@@ -183,3 +183,33 @@ if (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
   endif (NOT MSVC)
 
 endif (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
+
+#######################################################################
+# Output Configuration Summary
+#######################################################################
+
+include (FeatureSummary)
+
+message ("")
+feature_summary (WHAT ALL DESCRIPTION "Configuration Summary --\n")
+
+message (STATUS "Static libraries will be written to ${CMAKE_CURRENT_BINARY_DIR}/lib")
+
+if (OPTION_BUILD_SHARED_LIBS)
+  message (STATUS "Shared libraries will be written to ${CMAKE_CURRENT_BINARY_DIR}/lib")
+else ()
+  message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
+endif ()
+
+if (FLTK_BUILD_TEST)
+  message (STATUS "Test programs    will be written to ${CMAKE_CURRENT_BINARY_DIR}/bin/test")
+endif ()
+
+if (FLTK_BUILD_EXAMPLES)
+  message (STATUS "Example programs will be written to ${CMAKE_CURRENT_BINARY_DIR}/bin/examples")
+else ()
+  message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
+endif ()
+
+message ("")
+message (STATUS "End of Configuration Summary --\n")
