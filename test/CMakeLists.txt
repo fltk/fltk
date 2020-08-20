@@ -18,7 +18,7 @@
 include (../CMake/FLTK-Functions.cmake)
 include (../CMake/fl_create_example.cmake)
 
-set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin)
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/test)
 set (TESTFILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/../data)
 
 # create data and binary directory to copy scripts and data files
@@ -226,7 +226,8 @@ file (COPY
   DESTINATION ${TESTFILE_PATH}
 )
 
-# the main test program 'demo' needs additional hints and configurations
+# The main test program 'demo' needs additional hints and configurations.
+# Note: CMake defines "CMAKE_INTDIR" which is the build type folder (e.g. "Debug")
+# for multi config builds (MSVC, Xcode)
 
 target_compile_definitions (demo PRIVATE GENERATED_BY_CMAKE)
-target_compile_definitions (demo PRIVATE CMAKE_SOURCE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")

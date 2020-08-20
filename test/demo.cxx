@@ -37,17 +37,21 @@
 
     fltk/fluid              fluid (../fluid/fluid)
     fltk/test               demo, demo.menu, working directory, data files
-    fltk/documentation/src  images for help_dialog(.html)
+    fltk/test/images        images for help_dialog(.html)
 
   (2) CMake + make (e.g. Unix)
 
-    build/bin               fluid, demo
+    build/bin               fluid
+    build/bin/test          test and demo programs
     build/data              demo.menu, working directory, data files
+    build/data/images       images for help_dialog(.html)
 
   (3) CMake + Visual Studio (TYPE == build type: Debug, Release, ...)
 
-    build/bin/TYPE          fluid, demo
+    build/bin/TYPE          fluid
+    build/bin/test/TYPE     test and demo programs
     build/data              demo.menu, working directory, data files
+    build/data/images       images for help_dialog(.html)
 
   (4) macOS                 The setup is similar to Windows and Linux:
                             Makefiles: like (1) or (2)
@@ -109,7 +113,6 @@ char params[256];           // commandline arguments
 // Global path variables for all platforms and build systems
 // to avoid duplication and dynamic allocation
 
-char src_path   [FL_PATH_MAX];          // directory of this souce file
 char app_path   [FL_PATH_MAX];          // directory of all demo binaries
 char fluid_path [FL_PATH_MAX];          // binary directory of fluid
 char data_path  [FL_PATH_MAX];          // working directory of all demos
@@ -125,6 +128,15 @@ const char *suffix = ".app";
 const char *suffix = "";
 #endif
 
+// CMake defines the "build type" subdirectory for multi configuration
+// build setups like Visual Studio and Xcode
+
+#ifdef CMAKE_INTDIR
+const char *cmake_intdir = "/" CMAKE_INTDIR;
+#else
+const char *cmake_intdir = 0;
+#endif
+
 // debug output function
 void debug_var(const char *varname, const char *value) {
   tty->printf("%-10s = '%s'\n", varname, value);
@@ -134,7 +146,7 @@ void debug_var(const char *varname, const char *value) {
 void show_tty(int val) {
   if ( val ) {
     form->size_range(FORM_W,FORM_H+TTY_H,0,0); // allow resizing
-    form->size(TTY_W,FORM_H+TTY_H);         // demo + height for tty
+    form->size(TTY_W,FORM_H+TTY_H);            // demo + height for tty
     demogrp->size(FORM_W,FORM_H);
     tty->show();                               // show tty
     tty->resize(0, FORM_H, TTY_W, TTY_H);      // force tty position
@@ -433,7 +445,7 @@ void doexit(Fl_Widget *, void *) {exit(0);}
 /*
   Load the menu file. Returns whether successful.
 */
-int load_the_menu(char *menu) {
+int load_the_menu(const char * const menu) {
   FILE *fin = 0;
   char line[256], mname[64],iname[64],cname[64];
   int i, j;
@@ -502,7 +514,7 @@ void fix_path(char *path, int strip_filename = 1) {
 
 int main(int argc, char **argv) {
 
-  fl_putenv("FLTK_DOCDIR=../documentation/html"); // not sure if this is needed
+  fl_putenv("FLTK_DOCDIR=../documentation/html"); // used by fluid
 
   char menu[FL_PATH_MAX];
 
@@ -515,50 +527,46 @@ int main(int argc, char **argv) {
 #endif
   fix_path(app_path);
 
-  // construct src_path in case we want to use it (macOS ?)
-
-#if defined(GENERATED_BY_CMAKE)
-  strcpy(src_path, CMAKE_SOURCE_PATH);
-#else
-  strcpy(src_path, app_path);
-#endif
-  fix_path(src_path, 0);
-
-  // fluid's path is the same for CMake builds but not for autoconf/make
+  // fluid's path is relative to app_path:
+  // - "../fluid" for autoconf/make builds
+  // - ".." (parent directory) for single configuration CMake builds
+  // - "../../$CMAKE_INTDIR" for multi-config (Visual Studio or Xcode) CMake builds
 
   strcpy(fluid_path, app_path);
 
+  if (cmake_intdir)
+    fix_path(fluid_path); // remove intermediate (build type) folder, e.g. "/Debug"
+
+  fix_path(fluid_path); // remove folder name ("test")
+
 #if !defined(GENERATED_BY_CMAKE)
-  fix_path(fluid_path); // removes folder name (test)
   strcat(fluid_path, "/fluid");
-#endif
+#else
+  // CMake: potentially Visual Studio or Xcode (multi config)
+  if (cmake_intdir)
+    strcat(fluid_path, cmake_intdir); // append e.g. "/Debug"
+
+#endif // GENERATED_BY_CMAKE
 
   // construct data_path for the menu file and all resources (data files)
-  // CMake: replace "/bin/*"" with "/data"
+  // CMake: replace "/bin/test/*" with "/data"
   // autotools: use app_path directly
 
   strcpy(data_path, app_path);
 
 #if defined(GENERATED_BY_CMAKE)
   {
-    char *pos = strstr(data_path, "/bin");
+    char *pos = strstr(data_path, "/bin/test");
     if (pos)
       strcpy(pos, "/data");
   }
-#endif
+#endif // GENERATED_BY_CMAKE
 
-  // construct the menu file name, optionally overridden by command args
-  // CMake: use data_path instead of app_path
+  // Construct the menu file name, optionally overridden by command args.
+  // Use data_path and append "/<exe-file-name>.menu"
 
   const char *fn = fl_filename_name(argv[0]);
-
-#if defined(GENERATED_BY_CMAKE)
   strcpy(menu, data_path);
-#else
-  strcpy(menu, app_path);
-#endif
-
-  // append "/<exe-file-name>.menu"
   strcat(menu, "/");
   strcat(menu, fn);
   fl_filename_setext(menu, sizeof(menu), ".menu");
@@ -566,7 +574,7 @@ int main(int argc, char **argv) {
   // parse commandline
 
   int i = 0;
-  if (!Fl::args(argc,argv,i) || i < argc-1)
+  if (!Fl::args(argc, argv, i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s", argv[0], Fl::help);
   if (i < argc) {
     // override menu file *and* data path !
@@ -575,7 +583,7 @@ int main(int argc, char **argv) {
     fix_path(data_path);
   }
 
-  // set current work directory to 'app_path'
+  // set current work directory to 'data_path'
 
   if (fl_chdir(data_path) == -1) { /* ignore */ }
 
@@ -586,21 +594,22 @@ int main(int argc, char **argv) {
 
   {
     char cwd[1024];
-    debug_var("src_path",   src_path);
+    fl_getcwd(cwd, sizeof(cwd));
+    fix_path(cwd, 0);
+
     debug_var("app_path",   app_path);
     debug_var("fluid_path", fluid_path);
     debug_var("data_path",  data_path);
-    debug_var("Menu file",  menu);
-    debug_var("Cwd",        fl_getcwd(cwd,sizeof(cwd)));
+    debug_var("menu file",  menu);
+    debug_var("cwd",        cwd);
     tty->printf("\n");
   }
 
-  // note: load_the_menu() *may* change the `menu` buffer contents !
   if (!load_the_menu(menu))
-    Fl::fatal("Can't open %s", menu);
+    Fl::fatal("Can't open menu file '%s'", menu);
 
   push_menu("@main");
-  form->show(argc,argv);
+  form->show(argc, argv);
   Fl::run();
   return 0;
 }
