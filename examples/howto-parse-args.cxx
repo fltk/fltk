@@ -1,15 +1,17 @@
 //
-//     How to parse command line arguments - Duncan Gibson 2010-10-23
-//     First posted in https://www.fltk.org/newsgroups.php?gfltk.general+v:31449
+// How to parse command line arguments - Duncan Gibson 2010-10-23
 //
-//     Shows how to decode additional command line arguments using Fl::args()
-//     on top of the "standard" options used by the toolkit itself.
+// First posted in https://www.fltk.org/newsgroups.php?gfltk.general+v:22493
+// in thread "fltk-1.x : parsing command line arguments"
 //
-//     Note that this only handles "option separateValue" rather than the
-//     usual *nix idiom of "option=value", and provides no validation nor
-//     conversion of the paramter string into ints or floats.
+// Shows how to decode additional command line arguments using Fl::args()
+// on top of the "standard" options used by the toolkit itself.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Note that this only handles "option separateValue" rather than the
+// usual *nix idiom of "option=value", and provides no validation nor
+// conversion of the parameter string into ints or floats.
+//
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
