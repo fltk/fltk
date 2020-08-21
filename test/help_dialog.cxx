@@ -36,27 +36,11 @@ main(int  argc,                 // I - Number of command-line arguments
      char *argv[])              // I - Command-line arguments
 {
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
-  char htmlname[FL_PATH_MAX];
-#ifdef __APPLE__
-  int i = 1;
-  while (i < argc && Fl::arg(argc, argv, i)) i++;
-  if (i < argc) {
-    strcpy(htmlname, argv[i]);
-  } else {
-    // bundled apps do not set the current directory
-    strcpy(htmlname, argv[0]);
-    char *slash = strrchr(htmlname, '/');
-    if (slash) strcpy(slash, "/../Resources/help_dialog.html");
-  }
-#else
-  if (argc > 1) {
-    strcpy(htmlname, argv[1]);
-  } else {
-    strcpy(htmlname, "help_dialog.html");
-  }
-#endif
+  int i;
+  if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
+  const char *fname = (i < argc) ? argv[i] : "help_dialog.html";
 
-  help->load(htmlname); // TODO: add error check (when load() returns int instead of void)
+  help->load(fname); // TODO: add error check (when load() returns int instead of void)
 
   help->show(1, argv);
 

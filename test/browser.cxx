@@ -160,42 +160,15 @@ void wtype_cb(Fl_Widget *, void *) {
 
 int main(int argc, char **argv) {
   int i;
-  if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
-  const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Double_Window window(720,520,fname);
-  browser = new Fl_Select_Browser(0,0,window.w(),350,0);
+  if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
+  const char *fname = (i < argc) ? argv[i] : "browser.cxx";
+  Fl_Double_Window window(720, 520, fname);
+  browser = new Fl_Select_Browser(0, 0, window.w(), 350, 0);
   browser->type(FL_MULTI_BROWSER);
-  //browser->type(FL_HOLD_BROWSER);
-  //browser->color(42);
   browser->callback(b_cb);
-  // browser->scrollbar_right();
-  //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
-  //browser->format_char('#');
   if (!browser->load(fname)) {
-    int done = 0;
-#ifdef _MSC_VER
-    // if 'browser' was started from the VisualC environment in Win32,
-    // the current directory is set to the environment itself,
-    // so we need to correct the browser file path
-    if ( i == argc )
-    {
-      fname = "../test/browser.cxx";
-      done = browser->load(fname);
-    }
-#elif defined(__APPLE__)
-    char buf[2048];
-    strcpy(buf, argv[0]);
-    char *slash = strrchr(buf, '/');
-    if (slash) {
-      strcpy(slash, "/../../../browser.cxx");
-    }
-    done = browser->load(buf);
-#endif
-    if ( !done )
-    {
-      fl_message("Can't load %s, %s\n", fname, strerror(errno));
-      exit(1);
-    }
+    fl_message("Can't load '%s'\n%s\n", fname, strerror(errno));
+    exit(1);
   }
   browser->position(0);
 

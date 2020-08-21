@@ -61,7 +61,7 @@
 @main:Fluid\n(UI design tool):fluid valuators.fl
 
 @main:Cool\nDemos...:@e
-	@e:X Color\nBrowser:colbrowser
+	@e:X Color\nBrowser:colbrowser rgb.txt
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle

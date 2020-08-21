@@ -47,28 +47,19 @@ static Fl_Value_Slider *rs, *gs, *bs;
 static char dbname[FL_PATH_MAX];
 
 static void create_form_cl(void);
-static int load_browser(char *);
+static int load_browser(const char *);
 
 typedef struct { int r, g, b; } RGBdb;
 
 static RGBdb rgbdb[MAX_RGB];
 
 
-int main(int argc, char *argv[])
-{
-  Fl::args(argc, argv);
+int main(int argc, char *argv[]) {
+  int i;
+  if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
+  const char *dbname = (i < argc) ? argv[i] : "rgb.txt";
 
   create_form_cl();
-
-#ifdef __APPLE__
-  // Bundled apps do not set the current directory
-  strcpy(dbname, argv[0]);
-  char *slash = strrchr(dbname, '/');
-  if (slash)
-    strcpy(slash, "/../Resources/rgb.txt");
-#else
-  strcpy(dbname, "rgb.txt");
-#endif
 
   if (load_browser(dbname))
     dbobj->label(dbname);
@@ -139,7 +130,7 @@ static int read_entry(FILE * fp, int *r, int *g, int *b, char *name)
 }
 
 
-static int load_browser(char *fname)
+static int load_browser(const char *fname)
 {
   FILE *fp;
   RGBdb *db = rgbdb, *dbs = db + MAX_RGB;
@@ -147,7 +138,7 @@ static int load_browser(char *fname)
   char name[256], buf[300];
 
   if (!(fp = fl_fopen(fname, "r"))) {
-    fl_alert("%s\n%s\n%s","Load", fname, "Can't open");
+    fl_alert("Load:\nCan't open '%s'", fname);
     return 0;
   }
 
