@@ -43,6 +43,7 @@ CPPFILES =\
 	editor.cxx \
 	fast_slow.cxx \
 	file_chooser.cxx \
+	fltk-versions.cxx \
 	fonts.cxx \
 	forms.cxx \
 	fractals.cxx \
@@ -128,6 +129,7 @@ ALL =	\
 	editor$(EXEEXT) \
 	fast_slow$(EXEEXT) \
 	file_chooser$(EXEEXT) \
+	fltk-versions$(EXEEXT) \
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
 	hello$(EXEEXT) \
@@ -404,6 +406,8 @@ file_chooser$(EXEEXT): file_chooser.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+
+fltk-versions$(EXEEXT): fltk-versions.o
 
 fonts$(EXEEXT): fonts.o
 

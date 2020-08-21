@@ -8,7 +8,6 @@ SHELL = /bin/sh
 ALL = browser-simple$(EXEEXT) \
       clipboard$(EXEEXT) \
       draggable-group$(EXEEXT) \
-      fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \

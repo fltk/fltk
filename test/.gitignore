@@ -46,6 +46,7 @@ fast_slow
 fast_slow.cxx
 fast_slow.h
 file_chooser
+fltk-versions
 fonts
 forms
 fractals

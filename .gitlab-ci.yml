@@ -33,7 +33,7 @@ build-autotools:
   # install the necessary build tools
   before_script:
     - apt update && apt -y install make autoconf man
-    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
     - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
     - apt -y install libpango1.0-dev libcairo2-dev
   script:
@@ -47,7 +47,7 @@ build-autotools:
       - test/cairo_test
       - test/glpuzzle
       - test/unittests
-      - examples/fltk-versions
+      - test/fltk-versions
 
 # Build with CMake and Ninja (default configuration)
 
@@ -56,11 +56,11 @@ build-cmake:
   # install the necessary build tools
   before_script:
     - apt update && apt -y install cmake ninja-build
-    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
     - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
   script:
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
+    - cmake -DCMAKE_BUILD_TYPE=Debug -DFLTK_BUILD_EXAMPLES=ON -G Ninja ..
     - time ninja
   artifacts:
     paths:
