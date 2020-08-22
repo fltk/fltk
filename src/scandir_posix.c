@@ -157,7 +157,7 @@ fl_scandir(const char *dir, struct dirent ***namelist,
     if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
 
     // XXX: This would be a thread safe alternative to the above, but commented
-    //      out because we can get either GNU or POSIX versions on linux, 
+    //      out because we can get either GNU or POSIX versions on linux,
     //      which AFAICT are incompatible: GNU doesn't guarantee errmsg is used
     //      at all, whereas POSIX /only/ fills buffer. The two calls are not really
     //      compatible but have the same name and different return values.. wtf?

@@ -23,7 +23,7 @@
 #include <FL/Fl_Printer.H>
 #include <string.h>
 #include <errno.h>
-#include <locale.h>	// setlocale()..
+#include <locale.h>     // setlocale()..
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_message.H>
 #include <FL/Fl_SVG_File_Surface.H>

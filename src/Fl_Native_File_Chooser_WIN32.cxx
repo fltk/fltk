@@ -527,7 +527,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
           strncpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH);
           strncat(pathname, "\\",                 FNFC_MAX_PATH);
           strncat(pathname, wchartoutf8(s),       FNFC_MAX_PATH);
-	  pathname[FNFC_MAX_PATH-1] = 0;
+          pathname[FNFC_MAX_PATH-1] = 0;
           add_pathname(pathname);
         }
       }

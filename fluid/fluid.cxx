@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <locale.h>	// setlocale()..
+#include <locale.h>     // setlocale()..
 #include <time.h>   // time(), localtime(), etc.
 
 #include "../src/flstring.h"

@@ -39,7 +39,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Simple_Terminal.H>
 #include <string.h>
-#include <locale.h>	// setlocale()..
+#include <locale.h>     // setlocale()..
 
 #define TERMINAL_HEIGHT 120
 #define TERMINAL_GREEN  "\033[32m"

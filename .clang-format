@@ -1,7 +1,7 @@
 #
 # clang-format control file for the FLTK project.
 #
-# Copyright 2017 by Bill Spitzak and others.
+# Copyright 2017-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -64,7 +64,7 @@ BasedOnStyle:                                   LLVM
 # this annoying bug of clang-format.
 #
 # UseTab:                                       Always
-UseTab:                                         ForIndentation
+UseTab:                                         Never
 
 # Should we extend code lines beyond 80 columns ?
 # Default: 80

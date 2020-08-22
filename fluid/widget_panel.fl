@@ -295,7 +295,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           Fl_Value_Input {} {
             label {Size:}
             callback slider_size_cb
-            tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 step 0.010101 textsize 11
+            tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Minimum:}
@@ -674,7 +674,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Button {} {
         label Revert
         callback revert_cb
-        comment {Hidden Revert button}
+        comment {Hidden Revert button} selected
         xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {

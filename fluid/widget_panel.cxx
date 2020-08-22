@@ -317,7 +317,6 @@ ive to the origin at construction time");
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
             o->tooltip("The size of the slider.");
             o->labelsize(11);
-            o->step(0.010101);
             o->textsize(11);
             o->callback((Fl_Callback*)slider_size_cb);
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));

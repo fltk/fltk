@@ -42,7 +42,7 @@
         \endcode
     - If no "*" pattern is provided, then an entry for "All Files (*)" is automatically added.
     - An optional file preview box is provided which can be toggled by programmer or user
-      showing images, or the first 2048 bytes of printable text. 
+      showing images, or the first 2048 bytes of printable text.
     - Preview image loading functions can be registered to provide custom file previews.
     - The favorites button shows up to 100 user-saved favorite directories, the user's home
       directory, and a filesystems item.
