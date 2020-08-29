@@ -29,6 +29,7 @@ Bug fixes and other improvements
     Set OPTION_USE_SYSTEM_LIBPNG/JPEG off under macOS by default
     Have Fl_Pack::draw() call Fl_Group::init_sizes() on its parent group.
     CMake support of the Darwin+XQuartz test platform
+    Add support for macOS 10.15 "Catalina" and 11.0 "Big Sur".
 
   OKAMURA, Yasunobu (1):
     Fix JIS Keyboard dead keys

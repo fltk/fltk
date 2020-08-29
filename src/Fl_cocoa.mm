@@ -677,7 +677,6 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 @public
   CGContextRef aux_bitmap; // stores a copy of the last content of the view, also used to draw outside drawRect:
-  BOOL direct_draw; // YES means drawing outside drawRect:
 #endif
 }
 + (void)prepareEtext:(NSString*)aString;
@@ -2343,20 +2342,17 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  gives a graphics context whose product ultimately appears on screen. But the
  full content of the view must be redrawn each time drawRect: runs, in contrast
  to pre-10.14 where drawings were added to the previous window content.
- That is why FLView maintains a bitmap (view->aux_bitmap) equal to the last content of the FLView.
- At the beginning of drawRect:, aux_bitmap is copied to the graphics context,
- then drawRect: does its drawing, finally the view's graphical content as it is at the end of
- drawRect: is copied back to aux_bitmap.
- 
+ That is why FLView maintains a bitmap (view->aux_bitmap) to which FLTK directs all drawings.
+ At the end of drawRect:, the content of that bitmap is copied to the graphics context.
+  
  A problem arises to support drawing done outside Fl_X::flush(), that is,
  after the app calls Fl_Window::make_current() at any time it wants.
  That situation is identified by the condition (views_use_CA && !through_drawRect).
  A graphics context usable outside drawRect: that ultimately appears on screen,
  if it exists, was not identified. Drawing operations after the call to Fl_Window::make_current()
- are directed to aux_bitmap. Fl_Window::make_current() sets to YES the direct_draw member
- of the FLView and also calls [view setNeedsDisplay:YES] which instructs the system to
- run drawRect: at the next event loop. Later, when drawRect: runs, the content of
- aux_bitmap is copied to drawRect's graphics context and direct_draw is set to NO.
+ are directed to aux_bitmap. Fl_Window::make_current() calls [view setNeedsDisplay:YES]
+ which instructs the system to run drawRect: at the next event loop. Later,
+ when drawRect: runs, the content of aux_bitmap is copied to drawRect's graphics context.
  
  OpenGL windows remain processed under 10.14 as before.
  */
@@ -2391,9 +2387,17 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
-  aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
-                                     CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
-                                     CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
+  if (!gc || fl_mac_os_version >= 110000) {
+    // bitmap context-related functions (e.g., CGBitmapContextGetBytesPerRow) can't be used here with macOS 11.0 "Big Sur"
+    static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+    int W = [self frame].size.width, H = [self frame].size.height;
+    if (r) { W *= 2; H *= 2; }
+    aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst);
+  } else {
+    aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
+                                       CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
+                                       CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
+  }
   if (r) CGContextScaleCTM(aux_bitmap, 2, 2);
 }
 - (void)reset_aux_bitmap {
@@ -2427,13 +2431,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Window *window = [cw getFl_Window];
   if (!window) return; // may happen after closing full-screen window
   fl_lock_function();
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  CGContextRef gc = views_use_CA ? [[NSGraphicsContext currentContext] CGContext] : NULL;
-#endif
   Fl_X *i = Fl_X::i(window);
   if (!through_Fl_X_flush
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-      && !direct_draw
+            && (!views_use_CA || !aux_bitmap)
 #endif
       ) {
     [self did_view_resolution_change];
@@ -2450,36 +2451,27 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     window->clear_damage(FL_DAMAGE_ALL);
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  else if (gc && aux_bitmap && ( Fl_X::i(window)->region || !(window->damage()&FL_DAMAGE_ALL)) ) {
-    if (CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) {
-      // this condition (unchanged W and H but changed BytesPerRow) occurs with 10.15
-      CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
-      CGContextDrawImage(gc, [self frame], img);
-      CGImageRelease(img);
-    } else {
-      memcpy(CGBitmapContextGetData(gc), CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
-    }
+  CGContextRef destination = NULL;
+  if (views_use_CA) {
+    destination = [[NSGraphicsContext currentContext] CGContext];
+    if (!aux_bitmap && !window->as_gl_window()) [self create_aux_bitmap:destination retina:i->mapped_to_retina()];
   }
 #endif
   through_drawRect = YES;
+  if (window->damage()) i->flush();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  if (gc) {
-    if (window->damage()) {
-      i->flush();
-      if (!aux_bitmap) [self create_aux_bitmap:gc retina:i->mapped_to_retina()];
-      if (CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) {
-        CGImageRef img = CGBitmapContextCreateImage(gc);
-        CGContextDrawImage(aux_bitmap, [self frame], img);
-        CGImageRelease(img);
-      } else {
-        memcpy(CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetData(gc), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
-      }
+  if (destination) { // can be NULL with gl_start/gl_finish
+    if (fl_mac_os_version < 110000 && CGBitmapContextGetBytesPerRow(aux_bitmap) == CGBitmapContextGetBytesPerRow(destination)) {
+      memcpy(CGBitmapContextGetData(destination), CGBitmapContextGetData(aux_bitmap),
+             CGBitmapContextGetHeight(aux_bitmap) * CGBitmapContextGetBytesPerRow(aux_bitmap));
+    } else {
+      CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
+      CGContextDrawImage(destination, [self frame], img);
+      CGImageRelease(img);
     }
-    Fl_X::q_release_context();
-    direct_draw = NO;
-  } else
+  }
+  Fl_X::q_release_context();
 #endif
-     i->flush();
   if (!through_Fl_X_flush) window->clear_damage();
   through_drawRect = NO;
   fl_unlock_function();
@@ -3526,26 +3518,21 @@ void Fl_Window::make_current()
   fl_window = i->xid;
   current_ = this;
   Fl_X::set_high_resolution( i->mapped_to_retina() );
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  if (views_use_CA && !through_drawRect) { // detect direct calls from the app
+  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
     FLView *view = (FLView*)[fl_window contentView];
-    if (!view->aux_bitmap) [view display];
-    i->gc = view->aux_bitmap;
-    view->direct_draw = YES;
-    [view setNeedsDisplay:YES];
-  } else
-#endif
-  {
-    NSGraphicsContext *nsgc =   through_drawRect ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
-    static SEL gc_sel = fl_mac_os_version >= 101000 ? @selector(CGContext) : @selector(graphicsPort);
-    i->gc = (CGContextRef)[nsgc performSelector:gc_sel];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-    if (!i->gc) { // to support gl_start()/gl_finish()
-      static CGContextRef dummy_gc = CGBitmapContextCreate(NULL, 10, 10, 8, 40, CGColorSpaceCreateDeviceRGB(), kCGImageAlphaPremultipliedFirst);
-      i->gc = dummy_gc;
+    if (views_use_CA && !through_drawRect) { // detect direct calls from the app
+      [view setNeedsDisplay:YES];
     }
-#endif
-  }
+    if (views_use_CA && view->aux_bitmap) {
+      i->gc = view->aux_bitmap;
+    } else
+  #endif
+    {
+      NSGraphicsContext *nsgc =   through_drawRect ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
+      static SEL gc_sel = fl_mac_os_version >= 101000 ? @selector(CGContext) : @selector(graphicsPort);
+      i->gc = (CGContextRef)[nsgc performSelector:gc_sel];
+    }
+  
   fl_gc = i->gc;
   CGContextSaveGState(fl_gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
@@ -4886,7 +4873,6 @@ int Fl_X::calc_mac_os_version() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (fl_mac_os_version >= 101400) views_use_CA = YES;
 #endif
-  //if (fl_mac_os_version >= 101300) views_use_CA = YES; // to get as with mojave
   return fl_mac_os_version;
 }
 
