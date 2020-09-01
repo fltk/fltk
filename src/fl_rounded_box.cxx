@@ -1,7 +1,7 @@
 //
 // Rounded box drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,15 +17,15 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-// Constants for rounded corner drawing algorithm:
+// Global parameters for rounded corner drawing algorithm:
 //
 //  RN = number of segments per corner (must match offset array size)
 //  RS = max. corner radius
 //  BW = box shadow width
 
-#define RN      5
-#define RS      15
-#define BW      3
+#define RN 5
+#define RS (Fl::box_border_radius_max())
+#define BW (Fl::box_shadow_width())
 
 static double offset[RN] = { 0.0, 0.07612, 0.29289, 0.61732, 1.0};
 

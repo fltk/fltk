@@ -17,7 +17,10 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-#define BW 3
+// Global parameters for box drawing algorithm:
+//
+//  BW = box shadow width
+#define BW (Fl::box_shadow_width())
 
 static void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_color(FL_DARK3);

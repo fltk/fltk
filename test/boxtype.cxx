@@ -103,8 +103,12 @@ int main(int argc, char ** argv) {
 #else // this code uses the nice bright blue background to show box vs. frame types
   Fl::args(argc, argv);
   Fl::get_system_colors();
-  window->color(12);// light blue
+  window->color(fl_rgb_color(51, 173, 255)); // light blue (#33adff)
 #endif
+
+  // TEST: set box shadow width and max. border radius (should be commented out)
+  // Fl::box_border_radius_max(5); // default: 15 (see documentation)
+  // Fl::box_shadow_width(6);      // default:  3 (see documentation)
 
   // set window title to show active scheme
   Fl::scheme(Fl::scheme()); // init scheme

@@ -1,7 +1,7 @@
 //
 // Oval box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,12 +14,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
-
 // Less-used box types are in separate files so they are not linked
 // in if not used.
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+
+// Global parameters for box drawing algorithm:
+//
+//  BW = box shadow width
+#define BW (Fl::box_shadow_width())
 
 static void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
   Fl::set_box_color(c);
@@ -37,7 +41,7 @@ static void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 static void fl_oval_shadow_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_oval_flat_box(x+3,y+3,w,h,FL_DARK3);
+  fl_oval_flat_box(x+BW,y+BW,w,h,FL_DARK3);
   fl_oval_box(x,y,w,h,c);
 }
 

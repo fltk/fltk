@@ -1,7 +1,7 @@
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -45,6 +45,9 @@ static const uchar inactive_ramp[24] = {
   49, 49, 50, 50,
   51, 51, 52, 52};
 static int draw_it_active = 1;
+
+int Fl::box_border_radius_max_ = 15;
+int Fl::box_shadow_width_ = 3;
 
 /**
   Determines if the currently drawn box is active or inactive.

@@ -18,6 +18,9 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2020
   New Features and Extensions
 
   - (add new items here)
+  - The border radius of "rounded" box types can be limited and
+    the shadow width of "shadow" box types can be configured (issue #130).
+    See Fl::box_border_radius_max() and Fl::box_shadow_width().
   - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
     graphics to SVG or EPS files, respectively.
   - New fl_putenv() is a cross-platform putenv() wrapper (see docs).
