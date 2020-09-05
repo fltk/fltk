@@ -115,7 +115,7 @@ option (OPTION_BUILD_SHARED_LIBS
 #######################################################################
 option (OPTION_PRINT_SUPPORT "allow print support" ON)
 option (OPTION_FILESYSTEM_SUPPORT "allow file system support" ON)
-
+option (OPTION_BUILD_FLUID "Build fluid RAD tool" ON)
 option (FLTK_BUILD_TEST     "Build test/demo programs" ON)
 option (FLTK_BUILD_EXAMPLES "Build example programs"   OFF)
 
