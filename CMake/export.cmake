@@ -33,9 +33,11 @@ if (CMAKE_CROSSCOMPILING)
     PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
   )
 else ()
-  add_subdirectory(fluid)
-  set (FLTK_FLUID_EXECUTABLE fluid)
-  set (FLUID fluid) # export
+  if(OPTION_BUILD_FLUID)
+    add_subdirectory(fluid)
+    set (FLTK_FLUID_EXECUTABLE fluid)
+    set (FLUID fluid) # export
+  endif(OPTION_BUILD_FLUID)
 endif (CMAKE_CROSSCOMPILING)
 
 add_subdirectory(src)
