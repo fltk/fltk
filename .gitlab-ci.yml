@@ -2,15 +2,12 @@
 #
 # It serves two purposes:
 #
-# (1) Continuously building FLTK with several build systems.
+# (1) Continuously building FLTK with one or more build systems.
 # (2) Generating current HTML documentation and putting it online.
 #
 # The documentation will be viewable at:
 #
-# https://fltk.gitlab.io/<repository>/
-#
-# <repository> can be:
-#  - fltk
+# https://fltk.gitlab.io/fltk/
 #
 # Details of this script:
 #
@@ -56,16 +53,23 @@ build-autotools:
 
 build-cmake:
   stage: build
+  only:
+    - master
   # install the necessary build tools
   before_script:
+    - date
     - apt update && apt -y install cmake ninja-build
     - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
     - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
     - apt -y install libpango1.0-dev libcairo2-dev
   script:
+    - date
+    - gcc --version
     - mkdir build && cd build
     - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DFLTK_BUILD_EXAMPLES=ON -DOPTION_USE_PANGO=ON -DOPTION_CAIRO=ON ..
+    - date
     - time ninja
+    - date
   artifacts:
     paths:
       - build/lib/
@@ -75,16 +79,25 @@ build-cmake:
 
 pages:
   stage: deploy
+  only:
+    - master
+  # run this job (documentation) independent of the build jobs (empty "needs" clause)
+  needs: []
   # install the necessary build tools
   before_script:
+    - date
     - apt update && apt -y install make autoconf man doxygen
   script:
+    - date
     - make clean
     - cd documentation
+    - date
     - make && make html
+    - date
     - cd ..
     - mkdir -p public/
     - mv documentation/html/* public/
+    - date
   artifacts:
     paths:
       - public
