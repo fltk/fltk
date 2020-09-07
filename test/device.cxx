@@ -739,7 +739,7 @@ int main(int argc, char ** argv) {
   b_bitmap.image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
 
   new Fl_Clock(360,230+16,120,120);
-  Fl_Return_Button * ret = new Fl_Return_Button (360, 360, 120,30, "Return");
+  Fl_Return_Button * ret = new Fl_Return_Button (360, 360+16, 120,30, "Return");
   ret->deactivate();
   Fl_Button but1(360, 390+16, 30, 30, "@->|");
   but1.labelcolor(FL_DARK3);
