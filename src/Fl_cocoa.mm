@@ -2188,7 +2188,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
     int W = [self frame].size.width, H = [self frame].size.height;
     if (r) { W *= 2; H *= 2; }
-    aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst);
+    aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst|kCGBitmapByteOrder32Host);
   } else {
     aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
                                        CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
