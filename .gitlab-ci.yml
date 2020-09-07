@@ -9,9 +9,8 @@
 #
 # https://fltk.gitlab.io/<repository>/
 #
-# <repository> can be one of:
+# <repository> can be:
 #  - fltk
-#  - fltk-test
 #
 # Details of this script:
 #
@@ -23,13 +22,17 @@ image: gcc
 
 stages:
   - build
-  - test
   - deploy
 
 # Build with autoconf/make (including Pango and Cairo)
 
+# Disabled for regular builds after commits to save build time: "only schedules"
+# Note: Build time limits on "GitLab Free" effective Oct 2020: 400 minutes per month
+
 build-autotools:
   stage: build
+  only:
+    - schedules
   # install the necessary build tools
   before_script:
     - apt update && apt -y install make autoconf man
@@ -49,7 +52,7 @@ build-autotools:
       - test/unittests
       - test/fltk-versions
 
-# Build with CMake and Ninja (default configuration)
+# Build with CMake and Ninja (with pango, cairo, building examples)
 
 build-cmake:
   stage: build
@@ -58,45 +61,15 @@ build-cmake:
     - apt update && apt -y install cmake ninja-build
     - apt -y install freeglut3-dev libfontconfig-dev libxft-dev libglew-dev
     - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
+    - apt -y install libpango1.0-dev libcairo2-dev
   script:
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug -DFLTK_BUILD_EXAMPLES=ON -G Ninja ..
+    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DFLTK_BUILD_EXAMPLES=ON -DOPTION_USE_PANGO=ON -DOPTION_CAIRO=ON ..
     - time ninja
   artifacts:
     paths:
       - build/lib/
       - build/bin/
-
-# Build HTML documentation
-
-documentation:
-  stage: build
-  only:
-    - schedules
-  # install the necessary build tools
-  before_script:
-    - apt update && apt -y install make autoconf man doxygen
-  script:
-    - make clean
-    - doxygen --version
-    - cd documentation && make && make html
-  artifacts:
-    paths:
-      - documentation/src/*.[1-6]
-      - documentation/html
-
-  # depending on your build setup it's most likely a good idea to
-  #   cache outputs to reduce the build time
-  # cache:
-  #   paths:
-  #     - "*.o"
-
-# run tests using the binary built before
-#test:
-#  stage: test
-#  script:
-#    - ./runmytests.sh
-
 
 # Generate and install HTML documentation
 
