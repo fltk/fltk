@@ -512,14 +512,14 @@ public:
 
   /** Returns the window width including any frame added by the window manager.
 
-   Same as w() if applied to a subwindow.
+   Same as w() if applied to a subwindow, or if window is not yet mapped.
    */
   int decorated_w() const;
 
   /** Returns the window height including any window title bar and any frame
    added by the window manager.
 
-   Same as h() if applied to a subwindow.
+   Same as h() if applied to a subwindow, or if window is not yet mapped.
    */
   int decorated_h() const;
 
