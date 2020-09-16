@@ -1,7 +1,8 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
+// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +25,6 @@
 #include <ctype.h>
 #include "CodeEditor.h"
 
-
 Fl_Text_Display::Style_Table_Entry CodeEditor::
                 styletable[] = {        // Style table
                   { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
@@ -35,6 +35,7 @@ Fl_Text_Display::Style_Table_Entry CodeEditor::
                   { FL_DARK_RED,         FL_COURIER_BOLD,   11 }, // F - Types
                   { FL_BLUE,             FL_COURIER_BOLD,   11 }  // G - Keywords
                 };
+
 const char * const CodeEditor::
                 code_keywords[] = {     // Sorted list of C/C++ keywords...
                   "and",
@@ -72,6 +73,7 @@ const char * const CodeEditor::
                   "xor",
                   "xor_eq"
                 };
+
 const char * const CodeEditor::
                 code_types[] = {        // Sorted list of C/C++ types...
                   "auto",
@@ -130,132 +132,68 @@ extern "C" {
   }
 }
 
-// 'style_parse()' - Parse text and produce style data.
-void CodeEditor::style_parse(const char *text, char *style, int length) {
-  char          current;
-  int           col;
-  int           last;
-  char          buf[255],
-                *bufptr;
-  const char    *temp;
+// See if 'find' is a C/C++ keyword.
+//     Refer to bsearch(3) for return value.
+//
+void* CodeEditor::search_keywords(char *find) {
+  return bsearch(&find, code_keywords,
+                 sizeof(code_keywords) / sizeof(code_keywords[0]),
+                 sizeof(code_keywords[0]), compare_keywords);
+}
 
+// See if 'find' is a C/C++ type.
+//     Refer to bsearch(3) for return value.
+//
+void* CodeEditor::search_types(char *find) {
+  return bsearch(&find, code_types,
+                 sizeof(code_types) / sizeof(code_types[0]),
+                 sizeof(code_types[0]), compare_keywords);
+}
+
+// 'style_parse()' - Parse text and produce style data.
+void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to parse
+                             char       *in_sbuff,         // style buffer we modify
+                             int         in_len,           // byte length to parse
+                             char        in_style) {       // starting style letter
   // Style letters:
   //
-  // A - Plain
-  // B - Line comments
-  // C - Block comments
-  // D - Strings
-  // E - Directives
-  // F - Types
-  // G - Keywords
+  // 'A' - Plain
+  // 'B' - Line comments  // ..
+  // 'C' - Block comments /*..*/
+  // 'D' - Strings        "xxx"
+  // 'E' - Directives     #define, #include..
+  // 'F' - Types          void, char..
+  // 'G' - Keywords       if, while..
 
-  for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
-    if (current == 'B' || current == 'F' || current == 'G') current = 'A';
-    if (current == 'A') {
-      // Check for directives, comments, strings, and keywords...
-      if (col == 0 && *text == '#') {
-        // Set style to directive
-        current = 'E';
-      } else if (strncmp(text, "//", 2) == 0) {
-        current = 'B';
-        for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
+  StyleParse sp;
+  sp.tbuff  = in_tbuff;
+  sp.sbuff  = in_sbuff;
+  sp.len    = in_len;
+  sp.style  = in_style;
+  sp.lwhite = 1;        // 1:while parsing over leading white and first char past, 0:past white
+  sp.col    = 0;
+  sp.last   = 0;
 
-        if (length == 0) break;
-      } else if (strncmp(text, "/*", 2) == 0) {
-        current = 'C';
-      } else if (strncmp(text, "\\\"", 2) == 0) {
-        // Quoted quote...
-        *style++ = current;
-        *style++ = current;
-        text ++;
-        length --;
-        col += 2;
-        continue;
-      } else if (*text == '\"') {
-        current = 'D';
-      } else if (!last && (islower(*text) || *text == '_')) {
-        // Might be a keyword...
-        for (temp = text, bufptr = buf;
-             (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
-             *bufptr++ = *temp++) {
-          // nothing
-        }
-
-        if (!islower(*temp) && *temp != '_') {
-          *bufptr = '\0';
-
-          bufptr = buf;
-
-          if (bsearch(&bufptr, code_types,
-                      sizeof(code_types) / sizeof(code_types[0]),
-                      sizeof(code_types[0]), compare_keywords)) {
-            while (text < temp) {
-              *style++ = 'F';
-              text ++;
-              length --;
-              col ++;
-            }
-
-            text --;
-            length ++;
-            last = 1;
-            continue;
-          } else if (bsearch(&bufptr, code_keywords,
-                             sizeof(code_keywords) / sizeof(code_keywords[0]),
-                             sizeof(code_keywords[0]), compare_keywords)) {
-            while (text < temp) {
-              *style++ = 'G';
-              text ++;
-              length --;
-              col ++;
-            }
-
-            text --;
-            length ++;
-            last = 1;
-            continue;
-          }
-        }
-      }
-    } else if (current == 'C' && strncmp(text, "*/", 2) == 0) {
-      // Close a C comment...
-      *style++ = current;
-      *style++ = current;
-      text ++;
-      length --;
-      current = 'A';
-      col += 2;
-      continue;
-    } else if (current == 'D') {
-      // Continuing in string...
-      if (strncmp(text, "\\\"", 2) == 0) {
-        // Quoted end quote...
-        *style++ = current;
-        *style++ = current;
-        text ++;
-        length --;
-        col += 2;
-        continue;
-      } else if (*text == '\"') {
-        // End quote...
-        *style++ = current;
-        col ++;
-        current = 'A';
-        continue;
-      }
-    }
-
-    // Copy style info...
-    if (current == 'A' && (*text == '{' || *text == '}')) *style++ = 'G';
-    else *style++ = current;
-    col ++;
-
-    last = isalnum(*text) || *text == '_' || *text == '.';
-
-    if (*text == '\n') {
-      // Reset column and possibly reset the style
-      col = 0;
-      if (current == 'B' || current == 'E') current = 'A';
+  // Loop through the code, updating style buffer
+  char c;
+  while ( sp.len > 0 ) {
+    c = sp.tbuff[0];  // current char
+    if ( sp.style == 'C' ) {                              // Started in middle of comment block?
+      if ( !sp.parse_block_comment() ) break;
+    } else if ( strncmp(sp.tbuff, "/*", 2)==0 ) {         // C style comment block?
+      if ( !sp.parse_block_comment() ) break;
+    } else if ( c == '\\' ) {                             // Backslash escape char?
+      if ( !sp.parse_escape() ) break;
+    } else if ( strncmp(sp.tbuff, "//", 2)==0 ) {         // Line comment?
+      if ( !sp.parse_line_comment() ) break;
+    } else if ( c == '"' ) {                              // Start of quoted string?
+      if ( !sp.parse_quoted_string() ) break;
+    } else if ( c == '#' && sp.lwhite ) {                 // Start of '#' directive?
+      if ( !sp.parse_directive() ) break;
+    } else if ( !sp.last && (islower(c) || c == '_') ) {  // Possible C/C++ keyword?
+      if ( !sp.parse_keyword() ) break;
+    } else {                                              // All other chars?
+      if ( !sp.parse_all_else() ) break;
     }
   }
 }
@@ -267,12 +205,9 @@ void CodeEditor::style_unfinished_cb(int, void*) { }
 void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
                               int /*nRestyled*/, const char * /*deletedText*/,
                               void *cbArg) {
-  CodeEditor    *editor = (CodeEditor *)cbArg;
-  int           start,                          // Start of text
-                end;                            // End of text
-  char          last,                           // Last style on line
-                *style,                         // Style data
-                *text;                          // Text data
+  CodeEditor *editor = (CodeEditor*)cbArg;
+  char       *style,                         // Style data
+             *text;                          // Text data
 
 
   // If this is just a selection change, just unselect the style buffer...
@@ -299,48 +234,18 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   // callbacks...
   editor->mStyleBuffer->select(pos, pos + nInserted - nDeleted);
 
-  // Re-parse the changed region; we do this by parsing from the
-  // beginning of the line of the changed region to the end of
-  // the line of the changed region...  Then we check the last
-  // style character and keep updating if we have a multi-line
-  // comment character...
-  start = editor->mBuffer->line_start(pos);
-  // the following code checks the style of the last character of the previous
-  // line. If it is a block comment, the previous line is interpreted as well.
-  int altStart = editor->mBuffer->prev_char(start);
-  if (altStart>0) {
-    altStart = editor->mBuffer->prev_char(altStart);
-    if (altStart>=0 && editor->mStyleBuffer->byte_at(start-2)=='C')
-      start = editor->mBuffer->line_start(altStart);
-  }
-  end   = editor->mBuffer->line_end(pos + nInserted);
-  text  = editor->mBuffer->text_range(start, end);
-  style = editor->mStyleBuffer->text_range(start, end);
-  if (start==end)
-    last = 0;
-  else
-    last  = style[end - start - 1];
+  // Reparse whole buffer, don't get cute. Maybe optimize range later
+  int len = editor->buffer()->length();
+  text  = editor->mBuffer->text_range(0, len);
+  style = editor->mStyleBuffer->text_range(0, len);
 
-  style_parse(text, style, end - start);
+  //DEBUG printf("BEFORE:\n"); show_buffer(editor); printf("-- END BEFORE\n");
+  style_parse(text, style, editor->mBuffer->length(), 'A');
+  //DEBUG printf("AFTER:\n"); show_buffer(editor); printf("-- END AFTER\n");
 
-  editor->mStyleBuffer->replace(start, end, style);
-  editor->redisplay_range(start, end);
-
-  if (start==end || last != style[end - start - 1]) {
-    // The last character on the line changed styles, so reparse the
-    // remainder of the buffer...
-    free(text);
-    free(style);
-
-    end   = editor->mBuffer->length();
-    text  = editor->mBuffer->text_range(start, end);
-    style = editor->mStyleBuffer->text_range(start, end);
-
-    style_parse(text, style, end - start);
-
-    editor->mStyleBuffer->replace(start, end, style);
-    editor->redisplay_range(start, end);
-  }
+  editor->mStyleBuffer->replace(0, len, style);
+  editor->redisplay_range(0, len);
+  editor->redraw();
 
   free(text);
   free(style);
@@ -394,7 +299,7 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
                  sizeof(styletable) / sizeof(styletable[0]),
                  'A', style_unfinished_cb, this);
 
-  style_parse(text, style, mBuffer->length());
+  style_parse(text, style, mBuffer->length(), 'A');
 
   mStyleBuffer->text(style);
   delete[] style;

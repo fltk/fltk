@@ -15,29 +15,30 @@
 //
 
 #ifndef CodeEditor_h
-#  define CodeEditor_h
+#define CodeEditor_h
 
 //
 // Include necessary headers...
 //
 
-#  include <stdio.h>
-#  include <stdlib.h>
-#  include <string.h>
-#  include <ctype.h>
-#  include <FL/Fl.H>
-#  include <FL/Fl_Text_Buffer.H>
-#  include <FL/Fl_Text_Editor.H>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
+#include "StyleParse.h"
 
 class CodeEditor : public Fl_Text_Editor {
   static Fl_Text_Display::Style_Table_Entry styletable[];
   static const char * const code_keywords[];
   static const char * const code_types[];
-
+  static void* search_types(char *find);
+  static void* search_keywords(char *find);
 
   // 'style_parse()' - Parse text and produce style data.
-  static void style_parse(const char *text, char *style, int length);
+  static void style_parse(const char *tbuff, char *sbuff, int len, char style);
 
   // 'style_unfinished_cb()' - Update unfinished styles.
   static void style_unfinished_cb(int, void*);
@@ -58,6 +59,7 @@ class CodeEditor : public Fl_Text_Editor {
   // attempt to make the fluid code editor widget honour textsize setting
   void textsize(Fl_Fontsize s);
 
+  friend class StyleParse;
 };
 
 class CodeViewer : public CodeEditor {
