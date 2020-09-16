@@ -245,8 +245,7 @@ int Fl_Menu_Item::insert(
   Labels starting with the "_" character cause a divider to be placed after that menu item.
   \par
   A label of the form "File/Quit" will create the submenu "File"
-  with a menu item called "Quit". The "/" character is ignored if it appears
-  as the first character of the label string, e.g.  "/File/Quit".
+  with a menu item called "Quit".
   \par
   The label string is copied to new memory and can be freed.
   The other arguments (including the shortcut) are copied into the
