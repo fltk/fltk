@@ -1750,7 +1750,9 @@ static void sigint(SIGARG) {
 int main(int argc,char **argv) {
   int i = 1;
 
-  setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
+  setlocale(LC_ALL, "");      // enable multilanguage errors in file chooser
+  setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
+
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
     static const char *msg =
       "usage: %s <switches> name.fl\n"

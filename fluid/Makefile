@@ -1,7 +1,7 @@
 #
-# FLUID makefile for the Fast Light Tool Kit (FLTK).
+# FLUID Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -120,16 +120,16 @@ uninstall-linux:
 uninstall-osx:
 	$(RM) -r $(DESTDIR)/Applications/fluid.app
 
-
-#
 # Note: The rebuild target can only be used if you have the original .fl
-#       files.  This is normally only used by the FLTK maintainers...
-#
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	fluid must be rebuilt if any {.fl|.cxx|.h} files were changed.
 
-rebuild:
-	./fluid -u -c about_panel.fl
-	./fluid -u -c alignment_panel.fl
-	./fluid -u -c function_panel.fl
-	./fluid -u -c print_panel.fl
-	./fluid -u -c template_panel.fl
-	./fluid -u -c widget_panel.fl
+rebuild: fluid$(EXEEXT)
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	./fluid$(EXEEXT) -u -c about_panel.fl
+	./fluid$(EXEEXT) -u -c alignment_panel.fl
+	./fluid$(EXEEXT) -u -c function_panel.fl
+	./fluid$(EXEEXT) -u -c print_panel.fl
+	./fluid$(EXEEXT) -u -c template_panel.fl
+	./fluid$(EXEEXT) -u -c widget_panel.fl

@@ -582,6 +582,16 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
+# Note: The rebuild target can only be used if you have the original .fl
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	the libs must be rebuilt if any {.fl|.cxx|.h} files were changed.
+
+rebuild:
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	../fluid/fluid$(EXEEXT) -u -c Fl_File_Chooser.fl
+	../fluid/fluid$(EXEEXT) -u -c Fl_Help_Dialog.fl
+
 clean:
 	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM)	drivers/Cocoa/*.o
