@@ -407,6 +407,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
 
  \todo  "extendRangeForStyleMods" does not exist (might be a hangover
          from the port from nedit). Find the correct function.
+ \see Fl_Text_Display::style_buffer()
  */
 void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
                                      const Style_Table_Entry *styleTable,

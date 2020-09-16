@@ -171,6 +171,13 @@ public:
    \see Fl_Text_Display::buffer(Fl_Text_Buffer& buf)
    */
   Fl_Text_Buffer* buffer() const { return mBuffer; }
+  /**
+   Gets the current style buffer associated with the text widget.
+   Multiple text widgets can be associated with the same style buffer.
+   \return current style buffer
+   \see Fl_Text_Display::highlight_data()
+   */
+  Fl_Text_Buffer* style_buffer() const { return mStyleBuffer; }
 
   void redisplay_range(int start, int end);
   void scroll(int topLineNum, int horizOffset);
