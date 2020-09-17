@@ -164,7 +164,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   textfont_ = FL_HELVETICA;             // textfont()
   textsize_ = FL_NORMAL_SIZE;           // textsize()
   textcolor_ = FL_FOREGROUND_COLOR;     // textcolor()
-  mLineNumLeft = 0;
+  mLineNumLeft = 0;             // XXX: UNUSED
   mLineNumWidth = 0;
 
   linenumber_font_    = FL_HELVETICA;
