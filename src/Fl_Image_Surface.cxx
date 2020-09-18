@@ -91,7 +91,8 @@ int Fl_Image_Surface_Driver::printable_rect(int *w, int *h) {
  \endcond
  */
 
-/** Returns an image made of all drawings sent to the Fl_Image_Surface object.
+/** Returns a depth 3 image made of all drawings sent to the Fl_Image_Surface object.
+ 
  The returned object contains its own copy of the RGB data.
  The caller is responsible for deleting the image.
  */
