@@ -1,7 +1,7 @@
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,15 +25,15 @@
 /// @file
 
 enum { // values for flags:
-  FL_MENU_INACTIVE = 1,         ///< Deactivate menu item (gray out)
-  FL_MENU_TOGGLE= 2,            ///< Item is a checkbox toggle (shows checkbox for on/off state)
-  FL_MENU_VALUE = 4,            ///< The on/off state for checkbox/radio buttons (if set, state is 'on')
-  FL_MENU_RADIO = 8,            ///< Item is a radio button (one checkbox of many can be on)
-  FL_MENU_INVISIBLE = 0x10,     ///< Item will not show up (shortcut will work)
-  FL_SUBMENU_POINTER = 0x20,    ///< Indicates user_data() is a pointer to another menu array
-  FL_SUBMENU = 0x40,            ///< This item is a submenu to other items
-  FL_MENU_DIVIDER = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons.
-  FL_MENU_HORIZONTAL = 0x100    ///< ??? -- reserved
+  FL_MENU_INACTIVE   = 1,      ///< Deactivate menu item (gray out)
+  FL_MENU_TOGGLE     = 2,      ///< Item is a checkbox toggle (shows checkbox for on/off state)
+  FL_MENU_VALUE      = 4,      ///< The on/off state for checkbox/radio buttons (if set, state is 'on')
+  FL_MENU_RADIO      = 8,      ///< Item is a radio button (one checkbox of many can be on)
+  FL_MENU_INVISIBLE  = 0x10,   ///< Item will not show up (shortcut will work)
+  FL_SUBMENU_POINTER = 0x20,   ///< Indicates user_data() is a pointer to another menu array
+  FL_SUBMENU         = 0x40,   ///< Item is a submenu to other items
+  FL_MENU_DIVIDER    = 0x80,   ///< Creates divider line below this item. Also ends a group of radio buttons
+  FL_MENU_HORIZONTAL = 0x100   ///< ??? -- reserved
 };
 
 extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
@@ -402,19 +402,29 @@ struct FL_EXPORT Fl_Menu_Item {
   */
   void do_callback(Fl_Widget* o,long arg) const {callback_(o, (void*)(fl_intptr_t)arg);}
 
-  // back-compatibility, do not use:
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::value() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see value()
+  */
+  inline int checked() const {return value();}
 
-  /** For back compatibility only
-   \deprecated  Replaced by value() */
-  int checked() const {return flags&FL_MENU_VALUE;}
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::set() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see set()
+  */
+  inline void check() {set();}
 
-  /** For back compatibility only
-   \deprecated Replaced by set() */
-  void check() {flags |= FL_MENU_VALUE;}
-
-  /** For back compatibility only
-   \deprecated Replaced by clear() */
-  void uncheck() {flags &= ~FL_MENU_VALUE;}
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::clear() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see clear()
+  */
+  inline void uncheck() {clear();}
 
   int insert(int,const char*,int,Fl_Callback*,void* =0, int =0);
   int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
