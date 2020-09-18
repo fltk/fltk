@@ -304,13 +304,13 @@ struct FL_EXPORT Fl_Menu_Item {
   */
   int radio() const {return flags&FL_MENU_RADIO;}
   /** Returns the current value of the check or radio item.
-      This is zero (0) if the menu item is not checked and
-      non-zero otherwise. You should not rely on a particular value,
-      only zero or non-zero.
-      \note The returned value for a checked menu item as of FLTK 1.3.2
-      is FL_MENU_VALUE (4), but may be 1 in a future version.
+      This is zero (0) if the menu item is not checked and non-zero otherwise.
+      \since 1.4.0 this method returns 1 if the item is checked but you
+        should not rely on a particular value, only zero or non-zero.
+      \note The returned value for a checked menu item was FL_MENU_VALUE (4)
+        before FLTK 1.4.0.
   */
-  int value() const {return flags&FL_MENU_VALUE;}
+  int value() const {return (flags & FL_MENU_VALUE) ? 1 : 0;}
   /**
     Turns the check or radio item "on" for the menu item. Note that this
     does not turn off any adjacent radio items like set_only() does.
