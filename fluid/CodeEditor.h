@@ -32,10 +32,6 @@
 
 class CodeEditor : public Fl_Text_Editor {
   static Fl_Text_Display::Style_Table_Entry styletable[];
-  static const char * const code_keywords[];
-  static const char * const code_types[];
-  static void* search_types(char *find);
-  static void* search_keywords(char *find);
 
   // 'style_parse()' - Parse text and produce style data.
   static void style_parse(const char *tbuff, char *sbuff, int len, char style);

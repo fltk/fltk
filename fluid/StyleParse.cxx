@@ -17,8 +17,111 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>     // bsearch()
 #include "StyleParse.h"
-#include "CodeEditor.h"
+
+// Sorted list of C/C++ keywords...
+static const char * const code_keywords[] = {
+  "and",
+  "and_eq",
+  "asm",
+  "bitand",
+  "bitor",
+  "break",
+  "case",
+  "catch",
+  "compl",
+  "continue",
+  "default",
+  "delete",
+  "do",
+  "else",
+  "false",
+  "for",
+  "goto",
+  "if",
+  "new",
+  "not",
+  "not_eq",
+  "operator",
+  "or",
+  "or_eq",
+  "return",
+  "switch",
+  "template",
+  "this",
+  "throw",
+  "true",
+  "try",
+  "while",
+  "xor",
+  "xor_eq"
+};
+
+// Sorted list of C/C++ types...
+static const char * const code_types[] = {
+  "auto",
+  "bool",
+  "char",
+  "class",
+  "const",
+  "const_cast",
+  "double",
+  "dynamic_cast",
+  "enum",
+  "explicit",
+  "extern",
+  "float",
+  "friend",
+  "inline",
+  "int",
+  "long",
+  "mutable",
+  "namespace",
+  "private",
+  "protected",
+  "public",
+  "register",
+  "short",
+  "signed",
+  "sizeof",
+  "static",
+  "static_cast",
+  "struct",
+  "template",
+  "typedef",
+  "typename",
+  "union",
+  "unsigned",
+  "virtual",
+  "void",
+  "volatile"
+};
+
+// 'compare_keywords()' - Compare two keywords...
+extern "C" {
+  static int compare_keywords(const void *a, const void *b) {
+    return strcmp(*((const char **)a), *((const char **)b));
+  }
+}
+
+// See if 'find' is a C/C++ keyword.
+//     Refer to bsearch(3) for return value.
+//
+static void* search_keywords(char *find) {
+  return bsearch(&find, code_keywords,
+                 sizeof(code_keywords) / sizeof(code_keywords[0]),
+                 sizeof(code_keywords[0]), compare_keywords);
+}
+
+// See if 'find' is a C/C++ type.
+//     Refer to bsearch(3) for return value.
+//
+static void* search_types(char *find) {
+  return bsearch(&find, code_types,
+                 sizeof(code_types) / sizeof(code_types[0]),
+                 sizeof(code_types[0]), compare_keywords);
+}
 
 // Handle style parsing over a character
 //    Handles updating col counter when \n encountered.
@@ -145,10 +248,10 @@ int StyleParse::parse_keyword() {
   buffer_keyword();
   char *key = keyword;
   // C/C++ type? (void, char..)
-  if ( CodeEditor::search_types(key) )
+  if ( search_types(key) )
     return parse_over_key(key, 'F');           // 'type' style
   // C/C++ Keyword? (switch, return..)
-  else if ( CodeEditor::search_keywords(key) )
+  else if ( search_keywords(key) )
     return parse_over_key(key, 'G');           // 'keyword' style
   // Not a type or keyword? Parse over it
   return parse_over_key(key, style);

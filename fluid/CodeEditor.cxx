@@ -36,84 +36,6 @@ Fl_Text_Display::Style_Table_Entry CodeEditor::
                   { FL_BLUE,             FL_COURIER_BOLD,   11 }  // G - Keywords
                 };
 
-const char * const CodeEditor::
-                code_keywords[] = {     // Sorted list of C/C++ keywords...
-                  "and",
-                  "and_eq",
-                  "asm",
-                  "bitand",
-                  "bitor",
-                  "break",
-                  "case",
-                  "catch",
-                  "compl",
-                  "continue",
-                  "default",
-                  "delete",
-                  "do",
-                  "else",
-                  "false",
-                  "for",
-                  "goto",
-                  "if",
-                  "new",
-                  "not",
-                  "not_eq",
-                  "operator",
-                  "or",
-                  "or_eq",
-                  "return",
-                  "switch",
-                  "template",
-                  "this",
-                  "throw",
-                  "true",
-                  "try",
-                  "while",
-                  "xor",
-                  "xor_eq"
-                };
-
-const char * const CodeEditor::
-                code_types[] = {        // Sorted list of C/C++ types...
-                  "auto",
-                  "bool",
-                  "char",
-                  "class",
-                  "const",
-                  "const_cast",
-                  "double",
-                  "dynamic_cast",
-                  "enum",
-                  "explicit",
-                  "extern",
-                  "float",
-                  "friend",
-                  "inline",
-                  "int",
-                  "long",
-                  "mutable",
-                  "namespace",
-                  "private",
-                  "protected",
-                  "public",
-                  "register",
-                  "short",
-                  "signed",
-                  "sizeof",
-                  "static",
-                  "static_cast",
-                  "struct",
-                  "template",
-                  "typedef",
-                  "typename",
-                  "union",
-                  "unsigned",
-                  "virtual",
-                  "void",
-                  "volatile"
-                };
-
 // attempt to make the fluid code editor widget honour textsize setting
 void CodeEditor::textsize(Fl_Fontsize s) {
   Fl_Text_Editor::textsize(s); // call base class method
@@ -124,31 +46,6 @@ void CodeEditor::textsize(Fl_Fontsize s) {
   }
 } // textsize
 
-
-// 'compare_keywords()' - Compare two keywords...
-extern "C" {
-  static int compare_keywords(const void *a, const void *b) {
-    return strcmp(*((const char **)a), *((const char **)b));
-  }
-}
-
-// See if 'find' is a C/C++ keyword.
-//     Refer to bsearch(3) for return value.
-//
-void* CodeEditor::search_keywords(char *find) {
-  return bsearch(&find, code_keywords,
-                 sizeof(code_keywords) / sizeof(code_keywords[0]),
-                 sizeof(code_keywords[0]), compare_keywords);
-}
-
-// See if 'find' is a C/C++ type.
-//     Refer to bsearch(3) for return value.
-//
-void* CodeEditor::search_types(char *find) {
-  return bsearch(&find, code_types,
-                 sizeof(code_types) / sizeof(code_types[0]),
-                 sizeof(code_types[0]), compare_keywords);
-}
 
 // 'style_parse()' - Parse text and produce style data.
 void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to parse
@@ -239,9 +136,7 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   text  = editor->mBuffer->text_range(0, len);
   style = editor->mStyleBuffer->text_range(0, len);
 
-  //DEBUG printf("BEFORE:\n"); show_buffer(editor); printf("-- END BEFORE\n");
   style_parse(text, style, editor->mBuffer->length(), 'A');
-  //DEBUG printf("AFTER:\n"); show_buffer(editor); printf("-- END AFTER\n");
 
   editor->mStyleBuffer->replace(0, len, style);
   editor->redisplay_range(0, len);
