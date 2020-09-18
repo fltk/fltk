@@ -143,7 +143,7 @@ in the pdf output, whereas the html output uses different font sizes.
    <H4>Headline in big text (H4)</H4>
 
 
-\section development_non-ascii Non-ASCII Characters
+\section development_non_ascii Non-ASCII Characters
 
 \code
     Doxygen understands many HTML quoting characters like
