@@ -28,14 +28,16 @@
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>
-#include <FL/Fl_Bitmap.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <FL/math.h>
 
-#include "pixmaps/sudoku.xbm"
+#ifndef _WIN32
+#  include <FL/Fl_Bitmap.H>
+#  include "pixmaps/sudoku.xbm"
+#endif // !_WIN32
 
 // Audio headers...
 #include <config.h>
@@ -703,6 +705,9 @@ Sudoku::Sudoku()
     }
 
   // Set icon for window
+#ifdef _WIN32
+  Fl_Window::default_icons();
+#else
   Fl_Bitmap bm(sudoku_bits, sudoku_width, sudoku_height);
   Fl_Image_Surface surf(sudoku_width, sudoku_height, 1);
   Fl_Surface_Device::push_current(&surf);
@@ -712,6 +717,7 @@ Sudoku::Sudoku()
   bm.draw(0, 0);
   Fl_Surface_Device::pop_current();
   icon(surf.image());
+#endif
   
   // Catch window close events...
   callback(close_cb);

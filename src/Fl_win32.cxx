@@ -2426,7 +2426,7 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
 
 void Fl_Window::default_icons() {
   HICON *big_icon, *small_icon, big_icon_array[1], small_icon_array[1];
-  char path[FL_PATH_MAX];
+  wchar_t path[FL_PATH_MAX];
 
   big_icon_array[0] = NULL;
   small_icon_array[0] = NULL;
@@ -2434,8 +2434,8 @@ void Fl_Window::default_icons() {
   small_icon = small_icon_array;
 
   // use exe's/module's icon resource to set window default icons
-  GetModuleFileNameA(NULL, path, FL_PATH_MAX);
-  ExtractIconExA(path, 0, big_icon, small_icon, 1);
+  GetModuleFileNameW(NULL, path, FL_PATH_MAX);
+  ExtractIconExW(path, 0, big_icon, small_icon, 1);
 
   Fl_Window::default_icons(big_icon_array[0], small_icon_array[0]);
 }

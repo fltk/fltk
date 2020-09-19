@@ -97,7 +97,6 @@ CREATE_EXAMPLE(resizebox resizebox.cxx fltk)
 CREATE_EXAMPLE(rotated_text rotated_text.cxx fltk)
 CREATE_EXAMPLE(scroll scroll.cxx fltk)
 CREATE_EXAMPLE(subwindow subwindow.cxx fltk)
-CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
 CREATE_EXAMPLE(symbols symbols.cxx fltk)
 CREATE_EXAMPLE(tabs tabs.fl fltk)
 CREATE_EXAMPLE(table table.cxx fltk)
@@ -112,6 +111,12 @@ CREATE_EXAMPLE(unittests unittests.cxx fltk)
 CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)
 
 CREATE_EXAMPLE(fltk-versions ../examples/fltk-versions.cxx fltk)
+
+if(WIN32)
+CREATE_EXAMPLE(sudoku "sudoku.cxx;sudoku.rc" "fltk;fltk_images;${AUDIOLIBS}")
+else()
+CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
+endif(WIN32)
 
 # OpenGL demos...
 if(OPENGL_FOUND)
