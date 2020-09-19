@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #if ! ( defined(_Xutf8_h) || defined(FL_DOXYGEN) )
@@ -28,55 +27,55 @@ extern "C" {
 #include <FL/Fl_Export.H>
 
 typedef struct {
-	int nb_font;
-	char **font_name_list;
-	int *encodings;
-	XFontStruct **fonts;
-	Font fid;
-	int ascent;
-	int descent;
-	int *ranges;
+        int nb_font;
+        char **font_name_list;
+        int *encodings;
+        XFontStruct **fonts;
+        Font fid;
+        int ascent;
+        int descent;
+        int *ranges;
 } XUtf8FontStruct;
 
 XUtf8FontStruct *
 XCreateUtf8FontStruct (
-	Display         *dpy,
-	const char      *base_font_name_list);
+        Display         *dpy,
+        const char      *base_font_name_list);
 
 void
 XUtf8DrawString(
-        Display         	*display,
-        Drawable        	d,
+        Display                 *display,
+        Drawable                d,
         XUtf8FontStruct  *font_set,
-        GC              	gc,
-        int             	x,
-        int             	y,
-        const char      	*string,
-        int             	num_bytes);
+        GC                      gc,
+        int                     x,
+        int                     y,
+        const char              *string,
+        int                     num_bytes);
 
 void
 XUtf8_measure_extents(
-        Display         	*display,
-        Drawable        	d,
+        Display                 *display,
+        Drawable                d,
         XUtf8FontStruct  *font_set,
-        GC              	gc,
-        int             	*xx,
-        int             	*yy,
-        int             	*ww,
-        int             	*hh,
-        const char      	*string,
-        int             	num_bytes);
+        GC                      gc,
+        int                     *xx,
+        int                     *yy,
+        int                     *ww,
+        int                     *hh,
+        const char              *string,
+        int                     num_bytes);
 
 void
 XUtf8DrawRtlString(
-        Display         	*display,
-        Drawable        	d,
+        Display                 *display,
+        Drawable                d,
         XUtf8FontStruct  *font_set,
-        GC              	gc,
-        int             	x,
-        int             	y,
-        const char      	*string,
-        int             	num_bytes);
+        GC                      gc,
+        int                     x,
+        int                     y,
+        const char              *string,
+        int                     num_bytes);
 
 void
 XUtf8DrawImageString(
@@ -92,12 +91,12 @@ XUtf8DrawImageString(
 int
 XUtf8TextWidth(
         XUtf8FontStruct  *font_set,
-        const char      	*string,
-        int             	num_bytes);
+        const char              *string,
+        int                     num_bytes);
 int
 XUtf8UcsWidth(
-	XUtf8FontStruct  *font_set,
-	unsigned int            ucs);
+        XUtf8FontStruct  *font_set,
+        unsigned int            ucs);
 
 FL_EXPORT int
 fl_XGetUtf8FontAndGlyph(
@@ -108,40 +107,40 @@ fl_XGetUtf8FontAndGlyph(
 
 void
 XFreeUtf8FontStruct(
-        Display         	*dpy,
-        XUtf8FontStruct 	*font_set);
+        Display                 *dpy,
+        XUtf8FontStruct         *font_set);
 
 
 int
 XConvertUtf8ToUcs(
-	const unsigned char 	*buf,
-	int 			len,
-	unsigned int 		*ucs);
+        const unsigned char     *buf,
+        int                     len,
+        unsigned int            *ucs);
 
 int
 XConvertUcsToUtf8(
-	unsigned int 		ucs,
-	char 			*buf);
+        unsigned int            ucs,
+        char                    *buf);
 
 int
 XUtf8CharByteLen(
-	const unsigned char 	*buf,
-	int 			len);
+        const unsigned char     *buf,
+        int                     len);
 
 int
 XCountUtf8Char(
-	const unsigned char *buf,
-	int len);
+        const unsigned char *buf,
+        int len);
 
 int
 XFastConvertUtf8ToUcs(
-	const unsigned char 	*buf,
-	int 			len,
-	unsigned int 		*ucs);
+        const unsigned char     *buf,
+        int                     len,
+        unsigned int            *ucs);
 
 long
 XKeysymToUcs(
-	KeySym 	keysym);
+        KeySym  keysym);
 
 #ifdef X_HAVE_UTF8_STRING
 #define XUtf8LookupString Xutf8LookupString
@@ -161,7 +160,3 @@ XUtf8LookupString(
 #  endif
 
 #endif
-
-/*
- *  End of "$Id$".
- */

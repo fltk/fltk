@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Darwin system driver.
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -22,6 +20,7 @@
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/filename.H>
+#include <FL/fl_string.h>
 #include <FL/Fl.H>
 #include <locale.h>
 #include <stdio.h>
@@ -67,7 +66,7 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
   ptr = double_dlopen(filename);
 #  ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
   if (!ptr) {
-    char *f_dylib = strdup(filename);
+    char *f_dylib = fl_strdup(filename);
     strcpy(strrchr(f_dylib, '.'), ".dylib");
     char path[FL_PATH_MAX];
     sprintf(path, "/sw/lib/%s", f_dylib);
@@ -90,7 +89,7 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
 int Fl_Posix_System_Driver::file_type(const char *filename)
 {
   int filetype;
-  struct stat fileinfo;		// Information on file
+  struct stat fileinfo;         // Information on file
   if (!::stat(filename, &fileinfo))
   {
     if (S_ISDIR(fileinfo.st_mode))
@@ -128,7 +127,3 @@ void Fl_Posix_System_Driver::gettime(time_t *sec, int *usec) {
   *sec = tv.tv_sec;
   *usec = tv.tv_usec;
 }
-
-//
-// End of "$Id$".
-//

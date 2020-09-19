@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Input header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -40,16 +38,16 @@
   <TABLE WIDTH="90%" BORDER="1" SUMMARY="Fl_Input keyboard and mouse bindings.">
     <CAPTION ALIGN="TOP">Keyboard and mouse bindings.</CAPTION>
     <TR><TD NOWRAP="NOWRAP" WIDTH="1%">
-      <B>Mouse button 1</B> 
+      <B>Mouse button 1</B>
     </TD><TD>
-      Moves the cursor to this point. 
-      Drag selects characters. 
-      Double click selects words. 
+      Moves the cursor to this point.
+      Drag selects characters.
+      Double click selects words.
       Triple click selects all line.
       Shift+click extends the selection.
       When you select text it is automatically copied to the selection buffer.
     </TD></TR><TR><TD NOWRAP="NOWRAP">
-      <B>Mouse button 2</B> 
+      <B>Mouse button 2</B>
     </TD><TD>
       Insert the selection buffer at the point clicked.
       You can also select a region and replace it with the selection buffer
@@ -124,7 +122,7 @@
     <TD NOWRAP="NOWRAP"><B> Command-V </B></TD>
     <TD>
       <B>Paste the clipboard.</B> <BR>
-      (Macs keyboards don't have "Insert" keys, 
+      (Macs keyboards don't have "Insert" keys,
       but if they did, Shift-Insert would work)
 
   </TD></TR><TR>
@@ -140,16 +138,16 @@
     <TD NOWRAP="NOWRAP"><B> Command-Z </B></TD>
     <TD>
       <B>Undo.</B> <BR>
-      This is a single-level undo mechanism, but all adjacent 
+      This is a single-level undo mechanism, but all adjacent
       deletions and insertions are concatenated into a single "undo".
-      Often this will undo a lot more than you expected. 
+      Often this will undo a lot more than you expected.
 
   </TD></TR><TR>
     <TD NOWRAP="NOWRAP"><B> Shift-^Z </B></TD>
     <TD NOWRAP="NOWRAP"><B> Shift-Command-Z </B></TD>
     <TD>
       <B>Redo.</B> <BR>
-      Currently same behavior as ^Z. 
+      Currently same behavior as ^Z.
       Reserved for future multilevel undo/redo.
 
   </TD></TR><TR>
@@ -264,8 +262,4 @@ public:
   Fl_Input(int,int,int,int,const char * = 0);
 };
 
-#endif 
-
-//
-// End of "$Id$".
-//
+#endif

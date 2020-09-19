@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -56,20 +54,20 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
 
 protected:
 
-  static Fl_Shared_Image **images_;	// Shared images
-  static int	num_images_;		// Number of shared images
-  static int	alloc_images_;		// Allocated shared images
-  static Fl_Shared_Handler *handlers_;	// Additional format handlers
-  static int	num_handlers_;		// Number of format handlers
-  static int	alloc_handlers_;	// Allocated format handlers
+  static Fl_Shared_Image **images_;     // Shared images
+  static int    num_images_;            // Number of shared images
+  static int    alloc_images_;          // Allocated shared images
+  static Fl_Shared_Handler *handlers_;  // Additional format handlers
+  static int    num_handlers_;          // Number of format handlers
+  static int    alloc_handlers_;        // Allocated format handlers
 
-  const char	*name_;			// Name of image file
-  int		original_;		// Original image?
-  int		refcount_;		// Number of times this image has been used
-  Fl_Image	*image_;		// The image that is shared
-  int		alloc_image_;		// Was the image allocated?
+  const char    *name_;                 // Name of image file
+  int           original_;              // Original image?
+  int           refcount_;              // Number of times this image has been used
+  Fl_Image      *image_;                // The image that is shared
+  int           alloc_image_;           // Was the image allocated?
 
-  static int	compare(Fl_Shared_Image **i0, Fl_Shared_Image **i1);
+  static int    compare(Fl_Shared_Image **i0, Fl_Shared_Image **i1);
 
   // Use get() and release() to load/delete images in memory...
   Fl_Shared_Image();
@@ -80,12 +78,12 @@ protected:
 
 public:
   /** Returns the filename of the shared image */
-  const char	*name() { return name_; }
+  const char    *name() { return name_; }
 
   /** Returns the number of references of this shared image.
     When reference is below 1, the image is deleted.
   */
-  int		refcount() { return refcount_; }
+  int           refcount() { return refcount_; }
 
   /** Returns whether this is an original image.
     Images loaded from a file or from memory are marked \p original as
@@ -96,8 +94,12 @@ public:
   */
   int original() { return original_; }
 
-  void		release();
-  void		reload();
+  void          release();
+  void          reload();
+
+  virtual Fl_Shared_Image *as_shared_image() {
+    return this;
+  }
 
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return Fl_Image::copy(); }
@@ -111,9 +113,9 @@ public:
   static Fl_Shared_Image *get(const char *name, int W = 0, int H = 0);
   static Fl_Shared_Image *get(Fl_RGB_Image *rgb, int own_it = 1);
   static Fl_Shared_Image **images();
-  static int		num_images();
-  static void		add_handler(Fl_Shared_Handler f);
-  static void		remove_handler(Fl_Shared_Handler f);
+  static int            num_images();
+  static void           add_handler(Fl_Shared_Handler f);
+  static void           remove_handler(Fl_Shared_Handler f);
 };
 
 //
@@ -125,7 +127,3 @@ public:
 FL_EXPORT extern void fl_register_images();
 
 #endif // !Fl_Shared_Image_H
-
-//
-// End of "$Id$"
-//

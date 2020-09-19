@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
 // This is a GLUT demo program, with modifications to
@@ -13,11 +11,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -34,10 +32,10 @@ int main(int, char**) {
  *
  * Usage: fractals
  *
- * Homework 6, Part 2: fractal mountains and fractal trees 
+ * Homework 6, Part 2: fractal mountains and fractal trees
  * (Pretty Late)
  *
- * Draws fractal mountains and trees -- and an island of mountains in water 
+ * Draws fractal mountains and trees -- and an island of mountains in water
  * (I tried having trees on the island but it didn't work too well.)
  *
  * Two viewer modes: polar and flying (both restrained to y>0 for up vector).
@@ -75,7 +73,7 @@ int main(int, char**) {
 #  define srand48(x) (srand((x)))
 #endif
 
-typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF, 
+typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,
                MOUNTAIN_MAT, WATER_MAT, LEAF_MAT, TREE_MAT, STEMANDLEAVES,
                AXES } DisplayLists;
 
@@ -83,9 +81,9 @@ typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,
 
 int Rebuild = 1,        /* Rebuild display list in next display? */
     fractal = TREE,     /* What fractal are we building */
-    Level   = 4;        /* levels of recursion for fractals */     
+    Level   = 4;        /* levels of recursion for fractals */
 
-int DrawAxes = 0;       
+int DrawAxes = 0;
 
 /***************************************************************/
 /************************* VECTOR JUNK *************************/
@@ -97,7 +95,7 @@ void printvert(float v[3])
   fprintf(stderr, "(%f, %f, %f)\n", v[0], v[1], v[2]);
 }
 
-#if 0	// removed for FL, it is in fracviewer.c
+#if 0   // removed for FL, it is in fracviewer.c
   /* normalizes v */
 void normalize(GLfloat v[3])
 {
@@ -140,7 +138,7 @@ float xzlength(float v1[3], float v2[3])
 float xzslope(float v1[3], float v2[3])
 {
   return ((v1[0] != v2[0]) ? ((v1[2] - v2[2]) / (v1[0] - v2[0]))
-	                   : FLT_MAX);
+                           : FLT_MAX);
 }
 
 
@@ -149,14 +147,14 @@ float xzslope(float v1[3], float v2[3])
 /***************************************************************/
 
 GLfloat DispFactor[MAXLEVEL];  /* Array of what to multiply random number
-				  by for a given level to get midpoint
-				  displacement  */
+                                  by for a given level to get midpoint
+                                  displacement  */
 GLfloat DispBias[MAXLEVEL];  /* Array of what to add to random number
-				before multiplying it by DispFactor */
+                                before multiplying it by DispFactor */
 
 #define NUMRANDS 191
 float RandTable[NUMRANDS];  /* hash table of random numbers so we can
-			       raise the same midpoints by the same amount */ 
+                               raise the same midpoints by the same amount */
 
          /* The following are for permitting an edge of a moutain to be   */
          /* pegged so it won't be displaced up or down.  This makes it    */
@@ -164,7 +162,7 @@ float RandTable[NUMRANDS];  /* hash table of random numbers so we can
 
 GLfloat Verts[3][3],    /* Vertices of outside edges of mountain */
         Slopes[3];      /* Slopes between these outside edges */
-int     Pegged[3];      /* Is this edge pegged or not */           
+int     Pegged[3];      /* Is this edge pegged or not */
 
  /*
   * Comes up with a new table of random numbers [0,1)
@@ -180,14 +178,14 @@ void InitRandTable(unsigned int seed)
 
   /* calculate midpoint and displace it if required */
 void Midpoint(GLfloat mid[3], GLfloat v1[3], GLfloat v2[3],
-	      int edge, int level)
+              int edge, int level)
 {
   unsigned hash;
 
   mid[0] = (v1[0] + v2[0]) / 2;
   mid[1] = (v1[1] + v2[1]) / 2;
   mid[2] = (v1[2] + v2[2]) / 2;
-  if (!Pegged[edge] || (fabs(xzslope(Verts[edge], mid) 
+  if (!Pegged[edge] || (fabs(xzslope(Verts[edge], mid)
                         - Slopes[edge]) > 0.00001)) {
     srand48((int)((v1[0]+v2[0])*23344));
     hash = unsigned(drand48() * 7334334);
@@ -198,9 +196,9 @@ void Midpoint(GLfloat mid[3], GLfloat v1[3], GLfloat v2[3],
 }
 
   /*
-   * Recursive moutain drawing routine -- from lecture with addition of 
+   * Recursive moutain drawing routine -- from lecture with addition of
    * allowing an edge to be pegged.  This function requires the above
-   * globals to be set, as well as the Level global for fractal level 
+   * globals to be set, as well as the Level global for fractal level
    */
 static float cutoff = -1;
 
@@ -239,9 +237,9 @@ void FractalMountain(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3],
   GLfloat fraction[8] = { 0.3, 0.3, 0.4, 0.2, 0.3, 0.2, 0.4, 0.4  };
   GLfloat bias[8]     = { 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1  };
   int i;
-  float avglen = (xzlength(v1, v2) + 
+  float avglen = (xzlength(v1, v2) +
                   xzlength(v2, v3) +
-		  xzlength(v3, v1) / 3);
+                  xzlength(v3, v1) / 3);
 
   for (i = 0; i < 3; i++) {
     Verts[0][i] = v1[i];      /* set mountain vertex globals */
@@ -254,15 +252,15 @@ void FractalMountain(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3],
   Slopes[1] = xzslope(Verts[1], Verts[2]);
   Slopes[2] = xzslope(Verts[2], Verts[0]);
 
-  lengths[0] = avglen;          
-  for (i = 1; i < Level; i++) {   
+  lengths[0] = avglen;
+  for (i = 1; i < Level; i++) {
     lengths[i] = lengths[i-1]/2;     /* compute edge length for each level */
   }
 
-  for (i = 0; i < Level; i++) {     /* DispFactor and DispBias arrays */      
+  for (i = 0; i < Level; i++) {     /* DispFactor and DispBias arrays */
     DispFactor[i] = (lengths[i] * ((i <= 7) ? fraction[i] : fraction[7]));
     DispBias[i]   = ((i <= 7) ? bias[i] : bias[7]);
-  } 
+  }
 
   glBegin(GL_TRIANGLES);
     FMR(v1, v2, v3, 0);    /* issues no GL but vertex calls */
@@ -301,7 +299,7 @@ long TreeSeed;   /* for srand48 - remember so we can build "same tree"
                      at a different level */
 
  /*
-  * recursive tree drawing thing, fleshed out from class notes pseudocode 
+  * recursive tree drawing thing, fleshed out from class notes pseudocode
   */
 void FractalTree(int level, long level_seed)
 {
@@ -318,7 +316,7 @@ void FractalTree(int level, long level_seed)
     glScalef(0.7, 0.7, 0.7);
 
       srand48(level_seed+1);
-      glPushMatrix();    
+      glPushMatrix();
         glRotatef(110 + drand48()*40, 0, 1, 0);
         glRotatef(30 + drand48()*20, 0, 0, 1);
         FractalTree(level + 1, level_seed+4);
@@ -412,7 +410,7 @@ void CreateTree(void)
     FractalTree(0, TreeSeed);
     glPopAttrib();
     glPopMatrix();
-  glEndList();  
+  glEndList();
 }
 
  /*
@@ -477,7 +475,7 @@ void CreateIsland(void)
 
   glPopMatrix();
   glPopAttrib();
-  glEndList();  
+  glEndList();
 }
 
 
@@ -565,7 +563,7 @@ void myGLInit(void)
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
   glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    
+
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glEnable(GL_LIGHTING);
@@ -590,7 +588,7 @@ void myGLInit(void)
   CreateTreeLists();
 
   glFlush();
-} 
+}
 
 /***************************************************************/
 /************************ GLUT STUFF ***************************/
@@ -792,7 +790,7 @@ int main(int argc, char** argv)
   g->end();
 
   b = new Fl_Button(400,50,100,30,"New Fractal"); b->callback(handlemenu,(void*)MENU_RAND);
-  
+
   b = new Fl_Button( 10,10,100,30,"Mountain"); b->callback(choosefract,(void*)MOUNTAIN);
   b = new Fl_Button(110,10,100,30,"Tree"); b->callback(choosefract,(void*)TREE);
   b = new Fl_Button(210,10,100,30,"Island"); b->callback(choosefract,(void*)ISLAND);
@@ -817,7 +815,7 @@ int main(int argc, char** argv)
 
   NewFractals();
   agvMakeAxesList(AXES);
-  myGLInit(); 
+  myGLInit();
   MenuInit();
 
   glutMainLoop(); // you could use Fl::run() instead
@@ -825,7 +823,3 @@ int main(int argc, char** argv)
   return 0;
 }
 #endif
-
-//
-// End of "$Id$".
-//

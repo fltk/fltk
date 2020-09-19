@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // fl_open_uri() code for FLTK.
 //
 // Test with:
@@ -13,11 +11,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -107,7 +105,7 @@ int fl_open_uri(const char *uri, char *msg, int msglen) {
 }
 
 /** Decodes a URL-encoded string.
- 
+
  In a Uniform Resource Identifier (URI), all non-ASCII bytes and several others (e.g., '<', '%', ' ')
  are URL-encoded using 3 bytes by "%XY" where XY is the hexadecimal value of the byte. This function
  decodes the URI restoring its original UTF-8 encoded content. Decoding is done in-place.
@@ -141,9 +139,9 @@ void fl_decode_uri(char *uri)
 
 // Run the specified program, returning 1 on success and 0 on failure
 int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen) {
-  pid_t	pid;				// Process ID of first child
-  int status;				// Exit status from first child
-  sigset_t set, oldset;			// Signal masks
+  pid_t pid;                            // Process ID of first child
+  int status;                           // Exit status from first child
+  sigset_t set, oldset;                 // Signal masks
 
 
   // Block SIGCHLD while we run the program...
@@ -235,7 +233,3 @@ int main(int argc, char **argv) {
   } else return 0;
 }
 #endif // TEST
-
-//
-// End of "$Id$".
-//

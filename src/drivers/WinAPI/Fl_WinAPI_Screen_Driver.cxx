@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Windows screen interface for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -315,10 +313,10 @@ static void getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,ucha
 
 void Fl_WinAPI_Screen_Driver::get_system_colors()
 {
-  if (!bg2_set) getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
-  if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
-  if (!bg_set) getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
-  getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
+  if (!bg2_set) getsyscolor(COLOR_WINDOW,       fl_bg2,Fl::background2);
+  if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,    fl_fg, Fl::foreground);
+  if (!bg_set) getsyscolor(COLOR_BTNFACE,       fl_bg, Fl::background);
+  getsyscolor(COLOR_HIGHLIGHT,  0,     set_selection_color);
 }
 
 
@@ -484,10 +482,10 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
 
 Fl_RGB_Image *                                                  // O - image or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(
-                                            int   X,		// I - Left position
-                                            int   Y,		// I - Top position
-                                            int   w,		// I - Width of area to read
-                                            int   h,		// I - Height of area to read
+                                            int   X,            // I - Left position
+                                            int   Y,            // I - Top position
+                                            int   w,            // I - Width of area to read
+                                            int   h,            // I - Height of area to read
                                             Fl_Window *win,     // I - window to capture from or NULL to capture from current offscreen
                                             bool may_capture_subwins, bool *did_capture_subwins)
 {
@@ -505,26 +503,26 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
-  int	d = 3;			// Depth of image
+  int   d = 3;                  // Depth of image
   int alpha = 0; uchar *p = NULL;
-  // Allocate the image data array as needed...  
+  // Allocate the image data array as needed...
   const uchar *oldp = p;
   if (!p) p = new uchar[w * h * d];
-  
+
   // Initialize the default colors/alpha in the whole image...
   memset(p, alpha, w * h * d);
-  
+
   // Grab all of the pixels in the image...
-  
+
   // Assure that we are not trying to read non-existing data. If it is so, the
   // function should still work, but the out-of-bounds part of the image is
   // untouched (initialized with the alpha value or 0 (black), resp.).
-  
+
   int ww = w; // We need the original width for output data line size
-  
+
   int shift_x = 0; // X target shift if X modified
   int shift_y = 0; // Y target shift if X modified
-  
+
   if (X < 0) {
     shift_x = -X;
     w += X;
@@ -535,64 +533,64 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
     h += Y;
     Y = 0;
   }
-  
-  if (h < 1 || w < 1) return 0/*p*/;		// nothing to copy
-  
-  int line_size = ((3*w+3)/4) * 4;	// each line is aligned on a DWORD (4 bytes)
-  uchar *dib = new uchar[line_size*h];	// create temporary buffer to read DIB
-  
+
+  if (h < 1 || w < 1) return 0/*p*/;            // nothing to copy
+
+  int line_size = ((3*w+3)/4) * 4;      // each line is aligned on a DWORD (4 bytes)
+  uchar *dib = new uchar[line_size*h];  // create temporary buffer to read DIB
+
   // fill in bitmap info for GetDIBits
-  
+
   BITMAPINFO   bi;
   bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bi.bmiHeader.biWidth = w;
-  bi.bmiHeader.biHeight = -h;		// negative => top-down DIB
+  bi.bmiHeader.biHeight = -h;           // negative => top-down DIB
   bi.bmiHeader.biPlanes = 1;
-  bi.bmiHeader.biBitCount = 24;		// 24 bits RGB
+  bi.bmiHeader.biBitCount = 24;         // 24 bits RGB
   bi.bmiHeader.biCompression = BI_RGB;
   bi.bmiHeader.biSizeImage = 0;
   bi.bmiHeader.biXPelsPerMeter = 0;
   bi.bmiHeader.biYPelsPerMeter = 0;
   bi.bmiHeader.biClrUsed = 0;
   bi.bmiHeader.biClrImportant = 0;
-  
+
   // copy bitmap from original DC (Window, Fl_Offscreen, ...)
   if (win && Fl_Window::current() != win) win->make_current();
   HDC gc = (HDC)fl_graphics_driver->gc();
   HDC hdc = CreateCompatibleDC(gc);
   HBITMAP hbm = CreateCompatibleBitmap(gc,w,h);
-  
-  int save_dc = SaveDC(hdc);			// save context for cleanup
-  SelectObject(hdc,hbm);			// select bitmap
-  BitBlt(hdc,0,0,w,h,gc,X,Y,SRCCOPY);	// copy image section to DDB
-  
+
+  int save_dc = SaveDC(hdc);                    // save context for cleanup
+  SelectObject(hdc,hbm);                        // select bitmap
+  BitBlt(hdc,0,0,w,h,gc,X,Y,SRCCOPY);   // copy image section to DDB
+
   // copy RGB image data to the allocated DIB
-  
+
   GetDIBits(hdc, hbm, 0, h, dib, (BITMAPINFO *)&bi, DIB_RGB_COLORS);
-  
+
   // finally copy the image data to the user buffer
-  
+
   for (int j = 0; j<h; j++) {
-    const uchar *src = dib + j * line_size;			// source line
-    uchar *tg = p + (j + shift_y) * d * ww + shift_x * d;	// target line
+    const uchar *src = dib + j * line_size;                     // source line
+    uchar *tg = p + (j + shift_y) * d * ww + shift_x * d;       // target line
     for (int i = 0; i<w; i++) {
       uchar b = *src++;
       uchar g = *src++;
-      *tg++ = *src++;	// R
-      *tg++ = g;	// G
-      *tg++ = b;	// B
+      *tg++ = *src++;   // R
+      *tg++ = g;        // G
+      *tg++ = b;        // B
       if (alpha)
-        *tg++ = alpha;	// alpha
+        *tg++ = alpha;  // alpha
     }
   }
-  
+
   // free used GDI and other structures
-  
-  RestoreDC(hdc,save_dc);	// reset DC
+
+  RestoreDC(hdc,save_dc);       // reset DC
   DeleteDC(hdc);
   DeleteObject(hbm);
-  delete[] dib;		// delete DIB temporary buffer
-  
+  delete[] dib;         // delete DIB temporary buffer
+
   Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
   if (!oldp) rgb->alloc_array = 1;
   return rgb;
@@ -622,7 +620,3 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
   }
   return screen;
 }
-
-//
-// End of "$Id$".
-//

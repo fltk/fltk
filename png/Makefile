@@ -8,11 +8,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 include ../makeinclude
@@ -23,7 +23,8 @@ include ../makeinclude
 
 OBJS	=	png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o \
 		pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o \
-		pngwtran.o pngmem.o pngerror.o pngpread.o
+		pngwtran.o pngmem.o pngerror.o pngpread.o \
+		arm/arm_init.o arm/filter_neon_intrinsics.o arm/palette_neon_intrinsics.o
 
 LIBPNG	=	../lib/libfltk_png$(LIBEXT)
 
@@ -94,8 +95,3 @@ depend:	$(OBJS:.o=.c)
 include makedepend
 
 $(OBJS):	../makeinclude
-
-
-#
-# End of "$Id$".
-#

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_GIF_Image routines.
 //
 // Copyright 1997-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -146,7 +144,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *imagename, const unsigned char *data) :
 */
 void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 {
-  char **new_data;	// Data array
+  char **new_data;      // Data array
 
   {char b[6] = { 0 };
     for (int i=0; i<6; ++i) b[i] = rdr.read_byte();
@@ -188,7 +186,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
     }
   }
 
-  int CodeSize;		/* Code size, init from GIF header, increases... */
+  int CodeSize;         /* Code size, init from GIF header, increases... */
   char Interlace;
 
   for (;;) {
@@ -203,7 +201,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 
     //  if (i == 0x3B) return 0;  eof code
 
-    if (i == 0x21) {		// a "gif extension"
+    if (i == 0x21) {            // a "gif extension"
 
       ch = rdr.read_byte();
       blocklen = rdr.read_byte();
@@ -223,7 +221,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
       } else if (ch != 0xFE) { //Gif Comment
         Fl::warning("%s: unknown gif extension 0x%02x.", rdr.name(), ch);
       }
-    } else if (i == 0x2c) {	// an image
+    } else if (i == 0x2c) {     // an image
 
       ch = rdr.read_byte(); ch = rdr.read_byte(); // GETSHORT(x_position);
       ch = rdr.read_byte(); ch = rdr.read_byte(); // GETSHORT(y_position);
@@ -266,8 +264,8 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
     Fl::warning("%s does not have a color table, using default.\n", rdr.name());
     BitsPerPixel = CodeSize - 1;
     ColorMapSize = 1 << BitsPerPixel;
-    Red[0] = Green[0] = Blue[0] = 0;	// black
-    Red[1] = Green[1] = Blue[1] = 255;	// white
+    Red[0] = Green[0] = Blue[0] = 0;    // black
+    Red[1] = Green[1] = Blue[1] = 255;  // white
     for (int i = 2; i < ColorMapSize; i++) {
       Red[i] = Green[i] = Blue[i] = (uchar)(255 * i / (ColorMapSize - 1));
     }
@@ -455,8 +453,3 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 
   delete[] Image;
 }
-
-
-//
-// End of "$Id$".
-//

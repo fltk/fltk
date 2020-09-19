@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #define DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
@@ -108,11 +106,11 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
   // move the scrollbars so they can respond to events:
   bbox(X,Y,W,H);
   scrollbar.resize(
-	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
-	Y, scrollsize, H);
+        scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
+        Y, scrollsize, H);
   hscrollbar.resize(
-	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
-	W, scrollsize);
+        X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
+        W, scrollsize);
   max_width = 0;
 }
 
@@ -152,27 +150,27 @@ void Fl_Browser_::update_top() {
       int hh = item_quick_height(l);
       // step through list until we find line containing this point:
       while (ly > yy) {
-	void* l1 = item_prev(l);
-	if (!l1) {ly = 0; break;} // hit the top
-	l  = l1;
-	hh = item_quick_height(l);
-	ly -= hh;
+        void* l1 = item_prev(l);
+        if (!l1) {ly = 0; break;} // hit the top
+        l  = l1;
+        hh = item_quick_height(l);
+        ly -= hh;
       }
       while ((ly+hh) <= yy) {
-	void* l1 = item_next(l);
-	if (!l1) {yy = ly+hh-1; break;}
-	l = l1;
-	ly += hh;
-	hh = item_quick_height(l);
+        void* l1 = item_next(l);
+        if (!l1) {yy = ly+hh-1; break;}
+        l = l1;
+        ly += hh;
+        hh = item_quick_height(l);
       }
       // top item must *really* be visible, use slow height:
       for (;;) {
-	hh = item_height(l);
-	if ((ly+hh) > yy) break; // it is big enough to see
-	// go up to top of previous item:
-	void* l1 = item_prev(l);
-	if (!l1) {ly = yy = 0; break;} // hit the top
-	l = l1; yy = position_ = ly = ly-item_quick_height(l);
+        hh = item_height(l);
+        if ((ly+hh) > yy) break; // it is big enough to see
+        // go up to top of previous item:
+        void* l1 = item_prev(l);
+        if (!l1) {ly = yy = 0; break;} // hit the top
+        l = l1; yy = position_ = ly = ly-item_quick_height(l);
       }
       // use it:
       top_ = l;
@@ -268,13 +266,13 @@ void Fl_Browser_::display(void* item) {
     if (l) {
       h1 = item_quick_height(l);
       if (l == item) {
-	if (Y <= H) { // it is visible or right at bottom
-	  Y = Y+h1-H; // find where bottom edge is
-	  if (Y > 0) position(real_position_+Y); // scroll down a bit
-	} else {
-	  position(real_position_+Y-(H-h1)/2); // center it
-	}
-	return;
+        if (Y <= H) { // it is visible or right at bottom
+          Y = Y+h1-H; // find where bottom edge is
+          if (Y > 0) position(real_position_+Y); // scroll down a bit
+        } else {
+          position(real_position_+Y-(H-h1)/2); // center it
+        }
+        return;
       }
       Y += h1;
       l = item_next(l);
@@ -283,9 +281,9 @@ void Fl_Browser_::display(void* item) {
       h1 = item_quick_height(lp);
       Yp -= h1;
       if (lp == item) {
-	if ((Yp + h1) >= 0) position(real_position_+Yp);
-	else position(real_position_+Yp-(H-h1)/2);
-	return;
+        if ((Yp + h1) >= 0) position(real_position_+Yp);
+        else position(real_position_+Yp-(H-h1)/2);
+        return;
       }
       lp = item_prev(lp);
     }
@@ -298,10 +296,10 @@ void Fl_Browser_::display(void* item) {
     h1 = item_quick_height(l);
     if (l == item) {
       if (Y <= H) { // it is visible or right at bottom
-	Y = Y+h1-H; // find where bottom edge is
-	if (Y > 0) position(real_position_+Y); // scroll down a bit
+        Y = Y+h1-H; // find where bottom edge is
+        if (Y > 0) position(real_position_+Y); // scroll down a bit
       } else {
-	position(real_position_+Y-(H-h1)/2); // center it
+        position(real_position_+Y-(H-h1)/2); // center it
       }
       return;
     }
@@ -341,7 +339,7 @@ J1:
   }
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
-	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
+        (has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
     if (!scrollbar.visible()) {
       scrollbar.set_visible();
       drawsquare = 1;
@@ -356,7 +354,7 @@ J1:
   }
 
   if ((has_scrollbar_ & HORIZONTAL) && (
-	(has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_ > W)) {
+        (has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_ > W)) {
     if (!hscrollbar.visible()) {
       hscrollbar.set_visible();
       drawsquare = 1;
@@ -374,7 +372,7 @@ J1:
   // because the horizontal one is drawn.  There should be a cleaner way
   // to do this besides copying the same code...
   if ((has_scrollbar_ & VERTICAL) && (
-	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
+        (has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
     if (!scrollbar.visible()) {
       scrollbar.set_visible();
       drawsquare = 1;
@@ -400,17 +398,17 @@ J1:
     if (hh <= 0) continue;
     if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
-	fl_color(active_r() ? selection_color() : fl_inactive(selection_color()));
-	fl_rectf(X, yy+Y, W, hh);
+        fl_color(active_r() ? selection_color() : fl_inactive(selection_color()));
+        fl_rectf(X, yy+Y, W, hh);
       } else if (!(damage()&FL_DAMAGE_ALL)) {
-	fl_push_clip(X, yy+Y, W, hh);
-	draw_box(box() ? box() : FL_DOWN_BOX, x(), y(), w(), h(), color());
-	fl_pop_clip();
+        fl_push_clip(X, yy+Y, W, hh);
+        draw_box(box() ? box() : FL_DOWN_BOX, x(), y(), w(), h(), color());
+        fl_pop_clip();
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
       if (l == selection_ && Fl::focus() == this) {
-	draw_box(FL_BORDER_FRAME, X, yy+Y, W, hh, color());
-	draw_focus(FL_NO_BOX, X, yy+Y, W+1, hh+1);
+        draw_box(FL_BORDER_FRAME, X, yy+Y, W, hh, color());
+        draw_focus(FL_NO_BOX, X, yy+Y, W+1, hh+1);
       }
       int ww = item_width(l);
       if (ww > max_width) {max_width = ww; max_width_item = l;}
@@ -425,7 +423,7 @@ J1:
   }
   fl_pop_clip();
 
-  fl_push_clip(x(),y(),w(),h());		// STR# 2886
+  fl_push_clip(x(),y(),w(),h());                // STR# 2886
   redraw1 = redraw2 = 0;
   if (!dont_repeat) {
     dont_repeat = 1;
@@ -434,13 +432,13 @@ J1:
     full_height_ = full_height();
     full_width_ = full_width();
     if ((has_scrollbar_ & VERTICAL) &&
-	((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
+        ((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
       if (!scrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     } else {
       if (scrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     }
     if ((has_scrollbar_ & HORIZONTAL) &&
-	((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
+        ((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
       if (!hscrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     } else {
       if (hscrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
@@ -452,8 +450,8 @@ J1:
   int dy = top_ ? item_quick_height(top_) : 0; if (dy < 10) dy = 10;
   if (scrollbar.visible()) {
     scrollbar.damage_resize(
-	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
-	Y, scrollsize, H);
+        scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
+        Y, scrollsize, H);
     scrollbar.value(position_, H, 0, full_height_);
     scrollbar.linesize(dy);
     if (drawsquare) draw_child(scrollbar);
@@ -461,8 +459,8 @@ J1:
   }
   if (hscrollbar.visible()) {
     hscrollbar.damage_resize(
-	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
-	W, scrollsize);
+        X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
+        W, scrollsize);
     hscrollbar.value(hposition_, W, 0, full_width_);
     hscrollbar.linesize(dy);
     if (drawsquare) draw_child(hscrollbar);
@@ -564,7 +562,7 @@ void Fl_Browser_::swapping(void* a, void* b) {
   being inserted into the list.
   It allows the Fl_Browser_ to update its cache data as needed,
   scheduling a redraw for the affected lines.
-  This method does not actually insert items, but handles the 
+  This method does not actually insert items, but handles the
   follow up bookkeeping after items have been inserted.
   \param[in] a The starting item position
   \param[in] b The new item being inserted
@@ -595,7 +593,7 @@ void* Fl_Browser_::find_item(int ypos) {
 /**
   Sets the selection state of \p item to \p val,
   and returns 1 if the state changed or 0 if it did not.
-  
+
   If \p docallbacks is non-zero, select tries to call
   the callback function for the widget.
 
@@ -629,7 +627,7 @@ int Fl_Browser_::select(void* item, int val, int docallbacks) {
       redraw_line(item);
       display(item);
     }
-  }	    
+  }
   if (docallbacks) {
     set_changed();
     do_callback();
@@ -640,7 +638,7 @@ int Fl_Browser_::select(void* item, int val, int docallbacks) {
 /**
   Deselects all items in the list and returns 1 if the state changed
   or 0 if it did not.
-  
+
   If the optional \p docallbacks parameter is non-zero, deselect tries
   to call the callback function for the widget.
 
@@ -714,29 +712,29 @@ int Fl_Browser_::handle(int event) {
       if (type()==FL_HOLD_BROWSER) {
         switch (Fl::event_key()) {
         case FL_Down:
-	  while ((l = item_next(l))) {
+          while ((l = item_next(l))) {
             if (item_height(l)>0) {select_only(l, when()); break;}
-	  }
+          }
             return 1;
         case FL_Up:
           while ((l = item_prev(l))) {
-	    if (item_height(l)>0) {
-	      select_only(l, when());
-	      break; // no need to test wp (return 1)
-	    }
-	  }
+            if (item_height(l)>0) {
+              select_only(l, when());
+              break; // no need to test wp (return 1)
+            }
+          }
           return 1;
-        } 
+        }
       } else  {
         switch (Fl::event_key()) {
         case FL_Enter:
         case FL_KP_Enter:
           select_only(l, when() & ~FL_WHEN_ENTER_KEY);
-	  if (wp.deleted()) return 1;
-	  if (when() & FL_WHEN_ENTER_KEY) {
-	    set_changed();
-	    do_callback();
-	  }
+          if (wp.deleted()) return 1;
+          if (when() & FL_WHEN_ENTER_KEY) {
+            set_changed();
+            do_callback();
+          }
           return 1;
         case ' ':
           selection_ = l;
@@ -746,7 +744,7 @@ int Fl_Browser_::handle(int event) {
           while ((l = item_next(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
               select(l, l1 ? item_selected(l1) : 1, when());
-	    if (wp.deleted()) return 1;
+            if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
           return 1;
@@ -754,7 +752,7 @@ int Fl_Browser_::handle(int event) {
           while ((l = item_prev(l))) {
             if (Fl::event_state(FL_SHIFT|FL_CTRL))
               select(l, l1 ? item_selected(l1) : 1, when());
-	    if (wp.deleted()) return 1;
+            if (wp.deleted()) return 1;
             if (item_height(l)>0) goto J1;
           }
           return 1;
@@ -767,7 +765,7 @@ J1:
       }
     }
   }
-  
+
   if (Fl_Group::handle(event)) return 1;
   if (wp.deleted()) return 1;
 
@@ -779,7 +777,7 @@ J1:
 // we use the construct:
 //     change = select_only(find_item(my), 0);
 //     if (change && (when() & FL_WHEN_CHANGED)) {
-//	 set_changed();
+//       set_changed();
 //       do_callback();
 //     }
 // See str #834
@@ -808,62 +806,62 @@ J1:
       change = select_only(find_item(my), 0);
       if (wp.deleted()) return 1;
       if (change && (when() & FL_WHEN_CHANGED)) {
-	set_changed();
-	do_callback();
-	if (wp.deleted()) return 1;
+        set_changed();
+        do_callback();
+        if (wp.deleted()) return 1;
       }
     } else {
       void* l = find_item(my);
       whichway = 1;
       if (Fl::event_state(FL_COMMAND)) { // toggle selection:
       TOGGLE:
-	if (l) {
-	  whichway = !item_selected(l);
-	  change = select(l, whichway, 0);
-	  if (wp.deleted()) return 1;
-	  if (change && (when() & FL_WHEN_CHANGED)) {
-	    set_changed();
-	    do_callback();
-	    if (wp.deleted()) return 1;
-	  }
-	}
+        if (l) {
+          whichway = !item_selected(l);
+          change = select(l, whichway, 0);
+          if (wp.deleted()) return 1;
+          if (change && (when() & FL_WHEN_CHANGED)) {
+            set_changed();
+            do_callback();
+            if (wp.deleted()) return 1;
+          }
+        }
       } else if (Fl::event_state(FL_SHIFT)) { // extend selection:
-	if (l == selection_) goto TOGGLE;
-	// state of previous selection determines new value:
-	whichway = l ? !item_selected(l) : 1;
-	// see which of the new item or previous selection is earlier,
-	// by searching from the previous forward for this one:
-	int down;
-	if (!l) down = 1;
-	else {for (void* m = selection_; ; m = item_next(m)) {
-	  if (m == l) {down = 1; break;}
-	  if (!m) {down = 0; break;}
-	}}
-	if (down) {
-	  for (void* m = selection_; m != l; m = item_next(m)) {
-	    select(m, whichway, when() & FL_WHEN_CHANGED);
-	    if (wp.deleted()) return 1;
-	  }
-	} else {
-	  void* e = selection_;
-	  for (void* m = item_next(l); m; m = item_next(m)) {
-	    select(m, whichway, when() & FL_WHEN_CHANGED);
-	    if (wp.deleted()) return 1;
-	    if (m == e) break;
-	  }
-	}
-	// do the clicked item last so the select box is around it:
-	change = 1;
-	if (l) select(l, whichway, when() & FL_WHEN_CHANGED);
-	if (wp.deleted()) return 1;
+        if (l == selection_) goto TOGGLE;
+        // state of previous selection determines new value:
+        whichway = l ? !item_selected(l) : 1;
+        // see which of the new item or previous selection is earlier,
+        // by searching from the previous forward for this one:
+        int down;
+        if (!l) down = 1;
+        else {for (void* m = selection_; ; m = item_next(m)) {
+          if (m == l) {down = 1; break;}
+          if (!m) {down = 0; break;}
+        }}
+        if (down) {
+          for (void* m = selection_; m != l; m = item_next(m)) {
+            select(m, whichway, when() & FL_WHEN_CHANGED);
+            if (wp.deleted()) return 1;
+          }
+        } else {
+          void* e = selection_;
+          for (void* m = item_next(l); m; m = item_next(m)) {
+            select(m, whichway, when() & FL_WHEN_CHANGED);
+            if (wp.deleted()) return 1;
+            if (m == e) break;
+          }
+        }
+        // do the clicked item last so the select box is around it:
+        change = 1;
+        if (l) select(l, whichway, when() & FL_WHEN_CHANGED);
+        if (wp.deleted()) return 1;
       } else { // select only this item
-	change = select_only(l, 0);
-	if (wp.deleted()) return 1;
-	if (change && (when() & FL_WHEN_CHANGED)) {
-	  set_changed();
-	  do_callback();
-	  if (wp.deleted()) return 1;
-	}
+        change = select_only(l, 0);
+        if (wp.deleted()) return 1;
+        if (change && (when() & FL_WHEN_CHANGED)) {
+          set_changed();
+          do_callback();
+          if (wp.deleted()) return 1;
+        }
       }
     }
     return 1;
@@ -886,29 +884,29 @@ J1:
       void* l = find_item(my);
       void* t; void* b; // this will be the range to change
       if (my > py) { // go down
-	t = selection_ ? item_next(selection_) : 0;
-	b = l ? item_next(l) : 0;
-      } else {	// go up
-	t = l;
-	b = selection_;
+        t = selection_ ? item_next(selection_) : 0;
+        b = l ? item_next(l) : 0;
+      } else {  // go up
+        t = l;
+        b = selection_;
       }
       for (; t && t != b; t = item_next(t)) {
-	char change_t;
-	change_t = select(t, whichway, 0);
-	if (wp.deleted()) return 1;
-	change |= change_t;
-	if (change_t && (when() & FL_WHEN_CHANGED)) {
-	  set_changed();
-	  do_callback();
-	  if (wp.deleted()) return 1;
-	}
+        char change_t;
+        change_t = select(t, whichway, 0);
+        if (wp.deleted()) return 1;
+        change |= change_t;
+        if (change_t && (when() & FL_WHEN_CHANGED)) {
+          set_changed();
+          do_callback();
+          if (wp.deleted()) return 1;
+        }
       }
       if (l) selection_ = l;
     } else {
       void* l1 = selection_;
       void* l =
-	(Fl::event_x()<x() || Fl::event_x()>x()+w()) ? selection_ :
-	find_item(my);
+        (Fl::event_x()<x() || Fl::event_x()>x()+w()) ? selection_ :
+        find_item(my);
       change = (l != l1);
       select_only(l, when() & FL_WHEN_CHANGED);
       if (wp.deleted()) return 1;
@@ -986,8 +984,8 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   item_swap(void*, void*) and item_text(void*) must be implemented for this call.
   \param[in] flags FL_SORT_ASCENDING -- sort in ascending order\n
                    FL_SORT_DESCENDING -- sort in descending order\n
-		   Values other than the above will cause undefined behavior\n
-		   Other flags may appear in the future.
+                   Values other than the above will cause undefined behavior\n
+                   Other flags may appear in the future.
   \todo Add a flag to ignore case
 */
 void Fl_Browser_::sort(int flags) {
@@ -1032,10 +1030,10 @@ void Fl_Browser_::sort(int flags) {
 
 /**
   This method may be provided by the subclass to return the height of the
-  \p item, in pixels.  
+  \p item, in pixels.
   Allow for two additional pixels for the list selection box.
-  This method differs from item_height in that it is only called for 
-  selection and scrolling operations. 
+  This method differs from item_height in that it is only called for
+  selection and scrolling operations.
   The default implementation calls item_height.
   \param[in] item The item whose height to return.
   \returns The height, in pixels.
@@ -1046,7 +1044,7 @@ int Fl_Browser_::item_quick_height(void* item) const {
 
 /**
   This method may be provided to return the average height of all items
-  to be used for scrolling. 
+  to be used for scrolling.
   The default implementation uses the height of the first item.
   \returns The average height of items, in pixels.
 */
@@ -1056,8 +1054,8 @@ int Fl_Browser_::incr_height() const {
 
 /**
   This method may be provided by the subclass to indicate the full height
-  of the item list, in pixels. 
-  The default implementation computes the full height from the item heights. 
+  of the item list, in pixels.
+  The default implementation computes the full height from the item heights.
   Includes the items that are scrolled off screen.
   \returns The height of the entire list, in pixels.
 */
@@ -1070,7 +1068,7 @@ int Fl_Browser_::full_height() const {
 
 /**
   This method may be provided by the subclass to indicate the full width
-  of the item list, in pixels. 
+  of the item list, in pixels.
   The default implementation computes the full width from the item widths.
   \returns The maximum width of all the items, in pixels.
 */
@@ -1079,7 +1077,7 @@ int Fl_Browser_::full_width() const {
 }
 
 /**
-  This method must be implemented by the subclass if it supports 
+  This method must be implemented by the subclass if it supports
   multiple selections; sets the selection state to \p val for the \p item.
   Sets the selection state for \p item, where optional \p val is 1 (select, the default)
   or 0 (de-select).
@@ -1096,7 +1094,3 @@ void Fl_Browser_::item_select(void *item, int val) {}
   \param[in] item The item to test.
 */
 int Fl_Browser_::item_selected(void* item) const { return item==selection_ ? 1 : 0; }
-
-//
-// End of "$Id$".
-//

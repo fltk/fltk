@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa Screen interface.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -44,7 +42,7 @@ int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
 /**
  Creates a driver that manages all screen and display related calls.
- 
+
  This function must be implemented once for every platform.
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
@@ -265,72 +263,72 @@ int Fl_Cocoa_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsi
 {
   switch (key) {
     case FL_Delete: {
-      if (mods==0)          return input->kf_delete_char_right();	// Delete         (OSX-HIG,TE,SA,WOX)
-      if (mods==FL_CTRL)    return input->kf_delete_char_right();	// Ctrl-Delete    (??? TE,!SA,!WOX)
-      if (mods==FL_ALT)     return input->kf_delete_word_right();	// Alt-Delete     (OSX-HIG,TE,SA)
-      return 0;							// ignore other combos, pass to parent
+      if (mods==0)          return input->kf_delete_char_right();       // Delete         (OSX-HIG,TE,SA,WOX)
+      if (mods==FL_CTRL)    return input->kf_delete_char_right();       // Ctrl-Delete    (??? TE,!SA,!WOX)
+      if (mods==FL_ALT)     return input->kf_delete_word_right();       // Alt-Delete     (OSX-HIG,TE,SA)
+      return 0;                                                 // ignore other combos, pass to parent
     }
-      
+
     case FL_Left:
-      if (mods==0)          return input->kf_move_char_left();		// Left           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_move_word_left();		// Alt-Left       (OSX-HIG)
-      if (mods==FL_META)    return input->kf_move_sol();		// Meta-Left      (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_move_sol();		// Ctrl-Left      (TE/SA)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_left();          // Left           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_move_word_left();          // Alt-Left       (OSX-HIG)
+      if (mods==FL_META)    return input->kf_move_sol();                // Meta-Left      (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_move_sol();                // Ctrl-Left      (TE/SA)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Right:
-      if (mods==0)          return input->kf_move_char_right();	// Right          (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_move_word_right();	// Alt-Right      (OSX-HIG)
-      if (mods==FL_META)    return input->kf_move_eol();		// Meta-Right     (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_move_eol();		// Ctrl-Right     (TE/SA)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_right(); // Right          (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_move_word_right(); // Alt-Right      (OSX-HIG)
+      if (mods==FL_META)    return input->kf_move_eol();                // Meta-Right     (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_move_eol();                // Ctrl-Right     (TE/SA)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Up:
-      if (mods==0)          return input->kf_lines_up(1);		// Up             (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_page_up();		// Ctrl-Up        (TE !HIG)
-      if (mods==FL_ALT)     return input->kf_move_up_and_sol();	// Alt-Up         (OSX-HIG)
-      if (mods==FL_META)    return input->kf_top();			// Meta-Up        (OSX-HIG)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_up(1);               // Up             (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_page_up();         // Ctrl-Up        (TE !HIG)
+      if (mods==FL_ALT)     return input->kf_move_up_and_sol(); // Alt-Up         (OSX-HIG)
+      if (mods==FL_META)    return input->kf_top();                     // Meta-Up        (OSX-HIG)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Down:
-      if (mods==0)          return input->kf_lines_down(1);		// Dn             (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_page_down();		// Ctrl-Dn        (TE !HIG)
-      if (mods==FL_ALT)     return input->kf_move_down_and_eol();	// Alt-Dn         (OSX-HIG)
-      if (mods==FL_META)    return input->kf_bottom();			// Meta-Dn        (OSX-HIG)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_down(1);             // Dn             (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_page_down();               // Ctrl-Dn        (TE !HIG)
+      if (mods==FL_ALT)     return input->kf_move_down_and_eol();       // Alt-Dn         (OSX-HIG)
+      if (mods==FL_META)    return input->kf_bottom();                  // Meta-Dn        (OSX-HIG)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Up:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
-      if (mods==0)          return input->kf_page_up();		// PgUp           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_page_up();		// Alt-PageUp     (OSX-HIG)
-      if (mods==FL_META)    return input->kf_top();			// Meta-PageUp    (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_up();         // PgUp           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_page_up();         // Alt-PageUp     (OSX-HIG)
+      if (mods==FL_META)    return input->kf_top();                     // Meta-PageUp    (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Down:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
-      if (mods==0)          return input->kf_page_down();		// PgDn           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_page_down();		// Alt-PageDn     (OSX-HIG)
-      if (mods==FL_META)    return input->kf_bottom();			// Meta-PageDn    (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_down();               // PgDn           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_page_down();               // Alt-PageDn     (OSX-HIG)
+      if (mods==FL_META)    return input->kf_bottom();                  // Meta-PageDn    (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Home:
-      if (mods==0)          return input->kf_top();			// Home           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_top();			// Alt-Home       (???)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_top();                     // Home           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_top();                     // Alt-Home       (???)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_End:
-      if (mods==0)          return input->kf_bottom();			// End            (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_bottom();			// Alt-End        (???)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_bottom();                  // End            (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_bottom();                  // Alt-End        (???)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_BackSpace:
-      if (mods==0)          return input->kf_delete_char_left();	// Backspace      (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_delete_char_left();	// Ctrl-Backspace (TE/SA)
-      if (mods==FL_ALT)     return input->kf_delete_word_left();	// Alt-Backspace  (OSX-HIG)
-      if (mods==FL_META)    return input->kf_delete_sol();		// Meta-Backspace (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
+      if (mods==0)          return input->kf_delete_char_left();        // Backspace      (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_delete_char_left();        // Ctrl-Backspace (TE/SA)
+      if (mods==FL_ALT)     return input->kf_delete_word_left();        // Alt-Backspace  (OSX-HIG)
+      if (mods==FL_META)    return input->kf_delete_sol();              // Meta-Backspace (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
     }
   return -1;
 }
@@ -460,7 +458,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
   if (current_timer && current_timer->pending == 0)
     delete_timer(*current_timer);
   current_timer = NULL;
-  
+
   Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
 }
@@ -550,7 +548,3 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
     }
   }
 }
-
-//
-// End of "$Id$".
-//

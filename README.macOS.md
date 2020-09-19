@@ -33,7 +33,7 @@ _README.macOS.md - Building FLTK under Apple macOS_
     * [Testing FLTK](#bam_test)
     * [Installing FLTK](#bam_install)
     * [Creating new Projects](#bam_new_projects)
-    
+
 * [Make an Application Launchable by Dropping Files on its Icon](#dropstart)
 * [Document History](#doc_history)
 
@@ -67,16 +67,16 @@ This option requires an Apple ID and the Administrator password.
 
 In order to build FLTK, you need to install _CMake_ and _Xcode_.
 
-_Xcode_ is Apple's IDE (Integrated Devloper Environment) and can be downloaded via the 
+_Xcode_ is Apple's IDE (Integrated Devloper Environment) and can be downloaded via the
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12). You will
 need an Apple ID and administrator right for this. Installing _Xcode_ needs little to no
 user input, but will likely take well over an hour.
 
-"CMake is used to control the software compilation process using simple platform and 
+"CMake is used to control the software compilation process using simple platform and
 compiler independent configuration files, and generate native makefiles and workspaces
 that can be used in the compiler environment of your choice."
 
-Please download and install the Mac OS X version of _CMake_ from 
+Please download and install the Mac OS X version of _CMake_ from
 [www.cmake.org](https://cmake.org/download/). Download the .dmg file, click it, and when
 the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
@@ -88,24 +88,24 @@ You will need to clone the repository to check out the source code onto your mac
 has the great benefit that the source code can be updated later simply by telling _git_ to
 _pull_ the newest release.
 
-If you want to use _Xcode_ to clone the FLTK GitHub repository, you will have to give _Xcode_ 
+If you want to use _Xcode_ to clone the FLTK GitHub repository, you will have to give _Xcode_
 access to your GitHub Account in the _Xcode_ preferences. If you don't have a GitHub
-account, or don't want to share your credentials with _Xcode_, you can use still the command 
-line  `git clone https://github.com/fltk/fltk.git fltk-1.4.git` 
+account, or don't want to share your credentials with _Xcode_, you can use still the command
+line  `git clone https://github.com/fltk/fltk.git fltk-1.4.git`
 to ceck out the repo.
 
-Start _Xcode_. Select `Source Control >> Clone...` in the main menu. 
+Start _Xcode_. Select `Source Control >> Clone...` in the main menu.
 
-A dialog box will open with a search field and a list of repositories. Enter `fltk/fltk` in 
-the search field. A list of matchin repositories appears. The first one should be named `fltk` 
+A dialog box will open with a search field and a list of repositories. Enter `fltk/fltk` in
+the search field. A list of matchin repositories appears. The first one should be named `fltk`
 and be owned by `fltk`. Select it and click _Clone_.
 
 A file chooser appears. Navigate to your home directory. The create a new folder named
 `dev`. Enter `fltk-1.4.git` in the _Save As:_ field and click _Clone_, then _Done_ in the
-previous dialog. 
+previous dialog.
 
 The local copy of your repository can be updated by loading it into _Xcode_ and selecting
-`Source Control >> Pull...` in the main menu. 
+`Source Control >> Pull...` in the main menu.
 
 <a name="bcx_config"></a>
 ### Configuring FLTK (CMake, Xcode)
@@ -120,7 +120,7 @@ The next input field is marked _Where to build the binaries:_. Click _Browse Bui
 and navigate to your home folder,  then `dev`, then `fltk-1.4.git`, then use _New Folder_
 to create a folder named `build`, and inside that, create a folder named `Xcode`. Click _Open_.
 
-The top two input fields should read 
+The top two input fields should read
 ```
 /Users/your_name/dev/fltk-1.4.git
 ```
@@ -129,17 +129,17 @@ and
 /Users/your_name/dev/fltk-1.4.git/build/Xcode
 ```
 
-Back in the _CMake_ main window, click _Configure_, select _Xcode_ as the generator and 
+Back in the _CMake_ main window, click _Configure_, select _Xcode_ as the generator and
 click _Done_. _CMake_ will now analyse your system and find tools and dependencies. When
-done, the upper list field in _CMake_ will show CMAKE, FLTK, and OPTION. Open the OPTION 
+done, the upper list field in _CMake_ will show CMAKE, FLTK, and OPTION. Open the OPTION
 field and find the entries OPTION_USE_SYSTEM_LIBJPEG and OPTION_USE_SYSTEM_LIBPNG,
 and disable both for maximum compatibility with other macOS installation.
 
 Finally, click _Generate_ to generate the _Xcode_ IDE file.
 
-You may be wondering why we chose this rather involved way of creating the IDE files instead 
+You may be wondering why we chose this rather involved way of creating the IDE files instead
 of just including the IDEs in the repo. Well, we did for the longest time, but creating new IDEs
-for every possible platform is quite involved. IDE file formats change, platforms change, and 
+for every possible platform is quite involved. IDE file formats change, platforms change, and
 FLTK changes as well, and maintenance of the IDEs had become a nightmare. _CMake_ on the
 other hand is very smart, knows about platforms and IDEs that we could never support manually,
 and usually needs to be run only once. Even when updating the FLTK source code later,
@@ -149,22 +149,22 @@ _CMake_ will be smart enough to update the build files as well.
 ### Building FLTK (CMake, Xcode)
 
 Now this is easy if all the previous steps were successful. If you are still in _CMake_, just click
-_Open Project_ and _CMake_ will launch _XCode_ for you. If not, just launch _XCode_ and 
+_Open Project_ and _CMake_ will launch _XCode_ for you. If not, just launch _XCode_ and
 open `Macintosh HD⁩ ▸ ⁨Users⁩ ▸ your_name⁩ ▸ ⁨dev⁩ ▸ ⁨fltk-1.4.git⁩ ▸ ⁨build⁩ ▸ ⁨Xcode⁩ ▸ ⁨FLTK.xcodeproj`.
 
 _XCode_ may or may not ask to Autocreate Schemes. Click _Automatically Create Schemes_.
 
-In _Xcode_, set the 'active Scheme' to 'hello' or any other test program and press CMD+R 
+In _Xcode_, set the 'active Scheme' to 'hello' or any other test program and press CMD+R
 to compile and run that application.
 
 <a name="bcx_test"></a>
 ### Testing FLTK (CMake, Xcode)
 
-After a successful build, you can test FLTK's capabilities by choosing 'ALL_BUILD' as the 
-'active Scheme' and pressing CMD+B to build, then choosing 'demo' and pressing CMD+R to 
-run the demo program. 
+After a successful build, you can test FLTK's capabilities by choosing 'ALL_BUILD' as the
+'active Scheme' and pressing CMD+B to build, then choosing 'demo' and pressing CMD+R to
+run the demo program.
 
-TODO: as of Jan 2019, compiling 'demo' will not compile any of the other demo programs. 
+TODO: as of Jan 2019, compiling 'demo' will not compile any of the other demo programs.
 We really have to update the dependencies!
 
 <a name="bcx_install"></a>
@@ -176,15 +176,15 @@ permission.
 <a name="bcx_new_projects"></a>
 ### Creating new Projects (CMake, Xcode)
 
-TODO: we still need to write a simple CMake file for creating a minimal cross platform app. 
+TODO: we still need to write a simple CMake file for creating a minimal cross platform app.
 
 
 <a name="build_cmake_make"></a>
 ## How to Build FLTK Using _CMake_ and _make_
 
 This option is best for users who like to develop their apps without using Apple's Xcode IDE,
-but like the advantages of _CMake_ over _autoconf_. Users should be comfortable with 
-using `bash` or `tcsh` in a terminal window. 
+but like the advantages of _CMake_ over _autoconf_. Users should be comfortable with
+using `bash` or `tcsh` in a terminal window.
 
 This option requires neither administrator rights, nor an Apple ID.
 
@@ -193,15 +193,15 @@ This option requires neither administrator rights, nor an Apple ID.
 
 In order to build FLTK, you need to install _CMake_ and the _Xcode_ command line tools.
 
-"CMake is used to control the software compilation process using simple platform and 
+"CMake is used to control the software compilation process using simple platform and
 compiler independent configuration files, and generate native makefiles and workspaces
 that can be used in the compiler environment of your choice."
 
-Please download and install the Mac OS X version of _CMake_ from 
+Please download and install the Mac OS X version of _CMake_ from
 [www.cmake.org](https://cmake.org/download/). Download the .dmg file, click it, and when
 the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
-We will be using _CMake_ from the command line. Please launch _CMake_ and choose 
+We will be using _CMake_ from the command line. Please launch _CMake_ and choose
 `Tools > How to Install for Command Line Use` and follow the instructions
 in the dialog box. If you have admin right, you can also use
 
@@ -209,14 +209,14 @@ in the dialog box. If you have admin right, you can also use
 sudo ln -s /Applications/CMake.app/Contents/bin/cmake /usr/local/bin/cmake
 ```
 
-Installing the _Xcode_ command line tools is pretty straight forward. Just enter this 
+Installing the _Xcode_ command line tools is pretty straight forward. Just enter this
 in your shell and follow the dialogs:
 
 ```bash
 xcode-select --install
 ```
 
-On older versions of macOS, you will have to install _Xcode_ from the 
+On older versions of macOS, you will have to install _Xcode_ from the
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
 and then install the command line tools from within _Xcode_.
 
@@ -253,15 +253,15 @@ cmake -G "Unix Makefiles" \
 _CMake_ runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
 
-For the advanced user, there are a few more optinons to the _CMake_ setup. Type 
-`cmake -L ../..` to get a complete list of options. These should be pretty 
-self-explanatory. Some more details can be found in 
+For the advanced user, there are a few more optinons to the _CMake_ setup. Type
+`cmake -L ../..` to get a complete list of options. These should be pretty
+self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
 
 <a name="bcm_build"></a>
 ### Building FLTK (CMake, make)
 
-Now this is easy if all the previous steps were successful. Stay in your `build/Makefiles` 
+Now this is easy if all the previous steps were successful. Stay in your `build/Makefiles`
 directory and type:
 
 ```bash
@@ -308,7 +308,7 @@ file is:
 fltk-config --compile myProgram.cxx
 ```
 
-`fltk-config` and our user interface designer `fluid` will be installed in 
+`fltk-config` and our user interface designer `fluid` will be installed in
 `/usr/local/bin/` by default. I recommend that you add this directory to the shell
 `PATH` variable.
 
@@ -317,35 +317,35 @@ fltk-config --compile myProgram.cxx
 ## How to Build FLTK Using _autoconf_ and _make_
 
 This option is best for users who like to develop their apps without using Apple's Xcode IDE
-and prefer minimal dependencies of a _Makefile_ over _CMake_. Users should be comfortable 
-with using `bash` or `tcsh` in a terminal window. 
+and prefer minimal dependencies of a _Makefile_ over _CMake_. Users should be comfortable
+with using `bash` or `tcsh` in a terminal window.
 
 This option requires administrator rights, but no Apple ID.
 
 <a name="bam_prerequisites"></a>
 ###  Prerequisites (autoconf, make)
 
-In order to build FLTK from the command line, you need to install a C++ compiler 
+In order to build FLTK from the command line, you need to install a C++ compiler
 environment, `make` and `autoconf`. Installing the _Xcode_ command line tools is the easiest
 way to get all prerequisites in one simple step.
 
 <a name="xcode_command_line_tools"></a>
-Launch _Terminal.app_ by pressing Command+Spacebar and typing `Terminal` and pressing _return_. 
+Launch _Terminal.app_ by pressing Command+Spacebar and typing `Terminal` and pressing _return_.
 I like to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
 on the Terminal icon that is now in the docking bar, and choose _Options_->_Keep in Dock_).
 
-Installing the _Xcode_ command line tools is pretty straight forward. Just enter this 
+Installing the _Xcode_ command line tools is pretty straight forward. Just enter this
 and follow the dialogs:
 
 ```bash
 xcode-select --install
 ```
 
-On older versions of macOS, you will have to install _Xcode_ from the 
+On older versions of macOS, you will have to install _Xcode_ from the
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
 and then install the command line tools from within _Xcode_.
 
-Apple no longer includes _autoconf_ in the _Xcode_ command line tools. To install 
+Apple no longer includes _autoconf_ in the _Xcode_ command line tools. To install
 _autoconf_, we first need to installe _brew_ by typing this rather cryptic command in the shell
 you will need the root password):
 
@@ -390,7 +390,7 @@ cd fltk-1.4.git
 Using you shell in the terminal, make sure that you are in the root directory of your
 FLTK source code tree.
 
-If you are configuring fltk for the first time, you need to instruct FLTK to create some 
+If you are configuring fltk for the first time, you need to instruct FLTK to create some
 very basic configuration files. Type:
 
 ```bash
@@ -408,15 +408,15 @@ and type
 The configuration script runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
 
-For the advanced user, there are a few more optinons to the _configure_ script. Type 
-`./configure --help` to get a complete list of options. These should be pretty 
-self-explanatory. Some more details can be found in 
+For the advanced user, there are a few more optinons to the _configure_ script. Type
+`./configure --help` to get a complete list of options. These should be pretty
+self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
 
 <a name="bam_build"></a>
 ### Building FLTK (autoconf, make)
 
-Now this is easy if all the previous steps were successful. Stay in your FLTK source-code 
+Now this is easy if all the previous steps were successful. Stay in your FLTK source-code
 directory and type:
 
 ```bash
@@ -472,7 +472,7 @@ fltk-config --compile main.cxx
 ./main
 ```
 
-`fltk-config` and our user interface designer `fluid` will be installed in 
+`fltk-config` and our user interface designer `fluid` will be installed in
 `/usr/local/bin/` by default. I recommend that you add this directory to the shell
 `PATH` variable.
 

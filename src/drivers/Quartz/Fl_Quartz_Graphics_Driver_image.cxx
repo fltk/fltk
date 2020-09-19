@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -50,8 +48,8 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
  userdata:  ?
  */
 static void innards(const uchar *buf, int X, int Y, int W, int H,
-		    int delta, int linedelta, int mono,
-		    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc, Fl_Quartz_Graphics_Driver *driver)
+                    int delta, int linedelta, int mono,
+                    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc, Fl_Quartz_Graphics_Driver *driver)
 {
   if (!linedelta) linedelta = W*abs(delta);
 
@@ -65,14 +63,14 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     tmpBuf = new uchar[ H*W*abs(delta) ];
     if (cb) {
       for (int i=0; i<H; i++) {
-	cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
+        cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
       }
     } else {
       uchar *p = tmpBuf;
       for (int i=0; i<H; i++) {
-	memcpy(p, buf+i*abs(linedelta), W*abs(delta));
-	p += W*abs(delta);
-	}
+        memcpy(p, buf+i*abs(linedelta), W*abs(delta));
+        p += W*abs(delta);
+        }
     }
     array = (void*)tmpBuf;
     linedelta = W*abs(delta);
@@ -86,8 +84,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   // a release callback is necessary when the gc is a print context because the image data
   // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
   CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, abs(linedelta)*H,
-						       tmpBuf ? dataReleaseCB : NULL
-						       );
+                                                       tmpBuf ? dataReleaseCB : NULL
+                                                       );
   CGImageRef        img = CGImageCreate( W, H, 8, 8*abs(delta), abs(linedelta),
                             lut, abs(delta)&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
@@ -115,14 +113,14 @@ void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w
   innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,1,0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,1,cb,data,gc_,this);
 }
 
@@ -211,7 +209,7 @@ void Fl_Quartz_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int 
   if (!*id(pxm)) {
     cache(pxm);
   }
-  
+
   CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(pxm);
   draw_CGImage(cgimg, X,Y,W,H, cx,cy, pxm->w(), pxm->h());
 }
@@ -290,7 +288,3 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
 void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t pixmap_ref) {
   CGImageRelease((CGImageRef)pixmap_ref);
 }
-
-//
-// End of "$Id$".
-//

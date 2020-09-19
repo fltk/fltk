@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Android window driver.
 //
 // Copyright 2018-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -124,8 +122,8 @@ void Fl_Android_Window_Driver::make_current()
 
 void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
 {
-  int is_a_resize = (W != w() || H != h() || is_a_rescale());
-  if (X != x() || Y != y() || is_a_rescale()) {
+  int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
+  if (X != x() || Y != y() || Fl_Window::is_a_rescale()) {
     force_position(1);
   } else {
     if (!is_a_resize)
@@ -402,13 +400,13 @@ static HRGN bitmap2region(Fl_Image* image) {
   /* Does this need to be dynamically determined, perhaps? */
   const int ALLOC_UNIT = 100;
   DWORD maxRects = ALLOC_UNIT;
-  
+
   RGNDATA* pData = (RGNDATA*)malloc(sizeof(RGNDATAHEADER)+(sizeof(RECT)*maxRects));
   pData->rdh.dwSize = sizeof(RGNDATAHEADER);
   pData->rdh.iType = RDH_RECTANGLES;
   pData->rdh.nCount = pData->rdh.nRgnSize = 0;
   SetRect(&pData->rdh.rcBound, MAXLONG, MAXLONG, 0, 0);
-  
+
   const int bytesPerLine = (image->w() + 7)/8;
   BYTE* p, *data = (BYTE*)*image->data();
   for (int y = 0; y < image->h(); y++) {
@@ -551,7 +549,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
 
 void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();
-  
+
   if (count > 0) {
     icon_->icons = new Fl_RGB_Image*[count];
     icon_->count = count;
@@ -559,7 +557,7 @@ void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
     for (int i = 0;i < count;i++)
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
   }
-  
+
   if (Fl_X::i(pWindow))
     set_icons();
 }
@@ -594,7 +592,7 @@ void Fl_WinAPI_Window_Driver::free_icons() {
 
 void Fl_WinAPI_Window_Driver::make_current() {
   fl_GetDC(fl_xid(pWindow));
-  
+
 #if USE_COLORMAP
   // Windows maintains a hardware and software color palette; the
   // SelectPalette() call updates the current soft->hard mapping
@@ -602,7 +600,7 @@ void Fl_WinAPI_Window_Driver::make_current() {
   // code does any drawing...
   fl_select_palette();
 #endif // USE_COLORMAP
-  
+
   fl_graphics_driver->clip_region(0);
   ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 }
@@ -653,7 +651,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   }
 
   if (hide_common()) return;
-  
+
   // make sure any custom icons get freed
 //  icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
   // this little trick keeps the current clipboard alive, even if we are about
@@ -673,9 +671,9 @@ void Fl_WinAPI_Window_Driver::hide() {
     if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
   }
-  
+
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  
+
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
   if (p==GetParent(ip->xid)) {
@@ -716,19 +714,19 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   Fl_Window *w = pWindow;
   int top, bottom, left, right;
   int sx, sy, sw, sh;
-  
+
   top = fullscreen_screen_top();
   bottom = fullscreen_screen_bottom();
   left = fullscreen_screen_left();
   right = fullscreen_screen_right();
-  
+
   if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
     top = screen_num();
     bottom = top;
     left = top;
     right = top;
   }
-  
+
   Fl::screen_xywh(sx, sy, sw, sh, top);
   Y = sy;
   Fl::screen_xywh(sx, sy, sw, sh, bottom);
@@ -737,11 +735,11 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   X = sx;
   Fl::screen_xywh(sx, sy, sw, sh, right);
   W = sx + sw - X;
-  
+
   DWORD flags = GetWindowLong(fl_xid(w), GWL_STYLE);
   flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
   SetWindowLong(fl_xid(w), GWL_STYLE, flags);
-  
+
   // SWP_NOSENDCHANGING is so that we can override size limits
   float s = Fl::screen_driver()->scale(screen_num());
   SetWindowPos(fl_xid(w), HWND_TOP, X*s, Y*s, W*s, H*s, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
@@ -826,7 +824,3 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
 }
 
 #endif
-
-//
-// End of "$Id$".
-//

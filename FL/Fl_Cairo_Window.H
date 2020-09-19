@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -29,7 +27,7 @@
 #  include <FL/Fl.H>
 #  include <FL/Fl_Double_Window.H>
 
-/** 
+/**
    \addtogroup group_cairo
    @{
 */
@@ -44,7 +42,7 @@
    \note You can alternatively define your custom cairo FLTK window,
    and thus at least override the draw() method to provide custom cairo
    support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)
-   to attach a context to your window. You should do it only when your window is 
+   to attach a context to your window. You should do it only when your window is
    the current window. \see Fl_Window::current()
 */
 class FL_EXPORT Fl_Cairo_Window : public Fl_Double_Window {
@@ -62,7 +60,7 @@ protected:
     if (draw_cb_) { // call the Cairo draw callback
       // manual method ? if yes explicitly get a cairo_context here
       if (!Fl::cairo_autolink_context())
-	Fl::cairo_make_current(this);
+        Fl::cairo_make_current(this);
       draw_cb_(this, Fl::cairo_cc());
       // flush cairo drawings: necessary at least for Windows
       cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
@@ -73,7 +71,7 @@ protected:
 public:
   /** This defines the cairo draw callback prototype that you must further */
   typedef void (*cairo_draw_cb) (Fl_Cairo_Window* self, cairo_t* def);
-  /** 
+  /**
     You must provide a draw callback which will implement your cairo rendering.
     This method will permit you to set your cairo callback to \p cb.
   */
@@ -87,7 +85,3 @@ private:
 
 # endif // FLTK_HAVE_CAIRO
 #endif // FL_CAIRO_WINDOW_H
-
-//
-// End of "$Id$" .
-//

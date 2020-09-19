@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -47,6 +45,9 @@ static const uchar inactive_ramp[24] = {
   49, 49, 50, 50,
   51, 51, 52, 52};
 static int draw_it_active = 1;
+
+int Fl::box_border_radius_max_ = 15;
+int Fl::box_shadow_width_ = 3;
 
 /**
   Determines if the currently drawn box is active or inactive.
@@ -269,7 +270,7 @@ void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
   Fl::set_box_color(bgcolor);
   fl_rectf(x+1, y+1, w-2, h-2);
 }
-#define fl_border_box fl_rectbound	/**< allow consistent naming */
+#define fl_border_box fl_rectbound      /**< allow consistent naming */
 
 /**
   Draws a frame of type FL_BORDER_FRAME.
@@ -287,70 +288,70 @@ static struct {
   int set;
 } fl_box_table[256] = {
 // must match list in Enumerations.H!!!
-  {fl_no_box,		0,0,0,0,1},
-  {fl_flat_box,		0,0,0,0,1}, // FL_FLAT_BOX
-  {fl_up_box,		D1,D1,D2,D2,1},
-  {fl_down_box,		D1,D1,D2,D2,1},
-  {fl_up_frame,		D1,D1,D2,D2,1},
-  {fl_down_frame,	D1,D1,D2,D2,1},
-  {fl_thin_up_box,	1,1,2,2,1},
-  {fl_thin_down_box,	1,1,2,2,1},
-  {fl_thin_up_frame,	1,1,2,2,1},
-  {fl_thin_down_frame,	1,1,2,2,1},
-  {fl_engraved_box,	2,2,4,4,1},
-  {fl_embossed_box,	2,2,4,4,1},
-  {fl_engraved_frame,	2,2,4,4,1},
-  {fl_embossed_frame,	2,2,4,4,1},
-  {fl_border_box,	1,1,2,2,1},
-  {fl_border_box,	1,1,5,5,0}, // _FL_SHADOW_BOX
-  {fl_border_frame,	1,1,2,2,1},
-  {fl_border_frame,	1,1,5,5,0}, // _FL_SHADOW_FRAME
-  {fl_border_box,	1,1,2,2,0}, // _FL_ROUNDED_BOX
-  {fl_border_box,	1,1,2,2,0}, // _FL_RSHADOW_BOX
-  {fl_border_frame,	1,1,2,2,0}, // _FL_ROUNDED_FRAME
-  {fl_flat_box,		0,0,0,0,0}, // _FL_RFLAT_BOX
-  {fl_up_box,		3,3,6,6,0}, // _FL_ROUND_UP_BOX
-  {fl_down_box,		3,3,6,6,0}, // _FL_ROUND_DOWN_BOX
-  {fl_up_box,		0,0,0,0,0}, // _FL_DIAMOND_UP_BOX
-  {fl_down_box,		0,0,0,0,0}, // _FL_DIAMOND_DOWN_BOX
-  {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_BOX
-  {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX
-  {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
-  {fl_flat_box,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
-  {fl_up_box,		4,4,8,8,0}, // _FL_PLASTIC_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
-  {fl_up_frame,		2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME
-  {fl_down_frame,	2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME
-  {fl_up_box,		2,2,4,4,0}, // _FL_PLASTIC_THIN_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_THIN_DOWN_BOX
-  {fl_up_box,		2,2,4,4,0}, // _FL_PLASTIC_ROUND_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_ROUND_DOWN_BOX
-  {fl_up_box,		2,2,4,4,0}, // _FL_GTK_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_GTK_DOWN_BOX
-  {fl_up_frame,		2,2,4,4,0}, // _FL_GTK_UP_FRAME
-  {fl_down_frame,	2,2,4,4,0}, // _FL_GTK_DOWN_FRAME
-  {fl_up_frame,		1,1,2,2,0}, // _FL_GTK_THIN_UP_FRAME
-  {fl_down_frame,	1,1,2,2,0}, // _FL_GTK_THIN_DOWN_FRAME
-  {fl_up_box,		1,1,2,2,0}, // _FL_GTK_THIN_ROUND_UP_BOX
-  {fl_down_box,		1,1,2,2,0}, // _FL_GTK_THIN_ROUND_DOWN_BOX
-  {fl_up_box,		2,2,4,4,0}, // _FL_GTK_ROUND_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_GTK_ROUND_DOWN_BOX
-  {fl_up_box,		2,2,4,4,0}, // _FL_GLEAM_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_GLEAM_DOWN_BOX
-  {fl_up_frame,		2,2,4,4,0}, // _FL_GLEAM_UP_FRAME
-  {fl_down_frame,	2,2,4,4,0}, // _FL_GLEAM_DOWN_FRAME
-  {fl_up_box,		2,2,4,4,0}, // _FL_GLEAM_THIN_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_GLEAM_THIN_DOWN_BOX
-  {fl_up_box,	       	2,2,4,4,0}, // _FL_GLEAM_ROUND_UP_BOX
-  {fl_down_box,		2,2,4,4,0}, // _FL_GLEAM_ROUND_DOWN_BOX
-  {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+0
-  {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+1
-  {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+2
-  {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+3
-  {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+4
-  {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+5
-  {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+6
-  {fl_down_box,		3,3,6,6,0}  // FL_FREE_BOX+7
+  {fl_no_box,           0,0,0,0,1},
+  {fl_flat_box,         0,0,0,0,1}, // FL_FLAT_BOX
+  {fl_up_box,           D1,D1,D2,D2,1},
+  {fl_down_box,         D1,D1,D2,D2,1},
+  {fl_up_frame,         D1,D1,D2,D2,1},
+  {fl_down_frame,       D1,D1,D2,D2,1},
+  {fl_thin_up_box,      1,1,2,2,1},
+  {fl_thin_down_box,    1,1,2,2,1},
+  {fl_thin_up_frame,    1,1,2,2,1},
+  {fl_thin_down_frame,  1,1,2,2,1},
+  {fl_engraved_box,     2,2,4,4,1},
+  {fl_embossed_box,     2,2,4,4,1},
+  {fl_engraved_frame,   2,2,4,4,1},
+  {fl_embossed_frame,   2,2,4,4,1},
+  {fl_border_box,       1,1,2,2,1},
+  {fl_border_box,       1,1,5,5,0}, // _FL_SHADOW_BOX
+  {fl_border_frame,     1,1,2,2,1},
+  {fl_border_frame,     1,1,5,5,0}, // _FL_SHADOW_FRAME
+  {fl_border_box,       1,1,2,2,0}, // _FL_ROUNDED_BOX
+  {fl_border_box,       1,1,2,2,0}, // _FL_RSHADOW_BOX
+  {fl_border_frame,     1,1,2,2,0}, // _FL_ROUNDED_FRAME
+  {fl_flat_box,         0,0,0,0,0}, // _FL_RFLAT_BOX
+  {fl_up_box,           3,3,6,6,0}, // _FL_ROUND_UP_BOX
+  {fl_down_box,         3,3,6,6,0}, // _FL_ROUND_DOWN_BOX
+  {fl_up_box,           0,0,0,0,0}, // _FL_DIAMOND_UP_BOX
+  {fl_down_box,         0,0,0,0,0}, // _FL_DIAMOND_DOWN_BOX
+  {fl_border_box,       1,1,2,2,0}, // _FL_OVAL_BOX
+  {fl_border_box,       1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX
+  {fl_border_frame,     1,1,2,2,0}, // _FL_OVAL_FRAME
+  {fl_flat_box,         0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
+  {fl_up_box,           4,4,8,8,0}, // _FL_PLASTIC_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
+  {fl_up_frame,         2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME
+  {fl_down_frame,       2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME
+  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_THIN_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_THIN_DOWN_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_ROUND_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_ROUND_DOWN_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_GTK_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_GTK_DOWN_BOX
+  {fl_up_frame,         2,2,4,4,0}, // _FL_GTK_UP_FRAME
+  {fl_down_frame,       2,2,4,4,0}, // _FL_GTK_DOWN_FRAME
+  {fl_up_frame,         1,1,2,2,0}, // _FL_GTK_THIN_UP_FRAME
+  {fl_down_frame,       1,1,2,2,0}, // _FL_GTK_THIN_DOWN_FRAME
+  {fl_up_box,           1,1,2,2,0}, // _FL_GTK_THIN_ROUND_UP_BOX
+  {fl_down_box,         1,1,2,2,0}, // _FL_GTK_THIN_ROUND_DOWN_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_GTK_ROUND_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_GTK_ROUND_DOWN_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_DOWN_BOX
+  {fl_up_frame,         2,2,4,4,0}, // _FL_GLEAM_UP_FRAME
+  {fl_down_frame,       2,2,4,4,0}, // _FL_GLEAM_DOWN_FRAME
+  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_THIN_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_THIN_DOWN_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_GLEAM_ROUND_UP_BOX
+  {fl_down_box,         2,2,4,4,0}, // _FL_GLEAM_ROUND_DOWN_BOX
+  {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+0
+  {fl_down_box,         3,3,6,6,0}, // FL_FREE_BOX+1
+  {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+2
+  {fl_down_box,         3,3,6,6,0}, // FL_FREE_BOX+3
+  {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+4
+  {fl_down_box,         3,3,6,6,0}, // FL_FREE_BOX+5
+  {fl_up_box,           3,3,6,6,0}, // FL_FREE_BOX+6
+  {fl_down_box,         3,3,6,6,0}  // FL_FREE_BOX+7
 };
 
 /**
@@ -414,7 +415,7 @@ Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
 }
 /** Sets the function to call to draw a specific boxtype. */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
-		      uchar a, uchar b, uchar c, uchar d) {
+                      uchar a, uchar b, uchar c, uchar d) {
   fl_box_table[t].f   = f;
   fl_box_table[t].set = 1;
   fl_box_table[t].dx  = a;
@@ -464,7 +465,3 @@ void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) c
   fl_box_table[t].f(X, Y, W, H, c);
   draw_it_active = 1;
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
 # Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 # Get configuration stuff...
@@ -31,6 +29,7 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/intro.dox \
                          $(SRC_DOCDIR)/basics.dox \
                          $(SRC_DOCDIR)/common.dox \
+                         $(SRC_DOCDIR)/resize.dox \
                          $(SRC_DOCDIR)/editor.dox \
                          $(SRC_DOCDIR)/drawing.dox \
                          $(SRC_DOCDIR)/events.dox \
@@ -133,7 +132,7 @@ uninstall-linux uninstall-osx:
 
 Doxyfile: Doxyfile.in
 	echo "Generating Doxyfile ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
@@ -143,7 +142,7 @@ Doxyfile: Doxyfile.in
 
 Doxybook: Doxyfile.in
 	echo "Generating Doxybook ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
@@ -184,10 +183,6 @@ src/fltk-book.tex: src/fltk-book.tex.in
 	DOXY_VERSION=`$(DOXYDOC) --version`; \
 	YEAR=`date +%Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
-	    -e"s/@FL_VERSION@/$(FL_VERSION)/g" \
+	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
 	< $< > $@
-
-#
-# End of "$Id$".
-#

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -214,10 +212,6 @@ typedef BOOL(WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
 extern flTypeImmReleaseContext flImmReleaseContext;
 
 
-void Fl_GDI_Graphics_Driver::reset_spot()
-{
-}
-
 void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
   if (!win) return;
@@ -294,7 +288,3 @@ Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
 void Fl_GDI_Graphics_Driver::set_current_() {
   restore_clip();
 }
-
-//
-// End of "$Id$".
-//

@@ -1474,8 +1474,3 @@ void nsvgRasterize(NSVGrasterizer* r,
 }
 
 #endif // NANOSVGRAST_IMPLEMENTATION
-
-
-//
-// End of "$Id$".
-//

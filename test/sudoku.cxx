@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -62,13 +60,13 @@
 // Default sizes...
 //
 
-#define GROUP_SIZE	160
-#define CELL_SIZE	50
-#define CELL_OFFSET	5
+#define GROUP_SIZE      160
+#define CELL_SIZE       50
+#define CELL_OFFSET     5
 #ifdef __APPLE__
-#  define MENU_OFFSET	0
+#  define MENU_OFFSET   0
 #else
-#  define MENU_OFFSET	25
+#  define MENU_OFFSET   25
 #endif // __APPLE__
 
 // Sound class for Sudoku...
@@ -101,18 +99,18 @@ class SudokuSound {
   int remaining;
 
   static OSStatus audio_cb(AudioDeviceID device,
-			   const AudioTimeStamp *current_time,
-			   const AudioBufferList *data_in,
-			   const AudioTimeStamp *time_in,
-			   AudioBufferList *data_out,
-			   const AudioTimeStamp *time_out,
-			   void *client_data);
+                           const AudioTimeStamp *current_time,
+                           const AudioBufferList *data_in,
+                           const AudioTimeStamp *time_in,
+                           AudioBufferList *data_out,
+                           const AudioTimeStamp *time_out,
+                           void *client_data);
 #elif defined(_WIN32)
-  HWAVEOUT	device;
-  HGLOBAL	header_handle;
-  LPWAVEHDR	header_ptr;
-  HGLOBAL	data_handle;
-  LPSTR		data_ptr;
+  HWAVEOUT      device;
+  HGLOBAL       header_handle;
+  LPWAVEHDR     header_ptr;
+  HGLOBAL       data_handle;
+  LPSTR         data_ptr;
 
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
@@ -130,86 +128,86 @@ class SudokuSound {
   SudokuSound();
   ~SudokuSound();
 
-  void	play(char note);
+  void  play(char note);
 };
 
 
 // Sudoku cell class...
 class SudokuCell : public Fl_Widget {
-  bool		readonly_;
-  int		value_;
-  int		test_value_[9];
+  bool          readonly_;
+  int           value_;
+  int           test_value_[9];
 
   public:
 
-		SudokuCell(int X, int Y, int W, int H);
-  void		draw();
-  int		handle(int event);
-  void		readonly(bool r) { readonly_ = r; redraw(); }
-  bool		readonly() const { return readonly_; }
-  void		test_value(int v, int n) { test_value_[n] = v; redraw(); }
-  int		test_value(int n) const { return test_value_[n]; }
-  void		value(int v) {
-		  value_ = v;
-		  for (int i = 0; i < 8; i ++) test_value_[i] = 0;
-		  redraw();
-		}
-  int		value() const { return value_; }
+                SudokuCell(int X, int Y, int W, int H);
+  void          draw();
+  int           handle(int event);
+  void          readonly(bool r) { readonly_ = r; redraw(); }
+  bool          readonly() const { return readonly_; }
+  void          test_value(int v, int n) { test_value_[n] = v; redraw(); }
+  int           test_value(int n) const { return test_value_[n]; }
+  void          value(int v) {
+                  value_ = v;
+                  for (int i = 0; i < 8; i ++) test_value_[i] = 0;
+                  redraw();
+                }
+  int           value() const { return value_; }
 };
 
 
 // Sudoku window class...
 class Sudoku : public Fl_Double_Window {
   Fl_Sys_Menu_Bar *menubar_;
-  Fl_Group	*grid_;
-  time_t	seed_;
-  char		grid_values_[9][9];
-  SudokuCell	*grid_cells_[9][9];
-  Fl_Group	*grid_groups_[3][3];
-  int		difficulty_;
-  SudokuSound	*sound_;
+  Fl_Group      *grid_;
+  time_t        seed_;
+  char          grid_values_[9][9];
+  SudokuCell    *grid_cells_[9][9];
+  Fl_Group      *grid_groups_[3][3];
+  int           difficulty_;
+  SudokuSound   *sound_;
 
-  static void	check_cb(Fl_Widget *widget, void *);
-  static void	close_cb(Fl_Widget *widget, void *);
-  static void	diff_cb(Fl_Widget *widget, void *d);
-  static void	update_helpers_cb(Fl_Widget *, void *);
-  static void	help_cb(Fl_Widget *, void *);
-  static void	mute_cb(Fl_Widget *widget, void *);
-  static void	new_cb(Fl_Widget *widget, void *);
-  static void	reset_cb(Fl_Widget *widget, void *);
-  static void	restart_cb(Fl_Widget *widget, void *);
-  void		set_title();
-  static void	solve_cb(Fl_Widget *widget, void *);
+  static void   check_cb(Fl_Widget *widget, void *);
+  static void   close_cb(Fl_Widget *widget, void *);
+  static void   diff_cb(Fl_Widget *widget, void *d);
+  static void   update_helpers_cb(Fl_Widget *, void *);
+  static void   help_cb(Fl_Widget *, void *);
+  static void   mute_cb(Fl_Widget *widget, void *);
+  static void   new_cb(Fl_Widget *widget, void *);
+  static void   reset_cb(Fl_Widget *widget, void *);
+  static void   restart_cb(Fl_Widget *widget, void *);
+  void          set_title();
+  static void   solve_cb(Fl_Widget *widget, void *);
 
   static Fl_Help_Dialog *help_dialog_;
-  static Fl_Preferences	prefs_;
+  static Fl_Preferences prefs_;
   public:
 
-	      	Sudoku();
-		~Sudoku();
+                Sudoku();
+                ~Sudoku();
 
-  void		check_game(bool highlight = true);
-  void		load_game();
-  void		new_game(time_t seed);
-  int		next_value(SudokuCell *c);
-  void		resize(int X, int Y, int W, int H);
-  void		save_game();
-  void		solve_game();
-  void	        update_helpers();
+  void          check_game(bool highlight = true);
+  void          load_game();
+  void          new_game(time_t seed);
+  int           next_value(SudokuCell *c);
+  void          resize(int X, int Y, int W, int H);
+  void          save_game();
+  void          solve_game();
+  void          update_helpers();
 };
 
 
 // Sound class globals...
 int SudokuSound::frequencies[9] = {
-  880,	// A(5)
-  988,	// B(5)
-  1046,	// C(5)
-  1174,	// D(5)
-  1318,	// E(5)
-  1396,	// F(5)
-  1568,	// G(5)
-  1760,	// H (A6)
-  1976	// I (B6)
+  880,  // A(5)
+  988,  // B(5)
+  1046, // C(5)
+  1174, // D(5)
+  1318, // E(5)
+  1396, // F(5)
+  1568, // G(5)
+  1760, // H (A6)
+  1976  // I (B6)
 };
 short *SudokuSound::sample_data[9] = { 0 };
 int SudokuSound::sample_size = 0;
@@ -225,19 +223,19 @@ SudokuSound::SudokuSound() {
   UInt32 size = sizeof(device);
 
   if (AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-			       &size, (void *)&device) != noErr) return;
+                               &size, (void *)&device) != noErr) return;
 
   size = sizeof(format);
   if (AudioDeviceGetProperty(device, 0, false, kAudioDevicePropertyStreamFormat,
-			     &size, &format) != noErr) return;
+                             &size, &format) != noErr) return;
 
   // Set up a format we like...
-  format.mSampleRate       = 44100.0;	// 44.1kHz
-  format.mChannelsPerFrame = 2;		// stereo
+  format.mSampleRate       = 44100.0;   // 44.1kHz
+  format.mChannelsPerFrame = 2;         // stereo
 
   if (AudioDeviceSetProperty(device, NULL, 0, false,
                              kAudioDevicePropertyStreamFormat,
-	                     sizeof(format), &format) != noErr) return;
+                             sizeof(format), &format) != noErr) return;
 
   // Check we got linear pcm - what to do if we did not ???
   if (format.mFormatID != kAudioFormatLinearPCM) return;
@@ -250,11 +248,11 @@ SudokuSound::SudokuSound() {
   if (AudioDeviceAddIOProc(device, audio_cb, (void *)this) != noErr) return;
   AudioDeviceStart(device, audio_cb);
 #  endif
-  
+
   sample_size = (int)format.mSampleRate / 20;
 
 #elif defined(_WIN32)
-  WAVEFORMATEX	format;
+  WAVEFORMATEX  format;
 
   memset(&format, 0, sizeof(format));
   format.cbSize          = sizeof(format);
@@ -332,11 +330,11 @@ SudokuSound::SudokuSound() {
         double val = 0.5 * sin(2.0 * M_PI * theta) + theta - (int)theta - 0.5;
 
         if (j < attack) {
-	  *sample_ptr = (int)(32767 * val * j / attack);
-	} else if (j > decay) {
-	  *sample_ptr = (int)(32767 * val * (sample_size - j + decay) /
-	                      sample_size);
-	} else *sample_ptr = (int)(32767 * val);
+          *sample_ptr = (int)(32767 * val * j / attack);
+        } else if (j > decay) {
+          *sample_ptr = (int)(32767 * val * (sample_size - j + decay) /
+                              sample_size);
+        } else *sample_ptr = (int)(32767 * val);
 
         sample_ptr[1] = *sample_ptr;
       }
@@ -390,12 +388,12 @@ SudokuSound::~SudokuSound() {
 // Callback function for writing audio data...
 OSStatus
 SudokuSound::audio_cb(AudioDeviceID device,
-		      const AudioTimeStamp *current_time,
-		      const AudioBufferList *data_in,
-		      const AudioTimeStamp *time_in,
-		      AudioBufferList *data_out,
-		      const AudioTimeStamp *time_out,
-		      void *client_data) {
+                      const AudioTimeStamp *current_time,
+                      const AudioBufferList *data_in,
+                      const AudioTimeStamp *time_in,
+                      AudioBufferList *data_out,
+                      const AudioTimeStamp *time_out,
+                      void *client_data) {
   SudokuSound *ss = (SudokuSound *)client_data;
   int count;
   float *buffer;
@@ -455,8 +453,8 @@ void SudokuSound::play(char note) {
 #  endif // HAVE_ALSA_ASOUNDLIB_H
 
   // Just use standard X11 stuff...
-  XKeyboardState	state;
-  XKeyboardControl	control;
+  XKeyboardState        state;
+  XKeyboardControl      control;
 
   // Get original pitch and duration...
   XGetKeyboardControl(fl_display, &state);
@@ -468,7 +466,7 @@ void SudokuSound::play(char note) {
 
   XChangeKeyboardControl(fl_display,
                          KBBellPercent | KBBellPitch | KBBellDuration,
-			 &control);
+                         &control);
   XBell(fl_display, 100);
   XFlush(fl_display);
 
@@ -479,7 +477,7 @@ void SudokuSound::play(char note) {
 
   XChangeKeyboardControl(fl_display,
                          KBBellPercent | KBBellPitch | KBBellDuration,
-			 &control);
+                         &control);
 #endif // __APPLE__
 }
 
@@ -557,16 +555,16 @@ SudokuCell::handle(int event) {
     case FL_PUSH :
       if (!readonly() && Fl::event_inside(this)) {
         if (Fl::event_clicks()) {
-	  // 2+ clicks increments/sets value
-	  if (value()) {
-	    if (value() < 9) value(value() + 1);
-	    else value(1);
-	  } else value(((Sudoku *)window())->next_value(this));
-	}
+          // 2+ clicks increments/sets value
+          if (value()) {
+            if (value() < 9) value(value() + 1);
+            else value(1);
+          } else value(((Sudoku *)window())->next_value(this));
+        }
 
         Fl::focus(this);
-	redraw();
-	return 1;
+        redraw();
+        return 1;
       }
       break;
 
@@ -581,33 +579,33 @@ SudokuCell::handle(int event) {
         }
 
         if (Fl::event_state() & (FL_SHIFT | FL_CAPS_LOCK)) {
-	  int i;
+          int i;
 
-	  for (i = 0; i < 8; i ++)
-	    if (test_value_[i] == key) {
-	      test_value_[i] = 0;
-	      break;
-	    }
+          for (i = 0; i < 8; i ++)
+            if (test_value_[i] == key) {
+              test_value_[i] = 0;
+              break;
+            }
 
           if (i >= 8) {
-	    for (i = 0; i < 8; i ++)
-	      if (!test_value_[i]) {
-		test_value_[i] = key;
-		break;
-	      }
-	  }
+            for (i = 0; i < 8; i ++)
+              if (!test_value_[i]) {
+                test_value_[i] = key;
+                break;
+              }
+          }
 
-	  if (i >= 8) {
-	    for (i = 0; i < 7; i ++) test_value_[i] = test_value_[i + 1];
-	    test_value_[i] = key;
-	  }
+          if (i >= 8) {
+            for (i = 0; i < 7; i ++) test_value_[i] = test_value_[i + 1];
+            test_value_[i] = key;
+          }
 
-	  redraw();
-	} else {
-	  value(key);
-	  do_callback();
-	}
-	return 1;
+          redraw();
+        } else {
+          value(key);
+          do_callback();
+        }
+        return 1;
       } else if (key == 0 || Fl::event_key() == FL_BackSpace ||
                  Fl::event_key() == FL_Delete) {
         if (readonly()) {
@@ -616,8 +614,8 @@ SudokuCell::handle(int event) {
         }
 
         value(0);
-	do_callback();
-	return 1;
+        do_callback();
+        return 1;
       }
       break;
   }
@@ -627,8 +625,8 @@ SudokuCell::handle(int event) {
 
 
 // Sudoku class globals...
-Fl_Help_Dialog	*Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
-Fl_Preferences	Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
+Fl_Help_Dialog  *Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
+Fl_Preferences  Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
 
 
 // Create a Sudoku game window...
@@ -638,7 +636,7 @@ Sudoku::Sudoku()
   int j, k;
   Fl_Group *g;
   SudokuCell *cell;
-  static Fl_Menu_Item	items[] = {
+  static Fl_Menu_Item   items[] = {
     { "&Game", 0, 0, 0, FL_SUBMENU },
     { "&New Game", FL_COMMAND | 'n', new_cb, 0, FL_MENU_DIVIDER },
     { "&Check Game", FL_COMMAND | 'c', check_cb, 0, 0 },
@@ -684,7 +682,7 @@ Sudoku::Sudoku()
   for (j = 0; j < 3; j ++)
     for (k = 0; k < 3; k ++) {
       g = new Fl_Group(k * GROUP_SIZE, j * GROUP_SIZE + MENU_OFFSET,
-		       GROUP_SIZE, GROUP_SIZE);
+                       GROUP_SIZE, GROUP_SIZE);
       g->box(FL_BORDER_BOX);
       if ((int)(j == 1) ^ (int)(k == 1)) g->color(FL_DARK3);
       else g->color(FL_DARK2);
@@ -697,9 +695,9 @@ Sudoku::Sudoku()
     for (k = 0; k < 9; k ++) {
       cell = new SudokuCell(k * CELL_SIZE + CELL_OFFSET +
                                 (k / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
-	                    j * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
-			        (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
-			    CELL_SIZE, CELL_SIZE);
+                            j * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
+                                (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+                            CELL_SIZE, CELL_SIZE);
       cell->callback(reset_cb);
       grid_cells_[j][k] = cell;
     }
@@ -718,7 +716,7 @@ Sudoku::Sudoku()
   Fl_Surface_Device::pop_current();
   icon(surf.image());
 #endif
-  
+
   // Catch window close events...
   callback(close_cb);
 
@@ -773,19 +771,19 @@ Sudoku::check_game(bool highlight) {
       else {
         for (m = 0; m < 9; m ++)
           if ((j != m && grid_cells_[m][k]->value() == val) ||
-	      (k != m && grid_cells_[j][m]->value() == val)) break;
+              (k != m && grid_cells_[j][m]->value() == val)) break;
 
         if (m < 9) {
           if (highlight) {
-	    cell->color(FL_YELLOW);
-	    cell->redraw();
-	  }
+            cell->color(FL_YELLOW);
+            cell->redraw();
+          }
 
-	  correct = false;
-	} else if (highlight) {
-	  cell->color(FL_LIGHT3);
-	  cell->redraw();
-	}
+          correct = false;
+        } else if (highlight) {
+          cell->color(FL_LIGHT3);
+          cell->redraw();
+        }
       }
     }
 
@@ -794,40 +792,40 @@ Sudoku::check_game(bool highlight) {
     for (k = 0; k < 9; k += 3)
       for (int jj = 0; jj < 3; jj ++)
         for (int kk = 0; kk < 3; kk ++) {
-	  SudokuCell *cell = grid_cells_[j + jj][k + kk];
-	  int val = cell->value();
+          SudokuCell *cell = grid_cells_[j + jj][k + kk];
+          int val = cell->value();
 
-	  if (cell->readonly() || !val) continue;
+          if (cell->readonly() || !val) continue;
 
           int jjj;
 
           for (jjj = 0; jjj < 3; jjj ++) {
-	    int kkk;
+            int kkk;
 
-	    for (kkk = 0; kkk < 3; kkk ++)
+            for (kkk = 0; kkk < 3; kkk ++)
               if (jj != jjj && kk != kkk &&
-	          grid_cells_[j + jjj][k + kkk]->value() == val) break;
+                  grid_cells_[j + jjj][k + kkk]->value() == val) break;
 
             if (kkk < 3) break;
-	  }
+          }
 
           if (jjj < 3) {
             if (highlight) {
-	      cell->color(FL_YELLOW);
-	      cell->redraw();
-	    }
+              cell->color(FL_YELLOW);
+              cell->redraw();
+            }
 
-	    correct = false;
-	  }
-	}
+            correct = false;
+          }
+        }
 
   if (!empty && correct) {
     // Success!
     for (j = 0; j < 9; j ++) {
       for (k = 0; k < 9; k ++) {
-	SudokuCell *cell = grid_cells_[j][k];
-	cell->color(FL_GREEN);
-	cell->readonly(1);
+        SudokuCell *cell = grid_cells_[j][k];
+        cell->color(FL_GREEN);
+        cell->readonly(1);
       }
 
       if (sound_) sound_->play('A' + grid_cells_[j][8]->value() - 1);
@@ -870,9 +868,9 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
       if (!val)
       {
         prefs_.set("difficulty_warning", 1);
-	fl_alert("Note: 'Hard' and 'Impossible' puzzles may have more than "
-	         "one possible solution.\n"
-		 "This is not an error or bug.");
+        fl_alert("Note: 'Hard' and 'Impossible' puzzles may have more than "
+                 "one possible solution.\n"
+                 "This is not an error or bug.");
       }
     }
 
@@ -947,50 +945,50 @@ Sudoku::help_cb(Fl_Widget *, void *) {
     help_dialog_ = new Fl_Help_Dialog();
 
     help_dialog_->value(
-	"<HTML>\n"
-	"<HEAD>\n"
-	"<TITLE>Sudoku Help</TITLE>\n"
-	"</HEAD>\n"
-	"<BODY BGCOLOR='#ffffff'>\n"
+        "<HTML>\n"
+        "<HEAD>\n"
+        "<TITLE>Sudoku Help</TITLE>\n"
+        "</HEAD>\n"
+        "<BODY BGCOLOR='#ffffff'>\n"
 
-	"<H2>About the Game</H2>\n"
+        "<H2>About the Game</H2>\n"
 
-	"<P>Sudoku (pronounced soo-dough-coo with the emphasis on the\n"
+        "<P>Sudoku (pronounced soo-dough-coo with the emphasis on the\n"
         "first syllable) is a simple number-based puzzle/game played on a\n"
-	"9x9 grid that is divided into 3x3 subgrids. The goal is to enter\n"
-	"a number from 1 to 9 in each cell so that each number appears\n"
-	"only once in each column and row. In addition, each 3x3 subgrid\n"
-	"may only contain one of each number.</P>\n"
+        "9x9 grid that is divided into 3x3 subgrids. The goal is to enter\n"
+        "a number from 1 to 9 in each cell so that each number appears\n"
+        "only once in each column and row. In addition, each 3x3 subgrid\n"
+        "may only contain one of each number.</P>\n"
 
-	"<P>This version of the puzzle is copyright 2005-2010 by Michael R\n"
-	"Sweet.</P>\n"
+        "<P>This version of the puzzle is copyright 2005-2010 by Michael R\n"
+        "Sweet.</P>\n"
 
-	"<P><B>Note:</B> The 'Hard' and 'Impossible' difficulty\n"
-	"levels generate Sudoku puzzles with multiple possible solutions.\n"
-	"While some purists insist that these cannot be called 'Sudoku'\n"
-	"puzzles, the author (me) has personally solved many such puzzles\n"
-	"in published/printed Sudoku books and finds them far more\n"
-	"interesting than the simple single solution variety. If you don't\n"
-	"like it, don't play with the difficulty set to 'High' or\n"
-	"'Impossible'.</P>\n"
+        "<P><B>Note:</B> The 'Hard' and 'Impossible' difficulty\n"
+        "levels generate Sudoku puzzles with multiple possible solutions.\n"
+        "While some purists insist that these cannot be called 'Sudoku'\n"
+        "puzzles, the author (me) has personally solved many such puzzles\n"
+        "in published/printed Sudoku books and finds them far more\n"
+        "interesting than the simple single solution variety. If you don't\n"
+        "like it, don't play with the difficulty set to 'High' or\n"
+        "'Impossible'.</P>\n"
 
-	"<H2>How to Play the Game</H2>\n"
+        "<H2>How to Play the Game</H2>\n"
 
-	"<P>At the start of a new game, Sudoku fills in a random selection\n"
-	"of cells for you - the number of cells depends on the difficulty\n"
-	"level you use. Click in any of the empty cells or use the arrow\n"
-	"keys to highlight individual cells and press a number from 1 to 9\n"
-	"to fill in the cell. To clear a cell, press 0, Delete, or\n"
-	"Backspace. When you have successfully completed all subgrids, the\n"
-	"entire puzzle is highlighted in green until you start a new\n"
-	"game.</P>\n"
+        "<P>At the start of a new game, Sudoku fills in a random selection\n"
+        "of cells for you - the number of cells depends on the difficulty\n"
+        "level you use. Click in any of the empty cells or use the arrow\n"
+        "keys to highlight individual cells and press a number from 1 to 9\n"
+        "to fill in the cell. To clear a cell, press 0, Delete, or\n"
+        "Backspace. When you have successfully completed all subgrids, the\n"
+        "entire puzzle is highlighted in green until you start a new\n"
+        "game.</P>\n"
 
-	"<P>As you work to complete the puzzle, you can display possible\n"
-	"solutions inside each cell by holding the Shift key and pressing\n"
-	"each number in turn. Repeat the process to remove individual\n"
-	"numbers, or press a number without the Shift key to replace them\n"
-	"with the actual number to use.</P>\n"
-	"</BODY>\n"
+        "<P>As you work to complete the puzzle, you can display possible\n"
+        "solutions inside each cell by holding the Shift key and pressing\n"
+        "each number in turn. Repeat the process to remove individual\n"
+        "numbers, or press a number without the Shift key to replace them\n"
+        "with the actual number to use.</P>\n"
+        "</BODY>\n"
     );
   }
 
@@ -1016,8 +1014,8 @@ Sudoku::load_game() {
       sprintf(name, "value%d.%d", j, k);
       if (!prefs_.get(name, val, 0)) {
         j = 9;
-	grid_values_[0][0] = 0;
-	break;
+        grid_values_[0][0] = 0;
+        break;
       }
 
       grid_values_[j][k] = val;
@@ -1025,7 +1023,7 @@ Sudoku::load_game() {
       sprintf(name, "state%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->value(val);
- 
+
       sprintf(name, "readonly%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->readonly(val != 0);
@@ -1033,13 +1031,13 @@ Sudoku::load_game() {
       if (val) cell->color(FL_GRAY);
       else {
         cell->color(FL_LIGHT3);
-	solved = false;
+        solved = false;
       }
 
       for (int m = 0; m < 8; m ++) {
-	sprintf(name, "test%d%d.%d", m, j, k);
-	prefs_.get(name, val, 0);
-	cell->test_value(val, m);
+        sprintf(name, "test%d%d.%d", m, j, k);
+        prefs_.get(name, val, 0);
+        cell->test_value(val, m);
       }
     }
 
@@ -1096,35 +1094,35 @@ Sudoku::new_game(time_t seed) {
   for (j = 0; j < 9; j += 3) {
     for (k = 0; k < 9; k += 3) {
       for (t = 1; t <= 9; t ++) {
-	for (count = 0; count < 20; count ++) {
-	  m = j + (rand() % 3);
-	  n = k + (rand() % 3);
-	  if (!grid_values_[m][n]) {
-	    int mm;
+        for (count = 0; count < 20; count ++) {
+          m = j + (rand() % 3);
+          n = k + (rand() % 3);
+          if (!grid_values_[m][n]) {
+            int mm;
 
-	    for (mm = 0; mm < m; mm ++)
-	      if (grid_values_[mm][n] == t) break;
+            for (mm = 0; mm < m; mm ++)
+              if (grid_values_[mm][n] == t) break;
 
-	    if (mm < m) continue;
+            if (mm < m) continue;
 
-	    int nn;
+            int nn;
 
-	    for (nn = 0; nn < n; nn ++)
-	      if (grid_values_[m][nn] == t) break;
+            for (nn = 0; nn < n; nn ++)
+              if (grid_values_[m][nn] == t) break;
 
-	    if (nn < n) continue;
+            if (nn < n) continue;
 
-	    grid_values_[m][n] = t;
-	    break;
-	  }
-	}
+            grid_values_[m][n] = t;
+            break;
+          }
+        }
 
-	if (count == 20) {
-	  // Unable to find a valid puzzle so far, so start over...
-	  k = 9;
-	  j = -3;
-	  memset(grid_values_, 0, sizeof(grid_values_));
-	}
+        if (count == 20) {
+          // Unable to find a valid puzzle so far, so start over...
+          k = 9;
+          j = -3;
+          memset(grid_values_, 0, sizeof(grid_values_));
+        }
       }
     }
   }
@@ -1164,13 +1162,13 @@ Sudoku::new_game(time_t seed) {
         cell = grid_cells_[j][k];
 
         if (grid_values_[j][k] == t && !cell->readonly()) {
-	  cell->value(grid_values_[j][k]);
-	  cell->readonly(1);
-	  cell->color(FL_GRAY);
+          cell->value(grid_values_[j][k]);
+          cell->readonly(1);
+          cell->color(FL_GRAY);
 
-	  count --;
-	  break;
-	}
+          count --;
+          break;
+        }
       }
     }
   }
@@ -1180,7 +1178,7 @@ Sudoku::new_game(time_t seed) {
 // Return the next available value for a cell...
 int
 Sudoku::next_value(SudokuCell *c) {
-  int	j = 0, k = 0, m = 0, n = 0;
+  int   j = 0, k = 0, m = 0, n = 0;
 
 
   for (j = 0; j < 9; j ++) {
@@ -1217,7 +1215,7 @@ void
 Sudoku::reset_cb(Fl_Widget *widget, void *) {
   widget->color(FL_LIGHT3);
   widget->redraw();
-  
+
   ((Sudoku *)(widget->window()))->check_game(false);
 }
 
@@ -1249,9 +1247,9 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
       if (!cell->readonly()) {
         solved = false;
         int v = cell->value();
-	cell->value(0);
-	cell->color(FL_LIGHT3);
-	if (v && s->sound_) s->sound_->play('A' + v - 1);
+        cell->value(0);
+        cell->color(FL_LIGHT3);
+        if (v && s->sound_) s->sound_->play('A' + v - 1);
       }
     }
 
@@ -1278,8 +1276,8 @@ Sudoku::save_game() {
       prefs_.set(name, cell->readonly());
 
       for (int m = 0; m < 8; m ++) {
-	sprintf(name, "test%d%d.%d", m, j, k);
-	prefs_.set(name, cell->test_value(m));
+        sprintf(name, "test%d%d.%d", m, j, k);
+        prefs_.set(name, cell->test_value(m));
       }
     }
 }
@@ -1339,8 +1337,3 @@ main(int argc, char *argv[]) {
   // Run until the user quits...
   return (Fl::run());
 }
-
-
-//
-// End of "$Id$".
-//

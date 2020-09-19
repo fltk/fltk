@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -145,8 +143,8 @@ Fl_Color fl_inactive(Fl_Color c) {
  \return contrasting color
  */
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
-  unsigned c1, c2;	// RGB colors
-  int l1, l2;		// Luminosities
+  unsigned c1, c2;      // RGB colors
+  int l1, l2;           // Luminosities
 
   // Get the RGB values for each color...
   if (fg & 0xffffff00) c1 = (unsigned)fg;
@@ -168,7 +166,3 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 /**
  \}
  */
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -27,24 +25,24 @@
 #endif
 
 // values for type()
-#define FL_BAR_CHART		0	/**< type() for Bar Chart variant */
-#define FL_HORBAR_CHART		1	/**< type() for Horizontal Bar Chart variant */
-#define FL_LINE_CHART		2	/**< type() for Line Chart variant */
-#define FL_FILL_CHART		3	/**< type() for Fill Line Chart variant */
-#define FL_SPIKE_CHART		4	/**< type() for Spike Chart variant */
-#define FL_PIE_CHART		5	/**< type() for Pie Chart variant */
-#define FL_SPECIALPIE_CHART	6	/**< type() for Special Pie Chart variant */
+#define FL_BAR_CHART            0       /**< type() for Bar Chart variant */
+#define FL_HORBAR_CHART         1       /**< type() for Horizontal Bar Chart variant */
+#define FL_LINE_CHART           2       /**< type() for Line Chart variant */
+#define FL_FILL_CHART           3       /**< type() for Fill Line Chart variant */
+#define FL_SPIKE_CHART          4       /**< type() for Spike Chart variant */
+#define FL_PIE_CHART            5       /**< type() for Pie Chart variant */
+#define FL_SPECIALPIE_CHART     6       /**< type() for Special Pie Chart variant */
 
-#define FL_FILLED_CHART  FL_FILL_CHART	/**< for compatibility */
+#define FL_FILLED_CHART  FL_FILL_CHART  /**< for compatibility */
 
-#define FL_CHART_MAX		128	/**< max entries per chart */
-#define FL_CHART_LABEL_MAX	18	/**< max label length for entry */
+#define FL_CHART_MAX            128     /**< max entries per chart */
+#define FL_CHART_LABEL_MAX      18      /**< max label length for entry */
 
 /** For internal use only */
 struct FL_CHART_ENTRY {
-   float val;				/**< For internal use only. */
-   unsigned col;			/**< For internal use only. */
-   char str[FL_CHART_LABEL_MAX+1];	/**< For internal use only. */
+   float val;                           /**< For internal use only. */
+   unsigned col;                        /**< For internal use only. */
+   char str[FL_CHART_LABEL_MAX+1];      /**< For internal use only. */
 };
 
 /**
@@ -52,7 +50,7 @@ struct FL_CHART_ENTRY {
   \brief Fl_Chart displays simple charts.
   It is provided for Forms compatibility.
 
-  \image html charts.png  
+  \image html charts.png
   \image latex charts.png  "Fl_Chart" width=10cm
   \todo Refactor Fl_Chart::type() information.
 
@@ -145,7 +143,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

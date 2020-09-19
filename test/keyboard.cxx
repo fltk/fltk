@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -99,23 +97,23 @@ int main(int argc, char** argv) {
   window->show(argc,argv);
   while (Fl::wait()) {
     const char *str;
-    
+
     // update all the buttons with the current key and shift state:
     for (int c = 0; c < window->children(); c++) {
       Fl_Widget* b = window->child(c);
       if (b->callback() == (Fl_Callback*)key_cb) {
-	int i = b->argument();
-	if (!i) i = b->label()[0];
+        int i = b->argument();
+        if (!i) i = b->label()[0];
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_key(i);
         if (btn->value()!=state)
-	  btn->value(state);
+          btn->value(state);
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
-	int i = b->argument();
+        int i = b->argument();
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_state(i);
         if (btn->value()!=state)
-	  btn->value(state);
+          btn->value(state);
       }
     }
 
@@ -136,7 +134,7 @@ int main(int argc, char** argv) {
     } else {
       sprintf(buffer, "0x%04x", k);
       for (int i = 0; i < int(sizeof(table)/sizeof(*table)); i++)
-	if (table[i].n == k) {keyname = table[i].text; break;}
+        if (table[i].n == k) {keyname = table[i].text; break;}
     }
     if (strcmp(key_output->value(), keyname))
       key_output->value(keyname);
@@ -147,7 +145,3 @@ int main(int argc, char** argv) {
   }
   return 0;
 }
-
-//
-// End of "$Id$".
-//

@@ -3,8 +3,6 @@ version 1.0400
 header_name {../FL/Fl_File_Chooser.H}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -13,11 +11,11 @@ comment {//
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // =======================================================================
 //  DO NOT EDIT FL/Fl_File_Chooser.H and src/Fl_File_Chooser.cxx !!!
@@ -68,7 +66,8 @@ class FL_EXPORT Fl_File_Chooser {open
   }
   decl {void update_preview();} {private local
   }
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
+  } {
     code {if (!prefs_) {
   prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
 }} {}
@@ -79,7 +78,7 @@ class FL_EXPORT Fl_File_Chooser {open
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();} open
-      private xywh {507 327 490 380} type Double hide resizable
+      private xywh {1171 438 490 380} type Double hide resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -108,13 +107,17 @@ window->hide();} open
         }
       }
       Fl_Tile {} {
-        callback {update_preview();}
+        callback {update_preview();} open
         private xywh {10 45 470 225} resizable
       } {
         Fl_File_Browser fileList {
           callback {fileListCB();}
-          private xywh {10 45 295 225} type Hold hotspot
+          private xywh {10 45 295 225} type Hold box DOWN_BOX hotspot
           code0 {\#include <FL/Fl_File_Browser.H>}
+        }
+        Fl_Box errorBox {
+          label {dynamic error display} selected
+          private xywh {10 45 295 225} box DOWN_BOX color 7 labelsize 18 labelcolor 1 align 149 hide
         }
         Fl_Box previewBox {
           label {?}
@@ -351,7 +354,7 @@ okButton->parent()->init_sizes();} {}
   } {
     code {fileList->textfont(f);} {}
   }
-  Function {textfont()} {selected return_type Fl_Font
+  Function {textfont()} {return_type Fl_Font
   } {
     code {return (fileList->textfont());} {}
   }
@@ -477,6 +480,18 @@ window->resizable(svres);} {}
     }
     code {return ret;} {}
   }
+  Function {show_error_box(int val)} {
+    comment {Show error box if val=1, hide if val=0} open protected return_type void
+  } {
+    code {if ( val ) {
+  errorBox->color(fileList->color()); // inherit fileList's bg color
+  errorBox->show();
+  fileList->hide();
+} else {
+  errorBox->hide();
+  fileList->show();
+}} {}
+  }
 }
 
 decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);} {public local
@@ -489,10 +504,4 @@ decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
 }
 
 decl {FL_EXPORT void fl_file_chooser_ok_label(const char*l);} {public local
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

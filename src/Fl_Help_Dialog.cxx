@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // ========================================================================
 //  DO NOT EDIT FL/Fl_Help_Dialog.H and src/Fl_Help_Dialog.cxx !!!
@@ -201,11 +199,11 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
   } // Fl_Double_Window* window_
   back_->deactivate();
   forward_->deactivate();
-  
+
   index_    = -1;
   max_      = 0;
   find_pos_ = 0;
-  
+
   fl_register_images();
 }
 
@@ -246,12 +244,12 @@ void Fl_Help_Dialog::show(int argc, char **argv) {
 
 void Fl_Help_Dialog::textsize(Fl_Fontsize s) {
   view_->textsize(s);
-  
+
   if (s <= 8)
     smaller_->deactivate();
   else
     smaller_->activate();
-  
+
   if (s >= 18)
     larger_->deactivate();
   else
@@ -295,7 +293,3 @@ int Fl_Help_Dialog::x() {
 int Fl_Help_Dialog::y() {
   return (window_->y());
 }
-
-//
-// End of "$Id$".
-//

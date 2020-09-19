@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 /** \file
  Fl_Double_Window implementation.
@@ -54,7 +52,7 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
   Fl_X *myi = Fl_X::i(this);
-  if (myi && Fl_Window_Driver::driver(this)->other_xid && (ow < w() || oh < h() || Fl_Window_Driver::is_a_rescale()))
+  if (myi && Fl_Window_Driver::driver(this)->other_xid && (ow < w() || oh < h() || is_a_rescale()))
     Fl_Window_Driver::driver(this)->destroy_double_buffer();
 }
 
@@ -82,7 +80,3 @@ void Fl_Double_Window::flush()
 Fl_Double_Window::~Fl_Double_Window() {
   hide();
 }
-
-//
-// End of "$Id$".
-//

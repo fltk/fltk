@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
 // Notice that Fl_Image is for a static, multiple-reuse image, such
@@ -13,11 +11,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -40,12 +38,12 @@ void make_image() {
     for (int x = 0; x < width; x++) {
       double X = double(x)/(width-1);
       *p++ = uchar(255*((1-X)*(1-Y))); // red in upper-left
-      *p++ = uchar(255*((1-X)*Y));	// green in lower-left
-      *p++ = uchar(255*(X*Y));	// blue in lower-right
+      *p++ = uchar(255*((1-X)*Y));     // green in lower-left
+      *p++ = uchar(255*(X*Y));         // blue in lower-right
       X -= 0.5;
       Y -= 0.5;
       int alpha = (int)(255 * sqrt(X * X + Y * Y));
-      if (alpha < 255) *p++ = uchar(alpha);	// alpha transparency
+      if (alpha < 255) *p++ = uchar(alpha);     // alpha transparency
       else *p++ = 255;
       Y += 0.5;
     }
@@ -105,7 +103,7 @@ int main(int argc, char **argv) {
       exit(1);
     }
     fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-				fl_visual->visual, AllocNone);
+                                fl_visual->visual, AllocNone);
     fl_xpixel(FL_BLACK); // make sure black is allocated in overlay visuals
   } else {
     Fl::visual(FL_RGB);
@@ -146,7 +144,3 @@ int main(int argc, char **argv) {
   window.show(argc, argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

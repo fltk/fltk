@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /*
@@ -53,11 +51,11 @@ That was a blank line above this.
 #s## start line with '#'
 #s#.# alternative start line with '#'
 
-	You should try different browser types:
-	Fl_Browser
-	Fl_Select_Browser
-	Fl_Hold_Browser
-	Fl_Multi_Browser
+        You should try different browser types:
+        Fl_Browser
+        Fl_Select_Browser
+        Fl_Hold_Browser
+        Fl_Multi_Browser
 */
 
 #include <FL/Fl.H>
@@ -74,15 +72,15 @@ That was a blank line above this.
 #include <stdlib.h>
 
 Fl_Select_Browser *browser;
-Fl_Button	*top,
-		*bottom,
-		*middle,
-		*visible,
-		*swap,
-		*sort;
+Fl_Button       *top,
+                *bottom,
+                *middle,
+                *visible,
+                *swap,
+                *sort;
 Fl_Choice       *btype;
 Fl_Choice       *wtype;
-Fl_Int_Input	*field;
+Fl_Int_Input    *field;
 Fl_Simple_Terminal *tty = 0;
 
 typedef struct {
@@ -106,7 +104,7 @@ WhenItem when_items[] = {
 
 void b_cb(Fl_Widget* o, void*) {
   tty->printf("callback, selection = \033[31m%d\033[0m, event_clicks = \033[32m%d\033[0m\n",
-	 ((Fl_Browser*)o)->value(), Fl::event_clicks());
+         ((Fl_Browser*)o)->value(), Fl::event_clicks());
 }
 
 void show_cb(Fl_Widget *o, void *) {
@@ -130,15 +128,15 @@ void show_cb(Fl_Widget *o, void *) {
 
 void swap_cb(Fl_Widget *, void *) {
   int a = -1, b = -1;
-  for ( int t=0; t<browser->size(); t++ ) {	// find two selected items
+  for ( int t=0; t<browser->size(); t++ ) {     // find two selected items
     if ( browser->selected(t) ) {
       if ( a < 0 )
-	{ a = t; }
-      else 
-	{ b = t; break; }
+        { a = t; }
+      else
+        { b = t; break; }
     }
   }
-  browser->swap(a, b);				// swap them
+  browser->swap(a, b);                          // swap them
 }
 
 void sort_cb(Fl_Widget *, void *) {
@@ -147,7 +145,7 @@ void sort_cb(Fl_Widget *, void *) {
 
 void btype_cb(Fl_Widget *, void *) {
   for ( int t=1; t<=browser->size(); t++ ) browser->select(t,0);
-  browser->select(1,0);		// leave focus box on first line
+  browser->select(1,0);         // leave focus box on first line
        if ( strcmp(btype->text(),"Normal")==0) browser->type(FL_NORMAL_BROWSER);
   else if ( strcmp(btype->text(),"Select")==0) browser->type(FL_SELECT_BROWSER);
   else if ( strcmp(btype->text(),"Hold"  )==0) browser->type(FL_HOLD_BROWSER);
@@ -157,47 +155,20 @@ void btype_cb(Fl_Widget *, void *) {
 
 void wtype_cb(Fl_Widget *, void *) {
   if ( wtype->value() < 0 ) return;
-  browser->when( when_items[wtype->value()].wvalue );	// when value based on array
+  browser->when( when_items[wtype->value()].wvalue );   // when value based on array
 }
 
 int main(int argc, char **argv) {
   int i;
-  if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
-  const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Double_Window window(720,520,fname);
-  browser = new Fl_Select_Browser(0,0,window.w(),350,0);
+  if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
+  const char *fname = (i < argc) ? argv[i] : "browser.cxx";
+  Fl_Double_Window window(720, 520, fname);
+  browser = new Fl_Select_Browser(0, 0, window.w(), 350, 0);
   browser->type(FL_MULTI_BROWSER);
-  //browser->type(FL_HOLD_BROWSER);
-  //browser->color(42);
   browser->callback(b_cb);
-  // browser->scrollbar_right();
-  //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
-  //browser->format_char('#');
   if (!browser->load(fname)) {
-    int done = 0;
-#ifdef _MSC_VER
-    // if 'browser' was started from the VisualC environment in Win32, 
-    // the current directory is set to the environment itself, 
-    // so we need to correct the browser file path
-    if ( i == argc ) 
-    {
-      fname = "../test/browser.cxx";
-      done = browser->load(fname);
-    }
-#elif defined(__APPLE__)
-    char buf[2048];
-    strcpy(buf, argv[0]);
-    char *slash = strrchr(buf, '/');
-    if (slash) {
-      strcpy(slash, "/../../../browser.cxx");
-    }
-    done = browser->load(buf);
-#endif
-    if ( !done )
-    {
-      fl_message("Can't load %s, %s\n", fname, strerror(errno));
-      exit(1);
-    }
+    fl_message("Can't load '%s'\n%s\n", fname, strerror(errno));
+    exit(1);
   }
   browser->position(0);
 
@@ -252,8 +223,4 @@ int main(int argc, char **argv) {
   window.show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//
 

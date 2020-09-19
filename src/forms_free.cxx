@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Forms free widget routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Emulation of the Forms "free" widget.
@@ -44,9 +42,9 @@ void Fl_Free::step(void *v) {
   \code
   int handle_function(Fl_Widget *w,
                       int       event,
-     	              float     event_x,
-    		      float     event_y,
-    		      char      key)
+                      float     event_x,
+                      float     event_y,
+                      char      key)
   \endcode
   This function is called from the handle() method in response to most
   events, and is called by the draw() method.
@@ -54,16 +52,16 @@ void Fl_Free::step(void *v) {
   The event argument contains the event type:
   \code
   // old event names for compatibility:
-  #define FL_MOUSE		FL_DRAG
-  #define FL_DRAW		0
-  #define FL_STEP		9
-  #define FL_FREEMEM		12
-  #define FL_FREEZE		FL_UNMAP
-  #define FL_THAW		FL_MAP
+  #define FL_MOUSE              FL_DRAG
+  #define FL_DRAW               0
+  #define FL_STEP               9
+  #define FL_FREEMEM            12
+  #define FL_FREEZE             FL_UNMAP
+  #define FL_THAW               FL_MAP
   \endcode
 */
 Fl_Free::Fl_Free(uchar t,int X, int Y, int W, int H,const char *L,
-		 FL_HANDLEPTR hdl) :
+                 FL_HANDLEPTR hdl) :
 Fl_Widget(X,Y,W,H,L) {
   type(t);
   hfunc = hdl;
@@ -99,7 +97,3 @@ int Fl_Free::handle(int e) {
   if (hfunc(this, e, float(Fl::event_x()), float(Fl::event_y()), key)) do_callback();
   return 1;
 }
-
-//
-// End of "$Id$".
-//

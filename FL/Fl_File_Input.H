@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -36,7 +34,7 @@
   FL_WHEN_RELEASE callback won't be called if the directory clicked
   is the same as the current one.
 
-  <P align=CENTER> \image html Fl_File_Input.png </P> 
+  <P align=CENTER> \image html Fl_File_Input.png </P>
   \image latex Fl_File_Input.png "Fl_File_Input"  width=6cm
 
   \note As all Fl_Input derived objects, Fl_File_Input may call its callback
@@ -45,15 +43,15 @@
   to avoid reentrant calls if you plan to show another window or dialog box in the callback.
 */
 class FL_EXPORT Fl_File_Input : public Fl_Input {
-  
-  char		ok_entry_;
-  uchar		down_box_;
-  short		buttons_[200];
-  short		pressed_;
 
-  void		draw_buttons();
-  int		handle_button(int event);
-  void		update_buttons();
+  char          ok_entry_;
+  uchar         down_box_;
+  short         buttons_[200];
+  short         pressed_;
+
+  void          draw_buttons();
+  int           handle_button(int event);
+  void          update_buttons();
 
 public:
 
@@ -66,9 +64,9 @@ protected:
 
 public:
   /** Gets the box type used for the navigation bar. */
-  Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
+  Fl_Boxtype    down_box() const { return (Fl_Boxtype)down_box_; }
   /** Sets the box type to use for the navigation bar.  */
-  void		down_box(Fl_Boxtype b) { down_box_ = b; }
+  void          down_box(Fl_Boxtype b) { down_box_ = b; }
 
   /**
     Gets the current error color.
@@ -79,7 +77,7 @@ public:
     \deprecated Will be removed in FLTK 1.5.0 or higher.
     \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
   */
-  Fl_Color	errorcolor() const { return FL_RED; }
+  Fl_Color      errorcolor() const { return FL_RED; }
 
   /**
     Sets the current error color to \p c.
@@ -89,21 +87,16 @@ public:
     \deprecated Will be removed in FLTK 1.5.0 or higher.
     \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
     */
-  void		errorcolor(Fl_Color c) {}
+  void          errorcolor(Fl_Color c) {}
 
-  int	value(const char *str);
-  int	value(const char *str, int len);
+  int   value(const char *str);
+  int   value(const char *str, int len);
 
   /**
     Returns the current value, which is a pointer to an internal buffer
     and is valid only until the next event is handled.
   */
-  const char	*value() { return Fl_Input_::value(); }
+  const char    *value() { return Fl_Input_::value(); }
 };
 
 #endif // !Fl_File_Input_H
-
-
-//
-// End of "$Id$".
-//

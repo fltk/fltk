@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * This implementation of 'scandir()' is intended to be POSIX.1-2008 compliant.
  * A POSIX.1-1990 compliant system is required as minimum base.
  * Note:
@@ -12,11 +10,11 @@
  * the file "COPYING" which should have been included with this file. If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  *
  * It is required that 'SIZE_MAX' is at least 'INT_MAX'.
  * Don't use a C++ compiler to build this module.
@@ -130,76 +128,91 @@ readentry(DIR *dirp, struct dirent **entryp, size_t *len)
 }
 
 
-/* ========================================================================== */
+/*
+ * This could use some docs.
+ *
+ * Returns -1 on error, errmsg returns error string (if non-NULL)
+ */
 int
 fl_scandir(const char *dir, struct dirent ***namelist,
            int (*sel)(struct dirent *),
-           int (*compar)(struct dirent **, struct dirent **))
+           int (*compar)(struct dirent **, struct dirent **),
+           char *errmsg, int errmsg_sz) {
 {
   int result = -1;
   DIR *dirp;
   size_t len, num = 0, max = ENTRIES_MIN;
   struct dirent *entryp, **entries, **p;
 
+  if (errmsg && errmsg_sz>0) errmsg[0] = '\0';
   entries = (struct dirent **) malloc(sizeof(*entries) * max);
-  if (NULL != entries)
-  {
-    /* Open directory 'dir' (and verify that it really is a directory) */
-    dirp = opendir(dir);
-    if (NULL != dirp)
-    {
-      /* Read next directory entry */
-      while (!readentry(dirp, &entryp, &len))
-      {
-        if (NULL == entryp)
-        {
-          /* EOD => Return number of directory entries */
-          result = (int) num;
-          break;
-        }
-        /* Apply select function if there is one provided */
-        if (NULL != sel)  { if (!sel(entryp))  continue; }
-        entries[num++] = entryp;
-        if (num >= max)
-        {
-          /* Allocate exponentially increasing sized memory chunks */
-          if (INT_MAX / 2 >= (int) max)  { max *= (size_t) 2; }
-          else
-          {
-            errno = ENOMEM;
-            break;
-          }
-          p = (struct dirent **) realloc((void *) entries,
-                                         sizeof(*entries) * max);
-          if (NULL != p)  { entries = p; }
-          else  break;
-        }
-      }
-      closedir(dirp);
-      /*
-       * A standard compliant 'closedir()' is allowed to fail with 'EINTR',
-       * but the state of the directory structure is undefined in this case.
-       * Therefore we ignore the return value because we can't call 'closedir()'
-       * again and must hope that the system has released all resources.
-       */
-    }
-    /* Sort entries in array if there is a compare function provided */
-    if (NULL != compar)
-    {
-      qsort((void *) entries, num, sizeof(*entries),
-            (int (*)(const void *, const void *)) compar);
-    }
-    *namelist = entries;
+  if (NULL == entries) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "out of memory");
+    return -1;
   }
 
-  /* Check for error */
-  if (-1 == result)
+  /* Open directory 'dir' (and verify that it really is a directory) */
+  dirp = opendir(dir);
+  if (NULL == dirp) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+
+    // XXX: This would be a thread safe alternative to the above, but commented
+    //      out because we can get either GNU or POSIX versions on linux,
+    //      which AFAICT are incompatible: GNU doesn't guarantee errmsg is used
+    //      at all, whereas POSIX /only/ fills buffer. The two calls are not really
+    //      compatible but have the same name and different return values.. wtf?
+    //
+    // if (errmsg && errmsg_sz > 0) {
+    //   strerror_r(errno, errmsg, errmsg_sz); // thread safe. Might be GNU, might be POSIX
+    //   errmsg[errmsg_sz-1] = '\0';           // force null term b/c XSI does not specify
+    // }
+    return -1;
+  }
+
+  /* Read next directory entry */
+  while (!readentry(dirp, &entryp, &len))
   {
+    if (NULL == entryp)
+    {
+      /* EOD => Return number of directory entries */
+      result = (int) num;
+      break;
+    }
+    /* Apply select function if there is one provided */
+    if (NULL != sel)  { if (!sel(entryp))  continue; }
+    entries[num++] = entryp;
+    if (num >= max) {
+      /* Allocate exponentially increasing sized memory chunks */
+      if (INT_MAX / 2 >= (int) max)  { max *= (size_t) 2; }
+      else {
+        errno = ENOMEM;
+        break;
+      }
+      p = (struct dirent **) realloc((void *)entries, sizeof(*entries)*max);
+      if (NULL != p) { entries = p; }
+      else  break;
+    }
+  }
+  closedir(dirp);
+  /*
+   * A standard compliant 'closedir()' is allowed to fail with 'EINTR',
+   * but the state of the directory structure is undefined in this case.
+   * Therefore we ignore the return value because we can't call 'closedir()'
+   * again and must hope that the system has released all resources.
+   */
+
+  /* Sort entries in array if there is a compare function provided */
+  if (NULL != compar) {
+    qsort((void *) entries, num, sizeof(*entries),
+          (int (*)(const void *, const void *)) compar);
+  }
+  *namelist = entries;
+  /* Check for error */
+  if (-1 == result) {
     /* Free all memory we have allocated */
     while (num--)  { free(entries[num]); }
     free(entries);
   }
-
   return result;
 }
 
@@ -211,7 +224,3 @@ fl_scandir(const char *dir, struct dirent ***namelist,
 typedef int dummy;
 
 #endif /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
-
-/*
- * End of "$Id$".
- */

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -197,7 +195,7 @@ int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y,
     ret = 2;
   } else if (EqualRgn(temp, rr)) { // complete
     ret = 0;
-  } else {	// partial intersection
+  } else {      // partial intersection
     RECT rect;
     GetRgnBox(temp, &rect);
     if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // if print context, convert coords from device to logical
@@ -239,7 +237,3 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
     if (r) unscale_clip(r);
   }
 }
-
-//
-// End of "$Id$".
-//

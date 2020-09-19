@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -185,8 +183,3 @@ void Fl_OpenGL_Graphics_Driver::restore_clip() {
   // TODO: implement OpenGL clipping
   fl_clip_state_number++;
 }
-
-
-//
-// End of "$Id$".
-//

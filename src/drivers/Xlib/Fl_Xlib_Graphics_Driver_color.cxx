@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Implementation of fl_color(i), fl_color(r,g,b).
@@ -44,14 +42,14 @@ extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 // figure_out_visual() calculates masks & shifts for generating
 // pixels in true-color visuals:
 
-uchar fl_redmask;	/**< color mask used in current color map handling */
-uchar fl_greenmask;	/**< color mask used in current color map handling */
-uchar fl_bluemask;	/**< color mask used in current color map handling */
+uchar fl_redmask;       /**< color mask used in current color map handling */
+uchar fl_greenmask;     /**< color mask used in current color map handling */
+uchar fl_bluemask;      /**< color mask used in current color map handling */
 
-int fl_redshift;	/**< color shift used in current color map handling */
-int fl_greenshift;	/**< color shift used in current color map handling */
-int fl_blueshift;	/**< color shift used in current color map handling */
-int fl_extrashift;	/**< color shift used in current color map handling */
+int fl_redshift;        /**< color shift used in current color map handling */
+int fl_greenshift;      /**< color shift used in current color map handling */
+int fl_blueshift;       /**< color shift used in current color map handling */
+int fl_extrashift;      /**< color shift used in current color map handling */
 
 static uchar beenhere;
 
@@ -345,7 +343,3 @@ void Fl_Xlib_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
 /**
  \}
  */
-
-//
-// End of "$Id$".
-//

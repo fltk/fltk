@@ -1,19 +1,19 @@
 //
-// "$Id$"
-//
 // Header file for Fl_Text_Buffer class.
 //
 // Copyright 2001-2017 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
-// Please report all bugs and problems on the following page:
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -22,7 +22,7 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
-#include <stdarg.h>	/* va_start/end */
+#include <stdarg.h>     /* va_start/end */
 
 #undef ASSERT_UTF8
 
@@ -134,7 +134,7 @@ public:
   /**
    \brief Returns true if any text is selected.
    \return  \p true if any text has been selected, or \p false
-	    if no text is selected.
+            if no text is selected.
   */
   bool selected() const { return mSelected; }
 
@@ -478,9 +478,7 @@ public:
   void highlight(int start, int end);
 
   /**
-   Returns the highlighted text.
-
-   When you are done with the text, free it using the free() function.
+   Returns a non-zero value if text has been highlighted, 0 otherwise.
    */
   int highlight() { return mHighlight.selected(); }
 
@@ -841,7 +839,3 @@ protected:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

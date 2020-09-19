@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tiny OpenGL v3 + glut demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -32,13 +30,13 @@
 // Globals
 // Real programs don't use globals :-D
 // Data would normally be read from files
-GLfloat vertices[] = {	-1.0f,0.0f,0.0f,
+GLfloat vertices[] = {  -1.0f,0.0f,0.0f,
   0.0f,1.0f,0.0f,
   0.0f,0.0f,0.0f };
-GLfloat colours[] = {	1.0f, 0.0f, 0.0f,
+GLfloat colours[] = {   1.0f, 0.0f, 0.0f,
   0.0f, 1.0f, 0.0f,
   0.0f, 0.0f, 1.0f };
-GLfloat vertices2[] = {	0.0f,0.0f,0.0f,
+GLfloat vertices2[] = { 0.0f,0.0f,0.0f,
   0.0f,-1.0f,0.0f,
   1.0f,0.0f,0.0f };
 
@@ -52,7 +50,7 @@ void printShaderInfoLog(GLint shader)
 {
   int infoLogLen = 0;
   GLchar *infoLog;
-  
+
   glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
   if (infoLogLen > 0)
   {
@@ -68,35 +66,35 @@ void printShaderInfoLog(GLint shader)
 void init(void)
 {
   // Would load objects from file here - but using globals in this example
-  
+
   // Allocate Vertex Array Objects
   glGenVertexArrays(2, &vertexArrayObjID[0]);
   // Setup first Vertex Array Object
   glBindVertexArray(vertexArrayObjID[0]);
   glGenBuffers(2, vertexBufferObjID);
-  
+
   // VBO for vertex data
   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID[0]);
   glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
   glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
-  
+
   // VBO for colour data
   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID[1]);
   glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), colours, GL_STATIC_DRAW);
   glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(1);
-  
+
   // Setup second Vertex Array Object
   glBindVertexArray(vertexArrayObjID[1]);
   glGenBuffers(1, &vertexBufferObjID[2]);
-  
+
   // VBO for vertex data
   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID[2]);
   glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLfloat), vertices2, GL_STATIC_DRAW);
   glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
-  
+
   glBindVertexArray(0);
 }
 
@@ -105,17 +103,17 @@ void initShaders(void)
 {
   GLuint p, f, v;
   glClearColor (1.0, 1.0, 1.0, 0.0);
-  
+
   v = glCreateShader(GL_VERTEX_SHADER);
   f = glCreateShader(GL_FRAGMENT_SHADER);
-  
+
 #ifdef __APPLE__
 #define SHADING_LANG_VERS "140"
 #else
 #define SHADING_LANG_VERS "130"
 #endif
   // load shaders
-  const char *vv = "#version "SHADING_LANG_VERS"\n\
+  const char *vv = "#version " SHADING_LANG_VERS "\n\
   in  vec3 in_Position;\
   in  vec3 in_Color;\
   out vec3 ex_Color;\
@@ -124,8 +122,8 @@ void initShaders(void)
     ex_Color = in_Color;\
     gl_Position = vec4(in_Position, 1.0);\
   }";
-  
-  const char *ff = "#version "SHADING_LANG_VERS"\n\
+
+  const char *ff = "#version " SHADING_LANG_VERS "\n\
   precision highp float;\
   in  vec3 ex_Color;\
   out vec4 out_Color;\
@@ -133,12 +131,12 @@ void initShaders(void)
   {\
     out_Color = vec4(ex_Color,1.0);\
   }";
-  
+
   glShaderSource(v, 1, &vv,NULL);
   glShaderSource(f, 1, &ff,NULL);
-  
+
   GLint compiled;
-  
+
   glCompileShader(v);
   glGetShaderiv(v, GL_COMPILE_STATUS, &compiled);
   if (!compiled)
@@ -146,7 +144,7 @@ void initShaders(void)
     fprintf(stderr, "Vertex shader not compiled.\n");
     printShaderInfoLog(v);
   }
-  
+
   glCompileShader(f);
   glGetShaderiv(f, GL_COMPILE_STATUS, &compiled);
   if (!compiled)
@@ -154,9 +152,9 @@ void initShaders(void)
     fprintf(stderr, "Fragment shader not compiled.\n");
     printShaderInfoLog(f);
   }
-  
+
   p = glCreateProgram();
-  
+
   glAttachShader(p,v);
   glAttachShader(p,f);
   glBindAttribLocation(p,0, "in_Position");
@@ -180,13 +178,13 @@ void display(void)
 {
   // clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  glBindVertexArray(vertexArrayObjID[0]);	// First VAO
-  glDrawArrays(GL_TRIANGLES, 0, 3);	// draw first object
-  
-  glBindVertexArray(vertexArrayObjID[1]);		// select second VAO
+
+  glBindVertexArray(vertexArrayObjID[0]);       // First VAO
+  glDrawArrays(GL_TRIANGLES, 0, 3);     // draw first object
+
+  glBindVertexArray(vertexArrayObjID[1]);               // select second VAO
   glVertexAttrib3f((GLuint)1, 1.0, 0.0, 0.0); // set constant color attribute
-  glDrawArrays(GL_TRIANGLES, 0, 3);	// draw second object
+  glDrawArrays(GL_TRIANGLES, 0, 3);     // draw second object
  }
 
 int fullscreen = 0;
@@ -218,7 +216,3 @@ int main (int argc, char* argv[])
   glutMainLoop();
   return 0;
 }
-
-//
-// End of "$Id$".
-//

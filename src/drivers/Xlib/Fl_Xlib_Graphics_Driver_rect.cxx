@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -140,8 +138,8 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
   window corner, but with a line width so that a part of the line should
   be visible (in this case 2 of 5 pixels):
 
-  fl_line_style (FL_SOLID,5);	// line width = 5
-  fl_rect (-1,-1,100,100);	// top/left: 2 pixels visible
+  fl_line_style (FL_SOLID,5);   // line width = 5
+  fl_rect (-1,-1,100,100);      // top/left: 2 pixels visible
 
   In this example case, no clipping would be done, because X can
   handle it and clip unneeded pixels.
@@ -156,9 +154,9 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 /*
   clip_rect() returns 1 if the area is invisible (clipped) because ...
 
-  (a) w <= 0 or h <= 0				i.e. nothing is visible
-  (b) x+w < clip_min() or y+h < clip_min()	i.e. left of or above visible area
-  (c) x > clip_max() or y > clip_max()		i.e. right of or below visible area
+  (a) w <= 0 or h <= 0                          i.e. nothing is visible
+  (b) x+w < clip_min() or y+h < clip_min()      i.e. left of or above visible area
+  (c) x > clip_max() or y > clip_max()          i.e. right of or below visible area
 
   clip_min() and clip_max() are the minimal and maximal x/y coordinate values
   used for clipping.
@@ -175,9 +173,9 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 
 int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
 
-  if (w <= 0 || h <= 0) return 1;			// (a)
-  if (x+w < clip_min() || y+h < clip_min()) return 1;	// (b)
-  if (x > clip_max() || y > clip_max()) return 1;	// (c)
+  if (w <= 0 || h <= 0) return 1;                       // (a)
+  if (x+w < clip_min() || y+h < clip_min()) return 1;   // (b)
+  if (x > clip_max() || y > clip_max()) return 1;       // (c)
 
   if (x < clip_min()) { w -= (clip_min()-x); x = clip_min(); }
   if (y < clip_min()) { h -= (clip_min()-y); y = clip_min(); }
@@ -197,8 +195,8 @@ int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
 Fl_Region Fl_Xlib_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
   Fl_Region r = XCreateRegion(); // create an empty region
-  if (clip_rect(x, y, w, h))	 // outside valid coordinate space
-    return r;			 // empty region
+  if (clip_rect(x, y, w, h))     // outside valid coordinate space
+    return r;                    // empty region
   R.x = x; R.y = y; R.width = w; R.height = h;
   XUnionRectWithRegion(&R, r, r);
   return r;
@@ -392,7 +390,7 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   Fl_Region r = rstack[rstackptr];
   if (!r) return 1;
   // get rid of coordinates outside the 16-bit range the X calls take.
-  if (clip_rect(x,y,w,h)) return 0;	// clipped
+  if (clip_rect(x,y,w,h)) return 0;     // clipped
   return XRectInRegion(r, x, y, w, h);
 }
 
@@ -408,7 +406,3 @@ void Fl_Xlib_Graphics_Driver::restore_clip() {
     else XSetClipMask(fl_display, gc_, 0);
   }
 }
-
-//
-// End of "$Id$".
-//

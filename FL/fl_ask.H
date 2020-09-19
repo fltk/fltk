@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file fl_ask.H
@@ -24,10 +22,9 @@
 #  define fl_ask_H
 
 #  include "Enumerations.H"
-
 class Fl_Widget;
 
-/** Different system beeps available. 
+/** Different system beeps available.
  \sa fl_beep(int) */
 enum Fl_Beep {
   FL_BEEP_DEFAULT = 0,  ///< Default beep.
@@ -66,6 +63,15 @@ inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
 FL_EXPORT void fl_message_hotspot(int enable);
 FL_EXPORT int fl_message_hotspot(void);
 
+FL_EXPORT void fl_message_position(const int x, const int y, const int center = 0);
+FL_EXPORT void fl_message_position(Fl_Widget *widget);
+FL_EXPORT int fl_message_position(int *x = 0, int *y = 0);
+
+/** \see fl_message_position(Fl_Widget *widget). */
+inline void fl_message_position(Fl_Widget &widget) {
+  fl_message_position(&widget);
+}
+
 FL_EXPORT void fl_message_title(const char *title);
 FL_EXPORT void fl_message_title_default(const char *title);
 
@@ -76,7 +82,3 @@ extern FL_EXPORT const char* fl_ok;
 extern FL_EXPORT const char* fl_cancel;
 extern FL_EXPORT const char* fl_close;
 #endif // !fl_ask_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Code to test and parse fltk shortcut numbers.
@@ -147,8 +145,8 @@ const char* fl_shortcut_label(unsigned int shortcut) {
 
 static char *add_modifier_key(char *p, const char *end, const char *name) {
   size_t ln = strlen(name);
-  if (p+ln > end) {		// string too long
-    if (p+4 <= end) {		// can replace with "..." ?
+  if (p+ln > end) {             // string too long
+    if (p+4 <= end) {           // can replace with "..." ?
       strcpy(p,"...");
       p += 3;
     } else
@@ -157,12 +155,12 @@ static char *add_modifier_key(char *p, const char *end, const char *name) {
     strcpy(p,name);
     p += ln;
   }
-  if (p[-1] == '\\')		// remove (last) '\' character
+  if (p[-1] == '\\')            // remove (last) '\' character
     p--;
-  else if (p[-1] == '+')	// don't add another '+' character
+  else if (p[-1] == '+')        // don't add another '+' character
     {/*empty*/}
-  else				// not a '\' or '+'
-    *p++ = '+';			// add a '+' character
+  else                          // not a '\' or '+'
+    *p++ = '+';                 // add a '+' character
   return p;
 }
 
@@ -190,7 +188,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
 
   // Add modifier key names.
   // Note: if necessary we could change the order here depending on the platform.
-  // However, as discussed in fltk.development, the order appears to be the
+  // However, as discussed in fltk.coredev, the order appears to be the
   // same on all platforms, with exceptions in _some_ Linux applications.
 
   if (shortcut & FL_CTRL)  {p = add_modifier_key(p, end, fl_local_ctrl);}
@@ -328,7 +326,7 @@ unsigned int Fl_Widget::label_shortcut(const char *t) {
   \param require_alt if true: match only if Alt key is pressed.
 
   \return true, if the entered text matches the '&x' shortcut in \p t
-	  false (0) otherwise.
+          false (0) otherwise.
 
   \note Internal use only.
 */
@@ -362,7 +360,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   Fl::event_text() is used to get the entered key value.
 
   \return true, if the entered text matches the widget's'&x' shortcut,
-	  false (0) otherwise.
+          false (0) otherwise.
 
   \note Internal use only.
 */
@@ -420,7 +418,3 @@ const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char 
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

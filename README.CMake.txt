@@ -5,8 +5,8 @@ README.CMake.txt - Building and using FLTK with CMake
  CONTENTS
 ==========
 
-  1	Introduction to CMake
-  2	Using CMake to Build FLTK
+  1     Introduction to CMake
+  2     Using CMake to Build FLTK
     2.1   Prerequisites
     2.2   Options
     2.3   Building under Linux with Unix Makefiles
@@ -14,10 +14,10 @@ README.CMake.txt - Building and using FLTK with CMake
     2.5   Building under Windows with MinGW using Makefiles
     2.6   Building under MacOS with Xcode
     2.7   Crosscompiling
-  3	Using CMake with FLTK
+  3     Using CMake with FLTK
     3.1   Library Names
     3.2   Using Fluid Files
-  4	Document History
+  4     Document History
 
 
  1.  INTRODUCTION TO CMAKE
@@ -113,8 +113,11 @@ OPTION_BUILD_SHARED_LIBS - default OFF
    Normally FLTK is built as static libraries which makes more portable
    binaries.  If you want to use shared libraries, this will build them too.
 
-OPTION_BUILD_EXAMPLES - default ON
-   Builds the many fine example programs.
+FLTK_BUILD_TEST - default ON
+   Builds the test and demo programs in the 'test' directory.
+
+FLTK_BUILD_EXAMPLES - default OFF
+   Builds the example programs in the 'examples' directory.
 
 OPTION_CAIRO - default OFF
    Enables libcairo support - see README.Cairo.txt.
@@ -138,16 +141,17 @@ OPTION_USE_SYSTEM_LIBPNG - default ON
    use system libraries instead, unless CMake can't find them.  If you set
    any of these options to OFF, then the built in library will be used.
 
-OPTION_USE_NANOSVG - default ON
-   FLTK has a built in nano svg library. Turning this option off
-   disables nano SVG support.
+OPTION_USE_SVG - default ON
+   FLTK has a built in SVG library and can create (write) SVG image files.
+   Turning this option off disables SVG (read and write) support.
 
 OPTION_USE_XINERAMA - default ON
-OPTION_USE_XFT - default ON
-OPTION_USE_XDBE - default ON
-OPTION_USE_XCURSOR - default ON
-OPTION_USE_XRENDER - default ON
-   These are X11 extended libraries.
+OPTION_USE_XFT      - default ON
+OPTION_USE_XDBE     - default ON
+OPTION_USE_XCURSOR  - default ON
+OPTION_USE_XRENDER  - default ON
+   These are X11 extended libraries. These libs are used if found on the
+   build system unless the respective option is turned off.
 
 OPTION_USE_PANGO - default OFF
    Enables use of the Pango library for drawing text. Pango supports all
@@ -173,8 +177,8 @@ OPTION_PRINT_SUPPORT - default ON
 Documentation options: these options are only available if `doxygen' is
    installed and found by CMake. PDF related options require also `latex'.
 
-OPTION_BUILD_HTML_DOCUMENTATION - default OFF
-OPTION_BUILD_PDF_DOCUMENTATION - default OFF
+OPTION_BUILD_HTML_DOCUMENTATION - default ON
+OPTION_BUILD_PDF_DOCUMENTATION  - default ON
    These options can be used to switch HTML documentation generation with
    doxygen on. The build targets ('html', 'pdf', or 'docs') need still to
    be executed explicitly.
@@ -185,7 +189,7 @@ OPTION_INCLUDE_DRIVER_DOCUMENTATION - default OFF
    or advanced users.
 
 OPTION_INSTALL_HTML_DOCUMENTATION - default OFF
-OPTION_INSTALL_PDF_DOCUMENTATION - default OFF
+OPTION_INSTALL_PDF_DOCUMENTATION  - default OFF
    If these options are ON then the HTML and/or PDF docs get installed
    when the 'install' target is executed, e.g. with `make install'. You
    need to select above options OPTION_BUILD_*_DOCUMENTATION as well.
@@ -246,15 +250,15 @@ in the GUI (cmake-gui).
        to where you've extracted an fltk distribution tar file (or
        snapshot tar file), and run the following commands:
 
-           cd C:\fltk-1.4.x		<-- change to your FLTK directory
-           mkdir build			<-- create an empty directory
+           cd C:\fltk-1.4.x             <-- change to your FLTK directory
+           mkdir build                  <-- create an empty directory
            cd build
            cmake -G "Visual Studio 7" -D CMAKE_BUILD_TYPE=Release ..
 
        IMPORTANT: The trailing ".." on the cmake command must be specified
        (it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
 
-	This will create the file FLTK.sln in the current 'build' directory.
+        This will create the file FLTK.sln in the current 'build' directory.
 
     3) Open Visual Studio 7, and choose File -> Open -> Project,
        and pick the "FLTK.sln" created by step #2 in the 'build' directory.
@@ -267,7 +271,7 @@ in the GUI (cmake-gui).
 
     5) In the "Solution Explorer", right click on:
 
-	    Solution 'FLTK' (## projects)
+            Solution 'FLTK' (## projects)
 
        ..and in the popup menu, choose "Build Solution"
 
@@ -275,25 +279,25 @@ in the GUI (cmake-gui).
 
        The test programs (*.exe) can be found in e.g.
 
-	    Release: C:\fltk-1.4.x\build\bin\examples\release\*.exe
-	      Debug: C:\fltk-1.4.x\build\bin\examples\debug\*.exe
+            Release: C:\fltk-1.4.x\build\bin\examples\release\*.exe
+              Debug: C:\fltk-1.4.x\build\bin\examples\debug\*.exe
 
        ..and the FLTK include files (*.H & *.h) your own apps can
        compile with can be found in:
 
-	    Release & Debug: C:\fltk-1.4.x\build\FL
-	    *and* [1] in:    C:\fltk-1.4.x\FL
+            Release & Debug: C:\fltk-1.4.x\build\FL
+            *and* [1] in:    C:\fltk-1.4.x\FL
 
        ..and the FLTK library files (*.lib) which your own apps can
        link with can be found in:
 
-	    Release: C:\fltk-1.4.x\build\lib\release\*.lib
-	      Debug: C:\fltk-1.4.x\build\lib\debug\*.lib
+            Release: C:\fltk-1.4.x\build\lib\release\*.lib
+              Debug: C:\fltk-1.4.x\build\lib\debug\*.lib
 
       [1] If you want to build your own FLTK application directly using
-	  the build directories (i.e. without "installation") you need
-	  to include both the build tree (first) and then the FLTK source
-	  tree in the compiler's header search list.
+          the build directories (i.e. without "installation") you need
+          to include both the build tree (first) and then the FLTK source
+          tree in the compiler's header search list.
 
 
  2.5  Building under Windows with MinGW using Makefiles
@@ -495,8 +499,8 @@ a Windows GUI app.  It is ignored on other platforms and should always be
 present with FLTK GUI programs for better portability.
 
 Note: the variable FLTK_USE_FILE used to include another file in
-previous FLTK versions was deprecated since FLTK 1.3.4 and was removed
-in FLTK 1.4.0.
+previous FLTK versions was deprecated since FLTK 1.3.4 and will be
+removed in FLTK 1.4.0 (this version) or later (maybe 1.4.1).
 
 
  3.1  Library Names
@@ -540,8 +544,8 @@ include_directories(${FLTK_INCLUDE_DIRS})
 
 #run fluid -c to generate CubeViewUI.cxx and CubeViewUI.h files
 add_custom_command(
-	OUTPUT "CubeViewUI.cxx" "CubeViewUI.h"
-	COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/CubeViewUI.fl
+        OUTPUT "CubeViewUI.cxx" "CubeViewUI.h"
+        COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/CubeViewUI.fl
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -552,9 +556,9 @@ add_executable(CubeView WIN32 CubeMain.cxx CubeView.cxx CubeViewUI.cxx)
 target_link_libraries(CubeView fltk fltk_gl)
 ---
 
-You can repeat the add_custom_command for each fluid file or if you have
-a large number of them see the CMake/macros.cmake function FLTK_RUN_FLUID
-for an example of how to run it in a loop.
+You can repeat the add_custom_command for each fluid file or if you
+have a large number of them see the CMake/FLTK-Functions.cmake function
+FLTK_RUN_FLUID for an example of how to run it in a loop.
 
 The two lines
 

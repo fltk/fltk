@@ -28,7 +28,7 @@ ON-LINE DOCUMENTATION
     starting point.  PostScript(tm) and PDF versions of this
     documentation is also available from the FLTK web site at:
 
-        http://www.fltk.org/documentation.php
+        https://www.fltk.org/documentation.php
 
 
 BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
@@ -54,22 +54,22 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     You can run configure yourself to get the exact setup you
     need. Type "./configure <options>".  Options include:
 
-	--enable-cygwin         - Enable the Cygwin libraries (Windows)
-	--enable-debug          - Enable debugging code & symbols
-	--disable-gl            - Disable OpenGL support
-	--enable-shared         - Enable generation of shared libraries
-	--enable-threads        - Enable multithreading support
-	--enable-xdbe           - Enable the X double-buffer extension
-	--enable-xft            - Enable the Xft library (anti-aliased fonts)
+        --enable-cygwin         - Enable the Cygwin libraries (Windows)
+        --enable-debug          - Enable debugging code & symbols
+        --disable-gl            - Disable OpenGL support
+        --enable-shared         - Enable generation of shared libraries
+        --enable-threads        - Enable multithreading support
+        --enable-xdbe           - Enable the X double-buffer extension
+        --enable-xft            - Enable the Xft library (anti-aliased fonts)
 
-	--bindir=/path          - Set the location for executables
-                        	  [default = /usr/local/bin]
-	--libdir=/path          - Set the location for libraries
-                        	  [default = /usr/local/lib]
-	--includedir=/path      - Set the location for include files.
-                        	  [default = /usr/local/include]
-	--prefix=/dir           - Set the directory prefix for files
-                        	  [default = /usr/local]
+        --bindir=/path          - Set the location for executables
+                                  [default = /usr/local/bin]
+        --libdir=/path          - Set the location for libraries
+                                  [default = /usr/local/lib]
+        --includedir=/path      - Set the location for include files.
+                                  [default = /usr/local/include]
+        --prefix=/dir           - Set the directory prefix for files
+                                  [default = /usr/local]
 
     When the configure script is done you can just run the
     "make" command. This will build the library, FLUID tool, and
@@ -119,11 +119,11 @@ BUILDING HTML DOCUMENTATION
 
     If you want to build the HTML documentation:
 
-    	( cd documentation && make html )
+        ( cd documentation && make html )
 
     If you want to build the PDF documentation:
 
-    	( cd documentation && make pdf )
+        ( cd documentation && make pdf )
 
     FLTK uses doxygen for documentation, so you'll at least need doxygen
     installed for creating html docs, and LaTeX for creating PDF docs.
@@ -133,19 +133,19 @@ INTERNET RESOURCES
 
     FLTK is available on the 'net in a bunch of locations:
 
-	- WWW:   http://www.fltk.org/
-	         http://www.fltk.org/str.php [for reporting bugs]
-	         http://www.fltk.org/software.php [source code]
+        - WWW:   https://www.fltk.org/
+                 https://www.fltk.org/bugs.php [for reporting bugs]
+                 https://www.fltk.org/software.php [source code]
 
     To join the FLTK mailing list, go the following web page:
 
-        http://www.fltk.org/newsgroups.php
+        https://www.fltk.org/newsgroups.php
 
 REPORTING BUGS
 
     To report a bug in FLTK, use the form at:
 
-        http://www.fltk.org/str.php
+        https://www.fltk.org/bugs.php
 
     For general support and questions, please use the FLTK
     mailing list at "fltk@fltk.org".
@@ -169,5 +169,4 @@ COPYRIGHT
     outlined in the file "COPYING" which should have been included with
     this file.  If this file is missing or damaged, see the license at:
 
-        http://www.fltk.org/COPYING.php
-
+        https://www.fltk.org/COPYING.php

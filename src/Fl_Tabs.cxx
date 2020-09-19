@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // This is the "file card tabs" interface to allow you to put lots and lots
@@ -189,13 +187,13 @@ int Fl_Tabs::handle(int event) {
       }
       if (o &&                              // Released on a tab and..
           (value(o) ||                      // tab changed value or..
-	   (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
-	  )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
-	 ) {
+           (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
+          )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
+         ) {
         Fl_Widget_Tracker wp(o);
         set_changed();
-	do_callback();
-	if (wp.deleted()) return 1;
+        do_callback();
+        if (wp.deleted()) return 1;
       }
       Fl_Tooltip::current(o);
     } else {
@@ -204,27 +202,28 @@ int Fl_Tabs::handle(int event) {
     return 1;
   case FL_MOVE: {
     int ret = Fl_Group::handle(event);
-    Fl_Widget *tooltip_widget = Fl_Tooltip::current(), *n = tooltip_widget;
+    Fl_Widget *tooltip_widget = Fl_Tooltip::current();
+    Fl_Widget *n; // initialized later
     int H = tab_height();
-    if ( (H>=0) && (Fl::event_y()>y()+H) )
+    if ( (H >= 0) && (Fl::event_y() > y()+H) )
       return ret;
-    else if ( (H<0) && (Fl::event_y() < y()+h()+H) )
+    else if ( (H < 0) && (Fl::event_y() < y()+h()+H) )
       return ret;
     else {
       n = which(Fl::event_x(), Fl::event_y());
       if (!n) n = this;
     }
-    if (n!=tooltip_widget)
+    if (n != tooltip_widget)
       Fl_Tooltip::enter(n);
     return ret; }
   case FL_FOCUS:
   case FL_UNFOCUS:
     if (!Fl::visible_focus()) return Fl_Group::handle(event);
     if (Fl::event() == FL_RELEASE ||
-	Fl::event() == FL_SHORTCUT ||
-	Fl::event() == FL_KEYBOARD ||
-	Fl::event() == FL_FOCUS ||
-	Fl::event() == FL_UNFOCUS) {
+        Fl::event() == FL_SHORTCUT ||
+        Fl::event() == FL_KEYBOARD ||
+        Fl::event() == FL_FOCUS ||
+        Fl::event() == FL_UNFOCUS) {
       redraw_tabs();
       if (Fl::event() == FL_FOCUS) return Fl_Group::handle(event);
       if (Fl::event() == FL_UNFOCUS) return 0;
@@ -233,22 +232,22 @@ int Fl_Tabs::handle(int event) {
   case FL_KEYBOARD:
     switch (Fl::event_key()) {
       case FL_Left:
-	if (!children()) return 0;
+        if (!children()) return 0;
         if (child(0)->visible()) return 0;
-	for (i = 1; i < children(); i ++)
-	  if (child(i)->visible()) break;
-	value(child(i - 1));
-	set_changed();
-	do_callback();
+        for (i = 1; i < children(); i ++)
+          if (child(i)->visible()) break;
+        value(child(i - 1));
+        set_changed();
+        do_callback();
         return 1;
       case FL_Right:
-	if (!children()) return 0;
+        if (!children()) return 0;
         if (child(children() - 1)->visible()) return 0;
-	for (i = 0; i < children(); i ++)
-	  if (child(i)->visible()) break;
-	value(child(i + 1));
-	set_changed();
-	do_callback();
+        for (i = 0; i < children(); i ++)
+          if (child(i)->visible()) break;
+        value(child(i + 1));
+        set_changed();
+        do_callback();
         return 1;
       case FL_Down:
         redraw();
@@ -499,39 +498,39 @@ Fl_Tabs::~Fl_Tabs() {
   \li >  0: use given \p tabh value, tabs on top (height = tabh)
   \li < -1: use given \p tabh value, tabs on bottom (height = -tabh)
 
-  \param[in]	tabh		position and optional height of tabs (see above)
-  \param[out]	rx,ry,rw,rh	(x,y,w,h) of client area for children
+  \param[in]    tabh            position and optional height of tabs (see above)
+  \param[out]   rx,ry,rw,rh     (x,y,w,h) of client area for children
 
-  \since	FLTK 1.3.0
+  \since        FLTK 1.3.0
 */
 void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
 
-  if (children()) {			// use existing values
+  if (children()) {                     // use existing values
 
     rx = child(0)->x();
     ry = child(0)->y();
     rw = child(0)->w();
     rh = child(0)->h();
 
-  } else {				// calculate values
+  } else {                              // calculate values
 
     int y_offset;
     int label_height = fl_height(labelfont(), labelsize()) + BORDER*2;
 
-    if (tabh == 0)			// use default (at top)
+    if (tabh == 0)                      // use default (at top)
       y_offset = label_height;
-    else if (tabh == -1)		// use default (at bottom)
+    else if (tabh == -1)                // use default (at bottom)
       y_offset = -label_height;
     else
-      y_offset = tabh;			// user given value
+      y_offset = tabh;                  // user given value
 
     rx = x();
     rw = w();
 
-    if (y_offset >= 0) {		// labels at top
+    if (y_offset >= 0) {                // labels at top
       ry = y() + y_offset;
       rh = h() - y_offset;
-    } else {				// labels at bottom
+    } else {                            // labels at bottom
       ry = y();
       rh = h() + y_offset;
     }
@@ -548,7 +547,3 @@ void Fl_Tabs::clear_tab_positions() {
     tab_width = 0;
   }
 }
-
-//
-// End of "$Id$".
-//

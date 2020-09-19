@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Definition of Android system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -24,6 +22,7 @@
 #ifndef FL_ANDROID_SYSTEM_DRIVER_H
 #define FL_ANDROID_SYSTEM_DRIVER_H
 
+#include <FL/fl_string.h>
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
 
@@ -48,7 +47,7 @@ public:
   virtual void fatal(const char *format, va_list args);
   virtual char *utf2mbcs(const char *s);
   virtual char *getenv(const char *var);
-  virtual int putenv(char *var) {return ::putenv(var);} // *FIXME* needs string conversion
+  virtual int putenv(const char *var) { return ::putenv(fl_strdup(var)); }
   virtual int open(const char *fnam, int oflags, int pmode);
   virtual int open_ext(const char *fnam, int binary, int oflags, int pmode);
   virtual FILE *fopen(const char *fnam, const char *mode);
@@ -72,7 +71,9 @@ public:
   // these 2 are in Fl_get_key_win32.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg, int errmsg_sz);
   virtual int filename_expand(char *to,int tolen, const char *from);
   virtual int filename_relative(char *to, int tolen, const char *from, const char *base);
   virtual int filename_absolute(char *to, int tolen, const char *from);
@@ -82,7 +83,9 @@ public:
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_recent_tooltip_fix() {return 1;}
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);
-  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
+  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size,
+                                          dirent ***pfiles, Fl_File_Sort_F *sort,
+                                          char *errmsg=NULL, int errmsg_sz=0);
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);
@@ -123,7 +126,3 @@ public:
 };
 
 #endif // FL_ANDROID_SYSTEM_DRIVER_H
-
-//
-// End of "$Id$".
-//

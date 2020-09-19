@@ -3,21 +3,19 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -55,7 +53,7 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {
 Function {make_function_panel()} {} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {557 523 343 232} type Double resizable modal visible
+    xywh {557 523 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -136,7 +134,7 @@ Function {make_function_panel()} {} {
 Function {make_code_panel()} {} {
   Fl_Window code_panel {
     label {Code Properties}
-    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
 code_panel->hide(); // otherwise hide..} open
     xywh {503 450 540 180} type Double labelsize 11 hide resizable
@@ -336,7 +334,7 @@ Function {make_decl_panel()} {} {
 Function {make_data_panel()} {} {
   Fl_Window data_panel {
     label {Inline Data Properties} open
-    xywh {472 191 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {472 191 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -541,9 +539,9 @@ Function {make_widgetbin()} {open
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
-else  
+else
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {410 171 574 85} type Single align 80 non_modal visible
+    xywh {410 171 574 85} type Single align 80 hide non_modal
   } {
     Fl_Group {} {
       xywh {3 3 79 79}
@@ -963,7 +961,5 @@ Function {make_sourceview()} {} {
 }
 
 comment {
-//
-// End of "$Id$".
 //} {in_source in_header
 }

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,18 +7,18 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
   \file Fl_GDI_Graphics_Driver_vertex.cxx
 
   \brief  Portable drawing code for drawing arbitrary shapes with
-	  simple 2D transformations, implemented for Windows GDI.
+          simple 2D transformations, implemented for Windows GDI.
 */
 
 #include "Fl_GDI_Graphics_Driver.H"
@@ -99,9 +97,5 @@ void Fl_GDI_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, d
     SelectObject(gc_, fl_brush());
     Pie(gc_, llx, lly, llx+w, lly+h, 0,0, 0,0);
   } else
-    Arc(gc_, llx, lly, llx+w, lly+h, 0,0, 0,0); 
+    Arc(gc_, llx, lly, llx+w, lly+h, 0,0, 0,0);
 }
-
-//
-// End of "$Id$".
-//

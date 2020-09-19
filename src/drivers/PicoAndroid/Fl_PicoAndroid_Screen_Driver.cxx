@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Android Screen interface based on Pico
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // http://developer.android.com/ndk/reference/group___native_activity.html
@@ -443,7 +441,7 @@ double Fl_PicoAndroid_Screen_Driver::wait(double time_to_wait)
 
 
 /*
- The following code should not be here! 
+ The following code should not be here!
  All this must be refactored into the driver system!
  */
 
@@ -458,7 +456,7 @@ Fl_Fontdesc* fl_fonts = NULL;
  Undefined symbols for architecture x86_64:
  */
 
-#if !defined(FL_DOXYGEN)	// *FIXME* silence Doxygen warnings
+#if !defined(FL_DOXYGEN)        // *FIXME* silence Doxygen warnings
 
 void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
 void fl_reset_spot() { }
@@ -562,10 +560,3 @@ drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.o:Fl_PicoAndroid_Window_Driver.
 drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.o:Fl_PicoAndroid_Window_Driver.cxx:vtable for Fl_PicoAndroid_Window_Driver: error: undefined reference to 'Fl_PicoAndroid_Window_Driver::flush_overlay()'
 
 #endif
-
-
-
-//
-// End of "$Id$".
-//
-

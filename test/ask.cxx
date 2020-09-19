@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Standard dialog test program for the Fast Light Tool Kit (FLTK).
 //
 // This also demonstrates how to trap attempts by the user to
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -49,17 +47,20 @@ void rename_me_pwd(Fl_Widget*o) {
   update_input_text(o, input);
 }
 
-void window_callback(Fl_Widget*, void*) {
+void window_callback(Fl_Widget *win, void*) {
   int hotspot = fl_message_hotspot();
   fl_message_hotspot(0);
   fl_message_title("note: no hotspot set for this dialog");
   int rep = fl_choice("Are you sure you want to quit?",
-		      "Cancel", "Quit", "Dunno");
+                      "Cancel", "Quit", "Dunno");
   fl_message_hotspot(hotspot);
   if (rep==1)
     exit(0);
-  else if (rep==2)
+  else if (rep==2) { // (Dunno)
+    fl_message_position(win);
+    fl_message_title("This dialog must be centered over the main window");
     fl_message("Well, maybe you should know before we quit.");
+  }
 }
 
 /*
@@ -98,11 +99,11 @@ void timer_cb(void *) {
 
   // pop up a message:
   stop = fl_choice("Timeout. Click the 'Close' button.\n"
-		   "Note: this message was blocked in FLTK 1.3\n"
-		   "if another message window is open.\n"
-		   "This *should* be fixed in FLTK 1.4.0!\n"
-		   "This message should pop up every 5 seconds.",
-		   "Close", "Stop these funny popups", NULL);
+                   "Note: this message was blocked in FLTK 1.3\n"
+                   "if another message window is open.\n"
+                   "This *should* be fixed in FLTK 1.4.0!\n"
+                   "This message should pop up every 5 seconds.",
+                   "Close", "Stop these funny popups", NULL);
 }
 
 int main(int argc, char **argv) {
@@ -132,7 +133,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

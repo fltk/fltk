@@ -8,7 +8,6 @@ SHELL = /bin/sh
 ALL = browser-simple$(EXEEXT) \
       clipboard$(EXEEXT) \
       draggable-group$(EXEEXT) \
-      fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
@@ -24,7 +23,6 @@ ALL = browser-simple$(EXEEXT) \
       progress-simple$(EXEEXT) \
       shapedwindow$(EXEEXT) \
       simple-terminal$(EXEEXT) \
-      SVG_File_Surface$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \

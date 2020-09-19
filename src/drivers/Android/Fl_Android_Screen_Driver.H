@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Android screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -37,7 +35,7 @@ extern void (*fl_lock_function)();
 class Fl_Window;
 
 
-class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver 
+class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver
 {
   // easy access to the super class
   typedef Fl_Screen_Driver super;
@@ -139,7 +137,7 @@ public:
   virtual void disable_im();
   virtual void open_display_platform();
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
-#if defined(FLTK_HIDPI_SUPPORT)  
+#if defined(FLTK_HIDPI_SUPPORT)
   virtual APP_SCALING_CAPABILITY rescalable() {
     return PER_SCREEN_APP_SCALING;
   }
@@ -176,7 +174,3 @@ public:
 };
 
 #endif // FL_ANDROID_SCREEN_DRIVER_H
-
-//
-// End of "$Id$".
-//

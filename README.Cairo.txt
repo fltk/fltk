@@ -139,21 +139,21 @@ on the various supported operating systems.
     ..and then rebuild FLTK:
 
         make distclean
-	./configure --enable-cairo
-	make
+        ./configure --enable-cairo
+        make
 
     If you get this error:
 
         [..]
-	Linking cairo_test...
-	/usr/bin/ld: cannot find -lpixman-1
-	collect2: ld returned 1 exit status
-	make[1]: *** [cairo_test] Error 1
+        Linking cairo_test...
+        /usr/bin/ld: cannot find -lpixman-1
+        collect2: ld returned 1 exit status
+        make[1]: *** [cairo_test] Error 1
 
     ..remove "-lpixman-1" from FLTK's makeinclude file, i.e. change this line:
 
-	-CAIROLIBS      = -lcairo -lpixman-1
-	+CAIROLIBS      = -lcairo
+        -CAIROLIBS      = -lcairo -lpixman-1
+        +CAIROLIBS      = -lcairo
 
     ..then another 'make' should finish the build without errors.
     You should be able to then run the test/cairo_test program.
@@ -161,7 +161,7 @@ on the various supported operating systems.
     According to the cairo site, "For Debian and Debian derivatives including
     Ubuntu" you need to install libcairo2-dev, i.e.
 
-	sudo apt-get install libcairo2-dev
+        sudo apt-get install libcairo2-dev
 
     This has been tested and works with Ubuntu 11.10. Note that this also
     installs libpixman-1-dev, so that dependencies on this should be resolved

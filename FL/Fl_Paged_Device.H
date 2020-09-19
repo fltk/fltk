@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -9,14 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_Paged_Device.H 
+/** \file Fl_Paged_Device.H
  \brief declaration of class Fl_Paged_Device.
  */
 
@@ -32,7 +30,7 @@
 /**
  \brief Represents page-structured drawing surfaces.
 
- This class has no public constructor: don't instantiate it; use Fl_Printer 
+ This class has no public constructor: don't instantiate it; use Fl_Printer
  or Fl_PostScript_File_Device instead.
  */
 class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
@@ -42,7 +40,7 @@ protected:
 public:
   /**
    \brief Possible page formats.
-   
+
    All paper formats with pre-defined width and height.
    */
   enum Page_Format {
@@ -92,21 +90,23 @@ public:
  */
   typedef struct {
     /** \brief width in points */
-    int width; 
+    int width;
     /** \brief height in points */
-    int height; 
+    int height;
     /** \brief format name */
-    const char *name; 
+    const char *name;
   } page_format;
   /** \brief width, height and name of all elements of the enum \ref Page_Format.
    */
-  static const page_format page_formats[NO_PAGE_FORMATS];  
+  static const page_format page_formats[NO_PAGE_FORMATS];
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
-  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
-  /** Synonym of begin_job(int pagecount, int *frompage, int *topage).
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
+  /** Synonym of begin_job(int pagecount, int *frompage, int *topage, char **perr_message).
    For API compatibility with FLTK 1.3.x */
-  int start_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL) {return begin_job(pagecount, frompage, topage);}
+  int start_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL) {
+    return begin_job(pagecount, frompage, topage, perr_message);
+  }
   virtual int begin_page(void);
   /** Synonym of begin_page().
    For API compatibility with FLTK 1.3.x */
@@ -125,8 +125,4 @@ public:
 };
 
 #endif // Fl_Paged_Device_H
-
-//
-// End of "$Id$"
-//
 

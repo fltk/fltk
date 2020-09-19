@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -335,8 +333,8 @@ void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
   int i = segs;
 
   if (i) {
-    double epsilon = A/i;			// Arc length for equal-size steps
-    double cos_e = cos(epsilon);	// Rotation coefficients
+    double epsilon = A/i;                       // Arc length for equal-size steps
+    double cos_e = cos(epsilon);        // Rotation coefficients
     double sin_e = sin(epsilon);
     do {
       double Xnew =  cos_e*X + sin_e*Y;
@@ -506,9 +504,3 @@ void Fl_Pico_Graphics_Driver::draw(const char *str, int n, int x, int y)
     x += size_*0.5;
   }
 }
-
-
-
-//
-// End of "$Id$".
-//

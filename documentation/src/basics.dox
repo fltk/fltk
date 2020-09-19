@@ -1,7 +1,7 @@
 /**
 
  \page basics FLTK Basics
- 
+
 This chapter teaches you the basics of compiling programs
 that use FLTK.
 
@@ -104,22 +104,22 @@ copy of it - it just uses the pointer.
 
 \subsection basics_hierarchies Creating Widget hierarchies
 
-Widgets are commonly ordered into functional groups, which 
-in turn may be grouped again, creating a hierarchy of widgets. 
-FLTK makes it easy to fill groups by automatically adding all widgets 
+Widgets are commonly ordered into functional groups, which
+in turn may be grouped again, creating a hierarchy of widgets.
+FLTK makes it easy to fill groups by automatically adding all widgets
 that are created between a
 <tt>myGroup->begin()</tt>
-and 
+and
 <tt>myGroup->end()</tt>.
 In this example, \p myGroup would be the \e current group.
 
 Newly created groups and their derived widgets implicitly call
-\p begin() in the constructor, effectively adding all 
+\p begin() in the constructor, effectively adding all
 subsequently created widgets to itself until \p end()
 is called.
 
 Setting the current group to \p NULL will stop automatic
-hierarchies. New widgets can now be added manually using 
+hierarchies. New widgets can now be added manually using
 <tt>Fl_Group::add(...)</tt>
 and
 <tt>Fl_Group::insert(...)</tt>.
@@ -208,7 +208,7 @@ write, or when an error condition occurs on a file. They are
 most often used to monitor network connections (sockets) for
 data-driven displays.
 
-FLTK applications must periodically check (Fl::check()) 
+FLTK applications must periodically check (Fl::check())
 or wait (Fl::wait()) for events or use the Fl::run()
 method to enter a standard event processing loop. Calling
 Fl::run() is equivalent to the following code:
@@ -310,10 +310,10 @@ SRCS = CubeMain.cxx CubeView.cxx CubeViewUI.cxx
 
 .SUFFIXES: .o .cxx
 %.o: %.cxx
-	$(CXX) $(CXXFLAGS) $(DEBUG) -c $<
+        $(CXX) $(CXXFLAGS) $(DEBUG) -c $<
 
 all: $(TARGET)
-	$(LINK) -o $(TARGET) $(OBJS) $(LDSTATIC)
+        $(LINK) -o $(TARGET) $(OBJS) $(LDSTATIC)
 
 $(TARGET): $(OBJS)
 CubeMain.o: CubeMain.cxx CubeViewUI.h
@@ -321,16 +321,16 @@ CubeView.o: CubeView.cxx CubeView.h CubeViewUI.h
 CubeViewUI.o: CubeViewUI.cxx CubeView.h
 
 clean: $(TARGET) $(OBJS)
-	rm -f *.o 2> /dev/null
-	rm -f $(TARGET) 2> /dev/null
+        rm -f *.o 2> /dev/null
+        rm -f $(TARGET) 2> /dev/null
 \endcode
 
 \section basics_visual_cpp Compiling Programs with Microsoft Visual C++
 
 In Visual C++ you will need to tell the compiler where to
 find the FLTK header files. This can be done by selecting
-"Settings" from the "Project" menu and then changing the 
-"Preprocessor" settings under the "C/C++" tab. You will also 
+"Settings" from the "Project" menu and then changing the
+"Preprocessor" settings under the "C/C++" tab. You will also
 need to add the FLTK (<tt>FLTK.LIB</tt> or <tt>FLTKD.LIB</tt>) and the Windows
 Common Controls (<tt>COMCTL32.LIB</tt>) libraries to the "Link" settings.
 

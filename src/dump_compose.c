@@ -14,11 +14,11 @@ int main() {
     for (y = 0; y<6; y++) {
       const char *p = compose_pairs + (16*y+x)*2;
       if (p[1] == ' ')
-	printf("<td><code>%c&nbsp</code>&nbsp&nbsp&nbsp%c\n",
-	       p[0],(p-compose_pairs)/2+0xA0);
+        printf("<td><code>%c&nbsp</code>&nbsp&nbsp&nbsp%c\n",
+               p[0],(p-compose_pairs)/2+0xA0);
       else
-	printf("<td><code>%c%c</code>&nbsp&nbsp&nbsp%c\n",
-	       p[0],p[1],(p-compose_pairs)/2+0xA0);
+        printf("<td><code>%c%c</code>&nbsp&nbsp&nbsp%c\n",
+               p[0],p[1],(p-compose_pairs)/2+0xA0);
     }
     printf("<tr>");
   }

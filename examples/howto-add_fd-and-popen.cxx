@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //     How to use popen() and Fl::add_fd() - erco 10/04/04
 //     Originally from erco's cheat sheet, permission by author.
 //
@@ -16,11 +14,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <stdio.h>
 #include <FL/Fl.H>
@@ -28,16 +26,16 @@
 #include <FL/Fl_Multi_Browser.H>
 
 #ifdef _WIN32
-#  define PING_CMD "ping -n 10 localhost"	// 'slow command' under windows
+#  define PING_CMD "ping -n 10 localhost"       // 'slow command' under windows
 #  ifdef _MSC_VER
 #    define popen _popen
 #    define pclose _pclose
 #  else /*_MSC_VER*/
-#    include <unistd.h>				// non-MS win32 compilers (untested)
+#    include <unistd.h>                         // non-MS win32 compilers (untested)
 #  endif /*_MSC_VER*/
 #else
 #  include <unistd.h>
-#  define PING_CMD "ping -i 2 -c 10 localhost"	// 'slow command' under unix
+#  define PING_CMD "ping -i 2 -c 10 localhost"  // 'slow command' under unix
 #endif
 
 // GLOBALS
@@ -49,28 +47,24 @@ FILE *G_fp = NULL;
 void HandleFD(FL_SOCKET fd, void *data) {
   Fl_Multi_Browser *brow = (Fl_Multi_Browser*)data;
   char s[1024];
-  if ( fgets(s, 1023, G_fp) == NULL ) {		// read the line of data
-    Fl::remove_fd(fileno(G_fp));		// command ended? disconnect callback
-    pclose(G_fp);				// close the descriptor
-    brow->add(""); brow->add("<<DONE>>");	// append msg indicating command finished
+  if ( fgets(s, 1023, G_fp) == NULL ) {         // read the line of data
+    Fl::remove_fd(fileno(G_fp));                // command ended? disconnect callback
+    pclose(G_fp);                               // close the descriptor
+    brow->add(""); brow->add("<<DONE>>");       // append msg indicating command finished
     return;
   }
-  brow->add(s);					// line of data read? append to widget
+  brow->add(s);                                 // line of data read? append to widget
 }
 
 int main(int argc, char *argv[]) {
   Fl_Window win(600,600);
   Fl_Multi_Browser brow(10,10,580,580);
-  if ( ( G_fp = popen(PING_CMD, "r") ) == NULL ) {	// start the external unix command
+  if ( ( G_fp = popen(PING_CMD, "r") ) == NULL ) {      // start the external unix command
     perror("popen failed");
     return(1);
   }
-  Fl::add_fd(fileno(G_fp), HandleFD, (void*)&brow);	// setup a callback for the popen()ed descriptor
+  Fl::add_fd(fileno(G_fp), HandleFD, (void*)&brow);     // setup a callback for the popen()ed descriptor
   win.resizable(brow);
   win.show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

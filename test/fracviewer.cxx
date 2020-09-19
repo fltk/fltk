@@ -50,18 +50,18 @@
 #define INIT_EY       -2.0
 #define INIT_EZ       -2.0
 #define INIT_MOVE     0.01
-#define MINMOVE      0.001    
+#define MINMOVE      0.001
 
   /* Start in this mode */
-#define INIT_MODE   POLAR   
+#define INIT_MODE   POLAR
 
   /* Controls:  */
 
   /* map 0-9 to an EyeMove value when number key is hit in FLYING mode */
-#define SPEEDFUNCTION(x) ((x)*(x)*0.001)  
+#define SPEEDFUNCTION(x) ((x)*(x)*0.001)
 
   /* Multiply EyeMove by (1+-MOVEFRACTION) when +/- hit in FLYING mode */
-#define MOVEFRACTION 0.25   
+#define MOVEFRACTION 0.25
 
   /* What to multiply number of pixels mouse moved by to get rotation amount */
 #define EL_SENS   0.5
@@ -92,7 +92,7 @@ int     MoveMode = INIT_MODE;  /* FLYING or POLAR mode? */
 GLfloat Ex = INIT_EX,             /* flying parameters */
         Ey = INIT_EY,
         Ez = INIT_EZ,
-        EyeMove = INIT_MOVE,     
+        EyeMove = INIT_MOVE,
 
         EyeDist = INIT_DIST,      /* polar params */
         AzSpin  = INIT_AZ_SPIN,
@@ -106,15 +106,15 @@ int agvMoving;    /* Currently moving?  */
 int downx, downy,   /* for tracking mouse position */
     lastx, lasty,
     downb = -1;     /* and button status */
-						
+
 GLfloat downDist, downEl, downAz, /* for saving state of things */
         downEx, downEy, downEz,   /* when button is pressed */
-        downEyeMove;                
+        downEyeMove;
 
 GLfloat dAz, dEl, lastAz, lastEl;  /* to calculate spinning w/ polar motion */
 int     AdjustingAzEl = 0;
 
-int AllowIdle, RedisplayWindow; 
+int AllowIdle, RedisplayWindow;
    /* If AllowIdle is 1 it means AGV will install its own idle which
     * will update the viewpoint as needed and send glutPostRedisplay() to the
     * window RedisplayWindow which was set in agvInit().  AllowIdle of 0
@@ -200,7 +200,7 @@ void FlyLookFrom(GLfloat x, GLfloat y, GLfloat z, GLfloat az, GLfloat el)
    * Call viewing transformation based on movement mode
    */
 void agvViewTransform(void)
-{ 
+{
   switch (MoveMode) {
     case FLYING:
       FlyLookFrom(Ex, Ey, Ez, EyeAz, EyeEl);
@@ -212,7 +212,7 @@ void agvViewTransform(void)
 }
 
   /*
-   * keep them vertical; I think this makes a lot of things easier, 
+   * keep them vertical; I think this makes a lot of things easier,
    * but maybe it wouldn't be too hard to adapt things to let you go
    * upside down
    */
@@ -285,7 +285,7 @@ void MoveOn(int v)
 
   /*
    * set new redisplay window.  If <= 0 it means we are not to install
-   * an idle function and will rely on whoever does install one to 
+   * an idle function and will rely on whoever does install one to
    * put statement like "if (agvMoving) agvMove();" at end of it
    */
 void agvSetAllowIdle(int allowidle)
@@ -368,16 +368,16 @@ void agvHandleButton(int button, int state, int x, int y)
         lastAz = downAz = EyeAz;
         AzSpin = ElSpin = dAz = dEl = 0;
         AdjustingAzEl = 1;
-	MoveOn(1);
+        MoveOn(1);
         break;
 
       case GLUT_MIDDLE_BUTTON:
         downDist = EyeDist;
-	downEx = Ex;
-	downEy = Ey;
-	downEz = Ez;
-	downEyeMove = EyeMove;
-	EyeMove = 0;
+        downEx = Ex;
+        downEy = Ey;
+        downEz = Ez;
+        downEyeMove = EyeMove;
+        EyeMove = 0;
     }
 
   } else if (state == GLUT_UP && button == downb) {
@@ -387,19 +387,19 @@ void agvHandleButton(int button, int state, int x, int y)
     switch (button) {
       case GLUT_LEFT_BUTTON:
         if (MoveMode != FLYING) {
-	  AzSpin =  -dAz;
-	  if (AzSpin < MIN_AZSPIN && AzSpin > -MIN_AZSPIN)
-	    AzSpin = 0;	
-	  ElSpin = -dEl;
-	  if (ElSpin < MIN_ELSPIN && ElSpin > -MIN_ELSPIN)
-	    ElSpin = 0; 
-	}
+          AzSpin =  -dAz;
+          if (AzSpin < MIN_AZSPIN && AzSpin > -MIN_AZSPIN)
+            AzSpin = 0;
+          ElSpin = -dEl;
+          if (ElSpin < MIN_ELSPIN && ElSpin > -MIN_ELSPIN)
+            ElSpin = 0;
+        }
         AdjustingAzEl = 0;
         MoveOn(1);
-	break;
+        break;
 
       case GLUT_MIDDLE_BUTTON:
-	EyeMove = downEyeMove;
+        EyeMove = downEyeMove;
       }
   }
 }
@@ -460,14 +460,14 @@ void agvHandleKeys(unsigned char key, int, int) {
     SetMove(SPEEDFUNCTION((key-'0')));
   else
     switch(key) {
-      case '+':  
+      case '+':
         if (EyeMove == 0)
           SetMove(MINMOVE);
          else
-	  SetMove(EyeMove *= (1 + MOVEFRACTION));
+          SetMove(EyeMove *= (1 + MOVEFRACTION));
         break;
       case '-':
-	SetMove(EyeMove *= (1 - MOVEFRACTION));
+        SetMove(EyeMove *= (1 - MOVEFRACTION));
         break;
     }
 }
@@ -522,11 +522,11 @@ void agvMakeAxesList(int displaylistnum)
         for (j = 0; j < 21; j++) {
 //          glutSolidCube(0.1);
           glTranslatef(i==0, i==1, i==2);
-	}
+        }
       glPopMatrix();
     }
   glPopAttrib();
-  glEndList();  
+  glEndList();
 }
 
 

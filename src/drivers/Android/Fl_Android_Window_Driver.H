@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Android window driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -33,13 +31,13 @@
 
  There is one window driver for each Fl_Window. Window drivers manage window
  actions such as resizing, events, decoration, fullscreen modes, etc. . All
- drawing and rendering is managed by the Surface device and the associated 
+ drawing and rendering is managed by the Surface device and the associated
  graphics driver.
 
  - window specific event handling
  - window types and styles, depth, etc.
  - decorations
- 
+
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 
@@ -143,7 +141,3 @@ public:
 
 
 #endif // FL_ANDROID_WINDOW_DRIVER_H
-
-//
-// End of "$Id$".
-//

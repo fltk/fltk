@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Group.H>
@@ -35,21 +33,21 @@ class MyTable : public Fl_Table {
     static char s[10];
     switch ( context ) {
       case CONTEXT_STARTPAGE:                   // before page is drawn..
-	fl_font(FL_HELVETICA, 8);               // set font for drawing operations
-	return; 
+        fl_font(FL_HELVETICA, 8);               // set font for drawing operations
+        return;
       case CONTEXT_CELL:                        // Draw data in cells
         sprintf(s, "%c", 'A'+ROW+COL);
-	fl_push_clip(X,Y,W,H);
-	  // Draw cell bg
-	  fl_color(FL_WHITE); fl_rectf(X,Y,W,H);
-	  // Draw cell data
-	  fl_color(FL_GRAY0); fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
-	  // Draw box border
-	  fl_color(color()); fl_rect(X,Y,W,H);
-	fl_pop_clip();
-	return;
+        fl_push_clip(X,Y,W,H);
+          // Draw cell bg
+          fl_color(FL_WHITE); fl_rectf(X,Y,W,H);
+          // Draw cell data
+          fl_color(FL_GRAY0); fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
+          // Draw box border
+          fl_color(color()); fl_rect(X,Y,W,H);
+        fl_pop_clip();
+        return;
       default:
-	return;
+        return;
     }
   }
   public:
@@ -63,7 +61,7 @@ class MyTable : public Fl_Table {
     // Cols
     cols(13);                   // how many columns
     col_width_all(10);          // default width of columns
-    end();			// end the Fl_Table group
+    end();                      // end the Fl_Table group
   }
   ~MyTable() { }
 };
@@ -82,60 +80,60 @@ class ScrollBarSizeTest : public Fl_Group {
     Fl_Text_Display *text_a, *text_b, *text_c;
 
     Fl_Browser *makebrowser(int X,int Y,int W,int H,const char*L=0) {
-	Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
-	b->type(FL_MULTI_BROWSER);
-	b->align(FL_ALIGN_TOP);
-	for (int t=0; phonetics[t]; t++ ) {
-	  b->add(phonetics[t]);
-	  if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
-	}
-	return(b);
+        Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
+        b->type(FL_MULTI_BROWSER);
+        b->align(FL_ALIGN_TOP);
+        for (int t=0; phonetics[t]; t++ ) {
+          b->add(phonetics[t]);
+          if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
+        }
+        return(b);
     }
     Fl_Tree *maketree(int X,int Y,int W,int H,const char*L=0) {
-	Fl_Tree *b = new Fl_Tree(X,Y,W,H,L);
-	b->type(FL_TREE_SELECT_MULTI);
-	b->align(FL_ALIGN_TOP);
-	for (int t=0; phonetics[t]; t++ ) {
-	  b->add(phonetics[t]);
-	  if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
-	}
-	return(b);
+        Fl_Tree *b = new Fl_Tree(X,Y,W,H,L);
+        b->type(FL_TREE_SELECT_MULTI);
+        b->align(FL_ALIGN_TOP);
+        for (int t=0; phonetics[t]; t++ ) {
+          b->add(phonetics[t]);
+          if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
+        }
+        return(b);
     }
     MyTable *maketable(int X,int Y,int W,int H,const char*L=0) {
-	MyTable *mta = new MyTable(X,Y,W,H,L);
-	mta->align(FL_ALIGN_TOP);
-	mta->end();
-	return(mta);
+        MyTable *mta = new MyTable(X,Y,W,H,L);
+        mta->align(FL_ALIGN_TOP);
+        mta->end();
+        return(mta);
     }
     Fl_Text_Display *maketextdisplay(int X,int Y,int W,int H,const char*L=0) {
-	Fl_Text_Display *dpy = new Fl_Text_Display(X,Y,W,H,L);
-	Fl_Text_Buffer  *buf = new Fl_Text_Buffer();
-	dpy->buffer(buf);
-	for (int t=0; phonetics[t]; t++ ) {
-	  buf->printf("%s\n", phonetics[t]);
-	  if ( phonetics[t][0] == 'C' ) buf->printf("Long entry will show h-bar\n");
-	}
-	return(dpy);
+        Fl_Text_Display *dpy = new Fl_Text_Display(X,Y,W,H,L);
+        Fl_Text_Buffer  *buf = new Fl_Text_Buffer();
+        dpy->buffer(buf);
+        for (int t=0; phonetics[t]; t++ ) {
+          buf->printf("%s\n", phonetics[t]);
+          if ( phonetics[t][0] == 'C' ) buf->printf("Long entry will show h-bar\n");
+        }
+        return(dpy);
     }
     void slide_cb2(Fl_Value_Slider *in) {
-	const char *label = in->label();
-	int val = int(in->value());
-	//fprintf(stderr, "VAL='%d'\n",val);
-	if ( strcmp(label,"A: Scroll Size") == 0 ) {
-	    brow_a->scrollbar_size(val);
-	    tree_a->scrollbar_size(val);
-	    table_a->scrollbar_size(val);
-	    text_a->scrollbar_size(val);
-	} else {
-	    Fl::scrollbar_size(val);
-	}
-	in->window()->redraw();
+        const char *label = in->label();
+        int val = int(in->value());
+        //fprintf(stderr, "VAL='%d'\n",val);
+        if ( strcmp(label,"A: Scroll Size") == 0 ) {
+            brow_a->scrollbar_size(val);
+            tree_a->scrollbar_size(val);
+            table_a->scrollbar_size(val);
+            text_a->scrollbar_size(val);
+        } else {
+            Fl::scrollbar_size(val);
+        }
+        in->window()->redraw();
     }
     static void slide_cb(Fl_Widget *w, void *data) {
         ScrollBarSizeTest *o = (ScrollBarSizeTest*)data;
-	o->slide_cb2((Fl_Value_Slider*)w);
+        o->slide_cb2((Fl_Value_Slider*)w);
     }
-public: 
+public:
     static Fl_Widget *create() {
       return(new ScrollBarSizeTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H));
     }
@@ -146,19 +144,19 @@ public:
         //      _____________    _______________
         //     |_____________|  |_______________|
         //                                                ---   -----  <-- tgrpy
-        //       brow_a      brow_b      brow_c            | 14   | 
+        //       brow_a      brow_b      brow_c            | 14   |
         //     ----------  ----------  ----------         ---     |    <-- browy
         //     |        |  |        |  |        |          |browh |
         //     |        |  |        |  |        |          |      |
-        //     ----------  ----------  ----------         ---   tgrph 
+        //     ----------  ----------  ----------         ---   tgrph
         //                                                 |      |
-        //       tree_a      tree_b      tree_c            | 20   | 
+        //       tree_a      tree_b      tree_c            | 20   |
         //     ----------  ----------  ----------         ---     |    <-- treey
         //     |        |  |        |  |        |          |treeh |
         //     |        |  |        |  |        |          |      |
         //     ----------  ----------  ----------         ---     |
         //                                                 |      |
-        //      table_a     table_b     table_c            | 20   | 
+        //      table_a     table_b     table_c            | 20   |
         //     ----------  ----------  ----------         ---     |    <-- tabley
         //     |        |  |        |  |        |          |tableh|
         //     |        |  |        |  |        |          |      |
@@ -203,7 +201,7 @@ public:
         slide_browa->callback(slide_cb, (void*)this);
         slide_browa->labelsize(12);
         int msgbox_x = brow_c->x() + brow_c->w() + 20;
-	int msgbox_w = W-(msgbox_x-X);
+        int msgbox_w = W-(msgbox_x-X);
         Fl_Box *msgbox = new Fl_Box(msgbox_x,browy,msgbox_w,H-Y-48);
         msgbox->label("\nVerify global scrollbar sizing and per-widget scrollbar sizing. "
                       "Scrollbar's size should change interactively as size sliders are changed. "
@@ -212,14 +210,10 @@ public:
                       "for all the 'A' group widgets.");
         msgbox->labelsize(12);
         msgbox->align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
-	msgbox->box(FL_FLAT_BOX);
-	msgbox->color(53); // 90% gray
+        msgbox->box(FL_FLAT_BOX);
+        msgbox->color(53); // 90% gray
       end();
     }
 };
 
 UnitTest scrollbarsize("scrollbar size", ScrollBarSizeTest::create);
-
-//
-// End of "$Id$"
-//

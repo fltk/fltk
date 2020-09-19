@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* Implementation of support for two text drawing APIs: Core Text (current) and ATSU (legacy)
@@ -81,6 +79,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_utf8.h> // for fl_utf8toUtf16()
+#include <FL/fl_string.h> // fl_strdup()
 
 Fl_Fontdesc* fl_fonts = NULL;
 
@@ -234,9 +233,9 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
   if (wlen >= utfWlen)
   {
     utfWlen = wlen + 100;
-	if (utfWbuf) free(utfWbuf);
+        if (utfWbuf) free(utfWbuf);
     utfWbuf = (UniChar*)malloc((utfWlen)*sizeof(UniChar));
-	wlen = fl_utf8toUtf16(txt, len, (unsigned short*)utfWbuf, utfWlen);
+        wlen = fl_utf8toUtf16(txt, len, (unsigned short*)utfWbuf, utfWlen);
   }
   *new_len = wlen;
   return utfWbuf;
@@ -522,15 +521,15 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
       CGSize advance_size;
       CGGlyph glyph;
       for (int j = 0; j < block; j++) { // loop over the block
-	// ii spans all characters of this block
-	bool b = CTFontGetGlyphsForCharacters(fl_fontsize->fontref, &ii, &glyph, 1);
-	if (b)
-	  CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
-	else
-	  advance_size.width = -1e9; // calculate this later
-	// the width of one character of this block of characters
-	fl_fontsize->width[r][j] = advance_size.width;
-	ii++;
+        // ii spans all characters of this block
+        bool b = CTFontGetGlyphsForCharacters(fl_fontsize->fontref, &ii, &glyph, 1);
+        if (b)
+          CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
+        else
+          advance_size.width = -1e9; // calculate this later
+        // the width of one character of this block of characters
+        fl_fontsize->width[r][j] = advance_size.width;
+        ii++;
       }
     }
     // sum the widths of all characters of txt
@@ -542,12 +541,12 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
       bool must_release = false;
       bool b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
       if (!b) { // the current font doesn't contain this char
-	CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, &uni, 1, kCFAllocatorNull);
-	// find a font that contains it
-	font2 = CTFontCreateForString(font2, str, CFRangeMake(0,1));
-	must_release = true;
-	CFRelease(str);
-	b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
+        CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, &uni, 1, kCFAllocatorNull);
+        // find a font that contains it
+        font2 = CTFontCreateForString(font2, str, CFRangeMake(0,1));
+        must_release = true;
+        CFRelease(str);
+        b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
       }
       if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
       else advance_size.width = 0.;
@@ -620,15 +619,22 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _CoreText)(const char *str, int
   CFRelease(ctline);
 }
 
+// Skip over bold/italic/oblique qualifiers part of PostScript font names
+// Example:
+//      input: '-Regular_Light-Condensed'
+//     return: '_Light-Condensed'
+//
 static char *skip(char *p, int& derived)
 {
-  if (memcmp(p, "-BoldItalic", 11) == 0) { p += 11; derived = 3; }
-  else if (memcmp(p, "-BoldOblique", 12) == 0) { p += 12; derived = 3; }
-  else if (memcmp(p, "-Bold", 5) == 0) {p += 5; derived = 1; }
-  else if (memcmp(p, "-Italic", 7) == 0) {p += 7; derived = 2; }
-  else if (memcmp(p, "-Oblique", 8) == 0) {p += 8; derived = 2; }
-  else if (memcmp(p, "-Regular", 8) == 0) {p += 8; }
-  else if (memcmp(p, "-Roman", 6) == 0) {p += 6; }
+  //                  0    5    10
+  //                  |    |    |
+  if      (strncmp(p, "-BoldItalic",  11) == 0) { p += 11; derived = 3; }
+  else if (strncmp(p, "-BoldOblique", 12) == 0) { p += 12; derived = 3; }
+  else if (strncmp(p, "-Bold",         5) == 0) { p +=  5; derived = 1; }
+  else if (strncmp(p, "-Italic",       7) == 0) { p +=  7; derived = 2; }
+  else if (strncmp(p, "-Oblique",      8) == 0) { p +=  8; derived = 2; }
+  else if (strncmp(p, "-Regular",      8) == 0) { p +=  8; }
+  else if (strncmp(p, "-Roman",        6) == 0) { p +=  6; }
   return p;
 }
 
@@ -677,7 +683,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
     CFRelease(font);
     static char fname[200];
     CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
-    tabfontnames[i] = strdup(fname); // never free'ed
+    tabfontnames[i] = fl_strdup(fname); // never free'ed
     CFRelease(cfname);
   }
   CFRelease(arrayref);
@@ -847,13 +853,13 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
   for (ItemCount idx = 0; idx < oFontCount; idx++)
   {
     //  ByteCount actualLength = 0;
-    //	Ptr oName;
+    //  Ptr oName;
     // How to get the name - Apples docs say call this twice, once to get the length, then again
     // to get the actual name...
     //    ATSUFindFontName (oFontIDs[idx], kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage,
     //                      0, NULL, &actualLength, NULL);
     // Now actualLength tells us the length of buffer we need
-    //	oName = (Ptr)malloc(actualLength + 8);
+    //  oName = (Ptr)malloc(actualLength + 8);
     // But who's got time for that nonsense? Let's just hard code a fixed buffer (urgh!)
     ByteCount actualLength = 511;
     char oName[512];
@@ -864,8 +870,8 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
       oName[511] = 0;
     else
       oName[actualLength] = 0;
-    Fl::set_font((Fl_Font)(fl_free_font++), strdup(oName));
-    //	free(oName);
+    Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(oName));
+    //  free(oName);
   }
   free(oFontIDs);
   return (Fl_Font)fl_free_font;
@@ -874,7 +880,3 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
 #endif // HAS_ATSU
 
 #endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

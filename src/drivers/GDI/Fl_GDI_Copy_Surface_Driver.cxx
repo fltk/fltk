@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -89,7 +87,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
       SetClipboardData(CF_BITMAP, surf->offscreen());
       Fl_Surface_Device::pop_current();
       delete surf;
-      
+
       CloseClipboard ();
     }
     DeleteEnhMetaFile(hmf);
@@ -116,7 +114,3 @@ void Fl_GDI_Copy_Surface_Driver::untranslate() {
   ((Fl_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
 #endif // FL_CFG_GFX_GDI
-
-//
-// End of "$Id$".
-//

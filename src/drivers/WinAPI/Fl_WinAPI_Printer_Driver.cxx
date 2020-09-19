@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Printing support for Windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2019 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
@@ -38,7 +36,7 @@ private:
   int top_margin;
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
   Fl_WinAPI_Printer_Driver(void);
-  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
   int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
@@ -72,12 +70,12 @@ Fl_WinAPI_Printer_Driver::~Fl_WinAPI_Printer_Driver(void) {
 static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 {
   if ( !prHDC ) return;
-  
+
   fl_window = 0;
   SetGraphicsMode(prHDC, GM_ADVANCED); // to allow for rotations
   SetMapMode(prHDC, MM_ANISOTROPIC);
   SetTextAlign(prHDC, TA_BASELINE|TA_LEFT);
-  SetBkMode(prHDC, TRANSPARENT);	
+  SetBkMode(prHDC, TRANSPARENT);
   // this matches 720 logical units to the number of device units in 10 inches of paper
   // thus the logical unit is the point (= 1/72 inch)
   SetWindowExtEx(prHDC, 720, 720, NULL);
@@ -85,15 +83,14 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 }
 
 
-int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
+int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage, char **perr_message)
 // returns 0 iff OK
 {
   if (pagecount == 0) pagecount = 10000;
-  DWORD       commdlgerr;
   DOCINFO     di;
   char        docName [256];
   int err = 0;
-  
+
   abortPrint = FALSE;
   memset (&pd, 0, sizeof (PRINTDLG));
   pd.lStructSize = sizeof (PRINTDLG);
@@ -116,14 +113,28 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
       prerr = StartDoc (hPr, &di);
       if (prerr < 1) {
         abortPrint = TRUE;
-        //fl_alert ("StartDoc error %d", prerr);
-        err = 1;
+        DWORD dw = GetLastError();
+        err = (dw == ERROR_CANCELLED ? 1 : 2);
+        if (perr_message && err == 2) {
+          wchar_t *lpMsgBuf;
+          DWORD retval = FormatMessageW(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPWSTR) &lpMsgBuf,
+            0, NULL);
+          if (retval) {
+            unsigned srclen = lstrlenW(lpMsgBuf);
+            while (srclen > 0 && (lpMsgBuf[srclen-1] == '\n' || lpMsgBuf[srclen-1] == '\r')) srclen--;
+            unsigned l = fl_utf8fromwc(NULL, 0, lpMsgBuf, srclen);
+            *perr_message = new char[l+51];
+            sprintf(*perr_message, "begin_job() failed with error %lu: ", dw);
+            fl_utf8fromwc(*perr_message + strlen(*perr_message), l+1, lpMsgBuf, srclen);
+            LocalFree(lpMsgBuf);
+          }
+        }
       }
-    } else {
-      commdlgerr = CommDlgExtendedError ();
-      fl_alert ("Unable to create print context, error %lu",
-                (unsigned long) commdlgerr);
-      err = 1;
     }
   } else {
     err = 1;
@@ -153,7 +164,7 @@ void Fl_WinAPI_Printer_Driver::end_job (void)
     if (! abortPrint) {
       prerr = EndDoc (hPr);
       if (prerr < 0) {
-	fl_alert ("EndDoc error %d", prerr);
+        fl_alert ("EndDoc error %d", prerr);
       }
     }
     DeleteDC (hPr);
@@ -171,14 +182,14 @@ void Fl_WinAPI_Printer_Driver::absolute_printable_rect(int *x, int *y, int *w, i
 {
   POINT         physPageSize;
   POINT         pixelsPerInch;
-  XFORM		transform;
-    
+  XFORM         transform;
+
   if (hPr == NULL) return;
   HDC gc = (HDC)driver()->gc();
   GetWorldTransform(gc, &transform);
   ModifyWorldTransform(gc, NULL, MWT_IDENTITY);
   SetWindowOrgEx(gc, 0, 0, NULL);
-  
+
   physPageSize.x = GetDeviceCaps(hPr, HORZRES);
   physPageSize.y = GetDeviceCaps(hPr, VERTRES);
   DPtoLP(hPr, &physPageSize, 1);
@@ -191,7 +202,7 @@ void Fl_WinAPI_Printer_Driver::absolute_printable_rect(int *x, int *y, int *w, i
   *w -= (pixelsPerInch.x / 2);
   top_margin = (pixelsPerInch.y / 4);
   *h -= (pixelsPerInch.y / 2);
-  
+
   *x = left_margin;
   *y = top_margin;
   origin(x_offset, y_offset);
@@ -218,7 +229,7 @@ int Fl_WinAPI_Printer_Driver::printable_rect(int *w, int *h)
 int Fl_WinAPI_Printer_Driver::begin_page (void)
 {
   int  rsult, w, h;
-  
+
   rsult = 0;
   if (hPr != NULL) {
     WIN_SetupPrinterDeviceContext (hPr);
@@ -266,7 +277,7 @@ void Fl_WinAPI_Printer_Driver::rotate (float rot_angle)
 int Fl_WinAPI_Printer_Driver::end_page (void)
 {
   int  rsult;
-  
+
   rsult = 0;
   if (hPr != NULL) {
     prerr = EndPage (hPr);
@@ -319,7 +330,3 @@ void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }
-
-//
-// End of "$Id$".
-//

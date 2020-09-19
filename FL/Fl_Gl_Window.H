@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -28,7 +26,7 @@ class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
 class Fl_Gl_Window_Driver;
 /**
   The Fl_Gl_Window widget sets things up so OpenGL works.
-  
+
   It also keeps an OpenGL "context" for that window, so that changes to the
   lighting and projection may be reused between redraws. Fl_Gl_Window
   also flushes the OpenGL streams and swaps buffers after draw() returns.
@@ -42,7 +40,7 @@ class Fl_Gl_Window_Driver;
   Please note that the FLTK drawing and clipping functions
   will not work inside an Fl_Gl_Window. All drawing
   should be done using OpenGL calls exclusively.
- 
+
   \see \ref opengl_highdpi
 
   \note FLTK 1.4 introduces a driver system for graphic calls. It is now possible
@@ -81,9 +79,9 @@ public:
   int handle(int);
   /** Returns a pointer to the window's Fl_Gl_Window_Driver object */
   Fl_Gl_Window_Driver *gl_driver() {return pGlWindowDriver;}
-  
+
   /**
-    Is turned off when FLTK creates a new context for this window or 
+    Is turned off when FLTK creates a new context for this window or
     when the window resizes, and is turned on \e after draw() is called.
     You can use this inside your draw() method to avoid unnecessarily
     initializing the OpenGL context. Just do this:
@@ -100,28 +98,28 @@ public:
      ... draw your geometry here ...
     }
     \endcode
-    
+
     You can turn valid() on by calling valid(1).  You
     should only do this after fixing the transformation inside a draw()
-    or after make_current().  This is done automatically after 
+    or after make_current().  This is done automatically after
     draw() returns.
   */
   char valid() const {return valid_f_ & 1;}
   /**
-    See char Fl_Gl_Window::valid() const 
+    See char Fl_Gl_Window::valid() const
   */
   void valid(char v) {if (v) valid_f_ |= 1; else valid_f_ &= 0xfe;}
   void invalidate();
 
   /**
-    Will only be set if the 
+    Will only be set if the
     OpenGL context is created or recreated. It differs from
     Fl_Gl_Window::valid() which is also set whenever the context
     changes size.
   */
   char context_valid() const {return valid_f_ & 2;}
   /**
-    See char Fl_Gl_Window::context_valid() const 
+    See char Fl_Gl_Window::context_valid() const
   */
   void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
@@ -139,7 +137,7 @@ public:
   /**
    Set or change the OpenGL capabilites of the window.  The value can be
    any of the following OR'd together:
-   
+
    - \c FL_RGB - RGB color (not indexed)
    - \c FL_RGB8 - RGB color with at least 8 bits of each color
    - \c FL_INDEX - Indexed mode
@@ -151,14 +149,14 @@ public:
    - \c FL_STENCIL - stencil buffer
    - \c FL_MULTISAMPLE - multisample antialiasing
    - \c FL_OPENGL3 - use OpenGL version 3.0 or more.
-   
+
    FL_RGB and FL_SINGLE have a value of zero, so they
    are "on" unless you give FL_INDEX or FL_DOUBLE.
-   
+
    If the desired combination cannot be done, FLTK will try turning off
    FL_MULTISAMPLE.  If this also fails the show() will call
    Fl::error() and not show the window.
-   
+
    You can change the mode while the window is displayed.  This is most
    useful for turning double-buffering on and off.  Under X this will
    cause the old X window to be destroyed and a new one to be created.  If
@@ -166,14 +164,14 @@ public:
    window to blink, raise to the top, and be de-iconized, and the xid()
    will change, possibly breaking other code.  It is best to make the GL
    window a child of another window if you wish to do this!
-   
+
    mode() must not be called within draw() since it
    changes the current context.
-   
+
    The FL_OPENGL3 flag is required to access OpenGL version 3 or more
    under the X11 and MacOS platforms; it's optional under Windows.
    See more details in \ref opengl3.
-   
+
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
    */
   int mode(int a) {return mode(a,0);}
@@ -204,7 +202,7 @@ public:
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
-  
+
   float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.
    When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::w()
@@ -226,10 +224,10 @@ public:
    \version 1.3.4
    */
   int pixel_h() { return int(pixels_per_unit() * h() + 0.5f); }
-  
+
   ~Fl_Gl_Window();
   /**
-    Creates a new Fl_Gl_Window widget using the given size, and label string. 
+    Creates a new Fl_Gl_Window widget using the given size, and label string.
     The default boxtype is FL_NO_BOX. The default mode is FL_RGB|FL_DOUBLE|FL_DEPTH.
   */
   Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
@@ -244,7 +242,3 @@ public:
 };
 
 #endif // Fl_Gl_Window_H
-
-//
-// End of "$Id$".
-//

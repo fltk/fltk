@@ -1,6 +1,6 @@
 /**
 
- \page	FAQ	FAQ (Frequently Asked Questions)
+ \page  FAQ     FAQ (Frequently Asked Questions)
 
 A list of frequently asked questions about FLTK.
 
@@ -32,7 +32,7 @@ and then read them, download and build FLTK from the source, then run the
 test/demo program. Also, go into the 'examples/' directory and run 'make',
 then run some of those programs.
 
-If you prefer watching TV to reading books and code, google search for 
+If you prefer watching TV to reading books and code, google search for
 "FLTK video tutorials" which has some introductory examples of how to
 write FLTK programs in C++ and build them.
 
@@ -79,8 +79,8 @@ clause ("exception") to allow for static linking. Specifically:
     example statement can be included in user documentation to satisfy
     this requirement:
 
-	[program/widget] is based in part on the work of the 
-	FLTK project (http://www.fltk.org).
+        [program/widget] is based in part on the work of the
+        FLTK project (https://www.fltk.org).
 
 \endverbatim
 
@@ -142,6 +142,27 @@ void my_callback(Fl_Widget*, void*) {
 }
 \endcode
 
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="examples.html">
+    [Prev]
+    Example Source Code
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    &nbsp;
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
 
 */
 

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL test program for the Fast Light Tool Kit (FLTK).
 //
 // Modified to have 2 cubes to test multiple OpenGL contexts
@@ -11,11 +9,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -165,7 +163,7 @@ void makeform(const char *name) {
 
   cube2 = new cube_box(513,23,344,344, 0);
   Fl_Box *b = new Fl_Box(FL_NO_BOX,cube->x(),size->y(),
-			 cube->w(),size->h(),0);
+                         cube->w(),size->h(),0);
   form->resizable(b);
   b->hide();
   form->end();
@@ -194,7 +192,7 @@ int main(int argc, char **argv) {
   makeform(argv[0]);
   // added to demo printing
   form->begin();
-  static Fl_Menu_Item	items[] = {
+  static Fl_Menu_Item   items[] = {
     { "Print", 0, 0, 0, FL_SUBMENU },
     { "Print window", 0, print_cb, 0, 0 },
     { 0 },
@@ -231,9 +229,9 @@ int main(int argc, char **argv) {
 #endif
   for (;;) {
     if (form->visible() && speed->value())
-      {if (!Fl::check()) break;}	// returns immediately
+      {if (!Fl::check()) break;}        // returns immediately
     else
-      {if (!Fl::wait()) break;}	// waits until something happens
+      {if (!Fl::wait()) break;} // waits until something happens
     cube->wire = wire->value();
     cube2->wire = !wire->value();
     cube->size = cube2->size = size->value();
@@ -244,7 +242,3 @@ int main(int argc, char **argv) {
   }
   return 0;
 }
-
-//
-// End of "$Id$".
-//

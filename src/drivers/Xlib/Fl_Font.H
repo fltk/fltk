@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Two internal fltk data structures:
@@ -44,7 +42,7 @@ public:
   int angle;
   FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
 #  else
-  XUtf8FontStruct* font;	// X UTF-8 font information
+  XUtf8FontStruct* font;        // X UTF-8 font information
   FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname);
 #  endif
 #  if HAVE_GL
@@ -58,17 +56,13 @@ public:
 #if !USE_XFT
 struct Fl_Xlib_Fontdesc { // replaces Fl_Fontdesc
   const char *name;
-  char fontname[128];	// "Pretty" font name
-  Fl_Font_Descriptor *first;	// linked list of sizes of this style
-  char **xlist;		// matched X font names
-  int n;		// size of xlist, negative = don't free xlist!
+  char fontname[128];   // "Pretty" font name
+  Fl_Font_Descriptor *first;    // linked list of sizes of this style
+  char **xlist;         // matched X font names
+  int n;                // size of xlist, negative = don't free xlist!
 };
 #endif
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 #endif
-
-//
-// End of "$Id$".
-//

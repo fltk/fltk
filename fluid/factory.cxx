@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
 // Type classes for most of the fltk widgets.  Most of the work
@@ -17,11 +15,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -204,8 +202,8 @@ public:
     if (!batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
-	sprintf(buffer,"Browser Line %d",i);
-	b->add(buffer);
+        sprintf(buffer,"Browser Line %d",i);
+        b->add(buffer);
       }
     }
     return b;
@@ -252,8 +250,8 @@ public:
     if (!batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
-	sprintf(buffer,"Browser Line %d",i);
-	b->add(buffer);
+        sprintf(buffer,"Browser Line %d",i);
+        b->add(buffer);
       }
     }
     return b;
@@ -399,7 +397,7 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box()) + h / 2;
-    if (w < 40) w = 40	;
+    if (w < 40) w = 40  ;
   }
   virtual const char *type_name() {return "Fl_Spinner";}
   virtual const char *alt_type_name() {return "fltk::Spinner";}
@@ -1145,125 +1143,125 @@ Fl_Type *Fl_Type_make(const char *tn) {
 struct symbol {const char *name; int value;};
 
 static symbol table[] = {
-  {"BLACK",			FL_BLACK},
-  {"RED",			FL_RED},
-  {"GREEN",			FL_GREEN},
-  {"YELLOW",			FL_YELLOW},
-  {"BLUE",			FL_BLUE},
-  {"MAGENTA",			FL_MAGENTA},
-  {"CYAN",			FL_CYAN},
-  {"WHITE",			FL_WHITE},
+  {"BLACK",                     FL_BLACK},
+  {"RED",                       FL_RED},
+  {"GREEN",                     FL_GREEN},
+  {"YELLOW",                    FL_YELLOW},
+  {"BLUE",                      FL_BLUE},
+  {"MAGENTA",                   FL_MAGENTA},
+  {"CYAN",                      FL_CYAN},
+  {"WHITE",                     FL_WHITE},
 
-  {"LCOL",			FL_BLACK},
-  {"COL1",			FL_GRAY},
-  {"MCOL",			FL_LIGHT1},
-  {"LEFT_BCOL",			FL_LIGHT3},
-  {"TOP_BCOL",			FL_LIGHT2},
-  {"BOTTOM_BCOL",		FL_DARK2},
-  {"RIGHT_BCOL",		FL_DARK3},
-  {"INACTIVE",			FL_INACTIVE_COLOR},
-  {"INACTIVE_COL",		FL_INACTIVE_COLOR},
-  {"FREE_COL1",			FL_FREE_COLOR},
-  {"FREE_COL2",			FL_FREE_COLOR+1},
-  {"FREE_COL3",			FL_FREE_COLOR+2},
-  {"FREE_COL4",			FL_FREE_COLOR+3},
-  {"FREE_COL5",			FL_FREE_COLOR+4},
-  {"FREE_COL6",			FL_FREE_COLOR+5},
-  {"FREE_COL7",			FL_FREE_COLOR+6},
-  {"FREE_COL8",			FL_FREE_COLOR+7},
-  {"FREE_COL9",			FL_FREE_COLOR+8},
-  {"FREE_COL10",		FL_FREE_COLOR+9},
-  {"FREE_COL11",		FL_FREE_COLOR+10},
-  {"FREE_COL12",		FL_FREE_COLOR+11},
-  {"FREE_COL13",		FL_FREE_COLOR+12},
-  {"FREE_COL14",		FL_FREE_COLOR+13},
-  {"FREE_COL15",		FL_FREE_COLOR+14},
-  {"FREE_COL16",		FL_FREE_COLOR+15},
-  {"TOMATO",			131},
-  {"INDIANRED",			164},
-  {"SLATEBLUE",			195},
-  {"DARKGOLD",			84},
-  {"PALEGREEN",			157},
-  {"ORCHID",			203},
-  {"DARKCYAN",			189},
-  {"DARKTOMATO",		113},
-  {"WHEAT",			174},
-  {"ALIGN_CENTER",		FL_ALIGN_CENTER},
-  {"ALIGN_TOP",			FL_ALIGN_TOP},
-  {"ALIGN_BOTTOM",		FL_ALIGN_BOTTOM},
-  {"ALIGN_LEFT",		FL_ALIGN_LEFT},
-  {"ALIGN_RIGHT",		FL_ALIGN_RIGHT},
-  {"ALIGN_INSIDE",		FL_ALIGN_INSIDE},
-  {"ALIGN_TOP_LEFT",		FL_ALIGN_TOP | FL_ALIGN_LEFT},
-  {"ALIGN_TOP_RIGHT",		FL_ALIGN_TOP | FL_ALIGN_RIGHT},
-  {"ALIGN_BOTTOM_LEFT",		FL_ALIGN_BOTTOM | FL_ALIGN_LEFT},
-  {"ALIGN_BOTTOM_RIGHT",	FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT},
-  {"ALIGN_CENTER|FL_ALIGN_INSIDE",	FL_ALIGN_CENTER|FL_ALIGN_INSIDE},
-  {"ALIGN_TOP|FL_ALIGN_INSIDE",		FL_ALIGN_TOP|FL_ALIGN_INSIDE},
-  {"ALIGN_BOTTOM|FL_ALIGN_INSIDE",	FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE},
-  {"ALIGN_LEFT|FL_ALIGN_INSIDE",	FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
-  {"ALIGN_RIGHT|FL_ALIGN_INSIDE",	FL_ALIGN_RIGHT|FL_ALIGN_INSIDE},
-  {"ALIGN_INSIDE|FL_ALIGN_INSIDE",	FL_ALIGN_INSIDE|FL_ALIGN_INSIDE},
-  {"ALIGN_TOP_LEFT|FL_ALIGN_INSIDE",	FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
-  {"ALIGN_TOP_RIGHT|FL_ALIGN_INSIDE",	FL_ALIGN_TOP|FL_ALIGN_RIGHT|FL_ALIGN_INSIDE},
-  {"ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE",	FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
+  {"LCOL",                      FL_BLACK},
+  {"COL1",                      FL_GRAY},
+  {"MCOL",                      FL_LIGHT1},
+  {"LEFT_BCOL",                 FL_LIGHT3},
+  {"TOP_BCOL",                  FL_LIGHT2},
+  {"BOTTOM_BCOL",               FL_DARK2},
+  {"RIGHT_BCOL",                FL_DARK3},
+  {"INACTIVE",                  FL_INACTIVE_COLOR},
+  {"INACTIVE_COL",              FL_INACTIVE_COLOR},
+  {"FREE_COL1",                 FL_FREE_COLOR},
+  {"FREE_COL2",                 FL_FREE_COLOR+1},
+  {"FREE_COL3",                 FL_FREE_COLOR+2},
+  {"FREE_COL4",                 FL_FREE_COLOR+3},
+  {"FREE_COL5",                 FL_FREE_COLOR+4},
+  {"FREE_COL6",                 FL_FREE_COLOR+5},
+  {"FREE_COL7",                 FL_FREE_COLOR+6},
+  {"FREE_COL8",                 FL_FREE_COLOR+7},
+  {"FREE_COL9",                 FL_FREE_COLOR+8},
+  {"FREE_COL10",                FL_FREE_COLOR+9},
+  {"FREE_COL11",                FL_FREE_COLOR+10},
+  {"FREE_COL12",                FL_FREE_COLOR+11},
+  {"FREE_COL13",                FL_FREE_COLOR+12},
+  {"FREE_COL14",                FL_FREE_COLOR+13},
+  {"FREE_COL15",                FL_FREE_COLOR+14},
+  {"FREE_COL16",                FL_FREE_COLOR+15},
+  {"TOMATO",                    131},
+  {"INDIANRED",                 164},
+  {"SLATEBLUE",                 195},
+  {"DARKGOLD",                  84},
+  {"PALEGREEN",                 157},
+  {"ORCHID",                    203},
+  {"DARKCYAN",                  189},
+  {"DARKTOMATO",                113},
+  {"WHEAT",                     174},
+  {"ALIGN_CENTER",              FL_ALIGN_CENTER},
+  {"ALIGN_TOP",                 FL_ALIGN_TOP},
+  {"ALIGN_BOTTOM",              FL_ALIGN_BOTTOM},
+  {"ALIGN_LEFT",                FL_ALIGN_LEFT},
+  {"ALIGN_RIGHT",               FL_ALIGN_RIGHT},
+  {"ALIGN_INSIDE",              FL_ALIGN_INSIDE},
+  {"ALIGN_TOP_LEFT",            FL_ALIGN_TOP | FL_ALIGN_LEFT},
+  {"ALIGN_TOP_RIGHT",           FL_ALIGN_TOP | FL_ALIGN_RIGHT},
+  {"ALIGN_BOTTOM_LEFT",         FL_ALIGN_BOTTOM | FL_ALIGN_LEFT},
+  {"ALIGN_BOTTOM_RIGHT",        FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT},
+  {"ALIGN_CENTER|FL_ALIGN_INSIDE",      FL_ALIGN_CENTER|FL_ALIGN_INSIDE},
+  {"ALIGN_TOP|FL_ALIGN_INSIDE",         FL_ALIGN_TOP|FL_ALIGN_INSIDE},
+  {"ALIGN_BOTTOM|FL_ALIGN_INSIDE",      FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE},
+  {"ALIGN_LEFT|FL_ALIGN_INSIDE",        FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
+  {"ALIGN_RIGHT|FL_ALIGN_INSIDE",       FL_ALIGN_RIGHT|FL_ALIGN_INSIDE},
+  {"ALIGN_INSIDE|FL_ALIGN_INSIDE",      FL_ALIGN_INSIDE|FL_ALIGN_INSIDE},
+  {"ALIGN_TOP_LEFT|FL_ALIGN_INSIDE",    FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
+  {"ALIGN_TOP_RIGHT|FL_ALIGN_INSIDE",   FL_ALIGN_TOP|FL_ALIGN_RIGHT|FL_ALIGN_INSIDE},
+  {"ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE", FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_INSIDE},
   {"ALIGN_BOTTOM_RIGHT|FL_ALIGN_INSIDE",FL_ALIGN_BOTTOM|FL_ALIGN_RIGHT|FL_ALIGN_INSIDE},
 
-  {"ALIGN_LEFT_TOP",		FL_ALIGN_TOP | FL_ALIGN_LEFT},
-  {"ALIGN_RIGHT_TOP",		FL_ALIGN_TOP | FL_ALIGN_RIGHT},
-  {"ALIGN_LEFT_BOTTOM",		FL_ALIGN_BOTTOM | FL_ALIGN_LEFT},
-  {"ALIGN_RIGHT_BOTTOM",	FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT},
-  {"INVALID_STYLE",		255},
-  {"NORMAL_STYLE",		FL_HELVETICA},
-  {"BOLD_STYLE",		FL_HELVETICA|FL_BOLD},
-  {"ITALIC_STYLE",		FL_HELVETICA|FL_ITALIC},
-  {"BOLDITALIC_STYLE",		FL_HELVETICA|FL_BOLD|FL_ITALIC},
-  {"FIXED_STYLE",		FL_COURIER},
-  {"FIXEDBOLD_STYLE",		FL_COURIER|FL_BOLD},
-  {"FIXEDITALIC_STYLE",		FL_COURIER|FL_ITALIC},
-  {"FIXEDBOLDITALIC_STYLE",	FL_COURIER|FL_BOLD|FL_ITALIC},
-  {"TIMES_STYLE",		FL_TIMES},
-  {"TIMESBOLD_STYLE",		FL_TIMES|FL_BOLD},
-  {"TIMESITALIC_STYLE",		FL_TIMES|FL_ITALIC},
-  {"TIMESBOLDITALIC_STYLE",	FL_TIMES|FL_BOLD|FL_ITALIC},
-  {"SHADOW_STYLE",		(_FL_SHADOW_LABEL<<8)},
-  {"ENGRAVED_STYLE",		(_FL_ENGRAVED_LABEL<<8)},
-  {"EMBOSSED_STYLE",		(_FL_EMBOSSED_LABEL<<0)},
-  {"TINY_SIZE",			8},
-  {"SMALL_SIZE",		11},
-  {"NORMAL_SIZE",		FL_NORMAL_SIZE},
-  {"MEDIUM_SIZE",		18},
-  {"LARGE_SIZE",		24},
-  {"HUGE_SIZE",			32},
-  {"DEFAULT_SIZE",		FL_NORMAL_SIZE},
-  {"TINY_FONT",			8},
-  {"SMALL_FONT",		11},
-  {"NORMAL_FONT",		FL_NORMAL_SIZE},
-  {"MEDIUM_FONT",		18},
-  {"LARGE_FONT",		24},
-  {"HUGE_FONT",			32},
-  {"NORMAL_FONT1",		11},
-  {"NORMAL_FONT2",		FL_NORMAL_SIZE},
-  {"DEFAULT_FONT",		11},
-  {"RETURN_END_CHANGED",	0},
-  {"RETURN_CHANGED",		1},
-  {"RETURN_END",		2},
-  {"RETURN_ALWAYS",		3},
-  {"PUSH_BUTTON",		FL_TOGGLE_BUTTON},
-  {"RADIO_BUTTON",		FL_RADIO_BUTTON},
-  {"HIDDEN_BUTTON",		FL_HIDDEN_BUTTON},
-  {"SELECT_BROWSER",		FL_SELECT_BROWSER},
-  {"HOLD_BROWSER",		FL_HOLD_BROWSER},
-  {"MULTI_BROWSER",		FL_MULTI_BROWSER},
-  {"SIMPLE_COUNTER",		FL_SIMPLE_COUNTER},
-  {"LINE_DIAL",			FL_LINE_DIAL},
-  {"FILL_DIAL",			FL_FILL_DIAL},
-  {"VERT_SLIDER",		FL_VERT_SLIDER},
-  {"HOR_SLIDER",		FL_HOR_SLIDER},
-  {"VERT_FILL_SLIDER",		FL_VERT_FILL_SLIDER},
-  {"HOR_FILL_SLIDER",		FL_HOR_FILL_SLIDER},
-  {"VERT_NICE_SLIDER",		FL_VERT_NICE_SLIDER},
-  {"HOR_NICE_SLIDER",		FL_HOR_NICE_SLIDER},
+  {"ALIGN_LEFT_TOP",            FL_ALIGN_TOP | FL_ALIGN_LEFT},
+  {"ALIGN_RIGHT_TOP",           FL_ALIGN_TOP | FL_ALIGN_RIGHT},
+  {"ALIGN_LEFT_BOTTOM",         FL_ALIGN_BOTTOM | FL_ALIGN_LEFT},
+  {"ALIGN_RIGHT_BOTTOM",        FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT},
+  {"INVALID_STYLE",             255},
+  {"NORMAL_STYLE",              FL_HELVETICA},
+  {"BOLD_STYLE",                FL_HELVETICA|FL_BOLD},
+  {"ITALIC_STYLE",              FL_HELVETICA|FL_ITALIC},
+  {"BOLDITALIC_STYLE",          FL_HELVETICA|FL_BOLD|FL_ITALIC},
+  {"FIXED_STYLE",               FL_COURIER},
+  {"FIXEDBOLD_STYLE",           FL_COURIER|FL_BOLD},
+  {"FIXEDITALIC_STYLE",         FL_COURIER|FL_ITALIC},
+  {"FIXEDBOLDITALIC_STYLE",     FL_COURIER|FL_BOLD|FL_ITALIC},
+  {"TIMES_STYLE",               FL_TIMES},
+  {"TIMESBOLD_STYLE",           FL_TIMES|FL_BOLD},
+  {"TIMESITALIC_STYLE",         FL_TIMES|FL_ITALIC},
+  {"TIMESBOLDITALIC_STYLE",     FL_TIMES|FL_BOLD|FL_ITALIC},
+  {"SHADOW_STYLE",              (_FL_SHADOW_LABEL<<8)},
+  {"ENGRAVED_STYLE",            (_FL_ENGRAVED_LABEL<<8)},
+  {"EMBOSSED_STYLE",            (_FL_EMBOSSED_LABEL<<0)},
+  {"TINY_SIZE",                 8},
+  {"SMALL_SIZE",                11},
+  {"NORMAL_SIZE",               FL_NORMAL_SIZE},
+  {"MEDIUM_SIZE",               18},
+  {"LARGE_SIZE",                24},
+  {"HUGE_SIZE",                 32},
+  {"DEFAULT_SIZE",              FL_NORMAL_SIZE},
+  {"TINY_FONT",                 8},
+  {"SMALL_FONT",                11},
+  {"NORMAL_FONT",               FL_NORMAL_SIZE},
+  {"MEDIUM_FONT",               18},
+  {"LARGE_FONT",                24},
+  {"HUGE_FONT",                 32},
+  {"NORMAL_FONT1",              11},
+  {"NORMAL_FONT2",              FL_NORMAL_SIZE},
+  {"DEFAULT_FONT",              11},
+  {"RETURN_END_CHANGED",        0},
+  {"RETURN_CHANGED",            1},
+  {"RETURN_END",                2},
+  {"RETURN_ALWAYS",             3},
+  {"PUSH_BUTTON",               FL_TOGGLE_BUTTON},
+  {"RADIO_BUTTON",              FL_RADIO_BUTTON},
+  {"HIDDEN_BUTTON",             FL_HIDDEN_BUTTON},
+  {"SELECT_BROWSER",            FL_SELECT_BROWSER},
+  {"HOLD_BROWSER",              FL_HOLD_BROWSER},
+  {"MULTI_BROWSER",             FL_MULTI_BROWSER},
+  {"SIMPLE_COUNTER",            FL_SIMPLE_COUNTER},
+  {"LINE_DIAL",                 FL_LINE_DIAL},
+  {"FILL_DIAL",                 FL_FILL_DIAL},
+  {"VERT_SLIDER",               FL_VERT_SLIDER},
+  {"HOR_SLIDER",                FL_HOR_SLIDER},
+  {"VERT_FILL_SLIDER",          FL_VERT_FILL_SLIDER},
+  {"HOR_FILL_SLIDER",           FL_HOR_FILL_SLIDER},
+  {"VERT_NICE_SLIDER",          FL_VERT_NICE_SLIDER},
+  {"HOR_NICE_SLIDER",           FL_HOR_NICE_SLIDER},
 };
 
 #include <stdlib.h>
@@ -1275,7 +1273,3 @@ int lookup_symbol(const char *name, int &v, int numberok) {
   if (numberok && ((v = atoi(name)) || !strcmp(name,"0"))) return 1;
   return 0;
 }
-
-//
-// End of "$Id$".
-//

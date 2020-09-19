@@ -1,6 +1,6 @@
 /**
 
- \page	subclassing Adding and Extending Widgets
+ \page  subclassing Adding and Extending Widgets
 
 
 This chapter describes how to add your own widgets or extend existing
@@ -12,18 +12,18 @@ New widgets are created by \e subclassing an existing FLTK widget,
 typically Fl_Widget for controls and Fl_Group for composite widgets.
 
 A control widget typically interacts with the user to receive and/or
-display a value of some sort. 
+display a value of some sort.
 
 A composite widget holds a list of child widgets and handles moving,
 sizing, showing, or hiding them as needed. Fl_Group is the main
 composite widget class in FLTK, and all of the other composite widgets
-(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, and Fl_Window) are subclasses of it. 
+(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, and Fl_Window) are subclasses of it.
 
 You can also subclass other existing widgets to provide a different
 look or user-interface. For example, the button widgets are all
 subclasses of Fl_Button since they all interact with the user
 via a mouse button click.  The only difference is the code that draws
-the face of the button. 
+the face of the button.
 
 \section subclassing_fl_widget Making a Subclass of Fl_Widget
 
@@ -44,7 +44,7 @@ This will allow the class to be used in
 without problems.
 
 The constructor must call the constructor for the base class and
-pass the same arguments: 
+pass the same arguments:
 
 \code
 MyClass::MyClass(int x, int y, int w, int h, const char *label)
@@ -107,7 +107,7 @@ The second form indicates that a region is damaged.  If only these
 calls are done in a window (no calls to \p damage(n)) then FLTK
 will clip to the union of all these calls before drawing anything.
 This can greatly speed up incremental displays.  The mask bits are
-OR'd into \p damage() unless this is a Fl_Window widget. 
+OR'd into \p damage() unless this is a Fl_Window widget.
 
 \par
 The third form returns the bitwise-OR of all \p damage(n)
@@ -171,13 +171,13 @@ draw those labels).
 \par
 The second form uses the passed bounding box instead of the widget's
 bounding box. This is useful so "centered" labels are aligned with some
-feature, like a moving slider. 
+feature, like a moving slider.
 
 \par
 The third form draws the label anywhere. It acts as though
 \p FL_ALIGN_INSIDE has been forced on so the label will appear inside
 the passed bounding box. This is designed for parent groups to draw
-labels with. 
+labels with.
 
 \anchor subclassing_set_flag
 void Fl_Widget::set_flag(int c) <br>
@@ -201,15 +201,15 @@ int Fl_Widget::test_shortcut() <br>
 static int Fl_Widget::test_shortcut(const char *s)
 
 \par
-The first version tests Fl_Widget::label() against the current event 
-(which should be a \p FL_SHORTCUT event).  If the label contains a '&' 
+The first version tests Fl_Widget::label() against the current event
+(which should be a \p FL_SHORTCUT event).  If the label contains a '&'
 character and the character after it matches the keypress, this returns
-true. This returns false if the \p SHORTCUT_LABEL flag is off, if the 
-label is \p NULL, or does not have a '&' character in it, or if the 
+true. This returns false if the \p SHORTCUT_LABEL flag is off, if the
+label is \p NULL, or does not have a '&' character in it, or if the
 keypress does not match the character.
 
 \par
-The second version lets you do this test against an arbitrary string. 
+The second version lets you do this test against an arbitrary string.
 
 \todo Clarify Fl_Widget::test_shortcut() explanations. Fl_Widget.h
       says Internal Use only, but subclassing chapter gives details!
@@ -236,21 +236,21 @@ be greater than the symbol \p FL_RESERVED_TYPE (which is 100) and
 less than \p FL_WINDOW (unless you make a subclass of Fl_Window).
 Look through the header files for \p FL_RESERVED_TYPE to find an
 unused number. If you make a subclass of Fl_Window you must use
-<tt>FL_WINDOW + n</tt> (where \p n must be in the range 1 to 7). 
+<tt>FL_WINDOW + n</tt> (where \p n must be in the range 1 to 7).
 
 \section subclassing_events Handling Events
 
 The virtual method Fl_Widget::handle(int event) is called
 to handle each event passed to the widget. It can:
 
-\li Change the state of the widget. 
-\li Call Fl_Widget::redraw() if the widget needs to be redisplayed. 
+\li Change the state of the widget.
+\li Call Fl_Widget::redraw() if the widget needs to be redisplayed.
 \li Call Fl_Widget::damage(uchar c) if the widget needs a partial-update
     (assuming you provide support for this in your
     \ref subclassing_drawing "draw()"
-    method). 
-\li Call Fl_Widget::do_callback() if a callback should be generated. 
-\li Call Fl_Widget::handle() on child widgets. 
+    method).
+\li Call Fl_Widget::do_callback() if a callback should be generated.
+\li Call Fl_Widget::handle() on child widgets.
 
 Events are identified by the integer argument.  Other information
 about the most recent event is stored in static locations and acquired
@@ -259,7 +259,7 @@ by calling the
 This information remains valid until another event is handled.
 
 Here is a sample \p handle() method for a widget that acts as
-a pushbutton and also accepts the keystroke \p 'x' to cause the callback: 
+a pushbutton and also accepts the keystroke \p 'x' to cause the callback:
 
 \code
 int MyClass::handle(int event) {
@@ -272,23 +272,23 @@ int MyClass::handle(int event) {
         int t = Fl::event_inside(this);
         if (t != highlight) {
           highlight = t;
-	  redraw();
-	}
+          redraw();
+        }
       }
       return 1;
     case FL_RELEASE:
       if (highlight) {
-	highlight = 0;
-	redraw();
+        highlight = 0;
+        redraw();
         do_callback();
-	// never do anything after a callback, as the callback
-	// may delete the widget!
+        // never do anything after a callback, as the callback
+        // may delete the widget!
       }
       return 1;
     case FL_SHORTCUT:
       if (Fl::event_key() == 'x') {
         do_callback();
-	return 1;
+        return 1;
       }
       return 0;
     default:
@@ -301,10 +301,10 @@ You must return non-zero if your \p handle() method
 uses the event. If you return zero, the parent widget will try
 sending the event to another widget.
 
-For debugging purposes, event numbers can be printed as their actual event names 
+For debugging purposes, event numbers can be printed as their actual event names
 using the \ref fl_eventnames[] array, e.g.:
 \code
-  #include <FL/names.h>		// defines fl_eventnames[]
+  #include <FL/names.h>         // defines fl_eventnames[]
   [..]
   int MyClass::handle(int e) {
       printf("Event was %s (%d)\n", fl_eventnames[e], e);     // e.g. "Event was FL_PUSH (1)"
@@ -325,15 +325,15 @@ the \p damage(n) calls to this widget since it was last
 drawn. This can be used for minimal update, by only redrawing
 the parts whose bits are set. FLTK will turn on the
 \p FL_DAMAGE_ALL bit if it thinks the entire widget must
-be redrawn, e.g. for an expose event. 
+be redrawn, e.g. for an expose event.
 
-Expose events (and the 
-\ref subclassing_damage "damage(mask,x,y,w,h)" function described 
+Expose events (and the
+\ref subclassing_damage "damage(mask,x,y,w,h)" function described
 above) will cause \p draw() to be called with FLTK's
 \ref ssect_Clipping "clipping"
 turned on.  You can greatly speed up redrawing in some
 cases by testing \p fl_not_clipped(x,y,w,h) or \p %fl_clip_box()
-and skipping invisible parts. 
+and skipping invisible parts.
 
 Besides the protected methods described above, FLTK provides a large
 number of basic drawing functions, which are described in the chapter
@@ -350,7 +350,7 @@ actually change.
 
 This should \e not call \p redraw(), at least if only the
 \p x() and \p y() change.  This is because composite widgets like
-Fl_Scroll may have a more efficient way of drawing the new position. 
+Fl_Scroll may have a more efficient way of drawing the new position.
 
 \section subclassing_composite Making a Composite Widget
 
@@ -360,7 +360,7 @@ It is possible to make a composite object that is not a subclass of
 Fl_Group, but you'll have to duplicate the code in Fl_Group
 anyways.
 
-Instances of the child widgets may be included in the parent: 
+Instances of the child widgets may be included in the parent:
 
 \code
 class MyClass : public Fl_Group {
@@ -370,7 +370,7 @@ class MyClass : public Fl_Group {
 };
 \endcode
 
-The constructor has to initialize these instances. They are automatically 
+The constructor has to initialize these instances. They are automatically
 added to the group, since the Fl_Group constructor does
 Fl_Group::begin().
 <I>Don't forget to call Fl_Group::end() or use the Fl_End pseudo-class:</I>
@@ -501,7 +501,7 @@ system specific. See \ref osissues for more details.
 
 FLTK provides routines to drag and drop UTF-8 encoded text between applications:
 
-Drag'n'drop operations are initiated by copying data to the 
+Drag'n'drop operations are initiated by copying data to the
 clipboard and calling the function Fl::dnd().
 
 Drop attempts are handled via the following events,
@@ -525,7 +525,7 @@ that expects a system window ID to indicate where to draw.
 Subclassing Fl_Window is almost exactly like
 subclassing Fl_Group, and in fact you can easily
 switch a subclass back and forth. Watch out for the following
-differences: 
+differences:
 
 -# Fl_Window is a subclass of Fl_Group so
    <I>make sure your constructor calls</I> \p end()

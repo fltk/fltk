@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Offscreen drawing test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* Standard headers */
@@ -69,7 +67,7 @@ private:
   // Width and height of the offscreen surface
   int offsc_w, offsc_h;
   int iters; // Must be set on first pass!
-  float scale; // current screen scaling factor value 
+  float scale; // current screen scaling factor value
 };
 
 /*****************************************************************************/
@@ -119,7 +117,7 @@ void oscr_box::draw()
 int oscr_box::handle(int ev)
 {
   int ret = Fl_Box::handle(ev);
-  
+
   // handle dragging of visible page area - if a valid context exists
   if (has_oscr())
   {
@@ -145,32 +143,32 @@ int oscr_box::handle(int ev)
     case FL_DRAG:
       if (drag_state == 1) // dragging page
       {
-	int x2 = Fl::event_x_root();
-	int y2 = Fl::event_y_root();
-	xoff = x1 - x2;
-	yoff = y1 - y2;
-	x1 = x2;
-	y1 = y2;
-	page_x += xoff;
-	page_y += yoff;
-	// check the page bounds
-	if (page_x < -w())
-	{
-	  page_x = -w();
-	}
-	else if (page_x > offsc_w)
-	{
-	  page_x = offsc_w;
-	}
-	if (page_y < -h())
-	{
-	  page_y = -h();
-	}
-	else if (page_y > offsc_h)
-	{
-	  page_y = offsc_h;
-	}
-	redraw();
+        int x2 = Fl::event_x_root();
+        int y2 = Fl::event_y_root();
+        xoff = x1 - x2;
+        yoff = y1 - y2;
+        x1 = x2;
+        y1 = y2;
+        page_x += xoff;
+        page_y += yoff;
+        // check the page bounds
+        if (page_x < -w())
+        {
+          page_x = -w();
+        }
+        else if (page_x > offsc_w)
+        {
+          page_x = offsc_w;
+        }
+        if (page_y < -h())
+        {
+          page_y = -h();
+        }
+        else if (page_y > offsc_h)
+        {
+          page_y = offsc_h;
+        }
+        redraw();
       }
       ret = 1;
       break;
@@ -264,7 +262,3 @@ int main(int argc, char **argv)
 
   return Fl::run();
 } // main
-
-//
-// End of "$Id$".
-//

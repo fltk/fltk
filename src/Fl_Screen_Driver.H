@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // All screen related calls in a driver style class.
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -50,7 +48,7 @@ class Fl_Input;
  A base class describing the interface between FLTK and screen-related operations.
 
  This class is only for internal use by the FLTK library.
- 
+
  Each supported platform implements several of the virtual methods of this class.
  */
 class FL_EXPORT Fl_Screen_Driver {
@@ -63,7 +61,7 @@ protected:
 
   int num_screens;
   static  float fl_intersection(int x1, int y1, int w1, int h1,
-				int x2, int y2, int w2, int h2);
+                                int x2, int y2, int w2, int h2);
 
 public:
   static int keyboard_screen_scaling; // true means ctrl/+/-/0/ resize windows
@@ -139,7 +137,7 @@ public:
   /* Member function read_win_rectangle() supports public functions
    fl_read_image() and fl_capture_window_part() which capture pixel data from
    a window (or also from an offscreen buffer with fl_read_image).
-   
+
    If 'may_capture_subwins' is true, an implementation may or may not capture
    also the content of subwindows embedded in 'win'. If subwindows were captured,
    *'did_capture_subwins' is returned set to true. If read_win_rectangle()
@@ -147,11 +145,11 @@ public:
    be set before the call to the address of a boolean set to false.
    The implementation of this virtual function for the macOS platform has the
    capability of capturing subwindows when asked for.
-   
+
    A platform may also use its read_win_rectangle() implementation to capture
    window decorations (e.g., title bar). In that case, it is called by
    Fl_XXX_Window_Driver::capture_titlebar_and_borders().
-   
+
    win is the window to capture from, or NULL to capture from the current offscreen
    */
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
@@ -175,7 +173,7 @@ public:
   virtual void close_display() {}
   // compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height) {}
-  
+
   void rescale_all_windows_from_screen(int screen, float f);
   static void transient_scale_display(float f, int nscreen);
   static int scale_handler(int event);
@@ -189,9 +187,6 @@ public:
   /** Returns the platform's support for rescaling the application with ctrl-/+/-/0/ keys.
    */
   virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
-  /* Number of pixels per drawing unit for the display.
-     The default implementation may be enough. */
-  virtual float retina_factor() { return 1; }
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 };
@@ -203,7 +198,3 @@ public:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,6 @@
 /* $XFree86: xc/lib/X11/lcUniConv/cjk_tab_to_h.c,v 1.2 2000/12/04 18:49:31 dawes Exp $ */
 
-/* 2009-02-17 <sparkaround@gmail.com>: Create gbk_tab_to_h.c from 
+/* 2009-02-17 <sparkaround@gmail.com>: Create gbk_tab_to_h.c from
  * cjk_tab_to_h.c to generate GBK(cp936ext) table correctly.
  *
  *

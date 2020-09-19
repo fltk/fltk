@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,21 +7,21 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
-#include <string.h>   // strdup()
 
 float     Fl_Tooltip::delay_ = 1.0f;
 float     Fl_Tooltip::hidedelay_ = 12.0f;
@@ -59,7 +57,7 @@ public:
   /** Shows the tooltip windows only if a tooltip text is available. */
   void show() {
     if (!tip) return;
-    
+
     Fl_Menu_Window::show();
   }
 
@@ -213,8 +211,8 @@ void Fl_Tooltip::enter_(Fl_Widget* w) {
   }
   enter_area(w, 0, 0, w->w(), w->h(), tw->tooltip());
 }
-/** 
-     Sets the current widget target. 
+/**
+     Sets the current widget target.
      Acts as though enter(widget) was done but does not pop up a
      tooltip.  This is useful to prevent a tooltip from reappearing when
      a modal overlapping window is deleted. FLTK does this automatically
@@ -334,18 +332,18 @@ void Fl_Tooltip::set_enter_exit_once_() {
 }
 
 /**
-  Sets the current tooltip text. 
+  Sets the current tooltip text.
 
-  Sets a string of text to display in a popup tooltip window when the user 
-  hovers the mouse over the widget. The string is <I>not</I> copied, so 
-  make sure any formatted string is stored in a static, global, 
+  Sets a string of text to display in a popup tooltip window when the user
+  hovers the mouse over the widget. The string is <I>not</I> copied, so
+  make sure any formatted string is stored in a static, global,
   or allocated buffer. If you want a copy made and managed for you,
   use the copy_tooltip() method, which will manage the tooltip string
   automatically.
 
-  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
-  tooltip for a group and setting no tooltip for a child will show the 
-  group's tooltip instead. To avoid this behavior, you can set the child's 
+  If no tooltip is set, the tooltip of the parent is inherited. Setting a
+  tooltip for a group and setting no tooltip for a child will show the
+  group's tooltip instead. To avoid this behavior, you can set the child's
   tooltip to an empty string ("").
   \param[in] text New tooltip text (no copy is made)
   \see copy_tooltip(const char*), tooltip()
@@ -362,16 +360,16 @@ void Fl_Widget::tooltip(const char *text) {
 }
 
 /**
-  Sets the current tooltip text. 
-  Unlike tooltip(), this method allocates a copy of the tooltip 
+  Sets the current tooltip text.
+  Unlike tooltip(), this method allocates a copy of the tooltip
   string instead of using the original string pointer.
 
   The internal copy will automatically be freed whenever you assign
   a new tooltip or when the widget is destroyed.
 
-  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
-  tooltip for a group and setting no tooltip for a child will show the 
-  group's tooltip instead. To avoid this behavior, you can set the child's 
+  If no tooltip is set, the tooltip of the parent is inherited. Setting a
+  tooltip for a group and setting no tooltip for a child will show the
+  group's tooltip instead. To avoid this behavior, you can set the child's
   tooltip to an empty string ("").
   \param[in] text New tooltip text (an internal copy is made and managed)
   \see tooltip(const char*), tooltip()
@@ -381,13 +379,9 @@ void Fl_Widget::copy_tooltip(const char *text) {
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
   if (text) {
     set_flag(COPIED_TOOLTIP);
-    tooltip_ = strdup(text);
+    tooltip_ = fl_strdup(text);
   } else {
     clear_flag(COPIED_TOOLTIP);
     tooltip_ = (char *)0;
   }
 }
-
-//
-// End of "$Id$".
-//

@@ -14,7 +14,7 @@ Current versions of bundled libraries:
 
   ** work in progress -- not yet completely upgraded **
 
-  Library       Version            Release date		FLTK Version
+  Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9c            2018-01-14           1.4.0
   nanosvg       f31098fa85 [1]     2019-05-23           1.4.0
@@ -23,7 +23,7 @@ Current versions of bundled libraries:
 
 Previous versions of bundled libraries:
 
-  Library       Version            Release date		FLTK Version
+  Library       Version            Release date         FLTK Version
   ------------------------------------------------------------------
   nanosvg       ce81a6577c [1]     2018-07-01           1.4.0
   jpeg          jpeg-9a            2014-01-19           1.3.5

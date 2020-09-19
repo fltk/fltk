@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Character encoding support for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #if defined(_WIN32) || defined(__APPLE__) /* PORTME: is this really needed? It's huge! */
@@ -6248,7 +6246,3 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 #endif /* CP936 */
 
 #endif /* _WIN32 || __APPLE__  */ /* PORTME: Unicode stuff */
-
-/*
- * End of "$Id$".
- */

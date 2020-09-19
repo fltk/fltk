@@ -1,7 +1,5 @@
 #! /bin/sh
 #
-# $Id$
-#
 # Makefile helper script for the Fast Light Tool Kit (FLTK) documentation.
 #
 # Copyright 1998-2015 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 # This script generates latex/refman.pdf after doxygen has been executed.
@@ -41,7 +39,3 @@
       latex_count=`expr $latex_count - 1`
     done
   cd ..) > pdfall.log 2>&1
-
-#
-# End of "$Id$".
-#

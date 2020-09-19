@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Demonstrate how to draw an 'X' in fltk
 //
 //     Create a custom widget that draws an 'X' to the corners of the window,
@@ -14,11 +12,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -31,7 +29,7 @@ public:
     }
     void draw() {
         // Draw background - a white filled rectangle
-	fl_color(FL_WHITE); fl_rectf(x(),y(),w(),h());
+        fl_color(FL_WHITE); fl_rectf(x(),y(),w(),h());
         // Draw black 'X' over base widget's background
         fl_color(FL_BLACK);
         int x1 = x(),       y1 = y();
@@ -42,13 +40,9 @@ public:
 };
 int main() {
     Fl_Double_Window win(200,200,"Draw X");
-    DrawX draw_x(10, 10, win.w()-20, win.h()-20);	// put our widget 10 pixels within window edges
-    draw_x.color(FL_WHITE);				// make widget's background white
+    DrawX draw_x(10, 10, win.w()-20, win.h()-20);       // put our widget 10 pixels within window edges
+    draw_x.color(FL_WHITE);                             // make widget's background white
     win.resizable(draw_x);
     win.show();
     return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

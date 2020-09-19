@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MSWidnows' GDI color functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // The fltk "colormap".  This allows ui colors to be stored in 8-bit
@@ -101,11 +99,11 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
     if (!xmap.pen || xmap.pwidth != tw) {
 #if USE_COLORMAP
       if (fl_palette) {
-	set_xmap(xmap, PALETTEINDEX(i), tw);
+        set_xmap(xmap, PALETTEINDEX(i), tw);
       } else {
 #endif
-	unsigned c = fl_cmap[i];
-	set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)), tw);
+        unsigned c = fl_cmap[i];
+        set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)), tw);
 #if USE_COLORMAP
       }
 #endif
@@ -158,10 +156,10 @@ HBRUSH fl_brush_action(int action) {
     if (brushes[i].brush == NULL) goto CREATE_BRUSH;
     if ( (++brushes[i].usage) > 32000 ) { // keep a usage statistic
       for (int j=0; j<FL_N_BRUSH; j++) {
-	if (brushes[j].usage>16000)
-	  brushes[j].usage -= 16000;
-	else
-	  brushes[j].usage = 0;
+        if (brushes[j].usage>16000)
+          brushes[j].usage -= 16000;
+        else
+          brushes[j].usage = 0;
       }
     }
     return brushes[i].brush;
@@ -170,8 +168,8 @@ HBRUSH fl_brush_action(int action) {
     for (i=0; i<FL_N_BRUSH; i++) {
       if (brushes[i].brush == NULL) goto CREATE_BRUSH;
       if (brushes[i].usage<umin) {
-	umin = brushes[i].usage;
-	imin = i;
+        umin = brushes[i].usage;
+        imin = i;
       }
     }
     i = imin;
@@ -247,7 +245,3 @@ fl_select_palette(void)
 }
 
 #endif
-
-//
-// End of "$Id$".
-//

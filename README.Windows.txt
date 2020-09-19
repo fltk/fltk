@@ -1,13 +1,14 @@
- README.MSWindows.txt - Building FLTK under Microsoft Windows
---------------------------------------------------------------
-
+ README.Windows.txt - Building FLTK under Microsoft Windows
+------------------------------------------------------------
 
 
  CONTENTS
 ==========
 
-  1   INTRODUCTION
-  2   HOW TO BUILD FLTK USING MinGW/Cygwin
+  1 INTRODUCTION
+
+  2 HOW TO BUILD FLTK USING MinGW AND Cygwin
+
     2.1   The Tools
     2.2   Recommended Command Line Build Environment
     2.3   Prerequisites
@@ -17,7 +18,9 @@
     2.7   Testing FLTK
     2.8   Installing FLTK
     2.9   Creating new Projects
-  3   HOW TO BUILD FLTK USING VISUAL STUDIO 2008
+
+  3 HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO
+
     3.1   Prerequisites
     3.2   Downloading and Unpacking
     3.3   Configuring FLTK
@@ -25,21 +28,16 @@
     3.5   Testing FLTK
     3.6   Installing FLTK
     3.7   Creating new Projects
-  4   HOW TO BUILD FLTK USING VISUAL STUDIO 2010 OR LATER
-    4.1   Prerequisites
-    4.2   Downloading and Unpacking
-    4.3   Configuring FLTK
-    4.4   Building FLTK
-    4.5   Testing FLTK
-    4.6   Installing FLTK
-    4.7   Creating new Projects
-  5   FREQUENTLY ASKED QUESTIONS
-  7   LINKS
-  6   DOCUMENT HISTORY
+
+  4 FREQUENTLY ASKED QUESTIONS
+
+  5 LINKS
+
+  6 DOCUMENT HISTORY
 
 
- INTRODUCTION
-==============
+  1 INTRODUCTION
+==================
 
 FLTK 1.3 and later is officially supported on Windows (2000,) 2003,
 XP, and later.  Older Windows versions are not officially supported,
@@ -61,7 +59,7 @@ environments on the Windows platform:
       support, how to easily get started and stay productive in Visual Studio."
 
       Citation from:
-      https://blogs.msdn.microsoft.com/vcblog/2016/10/05/cmake-support-in-visual-studio/
+      https://devblogs.microsoft.com/cppblog/cmake-support-in-visual-studio/
 
       As of this writing (07/2017) the FLTK team did not yet test and
       verify the functionality of Microsoft's included CMake features.
@@ -72,15 +70,15 @@ CAUTION: Libraries built by any one of these environments can not be mixed
 with object files from any other environment!
 
 
- HOW TO BUILD FLTK USING MinGW and Cygwin
-==========================================
+  2 HOW TO BUILD FLTK USING MinGW AND Cygwin
+==============================================
 
 This chapter of this document gives a brief overview of
 compiling and using FLTK with the Cygwin and MinGW compiler
 toolkits.  Both toolkits provide a build environment based
 around the GNU C/C++ compiler. Further information is
-available from the FLTK website at http://www.fltk.org, such
-as this Howto note: http://www.fltk.org/articles.php?L598
+available from the FLTK website at https://www.fltk.org, such
+as this Howto note: https://www.fltk.org/articles.php?L598
 
 The Cygwin build environment supplies a library (the Cygwin
 DLL) that is primarily intended to provide a number of
@@ -103,6 +101,7 @@ Currently you would have to install mingw64-i686-gcc-g++ for
 32-bit Windows applications (despite its name!), and/or
 mingw64-x86_64-gcc-g++ for 64-bit applications. You may also
 need to install the corresponding '-headers' packages as well.
+
 Currently these tools support gcc 4.5 or newer. The setup for
 FLTK is somewhat more complicated because you must configure
 this as a cross compiler, but it works well.
@@ -189,15 +188,15 @@ the Start menu.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
 into your home folder. The default location as seen from MSWindows is similar
 to
 
   C:\MinGW\msys\1.0\home\matt\
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of
 that page. Unpack FLTK into a convenient location. I like to have everything
 in my dev directory:
 
@@ -211,7 +210,7 @@ in my dev directory:
  Configuring FLTK
 ------------------
 
-If you got FLTK via subversion then you need one extra step. Otherwise skip
+If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type the
 following:
 
@@ -240,7 +239,7 @@ linking:
 
 Known Problems:
 
-  There is a known incompatibility with some Windows subversion tools that
+  There is a known incompatibility with some Windows git tools that
   may not set the correct line endings for autoconf. If you get strange
   error messages when running ./configure or make, you may need to convert
   configh.in to "Unix line endings" (LF-only). These error messages are
@@ -252,8 +251,13 @@ Known Problems:
   You can fix the line endings with the MinGW/msys tool 'unix2dos' (u2d)
   or with your favorite editor, if it allows to change the line endings,
   then run autoconf and ./configure again.
-  For further information see this bug report:
-     http://www.fltk.org/newsgroups.php?gfltk.bugs+v:10197
+
+  We don't know if this issue is still relevant with current Git tools.
+  It has been reported when we were still using Subversion (svn).
+
+  For further information see this bug report (regarding svn)
+
+    https://www.fltk.org/newsgroups.php?gfltk.bugs+v:10197
 
 
  Building FLTK
@@ -304,8 +308,8 @@ I recommend that you add it to the command search path.
 
 
 
- HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO
-================================================
+  3 HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO
+=====================================================
 
 
  Prerequisites
@@ -316,7 +320,7 @@ Visual C++ developer environment from the Microsoft web site. The "Express"
 or "Community" edition is free of charge and sufficient to develop FLTK
 applications:
 
-  https://www.visualstudio.com/vs/visual-studio-express/
+  https://visualstudio.microsoft.com/vs/express/
 
 If you intend to use an older (maybe commercial) version you need at least
 a version that is supported by the version of CMake you are using to generate
@@ -325,15 +329,18 @@ installed or building FLTK may fail.
 
 As of this writing (07/2017) the FLTK team recommends at least Visual
 Studio 2008 with current service packs. Visual Studio 2008, 2010, 2013,
-2015, and 2017 are known to work with FLTK 1.4.0 (svn, 07/2017).
+2015, and 2017 are known to work with FLTK 1.4.0 (Git: 07/2017).
 
-You also need to install CMake (cmake-gui) from:
+You may also need to install CMake (cmake-gui) from:
 
   https://cmake.org/download/
 
-Visual Studio 2017 has internal CMake support (so you may not need to
-install CMake separately), but this has not yet been tested thoroughly
-by the FLTK team.
+Visual Studio 2017 (and later) has internal CMake support (so you may not
+need to install CMake separately).
+There is an option to "open a folder" with a CMakeLists.txt file - in our
+case the FLTK root folder. You may want to try this.
+
+Note that this has not yet been tested thoroughly by the FLTK team.
 
 
  Downloading and Unpacking FLTK
@@ -341,10 +348,10 @@ by the FLTK team.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of
 that page.
 
 Unpack FLTK by using an appropriate unpacker and copy the new folder into a
@@ -449,107 +456,8 @@ is changed, the corresponding .cxx file will be recompiled.
 
 
 
- HOW TO BUILD FLTK USING VISUAL STUDIO 2010 OR LATER
-====================================================
-
-
- Prerequisites
----------------
-
-See previous chapter "HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO".
-
-
- Downloading and Unpacking
----------------------------
-
-See previous chapter "HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO".
-
-
- Configuring FLTK
-------------------
-
-See previous chapter "HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO".
-
-
- Building FLTK
----------------
-
-See previous chapter "HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO".
-
- Testing FLTK
---------------
-
-See previous chapter "HOW TO BUILD FLTK USING MICROSOFT VISUAL STUDIO".
-
-
- Installing FLTK
------------------
-
-********************************************************************************
-   The information in this chapter is NO LONGER RECOMMENDED by the FLTK team.
-********************************************************************************
-
-The default location for VisualC 2010 libraries and headers is here:
-
-  C:\Program Files\Microsoft Visual Studio 10.0\VC\
-
-It is possible to move the FLTK libraries, headers, and Fluid into the
-respective subdirectories, so that they are available for future development
-without adding link and include paths to the solution.
-
-  copy the entire FL directory into the include path
-
-  add all files from ide\VisualC2010\FL to the FL directory copied above
-    (this is currently only one file: abi-version.h)
-
-  copy all .lib files from the fltk lib directory to the VC lib directory
-
-  copy fluid.exe in the fluid directory to the bin directory
-
-I highly discourage using dll's (dynamically linking libraries) on MSWindows
-because they will require an installation process and likely cause version
-conflicts. Use the static .lib libraries instead.
-
-
- Creating new Projects
------------------------
-
-********************************************************************************
-   The information in this chapter is NO LONGER RECOMMENDED by the FLTK team.
-********************************************************************************
-
-This chapter assumes that libraries and headers are copied into
-
-  C:\Program Files\Microsoft Visual Studio 10.0\VC\
-
-Create a new project of type "General", "Empty Project" and add a simple "C++"
-file to it. The FLTK "hello" source code is a good base.
-
-Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK
-libraries that you want to use (at least "fltk.lib") to Additional Dependencies
-(Configuration Properties > Linker > Additional Dependencies).
-
-Compile and run your test program with F5.
-
-You can also include .fl resources: add a new Header file to your project, but
-let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
-from the "bin" directory and set it as the default editor.
-
-To automatically compile .fl files, open the Properties editor and change the
-Element Type to Custom Build and click Apply. Now set the
-Custom Build Steps to:
-
-  Command Line: fluid.exe -c %(FullPath)
-  Description: Compiling Fluid .fl file
-  Outputs: $(InputDir)$(InputName).cxx; $(InputDir)$(InputName).h
-
-Now add the generated .cxx file to your project as well. Whenever the .fl file
-is changed, the corresponding .cxx file will be recompiled.
-
-
-
- FREQUENTLY ASKED QUESTIONS
-============================
+  4 FREQUENTLY ASKED QUESTIONS
+================================
 
 
  Why does a console window appear when I run my program?
@@ -599,50 +507,53 @@ will change this to compile and link in OpenGL.
 
 
 
- LINKS
-=======
+  5 LINKS
+===========
 
 The following links may be of use:
 
-1. Main Cygwin homepage:
+  1. Main Cygwin homepage:
 
-	http://www.cygwin.com/
+        https://www.cygwin.com/
 
-2. Main MinGW homepage:
+  2. Main MinGW homepage:
 
-	http://www.mingw.org/
+        http://www.mingw.org/
 
-   In particular look for the MinGW FAQ at this link for
-   a lot of useful Mingw-native development documentation.
-
-
-3. Check out the FLTK newsgroups at the FLTK homepage:
-
-	http://www.fltk.org/
-
-   Its archival search facilities are EXTREMELY useful
-   to check back through previous problems with this
-   sort of configuration before posting new questions.
-
-4. GNU Compiler Collection (GCC) compiler homepage:
-
-	http://gcc.gnu.org/
-
-5. OpenGL page - for OpenGL and GLUT libs
-
-	http://www.opengl.org/
-
-6. CMake homepage:
-
-	https://cmake.org/
+     In particular look for the MinGW FAQ at this link for
+     a lot of useful MinGW-native development documentation.
 
 
+  3. Check out the FLTK newsgroups at the FLTK homepage:
 
- DOCUMENT HISTORY
-==================
+        https://www.fltk.org/
 
-Oct 25 2010 - matt: restructured entire document and verified instructions
-Dec 20 2010 - matt: merged with README.win32
-Dec 22 2010 - Albrecht: added newer Cygwin (cross/mingw-w64) options
-Feb 24 2012 - Albrecht: clarified console window FAQ
-Jul 05 2017 - Albrecht: several updates, particularly on Visual Studio usage
+     Its archival search facilities are EXTREMELY useful
+     to check back through previous problems with this
+     sort of configuration before posting new questions.
+
+  4. GNU Compiler Collection (GCC) compiler homepage:
+
+        https://gcc.gnu.org/
+
+  5. OpenGL page - for OpenGL and GLUT libs
+
+        https://www.opengl.org/
+
+  6. CMake homepage:
+
+        https://cmake.org/
+
+  Note: all links in this document have been checked on Mar 21, 2020.
+    We can't guarantee that these links are still valid any time later.
+
+
+  6 DOCUMENT HISTORY
+======================
+
+  The document history is no longer maintained in this document.
+  Please consult the Git history instead.
+  Examples:
+    git log -- README.Windows.txt
+    git log -- README.MSWindows.txt     (previous, renamed version)
+    gitk -- README.Windows.txt

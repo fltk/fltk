@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // implementation of class Fl_OpenGL_Display_Device for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -132,13 +130,10 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, 
     memcpy(q, tmp, mByteWidth);
   }
   delete[] tmp;
-  
+
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
   img->alloc_array = 1;
   return img;
 }
 
 #endif
-//
-// End of "$Id$".
-//

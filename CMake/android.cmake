@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # android.cmake to build the FLTK AndroidStudio project using CMake
 # Written by Matthias Melcher
 #
@@ -10,11 +8,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 # all target modules will be added here later

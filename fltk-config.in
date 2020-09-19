@@ -1,7 +1,5 @@
 #!/bin/sh
 #
-# "$Id$"
-#
 # FLTK configuration utility.
 #
 # Copyright 2000-2016 by Bill Spitzak and others.
@@ -12,16 +10,16 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-MAJOR_VERSION=@FL_MAJOR_VERSION@
-MINOR_VERSION=@FL_MINOR_VERSION@
-PATCH_VERSION=@FL_PATCH_VERSION@
+MAJOR_VERSION=@FLTK_VERSION_MAJOR@
+MINOR_VERSION=@FLTK_VERSION_MINOR@
+PATCH_VERSION=@FLTK_VERSION_PATCH@
 VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
@@ -405,7 +403,3 @@ fi
 if test "$echo_includedir" = "yes"; then
     echo $includedir
 fi
-
-#
-# End of "$Id$".
-#

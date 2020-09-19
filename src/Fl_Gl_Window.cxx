@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "config_lib.h"
@@ -57,10 +55,10 @@ extern int fl_gl_load_plugin;
 // GL_SWAP_TYPE, it should be equal to one of these symbols:
 
 // contents of back buffer after glXSwapBuffers():
-#define UNDEFINED 1 	// anything
-#define SWAP 2		// former front buffer (same as unknown)
-#define COPY 3		// unchanged
-#define NODAMAGE 4	// unchanged even by X expose() events
+#define UNDEFINED 1     // anything
+#define SWAP 2          // former front buffer (same as unknown)
+#define COPY 3          // unchanged
+#define NODAMAGE 4      // unchanged even by X expose() events
 
 static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
 
@@ -78,12 +76,12 @@ void Fl_Gl_Window::show() {
       g = pGlWindowDriver->find(mode_,alist);
       if (!g && (mode_ & FL_DOUBLE) == FL_SINGLE) {
         g = pGlWindowDriver->find(mode_ | FL_DOUBLE,alist);
-	if (g) mode_ |= FL_FAKE_SINGLE;
+        if (g) mode_ |= FL_FAKE_SINGLE;
       }
 
       if (!g) {
         Fl::error("Insufficient GL support");
-	return;
+        return;
       }
     }
     pGlWindowDriver->before_show(need_after);
@@ -138,7 +136,7 @@ void Fl_Gl_Window::make_current() {
 
 /**
   Sets the projection so 0,0 is in the lower left of the window and each
-  pixel is 1 unit wide/tall.  If you are drawing 2D images, your 
+  pixel is 1 unit wide/tall.  If you are drawing 2D images, your
   draw() method may want to call this if valid() is false.
 */
 void Fl_Gl_Window::ortho() {
@@ -178,10 +176,10 @@ void Fl_Gl_Window::flush() {
       SWAP_TYPE = pGlWindowDriver->swap_type();
       const char* c = fl_getenv("GL_SWAP_TYPE");
       if (c) {
-	if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
-	else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;
-	else if (!strcmp(c, "SWAP")) SWAP_TYPE = SWAP;
-	else SWAP_TYPE = UNDEFINED;
+        if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
+        else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;
+        else if (!strcmp(c, "SWAP")) SWAP_TYPE = SWAP;
+        else SWAP_TYPE = UNDEFINED;
       }
     }
 
@@ -189,14 +187,14 @@ void Fl_Gl_Window::flush() {
 
       // don't draw if only overlay damage or expose events:
       if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !save_valid)
-	draw();
+        draw();
       swap_buffers();
 
     } else if (SWAP_TYPE == COPY) {
 
       // don't draw if only the overlay is damaged:
       if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-	  swap_buffers();
+          swap_buffers();
 
     } else if (SWAP_TYPE == SWAP){
       damage(FL_DAMAGE_ALL);
@@ -208,28 +206,28 @@ void Fl_Gl_Window::flush() {
       // If we are faking the overlay, use CopyPixels to act like
       // SWAP_TYPE == COPY.  Otherwise overlay redraw is way too slow.
       if (overlay == this) {
-	// don't draw if only the overlay is damaged:
-	if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-	// we use a separate context for the copy because rasterpos must be 0
-	// and depth test needs to be off:
-	static GLContext ortho_context = 0;
-	static Fl_Gl_Window* ortho_window = 0;
-	int orthoinit = !ortho_context;
-	if (orthoinit) ortho_context = pGlWindowDriver->create_gl_context(this, g);
-	pGlWindowDriver->set_gl_context(this, ortho_context);
-	if (orthoinit || !save_valid || ortho_window != this) {
-	  glDisable(GL_DEPTH_TEST);
-	  glReadBuffer(GL_BACK);
-	  glDrawBuffer(GL_FRONT);
-	  glLoadIdentity();
-	  glViewport(0, 0, pixel_w(), pixel_h());
-	  glOrtho(0, pixel_w(), 0, pixel_h(), -1, 1);
-	  glRasterPos2i(0,0);
-	  ortho_window = this;
-	}
-	glCopyPixels(0,0,pixel_w(),pixel_h(),GL_COLOR);
-	make_current(); // set current context back to draw overlay
-	damage1_ = 0;
+        // don't draw if only the overlay is damaged:
+        if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
+        // we use a separate context for the copy because rasterpos must be 0
+        // and depth test needs to be off:
+        static GLContext ortho_context = 0;
+        static Fl_Gl_Window* ortho_window = 0;
+        int orthoinit = !ortho_context;
+        if (orthoinit) ortho_context = pGlWindowDriver->create_gl_context(this, g);
+        pGlWindowDriver->set_gl_context(this, ortho_context);
+        if (orthoinit || !save_valid || ortho_window != this) {
+          glDisable(GL_DEPTH_TEST);
+          glReadBuffer(GL_BACK);
+          glDrawBuffer(GL_FRONT);
+          glLoadIdentity();
+          glViewport(0, 0, pixel_w(), pixel_h());
+          glOrtho(0, pixel_w(), 0, pixel_h(), -1, 1);
+          glRasterPos2i(0,0);
+          ortho_window = this;
+        }
+        glCopyPixels(0,0,pixel_w(),pixel_h(),GL_COLOR);
+        make_current(); // set current context back to draw overlay
+        damage1_ = 0;
 
       } else {
         damage1_ = damage();
@@ -245,7 +243,7 @@ void Fl_Gl_Window::flush() {
       glFlush();
     }
 
-  } else {	// single-buffered context is simpler:
+  } else {      // single-buffered context is simpler:
 
     draw();
     if (overlay == this) draw_overlay();
@@ -261,7 +259,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 //  printf("Fl_Gl_Window::resize(X=%d, Y=%d, W=%d, H=%d)\n", X, Y, W, H);
 //  printf("current: x()=%d, y()=%d, w()=%d, h()=%d\n", x(), y(), w(), h());
 
-  int is_a_resize = (W != Fl_Widget::w() || H != Fl_Widget::h() || Fl_Window_Driver::is_a_rescale());
+  int is_a_resize = (W != Fl_Widget::w() || H != Fl_Widget::h() || is_a_rescale());
   if (is_a_resize) valid(0);
   pGlWindowDriver->resize(is_a_resize, W, H);
   Fl_Window::resize(X,Y,W,H);
@@ -273,9 +271,9 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   the context from one window to another. You can also set it to NULL,
   which will force FLTK to recreate the context the next time make_current()
   is called, this is useful for getting around bugs in OpenGL implementations.
-  
+
   If <i>destroy_flag</i> is true the context will be destroyed by
-  fltk when the window is destroyed, or when the mode() is changed, 
+  fltk when the window is destroyed, or when the mode() is changed,
   or the next time context(x) is called.
 */
 void Fl_Gl_Window::context(GLContext v, int destroy_flag) {
@@ -283,7 +281,7 @@ void Fl_Gl_Window::context(GLContext v, int destroy_flag) {
   context_ = v;
   if (destroy_flag) mode_ &= ~NON_LOCAL_CONTEXT;
   else mode_ |= NON_LOCAL_CONTEXT;
-}    
+}
 
 /**
   Hides the window and destroys the OpenGL context.
@@ -327,13 +325,13 @@ void Fl_Gl_Window::init() {
 /**
   You must implement this virtual function if you want to draw into the
   overlay.  The overlay is cleared before this is called.  You should
-  draw anything that is not clear using OpenGL.  You must use 
+  draw anything that is not clear using OpenGL.  You must use
   gl_color(i) to choose colors (it allocates them from the colormap
   using system-specific calls), and remember that you are in an indexed
   OpenGL mode and drawing anything other than flat-shaded will probably
   not work.
 
-  Both this function and Fl_Gl_Window::draw() should check 
+  Both this function and Fl_Gl_Window::draw() should check
   Fl_Gl_Window::valid() and set the same transformation.  If you
   don't your code may not work on other systems.  Depending on the OS,
   and on whether overlays are real or simulated, the OpenGL context may
@@ -343,11 +341,11 @@ void Fl_Gl_Window::draw_overlay() {}
 
 #endif // HAVE_GL
 
-/** Draws the Fl_Gl_Window.   
-  You \e \b must subclass Fl_Gl_Window and provide an implementation for 
+/** Draws the Fl_Gl_Window.
+  You \e \b must subclass Fl_Gl_Window and provide an implementation for
   draw().  You may also provide an implementation of draw_overlay()
   if you want to draw into the overlay planes.  You can avoid
-  reinitializing the viewport and lights and other things by checking 
+  reinitializing the viewport and lights and other things by checking
   valid() at the start of draw() and only doing the
   initialization if it is false.
 
@@ -392,7 +390,7 @@ void Fl_Gl_Window::draw_overlay() {}
         glColor3f(1.0, 1.0, 1.0);
         glBegin(GL_LINE_STRIP); glVertex2f(w(), h()); glVertex2f(-w(),-h()); glEnd();
         glBegin(GL_LINE_STRIP); glVertex2f(w(),-h()); glVertex2f(-w(), h()); glEnd();
-    } 
+    }
   \endcode
 
 */
@@ -413,7 +411,7 @@ void Fl_Gl_Window::draw() {
   glLineWidth((GLfloat)pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
   glEnable(GL_BLEND); // FIXME: push on state stack
-  
+
   Fl_Window::draw();
 
   glPopMatrix();
@@ -428,7 +426,7 @@ void Fl_Gl_Window::draw() {
 /**
  Handle some FLTK events as needed.
  */
-int Fl_Gl_Window::handle(int event) 
+int Fl_Gl_Window::handle(int event)
 {
   return Fl_Window::handle(event);
 }
@@ -476,23 +474,23 @@ char Fl_Gl_Window_Driver::swap_type() {return UNDEFINED;}
 void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #if (HAVE_DLSYM && HAVE_DLFCN_H)
   char symbol[1024];
-  
+
   snprintf(symbol, sizeof(symbol), "_%s", procName);
-  
+
 #    ifdef RTLD_DEFAULT
   return dlsym(RTLD_DEFAULT, symbol);
-  
+
 #    else // No RTLD_DEFAULT support, so open the current a.out symbols...
   static void *rtld_default = dlopen(0, RTLD_LAZY);
-  
+
   if (rtld_default) return dlsym(rtld_default, symbol);
   else return 0;
-  
+
 #    endif // RTLD_DEFAULT
-  
+
 #elif defined(HAVE_GLXGETPROCADDRESSARB)
   return (void*)glXGetProcAddressARB((const GLubyte *)procName);
-  
+
 #else
   return 0;
 #endif // HAVE_DLSYM
@@ -570,7 +568,7 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
     GLfloat pos[4];
     glGetIntegerv(GL_MATRIX_MODE, &matrixmode);
     glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);       // save original glRasterPos
-    glMatrixMode(GL_PROJECTION);			// save proj/model matrices
+    glMatrixMode(GL_PROJECTION);                        // save proj/model matrices
     glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -767,7 +765,3 @@ void Fl_X11_Gl_Window_Driver::waitGL() {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

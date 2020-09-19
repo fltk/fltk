@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // ========================================================================
 //  DO NOT EDIT FL/Fl_Help_Dialog.H and src/Fl_Help_Dialog.cxx !!!
@@ -36,11 +34,11 @@
 #include <FL/Fl_Help_View.H>
 
 class FL_EXPORT Fl_Help_Dialog {
-  int index_; 
-  int max_; 
+  int index_;
+  int max_;
   int line_[100]; // FIXME: we must remove those static numbers
   char file_[100][FL_PATH_MAX]; // FIXME: we must remove those static numbers
-  int find_pos_; 
+  int find_pos_;
 public:
   Fl_Help_Dialog();
 private:
@@ -84,7 +82,3 @@ public:
   int y();
 };
 #endif
-
-//
-// End of "$Id$".
-//
