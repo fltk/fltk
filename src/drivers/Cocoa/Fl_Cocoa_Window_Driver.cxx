@@ -320,17 +320,19 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);
-  uchar *rgba = new uchar[4 * scaled_w * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * scaled_w, 2 * htop, 8, 8 * scaled_w, cspace, kCGImageAlphaPremultipliedLast);
+  const int factor = (layer ? 4 : 2); // resolution level for the titlebar (2 == retina's)
+  int data_w = factor * scaled_w, data_h = factor * htop;
+  uchar *rgba = new uchar[4 * data_w * data_h];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGContextClearRect(auxgc, CGRectMake(0,0,2*scaled_w,2*htop));
-  CGContextScaleCTM(auxgc, 2, 2);
+  CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
+  CGContextScaleCTM(auxgc, factor, factor);
   if (layer) {
     Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
     if (fl_mac_os_version >= 101300) {
       // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
       uchar *p = rgba;
-      uchar *last = rgba + 4 * scaled_w * htop * 4;
+      uchar *last = rgba + data_w * data_h * 4;
       while (p < last) {
         uchar q = *(p+3);
         if (q && q != 0xff) {
@@ -352,7 +354,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  top = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
+  top = new Fl_RGB_Image(rgba, data_w, data_h, 4);
   top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
