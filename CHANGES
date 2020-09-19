@@ -5,18 +5,20 @@ Bug fixes and other improvements
   Note to devs: the following list was created with:
     $ git shortlog release-1.3.5.. | sed -e's/^    //' | sed -e's/^/  /'
 
-  Albrecht Schlosser (6):
+  Albrecht Schlosser (8):
     Fix Fl::add_timeout() in draw() under Linux (STR 3188)
     Fix trailing whitespace in CHANGES
     X11: Fix X Input Methods (XIM) (STR 3502, 3192)
     Minor CMake updates (formatting)
     Fix overly restrictive JPEG filter (#81)
     Fix DND in read-only Fl_Input (Fl_Output) (#113)
+    Update CHANGES and dependencies
+    Minor CMake, docs, and test program updates
 
   Greg Ercolano (1):
     fixes issue92, added -d debug flag to fluid
 
-  ManoloFLTK (12):
+  ManoloFLTK (13):
     X11: add support for copy+paste of image within one app
     Windows: add bitmap version of graphics when copying to clipboard
     Fix use of Xrender extension with old, 16-bit framebuffers.
@@ -29,7 +31,7 @@ Bug fixes and other improvements
     Set OPTION_USE_SYSTEM_LIBPNG/JPEG off under macOS by default
     Have Fl_Pack::draw() call Fl_Group::init_sizes() on its parent group.
     CMake support of the Darwin+XQuartz test platform
-    Add support for macOS 10.15 "Catalina" and 11.0 "Big Sur".
+    Add support of macOS "Big Sur" 11.0
 
   OKAMURA, Yasunobu (1):
     Fix JIS Keyboard dead keys

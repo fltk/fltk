@@ -50,7 +50,7 @@ endif (MSVC)
 # Simulate the behavior of autoconf macro AC_HEADER_DIRENT, see:
 # https://www.gnu.org/software/autoconf/manual/autoconf-2.69/html_node/Particular-Headers.html
 # "Check for the following header files. For the first one that is found
-#  and defines ‘DIR’, define the listed C preprocessor macro ..."
+#  and defines 'DIR', define the listed C preprocessor macro ..."
 #
 # Note: we don't check if it really defines 'DIR', but we stop processing
 # once we found the first suitable header file.

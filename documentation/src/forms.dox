@@ -9,8 +9,8 @@ This appendix describes the Forms compatibility included with FLTK.
 <table border="1" width="90%" bgcolor="#cccccc">
 <tr>
 <th align="center">
-Warning: The Forms compatility is deprecated and no longer maintained in FLTK1,
-and is likely to be removed completely after the next official release.
+Warning: The Forms compatibility is deprecated and no longer maintained
+in FLTK 1.3, and is likely to be removed completely in FLTK 1.4
 </th>
 </tr>
 </table>
