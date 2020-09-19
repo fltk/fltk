@@ -1,7 +1,7 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,8 @@
 #include "StyleParse.h"
 
 class CodeEditor : public Fl_Text_Editor {
+  friend class StyleParse;
+
   static Fl_Text_Display::Style_Table_Entry styletable[];
 
   // 'style_parse()' - Parse text and produce style data.
@@ -54,8 +56,6 @@ class CodeEditor : public Fl_Text_Editor {
 
   // attempt to make the fluid code editor widget honour textsize setting
   void textsize(Fl_Fontsize s);
-
-  friend class StyleParse;
 };
 
 class CodeViewer : public CodeEditor {
