@@ -1,7 +1,8 @@
 //
-// Syntax highlighting style parser class - erco 09/16/2020
+// Syntax highlighting for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 2020 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
