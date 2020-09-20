@@ -258,18 +258,19 @@ int StyleParse::parse_keyword() {
   return parse_over_key(key, style);
 }
 
-// Style parse a quoted string.
+// Style parse a quoted string, either "" or ''.
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
-int StyleParse::parse_quoted_string() {
-  style = 'D';                           // start string style
+int StyleParse::parse_quoted_string(char quote_char, // e.g. '"' or '\''
+                                    char in_style) { // style for quoted text
+  style = in_style;                      // start string style
   if ( !parse_over_char() ) return 0;    // parse over opening quote
 
   // Parse until closing quote reached
   char c;
   while ( len > 0 ) {
     c = tbuff[0];
-    if ( c == '"' ) {                     // Closing quote? Parse and done
+    if ( c == quote_char ) {              // Closing quote? Parse and done
       if ( !parse_over_char() ) return 0; // close quote
       break;
     } else if ( c == '\\' ) {             // Escape sequence? Parse over, continue

@@ -50,7 +50,8 @@ public:
   int  parse_over_key(const char *key, char s);
   int  parse_over_angles(char s);
   int  parse_keyword();           // "switch"
-  int  parse_quoted_string();     // "hello"
+  int  parse_quoted_string(char quote_char, char in_style);
+                                  // "hello", 'x'
   int  parse_directive();         // "#define"
   int  parse_line_comment();      // "// text.."
   int  parse_escape();            // "\'"

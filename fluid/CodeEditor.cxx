@@ -33,7 +33,8 @@ Fl_Text_Display::Style_Table_Entry CodeEditor::
                   { FL_BLUE,             FL_COURIER,        11 }, // D - Strings
                   { FL_DARK_RED,         FL_COURIER,        11 }, // E - Directives
                   { FL_DARK_RED,         FL_COURIER_BOLD,   11 }, // F - Types
-                  { FL_BLUE,             FL_COURIER_BOLD,   11 }  // G - Keywords
+                  { FL_BLUE,             FL_COURIER_BOLD,   11 }, // G - Keywords
+                  { 220, /* med cyan */  FL_COURIER,        11 }  // H - Single quote chars
                 };
 
 // attempt to make the fluid code editor widget honour textsize setting
@@ -61,6 +62,7 @@ void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to par
   // 'E' - Directives     #define, #include..
   // 'F' - Types          void, char..
   // 'G' - Keywords       if, while..
+  // 'H' - Chars          'x'
 
   StyleParse sp;
   sp.tbuff  = in_tbuff;
@@ -83,8 +85,10 @@ void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to par
       if ( !sp.parse_escape() ) break;
     } else if ( strncmp(sp.tbuff, "//", 2)==0 ) {         // Line comment?
       if ( !sp.parse_line_comment() ) break;
-    } else if ( c == '"' ) {                              // Start of quoted string?
-      if ( !sp.parse_quoted_string() ) break;
+    } else if ( c == '"' ) {                              // Start of double quoted string?
+      if ( !sp.parse_quoted_string('"', 'D') ) break;
+    } else if ( c == '\'' ) {                             // Start of single quoted string?
+      if ( !sp.parse_quoted_string('\'', 'H') ) break;
     } else if ( c == '#' && sp.lwhite ) {                 // Start of '#' directive?
       if ( !sp.parse_directive() ) break;
     } else if ( !sp.last && (islower(c) || c == '_') ) {  // Possible C/C++ keyword?
