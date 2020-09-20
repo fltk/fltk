@@ -36,13 +36,13 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
   set (GENERATE_LATEX NO)
   set (LATEX_HEADER   "")
 
-  configure_file(
+  configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     @ONLY
   )
 
-  configure_file(
+  configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tiny.png
     ${CMAKE_CURRENT_BINARY_DIR}/html/tiny.png
     COPYONLY
@@ -51,7 +51,6 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
   # generate html docs
 
   add_custom_target (html
-    # ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
@@ -73,28 +72,31 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
   set (GENERATE_LATEX YES)
   set (LATEX_HEADER   "${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
 
-  configure_file(
+  # strip potential " (Git-hash)" from the original version
+  string (REGEX REPLACE " .*$" "" DOXY_VERSION ${DOXYGEN_VERSION})
+  execute_process (COMMAND date +%Y
+    OUTPUT_VARIABLE YEAR
+  )
+
+  configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
     ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
     @ONLY
   )
 
-  # generate LaTeX header fltk-book.tex
-
-  set (DOXY_VERSION ${DOXYGEN_VERSION})
-  execute_process (COMMAND date +%Y
-    OUTPUT_VARIABLE YEAR
-  )
-
-  configure_file (${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-book.tex.in
-    ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-title.tex.in
+    ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
     @ONLY
   )
 
   # generate fltk.pdf
 
-  add_custom_command(
+  add_custom_command (
     OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_header
+            ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
+            ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
     COMMAND ${DOXYGEN_EXECUTABLE} Doxybook
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fltk.pdf
@@ -105,7 +107,6 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
   # add target 'pdf'
 
   add_custom_target (pdf
-    # ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
   )
 
@@ -117,8 +118,7 @@ endif (OPTION_BUILD_PDF_DOCUMENTATION)
 
 if (DOCS)
 
-  add_custom_target(docs
-    # ALL
+  add_custom_target (docs
     DEPENDS ${DOCS}
   )
 

@@ -66,7 +66,7 @@ dist:	docs
 
 clean:
 	$(RM) Doxyfile Doxybook
-	$(RM) fltk.pdf refman.pdf src/fltk-book.tex
+	$(RM) fltk.pdf refman.pdf src/fltk-book.tex src/fltk-book.tex.in
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -180,9 +180,14 @@ refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	./make_pdf
 
 src/fltk-book.tex: src/fltk-book.tex.in
-	DOXY_VERSION=`$(DOXYDOC) --version`; \
+	echo "Generating $@ ..."
+	DOXY_VERSION=`$(DOXYDOC) --version|cut -f1 -d' '`; \
 	YEAR=`date +%Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
 	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
 	< $< > $@
+
+src/fltk-book.tex.in: src/fltk-title.tex.in
+	echo "Generating $@ ..."
+	./make_header src/fltk-title.tex.in src/fltk-book.tex.in
