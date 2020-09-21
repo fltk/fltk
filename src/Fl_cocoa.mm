@@ -2387,7 +2387,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
-  if (!gc || fl_mac_os_version >= 110000) {
+  if (!gc || fl_mac_os_version >= 101600) {
     // bitmap context-related functions (e.g., CGBitmapContextGetBytesPerRow) can't be used here with macOS 11.0 "Big Sur"
     static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
     int W = [self frame].size.width, H = [self frame].size.height;
@@ -2461,7 +2461,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if (window->damage()) i->flush();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (destination) { // can be NULL with gl_start/gl_finish
-    if (fl_mac_os_version < 110000 && CGBitmapContextGetBytesPerRow(aux_bitmap) == CGBitmapContextGetBytesPerRow(destination)) {
+    if (fl_mac_os_version < 101600 && CGBitmapContextGetBytesPerRow(aux_bitmap) == CGBitmapContextGetBytesPerRow(destination)) {
       memcpy(CGBitmapContextGetData(destination), CGBitmapContextGetData(aux_bitmap),
              CGBitmapContextGetHeight(aux_bitmap) * CGBitmapContextGetBytesPerRow(aux_bitmap));
     } else {
