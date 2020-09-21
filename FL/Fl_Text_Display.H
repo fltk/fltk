@@ -40,10 +40,10 @@
  Displays.
 
  \image html editor.png "Fl_Text_Display widget"
- \image latex editor.png "Fl_Text_Display widget" width=6cm
+ \image latex editor.png "Fl_Text_Display widget" width=10cm
  <BR><BR>
  \image html editor-linenumbers.png "Fl_Text_Display widget with line numbers enabled"
- \image latex editor-linenumbers.png "Fl_Text_Display widget with line numbers enabled" width=6cm
+ \image latex editor-linenumbers.png "Fl_Text_Display widget with line numbers enabled" width=10cm
 
  \b Example \b Use
  \code
