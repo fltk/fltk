@@ -320,7 +320,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);
-  const int factor = (layer ? 4 : 2); // resolution level for the titlebar (2 == retina's)
+  const int factor = (layer && mapped_to_retina() ? 4 : 2); // resolution level for the titlebar (2 == retina's)
   int data_w = factor * scaled_w, data_h = factor * htop;
   uchar *rgba = new uchar[4 * data_w * data_h];
   CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
