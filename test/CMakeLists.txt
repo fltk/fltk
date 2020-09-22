@@ -49,6 +49,7 @@ include_directories(
 #######################################################################
 # Add the ANDROID_OK option if the example can be compiled for Android
 # as well as for other platforms.
+
 if (NOT ANDROID)
 
 CREATE_EXAMPLE (adjuster adjuster.cxx fltk ANDROID_OK)

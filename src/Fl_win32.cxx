@@ -2431,19 +2431,32 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
 }
 
 void Fl_Window::default_icons() {
-  HICON *big_icon, *small_icon, big_icon_array[1], small_icon_array[1];
+  HICON *pbig, *psmall, big_icons[1], small_icons[1];
   wchar_t path[FL_PATH_MAX];
 
-  big_icon_array[0] = NULL;
-  small_icon_array[0] = NULL;
-  big_icon = big_icon_array;
-  small_icon = small_icon_array;
+  big_icons[0] = NULL;
+  small_icons[0] = NULL;
+  pbig = big_icons;
+  psmall = small_icons;
+
+  if (default_big_icon != NULL)
+    DestroyIcon(default_big_icon);
+  if (default_small_icon != NULL)
+    DestroyIcon(default_small_icon);
 
   // use exe's/module's icon resource to set window default icons
-  GetModuleFileNameW(NULL, path, FL_PATH_MAX);
-  ExtractIconExW(path, 0, big_icon, small_icon, 1);
+  if (GetModuleFileNameW(NULL, path, FL_PATH_MAX) == 0)
+    return;
+  if (ExtractIconExW(path, 0, pbig, psmall, 1) == 0)
+    return;
 
-  Fl_Window::default_icons(big_icon_array[0], small_icon_array[0]);
+  default_big_icon = NULL;
+  default_small_icon = NULL;
+
+  if (big_icons[0] != NULL)
+    default_big_icon = big_icons[0];
+  if (small_icons[0] != NULL)
+    default_small_icon = small_icons[0];
 }
 
 void Fl_WinAPI_Window_Driver::set_icons() {
