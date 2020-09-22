@@ -1,6 +1,4 @@
 //
-// "$Id$".
-//
 //       External code editor management class for Windows
 //
 //       Handles starting and keeping track of an external text editor,
@@ -28,7 +26,7 @@
 #include <string.h>                 /* sprintf().. */
 
 class ExternalCodeEditor {
-  PROCESS_INFORMATION pinfo_;       // CreateProcess() handle to running process 
+  PROCESS_INFORMATION pinfo_;       // CreateProcess() handle to running process
   FILETIME            file_mtime_;  // last modify time of the file (used to determine if file changed)
   LARGE_INTEGER       file_size_;   // last file size (used to determine if changed)
   const char *        filename_;    // tmpfilename editor uses
@@ -43,7 +41,7 @@ public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();
   int is_editing();
-  DWORD reap_editor();
+  int reap_editor(DWORD *pid_reaped=NULL);
   void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);
@@ -59,6 +57,3 @@ public:
 };
 
 #endif /*_EXTCODEEDITOR_H */
-//
-// End of "$Id$".
-//

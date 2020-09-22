@@ -3,21 +3,19 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // FLUID print panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -29,6 +27,9 @@ decl {\#include <stdlib.h>} {private local
 }
 
 decl {\#include "../src/flstring.h"} {private local
+}
+
+decl {\#include <FL/fl_string.h>} {private local
 }
 
 decl {\#include <FL/Fl_Preferences.H>} {private local
@@ -53,7 +54,7 @@ Function {make_print_panel()} {open
       } {}
       Fl_Button print_properties {
         label {Properties...}
-        callback {print_properties_panel->show();} selected
+        callback {print_properties_panel->show();}
         xywh {294 10 105 25}
       }
       Fl_Box print_status {
@@ -309,7 +310,7 @@ if ((lpstat = popen("LC_MESSAGES=C LANG=C lpstat -p -d", "r")) != NULL) {
       }
       *qptr = '\\0';
 
-      print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+      print_choice->add(qname, 0, 0, (void *)fl_strdup(name), 0);
     } else if (!strncmp(line, "system default destination: ", 28)) {
       if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\\0';
     }
@@ -357,10 +358,4 @@ print_page_size->value(val);
 snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
 print_output_mode[val]->setonly();} {}
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

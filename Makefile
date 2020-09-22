@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
 # Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 include makeinclude
@@ -80,6 +78,10 @@ distclean: clean
 		$(RM) test/`basename $$file .fl`.cxx; \
 		$(RM) test/`basename $$file .fl`.h; \
 	done
+	$(RM) -rf autom4te.cache/
+	$(RM) config.guess
+	$(RM) config.sub
+	$(RM) configure
 
 fltk-config: configure configh.in fltk-config.in
 	if test -f config.status; then \
@@ -129,8 +131,3 @@ clang:
 	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) clean all
 clang-changes:
 	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) all
-
-
-#
-# End of "$Id$".
-#

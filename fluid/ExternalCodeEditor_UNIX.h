@@ -1,6 +1,4 @@
 //
-// "$Id$".
-//
 //       External code editor management class for Unix
 //
 //       Handles starting and keeping track of an external text editor,
@@ -31,7 +29,7 @@ public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();
   int is_editing();
-  pid_t reap_editor();
+  int reap_editor(pid_t *pid_reaped=NULL);
   void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);
@@ -47,6 +45,3 @@ public:
 };
 
 #endif /*_EXTCODEEDITOR_H */
-//
-// End of "$Id$".
-//

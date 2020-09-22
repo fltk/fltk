@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Table_Row -- A row oriented table widget
 //
 //    A class specializing in a table of rows.
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -32,7 +30,7 @@
 // #define DEBUG 1
 #ifdef DEBUG
 #include <FL/names.h>
-#include <stdio.h>		// fprintf()
+#include <stdio.h>              // fprintf()
 #define PRINTEVENT \
     fprintf(stderr,"TableRow %s: ** Event: %s --\n", (label()?label():"none"), fl_eventnames[event]);
 #else
@@ -46,7 +44,7 @@ void Fl_Table_Row::CharVector::copy(char *newarr, int newsize) {
   memcpy(arr, newarr, newsize * sizeof(char));
 }
 
-Fl_Table_Row::CharVector::~CharVector() {	// DTOR
+Fl_Table_Row::CharVector::~CharVector() {       // DTOR
   if (arr) free(arr);
   arr = 0;
 }
@@ -80,7 +78,7 @@ void Fl_Table_Row::type(TableRowSelectMode val) {
       int count = 0;
       for ( int row=0; row<rows(); row++ ) {
         if ( _rowselect[row] ) {
-          if ( ++count > 1 ) {	// only one allowed
+          if ( ++count > 1 ) {  // only one allowed
             _rowselect[row] = 0;
           }
         }
@@ -111,7 +109,7 @@ int Fl_Table_Row::select_row(int row, int flag) {
   switch ( _selectmode ) {
     case SELECT_NONE:
       return(-1);
-      
+
     case SELECT_SINGLE: {
       int oldval;
       for ( int t=0; t<rows(); t++ ) {
@@ -131,13 +129,13 @@ int Fl_Table_Row::select_row(int row, int flag) {
       }
       break;
     }
-      
+
     case SELECT_MULTI: {
       int oldval = _rowselect[row];
       if ( flag == 2 ) { _rowselect[row] ^= 1; }
       else             { _rowselect[row] = flag; }
-      if ( _rowselect[row] != oldval ) {		// select state changed?
-        if ( row >= toprow && row <= botrow ) {		// row visible?
+      if ( _rowselect[row] != oldval ) {                // select state changed?
+        if ( row >= toprow && row <= botrow ) {         // row visible?
           // Extend partial redraw range
           redraw_range(row, row, leftcol, rightcol);
         }
@@ -153,11 +151,11 @@ void Fl_Table_Row::select_all_rows(int flag) {
   switch ( _selectmode ) {
     case SELECT_NONE:
       return;
-      
+
     case SELECT_SINGLE:
       if ( flag != 0 ) return;
       //FALLTHROUGH
-      
+
     case SELECT_MULTI: {
       char changed = 0;
       if ( flag == 2 ) {
@@ -168,7 +166,7 @@ void Fl_Table_Row::select_all_rows(int flag) {
       } else {
         for ( int row=0; row<(int)_rowselect.size(); row++ ) {
           changed |= (_rowselect[row] != flag)?1:0;
-          _rowselect[row] = flag; 
+          _rowselect[row] = flag;
         }
       }
       if ( changed ) {
@@ -181,46 +179,46 @@ void Fl_Table_Row::select_all_rows(int flag) {
 // Set number of rows
 void Fl_Table_Row::rows(int val) {
   Fl_Table::rows(val);
-  while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }	// enlarge
-  while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }	// shrink
+  while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }   // enlarge
+  while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }     // shrink
 }
 
 // Handle events
 int Fl_Table_Row::handle(int event) {
-  PRINTEVENT;  
+  PRINTEVENT;
 
   // Make snapshots of realtime event states *before* we service user's cb,
   // which may do things like post popup menus that return with unexpected button states.
   int _event_button = Fl::event_button();
-  //int _event_clicks = Fl::event_clicks();	// uncomment if needed
+  //int _event_clicks = Fl::event_clicks();     // uncomment if needed
   int _event_x      = Fl::event_x();
   int _event_y      = Fl::event_y();
-  //int _event_key    = Fl::event_key();	// uncomment if needed
+  //int _event_key    = Fl::event_key();        // uncomment if needed
   int _event_state  = Fl::event_state();
-  //Fl_Widget *_focus = Fl::focus();		// uncomment if needed
-  
+  //Fl_Widget *_focus = Fl::focus();            // uncomment if needed
+
   // Let base class handle event
   //     Note: base class may invoke user callbacks that post menus,
   //     so from here on use event state snapshots (above).
   //
   int ret = Fl_Table::handle(event);
-  
+
   // The following code disables cell selection.. why was it added? -erco 05/18/03
-  // if ( ret ) { _last_y = Fl::event_y(); return(1); }	// base class 'handled' it (eg. column resize)
-  
+  // if ( ret ) { _last_y = Fl::event_y(); return(1); } // base class 'handled' it (eg. column resize)
+
   int shiftstate = (_event_state & FL_CTRL) ? FL_CTRL :
   (_event_state & FL_SHIFT) ? FL_SHIFT : 0;
-  
+
   // Which row/column are we over?
-  int R, C;  				// row/column being worked on
-  ResizeFlag resizeflag;		// which resizing area are we over? (0=none)
+  int R, C;                             // row/column being worked on
+  ResizeFlag resizeflag;                // which resizing area are we over? (0=none)
   TableContext context = cursor2rowcol(R, C, resizeflag);
   switch ( event ) {
     case FL_PUSH:
       if ( _event_button == 1 ) {
-        _last_push_x = _event_x;	// save regardless of context
-        _last_push_y = _event_y;	// " "
-        
+        _last_push_x = _event_x;        // save regardless of context
+        _last_push_y = _event_y;        // " "
+
         // Handle selection in table.
         //     Select cell under cursor, and enable drag selection mode.
         //
@@ -228,9 +226,9 @@ int Fl_Table_Row::handle(int event) {
           // Ctrl key? Toggle selection state
           switch ( shiftstate ) {
             case FL_CTRL:
-              select_row(R, 2);		// toggle
+              select_row(R, 2);         // toggle
               break;
-              
+
             case FL_SHIFT: {
               select_row(R, 1);
               if ( _last_row > -1 ) {
@@ -245,27 +243,27 @@ int Fl_Table_Row::handle(int event) {
               }
               break;
             }
-              
+
             default:
-              select_all_rows(0);	// clear all previous selections
+              select_all_rows(0);       // clear all previous selections
               select_row(R, 1);
               break;
           }
-          
+
           _last_row = R;
           _dragging_select = 1;
           ret = 1;      // FL_PUSH handled (ensures FL_DRAG will be sent)
           // redraw();  // redraw() handled by select_row()
         }
-      } 
+      }
       break;
-      
+
     case FL_DRAG: {
       if ( _dragging_select ) {
         // Dragged off table edges? Handle scrolling
-        int offtop = toy - _last_y;			// >0 if off top of table
-        int offbot = _last_y - (toy + toh);		// >0 if off bottom of table
-        
+        int offtop = toy - _last_y;                     // >0 if off top of table
+        int offbot = _last_y - (toy + toh);             // >0 if off bottom of table
+
         if ( offtop > 0 && row_position() > 0 ) {
           // Only scroll in upward direction
           int diff = _last_y - _event_y;
@@ -285,17 +283,17 @@ int Fl_Table_Row::handle(int event) {
             break;
           }
           row_position(row_position() + diff);
-          context = CONTEXT_CELL; C = 0; R = botrow;		// HACK: fake it
-          if ( R < 0 || R > rows() ) { ret = 1; break; }	// HACK: ugly
+          context = CONTEXT_CELL; C = 0; R = botrow;            // HACK: fake it
+          if ( R < 0 || R > rows() ) { ret = 1; break; }        // HACK: ugly
         }
         if ( context == CONTEXT_CELL ) {
           switch ( shiftstate ) {
             case FL_CTRL:
-              if ( R != _last_row ) {		// toggle if dragged to new row
-                select_row(R, 2);		// 2=toggle
+              if ( R != _last_row ) {           // toggle if dragged to new row
+                select_row(R, 2);               // 2=toggle
               }
               break;
-              
+
             case FL_SHIFT:
             default:
               select_row(R, 1);
@@ -311,38 +309,34 @@ int Fl_Table_Row::handle(int event) {
               }
               break;
           }
-          ret = 1;				// drag handled
+          ret = 1;                              // drag handled
           _last_row = R;
         }
       }
       break;
     }
-      
+
     case FL_RELEASE:
       if ( _event_button == 1 ) {
         _dragging_select = 0;
-        ret = 1;			// release handled
-        // Clicked off edges of data table? 
+        ret = 1;                        // release handled
+        // Clicked off edges of data table?
         //    A way for user to clear the current selection.
         //
         int databot = tiy + table_h,
         dataright = tix + table_w;
-        if ( 
+        if (
             ( _last_push_x > dataright && _event_x > dataright ) ||
             ( _last_push_y > databot && _event_y > databot )
             ) {
-          select_all_rows(0);			// clear previous selections
+          select_all_rows(0);                   // clear previous selections
         }
       }
       break;
-      
+
     default:
       break;
   }
   _last_y = _event_y;
   return(ret);
 }
-
-//
-// End of "$Id$".
-//

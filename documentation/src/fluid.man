@@ -9,7 +9,7 @@ fluid [ \-c [ \-o
 .I header-filename
 ] ] [
 .I filename.fl
-] 
+]
 .fi
 .SH DESCRIPTION
 \fIfluid\fR is an interactive GUI designer for FLTK. When run
@@ -19,7 +19,7 @@ Functions, classes, windows, and GUI components can be
 manipulated as needed.
 .LP
 When used with the \fI\-c\fR option, \fIfluid\fR will create the
-necessary C++ header and code files in the current directory. 
+necessary C++ header and code files in the current directory.
 You can override the default extensions, filenames, and
 directories using the \fI\-o\fR and \fI\-h\fR options.
 .SH SEE ALSO
@@ -27,6 +27,6 @@ fltk\-config(1), fltk(3)
 .br
 FLTK Programming Manual, Chapter 9
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHORS
 Bill Spitzak and others.

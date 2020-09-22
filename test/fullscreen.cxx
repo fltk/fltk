@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -130,7 +128,7 @@ class fullscreen_window : public Fl_Single_Window {
   Fl_Toggle_Light_Button *b4;
 };
 
-fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) { 
+fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) {
 
 }
 
@@ -234,15 +232,15 @@ void update_screeninfo(Fl_Widget *b, void *p) {
     sprintf(line, "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
     browser->add(line);
     for (int n = 0; n < Fl::screen_count(); n++) {
-	int x, y, w, h;
+        int x, y, w, h;
         float dpih, dpiv;
-	Fl::screen_xywh(x, y, w, h, n);
+        Fl::screen_xywh(x, y, w, h, n);
         Fl::screen_dpi(dpih, dpiv, n);
         sprintf(line, "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f scale:%.2f", n, w, h, x, y, dpih, dpiv, Fl::screen_scale(n));
-	browser->add(line);
-	Fl::screen_work_area(x, y, w, h, n);
-	sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
-	browser->add(line);
+        browser->add(line);
+        Fl::screen_work_area(x, y, w, h, n);
+        sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
+        browser->add(line);
     }
 }
 
@@ -278,13 +276,13 @@ int main(int argc, char **argv) {
 #endif
 
   Fl_Window *w;
-  if (twowindow) {	// make it's own window
+  if (twowindow) {      // make it's own window
     sw.resizable(&sw);
     w = &sw;
-    window.set_modal();	// makes controls stay on top when fullscreen pushed
+    window.set_modal(); // makes controls stay on top when fullscreen pushed
     argc--;
     sw.show();
-  } else {		// otherwise make a subwindow
+  } else {              // otherwise make a subwindow
     window.add(sw);
     window.resizable(&sw);
     w = &window;
@@ -329,7 +327,7 @@ int main(int argc, char **argv) {
   Fl_Browser *browser = new Fl_Browser(50,y,window.w()-60,100);
   update_screeninfo(0, browser);
   y+=100;
-  
+
   Fl_Button update(50,y,window.w()-60,30,"Update");
   update.callback(update_screeninfo, browser);
   y+=30;
@@ -338,10 +336,6 @@ int main(int argc, char **argv) {
 
   window.end();
   window.show(argc,argv);
-  
+
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // You MUST use gl_visual() to select the default visual before doing
@@ -67,7 +65,7 @@ void gl_start() {
     clip_state_number = fl_graphics_driver->fl_clip_state_number;
     int x = 0, y = 0, w = 0, h = 0;
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
-		    x, y, w, h)) {
+                    x, y, w, h)) {
       fl_clip_region(Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h));
       glScissor(x*gl_start_scale, (Fl_Window::current()->h()-(y+h))*gl_start_scale, w*gl_start_scale, h*gl_start_scale);
       glEnable(GL_SCISSOR_TEST);
@@ -135,7 +133,3 @@ int Fl::gl_visual(int mode, int *alist) {
  */
 
 #endif // HAVE_GL
-
-//
-// End of "$Id$".
-//

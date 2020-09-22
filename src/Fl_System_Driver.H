@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -97,8 +95,11 @@ public:
   // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}
   virtual char *getenv(const char* v) {return NULL;}
-  virtual int putenv(char* v) {return -1;}
+  virtual int putenv(const char *var) {return -1;}
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
+
+  // implement these to support cross-platform string operations
+  virtual char *strdup(const char *s) {return NULL;}
 
   // Note: the default implementation ignores the 'binary' argument.
   // Some platforms (notably Windows) may use this argument.
@@ -130,7 +131,9 @@ public:
   virtual int event_key(int k) {return 0;}
   virtual int get_key(int k) {return 0;}
   // implement scandir-like function
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {return -1;}
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg=NULL, int errmsg_sz=0) {return -1;}
   // the default implementation of filename_expand() may be enough
   virtual int filename_expand(char *to, int tolen, const char *from);
   // to implement
@@ -164,7 +167,9 @@ public:
   // implement to support Fl_File_Browser::load()
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon) {return 0;}
   // the default implementation of file_browser_load_directory() should be enough
-  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
+  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size,
+                                          dirent ***pfiles, Fl_File_Sort_F *sort,
+                                          char *errmsg=NULL, int errmsg_sz=0);
   // implement to support Fl_Preferences
   virtual void newUUID(char *uuidBuffer) { uuidBuffer[0] = 0; }
   // implement to support Fl_Preferences
@@ -242,7 +247,3 @@ public:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

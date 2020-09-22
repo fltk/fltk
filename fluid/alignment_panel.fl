@@ -3,21 +3,19 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -348,7 +346,7 @@ Function {make_shell_window()} {open
   }
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {454 363 555 430} type Double resizable visible
+    xywh {454 363 555 430} type Double hide resizable
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
@@ -560,12 +558,12 @@ Function {show_global_settings_window()} {open return_type void
 readPrefs();
 refreshUI();
 fl_message(
-	"WARNING!\\n\\n"
-	"The following dialog changes the user interface behavior\\n"
-	"of ALL FLTK applications, for the current user, or for \\n"
-	"ALL users on this machine.\\n\\n"
-	"Please choose these settings carefully, or reset\\n"
-	"user and system settings to \\"default\\".");
+        "WARNING!\\n\\n"
+        "The following dialog changes the user interface behavior\\n"
+        "of ALL FLTK applications, for the current user, or for \\n"
+        "ALL users on this machine.\\n\\n"
+        "Please choose these settings carefully, or reset\\n"
+        "user and system settings to \\"default\\".");
 global_settings_window->show();} {}
 }
 
@@ -702,7 +700,7 @@ Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
         callback {int mode = wUserOrSystem->value();
 opt[Fl::OPTION_FNFC_USES_GTK ][mode] = wGTKText->value();} open
         tooltip {OPTION_FNFC_USES_GTK
-        
+
 If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser class
 calls the GTK open/save file dialogs when they are available on the platfom. If disabled, the Fl_Native_File_Chooser class
 always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is available.
@@ -788,10 +786,4 @@ global_settings_window->hide();}
   }
   code {readPrefs();
   Fl::option(Fl::OPTION_SHOW_TOOLTIPS,1); // make sure tooltips are on !} {}
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

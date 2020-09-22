@@ -3,21 +3,19 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -297,7 +295,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           Fl_Value_Input {} {
             label {Size:}
             callback slider_size_cb
-            tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 step 0.010101 textsize 11
+            tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Minimum:}
@@ -364,7 +362,8 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           label {Shortcut:}
           callback shortcut_in_cb
           comment {This is a special button that grabs keystrokes directly}
-          tooltip {The shortcut key for the widget.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
+          tooltip {The shortcut key for the widget.
+Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
           code0 {\#include "Shortcut_Button.h"}
           class Shortcut_Button
         }
@@ -675,7 +674,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Button {} {
         label Revert
         callback revert_cb
-        comment {Hidden Revert button}
+        comment {Hidden Revert button} selected
         xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
@@ -701,10 +700,4 @@ wCallback->do_callback(wCallback, v);} open
       }
     }
   }
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

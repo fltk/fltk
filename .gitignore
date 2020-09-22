@@ -1,5 +1,6 @@
-# ignore file for git - generated from subversion with:
-# git svn show-ignore
+#
+# Files to be ignored by Git (do not commit)
+#
 
 *.o
 *.exe
@@ -20,6 +21,9 @@ etc/FLTKConfig.cmake
 # MSVC
 *.tlog
 .vs/
+
+# VS Code (Visual Studio Code) Editor
+.vscode/
 
 # /
 /autom4te*.cache
@@ -43,6 +47,10 @@ etc/FLTKConfig.cmake
 /FL/abi-version.h
 /FL/Makefile
 /FL/*.bck
+
+# /cairo/
+/cairo/*.so*
+/cairo/*.dll
 
 # /documentation/
 /documentation/.xvpics
@@ -83,42 +91,7 @@ etc/FLTKConfig.cmake
 /documentation/src/fltk-book.tex
 
 # /examples/
-/examples/*.exe
-/examples/clipboard
-/examples/draggable-group
-/examples/fltk-versions
-/examples/howto-add_fd-and-popen
-/examples/howto-browser-with-icons
-/examples/howto-drag-and-drop
-/examples/howto-menu-with-images
-/examples/howto-parse-args
-/examples/howto-simple-svg
-/examples/howto-text-over-image-button
-/examples/menubar-add
-/examples/nativefilechooser-simple
-/examples/nativefilechooser-simple-app
-/examples/OpenGL3-glut-test
-/examples/OpenGL3test
-/examples/progress-simple
-/examples/shapedwindow
-/examples/simple-terminal
-/examples/SVG_File_Surface
-/examples/table-as-container
-/examples/table-simple
-/examples/table-sort
-/examples/table-spreadsheet
-/examples/table-spreadsheet-with-keyboard-nav
-/examples/table-with-keynav
-/examples/tabs-simple
-/examples/textdisplay-with-colors
-/examples/texteditor-simple
-/examples/texteditor-with-dynamic-colors
-/examples/tree-as-container
-/examples/tree-custom-draw-items
-/examples/tree-custom-sort
-/examples/tree-of-tables
-/examples/tree-simple
-/examples/wizard-simple
+# see examples/.gitignore
 
 # /fluid/
 /fluid/fluid
@@ -146,209 +119,15 @@ etc/FLTKConfig.cmake
 /src/*.sl*
 /src/*.a
 /src/*.bck
+/src/*.dll
 /src/*.sav
 /src/*.dylib
 
 # /test/
-/test/CubeView
-/test/CubeViewUI.cxx
-/test/CubeViewUI.h
-/test/adjuster
-/test/animated
-/test/arc
-/test/ask
-/test/bitmap
-/test/blocks
-/test/boxtype
-/test/browser
-/test/button
-/test/buttons
-/test/cairo_test
-/test/checkers
-test/checkers_pieces.cxx
-test/checkers_pieces.h
-test/clock
-/test/colbrowser
-/test/color_chooser
-/test/cube
-/test/cursor
-/test/curve
-/test/demo
-/test/device
-/test/doublebuffer
-/test/editor
-/test/fast_slow
-/test/fast_slow.cxx
-/test/fast_slow.h
-/test/file_chooser
-/test/fonts
-/test/forms
-/test/fractals
-/test/fullscreen
-/test/gl_overlay
-/test/glpuzzle
-/test/hello
-/test/help_dialog
-/test/icon
-/test/iconize
-/test/image
-/test/inactive
-/test/inactive.cxx
-/test/inactive.h
-/test/input
-/test/input_choice
-/test/keyboard
-/test/keyboard_ui.cxx
-/test/keyboard_ui.h
-/test/label
-/test/line_style
-/test/list_visuals
-/test/mandelbrot
-/test/mandelbrot_ui.cxx
-/test/mandelbrot_ui.h
-/test/menubar
-/test/message
-/test/minimum
-/test/native-filechooser
-/test/navigation
-/test/offscreen
-/test/output
-/test/overlay
-/test/pack
-/test/pixmap
-/test/pixmap_browser
-/test/preferences
-/test/preferences.cxx
-/test/preferences.h
-/test/print
-/test/radio
-/test/radio.cxx
-/test/radio.h
-/test/resize
-/test/resize.cxx
-/test/resize.h
-/test/resizebox
-/test/rotated_text
-/test/scroll
-/test/shape
-/test/shiny
-/test/shiny_panel.cxx
-/test/shiny_panel.h
-/test/subwindow
-/test/sudoku
-/test/symbols
-/test/table
-/test/tabs
-/test/tabs.cxx
-/test/tabs.h
-/test/threads
-/test/tile
-/test/tiled_image
-/test/tree
-/test/tree.cxx
-/test/tree.h
-/test/twowin
-/test/unittests
-/test/utf8
-/test/valuators
-/test/valuators.cxx
-/test/valuators.h
-/test/windowfocus
-/test/*.bck
-/test/*.exe
-/test/*.ilk
-/test/fltk*.lib
-/test/fltk*.exp
-/test/fltk*.dll
+# see test/.gitignore
 
-##################################
-# Mac OS X binary files filtering:
-##################################
-# /test/blocks.app/Contents/MacOS/
-/test/blocks.app/Contents/MacOS/blocks
-
-# /test/checkers.app/Contents/MacOS/
-/test/checkers.app/Contents/MacOS/checkers
-
-# /test/sudoku.app/Contents/MacOS/
-/test/sudoku.app/Contents/MacOS/sudoku
+# macOS binary files
+# (see also test/.gitignore)
 
 fluid/*.app/Contents/MacOS
-test/*.app/Contents/MacOS
 **/.DS_Store
-
-test/adjuster.app
-test/iconize.app
-test/fast_slow.app
-test/message.app
-test/icon.app
-test/line_style.app
-test/symbols.app
-test/file_chooser.app
-test/native-filechooser.app
-test/browser.app
-test/curve.app
-test/fonts.app
-test/fullscreen.app
-test/doublebuffer.app
-test/glpuzzle.app
-test/shape.app
-test/forms.app
-test/keyboard.app
-test/ask.app
-test/color_chooser.app
-test/mandelbrot.app
-test/offscreen.app
-test/resize.app
-test/animated.app
-test/subwindow.app
-test/inactive.app
-test/navigation.app
-test/tabs.app/Contents
-test/label.app
-test/rotated_text.app
-test/tiled_image.app
-test/hello.app
-test/tile.app
-test/twowin.app
-test/windowfocus.app
-test/button.app
-test/input.app
-test/arc.app
-test/pixmap.app
-test/tree.app
-test/tabs.app
-test/buttons.app
-test/cube.app
-test/output.app
-test/overlay.app
-test/table.app
-test/list_visuals.app
-test/device.app
-test/demo.app
-test/minimum.app
-test/unittests.app
-test/colbrowser.app
-test/preferences.app/Contents
-test/radio.app
-test/threads.app
-test/pixmap_browser.app
-test/boxtype.app
-test/CubeView.app
-test/utf8.app
-test/pack.app
-test/cairo_test.app
-test/preferences.app
-test/scroll.app
-test/fractals.app
-test/bitmap.app
-test/input_choice.app
-test/clock.app
-test/help_dialog.app
-test/menubar.app
-test/valuators.app
-test/image.app
-test/gl_overlay.app
-test/editor.app
-test/cursor.app
-test/resizebox.app

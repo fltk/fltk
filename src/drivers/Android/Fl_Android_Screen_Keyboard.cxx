@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Android screen interface for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -212,7 +210,7 @@ static int android_to_fltk_modifiers(int a)
 int Fl_Android_Screen_Driver::handle_keyboard_event(AInputQueue *queue, AInputEvent *event)
 {
 /*
-int32_t 	AKeyEvent_getAction (const AInputEvent *key_event)
+int32_t         AKeyEvent_getAction (const AInputEvent *key_event)
  { AKEY_EVENT_ACTION_DOWN = 0, AKEY_EVENT_ACTION_UP = 1, AKEY_EVENT_ACTION_MULTIPLE = 2 }
 > Reading up on ACTION_MULTIPLE also explains how to deal with
 > special or sequences of characters:
@@ -221,14 +219,14 @@ int32_t 	AKeyEvent_getAction (const AInputEvent *key_event)
 > executed. Otherwise, if the key code is KEYCODE_UNKNOWN, then this
 > is a sequence of characters as returned by getCharacters()."
 
-int32_t 	AKeyEvent_getFlags (const AInputEvent *key_event)
+int32_t         AKeyEvent_getFlags (const AInputEvent *key_event)
  {
   AKEY_EVENT_FLAG_WOKE_HERE = 0x1, AKEY_EVENT_FLAG_SOFT_KEYBOARD = 0x2, AKEY_EVENT_FLAG_KEEP_TOUCH_MODE = 0x4, AKEY_EVENT_FLAG_FROM_SYSTEM = 0x8,
   AKEY_EVENT_FLAG_EDITOR_ACTION = 0x10, AKEY_EVENT_FLAG_CANCELED = 0x20, AKEY_EVENT_FLAG_VIRTUAL_HARD_KEY = 0x40, AKEY_EVENT_FLAG_LONG_PRESS = 0x80,
   AKEY_EVENT_FLAG_CANCELED_LONG_PRESS = 0x100, AKEY_EVENT_FLAG_TRACKING = 0x200, AKEY_EVENT_FLAG_FALLBACK = 0x400
 }
 
-int32_t 	AKeyEvent_getKeyCode (const AInputEvent *key_event)
+int32_t         AKeyEvent_getKeyCode (const AInputEvent *key_event)
  {
   AKEYCODE_UNKNOWN = 0, AKEYCODE_SOFT_LEFT = 1, AKEYCODE_SOFT_RIGHT = 2, AKEYCODE_HOME = 3,
   AKEYCODE_BACK = 4, AKEYCODE_CALL = 5, AKEYCODE_ENDCALL = 6, AKEYCODE_0 = 7,
@@ -240,10 +238,10 @@ int32_t 	AKeyEvent_getKeyCode (const AInputEvent *key_event)
   AKEYCODE_CLEAR = 28, AKEYCODE_A = 29, AKEYCODE_B = 30, AKEYCODE_C = 31,
   AKEYCODE_D = 32, AKEYCODE_E = 33, AKEYCODE_F = 34, AKEYCODE_G = 35, ...
 
-int32_t 	AKeyEvent_getScanCode (const AInputEvent *key_event)
+int32_t         AKeyEvent_getScanCode (const AInputEvent *key_event)
   { AKEY_STATE_UNKNOWN = -1, AKEY_STATE_UP = 0, AKEY_STATE_DOWN = 1, AKEY_STATE_VIRTUAL = 2 }
 
-int32_t 	AKeyEvent_getMetaState (const AInputEvent *key_event)
+int32_t         AKeyEvent_getMetaState (const AInputEvent *key_event)
  {
   AMETA_NONE = 0, AMETA_ALT_ON = 0x02, AMETA_ALT_LEFT_ON = 0x10, AMETA_ALT_RIGHT_ON = 0x20,
   AMETA_SHIFT_ON = 0x01, AMETA_SHIFT_LEFT_ON = 0x40, AMETA_SHIFT_RIGHT_ON = 0x80, AMETA_SYM_ON = 0x04,
@@ -252,9 +250,9 @@ int32_t 	AKeyEvent_getMetaState (const AInputEvent *key_event)
   AMETA_NUM_LOCK_ON = 0x200000, AMETA_SCROLL_LOCK_ON = 0x400000
 }
 
-int32_t 	AKeyEvent_getRepeatCount (const AInputEvent *key_event)
-int64_t 	AKeyEvent_getDownTime (const AInputEvent *key_event)
-int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
+int32_t         AKeyEvent_getRepeatCount (const AInputEvent *key_event)
+int64_t         AKeyEvent_getDownTime (const AInputEvent *key_event)
+int64_t         AKeyEvent_getEventTime (const AInputEvent *key_event)
 */
   Fl_Android_Application::log_i("Key event: action=%d keyCode=%d metaState=0x%x scanCode=%d",
                                 AKeyEvent_getAction(event),
@@ -452,9 +450,3 @@ void Fl_Android_Screen_Driver::release_keyboard()
                                   ANATIVEACTIVITY_HIDE_SOFT_INPUT_NOT_ALWAYS);
   }
 }
-
-
-
-//
-// End of "$Id$".
-//

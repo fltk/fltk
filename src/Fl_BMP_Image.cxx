@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_BMP_Image class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2011-2020 by Bill Spitzak and others.
@@ -13,9 +11,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -478,8 +476,3 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height)
   }
   // File is closed when returning...
 }
-
-
-//
-// End of "$Id$".
-//

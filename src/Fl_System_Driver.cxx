@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A base class for platform specific system calls.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -137,7 +135,7 @@ void Fl_System_Driver::fatal(const char *format, va_list args) {
 
 /* the following function was stolen from the X sources as indicated. */
 
-/* Copyright 	Massachusetts Institute of Technology  1985, 1986, 1987 */
+/* Copyright    Massachusetts Institute of Technology  1985, 1986, 1987 */
 /* $XConsortium: XParseGeom.c,v 11.18 91/02/21 17:23:05 rws Exp $ */
 
 /*
@@ -168,7 +166,7 @@ static int ReadInteger(char* string, char** NextString)
 {
   int Result = 0;
   int Sign = 1;
-  
+
   if (*string == '+')
     string++;
   else if (*string == '-') {
@@ -193,11 +191,11 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   unsigned int tempWidth = 0, tempHeight = 0;
   int tempX = 0, tempY = 0;
   char *nextCharacter;
-  
+
   if ( (string == NULL) || (*string == '\0')) return(mask);
   if (*string == '=')
     string++;  /* ignore possible '=' at beg of geometry spec */
-  
+
   strind = (char *)string;
   if (*strind != '+' && *strind != '-' && *strind != 'x') {
     tempWidth = ReadInteger(strind, &nextCharacter);
@@ -206,7 +204,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     strind = nextCharacter;
     mask |= fl_WidthValue;
   }
-  
+
   if (*strind == 'x' || *strind == 'X') {
     strind++;
     tempHeight = ReadInteger(strind, &nextCharacter);
@@ -215,7 +213,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     strind = nextCharacter;
     mask |= fl_HeightValue;
   }
-  
+
   if ((*strind == '+') || (*strind == '-')) {
     if (*strind == '-') {
       strind++;
@@ -224,7 +222,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
         return (0);
       strind = nextCharacter;
       mask |= fl_XNegative;
-      
+
     } else {
       strind++;
       tempX = ReadInteger(strind, &nextCharacter);
@@ -241,7 +239,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
           return(0);
         strind = nextCharacter;
         mask |= fl_YNegative;
-        
+
       } else {
         strind++;
         tempY = ReadInteger(strind, &nextCharacter);
@@ -252,12 +250,12 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
       mask |= fl_YValue;
     }
   }
-  
+
   /* If strind isn't at the end of the string the it's an invalid
    geometry specification. */
-  
+
   if (*strind != '\0') return (0);
-  
+
   if (mask & fl_XValue)
     *x = tempX;
   if (mask & fl_YValue)
@@ -411,23 +409,23 @@ int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
   strlcpy(temp,from, tolen);
   char *start = temp;
   char *end = temp+strlen(temp);
-  
+
   int ret = 0;
-  
-  for (char *a=temp; a<end; ) {	// for each slash component
+
+  for (char *a=temp; a<end; ) { // for each slash component
     char *e; for (e=a; e<end && *e != '/'; e++) {/*empty*/} // find next slash
     const char *value = 0; // this will point at substitute value
     switch (*a) {
-      case '~':	// a home directory name
-        if (e <= a+1) {	// current user's directory
+      case '~': // a home directory name
+        if (e <= a+1) { // current user's directory
           value = getenv("HOME");
-        } else {	// another user's directory
+        } else {        // another user's directory
           char t = *e; *(char *)e = 0;
           value = getpwnam(a+1);
           *(char *)e = t;
         }
         break;
-      case '$':		/* an environment variable */
+      case '$':         /* an environment variable */
       {char t = *e; *(char *)e = 0; value = getenv(a+1); *(char *)e = t;}
         break;
     }
@@ -451,9 +449,11 @@ int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
 }
 
 int Fl_System_Driver::file_browser_load_directory(const char *directory, char *filename,
-                                                  size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
+                                                  size_t name_size, dirent ***pfiles,
+                                                  Fl_File_Sort_F *sort,
+                                                  char *errmsg, int errmsg_sz)
 {
-  return filename_list(directory, pfiles, sort);
+  return filename_list(directory, pfiles, sort, errmsg, errmsg_sz);
 }
 
 int Fl_System_Driver::file_type(const char *filename)
@@ -498,7 +498,3 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

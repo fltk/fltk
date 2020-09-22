@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -68,17 +66,17 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
     case _FL_PLASTIC_UP_FRAME :
     case _FL_PLASTIC_DOWN_FRAME :
         if (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_) {
-	  Fl::scheme_bg_->draw(X-(X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
-	                       Y-(Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),
-	                       W+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w(),
-			       H+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h());
-	  break;
+          Fl::scheme_bg_->draw(X-(X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
+                               Y-(Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),
+                               W+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w(),
+                               H+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h());
+          break;
         }
 
     default :
-	fl_color(s->color());
-	fl_rectf(X,Y,W,H);
-	break;
+        fl_color(s->color());
+        fl_rectf(X,Y,W,H);
+        break;
   }
   Fl_Widget*const* a = s->array();
   for (int i=s->children()-2; i--;) {
@@ -119,15 +117,15 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
     if ( o==&scrollbar || o==&hscrollbar ) continue;
     if ( first ) {
         first = 0;
-	si.child.l = o->x();
-	si.child.r = o->x()+o->w();
-	si.child.b = o->y()+o->h();
-	si.child.t = o->y();
+        si.child.l = o->x();
+        si.child.r = o->x()+o->w();
+        si.child.b = o->y()+o->h();
+        si.child.t = o->y();
     } else {
-	if (o->x() < si.child.l) si.child.l = o->x();
-	if (o->y() < si.child.t) si.child.t = o->y();
-	if (o->x()+o->w() > si.child.r) si.child.r = o->x()+o->w();
-	if (o->y()+o->h() > si.child.b) si.child.b = o->y()+o->h();
+        if (o->x() < si.child.l) si.child.l = o->x();
+        if (o->y() < si.child.t) si.child.t = o->y();
+        if (o->x()+o->w() > si.child.r) si.child.r = o->x()+o->w();
+        if (o->y()+o->h() > si.child.b) si.child.b = o->y()+o->h();
     }
   }
 
@@ -144,24 +142,24 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
     si.hneeded = 0;
     if (type() & VERTICAL) {
       if ((type() & ALWAYS_ON) || si.child.t < Y || si.child.b > Y+H) {
-	si.vneeded = 1;
-	W -= si.scrollsize;
-	if (scrollbar.align() & FL_ALIGN_LEFT) X += si.scrollsize;
+        si.vneeded = 1;
+        W -= si.scrollsize;
+        if (scrollbar.align() & FL_ALIGN_LEFT) X += si.scrollsize;
       }
     }
     if (type() & HORIZONTAL) {
       if ((type() & ALWAYS_ON) || si.child.l < X || si.child.r > X+W) {
-	si.hneeded = 1;
-	H -= si.scrollsize;
-	if (scrollbar.align() & FL_ALIGN_TOP) Y += si.scrollsize;
-	// recheck vertical since we added a horizontal scrollbar
-	if (!si.vneeded && (type() & VERTICAL)) {
-	  if ((type() & ALWAYS_ON) || si.child.t < Y || si.child.b > Y+H) {
-	    si.vneeded = 1;
-	    W -= si.scrollsize;
-	    if (scrollbar.align() & FL_ALIGN_LEFT) X += si.scrollsize;
-	  }
-	}
+        si.hneeded = 1;
+        H -= si.scrollsize;
+        if (scrollbar.align() & FL_ALIGN_TOP) Y += si.scrollsize;
+        // recheck vertical since we added a horizontal scrollbar
+        if (!si.vneeded && (type() & VERTICAL)) {
+          if ((type() & ALWAYS_ON) || si.child.t < Y || si.child.b > Y+H) {
+            si.vneeded = 1;
+            W -= si.scrollsize;
+            if (scrollbar.align() & FL_ALIGN_LEFT) X += si.scrollsize;
+          }
+        }
       }
     }
     si.innerchild.x = X;
@@ -173,15 +171,15 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
   // calculate hor scrollbar position
   si.hscroll.x = si.innerchild.x;
   si.hscroll.y = (scrollbar.align() & FL_ALIGN_TOP)
-		     ? si.innerbox.y
-		     : si.innerbox.y + si.innerbox.h - si.scrollsize;
+                     ? si.innerbox.y
+                     : si.innerbox.y + si.innerbox.h - si.scrollsize;
   si.hscroll.w = si.innerchild.w;
   si.hscroll.h = si.scrollsize;
 
   // calculate ver scrollbar position
   si.vscroll.x = (scrollbar.align() & FL_ALIGN_LEFT)
                      ? si.innerbox.x
-		     : si.innerbox.x + si.innerbox.w - si.scrollsize;
+                     : si.innerbox.x + si.innerbox.w - si.scrollsize;
   si.vscroll.y = si.innerchild.y;
   si.vscroll.w = si.scrollsize;
   si.vscroll.h = si.innerchild.h;
@@ -261,9 +259,9 @@ void Fl_Scroll::draw() {
       B = 0;
       for (int i=children()-2; i--; a++) {
         if ((*a)->x() < L) L = (*a)->x();
-	if (((*a)->x() + (*a)->w()) > R) R = (*a)->x() + (*a)->w();
+        if (((*a)->x() + (*a)->w()) > R) R = (*a)->x() + (*a)->w();
         if ((*a)->y() < T) T = (*a)->y();
-	if (((*a)->y() + (*a)->h()) > B) B = (*a)->y() + (*a)->h();
+        if (((*a)->y() + (*a)->h()) > B) B = (*a)->y() + (*a)->h();
       }
       if (L > X) draw_clip(this, X, Y, L - X, H);
       if (R < (X + W)) draw_clip(this, R, Y, X + W - R, H);
@@ -285,22 +283,22 @@ void Fl_Scroll::draw() {
 
       // Now that we know what's needed, make it so.
       if (si.vneeded && !scrollbar.visible()) {
-	scrollbar.set_visible();
-	d = FL_DAMAGE_ALL;
+        scrollbar.set_visible();
+        d = FL_DAMAGE_ALL;
       }
       else if (!si.vneeded && scrollbar.visible()) {
-	scrollbar.clear_visible();
-	draw_clip(this, si.vscroll.x, si.vscroll.y, si.vscroll.w, si.vscroll.h);
-	d = FL_DAMAGE_ALL;
+        scrollbar.clear_visible();
+        draw_clip(this, si.vscroll.x, si.vscroll.y, si.vscroll.w, si.vscroll.h);
+        d = FL_DAMAGE_ALL;
       }
       if (si.hneeded && !hscrollbar.visible()) {
-	hscrollbar.set_visible();
-	d = FL_DAMAGE_ALL;
+        hscrollbar.set_visible();
+        d = FL_DAMAGE_ALL;
       }
       else if (!si.hneeded && hscrollbar.visible()) {
-	hscrollbar.clear_visible();
-	draw_clip(this, si.hscroll.x, si.hscroll.y, si.hscroll.w, si.hscroll.h);
-	d = FL_DAMAGE_ALL;
+        hscrollbar.clear_visible();
+        draw_clip(this, si.hscroll.x, si.hscroll.y, si.hscroll.w, si.hscroll.h);
+        d = FL_DAMAGE_ALL;
       }
       else if ( hscrollbar.h() != si.scrollsize || scrollbar.w() != si.scrollsize ) {
          // scrollsize changed
@@ -308,11 +306,11 @@ void Fl_Scroll::draw() {
       }
 
       scrollbar.resize(si.vscroll.x, si.vscroll.y, si.vscroll.w, si.vscroll.h);
-      oldy = yposition_ = si.vscroll.pos;	// si.innerchild.y - si.child.t;
+      oldy = yposition_ = si.vscroll.pos;       // si.innerchild.y - si.child.t;
       scrollbar.value(si.vscroll.pos, si.vscroll.size, si.vscroll.first, si.vscroll.total);
 
       hscrollbar.resize(si.hscroll.x, si.hscroll.y, si.hscroll.w, si.hscroll.h);
-      oldx = xposition_ = si.hscroll.pos;	// si.innerchild.x - si.child.l;
+      oldx = xposition_ = si.hscroll.pos;       // si.innerchild.x - si.child.l;
       hscrollbar.value(si.hscroll.pos, si.hscroll.size, si.hscroll.first, si.hscroll.total);
   }
 
@@ -449,7 +447,3 @@ int Fl_Scroll::handle(int event) {
   fix_scrollbar_order();
   return Fl_Group::handle(event);
 }
-
-//
-// End of "$Id$".
-//

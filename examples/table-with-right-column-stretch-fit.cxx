@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //
 // Demonstrate resizing Fl_Table_Row right column to fit window to avoid appearance of horiz scrollbar
 //
@@ -18,11 +16,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>

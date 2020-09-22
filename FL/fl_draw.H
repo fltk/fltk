@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -46,9 +44,9 @@ FL_EXPORT extern char fl_draw_shortcut;
  then a least-squares algorithm is used to find the closest color.
  If no valid graphical context (fl_gc) is available,
  the foreground is not set for the current window.
- \param[in] c color 
+ \param[in] c color
  */
-inline void	fl_color(Fl_Color c) {fl_graphics_driver->color(c); } // select indexed color
+inline void     fl_color(Fl_Color c) {fl_graphics_driver->color(c); } // select indexed color
 /** for back compatibility - use fl_color(Fl_Color c) instead */
 inline void fl_color(int c) {fl_color((Fl_Color)c);}
 /**
@@ -61,7 +59,7 @@ inline void fl_color(int c) {fl_color((Fl_Color)c);}
  the foreground is not set for the current window.
  \param[in] r,g,b color components
  */
-inline void	fl_color(uchar r, uchar g, uchar b) {fl_graphics_driver->color(r,g,b); } // select actual color
+inline void     fl_color(uchar r, uchar g, uchar b) {fl_graphics_driver->color(r,g,b); } // select actual color
 /**
   Returns the last fl_color() that was set.
   This can be used for state save/restore.
@@ -94,7 +92,7 @@ inline void fl_push_clip(int x, int y, int w, int h) {fl_graphics_driver->push_c
 inline void fl_push_no_clip() {fl_graphics_driver->push_no_clip(); }
 /**
  Restores the previous clip region.
- 
+
  You must call fl_pop_clip() once for every time you call fl_push_clip().
  Unpredictable results may occur if the clip stack is not empty when
  you return to FLTK.
@@ -137,9 +135,9 @@ inline int fl_not_clipped(int x, int y, int w, int h) {
       int X = 0, Y = 0, W = 0, H = 0;
       int ret = fl_clip_box(x(), y(), w(), h(), X, Y, W, H);
       if (ret == 0) { // entire group is visible (not clipped)
-	// full drawing code here
+        // full drawing code here
       } else { // parts of this group are clipped
-	// partial drawing code here (uses X, Y, W, and H to test)
+        // partial drawing code here (uses X, Y, W, and H to test)
       }
     }
   \endcode
@@ -171,14 +169,20 @@ inline void fl_restore_clip() {
 
 /**
  Replaces the top of the clipping stack with a clipping region of any shape.
- 
+
  Fl_Region is an operating system specific type.
+ \note This function is mostly intended for internal use by the FLTK library
+ when drawing to the display.
+ Its effect can be null if the current drawing surface is not the display.
  \param[in] r clipping region
  */
 inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); }
 
 /**
  Returns the current clipping region.
+ \note This function is mostly intended for internal use by the FLTK library
+ when drawing to the display.
+ Its return value can be always NULL if the current drawing surface is not the display.
  */
 inline Fl_Region fl_clip_region() { return fl_graphics_driver->clip_region(); }
 
@@ -194,7 +198,7 @@ inline void fl_point(int x, int y) { fl_graphics_driver->point(x,y); }
  Sets how to draw lines (the "pen").
  If you change this it is your responsibility to set it back to the default
  using \c fl_line_style(0).
- 
+
  \param[in] style A bitmask which is a bitwise-OR of a line style, a cap
  style, and a join style. If you don't specify a dash type you
  will get a solid line. If you don't specify a cap or join type
@@ -209,7 +213,7 @@ inline void fl_point(int x, int y) { fl_graphics_driver->point(x,y); }
  with a zero-length entry. A \c NULL pointer or a zero-length
  array results in a solid line. Odd array sizes are not supported
  and result in undefined behavior.
- 
+
  \note      Because of how line styles are implemented on Win32 systems,
  you \e must set the line style \e after setting the drawing
  color. If you set the color after the line style you will lose
@@ -219,26 +223,26 @@ inline void fl_point(int x, int y) { fl_graphics_driver->point(x,y); }
  */
 inline void fl_line_style(int style, int width=0, char* dashes=0) {fl_graphics_driver->line_style(style,width,dashes); }
 enum {
-  FL_SOLID	= 0,		///< line style: <tt>___________</tt>
-  FL_DASH	= 1,		///< line style: <tt>_ _ _ _ _ _</tt>
-  FL_DOT	= 2,		///< line style: <tt>. . . . . .</tt>
-  FL_DASHDOT	= 3,		///< line style: <tt>_ . _ . _ .</tt>
-  FL_DASHDOTDOT	= 4,		///< line style: <tt>_ . . _ . .</tt>
+  FL_SOLID      = 0,            ///< line style: <tt>___________</tt>
+  FL_DASH       = 1,            ///< line style: <tt>_ _ _ _ _ _</tt>
+  FL_DOT        = 2,            ///< line style: <tt>. . . . . .</tt>
+  FL_DASHDOT    = 3,            ///< line style: <tt>_ . _ . _ .</tt>
+  FL_DASHDOTDOT = 4,            ///< line style: <tt>_ . . _ . .</tt>
 
-  FL_CAP_FLAT	= 0x100,	///< cap style: end is flat
-  FL_CAP_ROUND	= 0x200,	///< cap style: end is round
-  FL_CAP_SQUARE	= 0x300,	///< cap style: end wraps end point
+  FL_CAP_FLAT   = 0x100,        ///< cap style: end is flat
+  FL_CAP_ROUND  = 0x200,        ///< cap style: end is round
+  FL_CAP_SQUARE = 0x300,        ///< cap style: end wraps end point
 
-  FL_JOIN_MITER	= 0x1000,	///< join style: line join extends to a point
-  FL_JOIN_ROUND	= 0x2000,	///< join style: line join is rounded
-  FL_JOIN_BEVEL	= 0x3000	///< join style: line join is tidied
+  FL_JOIN_MITER = 0x1000,       ///< join style: line join extends to a point
+  FL_JOIN_ROUND = 0x2000,       ///< join style: line join is rounded
+  FL_JOIN_BEVEL = 0x3000        ///< join style: line join is tidied
 };
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 
-/** 
+/**
  Draws a 1-pixel border \e inside the given bounding box.
- This function is meant for quick drawing of simple boxes. The behavior is 
+ This function is meant for quick drawing of simple boxes. The behavior is
  undefined for line widths that are not 1.
  */
 inline void fl_rect(int x, int y, int w, int h) { fl_graphics_driver->rect(x,y,w,h); }
@@ -281,7 +285,7 @@ inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {fl_graphics_d
 /**
  Outlines a 4-sided polygon with lines
  */
-inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
+inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
   {fl_graphics_driver->loop(x,y,x1,y1,x2,y2,x3,y3); }
 
 // filled polygons
@@ -292,7 +296,7 @@ inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {fl_graphic
 /**
  Fills a 4-sided polygon. The polygon must be convex.
  */
-inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
+inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
   { fl_graphics_driver->polygon(x,y,x1,y1,x2,y2,x3,y3); }
 
 // draw rectilinear lines, horizontal segment first:
@@ -328,21 +332,21 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver-
 // circular lines and pie slices (code in fl_arci.C):
 /**
  Draw ellipse sections using integer coordinates.
- 
+
  These functions match the rather limited circle drawing code provided by X
  and Windows. The advantage over using fl_arc with floating point coordinates
  is that they are faster because they often use the hardware, and they draw
  much nicer small circles, since the small sizes are often hard-coded bitmaps.
- 
+
  If a complete circle is drawn it will fit inside the passed bounding box.
  The two angles are measured in degrees counter-clockwise from 3 o'clock and
  are the starting and ending angle of the arc, \p a2 must be greater or equal
  to \p a1.
- 
+
  fl_arc() draws a series of lines to approximate the arc. Notice that the
  integer version of fl_arc() has a different number of arguments than the
  double version fl_arc(double x, double y, double r, double start, double end)
- 
+
  \param[in] x,y,w,h bounding box of complete circle
  \param[in] a1,a2 start and end angles of arc measured in degrees
  counter-clockwise from 3 o'clock. \p a2 must be greater
@@ -354,11 +358,11 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver-
 inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_graphics_driver->arc(x,y,w,h,a1,a2); }
 /**
  Draw filled ellipse sections using integer coordinates.
- 
+
  Like fl_arc(), but fl_pie() draws a filled-in pie slice.
  This slice may extend outside the line drawn by fl_arc();
  to avoid this use w - 1 and h - 1.
- 
+
  \param[in] x,y,w,h bounding box of complete circle
  \param[in] a1,a2 start and end angles of arc measured in degrees
  counter-clockwise from 3 o'clock. \p a2 must be greater
@@ -373,7 +377,7 @@ FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // ny
 
 // scalable drawing code (code in fl_vertex.C and fl_arc.C):
 /**
- Saves the current transformation matrix on the stack. 
+ Saves the current transformation matrix on the stack.
  The maximum depth of the stack is 32.
  */
 inline void fl_push_matrix() { fl_graphics_driver->push_matrix(); }
@@ -407,12 +411,12 @@ inline void fl_translate(double x, double y) { fl_graphics_driver->translate(x, 
 inline void fl_rotate(double d) { fl_graphics_driver->rotate(d); }
 /**
  Concatenates another transformation onto the current one.
- 
+
  \param[in] a,b,c,d,x,y transformation matrix elements such that
  <tt> X' = aX + cY + x </tt> and <tt> Y' = bX +dY + y </tt>
  */
-inline void fl_mult_matrix(double a, double b, double c, double d, double x,double y) 
-	{ fl_graphics_driver->mult_matrix(a, b, c, d, x, y); }
+inline void fl_mult_matrix(double a, double b, double c, double d, double x,double y)
+        { fl_graphics_driver->mult_matrix(a, b, c, d, x, y); }
 /**
  Starts drawing a list of points. Points are added to the list with fl_vertex()
  */
@@ -476,7 +480,7 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
 inline void fl_arc(double x, double y, double r, double start, double end) {fl_graphics_driver->arc(x,y,r,start,end); }
 /**
  fl_circle(x,y,r) is equivalent to fl_arc(x,y,r,0,360), but may be faster.
- 
+
  It must be the \e only thing in the path: if you want a circle as part of
  a complex polygon you must use fl_arc()
  \param[in] x,y,r center and radius of circle
@@ -500,13 +504,13 @@ inline void fl_end_loop() {fl_graphics_driver->end_loop(); }
 inline void fl_end_polygon() {fl_graphics_driver->end_polygon(); }
 /**
  Starts drawing a complex filled polygon.
- 
+
  The polygon may be concave, may have holes in it, or may be several
  disconnected pieces. Call fl_gap() to separate loops of the path.
- 
+
  To outline the polygon, use fl_begin_loop() and replace each fl_gap()
  with fl_end_loop();fl_begin_loop() pairs.
- 
+
  \note
  For portability, you should only draw polygons that appear the same
  whether "even/odd" or "non-zero" winding rules are used to fill them.
@@ -515,7 +519,7 @@ inline void fl_end_polygon() {fl_graphics_driver->end_polygon(); }
 inline void fl_begin_complex_polygon() {fl_graphics_driver->begin_complex_polygon(); }
 /**
  Call fl_gap() to separate loops of the path.
- 
+
  It is unnecessary but harmless to call fl_gap() before the first vertex,
  after the last vertex, or several times in a row.
  */
@@ -552,8 +556,8 @@ inline double fl_transform_dy(double x, double y) {return fl_graphics_driver->tr
 inline void fl_transformed_vertex(double xf, double yf) {fl_graphics_driver->transformed_vertex(xf,yf); }
 
 /** Copy a rectangular area of the given offscreen buffer into the current drawing destination.
-   \param x,y	position where to draw the copied rectangle
-   \param w,h	size of the copied rectangle
+   \param x,y   position where to draw the copied rectangle
+   \param w,h   size of the copied rectangle
    \param pixmap  offscreen buffer containing the rectangle to copy
    \param srcx,srcy origin in offscreen buffer of rectangle to copy
    */
@@ -614,7 +618,7 @@ inline double fl_width(const char* txt, int n) {return fl_graphics_driver->width
     \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
 inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
-/** Determines the minimum pixel dimensions of a nul-terminated string 
+/** Determines the minimum pixel dimensions of a nul-terminated string
     using the current fl_font().
 
   Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
@@ -711,9 +715,9 @@ inline void fl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->d
   rotating \p angle degrees counter-clockwise.
 
   \note When using X11 (Unix, Linux, Cygwin et al.) this needs Xft to work.
-	Under plain X11 (w/o Xft) rotated text is not supported by FLTK.
-	A warning will be issued to stderr at runtime (only once) if you
-	use this method with an angle other than 0.
+        Under plain X11 (w/o Xft) rotated text is not supported by FLTK.
+        A warning will be issued to stderr at runtime (only once) if you
+        use this method with an angle other than 0.
 */
 inline void fl_draw(int angle, const char* str, int n, int x, int y) {fl_graphics_driver->draw(angle,str,n,x,y); }
 /**
@@ -741,16 +745,16 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
   Draws an 8-bit per color RGB or luminance image.
   \param[in] buf points at the "r" data of the top-left pixel.
                  Color data must be in <tt>r,g,b</tt> order.
-		 Luminance data is only one <tt>gray</tt> byte.
+                 Luminance data is only one <tt>gray</tt> byte.
   \param[in] X,Y position where to put top-left corner of image
   \param[in] W,H size of the image
   \param[in] D   delta to add to the pointer between pixels. It may be
                  any value greater than or equal to 1, or it can be
-		 negative to flip the image horizontally
+                 negative to flip the image horizontally
   \param[in] L   delta to add to the pointer between lines (if 0 is
                  passed it uses \p W * \p D), and may be larger than
-		 \p W * \p D to crop data, or negative to flip the
-		 image vertically
+                 \p W * \p D to crop data, or negative to flip the
+                 image vertically
 
   It is highly recommended that you put the following code before the
   first <tt>show()</tt> of \e any window in your program to get rid of
@@ -887,7 +891,3 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 /** @} */
 
 #endif
-
-//
-// End of "$Id$".
-//

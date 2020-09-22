@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-//	Simple Fl_Browser widget example. - erco 07/26/2019
+//      Simple Fl_Browser widget example. - erco 07/26/2019
 //
 // Copyright 2019 Greg Ercolano.
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <stdio.h>
 #include <FL/Fl.H>
@@ -38,7 +36,7 @@ void MultiBrowserCallback(Fl_Widget *w, void *data) {
   Fl_Multi_Browser *brow = (Fl_Multi_Browser*)w;
   // Multi browser can have many items selected, so print all selected
   for ( int t=1; t<=brow->size(); t++ )
-    if ( brow->selected(t) ) 
+    if ( brow->selected(t) )
       printf("[multi browser] item %d selected: %s\n", t, brow->text(t));
   printf("\n");
 }
@@ -51,7 +49,7 @@ int main(int argc, char *argv[]) {
     {
       // Create Hold Browser
       Fl_Hold_Browser *brow = new Fl_Hold_Browser(10, 10, win->w()-20, 80, "Hold");
-      brow->callback(HoldBrowserCallback);	// callback for hold browser
+      brow->callback(HoldBrowserCallback);      // callback for hold browser
       // Add some items
       brow->add("One");
       brow->add("Two");
@@ -63,7 +61,7 @@ int main(int argc, char *argv[]) {
     {
       // Create Multi Browser
       Fl_Multi_Browser *brow = new Fl_Multi_Browser(10, 120, win->w()-20, 80, "Multi");
-      brow->callback(MultiBrowserCallback);	// callback for multi browser
+      brow->callback(MultiBrowserCallback);     // callback for multi browser
       // Add some items
       brow->add("Aaa");
       brow->add("Bbb");
@@ -79,7 +77,3 @@ int main(int argc, char *argv[]) {
   win->show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

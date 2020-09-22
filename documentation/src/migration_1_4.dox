@@ -1,6 +1,6 @@
 /**
 
- \page	migration_1_4	Migrating Code from FLTK 1.3 to 1.4
+ \page  migration_1_4   Migrating Code from FLTK 1.3 to 1.4
 
 This appendix describes the differences between the FLTK
 1.3.x and FLTK 1.4.x functions and classes.

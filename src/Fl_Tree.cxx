@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +6,7 @@
 
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/fl_string.h>
 
 //////////////////////
 // Fl_Tree.cxx
@@ -20,11 +19,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // INTERNAL: scroller callback (hor+vert scroll)
@@ -40,29 +39,29 @@ static void scroll_cb(Fl_Widget*,void *data) {
 static char **parse_path(const char *path) {
   size_t len = strlen(path);
   char *cp = new char[(len+1)], *word = cp, *s = cp; // freed below or in free_path()
-  char **ap = new char*[(len+1)], **arr = ap;	     // overallocates arr[]
+  char **ap = new char*[(len+1)], **arr = ap;        // overallocates arr[]
   while (1) {
-    if (*path =='/' || *path == 0) {		// handle path sep or eos
+    if (*path =='/' || *path == 0) {            // handle path sep or eos
       if (word != s) { *s++ = 0; *arr++= word; word = s; }
-      if ( !*path++) break; else continue;	// eos? done, else cont
-    } else if ( *path == '\\' ) {		// handle escape
+      if ( !*path++) break; else continue;      // eos? done, else cont
+    } else if ( *path == '\\' ) {               // handle escape
       if ( *(++path) ) { *s++ = *path++; } else continue;
-    } else { *s++ = *path++; }			// handle normal char
+    } else { *s++ = *path++; }                  // handle normal char
   }
   *arr = 0;
-  if ( arr == ap ) delete[] cp;	// empty arr[]? delete since free_path() can't
+  if ( arr == ap ) delete[] cp; // empty arr[]? delete since free_path() can't
   return ap;
 }
 
 // INTERNAL: Free an array 'arr' returned by parse_path()
 static void free_path(char **arr) {
   if ( arr ) {
-    if ( arr[0] ) { delete[] arr[0]; }	// deletes cp in parse_path
-    delete[] arr;  			// deletes ptr array
+    if ( arr[0] ) { delete[] arr[0]; }  // deletes cp in parse_path
+    delete[] arr;                       // deletes ptr array
   }
 }
 
-#if 0		/* unused code -- STR #3169 */
+#if 0           /* unused code -- STR #3169 */
 // INTERNAL: Recursively descend 'item's tree hierarchy
 //           accumulating total child 'count'
 //
@@ -76,15 +75,15 @@ static int find_total_children(Fl_Tree_Item *item, int count=0) {
 #endif
 
 /// Constructor.
-Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L) { 
+Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L) {
   _root = new Fl_Tree_Item(this);
-  _root->parent(0);				// we are root of tree
+  _root->parent(0);                             // we are root of tree
   _root->label("ROOT");
   _item_focus      = 0;
   _callback_item   = 0;
   _callback_reason = FL_TREE_REASON_NONE;
-  _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
-	
+  _scrollbar_size  = 0;                         // 0: uses Fl::scrollbar_size()
+
   _lastselect       = 0;
 
   box(FL_DOWN_BOX);
@@ -137,20 +136,20 @@ Fl_Tree::~Fl_Tree() {
 /// \version 1.3.3
 ///
 int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
-			          int dir, int val, bool visible ) {
+                                  int dir, int val, bool visible ) {
   int changed = 0;
   for (Fl_Tree_Item *item=from; item; item = next_item(item, dir, visible) ) {
     switch (val) {
       case 0:
-	if ( deselect(item, when()) ) ++changed;
+        if ( deselect(item, when()) ) ++changed;
         break;
       case 1:
         if ( select(item, when()) ) ++changed;
-	break;
+        break;
       case 2:
         select_toggle(item, when());
-	++changed;	// toggle always involves a change
-	break;
+        ++changed;      // toggle always involves a change
+        break;
     }
     if ( item==to ) break;
   }
@@ -167,7 +166,7 @@ int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
 /// but necessitates a direction to be specified to find \p 'to'.<br>
 /// Used by SHIFT-click to extend a selection between two items inclusive.<br>
 /// Handles calling redraw() if anything changed.
-/// 
+///
 /// \param[in] from    Starting item
 /// \param[in] to      Ending item
 /// \param[in] val     Select or deselect items (0=deselect, 1=select, 2=toggle)
@@ -176,21 +175,21 @@ int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
 /// \returns The number of items whose selection states were changed, if any.
 /// \version 1.3.3 ABI feature
 int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
-			      int val, bool visible) {
+                              int val, bool visible) {
   int changed = 0;
   if ( from == to ) {
-    if ( visible && !from->is_visible() ) return(0);	// do nothing
+    if ( visible && !from->is_visible() ) return(0);    // do nothing
     switch (val) {
       case 0:
         if ( deselect(from, when()) ) ++changed;
-	break;
+        break;
       case 1:
         if ( select(from, when()) ) ++changed;
-	break;
+        break;
       case 2:
         select_toggle(from, when());
-	++changed;		// always changed
-	break;
+        ++changed;              // always changed
+        break;
     }
     return(changed);
   }
@@ -199,20 +198,20 @@ int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
     if ( visible && !item->is_visible() ) continue;
     if ( on || (item == from) || (item == to) ) {
       switch (val) {
-	case 0:
-	  if ( deselect(item, when()) ) ++changed;
-	  break;
-	case 1:
-	  if ( select(item, when()) ) ++changed;
-	  break;
-	case 2:
-	  select_toggle(item, when());
-	  ++changed;	// toggle always involves a change
-	  break;
+        case 0:
+          if ( deselect(item, when()) ) ++changed;
+          break;
+        case 1:
+          if ( select(item, when()) ) ++changed;
+          break;
+        case 2:
+          select_toggle(item, when());
+          ++changed;    // toggle always involves a change
+          break;
       }
       if ( (item == from) || (item == to) ) {
         on ^= 1;
-	if ( !on ) break;	// done
+        if ( !on ) break;       // done
       }
     }
   }
@@ -223,148 +222,148 @@ enum { PUSHED_NONE=0, PUSHED_OPEN_CLOSE, PUSHED_USER_ICON, PUSHED_LABEL };
 /// Standard FLTK event handler for this widget.
 /// \todo add Fl_Widget_Tracker (see Fl_Browser_.cxx::handle())
 int Fl_Tree::handle(int e) {
-  if (e == FL_NO_EVENT) return(0);		// XXX: optimize to prevent slow resizes on large trees!
+  if (e == FL_NO_EVENT) return(0);              // XXX: optimize to prevent slow resizes on large trees!
   int ret = 0;
   char is_shift   = Fl::event_state() & FL_SHIFT   ? 1 : 0;
   char is_ctrl    = Fl::event_state() & FL_CTRL    ? 1 : 0;
-  char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;	// ctrl on win/lin, 'Command' on mac
+  char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;     // ctrl on win/lin, 'Command' on mac
   // Developer note: Fl_Browser_::handle() used for reference here..
-  // #include <FL/names.h>	// for event debugging
+  // #include <FL/names.h>      // for event debugging
   // fprintf(stderr, "DEBUG: %s (%d)\n", fl_eventnames[e], e);
 
   if (e == FL_ENTER || e == FL_LEAVE) return(1);
   switch (e) {
     case FL_FOCUS: {
-      // FLTK tests if we want focus. 
+      // FLTK tests if we want focus.
       //     If a nav key was used to give us focus, and we've got no saved
       //     focus widget, determine which item gets focus depending on nav key.
       //
-      if ( ! _item_focus ) {				// no focus established yet?
-	switch (Fl::event_key()) {			// determine if focus was navigated..
-	  case FL_Tab: {				// received focus via TAB?
-	    int updown = is_shift ? FL_Up : FL_Down;	// SHIFT-TAB similar to Up, TAB similar to Down
-	    set_item_focus(next_visible_item(0, updown));
-	    break;
-	  }
-	  case FL_Left:		// received focus via LEFT or UP?
-	  case FL_Up: { 	// XK_ISO_Left_Tab
-	    set_item_focus(next_visible_item(0, FL_Up));
-	    break;
-	  }
-	  case FL_Right: 	// received focus via RIGHT or DOWN?
-	  case FL_Down:
-	  default: {
-	    set_item_focus(next_visible_item(0, FL_Down));
-	    break;
-	  }
-	}
+      if ( ! _item_focus ) {                            // no focus established yet?
+        switch (Fl::event_key()) {                      // determine if focus was navigated..
+          case FL_Tab: {                                // received focus via TAB?
+            int updown = is_shift ? FL_Up : FL_Down;    // SHIFT-TAB similar to Up, TAB similar to Down
+            set_item_focus(next_visible_item(0, updown));
+            break;
+          }
+          case FL_Left:         // received focus via LEFT or UP?
+          case FL_Up: {         // XK_ISO_Left_Tab
+            set_item_focus(next_visible_item(0, FL_Up));
+            break;
+          }
+          case FL_Right:        // received focus via RIGHT or DOWN?
+          case FL_Down:
+          default: {
+            set_item_focus(next_visible_item(0, FL_Down));
+            break;
+          }
+        }
       }
-      if ( visible_focus() ) redraw();	// draw focus change
+      if ( visible_focus() ) redraw();  // draw focus change
       return(1);
     }
-    case FL_UNFOCUS: {		// FLTK telling us some other widget took focus.
-      if ( visible_focus() ) redraw();	// draw focus change
+    case FL_UNFOCUS: {          // FLTK telling us some other widget took focus.
+      if ( visible_focus() ) redraw();  // draw focus change
       return(1);
     }
-    case FL_KEYBOARD: {		// keyboard shortcut
+    case FL_KEYBOARD: {         // keyboard shortcut
       // Do shortcuts first or scrollbar will get them...
-      if ( (Fl::focus() == this) &&				// tree has focus?
-           _prefs.selectmode() > FL_TREE_SELECT_NONE ) {	// select mode that supports kb events?
-	if ( !_item_focus ) {					// no current focus item?
-	  set_item_focus(first_visible_item());			// use first vis item
-	  if ( Fl::event_key() == FL_Up ||			// Up or down?
-	       Fl::event_key() == FL_Down )			// ..if so, already did 'motion'
-	    return(1);						// ..so just return.
-	}
-	if ( _item_focus ) {
-	  int ekey = Fl::event_key();
-	  switch (ekey) {
-	    case FL_Enter:	// ENTER: toggle open/close
-	    case FL_KP_Enter: {
-	      open_toggle(_item_focus, when());			// toggle item in focus
-	      return(1);					// done, we handled key
-	    }
-	    case ' ':		// SPACE: change selection state
-	      switch ( _prefs.selectmode() ) {
-		case FL_TREE_SELECT_NONE:
-		  break;					// ignore, let group have shot at event
-		case FL_TREE_SELECT_SINGLE:
-		case FL_TREE_SELECT_SINGLE_DRAGGABLE:
-		  if ( is_ctrl ) {				// CTRL-SPACE: (single mode) toggle
-		    if ( ! _item_focus->is_selected() ) {
-		      select_only(_item_focus, when());
-		    } else {
-		      deselect_all(0, when());
-		    }
-		  } else {
-		    select_only(_item_focus, when());		// SPACE: (single mode) select only
-		  }
-		  _lastselect = _item_focus;
-	          return(1);					// done, we handled key
-		case FL_TREE_SELECT_MULTI:
-		  if ( is_ctrl ) {
-		    select_toggle(_item_focus, when());		// CTRL-SPACE: (multi mode) toggle selection
-		  } else {
-		    select(_item_focus, when());		// SPACE: (multi-mode) select
-		  }
-		  _lastselect = _item_focus;
-	          return(1);					// done, we handled key
-	      }
-	      break;
-	    case FL_Right:  	// RIGHT: open children (if any)
-	    case FL_Left: {	// LEFT: close children (if any)
-	      if ( _item_focus ) {
-		if ( ekey == FL_Right && _item_focus->is_close() ) {
-		  open(_item_focus);	// open closed item
-		  ret = 1;
-		} else if ( ekey == FL_Left && _item_focus->is_open() ) {
-		  close(_item_focus);	// close open item
-		  ret = 1;
-		}
-		return(1);
-	      }
-	      break;
-	    }
-	    case FL_Up:		// UP: next item up, or extend selection up
-	    case FL_Down: {	// DOWN: next item down, or extend selection down
-	      set_item_focus(next_visible_item(_item_focus, ekey));	// next item up|dn
-	      if ( _item_focus ) {					// item in focus?
-	        // Autoscroll
-		int itemtop = _item_focus->y();
-		int itembot = _item_focus->y()+_item_focus->h();
-		if ( itemtop < y() ) { show_item_top(_item_focus); }
-		if ( itembot > y()+h() ) { show_item_bottom(_item_focus); }
-		// Extend selection
-		if ( _prefs.selectmode() == FL_TREE_SELECT_MULTI &&	// multiselect on?
-		     is_shift &&					// shift key?
-		     ! _item_focus->is_selected() ) {			// not already selected?
-		  select(_item_focus, when());				// extend selection..
-		  _lastselect = _item_focus;
-		}
-		return(1);
-	      }
-	      break;
-	    }
-	    case 'a':
-	    case 'A': {
-	      if ( is_command ) {					// ^A (win/linux), Meta-A (mac)
-		switch ( _prefs.selectmode() ) {
-		  case FL_TREE_SELECT_NONE:
-		  case FL_TREE_SELECT_SINGLE:
-		  case FL_TREE_SELECT_SINGLE_DRAGGABLE:
-		    break;
-		  case FL_TREE_SELECT_MULTI:
-		    // Do a 'select all'
-	            select_all();
-		    _lastselect = first_visible_item();
-		    take_focus();
-		    return(1);
-		}
-	      }
-	      break;
-	    }
-	  }
-	}
+      if ( (Fl::focus() == this) &&                             // tree has focus?
+           _prefs.selectmode() > FL_TREE_SELECT_NONE ) {        // select mode that supports kb events?
+        if ( !_item_focus ) {                                   // no current focus item?
+          set_item_focus(first_visible_item());                 // use first vis item
+          if ( Fl::event_key() == FL_Up ||                      // Up or down?
+               Fl::event_key() == FL_Down )                     // ..if so, already did 'motion'
+            return(1);                                          // ..so just return.
+        }
+        if ( _item_focus ) {
+          int ekey = Fl::event_key();
+          switch (ekey) {
+            case FL_Enter:      // ENTER: toggle open/close
+            case FL_KP_Enter: {
+              open_toggle(_item_focus, when());                 // toggle item in focus
+              return(1);                                        // done, we handled key
+            }
+            case ' ':           // SPACE: change selection state
+              switch ( _prefs.selectmode() ) {
+                case FL_TREE_SELECT_NONE:
+                  break;                                        // ignore, let group have shot at event
+                case FL_TREE_SELECT_SINGLE:
+                case FL_TREE_SELECT_SINGLE_DRAGGABLE:
+                  if ( is_ctrl ) {                              // CTRL-SPACE: (single mode) toggle
+                    if ( ! _item_focus->is_selected() ) {
+                      select_only(_item_focus, when());
+                    } else {
+                      deselect_all(0, when());
+                    }
+                  } else {
+                    select_only(_item_focus, when());           // SPACE: (single mode) select only
+                  }
+                  _lastselect = _item_focus;
+                  return(1);                                    // done, we handled key
+                case FL_TREE_SELECT_MULTI:
+                  if ( is_ctrl ) {
+                    select_toggle(_item_focus, when());         // CTRL-SPACE: (multi mode) toggle selection
+                  } else {
+                    select(_item_focus, when());                // SPACE: (multi-mode) select
+                  }
+                  _lastselect = _item_focus;
+                  return(1);                                    // done, we handled key
+              }
+              break;
+            case FL_Right:      // RIGHT: open children (if any)
+            case FL_Left: {     // LEFT: close children (if any)
+              if ( _item_focus ) {
+                if ( ekey == FL_Right && _item_focus->is_close() ) {
+                  open(_item_focus);    // open closed item
+                  ret = 1;
+                } else if ( ekey == FL_Left && _item_focus->is_open() ) {
+                  close(_item_focus);   // close open item
+                  ret = 1;
+                }
+                return(1);
+              }
+              break;
+            }
+            case FL_Up:         // UP: next item up, or extend selection up
+            case FL_Down: {     // DOWN: next item down, or extend selection down
+              set_item_focus(next_visible_item(_item_focus, ekey));     // next item up|dn
+              if ( _item_focus ) {                                      // item in focus?
+                // Autoscroll
+                int itemtop = _item_focus->y();
+                int itembot = _item_focus->y()+_item_focus->h();
+                if ( itemtop < y() ) { show_item_top(_item_focus); }
+                if ( itembot > y()+h() ) { show_item_bottom(_item_focus); }
+                // Extend selection
+                if ( _prefs.selectmode() == FL_TREE_SELECT_MULTI &&     // multiselect on?
+                     is_shift &&                                        // shift key?
+                     ! _item_focus->is_selected() ) {                   // not already selected?
+                  select(_item_focus, when());                          // extend selection..
+                  _lastselect = _item_focus;
+                }
+                return(1);
+              }
+              break;
+            }
+            case 'a':
+            case 'A': {
+              if ( is_command ) {                                       // ^A (win/linux), Meta-A (mac)
+                switch ( _prefs.selectmode() ) {
+                  case FL_TREE_SELECT_NONE:
+                  case FL_TREE_SELECT_SINGLE:
+                  case FL_TREE_SELECT_SINGLE_DRAGGABLE:
+                    break;
+                  case FL_TREE_SELECT_MULTI:
+                    // Do a 'select all'
+                    select_all();
+                    _lastselect = first_visible_item();
+                    take_focus();
+                    return(1);
+                }
+              }
+              break;
+            }
+          }
+        }
       }
       break;
     }
@@ -372,7 +371,7 @@ int Fl_Tree::handle(int e) {
 
   // Let Fl_Group take a shot at handling the event
   if (Fl_Group::handle(e)) {
-    return(1);			// handled? don't continue below
+    return(1);                  // handled? don't continue below
   }
 
   // Handle events the child FLTK widgets didn't need
@@ -381,8 +380,8 @@ int Fl_Tree::handle(int e) {
   if ( ! _root ) return(ret);
   static int last_my = 0;
   switch ( e ) {
-    case FL_PUSH: {		// clicked on tree
-      last_my = Fl::event_y();	// save for dragging direction..
+    case FL_PUSH: {             // clicked on tree
+      last_my = Fl::event_y();  // save for dragging direction..
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
       // Tell FL_DRAG what was pushed
@@ -390,52 +389,52 @@ int Fl_Tree::handle(int e) {
                          : item->event_on_user_icon(_prefs)     ? PUSHED_USER_ICON   // usericon clicked
                                                                 : PUSHED_LABEL       // label clicked
                                                                 : PUSHED_NONE;       // none of the above
-      if ( !item ) {		// clicked, but not on an item?
+      if ( !item ) {            // clicked, but not on an item?
         _lastselect = 0;
-	switch ( _prefs.selectmode() ) {
-	  case FL_TREE_SELECT_NONE:
-	    break;
-	  case FL_TREE_SELECT_SINGLE:
-	  case FL_TREE_SELECT_SINGLE_DRAGGABLE:
-	  case FL_TREE_SELECT_MULTI:
-	    deselect_all();
-	    break;
-	}
-	break;
+        switch ( _prefs.selectmode() ) {
+          case FL_TREE_SELECT_NONE:
+            break;
+          case FL_TREE_SELECT_SINGLE:
+          case FL_TREE_SELECT_SINGLE_DRAGGABLE:
+          case FL_TREE_SELECT_MULTI:
+            deselect_all();
+            break;
+        }
+        break;
       }
-      set_item_focus(item);			// becomes new focus widget, calls redraw() if needed
-      ret |= 1;					// handled
+      set_item_focus(item);                     // becomes new focus widget, calls redraw() if needed
+      ret |= 1;                                 // handled
       if ( Fl::event_button() == FL_LEFT_MOUSE ) {
-	if ( item->event_on_collapse_icon(_prefs) ) {	// collapse icon clicked?
-	  open_toggle(item);				// toggle open (handles redraw)
-	} else if ( !item->widget() || !Fl::event_inside(item->widget()) ) {  // not inside widget()
-	  switch ( _prefs.selectmode() ) {
-	    case FL_TREE_SELECT_NONE:
-	      break;
-	    case FL_TREE_SELECT_SINGLE:
-	    case FL_TREE_SELECT_SINGLE_DRAGGABLE:
-	      select_only(item, when());		// select only this item (handles redraw)
-	      _lastselect = item;
-	      break;
-	    case FL_TREE_SELECT_MULTI: {
-	      if ( is_shift ) {			// SHIFT+PUSH?
-	        if ( _lastselect ) {
-		  int val = is_ctrl ? 2 : 1;
-		  bool visible = true;
-	          extend_selection(_lastselect, item, val, visible);
-	        } else {
-	          select(item);			// add to selection
-		}
-	      } else if ( is_ctrl ) {		// CTRL+PUSH?
-		select_toggle(item, when());	// toggle selection state
-	      } else {
-		select_only(item, when());
-	      }
-	      _lastselect = item;
-	      break;
-	    }
-	  }
-	}
+        if ( item->event_on_collapse_icon(_prefs) ) {   // collapse icon clicked?
+          open_toggle(item);                            // toggle open (handles redraw)
+        } else if ( !item->widget() || !Fl::event_inside(item->widget()) ) {  // not inside widget()
+          switch ( _prefs.selectmode() ) {
+            case FL_TREE_SELECT_NONE:
+              break;
+            case FL_TREE_SELECT_SINGLE:
+            case FL_TREE_SELECT_SINGLE_DRAGGABLE:
+              select_only(item, when());                // select only this item (handles redraw)
+              _lastselect = item;
+              break;
+            case FL_TREE_SELECT_MULTI: {
+              if ( is_shift ) {                 // SHIFT+PUSH?
+                if ( _lastselect ) {
+                  int val = is_ctrl ? 2 : 1;
+                  bool visible = true;
+                  extend_selection(_lastselect, item, val, visible);
+                } else {
+                  select(item);                 // add to selection
+                }
+              } else if ( is_ctrl ) {           // CTRL+PUSH?
+                select_toggle(item, when());    // toggle selection state
+              } else {
+                select_only(item, when());
+              }
+              _lastselect = item;
+              break;
+            }
+          }
+        }
       }
       break;
     }
@@ -454,17 +453,17 @@ int Fl_Tree::handle(int e) {
       last_my = my;
 
       // Handle autoscrolling
-      if ( my < y() ) {				// Above top?
-        dir = FL_Up;				// ..going up
-        int p = vposition()-(y()-my);		// ..position above us
-	if ( p < 0 ) p = 0;			// ..don't go above 0
-        vposition(p);				// ..scroll to new position
-      } else if ( my > (y()+h()) ) {		// Below bottom?
-        dir = FL_Down;				// ..going down
-        int p = vposition()+(my-y()-h());	// ..position below us
-	if ( p > (int)_vscroll->maximum() )	// ..don't go below bottom
-	  p = (int)_vscroll->maximum();
-        vposition(p);				// ..scroll to new position
+      if ( my < y() ) {                         // Above top?
+        dir = FL_Up;                            // ..going up
+        int p = vposition()-(y()-my);           // ..position above us
+        if ( p < 0 ) p = 0;                     // ..don't go above 0
+        vposition(p);                           // ..scroll to new position
+      } else if ( my > (y()+h()) ) {            // Below bottom?
+        dir = FL_Down;                          // ..going down
+        int p = vposition()+(my-y()-h());       // ..position below us
+        if ( p > (int)_vscroll->maximum() )     // ..don't go below bottom
+          p = (int)_vscroll->maximum();
+        vposition(p);                           // ..scroll to new position
       }
 
       // Now handle the event..
@@ -472,76 +471,76 @@ int Fl_Tree::handle(int e) {
       //
       if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-      if ( !item ) break;			// not near item? ignore drag event
-      ret |= 1;					// acknowledge event
+      if ( !item ) break;                       // not near item? ignore drag event
+      ret |= 1;                                 // acknowledge event
       if (_prefs.selectmode() != FL_TREE_SELECT_SINGLE_DRAGGABLE)
-        set_item_focus(item);			// becomes new focus item
-      if (item==_lastselect) break;		// same item as before? avoid reselect
+        set_item_focus(item);                   // becomes new focus item
+      if (item==_lastselect) break;             // same item as before? avoid reselect
 
       // Handle selection behavior
       switch ( _prefs.selectmode() ) {
-	case FL_TREE_SELECT_NONE:
-	  break;				// no selection changes
-	case FL_TREE_SELECT_SINGLE: {
-	  select_only(item, when());		// select only this item (handles redraw)
-	  break;
-	}
-	case FL_TREE_SELECT_SINGLE_DRAGGABLE: {
-	  item = _lastselect; // Keep the source intact
-	  redraw();
-	  break;
-	}
-	case FL_TREE_SELECT_MULTI: {
-	  Fl_Tree_Item *from = next_visible_item(_lastselect, dir); // avoid reselecting item
-	  Fl_Tree_Item *to = item;
-	  int val = is_ctrl ? 2 : 1;	// toggle_select() or just select()?
-	  bool visible = true;
-	  extend_selection_dir(from, to, dir, val, visible);
-	  break;
-	}
+        case FL_TREE_SELECT_NONE:
+          break;                                // no selection changes
+        case FL_TREE_SELECT_SINGLE: {
+          select_only(item, when());            // select only this item (handles redraw)
+          break;
+        }
+        case FL_TREE_SELECT_SINGLE_DRAGGABLE: {
+          item = _lastselect; // Keep the source intact
+          redraw();
+          break;
+        }
+        case FL_TREE_SELECT_MULTI: {
+          Fl_Tree_Item *from = next_visible_item(_lastselect, dir); // avoid reselecting item
+          Fl_Tree_Item *to = item;
+          int val = is_ctrl ? 2 : 1;    // toggle_select() or just select()?
+          bool visible = true;
+          extend_selection_dir(from, to, dir, val, visible);
+          break;
+        }
       }
-      _lastselect = item;			// save current item for later
+      _lastselect = item;                       // save current item for later
       break;
     }
     case FL_RELEASE:
       if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
           Fl::event_button() == FL_LEFT_MOUSE) {
         Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item mouse is over (vertically)
-        if (item && 					     // mouse over valid item?
-	    _lastselect && 				     // item being dragged is valid?
-	    item != _lastselect) {			     // item we're over not same as drag item?
+        if (item &&                                          // mouse over valid item?
+            _lastselect &&                                   // item being dragged is valid?
+            item != _lastselect) {                           // item we're over not same as drag item?
           // Are we dropping above or below the target item?
-          const int h = Fl::event_y() - item->y();	     // mouse relative to item's top/left
-          const int mid = item->h() / 2;		     // middle of item relative to item's top/left
-          const bool is_above = h < mid;		     // is mouse above middle of item?
+          const int h = Fl::event_y() - item->y();           // mouse relative to item's top/left
+          const int mid = item->h() / 2;                     // middle of item relative to item's top/left
+          const bool is_above = h < mid;                     // is mouse above middle of item?
           //printf("Dropping %s target item\n", is_above ? "above" : "below");
 
-	  Fl_Tree_Item *target = is_above ? prev(item) : next(item); // target item
+          Fl_Tree_Item *target = is_above ? prev(item) : next(item); // target item
           if ( target != _lastselect ) {                     // Don't drop on self
-            Fl_Tree_Item *parent = item->parent();	     // find parent for item mouse is over
-	    if ( !parent ) {				     // no parent (root)?
-	      // Special case for root; Drop as first child
-	      _lastselect->move_into(root(), 0);
-	    } else {
-	      // Not root..
-	      if (item->children() && item->is_open() && !is_above) {
-	        // Special case: Drop onto open folder below midline?
-		//    Drop as first child (pos=0)
-		//
-		_lastselect->move_into(item, 0);	     // STR #3432
-	      } else if (_lastselect->parent() == parent) {
-		// If we're moving inside same parent, use the below/above methods
-		if (is_above) _lastselect->move_above(item);
-		else          _lastselect->move_below(item);
-	      } else {
-		// Moving to different parent..
-		int pos = parent->find_child(item);	// find position of item in parent
-		if (!is_above) pos++;			// below? next position down
-		_lastselect->move_into(parent, pos);	// move item into parent at position
-	      }
-	    }
-	    redraw();
-	    do_callback_for_item(_lastselect, FL_TREE_REASON_DRAGGED);
+            Fl_Tree_Item *parent = item->parent();           // find parent for item mouse is over
+            if ( !parent ) {                                 // no parent (root)?
+              // Special case for root; Drop as first child
+              _lastselect->move_into(root(), 0);
+            } else {
+              // Not root..
+              if (item->children() && item->is_open() && !is_above) {
+                // Special case: Drop onto open folder below midline?
+                //    Drop as first child (pos=0)
+                //
+                _lastselect->move_into(item, 0);             // STR #3432
+              } else if (_lastselect->parent() == parent) {
+                // If we're moving inside same parent, use the below/above methods
+                if (is_above) _lastselect->move_above(item);
+                else          _lastselect->move_below(item);
+              } else {
+                // Moving to different parent..
+                int pos = parent->find_child(item);     // find position of item in parent
+                if (!is_above) pos++;                   // below? next position down
+                _lastselect->move_into(parent, pos);    // move item into parent at position
+              }
+            }
+            redraw();
+            do_callback_for_item(_lastselect, FL_TREE_REASON_DRAGGED);
           }
         }
         redraw();
@@ -593,7 +592,7 @@ void Fl_Tree::calc_dimensions() {
     if ( vshow ) {
       _vscroll->show();
       _vscroll->resize(_tox+_tow-scrollsize, _toy,
-		       scrollsize, h()-Fl::box_dh(box()) - (hshow ? scrollsize : 0));
+                       scrollsize, h()-Fl::box_dh(box()) - (hshow ? scrollsize : 0));
     } else {
       _vscroll->hide();
       _vscroll->value(0);
@@ -602,7 +601,7 @@ void Fl_Tree::calc_dimensions() {
     if ( hshow ) {
       _hscroll->show();
       _hscroll->resize(_tox, _toy+_toh-scrollsize,
-		       _tow - (vshow ? scrollsize : 0), scrollsize);
+                       _tow - (vshow ? scrollsize : 0), scrollsize);
     } else {
       _hscroll->hide();
       _hscroll->value(0);
@@ -642,7 +641,7 @@ void Fl_Tree::calc_dimensions() {
 ///
 /// _tree_w/_tree_h include the tree's margins (e.g. marginleft()),
 /// whether items are open or closed, label contents and font sizes, etc.
-///     
+///
 /// The tree hierarchy's size is managed separately from the widget's
 /// size as an optimization; this way resize() on the widget doesn't
 /// involve recalculating the tree's hierarchy needlessly, as widget
@@ -682,10 +681,10 @@ void Fl_Tree::calc_tree() {
   }
   int xmax = 0, render = 0, ytop = Y;
   fl_font(_prefs.labelfont(), _prefs.labelsize());
-  _root->draw(X, Y, W, 0, xmax, 1, render);		// descend into tree without drawing (render=0)
+  _root->draw(X, Y, W, 0, xmax, 1, render);             // descend into tree without drawing (render=0)
   // Save computed tree width and height
-  _tree_w = _prefs.marginleft() + xmax - X;		// include margin in tree's width
-  _tree_h = _prefs.margintop()  + Y - ytop;		// include margin in tree's height
+  _tree_w = _prefs.marginleft() + xmax - X;             // include margin in tree's width
+  _tree_h = _prefs.margintop()  + Y - ytop;             // include margin in tree's height
   // Calc tree dims again; now that tree_w/tree_h are known, scrollbars are calculated.
   calc_dimensions();
 }
@@ -707,7 +706,7 @@ void Fl_Tree::draw() {
   // We handle drawing children ourselves by calling each item's draw()
   {
     // Draw group's bg + label
-    if ( damage() & ~FL_DAMAGE_CHILD) {	// redraw entire widget?
+    if ( damage() & ~FL_DAMAGE_CHILD) { // redraw entire widget?
       Fl_Group::draw_box();
       Fl_Group::draw_label();
     }
@@ -727,12 +726,12 @@ void Fl_Tree::draw() {
     {
       int xmax = 0;
       fl_font(_prefs.labelfont(), _prefs.labelsize());
-      _root->draw(X, Y, W, 				// descend into tree here to draw it
-		  (Fl::focus()==this)?_item_focus:0,	// show focus item ONLY if Fl_Tree has focus
-		  xmax, 1, 1);
+      _root->draw(X, Y, W,                              // descend into tree here to draw it
+                  (Fl::focus()==this)?_item_focus:0,    // show focus item ONLY if Fl_Tree has focus
+                  xmax, 1, 1);
     }
     fl_pop_clip();
-  }  
+  }
   // Draw scrollbars last
   draw_child(*_vscroll);
   draw_child(*_hscroll);
@@ -741,21 +740,21 @@ void Fl_Tree::draw() {
     fl_color(_vscroll->color());
     fl_rectf(_hscroll->x()+_hscroll->w(),
              _vscroll->y()+_vscroll->h(),
-	     _vscroll->w(),
-	     _hscroll->h());
+             _vscroll->w(),
+             _hscroll->h());
   }
 
   // Draw dragging line
-  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&		// drag mode?
-      Fl::pushed() == this) {						// item clicked is the one we're drawing?
+  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&         // drag mode?
+      Fl::pushed() == this) {                                           // item clicked is the one we're drawing?
 
     Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-    if (item && 					 // we're over a valid item?
-        item != _item_focus) {				 // item doesn't have keyboard focus?
+    if (item &&                                          // we're over a valid item?
+        item != _item_focus) {                           // item doesn't have keyboard focus?
       // Are we dropping above or below the target item?
-      const int h = Fl::event_y() - item->y();	         // mouse relative to item's top/left
-      const int mid = item->h() / 2;		         // middle of item relative to item's top/left
-      const bool is_above = h < mid;		         // is mouse above middle of item?
+      const int h = Fl::event_y() - item->y();           // mouse relative to item's top/left
+      const int mid = item->h() / 2;                     // middle of item relative to item's top/left
+      const bool is_above = h < mid;                     // is mouse above middle of item?
       fl_color(FL_BLACK);
       int tgt = item->y() + (is_above ? 0 : item->h());
       fl_line(item->x(), tgt, item->x() + item->w(), tgt);
@@ -773,7 +772,7 @@ void Fl_Tree::show_self() {
   _root->show_self();
 }
 
-/// Set the label for the root item to \p 'new_label'. 
+/// Set the label for the root item to \p 'new_label'.
 ///
 /// Makes an internally managed copy of 'new_label'.
 ///
@@ -830,7 +829,7 @@ Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
     _root = new Fl_Tree_Item(this);
     _root->parent(0);
     _root->label("ROOT");
-  } 
+  }
   // Find parent item via path
   char **arr = parse_path(path);
   item = _root->add(_prefs, arr, item);
@@ -866,7 +865,7 @@ Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
  if (item) tree->insert_above(item, "New item");   // insert new item above it
  :
  \endcode
- 
+
  \param[in] above -- the item above which to insert the new item. Must not be NULL.
  \param[in] name -- the name of the new item
  \returns The new item added, or 0 if 'above' could not be found.
@@ -922,12 +921,12 @@ int Fl_Tree::remove(Fl_Tree_Item *item) {
   if ( item == _root ) {
     clear();
   } else {
-    Fl_Tree_Item *parent = item->parent();	// find item's parent
+    Fl_Tree_Item *parent = item->parent();      // find item's parent
     if ( ! parent ) return(-1);
-    parent->remove_child(item);			// remove child + children
+    parent->remove_child(item);                 // remove child + children
   }
   return(0);
-} 
+}
 
 /// Clear the entire tree's children, including the root.
 /// The tree will be left completely empty.
@@ -938,7 +937,7 @@ void Fl_Tree::clear() {
   delete _root; _root = 0;
   _item_focus = 0;
   _lastselect = 0;
-} 
+}
 
 /// Clear all the children for \p 'item'.
 /// Item may not be NULL.
@@ -946,14 +945,14 @@ void Fl_Tree::clear() {
 void Fl_Tree::clear_children(Fl_Tree_Item *item) {
   if ( item->has_children() ) {
     item->clear_children();
-    redraw();				// redraw only if there were children to clear
+    redraw();                           // redraw only if there were children to clear
   }
-} 
+}
 
 /**
  Find the item, given a menu style path, e.g. "/Parent/Child/item".
  There is both a const and non-const version of this method.
- Const version allows pure const methods to use this method 
+ Const version allows pure const methods to use this method
  to do lookups without causing compiler errors.
 
  To specify items or submenus that contain slashes ('/' or '\')
@@ -982,7 +981,7 @@ const Fl_Tree_Item *Fl_Tree::find_item(const char *path) const {
 Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
-	 static_cast<const Fl_Tree&>(*this).find_item(path)));
+         static_cast<const Fl_Tree&>(*this).find_item(path)));
 }
 
 // Handle safe 'reverse string concatenation'.
@@ -1006,9 +1005,9 @@ Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
 /// \param[in] pathnamelen The maximum length of the string (including NULL). Must not be zero.
 /// \param[in] item The item whose pathname is to be returned.
 /// \returns
-///	-   0 : OK (\p pathname returns the item's pathname)
-///	-  -1 : item not found (pathname="")
-///	-  -2 : pathname not large enough (pathname="")
+///     -   0 : OK (\p pathname returns the item's pathname)
+///     -  -1 : item not found (pathname="")
+///     -  -2 : pathname not large enough (pathname="")
 /// \see find_item()
 ///
 int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *item) const {
@@ -1017,25 +1016,25 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
   if ( !item ) return(-1);
   // Build pathname starting at end
   char *s = (pathname+pathnamelen-1);
-  int slen = 0;			// length of string compiled so far (including NULL)
+  int slen = 0;                 // length of string compiled so far (including NULL)
   SAFE_RCAT('\0');
   while ( item ) {
-    if ( item->is_root() && showroot() == 0 ) break;		// don't include root in path if showroot() off
+    if ( item->is_root() && showroot() == 0 ) break;            // don't include root in path if showroot() off
     // Find name of current item
-    const char *name = item->label() ? item->label() : "???";	// name for this item
+    const char *name = item->label() ? item->label() : "???";   // name for this item
     int len = (int) strlen(name);
     // Add name to end of pathname[]
     for ( --len; len>=0; len-- ) {
-      SAFE_RCAT(name[len]);					// rcat name of item
+      SAFE_RCAT(name[len]);                                     // rcat name of item
       if ( name[len] == '/' || name[len] == '\\' ) {
-        SAFE_RCAT('\\');					// escape front or back slashes within name
+        SAFE_RCAT('\\');                                        // escape front or back slashes within name
       }
     }
-    SAFE_RCAT('/');						// rcat leading slash
-    item = item->parent();					// move up tree (NULL==root)
+    SAFE_RCAT('/');                                             // rcat leading slash
+    item = item->parent();                                      // move up tree (NULL==root)
   }
-  if ( *(++s) == '/' ) { ++s; --slen; }				// leave off leading slash from pathname
-  if ( s != pathname ) memmove(pathname, s, slen);		// Shift down right-aligned string
+  if ( *(++s) == '/' ) { ++s; --slen; }                         // leave off leading slash from pathname
+  if ( s != pathname ) memmove(pathname, s, slen);              // Shift down right-aligned string
   return(0);
 }
 
@@ -1049,7 +1048,7 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
 ///
 /// Use this method /only/ if you've subclassed Fl_Tree, and are receiving
 /// events before Fl_Tree has been able to process and update callback_item().
-/// 
+///
 /// \param[in] yonly -- 0: check both event's X and Y values.
 ///                  -- 1: only check event's Y value, don't care about X.
 /// \returns The item clicked, or NULL if no item was under the current event.
@@ -1065,7 +1064,7 @@ const Fl_Tree_Item* Fl_Tree::find_clicked(int yonly) const {
 Fl_Tree_Item *Fl_Tree::find_clicked(int yonly) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
-	 static_cast<const Fl_Tree&>(*this).find_clicked(yonly)));
+         static_cast<const Fl_Tree&>(*this).find_clicked(yonly)));
 }
 
 /// Set the item that was last clicked.
@@ -1132,7 +1131,7 @@ Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
  \see first(), next(), last(), prev()
 */
 Fl_Tree_Item* Fl_Tree::first() {
-  return(_root);				// first item always root
+  return(_root);                                // first item always root
 }
 
 /// Returns the first open(), visible item in the tree, or 0 if none.
@@ -1334,16 +1333,16 @@ Fl_Tree_Item *Fl_Tree::last_selected_item() {
  \version 1.3.3
 */
 Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
-  if ( ! item ) {					// no start item?
+  if ( ! item ) {                                       // no start item?
     if ( visible ) {
-	item = ( dir == FL_Up ) ? last_visible_item() : // wrap to bottom
-				  first_visible_item();	// wrap to top
+        item = ( dir == FL_Up ) ? last_visible_item() : // wrap to bottom
+                                  first_visible_item(); // wrap to top
     } else {
-	item = ( dir == FL_Up ) ? last() :		// wrap to bottom
-				  first();		// wrap to top
+        item = ( dir == FL_Up ) ? last() :              // wrap to bottom
+                                  first();              // wrap to top
     }
     if ( ! item ) return(0);
-    if ( item->visible_r() ) return(item);		// return first/last visible item
+    if ( item->visible_r() ) return(item);              // return first/last visible item
   }
   switch (dir) {
     case FL_Up:
@@ -1353,7 +1352,7 @@ Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
       if ( visible ) return(item->next_visible(_prefs));
       else           return(item->next());
   }
-  return(0);		// unknown dir
+  return(0);            // unknown dir
 }
 
 /**
@@ -1389,21 +1388,21 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
   switch (dir) {
     case FL_Down:
       if ( ! item ) {
-	if ( ! (item = first()) ) return(0);
-	if ( item->is_selected() ) return(item);
+        if ( ! (item = first()) ) return(0);
+        if ( item->is_selected() ) return(item);
       }
       while ( (item = item->next()) )
-	if ( item->is_selected() )
-	  return(item);
+        if ( item->is_selected() )
+          return(item);
       return(0);
     case FL_Up:
       if ( ! item ) {
-	if ( ! (item = last()) ) return(0);
-	if ( item->is_selected() ) return(item);
+        if ( ! (item = last()) ) return(0);
+        if ( item->is_selected() ) return(item);
       }
       while ( (item = item->prev()) )
-	if ( item->is_selected() )
-	  return(item);
+        if ( item->is_selected() )
+          return(item);
       return(0);
   }
   return(0);
@@ -1446,7 +1445,7 @@ int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item to be opened. Must not be NULL.
@@ -1462,7 +1461,7 @@ int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
 ///
 int Fl_Tree::open(Fl_Tree_Item *item, int docallback) {
   if ( item->is_open() ) return(0);
-  item->open();		// handles recalc_tree()
+  item->open();         // handles recalc_tree()
   redraw();
   if ( docallback ) {
     do_callback_for_item(item, FL_TREE_REASON_OPENED);
@@ -1480,7 +1479,7 @@ int Fl_Tree::open(Fl_Tree_Item *item, int docallback) {
 /// Items or submenus that themselves contain slashes ('/' or '\')
 /// should be escaped, e.g. open("Holidays/12\\/25\\/2010").
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
@@ -1493,11 +1492,11 @@ int Fl_Tree::open(Fl_Tree_Item *item, int docallback) {
 ///     -   0 -- OK: item was already open, no change
 ///     -  -1 -- ERROR: item was not found
 /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-///         
+///
 int Fl_Tree::open(const char *path, int docallback) {
   Fl_Tree_Item *item = find_item(path);
   if ( ! item ) return(-1);
-  return(open(item, docallback));		// handles recalc_tree()
+  return(open(item, docallback));               // handles recalc_tree()
 }
 
 /// Toggle the open state of \p 'item'.
@@ -1506,7 +1505,7 @@ int Fl_Tree::open(const char *path, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item whose open state is to be toggled. Must not be NULL.
@@ -1519,9 +1518,9 @@ int Fl_Tree::open(const char *path, int docallback) {
 ///
 void Fl_Tree::open_toggle(Fl_Tree_Item *item, int docallback) {
   if ( item->is_open() ) {
-    close(item, docallback);		// handles recalc_tree()
+    close(item, docallback);            // handles recalc_tree()
   } else {
-    open(item, docallback);		// handles recalc_tree()
+    open(item, docallback);             // handles recalc_tree()
   }
 }
 
@@ -1531,7 +1530,7 @@ void Fl_Tree::open_toggle(Fl_Tree_Item *item, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item to be closed. Must not be NULL.
@@ -1546,7 +1545,7 @@ void Fl_Tree::open_toggle(Fl_Tree_Item *item, int docallback) {
 ///
 int Fl_Tree::close(Fl_Tree_Item *item, int docallback) {
   if ( item->is_close() ) return(0);
-  item->close();		// handles recalc_tree()
+  item->close();                // handles recalc_tree()
   redraw();
   if ( docallback ) {
     do_callback_for_item(item, FL_TREE_REASON_CLOSED);
@@ -1563,7 +1562,7 @@ int Fl_Tree::close(Fl_Tree_Item *item, int docallback) {
 /// Items or submenus that themselves contain slashes ('/' or '\')
 /// should be escaped, e.g. close("Holidays/12\\/25\\/2010").
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
@@ -1576,11 +1575,11 @@ int Fl_Tree::close(Fl_Tree_Item *item, int docallback) {
 ///     -   0 -- OK: item was already closed, no change
 ///     -  -1 -- ERROR: item was not found
 /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-///         
+///
 int Fl_Tree::close(const char *path, int docallback) {
   Fl_Tree_Item *item = find_item(path);
   if ( ! item ) return(-1);
-  return(close(item, docallback));		// handles recalc_tree()
+  return(close(item, docallback));              // handles recalc_tree()
 }
 
 /// See if \p 'item' is open.
@@ -1651,7 +1650,7 @@ int Fl_Tree::is_close(const char *path) const {
 /// Invokes the callback depending on the value of optional parameter \p docallback.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item to be selected. Must not be NULL.
@@ -1692,7 +1691,7 @@ int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
 /// Items or submenus that themselves contain slashes ('/' or '\')
 /// should be escaped, e.g. select("Holidays/12\\/25\\/2010").
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
@@ -1717,7 +1716,7 @@ int Fl_Tree::select(const char *path, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item to be selected. Must not be NULL.
@@ -1731,7 +1730,7 @@ void Fl_Tree::select_toggle(Fl_Tree_Item *item, int docallback) {
   set_changed();
   if ( docallback ) {
     do_callback_for_item(item, item->is_selected() ? FL_TREE_REASON_SELECTED
-						   : FL_TREE_REASON_DESELECTED);
+                                                   : FL_TREE_REASON_DESELECTED);
   }
   redraw();
 }
@@ -1742,7 +1741,7 @@ void Fl_Tree::select_toggle(Fl_Tree_Item *item, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item -- the item to be deselected. Must not be NULL.
@@ -1776,7 +1775,7 @@ int Fl_Tree::deselect(Fl_Tree_Item *item, int docallback) {
 /// Items or submenus that themselves contain slashes ('/' or '\')
 /// should be escaped, e.g. deselect("Holidays/12\\/25\\/2010").
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
@@ -1802,7 +1801,7 @@ int Fl_Tree::deselect(const char *path, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item The item that will be deselected (along with all its children).
@@ -1814,7 +1813,7 @@ int Fl_Tree::deselect(const char *path, int docallback) {
 /// \returns Count of how many items were actually changed to the deselected state.
 ///
 int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
-  item = item ? item : first();			// NULL? use first()
+  item = item ? item : first();                 // NULL? use first()
   if ( ! item ) return(0);
   int count = 0;
   // Deselect item
@@ -1823,7 +1822,7 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
       ++count;
   // Deselect its children
   for ( int t=0; t<item->children(); t++ ) {
-    count += deselect_all(item->child(t), docallback);	// recurse
+    count += deselect_all(item->child(t), docallback);  // recurse
   }
   return(count);
 }
@@ -1835,26 +1834,26 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] selitem The item to be selected. If NULL, first() is used.
 /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
 ///     -   0 - the callback() is not invoked
-///     -   1 - the callback() is invoked for each item that changed state (default), 
-///             callback_reason() will be either FL_TREE_REASON_SELECTED or 
+///     -   1 - the callback() is invoked for each item that changed state (default),
+///             callback_reason() will be either FL_TREE_REASON_SELECTED or
 ///             FL_TREE_REASON_DESELECTED
 /// \returns The number of items whose selection states were changed, if any.
 ///
 int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
-  selitem = selitem ? selitem : first();	// NULL? use first()
+  selitem = selitem ? selitem : first();        // NULL? use first()
   if ( ! selitem ) return(0);
   int changed = 0;
   // Deselect everything first.
   //    Prevents callbacks from seeing more than one item selected.
   //
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
-    if ( item == selitem ) continue;		// don't do anything to selitem yet..
+    if ( item == selitem ) continue;            // don't do anything to selitem yet..
     if ( item->is_selected() ) {
       deselect(item, docallback);
       ++changed;
@@ -1863,7 +1862,7 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   // Should we 'reselect' item if already selected?
   if ( selitem->is_selected() && (item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS) ) {
     // Selection unchanged, so no ++changed
-    select(selitem, docallback);			// do callback with reason=reselect
+    select(selitem, docallback);                        // do callback with reason=reselect
   } else if ( !selitem->is_selected() ) {
     // Item was not already selected, select and indicate changed
     select(selitem, docallback);
@@ -1879,10 +1878,10 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
 /// parameter \p 'docallback'.<br>
 /// Handles calling redraw() if anything changed.
 ///
-/// The callback can use callback_item() and callback_reason() respectively to determine 
+/// The callback can use callback_item() and callback_reason() respectively to determine
 /// the item changed and the reason the callback was called.
 ///
-/// \param[in] item The item that will be selected (along with all its children). 
+/// \param[in] item The item that will be selected (along with all its children).
 ///            If NULL, first() is used.
 /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
 ///     -   0 - the callback() is not invoked
@@ -1891,7 +1890,7 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
 /// \returns Count of how many items were actually changed to the selected state.
 ///
 int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
-  item = item ? item : first();			// NULL? use first()
+  item = item ? item : first();                 // NULL? use first()
   if ( ! item ) return(0);
   int count = 0;
   // Select item
@@ -1900,7 +1899,7 @@ int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
       ++count;
   // Select its children
   for ( int t=0; t<item->children(); t++ ) {
-    count += select_all(item->child(t), docallback);	// recurse
+    count += select_all(item->child(t), docallback);    // recurse
   }
   return(count);
 }
@@ -1917,9 +1916,9 @@ Fl_Tree_Item* Fl_Tree::get_item_focus() const {
 /// \param[in] item The item that should take focus. If NULL, none will have focus.
 ///
 void Fl_Tree::set_item_focus(Fl_Tree_Item *item) {
-  if ( _item_focus != item ) {		// changed?
-    _item_focus = item;			// update
-    if ( visible_focus() ) redraw();	// redraw to update focus box
+  if ( _item_focus != item ) {          // changed?
+    _item_focus = item;                 // update
+    if ( visible_focus() ) redraw();    // redraw to update focus box
   }
 }
 
@@ -2134,14 +2133,14 @@ void Fl_Tree::widgetmarginleft(int val) {
   recalc_tree();
 }
 
-/// Gets the width of the horizontal connection lines (in pixels) 
+/// Gets the width of the horizontal connection lines (in pixels)
 /// that appear to the left of each tree item's label.
 ///
 int Fl_Tree::connectorwidth() const {
   return(_prefs.connectorwidth());
 }
 
-/// Sets the width of the horizontal connection lines (in pixels) 
+/// Sets the width of the horizontal connection lines (in pixels)
 /// that appear to the left of each tree item's label.
 ///
 void Fl_Tree::connectorwidth(int val) {
@@ -2328,7 +2327,7 @@ Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
 /// Set the 'item draw mode' used for the tree to \p 'mode'.
 ///
 /// This affects how items in the tree are drawn,
-/// such as when a widget() is defined. 
+/// such as when a widget() is defined.
 /// See ::Fl_Tree_Item_Draw_Mode for possible values.
 /// \version 1.3.1 ABI feature
 ///
@@ -2339,7 +2338,7 @@ void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode mode) {
 /// Set the 'item draw mode' used for the tree to integer \p 'mode'.
 ///
 /// This affects how items in the tree are drawn,
-/// such as when a widget() is defined. 
+/// such as when a widget() is defined.
 /// See ::Fl_Tree_Item_Draw_Mode for possible values.
 /// \version 1.3.1 ABI feature
 ///
@@ -2448,7 +2447,7 @@ int Fl_Tree::vposition() const {
 
 /// Sets the vertical scroll offset to position \p 'pos'.
 /// The position is how many pixels of the tree are scrolled off the top edge
-/// of the screen. 
+/// of the screen.
 /// \param[in] pos The vertical position (in pixels) to scroll the tree to.
 /// \see vposition(), hposition(), hposition(int)
 ///
@@ -2472,7 +2471,7 @@ int Fl_Tree::hposition() const {
 
 /// Sets the horizontal scroll offset to position \p 'pos'.
 /// The position is how many pixels of the tree are scrolled off the left edge
-/// of the screen. 
+/// of the screen.
 /// \param[in] pos The vertical position (in pixels) to scroll the tree to.
 /// \see hposition(), vposition(), vposition(int)
 /// \note Must be using FLTK ABI 1.3.3 or higher for this to be effective.
@@ -2511,7 +2510,7 @@ int Fl_Tree::is_scrollbar(Fl_Widget *w) {
 ///
 /// If this value is zero (default), this widget will use the global
 /// Fl::scrollbar_size() value as the scrollbar's width.
-/// 
+///
 /// \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
 /// \see Fl::scrollbar_size(int)
 ///
@@ -2523,17 +2522,17 @@ int Fl_Tree::scrollbar_size() const {
 /// for this widget, in pixels.
 ///
 /// Normally you should not need this method, and should use the global
-/// Fl::scrollbar_size(int) instead to manage the size of ALL 
-/// your widgets' scrollbars. This ensures your application 
+/// Fl::scrollbar_size(int) instead to manage the size of ALL
+/// your widgets' scrollbars. This ensures your application
 /// has a consistent UI, and is the default behavior. Normally
 /// this is what you want.
 ///
 /// Only use this method if you really need to override just THIS
 /// instance of the widget's scrollbar size. (This need should be rare.)
-///   
+///
 /// Setting \p size to the special value of 0 causes the widget to
 /// track the global Fl::scrollbar_size(), which is the default.
-///   
+///
 /// \param[in] size Sets the scrollbar size in pixels.\n
 ///                 If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
 /// \see Fl::scrollbar_size()
@@ -2645,15 +2644,15 @@ void Fl_Tree::load(Fl_Preferences &prefs) {
   n = prefs.entries();
   for (i=0; i<n; i++) {
     // We must remove all fwd slashes in the key and value strings. Replace with backslash.
-    char *key = strdup(prefs.entry(i));
+    char *key = fl_strdup(prefs.entry(i));
     int kn = (int) strlen(key);
     for (j=0; j<kn; j++) {
-      if (key[j]=='/') key[j]='\\'; 
+      if (key[j]=='/') key[j]='\\';
     }
     char *val;  prefs.get(key, val, "");
     int vn = (int) strlen(val);
     for (j=0; j<vn; j++) {
-      if (val[j]=='/') val[j]='\\'; 
+      if (val[j]=='/') val[j]='\\';
     }
     if (vn<40) {
       size_t sze = pn + strlen(key) + vn;
@@ -2690,7 +2689,3 @@ void Fl_Tree::fix_scrollbar_order() {
 void Fl_Tree::recalc_tree() {
   _tree_w = _tree_h = -1;
 }
-
-//
-// End of "$Id$".
-//

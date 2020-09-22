@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Add a font to the internal table.
@@ -33,14 +31,14 @@ static int table_size;
 /**
   Changes a face.  The string pointer is simply stored,
   the string is not copied, so the string must be in static memory.
-*/    
+*/
 void Fl::set_font(Fl_Font fnum, const char* name) {
   Fl_Graphics_Driver &d = Fl_Graphics_Driver::default_driver();
   unsigned width = d.font_desc_size();
   if (!fl_fonts) fl_fonts = d.calc_fl_fonts();
   while (fnum >= table_size) {
     int i = table_size;
-    if (!i) {	// don't realloc the built-in table
+    if (!i) {   // don't realloc the built-in table
       table_size = 2*FL_FREE_FONT;
       i = FL_FREE_FONT;
       Fl_Fontdesc* t = (Fl_Fontdesc*)malloc(table_size*width);
@@ -71,7 +69,3 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
 const char* Fl::get_font(Fl_Font fnum) {
   return Fl_Graphics_Driver::default_driver().font_name(fnum);
 }
-
-//
-// End of "$Id$".
-//

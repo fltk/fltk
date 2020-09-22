@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -100,12 +98,8 @@ void Fl_Quartz_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_
   float s = Fl::screen_scale(win->screen_num());
   CGContextScaleCTM(gc, 1/s, s >= 1 ? -1/s : -1);
   Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt*s);
-  CGContextRestoreGState(gc);  
+  CGContextRestoreGState(gc);
   draw(win, x_offset, y_offset + bt); // print the window inner part
 }
 
 #endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

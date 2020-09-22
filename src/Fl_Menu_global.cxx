@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Global menu shortcut code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Make all the shortcuts in this menu global.
@@ -33,19 +31,15 @@ static int handler(int e) {
 
 /**
   Make the shortcuts for this menu work no matter what window has the
-  focus when you type it.  This is done by using 
+  focus when you type it.  This is done by using
   Fl::add_handler().  This Fl_Menu_ widget does not
   have to be visible (ie the window it is in can be hidden, or it does
   not have to be put in a window at all).
   <P>Currently there can be only one global()menu.  Setting a new
-  one will replace the old one.  There is no way to remove the 
+  one will replace the old one.  There is no way to remove the
   global() setting (so don't destroy the widget!)
 */
 void Fl_Menu_::global() {
   if (!the_widget) Fl::add_handler(handler);
   the_widget = this;
 }
-
-//
-// End of "$Id$".
-//

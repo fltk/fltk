@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A simple demo of 'drag and drop' with FLTK.
 // Originally from erco's cheat sheet, permission by author.
 // Inspired by Michael Sephton's original example posted on fltk.general.
@@ -17,11 +15,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -45,10 +43,10 @@ public:
     switch ( event ) {
       case FL_PUSH: {             // do 'copy/dnd' when someone clicks on box
         const char *msg = "It works!";
-	Fl::copy(msg,strlen(msg),0);
-	Fl::dnd();
-	ret = 1;
-	break;
+        Fl::copy(msg,strlen(msg),0);
+        Fl::dnd();
+        ret = 1;
+        break;
       }
     }
     return(ret);
@@ -70,55 +68,55 @@ public:
     int ret = Fl_Box::handle(event);
     int len;
     switch ( event ) {
-      case FL_DND_ENTER:	// return(1) for this event to 'accept' dnd
-	label("ENTER");		// visible only if you stop the mouse at the widget's border
-	fprintf(stderr, "FL_DND_ENTER\n");
-	dnd_inside = 1;		// status: inside the widget, accept drop
-	ret = 1;
-	break;
-      case FL_DND_DRAG:		// return(1) for this event to 'accept' dnd
-	label("drop\nhere");
-	fprintf(stderr, "FL_DND_DRAG\n");
-	ret = 1;
-	break;
-      case FL_DND_RELEASE:	// return(1) for this event to 'accept' the payload (drop)
-	fprintf(stderr, "FL_DND_RELEASE\n");
-	if (dnd_inside) {
-	  ret = 1;		// return(1) and expect FL_PASTE event to follow
-	  label("RELEASE");
-	} else {
-	  ret = 0;		// return(0) to reject the DND payload (drop)
-	  label("DND\nREJECTED!");
-	}
-	break;
+      case FL_DND_ENTER:        // return(1) for this event to 'accept' dnd
+        label("ENTER");         // visible only if you stop the mouse at the widget's border
+        fprintf(stderr, "FL_DND_ENTER\n");
+        dnd_inside = 1;         // status: inside the widget, accept drop
+        ret = 1;
+        break;
+      case FL_DND_DRAG:         // return(1) for this event to 'accept' dnd
+        label("drop\nhere");
+        fprintf(stderr, "FL_DND_DRAG\n");
+        ret = 1;
+        break;
+      case FL_DND_RELEASE:      // return(1) for this event to 'accept' the payload (drop)
+        fprintf(stderr, "FL_DND_RELEASE\n");
+        if (dnd_inside) {
+          ret = 1;              // return(1) and expect FL_PASTE event to follow
+          label("RELEASE");
+        } else {
+          ret = 0;              // return(0) to reject the DND payload (drop)
+          label("DND\nREJECTED!");
+        }
+        break;
       case FL_PASTE:              // handle actual drop (paste) operation
-	fprintf(stderr, "FL_PASTE\n");
-	copy_label(Fl::event_text());
-	fprintf(stderr, "Pasted '%s'\n", Fl::event_text());
+        fprintf(stderr, "FL_PASTE\n");
+        copy_label(Fl::event_text());
+        fprintf(stderr, "Pasted '%s'\n", Fl::event_text());
 
-	// Don't pop up dialog windows in FL_DND_* or FL_PASTE event handling
-	// resulting from DND operations. This may hang or even crash the
-	// application on *some* platforms. Use a short timer to delay the
-	// message display after the event processing is completed.
+        // Don't pop up dialog windows in FL_DND_* or FL_PASTE event handling
+        // resulting from DND operations. This may hang or even crash the
+        // application on *some* platforms. Use a short timer to delay the
+        // message display after the event processing is completed.
 
-	delete[] dnd_text;	// don't leak (just in case)
-	dnd_text = 0;
+        delete[] dnd_text;      // don't leak (just in case)
+        dnd_text = 0;
 
-	len = Fl::event_length();
-	if (len && Fl::event_text()) {
-	  dnd_text = new char[len + 1];
-	  memcpy(dnd_text, Fl::event_text(), len);
-	  dnd_text[len] = '\0';
-	  Fl::add_timeout(0.001, timer_cb, this); // delay message popup
-	}
-	ret = 1;
-	break;
-      case FL_DND_LEAVE:	// not strictly necessary to return(1) for this event
-	label("..to\nhere");	// reset label
-	fprintf(stderr, "FL_DND_LEAVE\n");
-	dnd_inside = 0;		// status: mouse is outside, don't accept drop
-	ret = 1;		// return(1) anyway..
-	break;
+        len = Fl::event_length();
+        if (len && Fl::event_text()) {
+          dnd_text = new char[len + 1];
+          memcpy(dnd_text, Fl::event_text(), len);
+          dnd_text[len] = '\0';
+          Fl::add_timeout(0.001, timer_cb, this); // delay message popup
+        }
+        ret = 1;
+        break;
+      case FL_DND_LEAVE:        // not strictly necessary to return(1) for this event
+        label("..to\nhere");    // reset label
+        fprintf(stderr, "FL_DND_LEAVE\n");
+        dnd_inside = 0;         // status: mouse is outside, don't accept drop
+        ret = 1;                // return(1) anyway..
+        break;
     }
     return(ret);
   }
@@ -152,7 +150,3 @@ int main(int argc, char **argv) {
   win_b.show();
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
 // You may find the basic read_* and write_* routines to
@@ -14,11 +12,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -27,6 +25,7 @@
 #include <stdarg.h>
 #include "alignment_panel.h"
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 #include "Fl_Widget_Type.h"
 
 ////////////////////////////////////////////////////////////////
@@ -171,7 +170,7 @@ static int hexdigit(int x) {
 }
 
 
-static int read_quoted() {	// read whatever character is after a \ .
+static int read_quoted() {      // read whatever character is after a \ .
   int c,d,x;
   switch(c = fgetc(fin)) {
   case '\n': lineno++; return -1;
@@ -182,7 +181,7 @@ static int read_quoted() {	// read whatever character is after a \ .
   case 'r' : return('\r');
   case 't' : return('\t');
   case 'v' : return('\v');
-  case 'x' :	/* read hex */
+  case 'x' :    /* read hex */
     for (c=x=0; x<3; x++) {
       int ch = fgetc(fin);
       d = hexdigit(ch);
@@ -190,7 +189,7 @@ static int read_quoted() {	// read whatever character is after a \ .
       c = (c<<4)+d;
     }
     break;
-  default:		/* read octal */
+  default:              /* read octal */
     if (c<'0' || c>'7') break;
     c -= '0';
     for (x=0; x<2; x++) {
@@ -208,9 +207,9 @@ static int read_quoted() {	// read whatever character is after a \ .
 // This will skip all comments (# to end of line), and evaluate
 // all \xxx sequences and use \ at the end of line to remove the newline.
 // A word is any one of:
-//	a continuous string of non-space chars except { and } and #
-//	everything between matching {...} (unless wantbrace != 0)
-//	the characters '{' and '}'
+//      a continuous string of non-space chars except { and } and #
+//      everything between matching {...} (unless wantbrace != 0)
+//      the characters '{' and '}'
 
 static char *buffer;
 static int buflen;
@@ -233,9 +232,9 @@ const char *read_word(int wantbrace) {
   // skip all the whitespace before it:
   for (;;) {
     x = getc(fin);
-    if (x < 0 && feof(fin)) {	// eof
+    if (x < 0 && feof(fin)) {   // eof
       return 0;
-    } else if (x == '#') {	// comment
+    } else if (x == '#') {      // comment
       do x = getc(fin); while (x >= 0 && x != '\n');
       lineno++;
       continue;
@@ -257,9 +256,9 @@ const char *read_word(int wantbrace) {
       x = getc(fin);
       if (x<0) {read_error("Missing '}'"); break;}
       else if (x == '#') { // embedded comment
-	do x = getc(fin); while (x >= 0 && x != '\n');
-	lineno++;
-	continue;
+        do x = getc(fin); while (x >= 0 && x != '\n');
+        lineno++;
+        continue;
       } else if (x == '\n') lineno++;
       else if (x == '\\') {x = read_quoted(); if (x<0) continue;}
       else if (x == '{') nesting++;
@@ -312,7 +311,7 @@ extern const char* code_file_name;
 int write_file(const char *filename, int selected_only) {
   if (!open_write(filename)) return 0;
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
-	       "version %.4f",FL_VERSION);
+               "version %.4f",FL_VERSION);
   if(!include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
   if(use_FL_COMMAND)
@@ -322,11 +321,11 @@ int write_file(const char *filename, int selected_only) {
     write_string("\ni18n_include %s", i18n_include);
     switch (i18n_type) {
     case 1 : /* GNU gettext */
-	write_string("\ni18n_function %s", i18n_function);
+        write_string("\ni18n_function %s", i18n_function);
         break;
     case 2 : /* POSIX catgets */
         if (i18n_file[0]) write_string("\ni18n_file %s", i18n_file);
-	write_string("\ni18n_set %s", i18n_set);
+        write_string("\ni18n_set %s", i18n_set);
         break;
     }
   }
@@ -407,19 +406,19 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_function")) {
-      i18n_function = strdup(read_word());
+      i18n_function = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_file")) {
-      i18n_file = strdup(read_word());
+      i18n_file = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_set")) {
-      i18n_set = strdup(read_word());
+      i18n_set = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_include")) {
-      i18n_include = strdup(read_word());
+      i18n_include = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_type"))
@@ -433,13 +432,13 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
     if (!strcmp(c,"header_name")) {
-      if (!header_file_set) header_file_name = strdup(read_word());
+      if (!header_file_set) header_file_name = fl_strdup(read_word());
       else read_word();
       goto CONTINUE;
     }
 
     if (!strcmp(c,"code_name")) {
-      if (!code_file_set) code_file_name = strdup(read_word());
+      if (!code_file_set) code_file_name = fl_strdup(read_word());
       else read_word();
       goto CONTINUE;
     }
@@ -487,7 +486,7 @@ static void read_children(Fl_Type *p, int paste) {
     }
 
     Fl_Type::current = p;
-    
+
   CONTINUE:;
   }
 }
@@ -612,35 +611,31 @@ void read_fdesign() {
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
-	group = widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Group");
-	Fl_Type::current = group;
+        group = widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Group");
+        Fl_Type::current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
-	if (group) {
-	  Fl_Group* g = (Fl_Group*)(group->o);
-	  g->begin();
-	  g->forms_end();
-	  Fl_Group::current(0);
-	}
-	group = widget = 0;
-	Fl_Type::current = window;
+        if (group) {
+          Fl_Group* g = (Fl_Group*)(group->o);
+          g->begin();
+          g->forms_end();
+          Fl_Group::current(0);
+        }
+        group = widget = 0;
+        Fl_Type::current = window;
       } else {
-	for (int i = 0; class_matcher[i]; i += 2)
-	  if (!strcmp(value,class_matcher[i])) {
-	    value = class_matcher[i+1]; break;}
-	widget = (Fl_Widget_Type*)Fl_Type_make(value);
-	if (!widget) {
-	  printf("class %s not found, using Fl_Button\n", value);
-	  widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Button");
-	}
+        for (int i = 0; class_matcher[i]; i += 2)
+          if (!strcmp(value,class_matcher[i])) {
+            value = class_matcher[i+1]; break;}
+        widget = (Fl_Widget_Type*)Fl_Type_make(value);
+        if (!widget) {
+          printf("class %s not found, using Fl_Button\n", value);
+          widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Button");
+        }
       }
 
     } else if (widget) {
       if (!widget->read_fdesign(name, value))
-	printf("Ignoring \"%s: %s\"\n", name, value);
+        printf("Ignoring \"%s: %s\"\n", name, value);
     }
   }
 }
-
-//
-// End of "$Id$".
-//

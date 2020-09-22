@@ -1,26 +1,21 @@
 #
-# "$Id$"
-#
 # This file sets variables for common use in export.cmake and install.cmake
 # Written by Michael Surette
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 #######################################################################
-set (FL_MAJOR_VERSION ${FLTK_VERSION_MAJOR})
-set (FL_MINOR_VERSION ${FLTK_VERSION_MINOR})
-set (FL_PATCH_VERSION ${FLTK_VERSION_PATCH})
 
 set (DEBUG_VARIABLES_CMAKE 0)
 if (DEBUG_VARIABLES_CMAKE)
@@ -85,66 +80,66 @@ set (IMAGELIBS)
 set (STATICIMAGELIBS)
 
 if (FLTK_BUILTIN_JPEG_FOUND)
-  list(APPEND IMAGELIBS -lfltk_jpeg)
-  list(APPEND STATICIMAGELIBS \$libdir/libfltk_jpeg.a)
+  list (APPEND IMAGELIBS -lfltk_jpeg)
+  list (APPEND STATICIMAGELIBS \$libdir/libfltk_jpeg.a)
 else ()
   if (LIB_jpeg)
-    list(APPEND IMAGELIBS -ljpeg)
-    list(APPEND STATICIMAGELIBS -ljpeg)
+    list (APPEND IMAGELIBS -ljpeg)
+    list (APPEND STATICIMAGELIBS -ljpeg)
   endif (LIB_jpeg)
 endif (FLTK_BUILTIN_JPEG_FOUND)
 
 if (FLTK_BUILTIN_PNG_FOUND)
-  list(APPEND IMAGELIBS -lfltk_png)
-  list(APPEND STATICIMAGELIBS \$libdir/libfltk_png.a)
+  list (APPEND IMAGELIBS -lfltk_png)
+  list (APPEND STATICIMAGELIBS \$libdir/libfltk_png.a)
 else ()
   if (LIB_png)
-    list(APPEND IMAGELIBS -lpng)
-    list(APPEND STATICIMAGELIBS -lpng)
+    list (APPEND IMAGELIBS -lpng)
+    list (APPEND STATICIMAGELIBS -lpng)
   endif (LIB_png)
 endif (FLTK_BUILTIN_PNG_FOUND)
 
 if (FLTK_BUILTIN_ZLIB_FOUND)
-  list(APPEND IMAGELIBS -lfltk_z)
-  list(APPEND STATICIMAGELIBS \$libdir/libfltk_z.a)
+  list (APPEND IMAGELIBS -lfltk_z)
+  list (APPEND STATICIMAGELIBS \$libdir/libfltk_z.a)
 else ()
   if (LIB_zlib)
-    list(APPEND IMAGELIBS -lz)
-    list(APPEND STATICIMAGELIBS -lz)
+    list (APPEND IMAGELIBS -lz)
+    list (APPEND STATICIMAGELIBS -lz)
   endif (LIB_zlib)
 endif (FLTK_BUILTIN_ZLIB_FOUND)
 
-string(REPLACE ";" " " IMAGELIBS "${IMAGELIBS}")
-string(REPLACE ";" " " STATICIMAGELIBS "${STATICIMAGELIBS}")
+string (REPLACE ";" " " IMAGELIBS "${IMAGELIBS}")
+string (REPLACE ";" " " STATICIMAGELIBS "${STATICIMAGELIBS}")
 
 #######################################################################
-set(CC ${CMAKE_C_COMPILER})
-set(CXX ${CMAKE_CXX_COMPILER})
+set (CC ${CMAKE_C_COMPILER})
+set (CXX ${CMAKE_CXX_COMPILER})
 
-set(ARCHFLAGS ${OPTION_ARCHFLAGS})
+set (ARCHFLAGS ${OPTION_ARCHFLAGS})
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_UPPER)
 if (${BUILD_UPPER})
   set (CFLAGS "${CMAKE_C_FLAGS_${BUILD_UPPER}} ${CFLAGS}")
 endif (${BUILD_UPPER})
 
-set(CFLAGS "${OPTION_OPTIM} ${CMAKE_C_FLAGS} ${CFLAGS}")
-foreach(arg ${FLTK_CFLAGS})
-  set(CFLAGS "${CFLAGS} ${arg}")
-endforeach(arg ${FLTK_CFLAGS})
+set (CFLAGS "${OPTION_OPTIM} ${CMAKE_C_FLAGS} ${CFLAGS}")
+foreach (arg ${FLTK_CFLAGS})
+  set (CFLAGS "${CFLAGS} ${arg}")
+endforeach (arg ${FLTK_CFLAGS})
 
-set(CXXFLAGS "${CFLAGS}")
+set (CXXFLAGS "${CFLAGS}")
 
-foreach(arg ${FLTK_LDLIBS})
-  set(LINK_LIBS "${LINK_LIBS} ${arg}")
-endforeach(arg ${FLTK_LDLIBS})
+foreach (arg ${FLTK_LDLIBS})
+  set (LINK_LIBS "${LINK_LIBS} ${arg}")
+endforeach (arg ${FLTK_LDLIBS})
 
-set(LIBS "${LINK_LIBS}")
+set (LIBS "${LINK_LIBS}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
-    set(SHAREDSUFFIX "_s")
+    set (SHAREDSUFFIX "_s")
 else ()
-    set(SHAREDSUFFIX "")
+    set (SHAREDSUFFIX "")
 endif (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
 
 if (DEBUG_VARIABLES_CMAKE)

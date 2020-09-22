@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-// Encompasses platform-specific printing-support code and 
+// Encompasses platform-specific printing-support code and
 // PostScript output code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Printer.H>
@@ -29,7 +27,7 @@ Fl_Printer::Fl_Printer(void) {
 Fl_Paged_Device* Fl_Printer::newPrinterDriver(void) {
   return NULL;
 }
-int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage, char **perr_message) {return 2;}
 int Fl_Printer::begin_page(void) {return 1;}
 int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
 void Fl_Printer::margins(int *left, int *top, int *right, int *bottom) {}
@@ -43,6 +41,7 @@ int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
 void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
+bool Fl_Printer::is_current(void) {return false;}
 Fl_Printer::~Fl_Printer(void) {}
 
 const char *Fl_Printer::dialog_title = NULL;
@@ -66,7 +65,7 @@ const char *Fl_Printer::property_save = NULL;
 const char *Fl_Printer::property_cancel = NULL;
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void) {}
-int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to) {return 1;}
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to, char **perr_message) {return 2;}
 int Fl_PostScript_File_Device::begin_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
                                           enum Fl_Paged_Device::Page_Layout layout) {return 1;}
 int Fl_PostScript_File_Device::begin_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
@@ -83,6 +82,14 @@ void Fl_PostScript_File_Device::untranslate(void) {}
 int Fl_PostScript_File_Device::end_page (void) {return 1;}
 void Fl_PostScript_File_Device::end_job(void) {}
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
+
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background) : Fl_Widget_Surface(NULL) {}
+Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {}
+void Fl_EPS_File_Surface::origin(int, int) {}
+void Fl_EPS_File_Surface::origin(int*, int*) {}
+int Fl_EPS_File_Surface::printable_rect(int*, int*) {return 1;}
+void Fl_EPS_File_Surface::translate(int, int) {}
+void Fl_EPS_File_Surface::untranslate() {}
 
 #else
 
@@ -132,21 +139,9 @@ Fl_Printer::Fl_Printer(void) {
   driver(printer->driver());
 }
 
-/**
- Begins a print job.
- Opens a platform-specific dialog window allowing the user to set several options including
- the desired printer and the page orientation. Optionally, the user can also select a range of pages to  be
- printed. This range is returned to the caller that is in charge of sending only these pages 
- for printing.
- 
- \param[in] pagecount the total number of pages of the job (or 0 if you don't know the number of pages)
- \param[out] frompage if non-null, *frompage is set to the first page the user wants printed
- \param[out] topage if non-null, *topage is set to the last page the user wants printed
- \return 0 if OK, non-zero if any error occurred or if the user cancelled the print request.
- */
-int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage)
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage, char **perr_message)
 {
-  return printer->begin_job(pagecount, frompage, topage);
+  return printer->begin_job(pagecount, frompage, topage, perr_message);
 }
 
 int Fl_Printer::begin_page(void)
@@ -224,7 +219,3 @@ Fl_Printer::~Fl_Printer(void)
 }
 
 #endif // defined(FL_NO_PRINT_SUPPORT)
-
-//
-// End of "$Id$".
-//

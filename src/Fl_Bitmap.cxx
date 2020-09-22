@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \fn Fl_Bitmap::Fl_Bitmap(const char *array, int W, int H)
@@ -97,11 +95,11 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
   for (dataptr = array + d - 1, y = 0; y < h; y ++, dataptr += ld)
     for (bitptr = bitmap + y * bmw, bit = 1, x = 0; x < w; x ++, dataptr += d) {
       if (*dataptr > dither[x & 15][y & 15])
-	*bitptr |= bit;
+        *bitptr |= bit;
       if (bit < 128) bit <<= 1;
       else {
-	bit = 1;
-	bitptr ++;
+        bit = 1;
+        bitptr ++;
       }
     }
 
@@ -140,8 +138,8 @@ void Fl_Bitmap::label(Fl_Menu_Item* m) {
 }
 
 Fl_Image *Fl_Bitmap::copy(int W, int H) {
-  Fl_Bitmap	*new_image;	// New RGB image
-  uchar		*new_array;	// New array for image data
+  Fl_Bitmap     *new_image;     // New RGB image
+  uchar         *new_array;     // New array for image data
 
   // Optimize the simple copy where the width and height are the same...
   if (W == data_w() && H == data_h()) {
@@ -155,16 +153,16 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   }
   if (W <= 0 || H <= 0) return 0;
 
-  // OK, need to resize the image data; allocate memory and 
-  uchar		*new_ptr,	// Pointer into new array
-		new_bit,	// Bit for new array
-		old_bit;	// Bit for old array
-  const uchar	*old_ptr;	// Pointer into old array
-  int		sx, sy,		// Source coordinates
-		dx, dy,		// Destination coordinates
-		xerr, yerr,	// X & Y errors
-		xmod, ymod,	// X & Y moduli
-		xstep, ystep;	// X & Y step increments
+  // OK, need to resize the image data; allocate memory and
+  uchar         *new_ptr,       // Pointer into new array
+                new_bit,        // Bit for new array
+                old_bit;        // Bit for old array
+  const uchar   *old_ptr;       // Pointer into old array
+  int           sx, sy,         // Source coordinates
+                dx, dy,         // Destination coordinates
+                xerr, yerr,     // X & Y errors
+                xmod, ymod,     // X & Y moduli
+                xstep, ystep;   // X & Y step increments
 
 
   // Figure out Bresenham step/modulus values...
@@ -183,23 +181,23 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
     for (dx = W, xerr = W, old_ptr = array + sy * ((data_w() + 7) / 8), sx = 0, new_bit = 1;
-	 dx > 0;
-	 dx --) {
+         dx > 0;
+         dx --) {
       old_bit = (uchar)(1 << (sx & 7));
       if (old_ptr[sx / 8] & old_bit) *new_ptr |= new_bit;
 
       if (new_bit < 128) new_bit <<= 1;
       else {
         new_bit = 1;
-	new_ptr ++;
+        new_ptr ++;
       }
 
       sx   += xstep;
       xerr -= xmod;
 
       if (xerr <= 0) {
-	xerr += W;
-	sx ++;
+        xerr += W;
+        sx ++;
       }
     }
 
@@ -215,7 +213,3 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
   return new_image;
 }
-
-//
-// End of "$Id$".
-//

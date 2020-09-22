@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -51,8 +49,8 @@ static void centered_text(cairo_t *cr, double x0, double y0, double w0, double h
 // draw a button object with rounded corners and a label
 
 static void round_button(cairo_t *cr, double x0, double y0,
-			 double rect_width, double rect_height, double radius,
-			 double r, double g, double b) {
+                         double rect_width, double rect_height, double radius,
+                         double r, double g, double b) {
   double x1, y1;
   x1 = x0 + rect_width;
   y1 = y0 + rect_height;
@@ -158,7 +156,3 @@ int main(int argc, char **argv) {
   return 0;
 }
 #endif
-
-//
-// End of "$Id$".
-//

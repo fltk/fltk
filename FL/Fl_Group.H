@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -43,7 +41,10 @@ class Fl_Rect;
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
-  Fl_Widget** array_;
+  union {
+    Fl_Widget** array_; // used if group has two or more children or NULL
+    Fl_Widget* child1_; // used if group has one child or NULL
+  };
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
   int children_;
@@ -52,7 +53,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
   int navigation(int);
   static Fl_Group *current_;
- 
+
   // unimplemented copy ctor and assignment operator
   Fl_Group(const Fl_Group&);
   Fl_Group& operator=(const Fl_Group&);
@@ -84,7 +85,7 @@ public:
   Fl_Widget* child(int n) const {return array()[n];}
   int find(const Fl_Widget*) const;
   /**
-    See int Fl_Group::find(const Fl_Widget *w) const 
+    See int Fl_Group::find(const Fl_Widget *w) const
   */
   int find(const Fl_Widget& o) const {return find(&o);}
   Fl_Widget* const* array() const;
@@ -98,7 +99,7 @@ public:
   virtual ~Fl_Group();
   void add(Fl_Widget&);
   /**
-    See void Fl_Group::add(Fl_Widget &w) 
+    See void Fl_Group::add(Fl_Widget &w)
   */
   void add(Fl_Widget* o) {add(*o);}
   void insert(Fl_Widget&, int i);
@@ -117,11 +118,24 @@ public:
   void clear();
 
   /**
-    See void Fl_Group::resizable(Fl_Widget *box) 
+    Sets the group's resizable widget.
+    See void Fl_Group::resizable(Fl_Widget *o)
   */
   void resizable(Fl_Widget& o) {resizable_ = &o;}
   /**
-    The resizable widget defines the resizing box for the group. When the
+    The resizable widget defines both the resizing box and the resizing
+    behavior of the group and its children.
+
+    If the resizable is NULL the group's size is fixed and all of the widgets
+    in the group remain a fixed size and distance from the top-left corner.
+    This is the default for groups derived from Fl_Window and Fl_Pack.
+
+    The resizable may be set to the group itself, in which case all of the
+    widgets that are its direct children are resized proportionally.
+    This is the default value for Fl_Group.
+
+    The resizable widget defines the resizing box for the group, which could
+    be the group itself or one of the group's direct children. When the
     group is resized it calculates a new size and position for all of its
     children. Widgets that are horizontally or vertically inside the
     dimensions of the box are scaled to the new size. Widgets outside the
@@ -132,27 +146,24 @@ public:
     \image html resizebox1.png
 
     <br>
-    
+
     \image html resizebox2.png
-    
+
     \image latex resizebox1.png "before resize"  width=4cm
-    
+
     \image latex resizebox2.png "after resize"   width=4.85cm
 
-    The resizable may be set to the group itself, in which case all the
-    contents are resized. This is the default value for Fl_Group,
-    although NULL is the default for Fl_Window and Fl_Pack.
-
-    If the resizable is NULL then all widgets remain a fixed size
-    and distance from the top-left corner.
-
     It is possible to achieve any type of resize behavior by using an
-    invisible Fl_Box as the resizable and/or by using a hierarchy
-    of child Fl_Group's.
+    invisible Fl_Box as the resizable and/or by using a hierarchy of
+    Fl_Group widgets, each with their own resizing strategies.
+
+    See the \ref resize chapter for more examples and detailed explanation.
+
   */
   void resizable(Fl_Widget* o) {resizable_ = o;}
   /**
-    See void Fl_Group::resizable(Fl_Widget *box) 
+    Returns the group's resizable widget.
+    See void Fl_Group::resizable(Fl_Widget *o)
   */
   Fl_Widget* resizable() const {return resizable_;}
   /**
@@ -164,7 +175,7 @@ public:
   /**
     Controls whether the group widget clips the drawing of
     child widgets to its bounding box.
-    
+
     Set \p c to 1 if you want to clip the child widgets to the
     bounding box.
 
@@ -204,7 +215,7 @@ public:
 /**
   This is a dummy class that allows you to end a Fl_Group in a constructor list of a
   class:
-  \code 
+  \code
   class MyClass {
     Fl_Group group;
     Fl_Button button_in_group;
@@ -218,7 +229,7 @@ public:
     end(),
     button_outside_group(10,120,60,30) {
     [..ctor code..]
-  } 
+  }
   \endcode
 */
 class FL_EXPORT Fl_End {
@@ -228,7 +239,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

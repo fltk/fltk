@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Bezier curve functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -37,9 +35,9 @@
 
 /** see fl_curve() */
 void Fl_Graphics_Driver::curve(double X0, double Y0,
-	      double X1, double Y1,
-	      double X2, double Y2,
-	      double X3, double Y3) {
+              double X1, double Y1,
+              double X2, double Y2,
+              double X3, double Y3) {
 
   double x = fl_transform_x(X0,Y0);
   double y = fl_transform_y(X0,Y0);
@@ -107,7 +105,3 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

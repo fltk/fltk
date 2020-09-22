@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //    Demonstrate creating an Fl_Browser with icons - Greg Ercolano 10/07/09 (STR#1739)
 //
 //    Shows how one can add icons to items in a browser.
@@ -12,12 +10,12 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
-// 
+//     https://www.fltk.org/bugs.php
+//
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Browser.H>
@@ -147,7 +145,7 @@ public:
 
     // See which icon the user picked
     Fl_Image *i = 0;
-	 if ( strcmp(ch->text(), "None"  ) == 0 ) { i = 0; }
+         if ( strcmp(ch->text(), "None"  ) == 0 ) { i = 0; }
     else if ( strcmp(ch->text(), "Small" ) == 0 ) { i = mb->sml_icon; }
     else if ( strcmp(ch->text(), "Medium") == 0 ) { i = mb->med_icon; }
     else if ( strcmp(ch->text(), "Large" ) == 0 ) { i = mb->big_icon; }
@@ -179,8 +177,4 @@ int main() {
   w->end();
   w->show();
   return(Fl::run());
-} 
-
-//
-// End of "$Id$".
-//
+}

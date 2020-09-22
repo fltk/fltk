@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa window driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -57,13 +55,13 @@ class NSOpenGLPixelFormat;
 
  There is one window driver for each Fl_Window. Window drivers manage window
  actions such as resizing, events, decoration, fullscreen modes, etc. . All
- drawing and rendering is managed by the Surface device and the associated 
+ drawing and rendering is managed by the Surface device and the associated
  graphics driver.
 
  - window specific event handling
  - window types and styles, depth, etc.
  - decorations
- 
+
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 struct Fl_Window_Driver::shape_data_type {
@@ -144,7 +142,7 @@ public:
   CALayer *get_titlebar_layer();
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
-  
+
   // these functions are OpenGL-related and use objective-c
   // they are put here to avoid libfltk_gl dependency in Fl_cocoa.mm
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
@@ -155,14 +153,10 @@ public:
   static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
   static void GL_cleardrawable(void); // uses Objective-c
   static void gl_start(NSOpenGLContext*); // uses Objective-c
-  
+
   //icons
   virtual void icons(const Fl_RGB_Image *icons[], int count);
   NSImage *icon_image;
 };
 
 #endif // FL_COCOA_WINDOW_DRIVER_H
-
-//
-// End of "$Id$".
-//

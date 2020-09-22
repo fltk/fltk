@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FL_DOXYGEN
@@ -22,6 +20,7 @@
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>  // fl_strdup()
 #include <FL/platform.H>
 #include "Fl_Font.H"
 
@@ -276,7 +275,7 @@ static void make_raw_name(char *raw, char *pretty)
           mods |= BOLD;
         }
         goto NEXT_STYLE;
-          
+
         case 'L':
           if (strncasecmp(style, "Light", 5) == 0)
           {
@@ -320,6 +319,11 @@ STYLE_DONE:
 ///////////////////////////////////////////////////////////
 
 static int fl_free_font = FL_FREE_FONT;
+
+// This function fills in the fltk font table with all the fonts that
+// are found on the X server.  It tries to place the fonts into families
+// and to sort them so the first 4 in a family are normal, bold, italic,
+// and bold italic.
 
 // Uses the fontconfig lib to construct a list of all installed fonts.
 // I tried using XftListFonts for this, but the API is tricky - and when
@@ -420,7 +424,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
       }
       else
       { // The listed name has been modified
-        full_list[j] = strdup(first);
+        full_list[j] = fl_strdup(first);
         // Free the font name storage
         free (font);
       }
@@ -448,7 +452,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
         make_raw_name(xft_name, full_list[j]);
         // NOTE: This just adds on AFTER the default fonts - no attempt is made
         // to identify already loaded fonts. Is this bad?
-        stored_name = strdup(xft_name);
+        stored_name = fl_strdup(xft_name);
         Fl::set_font((Fl_Font)(j + FL_FREE_FONT), stored_name);
         fl_free_font ++;
 
@@ -549,7 +553,7 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
     }
 
     if(comma_count) { // multiple comma-separated names were passed
-      char *local_name = strdup(name); // duplicate the full name so we can edit the copy
+      char *local_name = fl_strdup(name); // duplicate the full name so we can edit the copy
       char *curr = local_name; // points to first name in string
       char *nxt; // next name in string
       do {
@@ -559,13 +563,13 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
           nxt++; // first char of next name
         }
 
-	// Add the current name to the match pattern
-	XftPatternAddString(fnt_pat, XFT_FAMILY, curr);
+        // Add the current name to the match pattern
+        XftPatternAddString(fnt_pat, XFT_FAMILY, curr);
 
         if(nxt) curr = nxt; // move onto next name (if it exists)
-	// Now do a cut-down version of the FLTK name conversion.
-	// NOTE: we only use the slant and weight of the first name,
-	// subsequent names we ignore this for... But we still need to do the check.
+        // Now do a cut-down version of the FLTK name conversion.
+        // NOTE: we only use the slant and weight of the first name,
+        // subsequent names we ignore this for... But we still need to do the check.
         switch (*curr++) {
         case 'I': break; // italic
         case 'P':        // bold-italic (falls-through)
@@ -610,28 +614,28 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
 #if 0 // the XftResult never seems to get set to anything... abandon this code?
     switch(match_result) { // how good a match is this font for our request?
       case XftResultMatch:
-	puts("Object exists with the specified ID");
-	break;
+        puts("Object exists with the specified ID");
+        break;
 
       case XftResultTypeMismatch:
-	puts("Object exists, but the type does not match");
-	break;
+        puts("Object exists, but the type does not match");
+        break;
 
       case XftResultNoId:
-	puts("Object exists, but has fewer values than specified");
-	break;
+        puts("Object exists, but has fewer values than specified");
+        break;
 
       case FcResultOutOfMemory:
-	puts("FcResult: Malloc failed");
-	break;
+        puts("FcResult: Malloc failed");
+        break;
 
       case XftResultNoMatch:
-	puts("Object does not exist at all");
-	break;
+        puts("Object does not exist at all");
+        break;
 
       default:
-	printf("Invalid XftResult status %d \n", match_result);
-	break;
+        printf("Invalid XftResult status %d \n", match_result);
+        break;
     }
 #endif
 
@@ -678,7 +682,7 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
      * XLFD's to construct a "super-pattern" that incorporates attributes from all
      * XLFD's and use that to perform a XftFontMatch(). Maybe...
      */
-    char *local_name = strdup(name);
+    char *local_name = fl_strdup(name);
     if(comma_count) { // This means we were passed multiple XLFD's
       char *pc = strchr(local_name, ',');
       *pc = 0; // terminate the XLFD at the first comma
@@ -796,21 +800,21 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
   if (fl_overlay) {
     if (!draw_)
       draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-			   fl_overlay_visual->visual, fl_overlay_colormap);
+                           fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
       XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
-			 fl_visual->visual, fl_colormap);
+                         fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
   Region region = fl_clip_region();
   if (!(region && XEmptyRegion(region))) {
     XftDrawSetClip(draw_, region);
-    
+
     // Use fltk's color allocator, copy the results to match what
     // XftCollorAllocValue returns:
     XftColor color;
@@ -820,7 +824,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     color.color.green = ((int)g)*0x101;
     color.color.blue  = ((int)b)*0x101;
     color.color.alpha = 0xffff;
-    
+
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
     XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar16 *)buffer, n);
@@ -842,14 +846,14 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   if (fl_overlay) {
     if (!draw_)
       draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-			   fl_overlay_visual->visual, fl_overlay_colormap);
+                           fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
       XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
-			 fl_visual->visual, fl_colormap);
+                         fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
@@ -929,7 +933,7 @@ extern "C" {
 int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
-  
+
   fl_open_display();
   XftFontSet* fs = XftListFonts(fl_display, fl_screen,
                                 XFT_FAMILY, XftTypeString, s->name+1,
@@ -966,18 +970,11 @@ float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *des
   return ps_size;
 }
 
-
-// This function fills in the fltk font table with all the fonts that
-// are found on the X server.  It tries to place the fonts into families
-// and to sort them so the first 4 in a family are normal, bold, italic,
-// and bold italic.
-
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
 // the header files I decided to store this value in the last character
 // of the font name array.
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
-
 
 // turn a stored font name in "fltk format" into a pretty name:
 const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
@@ -985,18 +982,29 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   if (!f->fontname[0]) {
     const char* p = f->name;
     int type;
+#if USE_PANGO
     type = 0;
     if (strstr(p, " Bold")) type = FL_BOLD;
     if (strstr(p, " Italic") || strstr(p, " Oblique")) type += FL_ITALIC;
-    // NOTE: This can cause duplications in fonts that already have Bold or Italic in
-    // their "name". Maybe we need to find a cleverer way?
     strlcpy(f->fontname, p, ENDOFBUFFER);
+#else
+    switch (p[0]) {
+      case 'B': type = FL_BOLD; break;
+      case 'I': type = FL_ITALIC; break;
+      case 'P': type = FL_BOLD | FL_ITALIC; break;
+      default:  type = 0; break;
+    }
+  // NOTE: This can cause duplications in fonts that already have Bold or Italic in
+  // their "name". Maybe we need to find a cleverer way?
+    strlcpy(f->fontname, p+1, ENDOFBUFFER);
+    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
+#endif // USE_PANGO
     f->fontname[ENDOFBUFFER] = (char)type;
   }
   if (ap) *ap = f->fontname[ENDOFBUFFER];
   return f->fontname;
 }
-
 
 float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
   return 2;
@@ -1080,7 +1088,7 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   const char *weight = wt_med; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
-  char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
+  char *pc = fl_strdup(fl_fonts[fnum].name); // what font were we asked for?
 #if USE_PANGO
   char *p = pc + 1;
   while (*p) { *p = tolower(*p); p++; }
@@ -1292,7 +1300,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   Region region = clip_region();
   if (region && XEmptyRegion(region)) return;
   if (!playout_) context();
-  
+
   char *str2 = NULL;
   const char *tmpv = (const char *)memchr(str, '\n', n);
   if (tmpv == str + n - 1) { // ignore final '\n'
@@ -1330,7 +1338,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   else
     XftDrawChange(draw_, draw_window = fl_window);
   XftDrawSetClip(draw_, region);
-  
+
   int  dx, dy, w, h, y_correction, desc = descent_unscaled(), lheight = height_unscaled();
   fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, desc, lheight, y_correction);
   if (from_right) {
@@ -1456,7 +1464,3 @@ Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize f
 #endif // USE_PANGO
 
 #endif // FL_DOXYGEN
-
-//
-// End of "$Id$"
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Box header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -45,7 +43,7 @@ public:
     <P>The destructor removes the box.
   */
   Fl_Box(int X, int Y, int W, int H, const char *l=0);
-  
+
   /**    See Fl_Box::Fl_Box(int x, int y, int w, int h, const char * = 0)   */
   Fl_Box(Fl_Boxtype b, int X, int Y, int W, int H, const char *l);
 
@@ -53,7 +51,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

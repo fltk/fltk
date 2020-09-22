@@ -1,6 +1,6 @@
 /**
 
- \page	common Common Widgets and Attributes
+ \page  common Common Widgets and Attributes
 
 This chapter describes many of the widgets that are provided
 with FLTK and covers how to query and set the standard
@@ -23,7 +23,7 @@ FLTK provides many types of buttons:
 
 \li Fl_Round_Button - A button with a radio circle.
 
-\image html buttons.png "Figure 3-1: FLTK Button Widgets"
+\image html buttons.png "Figure 5.1: FLTK Button Widgets"
 \image latex buttons.png "FLTK Button Widgets" width=10cm
 
 All of these buttons just need the corresponding
@@ -46,10 +46,10 @@ lbutton->type(FL_TOGGLE_BUTTON);
 rbutton->type(FL_RADIO_BUTTON);
 \endcode
 
-For toggle and radio buttons, the \p value() method returns 
+For toggle and radio buttons, the \p value() method returns
 the current button state (0 = off, 1 = on). The \p set() and
-\p clear() methods can be used on toggle buttons to turn a 
-toggle button on or off, respectively. 
+\p clear() methods can be used on toggle buttons to turn a
+toggle button on or off, respectively.
 Radio buttons can be turned on with the \p setonly()
 method; this will also turn off other radio buttons in the same
 group.
@@ -64,7 +64,7 @@ FLTK provides several text widgets for displaying and receiving text:
 
 \li Fl_Multiline_Input - A multi-line text input field.
 
-\li Fl_Multiline_Output	- A multi-line text output field.
+\li Fl_Multiline_Output - A multi-line text output field.
 
 \li Fl_Text_Display - A multi-line text display widget.
 
@@ -76,7 +76,7 @@ The Fl_Output and Fl_Multiline_Output
 widgets allow the user to copy text from the output field but
 not change it.
 
-The \p value() method is used to get or set the 
+The \p value() method is used to get or set the
 string that is displayed:
 
 \code
@@ -110,10 +110,10 @@ strings. FLTK provides the following valuators:
 
 \li Fl_Value_Slider - A slider that shows the current value.
 
-\image html valuators.png "Figure 3-2: FLTK valuator widgets"
+\image html valuators.png "Figure 5.2: FLTK valuator widgets"
 \image latex valuators.png "FLTK valuator widgets" width=10cm
 
-The \p value() method gets and sets the current value 
+The \p value() method gets and sets the current value
 of the widget. The \p minimum() and \p maximum()
 methods set the range of values that are reported by the
 widget.
@@ -249,15 +249,15 @@ the nearest entry in the colormap.
 The type Fl_Boxtype stored and returned in Fl_Widget::box()
 is an enumeration defined in Enumerations.H.
 
-Figure 3-3 shows the standard box types included with FLTK.
+Figure 5.3 shows the standard box types included with FLTK.
 
-\image html boxtypes.png "Figure 3-3: FLTK box types"
+\image html boxtypes.png "Figure 5.3: FLTK box types"
 \image latex boxtypes.png "FLTK box types" width=12cm
 
 \p FL_NO_BOX means nothing is drawn at all, so whatever is
 already on the screen remains. The <tt>FL_..._FRAME</tt> types only
 draw their edges, leaving the interior unchanged. The blue color in
-Figure 3-3 is the area that is not drawn by the frame types.
+Figure 5.3 is the area that is not drawn by the frame types.
 
 \subsection common_custom_boxtypes Making Your Own Boxtypes
 
@@ -329,14 +329,14 @@ The last 4 arguments to Fl::set_boxtype() are the
 offsets for the \p x, \p y, \p width, and \p height values that should be
 subtracted when drawing the label inside the box.
 
-A complete box design contains four box types in this order: 
+A complete box design contains four box types in this order:
 a filled, neutral box (<tt>UP_BOX</tt>),
 a filled, depressed box (<tt>DOWN_BOX</tt>),
 and the same as outlines only (<tt>UP_FRAME</tt> and <tt>DOWN_FRAME</tt>).
 The function
 \ref common_fl_down "fl_down(Fl_Boxtype)"
-expects the neutral design on a boxtype with a numerical 
-value evenly dividable by two. 
+expects the neutral design on a boxtype with a numerical
+value evenly dividable by two.
 \ref common_fl_frame "fl_frame(Fl_Boxtype)"
 expects the \p UP_BOX design at a value dividable by four.
 
@@ -351,9 +351,9 @@ labeling of widgets.
 The \p label() method sets the string that is displayed
 for the label. Symbols can be included with the label string by
 escaping them using the "@" symbol - "@@" displays a single at
-sign. Figure 3-4 shows the available symbols.
+sign. Figure 5.4 shows the available symbols.
 
-\image html symbols.png "Figure 3-4: FLTK label symbols"
+\image html symbols.png "Figure 5.4: FLTK label symbols"
 \image latex symbols.png "FLTK label symbols" width=10cm
 
 <!-- NEED 2in -->
@@ -379,7 +379,7 @@ Symbols and text can be combined in a label, however the symbol must be at
 the beginning and/or at the end of the text. If the text spans multiple lines,
 the symbol or symbols will scale up to match the height of all the lines.
 
-\image html symbol-examples.png "Figure 3-5: FLTK symbols and text"
+\image html symbol-examples.png "Figure 5.5: FLTK symbols and text"
 \image latex symbol-examples.png "FLTK symbols and text" width=10cm
 
 <!-- NEED 2in -->
@@ -507,7 +507,7 @@ It is also possible to define your own drawings and add
 them to the symbol list, so they can be rendered as part of
 any label.
 
-To create a new symbol, you implement a drawing function 
+To create a new symbol, you implement a drawing function
 <tt>void drawit(Fl_Color c)</tt> which typically uses the
 functions described in \ref ssect_Complex
 to generate a vector shape inside a two-by-two units sized box
@@ -567,28 +567,28 @@ button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>Note:</B>
+        <TD><B>Note:</B>
 
-	You cannot delete a widget inside a callback, as the
-	widget may still be accessed by FLTK after your callback
-	is completed. Instead, use the Fl::delete_widget()
-	method to mark your widget for deletion when it is safe
-	to do so.
+        You cannot delete a widget inside a callback, as the
+        widget may still be accessed by FLTK after your callback
+        is completed. Instead, use the Fl::delete_widget()
+        method to mark your widget for deletion when it is safe
+        to do so.
 
-	<B>Hint:</B>
+        <B>Hint:</B>
 
-	Many programmers new to FLTK or C++ try to use a
-	non-static class method instead of a static class method
-	or function for their callback. Since callbacks are done
-	outside a C++ class, the <tt>this</tt> pointer is not
-	initialized for class methods.
+        Many programmers new to FLTK or C++ try to use a
+        non-static class method instead of a static class method
+        or function for their callback. Since callbacks are done
+        outside a C++ class, the <tt>this</tt> pointer is not
+        initialized for class methods.
 
-	To work around this problem, define a static method
-	in your class that accepts a pointer to the class, and
-	then have the static method call the class method(s) as
-	needed. The data pointer you provide to the
-	\p callback() method of the widget can be a
-	pointer to the instance of your class.
+        To work around this problem, define a static method
+        in your class that accepts a pointer to the class, and
+        then have the static method call the class method(s) as
+        needed. The data pointer you provide to the
+        \p callback() method of the widget can be a
+        pointer to the instance of your class.
 
 \code
 class Foo {
@@ -601,7 +601,7 @@ class Foo {
 
 w->callback(my_static_callback, (void *)this);
 \endcode
-	</TD>
+        </TD>
 </TR>
 </TABLE></CENTER>
 
@@ -640,8 +640,8 @@ combined with any modifiers like \p Shift , \p Alt , and \p Control.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="editor.html">
-    Designing a Simple Text Editor
+    <a class="el" href="resize.html">
+    How does resizing work?
     [Next]
     </a>
   </td>

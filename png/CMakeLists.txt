@@ -9,9 +9,9 @@
 #
 #     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     https://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 # source files for png
@@ -31,6 +31,9 @@ set(PNG_SRCS
   pngwrite.c
   pngwtran.c
   pngwutil.c
+  arm/arm_init.c
+  arm/filter_neon_intrinsics.c
+  arm/palette_neon_intrinsics.c
 )
 
 #######################################################################

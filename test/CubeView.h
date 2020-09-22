@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef CUBEVIEW_H
@@ -47,7 +45,7 @@ public:
      * initialize button in CubeViewUI.
      */
     void v_angle(double angle){vAng=angle;}
-    
+
     // Return the rotation about the vertical (y ) axis.
     double v_angle() const {return vAng;}
 
@@ -83,7 +81,7 @@ public:
      * entities displayed in the cube view.
      *
      */
-    void draw();    
+    void draw();
 #endif /* HAVE_GL */
 private:
 
@@ -97,7 +95,7 @@ private:
 #else
     void drawCube() { }
 #endif /* HAVE_GL */
-    
+
     double vAng,hAng;
     double xshift,yshift;
 
@@ -109,7 +107,3 @@ private:
 
 };
 #endif
-
-//
-// End of "$Id$".
-//

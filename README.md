@@ -1,7 +1,5 @@
 # README - Fast Light Tool Kit (FLTK) Version 1.4.0
 
-** This FLTK repository is now our official source code repository. **
-
 ## WHAT IS FLTK?
 
     The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
@@ -13,4 +11,5 @@
     currently maintained by a small group of developers across
     the world with a central repository in the US.
 
-    For more information see file README.
+    For more information see README.txt:
+    https://github.com/fltk/fltk/blob/master/README.txt

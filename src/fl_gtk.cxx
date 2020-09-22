@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // "GTK" drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // These box types provide a GTK+ look, based on Red Hat's Bluecurve
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Box drawing code for an obscure box type.
@@ -203,7 +201,7 @@ static void draw(int which, int x,int y,int w,int h, int inset)
 
 static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
-  draw(FILL,	    x,   y, w,   h, 2);
+  draw(FILL,        x,   y, w,   h, 2);
 
   gtk_color(fl_color_average(FL_BLACK, c, 0.025f));
   draw(LOWER_RIGHT, x+1, y, w-2, h, 2);
@@ -229,12 +227,12 @@ static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0);
 
   gtk_color(fl_color_average(FL_BLACK, c, 0.5f));
-  draw(CLOSED,	    x,   y, w,   h, 0);
+  draw(CLOSED,      x,   y, w,   h, 0);
 }
 
 static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
-  draw(FILL,	    x,   y, w,   h, 2);
+  draw(FILL,        x,   y, w,   h, 2);
 
   gtk_color(fl_color_average(FL_BLACK, c, 0.05f));
   draw(UPPER_LEFT,  x,   y, w,   h, 2);
@@ -244,7 +242,7 @@ static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0);
 
   gtk_color(fl_color_average(FL_BLACK, c, 0.5f));
-  draw(CLOSED,	    x,   y, w,   h, 0);
+  draw(CLOSED,      x,   y, w,   h, 0);
 }
 
 #else
@@ -286,8 +284,3 @@ Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
 
   return _FL_GTK_UP_BOX;
 }
-
-
-//
-// End of "$Id$".
-//

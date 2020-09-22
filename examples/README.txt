@@ -19,7 +19,7 @@ FLTK EXAMPLE PROGRAMS
         misused or hard to document
 
       o Demonstrate code that are FAQs on the newsgroup forum.
-	(such as how to use threads, callbacks, etc)
+        (such as how to use threads, callbacks, etc)
 
       o Example code should be short, but not at the expense of clarity.
 
@@ -119,5 +119,7 @@ DISCLAIMER
 
 BUGS
 
-    If you find a bug, please report it through the fltk STR form at
-    https://www.fltk.org/str.php
+    If you find a bug, please report it to the FLTK team. For more
+    information on how to do this see this page:
+
+      https://www.fltk.org/bugs.php

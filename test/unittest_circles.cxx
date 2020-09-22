@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Box.H>
@@ -23,8 +21,8 @@
 //------- test the circle drawing capabilities of this implementation ----------
 //
 class CircleTest : public Fl_Box {
-public: 
-  static Fl_Widget *create() { 
+public:
+  static Fl_Widget *create() {
     return new CircleTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
   CircleTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
@@ -84,7 +82,3 @@ public:
 };
 
 UnitTest circle("circles and arcs", CircleTest::create);
-
-//
-// End of "$Id$"
-//

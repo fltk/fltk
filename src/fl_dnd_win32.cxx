@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // This file contains Windows-specific code for FLTK which is always linked
@@ -181,8 +179,8 @@ public:
       char *a, *b;
       a = b = currDragData;
       while (*a) { // strip the CRLF pairs
-	if (*a == '\r' && a[1] == '\n') a++;
-	else *b++ = *a++;
+        if (*a == '\r' && a[1] == '\n') a++;
+        else *b++ = *a++;
       }
       *b = 0;
       Fl::e_text = currDragData;
@@ -211,7 +209,7 @@ private:
   }
   static char fillCurrentDragData(IDataObject *data) {
     // shortcut through this whole procedure if there is no fresh data
-    if (!data) 
+    if (!data)
       return currDragResult;
     // shortcut through this whole procedure if this is still the same drag event
     // (* this is safe, because 'currDragRef' is cleared on Leave and Drop events)
@@ -220,7 +218,7 @@ private:
 
     // clear currDrag* for a new drag event
     clearCurrentDragData();
-    
+
     currDragRef = data;
     // fill currDrag* with UTF-8 data, if available
     FORMATETC fmt = { 0 };
@@ -255,15 +253,15 @@ private:
       unsigned u;
       void *stuff = GlobalLock( medium.hGlobal );
       currDragData = (char*)malloc(3 * strlen((char*)stuff) + 10);
-      p = (char*)stuff; 
+      p = (char*)stuff;
       last = p + strlen(p);
       q = currDragData;
       while (p < last) {
-	u = fl_utf8decode(p, last, &len);
-	p += len;
-	len = fl_utf8encode(u, q);
-	q += len;
-	}
+        u = fl_utf8decode(p, last, &len);
+        p += len;
+        len = fl_utf8encode(u, q);
+        q += len;
+        }
       *q = 0;
       currDragSize = (int) (q - currDragData);
       currDragData = (char*)realloc(currDragData, currDragSize + 1);
@@ -408,8 +406,8 @@ public:
   }
 
   HRESULT __stdcall Reset(void) {
-	n = 0;
-	return S_OK;
+        n = 0;
+        return S_OK;
   }
 
   HRESULT __stdcall Clone(IEnumFORMATETC  **ppenum){
@@ -497,8 +495,8 @@ public:
 //      pMem[l * sizeof(WCHAR) + 1 + sizeof(DROPFILES)] = 0;
 //      pMem[l * sizeof(WCHAR) + 2 + sizeof(DROPFILES)] = 0;
 //      pMem[l * sizeof(WCHAR) + 3 + sizeof(DROPFILES)] = 0;
-      pmedium->tymed	      = TYMED_HGLOBAL;
-      pmedium->hGlobal	      = gh;
+      pmedium->tymed          = TYMED_HGLOBAL;
+      pmedium->hGlobal        = gh;
       pmedium->pUnkForRelease = NULL;
       GlobalUnlock( gh );
       return S_OK;
@@ -514,8 +512,8 @@ public:
     return DV_E_FORMATETC;
   }
 //  HRESULT STDMETHODCALLTYPE EnumFormatEtc( DWORD dir, IEnumFORMATETC** ppenumFormatEtc) {
-//	*ppenumFormatEtc = m_EnumF;
-//	return S_OK;
+//      *ppenumFormatEtc = m_EnumF;
+//      return S_OK;
 //  }
 
   // all the following methods are not really needed for a DnD object
@@ -557,7 +555,3 @@ int Fl_WinAPI_Screen_Driver::dnd(int unused)
   if ( ret==DRAGDROP_S_DROP ) return 1; // or DD_S_CANCEL
   return 0;
 }
-
-//
-// End of "$Id$".
-//

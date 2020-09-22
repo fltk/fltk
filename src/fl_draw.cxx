@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Implementation of fl_draw(const char*,int,int,int,int,Fl_Align)
@@ -27,14 +25,14 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
-#include <FL/platform.H>	// fl_open_display()
+#include <FL/platform.H>        // fl_open_display()
 
 #include "flstring.h"
 #include <ctype.h>
 #include <math.h>
 
 
-char fl_draw_shortcut;	// set by fl_labeltypes.cxx
+char fl_draw_shortcut;  // set by fl_labeltypes.cxx
 
 static char* underline_at;
 
@@ -42,7 +40,7 @@ static char* underline_at;
  Otherwise, use buf as buffer but don't go beyond its length of maxbuf.
  */
 static const char* expand_text_(const char* from, char*& buf, int maxbuf, double maxw, int& n,
-	       double &width, int wrap, int draw_symbols) {
+               double &width, int wrap, int draw_symbols) {
   char* e = buf+(maxbuf-4);
   underline_at = 0;
   double w = 0;
@@ -64,14 +62,14 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
     if (!c || c == ' ' || c == '\n') {
       // test for word-wrap:
       if (word_start < p && wrap) {
-	double newwidth = w + fl_width(word_end, (int) (o-word_end) );
-	if (word_end > buf && int(newwidth) > maxw) { // break before this word
-	  o = word_end;
-	  p = word_start;
-	  break;
-	}
-	word_end = o;
-	w = newwidth;
+        double newwidth = w + fl_width(word_end, (int) (o-word_end) );
+        if (word_end > buf && int(newwidth) > maxw) { // break before this word
+          o = word_end;
+          p = word_start;
+          break;
+        }
+        word_end = o;
+        w = newwidth;
       }
       if (!c) break;
       else if (c == '\n') {p++; break;}
@@ -123,7 +121,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
  */
 const char*
 fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
-	       double &width, int wrap, int draw_symbols) {
+               double &width, int wrap, int draw_symbols) {
   return expand_text_(from,  buf, maxbuf, maxw,  n, width,  wrap,  draw_symbols);
 }
 
@@ -133,8 +131,8 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
   function such as fl_draw(const char*, int, int, int) to do the real work
 */
 void fl_draw(
-    const char* str,	// the (multi-line) string
-    int x, int y, int w, int h,	// bounding box
+    const char* str,    // the (multi-line) string
+    int x, int y, int w, int h, // bounding box
     Fl_Align align,
     void (*callthis)(const char*,int,int,int),
     Fl_Image* img, int draw_symbols)
@@ -252,7 +250,7 @@ void fl_draw(
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
       if (lines>1) e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen,
-				width, align&FL_ALIGN_WRAP, draw_symbols);
+                                width, align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
@@ -264,7 +262,7 @@ void fl_draw(
       callthis(linebuf,buflen,xpos,ypos-desc);
 
       if (underline_at && underline_at >= linebuf && underline_at < (linebuf + buflen))
-	callthis("_",1,xpos+int(fl_width(linebuf,(int) (underline_at-linebuf))),ypos-desc);
+        callthis("_",1,xpos+int(fl_width(linebuf,(int) (underline_at-linebuf))),ypos-desc);
 
       if (!*e || (*e == '@' && e[1] != '@')) break;
       p = e;
@@ -379,16 +377,16 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   int W = 0;
   int symwidth[2], symtotal;
 
-  symwidth[0] = 0;	// size of symbol at beginning of string (if any)
-  symwidth[1] = 0;	// size of symbol at end of string (if any)
+  symwidth[0] = 0;      // size of symbol at beginning of string (if any)
+  symwidth[1] = 0;      // size of symbol at end of string (if any)
 
   if (draw_symbols) {
     // Symbol at beginning of string?
-    const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;	// sym2 check will skip leading @@
+    const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;      // sym2 check will skip leading @@
     if (str[0] == '@' && str[1] != '@') {
-      while (*str && !isspace(*str)) { ++str; }		// skip over symbol
-      if (isspace(*str)) ++str;				// skip over trailing space
-      sym2 = str;					// sym2 check will skip leading symbol
+      while (*str && !isspace(*str)) { ++str; }         // skip over symbol
+      if (isspace(*str)) ++str;                         // skip over trailing space
+      sym2 = str;                                       // sym2 check will skip leading symbol
       symwidth[0] = h;
     }
     // Symbol at end of string?
@@ -402,7 +400,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   for (p = str, lines=0; p;) {
 //    e = expand(p, linebuf, w - symtotal, buflen, width, w != 0, draw_symbols);
     e = expand_text_(p, linebuf, 0, w - symtotal, buflen, width,
-			w != 0, draw_symbols);
+                        w != 0, draw_symbols);
     if ((int)ceil(width) > W) W = (int)ceil(width);
     lines++;
     if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
@@ -460,7 +458,3 @@ int fl_height(int font, int size) {
     fl_font(tf,ts);                       // restore
     return(height);
 }
-
-//
-// End of "$Id$".
-//

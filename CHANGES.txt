@@ -1,4 +1,4 @@
-Changes in FLTK 1.4.0					Released: ??? ?? 2019
+Changes in FLTK 1.4.0                            Released: ??? ?? 2020
 
   General Information about this Release
 
@@ -18,6 +18,12 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - The border radius of "rounded" box types can be limited and
+    the shadow width of "shadow" box types can be configured (issue #130).
+    See Fl::box_border_radius_max() and Fl::box_shadow_width().
+  - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
+    graphics to SVG or EPS files, respectively.
+  - New fl_putenv() is a cross-platform putenv() wrapper (see docs).
   - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
     keystrokes as scaling all windows of a screen.
   - New "Preview" switch added to the GTK native file chooser dialog
@@ -86,9 +92,6 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
     of Fl_Clock, Fl_Clock_Output, and derived widgets.
   - New method Fl_Tabs::tab_align() allows to set alignment of tab labels,
     particularly to support icons on tab labels (STR #3076).
-  - Added '--enable-print' option to configure effective under X11 platforms
-    and with 'yes' default value. Using '--enable-print=no' removes print
-    and PostScript support from the FLTK library, thus reducing its size.
   - Added Fl_Surface_Device::push_current(new_surface) and
     Fl_Surface_Device::pop_current() to set/unset the current surface
     receiving graphics commands.
@@ -100,8 +103,13 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
 
   New Configuration Options (ABI Version)
 
-  - The library can be built without support for SVG images using the
-    --disable-nanosvg configure option or turning off OPTION_USE_NANOSVG in CMake.
+  - The library can be built without support for reading SVG images or writing
+    graphics in SVG format using the --disable-svg configure option
+    or turning off OPTION_USE_SVG in CMake.
+  - The library can be built without support for PostScript, thus reducing
+    its size, using the --disable-print configure option or turning off
+    OPTION_PRINT_SUPPORT in CMake. That makes classes Fl_PostScript_File_Device,
+    Fl_EPS_File_Surface and Fl_Printer (under X11 platform only) ineffective.
   - FLTK's ABI version can be configured with 'configure' and CMake.
     See documentation in README.abi-version.txt.
 
@@ -118,6 +126,12 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Added support for macOS 11.0 "Big Sur" and for building for
+    the arm64 architecture.
+  - Add optional argument to Fl_Printer::begin_job() to receive
+    a string describing the error when an error occurs.
+  - Fix Windows-specific bug when the program tries to enlarge a
+    maximized window, that would freeze the window (git issue #65).
   - Improve X11 16-bit coordinate clipping for text (STR 2798). This
     assumes that text is "small" WRT 16-bit coordinate space and clips
     text if at least one of the x/y coordinates is out of bounds.

@@ -1,10 +1,10 @@
 /**
 
- \page	enumerations	FLTK Enumerations
+ \page  enumerations    FLTK Enumerations
 
- \note	This file is not actively maintained any more, but is left
- 	here as a reference, until the doxygen documentation is
-	completed.
+ \note  This file is not actively maintained any more, but is left
+        here as a reference, until the doxygen documentation is
+        completed.
 
  \sa \ref FL/Enumerations.H.
 
@@ -31,10 +31,10 @@ The FLTK version number is stored in a number of compile-time constants:
       currently 10400 (default)
 
   \note The ABI version (FL_ABI_VERSION) is usually constant throughout one
-	major/minor release version, for instance 10300 if FL_API_VERSION is 10304.
-	Hence the ABI is constant if only the patch version is changed.
-	You can change this with configure or CMake though if you want the
-	latest enhancements (called "ABI features", see CHANGES).
+        major/minor release version, for instance 10300 if FL_API_VERSION is 10304.
+        Hence the ABI is constant if only the patch version is changed.
+        You can change this with configure or CMake though if you want the
+        latest enhancements (called "ABI features", see CHANGES).
 
 \section enumerations_events Events
 

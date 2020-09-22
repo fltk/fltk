@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -29,9 +27,9 @@
 
 /*
  Move everything here that manages the native screen interface.
- 
+
  There is exactly one screen driver in the system.
- 
+
  - screen configuration and sizes
  - multiple screens
  - native dialog boxes
@@ -47,7 +45,7 @@ class Fl_RGB_Image;
 class NSImage;
 #endif
 
-class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
+class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver
 {
 protected:
   struct XRectangle {int x, y, width, height;};
@@ -100,8 +98,7 @@ public:
   virtual void open_display_platform();
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
-  virtual float retina_factor() { return 2; }
-  
+
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
@@ -113,7 +110,3 @@ private:
 
 
 #endif // FL_COCOA_SCREEN_DRIVER_H
-
-//
-// End of "$Id$".
-//

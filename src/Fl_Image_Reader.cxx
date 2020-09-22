@@ -9,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -22,6 +22,7 @@
 #include "Fl_Image_Reader.h"
 
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -40,7 +41,7 @@
 int Fl_Image_Reader::open(const char *filename) {
   if (!filename)
     return -1;
-  pName = strdup(filename);
+  pName = fl_strdup(filename);
   if ( (pFile = fl_fopen(filename, "rb")) == NULL ) {
     return -1;
   }
@@ -51,7 +52,7 @@ int Fl_Image_Reader::open(const char *filename) {
 // Initialize the reader for memory access, name is copied and stored
 int Fl_Image_Reader::open(const char *imagename, const unsigned char *data) {
   if (imagename)
-    pName = strdup(imagename);
+    pName = fl_strdup(imagename);
   if (data) {
     pStart = pData = data;
     pIsData = 1;

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -43,11 +41,11 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
 {
   font_ = 0;
   size_ = 0;
-  sptr=0; rstackptr=0; 
+  sptr=0; rstackptr=0;
   rstack[0] = NULL;
   fl_clip_state_number=0;
-  m = m0; 
-  fl_matrix = &m; 
+  m = m0;
+  fl_matrix = &m;
   font_descriptor_ = NULL;
   scale_ = 1;
 };
@@ -202,7 +200,7 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
 /** Converts \p width and \p height from FLTK units to drawing units.
  The conversion performed consists in multiplying \p width and \p height by
  scale() and in slightly modifying that to help support tiled images. */
-void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
+void Fl_Graphics_Driver::cache_size(int &width, int &height)
 {
   if ( int(scale()) == scale() ) {
     width  = width * scale();
@@ -224,7 +222,7 @@ void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   }
   // to allow rescale at runtime
   int w2=pxm->w(), h2=pxm->h();
-  cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
+  cache_size(w2, h2); // after this, w2 x h2 is size of desired cached image
   int *pw, *ph;
   cache_w_h(pxm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
   if (*id(pxm) && (*pw != w2 || *ph != h2)) {
@@ -257,7 +255,7 @@ void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int 
     return;
   }
   int w2 = bm->w(), h2 = bm->h();
-  cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
+  cache_size(w2, h2); // after this, w2 x h2 is size of desired cached image
   int *pw, *ph;
   cache_w_h(bm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
   if (*id(bm) && (*pw != w2 || *ph != h2)) {
@@ -297,7 +295,7 @@ void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int
   int w2, h2, *pw, *ph;
   if (need_scaled_drawing) {
     w2 = img->w(); h2 = img->h();
-    cache_size(img, w2, h2);
+    cache_size(w2, h2);
   } else {
     w2 = img->data_w(); h2 = img->data_h();
   } // after this, w2 x h2 is desired cached image size
@@ -944,7 +942,3 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, 
 void Fl_Scalable_Graphics_Driver::transformed_vertex0(float x, float y) {}
 
 #endif
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -191,7 +189,7 @@ void Fl_PostScript_Graphics_Driver::close_rle85(void *data) // stop doing RLE+AS
 // End of implementation of the /RunLengthEncode + /ASCII85Encode PostScript filter
 //
 
- 
+
 int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, int D, int LD){
 
   mask = 0;
@@ -405,12 +403,12 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
   } else {
     fprintf(output , "%g %g %g %g %i %i CI", x , y+h , w , -h , iw , ih);
   }
-  
+
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
   void *big = prepare_rle85();
-  
+
   if (level2_mask) {
     for (j = ih - 1; j >= 0; j--) { // output full image data
       call(data, 0, j, iw, rgbdata);
@@ -448,7 +446,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
         uchar r = curdata[0];
         uchar g =  curdata[1];
         uchar b =  curdata[2];
-        
+
         if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
           unsigned int a2 = curdata[3]; //must be int
           unsigned int a = 255-a2;
@@ -456,11 +454,11 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
           g = (a2 * g + bg_g * a)/255;
           b = (a2 * b + bg_b * a)/255;
         }
-        
+
         write_rle85(r, big); write_rle85(g, big); write_rle85(b, big);
         curdata +=D;
       }
-      
+
     }
   }
   close_rle85(big);
@@ -631,7 +629,3 @@ int Fl_PostScript_Graphics_Driver::scale_for_image_(Fl_Image *img, int XP, int Y
 }
 
 #endif // !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
-
-//
-// End of "$Id$"
-//

@@ -15,14 +15,14 @@ This chapter describes FLTK development and documentation.
 /**
   \class Fl_Clock_Output
   \brief This widget can be used to display a program-supplied time.
-  
+
   The time shown on the clock is not updated. To display the current time,
   use Fl_Clock instead.
 
-  \image html clock.png 
-  \image latex clock.png "" width=10cm 
+  \image html clock.png
+  \image latex clock.png "" width=10cm
   \image html round_clock.png
-  \image latex clock.png "" width=10cm 
+  \image latex clock.png "" width=10cm
   \image html round_clock.png "" width=10cm */
 
   /**
@@ -143,7 +143,7 @@ in the pdf output, whereas the html output uses different font sizes.
    <H4>Headline in big text (H4)</H4>
 
 
-\section development_non-ascii Non-ASCII Characters
+\section development_non_ascii Non-ASCII Characters
 
 \code
     Doxygen understands many HTML quoting characters like
@@ -163,10 +163,10 @@ Alternatively you can use \b UTF-8 encoding within Doxygen comments.
 
 \section development_structure Document Structure
 
-  \li	\b \\page	creates a named page
-  \li	\b \\section	creates a named section within that page
-  \li	\b \\subsection	creates a named subsection within the current section
-  \li	\b \\subsubsection creates a named subsubsection within the current subsection
+  \li   \b \\page       creates a named page
+  \li   \b \\section    creates a named section within that page
+  \li   \b \\subsection creates a named subsection within the current section
+  \li   \b \\subsubsection creates a named subsubsection within the current subsection
 
 All these statements take a "name" as their first argument, and a title
 as their second argument. The title can contain spaces.
@@ -176,7 +176,7 @@ a size like \b "<H1>", \b "<H2>", and \b "<H3>", and \b "<H4>", respectively.
 
 By <b>FLTK documentation convention</b>, a file like this one with a doxygen
 documentation chapter has the name <b>"<chapter>.dox".</b>
-The \b \\page statement at the top of the page is 
+The \b \\page statement at the top of the page is
 <b>"\page <chapter> This is the title"</b>.
 Sections within a documentation page must be called \b "<chapter>_<section>",
 where \b "<chapter>" is the name part of the file, and \b "<section>" is a
@@ -190,18 +190,18 @@ links \b from normal (e.g. class) documentation \b to documentation sections
 
 This page has
   \code
-	\page development I - Developer Information
+        \page development I - Developer Information
   \endcode
 at its top.
 
 This section is
   \code
-	\section development_structure Document Structure
+        \section development_structure Document Structure
   \endcode
 
 The following section is
   \code
-	\section development_links Creating Links
+        \section development_links Creating Links
   \endcode
 
 

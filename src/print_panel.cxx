@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Print panel for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -25,11 +23,11 @@
 //
 // Todo:
 //
-//   -	Currently preferences can't be saved, and there are options that
-//	are not yet used for printing.
-//   -	This file can only be used as an include file in Fl_PS_Printer.cxx
-//   -	The use of static variables should be avoided.
-//   -	Probably much more ...
+//   -  Currently preferences can't be saved, and there are options that
+//      are not yet used for printing.
+//   -  This file can only be used as an include file in Fl_PS_Printer.cxx
+//   -  The use of static variables should be avoided.
+//   -  Probably much more ...
 //
 
 #include "print_panel.h"
@@ -38,6 +36,7 @@
 #include "../src/flstring.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/fl_string.h>
 
 static Fl_Double_Window *print_panel=(Fl_Double_Window *)0;
 static Fl_Group *print_panel_controls=(Fl_Group *)0;
@@ -56,7 +55,7 @@ static Fl_Int_Input *print_from=(Fl_Int_Input *)0;
 static Fl_Int_Input *print_to=(Fl_Int_Input *)0;
 static Fl_Spinner *print_copies=(Fl_Spinner *)0;
 
-static int print_start = 0;	// 1 if print_okay has been clicked
+static int print_start = 0;     // 1 if print_okay has been clicked
 
 static void cb_print_choice(Fl_Choice*, void*) {
   print_update_status();
@@ -529,7 +528,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
   print_choice->clear();
   print_choice->add(Fl_Printer::dialog_print_to_file, 0, 0, 0, FL_MENU_DIVIDER);
   print_choice->value(0);
-  
+
   print_start = 0;
 
   defname[0] = '\0';
@@ -543,19 +542,19 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
         }
         *qptr = '\0';
 
-        print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+        print_choice->add(qname, 0, 0, (void *)fl_strdup(name), 0);
       } else if (!strncmp(line, "system default destination: ", 28)) {
         if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
       }
     }
     pclose(lpstat);
   }
-  
+
   if (print_choice->size() == 2 && (lpstat = fopen("/etc/printcap", "r"))) { // try next with BSD printing system
     while (fgets(line, sizeof(line),lpstat)) { // get names of all known printers
       if (*line == '#' || (p = strchr(line, '|')) == NULL) continue;
       *p = 0;
-      print_choice->add(line, 0, 0, (void *)strdup(line), 0);
+      print_choice->add(line, 0, 0, (void *)fl_strdup(line), 0);
       style = BSD;
       *p = '|';
       while (1) {
@@ -621,7 +620,3 @@ void print_update_status() {
   print_prefs.get(name, val, 0);
   print_output_mode[val]->setonly();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$:
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Box.H>
@@ -29,14 +27,14 @@ public:
   }
   PointTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("testing the fl_point call\n"
-	  "You should see four pixels each in black, red, green and blue. "
-	  "Make sure that pixels are not anti-aliased (blurred across multiple pixels)!");
+          "You should see four pixels each in black, red, green and blue. "
+          "Make sure that pixels are not anti-aliased (blurred across multiple pixels)!");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
   }
   void draw() {
     Fl_Box::draw();
-    int a = x()+10, b = y()+10; 
+    int a = x()+10, b = y()+10;
     fl_color(FL_WHITE); fl_rectf(a, b, 90, 90);
     fl_color(FL_BLACK); fl_rect(a, b, 90, 90);
     fl_point(a+10, b+10); fl_point(a+20, b+20);
@@ -54,7 +52,3 @@ public:
 };
 
 UnitTest points("drawing points", PointTest::create);
-
-//
-// End of "$Id$"
-//

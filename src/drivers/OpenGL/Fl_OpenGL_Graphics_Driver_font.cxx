@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,18 +7,18 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /*
  This module implements a lowest-common-denominator font for OpenGL.
  It will always work, even if the main graphics library does not support
  rendering text into a texture buffer.
- 
+
  The font is limited to a single face and ASCII characters. It is drawn using
  lines which makes it arbitrarily scalable. I am trying to keep font data really
  compact.
@@ -215,8 +213,3 @@ void Fl_OpenGL_Graphics_Driver::text_extents(const char *str, int n, int& dx, in
 }
 
 #endif
-
-
-//
-// End of "$Id$".
-//

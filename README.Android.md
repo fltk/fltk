@@ -26,7 +26,7 @@ device, you are ready to install FLTK.
 Build FLTK for your native platform first using CMake. AndroidStudio will need a native
 version of the user interface design tool _Fluid_.
 
-The following example is for the _Xcode_ IDE on _macOS_. The same should work for 
+The following example is for the _Xcode_ IDE on _macOS_. The same should work for
 other IDEs and Makefiles on other platforms that run _AndroidStudio_.
 
 ```bash
@@ -43,8 +43,8 @@ cmake -G "Unix Makefiles" \
   -D OPTION_CREATE_ANDROID_STUDIO_IDE=On \
   ../..
 ```
-Note the last option, `-D OPTION_CREATE_ANDROID_STUDIO_IDE=On`. This option will 
-create the file needed to create an FLTK demo project in 
+Note the last option, `-D OPTION_CREATE_ANDROID_STUDIO_IDE=On`. This option will
+create the file needed to create an FLTK demo project in
 `fltk-1.4.git/build/Xcode/AndroidStudio`.
 
 - open the `build/Xcode/AndroidStudio/` directory as a project in AndroidStudio3

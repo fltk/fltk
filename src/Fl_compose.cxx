@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Character compose processing for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -31,19 +29,19 @@ int Fl::compose_state = 0;
 
 /** Any text editing widget should call this for each FL_KEYBOARD event.
  Use of this function is very simple.
- 
+
  <p>If <i>true</i> is returned, then it has modified the
  Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
  insert (it may be of zero length!).  It will also set the "del"
  parameter to the number of <i>bytes</i> to the left of the cursor to
  delete, this is used to delete the results of the previous call to
  Fl::compose().
- 
+
  <p>If <i>false</i> is returned, the keys should be treated as function
  keys, and del is set to zero. You could insert the text anyways, if
  you don't know what else to do.
- 
- <p>On the Mac OS platform, text input can involve marked text, that is, 
+
+ <p>On the Mac OS platform, text input can involve marked text, that is,
  temporary text replaced by other text during the input process. This occurs,
  e.g., when using dead keys or when entering CJK characters.
  Text editing widgets should preferentially signal
@@ -53,10 +51,10 @@ int Fl::compose_state = 0;
  current insertion point. Widgets should also call
  <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS
  events. Optionally, widgets can also call
- <tt>void Fl::insertion_point_location(int x, int y, int height)</tt> to indicate the window 
- coordinates of the bottom of the current insertion point and the line height. 
- This way, auxiliary windows that help choosing among alternative characters 
- appear just below the insertion point. If widgets don't do that, 
+ <tt>void Fl::insertion_point_location(int x, int y, int height)</tt> to indicate the window
+ coordinates of the bottom of the current insertion point and the line height.
+ This way, auxiliary windows that help choosing among alternative characters
+ appear just below the insertion point. If widgets don't do that,
  auxiliary windows appear at the widget's bottom. The
  Fl_Input and Fl_Text_Editor widgets underline marked text.
  If none of this is done by a user-defined text editing widget,
@@ -64,7 +62,7 @@ int Fl::compose_state = 0;
  Finally, text editing widgets should call <tt>set_flag(MAC_USE_ACCENTS_MENU);</tt>
  in their constructor if they want to use the feature introduced with Mac OS 10.7 "Lion"
  where pressing and holding certain keys on the keyboard opens an accented-character menu window.
- 
+
  <p>Though the current implementation returns immediately, future
  versions may take quite awhile, as they may pop up a window or do
  other user-interface things to allow characters to be selected.
@@ -83,8 +81,4 @@ void Fl::compose_reset()
 {
   Fl::screen_driver()->compose_reset();
 }
-
-//
-// End of "$Id$"
-//
 

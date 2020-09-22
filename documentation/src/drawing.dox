@@ -1,12 +1,12 @@
 /**
 
- \page	drawing Drawing Things in FLTK
+ \page  drawing Drawing Things in FLTK
 
 This chapter covers the drawing functions that are provided with FLTK.
 
 \section sect_WhenCanYouDraw When Can You Draw Things in FLTK?
 
-There are only certain places you can execute FLTK code 
+There are only certain places you can execute FLTK code
 that draws to the computer's display.
 Calling these functions at other places will result in undefined behavior!
 
@@ -22,16 +22,16 @@ Calling these functions at other places will result in undefined behavior!
 
 \li You can call Fl_Window::make_current() to do incremental update of a
     widget. Use Fl_Widget::window() to find the window.
-    
+
 In contrast, code that draws to other drawing surfaces than the display
-(i.e., instances of derived classes of the Fl_Surface_Device class, except 
-Fl_Display_Device, such as Fl_Printer and Fl_Copy_Surface) can be executed 
+(i.e., instances of derived classes of the Fl_Surface_Device class, except
+Fl_Display_Device, such as Fl_Printer and Fl_Copy_Surface) can be executed
 at any time as follows:
-<ol><li> Make your surface the new current drawing surface calling the 
+<ol><li> Make your surface the new current drawing surface calling the
 Fl_Surface_Device::push_current(Fl_Surface_Device*) function.
 <li> Make a series of calls to any of the drawing functions described below;
 these will operate on the new current drawing surface;
-<li> Set the current drawing surface back to its previous state calling 
+<li> Set the current drawing surface back to its previous state calling
 Fl_Surface_Device::pop_current().
 </ol>
 
@@ -70,18 +70,21 @@ to two pixels.
 </ul>
 
 At application start time, FLTK attempts to detect the adequate scale factor value for
-each screen of the system. If this attempt fails, it's possible to set the
+each screen of the system. Here is how that's done under the \ref osissues_x_scaling "X11"
+and \ref osissues_windows_scaling "Windows" platforms.
+If the resulting scale factor is not satisfactory, and also under the macOS platform,
+it's possible to set the
 <tt>FLTK_SCALING_FACTOR</tt> environmental variable to the desired numerical value
 (e.g., 1.75) and any FLTK app will start scaled with that value. Furthermore,
 it's possible to change the scale factor value of any screen at run time
 with ctrl/+/-/0/ keystrokes which enlarge, shrink, and reset, respectively,
 all FLTK windows on a screen and their content.
-Under Mac OS X, the corresponding GUI scaling shortcuts are cmd/+/-/0/.
+Under Mac OS X, the corresponding GUI scaling shortcuts are ⌘/+/-/0/.
 
 GUI rescaling involves also image drawing: the screen area covered by the drawn image
 contains a number of pixels that grows with the scale factor. When FLTK draws images,
 it maps the image data (the size of these data is given by Fl_Image::data_w() and
-Fl_Image::data_h())) to the screen area whose size (in FLTK units) is given by
+Fl_Image::data_h()) to the screen area whose size (in FLTK units) is given by
 Fl_Image::w() and Fl_Image::h(). How exactly such mapping is performed depends on the
 image type, the platform and some hardware features. The most common
 case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
@@ -159,7 +162,7 @@ is the order of the line segments:
 
 \par
 Note that
-\ref common_fl_frame "fl_frame(Fl_Boxtype b)" 
+\ref common_fl_frame "fl_frame(Fl_Boxtype b)"
 is described in the \ref common_boxtypes section.
 
 
@@ -228,7 +231,7 @@ Fl_Region fl_clip_region()
 
 \par
 Replace the top of the clip stack with a clipping region of any shape.
-Fl_Region is an operating system specific type. The second form returns 
+Fl_Region is an operating system specific type. The second form returns
 the current clipping region.
 
 
@@ -248,7 +251,7 @@ standard colors and color cube for the first 256 colors. All of
 these are named with symbols in
 \ref enumerations "<FL/Enumerations.H>". Example:
 
-\image html fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)"
+\image html fltk-colormap.png "Figure 8.1: FLTK default colormap (Fl_Color 0x00 - 0xff)"
 \image latex fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)" width=6cm
 
 Color values greater than 255 are treated as 24-bit RGB
@@ -508,7 +511,7 @@ box. The two angles are measured in degrees counter-clockwise from
 must be greater or equal to \p a1.
 
 \par
-\image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
+\image html  fl_pie_arc_diagram.png "Figure 8.1: fl_pie() and fl_arc()"
 \image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=6cm
 
 \par
@@ -526,8 +529,8 @@ use \p w-1 and \p h-1.
 void \ref fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area)(void*, int,int,int,int), void* data)
 \par
 Scroll a rectangle and draw the newly exposed portions. The contents
-of the rectangular area is first shifted by \p dx and 
-\p dy \ref ssect_DrawingUnit "FLTK units". The callback is then called for every newly 
+of the rectangular area is first shifted by \p dx and
+\p dy \ref ssect_DrawingUnit "FLTK units". The callback is then called for every newly
 exposed rectangular area,
 
 
@@ -610,7 +613,7 @@ the path. It is unnecessary but harmless to call
 or several times in a row.
 
 \par
-\p %fl_gap() should only be called between 
+\p %fl_gap() should only be called between
 \p %fl_begin_complex_polygon() and
 \p %fl_end_complex_polygon().
 To outline the polygon, use
@@ -651,7 +654,7 @@ If \p end is less than \p start then it draws the arc in a clockwise
 direction.
 
 \par
-\image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
+\image html  fl_arc_xyr_diagram.png "Figure 8.3: fl_arc(x,y,r,a1,a2)"
 \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
 
 void fl_circle(double x, double y, double r)
@@ -684,13 +687,13 @@ the baseline of the font. To align to the bottom, subtract
 \p %fl_descent() from \p y.
 To align to the top, subtract \p %fl_descent() and add \p %fl_height().
 This version of \p %fl_draw()  provides direct access to
-the text drawing function of the underlying OS. It does not apply any 
-special handling to control characters. 
+the text drawing function of the underlying OS. It does not apply any
+special handling to control characters.
 
 void fl_rtl_draw(const char *str, int n, int x, int y)
 
 \par
-Draw a UTF-8 string of length n bytes right to left starting at the given x, y location. 
+Draw a UTF-8 string of length n bytes right to left starting at the given x, y location.
 
 void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols)
 
@@ -766,7 +769,7 @@ ie. the 'inked area'.
 Given a string "txt" drawn using fl_draw(txt, x, y) you would determine
 its extents in \ref ssect_DrawingUnit "FLTK units" on the display using fl_text_extents(txt, dx, dy, wo, ho)
 such that a bounding box that exactly fits around the inked area of the text
-could be drawn with fl_rect(x+dx, y+dy, wo, ho). 
+could be drawn with fl_rect(x+dx, y+dy, wo, ho).
 \par
 Refer to the full documentation for fl_text_extents() for details
 on usage.
@@ -830,21 +833,21 @@ Returns the face and size set by the most recent call to
 
 \subsection ssect_CharacterEncoding Character Encoding
 
-FLTK 1.3 expects all text in Unicode UTF-8 encoding. UTF-8 is 
-ASCII compatible for the first 128 characters. International 
-characters are encoded in multibyte sequences. 
+FLTK 1.3 expects all text in Unicode UTF-8 encoding. UTF-8 is
+ASCII compatible for the first 128 characters. International
+characters are encoded in multibyte sequences.
 
-FLTK expects individual characters, characters that are not part of 
-a string, in UCS-4 encoding, which is also ASCII compatible, but 
+FLTK expects individual characters, characters that are not part of
+a string, in UCS-4 encoding, which is also ASCII compatible, but
 requires 4 bytes to store a Unicode character.
 
 FLTK can draw accurately any Unicode-supported script for which the system
 contains relevant fonts. Under X11 platforms, this requires
-to build the library with the OPTION_USE_PANGO CMake option turned On 
+to build the library with the OPTION_USE_PANGO CMake option turned On
 (or with configure --enable-pango).
 
 Plain text drawing starting at a user-given coordinate
-is well supported by FLTK, including for right-to-left scripts. 
+is well supported by FLTK, including for right-to-left scripts.
 Further text-related operations
 (i.e., selection, formatting, input, and editing) are functional with
 left-to-right scripts only.
@@ -914,7 +917,7 @@ or negative to flip the image vertically.
 \par
 It is highly recommended that you put the following code before the
 first show() of \e any window in your program to get rid
-of the dithering if possible: 
+of the dithering if possible:
 
 \code
 Fl::visual(FL_RGB);
@@ -1036,7 +1039,7 @@ for widgets using the \p image() and \p deimage() methods or drawn directly.
 Images can be drawn scaled to any size, independently from
 the size of the image's data (see Fl_Image::scale()).
 
-The Fl_Image class does almost nothing by itself, but is instead 
+The Fl_Image class does almost nothing by itself, but is instead
 supported by three basic image types:
 
 \li Fl_Bitmap
@@ -1051,29 +1054,29 @@ The Fl_Pixmap class encapsulates a colormapped image.
 The \p draw() method draws the image using the colors in the
 file, and masks off any transparent colors automatically.
 
-The Fl_RGB_Image class encapsulates a full-color 
-(or grayscale) image with 1 to 4 color components. Images with 
-an even number of components are assumed to contain an 
-alpha channel that is used for transparency. The transparency 
-provided by the draw() method is either a 24-bit 
-blend against the existing window contents or a "screen door" 
-transparency mask, depending on the platform and screen color depth. 
+The Fl_RGB_Image class encapsulates a full-color
+(or grayscale) image with 1 to 4 color components. Images with
+an even number of components are assumed to contain an
+alpha channel that is used for transparency. The transparency
+provided by the draw() method is either a 24-bit
+blend against the existing window contents or a "screen door"
+transparency mask, depending on the platform and screen color depth.
 
 char fl_can_do_alpha_blending()
 
 \par
 \p %fl_can_do_alpha_blending() will return 1, if your
-platform supports true alpha blending for RGBA images, or 0, 
+platform supports true alpha blending for RGBA images, or 0,
 if FLTK will use screen door transparency.
 
 FLTK also provides several image classes based on the three
 standard image types for common file formats:
 
-\li Fl_GIF_Image 
-\li Fl_JPEG_Image 
-\li Fl_PNG_Image 
-\li Fl_PNM_Image 
-\li Fl_XBM_Image 
+\li Fl_GIF_Image
+\li Fl_JPEG_Image
+\li Fl_PNG_Image
+\li Fl_PNM_Image
+\li Fl_XBM_Image
 \li Fl_XPM_Image
 \li Fl_SVG_Image
 
@@ -1124,7 +1127,7 @@ where img is a pointer to any Fl_Image type.
 \subsection ssect_Offscreen Offscreen Drawing
 
 Sometimes it can be very useful to generate a complex drawing
-in memory first and copy it to the screen at a later point in 
+in memory first and copy it to the screen at a later point in
 time. This technique can significantly reduce the amount of repeated
 drawing. Offscreen drawing functions are declared in <FL/fl_draw.H>.
 
@@ -1145,8 +1148,8 @@ Delete a previously created offscreen buffer. All drawings are lost.
 void fl_begin_offscreen(Fl_Offscreen)
 
 \par
-Send all subsequent drawing commands to this offscreen buffer. 
-FLTK can draw into a buffer at any time. There is no need to wait for 
+Send all subsequent drawing commands to this offscreen buffer.
+FLTK can draw into a buffer at any time. There is no need to wait for
 an Fl_Widget::draw() to occur.
 
 void fl_end_offscreen()

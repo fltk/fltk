@@ -63,7 +63,7 @@ The X Window System version 11.
 The X Window System interface library.
 
 \par MS Windows, <tt>WIN32</tt>
-The Microsoft Windows Application Programmer's Interface for Windows 2000, 
+The Microsoft Windows Application Programmer's Interface for Windows 2000,
 Windows XP, Windows Vista, Windows 7 and later Windows versions.
 FLTK uses the preprocessor definition <tt>_WIN32</tt> for the 32 bit
 and 64 bit MS Windows API.
@@ -79,7 +79,7 @@ FLTK is Copyright 1998-2020 by Bill Spitzak and others.  Use and
 distribution of FLTK is governed by the GNU Library General Public
 License with 4 exceptions, located in \ref license.
 
-UNIX is a registered trademark of the X Open Group, Inc. 
+UNIX is a registered trademark of the X Open Group, Inc.
 Microsoft and Windows are registered trademarks of Microsoft
 Corporation. OpenGL is a registered trademark of Silicon
 Graphics, Inc. Apple, Macintosh, MacOS, and Mac OS X are

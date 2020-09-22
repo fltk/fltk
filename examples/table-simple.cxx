@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //    Simple example of using Fl_Table - Greg Ercolano 11/29/2010
 //
 //    Demonstrates the simplest use of Fl_Table possible.
@@ -15,24 +13,24 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
-// 
+//     https://www.fltk.org/bugs.php
+//
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Table.H>
 #include <FL/fl_draw.H>
 
 #define MAX_ROWS 30
-#define MAX_COLS 26		// A-Z
+#define MAX_COLS 26             // A-Z
 
 // Derive a class from Fl_Table
 class MyTable : public Fl_Table {
 
-  int data[MAX_ROWS][MAX_COLS];		// data array for cells
+  int data[MAX_ROWS][MAX_COLS];         // data array for cells
 
   // Draw the row/col headings
   //    Make this a dark thin upbox with the text inside.
@@ -43,7 +41,7 @@ class MyTable : public Fl_Table {
       fl_color(FL_BLACK);
       fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
     fl_pop_clip();
-  } 
+  }
   // Draw the cell data
   //    Dark gray text on white background with subtle border
   //
@@ -56,7 +54,7 @@ class MyTable : public Fl_Table {
       // Draw box border
       fl_color(color()); fl_rect(X,Y,W,H);
     fl_pop_clip();
-  } 
+  }
   // Handle drawing table's cells
   //     Fl_Table calls this function to draw each visible cell in the table.
   //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
@@ -66,15 +64,15 @@ class MyTable : public Fl_Table {
     switch ( context ) {
       case CONTEXT_STARTPAGE:                   // before page is drawn..
         fl_font(FL_HELVETICA, 16);              // set the font for our drawing operations
-        return; 
+        return;
       case CONTEXT_COL_HEADER:                  // Draw column headers
         sprintf(s,"%c",'A'+COL);                // "A", "B", "C", etc.
         DrawHeader(s,X,Y,W,H);
-        return; 
+        return;
       case CONTEXT_ROW_HEADER:                  // Draw row headers
         sprintf(s,"%03d:",ROW);                 // "001:", "002:", etc
         DrawHeader(s,X,Y,W,H);
-        return; 
+        return;
       case CONTEXT_CELL:                        // Draw data in cells
         sprintf(s,"%d",data[ROW][COL]);
         DrawData(s,X,Y,W,H);
@@ -102,7 +100,7 @@ public:
     col_header(1);              // enable column headers (along top)
     col_width_all(80);          // default width of columns
     col_resize(1);              // enable column resizing
-    end();			// end the Fl_Table group
+    end();                      // end the Fl_Table group
   }
   ~MyTable() { }
 };
@@ -115,7 +113,3 @@ int main(int argc, char **argv) {
   win.show(argc,argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

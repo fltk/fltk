@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -59,7 +57,7 @@ class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
 protected:
 
-  uchar alloc;			// flag indicates if menu_ is a dynamic copy (=1) or not (=0)
+  uchar alloc;                  // flag indicates if menu_ is a dynamic copy (=1) or not (=0)
   uchar down_box_;
   Fl_Font textfont_;
   Fl_Fontsize textsize_;
@@ -204,7 +202,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

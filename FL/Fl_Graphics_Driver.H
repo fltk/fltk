@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -64,9 +62,9 @@ struct Fl_Fontdesc;
  drawing operations (e.g., fl_rectf()) that operate on the current drawing surface (see Fl_Surface_Device).
  Drawing operations are functionally presented in \ref drawing and as function lists
  in the \ref fl_drawings and \ref fl_attributes modules.
- 
+
  <tt>Fl_Surface_Device::surface()->driver()</tt>
- gives at any time the graphics driver used by all drawing operations. 
+ gives at any time the graphics driver used by all drawing operations.
  For compatibility with older FLTK versions, the \ref fl_graphics_driver global variable gives the same result.
  Its value changes when
  drawing operations are directed to another drawing surface by Fl_Surface_Device::push_current() /
@@ -84,6 +82,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+  friend class Fl_SVG_Image;
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
@@ -130,7 +129,7 @@ and
    draw_fixed(Fl_RGB_Image *,....) because scale-and-draw may require function Alphablend()
    from MSIMG32.DLL. In the absence of that, the draw_rgb() implementation calls
    Fl_Graphics_Driver::draw_rgb() which runs Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
-   
+
    Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
    to compute the cached form of all image types, and uncache(Fl_RGB_Image *,...),
    uncache_pixmap(fl_uintptr_t) and delete_bitmask(Fl_Bitmask) to destroy cached image forms.
@@ -235,9 +234,9 @@ protected:
   static Fl_Offscreen get_offscreen_and_delete_image_surface(Fl_Image_Surface*);
   /** For internal library use only */
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
-  
+
   Fl_Graphics_Driver();
-  void cache_size(Fl_Image *img, int &width, int &height);
+  virtual void cache_size(int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
@@ -402,10 +401,10 @@ struct Fl_Fontdesc {
  - scale the cached offscreen of image objects
  - scale the pixel arrays used when performing direct image draws
  - call the member functions of a platform-specific,
- Fl_Scalable_Graphics_Driver-derived class that do the drawings with adequately 
+ Fl_Scalable_Graphics_Driver-derived class that do the drawings with adequately
  scaled coordinates. The member functions are named with the _unscaled suffix.
  - scale and unscale the clipping region.
- 
+
  This class is presently used by the X11 and Windows platforms to support HiDPI displays.
  In the future, it may also be used by other platforms.
  */
@@ -492,7 +491,3 @@ protected:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

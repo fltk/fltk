@@ -13,8 +13,8 @@ exceptions:
       The authors do request that such modifications be
       contributed to the FLTK project - send all contributions
       through the "Software Trouble Report" on the following page:
- 
-           http://www.fltk.org/str.php
+
+           https://www.fltk.org/bugs.php
 
     2. Widgets that are subclassed from FLTK widgets do not
        constitute a derivative work.
@@ -42,7 +42,7 @@ exceptions:
        documentation to satisfy this requirement:
 
            [program/widget] is based in part on the work of
-           the FLTK project (http://www.fltk.org).
+           the FLTK project (https://www.fltk.org).
 
 -----------------------------------------------------------------------
 

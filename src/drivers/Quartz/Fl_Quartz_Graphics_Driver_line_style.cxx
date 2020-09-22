@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -44,7 +42,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
   static CGLineJoin Join[4] = { kCGLineJoinMiter, kCGLineJoinMiter,
                                     kCGLineJoinRound, kCGLineJoinBevel };
   if (width<1) width = 1;
-  quartz_line_width_ = (float)width; 
+  quartz_line_width_ = (float)width;
   quartz_line_cap_ = Cap[(style>>8)&3];
   // when printing kCGLineCapSquare seems better for solid lines
   if ( Fl_Surface_Device::surface() != Fl_Display_Device::display_device()
@@ -53,7 +51,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     quartz_line_cap_ = kCGLineCapSquare;
   }
   quartz_line_join_ = Join[(style>>12)&3];
-  char *d = dashes; 
+  char *d = dashes;
   static CGFloat pattern[16];
   if (d && *d) {
     CGFloat *pDst = pattern;
@@ -65,7 +63,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     // adjust lengths to account for cap:
     if (style & 0x200) {
       dash = char(2*width);
-      dot = 1; 
+      dot = 1;
       gap = char(2*width-1);
     } else {
       dash = char(3*width);
@@ -88,7 +86,3 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
 }
 
 #endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

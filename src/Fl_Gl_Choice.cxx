@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "config_lib.h"
@@ -44,7 +42,7 @@ static void add_context(GLContext ctx) {
 }
 
 static void del_context(GLContext ctx) {
-  int i; 
+  int i;
   for (i=0; i<nContext; i++) {
     if (context_list[i]==ctx) {
       memmove(context_list+i, context_list+i+1,
@@ -155,7 +153,7 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
-  
+
   // Replacement for ChoosePixelFormat() that finds one with an overlay if possible:
   HDC gc = (HDC)(fl_graphics_driver ? fl_graphics_driver->gc() : 0);
   if (!gc) gc = fl_GetDC(0);
@@ -193,7 +191,7 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
       else if (!(chosen_pfd.bReserved & 15) && (pfd.bReserved & 15)) {}
       // otherwise prefer a format that supports composition (STR #3119)
       else if ((chosen_pfd.dwFlags & PFD_SUPPORT_COMPOSITION) &&
-	       !(pfd.dwFlags & PFD_SUPPORT_COMPOSITION)) continue;
+               !(pfd.dwFlags & PFD_SUPPORT_COMPOSITION)) continue;
       // otherwise more bit planes is better, but no more than 32 (8 bits per channel):
       else if (pfd.cColorBits > 32 || chosen_pfd.cColorBits > pfd.cColorBits) continue;
       else if (chosen_pfd.cDepthBits > pfd.cDepthBits) continue;
@@ -215,13 +213,13 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 #endif // DEBUG_PFD
 
   if (!pixelformat) return 0;
-  
+
   g = new Fl_Gl_Choice(m, alistp, first);
   first = g;
-  
+
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
-  
+
   return g;
 }
 
@@ -274,13 +272,13 @@ void Fl_WinAPI_Gl_Window_Driver::delete_gl_context(GLContext context) {
 static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
 {
   int glx_major, glx_minor;
-  
+
   // FBConfigs were added in GLX version 1.3.
   if ( !glXQueryVersion(fl_display, &glx_major, &glx_minor) ||
       ( ( glx_major == 1 ) && ( glx_minor < 3 ) ) || ( glx_major < 1 ) ) {
     return NULL;
   }
-  
+
   //printf( "Getting matching framebuffer configs\n" );
   int fbcount;
   GLXFBConfig* fbc = glXChooseFBConfig(fl_display, DefaultScreen(fl_display), blist, &fbcount);
@@ -289,7 +287,7 @@ static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
     return NULL;
   }
   //printf( "Found %d matching FB configs.\n", fbcount );
-  
+
   // Pick the FB config/visual with the most samples per pixel
   int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
   for (int i = 0; i < fbcount; ++i)
@@ -308,7 +306,7 @@ static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
     }
     XFree(vi);
   }
-  
+
   GLXFBConfig bestFbc = fbc[ best_fbc ];
   // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
   XFree(fbc);
@@ -322,10 +320,10 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
-  
+
   const int *blist;
   int list[32];
-  
+
   if (alistp)
     blist = alistp;
   else {
@@ -371,7 +369,7 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
     list[n] = 0;
     blist = list;
   }
-  
+
   fl_open_display();
   XVisualInfo *visp = NULL;
   GLXFBConfig best_fb = NULL;
@@ -387,13 +385,13 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
       return 0;
     }
   }
-  
+
   g = new Fl_Gl_Choice(m, alistp, first);
   first = g;
-  
+
   g->vis = visp;
   g->best_fb = best_fb;
-  
+
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
       visp->visualid == fl_visual->visualid &&
       !fl_getenv("MESA_PRIVATE_CMAP"))
@@ -414,7 +412,7 @@ static int ctxErrorHandler( Display *dpy, XErrorEvent *ev )
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-  
+
   typedef GLContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLContext, Bool, const int*);
   // It is not necessary to create or make current to a context before calling glXGetProcAddressARB
   static glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
@@ -423,7 +421,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
 #else
   NULL;
 #endif
-  
+
   GLContext ctx = 0;
   // Check for the GLX_ARB_create_context extension string and the function.
   // If either is not present, use GLX 1.3 context creation method.
@@ -483,7 +481,3 @@ void Fl_X11_Gl_Window_Driver::delete_gl_context(GLContext context) {
 #endif // FL_CFG_GFX_XLIB
 
 #endif // HAVE_GL
-
-//
-// End of "$Id$".
-//

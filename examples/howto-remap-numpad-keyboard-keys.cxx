@@ -1,7 +1,5 @@
 // vim: autoindent tabstop=8 shiftwidth=2 expandtab softtabstop=2
 //
-// "$Id$"
-//
 // Demonstrate keyboard remapping: Force number pad to type numbers even if NumLock off
 //
 // DESCRIPTION
@@ -31,11 +29,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -49,7 +47,7 @@ Fl_Check_Button *G_checkbut = 0;
 // Global event handler: FLTK calls this after event translation. It's up to us
 // to call Fl::handle_(e,w) to actually deliver the event to the widgets. If we
 // don't and just return, the event will be dropped. See docs for more.
-// 
+//
 int MyHandler(int e, Fl_Window *w) {
   // Remapping disabled? Early exit..
   if ( G_checkbut->value() == 0 ) return Fl::handle_(e, w);

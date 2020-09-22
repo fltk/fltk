@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_PNG_Image routines.
 //
 // Copyright 1997-2012 by Easy Software Products.
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 
@@ -57,8 +55,8 @@ typedef struct  {
 
 extern "C" {
   static void png_read_data_from_mem( png_structp png_ptr, //pointer to our data
-				      png_bytep data,  // where to copy the image data for libpng computing
-				      png_size_t length) // length of data to copy
+                                      png_bytep data,  // where to copy the image data for libpng computing
+                                      png_size_t length) // length of data to copy
   {
     fl_png_memory *png_mem_data = (fl_png_memory*)png_get_io_ptr(png_ptr); // get the pointer to our struct
     if (png_mem_data->current + length > png_mem_data->last) {
@@ -85,8 +83,8 @@ extern "C" {
  PNG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
 
- \param[in] filename	Name of PNG file to read
- \param     offset    Offset to seek for the begin of PNG data (i.e. inside a .ICO file)
+ \param[in] filename    Name of PNG file to read
+ \param     offset      Offset to seek for the begin of PNG data (i.e. inside a .ICO file)
  */
 Fl_PNG_Image::Fl_PNG_Image (const char *filename, int offset): Fl_RGB_Image(0,0,0)
 {
@@ -103,7 +101,7 @@ Fl_PNG_Image::Fl_PNG_Image (const char *filename, int offset): Fl_RGB_Image(0,0,
  shared images (see: Fl_Shared_Image) and will be available by that name.
 
  \param name_png  A name given to this image or NULL
- \param buffer	  Pointer to the start of the PNG image in memory
+ \param buffer    Pointer to the start of the PNG image in memory
  \param maxsize   Size in bytes of the memory buffer containing the PNG image
  */
 Fl_PNG_Image::Fl_PNG_Image (
@@ -116,18 +114,18 @@ Fl_PNG_Image::Fl_PNG_Image (
 void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned char *buffer_png, int maxsize)
 {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-  int i;		// Looping var
-  int channels;		// Number of color channels
-  png_structp pp;	// PNG read pointer
-  png_infop info = 0;	// PNG info pointers
-  png_bytep *rows;	// PNG row pointers
+  int i;                // Looping var
+  int channels;         // Number of color channels
+  png_structp pp;       // PNG read pointer
+  png_infop info = 0;   // PNG info pointers
+  png_bytep *rows;      // PNG row pointers
   fl_png_memory png_mem_data;
   int from_memory = (buffer_png != NULL); // true if reading image from memory
 
   // Note: The file pointer fp must not be an automatic (stack) variable
   // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
-  static FILE *fp;	// intentionally initialized separately below
-  fp = NULL;		// always initialize file pointer
+  static FILE *fp;      // intentionally initialized separately below
+  fp = NULL;            // always initialize file pointer
 
   if (!from_memory) {
     if ((fp = fl_fopen(name_png, "rb")) == NULL) {
@@ -235,8 +233,3 @@ void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned ch
   }
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
-
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Android Native Application interface
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -27,6 +25,7 @@
 
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 
 #include <jni.h>
 
@@ -378,7 +377,7 @@ void *Fl_Android_Application::thread_entry(void* param)
   pthread_cond_broadcast(&pCond);
   pthread_mutex_unlock(&pMutex);
 
-  char *argv[] = { strdup(pActivity->obbPath), 0 };
+  char *argv[] = { fl_strdup(pActivity->obbPath), 0 };
   main(1, argv);
 
   destroy();
@@ -842,8 +841,3 @@ Fl_Android_Java::~Fl_Android_Java()
     pJavaVM->DetachCurrentThread();
   }
 }
-
-
-//
-// End of "$Id$".
-//

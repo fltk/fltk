@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Forms file selection routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Emulate the Forms file chooser using the fltk file chooser.
@@ -26,7 +24,7 @@ static const char *fl_pattern;  // assumed passed value is static
 static char fl_filename[FL_PATH_MAX];
 
 char* fl_show_file_selector(const char *message,const char *dir,
-			    const char *pat,const char *fname) {
+                            const char *pat,const char *fname) {
   if (dir && dir[0]) strlcpy(fl_directory,dir,sizeof(fl_directory));
   if (pat && pat[0]) fl_pattern = pat;
   if (fname && fname[0]) strlcpy(fl_filename,fname,sizeof(fl_filename));
@@ -47,12 +45,8 @@ char* fl_show_file_selector(const char *message,const char *dir,
   return (char *)q;
 }
 
-char*	fl_get_directory() {return fl_directory;}
+char*   fl_get_directory() {return fl_directory;}
 
-char*	fl_get_pattern() {return (char *)fl_pattern;}
+char*   fl_get_pattern() {return (char *)fl_pattern;}
 
-char*	fl_get_filename() {return fl_filename;}
-
-//
-// End of "$Id$".
-//
+char*   fl_get_filename() {return fl_filename;}

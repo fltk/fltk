@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -21,6 +19,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -84,9 +83,9 @@ static void cleanup_readqueue(Fl_Widget *w) {
   // Read the entire queue and copy over all valid entries.
   // The new head will be determined after the last copied entry.
 
-  int old_head = obj_head;	// save newest entry
-  int entry = obj_tail;		// oldest entry
-  obj_head = obj_tail;		// new queue start
+  int old_head = obj_head;      // save newest entry
+  int entry = obj_tail;         // oldest entry
+  obj_head = obj_tail;          // new queue start
   for (;;) {
     Fl_Widget *o = obj_queue[entry++];
     if (entry >= QUEUE_SIZE) entry = 0;
@@ -111,24 +110,24 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   x_ = X; y_ = Y; w_ = W; h_ = H;
 
-  label_.value	 = L;
+  label_.value   = L;
   label_.image   = 0;
   label_.deimage = 0;
-  label_.type	 = FL_NORMAL_LABEL;
-  label_.font	 = FL_HELVETICA;
-  label_.size	 = FL_NORMAL_SIZE;
-  label_.color	 = FL_FOREGROUND_COLOR;
-  label_.align_	 = FL_ALIGN_CENTER;
+  label_.type    = FL_NORMAL_LABEL;
+  label_.font    = FL_HELVETICA;
+  label_.size    = FL_NORMAL_SIZE;
+  label_.color   = FL_FOREGROUND_COLOR;
+  label_.align_  = FL_ALIGN_CENTER;
   tooltip_       = 0;
-  callback_	 = default_callback;
-  user_data_ 	 = 0;
-  type_		 = 0;
-  flags_	 = VISIBLE_FOCUS;
-  damage_	 = 0;
-  box_		 = FL_NO_BOX;
-  color_	 = FL_GRAY;
-  color2_	 = FL_GRAY;
-  when_		 = FL_WHEN_RELEASE;
+  callback_      = default_callback;
+  user_data_     = 0;
+  type_          = 0;
+  flags_         = VISIBLE_FOCUS;
+  damage_        = 0;
+  box_           = FL_NO_BOX;
+  color_         = FL_GRAY;
+  color2_        = FL_GRAY;
+  when_          = FL_WHEN_RELEASE;
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
@@ -293,7 +292,7 @@ void Fl_Widget::copy_label(const char *a) {
   if ((flags() & COPIED_LABEL) && (label_.value == a))
     return;
   if (a) {
-    label(strdup(a));
+    label(fl_strdup(a));
     set_flag(COPIED_LABEL);
   } else {
     label(0);
@@ -310,10 +309,10 @@ void Fl_Widget::copy_label(const char *a) {
   in your own widget's handle() method.
 
   \note It is legal to delete the widget in the callback (i.e. in user code),
-	but you must not access the widget in the handle() method after
-	calling do_callback() if the widget was deleted in the callback.
-	We recommend to use Fl_Widget_Tracker to check whether the widget
-	was deleted in the callback.
+        but you must not access the widget in the handle() method after
+        calling do_callback() if the widget was deleted in the callback.
+        We recommend to use Fl_Widget_Tracker to check whether the widget
+        was deleted in the callback.
 
   \param[in] widget call the callback with \p widget as the first argument
   \param[in] arg use \p arg as the user data (second) argument
@@ -331,7 +330,3 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg) {
   if (callback_ != default_callback)
     clear_changed();
 }
-
-//
-// End of "$Id$".
-//

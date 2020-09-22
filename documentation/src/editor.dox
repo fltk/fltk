@@ -1,6 +1,6 @@
 /**
 
- \page	editor Designing a Simple Text Editor
+ \page  editor Designing a Simple Text Editor
 
 This chapter takes you through the design of a simple
 FLTK-based text editor.
@@ -143,7 +143,7 @@ Fl_Input widgets, the "replace all" and
 the "replace next " button is a
 Fl_Return_Button widget:
 
-\image html editor-replace.png "Figure 4-1: The search and replace dialog"
+\image html editor-replace.png "Figure 7.1: The search and replace dialog"
 \image latex editor-replace.png "The search and replace dialog" width=10cm
 
 \code
@@ -604,9 +604,9 @@ Congratulations, you've just built your own text editor!
 
 \section editor_final_product The Final Product
 
-The final editor window should look like the image in Figure 4-2.
+The final editor window should look like the image in Figure 7.2.
 
-\image html editor.png "Figure 4-2: The completed editor window"
+\image html editor.png "Figure 7.2: The completed editor window"
 \image latex editor.png "The completed editor window" width=12cm
 
 \section editor_advanced_features Advanced Features
@@ -897,9 +897,9 @@ style_parse(const char *text,
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="common.html">
+    <a class="el" href="resize.html">
     [Prev]
-    Common Widgets and Attributes
+    How does resizing work?
     </a>
   </td>
   <td width="10%" align="CENTER">

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL text drawing support routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,21 +7,21 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Functions from <FL/gl.h>
 // See also Fl_Gl_Window and gl_start.cxx
 
 /* Note about implementing GL text support for a new platform
- 
+
  1) if the GL_EXT_texture_rectangle (a.k.a. GL_ARB_texture_rectangle) GL extension
  is available, no platform-specific code is needed, besides support for fl_draw() and Fl_Image_Surface for the platform.
- 
+
  2) if the GL_EXT_texture_rectangle GL extension is not available,
  a rudimentary support through GLUT is obtained without any platform-specific code.
 
@@ -186,8 +184,8 @@ static void gl_draw_invert(const char* str, int n, int x, int y) {
   center. Exactly the same output as fl_draw().
   */
 void gl_draw(
-  const char* str, 	// the (multi-line) string
-  int x, int y, int w, int h, 	// bounding box
+  const char* str,      // the (multi-line) string
+  int x, int y, int w, int h,   // bounding box
   Fl_Align align)
 {
   fl_draw(str, x, -y-h, w, h, align, gl_draw_invert, NULL, 0);
@@ -302,9 +300,9 @@ int gl_texture_fifo::already_known(const char *str, int n)
   int rank;
   for ( rank = 0; rank <= last; rank++) {
     if ((fifo[rank].str_len == n) &&
-	(fifo[rank].fdesc == gl_fontsize) &&
-	(fifo[rank].scale == gl_scale) &&
-	(memcmp(str, fifo[rank].utf8, n) == 0)) {
+        (fifo[rank].fdesc == gl_fontsize) &&
+        (fifo[rank].scale == gl_scale) &&
+        (memcmp(str, fifo[rank].utf8, n) == 0)) {
       return rank;
     }
   }
@@ -348,7 +346,7 @@ void gl_texture_fifo::display_texture(int rank)
     pos[0] /= gl_start_scale;
     pos[1] /= gl_start_scale;
   }
-  
+
   float R = 2;
   glScalef (R/winw, R/winh, 1.0f);
   glTranslatef (-winw/R, -winh/R, 0.0f);
@@ -371,13 +369,13 @@ void gl_texture_fifo::display_texture(int rank)
   glVertex2f (ox + width, oy);
   glEnd ();
   glPopAttrib();
-  
+
   // reset original matrices
   glPopMatrix(); // GL_MODELVIEW
   glMatrixMode (GL_PROJECTION);
   glPopMatrix();
   glMatrixMode (matrixMode);
-  
+
   //set the raster position to end of string
   pos[0] += width;
   GLdouble modelmat[16];
@@ -581,7 +579,7 @@ void Fl_Gl_Window_Driver::draw_string_legacy_glut(const char* str, int n)
   gl_scale = (gwin ? gwin->pixels_per_unit() : 1);
   float ratio = fl_width((char*)str_nul, n) * gl_scale/glutStrokeLength(GLUT_STROKE_ROMAN, str_nul);
   Fl_Surface_Device::pop_current();
-  
+
   //setup matrices
   GLint matrixMode;
   glGetIntegerv (GL_MATRIX_MODE, &matrixMode);
@@ -593,7 +591,7 @@ void Fl_Gl_Window_Driver::draw_string_legacy_glut(const char* str, int n)
   glLoadIdentity ();
   float winw = gl_scale * Fl_Window::current()->w();
   float winh = gl_scale * Fl_Window::current()->h();
-  
+
   GLfloat pos[4];
   glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);
   if (gl_start_scale != 1) { // using gl_start() / gl_finish()
@@ -803,7 +801,3 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
  */
 
 #endif // HAVE_GL || defined(FL_DOXYGEN)
-
-//
-// End of "$Id$".
-//

@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include <wchar.h>
@@ -57,30 +56,30 @@ int main(int argc, char **argv) {
     }
     if (i != ucs - 1 || !i) {
       if ((ucs - i) > MAX_DELTA || !i) {
-	if (i) {
-	  printf("};\n");
-	  fprintf(stderr, "\t/* end: U+%04X */\n", i);
-	}
-	if (strcmp(argv[1], "spacing")) {
-	  printf("\nstatic const char unicode_to_%s_%db_%04X[] = {\n",
-	         argv[1], nbb, ucs);
-	  fprintf(stderr, "unicode_to_%s_%db_%04X[]; ", 
-		  argv[1], nbb, ucs);
-	} else {
-	  printf("\nstatic const unsigned short"
-		 " ucs_table_%04X[]"
-		 " = {\n", ucs);
-	  fprintf(stderr, "ucs_table_%04X[]; ", ucs);
-	}
+        if (i) {
+          printf("};\n");
+          fprintf(stderr, "\t/* end: U+%04X */\n", i);
+        }
+        if (strcmp(argv[1], "spacing")) {
+          printf("\nstatic const char unicode_to_%s_%db_%04X[] = {\n",
+                 argv[1], nbb, ucs);
+          fprintf(stderr, "unicode_to_%s_%db_%04X[]; ",
+                  argv[1], nbb, ucs);
+        } else {
+          printf("\nstatic const unsigned short"
+                 " ucs_table_%04X[]"
+                 " = {\n", ucs);
+          fprintf(stderr, "ucs_table_%04X[]; ", ucs);
+        }
       } else {
-	while (i < ucs - 1) {
-	  i++;
-	  if (nbb == 1) {
-	    printf("0x00,\n");
-	  } else {
-	    printf("0x00, 0x00,\n");
-	  }
-	};
+        while (i < ucs - 1) {
+          i++;
+          if (nbb == 1) {
+            printf("0x00,\n");
+          } else {
+            printf("0x00, 0x00,\n");
+          }
+        };
       }
     }
     i = ucs;
@@ -97,7 +96,3 @@ int main(int argc, char **argv) {
   fprintf(stderr, "\t/* end: U+%04X */\n", i);
   return 0;
 }
-
-/*
- * End of "$Id$".
- */

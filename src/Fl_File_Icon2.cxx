@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_File_Icon system icon routines.
 //
 // KDE icon code donated by Maarten De Boer.
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -47,17 +45,17 @@
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 #ifndef F_OK
-#  define F_OK	0
+#  define F_OK  0
 #endif
 
 //
 // Local functions...
 //
 
-static void	load_kde_icons(const char *directory, const char *icondir);
-static void	load_kde_mimelnk(const char *filename, const char *icondir);
-static char	*kde_to_fltk_pattern(const char *kdepattern);
-static char	*get_kde_val(char *str, const char *key);
+static void     load_kde_icons(const char *directory, const char *icondir);
+static void     load_kde_mimelnk(const char *filename, const char *icondir);
+static char     *kde_to_fltk_pattern(const char *kdepattern);
+static char     *get_kde_val(char *str, const char *key);
 
 
 //
@@ -72,10 +70,10 @@ static const char *kdedir = NULL;
   \param[in] f filename
 */
 void
-Fl_File_Icon::load(const char *f)	// I - File to read from
+Fl_File_Icon::load(const char *f)       // I - File to read from
 {
-  int		i;			// Load status...
-  const char	*ext;			// File extension
+  int           i;                      // Load status...
+  const char    *ext;                   // File extension
 
 
   ext = fl_filename_ext(f);
@@ -98,15 +96,15 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
   \param[in] fti icon filename
   \return 0 on success, non-zero on error
 */
-int					// O - 0 on success, non-zero on error
-Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
+int                                     // O - 0 on success, non-zero on error
+Fl_File_Icon::load_fti(const char *fti) // I - File to read from
 {
-  FILE	*fp;			// File pointer
-  int	ch;			// Current character
-  char	command[255],		// Command string ("vertex", etc.)
-	params[255],		// Parameter string ("10.0,20.0", etc.)
-	*ptr;			// Pointer into strings
-  int	outline;		// Outline polygon
+  FILE  *fp;                    // File pointer
+  int   ch;                     // Current character
+  char  command[255],           // Command string ("vertex", etc.)
+        params[255],            // Parameter string ("10.0,20.0", etc.)
+        *ptr;                   // Pointer into strings
+  int   outline;                // Outline polygon
 
 
   // Try to open the file...
@@ -131,7 +129,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     {
       while ((ch = getc(fp)) != EOF)
         if (ch == '\n')
-	  break;
+          break;
 
       if (ch == EOF)
         break;
@@ -219,18 +217,18 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
         add_color(FL_BLACK);
       else
       {
-        int c = atoi(params);	// Color value
+        int c = atoi(params);   // Color value
 
 
         if (c < 0)
-	{
-	  // Composite color; compute average...
-	  c = -c;
-	  add_color(fl_color_average((Fl_Color)(c >> 4),
-	                             (Fl_Color)(c & 15), 0.5f));
-	}
-	else
-	  add_color((Fl_Color)c);
+        {
+          // Composite color; compute average...
+          c = -c;
+          add_color(fl_color_average((Fl_Color)(c >> 4),
+                                     (Fl_Color)(c & 15), 0.5f));
+        }
+        else
+          add_color((Fl_Color)c);
       }
     }
     else if (strcmp(command, "bgnline") == 0)
@@ -258,17 +256,17 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
         cval = FL_BLACK;
       else
       {
-        int c = atoi(params);	// Color value
+        int c = atoi(params);   // Color value
 
 
         if (c < 0)
-	{
-	  // Composite color; compute average...
-	  c = -c;
-	  cval = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5f);
-	}
-	else
-	  cval = c;
+        {
+          // Composite color; compute average...
+          c = -c;
+          cval = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5f);
+        }
+        else
+          cval = c;
       }
 
       // Store outline color...
@@ -282,7 +280,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
       add(END);
     else if (strcmp(command, "vertex") == 0)
     {
-      float x, y;		// Coordinates of vertex
+      float x, y;               // Coordinates of vertex
 
 
       if (sscanf(params, "%f,%f", &x, &y) != 2)
@@ -316,20 +314,20 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
   \param[in] ifile image filename
   \return 0 on success, non-zero on error
 */
-int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
+int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
 {
-  Fl_Shared_Image	*img;		// Image file
+  Fl_Shared_Image       *img;           // Image file
 
 
   img = Fl_Shared_Image::get(ifile);
   if (!img || !img->count() || !img->w() || !img->h()) return -1;
 
   if (img->count() == 1) {
-    int		x, y;		// X & Y in image
-    int		startx;		// Starting X coord
-    Fl_Color	c,		// Current color
-		temp;		// Temporary color
-    const uchar *row;		// Pointer into image
+    int         x, y;           // X & Y in image
+    int         startx;         // Starting X coord
+    Fl_Color    c,              // Current color
+                temp;           // Temporary color
+    const uchar *row;           // Pointer into image
 
     const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
 
@@ -338,73 +336,73 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
     {
       for (x = 0, startx = 0, c = (Fl_Color)-1;
            x < img->w();
-	   x ++, row += img->d())
+           x ++, row += img->d())
       {
-	switch (img->d())
-	{
+        switch (img->d())
+        {
           case 1 :
               temp = fl_rgb_color(row[0], row[0], row[0]);
-	      break;
+              break;
           case 2 :
-	      if (row[1] > 127)
-        	temp = fl_rgb_color(row[0], row[0], row[0]);
-	      else
-		temp = (Fl_Color)-1;
-	      break;
-	  case 3 :
+              if (row[1] > 127)
+                temp = fl_rgb_color(row[0], row[0], row[0]);
+              else
+                temp = (Fl_Color)-1;
+              break;
+          case 3 :
               temp = fl_rgb_color(row[0], row[1], row[2]);
-	      break;
-	  default :
-	      if (row[3] > 127)
-        	temp = fl_rgb_color(row[0], row[1], row[2]);
-	      else
-		temp = (Fl_Color)-1;
-	      break;
-	}
+              break;
+          default :
+              if (row[3] > 127)
+                temp = fl_rgb_color(row[0], row[1], row[2]);
+              else
+                temp = (Fl_Color)-1;
+              break;
+        }
 
-	if (temp != c)
-	{
-	  if (x > startx && c != (Fl_Color)-1)
-	  {
-	    add_color(c);
-	    add(POLYGON);
-	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
-	    add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
-	    add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
-	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
-	    add(END);
-	  }
+        if (temp != c)
+        {
+          if (x > startx && c != (Fl_Color)-1)
+          {
+            add_color(c);
+            add(POLYGON);
+            add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+            add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+            add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+            add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+            add(END);
+          }
 
           c      = temp;
-	  startx = x;
-	}
+          startx = x;
+        }
       }
 
       if (x > startx && c != (Fl_Color)-1)
       {
-	add_color(c);
-	add(POLYGON);
-	add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
-	add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
-	add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
-	add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
-	add(END);
+        add_color(c);
+        add(POLYGON);
+        add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+        add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+        add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+        add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+        add(END);
       }
     }
   } else {
-    int		i, j;			// Looping vars
-    int		ch;			// Current character
-    int		newch;			// New character
-    int		bg;			// Background color
-    char	val[16];		// Color value
-    const char	*lineptr,		// Pointer into line
-		*const*ptr;		// Pointer into data array
-    int		ncolors,		// Number of colors
-		chars_per_color;	// Characters per color
-    Fl_Color	*colors;		// Colors
-    int		red, green, blue;	// Red, green, and blue values
-    int		x, y;			// X & Y in image
-    int		startx;			// Starting X coord
+    int         i, j;                   // Looping vars
+    int         ch;                     // Current character
+    int         newch;                  // New character
+    int         bg;                     // Background color
+    char        val[16];                // Color value
+    const char  *lineptr,               // Pointer into line
+                *const*ptr;             // Pointer into data array
+    int         ncolors,                // Number of colors
+                chars_per_color;        // Characters per color
+    Fl_Color    *colors;                // Colors
+    int         red, green, blue;       // Red, green, and blue values
+    int         x, y;                   // X & Y in image
+    int         startx;                 // Starting X coord
 
     // Get the pixmap data...
     ptr = img->data();
@@ -430,76 +428,76 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
       ptr ++;
     } else {
       for (i = 0; i < ncolors; i ++, ptr ++) {
-	// Get the color's character
-	lineptr = *ptr;
-	ch      = *lineptr++;
+        // Get the color's character
+        lineptr = *ptr;
+        ch      = *lineptr++;
 
         if (chars_per_color > 1) ch = (ch << 8) | *lineptr++;
 
-	// Get the color value...
-	if ((lineptr = strstr(lineptr, "c ")) == NULL) {
-	  // No color; make this black...
-	  colors[ch] = FL_BLACK;
-	} else if (lineptr[2] == '#') {
-	  // Read the RGB triplet...
-	  lineptr += 3;
-	  for (j = 0; j < 12; j ++)
+        // Get the color value...
+        if ((lineptr = strstr(lineptr, "c ")) == NULL) {
+          // No color; make this black...
+          colors[ch] = FL_BLACK;
+        } else if (lineptr[2] == '#') {
+          // Read the RGB triplet...
+          lineptr += 3;
+          for (j = 0; j < 12; j ++)
             if (!isxdigit(lineptr[j]))
-	      break;
+              break;
 
-	  switch (j) {
+          switch (j) {
             case 0 :
-		bg = ch;
-	    default :
-		red = green = blue = 0;
-		break;
+                bg = ch;
+            default :
+                red = green = blue = 0;
+                break;
 
             case 3 :
-		val[0] = lineptr[0];
-		val[1] = '\0';
-		red = 255 * strtol(val, NULL, 16) / 15;
+                val[0] = lineptr[0];
+                val[1] = '\0';
+                red = 255 * strtol(val, NULL, 16) / 15;
 
-		val[0] = lineptr[1];
-		val[1] = '\0';
-		green = 255 * strtol(val, NULL, 16) / 15;
+                val[0] = lineptr[1];
+                val[1] = '\0';
+                green = 255 * strtol(val, NULL, 16) / 15;
 
-		val[0] = lineptr[2];
-		val[1] = '\0';
-		blue = 255 * strtol(val, NULL, 16) / 15;
-		break;
+                val[0] = lineptr[2];
+                val[1] = '\0';
+                blue = 255 * strtol(val, NULL, 16) / 15;
+                break;
 
             case 6 :
             case 9 :
             case 12 :
-		j /= 3;
+                j /= 3;
 
-		val[0] = lineptr[0];
-		val[1] = lineptr[1];
-		val[2] = '\0';
-		red = strtol(val, NULL, 16);
+                val[0] = lineptr[0];
+                val[1] = lineptr[1];
+                val[2] = '\0';
+                red = strtol(val, NULL, 16);
 
-		val[0] = lineptr[j + 0];
-		val[1] = lineptr[j + 1];
-		val[2] = '\0';
-		green = strtol(val, NULL, 16);
+                val[0] = lineptr[j + 0];
+                val[1] = lineptr[j + 1];
+                val[2] = '\0';
+                green = strtol(val, NULL, 16);
 
-		val[0] = lineptr[2 * j + 0];
-		val[1] = lineptr[2 * j + 1];
-		val[2] = '\0';
-		blue = strtol(val, NULL, 16);
-		break;
-	  }
+                val[0] = lineptr[2 * j + 0];
+                val[1] = lineptr[2 * j + 1];
+                val[2] = '\0';
+                blue = strtol(val, NULL, 16);
+                break;
+          }
 
-	  colors[ch] = fl_rgb_color((uchar)red, (uchar)green, (uchar)blue);
-	} else {
-	  // Read a color name...
-	  if (strncasecmp(lineptr + 2, "white", 5) == 0) colors[ch] = FL_WHITE;
-	  else if (strncasecmp(lineptr + 2, "black", 5) == 0) colors[ch] = FL_BLACK;
-	  else if (strncasecmp(lineptr + 2, "none", 4) == 0) {
+          colors[ch] = fl_rgb_color((uchar)red, (uchar)green, (uchar)blue);
+        } else {
+          // Read a color name...
+          if (strncasecmp(lineptr + 2, "white", 5) == 0) colors[ch] = FL_WHITE;
+          else if (strncasecmp(lineptr + 2, "black", 5) == 0) colors[ch] = FL_BLACK;
+          else if (strncasecmp(lineptr + 2, "none", 4) == 0) {
             colors[ch] = FL_BLACK;
-	    bg = ch;
-	  } else colors[ch] = FL_GRAY;
-	}
+            bg = ch;
+          } else colors[ch] = FL_GRAY;
+        }
       }
     }
 
@@ -510,34 +508,34 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
       ch      = bg;
 
       for (x = 0; x < img->w(); x ++) {
-	newch = *lineptr++;
+        newch = *lineptr++;
 
         if (chars_per_color > 1) newch = (newch << 8) | *lineptr++;
 
-	if (newch != ch) {
-	  if (ch != bg) {
+        if (newch != ch) {
+          if (ch != bg) {
             add_color(colors[ch]);
-	    add(POLYGON);
-	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
-	    add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
-	    add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
-	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
-	    add(END);
+            add(POLYGON);
+            add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+            add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+            add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+            add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+            add(END);
           }
 
-	  ch     = newch;
-	  startx = x;
-	}
+          ch     = newch;
+          startx = x;
+        }
       }
 
       if (ch != bg) {
-	add_color(colors[ch]);
-	add(POLYGON);
-	add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
-	add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
-	add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
-	add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
-	add(END);
+        add_color(colors[ch]);
+        add(POLYGON);
+        add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+        add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+        add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+        add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+        add(END);
       }
     }
 
@@ -572,79 +570,79 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 */
 void
 Fl_File_Icon::load_system_icons(void) {
-  int		i;				// Looping var
-  Fl_File_Icon	*icon;				// New icons
-  char		filename[FL_PATH_MAX + 60];	// Filename
-  char		icondir[FL_PATH_MAX];		// Icon directory
-  static int	init = 0;	// Have the icons been initialized?
+  int           i;                              // Looping var
+  Fl_File_Icon  *icon;                          // New icons
+  char          filename[FL_PATH_MAX + 60];     // Filename
+  char          icondir[FL_PATH_MAX];           // Icon directory
+  static int    init = 0;       // Have the icons been initialized?
   const char * const icondirs[] = {
-		  "Bluecurve",	// Icon directories to look for, in order
-		  "crystalsvg",
-		  "default.kde",
-		  "hicolor",
-		  NULL
-		};
-  static short	plain[] = {	// Plain file icon
-		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
-		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
-		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
-		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
-		  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
-		  VERTEX, 8000, 7000, END,
-		  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
-		  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
-		  VERTEX, 2000, 1000, END, LINE, VERTEX, 3000, 7000,
-		  VERTEX, 5000, 7000, END, LINE, VERTEX, 3000, 6000,
-		  VERTEX, 5000, 6000, END, LINE, VERTEX, 3000, 5000,
-		  VERTEX, 7000, 5000, END, LINE, VERTEX, 3000, 4000,
-		  VERTEX, 7000, 4000, END, LINE, VERTEX, 3000, 3000,
-		  VERTEX, 7000, 3000, END, LINE, VERTEX, 3000, 2000,
-		  VERTEX, 7000, 2000, END,
-		  END
-		};
-  static short	image[] = {	// Image file icon
-		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
-		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
-		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
-		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
-		  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
-		  VERTEX, 8000, 7000, END,
-		  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
-		  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
-		  VERTEX, 2000, 1000, END,
-		  COLOR, 0, FL_RED, POLYGON, VERTEX, 3500, 2500,
-		  VERTEX, 3000, 3000, VERTEX, 3000, 4000,
-		  VERTEX, 3500, 4500, VERTEX, 4500, 4500,
-		  VERTEX, 5000, 4000, VERTEX, 5000, 3000,
-		  VERTEX, 4500, 2500, END,
-		  COLOR, 0, FL_GREEN, POLYGON, VERTEX, 5500, 2500,
-		  VERTEX, 5000, 3000, VERTEX, 5000, 4000,
-		  VERTEX, 5500, 4500, VERTEX, 6500, 4500,
-		  VERTEX, 7000, 4000, VERTEX, 7000, 3000,
-		  VERTEX, 6500, 2500, END,
-		  COLOR, 0, FL_BLUE, POLYGON, VERTEX, 4500, 3500,
-		  VERTEX, 4000, 4000, VERTEX, 4000, 5000,
-		  VERTEX, 4500, 5500, VERTEX, 5500, 5500,
-		  VERTEX, 6000, 5000, VERTEX, 6000, 4000,
-		  VERTEX, 5500, 3500, END,
-		  END
-		};
-  static short	dir[] = {	// Directory icon
-		  COLOR, -1, -1, POLYGON, VERTEX, 1000, 1000,
-		  VERTEX, 1000, 7500,  VERTEX, 9000, 7500,
-		  VERTEX, 9000, 1000, END,
-		  POLYGON, VERTEX, 1000, 7500, VERTEX, 2500, 9000,
-		  VERTEX, 5000, 9000, VERTEX, 6500, 7500, END,
-		  COLOR, 0, FL_WHITE, LINE, VERTEX, 1500, 1500,
-		  VERTEX, 1500, 7000, VERTEX, 9000, 7000, END,
-		  COLOR, 0, FL_BLACK, LINE, VERTEX, 9000, 7500,
-		  VERTEX, 9000, 1000, VERTEX, 1000, 1000, END,
-		  COLOR, 0, FL_GRAY, LINE, VERTEX, 1000, 1000,
-		  VERTEX, 1000, 7500, VERTEX, 2500, 9000,
-		  VERTEX, 5000, 9000, VERTEX, 6500, 7500,
-		  VERTEX, 9000, 7500, END,
-		  END
-		};
+                  "Bluecurve",  // Icon directories to look for, in order
+                  "crystalsvg",
+                  "default.kde",
+                  "hicolor",
+                  NULL
+                };
+  static short  plain[] = {     // Plain file icon
+                  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
+                  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
+                  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
+                  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
+                  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
+                  VERTEX, 8000, 7000, END,
+                  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
+                  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
+                  VERTEX, 2000, 1000, END, LINE, VERTEX, 3000, 7000,
+                  VERTEX, 5000, 7000, END, LINE, VERTEX, 3000, 6000,
+                  VERTEX, 5000, 6000, END, LINE, VERTEX, 3000, 5000,
+                  VERTEX, 7000, 5000, END, LINE, VERTEX, 3000, 4000,
+                  VERTEX, 7000, 4000, END, LINE, VERTEX, 3000, 3000,
+                  VERTEX, 7000, 3000, END, LINE, VERTEX, 3000, 2000,
+                  VERTEX, 7000, 2000, END,
+                  END
+                };
+  static short  image[] = {     // Image file icon
+                  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
+                  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
+                  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
+                  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
+                  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
+                  VERTEX, 8000, 7000, END,
+                  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
+                  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
+                  VERTEX, 2000, 1000, END,
+                  COLOR, 0, FL_RED, POLYGON, VERTEX, 3500, 2500,
+                  VERTEX, 3000, 3000, VERTEX, 3000, 4000,
+                  VERTEX, 3500, 4500, VERTEX, 4500, 4500,
+                  VERTEX, 5000, 4000, VERTEX, 5000, 3000,
+                  VERTEX, 4500, 2500, END,
+                  COLOR, 0, FL_GREEN, POLYGON, VERTEX, 5500, 2500,
+                  VERTEX, 5000, 3000, VERTEX, 5000, 4000,
+                  VERTEX, 5500, 4500, VERTEX, 6500, 4500,
+                  VERTEX, 7000, 4000, VERTEX, 7000, 3000,
+                  VERTEX, 6500, 2500, END,
+                  COLOR, 0, FL_BLUE, POLYGON, VERTEX, 4500, 3500,
+                  VERTEX, 4000, 4000, VERTEX, 4000, 5000,
+                  VERTEX, 4500, 5500, VERTEX, 5500, 5500,
+                  VERTEX, 6000, 5000, VERTEX, 6000, 4000,
+                  VERTEX, 5500, 3500, END,
+                  END
+                };
+  static short  dir[] = {       // Directory icon
+                  COLOR, -1, -1, POLYGON, VERTEX, 1000, 1000,
+                  VERTEX, 1000, 7500,  VERTEX, 9000, 7500,
+                  VERTEX, 9000, 1000, END,
+                  POLYGON, VERTEX, 1000, 7500, VERTEX, 2500, 9000,
+                  VERTEX, 5000, 9000, VERTEX, 6500, 7500, END,
+                  COLOR, 0, FL_WHITE, LINE, VERTEX, 1500, 1500,
+                  VERTEX, 1500, 7000, VERTEX, 9000, 7000, END,
+                  COLOR, 0, FL_BLACK, LINE, VERTEX, 9000, 7500,
+                  VERTEX, 9000, 1000, VERTEX, 1000, 1000, END,
+                  COLOR, 0, FL_GRAY, LINE, VERTEX, 1000, 1000,
+                  VERTEX, 1000, 7500, VERTEX, 2500, 9000,
+                  VERTEX, 5000, 9000, VERTEX, 6500, 7500,
+                  VERTEX, 9000, 7500, END,
+                  END
+                };
 
 
   // Add symbols if they haven't been added already...
@@ -656,7 +654,7 @@ Fl_File_Icon::load_system_icons(void) {
       // Figure out where KDE is installed...
       if ((kdedir = fl_getenv("KDEDIR")) == NULL) {
         if (!fl_access("/opt/kde", F_OK)) kdedir = "/opt/kde";
-	else if (!fl_access("/usr/local/share/mimelnk", F_OK)) kdedir = "/usr/local";
+        else if (!fl_access("/usr/local/share/mimelnk", F_OK)) kdedir = "/usr/local";
         else kdedir = "/usr";
       }
     }
@@ -668,18 +666,18 @@ Fl_File_Icon::load_system_icons(void) {
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
 
       for (i = 0; icondirs[i]; i ++) {
-	snprintf(icondir, sizeof(icondir), "%s/share/icons/%s", kdedir,
-		 icondirs[i]);
+        snprintf(icondir, sizeof(icondir), "%s/share/icons/%s", kdedir,
+                 icondirs[i]);
 
         if (!fl_access(icondir, F_OK)) break;
       }
 
       if (icondirs[i]) {
         snprintf(filename, sizeof(filename), "%s/16x16/mimetypes/unknown.png",
-	         icondir);
+                 icondir);
       } else {
-	snprintf(filename, sizeof(filename), "%s/share/icons/unknown.xpm",
-	         kdedir);
+        snprintf(filename, sizeof(filename), "%s/share/icons/unknown.xpm",
+                 kdedir);
       }
 
       if (!fl_access(filename, F_OK)) icon->load_image(filename);
@@ -734,25 +732,25 @@ Fl_File_Icon::load_system_icons(void) {
       icon->load_fti("/usr/lib/filetype/system/iconlib/ImageFile.fti");
 
       if (!fl_access("/usr/lib/filetype/install/iconlib/acroread.doc.fti", F_OK)) {
-	icon = new Fl_File_Icon("*.{eps|ps}", Fl_File_Icon::PLAIN);
-	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
+        icon = new Fl_File_Icon("*.{eps|ps}", Fl_File_Icon::PLAIN);
+        icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
 
-	icon = new Fl_File_Icon("*.pdf", Fl_File_Icon::PLAIN);
-	icon->load_fti("/usr/lib/filetype/install/iconlib/acroread.doc.fti");
+        icon = new Fl_File_Icon("*.pdf", Fl_File_Icon::PLAIN);
+        icon->load_fti("/usr/lib/filetype/install/iconlib/acroread.doc.fti");
       } else {
-	icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
-	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
+        icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
+        icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
       }
 
       if (!fl_access("/usr/lib/filetype/install/iconlib/html.fti", F_OK)) {
-	icon = new Fl_File_Icon("*.{htm|html|shtml}", Fl_File_Icon::PLAIN);
+        icon = new Fl_File_Icon("*.{htm|html|shtml}", Fl_File_Icon::PLAIN);
         icon->load_fti("/usr/lib/filetype/iconlib/generic.doc.fti");
-	icon->load_fti("/usr/lib/filetype/install/iconlib/html.fti");
+        icon->load_fti("/usr/lib/filetype/install/iconlib/html.fti");
       }
 
       if (!fl_access("/usr/lib/filetype/install/iconlib/color.ps.idle.fti", F_OK)) {
-	icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
-	icon->load_fti("/usr/lib/filetype/install/iconlib/color.ps.idle.fti");
+        icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
+        icon->load_fti("/usr/lib/filetype/install/iconlib/color.ps.idle.fti");
       }
     } else {
       // Create the default icons...
@@ -780,12 +778,12 @@ Fl_File_Icon::load_system_icons(void) {
 //
 
 static void
-load_kde_icons(const char *directory,	// I - Directory to load
-               const char *icondir) {	// I - Location of icons
-  int		i;			// Looping var
-  int		n;			// Number of entries in directory
-  dirent	**entries;		// Entries in directory
-  char		full[FL_PATH_MAX];	// Full name of file
+load_kde_icons(const char *directory,   // I - Directory to load
+               const char *icondir) {   // I - Location of icons
+  int           i;                      // Looping var
+  int           n;                      // Number of entries in directory
+  dirent        **entries;              // Entries in directory
+  char          full[FL_PATH_MAX];      // Full name of file
 
 
   entries = (dirent **)0;
@@ -811,16 +809,16 @@ load_kde_icons(const char *directory,	// I - Directory to load
 //
 
 static void
-load_kde_mimelnk(const char *filename,	// I - mimelnk filename
-                 const char *icondir) {	// I - Location of icons
-  FILE		*fp;
-  char		tmp[1024];
-  char		iconfilename[FL_PATH_MAX];
-  char		pattern[1024];
-  char		mimetype[1024];
-  char		*val;
-  char		full_iconfilename[2 * FL_PATH_MAX];
-  Fl_File_Icon	*icon;
+load_kde_mimelnk(const char *filename,  // I - mimelnk filename
+                 const char *icondir) { // I - Location of icons
+  FILE          *fp;
+  char          tmp[1024];
+  char          iconfilename[FL_PATH_MAX];
+  char          pattern[1024];
+  char          mimetype[1024];
+  char          *val;
+  char          full_iconfilename[2 * FL_PATH_MAX];
+  Fl_File_Icon  *icon;
 
 
   mimetype[0]     = '\0';
@@ -830,11 +828,11 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
   if ((fp = fl_fopen(filename, "rb")) != NULL) {
     while (fgets(tmp, sizeof(tmp), fp)) {
       if ((val = get_kde_val(tmp, "Icon")) != NULL)
-	strlcpy(iconfilename, val, sizeof(iconfilename));
+        strlcpy(iconfilename, val, sizeof(iconfilename));
       else if ((val = get_kde_val(tmp, "MimeType")) != NULL)
-	strlcpy(mimetype, val, sizeof(mimetype));
+        strlcpy(mimetype, val, sizeof(mimetype));
       else if ((val = get_kde_val(tmp, "Patterns")) != NULL)
-	strlcpy(pattern, val, sizeof(pattern));
+        strlcpy(pattern, val, sizeof(pattern));
     }
 
     fclose(fp);
@@ -851,87 +849,87 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
         strlcpy(full_iconfilename, iconfilename, sizeof(full_iconfilename));
       } else if (!fl_access(icondir, F_OK)) {
         // KDE 3.x and 2.x icons
-	int		i;		// Looping var
-	static const char *paths[] = {	// Subdirs to look in...
-	  "16x16/actions",
-	  "16x16/apps",
-	  "16x16/devices",
-	  "16x16/filesystems",
-	  "16x16/mimetypes",
+        int             i;              // Looping var
+        static const char *paths[] = {  // Subdirs to look in...
+          "16x16/actions",
+          "16x16/apps",
+          "16x16/devices",
+          "16x16/filesystems",
+          "16x16/mimetypes",
 /*
-	  "20x20/actions",
-	  "20x20/apps",
-	  "20x20/devices",
-	  "20x20/filesystems",
-	  "20x20/mimetypes",
+          "20x20/actions",
+          "20x20/apps",
+          "20x20/devices",
+          "20x20/filesystems",
+          "20x20/mimetypes",
 
-	  "22x22/actions",
-	  "22x22/apps",
-	  "22x22/devices",
-	  "22x22/filesystems",
-	  "22x22/mimetypes",
+          "22x22/actions",
+          "22x22/apps",
+          "22x22/devices",
+          "22x22/filesystems",
+          "22x22/mimetypes",
 
-	  "24x24/actions",
-	  "24x24/apps",
-	  "24x24/devices",
-	  "24x24/filesystems",
-	  "24x24/mimetypes",
+          "24x24/actions",
+          "24x24/apps",
+          "24x24/devices",
+          "24x24/filesystems",
+          "24x24/mimetypes",
 */
-	  "32x32/actions",
-	  "32x32/apps",
-	  "32x32/devices",
-	  "32x32/filesystems",
-	  "32x32/mimetypes",
+          "32x32/actions",
+          "32x32/apps",
+          "32x32/devices",
+          "32x32/filesystems",
+          "32x32/mimetypes",
 /*
-	  "36x36/actions",
-	  "36x36/apps",
-	  "36x36/devices",
-	  "36x36/filesystems",
-	  "36x36/mimetypes",
+          "36x36/actions",
+          "36x36/apps",
+          "36x36/devices",
+          "36x36/filesystems",
+          "36x36/mimetypes",
 
-	  "48x48/actions",
-	  "48x48/apps",
-	  "48x48/devices",
-	  "48x48/filesystems",
-	  "48x48/mimetypes",
+          "48x48/actions",
+          "48x48/apps",
+          "48x48/devices",
+          "48x48/filesystems",
+          "48x48/mimetypes",
 
-	  "64x64/actions",
-	  "64x64/apps",
-	  "64x64/devices",
-	  "64x64/filesystems",
-	  "64x64/mimetypes",
+          "64x64/actions",
+          "64x64/apps",
+          "64x64/devices",
+          "64x64/filesystems",
+          "64x64/mimetypes",
 
-	  "96x96/actions",
-	  "96x96/apps",
-	  "96x96/devices",
-	  "96x96/filesystems",
-	  "96x96/mimetypes"
-*/	};
+          "96x96/actions",
+          "96x96/apps",
+          "96x96/devices",
+          "96x96/filesystems",
+          "96x96/mimetypes"
+*/      };
 
         for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
           snprintf(full_iconfilename, sizeof(full_iconfilename),
-	           "%s/%s/%s.png", icondir, paths[i], iconfilename);
+                   "%s/%s/%s.png", icondir, paths[i], iconfilename);
 
           if (!fl_access(full_iconfilename, F_OK)) break;
-	}
+        }
 
         if (i >= (int)(sizeof(paths) / sizeof(paths[0]))) return;
       } else {
         // KDE 1.x icons
         snprintf(full_iconfilename, sizeof(full_iconfilename),
-	         "%s/%s", tmp, iconfilename);
+                 "%s/%s", tmp, iconfilename);
 
         if (fl_access(full_iconfilename, F_OK)) return;
       }
 
       if (strncmp(mimetype, "inode/", 6) == 0) {
-	if (!strcmp(mimetype + 6, "directory"))
-	  icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
-	else if (!strcmp(mimetype + 6, "blockdevice"))
-	  icon = new Fl_File_Icon("*", Fl_File_Icon::DEVICE);
-	else if (!strcmp(mimetype + 6, "fifo"))
-	  icon = new Fl_File_Icon("*", Fl_File_Icon::FIFO);
-	else return;
+        if (!strcmp(mimetype + 6, "directory"))
+          icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
+        else if (!strcmp(mimetype + 6, "blockdevice"))
+          icon = new Fl_File_Icon("*", Fl_File_Icon::DEVICE);
+        else if (!strcmp(mimetype + 6, "fifo"))
+          icon = new Fl_File_Icon("*", Fl_File_Icon::FIFO);
+        else return;
       } else {
         icon = new Fl_File_Icon(kde_to_fltk_pattern(pattern),
                                 Fl_File_Icon::PLAIN);
@@ -949,8 +947,8 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 
 static char *
 kde_to_fltk_pattern(const char *kdepattern) {
-  char	*pattern,
-	*patptr;
+  char  *pattern,
+        *patptr;
 
 
   pattern = (char *)malloc(strlen(kdepattern) + 3);
@@ -989,8 +987,3 @@ get_kde_val(char       *str,
 
   return ((char *)0);
 }
-
-
-//
-// End of "$Id$".
-//

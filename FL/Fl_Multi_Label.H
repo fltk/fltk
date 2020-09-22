@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Multi-label header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Multi_Label_H
@@ -45,8 +43,8 @@ struct Fl_Menu_Item;
 
     Example Use: Fl_Menu_Bar
     \code
-      Fl_Pixmap *image = new Fl_Pixmap(..);	// image for menu item; any Fl_Image based widget
-      Fl_Menu_Bar *menu = new Fl_Menu_Bar(..);	// can be any Fl_Menu_ oriented widget (Fl_Choice, Fl_Menu_Button..)
+      Fl_Pixmap *image = new Fl_Pixmap(..);     // image for menu item; any Fl_Image based widget
+      Fl_Menu_Bar *menu = new Fl_Menu_Bar(..);  // can be any Fl_Menu_ oriented widget (Fl_Choice, Fl_Menu_Button..)
 
       // Create a menu item
       int i = menu->add("File/New", ..);
@@ -96,7 +94,3 @@ struct FL_EXPORT Fl_Multi_Label {
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

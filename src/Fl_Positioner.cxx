@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Positioner widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // The positioner widget from Forms, gives 2D input
@@ -99,7 +97,7 @@ int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
       redraw();
                    } }
     if (!(when() & FL_WHEN_CHANGED ||
-	  (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
+          (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
     if (changed() || when()&FL_WHEN_NOT_CHANGED) {
       if (event == FL_RELEASE) clear_changed();
       do_callback();
@@ -145,7 +143,3 @@ void Fl_Positioner::ybounds(double a, double b) {
     redraw();
   }
 }
-
-//
-// End of "$Id$".
-//

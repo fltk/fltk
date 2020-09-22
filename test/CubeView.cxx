@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "CubeView.h"
@@ -34,10 +32,10 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
     size=10.0;
     xshift=0.0;
     yshift=0.0;
-    
+
     /* The cube definition. These are the vertices of a unit cube
      * centered on the origin.*/
-    
+
     boxv0[0] = -0.5; boxv0[1] = -0.5; boxv0[2] = -0.5;
     boxv1[0] =  0.5; boxv1[1] = -0.5; boxv1[2] = -0.5;
     boxv2[0] =  0.5; boxv2[1] =  0.5; boxv2[2] = -0.5;
@@ -155,11 +153,7 @@ void CubeView::draw() {
     glScalef(float(size),float(size),float(size));
 
     drawCube();
-    
+
     glPopMatrix();
 }
 #endif /* HAVE_GL */
-
-//
-// End of "$Id$".
-//

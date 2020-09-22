@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Scroll header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -94,7 +92,7 @@ class FL_EXPORT Fl_Scroll : public Fl_Group {
   void fix_scrollbar_order();
   static void draw_clip(void*,int,int,int,int);
 
-protected:	//  (STR#1895)
+protected:      //  (STR#1895)
   /**
     Structure to manage scrollbar and widget interior sizes.
     This is filled out by recalc_scrollbars() for use in calculations
@@ -106,27 +104,27 @@ protected:	//  (STR#1895)
     typedef struct { int x,y,w,h; } Fl_Region_XYWH;
     /// A local struct to manage a region defined by left/right/top/bottom
     typedef struct {
-      int l;			///< (l)eft "x" position, aka x1
-      int r;			///< (r)ight "x" position, aka x2
-      int t;			///< (t)op "y" position, aka y1
-      int b;			///< (b)ottom "y" position, aka y2
+      int l;                    ///< (l)eft "x" position, aka x1
+      int r;                    ///< (r)ight "x" position, aka x2
+      int t;                    ///< (t)op "y" position, aka y1
+      int b;                    ///< (b)ottom "y" position, aka y2
     } Fl_Region_LRTB;
     /// A local struct to manage a scrollbar's xywh region and tab values
     typedef struct {
       int x,y,w,h;
-      int pos;			///< scrollbar tab's "position of first line displayed"
-      int size;			///< scrollbar tab's "size of window in lines"
-      int first;		///< scrollbar tab's "number of first line"
-      int total;		///< scrollbar tab's "total number of lines"
+      int pos;                  ///< scrollbar tab's "position of first line displayed"
+      int size;                 ///< scrollbar tab's "size of window in lines"
+      int first;                ///< scrollbar tab's "number of first line"
+      int total;                ///< scrollbar tab's "total number of lines"
     } Fl_Scrollbar_Data;
-    int scrollsize;		///< the effective scrollbar thickness (local or global)
-    Fl_Region_XYWH innerbox;	///< widget's inner box, excluding scrollbars
-    Fl_Region_XYWH innerchild;	///< widget's inner box, including scrollbars
-    Fl_Region_LRTB child;	///< child bounding box: left/right/top/bottom
-    int hneeded;		///< horizontal scrollbar visibility
-    int vneeded;		///< vertical scrollbar visibility
-    Fl_Scrollbar_Data hscroll;	///< horizontal scrollbar region + values
-    Fl_Scrollbar_Data vscroll;	///< vertical scrollbar region + values
+    int scrollsize;             ///< the effective scrollbar thickness (local or global)
+    Fl_Region_XYWH innerbox;    ///< widget's inner box, excluding scrollbars
+    Fl_Region_XYWH innerchild;  ///< widget's inner box, including scrollbars
+    Fl_Region_LRTB child;       ///< child bounding box: left/right/top/bottom
+    int hneeded;                ///< horizontal scrollbar visibility
+    int vneeded;                ///< vertical scrollbar visibility
+    Fl_Scrollbar_Data hscroll;  ///< horizontal scrollbar region + values
+    Fl_Scrollbar_Data vscroll;  ///< vertical scrollbar region + values
   } ScrollInfo;
   void recalc_scrollbars(ScrollInfo &si);
 
@@ -199,7 +197,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

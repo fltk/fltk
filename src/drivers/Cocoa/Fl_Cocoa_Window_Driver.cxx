@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa window driver.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -252,9 +250,10 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
 {
   CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);
   if (img) {
-    float s = Fl_Graphics_Driver::default_driver().scale();
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,
-                                      dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
+    // the current surface is generally the display, but is an Fl_Image_Surface when scrolling an Fl_Overlay_Window
+    Fl_Quartz_Graphics_Driver *qgd = (Fl_Quartz_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
+    float s = qgd->scale();
+    qgd->draw_CGImage(img, dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
     CFRelease(img);
   }
   return 0;
@@ -313,27 +312,30 @@ const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
  */
 void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
-  left = bottom = right = NULL;
+  top = left = bottom = right = NULL;
   int htop, hleft, hright, hbottom;
   Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
+  if (htop == 0) return; // when window is fullscreen
   CALayer *layer = get_titlebar_layer();
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);
-  uchar *rgba = new uchar[4 * scaled_w * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * scaled_w, 2 * htop, 8, 8 * scaled_w, cspace, kCGImageAlphaPremultipliedLast);
+  const int factor = (layer && mapped_to_retina() ? 4 : 2); // resolution level for the titlebar (2 == retina's)
+  int data_w = factor * scaled_w, data_h = factor * htop;
+  uchar *rgba = new uchar[4 * data_w * data_h];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGContextClearRect(auxgc, CGRectMake(0,0,2*scaled_w,2*htop));
-  CGContextScaleCTM(auxgc, 2, 2);
+  CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
+  CGContextScaleCTM(auxgc, factor, factor);
   if (layer) {
     Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
     if (fl_mac_os_version >= 101300) {
       // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
       uchar *p = rgba;
-      uchar *last = rgba + 4 * scaled_w * htop * 4;
+      uchar *last = rgba + data_w * data_h * 4;
       while (p < last) {
         uchar q = *(p+3);
-        if (q) {
+        if (q && q != 0xff) {
           float m = 255./q;
           *p++ *= m;
           *p++ *= m;
@@ -352,12 +354,8 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  top = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
+  top = new Fl_RGB_Image(rgba, data_w, data_h, 4);
   top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
 }
-
-//
-// End of "$Id$".
-//

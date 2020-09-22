@@ -28,6 +28,6 @@ with the actual number to use.
 .SH SEE ALSO
 fltk(3)
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHOR
 Michael R Sweet.
