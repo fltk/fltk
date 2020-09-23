@@ -34,6 +34,7 @@ FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graph
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
+/** Used by the Windows platform to print Fl_Pixmap objects. */
 unsigned Fl_Graphics_Driver::need_pixmap_bg_color = 0;
 
 /** Constructor */
