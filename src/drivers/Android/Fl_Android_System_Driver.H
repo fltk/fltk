@@ -22,6 +22,7 @@
 #ifndef FL_ANDROID_SYSTEM_DRIVER_H
 #define FL_ANDROID_SYSTEM_DRIVER_H
 
+#include <string.h>
 #include <FL/fl_string.h>
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
@@ -123,6 +124,7 @@ public:
   virtual void remove_fd(int);
   virtual void gettime(time_t *sec, int *usec);
 #endif
+  virtual char *strdup(const char *s) {return ::strdup(s);}
 };
 
 #endif // FL_ANDROID_SYSTEM_DRIVER_H
