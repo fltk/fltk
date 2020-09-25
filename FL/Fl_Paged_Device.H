@@ -39,38 +39,37 @@ protected:
   Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
 public:
   /**
-   \brief Possible page formats.
-
-   All paper formats with pre-defined width and height.
+   Possible page formats.
+   All paper formats with pre-defined width and height. The Fl_Paged_Device::page_formats array gives these widths and heights.
    */
   enum Page_Format {
     A0 = 0, /**<  A0 format */
-    A1,
-    A2,
-    A3,
+    A1, /**<  A1 format */
+    A2, /**<  A2 format */
+    A3, /**<  A3 format */
     A4, /**<  A4 format */
-    A5,
-    A6,
-    A7,
-    A8,
-    A9,
-    B0,
-    B1,
-    B2,
-    B3,
-    B4,
-    B5,
-    B6,
-    B7,
-    B8,
-    B9,
-    B10,
+    A5, /**<  A5 format */
+    A6, /**<  A6 format */
+    A7, /**<  A7 format */
+    A8, /**<  A8 format */
+    A9, /**<  A9 format */
+    B0, /**<  B0 format */
+    B1, /**<  B1 format */
+    B2, /**<  B2 format */
+    B3, /**<  B3 format */
+    B4, /**<  B4 format */
+    B5, /**<  B5 format */
+    B6, /**<  B6 format */
+    B7, /**<  B7 format */
+    B8, /**<  B8 format */
+    B9, /**<  B9 format */
+    B10, /**<  B10 format */
     C5E,
     DLE,
     EXECUTIVE,
     FOLIO,
     LEDGER,
-    LEGAL,
+    LEGAL, /**<  Legal format */
     LETTER, /**<  Letter format */
     TABLOID,
     ENVELOPE,
