@@ -66,12 +66,12 @@ public:
     B10, /**<  B10 format */
     C5E,
     DLE,
-    EXECUTIVE,
-    FOLIO,
-    LEDGER,
+    EXECUTIVE, /**<   Executive format */
+    FOLIO, /**<  Folio  format */
+    LEDGER, /**<  Ledger  format */
     LEGAL, /**<  Legal format */
     LETTER, /**<  Letter format */
-    TABLOID,
+    TABLOID, /**<   Tabloid format */
     ENVELOPE,
     MEDIA = 0x1000
   };
