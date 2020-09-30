@@ -66,8 +66,11 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
   ptr = double_dlopen(filename);
 #  ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
   if (!ptr) {
-    char *f_dylib = fl_strdup(filename);
-    strcpy(strrchr(f_dylib, '.'), ".dylib");
+    char *f_dylib = (char*)malloc(strlen(filename)+7);
+    strcpy(f_dylib, filename);
+    char *p = strrchr(f_dylib, '.');
+    if (!p) p = f_dylib + strlen(f_dylib);
+    strcpy(p, ".dylib");
     char path[FL_PATH_MAX];
     sprintf(path, "/sw/lib/%s", f_dylib);
     ptr = ::dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
