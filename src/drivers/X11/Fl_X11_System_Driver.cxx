@@ -28,6 +28,10 @@
 #include <pwd.h>
 #include <string.h>     // strerror(errno)
 #include <errno.h>      // errno
+#if HAVE_DLSYM && HAVE_DLFCN_H
+#include <dlfcn.h>   // for dlsym
+#endif
+
 
 #if defined(_AIX)
 extern "C" {
@@ -354,46 +358,65 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
 
 void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
 {
-  // warning Unix implementation of Fl_Preferences::newUUID() incomplete!
-  // #include <uuid/uuid.h>
-  // void uuid_generate(uuid_t out);
   unsigned char b[16];
-  time_t t = time(0);                   // first 4 byte
-  b[0] = (unsigned char)t;
-  b[1] = (unsigned char)(t>>8);
-  b[2] = (unsigned char)(t>>16);
-  b[3] = (unsigned char)(t>>24);
-  int r = rand();                       // four more bytes
-  b[4] = (unsigned char)r;
-  b[5] = (unsigned char)(r>>8);
-  b[6] = (unsigned char)(r>>16);
-  b[7] = (unsigned char)(r>>24);
-  unsigned long a = (unsigned long)&t;  // four more bytes
-  b[8] = (unsigned char)a;
-  b[9] = (unsigned char)(a>>8);
-  b[10] = (unsigned char)(a>>16);
-  b[11] = (unsigned char)(a>>24);
-  // Now we try to find 4 more "random" bytes. We extract the
-  // lower 4 bytes from the address of t - it is created on the
-  // stack so *might* be in a different place each time...
-  // This is now done via a union to make it compile OK on 64-bit systems.
-  union { void *pv; unsigned char a[sizeof(void*)]; } v;
-  v.pv = (void *)(&t);
-  // NOTE: May need to handle big- or little-endian systems here
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  typedef void (*gener_f_type)(uchar*);
+  static bool looked_for_uuid_generate = false;
+  static gener_f_type uuid_generate_f = NULL;
+  if (!looked_for_uuid_generate) {
+    looked_for_uuid_generate = true;
+#  ifdef RTLD_DEFAULT
+    uuid_generate_f = (gener_f_type)dlsym(RTLD_DEFAULT, "uuid_generate");
+#  endif
+    if (!uuid_generate_f) {
+      void *libuuid = this->dlopen("libuuid.so");
+      if (libuuid) {
+        uuid_generate_f = (gener_f_type)dlsym(libuuid, "uuid_generate");
+      }
+    }
+  }
+  if (uuid_generate_f) {
+    uuid_generate_f(b);
+  } else
+#endif
+  {
+    time_t t = time(0);                   // first 4 byte
+    b[0] = (unsigned char)t;
+    b[1] = (unsigned char)(t>>8);
+    b[2] = (unsigned char)(t>>16);
+    b[3] = (unsigned char)(t>>24);
+    int r = rand();                       // four more bytes
+    b[4] = (unsigned char)r;
+    b[5] = (unsigned char)(r>>8);
+    b[6] = (unsigned char)(r>>16);
+    b[7] = (unsigned char)(r>>24);
+    unsigned long a = (unsigned long)&t;  // four more bytes
+    b[8] = (unsigned char)a;
+    b[9] = (unsigned char)(a>>8);
+    b[10] = (unsigned char)(a>>16);
+    b[11] = (unsigned char)(a>>24);
+    // Now we try to find 4 more "random" bytes. We extract the
+    // lower 4 bytes from the address of t - it is created on the
+    // stack so *might* be in a different place each time...
+    // This is now done via a union to make it compile OK on 64-bit systems.
+    union { void *pv; unsigned char a[sizeof(void*)]; } v;
+    v.pv = (void *)(&t);
+    // NOTE: May need to handle big- or little-endian systems here
 # if WORDS_BIGENDIAN
-  b[8] = v.a[sizeof(void*) - 1];
-  b[9] = v.a[sizeof(void*) - 2];
-  b[10] = v.a[sizeof(void*) - 3];
-  b[11] = v.a[sizeof(void*) - 4];
+    b[8] = v.a[sizeof(void*) - 1];
+    b[9] = v.a[sizeof(void*) - 2];
+    b[10] = v.a[sizeof(void*) - 3];
+    b[11] = v.a[sizeof(void*) - 4];
 # else // data ordered for a little-endian system
-  b[8] = v.a[0];
-  b[9] = v.a[1];
-  b[10] = v.a[2];
-  b[11] = v.a[3];
+    b[8] = v.a[0];
+    b[9] = v.a[1];
+    b[10] = v.a[2];
+    b[11] = v.a[3];
 # endif
-  char name[80];                        // last four bytes
-  gethostname(name, 79);
-  memcpy(b+12, name, 4);
+    char name[80];                        // last four bytes
+    gethostname(name, 79);
+    memcpy(b+12, name, 4);
+  }
   sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
           b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
@@ -549,9 +572,6 @@ int Fl_X11_System_Driver::utf8locale() {
   return ret;
 }
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
-#include <dlfcn.h>   // for dlopen et al
-#endif
 #if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
