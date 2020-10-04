@@ -88,7 +88,7 @@ public:
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);
-  virtual void *dlopen(const char *filename);
+  virtual void *load(const char *filename);
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h);
   virtual const char *next_dir_sep(const char *start);
   // these 3 are implemented in Fl_lock.cxx

@@ -65,7 +65,9 @@ public:
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
-  virtual void *dlopen(const char *filename);
+#if HAVE_DLFCN_H
+  virtual void *load(const char *filename);
+#endif
   // these 4 are implemented in Fl_lock.cxx
   virtual void awake(void*);
   virtual int lock();

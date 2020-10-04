@@ -1,7 +1,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,8 @@
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
-#include "../../Fl_System_Driver.H"
+#include "Fl_X11_System_Driver.H"
+#include "../Posix/Fl_Posix_System_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -285,9 +286,7 @@ void Fl_X11_Screen_Driver::init() {
 
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
-    void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-    if (!libxrandr_addr) libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
-    if (libxrandr_addr) XRRSizes_f = (XRRSizes_type)dlsym(libxrandr_addr, "XRRSizes");
+    XRRSizes_f = (XRRSizes_type)Fl_X11_System_Driver::dlopen_or_dlsym("libXrandr", "XRRSizes");
   }
   if (XRRSizes_f) {
     int nscreens;

@@ -1652,7 +1652,7 @@ void Fl_Plugin_Manager::removePlugin(Fl_Preferences::ID id) {
 int Fl_Plugin_Manager::load(const char *filename) {
   // the functions below will automatically load plugins that are defined:
   // Fl_My_Plugin plugin();
-  void *dl = Fl::system_driver()->dlopen(filename);
+  void *dl = Fl::system_driver()->load(filename);
   // There is no way of unloading a plugin!
   return (dl != 0) ? 0 : -1;
 }

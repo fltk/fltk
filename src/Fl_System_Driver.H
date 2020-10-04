@@ -178,7 +178,7 @@ public:
   // the default implementation of preferences_need_protection_check() may be enough
   virtual int preferences_need_protection_check() {return 0;}
   // implement to support Fl_Plugin_Manager::load()
-  virtual void *dlopen(const char *filename) {return NULL;}
+  virtual void *load(const char *filename) {return NULL;}
   // the default implementation is most probably enough
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h) {}
   // the default implementation is most probably enough

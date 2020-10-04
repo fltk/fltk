@@ -2,7 +2,7 @@
 // Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -365,15 +365,7 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
   static gener_f_type uuid_generate_f = NULL;
   if (!looked_for_uuid_generate) {
     looked_for_uuid_generate = true;
-#  ifdef RTLD_DEFAULT
-    uuid_generate_f = (gener_f_type)dlsym(RTLD_DEFAULT, "uuid_generate");
-#  endif
-    if (!uuid_generate_f) {
-      void *libuuid = this->dlopen("libuuid.so");
-      if (libuuid) {
-        uuid_generate_f = (gener_f_type)dlsym(libuuid, "uuid_generate");
-      }
-    }
+    uuid_generate_f = (gener_f_type)Fl_X11_System_Driver::dlopen_or_dlsym("libuuid", "uuid_generate");
   }
   if (uuid_generate_f) {
     uuid_generate_f(b);
@@ -572,6 +564,70 @@ int Fl_X11_System_Driver::utf8locale() {
   return ret;
 }
 
+#if HAVE_DLSYM && HAVE_DLFCN_H
+static void* quadruple_dlopen(const char *libname)
+{
+  char filename2[FL_PATH_MAX];
+  sprintf(filename2, "%s.so", libname);
+  void *ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+  if (!ptr) {
+    sprintf(filename2, "%s.so.2", libname);
+    ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+    if (!ptr) {
+      sprintf(filename2, "%s.so.1", libname);
+      ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+      if (!ptr) {
+        sprintf(filename2, "%s.so.0", libname);
+        ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+      }
+    }
+  }
+  return ptr;
+}
+#endif
+
+/**
+ Returns the run-time address of a function or of a shared library.
+ \param lib_name shared library name (without its extension) or NULL to search the function in the running program
+ \param func_name  function name or NULL
+ \return the address of the function (when func_name != NULL) or of the shared library, or NULL if not found.
+ */
+void *Fl_X11_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *func_name)
+{
+  void *lib_address = NULL;
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  void *func_ptr = NULL;
+  if (func_name) {
+#ifdef RTLD_DEFAULT
+    func_ptr = dlsym(RTLD_DEFAULT, func_name);
+#else
+    void *p = dlopen(NULL, RTLD_LAZY);
+    func_ptr = dlsym(p, func_name);
+#endif
+    if (func_ptr) return func_ptr;
+  }
+#ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
+  if (lib_name) {
+    char path[FL_PATH_MAX];
+    sprintf(path, "/opt/X11/lib/%s.dylib", lib_name);
+    lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+    if (!lib_address) {
+      sprintf(path, "/opt/sw/lib/%s.dylib", lib_name);
+      lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+      if (!lib_address) {
+        sprintf(path, "/sw/lib/%s.dylib", lib_name);
+        lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+      }
+    }
+  }
+#else
+  if (lib_name) lib_address = quadruple_dlopen(lib_name);
+#endif // __APPLE_CC__
+  if (func_name && lib_address) return ::dlsym(lib_address, func_name);
+#endif // HAVE_DLFCN_H
+  return lib_address;
+}
+
 #if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
@@ -583,14 +639,14 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
     *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
   } else {
     // Try first with GTK3
-    *ptr_gtk = Fl::system_driver()->dlopen("libgtk-3.so");
+    *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-3");
     if (*ptr_gtk) {
 #ifdef DEBUG
       puts("selected GTK-3\n");
 #endif
     } else {
       // Try then with GTK2
-      *ptr_gtk = Fl::system_driver()->dlopen("libgtk-x11-2.0.so");
+      *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-x11-2.0");
 #ifdef DEBUG
       if (*ptr_gtk) {
         puts("selected GTK-2\n");

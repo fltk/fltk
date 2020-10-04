@@ -912,7 +912,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   return filename;
 }
 
-void *Fl_WinAPI_System_Driver::dlopen(const char *filename) {
+void *Fl_WinAPI_System_Driver::load(const char *filename) {
   return LoadLibraryW(utf8_to_wchar(filename, wbuf));
 }
 
