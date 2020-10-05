@@ -617,18 +617,22 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     }
     if (usepath) {
       // Set only if full path exists
-      [_panel setDirectoryURL:[NSURL fileURLWithPath:path]];
+      [_panel setDirectoryURL:[NSURL fileURLWithPath:path]]; // 10.6
     } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
-      if (dir) [_panel setDirectoryURL:[NSURL fileURLWithPath:dir]];
-      if (fname) [_panel setNameFieldStringValue:fname];
+      if (dir) [_panel setDirectoryURL:[NSURL fileURLWithPath:dir]];  // 10.6
+      if (fname) [_panel setNameFieldStringValue:fname]; // 10.6
     }
     [path release];
-    __block NSInteger complete = -1;
-    [_panel beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSInteger returnCode) {
-      complete = returnCode; // this block runs after OK or Cancel was triggered in file dialog
-    }]; // this message returns immediately and begins the file dialog as a sheet
-    while ([_panel isVisible]) Fl::wait(100); // loop until end of file dialog
-    retval = complete;
+    if ([NSApp mainWindow]) {
+      __block NSInteger complete = -1;
+      [_panel beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSInteger returnCode) {
+        complete = returnCode; // this block runs after OK or Cancel was triggered in file dialog
+      }]; // this message returns immediately and begins the file dialog as a sheet
+      while ([_panel isVisible]) Fl::wait(100); // loop until end of file dialog
+      retval = complete;
+    } else {
+      retval = [_panel runModal];
+    }
   }
   else
 #endif
