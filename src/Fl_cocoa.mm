@@ -1696,7 +1696,12 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
         [NSApp run];
         in_nsapp_run = false;
       }
-      else [NSApp finishLaunching];
+      else {
+        [NSApp finishLaunching];
+        // Unbundled app may require this so delegate receives applicationDidFinishLaunching:
+        // even if doc states this is sent at the end of finishLaunching.
+        if (!is_bundled()) [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+      }
     }
 
     // empty the event queue but keep system events for drag&drop of files at launch
