@@ -674,15 +674,15 @@ void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
 
 
 void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
-  Fl_Xlib_Font_Descriptor *gl_fd = (Fl_Xlib_Font_Descriptor*)fd;
-  if (gl_fd->glok[r]) return;
-  gl_fd->glok[r] = 1;
 # if USE_XFT
   /* We hope not to come here: We hope that any system using XFT will also
    * have sufficient GL capability to support our font texture pile mechansim,
    * allowing XFT to render the face directly. */
   // Face already set by gl_bitmap_font in this case.
 # else
+  Fl_Xlib_Font_Descriptor *gl_fd = (Fl_Xlib_Font_Descriptor*)fd;
+  if (gl_fd->glok[r]) return;
+  gl_fd->glok[r] = 1;
   unsigned int ii = r * 0x400;
   for (int i = 0; i < 0x400; i++) {
     XFontStruct *font = NULL;

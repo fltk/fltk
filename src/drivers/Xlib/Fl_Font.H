@@ -44,10 +44,10 @@ public:
 #  else
   XUtf8FontStruct* font;        // X UTF-8 font information
   FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname);
-#  endif
 #  if HAVE_GL
   char glok[64];
 #  endif // HAVE_GL
+#  endif // USE_XFT
   FL_EXPORT ~Fl_Xlib_Font_Descriptor();
 };
 
