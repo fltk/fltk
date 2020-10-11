@@ -405,7 +405,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     CGContextSaveGState(gc);
     CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
     CGContextScaleCTM(gc, 1/s, -1/s);
-    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
+    Fl_Cocoa_Window_Driver::driver(win)->draw_layer_to_context(layer, gc, win->w() * s, bt);
     CGContextRestoreGState(gc);
     bool clip_corners = fl_mac_os_version >= 100600 && !win->parent();
     if (clip_corners) {

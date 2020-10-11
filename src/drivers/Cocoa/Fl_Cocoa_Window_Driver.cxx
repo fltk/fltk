@@ -328,8 +328,8 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
   CGContextScaleCTM(auxgc, factor, factor);
   if (layer) {
-    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
-    if (fl_mac_os_version >= 101300) {
+    draw_layer_to_context(layer, auxgc, scaled_w, htop);
+    if (fl_mac_os_version >= 101300 && fl_mac_os_version < 101500) {
       // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
       uchar *p = rgba;
       uchar *last = rgba + data_w * data_h * 4;

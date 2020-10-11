@@ -97,7 +97,7 @@ void Fl_Quartz_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_
   CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
   float s = Fl::screen_scale(win->screen_num());
   CGContextScaleCTM(gc, 1/s, s >= 1 ? -1/s : -1);
-  Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt*s);
+  Fl_Cocoa_Window_Driver::driver(win)->draw_layer_to_context(layer, gc, win->w() * s, bt*s);
   CGContextRestoreGState(gc);
   draw(win, x_offset, y_offset + bt); // print the window inner part
 }

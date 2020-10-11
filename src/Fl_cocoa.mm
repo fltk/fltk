@@ -4382,7 +4382,22 @@ void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef 
     CGContextFillRect(gc, CGRectMake(0, 0, w, h));
   }
   CGContextSetShouldAntialias(gc, true);
-  [layer renderInContext:gc]; // 10.5
+  if (fl_mac_os_version >= 101500) {
+    FLWindow *flwin = fl_xid(pWindow);
+    [flwin makeMainWindow];
+    [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+    NSInteger win_id = [flwin windowNumber];
+    CFArrayRef array = CFArrayCreate(NULL, (const void**)&win_id, 1, NULL);
+    NSRect rr = [flwin frame];
+    rr.origin.y += rr.size.height - h;
+    rr.size.height = h;
+    rr.origin.y = CGDisplayBounds(CGMainDisplayID()).size.height - (rr.origin.y + rr.size.height);
+    CGImageRef img = CGWindowListCreateImageFromArray(rr, array, kCGWindowImageBoundsIgnoreFraming); // 10.5
+    CFRelease(array);
+    CGContextDrawImage(gc, CGRectMake(0, 0, w, h), img);
+    CGImageRelease(img);
+  } else
+    [layer renderInContext:gc]; // 10.5
   CGContextRestoreGState(gc);
 #endif
 }

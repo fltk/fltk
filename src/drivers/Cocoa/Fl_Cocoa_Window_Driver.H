@@ -140,7 +140,7 @@ public:
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   virtual void wait_for_expose();
   CALayer *get_titlebar_layer();
-  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
+  void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
 
   // these functions are OpenGL-related and use objective-c
