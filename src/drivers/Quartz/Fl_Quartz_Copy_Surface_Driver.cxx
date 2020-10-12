@@ -87,19 +87,4 @@ void Fl_Quartz_Copy_Surface_Driver::untranslate() {
   CGContextRestoreGState(gc);
 }
 
-void Fl_Quartz_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
-  CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();
-  if (!layer) {
-    return Fl_Widget_Surface::draw_decorated_window(win, x_offset, y_offset);
-  }
-  CGContextSaveGState(gc);
-  int bt = win->decorated_h() - win->h();
-  CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-  float s = Fl::screen_scale(win->screen_num());
-  CGContextScaleCTM(gc, 1/s, s >= 1 ? -1/s : -1);
-  Fl_Cocoa_Window_Driver::driver(win)->draw_layer_to_context(layer, gc, win->w() * s, bt*s);
-  CGContextRestoreGState(gc);
-  draw(win, x_offset, y_offset + bt); // print the window inner part
-}
-
 #endif // FL_CFG_GFX_QUARTZ

@@ -33,7 +33,6 @@ protected:
   void set_current();
   void translate(int x, int y);
   void untranslate();
-  virtual void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
 };
 
 #endif /* Fl_Quartz_Copy_Surface_Driver_H */

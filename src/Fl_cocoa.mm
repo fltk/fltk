@@ -4362,44 +4362,35 @@ int Fl_Cocoa_Window_Driver::decorated_h()
   return h() + bt/s;
 }
 
-CALayer *Fl_Cocoa_Window_Driver::get_titlebar_layer()
+void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, int h)
 {
-  // a compilation warning appears with SDK 10.5, so we require SDK 10.6 instead
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  return fl_mac_os_version >= 101000 ? [[[fl_xid(pWindow) standardWindowButton:NSWindowCloseButton] superview] layer] : nil; // 10.5
-#else
-  return nil;
-#endif
-}
-
-void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
-{
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  CGContextSaveGState(gc);
-  clip_to_rounded_corners(gc, w, h);
-  if (fl_mac_os_version < 101500) { // exact OS threshold might be lower
-    CGContextSetRGBFillColor(gc, .79, .79, .79, 1.); // equiv. to FL_DARK1
-    CGContextFillRect(gc, CGRectMake(0, 0, w, h));
-  }
-  CGContextSetShouldAntialias(gc, true);
-  if (fl_mac_os_version >= 101500) {
-    FLWindow *flwin = fl_xid(pWindow);
-    [flwin makeMainWindow];
-    [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-    NSInteger win_id = [flwin windowNumber];
+  FLWindow *nswin = fl_xid(pWindow);
+  [nswin makeMainWindow];
+  [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];  
+  CGImageRef img;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (fl_mac_os_version >= 100600) { // verified OK from 10.6
+    NSInteger win_id = [nswin windowNumber];
     CFArrayRef array = CFArrayCreate(NULL, (const void**)&win_id, 1, NULL);
-    NSRect rr = [flwin frame];
-    rr.origin.y += rr.size.height - h;
-    rr.size.height = h;
+    CGRect rr = NSRectToCGRect([nswin frame]);
     rr.origin.y = CGDisplayBounds(CGMainDisplayID()).size.height - (rr.origin.y + rr.size.height);
-    CGImageRef img = CGWindowListCreateImageFromArray(rr, array, kCGWindowImageBoundsIgnoreFraming); // 10.5
+    rr.size.height = h;
+    img = CGWindowListCreateImageFromArray(rr, array, kCGWindowImageBoundsIgnoreFraming); // 10.5
     CFRelease(array);
+  } else
+#endif
+  {
+    Fl_Graphics_Driver::default_driver().scale(1);
+    img = CGImage_from_window_rect(0, -h, w, h, false);
+    Fl_Graphics_Driver::default_driver().scale(Fl::screen_driver()->scale(screen_num()));
+  }
+  if (img) {
+    CGContextSaveGState(gc);
+    clip_to_rounded_corners(gc, w, h);
     CGContextDrawImage(gc, CGRectMake(0, 0, w, h), img);
     CGImageRelease(img);
-  } else
-    [layer renderInContext:gc]; // 10.5
-  CGContextRestoreGState(gc);
-#endif
+    CGContextRestoreGState(gc);
+  }
 }
 
 void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {

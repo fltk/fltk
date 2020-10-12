@@ -316,44 +316,17 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   int htop, hleft, hright, hbottom;
   Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
   if (htop == 0) return; // when window is fullscreen
-  CALayer *layer = get_titlebar_layer();
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);
-  const int factor = (layer && mapped_to_retina() ? 4 : 2); // resolution level for the titlebar (2 == retina's)
+  const int factor = (mapped_to_retina() ? 2 : 1);
   int data_w = factor * scaled_w, data_h = factor * htop;
   uchar *rgba = new uchar[4 * data_w * data_h];
   CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
   CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
   CGContextScaleCTM(auxgc, factor, factor);
-  if (layer) {
-    draw_layer_to_context(layer, auxgc, scaled_w, htop);
-    if (fl_mac_os_version >= 101300 && fl_mac_os_version < 101500) {
-      // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
-      uchar *p = rgba;
-      uchar *last = rgba + data_w * data_h * 4;
-      while (p < last) {
-        uchar q = *(p+3);
-        if (q && q != 0xff) {
-          float m = 255./q;
-          *p++ *= m;
-          *p++ *= m;
-          *p++ *= m;
-          *p++ = 0xff;
-        } else p += 4;
-      }
-    }
-  } else {
-    Fl_Graphics_Driver::default_driver().scale(1);
-    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop, false);
-    Fl_Graphics_Driver::default_driver().scale(s);
-    CGContextSaveGState(auxgc);
-    clip_to_rounded_corners(auxgc, scaled_w, htop);
-    CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);
-    CGContextRestoreGState(auxgc);
-    CFRelease(img);
-  }
+  draw_titlebar_to_context(auxgc, scaled_w, htop);
   top = new Fl_RGB_Image(rgba, data_w, data_h, 4);
   top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);

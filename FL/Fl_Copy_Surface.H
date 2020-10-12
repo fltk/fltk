@@ -64,7 +64,6 @@ public:
   void origin(int *x, int *y);
   void origin(int x, int y);
   int printable_rect(int *w, int *h);
-  virtual void draw_decorated_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
 };
 
 

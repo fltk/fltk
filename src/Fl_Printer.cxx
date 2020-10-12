@@ -39,7 +39,6 @@ void Fl_Printer::translate(int x, int y) {}
 void Fl_Printer::untranslate(void) {}
 int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
-void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
 bool Fl_Printer::is_current(void) {return false;}
 Fl_Printer::~Fl_Printer(void) {}
@@ -197,11 +196,6 @@ int Fl_Printer::end_page (void)
 void Fl_Printer::end_job (void)
 {
   printer->end_job();
-}
-
-void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
-{
-  printer->draw_decorated_window(win, delta_x, delta_y);
 }
 
 void Fl_Printer::set_current(void)
