@@ -19,12 +19,12 @@
 #include <FL/fl_draw.H> // necessary for FL_EXPORT fl_*_offscreen()
 
 /** Constructor with optional high resolution.
- \param w and \param h set the size of the resulting image. The value of the \p high_res
- parameter controls whether \p w and \p h are interpreted as pixel or FLTK units.
+ \param w,h Width and height of the resulting image. The value of the \p high_res
+ parameter controls whether \p w and \p h are interpreted as pixels or FLTK units.
 
  \param high_res If zero, the created image surface is sized at \p w x \p h pixels.
  If non-zero, the pixel size of the created image surface depends on
- the value of the display scale factor (see Fl_Graphics_Driver::scale()):
+ the value of the display scale factor (see Fl::screen_scale(int)):
  the resulting image has the same number of pixels as an area of the display of size
  \p w x \p h expressed in FLTK units.
 
