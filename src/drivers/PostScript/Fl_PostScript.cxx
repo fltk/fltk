@@ -20,56 +20,31 @@
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
+#include "Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
 #include <FL/fl_string.h>
+#include <FL/platform.H>
 #include <stdarg.h>
 #include <time.h>
+#if USE_PANGO
+#include <FL/math.h> // for M_PI
+#include <pango/pangocairo.h>
+#include <cairo/cairo-ps.h>
+#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
+#endif
 
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
-
-/**
- \brief The constructor.
- */
-Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
-{
-  close_cmd_ = 0;
-  //lang_level_ = 3;
-  lang_level_ = 2;
-  mask = 0;
-  ps_filename_ = NULL;
-  scale_x = scale_y = 1.;
-  bg_r = bg_g = bg_b = 255;
-}
-
-/** \brief The destructor. */
-Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
-  if(ps_filename_) free(ps_filename_);
-}
-
-/**
- \}
- \endcond
- */
-
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
   Fl_Surface_Device::driver( new Fl_PostScript_Graphics_Driver() );
 }
 
-Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
-{
-  return (Fl_PostScript_Graphics_Driver*)Fl_Surface_Device::driver();
+FILE *Fl_PostScript_File_Device::file() {
+  return driver()->file();
 }
-
 
 int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::Page_Format format,
                                           enum Fl_Paged_Device::Page_Layout layout)
@@ -86,7 +61,7 @@ int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::P
   if(ps->output == NULL) return 2;
   ps->ps_filename_ = fl_strdup(fnfc.filename());
   ps->start_postscript(pagecount, format, layout);
-  this->set_current();
+  Fl_Surface_Device::push_current(this);
   return 0;
 }
 
@@ -105,7 +80,7 @@ int Fl_PostScript_File_Device::begin_job (FILE *ps_output, int pagecount,
   ps->ps_filename_ = NULL;
   ps->start_postscript(pagecount, format, layout);
   ps->close_command(dont_close); // so that end_job() doesn't close the file
-  this->set_current();
+  Fl_Surface_Device::push_current(this);
   return 0;
 }
 
@@ -124,6 +99,158 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
  \addtogroup DriverDeveloper
  \{
  */
+
+static const int dashes_flat[5][7]={
+{-1,0,0,0,0,0,0},
+{3,1,-1,0,0,0,0},
+{1,1,-1,0,0,0,0},
+{3,1,1,1,-1,0,0},
+{3,1,1,1,1,1,-1}
+};
+
+//yeah, hack...
+static const double dashes_cap[5][7]={
+{-1,0,0,0,0,0,0},
+{2,2,-1,0,0,0,0},
+{0.01,1.99,-1,0,0,0,0},
+{2,2,0.01,1.99,-1,0,0},
+{2,2,0.01,1.99,0.01,1.99,-1}
+};
+
+/**
+ \brief The constructor.
+ */
+Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
+{
+  close_cmd_ = 0;
+  //lang_level_ = 3;
+  lang_level_ = 2;
+  mask = 0;
+  ps_filename_ = NULL;
+  scale_x = scale_y = 1.;
+  bg_r = bg_g = bg_b = 255;
+  clip_ = NULL;
+}
+
+/** \brief The destructor. */
+Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
+  if(ps_filename_) free(ps_filename_);
+}
+
+
+#if ! USE_PANGO
+static const char *_fontNames[] = {
+"Helvetica2B",
+"Helvetica-Bold2B",
+"Helvetica-Oblique2B",
+"Helvetica-BoldOblique2B",
+"Courier2B",
+"Courier-Bold2B",
+"Courier-Oblique2B",
+"Courier-BoldOblique2B",
+"Times-Roman2B",
+"Times-Bold2B",
+"Times-Italic2B",
+"Times-BoldItalic2B",
+"Symbol",
+"Courier2B",
+"Courier-Bold2B",
+"ZapfDingbats"
+};
+#endif
+
+void Fl_PostScript_Graphics_Driver::font(int f, int s) {
+  Fl_Graphics_Driver& driver = Fl_Graphics_Driver::default_driver();
+  driver.font(f,s); // Use display fonts for font measurement
+  Fl_Graphics_Driver::font(f, s);
+  Fl_Font_Descriptor *desc = driver.font_descriptor();
+  this->font_descriptor(desc);
+#if ! USE_PANGO
+  if (f < FL_FREE_FONT) {
+    fprintf(output, "/%s SF\n" , _fontNames[f]);
+    float ps_size = driver.scale_font_for_PostScript(desc, s);
+    clocale_printf("%.1f FS\n", ps_size);
+  }
+#endif
+}
+
+double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
+  return Fl_Graphics_Driver::default_driver().width(s, n);
+}
+
+double Fl_PostScript_Graphics_Driver::width(unsigned u) {
+  return Fl_Graphics_Driver::default_driver().width(u);
+}
+
+int Fl_PostScript_Graphics_Driver::height() {
+  return Fl_Graphics_Driver::default_driver().height();
+}
+
+int Fl_PostScript_Graphics_Driver::descent() {
+  return Fl_Graphics_Driver::default_driver().descent();
+}
+
+void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  Fl_Graphics_Driver::default_driver().text_extents(c, n, dx, dy, w, h);
+}
+
+
+void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
+  Fl::get_color(c, cr_, cg_, cb_);
+  color(cr_, cg_, cb_);
+}
+
+void Fl_PostScript_Graphics_Driver::point(int x, int y){
+  rectf(x,y,1,1);
+}
+
+int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
+  if (!clip_) return 1;
+  if (clip_->w < 0) return 1;
+  int X = 0, Y = 0, W = 0, H = 0;
+  clip_box(x, y, w, h, X, Y, W, H);
+  if (W) return 1;
+  return 0;
+}
+
+int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
+  if (!clip_) {
+    X = x; Y = y; W = w; H = h;
+    return 0;
+  }
+  if (clip_->w < 0) {
+    X = x; Y = y; W = w; H = h;
+    return 1;
+  }
+  int ret = 0;
+  if (x > (X=clip_->x)) {X=x; ret=1;}
+  if (y > (Y=clip_->y)) {Y=y; ret=1;}
+  if ((x+w) < (clip_->x+clip_->w)) {
+    W=x+w-X;
+
+    ret=1;
+
+  }else
+    W = clip_->x + clip_->w - X;
+  if(W<0){
+    W=0;
+    return 1;
+  }
+  if ((y+h) < (clip_->y+clip_->h)) {
+    H=y+h-Y;
+    ret=1;
+  }else
+    H = clip_->y + clip_->h - Y;
+  if(H<0){
+    W=0;
+    H=0;
+    return 1;
+  }
+  return ret;
+}
+
+
+#if ! USE_PANGO
 
 int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 {
@@ -583,8 +710,8 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
 }
 
 int Fl_PostScript_Graphics_Driver::start_eps (int width, int height) {
-  width_ = width;
-  height_ = height;
+  pw_ = width;
+  ph_ = height;
   fputs("%!PS-Adobe-3.0 EPSF-3.0\n", output);
   fputs("%%Creator: (FLTK)\n", output);
   fprintf(output,"%%%%BoundingBox: 1 1 %d %d\n", width, height);
@@ -610,7 +737,7 @@ int Fl_PostScript_Graphics_Driver::start_eps (int width, int height) {
   reset();
   nPages=0;
   fprintf(output, "GS\n");
-  clocale_printf( "%g %g TR\n", (double)0, height_);
+  clocale_printf( "%g %g TR\n", (double)0, ph_);
   fprintf(output, "1 -1 SC\n");
   line_style(0);
   fprintf(output, "GS GS\n");
@@ -854,29 +981,6 @@ void Fl_PostScript_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int 
   fprintf(output, "GR\n");
 }
 
-void Fl_PostScript_Graphics_Driver::point(int x, int y){
-  rectf(x,y,1,1);
-}
-
-static const int dashes_flat[5][7]={
-{-1,0,0,0,0,0,0},
-{3,1,-1,0,0,0,0},
-{1,1,-1,0,0,0,0},
-{3,1,1,1,-1,0,0},
-{3,1,1,1,1,1,-1}
-};
-
-
-//yeah, hack...
-static const double dashes_cap[5][7]={
-{-1,0,0,0,0,0,0},
-{2,2,-1,0,0,0,0},
-{0.01,1.99,-1,0,0,0,0},
-{2,2,0.01,1.99,-1,0,0},
-{2,2,0.01,1.99,0.01,1.99,-1}
-};
-
-
 void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashes){
   //line_styled_=1;
 
@@ -933,64 +1037,6 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
     }
   }
   fprintf(output, "] 0 setdash\n");
-}
-
-static const char *_fontNames[] = {
-"Helvetica2B",
-"Helvetica-Bold2B",
-"Helvetica-Oblique2B",
-"Helvetica-BoldOblique2B",
-"Courier2B",
-"Courier-Bold2B",
-"Courier-Oblique2B",
-"Courier-BoldOblique2B",
-"Times-Roman2B",
-"Times-Bold2B",
-"Times-Italic2B",
-"Times-BoldItalic2B",
-"Symbol",
-"Courier2B",
-"Courier-Bold2B",
-"ZapfDingbats"
-};
-
-void Fl_PostScript_Graphics_Driver::font(int f, int s) {
-  Fl_Graphics_Driver& driver = Fl_Graphics_Driver::default_driver();
-  driver.font(f,s); // Use display fonts for font measurement
-  Fl_Graphics_Driver::font(f, s);
-  Fl_Font_Descriptor *desc = driver.font_descriptor();
-  this->font_descriptor(desc);
-  if (f < FL_FREE_FONT) {
-    fprintf(output, "/%s SF\n" , _fontNames[f]);
-    float ps_size = driver.scale_font_for_PostScript(desc, s);
-    clocale_printf("%.1f FS\n", ps_size);
-  }
-}
-
-double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
-  return Fl_Graphics_Driver::default_driver().width(s, n);
-}
-
-double Fl_PostScript_Graphics_Driver::width(unsigned u) {
-  return Fl_Graphics_Driver::default_driver().width(u);
-}
-
-int Fl_PostScript_Graphics_Driver::height() {
-  return Fl_Graphics_Driver::default_driver().height();
-}
-
-int Fl_PostScript_Graphics_Driver::descent() {
-  return Fl_Graphics_Driver::default_driver().descent();
-}
-
-void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  Fl_Graphics_Driver::default_driver().text_extents(c, n, dx, dy, w, h);
-}
-
-
-void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
-  Fl::get_color(c, cr_, cg_, cb_);
-  color(cr_, cg_, cb_);
 }
 
 void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
@@ -1375,51 +1421,6 @@ void Fl_PostScript_Graphics_Driver::pop_clip() {
     recover();
 }
 
-int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
-  if (!clip_) {
-    X = x; Y = y; W = w; H = h;
-    return 0;
-  }
-  if (clip_->w < 0) {
-    X = x; Y = y; W = w; H = h;
-    return 1;
-  }
-  int ret = 0;
-  if (x > (X=clip_->x)) {X=x; ret=1;}
-  if (y > (Y=clip_->y)) {Y=y; ret=1;}
-  if ((x+w) < (clip_->x+clip_->w)) {
-    W=x+w-X;
-
-    ret=1;
-
-  }else
-    W = clip_->x + clip_->w - X;
-  if(W<0){
-    W=0;
-    return 1;
-  }
-  if ((y+h) < (clip_->y+clip_->h)) {
-    H=y+h-Y;
-    ret=1;
-  }else
-    H = clip_->y + clip_->h - Y;
-  if(H<0){
-    W=0;
-    H=0;
-    return 1;
-  }
-  return ret;
-}
-
-int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
-  if (!clip_) return 1;
-  if (clip_->w < 0) return 1;
-  int X = 0, Y = 0, W = 0, H = 0;
-  clip_box(x, y, w, h, X, Y, W, H);
-  if (W) return 1;
-  return 0;
-}
-
 void Fl_PostScript_Graphics_Driver::ps_origin(int x, int y)
 {
   clocale_printf("GR GR GS %d %d TR  %f %f SC %d %d TR %f rotate GS\n",
@@ -1435,6 +1436,514 @@ void Fl_PostScript_Graphics_Driver::ps_untranslate(void)
 {
   fprintf(output, "GR GR\n");
 }
+
+# else
+
+/* Cairo-based implementation of the PostScript graphics driver */
+
+static cairo_status_t write_to_cairo_stream(FILE *output, unsigned char *data, unsigned int length) {
+  size_t l = fwrite(data, 1, length, output);
+  return (l == length ? CAIRO_STATUS_SUCCESS : CAIRO_STATUS_WRITE_ERROR);
+}
+
+static int init_cairo_postscript(FILE* output, cairo_t* &cairo_, PangoLayout* &pango_layout,
+                                     int w, int h) {
+  cairo_surface_t* cs = cairo_ps_surface_create_for_stream((cairo_write_func_t)write_to_cairo_stream, output, w, h);
+  if (cairo_surface_status(cs) != CAIRO_STATUS_SUCCESS) return 1;
+  cairo_ps_surface_restrict_to_level(cs, CAIRO_PS_LEVEL_2);
+  cairo_ = cairo_create(cs);
+  pango_layout = pango_cairo_create_layout(cairo_);
+  return 0;
+}
+
+int Fl_PostScript_Graphics_Driver::start_postscript(int pagecount,
+    enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout)
+//returns 0 iff OK
+{
+  if (format == Fl_Paged_Device::A4) {
+    left_margin = 18;
+    top_margin = 18;
+  }
+  else {
+    left_margin = 12;
+    top_margin = 12;
+  }
+  page_format_ = (enum Fl_Paged_Device::Page_Format)(format | layout);
+  if (layout & Fl_Paged_Device::LANDSCAPE){
+    ph_ = Fl_Paged_Device::page_formats[format].width;
+    pw_ = Fl_Paged_Device::page_formats[format].height;
+  } else {
+    pw_ = Fl_Paged_Device::page_formats[format].width;
+    ph_ = Fl_Paged_Device::page_formats[format].height;
+  }
+  if (init_cairo_postscript(output, cairo_, pango_layout_, Fl_Paged_Device::page_formats[format].width, Fl_Paged_Device::page_formats[format].height)) return 1;
+  nPages=0;
+  char feature[250];
+  sprintf(feature, "%%%%BeginFeature: *PageSize %s\n<</PageSize[%d %d]>>setpagedevice\n%%%%EndFeature",
+          Fl_Paged_Device::page_formats[format].name, Fl_Paged_Device::page_formats[format].width, Fl_Paged_Device::page_formats[format].height);
+  cairo_ps_surface_dsc_comment(cairo_get_target(cairo_), feature);
+  return 0;
+}
+
+int Fl_PostScript_Graphics_Driver::start_eps(int width, int height) {
+  pw_ = width;
+  ph_ = height;
+  if (init_cairo_postscript(output, cairo_, pango_layout_, width, height)) return 1;
+  cairo_ps_surface_set_eps(cairo_get_target(cairo_), true);
+  nPages=0; //useful?
+  return 0;
+}
+
+void Fl_PostScript_Graphics_Driver::rectf(int x, int y, int w, int h) {
+  cairo_rectangle(cairo_, x, y, w, h);
+  cairo_fill(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::rect(int x, int y, int w, int h) {
+  cairo_rectangle(cairo_, x, y, w, h);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::line(int x1, int y1, int x2, int y2) {
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_stroke(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::line(int x0, int y0, int x1, int y1, int x2, int y2) {
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x0, y0);
+  cairo_line_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_stroke(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x1, y);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x1, y);
+  cairo_line_to(cairo_, x1, y2);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x1, y);
+  cairo_line_to(cairo_, x1, y2);
+  cairo_line_to(cairo_, x3, y2);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x, y1);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x, y1);
+  cairo_line_to(cairo_, x2, y1);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+  cairo_move_to(cairo_, x, y);
+  cairo_line_to(cairo_, x, y1);
+  cairo_line_to(cairo_, x2, y1);
+  cairo_line_to(cairo_, x2, y3);
+  cairo_stroke(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
+  cairo_save(cairo_);
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x0, y0);
+  cairo_line_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_close_path(cairo_);
+  cairo_stroke(cairo_);
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  cairo_save(cairo_);
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x0, y0);
+  cairo_line_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_line_to(cairo_, x3, y3);
+  cairo_close_path(cairo_);
+  cairo_stroke(cairo_);
+  cairo_restore(cairo_);
+
+}
+
+void Fl_PostScript_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
+  cairo_save(cairo_);
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x0, y0);
+  cairo_line_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_close_path(cairo_);
+  cairo_fill(cairo_);
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  cairo_save(cairo_);
+  cairo_new_path(cairo_);
+  cairo_move_to(cairo_, x0, y0);
+  cairo_line_to(cairo_, x1, y1);
+  cairo_line_to(cairo_, x2, y2);
+  cairo_line_to(cairo_, x3, y3);
+  cairo_close_path(cairo_);
+  cairo_fill(cairo_);
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashes) {
+  linewidth_=width;
+  linestyle_=style;
+  if(dashes){
+    if(dashes != linedash_)
+      strcpy(linedash_,dashes);
+    
+  } else
+    linedash_[0]=0;
+  char width0 = 0;
+  if (!width){
+    width=1; //for screen drawing compatibility
+    width0=1;
+  }
+  cairo_set_line_width(cairo_, width);
+  
+  if(!style && (!dashes || !(*dashes)) && width0) //system lines
+    style = FL_CAP_SQUARE;
+  
+  int cap = (style &0xf00);
+  cairo_line_cap_t c_cap;
+  if (cap == FL_CAP_SQUARE) c_cap = CAIRO_LINE_CAP_SQUARE;
+  else if (cap == FL_CAP_FLAT) c_cap = CAIRO_LINE_CAP_BUTT;
+  else if (cap == FL_CAP_ROUND) c_cap = CAIRO_LINE_CAP_ROUND;
+  else c_cap = CAIRO_LINE_CAP_BUTT;
+  cairo_set_line_cap(cairo_, c_cap);
+  
+  int join = (style & 0xf000);
+  cairo_line_join_t c_join;
+  if (join == FL_JOIN_MITER) c_join = CAIRO_LINE_JOIN_MITER;
+  else if (join == FL_JOIN_ROUND)c_join = CAIRO_LINE_JOIN_ROUND;
+  else if (join == FL_JOIN_BEVEL) c_join = CAIRO_LINE_JOIN_BEVEL;
+  else c_join = CAIRO_LINE_JOIN_MITER;
+  cairo_set_line_join(cairo_, c_join);
+  
+  double *ddashes = NULL;
+  int l = 0;
+  if (dashes && *dashes){
+    ddashes = new double[strlen(dashes)];
+    while (dashes[l]) {ddashes[l] = dashes[l]; l++; }
+  } else if (style & 0xff) {
+    ddashes = new double[6];
+    if (style & 0x200){ // round and square caps, dash length need to be adjusted
+      const double *dt = dashes_cap[style & 0xff];
+      while (*dt >= 0){
+        ddashes[l++] = width * (*dt);
+        dt++;
+      }
+    } else {
+      const int *ds = dashes_flat[style & 0xff];
+      while (*ds >= 0){
+        ddashes[l++] = width * (*ds);
+        ds++;
+      }
+    }
+  }
+  cairo_set_dash(cairo_, ddashes, l, 0);
+  delete[] ddashes;
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
+  Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
+  cr_ = r; cg_ = g; cb_ = b;
+  double fr, fg, fb;
+  fr = r/255.0;
+  fg = g/255.0;
+  fb = b/255.0;
+  cairo_set_source_rgb(cairo_, fr, fg, fb);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::draw(int rotation, const char *str, int n, int x, int y)
+{
+  cairo_save(cairo_);
+  cairo_translate(cairo_, x, y);
+  cairo_rotate(cairo_, -rotation * M_PI / 180);
+  this->transformed_draw(str, n, 0, 0);
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
+  if (!n) return;
+  pango_layout_set_font_description(pango_layout_, Fl_Xlib_Graphics_Driver::pango_font_description(Fl_Graphics_Driver::font()));
+  int pwidth, pheight;
+  cairo_save(cairo_);
+  pango_layout_set_text(pango_layout_, str, n);
+  pango_layout_get_size(pango_layout_, &pwidth, &pheight);
+  if (pwidth > 0) {
+    double s = width(str, n);
+    cairo_translate(cairo_, x, y - height() + descent());
+    s = (s/pwidth) * PANGO_SCALE;
+    cairo_scale(cairo_, s, s);
+    pango_cairo_show_layout(cairo_, pango_layout_);
+  }
+  cairo_restore(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
+  int w = (int)width(str, n);
+  transformed_draw(str, n, x - w, y);
+}
+
+void Fl_PostScript_Graphics_Driver::concat(){
+  cairo_matrix_t mat = {fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y};
+  cairo_transform(cairo_, &mat);
+}
+
+void Fl_PostScript_Graphics_Driver::reconcat(){
+  cairo_matrix_t mat = {fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y};
+  cairo_status_t stat = cairo_matrix_invert(&mat);
+  if (stat != CAIRO_STATUS_SUCCESS) {
+    fputs("error in cairo_matrix_invert\n", stderr);
+  }
+  cairo_transform(cairo_, &mat);
+}
+
+void Fl_PostScript_Graphics_Driver::begin_points() {
+  cairo_save(cairo_);
+  concat();
+  cairo_new_path(cairo_);
+  gap_=1;
+  shape_=POINTS;
+}
+
+void Fl_PostScript_Graphics_Driver::begin_line() {
+  cairo_save(cairo_);
+  concat();
+  cairo_new_path(cairo_);
+  gap_=1;
+  shape_=LINE;
+}
+
+void Fl_PostScript_Graphics_Driver::begin_loop() {
+  cairo_save(cairo_);
+  concat();
+  cairo_new_path(cairo_);
+  gap_=1;
+  shape_=LOOP;
+}
+
+void Fl_PostScript_Graphics_Driver::begin_polygon() {
+  cairo_save(cairo_);
+  concat();
+  cairo_new_path(cairo_);
+  gap_=1;
+  shape_=POLYGON;
+}
+
+void Fl_PostScript_Graphics_Driver::vertex(double x, double y) {
+  if(shape_==POINTS){
+    cairo_move_to(cairo_, x, y);
+    gap_=1;
+    return;
+  }
+  if(gap_){
+    cairo_move_to(cairo_, x, y);
+    gap_=0;
+  }else
+    cairo_line_to(cairo_, x, y);
+}
+
+void Fl_PostScript_Graphics_Driver::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3)
+{
+  if(shape_==NONE) return;
+  if(gap_)
+    cairo_move_to(cairo_, x, y);
+  else
+    cairo_line_to(cairo_, x, y);
+  gap_=0;
+  cairo_curve_to(cairo_, x1 , y1 , x2 , y2 , x3 , y3);
+}
+
+void Fl_PostScript_Graphics_Driver::circle(double x, double y, double r){
+  if (shape_==NONE){
+    cairo_save(cairo_);
+    concat();
+    cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
+    reconcat();
+    cairo_restore(cairo_);
+  } else
+    cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
+}
+
+void Fl_PostScript_Graphics_Driver::arc(double x, double y, double r, double start, double a){
+  if (shape_==NONE) return;
+  gap_ = 0;
+  if(start > a)
+    cairo_arc(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
+  else
+    cairo_arc_negative(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
+}
+
+void Fl_PostScript_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
+  if (w <= 1 || h <= 1) return;
+  cairo_save(cairo_);
+  begin_line();
+  cairo_translate(cairo_, x + w/2.0 -0.5 , y + h/2.0 - 0.5);
+  cairo_scale(cairo_, (w-1)/2.0 , (h-1)/2.0);
+  arc(0,0,1,a2,a1);
+  cairo_scale(cairo_, 2.0/(w-1) , 2.0/(h-1));
+  cairo_translate(cairo_, -x - w/2.0 +0.5 , -y - h/2.0 +0.5);
+  end_line();
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double a2) {
+  cairo_save(cairo_);
+  begin_polygon();
+  cairo_translate(cairo_, x + w/2.0 -0.5 , y + h/2.0 - 0.5);
+  cairo_scale(cairo_, (w-1)/2.0 , (h-1)/2.0);
+  vertex(0,0);
+  arc(0.0,0.0, 1, a2, a1);
+  end_polygon();
+  cairo_restore(cairo_);
+}
+
+void Fl_PostScript_Graphics_Driver::end_points() {
+  end_line();
+}
+
+void Fl_PostScript_Graphics_Driver::end_line() {
+  gap_=1;
+  reconcat();
+  cairo_stroke(cairo_);
+  cairo_restore(cairo_);
+  shape_=NONE;
+}
+
+void Fl_PostScript_Graphics_Driver::end_loop(){
+  gap_=1;
+  reconcat();
+  cairo_close_path(cairo_);
+  cairo_stroke(cairo_);
+  cairo_restore(cairo_);
+  shape_=NONE;
+}
+
+void Fl_PostScript_Graphics_Driver::end_polygon() {
+  gap_=1;
+  reconcat();
+  cairo_close_path(cairo_);
+  cairo_fill(cairo_);
+  cairo_restore(cairo_);
+  shape_=NONE;
+}
+
+void Fl_PostScript_Graphics_Driver::transformed_vertex(double x, double y) {
+  reconcat();
+  if(gap_){
+    cairo_move_to(cairo_, x, y);
+    gap_=0;
+  }else
+    cairo_line_to(cairo_, x, y);
+  concat();
+}
+
+void Fl_PostScript_Graphics_Driver::push_clip(int x, int y, int w, int h) {
+  Clip * c=new Clip();
+  clip_box(x,y,w,h,c->x,c->y,c->w,c->h);
+  c->prev=clip_;
+  clip_=c;
+  cairo_save(cairo_);
+  cairo_rectangle(cairo_, clip_->x-0.5 , clip_->y-0.5 , clip_->w  , clip_->h);
+  cairo_clip(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::push_no_clip() {
+  Clip * c = new Clip();
+  c->prev=clip_;
+  clip_=c;
+  clip_->x = clip_->y = clip_->w = clip_->h = -1;
+  cairo_save(cairo_);
+  cairo_reset_clip(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::pop_clip() {
+  if(!clip_)return;
+  Clip * c=clip_;
+  clip_=clip_->prev;
+  delete c;
+  cairo_restore(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::ps_origin(int x, int y) {
+  cairo_restore(cairo_);
+  cairo_restore(cairo_);
+  cairo_save(cairo_);
+  cairo_scale(cairo_, scale_x, scale_y);
+  cairo_translate(cairo_, x, y);
+  cairo_rotate(cairo_, angle * M_PI / 180);
+  cairo_save(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::ps_translate(int x, int y)
+{
+  cairo_save(cairo_);
+  cairo_translate(cairo_, x, y);
+  cairo_save(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::ps_untranslate(void)
+{
+  cairo_restore(cairo_);
+  cairo_restore(cairo_);
+  check_status();
+}
+
+void Fl_PostScript_Graphics_Driver::check_status(void) {
+#ifdef DEBUG
+  if (cairo_status(cairo_) !=  CAIRO_STATUS_SUCCESS) {
+    fprintf(stderr,"we have a problem");
+  }
+#endif
+}
+
+#endif // USE_PANGO
+
+/**
+\}
+\endcond
+*/
 
 void Fl_PostScript_File_Device::margins(int *left, int *top, int *right, int *bottom) // to implement
 {
@@ -1472,16 +1981,35 @@ void Fl_PostScript_File_Device::scale (float s_x, float s_y)
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->scale_x = s_x;
   ps->scale_y = s_y;
+#if USE_PANGO
+  cairo_restore(ps->cr());
+  cairo_restore(ps->cr());
+  cairo_save(ps->cr());
+  cairo_scale(ps->cr(), s_x, s_y);
+  cairo_rotate(ps->cr(), ps->angle * M_PI / 180);
+  cairo_save(ps->cr());
+#else
   ps->clocale_printf("GR GR GS %d %d TR  %f %f SC %f rotate GS\n",
           ps->left_margin, ps->top_margin, ps->scale_x, ps->scale_y, ps->angle);
+#endif
 }
 
 void Fl_PostScript_File_Device::rotate (float rot_angle)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->angle = - rot_angle;
+#if USE_PANGO
+  cairo_restore(ps->cr());
+  cairo_restore(ps->cr());
+  cairo_save(ps->cr());
+  cairo_scale(ps->cr(), ps->scale_x, ps->scale_y);
+  cairo_translate(ps->cr(), x_offset, y_offset);
+  cairo_rotate(ps->cr(), ps->angle * M_PI / 180);
+  cairo_save(ps->cr());
+#else
   ps->clocale_printf("GR GR GS %d %d TR  %f %f SC %d %d TR %f rotate GS\n",
           ps->left_margin, ps->top_margin, ps->scale_x, ps->scale_y, x_offset, y_offset, ps->angle);
+#endif
 }
 
 void Fl_PostScript_File_Device::translate(int x, int y)
@@ -1497,17 +2025,45 @@ void Fl_PostScript_File_Device::untranslate(void)
 int Fl_PostScript_File_Device::begin_page (void)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
+#if USE_PANGO
+  cairo_ps_surface_dsc_begin_page_setup(cairo_get_target(ps->cr()));
+  char feature[200];
+  sprintf(feature, "%%%%PageOrientation: %s", ps->pw_ > ps->ph_ ? "Landscape" : "Portrait");
+  cairo_ps_surface_dsc_comment(cairo_get_target(ps->cr()), feature);
+  if (ps->pw_ > ps->ph_) {
+    cairo_translate(ps->cr(), 0, ps->pw_);
+    cairo_rotate(ps->cr(), -M_PI/2);
+  }
+  cairo_translate(ps->cr(), ps->left_margin, ps->top_margin);
+  cairo_set_line_width(ps->cr(), 1);
+  cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
+  cairo_save(ps->cr());
+  cairo_save(ps->cr());
+  cairo_save(ps->cr());
+  ps->check_status();
+#else
   ps->page(ps->page_format_);
+#endif
   x_offset = 0;
   y_offset = 0;
   ps->scale_x = ps->scale_y = 1.;
   ps->angle = 0;
+#if ! USE_PANGO
   fprintf(ps->output, "GR GR GS %d %d translate GS\n", ps->left_margin, ps->top_margin);
+#endif
   return 0;
 }
 
 int Fl_PostScript_File_Device::end_page (void)
 {
+#if USE_PANGO
+  Fl_PostScript_Graphics_Driver *ps = (Fl_PostScript_Graphics_Driver*)driver();
+  cairo_restore(ps->cr());
+  cairo_restore(ps->cr());
+  cairo_restore(ps->cr());
+  cairo_show_page(ps->cr());
+  ps->check_status();
+#endif
   return 0;
 }
 
@@ -1515,6 +2071,20 @@ void Fl_PostScript_File_Device::end_job (void)
 // finishes PostScript & closes file
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
+  int error = 0;
+#if USE_PANGO
+  cairo_surface_t *s = cairo_get_target(ps->cr());
+  cairo_surface_finish(s);
+  error = cairo_surface_status(s);
+  if (error) {
+    fclose(ps->output);
+    fputs("\n", ps->output); // creates an stdio error
+  }
+  cairo_destroy(ps->cr());
+  cairo_surface_destroy(s);
+  g_object_unref(ps->pango_layout());
+  if (!error) error = fflush(ps->output);
+#else
   if (ps->nPages) {  // for eps nPages is 0 so it is fine ....
     fprintf(ps->output, "CR\nGR\nGR\nGR\nSP\n restore\n");
     if (!ps->pages_){
@@ -1524,81 +2094,103 @@ void Fl_PostScript_File_Device::end_job (void)
   } else
     fprintf(ps->output, "GR\n restore\n");
   fputs("%%EOF",ps->output);
-  ps->reset();
   fflush(ps->output);
-  if(ferror(ps->output)) {
-    fl_alert ("Error during PostScript data output.");
-    }
-  if (ps->close_cmd_) {
-    (*ps->close_cmd_)(ps->output);
-  } else {
-    fclose(ps->output);
-    }
+  error = ferror(ps->output);
+  ps->reset();
+#endif
   while (ps->clip_){
     Fl_PostScript_Graphics_Driver::Clip * c= ps->clip_;
     ps->clip_= ps->clip_->prev;
     delete c;
   }
-  Fl_Display_Device::display_device()->set_current();
+  Fl_Surface_Device::pop_current();
+  int err2 = (ps->close_cmd_ ? (ps->close_cmd_)(ps->output) : fclose(ps->output) );
+  if (!error) error = err2;
+  if (error && ps->close_cmd_ == NULL) {
+    fl_alert ("Error during PostScript data output.");
+    }
 }
 
-/**
-\}
-\endcond
-*/
-
-Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background) :
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background, Fl_PostScript_Close_Command closef) :
         Fl_Widget_Surface(new Fl_PostScript_Graphics_Driver()) {
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = eps;
+  ps->close_cmd_ = closef;
   if (ps->output) {
     float s = Fl::screen_scale(0);
     ps->start_eps(width*s, height*s);
+#if USE_PANGO
+      cairo_save(ps->cr());
+      ps->left_margin = ps->top_margin = 0;
+      cairo_scale(ps->cr(), s, s);
+      cairo_set_line_width(ps->cr(), 1);
+      cairo_set_source_rgb(ps->cr(), 1.0, 1.0, 1.0); // white background
+      cairo_save(ps->cr());
+      cairo_save(ps->cr());
+      ps->check_status();
+#else
     if (s != 1) {
       ps->clocale_printf("GR GR GS %f %f SC GS\n", s, s);
-      ps->scale_x = ps->scale_y = s;
     }
+#endif
+    ps->scale_x = ps->scale_y = s;
     Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
   }
 }
 
-void Fl_EPS_File_Surface::complete_() {
+int Fl_EPS_File_Surface::close() {
+  int error = 0;
   Fl_PostScript_Graphics_Driver *ps = driver();
+#if USE_PANGO
+  cairo_surface_t *s = cairo_get_target(ps->cr());
+  cairo_surface_finish(s);
+  cairo_status_t status = cairo_surface_status(s);
+  cairo_destroy(ps->cr());
+  cairo_surface_destroy(s);
+  g_object_unref(ps->pango_layout());
+  fflush(ps->output);
+  error = ferror(ps->output);
+  if (status !=  CAIRO_STATUS_SUCCESS) error = status;
+#else
   if(ps->output) {
     fputs("GR\nend %matches begin of FLTK dict\n", ps->output);
     fputs("restore\n", ps->output);
     fputs("%%EOF\n", ps->output);
     ps->reset();
     fflush(ps->output);
-    if(ferror(ps->output)) {
-      fl_alert ("Error during PostScript data output.");
-    }
+    error = ferror(ps->output);
   }
+#endif
+  int err2 = (ps->close_cmd_ ? (ps->close_cmd_)(ps->output) : fclose(ps->output));
+  if (err2) error = err2;
   while (ps->clip_){
     Fl_PostScript_Graphics_Driver::Clip * c= ps->clip_;
     ps->clip_= ps->clip_->prev;
     delete c;
   }
+  ps->output = NULL;
+  return error;
 }
 
 Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {
-  Fl_PostScript_Graphics_Driver *ps = driver();
-  if(ps->output) complete_();
-  delete ps;
+  if (driver()->output) {
+    if ( close() ) {
+      fl_open_display();
+      fl_alert ("Error during encapsulated PostScript data output.");
+    }
+  }
+  delete driver();
 }
 
-int Fl_EPS_File_Surface::close() {
-  complete_();
+FILE *Fl_EPS_File_Surface::file() {
   Fl_PostScript_Graphics_Driver *ps = driver();
-  int retval = fclose(ps->output);
-  ps->output = NULL;
-  return retval;
+  return ps ? ps->output : NULL;
 }
 
 int Fl_EPS_File_Surface::printable_rect(int *w, int *h) {
   Fl_PostScript_Graphics_Driver *ps = driver();
-  *w = ps->width_;
-  *h = ps->height_;
+  *w = int(ps->pw_);
+  *h = int(ps->ph_);
   return 0;
 }
 

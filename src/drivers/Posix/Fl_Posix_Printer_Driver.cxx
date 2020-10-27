@@ -1,7 +1,7 @@
 //
 // PostScript priting support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,7 @@
 #if defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
 
 #include <FL/Fl_PostScript.H>
+#include "../PostScript/Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl_Printer.H>
 #include <FL/fl_ask.H>
 
@@ -326,7 +327,7 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     return 2;
   }
   ps->close_command(pclose);
-  this->set_current();
+  Fl_Surface_Device::push_current(this);
   return ps->start_postscript(pages, format, layout); // start printing
 }
 

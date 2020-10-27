@@ -1108,7 +1108,14 @@ case $host_os_gui in
           if test x$PKGCONFIG != x; then
             CXXFLAGS="`$PKGCONFIG --cflags pangoxft` $CXXFLAGS"
             LIBS="`$PKGCONFIG --libs pangoxft` $LIBS"
-          else
+            CXXFLAGS="`$PKGCONFIG --cflags pangocairo` $CXXFLAGS"
+            LIBS="`$PKGCONFIG --libs pangocairo` $LIBS"
+            case $host_os in
+   		 darwin*)
+         	   LDFLAGS="-L/opt/sw/lib -L/sw/lib $LDFLAGS"
+       		 ;;
+	    esac
+         else
             case $host_os in
                 linux*)
                     CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
