@@ -617,7 +617,12 @@ void copy(Fl_Widget *, void *data) {
     }
     if (!err) {
       p->begin_page();
-      if (target->as_window()) p->print_window(target->as_window());
+      if (target->as_window()) {
+        int w, h;
+        p->printable_rect(&w, &h);
+        p->origin(w/2, h/2);
+        p->print_window(target->as_window(), -target->w()/2, -target->h()/2);
+      }
       else p->print_widget(target);
       p->end_page();
       p->end_job();
@@ -646,10 +651,8 @@ void copy(Fl_Widget *, void *data) {
         if (p.file()) {
           if (target->as_window()) p.draw_decorated_window(target->as_window());
           else p.draw(target);
-        //p.close();
         }
       }
-      fclose(eps);
     }
   }
 

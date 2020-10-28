@@ -1,7 +1,7 @@
 //
 // Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -82,6 +82,9 @@ protected:
   static PangoContext *pctxt_;
   static PangoFontMap *pfmap_;
   static PangoLayout *playout_;
+public:
+  static PangoFontDescription* pango_font_description(Fl_Font fnum) { return pfd_array[fnum]; }
+private:
   static PangoFontDescription **pfd_array; // one array element for each Fl_Font
   static int pfd_array_length;
   void do_draw(int from_right, const char *str, int n, int x, int y);

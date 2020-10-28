@@ -2,7 +2,7 @@
 // Encompasses platform-specific printing-support code and
 // PostScript output code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -80,15 +80,19 @@ void Fl_PostScript_File_Device::translate(int x, int y) {}
 void Fl_PostScript_File_Device::untranslate(void) {}
 int Fl_PostScript_File_Device::end_page (void) {return 1;}
 void Fl_PostScript_File_Device::end_job(void) {}
+FILE* Fl_PostScript_File_Device::file() {return NULL;}
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
 
-Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background) : Fl_Widget_Surface(NULL) {}
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps_output,
+                                         Fl_Color background, Fl_PostScript_Close_Command closef) : Fl_Widget_Surface(NULL) {}
 Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {}
 void Fl_EPS_File_Surface::origin(int, int) {}
 void Fl_EPS_File_Surface::origin(int*, int*) {}
 int Fl_EPS_File_Surface::printable_rect(int*, int*) {return 1;}
 void Fl_EPS_File_Surface::translate(int, int) {}
 void Fl_EPS_File_Surface::untranslate() {}
+FILE* Fl_EPS_File_Surface::file() {return NULL;}
+int Fl_EPS_File_Surface::close() {return 1;}
 
 #else
 

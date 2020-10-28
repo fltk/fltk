@@ -3087,7 +3087,7 @@ void Fl_X11_Window_Driver::show() {
 }
 
 
-//#define USE_PRINT_BUTTON 1
+#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
 
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
@@ -3112,6 +3112,7 @@ void printFront(Fl_Widget *o, void *data)
     scale = (float)w/ww;
     if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale, scale);
+    printer.printable_rect(&w, &h);
   }
 
 // #define ROTATE 20.0
@@ -3120,11 +3121,12 @@ void printFront(Fl_Widget *o, void *data)
   printer.printable_rect(&w, &h);
   printer.origin(w/2, h/2 );
   printer.rotate(ROTATE);
-  printer.print_widget( win, - win->w()/2, - win->h()/2 );
+  printer.print_window( win, - win->w()/2, - win->h()/2);
   //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
 #else
-  printer.print_window(win);
-  //printer.print_window_part( win, 0,0, win->w(), win->h(), 0,0 );
+  printer.origin(w/2, h/2 );
+  printer.print_window(win, -ww/2, -wh/2);
+  //printer.print_window_part( win, 0,0, win->w(), win->h(), -ww/2, -wh/2 );
 #endif
 
   printer.end_page();
