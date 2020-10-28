@@ -97,7 +97,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2020
     receiving graphics commands.
   - X11 platform: Added support for drawing text with the pango library
     which allows to draw most scripts supported by Unicode, including CJK
-    and right-to-left scripts. The corresponding CMake option is
+    and right-to-left scripts. FLTK now outputs PostScript that draws
+    those scripts in vectorial form. The corresponding CMake option is
     OPTION_USE_PANGO. The corresponding configure option is --enable-pango.
     This option is OFF by default.
 
