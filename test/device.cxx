@@ -716,7 +716,7 @@ void operation_cb(Fl_Widget* wid, void *data)
 
 int main(int argc, char ** argv) {
 
-  //Fl::scheme("plastic");
+  Fl::scheme("plastic");
 
   Fl_Window * w2 = new Fl_Window(500,568,"Graphics test");
 

@@ -3092,29 +3092,18 @@ void Fl_X11_Window_Driver::show() {
 
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 #include <FL/Fl_Printer.H>
-#include <FL/Fl_PostScript.H>
 #include <FL/Fl_Button.H>
 
 void printFront(Fl_Widget *o, void *data)
 {
   Fl_Printer printer;
-  //FILE *file=fopen("prov.ps","w");
-  //Fl_PostScript_File_Device printer;
   o->window()->hide();
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   int w, h;
-  if( printer.begin_job(1) )
-  //if (printer.begin_job(file, 1, Fl_Paged_Device::A4, Fl_Paged_Device::PORTRAIT))
-  { o->window()->show(); return; }
+  if( printer.begin_job(1) ) { o->window()->show(); return; }
   if( printer.begin_page() ) { o->window()->show(); return; }
   printer.printable_rect(&w,&h);
-int left,right,top,bottom;
-printer.margins(&left,&right,&top,&bottom);
-fl_color(FL_BLUE); fl_line_style(0, 3);
-fl_rect(-left, -top, w+left+right, h+top+bottom);
-fl_line_style(0);
-fl_color(FL_RED);fl_rect(0, 0, w, h);
   // scale the printer device so that the window fits on the page
   float scale = 1;
   int ww = win->decorated_w();
@@ -3137,12 +3126,11 @@ fl_color(FL_RED);fl_rect(0, 0, w, h);
 #else
   printer.origin(w/2, h/2 );
   printer.print_window(win, -ww/2, -wh/2);
-  //printer.print_window_part( win, 0,0, win->w(), win->h(), 0,0 );
+  //printer.print_window_part( win, 0,0, win->w(), win->h(), -ww/2, -wh/2 );
 #endif
 
   printer.end_page();
   printer.end_job();
-  //fclose(file);
   o->window()->show();
 }
 
