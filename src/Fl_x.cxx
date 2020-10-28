@@ -3087,7 +3087,7 @@ void Fl_X11_Window_Driver::show() {
 }
 
 
-#define USE_PRINT_BUTTON 1
+//#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
 
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
