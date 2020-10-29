@@ -758,8 +758,8 @@ void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int Y
     cairo_clip(cairo_); // still to be tested
     if (img->d() >= 1) cairo_set_source(cairo_, pat);
     cairo_matrix_t matrix;
-    cairo_matrix_init_scale(&matrix, double(img->data_w())/img->w(), double(img->data_h())/img->h());
-    cairo_matrix_translate(&matrix, -XP+cx, -YP+cy);
+    cairo_matrix_init_scale(&matrix, double(img->data_w())/(img->w()+1), double(img->data_h())/(img->h()+1));
+    cairo_matrix_translate(&matrix, -XP+0.5+cx, -YP+0.5+cy);
     cairo_pattern_set_matrix(pat, &matrix);
     cairo_mask(cairo_, pat);
     cairo_pattern_destroy(pat);
