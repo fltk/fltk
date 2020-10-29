@@ -41,26 +41,30 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
   const uchar *curdata;
 
   cb_data = (struct callback_data*)data;
+  int last = x+w;
   curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
-
-  memcpy(buf, curdata, w*cb_data->D);
+  for (; x<last; x++) {
+    memcpy(buf, curdata, abs(cb_data->D));
+    buf += abs(cb_data->D);
+    curdata += cb_data->D;
+  }
 }
 
 void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
-  if (D<3){ //mono
+  if (abs(D)<3){ //mono
     draw_image_mono(data, ix, iy, iw, ih, D, LD);
     return;
   }
 
   struct callback_data cb_data;
 
-  if (!LD) LD = iw*D;
-
+  if (!LD) LD = iw*abs(D);
+  if (D<0) data += iw*abs(D);
   cb_data.data = data;
   cb_data.D = D;
   cb_data.LD = LD;
 
-  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, D);
+  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
 }
 
 #if ! USE_PANGO
@@ -407,7 +411,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
     fprintf(output , "%g %g %g %g %i %i CI", x , y+h , w , -h , iw , ih);
   }
 
-  int LD=iw*D;
+  int LD=iw*abs(D);
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
   void *big = prepare_rle85();
@@ -450,7 +454,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
         uchar g =  curdata[1];
         uchar b =  curdata[2];
 
-        if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
+        if (lang_level_<3 && abs(D)>3) { //can do  mixing using bg_* colors)
           unsigned int a2 = curdata[3]; //must be int
           unsigned int a = 255-a2;
           r = (a2 * r + bg_r * a)/255;
@@ -490,7 +494,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
     fprintf(output , "%g %g %g %g %i %i GI", x , y+h , w , -h , iw , ih);
 
 
-  if (!LD) LD = iw*D;
+  if (!LD) LD = iw*abs(D);
 
 
   int bg = (bg_r + bg_g + bg_b)/3;
@@ -509,7 +513,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
     const uchar *curdata=data+j*LD;
     for (i=0 ; i<iw ; i++) {
       uchar r = curdata[0];
-      if (lang_level_<3 && D>1) { //can do  mixing
+      if (lang_level_<3 && abs(D)>1) { //can do  mixing
 
         unsigned int a2 = curdata[1]; //must be int
         unsigned int a = 255-a2;
@@ -651,11 +655,12 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
 void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD)
 {
   struct callback_data cb_data;
-  if (!LD) LD = iw*D;
+  if (!LD) LD = iw*abs(D);
+  if (D<0) data += iw*abs(D);
   cb_data.data = data;
   cb_data.D = D;
   cb_data.LD = LD;
-  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, D);
+  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
 }
 
 void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D)
