@@ -1111,10 +1111,11 @@ case $host_os_gui in
             CXXFLAGS="`$PKGCONFIG --cflags pangocairo` $CXXFLAGS"
             LIBS="`$PKGCONFIG --libs pangocairo` $LIBS"
             case $host_os in
-   		 darwin*)
-         	   LDFLAGS="-L/opt/sw/lib -L/sw/lib $LDFLAGS"
-       		 ;;
-	    esac
+              darwin*)
+                dnl make sure LDFLAGS is appropriate for cairo (and pango)
+                LDFLAGS="`$PKGCONFIG --libs cairo` $LDFLAGS"
+              ;;
+           esac
          else
             case $host_os in
                 linux*)
