@@ -270,6 +270,14 @@ static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
 typedef Window (*gdk_to_X11_t)(GdkWindow*);
 static gdk_to_X11_t fl_gdk_to_X11 = NULL;
 
+// unsigned long gdk_x11_window_get_type();
+typedef unsigned long (*XX_gdk_x11_window_get_type)();
+static XX_gdk_x11_window_get_type fl_gdk_x11_window_get_type = NULL;
+
+//gboolean g_type_check_instance_is_a(void *type_instance, unsigned long iface_type)
+typedef gboolean (*XX_g_type_check_instance_is_a)(void *type_instance, unsigned long iface_type);
+static XX_g_type_check_instance_is_a fl_g_type_check_instance_is_a = NULL;
+
 // GtkWidget *gtk_check_button_new_with_label(const gchar *);
 typedef GtkWidget* (*XX_gtk_check_button_new_with_label)(const gchar *);
 static XX_gtk_check_button_new_with_label fl_gtk_check_button_new_with_label = NULL;
@@ -768,11 +776,17 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   fl_gtk_widget_show_all(extra);
   Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
-  if (firstw) {
+  if (firstw && fl_gdk_to_X11) {
     GdkWindow* gdkw = fl_gtk_widget_get_window(gtkw_ptr);
-    Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
-    XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
+    // Make sure the Dialog is an X11 window because it's not on Wayland.
+    // Until we find how to make a wayland window transient for an X11 window,
+    // we make the GTK window transient only when it's X11-based.
+    if ( (!fl_gdk_x11_window_get_type) || (!fl_g_type_check_instance_is_a) ||
+        fl_g_type_check_instance_is_a(gdkw, fl_gdk_x11_window_get_type()) ) {
+      Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
+      if (xw) XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
     }
+  }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
   fl_gtk_toggle_button_set_active((GtkToggleButton *)show_hidden_button, state);
 
@@ -919,7 +933,8 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(g_object_unref, ptr_gtk);
   fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
   if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
-  if (!fl_gdk_to_X11) { did_find_GTK_libs = 0; return; }
+  fl_gdk_x11_window_get_type = (XX_gdk_x11_window_get_type)dlsym(ptr_gtk, "gdk_x11_window_get_type");
+  fl_g_type_check_instance_is_a = (XX_g_type_check_instance_is_a)dlsym(ptr_gtk, "g_type_check_instance_is_a");
   GET_SYM(gtk_check_button_new_with_label, ptr_gtk);
   GET_SYM(g_signal_connect_data, ptr_gtk);
   GET_SYM(gtk_toggle_button_get_active, ptr_gtk);

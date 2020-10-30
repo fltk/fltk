@@ -760,7 +760,7 @@ void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int Y
     cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
     cairo_save(cairo_);
     cairo_rectangle(cairo_, XP-0.5, YP-0.5, WP+1, HP+1);
-    cairo_clip(cairo_); // still to be tested
+    cairo_clip(cairo_);
     if (img->d() >= 1) cairo_set_source(cairo_, pat);
     cairo_matrix_t matrix;
     cairo_matrix_init_scale(&matrix, double(img->data_w())/(img->w()+1), double(img->data_h())/(img->h()+1));
