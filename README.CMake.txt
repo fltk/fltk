@@ -61,7 +61,7 @@ More information on CMake can be found on its web site http://www.cmake.org.
 --------------------
 
 The prerequisites for building FLTK with CMake are staightforward:
-CMake 2.6.3 or later and a recent FLTK 1.3 release, snapshot, or subversion
+CMake 3.2.3 or later and a recent FLTK 1.3 release, snapshot, or subversion
 download (working copy).  Installation of CMake is covered on its web site.
 
 This howto will cover building FLTK with the default options using CMake
