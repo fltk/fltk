@@ -2111,6 +2111,10 @@ void Fl_PostScript_File_Device::end_job (void)
     }
 }
 
+void Fl_PostScript_File_Device::close_command(Fl_PostScript_Close_Command cmd) {
+  driver()->close_command(cmd);
+}
+
 Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background, Fl_PostScript_Close_Command closef) :
         Fl_Widget_Surface(new Fl_PostScript_Graphics_Driver()) {
   Fl_PostScript_Graphics_Driver *ps = driver();

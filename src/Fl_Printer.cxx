@@ -81,6 +81,7 @@ void Fl_PostScript_File_Device::untranslate(void) {}
 int Fl_PostScript_File_Device::end_page (void) {return 1;}
 void Fl_PostScript_File_Device::end_job(void) {}
 FILE* Fl_PostScript_File_Device::file() {return NULL;}
+void Fl_PostScript_File_Device::close_command(Fl_PostScript_Close_Command cmd) {}
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
 
 Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps_output,

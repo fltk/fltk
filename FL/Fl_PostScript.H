@@ -25,7 +25,10 @@
 #include <FL/fl_draw.H>
 #include <stdarg.h>
 
-/** Signature of Fl_PostScript::close_command() functions passed as parameters. */
+/** Signature of functions FLTK may use to close FILE variables after PostScript/EPS output.
+ A non-null return value indicates output error.
+ \see Fl_PostScript_File_Device::close_command() and Fl_EPS_File_Surface::Fl_EPS_File_Surface().
+ */
 extern "C" {
   typedef int (*Fl_PostScript_Close_Command)(FILE *);
 }
@@ -44,6 +47,11 @@ class Fl_PostScript_Graphics_Driver;
  FLTK standard fonts are output using the corresponding PostScript standard fonts.
  The latin alphabet means all unicode characters between U+0020 and U+017F, or, in other words,
  the ASCII, Latin-1 Supplement and Latin Extended-A charts.
+ <br><b>Processing of transparent Fl_RGB_Image objects</b>: Under the X11 + pango platform,
+ these objects are output with their exact transparency. With other platforms, these objects
+ are drawn blended to white color. Class Fl_EPS_File_Surface 's constructor allows to set another
+ background color for blending.
+ <center>Extra characters supported by standard PostScript fonts</center>
  <table>
  <tr> <th>Char</th><th>Codepoint</th><th>Name</th>  <th>Char</th><th>Codepoint</th><th>Name</th> <th>Char</th><th>Codepoint</th><th>Name</th></tr>
  <tr><td>ƒ</td><td>U+0192</td><td>florin</td><td>‚</td><td>U+201A</td><td>quotesinglbase</td><td>™</td><td>U+2122</td><td>trademark</td></tr>
@@ -121,14 +129,16 @@ public:
   void translate(int x, int y);
   void untranslate(void);
   int end_page (void);
-  /** Finishes all PostScript output.
-   This also closes the underlying \p fclose(file()) unless close_command() was used to set another function.
+  /** Completes all PostScript output.
+   This also closes with \p fclose() the underlying file() unless close_command() was used to set another function.
    */
   void end_job(void);
   /** Label of the PostScript file chooser window */
   static const char *file_chooser_title;
   /** Returns the underlying FILE* receiving all PostScript data */
   FILE *file();
+  /** Sets the function end_job() calls to close the file() */
+  void close_command(Fl_PostScript_Close_Command cmd);
 };
 
 /** Encapsulated PostScript drawing surface.
