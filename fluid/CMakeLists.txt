@@ -18,6 +18,7 @@ if (NOT ANDROID)
 
 set (CPPFILES
   CodeEditor.cxx
+  StyleParse.cxx
   Fl_Function_Type.cxx
   Fl_Group_Type.cxx
   Fl_Menu_Type.cxx
