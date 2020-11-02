@@ -503,15 +503,8 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
-  int   d = 3;                  // Depth of image
-  int alpha = 0; uchar *p = NULL;
-  // Allocate the image data array as needed...
-  const uchar *oldp = p;
-  if (!p) p = new uchar[w * h * d];
-
-  // Initialize the default colors/alpha in the whole image...
-  memset(p, alpha, w * h * d);
-
+  // Depth of image is always 3 here
+  
   // Grab all of the pixels in the image...
 
   // Assure that we are not trying to read non-existing data. If it is so, the
@@ -534,7 +527,12 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
     Y = 0;
   }
 
-  if (h < 1 || w < 1) return 0/*p*/;            // nothing to copy
+  if (h < 1 || w < 1) return 0;            // nothing to copy
+  
+  // Allocate and initialize the image data array
+  size_t arraySize = ((size_t)w * h) * 3;
+  uchar *p = new uchar[arraySize];
+  memset(p, 0, arraySize);
 
   int line_size = ((3*w+3)/4) * 4;      // each line is aligned on a DWORD (4 bytes)
   uchar *dib = new uchar[line_size*h];  // create temporary buffer to read DIB
@@ -572,15 +570,13 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
 
   for (int j = 0; j<h; j++) {
     const uchar *src = dib + j * line_size;                     // source line
-    uchar *tg = p + (j + shift_y) * d * ww + shift_x * d;       // target line
+    uchar *tg = p + (j + shift_y) * 3 * ww + shift_x * 3;       // target line
     for (int i = 0; i<w; i++) {
       uchar b = *src++;
       uchar g = *src++;
       *tg++ = *src++;   // R
       *tg++ = g;        // G
       *tg++ = b;        // B
-      if (alpha)
-        *tg++ = alpha;  // alpha
     }
   }
 
@@ -591,8 +587,8 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
   DeleteObject(hbm);
   delete[] dib;         // delete DIB temporary buffer
 
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
-  if (!oldp) rgb->alloc_array = 1;
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, 3);
+  rgb->alloc_array = 1;
   return rgb;
 }
 

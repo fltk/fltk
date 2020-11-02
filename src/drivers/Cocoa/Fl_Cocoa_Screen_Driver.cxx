@@ -342,7 +342,7 @@ void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &h
 Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window,
                                                          bool may_capture_subwins, bool *did_capture_subwins)
 {
-  int bpp, bpr, depth = 4;
+  int bpp, bpr;
   uchar *base, *p;
   if (!window) { // read from offscreen buffer
     float s = 1;
@@ -364,9 +364,9 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     // Copy the image from the off-screen buffer to the memory buffer.
     int idx, idy;  // Current X & Y in image
     uchar *pdst, *psrc;
-    p = new uchar[w * h * depth];
+    p = new uchar[w * h * 4];
     for (idy = Y, pdst = p; idy < h + Y; idy ++) {
-      for (idx = 0, psrc = base + idy * bpr + X * bpp; idx < w; idx ++, psrc += bpp, pdst += depth) {
+      for (idx = 0, psrc = base + idy * bpr + X * bpp; idx < w; idx ++, psrc += bpp, pdst += 4) {
         pdst[0] = psrc[0];  // R
         pdst[1] = psrc[1];  // G
         pdst[2] = psrc[2];  // B
@@ -397,7 +397,7 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     delete surf;
     CFRelease(cgimg);
   }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, depth, bpr);
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, 4, bpr);
   rgb->alloc_array = 1;
   return rgb;
 }
