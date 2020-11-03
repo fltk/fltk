@@ -46,17 +46,21 @@
 */
 class FL_EXPORT Fl_SVG_File_Surface : public Fl_Widget_Surface {
   int width_, height_;
+  int (*closef_)(FILE*);
 public:
   /**
   Constructor of the SVG drawing surface.
   \param width,height Width and height of the graphics area in FLTK drawing units
   \param svg A writable FILE pointer where the SVG data are to be sent. The resulting SVG data are not complete until after destruction of the Fl_SVG_File_Surface object or after calling close().
-  */
-  Fl_SVG_File_Surface(int width, int height, FILE *svg);
+  \param closef If not NULL,  the destructor and close() will call \p closef(svg) after all
+    SVG data has been sent. If NULL, \p fclose(svg) is called instead. This allows to close the FILE
+    pointer by, e.g., \p pclose, or, using a function such as \p "int keep_open(FILE*){return 0;}", to keep it open after
+    completion of all output to \p svg. Function \p closef should return non zero to indicate an error.
+   */
+  Fl_SVG_File_Surface(int width, int height, FILE *svg, int (*closef)(FILE*) = NULL);
   /**
    Destructor.
-   The underlying FILE pointer remains open after destruction of the Fl_SVG_File_Surface object
-   unless close() was called.
+   The underlying FILE pointer is processed as by close().
    */
   ~Fl_SVG_File_Surface();
   /** Returns the underlying FILE pointer */
@@ -65,9 +69,10 @@ public:
   virtual void translate(int x, int y);
   virtual void untranslate();
   virtual int printable_rect(int *w, int *h);
-  /** Closes with function fclose() the FILE pointer where SVG data is output.
+  /** Closes the FILE pointer where SVG data is output.
+  The underlying FILE is closed by function fclose() unless another function was set at object's construction time.
   The only operation possible after this on the Fl_SVG_File_Surface object is its destruction.
-  \return The value returned by fclose(). */
+  \return The value returned by the closing function call. */
   int close();
 };
 

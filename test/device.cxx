@@ -677,7 +677,7 @@ void copy(Fl_Widget *, void *data) {
         if (surface.file()) {
           if (target->as_window()) surface.draw_decorated_window(target->as_window());
           else surface.draw(target);
-          surface.close();
+          if (surface.close()) fl_message("Error while writing to SVG file %s", fnfc.filename());
         }
       }
     }

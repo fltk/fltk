@@ -305,7 +305,8 @@ int Fl_SVG_Graphics_Driver::descent() {
   return Fl_Display_Device::display_device()->driver()->descent();
 }
 
-Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f) : Fl_Widget_Surface(new Fl_SVG_Graphics_Driver(f)) {
+Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FILE*)) : Fl_Widget_Surface(new Fl_SVG_Graphics_Driver(f)) {
+  closef_ = closef;
   Fl_Window *win = Fl::first_window();
   float s = (win ? Fl::screen_scale(win->screen_num()) : 1);
   int sw = w * s, sh = h * s;
@@ -321,12 +322,7 @@ Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f) : Fl_Widget_Surf
 }
 
 Fl_SVG_File_Surface::~Fl_SVG_File_Surface() {
-  Fl_SVG_Graphics_Driver *driver = (Fl_SVG_Graphics_Driver*)this->driver();
-  if (driver) {
-    fputs("</g></g></svg>\n", driver->file());
-    fflush(driver->file());
-    delete driver;
-  }
+  if (driver()) close();
 }
 
 FILE *Fl_SVG_File_Surface::file() {
@@ -337,7 +333,7 @@ FILE *Fl_SVG_File_Surface::file() {
 int Fl_SVG_File_Surface::close() {
   Fl_SVG_Graphics_Driver *driver = (Fl_SVG_Graphics_Driver*)this->driver();
   fputs("</g></g></svg>\n", driver->file());
-  int retval = fclose(driver->file());
+  int retval = (closef_ ? closef_(driver->file()) : fclose(driver->file()));
   delete driver;
   this->driver(NULL);
   return retval;
