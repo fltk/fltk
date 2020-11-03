@@ -77,10 +77,12 @@ typedef ulong Fl_Offscreen;
 // begin/end are macros that save the old state in local variables:
 #    define fl_begin_offscreen(pixmap) \
   Window _sw=fl_window; fl_window=pixmap; \
+  GC _sgc = fl_gc; if (!_sgc) fl_gc = XCreateGC(fl_display, pixmap, 0, 0); \
   Fl_Surface_Device *_ss = Fl_Surface_Device::surface(); Fl_Display_Device::display_device()->set_current(); \
   fl_push_no_clip()
 #    define fl_end_offscreen() \
-  fl_pop_clip(); fl_window = _sw; _ss->set_current()
+  fl_pop_clip(); fl_window = _sw; _ss->set_current(); \
+  if (!_sgc) XFreeGC(fl_display, fl_gc); fl_gc = _sgc
 
 extern FL_EXPORT void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)

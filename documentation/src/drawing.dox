@@ -1052,9 +1052,48 @@ Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in 
 time. This technique can significantly reduce the amount of
 repeated drawing. Offscreen drawing functions are declared in <FL/x.H>.
-Fl_Double_Window uses offscreen rendering
-to avoid flickering on systems that don't support 
-double-buffering natively. 
+
+Fl_Double_Window uses offscreen rendering to avoid flickering on systems
+that don't support double-buffering natively.
+
+FLTK can draw into an offscreen buffer at any time. There is no need to
+wait for an Fl_Widget::draw() to occur.
+
+\note The X11 platform requires an open display for offscreen drawing,
+i.e. you may need to call fl_open_display() prior to creating and using
+offscreen buffers, particularly if no window has been shown yet.
+
+\par
+\note In FLTK 1.3.x and earlier versions all offscreen drawing functions
+described below are implemented as macros and create certain temporary
+variables to save context information. You may need to create local scope
+blocks with curly braces { ... } if you use offscreen functions more than
+once in a function or method.
+
+Example:
+\code
+  fl_open_display(); // necessary before showing the first window
+  Fl_Offscreen oscr = fl_create_offscreen(120, 120);
+  { // begin block
+    fl_begin_offscreen(oscr);
+    fl_color(FL_WHITE);
+    fl_rectf(0, 0, 120, 120);
+    fl_end_offscreen();
+  } // end block
+  // other code here
+  { // begin block
+    fl_begin_offscreen(oscr);
+    fl_color(FL_BLACK);
+    fl_rectf(10, 10, 100, 100);
+    fl_end_offscreen();
+  } // end block
+  // other code here
+  fl_delete_offscreen(oscr);
+\endcode
+
+\note In FLTK 1.4.0 and later neither calling fl_open_display() nor using
+  local blocks is necessary since the offscreen functions described below
+  are real functions (not macros as in 1.3.x).
 
 Fl_Offscreen fl_create_offscreen(int w, int h)
 
@@ -1070,8 +1109,6 @@ void fl_begin_offscreen(Fl_Offscreen)
 
 \par
 Send all subsequent drawing commands to this offscreen buffer. 
-FLTK can draw into a buffer at any time. There is no need to wait for 
-an Fl_Widget::draw() to occur.
 
 void fl_end_offscreen()
 
