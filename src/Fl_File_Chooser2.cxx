@@ -187,7 +187,7 @@
 /** \fn const char *Fl_File_Chooser::directory()
   Gets the current directory.*/
 
-/** \fn void Fl_File_Chooser::filter(const char *pattern)
+/** \fn void Fl_File_Chooser::filter(const char * pattern)
   Sets or gets the current filename filter patterns. The filter
   patterns use fl_filename_match().
   Multiple patterns can be used by separating them with tabs, like
