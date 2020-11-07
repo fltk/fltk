@@ -1039,14 +1039,14 @@ int main() {
  The scaling factor is initialized by the library to a value
  based on information obtained from the OS. If this initial value
  is not satisfactory, the FLTK_SCALING_FACTOR environment variable
- can be set to a value FLTK will use as initial scaling factor.
- The scaling factor value can be further changed at runtime
- by typing ctrl-/+/-/0/ (cmd-/+/-/0/ under MacOS). FLTK sends the
+ can be set to a value FLTK will multiply to the OS-given value.
+ The 2 variants of functions Fl::screen_scale() allow to programmatically get and set
+ scaling factor values. The scaling factor value can be further changed at runtime
+ by typing ctrl-/+/-/0/ (cmd-/+/-/0/ under macOS). FLTK sends the
  \ref FL_ZOOM_EVENT when the factor value is changed, to which a
  callback can be associated with Fl::add_handler().
- By default, FLTK also displays the new scaling factor value in a yellow, transient window.
+ By default, FLTK displays the new scaling factor value in a yellow, transient window.
  This can be changed with option Fl::OPTION_SHOW_SCALING.
- The scaling factor value is programmatically get and set with the Fl::screen_scale() functions.
      @{ */
   static int x(); // via screen driver
   static int y(); // via screen driver

@@ -750,7 +750,6 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   XImage        *image;         // Captured image
   int           i, maxindex;    // Looping vars
   int           x, y;           // Current X & Y in image
-  int           d;              // Depth of image
   unsigned char *line,          // Array to hold image row
                 *line_ptr;      // Pointer to current line image
   unsigned char *pixel;         // Current color value
@@ -865,11 +864,10 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   printf("map_entries      = %d\n", fl_visual->visual->map_entries);
 #endif // DEBUG
 
-  d = 3;
+  const int d = 3; // Depth of image
   uchar *p = NULL;
   // Allocate the image data array as needed...
-  const uchar *oldp = p;
-  if (!p) p = new uchar[w * h * d];
+  p = new uchar[w * h * d];
 
   // Initialize the default colors/alpha in the whole image...
   memset(p, 0, w * h * d);
@@ -1167,7 +1165,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   XDestroyImage(image);
 
   Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
-  if (!oldp) rgb->alloc_array = 1;
+  rgb->alloc_array = 1;
   return rgb;
 }
 
