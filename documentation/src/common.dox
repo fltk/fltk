@@ -441,7 +441,7 @@ image that is shown when the widget is inactive, while the \p image()
 method sets the image that is shown when the widget is active.
 
 To make an image you use a subclass of
-\ref ssect_Fl_Image "Fl_Image".
+\ref drawing_Fl_Image "Fl_Image".
 
 \par Making Your Own Label Types
 
@@ -509,7 +509,7 @@ any label.
 
 To create a new symbol, you implement a drawing function
 <tt>void drawit(Fl_Color c)</tt> which typically uses the
-functions described in \ref ssect_Complex
+functions described in \ref drawing_complex
 to generate a vector shape inside a two-by-two units sized box
 around the origin. This function is then linked into the symbols
 table using fl_add_symbol():

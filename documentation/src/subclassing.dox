@@ -330,7 +330,7 @@ be redrawn, e.g. for an expose event.
 Expose events (and the
 \ref subclassing_damage "damage(mask,x,y,w,h)" function described
 above) will cause \p draw() to be called with FLTK's
-\ref ssect_Clipping "clipping"
+\ref drawing_clipping "clipping"
 turned on.  You can greatly speed up redrawing in some
 cases by testing \p fl_not_clipped(x,y,w,h) or \p %fl_clip_box()
 and skipping invisible parts.

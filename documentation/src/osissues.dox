@@ -162,10 +162,10 @@ extern XFontStruct *fl_xfont
 
 \par
 Points to the font selected by the most recent
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 This is not necessarily the current font of \c fl_gc,
 which is not set until
-\ref ssect_Text "fl_draw()"
+\ref drawing_text "fl_draw()"
 is called. If FLTK was compiled with Xft support, \c fl_xfont
 will usually be 0 and \c fl_xftfont will contain a pointer
 to the \c XftFont structure instead.
@@ -175,7 +175,7 @@ extern void *fl_xftfont
 \par
 If FLTK was compiled with Xft support enabled, \c fl_xftfont
 points to the xft font selected by the most recent
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 Otherwise it will be 0. \c fl_xftfont should be cast to
 <tt>XftFont*</tt>.
 

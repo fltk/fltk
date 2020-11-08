@@ -283,7 +283,7 @@ void gl_font(Fl_Font fontid, int size)
 
 \par
 Sets the current OpenGL font to the same font you get by calling
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 
 int gl_height() <br>
 int gl_descent() <br>
@@ -317,7 +317,7 @@ void gl_draw(const char *s, int x, int y, int w, int h, Fl_Align)
 Draws a string formatted into a box, with newlines and tabs
 expanded, other control characters changed to ^X, and aligned
 with the edges or center. Exactly the same output as
-\ref ssect_Text "fl_draw()".
+\ref drawing_text "fl_draw()".
 
 \section opengl_speed Speeding up OpenGL
 
