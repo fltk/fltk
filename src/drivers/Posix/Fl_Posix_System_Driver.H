@@ -23,6 +23,7 @@
 #ifndef FL_POSIX_SYSTEM_DRIVER_H
 #define FL_POSIX_SYSTEM_DRIVER_H
 
+#include "../../config_lib.h"
 #include "../../Fl_System_Driver.H"
 #include <stdlib.h>
 #include <unistd.h>
