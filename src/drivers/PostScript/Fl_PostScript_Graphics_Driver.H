@@ -29,7 +29,6 @@
 #endif
 
 #if USE_PANGO
-typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo cairo_t;
 typedef struct _PangoLayout  PangoLayout;
 #endif
