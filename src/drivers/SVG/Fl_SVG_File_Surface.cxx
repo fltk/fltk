@@ -1005,7 +1005,8 @@ void Fl_SVG_Graphics_Driver::arc_pie(char AorP, int x, int y, int w, int h, doub
 
 #else
 
-Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f) : Fl_Widget_Surface(NULL) {
+Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FILE*)) : Fl_Widget_Surface(NULL) {
+  closef_ = NULL;
   width_ = height_ = 0;
 }
 Fl_SVG_File_Surface::~Fl_SVG_File_Surface() {}
