@@ -275,8 +275,8 @@ void Fl_Image::scale(int width, int height, int proportional, int can_expand)
     if (fw < 1) fw = 1;
     if (fh < 1) fh = 1;
   }
-  w_ = int(data_w() / fw);
-  h_ = int(data_h() / fh);
+  w_ = int((data_w() / fw) + 0.5);
+  h_ = int((data_h() / fh) + 0.5);
 }
 
 /** Draw the image to the current drawing surface rescaled to a given width and height.
