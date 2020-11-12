@@ -29,7 +29,6 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/math.h>
 #include <FL/platform.H>
-#include <FL/Fl_SVG_Image.H>
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
@@ -211,9 +210,9 @@ void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
     width  = (width+1) * scale();
     height = (height+1) * scale();
   }
-  if (img->d() == 4 && ((Fl_RGB_Image*)img)->as_svg_image()) { // check for SVG image
-    Fl_SVG_Image *svg = (Fl_SVG_Image*)img;
-    svg->cache_size(width, height);
+  if (img->d() == 4) { // check for depth-4 RGB image
+    Fl_RGB_Image *rgb = (Fl_RGB_Image*)img;
+    rgb->cache_size(width, height);
   }
 }
 
