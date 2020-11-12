@@ -86,7 +86,7 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
      Setting line_delta_ to 1 and offsetting all line, rectangle, text and clip
      coordinates by line_delta_ achieves what is wanted until scale_ <= 3.5.
      */
-    line_delta_ =  (scale() > 1.75 ? 1 : 0);
+    line_delta_ =  (scale() > 1.9/*1.75*/ ? 1 : 0);
   }
 #endif
 }

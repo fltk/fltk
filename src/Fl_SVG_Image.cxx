@@ -221,8 +221,8 @@ void Fl_SVG_Image::resize(int width, int height) {
   int w1 = width, h1 = height;
   if (proportional) {
     float f = svg_scaling_(width, height);
-    w1 = int( int(counted_svg_image_->svg_image->width+0.5)*f + 0.5 );
-    h1 = int( int(counted_svg_image_->svg_image->height+0.5)*f + 0.5 );
+    w1 = int( counted_svg_image_->svg_image->width*f + 0.5 );
+    h1 = int( counted_svg_image_->svg_image->height*f + 0.5 );
   }
   w(w1); h(h1);
   if (rasterized_ && w1 == raster_w_ && h1 == raster_h_) return;
@@ -232,6 +232,17 @@ void Fl_SVG_Image::resize(int width, int height) {
   }
   uncache();
   rasterize_(w1, h1);
+}
+
+
+void Fl_SVG_Image::cache_size(int &width, int &height) {
+  if (proportional) {
+    // Keep the rasterized image proportional to its source-level width and height
+    // while maintaining it large enough to allow image tiling.
+    float f = counted_svg_image_->svg_image->width / counted_svg_image_->svg_image->height;
+    if (height * f >= width) width =  height * f + 0.5;
+    else height = width/f + 0.5;
+  }
 }
 
 
@@ -246,7 +257,7 @@ void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
   int w1 = w(), h1 = h();
   int f = fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER) ? 2 : 1;
   int w2 = f*w(), h2 = f*h();
-  fl_graphics_driver->cache_size(w2, h2);
+  fl_graphics_driver->cache_size(this, w2, h2);
   resize(w2, h2);
   scale(w1, h1, 0, 1);
   Fl_RGB_Image::draw(X, Y, W, H, cx, cy);

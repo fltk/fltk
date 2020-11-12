@@ -133,6 +133,7 @@ struct NSVGimage;
 
  */
 class FL_EXPORT Fl_SVG_Image : public Fl_RGB_Image {
+  friend class Fl_Graphics_Driver;
 private:
   typedef struct {
     NSVGimage* svg_image;
@@ -146,6 +147,7 @@ private:
   float average_weight_;
   float svg_scaling_(int W, int H);
   void rasterize_(int W, int H);
+  void cache_size(int &width, int &height);
   void init_(const char *filename, const char *filedata, Fl_SVG_Image *copy_source);
   Fl_SVG_Image(Fl_SVG_Image *source);
 public:

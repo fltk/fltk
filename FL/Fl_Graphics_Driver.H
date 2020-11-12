@@ -236,7 +236,7 @@ protected:
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
 
   Fl_Graphics_Driver();
-  virtual void cache_size(int &width, int &height);
+  virtual void cache_size(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor

@@ -29,6 +29,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/math.h>
 #include <FL/platform.H>
+#include <FL/Fl_SVG_Image.H>
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
@@ -201,7 +202,7 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
 /** Converts \p width and \p height from FLTK units to drawing units.
  The conversion performed consists in multiplying \p width and \p height by
  scale() and in slightly modifying that to help support tiled images. */
-void Fl_Graphics_Driver::cache_size(int &width, int &height)
+void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
 {
   if ( int(scale()) == scale() ) {
     width  = width * scale();
@@ -209,6 +210,10 @@ void Fl_Graphics_Driver::cache_size(int &width, int &height)
   } else {
     width  = (width+1) * scale();
     height = (height+1) * scale();
+  }
+  if (img->d() == 4 && ((Fl_RGB_Image*)img)->as_svg_image()) { // check for SVG image
+    Fl_SVG_Image *svg = (Fl_SVG_Image*)img;
+    svg->cache_size(width, height);
   }
 }
 
@@ -223,7 +228,7 @@ void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   }
   // to allow rescale at runtime
   int w2=pxm->w(), h2=pxm->h();
-  cache_size(w2, h2); // after this, w2 x h2 is size of desired cached image
+  cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
   int *pw, *ph;
   cache_w_h(pxm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
   if (*id(pxm) && (*pw != w2 || *ph != h2)) {
@@ -256,7 +261,7 @@ void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int 
     return;
   }
   int w2 = bm->w(), h2 = bm->h();
-  cache_size(w2, h2); // after this, w2 x h2 is size of desired cached image
+  cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
   int *pw, *ph;
   cache_w_h(bm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
   if (*id(bm) && (*pw != w2 || *ph != h2)) {
@@ -296,7 +301,7 @@ void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int
   int w2, h2, *pw, *ph;
   if (need_scaled_drawing) {
     w2 = img->w(); h2 = img->h();
-    cache_size(w2, h2);
+    cache_size(img, w2, h2);
   } else {
     w2 = img->data_w(); h2 = img->data_h();
   } // after this, w2 x h2 is desired cached image size

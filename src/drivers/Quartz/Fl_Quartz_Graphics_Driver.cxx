@@ -154,7 +154,7 @@ void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r) {
   }
 }
 
-void Fl_Quartz_Graphics_Driver::cache_size(int &width, int &height) {
+void Fl_Quartz_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height) {
   width *= 2 * scale();
   height *= 2 * scale();
 }

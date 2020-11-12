@@ -625,7 +625,7 @@ void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(bm, W, H);
   cx *= scale(); cy *= scale();
   XSetStipple(fl_display, gc_, *Fl_Graphics_Driver::id(bm));
   int ox = X-cx; if (ox < 0) ox += bm->w()*scale();
@@ -727,7 +727,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_RGB_Image *img) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(img, W, H);
   cx *= scale(); cy *= scale();
   if (img->d() == 1 || img->d() == 3) {
     XCopyArea(fl_display, *Fl_Graphics_Driver::id(img), fl_window, gc_, cx, cy, W, H, X, Y);
@@ -764,9 +764,9 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  cache_size(W, H);
+  cache_size(rgb, W, H);
   int Wfull = rgb->w(), Hfull = rgb->h();
-  cache_size(Wfull, Hfull);
+  cache_size(rgb, Wfull, Hfull);
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
                                  rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
                           cx*scale(), cy*scale(), (X + offset_x_)*scale(), (Y + offset_y_)*scale(), W, H);
@@ -829,7 +829,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(pxm, W, H);
   cx *= scale(); cy *= scale();
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
