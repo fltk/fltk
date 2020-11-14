@@ -133,7 +133,6 @@ struct NSVGimage;
 
  */
 class FL_EXPORT Fl_SVG_Image : public Fl_RGB_Image {
-  friend class Fl_Graphics_Driver;
 private:
   typedef struct {
     NSVGimage* svg_image;
