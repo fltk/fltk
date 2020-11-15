@@ -5,7 +5,7 @@ WHAT IS FLTK?
 
     The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
     a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
-    Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+    Microsoft(r) Windows(r), and macOS(r). FLTK provides
     modern GUI functionality without the bloat and supports 3D
     graphics via OpenGL(r) and its built-in GLUT emulation. It
     was originally developed by Mr. Bill Spitzak and is
@@ -23,19 +23,29 @@ LICENSING
 
 ON-LINE DOCUMENTATION
 
-    All of the documentation is in HTML in the subdirectory
-    "documentation". The "index.html" file should be your
-    starting point.  PostScript(tm) and PDF versions of this
+    The documentation in HTML and PDF forms can be created by
+    Doxygen from the source files. HTML and PDF versions of this
     documentation is also available from the FLTK web site at:
 
         https://www.fltk.org/documentation.php
 
 
-BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
+BUILDING AND INSTALLING FLTK UNDER UNIX AND macOS
 
-    In most cases you can just type "make".  This will run
-    configure with the default (no) options and then compile
-    everything.
+    Beginning with FLTK 1.4 the main and recommended build system
+    is CMake. CMake is a "build system generator" and can be used
+    to create Makefile's, Ninja build files, Xcode (macOS),
+    Visual Studio (Windows) IDE files and many more.
+
+    Please see README.CMake.txt for further information.
+
+    Alternatively FLTK can be built with autoconf + make, the
+    build system used in FLTK 1.3 and earlier versions. Please
+    be aware that the following information may be outdated
+    because it is no longer actively maintained.
+
+    In most cases you can just type "make".  This will run configure
+    with the default (no) options and then compile everything.
 
     FLTK uses GNU autoconf to configure itself for your UNIX
     platform. The main things that the configure script will
@@ -48,8 +58,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     If you aren't using "gcc", "g++", "c++", or "CC" for your
     C++ compiler, you'll also need to set the CXX environment
     variable. Similarly, if you aren't using "gcc" or "cc" for
-    your C compiler you'll need to set the CC environment
-    variable.
+    your C compiler you'll need to set the CC environment variable.
 
     You can run configure yourself to get the exact setup you
     need. Type "./configure <options>".  Options include:
@@ -85,12 +94,12 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     need to run "make install-desktop" as root.
 
 
-SVN USERS
+GIT USERS
 
-    If you've just checked out a fresh copy of FLTK from SVN,
+    If you've just checked out a fresh copy of FLTK from GIT,
     you'll need to generate an initial version of 'configure'
-    by running 'make makeinclude'. (We don't include a copy
-    of configure in svn)
+    by running 'make makeinclude' (we don't include a copy
+    of configure in git).
 
 
 MAKE TARGETS
@@ -105,14 +114,17 @@ MAKE TARGETS
 BUILDING FLTK UNDER MICROSOFT WINDOWS
 
     There are two ways to build FLTK under Microsoft Windows.
-    The first is to use the Visual C++ project files under the
-    "ide/" directory.  See the file ide/README.IDE for more info.
+    The first is to use CMake to create the Visual C++ project files
+    in your favorite development directory, then build FLTK with
+    Visual Studio.
 
     The second method is to use a GNU-based development tool.
     To build with the Cygwin or MinGW tools, use the supplied
     configure script as specified in the UNIX section above:
 
         sh configure ...options...
+
+    See README.Windows.txt and README.CMake.txt for more info.
 
 
 BUILDING HTML DOCUMENTATION
@@ -137,18 +149,33 @@ INTERNET RESOURCES
                  https://www.fltk.org/bugs.php [for reporting bugs]
                  https://www.fltk.org/software.php [source code]
 
+
+GENERAL QUESTIONS
+
     To join the FLTK mailing list, go the following web page:
+
+        https://groups.google.com/forum/#!forum/fltkgeneral
+
+    You can find detailed instructions how you can register for the mailing
+    list (even w/o a Google mail address) at the bottom of this page:
 
         https://www.fltk.org/newsgroups.php
 
+
 REPORTING BUGS
 
-    To report a bug in FLTK, use the form at:
+    If you are new to FLTK, or have general questions about how to use FLTK,
+    or aren't sure if you found a bug, please ask first on the fltk.general
+    group forum at:
+
+        https://groups.google.com/forum/#!forum/fltkgeneral
+
+    See paragraph GENERAL QUESTIONS above for more info.
+
+    If you are sure you found a bug, please see the following page for
+    further information:
 
         https://www.fltk.org/bugs.php
-
-    For general support and questions, please use the FLTK
-    mailing list at "fltk@fltk.org".
 
 
 TRADEMARKS
@@ -162,7 +189,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2016 by Bill Spitzak and others,
+    FLTK is copyright 1998-2020 by Bill Spitzak and others,
     see the CREDITS file for more info.
 
     This library is free software. Distribution and use rights are
