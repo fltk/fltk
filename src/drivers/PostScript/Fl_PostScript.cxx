@@ -1622,7 +1622,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
   if(dashes){
     if(dashes != linedash_)
       strcpy(linedash_,dashes);
-    
+
   } else
     linedash_[0]=0;
   char width0 = 0;
@@ -1631,10 +1631,10 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
     width0=1;
   }
   cairo_set_line_width(cairo_, width);
-  
+
   if(!style && (!dashes || !(*dashes)) && width0) //system lines
     style = FL_CAP_SQUARE;
-  
+
   int cap = (style &0xf00);
   cairo_line_cap_t c_cap;
   if (cap == FL_CAP_SQUARE) c_cap = CAIRO_LINE_CAP_SQUARE;
@@ -1642,7 +1642,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
   else if (cap == FL_CAP_ROUND) c_cap = CAIRO_LINE_CAP_ROUND;
   else c_cap = CAIRO_LINE_CAP_BUTT;
   cairo_set_line_cap(cairo_, c_cap);
-  
+
   int join = (style & 0xf000);
   cairo_line_join_t c_join;
   if (join == FL_JOIN_MITER) c_join = CAIRO_LINE_JOIN_MITER;
@@ -1650,7 +1650,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
   else if (join == FL_JOIN_BEVEL) c_join = CAIRO_LINE_JOIN_BEVEL;
   else c_join = CAIRO_LINE_JOIN_MITER;
   cairo_set_line_join(cairo_, c_join);
-  
+
   double *ddashes = NULL;
   int l = 0;
   if (dashes && *dashes){

@@ -68,7 +68,7 @@ class Fl_PostScript_Graphics_Driver;
  <tr><td>‘</td><td>U+2018</td><td>quoteleft</td><td>/</td><td>U+2044</td><td>fraction</td><td>ﬂ</td><td>U+FB02</td><td>fl</td></tr>
  <tr><td>’</td><td>U+2019</td><td>quoteright</td><td>€</td><td>U+20AC</td><td>Euro</td><td></td><td>U+F8FF</td><td>apple (Mac OS only)</td></tr>
  </table>
- 
+
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 protected:

@@ -504,7 +504,7 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
   // Depth of image is always 3 here
-  
+
   // Grab all of the pixels in the image...
 
   // Assure that we are not trying to read non-existing data. If it is so, the
@@ -528,7 +528,7 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
   }
 
   if (h < 1 || w < 1) return 0;            // nothing to copy
-  
+
   // Allocate and initialize the image data array
   size_t arraySize = ((size_t)w * h) * 3;
   uchar *p = new uchar[arraySize];
