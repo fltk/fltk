@@ -4397,7 +4397,13 @@ void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
   [ctxt update]; // supports window resizing
 }
 
-/* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
+/* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2,
+ and also assigns that value to global fl_mac_os_version.
+ N.B.: macOS "Big Sur" 11.0 can produce 2 different values for fl_mac_os_version:
+  - when SDK 11.0 is used, fl_mac_os_version is set to 110000 (or bigger)
+  - when SDK 10.15 or earlier is used, fl_mac_os_version is set to 101600
+  That is reported to facilitate life of apps that assumed majorVersion would remain equal to 10
+  and used only minorVersion to determine what is the running version of macOS.
  */
 int Fl_Darwin_System_Driver::calc_mac_os_version() {
   if (fl_mac_os_version) return fl_mac_os_version;
