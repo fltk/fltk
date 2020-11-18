@@ -76,7 +76,7 @@ private:
   Fl_Image & operator=(const Fl_Image &);
   Fl_Image(const Fl_Image &);
   // Presently redefined in Fl_SVG_Image
-  virtual void cache_size(int &width, int &height) {}
+  virtual void cache_size_(int &width, int &height) {}
 
 protected:
 

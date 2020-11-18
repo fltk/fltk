@@ -210,7 +210,7 @@ void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
     width  = (width+1) * scale();
     height = (height+1) * scale();
   }
-  img->cache_size(width, height);
+  img->cache_size_(width, height);
 }
 
 /** Draws an Fl_Pixmap object using this graphics driver.

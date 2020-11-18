@@ -235,7 +235,7 @@ void Fl_SVG_Image::resize(int width, int height) {
 }
 
 
-void Fl_SVG_Image::cache_size(int &width, int &height) {
+void Fl_SVG_Image::cache_size_(int &width, int &height) {
   if (proportional) {
     // Keep the rasterized image proportional to its source-level width and height
     // while maintaining it large enough to allow image tiling.
