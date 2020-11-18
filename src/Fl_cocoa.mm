@@ -4386,7 +4386,7 @@ void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, in
   }
   if (img) {
     CGContextSaveGState(gc);
-    clip_to_rounded_corners(gc, w, h);
+    if (fl_mac_os_version < 100600) clip_to_rounded_corners(gc, w, h);
     CGContextDrawImage(gc, CGRectMake(0, 0, w, h), img);
     CGImageRelease(img);
     CGContextRestoreGState(gc);
