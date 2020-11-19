@@ -644,6 +644,16 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   if (cy < 0) { H += cy; Y -= cy; cy = 0; }
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
+  // don't attempt to read outside the window/offscreen buffer limits
+  Window root_return;
+  int x_return, y_return;
+  unsigned int winW, winH;
+  unsigned int border_width_return;
+  unsigned int depth_return;
+  XGetGeometry(fl_display, fl_window, &root_return, &x_return, &y_return, &winW,
+               &winH, &border_width_return, &depth_return);
+  if (X+W > winW) W = winW-X;
+  if (Y+H > winH) H = winH-Y;
   if (W <= 0 || H <= 0) return;
   int ld = img->ld();
   if (ld == 0) ld = img->data_w() * img->d();
