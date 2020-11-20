@@ -839,10 +839,30 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
     }
   }
 
+  if (!image) return 0;
   if (s != 1) {
     w = ws;
     h = hs;
   }
+
+#ifdef DEBUG
+  printf("width            = %d\n", image->width);
+  printf("height           = %d\n", image->height);
+  printf("xoffset          = %d\n", image->xoffset);
+  printf("format           = %d\n", image->format);
+  printf("data             = %p\n", image->data);
+  printf("byte_order       = %d\n", image->byte_order);
+  printf("bitmap_unit      = %d\n", image->bitmap_unit);
+  printf("bitmap_bit_order = %d\n", image->bitmap_bit_order);
+  printf("bitmap_pad       = %d\n", image->bitmap_pad);
+  printf("depth            = %d\n", image->depth);
+  printf("bytes_per_line   = %d\n", image->bytes_per_line);
+  printf("bits_per_pixel   = %d\n", image->bits_per_pixel);
+  printf("red_mask         = %08x\n", image->red_mask);
+  printf("green_mask       = %08x\n", image->green_mask);
+  printf("blue_mask        = %08x\n", image->blue_mask);
+  printf("map_entries      = %d\n", fl_visual->visual->map_entries);
+#endif // DEBUG
 
   const int d = 3; // Depth of image
   uchar *p = NULL;
@@ -851,318 +871,299 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 
   // Initialize the default colors/alpha in the whole image...
   memset(p, 0, w * h * d);
-  if (image) {
+
+  // Check that we have valid mask/shift values...
+  if (!image->red_mask && image->bits_per_pixel > 12) {
+    // Greater than 12 bits must be TrueColor...
+    image->red_mask   = fl_visual->visual->red_mask;
+    image->green_mask = fl_visual->visual->green_mask;
+    image->blue_mask  = fl_visual->visual->blue_mask;
+
 #ifdef DEBUG
-    printf("width            = %d\n", image->width);
-    printf("height           = %d\n", image->height);
-    printf("xoffset          = %d\n", image->xoffset);
-    printf("format           = %d\n", image->format);
-    printf("data             = %p\n", image->data);
-    printf("byte_order       = %d\n", image->byte_order);
-    printf("bitmap_unit      = %d\n", image->bitmap_unit);
-    printf("bitmap_bit_order = %d\n", image->bitmap_bit_order);
-    printf("bitmap_pad       = %d\n", image->bitmap_pad);
-    printf("depth            = %d\n", image->depth);
-    printf("bytes_per_line   = %d\n", image->bytes_per_line);
-    printf("bits_per_pixel   = %d\n", image->bits_per_pixel);
+    // Defined in Fl_Xlib_Graphics_Driver_color.cxx
+    extern uchar fl_redmask, fl_greenmask, fl_bluemask;
+    extern int fl_redshift, fl_greenshift, fl_blueshift;
+    puts("\n---- UPDATED ----");
+    printf("fl_redmask       = %08x\n", fl_redmask);
+    printf("fl_redshift      = %d\n", fl_redshift);
+    printf("fl_greenmask     = %08x\n", fl_greenmask);
+    printf("fl_greenshift    = %d\n", fl_greenshift);
+    printf("fl_bluemask      = %08x\n", fl_bluemask);
+    printf("fl_blueshift     = %d\n", fl_blueshift);
     printf("red_mask         = %08x\n", image->red_mask);
     printf("green_mask       = %08x\n", image->green_mask);
     printf("blue_mask        = %08x\n", image->blue_mask);
-    printf("map_entries      = %d\n", fl_visual->visual->map_entries);
 #endif // DEBUG
-    
-    // Check that we have valid mask/shift values...
-    if (!image->red_mask && image->bits_per_pixel > 12) {
-      // Greater than 12 bits must be TrueColor...
-      image->red_mask   = fl_visual->visual->red_mask;
-      image->green_mask = fl_visual->visual->green_mask;
-      image->blue_mask  = fl_visual->visual->blue_mask;
-      
-#ifdef DEBUG
-      // Defined in Fl_Xlib_Graphics_Driver_color.cxx
-      extern uchar fl_redmask, fl_greenmask, fl_bluemask;
-      extern int fl_redshift, fl_greenshift, fl_blueshift;
-      puts("\n---- UPDATED ----");
-      printf("fl_redmask       = %08x\n", fl_redmask);
-      printf("fl_redshift      = %d\n", fl_redshift);
-      printf("fl_greenmask     = %08x\n", fl_greenmask);
-      printf("fl_greenshift    = %d\n", fl_greenshift);
-      printf("fl_bluemask      = %08x\n", fl_bluemask);
-      printf("fl_blueshift     = %d\n", fl_blueshift);
-      printf("red_mask         = %08x\n", image->red_mask);
-      printf("green_mask       = %08x\n", image->green_mask);
-      printf("blue_mask        = %08x\n", image->blue_mask);
-#endif // DEBUG
-    }
-    
-    // Check if we have colormap image...
-    if (!image->red_mask) {
-      // Get the colormap entries for this window...
-      maxindex = fl_visual->visual->map_entries;
-      
-      for (i = 0; i < maxindex; i ++) colors[i].pixel = i;
-      
-      XQueryColors(fl_display, fl_colormap, colors, maxindex);
-      
-      for (i = 0; i < maxindex; i ++) {
-        cvals[i][0] = colors[i].red >> 8;
-        cvals[i][1] = colors[i].green >> 8;
-        cvals[i][2] = colors[i].blue >> 8;
-      }
-      
-      // Read the pixels and output an RGB image...
-      for (y = 0; y < image->height; y ++) {
-        pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
-        line  = p + y * w * d;
-        
-        switch (image->bits_per_pixel) {
-          case 1 :
-            for (x = image->width, line_ptr = line, index_mask = 128;
-                 x > 0;
-                 x --, line_ptr += d) {
-              if (*pixel & index_mask) {
-                line_ptr[0] = cvals[1][0];
-                line_ptr[1] = cvals[1][1];
-                line_ptr[2] = cvals[1][2];
-              } else {
-                line_ptr[0] = cvals[0][0];
-                line_ptr[1] = cvals[0][1];
-                line_ptr[2] = cvals[0][2];
-              }
-              
-              if (index_mask > 1) {
-                index_mask >>= 1;
-              } else {
-                index_mask = 128;
-                pixel ++;
-              }
-            }
-            break;
-            
-          case 2 :
-            for (x = image->width, line_ptr = line, index_shift = 6;
-                 x > 0;
-                 x --, line_ptr += d) {
-              i = (*pixel >> index_shift) & 3;
-              
-              line_ptr[0] = cvals[i][0];
-              line_ptr[1] = cvals[i][1];
-              line_ptr[2] = cvals[i][2];
-              
-              if (index_shift > 0) {
-                index_shift -= 2;
-              } else {
-                index_shift = 6;
-                pixel ++;
-              }
-            }
-            break;
-            
-          case 4 :
-            for (x = image->width, line_ptr = line, index_shift = 4;
-                 x > 0;
-                 x --, line_ptr += d) {
-              if (index_shift == 4) i = (*pixel >> 4) & 15;
-              else i = *pixel & 15;
-              
-              line_ptr[0] = cvals[i][0];
-              line_ptr[1] = cvals[i][1];
-              line_ptr[2] = cvals[i][2];
-              
-              if (index_shift > 0) {
-                index_shift = 0;
-              } else {
-                index_shift = 4;
-                pixel ++;
-              }
-            }
-            break;
-            
-          case 8 :
-            for (x = image->width, line_ptr = line;
-                 x > 0;
-                 x --, line_ptr += d, pixel ++) {
-              line_ptr[0] = cvals[*pixel][0];
-              line_ptr[1] = cvals[*pixel][1];
-              line_ptr[2] = cvals[*pixel][2];
-            }
-            break;
-            
-          case 12 :
-            for (x = image->width, line_ptr = line, index_shift = 0;
-                 x > 0;
-                 x --, line_ptr += d) {
-              if (index_shift == 0) {
-                i = ((pixel[0] << 4) | (pixel[1] >> 4)) & 4095;
-              } else {
-                i = ((pixel[1] << 8) | pixel[2]) & 4095;
-              }
-              
-              line_ptr[0] = cvals[i][0];
-              line_ptr[1] = cvals[i][1];
-              line_ptr[2] = cvals[i][2];
-              
-              if (index_shift == 0) {
-                index_shift = 4;
-              } else {
-                index_shift = 0;
-                pixel += 3;
-              }
-            }
-            break;
-        }
-      }
-    } else {
-      // RGB(A) image, so figure out the shifts & masks...
-      red_mask  = image->red_mask;
-      red_shift = 0;
-      
-      while ((red_mask & 1) == 0) {
-        red_mask >>= 1;
-        red_shift ++;
-      }
-      
-      green_mask  = image->green_mask;
-      green_shift = 0;
-      
-      while ((green_mask & 1) == 0) {
-        green_mask >>= 1;
-        green_shift ++;
-      }
-      
-      blue_mask  = image->blue_mask;
-      blue_shift = 0;
-      
-      while ((blue_mask & 1) == 0) {
-        blue_mask >>= 1;
-        blue_shift ++;
-      }
-      
-      // Read the pixels and output an RGB image...
-      for (y = 0; y < image->height; y ++) {
-        pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
-        line  = p + y * w * d;
-        
-        switch (image->bits_per_pixel) {
-          case 8 :
-            for (x = image->width, line_ptr = line;
-                 x > 0;
-                 x --, line_ptr += d, pixel ++) {
-              i = *pixel;
-              
-              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-            }
-            break;
-            
-          case 12 :
-            for (x = image->width, line_ptr = line, index_shift = 0;
-                 x > 0;
-                 x --, line_ptr += d) {
-              if (index_shift == 0) {
-                i = ((pixel[0] << 4) | (pixel[1] >> 4)) & 4095;
-              } else {
-                i = ((pixel[1] << 8) | pixel[2]) & 4095;
-              }
-              
-              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              
-              if (index_shift == 0) {
-                index_shift = 4;
-              } else {
-                index_shift = 0;
-                pixel += 3;
-              }
-            }
-            break;
-            
-          case 16 :
-            if (image->byte_order == LSBFirst) {
-              // Little-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 2) {
-                i = (pixel[1] << 8) | pixel[0];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            } else {
-              // Big-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 2) {
-                i = (pixel[0] << 8) | pixel[1];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            }
-            break;
-            
-          case 24 :
-            if (image->byte_order == LSBFirst) {
-              // Little-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 3) {
-                i = (((pixel[2] << 8) | pixel[1]) << 8) | pixel[0];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            } else {
-              // Big-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 3) {
-                i = (((pixel[0] << 8) | pixel[1]) << 8) | pixel[2];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            }
-            break;
-            
-          case 32 :
-            if (image->byte_order == LSBFirst) {
-              // Little-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 4) {
-                i = (((((pixel[3] << 8) | pixel[2]) << 8) | pixel[1]) << 8) | pixel[0];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            } else {
-              // Big-endian...
-              for (x = image->width, line_ptr = line;
-                   x > 0;
-                   x --, line_ptr += d, pixel += 4) {
-                i = (((((pixel[0] << 8) | pixel[1]) << 8) | pixel[2]) << 8) | pixel[3];
-                
-                line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
-                line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
-                line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-              }
-            }
-            break;
-        }
-      }
-    }
-    
-    // Destroy the X image we've read and return the RGB(A) image...
-    XDestroyImage(image);
   }
+
+  // Check if we have colormap image...
+  if (!image->red_mask) {
+    // Get the colormap entries for this window...
+    maxindex = fl_visual->visual->map_entries;
+
+    for (i = 0; i < maxindex; i ++) colors[i].pixel = i;
+
+    XQueryColors(fl_display, fl_colormap, colors, maxindex);
+
+    for (i = 0; i < maxindex; i ++) {
+      cvals[i][0] = colors[i].red >> 8;
+      cvals[i][1] = colors[i].green >> 8;
+      cvals[i][2] = colors[i].blue >> 8;
+    }
+
+    // Read the pixels and output an RGB image...
+    for (y = 0; y < image->height; y ++) {
+      pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
+      line  = p + y * w * d;
+
+      switch (image->bits_per_pixel) {
+        case 1 :
+          for (x = image->width, line_ptr = line, index_mask = 128;
+               x > 0;
+               x --, line_ptr += d) {
+            if (*pixel & index_mask) {
+              line_ptr[0] = cvals[1][0];
+              line_ptr[1] = cvals[1][1];
+              line_ptr[2] = cvals[1][2];
+            } else {
+              line_ptr[0] = cvals[0][0];
+              line_ptr[1] = cvals[0][1];
+              line_ptr[2] = cvals[0][2];
+            }
+
+            if (index_mask > 1) {
+              index_mask >>= 1;
+            } else {
+              index_mask = 128;
+              pixel ++;
+            }
+          }
+          break;
+
+        case 2 :
+          for (x = image->width, line_ptr = line, index_shift = 6;
+               x > 0;
+               x --, line_ptr += d) {
+            i = (*pixel >> index_shift) & 3;
+
+            line_ptr[0] = cvals[i][0];
+            line_ptr[1] = cvals[i][1];
+            line_ptr[2] = cvals[i][2];
+
+            if (index_shift > 0) {
+              index_shift -= 2;
+            } else {
+              index_shift = 6;
+              pixel ++;
+            }
+          }
+          break;
+
+        case 4 :
+          for (x = image->width, line_ptr = line, index_shift = 4;
+               x > 0;
+               x --, line_ptr += d) {
+            if (index_shift == 4) i = (*pixel >> 4) & 15;
+            else i = *pixel & 15;
+
+            line_ptr[0] = cvals[i][0];
+            line_ptr[1] = cvals[i][1];
+            line_ptr[2] = cvals[i][2];
+
+            if (index_shift > 0) {
+              index_shift = 0;
+            } else {
+              index_shift = 4;
+              pixel ++;
+            }
+          }
+          break;
+
+        case 8 :
+          for (x = image->width, line_ptr = line;
+               x > 0;
+               x --, line_ptr += d, pixel ++) {
+            line_ptr[0] = cvals[*pixel][0];
+            line_ptr[1] = cvals[*pixel][1];
+            line_ptr[2] = cvals[*pixel][2];
+          }
+          break;
+
+        case 12 :
+          for (x = image->width, line_ptr = line, index_shift = 0;
+               x > 0;
+               x --, line_ptr += d) {
+            if (index_shift == 0) {
+              i = ((pixel[0] << 4) | (pixel[1] >> 4)) & 4095;
+            } else {
+              i = ((pixel[1] << 8) | pixel[2]) & 4095;
+            }
+
+            line_ptr[0] = cvals[i][0];
+            line_ptr[1] = cvals[i][1];
+            line_ptr[2] = cvals[i][2];
+
+            if (index_shift == 0) {
+              index_shift = 4;
+            } else {
+              index_shift = 0;
+              pixel += 3;
+            }
+          }
+          break;
+      }
+    }
+  } else {
+    // RGB(A) image, so figure out the shifts & masks...
+    red_mask  = image->red_mask;
+    red_shift = 0;
+
+    while ((red_mask & 1) == 0) {
+      red_mask >>= 1;
+      red_shift ++;
+    }
+
+    green_mask  = image->green_mask;
+    green_shift = 0;
+
+    while ((green_mask & 1) == 0) {
+      green_mask >>= 1;
+      green_shift ++;
+    }
+
+    blue_mask  = image->blue_mask;
+    blue_shift = 0;
+
+    while ((blue_mask & 1) == 0) {
+      blue_mask >>= 1;
+      blue_shift ++;
+    }
+
+    // Read the pixels and output an RGB image...
+    for (y = 0; y < image->height; y ++) {
+      pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
+      line  = p + y * w * d;
+
+      switch (image->bits_per_pixel) {
+        case 8 :
+          for (x = image->width, line_ptr = line;
+               x > 0;
+               x --, line_ptr += d, pixel ++) {
+            i = *pixel;
+
+            line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+            line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+            line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+          }
+          break;
+
+        case 12 :
+          for (x = image->width, line_ptr = line, index_shift = 0;
+               x > 0;
+               x --, line_ptr += d) {
+            if (index_shift == 0) {
+              i = ((pixel[0] << 4) | (pixel[1] >> 4)) & 4095;
+            } else {
+              i = ((pixel[1] << 8) | pixel[2]) & 4095;
+            }
+
+            line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+            line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+            line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+
+            if (index_shift == 0) {
+              index_shift = 4;
+            } else {
+              index_shift = 0;
+              pixel += 3;
+            }
+          }
+          break;
+
+        case 16 :
+          if (image->byte_order == LSBFirst) {
+            // Little-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 2) {
+              i = (pixel[1] << 8) | pixel[0];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          } else {
+            // Big-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 2) {
+              i = (pixel[0] << 8) | pixel[1];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          }
+          break;
+
+        case 24 :
+          if (image->byte_order == LSBFirst) {
+            // Little-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 3) {
+              i = (((pixel[2] << 8) | pixel[1]) << 8) | pixel[0];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          } else {
+            // Big-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 3) {
+              i = (((pixel[0] << 8) | pixel[1]) << 8) | pixel[2];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          }
+          break;
+
+        case 32 :
+          if (image->byte_order == LSBFirst) {
+            // Little-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 4) {
+              i = (((((pixel[3] << 8) | pixel[2]) << 8) | pixel[1]) << 8) | pixel[0];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          } else {
+            // Big-endian...
+            for (x = image->width, line_ptr = line;
+                 x > 0;
+                 x --, line_ptr += d, pixel += 4) {
+              i = (((((pixel[0] << 8) | pixel[1]) << 8) | pixel[2]) << 8) | pixel[3];
+
+              line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
+              line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
+              line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
+            }
+          }
+          break;
+      }
+    }
+  }
+
+  // Destroy the X image we've read and return the RGB(A) image...
+  XDestroyImage(image);
+
   Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
   rgb->alloc_array = 1;
   return rgb;

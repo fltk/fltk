@@ -658,12 +658,14 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   int ld = img->ld();
   if (ld == 0) ld = img->data_w() * img->d();
   uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
+
+  uchar *dst = fl_read_image(NULL, X, Y, W, H, 0);
+  if (!dst) {
+    fl_draw_image(srcptr, X, Y, W, H, img->d(), ld);
+    return;
+  }
   int srcskip = ld - img->d() * W;
-
-  uchar *dst = new uchar[W * H * 3];
   uchar *dstptr = dst;
-
-  fl_read_image(dst, X, Y, W, H, 0);
 
   uchar srcr, srcg, srcb, srca;
   uchar dstr, dstg, dstb, dsta;
