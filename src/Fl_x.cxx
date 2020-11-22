@@ -2904,6 +2904,68 @@ void Fl_X11_Window_Driver::set_icons() {
 
 ////////////////////////////////////////////////////////////////
 
+#if ! HAVE_XCURSOR
+static void cache_pixmap_cursor(Fl_Cursor c, Cursor& cursor, Fl_Window *pWindow, Cursor& result) {
+  if (cursor != None) { // already cached?
+    result = cursor;
+    return;
+  }
+#define CURSORSIZE 16
+#define HOTXY 7
+  static struct TableEntry {
+    uchar bits[CURSORSIZE*CURSORSIZE/8];
+    uchar mask[CURSORSIZE*CURSORSIZE/8];
+    Cursor cursor;
+  } table[] = {
+    {{  // FL_CURSOR_NWSE
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78, 0x00, 0x38, 0x00, 0x78, 0x00,
+     0xe8, 0x00, 0xc0, 0x01, 0x80, 0x03, 0x00, 0x17, 0x00, 0x1e, 0x00, 0x1c,
+     0x00, 0x1e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+     {
+     0x00, 0x00, 0x00, 0x00, 0xfc, 0x00, 0xfc, 0x00, 0x7c, 0x00, 0xfc, 0x00,
+     0xfc, 0x01, 0xec, 0x03, 0xc0, 0x37, 0x80, 0x3f, 0x00, 0x3f, 0x00, 0x3e,
+     0x00, 0x3f, 0x00, 0x3f, 0x00, 0x00, 0x00, 0x00}},
+    {{  // FL_CURSOR_NESW
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x1c, 0x00, 0x1e,
+     0x00, 0x17, 0x80, 0x03, 0xc0, 0x01, 0xe8, 0x00, 0x78, 0x00, 0x38, 0x00,
+     0x78, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+     {
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x3f, 0x00, 0x3e, 0x00, 0x3f,
+     0x80, 0x3f, 0xc0, 0x37, 0xec, 0x03, 0xfc, 0x01, 0xfc, 0x00, 0x7c, 0x00,
+     0xfc, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {{0}, {0}} // FL_CURSOR_NONE & unknown
+  };
+
+  Cursor xc = None;
+  if (c >= FL_CURSOR_NWSE) {
+     TableEntry *q = (c > FL_CURSOR_NESW) ? table+2 : table+(c-FL_CURSOR_NWSE);
+   if (!(q->cursor)) {
+     XColor dummy = { 0 };
+     Pixmap p = XCreateBitmapFromData(fl_display,
+     RootWindow(fl_display, fl_screen), (const char*)(q->bits), CURSORSIZE, CURSORSIZE);
+     Pixmap m = XCreateBitmapFromData(fl_display,
+     RootWindow(fl_display, fl_screen), (const char*)(q->mask), CURSORSIZE, CURSORSIZE);
+     q->cursor = XCreatePixmapCursor(fl_display, p,m,&dummy, &dummy, HOTXY, HOTXY);
+     XFreePixmap(fl_display, m);
+     XFreePixmap(fl_display, p);
+    }
+    xc = q->cursor;
+  }
+  XColor fgc;
+  uchar r,g,b;
+  // hardcoded colors (legacy)
+  Fl_Color fg = FL_WHITE;
+  Fl_Color bg = FL_BLACK;
+  Fl::get_color(fg,r,g,b);
+  fgc.red = r<<8; fgc.green = g<<8; fgc.blue = b<<8;
+  XColor bgc;
+  Fl::get_color(bg,r,g,b);
+  bgc.red = r<<8; bgc.green = g<<8; bgc.blue = b<<8;
+  XRecolorCursor(fl_display, xc, &fgc, &bgc);
+  result = xc;
+}
+#endif // ! HAVE_XCURSOR
+
 int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
 
   /* The cursors are cached, because creating one takes 0.5ms including
@@ -2926,6 +2988,11 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
   static Cursor xc_se = None;
   static Cursor xc_s = None;
   static Cursor xc_sw = None;
+#if ! HAVE_XCURSOR
+  static Cursor xc_nwse = None;
+  static Cursor xc_nesw = None;
+  static Cursor xc_none = None;
+#endif // ! HAVE_XCURSOR
 
   Cursor xc;
 
@@ -2952,6 +3019,11 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
   case FL_CURSOR_SE:      cache_cursor(XC_bottom_right_corner, xc_se); break;
   case FL_CURSOR_S:       cache_cursor(XC_bottom_side, xc_s); break;
   case FL_CURSOR_SW:      cache_cursor(XC_bottom_left_corner, xc_sw); break;
+#if ! HAVE_XCURSOR
+  case FL_CURSOR_NWSE:    cache_pixmap_cursor(c, xc_nwse, pWindow, xc); break;
+  case FL_CURSOR_NESW:    cache_pixmap_cursor(c, xc_nesw, pWindow, xc); break;
+  case FL_CURSOR_NONE:    cache_pixmap_cursor(c, xc_none, pWindow, xc); break;
+#endif // ! HAVE_XCURSOR
   default:
     return 0;
   }
