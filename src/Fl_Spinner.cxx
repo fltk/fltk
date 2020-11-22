@@ -1,7 +1,7 @@
 //
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,8 @@
 #include <stdlib.h>
 
 #include <FL/Fl_Spinner.H>
+#include <FL/Fl_Rect.H>
+#include <FL/fl_draw.H>
 
 /*
   This widget is a combination of the input widget and repeat buttons.
@@ -91,9 +93,6 @@ void Fl_Spinner::update() {
   input_.value(s);
 }
 
-#define FL_UP_ARROW_TX "@-42<"
-#define FL_DOWN_ARROW_TX "@-42>"
-
 /**
   Creates a new Fl_Spinner widget using the given position, size,
   and label string.
@@ -104,9 +103,8 @@ void Fl_Spinner::update() {
 Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
 : Fl_Group(X, Y, W, H, L),
   input_(X, Y, W - H / 2 - 2, H),
-  up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, FL_UP_ARROW_TX),
-  down_button_(X + W - H / 2 - 2, Y + H - H / 2,
-               H / 2 + 2, H / 2, FL_DOWN_ARROW_TX)
+  up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2),
+  down_button_(X + W - H / 2 - 2, Y + H - H / 2, H / 2 + 2, H / 2)
 {
   end();
 
@@ -127,6 +125,26 @@ Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
   up_button_.callback((Fl_Callback *)sb_cb, this);
 
   down_button_.callback((Fl_Callback *)sb_cb, this);
+}
+
+void Fl_Spinner::draw() {
+
+  // draw the box and the input widget
+
+  draw_box();
+  ((Fl_Widget&)input_).draw();
+
+  // draw the buttons and the up and down arrows as their "labels"
+
+  ((Fl_Widget&)up_button_).draw();
+  Fl_Rect up(up_button_);
+  up.inset(up_button_.box());
+  fl_draw_arrow(up, FL_ARROW_SINGLE, FL_ORIENT_UP, labelcolor());
+
+  ((Fl_Widget&)down_button_).draw();
+  Fl_Rect down(down_button_);
+  down.inset(down_button_.box());
+  fl_draw_arrow(down, FL_ARROW_SINGLE, FL_ORIENT_DOWN, labelcolor());
 }
 
 int Fl_Spinner::handle(int event) {

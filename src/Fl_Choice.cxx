@@ -1,7 +1,7 @@
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,11 @@
 // Emulates the Forms choice widget.  This is almost exactly the same
 // as an Fl_Menu_Button.  The only difference is the appearance of the
 // button: it draws the text of the current pick and a down-arrow.
+// The exact layout and the type of arrow can vary by FLTK scheme.
+
+// FIXME: all such variations should be implemented in the "scheme code",
+// hopefully in a future class derived from a base class Fl_Scheme or similar.
+// Albrecht
 
 void Fl_Choice::draw() {
   Fl_Boxtype btype = Fl::scheme() ? FL_UP_BOX           // non-default uses up box
@@ -32,70 +37,74 @@ void Fl_Choice::draw() {
   // Arrow area
   int H = h() - 2 * dy;
   int W = Fl::is_scheme("gtk+")    ? 20 :                       // gtk+  -- fixed size
-          Fl::is_scheme("gleam")   ? 20 :                       // gleam -- fixed size
-          Fl::is_scheme("plastic") ? ((H > 20) ? 20 : H)        // plastic: shrink if H<20
-                                   : ((H > 20) ? 20 : H);       // default: shrink if H<20
+          Fl::is_scheme("gleam")   ? 20                         // gleam -- fixed size
+                                   : ((H > 20) ? 20 : H);       // else: shrink if H<20
   int X = x() + w() - W - dx;
   int Y = y() + dy;
 
-  // Arrow object
-  int w1 = (W - 4) / 3; if (w1 < 1) w1 = 1;
-  int x1 = X + (W - 2 * w1 - 1) / 2;
-  int y1 = Y + (H - w1 - 1) / 2;
+  Fl_Rect ab(X, Y, W, H); // arrow box
+  int active = active_r();
+  Fl_Color arrow_color = active ? labelcolor() : fl_inactive(labelcolor());
+  Fl_Color box_color = color();
+
+  // From "original" code: modify the box color *only* for the default scheme.
+  // This is weird (why?). I believe we should either make sure that the text
+  // color contrasts well when the text is rendered *or* we should do this for
+  // *all* schemes. Anyway, adapting the old code... (Albrecht)
+
+  if (!Fl::scheme()) {            // default scheme only, see comment above
+    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor())
+      box_color = FL_BACKGROUND2_COLOR;
+    else
+      box_color = fl_lighter(color());
+  }
+
+  // Draw the widget box
+
+  draw_box(btype, box_color);
+
+  // Arrow box or horizontal divider line, depending on the current scheme
+
+  // Scheme:          Box or divider line
+  // ----------------------------------------
+  // Default (None):  Arrow box (FL_UP_BOX)
+  // gtk+, gleam:     Divider line
+  // else:            Nothing (!)
 
   if (Fl::scheme()) {
-    // NON-DEFAULT SCHEME
-
-    // Draw widget box
-    draw_box(btype, color());
-
-    // Draw arrow area
-    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-    if (Fl::is_scheme("plastic")) {
-      // Show larger up/down arrows...
-      fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
-      fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
-    } else {
-      // Show smaller up/down arrows with a divider...
-      x1 = x() + w() - 13 - dx;
-      y1 = y() + h() / 2;
-      fl_polygon(x1, y1 - 2, x1 + 3, y1 - 5, x1 + 6, y1 - 2);
-      fl_polygon(x1, y1 + 2, x1 + 3, y1 + 5, x1 + 6, y1 + 2);
+    if (Fl::is_scheme("gtk+") ||
+        Fl::is_scheme("gleam")) {
+      // draw the divider
+      int x1 = x() + w() - 20 - dx;
+      int y1 = y() + h() / 2;
 
       fl_color(fl_darker(color()));
-      fl_yxline(x1 - 7, y1 - 8, y1 + 8);
+      fl_yxline(x1, y1 - 8, y1 + 8);
 
       fl_color(fl_lighter(color()));
-      fl_yxline(x1 - 6, y1 - 8, y1 + 8);
+      fl_yxline(x1 + 1, y1 - 8, y1 + 8);
     }
-  } else {
-    // DEFAULT SCHEME
-
-    // Draw widget box
-    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor()) {
-      draw_box(btype, FL_BACKGROUND2_COLOR);
-    } else {
-      draw_box(btype, fl_lighter(color()));
-    }
-
-    // Draw arrow area
-    draw_box(FL_UP_BOX,X,Y,W,H,color());
-    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-    fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
+  } else { // Default scheme ("None")
+    // Draw arrow box
+    draw_box(FL_UP_BOX, X, Y, W, H, color());
+    ab.inset(FL_UP_BOX);
   }
+
+  // Draw choice arrow(s)
+  fl_draw_arrow(ab, FL_ARROW_CHOICE, FL_ORIENT_NONE, arrow_color);
 
   W += 2 * dx;
 
   // Draw menu item's label
   if (mvalue()) {
     Fl_Menu_Item m = *mvalue();
-    if (active_r()) m.activate(); else m.deactivate();
+    if (active) m.activate(); else m.deactivate();
 
     // Clip
     int xx = x() + dx, yy = y() + dy + 1, ww = w() - W, hh = H - 2;
     fl_push_clip(xx, yy, ww, hh);
 
-    if ( Fl::scheme()) {
+    if (Fl::scheme()) {
       Fl_Label l;
       l.value = m.text;
       l.image = 0;

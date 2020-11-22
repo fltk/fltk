@@ -49,7 +49,7 @@ class FL_EXPORT Fl_Counter : public Fl_Valuator {
   Fl_Fontsize textsize_;
   Fl_Color textcolor_;
   double lstep_;
-  uchar mouseobj;
+  uchar mouseobj_;
   static void repeat_callback(void *);
   int calc_mouseobj();
   void increment_cb();
@@ -57,6 +57,8 @@ class FL_EXPORT Fl_Counter : public Fl_Valuator {
 protected:
 
   void draw();
+  // compute widths of arrow boxes
+  void arrow_widths(int &w1, int &w2);
 
 public:
 

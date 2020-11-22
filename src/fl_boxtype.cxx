@@ -1,7 +1,7 @@
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -415,7 +415,7 @@ Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
 }
 /** Sets the function to call to draw a specific boxtype. */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
-                      uchar a, uchar b, uchar c, uchar d) {
+                     uchar a, uchar b, uchar c, uchar d) {
   fl_box_table[t].f   = f;
   fl_box_table[t].set = 1;
   fl_box_table[t].dx  = a;

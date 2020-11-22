@@ -1,7 +1,7 @@
 //
 // Menu button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,7 @@ void Fl_Menu_Button::draw() {
   draw_label(x()+Fl::box_dx(box()), y(), X-x()+2, h());
   if (Fl::focus() == this) draw_focus();
   // ** if (box() == FL_FLAT_BOX) return; // for XForms compatibility
+  // FIXME_ARROW: use fl_draw_arrow()
   fl_color(active_r() ? FL_DARK3 : fl_inactive(FL_DARK3));
   fl_line(X+H/2, Y+H, X, Y, X+H, Y);
   fl_color(active_r() ? FL_LIGHT3 : fl_inactive(FL_LIGHT3));

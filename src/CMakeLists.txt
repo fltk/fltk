@@ -136,6 +136,7 @@ set (CPPFILES
   fl_curve.cxx
   fl_diamond_box.cxx
   fl_draw.cxx
+  fl_draw_arrow.cxx
   fl_draw_pixmap.cxx
   fl_encoding_latin1.cxx
   fl_encoding_mac_roman.cxx

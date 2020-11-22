@@ -1,7 +1,7 @@
 //
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,6 +65,8 @@ protected:
   Fl_Repeat_Button
                 up_button_,             // Up button
                 down_button_;           // Down button
+
+  virtual void draw();
 
 public:
 

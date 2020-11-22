@@ -19,67 +19,118 @@
 #include <FL/Fl_Simple_Counter.H>
 #include <FL/fl_draw.H>
 
-void Fl_Counter::draw() {
-  int i; Fl_Boxtype boxtype[5];
-  Fl_Color selcolor;
+// This struct describes the four arrow boxes
+struct arrow_box {
+  int width;
+  Fl_Arrow_Type arrow_type;
+  Fl_Boxtype boxtype;
+  Fl_Orientation orientation;
+  arrow_box() { // constructor
+    width = 0;
+    boxtype = FL_NO_BOX;
+    orientation = FL_ORIENT_RIGHT;
+    arrow_type = FL_ARROW_SINGLE;
+  }
+};
 
-  boxtype[0] = box();
-  if (boxtype[0] == FL_UP_BOX) boxtype[0] = FL_DOWN_BOX;
-  if (boxtype[0] == FL_THIN_UP_BOX) boxtype[0] = FL_THIN_DOWN_BOX;
-  for (i=1; i<5; i++)
-    if (mouseobj == i)
-      boxtype[i] = fl_down(box());
-    else
-      boxtype[i] = box();
+/**
+  Compute sizes (widths) of arrow boxes.
 
-  int xx[5], ww[5];
-  if (type() == FL_NORMAL_COUNTER) {
-    int W = w()*15/100;
-    xx[1] = x();         ww[1] = W;
-    xx[2] = x()+1*W;     ww[2] = W;
-    xx[0] = x()+2*W;     ww[0] = w()-4*W;
-    xx[3] = x()+w()-2*W; ww[3] = W;
-    xx[4] = x()+w()-1*W; ww[4] = W;
+  This method computes the two sizes of the arrow boxes of Fl_Counter.
+  You can override it in a subclass if you want to draw fancy arrows
+  or change the layout. However, the basic layout is fixed and can't
+  be changed w/o overriding the draw() and handle() methods.
+
+  Basic layout:
+  \code
+    +------+-----+-------------+-----+------+
+    |  <<  |  <  |    value    |  >  |  >>  |
+    +------+-----+-------------+-----+------+
+  \endcode
+
+  The returned value \p w2 should be zero if the counter type() is FL_SIMPLE_COUNTER.
+
+  \param[out]   w1  width of single arrow box
+  \param[out]   w2  width of double arrow box
+*/
+void Fl_Counter::arrow_widths(int &w1, int &w2) {
+  if (type() == FL_SIMPLE_COUNTER) {
+    w1 = w() * 20/100;
+    w2 = 0;
   } else {
-    int W = w()*20/100;
-    xx[1] = 0;           ww[1] = 0;
-    xx[2] = x();         ww[2] = W;
-    xx[0] = x()+W;       ww[0] = w()-2*W;
-    xx[3] = x()+w()-1*W; ww[3] = W;
-    xx[4] = 0;           ww[4] = 0;
+    w1 = w() * 13/100;
+    w2 = w() * 17/100;
+  }
+  // limit arrow box sizes to reserve more space for the text box
+  if (w1 > 18) w1 = 18;
+  if (w2 > 24) w2 = 24;
+}
+
+void Fl_Counter::draw() {
+  struct arrow_box ab[4];
+
+  // text box setup
+  Fl_Boxtype tbt = box();
+  if (tbt == FL_UP_BOX) tbt = FL_DOWN_BOX;
+  if (tbt == FL_THIN_UP_BOX) tbt = FL_THIN_DOWN_BOX;
+
+  // array boxes
+  for (int i = 0; i < 4; i++) {
+    if (mouseobj_ == i + 1)
+      ab[i].boxtype = fl_down(box());
+    else
+      ab[i].boxtype = box();
   }
 
-  draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_BACKGROUND2_COLOR);
+  ab[0].arrow_type = ab[3].arrow_type = FL_ARROW_DOUBLE;      // first and last arrow
+  ab[0].orientation = ab[1].orientation = FL_ORIENT_LEFT;     // left arrows
+
+  int w1 = 0, w2 = 0;
+  arrow_widths(w1, w2);
+  if (type() == FL_SIMPLE_COUNTER)
+    w2 = 0;
+
+  ab[0].width = ab[3].width = w2;          // double arrows
+  ab[1].width = ab[2].width = w1;          // single arrows
+
+  int tw = w() - 2 * (w1 + w2); // text box width
+  int tx = x() + w1 + w2;       // text box position
+
+  // printf("w() = %3d, w1 = %3d, w2 = %3d, tw = %3d\n", w(), w1, w2, tw);
+
+  // always draw text box and text
+  draw_box(tbt, tx, y(), tw, h(), FL_BACKGROUND2_COLOR);
   fl_font(textfont(), textsize());
   fl_color(active_r() ? textcolor() : fl_inactive(textcolor()));
   char str[128]; format(str);
-  fl_draw(str, xx[0], y(), ww[0], h(), FL_ALIGN_CENTER);
-  if (Fl::focus() == this) draw_focus(boxtype[0], xx[0], y(), ww[0], h());
+  fl_draw(str, tx, y(), tw, h(), FL_ALIGN_CENTER);
+  if (Fl::focus() == this) draw_focus(tbt, tx, y(), tw, h());
   if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 
+  Fl_Color arrow_color;
   if (active_r())
-    selcolor = labelcolor();
+    arrow_color = labelcolor();
   else
-    selcolor = fl_inactive(labelcolor());
+    arrow_color = fl_inactive(labelcolor());
 
-  if (type() == FL_NORMAL_COUNTER) {
-    draw_box(boxtype[1], xx[1], y(), ww[1], h(), color());
-    fl_draw_symbol("@-4<<", xx[1], y(), ww[1], h(), selcolor);
+  // draw arrow boxes
+  int xo = x();
+  for (int i = 0; i < 4; i++) {
+    if (ab[i].width > 0) {
+      draw_box(ab[i].boxtype, xo, y(), ab[i].width, h(), color());
+      Fl_Rect bb(xo, y(), ab[i].width, h(), ab[i].boxtype);
+      fl_draw_arrow(bb, ab[i].arrow_type, ab[i].orientation, arrow_color);
+      xo += ab[i].width;
+    }
+    if (i == 1) xo += tw;
   }
-  draw_box(boxtype[2], xx[2], y(), ww[2], h(), color());
-  fl_draw_symbol("@-4<",  xx[2], y(), ww[2], h(), selcolor);
-  draw_box(boxtype[3], xx[3], y(), ww[3], h(), color());
-  fl_draw_symbol("@-4>",  xx[3], y(), ww[3], h(), selcolor);
-  if (type() == FL_NORMAL_COUNTER) {
-    draw_box(boxtype[4], xx[4], y(), ww[4], h(), color());
-    fl_draw_symbol("@-4>>", xx[4], y(), ww[4], h(), selcolor);
-  }
-}
+
+} // draw()
 
 void Fl_Counter::increment_cb() {
-  if (!mouseobj) return;
+  if (!mouseobj_) return;
   double v = value();
-  switch (mouseobj) {
+  switch (mouseobj_) {
   case 1: v -= lstep_; break;
   case 2: v = increment(v, -1); break;
   case 3: v = increment(v, 1); break;
@@ -95,7 +146,7 @@ void Fl_Counter::repeat_callback(void* v) {
   Fl_Counter* b = (Fl_Counter*)v;
   int buttons = Fl::event_state() & FL_BUTTONS; // any mouse button pressed
   int focus = (Fl::focus() == b);               // the widget has focus
-  if (b->mouseobj && buttons && focus) {
+  if (b->mouseobj_ && buttons && focus) {
     Fl::add_timeout(REPEAT, repeat_callback, b);
     b->increment_cb();
   }
@@ -120,9 +171,9 @@ int Fl_Counter::handle(int event) {
   int i;
   switch (event) {
   case FL_RELEASE:
-    if (mouseobj) {
+    if (mouseobj_) {
       Fl::remove_timeout(repeat_callback, this);
-      mouseobj = 0;
+      mouseobj_ = 0;
       redraw();
     }
     handle_release();
@@ -135,9 +186,9 @@ int Fl_Counter::handle(int event) {
     }
   case FL_DRAG:
     i = calc_mouseobj();
-    if (i != mouseobj) {
+    if (i != mouseobj_) {
       Fl::remove_timeout(repeat_callback, this);
-      mouseobj = (uchar)i;
+      mouseobj_ = (uchar)i;
       if (i > 0)
         Fl::add_timeout(INITIALREPEAT, repeat_callback, this);
       Fl_Widget_Tracker wp(this);
@@ -159,7 +210,7 @@ int Fl_Counter::handle(int event) {
     }
     // break not required because of switch...
   case FL_UNFOCUS :
-    mouseobj = 0;
+    mouseobj_ = 0;
     /* FALLTHROUGH */
   case FL_FOCUS :
     if (Fl::visible_focus()) {
@@ -195,7 +246,7 @@ Fl_Counter::Fl_Counter(int X, int Y, int W, int H, const char* L)
   bounds(-1000000.0, 1000000.0);
   Fl_Valuator::step(1, 10);
   lstep_ = 1.0;
-  mouseobj = 0;
+  mouseobj_ = 0;
   textfont_ = FL_HELVETICA;
   textsize_ = FL_NORMAL_SIZE;
   textcolor_ = FL_FOREGROUND_COLOR;
