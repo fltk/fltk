@@ -454,7 +454,7 @@ Here is a basic CMakeLists.txt file using FLTK.
 
 ------
 
-cmake_minimum_required(VERSION 2.6.3)
+cmake_minimum_required(VERSION 3.2.3)
 
 project(hello)
 
@@ -471,10 +471,14 @@ set(FLTK_DIR /path/to/fltk)
 
 find_package(FLTK REQUIRED NO_MODULE)
 
-include_directories(${FLTK_INCLUDE_DIRS})
+if (APPLE)
+  add_executable(hello MACOSX_BUNDLE hello.cxx)
+  target_link_libraries(hello "-framework cocoa")
+else ()
+  add_executable(hello WIN32 hello.cxx)
+endif (APPLE)
 
-add_executable(hello WIN32 hello.cxx)
-# target_include_directories(hello PUBLIC ${FLTK_INCLUDE_DIRS})
+target_include_directories(hello PUBLIC ${FLTK_INCLUDE_DIRS})
 
 target_link_libraries(hello fltk)
 
@@ -487,16 +491,15 @@ means that it is an error if it's not found.  NO_MODULE tells it to search
 only for the FLTKConfig file, not using the FindFLTK.cmake supplied with
 CMake, which doesn't work with this version of FLTK.
 
+The add_executable() command takes one form for the macOS platform
+and another for other platforms (Yes, WIN32 can be used also for the X11 platform).
+
 Once the package is found the CMake variable FLTK_INCLUDE_DIRS is defined
 which can be used to add the FLTK include directories to the definitions
-used to compile your program. In older CMake versions you may need to use
-`include_directories()` as shown above. In more recent CMake versions you
-can use the (commented) `target_include_directories()` command. The latter
-should be preferred (YMMV, see the CMake docs).
+used to compile your program using the `target_include_directories()` command. 
 
-The WIN32 in the add_executable tells your Windows compiler that this is
-a Windows GUI app.  It is ignored on other platforms and should always be
-present with FLTK GUI programs for better portability.
+The target_link_libraries() command is used to specify all necessary FLTK 
+libraries. Thus, you may have to add fltk_images, fltk_gl, etc…
 
 Note: the variable FLTK_USE_FILE used to include another file in
 previous FLTK versions was deprecated since FLTK 1.3.4 and will be
