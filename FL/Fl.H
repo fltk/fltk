@@ -816,7 +816,8 @@ int main() {
         character use the value of that ASCII character (as though shift,
         ctrl, and caps lock were not on). The space bar is 32.
     \li All keys on the numeric keypad producing a printable ASCII
-        character use the value of that ASCII character plus FL_KP.
+        character use the value of that ASCII character plus FL_KP
+        (e.g., FL_KP + '4', FL_KP + '/').
         The highest possible value is FL_KP_Last so you can
         range-check to see if something is  on the keypad.
     \li All numbered function keys use the number on the function key plus
