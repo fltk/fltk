@@ -48,6 +48,7 @@
 #include <stddef.h>           /* For 'offsetof()', 'NULL' and 'size_t' */
 #include <limits.h>           /* For 'INT_MAX' */
 #include <string.h>           /* For 'memcpy()' */
+#include "flstring.h"         /* For 'fl_snprintf()' */
 #if defined(HAVE_PTHREAD) && defined(HAVE_PTHREAD_H)
 #  include <pthread.h>
 #endif  /* HAVE_PTHREAD */
@@ -137,7 +138,7 @@ int
 fl_scandir(const char *dir, struct dirent ***namelist,
            int (*sel)(struct dirent *),
            int (*compar)(struct dirent **, struct dirent **),
-           char *errmsg, int errmsg_sz) {
+           char *errmsg, int errmsg_sz)
 {
   int result = -1;
   DIR *dirp;

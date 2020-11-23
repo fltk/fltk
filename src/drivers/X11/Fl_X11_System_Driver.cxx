@@ -481,8 +481,8 @@ int Fl_X11_System_Driver::filename_list(const char *d,
   fl_utf8to_mb(d, dirlen, dirloc, dirlen + 1);
 
 #ifndef HAVE_SCANDIR
-  // This version is when we define our own scandir
-  int n = fl_scandir(dirloc, list, 0, sort);
+  // This version is when we define our own scandir. Note it updates errmsg on errors.
+  int n = fl_scandir(dirloc, list, 0, sort, errmsg, errmsg_sz);
 #elif defined(HAVE_SCANDIR_POSIX)
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(dirloc, list, 0, (int(*)(const dirent **, const dirent **))sort);
@@ -504,7 +504,11 @@ int Fl_X11_System_Driver::filename_list(const char *d,
   free(dirloc);
 
   if (n==-1) {
+    // Don't write to errmsg if FLTK's fl_scandir() already set it.
+    // If OS's scandir() was used (HAVE_SCANDIR), we return its error in errmsg here..
+#ifdef HAVE_SCANDIR
     if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+#endif
     return -1;
   }
 
