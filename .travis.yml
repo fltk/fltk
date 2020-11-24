@@ -1,5 +1,7 @@
 sudo: required
-dist: trusty
+dist: xenial
+osx_image: xcode12.2
+
 cache: ccache
 
 language:
