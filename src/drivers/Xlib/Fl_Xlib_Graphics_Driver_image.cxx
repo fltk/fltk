@@ -812,6 +812,15 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
+    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR) {
+      XRenderSetPictureFilter(fl_display, src, FilterBilinear, 0, 0);
+      // A note at  https://www.talisman.org/~erlkonig/misc/x11-composite-tutorial/ :
+      // "When you use a filter you'll probably want to use PictOpOver as the render op,  
+      // regardless of whether the source picture has an alpha channel or not, since
+      // the edges may end up having alpha values after the filter has been applied."
+      // suggests this would be preferable :
+      // has_alpha = true;
+    }
   }
   XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
                    XP, YP, WP, HP);
