@@ -471,11 +471,9 @@ set(FLTK_DIR /path/to/fltk)
 
 find_package(FLTK REQUIRED NO_MODULE)
 
+add_executable(hello WIN32 MACOSX_BUNDLE hello.cxx)
 if (APPLE)
-  add_executable(hello MACOSX_BUNDLE hello.cxx)
   target_link_libraries(hello "-framework cocoa")
-else ()
-  add_executable(hello WIN32 hello.cxx)
 endif (APPLE)
 
 target_include_directories(hello PUBLIC ${FLTK_INCLUDE_DIRS})
@@ -491,8 +489,9 @@ means that it is an error if it's not found.  NO_MODULE tells it to search
 only for the FLTKConfig file, not using the FindFLTK.cmake supplied with
 CMake, which doesn't work with this version of FLTK.
 
-The add_executable() command takes one form for the macOS platform
-and another for other platforms (Yes, WIN32 can be used also for the X11 platform).
+The "WIN32 MACOSX_BUNDLE" in the add_executable tells this is
+a GUI app.  It is ignored on other platforms and should always be
+present with FLTK GUI programs for better portability.
 
 Once the package is found the CMake variable FLTK_INCLUDE_DIRS is defined
 which can be used to add the FLTK include directories to the definitions
