@@ -793,8 +793,11 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       XTranslateCoordinates(fl_display, xid,
                             RootWindow(fl_display, fl_screen), Xs, Ys, &dx, &dy, &child_win);
       // screen dimensions
-      Fl::screen_xywh(sx, sy, sw, sh, Fl_Window_Driver::driver(win)->screen_num());
-      sx *= s; sy *= s; sw *= s; sh *= s;
+      int ns = Fl_Window_Driver::driver(win)->screen_num();
+      sx = screens[ns].x_org;
+      sy = screens[ns].y_org;
+      sw = screens[ns].width;
+      sh = screens[ns].height;
     }
     if (win && !allow_outside && int(s) != s) {
       ws = (w+1) * s; // matches what Fl_Graphics_Driver::cache_size() does

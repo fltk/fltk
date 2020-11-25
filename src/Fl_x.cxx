@@ -2186,9 +2186,9 @@ int fl_handle(const XEvent& thisevent)
 #if USE_XFT
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
       ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) ) {
-        window->resize(X/s, Y/s, ceil(W/s), ceil(H/s));
+        window->resize(rint(X/s), rint(Y/s), ceil(W/s), ceil(H/s));
     } else {
-      window->position(X/s, Y/s);
+      window->position(rint(X/s), rint(Y/s));
     }
 #else
     window->resize(X, Y, W, H);
@@ -2220,7 +2220,7 @@ int fl_handle(const XEvent& thisevent)
 #else
       float s = 1;
 #endif
-      window->position(xpos/s, ypos/s);
+      window->position(rint(xpos/s), rint(ypos/s));
     }
     break;
     }
@@ -2273,12 +2273,12 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
     if (is_a_resize) {
       if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
       if (is_a_move) {
-        XMoveResizeWindow(fl_display, fl_xid(pWindow), X*s, Y*s, W>0 ? W*s : 1, H>0 ? H*s : 1);
+        XMoveResizeWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s), W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
         XResizeWindow(fl_display, fl_xid(pWindow), W>0 ? W*s : 1, H>0 ? H*s : 1);
       }
     } else
-      XMoveWindow(fl_display, fl_xid(pWindow), X*s, Y*s);
+      XMoveWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s));
   }
 }
 
@@ -2586,7 +2586,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
                                root,
-                               X*s, Y*s, W*s, H*s,
+                               rint(X*s), rint(Y*s), W*s, H*s,
                                0, // borderwidth
                                visual->depth,
                                InputOutput,
