@@ -786,7 +786,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 
   if (!image) {
     // fetch absolute coordinates
-    int dx, dy, sx, sy, sw, sh;
+    int dx = 0, dy = 0, sx = 0, sy = 0, sw = 0, sh = 0;
     Window child_win;
 
     if (win) {
