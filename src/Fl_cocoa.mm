@@ -1892,8 +1892,8 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   dx = 2*bx;
   dy = 2*by + bt;
   float s = Fl::screen_driver()->scale(0);
-  X = w->x()*s-xoff;
-  Y = w->y()*s-yoff;
+  X = round(w->x()*s)-xoff;
+  Y = round(w->y()*s)-yoff;
   W = w->w()*s+dx;
   H = w->h()*s+dy;
 
@@ -3007,8 +3007,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     winlevel = NSStatusWindowLevel;
   }
   float s = Fl::screen_driver()->scale(0);
-  crect.origin.x = int(s * w->x()); // correct origin set later for subwindows
-  crect.origin.y = main_screen_height - int(s * (w->y() + w->h()));
+  crect.origin.x = round(s * w->x()); // correct origin set later for subwindows
+  crect.origin.y = main_screen_height - round(s * (w->y() + w->h()));
   crect.size.width = int(s * w->w());
   crect.size.height = int(s * w->h());
   FLWindow *cw = [[FLWindow alloc] initWithFl_W:w
@@ -3076,8 +3076,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
       delta = [cw cascadeTopLeftFromPoint:delta];
     }
     crect = [cw frame]; // synchronize FLTK's and the system's window coordinates
-    this->x(int(crect.origin.x/s));
-    this->y( main_screen_height/s - (crect.origin.y/s + w->h()) );
+    this->x(round(crect.origin.x/s));
+    this->y( round((main_screen_height - crect.origin.y)/s) - w->h() );
   }
   if(w->menu_window()) { // make menu windows slightly transparent
     [cw setAlphaValue:0.97];
