@@ -246,14 +246,12 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
 
 /* Rescale region r with factor f and returns the scaled region.
  Region r is returned unchanged if r is null or f is 1.
- The input region is deleted if dr is null.
  */
 HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr) {
   if (r && f != 1) {
     DWORD size = GetRegionData(r, 0, NULL);
     RGNDATA *pdata = (RGNDATA*)malloc(size);
     GetRegionData(r, size, pdata);
-    if (!dr) DeleteObject(r);
     POINT pt = {0, 0};
     if (dr && dr->depth >= 1) { // account for translation
       GetWindowOrgEx((HDC)dr->gc(), &pt);

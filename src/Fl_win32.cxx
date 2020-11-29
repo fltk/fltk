@@ -1265,8 +1265,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           ValidateRgn(hWnd, R2);
         }
 
-        // convert R2 in drawing units to i->region in FLTK units
-        i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1 / scale, NULL);
+        if (scale != 1) DeleteObject(R2);
 
         window->clear_damage((uchar)(window->damage() | FL_DAMAGE_EXPOSE));
         // These next two statements should not be here, so that all update
