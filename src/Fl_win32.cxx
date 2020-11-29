@@ -43,7 +43,7 @@
 #include <shellapi.h>
 // Some versions of MinGW now require us to explicitly include winerror to get S_OK defined
 #include <winerror.h>
-#include <math.h> // for ceil()
+#include <math.h> // for ceil() and round()
 
 void fl_free_fonts(void);
 void fl_release_dc(HWND, HDC);
@@ -1718,10 +1718,11 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
       }
 
       RECT r;
-      r.left = w->x() * s;
-      r.top = w->y() * s;
-      r.right = (w->x() + w->w()) * s;
-      r.bottom = (w->y() + w->h()) * s;
+      int drawingX, drawingY; // drawing coordinates of window top-left
+      r.left = drawingX = round(w->x() * s);
+      r.top = drawingY = round(w->y() * s);
+      r.right = drawingX + w->w() * s;
+      r.bottom = drawingY + w->h() * s;
       // get the decoration rectangle for the desired client rectangle
 
       typedef BOOL(WINAPI* AdjustWindowRectExForDpi_type)(LPRECT, DWORD, BOOL, DWORD, UINT);
@@ -1739,9 +1740,9 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
         Y = r.top;
         W = r.right - r.left;
         H = r.bottom - r.top;
-        bx = w->x() * s - r.left;
-        by = r.bottom - (w->y() + w->h()) * s; // height of the bottom frame
-        bt = w->y() * s - r.top - by;          // height of top caption bar
+        bx = drawingX - r.left;
+        by = r.bottom - (drawingY + w->h() * s); // height of the bottom frame
+        bt = drawingY - r.top - by;          // height of top caption bar
         xoff = bx;
         yoff = by + bt;
         dx = W - w->w() * s;
@@ -1787,11 +1788,8 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   // Find screen that contains most of the window
   // FIXME: this ought to be the "work area" instead of the entire screen !
   int scr_x = 0, scr_y = 0, scr_w = 0, scr_h = 0;
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X / s, Y / s, W / s, H / s);
-  scr_x *= s;
-  scr_y *= s;
-  scr_w *= s;
-  scr_h *= s;
+  int ns = Fl::screen_num(round(X / s), round(Y / s), W / s, H / s);
+  ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->screen_xywh_unscaled(scr_x, scr_y, scr_w, scr_h, ns);
   // Make border's lower right corner visible
   if (scr_x + scr_w < X + W)
     X = scr_x + scr_w - W;
@@ -1873,7 +1871,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
     int dummy_x, dummy_y, bt, bx, by;
     // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
-    int scaledX = int(X * s), scaledY = int(Y * s), scaledW = int(W * s), scaledH = int(H * s);
+    int scaledX = round(X * s), scaledY = round(Y * s), scaledW = int(W * s), scaledH = int(H * s);
     // Ignore window managing when resizing, so that windows (and more
     // specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
@@ -2023,8 +2021,8 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   }
   Fl_Window_Driver::driver(w)->screen_num(nscreen);
   float s = Fl::screen_driver()->scale(nscreen);
-  int xp = w->x() * s; // these are in graphical units
-  int yp = w->y() * s;
+  int xp = round(w->x() * s); // these are in graphical units
+  int yp = round(w->y() * s);
   int wp = w->w() * s;
   int hp = w->h() * s;
 
@@ -2093,8 +2091,8 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
       if (!Fl::grab()) {
         xp = xwm;
         yp = ywm;
-        x(xp / s);
-        y(yp / s);
+        x(round(xp / s));
+        y(round(yp / s));
       }
       xp -= bx;
       yp -= by + bt;

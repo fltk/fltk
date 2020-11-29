@@ -175,6 +175,16 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
 }
 
 
+void Fl_WinAPI_Screen_Driver::screen_xywh_unscaled(int &X, int &Y, int &W, int &H, int n) {
+  if (num_screens < 0) init();
+  if ((n < 0) || (n >= num_screens)) n = 0;
+  X = screens[n].left;
+  Y = screens[n].top;
+  W = screens[n].right - screens[n].left;
+  H = screens[n].bottom - screens[n].top;
+};
+
+
 void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
 {
   if (num_screens < 0) init();
