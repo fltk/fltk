@@ -46,16 +46,15 @@ void Fl_GDI_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
   loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1);
 }
 
-void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
-  if (w<=0 || h<=0) return;
-  int line_delta_ =  (scale() > 1.9 ? 1 : 0);
-  x += line_delta_; y += line_delta_;
-  int tw = line_width_ ? line_width_ : 1; // true line width
-  MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x+w-tw, y);
-  LineTo(gc_, x+w-tw, y+h-tw);
-  LineTo(gc_, x, y+h-tw);
-  LineTo(gc_, x, y);
+void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h)
+{
+  if (w > 0 && h > 0) {
+    float s = scale();
+    xyline_unscaled(x*s, y*s, (x+w-1)*s);
+    yxline_unscaled(x*s, y*s, (y+h-1)*s);
+    yxline_unscaled((x+w-1)*s, y*s, (y+h-1)*s);
+    xyline_unscaled(x*s, (y+h-1)*s, (x+w-1)*s);
+  }
 }
 
 void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
@@ -132,9 +131,6 @@ void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1,
 }
 
 void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
-  if (x==x3 && x1==x2 && y==y1 && y3==y2) { // rectangular loop
-    if (scale() > 1.9) { x += 1; y += 1; x1 += 1; y1 += 1; x2 += 1; y2 += 1;  x3 += 1; y3 += 1;}
-  }
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   LineTo(gc_, x2, y2);

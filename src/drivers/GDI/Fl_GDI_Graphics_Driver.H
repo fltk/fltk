@@ -96,9 +96,8 @@ public:
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   virtual void point_unscaled(float x, float y);
-  void rect_unscaled(float x, float y, float w, float h);
+  virtual void rect(int x, int y, int w, int h);
   void focus_rect(int x, int y, int w, int h);
   void rectf_unscaled(float x, float y, float w, float h);
   virtual void line_unscaled(float x, float y, float x1, float y1);

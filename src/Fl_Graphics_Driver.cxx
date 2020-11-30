@@ -713,7 +713,23 @@ void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, i
 }
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-    loop_unscaled(x0*scale(), y0*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale(), x3*scale(), y3*scale());
+  int X, Y, W, H;
+  if (x0 == x3 && x1 == x2 && y0 == y1 && y3 == y2) { // rectangular loop
+    X = x0 > x1 ? x1 : x0;
+    Y = y0 > y3 ? y3 : y0;
+    W = abs(x0 - x1);
+    H = abs(y0 - y3);
+    rect(X, Y, W + 1, H + 1);
+  } else if (x0 == x1 && y1 == y2 && x2 == x3 && y3 == y0) { // rectangular loop also
+    X = x0 > x3 ? x3 : x0;
+    Y = y0 > y1 ? y1 : y0;
+    W = abs(x0 - x3);
+    H = abs(y0 - y1);
+    rect(X, Y, W + 1, H + 1);
+  } else {
+    float s = scale();
+    loop_unscaled(x0*s, y0*s, x1*s, y1*s, x2*s, y2*s, x3*s, y3*s);
+  }
 }
 
 void Fl_Scalable_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
