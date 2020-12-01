@@ -1741,12 +1741,12 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
         W = r.right - r.left;
         H = r.bottom - r.top;
         bx = drawingX - r.left;
-        by = r.bottom - (drawingY + w->h() * s); // height of the bottom frame
+        by = r.bottom - int(drawingY + w->h() * s); // height of the bottom frame
         bt = drawingY - r.top - by;          // height of top caption bar
         xoff = bx;
         yoff = by + bt;
-        dx = W - w->w() * s;
-        dy = H - w->h() * s;
+        dx = W - int(w->w() * s);
+        dy = H - int(w->h() * s);
         if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
           ret = 2;
         else
@@ -1802,9 +1802,9 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
     Y = scr_y;
   // Make client area's lower right corner visible
   if (scr_x + scr_w < X + dx + w->w())
-    X = scr_x + scr_w - w->w() * s - dx;
+    X = scr_x + scr_w - int(w->w() * s) - dx;
   if (scr_y + scr_h < Y + dy + w->h())
-    Y = scr_y + scr_h - w->h() * s - dy;
+    Y = scr_y + scr_h - int(w->h() * s) - dy;
   // Make client area's upper left corner visible
   if (X + xoff < scr_x)
     X = scr_x - xoff;
