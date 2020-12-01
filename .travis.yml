@@ -1,10 +1,9 @@
 dist: xenial
-osx_image: xcode12.2
+# osx_image: xcode12.2
 
 cache: ccache
 
-language:
-  - c++
+language: cpp
 
 os:
   - linux
@@ -12,17 +11,17 @@ os:
 
 compiler:
   - gcc
-  - clang
+  ## disabled:  - clang
 
 env:
   - |
     ANALYZE=false
     DOC=false
 
-matrix:
+jobs:
   include:
     os: linux
-    compiler: clang
+    ## compiler: clang
     ## env: ANALYZE=true DOC=true
 
 branches:
@@ -36,15 +35,15 @@ branches:
 
 before_script:
   - |
-    if [ $TRAVIS_OS_NAME == linux ]; then
+    if [ $TRAVIS_OS_NAME = linux ]; then
        sudo apt-get update -q
        sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev libglew-dev
        sudo apt-get install -y doxygen
-    elif [ $TRAVIS_OS_NAME == osx ]; then
-      brew install ccache # need to install on macOS
-      # brew install glew   # libGLEW not needed on macOS
-      export PATH="/usr/local/opt/ccache/libexec:$PATH"
-      brew install doxygen
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+      # brew install ccache # need to install on macOS
+      # export PATH="/usr/local/opt/ccache/libexec:$PATH"
+      # brew install doxygen
+      echo "macOS build is currently disabled"
     fi
 
 script:
