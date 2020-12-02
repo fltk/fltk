@@ -203,14 +203,15 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
  scale() and in slightly modifying that to help support tiled images. */
 void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
 {
-  if ( int(scale()) == scale() ) {
-    width  = width * scale();
-    height = height * scale();
-  } else {
-    width  = (width+1) * scale();
-    height = (height+1) * scale();
-  }
-  img->cache_size_(width, height);
+  // Image tiling may require to convert the floating value of width * scale() or
+  // height * scale() to a larger integer value to avoid undrawn space between adjacent images.
+  float s = scale(), fs = width * s;
+  width = (fs - int(fs) < 0.001 ? int(fs) :
+           int((width+1) * s));
+  fs = height * s;
+  height = (fs - int(fs) < 0.001 ? int(fs) :
+           int((height+1) * s));
+  if (img) img->cache_size_(width, height);
 }
 
 /** Draws an Fl_Pixmap object using this graphics driver.

@@ -503,7 +503,7 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
   int ws, hs;
   if (int(s) == s) { ws = w * s; hs = h * s;}
   else {
-    ws = (w+1)*s; // matches what Fl_Graphics_Driver::cache_size() does
+    ws = (w+1)*s; // approximates what Fl_Graphics_Driver::cache_size() does
     hs = (h+1)*s;
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
