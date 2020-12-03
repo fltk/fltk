@@ -128,6 +128,9 @@ public:
   void cache(Fl_Bitmap *img);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   virtual double width_unscaled(const char *str, int n);
+#if USE_PANGO
+  virtual double fast_width(const char *str, int n);
+#endif
   virtual double width_unscaled(unsigned int c);
   virtual void text_extents_unscaled(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual Fl_Fontsize size_unscaled();

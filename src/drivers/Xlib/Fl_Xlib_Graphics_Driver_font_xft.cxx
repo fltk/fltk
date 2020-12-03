@@ -1012,6 +1012,10 @@ float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
 Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   //  XftFontClose(fl_display, font);
+#if USE_PANGO
+  if (width) for (int i = 0; i < 64; i++) delete[] width[i];
+  delete[] width;
+#endif
 }
 
 
@@ -1347,6 +1351,34 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
                           (y - y_correction  - lheight + desc) * PANGO_SCALE ); // 1.8
   }
 
+double Fl_Xlib_Graphics_Driver::fast_width(const char* str, int n) {
+  int len;
+  unsigned r=0, utf32 = fl_utf8decode(str, str+n, &len);
+  Fl_Xlib_Font_Descriptor *desc = NULL;
+  bool in_mem = (len == n &&  utf32 <= 0xFFFF);
+  if (in_mem) {
+    desc = (Fl_Xlib_Font_Descriptor*)font_descriptor();
+    r = (utf32 & 0xFC00) >> 10;
+    if (!desc->width) {
+      desc->width = (int**)new int*[64];
+      memset(desc->width, 0, 64*sizeof(int*));
+    }
+    if (!desc->width[r]) {
+      desc->width[r] = (int*)new int[0x0400];
+      for (int i = 0; i < 0x0400; i++) desc->width[r][i] = -1;
+    } else {
+      if ( desc->width[r][utf32&0x03FF] >= 0 ) { // already cached
+        return double(desc->width[r][utf32 & 0x03FF]) / Fl_Graphics_Driver::scale();
+      }
+    }
+  }
+  double width = width_unscaled(str, n);
+  if (in_mem) {
+    desc->width[r][utf32 & 0x03FF] = (int)width;
+  }
+  return width/Fl_Graphics_Driver::scale();
+}
+
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
   if (!n) return 0;
   if (!fl_display || size_ == 0) return -1;
@@ -1458,6 +1490,7 @@ Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize f
   angle = fangle;
   height_ = 0;
   descent_ = 0;
+  width = NULL;
 }
 
 #endif // USE_PANGO
