@@ -32,7 +32,7 @@
 // Expands all unprintable characters to ^X or \nnn notation
 // Aligns them against the inside of the box.
 
-#define min(a,b) ((a)<(b)?(a):(b))
+#include <algorithm>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
@@ -147,12 +147,12 @@ void fl_draw(
            *symptr++ = *str++);
       *symptr = '\0';
       if (isspace(*str)) str++;
-      symwidth[0] = min(w,h);
+      symwidth[0] = std::min<int>(w,h);
     }
 
     if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1) && p[-1] != '@') {
       strlcpy(symbol[1], p, sizeof(symbol[1]));
-      symwidth[1] = min(w,h);
+      symwidth[1] = std::min<int>(w,h);
     }
   }
 
