@@ -39,6 +39,7 @@
 #include <ctype.h>
 #include <math.h>
 
+#undef min
 #define min(a,b) ((a)<(b)?(a):(b))
 #define MAXBUF 1024
 
