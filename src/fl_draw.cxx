@@ -32,7 +32,6 @@
 // Expands all unprintable characters to ^X or \nnn notation
 // Aligns them against the inside of the box.
 
-#define min(a,b) ((a)<(b)?(a):(b))
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
@@ -40,6 +39,7 @@
 #include <ctype.h>
 #include <math.h>
 
+#define min(a,b) ((a)<(b)?(a):(b))
 #define MAXBUF 1024
 
 char fl_draw_shortcut;	// set by fl_labeltypes.cxx
