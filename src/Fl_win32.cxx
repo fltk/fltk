@@ -565,13 +565,22 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
 void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
+  typedef HMONITOR(WINAPI * MonitorFromRect_type)(LPCRECT, DWORD);
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
-  if (is_dpi_aware)
+  MonitorFromRect_type fl_MonitorFromRect = NULL;
+  if (is_dpi_aware) {
     fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "GetDpiForMonitor");
+    if (fl_GetDpiForMonitor != NULL)
+      fl_MonitorFromRect = (MonitorFromRect_type)GetProcAddress(LoadLibrary("User32.DLL"), "MonitorFromRect");
+  }
   for (int ns = 0; ns < screen_count(); ns++) {
-    HMONITOR hm = MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
+    HRESULT r = !S_OK;
     UINT dpiX, dpiY;
-    HRESULT r =  fl_GetDpiForMonitor ? fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY) : !S_OK;
+    // The result of MonitorFromRect is only needed when is_dpi_aware is true and when GetProcAddress successed getting the address for GetDpiForMonitor.
+    if ((fl_GetDpiForMonitor != NULL) && (fl_MonitorFromRect != NULL)) {
+      HMONITOR hm = fl_MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
+      r =  fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
+    }
     if (r != S_OK) { dpiX = dpiY = 96; }
     dpi[ns][0] = dpiX;
     dpi[ns][1] = dpiY;
