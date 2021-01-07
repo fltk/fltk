@@ -3,6 +3,7 @@
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
+// Copyright 2011-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -52,6 +53,8 @@ struct Fl_Help_Block {
                 w,              // Width
                 h;              // Height
   int           line[32];       // Left starting position for each line
+  int           ol;             // is ordered list <OL> element
+  int           ol_num;         // item number in ordered list
 };
 
 //
