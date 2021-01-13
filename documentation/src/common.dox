@@ -23,7 +23,7 @@ FLTK provides many types of buttons:
 
 \li Fl_Round_Button - A button with a radio circle.
 
-\image html buttons.png "Figure 5.1: FLTK Button Widgets"
+\image html buttons.png "FLTK Button Widgets"
 \image latex buttons.png "FLTK Button Widgets" width=10cm
 
 All of these buttons just need the corresponding
@@ -110,7 +110,7 @@ strings. FLTK provides the following valuators:
 
 \li Fl_Value_Slider - A slider that shows the current value.
 
-\image html valuators.png "Figure 5.2: FLTK valuator widgets"
+\image html valuators.png "FLTK valuator widgets"
 \image latex valuators.png "FLTK valuator widgets" width=10cm
 
 The \p value() method gets and sets the current value
@@ -249,15 +249,15 @@ the nearest entry in the colormap.
 The type Fl_Boxtype stored and returned in Fl_Widget::box()
 is an enumeration defined in Enumerations.H.
 
-Figure 5.3 shows the standard box types included with FLTK.
+These are the standard box types included with FLTK:
 
-\image html boxtypes.png "Figure 5.3: FLTK box types"
-\image latex boxtypes.png "FLTK box types" width=12cm
+\image html  boxtypes.png "FLTK Standard Box Types"
+\image latex boxtypes.png "FLTK Standard Box Types" width=12cm
 
 \p FL_NO_BOX means nothing is drawn at all, so whatever is
 already on the screen remains. The <tt>FL_..._FRAME</tt> types only
 draw their edges, leaving the interior unchanged. The blue color in
-Figure 5.3 is the area that is not drawn by the frame types.
+the image above is the area that is not drawn by the frame types.
 
 \subsection common_custom_boxtypes Making Your Own Boxtypes
 
@@ -350,10 +350,10 @@ labeling of widgets.
 
 The \p label() method sets the string that is displayed
 for the label. Symbols can be included with the label string by
-escaping them using the "@" symbol - "@@" displays a single at
-sign. Figure 5.4 shows the available symbols.
+escaping them using the "@" symbol - "@@" displays a single at sign.
+These are the available symbols:
 
-\image html symbols.png "Figure 5.4: FLTK label symbols"
+\image html symbols.png "FLTK label symbols"
 \image latex symbols.png "FLTK label symbols" width=10cm
 
 <!-- NEED 2in -->
@@ -379,7 +379,7 @@ Symbols and text can be combined in a label, however the symbol must be at
 the beginning and/or at the end of the text. If the text spans multiple lines,
 the symbol or symbols will scale up to match the height of all the lines.
 
-\image html symbol-examples.png "Figure 5.5: FLTK symbols and text"
+\image html symbol-examples.png "FLTK symbols and text"
 \image latex symbol-examples.png "FLTK symbols and text" width=10cm
 
 <!-- NEED 2in -->
