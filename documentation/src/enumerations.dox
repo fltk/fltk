@@ -1,10 +1,9 @@
 /**
 
- \page  enumerations    FLTK Enumerations
+ \page  enumerations    Constants and Enumerations
 
- \note  This file is not actively maintained any more, but is left
-        here as a reference, until the doxygen documentation is
-        completed.
+ \note  This file is not actively maintained any more, but is left here
+        as a reference, until the doxygen documentation is completed.
 
  \sa \ref FL/Enumerations.H.
 

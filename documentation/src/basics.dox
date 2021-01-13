@@ -2,7 +2,7 @@
 
  \page basics FLTK Basics
 
-This chapter teaches you the basics of compiling programs
+This chapter teaches you the basics of writing and compiling programs
 that use FLTK.
 
 \section basics_writing Writing Your First FLTK Program
@@ -69,12 +69,13 @@ window->show(argc, argv);
 return Fl::run();
 \endcode
 
-The resulting program will display the window in Figure 4.1.
+The resulting program will display the "Hello, World!" window:
+
+\image html  hello_cxx.png "The Hello, World! Window"
+\image latex hello_cxx.png "The Hello, World! Window" width=8cm
+
 You can quit the program by closing the window or pressing the
 <tt>ESC</tt>ape key.
-
-\image html hello_cxx.png "Figure 4.1: The Hello, World! Window"
-\image latex hello_cxx.png "The Hello, World! Window" width=8cm
 
 \subsection basics_creating Creating the Widgets
 
@@ -102,7 +103,7 @@ defaults to \p NULL. The label string must be in static
 storage such as a string constant because FLTK does not make a
 copy of it - it just uses the pointer.
 
-\subsection basics_hierarchies Creating Widget hierarchies
+\subsection basics_hierarchies Creating Widget Hierarchies
 
 Widgets are commonly ordered into functional groups, which
 in turn may be grouped again, creating a hierarchy of widgets.
@@ -135,7 +136,7 @@ the widget. More details are available in the
 \ref common_boxtypes
 section.
 
-You could examine the boxtype in by doing
+You could examine the boxtype by doing
 <tt>box->box()</tt>. FLTK uses method name overloading to make
 short names for get/set methods. A "set" method is always of
 the form "void name(type)", and a "get" method is always
@@ -143,7 +144,7 @@ of the form "type name() const".
 
 \subsection basics_redrawing Redrawing After Changing Attributes
 
-Almost all of the set/get pairs are very fast, short inline
+Almost all of the get/set pairs are very fast, short inline
 functions and thus very efficient. However, <i>the "set" methods
 do not call \p redraw()</i> - you have to call it
 yourself. This greatly reduces code size and execution time. The
@@ -220,7 +221,56 @@ while (Fl::wait());
 Fl::run() does not return until all of the windows
 under FLTK control are closed by the user or your program.
 
-\section basics_standard_compiler Compiling Programs with Standard Compilers
+\section basics_naming Naming Conventions
+
+All public symbols in FLTK start with the characters 'F' and 'L':
+
+\li Functions are either \p Fl::foo() or \p fl_foo().
+
+\li Class and type names are capitalized: \p Fl_Foo.
+
+\li \ref enumerations "Constants and Enumerations"
+    are uppercase: \p FL_FOO.
+
+\li All header files start with <tt><FL/...></tt>.
+
+<!-- NEED 5in -->
+
+\section basics_headerfiles Header Files
+
+The proper way to include FLTK header files is:
+
+\code
+#include <FL/Fl_xyz.H>
+\endcode
+
+\note
+Case \e is \e significant on many operating systems,
+and the C standard uses the forward slash (/) to
+separate directories. <i>Do not use any of the following
+include lines:</i>
+
+\code
+#include <FL\Fl_xyz.H>
+#include <fl/fl_xyz.h>
+#include <Fl/fl_xyz.h>
+\endcode
+
+
+\section basics_compiling Compiling Programs that Use FLTK
+
+This section needs a major rework. Since FLTK 1.4 CMake is the recommended build
+system. The details below show the "old" methods and reference information
+in case you like to write your build configuration manually (e.g. Makefiles,
+Visual Studio, or other IDE's etc.).
+
+CMake can simplify this task substantially. For now, refer to README.CMake.txt
+for further information.
+
+\todo Add a chapter "Building FLTK with CMake" or similar.
+
+
+\subsection basics_standard_compiler Compiling Programs with Standard Compilers
 
 Under UNIX (and under Microsoft Windows when using the GNU development
 tools) you will probably need to tell the compiler where to find the
@@ -246,14 +296,15 @@ CC  ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 \endcode
 
-Aside from the "fltk" library, there is also a "fltk_forms"
-library for the XForms compatibility classes, "fltk_gl" for the
-OpenGL and GLUT classes, and "fltk_images" for the image file
-classes, Fl_Help_Dialog widget, and system icon support.
+Aside from the "fltk" library, there are also the following libraries
+  - "fltk_forms" for the XForms compatibility classes
+  - "fltk_gl" for the OpenGL and GLUT classes
+  - "fltk_images" for the image file classes, Fl_Help_Dialog widget, and system icon support
+  - "fltk_cairo" for optional integrated Cairo support.
 
 \note
-The libraries are named "fltk.lib", "fltkgl.lib", "fltkforms.lib",
-and "fltkimages.lib", respectively under Windows.
+The libraries are named "fltk.lib", "fltk_gl.lib", "fltk_forms.lib", "fltk_images.lib",
+and fltk_cairo.lib, respectively under Windows.
 
 As before, the \p fltk-config script included with FLTK can be
 used to get the options that are required by your linker:
@@ -272,6 +323,7 @@ CC ... `fltk-config --use-forms --ldflags`
 CC ... `fltk-config --use-gl --ldflags`
 CC ... `fltk-config --use-images --ldflags`
 CC ... `fltk-config --use-forms --use-gl --use-images --ldflags`
+CC ... `fltk-config --use-cairo --ldflags`
 \endcode
 
 Finally, you can use the \p fltk-config script to
@@ -282,12 +334,17 @@ fltk-config --compile filename.cpp
 fltk-config --use-forms --compile filename.cpp
 fltk-config --use-gl --compile filename.cpp
 fltk-config --use-images --compile filename.cpp
+fltk-config --use-cairo --compile filename.cpp
 fltk-config --use-forms --use-gl --use-images --compile filename.cpp
 \endcode
 
-Any of these will create an executable named \p filename.
+Any of these will create an executable named \p filename (or \p filename.exe
+under Windows).
 
-\section basics_makefile Compiling Programs with Makefiles
+\note 'fltk-config --compile' accepts only a limited set of file extensions
+  for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C' .
+
+\subsection basics_makefile Compiling Programs with Makefiles
 
 The previous section described how to use \p fltk-config to
 build a program consisting of a single source file from the command
@@ -325,18 +382,28 @@ clean: $(TARGET) $(OBJS)
         rm -f $(TARGET) 2> /dev/null
 \endcode
 
-\section basics_visual_cpp Compiling Programs with Microsoft Visual C++
+\subsection basics_visual_cpp Compiling Programs with Microsoft Visual C++
 
-In Visual C++ you will need to tell the compiler where to
-find the FLTK header files. This can be done by selecting
-"Settings" from the "Project" menu and then changing the
-"Preprocessor" settings under the "C/C++" tab. You will also
-need to add the FLTK (<tt>FLTK.LIB</tt> or <tt>FLTKD.LIB</tt>) and the Windows
-Common Controls (<tt>COMCTL32.LIB</tt>) libraries to the "Link" settings.
+In Visual C++ you will need to tell the compiler where to find the FLTK
+header files. This can be done by selecting "Settings" from the "Project"
+menu and then changing the "Preprocessor" settings under the "C/C++" tab.
+
+You will also need to add the following libraries to the \p Linker settings:
+ - \p fltk.lib or \p fltkd.lib, the main FLTK library (postfix 'd' = Debug)
+ - all FLTK libraries your program requires (fltk_gl, fltk_images, …)
+ - additional libraries like \p libpng.lib, \p libjpeg.lib, etc.
+ - the Windows Common Controls (\p comctl32.lib) and
+ - the Windows Socket (\p ws2_32.lib) libraries.
+
+\note There's a \p Linker setting "Additional Library Directories" or similar;
+  the exact name depends on the Visual Studio version you're using. You can
+  and \b should use this to simplify adding the libraries above. If you set
+  this to the FLTK library path you can just use the library \b names
+  and don't need to use the full paths to all libraries.
 
 You must also define <tt>_WIN32</tt> if the compiler doesn't do this.
-Currently all known Windows compilers define _WIN32 - unless you use Cygwin.
-You must not define _WIN32 if you use Cygwin.
+Currently all known Windows compilers define _WIN32 - unless you use Cygwin
+(that's correct, you must not define _WIN32 if you use Cygwin).
 
 More information can be found in <tt>README.Windows.txt</tt>.
 
@@ -344,42 +411,6 @@ You can build your Microsoft Windows applications as Console or
 Desktop applications.  If you want to use the standard C \p main()
 function as the entry point, FLTK includes a \p WinMain()
 function that will call your \p main() function for you.
-
-\section basics_naming Naming
-
-All public symbols in FLTK start with the characters 'F' and 'L':
-
-\li Functions are either \p Fl::foo() or \p fl_foo().
-
-\li Class and type names are capitalized: \p Fl_Foo.
-
-\li \ref enumerations "Constants and enumerations"
-    are uppercase: \p FL_FOO.
-
-\li All header files start with <tt><FL/...></tt>.
-
-<!-- NEED 5in -->
-
-\section basics_headerfiles Header Files
-
-The proper way to include FLTK header files is:
-
-\code
-#include <FL/Fl_xyz.H>
-\endcode
-
-\note
-Case \e is significant on many operating systems,
-and the C standard uses the forward slash (/) to
-separate directories. <i>Do not use any of the following
-include lines:</i>
-
-\code
-#include <FL\Fl_xyz.H>
-#include <fl/fl_xyz.h>
-#include <Fl/fl_xyz.h>
-\endcode
-
 
 \htmlonly
 <hr>
