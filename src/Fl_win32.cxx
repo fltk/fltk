@@ -1608,7 +1608,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
             wd->screen_num(news);
         }
-        window->position(nx / scale, ny / scale);
+        window->position(round(nx/scale), round(ny/scale));
         break;
       } // case WM_MOVE
 
