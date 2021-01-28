@@ -1,11 +1,11 @@
-CHANGES IN FLTK 1.3.6					RELEASED: ??? ?? 2020
+CHANGES IN FLTK 1.3.6					RELEASED: ??? ?? 2021
 
 Bug fixes and other improvements
 
   Note to devs: the following list was created with:
     $ git shortlog release-1.3.5.. | sed -e's/^    //' | sed -e's/^/  /'
 
-  Albrecht Schlosser (10):
+  Albrecht Schlosser (12):
     Fix Fl::add_timeout() in draw() under Linux (STR 3188)
     Fix trailing whitespace in CHANGES
     X11: Fix X Input Methods (XIM) (STR 3502, 3192)
@@ -16,6 +16,11 @@ Bug fixes and other improvements
     Minor CMake, docs, and test program updates
     Fix doxygen warnings
     Fix offscreen drawing under X11 (STR 3384)
+    Fix potential fluid crashes (STR 3420) + memory leak
+    Fix X11 copy-paste and drag-and-drop target selection (#182)
+
+  ComputerNerd (1):
+    FLTK 1.3 had the same exterr problem.
 
   Greg Ercolano (1):
     fixes issue92, added -d debug flag to fluid
@@ -38,6 +43,9 @@ Bug fixes and other improvements
 
   OKAMURA, Yasunobu (1):
     Fix JIS Keyboard dead keys
+
+  erco77 (1):
+    Merge pull request #176 from ComputerNerd/errmsg-fix-13
 
 
 CHANGES IN FLTK 1.3.5					RELEASED: Mar 03 2019

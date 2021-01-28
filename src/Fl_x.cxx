@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifdef WIN32
@@ -364,6 +362,98 @@ static Atom fl_NET_WM_ICON;
 static Atom fl_NET_ACTIVE_WINDOW;
 
 /*
+  Debug: translate Atom (number) to name: enable (1) if used below
+*/
+#if (0)
+static void debug_atom_name(const char *fun, int line, Atom atom) {
+  char *name = XGetAtomName(fl_display, atom);
+  fprintf(stderr, "[%s:%d] debug_atom_name (%4lu) = %s\n", fun, line, atom, name);
+  XFree(name);
+}
+#endif
+
+/*
+  Find the best target in a list of available copy/paste or dnd targets.
+
+  This function searches all available targets [avail, na] by comparing
+  these with an ordered list of suitable targets [targets, nt].
+  The size of the list of available targets is determined by 'na'.
+
+  The list of suitable targets must be ordered by preference with the
+  best target first. This ensures that we always find our preferred
+  target, no matter how the list of available targets is ordered.
+  The list size is max. 'nt' entries but can also be terminated
+  by a zero (0) entry.
+
+  The list of suitable targets is provided by FLTK (see below) whereas
+  the list of available targets is provided by the source program.
+
+  Returns: (Atom) the "best target" or 0 (zero) if no target matches.
+*/
+
+static Atom find_target(Atom *targets, int nt, Atom *avail, int na) {
+  Atom retval = 0;
+  Atom mt, at;
+  int i = 0, m = 0;
+#if (0) // Debug
+  fprintf(stderr, "find_target: looking for:\n");
+  for (i = 0; i < nt; i++)
+    debug_atom_name("  find_target", i, ((Atom*)targets)[i]);
+  for (i = 0; i < na; i++)
+    debug_atom_name("  available  ", i, ((Atom*)avail)[i]);
+#endif // Debug
+  int n = nt;
+  for (i = 0; i < na; i++) { // search all available targets
+    at = ((Atom*)avail)[i];
+    // search only *better* targets: m < n !
+    for (m = 0; m < n; m++) { // try to match usable targets
+      mt = ((Atom*)targets)[m];
+      if (!mt) break; // end of list
+      if (mt == at) {
+        n = m;
+        retval = mt;
+        break;
+      }
+    }
+    if (n == 0) break; // found the *best* target (0)
+  }
+  // debug_atom_name("find_target: FOUND", n, retval);
+  return retval;
+}
+
+/*
+  Find a suitable target for text insertion in a list of available targets.
+*/
+static Atom find_target_text(Atom *avail, int na) {
+  static Atom text_targets[] = {
+    fl_XaUtf8String,      // "UTF8_STRING"
+    fl_Xatextplainutf2,   // "text/plain;charset=utf-8" (correct: lowercase)
+    fl_Xatextplainutf,    // "text/plain;charset=UTF-8" (non-standard: compat.)
+    fl_Xatextplain,       // "text/plain"
+    XA_STRING,            // "STRING"
+    fl_XaText,            // "TEXT"
+    fl_XaCompoundText,    // "COMPOUND_TEXT"
+    fl_XaTextUriList,     // "text/uri-list" (e.g. file manager)
+    (Atom)0               // list terminator (optional, but don't remove)
+  };
+  static int nt = sizeof(text_targets) / sizeof(Atom) - 1; // list size w/o terminator
+  return find_target(text_targets, nt, avail, na);
+}
+
+/*
+  Find a suitable target for image insertion in a list of available targets.
+*/
+static Atom find_target_image(Atom *avail, int na) {
+  static Atom image_targets[] = {
+    fl_XaImageBmp,        // "image/bmp"
+    fl_XaImagePNG,        // "image/png"
+    (Atom)0               // list terminator (optional, but don't remove)
+  };
+  static int ni = sizeof(image_targets) / sizeof(Atom) - 1; // list size w/o terminator
+  return find_target(image_targets, ni, avail, na);
+}
+
+/*
   X defines 32-bit-entities to have a format value of max. 32,
   although sizeof(atom) can be 8 (64 bits) on a 64-bit OS.
   See also fl_open_display() for sizeof(atom) < 4.
@@ -708,7 +798,7 @@ void fl_open_display(Display* d) {
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
-  fl_Xatextplainutf2    = XInternAtom(d, "text/plain;charset=utf-8",0);	// Firefox/Thunderbird needs this - See STR#2930
+  fl_Xatextplainutf2    = XInternAtom(d, "text/plain;charset=utf-8",0); // Firefox/Thunderbird needs this - See STR#2930
   fl_Xatextplain        = XInternAtom(d, "text/plain",          0);
   fl_XaText             = XInternAtom(d, "TEXT",                0);
   fl_XaCompoundText     = XInternAtom(d, "COMPOUND_TEXT",       0);
@@ -892,12 +982,12 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
     if (type == Fl::clipboard_plain_text && fl_selection_type[clipboard] == type) {
-    // Notice that the text is clobbered if set_selection is
-    // called in response to FL_PASTE!
-    // However, for now, we only paste text in this function
-    Fl::e_text = fl_selection_buffer[clipboard];
-    Fl::e_length = fl_selection_length[clipboard];
-    if (!Fl::e_text) Fl::e_text = (char *)"";
+      // Notice that the text is clobbered if set_selection is
+      // called in response to FL_PASTE!
+      // However, for now, we only paste text in this function
+      Fl::e_text = fl_selection_buffer[clipboard];
+      Fl::e_length = fl_selection_length[clipboard];
+      if (!Fl::e_text) Fl::e_text = (char *)"";
     } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
       Fl::e_clipboard_data = own_bmp_to_RGB(fl_selection_buffer[1]);
       Fl::e_clipboard_type = Fl::clipboard_image;
@@ -932,41 +1022,23 @@ int Fl::clipboard_contains(const char *type)
   do  {
     XNextEvent(fl_display, &event);
     if (event.type == SelectionNotify && event.xselection.property == None) return 0;
-    i++; 
+    i++;
   }
-  while (i < 50 && event.type != SelectionNotify);
-  if (i >= 50) return 0;
+  while (i < 20 && event.type != SelectionNotify);
+  if (i >= 20) return 0;
   XGetWindowProperty(fl_display,
-		     event.xselection.requestor,
-		     event.xselection.property,
-		     0, 4000, 0, 0,
-		     &actual, &format, &count, &remaining, &portion);
+                     event.xselection.requestor,
+                     event.xselection.property,
+                     0, 4000, 0, 0,
+                     &actual, &format, &count, &remaining, &portion);
   if (actual != XA_ATOM) return 0;
-  Atom t;
-  int retval = 0;
-  if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-    for (i = 0; i<count; i++) { // searching for text data
-      t = ((Atom*)portion)[i];
-      if (t == fl_Xatextplainutf ||
-	  t == fl_Xatextplainutf2 ||
-	  t == fl_Xatextplain ||
-	  t == fl_XaUtf8String) {
-	retval = 1;
-	break;
-      }
-    }	
-  }
-  else if (strcmp(type, Fl::clipboard_image) == 0) {
-    for (i = 0; i<count; i++) { // searching for image data
-      t = ((Atom*)portion)[i];
-      if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
-	retval = 1;
-	break;
-      }
-    }	
-  }
+  Atom t = (Atom)0;
+  if (strcmp(type, Fl::clipboard_plain_text) == 0)
+    t = find_target_text((Atom*)portion, count);
+  else if (strcmp(type, Fl::clipboard_image) == 0)
+    t = find_target_image((Atom*)portion, count);
   XFree(portion);
-  return retval;
+  return (t ? 1 : 0);
 }
 
 static Window fl_dnd_source_window;
@@ -1416,7 +1488,6 @@ int fl_handle(const XEvent& thisevent)
 
   case SelectionNotify: {
     static unsigned char* sn_buffer = 0;
-    //static const char *buffer_format = 0;
     if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
@@ -1441,70 +1512,50 @@ int fl_handle(const XEvent& thisevent)
           else
             handle_clipboard_timestamp(0, t);
         }
-	XFree(portion); portion = 0;
+        XFree(portion); portion = 0;
         return true;
       }
 
       if (actual == TARGETS || actual == XA_ATOM) {
-/*for (unsigned i = 0; i<count; i++) {
-  fprintf(stderr," %s", XGetAtomName(fl_display, ((Atom*)portion)[i]) );
-  }
-fprintf(stderr,"\n");*/
-	Atom t, type = XA_STRING;
-	if (Fl::e_clipboard_type == Fl::clipboard_image) { // searching for image data
-	  for (unsigned i = 0; i<count; i++) { 
-	    t = ((Atom*)portion)[i];
-	    if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
-	      type = t;
-	      goto found;
-	    }
-	  }
-	  XFree(portion);
-	  return true;
-	}
-	for (unsigned i = 0; i<count; i++) { // searching for text data
-	  t = ((Atom*)portion)[i];
-	  if (t == fl_Xatextplainutf ||
-	      t == fl_Xatextplainutf2 ||
-	      t == fl_Xatextplain ||
-	      t == fl_XaUtf8String) {
-	    type = t;
-	    break;
-	  }
-	  // rest are only used if no utf-8 available:
-	  if (t == fl_XaText ||
-	      t == fl_XaTextUriList ||
-	      t == fl_XaCompoundText) type = t;
-	}
-      found:
-	XFree(portion); portion = 0;
-	Atom property = xevent.xselection.property;
-	XConvertSelection(fl_display, property, type, property,
-	      fl_xid(Fl::first_window()),
-	      fl_event_time);
-	if (type == fl_XaImageBmp) {
-	  Fl::e_clipboard_type = Fl::clipboard_image;
-	  //buffer_format = "image/bmp";
-	  }
-	else if (type == fl_XaImagePNG) {
-	  Fl::e_clipboard_type = Fl::clipboard_image;
-	  //buffer_format = "image/png";
-	  }
-	else {
-	  Fl::e_clipboard_type = Fl::clipboard_plain_text;
-	  //buffer_format = Fl::clipboard_plain_text;
-	  }
-//fprintf(stderr,"used format=%s\n", buffer_format);
-	return true;
+        Atom type;
+        if (Fl::e_clipboard_type == Fl::clipboard_image) { // searching for image data
+          type = find_target_image((Atom *)portion, count);
+        }
+        else { // searching for text data. *FIXME* - there may be other data types!
+          type = find_target_text((Atom *)portion, count);
+        }
+        XFree(portion); portion = 0;
+
+        if (!type) { // not found
+          if (Fl::e_clipboard_type == Fl::clipboard_image)
+            return true;
+          else
+            type = fl_XaUtf8String; // text: try this anyway (was: XA_STRING)
+        } // not found
+
+        Atom property = xevent.xselection.property;
+        XConvertSelection(fl_display, property, type, property,
+              fl_xid(Fl::first_window()),
+              fl_event_time);
+        if (type == fl_XaImageBmp) {
+          Fl::e_clipboard_type = Fl::clipboard_image;
+        }
+        else if (type == fl_XaImagePNG) {
+          Fl::e_clipboard_type = Fl::clipboard_image;
+        }
+        else {
+          Fl::e_clipboard_type = Fl::clipboard_plain_text;
+        }
+        return true;
       }
-	if (actual == fl_INCR) {
-	  bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
-	  XFree(portion);
-	  break;
-	}
-	// Make sure we got something sane...
+      if (actual == fl_INCR) {
+        bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
+        XFree(portion);
+        break;
+      }
+      // Make sure we got something sane...
       if ((portion == NULL) || (format != 8) || (count == 0)) {
-	if (portion) { XFree(portion); portion = 0; }
+        if (portion) { XFree(portion); portion = 0; }
         return true;
       }
       sn_buffer = (unsigned char*)realloc(sn_buffer, bytesread+count+remaining+1);
@@ -1547,7 +1598,7 @@ fprintf(stderr,"\n");*/
     else if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
       Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
       Fl::e_length = bytesread;
-      }
+    }
     int old_event = Fl::e_number;
     int retval = fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
     if (!retval && Fl::e_clipboard_type == Fl::clipboard_image) {
@@ -1565,13 +1616,15 @@ fprintf(stderr,"\n");*/
                            fl_xevent->xselection.requestor);
       fl_dnd_source_window = 0; // don't send a second time
     }
-    return 1;}
+    return 1;
+  } // SelectionNotify
 
   case SelectionClear: {
     int clipboard = fl_xevent->xselectionclear.selection == CLIPBOARD;
     fl_i_own_selection[clipboard] = 0;
     poll_clipboard_owner();
-    return 1;}
+    return 1;
+  }
 
   case SelectionRequest: {
     XSelectionEvent e;
@@ -1584,52 +1637,50 @@ fprintf(stderr,"\n");*/
     e.property = fl_xevent->xselectionrequest.property;
     if (fl_selection_type[clipboard] == Fl::clipboard_plain_text) {
       if (e.target == TARGETS) {
-	Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
-	XChangeProperty(fl_display, e.requestor, e.property,
-	                XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
+        Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
+        XChangeProperty(fl_display, e.requestor, e.property,
+                        XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
       } else {
-	if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
-	  if (e.target == fl_XaUtf8String ||
-	      e.target == XA_STRING ||
-	      e.target == fl_XaCompoundText ||
-	      e.target == fl_XaText ||
-	      e.target == fl_Xatextplain ||
-	      e.target == fl_Xatextplainutf ||
-	      e.target == fl_Xatextplainutf2) {
-	    // clobber the target type, this seems to make some applications
-	    // behave that insist on asking for XA_TEXT instead of UTF8_STRING
-	    // Does not change XA_STRING as that breaks xclipboard.
-	    if (e.target != XA_STRING) e.target = fl_XaUtf8String;
-	    XChangeProperty(fl_display, e.requestor, e.property,
-		            e.target, 8, 0,
-		            (unsigned char *)fl_selection_buffer[clipboard],
-		            fl_selection_length[clipboard]);
-	  }
-	} else {
-	  //    char* x = XGetAtomName(fl_display,e.target);
-	  //    fprintf(stderr,"selection request of %s\n",x);
-	  //    XFree(x);
-	  e.property = 0;
-	}
+        if (fl_selection_length[clipboard]) { // data available
+          if (e.target == fl_XaUtf8String ||
+              e.target == XA_STRING ||
+              e.target == fl_XaCompoundText ||
+              e.target == fl_XaText ||
+              e.target == fl_Xatextplain ||
+              e.target == fl_Xatextplainutf ||
+              e.target == fl_Xatextplainutf2) {
+            // clobber the target type, this seems to make some applications
+            // behave that insist on asking for XA_TEXT instead of UTF8_STRING
+            // Does not change XA_STRING as that breaks xclipboard.
+            if (e.target != XA_STRING) e.target = fl_XaUtf8String;
+            XChangeProperty(fl_display, e.requestor, e.property,
+                            e.target, 8, 0,
+                            (unsigned char *)fl_selection_buffer[clipboard],
+                            fl_selection_length[clipboard]);
+          }
+        } else { // no data available
+          e.property = 0;
+        }
       }
     } else { // image in clipboard
       if (e.target == TARGETS) {
-	Atom a[1] = {fl_XaImageBmp};
-	XChangeProperty(fl_display, e.requestor, e.property,
-	                XA_ATOM, atom_bits, 0, (unsigned char*)a, 1);
+        Atom a[1] = {fl_XaImageBmp};
+        XChangeProperty(fl_display, e.requestor, e.property,
+                        XA_ATOM, atom_bits, 0, (unsigned char*)a, 1);
       } else {
-	if (e.target == fl_XaImageBmp && fl_selection_length[clipboard]) {
-	    XChangeProperty(fl_display, e.requestor, e.property,
-		            e.target, 8, 0,
-		            (unsigned char *)fl_selection_buffer[clipboard],
-		            fl_selection_length[clipboard]);
-	} else {
-	  e.property = 0;
-	}
+        if (e.target == fl_XaImageBmp && fl_selection_length[clipboard]) {
+            XChangeProperty(fl_display, e.requestor, e.property,
+                            e.target, 8, 0,
+                            (unsigned char *)fl_selection_buffer[clipboard],
+                            fl_selection_length[clipboard]);
+        } else {
+          e.property = 0;
+        }
       }
     }
-    XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);}
+    XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);
     return 1;
+  } // SelectionRequest
 
   // events where interesting window id is in a different place:
   case CirculateNotify:
@@ -1645,7 +1696,7 @@ fprintf(stderr,"\n");*/
   case UnmapNotify:
     xid = xevent.xmaprequest.window;
     break;
-  }
+  } // switch (xevent.type)
 
   int event = 0;
   Fl_Window* window = fl_find(xid);
@@ -1662,7 +1713,7 @@ fprintf(stderr,"\n");*/
 	window->position(0, 0);
 	window->position(oldx, oldy);
 	window->show(); // recreate the X11 window in support of the FLTK window
-	}
+      }
       return 1;
     }
   case ClientMessage: {
@@ -1675,7 +1726,7 @@ fprintf(stderr,"\n");*/
       in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
-//      printf("XdndEnter, version %ld\n", data[1] >> 24);
+      // fprintf(stderr, "XdndEnter, version %ld\n", data[1] >> 24);
       if (data[1]&1) {
         // get list of data types:
         Atom actual; int format; unsigned long count, remaining;
@@ -1704,25 +1755,16 @@ fprintf(stderr,"\n");*/
         fl_dnd_source_types[3] = 0;
       }
 
-      // Loop through the source types and pick the first text type...
-      unsigned i;
-      Atom type = ((Atom*)fl_dnd_source_types)[0];
-      for (i = 0; fl_dnd_source_types[i]; i ++) {
-        Atom t = ((Atom*)fl_dnd_source_types)[i];
-        //printf("fl_dnd_source_types[%d]=%ld(%s)\n",i,t,XGetAtomName(fl_display,t));
-        if (t == fl_Xatextplainutf ||		// "text/plain;charset=UTF-8"
-            t == fl_Xatextplainutf2 ||		// "text/plain;charset=utf-8" -- See STR#2930
-            t == fl_Xatextplain ||		// "text/plain"
-            t == fl_XaUtf8String) {		// "UTF8_STRING"
-          type = t;
-          break;
-	}
-        // rest are only used if no utf-8 available:
-        if (t == fl_XaText ||			// "TEXT"
-            t == fl_XaTextUriList ||		// "text/uri-list"
-            t == fl_XaCompoundText) type = t;	// "COMPOUND_TEXT"
+      // Pick the "best" source (text) type...
+      // *FIXME* what if we don't find a suitable type? (see below: first type?)
+      // *FIXME* count (zero terminated) dnd sources (must be at least 1)
+      int dnd_sources;
+      for (dnd_sources = 0; fl_dnd_source_types[dnd_sources]; dnd_sources++) {
+        // empty
       }
-      fl_dnd_type = type;
+      fl_dnd_type = find_target_text(fl_dnd_source_types, dnd_sources);
+      if (!fl_dnd_type) // not found: pick first type
+        fl_dnd_type = fl_dnd_source_types[0];
 
       event = FL_DND_ENTER;
       Fl::e_text = unknown;
@@ -1785,7 +1827,8 @@ fprintf(stderr,"\n");*/
       return 1;
 
     }
-    break;}
+    break;
+  } // case ClientMessage
 
   case UnmapNotify:
     event = FL_HIDE;
