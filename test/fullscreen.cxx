@@ -77,10 +77,10 @@ Fl_Gl_Window(x,y,w,h,l) {
 }
 
 void shape_window::draw() {
-  printf("drawing size %d %d\n",w(),h());
+  // fprintf(stderr, "drawing size %d %d\n", w(), h());
   if (!valid()) {
     valid(1);
-//  printf("init\n");
+    // fprintf(stderr, "init\n");
     glLoadIdentity();
     glViewport(0,0,pixel_w(),pixel_h());
   }
@@ -134,7 +134,7 @@ fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Wi
 
 int fullscreen_window::handle(int e) {
   if (e == FL_FULLSCREEN) {
-    printf("Received FL_FULLSCREEN event\n");
+    // fprintf(stderr, "Received FL_FULLSCREEN event\n");
     b3->value(fullscreen_active());
   }
   if (Fl_Single_Window::handle(e)) return 1;
