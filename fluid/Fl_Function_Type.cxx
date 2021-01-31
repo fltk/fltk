@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -275,6 +273,8 @@ void Fl_Function_Type::write_code1() {
     if (rtype) {
       if (!strcmp(rtype,"static")) {is_static = 1; rtype = 0;}
       else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
+    }
+    if (rtype) {
       if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = 0;}
       else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
     }
@@ -392,7 +392,7 @@ void Fl_Function_Type::write_code1() {
     }
   }
   
-  if (havewidgets && !child->name()) write_c("  %s* w;\n", subclassname(child));
+  if (havewidgets && child && !child->name()) write_c("  %s* w;\n", subclassname(child));
   indentation += 2;
 }
 
@@ -1284,6 +1284,7 @@ void Fl_Comment_Type::write_code1() {
     *e++ = eol;
     b = e;
   }
+  free(txt);
 }
 
 void Fl_Comment_Type::write_code2() {}
