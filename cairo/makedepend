@@ -1,3 +1,7 @@
 # DO NOT DELETE
 
-Fl_Cairo.o: ../config.h ../FL/Fl_Export.H
+Fl_Cairo.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/Fl_Cairo.H
+Fl_Cairo.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Cairo.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
+Fl_Cairo.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Cairo.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Window.H

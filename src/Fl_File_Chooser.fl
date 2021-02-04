@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0305
+version 1.0306
 header_name {../FL/Fl_File_Chooser.H}
 code_name {.cxx}
 comment {//

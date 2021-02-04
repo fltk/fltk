@@ -76,8 +76,15 @@ buttons.o: ../FL/Fl_Button.H ../FL/Fl_Repeat_Button.H ../FL/Fl.H
 buttons.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 buttons.o: ../FL/Fl_Light_Button.H ../FL/Fl_Round_Button.H ../FL/Fl_Tooltip.H
 buttons.o: ../FL/Fl_Widget.H
-cairo_test.o: ../config.h ../FL/fl_ask.H ../FL/Enumerations.H
-cairo_test.o: ../FL/abi-version.h ../FL/Fl_Export.H ../FL/fl_types.h
+cairo_test.o: ../config.h ../FL/Fl_Cairo_Window.H ../FL/Fl.H
+cairo_test.o: ../FL/Fl_Export.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+cairo_test.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
+cairo_test.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+cairo_test.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+cairo_test.o: ../FL/Fl_Box.H ../FL/x.H ../FL/fl_draw.H ../FL/Enumerations.H
+cairo_test.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+cairo_test.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+cairo_test.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/math.h
 checkers.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 checkers.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 checkers.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
