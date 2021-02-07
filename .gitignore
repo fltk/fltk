@@ -30,11 +30,9 @@ etc/FLTKConfig.cmake
 /build
 /clang
 /config.cache
-/config.guess
 /config.h
 /config.log
 /config.status
-/config.sub
 /configure
 /fltk-config
 /fltk.list

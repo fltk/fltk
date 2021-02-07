@@ -19,93 +19,166 @@ dnl
 dnl We need at least autoconf 2.50...
 AC_PREREQ([2.50])
 
+
+dnl Package name and version
+AC_INIT([fltk], [1.4.0], [https://github.com/fltk/fltk/issues], [fltk], [https://www.fltk.org/])
+
+FLTK_VERSION="AC_PACKAGE_VERSION"
+FLTK_VERSION_MAJOR=$(echo AC_PACKAGE_VERSION | awk -F. '{print $1}')
+FLTK_VERSION_MINOR=$(echo AC_PACKAGE_VERSION | awk -F. '{print $2}')
+FLTK_VERSION_PATCH=$(echo AC_PACKAGE_VERSION | awk -F. '{print $3}')
+
+echo "FLTK_VERSION_MAJOR=$FLTK_VERSION_MAJOR"
+echo "FLTK_VERSION_MINOR=$FLTK_VERSION_MINOR"
+echo "FLTK_VERSION_PATCH=$FLTK_VERSION_PATCH"
+
+FL_DSO_VERSION="${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}"
+FL_ABI_VERSION="${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}.0"
+
+AC_SUBST(FLTK_VERSION)
+AC_SUBST(FLTK_VERSION_MAJOR)
+AC_SUBST(FLTK_VERSION_MINOR)
+AC_SUBST(FLTK_VERSION_PATCH)
+AC_SUBST(FL_DSO_VERSION)
+AC_SUBST(FL_ABI_VERSION)
+
+
 dnl Required file in package...
-AC_INIT
 AC_CONFIG_SRCDIR([src/Fl.cxx])
+
 
 AC_CANONICAL_HOST
 
+
 dnl determine whether we're cross-compiling
-if test "$host" != "$build"; then
-  fltk_cross_compiling="yes"
-else
-  fltk_cross_compiling="no"
-fi
+AS_IF([test "$host" != "$build"], [
+    fltk_cross_compiling="yes"
+], [
+    fltk_cross_compiling="no"
+])
+
 
 dnl Do not automatically add "-g" to compiler options...
 dnl This must be _before_ "Find compiler commands..."
-ARCHFLAGS="${ARCHFLAGS:=}"
 CFLAGS="${CFLAGS:=}"
 CPPFLAGS="${CPPFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 DSOFLAGS="${DSOFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
-OPTIM="${OPTIM:=}"
+
 
 dnl Find compiler commands...
 AC_PROG_CC
 AC_PROG_CXX
 
-dnl So --with-archflags option is used during "checking size of long"
-case $host_os in
-    darwin*)
-        if test "x$with_archflags" != x ; then
-            CFLAGS="$CFLAGS $with_archflags"
-        fi
-        ;;
-esac
 
-dnl FLTK library versions...
-FLTK_VERSION_MAJOR=1
-FLTK_VERSION_MINOR=4
-FLTK_VERSION_PATCH=0
-FLTK_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}.${FLTK_VERSION_PATCH}
-
-FL_DSO_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
-FL_ABI_VERSION=${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}.0
-
-AC_SUBST(FLTK_VERSION_MAJOR)
-AC_SUBST(FLTK_VERSION_MINOR)
-AC_SUBST(FLTK_VERSION_PATCH)
-AC_SUBST(FLTK_VERSION)
-AC_SUBST(FL_DSO_VERSION)
-AC_SUBST(FL_ABI_VERSION)
-
+dnl Architecture and optimization options...
+ARCHFLAGS="${ARCHFLAGS:=}"
+AC_ARG_WITH([archflags], AS_HELP_STRING([--with-archflags="flags"], [use custom architecture flags (default=none, macOS values include "-arch arm64e", "-arch i386", "-arch ppc", and "-arch x86_64")]), [
+    ARCHFLAGS="$withval"
+])
 AC_SUBST(ARCHFLAGS)
+
+OPTIM="${OPTIM:=}"
+AC_ARG_WITH(optim, AS_HELP_STRING([--with-optim="flags"], [use custom optimization flags]), [
+    OPTIM="$withval"
+])
 AC_SUBST(OPTIM)
+
+
+dnl Other options
+AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [use Cairo library])) AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for cairo extended use]))
+
+AC_ARG_ENABLE([cp936], AS_HELP_STRING([--enable-cp936], [turn on CP936]))
+AS_IF([test x$enable_cp936 = xyes], [
+    CFLAGS="$CFLAGS -DCP936"
+])
+
+AC_ARG_ENABLE([cygwin], AS_HELP_STRING([--enable-cygwin], [use the Cygwin libraries (default=no)]))
+
+AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug], [turn on debugging]))
+AS_IF([test x$enable_debug = xyes], [
+    DEBUGFLAG="-g "
+], [
+    DEBUGFLAG=""
+])
+
+AC_ARG_ENABLE([gl], AS_HELP_STRING([--disable-gl], [turn off OpenGL support]))
+
+AC_ARG_ENABLE([localjpeg], AS_HELP_STRING([--enable-localjpeg], [use local JPEG library (default=auto)]))
+AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG library (efault=auto)]))
+AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB library (default=auto)]))
+
+AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
+
+AC_ARG_ENABLE([print], AS_HELP_STRING([--disable-print], [turn off print support (X11)]))
+AS_IF([test x$enable_print = xno], [
+    AC_DEFINE([FL_NO_PRINT_SUPPORT], [Disable X11 print support?])
+])
+
+AC_ARG_ENABLE([shared], AS_HELP_STRING([--enable-shared], [turn on shared libraries]))
+
+AC_ARG_ENABLE([svg], AS_HELP_STRING([--disable-svg], [disable SVG support]))
+AS_IF([test x$enable_svg != xno], [
+    AC_DEFINE([FLTK_USE_SVG], [SVG image support])
+])
+
+AC_ARG_ENABLE([threads], AS_HELP_STRING([--disable-threads], [turn off multi-threading support]))
+
+AC_ARG_ENABLE([x11], AS_HELP_STRING([--enable-x11], [use X11 with Cygwin or macOS (default=no)]))
+
+AC_ARG_ENABLE([xcursor], AS_HELP_STRING([--disable-xcursor], [turn off Xcursor support]))
+
+AC_ARG_ENABLE([xdbe], AS_HELP_STRING([--disable-xdbe], [turn off Xdbe support]))
+
+AC_ARG_ENABLE([xfixes], AS_HELP_STRING([--disable-xfixes], [turn off Xfixes support]))
+
+AC_ARG_ENABLE([xft], AS_HELP_STRING([--disable-xft], [turn off Xft support]))
+
+AC_ARG_ENABLE([xinerama], AS_HELP_STRING([--disable-xinerama], [turn off Xinerama support]))
+
+AC_ARG_ENABLE([xrender], AS_HELP_STRING([--disable-xrender], [turn off Xrender support]))
+
+AS_IF([test x$enable_pango = xyes -a x$enable_xft = xno], [
+    AC_MSG_ERROR([--disable-xft and --enable-pango are incompatible because Xft is necessary for Pango.])
+])
+
+
+dnl So --with-archflags option is used during "checking size of long"
+# TODO: Fix long long test
+AS_IF([test "x$with_archflags" != x], [
+    CFLAGS="$CFLAGS $with_archflags"
+])
+
 
 dnl FLTK build options to be used in Makefiles (defined in makeinclude)
 BUILD=""
 
+
 dnl OS-specific pre-tests...
 dnl host_os_gui equals $host_os unless we target Cygwin or Darwin in combination with X11.
 host_os_gui=$host_os
-case $host_os in
-    cygwin*)
-        # Handle Cygwin option *first*, before all other tests.
-        AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [[default=no]]])
-        AC_ARG_ENABLE(x11,    [  --enable-x11            with Cygwin or Mac OS, use X11 [[default=no]]])
-        if test x$enable_cygwin = xyes; then
-            # we target Cygwin in combination with X11
-            if test x$enable_x11 = xyes; then
-                host_os_gui="X11$host_os"
-            fi
-        fi
-        ;;
-    darwin*)
-        if test x$enable_x11 = xyes; then
-                host_os_gui="X11"
-                OPTIM="-U__APPLE__ $OPTIM"
-                macosversion=`sw_vers -productVersion | cut -d. -f2`
-                macosversion_maj=`sw_vers -productVersion | cut -d. -f1`
-                if  test $macosversion_maj -ge "11" -o $macosversion -ge "13" ; then
-                        CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.9 -D_LIBCPP_HAS_THREAD_API_PTHREAD"
-                fi
-        fi
-        ;;
-   *)
-   ;;
-esac
+AS_CASE([$host_os],
+[cygwin*], [
+    # Handle Cygwin option *first*, before all other tests.
+    AS_IF([test x$enable_cygwin = xyes], [
+        # we target Cygwin in combination with X11
+	AS_IF([test x$enable_x11 = xyes], [
+	    host_os_gui="X11$host_os"
+	])
+    ])
+], [darwin*], [
+    AS_IF([test x$enable_x11 = xyes], [
+	host_os_gui="X11"
+	OPTIM="-U__APPLE__ $OPTIM"
+	macosversion=$(sw_vers -productVersion | cut -d. -f2)
+	macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
+	AS_IF([test $macosversion_maj -ge 11 -o $macosversion -ge 13], [
+	    CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.9 -D_LIBCPP_HAS_THREAD_API_PTHREAD"
+	])
+    ])
+])
+
 
 dnl Define the libraries and link options we will need.
 LINKFLTK="../lib/libfltk.a"
@@ -127,9 +200,6 @@ GLLIBBASENAME="libfltk_gl.a"
 IMGLIBBASENAME="libfltk_images.a"
 CAIROLIBBASENAME="libfltk_cairo.a"
 
-if test x$enable_pango = xyes -a x$enable_xft = xno; then
-  AC_MSG_ERROR([--disable-xft and --enable-pango are incompatible because Xft is necessary for pango. Aborting.])
-fi
 
 dnl Check for Cairo library unless disabled...
 CAIRODIR=""
@@ -137,9 +207,6 @@ CAIROFLAGS=""
 LINKFLTKCAIRO=""
 FLTKCAIROOPTION=""
 CAIROLIBS=""
-
-AC_ARG_ENABLE(cairoext,[  --enable-cairoext       use fltk code instrumentation for cairo extended use [[default=no]]])
-AC_ARG_ENABLE(cairo,   [  --enable-cairo          use lib Cairo [[default=no]]])
 
 if test x$enable_cairoext = xyes; then
           AC_DEFINE(FLTK_USE_CAIRO)
@@ -209,21 +276,7 @@ if test ! "$has_abiversion" = "" ; then
 fi
 
 dnl Handle compile-time options...
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [[default=no]]])
-if test x$enable_debug = xyes; then
-    DEBUGFLAG="-g "
-else
-    DEBUGFLAG=""
-fi
 
-AC_ARG_ENABLE(cp936, [  --enable-cp936          turn on CP936 [[default=no]]])
-if test x$enable_cp936 = xyes; then
-    CFLAGS="$CFLAGS -DCP936"
-fi
-
-AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [[default=yes]]])
-
-AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [[default=no]]])
 if test x$enable_shared = xyes; then
     PICFLAG=1
     SHAREDSUFFIX=""
@@ -419,15 +472,6 @@ AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
 AC_SUBST(FLUID_BUILD)
-
-AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support [[default=yes]]])
-
-AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
-
-AC_ARG_WITH(archflags, [  --with-archflags="flags"
-                          use custom architecture flags
-                          (possible Mac OS X values include -arch i386, -arch x86_64, -arch ppc)],
-    ARCHFLAGS="$withval")
 
 dnl Find commands...
 AC_PROG_INSTALL
@@ -670,7 +714,6 @@ AC_SUBST(STATICIMAGELIBS)
 # Handle the ZLIB lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localzlib parameter is not set by user
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
-AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library [[default=auto]]])
 # Check for System lib use if automatic mode or --disable-localzlib is requested
 syszlib_ok=no
 syszinc_ok=no
@@ -707,7 +750,6 @@ fi
 # Handle the PNG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localpng parameter is not set by user
 # Then we check the png lib usability with result in syspng_lib variable
-AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library  [[default=auto]]])
 
 # Now check if system lib is usable, we check Lib AND include availability with inc variant,
 # but only, if the builtin lib is not requested
@@ -753,7 +795,6 @@ fi
 # Handle the JPEG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localjpeg parameter is not set by user
 # Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
-AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library [[default=auto]]])
 # Check for System lib use if automatic mode or --disable-localjpeg is requested
 sysjpeglib_ok=no
 sysjpeginc_ok=no
@@ -792,10 +833,6 @@ AC_SUBST(ZLIB)
 AC_SUBST(ZLIBINC)
 
 # Control the usage of the nanosvg lib and SVG output
-AC_ARG_ENABLE(svg, [  --enable-svg            read/write SVG files  [[default=yes]]])
-if test x$enable_svg != xno; then
-    AC_DEFINE(FLTK_USE_SVG)
-fi
 
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
@@ -1028,15 +1065,6 @@ case $host_os_gui in
             GLDEMOS=""
         fi
 
-        dnl Check whether print support was disabled...
-        AC_ARG_ENABLE(print,    [  --enable-print          turn on print support (X11 platform) [[default=yes]]])
-        if test x$enable_print = xno; then
-            AC_DEFINE(FL_NO_PRINT_SUPPORT)
-        fi
-
-        dnl Check for Xinerama support unless disabled...
-        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
-
         xinerama_found=no
         if test x$enable_xinerama != xno; then
             AC_CHECK_LIB(Xinerama, XineramaIsActive,
@@ -1046,8 +1074,6 @@ case $host_os_gui in
         fi
 
         dnl Check for the Xft library unless disabled...
-        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [[default=yes]]])
-
         xft_found=no
         if test x$enable_xft != xno; then
             # Try pkg-config first (freetype2 deprecated freetype-config from some version on)
@@ -1101,7 +1127,6 @@ case $host_os_gui in
   fi
 
         dnl Check for the pango library unless disabled...
-        AC_ARG_ENABLE(pango, [  --enable-pango          turn on Pango support [[default=no]]])
 
         pango_found=no
         if test x$enable_pango = xyes; then
@@ -1144,7 +1169,6 @@ case $host_os_gui in
         fi
 
         dnl Check for the Xdbe extension unless disabled...
-        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
         xdbe_found=no
         if test x$enable_xdbe != xno; then
@@ -1159,7 +1183,6 @@ case $host_os_gui in
         fi
 
         dnl Check for the Xfixes extension unless disabled...
-        AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
 
         xfixes_found=no
         if test x$enable_xfixes != xno; then
@@ -1174,7 +1197,6 @@ case $host_os_gui in
         fi
 
         dnl Check for the Xcursor library unless disabled...
-        AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [[default=yes]]])
 
         xcursor_found=no
         if test x$enable_xcursor != xno; then
@@ -1189,7 +1211,6 @@ case $host_os_gui in
         fi
 
         dnl Check for the Xrender library unless disabled...
-        AC_ARG_ENABLE(xrender, [  --enable-xrender        turn on Xrender support [[default=yes]]])
 
         xrender_found=no
         if test x$enable_xrender != xno; then
@@ -1681,8 +1702,8 @@ BINARY_DIR=
 AC_SUBST(BINARY_DIR)
 
 dnl Write all of the files...
-AC_CONFIG_HEADER(config.h:configh.in)
-AC_CONFIG_HEADER(FL/abi-version.h:abi-version.in)
+AC_CONFIG_HEADERS([config.h:configh.in])
+AC_CONFIG_HEADERS([FL/abi-version.h:abi-version.in])
 AC_CONFIG_FILES([makeinclude fltk.list fltk-config fltk.spec FL/Makefile])
 AC_OUTPUT
 
