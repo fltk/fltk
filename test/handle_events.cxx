@@ -13,7 +13,8 @@
 //
 //     https://www.fltk.org/bugs.php
 //
-// compile as: fltk-config --compile handle_events.cxx
+
+// compile standalone as: fltk-config --compile handle_events.cxx
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -43,7 +44,7 @@ public:
     eventnum++;
     ex = Fl::event_x();
     ey = Fl::event_y();
-    int screen_num = Fl::screen_num(x(), y(), w(), h());
+    int screen_num = Fl_Window::screen_num();
 #if defined(FL_API_VERSION) && FL_API_VERSION >= 10400
     int scale = int(Fl::screen_scale(screen_num) * 100. + 0.5);
 #else
@@ -63,15 +64,15 @@ int app::handle(int ev) {
   int res = WINDOW_TYPE::handle(ev);
   switch (ev) {
     case FL_PUSH:
-      printf(", button %d down", Fl::event_button());
+      fprintf(stderr, ", button %d down", Fl::event_button());
       res = 1;
       break;
     case FL_RELEASE:
-      printf(", button %d up", Fl::event_button());
+      fprintf(stderr, ", button %d up", Fl::event_button());
       res = 1;
       break;
     case FL_MOUSEWHEEL:
-      printf(", dx = %d, dy = %d", Fl::event_dx(), Fl::event_dy());
+      fprintf(stderr, ", dx = %d, dy = %d", Fl::event_dx(), Fl::event_dy());
       res = 1;
       break;
     case FL_ENTER:
@@ -82,10 +83,10 @@ int app::handle(int ev) {
       break;
     case FL_KEYBOARD:
       if (Fl::event_text()[0] >= 'a' && Fl::event_text()[0] <= 'z') {
-        printf(", Text = '%s'", Fl::event_text());
+        fprintf(stderr, ", Text = '%s'", Fl::event_text());
         res = 1;
       } else { // "ignore" everything else
-        printf(", ignored '%s'", Fl::event_text());
+        fprintf(stderr, ", ignored '%s'", Fl::event_text());
       }
       break;
     case FL_KEYUP:
@@ -98,7 +99,7 @@ int app::handle(int ev) {
     default:
       break;
   }
-  printf("\n"); fflush(stdout);
+  fprintf(stderr, "\n"); fflush(stderr);
   return res;
 } /* end of handle() method */
 
