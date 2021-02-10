@@ -1010,7 +1010,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
                        WPARAM wParam, LPARAM lParam) {
   static int px, py, pmx, pmy;
   POINT pt;
-  float scale = Fl_Graphics_Driver::default_driver().scale();
+  float scale = Fl::screen_driver()->scale(window->screen_num());
   Fl::e_x = pt.x = (signed short)LOWORD(lParam);
   Fl::e_y = pt.y = (signed short)HIWORD(lParam);
   Fl::e_x /= scale;
@@ -1597,7 +1597,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         //             sd->scale(olds),news, s,
         //             Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);
         // fflush(LOG);
-        if (olds != news) {
+        if (olds != news && !window->parent()) {
           if (s != sd->scale(olds) &&
               !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
               window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
