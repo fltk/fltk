@@ -281,9 +281,9 @@ void Fl_Shared_Image::reload() {
 
     alloc_image_ = 1;
 
-    if ((img->w() != w() && w()) || (img->h() != h() && h())) {
+    if ((img->w() != data_w() && data_w()) || (img->h() != data_h() && data_h())) {
       // Make sure the reloaded image is the same size as the existing one.
-      Fl_Image *temp = img->copy(w(), h());
+      Fl_Image *temp = img->copy(data_w(), data_h());
       delete img;
       image_ = temp;
     } else {
