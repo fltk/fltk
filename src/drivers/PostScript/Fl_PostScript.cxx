@@ -2122,7 +2122,7 @@ Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Co
   ps->close_cmd_ = closef;
   if (ps->output) {
     float s = Fl::screen_scale(0);
-    ps->start_eps(width*s, height*s);
+    ps->start_eps(int(width*s), int(height*s));
 #if USE_PANGO
       cairo_save(ps->cr());
       ps->left_margin = ps->top_margin = 0;

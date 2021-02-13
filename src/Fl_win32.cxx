@@ -573,9 +573,9 @@ void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
     UINT dpiX, dpiY;
     HRESULT r =  fl_GetDpiForMonitor ? fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY) : !S_OK;
     if (r != S_OK) { dpiX = dpiY = 96; }
-    dpi[ns][0] = dpiX;
-    dpi[ns][1] = dpiY;
-    scale(ns, dpiX / 96.);
+    dpi[ns][0] = float(dpiX);
+    dpi[ns][1] = float(dpiY);
+    scale(ns, dpiX / 96.f);
   //fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
 }
@@ -639,8 +639,8 @@ int Fl_WinAPI_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
 int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
   int n = get_mouse_unscaled(x, y);
   float s = scale(n);
-  x = x / s;
-  y = y / s;
+  x = int(x / s);
+  y = int(y / s);
   return n;
 }
 
@@ -887,8 +887,8 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
         Fl_Surface_Device::push_current(surf);
         fl_color(FL_WHITE);             // draw white background
         fl_rectf(0, 0, width, height);
-        rect.right *= scaling;          // apply scaling to the metafile draw operation
-        rect.bottom *= scaling;
+        rect.right = LONG(rect.right * scaling);          // apply scaling to the metafile draw operation
+        rect.bottom = LONG(rect.bottom * scaling);
         PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
         image = surf->image();
         Fl_Surface_Device::pop_current();
@@ -1013,11 +1013,11 @@ static int mouse_event(Fl_Window *window, int what, int button,
   float scale = Fl::screen_driver()->scale(window->screen_num());
   Fl::e_x = pt.x = (signed short)LOWORD(lParam);
   Fl::e_y = pt.y = (signed short)HIWORD(lParam);
-  Fl::e_x /= scale;
-  Fl::e_y /= scale;
+  Fl::e_x = int(Fl::e_x / scale);
+  Fl::e_y = int(Fl::e_y / scale);
   ClientToScreen(fl_xid(window), &pt);
-  Fl::e_x_root = pt.x / scale;
-  Fl::e_y_root = pt.y / scale;
+  Fl::e_x_root = int(pt.x / scale);
+  Fl::e_y_root = int(pt.y / scale);
 #ifdef USE_CAPTURE_MOUSE_WIN
   Fl_Window *mouse_window = window; // save "mouse window"
 #endif
@@ -1206,7 +1206,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
           int ns = Fl_Window_Driver::driver(window)->screen_num();
           sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
-          float f = HIWORD(wParam) / 96.;
+          float f = HIWORD(wParam) / 96.f;
           GetClientRect(hWnd, &r);
           float old_f = float(r.right) / window->w();
           Fl::screen_driver()->scale(ns, f);
@@ -1255,10 +1255,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         RECT r_box;
         if (scale != 1 && GetRgnBox(R, &r_box) != NULLREGION) {
           // add de-scaled update region to i->region in FLTK units
-          r_box.left /= scale;
-          r_box.right /= scale;
-          r_box.top /= scale;
-          r_box.bottom /= scale;
+          r_box.left = LONG(r_box.left / scale);
+          r_box.right = LONG(r_box.right / scale);
+          r_box.top = LONG(r_box.top / scale);
+          r_box.bottom = LONG(r_box.bottom / scale);
           Fl_Region R3 = CreateRectRgn(r_box.left, r_box.top, r_box.right + 1, r_box.bottom + 1);
           if (!i->region) i->region = R3;
           else {
@@ -1567,7 +1567,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           } else {
             Fl::handle(FL_SHOW, window);
             resize_bug_fix = window;
-            window->size(ceil(LOWORD(lParam) / scale), ceil(HIWORD(lParam) / scale));
+            window->size(int(ceil(LOWORD(lParam) / scale)), int(ceil(HIWORD(lParam) / scale)));
             // fprintf(LOG,"WM_SIZE size(%.0f,%.0f) graph(%d,%d) s=%.2f\n",
             //         ceil(LOWORD(lParam)/scale),ceil(HIWORD(lParam)/scale),
             //         LOWORD(lParam),HIWORD(lParam),scale);
@@ -1589,7 +1589,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
         Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
         int olds = wd->screen_num();
-        int news = sd->screen_num_unscaled(nx + window->w() * scale / 2, ny + window->h() * scale / 2);
+        int news = sd->screen_num_unscaled(nx + int(window->w() * scale / 2), ny + int(window->h() * scale / 2));
         if (news == -1)
           news = olds;
         float s = sd->scale(news);
@@ -1608,7 +1608,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
             wd->screen_num(news);
         }
-        window->position(round(nx/scale), round(ny/scale));
+        window->position(int(round(nx/scale)), int(round(ny/scale)));
         break;
       } // case WM_MOVE
 
@@ -1733,10 +1733,10 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
 
       RECT r;
       int drawingX, drawingY; // drawing coordinates of window top-left
-      r.left = drawingX = round(w->x() * s);
-      r.top = drawingY = round(w->y() * s);
-      r.right = drawingX + w->w() * s;
-      r.bottom = drawingY + w->h() * s;
+      r.left = drawingX = int(round(w->x() * s));
+      r.top = drawingY = int(round(w->y() * s));
+      r.right = drawingX + int(w->w() * s);
+      r.bottom = drawingY + int(w->h() * s);
       // get the decoration rectangle for the desired client rectangle
 
       typedef BOOL(WINAPI* AdjustWindowRectExForDpi_type)(LPRECT, DWORD, BOOL, DWORD, UINT);
@@ -1745,7 +1745,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
       BOOL ok;
       if ( fl_AdjustWindowRectExForDpi) {
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-        UINT dpi = sd->dpi[Fl_Window_Driver::driver(w)->screen_num()][0];
+        UINT dpi = UINT(sd->dpi[Fl_Window_Driver::driver(w)->screen_num()][0]);
         ok = fl_AdjustWindowRectExForDpi(&r, style, FALSE, styleEx, dpi);
       } else
         ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
@@ -1802,7 +1802,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   // Find screen that contains most of the window
   // FIXME: this ought to be the "work area" instead of the entire screen !
   int scr_x = 0, scr_y = 0, scr_w = 0, scr_h = 0;
-  int ns = Fl::screen_num(round(X / s), round(Y / s), W / s, H / s);
+  int ns = Fl::screen_num(int(round(X / s)), int(round(Y / s)), int(W / s), int(H / s));
   ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->screen_xywh_unscaled(scr_x, scr_y, scr_w, scr_h, ns);
   // Make border's lower right corner visible
   if (scr_x + scr_w < X + W)
@@ -1885,7 +1885,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
     int dummy_x, dummy_y, bt, bx, by;
     // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
-    int scaledX = round(X * s), scaledY = round(Y * s), scaledW = int(W * s), scaledH = int(H * s);
+    int scaledX = int(round(X * s)), scaledY = int(round(Y * s)), scaledW = int(W * s), scaledH = int(H * s);
     // Ignore window managing when resizing, so that windows (and more
     // specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
@@ -2035,10 +2035,10 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   }
   Fl_Window_Driver::driver(w)->screen_num(nscreen);
   float s = Fl::screen_driver()->scale(nscreen);
-  int xp = round(w->x() * s); // these are in graphical units
-  int yp = round(w->y() * s);
-  int wp = w->w() * s;
-  int hp = w->h() * s;
+  int xp = int(round(w->x() * s)); // these are in graphical units
+  int yp = int(round(w->y() * s));
+  int wp = int(w->w() * s);
+  int hp = int(w->h() * s);
 
   int showit = 1;
 
@@ -2105,8 +2105,8 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
       if (!Fl::grab()) {
         xp = xwm;
         yp = ywm;
-        x(round(xp / s));
-        y(round(yp / s));
+        x(int(round(xp / s)));
+        y(int(round(yp / s)));
       }
       xp -= bx;
       yp -= by + bt;
@@ -2225,15 +2225,15 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax) {
   hd += td;
 
   float s = Fl::screen_driver()->scale(screen_num());
-  minmax->ptMinTrackSize.x = s * minw() + wd;
-  minmax->ptMinTrackSize.y = s * minh() + hd;
+  minmax->ptMinTrackSize.x = LONG(s * minw()) + wd;
+  minmax->ptMinTrackSize.y = LONG(s * minh()) + hd;
   if (maxw()) {
-    minmax->ptMaxTrackSize.x = s * maxw() + wd;
-    minmax->ptMaxSize.x = s * maxw() + wd;
+    minmax->ptMaxTrackSize.x = LONG(s * maxw()) + wd;
+    minmax->ptMaxSize.x = LONG(s * maxw()) + wd;
   }
   if (maxh()) {
-    minmax->ptMaxTrackSize.y = s * maxh() + hd;
-    minmax->ptMaxSize.y = s * maxh() + hd;
+    minmax->ptMaxTrackSize.y = LONG(s * maxh()) + hd;
+    minmax->ptMaxSize.y = LONG(s * maxh()) + hd;
   }
 }
 
@@ -2756,11 +2756,11 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
     Fl::check();
   HDC save_gc = (HDC)fl_graphics_driver->gc();
   fl_graphics_driver->gc(GetDC(NULL));
-  int ww = w() * scaling + 2 * wsides;
-  wsides /= scaling;
+  int ww = int(w() * scaling) + 2 * wsides;
+  wsides = int(wsides / scaling);
   if (wsides < 1)
     wsides = 1;
-  ww /= scaling;
+  ww = int(ww / scaling);
   if (wsides <= 1)
     ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
@@ -2769,11 +2769,11 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   if (htop && r.right - r.left > offset) {
     top = dr->read_win_rectangle_unscaled(r.left+offset, r.top, r.right - r.left-offset, htop, 0);
     if (scaling != 1 && top)
-      top->scale(ww, htop / scaling, 0, 1);
+      top->scale(ww, int(htop / scaling), 0, 1);
   }
   if (wsides) {
-    left = dr->read_win_rectangle_unscaled(r.left + offset, r.top + htop, wsides, h() * scaling, 0);
-    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling, 0);
+    left = dr->read_win_rectangle_unscaled(r.left + offset, r.top + htop, wsides, int(h() * scaling), 0);
+    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, int(h() * scaling), 0);
     bottom = dr->read_win_rectangle_unscaled(r.left+offset, r.bottom - hbottom, ww, hbottom, 0);
     if (scaling != 1) {
       if (left) left->scale(wsides, h(), 0, 1);

@@ -217,7 +217,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
         Fl_RGB_Image *img = traverse_to_gl_subwindows(c->as_window(),  origin_x - c->x(),
                                                       origin_y - c->y(), width, height, full_img);
         if (img == full_img) continue;
-        write_image_inside(full_img, img, (origin_x - x) * full_img_scale, (origin_y - y) * full_img_scale);
+        write_image_inside(full_img, img, int((origin_x - x) * full_img_scale), int((origin_y - y) * full_img_scale));
         delete img;
       }
     }
@@ -360,11 +360,11 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   Fl_Screen_Driver *d = Fl::screen_driver();
   float s = d->scale(nscreen);
   if (s > 3) s = 3; // limit the growth of the transient window
-  Fl_Image_Surface *surf = new Fl_Image_Surface(w*s, w*s/2);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(int(w*s), int(w*s/2));
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
-  fl_rectf(-1, -1, w*s+2, w*s+2);
-  Fl_Box *b = new Fl_Box(FL_RFLAT_BOX, 0, 0, w*s, w*s/2, "");
+  fl_rectf(-1, -1, int(w*s)+2, int(w*s)+2);
+  Fl_Box *b = new Fl_Box(FL_RFLAT_BOX, 0, 0, int(w*s), int(w*s/2), "");
   b->color(FL_WHITE);
   surf->draw(b);
   delete b;
@@ -374,14 +374,14 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   //create a window shaped with the rounded box
   int X, Y, W, H;
   Fl::screen_xywh(X, Y, W, H, nscreen);
-  w /= d->scale(nscreen)/s;
+  w = int(w / (d->scale(nscreen)/s));
   Fl_Window *win = new Fl_Window((X + W/2) -w/2, (Y + H/2) -w/4, w, w/2, 0);
   b = new Fl_Box(FL_FLAT_BOX, 0, 0, w, w/2, NULL);
   char str[10];
   sprintf(str, "%d %%", int(f * 100 + 0.5));
   b->copy_label(str);
   b->labelfont(FL_TIMES_BOLD);
-  b->labelsize(30 * s / d->scale(nscreen));
+  b->labelsize(Fl_Fontsize(30 * s / d->scale(nscreen)));
   b->labelcolor(FL_BLACK);
   b->color(Fl_Tooltip::color());
   win->end();
@@ -427,9 +427,9 @@ int Fl_Screen_Driver::scale_handler(int event)
 #else
     // scaling factors for the standard GUI
     static float scaling_values[] = {
-      0.5, 2.f/3, 0.8, 0.9, 1.0,
-      1.1, 1.2, 4.f/3, 1.5, 1.7,
-      2.0, 2.4, 3.0};
+      0.5f, 2.f/3, 0.8f, 0.9f, 1.0f,
+      1.1f, 1.2f, 4.f/3, 1.5f, 1.7f,
+      2.0f, 2.4f, 3.0f};
 #endif
     float f, old_f = screen_dr->scale(screen)/initial_scale;
     if (key == '0' || key == 0xE0) f = 1;

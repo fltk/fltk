@@ -89,8 +89,8 @@ public:
     Fl_Window *target = fl_find( hWnd );
     if (target) {
       float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
-      Fl::e_x_root /= s;
-      Fl::e_y_root /= s;
+      Fl::e_x_root = int(Fl::e_x_root / s);
+      Fl::e_y_root = int(Fl::e_y_root / s);
       Fl::e_x = Fl::e_x_root-target->x();
       Fl::e_y = Fl::e_y_root-target->y();
     }
@@ -124,8 +124,8 @@ public:
     Fl::e_y_root = pt.y;
     if (fl_dnd_target_window) {
       float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(fl_dnd_target_window)->screen_num());
-      Fl::e_x_root /= s;
-      Fl::e_y_root /= s;
+      Fl::e_x_root = int(Fl::e_x_root /s);
+      Fl::e_y_root = int(Fl::e_y_root /s);
       Fl::e_x = Fl::e_x_root-fl_dnd_target_window->x();
       Fl::e_y = Fl::e_y_root-fl_dnd_target_window->y();
     }
@@ -161,8 +161,8 @@ public:
     Fl::e_x_root = pt.x;
     Fl::e_y_root = pt.y;
     float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
-    Fl::e_x_root /= s;
-    Fl::e_y_root /= s;
+    Fl::e_x_root = int(Fl::e_x_root / s);
+    Fl::e_y_root = int(Fl::e_y_root / s);
     if (target) {
       Fl::e_x = Fl::e_x_root-target->x();
       Fl::e_y = Fl::e_y_root-target->y();

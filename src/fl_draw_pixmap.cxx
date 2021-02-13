@@ -119,7 +119,7 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
     return 0;
 
   typedef uchar uchar4[4];
-  uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
+  uchar4 *colors = new uchar4[ int(1<<(chars_per_pixel*8)) ];
 
   if (Fl_Graphics_Driver::need_pixmap_bg_color) {
     color_count = 0;

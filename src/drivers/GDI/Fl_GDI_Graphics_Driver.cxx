@@ -104,7 +104,8 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
-  x *= scale(); y *= scale(); w *= scale(); h *= scale(); srcx *= scale(); srcy *= scale();
+  x = int(x * scale()); y = int(y * scale()); w = int(w * scale()); h = int(h * scale());
+  srcx = int(srcx * scale()); srcy = int(srcy * scale());
   if (srcx < 0) {w += srcx; x -= srcx; srcx = 0;}
   if (srcy < 0) {h += srcy; y -= srcy; srcy = 0;}
   int off_width, off_height;
@@ -157,7 +158,7 @@ void Fl_GDI_Graphics_Driver::translate_all(int x, int y) {
     depth = stack_height - 1;
   }
   GetWindowOrgEx((HDC)gc(), origins+depth);
-  SetWindowOrgEx((HDC)gc(), origins[depth].x - x*scale(), origins[depth].y - y*scale(), NULL);
+  SetWindowOrgEx((HDC)gc(), int(origins[depth].x - x*scale()), int(origins[depth].y - y*scale()), NULL);
   depth++;
 }
 
@@ -179,8 +180,8 @@ void Fl_GDI_Graphics_Driver::transformed_vertex0(float x, float y) {
       p_size = p ? 2*p_size : 16;
       p = (POINT*)realloc((void*)p, p_size*sizeof(*p));
     }
-    p[n].x = x;
-    p[n].y = y;
+    p[n].x = int(x);
+    p[n].y = int(y);
     n++;
   }
 }
@@ -255,14 +256,14 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
     POINT pt = {0, 0};
     if (dr && dr->depth >= 1) { // account for translation
       GetWindowOrgEx((HDC)dr->gc(), &pt);
-      pt.x *= (f - 1);
-      pt.y *= (f - 1);
+      pt.x = int(pt.x * (f - 1));
+      pt.y = int(pt.y * (f - 1));
     }
     RECT *rects = (RECT*)&(pdata->Buffer);
     int delta = (f > 1.75 ? 1 : 0) - int(f/2);
     for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
-      int x = rects[i].left * f + pt.x;
-      int y = rects[i].top * f + pt.y;
+      int x = int(rects[i].left * f) + pt.x;
+      int y = int(rects[i].top * f) + pt.y;
       RECT R2;
       R2.left = x + delta;
       R2.top  = y + delta;

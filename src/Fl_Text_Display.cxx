@@ -2045,7 +2045,7 @@ int Fl_Text_Display::handle_vline(
         w = ((int(xAbs/tab)+1)*tab) - xAbs;
         styleX = startX+w; startStyle = i;
         if (mode==DRAW_LINE)
-          draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
+          draw_string( style|BG_ONLY_MASK, int(startX), Y, int(startX+w), 0, 0 );
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
           free(lineStr);
@@ -2062,21 +2062,21 @@ int Fl_Text_Display::handle_vline(
         }
         if (mode==DRAW_LINE) {
           if (startIndex!=startStyle) {
-            fl_push_clip(startX, Y, w+1, mMaxsize);
-            draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
+            fl_push_clip(int(startX), Y, int(w)+1, mMaxsize);
+            draw_string( style, int(styleX), Y, int(startX+w), lineStr+startStyle, i-startStyle );
             fl_pop_clip();
           } else {
-            draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+            draw_string( style, int(startX), Y, int(startX+w), lineStr+startIndex, i-startIndex );
           }
         }
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
           int di;
           if (startIndex!=startStyle) {
-            di = find_x(lineStr+startStyle, i-startStyle, style, -(rightClip-styleX)); // STR #2788
+            di = find_x(lineStr+startStyle, i-startStyle, style, -int(rightClip-styleX)); // STR #2788
             di = lineStartPos + startStyle + di;
           } else {
-            di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+            di = find_x(lineStr+startIndex, i-startIndex, style, -int(rightClip-startX)); // STR #2788
             di = lineStartPos + startIndex + di;
           }
           free(lineStr);
@@ -2102,7 +2102,7 @@ int Fl_Text_Display::handle_vline(
     double xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
     w = ((int(xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
-      draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
+      draw_string( style|BG_ONLY_MASK, int(startX), Y, int(startX+w), 0, 0 );
     if (mode==FIND_INDEX) {
       // find x pos inside block
       free(lineStr);
@@ -2115,21 +2115,21 @@ int Fl_Text_Display::handle_vline(
     if (mode==DRAW_LINE) {
       // STR 2531
       if (startIndex!=startStyle) {
-        fl_push_clip(startX, Y, w+1, mMaxsize);
-        draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
+        fl_push_clip(int(startX), Y, int(w)+1, mMaxsize);
+        draw_string( style, int(styleX), Y, int(startX+w), lineStr+startStyle, i-startStyle );
         fl_pop_clip();
       } else {
-        draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+        draw_string( style, int(startX), Y, int(startX+w), lineStr+startIndex, i-startIndex );
       }
     }
     if (mode==FIND_INDEX) {
       // find x pos inside block
       int di;
       if (startIndex!=startStyle) {
-        di = find_x(lineStr+startStyle, i-startStyle, style, -(rightClip-styleX)); // STR #2788
+        di = find_x(lineStr+startStyle, i-startStyle, style, -int(rightClip-styleX)); // STR #2788
         di = lineStartPos + startStyle + di;
       } else {
-        di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+        di = find_x(lineStr+startIndex, i-startIndex, style, -int(rightClip-startX)); // STR #2788
         di = lineStartPos + startIndex + di;
       }
       free(lineStr);
@@ -2139,14 +2139,14 @@ int Fl_Text_Display::handle_vline(
   }
   if (mode==GET_WIDTH) {
     free(lineStr);
-    return startX+w;
+    return int(startX+w);
   }
 
   // clear the rest of the line
   startX += w;
   style = position_style(lineStartPos, lineLen, i);
   if (mode==DRAW_LINE)
-    draw_string( style|BG_ONLY_MASK, startX, Y, text_area.x+text_area.w, lineStr, lineLen );
+    draw_string( style|BG_ONLY_MASK, int(startX), Y, text_area.x+text_area.w, lineStr, lineLen );
 
   free(lineStr);
   IS_UTF8_ALIGNED2(buffer(), (lineStartPos+lineLen))

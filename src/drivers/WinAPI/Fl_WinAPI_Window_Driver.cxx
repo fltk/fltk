@@ -121,7 +121,7 @@ int Fl_WinAPI_Window_Driver::decorated_w()
   int bt, bx, by;
   float s = Fl::screen_driver()->scale(screen_num());
   border_width_title_bar_height(bx, by, bt);
-  int mini_bx = bx/s; if (mini_bx < 1) mini_bx = 1;
+  int mini_bx = int(bx/s); if (mini_bx < 1) mini_bx = 1;
   return w() + 2 * mini_bx;
 }
 
@@ -130,8 +130,8 @@ int Fl_WinAPI_Window_Driver::decorated_h()
   int bt, bx, by;
   border_width_title_bar_height(bx, by, bt);
   float s = Fl::screen_driver()->scale(screen_num());
-  int mini_by = by/s; if (mini_by < 1) mini_by = 1;
-  return h() + (bt + by)/s + mini_by;
+  int mini_by = int(by / s); if (mini_by < 1) mini_by = 1;
+  return h() + int((bt + by) / s) + mini_by;
 }
 
 
@@ -285,8 +285,8 @@ void Fl_WinAPI_Window_Driver::draw_begin()
     float s = Fl::screen_driver()->scale(screen_num());
     if ((shape_data_->lw_ != s*w() || shape_data_->lh_ != s*h()) && shape_data_->shape_) {
       // size of window has changed since last time
-      shape_data_->lw_ = s*w();
-      shape_data_->lh_ = s*h();
+      shape_data_->lw_ = int(s * w());
+      shape_data_->lh_ = int(s * h());
       Fl_Image* temp = shape_data_->effective_bitmap_ ? shape_data_->effective_bitmap_ : shape_data_->shape_;
       temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
@@ -601,7 +601,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   Fl_X::i(pWindow)->xid = xid;
   // compute window position and size in scaled units
   float s = Fl::screen_driver()->scale(screen_num());
-  int scaledX = ceil(X*s), scaledY= ceil(Y*s), scaledW = ceil(W*s), scaledH = ceil(H*s);
+  int scaledX = int(ceil(X*s)), scaledY= int(ceil(Y*s)), scaledW = int(ceil(W*s)), scaledH = int(ceil(H*s));
   // Adjust for decorations (but not if that puts the decorations
   // outside the screen)
   if ((X != x()) || (Y != y())) {
@@ -649,7 +649,9 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
     first_time = 0;
   }
   float s = Fl::screen_driver()->scale(screen_num());
-  src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
+  src_x = int(src_x * s); src_y = int(src_y * s);
+  src_w = int(src_w * s); src_h = int(src_h * s);
+  dest_x = int(dest_x * s); dest_y = int(dest_y * s);
   // Now check if the source scrolling area is fully visible.
   // If it is, we will do a quick scroll and just update the
   // newly exposed area. If it is not, we go the safe route and

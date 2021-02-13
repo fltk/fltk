@@ -1132,7 +1132,7 @@ Fl_Help_View::draw()
             utf8l = buf.size() - utf8l; // length of added UTF-8 text
             const char *oldptr = ptr;
             ptr = strchr(ptr, ';') + 1;
-            entity_extra_length += ptr - (oldptr-1) - utf8l; // extra length between html entity and UTF-8
+            entity_extra_length += int(ptr - (oldptr-1)) - utf8l; // extra length between html entity and UTF-8
           }
 
           if ((fsize + 2) > hh)

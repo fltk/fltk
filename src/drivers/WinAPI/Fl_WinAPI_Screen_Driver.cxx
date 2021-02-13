@@ -146,10 +146,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  X = work_area[n].left/scale_of_screen[n];
-  Y = work_area[n].top/scale_of_screen[n];
-  W = (work_area[n].right - work_area[n].left)/scale_of_screen[n];
-  H = (work_area[n].bottom - work_area[n].top)/scale_of_screen[n];
+  X = int(work_area[n].left/scale_of_screen[n]);
+  Y = int(work_area[n].top/scale_of_screen[n]);
+  W = int((work_area[n].right - work_area[n].left)/scale_of_screen[n]);
+  H = int((work_area[n].bottom - work_area[n].top)/scale_of_screen[n]);
 }
 
 
@@ -161,10 +161,10 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].left/scale_of_screen[n];
-    Y = screens[n].top/scale_of_screen[n];
-    W = (screens[n].right - screens[n].left)/scale_of_screen[n];
-    H = (screens[n].bottom - screens[n].top)/scale_of_screen[n];
+    X = int(screens[n].left/scale_of_screen[n]);
+    Y = int(screens[n].top/scale_of_screen[n]);
+    W = int((screens[n].right - screens[n].left)/scale_of_screen[n]);
+    H = int((screens[n].bottom - screens[n].top)/scale_of_screen[n]);
   } else {
     /* Fallback if something is broken... */
     X = 0;
@@ -501,14 +501,14 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
   int ws, hs;
-  if (int(s) == s) { ws = w * s; hs = h * s;}
+  if (int(s) == s) { ws = int(w * s); hs = int(h * s);}
   else {
-    ws = (w+1)*s; // approximates what Fl_Graphics_Driver::cache_size() does
-    hs = (h+1)*s;
+    ws = int((w+1) * s); // approximates what Fl_Graphics_Driver::cache_size() does
+    hs = int((h+1) * s);
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs, win);
+  return read_win_rectangle_unscaled(int(X*s), int(Y*s), ws, hs, win);
 }
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)

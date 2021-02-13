@@ -79,7 +79,7 @@ int Fl_Menu_::item_pathname_(char *name,
     if (m->submenu()) {                         // submenu? descend
       if (m->flags & FL_SUBMENU_POINTER) {
         // SUBMENU POINTER? Recurse to descend
-        int slen = strlen(name);
+        int slen = (int)strlen(name);
         const Fl_Menu_Item *submenu = (const Fl_Menu_Item*)m->user_data();
         if (m->label()) {
           if (*name) SAFE_STRCAT("/");

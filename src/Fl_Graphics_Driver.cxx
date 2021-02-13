@@ -102,8 +102,8 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   int px = srcx, py = srcy, pw = w, ph = h;
   if (px < 0) {px = 0; pw += srcx; x -= srcx;}
   if (py < 0) {py = 0; ph += srcy; y -= srcy;}
-  if (px + pw > px_width/s) {pw = px_width/s - px;}
-  if (py + ph > px_height/s) {ph = px_height/s - py;}
+  if (px + pw > px_width/s) {pw = int(px_width/s) - px;}
+  if (py + ph > px_height/s) {ph = int(px_height/s) - py;}
   uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
   if (surface) {
     Fl_Surface_Device::pop_current();
@@ -751,7 +751,7 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
 
 void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
   if (!font_descriptor()) fl_open_display(); // to catch the correct initial value of scale_
-  font_unscaled(face, size * scale());
+  font_unscaled(face, Fl_Fontsize(size * scale()));
 }
 
 double Fl_Scalable_Graphics_Driver::width(const char *str, int n) {
@@ -764,15 +764,15 @@ double Fl_Scalable_Graphics_Driver::width(unsigned int c) {
 
 Fl_Fontsize Fl_Scalable_Graphics_Driver::size() {
   if (!font_descriptor() ) return -1;
-  return size_unscaled()/scale();
+  return Fl_Fontsize(size_unscaled()/scale());
 }
 
 void Fl_Scalable_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h) {
   text_extents_unscaled(str, n, dx, dy, w, h);
-  dx /= scale();
-  dy /= scale();
-  w /= scale();
-  h /= scale();
+  dx = int(dx / scale());
+  dy = int(dy / scale());
+  w = int(w / scale());
+  h = int(h / scale());
 }
 
 int Fl_Scalable_Graphics_Driver::height() {
@@ -780,25 +780,25 @@ int Fl_Scalable_Graphics_Driver::height() {
 }
 
 int Fl_Scalable_Graphics_Driver::descent() {
-  return descent_unscaled()/scale();
+  return int(descent_unscaled()/scale());
 }
 
 void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
-  draw_unscaled(str, n, x*scale(), y*scale());
+  draw_unscaled(str, n, int(x*scale()), int(y*scale()));
   unscale_clip(r2);
 }
 
 void Fl_Scalable_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
-  draw_unscaled(angle, str, n, x*scale(), y*scale());
+  draw_unscaled(angle, str, n, int(x*scale()), int(y*scale()));
   unscale_clip(r2);
 }
 
 void Fl_Scalable_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
-  rtl_draw_unscaled(str, n, x * scale(), y * scale());
+  rtl_draw_unscaled(str, n, int(x * scale()), int(y * scale()));
 }
 
 void Fl_Scalable_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
@@ -810,9 +810,9 @@ void Fl_Scalable_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a
 }
 
 void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes) {
-  if (width == 0) line_width_ = scale() < 2 ? 0 : scale();
-  else line_width_ = width>0 ? width*scale() : -width*scale();
-  line_style_unscaled(style, line_width_, dashes);
+  if (width == 0) line_width_ = int(scale() < 2 ? 0 : scale());
+  else line_width_ = int(width>0 ? width*scale() : -width*scale());
+  line_style_unscaled(style, float(line_width_), dashes);
 }
 
 /* read the image data from a pointer or with a callback, scale it, and draw it */
@@ -840,12 +840,12 @@ void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb
   rgb->alloc_array = 1;
   Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
   Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
-  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(ceil(W * s), ceil(H * s));
+  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(int(ceil(W * s)), int(ceil(H * s)));
   Fl_Image::RGB_scaling(keep);
   delete rgb;
   if (scaled_rgb) {
     Fl_Region r2 = scale_clip(s);
-    draw_image_unscaled(scaled_rgb->array, X * s, Y * s, scaled_rgb->w(), scaled_rgb->h(), depth);
+    draw_image_unscaled(scaled_rgb->array, int(X * s), int(Y * s), scaled_rgb->w(), scaled_rgb->h(), depth);
     unscale_clip(r2);
     delete scaled_rgb;
   }
@@ -884,11 +884,11 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* dat
 }
 
 void Fl_Scalable_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(xf * scale(), yf * scale());
+  transformed_vertex0(float(xf * scale()), float(yf * scale()));
 }
 
 void Fl_Scalable_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0((x*m.a + y*m.c + m.x) * scale(), (x*m.b + y*m.d + m.y) * scale());
+  transformed_vertex0(float((x*m.a + y*m.c + m.x) * scale()), float((x*m.b + y*m.d + m.y) * scale()));
 }
 
 void Fl_Scalable_Graphics_Driver::unscale_clip(Fl_Region r) {

@@ -78,7 +78,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
 
     if (o > e) {
       if (maxbuf) break; // don't overflow buffer
-      l_local_buff += (o - e) + 200; // enlarge buffer
+      l_local_buff += int(o - e) + 200; // enlarge buffer
       buf = (char*)realloc(local_buf, l_local_buff);
       e = buf + l_local_buff - 4; // update pointers to buffer content
       o = buf + (o - local_buf);

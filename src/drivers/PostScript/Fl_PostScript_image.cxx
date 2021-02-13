@@ -116,7 +116,7 @@ void Fl_PostScript_Graphics_Driver::write85(void *data, const uchar *p, int len)
   const uchar *last = p + len;
   while (p < last) {
     int c = 4 - big->l4;
-    if (last-p < c) c = last-p;
+    if (last-p < c) c = int(last-p);
     memcpy(big->bytes4 + big->l4, p, c);
     p += c;
     big->l4 += c;
