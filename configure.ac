@@ -1253,7 +1253,7 @@ AC_SUBST([CAT3EXT])
 AC_SUBST([CAT6EXT])
 
 dnl Fix "mandir" variable...
-AS_IF([test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"]. [
+AS_IF([test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"], [
     AS_CASE(["$host_os"], [*bsd* | darwin* | linux*], [
 	# *BSD, Darwin, and Linux
 	mandir="\${prefix}/share/man"
@@ -1507,7 +1507,8 @@ AS_CASE([$host_os], [darwin*], [
 dnl Define the FLTK documentation directory...
 AS_CASE([$host_os], [mingw*], [
     # Determine the path where MSys has /usr installed
-    msyspath="$(mount | grep '\/usr ' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g')"
+    msyspath="$(mount | grep '/usr ' | cut -d ' ' -f -1 | sed -e's,\\,/, g')"
+
     # Then substitute that in the Windows path instead of /usr
     AC_DEFINE_UNQUOTED([FLTK_DOCDIR], "$msyspath/local/share/doc/fltk")
 ], [*], [
