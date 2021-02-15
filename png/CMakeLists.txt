@@ -1,7 +1,7 @@
 #
 # PNG library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,8 @@ set(PNG_SRCS
   pngwrite.c
   pngwtran.c
   pngwutil.c
+
+  # build on ARM (Apple M1 systems)
   arm/arm_init.c
   arm/filter_neon_intrinsics.c
   arm/palette_neon_intrinsics.c

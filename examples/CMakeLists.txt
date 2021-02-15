@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt used to build example apps by the CMake build system
 #
-# Copyright 2020 by Bill Spitzak and others.
+# Copyright 2020-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this

@@ -19,7 +19,7 @@
 # set CMake minimum version (must be before `project()`
 #######################################################################
 
-# Note: previous (1.3.x) minimum version
+# Note: previous (1.3.5) minimum version
 # cmake_minimum_required (VERSION 2.6.3)
 
 # Note: minimum CMake version required by GNUInstallDirs
@@ -54,7 +54,6 @@ if (false)
   fl_debug_var (FLTK_VERSION_MAJOR)
   fl_debug_var (FLTK_VERSION_MINOR)
   fl_debug_var (FLTK_VERSION_PATCH)
-  fl_debug_var (FLTK_VERSION)
   fl_debug_var (FLTK_VERSION)
 endif (false)
 
