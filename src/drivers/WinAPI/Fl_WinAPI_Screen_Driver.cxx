@@ -125,7 +125,7 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
-        goto way_out;
+        return;
       }
     }
   }
@@ -137,8 +137,6 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].right = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
-way_out:
-  desktop_scale_factor();
 }
 
 
