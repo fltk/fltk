@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 // The fltk "colormap".  This allows ui colors to be stored in 8-bit
 // locations, and provides a level of indirection so that global color
 // changes can be made.  Not to be confused with the X colormap, which
@@ -75,5 +72,3 @@ void Fl_Quartz_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
     fl_cmap[i] = c;
   }
 }
-
-#endif // FL_CFG_GFX_QUARTZ

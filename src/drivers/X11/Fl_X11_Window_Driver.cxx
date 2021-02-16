@@ -40,7 +40,6 @@ extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;
 extern Colormap fl_overlay_colormap;
 extern unsigned long fl_transparent_pixel;
-extern uchar fl_overlay; // changes how fl_color(x) works
 #endif
 
 Window fl_window;
@@ -595,13 +594,13 @@ void _Fl_Overlay::flush() {
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
 #endif
-  fl_overlay = 1;
+  Fl_Xlib_Graphics_Driver::fl_overlay = 1;
   Fl_Overlay_Window *w = (Fl_Overlay_Window *)parent();
   Fl_X *myi = Fl_X::i(this);
   if (damage() != FL_DAMAGE_EXPOSE) XClearWindow(fl_display, fl_xid(this));
   fl_clip_region(myi->region); myi->region = 0;
   w->draw_overlay();
-  fl_overlay = 0;
+  Fl_Xlib_Graphics_Driver::fl_overlay = 0;
 }
 #endif // HAVE_OVERLAY
 
@@ -648,10 +647,10 @@ void Fl_X11_Window_Driver::flush_menu() {
    // capture gc changes automatically to update the cairo context adequately
    if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
 # endif
-   fl_overlay = 1;
+  Fl_Xlib_Graphics_Driver::fl_overlay = 1;
    fl_clip_region(myi->region); myi->region = 0; current(pWindow);
    draw();
-   fl_overlay = 0;
+  Fl_Xlib_Graphics_Driver::fl_overlay = 0;
 #else
    flush_Fl_Window();
 #endif

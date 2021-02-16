@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_QUARTZ
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/platform.H>
 #include "Fl_Quartz_Graphics_Driver.H"
@@ -86,5 +83,3 @@ void Fl_Quartz_Copy_Surface_Driver::translate(int x, int y) {
 void Fl_Quartz_Copy_Surface_Driver::untranslate() {
   CGContextRestoreGState(gc);
 }
-
-#endif // FL_CFG_GFX_QUARTZ

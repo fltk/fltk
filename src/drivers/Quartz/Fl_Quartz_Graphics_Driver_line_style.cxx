@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 
@@ -84,5 +81,3 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
   }
   quartz_restore_line_style();
 }
-
-#endif // FL_CFG_GFX_QUARTZ

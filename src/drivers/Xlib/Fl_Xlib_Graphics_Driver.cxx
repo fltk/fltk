@@ -39,6 +39,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 }
 
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
+int Fl_Xlib_Graphics_Driver::fl_overlay = 0;
 
 /* Reference to the current graphics context
  For back-compatibility only. The preferred procedure to get this pointer is

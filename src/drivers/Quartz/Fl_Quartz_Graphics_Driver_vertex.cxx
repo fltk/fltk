@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 /**
   \file quartz_vertex.cxx
   \brief  Portable drawing code for drawing arbitrary shapes with
@@ -148,6 +145,3 @@ void Fl_Quartz_Graphics_Driver::transformed_vertex0(float x, float y) {
 void Fl_Quartz_Graphics_Driver::fixloop() {  // remove equal points from closed path
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
-
-
-#endif // FL_CFG_GFX_QUARTZ

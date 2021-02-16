@@ -250,8 +250,6 @@ void gl_color(Fl_Color i) {
     2) draw the texture using the current GL color.
 */
 
-static float gl_scale = 1; // scaling factor between FLTK and GL drawing units: GL = FLTK * gl_scale
-
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
   friend class Fl_Gl_Window_Driver;
@@ -301,7 +299,7 @@ int gl_texture_fifo::already_known(const char *str, int n)
   for ( rank = 0; rank <= last; rank++) {
     if ((fifo[rank].str_len == n) &&
         (fifo[rank].fdesc == gl_fontsize) &&
-        (fifo[rank].scale == gl_scale) &&
+        (fifo[rank].scale == Fl_Gl_Window_Driver::gl_scale) &&
         (memcmp(str, fifo[rank].utf8, n) == 0)) {
       return rank;
     }
@@ -332,8 +330,8 @@ void gl_texture_fifo::display_texture(int rank)
   glMatrixMode (GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity ();
-  float winw = gl_scale * Fl_Window::current()->w();
-  float winh = gl_scale * Fl_Window::current()->h();
+  float winw = Fl_Gl_Window_Driver::gl_scale * Fl_Window::current()->w();
+  float winh = Fl_Gl_Window_Driver::gl_scale * Fl_Window::current()->h();
   // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
   glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
@@ -358,7 +356,7 @@ void gl_texture_fifo::display_texture(int rank)
   //write the texture on screen
   glBegin (GL_QUADS);
   float ox = pos[0];
-  float oy = pos[1] + height - gl_scale * fl_descent();
+  float oy = pos[1] + height - Fl_Gl_Window_Driver::gl_scale * fl_descent();
   glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
   glVertex2f (ox, oy);
   glTexCoord2f (0.0f, height); // draw upper left in world coordinates
@@ -407,12 +405,12 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].str_len = n; // record length of text in utf8
   fl_graphics_driver->font_descriptor(gl_fontsize);
   int w, h;
-  w = fl_width(fifo[current].utf8, n) * gl_scale;
+  w = fl_width(fifo[current].utf8, n) * Fl_Gl_Window_Driver::gl_scale;
   // Hack - make w be aligned
   w = (w + 3) & (~3);
-  h = fl_height() * gl_scale;
+  h = fl_height() * Fl_Gl_Window_Driver::gl_scale;
 
-  fifo[current].scale = gl_scale;
+  fifo[current].scale = Fl_Gl_Window_Driver::gl_scale;
   fifo[current].fdesc = gl_fontsize;
   char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h);
 
@@ -627,173 +625,6 @@ void Fl_Gl_Window_Driver::draw_string_legacy_glut(const char* str, int n)
   }
   glRasterPos2d(objX, objY);
 }
-
-
-#if  defined(FL_CFG_GFX_XLIB)
-#  include "drivers/Xlib/Fl_Font.H"
-#  include <FL/platform.H>
-#  include <GL/glx.h>
-
-void Fl_X11_Gl_Window_Driver::draw_string_legacy(const char* str, int n) {
-  draw_string_legacy_get_list(str, n);
-}
-
-int Fl_X11_Gl_Window_Driver::genlistsize() {
-#if USE_XFT
-  return 256;
-#else
-  return 0x10000;
-#endif
-}
-
-void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
-  /* This method should ONLY be triggered if our GL font texture pile mechanism
-   * is not working on this platform. This code might not reliably render glyphs
-   * from higher codepoints. */
-  if (!fl_fontsize->listbase) {
-#if USE_XFT
-    /* Ideally, for XFT, we need a glXUseXftFont implementation here... But we
-     * do not have such a thing. Instead, we try to find a legacy Xlib font that
-     * matches the current XFT font and use that.
-     * Ideally, we never come here - we hope the texture pile implementation
-     * will work correctly so that XFT can render the face directly without the
-     * need for this workaround. */
-    XFontStruct *font = fl_xfont.value();
-    int base = font->min_char_or_byte2;
-    int count = font->max_char_or_byte2 - base + 1;
-    fl_fontsize->listbase = glGenLists(genlistsize());
-    glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
-#else
-    /* Not using XFT to render text - the legacy Xlib fonts can usually be rendered
-     * directly by using glXUseXFont mechanisms. */
-    fl_fontsize->listbase = glGenLists(genlistsize());
-#endif // !USE_XFT
-  }
-  glListBase(fl_fontsize->listbase);
-}
-
-
-void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
-# if USE_XFT
-  /* We hope not to come here: We hope that any system using XFT will also
-   * have sufficient GL capability to support our font texture pile mechansim,
-   * allowing XFT to render the face directly. */
-  // Face already set by gl_bitmap_font in this case.
-# else
-  Fl_Xlib_Font_Descriptor *gl_fd = (Fl_Xlib_Font_Descriptor*)fd;
-  if (gl_fd->glok[r]) return;
-  gl_fd->glok[r] = 1;
-  unsigned int ii = r * 0x400;
-  for (int i = 0; i < 0x400; i++) {
-    XFontStruct *font = NULL;
-    unsigned short id;
-    fl_XGetUtf8FontAndGlyph(gl_fd->font, ii, &font, &id);
-    if (font) glXUseXFont(font->fid, id, 1, gl_fd->listbase+ii);
-    ii++;
-  }
-# endif
-}
-
-#if !USE_XFT
-Fl_Font_Descriptor** Fl_X11_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
-  Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts) + fnum;
-  return &(s->first);
-}
-#endif
-
-#if HAVE_GL_OVERLAY
-extern uchar fl_overlay;
-int Fl_X11_Gl_Window_Driver::overlay_color(Fl_Color i) {
-  if (fl_overlay) {glIndexi(int(fl_xpixel(i))); return 1;}
-  return 0;
-}
-#endif // HAVE_GL_OVERLAY
-
-#endif // FL_CFG_GFX_XLIB
-
-
-#if defined(FL_CFG_GFX_GDI)
-#  include "drivers/GDI/Fl_Font.H"
-
-void Fl_WinAPI_Gl_Window_Driver::draw_string_legacy(const char* str, int n) {
-  draw_string_legacy_get_list(str, n);
-}
-
-int Fl_WinAPI_Gl_Window_Driver::genlistsize() {
-  return 0x10000;
-}
-
-void Fl_WinAPI_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
-  if (!fl_fontsize->listbase) {
-    fl_fontsize->listbase = glGenLists(genlistsize());
-  }
-  glListBase(fl_fontsize->listbase);
-}
-
-void Fl_WinAPI_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
-  Fl_GDI_Font_Descriptor* gl_fd = (Fl_GDI_Font_Descriptor*)fd;
-  if (gl_fd->glok[r]) return;
-  gl_fd->glok[r] = 1;
-  unsigned int ii = r * 0x400;
-  HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), gl_fd->fid);
-  wglUseFontBitmapsW((HDC)fl_graphics_driver->gc(), ii, 0x400, gl_fd->listbase+ii);
-  SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
-}
-
-#if HAVE_GL_OVERLAY
-extern uchar fl_overlay;
-extern int fl_overlay_depth;
-int Fl_WinAPI_Gl_Window_Driver::overlay_color(Fl_Color i) {
-  if (fl_overlay && fl_overlay_depth) {
-    if (fl_overlay_depth < 8) {
-      // only black & white produce the expected colors.  This could
-      // be improved by fixing the colormap set in Fl_Gl_Overlay.cxx
-      int size = 1<<fl_overlay_depth;
-      if (!i) glIndexi(size-2);
-      else if (i >= size-2) glIndexi(size-1);
-      else glIndexi(i);
-    } else {
-      glIndexi(i ? i : FL_GRAY_RAMP);
-    }
-    return 1;
-  }
-  return 0;
-}
-#endif // HAVE_GL_OVERLAY
-#endif // FL_CFG_GFX_GDI
-
-
-#if defined(FL_CFG_GFX_QUARTZ)
-#include <FL/platform.H>
-#include <FL/Fl_Image_Surface.H>
-
-/* Some old Apple hardware doesn't implement the GL_EXT_texture_rectangle extension.
- For it, draw_string_legacy_glut() is used to draw text. */
-
-char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h)
-{
-  // write str to a bitmap just big enough
-  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
-  Fl_Font f=fl_font(); Fl_Fontsize s=fl_size();
-  Fl_Surface_Device::push_current(surf);
-  fl_color(FL_WHITE);
-  fl_font(f, s * gl_scale);
-  fl_draw(str, n, 0, fl_height() - fl_descent());
-  // get the alpha channel only of the bitmap
-  char *alpha_buf = new char[w*h], *r = alpha_buf, *q;
-  q = (char*)CGBitmapContextGetData(surf->offscreen());
-  for (int i = 0; i < h; i++) {
-    for (int j = 0; j < w; j++) {
-      *r++ = *(q+3);
-      q += 4;
-    }
-  }
-  Fl_Surface_Device::pop_current();
-  delete surf;
-  return alpha_buf;
-}
-
-#endif // FL_CFG_GFX_QUARTZ
 
 /**
  \}

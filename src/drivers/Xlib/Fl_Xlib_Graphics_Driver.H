@@ -116,6 +116,7 @@ public:
 #if USE_XFT
   static void destroy_xft_draw(Window id);
 #endif
+  static int fl_overlay;
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);

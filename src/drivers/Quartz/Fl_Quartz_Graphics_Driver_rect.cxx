@@ -15,9 +15,6 @@
 //
 
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #include <FL/Fl.H>
 #include <FL/platform.H>
 
@@ -297,6 +294,3 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
     }
   }
 }
-
-
-#endif // FL_CFG_GFX_QUARTZ

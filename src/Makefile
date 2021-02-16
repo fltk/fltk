@@ -198,6 +198,13 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
+GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx
+GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
+GLCPPFILES_XFT = $(GLCPPFILES_X11)
+GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
+
+GLCPPFILES += $(GLCPPFILES_$(BUILD))
+
 #	the following file currently doesn't contribute code to GLCPPFILES
 #	drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
 

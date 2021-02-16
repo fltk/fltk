@@ -16,7 +16,6 @@
 
 #include "../../config_lib.h"
 
-#ifdef FL_CFG_GFX_GDI
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/platform.H>
 #include "Fl_GDI_Graphics_Driver.H"
@@ -113,4 +112,3 @@ void Fl_GDI_Copy_Surface_Driver::translate(int x, int y) {
 void Fl_GDI_Copy_Surface_Driver::untranslate() {
   ((Fl_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
-#endif // FL_CFG_GFX_GDI

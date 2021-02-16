@@ -37,21 +37,21 @@ class Fl_Gl_Choice;
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Window_Driver.H"
 
-static GLContext context;
+GLContext Fl_Gl_Window_Driver::gl_start_context;
 static int clip_state_number=-1;
 static int pw, ph;
 float gl_start_scale = 1;
 
-static Fl_Gl_Choice* gl_choice;
+static Fl_Gl_Choice* gl_choice = NULL;
 
 /** Creates an OpenGL context */
 void gl_start() {
   gl_start_scale = Fl_Display_Device::display_device()->driver()->scale();
-  if (!context) {
+  if (!Fl_Gl_Window_Driver::gl_start_context) {
     if (!gl_choice) Fl::gl_visual(0);
-    context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
+    Fl_Gl_Window_Driver::gl_start_context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
   }
-  Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), context);
+  Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), Fl_Gl_Window_Driver::gl_start_context);
   Fl_Gl_Window_Driver::global()->gl_start();
   if (pw != int(Fl_Window::current()->w() * gl_start_scale) || ph != int(Fl_Window::current()->h() * gl_start_scale)) {
     pw = int(Fl_Window::current()->w() * gl_start_scale);
@@ -93,32 +93,6 @@ void gl_finish() {
 void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   gl_choice = c;
 }
-
-#ifdef FL_CFG_GFX_QUARTZ
-#include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
-
-void Fl_Cocoa_Gl_Window_Driver::gl_start() {
-  Fl_Cocoa_Window_Driver::gl_start(context);
-}
-
-#endif
-
-
-#ifdef FL_CFG_GFX_XLIB
-#include <FL/platform.H>
-#include "Fl_Gl_Choice.H"
-
-void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
-  Fl_Gl_Window_Driver::gl_visual(c);
-  fl_visual = c->vis;
-  fl_colormap = c->colormap;
-}
-
-void Fl_X11_Gl_Window_Driver::gl_start() {
-  glXWaitX();
-}
-
-#endif // FL_CFG_GFX_XLIB
 
 int Fl::gl_visual(int mode, int *alist) {
   Fl_Gl_Choice *c = Fl_Gl_Window_Driver::global()->find(mode,alist);
