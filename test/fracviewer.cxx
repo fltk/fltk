@@ -247,7 +247,7 @@ void agvMove(void)
         ElSpin = -ElSpin;      /* look better when you are kept from going */
                                /* upside down while spinning - Isn't great */
         if (fabs(ElSpin) > fabs(AzSpin))
-          AzSpin = fabs(ElSpin) * (AzSpin > 0.0f) ? 1.0f : -1.0f;
+          AzSpin = GLfloat(fabs(ElSpin) * ((AzSpin > 0.0f) ? 1.0f : -1.0f));
       }
       break;
     }
