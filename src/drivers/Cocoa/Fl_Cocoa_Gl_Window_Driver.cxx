@@ -54,6 +54,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void redraw_overlay();
   virtual void gl_start();
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h);
+  virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
 };
 
 // Describes crap needed to create a GLContext.
@@ -243,6 +244,58 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
 
 void Fl_Cocoa_Gl_Window_Driver::gl_start() {
   Fl_Cocoa_Window_Driver::gl_start(gl_start_context);
+}
+
+// convert BGRA to RGB and also exchange top and bottom
+static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
+{
+  uchar *newimg = new uchar[3*w*h];
+  uchar *to = newimg;
+  for (int i = h-1; i >= 0; i--) {
+    uchar *from = baseAddress + i * mByteWidth;
+    for (int j = 0; j < w; j++, from += 4) {
+#if defined(__ppc__) && __ppc__
+      memcpy(to, from + 1, 3);
+      to += 3;
+#else
+      *(to++) = *(from+2);
+      *(to++) = *(from+1);
+      *(to++) = *from;
+#endif
+    }
+  }
+  delete[] baseAddress;
+  return newimg;
+}
+
+Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
+{
+  Fl_Gl_Window* glw = pWindow;
+  float factor = glw->pixels_per_unit();
+  if (factor != 1) {
+    w *= factor; h *= factor; x *= factor; y *= factor;
+  }
+  Fl_Cocoa_Window_Driver::GLcontext_makecurrent(glw->context());
+  Fl_Cocoa_Window_Driver::flush_context(glw->context()); // to capture also the overlay and for directGL demo
+  // Read OpenGL context pixels directly.
+  // For extra safety, save & restore OpenGL states that are changed
+  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+  // Read a block of pixels from the frame buffer
+  int mByteWidth = w * 4;
+  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
+  uchar *baseAddress = new uchar[mByteWidth * h];
+  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
+               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, baseAddress);
+  glPopClientAttrib();
+  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
+  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
+  img->alloc_array = 1;
+  Fl_Cocoa_Window_Driver::flush_context(glw->context());
+  return img;
 }
 
 #endif // HAVE_GL

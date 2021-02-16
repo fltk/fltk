@@ -51,6 +51,7 @@ class Fl_Gl_Window_Driver;
 class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   friend class Fl_Gl_Window_Driver;
   friend class _Fl_Gl_Overlay;
+  friend class Fl_OpenGL_Display_Device;
   Fl_Gl_Window_Driver *pGlWindowDriver;
 
   /** Returns a pointer to the window's Fl_Gl_Window_Driver object */
