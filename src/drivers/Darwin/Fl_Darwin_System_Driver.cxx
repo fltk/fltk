@@ -1,7 +1,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,7 @@
 #include <FL/filename.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Preferences.H>
+#include "../Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 #include <xlocale.h>
@@ -365,4 +366,9 @@ const char *Fl_Darwin_System_Driver::mac_roman_to_local(const char *t, int)
 const char *Fl_Darwin_System_Driver::local_to_mac_roman(const char *t, int)
 {
   return t;
+}
+
+Fl_Sys_Menu_Bar_Driver *Fl_Darwin_System_Driver::sys_menu_bar_driver()
+{
+  return Fl_MacOS_Sys_Menu_Bar_Driver::driver();
 }
