@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include <FL/platform.H>

@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>

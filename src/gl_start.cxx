@@ -26,7 +26,7 @@
 // be erased when the buffers are swapped (when double buffer hardware
 // is being used)
 
-#include "config_lib.h"
+#include <config.h>
 #if HAVE_GL
 
 #include <FL/Fl.H>

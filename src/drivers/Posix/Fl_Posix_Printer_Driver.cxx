@@ -14,9 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 
-#if defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
+#if !defined(FL_NO_PRINT_SUPPORT)
 
 #include <FL/Fl_PostScript.H>
 #include "../PostScript/Fl_PostScript_Graphics_Driver.H"
@@ -331,4 +331,4 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
   return ps->start_postscript(pages, format, layout); // start printing
 }
 
-#endif // defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
+#endif // !defined(FL_NO_PRINT_SUPPORT)

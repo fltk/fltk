@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 #if HAVE_GL
 
 #include <FL/Fl.H>

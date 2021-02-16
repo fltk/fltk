@@ -20,7 +20,7 @@ extern "C" {
 #include <pthread.h>
 }
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"

@@ -21,7 +21,6 @@
  */
 
 #include <config.h>
-#include "../../config_lib.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>

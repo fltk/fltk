@@ -19,8 +19,7 @@
   \brief Color handling
 */
 
-#include "../../config_lib.h"
-// #include <config.h>
+#include <config.h>
 #include "Fl_OpenGL_Graphics_Driver.H"
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>

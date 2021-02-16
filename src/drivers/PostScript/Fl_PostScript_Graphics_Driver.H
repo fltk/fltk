@@ -21,7 +21,7 @@
 #ifndef FL_POSTSCRIPT_GRAPHICS_DRIVER_H
 #define FL_POSTSCRIPT_GRAPHICS_DRIVER_H
 
-#include "../../config_lib.h"
+#include <config.h>
 #include <FL/Fl_PostScript.H>
 
 #ifndef USE_PANGO

@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 #include <FL/Fl_Gl_Window.H>
 #include "../../Fl_Gl_Window_Driver.H"
 #include <FL/Fl_Image.H>

@@ -14,11 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#include "Fl_Quartz_Graphics_Driver.H"
-
 #include <config.h>
+#include "Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>

@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Cocoa_Screen_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"
 #include "../Quartz/Fl_Font.H"

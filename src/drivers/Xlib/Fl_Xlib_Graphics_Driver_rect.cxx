@@ -19,7 +19,7 @@
  \brief X11 Xlib specific line and polygon drawing with integer coordinates.
  */
 
-#include "../../config_lib.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>

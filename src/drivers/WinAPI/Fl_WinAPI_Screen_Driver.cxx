@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>

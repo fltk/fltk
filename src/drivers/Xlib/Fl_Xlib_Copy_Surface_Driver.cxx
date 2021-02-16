@@ -14,8 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
+#include <config.h>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
 #include <FL/platform.H>

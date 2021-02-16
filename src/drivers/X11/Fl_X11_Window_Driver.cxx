@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_X11_Window_Driver.H"
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"

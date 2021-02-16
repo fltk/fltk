@@ -20,8 +20,8 @@
  \{
  */
 
+#include <config.h>
 #include <FL/Fl.H>
-#include "config_lib.h"
 #include <FL/Fl_Graphics_Driver.H>
 #include "Fl_Screen_Driver.H"
 #include <FL/Fl_Image.H>

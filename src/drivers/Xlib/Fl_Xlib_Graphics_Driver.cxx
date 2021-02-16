@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Xlib_Graphics_Driver.H"
 #include "Fl_Font.H"
 #include <FL/fl_draw.H>

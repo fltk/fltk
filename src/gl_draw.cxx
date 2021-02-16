@@ -29,7 +29,7 @@
  get_list(), gl_bitmap_font() and draw_string_legacy() for the platform's Fl_XXX_Gl_Window_Driver.
  */
 
-#include "config_lib.h"
+#include <config.h>
 
 #if HAVE_GL || defined(FL_DOXYGEN)
 
