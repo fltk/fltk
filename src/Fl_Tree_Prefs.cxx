@@ -18,73 +18,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>
 
-#ifdef FL_CFG_WIN_COCOA
-#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
-#endif
-
 // INTERNAL: BUILT IN OPEN/STOW XPMS
 //    These can be replaced via prefs.openicon()/closeicon()
 //
-
-#ifdef FL_CFG_WIN_COCOA
-
-const char * const Fl_Darwin_System_Driver::tree_open_xpm_darwin[] = {
-  "11 11 2 1",
-  ".  c None",
-  "@  c #000000",
-  "...@.......",
-  "...@@......",
-  "...@@@.....",
-  "...@@@@....",
-  "...@@@@@...",
-  "...@@@@@@..",
-  "...@@@@@...",
-  "...@@@@....",
-  "...@@@.....",
-  "...@@......",
-  "...@......."
-};
-
-const char * const Fl_Darwin_System_Driver::tree_close_xpm_darwin[] = {
-  "11 11 2 1",
-  ".  c None",
-  "@  c #000000",
-  "...........",
-  "...........",
-  "...........",
-  "@@@@@@@@@@@",
-  ".@@@@@@@@@.",
-  "..@@@@@@@..",
-  "...@@@@@...",
-  "....@@@....",
-  ".....@.....",
-  "...........",
-  "..........."
-};
-
-Fl_Pixmap *Fl_Darwin_System_Driver::tree_openpixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_open_xpm_darwin);
-  return pixmap;
-}
-
-Fl_Pixmap *Fl_Darwin_System_Driver::tree_closepixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_close_xpm_darwin);
-  return pixmap;
-}
-
-int Fl_Darwin_System_Driver::tree_connector_style() {
-  return FL_TREE_CONNECTOR_NONE;
-}
-
-#endif // FL_CFG_WIN_COCOA
-
 
 /**
  \cond DriverDev

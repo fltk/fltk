@@ -22,6 +22,8 @@
 #include <FL/filename.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/Fl_Tree_Prefs.H>
+#include <FL/Fl_Pixmap.H>
 #include "../Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -371,4 +373,52 @@ const char *Fl_Darwin_System_Driver::local_to_mac_roman(const char *t, int)
 Fl_Sys_Menu_Bar_Driver *Fl_Darwin_System_Driver::sys_menu_bar_driver()
 {
   return Fl_MacOS_Sys_Menu_Bar_Driver::driver();
+}
+
+const char * const Fl_Darwin_System_Driver::tree_open_xpm_darwin[] = {
+  "11 11 2 1",
+  ".  c None",
+  "@  c #000000",
+  "...@.......",
+  "...@@......",
+  "...@@@.....",
+  "...@@@@....",
+  "...@@@@@...",
+  "...@@@@@@..",
+  "...@@@@@...",
+  "...@@@@....",
+  "...@@@.....",
+  "...@@......",
+  "...@......."
+};
+
+const char * const Fl_Darwin_System_Driver::tree_close_xpm_darwin[] = {
+  "11 11 2 1",
+  ".  c None",
+  "@  c #000000",
+  "...........",
+  "...........",
+  "...........",
+  "@@@@@@@@@@@",
+  ".@@@@@@@@@.",
+  "..@@@@@@@..",
+  "...@@@@@...",
+  "....@@@....",
+  ".....@.....",
+  "...........",
+  "..........."
+};
+
+Fl_Pixmap *Fl_Darwin_System_Driver::tree_openpixmap() {
+  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_open_xpm_darwin);
+  return pixmap;
+}
+
+Fl_Pixmap *Fl_Darwin_System_Driver::tree_closepixmap() {
+  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_close_xpm_darwin);
+  return pixmap;
+}
+
+int Fl_Darwin_System_Driver::tree_connector_style() {
+  return FL_TREE_CONNECTOR_NONE;
 }
