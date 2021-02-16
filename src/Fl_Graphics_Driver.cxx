@@ -413,7 +413,7 @@ void Fl_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP
 
 void Fl_Graphics_Driver::draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
 
-void Fl_Graphics_Driver::make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b) {}
+void Fl_Graphics_Driver::make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data) {}
 
 /** Support function for Fl_Pixmap drawing */
 void Fl_Graphics_Driver::cache(Fl_Pixmap *img) { }

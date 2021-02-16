@@ -700,6 +700,38 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
   }
 }
 
+// Makes an RGB triplet different from all the colors used in the pixmap
+// and computes Fl_Graphics_Driver::need_pixmap_bg_color from this triplet
+void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b, int color_count, void **data) {
+  typedef struct { uchar r; uchar g; uchar b; } UsedColor;
+  UsedColor *used_colors = *(UsedColor**)data;
+  int i;
+  r = 2; g = 3; b = 4;
+  while (1) {
+    for ( i=0; i<color_count; i++ )
+      if ( used_colors[i].r == r &&
+           used_colors[i].g == g &&
+           used_colors[i].b == b )
+        break;
+    if (i >= color_count) {
+      free((void*)used_colors);
+      *(UsedColor**)data = NULL;
+      need_pixmap_bg_color = RGB(r, g, b);
+      return;
+    }
+    if (r < 255) {
+      r++;
+    } else {
+      r = 0;
+      if (g < 255) {
+        g++;
+      } else {
+        g = 0;
+        b++;
+      }
+    }
+  }
+}
 
 void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());

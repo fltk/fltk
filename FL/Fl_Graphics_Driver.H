@@ -141,7 +141,7 @@ private:
   virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   // the default implementation of make_unused_color_() is most probably enough
-  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b);
+  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
