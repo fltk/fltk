@@ -241,6 +241,8 @@ public:
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
+  virtual void lock_ring() {}
+  virtual void unlock_ring() {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

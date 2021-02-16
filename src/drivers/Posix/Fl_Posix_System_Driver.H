@@ -2,7 +2,7 @@
 // Definition of POSIX system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -79,6 +79,10 @@ public:
   virtual int dot_file_hidden() {return 1;}
   virtual void gettime(time_t *sec, int *usec);
   virtual char* strdup(const char *s) {return ::strdup(s);}
+#if defined(HAVE_PTHREAD)
+  virtual void lock_ring();
+  virtual void unlock_ring();
+#endif
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H
