@@ -495,9 +495,9 @@ present with FLTK GUI programs for better portability.
 
 Once the package is found the CMake variable FLTK_INCLUDE_DIRS is defined
 which can be used to add the FLTK include directories to the definitions
-used to compile your program using the `target_include_directories()` command. 
+used to compile your program using the `target_include_directories()` command.
 
-The target_link_libraries() command is used to specify all necessary FLTK 
+The target_link_libraries() command is used to specify all necessary FLTK
 libraries. Thus, you may have to add fltk_images, fltk_gl, etc…
 
 Note: the variable FLTK_USE_FILE used to include another file in
