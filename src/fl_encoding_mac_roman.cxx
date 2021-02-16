@@ -1,7 +1,7 @@
 //
 // Convert Mac Roman encoded text to the local encoding.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/fl_draw.H>
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
@@ -22,30 +22,17 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 // These function assume a western code page.
-//
-// On Mac OS X, nothing need to be converted. We simply return the
-// original pointer.
 //
 // Windows and X11 render text in ISO or Latin-1 for western settings. The
 // lookup tables below will convert all common character codes and replace
 // unknown characters with an upsidedown question mark.
-
-#ifdef FL_CFG_WIN_COCOA
-
-#  include "drivers/Darwin/Fl_Darwin_System_Driver.H"
-
-const char *Fl_Darwin_System_Driver::mac_roman_to_local(const char *t, int)
-{
-  return t;
-}
-
-const char *Fl_Darwin_System_Driver::local_to_mac_roman(const char *t, int)
-{
-  return t;
-}
-
-#endif
 
 // This table converts Windows-1252/Latin 1 into MacRoman encoding
 static uchar latin2roman[128] = {
@@ -73,12 +60,6 @@ static uchar roman2latin[128] = {
 
 static char *buf = 0;
 static int n_buf = 0;
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
 
 const char *Fl_System_Driver::local_to_mac_roman(const char *t, int n)
 {
