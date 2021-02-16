@@ -1082,14 +1082,14 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 	])
     ])
 
-    dnl test if pango is asked but xft was not found
+    dnl test if Pango is asked but xft was not found
     AS_IF([test x$enable_pango = xyes -a x$xft_found = xno], [
-        AC_MSG_WARN([could not find the Xft headers and/or libraries required for pango.])
+        AC_MSG_WARN([could not find the Xft headers and/or libraries required for Pango.])
         AC_MSG_NOTICE([please install Xft headers and libraries or don't use configure with '--enable-pango'.])
         AC_MSG_ERROR([Aborting.])
     ])
 
-    dnl Check for the pango library unless disabled...
+    dnl Check for the Pango library unless disabled...
     pango_found=no
     AS_IF([test x$enable_pango = xyes], [
 	AS_IF([test x$PKGCONFIG != x], [
@@ -1099,10 +1099,10 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 	    LIBS="$($PKGCONFIG --libs pangocairo) $LIBS"
 
 	    AS_CASE([$host_os], [darwin*], [
-	        dnl make sure LDFLAGS is appropriate for cairo (and pango)
+	        dnl make sure LDFLAGS is appropriate for cairo (and Pango)
 	        LDFLAGS="$($PKGCONFIG --libs cairo) $LDFLAGS"
 	    ])
-        ], [
+
 	    AS_CASE([$host_os], [linux*], [
 	        CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
 	        CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
@@ -1557,7 +1557,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 	graphics="$graphics + Xrender"
     ])
     AS_IF([test x$pango_found = xyes], [
-	graphics="$graphics + pango"
+        graphics="$graphics + Pango"
     ])
 ])
 
