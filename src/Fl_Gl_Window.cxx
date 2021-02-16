@@ -14,8 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 #if HAVE_GL
+#define FL_CFG_GFX_OPENGL 1
 
 extern int fl_gl_load_plugin;
 
@@ -344,7 +345,6 @@ void Fl_Gl_Window::init() {
 */
 void Fl_Gl_Window::draw_overlay() {}
 
-#endif // HAVE_GL
 
 /** Draws the Fl_Gl_Window.
   You \e \b must subclass Fl_Gl_Window and provide an implementation for
@@ -510,3 +510,5 @@ Fl_Font_Descriptor** Fl_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
  \}
  \endcond
  */
+
+#endif // HAVE_GL
