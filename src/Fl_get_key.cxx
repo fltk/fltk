@@ -1,7 +1,7 @@
 //
 // Keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
-#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
+#include <config.h>
+#if !defined(FL_DOXYGEN)
 
 // Return the current state of a key.  This is the X version.  I identify
 // keys (mostly) by the X keysym.  So this turns the keysym into a keycode
@@ -49,4 +49,4 @@ int Fl_X11_System_Driver::get_key(int k) {
   return event_key(k);
 }
 
-#endif // FL_CFG_SYS_POSIX
+#endif // FL_DOXYGEN
