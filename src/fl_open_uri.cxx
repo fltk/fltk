@@ -22,7 +22,7 @@
 // Include necessary headers...
 //
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/filename.H>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
