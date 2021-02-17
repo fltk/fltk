@@ -61,6 +61,7 @@ CPPFLAGS="${CPPFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 DSOFLAGS="${DSOFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
+LIBS="${LDFLAGS:=}"
 
 
 dnl Find common commands...
@@ -1093,42 +1094,30 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     pango_found=no
     AS_IF([test x$enable_pango = xyes], [
         AS_IF([test x$PKGCONFIG != x], [
-            CXXFLAGS="$($PKGCONFIG --cflags pangoxft) $CXXFLAGS"
-            LIBS="$($PKGCONFIG --libs pangoxft) $LIBS"
-            CXXFLAGS="$($PKGCONFIG --cflags pangocairo) $CXXFLAGS"
-            LIBS="$($PKGCONFIG --libs pangocairo) $LIBS"
+            dnl pkg-config is available, use it...
+            dnl AC_MSG_NOTICE([--enable-pango: using pkg-config ...])
+            CXXFLAGS="$($PKGCONFIG --cflags pangoxft pangocairo) $CXXFLAGS"
+            LIBS="$($PKGCONFIG --libs pangoxft pangocairo) $LIBS"
+        ], [
+            dnl pkg-config is not available, issue warning and continue...
+            AC_MSG_WARN([--enable-pango: please install pkg-config. Continuing anyway.])
+        ])
 
-            AS_CASE([$host_os], [darwin*], [
-                dnl make sure LDFLAGS is appropriate for cairo (and Pango)
-                LDFLAGS="$($PKGCONFIG --libs cairo) $LDFLAGS"
-            ])
-
-            AS_CASE([$host_os], [linux*], [
-                CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
-                CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
-            ], [freebsd*], [
-                CXXFLAGS="-I/usr/local/include/pango-1.0 -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include $CXXFLAGS"
-            ], [netbsd*], [
-                CXXFLAGS="-I/usr/pkg/include/pango-1.0 -I/usr/pkg/include/glib-2.0 -I/usr/pkg/lib/glib-2.0/include $CXXFLAGS"
-                CXXFLAGS="-I/usr/pkg/include/glib/glib-2.0 $CXXFLAGS"
-                PANGOLIBDIR="-L/usr/pkg/lib"
-                LDFLAGS="-Wl,-rpath,/usr/pkg/lib $LDFLAGS"
-            ])
-
-            LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS"
-
-            CPPFLAGS="$CXXFLAGS"
-            AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h], [
-                AC_CHECK_LIB([pango-1.0], [pango_layout_new], [
-                    AC_CHECK_LIB([pangoxft-1.0], [pango_xft_render_layout], [
-                        AC_DEFINE([USE_PANGO])
-                        pango_found=yes
-                    ])
+        CPPFLAGS="$CXXFLAGS"
+        AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h], [
+            AC_CHECK_LIB([pango-1.0], [pango_layout_new], [
+                AC_CHECK_LIB([pangoxft-1.0], [pango_xft_render_layout], [
+                    AC_DEFINE([USE_PANGO])
+                    pango_found=yes
                 ])
             ])
         ])
 
-        CPPFLAGS="$CXXFLAGS"
+        dnl Early abort if --enable-pango was requested but Pango could not be found
+        AS_IF([test x$pango_found != xyes], [
+            AC_MSG_NOTICE([--enable-pango: Pango libs and/or headers could not be found.])
+            AC_MSG_ERROR([Aborting.])
+        ])
     ])
 
     dnl Check for the Xdbe extension unless disabled...
