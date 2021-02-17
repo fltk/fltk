@@ -63,12 +63,6 @@ extern int fl_gl_load_plugin;
 
 static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
 
-////////////////////////////////////////////////////////////////
-
-int Fl_Gl_Window_Driver::copy = COPY;
-GLContext Fl_Gl_Window_Driver::cached_context = NULL;
-Fl_Window* Fl_Gl_Window_Driver::cached_window = NULL;
-float Fl_Gl_Window_Driver::gl_scale = 1; // scaling factor between FLTK and GL drawing units: GL = FLTK * gl_scale
 
 /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
 int Fl_Gl_Window::can_do(int a, const int *b) {
@@ -457,6 +451,11 @@ float Fl_Gl_Window::pixels_per_unit() {
  \addtogroup DriverDeveloper
  \{
  */
+
+int Fl_Gl_Window_Driver::copy = COPY;
+GLContext Fl_Gl_Window_Driver::cached_context = NULL;
+Fl_Window* Fl_Gl_Window_Driver::cached_window = NULL;
+float Fl_Gl_Window_Driver::gl_scale = 1; // scaling factor between FLTK and GL drawing units: GL = FLTK * gl_scale
 
 // creates a unique, dummy Fl_Gl_Window_Driver object used when no Fl_Gl_Window is around
 // necessary to support gl_start()/gl_finish()

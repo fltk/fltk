@@ -17,6 +17,11 @@
 #include <config.h>
 #if HAVE_GL
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
 #  include <FL/Fl.H>
 #  include "Fl_Gl_Choice.H"
 #  include <FL/Fl_Gl_Window.H>
@@ -52,12 +57,6 @@ void Fl_Gl_Window_Driver::del_context(GLContext ctx) {
 }
 
 Fl_Gl_Choice *Fl_Gl_Window_Driver::first;
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
 
 // this assumes one of the two arguments is zero:
 // We keep the list system in Win32 to stay compatible and interpret

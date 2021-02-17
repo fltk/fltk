@@ -37,7 +37,17 @@ class Fl_Gl_Choice;
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Window_Driver.H"
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
 GLContext Fl_Gl_Window_Driver::gl_start_context;
+/**
+ \}
+ \endcond
+ */
+
 static int clip_state_number=-1;
 static int pw, ph;
 float gl_start_scale = 1;
