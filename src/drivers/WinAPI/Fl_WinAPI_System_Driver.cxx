@@ -217,7 +217,7 @@ int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {
 int Fl_WinAPI_System_Driver::open_ext(const char *fnam, int binary, int oflags, int pmode) {
   if (oflags == 0) oflags = _O_RDONLY;
   oflags |= (binary ? _O_BINARY : _O_TEXT);
-  return open(fnam, oflags, pmode);
+  return this->open(fnam, oflags, pmode);
 }
 
 FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
