@@ -53,6 +53,7 @@ fractals
 fullscreen
 gl_overlay
 glpuzzle
+handle_events
 hello
 help_dialog
 icon
