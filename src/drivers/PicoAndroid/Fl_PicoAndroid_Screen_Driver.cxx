@@ -17,7 +17,7 @@
 // http://developer.android.com/ndk/reference/group___native_activity.html
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_PicoAndroid_Screen_Driver.H"
 
 #include <android/window.h>

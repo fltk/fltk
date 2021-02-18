@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_PicoAndroid_Window_Driver.H"
 
 #include "Fl_PicoAndroid_Screen_Driver.H"
