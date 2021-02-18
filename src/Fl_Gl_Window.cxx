@@ -1,7 +1,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,6 @@
 
 #include <config.h>
 #if HAVE_GL
-#define FL_CFG_GFX_OPENGL 1
 
 extern int fl_gl_load_plugin;
 
@@ -25,8 +24,10 @@ extern int fl_gl_load_plugin;
 #include "Fl_Gl_Window_Driver.H"
 #include "Fl_Window_Driver.H"
 #include <FL/Fl_Graphics_Driver.H>
-#include <stdlib.h>
 #include <FL/fl_utf8.h>
+#include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
+
+#include <stdlib.h>
 #  if (HAVE_DLSYM && HAVE_DLFCN_H)
 #    include <dlfcn.h>
 #  endif // (HAVE_DLSYM && HAVE_DLFCN_H)
@@ -35,10 +36,6 @@ extern int fl_gl_load_plugin;
 #    include <GL/glx.h>
 #  endif // HAVE_GLXGETPROCADDRESSARB
 
-
-#ifdef FL_CFG_GFX_OPENGL
-#include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
-#endif
 
 ////////////////////////////////////////////////////////////////
 
@@ -394,7 +391,6 @@ void Fl_Gl_Window::draw_overlay() {}
 
 */
 void Fl_Gl_Window::draw() {
-#ifdef FL_CFG_GFX_OPENGL
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
@@ -416,9 +412,6 @@ void Fl_Gl_Window::draw() {
   glPopMatrix();
   glPopAttrib();
   Fl_Surface_Device::pop_current();
-#else
-  Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
-#endif
 }
 
 
