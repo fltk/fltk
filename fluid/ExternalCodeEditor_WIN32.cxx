@@ -242,17 +242,18 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   // Changes? Load file. Be sure to fallthru to CloseHandle()
   int ret = 0;
   if ( changed || force ) {
-    char *buf = (char*)malloc(fsize.QuadPart + 1);
+    size_t buflen = size_t(fsize.QuadPart);
+    char *buf = (char*)malloc(buflen + 1);
     DWORD count;
-    if ( ReadFile(fh, buf, fsize.QuadPart, &count, 0) == 0 ) {
+    if ( ReadFile(fh, buf, buflen, &count, 0) == 0 ) {
       fl_alert("ERROR: ReadFile() failed for %s: %s",
                filename(), get_ms_errmsg());
       free((void*)buf); buf = 0;
       ret = -1;      // fallthru to CloseHandle()
-    } else if ( count != fsize.QuadPart ) {
+    } else if ( count != buflen ) {
       fl_alert("ERROR: ReadFile() failed for %s:\n"
                "expected %ld bytes, got %ld",
-               filename(), long(fsize.QuadPart), long(count));
+               filename(), long(buflen), long(count));
       free((void*)buf); buf = 0;
       ret = -1;      // fallthru to CloseHandle()
     } else {
