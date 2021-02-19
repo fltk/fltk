@@ -412,7 +412,8 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
 
   fifo[current].scale = Fl_Gl_Window_Driver::gl_scale;
   fifo[current].fdesc = gl_fontsize;
-  char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h);
+  Fl_Fontsize fs = Fl_Gl_Window_Driver::global()->effective_size();
+  char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h, fs);
 
   // save GL parameters GL_UNPACK_ROW_LENGTH and GL_UNPACK_ALIGNMENT
   GLint row_length, alignment;
@@ -496,8 +497,11 @@ void Fl_Gl_Window_Driver::draw_string_with_texture(const char* str, int n)
   gl_fifo->display_texture(index);
 }
 
+Fl_Fontsize Fl_Gl_Window_Driver::effective_size() {
+  return fl_graphics_driver->font_descriptor()->size;
+}
 
-char *Fl_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h)
+char *Fl_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs)
 {
   // write str to a bitmap that is just big enough
   // create an Fl_Image_Surface object
@@ -511,7 +515,7 @@ char *Fl_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, 
   // set up the text colour as white, which we will interpret as opaque
   fl_color(255,255,255);
   // Fix the font scaling
-  fl_font (fnt, gl_fontsize->size); // resize "fltk" font to current GL view scaling
+  fl_font (fnt, fs); // resize "fltk" font to current GL view scaling
   int desc = fl_descent();
   // Render the text to the buffer
   fl_draw(str, n, 0, h - desc);
