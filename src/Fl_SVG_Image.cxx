@@ -162,8 +162,8 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_I
       d(-1);
       ld(ERR_FORMAT);
     } else {
-      w(counted_svg_image_->svg_image->width + 0.5);
-      h(counted_svg_image_->svg_image->height + 0.5);
+      w(int(counted_svg_image_->svg_image->width + 0.5));
+      h(int(counted_svg_image_->svg_image->height + 0.5));
     }
   } else if (copy_source) {
     w(copy_source->w());
@@ -184,7 +184,7 @@ void Fl_SVG_Image::rasterize_(int W, int H) {
     fy = (double)H / counted_svg_image_->svg_image->height;
   }
   array = new uchar[W*H*4];
-  nsvgRasterizeXY(rasterizer, counted_svg_image_->svg_image, 0, 0, fx, fy, (uchar* )array, W, H, W*4);
+  nsvgRasterizeXY(rasterizer, counted_svg_image_->svg_image, 0, 0, float(fx), float(fy), (uchar* )array, W, H, W*4);
   alloc_array = 1;
   data((const char * const *)&array, 1);
   d(4);
@@ -240,8 +240,8 @@ void Fl_SVG_Image::cache_size_(int &width, int &height) {
     // Keep the rasterized image proportional to its source-level width and height
     // while maintaining it large enough to allow image tiling.
     float f = counted_svg_image_->svg_image->width / counted_svg_image_->svg_image->height;
-    if (height * f >= width) width =  height * f + 0.5;
-    else height = width/f + 0.5;
+    if (height * f >= width) width =  int(height * f + 0.5);
+    else height = int(width/f + 0.5);
   }
 }
 
