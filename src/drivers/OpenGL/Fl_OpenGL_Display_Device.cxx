@@ -61,7 +61,7 @@ Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int
   int ns = Fl_Window_Driver::driver(glw)->screen_num();
   float s = Fl::screen_driver()->scale(ns);
   if (s != 1) {
-    x *= s; y *= s; w *= s; h *= s;
+    x = int(x * s); y = int(y * s); w = int(w * s); h = int(h * s);
   }
   // Read a block of pixels from the frame buffer
   int mByteWidth = w * 3;
