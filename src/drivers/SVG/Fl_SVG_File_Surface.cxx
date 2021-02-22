@@ -219,9 +219,9 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   } else {
     int cap_part = (line_style_ & 0xF00);
     bool is_flat = (cap_part == FL_CAP_FLAT || cap_part == 0);
-    float dot = (is_flat ? width_/s : width_*0.6/s);
-    float gap = (is_flat ? width_/s : width_*1.5/s);
-    float big = (is_flat ? 3*width_/s : width_*2.5/s);
+    float dot = (is_flat ? width_/s : width_*0.6f/s);
+    float gap = (is_flat ? width_/s : width_*1.5f/s);
+    float big = (is_flat ? 3*width_/s : width_*2.5f/s);
     if (dasharray_) free(dasharray_);
     dasharray_ = (char*)malloc(61);
     if (dash_part == FL_DOT) sprintf(dasharray_, "%.3f,%.3f", dot, gap);
@@ -309,7 +309,7 @@ Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FI
   closef_ = closef;
   Fl_Window *win = Fl::first_window();
   float s = (win ? Fl::screen_scale(win->screen_num()) : 1);
-  int sw = w * s, sh = h * s;
+  int sw = int(w * s), sh = int(h * s);
   fprintf(f,
           "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n"
           "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n"
@@ -418,7 +418,7 @@ static void user_write_data(png_structp png_ptr, png_bytep data, png_size_t leng
   if (length >= 3) {
     new_l = write_by_3(data, length, svg_base64_data);
   }
-  svg_base64_data->lbuf = new_l;
+  svg_base64_data->lbuf = (int)new_l;
   if (new_l) {
     memcpy(svg_base64_data->buff, data + length - new_l, new_l);
   }
@@ -540,7 +540,7 @@ static void term_destination(jpeg_compress_struct *cinfo) {
   jpeg_client_data_struct *client_data = (jpeg_client_data_struct*)(cinfo->client_data);
   size_t new_l = process_jpeg_chunk(cinfo, client_data->size - cinfo->dest->free_in_buffer);
   if (new_l) {
-    to_base64(client_data->JPEG_BUFFER, new_l, &client_data->base64_data);
+    to_base64(client_data->JPEG_BUFFER, (int)new_l, &client_data->base64_data);
   }
 }
 
@@ -972,13 +972,13 @@ void Fl_SVG_Graphics_Driver::arc_pie(char AorP, int x, int y, int w, int h, doub
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w /*- 0.5f*/, cy = y + 0.5f*h - 0.5f;
   double r = (w!=h ? 0.5 : (w+h)*0.25f-0.5f);
-  float stroke_width = width_;
+  float stroke_width = float(width_);
   float sx, sy;
   if (w != h) {
-    sx = w-1; sy = h-1;
+    sx = float(w-1); sy = float(h-1);
     stroke_width /= ((sx+sy)/2);
   } else {
-    sx = sy = 2*r;
+    sx = sy = float(2*r);
     stroke_width /= sx;
   }
   fprintf(out_, "<g transform=\"translate(%f,%f) scale(%f,%f)\">\n", cx, cy, sx, sy);

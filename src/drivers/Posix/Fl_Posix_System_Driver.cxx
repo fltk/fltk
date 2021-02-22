@@ -17,7 +17,6 @@
 #include <config.h>
 #include "Fl_Posix_System_Driver.H"
 #include "../../flstring.h"
-#include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/filename.H>
 #include <FL/fl_string.h>

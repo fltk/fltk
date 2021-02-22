@@ -17,7 +17,7 @@ Current versions of bundled libraries:
   Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9c            2018-01-14           1.4.0
-  nanosvg       f31098fa85 [1]     2019-05-23           1.4.0
+  nanosvg       a1eea27b3d [1]     2021-02-21           1.4.0
   png           libpng-1.6.37      2019-04-14           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
 
@@ -25,13 +25,14 @@ Previous versions of bundled libraries:
 
   Library       Version            Release date         FLTK Version
   ------------------------------------------------------------------
-  nanosvg       ce81a6577c [1]     2018-07-01           1.4.0
+  nanosvg       f31098fa85 [1]     2019-05-23           1.4.x
   jpeg          jpeg-9a            2014-01-19           1.3.5
   png           libpng-1.6.16      2014-12-22           1.3.5
   zlib          zlib-1.2.8         2013-04-28           1.3.5
 
 [1] Git commit in: https://github.com/fltk/nanosvg
-    See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date".
+    See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date"
+    and file nanosvg/README.txt.
 
 General information:
 
@@ -190,6 +191,9 @@ nanosvg:
   the FLTK patches will be accepted upstream at some time in the future
   so we no longer need our own patches.
   AlbrechtS, 04 Feb 2018.
+
+  Update (Feb 22, 2021): The upstream library is officially no longer
+  maintained (see README.md) although updates appear from time to time.
 
   Use this clone (branch 'fltk') to get the nanosvg library with FLTK
   specific patches:

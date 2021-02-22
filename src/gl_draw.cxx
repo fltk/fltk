@@ -37,6 +37,7 @@
 #include <FL/gl.h>
 #include <FL/gl_draw.H>
 #include <FL/fl_draw.H>
+#include <FL/math.h> // for ceil()
 #include "Fl_Gl_Window_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/glu.h>  // for gluUnProject()
@@ -154,7 +155,7 @@ void gl_draw(const char* str, int n, float x, float y) {
  \see  gl_texture_pile_height(int)
   */
 void gl_draw(const char* str) {
-  gl_draw(str, strlen(str));
+  gl_draw(str, (int)strlen(str));
 }
 
 /**
@@ -162,7 +163,7 @@ void gl_draw(const char* str) {
  \see  gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int x, int y) {
-  gl_draw(str, strlen(str), x, y);
+  gl_draw(str, (int)strlen(str), x, y);
 }
 
 /**
@@ -170,7 +171,7 @@ void gl_draw(const char* str, int x, int y) {
  \see  gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, float x, float y) {
-  gl_draw(str, strlen(str), x, y);
+  gl_draw(str, (int)strlen(str), x, y);
 }
 
 static void gl_draw_invert(const char* str, int n, int x, int y) {
@@ -359,11 +360,11 @@ void gl_texture_fifo::display_texture(int rank)
   float oy = pos[1] + height - Fl_Gl_Window_Driver::gl_scale * fl_descent();
   glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
   glVertex2f (ox, oy);
-  glTexCoord2f (0.0f, height); // draw upper left in world coordinates
+  glTexCoord2f (0.0f, (GLfloat)height); // draw upper left in world coordinates
   glVertex2f (ox, oy - height);
-  glTexCoord2f (width, height); // draw upper right in world coordinates
+  glTexCoord2f ((GLfloat)width, (GLfloat)height); // draw upper right in world coordinates
   glVertex2f (ox + width, oy - height);
-  glTexCoord2f (width, 0.0f); // draw lower right in world coordinates
+  glTexCoord2f ((GLfloat)width, 0.0f); // draw lower right in world coordinates
   glVertex2f (ox + width, oy);
   glEnd ();
   glPopAttrib();
@@ -405,10 +406,10 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].str_len = n; // record length of text in utf8
   fl_graphics_driver->font_descriptor(gl_fontsize);
   int w, h;
-  w = fl_width(fifo[current].utf8, n) * Fl_Gl_Window_Driver::gl_scale;
+  w = int(ceil(fl_width(fifo[current].utf8, n) * Fl_Gl_Window_Driver::gl_scale));
   // Hack - make w be aligned
   w = (w + 3) & (~3);
-  h = fl_height() * Fl_Gl_Window_Driver::gl_scale;
+  h = int(ceil(fl_height() * Fl_Gl_Window_Driver::gl_scale));
 
   fifo[current].scale = Fl_Gl_Window_Driver::gl_scale;
   fifo[current].fdesc = gl_fontsize;
@@ -549,7 +550,7 @@ void Fl_Gl_Window_Driver::draw_string_legacy_get_list(const char* str, int n) {
   int size = 0;
   if (gl_start_scale != 1) { // using gl_start() / gl_finish()
     size = fl_graphics_driver->font_descriptor()->size;
-    gl_font(fl_font(), size * gl_start_scale);
+    gl_font(fl_font(), Fl_Fontsize(size * gl_start_scale));
   }
   for (unsigned i = 0; i < wn; i++) {
     unsigned int r;
@@ -579,7 +580,7 @@ void Fl_Gl_Window_Driver::draw_string_legacy_glut(const char* str, int n)
   fl_graphics_driver->font_descriptor(gl_fontsize);
   Fl_Gl_Window *gwin = Fl_Window::current()->as_gl_window();
   gl_scale = (gwin ? gwin->pixels_per_unit() : 1);
-  float ratio = fl_width((char*)str_nul, n) * gl_scale/glutStrokeLength(GLUT_STROKE_ROMAN, str_nul);
+  float ratio = float(fl_width((char*)str_nul, n) * gl_scale/glutStrokeLength(GLUT_STROKE_ROMAN, str_nul));
   Fl_Surface_Device::pop_current();
 
   //setup matrices
@@ -605,7 +606,7 @@ void Fl_Gl_Window_Driver::draw_string_legacy_glut(const char* str, int n)
   glTranslatef (-winw/R, -winh/R, 0.0f);
   glTranslatef(pos[0]*2/R, pos[1]*2/R, 0.0);
   glutStrokeString(GLUT_STROKE_ROMAN, str_nul);
-  float width = fl_width((char*)str_nul);
+  float width = float(fl_width((char*)str_nul));
   delete[] str_nul;
   glPopAttrib();
   // reset original matrices

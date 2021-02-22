@@ -108,7 +108,7 @@ void Fl_OpenGL_Graphics_Driver::circle(double cx, double cy, double r) {
   int num_segments = (int)(10 * sqrt(rMax))+1;
   double theta = 2 * M_PI / float(num_segments);
   double tangetial_factor = tan(theta);
-  double radial_factor = cosf(theta);//calculate the radial factor
+  double radial_factor = cos(theta);//calculate the radial factor
   double x = r; //we start at angle = 0
   double y = 0;
 

@@ -77,7 +77,7 @@ void gl_start() {
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
                     x, y, w, h)) {
       fl_clip_region(Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h));
-      glScissor(x*gl_start_scale, (Fl_Window::current()->h()-(y+h))*gl_start_scale, w*gl_start_scale, h*gl_start_scale);
+      glScissor(int(x*gl_start_scale), int((Fl_Window::current()->h()-(y+h))*gl_start_scale), int(w*gl_start_scale), int(h*gl_start_scale));
       glEnable(GL_SCISSOR_TEST);
     } else {
       glDisable(GL_SCISSOR_TEST);

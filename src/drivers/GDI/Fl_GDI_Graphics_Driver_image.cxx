@@ -536,32 +536,25 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
+  bool need_clip = (cx || cy || WP != rgb->w() || HP != rgb->h());
+  if (need_clip) {
+    push_clip(XP, YP, WP, HP);
+    XP -= cx; YP -= cy; cx = cy = 0; WP = rgb->w(); HP = rgb->h();
+  }
   int W = WP, H = HP;
   cache_size(rgb, W, H);
-  int Wfull = rgb->w(), Hfull = rgb->h();
-  cache_size(rgb, Wfull, Hfull);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
-  Wfull = int(W * (rgb->data_w() / float(Wfull))); Hfull = int(H * (rgb->data_h() / float(Hfull)));
-  int cx2 = int(cx * scale()), cy2 = int(cy * scale());
-  if (cx2+Wfull > rgb->data_w()) Wfull = rgb->data_w()-cx2;
-  if (cy2+Hfull > rgb->data_h()) Hfull = rgb->data_h()-cy2;
-  float scaleW = float(rgb->data_w())/rgb->w();
-  float scaleH = float(rgb->data_h())/rgb->h();
-  if (Wfull > int(WP*scaleW)) Wfull = int(WP*scaleW);
-  if (Hfull > int(HP*scaleH)) Hfull = int(HP*scaleH);
-  if (rgb->as_svg_image()) { // maintain precise aspect ratio for SVG images
-    float s = scale(); scale(1); cache_size(rgb, Wfull, Hfull); scale(s);
-  }
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(int(XP*scale()), int(YP*scale()), W, H, new_gc, int(cx*scaleW), int(cy*scaleH), Wfull, Hfull);
+    alpha_blend_(int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, int(XP*scale()), int(YP*scale()), W, H, new_gc, int(cx*scaleW), int(cy*scaleH), Wfull, Hfull, SRCCOPY);
+    StretchBlt(gc_, int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
+  if (need_clip) pop_clip();
 }
 
 
