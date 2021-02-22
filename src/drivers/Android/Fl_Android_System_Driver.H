@@ -25,6 +25,7 @@
 #include <string.h>
 #include <FL/fl_string.h>
 #include "../../Fl_System_Driver.H"
+#include "../Posix/Fl_Posix_System_Driver.H"
 #include <stdarg.h>
 
 /*
@@ -38,7 +39,7 @@
  - multithreading
  */
 
-class Fl_Android_System_Driver : public Fl_System_Driver
+class Fl_Android_System_Driver : public Fl_Posix_System_Driver
 {
 #if 0
 public:
@@ -122,9 +123,8 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
-  virtual void gettime(time_t *sec, int *usec);
-#endif
   virtual char *strdup(const char *s) {return ::strdup(s);}
+#endif
 };
 
 #endif // FL_ANDROID_SYSTEM_DRIVER_H

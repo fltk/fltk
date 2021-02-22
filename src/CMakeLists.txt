@@ -300,6 +300,7 @@ elseif (ANDROID)
 
   set (DRIVER_FILES
     drivers/Android/Fl_Android_Application.cxx
+    drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Android/Fl_Android_System_Driver.cxx
     drivers/Android/Fl_Android_Screen_Driver.cxx
     drivers/Android/Fl_Android_Screen_Keyboard.cxx
@@ -311,6 +312,7 @@ elseif (ANDROID)
   )
   set (DRIVER_HEADER_FILES
     drivers/Android/Fl_Android_Application.H
+    drivers/Posix/Fl_Posix_System_Driver.H
     drivers/Android/Fl_Android_System_Driver.H
     drivers/Android/Fl_Android_Screen_Driver.H
     drivers/Android/Fl_Android_Window_Driver.H
