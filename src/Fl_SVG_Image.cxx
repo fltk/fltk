@@ -32,12 +32,21 @@ static double strtoll(const char *str, char **endptr, int base) {
 }
 #endif
 
+#ifdef _MSC_VER
+#pragma warning (push)                  // Save #pragma warning status
+#pragma warning (disable: 4244)         // Switch off conversion warnings
+#endif
+
 #define NANOSVG_ALL_COLOR_KEYWORDS      // Include full list of color keywords.
 #define NANOSVG_IMPLEMENTATION          // Expands implementation
 #include "../nanosvg/nanosvg.h"
 
 #define NANOSVGRAST_IMPLEMENTATION      // Expands implementation
 #include "../nanosvg/nanosvgrast.h"
+
+#ifdef _MSC_VER
+#pragma warning (pop)                  // Restore #pragma warning status
+#endif
 
 #if defined(HAVE_LIBZ)
 #include <zlib.h>
