@@ -260,15 +260,14 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
       pt.y = int(pt.y * (f - 1));
     }
     RECT *rects = (RECT*)&(pdata->Buffer);
-    int delta = (f > 1.75 ? 1 : 0) - int(f/2);
     for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
-      int x = int(rects[i].left * f) + pt.x;
-      int y = int(rects[i].top * f) + pt.y;
+      int x = Fl_GDI_Graphics_Driver::floor(rects[i].left, f) + pt.x;
+      int y = Fl_GDI_Graphics_Driver::floor(rects[i].top, f) + pt.y;
       RECT R2;
-      R2.left = x + delta;
-      R2.top  = y + delta;
-      R2.right = int(rects[i].right * f) + pt.x - x + R2.left;
-      R2.bottom = int(rects[i].bottom * f) + pt.y - y + R2.top;
+      R2.left = x;
+      R2.top  = y;
+      R2.right = Fl_GDI_Graphics_Driver::floor(rects[i].right, f) + pt.x - x + R2.left;
+      R2.bottom = Fl_GDI_Graphics_Driver::floor(rects[i].bottom, f) + pt.y - y + R2.top;
       rects[i] = R2;
     }
     r = ExtCreateRegion(NULL, size, pdata);
@@ -286,4 +285,12 @@ Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
 
 void Fl_GDI_Graphics_Driver::set_current_() {
   restore_clip();
+}
+
+void Fl_GDI_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
+{
+  float s = scale();
+  width  = (s == int(s) ? width * int(s) : floor(width+1));
+  height = (s == int(s) ? height * int(s) : floor(height+1));
+  cache_size_finalize(img, width, height);
 }

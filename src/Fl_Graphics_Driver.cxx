@@ -211,6 +211,10 @@ void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
   fs = height * s;
   height = (fs - int(fs) < 0.001 ? int(fs) :
            int((height+1) * s));
+  cache_size_finalize(img, width, height);
+}
+
+void Fl_Graphics_Driver::cache_size_finalize(Fl_Image *img, int &width, int &height) {
   if (img) img->cache_size_(width, height);
 }
 
@@ -754,6 +758,10 @@ void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
   font_unscaled(face, Fl_Fontsize(size * scale()));
 }
 
+Fl_Font Fl_Scalable_Graphics_Driver::font() {
+  return Fl_Graphics_Driver::font();
+}
+
 double Fl_Scalable_Graphics_Driver::width(const char *str, int n) {
   return width_unscaled(str, n)/scale();
 }
@@ -790,6 +798,10 @@ void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   unscale_clip(r2);
 }
 
+void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  Fl_Graphics_Driver::draw(str, n, x, y);
+}
+
 void Fl_Scalable_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
@@ -803,6 +815,10 @@ void Fl_Scalable_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y)
 
 void Fl_Scalable_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   arc_unscaled(x * scale(), y * scale(), w * scale(), h * scale(), a1, a2);
+}
+
+void Fl_Scalable_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
 }
 
 void Fl_Scalable_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {

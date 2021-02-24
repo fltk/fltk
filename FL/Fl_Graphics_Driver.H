@@ -237,6 +237,7 @@ protected:
 
   Fl_Graphics_Driver();
   virtual void cache_size(Fl_Image *img, int &width, int &height);
+  void cache_size_finalize(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
@@ -444,6 +445,7 @@ protected:
   virtual void circle(double x, double y, double r);
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   virtual void font(Fl_Font face, Fl_Fontsize size);
+  virtual Fl_Font font();
   virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
   virtual double width(const char *str, int n);
   virtual double width(unsigned int c);
@@ -461,8 +463,10 @@ protected:
   virtual void draw_unscaled(const char *str, int n, int x, int y);
   virtual void draw(int angle, const char *str, int n, int x, int y);
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
+  virtual void draw(const char *str, int nChars, float x, float y);
   virtual void rtl_draw(const char* str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
+  virtual void arc(double x, double y, double r, double start, double end);
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);

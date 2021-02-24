@@ -398,10 +398,10 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(bm, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -499,10 +499,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(img, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
@@ -547,10 +547,10 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
+    alpha_blend_(this->floor(XP), this->floor(YP), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
+    StretchBlt(gc_, this->floor(XP), this->floor(YP), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
@@ -631,10 +631,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(pxm, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
