@@ -17,6 +17,7 @@
 #include <config.h>
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
+#include "../../Fl_Screen_Driver.H"
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
@@ -157,4 +158,20 @@ void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 void Fl_Quartz_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height) {
   width *= 2 * scale();
   height *= 2 * scale();
+}
+
+float Fl_Quartz_Graphics_Driver::remove_scale() {
+  float s = scale();
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, 1.f);
+    CGContextScaleCTM(gc_, 1/s, 1/s);
+  }
+  return s;
+}
+
+void Fl_Quartz_Graphics_Driver::restore_scale(float s) {
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, s);
+    CGContextScaleCTM(gc_, s, s);
+  }
 }

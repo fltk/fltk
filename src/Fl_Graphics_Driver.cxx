@@ -626,6 +626,9 @@ void Fl_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
   loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1);
 }
 
+float Fl_Graphics_Driver::remove_scale() { return 1.f;}
+
+void Fl_Graphics_Driver::restore_scale(float) { }
 
 /**
  \}
@@ -975,5 +978,21 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int
 void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) {}
 
 void Fl_Scalable_Graphics_Driver::transformed_vertex0(float x, float y) {}
+
+float Fl_Scalable_Graphics_Driver::remove_scale() {
+  float s = scale();
+  if (s != 1.f) {
+    push_no_clip();
+    scale(1.f);
+  }
+  return s;
+}
+
+void Fl_Scalable_Graphics_Driver::restore_scale(float s) {
+  if (s != 1.f) {
+    scale(s);
+    pop_clip();
+  }
+}
 
 #endif

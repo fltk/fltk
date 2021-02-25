@@ -81,7 +81,9 @@ public:
   /** \brief Returns the graphics driver of this drawing surface. */
   inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; };
   /** The current drawing surface.
-   In other words, the Fl_Surface_Device object that currently receives all graphics requests */
+   In other words, the Fl_Surface_Device object that currently receives all graphics requests
+   \note It's possible to transiently remove the GUI scaling factor in force in the current
+   drawing surface with \ref fl_remove_scale(). */
   static inline Fl_Surface_Device *surface() {
     return surface_ ? surface_ : default_surface();
   };
