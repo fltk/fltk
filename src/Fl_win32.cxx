@@ -613,6 +613,9 @@ public:
     // to work around it anyway.
     if (clipboard_wnd != NULL)
       fl_clipboard_notify_untarget(clipboard_wnd);
+#if USE_GDIPLUS
+    Fl_GDIplus_Graphics_Driver::shutdown();
+#endif
   }
 };
 static Fl_Win32_At_Exit win32_at_exit;

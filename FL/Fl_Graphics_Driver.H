@@ -374,6 +374,8 @@ public:
   virtual float override_scale();
   virtual void restore_scale(float);
   virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return NULL; }
+  virtual void antialias(int state);
+  virtual int antialias();
 };
 
 #ifndef FL_DOXYGEN

@@ -123,6 +123,9 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       target_link_directories (${TARGET_NAME} PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
     endif()
   endif (FLTK_HAVE_CAIRO)
+  if (USE_GDIPLUS)        # can only be true on Windows
+    target_link_libraries (${TARGET_NAME} gdiplus)
+  endif (USE_GDIPLUS)
 
   if (MAC_BUNDLE)
     if (PLIST)

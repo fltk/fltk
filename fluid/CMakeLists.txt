@@ -78,6 +78,10 @@ if (FLTK_HAVE_CAIRO)
   endif()
 endif (FLTK_HAVE_CAIRO)
 
+if (USE_GDIPLUS)        # can only be true on Windows
+  target_link_libraries (fluid gdiplus)
+endif (USE_GDIPLUS)
+
 # install fluid
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))

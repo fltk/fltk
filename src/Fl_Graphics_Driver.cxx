@@ -676,6 +676,12 @@ void Fl_Graphics_Driver::transformed_vertex0(float x, float y) {
   }
 }
 
+void Fl_Graphics_Driver::antialias(int state) {}
+
+int Fl_Graphics_Driver::antialias() {
+  return 0;
+}
+
 /**
  \}
  \endcond

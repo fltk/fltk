@@ -52,6 +52,16 @@ if (UNIX)
   list (APPEND FLTK_LDLIBS -lm)
 endif (UNIX)
 
+if (WIN32)
+  option (OPTION_USE_GDIPLUS "use GDI+ when possible for antialiased graphics" ON)
+  if (OPTION_USE_GDIPLUS)
+    set (USE_GDIPLUS TRUE)
+    if (NOT MSVC)
+      list (APPEND FLTK_LDLIBS "-lgdiplus")
+    endif (NOT MSVC)
+  endif (OPTION_USE_GDIPLUS)
+endif (WIN32)
+
 #######################################################################
 if (APPLE)
   option (OPTION_APPLE_X11 "use X11" OFF)
