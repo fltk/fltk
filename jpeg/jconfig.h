@@ -59,14 +59,6 @@ typedef unsigned char boolean;
 /* #undef NEED_SIGNAL_CATCHER */
 /* #undef DONT_USE_B_MODE */
 
-#if 0					/* FLTK 1.3.3 (disabled in FLTK 1.3.4) */
-
-#if defined(WIN32) || defined(__EMX__)
-#  define USE_SETMODE
-#endif /* WIN32 || __EMX__ */
-
-#endif					/* FLTK 1.3.3 (disabled in FLTK 1.3.4) */
-
 /* Define this if you want percent-done progress reports from cjpeg/djpeg. */
 /* #undef PROGRESS_REPORT */
 
