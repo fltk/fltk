@@ -688,7 +688,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 /** \addtogroup  fl_drawings
     @{ */
 
-FL_EXPORT float fl_remove_scale();
+FL_EXPORT float fl_override_scale();
 
 FL_EXPORT void fl_restore_scale(float s);
 

@@ -188,7 +188,7 @@ protected:
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
   virtual void overlay_rect(int x, int y, int w , int h);
-  virtual float remove_scale();
+  virtual float override_scale();
   virtual void restore_scale(float);
 };
 

@@ -364,7 +364,7 @@ public:
   virtual void font_name(int num, const char *name);
   // Defaut implementation may be enough
   virtual void overlay_rect(int x, int y, int w , int h);
-  virtual float remove_scale();
+  virtual float override_scale();
   virtual void restore_scale(float);
 };
 
@@ -488,7 +488,7 @@ protected:
   void transformed_vertex(double xf, double yf);
   virtual void transformed_vertex0(float x, float y);
   void vertex(double x, double y);
-  virtual float remove_scale();
+  virtual float override_scale();
   virtual void restore_scale(float);
 };
 #endif // FL_DOXYGEN
