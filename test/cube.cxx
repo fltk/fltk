@@ -119,7 +119,9 @@ void cube_box::draw() {
 
   // if an OpenGL graphics driver is installed, give it a chance
   // to draw additional graphics
-  if (Fl::cfg_gfx_opengl) Fl_Gl_Window::draw();
+#if HAVE_GL
+  Fl_Gl_Window::draw();
+#endif
 }
 
 int cube_box::handle(int e) {
@@ -234,12 +236,10 @@ void makeform(const char *name) {
 
 #if HAVE_GL
   // try to overlay a button onto an OpenGL window
-  if (Fl::cfg_gfx_opengl) {
-    lt_cube->begin();
-    Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
-    test->box(FL_ROUND_UP_BOX);
-    lt_cube->end();
-  }
+  lt_cube->begin();
+  Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
+  test->box(FL_ROUND_UP_BOX);
+  lt_cube->end();
 #endif // HAVE_GL
 }
 
