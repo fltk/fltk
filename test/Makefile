@@ -181,7 +181,6 @@ ALL =	\
 	tree$(EXEEXT) \
 	twowin$(EXEEXT) \
 	valuators$(EXEEXT) \
-	cairotest$(EXEEXT) \
 	utf8$(EXEEXT) \
 	windowfocus$(EXEEXT)
 

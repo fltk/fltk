@@ -211,8 +211,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         AC_DEFINE([FLTK_HAVE_CAIRO])
         CAIRODIR="cairo"
         CAIROFLAGS="$($PKGCONFIG --cflags cairo)"
-        # TODO: Use pkg-config to get cairo libraries
-        CAIROLIBS="-lcairo -lpixman-1"
+        CAIROLIBS="$($PKGCONFIG --libs cairo)"
         CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
         LINKFLTKCAIRO="../lib/libfltk_cairo.a"
         FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
@@ -226,8 +225,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         AC_DEFINE(FLTK_HAVE_CAIRO)
         CAIRODIR="cairo"
         CAIROFLAGS="$($PKGCONFIG --cflags cairo)"
-        # TODO: Use pkg-config to get cairo libraries
-        CAIROLIBS="-lcairo -lpixman-1"
+        CAIROLIBS="$($PKGCONFIG --libs cairo)"
         CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
         LINKFLTKCAIRO="../lib/libfltk_cairo.a"
         FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"

@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -124,9 +124,9 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 cairo_t * Fl::cairo_make_current(void *gc) {
     int W=0,H=0;
 #if defined(USE_X11)
-    //FIXME X11 get W,H
-    // gc will be the window handle here
-# warning FIXME get W,H for cairo_make_current(void*)
+  // FIXME X11 get W,H
+  // gc will be the window handle here
+  // # warning FIXME get W,H for cairo_make_current(void*)
 #elif defined(__APPLE_QUARTZ__)
     if (fl_window) {
       W = Fl_Window::current()->w();
