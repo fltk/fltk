@@ -196,6 +196,7 @@ pixmap_browser.app
 preferences.app
 radio.app
 resize.app
+resize-example*.app
 resizebox.app
 rotated_text.app
 scroll.app
