@@ -311,6 +311,7 @@ public:
   virtual void end_points();
   virtual void end_line();
   virtual void end_loop();
+  virtual void fixloop();
   virtual void end_polygon();
   virtual void end_complex_polygon();
   virtual void gap();

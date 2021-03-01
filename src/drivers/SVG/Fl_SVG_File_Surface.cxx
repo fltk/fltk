@@ -112,11 +112,7 @@ protected:
   void point(int x, int y);
   void end_points();
   void end_line();
-  void fixloop();
-  void end_loop();
   void end_polygon();
-  void begin_complex_polygon();
-  void gap();
   void end_complex_polygon();
   void circle(double x, double y,double r);
   void arc(int x,int y,int w,int h,double a1,double a2);
@@ -876,16 +872,6 @@ void Fl_SVG_Graphics_Driver::end_line() {
           red_, green_, blue_, width_, dasharray_, linecap_, linejoin_);
 }
 
-void Fl_SVG_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
-void Fl_SVG_Graphics_Driver::end_loop() {
-  fixloop();
-  if (n>2) transformed_vertex((float)p[0].x, (float)p[0].y);
-  end_line();
-}
-
 void Fl_SVG_Graphics_Driver::end_polygon() {
   fixloop();
   if (n < 3) {
@@ -914,21 +900,6 @@ void Fl_SVG_Graphics_Driver::circle(double x, double y, double r) {
   else
     fprintf(out_, " fill=\"none\" stroke-width=\"%d\" stroke-dasharray=\"%s\" stroke-linecap=\"%s\" stroke", width_, dasharray_,linecap_);
   fprintf(out_, "=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
-}
-
-void Fl_SVG_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
-}
-
-void Fl_SVG_Graphics_Driver::gap() {
-  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
-  if (n > gap_+2) {
-    transformed_vertex((float)p[gap_].x, (float)p[gap_].y);
-    gap_ = n;
-  } else {
-    n = gap_;
-  }
 }
 
 void Fl_SVG_Graphics_Driver::end_complex_polygon() {

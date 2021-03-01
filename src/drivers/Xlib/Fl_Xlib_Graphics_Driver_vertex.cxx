@@ -57,11 +57,6 @@ void Fl_Xlib_Graphics_Driver::end_polygon() {
   if (n>2) XFillPolygon(fl_display, fl_window, gc_, (XPoint*)p, n, Convex, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
-}
-
 void Fl_Xlib_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {

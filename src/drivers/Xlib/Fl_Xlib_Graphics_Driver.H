@@ -187,7 +187,6 @@ protected:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  void begin_complex_polygon();
   void end_points();
   void end_line();
   void end_loop();

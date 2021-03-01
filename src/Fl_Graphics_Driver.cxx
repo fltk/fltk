@@ -496,7 +496,10 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int
 int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {return 1;}
 
 /** see fl_begin_complex_polygon() */
-void Fl_Graphics_Driver::begin_complex_polygon() {}
+void Fl_Graphics_Driver::begin_complex_polygon() {
+  begin_polygon();
+  gap_ = 0;
+}
 
 /** see fl_transformed_vertex() */
 void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
@@ -514,8 +517,16 @@ void Fl_Graphics_Driver::end_points() {}
 /** see fl_end_line() */
 void Fl_Graphics_Driver::end_line() {}
 
+void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
+  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+}
+
 /** see fl_end_loop() */
-void Fl_Graphics_Driver::end_loop() {}
+void Fl_Graphics_Driver::end_loop() {
+  fixloop();
+  if (n>2) transformed_vertex((float)p[0].x, (float)p[0].y);
+  end_line();
+}
 
 /** see fl_end_polygon() */
 void Fl_Graphics_Driver::end_polygon() {}
@@ -524,7 +535,15 @@ void Fl_Graphics_Driver::end_polygon() {}
 void Fl_Graphics_Driver::end_complex_polygon() {}
 
 /** see fl_gap() */
-void Fl_Graphics_Driver::gap() {}
+void Fl_Graphics_Driver::gap() {
+  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
+  if (n > gap_+2) {
+    transformed_vertex((float)p[gap_].x, (float)p[gap_].y);
+    gap_ = n;
+  } else {
+    n = gap_;
+  }
+}
 
 /** see fl_circle() */
 void Fl_Graphics_Driver::circle(double x, double y, double r) {}

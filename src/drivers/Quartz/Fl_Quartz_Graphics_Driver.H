@@ -87,7 +87,6 @@ public:
   void XDestroyRegion(Fl_Region r);
   void high_resolution(bool b) { high_resolution_ = b; }
 protected:
-  void fixloop();
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
   void focus_rect(int x, int y, int w, int h);
@@ -109,13 +108,10 @@ protected:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  void begin_complex_polygon();
   void end_points();
   void end_line();
-  void end_loop();
   void end_polygon();
   void end_complex_polygon();
-  void gap();
   void circle(double x, double y, double r);
   void arc(int x, int y, int w, int h, double a1, double a2);
   void pie(int x, int y, int w, int h, double a1, double a2);

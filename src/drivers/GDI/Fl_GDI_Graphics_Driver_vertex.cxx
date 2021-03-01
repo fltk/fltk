@@ -59,8 +59,7 @@ void Fl_GDI_Graphics_Driver::end_polygon() {
 }
 
 void Fl_GDI_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
+  Fl_Graphics_Driver::begin_complex_polygon();
   numcount = 0;
 }
 
