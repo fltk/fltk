@@ -49,10 +49,9 @@ protected:
   int counts[20];
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   POINT *p;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();

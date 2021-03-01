@@ -49,6 +49,8 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   fl_matrix = &m;
   font_descriptor_ = NULL;
   scale_ = 1;
+  p_size = 0;
+  p = NULL;
 };
 
 /** Return the graphics driver used when drawing to the platform's display */
@@ -497,10 +499,14 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {return 1;}
 void Fl_Graphics_Driver::begin_complex_polygon() {}
 
 /** see fl_transformed_vertex() */
-void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {}
+void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
+  transformed_vertex0(float(xf), float(yf));
+}
 
 /** see fl_vertex() */
-void Fl_Graphics_Driver::vertex(double x, double y) {}
+void Fl_Graphics_Driver::vertex(double x, double y) {
+  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
+}
 
 /** see fl_end_points() */
 void Fl_Graphics_Driver::end_points() {}
@@ -632,6 +638,18 @@ void Fl_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
 float Fl_Graphics_Driver::override_scale() { return scale();}
 
 void Fl_Graphics_Driver::restore_scale(float) { }
+
+void Fl_Graphics_Driver::transformed_vertex0(float x, float y) {
+  if (!n || x != p[n-1].x || y != p[n-1].y) {
+    if (n >= p_size) {
+      p_size = p ? 2*p_size : 16;
+      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
+    }
+    p[n].x = x;
+    p[n].y = y;
+    n++;
+  }
+}
 
 /**
  \}
@@ -979,8 +997,6 @@ void Fl_Scalable_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void*
 void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l) {}
 
 void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) {}
-
-void Fl_Scalable_Graphics_Driver::transformed_vertex0(float x, float y) {}
 
 float Fl_Scalable_Graphics_Driver::override_scale() {
   float s = scale();

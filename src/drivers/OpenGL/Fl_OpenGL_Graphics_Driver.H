@@ -51,7 +51,6 @@ public:
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
   void transformed_vertex(double xf, double yf);
-  void vertex(double x, double y);
   void begin_points();
   void end_points();
   void begin_line();

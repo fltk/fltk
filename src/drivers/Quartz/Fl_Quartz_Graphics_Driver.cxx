@@ -52,7 +52,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Quartz_Graphics_Driver();
 }
 
-Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
+Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL) {
   quartz_line_width_ = 1.f;
   quartz_line_cap_ = kCGLineCapButt;
   quartz_line_join_ = kCGLineJoinMiter;

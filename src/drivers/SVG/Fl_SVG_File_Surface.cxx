@@ -53,9 +53,6 @@ class Fl_SVG_Graphics_Driver : public Fl_Graphics_Driver {
   uchar red_, green_, blue_;
   char *dasharray_; // the dash array as SVG needs it
   char *user_dash_array_; // the dash array as FLTK needs it
-  int p_size;
-  typedef struct { float x; float y; } XPOINT;
-  XPOINT *p;
   class Clip {
   public:
     int x, y, w, h; // the clip rectangle
@@ -113,9 +110,6 @@ protected:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   void point(int x, int y);
-  void transformed_vertex0(float x, float y);
-  void transformed_vertex(double xf, double yf);
-  void vertex(double x,double y);
   void end_points();
   void end_line();
   void fixloop();
@@ -860,26 +854,6 @@ void Fl_SVG_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2
   fprintf(out_, "<path d=\"M %d %d L %d %d L %d %d z\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" "
           "stroke-width=\"%d\" stroke-linejoin=\"%s\" stroke-linecap=\"%s\" stroke-dasharray=\"%s\"/>\n",
           x0, y0, x1, y1, x2, y2, red_, green_, blue_, width_, linejoin_, linecap_, dasharray_);
-}
-
-void Fl_SVG_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
-    if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
-    }
-   p[n].x = x;
-   p[n].y = y;
-   n++;
-   }
-}
-
-void Fl_SVG_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(float(xf), float(yf));
-}
-
-void Fl_SVG_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(float(x*m.a + y*m.c + m.x), float(x*m.b + y*m.d + m.y));
 }
 
 void Fl_SVG_Graphics_Driver::end_points() {

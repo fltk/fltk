@@ -173,6 +173,9 @@ protected:
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
   Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
   Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
+  int p_size;
+  typedef struct { float x; float y; } XPOINT;
+  XPOINT *p;
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
@@ -303,6 +306,7 @@ public:
   virtual double transform_dx(double x, double y);
   virtual double transform_dy(double x, double y);
   virtual void transformed_vertex(double xf, double yf);
+  virtual void transformed_vertex0(float x, float y);
   virtual void vertex(double x, double y);
   virtual void end_points();
   virtual void end_line();
@@ -486,7 +490,6 @@ protected:
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 
   void transformed_vertex(double xf, double yf);
-  virtual void transformed_vertex0(float x, float y);
   void vertex(double x, double y);
   virtual float override_scale();
   virtual void restore_scale(float);

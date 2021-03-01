@@ -27,14 +27,6 @@
 #include <FL/math.h>
 
 
-void Fl_Quartz_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(float(xf), float(yf));
-}
-
-void Fl_Quartz_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(float(x*m.a + y*m.c + m.x), float(x*m.b + y*m.d + m.y));
-}
-
 void Fl_Quartz_Graphics_Driver::end_points() {
   if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   for (int i=0; i<n; i++) {
@@ -128,18 +120,6 @@ void Fl_Quartz_Graphics_Driver::circle(double x, double y,double r) {
   CGContextAddArc(gc_, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(gc_);
   CGContextSetShouldAntialias(gc_, false);
-}
-
-void Fl_Quartz_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
-   if (n >= p_size) {
-   p_size = p ? 2*p_size : 16;
-   p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
-   }
-   p[n].x = x;
-   p[n].y = y;
-   n++;
-   }
 }
 
 void Fl_Quartz_Graphics_Driver::fixloop() {  // remove equal points from closed path

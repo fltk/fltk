@@ -94,7 +94,6 @@ private:
   static GC gc_;
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
 #if USE_XFT
