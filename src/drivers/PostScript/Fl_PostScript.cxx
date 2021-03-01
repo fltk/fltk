@@ -174,6 +174,8 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
 #endif
 }
 
+Fl_Font Fl_PostScript_Graphics_Driver::font() { return Fl_Graphics_Driver:: font(); }
+
 double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
   return Fl_Graphics_Driver::default_driver().width(s, n);
 }
@@ -199,6 +201,8 @@ void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
   Fl::get_color(c, cr_, cg_, cb_);
   color(cr_, cg_, cb_);
 }
+
+Fl_Color Fl_PostScript_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }
 
 void Fl_PostScript_Graphics_Driver::point(int x, int y){
   rectf(x,y,1,1);

@@ -133,6 +133,7 @@ public:
   // implementation of drawing methods
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
+  Fl_Color color();
 
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -191,6 +192,7 @@ public:
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void font(int face, int size);
+  Fl_Font font();
   double width(const char *, int);
   double width(unsigned int u);
   void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);

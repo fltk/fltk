@@ -575,7 +575,10 @@ Fl_Fontsize Fl_Graphics_Driver::size() {return size_; }
 double Fl_Graphics_Driver::width(const char *str, int nChars) { return 0; }
 
 /** Compute the width of Unicode character \p c if drawn with current font */
-double Fl_Graphics_Driver::width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
+double Fl_Graphics_Driver::width(unsigned int c) {
+  char buf[4];
+  return width(buf, fl_utf8encode (c, buf));
+}
 
 /** Return the current line height */
 int Fl_Graphics_Driver::height() { return size(); }

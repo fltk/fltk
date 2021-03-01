@@ -78,15 +78,19 @@ protected:
   void compute_dasharray(float s, char *dashes=0);
   void line_style(int style, int width, char *dashes=0);
   void line(int x1, int y1, int x2, int y2);
+  void line(int x1, int y1, int x2, int y2, int x3, int y3);
   void font_(int f, int s);
   void font(int f, int s);
+  Fl_Font font();
   void draw(const char *str, int n, int x, int y);
   void draw(const char*, int, float, float) ;
   void draw(int, const char*, int, int, int) ;
   void rtl_draw(const char *str, int n, int x, int y);
   void color(uchar r, uchar g, uchar b);
   void color(Fl_Color c);
-  double width(const char*, int) ;
+  Fl_Color color();
+  double width(const char*, int);
+  double width(unsigned int c);
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height() ;
   int descent() ;
@@ -122,6 +126,7 @@ protected:
   void end_complex_polygon();
   void circle(double x, double y,double r);
   void arc(int x,int y,int w,int h,double a1,double a2);
+  void arc(double x, double y, double r, double start, double end);
   void pie(int x,int y,int w,int h,double a1,double a2);
   void arc_pie(char AorP, int x, int y, int w, int h, double a1, double a2);
 };
@@ -179,6 +184,13 @@ void Fl_SVG_Graphics_Driver::line(int x1, int y1, int x2, int y2) {
           x1,y1,x2,y2, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
 }
 
+void Fl_SVG_Graphics_Driver::line(int x1, int y1, int x2, int y2, int x3, int y3) {
+  fprintf(out_,
+          "<path d=\"M %d %d L %d %d L %d %d \" "
+          "style=\"stroke:rgb(%u,%u,%u);fill:none;stroke-width:%d;stroke-linecap:%s;stroke-linejoin:%s;stroke-dasharray:%s\" />\n",
+  x1, y1, x2, y2, x3, y3, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
+}
+
 void Fl_SVG_Graphics_Driver::font_(int ft, int s) {
   Fl_Graphics_Driver::font(ft, s);
   int famnum = ft/4;
@@ -197,6 +209,8 @@ void Fl_SVG_Graphics_Driver::font(int ft, int s) {
   Fl_Display_Device::display_device()->driver()->font(ft, s);
   font_(ft, s);
 }
+
+Fl_Font Fl_SVG_Graphics_Driver::font() { return Fl_Graphics_Driver::font(); }
 
 void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   if (user_dash_array_ && user_dash_array_ != dashes) {free(user_dash_array_); user_dash_array_ = NULL;}
@@ -288,8 +302,14 @@ void Fl_SVG_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   blue_ = b;
 }
 
+Fl_Color Fl_SVG_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }
+
 double Fl_SVG_Graphics_Driver::width(const char* str, int l) {
  return Fl_Display_Device::display_device()->driver()->width(str, l);
+}
+
+double Fl_SVG_Graphics_Driver::width(unsigned int c) {
+  return Fl_Display_Device::display_device()->driver()->width(c);
 }
 
 void Fl_SVG_Graphics_Driver::text_extents(const char *c, int n, int& dx, int& dy, int& w, int& h) {
@@ -950,6 +970,10 @@ void Fl_SVG_Graphics_Driver::end_complex_polygon() {
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 
+void Fl_SVG_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
+}
+
 void Fl_SVG_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
   arc_pie('A', x, y, w, h, a1, a2);
 }
@@ -1018,3 +1042,5 @@ void Fl_SVG_File_Surface::untranslate() {}
 int Fl_SVG_File_Surface::printable_rect(int *w, int *h) {return 0;}
 
 #endif // FLTK_USE_SVG
+
+void Fl_SVG_File_Surface::origin(int *x, int *y) { Fl_Widget_Surface::origin(x, y);}

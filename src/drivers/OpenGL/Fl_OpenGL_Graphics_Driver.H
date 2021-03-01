@@ -50,8 +50,6 @@ public:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  //void transformed_vertex0(double x, double y);
   void transformed_vertex(double xf, double yf);
   void vertex(double x, double y);
   void begin_points();
@@ -67,21 +65,21 @@ public:
   void end_complex_polygon();
   void fixloop();
   void circle(double x, double y, double r);
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
   void arc(int x, int y, int w, int h, double a1, double a2);
+  void arc(double x, double y, double r, double start, double end);
   void pie(int x, int y, int w, int h, double a1, double a2);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   void line_style(int style, int width=0, char* dashes=0);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
   // --- implementation is in Fl_OpenGL_Graphics_Driver_font.cxx
   void font(Fl_Font face, Fl_Fontsize fsize);
+  Fl_Font font();
   void draw(const char *str, int n, int x, int y);
+  void draw(const char *str, int n, float x, float y);
+  void draw(int angle, const char *str, int n, int x, int y);
   double width(const char *str, int n);
+  double width(unsigned int c);
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();

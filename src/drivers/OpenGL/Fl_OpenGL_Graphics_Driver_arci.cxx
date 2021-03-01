@@ -46,6 +46,10 @@ void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2)
   glEnd();
 }
 
+void Fl_OpenGL_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
+}
+
 void Fl_OpenGL_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
   while (a2<a1) a2 += 360.0;  // TODO: write a sensible fmod angle alignment here
