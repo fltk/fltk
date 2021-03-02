@@ -536,25 +536,22 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  bool need_clip = (cx || cy || WP != rgb->w() || HP != rgb->h());
-  if (need_clip) {
-    push_clip(XP, YP, WP, HP);
-    XP -= cx; YP -= cy; cx = cy = 0; WP = rgb->w(); HP = rgb->h();
-  }
-  int W = WP, H = HP;
-  cache_size(rgb, W, H);
+  push_clip(XP, YP, WP, HP);
+  XP -= cx; YP -= cy;
+  WP = rgb->w(); HP = rgb->h();
+  cache_size(rgb, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(this->floor(XP), this->floor(YP), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
+    alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, this->floor(XP), this->floor(YP), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
+    StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
-  if (need_clip) pop_clip();
+  pop_clip();
 }
 
 
