@@ -769,25 +769,28 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
     Fl_Graphics_Driver::draw_rgb(rgb, XP, YP, WP, HP, cx, cy);
     return;
   }
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::start_image(rgb, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  cache_size(rgb, W, H);
-  int Wfull = rgb->w(), Hfull = rgb->h();
+  push_clip(XP, YP, WP, HP);
+  int Wfull = rgb->w(), Hfull = rgb->h(), offset = 0;
   cache_size(rgb, Wfull, Hfull);
+  if (Wfull > rgb->data_w() || Hfull > rgb->data_h()) {
+    // When enlarging while drawing with XRender, 1 pixel around target area seems unpainted,
+    // so we increase a bit the target area and move it 1 pixel to left and top.
+    Wfull = (rgb->w()+2)*scale(), Hfull = (rgb->h()+2)*scale();
+    offset = 1;
+  }
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
-                          cx*scale(), cy*scale(), (X + offset_x_)*scale(), (Y + offset_y_)*scale(), W, H);
+                          rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
+                          (XP-cx + offset_x_)*scale()-offset, (YP-cy + offset_y_)*scale()-offset, Wfull, Hfull);
+  pop_clip();
 }
 
 /* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
  XP,YP,WP,HP are in drawing units
  */
-int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
+int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP) {
   bool has_alpha = (depth == 2 || depth == 4);
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
@@ -822,7 +825,7 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       // has_alpha = true;
     }
   }
-  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
+  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, 0, 0, 0, 0,
                    XP, YP, WP, HP);
   XRenderFreePicture(fl_display, src);
   XRenderFreePicture(fl_display, dst);

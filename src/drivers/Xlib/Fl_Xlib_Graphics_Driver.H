@@ -70,7 +70,7 @@ protected:
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 #if HAVE_XRENDER
   virtual void draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
-  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP);
+  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP);
 #endif
   virtual int height_unscaled();
   virtual int descent_unscaled();
