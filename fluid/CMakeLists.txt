@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -69,7 +69,10 @@ else ()
   add_executable (fluid WIN32 ${CPPFILES})
 endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
-target_link_libraries(fluid fltk fltk_images fltk_forms)
+target_link_libraries (fluid fltk fltk_images fltk_forms)
+if (FLTK_HAVE_CAIRO)
+  target_link_directories (fluid PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+endif (FLTK_HAVE_CAIRO)
 
 # install fluid
 

@@ -14,9 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 #include <FL/Fl_Gl_Window.H>
+#include "../../Fl_Gl_Window_Driver.H"
 #include <FL/Fl_Image.H>
+#include "../../Fl_Screen_Driver.H"
+#include "../../Fl_Window_Driver.H"
 #include <FL/gl.h>
 #include <string.h>
 
@@ -35,69 +38,17 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 {
 }
 
-#ifdef FL_CFG_GFX_QUARTZ
-#include "../../Fl_Gl_Window_Driver.H"
-#include "../Cocoa/Fl_Cocoa_Window_Driver.H"
-
-// convert BGRA to RGB and also exchange top and bottom
-static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
-{
-  uchar *newimg = new uchar[3*w*h];
-  uchar *to = newimg;
-  for (int i = h-1; i >= 0; i--) {
-    uchar *from = baseAddress + i * mByteWidth;
-    for (int j = 0; j < w; j++, from += 4) {
-#if defined(__ppc__) && __ppc__
-      memcpy(to, from + 1, 3);
-      to += 3;
-#else
-      *(to++) = *(from+2);
-      *(to++) = *(from+1);
-      *(to++) = *from;
-#endif
-    }
-  }
-  delete[] baseAddress;
-  return newimg;
-}
-
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
 {
-  float factor = glw->pixels_per_unit();
-  if (factor != 1) {
-    w *= factor; h *= factor; x *= factor; y *= factor;
-  }
-  Fl_Cocoa_Window_Driver::GLcontext_makecurrent(glw->context());
-  Fl_Cocoa_Window_Driver::flush_context(glw->context()); // to capture also the overlay and for directGL demo
-  // Read OpenGL context pixels directly.
-  // For extra safety, save & restore OpenGL states that are changed
-  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
-  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-  // Read a block of pixels from the frame buffer
-  int mByteWidth = w * 4;
-  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
-  uchar *baseAddress = new uchar[mByteWidth * h];
-  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
-               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, baseAddress);
-  glPopClientAttrib();
-  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
-  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
-  img->alloc_array = 1;
-  Fl_Cocoa_Window_Driver::flush_context(glw->context());
-  return img;
+  return glw->gl_driver()->capture_gl_rectangle(x, y, w, h);
 }
 
-#else
-
-#include "../../Fl_Screen_Driver.H"
-#include "../../Fl_Window_Driver.H"
-Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
-/* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
+/* Captures a rectangle of a Fl_Gl_Window and returns it as a RGB image.
+ This is the platform-independent version. Some platforms may re-implement it.
  */
+Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
 {
+  Fl_Gl_Window *glw = pWindow;
   glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
@@ -110,7 +61,7 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, 
   int ns = Fl_Window_Driver::driver(glw)->screen_num();
   float s = Fl::screen_driver()->scale(ns);
   if (s != 1) {
-    x *= s; y *= s; w *= s; h *= s;
+    x = int(x * s); y = int(y * s); w = int(w * s); h = int(h * s);
   }
   // Read a block of pixels from the frame buffer
   int mByteWidth = w * 3;
@@ -135,5 +86,3 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, 
   img->alloc_array = 1;
   return img;
 }
-
-#endif

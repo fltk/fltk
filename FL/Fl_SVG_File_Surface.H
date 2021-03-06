@@ -66,6 +66,7 @@ public:
   /** Returns the underlying FILE pointer */
   FILE *file();
   virtual void origin(int x, int y);
+  virtual void origin(int *x, int *y);
   virtual void translate(int x, int y);
   virtual void untranslate();
   virtual int printable_rect(int *w, int *h);

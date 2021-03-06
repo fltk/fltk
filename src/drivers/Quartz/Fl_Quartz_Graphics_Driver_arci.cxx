@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #include "Fl_Quartz_Graphics_Driver.H"
 #include <FL/platform.H>
 
@@ -66,5 +63,3 @@ void Fl_Quartz_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2)
   CGContextFillPath(gc_);
   CGContextSetShouldAntialias(gc_, false);
 }
-
-#endif // FL_CFG_GFX_QUARTZ

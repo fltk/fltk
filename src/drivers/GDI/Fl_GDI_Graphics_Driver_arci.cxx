@@ -32,29 +32,29 @@
 
 void Fl_GDI_Graphics_Driver::arc_unscaled(float x, float y, float w, float h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
-  int xa = x+w/2+int(w*cos(a1/180.0*M_PI));
-  int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
-  int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
-  int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
+  int xa = int( x+w/2+int(w*cos(a1/180.0*M_PI)) );
+  int ya = int( y+h/2-int(h*sin(a1/180.0*M_PI)) );
+  int xb = int( x+w/2+int(w*cos(a2/180.0*M_PI)) );
+  int yb = int( y+h/2-int(h*sin(a2/180.0*M_PI)) );
   if (fabs(a1 - a2) < 90) {
     if (xa == xb && ya == yb) SetPixel(gc_, xa, ya, fl_RGB());
-    else Arc(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
-  } else Arc(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
+    else Arc(gc_, int(x), int(y), int(x+w), int(y+h), xa, ya, xb, yb);
+  } else Arc(gc_, int(x), int(y), int(x+w), int(y+h), xa, ya, xb, yb);
 }
 
 void Fl_GDI_Graphics_Driver::pie_unscaled(float x, float y, float w, float h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
   if (a1 == a2) return;
-  int xa = x+w/2+int(w*cos(a1/180.0*M_PI));
-  int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
-  int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
-  int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
+  int xa = int( x+w/2+int(w*cos(a1/180.0*M_PI)) );
+  int ya = int( y+h/2-int(h*sin(a1/180.0*M_PI)) );
+  int xb = int( x+w/2+int(w*cos(a2/180.0*M_PI)) );
+  int yb = int( y+h/2-int(h*sin(a2/180.0*M_PI)) );
   SelectObject(gc_, fl_brush());
   if (fabs(a1 - a2) < 90) {
     if (xa == xb && ya == yb) {
-      MoveToEx(gc_, x+w/2, y+h/2, 0L);
+      MoveToEx(gc_, int(x+w/2), int(y+h/2), 0L);
       LineTo(gc_, xa, ya);
       SetPixel(gc_, xa, ya, fl_RGB());
-    } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
-  } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
+    } else Pie(gc_, int(x), int(y), int(x+w), int(y+h), xa, ya, xb, yb);
+  } else Pie(gc_, int(x), int(y), int(x+w), int(y+h), xa, ya, xb, yb);
 }

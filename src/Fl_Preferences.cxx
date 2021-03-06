@@ -174,7 +174,7 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
    \brief Use this constructor to create or read a preferences file at an
    arbitrary position in the file system.
 
-   The file name is generated in the form <tt>$(path)/$(application).prefs</tt>.
+   The file name is generated in the form <tt>\$(path)/\$(application).prefs</tt>.
    If \p application is \c NULL, \p path is taken literally as the file path and name.
 
    \param[in] path path to the directory that contains the preferences file

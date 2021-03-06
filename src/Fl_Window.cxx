@@ -135,7 +135,7 @@ Fl_Window* Fl_Widget::top_window_offset(int& xoff, int& yoff) const {
     yoff += w->y();
     w = w->window();                    // walk up window hierarchy
   }
-  return const_cast<Fl_Widget*>(w)->as_window();
+  return w ? const_cast<Fl_Widget*>(w)->as_window() : NULL;
 }
 
 /** Gets the x position of the window on the screen */

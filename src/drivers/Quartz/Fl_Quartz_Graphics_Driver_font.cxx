@@ -69,10 +69,6 @@
 
  */
 
-
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "Fl_Font.H"
 #include <math.h>
@@ -878,5 +874,3 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
 }
 
 #endif // HAS_ATSU
-
-#endif // FL_CFG_GFX_QUARTZ

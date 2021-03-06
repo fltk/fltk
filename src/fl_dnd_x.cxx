@@ -1,7 +1,7 @@
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,6 @@
 #include "drivers/X11/Fl_X11_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 
-
 extern Atom fl_XdndAware;
 extern Atom fl_XdndSelection;
 extern Atom fl_XdndEnter;
@@ -32,7 +31,6 @@ extern Atom fl_XdndDrop;
 extern Atom fl_XdndStatus;
 extern Atom fl_XdndActionCopy;
 extern Atom fl_XdndFinished;
-//extern Atom fl_XdndProxy;
 extern Atom fl_XdndURIList;
 extern Atom fl_XaUtf8String;
 
@@ -90,7 +88,6 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
   XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
 
   while (Fl::pushed()) {
-
     // figure out what window we are pointing at:
     Window new_window = 0; int new_version = 0;
     Fl_Window* new_local_window = 0;
@@ -145,12 +142,12 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
             !strchr(fl_selection_buffer[0], ' ') &&
             strstr(fl_selection_buffer[0], "\r\n")) {
           // Send file/URI list...
-          fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-                               dndversion<<24, fl_XdndURIList, XA_STRING, 0);
+          fl_sendClientMessage(target_window, fl_XdndEnter, source_window, dndversion<<24,
+                               fl_XdndURIList, fl_XaUtf8String, XA_STRING);
         } else {
           // Send plain text...
-          fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-                               dndversion<<24, fl_XaUtf8String, 0, 0);
+          fl_sendClientMessage(target_window, fl_XdndEnter, source_window, dndversion<<24,
+                               fl_XaUtf8String, XA_STRING, 0);
         }
       }
     }

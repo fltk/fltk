@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_PicoAndroid_Graphics_Driver.h"
 
 #include <jni.h>

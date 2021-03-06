@@ -17,6 +17,3 @@ create_table: create_table.c
 
 clean:
 	rm -f *.o convert_map create_table conv_gen euc_tw
-
-
-

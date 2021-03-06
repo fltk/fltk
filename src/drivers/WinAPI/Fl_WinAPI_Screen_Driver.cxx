@@ -15,12 +15,12 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_Graphics_Driver.H>
+#include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
@@ -125,7 +125,7 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
-        goto way_out;
+        return;
       }
     }
   }
@@ -137,8 +137,6 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].right = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
-way_out:
-  desktop_scale_factor();
 }
 
 
@@ -146,10 +144,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  X = work_area[n].left/scale_of_screen[n];
-  Y = work_area[n].top/scale_of_screen[n];
-  W = (work_area[n].right - work_area[n].left)/scale_of_screen[n];
-  H = (work_area[n].bottom - work_area[n].top)/scale_of_screen[n];
+  X = int(work_area[n].left/scale_of_screen[n]);
+  Y = int(work_area[n].top/scale_of_screen[n]);
+  W = int((work_area[n].right - work_area[n].left)/scale_of_screen[n]);
+  H = int((work_area[n].bottom - work_area[n].top)/scale_of_screen[n]);
 }
 
 
@@ -161,10 +159,10 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].left/scale_of_screen[n];
-    Y = screens[n].top/scale_of_screen[n];
-    W = (screens[n].right - screens[n].left)/scale_of_screen[n];
-    H = (screens[n].bottom - screens[n].top)/scale_of_screen[n];
+    X = int(screens[n].left/scale_of_screen[n]);
+    Y = int(screens[n].top/scale_of_screen[n]);
+    W = int((screens[n].right - screens[n].left)/scale_of_screen[n]);
+    H = int((screens[n].bottom - screens[n].top)/scale_of_screen[n]);
   } else {
     /* Fallback if something is broken... */
     X = 0;
@@ -173,6 +171,16 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     H = GetSystemMetrics(SM_CYSCREEN);
   }
 }
+
+
+void Fl_WinAPI_Screen_Driver::screen_xywh_unscaled(int &X, int &Y, int &W, int &H, int n) {
+  if (num_screens < 0) init();
+  if ((n < 0) || (n >= num_screens)) n = 0;
+  X = screens[n].left;
+  Y = screens[n].top;
+  W = screens[n].right - screens[n].left;
+  H = screens[n].bottom - screens[n].top;
+};
 
 
 void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
@@ -491,20 +499,20 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
   int ws, hs;
-  if (int(s) == s) { ws = w * s; hs = h * s;}
+  if (int(s) == s) { ws = w * int(s); hs = h * int(s);}
   else {
-    ws = (w+1)*s; // matches what Fl_Graphics_Driver::cache_size() does
-    hs = (h+1)*s;
+    ws = Fl_GDI_Graphics_Driver::floor(w+1, s); // approximates what Fl_Graphics_Driver::cache_size() does
+    hs = Fl_GDI_Graphics_Driver::floor(h+1, s);
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs, win);
+  return read_win_rectangle_unscaled(Fl_GDI_Graphics_Driver::floor(X, s), Fl_GDI_Graphics_Driver::floor(Y, s), ws, hs, win);
 }
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
   // Depth of image is always 3 here
-  
+
   // Grab all of the pixels in the image...
 
   // Assure that we are not trying to read non-existing data. If it is so, the
@@ -528,7 +536,7 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
   }
 
   if (h < 1 || w < 1) return 0;            // nothing to copy
-  
+
   // Allocate and initialize the image data array
   size_t arraySize = ((size_t)w * h) * 3;
   uchar *p = new uchar[arraySize];

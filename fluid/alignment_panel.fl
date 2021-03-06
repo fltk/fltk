@@ -764,7 +764,7 @@ Default is on.} xywh {245 366 100 25} down_box BORDER_BOX
         }
       }
     }
-    
+
         Fl_Group {} {
       label {Scaling Factor Options} open
       xywh {10 421 380 66} box GTK_DOWN_BOX labelfont 2 align 21
@@ -797,7 +797,7 @@ Default is on.} xywh {245 442 100 25} down_box BORDER_BOX
         }
       }
     }
-    
+
     Fl_Choice wUserOrSystem {
       callback {refreshUI();} open
       tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default').} xywh {10 496 141 25} down_box BORDER_BOX

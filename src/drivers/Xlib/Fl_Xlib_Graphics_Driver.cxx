@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Xlib_Graphics_Driver.H"
 #include "Fl_Font.H"
 #include <FL/fl_draw.H>
@@ -39,6 +39,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 }
 
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
+int Fl_Xlib_Graphics_Driver::fl_overlay = 0;
 
 /* Reference to the current graphics context
  For back-compatibility only. The preferred procedure to get this pointer is
@@ -48,7 +49,6 @@ GC fl_gc = 0;
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
-  p_size = 0;
   p = NULL;
   line_delta_ = 0;
 #if USE_PANGO
@@ -86,7 +86,7 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
      Setting line_delta_ to 1 and offsetting all line, rectangle, text and clip
      coordinates by line_delta_ achieves what is wanted until scale_ <= 3.5.
      */
-    line_delta_ =  (scale() > 1.75 ? 1 : 0);
+    line_delta_ =  (scale() > 1.9/*1.75*/ ? 1 : 0);
   }
 #endif
 }

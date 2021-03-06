@@ -1,7 +1,7 @@
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
+#include <FL/platform.H>
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
@@ -216,7 +217,7 @@ int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {
 int Fl_WinAPI_System_Driver::open_ext(const char *fnam, int binary, int oflags, int pmode) {
   if (oflags == 0) oflags = _O_RDONLY;
   oflags |= (binary ? _O_BINARY : _O_TEXT);
-  return open(fnam, oflags, pmode);
+  return this->open(fnam, oflags, pmode);
 }
 
 FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
@@ -956,4 +957,68 @@ void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
   _ftime(&t);
   *sec = t.time;
   *usec = t.millitm * 1000;
+}
+
+//
+// Code for lock support
+//
+
+// These pointers are in Fl_win32.cxx:
+extern void (*fl_lock_function)();
+extern void (*fl_unlock_function)();
+
+// The main thread's ID
+static DWORD main_thread;
+
+// Microsoft's version of a MUTEX...
+static CRITICAL_SECTION cs;
+static CRITICAL_SECTION *cs_ring;
+
+void Fl_WinAPI_System_Driver::unlock_ring() {
+  LeaveCriticalSection(cs_ring);
+}
+
+void Fl_WinAPI_System_Driver::lock_ring() {
+  if (!cs_ring) {
+    cs_ring = (CRITICAL_SECTION*)malloc(sizeof(CRITICAL_SECTION));
+    InitializeCriticalSection(cs_ring);
+  }
+  EnterCriticalSection(cs_ring);
+}
+
+//
+// 'unlock_function()' - Release the lock.
+//
+
+static void unlock_function() {
+  LeaveCriticalSection(&cs);
+}
+
+//
+// 'lock_function()' - Get the lock.
+//
+
+static void lock_function() {
+  EnterCriticalSection(&cs);
+}
+
+int Fl_WinAPI_System_Driver::lock() {
+  if (!main_thread) InitializeCriticalSection(&cs);
+
+  lock_function();
+
+  if (!main_thread) {
+    fl_lock_function   = lock_function;
+    fl_unlock_function = unlock_function;
+    main_thread        = GetCurrentThreadId();
+  }
+  return 0;
+}
+
+void Fl_WinAPI_System_Driver::unlock() {
+  unlock_function();
+}
+
+void Fl_WinAPI_System_Driver::awake(void* msg) {
+  PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
 }

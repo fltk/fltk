@@ -415,7 +415,7 @@ void dobut(Fl_Widget *, long arg) {
                             NULL, &suInfo, &prInfo);
   if (!stat) {
     DWORD err = GetLastError();
-    fl_alert("Error starting process, error #%d\n'%s'", err, command);
+    fl_alert("Error starting process, error #%lu\n'%s'", err, command);
   }
 
 #elif defined __APPLE__

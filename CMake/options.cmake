@@ -145,37 +145,63 @@ if (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 endif (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 
 #######################################################################
-include (FindPkgConfig)
+# Include optional Cairo support
+#######################################################################
 
 option (OPTION_CAIRO "use lib Cairo" OFF)
 option (OPTION_CAIROEXT
   "use FLTK code instrumentation for Cairo extended use" OFF
 )
 
-if ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
+set (FLTK_HAVE_CAIRO 0)
+set (FLTK_USE_CAIRO 0)
+
+if (OPTION_CAIRO OR OPTION_CAIROEXT)
   pkg_search_module (PKG_CAIRO cairo)
-endif ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
 
-if (PKG_CAIRO_FOUND)
-  set (FLTK_HAVE_CAIRO 1)
-  add_subdirectory (cairo)
-  list (APPEND FLTK_LDLIBS -lcairo -lpixman-1)
-  include_directories (${PKG_CAIRO_INCLUDE_DIRS})
-  string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
+  # fl_debug_var (PKG_CAIRO_FOUND)
 
-  if (LIB_CAIRO AND OPTION_CAIROEXT)
-    set (FLTK_USE_CAIRO 1)
-    set (FLTK_CAIRO_FOUND TRUE)
+  if (PKG_CAIRO_FOUND)
+    set (FLTK_HAVE_CAIRO 1)
+    if (OPTION_CAIROEXT)
+      set (FLTK_USE_CAIRO 1)
+    endif (OPTION_CAIROEXT)
+    add_subdirectory (cairo)
+
+    # fl_debug_var (PKG_CAIRO_INCLUDE_DIRS)
+    # fl_debug_var (PKG_CAIRO_CFLAGS)
+    # fl_debug_var (PKG_CAIRO_STATIC_CFLAGS)
+    # fl_debug_var (PKG_CAIRO_LIBRARIES)
+    # fl_debug_var (PKG_CAIRO_STATIC_LIBRARIES)
+
+    include_directories (${PKG_CAIRO_INCLUDE_DIRS})
+
+    # Cairo libs and flags for fltk-config
+
+    # Hint: use either PKG_CAIRO_* or PKG_CAIRO_STATIC_* variables to
+    # create the list of libraries used to link programs with cairo
+    # by running fltk-config --use-cairo --compile ...
+    # Currently we're using the non-STATIC variables to link cairo shared.
+
+    set (CAIROLIBS)
+    foreach (lib ${PKG_CAIRO_LIBRARIES})
+      list (APPEND CAIROLIBS "-l${lib}")
+    endforeach()
+
+    string (REPLACE ";" " " CAIROLIBS  "${CAIROLIBS}")
+    string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
+
+    # fl_debug_var (FLTK_LDLIBS)
+    # fl_debug_var (CAIROFLAGS)
+    # fl_debug_var (CAIROLIBS)
+
   else ()
-    set (FLTK_CAIRO_FOUND FALSE)
-  endif (LIB_CAIRO AND OPTION_CAIROEXT)
-else ()
-  if (OPTION_CAIRO OR OPTION_CAIROEXT)
     message (STATUS "*** Cairo was requested but not found - please check your cairo installation")
     message (STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
     message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
-  endif (OPTION_CAIRO OR OPTION_CAIROEXT)
-endif (PKG_CAIRO_FOUND)
+  endif (PKG_CAIRO_FOUND)
+
+endif (OPTION_CAIRO OR OPTION_CAIROEXT)
 
 #######################################################################
 option (OPTION_USE_SVG "read/write SVG files" ON)
@@ -485,6 +511,7 @@ if (X11_Xft_FOUND AND OPTION_USE_PANGO)
   if (APPLE AND OPTION_APPLE_X11)
     find_file(FINK_PREFIX NAMES /opt/sw /sw)
     list (APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
+    include_directories (${FINK_PREFIX}/include/cairo)
     list (APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
   endif (APPLE AND OPTION_APPLE_X11)
   find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})

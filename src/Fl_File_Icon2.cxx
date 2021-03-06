@@ -240,7 +240,7 @@ Fl_File_Icon::load_fti(const char *fti) // I - File to read from
     else if (strcmp(command, "bgnoutlinepolygon") == 0)
     {
       add(OUTLINEPOLYGON);
-      outline = add(0) - data_;
+      outline = int(add(0) - data_);
       add(0);
     }
     else if (strcmp(command, "endoutlinepolygon") == 0 && outline)
@@ -408,7 +408,7 @@ int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
     ptr = img->data();
     sscanf(*ptr, "%*d%*d%d%d", &ncolors, &chars_per_color);
 
-    colors = new Fl_Color[1 << (chars_per_color * 8)];
+    colors = new Fl_Color[int(1 << (chars_per_color * 8))];
 
     // Read the colormap...
     memset(colors, 0, sizeof(Fl_Color) << (chars_per_color * 8));

@@ -4,7 +4,7 @@
 
 This chapter covers the drawing functions that are provided with FLTK.
 
-\section sect_WhenCanYouDraw When Can You Draw Things in FLTK?
+\section drawing_WhenCanYouDraw When Can You Draw Things in FLTK?
 
 There are only certain places you can execute FLTK code
 that draws to the computer's display.
@@ -35,20 +35,20 @@ these will operate on the new current drawing surface;
 Fl_Surface_Device::pop_current().
 </ol>
 
-\subsection ssect_DrawingUnit What Drawing Unit do FLTK drawing functions use?
+\section drawing_DrawingUnit What Drawing Units Do FLTK Drawing Functions Use?
 
-Before version 1.4, all graphical quantities used by FLTK are in pixel units:
-a window of width 500 units is 500-pixel wide, a line of length 10 units is
-10-pixel long, lines of text written using a 14-point font are 14 pixels below
-each other. This organization is not sufficient to support GUI apps that can be drawn on
-screens of varying pixel density, especially on High-DPI screens, because
+Before version 1.4 all graphical quantities used by FLTK were in pixel units:
+a window of width 500 units was 500 pixels wide, a line of length 10 units was
+10 pixels long, lines of text written using a 14-point font were 14 pixels below
+each other. This organization is not sufficient to support GUI apps that can be
+drawn on screens of varying pixel density, especially on High-DPI screens, because
 widgets become very small and text becomes unreadable.
 
 FLTK version 1.4 introduces a new feature, a screen-specific <b>scale factor</b> which is
 a float number with a typical value in the 1-2.5 range and is used as follows: any graphical
 element with an FLTK value of \e v units is drawn on the screen with \e v * \e scale units.
-Thus, a window with width 500 units is 500*scale-pixel wide, a line of length 10 units is
-10*scale-pixel long, lines of text written using a 14-point font are 14*scale pixels below
+Thus, a window with width 500 units is 500*scale pixels wide, a line of length 10 units is
+10*scale pixels long, lines of text written using a 14-point font are 14*scale pixels below
 each other. Consider a system with two screens, one with regular DPI and one with
 a twice higher DPI. If the first screen's scale factor is set to 1 and that of the
 second screen to 2, the GUI of any FLTK app appears equally sized on the two screens.
@@ -60,12 +60,14 @@ clipping regions) are in <b>FLTK units</b> which are both system- and DPI-indepe
 expressed in FLTK units by the current value of the scale factor
 for the screen in use and obtains quantities in <b>drawing units</b>.
 The current scale factor value, for an Fl_Window named \e window, is given by
+
 \code
-int nscreen = window->screen_num(); // the screen where window is mapped
-float s = Fl::screen_scale(nscreen); // this screen's scale factor
+  int nscreen = window->screen_num();  // the screen where window is mapped
+  float s = Fl::screen_scale(nscreen); // this screen's scale factor
 \endcode
-One drawing unit generally corresponds to one screen pixel...
-<li>...but not on Mac OS X and for retina displays, where one drawing unit corresponds
+
+One drawing unit generally corresponds to one screen pixel ...
+<li>... but not on macOS and for retina displays, where one drawing unit corresponds
 to two pixels.
 </ul>
 
@@ -79,7 +81,7 @@ it's possible to set the
 it's possible to change the scale factor value of any screen at run time
 with ctrl/+/-/0/ keystrokes which enlarge, shrink, and reset, respectively,
 all FLTK windows on a screen and their content.
-Under Mac OS X, the corresponding GUI scaling shortcuts are ⌘/+/-/0/.
+Under macOS, the corresponding GUI scaling shortcuts are ⌘/+/-/0/.
 
 GUI rescaling involves also image drawing: the screen area covered by the drawn image
 contains a number of pixels that grows with the scale factor. When FLTK draws images,
@@ -107,28 +109,28 @@ When drawing to Fl_Printer or Fl_PostScript_File_Device, the drawing unit
 is initially one point, that is, 1/72 of an inch. This unit is changed
 by calls to Fl_Paged_Device::scale().
 
-\section sect_DrawingFunctions Drawing Functions
+\section drawing_DrawingFunctions Drawing Functions
 
 To use the drawing functions you must first include the <FL/fl_draw.H>
 header file. FLTK provides the following types of drawing functions:
 
-\li \ref ssect_Boxes
-\li \ref ssect_Clipping
+\li \ref drawing_boxes
+\li \ref drawing_clipping
 \li \ref drawing_colors
-\li \ref ssect_Lines
-\li \ref ssect_Fast
-\li \ref ssect_Complex
-\li \ref ssect_Text
-\li \ref ssect_Fonts
-\li \ref ssect_CharacterEncoding
-\li \ref ssect_Overlay
+\li \ref drawing_lines
+\li \ref drawing_fast
+\li \ref drawing_complex
+\li \ref drawing_text
+\li \ref drawing_fonts
+\li \ref drawing_character_encoding
+\li \ref drawing_overlay
 \li \ref drawing_images
-\li \ref ssect_DirectImageDrawing
-\li \ref ssect_DirectImageReading
-\li \ref ssect_Fl_Image
-\li \ref ssect_Offscreen
+\li \ref drawing_direct_image_drawing
+\li \ref drawing_direct_image_reading
+\li \ref drawing_Fl_Image
+\li \ref drawing_offscreen
 
-\subsection ssect_Boxes Boxes
+\subsection drawing_boxes Boxes
 
 FLTK provides three functions that can be used to draw boxes for buttons
 and other UI controls. Each function uses the supplied upper-lefthand corner
@@ -166,12 +168,12 @@ Note that
 is described in the \ref common_boxtypes section.
 
 
-\subsection ssect_Clipping Clipping
+\subsection drawing_clipping Clipping
 
 You can limit all your drawing to a rectangular region by calling
 \p %fl_push_clip(), and put the drawings back by using
 \p %fl_pop_clip().
-This rectangle is measured in \ref ssect_DrawingUnit "FLTK units" and is unaffected by the current
+This rectangle is measured in \ref drawing_DrawingUnit "FLTK units" and is unaffected by the current
 transformation matrix.
 
 In addition, the system may provide clipping when updating windows
@@ -235,7 +237,7 @@ Fl_Region is an operating system specific type. The second form returns
 the current clipping region.
 
 
-\section drawing_colors Colors
+\subsection drawing_colors Colors
 
 FLTK manages colors as 32-bit unsigned integers, encoded as RGBI.
 When the "RGB" bytes are non-zero, the value is treated as RGB.
@@ -243,21 +245,19 @@ If these bytes are zero, the "I" byte will be used as an index
 into the colormap. Colors with both "RGB" set and an "I" >0
 are reserved for special use.
 
-Values from 0 to 255, i.e. the "I" index value, represent
-colors from the FLTK 1.3.x standard colormap
-and are allocated as needed on screens without TrueColor support.
-The \b Fl_Color enumeration type defines the
+Values from 0 to 255, i.e. the "I" index value, represent colors from the
+FLTK standard colormap and are allocated as needed on screens without
+TrueColor support. The \b Fl_Color enumeration type defines the
 standard colors and color cube for the first 256 colors. All of
 these are named with symbols in
 \ref enumerations "<FL/Enumerations.H>". Example:
 
-\image html fltk-colormap.png "Figure 8.1: FLTK default colormap (Fl_Color 0x00 - 0xff)"
+\image html  fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)"
 \image latex fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)" width=6cm
 
-Color values greater than 255 are treated as 24-bit RGB
-values. These are mapped to the closest color supported by the
-screen, either from one of the 256 colors in the FLTK 1.3.x
-colormap or a direct RGB value on TrueColor screens.
+Color values greater than 255 are treated as 24-bit RGB values. These are mapped
+to the closest color supported by the screen, either from one of the 256 colors
+in the FLTK colormap or a direct RGB value on TrueColor screens.
 
 Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) <br>
 Fl_Color fl_rgb_color(uchar grayscale)
@@ -362,7 +362,7 @@ button->color(0xffffff00);                  // RGB: white
 If TrueColor is not available, any RGB colors will be set to
 the nearest entry in the colormap.
 
-\subsection ssect_Lines Line Dashes and Thickness
+\subsection drawing_lines Line Dashes and Thickness
 
 FLTK supports drawing of lines with different styles and
 widths. Full functionality is not available under Windows 95, 98,
@@ -403,13 +403,13 @@ system-defined default of whatever value is fastest.
 \li <tt>FL_JOIN_BEVEL</tt> (flat)
 
 \par
-\p width is the number of \ref ssect_DrawingUnit "FLTK units" thick to draw the lines.
+\p width is the number of \ref drawing_DrawingUnit "FLTK units" thick to draw the lines.
 Zero results in the system-defined default, which on both X and
 Windows is somewhat different and nicer than 1.
 
 \par
 \p dashes is a pointer to an array of dash lengths, measured in
-\ref ssect_DrawingUnit "FLTK units".  The first location is how long to draw a solid portion, the
+\ref drawing_DrawingUnit "FLTK units".  The first location is how long to draw a solid portion, the
 next is how long to draw the gap, then the solid, etc.  It is
 terminated with a zero-length entry. A \p NULL pointer or a zero-length
 array results in a solid line. Odd array sizes are not supported and
@@ -421,13 +421,13 @@ The dashes array does not work under Windows 95, 98, or Me, since those
 operating systems do not support complex line styles.
 
 
-\subsection ssect_Fast Drawing Fast Shapes
+\subsection drawing_fast Drawing Fast Shapes
 
 These functions are used to draw almost all the FLTK widgets.
 They draw on exact pixel boundaries and are as fast as possible.
 Their behavior is duplicated exactly on all platforms FLTK is
 ported. It is undefined whether these are affected by the
-\ref ssect_Complex "transformation matrix",
+\ref drawing_complex "transformation matrix",
 so you should only call these while the matrix is set to the
 identity matrix (the default).
 
@@ -511,7 +511,7 @@ box. The two angles are measured in degrees counter-clockwise from
 must be greater or equal to \p a1.
 
 \par
-\image html  fl_pie_arc_diagram.png "Figure 8.1: fl_pie() and fl_arc()"
+\image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
 \image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=6cm
 
 \par
@@ -530,11 +530,11 @@ void \ref fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area
 \par
 Scroll a rectangle and draw the newly exposed portions. The contents
 of the rectangular area is first shifted by \p dx and
-\p dy \ref ssect_DrawingUnit "FLTK units". The callback is then called for every newly
+\p dy \ref drawing_DrawingUnit "FLTK units". The callback is then called for every newly
 exposed rectangular area,
 
 
-\subsection ssect_Complex Drawing Complex Shapes
+\subsection drawing_complex Drawing Complex Shapes
 
 The complex drawing functions let you draw arbitrary shapes
 with 2-D linear transformations. The functionality matches that
@@ -654,7 +654,7 @@ If \p end is less than \p start then it draws the arc in a clockwise
 direction.
 
 \par
-\image html  fl_arc_xyr_diagram.png "Figure 8.3: fl_arc(x,y,r,a1,a2)"
+\image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
 \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
 
 void fl_circle(double x, double y, double r)
@@ -669,7 +669,7 @@ a circle as part of a complex polygon you must use \p %fl_arc().
 \p %fl_circle() draws incorrectly if the transformation is both rotated and
 non-square scaled.
 
-\subsection ssect_Text Drawing Text
+\subsection drawing_text Drawing Text
 
 All text is drawn in the
 \ref drawing_fl_font "current font".
@@ -767,7 +767,7 @@ Determines the minimum dimensions of a nul-terminated string,
 ie. the 'inked area'.
 \par
 Given a string "txt" drawn using fl_draw(txt, x, y) you would determine
-its extents in \ref ssect_DrawingUnit "FLTK units" on the display using fl_text_extents(txt, dx, dy, wo, ho)
+its extents in \ref drawing_DrawingUnit "FLTK units" on the display using fl_text_extents(txt, dx, dy, wo, ho)
 such that a bounding box that exactly fits around the inked area of the text
 could be drawn with fl_rect(x+dx, y+dy, wo, ho).
 \par
@@ -786,7 +786,7 @@ key. If the shortcut is zero an empty string is returned. The
 return value points at a static buffer that is overwritten with
 each call.
 
-\subsection ssect_Fonts Fonts
+\subsection drawing_fonts Fonts
 
 FLTK supports a set of standard fonts based on the Times,
 Helvetica/Arial, Courier, and Symbol typefaces, as well as
@@ -821,7 +821,7 @@ the display.
 
 \par
 The font is identified by a \p face and a \p size.
-The size of the font is measured in \ref ssect_DrawingUnit "FLTK units" and not "points".
+The size of the font is measured in \ref drawing_DrawingUnit "FLTK units" and not "points".
 Lines should be spaced \p size FLTK units apart or more.
 
 int fl_font() <br>
@@ -831,10 +831,10 @@ int fl_size()
 Returns the face and size set by the most recent call to
 \p fl_font(a,b). This can be used to save/restore the font.
 
-\subsection ssect_CharacterEncoding Character Encoding
+\subsection drawing_character_encoding Character Encoding
 
-FLTK 1.3 expects all text in Unicode UTF-8 encoding. UTF-8 is
-ASCII compatible for the first 128 characters. International
+FLTK 1.3 and later versions expect all text in Unicode UTF-8 encoding.
+UTF-8 is ASCII compatible for the first 128 characters. International
 characters are encoded in multibyte sequences.
 
 FLTK expects individual characters, characters that are not part of
@@ -855,7 +855,7 @@ left-to-right scripts only.
 For more information about character encodings, see the chapter on
 \ref unicode.
 
-\subsection ssect_Overlay Drawing Overlays
+\subsection drawing_overlay Drawing Overlays
 
 These functions allow you to draw interactive selection rectangles
 without using the overlay hardware. FLTK will XOR a single rectangle
@@ -890,7 +890,7 @@ advantage of using the object is that FLTK will cache translated
 forms of the image (on X it uses a server pixmap) and thus
 redrawing is \e much faster.
 
-\subsection ssect_DirectImageDrawing Direct Image Drawing
+\subsection drawing_direct_image_drawing Direct Image Drawing
 
 The behavior when drawing images when the current
 transformation matrix is not the identity is not defined, so you
@@ -1010,7 +1010,7 @@ function finds and returns the width and height. The return
 value is non-zero if the dimensions were parsed ok and zero if
 there was any problem.
 
-\subsection ssect_DirectImageReading Direct Image Reading
+\subsection drawing_direct_image_reading Direct Image Reading
 
 FLTK provides a single function for reading from the current
 window or off-screen buffer into a RGB(A) image buffer.
@@ -1030,7 +1030,7 @@ The \p alpha parameter controls whether an alpha
 channel is created and the value that is placed in the alpha
 channel. If 0, no alpha channel is generated.
 
-\subsection ssect_Fl_Image Image Classes
+\subsection drawing_Fl_Image Image Classes
 
 FLTK provides a base image class called Fl_Image which supports
 creating, copying, and drawing images of various kinds, along
@@ -1124,21 +1124,47 @@ Draws the image with the upper-left corner at <tt>x, y</tt>.
 This is the same as doing <tt>img->draw(x, y, img->w(), img->h(), 0, 0)</tt>
 where img is a pointer to any Fl_Image type.
 
-\subsection ssect_Offscreen Offscreen Drawing
+\section drawing_offscreen Offscreen Drawing
 
 Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in
 time. This technique can significantly reduce the amount of repeated
 drawing. Offscreen drawing functions are declared in <FL/fl_draw.H>.
 
-Fl_Double_Window uses offscreen rendering to avoid flickering on
-systems that don't support double-buffering natively.
+Fl_Double_Window uses offscreen rendering to avoid flickering on systems
+that don't support double-buffering natively.
+
+FLTK can draw into an offscreen buffer at any time. There is no need to
+wait for an Fl_Widget::draw() to occur.
+
+\note In FLTK 1.3.x and earlier versions all offscreen drawing functions
+described below were implemented as macros and created certain temporary
+variables to save context information. You needed to create local scope
+blocks with curly braces { ... } if you used offscreen functions more than
+once in a function or method. This is no longer necessary since offscreen
+drawing is now implemented in real functions (no macros).
+
+Example:
+\code
+  Fl_Offscreen oscr = fl_create_offscreen(120, 120);
+  fl_begin_offscreen(oscr);
+  fl_color(FL_WHITE);
+  fl_rectf(0, 0, 120, 120);
+  fl_end_offscreen();
+  // other code here
+  fl_begin_offscreen(oscr);
+  fl_color(FL_BLACK);
+  fl_rectf(10, 10, 100, 100);
+  fl_end_offscreen();
+  // other code here
+  fl_delete_offscreen(oscr);
+\endcode
 
 Fl_Offscreen fl_create_offscreen(int w, int h)
 
 \par
 Create an RGB offscreen buffer containing as many pixels as in a screen area
-of size \p w,h \ref ssect_DrawingUnit "FLTK units".
+of size \p w,h \ref drawing_DrawingUnit "FLTK units".
 
 void fl_delete_offscreen(Fl_Offscreen)
 
@@ -1149,8 +1175,6 @@ void fl_begin_offscreen(Fl_Offscreen)
 
 \par
 Send all subsequent drawing commands to this offscreen buffer.
-FLTK can draw into a buffer at any time. There is no need to wait for
-an Fl_Widget::draw() to occur.
 
 void fl_end_offscreen()
 

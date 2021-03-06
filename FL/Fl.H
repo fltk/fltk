@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -170,34 +170,6 @@ public:
     \since 1.4.0
   */
   static void box_border_radius_max(int R) { box_border_radius_max_ = R < 5 ? 5 : R; }
-
-public: // run time information about compile time configuration
-  /** \defgroup cfg_gfx runtime graphics driver configuration */
-  /** @{ */
-  static bool cfg_gfx_xlib;   ///< X11 Xlib rendering available, usually on Linux systems
-  static bool cfg_gfx_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_gfx_gdi;    ///< GDI rendering available, usually on Windows systems
-  static bool cfg_gfx_opengl; ///< OpenGL rendering available, available on many platforms
-  static bool cfg_gfx_cairo;  ///< Cairo rendering available, available on many platforms
-  static bool cfg_gfx_directx;///< DirectX rendering available, usually on Windows systems
-  /** @} */
-  /** \defgroup cfg_prn runtime printer driver configuration */
-  /** @{ */
-  static bool cfg_prn_ps;     ///< PostScript rendering available, usually on Linux systems
-  static bool cfg_prn_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_prn_gdi;    ///< GDI rendering available, usually on Windows systems
-  /** @} */
-  /** \defgroup cfg_win runtime window and event manager configuration */
-  /** @{ */
-  static bool cfg_win_x11;    ///< X11 window management available, usually on Linux systems
-  static bool cfg_win_cocoa;  ///< Cocoa window management available, usually on OS X systems
-  static bool cfg_win_win32;  ///< Windows window management available, on low level Windows
-  /** @} */
-  /** \defgroup cfg_sys runtime system configuration */
-  /** @{ */
-  static bool cfg_sys_posix;  ///< Posix system available, usually on Linux and OS X systems, but also Cygwin
-  static bool cfg_sys_win32;  ///< Windows system available, on Windows
-  /** @} */
 
 public: // should be private!
 
@@ -816,7 +788,8 @@ int main() {
         character use the value of that ASCII character (as though shift,
         ctrl, and caps lock were not on). The space bar is 32.
     \li All keys on the numeric keypad producing a printable ASCII
-        character use the value of that ASCII character plus FL_KP.
+        character use the value of that ASCII character plus FL_KP
+        (e.g., FL_KP + '4', FL_KP + '/').
         The highest possible value is FL_KP_Last so you can
         range-check to see if something is  on the keypad.
     \li All numbered function keys use the number on the function key plus

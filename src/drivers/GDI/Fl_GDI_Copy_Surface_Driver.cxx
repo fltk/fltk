@@ -14,9 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_GDI
+#include <config.h>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/platform.H>
 #include "Fl_GDI_Graphics_Driver.H"
@@ -77,7 +75,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
       SetClipboardData (CF_ENHMETAFILE, hmf);
       // then put a BITMAP version of the graphics in the clipboard
       float scaling = driver()->scale();
-      int W = width * scaling, H = height * scaling;
+      int W = Fl_GDI_Graphics_Driver::floor(width, scaling), H = Fl_GDI_Graphics_Driver::floor(height, scaling);
       RECT rect = {0, 0, W, H};
       Fl_Image_Surface *surf = new Fl_Image_Surface(W, H);
       Fl_Surface_Device::push_current(surf);
@@ -113,4 +111,3 @@ void Fl_GDI_Copy_Surface_Driver::translate(int x, int y) {
 void Fl_GDI_Copy_Surface_Driver::untranslate() {
   ((Fl_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
-#endif // FL_CFG_GFX_GDI

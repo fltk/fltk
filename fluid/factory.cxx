@@ -188,8 +188,7 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -236,8 +235,7 @@ public:
     w -= Fl::box_dw(o->box()) - fl_height();
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -311,8 +309,7 @@ public:
     w -= Fl::box_dw(o->box()) + fl_height();
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -403,7 +400,8 @@ public:
   virtual const char *alt_type_name() {return "fltk::Spinner";}
   int is_spinner() const { return 1; }
   Fl_Widget *widget(int x,int y,int w,int h) {
-    return new Fl_Spinner(x,y,w,h,"spinner:");}
+    return new Fl_Spinner(x,y,w,h,"spinner:");
+  }
   Fl_Widget_Type *_make() {return new Fl_Spinner_Type();}
 };
 static Fl_Spinner_Type Fl_Spinner_type;
@@ -532,8 +530,7 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -574,8 +571,7 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-    Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -654,8 +650,7 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
-    h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    h = ((h + fl_height() - 1) / fl_height()) * fl_height() + Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }

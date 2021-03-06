@@ -1,7 +1,7 @@
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,10 +41,6 @@ static void next_tab_cb(Fl_Widget *, void *data);
 static void move_tab_cb(Fl_Widget *, void *data);
 static void merge_all_windows_cb(Fl_Widget *, void *data);
 #endif
-
-Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
-  return Fl_MacOS_Sys_Menu_Bar_Driver::driver();
-}
 
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::draw() {

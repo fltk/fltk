@@ -131,8 +131,8 @@ void triagnormal(float v1[3], float v2[3], float v3[3], float norm[3])
 
 float xzlength(float v1[3], float v2[3])
 {
-  return sqrt((v1[0] - v2[0])*(v1[0] - v2[0]) +
-              (v1[2] - v2[2])*(v1[2] - v2[2]));
+  return sqrtf((v1[0] - v2[0])*(v1[0] - v2[0]) +
+               (v1[2] - v2[2])*(v1[2] - v2[2]));
 }
 
 float xzslope(float v1[3], float v2[3])
@@ -173,7 +173,7 @@ void InitRandTable(unsigned int seed)
 
   srand48((long) seed);
   for (i = 0; i < NUMRANDS; i++)
-    RandTable[i] = drand48() - 0.5;
+    RandTable[i] = drand48() - 0.5f;
 }
 
   /* calculate midpoint and displace it if required */
@@ -234,8 +234,8 @@ void FractalMountain(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3],
                      int pegged[3])
 {
   GLfloat lengths[MAXLEVEL];
-  GLfloat fraction[8] = { 0.3, 0.3, 0.4, 0.2, 0.3, 0.2, 0.4, 0.4  };
-  GLfloat bias[8]     = { 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1  };
+  GLfloat fraction[8] = { 0.3f, 0.3f, 0.4f, 0.2f, 0.3f, 0.2f, 0.4f, 0.4f  };
+  GLfloat bias[8]     = { 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f  };
   int i;
   float avglen = (xzlength(v1, v2) +
                   xzlength(v2, v3) +
@@ -288,7 +288,7 @@ void CreateMountain(void)
    */
 void NewMountain(void)
 {
-  InitRandTable(time(NULL));
+  InitRandTable((unsigned int)time(NULL));
 }
 
 /***************************************************************/
@@ -311,28 +311,28 @@ void FractalTree(int level, long level_seed)
   } else {
     glCallList(STEM);
     glPushMatrix();
-    glRotatef(drand48()*180, 0, 1, 0);
-    glTranslatef(0, 1, 0);
-    glScalef(0.7, 0.7, 0.7);
+    glRotatef(drand48()*180.0f, 0.0f, 1.0f, 0.0f);
+    glTranslatef(0.0f, 1.0f, 0.0f);
+    glScalef(0.7f, 0.7f, 0.7f);
 
       srand48(level_seed+1);
       glPushMatrix();
-        glRotatef(110 + drand48()*40, 0, 1, 0);
-        glRotatef(30 + drand48()*20, 0, 0, 1);
+        glRotatef(110.0f + drand48()*40.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef( 30.0f + drand48()*20.0f, 0.0f, 0.0f, 1.0f);
         FractalTree(level + 1, level_seed+4);
       glPopMatrix();
 
       srand48(level_seed+2);
       glPushMatrix();
-        glRotatef(-130 + drand48()*40, 0, 1, 0);
-        glRotatef(30 + drand48()*20, 0, 0, 1);
+        glRotatef(-130.0f + drand48()*40.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef(  30.0f + drand48()*20.0f, 0.0f, 0.0f, 1.0f);
         FractalTree(level + 1, level_seed+5);
       glPopMatrix();
 
       srand48(level_seed+3);
       glPushMatrix();
-        glRotatef(-20 + drand48()*40, 0, 1, 0);
-        glRotatef(30 + drand48()*20, 0, 0, 1);
+        glRotatef(-20.0f + drand48()*40.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef( 30.0f + drand48()*20.0f, 0.0f, 0.0f, 1.0f);
         FractalTree(level + 1, level_seed+6);
       glPopMatrix();
 
@@ -350,22 +350,22 @@ void CreateTreeLists(void)
 
   glNewList(STEM, GL_COMPILE);
   glPushMatrix();
-    glRotatef(-90, 1, 0, 0);
+    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     gluCylinder(cylquad, 0.1, 0.08, 1, 10, 2 );
   glPopMatrix();
   glEndList();
 
   glNewList(LEAF, GL_COMPILE);  /* I think this was jeff allen's leaf idea */
     glBegin(GL_TRIANGLES);
-      glNormal3f(-0.1, 0, 0.25);  /* not normalized */
-      glVertex3f(0, 0, 0);
-      glVertex3f(0.25, 0.25, 0.1);
-      glVertex3f(0, 0.5, 0);
+      glNormal3f(-0.1f, 0.00f, 0.25f);  /* not normalized */
+      glVertex3f( 0.0f, 0.00f, 0.00f);
+      glVertex3f(0.25f, 0.25f, 0.10f);
+      glVertex3f(0.00f, 0.50f, 0.00f);
 
-      glNormal3f(0.1, 0, 0.25);
-      glVertex3f(0, 0, 0);
-      glVertex3f(0, 0.5, 0);
-      glVertex3f(-0.25, 0.25, 0.1);
+      glNormal3f( 0.10f, 0.00f, 0.25f);
+      glVertex3f( 0.00f, 0.00f, 0.00f);
+      glVertex3f( 0.00f, 0.50f, 0.00f);
+      glVertex3f(-0.25f, 0.25f, 0.10f);
     glEnd();
   glEndList();
 
@@ -375,16 +375,16 @@ void CreateTreeLists(void)
     glCallList(STEM);
     glCallList(LEAF_MAT);
     for(i = 0; i < 3; i++) {
-      glTranslatef(0, 0.333, 0);
-      glRotatef(90, 0, 1, 0);
+      glTranslatef(0.0f, 0.333f, 0.0f);
+      glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
       glPushMatrix();
-        glRotatef(0, 0, 1, 0);
-        glRotatef(50, 1, 0, 0);
+        glRotatef( 0.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef(50.0f, 1.0f, 0.0f, 0.0f);
         glCallList(LEAF);
       glPopMatrix();
       glPushMatrix();
-        glRotatef(180, 0, 1, 0);
-        glRotatef(60, 1, 0, 0);
+        glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef( 60.0f, 1.0f, 0.0f, 0.0f);
         glCallList(LEAF);
       glPopMatrix();
     }
@@ -418,7 +418,7 @@ void CreateTree(void)
   */
 void NewTree(void)
 {
-  TreeSeed = time(NULL);
+  TreeSeed = long(time(NULL));  // use time() as random seed
 }
 
 /***************************************************************/
@@ -427,7 +427,7 @@ void NewTree(void)
 
 void CreateIsland(void)
 {
-  cutoff = .06;
+  cutoff = .06f;
   CreateMountain();
   cutoff = -1;
   glNewList(ISLAND, GL_COMPILE);
@@ -437,39 +437,39 @@ void CreateIsland(void)
     glCallList(WATER_MAT);
 
     glBegin(GL_QUADS);
-      glNormal3f(0, 1, 0);
-      glVertex3f(10, 0.01, 10);
-      glVertex3f(10, 0.01, -10);
-      glVertex3f(-10, 0.01, -10);
-      glVertex3f(-10, 0.01, 10);
+      glNormal3f(  0.0f, 1.00f,   0.0f);
+      glVertex3f( 10.0f, 0.01f,  10.0f);
+      glVertex3f( 10.0f, 0.01f, -10.0f);
+      glVertex3f(-10.0f, 0.01f, -10.0f);
+      glVertex3f(-10.0f, 0.01f,  10.0f);
     glEnd();
 
     glPushMatrix();
-    glTranslatef(0, -0.1, 0);
+    glTranslatef(0.0f, -0.1f, 0.0f);
     glCallList(MOUNTAIN);
     glPopMatrix();
 
     glPushMatrix();
-    glRotatef(135, 0, 1, 0);
-    glTranslatef(0.2, -0.15, -0.4);
+    glRotatef(135.0f, 0.0f, 1.0f, 0.0f);
+    glTranslatef(0.2f, -0.15f, -0.4f);
     glCallList(MOUNTAIN);
     glPopMatrix();
 
     glPushMatrix();
-    glRotatef(-60, 0, 1, 0);
-    glTranslatef(0.7, -0.07, 0.5);
+    glRotatef(-60.0f, 0.0f, 1.0f, 0.0f);
+    glTranslatef(0.7f, -0.07f, 0.5f);
     glCallList(MOUNTAIN);
     glPopMatrix();
 
     glPushMatrix();
-    glRotatef(-175, 0, 1, 0);
-    glTranslatef(-0.7, -0.05, -0.5);
+    glRotatef(-175.0f, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-0.7f, -0.05f, -0.5f);
     glCallList(MOUNTAIN);
     glPopMatrix();
 
     glPushMatrix();
-    glRotatef(165, 0, 1, 0);
-    glTranslatef(-0.9, -0.12, 0.0);
+    glRotatef(165.0f, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-0.9f, -0.12f, 0.0f);
     glCallList(MOUNTAIN);
     glPopMatrix();
 
@@ -509,21 +509,21 @@ void Create(int fract)
 
 void SetupMaterials(void)
 {
-  GLfloat mtn_ambuse[] =   { 0.426, 0.256, 0.108, 1.0 };
-  GLfloat mtn_specular[] = { 0.394, 0.272, 0.167, 1.0 };
-  GLfloat mtn_shininess[] = { 10 };
+  GLfloat mtn_ambuse[] =    {  0.426f, 0.256f, 0.108f, 1.0f };
+  GLfloat mtn_specular[] =  {  0.394f, 0.272f, 0.167f, 1.0f };
+  GLfloat mtn_shininess[] = { 10.0f };
 
-  GLfloat water_ambuse[] =   { 0.0, 0.1, 0.5, 1.0 };
-  GLfloat water_specular[] = { 0.0, 0.1, 0.5, 1.0 };
-  GLfloat water_shininess[] = { 10 };
+  GLfloat water_ambuse[] =    {  0.0f, 0.1f, 0.5f, 1.0f };
+  GLfloat water_specular[] =  {  0.0f, 0.1f, 0.5f, 1.0f };
+  GLfloat water_shininess[] = { 10.0f };
 
-  GLfloat tree_ambuse[] =   { 0.4, 0.25, 0.1, 1.0 };
-  GLfloat tree_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-  GLfloat tree_shininess[] = { 0 };
+  GLfloat tree_ambuse[] =    { 0.4f, 0.25f, 0.1f, 1.0f };
+  GLfloat tree_specular[] =  { 0.0f, 0.00f, 0.0f, 1.0f };
+  GLfloat tree_shininess[] = { 0.0f };
 
-  GLfloat leaf_ambuse[] =   { 0.0, 0.8, 0.0, 1.0 };
-  GLfloat leaf_specular[] = { 0.0, 0.8, 0.0, 1.0 };
-  GLfloat leaf_shininess[] = { 10 };
+  GLfloat leaf_ambuse[] =    {  0.0f, 0.8f, 0.0f, 1.0f };
+  GLfloat leaf_specular[] =  {  0.0f, 0.8f, 0.0f, 1.0f };
+  GLfloat leaf_shininess[] = { 10.0f };
 
   glNewList(MOUNTAIN_MAT, GL_COMPILE);
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mtn_ambuse);
@@ -552,12 +552,12 @@ void SetupMaterials(void)
 
 void myGLInit(void)
 {
-  GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-  GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat light_position[] = { 0.0, 0.3, 0.3, 0.0 };
+  GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+  GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+  GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  GLfloat light_position[] = { 0.0f, 0.3f, 0.3f, 0.0f };
 
-  GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
+  GLfloat lmodel_ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 
   glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -654,7 +654,7 @@ void display(void)
   curtime = time(NULL);
   if ((curtime - fpstime) >= 2)
   {
-    fps      = (fps + fpscount / (curtime - fpstime)) / 2;
+    fps      = (fps + fpscount / int(curtime - fpstime)) / 2;
     fpstime  = curtime;
     fpscount = 0;
   }

@@ -23,6 +23,9 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Radio_Light_Button.H>
 #include <FL/Fl_Slider.H>
+#include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Printer.H>      // demo printing
+
 #include <stdlib.h>
 
 #if !HAVE_GL
@@ -32,9 +35,8 @@ public:
   int wire;
   double size;
   double speed;
-  cube_box(int x,int y,int w,int h,const char *l=0)
-    :Fl_Box(FL_DOWN_BOX,x,y,w,h,l){
-      label("This demo does\nnot work without GL");
+  cube_box(int x,int y,int w,int h,const char *l=0) :Fl_Box(FL_DOWN_BOX,x,y,w,h,l) {
+    label("This demo does\nnot work without GL");
   }
 };
 #else
@@ -49,8 +51,10 @@ public:
   int wire;
   double size;
   double speed;
-  cube_box(int x,int y,int w,int h,const char *l=0)
-    : Fl_Gl_Window(x,y,w,h,l) {lasttime = 0.0;}
+  cube_box(int x,int y,int w,int h,const char *l=0) : Fl_Gl_Window(x,y,w,h,l) {
+    lasttime = 0.0;
+    box(FL_DOWN_FRAME);
+  }
 };
 
 /* The cube definition */
@@ -115,13 +119,15 @@ void cube_box::draw() {
 
   // if an OpenGL graphics driver is installed, give it a chance
   // to draw additional graphics
-  if (Fl::cfg_gfx_opengl) Fl_Gl_Window::draw();
+#if HAVE_GL
+  Fl_Gl_Window::draw();
+#endif
 }
 
 int cube_box::handle(int e) {
   switch (e) {
-  case FL_ENTER: cursor(FL_CURSOR_CROSS); break;
-  case FL_LEAVE: cursor(FL_CURSOR_DEFAULT); break;
+    case FL_ENTER: cursor(FL_CURSOR_CROSS);   break;
+    case FL_LEAVE: cursor(FL_CURSOR_DEFAULT); break;
   }
   return Fl_Gl_Window::handle(e);
 }
@@ -131,7 +137,7 @@ int cube_box::handle(int e) {
 Fl_Window *form;
 Fl_Slider *speed, *size;
 Fl_Button *exit_button, *wire, *flat;
-cube_box *cube, *cube2;
+cube_box  *lt_cube, *rt_cube;
 
 int done = 0; // set to 1 in exit button callback
 
@@ -140,39 +146,7 @@ void exit_cb(Fl_Widget *, void *) {
   done = 1;
 }
 
-void makeform(const char *name) {
-  form = new Fl_Window(510+390,390,name);
-  new Fl_Box(FL_DOWN_FRAME,20,20,350,350,"");
-  new Fl_Box(FL_DOWN_FRAME,510,20,350,350,"");
-  speed = new Fl_Slider(FL_VERT_SLIDER,390,90,40,220,"Speed");
-  size = new Fl_Slider(FL_VERT_SLIDER,450,90,40,220,"Size");
-  wire = new Fl_Radio_Light_Button(390,20,100,30,"Wire");
-  flat = new Fl_Radio_Light_Button(390,50,100,30,"Flat");
-  exit_button = new Fl_Button(390,340,100,30,"Exit");
-  exit_button->callback(exit_cb);
-  cube = new cube_box(23,23,344,344, 0);
-
-#if HAVE_GL
-  if (Fl::cfg_gfx_opengl) { // try to overlay a button onto an OpenGL window
-    cube->begin();
-    Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
-    test->box(FL_ROUND_UP_BOX);
-    cube->end();
-  }
-#endif // HAVE_GL
-
-  cube2 = new cube_box(513,23,344,344, 0);
-  Fl_Box *b = new Fl_Box(FL_NO_BOX,cube->x(),size->y(),
-                         cube->w(),size->h(),0);
-  form->resizable(b);
-  b->hide();
-  form->end();
-}
-
-// added to demo printing
-#include <FL/Fl_Sys_Menu_Bar.H>
-#include <FL/Fl_Printer.H>
-
+// print screen demo
 void print_cb(Fl_Widget *w, void *data)
 {
   Fl_Printer printer;
@@ -185,38 +159,106 @@ void print_cb(Fl_Widget *w, void *data)
   printer.end_page();
   printer.end_job();
 }
-// end of printing demo
+
+// Create a form that allows resizing for A and C (GL windows) with B fixed size/centered:
+//
+//                  lt_grp                                rt_grp
+//      |<--------------------------------------->|<---------------------->|
+//      .          lt_cube            ct_grp      :       rt_cube          .
+//      .            350                100       :         350            .
+//      .  |<------------------->|  |<-------->|  |<------------------->|  .
+//      ....................................................................
+//      :  .......................  ............  .......................  :
+//      :  :                     :  :          :  :                     :  :
+//      :  :          A          :  :    B     :  :          C          :  :
+//      :  :                     :  :          :  :                     :  :
+//      :  :.....................:  :..........:  :.....................:  :  __
+//      :..................................................................:  __ MARGIN
+//
+//      |  |
+//     MARGIN
+//
+
+#define MENUBAR_H 25            // menubar height
+#define MARGIN    20            // fixed margin around widgets
+#define MARGIN2   (MARGIN*2)
+#define MARGIN3   (MARGIN*3)
+
+void makeform(const char *name) {
+  // Widget's XYWH's
+  int form_w = 800 + 4 * MARGIN;             // main window width
+  int form_h = 350 + MENUBAR_H + 2 * MARGIN; // main window height
+  int me_bar_x=0,                    me_bar_y=0,                me_bar_w=form_w,          me_bar_h=MENUBAR_H;                // menubar
+  int lt_grp_x=0,                    lt_grp_y=MENUBAR_H+MARGIN, lt_grp_w=350+100+MARGIN3, lt_grp_h=form_h-MENUBAR_H-MARGIN2; // left group
+  int lt_cub_x=lt_grp_x+MARGIN,      lt_cub_y=lt_grp_y,         lt_cub_w=350,             lt_cub_h=lt_grp_h;                 // left cube box (GL)
+  int ct_grp_x=lt_grp_x+350+MARGIN2, ct_grp_y=lt_grp_y,         ct_grp_w=100,             ct_grp_h=lt_grp_h;                 // center group
+  int rt_grp_x=lt_grp_x+lt_grp_w,    rt_grp_y=lt_grp_y,         rt_grp_w=350+MARGIN,      rt_grp_h=lt_grp_h;                 // right group
+  int rt_cub_x=rt_grp_x,             rt_cub_y=lt_grp_y,         rt_cub_w=350,             rt_cub_h=lt_grp_h;                 // right cube box (GL)
+
+  // main window
+  form = new Fl_Window(form_w, form_h, name);
+  form->begin();
+    // menu bar
+    Fl_Sys_Menu_Bar *menubar = new Fl_Sys_Menu_Bar(me_bar_x, me_bar_y, me_bar_w, me_bar_h);
+    menubar->add("File/Print window", FL_COMMAND+'p', print_cb);
+    menubar->add("File/Quit",         FL_COMMAND+'q', exit_cb);
+    // left group
+    Fl_Group *lt_grp = new Fl_Group(lt_grp_x, lt_grp_y, lt_grp_w, lt_grp_h);
+    lt_grp->begin();
+      // left GL window
+      lt_cube = new cube_box(lt_cub_x, lt_cub_y, lt_cub_w, lt_cub_h, 0);
+      // center group
+      Fl_Group *ct_grp = new Fl_Group(ct_grp_x, ct_grp_y, ct_grp_w, ct_grp_h);
+      ct_grp->begin();
+        wire  = new Fl_Radio_Light_Button(ct_grp_x, ct_grp_y,            100, 25, "Wire");
+        flat  = new Fl_Radio_Light_Button(ct_grp_x, wire->y()+wire->h(), 100, 25, "Flat");
+        speed = new Fl_Slider(FL_VERT_SLIDER, ct_grp_x,           flat->y()+flat->h()+MARGIN, 40, 200, "Speed");
+        size  = new Fl_Slider(FL_VERT_SLIDER, ct_grp_x+40+MARGIN, flat->y()+flat->h()+MARGIN, 40, 200, "Size");
+        exit_button = new Fl_Button(ct_grp_x, form_h-MARGIN-25, 100, 25, "Exit");
+        exit_button->callback(exit_cb);
+      ct_grp->end();
+      ct_grp->resizable(speed);      // only sliders resize vertically, not buttons
+    lt_grp->end();
+    lt_grp->resizable(lt_cube);
+    // right group
+    Fl_Group *rt_grp = new Fl_Group(rt_grp_x, rt_grp_y, rt_grp_w, rt_grp_h);
+    rt_grp->begin();
+      // right GL window
+      rt_cube = new cube_box(rt_cub_x, rt_cub_y, rt_cub_w, rt_cub_h, 0);
+    rt_grp->end();
+    rt_grp->resizable(rt_cube);
+    // right resizer
+    Fl_Box *rt_resizer = new Fl_Box(rt_grp_x-5, rt_grp_y, 10, rt_grp_h);
+    rt_resizer->box(FL_NO_BOX);
+  form->end();
+  form->resizable(rt_resizer);
+  form->size_range(form->w(), form->h()); // minimum window size
+
+#if HAVE_GL
+  // try to overlay a button onto an OpenGL window
+  lt_cube->begin();
+  Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
+  test->box(FL_ROUND_UP_BOX);
+  lt_cube->end();
+#endif // HAVE_GL
+}
 
 int main(int argc, char **argv) {
   Fl::use_high_res_GL(1);
   makeform(argv[0]);
-  // added to demo printing
-  form->begin();
-  static Fl_Menu_Item   items[] = {
-    { "Print", 0, 0, 0, FL_SUBMENU },
-    { "Print window", 0, print_cb, 0, 0 },
-    { 0 },
-    { 0 }
-  };
-  Fl_Sys_Menu_Bar *menubar_;
-  menubar_ = new Fl_Sys_Menu_Bar(0, 0, 60, 20);
-  menubar_->box(FL_FLAT_BOX);
-  menubar_->menu(items);
-  form->end();
-  // end of printing demo
   speed->bounds(4,0);
 #if HAVE_GL
-  speed->value(cube->speed = cube2->speed = 1.0);
+  speed->value(lt_cube->speed = rt_cube->speed = 1.0);
 #else
-  speed->value(cube->speed = cube2->speed = 0.0);
+  speed->value(lt_cube->speed = rt_cube->speed = 0.0);
 #endif
   size->bounds(4,0.01);
-  size->value(cube->size = cube2->size = 1.0);
-  flat->value(1); cube->wire = 0; cube2->wire = 1;
+  size->value(lt_cube->size = rt_cube->size = 1.0);
+  flat->value(1); lt_cube->wire = 0; rt_cube->wire = 1;
   form->label("cube");
   form->show(argc,argv);
-  cube->show();
-  cube2->show();
+  lt_cube->show();
+  rt_cube->show();
 #if 0
   // This demonstrates how to manipulate OpenGL contexts.
   // In this case the same context is used by multiple windows (I'm not
@@ -224,20 +266,21 @@ int main(int argc, char **argv) {
   // This fixes a bug on the XFree86 3.0 OpenGL where only one context
   // per program seems to work, but there are probably better uses for
   // this!
-  cube->make_current(); // causes context to be created
-  cube2->context(cube->context()); // share the contexts
+  lt_cube->make_current(); // causes context to be created
+  rt_cube->context(lt_cube->context()); // share the contexts
 #endif
   for (;;) {
-    if (form->visible() && speed->value())
-      {if (!Fl::check()) break;}        // returns immediately
-    else
-      {if (!Fl::wait()) break;} // waits until something happens
-    cube->wire = wire->value();
-    cube2->wire = !wire->value();
-    cube->size = cube2->size = size->value();
-    cube->speed = cube2->speed = speed->value();
-    cube->redraw();
-    cube2->redraw();
+    if (form->visible() && speed->value()) {
+      if (!Fl::check()) break;   // returns immediately
+    } else {
+      if (!Fl::wait()) break;    // waits until something happens
+    }
+    lt_cube->wire  = wire->value();
+    rt_cube->wire  = !wire->value();
+    lt_cube->size  = rt_cube->size = size->value();
+    lt_cube->speed = rt_cube->speed = speed->value();
+    lt_cube->redraw();
+    rt_cube->redraw();
     if (done) break; // exit button was clicked
   }
   return 0;

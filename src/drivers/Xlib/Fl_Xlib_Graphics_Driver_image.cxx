@@ -625,7 +625,7 @@ void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(bm, W, H);
   cx *= scale(); cy *= scale();
   XSetStipple(fl_display, gc_, *Fl_Graphics_Driver::id(bm));
   int ox = X-cx; if (ox < 0) ox += bm->w()*scale();
@@ -644,16 +644,28 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   if (cy < 0) { H += cy; Y -= cy; cy = 0; }
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
+  // don't attempt to read outside the window/offscreen buffer limits
+  Window root_return;
+  int x_return, y_return;
+  unsigned int winW, winH;
+  unsigned int border_width_return;
+  unsigned int depth_return;
+  XGetGeometry(fl_display, fl_window, &root_return, &x_return, &y_return, &winW,
+               &winH, &border_width_return, &depth_return);
+  if (X+W > (int)winW) W = (int)winW-X;
+  if (Y+H > (int)winH) H = (int)winH-Y;
   if (W <= 0 || H <= 0) return;
   int ld = img->ld();
   if (ld == 0) ld = img->data_w() * img->d();
   uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
+
+  uchar *dst = fl_read_image(NULL, X, Y, W, H, 0);
+  if (!dst) {
+    fl_draw_image(srcptr, X, Y, W, H, img->d(), ld);
+    return;
+  }
   int srcskip = ld - img->d() * W;
-
-  uchar *dst = new uchar[W * H * 3];
   uchar *dstptr = dst;
-
-  fl_read_image(dst, X, Y, W, H, 0);
 
   uchar srcr, srcg, srcb, srca;
   uchar dstr, dstg, dstb, dsta;
@@ -727,7 +739,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_RGB_Image *img) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(img, W, H);
   cx *= scale(); cy *= scale();
   if (img->d() == 1 || img->d() == 3) {
     XCopyArea(fl_display, *Fl_Graphics_Driver::id(img), fl_window, gc_, cx, cy, W, H, X, Y);
@@ -757,25 +769,28 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
     Fl_Graphics_Driver::draw_rgb(rgb, XP, YP, WP, HP, cx, cy);
     return;
   }
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::start_image(rgb, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  cache_size(W, H);
-  int Wfull = rgb->w(), Hfull = rgb->h();
-  cache_size(Wfull, Hfull);
+  push_clip(XP, YP, WP, HP);
+  int Wfull = rgb->w(), Hfull = rgb->h(), offset = 0;
+  cache_size(rgb, Wfull, Hfull);
+  if (Wfull > rgb->data_w() || Hfull > rgb->data_h()) {
+    // When enlarging while drawing with XRender, 1 pixel around target area seems unpainted,
+    // so we increase a bit the target area and move it 1 pixel to left and top.
+    Wfull = (rgb->w()+2)*scale(), Hfull = (rgb->h()+2)*scale();
+    offset = 1;
+  }
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
-                          cx*scale(), cy*scale(), (X + offset_x_)*scale(), (Y + offset_y_)*scale(), W, H);
+                          rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
+                          (XP-cx + offset_x_)*scale()-offset, (YP-cy + offset_y_)*scale()-offset, Wfull, Hfull);
+  pop_clip();
 }
 
 /* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
  XP,YP,WP,HP are in drawing units
  */
-int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
+int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP) {
   bool has_alpha = (depth == 2 || depth == 4);
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
@@ -800,8 +815,17 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
+    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR) {
+      XRenderSetPictureFilter(fl_display, src, FilterBilinear, 0, 0);
+      // A note at  https://www.talisman.org/~erlkonig/misc/x11-composite-tutorial/ :
+      // "When you use a filter you'll probably want to use PictOpOver as the render op,
+      // regardless of whether the source picture has an alpha channel or not, since
+      // the edges may end up having alpha values after the filter has been applied."
+      // suggests this would be preferable :
+      // has_alpha = true;
+    }
   }
-  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
+  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, 0, 0, 0, 0,
                    XP, YP, WP, HP);
   XRenderFreePicture(fl_display, src);
   XRenderFreePicture(fl_display, dst);
@@ -829,7 +853,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
   X = (X+offset_x_)*scale();
   Y = (Y+offset_y_)*scale();
-  cache_size(W, H);
+  cache_size(pxm, W, H);
   cx *= scale(); cy *= scale();
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {

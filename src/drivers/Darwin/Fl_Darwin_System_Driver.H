@@ -2,7 +2,7 @@
 // Definition of Apple Darwin system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -83,6 +83,7 @@ public:
   virtual const char *meta_name();
   virtual const char *alt_name();
   virtual const char *control_name();
+  virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver();
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

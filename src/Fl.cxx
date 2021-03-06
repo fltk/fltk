@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,8 +17,6 @@
 /** \file
  Implementation of the member functions of class Fl.
  */
-
-#include "config_lib.h"
 
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -36,83 +34,6 @@
 #if defined(DEBUG) || defined(DEBUG_WATCH)
 #  include <stdio.h>
 #endif // DEBUG || DEBUG_WATCH
-
-//
-// Runtime configuration flags
-//
-#ifdef FL_CFG_GFX_XLIB
-bool Fl::cfg_gfx_xlib = 1;
-#else
-bool Fl::cfg_gfx_xlib = 0;
-#endif
-#ifdef FL_CFG_GFX_QUARTZ
-bool Fl::cfg_gfx_quartz = 1;
-#else
-bool Fl::cfg_gfx_quartz = 0;
-#endif
-#ifdef FL_CFG_GFX_GDI
-bool Fl::cfg_gfx_gdi = 1;
-#else
-bool Fl::cfg_gfx_gdi = 0;
-#endif
-#ifdef FL_CFG_GFX_OPENGL
-bool Fl::cfg_gfx_opengl = 1;
-#else
-bool Fl::cfg_gfx_opengl = 0;
-#endif
-#ifdef FL_CFG_GFX_CAIRO
-bool Fl::cfg_gfx_cairo = 1;
-#else
-bool Fl::cfg_gfx_cairo = 0;
-#endif
-#ifdef FL_CFG_GFX_DIRECTX
-bool Fl::cfg_gfx_directx = 1;
-#else
-bool Fl::cfg_gfx_directx = 0;
-#endif
-
-#ifdef FL_CFG_PRN_PS
-bool Fl::cfg_prn_ps = 1;
-#else
-bool Fl::cfg_prn_ps = 0;
-#endif
-#ifdef FL_CFG_PRN_QUARTZ
-bool Fl::cfg_prn_quartz = 1;
-#else
-bool Fl::cfg_prn_quartz = 0;
-#endif
-#ifdef FL_CFG_PRN_GDI
-bool Fl::cfg_prn_gdi = 1;
-#else
-bool Fl::cfg_prn_gdi = 0;
-#endif
-
-#ifdef FL_CFG_WIN_X11
-bool Fl::cfg_win_x11 = 1;
-#else
-bool Fl::cfg_win_x11 = 0;
-#endif
-#ifdef FL_CFG_WIN_COCOA
-bool Fl::cfg_win_cocoa = 1;
-#else
-bool Fl::cfg_win_cocoa = 0;
-#endif
-#ifdef FL_CFG_WIN_WIN32
-bool Fl::cfg_win_win32 = 1;
-#else
-bool Fl::cfg_win_win32 = 0;
-#endif
-
-#ifdef FL_CFG_SYS_POSIX
-bool Fl::cfg_sys_posix = 1;
-#else
-bool Fl::cfg_sys_posix = 0;
-#endif
-#ifdef FL_CFG_SYS_WIN32
-bool Fl::cfg_sys_win32 = 1;
-#else
-bool Fl::cfg_sys_win32 = 0;
-#endif
 
 //
 // Globals...

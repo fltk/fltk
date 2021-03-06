@@ -18,6 +18,7 @@
 #include "Fl_X11_System_Driver.H"
 #include <FL/Fl_File_Browser.H>
 #include <FL/fl_string.h>  // fl_strdup
+#include <FL/platform.H>
 #include "../../flstring.h"
 
 #include <X11/Xlib.h>
@@ -481,8 +482,8 @@ int Fl_X11_System_Driver::filename_list(const char *d,
   fl_utf8to_mb(d, dirlen, dirloc, dirlen + 1);
 
 #ifndef HAVE_SCANDIR
-  // This version is when we define our own scandir
-  int n = fl_scandir(dirloc, list, 0, sort);
+  // This version is when we define our own scandir. Note it updates errmsg on errors.
+  int n = fl_scandir(dirloc, list, 0, sort, errmsg, errmsg_sz);
 #elif defined(HAVE_SCANDIR_POSIX)
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(dirloc, list, 0, (int(*)(const dirent **, const dirent **))sort);
@@ -504,7 +505,11 @@ int Fl_X11_System_Driver::filename_list(const char *d,
   free(dirloc);
 
   if (n==-1) {
+    // Don't write to errmsg if FLTK's fl_scandir() already set it.
+    // If OS's scandir() was used (HAVE_SCANDIR), we return its error in errmsg here..
+#ifdef HAVE_SCANDIR
     if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+#endif
     return -1;
   }
 
@@ -707,6 +712,32 @@ const char *Fl_X11_System_Driver::shortcut_add_key_name(unsigned key, char *p, c
     if (eom) *eom = q;
     return q;
   }
+}
+
+void Fl_X11_System_Driver::own_colormap() {
+  fl_open_display();
+#if USE_COLORMAP
+  switch (fl_visual->c_class) {
+  case GrayScale :
+  case PseudoColor :
+  case DirectColor :
+    break;
+  default:
+    return; // don't do anything for non-colormapped visuals
+  }
+  int i;
+  XColor colors[16];
+  // Get the first 16 colors from the default colormap...
+  for (i = 0; i < 16; i ++) colors[i].pixel = i;
+  XQueryColors(fl_display, fl_colormap, colors, 16);
+  // Create a new colormap...
+  fl_colormap = XCreateColormap(fl_display,
+                                RootWindow(fl_display,fl_screen),
+                                fl_visual->visual, AllocNone);
+  // Copy those first 16 colors to our own colormap:
+  for (i = 0; i < 16; i ++)
+    XAllocColor(fl_display, fl_colormap, colors + i);
+#endif // USE_COLORMAP
 }
 
 #endif // !defined(FL_DOXYGEN)

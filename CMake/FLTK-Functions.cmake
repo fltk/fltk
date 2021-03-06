@@ -2,7 +2,7 @@
 # FLTK-Functions.cmake
 # Written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -49,7 +49,3 @@ function (FLTK_SET_BUNDLE_ICON TARGET ICON_PATH)
     RESOURCE "${ICON_PATH}"
   )
 endfunction (FLTK_SET_BUNDLE_ICON TARGET ICON_PATH)
-
-#
-# End of file
-#

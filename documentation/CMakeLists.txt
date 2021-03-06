@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -74,6 +74,7 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
 
   # strip potential " (Git-hash)" from the original version
   string (REGEX REPLACE " .*$" "" DOXY_VERSION ${DOXYGEN_VERSION})
+
   execute_process (COMMAND date +%Y
     OUTPUT_VARIABLE YEAR
   )
@@ -83,6 +84,8 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
     ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
     @ONLY
   )
+
+  # generate LaTeX title fltk-title.tex
 
   configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/src/fltk-title.tex.in

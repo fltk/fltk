@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 
 #include "Fl_Android_Graphics_Driver.H"
 //#include "../WinAPI/Fl_WinAPI_Screen_Driver.H"

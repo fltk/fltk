@@ -50,7 +50,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
     img = Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
   }
   int depth = alpha ? 4 : 3;
-  if (img->d() != depth) {
+  if (img && img->d() != depth) {
     uchar *data = new uchar[img->w() * img->h() * depth];
     if (depth == 4) memset(data, alpha, img->w() * img->h() * depth);
     uchar *d = data;

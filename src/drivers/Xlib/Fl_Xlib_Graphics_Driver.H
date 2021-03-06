@@ -70,7 +70,7 @@ protected:
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 #if HAVE_XRENDER
   virtual void draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
-  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP);
+  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP);
 #endif
   virtual int height_unscaled();
   virtual int descent_unscaled();
@@ -94,7 +94,6 @@ private:
   static GC gc_;
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
 #if USE_XFT
@@ -116,6 +115,7 @@ public:
 #if USE_XFT
   static void destroy_xft_draw(Window id);
 #endif
+  static int fl_overlay;
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
@@ -187,7 +187,6 @@ protected:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  void begin_complex_polygon();
   void end_points();
   void end_line();
   void end_loop();

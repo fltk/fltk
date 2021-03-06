@@ -181,7 +181,6 @@ ALL =	\
 	tree$(EXEEXT) \
 	twowin$(EXEEXT) \
 	valuators$(EXEEXT) \
-	cairotest$(EXEEXT) \
 	utf8$(EXEEXT) \
 	windowfocus$(EXEEXT)
 
@@ -314,7 +313,7 @@ uninstall-osx:
 	$(RMDIR) $(DESTDIR)/Applications/sudoku.app
 
 # FLUID file rules
-.fl.cxx .fl.h:	../fluid/fluid$(EXEEXT)
+.fl.cxx .fl.h:
 	echo Generating $@ and header from $<...
 	$(FLUID_BUILD) -c $<
 

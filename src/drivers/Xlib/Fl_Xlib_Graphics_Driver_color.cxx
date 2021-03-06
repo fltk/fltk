@@ -96,16 +96,12 @@ static void figure_out_visual() {
 #  if HAVE_OVERLAY
 /** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
 Fl_XColor fl_xmap[2][256];
-/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
-uchar fl_overlay;
 Colormap fl_overlay_colormap;
 XVisualInfo* fl_overlay_visual;
 ulong fl_transparent_pixel;
 #  else
 /** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
 Fl_XColor fl_xmap[1][256];
-/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
-#    define fl_overlay 0
 #  endif
 
 void Fl_Xlib_Graphics_Driver::color(Fl_Color i) {
@@ -147,7 +143,7 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
     // find closest entry in the colormap:
     Fl_Color i =
       fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-    Fl_XColor &xmap = fl_xmap[fl_overlay][i];
+    Fl_XColor &xmap = fl_xmap[Fl_Xlib_Graphics_Driver::fl_overlay][i];
     if (xmap.mapped) return xmap.pixel;
     // if not black or white, change the entry to be an exact match:
     if (i != FL_COLOR_CUBE && i != 0xFF)
@@ -198,7 +194,7 @@ ulong fl_xpixel(Fl_Color i) {
     return fl_xpixel((i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255);
   }
 
-  Fl_XColor &xmap = fl_xmap[fl_overlay][i];
+  Fl_XColor &xmap = fl_xmap[Fl_Xlib_Graphics_Driver::fl_overlay][i];
   if (xmap.mapped) return xmap.pixel;
 
   if (!beenhere) figure_out_visual();
@@ -209,7 +205,7 @@ ulong fl_xpixel(Fl_Color i) {
 #  if USE_COLORMAP
   Colormap colormap = fl_colormap;
 #    if HAVE_OVERLAY
-  if (fl_overlay) colormap = fl_overlay_colormap; else
+  if (Fl_Xlib_Graphics_Driver::fl_overlay) colormap = fl_overlay_colormap; else
 #    endif
   if (fl_redmask) {
 #  endif
@@ -227,9 +223,9 @@ ulong fl_xpixel(Fl_Color i) {
   }
 #    if HAVE_OVERLAY
   static XColor* ac[2];
-  XColor*& allcolors = ac[fl_overlay];
+  XColor*& allcolors = ac[Fl_Xlib_Graphics_Driver::fl_overlay];
   static int nc[2];
-  int& numcolors = nc[fl_overlay];
+  int& numcolors = nc[Fl_Xlib_Graphics_Driver::fl_overlay];
 #    else
   static XColor *allcolors;
   static int numcolors;
@@ -254,7 +250,7 @@ ulong fl_xpixel(Fl_Color i) {
     // of round-trips to the X server, even though other programs may alter
     // the colormap after this and make decisions here wrong.
 #    if HAVE_OVERLAY
-    if (fl_overlay) numcolors = fl_overlay_visual->colormap_size; else
+    if (Fl_Xlib_Graphics_Driver::fl_overlay) numcolors = fl_overlay_visual->colormap_size; else
 #    endif
       numcolors = fl_visual->colormap_size;
     if (!allcolors) allcolors = new XColor[numcolors];
@@ -267,7 +263,7 @@ ulong fl_xpixel(Fl_Color i) {
   unsigned int bestmatch = 0;
   for (unsigned int n = numcolors; n--;) {
 #    if HAVE_OVERLAY
-    if (fl_overlay && n == fl_transparent_pixel) continue;
+    if (Fl_Xlib_Graphics_Driver::fl_overlay && n == fl_transparent_pixel) continue;
 #    endif
     XColor &a = allcolors[n];
     int d, t;

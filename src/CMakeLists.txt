@@ -398,6 +398,14 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
+if (USE_X11)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
+elseif (APPLE)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx)
+elseif (WIN32)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx)
+endif (USE_X11)
+
 set (GL_DRIVER_HEADER_FILES
   drivers/OpenGL/Fl_OpenGL_Display_Device.H
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
@@ -510,7 +518,7 @@ endif (WIN32)
 
 if (FLTK_HAVE_CAIRO)
   list (APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif (FLTK_HAVE_CAIRO)
+endif (FLTK_HAVE_CAIRO)
 
 if (HAVE_XINERAMA)
   list (APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
@@ -529,10 +537,9 @@ if (HAVE_XRENDER)
 endif (HAVE_XRENDER)
 
 if (USE_PANGO)
-  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT} ${HAVE_LIB_PANGOCAIRO} ${HAVE_LIB_CAIRO} ${HAVE_LIB_GOBJECT})
-  #if (NOT APPLE)
-  #  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT} )
-  #endif (NOT APPLE)
+  ### FIXME ###  This needs to use the PKG_* variables directly
+  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT} ${HAVE_LIB_PANGOCAIRO})
+  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_CAIRO} ${HAVE_LIB_GOBJECT})
 endif (USE_PANGO)
 
 if (USE_XFT)

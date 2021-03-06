@@ -14,9 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_XLIB
+#include <config.h>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -91,5 +89,3 @@ void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
 void Fl_Xlib_Copy_Surface_Driver::untranslate() {
   ((Fl_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
-
-#endif // FL_CFG_GFX_XLIB

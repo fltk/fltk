@@ -75,6 +75,8 @@ private:
   // Forbid use of copy constructor and assign operator
   Fl_Image & operator=(const Fl_Image &);
   Fl_Image(const Fl_Image &);
+  // Presently redefined in Fl_SVG_Image
+  virtual void cache_size_(int &width, int &height) {}
 
 protected:
 
@@ -302,7 +304,6 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   int cache_w_, cache_h_; // size of image when cached
-
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);

@@ -1,7 +1,7 @@
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,19 +14,11 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
 
 #include <stdlib.h>
-
-// FIXME: why do we need the lines below?
-#if defined(FL_CFG_SYS_POSIX)
-#include "drivers/Posix/Fl_Posix_System_Driver.H"
-#elif defined(FL_CFG_SYS_WIN32)
-#include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
-#endif
-
 
 /*
    From Bill:
@@ -73,14 +65,12 @@ int Fl::awake_ring_tail_;
 #endif
 
 static const int AWAKE_RING_SIZE = 1024;
-static void lock_ring();
-static void unlock_ring();
 
 /** Adds an awake handler for use in awake(). */
 int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
 {
   int ret = 0;
-  lock_ring();
+  Fl::system_driver()->lock_ring();
   if (!awake_ring_) {
     awake_ring_size_ = AWAKE_RING_SIZE;
     awake_ring_ = (Fl_Awake_Handler*)malloc(awake_ring_size_*sizeof(Fl_Awake_Handler));
@@ -104,7 +94,7 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
     awake_data_[awake_ring_head_] = data;
     awake_ring_head_ = next_head;
   }
-  unlock_ring();
+  Fl::system_driver()->unlock_ring();
   return ret;
 }
 
@@ -112,7 +102,7 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
 int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 {
   int ret = 0;
-  lock_ring();
+  Fl::system_driver()->lock_ring();
   if ((!awake_ring_) || (awake_ring_head_ == awake_ring_tail_)) {
     ret = -1;
   } else {
@@ -123,7 +113,7 @@ int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
       awake_ring_tail_ = 0;
     }
   }
-  unlock_ring();
+  Fl::system_driver()->unlock_ring();
   return ret;
 }
 
@@ -192,257 +182,6 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
 
     See also: \ref advanced_multithreading
 */
-#if defined(FL_CFG_SYS_WIN32)
-////////////////////////////////////////////////////////////////
-// Windows threading...
-#  include <windows.h>
-#  include <process.h>
-#  include <FL/platform.H>
-
-// These pointers are in Fl_win32.cxx:
-extern void (*fl_lock_function)();
-extern void (*fl_unlock_function)();
-
-// The main thread's ID
-static DWORD main_thread;
-
-// Microsoft's version of a MUTEX...
-CRITICAL_SECTION cs;
-CRITICAL_SECTION *cs_ring;
-
-void unlock_ring() {
-  LeaveCriticalSection(cs_ring);
-}
-
-void lock_ring() {
-  if (!cs_ring) {
-    cs_ring = (CRITICAL_SECTION*)malloc(sizeof(CRITICAL_SECTION));
-    InitializeCriticalSection(cs_ring);
-  }
-  EnterCriticalSection(cs_ring);
-}
-
-//
-// 'unlock_function()' - Release the lock.
-//
-
-static void unlock_function() {
-  LeaveCriticalSection(&cs);
-}
-
-//
-// 'lock_function()' - Get the lock.
-//
-
-static void lock_function() {
-  EnterCriticalSection(&cs);
-}
-
-int Fl_WinAPI_System_Driver::lock() {
-  if (!main_thread) InitializeCriticalSection(&cs);
-
-  lock_function();
-
-  if (!main_thread) {
-    fl_lock_function   = lock_function;
-    fl_unlock_function = unlock_function;
-    main_thread        = GetCurrentThreadId();
-  }
-  return 0;
-}
-
-void Fl_WinAPI_System_Driver::unlock() {
-  unlock_function();
-}
-
-void Fl_WinAPI_System_Driver::awake(void* msg) {
-  PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
-}
-#endif // FL_CFG_SYS_WIN32
-
-
-#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
-
-////////////////////////////////////////////////////////////////
-// POSIX threading...
-#if defined(HAVE_PTHREAD)
-#  include <unistd.h>
-#  include <fcntl.h>
-#  include <pthread.h>
-
-// Pipe for thread messaging via Fl::awake()...
-static int thread_filedes[2];
-
-// Mutex and state information for Fl::lock() and Fl::unlock()...
-static pthread_mutex_t fltk_mutex;
-static pthread_t owner;
-static int counter;
-
-static void lock_function_init_std() {
-  pthread_mutex_init(&fltk_mutex, NULL);
-}
-
-static void lock_function_std() {
-  if (!counter || owner != pthread_self()) {
-    pthread_mutex_lock(&fltk_mutex);
-    owner = pthread_self();
-  }
-  counter++;
-}
-
-static void unlock_function_std() {
-  if (!--counter) pthread_mutex_unlock(&fltk_mutex);
-}
-
-#  ifdef PTHREAD_MUTEX_RECURSIVE
-static bool lock_function_init_rec() {
-  pthread_mutexattr_t attrib;
-  pthread_mutexattr_init(&attrib);
-  if (pthread_mutexattr_settype(&attrib, PTHREAD_MUTEX_RECURSIVE)) {
-    pthread_mutexattr_destroy(&attrib);
-    return true;
-  }
-
-  pthread_mutex_init(&fltk_mutex, &attrib);
-  return false;
-}
-
-static void lock_function_rec() {
-  pthread_mutex_lock(&fltk_mutex);
-}
-
-static void unlock_function_rec() {
-  pthread_mutex_unlock(&fltk_mutex);
-}
-#  endif // PTHREAD_MUTEX_RECURSIVE
-
-void Fl_Posix_System_Driver::awake(void* msg) {
-  if (thread_filedes[1]) {
-    if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
-  }
-}
-
-static void* thread_message_;
-void* Fl_Posix_System_Driver::thread_message() {
-  void* r = thread_message_;
-  thread_message_ = 0;
-  return r;
-}
-
-static void thread_awake_cb(int fd, void*) {
-  if (read(fd, &thread_message_, sizeof(void*))==0) {
-    /* This should never happen */
-  }
-  Fl_Awake_Handler func;
-  void *data;
-  while (Fl::get_awake_handler_(func, data)==0) {
-    (*func)(data);
-  }
-}
-
-// These pointers are in Fl_x.cxx:
-extern void (*fl_lock_function)();
-extern void (*fl_unlock_function)();
-
-int Fl_Posix_System_Driver::lock() {
-  if (!thread_filedes[1]) {
-    // Initialize thread communication pipe to let threads awake FLTK
-    // from Fl::wait()
-    if (pipe(thread_filedes)==-1) {
-      /* this should not happen */
-    }
-
-    // Make the write side of the pipe non-blocking to avoid deadlock
-    // conditions (STR #1537)
-    fcntl(thread_filedes[1], F_SETFL,
-          fcntl(thread_filedes[1], F_GETFL) | O_NONBLOCK);
-
-    // Monitor the read side of the pipe so that messages sent via
-    // Fl::awake() from a thread will "wake up" the main thread in
-    // Fl::wait().
-    Fl::add_fd(thread_filedes[0], FL_READ, thread_awake_cb);
-
-    // Set lock/unlock functions for this system, using a system-supplied
-    // recursive mutex if supported...
-#  ifdef PTHREAD_MUTEX_RECURSIVE
-    if (!lock_function_init_rec()) {
-      fl_lock_function   = lock_function_rec;
-      fl_unlock_function = unlock_function_rec;
-    } else {
-#  endif // PTHREAD_MUTEX_RECURSIVE
-      lock_function_init_std();
-      fl_lock_function   = lock_function_std;
-      fl_unlock_function = unlock_function_std;
-#  ifdef PTHREAD_MUTEX_RECURSIVE
-    }
-#  endif // PTHREAD_MUTEX_RECURSIVE
-  }
-
-  fl_lock_function();
-  return 0;
-}
-
-void Fl_Posix_System_Driver::unlock() {
-  fl_unlock_function();
-}
-
-// Mutex code for the awake ring buffer
-static pthread_mutex_t *ring_mutex;
-
-void unlock_ring() {
-  pthread_mutex_unlock(ring_mutex);
-}
-
-void lock_ring() {
-  if (!ring_mutex) {
-    ring_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-    pthread_mutex_init(ring_mutex, NULL);
-  }
-  pthread_mutex_lock(ring_mutex);
-}
-
-#else // ! HAVE_PTHREAD
-
-void Fl_Posix_System_Driver::awake(void*) {}
-int Fl_Posix_System_Driver::lock() { return 1; }
-void Fl_Posix_System_Driver::unlock() {}
-void* Fl_Posix_System_Driver::thread_message() { return NULL; }
-
-void lock_ring() {}
-void unlock_ring() {}
-
-#endif // HAVE_PTHREAD
-
-
-#endif // FL_CFG_SYS_POSIX
-
-
-// TODO: can these functions be moved to the system drivers?
-#ifdef __ANDROID__
-
-static void unlock_ring()
-{
-  // TODO: implement me
-}
-
-static void lock_ring()
-{
-  // TODO: implement me
-}
-
-static void unlock_function()
-{
-  // TODO: implement me
-}
-
-static void lock_function()
-{
-  // TODO: implement me
-}
-
-#endif // __ANDROID__
-
-
 
 void Fl::awake(void *v) {
   Fl::system_driver()->awake(v);

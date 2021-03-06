@@ -36,7 +36,6 @@
 #if USE_OVERLAY
 // Currently Xft does not work with colormapped visuals, so this probably
 // does not work unless you have a true-color overlay.
-extern bool fl_overlay;
 extern Colormap fl_overlay_colormap;
 extern XVisualInfo* fl_overlay_visual;
 #endif

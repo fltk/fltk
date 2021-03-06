@@ -181,6 +181,7 @@ CodeEditor.o: ../FL/Fl_Valuator.H
 CodeEditor.o: ../FL/Fl_Widget.H
 CodeEditor.o: ../FL/platform_types.h
 CodeEditor.o: CodeEditor.h
+CodeEditor.o: StyleParse.h
 ExternalCodeEditor_UNIX.o: ../FL/abi-version.h
 ExternalCodeEditor_UNIX.o: ../FL/Enumerations.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl.H
@@ -406,6 +407,7 @@ fluid.o: ExternalCodeEditor_UNIX.h
 fluid.o: Fluid_Image.h
 fluid.o: Fl_Type.h
 fluid.o: function_panel.h
+fluid.o: StyleParse.h
 fluid.o: template_panel.h
 fluid.o: undo.h
 Fluid_Image.o: ../config.h
@@ -534,6 +536,7 @@ Fl_Function_Type.o: ExternalCodeEditor_UNIX.h
 Fl_Function_Type.o: Fluid_Image.h
 Fl_Function_Type.o: Fl_Type.h
 Fl_Function_Type.o: function_panel.h
+Fl_Function_Type.o: StyleParse.h
 Fl_Group_Type.o: ../config.h
 Fl_Group_Type.o: ../FL/abi-version.h
 Fl_Group_Type.o: ../FL/Enumerations.H
@@ -805,6 +808,7 @@ Fl_Widget_Type.o: Fluid_Image.h
 Fl_Widget_Type.o: Fl_Type.h
 Fl_Widget_Type.o: Fl_Widget_Type.h
 Fl_Widget_Type.o: Shortcut_Button.h
+Fl_Widget_Type.o: StyleParse.h
 Fl_Widget_Type.o: widget_panel.h
 Fl_Window_Type.o: ../config.h
 Fl_Window_Type.o: ../FL/abi-version.h
@@ -872,6 +876,7 @@ Fl_Window_Type.o: Fluid_Image.h
 Fl_Window_Type.o: Fl_Type.h
 Fl_Window_Type.o: Fl_Widget_Type.h
 Fl_Window_Type.o: Shortcut_Button.h
+Fl_Window_Type.o: StyleParse.h
 Fl_Window_Type.o: undo.h
 Fl_Window_Type.o: widget_panel.h
 function_panel.o: ../FL/abi-version.h
@@ -923,7 +928,9 @@ function_panel.o: ExternalCodeEditor_UNIX.h
 function_panel.o: Fluid_Image.h
 function_panel.o: Fl_Type.h
 function_panel.o: function_panel.h
+function_panel.o: StyleParse.h
 function_panel.o: undo.h
+StyleParse.o: StyleParse.h
 template_panel.o: ../config.h
 template_panel.o: ../FL/abi-version.h
 template_panel.o: ../FL/Enumerations.H
@@ -1033,4 +1040,5 @@ widget_panel.o: ../FL/Fl_Window.H
 widget_panel.o: ../FL/platform_types.h
 widget_panel.o: CodeEditor.h
 widget_panel.o: Shortcut_Button.h
+widget_panel.o: StyleParse.h
 widget_panel.o: widget_panel.h

@@ -1,6 +1,6 @@
-/* FLTK ***************************************************************	*/
-/* FLTK   Comments marked with FLTK show modifications for FLTK which	*/
-/* FLTK   should probably be preserved when zlib is upgraded.		*/
+/* FLTK *************************************************************** */
+/* FLTK   Comments marked with FLTK show modifications for FLTK which   */
+/* FLTK   should probably be preserved when zlib is upgraded.           */
 /* FLTK ***************************************************************	*/
 
 /* zconf.h -- configuration of the zlib compression library
@@ -13,9 +13,9 @@
 #ifndef ZCONF_H
 #define ZCONF_H
 
-#if ! (defined(_WIN32) || defined(WIN32))	/* FLTK */
-#  define HAVE_UNISTD_H				/* FLTK */
-#endif						/* FLTK */
+#if ! (defined(_WIN32) || defined(WIN32))   /* FLTK */
+#  define HAVE_UNISTD_H                     /* FLTK */
+#endif                                      /* FLTK */
 
 /*
  * If you *really* need a unique prefix for all types and library functions,

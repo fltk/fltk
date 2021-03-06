@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
@@ -786,18 +786,21 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 
   if (!image) {
     // fetch absolute coordinates
-    int dx, dy, sx, sy, sw, sh;
+    int dx = 0, dy = 0, sx = 0, sy = 0, sw = 0, sh = 0;
     Window child_win;
 
     if (win) {
       XTranslateCoordinates(fl_display, xid,
                             RootWindow(fl_display, fl_screen), Xs, Ys, &dx, &dy, &child_win);
       // screen dimensions
-      Fl::screen_xywh(sx, sy, sw, sh, Fl_Window_Driver::driver(win)->screen_num());
-      sx *= s; sy *= s; sw *= s; sh *= s;
+      int ns = Fl_Window_Driver::driver(win)->screen_num();
+      sx = screens[ns].x_org;
+      sy = screens[ns].y_org;
+      sw = screens[ns].width;
+      sh = screens[ns].height;
     }
     if (win && !allow_outside && int(s) != s) {
-      ws = (w+1) * s; // matches what Fl_Graphics_Driver::cache_size() does
+      ws = (w+1) * s; // approximates what Fl_Graphics_Driver::cache_size() does
       hs = (h+1) * s;
       if (Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
       if (Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;

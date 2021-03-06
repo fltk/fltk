@@ -20,7 +20,6 @@
 */
 
 #include <config.h>
-#include "../../config_lib.h"
 #include "Fl_OpenGL_Graphics_Driver.H"
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
@@ -45,6 +44,10 @@ void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2)
     a1 += incr;
   }
   glEnd();
+}
+
+void Fl_OpenGL_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
 }
 
 void Fl_OpenGL_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {

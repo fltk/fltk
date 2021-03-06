@@ -280,17 +280,13 @@ void Fl_Shared_Image::reload() {
     if (alloc_image_) delete image_;
 
     alloc_image_ = 1;
-
-    if ((img->w() != w() && w()) || (img->h() != h() && h())) {
-      // Make sure the reloaded image is the same size as the existing one.
-      Fl_Image *temp = img->copy(w(), h());
-      delete img;
-      image_ = temp;
-    } else {
-      image_ = img;
-    }
-
+    image_ = img;
+    int W = w();
+    int H = h();
     update();
+    // Make sure the reloaded image gets the same drawing size as the existing one.
+    if (W)
+      scale(W, H, 0, 1);
   }
 }
 

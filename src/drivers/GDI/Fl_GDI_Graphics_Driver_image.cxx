@@ -398,10 +398,10 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
-  cache_size(W, H);
-  cx *= scale(); cy *= scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
+  cache_size(bm, W, H);
+  cx = this->floor(cx); cy = this->floor(cy);
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -467,7 +467,8 @@ void Fl_GDI_Printer_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, 
                                          // draw it to printer context with background color as transparent
   float scaleW = bm->data_w()/float(bm->w());
   float scaleH = bm->data_h()/float(bm->h());
-  fl_TransparentBlt(gc_, X, Y, W, H, tempdc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH, RGB(r, g, b) );
+  fl_TransparentBlt(gc_, X, Y, W, H, tempdc,
+                    int(cx * scaleW), int(cy * scaleH), int(W * scaleW), int(H * scaleH), RGB(r, g, b) );
   delete img_surf;
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
@@ -498,10 +499,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
-  cache_size(W, H);
-  cx *= scale(); cy *= scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
+  cache_size(img, W, H);
+  cx = this->floor(cx); cy = this->floor(cy);
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
@@ -535,21 +536,22 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  float scaleW = float(rgb->data_w())/rgb->w();
-  float scaleH = float(rgb->data_h())/rgb->h();
-  int W = WP, H = HP;
-  cache_size(W, H);
+  push_clip(XP, YP, WP, HP);
+  XP -= cx; YP -= cy;
+  WP = rgb->w(); HP = rgb->h();
+  cache_size(rgb, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH);
+    alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH, SRCCOPY);
+    StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
+  pop_clip();
 }
 
 
@@ -571,7 +573,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP,
     if ( *pw != rgb->data_w() ||  *ph != rgb->data_h()) rgb->uncache();
   }
   if (!*id(rgb)) cache(rgb);
-  draw_fixed(rgb, 0, 0, WP/tr.eM11, HP/tr.eM22, cx/tr.eM11, cy/tr.eM22);
+  draw_fixed(rgb, 0, 0, int(WP / tr.eM11), int(HP / tr.eM22), int(cx / tr.eM11), int(cy / tr.eM22));
   SetWorldTransform(gc_, &old_tr);
 }
 
@@ -626,10 +628,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
-  cache_size(W, H);
-  cx *= scale(); cy *= scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
+  cache_size(pxm, W, H);
+  cx = this->floor(cx); cy = this->floor(cy);
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
@@ -677,8 +679,8 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
     // print all of offscreen but its parts in background color
     float scaleW = pxm->data_w()/float(pxm->w());
     float scaleH = pxm->data_h()/float(pxm->h());
-    fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH,
-                      need_pixmap_bg_color );
+    fl_TransparentBlt(gc_, X, Y, W, H, new_gc,
+                      int(cx * scaleW), int(cy * scaleH), int(W * scaleW), int(H * scaleH), need_pixmap_bg_color );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
     need_pixmap_bg_color = 0;
@@ -688,6 +690,38 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
   }
 }
 
+// Makes an RGB triplet different from all the colors used in the pixmap
+// and computes Fl_Graphics_Driver::need_pixmap_bg_color from this triplet
+void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b, int color_count, void **data) {
+  typedef struct { uchar r; uchar g; uchar b; } UsedColor;
+  UsedColor *used_colors = *(UsedColor**)data;
+  int i;
+  r = 2; g = 3; b = 4;
+  while (1) {
+    for ( i=0; i<color_count; i++ )
+      if ( used_colors[i].r == r &&
+           used_colors[i].g == g &&
+           used_colors[i].b == b )
+        break;
+    if (i >= color_count) {
+      free((void*)used_colors);
+      *(UsedColor**)data = NULL;
+      need_pixmap_bg_color = RGB(r, g, b);
+      return;
+    }
+    if (r < 255) {
+      r++;
+    } else {
+      r = 0;
+      if (g < 255) {
+        g++;
+      } else {
+        g = 0;
+        b++;
+      }
+    }
+  }
+}
 
 void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());

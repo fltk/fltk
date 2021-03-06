@@ -30,12 +30,8 @@
 // The above comments were checked in as r2, and much has changed since then;
 // transparency added, color cube not required, etc.      -erco Oct 20 2013
 
-#include "config_lib.h"
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
-#if defined(FL_CFG_SYS_WIN32)
-#include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
-#endif
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
@@ -72,41 +68,6 @@ int fl_measure_pixmap(const char * const *cdata, int &w, int &h) {
   return 1;
 }
 
-#if defined(FL_CFG_SYS_WIN32)
-
-
-// Makes an RGB triplet different from all the colors used in the pixmap
-// and compute Fl_Graphics_Driver::need_pixmap_bg_color from this triplet
-void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b) {
-  int i;
-  r = 2; g = 3; b = 4;
-  while (1) {
-    for ( i=0; i<color_count; i++ )
-      if ( used_colors[i].r == r &&
-           used_colors[i].g == g &&
-           used_colors[i].b == b )
-        break;
-    if (i >= color_count) {
-      free((void*)used_colors); used_colors = NULL;
-      need_pixmap_bg_color = RGB(r, g, b);
-      return;
-    }
-    if (r < 255) {
-      r++;
-    } else {
-      r = 0;
-      if (g < 255) {
-        g++;
-      } else {
-        g = 0;
-        b++;
-      }
-    }
-  }
-}
-#endif // FL_CFG_SYS_WIN32
-
-
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   int w, h;
   const uchar*const* data = (const uchar*const*)(cdata+1);
@@ -119,7 +80,7 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
     return 0;
 
   typedef uchar uchar4[4];
-  uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
+  uchar4 *colors = new uchar4[ int(1<<(chars_per_pixel*8)) ];
 
   if (Fl_Graphics_Driver::need_pixmap_bg_color) {
     color_count = 0;
@@ -194,10 +155,10 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   } // if ncolors
   if (Fl_Graphics_Driver::need_pixmap_bg_color) {
     if (transparent_c) {
-      fl_graphics_driver->make_unused_color_(transparent_c[0], transparent_c[1], transparent_c[2]);
+      fl_graphics_driver->make_unused_color_(transparent_c[0], transparent_c[1], transparent_c[2], color_count, (void**)&used_colors);
     } else {
       uchar r, g, b;
-      fl_graphics_driver->make_unused_color_(r, g, b);
+      fl_graphics_driver->make_unused_color_(r, g, b, color_count, (void**)&used_colors);
     }
   }
 

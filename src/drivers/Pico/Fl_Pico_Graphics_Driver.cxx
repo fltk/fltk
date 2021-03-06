@@ -15,7 +15,7 @@
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Pico_Graphics_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/math.h>

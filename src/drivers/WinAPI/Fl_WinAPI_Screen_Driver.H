@@ -54,6 +54,7 @@ public:
   virtual int w();
   virtual int h();
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
+  void screen_xywh_unscaled(int &X, int &Y, int &W, int &H, int n);
   virtual void screen_dpi(float &h, float &v, int n=0);
   int screen_num_unscaled(int x, int y);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);

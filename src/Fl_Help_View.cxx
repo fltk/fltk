@@ -1132,7 +1132,7 @@ Fl_Help_View::draw()
             utf8l = buf.size() - utf8l; // length of added UTF-8 text
             const char *oldptr = ptr;
             ptr = strchr(ptr, ';') + 1;
-            entity_extra_length += ptr - (oldptr-1) - utf8l; // extra length between html entity and UTF-8
+            entity_extra_length += int(ptr - (oldptr-1)) - utf8l; // extra length between html entity and UTF-8
           }
 
           if ((fsize + 2) > hh)
@@ -1177,10 +1177,27 @@ Fl_Help_View::draw()
 } // draw()
 
 
-
 /** Finds the specified string \p s at starting position \p p.
 
-    \return the matching position or -1 if not found
+  The argument \p p and the return value are offsets in Fl_Help_View::value(),
+  counting from 0. If \p p is out of range, 0 is used.
+
+  The string comparison is simple but honors some special cases:
+  - the specified string \p s must be in UTF-8 encoding
+  - HTML tags in value() are filtered (not compared as such, they never match)
+  - HTML entities like '\&lt;' or '\&x#20ac;' are converted to Unicode (UTF-8)
+  - ASCII characters (7-bit, \< 0x80) are compared case insensitive
+  - every newline (LF, '\\n') in value() is treated like a single space
+  - all other strings are compared as-is (byte by byte)
+
+  \todo complex HTML entities for Unicode code points \> 0x80 are currently treated
+    like one byte (not character!) and do not (yet) match correctly ("<" matches "&lt;"
+    but "€" doesn't match "&euro;", and "ü" doesn't match "&uuml;")
+
+  \param[in]  s   search string in UTF-8 encoding
+  \param[in]  p   starting position for search (0,...), Default = 0
+
+  \return the matching position or -1 if not found
 */
 int                                             // O - Matching position or -1 if not found
 Fl_Help_View::find(const char *s,               // I - String to find
@@ -1193,33 +1210,36 @@ Fl_Help_View::find(const char *s,               // I - String to find
                 *bs,                            // Start of current comparison
                 *sp;                            // Search string pointer
 
-
   DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
   // Range check input and value...
   if (!s || !value_) return -1;
 
   if (p < 0 || p >= (int)strlen(value_)) p = 0;
-  else if (p > 0) p ++;
 
   // Look for the string...
-  for (i = nblocks_, b = blocks_; i > 0; i --, b ++) {
+  for (i = nblocks_, b = blocks_; i > 0; i--, b++) {
     if (b->end < (value_ + p))
       continue;
 
     if (b->start < (value_ + p)) bp = value_ + p;
     else bp = b->start;
 
-    for (sp = s, bs = bp; *sp && *bp && bp < b->end; bp ++) {
+    for (sp = s, bs = bp; *sp && *bp && bp < b->end; bp++) {
       if (*bp == '<') {
         // skip to end of element...
-        while (*bp && bp < b->end && *bp != '>') bp ++;
+        while (*bp && bp < b->end && *bp != '>') bp++;
+        // no match, so reset to start of search...
+        sp = s;
+        bs = bp + 1;
         continue;
       } else if (*bp == '&') {
         // decode HTML entity...
         if ((c = quote_char(bp + 1)) < 0) c = '&';      // *FIXME* UTF-8, see below
         else bp = strchr(bp + 1, ';') + 1;
       } else c = *bp;
+
+      if (c == '\n') c = ' '; // treat newline as a single space
 
       // *FIXME* *UTF-8* (A.S. 02/14/2016)
       // At this point c may be an arbitrary Unicode Code Point corresponding
@@ -1229,19 +1249,18 @@ Fl_Help_View::find(const char *s,               // I - String to find
       // For instance: "&euro;" == 0x20ac -> 0xe2 0x82 0xac (UTF-8: 3 bytes).
       // Hint: use fl_utf8encode() [see below]
 
-      if (tolower(*sp) == tolower(c)) sp ++;
-      else {
-        // No match, so reset to start of search...
+      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) sp++;
+      else if (*sp == c) sp++;
+      else { // No match, so reset to start of search...
         sp = s;
-        bs ++;
         bp = bs;
+        bs++;
       }
     }
 
-    if (!*sp) {
-      // Found a match!
+    if (!*sp) { // Found a match!
       topline(b->y - b->h);
-      return (int) (b->end - value_);
+      return int(bs - value_);
     }
   }
 

@@ -22,7 +22,7 @@
  */
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Android_Screen_Driver.H"
 #include "Fl_Android_Application.H"
 #include "Fl_Android_Graphics_Font.H"

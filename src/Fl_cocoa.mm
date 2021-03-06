@@ -20,7 +20,7 @@ extern "C" {
 #include <pthread.h>
 }
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"
@@ -1892,8 +1892,8 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   dx = 2*bx;
   dy = 2*by + bt;
   float s = Fl::screen_driver()->scale(0);
-  X = w->x()*s-xoff;
-  Y = w->y()*s-yoff;
+  X = round(w->x()*s)-xoff;
+  Y = round(w->y()*s)-yoff;
   W = w->w()*s+dx;
   H = w->h()*s+dy;
 
@@ -3007,8 +3007,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     winlevel = NSStatusWindowLevel;
   }
   float s = Fl::screen_driver()->scale(0);
-  crect.origin.x = int(s * w->x()); // correct origin set later for subwindows
-  crect.origin.y = main_screen_height - int(s * (w->y() + w->h()));
+  crect.origin.x = round(s * w->x()); // correct origin set later for subwindows
+  crect.origin.y = main_screen_height - round(s * (w->y() + w->h()));
   crect.size.width = int(s * w->w());
   crect.size.height = int(s * w->h());
   FLWindow *cw = [[FLWindow alloc] initWithFl_W:w
@@ -3076,8 +3076,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
       delta = [cw cascadeTopLeftFromPoint:delta];
     }
     crect = [cw frame]; // synchronize FLTK's and the system's window coordinates
-    this->x(int(crect.origin.x/s));
-    this->y( main_screen_height/s - (crect.origin.y/s + w->h()) );
+    this->x(round(crect.origin.x/s));
+    this->y( round((main_screen_height - crect.origin.y)/s) - w->h() );
   }
   if(w->menu_window()) { // make menu windows slightly transparent
     [cw setAlphaValue:0.97];
@@ -4366,7 +4366,7 @@ void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, in
 {
   FLWindow *nswin = fl_xid(pWindow);
   [nswin makeMainWindow];
-  [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];  
+  [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
   CGImageRef img;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 100600) { // verified OK from 10.6
@@ -4386,7 +4386,7 @@ void Fl_Cocoa_Window_Driver::draw_titlebar_to_context(CGContextRef gc, int w, in
   }
   if (img) {
     CGContextSaveGState(gc);
-    clip_to_rounded_corners(gc, w, h);
+    if (fl_mac_os_version < 100600) clip_to_rounded_corners(gc, w, h);
     CGContextDrawImage(gc, CGRectMake(0, 0, w, h), img);
     CGImageRelease(img);
     CGContextRestoreGState(gc);
@@ -4397,7 +4397,13 @@ void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
   [ctxt update]; // supports window resizing
 }
 
-/* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
+/* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2,
+ and also assigns that value to global fl_mac_os_version.
+ N.B.: macOS "Big Sur" 11.0 can produce 2 different values for fl_mac_os_version:
+  - when SDK 11.0 is used, fl_mac_os_version is set to 110000 (or bigger)
+  - when SDK 10.15 or earlier is used, fl_mac_os_version is set to 101600
+  That is reported to facilitate life of apps that assumed majorVersion would remain equal to 10
+  and used only minorVersion to determine what is the running version of macOS.
  */
 int Fl_Darwin_System_Driver::calc_mac_os_version() {
   if (fl_mac_os_version) return fl_mac_os_version;

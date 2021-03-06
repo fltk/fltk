@@ -40,33 +40,7 @@
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
-#ifdef FL_CFG_GFX_QUARTZ
-#  include <OpenGL/gl.h>
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  void* pixelformat;
-#endif // FL_CFG_GFX_QUARTZ
-
-
-#ifdef FL_CFG_GFX_XLIB
-#  include <GL/glx.h>
-#  if ! defined(GLX_VERSION_1_3)
-#    typedef void *GLXFBConfig;
-#  endif
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
-      XVisualInfo *vis; /* the visual to use */ \
-      Colormap colormap; /* a colormap for that visual */ \
-      GLXFBConfig best_fb;
-#endif // FL_CFG_GFX_XLIB*/
-
-
-#ifdef FL_CFG_GFX_GDI
-#  include <FL/gl.h>
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
-      int pixelformat;       /* the visual to use */ \
-      PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
-#endif // FL_CFG_GFX_GDI
-
-
-// Describes crap needed to create a GLContext.
+// Describes the platform-independent part of data needed to create a GLContext.
 class Fl_Gl_Choice {
   friend class Fl_Gl_Window_Driver;
   int mode;
@@ -74,9 +48,6 @@ class Fl_Gl_Choice {
   Fl_Gl_Choice *next;
 public:
   Fl_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : mode(m), alist(alistp), next(n) {}
-  FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 };
-
-#undef FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 
 #endif // Fl_Gl_Choice_H

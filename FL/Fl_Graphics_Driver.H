@@ -1,8 +1,8 @@
 //
-// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
-// for the Fast Light Tool Kit (FLTK).
+// Declaration of classes Fl_Graphics_Driver, Fl_Scalable_Graphics_Driver,
+// and Fl_Font_Descriptor for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
  */
 
 /** \file Fl_Graphics_Driver.H
- \brief declaration of class Fl_Graphics_Driver.
+ \brief Declaration of class Fl_Graphics_Driver.
 */
 
 #ifndef FL_GRAPHICS_DRIVER_H
@@ -141,7 +141,7 @@ private:
   virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   // the default implementation of make_unused_color_() is most probably enough
-  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b);
+  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
@@ -173,6 +173,9 @@ protected:
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
   Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
   Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
+  int p_size;
+  typedef struct { float x; float y; } XPOINT;
+  XPOINT *p;
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
@@ -236,7 +239,8 @@ protected:
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
 
   Fl_Graphics_Driver();
-  virtual void cache_size(int &width, int &height);
+  virtual void cache_size(Fl_Image *img, int &width, int &height);
+  void cache_size_finalize(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
@@ -302,10 +306,12 @@ public:
   virtual double transform_dx(double x, double y);
   virtual double transform_dy(double x, double y);
   virtual void transformed_vertex(double xf, double yf);
+  virtual void transformed_vertex0(float x, float y);
   virtual void vertex(double x, double y);
   virtual void end_points();
   virtual void end_line();
   virtual void end_loop();
+  virtual void fixloop();
   virtual void end_polygon();
   virtual void end_complex_polygon();
   virtual void gap();
@@ -363,6 +369,8 @@ public:
   virtual void font_name(int num, const char *name);
   // Defaut implementation may be enough
   virtual void overlay_rect(int x, int y, int w , int h);
+  virtual float override_scale();
+  virtual void restore_scale(float);
 };
 
 #ifndef FL_DOXYGEN
@@ -444,6 +452,7 @@ protected:
   virtual void circle(double x, double y, double r);
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   virtual void font(Fl_Font face, Fl_Fontsize size);
+  virtual Fl_Font font();
   virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
   virtual double width(const char *str, int n);
   virtual double width(unsigned int c);
@@ -461,8 +470,10 @@ protected:
   virtual void draw_unscaled(const char *str, int n, int x, int y);
   virtual void draw(int angle, const char *str, int n, int x, int y);
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
+  virtual void draw(const char *str, int nChars, float x, float y);
   virtual void rtl_draw(const char* str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
+  virtual void arc(double x, double y, double r, double start, double end);
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
@@ -480,8 +491,9 @@ protected:
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 
   void transformed_vertex(double xf, double yf);
-  virtual void transformed_vertex0(float x, float y);
   void vertex(double x, double y);
+  virtual float override_scale();
+  virtual void restore_scale(float);
 };
 #endif // FL_DOXYGEN
 

@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"

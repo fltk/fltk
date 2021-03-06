@@ -1,10 +1,9 @@
 /**
 
- \page  enumerations    FLTK Enumerations
+ \page  enumerations    Constants and Enumerations
 
- \note  This file is not actively maintained any more, but is left
-        here as a reference, until the doxygen documentation is
-        completed.
+ \note  This file is not actively maintained any more, but is left here
+        as a reference, until the doxygen documentation is completed.
 
  \sa \ref FL/Enumerations.H.
 
@@ -126,8 +125,8 @@ FL_KEYBOARD and FL_SHORTCUT events:
   - FL_Insert - The insert key.
   - FL_Menu - The menu key.
   - FL_Num_Lock - The num lock key.
-  - FL_KP - One of the keypad numbers; use <tt>FL_KP +  n</tt>
-    for number <tt>n</tt>.
+  - FL_KP - One of the keypad numbers or keys; use <tt>FL_KP + 'n'</tt>
+    for number <tt>n</tt> and, say, <tt>FL_KP + '*'</tt>.
   - FL_KP_Enter - The enter key on the keypad.
   - FL_F - One of the function keys; use <tt>FL_F +  n</tt>
     for function key <tt>n</tt>.

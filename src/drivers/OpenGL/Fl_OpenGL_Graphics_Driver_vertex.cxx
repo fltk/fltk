@@ -94,10 +94,6 @@ void Fl_OpenGL_Graphics_Driver::transformed_vertex(double xf, double yf) {
   glVertex2d(xf, yf);
 }
 
-void Fl_OpenGL_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
-}
-
 void Fl_OpenGL_Graphics_Driver::circle(double cx, double cy, double r) {
   double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
   double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
@@ -108,7 +104,7 @@ void Fl_OpenGL_Graphics_Driver::circle(double cx, double cy, double r) {
   int num_segments = (int)(10 * sqrt(rMax))+1;
   double theta = 2 * M_PI / float(num_segments);
   double tangetial_factor = tan(theta);
-  double radial_factor = cosf(theta);//calculate the radial factor
+  double radial_factor = cos(theta);//calculate the radial factor
   double x = r; //we start at angle = 0
   double y = 0;
 

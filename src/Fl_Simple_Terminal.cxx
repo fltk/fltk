@@ -512,7 +512,7 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
   // Remove ansi codes and adjust style buffer accordingly.
   if ( ansi() ) {
     int nstyles = stable_size_ / STE_SIZE;
-    if ( len < 0 ) len = strlen(s);
+    if ( len < 0 ) len = (int)strlen(s);
     // New text buffer (after ansi codes parsed+removed)
     char *ntm = (char*)malloc(len+1);       // new text memory
     char *ntp = ntm;

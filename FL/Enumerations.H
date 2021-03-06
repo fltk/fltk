@@ -570,13 +570,13 @@ enum Fl_When { // Fl_Widget::when():
 
     FL_NO_BOX means nothing is drawn at all, so whatever is already
     on the screen remains. The FL_..._FRAME types only draw their edges,
-    leaving the interior unchanged. The blue color in Figure 1
+    leaving the interior unchanged. The blue color in the image below
     is the area that is not drawn by the frame types.
 
-    \image html boxtypes.png "Figure 1: FLTK standard box types"
-    \image latex boxtypes.png "FLTK standard box types" width=10cm
+    \image html  boxtypes.png "FLTK Standard Box Types"
+    \image latex boxtypes.png "FLTK Standard Box Types" width=12cm
 
-    \todo       Description of boxtypes is incomplete.
+    \todo       Description of box types is incomplete.
                 See below for the defined enum Fl_Boxtype.
                 \see src/Fl_get_system_colors.cxx
 */
@@ -593,7 +593,6 @@ enum Fl_When { // Fl_Widget::when():
       technical reasons - please use the same values (names) without the
       leading underscore in your code! Enum values with leading underscores
       are reserved for internal use and subject to change without notice!
-
 */
 enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxtype.cxx):
 

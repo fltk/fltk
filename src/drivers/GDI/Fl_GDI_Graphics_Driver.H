@@ -40,7 +40,7 @@ private:
   void set_current_();
   void draw_fixed(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_fixed(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b);
+  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
 protected:
   void draw_fixed(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
   void cache(Fl_RGB_Image *rgb);
@@ -49,15 +49,19 @@ protected:
   int counts[20];
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   POINT *p;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) { gc_ = (HDC)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
+  // This function aims to compute accurately int(x * s) in
+  // presence of rounding errors existing with floating point numbers
+  // and that sometimes differ between 32 and 64 bits.
+  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
+  inline int floor(int x) { return Fl_GDI_Graphics_Driver::floor(x, scale()); }
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
@@ -96,15 +100,18 @@ public:
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
-  virtual void point_unscaled(float x, float y);
-  void rect_unscaled(float x, float y, float w, float h);
+  virtual void point(int x, int y);
+  virtual void rect(int x, int y, int w, int h);
   void focus_rect(int x, int y, int w, int h);
-  void rectf_unscaled(float x, float y, float w, float h);
+  virtual void rectf(int x, int y, int w, int h);
   virtual void line_unscaled(float x, float y, float x1, float y1);
   virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void yxline_unscaled(float x, float y, float y1);
+  virtual void xyline(int x, int y, int x1);
+  virtual void xyline(int x, int y, int x1, int y2);
+  virtual void xyline(int x, int y, int x1, int y2, int x3);
+  virtual void yxline(int x, int y, int y1);
+  virtual void yxline(int x, int y, int y1, int x2);
+  virtual void yxline(int x, int y, int y1, int x2, int y3);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
@@ -145,6 +152,7 @@ protected:
   virtual void font_name(int num, const char *name);
   void global_gc();
   virtual void overlay_rect(int x, int y, int w , int h);
+  virtual void cache_size(Fl_Image *img, int &width, int &height);
 };
 
 

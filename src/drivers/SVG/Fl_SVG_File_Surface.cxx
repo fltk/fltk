@@ -53,9 +53,6 @@ class Fl_SVG_Graphics_Driver : public Fl_Graphics_Driver {
   uchar red_, green_, blue_;
   char *dasharray_; // the dash array as SVG needs it
   char *user_dash_array_; // the dash array as FLTK needs it
-  int p_size;
-  typedef struct { float x; float y; } XPOINT;
-  XPOINT *p;
   class Clip {
   public:
     int x, y, w, h; // the clip rectangle
@@ -78,15 +75,19 @@ protected:
   void compute_dasharray(float s, char *dashes=0);
   void line_style(int style, int width, char *dashes=0);
   void line(int x1, int y1, int x2, int y2);
+  void line(int x1, int y1, int x2, int y2, int x3, int y3);
   void font_(int f, int s);
   void font(int f, int s);
+  Fl_Font font();
   void draw(const char *str, int n, int x, int y);
   void draw(const char*, int, float, float) ;
   void draw(int, const char*, int, int, int) ;
   void rtl_draw(const char *str, int n, int x, int y);
   void color(uchar r, uchar g, uchar b);
   void color(Fl_Color c);
-  double width(const char*, int) ;
+  Fl_Color color();
+  double width(const char*, int);
+  double width(unsigned int c);
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height() ;
   int descent() ;
@@ -109,19 +110,13 @@ protected:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   void point(int x, int y);
-  void transformed_vertex0(float x, float y);
-  void transformed_vertex(double xf, double yf);
-  void vertex(double x,double y);
   void end_points();
   void end_line();
-  void fixloop();
-  void end_loop();
   void end_polygon();
-  void begin_complex_polygon();
-  void gap();
   void end_complex_polygon();
   void circle(double x, double y,double r);
   void arc(int x,int y,int w,int h,double a1,double a2);
+  void arc(double x, double y, double r, double start, double end);
   void pie(int x,int y,int w,int h,double a1,double a2);
   void arc_pie(char AorP, int x, int y, int w, int h, double a1, double a2);
 };
@@ -179,6 +174,13 @@ void Fl_SVG_Graphics_Driver::line(int x1, int y1, int x2, int y2) {
           x1,y1,x2,y2, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
 }
 
+void Fl_SVG_Graphics_Driver::line(int x1, int y1, int x2, int y2, int x3, int y3) {
+  fprintf(out_,
+          "<path d=\"M %d %d L %d %d L %d %d \" "
+          "style=\"stroke:rgb(%u,%u,%u);fill:none;stroke-width:%d;stroke-linecap:%s;stroke-linejoin:%s;stroke-dasharray:%s\" />\n",
+  x1, y1, x2, y2, x3, y3, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
+}
+
 void Fl_SVG_Graphics_Driver::font_(int ft, int s) {
   Fl_Graphics_Driver::font(ft, s);
   int famnum = ft/4;
@@ -197,6 +199,8 @@ void Fl_SVG_Graphics_Driver::font(int ft, int s) {
   Fl_Display_Device::display_device()->driver()->font(ft, s);
   font_(ft, s);
 }
+
+Fl_Font Fl_SVG_Graphics_Driver::font() { return Fl_Graphics_Driver::font(); }
 
 void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   if (user_dash_array_ && user_dash_array_ != dashes) {free(user_dash_array_); user_dash_array_ = NULL;}
@@ -219,9 +223,9 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   } else {
     int cap_part = (line_style_ & 0xF00);
     bool is_flat = (cap_part == FL_CAP_FLAT || cap_part == 0);
-    float dot = (is_flat ? width_/s : width_*0.6/s);
-    float gap = (is_flat ? width_/s : width_*1.5/s);
-    float big = (is_flat ? 3*width_/s : width_*2.5/s);
+    float dot = (is_flat ? width_/s : width_*0.6f/s);
+    float gap = (is_flat ? width_/s : width_*1.5f/s);
+    float big = (is_flat ? 3*width_/s : width_*2.5f/s);
     if (dasharray_) free(dasharray_);
     dasharray_ = (char*)malloc(61);
     if (dash_part == FL_DOT) sprintf(dasharray_, "%.3f,%.3f", dot, gap);
@@ -288,8 +292,14 @@ void Fl_SVG_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   blue_ = b;
 }
 
+Fl_Color Fl_SVG_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }
+
 double Fl_SVG_Graphics_Driver::width(const char* str, int l) {
  return Fl_Display_Device::display_device()->driver()->width(str, l);
+}
+
+double Fl_SVG_Graphics_Driver::width(unsigned int c) {
+  return Fl_Display_Device::display_device()->driver()->width(c);
 }
 
 void Fl_SVG_Graphics_Driver::text_extents(const char *c, int n, int& dx, int& dy, int& w, int& h) {
@@ -309,7 +319,7 @@ Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FI
   closef_ = closef;
   Fl_Window *win = Fl::first_window();
   float s = (win ? Fl::screen_scale(win->screen_num()) : 1);
-  int sw = w * s, sh = h * s;
+  int sw = int(w * s), sh = int(h * s);
   fprintf(f,
           "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n"
           "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n"
@@ -418,7 +428,7 @@ static void user_write_data(png_structp png_ptr, png_bytep data, png_size_t leng
   if (length >= 3) {
     new_l = write_by_3(data, length, svg_base64_data);
   }
-  svg_base64_data->lbuf = new_l;
+  svg_base64_data->lbuf = (int)new_l;
   if (new_l) {
     memcpy(svg_base64_data->buff, data + length - new_l, new_l);
   }
@@ -540,7 +550,7 @@ static void term_destination(jpeg_compress_struct *cinfo) {
   jpeg_client_data_struct *client_data = (jpeg_client_data_struct*)(cinfo->client_data);
   size_t new_l = process_jpeg_chunk(cinfo, client_data->size - cinfo->dest->free_in_buffer);
   if (new_l) {
-    to_base64(client_data->JPEG_BUFFER, new_l, &client_data->base64_data);
+    to_base64(client_data->JPEG_BUFFER, (int)new_l, &client_data->base64_data);
   }
 }
 
@@ -842,26 +852,6 @@ void Fl_SVG_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2
           x0, y0, x1, y1, x2, y2, red_, green_, blue_, width_, linejoin_, linecap_, dasharray_);
 }
 
-void Fl_SVG_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
-    if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
-    }
-   p[n].x = x;
-   p[n].y = y;
-   n++;
-   }
-}
-
-void Fl_SVG_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(float(xf), float(yf));
-}
-
-void Fl_SVG_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(float(x*m.a + y*m.c + m.x), float(x*m.b + y*m.d + m.y));
-}
-
 void Fl_SVG_Graphics_Driver::end_points() {
   for (int i=0; i<n; i++) {
     fprintf(out_, "<path d=\"M %f %f L %f %f\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" />\n",
@@ -880,16 +870,6 @@ void Fl_SVG_Graphics_Driver::end_line() {
     fprintf(out_, " L %f %f", p[i].x, p[i].y);
   fprintf(out_, "\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\" stroke-linecap=\"%s\" stroke-linejoin=\"%s\" />\n",
           red_, green_, blue_, width_, dasharray_, linecap_, linejoin_);
-}
-
-void Fl_SVG_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
-void Fl_SVG_Graphics_Driver::end_loop() {
-  fixloop();
-  if (n>2) transformed_vertex((float)p[0].x, (float)p[0].y);
-  end_line();
 }
 
 void Fl_SVG_Graphics_Driver::end_polygon() {
@@ -922,21 +902,6 @@ void Fl_SVG_Graphics_Driver::circle(double x, double y, double r) {
   fprintf(out_, "=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 
-void Fl_SVG_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
-}
-
-void Fl_SVG_Graphics_Driver::gap() {
-  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
-  if (n > gap_+2) {
-    transformed_vertex((float)p[gap_].x, (float)p[gap_].y);
-    gap_ = n;
-  } else {
-    n = gap_;
-  }
-}
-
 void Fl_SVG_Graphics_Driver::end_complex_polygon() {
   gap();
   if (n < 3) {
@@ -948,6 +913,10 @@ void Fl_SVG_Graphics_Driver::end_complex_polygon() {
   for (int i=1; i<n; i++)
     fprintf(out_, " L %f %f", p[i].x, p[i].y);
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
+}
+
+void Fl_SVG_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
 }
 
 void Fl_SVG_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
@@ -972,13 +941,13 @@ void Fl_SVG_Graphics_Driver::arc_pie(char AorP, int x, int y, int w, int h, doub
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w /*- 0.5f*/, cy = y + 0.5f*h - 0.5f;
   double r = (w!=h ? 0.5 : (w+h)*0.25f-0.5f);
-  float stroke_width = width_;
+  float stroke_width = float(width_);
   float sx, sy;
   if (w != h) {
-    sx = w-1; sy = h-1;
+    sx = float(w-1); sy = float(h-1);
     stroke_width /= ((sx+sy)/2);
   } else {
-    sx = sy = 2*r;
+    sx = sy = float(2*r);
     stroke_width /= sx;
   }
   fprintf(out_, "<g transform=\"translate(%f,%f) scale(%f,%f)\">\n", cx, cy, sx, sy);
@@ -1005,7 +974,8 @@ void Fl_SVG_Graphics_Driver::arc_pie(char AorP, int x, int y, int w, int h, doub
 
 #else
 
-Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f) : Fl_Widget_Surface(NULL) {
+Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f, int (*closef)(FILE*)) : Fl_Widget_Surface(NULL) {
+  closef_ = NULL;
   width_ = height_ = 0;
 }
 Fl_SVG_File_Surface::~Fl_SVG_File_Surface() {}
@@ -1017,3 +987,5 @@ void Fl_SVG_File_Surface::untranslate() {}
 int Fl_SVG_File_Surface::printable_rect(int *w, int *h) {return 0;}
 
 #endif // FLTK_USE_SVG
+
+void Fl_SVG_File_Surface::origin(int *x, int *y) { Fl_Widget_Surface::origin(x, y);}

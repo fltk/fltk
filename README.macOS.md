@@ -44,6 +44,9 @@ _README.macOS.md - Building FLTK under Apple macOS_
 FLTK supports macOS version 10.3 Panther and above. At the time of writing (Jan. 2019),
 FLTK compiles and runs fine on the most recent macOS 10.14 Mojave.
 
+Update (March 2021): FLTK builds and runs fine on macOS 11 (Big Sur) on Intel and
+the new M1 Apple Silicon (Arm) processors.
+
 FLTK 1.4 supports the following build environments on the macOS
 platform:
 
@@ -76,7 +79,7 @@ user input, but will likely take well over an hour.
 compiler independent configuration files, and generate native makefiles and workspaces
 that can be used in the compiler environment of your choice."
 
-Please download and install the Mac OS X version of _CMake_ from
+Please download and install the macOS version of _CMake_ from
 [www.cmake.org](https://cmake.org/download/). Download the .dmg file, click it, and when
 the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
@@ -91,17 +94,17 @@ _pull_ the newest release.
 If you want to use _Xcode_ to clone the FLTK GitHub repository, you will have to give _Xcode_
 access to your GitHub Account in the _Xcode_ preferences. If you don't have a GitHub
 account, or don't want to share your credentials with _Xcode_, you can use still the command
-line  `git clone https://github.com/fltk/fltk.git fltk-1.4.git`
-to ceck out the repo.
+line  `git clone https://github.com/fltk/fltk.git fltk-1.4`
+to check out the repo.
 
 Start _Xcode_. Select `Source Control >> Clone...` in the main menu.
 
 A dialog box will open with a search field and a list of repositories. Enter `fltk/fltk` in
-the search field. A list of matchin repositories appears. The first one should be named `fltk`
+the search field. A list of matching repositories appears. The first one should be named `fltk`
 and be owned by `fltk`. Select it and click _Clone_.
 
-A file chooser appears. Navigate to your home directory. The create a new folder named
-`dev`. Enter `fltk-1.4.git` in the _Save As:_ field and click _Clone_, then _Done_ in the
+A file chooser appears. Navigate to your home directory. Create a new folder named
+`dev`. Enter `fltk-1.4` in the _Save As:_ field and click _Clone_, then _Done_ in the
 previous dialog.
 
 The local copy of your repository can be updated by loading it into _Xcode_ and selecting
@@ -110,23 +113,23 @@ The local copy of your repository can be updated by loading it into _Xcode_ and 
 <a name="bcx_config"></a>
 ### Configuring FLTK (CMake, Xcode)
 
-Launch _CMake_ by pressing Command+Spacebar, the type _CMake_ and press return.
+Launch _CMake_ by pressing Command+Spacebar, then type _CMake_ and press return.
 _CMake_ should open with a large dialog box.
 
 The first input field is labeled with _Where is the source code:_ . Click on _Browse Source..._
-and navigate to your home folder, then `dev`, then `fltk-1.4.git`. Click _Open_.
+and navigate to your home folder, then `dev`, then `fltk-1.4`. Click _Open_.
 
 The next input field is marked _Where to build the binaries:_. Click _Browse Build..._
-and navigate to your home folder,  then `dev`, then `fltk-1.4.git`, then use _New Folder_
+and navigate to your home folder,  then `dev`, then `fltk-1.4`, then use _New Folder_
 to create a folder named `build`, and inside that, create a folder named `Xcode`. Click _Open_.
 
 The top two input fields should read
 ```
-/Users/your_name/dev/fltk-1.4.git
+/Users/your_name/dev/fltk-1.4
 ```
 and
 ```
-/Users/your_name/dev/fltk-1.4.git/build/Xcode
+/Users/your_name/dev/fltk-1.4/build/Xcode
 ```
 
 Back in the _CMake_ main window, click _Configure_, select _Xcode_ as the generator and
@@ -150,7 +153,7 @@ _CMake_ will be smart enough to update the build files as well.
 
 Now this is easy if all the previous steps were successful. If you are still in _CMake_, just click
 _Open Project_ and _CMake_ will launch _XCode_ for you. If not, just launch _XCode_ and
-open `Macintosh HD⁩ ▸ ⁨Users⁩ ▸ your_name⁩ ▸ ⁨dev⁩ ▸ ⁨fltk-1.4.git⁩ ▸ ⁨build⁩ ▸ ⁨Xcode⁩ ▸ ⁨FLTK.xcodeproj`.
+open `Macintosh HD⁩ ▸ ⁨Users⁩ ▸ your_name⁩ ▸ ⁨dev⁩ ▸ ⁨fltk-1.4⁩ ▸ ⁨build⁩ ▸ ⁨Xcode⁩ ▸ ⁨FLTK.xcodeproj`.
 
 _XCode_ may or may not ask to Autocreate Schemes. Click _Automatically Create Schemes_.
 
@@ -176,8 +179,7 @@ permission.
 <a name="bcx_new_projects"></a>
 ### Creating new Projects (CMake, Xcode)
 
-TODO: we still need to write a simple CMake file for creating a minimal cross platform app.
-
+See README.CMake.txt
 
 <a name="build_cmake_make"></a>
 ## How to Build FLTK Using _CMake_ and _make_
@@ -197,7 +199,7 @@ In order to build FLTK, you need to install _CMake_ and the _Xcode_ command line
 compiler independent configuration files, and generate native makefiles and workspaces
 that can be used in the compiler environment of your choice."
 
-Please download and install the Mac OS X version of _CMake_ from
+Please download and install the macOS version of _CMake_ from
 [www.cmake.org](https://cmake.org/download/). Download the .dmg file, click it, and when
 the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
@@ -229,7 +231,7 @@ Downloading FLTK is explained [here](#bam_download).
 <a name="bcm_config"></a>
 ### Configuring FLTK (CMake, make)
 
-Using you shell in the terminal, make sure that you are in the root directory of your
+Using your shell in the terminal, make sure that you are in the root directory of your
 FLTK source code tree.
 
 Create a directory where all FLTK binaries will be built:
@@ -253,7 +255,7 @@ cmake -G "Unix Makefiles" \
 _CMake_ runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
 
-For the advanced user, there are a few more optinons to the _CMake_ setup. Type
+For the advanced user there are a few more options to the _CMake_ setup. Type
 `cmake -L ../..` to get a complete list of options. These should be pretty
 self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
@@ -278,7 +280,7 @@ symbols. This is normal and can safely be ignored.
 After a successful build, you can test FLTK's capabilities by running
 
 ```bash
-open bin/examples/demo.app
+open bin/test/demo.app
 ```
 
 <a name="bcm_install"></a>
@@ -380,8 +382,8 @@ cd dev
 Now create a copy of the source code archive at Github on your local file system:
 
 ```bash
-git clone https://github.com/fltk/fltk.git fltk-1.4.git
-cd fltk-1.4.git
+git clone https://github.com/fltk/fltk.git fltk-1.4
+cd fltk-1.4
 ```
 
 <a name="bam_config"></a>
@@ -394,9 +396,9 @@ If you are configuring fltk for the first time, you need to instruct FLTK to cre
 very basic configuration files. Type:
 
 ```bash
-NOCONFIGURE=1 ./autogen.sh
+autoconf
 ```
-This script may generate a few error messages which you can sefely ignore.
+This creates the configure script.
 
 Now configure your FLTK installation. Stay in your FLTK source-code directory
 and type
@@ -408,7 +410,7 @@ and type
 The configuration script runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
 
-For the advanced user, there are a few more optinons to the _configure_ script. Type
+For the advanced user there are a few more optinons to the _configure_ script. Type
 `./configure --help` to get a complete list of options. These should be pretty
 self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
@@ -512,9 +514,9 @@ to the Info.plist file you have prepared.
 - Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
 - Apr 17 2012 - matt: added Xcode4 documentation
 - Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
-- Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
+- Apr 28 2014 - Manolo: how to build programs that run on various macOS versions
 - Mar 18 2015 - Manolo: removed uses of the Xcode3 project
-- Apr 01 2016 - AlbrechtS: corrected typo, formatted most line breaks < 80 columns
-- Dec 04 2018 - AlbrechtS: fix typo (lowercase fluid.app) for case sensitive macOS
+- Apr 01 2016 - Albrecht: corrected typo, formatted most line breaks < 80 columns
+- Dec 04 2018 - Albrecht: fix typo (lowercase fluid.app) for case sensitive macOS
 - Dec 28 2018 - Matt: complete rework for FLTK 1.4
-
+- Mar 01 2021 - Albrecht: minor updates, macOS Big Sur and Apple Silicon M1 (ARM)

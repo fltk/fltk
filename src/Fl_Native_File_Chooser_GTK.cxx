@@ -15,9 +15,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
-
-#ifdef FL_CFG_WIN_X11
+#include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
@@ -962,5 +960,3 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
     platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
 }
-
-#endif // FL_CFG_WIN_X11

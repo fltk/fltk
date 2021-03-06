@@ -52,7 +52,7 @@ If the group is stretched horizontally, the widths of
 the widgets within the group are adjusted proportionally.
 The same is true for vertical resizing.
 
-\image html resize-example1.png "Figure 6.1: Proportional resizing example"
+\image html resize-example1.png "Proportional resizing example"
 \image latex resize-example1.png "Proportional resizing example" width=12cm
 
 
@@ -100,7 +100,7 @@ The resizing behavior is as follows:
 \li the widths and heights of the remaining widgets stay the same,
     i.e. the widgets marked A, D, I and L stay the same size.
 
-\image html resize-example2.png "Figure 6.2: Complex resizing example"
+\image html resize-example2.png "Complex resizing example"
 \image latex resize-example2.png "Complex resizing example" width=12cm
 
 
@@ -120,7 +120,7 @@ be the \p resizable one?
 
 Setting the \p resizable to be the icon box won't give us what we want:
 
-\image html resize-example3a.png "Figure 6.3: Resizing dialog example (a)"
+\image html resize-example3a.png "Resizing dialog example (a)"
 \image latex resize-example3a.png "Resizing dialog example (a)" width=12cm
 
 The message text area would be the logical choice so that the user
@@ -128,7 +128,7 @@ can expand the dialog to see if there is more of an explanation below
 the short error message. This results in the behaviour shown in the
 diagram below.
 
-\image html resize-example3b.png "Figure 6.4: Resizing dialog example (b)"
+\image html resize-example3b.png "Resizing dialog example (b)"
 \image latex resize-example3b.png "Resizing dialog example (b)" width=12cm
 
 The result is close to what we want, but not quite:
@@ -141,7 +141,7 @@ That's ugly. How do we stop that from happening?
 Simple: put it in its own group and set the \p resizable to
 an invisible box widget, as shown in the diagram below.
 
-\image html resize-example3c.png "Figure 6.5: Resizing dialog example (c)"
+\image html resize-example3c.png "Resizing dialog example (c)"
 \image latex resize-example3c.png "Resizing dialog example (c)" width=12cm
 
 Now the invisible box, shown as "R", takes all of the
@@ -170,7 +170,7 @@ How could you achieve this?
 Setting either of the input fields to be the \p resizable leaves the
 other one fixed, as shown below:
 
-\image html resize-example4a.png "Figure 6.6: Resizing input fields example (a)"
+\image html resize-example4a.png "Resizing input fields example (a)"
 \image latex resize-example4a.png "Resizing input fields example (b)" width=12cm
 
 The answer is to leave the \p resizable of the group set to itself,
@@ -179,7 +179,7 @@ equally. Add a button and input field to each subgroup, and set
 each subgroup's \p resizable to the input field, as shown below.
 Tada!
 
-\image html resize-example4b.png "Figure 6.7: Resizing input fields example (b)"
+\image html resize-example4b.png "Resizing input fields example (b)"
 \image latex resize-example4b.png "Resizing inut fields example (b)" width=12cm
 
 In FLTK it is possible to solve almost any layout and resizing

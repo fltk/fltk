@@ -239,10 +239,10 @@ bool Fl_Window_Driver::is_a_rescale_ = false;
 void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_f) {
   screen_num(ns);
   Fl_Graphics_Driver::default_driver().scale(new_f);
-  int X = pWindow->x()*old_f/new_f, Y = pWindow->y()*old_f/new_f;
+  int X = int(pWindow->x() * old_f / new_f), Y = int(pWindow->y() * old_f / new_f);
   int W, H;
   if (pWindow->fullscreen_active()) {
-    W = pWindow->w() * old_f/new_f; H = pWindow->h() * old_f/new_f;
+    W = int(pWindow->w() * old_f / new_f); H = int(pWindow->h() * old_f / new_f);
   } else {
     W = pWindow->w(); H = pWindow->h();
     int sX, sY, sW, sH;

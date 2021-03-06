@@ -2,7 +2,7 @@
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,6 +42,7 @@ class Fl_File_Icon;
 class Fl_File_Browser;
 class Fl_Pixmap;
 class Fl_Widget;
+class Fl_Sys_Menu_Bar_Driver;
 
 /**
  \brief A base class for platform-specific system operations.
@@ -239,6 +240,9 @@ public:
   virtual const char *meta_name() { return "Meta"; }
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
+  virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
+  virtual void lock_ring() {}
+  virtual void unlock_ring() {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

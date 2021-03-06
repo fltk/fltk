@@ -19,7 +19,7 @@
 # set CMake minimum version (must be before `project()`
 #######################################################################
 
-# Note: previous (1.3.x) minimum version
+# Note: previous (1.3.5) minimum version
 # cmake_minimum_required (VERSION 2.6.3)
 
 # Note: minimum CMake version required by GNUInstallDirs
@@ -28,14 +28,20 @@
 # Minimum CMake version required by FLTK 1.4 (06/2020, work in progress)
 cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
 
-# Use "legacy mode" of FindOpenGL (avoid CMake developer warning)
-# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
-# the `OpenGL::GL` target. May be changed in the future.
-# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
+#######################################################################
 
-if (POLICY CMP0072)
-  cmake_policy (SET CMP0072 OLD)
-endif ()
+# Use "legacy mode" of FindOpenGL (avoid CMake developer warning).
+# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
+# the `OpenGL::GL` target. This may be changed in the future.
+# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
+# Update Feb 28, 2021: To avoid a warning about "OLD" policies we set
+# OpenGL_GL_PREFERENCE directly to "LEGACY" (other option: "GLVND").
+
+# if (POLICY CMP0072)
+#   cmake_policy (SET CMP0072 OLD)
+# endif ()
+
+set (OpenGL_GL_PREFERENCE LEGACY)
 
 #######################################################################
 # define the FLTK project and version
@@ -54,7 +60,6 @@ if (false)
   fl_debug_var (FLTK_VERSION_MAJOR)
   fl_debug_var (FLTK_VERSION_MINOR)
   fl_debug_var (FLTK_VERSION_PATCH)
-  fl_debug_var (FLTK_VERSION)
   fl_debug_var (FLTK_VERSION)
 endif (false)
 

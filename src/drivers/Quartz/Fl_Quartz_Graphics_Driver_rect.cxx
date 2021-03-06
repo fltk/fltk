@@ -15,11 +15,9 @@
 //
 
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <math.h>
 
 
 /**
@@ -43,6 +41,19 @@ void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(gc_, rect);
   if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+}
+
+void Fl_Quartz_Graphics_Driver::focus_rect(int x, int y, int w, int h)
+{
+  CGContextSaveGState(gc_);
+  float s = scale();
+  CGContextScaleCTM(gc_, 1/s, 1/s);
+  CGFloat lw = (s >= 1 ? floor(s) : 1);
+  CGContextSetLineWidth(gc_, lw);
+  CGFloat dots[2] = {lw, lw};
+  CGContextSetLineDash(gc_, 0, dots, 2);
+  CGContextStrokeRect(gc_, CGRectMake(x*s, y*s, (w-1)*s, (h-1)*s));
+  CGContextRestoreGState(gc_);
 }
 
 void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -297,6 +308,3 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
     }
   }
 }
-
-
-#endif // FL_CFG_GFX_QUARTZ

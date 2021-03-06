@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -344,7 +344,6 @@ Atom fl_XdndDrop;
 Atom fl_XdndStatus;
 Atom fl_XdndActionCopy;
 Atom fl_XdndFinished;
-//Atom fl_XdndProxy;
 Atom fl_XdndURIList;
 static Atom fl_Xatextplainutf;
 static Atom fl_Xatextplainutf2;         // STR#2930
@@ -366,6 +365,98 @@ static Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
 static Atom fl_NET_ACTIVE_WINDOW;
+
+/*
+  Debug: translate Atom (number) to name: enable (1) if used below
+*/
+#if (0)
+static void debug_atom_name(const char *fun, int line, Atom atom) {
+  char *name = XGetAtomName(fl_display, atom);
+  fprintf(stderr, "[%s:%d] debug_atom_name (%4lu) = %s\n", fun, line, atom, name);
+  XFree(name);
+}
+#endif
+
+/*
+  Find the best target in a list of available copy/paste or dnd targets.
+
+  This function searches all available targets [avail, na] by comparing
+  these with an ordered list of suitable targets [targets, nt].
+  The size of the list of available targets is determined by 'na'.
+
+  The list of suitable targets must be ordered by preference with the
+  best target first. This ensures that we always find our preferred
+  target, no matter how the list of available targets is ordered.
+  The list size is max. 'nt' entries but can also be terminated
+  by a zero (0) entry.
+
+  The list of suitable targets is provided by FLTK (see below); the
+  list of available targets is provided by the data source program.
+
+  Returns: (Atom) the "best target" or 0 (zero) if no target matches.
+*/
+
+static Atom find_target(Atom *targets, int nt, Atom *avail, int na) {
+  Atom retval = 0;
+  Atom mt, at;
+  int i = 0, m = 0;
+#if (0) // Debug
+  fprintf(stderr, "find_target: looking for:\n");
+  for (i = 0; i < nt; i++)
+    debug_atom_name("  find_target", i, targets[i]);
+  for (i = 0; i < na; i++)
+    debug_atom_name("  available  ", i, avail[i]);
+#endif // Debug
+  int n = nt;
+  for (i = 0; i < na; i++) { // search all available targets
+    at = avail[i];
+    // search only *better* targets: m < n !
+    for (m = 0; m < n; m++) { // try to match usable targets
+      mt = targets[m];
+      if (!mt) break; // end of list
+      if (mt == at) {
+        n = m;
+        retval = mt;
+        break;
+      }
+    }
+    if (n == 0) break; // found the *best* target (0)
+  }
+  // debug_atom_name("find_target: FOUND", n, retval);
+  return retval;
+}
+
+/*
+  Find a suitable target for text insertion in a list of available targets.
+*/
+static Atom find_target_text(Atom *avail, int na) {
+  static Atom text_targets[] = {
+    fl_XaUtf8String,      // "UTF8_STRING"
+    fl_Xatextplainutf2,   // "text/plain;charset=utf-8" (correct: lowercase)
+    fl_Xatextplainutf,    // "text/plain;charset=UTF-8" (non-standard: compat.)
+    fl_Xatextplain,       // "text/plain"
+    XA_STRING,            // "STRING"
+    fl_XaText,            // "TEXT"
+    fl_XaCompoundText,    // "COMPOUND_TEXT"
+    fl_XaTextUriList,     // "text/uri-list" (e.g. file manager)
+    (Atom)0               // list terminator (optional, but don't remove)
+  };
+  static int nt = sizeof(text_targets) / sizeof(Atom) - 1; // list size w/o terminator
+  return find_target(text_targets, nt, avail, na);
+}
+
+/*
+  Find a suitable target for image insertion in a list of available targets.
+*/
+static Atom find_target_image(Atom *avail, int na) {
+  static Atom image_targets[] = {
+    fl_XaImageBmp,        // "image/bmp"
+    fl_XaImagePNG,        // "image/png"
+    (Atom)0               // list terminator (optional, but don't remove)
+  };
+  static int ni = sizeof(image_targets) / sizeof(Atom) - 1; // list size w/o terminator
+  return find_target(image_targets, ni, avail, na);
+}
 
 /*
   X defines 32-bit-entities to have a format value of max. 32,
@@ -645,7 +736,6 @@ void open_display_i(Display* d) {
   fl_XdndStatus         = XInternAtom(d, "XdndStatus",          0);
   fl_XdndActionCopy     = XInternAtom(d, "XdndActionCopy",      0);
   fl_XdndFinished       = XInternAtom(d, "XdndFinished",        0);
-  //fl_XdndProxy        = XInternAtom(d, "XdndProxy",           0);
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
@@ -839,31 +929,13 @@ int Fl_X11_System_Driver::clipboard_contains(const char *type)
                      0, 4000, 0, 0,
                      &actual, &format, &count, &remaining, &portion);
   if (actual != XA_ATOM) return 0;
-  Atom t;
-  int retval = 0;
-  if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-    for (i = 0; i<count; i++) { // searching for text data
-      t = ((Atom*)portion)[i];
-      if (t == fl_Xatextplainutf ||
-          t == fl_Xatextplainutf2 ||
-          t == fl_Xatextplain ||
-          t == fl_XaUtf8String) {
-        retval = 1;
-        break;
-      }
-    }
-  }
-  else if (strcmp(type, Fl::clipboard_image) == 0) {
-    for (i = 0; i<count; i++) { // searching for image data
-      t = ((Atom*)portion)[i];
-      if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
-        retval = 1;
-        break;
-      }
-    }
-  }
+  Atom t = (Atom)0;
+  if (strcmp(type, Fl::clipboard_plain_text) == 0)
+    t = find_target_text((Atom*)portion, count);
+  else if (strcmp(type, Fl::clipboard_image) == 0)
+    t = find_target_image((Atom*)portion, count);
   XFree(portion);
-  return retval;
+  return (t ? 1 : 0);
 }
 
 static Window fl_dnd_source_window;
@@ -1417,7 +1489,6 @@ int fl_handle(const XEvent& thisevent)
 
   case SelectionNotify: {
     static unsigned char* sn_buffer = 0;
-    //static const char *buffer_format = 0;
     if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
@@ -1447,64 +1518,43 @@ int fl_handle(const XEvent& thisevent)
       }
 
       if (actual == TARGETS || actual == XA_ATOM) {
-        /*for (unsigned i = 0; i<count; i++) {
-            fprintf(stderr," %s", XGetAtomName(fl_display, ((Atom*)portion)[i]) );
-          }
-          fprintf(stderr,"\n");
-        */
-        Atom t, type = XA_STRING;
+        Atom type;
         if (Fl::e_clipboard_type == Fl::clipboard_image) { // searching for image data
-          for (unsigned i = 0; i<count; i++) {
-            t = ((Atom*)portion)[i];
-            if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
-              type = t;
-              goto found;
-            }
-          }
-          XFree(portion);
-          return true;
+          type = find_target_image((Atom *)portion, count);
         }
-        for (unsigned i = 0; i<count; i++) { // searching for text data
-          t = ((Atom*)portion)[i];
-          if (t == fl_Xatextplainutf ||
-              t == fl_Xatextplainutf2 ||
-              t == fl_Xatextplain ||
-              t == fl_XaUtf8String) {
-            type = t;
-            break;
-          }
-          // rest are only used if no UTF-8 available:
-          if (t == fl_XaText ||
-              t == fl_XaTextUriList ||
-              t == fl_XaCompoundText) type = t;
+        else { // searching for text data. *FIXME* - there may be other data types!
+          type = find_target_text((Atom *)portion, count);
         }
-      found:
         XFree(portion); portion = 0;
+
+        if (!type) { // not found
+          if (Fl::e_clipboard_type == Fl::clipboard_image)
+            return true;
+          else
+            type = fl_XaUtf8String; // text: try this anyway (was: XA_STRING)
+        } // not found
+
         Atom property = xevent.xselection.property;
         XConvertSelection(fl_display, property, type, property,
               fl_xid(Fl::first_window()),
               fl_event_time);
         if (type == fl_XaImageBmp) {
           Fl::e_clipboard_type = Fl::clipboard_image;
-          //buffer_format = "image/bmp";
-          }
+        }
         else if (type == fl_XaImagePNG) {
           Fl::e_clipboard_type = Fl::clipboard_image;
-          //buffer_format = "image/png";
-          }
+        }
         else {
           Fl::e_clipboard_type = Fl::clipboard_plain_text;
-          // buffer_format = Fl::clipboard_plain_text;
-          }
-          // fprintf(stderr,"used format=%s\n", buffer_format);
+        }
         return true;
       }
-        if (actual == fl_INCR) {
-          bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
-          XFree(portion);
-          break;
-        }
-        // Make sure we got something sane...
+      if (actual == fl_INCR) {
+        bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
+        XFree(portion);
+        break;
+      }
+      // Make sure we got something sane...
       if ((portion == NULL) || (format != 8) || (count == 0)) {
         if (portion) { XFree(portion); portion = 0; }
         return true;
@@ -1549,12 +1599,12 @@ int fl_handle(const XEvent& thisevent)
     else if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
       Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
       Fl::e_length = bytesread;
-      }
+    }
     int old_event = Fl::e_number;
     int retval = fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
     if (!retval && Fl::e_clipboard_type == Fl::clipboard_image) {
       delete (Fl_RGB_Image*)Fl::e_clipboard_data;
-      Fl::e_clipboard_data= NULL;
+      Fl::e_clipboard_data = NULL;
     }
     Fl::e_number = old_event;
     // Detect if this paste is due to Xdnd by the property name (I use
@@ -1567,13 +1617,15 @@ int fl_handle(const XEvent& thisevent)
                            fl_xevent->xselection.requestor);
       fl_dnd_source_window = 0; // don't send a second time
     }
-    return 1;}
+    return 1;
+  } // SelectionNotify
 
   case SelectionClear: {
     int clipboard = fl_xevent->xselectionclear.selection == CLIPBOARD;
     fl_i_own_selection[clipboard] = 0;
     poll_clipboard_owner();
-    return 1;}
+    return 1;
+  }
 
   case SelectionRequest: {
     XSelectionEvent e;
@@ -1590,7 +1642,7 @@ int fl_handle(const XEvent& thisevent)
         XChangeProperty(fl_display, e.requestor, e.property,
                         XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
       } else {
-        if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
+        if (fl_selection_length[clipboard]) { // data available
           if (e.target == fl_XaUtf8String ||
               e.target == XA_STRING ||
               e.target == fl_XaCompoundText ||
@@ -1607,10 +1659,7 @@ int fl_handle(const XEvent& thisevent)
                             (unsigned char *)fl_selection_buffer[clipboard],
                             fl_selection_length[clipboard]);
           }
-        } else {
-          //    char* x = XGetAtomName(fl_display,e.target);
-          //    fprintf(stderr,"selection request of %s\n",x);
-          //    XFree(x);
+        } else { // no data available
           e.property = 0;
         }
       }
@@ -1630,8 +1679,9 @@ int fl_handle(const XEvent& thisevent)
         }
       }
     }
-    XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);}
+    XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);
     return 1;
+  } // SelectionRequest
 
   // events where interesting window id is in a different place:
   case CirculateNotify:
@@ -1647,7 +1697,7 @@ int fl_handle(const XEvent& thisevent)
   case UnmapNotify:
     xid = xevent.xmaprequest.window;
     break;
-  }
+  } // switch (xevent.type)
 
   int event = 0;
   Fl_Window* window = fl_find(xid);
@@ -1664,7 +1714,7 @@ int fl_handle(const XEvent& thisevent)
         window->position(0, 0);
         window->position(oldx, oldy);
         window->show(); // recreate the X11 window in support of the FLTK window
-        }
+      }
       return 1;
     }
   case ClientMessage: {
@@ -1677,7 +1727,7 @@ int fl_handle(const XEvent& thisevent)
       in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
-//      printf("XdndEnter, version %ld\n", data[1] >> 24);
+      // fprintf(stderr, "XdndEnter, version %ld\n", data[1] >> 24);
       if (data[1]&1) {
         // get list of data types:
         Atom actual; int format; unsigned long count, remaining;
@@ -1706,25 +1756,16 @@ int fl_handle(const XEvent& thisevent)
         fl_dnd_source_types[3] = 0;
       }
 
-      // Loop through the source types and pick the first text type...
-      unsigned i;
-      Atom type = ((Atom*)fl_dnd_source_types)[0];
-      for (i = 0; fl_dnd_source_types[i]; i ++) {
-        Atom t = ((Atom*)fl_dnd_source_types)[i];
-        //printf("fl_dnd_source_types[%d]=%ld(%s)\n",i,t,XGetAtomName(fl_display,t));
-        if (t == fl_Xatextplainutf ||           // "text/plain;charset=UTF-8"
-            t == fl_Xatextplainutf2 ||          // "text/plain;charset=utf-8" -- See STR#2930
-            t == fl_Xatextplain ||              // "text/plain"
-            t == fl_XaUtf8String) {             // "UTF8_STRING"
-          type = t;
-          break;
-        }
-        // rest are only used if no UTF-8 available:
-        if (t == fl_XaText ||                   // "TEXT"
-            t == fl_XaTextUriList ||            // "text/uri-list"
-            t == fl_XaCompoundText) type = t;   // "COMPOUND_TEXT"
+      // Pick the "best" source (text) type...
+      // *FIXME* what if we don't find a suitable type? (see below: first type?)
+      // *FIXME* count (zero terminated) dnd sources (must be at least 1)
+      int dnd_sources;
+      for (dnd_sources = 0; fl_dnd_source_types[dnd_sources]; dnd_sources++) {
+        // empty
       }
-      fl_dnd_type = type;
+      fl_dnd_type = find_target_text(fl_dnd_source_types, dnd_sources);
+      if (!fl_dnd_type) // not found: pick first type
+        fl_dnd_type = fl_dnd_source_types[0];
 
       event = FL_DND_ENTER;
       Fl::e_text = unknown;
@@ -1791,7 +1832,8 @@ int fl_handle(const XEvent& thisevent)
       return 1;
 
     }
-    break;}
+    break;
+  } // case ClientMessage
 
   case UnmapNotify:
     event = FL_HIDE;
@@ -2186,9 +2228,9 @@ int fl_handle(const XEvent& thisevent)
 #if USE_XFT
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
       ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) ) {
-        window->resize(X/s, Y/s, ceil(W/s), ceil(H/s));
+        window->resize(rint(X/s), rint(Y/s), ceil(W/s), ceil(H/s));
     } else {
-      window->position(X/s, Y/s);
+      window->position(rint(X/s), rint(Y/s));
     }
 #else
     window->resize(X, Y, W, H);
@@ -2220,11 +2262,11 @@ int fl_handle(const XEvent& thisevent)
 #else
       float s = 1;
 #endif
-      window->position(xpos/s, ypos/s);
+      window->position(rint(xpos/s), rint(ypos/s));
     }
     break;
-    }
-  }
+  } // ReparentNotify
+  } // if (window) switch (xevent.type)
 
 #if HAVE_XFIXES
   switch (xevent.type - xfixes_event_base) {
@@ -2273,12 +2315,12 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
     if (is_a_resize) {
       if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
       if (is_a_move) {
-        XMoveResizeWindow(fl_display, fl_xid(pWindow), X*s, Y*s, W>0 ? W*s : 1, H>0 ? H*s : 1);
+        XMoveResizeWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s), W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
         XResizeWindow(fl_display, fl_xid(pWindow), W>0 ? W*s : 1, H>0 ? H*s : 1);
       }
     } else
-      XMoveWindow(fl_display, fl_xid(pWindow), X*s, Y*s);
+      XMoveWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s));
   }
 }
 
@@ -2586,7 +2628,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
                                root,
-                               X*s, Y*s, W*s, H*s,
+                               rint(X*s), rint(Y*s), W*s, H*s,
                                0, // borderwidth
                                visual->depth,
                                InputOutput,
@@ -2904,6 +2946,68 @@ void Fl_X11_Window_Driver::set_icons() {
 
 ////////////////////////////////////////////////////////////////
 
+#if ! HAVE_XCURSOR
+static void cache_pixmap_cursor(Fl_Cursor c, Cursor& cursor, Fl_Window *pWindow, Cursor& result) {
+  if (cursor != None) { // already cached?
+    result = cursor;
+    return;
+  }
+#define CURSORSIZE 16
+#define HOTXY 7
+  static struct TableEntry {
+    uchar bits[CURSORSIZE*CURSORSIZE/8];
+    uchar mask[CURSORSIZE*CURSORSIZE/8];
+    Cursor cursor;
+  } table[] = {
+    {{  // FL_CURSOR_NWSE
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78, 0x00, 0x38, 0x00, 0x78, 0x00,
+     0xe8, 0x00, 0xc0, 0x01, 0x80, 0x03, 0x00, 0x17, 0x00, 0x1e, 0x00, 0x1c,
+     0x00, 0x1e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+     {
+     0x00, 0x00, 0x00, 0x00, 0xfc, 0x00, 0xfc, 0x00, 0x7c, 0x00, 0xfc, 0x00,
+     0xfc, 0x01, 0xec, 0x03, 0xc0, 0x37, 0x80, 0x3f, 0x00, 0x3f, 0x00, 0x3e,
+     0x00, 0x3f, 0x00, 0x3f, 0x00, 0x00, 0x00, 0x00}},
+    {{  // FL_CURSOR_NESW
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x1c, 0x00, 0x1e,
+     0x00, 0x17, 0x80, 0x03, 0xc0, 0x01, 0xe8, 0x00, 0x78, 0x00, 0x38, 0x00,
+     0x78, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+     {
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x3f, 0x00, 0x3e, 0x00, 0x3f,
+     0x80, 0x3f, 0xc0, 0x37, 0xec, 0x03, 0xfc, 0x01, 0xfc, 0x00, 0x7c, 0x00,
+     0xfc, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {{0}, {0}} // FL_CURSOR_NONE & unknown
+  };
+
+  Cursor xc = None;
+  if (c >= FL_CURSOR_NWSE) {
+     TableEntry *q = (c > FL_CURSOR_NESW) ? table+2 : table+(c-FL_CURSOR_NWSE);
+   if (!(q->cursor)) {
+     XColor dummy = { 0 };
+     Pixmap p = XCreateBitmapFromData(fl_display,
+     RootWindow(fl_display, fl_screen), (const char*)(q->bits), CURSORSIZE, CURSORSIZE);
+     Pixmap m = XCreateBitmapFromData(fl_display,
+     RootWindow(fl_display, fl_screen), (const char*)(q->mask), CURSORSIZE, CURSORSIZE);
+     q->cursor = XCreatePixmapCursor(fl_display, p,m,&dummy, &dummy, HOTXY, HOTXY);
+     XFreePixmap(fl_display, m);
+     XFreePixmap(fl_display, p);
+    }
+    xc = q->cursor;
+  }
+  XColor fgc;
+  uchar r,g,b;
+  // hardcoded colors (legacy)
+  Fl_Color fg = FL_WHITE;
+  Fl_Color bg = FL_BLACK;
+  Fl::get_color(fg,r,g,b);
+  fgc.red = r<<8; fgc.green = g<<8; fgc.blue = b<<8;
+  XColor bgc;
+  Fl::get_color(bg,r,g,b);
+  bgc.red = r<<8; bgc.green = g<<8; bgc.blue = b<<8;
+  XRecolorCursor(fl_display, xc, &fgc, &bgc);
+  result = xc;
+}
+#endif // ! HAVE_XCURSOR
+
 int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
 
   /* The cursors are cached, because creating one takes 0.5ms including
@@ -2926,6 +3030,11 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
   static Cursor xc_se = None;
   static Cursor xc_s = None;
   static Cursor xc_sw = None;
+#if ! HAVE_XCURSOR
+  static Cursor xc_nwse = None;
+  static Cursor xc_nesw = None;
+  static Cursor xc_none = None;
+#endif // ! HAVE_XCURSOR
 
   Cursor xc;
 
@@ -2952,6 +3061,11 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
   case FL_CURSOR_SE:      cache_cursor(XC_bottom_right_corner, xc_se); break;
   case FL_CURSOR_S:       cache_cursor(XC_bottom_side, xc_s); break;
   case FL_CURSOR_SW:      cache_cursor(XC_bottom_left_corner, xc_sw); break;
+#if ! HAVE_XCURSOR
+  case FL_CURSOR_NWSE:    cache_pixmap_cursor(c, xc_nwse, pWindow, xc); break;
+  case FL_CURSOR_NESW:    cache_pixmap_cursor(c, xc_nesw, pWindow, xc); break;
+  case FL_CURSOR_NONE:    cache_pixmap_cursor(c, xc_none, pWindow, xc); break;
+#endif // ! HAVE_XCURSOR
   default:
     return 0;
   }

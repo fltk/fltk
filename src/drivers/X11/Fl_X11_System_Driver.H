@@ -18,7 +18,7 @@
 #ifndef FL_X11_SYSTEM_DRIVER_H
 #define FL_X11_SYSTEM_DRIVER_H
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "../Posix/Fl_Posix_System_Driver.H"
 
 class Fl_X11_System_Driver : public Fl_Posix_System_Driver {

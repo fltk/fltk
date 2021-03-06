@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_QUARTZ
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
@@ -137,5 +134,3 @@ void Fl_Quartz_Image_Surface_Driver::end_current()
   fl_window = pre_window;
   Fl_Surface_Device::end_current();
 }
-
-#endif // FL_CFG_GFX_QUARTZ
