@@ -104,7 +104,7 @@ AS_IF([test x$enable_debug = xyes], [
 AC_ARG_ENABLE([gl], AS_HELP_STRING([--disable-gl], [turn off OpenGL support]))
 
 AC_ARG_ENABLE([localjpeg], AS_HELP_STRING([--enable-localjpeg], [use local JPEG library (default=auto)]))
-AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG library (efault=auto)]))
+AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG library (default=auto)]))
 AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB library (default=auto)]))
 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
@@ -797,6 +797,8 @@ AC_SUBST([JPEG])
 AC_SUBST([JPEGINC])
 AC_SUBST([PNG])
 AC_SUBST([PNGINC])
+AC_SUBST([HAVE_PNG_H])
+AC_SUBST([HAVE_LIBPNG_H])
 AC_SUBST([ZLIB])
 AC_SUBST([ZLIBINC])
 
