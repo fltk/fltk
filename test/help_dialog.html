@@ -1,8 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fl_Help_Dialog test - Fast Light Toolkit (FLTK)</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+</head>
+<body>
 <!--
  *
- * Test file for Fl_Help_View for the Fast Light Tool Kit (FLTK).
+ * Fl_Help_View test file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2020 by Bill Spitzak and others.
+ * Copyright 1998-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -17,9 +24,9 @@
 -->
 <H1>Simple HTML Tests</H1>
 <UL>
-    <LI> <a href="#Plain Test">Plain Text Test</A>
-    <LI> <a href="#Entity Test">HTML Entity Test</A>
-    <LI> <a href="#Pre Test">PRE (preformatted Text) Test</A>
+    <LI> <a href="#PlainTest">Plain Text Test</A>
+    <LI> <a href="#EntityTest">HTML Entity Test</A>
+    <LI> <a href="#PreTest">PRE (preformatted Text) Test</A>
     <LI> <a href="#Headings">Heading Tests</A>
     <LI> <a href="#Lists">UL, OL, DL Lists</A>
     <LI> <a href="#Table">TABLE Tests</A>
@@ -29,7 +36,7 @@
 </UL>
 <P>
 
-<A NAME="Plain Test"></A>
+<A NAME="PlainTest"></A>
 <B>Plain text paragraphs</B><P>
     The licenses for most software are designed to take away your freedom to
     share and change it.  By contrast, the GNU General Public Licenses are
@@ -43,7 +50,7 @@
     <P>
     <I>Italic content.</I> <B>Bold content</B> <BIG>Big content.</BIG>
     <SMALL>Small content.</SMALL> <U>Underline content.</U> <STRIKE>Strike out content.</STRIKE>
-    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR=#ff8800>Orange #ff8800 font content.</FONT>
+    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR='#ff8800'>Orange #ff8800 font content.</FONT>
     <FONT COLOR=BLUE>Blue font content.</FONT>
     <P>
     <FONT FACE="Helvetica">This should be Helvetica. 0123456789</FONT><BR>
@@ -55,7 +62,7 @@
     <FONT FACE="Symbol">This should be Symbol. 0123456789</FONT>
     <P>
 
-<A NAME="Entity Test"></A>
+<A NAME="EntityTest"></A>
 <B>HTML Entities: named, hexadecimal, and decimal</B><P>
     <b>Special characters, formatted as named "HTML Entities", e.g. "&amp;euro;":</b><br>
     Euro and "dagger": "&euro;" "&dagger;"<br>
@@ -78,7 +85,7 @@
     Chinese (CJK Unified Ideographs) : "&#20013;" "&#20019;"<br>
     <P>
 
-<A NAME="Pre Test"></A>
+<A NAME="PreTest"></A>
 <B>Preformatted paragraphs</B><PRE>
 The following 2 paragraphs should be indented 4 spaces.
 
@@ -111,7 +118,7 @@ The following text content should all be indented 4 spaces.
 
     <I>Italic content.</I> <B>Bold content</B> <BIG>Big content.</BIG>
     <SMALL>Small content.</SMALL> <U>Underline content.</U> <STRIKE>Strike out content.</STRIKE>
-    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR=#ff8800>Orange #ff8800 font content.</FONT>
+    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR='#ff8800'>Orange #ff8800 font content.</FONT>
     <FONT COLOR=BLUE>Blue font content.</FONT>
 </PRE>
 <P>
@@ -143,6 +150,12 @@ End of UL. Starting an OL:
    <LI> Second list item</LI>
    <LI> Third list item</LI>
 </OL>
+Another OL with start value 10:
+<OL start="10">
+   <LI> First list item (value 10)</LI>
+   <LI> Second list item</LI>
+   <LI> Third list item</LI>
+</OL>
 End of OL. Starting a DL:
 <DL>
   A DL has been started. This should be a list of terms.
@@ -156,6 +169,26 @@ End of OL. Starting a DL:
   <DD>Description of third term goes here.</DD>
 </DL>
 End of DL.
+
+<p>
+Nested OL/UL:
+<OL>
+    <LI>First numbered Item
+        <UL>
+            <LI>one thing</LI>
+            <LI>two things</LI>
+            <LI>three things</LI>
+        </UL>
+    </LI>
+    <LI>Second numbered Item
+        <UL>
+            <LI>one thing</LI>
+            <LI>two things</LI>
+            <LI>Three things</LI>
+        </UL>
+    </LI>
+</OL>
+
 <P>
 
 <A NAME="Table"></A>
@@ -188,7 +221,7 @@ End of DL.
 <B>Simple Two Column Table With Borders And Heading</B>
 <TABLE BORDER=1>
   <TR>
-    <TH>Table Heading</TH>
+    <TH>Table Heading</TH> <TH>&nbsp;</TH>
   </TR>
   <TR>
     <TD>Column 1</TD>  <TD>Column 2</TD>
@@ -204,7 +237,7 @@ End of DL.
 <B>Simple Bordered Table With Heading And 10 Cell Padding + Spacing</B>
 <TABLE BORDER=1 CELLPADDING=10 CELLSPACING=10>
   <TR>
-    <TH>Table Heading</TH>
+    <TH colspan='2'>Table Heading</TH>
   </TR>
   <TR>
     <TD>Column 1</TD>  <TD>Column 2</TD>
@@ -220,21 +253,21 @@ End of DL.
 <B>Simple Table Of Images, Two Columns, Three Rows</B>
 <TABLE BORDER=1 CELLPADDING=10 CELLSPACING=10>
   <TR>
-    <TH>Table Heading</TH>
+    <TH colspan='2'>Table Heading</TH>
   </TR>
   <TR>
     <TD>Column 1</TD>  <TD>Column 2</TD>
   </TR><TR>
-    <TD><IMG SRC="images/FL200.png"></TD>
+    <TD><IMG SRC="images/FL200.png" alt="FLTK logo"></TD>
     <TD>This is the FLTK logo</TD>
   </TR><TR>
-    <TD><IMG SRC="images/tiny.png"></TD>
+    <TD><IMG SRC="images/tiny.png" alt="Tiny FLTK logo"></TD>
     <TD>Tiny FLTK logo.</TD>
   </TR><TR>
-    <TD><IMG SRC="images/Fl_Value_Input.png"></TD>
+    <TD><IMG SRC="images/Fl_Value_Input.png" alt="Fl_Value_Input"></TD>
     <TD>This is an image of Fl_Value_Input</TD>
   </TR><TR>
-    <TD><IMG SRC="images/Fl_Value_Output.png"></TD>
+    <TD><IMG SRC="images/Fl_Value_Output.png" alt="Fl_Value_Output"></TD>
     <TD>This is an image of Fl_Value_Output</TD>
   </TR>
 </TABLE>
@@ -251,7 +284,7 @@ This text should be in a paragraph break. This is paragraph #1 of 2.
 This text should be in a paragraph break as well. This is paragraph #2 of 2.
 <P>
 What follows should be a centered image.<BR>
-<IMG SRC="images/FL200.png"><BR>
+<IMG SRC="images/FL200.png" alt="FLTK logo"><BR>
 That should be a centered image.
 <P>
 </center>
@@ -296,3 +329,5 @@ This text should be between two horizontal lines.
 		   2 Tab + 3 Space
 		    ..
 </PRE>
+</body>
+</html>
