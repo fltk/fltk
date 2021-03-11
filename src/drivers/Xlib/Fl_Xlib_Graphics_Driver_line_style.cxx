@@ -26,7 +26,7 @@
 
 #include "Fl_Xlib_Graphics_Driver.H"
 
-void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
+void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, int width, char* dashes) {
 
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the Windows dash patterns on X
@@ -60,4 +60,20 @@ if (*dashes == 0) ndashes = 0;//against error with very small scaling
                      ndashes ? LineOnOffDash : LineSolid,
                      Cap[(style>>8)&3], Join[(style>>12)&3]);
   if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);
+}
+
+void *Fl_Xlib_Graphics_Driver::change_pen_width(int lwidth) {
+  XGCValues *gc_values = (XGCValues*)malloc(sizeof(XGCValues));
+  gc_values->line_width = lwidth;
+  XChangeGC(fl_display, gc_, GCLineWidth, gc_values);
+  gc_values->line_width = line_width_;
+  line_width_ = lwidth;
+  return gc_values;
+}
+
+void Fl_Xlib_Graphics_Driver::reset_pen_width(void *data) {
+  XGCValues *gc_values = (XGCValues*)data;
+  line_width_ = gc_values->line_width;
+  XChangeGC(fl_display, gc_, GCLineWidth, gc_values);
+  delete gc_values;
 }

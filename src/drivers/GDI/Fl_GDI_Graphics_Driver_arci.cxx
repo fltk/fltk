@@ -30,8 +30,9 @@
 #include <FL/math.h>
 #include <FL/platform.H>
 
-void Fl_GDI_Graphics_Driver::arc_unscaled(float x, float y, float w, float h, double a1, double a2) {
+void Fl_GDI_Graphics_Driver::arc_unscaled(int x, int y, int w, int h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
+  w++; h++;
   int xa = int( x+w/2+int(w*cos(a1/180.0*M_PI)) );
   int ya = int( y+h/2-int(h*sin(a1/180.0*M_PI)) );
   int xb = int( x+w/2+int(w*cos(a2/180.0*M_PI)) );
@@ -42,9 +43,11 @@ void Fl_GDI_Graphics_Driver::arc_unscaled(float x, float y, float w, float h, do
   } else Arc(gc_, int(x), int(y), int(x+w), int(y+h), xa, ya, xb, yb);
 }
 
-void Fl_GDI_Graphics_Driver::pie_unscaled(float x, float y, float w, float h, double a1, double a2) {
+void Fl_GDI_Graphics_Driver::pie_unscaled(int x, int y, int w, int h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
   if (a1 == a2) return;
+  x++; y++; w--; h--;
+  if (scale() >= 3) {x++; y++; w-=2; h-=2;}
   int xa = int( x+w/2+int(w*cos(a1/180.0*M_PI)) );
   int ya = int( y+h/2-int(h*sin(a1/180.0*M_PI)) );
   int xb = int( x+w/2+int(w*cos(a2/180.0*M_PI)) );

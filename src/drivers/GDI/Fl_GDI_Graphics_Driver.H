@@ -57,11 +57,6 @@ public:
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) { gc_ = (HDC)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
-  // This function aims to compute accurately int(x * s) in
-  // presence of rounding errors existing with floating point numbers
-  // and that sometimes differ between 32 and 64 bits.
-  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
-  inline int floor(int x) { return Fl_GDI_Graphics_Driver::floor(x, scale()); }
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
@@ -101,21 +96,16 @@ protected:
   void transformed_vertex0(float x, float y);
   void fixloop();
   virtual void point(int x, int y);
-  virtual void rect(int x, int y, int w, int h);
   void focus_rect(int x, int y, int w, int h);
-  virtual void rectf(int x, int y, int w, int h);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void xyline(int x, int y, int x1);
-  virtual void xyline(int x, int y, int x1, int y2);
-  virtual void xyline(int x, int y, int x1, int y2, int x3);
-  virtual void yxline(int x, int y, int y1);
-  virtual void yxline(int x, int y, int y1, int x2);
-  virtual void yxline(int x, int y, int y1, int x2, int y3);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
+  virtual void line_unscaled(int x, int y, int x1, int y1);
+  virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
+  virtual void xyline_unscaled(int x, int y, int x1);
+  virtual void yxline_unscaled(int x, int y, int y1);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   // --- clipping
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -131,14 +121,9 @@ protected:
   void end_complex_polygon();
   void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
-  virtual void line_style_unscaled(int style, float width, char* dashes);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
@@ -153,6 +138,8 @@ protected:
   void global_gc();
   virtual void overlay_rect(int x, int y, int w , int h);
   virtual void cache_size(Fl_Image *img, int &width, int &height);
+  virtual void* change_pen_width(int width);
+  virtual void reset_pen_width(void *data);
 };
 
 

@@ -779,8 +779,8 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
 
   w = gi.width;
   h = gi.height;
-  dx = -gi.x + line_delta_;
-  dy = -gi.y + line_delta_;
+  dx = -gi.x ;
+  dy = -gi.y ;
   correct_extents(scale(), dx, dy, w, h);
 }
 
@@ -788,10 +788,10 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
 
   // transform coordinates and clip if outside 16-bit space (STR 2798)
 
-  int x1 = x + offset_x_ * scale() + line_delta_;
+  int x1 = x + floor(offset_x_) ;
   if (x1 < clip_min() || x1 > clip_max()) return;
 
-  int y1 = y + offset_y_ * scale() + line_delta_;
+  int y1 = y + floor(offset_y_) ;
   if (y1 < clip_min() || y1 > clip_max()) return;
 
 #if USE_OVERLAY
@@ -870,7 +870,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+floor(offset_x_), y+floor(offset_y_), (FcChar32 *)str, n);
 }
 
 
@@ -1256,12 +1256,12 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
-  do_draw(0, str, n, x+offset_x_*scale(), y+offset_y_*scale());
+  do_draw(0, str, n, x + floor(offset_x_), y + floor(offset_y_));
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
-  pango_matrix_translate(&mat, x+offset_x_*scale(), y+offset_y_*scale()); // 1.6
+  pango_matrix_translate(&mat, x + floor(offset_x_), y + floor(offset_y_)); // 1.6
   double l = width_unscaled(str, n);
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
@@ -1275,7 +1275,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {
-  do_draw(1, str, n, x+offset_x_*scale(), y+offset_y_*scale());
+  do_draw(1, str, n, x+floor(offset_x_), y+floor(offset_y_));
 }
 
 /* Compute dx, dy, w, h so that fl_rect(x+dx, y+dy, w, h) is the bounding box
@@ -1343,8 +1343,8 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   if (from_right) {
     x -= w;
   }
-  pango_xft_render_layout(draw_, &color, playout_, (x + line_delta_)*PANGO_SCALE,
-                          (y - y_correction + line_delta_ - lheight + desc)*PANGO_SCALE ); // 1.8
+  pango_xft_render_layout(draw_, &color, playout_, x * PANGO_SCALE,
+                          (y - y_correction  - lheight + desc) * PANGO_SCALE ); // 1.8
   }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {

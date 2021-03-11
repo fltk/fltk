@@ -57,7 +57,6 @@ private:
   unsigned depth_; // depth of translation stack
   int stack_x_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE]; // translation stack allowing cumulative translations
   int stack_y_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE];
-  int line_delta_;
   virtual void set_current_();
   int clip_max_; // +/- x/y coordinate limit (16-bit coordinate space)
   virtual void draw_fixed(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -139,18 +138,17 @@ public:
 protected:
   virtual void transformed_vertex0(float x, float y);
   void fixloop();
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
-  virtual void point_unscaled(float x, float y);
-  virtual void rect_unscaled(float x, float y, float w, float h);
-  virtual void rectf_unscaled(float x, float y, float w, float h);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void yxline_unscaled(float x, float y, float y1);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void focus_rect(int x, int y, int w, int h);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
+  virtual void line_unscaled(int x, int y, int x1, int y1);
+  virtual void xyline_unscaled(int x, int y, int x1);
+  virtual void *change_pen_width(int lwidth);
+  virtual void reset_pen_width(void *data);
+  virtual void yxline_unscaled(int x, int y, int y1);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 
   // Scaling and clipping stuff for internal usage.
   // Currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
@@ -194,10 +192,9 @@ protected:
   void end_complex_polygon();
   void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void line_style_unscaled(int style, float width, char* dashes);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
   void color(Fl_Color c);
   void set_color(Fl_Color i, unsigned int c);
   void free_color(Fl_Color i, int overlay);

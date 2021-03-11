@@ -501,12 +501,12 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
   int ws, hs;
   if (int(s) == s) { ws = w * int(s); hs = h * int(s);}
   else {
-    ws = Fl_GDI_Graphics_Driver::floor(w+1, s); // approximates what Fl_Graphics_Driver::cache_size() does
-    hs = Fl_GDI_Graphics_Driver::floor(h+1, s);
+    ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Fl_Scalable_Graphics_Driver::floor(X, s),
+    hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Fl_Scalable_Graphics_Driver::floor(Y, s);
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(Fl_GDI_Graphics_Driver::floor(X, s), Fl_GDI_Graphics_Driver::floor(Y, s), ws, hs, win);
+  return read_win_rectangle_unscaled(Fl_Scalable_Graphics_Driver::floor(X, s), Fl_Scalable_Graphics_Driver::floor(Y, s), ws, hs, win);
 }
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
