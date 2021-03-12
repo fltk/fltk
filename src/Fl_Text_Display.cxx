@@ -470,7 +470,9 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 /**
  Recalculate the display's visible lines and scrollbar sizes.
  */
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
 #ifndef _WIN32
