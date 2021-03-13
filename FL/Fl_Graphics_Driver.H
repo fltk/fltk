@@ -340,8 +340,6 @@ public:
   virtual Fl_Font font();
   virtual Fl_Fontsize size();
   virtual double width(const char *str, int nChars);
-  // reimplemented by X11+pango platform to support word wrap mode of Fl_Text_Display
-  virtual double fast_width(const char *str, int n) {return width(str, n);};
   virtual double width(unsigned int c);
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual int height();

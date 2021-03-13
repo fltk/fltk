@@ -1351,12 +1351,11 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
                           (y - y_correction  - lheight + desc) * PANGO_SCALE ); // 1.8
   }
 
-double Fl_Xlib_Graphics_Driver::fast_width(const char* str, int n) {
-  int len;
-  unsigned r=0, utf32 = fl_utf8decode(str, str+n, &len);
+// cache the widths of single Unicode characters
+double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int utf32) {
+  unsigned r=0;
   Fl_Xlib_Font_Descriptor *desc = NULL;
-  bool in_mem = (len == n &&  utf32 <= 0xFFFF);
-  if (in_mem) {
+  if (utf32 <= 0xFFFF) {
     desc = (Fl_Xlib_Font_Descriptor*)font_descriptor();
     r = (utf32 & 0xFC00) >> 10;
     if (!desc->width) {
@@ -1368,18 +1367,29 @@ double Fl_Xlib_Graphics_Driver::fast_width(const char* str, int n) {
       for (int i = 0; i < 0x0400; i++) desc->width[r][i] = -1;
     } else {
       if ( desc->width[r][utf32&0x03FF] >= 0 ) { // already cached
-        return double(desc->width[r][utf32 & 0x03FF]) / Fl_Graphics_Driver::scale();
+        return double(desc->width[r][utf32 & 0x03FF]);
       }
     }
   }
-  double width = width_unscaled(str, n);
-  if (in_mem) {
+  char buf4[4];
+  int n = fl_utf8encode(utf32, buf4);
+  double width = do_width_unscaled_(buf4, n);
+  if (utf32 <= 0xFFFF) {
     desc->width[r][utf32 & 0x03FF] = (int)width;
   }
-  return width/Fl_Graphics_Driver::scale();
+  return width;
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
+  if (n == fl_utf8len(*str)) { // str contains a single unicode character
+    int l;
+    unsigned c = fl_utf8decode(str, str+n, &l);
+    return width_unscaled(c); // that character's width may have been cached
+  }
+  return do_width_unscaled_(str, n); // full width computation for multi-char strings
+}
+
+double Fl_Xlib_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
   if (!n) return 0;
   if (!fl_display || size_ == 0) return -1;
   if (!playout_) context();
@@ -1403,12 +1413,6 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {
   if (font_descriptor())  return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->height_;
   else return -1;
-}
-
-double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
-  char buf4[4];
-  int n = fl_utf8encode(c, buf4);
-  return width_unscaled(buf4, n);
 }
 
 int Fl_Xlib_Graphics_Driver::descent_unscaled() {

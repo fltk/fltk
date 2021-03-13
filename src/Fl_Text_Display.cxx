@@ -470,15 +470,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 /**
  Recalculate the display's visible lines and scrollbar sizes.
  */
-#ifndef _WIN32
-#include <sys/time.h>
-#endif
 void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
-#ifndef _WIN32
-struct timeval now, after_calc;
-gettimeofday(&now, NULL);
-#endif
   // did we have scrollbars initially?
   unsigned int hscrollbarvisible = mHScrollBar->visible();
   unsigned int vscrollbarvisible = mVScrollBar->visible();
@@ -699,13 +692,6 @@ gettimeofday(&now, NULL);
 
   update_v_scrollbar();
   update_h_scrollbar();
-#ifndef _WIN32
-gettimeofday(&after_calc, NULL);
-double duration = (after_calc.tv_sec - now.tv_sec) +
-  (after_calc.tv_usec >= now.tv_usec ? (after_calc.tv_usec - now.tv_usec)/1000000. :
-    (1000000 - now.tv_usec + after_calc.tv_usec)/1000000.);
-fprintf(stderr, "recalc_display:%g\n", duration);
-#endif
 }
 
 
@@ -2565,9 +2551,6 @@ double Fl_Text_Display::string_width( const char *string, int length, int style 
     fsize = textsize();
   }
   fl_font( font, fsize );
-  if (mContinuousWrap && !mWrapMarginPix && length == fl_utf8len1(*string)) {
-    return fl_graphics_driver->fast_width(string, length);
-  }
   return fl_width( string, length );
 }
 
