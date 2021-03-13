@@ -36,6 +36,7 @@ public:
 #    if USE_PANGO
         int descent_;
         int height_;
+        int **width;
 #    else
         XftFont* font;
 #    endif

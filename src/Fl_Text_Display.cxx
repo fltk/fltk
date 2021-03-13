@@ -472,7 +472,6 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
  */
 void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
-
   // did we have scrollbars initially?
   unsigned int hscrollbarvisible = mHScrollBar->visible();
   unsigned int vscrollbarvisible = mVScrollBar->visible();
