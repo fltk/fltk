@@ -38,7 +38,7 @@ Bug fixes and other improvements
     Set OPTION_USE_SYSTEM_LIBPNG/JPEG off under macOS by default
     Have Fl_Pack::draw() call Fl_Group::init_sizes() on its parent group.
     CMake support of the Darwin+XQuartz test platform
-    Add support of macOS "Big Sur" 11.0
+    Add support of macOS "Big Sur" 11.0 for both x86_64 and arm64 architectures.
     Fix when building with SDK 10.15 and running with 11.0 Big Sur
 
   OKAMURA, Yasunobu (1):
