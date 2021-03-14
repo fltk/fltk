@@ -120,9 +120,7 @@ void Fl_Graphics_Driver::end_points() {
 #elif defined(__APPLE_QUARTZ__)
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   for (int i=0; i<n; i++) { 
-    CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextStrokePath(fl_gc);
+    point(p[i].x, p[i].y);
   }
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
