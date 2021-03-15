@@ -101,10 +101,10 @@ Fl_Shared_Image::compare(Fl_Shared_Image **i0,          // I - First image
   int i = strcmp((*i0)->name(), (*i1)->name());
 
   if (i) return i;
-  else if (((*i0)->w() == 0 && (*i1)->original_) ||
-           ((*i1)->w() == 0 && (*i0)->original_)) return 0;
-  else if ((*i0)->w() != (*i1)->w()) return (*i0)->w() - (*i1)->w();
-  else return (*i0)->h() - (*i1)->h();
+  else if (((*i0)->data_w() == 0 && (*i1)->original_) ||
+           ((*i1)->data_w() == 0 && (*i0)->original_)) return 0;
+  else if ((*i0)->data_w() != (*i1)->data_w()) return (*i0)->data_w() - (*i1)->data_w();
+  else return (*i0)->data_h() - (*i1)->data_h();
 }
 
 
