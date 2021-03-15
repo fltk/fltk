@@ -28,11 +28,6 @@
 #define USE_PANGO 0
 #endif
 
-#if USE_PANGO
-typedef struct _cairo cairo_t;
-typedef struct _PangoLayout  PangoLayout;
-#endif
-
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
@@ -42,14 +37,51 @@ typedef struct _PangoLayout  PangoLayout;
 /**
  PostScript graphical backend.
  */
+#if USE_PANGO
+
+#include "../Cairo/Fl_Cairo_Graphics_Driver.H"
+
+class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+public:
+  FILE *output;
+  Fl_PostScript_Close_Command close_cmd_;
+  enum Fl_Paged_Device::Page_Format page_format_;
+  char *ps_filename_;
+  int nPages;
+  
+  Fl_PostScript_Graphics_Driver();
+  ~Fl_PostScript_Graphics_Driver();
+  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};
+  FILE * file() {return output;};
+  void page(double pw, double ph, int media = 0);
+  void page(int format);
+  int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
+  int start_eps(int width, int height);
+  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD);
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) {
+    Fl_Cairo_Graphics_Driver::draw_image(call, data, x,y,w,h,delta);
+  }
+  void font(int f, int s);
+  Fl_Font font();
+  double width(const char *s, int n);
+  double width(unsigned u);
+  int height();
+  int descent();
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b) {Fl_Cairo_Graphics_Driver::color(r,g,b);}
+  Fl_Color color();
+  void point(int x, int y);
+  int not_clipped(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  virtual PangoFontDescription* pango_font_description(Fl_Font fnum);
+  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+};
+
+#else // USE_PANGO
 
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 private:
-#if USE_PANGO
-  cairo_t *cairo_;
-  PangoLayout *pango_layout_;
-  void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
-#else
   void transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl);
   void *prepare_rle85();
   void write_rle85(uchar b, void *data);
@@ -58,14 +90,10 @@ private:
   void write85(void *data, const uchar *p, int len);
   void close85(void *data);
   int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
-#endif
 protected:
-#if ! USE_PANGO
   uchar **mask_bitmap() {return &mask;}
-#endif
 public:
   Fl_PostScript_Graphics_Driver();
-#ifndef FL_DOXYGEN
   enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS};
 
   class Clip {
@@ -78,11 +106,6 @@ public:
   int lang_level_;
   int gap_;
   int pages_;
-#if USE_PANGO
-  cairo_t *cr() { return cairo_; }
-  PangoLayout *pango_layout() {return pango_layout_;};
-  void check_status(void);
-#else
   int interpolate_; //interpolation of images
   uchar * mask;
   int mx; // width of mask;
@@ -98,7 +121,6 @@ public:
    \return value returned by vfprintf() call
    */
   int clocale_printf(const char *format, ...);
-#endif // USE_PANGO
 
   enum SHAPE shape_;
   int linewidth_;// need for clipping, lang level 1-2
@@ -141,7 +163,6 @@ public:
 
   void page(double pw, double ph, int media = 0);
   void page(int format);
-#endif // FL_DOXYGEN
 
   // implementation of drawing methods
   void color(Fl_Color c);
@@ -224,6 +245,7 @@ public:
   void ps_untranslate();
 };
 
+#endif // USE_PANGO
 /**
 \}
 \endcond
