@@ -635,7 +635,7 @@ int Fl_PostScript_Graphics_Driver::scale_for_image_(Fl_Image *img, int XP, int Y
   return 0;
 }
 
-#else
+#else // USE_PANGO
 
 void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D)
 {

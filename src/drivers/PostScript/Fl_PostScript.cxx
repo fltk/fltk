@@ -125,7 +125,9 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   close_cmd_ = 0;
   //lang_level_ = 3;
   lang_level_ = 2;
+#if ! USE_PANGO
   mask = 0;
+#endif
   ps_filename_ = NULL;
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
@@ -1441,7 +1443,7 @@ void Fl_PostScript_Graphics_Driver::ps_untranslate(void)
   fprintf(output, "GR GR\n");
 }
 
-# else
+# else // USE_PANGO
 
 /* Cairo-based implementation of the PostScript graphics driver */
 
