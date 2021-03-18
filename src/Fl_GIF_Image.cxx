@@ -298,7 +298,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
     if (CurCode == EOFCode) break;
 
-    uchar OutCode[1025]; // temporary array for reversing codes
+    uchar OutCode[4097]; // temporary array for reversing codes
     uchar *tp = OutCode;
     int i;
     if (CurCode < FreeCode) i = CurCode;
