@@ -67,6 +67,14 @@ set (SIMPLE_SOURCES
 )
 
 ############################################################
+# simple FLUID examples w/o extra libs
+############################################################
+
+set (FLUID_SOURCES
+  fluid-callback
+)
+
+############################################################
 # examples requiring fltk_images
 ############################################################
 
@@ -90,6 +98,14 @@ set (OPENGL_SOURCES
 
 foreach (src ${SIMPLE_SOURCES})
   CREATE_EXAMPLE (${src} ${src}.cxx fltk)
+endforeach (src)
+
+############################################################
+# create FLUID example programs
+############################################################
+
+foreach (src ${FLUID_SOURCES})
+  CREATE_EXAMPLE (${src} ${src}.fl fltk)
 endforeach (src)
 
 ############################################################
