@@ -35,6 +35,10 @@ public:
   Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int datasize);
 private:
   void load_png_(const char *name_png, const unsigned char *buffer_png, int datasize);
+  
+  // Note: The file pointer fp must not be an automatic (stack) variable
+  // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
+  FILE *fp;  // active file pointer during image load
 };
 
 #endif

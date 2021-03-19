@@ -121,9 +121,6 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   fl_png_memory png_mem_data;
   int from_memory = (buffer_png != NULL); // true if reading image from memory
 
-  // Note: The file pointer fp must not be an automatic (stack) variable
-  // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
-  static FILE *fp;      // intentionally initialized separately below
   fp = NULL;            // always initialize file pointer
 
   if (!from_memory) {
