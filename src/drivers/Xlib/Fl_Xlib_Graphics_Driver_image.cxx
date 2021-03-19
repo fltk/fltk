@@ -580,7 +580,7 @@ void Fl_Xlib_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(buf,x+offset_x_*scale(),y+offset_y_*scale(),w,h,d,l,mono,0,0,alpha,gc_);
+  innards(buf,x+floor(offset_x_),y+floor(offset_y_),w,h,d,l,mono,0,0,alpha,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data,
@@ -590,16 +590,16 @@ void Fl_Xlib_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* dat
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(0,x+offset_x_*scale(),y+offset_y_*scale(),w,h,d,0,mono,cb,data,alpha,gc_);
+  innards(0,x+floor(offset_x_),y+floor(offset_y_),w,h,d,0,mono,cb,data,alpha,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x+offset_x_*scale(),y+offset_y_*scale(),w,h,d,l,1,0,0,0,gc_);
+  innards(buf,x+floor(offset_x_),y+floor(offset_y_),w,h,d,l,1,0,0,0,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data,
                    int x, int y, int w, int h,int d) {
-  innards(0,x+offset_x_*scale(),y+offset_y_*scale(),w,h,d,0,1,cb,data,0,gc_);
+  innards(0,x+floor(offset_x_),y+floor(offset_y_),w,h,d,0,1,cb,data,0,gc_);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -623,8 +623,8 @@ void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = (X+offset_x_)*scale();
-  Y = (Y+offset_y_)*scale();
+  X = floor(X)+floor(offset_x_);
+  Y = floor(Y)+floor(offset_y_);
   cache_size(bm, W, H);
   cx *= scale(); cy *= scale();
   XSetStipple(fl_display, gc_, *Fl_Graphics_Driver::id(bm));
@@ -737,8 +737,8 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_RGB_Image *img) {
 
 
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = (X+offset_x_)*scale();
-  Y = (Y+offset_y_)*scale();
+  X = floor(X)+floor(offset_x_);
+  Y = floor(Y)+floor(offset_y_);
   cache_size(img, W, H);
   cx *= scale(); cy *= scale();
   if (img->d() == 1 || img->d() == 3) {
@@ -783,7 +783,8 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
   }
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
                           rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
-                          (XP-cx + offset_x_)*scale()-offset, (YP-cy + offset_y_)*scale()-offset, Wfull, Hfull);
+                          floor(XP-cx) + floor(offset_x_) - offset, floor(YP-cy) + floor(offset_y_) - offset,
+                          Wfull, Hfull);
   pop_clip();
 }
 
@@ -851,8 +852,8 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = (X+offset_x_)*scale();
-  Y = (Y+offset_y_)*scale();
+  X = floor(X)+floor(offset_x_);
+  Y = floor(Y)+floor(offset_y_);
   cache_size(pxm, W, H);
   cx *= scale(); cy *= scale();
   Fl_Region r2 = scale_clip(scale());

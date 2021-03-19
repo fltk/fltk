@@ -337,7 +337,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 
     if (CurCode == EOFCode) break;
 
-    uchar OutCode[1025]; // temporary array for reversing codes
+    uchar OutCode[4097]; // temporary array for reversing codes
     uchar *tp = OutCode;
     int i;
     if (CurCode < FreeCode) i = CurCode;

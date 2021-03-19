@@ -217,6 +217,9 @@ if (USE_X11)
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
     )
+    if (USE_PANGO)
+      set (DRIVER_FILES ${DRIVER_FILES} drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx)
+    endif (USE_PANGO)
   else ()
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx

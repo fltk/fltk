@@ -27,7 +27,7 @@
 #include "Fl_GDI_Graphics_Driver.H"
 
 
-void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
+void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, int width, char* dashes) {
 
   // According to Bill, the "default" cap and join should be the
   // "fastest" mode supported for the platform.  I don't know why
@@ -45,11 +45,10 @@ void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, float width, char* d
   } else {
     s1 |= style & 0xff; // allow them to pass any low 8 bits for style
   }
-  if ((style || n) && !width) width = scale(); // fix cards that do nothing for 0?
+  if ((style || n) && !width) width = int(scale()); // fix cards that do nothing for 0?
   if (!fl_current_xmap) color(FL_BLACK);
   LOGBRUSH penbrush = {BS_SOLID,fl_RGB(),0}; // can this be fl_brush()?
-  int tw = ( width < 1.f ? 1 : int(width) );
-  HPEN newpen = ExtCreatePen(s1, tw, &penbrush, n, n ? a : 0);
+  HPEN newpen = ExtCreatePen(s1, width, &penbrush, n, n ? a : 0);
   if (!newpen) {
     Fl::error("fl_line_style(): Could not create GDI pen object.");
     return;

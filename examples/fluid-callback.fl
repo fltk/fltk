@@ -1,0 +1,85 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+comment {README FIRST
+- - - - - - -
+This fluid (.fl) file demonstrates how to create a complete
+FLTK program with a button with a virtual callback method
+and a virtual destructor.
+
+The code is as short as possible but demonstrates setting
+virtual and static attributes on callbacks.
+
+Note that FLTK needs static functions as callbacks assigned
+to widgets like Fl_Buttons. The static callback method can
+eventually call other class methods like the virtual callback
+method in this example.
+
+Use fluid interactively to open this fluid (.fl) file and
+double-click on items to see how they are defined.
+
+Hint: Open the code view (Edit/Show Source Code) and select
+items to see which code each item generates. Switch tabs
+'Source' and 'Header' in the code view window to see code in
+the source and header file, respectively.
+
+Use "File/Write Code" or 'fluid -c fluid-callback.fl' at
+the command line to generate .cxx and .h files; compile
+and build the demo program with
+
+  fltk-config --compile fluid-callback.cxx
+} {in_source not_in_header
+}
+
+decl {\#include <FL/Fl_Window.H>} {public global
+}
+
+decl {\#include <FL/Fl_Button.H>} {public global
+}
+
+decl {\#include <stdio.h>} {public global
+}
+
+class App {open : Fl_Window
+} {
+  Function {App(int X, int Y, const char *L) : Fl_Window(X, Y, L)} {
+    comment Constructor open
+  } {
+    code {// Code in constructor
+printf("Creating new App\\n");
+Fl_Button *exit_cb = new Fl_Button(20, 20, 260, 60, "Exit: invokes virtual callback");
+exit_cb->callback(Cb_Bn_static, (void *)77);
+show();} {}
+  }
+  Function {~App()} {
+    comment {Virtual destructor} open return_type virtual
+  } {
+    code {printf("Closing and deleting App\\n");} {}
+  }
+  Function {Cb_Bn_static(Fl_Widget *w, void *v)} {
+    comment {Static callback method} open return_type {static void}
+  } {
+    code {// code in static callback
+int i = (int)(fl_intptr_t)v;
+printf("Executing  static callback Cb_Bn_static,  value = %d\\n", i);
+Fl_Window *win = w->window();
+App *app = (App *)win;
+app->Cb_Bn_virtual(v);} {}
+  }
+  Function {Cb_Bn_virtual(void *v)} {
+    comment {// Virtual callback method} open return_type {virtual void}
+  } {
+    code {// code in virtual callback
+int i = (int)(fl_intptr_t)v;
+printf("Executing virtual callback Cb_Bn_virtual, value = %d\\n", i);
+// note: operator delete calls hide()
+delete this;} {}
+  }
+}
+
+Function {} {open return_type int
+} {
+  code {// Main program
+App *app = new App(300, 100, "Virtual Callback Test");} {}
+}

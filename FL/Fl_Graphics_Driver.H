@@ -419,6 +419,11 @@ struct Fl_Fontdesc {
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   Fl_Scalable_Graphics_Driver();
+  // This function aims to compute accurately int(x * s) in
+  // presence of rounding errors existing with floating point numbers
+  // and that sometimes differ between 32 and 64 bits.
+  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
+  inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
   int line_width_;
   virtual Fl_Region scale_clip(float f);
@@ -426,29 +431,24 @@ protected:
   virtual void point(int x, int y);
   virtual void point_unscaled(float x, float y);
   virtual void rect(int x, int y, int w, int h);
-  virtual void rect_unscaled(float x, float y, float w, float h);
   virtual void rectf(int x, int y, int w, int h);
-  virtual void rectf_unscaled(float x, float y, float w, float h);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
   virtual void line(int x, int y, int x1, int y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
+  virtual void line_unscaled(int x, int y, int x1, int y1);
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
+  virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
   virtual void xyline(int x, int y, int x1);
-  virtual void xyline(int x, int y, int x1, int y2);
-  virtual void xyline(int x, int y, int x1, int y2, int x3);
-  virtual void xyline_unscaled(float x, float y, float x1);
+  virtual void xyline_unscaled(int x, int y, int x1);
   virtual void yxline(int x, int y, int y1);
-  virtual void yxline(int x, int y, int y1, int x2);
-  virtual void yxline(int x, int y, int y1, int x2, int y3);
-  virtual void yxline_unscaled(float x, float y, float y1);
+  virtual void yxline_unscaled(int x, int y, int y1);
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   virtual void circle(double x, double y, double r);
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   virtual void font(Fl_Font face, Fl_Fontsize size);
@@ -475,12 +475,12 @@ protected:
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
   virtual void arc(double x, double y, double r, double start, double end);
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
   virtual void line_style(int style, int width=0, char* dashes=0);
-  virtual void line_style_unscaled(int style, float width, char* dashes);
-  void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono, float s);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
+  void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono);
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
@@ -494,6 +494,8 @@ protected:
   void vertex(double x, double y);
   virtual float override_scale();
   virtual void restore_scale(float);
+  virtual void *change_pen_width(int lwidth);
+  virtual void reset_pen_width(void *data);
 };
 #endif // FL_DOXYGEN
 

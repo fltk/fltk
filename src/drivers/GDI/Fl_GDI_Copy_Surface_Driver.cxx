@@ -75,7 +75,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
       SetClipboardData (CF_ENHMETAFILE, hmf);
       // then put a BITMAP version of the graphics in the clipboard
       float scaling = driver()->scale();
-      int W = Fl_GDI_Graphics_Driver::floor(width, scaling), H = Fl_GDI_Graphics_Driver::floor(height, scaling);
+      int W = Fl_Scalable_Graphics_Driver::floor(width, scaling), H = Fl_Scalable_Graphics_Driver::floor(height, scaling);
       RECT rect = {0, 0, W, H};
       Fl_Image_Surface *surf = new Fl_Image_Surface(W, H);
       Fl_Surface_Device::push_current(surf);

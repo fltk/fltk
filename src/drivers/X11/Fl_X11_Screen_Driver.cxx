@@ -774,7 +774,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
 
   float s = allow_outside ? Fl::screen_driver()->scale(win->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
-  int ws = w * s, hs = h * s, Xs = X*s, Ys = Y*s;
+  int Xs = Fl_Scalable_Graphics_Driver::floor(X, s), Ys = Fl_Scalable_Graphics_Driver::floor(Y, s),
+  ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Xs, hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Ys;
 
 #  ifdef __sgi
   if (XReadDisplayQueryExtension(fl_display, &i, &i)) {
