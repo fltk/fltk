@@ -25,6 +25,39 @@
 extern "C" {
 #endif
 
+/**
+  \file vsnprintf.c
+  \brief  Portable vsnprintf() implementation.
+*/
+
+/**
+  FLTK's platform independent wrapper for the vsnprintf() C library function.
+
+  This function guarantees:
+
+  - access to vsnprintf(), even on systems that don't have it (FLTK's own
+    built-in code is used)
+
+  - Guarantees NUL termination. Even if string expands larger than the buffer,
+    a terminating NUL is included, unlike some implementations of vsnprintf(),
+    notably Microsoft Visual Studio (pre-2015), which can leave the string
+    unterminated when truncated.
+
+  If the build environment for FLTK has vsnprintf(), fl_vsnprintf()
+  is just a wrapper around the compiler's provided function. Otherwise,
+  if the function is NOT available, FLTK's own built-in version is provided.
+
+  The FLTK built in provides these style options:
+
+  - %[ -+#']
+  - *  -- padding width
+  - .* -- precision width
+  - Data types: h, l, ll, L
+  - Floating point formats: E, G, e, f, g
+  - Integer formats: B, X, b, d, i, o, u, x
+  - Pointer format: p
+  - String/char: c, s, n
+*/
 int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 #if defined(HAVE_VSNPRINTF) && defined(__linux__)
   return vsnprintf(buffer, bufsize, format, ap);
