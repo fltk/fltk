@@ -29,9 +29,7 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <stdio.h>   // FILE *fl_fopen()
 
 #ifdef __cplusplus
 extern "C" {

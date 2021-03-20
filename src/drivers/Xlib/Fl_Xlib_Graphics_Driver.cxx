@@ -22,6 +22,7 @@
 #include <FL/platform.H>
 
 #include <string.h>
+#include <stdlib.h>
 
 extern XIC fl_xim_ic;
 extern char fl_is_over_the_spot;

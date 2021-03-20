@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,8 +27,9 @@
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
-#include <FL/fl_draw.H>         // fl_text_extents()
-#include <FL/fl_string.h>       // fl_strdup()
+#include <FL/fl_draw.H>     // fl_text_extents()
+#include <FL/fl_string.h>   // fl_strdup()
+#include <stdlib.h>         // malloc, free
 
 // WINDOW/WIDGET SIZES
 #define MAINWIN_W       700                             // main window w()

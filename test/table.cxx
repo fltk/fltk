@@ -2,12 +2,6 @@
 // exercisetablerow -- Exercise all aspects of the Fl_Table_Row widget
 //
 
-#include <stdio.h>
-#include <string.h>
-#ifdef _WIN32
-#include <stdlib.h>     // atoi
-#endif /* _WIN32 */
-
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
@@ -17,6 +11,10 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Table_Row.H>
 #include <FL/Fl_Simple_Terminal.H>
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>     // atoi
 
 #define TERMINAL_HEIGHT 120
 

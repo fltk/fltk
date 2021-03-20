@@ -1,7 +1,7 @@
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,11 +22,12 @@
  \addtogroup DriverDeveloper
  \{
  */
-#  include <FL/Fl.H>
-#  include "Fl_Gl_Choice.H"
-#  include <FL/Fl_Gl_Window.H>
-#  include "Fl_Gl_Window_Driver.H"
-#  include <FL/gl_draw.H>
+#include <FL/Fl.H>
+#include "Fl_Gl_Choice.H"
+#include <FL/Fl_Gl_Window.H>
+#include "Fl_Gl_Window_Driver.H"
+#include <FL/gl_draw.H>
+#include <stdlib.h>
 
 GLContext *Fl_Gl_Window_Driver::context_list = 0;
 int Fl_Gl_Window_Driver::nContext = 0;

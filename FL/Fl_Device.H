@@ -2,7 +2,7 @@
 // Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,6 @@
 
 #include <FL/Fl_Plugin.H>
 #include <FL/platform_types.h>
-#include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_RGB_Image;

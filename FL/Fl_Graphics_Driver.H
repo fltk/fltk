@@ -33,7 +33,6 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
-#include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;

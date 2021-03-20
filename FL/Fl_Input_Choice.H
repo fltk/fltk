@@ -5,8 +5,8 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,13 +29,6 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Menu_Button.H>
-
-// Leaving these two headers so builds don't break if user includes this
-// header and uses items from fl_draw or string (but doesn't include in src).
-// Note: this would ensure compatibility with FLTK 1.3.x.
-// Shall we? Currently not!
-// #include <FL/fl_draw.H>
-// #include <string.h>
 
 /*
   A combination of the input widget and a menu button.

@@ -1,7 +1,7 @@
 //
 // OpenGL text drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,6 +42,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/glu.h>  // for gluUnProject()
 #include <FL/glut.H> // for glutStrokeString() and glutStrokeLength()
+#include <stdlib.h>
 
 #ifndef GL_TEXTURE_RECTANGLE_ARB
 #  define GL_TEXTURE_RECTANGLE_ARB 0x84F5

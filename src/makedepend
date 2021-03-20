@@ -1,5 +1,6 @@
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
+drivers/Cairo/Fl_Cairo_Graphics_Driver.o: ../config.h
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../config.h
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/abi-version.h
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Enumerations.H

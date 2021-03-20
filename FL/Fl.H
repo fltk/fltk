@@ -42,6 +42,7 @@
 #    undef BSD
 #  endif
 
+#include <string.h> // FIXME: Fl::is_scheme(): strcmp needs string.h
 
 class Fl_Widget;
 class Fl_Window;

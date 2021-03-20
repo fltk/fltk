@@ -2,7 +2,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 
 #include <FL/Fl_Graphics_Driver.H>
 #include <windows.h>
-
+#include <stdlib.h>
 
 /**
   \brief The Windows-specific graphics driver class.

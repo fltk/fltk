@@ -1,7 +1,7 @@
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,14 +24,10 @@
 // mostly.  In most cases it is easier to get a multi-line message
 // by putting newlines in the message.
 
-#include <stdio.h>
-#include <stdarg.h>
-#include "flstring.h"
-
 #include <FL/Fl.H>
 #include <FL/fl_string.h>
-
 #include <FL/fl_ask.H>
+#include "flstring.h"
 
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
@@ -42,6 +38,10 @@
 #include <FL/platform.H>
 #include "Fl_Screen_Driver.H"
 #include <FL/fl_draw.H>
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 static Fl_Window *message_form;
 static Fl_Box *message;

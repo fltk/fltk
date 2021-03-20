@@ -30,7 +30,7 @@
 #include "flstring.h"
 #include <ctype.h>
 #include <math.h>
-
+#include <stdlib.h>
 
 char fl_draw_shortcut;  // set by fl_labeltypes.cxx
 

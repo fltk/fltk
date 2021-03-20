@@ -1,7 +1,7 @@
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,9 +27,6 @@
 #define Fl_File_Chooser_H
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Menu_Button.H>

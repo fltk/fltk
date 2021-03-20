@@ -29,6 +29,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/fl_string.h>
+#include <stdlib.h>
 
 extern "C" {
 #if defined(HAVE_LIBPNG)

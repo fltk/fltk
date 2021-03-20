@@ -1,7 +1,7 @@
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,11 +20,13 @@
 // Each child widget is a card, and its label() is printed on the card tab.
 // Clicking the tab makes that card visible.
 
-#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Tooltip.H>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #define BORDER 2
 #define EXTRASPACE 10
