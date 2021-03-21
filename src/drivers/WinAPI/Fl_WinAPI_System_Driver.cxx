@@ -671,28 +671,30 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
 
 int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
 {
-  struct _stat  s;
-  char          fn[FL_PATH_MAX];
-  int           length;
-  length = (int) strlen(n);
+  char fn[4]; // used for drive letter only: "X:/"
+  int length = (int)strlen(n);
+  // Strip trailing slash from name...
+  if (length > 0 && isdirsep(n[length - 1]))
+    length --;
+  if (length < 1)
+    return 0;
+
   // This workaround brought to you by the fine folks at Microsoft!
   // (read lots of sarcasm in that...)
-  if (length < (int)(sizeof(fn) - 1)) {
-    if (length < 4 && isalpha(n[0]) && n[1] == ':' &&
-        (isdirsep(n[2]) || !n[2])) {
-      // Always use D:/ for drive letters
-      fn[0] = n[0];
-      strcpy(fn + 1, ":/");
-      n = fn;
-    } else if (length > 0 && isdirsep(n[length - 1])) {
-      // Strip trailing slash from name...
-      length --;
-      memcpy(fn, n, length);
-      fn[length] = '\0';
-      n = fn;
-    }
+
+  if (length == 2 && isalpha(n[0]) && n[1] == ':') { // trailing '/' already "removed"
+    // Always use "X:/" for drive letters
+    fn[0] = n[0];
+    strcpy(fn + 1, ":/");
+    n = fn;
+    length = 3;
   }
-  return !_stat(n, &s) && (s.st_mode & _S_IFDIR);
+
+  // convert filename to wide chars using *length*
+  utf8_to_wchar(n, wbuf, length);
+
+  DWORD fa = GetFileAttributesW(wbuf);
+  return (fa != INVALID_FILE_ATTRIBUTES) && (fa & FILE_ATTRIBUTE_DIRECTORY);
 }
 
 int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n)
