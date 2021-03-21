@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>  // abs(int)
 
 #include <FL/Fl_PostScript.H>
 #include "Fl_PostScript_Graphics_Driver.H"
