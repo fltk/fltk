@@ -1,7 +1,7 @@
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,19 +17,16 @@
 #include <config.h>
 #if !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>  // abs(int)
-
 #include <FL/Fl_PostScript.H>
 #include "Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
+#include <stdlib.h>  // abs(int)
+#include <string.h>  // memcpy()
 
-#if USE_PANGO
-#include <cairo/cairo.h>
+#if ! USE_PANGO
+#include <stdio.h>   // fprintf()
 #endif
 
 struct callback_data {
