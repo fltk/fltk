@@ -40,10 +40,11 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 
   cb_data = (struct callback_data*)data;
   int last = x+w;
+  const size_t aD = abs(cb_data->D);
   curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
   for (; x<last; x++) {
-    memcpy(buf, curdata, abs(cb_data->D));
-    buf += abs(cb_data->D);
+    memcpy(buf, curdata, aD);
+    buf += aD;
     curdata += cb_data->D;
   }
 }
