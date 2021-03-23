@@ -524,10 +524,14 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
         char pathname[FNFC_MAX_PATH];
         for ( const WCHAR *s = dirname + dirlen + 1;
               *s; s += (wcslen(s)+1)) {
-          strncpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH);
-          strncat(pathname, "\\",                 FNFC_MAX_PATH);
-          strncat(pathname, wchartoutf8(s),       FNFC_MAX_PATH);
-          pathname[FNFC_MAX_PATH-1] = 0;
+          // ISSUE #206 -- beware strncpy() vs. strncat():
+          //      > strncpy() doesn't guarantee null termination but strncat() does.
+          //      > strncat() can write to n+1, whereas strncpy() only writes to n.
+          // fl_snprintf() can't be used here b/c wchartoutf8() returns a static str.
+          //
+          strncpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH); pathname[FNFC_MAX_PATH-1] = 0;
+          strncat(pathname, "\\",                 FNFC_MAX_PATH-1);
+          strncat(pathname, wchartoutf8(s),       FNFC_MAX_PATH-1);
           add_pathname(pathname);
         }
       }
