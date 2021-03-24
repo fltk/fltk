@@ -407,7 +407,11 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT = 27
+  FL_ZOOM_EVENT = 27,
+  /** The current dynamic color mode has changed.
+   Call Fl::dynamic_color() to get the new mode.
+   */
+  FL_DYNAMIC_COLOR_CHANGED = 28
 // DEV NOTE: Keep this list in sync with FL/names.h
 };
 
@@ -1378,6 +1382,28 @@ enum Fl_Orientation {
   FL_ORIENT_SW    = 0x05, ///< GUI element pointing SW    (225°)
   FL_ORIENT_DOWN  = 0x06, ///< GUI element pointing down  (270°)
   FL_ORIENT_SE    = 0x07  ///< GUI element pointing SE    (315°)
+};
+
+/**
+    Modern operating systems provide a pair of color themes suitable for use in
+    light and dark ambient lighting. Automatic switching is normally provided
+    either using the current time of day or with ambient lighting sensors.
+    This enumeration lists the values for the Fl::dynamic_color() API, allowing
+    applications to opt in to automatic color theme switching or specify that
+    color switching is not desired.
+
+    \see Fl::dynamic_color()
+ */
+
+enum Fl_Dynamic_Color { // dynamic color values
+  /** Dynamic color themes are off/not supported/disabled */
+  FL_DYNAMIC_COLOR_OFF,
+  /** Automatically change color themes */
+  FL_DYNAMIC_COLOR_AUTO,
+  /** Use the light color theme */
+  FL_DYNAMIC_COLOR_LIGHT,
+  /** Use the dark color theme */
+  FL_DYNAMIC_COLOR_DARK
 };
 
 #endif

@@ -106,6 +106,27 @@ void Fl::get_system_colors()
   Fl::screen_driver()->get_system_colors();
 }
 
+#ifndef FL_DOXYGEN
+Fl_Dynamic_Color Fl::dynamic_color_ = FL_DYNAMIC_COLOR_OFF;
+#endif // !FL_DOXYGEN
+
+void Fl::dynamic_color(Fl_Dynamic_Color mode)
+{
+  dynamic_color_ = mode;
+}
+
+Fl_Dynamic_Color Fl::dynamic_color()
+{
+  // TODO: Remove this
+  if (getenv("FL_DYNAMIC_COLOR") && dynamic_color_ == FL_DYNAMIC_COLOR_OFF)
+    dynamic_color_ = FL_DYNAMIC_COLOR_AUTO;
+
+  if (dynamic_color_ == FL_DYNAMIC_COLOR_AUTO)
+    return Fl::system_driver()->dynamic_color();
+  else
+    return dynamic_color_;
+}
+
 
 //// Simple implementation of 2.0 Fl::scheme() interface...
 #define D1 BORDER_WIDTH

@@ -222,6 +222,7 @@ public:
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
+  virtual Fl_Dynamic_Color dynamic_color() { return FL_DYNAMIC_COLOR_LIGHT; }
   virtual void lock_ring() {}
   virtual void unlock_ring() {}
   virtual double wait(double);                             // must FL_OVERRIDE

@@ -51,8 +51,9 @@ const char *Fl_Darwin_System_Driver::control_name() {
 
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
-  command_key = FL_META;
-  control_key = FL_CTRL;
+  command_key    = FL_META;
+  control_key    = FL_CTRL;
+  dynamic_color_ = FL_DYNAMIC_COLOR_LIGHT;
 }
 
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {
@@ -403,4 +404,8 @@ Fl_Pixmap *Fl_Darwin_System_Driver::tree_closepixmap() {
 
 int Fl_Darwin_System_Driver::tree_connector_style() {
   return FL_TREE_CONNECTOR_NONE;
+}
+
+Fl_Dynamic_Color Fl_Darwin_System_Driver::dynamic_color() {
+  return dynamic_color_;
 }

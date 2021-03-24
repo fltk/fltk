@@ -148,6 +148,8 @@ private:
 
 public:
 
+  static Fl_Dynamic_Color dynamic_color_;
+
   static Fl_Screen_Driver *screen_driver();
   static Fl_System_Driver *system_driver();
 #ifdef __APPLE__ // deprecated in 1.4 - only for compatibility with 1.3
@@ -391,6 +393,27 @@ public:
   static void foreground(uchar, uchar, uchar);
   static void background(uchar, uchar, uchar);
   static void background2(uchar, uchar, uchar);
+
+  // dynamic color:
+  /** Set the dynamic color theme mode.
+
+    Most applications should just call Fl::dynamic_color(FL_DYNAMIC_COLOR_AUTO)
+    to use the user's preferred color theme. The default value is
+    FL_DYNAMIC_COLOR_OFF for compatibility with prior versions of FLTK.
+
+    When set to FL_DYNAMIC_COLOR_AUTO, FLTK will monitor for appearance/theme
+    changes. When the color theme changes, a FL_DYNAMIC_COLOR_CHANGED event is
+    sent to allow widgets to update their colors as needed.
+    */
+  static void dynamic_color(Fl_Dynamic_Color mode);
+  /** Gets the current dynamic color theme.
+
+    Returns FL_DYNAMIC_COLOR_OFF if dynamic color themes are off or disabled
+    (the default), FL_DYNAMIC_COLOR_LIGHT if the current color theme is for use
+    in bright ambient light, or FL_DYNAMIC_COLOR_DARK is the current color
+    theme is for use in dark ambient light.
+    */
+  static Fl_Dynamic_Color dynamic_color();
 
   // schemes:
   static int scheme(const char *name);

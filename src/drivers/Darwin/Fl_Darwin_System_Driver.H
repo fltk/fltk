@@ -40,6 +40,8 @@
 
 class Fl_Darwin_System_Driver : public Fl_Posix_System_Driver
 {
+  Fl_Dynamic_Color dynamic_color_;
+
 public:
   Fl_Darwin_System_Driver();
   int single_arg(const char *arg) FL_OVERRIDE;
@@ -82,6 +84,8 @@ public:
   Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() FL_OVERRIDE;
   double wait(double time_to_wait) FL_OVERRIDE;
   int ready() FL_OVERRIDE;
+  Fl_Dynamic_Color dynamic_color() FL_OVERRIDE;
+  void dynamic_color(Fl_Dynamic_Color mode) { dynamic_color_ = mode; }
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

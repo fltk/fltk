@@ -201,7 +201,11 @@ static void set_selection_color(uchar r, uchar g, uchar b)
 }
 
 
-// MacOS X currently supports two color schemes - Blue and Graphite.
+// macOS supports two basic color schemes - Light and Dark - with accent and
+// highlight colors.  Older versions limited the accent colors to Blue and
+// Graphite but now you can pick from a rainbow of colors plus the old Graphite
+// gray.
+//
 // Since we aren't emulating the Aqua interface (even if Apple would
 // let us), we use some defaults that are similar to both.  The
 // Fl::scheme("plastic") color/box scheme provides a usable Aqua-like
@@ -212,13 +216,30 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 
   Fl_Screen_Driver::get_system_colors();
 
-  if (!bg2_set) Fl::background2(0xff, 0xff, 0xff);
-  if (!fg_set) Fl::foreground(0, 0, 0);
-  if (!bg_set) Fl::background(0xd8, 0xd8, 0xd8);
+  Fl_Dynamic_Color mode = Fl::dynamic_color();
+
+  if (!bg2_set || mode != FL_DYNAMIC_COLOR_OFF) {
+    if (mode == FL_DYNAMIC_COLOR_DARK)
+      Fl::background2(23, 23, 23);
+    else
+      Fl::background2(0xff, 0xff, 0xff);
+  }
+  if (!fg_set || mode != FL_DYNAMIC_COLOR_OFF) {
+    if (mode == FL_DYNAMIC_COLOR_DARK)
+      Fl::foreground(223, 223, 223);
+    else
+      Fl::foreground(0, 0, 0);
+  }
+  if (!bg_set || mode != FL_DYNAMIC_COLOR_OFF) {
+    if (mode == FL_DYNAMIC_COLOR_DARK)
+      Fl::background(50, 50, 50);
+    else
+      Fl::background(0xd8, 0xd8, 0xd8);
+  }
 
 #if 0
   // this would be the correct code, but it does not run on all versions
-  // of OS X. Also, setting a bright selection color would require
+  // of macOS. Also, setting a bright selection color would require
   // some updates in Fl_Adjuster and Fl_Help_Browser
   OSStatus err;
   RGBColor c;
@@ -229,6 +250,7 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
     set_selection_color(c.red, c.green, c.blue);
 #else
   set_selection_color(0x00, 0x00, 0x80);
+  //set_selection_color(0, 87, 207);
 #endif
 }
 
