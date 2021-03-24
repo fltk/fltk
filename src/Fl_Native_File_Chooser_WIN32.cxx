@@ -30,6 +30,7 @@
 #define FNFC_MAX_PATH 32768     // XXX: MAX_PATH under win32 is 260, too small for modern use
 
 #include <FL/fl_string.h>       // fl_strdup()
+#include "flstring.h"           // fl_strlcpy()/cat()
 #include <FL/Fl_Native_File_Chooser.H>
 #  include <windows.h>
 #  include <commdlg.h>          // OPENFILENAMEW, GetOpenFileName()
@@ -522,16 +523,11 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
         //     eg. "/dir/name\0foo1\0foo2\0foo3\0\0"
         //
         char pathname[FNFC_MAX_PATH];
-        for ( const WCHAR *s = dirname + dirlen + 1;
-              *s; s += (wcslen(s)+1)) {
-          // ISSUE #206 -- beware strncpy() vs. strncat():
-          //      > strncpy() doesn't guarantee null termination but strncat() does.
-          //      > strncat() can write to n+1, whereas strncpy() only writes to n.
-          // fl_snprintf() can't be used here b/c wchartoutf8() returns a static str.
-          //
-          strncpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH); pathname[FNFC_MAX_PATH-1] = 0;
-          strncat(pathname, "\\",                 FNFC_MAX_PATH-1);
-          strncat(pathname, wchartoutf8(s),       FNFC_MAX_PATH-1);
+        for ( const WCHAR *s = dirname + dirlen + 1; *s; s += (wcslen(s)+1)) {
+          // ISSUE #206: replace strncpy/cat with fl_strlcpy/cat
+          fl_strlcpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH);
+          fl_strlcat(pathname, "\\",                 FNFC_MAX_PATH);
+          fl_strlcat(pathname, wchartoutf8(s),       FNFC_MAX_PATH);
           add_pathname(pathname);
         }
       }
