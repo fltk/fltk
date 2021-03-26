@@ -46,7 +46,6 @@ public:
   int pages_;
   cairo_t *cr() { return cairo_; }
   PangoLayout *pango_layout() {return pango_layout_;};
-  virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return NULL; }
 
   void check_status(void);
 

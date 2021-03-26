@@ -51,6 +51,7 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 struct Fl_Fontdesc;
+typedef struct _PangoFontDescription PangoFontDescription;
 
 #define FL_REGION_STACK_SIZE 10
 #define FL_MATRIX_STACK_SIZE 32
@@ -370,6 +371,7 @@ public:
   virtual void overlay_rect(int x, int y, int w , int h);
   virtual float override_scale();
   virtual void restore_scale(float);
+  virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return NULL; }
 };
 
 #ifndef FL_DOXYGEN

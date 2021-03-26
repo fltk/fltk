@@ -32,7 +32,6 @@
 #include <FL/math.h> // for M_PI
 #include <pango/pangocairo.h>
 #include <cairo/cairo-ps.h>
-#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif
 
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
@@ -1503,7 +1502,7 @@ int Fl_PostScript_Graphics_Driver::start_eps(int width, int height) {
 }
 
 PangoFontDescription* Fl_PostScript_Graphics_Driver::pango_font_description(Fl_Font fnum) {
-  return Fl_Xlib_Graphics_Driver::pango_font_description(fnum);
+  return Fl_Graphics_Driver::default_driver().pango_font_description(fnum);
 }
 
 #endif // USE_PANGO

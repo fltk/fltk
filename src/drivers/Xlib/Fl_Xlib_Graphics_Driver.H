@@ -85,7 +85,7 @@ protected:
   static PangoFontMap *pfmap_;
   static PangoLayout *playout_;
 public:
-  static PangoFontDescription* pango_font_description(Fl_Font fnum) { return pfd_array[fnum]; }
+  virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return pfd_array[fnum]; }
 private:
   static PangoFontDescription **pfd_array; // one array element for each Fl_Font
   static int pfd_array_length;
