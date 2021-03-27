@@ -18,6 +18,9 @@
     Declaration of class Fl_Cairo_Graphics_Driver.
 */
 
+#ifndef FL_CAIRO_GRAPHICS_DRIVER_H
+# define FL_CAIRO_GRAPHICS_DRIVER_H
+
 #include <FL/Fl_Graphics_Driver.H>
 
 typedef struct _cairo cairo_t;
@@ -137,3 +140,5 @@ public:
   void ps_translate(int, int);
   void ps_untranslate();
 };
+
+#endif // FL_CAIRO_GRAPHICS_DRIVER_H
