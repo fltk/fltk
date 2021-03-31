@@ -879,7 +879,7 @@ return; }
  */
 void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   void  *ptr_gtk;
-  if ( !Fl_X11_System_Driver::probe_for_GTK(2, 4, &ptr_gtk)) {
+  if ( !Fl_Posix_System_Driver::probe_for_GTK(2, 4, &ptr_gtk)) {
     did_find_GTK_libs = 0;
     return;
   }
