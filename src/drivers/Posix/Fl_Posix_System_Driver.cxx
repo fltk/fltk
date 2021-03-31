@@ -171,6 +171,30 @@ int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *
   return 1;
 }
 
+
+#if HAVE_DLSYM && HAVE_DLFCN_H
+static void* quadruple_dlopen(const char *libname)
+{
+  char filename2[FL_PATH_MAX];
+  sprintf(filename2, "%s.so", libname);
+  void *ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+  if (!ptr) {
+    sprintf(filename2, "%s.so.2", libname);
+    ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+    if (!ptr) {
+      sprintf(filename2, "%s.so.1", libname);
+      ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+      if (!ptr) {
+        sprintf(filename2, "%s.so.0", libname);
+        ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+      }
+    }
+  }
+  return ptr;
+}
+#endif
+
+
 /**
  Returns the run-time address of a function or of a shared library.
  \param lib_name shared library name (without its extension) or NULL to search the function in the running program

@@ -569,28 +569,6 @@ int Fl_X11_System_Driver::utf8locale() {
   return ret;
 }
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
-static void* quadruple_dlopen(const char *libname)
-{
-  char filename2[FL_PATH_MAX];
-  sprintf(filename2, "%s.so", libname);
-  void *ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-  if (!ptr) {
-    sprintf(filename2, "%s.so.2", libname);
-    ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-    if (!ptr) {
-      sprintf(filename2, "%s.so.1", libname);
-      ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-      if (!ptr) {
-        sprintf(filename2, "%s.so.0", libname);
-        ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-      }
-    }
-  }
-  return ptr;
-}
-#endif
-
 
 #if !defined(FL_DOXYGEN)
 
