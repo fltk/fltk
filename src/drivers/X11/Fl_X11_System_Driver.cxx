@@ -618,4 +618,58 @@ void Fl_X11_System_Driver::own_colormap() {
 #endif // USE_COLORMAP
 }
 
+
+void Fl_X11_System_Driver::make_transient(void *ptr_gtk, void *gtkw_window, Fl_Window *win) {
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  typedef int gboolean;
+  typedef struct _GdkDrawable GdkWindow;
+  typedef struct _GtkWidget GtkWidget;
+
+  typedef unsigned long (*XX_gdk_x11_window_get_type)();
+  static XX_gdk_x11_window_get_type fl_gdk_x11_window_get_type = NULL;
+
+  typedef gboolean (*XX_g_type_check_instance_is_a)(void *type_instance, unsigned long iface_type);
+  static XX_g_type_check_instance_is_a fl_g_type_check_instance_is_a = NULL;
+
+  typedef Window (*gdk_to_X11_t)(GdkWindow*);
+  static gdk_to_X11_t fl_gdk_to_X11 = NULL;
+  
+  typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
+  static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
+  
+  if (!fl_gdk_to_X11) {
+    fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
+    if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
+    if (!fl_gdk_to_X11) return;
+    fl_gdk_x11_window_get_type = (XX_gdk_x11_window_get_type)dlsym(ptr_gtk, "gdk_x11_window_get_type");
+    fl_g_type_check_instance_is_a = (XX_g_type_check_instance_is_a)dlsym(ptr_gtk, "g_type_check_instance_is_a");
+    fl_gtk_widget_get_window = (XX_gtk_widget_get_window)dlsym(ptr_gtk, "gtk_widget_get_window");
+    if (!fl_gtk_widget_get_window) return;
+  }
+  GdkWindow* gdkw = fl_gtk_widget_get_window((GtkWidget*)gtkw_window);
+
+  // Make sure the Dialog is an X11 window because it's not on Wayland.
+  // Until we find how to make a wayland window transient for an X11 window,
+  // we make the GTK window transient only when it's X11-based.
+  if ( (!fl_gdk_x11_window_get_type) || (!fl_g_type_check_instance_is_a) ||
+      fl_g_type_check_instance_is_a(gdkw, fl_gdk_x11_window_get_type()) ) {
+    Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
+    if (xw) XSetTransientForHint(fl_display, xw, fl_xid(win)); // set the GTK window transient for the last FLTK win
+  }
+#endif //HAVE_DLSYM && HAVE_DLFCN_H
+}
+
+void Fl_X11_System_Driver::emulate_modal_dialog() {
+  while (XEventsQueued(fl_display, QueuedAfterReading)) { // emulate modal dialog
+    XEvent xevent;
+    XNextEvent(fl_display, &xevent);
+    Window xid = xevent.xany.window;
+    if (xevent.type == ConfigureNotify) xid = xevent.xmaprequest.window;
+    if (!fl_find(xid)) continue; // skip events to non-FLTK windows
+    // process Expose and ConfigureNotify events
+    if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent);
+  }
+  Fl::flush(); // do the drawings needed after Expose events
+}
+
 #endif // !defined(FL_DOXYGEN)

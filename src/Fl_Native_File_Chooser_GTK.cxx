@@ -52,7 +52,6 @@ typedef struct _GtkWidget      GtkWidget;
 typedef struct _GtkFileChooser      GtkFileChooser;
 typedef struct _GtkDialog        GtkDialog;
 typedef struct _GtkWindow          GtkWindow;
-typedef struct _GdkDrawable           GdkWindow;
 typedef struct _GtkFileFilter     GtkFileFilter;
 typedef struct _GtkToggleButton       GtkToggleButton;
 typedef struct _GdkPixbuf GdkPixbuf;
@@ -259,22 +258,6 @@ static XX_gtk_file_chooser_set_extra_widget fl_gtk_file_chooser_set_extra_widget
 // void gtk_widget_show_now(GtkWidget *);
 typedef void (*XX_gtk_widget_show_now)(GtkWidget *);
 static XX_gtk_widget_show_now fl_gtk_widget_show_now = NULL;
-
-// GdkWindow* gtk_widget_get_window(GtkWidget *);
-typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
-static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
-
-// Window gdk_x11_drawable_get_xid(GdkWindow *); or gdk_x11_window_get_xid
-typedef Window (*gdk_to_X11_t)(GdkWindow*);
-static gdk_to_X11_t fl_gdk_to_X11 = NULL;
-
-// unsigned long gdk_x11_window_get_type();
-typedef unsigned long (*XX_gdk_x11_window_get_type)();
-static XX_gdk_x11_window_get_type fl_gdk_x11_window_get_type = NULL;
-
-//gboolean g_type_check_instance_is_a(void *type_instance, unsigned long iface_type)
-typedef gboolean (*XX_g_type_check_instance_is_a)(void *type_instance, unsigned long iface_type);
-static XX_g_type_check_instance_is_a fl_g_type_check_instance_is_a = NULL;
 
 // GtkWidget *gtk_check_button_new_with_label(const gchar *);
 typedef GtkWidget* (*XX_gtk_check_button_new_with_label)(const gchar *);
@@ -774,16 +757,8 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   fl_gtk_widget_show_all(extra);
   Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
-  if (firstw && fl_gdk_to_X11) {
-    GdkWindow* gdkw = fl_gtk_widget_get_window(gtkw_ptr);
-    // Make sure the Dialog is an X11 window because it's not on Wayland.
-    // Until we find how to make a wayland window transient for an X11 window,
-    // we make the GTK window transient only when it's X11-based.
-    if ( (!fl_gdk_x11_window_get_type) || (!fl_g_type_check_instance_is_a) ||
-        fl_g_type_check_instance_is_a(gdkw, fl_gdk_x11_window_get_type()) ) {
-      Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
-      if (xw) XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
-    }
+  if (firstw) {
+    ((Fl_Posix_System_Driver*)Fl::system_driver())->make_transient(Fl_Posix_System_Driver::ptr_gtk, gtkw_ptr, firstw);
   }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
   fl_gtk_toggle_button_set_active((GtkToggleButton *)show_hidden_button, state);
@@ -792,16 +767,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   fl_g_signal_connect_data(gtkw_ptr, "response", G_CALLBACK(run_response_handler), &response_id, NULL, (GConnectFlags) 0);
   while (response_id == GTK_RESPONSE_NONE) { // loop that shows the GTK dialog window
     fl_gtk_main_iteration(); // one iteration of the GTK event loop
-    while (XEventsQueued(fl_display, QueuedAfterReading)) { // emulate modal dialog
-      XEvent xevent;
-      XNextEvent(fl_display, &xevent);
-      Window xid = xevent.xany.window;
-      if (xevent.type == ConfigureNotify) xid = xevent.xmaprequest.window;
-      if (!fl_find(xid)) continue; // skip events to non-FLTK windows
-      // process Expose and ConfigureNotify events
-      if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent);
-    }
-    Fl::flush(); // do the drawings needed after Expose events
+    ((Fl_Posix_System_Driver*)Fl::system_driver())->emulate_modal_dialog();
   }
 
   if (response_id == GTK_RESPONSE_ACCEPT) {
@@ -914,7 +880,6 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_file_filter_get_name, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_extra_widget, ptr_gtk);
   GET_SYM(gtk_widget_show_now, ptr_gtk);
-  GET_SYM(gtk_widget_get_window, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_preview_widget_active, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_preview_widget, ptr_gtk);
   GET_SYM(gtk_file_chooser_get_preview_widget, ptr_gtk);
@@ -929,10 +894,6 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_widget_show_all, ptr_gtk);
   GET_SYM(gtk_table_attach_defaults, ptr_gtk);
   GET_SYM(g_object_unref, ptr_gtk);
-  fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
-  if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
-  fl_gdk_x11_window_get_type = (XX_gdk_x11_window_get_type)dlsym(ptr_gtk, "gdk_x11_window_get_type");
-  fl_g_type_check_instance_is_a = (XX_g_type_check_instance_is_a)dlsym(ptr_gtk, "g_type_check_instance_is_a");
   GET_SYM(gtk_check_button_new_with_label, ptr_gtk);
   GET_SYM(g_signal_connect_data, ptr_gtk);
   GET_SYM(gtk_toggle_button_get_active, ptr_gtk);
