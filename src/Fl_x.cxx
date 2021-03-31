@@ -789,7 +789,7 @@ void open_display_i(Display* d) {
 #endif
 
 #if USE_XRANDR
-  void *libxrandr_addr = Fl_X11_System_Driver::dlopen_or_dlsym("libXrandr");
+  void *libxrandr_addr = Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr");
   if (libxrandr_addr) {
     int error_base;
     typedef Bool (*XRRQueryExtension_type)(Display*, int*, int*);

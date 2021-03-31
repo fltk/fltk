@@ -286,7 +286,7 @@ void Fl_X11_Screen_Driver::init() {
 
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
-    XRRSizes_f = (XRRSizes_type)Fl_X11_System_Driver::dlopen_or_dlsym("libXrandr", "XRRSizes");
+    XRRSizes_f = (XRRSizes_type)Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr", "XRRSizes");
   }
   if (XRRSizes_f) {
     int nscreens;

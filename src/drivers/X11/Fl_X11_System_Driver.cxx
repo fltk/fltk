@@ -366,7 +366,7 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
   static gener_f_type uuid_generate_f = NULL;
   if (!looked_for_uuid_generate) {
     looked_for_uuid_generate = true;
-    uuid_generate_f = (gener_f_type)Fl_X11_System_Driver::dlopen_or_dlsym("libuuid", "uuid_generate");
+    uuid_generate_f = (gener_f_type)Fl_Posix_System_Driver::dlopen_or_dlsym("libuuid", "uuid_generate");
   }
   if (uuid_generate_f) {
     uuid_generate_f(b);
@@ -591,106 +591,6 @@ static void* quadruple_dlopen(const char *libname)
 }
 #endif
 
-/**
- Returns the run-time address of a function or of a shared library.
- \param lib_name shared library name (without its extension) or NULL to search the function in the running program
- \param func_name  function name or NULL
- \return the address of the function (when func_name != NULL) or of the shared library, or NULL if not found.
- */
-void *Fl_X11_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *func_name)
-{
-  void *lib_address = NULL;
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  void *func_ptr = NULL;
-  if (func_name) {
-#ifdef RTLD_DEFAULT
-    func_ptr = dlsym(RTLD_DEFAULT, func_name);
-#else
-    void *p = dlopen(NULL, RTLD_LAZY);
-    func_ptr = dlsym(p, func_name);
-#endif
-    if (func_ptr) return func_ptr;
-  }
-#ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
-  if (lib_name) {
-    char path[FL_PATH_MAX];
-    sprintf(path, "/opt/X11/lib/%s.dylib", lib_name);
-    lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-    if (!lib_address) {
-      sprintf(path, "/opt/sw/lib/%s.dylib", lib_name);
-      lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-      if (!lib_address) {
-        sprintf(path, "/sw/lib/%s.dylib", lib_name);
-        lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-      }
-    }
-  }
-#else
-  if (lib_name) lib_address = quadruple_dlopen(lib_name);
-#endif // __APPLE_CC__
-  if (func_name && lib_address) return ::dlsym(lib_address, func_name);
-#endif // HAVE_DLFCN_H
-  return lib_address;
-}
-
-#if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
-
-bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
-  typedef void (*init_t)(int*, void*);
-  *ptr_gtk = NULL;
-  // was GTK previously loaded?
-  init_t init_f = (init_t)dlsym(RTLD_DEFAULT, "gtk_init_check");
-  if (init_f) { // yes it was.
-    *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
-  } else {
-    // Try first with GTK3
-    *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-3");
-    if (*ptr_gtk) {
-#ifdef DEBUG
-      puts("selected GTK-3\n");
-#endif
-    } else {
-      // Try then with GTK2
-      *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-x11-2.0");
-#ifdef DEBUG
-      if (*ptr_gtk) {
-        puts("selected GTK-2\n");
-      }
-#endif
-    }
-    if (!(*ptr_gtk)) {
-#ifdef DEBUG
-      puts("Failure to load libgtk");
-#endif
-      return false;
-    }
-    init_f = (init_t)dlsym(*ptr_gtk, "gtk_init_check");
-    if (!init_f) return false;
-  }
-
-  // The point here is that after running gtk_init_check, the calling program's current locale can be modified.
-  // To avoid that, we memorize the calling program's current locale and restore the locale
-  // before returning.
-  char *before = NULL;
-  // record in "before" the calling program's current locale
-  char *p = setlocale(LC_ALL, NULL);
-  if (p) before = fl_strdup(p);
-  int ac = 0;
-  init_f(&ac, NULL); // may change the locale
-  if (before) {
-    setlocale(LC_ALL, before); // restore calling program's current locale
-    free(before);
-  }
-
-  // now check if running version is high enough
-  if (dlsym(*ptr_gtk, "gtk_get_major_version") == NULL) { // YES indicates V 3
-    typedef const char* (*check_t)(int, int, int);
-    check_t check_f = (check_t)dlsym(*ptr_gtk, "gtk_check_version");
-    if (!check_f || check_f(major, minor, 0) ) return false;
-  }
-  return true;
-}
-#endif // HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 #if !defined(FL_DOXYGEN)
 
