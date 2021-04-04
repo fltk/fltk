@@ -739,8 +739,8 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
     fl_g_signal_connect_data((GtkFileChooser *)gtkw_ptr, "update-preview", G_CALLBACK(update_preview_cb), preview,
                              NULL, (GConnectFlags)0);
     GtkWidget *preview_button = fl_gtk_check_button_new_with_label(Fl_File_Chooser::preview_label);
-    fl_g_signal_connect_data(preview_button, "toggled", G_CALLBACK(preview_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
     fl_gtk_toggle_button_set_active((GtkToggleButton *)preview_button, want_preview);
+    fl_g_signal_connect_data(preview_button, "toggled", G_CALLBACK(preview_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
     fl_gtk_table_attach_defaults(table, preview_button, 0, 1, 0, 1);
 
     plus_button = fl_gtk_button_new_with_label("<--->");
