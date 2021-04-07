@@ -1,7 +1,7 @@
 //
 // Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
   Character composition is done using dead keys and/or a compose
   key as defined by the operating system.
   <P>
- <!-- DON'T use the class name in the caption, or doxygen 1.8.x will fail. -->
+  <!-- DON'T use the class name in the caption, or doxygen 1.8.x will fail. -->
   <TABLE WIDTH="90%" BORDER="1" SUMMARY="Fl_Input keyboard and mouse bindings.">
     <CAPTION ALIGN="TOP">Keyboard and mouse bindings.</CAPTION>
     <TR><TD NOWRAP="NOWRAP" WIDTH="1%">
@@ -220,7 +220,6 @@
 class FL_EXPORT Fl_Input : public Fl_Input_ {
   friend class Fl_Screen_Driver;
   friend class Fl_Cocoa_Screen_Driver; // Not ideal, but probably no other platform will use it
-  int handle_key();
   int shift_position(int p);
   int shift_up_down_position(int p);
   void handle_mouse(int keepmark=0);
@@ -257,6 +256,8 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
 
 protected:
   void draw();
+  int handle_key();
+
 public:
   int handle(int);
   Fl_Input(int,int,int,int,const char * = 0);
