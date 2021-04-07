@@ -4,6 +4,8 @@
 // Copyright 1997-2011 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
+// Copyright 2013-2021 by Bill Spitzak and others.
+//
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
@@ -212,15 +214,21 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data)
 {
 #ifdef HAVE_LIBJPEG
-  FILE                   *fp = 0L;  // File pointer
   jpeg_decompress_struct  dinfo;    // Decompressor info
   fl_jpeg_error_mgr       jerr;     // Error handler info
   JSAMPROW                row;      // Sample row pointer
 
   // the following variables are pointers allocating some private space that
   // is not reset by 'setjmp()'
-  char* max_finish_decompress_err;      // count errors and give up afer a while
-  char* max_destroy_decompress_err;     // to avoid recusion and deadlock
+  char* max_finish_decompress_err;      // count errors and give up after a while
+  char* max_destroy_decompress_err;     // to avoid recursion and deadlock
+
+  // Note: The file pointer fp must not be an automatic (stack) variable
+  // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
+  // Hence the actual 'fp' is allocated with operator new.
+
+  FILE** fp = new FILE*;   // always allocate file pointer
+  *fp = NULL;
 
   // Clear data...
   alloc_array = 0;
@@ -228,13 +236,15 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
 
   // Open the image file if we read from the file system
   if (filename) {
-    if ((fp = fl_fopen(filename, "rb")) == NULL) {
+    if ((*fp = fl_fopen(filename, "rb")) == NULL) {
       ld(ERR_FILE_ACCESS);
+      delete fp;
       return;
     }
   } else {
     if (data==0L) {
       ld(ERR_FILE_ACCESS);
+      delete fp;
       return;
     }
   }
@@ -264,8 +274,8 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
     if ( (*max_destroy_decompress_err)-- > 0)
       jpeg_destroy_decompress(&dinfo);
 
-    if (fp)
-      fclose(fp);
+    if (*fp)
+      fclose(*fp);
 
     w(0);
     h(0);
@@ -281,12 +291,13 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
     free(max_finish_decompress_err);
 
     ld(ERR_FORMAT);
+    delete fp;
     return;
   }
 
   jpeg_create_decompress(&dinfo);
-  if (fp) {
-    jpeg_stdio_src(&dinfo, fp);
+  if (*fp) {
+    jpeg_stdio_src(&dinfo, *fp);
   } else {
     jpeg_mem_src(&dinfo, data);
   }
@@ -322,12 +333,13 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   free(max_destroy_decompress_err);
   free(max_finish_decompress_err);
 
-  if (fp)
-    fclose(fp);
+  if (*fp)
+    fclose(*fp);
 
   if (sharename && w() && h()) {
     Fl_Shared_Image *si = new Fl_Shared_Image(sharename, this);
     si->add();
   }
+  delete fp;
 #endif // HAVE_LIBJPEG
 }

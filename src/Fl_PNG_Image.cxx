@@ -4,7 +4,7 @@
 // Copyright 1997-2012 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
-// Copyright 2013-2017 by Bill Spitzak and others.
+// Copyright 2013-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -123,12 +123,15 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
 
   // Note: The file pointer fp must not be an automatic (stack) variable
   // to avoid potential clobbering by setjmp/longjmp (gcc: [-Wclobbered]).
-  static FILE *fp;      // intentionally initialized separately below
-  fp = NULL;            // always initialize file pointer
+  // Hence the actual 'fp' is allocated with operator new.
+
+  FILE** fp = new FILE*;   // always allocate file pointer
+  *fp = NULL;
 
   if (!from_memory) {
-    if ((fp = fl_fopen(name_png, "rb")) == NULL) {
+    if ((*fp = fl_fopen(name_png, "rb")) == NULL) {
       ld(ERR_FILE_ACCESS);
+      delete fp;
       return;
     }
   }
@@ -139,17 +142,19 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (pp) info = png_create_info_struct(pp);
   if (!pp || !info) {
     if (pp) png_destroy_read_struct(&pp, NULL, NULL);
-    if (!from_memory) fclose(fp);
+    if (!from_memory) fclose(*fp);
     Fl::warning("Cannot allocate memory to read PNG file or data \"%s\".\n", display_name);
     w(0); h(0); d(0); ld(ERR_FORMAT);
+    delete fp;
     return;
   }
 
   if (setjmp(png_jmpbuf(pp))) {
     png_destroy_read_struct(&pp, &info, NULL);
-    if (!from_memory) fclose(fp);
+    if (!from_memory) fclose(*fp);
     Fl::warning("PNG file or data \"%s\" is too large or contains errors!\n", display_name);
     w(0); h(0); d(0); ld(ERR_FORMAT);
+    delete fp;
     return;
   }
 
@@ -160,7 +165,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
     // Initialize the function pointer to the PNG read "engine"...
     png_set_read_fn (pp, (png_voidp) &png_mem_data, png_read_data_from_mem);
   } else {
-    png_init_io(pp, fp); // Initialize the PNG file read "engine"...
+    png_init_io(pp, *fp); // Initialize the PNG file read "engine"...
   }
 
   // Get the image dimensions and convert to grayscale or RGB...
@@ -225,7 +230,8 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
       si->add();
     }
   } else {
-    fclose(fp);
+    fclose(*fp);
   }
+  delete fp;
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
