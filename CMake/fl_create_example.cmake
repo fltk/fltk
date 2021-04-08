@@ -126,7 +126,10 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   if (PLIST)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${PLIST}")
-  endif (PLIST)
+  elseif (MAC_BUNDLE)
+    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "${TARGET_NAME}")
+    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.fltk.${TARGET_NAME}")
+  endif (MAC_BUNDLE AND NOT PLIST)
 
   ##############################################################################
   # Copy macOS "bundle wrapper" (shell script) to target directory.

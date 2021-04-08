@@ -1,7 +1,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -139,7 +139,7 @@ const char *cmake_intdir = 0;
 
 // debug output function
 void debug_var(const char *varname, const char *value) {
-  tty->printf("%-10s = '%s'\n", varname, value);
+  tty->printf("%-10s = %s\n", varname, value);
 }
 
 // Show or hide the tty window
