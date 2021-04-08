@@ -129,7 +129,7 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   elseif (MAC_BUNDLE)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "${TARGET_NAME}")
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.fltk.${TARGET_NAME}")
-  endif (MAC_BUNDLE AND NOT PLIST)
+  endif ()
 
   ##############################################################################
   # Copy macOS "bundle wrapper" (shell script) to target directory.
