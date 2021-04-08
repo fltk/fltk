@@ -6,7 +6,6 @@ SHELL = /bin/sh
 
 # Executables
 ALL = clipboard$(EXEEXT) \
-      fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
@@ -25,11 +24,11 @@ ALL = clipboard$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
-      tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
       tree-custom-draw-items$(EXEEXT) \
       tree-custom-sort$(EXEEXT) \
       tree-of-tables$(EXEEXT) \
+      tree-simple$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
@@ -40,4 +39,3 @@ clean:
 	$(RM) $(ALL)
 	$(RM) *.o
 	$(RM) core
-

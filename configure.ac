@@ -380,6 +380,16 @@ else
     LINKSHARED="$LINKFLTKCAIRO ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 fi
 
+dnl Define the fluid executable used when building the test programs.
+dnl In a native build we use the fluid executable created during the build,
+dnl in a cross-compilation we use `fluid' which must exist on the build system
+dnl and must be in the PATH, i.e. executable as 'fluid' (w/o $EXEEXT).
+if test "$fltk_cross_compiling" = "yes"; then
+  FLUID_BUILD="fluid"
+else
+  FLUID_BUILD="../fluid/fluid$EXEEXT"
+fi
+
 AC_SUBST(DSOCOMMAND)
 AC_SUBST(DSOFLAGS)
 AC_SUBST(DSOLINK)
@@ -391,6 +401,7 @@ AC_SUBST(CAIRODSONAME)
 AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
+AC_SUBST(FLUID_BUILD)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support [[default=yes]]])
 
@@ -857,10 +868,10 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
 		AC_DEFINE(HAVE_GL)
-		GLLIB="-lopengl32")
+		GLLIBS="-lopengl32")
 	    AC_CHECK_HEADER(GL/glu.h,
 		AC_DEFINE(HAVE_GL_GLU_H)
-		GLLIB="-lglu32 $GLLIB")
+		GLLIBS="-lglu32 $GLLIBS")
 	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -898,7 +909,7 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
 	    AC_DEFINE(HAVE_GL)
 	    AC_DEFINE(HAVE_GL_GLU_H)
-	    GLLIB="-framework OpenGL"
+	    GLLIBS="-framework OpenGL"
 	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -949,17 +960,17 @@ case $host_os_gui in
 	fi
 
 	dnl Check for OpenGL unless disabled...
-	GLLIB=
+	GLLIBS=
 
 	if test x$enable_gl != xno; then
 	    AC_SEARCH_LIBS(dlopen, dl)
 	    AC_CHECK_HEADER(GL/gl.h,
 		AC_CHECK_LIB(GL, glXMakeCurrent,
 		    [AC_DEFINE(HAVE_GL)
-		     GLLIB="-lGL"],
+		     GLLIBS="-lGL"],
 		    AC_CHECK_LIB(MesaGL, glXMakeCurrent,
 			[AC_DEFINE(HAVE_GL)
-			 GLLIB="-lMesaGL"],,
+			 GLLIBS="-lMesaGL"],,
 			[-lm]),
 		    [-lm])
 		AC_CHECK_LIB(GL, glXGetProcAddressARB,
@@ -968,10 +979,10 @@ case $host_os_gui in
 	    AC_CHECK_HEADER(GL/glu.h,
 		AC_DEFINE(HAVE_GL_GLU_H)
 		if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
-		    GLLIB="-lGLU $GLLIB"
+		    GLLIBS="-lGLU $GLLIBS"
 		fi
 		if test x$ac_cv_lib_MesaGL_glXMakeCurrent = xyes; then
-		    GLLIB="-lMesaGLU $GLLIB"
+		    GLLIBS="-lMesaGLU $GLLIBS"
 		fi
 	    )
 
@@ -1149,7 +1160,7 @@ case $host_os_gui in
 esac
 
 AC_SUBST(GLDEMOS)
-AC_SUBST(GLLIB)
+AC_SUBST(GLLIBS)
 AC_SUBST(HLINKS)
 AC_SUBST(OSX_ONLY)
 AC_SUBST(THREADS)

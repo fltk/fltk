@@ -1,5 +1,20 @@
+#
+# CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
+#
+# Copyright 1998-2021 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
+#
 
-set(CPPFILES
+set (CPPFILES
   Fl.cxx
   Fl_Adjuster.cxx
   Fl_Bitmap.cxx
@@ -47,8 +62,8 @@ set(CPPFILES
   Fl_Pixmap.cxx
   Fl_Positioner.cxx
   Fl_PostScript.cxx
-  Fl_Printer.cxx
   Fl_Preferences.cxx
+  Fl_Printer.cxx
   Fl_Progress.cxx
   Fl_Repeat_Button.cxx
   Fl_Return_Button.cxx
@@ -147,7 +162,21 @@ set(CPPFILES
   fl_encoding_mac_roman.cxx
 )
 
-set(FLCPPFILES
+# find all header files in source directory <FL/...>
+file (GLOB
+  HEADER_FILES
+  "../FL/*.[hH]"
+)
+
+# add generated header files in build directory
+list (APPEND HEADER_FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/../FL/abi-version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/../config.h
+)
+
+set (GL_HEADER_FILES)  # FIXME: not (yet?) defined
+
+set (FORMS_FILES
   forms_compatability.cxx
   forms_bitmap.cxx
   forms_free.cxx
@@ -156,7 +185,7 @@ set(FLCPPFILES
   forms_timer.cxx
 )
 
-set(GLCPPFILES
+set (GLCPPFILES
   Fl_Gl_Choice.cxx
   Fl_Gl_Device_Plugin.cxx
   Fl_Gl_Overlay.cxx
@@ -171,7 +200,7 @@ set(GLCPPFILES
   glut_font.cxx
 )
 
-set(IMGCPPFILES
+set (IMGCPPFILES
   fl_images_core.cxx
   Fl_BMP_Image.cxx
   Fl_File_Icon2.cxx
@@ -182,7 +211,7 @@ set(IMGCPPFILES
   Fl_PNM_Image.cxx
 )
 
-set(CFILES
+set (CFILES
   flstring.c
   scandir.c
   numericsort.c
@@ -198,27 +227,29 @@ set(CFILES
 )
 
 if (APPLE AND NOT OPTION_APPLE_X11)
-    set(MMFILES
-        Fl_cocoa.mm
-        Fl_Quartz_Printer.mm
-        Fl_Native_File_Chooser_MAC.mm
-        Fl_Sys_Menu_Bar.mm
-        )
+  set (MMFILES
+    Fl_cocoa.mm
+    Fl_Quartz_Printer.mm
+    Fl_Native_File_Chooser_MAC.mm
+    Fl_Sys_Menu_Bar.mm
+  )
 else()
-   set(MMFILES
-      )
+  set (MMFILES
+  )
 endif (APPLE AND NOT OPTION_APPLE_X11)
+
 
 #######################################################################
 
 # prepare source files for shared and static FLTK libraries
 
 set (SHARED_FILES ${CPPFILES} ${MMFILES} ${CFILES})
+list (APPEND SHARED_FILES ${HEADER_FILES})
 
 set (STATIC_FILES ${SHARED_FILES})
 
 if (WIN32)
-    list(APPEND STATIC_FILES fl_call_main.c)
+  list (APPEND STATIC_FILES fl_call_main.c)
 endif (WIN32)
 
 add_definitions(-DFL_LIBRARY)
@@ -230,151 +261,177 @@ add_definitions(-DFL_LIBRARY)
 set (OPTIONAL_LIBS)
 
 if (LIB_dl)
-    list(APPEND OPTIONAL_LIBS ${LIB_dl})
+  list (APPEND OPTIONAL_LIBS ${LIB_dl})
 endif (LIB_dl)
 
 if (USE_THREADS)
-    list(APPEND OPTIONAL_LIBS ${CMAKE_THREAD_LIBS_INIT})
+  list (APPEND OPTIONAL_LIBS ${CMAKE_THREAD_LIBS_INIT})
 endif (USE_THREADS)
 
 if (USE_X11)
-    list(APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
+  list (APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
 endif (USE_X11)
 
 if (WIN32)
-    list(APPEND OPTIONAL_LIBS comctl32)
+  list (APPEND OPTIONAL_LIBS comctl32 ws2_32)
 endif (WIN32)
 
 if (FLTK_HAVE_CAIRO)
-    list(APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif (FLTK_HAVE_CAIRO)
+  list (APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
+endif (FLTK_HAVE_CAIRO)
 
 if (HAVE_XINERAMA)
-    list(APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
+  list (APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
 endif (HAVE_XINERAMA)
 
 if (HAVE_XFIXES)
-    list(APPEND OPTIONAL_LIBS ${X11_Xfixes_LIB})
+  list (APPEND OPTIONAL_LIBS ${X11_Xfixes_LIB})
 endif (HAVE_XFIXES)
 
 if (HAVE_XCURSOR)
-    list(APPEND OPTIONAL_LIBS ${X11_Xcursor_LIB})
+  list (APPEND OPTIONAL_LIBS ${X11_Xcursor_LIB})
 endif (HAVE_XCURSOR)
 
 if (HAVE_XRENDER)
-    list(APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
+  list (APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
 endif (HAVE_XRENDER)
 
 if (USE_XFT)
-    list(APPEND OPTIONAL_LIBS ${X11_Xft_LIB})
-    if (LIB_fontconfig)
-	list(APPEND OPTIONAL_LIBS ${LIB_fontconfig})
-    endif (LIB_fontconfig)
+  list (APPEND OPTIONAL_LIBS ${X11_Xft_LIB})
+  if (LIB_fontconfig)
+    list (APPEND OPTIONAL_LIBS ${LIB_fontconfig})
+  endif (LIB_fontconfig)
 endif (USE_XFT)
 
 #######################################################################
 
-FL_ADD_LIBRARY(fltk STATIC "${STATIC_FILES}")
-target_link_libraries(fltk ${OPTIONAL_LIBS})
+FL_ADD_LIBRARY (fltk STATIC "${STATIC_FILES}")
+target_link_libraries (fltk ${OPTIONAL_LIBS})
 
 #######################################################################
 
-FL_ADD_LIBRARY(fltk_forms STATIC "${FLCPPFILES}")
-target_link_libraries(fltk_forms fltk)
+FL_ADD_LIBRARY (fltk_forms STATIC "${FORMS_FILES}")
+target_link_libraries (fltk_forms fltk)
 
 #######################################################################
 
-FL_ADD_LIBRARY(fltk_images STATIC "${IMGCPPFILES}")
-target_link_libraries(fltk_images fltk)
+FL_ADD_LIBRARY (fltk_images STATIC "${IMGCPPFILES}")
+target_link_libraries (fltk_images fltk)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
-    target_link_libraries(fltk_images ${FLTK_JPEG_LIBRARIES})
+  target_link_libraries (fltk_images ${FLTK_JPEG_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_jpeg)
+  target_link_libraries (fltk_images fltk_jpeg)
 endif (OPTION_USE_SYSTEM_LIBJPEG)
 
 if (OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_images ${FLTK_ZLIB_LIBRARIES})
+  target_link_libraries (fltk_images ${FLTK_ZLIB_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_z)
+  target_link_libraries (fltk_images fltk_z)
 endif (OPTION_USE_SYSTEM_ZLIB)
 
 if (OPTION_USE_SYSTEM_LIBPNG)
-    target_link_libraries(fltk_images ${FLTK_PNG_LIBRARIES})
+  target_link_libraries (fltk_images ${FLTK_PNG_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_png)
+  target_link_libraries (fltk_images fltk_png)
 endif (OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
 
 if (OPENGL_FOUND)
-   FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES}")
-   target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
+  FL_ADD_LIBRARY (fltk_gl STATIC "${GLCPPFILES}")
+  target_link_libraries (fltk_gl fltk ${OPENGL_LIBRARIES})
 endif (OPENGL_FOUND)
 
 #######################################################################
 # Build shared libraries (optional)
 #######################################################################
+# Shared libraries, part 1: everything except Visual Studio (MSVC)
+#######################################################################
 
-# Note to devs: As of 08 Aug 2016 we can build shared libs (dlls)
-# under Windows with Visual Studio (MSVC) but we can't link for instance
-# fltk_images_SHARED with fltk_SHARED - we have to use fltk, i.e. the
-# "static" object library instead. I don't know how to fix this, but
-# at least we can build shared libraries (dlls) with Visual Studio.
+if (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
+
+  FL_ADD_LIBRARY (fltk SHARED "${SHARED_FILES}")
+  target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS})
+
+  ###################################################################
+
+  FL_ADD_LIBRARY (fltk_forms SHARED "${FORMS_FILES}")
+  target_link_libraries (fltk_forms_SHARED fltk_SHARED)
+
+  ###################################################################
+
+  FL_ADD_LIBRARY (fltk_images SHARED "${IMGCPPFILES}")
+  target_link_libraries (fltk_images_SHARED fltk_SHARED)
+
+  if (OPTION_USE_SYSTEM_LIBJPEG)
+    target_link_libraries (fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
+  else()
+    target_link_libraries (fltk_images_SHARED fltk_jpeg_SHARED)
+  endif (OPTION_USE_SYSTEM_LIBJPEG)
+
+  if (OPTION_USE_SYSTEM_LIBPNG)
+    target_link_libraries (fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
+  else()
+    target_link_libraries (fltk_images_SHARED fltk_png_SHARED)
+  endif (OPTION_USE_SYSTEM_LIBPNG)
+
+  if (OPTION_USE_SYSTEM_ZLIB)
+    target_link_libraries (fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
+  else()
+    target_link_libraries (fltk_images_SHARED fltk_z_SHARED)
+  endif (OPTION_USE_SYSTEM_ZLIB)
+
+  ###################################################################
+
+  if (OPENGL_FOUND)
+    FL_ADD_LIBRARY (fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
+    target_link_libraries (fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+  endif (OPENGL_FOUND)
+
+endif (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
+
+#######################################################################
+# Shared libraries, part 2: Visual Studio (MSVC)
+#######################################################################
+
+# Note to devs: As of June 2020 we can't build separate shared libs (DLL's)
+# under Windows with Visual Studio (MSVC) but we can build one big DLL
+# that comprises all FLTK and optional PNG, JPEG, and ZLIB libs.
 # AlbrechtS
 
-if (OPTION_BUILD_SHARED_LIBS)
+if (OPTION_BUILD_SHARED_LIBS AND MSVC)
 
-    FL_ADD_LIBRARY(fltk SHARED "${SHARED_FILES}")
-    target_link_libraries(fltk_SHARED ${OPTIONAL_LIBS})
+  set (SOURCES ${SHARED_FILES} ${FORMS_FILES} ${IMGCPPFILES})
+  if (OPENGL_FOUND)
+    list (APPEND SOURCES ${GLCPPFILES} ${GL_HEADER_FILES} ${GL_DRIVER_HEADER_FILES})
+  endif (OPENGL_FOUND)
 
-    ###################################################################
+  FL_ADD_LIBRARY (fltk SHARED "${SOURCES}")
+  target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS})
 
-    FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
-    if (MSVC)
-      target_link_libraries(fltk_forms_SHARED fltk)
-    else ()
-      target_link_libraries(fltk_forms_SHARED fltk_SHARED)
-    endif (MSVC)
+  if (OPTION_USE_SYSTEM_LIBJPEG)
+    target_link_libraries (fltk_SHARED ${FLTK_JPEG_LIBRARIES})
+  else()
+    target_link_libraries (fltk_SHARED fltk_jpeg_SHARED)
+  endif (OPTION_USE_SYSTEM_LIBJPEG)
 
-    ###################################################################
+  if (OPTION_USE_SYSTEM_LIBPNG)
+    target_link_libraries (fltk_SHARED ${FLTK_PNG_LIBRARIES})
+  else()
+    target_link_libraries (fltk_SHARED fltk_png_SHARED)
+  endif (OPTION_USE_SYSTEM_LIBPNG)
 
-    FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
-    if (MSVC)
-      target_link_libraries(fltk_images_SHARED fltk)
-    else ()
-      target_link_libraries(fltk_images_SHARED fltk_SHARED)
-    endif (MSVC)
+  if (OPTION_USE_SYSTEM_ZLIB)
+    target_link_libraries (fltk_SHARED ${FLTK_ZLIB_LIBRARIES})
+  else()
+    target_link_libraries (fltk_SHARED fltk_z_SHARED)
+  endif (OPTION_USE_SYSTEM_ZLIB)
 
-    if (OPTION_USE_SYSTEM_LIBJPEG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
-    else()
-	target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
-    endif (OPTION_USE_SYSTEM_LIBJPEG)
+  if (OPENGL_FOUND)
+    target_link_libraries (fltk_SHARED ${OPENGL_LIBRARIES})
+  endif (OPENGL_FOUND)
 
-    if (OPTION_USE_SYSTEM_LIBPNG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
-    else()
-	target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
-    endif (OPTION_USE_SYSTEM_LIBPNG)
-
-    if (OPTION_USE_SYSTEM_ZLIB)
-	target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
-    else()
-	target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
-    endif (OPTION_USE_SYSTEM_ZLIB)
-
-    ###################################################################
-
-    if (OPENGL_FOUND)
-      FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES}")
-      if (MSVC)
-	target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
-      else ()
-	target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-      endif (MSVC)
-    endif (OPENGL_FOUND)
-
-endif (OPTION_BUILD_SHARED_LIBS)
+endif (OPTION_BUILD_SHARED_LIBS AND MSVC)
 
 #######################################################################

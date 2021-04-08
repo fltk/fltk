@@ -1,20 +1,20 @@
 #
-# "$Id$"
+# FLUID Makefile for the Fast Light Tool Kit (FLTK).
 #
-# FLUID makefile for the Fast Light Tool Kit (FLTK).
-#
-# Copyright 1998-2016 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
+
+include ../makeinclude
 
 CPPFILES = \
 	CodeEditor.cxx \
@@ -43,14 +43,12 @@ CPPFILES = \
 
 OBJECTS = $(CPPFILES:.cxx=.o)
 
-include ../makeinclude
-
 all:	$(FLUID) fluid$(EXEEXT)
 
 fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 			$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDFLAGS) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -r -f fluid.app/Contents/MacOS
 	$(OSX_ONLY) mkdir fluid.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
@@ -58,7 +56,7 @@ fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDFLAGS) $(LDLIBS)
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bak
@@ -66,7 +64,11 @@ clean:
 	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
 
 depend:	$(CPPFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES)
+	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
+	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies...
 include makedepend
@@ -111,20 +113,16 @@ uninstall-linux:
 uninstall-osx:
 	$(RM) -r $(DESTDIR)/Applications/fluid.app
 
-
-#
 # Note: The rebuild target can only be used if you have the original .fl
-#       files.  This is normally only used by the FLTK maintainers...
-#
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	fluid must be rebuilt if any {.fl|.cxx|.h} files were changed.
 
-rebuild:
-	./fluid -c about_panel.fl
-	./fluid -c alignment_panel.fl
-	./fluid -c function_panel.fl
-	./fluid -c print_panel.fl
-	./fluid -c template_panel.fl
-	./fluid -c widget_panel.fl
-
-#
-# End of "$Id$".
-#
+rebuild: fluid$(EXEEXT)
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	./fluid$(EXEEXT) -u -c about_panel.fl
+	./fluid$(EXEEXT) -u -c alignment_panel.fl
+	./fluid$(EXEEXT) -u -c function_panel.fl
+	./fluid$(EXEEXT) -u -c print_panel.fl
+	./fluid$(EXEEXT) -u -c template_panel.fl
+	./fluid$(EXEEXT) -u -c widget_panel.fl

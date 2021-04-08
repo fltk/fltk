@@ -1,20 +1,18 @@
 /* @CONFIG_H@.  Generated from @CONFIG_H_IN@ by CMake.  */
 /*
- * "$Id$"
- *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /*
@@ -86,7 +84,7 @@
 /*
  * USE_XFT
  *
- * Use the new Xft library to draw anti-aliased text.
+ * Use the Xft library to draw anti-aliased text.
  */
 
 #cmakedefine01 USE_XFT
@@ -335,7 +333,3 @@
 
 #cmakedefine01 HAVE_DLFCN_H
 #cmakedefine01 HAVE_DLSYM
-
-/*
- * End of "$Id$".
- */

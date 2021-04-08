@@ -1,22 +1,20 @@
 #
-# "$Id$"
+# Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Library makefile for the Fast Light Tool Kit (FLTK).
-#
-# Copyright 1998-2014 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-# Note:	see ../configure.in and/or ../makeinclude for definition of
+# Note:	see ../configure.ac and/or ../makeinclude for definition of
 #	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
 CPPFILES = \
@@ -166,10 +164,10 @@ CPPFILES = \
 	ps_image.cxx
 
 OBJCPPFILES = \
-    Fl_cocoa.mm \
-    Fl_Quartz_Printer.mm \
-    Fl_Native_File_Chooser_MAC.mm \
-    Fl_Sys_Menu_Bar.mm
+	Fl_cocoa.mm \
+	Fl_Quartz_Printer.mm \
+	Fl_Native_File_Chooser_MAC.mm \
+	Fl_Sys_Menu_Bar.mm
 
 FLCPPFILES = \
 	forms_compatability.cxx \
@@ -467,9 +465,19 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
+# Note: The rebuild target can only be used if you have the original .fl
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	the libs must be rebuilt if any {.fl|.cxx|.h} files were changed.
+
+rebuild:
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	../fluid/fluid$(EXEEXT) -u -c Fl_File_Chooser.fl
+	../fluid/fluid$(EXEEXT) -u -c Fl_Help_Dialog.fl
+
 clean:
-	-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
-	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
+	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM)	$(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
 		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
@@ -479,14 +487,18 @@ clean:
 		cmap core
 
 depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES) $(MMFILES) $(FLCPPFILES) \
+	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES) $(MMFILES) $(FLCPPFILES) \
 		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
+	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies... generated on a Linux/Unix host !
 include makedepend
 
 # These dependencies aren't part of the makedepend file since
-# they are part of the WIN32 and MacOS code base...
+# they are part of the Windows and MacOS code base...
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
@@ -556,7 +568,7 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 install: $(LIBNAME) $(DSONAME) \
 	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
-	$(IMGLIBNAME) $(IMGDSONAME) 
+	$(IMGLIBNAME) $(IMGDSONAME)
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
@@ -803,7 +815,3 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
 	fi
-
-#
-# End of "$Id$".
-#

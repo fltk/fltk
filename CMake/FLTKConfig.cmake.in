@@ -15,7 +15,7 @@
 #                - deprecated since FLTK 1.3.4
 #                - will be removed in FLTK 1.4.0 or later
 
-set (FLTK_VERSION @FLTK_VERSION_FULL@)
+set (FLTK_VERSION @FLTK_VERSION@)
 
 include (${CMAKE_CURRENT_LIST_DIR}/FLTK-Targets.cmake)
 
@@ -36,7 +36,3 @@ if (CMAKE_CROSSCOMPILING)
 else ()
   set (FLTK_FLUID_EXECUTABLE fluid)
 endif (CMAKE_CROSSCOMPILING)
-
-#
-# End of file
-#

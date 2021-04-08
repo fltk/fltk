@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Run the executable of a macOS bundle for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998-2020 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
+#
+#
+# Install this script side by side with the macOS bundle with the same name:
+#
+#  - dir/prog.app   macOS bundle (directory)
+#  - dir/prog       this script: runs the executable 'prog' inside the bundle
+#
+prog="`basename \"$0\"`"
+dir="`dirname \"$0\"`"
+exec "$dir/$prog.app/Contents/MacOS/$prog" "$@"

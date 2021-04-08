@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "FLTK @FL_VERSION@"
+PROJECT_NAME           = "FLTK @FLTK_VERSION@"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -565,9 +565,9 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox
-INPUT += @CMAKE_SOURCE_DIR@/FL
-INPUT += @CMAKE_SOURCE_DIR@/src
-INPUT += @CMAKE_SOURCE_DIR@/cairo
+INPUT += @FLTK_SOURCE_DIR@/FL
+INPUT += @FLTK_SOURCE_DIR@/src
+INPUT += @FLTK_SOURCE_DIR@/cairo
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/enumerations.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/glut.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/forms.dox
@@ -578,7 +578,7 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/development.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/license.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/examples.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/faq.dox
-INPUT += @CMAKE_SOURCE_DIR@/src/Fl_Sys_Menu_Bar.mm
+INPUT += @FLTK_SOURCE_DIR@/src/Fl_Sys_Menu_Bar.mm
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -611,9 +611,9 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE =  @CMAKE_SOURCE_DIR@/src/fl_font_win32.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_font_mac.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/aimm.h
+EXCLUDE  = @FLTK_SOURCE_DIR@/src/aimm.h
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_mac.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_win32.cxx
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -641,7 +641,8 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ../test
+EXAMPLE_PATH           = @CMAKE_CURRENT_SOURCE_DIR@/../test \
+                         @CMAKE_CURRENT_SOURCE_DIR@/../examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -1001,7 +1002,7 @@ COMPACT_LATEX          = NO
 # by the printer. Possible values are: a4, a4wide, letter, legal and
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX
 # packages that should be included in the LaTeX output.
@@ -1243,6 +1244,7 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = FL_DOXYGEN \
+                         FL_ABI_VERSION=99999 \
                          FLTK_ABI_VERSION=99999 \
                          FLTK_HAVE_CAIRO \
                          HAVE_GL \
@@ -1306,7 +1308,8 @@ EXTERNAL_GROUPS        = YES
 # The PERL_PATH should be the absolute path and name of the perl script
 # interpreter (i.e. the result of `which perl').
 
-# PERL_PATH              = /usr/bin/perl
+#** obsolete as of Doxygen 1.8.16 (use default for older versions)
+#** PERL_PATH              = /usr/bin/perl
 
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
@@ -1328,7 +1331,8 @@ CLASS_DIAGRAMS         = YES
 # the mscgen tool resides. If left empty the tool is assumed to be found in the
 # default search path.
 
-# MSCGEN_PATH            =
+#** obsolete as of Doxygen 1.8.16, not used by FLTK anyway
+#** MSCGEN_PATH            =
 
 # If set to YES, the inheritance and collaboration graphs will hide
 # inheritance and usage relations if the target is undocumented

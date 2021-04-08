@@ -1,19 +1,18 @@
 #
-# "$Id: Makefile 5667 2007-02-07 02:35:44Z mike $"
-#
 # CAIRO library makefile for the Fast Light Toolkit (FLTK).
 #
 # Copyright 1997-2009 by Easy Software Products.
+# Copyright 2010-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 # Note:	see ../configure.in and/or ../makeinclude for definition of
@@ -165,10 +164,10 @@ uninstall:
 $(CAIROOBJECTS):	../makeinclude
 
 depend: $(CAIROCPPFILES)
-	makedepend -Y -I.. -f makedepend $(CAIROCPPFILES)
+	makedepend -Y -I.. -f makedepend -w 20 $(CAIROCPPFILES)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
+	mv makedepend.tmp makedepend
 
 include makedepend
-
-#
-# End of "$Id: Makefile 5667 2007-02-07 02:35:44Z mike $".
-#

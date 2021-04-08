@@ -6,7 +6,8 @@
 #    on your system. Common examples:
 #
 #	FLTKCONFIG = /usr/local/bin/fltk-config
-#       FLTKCONFIG = /usr/local/src/fltk-1.3.x-svn/fltk-config
+#       FLTKCONFIG = /usr/local/src/fltk-1.3.x/fltk-config
+#       FLTKCONFIG = ../build/fltk-config # if ../build == CMake build directory
 #
 #    Set .SILENT in your Makefile if you want 'quieter' builds.
 #
@@ -32,4 +33,4 @@ LINKFLTK_ALL = $(shell $(FLTKCONFIG) --use-images --use-gl --ldstaticflags)
 # HOW TO LINK
 .o$(EXEEXT):
 	@echo "*** Linking $@..."
-	$(CXX) $< $(LINKFLTK_ALL) -o $@
+	$(CXX) $< $(LINKFLTK) $(LINKFLTK_IMG) -o $@
