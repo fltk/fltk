@@ -1,29 +1,27 @@
 #
-# "$Id$"
-#
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
-# (EPM can be found at http://www.epmhome.org/)
+# (EPM can be found at https://www.msweet.org/epm/)
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2011 by Bill Spitzak and others.
+%copyright 1998-2021 by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README
-%version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
+%version @FLTK_VERSION_MAJOR@.@FLTK_VERSION_MINOR@.@FLTK_VERSION_PATCH@
 %description The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
 %description cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
 %description Microsoft(r) Windows(r), and MacOS(r) X.  FLTK provides modern
@@ -101,7 +99,7 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_DSO_VERSION@ src/libfltk_gl.so.@FL_DSO
 
 %subpackage devel
 %description FLTK Development Environment
-%description Install fltk-devel if you need to develop FLTK applications. 
+%description Install fltk-devel if you need to develop FLTK applications.
 %description You'll need to install the fltk package if you plan to run
 %description dynamically linked applications.
 
@@ -124,7 +122,7 @@ f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-
 f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fluid.png fluid/icons/fluid-48.png
 f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fluid.png fluid/icons/fluid-64.png
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fluid.png fluid/icons/fluid-128.png
-f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.desktop
+f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/fluid.desktop
 
 %system all
 
@@ -350,6 +348,7 @@ l 0000 root sys $includedir/FL/forms.h forms.H
 l 0000 root sys $includedir/FL/gl_draw.h gl_draw.H
 l 0000 root sys $includedir/FL/glut.h glut.H
 l 0000 root sys $includedir/FL/mac.h mac.H
+l 0000 root sys $includedir/FL/platform.h platform.H
 l 0000 root sys $includedir/FL/win32.h win32.H
 l 0000 root sys $includedir/FL/x.h x.H
 %system all
@@ -427,7 +426,3 @@ f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/src/sudoku.$CAT6EXT
 f 0444 root sys $mandir/man6/blocks.6 documentation/src/blocks.man
 f 0444 root sys $mandir/man6/checkers.6 documentation/src/checkers.man
 f 0444 root sys $mandir/man6/sudoku.6 documentation/src/sudoku.man
-
-#
-# End of "$Id$".
-#
