@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -32,11 +32,16 @@ add_custom_target (uninstall
 install (DIRECTORY
   ${CMAKE_CURRENT_SOURCE_DIR}/FL
   DESTINATION ${FLTK_INCLUDEDIR} USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+    PATTERN "*.[hH]"
+    PATTERN "abi-version.h" EXCLUDE
 )
 
 install (DIRECTORY
   ${CMAKE_CURRENT_BINARY_DIR}/FL
   DESTINATION ${FLTK_INCLUDEDIR} USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+    PATTERN "*.[hH]"
 )
 
 if (OPTION_CREATE_LINKS)
