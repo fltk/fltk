@@ -2516,6 +2516,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 - (void)resetCursorRects {
   Fl_Window *w = [(FLWindow*)[self window] getFl_Window];
+  if (!w) return;
   Fl_X *i = Fl_X::i(w);
   if (!i) return;  // fix for STR #3128
   // We have to have at least one cursor rect for invalidateCursorRectsForView
