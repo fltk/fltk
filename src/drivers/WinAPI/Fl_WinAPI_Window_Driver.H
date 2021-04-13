@@ -1,5 +1,5 @@
 //
-// Definition of Apple Cocoa window driver
+// Definition of Windows window driver
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
