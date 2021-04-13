@@ -67,7 +67,7 @@ Open a shell and install some software:
 
   sudo apt-get install g++
   sudo apt-get install gdb
-  sudo apt-get install subversion
+  sudo apt-get install git
   sudo apt-get install autoconf
   sudo apt-get install libx11-dev
   sudo apt-get install libglu1-mesa-dev
@@ -81,13 +81,13 @@ If you are planning to use the Code::Blocks IDE, also install this
 
   sudo apt-get install codeblocks
 
-I like to use subversion to install the latest FLTK-1.3.release:
+I like to use git to install the latest FLTK-X.Y.release:
 
-  svn co http://seriss.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  git clone --branch branch-X.Y https://github.com/fltk/fltk
 
-To update to the latest version, just go into the fltk-1.3 directory and type
+To update to the latest version, just go into the fltk directory and type
 
-  svn update
+  git pull
 
 
  2.2  Linux Mint 9
@@ -103,7 +103,7 @@ Open a shell and install some software:
 
   sudo apt-get install g++
   sudo apt-get install gdb
-  sudo apt-get install subversion
+  sudo apt-get install git
   sudo apt-get install autoconf
   sudo apt-get install libx11-dev
   sudo apt-get install libglu1-mesa-dev
@@ -117,13 +117,13 @@ If you are planning to use the Code::Blocks IDE, also install this
 
   sudo apt-get install codeblocks
 
-I like to use subversion to install the latest FLTK-1.3.release:
+I like to use git to install the latest FLTK-X.Y.release:
 
-  svn co http://seriss.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  git clone --branch branch-X.Y https://github.com/fltk/fltk
 
-To update to the latest version, just go into the fltk-1.3 directory and type
+To update to the latest version, just go into the fltk directory and type
 
-  svn update
+  git pull
 
 FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
 
@@ -153,13 +153,13 @@ Don't forget to leave root status (Ctrl-D) before loading FLTK. To install FLTK
 for every user, you either have to set root user again, or use "visudo" to add
 yourself to the "sudo" list.
 
-I like to use subversion to install the latest FLTK-1.3.release:
+I like to use git to install the latest FLTK-X.Y.release:
 
-  svn co http://seriss.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  git clone --branch branch-X.Y https://github.com/fltk/fltk
 
-To update to the latest version, just go into the fltk-1.3 directory and type
+To update to the latest version, just go into the fltk directory and type
 
-  svn update
+  git pull
 
 FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
 
@@ -242,18 +242,18 @@ To use the current stable version of FLTK, simply install it from pkgsrc:
   cd /usr/pkgsrc/x11/fltk13
   bmake install
 
-For the latest development snapshot, first install the svn client from pkgsrc:
+For the latest development snapshot, first install the git client from pkgsrc:
 
-  cd /usr/pkgsrc/devel/subversion
+  cd /usr/pkgsrc/devel/git
   bmake install
 
-Now fetch the latest FLTK source code:
+Now fetch the latest FLTK X.Y.release source code:
 
-  svn co http://seriss.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  git clone --branch branch-X.Y https://github.com/fltk/fltk
 
-To update to the latest version, just go into the fltk-1.3 directory and type
+To update to the latest version, just go into the fltk directory and type
 
-  svn update
+  git pull
 
 If you have installed JPEG and PNG libraries from pkgsrc, configure your
 environment as follows so that the FLTK configure script can find them:
@@ -278,8 +278,8 @@ Download FLTK from here:
 
   https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of that
 page. Unpack FLTK into a convenient location. I like to have everything in my
 dev directory:
 
@@ -294,7 +294,7 @@ dev directory:
  3.2  Configuring FLTK
 -----------------------
 
-If you got FLTK via subversion then you need one extra step. Otherwise skip
+If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type the
 following:
 
@@ -442,3 +442,4 @@ Oct 30 2010 - matt: added Code::Blocks chapter
 Oct 28 2010 - matt: restructured entire document and verified instructions
 Nov 14 2010 - duncan: added install-desktop
 Jun 17 2013 - erco: added mingodad's CodeBlocks/Fluid recommendations
+Apr 13 2021 - giri: Replace svn instructions by git instructions
