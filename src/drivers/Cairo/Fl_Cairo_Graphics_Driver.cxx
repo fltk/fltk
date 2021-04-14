@@ -67,13 +67,13 @@ Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {}
 
 
 void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  cairo_rectangle(cairo_, x, y, w, h);
+  cairo_rectangle(cairo_, x-0.5, y-0.5, w, h);
   cairo_fill(cairo_);
   check_status();
 }
 
 void Fl_Cairo_Graphics_Driver::rect(int x, int y, int w, int h) {
-  cairo_rectangle(cairo_, x, y, w, h);
+  cairo_rectangle(cairo_, x, y, w-1, h-1);
   cairo_stroke(cairo_);
   check_status();
 }
