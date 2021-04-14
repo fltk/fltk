@@ -50,8 +50,9 @@ Our text editor will need some global variables to keep track of things:
 
 \code
 int            changed = 0;
-char           filename[256] = "";
-Fl_Text_Buffer *textbuf;
+char           filename[FL_PATH_MAX] = "";
+char           title[FL_PATH_MAX];
+Fl_Text_Buffer *textbuf = 0;
 \endcode
 
 The \p textbuf variable is the text editor buffer for
