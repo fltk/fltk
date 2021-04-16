@@ -794,7 +794,7 @@ void Fl_WinAPI_Native_File_Chooser_Driver::add_filter(const char *name_in,      
     if ((strlen(name_in)+strlen(winfilter)+3) < sizeof(name)) {
       sprintf(name, "%s (%s)", name_in, winfilter);
     } else {
-      sprintf(name, "%.*s", int(sizeof(name)), name_in);
+      sprintf(name, "%.*s", int(sizeof(name))-1, name_in);
     }
   }
   dnullcat(_parsedfilt, name);
