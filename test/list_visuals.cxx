@@ -4,7 +4,7 @@
 // List all the visuals on the screen, and dumps anything interesting
 // about them to stdout.
 //
-// Does not use FLTK.
+// Does not use FLTK under X11.
 //
 // This file may be #included in another program to make a function to
 // call to list the visuals.  Fl.H must be included first to indicate this.
@@ -22,22 +22,19 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#if defined(_WIN32) || defined(__APPLE__)
-#include <FL/Fl.H>
-#include <FL/fl_message.H>
+#ifndef Fl_H
+#  define NEED_MAIN 1 // when not included by another FLTK program
+#endif
 
-int main(int, char**) {
-  fl_alert("Currently, this program works only under X.");
-  return 1;
-}
+#include <FL/platform.H> // for USE_X11
 
-#else
+#if USE_X11
 
 #include <config.h>
 
 #define HAVE_MULTIBUF 0
 
-#ifndef Fl_H
+#ifdef NEED_MAIN
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -57,7 +54,7 @@ void fl_open_display() {
   fl_screen = DefaultScreen(fl_display);
 }
 
-#endif
+#endif // NEED_MAIN
 
 const char *ClassNames[] = {
   "StaticGray ",
@@ -216,14 +213,25 @@ void list_visuals() {
   if ( overlayInfo ) { XFree(overlayInfo); overlayInfo = 0; }
 }
 
-#endif
+#endif // USE_X11
 
-#ifndef Fl_H
-int main(int argc, char **argv) {
+#ifdef NEED_MAIN
+
+#  if ! USE_X11
+#    include <FL/fl_ask.H>
+#  endif
+
+int main(int argc, char** argv) {
+#  if USE_X11
   if (argc == 1);
   else if (argc == 2 && argv[1][0]!='-') dname = argv[1];
   else {fprintf(stderr,"usage: %s <display>\n",argv[0]); exit(1);}
   list_visuals();
   return 0;
+#  else
+  fl_alert("Currently, this program works only under X.");
+  return 1;
+#  endif // USE_X11
 }
-#endif
+
+#endif // NEED_MAIN

@@ -33,9 +33,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/platform.H>
-#if !defined(_WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
-#endif
 
 int visid = -1;
 int arg(int argc, char **argv, int &i) {
@@ -49,7 +47,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#if !defined(_WIN32) && !defined(__APPLE__)
+#if USE_X11
   int i = 1;
 
   Fl::args(argc,argv,i,arg);
