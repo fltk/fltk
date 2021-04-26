@@ -216,7 +216,7 @@ static void do_queued_events() {
   // we send FL_LEAVE only if the mouse did not enter some other window:
   if (!in_a_window) Fl::handle(FL_LEAVE, 0);
 #if CONSOLIDATE_MOTION
-  else if (send_motion == fl_xmousewin) {
+  else if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
