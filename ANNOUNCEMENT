@@ -19,7 +19,7 @@ FLTK 1.3.6 and previous versions contain many improvements and bug fixes.
   (online) of all listed bugs and feature requests.
 
   Note: This file is a snapshot of https://www.fltk.org/roadmap.php
-  as of this release (Feb. 2019). Please take into account that some
+  as of this release (April 2021). Please take into account that some
   bugs and/or feature requests in this list might have been fixed without
   notice.
 
@@ -36,7 +36,7 @@ release of FLTK 1.3.4. Only very serious bug fixes will be available
 if FLTK 1.4.0 is not yet released or not (yet) stable enough.
 
 This release (1.3.6) is a bug fix and maintenance release without new
-FLTK features (except macOS Mojave support).
+FLTK features (except macOS Mojave and Big Sur + M1 support).
 
 The current development branch is 'master' -- please checkout a new,
 clean working copy if you want to get FLTK 1.4 (master).
