@@ -54,10 +54,10 @@ DATE="`date +'%Y%m%d'`"
 
 # VS = short version number ('major.minor'), for instance '1.4'.
 # Note: VS is used only for snapshot generation
-# fltk_version = full version number w/o 'rcN' (from file VERSION)
+# fltk_version = full version number w/o 'rcN' (from file fltk_version.dat)
 
-fltk_version="`cat VERSION`"
-VS="`cat VERSION | sed -e's/\([0-9]*\.[0-9]*\).*/\1/'`"
+fltk_version="`cat fltk_version.dat`"
+VS="`echo $fltk_version | cut -f 1-2 -d '.'`"
 
 echo "Getting distribution..."
 
