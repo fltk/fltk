@@ -53,7 +53,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void gl_start();
-  virtual Fl_Fontsize effective_size();
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
 };
@@ -219,10 +218,6 @@ void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
 
 /* Some old Apple hardware doesn't implement the GL_EXT_texture_rectangle extension.
  For it, draw_string_legacy_glut() is used to draw text. */
-
-Fl_Fontsize Fl_Cocoa_Gl_Window_Driver::effective_size() {
-  return (Fl_Fontsize)round(fl_graphics_driver->size() * gl_scale);
-}
 
 char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs)
 {

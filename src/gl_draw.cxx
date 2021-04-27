@@ -405,16 +405,18 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
   fifo[current].str_len = n; // record length of text in utf8
-  fl_graphics_driver->font_descriptor(gl_fontsize);
-  int w, h;
-  w = int(ceil(fl_width(fifo[current].utf8, n) * Fl_Gl_Window_Driver::gl_scale));
-  // Hack - make w be aligned
-  w = (w + 3) & (~3);
-  h = int(ceil(fl_height() * Fl_Gl_Window_Driver::gl_scale));
-
+  Fl_Fontsize fs = fl_size();
+  float s = fl_graphics_driver->scale();
+  fl_graphics_driver->Fl_Graphics_Driver::scale(1); // temporarily remove scaling factor
+  fl_font(fl_font(), fs * Fl_Gl_Window_Driver::gl_scale); // the font size to use in the GL scene
+  int w = (int)ceil( fl_width(fifo[current].utf8, n) );
+  w = ((w + 3) / 4) * 4; // make w a multiple of 4
+  int h = fl_height();
+  fl_graphics_driver->Fl_Graphics_Driver::scale(s); // re-install scaling factor
+  fl_font(fl_font(), fs);
+  fs *= Fl_Gl_Window_Driver::gl_scale;
   fifo[current].scale = Fl_Gl_Window_Driver::gl_scale;
   fifo[current].fdesc = gl_fontsize;
-  Fl_Fontsize fs = Fl_Gl_Window_Driver::global()->effective_size();
   char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h, fs);
 
   // save GL parameters GL_UNPACK_ROW_LENGTH and GL_UNPACK_ALIGNMENT
@@ -499,9 +501,6 @@ void Fl_Gl_Window_Driver::draw_string_with_texture(const char* str, int n)
   gl_fifo->display_texture(index);
 }
 
-Fl_Fontsize Fl_Gl_Window_Driver::effective_size() {
-  return fl_graphics_driver->font_descriptor()->size;
-}
 
 char *Fl_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs)
 {
