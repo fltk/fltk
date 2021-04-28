@@ -20,6 +20,10 @@ FL_VERSION		= @FLTK_VERSION@
 FL_DSO_VERSION		= @FL_DSO_VERSION@
 FL_ABI_VERSION		= @FL_ABI_VERSION@
 
+# FLTK version for documentation generation with doxygen
+
+FLTK_VERSION		= @FLTK_VERSION@
+
 # Standard configure variables
 
 prefix		= @prefix@
