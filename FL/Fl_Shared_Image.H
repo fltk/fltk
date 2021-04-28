@@ -1,7 +1,7 @@
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,11 +23,54 @@
 #  include "Fl_Image.H"
 
 
-// Test function for adding new formats
-typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
+/** Test function (typedef) for adding new shared image formats.
+
+  This defines the function type you can use to add a handler for unknown
+  image formats that can be opened and loaded as an Fl_Shared_Image.
+
+  fl_register_images() adds all image formats known to FLTK.
+  Call Fl_Shared_Image::add_handler() to add your own check function to
+  the list of known image formats.
+
+  Your function will be passed the filename (\p name), some \p header
+  bytes already read from the image file and the size \p headerlen of the
+  data read. The max value of size is implementation dependent. If your
+  handler function needs to check more bytes you must open the image file
+  yourself.
+
+  The provided buffer \p header must not be overwritten.
+
+  If your handler function can identify the file type you must open the
+  file and return a valid Fl_Image or derived type, otherwise you must
+  return \c NULL.
+  Example:
+  \code
+    static Fl_Image *check_my_image(const char *name,
+                                    uchar *header,
+                                    int headerlen) {
+      // (test image type using header and headerlen)
+      if (known) {
+        // (load image data from file \p name)
+        return new Fl_RGB_Image(data, ...);
+      } else
+        return 0;
+    }
+    // add your handler:
+    Fl_Shared_Image::add_handler(check_my_image);
+  \endcode
+
+  \param[in]    name        filename to be checked and opened if applicable
+  \param[in]    header      portion of the file that has already been read
+  \param[in]    headerlen   length of provided \p header data
+
+  \returns      valid Fl_Image or \c NULL.
+
+  \see Fl_Shared_Image::add_handler()
+*/
+typedef Fl_Image *(*Fl_Shared_Handler)(const char *name,
+                                       uchar *header,
                                        int headerlen);
 
-// Shared images class.
 /**
   This class supports caching, loading, and drawing of image files.
 
@@ -42,6 +85,7 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
   A refcount is used to determine if a released image is to be destroyed
   with delete.
 
+  \see fl_register_image()
   \see Fl_Shared_Image::get()
   \see Fl_Shared_Image::find()
   \see Fl_Shared_Image::release()

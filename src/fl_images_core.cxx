@@ -2,6 +2,7 @@
 // FLTK images library core.
 //
 // Copyright 1997-2010 by Easy Software Products.
+// Copyright 2011-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,11 +48,13 @@ static Fl_Image *fl_check_images(const char *name, uchar *header, int headerlen)
 
 
 /**
-\brief Register the image formats.
+\brief Register the known image formats.
 
- This function is provided in the fltk_images library and
- registers all of the "extra" image file formats that are not part
- of the core FLTK library.
+  This function is provided in the fltk_images library and
+  registers all of the "extra" image file formats known to FLTK
+  that are not part of the core FLTK library.
+
+  You may add your own image formats with Fl_Shared_Image::add_handler().
 */
 void fl_register_images() {
   Fl_Shared_Image::add_handler(fl_check_images);
@@ -62,26 +65,50 @@ void fl_register_images() {
 //
 // 'fl_check_images()' - Check for a supported image format.
 //
+// returns 0 (NULL) if <headerlen> is less than 6 because:
+//  (1) some of the comparisons would otherwise access undefined data
+//  (2) there's no valid image file with less than 6 bytes
+//
+// Note 1: The number 6 above may be changed if necessary as long as
+//   condition (2) holds.
+//
+// Note 2: The provided buffer <header> MUST NOT be overwritten by any
+//   check function because subsequently called check functions need
+//   the original image header data. <header> should be const!
 
 Fl_Image *                                      // O - Image, if found
 fl_check_images(const char *name,               // I - Filename
                 uchar      *header,             // I - Header data from file
-                int headerlen) {                // I - Amount of data
+                int         headerlen) {        // I - Amount of data in header
+
+  if (headerlen < 6) // not a valid image
+    return 0;
+
+  // GIF
+
   if (memcmp(header, "GIF87a", 6) == 0 ||
       memcmp(header, "GIF89a", 6) == 0) // GIF file
     return new Fl_GIF_Image(name);
 
+  // BMP
+
   if (memcmp(header, "BM", 2) == 0)     // BMP file
     return new Fl_BMP_Image(name);
+
+  // PNM
 
   if (header[0] == 'P' && header[1] >= '1' && header[1] <= '7')
                                         // Portable anymap
     return new Fl_PNM_Image(name);
 
+  // PNG
+
 #ifdef HAVE_LIBPNG
   if (memcmp(header, "\211PNG", 4) == 0)// PNG file
     return new Fl_PNG_Image(name);
 #endif // HAVE_LIBPNG
+
+  // JPEG
 
 #ifdef HAVE_LIBJPEG
   if (memcmp(header, "\377\330\377", 3) == 0 && // Start-of-Image
@@ -89,22 +116,35 @@ fl_check_images(const char *name,               // I - Filename
     return new Fl_JPEG_Image(name);
 #endif // HAVE_LIBJPEG
 
+  // SVG or SVGZ (gzip'ed SVG)
+
 #ifdef FLTK_USE_SVG
-#  if defined(HAVE_LIBZ)
-  if (header[0] == 0x1f && header[1] == 0x8b) { // denotes gzip'ed data
+  uchar header2[64];      // buffer for decompression
+  uchar *buf = header;    // original header data
+  int count = headerlen;  // original header data size
+
+  // Note: variables 'buf' and 'count' may be overwritten subsequently
+  // if the image data is gzip'ed *and* we can decompress the data
+
+# if defined(HAVE_LIBZ)
+  if (header[0] == 0x1f && header[1] == 0x8b) { // gzip'ed data
     int fd = fl_open_ext(name, 1, 0);
     if (fd < 0) return NULL;
-    gzFile gzf =  gzdopen(fd, "r");
+    gzFile gzf = gzdopen(fd, "r");
     if (gzf) {
-      gzread(gzf, header, headerlen);
+      count = gzread(gzf, header2, (int)sizeof(header2));
       gzclose(gzf);
+      buf = header2; // decompressed data
     }
-  }
-#  endif // HAVE_LIBZ
-  if ( (headerlen > 5 && memcmp(header, "<?xml", 5) == 0) ||
-      memcmp(header, "<svg", 4) == 0)
+  } // gzip'ed data
+# endif // HAVE_LIBZ
+
+  if ((count >= 5 && memcmp(buf, "<?xml", 5) == 0) ||
+      (count >= 4 && memcmp(buf, "<svg", 4) == 0))
     return new Fl_SVG_Image(name);
 #endif // FLTK_USE_SVG
+
+  // unknown image format
 
   return 0;
 }

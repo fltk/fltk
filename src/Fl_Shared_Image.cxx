@@ -1,7 +1,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -249,6 +249,7 @@ void Fl_Shared_Image::release() {
 void Fl_Shared_Image::reload() {
   // Load image from disk...
   int           i;              // Looping var
+  int           count = 0;      // number of bytes read from image header
   FILE          *fp;            // File pointer
   uchar         header[64];     // Buffer for auto-detecting files
   Fl_Image      *img;           // New image
@@ -256,22 +257,23 @@ void Fl_Shared_Image::reload() {
   if (!name_) return;
 
   if ((fp = fl_fopen(name_, "rb")) != NULL) {
-    if (fread(header, 1, sizeof(header), fp)==0) { /* ignore */ }
+    count = fread(header, 1, sizeof(header), fp);
     fclose(fp);
+    if (count == 0)
+      return;
   } else {
     return;
   }
 
   // Load the image as appropriate...
-  if (memcmp(header, "#define", 7) == 0) // XBM file
+  if (count >= 7 && memcmp(header, "#define", 7) == 0) // XBM file
     img = new Fl_XBM_Image(name_);
-  else if (memcmp(header, "/* XPM */", 9) == 0) // XPM file
+  else if (count >= 9 && memcmp(header, "/* XPM */", 9) == 0) // XPM file
     img = new Fl_XPM_Image(name_);
   else {
     // Not a standard format; try an image handler...
     for (i = 0, img = 0; i < num_handlers_; i ++) {
-      img = (handlers_[i])(name_, header, sizeof(header));
-
+      img = (handlers_[i])(name_, header, count);
       if (img) break;
     }
   }
@@ -495,7 +497,19 @@ Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
 
 
 /** Adds a shared image handler, which is basically a test function
-    for adding new formats.
+  for adding new image formats.
+
+  This function will be called when an Fl_Shared_Image is to be loaded
+  (for instance with Fl_Shared_Image::get()) and the image type is not
+  known to FLTK.
+
+  All registered image handlers will be called in the order of registration.
+  You should always call fl_register_images() before adding your own
+  handlers - unless you need to override a known image file type which
+  should be rare.
+
+  \see Fl_Shared_Handler for more information of the function you need
+    to define.
 */
 void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
   int                   i;              // Looping var...
