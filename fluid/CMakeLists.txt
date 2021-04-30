@@ -71,7 +71,11 @@ endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries (fluid fltk fltk_images fltk_forms)
 if (FLTK_HAVE_CAIRO)
-  target_link_directories (fluid PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+  if (CMAKE_VERSION VERSION_LESS "3.13")
+    link_directories (fluid PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+  else()
+    target_link_directories (fluid PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+  endif()
 endif (FLTK_HAVE_CAIRO)
 
 # install fluid
