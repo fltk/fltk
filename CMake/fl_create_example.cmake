@@ -117,9 +117,9 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   if (FLTK_HAVE_CAIRO)
     if (CMAKE_VERSION VERSION_LESS "3.13")
-      link_directories (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+      link_directories    (${PKG_CAIRO_LIBRARY_DIRS})
     else()
-      target_link_directories (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
+      target_link_directories (${TARGET_NAME} PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
     endif()
   endif (FLTK_HAVE_CAIRO)
 
