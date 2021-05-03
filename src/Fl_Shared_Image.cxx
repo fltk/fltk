@@ -274,7 +274,15 @@ void Fl_Shared_Image::reload() {
     // Not a standard format; try an image handler...
     for (i = 0, img = 0; i < num_handlers_; i ++) {
       img = (handlers_[i])(name_, header, count);
-      if (img) break;
+
+      if (img) {
+        // We might have an object, but it might not be valid.
+        if (img->fail()) {
+            delete img;
+            img = 0;
+        }
+        else break;
+      }
     }
   }
 

@@ -135,8 +135,14 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   }
 
   rdr.read_dword();             // Skip size
-  rdr.read_word();              // Skip reserved stuff
-  rdr.read_word();
+  
+  // An empty text file starting with the characters 'BM' passes the above
+  // filter. Check other criteria to be certain we have a valid image file!
+  long reserved = rdr.read_dword();  // validate reserved [should be zero]
+  if (reserved != 0) {
+    ld(ERR_FORMAT);
+    return;
+  }
   offbits = (long)rdr.read_dword();// Read offset to image data
 
   // Then the bitmap information...
@@ -158,6 +164,9 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
     colors_used = 0;
 
     repcount = info_size - 12;
+  } else if (info_size != 40) {
+    ld(ERR_FORMAT); // Another image size is not valid [see text file check above].
+    return;
   } else {
     // New BMP header...
     w(rdr.read_long());
