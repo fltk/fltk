@@ -1,7 +1,7 @@
 #
 # FLUID Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -49,9 +49,11 @@ fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 			$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDFLAGS) $(LDLIBS)
-	$(OSX_ONLY) $(RM) -r -f fluid.app/Contents/MacOS
-	$(OSX_ONLY) mkdir fluid.app/Contents/MacOS
+	$(OSX_ONLY) $(RM) -r -f fluid.app
+	$(OSX_ONLY) mkdir -p fluid.app/Contents/MacOS fluid.app/Contents/Resources
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL) icons/fluid.icns fluid.app/Contents/Resources
+	$(OSX_ONLY) $(INSTALL) fluid.plist fluid.app/Contents/Info.plist
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
@@ -61,7 +63,7 @@ fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bak
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
-	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
+	$(OSX_ONLY) -$(RMDIR) fluid.app
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES)
@@ -95,7 +97,6 @@ install-osx:
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents
 	$(INSTALL_DATA) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
-	$(INSTALL_DATA) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
 	$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
 	$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid

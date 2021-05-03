@@ -27,7 +27,7 @@
 #   Sources can be:
 #   - .c/.cxx files, e.g. 'hello.cxx'
 #   - .fl (fluid) files, e.g. 'radio.fl'
-#   - .plist file (macOS), e.g. 'editor-Info.plist'
+#   - .plist file (macOS), e.g. 'editor.plist'
 #   - .icns file (macOS Icon), e.g. 'checkers.icns'
 #   - .rc file (Windows resource file, e.g. icon definition)
 #
@@ -39,6 +39,7 @@
 #   all other file types are added to the target's source files.
 #
 #   macOS specific .icns and .plist files are ignored on other platforms.
+#   These files must resided in the subdirectory 'mac-resources'.
 #
 # - LIBRARIES:
 #   List of libraries (CMake target names), separated by ';'. Needs
@@ -129,7 +130,8 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   endif (ICON_PATH)
 
   if (PLIST)
-    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${PLIST}")
+    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST
+                           "${CMAKE_CURRENT_SOURCE_DIR}/mac-resources/${PLIST}")
   elseif (MAC_BUNDLE)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "${TARGET_NAME}")
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.fltk.${TARGET_NAME}")

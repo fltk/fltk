@@ -116,11 +116,7 @@
 /fluid/*.ilk
 /fluid/*.pdb
 /fluid/TAGS
-
-# /fluid/fluid.app/Contents/MacOS/
-/fluid/fluid.app/Contents/MacOS/fluid
-
-# /fluid/pixmaps/
+/fluid/fluid.app
 /fluid/pixmaps/*.bck
 
 # /ide/VisualC2008/
@@ -294,89 +290,7 @@
 /test/fltk*.exp
 /test/fltk*.dll
 
-# /test/blocks.app/Contents/MacOS/
-/test/blocks.app/Contents/MacOS/blocks
-
-# /test/checkers.app/Contents/MacOS/
-/test/checkers.app/Contents/MacOS/checkers
-
-# /test/sudoku.app/Contents/MacOS/
-/test/sudoku.app/Contents/MacOS/sudoku
-
 # /test/ - generated apps (macOS)
-/test/CubeView.app/
-/test/adjuster.app/
-/test/animated.app/
-/test/arc.app/
-/test/ask.app/
-/test/bitmap.app/
-/test/boxtype.app/
-/test/browser.app/
-/test/button.app/
-/test/buttons.app/
-/test/cairo_test.app/
-/test/clock.app/
-/test/colbrowser.app/
-/test/color_chooser.app/
-/test/cube.app/
-/test/cursor.app/
-/test/curve.app/
-/test/demo.app/
-/test/device.app/
-/test/doublebuffer.app/
-/test/editor.app/
-/test/fast_slow.app/
-/test/file_chooser.app/
-/test/fltk-versions.app/
-/test/fonts.app/
-/test/forms.app/
-/test/fractals.app/
-/test/fullscreen.app/
-/test/gl_overlay.app/
-/test/glpuzzle.app/
-/test/hello.app/
-/test/help.app/
-/test/icon.app/
-/test/iconize.app/
-/test/image.app/
-/test/inactive.app/
-/test/input.app/
-/test/input_choice.app/
-/test/keyboard.app/
-/test/label.app/
-/test/line_style.app/
-/test/list_visuals.app/
-/test/mandelbrot.app/
-/test/menubar.app/
-/test/message.app/
-/test/minimum.app/
-/test/native-filechooser.app/
-/test/navigation.app/
-/test/offscreen.app/
-/test/output.app/
-/test/overlay.app/
-/test/pack.app/
-/test/pixmap.app/
-/test/pixmap_browser.app/
-/test/preferences.app/
-/test/radio.app/
-/test/resize.app/
-/test/resizebox.app/
-/test/rotated_text.app/
-/test/scroll.app/
-/test/shape.app/
-/test/subwindow.app/
-/test/symbols.app/
-/test/table.app/
-/test/tabs.app/
-/test/threads.app/
-/test/tile.app/
-/test/tiled_image.app/
-/test/tree.app/
-/test/twowin.app/
-/test/unittests.app/
-/test/utf8.app/
-/test/valuators.app/
-/test/windowfocus.app/
+/test/*.app
 
 **/.DS_Store
