@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Scroll header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -99,6 +97,27 @@ protected:	// NEW (STR#1895)
 #else
 private:	// OLD
 #endif
+
+  /// A local struct to manage a region defined by xywh
+  typedef struct { int x,y,w,h; } Fl_Region_XYWH;
+
+  /// A local struct to manage a region defined by left/right/top/bottom
+  typedef struct {
+    int l;		///< (l)eft "x" position, aka x1
+    int r;		///< (r)ight "x" position, aka x2
+    int t;		///< (t)op "y" position, aka y1
+    int b;		///< (b)ottom "y" position, aka y2
+  } Fl_Region_LRTB;
+
+  /// A local struct to manage a scrollbar's xywh region and tab values
+  typedef struct {
+    int x,y,w,h;
+    int pos;		///< scrollbar tab's "position of first line displayed"
+    int size;		///< scrollbar tab's "size of window in lines"
+    int first;		///< scrollbar tab's "number of first line"
+    int total;		///< scrollbar tab's "total number of lines"
+  } Fl_Scrollbar_Data;
+
   /**
     Structure to manage scrollbar and widget interior sizes.
     This is filled out by recalc_scrollbars() for use in calculations
@@ -106,23 +125,6 @@ private:	// OLD
     \note Availability in FLTK_ABI_VERSION 10303 or higher.
   */
   typedef struct {
-    /// A local struct to manage a region defined by xywh
-    typedef struct { int x,y,w,h; } Fl_Region_XYWH;
-    /// A local struct to manage a region defined by left/right/top/bottom
-    typedef struct {
-      int l;			///< (l)eft "x" position, aka x1
-      int r;			///< (r)ight "x" position, aka x2
-      int t;			///< (t)op "y" position, aka y1
-      int b;			///< (b)ottom "y" position, aka y2
-    } Fl_Region_LRTB;
-    /// A local struct to manage a scrollbar's xywh region and tab values
-    typedef struct {
-      int x,y,w,h;
-      int pos;			///< scrollbar tab's "position of first line displayed"
-      int size;			///< scrollbar tab's "size of window in lines"
-      int first;		///< scrollbar tab's "number of first line"
-      int total;		///< scrollbar tab's "total number of lines"
-    } Fl_Scrollbar_Data;
     int scrollsize;		///< the effective scrollbar thickness (local or global)
     Fl_Region_XYWH innerbox;	///< widget's inner box, excluding scrollbars
     Fl_Region_XYWH innerchild;	///< widget's inner box, including scrollbars
@@ -132,6 +134,7 @@ private:	// OLD
     Fl_Scrollbar_Data hscroll;	///< horizontal scrollbar region + values
     Fl_Scrollbar_Data vscroll;	///< vertical scrollbar region + values
   } ScrollInfo;
+
   void recalc_scrollbars(ScrollInfo &si);
 
 protected:
@@ -203,7 +206,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//
