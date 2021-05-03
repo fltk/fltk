@@ -172,7 +172,8 @@ int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *
 }
 
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
+#if HAVE_DLSYM && HAVE_DLFCN_H && !defined (__APPLE_CC__)
+
 static void* quadruple_dlopen(const char *libname)
 {
   char filename2[FL_PATH_MAX];
@@ -272,7 +273,7 @@ bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gt
     }
     init_f = (init_t)dlsym(Fl_Posix_System_Driver::ptr_gtk, "gtk_init_check");
     if (!init_f) return false;
-  
+
   *p_ptr_gtk = Fl_Posix_System_Driver::ptr_gtk;
   // The point here is that after running gtk_init_check, the calling program's current locale can be modified.
   // To avoid that, we memorize the calling program's current locale and restore the locale
