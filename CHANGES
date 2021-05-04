@@ -1,3 +1,22 @@
+CHANGES IN FLTK 1.3.6rc2				RELEASED: May 04 2021
+
+FLTK 1.3.6rc2 fixes some minor issues in 1.3.6rc1, particularly macOS
+bundle generation. It addresses an issue that bundles can't be executed
+on macOS 11.3 Big Sur if built with configure/make after downloading
+the release tarball because of the macOS "quarantine" feature.
+
+Details:
+
+  Albrecht Schlosser:
+    Rename file 'VERSION' to 'fltk_version.dat' (#191)
+    Fix version number in doxygen docs
+    Fix build with Cairo for CMake < 3.13
+    CMake: fix old (pre 3.13) link_directories() usage
+    Enhance CMake build configuration summary
+    Refactor macOS bundle generation to avoid "quarantine"
+    Fix a new compiler warning
+
+
 CHANGES IN FLTK 1.3.6rc1				RELEASED: Apr 26 2021
 
 FLTK 1.3.6 is a maintenance release with new macOS Big Sur support
