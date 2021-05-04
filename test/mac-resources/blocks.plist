@@ -8,7 +8,7 @@
 	<string>blocks</string>
 
 	<key>CFBundleIdentifier</key>
-	<string>com.easysw.blocks</string>
+	<string>org.fltk.blocks</string>
 
 	<key>CFBundleVersion</key>
 	<string>1.0</string>

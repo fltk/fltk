@@ -100,7 +100,7 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   # set macOS (icon) resource path if applicable
 
   if (MAC_BUNDLE AND ICON_NAME)
-    set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}.app/Contents/Resources/${ICON_NAME}")
+    set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/mac-resources/${ICON_NAME}")
   endif (MAC_BUNDLE AND ICON_NAME)
 
   ##############################################################################

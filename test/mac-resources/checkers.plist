@@ -29,7 +29,7 @@
 	<string>APPL</string>
 
 	<key>CFBundleSignature</key>
-	<string>FLSU</string>
+	<string>FLCK</string>
 
 	<key>CFBundleIconFile</key>
 	<string>checkers.icns</string>
