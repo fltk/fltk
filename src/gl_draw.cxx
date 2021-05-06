@@ -408,13 +408,13 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   Fl_Fontsize fs = fl_size();
   float s = fl_graphics_driver->scale();
   fl_graphics_driver->Fl_Graphics_Driver::scale(1); // temporarily remove scaling factor
-  fl_font(fl_font(), fs * Fl_Gl_Window_Driver::gl_scale); // the font size to use in the GL scene
+  fl_font(fl_font(), int(fs * Fl_Gl_Window_Driver::gl_scale)); // the font size to use in the GL scene
   int w = (int)ceil( fl_width(fifo[current].utf8, n) );
   w = ((w + 3) / 4) * 4; // make w a multiple of 4
   int h = fl_height();
   fl_graphics_driver->Fl_Graphics_Driver::scale(s); // re-install scaling factor
   fl_font(fl_font(), fs);
-  fs *= Fl_Gl_Window_Driver::gl_scale;
+  fs = int(fs * Fl_Gl_Window_Driver::gl_scale);
   fifo[current].scale = Fl_Gl_Window_Driver::gl_scale;
   fifo[current].fdesc = gl_fontsize;
   char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h, fs);
