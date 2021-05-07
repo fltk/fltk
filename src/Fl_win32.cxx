@@ -94,6 +94,16 @@ extern void fl_trigger_clipboard_notify(int source);
 extern HBRUSH fl_brush_action(int action);
 extern void fl_cleanup_pens(void);
 
+// MSVC 2010 can't find round() although <math.h> is included above,
+// which is surprising because ceil() works fine.
+// We could (should?) probably add configure/CMake feature tests for
+// round() and ceil() rather than depending on MSVC version numbers.
+// AlbrechtS, 02/2010 - Note: we don't know about MSVC 2012 - 2015, see
+// https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+
+#if defined(_MSC_VER) && _MSC_VER <= 1600
+#define round(A) int((A) + 0.5)
+#endif // _MSC_VER <= 1600
 
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
