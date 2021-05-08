@@ -96,6 +96,7 @@ bitmap.o: ../FL/fl_utf8.h
 bitmap.o: ../FL/Fl_Widget.H
 bitmap.o: ../FL/Fl_Window.H
 bitmap.o: ../FL/platform_types.h
+bitmap.o: pixmaps/sorceress.xbm
 blocks.o: ../config.h
 blocks.o: ../FL/abi-version.h
 blocks.o: ../FL/Enumerations.H
@@ -570,6 +571,7 @@ device.o: ../FL/Fl_Widget_Surface.H
 device.o: ../FL/Fl_Window.H
 device.o: ../FL/platform_types.h
 device.o: pixmaps/porsche.xpm
+device.o: pixmaps/sorceress.xbm
 doublebuffer.o: ../FL/abi-version.h
 doublebuffer.o: ../FL/Enumerations.H
 doublebuffer.o: ../FL/Fl.H
