@@ -824,7 +824,7 @@ forms.o: ../FL/Fl_Widget.H
 forms.o: ../FL/Fl_Window.H
 forms.o: ../FL/forms.H
 forms.o: ../FL/platform_types.h
-forms.o: pixmaps/srs.xbm
+forms.o: pixmaps/sorceress.xbm
 fractals.o: ../config.h
 fractals.o: ../FL/abi-version.h
 fractals.o: ../FL/Enumerations.H
@@ -1215,6 +1215,11 @@ line_style.o: ../FL/Fl_Widget.H
 line_style.o: ../FL/Fl_Window.H
 line_style.o: ../FL/platform_types.h
 list_visuals.o: ../config.h
+list_visuals.o: ../FL/Enumerations.H
+list_visuals.o: ../FL/Fl_Export.H
+list_visuals.o: ../FL/fl_types.h
+list_visuals.o: ../FL/platform.H
+list_visuals.o: ../FL/platform_types.h
 mandelbrot.o: ../FL/abi-version.h
 mandelbrot.o: ../FL/Enumerations.H
 mandelbrot.o: ../FL/Fl.H
