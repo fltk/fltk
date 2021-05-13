@@ -86,10 +86,12 @@ the Finder window opens, drag the _CMake_ icon into the Applications folder.
 <a name="bcx_download"></a>
 ### Downloading FLTK and Unpacking (CMake, Xcode)
 
-FLTK 1.4 is currently (as of Jan. 2019) only available as a source code repository via GitHub.
+FLTK 1.4 is currently (as of May 2021) available as a source code repository via GitHub.
 You will need to clone the repository to check out the source code onto your machine. This
 has the great benefit that the source code can be updated later simply by telling _git_ to
 _pull_ the newest release.
+
+Weekly snapshots ("tarballs") can be downloaded from https://www.fltk.org/software.php .
 
 If you want to use _Xcode_ to clone the FLTK GitHub repository, you will have to give _Xcode_
 access to your GitHub Account in the _Xcode_ preferences. If you don't have a GitHub
@@ -167,8 +169,8 @@ After a successful build, you can test FLTK's capabilities by choosing 'ALL_BUIL
 'active Scheme' and pressing CMD+B to build, then choosing 'demo' and pressing CMD+R to
 run the demo program.
 
-TODO: as of Jan 2019, compiling 'demo' will not compile any of the other demo programs.
-We really have to update the dependencies!
+Note: compiling 'demo' will not compile any of the other demo programs automatically.
+This is intentional so you can build the test and demo programs incrementally.
 
 <a name="bcx_install"></a>
 ### Installing FLTK (CMake, Xcode)
@@ -295,7 +297,7 @@ sudo make install
 
 It is possible to install FLTK without superuser privileges by changing the
 installation path to a location within the user account by adding the
-`--prefix=PREFIX` parameter to the `./configure` command.
+`-D CMAKE_INSTALL_PREFIX=<PREFIX>` parameter to the `cmake` command.
 
 <a name="bcm_new_projects"></a>
 ### Creating new Projects (CMake, make)
@@ -364,12 +366,14 @@ brew install autoconf automake
 <a name="bam_download"></a>
 ### Downloading and Unpacking (autoconf, make)
 
-FLTK 1.4 is currently (as of Jan. 2019) only available as a source code repository via GitHub.
+FLTK 1.4 is currently (as of May 2021) available as a source code repository via GitHub.
 You will need to clone the repository to check out the source code onto your machine. This
 has the great benefit that the source code can be updated later simply by telling _git_ to
 _pull_ the newest release.
 
-Start your terminal. If you have not set up a developer directory yet, I recomment to use
+Weekly snapshots ("tarballs") can be downloaded from https://www.fltk.org/software.php .
+
+Start your terminal. If you have not set up a developer directory yet, I recommend to use
 `~/dev` and put all your projects there:
 
 ```bash
@@ -389,7 +393,7 @@ cd fltk-1.4
 <a name="bam_config"></a>
 ### Configuring FLTK (autoconf, make)
 
-Using you shell in the terminal, make sure that you are in the root directory of your
+Using your shell in the terminal, make sure that you are in the root directory of your
 FLTK source code tree.
 
 If you are configuring fltk for the first time, you need to instruct FLTK to create some
@@ -410,7 +414,7 @@ and type
 The configuration script runs a number of tests to find external headers, libraries, and tools.
 The configuration summary should not show any errors. You can now continue to build FLTK.
 
-For the advanced user there are a few more optinons to the _configure_ script. Type
+For the advanced user there are a few more options to the _configure_ script. Type
 `./configure --help` to get a complete list of options. These should be pretty
 self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
@@ -485,7 +489,7 @@ fltk-config --compile main.cxx
 TODO: update for FLTK 1.4
 
 - Prepare an Info.plist file for your application derived from file
-test/editor-Info.plist which allows any file to be dropped
+test/mac-resources/editor.plist which allows any file to be dropped
 on the application icon.
 You can edit this file in Xcode and change
 Document types/Item 0/CFBundleTypeExtensions/Item 0
