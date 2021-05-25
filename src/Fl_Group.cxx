@@ -547,6 +547,52 @@ void Fl_Group::remove(Fl_Widget &o) {
 }
 
 /**
+  Removes the widget at \p index from the group and deletes it.
+
+  This method does nothing if \p index is out of bounds.
+
+  This method differs from the remove() method in that it deletes
+  the widget from memory. Since this method is virtual it can be
+  reimplemented in subclasses with additional requirements and
+  consequences. See the documentation of subclasses.
+
+  Many subclasses don't need to reimplement this method.
+
+  \note This method \b may refuse to remove and delete the widget
+    if it is an essential part of the Fl_Group, for instance
+    a scrollbar in an Fl_Scroll group. In this case the widget is
+    neither removed nor deleted.
+
+  This method does not call init_sizes() or redraw(). This is left
+  to user code if necessary.
+
+  Returns 0 if the widget was removed and deleted.
+  Return values \> 0 are reserved for use by FLTK core widgets.
+  Return values \< 0 are free to be used by user defined widgets.
+
+  \todo Reimplementation of Fl_Group::delete_widget(int) in more FLTK
+    subclasses. This is not yet complete.
+
+  \param[in]  index   index of child to be removed
+
+  \returns    success (0) or error code
+  \retval     0   success
+  \retval     1   index out of range
+  \retval     2   widget not allowed to be removed (see note)
+  \retval    >2   reserved for FLTK use
+
+  \since FLTK 1.4.0
+*/
+int Fl_Group::delete_child(int index) {
+  if (index < 0 || index >= children_)
+    return 1;
+  Fl_Widget *w = child(index);
+  remove(index);
+  delete w;
+  return 0;
+}
+
+/**
   Resets the internal array of widget sizes and positions.
 
   The Fl_Group widget keeps track of the original widget sizes and
