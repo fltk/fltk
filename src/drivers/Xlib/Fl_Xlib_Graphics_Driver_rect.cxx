@@ -326,9 +326,18 @@ void Fl_Xlib_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 
 int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H) {
   X = x; Y = y; W = w; H = h;
+  // pre-clip rectangle to 16-bit coordinates (STR #3134)
+  if (clip_rect(X, Y, W, H)) { // entirely clipped (outside)
+    W = H = 0;
+    return 2;
+  }
   Fl_Region r = rstack[rstackptr];
-  if (!r) return 0;
-  switch (XRectInRegion(r, x, y, w, h)) {
+  if (!r) { // no clipping region
+    if (X != x || Y != y || W != w || H != h) // pre-clipped
+      return 1; // partially outside, region differs
+    return 0;
+  }
+  switch (XRectInRegion(r, X, Y, W, H)) {
     case 0: // completely outside
       W = H = 0;
       return 2;
@@ -337,7 +346,7 @@ int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y
     default: // partial:
       break;
   }
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region rr = XRectangleRegion(X, Y, W, H);
   Fl_Region temp = XCreateRegion();
   XIntersectRegion(r, rr, temp);
   XRectangle rect;
