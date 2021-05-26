@@ -149,8 +149,7 @@ static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
 
  This function must be implemented once for every platform.
  */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   return new Fl_WinAPI_System_Driver();
 }
 
@@ -159,7 +158,6 @@ void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
 }
 
 void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
-
   char buf[1024];
   vsnprintf(buf, 1024, format, args);
   MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
@@ -358,8 +356,7 @@ unsigned Fl_WinAPI_System_Driver::utf8towc(const char *src, unsigned srclen, wch
   return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
-{
+unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen) {
   unsigned i = 0;
   unsigned count = 0;
   if (dstlen) for (;;) {
@@ -649,8 +646,7 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   return 1;
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
-{
+int Fl_WinAPI_System_Driver::filename_isdir(const char *n) {
   char fn[4]; // used for drive letter only: "X:/"
   int length = (int)strlen(n);
   // Strip trailing slash from name...
@@ -677,8 +673,7 @@ int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
   return (fa != INVALID_FILE_ATTRIBUTES) && (fa & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n)
-{
+int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n) {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
   return filename_isdir(n);
@@ -694,16 +689,15 @@ const char *Fl_WinAPI_System_Driver::filename_ext(const char *buf) {
   return q ? q : p;
 }
 
-int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
-{
+int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen) {
   if (msg) snprintf(msg, msglen, "open %s", uri);
   return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
 }
 
-int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
-{
+int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename,
+                                                          int lname, Fl_File_Icon *icon) {
   int num_files = 0;
-#  ifdef __CYGWIN__
+# ifdef __CYGWIN__
   //
   // Cygwin provides an implementation of setmntent() to get the list
   // of available drives...
@@ -715,15 +709,14 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
     num_files ++;
   }
   endmntent(m);
-#  else
+# else
   //
   // Normal Windows code uses drive bits...
   //
   DWORD drives;         // Drive available bits
   drives = GetLogicalDrives();
-  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1)
-    if (drives & 1)
-    {
+  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1) {
+    if (drives & 1) {
       sprintf(filename, "%c:/", i);
       if (i < 'C') // see also: GetDriveType and GetVolumeInformation in Windows
         browser->add(filename, icon);
@@ -731,7 +724,8 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
         browser->add(filename, icon);
       num_files ++;
     }
-#  endif // __CYGWIN__
+  }
+# endif // __CYGWIN__
   return num_files;
 }
 
