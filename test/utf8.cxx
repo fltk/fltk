@@ -566,13 +566,11 @@ public:
 
 int main(int argc, char** argv)
 {
-  int l;
-  const char *latin1 =
-  "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
+  const char *latin1 = // "ABCabcàèéïâîöüã123"
+    "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
+
   char *utf8 = (char*) malloc(strlen(latin1) * 5 + 1);
-  l = 0;
-  //    l = fl_latin12utf((const unsigned char*)latin1, strlen(latin1), utf8);
-  l = fl_utf8froma(utf8, (strlen(latin1) * 5 + 1), latin1, strlen(latin1));
+  int l = fl_utf8froma(utf8, (strlen(latin1) * 5 + 1), latin1, strlen(latin1));
 
   make_font_chooser();
   extra_font = FL_TIMES_BOLD_ITALIC;
