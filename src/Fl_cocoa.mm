@@ -2700,6 +2700,17 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
   fl_unlock_function();
 }
+- (void)draggingSession:(NSDraggingSession *)session
+           endedAtPoint:(NSPoint)screenPoint
+              operation:(NSDragOperation)operation {
+  Fl_Widget *w = Fl::pushed();
+  if ( w ) {
+    int old_event = Fl::e_number;
+    w->handle(Fl::e_number = FL_RELEASE);
+    Fl::e_number = old_event;
+    Fl::pushed( 0 );
+  }
+}
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
   return NSDragOperationGeneric;
@@ -4342,14 +4353,14 @@ int Fl_X::dnd(int use_selection)
     [myview dragImage:image  at:pt  offset:offset // deprecated in 10.7
                 event:theEvent  pasteboard:mypasteboard
                source:myview  slideBack:YES];
+    if ( w ) {
+      int old_event = Fl::e_number;
+      w->handle(Fl::e_number = FL_RELEASE);
+      Fl::e_number = old_event;
+      Fl::pushed( 0 );
+    }
   }
   CFRelease(text);
-  if ( w ) {
-    int old_event = Fl::e_number;
-    w->handle(Fl::e_number = FL_RELEASE);
-    Fl::e_number = old_event;
-    Fl::pushed( 0 );
-  }
   [localPool release];
   return true;
 }
