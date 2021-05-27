@@ -717,6 +717,8 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 #endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context;
+- (void)draggingSession:(NSDraggingSession *)session
+           endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation;
 #endif
 - (BOOL)did_view_resolution_change;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
@@ -2700,17 +2702,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
   fl_unlock_function();
 }
-- (void)draggingSession:(NSDraggingSession *)session
-           endedAtPoint:(NSPoint)screenPoint
-              operation:(NSDragOperation)operation {
-  Fl_Widget *w = Fl::pushed();
-  if ( w ) {
-    int old_event = Fl::e_number;
-    w->handle(Fl::e_number = FL_RELEASE);
-    Fl::e_number = old_event;
-    Fl::pushed( 0 );
-  }
-}
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
   return NSDragOperationGeneric;
@@ -2946,6 +2937,17 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
   return NSDragOperationCopy;
+}
+- (void)draggingSession:(NSDraggingSession *)session
+           endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+  Fl_Widget *w = Fl::pushed();
+  if ( w ) {
+    int old_event = Fl::e_number;
+    w->handle(Fl::e_number = FL_RELEASE);
+    Fl::e_number = old_event;
+    Fl::pushed( 0 );
+  }
 }
 #endif
 
@@ -4283,7 +4285,10 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
   else {
     width = 16; height = 16;
     }
-  Fl_Offscreen off = fl_create_offscreen(width, height);
+  void *data = calloc(width * height, 4);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGContextRef off = CGBitmapContextCreate(data, width, height, 8, width*4, lut, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(lut);
   fl_begin_offscreen(off);
   if (fl_mac_os_version >= version_threshold) {
     fl_font(FL_HELVETICA, 20);
