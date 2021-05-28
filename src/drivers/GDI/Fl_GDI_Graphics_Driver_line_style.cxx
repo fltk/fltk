@@ -46,6 +46,7 @@ void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, int width, char* das
     s1 |= style & 0xff; // allow them to pass any low 8 bits for style
   }
   if ((style || n) && !width) width = int(scale()); // fix cards that do nothing for 0?
+  if (!width) width = 1;
   if (!fl_current_xmap) color(FL_BLACK);
   LOGBRUSH penbrush = {BS_SOLID,fl_RGB(),0}; // can this be fl_brush()?
   HPEN newpen = ExtCreatePen(s1, width, &penbrush, n, n ? a : 0);

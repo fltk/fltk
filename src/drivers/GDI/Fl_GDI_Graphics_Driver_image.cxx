@@ -320,19 +320,19 @@ void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void*
   }
 }
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #if USE_COLORMAP
+void Fl_GDI_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   // use the error diffusion dithering code to produce a much nicer block:
   if (fl_palette) {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,(HDC)fl_graphics_driver->gc());
+    innards(c, floor(x), floor(y), floor(x + w) - floor(x), floor(y + h) - floor(y),
+            0,0,0,0,0, (HDC)gc());
     return;
   }
-#endif
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
+  Fl_Graphics_Driver::colored_rectf(x, y, w, h, r, g, b);
 }
+#endif
 
 // 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {

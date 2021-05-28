@@ -143,6 +143,7 @@ protected:
   void fixloop();
   virtual void focus_rect(int x, int y, int w, int h);
   virtual void rectf_unscaled(int x, int y, int w, int h);
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
   virtual void line_unscaled(int x, int y, int x1, int y1);
   virtual void xyline_unscaled(int x, int y, int x1);
   virtual void *change_pen_width(int lwidth);

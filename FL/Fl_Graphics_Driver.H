@@ -257,6 +257,8 @@ public:
   virtual void rect(int x, int y, int w, int h);
   virtual void focus_rect(int x, int y, int w, int h);
   virtual void rectf(int x, int y, int w, int h);
+  // the default implementation is most likely enough
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
   virtual void line(int x, int y, int x1, int y1);
   /** see fl_line(int, int, int, int, int, int) */
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);

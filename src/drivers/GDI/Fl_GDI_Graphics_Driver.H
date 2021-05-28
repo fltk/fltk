@@ -98,6 +98,9 @@ protected:
   virtual void point(int x, int y);
   void focus_rect(int x, int y, int w, int h);
   virtual void rectf_unscaled(int x, int y, int w, int h);
+#if USE_COLORMAP
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+#endif
   virtual void line_unscaled(int x, int y, int x1, int y1);
   virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
   virtual void xyline_unscaled(int x, int y, int x1);
