@@ -182,11 +182,32 @@ jpeg:
   Download:   See website and follow links.
   Repository: <unknown>
 
+  Download the latest jpeg-xy sources on a Linux (or Unix) system,
+  `cd' to /path-to/jpeg-xy and run
+
+    $ ./configure
+    $ make [-jN]
+
+  This builds the library and should create the static library file
+  '.libs/libjpeg.a'.
+
+  Execute the following command to extract the libjpeg symbol names
+  used to build the 'prefixed' libfltk_jpeg library:
+
+  $ nm --extern-only --defined-only .libs/libjpeg.a | awk '{print $3}' \
+    | sed '/^$/d' | sort -u | awk '{print "#define "$1" fltk_"$1}' \
+    > fltk_jpeg_prefix.h
+
+  This creates the header file 'fltk_jpeg_prefix.h' with the
+  '#define' statements using the 'fltk_' symbol prefix.
+
   The following files need special handling:
 
     CMakeLists.txt: Keep FLTK version, update manually if necessary.
 
     Makefile: Same as CMakeLists.txt.
+
+    fltk_jpeg_prefix.h:  Generate on a Linux system and merge (see above).
 
     Note: more to come...
 
