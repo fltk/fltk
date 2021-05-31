@@ -1,7 +1,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 // API changes + filter improvements by Nathan Vander Wilt 2005
 //
@@ -114,7 +114,7 @@ static char *wchartoutf8(LPCWSTR in);
 #define LBRACKET_CHR    '['
 #define RBRACKET_CHR    ']'
 
-// STATIC: PRINT WINDOWS 'DOUBLE NULL' STRING (DEBUG)
+// STATIC: Print Windows 'double-null' string (debug)
 #ifdef DEBUG
 #include <stdio.h>
 static void dnullprint(char *wp) {
@@ -133,8 +133,8 @@ static void dnullprint(char *wp) {
 }
 #endif
 
-// RETURN LENGTH OF DOUBLENULL STRING
-//    Includes single nulls in count, excludes trailing doublenull.
+// Return length of double-null string
+//    Includes single nulls in count, excludes trailing double-null.
 //
 //         1234 567
 //         |||/\|||
@@ -159,10 +159,12 @@ static int dnulllen(const char *wp) {
 static void dnullcat(char*&wp, const char *string, int n = -1 ) {
   //DEBUG printf("DEBUG: dnullcat IN: <"); dnullprint(wp); printf(">\n");
   size_t inlen = ( n < 0 ) ? strlen(string) : n;
+  char *wp2 = 0; // used to point at end of last string
   if ( ! wp ) {
     wp = new char[inlen + 4];
     *(wp+0) = '\0';
     *(wp+1) = '\0';
+    wp2 = wp; // no "last string", point at begin of buffer
   } else {
     int wplen = dnulllen(wp);
     // Make copy of wp into larger buffer
@@ -170,28 +172,13 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
     memcpy(tmp, wp, wplen+2);   // copy of wp plus doublenull
     delete[] wp;                // delete old wp
     wp = tmp;                   // use new copy
+    wp2 = wp + wplen + 1;       // point at second null
     //DEBUG printf("DEBUG: dnullcat COPY: <"); dnullprint(wp); printf("> (wplen=%d)\n", wplen);
   }
 
-  // Find end of double null string
-  //     *wp2 is left pointing at second null.
-  //
-  char *wp2 = wp;
-  if ( *(wp2+0) != '\0' && *(wp2+1) != '\0' ) {
-    for ( ; 1; wp2++ ) {
-      if ( *(wp2+0) == '\0' && *(wp2+1) == '\0' ) {
-        wp2++;
-        break;
-      }
-    }
-  }
-
-  if ( n == -1 ) n = (int) strlen(string);
-  strncpy(wp2, string, n);
-
-  // Leave string double-null terminated
-  *(wp2+n+0) = '\0';
-  *(wp2+n+1) = '\0';
+  // *wp2 points at second null; the buffer is large enough to copy the string!
+  strcpy(wp2, string);
+  *(wp2+inlen+1) = '\0'; // Leave string double-null terminated
   //DEBUG printf("DEBUG: dnullcat OUT: <"); dnullprint(wp); printf(">\n\n");
 }
 
@@ -849,7 +836,7 @@ static int count_filters(const char *filter) {
   return count > 0 ? count : 1;         // return at least 1
 }
 
-// CONVERT FLTK STYLE PATTERN MATCHES TO WINDOWS 'DOUBLENULL' PATTERN
+// Convert FLTK style pattern matches to windows 'double-null' pattern
 // Returns with the parsed double-null result in '_parsedfilt'.
 //
 //    Handles:
@@ -901,9 +888,9 @@ void Fl_WinAPI_Native_File_Chooser_Driver::parse_filter(const char *in) {
   // Parse
   for ( ; 1; in++ ) {
 
-    //// DEBUG
-    //// printf("WORKING ON '%c': mode=<%c> name=<%s> wildprefix=<%s> nwildcards=%d wildcards[n]=<%s>\n",
-    ////        *in, mode, name, wildprefix, nwildcards, wildcards[nwildcards]);
+    // DEBUG
+    // printf("WORKING ON '%c': mode=<%c> name=<%s> wildprefix=<%s> nwildcards=%d wildcards[n]=<%s>\n",
+    //        *in, mode, name, wildprefix, nwildcards, wildcards[nwildcards]);
 
     switch (*in) {
       case ',':
