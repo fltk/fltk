@@ -38,7 +38,7 @@ static const char *get_ms_errmsg() {
     _snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
     // Convert message to UTF-8
-    int mlen = fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
+    fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
     // Remove '\r's -- they screw up fl_alert()
     char *src = emsg, *dst = emsg;
     for ( ; 1; src++ ) {
