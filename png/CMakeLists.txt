@@ -65,6 +65,6 @@ endif ()
 # Install the library headers
 #######################################################################
 
-install (FILES png.h pngconf.h pnglibconf.h
+install (FILES png.h pngconf.h pnglibconf.h pngprefix.h
          DESTINATION ${FLTK_INCLUDEDIR}/FL/images
 )

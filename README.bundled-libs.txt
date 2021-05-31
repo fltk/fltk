@@ -5,6 +5,15 @@ This file is mainly intended for FLTK developers and contains information
 about the current versions of all bundled libraries and about how to
 upgrade these bundled libraries.
 
+Starting with FLTK 1.4.0 the bundled libraries jpeg, png, and zlib use
+"symbol prefixing" with the prefix 'fltk_' for all external symbols to
+distinguish the bundled libraries from existing system libraries and
+to avoid runtime errors.
+
+User code compiled correctly with the header files provided by the
+bundled image libraries need not be changed.
+
+The nanosvg library is not affected.
 
 Current versions of bundled libraries (as of Sep 13, 2021):
 
@@ -40,14 +49,18 @@ General information:
   We use our own build files, hence a few files MUST NOT be upgraded when
   the library source files are upgraded. We strive to keep changes to the
   library source files as small as possible. Patching library code to
-  work with FLTK should be a rare exception.
+  work with FLTK should be a rare exception. Symbol prefixing with prefix
+  'fltk_' is one such exception to the rule.
 
   If patches are necessary all changes in the library files should be
   marked with "FLTK" in a comment so a developer who upgrades the library
-  later is aware of changes in the source code for FLTK. Additional comments
-  should be added to show the rationale, i.e. why a particular change was
-  necessary. If applicable, add a reference to a Software Trouble Report,
-  GitHub Issue or PR like "STR 3456", "Issue #123", or "PR #234".
+  later is aware of changes in the source code for FLTK. Look for 'FLTK'
+  and/or 'fltk_' to find the differences.
+
+  Additional comments should be added to show the rationale, i.e. why
+  a particular change was necessary. If applicable, add a reference to
+  a Software Trouble Report, GitHub Issue or Pull Request (PR) like
+  "STR 3456", "Issue #123", or "PR #234".
 
 
 How to update the bundled libraries:
@@ -68,10 +81,11 @@ How to update the bundled libraries:
 Merging source files:
 
   Please check if some source and header files contain "FLTK" comments
-  to be aware of necessary merges. It is also good to get the distribution
-  tar ball of the previous version and to run a (graphical) diff or
-  merge tool on the previous version and the bundled version of FLTK
-  to see the "previous" differences.
+  and/or 'fltk_' symbol prefixing to be aware of necessary merges.
+  It is also good to download the distribution tar ball or Git source
+  files of the previous version and to run a (graphical) diff or merge
+  tool on the previous version and the bundled version of FLTK to see
+  the "previous" differences.
 
   Files that were not patched in previous versions should be copied to
   the new version w/o changes. Files that had FLTK specific patches must
@@ -102,9 +116,9 @@ Tests after merge:
 
 Upgrade notes for specific libraries:
 
-  The following chapters contain information of specific files and how
-  they are upgraded. Since the changes in all bundled libraries can't
-  be known in advance this information may change in the future. Please
+  The following chapters contain informations about specific files and
+  how they are upgraded. Since the changes in all bundled libraries are
+  not known in advance this information may change in the future. Please
   verify that no other changes are necessary.
 
 
@@ -140,13 +154,21 @@ png:
 
   libpng should be upgraded after zlib because it depends on zlib.
 
+  Download the latest libpng sources, `cd' to /path-to/libpng and run
+
+    $ ./configure --with-libpng-prefix=fltk_
+
+  This creates the header files 'pnglibconf.h' and 'pngprefix.h'
+  with the 'fltk_' symbol prefix.
+
   The following files need special handling:
 
     CMakeLists.txt: Keep FLTK version, update manually if necessary.
 
     Makefile: Same as CMakeLists.txt.
 
-    pnglibconf.h: Generate on a Linux system and merge.
+    pnglibconf.h: Generate on a Linux system and merge (see above).
+    pngprefix.h:  Generate on a Linux system and merge (see above).
 
     makedepend: Keep this file.
 
