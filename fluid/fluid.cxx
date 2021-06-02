@@ -1747,7 +1747,7 @@ static void sigint(SIGARG) {
 }
 #endif
 
-int main(int argc,char **argv) {
+extern "C" int fluid_main(int argc,char **argv) {
   int i = 1;
 
   setlocale(LC_ALL, "");      // enable multilanguage errors in file chooser

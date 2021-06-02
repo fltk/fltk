@@ -143,6 +143,8 @@ if (FLTK_BUILD_EXAMPLES)
   add_subdirectory (examples)
 endif (FLTK_BUILD_EXAMPLES)
 
+add_subdirectory (fluid)
+
 #######################################################################
 # Android Studio wrapup
 #######################################################################

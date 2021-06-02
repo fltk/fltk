@@ -20,23 +20,23 @@
 #######################################################################
 
 # Set the fluid executable path
-if (CMAKE_CROSSCOMPILING)
-  find_file(FLUID_PATH
-    NAMES fluid fluid.exe
-    PATHS ENV PATH
-    NO_CMAKE_FIND_ROOT_PATH
-  )
-  add_executable(fluid IMPORTED)
-  set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
-  set (FLUID)       # no export
-  set_target_properties(fluid
-    PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
-  )
-else ()
-  add_subdirectory(fluid)
-  set (FLTK_FLUID_EXECUTABLE fluid)
-  set (FLUID fluid) # export
-endif (CMAKE_CROSSCOMPILING)
+# if (CMAKE_CROSSCOMPILING)
+#   find_file(FLUID_PATH
+#     NAMES fluid fluid.exe
+#     PATHS ENV PATH
+#     NO_CMAKE_FIND_ROOT_PATH
+#   )
+#   add_executable(fluid IMPORTED)
+#   set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
+#   set (FLUID)       # no export
+#   set_target_properties(fluid
+#     PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
+#   )
+# else ()
+#   add_subdirectory(fluid)
+#   set (FLTK_FLUID_EXECUTABLE fluid)
+#   set (FLUID fluid) # export
+# endif (CMAKE_CROSSCOMPILING)
 
 add_subdirectory(src)
 
