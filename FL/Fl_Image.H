@@ -21,7 +21,6 @@
 #define Fl_Image_H
 
 #include "Enumerations.H"
-#include <stdlib.h>
 #include "Fl_Widget.H" // for fl_uintptr_t
 
 class Fl_Widget;

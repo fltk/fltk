@@ -98,7 +98,7 @@ void *Fl_GTK_Printer_Driver::ptr_gtk = NULL;
 
 // test wether GTK is available at run-time
 bool Fl_GTK_Printer_Driver::probe_for_GTK() {
-  return Fl_X11_System_Driver::probe_for_GTK(2, 10, &ptr_gtk);
+  return Fl_Posix_System_Driver::probe_for_GTK(2, 10, &ptr_gtk);
 }
 
 

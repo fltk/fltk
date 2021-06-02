@@ -22,6 +22,7 @@
 #include <FL/platform.H>
 
 #include <string.h>
+#include <stdlib.h>
 
 extern XIC fl_xim_ic;
 extern char fl_is_over_the_spot;
@@ -49,9 +50,7 @@ GC fl_gc = 0;
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
-  p_size = 0;
   p = NULL;
-  line_delta_ = 0;
 #if USE_PANGO
   Fl_Graphics_Driver::font(0, 0);
 #endif
@@ -77,17 +76,6 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
     Fl_Graphics_Driver::scale(f);
     //fprintf(stderr, "scale=%.2f\n", scale_);
     line_style(FL_SOLID); // scale also default line width
-    /* Scaling >= 2 transforms 1-pixel wide lines into wider lines.
-     X11 draws 2-pixel wide lines so that half of the line width is above or at left
-     of a 1-pixel wide line that would be drawn with the same coordinates.
-     Thus, if the line starts at coordinates (0,0) half of the line width is invisible.
-     Similarly, if the line ends at w()-1 the last pixel of the window is not drawn.
-     What is wanted when scale_ == 2 is a visible 2-pixel wide line in the first case,
-     and a line at the window's edge in the 2nd case.
-     Setting line_delta_ to 1 and offsetting all line, rectangle, text and clip
-     coordinates by line_delta_ achieves what is wanted until scale_ <= 3.5.
-     */
-    line_delta_ =  (scale() > 1.9/*1.75*/ ? 1 : 0);
   }
 #endif
 }
@@ -110,8 +98,8 @@ void Fl_Xlib_Graphics_Driver::transformed_vertex0(float fx, float fy) {
       p_size = p ? 2*p_size : 16;
       p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
     }
-    p[n].x = x + line_delta_;
-    p[n].y = y + line_delta_;
+    p[n].x = x ;
+    p[n].y = y ;
     n++;
   }
 }
@@ -243,15 +231,12 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
 Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
   Region r = rstack[rstackptr];
   if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
-  int deltaf = f/2;
   Region r2 = XCreateRegion();
   for (int i = 0; i < r->numRects; i++) {
-    int x = (r->rects[i].x1 + offset_x_)*f;
-    int y = (r->rects[i].y1 + offset_y_)*f;
-    int w = int((r->rects[i].x2 + offset_x_) * f) - x;
-    int h = int((r->rects[i].y2 + offset_y_) * f) - y;
-    x += line_delta_ - deltaf;
-    y += line_delta_ - deltaf;
+    int x = floor(r->rects[i].x1 + offset_x_, f);
+    int y = floor(r->rects[i].y1 + offset_y_, f);
+    int w = floor((r->rects[i].x2 + offset_x_) , f) - x;
+    int h = floor((r->rects[i].y2 + offset_y_) , f) - y;
     Region R = XRectangleRegion(x, y, w, h);
     XUnionRegion(R, r2, r2);
     ::XDestroyRegion(R);

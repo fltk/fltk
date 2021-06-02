@@ -16,6 +16,9 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
+#include <FL/filename.H>
+#include <FL/fl_string.h>
+#include <FL/fl_utf8.h>     // fl_fopen()
 #include "Fl_Type.h"
 #include "Fluid_Image.h"
 #include "../src/flstring.h"
@@ -23,8 +26,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <FL/filename.H>
-#include <FL/fl_string.h>
 
 extern void goto_source_dir(); // in fluid.cxx
 extern void leave_source_dir(); // in fluid.cxx

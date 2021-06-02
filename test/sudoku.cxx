@@ -437,7 +437,7 @@ void SudokuSound::play(char note) {
     Sleep(NOTE_DURATION);
   } else Beep(frequencies[note - 'A'], NOTE_DURATION);
 
-#else
+#elif USE_X11
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
     // Use ALSA to play the sound...

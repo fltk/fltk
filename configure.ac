@@ -104,7 +104,7 @@ AS_IF([test x$enable_debug = xyes], [
 AC_ARG_ENABLE([gl], AS_HELP_STRING([--disable-gl], [turn off OpenGL support]))
 
 AC_ARG_ENABLE([localjpeg], AS_HELP_STRING([--enable-localjpeg], [use local JPEG library (default=auto)]))
-AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG library (efault=auto)]))
+AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG library (default=auto)]))
 AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB library (default=auto)]))
 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
@@ -136,6 +136,21 @@ AC_ARG_ENABLE([xft], AS_HELP_STRING([--disable-xft], [turn off Xft support]))
 AC_ARG_ENABLE([xinerama], AS_HELP_STRING([--disable-xinerama], [turn off Xinerama support]))
 
 AC_ARG_ENABLE([xrender], AS_HELP_STRING([--disable-xrender], [turn off Xrender support]))
+
+AS_CASE([$host_os], [cygwin* | mingw*], [
+  AC_ARG_ENABLE([gdiplus], AS_HELP_STRING([--disable-gdiplus], [don't use GDI+ for antialiased graphics]))
+
+ gdiplus_found=no
+    AS_IF([test x$enable_gdiplus != xno], [
+        AC_CHECK_HEADERS([wtypes.h gdiplus.h], [
+            AC_DEFINE([USE_GDIPLUS])
+            LIBS="-lgdiplus $LIBS"
+            gdiplus_found=yes
+        ], [],
+    [[#include <wtypes.h>]])
+    ])
+
+])
 
 AS_IF([test x$enable_pango = xyes -a x$enable_xft = xno], [
     AC_MSG_ERROR([--disable-xft and --enable-pango are incompatible because Xft is necessary for Pango.])
@@ -211,8 +226,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         AC_DEFINE([FLTK_HAVE_CAIRO])
         CAIRODIR="cairo"
         CAIROFLAGS="$($PKGCONFIG --cflags cairo)"
-        # TODO: Use pkg-config to get cairo libraries
-        CAIROLIBS="-lcairo -lpixman-1"
+        CAIROLIBS="$($PKGCONFIG --libs cairo)"
         CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
         LINKFLTKCAIRO="../lib/libfltk_cairo.a"
         FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
@@ -226,8 +240,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         AC_DEFINE(FLTK_HAVE_CAIRO)
         CAIRODIR="cairo"
         CAIROFLAGS="$($PKGCONFIG --cflags cairo)"
-        # TODO: Use pkg-config to get cairo libraries
-        CAIROLIBS="-lcairo -lpixman-1"
+        CAIROLIBS="$($PKGCONFIG --libs cairo)"
         CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
         LINKFLTKCAIRO="../lib/libfltk_cairo.a"
         FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
@@ -799,6 +812,8 @@ AC_SUBST([JPEG])
 AC_SUBST([JPEGINC])
 AC_SUBST([PNG])
 AC_SUBST([PNGINC])
+AC_SUBST([HAVE_PNG_H])
+AC_SUBST([HAVE_LIBPNG_H])
 AC_SUBST([ZLIB])
 AC_SUBST([ZLIBINC])
 
@@ -887,6 +902,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     LDFLAGS="-mwindows $LDFLAGS"
     DSOFLAGS="-mwindows $DSOFLAGS"
     LIBS="$LIBS -lole32 -luuid -lcomctl32 -lws2_32"
+
     BUILD="WIN"
     AS_IF([test "x$with_optim" = x], [
         dnl Avoid -Os optimization on Cygwin/MinGW
@@ -1522,7 +1538,7 @@ echo "Configuration Summary"
 echo "-------------------------------------------------------------------------"
 
 AS_CASE([$host_os_gui], [cygwin* | mingw*], [
-    graphics="GDI"
+    AS_IF([test x$gdiplus_found = xyes], [graphics="GDI+"], [graphics="GDI"])
 ], [darwin*], [
     graphics="Quartz"
 ], [*], [

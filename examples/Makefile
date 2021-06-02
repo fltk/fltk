@@ -6,6 +6,7 @@ SHELL = /bin/sh
 
 # Executables
 ALL = browser-simple$(EXEEXT) \
+      chart-simple$(EXEEXT) \
       clipboard$(EXEEXT) \
       draggable-group$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \

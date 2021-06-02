@@ -1,7 +1,7 @@
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -300,9 +300,17 @@ int Fl_Input::kf_copy_cut() {
   return cut();
 }
 
-// Handle a keystroke.
-//     Returns 1 if handled by us, 0 if not.
-//
+/** Handles a keystroke.
+
+  This \p protected method handles a keystroke in an Fl_Input or derived
+  class. It handles compose key sequences and can also be used e.g. in
+  Fl_Multiline_Input, Fl_Float_Input and several more derived classes.
+
+  The details are way too complicated to be documented here and can be
+  changed as required. If in doubt, please consult the source code.
+
+  \returns  1 if the keystroke is handled by us, 0 if not.
+*/
 int Fl_Input::handle_key() {
 
   char ascii = Fl::event_text()[0];

@@ -92,6 +92,12 @@ CMAKE_INSTALL_PREFIX
     Where everything will go on install.  Defaults are /usr/local for Unix
     and C:\Program Files\FLTK for Windows.
 
+CMAKE_OSX_ARCHITECTURES (macOS only, ignored on other platforms)
+    Set this to either "arm64", "x86_64", or a list of both "arm64;x86_64".
+    The latter will build "universal apps" on macOS, whereas the former
+    will either build Intel (x86_64) or Apple Silicon aka M1 (arm64) apps.
+    The default is to build for the host processor architecture.
+
 The following are the FLTK specific options.  Platform specific options
 are ignored on other platforms.
 
@@ -134,9 +140,9 @@ OPTION_USE_THREADS - default ON
 OPTION_LARGE_FILE - default ON
    Enables large file (>2G) support.
 
-OPTION_USE_SYSTEM_LIBJPEG - default ON
-OPTION_USE_SYSTEM_ZLIB - default ON
-OPTION_USE_SYSTEM_LIBPNG - default ON
+OPTION_USE_SYSTEM_LIBJPEG - default ON (macOS: OFF)
+OPTION_USE_SYSTEM_LIBPNG  - default ON (macOS: OFF)
+OPTION_USE_SYSTEM_ZLIB    - default ON
    FLTK has built in jpeg, zlib, and png libraries.  These options let you
    use system libraries instead, unless CMake can't find them.  If you set
    any of these options to OFF, then the built in library will be used.
@@ -526,9 +532,10 @@ The built-in libraries (if built):
 ------------------------
 
 CMake has a command named fltk_wrap_ui which helps deal with fluid *.fl
-files. Unfortunately it is broken in CMake 3.4.x. You can however use
-add_custom_command to achieve the same result.
-This is a more basic approach and should work for all CMake versions.
+files. Unfortunately it is broken in CMake 3.4.x but it seems to work in
+3.5 and later CMake versions. You can however use add_custom_command()
+to achieve the same result. This is a more basic approach and should
+work for all CMake versions.
 
 Here is a sample CMakeLists.txt which compiles the CubeView example from
 a directory you've copied the test/Cube* files to.
@@ -584,3 +591,4 @@ Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
 Nov 01 2016 - AlbrechtS: remove deprecated FLTK_USE_FILE, add MinGW build
 Jul 05 2017 - matt: added instructions for MacOS and Xcode
 Dec 29 2018 - AlbrechtS: add documentation option descriptions
+Apr 29 2021 - AlbrechtS: document macOS "universal apps" build setup

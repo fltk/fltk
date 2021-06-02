@@ -1,7 +1,7 @@
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,18 +17,16 @@
 #include <config.h>
 #if !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-
 #include <FL/Fl_PostScript.H>
 #include "Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
+#include <stdlib.h>  // abs(int)
+#include <string.h>  // memcpy()
 
-#if USE_PANGO
-#include <cairo/cairo.h>
+#if ! USE_PANGO
+#include <stdio.h>   // fprintf()
 #endif
 
 struct callback_data {
@@ -42,10 +40,11 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 
   cb_data = (struct callback_data*)data;
   int last = x+w;
+  const size_t aD = abs(cb_data->D);
   curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
   for (; x<last; x++) {
-    memcpy(buf, curdata, abs(cb_data->D));
-    buf += abs(cb_data->D);
+    memcpy(buf, curdata, aD);
+    buf += aD;
     curdata += cb_data->D;
   }
 }
@@ -633,145 +632,6 @@ int Fl_PostScript_Graphics_Driver::scale_for_image_(Fl_Image *img, int XP, int Y
   clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
   clocale_printf("GS %d %d TR  %f %f SC GS\n", X-cx, Y-cy, float(img->w())/img->data_w(), float(img->h())/img->data_h());
   return 0;
-}
-
-#else
-
-void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D)
-{
-  uchar *array = new uchar[iw * D * ih];
-  for (int l = 0; l < ih; l++) {
-    call(data, 0, l, iw, array + l*D*iw);
-    if (D%2 == 0) for (int i = 0; i < iw; i++) {
-      *(array + l*D*iw + i*D + D-1) = 0xff;
-    }
-  }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(array, iw, ih, D);
-  rgb->alloc_array  = 1;
-  draw_rgb(rgb, ix, iy, iw, ih, 0, 0);
-  delete rgb;
-}
-
-void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD)
-{
-  struct callback_data cb_data;
-  if (!LD) LD = iw*abs(D);
-  if (D<0) data += iw*abs(D);
-  cb_data.data = data;
-  cb_data.D = D;
-  cb_data.LD = LD;
-  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
-}
-
-void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D)
-{
-  draw_image(call, data, ix, iy, iw, ih, D);
-}
-
-static void destroy_BGRA(void *data) {
-  delete[] (uchar*)data;
-}
-
-void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {
-  Fl_RGB_Image *rgb =  new Fl_RGB_Image(pxm);
-  draw_rgb_bitmap_(rgb, XP, YP, WP, HP, cx, cy);
-  delete rgb;
-}
-
-void Fl_PostScript_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {
-  draw_rgb_bitmap_(rgb, XP, YP, WP, HP, cx, cy);
-}
-
-void Fl_PostScript_Graphics_Driver::draw_bitmap(Fl_Bitmap *bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
-  draw_rgb_bitmap_(bitmap, XP, YP, WP, HP, cx, cy);
-}
-
-void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy)
-{
-  cairo_surface_t *surf;
-  cairo_format_t format = (img->d() >= 1 ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_A1);
-  int stride = cairo_format_stride_for_width(format, img->data_w());
-  uchar *BGRA = new uchar[stride * img->data_h()];
-  memset(BGRA, 0, stride * img->data_h());
-  if (img->d() >= 1) { // process Fl_RGB_Image of all depths
-    Fl_RGB_Image *rgb = (Fl_RGB_Image*)img;
-    int lrgb = rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d();
-    uchar A = 0xff, R,G,B, *q;
-    const uchar *r;
-    float f = 1;
-    if (rgb->d() >= 3) { // color images
-       for (int j = 0; j < rgb->data_h(); j++) {
-        r = rgb->array + j * lrgb;
-        q = BGRA + j * stride;
-        for (int i = 0; i < rgb->data_w(); i++) {
-          R = *r;
-          G = *(r+1);
-          B = *(r+2);
-          if (rgb->d() == 4) {
-            A = *(r+3);
-            f = float(A)/0xff;
-          }
-          *q =  B * f;
-          *(q+1) =  G * f;
-          *(q+2) =  R * f;
-          *(q+3) =  A;
-          r += rgb->d(); q += 4;
-        }
-      }
-    } else if (rgb->d() == 1 || rgb->d() == 2) { // B&W
-      for (int j = 0; j < rgb->data_h(); j++) {
-        r = rgb->array + j * lrgb;
-        q = BGRA + j * stride;
-        for (int i = 0; i < rgb->data_w(); i++) {
-          G = *r;
-          if (rgb->d() == 2) {
-            A = *(r+1);
-            f = float(A)/0xff;
-          }
-          *(q) =  G * f;
-          *(q+1) =  G * f;
-          *(q+2) =  G * f;
-          *(q+3) =  A;
-          r += rgb->d(); q += 4;
-        }
-      }
-    }
-  } else {
-    Fl_Bitmap *bm = (Fl_Bitmap*)img;
-    uchar  *r, p;
-    unsigned *q;
-    for (int j = 0; j < bm->data_h(); j++) {
-      r = (uchar*)bm->array + j * ((bm->data_w() + 7)/8);
-      q = (unsigned*)(BGRA + j * stride);
-      unsigned k = 0, mask32 = 1;
-      p = *r;
-      for (int i = 0; i < bm->data_w(); i++) {
-        if (p&1) (*q) |= mask32;
-        k++;
-        if (k % 8 != 0) p >>= 1; else p = *(++r);
-        if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
-      }
-    }
-  }
-  surf = cairo_image_surface_create_for_data(BGRA, format, img->data_w(), img->data_h(), stride);
-  if (cairo_surface_status(surf) == CAIRO_STATUS_SUCCESS) {
-    static cairo_user_data_key_t key = {};
-    (void)cairo_surface_set_user_data(surf, &key, BGRA, destroy_BGRA);
-    cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
-    cairo_save(cairo_);
-    cairo_rectangle(cairo_, XP-0.5, YP-0.5, WP+1, HP+1);
-    cairo_clip(cairo_);
-    if (img->d() >= 1) cairo_set_source(cairo_, pat);
-    cairo_matrix_t matrix;
-    cairo_matrix_init_scale(&matrix, double(img->data_w())/(img->w()+1), double(img->data_h())/(img->h()+1));
-    cairo_matrix_translate(&matrix, -XP+0.5+cx, -YP+0.5+cy);
-    cairo_pattern_set_matrix(pat, &matrix);
-    cairo_mask(cairo_, pat);
-    cairo_pattern_destroy(pat);
-    cairo_surface_destroy(surf);
-    cairo_restore(cairo_);
-    check_status();
-  }
 }
 
 #endif // USE_PANGO

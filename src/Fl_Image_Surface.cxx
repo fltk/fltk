@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +17,8 @@
 #include <FL/Fl_Image_Surface.H>
 
 #include <FL/fl_draw.H> // necessary for FL_EXPORT fl_*_offscreen()
+
+#include <stdlib.h>     // realloc()
 
 /** Constructor with optional high resolution.
  \param w,h Width and height of the resulting image. The value of the \p high_res

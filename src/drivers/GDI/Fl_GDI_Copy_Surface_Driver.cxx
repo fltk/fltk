@@ -42,7 +42,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  driver(new Fl_GDI_Graphics_Driver);
+  driver(Fl_Graphics_Driver::newMainGraphicsDriver());
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
   HDC hdc = GetDC(NULL);
@@ -55,7 +55,7 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   float factorh = (100.f * vmm) / vdots;
   // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
   float scaling = Fl_Graphics_Driver::default_driver().scale();
-  ((Fl_GDI_Graphics_Driver*)driver())->scale(scaling);
+  driver()->scale(scaling);
   RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)((w*scaling) * factorw); rect.bottom = (LONG)((h*scaling) * factorh);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
   if (gc != NULL) {
@@ -75,7 +75,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
       SetClipboardData (CF_ENHMETAFILE, hmf);
       // then put a BITMAP version of the graphics in the clipboard
       float scaling = driver()->scale();
-      int W = int(width * scaling), H = int(height * scaling);
+      int W = Fl_Scalable_Graphics_Driver::floor(width, scaling), H = Fl_Scalable_Graphics_Driver::floor(height, scaling);
       RECT rect = {0, 0, W, H};
       Fl_Image_Surface *surf = new Fl_Image_Surface(W, H);
       Fl_Surface_Device::push_current(surf);

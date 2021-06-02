@@ -4,7 +4,7 @@
 //     How to use Fl_Multi_Label to make menu items with images and labels.
 //
 // Copyright 2017 Greg Ercolano.
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,6 +16,7 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
@@ -90,13 +91,13 @@ static Fl_Pixmap L_redx_pixmap(L_redx_xpm);
 void Menu_CB(Fl_Widget *w, void* data) {
   const char *itemname = (const char*)data;   // "New", "Open", etc
   if ( strcmp(itemname, "Quit") == 0 ) {      // handle Quit
-    exit(0);
+    w->window()->hide();
   } else {                                    // just show a message for other items
     fl_message("'%s' would happen here", itemname);
   }
 }
 
-// ADD AN IMAGE IN FRONT OF ITEM'S TEXT
+// Add an image in front of item's text
 int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
                  const char  *labeltext,              // label text
                  int         shortcut,                // shortcut (e.g. FL_COMMAND+'a')
@@ -137,7 +138,7 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
 //
 void CreateMenuItems(Fl_Menu_* menu) {
 
-  // Add items with LABLES AND IMAGES using Fl_Multi_Label..
+  // Add items with LABELS AND IMAGES using Fl_Multi_Label..
   AddItemToMenu(menu, "File/New",  FL_COMMAND+'n', Menu_CB, (void*)"New",  &L_document_pixmap);
   AddItemToMenu(menu, "File/Open", FL_COMMAND+'o', Menu_CB, (void*)"Open", &L_folder_pixmap, FL_MENU_DIVIDER);
   AddItemToMenu(menu, "File/Quit", FL_COMMAND+'q', Menu_CB, (void*)"Quit", &L_redx_pixmap);

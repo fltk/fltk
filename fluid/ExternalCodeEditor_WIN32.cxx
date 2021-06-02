@@ -3,14 +3,15 @@
 //
 //      Note: This entire file Windows only.
 
-#include <stdio.h>      // snprintf()
-
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
 #include <FL/fl_utf8.h> // fl_utf8fromwc()
 #include <FL/fl_string.h> // fl_strdup()
 
 #include "ExternalCodeEditor_WIN32.h"
+
+#include <stdio.h>      // snprintf()
+#include <stdlib.h>
 
 extern int G_debug;     // defined in fluid.cxx
 
@@ -37,7 +38,7 @@ static const char *get_ms_errmsg() {
     _snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
     // Convert message to UTF-8
-    int mlen = fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
+    fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
     // Remove '\r's -- they screw up fl_alert()
     char *src = emsg, *dst = emsg;
     for ( ; 1; src++ ) {

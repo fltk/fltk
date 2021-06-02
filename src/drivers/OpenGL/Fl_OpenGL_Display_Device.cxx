@@ -40,7 +40,7 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
 {
-  return glw->gl_driver()->capture_gl_rectangle(x, y, w, h);
+  return Fl_Gl_Window_Driver::driver(glw)->capture_gl_rectangle(x, y, w, h);
 }
 
 /* Captures a rectangle of a Fl_Gl_Window and returns it as a RGB image.
@@ -58,8 +58,7 @@ Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int
   glPixelStorei(GL_PACK_SKIP_ROWS, 0);
   glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
   //
-  int ns = Fl_Window_Driver::driver(glw)->screen_num();
-  float s = Fl::screen_driver()->scale(ns);
+  float s = glw->pixels_per_unit();
   if (s != 1) {
     x = int(x * s); y = int(y * s); w = int(w * s); h = int(h * s);
   }

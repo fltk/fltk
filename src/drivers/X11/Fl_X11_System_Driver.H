@@ -64,10 +64,8 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
-#endif
-  static void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
+  virtual void make_transient(void *ptr_gtk, void *gtk_window, Fl_Window *win);
+  virtual void emulate_modal_dialog();
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

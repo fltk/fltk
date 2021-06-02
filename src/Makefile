@@ -283,7 +283,8 @@ XLIBFONTFILES = \
 
 # These C++ files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBXFTFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
 
 # These C++ files are used under condition: BUILD_GDI
 GDICPPFILES = \
@@ -601,6 +602,7 @@ rebuild:
 
 clean:
 	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM)	drivers/Cairo/*.o
 	-$(RM)	drivers/Cocoa/*.o
 	-$(RM)	drivers/Darwin/*.o
 	-$(RM)	drivers/GDI/*.o

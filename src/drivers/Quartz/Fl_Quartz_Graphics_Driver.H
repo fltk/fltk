@@ -50,9 +50,6 @@ class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
   friend class Fl_Quartz_Font_Descriptor;
 protected:
   CGContextRef gc_;
-  int p_size;
-  typedef struct { float x; float y; } XPOINT;
-  XPOINT *p;
   bool high_resolution_;
   float quartz_line_width_;
   CGLineCap quartz_line_cap_;
@@ -90,9 +87,6 @@ public:
   void XDestroyRegion(Fl_Region r);
   void high_resolution(bool b) { high_resolution_ = b; }
 protected:
-  void transformed_vertex0(float x, float y);
-  void fixloop();
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
   void focus_rect(int x, int y, int w, int h);
@@ -114,30 +108,18 @@ protected:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  void begin_complex_polygon();
-  void transformed_vertex(double xf, double yf);
-  void vertex(double x, double y);
   void end_points();
   void end_line();
-  void end_loop();
   void end_polygon();
   void end_complex_polygon();
-  void gap();
   void circle(double x, double y, double r);
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
   void arc(int x, int y, int w, int h, double a1, double a2);
   void pie(int x, int y, int w, int h, double a1, double a2);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   void line_style(int style, int width=0, char* dashes=0);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
   void set_color(Fl_Color i, unsigned int c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
-  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
   void draw(const char *str, int n, int x, int y);
   void draw(const char *str, int n, float x, float y);
   void draw(int angle, const char *str, int n, int x, int y);
@@ -188,6 +170,10 @@ protected:
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
   virtual void overlay_rect(int x, int y, int w , int h);
+  virtual float override_scale();
+  virtual void restore_scale(float);
+  virtual void antialias(int state);
+  virtual int antialias();
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {

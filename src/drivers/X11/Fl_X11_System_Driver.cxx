@@ -366,7 +366,7 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
   static gener_f_type uuid_generate_f = NULL;
   if (!looked_for_uuid_generate) {
     looked_for_uuid_generate = true;
-    uuid_generate_f = (gener_f_type)Fl_X11_System_Driver::dlopen_or_dlsym("libuuid", "uuid_generate");
+    uuid_generate_f = (gener_f_type)Fl_Posix_System_Driver::dlopen_or_dlsym("libuuid", "uuid_generate");
   }
   if (uuid_generate_f) {
     uuid_generate_f(b);
@@ -569,128 +569,6 @@ int Fl_X11_System_Driver::utf8locale() {
   return ret;
 }
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
-static void* quadruple_dlopen(const char *libname)
-{
-  char filename2[FL_PATH_MAX];
-  sprintf(filename2, "%s.so", libname);
-  void *ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-  if (!ptr) {
-    sprintf(filename2, "%s.so.2", libname);
-    ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-    if (!ptr) {
-      sprintf(filename2, "%s.so.1", libname);
-      ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-      if (!ptr) {
-        sprintf(filename2, "%s.so.0", libname);
-        ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-      }
-    }
-  }
-  return ptr;
-}
-#endif
-
-/**
- Returns the run-time address of a function or of a shared library.
- \param lib_name shared library name (without its extension) or NULL to search the function in the running program
- \param func_name  function name or NULL
- \return the address of the function (when func_name != NULL) or of the shared library, or NULL if not found.
- */
-void *Fl_X11_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *func_name)
-{
-  void *lib_address = NULL;
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  void *func_ptr = NULL;
-  if (func_name) {
-#ifdef RTLD_DEFAULT
-    func_ptr = dlsym(RTLD_DEFAULT, func_name);
-#else
-    void *p = dlopen(NULL, RTLD_LAZY);
-    func_ptr = dlsym(p, func_name);
-#endif
-    if (func_ptr) return func_ptr;
-  }
-#ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
-  if (lib_name) {
-    char path[FL_PATH_MAX];
-    sprintf(path, "/opt/X11/lib/%s.dylib", lib_name);
-    lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-    if (!lib_address) {
-      sprintf(path, "/opt/sw/lib/%s.dylib", lib_name);
-      lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-      if (!lib_address) {
-        sprintf(path, "/sw/lib/%s.dylib", lib_name);
-        lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
-      }
-    }
-  }
-#else
-  if (lib_name) lib_address = quadruple_dlopen(lib_name);
-#endif // __APPLE_CC__
-  if (func_name && lib_address) return ::dlsym(lib_address, func_name);
-#endif // HAVE_DLFCN_H
-  return lib_address;
-}
-
-#if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
-
-bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
-  typedef void (*init_t)(int*, void*);
-  *ptr_gtk = NULL;
-  // was GTK previously loaded?
-  init_t init_f = (init_t)dlsym(RTLD_DEFAULT, "gtk_init_check");
-  if (init_f) { // yes it was.
-    *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
-  } else {
-    // Try first with GTK3
-    *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-3");
-    if (*ptr_gtk) {
-#ifdef DEBUG
-      puts("selected GTK-3\n");
-#endif
-    } else {
-      // Try then with GTK2
-      *ptr_gtk = Fl_X11_System_Driver::dlopen_or_dlsym("libgtk-x11-2.0");
-#ifdef DEBUG
-      if (*ptr_gtk) {
-        puts("selected GTK-2\n");
-      }
-#endif
-    }
-    if (!(*ptr_gtk)) {
-#ifdef DEBUG
-      puts("Failure to load libgtk");
-#endif
-      return false;
-    }
-    init_f = (init_t)dlsym(*ptr_gtk, "gtk_init_check");
-    if (!init_f) return false;
-  }
-
-  // The point here is that after running gtk_init_check, the calling program's current locale can be modified.
-  // To avoid that, we memorize the calling program's current locale and restore the locale
-  // before returning.
-  char *before = NULL;
-  // record in "before" the calling program's current locale
-  char *p = setlocale(LC_ALL, NULL);
-  if (p) before = fl_strdup(p);
-  int ac = 0;
-  init_f(&ac, NULL); // may change the locale
-  if (before) {
-    setlocale(LC_ALL, before); // restore calling program's current locale
-    free(before);
-  }
-
-  // now check if running version is high enough
-  if (dlsym(*ptr_gtk, "gtk_get_major_version") == NULL) { // YES indicates V 3
-    typedef const char* (*check_t)(int, int, int);
-    check_t check_f = (check_t)dlsym(*ptr_gtk, "gtk_check_version");
-    if (!check_f || check_f(major, minor, 0) ) return false;
-  }
-  return true;
-}
-#endif // HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 #if !defined(FL_DOXYGEN)
 
@@ -738,6 +616,60 @@ void Fl_X11_System_Driver::own_colormap() {
   for (i = 0; i < 16; i ++)
     XAllocColor(fl_display, fl_colormap, colors + i);
 #endif // USE_COLORMAP
+}
+
+
+void Fl_X11_System_Driver::make_transient(void *ptr_gtk, void *gtkw_window, Fl_Window *win) {
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  typedef int gboolean;
+  typedef struct _GdkDrawable GdkWindow;
+  typedef struct _GtkWidget GtkWidget;
+
+  typedef unsigned long (*XX_gdk_x11_window_get_type)();
+  static XX_gdk_x11_window_get_type fl_gdk_x11_window_get_type = NULL;
+
+  typedef gboolean (*XX_g_type_check_instance_is_a)(void *type_instance, unsigned long iface_type);
+  static XX_g_type_check_instance_is_a fl_g_type_check_instance_is_a = NULL;
+
+  typedef Window (*gdk_to_X11_t)(GdkWindow*);
+  static gdk_to_X11_t fl_gdk_to_X11 = NULL;
+
+  typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
+  static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
+
+  if (!fl_gdk_to_X11) {
+    fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
+    if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
+    if (!fl_gdk_to_X11) return;
+    fl_gdk_x11_window_get_type = (XX_gdk_x11_window_get_type)dlsym(ptr_gtk, "gdk_x11_window_get_type");
+    fl_g_type_check_instance_is_a = (XX_g_type_check_instance_is_a)dlsym(ptr_gtk, "g_type_check_instance_is_a");
+    fl_gtk_widget_get_window = (XX_gtk_widget_get_window)dlsym(ptr_gtk, "gtk_widget_get_window");
+    if (!fl_gtk_widget_get_window) return;
+  }
+  GdkWindow* gdkw = fl_gtk_widget_get_window((GtkWidget*)gtkw_window);
+
+  // Make sure the Dialog is an X11 window because it's not on Wayland.
+  // Until we find how to make a wayland window transient for an X11 window,
+  // we make the GTK window transient only when it's X11-based.
+  if ( (!fl_gdk_x11_window_get_type) || (!fl_g_type_check_instance_is_a) ||
+      fl_g_type_check_instance_is_a(gdkw, fl_gdk_x11_window_get_type()) ) {
+    Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
+    if (xw) XSetTransientForHint(fl_display, xw, fl_xid(win)); // set the GTK window transient for the last FLTK win
+  }
+#endif //HAVE_DLSYM && HAVE_DLFCN_H
+}
+
+void Fl_X11_System_Driver::emulate_modal_dialog() {
+  while (XEventsQueued(fl_display, QueuedAfterReading)) { // emulate modal dialog
+    XEvent xevent;
+    XNextEvent(fl_display, &xevent);
+    Window xid = xevent.xany.window;
+    if (xevent.type == ConfigureNotify) xid = xevent.xmaprequest.window;
+    if (!fl_find(xid)) continue; // skip events to non-FLTK windows
+    // process Expose and ConfigureNotify events
+    if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent);
+  }
+  Fl::flush(); // do the drawings needed after Expose events
 }
 
 #endif // !defined(FL_DOXYGEN)

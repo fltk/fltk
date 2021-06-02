@@ -23,7 +23,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Bitmap.H>
-#include <stdlib.h>
 
 #define FL_WINDOW 0xF0          ///< window type id: all subclasses have type() >= this
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id

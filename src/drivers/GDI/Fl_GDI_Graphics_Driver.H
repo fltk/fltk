@@ -2,7 +2,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,17 @@
 
 #include <FL/Fl_Graphics_Driver.H>
 #include <windows.h>
+#include <stdlib.h>
+#include <config.h>
 
+#if USE_GDIPLUS
+#  if defined(_MSC_VER)
+#    include <objidl.h>
+#  else
+#    include <wtypes.h> // for PROPID needed with gcc 4.9.0 but not with 4.9.3
+#  endif
+#  include <gdiplus.h>
+#endif
 
 /**
   \brief The Windows-specific graphics driver class.
@@ -49,10 +59,9 @@ protected:
   int counts[20];
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   POINT *p;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
@@ -96,18 +105,20 @@ public:
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();
-  virtual void point_unscaled(float x, float y);
-  virtual void rect(int x, int y, int w, int h);
+  virtual void point(int x, int y);
   void focus_rect(int x, int y, int w, int h);
-  void rectf_unscaled(float x, float y, float w, float h);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void yxline_unscaled(float x, float y, float y1);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
+#if USE_COLORMAP
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+#endif
+  virtual void line_unscaled(int x, int y, int x1, int y1);
+  virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
+  virtual void xyline_unscaled(int x, int y, int x1);
+  virtual void yxline_unscaled(int x, int y, int y1);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   // --- clipping
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -123,14 +134,9 @@ protected:
   void end_complex_polygon();
   void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
-  virtual void line_style_unscaled(int style, float width, char* dashes);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
@@ -144,6 +150,9 @@ protected:
   virtual void font_name(int num, const char *name);
   void global_gc();
   virtual void overlay_rect(int x, int y, int w , int h);
+  virtual void cache_size(Fl_Image *img, int &width, int &height);
+  virtual void* change_pen_width(int width);
+  virtual void reset_pen_width(void *data);
 };
 
 
@@ -165,5 +174,42 @@ public:
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy);
 };
 
+#if USE_GDIPLUS
+
+class Fl_GDIplus_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+private:
+  Gdiplus::Color gdiplus_color_;
+  Gdiplus::Pen *pen_;
+  Gdiplus::SolidBrush *brush_;
+public:
+  Fl_GDIplus_Graphics_Driver();
+  virtual ~Fl_GDIplus_Graphics_Driver();
+  bool active;
+  static void shutdown(void);
+virtual void color(Fl_Color c);
+virtual Fl_Color color() { return color_; }
+virtual void color(uchar r, uchar g, uchar b);
+  virtual void line(int x, int y, int x1, int y1);
+  virtual void line(int x, int y, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void line_style(int style, int width, char* dashes);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void transformed_vertex(double xf, double yf);
+  virtual void vertex(double x,double y);
+  virtual void end_points();
+  virtual void end_line();
+  virtual void end_loop();
+  virtual void end_polygon();
+  virtual void end_complex_polygon();
+  virtual void circle(double x, double y, double r);
+  virtual void antialias(int state);
+  virtual int antialias();
+};
+
+#endif // USE_GDIPLUS
 
 #endif // FL_GDI_GRAPHICS_DRIVER_H

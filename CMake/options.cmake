@@ -52,6 +52,16 @@ if (UNIX)
   list (APPEND FLTK_LDLIBS -lm)
 endif (UNIX)
 
+if (WIN32)
+  option (OPTION_USE_GDIPLUS "use GDI+ when possible for antialiased graphics" ON)
+  if (OPTION_USE_GDIPLUS)
+    set (USE_GDIPLUS TRUE)
+    if (NOT MSVC)
+      list (APPEND FLTK_LDLIBS "-lgdiplus")
+    endif (NOT MSVC)
+  endif (OPTION_USE_GDIPLUS)
+endif (WIN32)
+
 #######################################################################
 if (APPLE)
   option (OPTION_APPLE_X11 "use X11" OFF)
@@ -145,37 +155,68 @@ if (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 endif (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 
 #######################################################################
-include (FindPkgConfig)
+# Include optional Cairo support
+#######################################################################
 
 option (OPTION_CAIRO "use lib Cairo" OFF)
 option (OPTION_CAIROEXT
   "use FLTK code instrumentation for Cairo extended use" OFF
 )
 
-if ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
+set (FLTK_HAVE_CAIRO 0)
+set (FLTK_USE_CAIRO 0)
+
+if (OPTION_CAIRO OR OPTION_CAIROEXT)
   pkg_search_module (PKG_CAIRO cairo)
-endif ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
 
-if (PKG_CAIRO_FOUND)
-  set (FLTK_HAVE_CAIRO 1)
-  add_subdirectory (cairo)
-  list (APPEND FLTK_LDLIBS -lcairo -lpixman-1)
-  include_directories (${PKG_CAIRO_INCLUDE_DIRS})
-  string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
+  # fl_debug_var (PKG_CAIRO_FOUND)
 
-  if (LIB_CAIRO AND OPTION_CAIROEXT)
-    set (FLTK_USE_CAIRO 1)
-    set (FLTK_CAIRO_FOUND TRUE)
+  if (PKG_CAIRO_FOUND)
+    set (FLTK_HAVE_CAIRO 1)
+    if (OPTION_CAIROEXT)
+      set (FLTK_USE_CAIRO 1)
+    endif (OPTION_CAIROEXT)
+    add_subdirectory (cairo)
+
+    if (0)
+      fl_debug_var (PKG_CAIRO_INCLUDE_DIRS)
+      fl_debug_var (PKG_CAIRO_CFLAGS)
+      fl_debug_var (PKG_CAIRO_LIBRARIES)
+      fl_debug_var (PKG_CAIRO_LIBRARY_DIRS)
+      fl_debug_var (PKG_CAIRO_STATIC_INCLUDE_DIRS)
+      fl_debug_var (PKG_CAIRO_STATIC_CFLAGS)
+      fl_debug_var (PKG_CAIRO_STATIC_LIBRARIES)
+      fl_debug_var (PKG_CAIRO_STATIC_LIBRARY_DIRS)
+    endif()
+
+    include_directories (${PKG_CAIRO_INCLUDE_DIRS})
+
+    # Cairo libs and flags for fltk-config
+
+    # Hint: use either PKG_CAIRO_* or PKG_CAIRO_STATIC_* variables to
+    # create the list of libraries used to link programs with cairo
+    # by running fltk-config --use-cairo --compile ...
+    # Currently we're using the non-STATIC variables to link cairo shared.
+
+    set (CAIROLIBS)
+    foreach (lib ${PKG_CAIRO_LIBRARIES})
+      list (APPEND CAIROLIBS "-l${lib}")
+    endforeach()
+
+    string (REPLACE ";" " " CAIROLIBS  "${CAIROLIBS}")
+    string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
+
+    # fl_debug_var (FLTK_LDLIBS)
+    # fl_debug_var (CAIROFLAGS)
+    # fl_debug_var (CAIROLIBS)
+
   else ()
-    set (FLTK_CAIRO_FOUND FALSE)
-  endif (LIB_CAIRO AND OPTION_CAIROEXT)
-else ()
-  if (OPTION_CAIRO OR OPTION_CAIROEXT)
     message (STATUS "*** Cairo was requested but not found - please check your cairo installation")
     message (STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
     message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
-  endif (OPTION_CAIRO OR OPTION_CAIROEXT)
-endif (PKG_CAIRO_FOUND)
+  endif (PKG_CAIRO_FOUND)
+
+endif (OPTION_CAIRO OR OPTION_CAIROEXT)
 
 #######################################################################
 option (OPTION_USE_SVG "read/write SVG files" ON)
@@ -313,87 +354,92 @@ endif (debug_threads)
 unset (debug_threads)
 
 #######################################################################
-option (OPTION_USE_SYSTEM_ZLIB "use system zlib" ON)
+#  Image Library Options
+#######################################################################
+
+option (OPTION_USE_SYSTEM_ZLIB      "use system zlib"    ON)
+
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
+endif ()
+
+#######################################################################
+#  Image Library : ZLIB
+#######################################################################
 
 if (OPTION_USE_SYSTEM_ZLIB)
-  include (FindZLIB)
-endif (OPTION_USE_SYSTEM_ZLIB)
+  find_package (ZLIB)
+endif ()
 
-if (ZLIB_FOUND)
+if (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
+  set (FLTK_USE_BUILTIN_ZLIB FALSE)
   set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
   include_directories (${ZLIB_INCLUDE_DIRS})
-  set (FLTK_BUILTIN_ZLIB_FOUND FALSE)
 else()
   if (OPTION_USE_SYSTEM_ZLIB)
     message (STATUS "cannot find system zlib library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_ZLIB)
+  endif ()
 
   add_subdirectory (zlib)
+  set (FLTK_USE_BUILTIN_ZLIB TRUE)
   set (FLTK_ZLIB_LIBRARIES fltk_z)
   set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-  set (FLTK_BUILTIN_ZLIB_FOUND TRUE)
-endif (ZLIB_FOUND)
+endif ()
 
 set (HAVE_LIBZ 1)
 
 #######################################################################
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
-endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
-  include (FindJPEG)
-endif (OPTION_USE_SYSTEM_LIBJPEG)
+  find_package (JPEG)
+endif ()
 
-if (JPEG_FOUND)
+if (OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+  set (FLTK_USE_BUILTIN_JPEG FALSE)
   set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
   include_directories (${JPEG_INCLUDE_DIR})
-  set (FLTK_BUILTIN_JPEG_FOUND FALSE)
 else ()
   if (OPTION_USE_SYSTEM_LIBJPEG)
     message (STATUS "cannot find system jpeg library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_LIBJPEG)
+  endif ()
 
   add_subdirectory (jpeg)
+  set (FLTK_USE_BUILTIN_JPEG TRUE)
   set (FLTK_JPEG_LIBRARIES fltk_jpeg)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
-  set (FLTK_BUILTIN_JPEG_FOUND TRUE)
-endif (JPEG_FOUND)
+endif ()
 
 set (HAVE_LIBJPEG 1)
 
 #######################################################################
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
-endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBPNG)
-  include (FindPNG)
-endif (OPTION_USE_SYSTEM_LIBPNG)
+  find_package (PNG)
+endif ()
 
-if (PNG_FOUND)
+if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+  set (FLTK_USE_BUILTIN_PNG FALSE)
   set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
   include_directories (${PNG_INCLUDE_DIR})
   add_definitions (${PNG_DEFINITIONS})
-  set (FLTK_BUILTIN_PNG_FOUND FALSE)
 else()
   if (OPTION_USE_SYSTEM_LIBPNG)
     message (STATUS "cannot find system png library - using built-in\n")
-  endif (OPTION_USE_SYSTEM_LIBPNG)
+  endif ()
 
   add_subdirectory (png)
+  set (FLTK_USE_BUILTIN_PNG TRUE)
   set (FLTK_PNG_LIBRARIES fltk_png)
   set (HAVE_PNG_H 1)
   set (HAVE_PNG_GET_VALID 1)
   set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
-  set (FLTK_BUILTIN_PNG_FOUND TRUE)
-endif (PNG_FOUND)
+endif ()
 
 set (HAVE_LIBPNG 1)
 

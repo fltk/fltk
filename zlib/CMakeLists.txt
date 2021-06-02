@@ -1,5 +1,21 @@
+#
+# ZLIB library CMake configuration for the Fast Light Toolkit (FLTK).
+#
+# Copyright 1998-2021 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
+#
 
 # source files for zlib
+
 set (ZLIB_SRCS
       adler32.c
       compress.c
@@ -21,6 +37,7 @@ set (ZLIB_SRCS
 #######################################################################
 
 # Suppress some Visual Studio compiler warnings
+
 set (msvc_warnings /wd4267 /wd4996)
 
 #######################################################################
@@ -38,6 +55,7 @@ endif (MSVC)
 #######################################################################
 
 if (OPTION_BUILD_SHARED_LIBS)
+
   FL_ADD_LIBRARY (fltk_z SHARED "${ZLIB_SRCS}")
 
   if (MSVC)

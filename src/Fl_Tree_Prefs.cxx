@@ -149,7 +149,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelmarginleft        = 3;
   _widgetmarginleft       = 3;
   _linespacing            = 0;
-  _labelfgcolor           = FL_BLACK;
+  _labelfgcolor           = FL_FOREGROUND_COLOR;
   _labelbgcolor           = 0xffffffff;         // we use this as 'transparent'
   _connectorcolor         = Fl_Color(43);
   _connectorstyle         = (Fl_Tree_Connector)Fl::system_driver()->tree_connector_style();

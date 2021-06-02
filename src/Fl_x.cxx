@@ -216,7 +216,7 @@ static void do_queued_events() {
   // we send FL_LEAVE only if the mouse did not enter some other window:
   if (!in_a_window) Fl::handle(FL_LEAVE, 0);
 #if CONSOLIDATE_MOTION
-  else if (send_motion == fl_xmousewin) {
+  else if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
@@ -789,7 +789,7 @@ void open_display_i(Display* d) {
 #endif
 
 #if USE_XRANDR
-  void *libxrandr_addr = Fl_X11_System_Driver::dlopen_or_dlsym("libXrandr");
+  void *libxrandr_addr = Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr");
   if (libxrandr_addr) {
     int error_base;
     typedef Bool (*XRRQueryExtension_type)(Display*, int*, int*);

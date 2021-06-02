@@ -366,6 +366,14 @@
 #cmakedefine FL_NO_PRINT_SUPPORT 1
 
 /*
+ * Do we use GDI+ to get antialiased graphics?
+ */
+ 
+#ifdef _WIN32
+#cmakedefine01 USE_GDIPLUS
+#endif
+
+/*
  * Do we want filename handling and a filechooser?
  */
 

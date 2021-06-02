@@ -21,7 +21,7 @@
 #
 # This macro displays the name and value of a CMake variable.
 # The variable name is expanded with spaces to be (at least)
-# <min_len> (currently 24) characters wide for better readability.
+# <min_len> (currently 30) characters wide for better readability.
 # VARNAME must be a string literal, e.g. WIN32 or "WIN32".
 #
 # Syntax:
@@ -34,7 +34,7 @@
 #######################################################################
 
 macro (fl_debug_var name)
-  set (min_len 24)
+  set (min_len 30)
   set (var "${name}")
   string(LENGTH "${var}" len)
   while (len LESS min_len)

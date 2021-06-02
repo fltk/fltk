@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h>
+
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif

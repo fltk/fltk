@@ -44,6 +44,33 @@ void Fl_Scroll::fix_scrollbar_order() {
   }
 }
 
+
+/**
+  Removes the widget at \p index from the group and deletes it.
+
+  This method does nothing if \p index is out of bounds or
+  if Fl_Group::child(index) is one of the scrollbars.
+
+  \param[in]  index   index of child to be removed
+
+  \returns    success (0) or error code
+  \retval     0   success
+  \retval     1   index out of range
+  \retval     2   widget not allowed to be removed (see note)
+
+  \see Fl_Group::delete_child()
+
+  \since FLTK 1.4.0
+*/
+int Fl_Scroll::delete_child(int index) {
+  if (index < 0 || index >= children())
+    return 1;
+  Fl_Widget *w = child(index);
+  if (w == &scrollbar || w == &hscrollbar)
+    return 2; // can't delete scrollbars
+  return Fl_Group::delete_child(index);
+}
+
 // Draw widget's background and children within a specific clip region
 //    So widget can just redraw damaged parts.
 //

@@ -1,7 +1,7 @@
 //
 // Header file for Fl_Text_Buffer class.
 //
-// Copyright 2001-2017 by Bill Spitzak and others.
+// Copyright 2001-2021 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -22,7 +22,7 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
-#include <stdarg.h>     /* va_start/end */
+#include <stdarg.h>     /* va_list */
 
 #undef ASSERT_UTF8
 

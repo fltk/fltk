@@ -68,7 +68,12 @@ public:
   virtual int need_menu_handle_part2() {return 1;}
 #if HAVE_DLFCN_H
   virtual void *load(const char *filename);
+#if HAVE_DLSYM
+  static void *ptr_gtk;
+  static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
 #endif
+#endif
+  static void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
   // these 4 are implemented in Fl_lock.cxx
   virtual void awake(void*);
   virtual int lock();
@@ -83,6 +88,8 @@ public:
   virtual void lock_ring();
   virtual void unlock_ring();
 #endif
+  virtual void make_transient(void *ptr_gtk, void *gtk_window, Fl_Window *win) {}
+  virtual void emulate_modal_dialog() {}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

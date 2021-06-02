@@ -13,3 +13,5 @@
 
     For more information see README.txt:
     https://github.com/fltk/fltk/blob/master/README.txt
+
+![Build](https://github.com/fltk/fltk/actions/workflows/build.yml/badge.svg)

@@ -30,7 +30,7 @@
 #include "flstring.h"
 #include <ctype.h>
 #include <math.h>
-
+#include <stdlib.h>
 
 char fl_draw_shortcut;  // set by fl_labeltypes.cxx
 
@@ -457,4 +457,21 @@ int fl_height(int font, int size) {
     int height = fl_height();
     fl_font(tf,ts);                       // restore
     return(height);
+}
+
+/** Removes any GUI scaling factor in subsequent drawing operations.
+ This must be matched by a later call to fl_restore_scale().
+ This function can be used to transiently perform drawing operations
+ that are not rescaled by the current value of the GUI scaling factor.
+ The resulting drawing context has no clipping region.
+ \return The GUI scaling factor value that was in place when the function started.
+ */
+float fl_override_scale() {
+  return fl_graphics_driver->override_scale();
+}
+
+/** Restores the GUI scaling factor and the clipping region in subsequent drawing operations.
+ \param s Value returned by a previous call to fl_override_scale(). */
+void fl_restore_scale(float s) {
+  fl_graphics_driver->restore_scale(s);
 }

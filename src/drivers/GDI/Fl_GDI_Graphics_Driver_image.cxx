@@ -320,19 +320,19 @@ void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void*
   }
 }
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #if USE_COLORMAP
+void Fl_GDI_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   // use the error diffusion dithering code to produce a much nicer block:
   if (fl_palette) {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,(HDC)fl_graphics_driver->gc());
+    innards(c, floor(x), floor(y), floor(x + w) - floor(x), floor(y + h) - floor(y),
+            0,0,0,0,0, (HDC)gc());
     return;
   }
-#endif
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
+  Fl_Graphics_Driver::colored_rectf(x, y, w, h, r, g, b);
 }
+#endif
 
 // 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
@@ -398,10 +398,10 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(bm, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -499,10 +499,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(img, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
@@ -536,25 +536,22 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  bool need_clip = (cx || cy || WP != rgb->w() || HP != rgb->h());
-  if (need_clip) {
-    push_clip(XP, YP, WP, HP);
-    XP -= cx; YP -= cy; cx = cy = 0; WP = rgb->w(); HP = rgb->h();
-  }
-  int W = WP, H = HP;
-  cache_size(rgb, W, H);
+  push_clip(XP, YP, WP, HP);
+  XP -= cx; YP -= cy;
+  WP = rgb->w(); HP = rgb->h();
+  cache_size(rgb, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
+    alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, int(XP*scale()), int(YP*scale()), W, H, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
+    StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
-  if (need_clip) pop_clip();
+  pop_clip();
 }
 
 
@@ -631,10 +628,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = int(X * scale());
-  Y = int(Y * scale());
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(pxm, W, H);
-  cx = int(cx * scale()); cy = int(cy * scale());
+  cx = this->floor(cx); cy = this->floor(cy);
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);

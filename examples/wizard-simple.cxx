@@ -3,7 +3,7 @@
 //      Originally from erco's cheat sheet 06/05/2010, permission by author.
 //
 // Copyright 2010 Greg Ercolano.
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,7 +15,7 @@
 //
 //     https://www.fltk.org/bugs.php
 //
-#include <stdlib.h>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
@@ -30,7 +30,7 @@ Fl_Wizard *G_wiz = 0;
 
 void back_cb(Fl_Widget*,void*) { G_wiz->prev(); }
 void next_cb(Fl_Widget*,void*) { G_wiz->next(); }
-void done_cb(Fl_Widget*,void*) { exit(0); }
+void done_cb(Fl_Widget*w,void*) { w->window()->hide(); }
 
 int main(int argc, char **argv) {
     G_win = new Fl_Window(400,300,"Example Wizard");

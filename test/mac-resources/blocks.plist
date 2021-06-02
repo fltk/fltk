@@ -5,10 +5,10 @@
 	<string>6.0</string>
 
 	<key>CFBundleExecutable</key>
-	<string>sudoku</string>
+	<string>blocks</string>
 
 	<key>CFBundleIdentifier</key>
-	<string>org.fltk.sudoku</string>
+	<string>org.fltk.blocks</string>
 
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
@@ -17,28 +17,28 @@
 	<string>English</string>
 
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2005-2006 by Michael Sweet</string>
+	<string>Copyright 2006-2021 by Michael Sweet</string>
 
 	<key>CFAppleHelpAnchor</key>
 	<string>help</string>
 
 	<key>CFBundleName</key>
-	<string>sudoku</string>
+	<string>blocks</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 
 	<key>CFBundleSignature</key>
-	<string>FLSU</string>
+	<string>BLKS</string>
 
 	<key>CFBundleIconFile</key>
-	<string>sudoku.icns</string>
+	<string>blocks.icns</string>
 
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 
 	<key>CFBundleGetInfoString</key>
-	<string>1.0, Copyright 2005-2006 by Michael Sweet</string>
+	<string>1.0, Copyright 2006-2021 by Michael Sweet</string>
 
 	<key>NSHighResolutionCapable</key>
 	<true/>

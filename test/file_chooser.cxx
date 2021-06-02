@@ -2,7 +2,7 @@
 // File chooser test program.
 //
 // Copyright 1999-2010 by Michael Sweet.
-// Copyright 2011-2019 by Bill Spitzak and others.
+// Copyright 2011-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,6 @@
 // Include necessary headers...
 //
 
-#include <stdio.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Shared_Image.H>
@@ -38,7 +37,10 @@
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Simple_Terminal.H>
+
+#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>     // exit()
 #include <locale.h>     // setlocale()..
 
 #define TERMINAL_HEIGHT 120
@@ -300,7 +302,7 @@ pdf_check(const char *name,     // I - Name of file
           "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
           "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
 
-  if (system(command)) return 0;
+  if (fl_system(command)) return 0;
 
   return new Fl_PNM_Image(preview);
 }
@@ -363,7 +365,7 @@ ps_check(const char *name,      // I - Name of file
           "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
           preview, outname);
 
-  if (system(command)) return 0;
+  if (fl_system(command)) return 0;
 
   return new Fl_PNM_Image(preview);
 }

@@ -31,127 +31,106 @@
 
 // --- line and polygon drawing with integer coordinates
 
-void Fl_GDI_Graphics_Driver::point_unscaled(float fx, float fy) {
-  int width = (scale() >= 1 ? int(scale()) : 1);
-  RECT rect;
-  rect.left = int(fx); rect.top = int(fy);
-  rect.right = int(fx) + width; rect.bottom = int(fy) + width;
-  FillRect(gc_, &rect, fl_brush());
+void Fl_GDI_Graphics_Driver::point(int x, int y) {
+  rectf(x, y, 1, 1);
 }
 
 void Fl_GDI_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
   // make pen have a one-pixel width
   line_style_unscaled( (color()==FL_WHITE?FL_SOLID:FL_DOT), 1, NULL);
-  loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1);
-}
-
-void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h)
-{
-  if (w > 0 && h > 0) {
-    float s = scale();
-    xyline_unscaled(x*s, y*s, (x+w-1)*s);
-    yxline_unscaled(x*s, y*s, (y+h-1)*s);
-    yxline_unscaled((x+w-1)*s, y*s, (y+h-1)*s);
-    xyline_unscaled(x*s, (y+h-1)*s, (x+w-1)*s);
-  }
+  int right = this->floor(x+w-1), bottom = this->floor(y+h-1);
+  x = this->floor(x); y = this->floor(y);
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, right, y);
+  LineTo(gc_, right, bottom);
+  LineTo(gc_, x, bottom);
+  LineTo(gc_, x, y);
 }
 
 void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   // Windows 95/98/ME do not implement the dotted line style, so draw
   // every other pixel around the focus area...
-  w--; h--;
+  w = floor(x+w-1) - floor(x) + 1;
+  h = floor(y+h-1) - floor(y) + 1;
+  x = floor(x); y = floor(y);
   int i=1, xx, yy;
-  for (xx = 0; xx < w; xx++, i++) if (i & 1) point(x + xx, y);
-  for (yy = 0; yy < h; yy++, i++) if (i & 1) point(x + w, y + yy);
-  for (xx = w; xx > 0; xx--, i++) if (i & 1) point(x + xx, y + h);
-  for (yy = h; yy > 0; yy--, i++) if (i & 1) point(x, y + yy);
+  COLORREF c = fl_RGB();
+  for (xx = 0; xx < w; xx++, i++) if (i & 1) SetPixel(gc_, x+xx, y, c);
+  for (yy = 0; yy < h; yy++, i++) if (i & 1) SetPixel(gc_, x+w, y+yy, c);
+  for (xx = w; xx > 0; xx--, i++) if (i & 1) SetPixel(gc_, x+xx, y+h, c);
+  for (yy = h; yy > 0; yy--, i++) if (i & 1) SetPixel(gc_, x, y+yy, c);
 }
 
-void Fl_GDI_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
-  if (w<=0 || h<=0) return;
+void Fl_GDI_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {
   RECT rect;
-  rect.left = int(x); rect.top = int(y);
-  rect.right = int(x + w); rect.bottom = int(y + h);
+  rect.left = x; rect.top = y;
+  rect.right = (x + w); rect.bottom = (y + h);
   FillRect(gc_, &rect, fl_brush());
 }
 
-void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1) {
-  MoveToEx(gc_, int(x), int(y), 0L);
-  LineTo(gc_, int(x1), int(y1));
-  SetPixel(gc_, int(x1), int(y1), fl_RGB());
+void Fl_GDI_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x1, y1);
+  SetPixel(gc_, x1, y1, fl_RGB());
 }
 
-void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
-  MoveToEx(gc_, int(x), int(y), 0L);
-  LineTo(gc_, int(x1), int(y1));
-  LineTo(gc_, int(x2), int(y2));
-  SetPixel(gc_, int(x2), int(y2), fl_RGB());
+void Fl_GDI_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x1, y1);
+  LineTo(gc_, x2, y2);
+  SetPixel(gc_, x2, y2, fl_RGB());
 }
 
-void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
-  int line_delta_ =  (scale() > 1.75 ? 1 : 0);
-  int tw = line_width_ ? line_width_ : 1; // true line width
-  if (x > x1) { float exch = x; x = x1; x1 = exch; }
-  int ix = int(x) + line_delta_; if (scale() >= 2.f) ix -= int(scale()/2);
-  int iy = int(y) + line_delta_;
-  if (scale() > 1.9 && line_width_/scale() >= 2) iy--;
-  int ix1 = int( int(x1/scale()+1.5f) * scale() ) - 1; // extend line to pixel before line beginning at x1/scale_ + 1
-  ix1 += line_delta_; if (scale() >= 2) ix1 -= 1;; if (scale() >= 4) ix1 -= 1;
-  MoveToEx(gc_, ix, iy, 0L); LineTo(gc_, ix1+1, iy);
-  // try and make sure no unfilled area lies between xyline(x,y,x1) and xyline(x,y+1,x1)
-  if (int(scale()) != scale() && y+line_delta_ + scale() >= iy + tw+1 - 0.001 ) {
-    MoveToEx(gc_, ix, iy+1, 0L); LineTo(gc_, ix1+1, iy+1);
-  }
+void* Fl_GDI_Graphics_Driver::change_pen_width(int width) { // set the width of the pen, return previous pen
+  LOGBRUSH penbrush = {BS_SOLID, fl_RGB(), 0};
+  HPEN newpen = ExtCreatePen(PS_GEOMETRIC | PS_ENDCAP_FLAT | PS_JOIN_ROUND, width, &penbrush, 0, 0);
+  return SelectObject(gc_, newpen);
 }
 
-void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
-  if (y1 < y) { float exch = y; y = y1; y1 = exch;}
-  int line_delta_ =  (scale() > 1.75 ? 1 : 0);
-  int tw = line_width_ ? line_width_ : 1; // true line width
-
-  int ix = int(x) + line_delta_;
-  if (scale() > 1.9 && line_width_/scale() >= 2) ix--;
-  int iy = int(y) + line_delta_; if (scale() >= 2) iy -= int(scale()/2);
-  int iy1 = int( int(y1/scale()+1.5) * scale() ) - 1;
-  iy1 += line_delta_; if (scale() >= 2) iy1 -= 1;; if (scale() >= 4) iy1 -= 1; // extend line to pixel before line beginning at y1/scale_ + 1
-  MoveToEx(gc_, ix, iy, 0L); LineTo(gc_, ix, iy1+1);
-  // try and make sure no unfilled area lies between yxline(x,y,y1) and yxline(x+1,y,y1)
-  if (int(scale()) != scale() && x+line_delta_+scale() >= ix + tw+1 -0.001) {
-    MoveToEx(gc_, ix+1, iy, 0L); LineTo(gc_, ix+1, iy1+1);
-  }
-
+void Fl_GDI_Graphics_Driver::reset_pen_width(void *data) {
+  DeleteObject(SelectObject(gc_, (HPEN)data));
 }
 
-void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
-  MoveToEx(gc_, int(x), int(y), 0L);
-  LineTo(gc_, int(x1), int(y1));
-  LineTo(gc_, int(x2), int(y2));
-  LineTo(gc_, int(x), int(y));
+void Fl_GDI_Graphics_Driver::xyline_unscaled(int x, int y, int x1) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x1+1 , y);
 }
 
-void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
-  MoveToEx(gc_, int(x), int(y), 0L);
-  LineTo(gc_, int(x1), int(y1));
-  LineTo(gc_, int(x2), int(y2));
-  LineTo(gc_, int(x3), int(y3));
-  LineTo(gc_, int(x), int(y));
+void Fl_GDI_Graphics_Driver::yxline_unscaled(int x, int y, int y1) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x, y1+1);
 }
 
-void Fl_GDI_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
+void Fl_GDI_Graphics_Driver::loop_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x1, y1);
+  LineTo(gc_, x2, y2);
+  LineTo(gc_, x, y);
+}
+
+void Fl_GDI_Graphics_Driver::loop_unscaled(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  MoveToEx(gc_, x, y, 0L);
+  LineTo(gc_, x1, y1);
+  LineTo(gc_, x2, y2);
+  LineTo(gc_, x3, y3);
+  LineTo(gc_, x, y);
+}
+
+void Fl_GDI_Graphics_Driver::polygon_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
   POINT p[3];
-  p[0].x = int(x);  p[0].y = int(y);
-  p[1].x = int(x1); p[1].y = int(y1);
-  p[2].x = int(x2); p[2].y = int(y2);
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
   SelectObject(gc_, fl_brush());
   Polygon(gc_, p, 3);
 }
 
-void Fl_GDI_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
+void Fl_GDI_Graphics_Driver::polygon_unscaled(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   POINT p[4];
-  p[0].x = int(x);  p[0].y = int(y);
-  p[1].x = int(x1); p[1].y = int(y1);
-  p[2].x = int(x2); p[2].y = int(y2);
-  p[3].x = int(x3); p[3].y = int(y3);
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x3; p[3].y = y3;
   SelectObject(gc_, fl_brush());
   Polygon(gc_, p, 4);
 }
@@ -232,3 +211,95 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
     if (r) unscale_clip(r);
   }
 }
+
+#if USE_GDIPLUS
+
+void Fl_GDIplus_Graphics_Driver::line(int x, int y, int x1, int y1) {
+  if (!active) return Fl_Scalable_Graphics_Driver::line(x, y, x1, y1);
+  bool AA = !(x == x1 || y == y1);
+  Gdiplus::Graphics graphics_(gc_);
+  graphics_.ScaleTransform(scale(), scale());
+  pen_->SetColor(gdiplus_color_);
+  if (AA) graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+  graphics_.DrawLine(pen_, x, y, x1, y1);
+}
+
+void Fl_GDIplus_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+  if (!active) return Fl_Scalable_Graphics_Driver::line(x, y, x1, y1, x2, y2);
+  line(x, y, x1, y1);
+  line(x1, y1, x2, y2);
+}
+
+void Fl_GDIplus_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
+  if (!active) return Fl_Scalable_Graphics_Driver::loop(x0, y0, x1, y1, x2, y2);
+  Gdiplus::GraphicsPath path;
+  Gdiplus::Point gdi2_p[3] = {Gdiplus::Point(x0, y0), Gdiplus::Point(x1, y1), Gdiplus::Point(x2, y2)};
+  path.AddLines(gdi2_p, 3);
+  path.CloseFigure();
+  Gdiplus::Graphics graphics_(gc_);
+  graphics_.ScaleTransform(scale(), scale());
+  pen_->SetColor(gdiplus_color_);
+  graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+  graphics_.DrawPath(pen_, &path);
+}
+
+#define fl_min(a,b) (a < b ? a : b)
+#define fl_max(a,b) (a > b ? a : b)
+void Fl_GDIplus_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  if ( (x0 == x3 && x1 == x2 && y0 == y1 && y3 == y2) ||
+      (x0 == x1 && y1 == y2 && x2 == x3 && y3 == y0) ) { // rectangular loop
+    int left = fl_min(x0, fl_min(x1, fl_min(x2, x3)));
+    int right = fl_max(x0, fl_max(x1, fl_max(x2, x3)));
+    int top = fl_min(y0, fl_min(y1, fl_min(y2, y3)));
+    int bottom = fl_max(y0, fl_max(y1, fl_max(y2, y3)));
+    rect(left, top, right-left+1, bottom-top+1);
+  } else {
+    if (!active) return Fl_Scalable_Graphics_Driver::loop(x0, y0, x1, y1, x2, y2, x3, y3);
+    Gdiplus::GraphicsPath path;
+    Gdiplus::PointF gdi2_p[4] = {Gdiplus::PointF(x0+1-line_width_/2.f, y0+1-line_width_/2.f), Gdiplus::PointF(x1+1-line_width_/2.f, y1+1-line_width_/2.f), Gdiplus::PointF(x2+1-line_width_/2.f, y2+1-line_width_/2.f), Gdiplus::PointF(x3+1-line_width_/2.f, y3+1-line_width_/2.f)};
+    path.AddLines(gdi2_p, 4);
+    path.CloseFigure();
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    pen_->SetColor(gdiplus_color_);
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    graphics_.DrawPath(pen_, &path);
+  }
+}
+
+void Fl_GDIplus_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
+  if (!active) return Fl_Scalable_Graphics_Driver::polygon(x0, y0, x1, y1, x2, y2);
+  Gdiplus::GraphicsPath path;
+  path.AddLine(x0, y0, x1, y1);
+  path.AddLine(x1, y1, x2, y2);
+  path.CloseFigure();
+  Gdiplus::Graphics graphics_(gc_);
+  graphics_.ScaleTransform(scale(), scale());
+  brush_->SetColor(gdiplus_color_);
+  graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+  graphics_.FillPath(brush_, &path);
+}
+
+void Fl_GDIplus_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  if ( (x0 == x3 && x1 == x2 && y0 == y1 && y3 == y2) ||
+      (x0 == x1 && y1 == y2 && x2 == x3 && y3 == y0) ) {
+    int left = fl_min(x0, fl_min(x1, fl_min(x2, x3)));
+    int right = fl_max(x0, fl_max(x1, fl_max(x2, x3)));
+    int top = fl_min(y0, fl_min(y1, fl_min(y2, y3)));
+    int bottom = fl_max(y0, fl_max(y1, fl_max(y2, y3)));
+    rectf(left, top, right-left, bottom-top);
+  } else {
+    if (!active) return Fl_Scalable_Graphics_Driver::polygon(x0, y0, x1, y1, x2, y2, x3, y3);
+    Gdiplus::GraphicsPath path;
+    path.AddLine(x0, y0, x1, y1);
+    path.AddLine(x1, y1, x2, y2);
+    path.AddLine(x2, y2, x3, y3);
+    path.CloseFigure();
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    brush_->SetColor(gdiplus_color_);
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    graphics_.FillPath(brush_, &path);
+  }
+}
+#endif

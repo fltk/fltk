@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt used to build test and demo apps by the CMake build system
 #
-# Copyright 2004-2020 by Bill Spitzak and others.
+# Copyright 2004-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -57,7 +57,7 @@ CREATE_EXAMPLE (arc arc.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (animated animated.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (ask ask.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (bitmap bitmap.cxx fltk ANDROID_OK)
-CREATE_EXAMPLE (blocks "blocks.cxx;blocks.icns" "fltk;${AUDIOLIBS}")
+CREATE_EXAMPLE (blocks "blocks.cxx;blocks.plist;blocks.icns" "fltk;${AUDIOLIBS}")
 CREATE_EXAMPLE (boxtype boxtype.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (browser browser.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (button button.cxx fltk ANDROID_OK)
@@ -71,13 +71,17 @@ CREATE_EXAMPLE (curve curve.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (demo demo.cxx fltk)
 CREATE_EXAMPLE (device device.cxx "fltk_images;fltk")
 CREATE_EXAMPLE (doublebuffer doublebuffer.cxx fltk ANDROID_OK)
-CREATE_EXAMPLE (editor "editor.cxx;editor-Info.plist" fltk ANDROID_OK)
+CREATE_EXAMPLE (editor "editor.cxx;editor.plist" fltk ANDROID_OK)
 CREATE_EXAMPLE (fast_slow fast_slow.fl fltk ANDROID_OK)
 CREATE_EXAMPLE (file_chooser file_chooser.cxx "fltk_images;fltk")
 CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
 CREATE_EXAMPLE (fonts fonts.cxx fltk)
 CREATE_EXAMPLE (forms forms.cxx "fltk_forms;fltk")
-CREATE_EXAMPLE (handle_events handle_events.cxx "fltk_gl;fltk") # opt. Fl_Gl_Window
+if (OPENGL_FOUND)
+  CREATE_EXAMPLE (handle_events handle_events.cxx "fltk_gl;fltk") # opt. Fl_Gl_Window
+else()
+  CREATE_EXAMPLE (handle_events handle_events.cxx fltk) # w/o Fl_Gl_Window
+endif()
 CREATE_EXAMPLE (hello hello.cxx fltk)
 CREATE_EXAMPLE (help_dialog help_dialog.cxx "fltk_images;fltk")
 CREATE_EXAMPLE (icon icon.cxx fltk)
@@ -116,7 +120,7 @@ CREATE_EXAMPLE (resize-example4b "resize-example4b.cxx;resize-arrows.cxx" fltk)
 CREATE_EXAMPLE (rotated_text rotated_text.cxx fltk)
 CREATE_EXAMPLE (scroll scroll.cxx fltk)
 CREATE_EXAMPLE (subwindow subwindow.cxx fltk)
-CREATE_EXAMPLE (sudoku "sudoku.cxx;sudoku.icns;sudoku.rc" "fltk_images;fltk;${AUDIOLIBS}")
+CREATE_EXAMPLE (sudoku "sudoku.cxx;sudoku.plist;sudoku.icns;sudoku.rc" "fltk_images;fltk;${AUDIOLIBS}")
 CREATE_EXAMPLE (symbols symbols.cxx fltk)
 CREATE_EXAMPLE (tabs tabs.fl fltk)
 CREATE_EXAMPLE (table table.cxx fltk)

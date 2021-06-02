@@ -97,10 +97,10 @@ public:
   static void draw_string_with_texture(const char* str, int n); // cross-platform
   // support for gl_draw(). The cross-platform version may be enough.
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
-  virtual Fl_Fontsize effective_size();
   virtual int genlistsize() { return 0; } // support for gl_draw()
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
+  static inline Fl_Gl_Window_Driver* driver(const Fl_Gl_Window *win) {return win->pGlWindowDriver;}
 };
 
 #endif /* Fl_Gl_Window_Driver_H */

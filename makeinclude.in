@@ -1,7 +1,7 @@
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,10 @@
 FL_VERSION		= @FLTK_VERSION@
 FL_DSO_VERSION		= @FL_DSO_VERSION@
 FL_ABI_VERSION		= @FL_ABI_VERSION@
+
+# FLTK version for documentation generation with doxygen
+
+FLTK_VERSION		= @FLTK_VERSION@
 
 # FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT }
 

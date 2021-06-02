@@ -217,6 +217,9 @@ if (USE_X11)
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
     )
+    if (USE_PANGO)
+      set (DRIVER_FILES ${DRIVER_FILES} drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx)
+    endif (USE_PANGO)
   else ()
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -518,7 +521,7 @@ endif (WIN32)
 
 if (FLTK_HAVE_CAIRO)
   list (APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif (FLTK_HAVE_CAIRO)
+endif (FLTK_HAVE_CAIRO)
 
 if (HAVE_XINERAMA)
   list (APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
@@ -537,10 +540,9 @@ if (HAVE_XRENDER)
 endif (HAVE_XRENDER)
 
 if (USE_PANGO)
-  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT} ${HAVE_LIB_PANGOCAIRO} ${HAVE_LIB_CAIRO} ${HAVE_LIB_GOBJECT})
-  #if (NOT APPLE)
-  #  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT} )
-  #endif (NOT APPLE)
+  ### FIXME ###  This needs to use the PKG_* variables directly
+  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT} ${HAVE_LIB_PANGOCAIRO})
+  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_CAIRO} ${HAVE_LIB_GOBJECT})
 endif (USE_PANGO)
 
 if (USE_XFT)

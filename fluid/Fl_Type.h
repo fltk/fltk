@@ -29,6 +29,7 @@
 #include "Fluid_Image.h"
 #include <FL/fl_draw.H>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
   #include "ExternalCodeEditor_WIN32.h"

@@ -28,11 +28,6 @@
 #define USE_PANGO 0
 #endif
 
-#if USE_PANGO
-typedef struct _cairo cairo_t;
-typedef struct _PangoLayout  PangoLayout;
-#endif
-
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
@@ -42,14 +37,51 @@ typedef struct _PangoLayout  PangoLayout;
 /**
  PostScript graphical backend.
  */
+#if USE_PANGO
+
+#include "../Cairo/Fl_Cairo_Graphics_Driver.H"
+
+class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+public:
+  FILE *output;
+  Fl_PostScript_Close_Command close_cmd_;
+  enum Fl_Paged_Device::Page_Format page_format_;
+  char *ps_filename_;
+  int nPages;
+
+  Fl_PostScript_Graphics_Driver();
+  ~Fl_PostScript_Graphics_Driver();
+  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};
+  FILE * file() {return output;};
+  void page(double pw, double ph, int media = 0);
+  void page(int format);
+  int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
+  int start_eps(int width, int height);
+  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD);
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) {
+    Fl_Cairo_Graphics_Driver::draw_image(call, data, x,y,w,h,delta);
+  }
+  void font(int f, int s);
+  Fl_Font font();
+  double width(const char *s, int n);
+  double width(unsigned u);
+  int height();
+  int descent();
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b) {Fl_Cairo_Graphics_Driver::color(r,g,b);}
+  Fl_Color color();
+  void point(int x, int y);
+  int not_clipped(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  virtual PangoFontDescription* pango_font_description(Fl_Font fnum);
+  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+};
+
+#else // USE_PANGO
 
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 private:
-#if USE_PANGO
-  cairo_t *cairo_;
-  PangoLayout *pango_layout_;
-  void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
-#else
   void transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl);
   void *prepare_rle85();
   void write_rle85(uchar b, void *data);
@@ -58,13 +90,11 @@ private:
   void write85(void *data, const uchar *p, int len);
   void close85(void *data);
   int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
-#endif
 protected:
   uchar **mask_bitmap() {return &mask;}
 public:
   Fl_PostScript_Graphics_Driver();
-#ifndef FL_DOXYGEN
-  enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
+  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS};
 
   class Clip {
   public:
@@ -76,11 +106,25 @@ public:
   int lang_level_;
   int gap_;
   int pages_;
+  int interpolate_; //interpolation of images
+  uchar * mask;
+  int mx; // width of mask;
+  int my; // mask lines
+  int page_policy_;
+  void page_policy(int p);
+  int page_policy(){return page_policy_;};
+  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
+  /** Shields output PostScript data from modifications of the current locale.
+   It typically avoids PostScript errors caused if the current locale uses comma instead of dot
+   as "decimal point".
+   \param format  directives controlling output PostScript data
+   \return value returned by vfprintf() call
+   */
+  int clocale_printf(const char *format, ...);
 
-  int shape_;
+  enum SHAPE shape_;
   int linewidth_;// need for clipping, lang level 1-2
   int linestyle_;//
-  int interpolate_; //interpolation of images
   unsigned char cr_,cg_,cb_;
   char  linedash_[256];//should be enough
   void concat();  // transform ror scalable dradings...
@@ -88,13 +132,9 @@ public:
   void recover(); //recovers the state after grestore (such as line styles...)
   void reset();
 
-  uchar * mask;
-  int mx; // width of mask;
-  int my; // mask lines
   Fl_PostScript_Close_Command close_cmd_;
-  int page_policy_;
   int nPages;
-  int orientation_;
+  //int orientation_;
 
   float scale_x;
   float scale_y;
@@ -108,31 +148,26 @@ public:
   uchar bg_r, bg_g, bg_b;
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   int start_eps(int width, int height);
-  /*  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
-   */
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
-  void transformed_draw(const char* s, double x, double y);
-  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
+  //void transformed_draw(const char* s, double x, double y);
 
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
 
-  void page_policy(int p);
-  int page_policy(){return page_policy_;};
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};
   FILE * file() {return output;};
   //void orientation (int o);
   //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor
-  void interpolate(int i){interpolate_=i;};
-  int interpolate(){return interpolate_;}
+  //void interpolate(int i){interpolate_=i;};
+  //int interpolate(){return interpolate_;}
 
   void page(double pw, double ph, int media = 0);
   void page(int format);
-#endif // FL_DOXYGEN
 
   // implementation of drawing methods
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
+  Fl_Color color();
 
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -191,6 +226,7 @@ public:
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void font(int face, int size);
+  Fl_Font font();
   double width(const char *, int);
   double width(unsigned int u);
   void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
@@ -199,19 +235,6 @@ public:
   void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-#if USE_PANGO
-  cairo_t *cr() { return cairo_; }
-  PangoLayout *pango_layout() {return pango_layout_;};
-  void check_status(void);
-#else
-  /** Shields output PostScript data from modifications of the current locale.
-   It typically avoids PostScript errors caused if the current locale uses comma instead of dot
-   as "decimal point".
-   \param format  directives controlling output PostScript data
-   \return value returned by vfprintf() call
-   */
-  int clocale_printf(const char *format, ...);
-#endif
   ~Fl_PostScript_Graphics_Driver();
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
@@ -222,6 +245,7 @@ public:
   void ps_untranslate();
 };
 
+#endif // USE_PANGO
 /**
 \}
 \endcond

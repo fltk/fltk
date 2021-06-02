@@ -430,7 +430,7 @@ void _Fl_Gl_Overlay::draw() {
   uchar save_valid = w->valid();
   w->valid(valid());
   Fl_Xlib_Graphics_Driver::fl_overlay = 1;
-  w->gl_driver()->draw_overlay();
+  Fl_Gl_Window_Driver::driver(w)->draw_overlay();
   Fl_Xlib_Graphics_Driver::fl_overlay = 0;
   valid(w->valid());
   w->valid(save_valid);

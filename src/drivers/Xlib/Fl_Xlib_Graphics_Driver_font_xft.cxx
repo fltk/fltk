@@ -779,8 +779,8 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
 
   w = gi.width;
   h = gi.height;
-  dx = -gi.x + line_delta_;
-  dy = -gi.y + line_delta_;
+  dx = -gi.x ;
+  dy = -gi.y ;
   correct_extents(scale(), dx, dy, w, h);
 }
 
@@ -788,10 +788,10 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
 
   // transform coordinates and clip if outside 16-bit space (STR 2798)
 
-  int x1 = x + offset_x_ * scale() + line_delta_;
+  int x1 = x + floor(offset_x_) ;
   if (x1 < clip_min() || x1 > clip_max()) return;
 
-  int y1 = y + offset_y_ * scale() + line_delta_;
+  int y1 = y + floor(offset_y_) ;
   if (y1 < clip_min() || y1 > clip_max()) return;
 
 #if USE_OVERLAY
@@ -870,7 +870,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+floor(offset_x_), y+floor(offset_y_), (FcChar32 *)str, n);
 }
 
 
@@ -1012,6 +1012,10 @@ float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
 Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   //  XftFontClose(fl_display, font);
+#if USE_PANGO
+  if (width) for (int i = 0; i < 64; i++) delete[] width[i];
+  delete[] width;
+#endif
 }
 
 
@@ -1256,12 +1260,12 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
-  do_draw(0, str, n, x+offset_x_*scale(), y+offset_y_*scale());
+  do_draw(0, str, n, x + floor(offset_x_), y + floor(offset_y_));
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
-  pango_matrix_translate(&mat, x+offset_x_*scale(), y+offset_y_*scale()); // 1.6
+  pango_matrix_translate(&mat, x + floor(offset_x_), y + floor(offset_y_)); // 1.6
   double l = width_unscaled(str, n);
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
@@ -1275,7 +1279,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {
-  do_draw(1, str, n, x+offset_x_*scale(), y+offset_y_*scale());
+  do_draw(1, str, n, x+floor(offset_x_), y+floor(offset_y_));
 }
 
 /* Compute dx, dy, w, h so that fl_rect(x+dx, y+dy, w, h) is the bounding box
@@ -1343,11 +1347,49 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   if (from_right) {
     x -= w;
   }
-  pango_xft_render_layout(draw_, &color, playout_, (x + line_delta_)*PANGO_SCALE,
-                          (y - y_correction + line_delta_ - lheight + desc)*PANGO_SCALE ); // 1.8
+  pango_xft_render_layout(draw_, &color, playout_, x * PANGO_SCALE,
+                          (y - y_correction  - lheight + desc) * PANGO_SCALE ); // 1.8
   }
 
+// cache the widths of single Unicode characters
+double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int utf32) {
+  unsigned r=0;
+  Fl_Xlib_Font_Descriptor *desc = NULL;
+  if (utf32 <= 0xFFFF) {
+    desc = (Fl_Xlib_Font_Descriptor*)font_descriptor();
+    r = (utf32 & 0xFC00) >> 10;
+    if (!desc->width) {
+      desc->width = (int**)new int*[64];
+      memset(desc->width, 0, 64*sizeof(int*));
+    }
+    if (!desc->width[r]) {
+      desc->width[r] = (int*)new int[0x0400];
+      for (int i = 0; i < 0x0400; i++) desc->width[r][i] = -1;
+    } else {
+      if ( desc->width[r][utf32&0x03FF] >= 0 ) { // already cached
+        return double(desc->width[r][utf32 & 0x03FF]);
+      }
+    }
+  }
+  char buf4[4];
+  int n = fl_utf8encode(utf32, buf4);
+  double width = do_width_unscaled_(buf4, n);
+  if (utf32 <= 0xFFFF) {
+    desc->width[r][utf32 & 0x03FF] = (int)width;
+  }
+  return width;
+}
+
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
+  if (n == fl_utf8len(*str)) { // str contains a single unicode character
+    int l;
+    unsigned c = fl_utf8decode(str, str+n, &l);
+    return width_unscaled(c); // that character's width may have been cached
+  }
+  return do_width_unscaled_(str, n); // full width computation for multi-char strings
+}
+
+double Fl_Xlib_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
   if (!n) return 0;
   if (!fl_display || size_ == 0) return -1;
   if (!playout_) context();
@@ -1371,12 +1413,6 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {
   if (font_descriptor())  return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->height_;
   else return -1;
-}
-
-double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
-  char buf4[4];
-  int n = fl_utf8encode(c, buf4);
-  return width_unscaled(buf4, n);
 }
 
 int Fl_Xlib_Graphics_Driver::descent_unscaled() {
@@ -1458,6 +1494,7 @@ Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize f
   angle = fangle;
   height_ = 0;
   descent_ = 0;
+  width = NULL;
 }
 
 #endif // USE_PANGO

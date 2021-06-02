@@ -1,7 +1,7 @@
 /*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016-2020 by Bill Spitzak and others.
+ * Copyright 2016-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -29,9 +29,7 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <stdio.h>   // FILE *fl_fopen()
 
 #ifdef __cplusplus
 extern "C" {
@@ -192,7 +190,7 @@ FL_EXPORT char* fl_getenv(const char *name);
 /* Portable UTF-8 aware putenv wrapper */
 FL_EXPORT int fl_putenv(const char *var);
 
-/* OD: Portable UTF-8 aware execvp wrapper */
+/* OD: Portable UTF-8 aware mkdir wrapper */
 FL_EXPORT int fl_mkdir(const char* f, int mode);
 
 /* OD: Portable UTF-8 aware rename wrapper */
