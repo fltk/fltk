@@ -29,9 +29,9 @@ Previous versions of bundled libraries:
 
   Library       Version            Release date         FLTK Version
   ------------------------------------------------------------------
-  jpeg          jpeg-9d            2020-01-12           1.3.6
-  png           libpng-1.6.37      2019-04-14           1.3.6
-  zlib          zlib-1.2.11        2017-01-15           1.3.6
+  jpeg          jpeg-9d            2020-01-12           1.3.6 - 1.3.8
+  png           libpng-1.6.37      2019-04-14           1.3.6 - 1.3.8
+  zlib          zlib-1.2.11        2017-01-15           1.3.6 - 1.3.8
   --------------------------------------------------------------------------
 
 
@@ -128,6 +128,27 @@ zlib:
   Download:   See website and follow links.
   Repository: git clone https://github.com/madler/zlib.git
 
+  zlib should be upgraded first because libpng depends on zlib.
+
+  Download the latest zlib sources, `cd' to /path-to/zlib and run
+
+    $ ./configure --zprefix
+
+  This creates the header file 'zconf.h' with definitions to enable
+  the standard 'z_' symbol prefix.
+
+  Unfortunately zlib requires patching some source and header files to
+  convert this 'z_' prefix to 'fltk_z_' to be more specific. As of this
+  writing (Nov. 2021) three files need symbol prefix patches:
+
+    - gzread.c
+    - zconf.h
+    - zlib.h
+
+  You may want to compare these files and/or the previous version to
+  find out which changes are required. The general rule is to change
+  all occurrences of 'z_' to 'fltk_z_' but there *are* exceptions.
+
 
   The following files need special handling:
 
@@ -135,10 +156,9 @@ zlib:
 
     Makefile: Same as CMakeLists.txt.
 
-    zconf.h: Merge changes.
-
-      As of zlib 1.2.11: two small sections marked with "FLTK" comments
-      that need to be kept.
+    gzread.c: Merge changes (see above, manual merge recommended).
+    zconf.h:  Merge changes (see above, manual merge recommended).
+    zlib.h:   Merge changes (see above, manual merge recommended).
 
     makedepend: Keep this file.
 
