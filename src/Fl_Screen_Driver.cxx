@@ -488,7 +488,7 @@ void Fl_Screen_Driver::open_display()
 
 
 // simulation of XParseColor:
-int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
+int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b) const
 {
   if (*p == '#') p++;
   size_t n = strlen(p);
