@@ -69,7 +69,7 @@ public:
   static char bg2_set;
   static char fg_set;
 
-  virtual float scale(int n) const { return 1; }
+  virtual float scale(int n) { return 1; }
   virtual void scale(int n, float f) {}
   static Fl_Screen_Driver *newScreenDriver();
   // --- display management
@@ -77,13 +77,13 @@ public:
   virtual int visual(int flags);
   // --- screen configuration
   virtual void init() {}
-  virtual int x() const { return 0; }
-  virtual int y() const { return 0; }
-  virtual int w() const { return 800; } // default, override in driver!
-  virtual int h() const { return 600; } // default, override in driver!
+  virtual int x() { return 0; }
+  virtual int y() { return 0; }
+  virtual int w() { return 800; } // default, override in driver!
+  virtual int h() { return 600; } // default, override in driver!
   virtual int screen_count();
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) const {
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     X = 0;
     Y = 0;
     W = 800;
@@ -109,14 +109,14 @@ public:
   virtual void grab(Fl_Window *win) {}
   // --- global colors
   /* the default implementation of parse_color() may be enough */
-  virtual int parse_color(const char *p, uchar &r, uchar &g, uchar &b) const;
+  virtual int parse_color(const char *p, uchar &r, uchar &g, uchar &b);
   virtual void get_system_colors() {}
   /* the default implementation of get_system_scheme() may be enough */
   virtual const char *get_system_scheme();
   // --- global timers
   virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {}
   virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {}
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) const { return 0; }
+  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) { return 0; }
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) {}
 
   static int secret_input_character;
