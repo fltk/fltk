@@ -52,6 +52,13 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Quartz_Graphics_Driver();
 }
 
+void Fl_Quartz_Graphics_Driver::antialias(int state) {
+}
+
+int Fl_Quartz_Graphics_Driver::antialias() {
+  return 1;
+}
+
 Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL) {
   quartz_line_width_ = 1.f;
   quartz_line_cap_ = kCGLineCapButt;

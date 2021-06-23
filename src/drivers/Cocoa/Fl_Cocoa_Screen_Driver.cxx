@@ -210,8 +210,8 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 }
 
 
-int Fl_Cocoa_Screen_Driver::has_marked_text() {
-  return true;
+int Fl_Cocoa_Screen_Driver::has_marked_text() const {
+  return 1;
 }
 
 

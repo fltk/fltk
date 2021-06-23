@@ -633,10 +633,10 @@ void Fl_X11_System_Driver::make_transient(void *ptr_gtk, void *gtkw_window, Fl_W
 
   typedef Window (*gdk_to_X11_t)(GdkWindow*);
   static gdk_to_X11_t fl_gdk_to_X11 = NULL;
-  
+
   typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
   static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
-  
+
   if (!fl_gdk_to_X11) {
     fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
     if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");

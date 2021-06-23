@@ -461,6 +461,11 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {}
 /** see fl_rectf() */
 void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {}
 
+void Fl_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
+  color(r, g, b);
+  rectf(x, y, w, h);
+}
+
 /** see fl_line(int, int, int, int) */
 void Fl_Graphics_Driver::line(int x, int y, int x1, int y1) {}
 
@@ -669,6 +674,12 @@ void Fl_Graphics_Driver::transformed_vertex0(float x, float y) {
     p[n].y = y;
     n++;
   }
+}
+
+void Fl_Graphics_Driver::antialias(int state) {}
+
+int Fl_Graphics_Driver::antialias() {
+  return 0;
 }
 
 /**

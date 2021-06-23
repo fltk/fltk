@@ -53,7 +53,7 @@ static VN_struct btypes[]=
    {(Fl_Boxtype)(-1)}
 };
 
-#include "pixmaps/srs.xbm"
+#include "pixmaps/sorceress.xbm"
 
 /*************** Callback **********************/
 

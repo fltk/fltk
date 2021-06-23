@@ -97,11 +97,7 @@ etc/FLTKConfig.cmake
 /fluid/*.bck
 /fluid/*.exe
 /fluid/TAGS
-
-# /fluid/fluid.app/Contents/MacOS/
-/fluid/fluid.app/Contents/MacOS/fluid
-
-# /fluid/pixmaps/
+/fluid/fluid.app
 /fluid/pixmaps/*.bck
 
 # /lib/
@@ -124,8 +120,4 @@ etc/FLTKConfig.cmake
 # /test/
 # see test/.gitignore
 
-# macOS binary files
-# (see also test/.gitignore)
-
-fluid/*.app/Contents/MacOS
 **/.DS_Store

@@ -48,7 +48,7 @@ public:
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
   int nPages;
-  
+
   Fl_PostScript_Graphics_Driver();
   ~Fl_PostScript_Graphics_Driver();
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};

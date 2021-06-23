@@ -68,7 +68,7 @@ extern "C" {
 }
 
 /*
-  Convert a UTF-8 string to Windows wide character encoding (UTF-16).
+  Convert UTF-8 string to Windows wide character encoding (UTF-16).
 
   This helper function is used throughout this file to convert UTF-8
   strings to Windows specific UTF-16 encoding for filenames, paths, or
@@ -86,15 +86,14 @@ extern "C" {
   'wbuf' is NULL a new buffer is allocated with realloc(). Hence the pointer
   'wbuf' can be shared among multiple calls to this function if it has been
   initialized with NULL (or malloc or realloc) before the first call.
-  Ideally every call to this function has its own static pointer though.
 
   The return value is either the old value of 'wbuf' (if the string fits)
-  or a pointer at the (re)allocated buffer.
+  or a pointer to the (re)allocated buffer.
 
   Pseudo doxygen docs (static function intentionally not documented):
 
   param[in]     utf8    input string (UTF-8)
-  param[in,out] wbuf    in:  pointer to output string buffer
+  param[in,out] wbuf    in:  pointer to output string buffer or NULL
                         out: new string (the pointer may be changed)
   param[in]     lg      optional: input string length (default = -1)
 
@@ -150,8 +149,7 @@ static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
 
  This function must be implemented once for every platform.
  */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   return new Fl_WinAPI_System_Driver();
 }
 
@@ -160,7 +158,6 @@ void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
 }
 
 void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
-
   char buf[1024];
   vsnprintf(buf, 1024, format, args);
   MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
@@ -227,43 +224,24 @@ FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
 }
 
 int Fl_WinAPI_System_Driver::system(const char *cmd) {
-# ifdef __MINGW32__
-  return ::system(fl_utf2mbcs(cmd));
-# else
   return _wsystem(utf8_to_wchar(cmd, wbuf));
-# endif
 }
 
 int Fl_WinAPI_System_Driver::execvp(const char *file, char *const *argv) {
-# ifdef __MINGW32__
-  return _execvp(fl_utf2mbcs(file), argv);
-# else
-  wchar_t **ar;
+  int n = 0;
+  while (argv[n]) n++; // count args
+  wchar_t **ar = (wchar_t **)calloc(sizeof(wchar_t *), n + 1);
+  // convert arguments first; trailing NULL provided by calloc()
+  for (int i = 0; i < n; i++)
+    ar[i] = utf8_to_wchar(argv[i], ar[i]); // alloc and assign
+  // convert executable file and execute it ...
   utf8_to_wchar(file, wbuf);
-
-  int i = 0, n = 0;
-  while (argv[i]) {i++; n++;}
-  ar = (wchar_t **)malloc(sizeof(wchar_t *) * (n + 1));
-  i = 0;
-  while (i <= n) {
-    unsigned wn;
-    unsigned len = (unsigned)strlen(argv[i]);
-    wn = fl_utf8toUtf16(argv[i], len, NULL, 0) + 1; // Query length
-    ar[i] = (wchar_t *)malloc(sizeof(wchar_t) * wn);
-    wn = fl_utf8toUtf16(argv[i], len, (unsigned short *)ar[i], wn); // Convert string
-    ar[i][wn] = 0;
-    i++;
-  }
-  ar[n] = NULL;
   _wexecvp(wbuf, ar);   // STR #3040
-  i = 0;
-  while (i < n) {
+  // clean up (reached only if _wexecvp() failed)
+  for (int i = 0; i < n; i++)
     free(ar[i]);
-    i++;
-  }
   free(ar);
   return -1;            // STR #3040
-#endif
 }
 
 int Fl_WinAPI_System_Driver::chmod(const char *fnam, int mode) {
@@ -378,8 +356,7 @@ unsigned Fl_WinAPI_System_Driver::utf8towc(const char *src, unsigned srclen, wch
   return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
-{
+unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen) {
   unsigned i = 0;
   unsigned count = 0;
   if (dstlen) for (;;) {
@@ -669,8 +646,7 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   return 1;
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
-{
+int Fl_WinAPI_System_Driver::filename_isdir(const char *n) {
   char fn[4]; // used for drive letter only: "X:/"
   int length = (int)strlen(n);
   // Strip trailing slash from name...
@@ -697,8 +673,7 @@ int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
   return (fa != INVALID_FILE_ATTRIBUTES) && (fa & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n)
-{
+int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n) {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
   return filename_isdir(n);
@@ -714,16 +689,15 @@ const char *Fl_WinAPI_System_Driver::filename_ext(const char *buf) {
   return q ? q : p;
 }
 
-int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
-{
+int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen) {
   if (msg) snprintf(msg, msglen, "open %s", uri);
   return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
 }
 
-int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
-{
+int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename,
+                                                          int lname, Fl_File_Icon *icon) {
   int num_files = 0;
-#  ifdef __CYGWIN__
+# ifdef __CYGWIN__
   //
   // Cygwin provides an implementation of setmntent() to get the list
   // of available drives...
@@ -735,15 +709,14 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
     num_files ++;
   }
   endmntent(m);
-#  else
+# else
   //
   // Normal Windows code uses drive bits...
   //
   DWORD drives;         // Drive available bits
   drives = GetLogicalDrives();
-  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1)
-    if (drives & 1)
-    {
+  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1) {
+    if (drives & 1) {
       sprintf(filename, "%c:/", i);
       if (i < 'C') // see also: GetDriveType and GetVolumeInformation in Windows
         browser->add(filename, icon);
@@ -751,7 +724,8 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
         browser->add(filename, icon);
       num_files ++;
     }
-#  endif // __CYGWIN__
+  }
+# endif // __CYGWIN__
   return num_files;
 }
 

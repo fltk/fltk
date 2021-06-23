@@ -477,7 +477,7 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     if (rescalable()) {
       use_startup_scale_factor();
-      if (keyboard_screen_scaling)
+      if (keyboard_screen_scaling && rescalable())
         Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);

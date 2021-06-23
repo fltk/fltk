@@ -18,6 +18,10 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
   New Features and Extensions
 
   - (add new items here)
+  - The Windows platform now draws oblique and curved lines in antialiased
+    form. The new function void fl_antialias(int state); allows to turn off
+    or on such antialiased drawing. The new function int fl_antialias(); returns
+    whether line and curve drawing is currently antialiased.
   - The border radius of "rounded" box types can be limited and
     the shadow width of "shadow" box types can be configured (issue #130).
     See Fl::box_border_radius_max() and Fl::box_shadow_width().
@@ -104,6 +108,9 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
 
   New Configuration Options (ABI Version)
 
+  - The new configure option --disable-gdiplus removes the possibility to draw
+    antialiased lines and curves on the Windows platform. The corresponding CMake
+    option is OPTION_USE_GDIPLUS.
   - The library can be built without support for reading SVG images or writing
     graphics in SVG format using the --disable-svg configure option
     or turning off OPTION_USE_SVG in CMake.

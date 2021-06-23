@@ -257,7 +257,7 @@ void Fl_Shared_Image::reload() {
   if (!name_) return;
 
   if ((fp = fl_fopen(name_, "rb")) != NULL) {
-    count = fread(header, 1, sizeof(header), fp);
+    count = (int)fread(header, 1, sizeof(header), fp);
     fclose(fp);
     if (count == 0)
       return;

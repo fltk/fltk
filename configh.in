@@ -359,6 +359,14 @@
 #undef FL_NO_PRINT_SUPPORT
 
 /*
+ * Do we use GDI+ to get antialiased graphics?
+ */
+
+#ifdef _WIN32
+#define USE_GDIPLUS 0
+#endif
+
+/*
  * Do we want filename handling and a filechooser?
  * *FIXME* Not yet implemented in configure !
  */

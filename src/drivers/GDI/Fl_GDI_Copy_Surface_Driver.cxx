@@ -42,7 +42,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  driver(new Fl_GDI_Graphics_Driver);
+  driver(Fl_Graphics_Driver::newMainGraphicsDriver());
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
   HDC hdc = GetDC(NULL);
@@ -55,7 +55,7 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   float factorh = (100.f * vmm) / vdots;
   // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
   float scaling = Fl_Graphics_Driver::default_driver().scale();
-  ((Fl_GDI_Graphics_Driver*)driver())->scale(scaling);
+  driver()->scale(scaling);
   RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)((w*scaling) * factorw); rect.bottom = (LONG)((h*scaling) * factorh);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
   if (gc != NULL) {

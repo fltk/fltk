@@ -49,7 +49,7 @@ endif (WIN32)
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set (ICON_NAME fluid.icns)
-  set (ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Resources/${ICON_NAME}")
+  set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
   add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
 
   # create macOS bundle wrapper script
@@ -78,11 +78,15 @@ if (FLTK_HAVE_CAIRO)
   endif()
 endif (FLTK_HAVE_CAIRO)
 
+if (USE_GDIPLUS)        # can only be true on Windows
+  target_link_libraries (fluid gdiplus)
+endif (USE_GDIPLUS)
+
 # install fluid
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   # create bundle
-  set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Info.plist")
+  set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
   # install

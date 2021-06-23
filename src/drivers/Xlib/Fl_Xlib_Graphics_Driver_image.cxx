@@ -602,14 +602,14 @@ void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void
   innards(0,x+floor(offset_x_),y+floor(offset_y_),w,h,d,0,1,cb,data,0,gc_);
 }
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
+void Fl_Xlib_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   if (fl_visual->depth > 16) {
-    fl_color(r,g,b);
-    fl_rectf(x,y,w,h);
+    Fl_Graphics_Driver::colored_rectf(x, y, w, h, r, g, b);
   } else {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,0,(GC)fl_graphics_driver->gc());
+    innards(c, floor(x), floor(y), floor(x + w) - floor(x), floor(y + h) - floor(y),
+            0,0,0,0,0,0, (GC)gc());
   }
 }
 

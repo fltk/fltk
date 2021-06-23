@@ -238,6 +238,16 @@ enum {
   FL_JOIN_BEVEL = 0x3000        ///< join style: line join is tidied
 };
 
+/**
+ Turns ON or OFF antialiased line drawings, if supported by platform.
+ Currently, only the Windows platform allows to change whether line drawings are antialiased.
+ Turning it OFF may accelerate heavy drawing operations.
+ */
+inline void fl_antialias(int state) { fl_graphics_driver->antialias(state); }
+
+/** Returns whether line drawings are currently antialiased */
+inline int fl_antialias() { return fl_graphics_driver->antialias(); }
+
 // rectangles tweaked to exactly fill the pixel rectangle:
 
 /**
@@ -264,8 +274,7 @@ inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_re
   solid-colored block using fl_draw_image() so that the correct color
   shade is produced.
   */
-/* note: doxygen comment here to avoid triplication in os-speciic files */
-FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+inline void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) { fl_graphics_driver->colored_rectf(x,y,w,h,r,g,b); }
 
 // line segments:
 /**

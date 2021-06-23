@@ -98,3 +98,134 @@ void Fl_GDI_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, d
   } else
     Arc(gc_, llx, lly, llx+w, lly+h, 0,0, 0,0);
 }
+
+#if USE_GDIPLUS
+
+void Fl_GDIplus_Graphics_Driver::transformed_vertex(double xf, double yf) {
+  if (!active) return Fl_Scalable_Graphics_Driver::transformed_vertex(xf, yf);
+  transformed_vertex0(float(xf) , float(yf) );
+}
+
+void Fl_GDIplus_Graphics_Driver::vertex(double x,double y) {
+  if (!active) return Fl_Scalable_Graphics_Driver::vertex(x, y);
+  transformed_vertex0(float(x*m.a + y*m.c + m.x) , float(x*m.b + y*m.d + m.y) );
+}
+
+void Fl_GDIplus_Graphics_Driver::end_points() {
+  if (!active) return Fl_GDI_Graphics_Driver::end_points();
+  for (int i = 0; i < n; i++) point(p[i].x, p[i].y);
+}
+
+void Fl_GDIplus_Graphics_Driver::end_line() {
+  if (!active) return Fl_GDI_Graphics_Driver::end_line();
+  if (n < 2) {
+    end_points();
+    return;
+  }
+  if (n>1) {
+    Gdiplus::GraphicsPath path;
+    Gdiplus::Point *gdi2_p = new Gdiplus::Point[n];
+    for (int i = 0; i < n; i++) {
+      gdi2_p[i] = Gdiplus::Point(p[i].x, p[i].y);
+    }
+    path.AddLines(gdi2_p, n);
+    delete[] gdi2_p;
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    pen_->SetColor(gdiplus_color_);
+    graphics_.DrawPath(pen_, &path);
+  }
+}
+
+void Fl_GDIplus_Graphics_Driver::end_loop() {
+  if (!active) return Fl_GDI_Graphics_Driver::end_loop();
+  fixloop();
+  if (n>2) {
+    Gdiplus::GraphicsPath path;
+    Gdiplus::Point *gdi2_p = new Gdiplus::Point[n];
+    for (int i = 0; i < n; i++) {
+      gdi2_p[i] = Gdiplus::Point(p[i].x, p[i].y);
+    }
+    path.AddLines(gdi2_p, n);
+    path.CloseFigure();
+    delete[] gdi2_p;
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    pen_->SetColor(gdiplus_color_);
+    graphics_.DrawPath(pen_, &path);
+  }
+}
+
+void Fl_GDIplus_Graphics_Driver::end_polygon() {
+  if (!active) return Fl_GDI_Graphics_Driver::end_polygon();
+  fixloop();
+  if (n < 3) {
+    end_line();
+    return;
+  }
+  if (n>2) {
+    Gdiplus::GraphicsPath path;
+    Gdiplus::Point *gdi2_p = new Gdiplus::Point[n];
+    for (int i = 0; i < n; i++) {
+      gdi2_p[i] = Gdiplus::Point(p[i].x, p[i].y);
+    }
+    path.AddPolygon(gdi2_p, n);
+    delete[] gdi2_p;
+    path.CloseFigure();
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    brush_->SetColor(gdiplus_color_);
+    graphics_.FillPath(brush_, &path);
+  }
+}
+
+void Fl_GDIplus_Graphics_Driver::end_complex_polygon() {
+  if (!active) return Fl_GDI_Graphics_Driver::end_complex_polygon();
+  gap();
+  if (n < 3) {
+    end_line();
+    return;
+  }
+  if (n>2) {
+    Gdiplus::GraphicsPath path;
+    Gdiplus::Point *gdi2_p = new Gdiplus::Point[n];
+    for (int i = 0; i < n; i++) {
+      gdi2_p[i] = Gdiplus::Point(p[i].x, p[i].y);
+    }
+    path.AddPolygon(gdi2_p, n);
+    delete[] gdi2_p;
+    path.CloseFigure();
+    Gdiplus::Graphics graphics_(gc_);
+    graphics_.ScaleTransform(scale(), scale());
+    graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    brush_->SetColor(gdiplus_color_);
+    graphics_.FillPath(brush_, &path);
+  }
+}
+
+void Fl_GDIplus_Graphics_Driver::circle(double x, double y, double r) {
+  if (!active) return Fl_Scalable_Graphics_Driver::circle(x, y, r);
+  double xt = transform_x(x,y);
+  double yt = transform_y(x,y);
+  double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
+  double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
+  int llx = (int)rint(xt-rx);
+  int w = (int)rint(xt+rx)-llx;
+  int lly = (int)rint(yt-ry);
+  int h = (int)rint(yt+ry)-lly;
+  Gdiplus::Graphics graphics_(gc_);
+  graphics_.ScaleTransform(scale(), scale());
+  graphics_.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+  if (what==POLYGON) {
+    brush_->SetColor(gdiplus_color_);
+    graphics_.FillPie(brush_, llx, lly, w, h, 0, 360);
+  } else {
+    pen_->SetColor(gdiplus_color_);
+    graphics_.DrawArc(pen_, llx, lly, w, h, 0, 360);
+  }
+}
+#endif
+

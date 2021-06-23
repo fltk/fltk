@@ -163,6 +163,10 @@ public:
   int yposition() const {return yposition_;}
   void scroll_to(int, int);
   void clear();
+
+  /* delete child n (by index) */
+  virtual int delete_child(int n);
+
   /**
     Gets the current size of the scrollbars' troughs, in pixels.
 

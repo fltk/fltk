@@ -26,6 +26,16 @@
 #include <FL/Fl_Graphics_Driver.H>
 #include <windows.h>
 #include <stdlib.h>
+#include <config.h>
+
+#if USE_GDIPLUS
+#  if defined(_MSC_VER)
+#    include <objidl.h>
+#  else
+#    include <wtypes.h> // for PROPID needed with gcc 4.9.0 but not with 4.9.3
+#  endif
+#  include <gdiplus.h>
+#endif
 
 /**
   \brief The Windows-specific graphics driver class.
@@ -98,6 +108,9 @@ protected:
   virtual void point(int x, int y);
   void focus_rect(int x, int y, int w, int h);
   virtual void rectf_unscaled(int x, int y, int w, int h);
+#if USE_COLORMAP
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+#endif
   virtual void line_unscaled(int x, int y, int x1, int y1);
   virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
   virtual void xyline_unscaled(int x, int y, int x1);
@@ -161,5 +174,42 @@ public:
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy);
 };
 
+#if USE_GDIPLUS
+
+class Fl_GDIplus_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+private:
+  Gdiplus::Color gdiplus_color_;
+  Gdiplus::Pen *pen_;
+  Gdiplus::SolidBrush *brush_;
+public:
+  Fl_GDIplus_Graphics_Driver();
+  virtual ~Fl_GDIplus_Graphics_Driver();
+  bool active;
+  static void shutdown(void);
+virtual void color(Fl_Color c);
+virtual Fl_Color color() { return color_; }
+virtual void color(uchar r, uchar g, uchar b);
+  virtual void line(int x, int y, int x1, int y1);
+  virtual void line(int x, int y, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void line_style(int style, int width, char* dashes);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void transformed_vertex(double xf, double yf);
+  virtual void vertex(double x,double y);
+  virtual void end_points();
+  virtual void end_line();
+  virtual void end_loop();
+  virtual void end_polygon();
+  virtual void end_complex_polygon();
+  virtual void circle(double x, double y, double r);
+  virtual void antialias(int state);
+  virtual int antialias();
+};
+
+#endif // USE_GDIPLUS
 
 #endif // FL_GDI_GRAPHICS_DRIVER_H

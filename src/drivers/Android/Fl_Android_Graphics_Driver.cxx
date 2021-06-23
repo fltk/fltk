@@ -1255,16 +1255,3 @@ void Fl_Android_Graphics_Driver::color(uchar r, uchar g, uchar b)
 {
   color( (((Fl_Color)r)<<24)|(((Fl_Color)g)<<16)|(((Fl_Color)b)<<8) );
 }
-
-/**
- Draw a rectangle that may be dithered if we are in colormap mode (which in
- the year 2018 is as likely has a user with a berstein colored tube TV).
- FIXME: This function should be virtual as well, or should not exist at all.
- */
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
-#if USE_COLORMAP
-  // ...
-#endif
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
-}
