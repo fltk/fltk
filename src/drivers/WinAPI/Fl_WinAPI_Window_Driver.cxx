@@ -475,7 +475,10 @@ void Fl_WinAPI_Window_Driver::hide() {
     }
   }
 
-  if (hide_common()) return;
+  if (hide_common()) {
+    delete[] doit; // note: `count` and `doit` may be NULL (see PR #241)
+    return;
+  }
 
   // make sure any custom icons get freed
 //  icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
