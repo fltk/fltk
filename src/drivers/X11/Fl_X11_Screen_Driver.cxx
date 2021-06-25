@@ -415,7 +415,7 @@ void Fl_X11_Screen_Driver::beep(int type)
     case FL_BEEP_DEFAULT :
     case FL_BEEP_ERROR :
       if (!fl_display) open_display();
-      XBell(fl_display, 100);
+      XBell(fl_display, 0);
       break;
     default :
       if (!fl_display) open_display();
