@@ -1,7 +1,7 @@
 //
 // Definition of Apple Cocoa window driver.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -481,7 +481,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   }
 
   // make sure any custom icons get freed
-//  icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
+  // icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
   if (GetClipboardOwner()==ip->xid)
@@ -517,8 +517,9 @@ void Fl_WinAPI_Window_Driver::hide() {
       if (ii != 0) doit[0]->show(); // Fix for STR#3165
       doit[ii]->show();
     }
-    delete[] doit;
   }
+  delete[] doit; // note: `count` and `doit` may be NULL (see PR #241)
+
   // Try to stop the annoying "raise another program" behavior
   if (pWindow->non_modal() && Fl::first_window() && Fl::first_window()->shown())
     Fl::first_window()->show();
