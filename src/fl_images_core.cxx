@@ -138,6 +138,12 @@ fl_check_images(const char *name,               // I - Filename
     }
   } // gzip'ed data
 # endif // HAVE_LIBZ
+  // check for presence of Byte Order Mark (BOM)
+  char utf8[4];
+  int lutf8 = fl_utf8encode(0xFEFF /* BOM in Unicode */, utf8);
+  if (memcmp(buf, utf8, lutf8) == 0) {
+    buf += lutf8; count -= lutf8;
+  }
 
   if ((count >= 5 && memcmp(buf, "<?xml", 5) == 0) ||
       (count >= 4 && memcmp(buf, "<svg", 4) == 0))
