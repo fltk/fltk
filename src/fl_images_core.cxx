@@ -161,7 +161,7 @@ fl_check_images(const char *name,               // I - Filename
 
   if ((count >= 5 &&
        (memcmp(buf, "<?xml", 5) == 0 ||
-        memcmp(buf, "<svg ", 5) == 0)))
+        memcmp(buf, "<svg", 4) == 0)))
     return new Fl_SVG_Image(name);
 #endif // FLTK_USE_SVG
 
