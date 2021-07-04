@@ -138,16 +138,10 @@ fl_check_images(const char *name,               // I - Filename
     }
   } // gzip'ed data
 # endif // HAVE_LIBZ
-  // check for presence of Byte Order Mark (BOM)
-  char utf8[4];
-  int lutf8 = fl_utf8encode(0xFEFF /* BOM in Unicode */, utf8);
-  if (memcmp(buf, utf8, lutf8) == 0) {
-    buf += lutf8; count -= lutf8;
-  }
 
   // Check if we have a UTF-8 BOM in the first three bytes (issue #247).
   // If yes we need at least 5 more bytes to recognize the signature.
-  // Note: BOM (Byte Order Marker) in UTF-8 is not recommended but allowed.
+  // Note: BOM (Byte Order Mark) in UTF-8 is not recommended but allowed.
 
   if (count >= 8) {
     const uchar bom[3] = { 0xef, 0xbb, 0xbf };
