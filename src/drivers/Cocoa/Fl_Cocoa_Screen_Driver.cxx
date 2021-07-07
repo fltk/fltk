@@ -518,6 +518,10 @@ void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, voi
 
 void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
+  if (!current_timer) {
+    add_timeout(time, cb, data);
+    return;
+  }
   // k = how many times 'time' seconds after the last scheduled timeout until the future
   double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
   if (k < 1) k = 1;
