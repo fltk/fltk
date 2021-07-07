@@ -465,18 +465,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 
 void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-  // check, if this timer slot exists already
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    // if so, simply change the fire interval
-    if (t.callback == cb  &&  t.data == data) {
-      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
-      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
-      t.pending = 1;
-      return;
-    }
-  }
-  // no existing timer to use. Create a new one:
+  // always create a new timer entry
   fl_intptr_t timer_id = -1;
   // find an empty slot in the timer array
   for (int i = 0; i < mac_timer_used; ++i) {
