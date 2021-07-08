@@ -2,7 +2,7 @@
 /*
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -13,6 +13,18 @@
  * Please see the following page on how to report bugs and issues:
  *
  *     https://www.fltk.org/bugs.php
+ */
+
+/*
+ * Note: configure syntax vs. CMake syntax in source files (examples):
+ *
+ *   configh.in               configh.cmake.in
+ *   ---------------------    ----------------------------
+ *   #define HAVE_GL 0        #cmakedefine01 HAVE_GL
+ *   #undef HAVE_SNPRINTF     #cmakedefine HAVE_SNPRINTF 1
+ *
+ *   The former #define's the given macro either as 0 or 1,
+ *   the latter either does not define the macro or #define's it as 1.
  */
 
 /*
@@ -368,7 +380,7 @@
 /*
  * Do we use GDI+ to get antialiased graphics?
  */
- 
+
 #ifdef _WIN32
 #cmakedefine01 USE_GDIPLUS
 #endif

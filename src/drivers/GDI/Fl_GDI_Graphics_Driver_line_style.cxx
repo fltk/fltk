@@ -77,7 +77,7 @@ void Fl_GDIplus_Graphics_Driver::line_style(int style, int width, char* dashes) 
     pen_->SetDashStyle(Gdiplus::DashStyleDashDotDot);
   else if(!dashes || !*dashes)
     pen_->SetDashStyle(Gdiplus::DashStyleSolid);
-  
+
   if (style & FL_CAP_ROUND ) {
     pen_->SetStartCap(Gdiplus::LineCapRound);
     pen_->SetEndCap(Gdiplus::LineCapRound);
@@ -88,7 +88,7 @@ void Fl_GDIplus_Graphics_Driver::line_style(int style, int width, char* dashes) 
     pen_->SetStartCap(Gdiplus::LineCapFlat);
     pen_->SetEndCap(Gdiplus::LineCapFlat);
   }
-  
+
   if (style & FL_JOIN_MITER ) {
     pen_->SetLineJoin(Gdiplus::LineJoinMiter);
   } else if (style & FL_JOIN_BEVEL ) {
@@ -96,7 +96,7 @@ void Fl_GDIplus_Graphics_Driver::line_style(int style, int width, char* dashes) 
   } else {
     pen_->SetLineJoin(Gdiplus::LineJoinRound);
   }
-  
+
   if (dashes && *dashes) {
     int n = 0; while (dashes[n]) n++;
     Gdiplus::REAL *gdi_dashes = new Gdiplus::REAL[n];
