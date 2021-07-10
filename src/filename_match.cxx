@@ -1,7 +1,7 @@
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,7 +28,14 @@
     - [^set] or [!set] matches any character not in the set.
     - {X|Y|Z} or {X,Y,Z} matches any one of the subexpressions literally.
     - \\x quotes the character x so it has no special meaning.
-    - x all other characters must be matched exactly.
+    - x all other characters are matched "exactly" on a \b case-insensitive basis.
+
+    Notes:
+    - \p s and \p p are matched on a char/byte basis, not as UCS codepoints or UTF-8 sequences.
+    - [set] ranges must run from low to high, i.e. [a-z] and not [z-a]
+    - [set] comparison is \b case-sensitive, i.e. [a-z] won't match "A".
+    - \\x only applies to the fl_filename_match special characters * ? [ {
+    - \\x needs a double \\ or the compiler will complain about non-standard escape sequences.
 
     \b Include:
     \code
