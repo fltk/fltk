@@ -84,10 +84,11 @@ extern "C" {
  be loaded for another reason.
 
  \param[in] filename    Name of PNG file to read
+ \param     offset      Offset to seek for the begin of PNG data (i.e. inside a .ICO file)
  */
-Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
+Fl_PNG_Image::Fl_PNG_Image (const char *filename, int offset): Fl_RGB_Image(0,0,0)
 {
-  load_png_(filename, NULL, 0);
+  load_png_(filename, offset, NULL, 0);
 }
 
 
@@ -106,11 +107,11 @@ Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
 Fl_PNG_Image::Fl_PNG_Image (
       const char *name_png, const unsigned char *buffer, int maxsize): Fl_RGB_Image(0,0,0)
 {
-  load_png_(name_png, buffer, maxsize);
+  load_png_(name_png, 0, buffer, maxsize);
 }
 
 
-void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_png, int maxsize)
+void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned char *buffer_png, int maxsize)
 {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
   int i;                // Looping var
@@ -133,6 +134,9 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
       ld(ERR_FILE_ACCESS);
       delete fp;
       return;
+    }
+    if (offset > 0 && fseek(fp, (long)offset, SEEK_SET) == -1) {
+      rewind(fp);
     }
   }
   const char *display_name = (name_png ? name_png : "In-memory PNG data");

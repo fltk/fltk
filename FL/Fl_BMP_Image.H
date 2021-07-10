@@ -34,7 +34,7 @@ class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
   protected:
 
-    void load_bmp_(class Fl_Image_Reader &rdr);
+    void load_bmp_(class Fl_Image_Reader &rdr, int ico_height=0);
 
 };
 
