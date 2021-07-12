@@ -1,17 +1,27 @@
 
-include_directories(${PKG_CAIRO_INCLUDE_DIRS})
+include_directories (${PKG_CAIRO_INCLUDE_DIRS})
 
 # source files for cairo
-set(cairo_SRCS Fl_Cairo.cxx)
+set (cairo_SRCS Fl_Cairo.cxx)
 
 #######################################################################
-FL_ADD_LIBRARY(fltk_cairo STATIC "${cairo_SRCS}")
+FL_ADD_LIBRARY (fltk_cairo STATIC "${cairo_SRCS}")
 
 #######################################################################
-if(OPTION_BUILD_SHARED_LIBS)
+# Build shared library (optional)
 #######################################################################
-FL_ADD_LIBRARY(fltk_cairo SHARED "${cairo_SRCS}")
 
-#######################################################################
-endif(OPTION_BUILD_SHARED_LIBS)
+if (OPTION_BUILD_SHARED_LIBS)
+
+  FL_ADD_LIBRARY (fltk_cairo SHARED "${cairo_SRCS}")
+  target_link_libraries (fltk_cairo_SHARED fltk_SHARED ${PKG_CAIRO_LIBRARIES})
+
+  if (CMAKE_VERSION VERSION_LESS "3.13")
+    link_directories (${PKG_CAIRO_LIBRARY_DIRS})
+  else()
+    target_link_directories (fltk_cairo_SHARED PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
+  endif()
+
+endif (OPTION_BUILD_SHARED_LIBS)
+
 #######################################################################

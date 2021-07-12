@@ -211,7 +211,7 @@ feature_summary (WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n"
 message (STATUS "Static libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
 
 if (OPTION_BUILD_SHARED_LIBS)
-  message (STATUS "Shared libraries will be built in  ${CMAKE_CURRENT_BINARY_DIR}/lib")
+  message (STATUS "Shared libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
 else ()
   message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
 endif ()
