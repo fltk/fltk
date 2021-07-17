@@ -72,7 +72,7 @@ AC_PATH_TOOL(PKGCONFIG, pkg-config)
 
 dnl Architecture and optimization options...
 ARCHFLAGS="${ARCHFLAGS:=}"
-AC_ARG_WITH([archflags], AS_HELP_STRING([--with-archflags="flags"], [use custom architecture flags (default=none, macOS values include "-arch arm64e", "-arch i386", "-arch ppc", and "-arch x86_64")]), [
+AC_ARG_WITH([archflags], AS_HELP_STRING([--with-archflags="flags"], [use custom architecture flags (default=none, macOS values include "-arch arm64", "-arch i386", "-arch ppc", and "-arch x86_64")]), [
     ARCHFLAGS="$withval"
 ])
 AC_SUBST(ARCHFLAGS)
