@@ -345,6 +345,12 @@
 #undef HAVE_PTHREAD_H
 
 /*
+ * Do we have PTHREAD_MUTEX_RECURSIVE?
+ */
+
+#undef HAVE_PTHREAD_MUTEX_RECURSIVE
+
+/*
  * Do we have the ALSA library?
  */
 

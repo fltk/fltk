@@ -345,6 +345,12 @@
 #cmakedefine HAVE_PTHREAD_H 1
 
 /*
+ * Do we have PTHREAD_MUTEX_RECURSIVE?
+ */
+
+#cmakedefine HAVE_PTHREAD_MUTEX_RECURSIVE 1
+
+/*
  * Do we have the ALSA library?
  */
 
