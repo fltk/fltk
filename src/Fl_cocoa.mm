@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -613,6 +611,10 @@ void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
+  if (!current_timer) {
+    add_timeout(time, cb, data);
+    return;
+  }
   // k = how many times 'time' seconds after the last scheduled timeout until the future
   double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
   if (k < 1) k = 1;
