@@ -30,3 +30,9 @@ pngerror.o: pngpriv.h pnglibconf.h png.h pngconf.h pngstruct.h pnginfo.h
 pngerror.o: pngdebug.h
 pngpread.o: pngpriv.h pnglibconf.h png.h pngconf.h pngstruct.h pnginfo.h
 pngpread.o: pngdebug.h
+arm/arm_init.o: pngpriv.h pnglibconf.h png.h pngconf.h pngstruct.h pnginfo.h
+arm/arm_init.o: pngdebug.h
+arm/filter_neon_intrinsics.o: pngpriv.h pnglibconf.h png.h pngconf.h
+arm/filter_neon_intrinsics.o: pngstruct.h pnginfo.h pngdebug.h
+arm/palette_neon_intrinsics.o: pngpriv.h pnglibconf.h png.h pngconf.h
+arm/palette_neon_intrinsics.o: pngstruct.h pnginfo.h pngdebug.h

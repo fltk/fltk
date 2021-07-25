@@ -4,28 +4,28 @@ The initial FLTK 1.3.0 is based on the final 1.1.10.
   Doxygen based documentation, and several new widgets including
   Fl_Native_File_Chooser, Fl_Table, and Fl_Tree.
 
-FLTK 1.3.6 and previous versions contain many improvements and bug fixes.
+FLTK 1.3.7 and previous versions contain many improvements and bug fixes.
 
-  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.6.
+  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.7.
 
-  Even though FLTK 1.3.6 does not fix all STRs, we decided to release
-  FLTK 1.3.6 as it contains many new features, bug fixes, and adaptations
-  to new compiler releases and OS versions (e.g. macOS 10.14 "Mojave"
-  up to macOS 11 "Big Sur" and better configure support for some
-  Linux platforms).
+  FLTK 1.3.7 is a maintenance release for macOS only. It fixes one
+  regression introduced in FLTK 1.3.6 and two long standing timer
+  issues on macOS.
+
+  Other platforms than macOS are not affected.
 
   Open bugs and feature requests can be viewed (offline) in KNOWN_BUGS.html
   with your browser. Links in this file direct you to the current state
   (online) of all listed bugs and feature requests.
 
   Note: This file is a snapshot of https://www.fltk.org/roadmap.php
-  as of this release (May 15, 2021). Please take into account that some
+  as of release 1.3.6 (May 15, 2021). Please take into account that some
   bugs and/or feature requests in this list might have been fixed without
   notice.
 
-  Bugs and feature requests for FLTK 1.4.x may also apply to FLTK 1.3.6.
+  Bugs and feature requests for FLTK 1.4.x may also apply to FLTK 1.3.7.
 
-FLTK 1.3.6 is expected to be the last release in the 1.3.x series.
+FLTK 1.3.7 is expected to be the last release in the 1.3.x series.
 
   All bug reports for 1.3.x will be fixed in FLTK 1.4.x if possible.
 
@@ -35,7 +35,7 @@ Note to Git users: This branch (branch-1.3) is end of life since the
 release of FLTK 1.3.4. Only very serious bug fixes will be available
 if FLTK 1.4.0 is not yet released or not (yet) stable enough.
 
-This release (1.3.6) is a bug fix and maintenance release without new
+This release (1.3.7) is a bug fix and maintenance release without new
 FLTK features (except macOS Mojave and Big Sur + M1 support).
 
 The current development branch is 'master' -- please checkout a new,

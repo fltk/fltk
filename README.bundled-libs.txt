@@ -6,13 +6,13 @@ about the current versions of all bundled libraries and about how to
 upgrade these bundled libraries.
 
 
-Current versions of bundled libraries (as of Feb 25, 2021):
+Current versions of bundled libraries (as of June 9, 2021):
 
   Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
-  jpeg          jpeg-9d            2020-01-12           1.3.6
-  png           libpng-1.6.37      2019-04-14           1.3.6
-  zlib          zlib-1.2.11        2017-01-15           1.3.6
+  jpeg          jpeg-9d            2020-01-12           1.3.6 / 1.3.7
+  png           libpng-1.6.37      2019-04-14           1.3.6 / 1.3.7
+  zlib          zlib-1.2.11        2017-01-15           1.3.6 / 1.3.7
   --------------------------------------------------------------------------
 
 Previous versions of bundled libraries:

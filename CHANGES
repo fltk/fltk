@@ -1,3 +1,19 @@
+CHANGES IN FLTK 1.3.7					RELEASED: Jul 25 2021
+
+FLTK 1.3.7 is a maintenance release for macOS only. It fixes one
+regression introduced in FLTK 1.3.6 and two long standing timer
+issues on macOS.
+
+Other platforms than macOS are not concerned.
+
+Changes:
+
+  Avoid premature FL_RELEASE event at start of drag-n-drop operation
+  Fix a timer inconsistency and prevent a crash
+  Fl::add_timeout() must always create a new timer (#248)
+
+
+
 CHANGES IN FLTK 1.3.6					RELEASED: May 15 2021
 
 There have been no changes since FLTK 1.3.6rc2.

@@ -47,7 +47,7 @@ set (OpenGL_GL_PREFERENCE LEGACY)
 # define the FLTK project and version
 #######################################################################
 
-project (FLTK VERSION 1.3.6)
+project (FLTK VERSION 1.3.7)
 
 #######################################################################
 # include macro definitions of generally used macros

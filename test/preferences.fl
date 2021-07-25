@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0306
+version 1.0307
 header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local

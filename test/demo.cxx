@@ -104,7 +104,7 @@
    bundled IDE solutions add a 'd' to the executable file name
    ('demod.exe') in Debug configurations that needs to be removed.
    This is no longer true with CMake-generated IDE's starting with
-   FLTK 1.3.6, but in FLTK 1.3 the OLD behavior is still used if
+   FLTK 1.3.6, but in FLTK 1.3.x the OLD behavior is still used if
    the provided Visual Studio IDE projects are used.
 */
 
