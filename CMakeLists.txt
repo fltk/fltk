@@ -1,8 +1,8 @@
 #
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -50,18 +50,20 @@ set (OpenGL_GL_PREFERENCE LEGACY)
 project (FLTK VERSION 1.4.0)
 
 #######################################################################
-# include macro definitions of generally used macros
+# include macro and function definitions for general usage
 #######################################################################
 
 include (CMake/fl_debug_var.cmake)
 include (CMake/fl_add_library.cmake)
+include (CMake/compatibility.cmake)
 
-if (false)
+if (0)
   fl_debug_var (FLTK_VERSION_MAJOR)
   fl_debug_var (FLTK_VERSION_MINOR)
   fl_debug_var (FLTK_VERSION_PATCH)
   fl_debug_var (FLTK_VERSION)
-endif (false)
+  fl_debug_var (CMAKE_VERSION)
+endif ()
 
 #######################################################################
 # basic setup

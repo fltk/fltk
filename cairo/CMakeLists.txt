@@ -15,12 +15,7 @@ if (OPTION_BUILD_SHARED_LIBS)
 
   FL_ADD_LIBRARY (fltk_cairo SHARED "${cairo_SRCS}")
   target_link_libraries (fltk_cairo_SHARED fltk_SHARED ${PKG_CAIRO_LIBRARIES})
-
-  if (CMAKE_VERSION VERSION_LESS "3.13")
-    link_directories (${PKG_CAIRO_LIBRARY_DIRS})
-  else()
-    target_link_directories (fltk_cairo_SHARED PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
-  endif()
+  fl_target_link_directories (fltk_cairo_SHARED PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 
 endif (OPTION_BUILD_SHARED_LIBS)
 
