@@ -87,8 +87,12 @@ $(LIBZ):	$(OBJS)
 # Make dependencies...
 #
 
-depend:	$(OBJS:.o=.c)
-	makedepend -Y -I.. -f makedepend $(OBJS:.o=.c)
+depend: $(OBJS:.o=.c)
+	makedepend -Y -I.. -f makedepend -w 20 $(OBJS:.o=.c)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
+	mv makedepend.tmp makedepend
 
 include makedepend
 

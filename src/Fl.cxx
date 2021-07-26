@@ -1341,7 +1341,7 @@ int Fl::handle_(int e, Fl_Window* window)
       return 1;
     }
     // Finally try sending it to the window, the event occurred in
-    if (send_event(FL_MOUSEWHEEL, window, window)) return 1;
+    if (send_event(FL_MOUSEWHEEL, window, window->top_window())) return 1;
   default:
     break;
   }

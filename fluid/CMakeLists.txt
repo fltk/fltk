@@ -72,11 +72,7 @@ add_library(fluid STATIC ${CPPFILES})
 
 target_link_libraries (fluid fltk fltk_images fltk_forms)
 if (FLTK_HAVE_CAIRO)
-  if (CMAKE_VERSION VERSION_LESS "3.13")
-    link_directories (${PKG_CAIRO_LIBRARY_DIRS})
-  else()
-    target_link_directories (fluid PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
-  endif()
+  fl_target_link_directories (fluid PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 endif (FLTK_HAVE_CAIRO)
 
 if (USE_GDIPLUS)        # can only be true on Windows

@@ -139,8 +139,23 @@ fl_check_images(const char *name,               // I - Filename
   } // gzip'ed data
 # endif // HAVE_LIBZ
 
-  if ((count >= 5 && memcmp(buf, "<?xml", 5) == 0) ||
-      (count >= 4 && memcmp(buf, "<svg", 4) == 0))
+  // Check if we have a UTF-8 BOM in the first three bytes (issue #247).
+  // If yes we need at least 5 more bytes to recognize the signature.
+  // Note: BOM (Byte Order Mark) in UTF-8 is not recommended but allowed.
+
+  if (count >= 8) {
+    const uchar bom[3] = { 0xef, 0xbb, 0xbf };
+    if (memcmp(buf, bom, 3) == 0) {
+      buf += 3;
+      count -= 3;
+    }
+  }
+
+  // Check svg or xml signature
+
+  if ((count >= 5 &&
+       (memcmp(buf, "<?xml", 5) == 0 ||
+        memcmp(buf, "<svg", 4) == 0)))
     return new Fl_SVG_Image(name);
 #endif // FLTK_USE_SVG
 

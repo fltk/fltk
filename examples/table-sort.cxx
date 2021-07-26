@@ -239,6 +239,7 @@ void MyTable::load_command(const char *cmd) {
     rows((int)rowdata_.size());
     // Auto-calculate widths, with 20 pixel padding
     autowidth(20);
+    pclose(fp);
 }
 
 // Callback whenever someone clicks on different parts of the table

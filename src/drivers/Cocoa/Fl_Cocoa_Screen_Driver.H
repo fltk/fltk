@@ -85,7 +85,7 @@ public:
   virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
   virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
-  virtual int has_marked_text();
+  virtual int has_marked_text() const;
   virtual void reset_marked_text();
   virtual void insertion_point_location(int x, int y, int height);
   int insertion_point_location(int *px, int *py, int *pheight);

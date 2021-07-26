@@ -72,7 +72,7 @@ AC_PATH_TOOL(PKGCONFIG, pkg-config)
 
 dnl Architecture and optimization options...
 ARCHFLAGS="${ARCHFLAGS:=}"
-AC_ARG_WITH([archflags], AS_HELP_STRING([--with-archflags="flags"], [use custom architecture flags (default=none, macOS values include "-arch arm64e", "-arch i386", "-arch ppc", and "-arch x86_64")]), [
+AC_ARG_WITH([archflags], AS_HELP_STRING([--with-archflags="flags"], [use custom architecture flags (default=none, macOS values include "-arch arm64", "-arch i386", "-arch ppc", and "-arch x86_64")]), [
     ARCHFLAGS="$withval"
 ])
 AC_SUBST(ARCHFLAGS)
@@ -870,10 +870,28 @@ AS_IF([test "x$enable_threads" != xno -a x$check_pthread = xyes], [
                 ])
             ])
         done
+
+        dnl Check if we have PTHREAD_MUTEX_RECURSIVE
+        AC_CACHE_CHECK([whether we have PTHREAD_MUTEX_RECURSIVE], ac_cv_pthread_mutex_recursive,[
+            AC_LANG_PUSH([C])
+            AC_COMPILE_IFELSE(
+                [AC_LANG_PROGRAM(
+                    [[#include <pthread.h>
+                    ]], [[
+                        return PTHREAD_MUTEX_RECURSIVE;
+                    ]])],
+                [ac_cv_pthread_mutex_recursive=yes],
+                [ac_cv_pthread_mutex_recursive=no])
+            AC_LANG_POP([])
+        ])
+        AS_IF([test x$ac_cv_pthread_mutex_recursive = xyes], [
+            AC_DEFINE([HAVE_PTHREAD_MUTEX_RECURSIVE])
+        ])
     ])
 ])
 
 AC_SUBST([PTHREAD_FLAGS])
+AC_SUBST([HAVE_PTHREAD_MUTEX_RECURSIVE])
 
 
 dnl Define OS-specific stuff...

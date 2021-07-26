@@ -1,7 +1,7 @@
 /*
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -12,6 +12,18 @@
  * Please see the following page on how to report bugs and issues:
  *
  *     https://www.fltk.org/bugs.php
+ */
+
+/*
+ * Note: configure syntax vs. CMake syntax in source files (examples):
+ *
+ *   configh.in               configh.cmake.in
+ *   ---------------------    ----------------------------
+ *   [#]define HAVE_GL 0      [#]cmakedefine01 HAVE_GL
+ *   [#]undef HAVE_SNPRINTF   [#]cmakedefine HAVE_SNPRINTF 1
+ *
+ *   The former defines the given macro either as 0 or 1,
+ *   the latter either does not define the macro or defines it as 1.
  */
 
 /*
@@ -168,7 +180,7 @@
  * USE_SDL
  *
  * Should we use SDL for the current platform
- * *FIXME* Not yet implemented in configure !
+ * *FIXME* USE_SDL not yet implemented in configure !
  *
  */
 
@@ -285,7 +297,6 @@
 #undef HAVE_LIBPNG
 #undef HAVE_LIBZ
 #undef HAVE_LIBJPEG
-#undef FLTK_USE_SVG
 
 /*
  * FLTK_USE_CAIRO
@@ -319,11 +330,25 @@
 #undef HAVE_PNG_SET_TRNS_TO_ALPHA
 
 /*
+* FLTK_USE_SVG
+*
+* Do we want FLTK to read and write SVG-formatted files ?
+*/
+
+#undef FLTK_USE_SVG
+
+/*
  * Do we have POSIX threading?
  */
 
 #undef HAVE_PTHREAD
 #undef HAVE_PTHREAD_H
+
+/*
+ * Do we have PTHREAD_MUTEX_RECURSIVE?
+ */
+
+#undef HAVE_PTHREAD_MUTEX_RECURSIVE
 
 /*
  * Do we have the ALSA library?
@@ -368,7 +393,7 @@
 
 /*
  * Do we want filename handling and a filechooser?
- * *FIXME* Not yet implemented in configure !
+ * *FIXME* FL_CFG_NO_FILESYSTEM_SUPPORT not yet implemented in configure !
  */
 
 #undef FL_CFG_NO_FILESYSTEM_SUPPORT
