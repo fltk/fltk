@@ -147,7 +147,7 @@ endif (OPENGL_FOUND)
 
 # Cairo demo - must also be built w/o Cairo (displays a message box)
 if (FLTK_HAVE_CAIRO)
-  CREATE_EXAMPLE (cairo_test cairo_test.cxx "fltk_cairo;fltk")
+  CREATE_EXAMPLE (cairo_test cairo_test.cxx "fltk_cairo;fltk;cairo")
 else ()
   CREATE_EXAMPLE (cairo_test cairo_test.cxx fltk)
 endif (FLTK_HAVE_CAIRO)
@@ -205,6 +205,10 @@ if (OPTION_BUILD_SHARED_LIBS)
       CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "fltk_gl_SHARED;fltk_SHARED;${OPENGL_LIBRARIES}")
       CREATE_EXAMPLE (shape-shared shape.cxx "fltk_gl_SHARED;fltk_SHARED;${OPENGL_LIBRARIES}")
     endif (OPENGL_FOUND)
+
+    if (FLTK_HAVE_CAIRO)
+      CREATE_EXAMPLE (cairo_test-shared cairo_test.cxx "fltk_cairo_SHARED;fltk_SHARED;cairo")
+    endif ()
 
   endif (MSVC) # (not MSVC)
 

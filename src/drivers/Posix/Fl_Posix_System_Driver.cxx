@@ -193,7 +193,7 @@ static void* quadruple_dlopen(const char *libname)
   }
   return ptr;
 }
-#endif
+#endif // HAVE_DLSYM && HAVE_DLFCN_H && !defined (__APPLE_CC__)
 
 
 /**
@@ -332,7 +332,7 @@ static void unlock_function_std() {
   if (!--counter) pthread_mutex_unlock(&fltk_mutex);
 }
 
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
 static bool lock_function_init_rec() {
   pthread_mutexattr_t attrib;
   pthread_mutexattr_init(&attrib);
@@ -352,7 +352,7 @@ static void lock_function_rec() {
 static void unlock_function_rec() {
   pthread_mutex_unlock(&fltk_mutex);
 }
-#  endif // PTHREAD_MUTEX_RECURSIVE
+#  endif // HAVE_PTHREAD_MUTEX_RECURSIVE
 
 void Fl_Posix_System_Driver::awake(void* msg) {
   if (thread_filedes[1]) {
@@ -402,18 +402,18 @@ int Fl_Posix_System_Driver::lock() {
 
     // Set lock/unlock functions for this system, using a system-supplied
     // recursive mutex if supported...
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
     if (!lock_function_init_rec()) {
       fl_lock_function   = lock_function_rec;
       fl_unlock_function = unlock_function_rec;
     } else {
-#  endif // PTHREAD_MUTEX_RECURSIVE
+#  endif // HAVE_PTHREAD_MUTEX_RECURSIVE
       lock_function_init_std();
       fl_lock_function   = lock_function_std;
       fl_unlock_function = unlock_function_std;
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
     }
-#  endif // PTHREAD_MUTEX_RECURSIVE
+#  endif // HAVE_PTHREAD_MUTEX_RECURSIVE
   }
 
   fl_lock_function();

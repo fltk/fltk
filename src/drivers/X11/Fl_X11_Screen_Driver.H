@@ -92,7 +92,7 @@ public:
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual void compose_reset();
-  virtual int text_display_can_leak();
+  virtual int text_display_can_leak() const;
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();

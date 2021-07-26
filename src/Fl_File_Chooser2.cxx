@@ -1491,9 +1491,9 @@ Fl_File_Chooser::value(const char *filename)
     return;
   }
 
+  char fixpath[FL_PATH_MAX];                   // Path with slashes converted
   if (Fl::system_driver()->backslash_as_slash()) {
     // See if the filename contains backslashes...
-    char        fixpath[FL_PATH_MAX];                   // Path with slashes converted
     if (strchr(filename, '\\')) {
       // Convert backslashes to slashes...
       strlcpy(fixpath, filename, sizeof(fixpath));

@@ -117,15 +117,12 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
   if (FLTK_HAVE_CAIRO)
-    if (CMAKE_VERSION VERSION_LESS "3.13")
-      link_directories    (${PKG_CAIRO_LIBRARY_DIRS})
-    else()
-      target_link_directories (${TARGET_NAME} PRIVATE ${PKG_CAIRO_LIBRARY_DIRS})
-    endif()
-  endif (FLTK_HAVE_CAIRO)
+    fl_target_link_directories (${TARGET_NAME} PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
+  endif ()
+
   if (USE_GDIPLUS)        # can only be true on Windows
     target_link_libraries (${TARGET_NAME} gdiplus)
-  endif (USE_GDIPLUS)
+  endif ()
 
   if (MAC_BUNDLE)
     if (PLIST)

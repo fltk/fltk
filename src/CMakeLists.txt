@@ -519,10 +519,6 @@ if (WIN32)
   list (APPEND OPTIONAL_LIBS comctl32 ws2_32)
 endif (WIN32)
 
-if (FLTK_HAVE_CAIRO)
-  list (APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
-endif (FLTK_HAVE_CAIRO)
-
 if (HAVE_XINERAMA)
   list (APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
 endif (HAVE_XINERAMA)

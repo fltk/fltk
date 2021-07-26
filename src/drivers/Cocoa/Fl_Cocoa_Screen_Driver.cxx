@@ -210,8 +210,8 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 }
 
 
-int Fl_Cocoa_Screen_Driver::has_marked_text() {
-  return true;
+int Fl_Cocoa_Screen_Driver::has_marked_text() const {
+  return 1;
 }
 
 
@@ -465,18 +465,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 
 void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-  // check, if this timer slot exists already
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    // if so, simply change the fire interval
-    if (t.callback == cb  &&  t.data == data) {
-      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
-      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
-      t.pending = 1;
-      return;
-    }
-  }
-  // no existing timer to use. Create a new one:
+  // always create a new timer entry
   fl_intptr_t timer_id = -1;
   // find an empty slot in the timer array
   for (int i = 0; i < mac_timer_used; ++i) {
@@ -518,6 +507,10 @@ void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, voi
 
 void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
+  if (!current_timer) {
+    add_timeout(time, cb, data);
+    return;
+  }
   // k = how many times 'time' seconds after the last scheduled timeout until the future
   double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
   if (k < 1) k = 1;

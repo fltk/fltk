@@ -1,7 +1,7 @@
 //
-
+// Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,8 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-//
-// Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
 // Continuously display FLTK's event state.
 //
@@ -33,9 +31,7 @@
 //
 
 #include "keyboard_ui.h"
-
 #include <string.h>
-
 
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
@@ -48,8 +44,7 @@ int handle(int e) {
 }
 
 int MyWindow::handle(int msg) {
-  if (msg==FL_MOUSEWHEEL)
-  {
+  if (msg==FL_MOUSEWHEEL) {
     roller_x->value( roller_x->value() + Fl::e_dx * roller_x->step() );
     roller_y->value( roller_y->value() + Fl::e_dy * roller_y->step() );
     return 1;
@@ -123,8 +118,13 @@ int main(int argc, char** argv) {
     int k = Fl::event_key();
     if (!k)
       keyname = "0";
-    else if (k < 256) {
+    else if (k < 128) { // ASCII
       sprintf(buffer, "'%c'", k);
+    } else if (k >= 0xa0 && k <= 0xff) { // ISO-8859-1 (international keyboards)
+      char key[8];
+      int kl = fl_utf8encode((unsigned)k, key);
+      key[kl] = '\0';
+      sprintf(buffer, "'%s'", key);
     } else if (k > FL_F && k <= FL_F_Last) {
       sprintf(buffer, "FL_F+%d", k - FL_F);
     } else if (k >= FL_KP && k <= FL_KP_Last) {
