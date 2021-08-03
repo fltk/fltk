@@ -76,6 +76,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x,
 static void drain_dropped_files_list(void);
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
 static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL);
+static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float scale);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();         // the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -106,6 +107,9 @@ static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
 static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4 && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#  define NSBitmapFormatFloatingPointSamples NSFloatingPointSamplesBitmapFormat
+#endif
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -3602,6 +3606,12 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
     [nsimg release];
   }
   if (!bitmap) return NULL;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSBitmapFormatFloatingPointSamples)) {
+    // this may happen with macOS ≥ 11.x
+    bitmap = scale_nsbitmapimagerep(bitmap, 1); // transform from floating point to integer pixel values
+  }
+#endif
   int bytesPerPixel([bitmap bitsPerPixel]/8);
   int bpr([bitmap bytesPerRow]);
   int hh([bitmap pixelsHigh]);
@@ -4118,7 +4128,7 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   return true;
 }
 
-// rescales an NSBitmapImageRep
+// rescales an NSBitmapImageRep (and also rewrites it with integer pixels)
 static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float scale)
 {
   int w = [img pixelsWide];
