@@ -76,7 +76,6 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x,
 static void drain_dropped_files_list(void);
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
 static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL);
-static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float scale);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();         // the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -107,9 +106,6 @@ static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
 static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4 && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
-#  define NSBitmapFormatFloatingPointSamples NSFloatingPointSamplesBitmapFormat
-#endif
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -3444,6 +3440,46 @@ void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
 #endif
 }
 
+
+static NSBitmapImageRep *pdf_to_nsbitmapimagerep(NSData *pdfdata) {
+  NSImage *image = [[NSImage alloc] initWithData:pdfdata];
+  NSInteger width = [image size].width * 2;
+  NSInteger height = [image size].height * 2;
+  NSBitmapImageRep *bitmap = [NSBitmapImageRep alloc];
+  NSRect dest_r = NSMakeRect(0, 0, width, height);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_9
+  if (fl_mac_os_version >= 100900) {
+    // This procedure is necessary because initWithFocusedViewRect is deprecated in macOS 10.14
+    // and because it produces a bitmap with floating point pixel values with macOS 11.x
+    bitmap = [bitmap initWithBitmapDataPlanes:NULL
+                                   pixelsWide:width
+                                   pixelsHigh:height
+                                bitsPerSample:8
+                              samplesPerPixel:4
+                                     hasAlpha:YES
+                                     isPlanar:NO
+                               colorSpaceName:NSDeviceRGBColorSpace
+                                  bytesPerRow:4 * width
+                                 bitsPerPixel:32];
+    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+    [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap]];// 10.4
+    [image drawInRect:dest_r]; // 10.9
+    [NSGraphicsContext restoreGraphicsState];
+    [localPool release];
+  } else
+#endif
+  {
+    [image lockFocus];
+    bitmap = [bitmap initWithFocusedViewRect:dest_r]; // deprecated 10.14
+    [image unlockFocus];
+  }
+  [bitmap setSize:[image size]];
+  [image release];
+  return bitmap;
+}
+
+
 Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
 {
   CGContextRestoreGState(gc);
@@ -3455,16 +3491,12 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   [clip declareTypes:[NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, nil] owner:nil];
   [clip setData:(NSData*)pdfdata forType:PDF_pasteboard_type];
+  
   //second, transform this PDF to a bitmap image and put it as tiff in clipboard with retina resolution
-  NSImage *image = [[NSImage alloc] initWithData:(NSData*)pdfdata];
+  NSBitmapImageRep *bitmap = pdf_to_nsbitmapimagerep((NSData*)pdfdata);
   CFRelease(pdfdata);
-  [image lockFocus];
-  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [image size].width*2, [image size].height*2)];
-  [image unlockFocus];
-  [bitmap setSize:[image size]];
   [clip setData:[bitmap TIFFRepresentation] forType:TIFF_pasteboard_type];
   [bitmap release];
-  [image release];
   delete driver();
 }
 
@@ -3598,20 +3630,9 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
     bitmap = [[NSBitmapImageRep alloc] initWithData:data];
   }
   else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
-    NSImage *nsimg = [[NSImage alloc] initWithData:data];
-    [nsimg lockFocus];
-    bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [nsimg size].width*2, [nsimg size].height*2)];
-    [bitmap setSize:[nsimg size]];
-    [nsimg unlockFocus];
-    [nsimg release];
+    bitmap = pdf_to_nsbitmapimagerep(data);
   }
   if (!bitmap) return NULL;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSBitmapFormatFloatingPointSamples)) {
-    // this may happen with macOS ≥ 11.x
-    bitmap = scale_nsbitmapimagerep(bitmap, 1); // transform from floating point to integer pixel values
-  }
-#endif
   int bytesPerPixel([bitmap bitsPerPixel]/8);
   int bpr([bitmap bytesPerRow]);
   int hh([bitmap pixelsHigh]);
