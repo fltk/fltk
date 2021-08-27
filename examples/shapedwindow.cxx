@@ -32,7 +32,7 @@ void cb(Fl_Widget *w, void *) {
 
 class dragbox : public Fl_Box {
 public:
-  dragbox(int x, int y, int w, int h, const char *t=0) : Fl_Box(x,y,w,h,t) {};
+  dragbox(int x, int y, int w, int h, const char *t=0) : Fl_Box(x,y,w,h,t) {}
   int handle(int event) {
     static int fromx, fromy, winx, winy;
     if (event == FL_PUSH) {

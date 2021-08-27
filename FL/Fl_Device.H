@@ -73,19 +73,19 @@ protected:
   /** Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }
   /** Sets the graphics driver of this drawing surface. */
-  inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;};
+  inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;}
 public:
   virtual void set_current(void);
   virtual bool is_current();
   /** \brief Returns the graphics driver of this drawing surface. */
-  inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; };
+  inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; }
   /** The current drawing surface.
    In other words, the Fl_Surface_Device object that currently receives all graphics requests.
    \note It's possible to transiently remove the GUI scaling factor in place in the current
    drawing surface with \ref fl_override_scale(). */
   static inline Fl_Surface_Device *surface() {
     return surface_ ? surface_ : default_surface();
-  };
+  }
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device();
   static void push_current(Fl_Surface_Device *new_current);

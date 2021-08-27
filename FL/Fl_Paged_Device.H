@@ -36,7 +36,7 @@
 class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
 protected:
   /** \brief The constructor */
-  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
+  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {}
 public:
   /**
    Possible page formats.
@@ -99,7 +99,7 @@ public:
    */
   static const page_format page_formats[NO_PAGE_FORMATS];
   /** \brief The destructor */
-  virtual ~Fl_Paged_Device() {};
+  virtual ~Fl_Paged_Device() {}
   virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
   /** Synonym of begin_job(int pagecount, int *frompage, int *topage, char **perr_message).
    For API compatibility with FLTK 1.3.x */

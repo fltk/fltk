@@ -55,9 +55,9 @@ public:
   ~Fl_File_Browser();
 
   /**    Sets or gets the size of the icons. The default size is 20 pixels.  */
-  uchar         iconsize() const { return (iconsize_); };
+  uchar         iconsize() const { return (iconsize_); }
   /**    Sets or gets the size of the icons. The default size is 20 pixels.  */
-  void          iconsize(uchar s) { iconsize_ = s; redraw(); };
+  void          iconsize(uchar s) { iconsize_ = s; redraw(); }
 
   /**
     Sets or gets the filename filter. The pattern matching uses
@@ -70,10 +70,10 @@ public:
     the fl_filename_match()
     function in FLTK.
   */
-  const char    *filter() const { return (pattern_); };
+  const char    *filter() const { return (pattern_); }
   int           load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
-  Fl_Fontsize  textsize() const { return Fl_Browser::textsize(); };
-  void          textsize(Fl_Fontsize s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
+  Fl_Fontsize  textsize() const { return Fl_Browser::textsize(); }
+  void          textsize(Fl_Fontsize s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); }
 
   /**
     Sets or gets the file browser type, FILES or
@@ -81,14 +81,14 @@ public:
     files and directories are shown. Otherwise only directories are
     shown.
   */
-  int           filetype() const { return (filetype_); };
+  int           filetype() const { return (filetype_); }
   /**
     Sets or gets the file browser type, FILES or
     DIRECTORIES. When set to FILES, both
     files and directories are shown. Otherwise only directories are
     shown.
   */
-  void          filetype(int t) { filetype_ = t; };
+  void          filetype(int t) { filetype_ = t; }
   void errmsg(const char *emsg);
   /**
     Returns OS error messages, or NULL if none. Use when advised.

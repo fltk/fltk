@@ -62,7 +62,7 @@ public:
   // Read a 32-bit signed integer, LSB-first
   int read_long() {
     return (int)read_dword();
-  };
+  }
 
   // Move the current read position to a byte offset from the beginning
   // of the file or the original start address in memory

@@ -69,7 +69,7 @@ public:
 
 class clipboard_viewer : public Fl_Tabs { // use tabs to display as appropriate the image or textual content of the clipboard
 public:
-  clipboard_viewer(int x, int y, int w, int h) : Fl_Tabs(x,y,w,h) {};
+  clipboard_viewer(int x, int y, int w, int h) : Fl_Tabs(x,y,w,h) {}
   virtual int handle(int event) {
     if (event != FL_PASTE) return Fl_Tabs::handle(event);
     if (strcmp(Fl::event_clipboard_type(), Fl::clipboard_image) == 0) { // an image is being pasted

@@ -109,10 +109,10 @@ private:
     pair(Fl_GTK_Native_File_Chooser_Driver* c, const char *f) {
       running = c;
       filter = fl_strdup(f);
-    };
+    }
     ~pair() {
       free((char*)filter);
-    };
+    }
   };
   GtkWidget *gtkw_ptr; // used to hold a GtkWidget* without pulling GTK into everything...
   void *gtkw_slist; // used to hold a GLib GSList...

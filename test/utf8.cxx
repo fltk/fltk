@@ -480,7 +480,7 @@ void box_cb(Fl_Widget* o, void*) {
 class right_left_input : public Fl_Input
 {
 public:
-  right_left_input (int x, int y, int w, int h) : Fl_Input(x, y, w, h) {};
+  right_left_input (int x, int y, int w, int h) : Fl_Input(x, y, w, h) {}
   void draw() {
     if (type() == FL_HIDDEN_INPUT) return;
     Fl_Boxtype b = box();

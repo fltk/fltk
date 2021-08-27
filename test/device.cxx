@@ -61,12 +61,12 @@ public:
   MyWidget(int x, int y):Fl_Box(x,y,100,100, "Clipping and rect(f):\nYellow rect.framed\nby B-Y-G-R rect. 1 p.\nthick. Your printer may \nrender very thin lines\nsurrounding \"X\""){
     align(FL_ALIGN_TOP);
     labelsize(10);
-  };
+  }
 };
 
-class MyWidget2: public Fl_Box{
+class MyWidget2: public Fl_Box {
 protected:
-  void draw(){
+  void draw() {
     Fl_Box::draw();
     int d;
     //    fl_line_style(0);
@@ -160,18 +160,18 @@ protected:
     fl_line(x()+61,y()+65, x()+59, y()+63);
 
     fl_color(FL_BLACK);
-  };
+  }
 
 public:
-  MyWidget2(int x, int y):Fl_Box(x,y,100,100, "Integer primitives"){
+  MyWidget2(int x, int y):Fl_Box(x,y,100,100, "Integer primitives") {
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
-class MyWidget3: public Fl_Box{
+class MyWidget3: public Fl_Box {
 protected:
-  void draw(){
+  void draw() {
     Fl_Box::draw();
     double d;
     //    fl_line_style(0);
@@ -193,12 +193,12 @@ protected:
     }
     fl_pop_clip();
 
-  };
+  }
 public:
-  MyWidget3(int x, int y):Fl_Box(x,y,100,100, "Sub-pixel drawing of\nlines 1.63 points apart\nOn the screen you\ncan see aliasing, the\nprinter should render\nthem properly"){
+  MyWidget3(int x, int y):Fl_Box(x,y,100,100, "Sub-pixel drawing of\nlines 1.63 points apart\nOn the screen you\ncan see aliasing, the\nprinter should render\nthem properly") {
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
 class MyWidget4: public Fl_Box{
@@ -355,15 +355,15 @@ protected:
     fl_pop_matrix();
 
     fl_color(FL_BLACK);
-  };
+  }
 public:
   MyWidget4(int x, int y):Fl_Box(x,y+10,150,150, "Line styles"){
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
-class MyWidget5: public Fl_Box{
+class MyWidget5: public Fl_Box {
 protected:
   void draw(){
     Fl_Box::draw();
@@ -430,12 +430,12 @@ protected:
     fl_end_complex_polygon();
 
     fl_pop_matrix();
-  };
+  }
 public:
   MyWidget5(int x, int y):Fl_Box(x,y,230,250, "Complex (double) drawings:\nBlue ellipse may not be\ncorrectly transformed\ndue to non-orthogonal\ntransformation"){
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
 uchar *image;
@@ -604,9 +604,9 @@ void copy(Fl_Widget *, void *data) {
   }
 }
 
-class My_Button:public Fl_Button{
+class My_Button:public Fl_Button {
 protected:
-  void draw(){
+  void draw() {
     if (type() == FL_HIDDEN_BUTTON) return;
     Fl_Color col = value() ? selection_color() : color();
     draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
@@ -617,7 +617,7 @@ protected:
     fl_line_style(0);
     draw_label();
 
-  };
+  }
 public:
   My_Button(int x, int y, int w, int h, const char * label = 0):Fl_Button(x,y,w,h,label){}
 };

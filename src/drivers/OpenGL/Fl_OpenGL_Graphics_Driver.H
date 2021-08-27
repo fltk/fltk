@@ -84,7 +84,7 @@ public:
   int descent();
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
-  void delete_bitmask(Fl_Bitmask bm) { };
+  void delete_bitmask(Fl_Bitmask bm) { }
 };
 
 #endif // FL_OPENGL_GRAPHICS_DRIVER_H
