@@ -128,7 +128,7 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
-  Fl() {}; // no constructor!
+  Fl() {} // no constructor!
 
 private:
 
