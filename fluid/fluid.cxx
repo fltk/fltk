@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1348,7 +1348,7 @@ public:
   int  close();
 
   FILE * desc() const { return _fpt;} // non null if file is open
-  char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, s, _fpt) : NULL;}
+  char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, (int)s, _fpt) : NULL;}
 
 #if defined(_WIN32)  && !defined(__CYGWIN__)
 protected:
@@ -1767,7 +1767,7 @@ int main(int argc,char **argv) {
     int i, n = pm.plugins();
     for (i=0; i<n; i++) {
       Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
-      if (pi) len += strlen(pi->help());
+      if (pi) len += (int)strlen(pi->help());
     }
     char *buf = (char*)malloc(len+1);
     sprintf(buf, msg, argv[0]);

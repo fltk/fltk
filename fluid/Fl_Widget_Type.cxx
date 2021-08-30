@@ -1,7 +1,7 @@
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -379,7 +379,7 @@ void label_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     i->static_value(current_widget->label());
     if (strlen(i->value()) >= oldlabellen) {
-      oldlabellen = strlen(i->value())+128;
+      oldlabellen = (int)strlen(i->value())+128;
       oldlabel = (char*)realloc(oldlabel,oldlabellen);
     }
     strcpy(oldlabel,i->value());
@@ -1343,7 +1343,7 @@ void user_data_type_cb(Fl_Input *i, void *v) {
 // "v_attributes" let user type in random code for attribute settings:
 
 void v_input_cb(Fl_Input* i, void* v) {
-  int n = fl_intptr_t(i->user_data());
+  int n = fl_int(i->user_data());
   if (v == LOAD) {
     i->static_value(current_widget->extra_code(n));
   } else {

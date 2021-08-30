@@ -5,7 +5,7 @@ code_name {.cxx}
 comment {//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,7 +46,7 @@ Function {make_widget_panel()} {
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb
+            callback label_cb selected
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
           }
@@ -134,7 +134,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           } {
             MenuItem {} {
               label {   Image Alignment   }
-              user_data 0xFFFFFFFF
+              user_data (fl_intptr_t)0xFFFFFFFF
               xywh {145 145 100 20} labelfont 2 labelsize 11 deactivate
             }
             MenuItem {} {
@@ -169,7 +169,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           } {
             MenuItem {} {
               label {   Inside && Outside   }
-              user_data 0xFFFFFFFF
+              user_data {(fl_intptr_t)0xFFFFFFFF}
               xywh {135 135 100 20} labelfont 2 labelsize 11 deactivate
             }
             MenuItem {} {
@@ -219,7 +219,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             }
             MenuItem {} {
               label {   Outside Alignment   }
-              user_data 0xFFFFFFFF
+              user_data {(fl_intptr_t)0xFFFFFFFF}
               xywh {125 125 100 20} labelfont 2 labelsize 11 deactivate
             }
             MenuItem {} {
@@ -674,7 +674,7 @@ wCallback->do_callback(wCallback, v);} open
       Fl_Button {} {
         label Revert
         callback revert_cb
-        comment {Hidden Revert button} selected
+        comment {Hidden Revert button}
         xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {

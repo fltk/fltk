@@ -1,7 +1,7 @@
 //
 // FLUID undo support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -61,7 +61,7 @@ static char *undo_filename(int level) {
 
   if (!undo_path_len) {
     fluid_prefs.getUserdataPath(undo_path, sizeof(undo_path));
-    undo_path_len = strlen(undo_path);
+    undo_path_len = (unsigned int)strlen(undo_path);
   }
 
   // append filename: "undo_PID_LEVEL.fl"

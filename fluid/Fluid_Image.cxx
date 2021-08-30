@@ -1,7 +1,7 @@
 //
 // Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -55,7 +55,7 @@ void Fluid_Image::write_static() {
       pixmap_header_written = write_number;
     }
     write_c("static const char *%s[] = {\n", idata_name);
-    write_cstring(img->data()[0], strlen(img->data()[0]));
+    write_cstring(img->data()[0], (int)strlen(img->data()[0]));
 
     int i;
     int ncolors, chars_per_color;
@@ -68,7 +68,7 @@ void Fluid_Image::write_static() {
     } else {
       for (i = 1; i <= ncolors; i ++) {
         write_c(",\n");
-        write_cstring(img->data()[i], strlen(img->data()[i]));
+        write_cstring(img->data()[i], (int)strlen(img->data()[i]));
       }
     }
     for (; i < img->count(); i ++) {
@@ -107,7 +107,7 @@ void Fluid_Image::write_static() {
       if (nData) {
         char *data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* ignore */ }
-        write_cdata(data, nData);
+        write_cdata(data, (int)nData);
         free(data);
       }
       fclose(f);

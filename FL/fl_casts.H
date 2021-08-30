@@ -1,4 +1,19 @@
-// experimental inline cast functions for the Fast Light Toolkit (FLTK)
+//
+// Experimental inline "cast functions" for the Fast Light Toolkit (FLTK).
+// See also issue #109: "VS2017 warnings when building fltk 1.4.x"
+//
+// Copyright 1998-2021 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
+//
 
 #include <FL/platform_types.h>
 

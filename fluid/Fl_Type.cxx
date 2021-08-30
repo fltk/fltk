@@ -1,19 +1,7 @@
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Each object described by Fluid is one of these objects.  They
-// are all stored in a double-linked list.
-//
-// They "type" of the object is covered by the virtual functions.
-// There will probably be a lot of these virtual functions.
-//
-// The type browser is also a list of these objects, but they
-// are "factory" instances, not "real" ones.  These objects exist
-// only so the "make" method can be called on them.  They are
-// not in the linked list and are not written to files or
-// copied or otherwise examined.
-//
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,6 +13,18 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// Each object described by Fluid is one of these objects.  They
+// are all stored in a double-linked list.
+//
+// The "type" of the object is covered by the virtual functions.
+// There will probably be a lot of these virtual functions.
+//
+// The type browser is also a list of these objects, but they
+// are "factory" instances, not "real" ones.  These objects exist
+// only so the "make" method can be called on them.  They are
+// not in the linked list and are not written to files or
+// copied or otherwise examined.
 
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
@@ -682,7 +682,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
     if (!nostrip) while (isspace((int)(unsigned char)*n)) n++;
     const char *e = n + strlen(n);
     if (!nostrip) while (e > n && isspace((int)(unsigned char)*(e-1))) e--;
-    length = e-n;
+    length = int(e-n);
     if (!length) n = 0;
   }
   if (n == p) return 0;

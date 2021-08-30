@@ -1,7 +1,7 @@
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -233,7 +233,7 @@ void write_cstring(const char *s, int length) {
 }
 
 // write a C string, quoting characters if necessary:
-void write_cstring(const char *s) {write_cstring(s,strlen(s));}
+void write_cstring(const char *s) {write_cstring(s, (int)strlen(s));}
 
 // write an array of C binary data (does not add a null):
 void write_cdata(const char *s, int length) {
