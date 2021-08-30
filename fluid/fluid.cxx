@@ -1347,8 +1347,19 @@ public:
   //not necessary here: FILE * fl_fopen (const char *file, const char *mode="r");
   int  close();
 
-  FILE * desc() const { return _fpt;} // non null if file is open
+  FILE * desc() const { return _fpt;} // non-null if file is open
   char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, (int)s, _fpt) : NULL;}
+
+  // returns fileno(FILE*):
+  // (file must be open, i.e. _fpt must be non-null)
+  // *FIXME* we should find a better solution for the 'fileno' issue
+  int fileno() const {
+#ifdef _MSC_VER
+    return _fileno(_fpt); // suppress MSVC warning
+#else
+    return ::fileno(_fpt);
+#endif
+  } // non null if file is open
 
 #if defined(_WIN32)  && !defined(__CYGWIN__)
 protected:
@@ -1490,7 +1501,7 @@ shell_pipe_cb(FL_SOCKET, void*) {
     shell_run_terminal->append(line);
   } else {
     // End of file; tell the parent...
-    Fl::remove_fd(fileno(s_proc.desc()));
+    Fl::remove_fd(s_proc.fileno());
     s_proc.close();
     shell_run_terminal->append("... END SHELL COMMAND ...\n");
   }
@@ -1526,7 +1537,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   }
   shell_run_window->show();
 
-  Fl::add_fd(fileno(s_proc.desc()), shell_pipe_cb);
+  Fl::add_fd(s_proc.fileno(), shell_pipe_cb);
 
   while (s_proc.desc()) Fl::wait();
 

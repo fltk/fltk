@@ -134,7 +134,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           } {
             MenuItem {} {
               label {   Image Alignment   }
-              user_data (fl_intptr_t)0xFFFFFFFF
+              user_data {(fl_intptr_t)0xFFFFFFFF}
               xywh {145 145 100 20} labelfont 2 labelsize 11 deactivate
             }
             MenuItem {} {
