@@ -152,7 +152,7 @@ void add_point_cb(Fl_Widget *w, void *d)
 {
   unsigned char *fd = vec[current_char];
   while (*fd) fd++;
-  *fd = (fl_intptr_t)(d);
+  *fd = (fl_uchar)(d);
   w->parent()->redraw();
 }
 
@@ -285,12 +285,12 @@ void create_the_forms() {
   // create the sample string
   int n = 0;
   strcpy(label, "Hello, world!\n");
-  int i = strlen(label);
+  int i = (int)strlen(label);
   ulong c;
   for (c = ' '+1; c < 127; c++) {
-    if (!(c&0x1f)) label[i++]='\n';
-    if (c=='@') label[i++]=c;
-    label[i++]=c;
+    if (!(c&0x1f)) label[i++] = '\n';
+    if (c == '@') label[i++] = '@';
+    label[i++] = (char)c;
   }
   label[i++] = '\n';
   for (c = 0xA1; c < 0x600; c += 9) {
