@@ -48,7 +48,7 @@ static void get_ms_errmsg(char *errmsg, int errmsg_sz) {
     fl_snprintf(errmsg, errmsg_sz, "Error #%lu", (unsigned long)lastErr);
   } else {
     /* convert message to UTF-8 */
-    int mlen = fl_utf8fromwc(errmsg, errmsg_sz, mbuf, msize);
+    fl_utf8fromwc(errmsg, errmsg_sz, mbuf, msize);
     /* Remove '\r's -- they screw up fl_alert()) */
     char *src = errmsg, *dst = errmsg;
     for ( ; 1; src++ ) {

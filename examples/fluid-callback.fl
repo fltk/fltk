@@ -81,5 +81,6 @@ delete this;} {}
 Function {} {open return_type int
 } {
   code {// Main program
-App *app = new App(300, 100, "Virtual Callback Test");} {}
+App(300, 100, "Virtual Callback Test");} {selected
+  }
 }
