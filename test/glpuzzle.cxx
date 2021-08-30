@@ -44,9 +44,9 @@ int main(int, char**) {
 #define WIDTH 4
 #define HEIGHT 5
 #define PIECES 10
-#define OFFSETX -2
-#define OFFSETY -2.5
-#define OFFSETZ -0.5
+#define OFFSETX -2.0f
+#define OFFSETY -2.5f
+#define OFFSETZ -0.5f
 
 typedef char Config[HEIGHT][WIDTH];
 
@@ -93,7 +93,7 @@ static struct puzzlelist *lastentry;
 
 int curX, curY, visible;
 
-#define MOVE_SPEED 0.2
+#define MOVE_SPEED 0.2f
 static unsigned char movingPiece;
 static float move_x, move_y;
 static float curquat[4];
@@ -105,7 +105,7 @@ static char xsize[PIECES + 1] =
 static char ysize[PIECES + 1] =
 {0, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2};
 static float zsize[PIECES + 1] =
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6};
+{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6f};
 
 static Config startConfig =
 {
@@ -161,30 +161,30 @@ solution(Config config)
 
 float boxcoords[][3] =
 {
-  {0.2, 0.2, 0.9},
-  {0.8, 0.2, 0.9},
-  {0.8, 0.8, 0.9},
-  {0.2, 0.8, 0.9},
-  {0.2, 0.1, 0.8},
-  {0.8, 0.1, 0.8},
-  {0.9, 0.2, 0.8},
-  {0.9, 0.8, 0.8},
-  {0.8, 0.9, 0.8},
-  {0.2, 0.9, 0.8},
-  {0.1, 0.8, 0.8},
-  {0.1, 0.2, 0.8},
-  {0.2, 0.1, 0.2},
-  {0.8, 0.1, 0.2},
-  {0.9, 0.2, 0.2},
-  {0.9, 0.8, 0.2},
-  {0.8, 0.9, 0.2},
-  {0.2, 0.9, 0.2},
-  {0.1, 0.8, 0.2},
-  {0.1, 0.2, 0.2},
-  {0.2, 0.2, 0.1},
-  {0.8, 0.2, 0.1},
-  {0.8, 0.8, 0.1},
-  {0.2, 0.8, 0.1},
+  {0.2f, 0.2f, 0.9f},
+  {0.8f, 0.2f, 0.9f},
+  {0.8f, 0.8f, 0.9f},
+  {0.2f, 0.8f, 0.9f},
+  {0.2f, 0.1f, 0.8f},
+  {0.8f, 0.1f, 0.8f},
+  {0.9f, 0.2f, 0.8f},
+  {0.9f, 0.8f, 0.8f},
+  {0.8f, 0.9f, 0.8f},
+  {0.2f, 0.9f, 0.8f},
+  {0.1f, 0.8f, 0.8f},
+  {0.1f, 0.2f, 0.8f},
+  {0.2f, 0.1f, 0.2f},
+  {0.8f, 0.1f, 0.2f},
+  {0.9f, 0.2f, 0.2f},
+  {0.9f, 0.8f, 0.2f},
+  {0.8f, 0.9f, 0.2f},
+  {0.2f, 0.9f, 0.2f},
+  {0.1f, 0.8f, 0.2f},
+  {0.1f, 0.2f, 0.2f},
+  {0.2f, 0.2f, 0.1f},
+  {0.8f, 0.2f, 0.1f},
+  {0.8f, 0.8f, 0.1f},
+  {0.2f, 0.8f, 0.1f},
 };
 
 float boxnormals[][3] =
@@ -195,26 +195,26 @@ float boxnormals[][3] =
   {0, 0, -1},
   {0, -1, 0},
   {-1, 0, 0},
-  {0.7071, 0.7071, 0.0000},  /* 6 */
-  {0.7071, -0.7071, 0.0000},
-  {-0.7071, 0.7071, 0.0000},
-  {-0.7071, -0.7071, 0.0000},
-  {0.7071, 0.0000, 0.7071},  /* 10 */
-  {0.7071, 0.0000, -0.7071},
-  {-0.7071, 0.0000, 0.7071},
-  {-0.7071, 0.0000, -0.7071},
-  {0.0000, 0.7071, 0.7071},  /* 14 */
-  {0.0000, 0.7071, -0.7071},
-  {0.0000, -0.7071, 0.7071},
-  {0.0000, -0.7071, -0.7071},
-  {0.5774, 0.5774, 0.5774},  /* 18 */
-  {0.5774, 0.5774, -0.5774},
-  {0.5774, -0.5774, 0.5774},
-  {0.5774, -0.5774, -0.5774},
-  {-0.5774, 0.5774, 0.5774},
-  {-0.5774, 0.5774, -0.5774},
-  {-0.5774, -0.5774, 0.5774},
-  {-0.5774, -0.5774, -0.5774},
+  {0.7071f, 0.7071f, 0.0000f},  /* 6 */
+  {0.7071f, -0.7071f, 0.0000f},
+  {-0.7071f, 0.7071f, 0.0000f},
+  {-0.7071f, -0.7071f, 0.0000f},
+  {0.7071f, 0.0000f, 0.7071f},  /* 10 */
+  {0.7071f, 0.0000f, -0.7071f},
+  {-0.7071f, 0.0000f, 0.7071f},
+  {-0.7071f, 0.0000f, -0.7071f},
+  {0.0000f, 0.7071f, 0.7071f},  /* 14 */
+  {0.0000f, 0.7071f, -0.7071f},
+  {0.0000f, -0.7071f, 0.7071f},
+  {0.0000f, -0.7071f, -0.7071f},
+  {0.5774f, 0.5774f, 0.5774f},  /* 18 */
+  {0.5774f, 0.5774f, -0.5774f},
+  {0.5774f, -0.5774f, 0.5774f},
+  {0.5774f, -0.5774f, -0.5774f},
+  {-0.5774f, 0.5774f, 0.5774f},
+  {-0.5774f, 0.5774f, -0.5774f},
+  {-0.5774f, -0.5774f, 0.5774f},
+  {-0.5774f, -0.5774f, -0.5774f},
 };
 
 int boxfaces[][4] =
@@ -308,30 +308,30 @@ drawBox(int piece, float xoff, float yoff)
 
 float containercoords[][3] =
 {
-  {-0.1, -0.1, 1.0},
-  {-0.1, -0.1, -0.1},
-  {4.1, -0.1, -0.1},
-  {4.1, -0.1, 1.0},
-  {1.0, -0.1, 0.6},     /* 4 */
-  {3.0, -0.1, 0.6},
-  {1.0, -0.1, 0.0},
-  {3.0, -0.1, 0.0},
-  {1.0, 0.0, 0.0},      /* 8 */
-  {3.0, 0.0, 0.0},
-  {3.0, 0.0, 0.6},
-  {1.0, 0.0, 0.6},
-  {0.0, 0.0, 1.0},      /* 12 */
-  {4.0, 0.0, 1.0},
-  {4.0, 0.0, 0.0},
-  {0.0, 0.0, 0.0},
-  {0.0, 5.0, 0.0},      /* 16 */
-  {0.0, 5.0, 1.0},
-  {4.0, 5.0, 1.0},
-  {4.0, 5.0, 0.0},
-  {-0.1, 5.1, -0.1},    /* 20 */
-  {4.1, 5.1, -0.1},
-  {4.1, 5.1, 1.0},
-  {-0.1, 5.1, 1.0},
+  {-0.1f, -0.1f, 1.0f},
+  {-0.1f, -0.1f, -0.1f},
+  {4.1f, -0.1f, -0.1f},
+  {4.1f, -0.1f, 1.0f},
+  {1.0f, -0.1f, 0.6f},     /* 4 */
+  {3.0f, -0.1f, 0.6f},
+  {1.0f, -0.1f, 0.0f},
+  {3.0f, -0.1f, 0.0f},
+  {1.0f, 0.0f, 0.0f},      /* 8 */
+  {3.0f, 0.0f, 0.0f},
+  {3.0f, 0.0f, 0.6f},
+  {1.0f, 0.0f, 0.6f},
+  {0.0f, 0.0f, 1.0f},      /* 12 */
+  {4.0f, 0.0f, 1.0f},
+  {4.0f, 0.0f, 0.0f},
+  {0.0f, 0.0f, 0.0f},
+  {0.0f, 5.0f, 0.0f},      /* 16 */
+  {0.0f, 5.0f, 1.0f},
+  {4.0f, 5.0f, 1.0f},
+  {4.0f, 5.0f, 0.0f},
+  {-0.1f, 5.1f, -0.1f},    /* 20 */
+  {4.1f, 5.1f, -0.1f},
+  {4.1f, 5.1f, 1.0f},
+  {-0.1f, 5.1f, 1.0f},
 };
 
 float containernormals[][3] =
@@ -458,7 +458,7 @@ drawAll(void)
       if (piece == movingPiece) {
         drawBox(piece, move_x, move_y);
       } else {
-        drawBox(piece, j, i);
+        drawBox(piece, float(j), float(i));
       }
     }
   }
@@ -720,8 +720,8 @@ continueSolving(void)
 found_piece:
   if (!movingPiece) {
     movingPiece = movedPiece;
-    move_x = fromx;
-    move_y = fromy;
+    move_x = float(fromx);
+    move_y = float(fromy);
   }
   move_x += xadds[movedir] * MOVE_SPEED;
   move_y += yadds[movedir] * MOVE_SPEED;
@@ -866,7 +866,7 @@ int
 invertMatrix(const GLfloat src[16], GLfloat inverse[16])
 {
   int i, j, k, swap;
-  double t;
+  float t;
   GLfloat temp[4][4];
 
   for (i = 0; i < 4; i++) {
@@ -947,7 +947,7 @@ computeCoords(int piece, int mousex, int mousey,
 
   if (piece == 0)
     return 0;
-  height = zsize[piece] - 0.1 + OFFSETZ;
+  height = zsize[piece] - 0.1f + OFFSETZ;
 
   glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
   glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
@@ -955,8 +955,8 @@ computeCoords(int piece, int mousex, int mousey,
   if (!invertMatrix(finalMatrix, finalMatrix))
     return 0;
 
-  in[0] = (2.0 * (mousex - viewport[0]) / viewport[2]) - 1;
-  in[1] = (2.0 * ((H - mousey) - viewport[1]) / viewport[3]) - 1;
+  in[0] = (2.0f * (mousex - viewport[0]) / viewport[2]) - 1;
+  in[1] = (2.0f * ((H - mousey) - viewport[1]) / viewport[3]) - 1;
 
   a = in[0] * finalMatrix[0 * 4 + 2] +
     in[1] * finalMatrix[1 * 4 + 2] +
@@ -1025,8 +1025,8 @@ grabPiece(int piece, float selx, float sely)
     while (selecty > 0 && thePuzzle[selecty - 1][selectx] == movingPiece) {
       selecty--;
     }
-    move_x = selectx;
-    move_y = selecty;
+    move_x = float(selectx);
+    move_y = float(selecty);
     selected = 1;
     selstartx = selx;
     selstarty = sely;
@@ -1097,11 +1097,11 @@ moveSelection(float selx, float sely)
       /* Allow visual movement of solution piece outside of the
 
          box */
-      move_x = selectx;
+      move_x = float(selectx);
       move_y = sely - selstarty + selecty;
     } else {
-      move_x = selectx;
-      move_y = selecty;
+      move_x = float(selectx);
+      move_y = float(selecty);
     }
   }
 }
@@ -1237,10 +1237,10 @@ motion(int x, int y)
   if (middle_mouse && !left_mouse) {
     if (mousex != x || mousey != y) {
       trackball(lastquat,
-        (2.0*mousex - W) / W,
-        (H - 2.0*mousey) / H,
-        (2.0*x - W) / W,
-        (H - 2.0*y) / H);
+        (2.0f*mousex - W) / W,
+        (H - 2.0f*mousey) / H,
+        (2.0f*x - W) / W,
+        (H - 2.0f*y) / H);
       spinning = enable_spinning; // 1 = yes, 0 = disabled (commandline -n)
     } else {
       spinning = 0;
@@ -1345,11 +1345,11 @@ init(void)
   static float lmodel_local[] =
   {GL_FALSE};
   static float light0_ambient[] =
-  {0.1, 0.1, 0.1, 1.0};
+  {0.1f, 0.1f, 0.1f, 1.0f};
   static float light0_diffuse[] =
-  {1.0, 1.0, 1.0, 0.0};
+  {1.0f, 1.0f, 1.0f, 0.0f};
   static float light0_position[] =
-  {0.8660254, 0.5, 1, 0};
+  {0.8660254f, 0.5f, 1, 0};
   static float light0_specular[] =
   {0.0, 0.0, 0.0, 0.0};
   static float bevel_mat_ambient[] =
@@ -1388,7 +1388,7 @@ init(void)
   glShadeModel(GL_FLAT);
 
   trackball(curquat, 0.0, 0.0, 0.0, 0.0);
-  srandom(time(NULL));
+  srandom((unsigned int)time(NULL));
 }
 
 static void
