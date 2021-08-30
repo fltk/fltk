@@ -22,8 +22,9 @@
 #  define Fl_H
 
 #include <FL/Fl_Export.H>
-
 #include <FL/platform_types.h> // for FL_SOCKET
+#include <FL/fl_casts.H>       // experimental
+
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
