@@ -242,8 +242,8 @@ public:
   */
   const char* value() const {return value_;}
 
-  /* Returns the character at index \p i. */
-  Fl_Char index(int i) const;
+  /* Returns the Unicode character at index \p i. */
+  unsigned int index(int i) const;
 
   /**
     Returns the number of bytes in value().
