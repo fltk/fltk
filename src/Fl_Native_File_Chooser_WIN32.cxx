@@ -328,12 +328,12 @@ void Fl_WinAPI_Native_File_Chooser_Driver::ClearBINF() {
 
 // CONVERT WINDOWS BACKSLASHES TO UNIX FRONTSLASHES
 void Fl_WinAPI_Native_File_Chooser_Driver::Win2Unix(char *s) {
-  while ( s=strchr(s,'\\') ) *s = '/';
+  while ( (s=strchr(s,'\\')) ) *s = '/';
 }
 
 // CONVERT UNIX FRONTSLASHES TO WINDOWS BACKSLASHES
 void Fl_WinAPI_Native_File_Chooser_Driver::Unix2Win(char *s) {
-  while ( s=strchr(s,'/') ) *s = '\\';
+  while ( (s=strchr(s,'/')) ) *s = '\\';
 }
 
 // SEE IF PATH IS FRONT SLASH OR BACKSLASH STYLE
