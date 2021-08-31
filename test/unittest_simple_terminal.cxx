@@ -88,7 +88,7 @@ public:
       { 0x33333300, FL_COURIER_BOLD, 14 },  // "\033[8m"      8   white 20%
       { 0x1a1a1a00, FL_COURIER_BOLD, 14 },  // "\033[9m"      9   white 10%
     };
-    int tty_h = (h/3.5);
+    int tty_h = (int)(h/3.5);
     int tty_y1 = y+(tty_h*0)+20;
     int tty_y2 = y+(tty_h*1)+40;
     int tty_y3 = y+(tty_h*2)+60;

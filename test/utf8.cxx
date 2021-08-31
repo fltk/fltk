@@ -324,8 +324,8 @@ static void create_font_widget()
   ulong c;
   for (c = ' '+1; c < 127; c++) {
     if (!(c&0x1f)) label[i++]='\n';
-    if (c=='@') label[i++]=c;
-    label[i++]=c;
+    if (c == '@') label[i++] = '@';
+    label[i++] = (char)c;
   }
   label[i++] = '\n';
   for (c = 0xA1; c < 0x600; c += 9) {
@@ -491,8 +491,8 @@ public:
   void drawtext(int X, int Y, int W, int H) {
     fl_color(textcolor());
     fl_font(textfont(), textsize());
-    fl_rtl_draw(value(), strlen(value()),
-                X + W, Y + fl_height() -fl_descent());
+    fl_rtl_draw(value(), (int)strlen(value()),
+                X + W, Y + fl_height() - fl_descent());
   }
 };
 
@@ -570,8 +570,8 @@ int main(int argc, char** argv)
     "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
 
   char *utf8 = (char*) malloc(strlen(latin1) * 5 + 1);
-  int l = fl_utf8froma(utf8, (strlen(latin1) * 5 + 1), latin1, strlen(latin1));
-
+  int l = fl_utf8froma(utf8, (unsigned int)strlen(latin1) * 5 + 1,
+                       latin1, (unsigned int)strlen(latin1));
   make_font_chooser();
   extra_font = FL_TIMES_BOLD_ITALIC;
 
