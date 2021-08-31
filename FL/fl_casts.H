@@ -17,22 +17,18 @@
 
 #include <FL/platform_types.h>
 
-inline char fl_char(void *v) { return (char)(fl_intptr_t)v; }
-inline int  fl_int(void *v)  { return (int)(fl_intptr_t)v; }
-inline long fl_long(void *v) { return (long)(fl_intptr_t)v; }
+inline char fl_char(void *v)             { return (char)(fl_intptr_t)v; }
+inline int  fl_int(void *v)              { return (int)(fl_intptr_t)v; }
+inline long fl_long(void *v)             { return (long)(fl_intptr_t)v; }
 
-inline unsigned char fl_uchar(void *v) { return (unsigned char)(fl_uintptr_t)v; }
-inline unsigned int  fl_uint(void *v)  { return (unsigned int)(fl_uintptr_t)v; }
-inline unsigned long fl_ulong(void *v) { return (unsigned long)(fl_uintptr_t)v; }
+inline unsigned char fl_uchar(void *v)   { return (unsigned char)(fl_uintptr_t)v; }
+inline unsigned int  fl_uint(void *v)    { return (unsigned int)(fl_uintptr_t)v; }
+inline unsigned long fl_ulong(void *v)   { return (unsigned long)(fl_uintptr_t)v; }
 
-#if 0 /* not necessary */
+// the following conversions can be used to silence MSVC warning C4312:
+// 'type cast': conversion from '<type>' to 'void *' of greater size
 
-inline char fl_char(size_t v) { return (char)v; }
-inline int  fl_int(size_t v)  { return (int)v; }
-inline long fl_long(size_t v) { return (long)v; }
-
-inline unsigned char fl_uchar(size_t v) { return (unsigned char)v; }
-inline unsigned int  fl_uint(size_t v)  { return (unsigned int)v; }
-inline unsigned long fl_ulong(size_t v) { return (unsigned long)v; }
-
-#endif /* not necessary */
+inline void *fl_voidptr(int v)           { return (void *)(fl_intptr_t)v; }
+inline void *fl_voidptr(unsigned int v)  { return (void *)(fl_uintptr_t)v; }
+inline void *fl_voidptr(long v)          { return (void *)(fl_intptr_t)v; }
+inline void *fl_voidptr(unsigned long v) { return (void *)(fl_uintptr_t)v; }
