@@ -8,7 +8,7 @@
 //     text can be highlighted, and the interface can be resized.
 //
 // Copyright 2010 Greg Ercolano.
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,6 +30,7 @@
 #  ifdef _MSC_VER
 #    define popen _popen
 #    define pclose _pclose
+#    define fileno _fileno
 #  else /*_MSC_VER*/
 #    include <unistd.h>                         // non-MS win32 compilers (untested)
 #  endif /*_MSC_VER*/
