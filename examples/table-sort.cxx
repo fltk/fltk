@@ -224,7 +224,7 @@ void MyTable::load_command(const char *cmd) {
     for ( int line=0; fgets(s, sizeof(s)-1, fp); line++ ) {
 #ifdef _WIN32
         // WINDOWS
-        if ( line < 5 ) continue; 	// skip DIR's 5 line header
+        if ( line < 5 ) continue; // skip DIR's 5 line header
 #else
         // UNIX
         if ( line==0 && strncmp(s,"total ",6)==0) continue;
