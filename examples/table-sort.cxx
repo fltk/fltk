@@ -28,6 +28,7 @@
 #include <FL/Fl_Table_Row.H>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <string>
@@ -39,9 +40,10 @@
 #ifdef _WIN32
 // WINDOWS
 #  define DIRCMD          "dir"
-static const char *G_header[] = { "Date", "Time", "Size", "Filename", "", "", "", "", "", 0 };
+static const char *G_header[] = { "Date", "Time", "", "Size", "Filename", "", "", "", "", "", 0 };
 #  ifdef _MSC_VER
 #    define popen           _popen
+#    define pclose          _pclose
 #  endif
 #else /* _WIN32 */
 // UNIX
@@ -219,11 +221,17 @@ void MyTable::load_command(const char *cmd) {
     char s[512];
     FILE *fp = popen(cmd, "r");
     cols(0);
-    for ( int r=0; fgets(s, sizeof(s)-1, fp); r++ ) {
-        if ( r==0 && strncmp(s,"total ",6)==0) { --r; continue; }
+    for ( int line=0; fgets(s, sizeof(s)-1, fp); line++ ) {
+#ifdef _WIN32
+        // WINDOWS
+        if ( line < 5 ) continue; // skip DIR's 5 line header
+#else
+        // UNIX
+        if ( line==0 && strncmp(s,"total ",6)==0) continue;
+#endif
         // Add a new row
         Row newrow; rowdata_.push_back(newrow);
-        std::vector<std::string> &rc = rowdata_[r].cols;
+        std::vector<std::string> &rc = rowdata_.back().cols;
         // Break line into separate word 'columns'
         char *ss;
         const char *delim = " \t\n";
@@ -235,11 +243,18 @@ void MyTable::load_command(const char *cmd) {
             cols((int)rc.size());
         }
     }
+    pclose(fp);
+
+#ifdef _WIN32
+    // WINDOWS: Trim off DIR's 2 line footer
+    if ( rowdata_.size() > 2 )
+        { rowdata_.pop_back(); rowdata_.pop_back(); }
+#endif
+
     // How many rows we loaded
     rows((int)rowdata_.size());
     // Auto-calculate widths, with 20 pixel padding
     autowidth(20);
-    pclose(fp);
 }
 
 // Callback whenever someone clicks on different parts of the table

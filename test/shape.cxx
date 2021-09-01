@@ -47,11 +47,11 @@ void shape_window::draw() {
   }
 // draw an amazing graphic:
   glClear(GL_COLOR_BUFFER_BIT);
-  glColor3f(.5,.6,.7);
+  glColor3f(.5f, .6f, .7f);
   glBegin(GL_POLYGON);
   for (int j=0; j<sides; j++) {
     double ang = j*2*M_PI/sides;
-    glVertex3f(cos(ang),sin(ang),0);
+    glVertex3f((GLfloat)cos(ang), (GLfloat)sin(ang), 0);
   }
   glEnd();
 }

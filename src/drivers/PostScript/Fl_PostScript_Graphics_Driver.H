@@ -51,8 +51,8 @@ public:
 
   Fl_PostScript_Graphics_Driver();
   ~Fl_PostScript_Graphics_Driver();
-  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};
-  FILE * file() {return output;};
+  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
+  FILE * file() {return output;}
   void page(double pw, double ph, int media = 0);
   void page(int format);
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
@@ -112,7 +112,7 @@ public:
   int my; // mask lines
   int page_policy_;
   void page_policy(int p);
-  int page_policy(){return page_policy_;};
+  int page_policy() { return page_policy_; }
   int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
   /** Shields output PostScript data from modifications of the current locale.
    It typically avoids PostScript errors caused if the current locale uses comma instead of dot
@@ -154,11 +154,11 @@ public:
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
 
-  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;};
-  FILE * file() {return output;};
+  void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
+  FILE * file() {return output;}
   //void orientation (int o);
   //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor
-  //void interpolate(int i){interpolate_=i;};
+  //void interpolate(int i){interpolate_=i;}
   //int interpolate(){return interpolate_;}
 
   void page(double pw, double ph, int media = 0);
@@ -211,9 +211,9 @@ public:
   void end_line();
   void end_loop();
   void end_polygon();
-  void begin_complex_polygon(){begin_polygon();};
-  void gap(){gap_=1;};
-  void end_complex_polygon(){end_polygon();};
+  void begin_complex_polygon(){begin_polygon();}
+  void gap(){gap_=1;}
+  void end_complex_polygon(){end_polygon();}
   void transformed_vertex(double x, double y);
 
   void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0);
@@ -221,8 +221,8 @@ public:
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
 
-  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
-  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
+  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); }
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void font(int face, int size);

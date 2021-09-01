@@ -1,7 +1,7 @@
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -500,7 +500,7 @@ void Fl_Code_Type::write_code1() {
   const char *ind = indent();
   while( (pch=strchr(c,'\n')) )
   {
-    int line_len = pch - c;
+    int line_len = int(pch - c);
     if (line_len < 1)
       write_c("\n");
     else

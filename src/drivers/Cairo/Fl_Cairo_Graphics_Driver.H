@@ -48,7 +48,7 @@ public:
   int gap_;
   int pages_;
   cairo_t *cr() { return cairo_; }
-  PangoLayout *pango_layout() {return pango_layout_;};
+  PangoLayout *pango_layout() {return pango_layout_;}
 
   void check_status(void);
 
@@ -117,17 +117,17 @@ public:
   void end_line();
   void end_loop();
   void end_polygon();
-  void begin_complex_polygon(){begin_polygon();};
-  void gap(){gap_=1;};
-  void end_complex_polygon(){end_polygon();};
+  void begin_complex_polygon() { begin_polygon(); }
+  void gap() { gap_ = 1; }
+  void end_complex_polygon() { end_polygon(); }
   void transformed_vertex(double x, double y);
 
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
 
-  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
-  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
+  void draw(const char* s, int nBytes, int x, int y) { transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) { transformed_draw(s,nBytes,x,y); }
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);

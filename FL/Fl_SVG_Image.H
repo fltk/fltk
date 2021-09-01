@@ -162,7 +162,7 @@ public:
   virtual void color_average(Fl_Color c, float i);
   virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
-  virtual Fl_SVG_Image *as_svg_image() { return this; };
+  virtual Fl_SVG_Image *as_svg_image() { return this; }
   virtual void normalize();
 };
 

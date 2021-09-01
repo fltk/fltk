@@ -273,7 +273,7 @@ private:
   int already_known(const char *str, int n);
 public:
   gl_texture_fifo(int max = 100); // 100 = default height of texture pile
-  inline int size(void) {return size_; };
+  inline int size(void) {return size_; }
   ~gl_texture_fifo(void);
 };
 

@@ -1,7 +1,7 @@
 //
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,7 @@ static void cb_(Fl_Tabs* o, void* v) {
 }
 
 Fl_Menu_Item menu_[] = {
- {"   Image Alignment   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
+ {"   Image Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
  {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -34,7 +34,7 @@ Fl_Menu_Item menu_[] = {
 };
 
 Fl_Menu_Item menu_1[] = {
- {"   Inside && Outside   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
+ {"   Inside && Outside   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
  {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -44,7 +44,7 @@ Fl_Menu_Item menu_1[] = {
  {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"   Outside Alignment   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
+ {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
  {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},

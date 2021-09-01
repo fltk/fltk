@@ -100,14 +100,14 @@ void cube_box::draw() {
     glEnable(GL_DEPTH_TEST);
     glFrustum(-1,1,-1,1,2,10000);
     glTranslatef(0,0,-10);
-    glClearColor(0.4, 0.4, 0.4, 0);
+    glClearColor(0.4f, 0.4f, 0.4f, 0);
   }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glPushMatrix();
   glRotatef(float(lasttime*1.6),0,0,1);
   glRotatef(float(lasttime*4.2),1,0,0);
   glRotatef(float(lasttime*2.3),0,1,0);
-  glTranslatef(-1.0, 1.2f, -1.5);
+  glTranslatef(-1.0f, 1.2f, -1.5f);
   glScalef(float(size),float(size),float(size));
   drawcube(wire);
   glPopMatrix();

@@ -97,9 +97,9 @@ class Rotated_Label_Box : public Fl_Widget{
 
   public:
   Rotated_Label_Box(int X, int Y, int W, int H, const char*L=0):
-    Fl_Widget(X,Y,W,H,L),rt_angle(0),rt_align((Fl_Align)0){
+    Fl_Widget(X,Y,W,H,L),rt_angle(0),rt_align((Fl_Align)0) {
       rt_text=input->value();
-    };
+    }
   int rt_angle;
   const char* rt_text;
   Fl_Align rt_align;

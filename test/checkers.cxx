@@ -1305,7 +1305,7 @@ int didabort(void) {
 }
 
 int main(int argc, char **argv) {
-  seed = time(0);
+  seed = (int)time(0);
   newgame();
 #ifdef BOTH
   fl_register_images();

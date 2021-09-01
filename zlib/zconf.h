@@ -1,7 +1,7 @@
 /* FLTK *************************************************************** */
 /* FLTK   Comments marked with FLTK show modifications for FLTK which   */
 /* FLTK   should probably be preserved when zlib is upgraded.           */
-/* FLTK ***************************************************************	*/
+/* FLTK *************************************************************** */
 
 /* zconf.h -- configuration of the zlib compression library
  * Copyright (C) 1995-2016 Jean-loup Gailly, Mark Adler

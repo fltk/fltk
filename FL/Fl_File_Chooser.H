@@ -142,7 +142,7 @@ public:
   void ok_label(const char *l);
   const char * ok_label();
   void preview(int e);
-  int preview() const { return previewButton->value(); };
+  int preview() const { return previewButton->value(); }
 private:
   void showHidden(int e);
   void remove_hidden_files();

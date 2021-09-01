@@ -32,7 +32,7 @@ void cb(Fl_Widget *w, void *) {
 
 class dragbox : public Fl_Box {
 public:
-  dragbox(int x, int y, int w, int h, const char *t=0) : Fl_Box(x,y,w,h,t) {};
+  dragbox(int x, int y, int w, int h, const char *t=0) : Fl_Box(x,y,w,h,t) {}
   int handle(int event) {
     static int fromx, fromy, winx, winy;
     if (event == FL_PUSH) {
@@ -52,13 +52,13 @@ public:
   }
 };
 
-const float factor = 1.3;
+const float factor = 1.3f;
 
 void shrink(Fl_Widget *wdgt, void *data)
 {
   Fl_Window *win = wdgt->window();
   int old = win->w();
-  win->size(old/factor, old/factor);
+  win->size(int(old/factor), int(old/factor));
   if (win->w() <= *(int*)data) wdgt->deactivate();
 }
 
@@ -66,7 +66,7 @@ void enlarge(Fl_Widget *wdgt, void *data)
 {
   Fl_Window *win = wdgt->window();
   int old = win->w();
-  win->size(old*factor, old*factor);
+  win->size(int(old*factor), int(old*factor));
   ((Fl_Widget*)data)->activate();
 }
 
@@ -80,7 +80,7 @@ Fl_RGB_Image* prepare_shape(int w)
   fl_color(FL_WHITE);
   fl_pie(2,2,w-4,w-4,0,360);
   fl_color(FL_BLACK);
-  fl_pie(0.7*w,w/2,w/4,w/4,0,360);
+  fl_pie(int(0.7*w),w/2,w/4,w/4,0,360);
   Fl_RGB_Image* img = surf->image();
   delete surf;
   Fl_Surface_Device::pop_current();

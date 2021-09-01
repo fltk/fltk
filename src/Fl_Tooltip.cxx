@@ -301,6 +301,7 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
       Fl::remove_timeout(tooltip_hide_timeout);
     }
     Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout);
+  } else if (Fl_Tooltip::delay() < .1) {
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
     if (Fl::system_driver()->use_recent_tooltip_fix() && window && window->visible()) {

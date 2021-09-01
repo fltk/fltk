@@ -102,7 +102,7 @@ public:
     input->resize(X,Y,W,H);                             // Move Fl_Input widget there
     char s[30]; sprintf(s, "%d", values[R][C]);         // Load input widget with cell's current value
     input->value(s);
-    input->position(0,strlen(s));                       // Select entire input field
+    input->position(0,int(strlen(s)));                  // Select entire input field
     input->show();                                      // Show the input widget, now that we've positioned it
     input->take_focus();
   }

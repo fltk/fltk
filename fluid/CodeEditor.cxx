@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -165,7 +165,7 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
   *ptr = '\0';
   if (*text) {
     // use only a single 'insert' call to avoid redraw issues
-    int n = strlen(text);
+    size_t n = strlen(text);
     char *b = (char*)malloc(n+2);
     *b = '\n';
     strcpy(b+1, text);

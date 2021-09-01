@@ -33,7 +33,7 @@ static const int win_size = 512;
 static const int first_useful_color = 56;
 static const int last_useful_color = 255;
 static const int num_iterations = 300;
-static const double max_line_width = 9.0;
+static const int max_line_width = 9;
 static const double delta_time = 0.1;
 
 /*****************************************************************************/
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
 
   main_window->show(argc, argv);
 
-  srand(time(NULL)); // seed the random sequence generator
+  srand((unsigned int)time(NULL)); // seed the random sequence generator
 
   Fl::add_timeout(delta_time, oscr_anim);
 

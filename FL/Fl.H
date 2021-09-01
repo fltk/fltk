@@ -22,8 +22,9 @@
 #  define Fl_H
 
 #include <FL/Fl_Export.H>
-
 #include <FL/platform_types.h> // for FL_SOCKET
+#include <FL/fl_casts.H>       // experimental
+
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
@@ -128,7 +129,7 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
-  Fl() {}; // no constructor!
+  Fl() {} // no constructor!
 
 private:
 

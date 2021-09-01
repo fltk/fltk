@@ -1,7 +1,7 @@
 //
 // Icon test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
 static Fl_Double_Window *win;
 
 void choice_cb(Fl_Widget *, void *v) {
-  Fl_Color c = (Fl_Color)(fl_intptr_t)v;
+  Fl_Color c = (Fl_Color)fl_uint(v);
   uchar buffer[32*32*3];
   Fl_RGB_Image icon(buffer, 32, 32, 3);
   icon.color_average(c, 0.0);
@@ -30,9 +30,9 @@ void choice_cb(Fl_Widget *, void *v) {
 }
 
 Fl_Menu_Item choices[] = {
-  {"Red",0,choice_cb,(void*)FL_RED},
-  {"Green",0,choice_cb,(void*)FL_GREEN},
-  {"Blue",0,choice_cb,(void*)FL_BLUE},
+  {"Red",   0, choice_cb, fl_voidptr(FL_RED)},
+  {"Green", 0, choice_cb, fl_voidptr(FL_GREEN)},
+  {"Blue",  0, choice_cb, fl_voidptr(FL_BLUE)},
   {0}
 };
 
