@@ -108,8 +108,12 @@ protected:
    */
   void ld(int LD) {ld_ = LD;}
   /**
-   Sets the current array pointer and count of pointers in the array.
-   */
+    Sets the current data pointer and count of pointers in the array.
+
+    There can be 0, 1, or more pointers to actual image data in an image.
+
+   \see const char* const* data(), count(), w(), h(), data_w(), data_h(), d(), ld()
+  */
   void data(const char * const *p, int c) {data_ = p; count_ = c;}
   void draw_empty(int X, int Y);
 
@@ -151,15 +155,36 @@ public:
    */
   int ld() const {return ld_;}
   /**
-   The count() method returns the number of data values
-   associated with the image. The value will be 0 for images with
-   no associated data, 1 for bitmap and color images, and greater
-   than 2 for pixmap images.
-   */
+    Returns the number of data values associated with the image.
+
+    The value will be 0 for images with no associated data, 1 for
+    bitmap and color images, and greater than 2 for pixmap images.
+
+    \see data()
+  */
   int count() const {return count_;}
   /**
-   Returns a pointer to the current image data array.
-   Use the count() method to find the size of the data array.
+    Returns a pointer to the current image data array.
+
+    There can be 0, 1, or more pointers to actual image data in an image.
+
+    Use the count() method to find the size of the data array. You must
+    not dereference the data() pointer if count() equals zero.
+
+    \note data() \b may return NULL.
+
+    Example:
+
+    Fl_RGB_Image has exactly one pointer which points at the R, G, B [, A]
+    data array of the image. The total size of this array depends on
+    several attributes like w(), h(), data_w(), data_h(), d() and ld()
+    and is basically data_w() * data_h() * d() but there are exceptions
+    if ld() is non-zero: see description of ld().
+
+    Other image types have different numbers and types of data pointers
+    which are implementation details and not documented here.
+
+    \see count(), w(), h(), data_w(), data_h(), d(), ld()
    */
   const char * const *data() const {return data_;}
   int fail();
