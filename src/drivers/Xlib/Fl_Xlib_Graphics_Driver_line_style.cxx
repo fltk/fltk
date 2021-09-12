@@ -75,5 +75,5 @@ void Fl_Xlib_Graphics_Driver::reset_pen_width(void *data) {
   XGCValues *gc_values = (XGCValues*)data;
   line_width_ = gc_values->line_width;
   XChangeGC(fl_display, gc_, GCLineWidth, gc_values);
-  delete gc_values;
+  free(data);
 }
