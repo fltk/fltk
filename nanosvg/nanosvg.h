@@ -1223,25 +1223,23 @@ static const char* nsvg__getNextPathItem(const char* s, char* it)
 
 static unsigned int nsvg__parseColorHex(const char* str)
 {
-	// FLTK: Solve fltk issue#180 / CVE-2019-1000032
 	unsigned int r=0, g=0, b=0;
 	if (sscanf(str, "#%2x%2x%2x", &r, &g, &b) == 3 )		// 2 digit hex
 		return NSVG_RGB(r, g, b);
 	if (sscanf(str, "#%1x%1x%1x", &r, &g, &b) == 3 )		// 1 digit hex, e.g. #abc -> 0xccbbaa
-		return NSVG_RGB(r*17, g*17, b*17);			// has same effect as (r<<4|r), (g<<4|g), ..
+		return NSVG_RGB(r*17, g*17, b*17);			// same effect as (r<<4|r), (g<<4|g), ..
 	return NSVG_RGB(128, 128, 128);
 }
 
 static unsigned int nsvg__parseColorRGB(const char* str)
 {
-	// FLTK: Solve fltk issue#180 / CVE-2019-1000032
 	unsigned int r=0, g=0, b=0;
 	if (sscanf(str, "rgb(%u, %u, %u)", &r, &g, &b) == 3)		// decimal integers
 		return NSVG_RGB(r, g, b);
 	if (sscanf(str, "rgb(%u%%, %u%%, %u%%)", &r, &g, &b) == 3) {	// decimal integer percentage
-	        r = (r <= 100) ? ((r*255)/100) : 255;			// clip percentages >100
-	        g = (g <= 100) ? ((g*255)/100) : 255;
-	        b = (b <= 100) ? ((b*255)/100) : 255;
+		r = (r <= 100) ? ((r*255)/100) : 255;			// FLTK: clip percentages >100
+		g = (g <= 100) ? ((g*255)/100) : 255;
+		b = (b <= 100) ? ((b*255)/100) : 255;
 		return NSVG_RGB(r, g, b);
 	}
 	return NSVG_RGB(128, 128, 128);
@@ -2188,7 +2186,12 @@ static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, 
 	// The loop assumes an iteration per end point (including start and end), this +1.
 	ndivs = (int)(fabsf(da) / (NSVG_PI*0.5f) + 1.0f);
 	hda = (da / (float)ndivs) / 2.0f;
-	kappa = fabsf(4.0f / 3.0f * (1.0f - cosf(hda)) / sinf(hda));
+	// Fix for ticket #179: division by 0: avoid cotangens around 0 (infinite)
+	if ((hda < 1e-3f) && (hda > -1e-3f))
+		hda *= 0.5f;
+	else
+		hda = (1.0f - cosf(hda)) / sinf(hda);
+	kappa = fabsf(4.0f / 3.0f * hda);
 	if (da < 0.0f)
 		kappa = -kappa;
 

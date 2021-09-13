@@ -22,38 +22,34 @@ For more information see README.bundled-libs.txt in FLTK's root directory.
 Changes in the FLTK fork, branch 'fltk':
 -----------------------------------------
 
-$ git show --no-patch fltk_2021-02-22
-tag fltk_2021-02-22
-Tagger: Albrecht Schlosser <...>
-Date:   Mon Feb 22 14:16:58 2021 +0100
+$ git show --no-patch fltk_2021-09-13
+tag fltk_2021-09-13
+Tagger: Albrecht Schlosser <albrechts.fltk@online.de>
+Date:   Mon Sep 13 19:09:40 2021 +0200
 
-Included in FLTK 1.4.x as of Feb 22, 2021
+FLTK modifications as of Sep 13, 2021:
 
-Latest upstream changes:
-------------------------
-
-commit 3e403ec72a9145cbbcc6c63d94a4caf079aafec2
-Merge: cc6c08d 45eb9f8
-Author: Mikko Mononen <...>
-Date:   Fri Nov 20 12:53:11 2020 +0200
-
-    Merge pull request #189 from fvogelnew1/Fix-for-#188
-
-    Update nanosvg.h
-
-Changes in branch 'fltk':
-
-  $ git shortlog master..fltk
-
-    AlbrechtS (2):
+$ git shortlog master..fltk
+AlbrechtS (2):
       Fix Visual Studio compilation error (missing long long).
       Modify rasterizer to support non-square X,Y axes scaling.
 
-    Greg Ercolano (1):
-      Address crash defined in fltk's issue 180
+Greg Ercolano (1):
+      Clip integer RGB percent values > 100
 
-commit a1eea27b3db2d15d924ea823dd0acc5bd2aa56f1
-Author: Greg Ercolano <...>
+Latest upstream commit (master):
+
+commit ccdb1995134d340a93fb20e3a3d323ccb3838dd0
+Merge: 3cdd4a9 419782d
+Author: Mikko Mononen <memononen@gmail.com>
+Date:   Fri Sep 3 21:24:42 2021 +0300
+
+    Merge pull request #198 from ctrlcctrlv/CVE_2019_1000032
+
+    Fix decimal values in color fields (nsvg__parseColorRGB, nsvg__parseColorHex)
+
+commit 461ad7de70d5fd3f09fc214e4baaadb830a2a270 (HEAD -> fltk, tag: fltk_2021-09-13, origin/fltk, origin/HEAD)
+Author: Greg Ercolano <erco@seriss.com>
 Date:   Mon Jan 18 15:05:13 2021 -0800
 
-    Address crash defined in fltk's issue 180
+    Clip integer RGB percent values > 100

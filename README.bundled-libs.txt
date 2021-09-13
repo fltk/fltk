@@ -6,12 +6,12 @@ about the current versions of all bundled libraries and about how to
 upgrade these bundled libraries.
 
 
-Current versions of bundled libraries (as of Feb 25, 2021):
+Current versions of bundled libraries (as of Sep 13, 2021):
 
   Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9d            2020-01-12           1.4.0
-  nanosvg       a1eea27b3d [1]     2021-02-21           1.4.0
+  nanosvg       461ad7de70 [1]     2021-09-13           1.4.0
   png           libpng-1.6.37      2019-04-14           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
   --------------------------------------------------------------------------
@@ -26,7 +26,7 @@ Previous versions of bundled libraries:
   --------------------------------------------------------------------------
 
 
-[1] Git commit in: https://github.com/fltk/nanosvg
+[1] Git commit in branch 'fltk' of https://github.com/fltk/nanosvg
     See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date"
     and file nanosvg/README.txt.
 
