@@ -7,7 +7,8 @@ that use FLTK.
 
 \section basics_writing Writing Your First FLTK Program
 
-All programs must include the file <tt><FL/Fl.H></tt>.
+All programs must include the file <tt><FL/Fl.H></tt>. This file
+should be included as the first FLTK header file.
 In addition the program must include a header file for each
 FLTK class it uses. Listing 1 shows a simple "Hello,
 World!" program that uses FLTK to display the window.
@@ -115,9 +116,12 @@ and
 In this example, \p myGroup would be the \e current group.
 
 Newly created groups and their derived widgets implicitly call
-\p begin() in the constructor, effectively adding all
-subsequently created widgets to itself until \p end()
-is called.
+\p begin() in the constructor, effectively adding all subsequently
+created widgets to itself until \p end() is called.
+
+Calling end() on one group widget transfers the "current group"
+property to the \b parent of that widget. Calling end() on a top
+level window (which has no parent) sets the current group to \p NULL.
 
 Setting the current group to \p NULL will stop automatic
 hierarchies. New widgets can now be added manually using
@@ -128,13 +132,11 @@ and
 \subsection basics_getset Get/Set Methods
 
 <tt>box->box(FL_UP_BOX)</tt>
-sets the type of box the Fl_Box draws, changing it from the default of
-\p FL_NO_BOX, which means that no box is drawn. In our
-"Hello, World!" example we use \p FL_UP_BOX,
-which means that a raised button border will be drawn around
-the widget. More details are available in the
-\ref common_boxtypes
-section.
+sets the type of box the Fl_Box draws, changing it from the default
+of \p FL_NO_BOX, which means that no box is drawn. In our
+"Hello, World!" example we use \p FL_UP_BOX, which means that a
+raised button border will be drawn around the widget.
+More details are available in the \ref common_boxtypes section.
 
 You could examine the boxtype by doing
 <tt>box->box()</tt>. FLTK uses method name overloading to make
@@ -161,8 +163,7 @@ and \p labeltype() methods.
 
 The \p labelfont() method sets the typeface and style
 that is used for the label, which for this example we are using
-\p FL_BOLD and \p FL_ITALIC. You can also specify
-typefaces directly.
+\p FL_BOLD and \p FL_ITALIC.
 
 The \p labelsize() method sets the height of the font in pixels.
 
@@ -292,15 +293,19 @@ Similarly, when linking your application you will need to tell the
 compiler to use the FLTK library:
 
 \code
-CC  ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
-gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
+CC  ... -L/usr/local/lib -lfltk -lXext -lX11 -lm -ldl
+gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm -ldl
 \endcode
 
 Aside from the "fltk" library, there are also the following libraries
-  - "fltk_forms" for the XForms compatibility classes
+  - "fltk_forms" for the XForms compatibility classes (deprecated)
   - "fltk_gl" for the OpenGL and GLUT classes
   - "fltk_images" for the image file classes, Fl_Help_Dialog widget, and system icon support
   - "fltk_cairo" for optional integrated Cairo support.
+
+\note
+  The separate library \p fltk_cairo will likely be removed in FLTK 1.4.0;
+  this is work in progress.
 
 \note
 The libraries are named "fltk.lib", "fltk_gl.lib", "fltk_forms.lib", "fltk_images.lib",
@@ -341,8 +346,8 @@ fltk-config --use-forms --use-gl --use-images --compile filename.cpp
 Any of these will create an executable named \p filename (or \p filename.exe
 under Windows).
 
-\note 'fltk-config --compile' accepts only a limited set of file extensions
-  for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C' .
+\note <kbd>'fltk-config \-\-compile'</kbd> accepts only a limited set of file
+  extensions for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C' .
 
 \subsection basics_makefile Compiling Programs with Makefiles
 
