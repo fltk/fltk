@@ -37,21 +37,33 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
   set (LATEX_HEADER   "")
 
   configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    @ONLY
-  )
-
-  configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tiny.png
     ${CMAKE_CURRENT_BINARY_DIR}/html/tiny.png
     COPYONLY
   )
 
-  # generate html docs
+  # configure Doxygen input file for HTML docs (Doxyfile.in)
+
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.in
+    @ONLY
+  )
+
+  # convert Doxyfile to current doxygen version
+
+  add_custom_command (
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxyfile.in > Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Converting Doxyfile to current doxygen version" VERBATIM
+  )
+
+  # generate HTML documentation
 
   add_custom_target (html
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating HTML documentation" VERBATIM
   )
@@ -66,7 +78,7 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
 
   list (APPEND DOCS pdf)
 
-  # generate Doxygen file "Doxybook"
+  # generate Doxygen input file "Doxybook"
 
   set (GENERATE_HTML  NO)
   set (GENERATE_LATEX YES)
@@ -79,10 +91,21 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
     OUTPUT_VARIABLE YEAR
   )
 
+  # configure Doxygen input file for PDF docs (Doxybook.in)
+
   configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxybook.in
     @ONLY
+  )
+
+  # convert Doxybook to current doxygen version
+
+  add_custom_command (
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
+    COMMAND ${DOXYGEN_EXECUTABLE} -u -s - < Doxybook.in > Doxybook
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Converting Doxybook to current doxygen version" VERBATIM
   )
 
   # generate LaTeX title fltk-title.tex
@@ -103,6 +126,8 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
     COMMAND ${DOXYGEN_EXECUTABLE} Doxybook
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_pdf
     COMMAND cp -f latex/refman.pdf fltk.pdf
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxybook
+            ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating PDF documentation" VERBATIM
   )
