@@ -1716,6 +1716,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
 
     if (![NSApp isActive]) foreground_and_activate();
     if (![NSApp servicesMenu]) createAppleMenu();
+    else Fl_Sys_Menu_Bar::window_menu_style(Fl_Sys_Menu_Bar::no_window_menu);
     main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
     [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
                                              selector:@selector(anyWindowWillClose:)
@@ -3459,11 +3460,14 @@ static NSBitmapImageRep *pdf_to_nsbitmapimagerep(NSData *pdfdata) {
                                      hasAlpha:YES
                                      isPlanar:NO
                                colorSpaceName:NSDeviceRGBColorSpace
-                                  bytesPerRow:4 * width
-                                 bitsPerPixel:32];
+                                  bytesPerRow:0
+                                 bitsPerPixel:0];
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
     [NSGraphicsContext saveGraphicsState];
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap]];// 10.4
+    [[NSColor clearColor] set];
+    NSRect r = NSMakeRect(0, 0, width, height);
+    NSRectFill(r);
     [image drawInRect:dest_r]; // 10.9
     [NSGraphicsContext restoreGraphicsState];
     [localPool release];
@@ -3611,7 +3615,7 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
 {
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
-  NSArray  *possible = [NSArray arrayWithObjects:TIFF_pasteboard_type, PDF_pasteboard_type, PICT_pasteboard_type, nil];
+  NSArray  *possible = [NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, PICT_pasteboard_type, nil];
   NSString *found = nil;
   NSUInteger rank;
   for (NSUInteger i = 0; (!found) && i < [possible count]; i++) {
