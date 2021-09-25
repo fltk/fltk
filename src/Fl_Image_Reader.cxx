@@ -124,14 +124,15 @@ unsigned int Fl_Image_Reader::read_dword() {
 
 // Move the current read position to a byte offset from the beginning
 // of the file or the original start address in memory.
-// This clears the error flag if the position is valid.
+// This method clears the error flag if the position is valid.
+// If reading from memory and (pStart + n) overflows, then the result is undefined.
+
 void Fl_Image_Reader::seek(unsigned int n) {
+  pError = 0;
   if (pIsFile) {
     int ret = fseek(pFile, n , SEEK_SET);
     if (ret < 0)
       pError = 2; // read / position error
-    else
-      pError = 0;
     return;
   } else if (pIsData) {
     if (pStart + n <= pEnd)
@@ -144,9 +145,12 @@ void Fl_Image_Reader::seek(unsigned int n) {
   pError = 3;
 }
 
-
 // Get the current read position as a byte offset from the
-// beginning of the file or the original start address in memory
+// beginning of the file or the original start address in memory.
+// This method does neither affect the error flag nor is it affected
+// by the current error status. If reading from a file, this may
+// return -1 or any error code from ftell().
+
 long Fl_Image_Reader::tell() const {
   if (pIsFile) {
     return ftell(pFile);
