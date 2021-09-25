@@ -1,7 +1,7 @@
 //
 // Internal (Image) Reader class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2020 by Bill Spitzak and others.
+// Copyright 2020-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -37,7 +37,9 @@ public:
   pIsFile(0), pIsData(0),
   pFile(0L), pData(0L),
   pStart(0L),
-  pName(0L)
+  pEnd((const unsigned char *)(-1L)),
+  pName(0L),
+  pError(0)
   {}
 
   // Initialize the reader to access the file system, filename is copied
@@ -45,7 +47,7 @@ public:
   int open(const char *filename);
 
   // Initialize the reader for memory access, name is copied and stored
-  int open(const char *imagename, const unsigned char *data);
+  int open(const char *imagename, const unsigned char *data, const long datasize = -1);
 
   // Close and destroy the reader
   ~Fl_Image_Reader();
@@ -68,6 +70,15 @@ public:
   // of the file or the original start address in memory
   void seek(unsigned int n);
 
+  // Get the current file or memory offset from the beginning
+  // of the file or the original start address in memory
+  long tell() const;
+
+  // Get the current EOF or error status of the file or data block
+  int error() const {
+    return pError;
+  }
+
   // return the name or filename for this reader
   const char *name() { return pName; }
 
@@ -83,8 +94,14 @@ private:
   const unsigned char *pData;
   // a pointer to the start of the image data
   const unsigned char *pStart;
+  // a pointer to the end of image data if reading from memory, otherwise undefined
+  // note: currently (const unsigned char *)(-1L) if end of memory is not available
+  // ... which means "unlimited"
+  const unsigned char *pEnd;
   // a copy of the name associated with this reader
   char *pName;
+  // a flag to store EOF or error status
+  int pError;
 };
 
 #endif // FL_IMAGE_READER_H

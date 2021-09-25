@@ -1,7 +1,7 @@
 //
 // Internal (Image) Reader class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2020 by Bill Spitzak and others.
+// Copyright 2020-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,12 +50,15 @@ int Fl_Image_Reader::open(const char *filename) {
 }
 
 // Initialize the reader for memory access, name is copied and stored
-int Fl_Image_Reader::open(const char *imagename, const unsigned char *data) {
+int Fl_Image_Reader::open(const char *imagename, const unsigned char *data, const long datasize) {
   if (imagename)
     pName = fl_strdup(imagename);
   if (data) {
     pStart = pData = data;
     pIsData = 1;
+    if (datasize > 0) {
+      pEnd = pStart + datasize;
+    }
     return 0;
   } else {
     return -1;
@@ -73,60 +76,82 @@ Fl_Image_Reader::~Fl_Image_Reader() {
 
 // Read a single byte from memory or a file
 uchar Fl_Image_Reader::read_byte() {
+  if (error()) // don't read after read error or EOF
+    return 0;
   if (pIsFile) {
-    return getc(pFile);
+    int ret = getc(pFile);
+    if (ret < 0) {
+      if (feof(pFile))
+        pError = 1;
+      else if (ferror(pFile))
+        pError = 2;
+      else
+        pError = 3; // unknown error
+      return 0;
+    }
+    return ret;
   } else if (pIsData) {
-    return *pData++;
-  } else {
+    if (pData < pEnd)
+      return *pData++;
+    pError = 1; // EOF
     return 0;
   }
+  pError = 3; // undefined mode
+  return 0;
 }
 
 // Read a 16-bit unsigned integer, LSB-first
 unsigned short Fl_Image_Reader::read_word() {
-  unsigned char b0, b1;  // Bytes from file
-  if (pIsFile) {
-    b0 = (uchar)getc(pFile);
-    b1 = (uchar)getc(pFile);
-    return ((b1 << 8) | b0);
-  } else if (pIsData) {
-    b0 = *pData++;
-    b1 = *pData++;
-    return ((b1 << 8) | b0);
-  } else {
+  unsigned char b0, b1;  // Bytes from file or memory
+  b0 = read_byte();
+  b1 = read_byte();
+  if (error())
     return 0;
-  }
+  return ((b1 << 8) | b0);
 }
 
 // Read a 32-bit unsigned integer, LSB-first
 unsigned int Fl_Image_Reader::read_dword() {
-  unsigned char b0, b1, b2, b3;  // Bytes from file
-  if (pIsFile) {
-    b0 = (uchar)getc(pFile);
-    b1 = (uchar)getc(pFile);
-    b2 = (uchar)getc(pFile);
-    b3 = (uchar)getc(pFile);
-    return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
-  } else if (pIsData) {
-    b0 = *pData++;
-    b1 = *pData++;
-    b2 = *pData++;
-    b3 = *pData++;
-    return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
-  } else {
+  unsigned char b0, b1, b2, b3;  // Bytes from file or memory
+  b0 = read_byte();
+  b1 = read_byte();
+  b2 = read_byte();
+  b3 = read_byte();
+  if (error())
     return 0;
-  }
+  return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
 }
 
-// Read a 32-bit signed integer, LSB-first
-// int Fl_Image_Reader::read_long() -- implementation in header file
-
 // Move the current read position to a byte offset from the beginning
-// of the file or the original start address in memory
+// of the file or the original start address in memory.
+// This clears the error flag if the position is valid.
 void Fl_Image_Reader::seek(unsigned int n) {
   if (pIsFile) {
-    fseek(pFile, n , SEEK_SET);
+    int ret = fseek(pFile, n , SEEK_SET);
+    if (ret < 0)
+      pError = 2; // read / position error
+    else
+      pError = 0;
+    return;
   } else if (pIsData) {
-    pData = pStart + n;
+    if (pStart + n <= pEnd)
+      pData = pStart + n;
+    else
+      pError = 2; // read / position error
+    return;
   }
+  // unknown mode (not initialized ?)
+  pError = 3;
+}
+
+
+// Get the current read position as a byte offset from the
+// beginning of the file or the original start address in memory
+long Fl_Image_Reader::tell() const {
+  if (pIsFile) {
+    return ftell(pFile);
+  } else if (pIsData) {
+    return long(pData - pStart);
+  }
+  return 0;
 }
