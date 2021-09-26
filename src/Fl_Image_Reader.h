@@ -82,6 +82,9 @@ public:
   // return the name or filename for this reader
   const char *name() { return pName; }
 
+  // skip a given number of bytes
+  void skip(unsigned int n) { seek(tell() + n); }
+
 private:
 
   // open() sets this if we read from a file
