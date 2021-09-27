@@ -1,7 +1,7 @@
 //
 // Fl_BMP_Image class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2011-2020 by Bill Spitzak and others.
+// Copyright 2011-2021 by Bill Spitzak and others.
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
@@ -40,20 +40,20 @@
 
 
 /**
- \brief This constructor loads the named BMP image from the given BMP filename.
+  This constructor loads the named BMP image from the given BMP filename.
 
- The destructor frees all memory and server resources that are used by
- the image.
+  The destructor frees all memory and server resources that are used by
+  the image.
 
- Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
- BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
- be loaded for another reason.
+  Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+  ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
+  BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
+  be loaded for another reason.
 
- \param[in] filename a full path and name pointing to a valid BMP file.
+  \param[in] filename a full path and name pointing to a BMP file.
 
- \see Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
- */
+  \see Fl_BMP_Image::Fl_BMP_Image(const char* imagename, const unsigned char *data, const long length = -1);
+*/
 Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 : Fl_RGB_Image(0,0,0)
 {
@@ -66,29 +66,44 @@ Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 }
 
 /**
- \brief Read a BMP image from memory.
+  This constructor loads a BMP image from memory.
 
- Construct an image from a block of memory inside the application. Fluid offers
- "binary data" chunks as a great way to add image data into the C++ source code.
- imagename can be NULL. If a name is given, the image is added to the list of
- shared images and will be available by that name.
+  Construct an image from a block of memory inside the application. Fluid offers
+  "binary data" chunks as a great way to add image data into the C++ source code.
+  \p imagename can be NULL. If a name is given, the image is added to the list of
+  shared images and will be available by that name.
 
- Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the image could not be read from memory, ERR_FORMAT if the
- BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
- be loaded for another reason.
+  The destructor frees all memory and server resources that are used by
+  the image.
 
- \param[in] imagename  A name given to this image or NULL
- \param[in] data       Pointer to the start of the BMP image in memory. This code will not check for buffer overruns.
+  The (new and optional) third parameter \p length \b should be used so buffer
+  overruns (i.e. truncated images) can be checked. See note below.
 
- \see Fl_BMP_Image::Fl_BMP_Image(const char *filename)
- \see Fl_Shared_Image
+  If \p length is not used
+  - it defaults to -1 (unlimited size)
+  - buffer overruns will not be checked.
+
+  \note The optional parameter \p length is available since FLTK 1.4.0.
+    Not using it is deprecated and old code should be modified to use it.
+    This parameter will likely become mandatory in a future FLTK version.
+
+  Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+  ERR_FILE_ACCESS if the image could not be read from memory, ERR_FORMAT if the
+  BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
+  be loaded for another reason.
+
+  \param[in] imagename  A name given to this image or NULL
+  \param[in] data       Pointer to the start of the BMP image in memory.
+  \param[in] length     Length of the BMP image in memory.
+
+  \see Fl_BMP_Image::Fl_BMP_Image(const char *filename)
+  \see Fl_Shared_Image
 */
-Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
+Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data, const long length)
 : Fl_RGB_Image(0,0,0)
 {
   Fl_Image_Reader rdr;
-  if (rdr.open(imagename, data) == -1) {
+  if (rdr.open(imagename, data, length) == -1) {
     ld(ERR_FILE_ACCESS);
   } else {
     load_bmp_(rdr);
@@ -96,35 +111,55 @@ Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
 }
 
 /*
- This method reads BMP image data and creates an RGB or RGBA image. The BMP
- format supports only 1 bit for alpha. To avoid code duplication, we use
- an Fl_Image_Reader that reads data from either a file or from memory.
- */
+  This macro can be used to check for end of file (EOF) or other read errors.
+  In case of an error or EOF an error message is issued and the image loading
+  is terminated with error code ERR_FORMAT.
+*/
+#define CHECK_ERROR \
+  if (rdr.error()) { \
+    Fl::error("[%d] Fl_BMP_Image: %s - unexpected EOF or read error at offset %ld", \
+              __LINE__, rdr.name(), rdr.tell()); \
+    ld(ERR_FORMAT); \
+    return; \
+  }
+
+/*
+  This method reads BMP image data and creates an RGB or RGBA image. The BMP
+  format supports only 1 bit for alpha. To avoid code duplication, we use
+  an Fl_Image_Reader that reads data from either a file or from memory.
+*/
 void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 {
-  int     info_size,    // Size of info header
-          depth,        // Depth of image (bits)
-          bDepth = 3,   // Depth of image (bytes)
-          compression,  // Type of compression
-          colors_used,  // Number of colors used
-          x, y,         // Looping vars
-          color,        // Color of RLE pixel
-          repcount,     // Number of times to repeat
-          temp,         // Temporary color
-          align,        // Alignment bytes
-          dataSize,     // number of bytes in image data set
-          row_order,    // 1 = normal;  -1 = flipped row order
-          start_y,      // Beginning Y
-          end_y;        // Ending Y
-  long    offbits;      // Offset to image data
-  uchar   bit,          // Bit in image
-          byte;         // Byte in image
-  uchar   *ptr;         // Pointer into pixels
-  uchar   colormap[256][3]; // Colormap
-  uchar   havemask;     // Single bit mask follows image data
-  int     use_5_6_5;    // Use 5:6:5 for R:G:B channels in 16 bit images
+  int   info_size,        // Size of info header
+        width,            // Width of image (pixels)
+        height,           // Height of image (pixels)
+        depth,            // Depth of image (bits)
+        bDepth = 3,       // Depth of image (bytes)
+        compression,      // Type of compression
+        colors_used,      // Number of colors used
+        x, y,             // Looping vars
+        color,            // Color of RLE pixel
+        repcount,         // Number of times to repeat
+        temp,             // Temporary color
+        align,            // Alignment bytes
+        dataSize,         // number of bytes in image data set
+        row_order,        // 1 = normal;  -1 = flipped row order
+        start_y,          // Beginning Y
+        end_y;            // Ending Y
+  long  offbits;          // Offset to image data
+  uchar bit,              // Bit in image
+        byte;             // Byte in image
+  uchar *ptr;             // Pointer into pixels
+  uchar colormap[256][3]; // Colormap
+  uchar havemask;         // Single bit mask follows image data
+  int   use_5_6_5;        // Use 5:6:5 for R:G:B channels in 16 bit images
 
-  // Reader is already open at this point.
+  // Implementation notes: Reader is already open at this point.
+  // Use local variables (width, height) until image is complete
+  // so we can easily use CHECK_ERROR to return with ld(ERR_FORMAT).
+  // We use CHECK_ERROR only at some essential points.
+
+  w(0); h(0); d(0); ld(0);      // make sure these are all zero
 
   // Get the header...
   byte = rdr.read_byte();       // Check "BM" sync chars
@@ -141,6 +176,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
   // Then the bitmap information...
   info_size = rdr.read_dword();
+  CHECK_ERROR
 
   //  printf("offbits = %ld, info_size = %d\n", offbits, info_size);
 
@@ -150,8 +186,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
   if (info_size < 40) {
     // Old Windows/OS2 BMP header...
-    w(rdr.read_word());
-    h(rdr.read_word());
+    width = rdr.read_word();
+    height = rdr.read_word();
     rdr.read_word();
     depth = rdr.read_word();
     compression = BI_RGB;
@@ -160,11 +196,11 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
     repcount = info_size - 12;
   } else {
     // New BMP header...
-    w(rdr.read_long());
+    width = rdr.read_long();
     // If the height is negative, the row order is flipped
     temp = rdr.read_long();
     if (temp < 0) row_order = 1;
-    h(abs(temp));
+    height = abs(temp);
     rdr.read_word();
     depth = rdr.read_word();
     compression = rdr.read_dword();
@@ -176,29 +212,29 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
     repcount = info_size - 40;
 
-    if (!compression && depth>=8 && w()>32/depth) {
+    if (!compression && depth >= 8 && width > 32/depth) {
       int Bpp = depth/8;
-      int maskSize = (((w()*Bpp+3)&~3)*h()) + (((((w()+7)/8)+3)&~3)*h());
-      if (maskSize==2*dataSize) {
+      int maskSize = (((width*Bpp+3)&~3)*height) + (((((width+7)/8)+3)&~3)*height);
+      if (maskSize == 2*dataSize) {
         havemask = 1;
-        h(h()/2);
+        height = height/2;
         bDepth = 4;
       }
     }
   }
+  CHECK_ERROR
 
-  //  printf("w() = %d, h() = %d, depth = %d, compression = %d, colors_used = %d, repcount = %d\n",
-  //         w(), h(), depth, compression, colors_used, repcount);
+  //  printf("width =%4d, height =%4d, depth = %2d, compression = %d, colors_used = %3d, repcount = %2d, row_order = %2d\n",
+  //         width, height, depth, compression, colors_used, repcount, row_order);
 
   // Skip remaining header bytes...
-  while (repcount > 0) {
-    rdr.read_byte();
-    repcount --;
-  }
+  if (repcount > 0)
+    rdr.skip(repcount);
+  CHECK_ERROR
 
   // Check header data...
-  if (!w() || !h() || !depth) {
-    w(0); h(0); d(0); ld(ERR_FORMAT);
+  if (!width || !height || !depth) {
+    ld(ERR_FORMAT);
     return;
   }
 
@@ -206,15 +242,16 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   if (colors_used == 0 && depth <= 8)
     colors_used = 1 << depth;
 
-  for (repcount = 0; repcount < colors_used; repcount ++) {
+  for (int i = 0; i < colors_used; i++) {
     // Read BGR color...
-    colormap[repcount][0] = rdr.read_byte();
-    colormap[repcount][1] = rdr.read_byte();
-    colormap[repcount][2] = rdr.read_byte();
+    colormap[i][0] = rdr.read_byte();
+    colormap[i][1] = rdr.read_byte();
+    colormap[i][2] = rdr.read_byte();
 
     // Skip pad byte for new BMP files...
     if (info_size > 12) rdr.read_byte();
   }
+  CHECK_ERROR
 
   // Read first dword of colormap. It tells us if 5:5:5 or 5:6:5 for 16 bit
   if (depth == 16)
@@ -222,18 +259,18 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
   // Set byte depth for RGBA images
   if (depth == 32)
-    bDepth=4;
+    bDepth = 4;
 
   // Setup image and buffers...
-  d(bDepth);
   if (offbits) rdr.seek(offbits);
+  CHECK_ERROR
 
-  if (((size_t)w()) * h() * d() > max_size() ) {
+  if (((size_t)width) * height * bDepth > max_size() ) {
     Fl::warning("BMP file \"%s\" is too large!\n", rdr.name());
-    w(0); h(0); d(0); ld(ERR_FORMAT);
+    ld(ERR_FORMAT);
     return;
   }
-  array = new uchar[w() * h() * d()];
+  array = new uchar[width * height * bDepth];
   alloc_array = 1;
 
   // Read the image data...
@@ -244,20 +281,20 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   temp  = 0;
 
   if (row_order < 0) {
-    start_y = h() - 1;
+    start_y = height - 1;
     end_y   = -1;
   } else {
     start_y = 0;
-    end_y   = h();
+    end_y   = height;
   }
 
   for (y = start_y; y != end_y; y += row_order) {
-    ptr = (uchar *)array + y * w() * d();
+    ptr = (uchar *)array + y * width * bDepth;
 
     switch (depth)
     {
       case 1 : // Bitmap
-        for (x = w(), bit = 128; x > 0; x --) {
+        for (x = width, bit = 128; x > 0; x --) {
           if (bit == 128) byte = rdr.read_byte();
 
           if (byte & bit) {
@@ -277,13 +314,13 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
         }
 
         // Read remaining bytes to align to 32 bits...
-        for (temp = (w() + 7) / 8; temp & 3; temp ++) {
+        for (temp = (width + 7) / 8; temp & 3; temp ++) {
           rdr.read_byte();
         }
         break;
 
       case 4 : // 16-color
-        for (x = w(), bit = 0xf0; x > 0; x --) {
+        for (x = width, bit = 0xf0; x > 0; x --) {
           // Get a new repcount as needed...
           if (repcount == 0) {
             if (compression != BI_RLE4) {
@@ -305,7 +342,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
                   break;
                 } else if (repcount == 2) {
                   // Delta...
-                  repcount = rdr.read_byte() * rdr.read_byte() * w();
+                  repcount = rdr.read_byte() * rdr.read_byte() * width;
                   color = 0;
                 } else {
                   // Absolute...
@@ -343,17 +380,18 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
           }
 
         }
+        CHECK_ERROR
 
         if (!compression) {
           // Read remaining bytes to align to 32 bits...
-          for (temp = (w() + 1) / 2; temp & 3; temp ++) {
+          for (temp = (width + 1) / 2; temp & 3; temp ++) {
             rdr.read_byte();
           }
         }
         break;
 
       case 8 : // 256-color
-        for (x = w(); x > 0; x --) {
+        for (x = width; x > 0; x --) {
           // Get a new repcount as needed...
           if (compression != BI_RLE8) {
             repcount = 1;
@@ -365,6 +403,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
               align --;
               rdr.read_byte();
             }
+            CHECK_ERROR
 
             if ((repcount = rdr.read_byte()) == 0) {
               if ((repcount = rdr.read_byte()) == 0) {
@@ -376,7 +415,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
                 break;
               } else if (repcount == 2) {
                 // Delta...
-                repcount = rdr.read_byte() * rdr.read_byte() * w();
+                repcount = rdr.read_byte() * rdr.read_byte() * width;
                 color = 0;
               } else {
                 // Absolute...
@@ -387,6 +426,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
               color = rdr.read_byte();
             }
           }
+          CHECK_ERROR
 
           // Get a new color as needed...
           if (color < 0) temp = rdr.read_byte();
@@ -403,14 +443,14 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
         if (!compression) {
           // Read remaining bytes to align to 32 bits...
-          for (temp = w(); temp & 3; temp ++) {
+          for (temp = width; temp & 3; temp ++) {
             rdr.read_byte();
           }
         }
         break;
 
       case 16 : // 16-bit 5:5:5 or 5:6:5 RGB
-        for (x = w(); x > 0; x --, ptr += bDepth) {
+        for (x = width; x > 0; x --, ptr += bDepth) {
           uchar b = rdr.read_byte(), a = rdr.read_byte() ;
           if (use_5_6_5) {
             ptr[2] = (uchar)(( b << 3 ) & 0xf8);
@@ -424,26 +464,26 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
         }
 
         // Read remaining bytes to align to 32 bits...
-        for (temp = w() * 2; temp & 3; temp ++) {
+        for (temp = width * 2; temp & 3; temp ++) {
           rdr.read_byte();
         }
         break;
 
       case 24 : // 24-bit RGB
-        for (x = w(); x > 0; x --, ptr += bDepth) {
+        for (x = width; x > 0; x --, ptr += bDepth) {
           ptr[2] = rdr.read_byte();
           ptr[1] = rdr.read_byte();
           ptr[0] = rdr.read_byte();
         }
 
         // Read remaining bytes to align to 32 bits...
-        for (temp = w() * 3; temp & 3; temp ++) {
+        for (temp = width * 3; temp & 3; temp ++) {
           rdr.read_byte();
         }
         break;
 
       case 32 : // 32-bit RGBA
-        for (x = w(); x > 0; x --, ptr += bDepth) {
+        for (x = width; x > 0; x --, ptr += bDepth) {
           ptr[2] = rdr.read_byte();
           ptr[1] = rdr.read_byte();
           ptr[0] = rdr.read_byte();
@@ -451,12 +491,13 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
         }
         break;
     }
+    CHECK_ERROR
   }
 
   if (havemask) {
-    for (y = h() - 1; y >= 0; y --) {
-      ptr = (uchar *)array + y * w() * d() + 3;
-      for (x = w(), bit = 128; x > 0; x --, ptr+=bDepth) {
+    for (y = height - 1; y >= 0; y --) {
+      ptr = (uchar *)array + y * width * bDepth + 3;
+      for (x = width, bit = 128; x > 0; x --, ptr += bDepth) {
         if (bit == 128) byte = rdr.read_byte();
         if (byte & bit)
           *ptr = 0;
@@ -468,9 +509,19 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
           bit = 128;
       }
       // Read remaining bytes to align to 32 bits...
-      for (temp = (w() + 7) / 8; temp & 3; temp ++)
+      for (temp = (width + 7) / 8; temp & 3; temp ++)
         rdr.read_byte();
     }
   }
+
+  CHECK_ERROR
+
+  // Success: set image attributes and return
   // File is closed when returning...
-}
+
+  w(width);
+  h(height);
+  d(bDepth);
+  ld(0);
+
+} // load_bmp_()
