@@ -1353,11 +1353,11 @@ public:
   // returns fileno(FILE*):
   // (file must be open, i.e. _fpt must be non-null)
   // *FIXME* we should find a better solution for the 'fileno' issue
-  int fileno() const {
+  int get_fileno() const {
 #ifdef _MSC_VER
     return _fileno(_fpt); // suppress MSVC warning
 #else
-    return ::fileno(_fpt);
+    return fileno(_fpt);
 #endif
   } // non null if file is open
 
@@ -1501,7 +1501,7 @@ shell_pipe_cb(FL_SOCKET, void*) {
     shell_run_terminal->append(line);
   } else {
     // End of file; tell the parent...
-    Fl::remove_fd(s_proc.fileno());
+    Fl::remove_fd(s_proc.get_fileno());
     s_proc.close();
     shell_run_terminal->append("... END SHELL COMMAND ...\n");
   }
@@ -1537,7 +1537,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   }
   shell_run_window->show();
 
-  Fl::add_fd(s_proc.fileno(), shell_pipe_cb);
+  Fl::add_fd(s_proc.get_fileno(), shell_pipe_cb);
 
   while (s_proc.desc()) Fl::wait();
 
