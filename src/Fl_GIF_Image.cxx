@@ -73,6 +73,35 @@
  */
 
 
+/*
+  This small helper function checks for read errors or end of file
+  and does some cleanup if an error was found.
+  It returns true (1) on error, false (0) otherwise.
+*/
+static int gif_error(Fl_Image_Reader &rdr, int line, uchar *Image) {
+  if (rdr.error()) {
+    if (Image)
+      delete[] Image; // delete temporary image array
+
+    Fl::error("[%d] Fl_GIF_Image: %s - unexpected EOF or read error at offset %ld",
+              line, rdr.name(), rdr.tell());
+    return 1;
+  }
+  return 0;
+}
+
+/*
+  This macro is used to check for end of file (EOF) or other read errors.
+  In case of a read error or EOF an error message is issued and the image
+  loading is terminated with error code ERR_FORMAT.
+  This calls gif_error (see above) to avoid code duplication.
+*/
+#define CHECK_ERROR \
+  if (gif_error(rdr, __LINE__, Image)) { \
+    ld(ERR_FORMAT); \
+    return; \
+  }
+
 /**
   This constructor loads a GIF image from the given file.
 
@@ -102,7 +131,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
     load_gif_(rdr);
   }
 }
-
 
 /**
   This constructor loads a GIF image from memory.
@@ -153,19 +181,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *imagename, const unsigned char *data, con
 }
 
 /*
-  This macro can be used to check for end of file (EOF) or other read errors.
-  In case of an error or EOF an error message is issued and the image loading
-  is terminated with error code ERR_FORMAT.
-*/
-#define CHECK_ERROR \
-  if (rdr.error()) { \
-    Fl::error("[%d] Fl_GIF_Image: %s - unexpected EOF or read error at offset %ld", \
-              __LINE__, rdr.name(), rdr.tell()); \
-    ld(ERR_FORMAT); \
-    return; \
-  }
-
-/*
  This method reads GIF image data and creates an RGB or RGBA image. The GIF
  format supports only 1 bit for alpha. To avoid code duplication, we use
  an Fl_Image_Reader that reads data from either a file or from memory.
@@ -173,6 +188,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *imagename, const unsigned char *data, con
 void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 {
   char **new_data;      // Data array
+  uchar *Image = 0L;    // internal temporary image data array
   w(0); h(0);
 
   // printf("\nFl_GIF_Image::load_gif_ : %s\n", rdr.name());
@@ -340,7 +356,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 
   // now read the LZW compressed image data
 
-  uchar *Image = new uchar[Width*Height];
+  Image = new uchar[Width*Height];
 
   int YC = 0, Pass = 0; /* Used to de-interlace the picture */
   uchar *p = Image;
