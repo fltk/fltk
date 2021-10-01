@@ -41,68 +41,82 @@
 int Fl_Image_Reader::open(const char *filename) {
   if (!filename)
     return -1;
-  pName = fl_strdup(filename);
-  if ( (pFile = fl_fopen(filename, "rb")) == NULL ) {
+  name_ = fl_strdup(filename);
+  if ((file_ = fl_fopen(filename, "rb")) == NULL) {
     return -1;
   }
-  pIsFile = 1;
+  is_file_ = 1;
   return 0;
 }
 
-// Initialize the reader for memory access, name is copied and stored
-int Fl_Image_Reader::open(const char *imagename, const unsigned char *data, const long datasize) {
+// Initialize the reader for memory access, name is copied and stored.
+int Fl_Image_Reader::open(const char *imagename, const unsigned char *data, const size_t datasize) {
   if (imagename)
-    pName = fl_strdup(imagename);
+    name_ = fl_strdup(imagename);
   if (data) {
-    pStart = pData = data;
-    pIsData = 1;
-    if (datasize > 0) {
-      pEnd = pStart + datasize;
-    }
+    start_ = data_ = data;
+    is_data_ = 1;
+    end_ = start_ + datasize;
     return 0;
-  } else {
-    return -1;
   }
+  return -1;
+}
+
+
+// Initialize the reader for memory access, name is copied and stored.
+// Deprecated, DO NOT USE! Buffer overruns will not be checked!
+// Please use instead:
+// Fl_Image_Reader::open(const char *imagename, const unsigned char *data, const size_t datasize)
+
+int Fl_Image_Reader::open(const char *imagename, const unsigned char *data) {
+  if (imagename)
+    name_ = fl_strdup(imagename);
+  if (data) {
+    start_ = data_ = data;
+    is_data_ = 1;
+    return 0;
+  }
+  return -1;
 }
 
 // Close and destroy the reader
 Fl_Image_Reader::~Fl_Image_Reader() {
-  if (pIsFile && pFile) {
-    fclose(pFile);
+  if (is_file_ && file_) {
+    fclose(file_);
   }
-  if (pName)
-    ::free(pName);
+  if (name_)
+    free(name_);
 }
 
 // Read a single byte from memory or a file
 uchar Fl_Image_Reader::read_byte() {
   if (error()) // don't read after read error or EOF
     return 0;
-  if (pIsFile) {
-    int ret = getc(pFile);
+  if (is_file_) {
+    int ret = getc(file_);
     if (ret < 0) {
-      if (feof(pFile))
-        pError = 1;
-      else if (ferror(pFile))
-        pError = 2;
+      if (feof(file_))
+        error_ = 1;
+      else if (ferror(file_))
+        error_ = 2;
       else
-        pError = 3; // unknown error
+        error_ = 3; // unknown error
       return 0;
     }
     return ret;
-  } else if (pIsData) {
-    if (pData < pEnd)
-      return *pData++;
-    pError = 1; // EOF
+  } else if (is_data_) {
+    if (data_ < end_)
+      return *data_++;
+    error_ = 1; // EOF
     return 0;
   }
-  pError = 3; // undefined mode
+  error_ = 3; // undefined mode
   return 0;
 }
 
 // Read a 16-bit unsigned integer, LSB-first
 unsigned short Fl_Image_Reader::read_word() {
-  unsigned char b0, b1;  // Bytes from file or memory
+  unsigned char b0, b1; // Bytes from file or memory
   b0 = read_byte();
   b1 = read_byte();
   if (error())
@@ -112,7 +126,7 @@ unsigned short Fl_Image_Reader::read_word() {
 
 // Read a 32-bit unsigned integer, LSB-first
 unsigned int Fl_Image_Reader::read_dword() {
-  unsigned char b0, b1, b2, b3;  // Bytes from file or memory
+  unsigned char b0, b1, b2, b3; // Bytes from file or memory
   b0 = read_byte();
   b1 = read_byte();
   b2 = read_byte();
@@ -125,24 +139,24 @@ unsigned int Fl_Image_Reader::read_dword() {
 // Move the current read position to a byte offset from the beginning
 // of the file or the original start address in memory.
 // This method clears the error flag if the position is valid.
-// If reading from memory and (pStart + n) overflows, then the result is undefined.
+// If reading from memory and (start_ + n) overflows, then the result is undefined.
 
 void Fl_Image_Reader::seek(unsigned int n) {
-  pError = 0;
-  if (pIsFile) {
-    int ret = fseek(pFile, n , SEEK_SET);
+  error_ = 0;
+  if (is_file_) {
+    int ret = fseek(file_, n, SEEK_SET);
     if (ret < 0)
-      pError = 2; // read / position error
+      error_ = 2; // read / position error
     return;
-  } else if (pIsData) {
-    if (pStart + n <= pEnd)
-      pData = pStart + n;
+  } else if (is_data_) {
+    if (start_ + n <= end_)
+      data_ = start_ + n;
     else
-      pError = 2; // read / position error
+      error_ = 2; // read / position error
     return;
   }
   // unknown mode (not initialized ?)
-  pError = 3;
+  error_ = 3;
 }
 
 // Get the current read position as a byte offset from the
@@ -152,10 +166,10 @@ void Fl_Image_Reader::seek(unsigned int n) {
 // return -1 or any error code from ftell().
 
 long Fl_Image_Reader::tell() const {
-  if (pIsFile) {
-    return ftell(pFile);
-  } else if (pIsData) {
-    return long(pData - pStart);
+  if (is_file_) {
+    return ftell(file_);
+  } else if (is_data_) {
+    return long(data_ - start_);
   }
   return 0;
 }
