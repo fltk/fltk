@@ -266,6 +266,8 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
   int CodeSize;         /* Code size, init from GIF header, increases... */
   char Interlace;
 
+  // Main parser loop: parse "blocks" until an image is found or error
+
   for (;;) {
 
     int i = rdr.read_byte();
@@ -303,8 +305,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
                     rdr.name(), ch, rdr.tell()-3, blocklen);
         ; // skip data
       }
-    }
-    else if (i == 0x2c) {       // an image: Image Descriptor follows
+    } else if (i == 0x2c) {       // an image: Image Descriptor follows
       // printf("Image Descriptor at offset %ld\n", rdr.tell());
       rdr.read_word();          // Image Left Position
       rdr.read_word();          // Image Top Position
@@ -325,18 +326,24 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
       }
       CHECK_ERROR
       break; // okay, this is the image we want
+    } else if (i == 0x3b) {       // Trailer (end of GIF data)
+      // printf("Trailer found at offset %ld\n", rdr.tell());
+      Fl::error("%s: no image data found.", rdr.name());
+      ld(ERR_NO_IMAGE); // this GIF file is "empty" (no image)
+      return;           // terminate
     } else {
-      Fl::warning("%s: unknown GIF code 0x%02x at offset %ld", rdr.name(), i, rdr.tell()-1);
-      blocklen = 0;
+      Fl::error("%s: unknown GIF code 0x%02x at offset %ld", rdr.name(), i, rdr.tell()-1);
+      ld(ERR_FORMAT); // broken file
+      return;         // terminate
     }
     CHECK_ERROR
 
-    // skip all the data subblocks:
+    // skip all data (sub)blocks:
     while (blocklen > 0) {
       rdr.skip(blocklen);
       blocklen = rdr.read_byte();
     }
-    // printf("End of data at offset %ld\n", rdr.tell());
+    // printf("End of data (sub)blocks at offset %ld\n", rdr.tell());
   }
 
   // read image data
@@ -406,6 +413,8 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
   uchar thisbyte = rdr.read_byte(); blocklen--;
   CHECK_ERROR
   int frombit = 0;
+
+  // loop to read LZW compressed image data
 
   for (;;) {
 
@@ -507,12 +516,13 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
     OldCode = CurCode;
   }
 
-  // We are done reading the image, now convert to xpm:
+  // We are done reading the image, now convert to xpm
 
-  // allocate line pointer arrays:
   w(Width);
   h(Height);
   d(1);
+
+  // allocate line pointer arrays:
   new_data = new char*[Height+2];
 
   // transparent pixel must be zero, swap if it isn't:
