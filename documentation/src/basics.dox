@@ -260,15 +260,14 @@ include lines:</i>
 
 \section basics_compiling Compiling Programs that Use FLTK
 
-This section needs a major rework. Since FLTK 1.4 CMake is the recommended build
-system. The details below show the "old" methods and reference information
-in case you like to write your build configuration manually (e.g. Makefiles,
-Visual Studio, or other IDE's etc.).
+Since FLTK 1.4 CMake is the recommended build system. The details below show
+the "old" methods and reference information in case you like to write your
+build configuration manually (e.g. Makefiles, Visual Studio, other IDE's ...).
 
 CMake can simplify this task substantially. For now, refer to README.CMake.txt
 for further information.
 
-\todo Add a chapter "Building FLTK with CMake" or similar.
+\todo This section needs a major rework. Add a chapter "Building FLTK with CMake".
 
 
 \subsection basics_standard_compiler Compiling Programs with Standard Compilers
@@ -278,23 +277,35 @@ tools) you will probably need to tell the compiler where to find the
 header files. This is usually done using the \p -I option:
 
 \code
-CC -I/usr/local/include ...
-gcc -I/usr/local/include ...
+c++ -I/usr/local/include ...
 \endcode
 
-The \p fltk-config script included with FLTK can be
-used to get the options that are required by your compiler:
+\note You need a C++ compiler to build FLTK. The commands given in this
+  chapter are \b examples using \p 'c++'. Please replace this command with
+  the C++ compiler suitable for your system or use the `fltk-config` script
+  as described below (this is recommended).
+
+The \p fltk-config script included with FLTK can be used to get the compiler
+and the options that are required by your compiler:
 
 \code
-CC `fltk-config --cxxflags` ...
+  fltk-config --cc
+  fltk-config --cxx
 \endcode
+
+return the C and C++ compiler commands used to build FLTK.
+
+\code
+c++ `fltk-config --cxxflags` ...
+\endcode
+
+can be used to include the required compiler flags in the command line.
 
 Similarly, when linking your application you will need to tell the
 compiler to use the FLTK library:
 
 \code
-CC  ... -L/usr/local/lib -lfltk -lXext -lX11 -lm -ldl
-gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm -ldl
+c++ ... -L/usr/local/lib -lfltk -lXext -lX11 ... -lm -ldl
 \endcode
 
 Aside from the "fltk" library, there are also the following libraries
@@ -304,8 +315,8 @@ Aside from the "fltk" library, there are also the following libraries
   - "fltk_cairo" for optional integrated Cairo support.
 
 \note
-  The separate library \p fltk_cairo will likely be removed in FLTK 1.4.0;
-  this is work in progress.
+  The separate \p fltk_cairo library will likely be removed in FLTK 1.4.0
+  (this is work in progress).
 
 \note
 The libraries are named "fltk.lib", "fltk_gl.lib", "fltk_forms.lib", "fltk_images.lib",
@@ -315,7 +326,7 @@ As before, the \p fltk-config script included with FLTK can be
 used to get the options that are required by your linker:
 
 \code
-CC ... `fltk-config --ldflags`
+c++ ... `fltk-config --ldflags`
 \endcode
 
 <!-- NEED 2in -->
@@ -324,11 +335,11 @@ The forms, GL, and images libraries are included with the "--use-foo"
 options, as follows:
 
 \code
-CC ... `fltk-config --use-forms --ldflags`
-CC ... `fltk-config --use-gl --ldflags`
-CC ... `fltk-config --use-images --ldflags`
-CC ... `fltk-config --use-forms --use-gl --use-images --ldflags`
-CC ... `fltk-config --use-cairo --ldflags`
+c++ ... `fltk-config --use-forms --ldflags`
+c++ ... `fltk-config --use-gl --ldflags`
+c++ ... `fltk-config --use-images --ldflags`
+c++ ... `fltk-config --use-forms --use-gl --use-images --ldflags`
+c++ ... `fltk-config --use-cairo --ldflags`
 \endcode
 
 Finally, you can use the \p fltk-config script to
@@ -347,7 +358,14 @@ Any of these will create an executable named \p filename (or \p filename.exe
 under Windows).
 
 \note <kbd>'fltk-config \-\-compile'</kbd> accepts only a limited set of file
-  extensions for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C' .
+  extensions for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C'
+  (capital 'C').
+
+\code
+fltk-config --help
+\endcode
+
+displays all available options.
 
 \subsection basics_makefile Compiling Programs with Makefiles
 
