@@ -3086,7 +3086,9 @@ void Fl_Window::fullscreen_x() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
     [i->xid setStyleMask:NSBorderlessWindowMask]; //10.6
 #endif
-    [i->xid setLevel:NSStatusWindowLevel];
+    if ([i->xid level] != NSStatusWindowLevel) {
+      [i->xid setLevel:NSStatusWindowLevel];
+    }
     int sx, sy, sw, sh, X, Y, W, H;
     int top = fullscreen_screen_top;
     int bottom = fullscreen_screen_bottom;
