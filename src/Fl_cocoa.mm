@@ -3089,9 +3089,11 @@ void Fl_Window::fullscreen_x() {
     if ([i->xid isKeyWindow]) {
       if ([i->xid level] != NSStatusWindowLevel) {
         [i->xid setLevel:NSStatusWindowLevel];
+        fixup_window_levels();
       }
     } else if([i->xid level] != NSNormalWindowLevel) {
       [i->xid setLevel:NSNormalWindowLevel];
+      fixup_window_levels();
     }
     int sx, sy, sw, sh, X, Y, W, H;
     int top = fullscreen_screen_top;
