@@ -3151,7 +3151,15 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
   if (fl_mac_os_version >= 100600) {
     FLWindow *nswin = fl_xid(pWindow);
     [nswin setStyleMask:NSBorderlessWindowMask]; // 10.6
-    [nswin setLevel:NSStatusWindowLevel];
+    if ([nswin isKeyWindow]) {
+      if ([nswin level] != NSStatusWindowLevel) {
+        [nswin setLevel:NSStatusWindowLevel];
+        fixup_window_levels();
+      }
+    } else if([nswin level] != NSNormalWindowLevel) {
+      [nswin setLevel:NSNormalWindowLevel];
+      fixup_window_levels();
+    }
     int sx, sy, sw, sh, X, Y, W, H;
     int top = fullscreen_screen_top();
     int bottom = fullscreen_screen_bottom();
