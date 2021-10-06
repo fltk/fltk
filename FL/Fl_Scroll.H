@@ -130,11 +130,11 @@ protected:      //  (STR#1895)
     Fl_Scrollbar_Data hscroll;  ///< horizontal scrollbar region + values
     Fl_Scrollbar_Data vscroll;  ///< vertical scrollbar region + values
   } ScrollInfo;
-  void recalc_scrollbars(ScrollInfo &si);
+  void recalc_scrollbars(ScrollInfo &si) const;
 
 protected:
 
-  void bbox(int&,int&,int&,int&);
+  void bbox(int&,int&,int&,int&) const;
   void draw();
 
 public:

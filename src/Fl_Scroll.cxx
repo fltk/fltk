@@ -121,16 +121,25 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   Derived classes can make use of this call to figure out the scrolling area
   eg. during resize() handling.
 
-  \param[in] si -- ScrollInfo structure
+  This method does not change the scrollbars or their visibility. It calculates
+  the scrollbar positions and visibility as they \b should be, according to the
+  positions and sizes of the children.
+
+  You may need to call redraw() to make sure the widget gets updated.
+
+  \param[inout] si -- ScrollInfo structure, filled with data
+
   \returns Structure containing the calculated info.
+
+  \see bbox()
 */
-void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
+void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) const {
 
   // inner box of widget (excluding scrollbars)
-  si.innerbox.x = x()+Fl::box_dx(box());
-  si.innerbox.y = y()+Fl::box_dy(box());
-  si.innerbox.w = w()-Fl::box_dw(box());
-  si.innerbox.h = h()-Fl::box_dh(box());
+  si.innerbox.x = x() + Fl::box_dx(box());
+  si.innerbox.y = y() + Fl::box_dy(box());
+  si.innerbox.w = w() - Fl::box_dw(box());
+  si.innerbox.h = h() - Fl::box_dh(box());
 
   // accumulate a bounding box for all the children
   si.child.l = si.innerbox.x;
@@ -238,28 +247,25 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
 }
 
 /**
-  Returns the bounding box for the interior of the scrolling area, inside
-  the scrollbars.
+  Returns the bounding box for the interior of the scrolling area,
+  inside the scrollbars.
 
-  Currently this is only reliable after draw(), and before any resizing of
-  the Fl_Scroll or any child widgets occur.
+  This method does not change the scrollbars or their visibility. First the
+  the scrollbar positions and visibility are calculated as they \b should be,
+  according to the positions and sizes of the children. Then the bounding
+  box is calculated.
 
-  \todo The visibility of the scrollbars ought to be checked/calculated
-  outside of the draw() method (STR #1895).
+  You may need to call redraw() to make sure the widget gets updated.
+
+  \see recalc_scrollbars()
 */
-void Fl_Scroll::bbox(int& X, int& Y, int& W, int& H) {
-  X = x()+Fl::box_dx(box());
-  Y = y()+Fl::box_dy(box());
-  W = w()-Fl::box_dw(box());
-  H = h()-Fl::box_dh(box());
-  if (scrollbar.visible()) {
-    W -= scrollbar.w();
-    if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar.w();
-  }
-  if (hscrollbar.visible()) {
-    H -= hscrollbar.h();
-    if (scrollbar.align() & FL_ALIGN_TOP) Y += hscrollbar.h();
-  }
+void Fl_Scroll::bbox(int& X, int& Y, int& W, int& H) const {
+  ScrollInfo si;
+  recalc_scrollbars(si);
+  X = si.innerchild.x;
+  Y = si.innerchild.y;
+  W = si.innerchild.w;
+  H = si.innerchild.h;
 }
 
 void Fl_Scroll::draw() {
