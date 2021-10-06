@@ -47,6 +47,15 @@ include_directories(
 )
 
 #######################################################################
+# Define additional example programs for testing, for instance:
+#   set (extra_tests issue-276 str-1895)
+# Use the source file test/'name'.cxx for each additional program.
+# These test programs will be built with image and GL libraries.
+# Leave the variable 'extra_tests' empty to disable extra test programs.
+
+set (extra_tests)
+
+#######################################################################
 # Add the ANDROID_OK option if the example can be compiled for Android
 # as well as for other platforms.
 
@@ -133,6 +142,15 @@ CREATE_EXAMPLE (utf8 utf8.cxx fltk)
 CREATE_EXAMPLE (valuators valuators.fl fltk)
 CREATE_EXAMPLE (unittests unittests.cxx fltk)
 CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
+
+# create additional test programs (used by developers for testing)
+if (extra_tests)
+  # message ("")
+  foreach (name ${extra_tests})
+    # message (STATUS "Will build additional test program ${name}")
+    create_example (${name} ${name}.cxx "fltk_images;fltk_gl;fltk")
+  endforeach ()
+endif ()
 
 # OpenGL demos...
 if (OPENGL_FOUND)
