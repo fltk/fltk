@@ -251,7 +251,7 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) const {
   inside the scrollbars.
 
   This method does not change the scrollbars or their visibility. First the
-  the scrollbar positions and visibility are calculated as they \b should be,
+  scrollbar positions and visibility are calculated as they \b should be,
   according to the positions and sizes of the children. Then the bounding
   box is calculated.
 
