@@ -291,6 +291,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   int desc = height-fl_descent();
   float xpos = (float)(X - xscroll_ + 1);
   int ypos = -yscroll_;
+  int ypos_cur = 0; // fix issue #270
   for (; ypos < H;) {
 
     // re-expand line unless it is the last one calculated above:
@@ -391,6 +392,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 #ifdef __APPLE__
       Fl::insertion_point_location(xpos+curx, Y+ypos+height, height);
 #endif
+	  ypos_cur = ypos+height; //fix issue #270
     }
 
   CONTINUE:
@@ -413,7 +415,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   fl_pop_clip();
   if (Fl::focus() == this) {
        fl_set_spot(textfont(), textsize(),
-               (int)xpos+curx, Y+ypos-fl_descent(), W, H, window());
+               (int)xpos+curx, Y+ypos_cur-fl_descent(), W, H, window()); //fix issue #270
   }
 }
 

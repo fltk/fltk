@@ -2402,6 +2402,11 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
   for ( int k = 0; k < nSegs; k++ ) {
     fl_line( segs[ k ].x1, segs[ k ].y1, segs[ k ].x2, segs[ k ].y2 );
   }
+
+  // fix issue #270
+  if (Fl::focus() == this) {
+       fl_set_spot(textfont(), textsize(), X, bot, text_area.w, text_area.h, window());
+  }
 }
 
 
