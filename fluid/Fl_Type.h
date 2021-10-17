@@ -1,16 +1,7 @@
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
-// Each object described by Fluid is one of these objects.  They
-// are all stored in a double-linked list.
-//
-// There is also a single "factory" instance of each type of this.
-// The method "make()" is called on this factory to create a new
-// instance of this object.  It could also have a "copy()" function,
-// but it was easier to implement this by using the file read/write
-// that is needed to save the setup anyways.
-//
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,11 +14,22 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// Each object described by Fluid is one of these objects.  They
+// are all stored in a double-linked list.
+//
+// There is also a single "factory" instance of each type of this.
+// The method "make()" is called on this factory to create a new
+// instance of this object.  It could also have a "copy()" function,
+// but it was easier to implement this by using the file read/write
+// that is needed to save the setup anyways.
+
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu.H>
 #include <FL/Fl_Plugin.H>
 #include "Fluid_Image.h"
 #include <FL/fl_draw.H>
+#include <FL/fl_attr.h>
+
 #include <stdarg.h>
 #include <stdlib.h>
 
@@ -859,12 +861,6 @@ void reveal_in_browser(Fl_Type*);
 int has_toplevel_function(const char *rtype, const char *sig);
 
 // file operations:
-#  ifdef __GNUC__
-#    define __fl_attr(x) __attribute__ (x)
-#  else
-#    define __fl_attr(x)
-#  endif // __GNUC__
-
 void write_word(const char *);
 void write_string(const char *,...) __fl_attr((__format__ (__printf__, 1, 2)));
 int write_file(const char *, int selected_only = 0);

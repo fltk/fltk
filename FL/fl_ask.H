@@ -22,6 +22,7 @@
 #  define fl_ask_H
 
 #  include "Enumerations.H"
+#  include "fl_attr.h"
 class Fl_Widget;
 
 /** Different system beeps available.
@@ -34,14 +35,6 @@ enum Fl_Beep {
   FL_BEEP_PASSWORD,  ///< Password beep.
   FL_BEEP_NOTIFICATION  ///< Notification beep.
 };
-
-#  ifdef __GNUC__
-/* the GNUC-specific attribute appearing below in prototypes with a variable list of arguments
- helps detection of mismatches between format string and argument list at compilation time */
-#    define __fl_attr(x) __attribute__ (x)
-#  else
-#    define __fl_attr(x)
-#  endif // __GNUC__
 
 FL_EXPORT void fl_beep(int type = FL_BEEP_DEFAULT);
 FL_EXPORT void fl_message(const char *,...) __fl_attr((__format__ (__printf__, 1, 2)));
