@@ -602,7 +602,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     fname = [preset lastPathComponent];
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6 && __BLOCKS__
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6 && defined(__BLOCKS__)
   if (fl_mac_os_version >= 100600) {
     bool usepath = false;
     NSString *path = nil;
