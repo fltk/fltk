@@ -45,13 +45,13 @@ void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, int width, char* da
     }
     char* p = dashes = buf;
     switch (style & 0xff) {
-    case FL_DASH:       *p++ = dash; *p++ = gap; break;
-    case FL_DOT:        *p++ = dot; *p++ = gap; break;
-    case FL_DASHDOT:    *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
-    case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
+      case FL_DASH:       *p++ = dash; *p++ = gap; break;
+      case FL_DOT:        *p++ = dot; *p++ = gap; break;
+      case FL_DASHDOT:    *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
+      case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
     }
     ndashes = p-buf;
-if (*dashes == 0) ndashes = 0;//against error with very small scaling
+    if (*dashes == 0) ndashes = 0; // against error with very small scaling
   }
   static int Cap[4] = {CapButt, CapButt, CapRound, CapProjecting};
   static int Join[4] = {JoinMiter, JoinMiter, JoinRound, JoinBevel};

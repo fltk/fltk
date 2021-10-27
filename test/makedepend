@@ -6,6 +6,7 @@ adjuster.o: ../FL/Fl.H
 adjuster.o: ../FL/Fl_Adjuster.H
 adjuster.o: ../FL/Fl_Bitmap.H
 adjuster.o: ../FL/Fl_Box.H
+adjuster.o: ../FL/fl_casts.H
 adjuster.o: ../FL/Fl_Double_Window.H
 adjuster.o: ../FL/Fl_Export.H
 adjuster.o: ../FL/Fl_Group.H
@@ -21,6 +22,7 @@ animated.o: ../FL/Enumerations.H
 animated.o: ../FL/Fl.H
 animated.o: ../FL/Fl_Bitmap.H
 animated.o: ../FL/Fl_Button.H
+animated.o: ../FL/fl_casts.H
 animated.o: ../FL/Fl_Device.H
 animated.o: ../FL/Fl_Double_Window.H
 animated.o: ../FL/fl_draw.H
@@ -42,6 +44,7 @@ arc.o: ../FL/abi-version.h
 arc.o: ../FL/Enumerations.H
 arc.o: ../FL/Fl.H
 arc.o: ../FL/Fl_Bitmap.H
+arc.o: ../FL/fl_casts.H
 arc.o: ../FL/Fl_Device.H
 arc.o: ../FL/Fl_Double_Window.H
 arc.o: ../FL/fl_draw.H
@@ -66,9 +69,11 @@ ask.o: ../FL/abi-version.h
 ask.o: ../FL/Enumerations.H
 ask.o: ../FL/Fl.H
 ask.o: ../FL/fl_ask.H
+ask.o: ../FL/fl_attr.h
 ask.o: ../FL/Fl_Bitmap.H
 ask.o: ../FL/Fl_Box.H
 ask.o: ../FL/Fl_Button.H
+ask.o: ../FL/fl_casts.H
 ask.o: ../FL/Fl_Double_Window.H
 ask.o: ../FL/Fl_Export.H
 ask.o: ../FL/Fl_Group.H
@@ -86,6 +91,7 @@ bitmap.o: ../FL/Enumerations.H
 bitmap.o: ../FL/Fl.H
 bitmap.o: ../FL/Fl_Bitmap.H
 bitmap.o: ../FL/Fl_Button.H
+bitmap.o: ../FL/fl_casts.H
 bitmap.o: ../FL/Fl_Double_Window.H
 bitmap.o: ../FL/Fl_Export.H
 bitmap.o: ../FL/Fl_Group.H
@@ -103,6 +109,7 @@ blocks.o: ../FL/Enumerations.H
 blocks.o: ../FL/Fl.H
 blocks.o: ../FL/Fl_Bitmap.H
 blocks.o: ../FL/Fl_Button.H
+blocks.o: ../FL/fl_casts.H
 blocks.o: ../FL/Fl_Device.H
 blocks.o: ../FL/Fl_Double_Window.H
 blocks.o: ../FL/fl_draw.H
@@ -143,6 +150,7 @@ boxtype.o: ../FL/Enumerations.H
 boxtype.o: ../FL/Fl.H
 boxtype.o: ../FL/Fl_Bitmap.H
 boxtype.o: ../FL/Fl_Box.H
+boxtype.o: ../FL/fl_casts.H
 boxtype.o: ../FL/Fl_Device.H
 boxtype.o: ../FL/Fl_Double_Window.H
 boxtype.o: ../FL/fl_draw.H
@@ -163,10 +171,12 @@ browser.o: ../FL/abi-version.h
 browser.o: ../FL/Enumerations.H
 browser.o: ../FL/Fl.H
 browser.o: ../FL/fl_ask.H
+browser.o: ../FL/fl_attr.h
 browser.o: ../FL/Fl_Bitmap.H
 browser.o: ../FL/Fl_Browser.H
 browser.o: ../FL/Fl_Browser_.H
 browser.o: ../FL/Fl_Button.H
+browser.o: ../FL/fl_casts.H
 browser.o: ../FL/Fl_Choice.H
 browser.o: ../FL/Fl_Device.H
 browser.o: ../FL/Fl_Double_Window.H
@@ -200,8 +210,10 @@ button.o: ../FL/abi-version.h
 button.o: ../FL/Enumerations.H
 button.o: ../FL/Fl.H
 button.o: ../FL/fl_ask.H
+button.o: ../FL/fl_attr.h
 button.o: ../FL/Fl_Bitmap.H
 button.o: ../FL/Fl_Button.H
+button.o: ../FL/fl_casts.H
 button.o: ../FL/Fl_Export.H
 button.o: ../FL/Fl_Group.H
 button.o: ../FL/Fl_Image.H
@@ -215,6 +227,7 @@ buttons.o: ../FL/Enumerations.H
 buttons.o: ../FL/Fl.H
 buttons.o: ../FL/Fl_Bitmap.H
 buttons.o: ../FL/Fl_Button.H
+buttons.o: ../FL/fl_casts.H
 buttons.o: ../FL/Fl_Check_Button.H
 buttons.o: ../FL/Fl_Export.H
 buttons.o: ../FL/Fl_Group.H
@@ -236,6 +249,7 @@ cairo_test.o: ../FL/Fl.H
 cairo_test.o: ../FL/Fl_Bitmap.H
 cairo_test.o: ../FL/Fl_Box.H
 cairo_test.o: ../FL/Fl_Cairo_Window.H
+cairo_test.o: ../FL/fl_casts.H
 cairo_test.o: ../FL/Fl_Device.H
 cairo_test.o: ../FL/Fl_Double_Window.H
 cairo_test.o: ../FL/fl_draw.H
@@ -258,8 +272,10 @@ checkers.o: ../FL/abi-version.h
 checkers.o: ../FL/Enumerations.H
 checkers.o: ../FL/Fl.H
 checkers.o: ../FL/fl_ask.H
+checkers.o: ../FL/fl_attr.h
 checkers.o: ../FL/Fl_Bitmap.H
 checkers.o: ../FL/Fl_Box.H
+checkers.o: ../FL/fl_casts.H
 checkers.o: ../FL/Fl_Device.H
 checkers.o: ../FL/Fl_Double_Window.H
 checkers.o: ../FL/fl_draw.H
@@ -286,6 +302,7 @@ clock.o: ../FL/abi-version.h
 clock.o: ../FL/Enumerations.H
 clock.o: ../FL/Fl.H
 clock.o: ../FL/Fl_Bitmap.H
+clock.o: ../FL/fl_casts.H
 clock.o: ../FL/Fl_Clock.H
 clock.o: ../FL/Fl_Double_Window.H
 clock.o: ../FL/Fl_Export.H
@@ -302,11 +319,13 @@ colbrowser.o: ../FL/Enumerations.H
 colbrowser.o: ../FL/filename.H
 colbrowser.o: ../FL/Fl.H
 colbrowser.o: ../FL/fl_ask.H
+colbrowser.o: ../FL/fl_attr.h
 colbrowser.o: ../FL/Fl_Bitmap.H
 colbrowser.o: ../FL/Fl_Box.H
 colbrowser.o: ../FL/Fl_Browser.H
 colbrowser.o: ../FL/Fl_Browser_.H
 colbrowser.o: ../FL/Fl_Button.H
+colbrowser.o: ../FL/fl_casts.H
 colbrowser.o: ../FL/Fl_Double_Window.H
 colbrowser.o: ../FL/Fl_Export.H
 colbrowser.o: ../FL/Fl_Group.H
@@ -328,6 +347,7 @@ color_chooser.o: ../FL/Fl.H
 color_chooser.o: ../FL/Fl_Bitmap.H
 color_chooser.o: ../FL/Fl_Box.H
 color_chooser.o: ../FL/Fl_Button.H
+color_chooser.o: ../FL/fl_casts.H
 color_chooser.o: ../FL/Fl_Choice.H
 color_chooser.o: ../FL/Fl_Color_Chooser.H
 color_chooser.o: ../FL/Fl_Device.H
@@ -362,6 +382,7 @@ cube.o: ../FL/Fl.H
 cube.o: ../FL/Fl_Bitmap.H
 cube.o: ../FL/Fl_Box.H
 cube.o: ../FL/Fl_Button.H
+cube.o: ../FL/fl_casts.H
 cube.o: ../FL/Fl_Device.H
 cube.o: ../FL/Fl_Export.H
 cube.o: ../FL/Fl_Gl_Window.H
@@ -392,6 +413,7 @@ CubeMain.o: ../FL/Enumerations.H
 CubeMain.o: ../FL/Fl.H
 CubeMain.o: ../FL/Fl_Bitmap.H
 CubeMain.o: ../FL/Fl_Box.H
+CubeMain.o: ../FL/fl_casts.H
 CubeMain.o: ../FL/Fl_Double_Window.H
 CubeMain.o: ../FL/Fl_Export.H
 CubeMain.o: ../FL/Fl_Gl_Window.H
@@ -414,6 +436,7 @@ CubeView.o: ../FL/abi-version.h
 CubeView.o: ../FL/Enumerations.H
 CubeView.o: ../FL/Fl.H
 CubeView.o: ../FL/Fl_Bitmap.H
+CubeView.o: ../FL/fl_casts.H
 CubeView.o: ../FL/Fl_Export.H
 CubeView.o: ../FL/Fl_Gl_Window.H
 CubeView.o: ../FL/Fl_Group.H
@@ -430,6 +453,7 @@ cursor.o: ../FL/Enumerations.H
 cursor.o: ../FL/Fl.H
 cursor.o: ../FL/Fl_Bitmap.H
 cursor.o: ../FL/Fl_Box.H
+cursor.o: ../FL/fl_casts.H
 cursor.o: ../FL/Fl_Choice.H
 cursor.o: ../FL/Fl_Device.H
 cursor.o: ../FL/Fl_Double_Window.H
@@ -458,6 +482,7 @@ curve.o: ../FL/Enumerations.H
 curve.o: ../FL/Fl.H
 curve.o: ../FL/Fl_Bitmap.H
 curve.o: ../FL/Fl_Button.H
+curve.o: ../FL/fl_casts.H
 curve.o: ../FL/Fl_Device.H
 curve.o: ../FL/Fl_Double_Window.H
 curve.o: ../FL/fl_draw.H
@@ -484,9 +509,11 @@ demo.o: ../FL/Enumerations.H
 demo.o: ../FL/filename.H
 demo.o: ../FL/Fl.H
 demo.o: ../FL/fl_ask.H
+demo.o: ../FL/fl_attr.h
 demo.o: ../FL/Fl_Bitmap.H
 demo.o: ../FL/Fl_Box.H
 demo.o: ../FL/Fl_Button.H
+demo.o: ../FL/fl_casts.H
 demo.o: ../FL/Fl_Choice.H
 demo.o: ../FL/Fl_Device.H
 demo.o: ../FL/Fl_Double_Window.H
@@ -519,11 +546,13 @@ device.o: ../FL/Enumerations.H
 device.o: ../FL/filename.H
 device.o: ../FL/Fl.H
 device.o: ../FL/fl_ask.H
+device.o: ../FL/fl_attr.h
 device.o: ../FL/Fl_Bitmap.H
 device.o: ../FL/Fl_Box.H
 device.o: ../FL/Fl_Browser.H
 device.o: ../FL/Fl_Browser_.H
 device.o: ../FL/Fl_Button.H
+device.o: ../FL/fl_casts.H
 device.o: ../FL/Fl_Check_Button.H
 device.o: ../FL/Fl_Choice.H
 device.o: ../FL/Fl_Clock.H
@@ -577,6 +606,7 @@ doublebuffer.o: ../FL/Enumerations.H
 doublebuffer.o: ../FL/Fl.H
 doublebuffer.o: ../FL/Fl_Bitmap.H
 doublebuffer.o: ../FL/Fl_Box.H
+doublebuffer.o: ../FL/fl_casts.H
 doublebuffer.o: ../FL/Fl_Device.H
 doublebuffer.o: ../FL/Fl_Double_Window.H
 doublebuffer.o: ../FL/fl_draw.H
@@ -603,11 +633,13 @@ editor.o: ../FL/Enumerations.H
 editor.o: ../FL/filename.H
 editor.o: ../FL/Fl.H
 editor.o: ../FL/fl_ask.H
+editor.o: ../FL/fl_attr.h
 editor.o: ../FL/Fl_Bitmap.H
 editor.o: ../FL/Fl_Box.H
 editor.o: ../FL/Fl_Browser.H
 editor.o: ../FL/Fl_Browser_.H
 editor.o: ../FL/Fl_Button.H
+editor.o: ../FL/fl_casts.H
 editor.o: ../FL/Fl_Check_Button.H
 editor.o: ../FL/Fl_Choice.H
 editor.o: ../FL/Fl_Device.H
@@ -652,6 +684,7 @@ fast_slow.o: ../FL/Enumerations.H
 fast_slow.o: ../FL/Fl.H
 fast_slow.o: ../FL/Fl_Bitmap.H
 fast_slow.o: ../FL/Fl_Box.H
+fast_slow.o: ../FL/fl_casts.H
 fast_slow.o: ../FL/Fl_Double_Window.H
 fast_slow.o: ../FL/Fl_Export.H
 fast_slow.o: ../FL/Fl_Group.H
@@ -669,11 +702,13 @@ file_chooser.o: ../FL/Enumerations.H
 file_chooser.o: ../FL/filename.H
 file_chooser.o: ../FL/Fl.H
 file_chooser.o: ../FL/fl_ask.H
+file_chooser.o: ../FL/fl_attr.h
 file_chooser.o: ../FL/Fl_Bitmap.H
 file_chooser.o: ../FL/Fl_Box.H
 file_chooser.o: ../FL/Fl_Browser.H
 file_chooser.o: ../FL/Fl_Browser_.H
 file_chooser.o: ../FL/Fl_Button.H
+file_chooser.o: ../FL/fl_casts.H
 file_chooser.o: ../FL/Fl_Check_Button.H
 file_chooser.o: ../FL/Fl_Choice.H
 file_chooser.o: ../FL/Fl_Device.H
@@ -716,8 +751,10 @@ fltk-versions.o: ../FL/abi-version.h
 fltk-versions.o: ../FL/Enumerations.H
 fltk-versions.o: ../FL/Fl.H
 fltk-versions.o: ../FL/fl_ask.H
+fltk-versions.o: ../FL/fl_attr.h
 fltk-versions.o: ../FL/Fl_Bitmap.H
 fltk-versions.o: ../FL/Fl_Box.H
+fltk-versions.o: ../FL/fl_casts.H
 fltk-versions.o: ../FL/Fl_Export.H
 fltk-versions.o: ../FL/Fl_Group.H
 fltk-versions.o: ../FL/Fl_Image.H
@@ -731,11 +768,13 @@ fonts.o: ../FL/Enumerations.H
 fonts.o: ../FL/filename.H
 fonts.o: ../FL/Fl.H
 fonts.o: ../FL/fl_ask.H
+fonts.o: ../FL/fl_attr.h
 fonts.o: ../FL/Fl_Bitmap.H
 fonts.o: ../FL/Fl_Box.H
 fonts.o: ../FL/Fl_Browser.H
 fonts.o: ../FL/Fl_Browser_.H
 fonts.o: ../FL/Fl_Button.H
+fonts.o: ../FL/fl_casts.H
 fonts.o: ../FL/Fl_Check_Button.H
 fonts.o: ../FL/Fl_Choice.H
 fonts.o: ../FL/Fl_Device.H
@@ -775,11 +814,13 @@ forms.o: ../FL/Enumerations.H
 forms.o: ../FL/filename.H
 forms.o: ../FL/Fl.H
 forms.o: ../FL/fl_ask.H
+forms.o: ../FL/fl_attr.h
 forms.o: ../FL/Fl_Bitmap.H
 forms.o: ../FL/Fl_Box.H
 forms.o: ../FL/Fl_Browser.H
 forms.o: ../FL/Fl_Browser_.H
 forms.o: ../FL/Fl_Button.H
+forms.o: ../FL/fl_casts.H
 forms.o: ../FL/Fl_Chart.H
 forms.o: ../FL/Fl_Check_Button.H
 forms.o: ../FL/Fl_Choice.H
@@ -833,6 +874,7 @@ fractals.o: ../FL/Enumerations.H
 fractals.o: ../FL/Fl.H
 fractals.o: ../FL/Fl_Bitmap.H
 fractals.o: ../FL/Fl_Button.H
+fractals.o: ../FL/fl_casts.H
 fractals.o: ../FL/Fl_Export.H
 fractals.o: ../FL/Fl_Gl_Window.H
 fractals.o: ../FL/Fl_Group.H
@@ -851,6 +893,7 @@ fracviewer.o: ../FL/abi-version.h
 fracviewer.o: ../FL/Enumerations.H
 fracviewer.o: ../FL/Fl.H
 fracviewer.o: ../FL/Fl_Bitmap.H
+fracviewer.o: ../FL/fl_casts.H
 fracviewer.o: ../FL/Fl_Export.H
 fracviewer.o: ../FL/Fl_Gl_Window.H
 fracviewer.o: ../FL/Fl_Group.H
@@ -869,10 +912,12 @@ fullscreen.o: ../FL/abi-version.h
 fullscreen.o: ../FL/Enumerations.H
 fullscreen.o: ../FL/Fl.H
 fullscreen.o: ../FL/fl_ask.H
+fullscreen.o: ../FL/fl_attr.h
 fullscreen.o: ../FL/Fl_Bitmap.H
 fullscreen.o: ../FL/Fl_Browser.H
 fullscreen.o: ../FL/Fl_Browser_.H
 fullscreen.o: ../FL/Fl_Button.H
+fullscreen.o: ../FL/fl_casts.H
 fullscreen.o: ../FL/Fl_Export.H
 fullscreen.o: ../FL/Fl_Gl_Window.H
 fullscreen.o: ../FL/Fl_Group.H
@@ -901,6 +946,7 @@ glpuzzle.o: ../FL/abi-version.h
 glpuzzle.o: ../FL/Enumerations.H
 glpuzzle.o: ../FL/Fl.H
 glpuzzle.o: ../FL/Fl_Bitmap.H
+glpuzzle.o: ../FL/fl_casts.H
 glpuzzle.o: ../FL/Fl_Export.H
 glpuzzle.o: ../FL/Fl_Gl_Window.H
 glpuzzle.o: ../FL/Fl_Group.H
@@ -921,6 +967,7 @@ gl_overlay.o: ../FL/Enumerations.H
 gl_overlay.o: ../FL/Fl.H
 gl_overlay.o: ../FL/Fl_Bitmap.H
 gl_overlay.o: ../FL/Fl_Button.H
+gl_overlay.o: ../FL/fl_casts.H
 gl_overlay.o: ../FL/Fl_Export.H
 gl_overlay.o: ../FL/Fl_Gl_Window.H
 gl_overlay.o: ../FL/Fl_Group.H
@@ -941,6 +988,7 @@ hello.o: ../FL/Enumerations.H
 hello.o: ../FL/Fl.H
 hello.o: ../FL/Fl_Bitmap.H
 hello.o: ../FL/Fl_Box.H
+hello.o: ../FL/fl_casts.H
 hello.o: ../FL/Fl_Export.H
 hello.o: ../FL/Fl_Group.H
 hello.o: ../FL/Fl_Image.H
@@ -956,6 +1004,7 @@ help_dialog.o: ../FL/Fl.H
 help_dialog.o: ../FL/Fl_Bitmap.H
 help_dialog.o: ../FL/Fl_Box.H
 help_dialog.o: ../FL/Fl_Button.H
+help_dialog.o: ../FL/fl_casts.H
 help_dialog.o: ../FL/Fl_Device.H
 help_dialog.o: ../FL/Fl_Double_Window.H
 help_dialog.o: ../FL/fl_draw.H
@@ -983,6 +1032,7 @@ icon.o: ../FL/abi-version.h
 icon.o: ../FL/Enumerations.H
 icon.o: ../FL/Fl.H
 icon.o: ../FL/Fl_Bitmap.H
+icon.o: ../FL/fl_casts.H
 icon.o: ../FL/Fl_Choice.H
 icon.o: ../FL/Fl_Double_Window.H
 icon.o: ../FL/Fl_Export.H
@@ -1002,6 +1052,7 @@ iconize.o: ../FL/Fl.H
 iconize.o: ../FL/Fl_Bitmap.H
 iconize.o: ../FL/Fl_Box.H
 iconize.o: ../FL/Fl_Button.H
+iconize.o: ../FL/fl_casts.H
 iconize.o: ../FL/Fl_Export.H
 iconize.o: ../FL/Fl_Group.H
 iconize.o: ../FL/Fl_Image.H
@@ -1016,6 +1067,7 @@ image.o: ../FL/Enumerations.H
 image.o: ../FL/Fl.H
 image.o: ../FL/Fl_Bitmap.H
 image.o: ../FL/Fl_Button.H
+image.o: ../FL/fl_casts.H
 image.o: ../FL/Fl_Double_Window.H
 image.o: ../FL/Fl_Export.H
 image.o: ../FL/Fl_Group.H
@@ -1034,6 +1086,7 @@ inactive.o: ../FL/Fl.H
 inactive.o: ../FL/Fl_Bitmap.H
 inactive.o: ../FL/Fl_Box.H
 inactive.o: ../FL/Fl_Button.H
+inactive.o: ../FL/fl_casts.H
 inactive.o: ../FL/Fl_Check_Button.H
 inactive.o: ../FL/Fl_Clock.H
 inactive.o: ../FL/Fl_Dial.H
@@ -1065,6 +1118,7 @@ input.o: ../FL/Fl.H
 input.o: ../FL/Fl_Bitmap.H
 input.o: ../FL/Fl_Box.H
 input.o: ../FL/Fl_Button.H
+input.o: ../FL/fl_casts.H
 input.o: ../FL/Fl_Choice.H
 input.o: ../FL/Fl_Color_Chooser.H
 input.o: ../FL/Fl_Device.H
@@ -1105,6 +1159,7 @@ input_choice.o: ../FL/Enumerations.H
 input_choice.o: ../FL/Fl.H
 input_choice.o: ../FL/Fl_Bitmap.H
 input_choice.o: ../FL/Fl_Button.H
+input_choice.o: ../FL/fl_casts.H
 input_choice.o: ../FL/Fl_Device.H
 input_choice.o: ../FL/Fl_Double_Window.H
 input_choice.o: ../FL/fl_draw.H
@@ -1139,6 +1194,7 @@ keyboard.o: ../FL/Fl.H
 keyboard.o: ../FL/Fl_Bitmap.H
 keyboard.o: ../FL/Fl_Box.H
 keyboard.o: ../FL/Fl_Button.H
+keyboard.o: ../FL/fl_casts.H
 keyboard.o: ../FL/Fl_Dial.H
 keyboard.o: ../FL/Fl_Export.H
 keyboard.o: ../FL/Fl_Group.H
@@ -1159,6 +1215,7 @@ label.o: ../FL/Fl.H
 label.o: ../FL/Fl_Bitmap.H
 label.o: ../FL/Fl_Box.H
 label.o: ../FL/Fl_Button.H
+label.o: ../FL/fl_casts.H
 label.o: ../FL/Fl_Choice.H
 label.o: ../FL/Fl_Device.H
 label.o: ../FL/Fl_Double_Window.H
@@ -1192,6 +1249,7 @@ line_style.o: ../FL/Fl.H
 line_style.o: ../FL/Fl_Bitmap.H
 line_style.o: ../FL/Fl_Box.H
 line_style.o: ../FL/Fl_Button.H
+line_style.o: ../FL/fl_casts.H
 line_style.o: ../FL/Fl_Check_Button.H
 line_style.o: ../FL/Fl_Choice.H
 line_style.o: ../FL/Fl_Device.H
@@ -1228,6 +1286,7 @@ mandelbrot.o: ../FL/Fl.H
 mandelbrot.o: ../FL/Fl_Bitmap.H
 mandelbrot.o: ../FL/Fl_Box.H
 mandelbrot.o: ../FL/Fl_Button.H
+mandelbrot.o: ../FL/fl_casts.H
 mandelbrot.o: ../FL/Fl_Device.H
 mandelbrot.o: ../FL/Fl_Double_Window.H
 mandelbrot.o: ../FL/fl_draw.H
@@ -1258,9 +1317,11 @@ menubar.o: ../FL/abi-version.h
 menubar.o: ../FL/Enumerations.H
 menubar.o: ../FL/Fl.H
 menubar.o: ../FL/fl_ask.H
+menubar.o: ../FL/fl_attr.h
 menubar.o: ../FL/Fl_Bitmap.H
 menubar.o: ../FL/Fl_Box.H
 menubar.o: ../FL/Fl_Button.H
+menubar.o: ../FL/fl_casts.H
 menubar.o: ../FL/Fl_Choice.H
 menubar.o: ../FL/Fl_Device.H
 menubar.o: ../FL/Fl_Double_Window.H
@@ -1296,7 +1357,9 @@ message.o: ../FL/abi-version.h
 message.o: ../FL/Enumerations.H
 message.o: ../FL/Fl.H
 message.o: ../FL/fl_ask.H
+message.o: ../FL/fl_attr.h
 message.o: ../FL/Fl_Bitmap.H
+message.o: ../FL/fl_casts.H
 message.o: ../FL/Fl_Export.H
 message.o: ../FL/Fl_Group.H
 message.o: ../FL/Fl_Image.H
@@ -1311,6 +1374,7 @@ minimum.o: ../FL/Fl.H
 minimum.o: ../FL/Fl_Bitmap.H
 minimum.o: ../FL/Fl_Box.H
 minimum.o: ../FL/Fl_Button.H
+minimum.o: ../FL/fl_casts.H
 minimum.o: ../FL/Fl_Double_Window.H
 minimum.o: ../FL/Fl_Export.H
 minimum.o: ../FL/Fl_Group.H
@@ -1328,11 +1392,13 @@ native-filechooser.o: ../FL/Enumerations.H
 native-filechooser.o: ../FL/filename.H
 native-filechooser.o: ../FL/Fl.H
 native-filechooser.o: ../FL/fl_ask.H
+native-filechooser.o: ../FL/fl_attr.h
 native-filechooser.o: ../FL/Fl_Bitmap.H
 native-filechooser.o: ../FL/Fl_Box.H
 native-filechooser.o: ../FL/Fl_Browser.H
 native-filechooser.o: ../FL/Fl_Browser_.H
 native-filechooser.o: ../FL/Fl_Button.H
+native-filechooser.o: ../FL/fl_casts.H
 native-filechooser.o: ../FL/Fl_Check_Button.H
 native-filechooser.o: ../FL/Fl_Choice.H
 native-filechooser.o: ../FL/Fl_Device.H
@@ -1376,6 +1442,7 @@ navigation.o: ../FL/abi-version.h
 navigation.o: ../FL/Enumerations.H
 navigation.o: ../FL/Fl.H
 navigation.o: ../FL/Fl_Bitmap.H
+navigation.o: ../FL/fl_casts.H
 navigation.o: ../FL/Fl_Export.H
 navigation.o: ../FL/Fl_Group.H
 navigation.o: ../FL/Fl_Image.H
@@ -1392,6 +1459,7 @@ offscreen.o: ../FL/Enumerations.H
 offscreen.o: ../FL/Fl.H
 offscreen.o: ../FL/Fl_Bitmap.H
 offscreen.o: ../FL/Fl_Box.H
+offscreen.o: ../FL/fl_casts.H
 offscreen.o: ../FL/Fl_Device.H
 offscreen.o: ../FL/Fl_Double_Window.H
 offscreen.o: ../FL/fl_draw.H
@@ -1415,6 +1483,7 @@ output.o: ../FL/Fl.H
 output.o: ../FL/Fl_Bitmap.H
 output.o: ../FL/Fl_Box.H
 output.o: ../FL/Fl_Button.H
+output.o: ../FL/fl_casts.H
 output.o: ../FL/Fl_Device.H
 output.o: ../FL/Fl_Double_Window.H
 output.o: ../FL/fl_draw.H
@@ -1446,6 +1515,7 @@ overlay.o: ../FL/Enumerations.H
 overlay.o: ../FL/Fl.H
 overlay.o: ../FL/Fl_Bitmap.H
 overlay.o: ../FL/Fl_Button.H
+overlay.o: ../FL/fl_casts.H
 overlay.o: ../FL/Fl_Device.H
 overlay.o: ../FL/Fl_Double_Window.H
 overlay.o: ../FL/fl_draw.H
@@ -1468,6 +1538,7 @@ pack.o: ../FL/Enumerations.H
 pack.o: ../FL/Fl.H
 pack.o: ../FL/Fl_Bitmap.H
 pack.o: ../FL/Fl_Button.H
+pack.o: ../FL/fl_casts.H
 pack.o: ../FL/Fl_Double_Window.H
 pack.o: ../FL/Fl_Export.H
 pack.o: ../FL/Fl_Group.H
@@ -1489,6 +1560,7 @@ pixmap.o: ../FL/Enumerations.H
 pixmap.o: ../FL/Fl.H
 pixmap.o: ../FL/Fl_Bitmap.H
 pixmap.o: ../FL/Fl_Button.H
+pixmap.o: ../FL/fl_casts.H
 pixmap.o: ../FL/Fl_Double_Window.H
 pixmap.o: ../FL/Fl_Export.H
 pixmap.o: ../FL/Fl_Group.H
@@ -1508,11 +1580,13 @@ pixmap_browser.o: ../FL/Enumerations.H
 pixmap_browser.o: ../FL/filename.H
 pixmap_browser.o: ../FL/Fl.H
 pixmap_browser.o: ../FL/fl_ask.H
+pixmap_browser.o: ../FL/fl_attr.h
 pixmap_browser.o: ../FL/Fl_Bitmap.H
 pixmap_browser.o: ../FL/Fl_Box.H
 pixmap_browser.o: ../FL/Fl_Browser.H
 pixmap_browser.o: ../FL/Fl_Browser_.H
 pixmap_browser.o: ../FL/Fl_Button.H
+pixmap_browser.o: ../FL/fl_casts.H
 pixmap_browser.o: ../FL/Fl_Check_Button.H
 pixmap_browser.o: ../FL/Fl_Choice.H
 pixmap_browser.o: ../FL/Fl_Device.H
@@ -1554,9 +1628,11 @@ preferences.o: ../FL/Enumerations.H
 preferences.o: ../FL/filename.H
 preferences.o: ../FL/Fl.H
 preferences.o: ../FL/fl_ask.H
+preferences.o: ../FL/fl_attr.h
 preferences.o: ../FL/Fl_Bitmap.H
 preferences.o: ../FL/Fl_Box.H
 preferences.o: ../FL/Fl_Button.H
+preferences.o: ../FL/fl_casts.H
 preferences.o: ../FL/Fl_Check_Button.H
 preferences.o: ../FL/Fl_Choice.H
 preferences.o: ../FL/Fl_Double_Window.H
@@ -1585,6 +1661,7 @@ radio.o: ../FL/Enumerations.H
 radio.o: ../FL/Fl.H
 radio.o: ../FL/Fl_Bitmap.H
 radio.o: ../FL/Fl_Button.H
+radio.o: ../FL/fl_casts.H
 radio.o: ../FL/Fl_Check_Button.H
 radio.o: ../FL/Fl_Double_Window.H
 radio.o: ../FL/Fl_Export.H
@@ -1607,6 +1684,7 @@ resize-example1.o: ../FL/Enumerations.H
 resize-example1.o: ../FL/Fl.H
 resize-example1.o: ../FL/Fl_Bitmap.H
 resize-example1.o: ../FL/Fl_Box.H
+resize-example1.o: ../FL/fl_casts.H
 resize-example1.o: ../FL/Fl_Double_Window.H
 resize-example1.o: ../FL/Fl_Export.H
 resize-example1.o: ../FL/Fl_Group.H
@@ -1622,6 +1700,7 @@ resize-example2.o: ../FL/Enumerations.H
 resize-example2.o: ../FL/Fl.H
 resize-example2.o: ../FL/Fl_Bitmap.H
 resize-example2.o: ../FL/Fl_Box.H
+resize-example2.o: ../FL/fl_casts.H
 resize-example2.o: ../FL/Fl_Double_Window.H
 resize-example2.o: ../FL/Fl_Export.H
 resize-example2.o: ../FL/Fl_Group.H
@@ -1638,6 +1717,7 @@ resize-example3a.o: ../FL/Fl.H
 resize-example3a.o: ../FL/Fl_Bitmap.H
 resize-example3a.o: ../FL/Fl_Box.H
 resize-example3a.o: ../FL/Fl_Button.H
+resize-example3a.o: ../FL/fl_casts.H
 resize-example3a.o: ../FL/Fl_Double_Window.H
 resize-example3a.o: ../FL/Fl_Export.H
 resize-example3a.o: ../FL/Fl_Group.H
@@ -1654,6 +1734,7 @@ resize-example3b.o: ../FL/Fl.H
 resize-example3b.o: ../FL/Fl_Bitmap.H
 resize-example3b.o: ../FL/Fl_Box.H
 resize-example3b.o: ../FL/Fl_Button.H
+resize-example3b.o: ../FL/fl_casts.H
 resize-example3b.o: ../FL/Fl_Double_Window.H
 resize-example3b.o: ../FL/Fl_Export.H
 resize-example3b.o: ../FL/Fl_Group.H
@@ -1670,6 +1751,7 @@ resize-example3c.o: ../FL/Fl.H
 resize-example3c.o: ../FL/Fl_Bitmap.H
 resize-example3c.o: ../FL/Fl_Box.H
 resize-example3c.o: ../FL/Fl_Button.H
+resize-example3c.o: ../FL/fl_casts.H
 resize-example3c.o: ../FL/Fl_Double_Window.H
 resize-example3c.o: ../FL/Fl_Export.H
 resize-example3c.o: ../FL/Fl_Group.H
@@ -1685,6 +1767,7 @@ resize-example4a.o: ../FL/Enumerations.H
 resize-example4a.o: ../FL/Fl.H
 resize-example4a.o: ../FL/Fl_Bitmap.H
 resize-example4a.o: ../FL/Fl_Box.H
+resize-example4a.o: ../FL/fl_casts.H
 resize-example4a.o: ../FL/Fl_Double_Window.H
 resize-example4a.o: ../FL/Fl_Export.H
 resize-example4a.o: ../FL/Fl_Group.H
@@ -1700,6 +1783,7 @@ resize-example4b.o: ../FL/Enumerations.H
 resize-example4b.o: ../FL/Fl.H
 resize-example4b.o: ../FL/Fl_Bitmap.H
 resize-example4b.o: ../FL/Fl_Box.H
+resize-example4b.o: ../FL/fl_casts.H
 resize-example4b.o: ../FL/Fl_Double_Window.H
 resize-example4b.o: ../FL/Fl_Export.H
 resize-example4b.o: ../FL/Fl_Group.H
@@ -1716,6 +1800,7 @@ resize.o: ../FL/Fl.H
 resize.o: ../FL/Fl_Bitmap.H
 resize.o: ../FL/Fl_Box.H
 resize.o: ../FL/Fl_Button.H
+resize.o: ../FL/fl_casts.H
 resize.o: ../FL/Fl_Double_Window.H
 resize.o: ../FL/Fl_Export.H
 resize.o: ../FL/Fl_Group.H
@@ -1730,9 +1815,11 @@ resizebox.o: ../FL/abi-version.h
 resizebox.o: ../FL/Enumerations.H
 resizebox.o: ../FL/Fl.H
 resizebox.o: ../FL/fl_ask.H
+resizebox.o: ../FL/fl_attr.h
 resizebox.o: ../FL/Fl_Bitmap.H
 resizebox.o: ../FL/Fl_Box.H
 resizebox.o: ../FL/Fl_Button.H
+resizebox.o: ../FL/fl_casts.H
 resizebox.o: ../FL/Fl_Device.H
 resizebox.o: ../FL/Fl_Double_Window.H
 resizebox.o: ../FL/fl_draw.H
@@ -1757,6 +1844,7 @@ rotated_text.o: ../FL/Fl.H
 rotated_text.o: ../FL/Fl_Bitmap.H
 rotated_text.o: ../FL/Fl_Box.H
 rotated_text.o: ../FL/Fl_Button.H
+rotated_text.o: ../FL/fl_casts.H
 rotated_text.o: ../FL/Fl_Choice.H
 rotated_text.o: ../FL/Fl_Device.H
 rotated_text.o: ../FL/Fl_Double_Window.H
@@ -1788,6 +1876,7 @@ scroll.o: ../FL/Enumerations.H
 scroll.o: ../FL/Fl.H
 scroll.o: ../FL/Fl_Bitmap.H
 scroll.o: ../FL/Fl_Box.H
+scroll.o: ../FL/fl_casts.H
 scroll.o: ../FL/Fl_Choice.H
 scroll.o: ../FL/Fl_Device.H
 scroll.o: ../FL/Fl_Double_Window.H
@@ -1818,6 +1907,7 @@ shape.o: ../FL/abi-version.h
 shape.o: ../FL/Enumerations.H
 shape.o: ../FL/Fl.H
 shape.o: ../FL/Fl_Bitmap.H
+shape.o: ../FL/fl_casts.H
 shape.o: ../FL/Fl_Export.H
 shape.o: ../FL/Fl_Gl_Window.H
 shape.o: ../FL/Fl_Group.H
@@ -1838,6 +1928,7 @@ subwindow.o: ../FL/Fl.H
 subwindow.o: ../FL/Fl_Bitmap.H
 subwindow.o: ../FL/Fl_Box.H
 subwindow.o: ../FL/Fl_Button.H
+subwindow.o: ../FL/fl_casts.H
 subwindow.o: ../FL/Fl_Export.H
 subwindow.o: ../FL/Fl_Group.H
 subwindow.o: ../FL/Fl_Image.H
@@ -1858,9 +1949,11 @@ sudoku.o: ../FL/Enumerations.H
 sudoku.o: ../FL/filename.H
 sudoku.o: ../FL/Fl.H
 sudoku.o: ../FL/fl_ask.H
+sudoku.o: ../FL/fl_attr.h
 sudoku.o: ../FL/Fl_Bitmap.H
 sudoku.o: ../FL/Fl_Box.H
 sudoku.o: ../FL/Fl_Button.H
+sudoku.o: ../FL/fl_casts.H
 sudoku.o: ../FL/Fl_Device.H
 sudoku.o: ../FL/Fl_Double_Window.H
 sudoku.o: ../FL/fl_draw.H
@@ -1899,6 +1992,7 @@ symbols.o: ../FL/Enumerations.H
 symbols.o: ../FL/Fl.H
 symbols.o: ../FL/Fl_Bitmap.H
 symbols.o: ../FL/Fl_Box.H
+symbols.o: ../FL/fl_casts.H
 symbols.o: ../FL/Fl_Device.H
 symbols.o: ../FL/Fl_Double_Window.H
 symbols.o: ../FL/fl_draw.H
@@ -1922,8 +2016,10 @@ table.o: ../FL/abi-version.h
 table.o: ../FL/Enumerations.H
 table.o: ../FL/Fl.H
 table.o: ../FL/fl_ask.H
+table.o: ../FL/fl_attr.h
 table.o: ../FL/Fl_Bitmap.H
 table.o: ../FL/Fl_Button.H
+table.o: ../FL/fl_casts.H
 table.o: ../FL/Fl_Check_Button.H
 table.o: ../FL/Fl_Choice.H
 table.o: ../FL/Fl_Device.H
@@ -1959,9 +2055,11 @@ tabs.o: ../FL/abi-version.h
 tabs.o: ../FL/Enumerations.H
 tabs.o: ../FL/Fl.H
 tabs.o: ../FL/fl_ask.H
+tabs.o: ../FL/fl_attr.h
 tabs.o: ../FL/Fl_Bitmap.H
 tabs.o: ../FL/Fl_Box.H
 tabs.o: ../FL/Fl_Button.H
+tabs.o: ../FL/fl_casts.H
 tabs.o: ../FL/Fl_Clock.H
 tabs.o: ../FL/Fl_Double_Window.H
 tabs.o: ../FL/Fl_Export.H
@@ -1983,9 +2081,11 @@ threads.o: ../FL/abi-version.h
 threads.o: ../FL/Enumerations.H
 threads.o: ../FL/Fl.H
 threads.o: ../FL/fl_ask.H
+threads.o: ../FL/fl_attr.h
 threads.o: ../FL/Fl_Bitmap.H
 threads.o: ../FL/Fl_Browser.H
 threads.o: ../FL/Fl_Browser_.H
+threads.o: ../FL/fl_casts.H
 threads.o: ../FL/Fl_Double_Window.H
 threads.o: ../FL/Fl_Export.H
 threads.o: ../FL/Fl_Group.H
@@ -2005,6 +2105,7 @@ tile.o: ../FL/Enumerations.H
 tile.o: ../FL/Fl.H
 tile.o: ../FL/Fl_Bitmap.H
 tile.o: ../FL/Fl_Box.H
+tile.o: ../FL/fl_casts.H
 tile.o: ../FL/Fl_Double_Window.H
 tile.o: ../FL/Fl_Export.H
 tile.o: ../FL/Fl_Group.H
@@ -2021,6 +2122,7 @@ tiled_image.o: ../FL/Enumerations.H
 tiled_image.o: ../FL/Fl.H
 tiled_image.o: ../FL/Fl_Bitmap.H
 tiled_image.o: ../FL/Fl_Button.H
+tiled_image.o: ../FL/fl_casts.H
 tiled_image.o: ../FL/Fl_Double_Window.H
 tiled_image.o: ../FL/Fl_Export.H
 tiled_image.o: ../FL/Fl_Group.H
@@ -2040,11 +2142,13 @@ tree.o: ../FL/Enumerations.H
 tree.o: ../FL/filename.H
 tree.o: ../FL/Fl.H
 tree.o: ../FL/fl_ask.H
+tree.o: ../FL/fl_attr.h
 tree.o: ../FL/Fl_Bitmap.H
 tree.o: ../FL/Fl_Box.H
 tree.o: ../FL/Fl_Browser.H
 tree.o: ../FL/Fl_Browser_.H
 tree.o: ../FL/Fl_Button.H
+tree.o: ../FL/fl_casts.H
 tree.o: ../FL/Fl_Check_Button.H
 tree.o: ../FL/Fl_Choice.H
 tree.o: ../FL/Fl_Color_Chooser.H
@@ -2096,6 +2200,7 @@ twowin.o: ../FL/Enumerations.H
 twowin.o: ../FL/Fl.H
 twowin.o: ../FL/Fl_Bitmap.H
 twowin.o: ../FL/Fl_Button.H
+twowin.o: ../FL/fl_casts.H
 twowin.o: ../FL/Fl_Double_Window.H
 twowin.o: ../FL/Fl_Export.H
 twowin.o: ../FL/Fl_Group.H
@@ -2117,6 +2222,7 @@ unittests.o: ../FL/Fl_Box.H
 unittests.o: ../FL/Fl_Browser.H
 unittests.o: ../FL/Fl_Browser_.H
 unittests.o: ../FL/Fl_Button.H
+unittests.o: ../FL/fl_casts.H
 unittests.o: ../FL/Fl_Check_Button.H
 unittests.o: ../FL/Fl_Choice.H
 unittests.o: ../FL/Fl_Clock.H
@@ -2189,6 +2295,7 @@ utf8.o: ../FL/Fl_Box.H
 utf8.o: ../FL/Fl_Browser.H
 utf8.o: ../FL/Fl_Browser_.H
 utf8.o: ../FL/Fl_Button.H
+utf8.o: ../FL/fl_casts.H
 utf8.o: ../FL/Fl_Check_Button.H
 utf8.o: ../FL/Fl_Choice.H
 utf8.o: ../FL/Fl_Device.H
@@ -2228,6 +2335,7 @@ valuators.o: ../FL/Fl_Adjuster.H
 valuators.o: ../FL/Fl_Bitmap.H
 valuators.o: ../FL/Fl_Box.H
 valuators.o: ../FL/Fl_Button.H
+valuators.o: ../FL/fl_casts.H
 valuators.o: ../FL/Fl_Counter.H
 valuators.o: ../FL/Fl_Device.H
 valuators.o: ../FL/Fl_Dial.H
@@ -2266,6 +2374,7 @@ windowfocus.o: ../FL/Enumerations.H
 windowfocus.o: ../FL/Fl.H
 windowfocus.o: ../FL/Fl_Bitmap.H
 windowfocus.o: ../FL/Fl_Box.H
+windowfocus.o: ../FL/fl_casts.H
 windowfocus.o: ../FL/Fl_Double_Window.H
 windowfocus.o: ../FL/Fl_Export.H
 windowfocus.o: ../FL/Fl_Group.H
