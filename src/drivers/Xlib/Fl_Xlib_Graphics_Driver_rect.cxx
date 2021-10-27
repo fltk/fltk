@@ -208,16 +208,22 @@ void Fl_Xlib_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 
 // --- line and polygon drawing
 
-void Fl_Xlib_Graphics_Driver::focus_rect(int x, int y, int w, int h)
-{
+void Fl_Xlib_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   w = this->floor(x + w) - this->floor(x);
   h = this->floor(y + h) - this->floor(y);
   x = this->floor(x) + floor(offset_x_);
   y = this->floor(y) + floor(offset_y_);
   if (!clip_rect(x, y, w, h)) {
-    line_style(FL_DOT);
+    int lw_save = line_width_;       // preserve current line_width
+    if (line_width_ == 0)
+      line_style(FL_DOT, 1);
+    else
+      line_style(FL_DOT);
     XDrawRectangle(fl_display, fl_window, gc_, x, y, w, h);
-    line_style(FL_SOLID);
+    if (lw_save == 0)
+      line_style(FL_SOLID, 0);       // restore line type and width
+    else
+      line_style(FL_SOLID);
   }
 }
 
