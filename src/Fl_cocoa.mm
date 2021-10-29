@@ -3304,7 +3304,7 @@ void Fl_X::make(Fl_Window* w)
         [cw center];
       } else if (w->non_modal()) {
         [cw center];
-      } else {
+      } else if (!w->fullscreen_active()) {
         static NSPoint delta = NSZeroPoint;
         delta = [cw cascadeTopLeftFromPoint:delta];
       }
