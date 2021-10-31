@@ -152,14 +152,12 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
     y_offset = 0;
     WIN_SetupPrinterDeviceContext (hPr);
     driver()->gc(hPr);
-    this->set_current();
   }
   return err;
 }
 
 void Fl_WinAPI_Printer_Driver::end_job (void)
 {
-  Fl_Display_Device::display_device()->set_current();
   if (hPr != NULL) {
     if (! abortPrint) {
       prerr = EndDoc (hPr);
@@ -232,6 +230,7 @@ int Fl_WinAPI_Printer_Driver::begin_page (void)
 
   rsult = 0;
   if (hPr != NULL) {
+    Fl_Surface_Device::push_current(this);
     WIN_SetupPrinterDeviceContext (hPr);
     prerr = StartPage (hPr);
     if (prerr < 0) {
@@ -280,6 +279,7 @@ int Fl_WinAPI_Printer_Driver::end_page (void)
 
   rsult = 0;
   if (hPr != NULL) {
+    Fl_Surface_Device::pop_current();
     prerr = EndPage (hPr);
     if (prerr < 0) {
       abortPrint = TRUE;

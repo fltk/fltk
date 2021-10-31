@@ -40,6 +40,7 @@ int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage, char *
 
  The page coordinates are initially in points, i.e., 1/72 inch,
  and with origin at the top left of the printable page area.
+ This function also makes this surface the current drawing surface with Fl_Surface_Device::push_current().
  \return 0 if OK, non-zero if any error
  */
 int Fl_Paged_Device::begin_page (void) {return 1;}
@@ -82,6 +83,7 @@ void Fl_Paged_Device::rotate(float angle) {}
 
 /**
  \brief To be called at the end of each page.
+ This function also stops this surface from being the current drawing surface with Fl_Surface_Device::pop_current().
 
  \return 0 if OK, non-zero if any error.
  */

@@ -60,7 +60,6 @@ int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::P
   if(ps->output == NULL) return 2;
   ps->ps_filename_ = fl_strdup(fnfc.filename());
   ps->start_postscript(pagecount, format, layout);
-  Fl_Surface_Device::push_current(this);
   return 0;
 }
 
@@ -79,7 +78,6 @@ int Fl_PostScript_File_Device::begin_job (FILE *ps_output, int pagecount,
   ps->ps_filename_ = NULL;
   ps->start_postscript(pagecount, format, layout);
   ps->close_command(dont_close); // so that end_job() doesn't close the file
-  Fl_Surface_Device::push_current(this);
   return 0;
 }
 
@@ -1592,6 +1590,7 @@ void Fl_PostScript_File_Device::untranslate(void)
 int Fl_PostScript_File_Device::begin_page (void)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
+  Fl_Surface_Device::push_current(this);
 #if USE_PANGO
   cairo_ps_surface_dsc_begin_page_setup(cairo_get_target(ps->cr()));
   char feature[200];
@@ -1631,6 +1630,7 @@ int Fl_PostScript_File_Device::end_page (void)
   cairo_show_page(ps->cr());
   ps->check_status();
 #endif
+  Fl_Surface_Device::pop_current();
   return 0;
 }
 
@@ -1670,7 +1670,6 @@ void Fl_PostScript_File_Device::end_job (void)
     ps->clip_= ps->clip_->prev;
     delete c;
   }
-  Fl_Surface_Device::pop_current();
   int err2 = (ps->close_cmd_ ? (ps->close_cmd_)(ps->output) : fclose(ps->output) );
   if (!error) error = err2;
   if (error && ps->close_cmd_ == NULL) {
