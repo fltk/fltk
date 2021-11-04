@@ -3113,22 +3113,25 @@ void Fl_Window::fullscreen_x() {
 
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
-  if (fl_mac_os_version < 101000) {
-    hide();
-    resize(X, Y, W, H);
-    show();
-  } else {
-    NSUInteger winstyle = (border() ?
-                           (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) : NSBorderlessWindowMask);
-    if (!modal()) winstyle |= NSMiniaturizableWindowMask;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 100600) {
     NSInteger level = NSNormalWindowLevel;
     if (modal()) level = modal_window_level();
     else if (non_modal()) level = non_modal_window_level();
+    [i->xid orderOut:nil];
     [i->xid setLevel:level];
-    resize(X, Y, W, H);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    NSUInteger winstyle = (border() ?
+                           (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) : NSBorderlessWindowMask);
+    if (!modal()) winstyle |= NSMiniaturizableWindowMask;
     [i->xid setStyleMask:winstyle]; //10.6
+    resize(X, Y, W, H);
+    [i->xid orderFront:nil];
+  } else
 #endif
+  {
+    hide();
+    resize(X, Y, W, H);
+    show();
   }
   Fl::handle(FL_FULLSCREEN, this);
 }
