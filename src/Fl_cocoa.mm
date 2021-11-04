@@ -1438,7 +1438,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
     int X, Y;
     CocoatoFLTK(window, X, Y);
-    window->Fl_Widget::resize(X, Y, window->w(), window->h());
+    if (window->x() != X || window->y() != Y) window->position(X, Y);
     update_e_xy_and_e_xy_root(nsw);
     // at least since MacOS 10.9: OS moves subwindows contained in a moved window
     // setSubwindowFrame is no longer necessary.
