@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,13 +16,10 @@
 
 /**
  \file fl_ask.cxx
- \brief Utility functions for common dialogs.
+ \brief Utility Functions for Common Dialogs.
  */
 
-// Implementation of fl_message, fl_ask, fl_choice, fl_input
-// The three-message fl_show_x functions are for forms compatibility
-// mostly.  In most cases it is easier to get a multi-line message
-// by putting newlines in the message.
+// Implementation of fl_message, fl_ask, fl_choice, fl_input etc.
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -48,7 +43,8 @@ static Fl_Box *message;
 static Fl_Box *icon;
 static Fl_Button *button[3];
 static Fl_Input *input;
-static int ret_val;
+static int ret_val;     // button return value: 0, 1, 2
+static int win_closed;  // window close flag (-1 = Escape, -2 = close button)
 static const char *iconlabel = "?";
 static const char *message_title_default;
 Fl_Font fl_message_font_ = FL_HELVETICA;
@@ -60,14 +56,27 @@ extern "C" void NSBeep(void);
 
 static char avoidRecursion = 0;
 
-// Sets the global return value (ret_val) and closes the window.
-// Note: this is used for the button callbacks and the window
-// callback (closing the window with the close button or menu).
-// The first argument (Fl_Widget *) can either be an Fl_Button*
-// pointer to one of the buttons or an Fl_Window* pointer to the
-// message window (message_form).
+// Sets the global return value 'ret_val' according to the button
+// that was pushed (0, 1, 2), sets the 'win_closed' flag = 0
+// and hides the window.
+
 static void button_cb(Fl_Widget *, long val) {
-  ret_val = (int) val;
+  ret_val = (int)val;
+  win_closed = 0;
+  message_form->hide();
+}
+
+// Sets the global return value 'ret_val' = 0 (no button pushed) and
+// sets the 'win_closed' flag to -1 for Escape or -2 else (Close Button)
+// and hides the window.
+
+static void window_cb(Fl_Widget *, long val) {
+  ret_val = 0;
+  if ((Fl::event() == FL_KEYBOARD || Fl::event() == FL_SHORTCUT) &&
+      (Fl::event_key() == FL_Escape))
+    win_closed = -1;
+  else
+    win_closed = -2;
   message_form->hide();
 }
 
@@ -81,7 +90,7 @@ static Fl_Window *makeform() {
  Fl_Group::current(0);
  // create a new top level window
  Fl_Window *w = message_form = new Fl_Window(410,103);
-  message_form->callback(button_cb);
+ message_form->callback(window_cb);
  // w->clear_border();
  // w->box(FL_UP_BOX);
  (message = new Fl_Box(60, 25, 340, 20))
@@ -106,7 +115,6 @@ static Fl_Window *makeform() {
      button[b]->callback(button_cb, b);
    }
  }
- button[0]->shortcut(FL_Escape);
  // add the buttons (left to right)
  {
    for (int b=2; b>=0; b--)
@@ -241,8 +249,6 @@ static int innards(const char* fmt, va_list ap,
     message_form->hotspot(button[0]);
   if (b0 && Fl_Widget::label_shortcut(b0))
     button[0]->shortcut(0);
-  else
-    button[0]->shortcut(FL_Escape);
 
   // set default window title, if defined and a specific title is not set
   if (!message_form->label() && message_title_default)
@@ -456,7 +462,7 @@ int fl_ask(const char *fmt, ...) {
    \retval 1 if the second button with \p b1 text is pushed
    \retval 2 if the third button with \p b2 text is pushed
  */
-int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
+int fl_choice(const char *fmt, const char *b0, const char *b1, const char *b2, ...) {
 
   if (avoidRecursion) return 0;
 
@@ -469,6 +475,56 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_end(ap);
   return r;
 }
+
+/**
+  Like fl_choice() but with extended (negative) return values.
+
+  This function can return negative values as described below whereas
+  fl_choice() only returns "button values" (0, 1, 2).
+
+  With fl_choice_n() you can arrange the buttons in a way that any button
+  can be the standard "cancel" button because Escape and closing the window
+  with the close button can be distinguished from button return codes.
+
+  Negative values are always "special" and should be considered like "cancel".
+
+  The special value \p -3 means that the dialog was blocked (not executed).
+
+  Other than that both functions are the same.
+
+  \see fl_choice()
+
+  \since 1.3.8
+
+  \param[in] fmt can be used as an sprintf-like format and variables for the message text
+  \param[in] b0 text label of button 0
+  \param[in] b1 text label of button 1 (can be 0)
+  \param[in] b2 text label of button 2 (can be 0)
+
+  \retval -3 if another dialog box is still open (the dialog was blocked)
+  \retval -2 if the dialog window was closed by clicking the close button
+  \retval -1 if the dialog was closed by hitting Escape
+  \retval  0 if the first button with \p b0 text is pushed
+  \retval  1 if the second button with \p b1 text is pushed
+  \retval  2 if the third button with \p b2 text is pushed
+*/
+int fl_choice_n(const char *fmt, const char *b0, const char *b1, const char *b2, ...) {
+
+  if (avoidRecursion) return -3;
+
+  va_list ap;
+
+  // fl_beep(FL_BEEP_QUESTION);
+
+  va_start(ap, b2);
+  int r = innards(fmt, ap, b0, b1, b2);
+  va_end(ap);
+
+  if (win_closed != 0 && r == 0)
+    return win_closed;
+  return r;
+}
+
 /** Gets the Fl_Box icon container of the current default dialog used in
     many common dialogs like fl_message(), fl_alert(),
     fl_ask(), fl_choice(), fl_input(), fl_password()
@@ -594,7 +650,7 @@ void fl_message_title(const char *title) {
     common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
     fl_input(), fl_password(), unless a specific title has been set
     with fl_message_title(const char *title).
-    
+
     The default is no title. You can override the default title for a
     single dialog with fl_message_title(const char *title).
 
@@ -614,7 +670,3 @@ void fl_message_title_default(const char *title) {
 }
 
 /** @} */
-
-//
-// End of "$Id$".
-//

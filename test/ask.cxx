@@ -1,12 +1,10 @@
 //
-// "$Id$"
-//
 // Standard dialog test program for the Fast Light Tool Kit (FLTK).
 //
 // This also demonstrates how to trap attempts by the user to
 // close the last window by overriding Fl::exit
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,16 +17,16 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <stdio.h>
-#include <string.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Box.H>
-
 #include <FL/fl_ask.H>
+
+#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 void update_input_text(Fl_Widget* o, const char *input) {
@@ -52,13 +50,19 @@ void window_callback(Fl_Widget*, void*) {
   int hotspot = fl_message_hotspot();
   fl_message_hotspot(0);
   fl_message_title("note: no hotspot set for this dialog");
-  int rep = fl_choice("Are you sure you want to quit?",
-		      "Cancel", "Quit", "Dunno");
+  int rep = fl_choice_n("Are you sure you want to quit?",
+                        "Cancel", "Quit", "Dunno");
   fl_message_hotspot(hotspot);
-  if (rep==1)
+  if (rep == 1) // Quit
     exit(0);
-  else if (rep==2)
+  else if (rep == 2) // Dunno
     fl_message("Well, maybe you should know before we quit.");
+  else if (rep == -1 || rep == -2) // Escape or close button
+    fl_message("Window closed by %s, continuing...", rep == -1 ? "hitting Escape" : "close button");
+  else {
+    // ignore (cancel or dialog was blocked)
+    // note: we can't open another fl_message() if the dialog was blocked!
+  }
 }
 
 /*
@@ -128,7 +132,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//
