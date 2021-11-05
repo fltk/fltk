@@ -20,7 +20,10 @@
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
 #elif !defined(FL_DOXYGEN)
 
-#  define CONSOLIDATE_MOTION 1
+#ifndef FLTK_CONSOLIDATE_MOTION
+#  define FLTK_CONSOLIDATE_MOTION 1
+#endif
+
 /**** Define this if your keyboard lacks a backspace key... ****/
 /* #define BACKSPACE_HACK 1 */
 
@@ -193,7 +196,7 @@ void Fl::remove_fd(int n) {
 
 extern int fl_send_system_handlers(void *e);
 
-#if CONSOLIDATE_MOTION
+#if FLTK_CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
 #endif
@@ -209,7 +212,7 @@ static void do_queued_events() {
   }
   // we send FL_LEAVE only if the mouse did not enter some other window:
   if (!in_a_window) Fl::handle(FL_LEAVE, 0);
-#if CONSOLIDATE_MOTION
+#if FLTK_CONSOLIDATE_MOTION
   else if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
@@ -1312,7 +1315,7 @@ static int px, py;
 static ulong ptime;
 
 static void set_event_xy() {
-#  if CONSOLIDATE_MOTION
+#  if FLTK_CONSOLIDATE_MOTION
   send_motion = 0;
 #  endif
   Fl::e_x_root  = fl_xevent->xbutton.x_root;
@@ -2122,7 +2125,7 @@ int fl_handle(const XEvent& thisevent)
 
   case MotionNotify:
     set_event_xy();
-#  if CONSOLIDATE_MOTION
+#  if FLTK_CONSOLIDATE_MOTION
     send_motion = fl_xmousewin = window;
     in_a_window = true;
     return 0;
