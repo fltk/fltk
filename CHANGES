@@ -1,3 +1,20 @@
+CHANGES IN FLTK 1.3.8					RELEASED: xxx xx 2021
+
+FLTK 1.3.8 is a maintenance release with some fixes and enhancements.
+
+Details:
+
+  Albrecht Schlosser:
+    Make "FLTK_CONSOLIDATE_MOTION" user-definable (issue #76).
+
+  ManoloFLTK:
+    Account for deprecation of [NSBitmapImageRep initWithFocusedViewRect:]
+      in macOS 10.14.
+    macOS: fix fullscreen window when other windows were created before.
+    Fix issue #287: "FLTK 1.3.6 doesn't handle fullscreen on macOS".
+    Fix issue #288: "FLTK 1.3.6+ doesn't notify window movement on macOS".
+
+
 CHANGES IN FLTK 1.3.7					RELEASED: Jul 25 2021
 
 FLTK 1.3.7 is a maintenance release for macOS only. It fixes one
