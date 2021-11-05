@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0307
+version 1.0308
 header_name {.h}
 code_name {.cxx}
 class CubeViewUI {open
