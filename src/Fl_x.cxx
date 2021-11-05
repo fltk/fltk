@@ -206,6 +206,7 @@ extern int fl_send_system_handlers(void *e);
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
 #endif
+
 static bool in_a_window; // true if in any of our windows, even destroyed ones
 static void do_queued_events() {
   in_a_window = true;
@@ -1726,7 +1727,9 @@ int fl_handle(const XEvent& thisevent)
     if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
+#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
@@ -1776,7 +1779,9 @@ int fl_handle(const XEvent& thisevent)
       break;
 
     } else if (message == fl_XdndPosition) {
+#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       float s = 1;
@@ -1811,7 +1816,9 @@ int fl_handle(const XEvent& thisevent)
       break;
 
     } else if (message == fl_XdndDrop) {
+#if FLTK_CONSOLIDATE_MOTION
       fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
       in_a_window = true;
       fl_dnd_source_window = data[0];
       fl_event_time = data[2];
@@ -2106,7 +2113,9 @@ int fl_handle(const XEvent& thisevent)
       checkdouble();
     }
 
+#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
 
@@ -2138,14 +2147,12 @@ int fl_handle(const XEvent& thisevent)
 
   case MotionNotify:
     set_event_xy(window);
+    in_a_window = true;
 #  if FLTK_CONSOLIDATE_MOTION
     send_motion = fl_xmousewin = window;
-    in_a_window = true;
     return 0;
 #  else
     event = FL_MOVE;
-    fl_xmousewin = window;
-    in_a_window = true;
     break;
 #  endif
 
@@ -2157,7 +2164,9 @@ int fl_handle(const XEvent& thisevent)
         xevent.xbutton.button == Button5) return 0;
     event = FL_RELEASE;
 
+#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     break;
 
@@ -2168,7 +2177,9 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
 
+#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = window;
+#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = true;
     { XIMStyles *xim_styles = NULL;
       if(!fl_xim_im || XGetIMValues(fl_xim_im, XNQueryInputStyle, &xim_styles, NULL, NULL)) {
@@ -2182,7 +2193,9 @@ int fl_handle(const XEvent& thisevent)
     if (xevent.xcrossing.detail == NotifyInferior) break;
     set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
+#if FLTK_CONSOLIDATE_MOTION
     fl_xmousewin = 0;
+#endif // FLTK_CONSOLIDATE_MOTION
     in_a_window = false; // make do_queued_events produce FL_LEAVE event
     return 0;
 
