@@ -700,7 +700,7 @@ void
 Fl_File_Chooser::fileListCB()
 {
   char	*filename,			// New filename
-	pathname[FL_PATH_MAX];			// Full pathname to file
+	pathname[FL_PATH_MAX + 4];	// Full pathname to file
 
 
   filename = (char *)fileList->text(fileList->value());
@@ -899,7 +899,7 @@ Fl_File_Chooser::fileNameCB()
       directory(pathname);
 
       if (filename[0]) {
-	char tempname[FL_PATH_MAX];
+	char tempname[FL_PATH_MAX + 4];
 
 	snprintf(tempname, sizeof(tempname), "%s/%s", directory_, filename);
 	fileName->value(tempname);
@@ -1057,8 +1057,8 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 void
 Fl_File_Chooser::newdir()
 {
-  const char	*dir;		// New directory name
-  char		pathname[FL_PATH_MAX];	// Full path of directory
+  const char	*dir;				// New directory name
+  char		pathname[FL_PATH_MAX + 4];	// Full path of directory
 
 
   // Get a directory name from the user
@@ -1479,7 +1479,7 @@ Fl_File_Chooser::value(int f)	// I - File number
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*name;		// Current filename
-  static char	pathname[FL_PATH_MAX];	// Filename + directory
+  static char	pathname[FL_PATH_MAX + 4]; // Filename + directory
 
 
   name = fileName->value();
