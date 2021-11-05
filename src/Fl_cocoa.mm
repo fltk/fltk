@@ -3363,6 +3363,7 @@ void Fl_X::make(Fl_Window* w)
     Fl::e_number = old_event;
     
     // if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    if (!w->parent()) [myview did_view_resolution_change]; // to set mapped_to_retina to its current state
     [pool release];
 }
 
