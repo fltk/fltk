@@ -184,20 +184,17 @@ void Fl_Check_Browser::item_draw(void *v, int X, int Y, int, int) const {
   int cy = Y + (tsize + 1 - CHECK_SIZE) / 2;
   X += 2;
 
+  // draw the check mark box (always)
   fl_color(active_r() ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR));
   fl_loop(X, cy, X, cy + CHECK_SIZE,
           X + CHECK_SIZE, cy + CHECK_SIZE, X + CHECK_SIZE, cy);
+
+  // draw the check mark
   if (i->checked) {
-    int tx = X + 3;
-    int tw = CHECK_SIZE - 4;
-    int d1 = tw / 3;
-    int d2 = tw - d1;
-    int ty = cy + (CHECK_SIZE + d2) / 2 - d1 - 2;
-    for (int n = 0; n < 3; n++, ty++) {
-      fl_line(tx, ty, tx + d1, ty + d1);
-      fl_line(tx + d1, ty + d1, tx + tw - 1, ty + d1 - d2 + 1);
-    }
+    fl_draw_check(Fl_Rect(X + 1, cy + 1, CHECK_SIZE - 1, CHECK_SIZE - 1), fl_color());
   }
+
+  // draw the item text
   fl_font(textfont(), tsize);
   if (i->selected) {
     col = fl_contrast(col, selection_color());

@@ -475,3 +475,111 @@ float fl_override_scale() {
 void fl_restore_scale(float s) {
   fl_graphics_driver->restore_scale(s);
 }
+
+/**
+  Draw a check mark inside the given bounding box.
+
+  The check mark is allowed to fill the entire box but the algorithm used
+  makes sure that a 1-pixel border is kept free if the box is large enough.
+  You need to calculate margins for box borders etc. yourself.
+
+  The check mark size is limited (minimum and maximum size) and the check
+  mark is always centered in the given box.
+
+  \note If the box is too small (bad GUI design) the check mark will be drawn
+    over the box borders. This is intentional for better user experience.
+    Otherwise users might not be able to recognize if a box is checked.
+
+  The size limits are implementation details and may be changed at any time.
+
+  \param[in]  X,Y  top left corner of the bounding box
+  \param[in]  W,H  width and height of the bounding box
+
+  \since 1.4.0
+*/
+
+void fl_draw_check(Fl_Rect bb, Fl_Color col) {
+
+  const int md = 6; // max. d1 value: 3 * md + 1 pixels wide
+  int tx = bb.x();
+  int ty = bb.y();
+  int tw = bb.w();
+  int th = bb.h();
+  int lh = 3;       // line height 3 means 4 pixels
+  int d1, d2;
+
+  Fl_Color saved_color = fl_color();
+
+  // make sure there's a free 1-pixel border if the area is large enough
+  if (tw > 10) {
+    tx++;
+    tw -= 2;
+  }
+  if (th > 10) {
+    ty++;
+    th -= 2;
+  }
+  // calculate d1, the width and height of the left part of the check mark
+  d1 = tw / 3;
+  d2 = 2 * d1;
+  if (d1 > md) {
+    d1 = md;
+    d2 = 2 * d1;
+  }
+  // make sure the height fits
+  if (d2 + lh + 1 > th) {
+    d2 = th - lh - 1;
+    d1 = (d2+1) / 2;
+  }
+  // check minimal size (box too small)
+  if (d1 < 2) {
+    d1 = 2;
+    d2 = 4;
+  }
+  // reduce line height (width) for small sizes
+  if (d1 < 4)
+    lh = 2;
+
+  tw = d1 + d2 + 1; // total width
+  th = d2 + lh + 1; // total height
+
+  tx = bb.x() + (bb.w() - tw + 1) / 2;  // x position (centered)
+  ty = bb.y() + (bb.h() - th + 1) / 2;  // y position (centered)
+
+  // Set DEBUG_FRAME to 1 - 3 for debugging (0 otherwise)
+  // Bit 1 set: draws a green background (the entire given box)
+  // Bit 2 set: draws a red frame around the check mark (the bounding box)
+  // The background (1) can be used to test correct positioning by the widget code
+
+#define DEBUG_FRAME (3)
+#if (DEBUG_FRAME)
+  if (DEBUG_FRAME & 1) {    // 1 = background
+    fl_color(0x88dd8800);
+    fl_rectf(bb.x(), bb.y(), bb.w(), bb.h());
+  }
+  if (DEBUG_FRAME & 2) {    // 2 = bounding box
+    fl_color(0xff000000);
+    fl_rect(tx, ty, tw, th);
+  }
+#endif
+
+  // draw the check mark
+
+  fl_color(col);
+
+  fl_begin_complex_polygon();
+
+    ty += d2 - d1;            // upper border of check mark: left to right
+    fl_vertex(tx, ty);
+    fl_vertex(tx + d1, ty + d1);
+    fl_vertex(tx + d1 + d2, ty + d1 - d2);
+    ty += lh;                 // lower border of check mark: right to left
+    fl_vertex(tx + d1 + d2, ty + d1 - d2);
+    fl_vertex(tx + d1, ty + d1);
+    fl_vertex(tx, ty);
+
+  fl_end_complex_polygon();
+
+  fl_color(saved_color);
+
+} // fl_draw_check()

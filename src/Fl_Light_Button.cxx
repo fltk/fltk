@@ -32,11 +32,15 @@ void Fl_Light_Button::draw() {
   Fl_Color col = value() ? (active_r() ? selection_color() :
                             fl_inactive(selection_color())) : color();
 
-  int W  = labelsize();
+  int W  = labelsize();         // check mark box size
+  if (W > 25) W = 25;           // limit box size
   int bx = Fl::box_dx(box());   // box frame width
-  int dx = bx + 2;              // relative position of check mark etc.
+  int dx = bx + 2;              // relative position of check mark box
   int dy = (h() - W) / 2;       // neg. offset o.k. for vertical centering
   int lx = 0;                   // relative label position (STR #3237)
+  int cx = x() + dx;            // check mark box x-position
+  int cy = y() + dy;            // check mark box y-position
+  int cw = 0;                   // check mark box width and height
 
   if (down_box()) {
     // draw other down_box() styles:
@@ -46,22 +50,17 @@ void Fl_Light_Button::draw() {
       case _FL_PLASTIC_DOWN_BOX :
       case _FL_PLASTIC_UP_BOX :
         // Check box...
-        draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
+        draw_box(down_box(), cx, cy, W, W, FL_BACKGROUND2_COLOR);
         if (value()) {
+          // Check mark...
           if (Fl::is_scheme("gtk+")) {
-            fl_color(FL_SELECTION_COLOR);
-          } else {
-            fl_color(col);
+            col = FL_SELECTION_COLOR;
           }
-          int tx = x() + dx + 3;
-          int tw = W - 6;
-          int d1 = tw/3;
-          int d2 = tw-d1;
-          int ty = y() + dy + (W+d2)/2-d1-2;
-          for (int n = 0; n < 3; n++, ty++) {
-            fl_line(tx, ty, tx+d1, ty+d1);
-            fl_line(tx+d1, ty+d1, tx+tw-1, ty+d1-d2+1);
-          }
+          // Calculate box position and size
+          cx += Fl::box_dx(down_box());
+          cy += Fl::box_dy(down_box());
+          cw = W - Fl::box_dw(down_box());
+          fl_draw_check(Fl_Rect(cx, cy, cw, cw), col);
         }
         break;
       case _FL_ROUND_DOWN_BOX :
@@ -149,7 +148,19 @@ int Fl_Light_Button::handle(int event) {
 /**
   Creates a new Fl_Light_Button widget using the given
   position, size, and label string.
-  <P>The destructor deletes the check button.
+
+  The default box type is \p FL_UP_BOX and the default down box
+  type down_box() is \p FL_NO_BOX (0).
+
+  The selection_color() sets the color of the "light".
+  Default is FL_YELLOW.
+
+  The default label alignment is \p 'FL_ALIGN_LEFT|FL_ALIGN_INSIDE' so
+  the label is drawn inside the button area right of the "light".
+
+  \note Do not change the default box types of Fl_Light_Button. The
+    box types determine how the button is drawn. If you change the
+    down_box() type the drawing behavior is undefined.
 */
 Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l)
 : Fl_Button(X, Y, W, H, l) {

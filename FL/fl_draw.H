@@ -1,7 +1,7 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,8 +22,9 @@
 #ifndef fl_draw_H
 #define fl_draw_H
 
-#include <FL/Enumerations.H>  // for the color names
-#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver + Fl_Region
+#include <FL/Enumerations.H>        // color names
+#include <FL/Fl_Graphics_Driver.H>  // fl_graphics_driver + Fl_Region
+#include <FL/Fl_Rect.H>
 
 // Image class...
 class Fl_Image;
@@ -749,9 +750,15 @@ FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,
                        Fl_Image* img=0, int draw_symbols = 1);
 
 // boxtypes:
+
 FL_EXPORT void fl_frame(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_frame2(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
+
+// basic GUI objects (check marks, arrows, more to come ...):
+
+// Draw a check mark in the given color inside the bounding box bb.
+void fl_draw_check(Fl_Rect bb, Fl_Color col);
 
 // images:
 
