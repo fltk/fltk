@@ -198,7 +198,7 @@ results in proportional resizing of the child widgets (and also
 of the margins and padding between them) as shown below, which
 is clearly not what you want.
 
-\image html resize-example5a.png "Figure 6.8: Resizing a row of widgets (a)"
+\image html  resize-example5a.png "Resizing a row of widgets (a)"
 \image latex resize-example5a.png "Resizing a row of widgets (a)" width=12cm
 
 Simply adding a group around A and B and setting its \p resizable
@@ -246,7 +246,7 @@ means that widgets A, B and C will never change height because
 the extra resizable box does not overlap them vertically.
 Only the padding below them will be resized.
 
-\image html resize-example5b.png "Figure 6.9: Resizing a row of widgets (b)"
+\image html  resize-example5b.png "Resizing a row of widgets (b)"
 \image latex resize-example5b.png "Resizing a row of widgets (b)" width=12cm
 
 In a real application, you probably want to allow widgets A,
@@ -257,7 +257,7 @@ Obviously after calling <tt>hide()</tt> on the box it is no
 longer visible, and may therefore be the same height as the
 other widgets, or a fraction of the height, as shown below.
 
-\image html resize-example5c.png "Figure 6.10: Resizing a row of widgets (c)"
+\image html  resize-example5c.png "Resizing a row of widgets (c)"
 \image latex resize-example5c.png "Resizing a row of widgets (c)" width=12cm
 
 To summarize the key points of the new technique:
