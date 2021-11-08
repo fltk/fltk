@@ -1799,6 +1799,7 @@ resize-example5a.o: ../FL/Enumerations.H
 resize-example5a.o: ../FL/Fl.H
 resize-example5a.o: ../FL/Fl_Bitmap.H
 resize-example5a.o: ../FL/Fl_Box.H
+resize-example5a.o: ../FL/fl_casts.H
 resize-example5a.o: ../FL/Fl_Double_Window.H
 resize-example5a.o: ../FL/Fl_Export.H
 resize-example5a.o: ../FL/Fl_Group.H
@@ -1814,6 +1815,7 @@ resize-example5b.o: ../FL/Enumerations.H
 resize-example5b.o: ../FL/Fl.H
 resize-example5b.o: ../FL/Fl_Bitmap.H
 resize-example5b.o: ../FL/Fl_Box.H
+resize-example5b.o: ../FL/fl_casts.H
 resize-example5b.o: ../FL/Fl_Double_Window.H
 resize-example5b.o: ../FL/Fl_Export.H
 resize-example5b.o: ../FL/Fl_Group.H
@@ -1829,6 +1831,7 @@ resize-example5c.o: ../FL/Enumerations.H
 resize-example5c.o: ../FL/Fl.H
 resize-example5c.o: ../FL/Fl_Bitmap.H
 resize-example5c.o: ../FL/Fl_Box.H
+resize-example5c.o: ../FL/fl_casts.H
 resize-example5c.o: ../FL/Fl_Double_Window.H
 resize-example5c.o: ../FL/Fl_Export.H
 resize-example5c.o: ../FL/Fl_Group.H

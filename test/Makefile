@@ -86,6 +86,9 @@ CPPFILES =\
 	resize-example3c.cxx \
 	resize-example4a.cxx \
 	resize-example4b.cxx \
+	resize-example5a.cxx \
+	resize-example5b.cxx \
+	resize-example5c.cxx \
 	rotated_text.cxx \
 	scroll.cxx \
 	shape.cxx \
@@ -168,6 +171,9 @@ ALL =	\
 	resize-example3c$(EXEEXT) \
 	resize-example4a$(EXEEXT) \
 	resize-example4b$(EXEEXT) \
+	resize-example5a$(EXEEXT) \
+	resize-example5b$(EXEEXT) \
+	resize-example5c$(EXEEXT) \
 	rotated_text$(EXEEXT) \
 	scroll$(EXEEXT) \
 	subwindow$(EXEEXT) \
@@ -512,6 +518,21 @@ resize-example4a$(EXEEXT): resize-example4a.o resize-arrows.o
 resize-example4b$(EXEEXT): resize-example4b.o resize-arrows.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example4b.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example5a$(EXEEXT): resize-example5a.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example5a.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example5b$(EXEEXT): resize-example5b.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example5b.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example5c$(EXEEXT): resize-example5c.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example5c.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 rotated_text$(EXEEXT): rotated_text.o
