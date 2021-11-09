@@ -425,8 +425,14 @@ void Fl_Window_Type::open() {
 uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
   Overlay_Window *w = (Overlay_Window *)o;
 
+  int hidden = !w->shown();
+  w->show(); // make it the front window
+
   // Read the screen image...
-  return (w->read_image(ww, hh));
+  uchar *idata = w->read_image(ww, hh);
+  if (hidden)
+    w->hide();
+  return idata;
 }
 
 
