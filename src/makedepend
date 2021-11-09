@@ -3502,6 +3502,14 @@ Fl_Wizard.o: ../FL/Fl_Widget.H
 Fl_Wizard.o: ../FL/Fl_Window.H
 Fl_Wizard.o: ../FL/Fl_Wizard.H
 Fl_Wizard.o: ../FL/platform_types.h
+fl_write_png.o: ../config.h
+fl_write_png.o: ../FL/Fl_Export.H
+fl_write_png.o: ../FL/Fl_Image.H
+fl_write_png.o: ../FL/Fl_PNG_Image.H
+fl_write_png.o: ../FL/Fl_RGB_Image.H
+fl_write_png.o: ../FL/fl_string.h
+fl_write_png.o: ../FL/fl_types.h
+fl_write_png.o: ../FL/fl_utf8.h
 Fl_x.o: ../config.h
 Fl_x.o: ../FL/abi-version.h
 Fl_x.o: ../FL/Enumerations.H

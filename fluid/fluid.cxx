@@ -347,33 +347,12 @@ void save_template_cb(Fl_Widget *, void *) {
   // Save to a PNG file...
   strcpy(ext, ".png");
 
-  FILE *fp;
-
-  if ((fp = fl_fopen(filename, "wb")) == NULL) {
+  errno = 0;
+  if (fl_write_png(filename, w, h, 3, pixels) != 0) {
     delete[] pixels;
     fl_alert("Error writing %s: %s", filename, strerror(errno));
     return;
   }
-
-  png_structp pptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-  png_infop iptr = png_create_info_struct(pptr);
-  png_bytep ptr = (png_bytep)pixels;
-
-  png_init_io(pptr, fp);
-  png_set_IHDR(pptr, iptr, w, h, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-               PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-  png_set_sRGB(pptr, iptr, PNG_sRGB_INTENT_PERCEPTUAL);
-
-  png_write_info(pptr, iptr);
-
-  for (int i = h; i > 0; i --, ptr += w * 3) {
-    png_write_row(pptr, ptr);
-  }
-
-  png_write_end(pptr, iptr);
-  png_destroy_write_struct(&pptr, &iptr);
-
-  fclose(fp);
 
 #  if 0 // The original PPM output code...
   strcpy(ext, ".ppm");
