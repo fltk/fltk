@@ -348,7 +348,7 @@ void save_template_cb(Fl_Widget *, void *) {
   strcpy(ext, ".png");
 
   errno = 0;
-  if (fl_write_png(filename, w, h, 3, pixels) != 0) {
+  if (fl_write_png(filename, pixels, w, h, 3) != 0) {
     delete[] pixels;
     fl_alert("Error writing %s: %s", filename, strerror(errno));
     return;
