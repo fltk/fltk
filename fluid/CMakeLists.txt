@@ -14,8 +14,6 @@
 #     https://www.fltk.org/bugs.php
 #
 
-if (NOT ANDROID)
-
 set (CPPFILES
   CodeEditor.cxx
   StyleParse.cxx
@@ -115,5 +113,3 @@ if (UNIX)
     )
   endforeach()
 endif (UNIX)
-
-endif (NOT ANDROID)

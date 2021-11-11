@@ -1,8 +1,8 @@
 #
-# Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
+# Export CMake file to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -19,26 +19,22 @@
 # final config and export
 #######################################################################
 
-# Set the fluid executable path
+# Set the fluid executable path used to create .cxx/.h from .fl files
+
 if (CMAKE_CROSSCOMPILING)
+  # find a fluid executable on the host system
   find_file(FLUID_PATH
     NAMES fluid fluid.exe
     PATHS ENV PATH
     NO_CMAKE_FIND_ROOT_PATH
   )
-  add_executable(fluid IMPORTED)
   set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
-  set (FLUID)       # no export
-  set_target_properties(fluid
-    PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
-  )
+  set (FLUID)                       # don't export
 else ()
-  add_subdirectory(fluid)
+  # use the fluid executable we build
   set (FLTK_FLUID_EXECUTABLE fluid)
-  set (FLUID fluid) # export
+  set (FLUID fluid)                 # export
 endif (CMAKE_CROSSCOMPILING)
-
-add_subdirectory(src)
 
 # generate FLTK-Targets.cmake for build directory use
 export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_CURRENT_BINARY_DIR}/FLTK-Targets.cmake)

@@ -115,6 +115,20 @@ endif (debug_build)
 unset (debug_build)
 
 #######################################################################
+# build the FLTK libraries
+#######################################################################
+
+add_subdirectory(src)
+
+#######################################################################
+# build fluid
+#######################################################################
+
+if (NOT ANDROID)
+  add_subdirectory(fluid)
+endif()
+
+#######################################################################
 # variables shared by export and install
 # export.cmake creates configuration files for direct use in a built but uninstalled FLTK
 # install.cmake creates these files for an installed FLTK

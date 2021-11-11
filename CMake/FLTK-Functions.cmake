@@ -28,7 +28,7 @@ function (FLTK_RUN_FLUID TARGET SOURCES)
       string(REGEX REPLACE "(.*).fl" \\1 basename ${src})
       add_custom_command(
         OUTPUT "${basename}.cxx" "${basename}.h"
-        COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/${src}
+        COMMAND ${FLTK_FLUID_EXECUTABLE} -c ${CMAKE_CURRENT_SOURCE_DIR}/${src}
         DEPENDS ${src}
         MAIN_DEPENDENCY ${src}
       )
