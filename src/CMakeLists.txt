@@ -133,6 +133,8 @@ set (CPPFILES
   fl_diamond_box.cxx
   fl_draw.cxx
   fl_draw_pixmap.cxx
+  fl_encoding_latin1.cxx
+  fl_encoding_mac_roman.cxx
   fl_engraved_label.cxx
   fl_file_dir.cxx
   fl_font.cxx
@@ -153,13 +155,12 @@ set (CPPFILES
   fl_shadow_box.cxx
   fl_shortcut.cxx
   fl_show_colormap.cxx
-  fl_symbols.cxx
-  fl_vertex.cxx
-  screen_xywh.cxx
-  fl_utf8.cxx
   fl_string.cxx
-  fl_encoding_latin1.cxx
-  fl_encoding_mac_roman.cxx
+  fl_symbols.cxx
+  fl_utf8.cxx
+  fl_vertex.cxx
+  print_button.cxx
+  screen_xywh.cxx
 )
 
 # find all header files in source directory <FL/...>

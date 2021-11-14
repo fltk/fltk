@@ -38,6 +38,9 @@ class Fl_X;
 class Fl_Image;
 class Fl_RGB_Image;
 
+// not directly window driver related, but ...
+int fl_create_print_window(); // used internally on some platforms
+
 /**
  \brief A base class for platform specific window handling code.
 

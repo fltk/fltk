@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -105,7 +105,6 @@ extern void fl_cleanup_pens(void);
 #define round(A) int((A) + 0.5)
 #endif // _MSC_VER <= 1600
 
-//
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
 /*
@@ -568,8 +567,8 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     }
   }
   OleInitialize(0L);
-
   get_imm_module();
+  fl_create_print_window();
 }
 
 
@@ -594,7 +593,7 @@ void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
     dpi[ns][0] = float(dpiX);
     dpi[ns][1] = float(dpiY);
     scale(ns, dpiX / 96.f);
-  //fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
+    // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
 }
 
@@ -2631,10 +2630,6 @@ void Fl_WinAPI_Window_Driver::show() {
       BringWindowToTop(i->xid);
     // ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
-#ifdef USE_PRINT_BUTTON
-  void preparePrintFront(void);
-  preparePrintFront();
-#endif
 }
 
 // the current context
@@ -2806,83 +2801,5 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   fl_graphics_driver->gc(save_gc);
   Fl_Surface_Device::pop_current();
 }
-
-
-#ifdef USE_PRINT_BUTTON
-// to test the Fl_Printer class creating a "Print front window" button in a separate window
-// contains also preparePrintFront call above
-#include <FL/Fl_Printer.H>
-#include <FL/Fl_Button.H>
-void printFront(Fl_Widget *o, void *data) {
-  Fl_Printer printer;
-  o->window()->hide();
-  Fl_Window *win = Fl::first_window();
-  if (!win)
-    return;
-  int w, h;
-  if (printer.begin_job(1)) {
-    o->window()->show();
-    return;
-  }
-  if (printer.begin_page()) {
-    o->window()->show();
-    return;
-  }
-  printer.printable_rect(&w, &h);
-  int wh, ww;
-  wh = win->decorated_h();
-  ww = win->decorated_w();
-  // scale the printer device so that the window fits on the page
-  float scale = 1;
-  if (ww > w || wh > h) {
-    scale = (float)w / ww;
-    if ((float)h / wh < scale)
-      scale = (float)h / wh;
-    printer.scale(scale, scale);
-  }
-// #define ROTATE 20.0
-#ifdef ROTATE
-  printer.scale(scale * 0.8, scale * 0.8);
-  printer.printable_rect(&w, &h);
-  printer.origin(w / 2, h / 2);
-  printer.rotate(ROTATE);
-  printer.print_widget(win, -win->w() / 2, -win->h() / 2);
-  // printer.print_window_part(win, 0, 0, win->w(), win->h(), -win->w() / 2, -win->h() / 2);
-#else
-  printer.print_window(win);
-#endif
-  printer.end_page();
-  printer.end_job();
-  o->window()->show();
-}
-
-#include <FL/Fl_Copy_Surface.H>
-void copyFront(Fl_Widget *o, void *data) {
-  o->window()->hide();
-  Fl_Window *win = Fl::first_window();
-  if (!win)
-    return;
-  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
-  surf->set_current();
-  surf->draw_decorated_window(win); // draw the window content
-  delete surf;                      // put the window on the clipboard
-  Fl_Display_Device::display_device()->set_current();
-  o->window()->show();
-}
-
-void preparePrintFront(void) {
-  static BOOL first = TRUE;
-  if (!first)
-    return;
-  first = FALSE;
-  static Fl_Window w(0, 0, 120, 60);
-  static Fl_Button bp(0, 0, w.w(), 30, "Print front window");
-  bp.callback(printFront);
-  static Fl_Button bc(0, 30, w.w(), 30, "Copy front window");
-  bc.callback(copyFront);
-  w.end();
-  w.show();
-}
-#endif // USE_PRINT_BUTTON
 
 #endif // defined(_WIN32) and !defined(FL_DOXYGEN)

@@ -716,6 +716,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
+  fl_create_print_window();
 }
 
 
@@ -3215,82 +3216,5 @@ void Fl_X11_Window_Driver::show() {
     XMapRaised(fl_display, fl_xid(pWindow));
   }
 }
-
-
-//#define USE_PRINT_BUTTON 1
-#ifdef USE_PRINT_BUTTON
-
-// to test the Fl_Printer class creating a "Print front window" button in a separate window
-#include <FL/Fl_Printer.H>
-#include <FL/Fl_Button.H>
-
-void printFront(Fl_Widget *o, void *data)
-{
-  Fl_Printer printer;
-  o->window()->hide();
-  Fl_Window *win = Fl::first_window();
-  if(!win) return;
-  int w, h;
-  if( printer.begin_job(1) ) { o->window()->show(); return; }
-  if( printer.begin_page() ) { o->window()->show(); return; }
-  printer.printable_rect(&w,&h);
-  // scale the printer device so that the window fits on the page
-  float scale = 1;
-  int ww = win->decorated_w();
-  int wh = win->decorated_h();
-  if (ww > w || wh > h) {
-    scale = (float)w/ww;
-    if ((float)h/wh < scale) scale = (float)h/wh;
-    printer.scale(scale, scale);
-    printer.printable_rect(&w, &h);
-  }
-
-// #define ROTATE 20.0
-#ifdef ROTATE
-  printer.scale(scale * 0.8, scale * 0.8);
-  printer.printable_rect(&w, &h);
-  printer.origin(w/2, h/2 );
-  printer.rotate(ROTATE);
-  printer.print_window( win, - win->w()/2, - win->h()/2);
-  //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
-#else
-  printer.origin(w/2, h/2 );
-  printer.print_window(win, -ww/2, -wh/2);
-  //printer.print_window_part( win, 0,0, win->w(), win->h(), -ww/2, -wh/2 );
-#endif
-
-  printer.end_page();
-  printer.end_job();
-  o->window()->show();
-}
-
-#include <FL/Fl_Copy_Surface.H>
-void copyFront(Fl_Widget *o, void *data)
-{
-  o->window()->hide();
-  Fl_Window *win = Fl::first_window();
-  if (!win) return;
-  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
-  Fl_Surface_Device::push_current(surf);
-  surf->draw_decorated_window(win); // draw the window content
-  Fl_Surface_Device::pop_current();
-  delete surf; // put the window on the clipboard
-  o->window()->show();
-}
-
-static int prepare_print_button() {
-  static Fl_Window w(0,0,140,60);
-  static Fl_Button bp(0,0,w.w(),30, "Print front window");
-  bp.callback(printFront);
-  static Fl_Button bc(0,30,w.w(),30, "Copy front window");
-  bc.callback(copyFront);
-  w.end();
-  w.show();
-  return 0;
-}
-
-static int unused = prepare_print_button();
-
-#endif // USE_PRINT_BUTTON
 
 #endif // !defined(FL_DOXYGEN)

@@ -157,11 +157,12 @@ CPPFILES = \
 	fl_shadow_box.cxx \
 	fl_shortcut.cxx \
 	fl_show_colormap.cxx \
+	fl_string.cxx \
 	fl_symbols.cxx \
-	fl_vertex.cxx \
-	screen_xywh.cxx \
 	fl_utf8.cxx \
-	fl_string.cxx
+	fl_vertex.cxx \
+	print_button.cxx \
+	screen_xywh.cxx
 
 OBJCPPFILES = \
 	Fl_cocoa.mm \
