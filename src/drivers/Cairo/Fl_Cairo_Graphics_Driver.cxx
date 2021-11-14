@@ -26,6 +26,8 @@
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
 #include <math.h>
+#include <stdlib.h>  // abs(int)
+#include <string.h>  // memcpy()
 
 // duplicated from Fl_PostScript.cxx
 struct callback_data {
@@ -52,10 +54,11 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 
   cb_data = (struct callback_data*)data;
   int last = x+w;
+  const size_t aD = abs(cb_data->D);
   curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
   for (; x<last; x++) {
-    memcpy(buf, curdata, abs(cb_data->D));
-    buf += abs(cb_data->D);
+    memcpy(buf, curdata, aD);
+    buf += aD;
     curdata += cb_data->D;
   }
 }
@@ -535,8 +538,9 @@ void Fl_Cairo_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int
 void Fl_Cairo_Graphics_Driver::draw_image_mono(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD)
 {
   struct callback_data cb_data;
-  if (!LD) LD = iw*abs(D);
-  if (D<0) data += iw*abs(D);
+  const size_t aD = abs(D);
+  if (!LD) LD = iw * aD;
+  if (D<0) data += iw * aD;
   cb_data.data = data;
   cb_data.D = D;
   cb_data.LD = LD;
