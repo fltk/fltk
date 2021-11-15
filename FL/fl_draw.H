@@ -266,7 +266,7 @@ enum {
 };
 
 /**
-  Turn ON or OFF antialiased line drawings, if supported by platform.
+  Turn antialiased line drawings ON or OFF, if supported by platform.
   Currently, only the Windows platform allows to change whether line drawings
   are antialiased. Turning it OFF may accelerate heavy drawing operations.
 */
@@ -288,6 +288,15 @@ inline int fl_antialias() {
 */
 inline void fl_rect(int x, int y, int w, int h) {
   fl_graphics_driver->rect(x, y, w, h);
+}
+
+/**
+  Draw a 1-pixel border \e inside the given bounding box.
+  This is the same as fl_rect(int x, int y, int w, int h) but with
+  Fl_Rect \p r as input argument.
+*/
+inline void fl_rect(Fl_Rect r) {
+  fl_rect(r.x(), r.y(), r.w(), r.h());
 }
 
 /** Draw a dotted rectangle, used to indicate keyboard focus on a widget. */
@@ -312,6 +321,17 @@ inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
   fl_rectf(x, y, w, h);
 }
 
+/** Color with current color a rectangle that exactly fills the given bounding box. */
+inline void fl_rectf(Fl_Rect r) {
+  fl_graphics_driver->rectf(r.x(), r.y(), r.w(), r.h());
+}
+
+/** Color with passed color a rectangle that exactly fills the given bounding box. */
+inline void fl_rectf(Fl_Rect r, Fl_Color c) {
+  fl_color(c);
+  fl_rectf(r);
+}
+
 /**
   Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
   On screens with less than 24 bits of color this is done by drawing a
@@ -320,6 +340,16 @@ inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
 */
 inline void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_graphics_driver->colored_rectf(x, y, w, h, r, g, b);
+}
+
+/**
+  Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
+  This is the same as fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b)
+  but with Fl_Rect \p bb (bounding box) as argument instead of (x, y, w, h).
+  \see fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b)
+*/
+inline void fl_rectf(Fl_Rect bb, uchar r, uchar g, uchar b) {
+  fl_graphics_driver->colored_rectf(bb.x(), bb.y(), bb.w(), bb.h(), r, g, b);
 }
 
 // line segments:
