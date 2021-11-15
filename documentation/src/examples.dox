@@ -266,7 +266,7 @@ on few systems (some version of Irix for example).
 \subsection examples_curve curve
 
 \par
-\c curve draws a nice Bezier curve into a custom widget. The
+\c curve draws a nice Bézier curve into a custom widget. The
 <i>points</i> option for splines is not supported on all platforms.
 
 

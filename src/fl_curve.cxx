@@ -1,5 +1,5 @@
 //
-// Bezier curve functions for the Fast Light Tool Kit (FLTK).
+// Bézier curve functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
@@ -16,7 +16,7 @@
 
 /**
   \file fl_curve.cxx
-  \brief Utility for drawing Bezier curves, adding the points to the
+  \brief Utility for drawing Bézier curves, adding the points to the
          current fl_begin/fl_vertex/fl_end path.
 
   Incremental math implementation:
