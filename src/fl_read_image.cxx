@@ -35,7 +35,7 @@
  and the value that is placed in the alpha channel. If 0, no alpha
  channel is generated.
 
- \see fl_capture_window_part()
+ \see fl_capture_window()
  */
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
@@ -96,7 +96,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
  The image depth may differ between platforms.
  \version 1.4
 */
-Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h)
+Fl_RGB_Image *fl_capture_window(Fl_Window *win, int x, int y, int w, int h)
 {
   Fl_RGB_Image *rgb = NULL;
   if (win->shown()) {

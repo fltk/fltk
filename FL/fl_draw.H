@@ -1035,7 +1035,7 @@ inline char fl_can_do_alpha_blending() {
 }
 
 FL_EXPORT uchar *fl_read_image(uchar *p, int X, int Y, int W, int H, int alpha = 0);
-FL_EXPORT Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h);
+FL_EXPORT Fl_RGB_Image *fl_capture_window(Fl_Window *win, int x, int y, int w, int h);
 
 // pixmaps:
 /**

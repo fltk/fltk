@@ -149,7 +149,7 @@ public:
   virtual void release_keyboard() {}
 
   /* Member function read_win_rectangle() supports public functions
-    fl_read_image() and fl_capture_window_part() which capture pixel data from
+    fl_read_image() and fl_capture_window() which capture pixel data from
     a window (or also from an offscreen buffer with fl_read_image).
 
     If 'may_capture_subwins' is true, an implementation may or may not capture
