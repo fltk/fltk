@@ -754,11 +754,11 @@ void MenuInit(void)
 /***************************************************************/
 
 // FLTK-style callbacks to Glut menu callback translators:
-void setlevel(Fl_Widget*, void *value) {setlevel(fl_intptr_t(value));}
+void setlevel(Fl_Widget*, void *value) {setlevel(fl_int(value));}
 
-void choosefract(Fl_Widget*, void *value) {choosefract(fl_intptr_t(value));}
+void choosefract(Fl_Widget*, void *value) {choosefract(fl_int(value));}
 
-void handlemenu(Fl_Widget*, void *value) {handlemenu(fl_intptr_t(value));}
+void handlemenu(Fl_Widget*, void *value) {handlemenu(fl_int(value));}
 
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>

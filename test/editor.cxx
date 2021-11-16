@@ -658,8 +658,8 @@ void find2_cb(Fl_Widget* w, void* v) {
   int found = textbuf->search_forward(pos, e->search, &pos);
   if (found) {
     // Found a match; select and update the position...
-    textbuf->select(pos, pos+strlen(e->search));
-    e->editor->insert_position(pos+strlen(e->search));
+    textbuf->select(pos, pos + (int)strlen(e->search));
+    e->editor->insert_position(pos + (int)strlen(e->search));
     e->editor->show_insert_position();
   }
   else fl_alert("No occurrences of \'%s\' found!", e->search);
@@ -773,11 +773,11 @@ void replace2_cb(Fl_Widget*, void* v) {
 
   if (found) {
     // Found a match; update the position and replace text...
-    textbuf->select(pos, pos+strlen(find));
+    textbuf->select(pos, pos + (int)strlen(find));
     textbuf->remove_selection();
     textbuf->insert(pos, replace);
-    textbuf->select(pos, pos+strlen(replace));
-    e->editor->insert_position(pos+strlen(replace));
+    textbuf->select(pos, pos + (int)strlen(replace));
+    e->editor->insert_position(pos + (int)strlen(replace));
     e->editor->show_insert_position();
   }
   else fl_alert("No occurrences of \'%s\' found!", find);
@@ -807,10 +807,10 @@ void replall_cb(Fl_Widget*, void* v) {
 
     if (found) {
       // Found a match; update the position and replace text...
-      textbuf->select(pos, pos+strlen(find));
+      textbuf->select(pos, pos + (int)strlen(find));
       textbuf->remove_selection();
       textbuf->insert(pos, replace);
-      e->editor->insert_position(pos+strlen(replace));
+      e->editor->insert_position(pos + (int)strlen(replace));
       e->editor->show_insert_position();
       times++;
     }

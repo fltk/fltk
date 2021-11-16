@@ -60,9 +60,9 @@
 // (b) click on a "normal block", destroy this one and adjacent blocks
 // (c) click on a "bomb", destroy all blocks of the same color
 
-#define LEVEL_FACTOR    0.90    // was: 0.95
-#define NORMAL_FACTOR   0.999
-#define BOMB_FACTOR     0.995
+#define LEVEL_FACTOR    0.900f    // was: 0.95
+#define NORMAL_FACTOR   0.999f
+#define BOMB_FACTOR     0.995f
 
 // Set this to 1 to debug the timer callback (should be 0)
 #define DEBUG_TIMER     0
@@ -309,8 +309,8 @@ BlockSound::BlockSound() {
 
     for (int j = max_sample; j > 0; j --, sample_ptr ++) {
       float freq = (float)j / (float)max_sample;
-      float volume = 32767.0 * (0.5 * sqrt(freq) + 0.5);
-      float sample = 0.0001 * ((rand() % 20001) - 10000);
+      float volume = float(32767.0 * (0.5 * sqrt(freq) + 0.5));
+      float sample = float(0.0001 * ((rand() % 20001) - 10000));
 
       *sample_ptr = (int)(volume * freq * sample +
                           (1.0 - freq) * sample_ptr[-2]);
@@ -785,12 +785,12 @@ int BlockWindow::handle(int event) {
         count --;
 
         if (b->bomb) {
-          sound_->play_explosion(0.19 + 0.005 * count);
+          sound_->play_explosion(float(0.19 + 0.005 * count));
 
           interval_ *= BOMB_FACTOR;
           score_ += count;
         } else {
-          sound_->play_explosion(0.09 + 0.005 * count);
+          sound_->play_explosion(float(0.09 + 0.005 * count));
 
           interval_ *= NORMAL_FACTOR;
           score_ += count * count;
@@ -841,11 +841,11 @@ void BlockWindow::init() {
 // Start a new game...
 void BlockWindow::new_game() {
   // Seed the random number generator...
-  srand(time(NULL));
+  srand((unsigned int)time(NULL));
 
   init();
 
-  interval_       = 0.1;
+  interval_       = 0.1f;
   opened_columns_ = 0;
 
   strcpy(title_, "Level: 1");
@@ -1006,7 +1006,7 @@ void BlockWindow::timeout_cb(BlockWindow *bw) {
 
       if (bw->num_columns_ == BLOCK_COLS) {
         bw->interval_ = -1.0;
-        bw->sound_->play_explosion(0.8);
+        bw->sound_->play_explosion(0.8f);
         bw->play_button_->label("@>");
       } else {
         bw->opened_columns_ ++;
