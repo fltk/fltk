@@ -106,6 +106,7 @@ install:	$(LIBJPEG)
 	$(INSTALL_DATA) jerror.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) jmorecfg.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) jpeglib.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) fltk_jpeg_prefix.h $(DESTDIR)$(includedir)/FL/images
 
 
 #
@@ -120,6 +121,7 @@ uninstall:
 	$(RM) $(includedir)/FL/images/jerror.h
 	$(RM) $(includedir)/FL/images/jmorecfg.h
 	$(RM) $(includedir)/FL/images/jpeglib.h
+	$(RM) $(includedir)/FL/images/fltk_jpeg_prefix.h
 
 
 #

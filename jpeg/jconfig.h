@@ -3,6 +3,9 @@
 /* FLTK   should probably be preserved when the JPEG lib is upgraded.	*/
 /* FLTK *************************************************************** */
 
+/* FLTK: enable symbol prefixes, see README.bundled-libs.txt */
+#include "fltk_jpeg_prefix.h"
+
 /* jconfig.h.  Generated from jconfig.cfg by configure.  */
 /* jconfig.cfg --- source file edited by configure script */
 /* see jconfig.txt for explanations */

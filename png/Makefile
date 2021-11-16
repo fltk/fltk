@@ -59,6 +59,7 @@ install: $(LIBPNG)
 	$(INSTALL_DATA) png.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) pngconf.h $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) pnglibconf.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) pngprefix.h $(DESTDIR)$(includedir)/FL/images
 
 
 #
@@ -72,6 +73,7 @@ uninstall:
 	$(RM) $(DESTDIR)$(includedir)/FL/images/png.h
 	$(RM) $(DESTDIR)$(includedir)/FL/images/pngconf.h
 	$(RM) $(DESTDIR)$(includedir)/FL/images/pnglibconf.h
+	$(RM) $(DESTDIR)$(includedir)/FL/images/pngprefix.h
 
 
 #
