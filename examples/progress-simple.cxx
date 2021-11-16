@@ -48,7 +48,7 @@ void butt_cb(Fl_Widget *butt, void *data) {
     w->end();                                  // end adding to window
     // Computation loop..
     for ( int t=1; t<=500; t++ ) {
-        progress->value(t/500.0);              // update progress bar with 0.0 ~ 1.0 value
+        progress->value(float(t/500.0));       // update progress bar with 0.0 ~ 1.0 value
         char percent[10];
         sprintf(percent, "%d%%", int((t/500.0)*100.0));
         progress->label(percent);              // update progress bar's label

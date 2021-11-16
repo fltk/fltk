@@ -31,7 +31,7 @@ Fl_Choice *G_choice = 0;
 // Fl_Choice callback for changing chart type()
 static void chart_type_cb(Fl_Widget *w, void*) {
     const Fl_Menu_Item *item = G_choice->mvalue();  // item picked
-    G_chart->type( item->argument() );              // apply change
+    G_chart->type( (uchar)item->argument() );       // apply change
     G_chart->redraw();
     // printf("Choice: '%s', argument=%ld\n", G_choice->text(), item->argument());
 }

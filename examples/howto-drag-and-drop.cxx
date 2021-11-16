@@ -43,7 +43,7 @@ public:
     switch ( event ) {
       case FL_PUSH: {             // do 'copy/dnd' when someone clicks on box
         const char *msg = "It works!";
-        Fl::copy(msg,strlen(msg),0);
+        Fl::copy(msg, (int)strlen(msg), 0);
         Fl::dnd();
         ret = 1;
         break;
