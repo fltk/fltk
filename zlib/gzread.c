@@ -440,7 +440,7 @@ z_size_t ZEXPORT gzfread(buf, size, nitems, file)
 
 /* -- see zlib.h -- */
 #ifdef Z_PREFIX_SET
-#  undef z_gzgetc
+#  undef fltk_z_gzgetc		/* FLTK */
 #else
 #  undef gzgetc
 #endif

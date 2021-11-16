@@ -1776,17 +1776,17 @@ ZEXTERN int ZEXPORT inflateBackInit_ OF((z_streamp strm, int windowBits,
                                          const char *version,
                                          int stream_size));
 #ifdef Z_PREFIX_SET
-#  define z_deflateInit(strm, level) \
+#  define fltk_z_deflateInit(strm, level) \
           deflateInit_((strm), (level), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define z_inflateInit(strm) \
+#  define fltk_z_inflateInit(strm) \
           inflateInit_((strm), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define z_deflateInit2(strm, level, method, windowBits, memLevel, strategy) \
+#  define fltk_z_deflateInit2(strm, level, method, windowBits, memLevel, strategy) \
           deflateInit2_((strm),(level),(method),(windowBits),(memLevel),\
                         (strategy), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define z_inflateInit2(strm, windowBits) \
+#  define fltk_z_inflateInit2(strm, windowBits) \
           inflateInit2_((strm), (windowBits), ZLIB_VERSION, \
                         (int)sizeof(z_stream))
-#  define z_inflateBackInit(strm, windowBits, window) \
+#  define fltk_z_inflateBackInit(strm, windowBits, window) \
           inflateBackInit_((strm), (windowBits), (window), \
                            ZLIB_VERSION, (int)sizeof(z_stream))
 #else
@@ -1821,8 +1821,8 @@ struct gzFile_s {
 };
 ZEXTERN int ZEXPORT gzgetc_ OF((gzFile file));  /* backward compatibility */
 #ifdef Z_PREFIX_SET
-#  undef z_gzgetc
-#  define z_gzgetc(g) \
+#  undef fltk_z_gzgetc
+#  define fltk_z_gzgetc(g) \
           ((g)->have ? ((g)->have--, (g)->pos++, *((g)->next)++) : (gzgetc)(g))
 #else
 #  define gzgetc(g) \
@@ -1846,12 +1846,12 @@ ZEXTERN int ZEXPORT gzgetc_ OF((gzFile file));  /* backward compatibility */
 
 #if !defined(ZLIB_INTERNAL) && defined(Z_WANT64)
 #  ifdef Z_PREFIX_SET
-#    define z_gzopen z_gzopen64
-#    define z_gzseek z_gzseek64
-#    define z_gztell z_gztell64
-#    define z_gzoffset z_gzoffset64
-#    define z_adler32_combine z_adler32_combine64
-#    define z_crc32_combine z_crc32_combine64
+#    define fltk_z_gzopen fltk_z_gzopen64
+#    define fltk_z_gzseek fltk_z_gzseek64
+#    define fltk_z_gztell fltk_z_gztell64
+#    define fltk_z_gzoffset fltk_z_gzoffset64
+#    define fltk_z_adler32_combine fltk_z_adler32_combine64
+#    define fltk_z_crc32_combine fltk_z_crc32_combine64
 #  else
 #    define gzopen gzopen64
 #    define gzseek gzseek64
