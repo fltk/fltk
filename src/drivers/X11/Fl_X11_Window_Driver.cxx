@@ -159,6 +159,15 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   if (status == 0 || root == parent) return;
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
+  // sometimes, very wide window borders are reported
+  // ignore them all:
+  XWindowAttributes w_attributes;
+  XGetWindowAttributes(fl_display, Fl_X::i(win)->xid, &w_attributes);
+  if (attributes.width - w_attributes.width >= 20) {
+    attributes.height -= (attributes.width - w_attributes.width);
+    attributes.width = w_attributes.width;
+  }
+  
   int nscreen = screen_num();
   float s = Fl::screen_driver()->scale(nscreen);
   w = attributes.width / s;
