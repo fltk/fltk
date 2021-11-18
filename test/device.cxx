@@ -603,7 +603,7 @@ void copy(Fl_Widget *, void *data) {
     }
   }
   
-  if (strcmp(operation, "fl_capture_window") == 0) {
+  if (strcmp(operation, "fl_capture_window()") == 0) {
     Fl_Window *win = target->as_window() ? target->as_window() : target->window();
     int X = target->as_window() ? 0 : target->x();
     int Y = target->as_window() ? 0 : target->y();
@@ -721,23 +721,25 @@ int main(int argc, char ** argv) {
   Fl_Radio_Round_Button *rb;
   Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,73);
   w3->box(FL_DOWN_BOX);
-  Fl_Group *g1 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
-  rb = new Fl_Radio_Round_Button(5,5,150,12, "Fl_Image_Surface");
+  Fl_Group *g1 = new Fl_Group(0,0,w3->w(),w3->h());
+  rb = new Fl_Radio_Round_Button(5,4,150,12, "Fl_Image_Surface");
   rb->set(); rb->callback(operation_cb, NULL); operation = rb->label(); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(170,5,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,18,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(170,18,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,31,150,12, "Fl_EPS_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(170,31,150,12, "Fl_SVG_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,44,150,12, "fl_capture_window"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,4,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,17,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,17,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,30,150,12, "Fl_EPS_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,30,150,12, "Fl_SVG_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,43,150,12, "fl_capture_window()"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   g1->end();
 
-  Fl_Group *g2 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
-  rb = new Fl_Radio_Round_Button(5,57,150,12, "Decorated Window");
+  Fl_Group *g2 = new Fl_Group(0,0,w3->w(),w3->h());
+  Fl_Box *box = new Fl_Box(FL_BORDER_BOX, 4, 55, 340, 16, NULL);
+  box->color(FL_LIGHT3);
+  rb = new Fl_Radio_Round_Button(5,57,140,12, "Decorated window");
   rb->labelsize(12); rb->set(); rb->callback(target_cb, w2); target = w2;
-  rb = new Fl_Radio_Round_Button(170,57,150,12, "Sub-window");
+  rb = new Fl_Radio_Round_Button(160,57,100,12, "Sub-window");
   rb->labelsize(12); rb->callback(target_cb, w3);
-  rb = new Fl_Radio_Round_Button(335,57,150,12, "Group");
+  rb = new Fl_Radio_Round_Button(275,57,60,12, "Group");
   rb->labelsize(12);rb->callback(target_cb, group);
   g2->end();
   Fl_Button *b4 = new Fl_Button(380, (w3->h() - 25)/2, 100, 25, "GO");
