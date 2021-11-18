@@ -551,7 +551,7 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
   // Bit 2 set: draws a red frame around the check mark (the bounding box)
   // The background (1) can be used to test correct positioning by the widget code
 
-#define DEBUG_FRAME (3)
+#define DEBUG_FRAME (0)
 #if (DEBUG_FRAME)
   if (DEBUG_FRAME & 1) {    // 1 = background
     fl_color(0x88dd8800);
