@@ -17,13 +17,17 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Image.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Shared_Image.H>
-#include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_ask.H>
+
+#include <stdio.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #endif // _WIN32
@@ -34,6 +38,7 @@
 Fl_Box *image_box;
 Fl_Box *image_size;
 Fl_Text_Display *display;
+Fl_RGB_Image *cl_img = 0; // image from clipboard
 
 inline int fl_min(int a, int b) {
   return (a < b ? a : b);
@@ -48,9 +53,12 @@ public:
   }
   void draw() {
     draw_box();
-    Fl_Image *im = image();
-    if (im) { // draw the chess pattern below the box centered image
-      int X = x() + (w() - im->w()) / 2, Y = y() + (h() - im->h()) / 2, W = im->w(), H = im->h();
+    Fl_Image *img = image();
+    if (img) { // draw the chess pattern below the box centered image
+      int X = x() + (w() - img->w()) / 2;
+      int Y = y() + (h() - img->h()) / 2;
+      int W = img->w();
+      int H = img->h();
       fl_push_clip(X, Y, W, H);
       fl_push_clip(x(), y(), w(), h());
       fl_color(FL_WHITE);
@@ -80,11 +88,11 @@ public:
     if (event != FL_PASTE)
       return Fl_Tabs::handle(event);
     if (strcmp(Fl::event_clipboard_type(), Fl::clipboard_image) == 0) { // an image is being pasted
-      Fl_RGB_Image *im = (Fl_RGB_Image *)Fl::event_clipboard();         // get it as an Fl_RGB_Image object
-      if (!im)
+      cl_img = (Fl_RGB_Image *)Fl::event_clipboard();                   // get it as an Fl_RGB_Image object
+      if (!cl_img)
         return 1;
       char title[300];
-      sprintf(title, "%dx%d", im->w(), im->h()); // display the image original size
+      sprintf(title, "%dx%d", cl_img->w(), cl_img->h()); // display the image original size
 #ifdef _WIN32
       OpenClipboard(NULL); // display extra technical info about clipboard content
       char *p = title + strlen(title);
@@ -103,16 +111,18 @@ public:
       HANDLE h;
       if ((h = GetClipboardData(CF_DIB))) {
         LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
-        sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d", lpBI->bmiHeader.biBitCount,
-                (int)lpBI->bmiHeader.biCompression, (int)lpBI->bmiHeader.biClrUsed);
+        sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d",
+                lpBI->bmiHeader.biBitCount,
+                (int)lpBI->bmiHeader.biCompression,
+                (int)lpBI->bmiHeader.biClrUsed);
       }
       CloseClipboard();
 #endif
       Fl_Image *oldimg = image_box->image();
       delete oldimg;
-      if (im->w() > image_box->w() || im->h() > image_box->h())
-        im->scale(image_box->w(), image_box->h());
-      image_box->image(im); // show the scaled image
+      if (cl_img->w() > image_box->w() || cl_img->h() > image_box->h())
+        cl_img->scale(image_box->w(), image_box->h());
+      image_box->image(cl_img); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());
       window()->redraw();
@@ -125,12 +135,9 @@ public:
   }
 };
 
-// global variables
-// chess *chess_obj;
-
 clipboard_viewer *tabs;
 
-
+// clipboard viewer callback
 void cb(Fl_Widget *wid, clipboard_viewer *tabs) {
   if (Fl::clipboard_contains(Fl::clipboard_image)) {
     Fl::paste(*tabs, 1, Fl::clipboard_image); // try to find image in the clipboard
@@ -140,16 +147,35 @@ void cb(Fl_Widget *wid, clipboard_viewer *tabs) {
     Fl::paste(*tabs, 1, Fl::clipboard_plain_text); // also try to find text
 }
 
-void clip_callback(int source, void *data) { // called after clipboard was changed or at application activation
+// "Save PNG" callback
+void save_cb(Fl_Widget *wid, clipboard_viewer *tabs) {
+  if (cl_img && !cl_img->fail()) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Please select a .png file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("PNG\t*.png\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (fnfc.show())
+      return;
+    const char *filename = fnfc.filename();
+    if (filename)
+      fl_write_png(filename, cl_img);
+  } else {
+    fl_message("%s", "No image available");
+  }
+}
+
+// called after clipboard was changed or at application activation
+void clip_callback(int source, void *data) {
   if (source == 1)
     cb(NULL, (clipboard_viewer *)data);
 }
 
 int main(int argc, char **argv) {
   fl_register_images(); // required for the X11 platform to allow pasting of images
-  Fl_Window *win = new Fl_Window(500, 550, "clipboard viewer");
+  Fl_Window *win = new Fl_Window(500, 550, "FLTK Clipboard Viewer");
   tabs = new clipboard_viewer(0, 0, 500, 500);
-  Fl_Group *g = new Fl_Group(5, 30, 490, 460, Fl::clipboard_image); // g will display the image form
+  Fl_Group *g = new Fl_Group(5, 30, 490, 460, Fl::clipboard_image); // will display the image form
   g->box(FL_FLAT_BOX);
   image_box = new chess(5, 30, 490, 450);
   image_size = new Fl_Box(FL_NO_BOX, 5, 485, 490, 10, 0);
@@ -157,24 +183,31 @@ int main(int argc, char **argv) {
   g->selection_color(TAB_COLOR);
 
   Fl_Text_Buffer *buffer = new Fl_Text_Buffer();
-  display = new Fl_Text_Display(5, 30, 490, 460, Fl::clipboard_plain_text); // display will display the text form
+  display = new Fl_Text_Display(5, 30, 490, 460, Fl::clipboard_plain_text); // will display the text form
   display->buffer(buffer);
   display->selection_color(TAB_COLOR);
   tabs->end();
   tabs->resizable(display);
 
-  Fl_Group *g2 = new Fl_Group(10, 510, 200, 25);
+  Fl_Group *g2 = new Fl_Group(10, 510, 330, 25);
   Fl_Button *refresh = new Fl_Button(10, 510, 200, 25, "Refresh from clipboard");
   refresh->callback((Fl_Callback *)cb, tabs);
+  Fl_Button *save = new Fl_Button(220, 510, 100, 25, "Save PNG");
+  save->callback((Fl_Callback *)save_cb, tabs);
   g2->end();
   g2->resizable(NULL);
   win->end();
   win->resizable(tabs);
   win->show(argc, argv);
-  clip_callback(1, tabs); // use clipboard content at start
-  Fl::add_clipboard_notify(clip_callback,
-                           tabs); // will update with new clipboard content immediately or at application activation
-
+  // TEST: set another default background color
+#if (0)
+  if (argc < 2) {
+    Fl::set_color(FL_BACKGROUND_COLOR, 0xff, 0xee, 0xdd);
+    Fl::set_color(FL_BACKGROUND2_COLOR, 0xdd, 0xee, 0xff);
+  }
+#endif
+  clip_callback(1, tabs);                         // use clipboard content at start
+  Fl::add_clipboard_notify(clip_callback, tabs);  // will update with new clipboard content
   Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR); // set bilinear image scaling method
   return Fl::run();
 }
