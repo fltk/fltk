@@ -68,7 +68,8 @@
 	@e:Block\nAttack!:blocks
 	@e:Checkers:checkers
 	@e:Sudoku:sudoku
-	@e:Print\nsupport:device
+	@e:Print\nSupport:device
+	@e:Clipboard\nViewer:clipboard
 
 @main:Other\nTests...:@o
 	@o:Color Choosers:color_chooser

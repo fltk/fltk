@@ -79,7 +79,6 @@ set (FLUID_SOURCES
 ############################################################
 
 set (IMAGE_SOURCES
-  clipboard
   howto-simple-svg
 )
 

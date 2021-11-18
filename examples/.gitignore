@@ -4,7 +4,6 @@
 # Note: *.exe will be ignored by means of ../.gitignore
 #
 browser-simple
-clipboard
 chart-simple
 draggable-group
 howto-add_fd-and-popen

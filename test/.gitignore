@@ -29,6 +29,7 @@ cairo_test
 checkers
 checkers_pieces.cxx
 checkers_pieces.h
+clipboard
 clock
 colbrowser
 color_chooser

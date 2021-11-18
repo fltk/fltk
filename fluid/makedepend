@@ -46,6 +46,7 @@ alignment_panel.o: ../FL/Fl_Menu_Item.H
 alignment_panel.o: ../FL/Fl_Pixmap.H
 alignment_panel.o: ../FL/Fl_Plugin.H
 alignment_panel.o: ../FL/Fl_Preferences.H
+alignment_panel.o: ../FL/Fl_Rect.H
 alignment_panel.o: ../FL/Fl_Repeat_Button.H
 alignment_panel.o: ../FL/Fl_Return_Button.H
 alignment_panel.o: ../FL/Fl_RGB_Image.H
@@ -90,6 +91,7 @@ align_widget.o: ../FL/Fl_Pack.H
 align_widget.o: ../FL/Fl_Pixmap.H
 align_widget.o: ../FL/Fl_Plugin.H
 align_widget.o: ../FL/Fl_Preferences.H
+align_widget.o: ../FL/Fl_Rect.H
 align_widget.o: ../FL/Fl_RGB_Image.H
 align_widget.o: ../FL/Fl_Shared_Image.H
 align_widget.o: ../FL/Fl_Tabs.H
@@ -137,6 +139,7 @@ code.o: ../FL/Fl_Pack.H
 code.o: ../FL/Fl_Pixmap.H
 code.o: ../FL/Fl_Plugin.H
 code.o: ../FL/Fl_Preferences.H
+code.o: ../FL/Fl_Rect.H
 code.o: ../FL/Fl_Repeat_Button.H
 code.o: ../FL/Fl_Return_Button.H
 code.o: ../FL/Fl_RGB_Image.H
@@ -177,6 +180,7 @@ CodeEditor.o: ../FL/Fl_Image.H
 CodeEditor.o: ../FL/Fl_Pixmap.H
 CodeEditor.o: ../FL/Fl_Plugin.H
 CodeEditor.o: ../FL/Fl_Preferences.H
+CodeEditor.o: ../FL/Fl_Rect.H
 CodeEditor.o: ../FL/Fl_RGB_Image.H
 CodeEditor.o: ../FL/Fl_Scrollbar.H
 CodeEditor.o: ../FL/Fl_Slider.H
@@ -247,6 +251,7 @@ factory.o: ../FL/Fl_Pixmap.H
 factory.o: ../FL/Fl_Plugin.H
 factory.o: ../FL/Fl_Preferences.H
 factory.o: ../FL/Fl_Progress.H
+factory.o: ../FL/Fl_Rect.H
 factory.o: ../FL/Fl_Repeat_Button.H
 factory.o: ../FL/Fl_Return_Button.H
 factory.o: ../FL/Fl_RGB_Image.H
@@ -316,6 +321,7 @@ file.o: ../FL/Fl_Pack.H
 file.o: ../FL/Fl_Pixmap.H
 file.o: ../FL/Fl_Plugin.H
 file.o: ../FL/Fl_Preferences.H
+file.o: ../FL/Fl_Rect.H
 file.o: ../FL/Fl_Repeat_Button.H
 file.o: ../FL/Fl_Return_Button.H
 file.o: ../FL/Fl_RGB_Image.H
@@ -391,6 +397,7 @@ fluid.o: ../FL/Fl_Plugin.H
 fluid.o: ../FL/Fl_PNG_Image.H
 fluid.o: ../FL/Fl_Preferences.H
 fluid.o: ../FL/Fl_Printer.H
+fluid.o: ../FL/Fl_Rect.H
 fluid.o: ../FL/Fl_Repeat_Button.H
 fluid.o: ../FL/Fl_Return_Button.H
 fluid.o: ../FL/Fl_RGB_Image.H
@@ -465,6 +472,7 @@ Fluid_Image.o: ../FL/Fl_Pack.H
 Fluid_Image.o: ../FL/Fl_Pixmap.H
 Fluid_Image.o: ../FL/Fl_Plugin.H
 Fluid_Image.o: ../FL/Fl_Preferences.H
+Fluid_Image.o: ../FL/Fl_Rect.H
 Fluid_Image.o: ../FL/Fl_Return_Button.H
 Fluid_Image.o: ../FL/Fl_RGB_Image.H
 Fluid_Image.o: ../FL/Fl_Scrollbar.H
@@ -524,6 +532,7 @@ Fl_Function_Type.o: ../FL/Fl_Pack.H
 Fl_Function_Type.o: ../FL/Fl_Pixmap.H
 Fl_Function_Type.o: ../FL/Fl_Plugin.H
 Fl_Function_Type.o: ../FL/Fl_Preferences.H
+Fl_Function_Type.o: ../FL/Fl_Rect.H
 Fl_Function_Type.o: ../FL/Fl_Repeat_Button.H
 Fl_Function_Type.o: ../FL/Fl_Return_Button.H
 Fl_Function_Type.o: ../FL/Fl_RGB_Image.H
@@ -585,6 +594,7 @@ Fl_Group_Type.o: ../FL/Fl_Pack.H
 Fl_Group_Type.o: ../FL/Fl_Pixmap.H
 Fl_Group_Type.o: ../FL/Fl_Plugin.H
 Fl_Group_Type.o: ../FL/Fl_Preferences.H
+Fl_Group_Type.o: ../FL/Fl_Rect.H
 Fl_Group_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Group_Type.o: ../FL/Fl_Scroll.H
 Fl_Group_Type.o: ../FL/Fl_Scrollbar.H
@@ -640,6 +650,7 @@ Fl_Menu_Type.o: ../FL/Fl_Pack.H
 Fl_Menu_Type.o: ../FL/Fl_Pixmap.H
 Fl_Menu_Type.o: ../FL/Fl_Plugin.H
 Fl_Menu_Type.o: ../FL/Fl_Preferences.H
+Fl_Menu_Type.o: ../FL/Fl_Rect.H
 Fl_Menu_Type.o: ../FL/Fl_Repeat_Button.H
 Fl_Menu_Type.o: ../FL/Fl_Return_Button.H
 Fl_Menu_Type.o: ../FL/Fl_RGB_Image.H
@@ -695,6 +706,7 @@ Fl_Type.o: ../FL/Fl_Pack.H
 Fl_Type.o: ../FL/Fl_Pixmap.H
 Fl_Type.o: ../FL/Fl_Plugin.H
 Fl_Type.o: ../FL/Fl_Preferences.H
+Fl_Type.o: ../FL/Fl_Rect.H
 Fl_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Type.o: ../FL/Fl_Shared_Image.H
@@ -802,6 +814,7 @@ Fl_Widget_Type.o: ../FL/Fl_Pack.H
 Fl_Widget_Type.o: ../FL/Fl_Pixmap.H
 Fl_Widget_Type.o: ../FL/Fl_Plugin.H
 Fl_Widget_Type.o: ../FL/Fl_Preferences.H
+Fl_Widget_Type.o: ../FL/Fl_Rect.H
 Fl_Widget_Type.o: ../FL/Fl_Repeat_Button.H
 Fl_Widget_Type.o: ../FL/Fl_Return_Button.H
 Fl_Widget_Type.o: ../FL/Fl_RGB_Image.H
@@ -874,6 +887,7 @@ Fl_Window_Type.o: ../FL/Fl_Pack.H
 Fl_Window_Type.o: ../FL/Fl_Pixmap.H
 Fl_Window_Type.o: ../FL/Fl_Plugin.H
 Fl_Window_Type.o: ../FL/Fl_Preferences.H
+Fl_Window_Type.o: ../FL/Fl_Rect.H
 Fl_Window_Type.o: ../FL/Fl_Repeat_Button.H
 Fl_Window_Type.o: ../FL/Fl_Return_Button.H
 Fl_Window_Type.o: ../FL/Fl_RGB_Image.H
@@ -939,6 +953,7 @@ function_panel.o: ../FL/Fl_Pack.H
 function_panel.o: ../FL/Fl_Pixmap.H
 function_panel.o: ../FL/Fl_Plugin.H
 function_panel.o: ../FL/Fl_Preferences.H
+function_panel.o: ../FL/Fl_Rect.H
 function_panel.o: ../FL/Fl_Return_Button.H
 function_panel.o: ../FL/Fl_RGB_Image.H
 function_panel.o: ../FL/Fl_Scrollbar.H
@@ -1022,6 +1037,7 @@ undo.o: ../FL/Fl_Pack.H
 undo.o: ../FL/Fl_Pixmap.H
 undo.o: ../FL/Fl_Plugin.H
 undo.o: ../FL/Fl_Preferences.H
+undo.o: ../FL/Fl_Rect.H
 undo.o: ../FL/Fl_RGB_Image.H
 undo.o: ../FL/Fl_Shared_Image.H
 undo.o: ../FL/Fl_Tabs.H
@@ -1059,6 +1075,7 @@ widget_panel.o: ../FL/Fl_Menu_Item.H
 widget_panel.o: ../FL/Fl_Pixmap.H
 widget_panel.o: ../FL/Fl_Plugin.H
 widget_panel.o: ../FL/Fl_Preferences.H
+widget_panel.o: ../FL/Fl_Rect.H
 widget_panel.o: ../FL/Fl_Return_Button.H
 widget_panel.o: ../FL/Fl_RGB_Image.H
 widget_panel.o: ../FL/Fl_Scrollbar.H

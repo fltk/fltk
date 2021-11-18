@@ -29,6 +29,7 @@ CPPFILES =\
 	buttons.cxx \
 	cairo_test.cxx \
 	checkers.cxx \
+	clipboard.cxx \
 	clock.cxx \
 	colbrowser.cxx \
 	color_chooser.cxx \
@@ -121,6 +122,7 @@ ALL =	\
 	buttons$(EXEEXT) \
 	cairo_test$(EXEEXT) \
 	checkers$(EXEEXT) \
+	clipboard$(EXEEXT) \
 	clock$(EXEEXT) \
 	colbrowser$(EXEEXT) \
 	color_chooser$(EXEEXT) \
@@ -343,6 +345,11 @@ checkers.cxx:		checkers_pieces.h
 checkers_pieces.o:	checkers_pieces.h
 checkers_pieces.h:	checkers_pieces.fl
 checkers_pieces.cxx:	checkers_pieces.fl ../fluid/fluid$(EXEEXT)
+
+clipboard$(EXEEXT): clipboard.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) clipboard.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
 
 clock$(EXEEXT): clock.o
 

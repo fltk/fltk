@@ -19,6 +19,7 @@ drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Overlay_Window.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Pixmap.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Plugin.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Preferences.H
+drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Rect.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_RGB_Image.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Scrollbar.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Slider.H
@@ -349,6 +350,7 @@ drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Overlay_Window.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Pixmap.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Plugin.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Preferences.H
+drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Rect.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Scrollbar.H
 drivers/X11/Fl_X11_Gl_Window_Driver.o: ../FL/Fl_Slider.H
@@ -390,6 +392,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Overlay_Window.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Pixmap.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Plugin.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Preferences.H
+drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Rect.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Scrollbar.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Shared_Image.H
@@ -455,6 +458,7 @@ drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Overlay_Window.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Pixmap.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Plugin.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Preferences.H
+drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Rect.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Scrollbar.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Single_Window.H
@@ -491,6 +495,7 @@ drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Pixmap.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Plugin.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Preferences.H
+drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Rect.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Scrollbar.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Slider.H
@@ -611,6 +616,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Overlay_Window.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Pixmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Plugin.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Preferences.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Rect.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Scrollbar.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Shared_Image.H
@@ -712,6 +718,7 @@ drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Image_Surface.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Pixmap.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Plugin.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Preferences.H
+drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Rect.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Scrollbar.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Shared_Image.H
@@ -817,6 +824,7 @@ Fl.o: ../FL/Fl_Overlay_Window.H
 Fl.o: ../FL/Fl_Pixmap.H
 Fl.o: ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H
+Fl.o: ../FL/Fl_Rect.H
 Fl.o: ../FL/Fl_RGB_Image.H
 Fl.o: ../FL/Fl_Scrollbar.H
 Fl.o: ../FL/Fl_Slider.H
@@ -920,6 +928,7 @@ fl_ask.o: ../FL/Fl_Input_.H
 fl_ask.o: ../FL/Fl_Pixmap.H
 fl_ask.o: ../FL/Fl_Plugin.H
 fl_ask.o: ../FL/Fl_Preferences.H
+fl_ask.o: ../FL/Fl_Rect.H
 fl_ask.o: ../FL/Fl_Return_Button.H
 fl_ask.o: ../FL/Fl_RGB_Image.H
 fl_ask.o: ../FL/Fl_Scrollbar.H
@@ -1183,6 +1192,7 @@ Fl_compose.o: ../FL/Fl_Image.H
 Fl_compose.o: ../FL/Fl_Pixmap.H
 Fl_compose.o: ../FL/Fl_Plugin.H
 Fl_compose.o: ../FL/Fl_Preferences.H
+Fl_compose.o: ../FL/Fl_Rect.H
 Fl_compose.o: ../FL/Fl_RGB_Image.H
 Fl_compose.o: ../FL/Fl_Scrollbar.H
 Fl_compose.o: ../FL/Fl_Slider.H
@@ -1306,6 +1316,7 @@ Fl_display.o: ../FL/Fl_Image.H
 Fl_display.o: ../FL/Fl_Pixmap.H
 Fl_display.o: ../FL/Fl_Plugin.H
 Fl_display.o: ../FL/Fl_Preferences.H
+Fl_display.o: ../FL/Fl_Rect.H
 Fl_display.o: ../FL/Fl_RGB_Image.H
 Fl_display.o: ../FL/Fl_Scrollbar.H
 Fl_display.o: ../FL/Fl_Slider.H
@@ -1335,6 +1346,7 @@ fl_dnd_x.o: ../FL/Fl_Overlay_Window.H
 fl_dnd_x.o: ../FL/Fl_Pixmap.H
 fl_dnd_x.o: ../FL/Fl_Plugin.H
 fl_dnd_x.o: ../FL/Fl_Preferences.H
+fl_dnd_x.o: ../FL/Fl_Rect.H
 fl_dnd_x.o: ../FL/Fl_RGB_Image.H
 fl_dnd_x.o: ../FL/Fl_Scrollbar.H
 fl_dnd_x.o: ../FL/Fl_Slider.H
@@ -1656,6 +1668,7 @@ Fl_get_system_colors.o: ../FL/Fl_Image.H
 Fl_get_system_colors.o: ../FL/Fl_Pixmap.H
 Fl_get_system_colors.o: ../FL/Fl_Plugin.H
 Fl_get_system_colors.o: ../FL/Fl_Preferences.H
+Fl_get_system_colors.o: ../FL/Fl_Rect.H
 Fl_get_system_colors.o: ../FL/Fl_RGB_Image.H
 Fl_get_system_colors.o: ../FL/Fl_Scrollbar.H
 Fl_get_system_colors.o: ../FL/Fl_Slider.H
@@ -1778,6 +1791,7 @@ Fl_grab.o: ../FL/Fl_Image.H
 Fl_grab.o: ../FL/Fl_Pixmap.H
 Fl_grab.o: ../FL/Fl_Plugin.H
 Fl_grab.o: ../FL/Fl_Preferences.H
+Fl_grab.o: ../FL/Fl_Rect.H
 Fl_grab.o: ../FL/Fl_RGB_Image.H
 Fl_grab.o: ../FL/Fl_Scrollbar.H
 Fl_grab.o: ../FL/Fl_Slider.H
@@ -1806,6 +1820,7 @@ Fl_Graphics_Driver.o: ../FL/Fl_Image_Surface.H
 Fl_Graphics_Driver.o: ../FL/Fl_Pixmap.H
 Fl_Graphics_Driver.o: ../FL/Fl_Plugin.H
 Fl_Graphics_Driver.o: ../FL/Fl_Preferences.H
+Fl_Graphics_Driver.o: ../FL/Fl_Rect.H
 Fl_Graphics_Driver.o: ../FL/Fl_RGB_Image.H
 Fl_Graphics_Driver.o: ../FL/Fl_Scrollbar.H
 Fl_Graphics_Driver.o: ../FL/Fl_Shared_Image.H
@@ -1875,6 +1890,7 @@ Fl_Help_Dialog.o: ../FL/Fl_Input_.H
 Fl_Help_Dialog.o: ../FL/Fl_Pixmap.H
 Fl_Help_Dialog.o: ../FL/Fl_Plugin.H
 Fl_Help_Dialog.o: ../FL/Fl_Preferences.H
+Fl_Help_Dialog.o: ../FL/Fl_Rect.H
 Fl_Help_Dialog.o: ../FL/Fl_RGB_Image.H
 Fl_Help_Dialog.o: ../FL/Fl_Scrollbar.H
 Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H
@@ -1903,6 +1919,7 @@ Fl_Help_View.o: ../FL/Fl_Image.H
 Fl_Help_View.o: ../FL/Fl_Pixmap.H
 Fl_Help_View.o: ../FL/Fl_Plugin.H
 Fl_Help_View.o: ../FL/Fl_Preferences.H
+Fl_Help_View.o: ../FL/Fl_Rect.H
 Fl_Help_View.o: ../FL/Fl_RGB_Image.H
 Fl_Help_View.o: ../FL/Fl_Scrollbar.H
 Fl_Help_View.o: ../FL/Fl_Shared_Image.H
@@ -1998,6 +2015,7 @@ Fl_Input.o: ../FL/Fl_Output.H
 Fl_Input.o: ../FL/Fl_Pixmap.H
 Fl_Input.o: ../FL/Fl_Plugin.H
 Fl_Input.o: ../FL/Fl_Preferences.H
+Fl_Input.o: ../FL/Fl_Rect.H
 Fl_Input.o: ../FL/Fl_RGB_Image.H
 Fl_Input.o: ../FL/Fl_Scrollbar.H
 Fl_Input.o: ../FL/Fl_Secret_Input.H
@@ -2033,6 +2051,7 @@ Fl_Input_.o: ../FL/Fl_Input_.H
 Fl_Input_.o: ../FL/Fl_Pixmap.H
 Fl_Input_.o: ../FL/Fl_Plugin.H
 Fl_Input_.o: ../FL/Fl_Preferences.H
+Fl_Input_.o: ../FL/Fl_Rect.H
 Fl_Input_.o: ../FL/Fl_RGB_Image.H
 Fl_Input_.o: ../FL/Fl_Scrollbar.H
 Fl_Input_.o: ../FL/Fl_Slider.H
@@ -2389,6 +2408,7 @@ fl_overlay.o: ../FL/Fl_Image.H
 fl_overlay.o: ../FL/Fl_Pixmap.H
 fl_overlay.o: ../FL/Fl_Plugin.H
 fl_overlay.o: ../FL/Fl_Preferences.H
+fl_overlay.o: ../FL/Fl_Rect.H
 fl_overlay.o: ../FL/Fl_RGB_Image.H
 fl_overlay.o: ../FL/Fl_Scrollbar.H
 fl_overlay.o: ../FL/Fl_Slider.H
@@ -2585,6 +2605,7 @@ fl_read_image.o: ../FL/Fl_Image.H
 fl_read_image.o: ../FL/Fl_Pixmap.H
 fl_read_image.o: ../FL/Fl_Plugin.H
 fl_read_image.o: ../FL/Fl_Preferences.H
+fl_read_image.o: ../FL/Fl_Rect.H
 fl_read_image.o: ../FL/Fl_RGB_Image.H
 fl_read_image.o: ../FL/Fl_Scrollbar.H
 fl_read_image.o: ../FL/Fl_Slider.H
@@ -2696,6 +2717,7 @@ Fl_Screen_Driver.o: ../FL/Fl_Overlay_Window.H
 Fl_Screen_Driver.o: ../FL/Fl_Pixmap.H
 Fl_Screen_Driver.o: ../FL/Fl_Plugin.H
 Fl_Screen_Driver.o: ../FL/Fl_Preferences.H
+Fl_Screen_Driver.o: ../FL/Fl_Rect.H
 Fl_Screen_Driver.o: ../FL/Fl_RGB_Image.H
 Fl_Screen_Driver.o: ../FL/Fl_Scrollbar.H
 Fl_Screen_Driver.o: ../FL/Fl_Shared_Image.H
@@ -2776,6 +2798,7 @@ fl_set_font.o: ../FL/Fl_Image.H
 fl_set_font.o: ../FL/Fl_Pixmap.H
 fl_set_font.o: ../FL/Fl_Plugin.H
 fl_set_font.o: ../FL/Fl_Preferences.H
+fl_set_font.o: ../FL/Fl_Rect.H
 fl_set_font.o: ../FL/Fl_RGB_Image.H
 fl_set_font.o: ../FL/Fl_Scrollbar.H
 fl_set_font.o: ../FL/Fl_Slider.H
@@ -2862,6 +2885,7 @@ Fl_Simple_Terminal.o: ../FL/Fl_Image.H
 Fl_Simple_Terminal.o: ../FL/Fl_Pixmap.H
 Fl_Simple_Terminal.o: ../FL/Fl_Plugin.H
 Fl_Simple_Terminal.o: ../FL/Fl_Preferences.H
+Fl_Simple_Terminal.o: ../FL/Fl_Rect.H
 Fl_Simple_Terminal.o: ../FL/Fl_RGB_Image.H
 Fl_Simple_Terminal.o: ../FL/Fl_Scrollbar.H
 Fl_Simple_Terminal.o: ../FL/Fl_Simple_Terminal.H
@@ -2929,6 +2953,7 @@ Fl_SVG_Image.o: ../FL/Fl_Image.H
 Fl_SVG_Image.o: ../FL/Fl_Pixmap.H
 Fl_SVG_Image.o: ../FL/Fl_Plugin.H
 Fl_SVG_Image.o: ../FL/Fl_Preferences.H
+Fl_SVG_Image.o: ../FL/Fl_Rect.H
 Fl_SVG_Image.o: ../FL/Fl_RGB_Image.H
 Fl_SVG_Image.o: ../FL/Fl_Scrollbar.H
 Fl_SVG_Image.o: ../FL/Fl_Slider.H
@@ -3066,6 +3091,7 @@ Fl_Text_Display.o: ../FL/Fl_Image.H
 Fl_Text_Display.o: ../FL/Fl_Pixmap.H
 Fl_Text_Display.o: ../FL/Fl_Plugin.H
 Fl_Text_Display.o: ../FL/Fl_Preferences.H
+Fl_Text_Display.o: ../FL/Fl_Rect.H
 Fl_Text_Display.o: ../FL/Fl_RGB_Image.H
 Fl_Text_Display.o: ../FL/Fl_Scrollbar.H
 Fl_Text_Display.o: ../FL/Fl_Slider.H
@@ -3099,6 +3125,7 @@ Fl_Text_Editor.o: ../FL/Fl_Image.H
 Fl_Text_Editor.o: ../FL/Fl_Pixmap.H
 Fl_Text_Editor.o: ../FL/Fl_Plugin.H
 Fl_Text_Editor.o: ../FL/Fl_Preferences.H
+Fl_Text_Editor.o: ../FL/Fl_Rect.H
 Fl_Text_Editor.o: ../FL/Fl_RGB_Image.H
 Fl_Text_Editor.o: ../FL/Fl_Scrollbar.H
 Fl_Text_Editor.o: ../FL/Fl_Slider.H
@@ -3327,6 +3354,7 @@ Fl_visual.o: ../FL/Fl_Image.H
 Fl_visual.o: ../FL/Fl_Pixmap.H
 Fl_visual.o: ../FL/Fl_Plugin.H
 Fl_visual.o: ../FL/Fl_Preferences.H
+Fl_visual.o: ../FL/Fl_Rect.H
 Fl_visual.o: ../FL/Fl_RGB_Image.H
 Fl_visual.o: ../FL/Fl_Scrollbar.H
 Fl_visual.o: ../FL/Fl_Slider.H
@@ -3370,6 +3398,7 @@ Fl_Widget_Surface.o: ../FL/Fl_Overlay_Window.H
 Fl_Widget_Surface.o: ../FL/Fl_Pixmap.H
 Fl_Widget_Surface.o: ../FL/Fl_Plugin.H
 Fl_Widget_Surface.o: ../FL/Fl_Preferences.H
+Fl_Widget_Surface.o: ../FL/Fl_Rect.H
 Fl_Widget_Surface.o: ../FL/Fl_RGB_Image.H
 Fl_Widget_Surface.o: ../FL/Fl_Scrollbar.H
 Fl_Widget_Surface.o: ../FL/Fl_Slider.H
@@ -3403,6 +3432,7 @@ Fl_Window.o: ../FL/Fl_Overlay_Window.H
 Fl_Window.o: ../FL/Fl_Pixmap.H
 Fl_Window.o: ../FL/Fl_Plugin.H
 Fl_Window.o: ../FL/Fl_Preferences.H
+Fl_Window.o: ../FL/Fl_Rect.H
 Fl_Window.o: ../FL/Fl_RGB_Image.H
 Fl_Window.o: ../FL/Fl_Scrollbar.H
 Fl_Window.o: ../FL/Fl_Slider.H
@@ -3531,6 +3561,7 @@ Fl_x.o: ../FL/Fl_Paged_Device.H
 Fl_x.o: ../FL/Fl_Pixmap.H
 Fl_x.o: ../FL/Fl_Plugin.H
 Fl_x.o: ../FL/Fl_Preferences.H
+Fl_x.o: ../FL/Fl_Rect.H
 Fl_x.o: ../FL/Fl_RGB_Image.H
 Fl_x.o: ../FL/Fl_Scrollbar.H
 Fl_x.o: ../FL/Fl_Shared_Image.H
@@ -3625,6 +3656,7 @@ forms_bitmap.o: ../FL/Fl_Pixmap.H
 forms_bitmap.o: ../FL/Fl_Plugin.H
 forms_bitmap.o: ../FL/Fl_Positioner.H
 forms_bitmap.o: ../FL/Fl_Preferences.H
+forms_bitmap.o: ../FL/Fl_Rect.H
 forms_bitmap.o: ../FL/Fl_Return_Button.H
 forms_bitmap.o: ../FL/Fl_RGB_Image.H
 forms_bitmap.o: ../FL/Fl_Round_Button.H
@@ -3681,6 +3713,7 @@ forms_compatibility.o: ../FL/Fl_Pixmap.H
 forms_compatibility.o: ../FL/Fl_Plugin.H
 forms_compatibility.o: ../FL/Fl_Positioner.H
 forms_compatibility.o: ../FL/Fl_Preferences.H
+forms_compatibility.o: ../FL/Fl_Rect.H
 forms_compatibility.o: ../FL/Fl_Repeat_Button.H
 forms_compatibility.o: ../FL/Fl_Return_Button.H
 forms_compatibility.o: ../FL/Fl_RGB_Image.H
@@ -3749,6 +3782,7 @@ forms_fselect.o: ../FL/Fl_Pixmap.H
 forms_fselect.o: ../FL/Fl_Plugin.H
 forms_fselect.o: ../FL/Fl_Positioner.H
 forms_fselect.o: ../FL/Fl_Preferences.H
+forms_fselect.o: ../FL/Fl_Rect.H
 forms_fselect.o: ../FL/Fl_Return_Button.H
 forms_fselect.o: ../FL/Fl_RGB_Image.H
 forms_fselect.o: ../FL/Fl_Round_Button.H
@@ -3806,6 +3840,7 @@ forms_pixmap.o: ../FL/Fl_Pixmap.H
 forms_pixmap.o: ../FL/Fl_Plugin.H
 forms_pixmap.o: ../FL/Fl_Positioner.H
 forms_pixmap.o: ../FL/Fl_Preferences.H
+forms_pixmap.o: ../FL/Fl_Rect.H
 forms_pixmap.o: ../FL/Fl_Return_Button.H
 forms_pixmap.o: ../FL/Fl_RGB_Image.H
 forms_pixmap.o: ../FL/Fl_Round_Button.H
@@ -3862,6 +3897,7 @@ forms_timer.o: ../FL/Fl_Pixmap.H
 forms_timer.o: ../FL/Fl_Plugin.H
 forms_timer.o: ../FL/Fl_Positioner.H
 forms_timer.o: ../FL/Fl_Preferences.H
+forms_timer.o: ../FL/Fl_Rect.H
 forms_timer.o: ../FL/Fl_Return_Button.H
 forms_timer.o: ../FL/Fl_RGB_Image.H
 forms_timer.o: ../FL/Fl_Round_Button.H
@@ -3937,6 +3973,7 @@ glut_compatibility.o: ../FL/Fl_Menu_Item.H
 glut_compatibility.o: ../FL/Fl_Pixmap.H
 glut_compatibility.o: ../FL/Fl_Plugin.H
 glut_compatibility.o: ../FL/Fl_Preferences.H
+glut_compatibility.o: ../FL/Fl_Rect.H
 glut_compatibility.o: ../FL/Fl_RGB_Image.H
 glut_compatibility.o: ../FL/Fl_Scrollbar.H
 glut_compatibility.o: ../FL/Fl_Slider.H
@@ -4030,6 +4067,7 @@ screen_xywh.o: ../FL/Fl_Image.H
 screen_xywh.o: ../FL/Fl_Pixmap.H
 screen_xywh.o: ../FL/Fl_Plugin.H
 screen_xywh.o: ../FL/Fl_Preferences.H
+screen_xywh.o: ../FL/Fl_Rect.H
 screen_xywh.o: ../FL/Fl_RGB_Image.H
 screen_xywh.o: ../FL/Fl_Scrollbar.H
 screen_xywh.o: ../FL/Fl_Slider.H
