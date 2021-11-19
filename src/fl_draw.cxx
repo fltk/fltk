@@ -492,8 +492,8 @@ void fl_restore_scale(float s) {
 
   The size limits are implementation details and may be changed at any time.
 
-  \param[in]  X,Y  top left corner of the bounding box
-  \param[in]  W,H  width and height of the bounding box
+  \param[in]  bb   rectangle that defines the bounding box
+  \param[in]  col  Fl_Color to draw the check mark
 
   \since 1.4.0
 */
