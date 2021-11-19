@@ -28,9 +28,12 @@
 
 #include <stdio.h>
 
-#ifdef _WIN32
+// optional: display extra technical info about clipboard content if defined
+// #define DEBUG_CLIPBOARD_DATA
+
+#if defined(_WIN32) && defined(DEBUG_CLIPBOARD_DATA)
 #include <windows.h>
-#endif // _WIN32
+#endif // _WIN32 && DEBUG_CLIPBOARD_DATA
 
 /* Displays and follows the content of the clipboard with either image or text data
  */
@@ -93,8 +96,12 @@ public:
         return 1;
       char title[300];
       sprintf(title, "%dx%d", cl_img->w(), cl_img->h()); // display the image original size
-#ifdef _WIN32
-      OpenClipboard(NULL); // display extra technical info about clipboard content
+
+      // optional: display extra technical info about clipboard content
+
+#if defined(_WIN32) && defined(DEBUG_CLIPBOARD_DATA)
+
+      OpenClipboard(NULL); //
       char *p = title + strlen(title);
       int format = EnumClipboardFormats(0);
       if (format && format < CF_MAX) {
@@ -117,7 +124,9 @@ public:
                 (int)lpBI->bmiHeader.biClrUsed);
       }
       CloseClipboard();
-#endif
+
+#endif // _WIN32 && DEBUG_CLIPBOARD_DATA
+
       Fl_Image *oldimg = image_box->image();
       delete oldimg;
       if (cl_img->w() > image_box->w() || cl_img->h() > image_box->h())
