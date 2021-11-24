@@ -298,11 +298,16 @@ If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type the
 following:
 
-  NOCONFIGURE=1 ./autogen.sh
+  autoconf
 
 Now configure your FLTK installation:
 
   ./configure
+
+Hint: Instead of executing `autoconf` and `configure` followed by `make`
+to build FLTK (see next section) you can also run `make` directly which
+will create and execute the 'configure' script with default parameters
+and build FLTK with the default configuration.
 
 ADVANCED: type "./configure --help" to get a complete list of optional
 configuration parameters. These should be pretty self-explanatory. Some

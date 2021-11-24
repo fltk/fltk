@@ -121,9 +121,6 @@ sed -e '1,$s/@VERSION@/'$version'/' \
 echo Creating configure script...
 autoconf -f
 
-echo Creating config.guess and config.sub \(ignore any other errors\)...
-automake --add-missing --copy 2>/dev/null
-
 echo Cleaning developer files...
 rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
 
