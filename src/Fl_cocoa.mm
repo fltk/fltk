@@ -1221,7 +1221,12 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
     int X, Y;
     CocoatoFLTK(window, X, Y);
-    if (window->x() != X || window->y() != Y) window->position(X, Y);
+    if (window->x() != X || window->y() != Y) {
+      if (!Fl_Cocoa_Window_Driver::driver(window)->through_resize())
+         window->position(X, Y);
+      else
+        window->Fl_Widget::resize(X,Y,window->w(),window->h());
+    }
     update_e_xy_and_e_xy_root(nsw);
     // at least since MacOS 10.9: OS moves subwindows contained in a moved window
     // setSubwindowFrame is no longer necessary.
@@ -1244,7 +1249,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   float s = Fl::screen_driver()->scale(window->screen_num());
   NSRect r = [view frame];
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(1);
-  window->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
+  if (Fl_Cocoa_Window_Driver::driver(window)->through_resize())
+    Fl_Cocoa_Window_Driver::driver(window)->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
+  else
+    window->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(0);
   update_e_xy_and_e_xy_root(nsw);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
@@ -3327,9 +3335,10 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
   if (view_resized() || !visible_r()) {
     pWindow->Fl_Group::resize(X, Y, W, H);
     if (!pWindow->shown()) pWindow->init_sizes();
-  } else {
+  } else if (!through_resize()) {
     NSPoint pt = FLTKtoCocoa(pWindow, X, Y, H);
     FLWindow *xid = fl_xid(pWindow);
+    through_resize(1);
     if (W != w() || H != h() || Fl_Window::is_a_rescale()) {
       NSRect r;
       float s = Fl::screen_driver()->scale(screen_num());
@@ -3347,10 +3356,14 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
     }
     else {
       if (pWindow->parent()) starting_moved_window = pWindow;
-      [xid setFrameOrigin:pt]; // set cocoa coords to FLTK position
-      x(X); y(Y); // useful when frame did not move but X or Y changed
+      if (!NSEqualPoints([xid frame].origin, pt))
+        [xid setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      else {
+        x(X); y(Y);
+      }
       if (pWindow->parent()) starting_moved_window = NULL;
     }
+    through_resize(0);
   }
 }
 

@@ -262,6 +262,7 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
 static const unsigned mapped_mask = 1;
 static const unsigned changed_mask = 2;
 static const unsigned view_resized_mask = 4;
+static const unsigned through_resize_mask = 8;
 
 bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
   return window_flags_ & mapped_mask;
@@ -288,6 +289,15 @@ bool Fl_Cocoa_Window_Driver::view_resized() {
 void Fl_Cocoa_Window_Driver::view_resized(bool b) {
   if (b) window_flags_ |= view_resized_mask;
   else window_flags_ &= ~view_resized_mask;
+}
+
+bool Fl_Cocoa_Window_Driver::through_resize() {
+  return window_flags_ & through_resize_mask;
+}
+
+void Fl_Cocoa_Window_Driver::through_resize(bool b) {
+  if (b) window_flags_ |= through_resize_mask;
+  else window_flags_ &= ~through_resize_mask;
 }
 
 

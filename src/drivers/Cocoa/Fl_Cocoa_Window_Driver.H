@@ -100,6 +100,8 @@ public:
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
   bool view_resized();   // did window's view receive [FLView view_did_resize] message?
   void view_resized(bool b); // sets whether window's view received [FLView view_did_resize] message
+  bool through_resize();   // did Fl_Window::resize() run already
+  void through_resize(bool b); // set whether Fl_Window::resize() run already
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);
