@@ -51,6 +51,7 @@ Fl_Table_Row::CharVector::~CharVector() {       // DTOR
 }
 
 void Fl_Table_Row::CharVector::size(int count) {
+  if (count <= 0 ) count = 1;    // (issue #296)
   if (count != _size) {
     arr = (char*)realloc(arr, (unsigned)count * sizeof(char));
     _size = count;
