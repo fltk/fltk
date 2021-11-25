@@ -746,6 +746,7 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W,
     return;
   }
   // Composite image with alpha manually each time...
+  push_no_clip();
   float s = scale();
   Fl_Graphics_Driver::scale(1);
   int ox = offset_x_, oy = offset_y_;
@@ -754,12 +755,11 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W,
   int nscreen = Fl_Window_Driver::driver(Fl_Window::current())->screen_num();
   float keep = d->scale(nscreen);
   d->scale(nscreen, 1);
-  push_no_clip();
   alpha_blend(img, X, Y, W, H, cx, cy);
-  pop_clip();
   d->scale(nscreen, keep);
   Fl_Graphics_Driver::scale(s);
   offset_x_ = ox; offset_y_ = oy;
+  pop_clip();
 }
 
 #if HAVE_XRENDER
