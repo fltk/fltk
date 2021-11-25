@@ -3,7 +3,7 @@
 //
 // Modified to have 2 cubes to test multiple OpenGL contexts
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -230,17 +230,18 @@ void makeform(const char *name) {
     // right resizer
     Fl_Box *rt_resizer = new Fl_Box(rt_grp_x-5, rt_grp_y, 10, rt_grp_h);
     rt_resizer->box(FL_NO_BOX);
+
+#if HAVE_GL
+    // overlay a button onto an OpenGL window
+    lt_cube->begin();
+    Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
+    test->box(FL_ROUND_UP_BOX);
+    lt_cube->end();
+#endif // HAVE_GL
+
   form->end();
   form->resizable(rt_resizer);
   form->size_range(form->w(), form->h()); // minimum window size
-
-#if HAVE_GL
-  // try to overlay a button onto an OpenGL window
-  lt_cube->begin();
-  Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
-  test->box(FL_ROUND_UP_BOX);
-  lt_cube->end();
-#endif // HAVE_GL
 }
 
 int main(int argc, char **argv) {
