@@ -774,8 +774,10 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
 
   float s = allow_outside ? Fl::screen_driver()->scale(win->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
-  int Xs = Fl_Scalable_Graphics_Driver::floor(X, s), Ys = Fl_Scalable_Graphics_Driver::floor(Y, s),
-  ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Xs, hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Ys;
+  int Xs = Fl_Scalable_Graphics_Driver::floor(X, s);
+  int Ys = Fl_Scalable_Graphics_Driver::floor(Y, s);
+  int ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Xs;
+  int hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Ys;
 
 #  ifdef __sgi
   if (XReadDisplayQueryExtension(fl_display, &i, &i)) {
@@ -800,12 +802,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       sw = screens[ns].width;
       sh = screens[ns].height;
     }
+#if ! HAVE_XRENDER
     if (win && !allow_outside && int(s) != s) {
       ws = (w+1) * s; // approximates what Fl_Graphics_Driver::cache_size() does
       hs = (h+1) * s;
-      if (Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
-      if (Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
      }
+#endif
+    if (win && Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
+    if (win && Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
     if (!win || (dx >= sx && dy >= sy && dx + ws <= sx+sw && dy + hs <= sy+sh) ) {

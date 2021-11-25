@@ -772,9 +772,15 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  push_clip(XP, YP, WP, HP);
-  int Wfull = rgb->w(), Hfull = rgb->h(), offset = 0;
-  cache_size(rgb, Wfull, Hfull);
+  float s = scale();
+  int Xs = Fl_Scalable_Graphics_Driver::floor(XP - cx, s);
+  int Wfull = Fl_Scalable_Graphics_Driver::floor(XP - cx + rgb->w(), s) - Xs  ;
+  int Ys = Fl_Scalable_Graphics_Driver::floor(YP - cy, s);
+  int Hfull = Fl_Scalable_Graphics_Driver::floor(YP - cy + rgb->h(), s) - Ys;
+  if (Wfull == 0 || Hfull == 0) return;
+  bool need_clip = (cx || cy || WP < rgb->w() || HP < rgb->h());
+  if (need_clip) push_clip(XP, YP, WP, HP);
+  int offset = 0;
   if (Wfull > rgb->data_w() || Hfull > rgb->data_h()) {
     // When enlarging while drawing with XRender, 1 pixel around target area seems unpainted,
     // so we increase a bit the target area and move it 1 pixel to left and top.
@@ -783,9 +789,9 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
   }
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
                           rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
-                          floor(XP-cx) + floor(offset_x_) - offset, floor(YP-cy) + floor(offset_y_) - offset,
+                          Xs + this->floor(offset_x_) - offset, Ys + this->floor(offset_y_) - offset,
                           Wfull, Hfull);
-  pop_clip();
+  if (need_clip) pop_clip();
 }
 
 /* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
