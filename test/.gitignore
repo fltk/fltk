@@ -33,6 +33,7 @@ clipboard
 clock
 colbrowser
 color_chooser
+coordinates
 cube
 CubeView
 CubeViewUI.cxx
@@ -133,6 +134,7 @@ valuators
 valuators.cxx
 valuators.h
 windowfocus
+wizard
 
 # macOS binary files
 
