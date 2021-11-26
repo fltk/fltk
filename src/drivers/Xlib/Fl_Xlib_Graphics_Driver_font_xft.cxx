@@ -31,14 +31,6 @@
 #include <X11/Xft/Xft.h>
 #include <X11/Xft/XftCompat.h>
 
-#define USE_OVERLAY 0
-
-#if USE_OVERLAY
-// Currently Xft does not work with colormapped visuals, so this probably
-// does not work unless you have a true-color overlay.
-extern Colormap fl_overlay_colormap;
-extern XVisualInfo* fl_overlay_visual;
-#endif
 
 Fl_XFont_On_Demand fl_xfont = 0;
 
@@ -50,10 +42,6 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
 
 XftDraw* Fl_Xlib_Graphics_Driver::draw_ = 0;
 Window Fl_Xlib_Graphics_Driver::draw_window = (Window)0;
-#if USE_OVERLAY
-static XftDraw* draw_overlay;
-static Window draw_overlay_window;
-#endif
 
 
 #if ! USE_PANGO
@@ -794,16 +782,6 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
   int y1 = y + floor(offset_y_) ;
   if (y1 < clip_min() || y1 > clip_max()) return;
 
-#if USE_OVERLAY
-  XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
-  if (fl_overlay) {
-    if (!draw_)
-      draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-                           fl_overlay_visual->visual, fl_overlay_colormap);
-    else //if (draw_overlay_window != fl_window)
-      XftDrawChange(draw_, draw_overlay_window = fl_window);
-  } else
-#endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
                          fl_visual->visual, fl_colormap);
@@ -840,16 +818,6 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 }
 
 void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
-#if USE_OVERLAY
-  XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
-  if (fl_overlay) {
-    if (!draw_)
-      draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-                           fl_overlay_visual->visual, fl_overlay_colormap);
-    else //if (draw_overlay_window != fl_window)
-      XftDrawChange(draw_, draw_overlay_window = fl_window);
-  } else
-#endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
                          fl_visual->visual, fl_colormap);
@@ -1022,10 +990,6 @@ Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
 void Fl_Xlib_Graphics_Driver::destroy_xft_draw(Window id) {
   if (id == draw_window)
     XftDrawChange(draw_, draw_window = fl_message_window);
-#if USE_OVERLAY
-  if (id == draw_overlay_window)
-    XftDrawChange(draw_overlay, draw_overlay_window = fl_message_window);
-#endif
 }
 
 void *fl_xftfont = 0; // always 0 under Pango

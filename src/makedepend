@@ -2422,7 +2422,6 @@ fl_overlay.o: ../FL/Fl_Widget.H
 fl_overlay.o: ../FL/platform.H
 fl_overlay.o: ../FL/platform_types.h
 fl_overlay.o: Fl_Screen_Driver.H
-fl_overlay_visual.o: ../config.h
 Fl_Overlay_Window.o: ../FL/abi-version.h
 Fl_Overlay_Window.o: ../FL/Enumerations.H
 Fl_Overlay_Window.o: ../FL/Fl.H

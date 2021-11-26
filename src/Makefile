@@ -146,7 +146,6 @@ CPPFILES = \
 	fl_open_uri.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
-	fl_overlay_visual.cxx \
 	fl_plastic.cxx \
 	fl_read_image.cxx \
 	fl_rect.cxx \
@@ -676,7 +675,6 @@ Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
-fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
