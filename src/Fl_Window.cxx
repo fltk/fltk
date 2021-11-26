@@ -333,6 +333,9 @@ void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
   default window icon (see links below) or the system default icon will
   be used.
 
+  This method makes an internal copy of the \p icon pixel buffer,
+  so once set, the Fl_RGB_Image instance can be freed by the caller.
+
   \param[in] icon icon for this window, NULL to reset window icon.
 
   \see Fl_Window::default_icon(const Fl_RGB_Image *)
