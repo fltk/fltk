@@ -134,8 +134,6 @@ public:
   virtual void flush(); // the default implementation may be enough
   virtual void flush_double();
   virtual void flush_overlay();
-  virtual void flush_menu();
-  virtual void erase_menu() {}
   /** Usable for platform-specific code executed before the platform-independent part of Fl_Window::draw() */
   virtual void draw_begin();
   /** Usable for platform-specific code executed after the platform-independent part of Fl_Window::draw() */
@@ -148,7 +146,6 @@ public:
   virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();
-  virtual void show_menu();
   virtual void resize(int X,int Y,int W,int H) {}
   virtual void hide() {}
   int hide_common();

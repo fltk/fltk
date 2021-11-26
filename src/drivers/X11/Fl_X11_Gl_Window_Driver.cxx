@@ -35,18 +35,11 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void before_show(int& need_after);
   virtual int mode_(int m, const int *a);
   virtual void swap_buffers();
-  virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
   virtual void delete_gl_context(GLContext);
-#if HAVE_GL_OVERLAY
-  virtual void make_overlay(void *&o);
-  virtual int can_do_overlay();
-  virtual void hide_overlay();
-  virtual int overlay_color(Fl_Color i);
-#endif
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void waitGL();
@@ -357,121 +350,12 @@ void Fl_X11_Gl_Window_Driver::delete_gl_context(GLContext context) {
 
 
 void Fl_X11_Gl_Window_Driver::make_overlay_current() {
-#if HAVE_GL_OVERLAY
-  if (overlay() != pWindow) {
-    ((Fl_Gl_Window*)overlay())->make_current();
-  } else
-#endif
     glDrawBuffer(GL_FRONT);
 }
 
 void Fl_X11_Gl_Window_Driver::redraw_overlay() {
-  if (overlay() != pWindow)
-    ((Fl_Gl_Window*)overlay())->redraw();
-  else
     pWindow->damage(FL_DAMAGE_OVERLAY);
 }
-
-#if HAVE_GL_OVERLAY
-
-// Methods on Fl_Gl_Window_Driver that create an overlay window.
-
-// Under X this is done by creating another window, of class _Fl_Gl_Overlay
-// which is a subclass of Fl_Gl_Window except it uses the overlay planes.
-// A pointer to this is stored in the "overlay" pointer of the Fl_Gl_Window.
-
-// If overlay hardware is unavailable, the overlay is
-// "faked" by drawing into the main layers.  This is indicated by
-// setting overlay == this.
-
-extern XVisualInfo *fl_find_overlay_visual();
-extern XVisualInfo *fl_overlay_visual;
-extern Colormap fl_overlay_colormap;
-extern unsigned long fl_transparent_pixel;
-//extern uchar fl_overlay;
-
-int Fl_X11_Gl_Window_Driver::overlay_color(Fl_Color i) {
-  if (Fl_Xlib_Graphics_Driver::fl_overlay) {glIndexi(int(fl_xpixel(i))); return 1;}
-  return 0;
-}
-
-
-class _Fl_Gl_Overlay : public Fl_Gl_Window {
-  void flush();
-  void draw();
-public:
-  void show();
-  _Fl_Gl_Overlay(int x, int y, int w, int h) :
-    Fl_Gl_Window(x,y,w,h) {
-    set_flag(INACTIVE);
-  }
-};
-
-void _Fl_Gl_Overlay::flush() {
-  make_current();
-#ifdef BOXX_BUGS
-  // The BoXX overlay is broken and you must not call swap-buffers. This
-  // code will make it work, but we lose because machines that do support
-  // double-buffered overlays will blink when they don't have to
-  glDrawBuffer(GL_FRONT);
-  draw();
-#else
-  draw();
-  swap_buffers();
-#endif
-  glFlush();
-  valid(1);
-}
-
-void _Fl_Gl_Overlay::draw() {
-  if (!valid()) glClearIndex((GLfloat)fl_transparent_pixel);
-  if (damage() != FL_DAMAGE_EXPOSE) glClear(GL_COLOR_BUFFER_BIT);
-  Fl_Gl_Window *w = (Fl_Gl_Window *)parent();
-  uchar save_valid = w->valid();
-  w->valid(valid());
-  Fl_Xlib_Graphics_Driver::fl_overlay = 1;
-  Fl_Gl_Window_Driver::driver(w)->draw_overlay();
-  Fl_Xlib_Graphics_Driver::fl_overlay = 0;
-  valid(w->valid());
-  w->valid(save_valid);
-}
-
-void _Fl_Gl_Overlay::show() {
-  if (!shown()) {
-    fl_background_pixel = int(fl_transparent_pixel);
-    Fl_X::make_xid(this, fl_overlay_visual, fl_overlay_colormap);
-    fl_background_pixel = -1;
-    // find the outermost window to tell wm about the colormap:
-    Fl_Window *w = window();
-    for (;;) {Fl_Window *w1 = w->window(); if (!w1) break; w = w1;}
-    XSetWMColormapWindows(fl_display, fl_xid(w), &(Fl_X::i(this)->xid), 1);
-    context(Fl_X11_Gl_Window_Driver::create_gl_context(fl_overlay_visual), 1);
-    valid(0);
-  }
-  Fl_Gl_Window::show();
-}
-
-void Fl_X11_Gl_Window_Driver::hide_overlay() {
-  if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->hide();
-}
-
-int Fl_X11_Gl_Window_Driver::can_do_overlay() {
-  return fl_find_overlay_visual() != 0;
-}
-
-
-void Fl_X11_Gl_Window_Driver::make_overlay(void *&current) {
-  if (current) return;
-  if (can_do_overlay()) {
-    _Fl_Gl_Overlay* o = new _Fl_Gl_Overlay(0, 0, pWindow->w(), pWindow->h());
-    current = o;
-    pWindow->add(*o);
-    o->show();
-  } else {
-    current = pWindow; // fake the overlay
-  }
-}
-#endif // HAVE_GL_OVERLAY
 
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
@@ -482,7 +366,6 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 void Fl_X11_Gl_Window_Driver::before_show(int&) {
   Fl_X11_Gl_Choice *g = (Fl_X11_Gl_Choice*)this->g();
   Fl_X::make_xid(pWindow, g->vis, g->colormap);
-  if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->show();
 }
 
 float Fl_X11_Gl_Window_Driver::pixels_per_unit()
@@ -523,11 +406,6 @@ void Fl_X11_Gl_Window_Driver::swap_buffers() {
   glXSwapBuffers(fl_display, fl_xid(pWindow));
 }
 
-void Fl_X11_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
-  if (is_a_resize && !pWindow->resizable() && overlay() && overlay() != pWindow) {
-    ((Fl_Gl_Window*)overlay())->resize(0,0,W,H);
-  }
-}
 
 char Fl_X11_Gl_Window_Driver::swap_type() {return copy;}
 

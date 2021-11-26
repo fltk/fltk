@@ -1193,24 +1193,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AC_DEFINE([HAVE_X11_XREGION_H])
     ], [], [#include <X11/Xlib.h>])
 
-    dnl Check for overlay visuals...
-    AC_PATH_PROG([XPROP], [xprop])
-    AC_CACHE_CHECK([for X overlay visuals], [ac_cv_have_overlay], [
-        AS_IF([test "x$XPROP" != x], [
-            AS_IF([$XPROP -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null], [
-                ac_cv_have_overlay=yes
-            ], [
-                ac_cv_have_overlay=no
-            ])
-        ], [
-            ac_cv_have_overlay=no
-        ])
-    ])
-
-    AS_IF([test x$ac_cv_have_overlay = xyes], [
-        AC_DEFINE([HAVE_OVERLAY])
-    ])
-
     # Make symlinks since UNIX/Linux is case sensitive,
     # but Cygwin in general not.
     AS_CASE([$host_os], [cygwin*], [

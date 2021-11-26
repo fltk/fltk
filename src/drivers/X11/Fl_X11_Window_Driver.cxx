@@ -35,13 +35,6 @@
 #define ShapeBounding                   0
 #define ShapeSet                        0
 
-#if HAVE_OVERLAY
-extern XVisualInfo *fl_find_overlay_visual();
-extern XVisualInfo *fl_overlay_visual;
-extern Colormap fl_overlay_colormap;
-extern unsigned long fl_transparent_pixel;
-#endif
-
 Window fl_window;
 
 
@@ -392,20 +385,6 @@ void Fl_X11_Window_Driver::make_current() {
 }
 
 
-void Fl_X11_Window_Driver::show_menu()
-{
-#if HAVE_OVERLAY
-  if (!shown() && ((Fl_Menu_Window*)pWindow)->overlay() && fl_find_overlay_visual()) {
-    XInstallColormap(fl_display, fl_overlay_colormap);
-    fl_background_pixel = int(fl_transparent_pixel);
-    Fl_X::make_xid(pWindow, fl_overlay_visual, fl_overlay_colormap);
-    fl_background_pixel = -1;
-  } else
-#endif
-    pWindow->Fl_Window::show();
-}
-
-
 void Fl_X11_Window_Driver::hide() {
   Fl_X* ip = Fl_X::i(pWindow);
   if (hide_common()) return;
@@ -497,107 +476,6 @@ void Fl_X11_Window_Driver::show_with_args_end(int argc, char **argv) {
                     (unsigned char *)buffer, p-buffer-1);
     delete[] buffer;
   }
-}
-
-
-#if HAVE_OVERLAY
-
-class _Fl_Overlay : public Fl_Window {
-  friend class Fl_Overlay_Window;
-  void flush();
-  void show();
-public:
-  _Fl_Overlay(int x, int y, int w, int h) : Fl_Window(x,y,w,h) {
-    set_flag(INACTIVE);
-  }
-};
-
-/*int Fl_Overlay_Window::can_do_overlay() {
- return fl_find_overlay_visual() != 0;
- }*/
-
-void _Fl_Overlay::show() {
-  if (shown()) {Fl_Window::show(); return;}
-  fl_background_pixel = int(fl_transparent_pixel);
-  Fl_X::make_xid(this, fl_overlay_visual, fl_overlay_colormap);
-  fl_background_pixel = -1;
-  // find the outermost window to tell wm about the colormap:
-  Fl_Window *w = window();
-  for (;;) {Fl_Window *w1 = w->window(); if (!w1) break; w = w1;}
-  XSetWMColormapWindows(fl_display, fl_xid(w), &(Fl_X::i(this)->xid), 1);
-}
-
-void _Fl_Overlay::flush() {
-  fl_window = fl_xid(this);
-#if defined(FLTK_USE_CAIRO)
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
-#endif
-  Fl_Xlib_Graphics_Driver::fl_overlay = 1;
-  Fl_Overlay_Window *w = (Fl_Overlay_Window *)parent();
-  Fl_X *myi = Fl_X::i(this);
-  if (damage() != FL_DAMAGE_EXPOSE) XClearWindow(fl_display, fl_xid(this));
-  fl_clip_region(myi->region); myi->region = 0;
-  w->draw_overlay();
-  Fl_Xlib_Graphics_Driver::fl_overlay = 0;
-}
-#endif // HAVE_OVERLAY
-
-
-int Fl_X11_Window_Driver::can_do_overlay() {
-#if HAVE_OVERLAY
-  return fl_find_overlay_visual() != 0;
-#endif
-  return Fl_Window_Driver::can_do_overlay();
-}
-
-void Fl_X11_Window_Driver::redraw_overlay() {
-#if HAVE_OVERLAY
-  if (!fl_display) return; // this prevents fluid -c from opening display
-  if (!overlay()) {
-    if (can_do_overlay()) {
-      Fl_Group::current(pWindow);
-      overlay(new _Fl_Overlay(0,0,w(),h()));
-      Fl_Group::current(0);
-    } else {
-      overlay(pWindow); // fake the overlay
-    }
-  }
-  if (shown()) {
-    if (overlay() == pWindow) {
-      pWindow->clear_damage(pWindow->damage()|FL_DAMAGE_OVERLAY);
-      Fl::damage(FL_DAMAGE_CHILD);
-    } else if (!overlay()->shown())
-      overlay()->show();
-    else
-      overlay()->redraw();
-  }
-  return;
-#endif
-  Fl_Window_Driver::redraw_overlay();
-}
-
-void Fl_X11_Window_Driver::flush_menu() {
-#if HAVE_OVERLAY
-   if (!fl_overlay_visual || !overlay()) {flush_Fl_Window(); return;}
-   Fl_X *myi = Fl_X::i(pWindow);
-   fl_window = myi->xid;
-# if defined(FLTK_USE_CAIRO)
-   // capture gc changes automatically to update the cairo context adequately
-   if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
-# endif
-  Fl_Xlib_Graphics_Driver::fl_overlay = 1;
-   fl_clip_region(myi->region); myi->region = 0; current(pWindow);
-   draw();
-  Fl_Xlib_Graphics_Driver::fl_overlay = 0;
-#else
-   flush_Fl_Window();
-#endif
-}
-
-void Fl_X11_Window_Driver::erase_menu() {
-#if HAVE_OVERLAY
-  if (pWindow->shown())  XClearWindow(fl_display, fl_xid(pWindow));
-#endif
 }
 
 int Fl_X11_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,

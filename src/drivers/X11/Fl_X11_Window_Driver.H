@@ -100,12 +100,9 @@ public:
   virtual void take_focus();
   virtual void flush_double();
   virtual void flush_overlay();
-  virtual void flush_menu();
-  virtual void erase_menu();
   virtual void draw_begin();
   virtual void make_current();
   virtual void show();
-  virtual void show_menu();
   virtual void resize(int X,int Y,int W,int H);
   virtual void label(const char *name, const char *mininame);
   virtual void destroy_double_buffer();
@@ -131,8 +128,6 @@ public:
   virtual void free_icons();
   void set_icons(); // driver-internal support function
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  virtual int can_do_overlay();
-  virtual void redraw_overlay();
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
 };
 

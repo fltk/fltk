@@ -72,7 +72,6 @@ unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set
 
 void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
 
-void Fl_Window_Driver::flush_menu() { pWindow->Fl_Window::flush(); }
 
 /**
  Draw the window content.
@@ -92,7 +91,6 @@ void Fl_Window_Driver::make_current() { }
  */
 void Fl_Window_Driver::show() { }
 
-void Fl_Window_Driver::show_menu() { pWindow->Fl_Window::show(); }
 
 /**
  Change the window title.

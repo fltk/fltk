@@ -171,24 +171,13 @@
 #undef USE_SDL
 
 /*
- * HAVE_OVERLAY:
- *
- * Use the X overlay extension?  FLTK will try to use an overlay
- * visual for Fl_Overlay_Window, the Gl_Window overlay, and for the
- * menus.  Setting this to zero will remove a substantial amount of
- * code from FLTK.  Overlays have only been tested on SGI servers!
- */
-
-#define HAVE_OVERLAY 0
-
-/*
  * HAVE_GL_OVERLAY:
  *
  * It is possible your GL has an overlay even if X does not.  If so,
  * set this to 1.
  */
 
-#define HAVE_GL_OVERLAY HAVE_OVERLAY
+#define HAVE_GL_OVERLAY 0
 
 /*
  * WORDS_BIGENDIAN:
