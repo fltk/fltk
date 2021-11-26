@@ -24,16 +24,8 @@
 
 /**
   The Fl_Double_Window provides a double-buffered window.
-  If possible this will use the X double buffering extension (Xdbe).  If
-  not, it will draw the window data into an off-screen pixmap, and then
+  It will draw the window data into an off-screen pixmap, and then
   copy it to the on-screen window.
-  <P>It is highly recommended that you put the following code before the
-  first show() of <I>any</I> window in your program: </P>
-  \code
-  Fl::visual(FL_DOUBLE|FL_INDEX)
-  \endcode
-  This makes sure you can use Xdbe on servers where double buffering
-  does not exist for every visual.
 */
 class FL_EXPORT Fl_Double_Window : public Fl_Window
 {

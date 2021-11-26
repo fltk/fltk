@@ -40,13 +40,6 @@
     less-than-24 bit deep visual.  This call fails if 24 bits are not
     available.
     <BR>&nbsp; </LI>
-    <LI>Fl::visual(FL_DOUBLE|FL_INDEX)
-    <BR>Hardware double buffering.  Call this if you are going to use
-    Fl_Double_Window.
-    <BR>&nbsp; </LI>
-    <LI>Fl::visual(FL_DOUBLE|FL_RGB)</LI>
-    <LI>Fl::visual(FL_DOUBLE|FL_RGB8)
-    <BR>Hardware double buffering and full color.
     </UL>
 
     <P>This returns true if the system has the capabilities by default or

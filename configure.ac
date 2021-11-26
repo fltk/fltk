@@ -127,8 +127,6 @@ AC_ARG_ENABLE([x11], AS_HELP_STRING([--enable-x11], [use X11 with Cygwin or macO
 
 AC_ARG_ENABLE([xcursor], AS_HELP_STRING([--disable-xcursor], [turn off Xcursor support]))
 
-AC_ARG_ENABLE([xdbe], AS_HELP_STRING([--disable-xdbe], [turn off Xdbe support]))
-
 AC_ARG_ENABLE([xfixes], AS_HELP_STRING([--disable-xfixes], [turn off Xfixes support]))
 
 AC_ARG_ENABLE([xft], AS_HELP_STRING([--disable-xft], [turn off Xft support]))
@@ -1154,18 +1152,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         ])
     ])
 
-    dnl Check for the Xdbe extension unless disabled...
-    xdbe_found=no
-    AS_IF([test x$enable_xdbe != xno], [
-        AC_CHECK_HEADER([X11/extensions/Xdbe.h], [
-            AC_CHECK_LIB([Xext], [XdbeQueryExtension], [
-                AC_DEFINE([HAVE_XDBE])
-                LIBS="-lXext $LIBS"
-                xdbe_found=yes
-            ])
-        ], [], [#include <X11/Xlib.h>])
-    ])
-
     dnl Check for the Xfixes extension unless disabled...
     xfixes_found=no
     AS_IF([test x$enable_xfixes != xno], [
@@ -1563,9 +1549,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     graphics="X11"
     AS_IF([test x$xft_found = xyes], [
         graphics="$graphics + Xft"
-    ])
-    AS_IF([test x$xdbe_found = xyes], [
-        graphics="$graphics + Xdbe"
     ])
     AS_IF([test x$xfixes_found = xyes], [
         graphics="$graphics + Xfixes"

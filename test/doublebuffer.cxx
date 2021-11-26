@@ -83,8 +83,6 @@ public:
 };
 
 int main(int argc, char **argv) {
-  if (!Fl::visual(FL_DOUBLE))
-    printf("Xdbe not supported, faking double buffer with pixmaps.\n");
   Fl_Window w01(420,420,"Fl_Single_Window"); w01.box(FL_FLAT_BOX);
   single_blink_window w1(10,10,400,400,"Fl_Single_Window");
   w1.box(FL_FLAT_BOX); w1.color(FL_BLACK); //w1.position(100,200);

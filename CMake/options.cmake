@@ -596,18 +596,6 @@ else(OPTION_USE_XRENDER)
 endif (OPTION_USE_XRENDER)
 
 #######################################################################
-if (X11_FOUND)
-  option (OPTION_USE_XDBE "use lib Xdbe" ON)
-endif (X11_FOUND)
-
-if (OPTION_USE_XDBE AND HAVE_XDBE_H)
-  set (HAVE_XDBE 1)
-  set (FLTK_XDBE_FOUND TRUE)
-else()
-  set (FLTK_XDBE_FOUND FALSE)
-endif (OPTION_USE_XDBE AND HAVE_XDBE_H)
-
-#######################################################################
 set (FL_NO_PRINT_SUPPORT FALSE)
 if (X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
   set (FL_NO_PRINT_SUPPORT TRUE)

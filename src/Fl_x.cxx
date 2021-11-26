@@ -2489,9 +2489,6 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->next = Fl_X::first;
   xp->region = 0;
   Fl_Window_Driver::driver(win)->wait_for_expose_value = 1;
-#ifdef USE_XDBE
-  Fl_X11_Window_Driver::driver(win)->backbuffer_bad = 1;
-#endif
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
   return xp;

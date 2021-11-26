@@ -62,7 +62,6 @@ fl_find_header (HAVE_SYS_SELECT_H sys/select.h)
 fl_find_header (HAVE_SYS_STDTYPES_H sys/stdtypes.h)
 
 fl_find_header (HAVE_X11_XREGION_H "X11/Xlib.h;X11/Xregion.h")
-fl_find_header (HAVE_XDBE_H "X11/Xlib.h;X11/extensions/Xdbe.h")
 
 if (WIN32 AND NOT CYGWIN)
   # we don't use pthreads on Windows (except for Cygwin, see options.cmake)
@@ -154,7 +153,7 @@ mark_as_advanced (HAVE_OPENGL_GLU_H HAVE_PNG_H)
 mark_as_advanced (HAVE_PTHREAD_H HAVE_PTHREAD_MUTEX_RECURSIVE)
 mark_as_advanced (HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
 mark_as_advanced (HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
-mark_as_advanced (HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
+mark_as_advanced (HAVE_SYS_STDTYPES_H)
 mark_as_advanced (HAVE_X11_XREGION_H)
 
 #----------------------------------------------------------------------

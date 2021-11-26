@@ -24,7 +24,7 @@
 #define FL_X11_WINDOW_DRIVER_H
 
 #include "../../Fl_Window_Driver.H"
-#include <config.h> // for USE_XDBE
+#include <config.h>
 #include <FL/platform.H> // for Cursor
 class Fl_Bitmap;
 
@@ -80,10 +80,6 @@ private:
   void flush_double(int erase_overlay);
   void sendxjunk();
   void activate_window();
-#ifdef USE_XDBE
-  char backbuffer_bad;
-  void flush_double_dbe(int erase_overlay);
-#endif
 
 public:
   Fl_X11_Window_Driver(Fl_Window*);

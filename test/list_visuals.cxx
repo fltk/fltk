@@ -77,10 +77,6 @@ typedef struct _OverlayInfo {
 #include <X11/extensions/multibuf.h>
 #endif
 
-#if HAVE_XDBE
-#include <X11/extensions/Xdbe.h>
-#endif
-
 static void print_mask(XVisualInfo* p) {
   int n = 0;
   int what = 0;
@@ -144,22 +140,6 @@ void list_visuals() {
   }
 #endif
 
-#if HAVE_XDBE
-  int event_base, error_base;
-  int numdouble = 0;
-  XdbeVisualInfo *dbe = 0;
-  if (XdbeQueryExtension(fl_display, &event_base, &error_base)) {
-    Drawable root = RootWindow(fl_display,fl_screen);
-    int numscreens = 1;
-    XdbeScreenVisualInfo *a = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-    if (!a) printf("error getting double buffer visuals\n");
-    else {
-      dbe = a->visinfo;
-      numdouble = a->count;
-    }
-  }
-#endif
-
   for (int i=0; i<num; i++) {
     XVisualInfo *p = visualList+i;
 
@@ -198,11 +178,6 @@ void list_visuals() {
       if (m->visualid == p->visualid)
         printf(" stereo multibuffer(%d)", m->max_buffers);
     }
-#endif
-
-#if HAVE_XDBE
-    for (j = 0; j < numdouble; j++) if (dbe[j].visual == p->visualid)
-      printf(" doublebuf(perflevel %d)",dbe[j].perflevel);
 #endif
 
     if (p->visualid==XVisualIDFromVisual(DefaultVisual(fl_display,fl_screen)))

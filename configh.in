@@ -109,22 +109,6 @@
 #define USE_PANGO 0
 
 /*
- * HAVE_XDBE:
- *
- * Do we have the X double-buffer extension?
- */
-
-#define HAVE_XDBE 0
-
-/*
- * USE_XDBE:
- *
- * Actually try to use the double-buffer extension?
- */
-
-#define USE_XDBE HAVE_XDBE
-
-/*
  * HAVE_XFIXES:
  *
  * Do we have the X fixes extension?

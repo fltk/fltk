@@ -44,74 +44,9 @@ extern unsigned long fl_transparent_pixel;
 
 Window fl_window;
 
-#if USE_XDBE
-#include <X11/extensions/Xdbe.h>
-
-// whether the Xdbe extension is usable.
-// DO NOT call this if the window is not mapped, because we do not want fluid to open the display.
-static int can_xdbe()
-{
-  static int tried = 0;
-  static int use_xdbe = 0;
-  if (!tried) {
-    tried = 1;
-    int event_base, error_base;
-    if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
-    Drawable root = RootWindow(fl_display,fl_screen);
-    int numscreens = 1;
-    XdbeScreenVisualInfo *a = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-    if (!a) return 0;
-    for (int j = 0; j < a->count; j++) {
-      if (a->visinfo[j].visual == fl_visual->visualid) {
-        use_xdbe = 1; break;
-      }
-    }
-    XdbeFreeVisualInfo(a);
-  }
-  return use_xdbe;
-}
-
-
-void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
-{
-  pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!other_xid) {
-    other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
-    backbuffer_bad = 1;
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-  }
-  if (backbuffer_bad || erase_overlay) {
-    // Make sure we do a complete redraw...
-    if (i->region) {Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region); i->region = 0;}
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-    backbuffer_bad = 0;
-  }
-  // Redraw as needed...
-  if (pWindow->damage()) {
-    fl_clip_region(i->region); i->region = 0;
-    fl_window = other_xid;
-    draw();
-    fl_window = i->xid;
-  }
-  // Copy contents of back buffer to window...
-  XdbeSwapInfo s;
-  s.swap_window = fl_xid(pWindow);
-  s.swap_action = XdbeCopied;
-  XdbeSwapBuffers(fl_display, &s, 1);
-}
-
-#endif // USE_XDBE
-
 
 void Fl_X11_Window_Driver::destroy_double_buffer() {
-#if USE_XDBE
-  if (can_xdbe()) {
-    XdbeDeallocateBackBufferName(fl_display, other_xid);
-  }
-  else
-#endif // USE_XDBE
-    fl_delete_offscreen(other_xid);
+  fl_delete_offscreen(other_xid);
   other_xid = 0;
 }
 
@@ -219,10 +154,7 @@ void Fl_X11_Window_Driver::draw_begin()
 void Fl_X11_Window_Driver::flush_double()
 {
   if (!shown()) return;
-#if USE_XDBE
-  if (can_xdbe()) flush_double_dbe(0); else
-#endif
-    flush_double(0);
+  flush_double(0);
 }
 
 void Fl_X11_Window_Driver::flush_double(int erase_overlay)
@@ -251,9 +183,6 @@ void Fl_X11_Window_Driver::flush_overlay()
   if (!shown()) return;
   int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (overlay() == pWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
-#if USE_XDBE
-  if (can_xdbe()) flush_double_dbe(erase_overlay); else
-#endif
   flush_double(erase_overlay);
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
   if (overlay() == oWindow) oWindow->draw_overlay();

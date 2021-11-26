@@ -153,7 +153,6 @@ OPTION_USE_SVG - default ON
 
 OPTION_USE_XINERAMA - default ON
 OPTION_USE_XFT      - default ON
-OPTION_USE_XDBE     - default ON
 OPTION_USE_XCURSOR  - default ON
 OPTION_USE_XRENDER  - default ON
    These are X11 extended libraries. These libs are used if found on the
