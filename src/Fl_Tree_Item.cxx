@@ -796,6 +796,7 @@ Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) 
 }
 
 static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
+  // Pasted from Fl_Widget::draw_focus(); we don't have access to this method
   if (!Fl::visible_focus()) return;
   switch (B) {
     case FL_DOWN_BOX:
@@ -807,32 +808,12 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y
     default:
       break;
   }
-  fl_color(fl_contrast(fg, bg));
-
-//#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
-  fl_line_style(FL_DOT);
-  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
-          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
-  fl_line_style(FL_SOLID);
-/*#else
-  // Some platforms don't implement dotted line style, so draw
-  // every other pixel around the focus area...
-  //
-  // Also, QuickDraw (MacOS) does not support line styles specifically,
-  // and the hack we use in fl_line_style() will not draw horizontal lines
-  // on odd-numbered rows...
-  int i, xx, yy;
-
   X += Fl::box_dx(B);
   Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B) + 2;
-  H -= Fl::box_dh(B) + 2;
-
-  for (xx = 0, i = 1; xx < W; xx ++, i ++) if (i & 1) fl_point(X + xx, Y);
-  for (yy = 0; yy < H; yy ++, i ++) if (i & 1) fl_point(X + W, Y + yy);
-  for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
-  for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
-#endif*/
+  W -= Fl::box_dw(B)+1;
+  H -= Fl::box_dh(B)+1;
+  fl_color(fl_contrast(fg, bg));
+  fl_focus_rect(X, Y, W, H);
 }
 
 /// Return the item's 'visible' height. Takes into account the item's:
