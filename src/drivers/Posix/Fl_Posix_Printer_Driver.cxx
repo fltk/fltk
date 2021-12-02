@@ -327,7 +327,6 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     return 2;
   }
   ps->close_command(pclose);
-  Fl_Surface_Device::push_current(this);
   return ps->start_postscript(pages, format, layout); // start printing
 }
 

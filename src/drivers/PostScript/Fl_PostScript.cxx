@@ -122,9 +122,9 @@ static const double dashes_cap[5][7]={
 Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
 {
   close_cmd_ = 0;
+#if ! USE_PANGO
   //lang_level_ = 3;
   lang_level_ = 2;
-#if ! USE_PANGO
   mask = 0;
 #endif
   ps_filename_ = NULL;

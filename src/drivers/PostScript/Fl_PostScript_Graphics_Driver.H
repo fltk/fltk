@@ -48,6 +48,8 @@ public:
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
   int nPages;
+  double pw_, ph_;
+  uchar bg_r, bg_g, bg_b;
 
   Fl_PostScript_Graphics_Driver();
   ~Fl_PostScript_Graphics_Driver();
