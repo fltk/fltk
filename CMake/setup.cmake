@@ -68,6 +68,14 @@ endif (WIN32 AND NOT CYGWIN)
 include(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
+if (CMAKE_GENERATOR MATCHES "Xcode")
+  if (${XCODE_VERSION} VERSION_GREATER_EQUAL 3.9) # CMake 3.9 and up
+    # Tell Xcode to regenerate scheme information automatically whenever the
+    # CMake configuartion changes without asking the user
+    set (CMAKE_XCODE_GENERATE_SCHEME 1)
+  endif()
+endif()
+
 if (APPLE)
   set (HAVE_STRCASECMP 1)
   set (HAVE_DIRENT_H 1)

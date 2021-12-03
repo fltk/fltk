@@ -37,18 +37,41 @@ set (CPPFILES
   widget_panel.cxx
 )
 
+# also list header files in Apple's Xcode IDE
+
+set (HEADERFILES
+  CodeEditor.h
+  Fl_Type.h
+  Fl_Widget_Type.h
+  Fluid_Image.h
+  Shortcut_Button.h
+  StyleParse.h
+  about_panel.h
+  alignment_panel.h
+  comments.h
+  function_panel.h
+  print_panel.h
+  template_panel.h
+  undo.h
+  widget_panel.h
+)
+
 # ExternalCodeEditor: platform specific files
 
 if (WIN32)
   list (APPEND CPPFILES ExternalCodeEditor_WIN32.cxx)
+  list (APPEND HEADERFILES ExternalCodeEditor_WIN32.h)
 else ()
   list (APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
+  list (APPEND HEADERFILES ExternalCodeEditor_UNIX.h)
 endif (WIN32)
+
+source_group("Header Files" FILES ${HEADERFILES})
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set (ICON_NAME fluid.icns)
   set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${HEADERFILES} ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -64,7 +87,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   unset (WRAPPER)
 
 else ()
-  add_executable (fluid WIN32 ${CPPFILES})
+  add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
 endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries (fluid fltk fltk_images fltk_forms)
