@@ -20,6 +20,7 @@
 #include <FL/fl_string.h>
 #include <FL/fl_utf8.h> // fl_fopen()
 #include <stdio.h>
+#include <time.h> // hack to restore "configure --enable-x11" on macOS ≥ 11
 
 // PNG library include files
 

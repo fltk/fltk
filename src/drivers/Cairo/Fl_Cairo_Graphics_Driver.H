@@ -44,17 +44,13 @@ public:
   };
   Clip * clip_;
 
-  int lang_level_;
   int gap_;
-  int pages_;
   cairo_t *cr() { return cairo_; }
   PangoLayout *pango_layout() {return pango_layout_;}
 
   void check_status(void);
 
   enum SHAPE shape_;
-  int linewidth_;// need for clipping, lang level 1-2
-  int linestyle_;//
   unsigned char cr_,cg_,cb_;
   char  linedash_[256];//should be enough
   void concat();  // transform ror scalable dradings...
@@ -68,9 +64,6 @@ public:
   int left_margin;
   int top_margin;
 
-  double pw_, ph_;
-
-  uchar bg_r, bg_g, bg_b;
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
 
   // implementation of drawing methods

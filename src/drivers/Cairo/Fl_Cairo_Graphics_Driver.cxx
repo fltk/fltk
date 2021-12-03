@@ -64,7 +64,14 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 }
 
 
-Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {}
+Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
+  cairo_ = NULL;
+  pango_layout_ = NULL;
+  clip_ = NULL;
+  scale_x = scale_y = 1;
+  angle = 0;
+  left_margin = top_margin = 0;
+}
 
 Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {}
 
@@ -192,8 +199,6 @@ void Fl_Cairo_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, i
 }
 
 void Fl_Cairo_Graphics_Driver::line_style(int style, int width, char* dashes) {
-  linewidth_=width;
-  linestyle_=style;
   if(dashes){
     if(dashes != linedash_)
       strcpy(linedash_,dashes);
