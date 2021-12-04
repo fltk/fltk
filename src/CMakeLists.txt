@@ -79,7 +79,7 @@ set (CPPFILES
   Fl_Single_Window.cxx
   Fl_Slider.cxx
   Fl_Spinner.cxx
-  Fl_String.cxx
+  Fl_String_class.cxx
   Fl_Sys_Menu_Bar.cxx
   Fl_System_Driver.cxx
   Fl_Table.cxx

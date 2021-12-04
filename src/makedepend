@@ -2968,11 +2968,11 @@ fl_string.o: ../FL/fl_casts.H
 fl_string.o: ../FL/Fl_Export.H
 fl_string.o: ../FL/Fl_Preferences.H
 fl_string.o: ../FL/fl_string.h
-Fl_String.o: ../FL/Fl_String_class.H
 fl_string.o: ../FL/fl_types.h
 fl_string.o: ../FL/fl_utf8.h
 fl_string.o: ../FL/platform_types.h
 fl_string.o: Fl_System_Driver.H
+Fl_String_class.o: ../FL/Fl_String_class.H
 Fl_SVG_Image.o: ../config.h
 Fl_SVG_Image.o: ../FL/abi-version.h
 Fl_SVG_Image.o: ../FL/Enumerations.H
