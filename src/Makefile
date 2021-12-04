@@ -58,6 +58,7 @@ CPPFILES = \
 	Fl_Menu_Window.cxx \
 	Fl_Menu_add.cxx \
 	Fl_Menu_global.cxx \
+	Fl_Message.cxx \
 	Fl_Multi_Label.cxx \
 	Fl_Native_File_Chooser.cxx \
 	Fl_Overlay_Window.cxx \

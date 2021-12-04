@@ -21,8 +21,11 @@
 
 // *** BEGIN OUT OF SOURCE DOCUMENTATION ***
 
-/** \defgroup group_comdlg Common Dialogs classes and functions
-    @{
+/** \defgroup group_comdlg Common Dialog Classes and Functions
+
+  \brief Common dialog functions for file selection, message output, and more.
+
+  @{
 */
 /** \class Fl_File_Chooser
   The Fl_File_Chooser widget displays a standard file selection
