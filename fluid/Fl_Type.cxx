@@ -36,134 +36,7 @@
 #include "Fl_Type.h"
 #include "undo.h"
 
-#include <FL/Fl_Pixmap.H>
-#include "pixmaps/lock.xpm"
-#include "pixmaps/protected.xpm"
-#include "pixmaps/invisible.xpm"
-//#include "pixmaps/unlock.xpm"
-
-static Fl_Pixmap        lock_pixmap(lock_xpm);
-static Fl_Pixmap    protected_pixmap(protected_xpm);
-static Fl_Pixmap    invisible_pixmap(invisible_xpm);
-//static Fl_Pixmap      unlock_pixmap(unlock_xpm);
-
-#include "pixmaps/flWindow.xpm"
-#include "pixmaps/flButton.xpm"
-#include "pixmaps/flCheckButton.xpm"
-#include "pixmaps/flRoundButton.xpm"
-#include "pixmaps/flBox.xpm"
-#include "pixmaps/flGroup.xpm"
-#include "pixmaps/flFunction.xpm"
-#include "pixmaps/flCode.xpm"
-#include "pixmaps/flCodeBlock.xpm"
-#include "pixmaps/flComment.xpm"
-#include "pixmaps/flData.xpm"
-#include "pixmaps/flDeclaration.xpm"
-#include "pixmaps/flDeclarationBlock.xpm"
-#include "pixmaps/flClass.xpm"
-#include "pixmaps/flTabs.xpm"
-#include "pixmaps/flInput.xpm"
-#include "pixmaps/flChoice.xpm"
-#include "pixmaps/flMenuitem.xpm"
-#include "pixmaps/flMenubar.xpm"
-#include "pixmaps/flSubmenu.xpm"
-#include "pixmaps/flScroll.xpm"
-#include "pixmaps/flTile.xpm"
-#include "pixmaps/flWizard.xpm"
-#include "pixmaps/flPack.xpm"
-#include "pixmaps/flReturnButton.xpm"
-#include "pixmaps/flLightButton.xpm"
-#include "pixmaps/flRepeatButton.xpm"
-#include "pixmaps/flMenuButton.xpm"
-#include "pixmaps/flOutput.xpm"
-#include "pixmaps/flTextDisplay.xpm"
-#include "pixmaps/flTextEdit.xpm"
-#include "pixmaps/flFileInput.xpm"
-#include "pixmaps/flBrowser.xpm"
-#include "pixmaps/flCheckBrowser.xpm"
-#include "pixmaps/flFileBrowser.xpm"
-#include "pixmaps/flClock.xpm"
-#include "pixmaps/flHelp.xpm"
-#include "pixmaps/flProgress.xpm"
-#include "pixmaps/flSlider.xpm"
-#include "pixmaps/flScrollBar.xpm"
-#include "pixmaps/flValueSlider.xpm"
-#include "pixmaps/flAdjuster.xpm"
-#include "pixmaps/flCounter.xpm"
-#include "pixmaps/flDial.xpm"
-#include "pixmaps/flRoller.xpm"
-#include "pixmaps/flValueInput.xpm"
-#include "pixmaps/flValueOutput.xpm"
-#include "pixmaps/flSpinner.xpm"
-#include "pixmaps/flWidgetClass.xpm"
-#include "pixmaps/flTree.xpm"
-#include "pixmaps/flTable.xpm"
-#include "pixmaps/flSimpleTerminal.xpm"
-
-static Fl_Pixmap        window_pixmap(flWindow_xpm);
-static Fl_Pixmap        button_pixmap(flButton_xpm);
-static Fl_Pixmap        checkbutton_pixmap(flCheckButton_xpm);
-static Fl_Pixmap        roundbutton_pixmap(flRoundButton_xpm);
-static Fl_Pixmap        box_pixmap(flBox_xpm);
-static Fl_Pixmap        group_pixmap(flGroup_xpm);
-static Fl_Pixmap        function_pixmap(flFunction_xpm);
-static Fl_Pixmap        code_pixmap(flCode_xpm);
-static Fl_Pixmap        codeblock_pixmap(flCodeBlock_xpm);
-static Fl_Pixmap        comment_pixmap(flComment_xpm);
-static Fl_Pixmap        declaration_pixmap(flDeclaration_xpm);
-static Fl_Pixmap        declarationblock_pixmap(flDeclarationBlock_xpm);
-static Fl_Pixmap        class_pixmap(flClass_xpm);
-static Fl_Pixmap        tabs_pixmap(flTabs_xpm);
-static Fl_Pixmap        input_pixmap(flInput_xpm);
-static Fl_Pixmap        choice_pixmap(flChoice_xpm);
-static Fl_Pixmap        menuitem_pixmap(flMenuitem_xpm);
-static Fl_Pixmap        menubar_pixmap(flMenubar_xpm);
-static Fl_Pixmap        submenu_pixmap(flSubmenu_xpm);
-static Fl_Pixmap        scroll_pixmap(flScroll_xpm);
-static Fl_Pixmap        tile_pixmap(flTile_xpm);
-static Fl_Pixmap        wizard_pixmap(flWizard_xpm);
-static Fl_Pixmap        pack_pixmap(flPack_xpm);
-static Fl_Pixmap        returnbutton_pixmap(flReturnButton_xpm);
-static Fl_Pixmap        lightbutton_pixmap(flLightButton_xpm);
-static Fl_Pixmap        repeatbutton_pixmap(flRepeatButton_xpm);
-static Fl_Pixmap        menubutton_pixmap(flMenuButton_xpm);
-static Fl_Pixmap        output_pixmap(flOutput_xpm);
-static Fl_Pixmap        textdisplay_pixmap(flTextDisplay_xpm);
-static Fl_Pixmap        textedit_pixmap(flTextEdit_xpm);
-static Fl_Pixmap        fileinput_pixmap(flFileInput_xpm);
-static Fl_Pixmap        browser_pixmap(flBrowser_xpm);
-static Fl_Pixmap        checkbrowser_pixmap(flCheckBrowser_xpm);
-static Fl_Pixmap        filebrowser_pixmap(flFileBrowser_xpm);
-static Fl_Pixmap        clock_pixmap(flClock_xpm);
-static Fl_Pixmap        help_pixmap(flHelp_xpm);
-static Fl_Pixmap        progress_pixmap(flProgress_xpm);
-static Fl_Pixmap        slider_pixmap(flSlider_xpm);
-static Fl_Pixmap        scrollbar_pixmap(flScrollBar_xpm);
-static Fl_Pixmap        valueslider_pixmap(flValueSlider_xpm);
-static Fl_Pixmap        adjuster_pixmap(flAdjuster_xpm);
-static Fl_Pixmap        counter_pixmap(flCounter_xpm);
-static Fl_Pixmap        dial_pixmap(flDial_xpm);
-static Fl_Pixmap        roller_pixmap(flRoller_xpm);
-static Fl_Pixmap        valueinput_pixmap(flValueInput_xpm);
-static Fl_Pixmap        valueoutput_pixmap(flValueOutput_xpm);
-static Fl_Pixmap        spinner_pixmap(flSpinner_xpm);
-static Fl_Pixmap        widgetclass_pixmap(flWidgetClass_xpm);
-static Fl_Pixmap        data_pixmap(flData_xpm);
-static Fl_Pixmap        tree_pixmap(flTree_xpm);
-static Fl_Pixmap    table_pixmap(flTable_xpm);
-static Fl_Pixmap    simple_terminal_pixmap(flSimpleTerminal_xpm);
-
-Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, &roundbutton_pixmap, /* 0..4 */
- &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */
- &declarationblock_pixmap, &class_pixmap, &tabs_pixmap, &input_pixmap, &choice_pixmap,               /* 11..15 */
- &menuitem_pixmap, &menubar_pixmap, &submenu_pixmap, &scroll_pixmap, &tile_pixmap, &wizard_pixmap,   /* 16..21 */
- &pack_pixmap, &returnbutton_pixmap, &lightbutton_pixmap, &repeatbutton_pixmap, &menubutton_pixmap,  /* 22..26 */
- &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
- &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,           /* 33..36 */
- &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
- &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap,             /* 42..46 */
- &spinner_pixmap, &widgetclass_pixmap, &data_pixmap, &tree_pixmap, &table_pixmap,                    /* 47..51 */
- &simple_terminal_pixmap };                                                                          /* 52 */
+#include "pixmaps.h"
 
 extern int show_comments;
 
@@ -386,12 +259,19 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
 
   // Add tags on top of the icon for locked and protected types.
   switch (l->is_public()) {
-    case 0: lock_pixmap.draw(X - 17, Y); break;
-    case 2: protected_pixmap.draw(X - 17, Y); break;
+    case 0: lock_pixmap->draw(X - 17, Y); break;
+    case 2: protected_pixmap->draw(X - 17, Y); break;
   }
 
-  if (l->is_widget() && ((Fl_Widget_Type*)l)->o && !((Fl_Widget_Type*)l)->o->visible()) {
-    invisible_pixmap.draw(X - 17, Y);
+  if (   l->is_widget()
+      && !l->is_window()
+      && ((Fl_Widget_Type*)l)->o
+      && !((Fl_Widget_Type*)l)->o->visible()
+      && (!l->parent || (   strcmp(l->parent->type_name(),"Fl_Tabs")
+                         && strcmp(l->parent->type_name(),"Fl_Wizard")) )
+      )
+  {
+    invisible_pixmap->draw(X - 17, Y);
   }
 
   // Indent=12 per level: Now write the text that comes after the graphics representation
