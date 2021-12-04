@@ -832,7 +832,7 @@ public:
   }
   Fl_Widget_Type *_make() {return new Fl_Input_Choice_Type();}
   virtual void build_menu();
-  int pixmapID() { return 15; }
+  int pixmapID() { return 53; }
   void copy_properties();
 };
 

@@ -32,6 +32,7 @@ set (CPPFILES
   file.cxx
   fluid.cxx
   function_panel.cxx
+  pixmaps.cxx
   template_panel.cxx
   undo.cxx
   widget_panel.cxx
@@ -51,6 +52,7 @@ set (HEADERFILES
   comments.h
   function_panel.h
   print_panel.h
+  pixmaps.h
   template_panel.h
   undo.h
   widget_panel.h
