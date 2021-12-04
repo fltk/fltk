@@ -560,4 +560,28 @@ void fl_message_title_default(const char *title) {
   Fl_Message::message_title_default(title);
 }
 
+/** Sets the icon label of the dialog window used in many common dialogs.
+
+  This icon label will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The label \p str is stored internally as a reference, it must be
+  in scope until the dialog function (e.g. fl_choice) is called.
+
+  It applies only to the \b next call of one of the common dialogs and
+  will be reset after that call so the next dialog will use its default
+  label unless set again.
+
+  \note This label string must be short, usually only one character so
+    it fits in the icon box. You can use any valid UTF-8 character, e.g.
+    the Euro sign ("€") which is three bytes in UTF-8 encoding.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] str    icon label
+*/
+void fl_message_icon_label(const char *str) {
+  Fl_Message::icon_label(str);
+}
+
 /** @} */

@@ -65,6 +65,9 @@ private:
   static const char *message_title_;
   static const char *message_title_default_;
 
+  // icon label for next dialog (STR #2762)
+  static const char *message_icon_label_;
+
   // Note: since Fl_Message objects are destroyed before fl_input()
   // and fl_password() return their input text, we *need* to store
   // the text in an internal (static) buffer. :-(
@@ -89,6 +92,7 @@ public:
   static Fl_Box *message_icon();
   static void message_title(const char *title);
   static void message_title_default(const char *title);
+  static void icon_label(const char *str);
 
   /** Implements fl_message_position(const int, const int y, const int center). */
   static void message_position(const int x, const int y, const int center) {

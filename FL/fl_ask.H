@@ -95,6 +95,8 @@ inline void fl_message_position(Fl_Widget &widget) {
 FL_EXPORT void fl_message_title(const char *title);
 FL_EXPORT void fl_message_title_default(const char *title);
 
+FL_EXPORT void fl_message_icon_label(const char *str);
+
 // pointers you can use to change FLTK to another language:
 extern FL_EXPORT const char *fl_no;
 extern FL_EXPORT const char *fl_yes;

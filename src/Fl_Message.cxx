@@ -65,6 +65,8 @@
 const char *Fl_Message::message_title_default_;
 const char *Fl_Message::message_title_;
 
+const char *Fl_Message::message_icon_label_;
+
 Fl_Box *Fl_Message::message_icon_;
 
 char *Fl_Message::input_buffer_;
@@ -123,6 +125,9 @@ void Fl_Message::window_cb_(Fl_Widget *w, void *d) {
   The constructor creates a default message window and sets the icon type
   to the given \p iconlabel which can be any character (or string).
 
+  If fl_message_icon_label() has been called before this label is used
+  instead and reset to NULL after the message window has been created.
+
   Message text box (Fl_Box), icon (Fl_Box), and an input (Fl_Input) widgets
   are created and initialized. Three buttons are created and arranged right to
   left in the message window. The second (middle) button is an Fl_Return_Button.
@@ -157,7 +162,13 @@ Fl_Message::Fl_Message(const char *iconlabel)
   icon_->labelsize(icon_template->labelsize());
   icon_->color(icon_template->color());
   icon_->labelcolor(icon_template->labelcolor());
-  icon_->label(iconlabel);
+
+  if (message_icon_label_) { // fl_message_icon_label() has been called
+    icon_->copy_label(message_icon_label_);
+    message_icon_label_ = 0;
+  } else { // use default (static, per message default string)
+    icon_->label(iconlabel);
+  }
 
   window_->end(); // don't add the buttons automatically
 
@@ -524,6 +535,10 @@ void Fl_Message::message_title_default(const char *title) {
   }
   if (title)
     message_title_default_ = strdup(title);
+}
+
+void Fl_Message::icon_label(const char *str) {
+  message_icon_label_ = str;
 }
 
 /**
