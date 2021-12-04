@@ -979,8 +979,15 @@ static void cb(Fl_Widget *, void *v) {
         // Move and resize the menubar across the top of the window...
         wt->o->resize(0, 0, w, h);
       } else {
-        // Just resize to the ideal size...
-        wt->o->size(w, h);
+        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+          // If this callback was called from the RMB popup menu in a window,
+          // popupx and popupy will contain the mouse coordinates at RMB event.
+          wt->o->resize(Fl_Window_Type::popupx, Fl_Window_Type::popupy, w, h);
+        } else {
+          // If popupx is invalid, use the default position and find a good
+          // size for the widget.
+          wt->o->size(w, h);
+        }
       }
     }
     select_only(t);

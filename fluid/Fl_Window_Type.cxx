@@ -1176,6 +1176,9 @@ void Fl_Window_Type::moveallchildren()
   update_xywh();
 }
 
+int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
+int Fl_Window_Type::popupy = 0x7FFFFFFF;
+
 int Fl_Window_Type::handle(int event) {
   static Fl_Type* selection;
   switch (event) {
@@ -1187,8 +1190,10 @@ int Fl_Window_Type::handle(int event) {
     if (Fl::event_button() >= 3) {
       in_this_only = this; // modifies how some menu items work.
       static const Fl_Menu_Item* myprev;
+      popupx = mx; popupy = my;
       const Fl_Menu_Item* m = New_Menu->popup(mx,my,"New",myprev);
       if (m && m->callback()) {myprev = m; m->do_callback(this->o);}
+      popupx = 0x7FFFFFFF; popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
       in_this_only = 0;
       return 1;
     }
