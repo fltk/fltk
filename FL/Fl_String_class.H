@@ -14,10 +14,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FL_FL_STRING_H_
-#define _FL_FL_STRING_H_
+#ifndef _FL_Fl_String_class_H_
+#define _FL_Fl_String_class_H_
 
-/** \file FL/Fl_String.H
+/** \file FL/Fl_String_class.H
   Basic Fl_String class for FLTK.
 */
 
@@ -111,4 +111,4 @@ public:
 
 }; // class Fl_String
 
-#endif // _FL_FL_STRING_H_
+#endif // _FL_Fl_String_class_H_

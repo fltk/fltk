@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl_String.H>
+#include <FL/Fl_String_class.H>
 
 #include <stdio.h>
 #include <string.h>
