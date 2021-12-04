@@ -1210,6 +1210,7 @@ void make_main_window() {
 
   if (!main_window) {
     Fl_Widget *o;
+    loadPixmaps();
     main_window = new Fl_Double_Window(WINWIDTH,WINHEIGHT,"fluid");
     main_window->box(FL_NO_BOX);
     o = make_widget_browser(0,MENUHEIGHT,BROWSERWIDTH,BROWSERHEIGHT);
@@ -1792,7 +1793,6 @@ int main(int argc,char **argv) {
 #endif // __APPLE__
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
-    loadPixmaps();
     main_window->callback(exit_cb);
     position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
     main_window->show(argc,argv);
