@@ -370,6 +370,15 @@ static Fl_Type* write_code(Fl_Type* p) {
 extern const char* header_file_name;
 extern Fl_Class_Type *current_class;
 
+
+/** \brief Write the source and header files for the current design.
+
+ If the files already exist, they will be overwritten.
+
+ \param[in] s filename of source code file
+ \param[in] t filename of the header file
+ \return 0 if the operation failed, 1 if it was successful
+ */
 int write_code(const char *s, const char *t) {
   const char *filemode = "w";
   if (write_sourceview)
