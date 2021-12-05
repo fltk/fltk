@@ -2791,9 +2791,11 @@ void Fl_X11_Window_Driver::sendxjunk() {
   if (!size_range_set()) { // default size_range based on resizable():
     if (w->resizable()) {
       Fl_Widget *o = w->resizable();
-      int minw = o->w(); if (minw > 100) minw = 100;
-      int minh = o->h(); if (minh > 100) minh = 100;
-      w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
+      int minw = w->w();                     // minw is window's initial width
+      int minh = w->h();                     // minh is window's initial height
+      int maxw = (o->w() == 0) ? minw : 0;   // if resizable w()==0, disable resize w()
+      int maxh = (o->h() == 0) ? minh : 0;   // if resizable h()==0, disable resize h()
+      w->size_range(minw, minh, maxw, maxh);
     } else {
       w->size_range(w->w(), w->h(), w->w(), w->h());
     }
