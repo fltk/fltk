@@ -702,7 +702,7 @@ char i18n_program[FL_PATH_MAX] = "";
 int write_code_files() {
   if (!filename) {
     save_cb(0,0);
-    if (!filename) return;
+    if (!filename) return 1;
   }
   char cname[FL_PATH_MAX];
   char hname[FL_PATH_MAX];
@@ -734,6 +734,7 @@ int write_code_files() {
       fl_message("Wrote %s", cname);
     }
   }
+  return 0;
 }
 
 void write_cb(Fl_Widget *, void *) {
