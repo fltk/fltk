@@ -99,7 +99,7 @@ void Fl_String::alloc_buf(int size) {
 }
 
 void Fl_String::value(const char *str) {
-  value(str, str ? strlen(str) : 0);
+  value(str, str ? (int)strlen(str) : 0);
 }
 
 int Fl_String::slen() const {

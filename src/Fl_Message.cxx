@@ -46,7 +46,8 @@
 #include <FL/Fl.H>
 #include "flstring.h"
 #include <FL/fl_ask.H>
-#include "Fl_Message.h" // intentionally "hidden" in src/...
+#include "Fl_Message.h"     // intentionally "hidden" in src/...
+#include "FL/fl_string.h"   // fl_strdup()
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -510,7 +511,7 @@ void Fl_Message::message_title(const char *title) {
     message_title_ = 0;
   }
   if (title)
-    message_title_ = strdup(title);
+    message_title_ = fl_strdup(title);
 }
 
 /** Sets the default title of the dialog window used in many common dialogs.
@@ -534,7 +535,7 @@ void Fl_Message::message_title_default(const char *title) {
     message_title_default_ = 0;
   }
   if (title)
-    message_title_default_ = strdup(title);
+    message_title_default_ = fl_strdup(title);
 }
 
 void Fl_Message::icon_label(const char *str) {
