@@ -38,7 +38,7 @@ static const char * const flSimpleTerminal_xpm[] = {
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
-".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
 "c..............................c",
 "cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc"

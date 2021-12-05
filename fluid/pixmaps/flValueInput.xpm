@@ -34,7 +34,7 @@ static const char * const flValueInput_xpm[] = {
 ".fddddd....ddddd....dddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
-".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
 "c..............................c",
 "cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc",

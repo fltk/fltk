@@ -42,5 +42,6 @@ static const char * const flMenubar_xpm[] = {
 "cccccccgf'''''''''''''''''''agcc",
 "cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc"
 };

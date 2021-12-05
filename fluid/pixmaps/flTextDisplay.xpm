@@ -38,7 +38,7 @@ static const char * const flTextDisplay_xpm[] = {
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
-".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
 "c..............................c",
 "cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc"

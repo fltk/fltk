@@ -34,7 +34,7 @@ static const char * const flOutput_xpm[] = {
 ".fdd..dddddd..dddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
 ".fdddddddddddddddddddddddddddda.",
-".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+".aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
 "c..............................c",
 "cccccccccccccccccccccccccccccccc",
 "cccccccccccccccccccccccccccccccc",
