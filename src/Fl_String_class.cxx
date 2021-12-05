@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-/** \file src/Fl_String.cxx
+/** \file src/Fl_String_class.cxx
   Basic Fl_String class for FLTK.
 */
 

@@ -2265,6 +2265,7 @@ Fl_Message.o: ../FL/Fl_Input.H
 Fl_Message.o: ../FL/Fl_Input_.H
 Fl_Message.o: ../FL/Fl_Return_Button.H
 Fl_Message.o: ../FL/Fl_Secret_Input.H
+Fl_Message.o: ../FL/fl_string.h
 Fl_Message.o: ../FL/Fl_String_class.H
 Fl_Message.o: ../FL/fl_types.h
 Fl_Message.o: ../FL/fl_utf8.h
