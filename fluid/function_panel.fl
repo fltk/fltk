@@ -541,10 +541,10 @@ Function {make_widgetbin()} {open
   exit_cb((Fl_Widget*)o, v);
 else
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {446 274 574 102} type Single align 80 non_modal visible
+    xywh {445 273 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
-      label Code
+      label Code open
       xywh {3 19 79 79} labelsize 12
     } {
       Fl_Button {} {
@@ -603,7 +603,7 @@ else
       }
     }
     Fl_Group {} {
-      label Groups
+      label Groups open
       xywh {87 19 79 79} labelsize 12
     } {
       Fl_Button {} {
@@ -650,7 +650,7 @@ else
       }
     }
     Fl_Group {} {
-      label Buttons
+      label Buttons open
       xywh {171 19 54 79} labelsize 12
     } {
       Fl_Button {} {
@@ -691,7 +691,7 @@ else
       }
     }
     Fl_Group {} {
-      label Valuators
+      label Valuators open
       xywh {230 19 104 79} labelsize 12
     } {
       Fl_Button {} {
@@ -756,7 +756,7 @@ else
       }
     }
     Fl_Group {} {
-      label Text
+      label Text open
       xywh {339 19 54 79} labelsize 12
     } {
       Fl_Button {} {
@@ -797,20 +797,26 @@ else
       }
     }
     Fl_Group {} {
-      label Menus
-      xywh {398 19 54 79} labelsize 12
+      label Menus open
+      xywh {398 19 79 79} labelsize 12
     } {
-      Fl_Button {} {
-        user_data {"Fl_Menu_Bar"}
-        callback type_make_cb
-        tooltip {Menu Bar} xywh {400 21 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[17]);}
-      }
       Fl_Button {} {
         user_data {"Fl_Input_Choice"}
         callback type_make_cb
-        tooltip {Input Choice} xywh {425 21 24 24} box THIN_UP_BOX
+        tooltip {Input Choice} xywh {400 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[53]);}
+      }
+      Fl_Button {} {
+        user_data {"menuitem"}
+        callback type_make_cb
+        tooltip {Menu Item} xywh {425 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[16]);}
+      }
+      Fl_Button {} {
+        user_data {"Fl_Menu_Bar"}
+        callback type_make_cb
+        tooltip {Menu Bar} xywh {450 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[17]);}
       }
       Fl_Button {} {
         user_data {"Fl_Menu_Button"}
@@ -819,10 +825,16 @@ else
         code0 {o->image(pixmap[26]);}
       }
       Fl_Button {} {
-        user_data {"menuitem"}
+        user_data {"checkmenuitem"}
         callback type_make_cb
-        tooltip {Menu Item} xywh {425 46 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[16]);}
+        tooltip {Checkbox Menu Item} xywh {425 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[54]);}
+      }
+      Fl_Button {} {
+        user_data {"submenu"}
+        callback type_make_cb
+        tooltip {Sub Menu} xywh {450 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[18]);}
       }
       Fl_Button {} {
         user_data {"Fl_Choice"}
@@ -831,73 +843,73 @@ else
         code0 {o->image(pixmap[15]);}
       }
       Fl_Button {} {
-        user_data {"submenu"}
-        callback type_make_cb
-        tooltip {Sub Menu} xywh {425 71 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[18]);}
+        user_data {"radiomenuitem"}
+        callback type_make_cb selected
+        tooltip {Radio Menu Item} xywh {425 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[55]);}
       }
     }
     Fl_Group {} {
-      label Browsers
-      xywh {457 19 54 79} labelsize 12
+      label Browsers open
+      xywh {482 19 54 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Browser"}
         callback type_make_cb
-        tooltip Browser xywh {459 21 24 24} box THIN_UP_BOX
+        tooltip Browser xywh {484 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[31]);}
       }
       Fl_Button {} {
         user_data {"Fl_Tree"}
         callback type_make_cb
-        tooltip Tree xywh {484 21 24 24} box THIN_UP_BOX
+        tooltip Tree xywh {509 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[50]);}
       }
       Fl_Button {} {
         user_data {"Fl_Check_Browser"}
         callback type_make_cb
-        tooltip {Check Browser} xywh {459 46 24 24} box THIN_UP_BOX
+        tooltip {Check Browser} xywh {484 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[32]);}
-      }
-      Fl_Button {} {
-        user_data {"Fl_File_Browser"}
-        callback type_make_cb
-        tooltip {File Browser} xywh {459 71 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[33]);}
       }
       Fl_Button {} {
         user_data {"Fl_Help_View"}
         callback type_make_cb
-        tooltip {Help Browser} xywh {484 46 24 24} box THIN_UP_BOX
+        tooltip {Help Browser} xywh {509 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[35]);}
+      }
+      Fl_Button {} {
+        user_data {"Fl_File_Browser"}
+        callback type_make_cb
+        tooltip {File Browser} xywh {484 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[33]);}
       }
       Fl_Button {} {
         user_data {"Fl_Table"}
         callback type_make_cb
-        tooltip Table xywh {484 71 24 24} box THIN_UP_BOX
+        tooltip Table xywh {509 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[51]);}
       }
     }
     Fl_Group {} {
-      label Misc selected
-      xywh {515 19 55 79} labelsize 12
+      label Misc open
+      xywh {540 19 55 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Box"}
         callback type_make_cb
-        tooltip Box xywh {517 21 24 24} box THIN_UP_BOX
+        tooltip Box xywh {542 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[5]);}
       }
       Fl_Button {} {
         user_data {"Fl_Clock"}
         callback type_make_cb
-        tooltip Clock xywh {542 21 24 24} box THIN_UP_BOX
+        tooltip Clock xywh {567 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[34]);}
       }
       Fl_Button {} {
         user_data {"Fl_Progress"}
         callback type_make_cb
-        tooltip Progress xywh {517 46 24 24} box THIN_UP_BOX
+        tooltip Progress xywh {542 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[36]);}
       }
     }

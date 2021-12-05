@@ -695,12 +695,16 @@ public:
 
 class Fl_Radio_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
+    const char* type_name() {return "RadioMenuItem";}
     Fl_Type* make();
+    int pixmapID() { return 55; }
 };
 
 class Fl_Checkbox_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
+    const char* type_name() {return "CheckMenuItem";}
     Fl_Type* make();
+    int pixmapID() { return 54; }
 };
 
 class Fl_Submenu_Type : public Fl_Menu_Item_Type {

@@ -99,6 +99,7 @@ etc/FLTKConfig.cmake
 /fluid/TAGS
 /fluid/fluid.app
 /fluid/pixmaps/*.bck
+/fluid/html/
 
 # /lib/
 /lib/lib*
