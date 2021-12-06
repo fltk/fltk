@@ -10,10 +10,10 @@
   <TD><CENTER>
     <B>FLTK 1.4.0 Programming Manual</B>
 
-    Revision 11 by F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+    By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
-    Copyright 1998-2020 by Bill Spitzak and others.
+    Copyright 1998-2021 by Bill Spitzak and others.
   </CENTER></TD>
 </TR>
 </TABLE>
@@ -48,10 +48,18 @@
     \subpage editor
 
     \subpage drawing
+        - \ref drawing_WhenCanYouDraw
+        - \ref drawing_DrawingUnit
+        - \ref drawing_DrawingFunctions
+        - \ref drawing_images
+        - \ref drawing_offscreen
 
     \subpage events
         - \ref events_event_xxx
         - \ref events_propagation
+
+  </TD>
+  <TD ALIGN="LEFT" VALIGN="TOP">
 
     \subpage subclassing
 
@@ -61,9 +69,6 @@
         - \ref fluid_widget_attributes
         - \ref fluid_selecting_moving
         - \ref fluid_images
-
-  </TD>
-  <TD ALIGN="LEFT" VALIGN="TOP">
 
     \subpage advanced
 
