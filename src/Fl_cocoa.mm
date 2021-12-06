@@ -1234,6 +1234,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (window->parent()) [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
     starting_moved_window = NULL;
   }
+  if (!window->parent()) {
+    int nscreen = Fl::screen_num(window->x(), window->y(), window->w(), window->h());
+    Fl_Window_Driver::driver(window)->screen_num(nscreen);
+  }
   fl_unlock_function();
 }
 - (void)view_did_resize:(NSNotification *)notif
