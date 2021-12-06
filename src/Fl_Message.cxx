@@ -503,7 +503,7 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
   will be reset to an empty title (the default for all dialogs) after
   that call.
 
-  \param[in] title	window label, string copied internally
+  \param[in] title      window label, string copied internally
 */
 void Fl_Message::message_title(const char *title) {
   if (message_title_) {
@@ -527,7 +527,7 @@ void Fl_Message::message_title(const char *title) {
   The \p title string is copied internally, so that you can use a
   local variable or free the string immediately after this call.
 
-  \param[in] title	default window label, string copied internally
+  \param[in] title      default window label, string copied internally
 */
 void Fl_Message::message_title_default(const char *title) {
   if (message_title_default_) {

@@ -95,7 +95,7 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
     attributes.height -= (attributes.width - w_attributes.width);
     attributes.width = w_attributes.width;
   }
-  
+
   int nscreen = screen_num();
   float s = Fl::screen_driver()->scale(nscreen);
   w = attributes.width / s;

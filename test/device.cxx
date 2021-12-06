@@ -602,7 +602,7 @@ void copy(Fl_Widget *, void *data) {
       }
     }
   }
-  
+
   if (strcmp(operation, "fl_capture_window()") == 0) {
     Fl_Window *win = target->as_window() ? target->as_window() : target->window();
     int X = target->as_window() ? 0 : target->x();
