@@ -162,6 +162,10 @@ public:
 
     See the \ref resize chapter for more examples and detailed explanation.
 
+    \note The resizable() widget of a window can also affect the window's
+      resizing behavior if Fl_Window::size_range() is not called.
+
+    \see Fl_Window::size_range()
   */
   void resizable(Fl_Widget* o) {resizable_ = o;}
   /**

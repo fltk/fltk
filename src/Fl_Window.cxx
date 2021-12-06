@@ -594,39 +594,43 @@ int Fl_Window::handle(int ev)
 }
 
 /**
- Sets the allowable range the user can resize this window to.
- This only works for top-level windows.
+  Sets the allowable range the user can resize this window to.
+  This only works for top-level windows.
 
- If this function is not called, FLTK tries to figure out the range
- from the setting of resizable():
- <UL>
- <LI>If resizable() is NULL (this is the  default) then the window cannot
-        be resized and the resize border and max-size control will not be
-        displayed for the window.</LI>
- <LI>If either dimension of resizable() is less than 100, then that is
-        considered the minimum size.  Otherwise the resizable() has a minimum
-        size of 100.</LI>
- <LI>If either dimension of resizable() is zero, then that is also the
-        maximum size (so the window cannot resize in that direction).</LI>
- </UL>
+  It is undefined what happens if the current window size does not fit
+  in the constraints passed to size_range().
 
- It is undefined what happens if the current size does not fit in the
- constraints passed to size_range().
+  If this function is \b not called, FLTK tries to figure out the range
+  from the setting of the window's resizable() widget:
 
- \param[in] minWidth, minHeight The smallest the window can be.
+  - If resizable() is NULL (this is the default) then the window cannot
+    be resized and the resize border and max-size control will not be
+    displayed for the window.
+
+  - If either dimension of resizable() is zero, then the minimum size is
+    also the maximum size (so the window cannot resize in that direction).
+
+  - Otherwise the size of the resizable is irrelevant and the window's
+    minimum size is the current size and the maximum size is unlimited
+    like if size_range(w(), h(), 0, 0) was called.
+
+  \param[in] minWidth, minHeight The smallest the window can be.
     Either value must be greater than 0.
- \param[in] maxWidth, maxHeight The largest the window can be. If either is
-    equal to the minimum then you cannot resize in that direction.
+
+  \param[in] maxWidth, maxHeight The largest the window can be. If either
+    is equal to the minimum then you cannot resize in that direction.
     If either is zero then FLTK picks a maximum size in that direction
     such that the window will fill the screen.
- \param[in] deltaX, deltaY These are size increments. The window will be
+
+  \param[in] deltaX, deltaY These are size increments. The window will be
     constrained to widths of <tt>minWidth + N * deltaX</tt>, where N is any
-    non-negative integer. If these are less or equal to 1 they are ignored.
-    (this is ignored on Windows)
- \param[in] aspectRatio A flag that indicates that the window should preserve
+    non-negative integer. If these are less or equal to 1 they are ignored
+    (this is ignored on Windows).
+
+  \param[in] aspectRatio A flag that indicates that the window should preserve
     its aspect ratio. This only works if both the maximum and minimum have
     the same aspect ratio (ignored on Windows and by many X window managers).
- */
+*/
 void Fl_Window::size_range(int minWidth, int minHeight,
                            int maxWidth, int maxHeight,
                            int deltaX, int deltaY, int aspectRatio) {
