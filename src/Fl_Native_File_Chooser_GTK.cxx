@@ -914,14 +914,14 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   platform_fnfc = NULL;
   if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
     const char *desktop = getenv("XDG_CURRENT_DESKTOP");
-    if (desktop && strcmp(desktop, "KDE") == 0) {
+    if (desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {
       if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
         // First Time here, try to find kdialog
         FILE *pipe = popen("kdialog -v 2> /dev/null", "r");
         if (pipe) {
-          char line[100] = "";
-          fgets(line, sizeof(line), pipe);
-          if (strlen(line) > 0) Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog = true;
+          char *p, line[100] = "";
+          p = fgets(line, sizeof(line), pipe);
+          if (p && strlen(line) > 0) Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog = true;
           pclose(pipe);
         }
         Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog = true;

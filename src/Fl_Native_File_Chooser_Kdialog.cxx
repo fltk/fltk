@@ -51,8 +51,29 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
   Fl::flush(); // to close menus if necessary
   const char *option;
   switch (_btype) {
+    case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY: {
+      // BROWSE_MULTI_DIRECTORY is not supported by kdialog, run GTK chooser instead
+      Fl_Native_File_Chooser fnfc(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
+      fnfc.title( title() );
+      fnfc.directory(directory());
+      fnfc.preset_file(preset_file());
+      fnfc.filter(filter());
+      fnfc.options(options());
+      int retval = fnfc.show();
+      for (int i = 0; i < _tpathnames; i++) delete[] _pathnames[i];
+      delete[] _pathnames; _pathnames = NULL;
+      _tpathnames = fnfc.count();
+      if (_tpathnames && retval == 0) {
+        _pathnames = new char*[_tpathnames];
+        for (int i = 0; i < _tpathnames; i++) {
+          _pathnames[i] = new char[strlen(fnfc.filename(i))+1];
+          strcpy(_pathnames[i], fnfc.filename(i));
+        }
+      }
+      return retval;
+    }
+      break;
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
-    case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY: // not supported
       option = "--getexistingdirectory";
       break;
 
