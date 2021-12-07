@@ -24,6 +24,7 @@
 #define FL_COCOA_WINDOW_DRIVER_H
 
 #include "../../Fl_Window_Driver.H"
+#include <FL/Fl_Plugin.H>
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Image;
@@ -161,6 +162,14 @@ public:
   //icons
   virtual void icons(const Fl_RGB_Image *icons[], int count);
   NSImage *icon_image;
+};
+
+class Fl_Cocoa_Plugin : public Fl_Plugin {
+public:
+  Fl_Cocoa_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
+  virtual const char *klass() { return "fltk:cocoa"; }
+  virtual const char *name() = 0;
+  virtual void resize(Fl_Gl_Window *glw, int x, int y, int w, int h) = 0;
 };
 
 #endif // FL_COCOA_WINDOW_DRIVER_H

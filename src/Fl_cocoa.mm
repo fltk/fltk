@@ -1253,9 +1253,19 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   float s = Fl::screen_driver()->scale(window->screen_num());
   NSRect r = [view frame];
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(1);
-  if (Fl_Cocoa_Window_Driver::driver(window)->through_resize())
-    Fl_Cocoa_Window_Driver::driver(window)->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
-  else
+  if (Fl_Cocoa_Window_Driver::driver(window)->through_resize()) {
+    if (window->as_gl_window()) {
+      static Fl_Cocoa_Plugin *plugin = NULL;
+      if (!plugin) {
+        Fl_Plugin_Manager pm("fltk:cocoa");
+        plugin = (Fl_Cocoa_Plugin*)pm.plugin("gl.cocoa.fltk.org");
+      }
+      // calls Fl_Gl_Window::resize() without including Fl_Gl_Window.H
+      plugin->resize(window->as_gl_window(), X, Y, lround(r.size.width/s), lround(r.size.height/s));
+    } else {
+      Fl_Cocoa_Window_Driver::driver(window)->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
+    }
+  } else
     window->resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
   Fl_Cocoa_Window_Driver::driver(window)->view_resized(0);
   update_e_xy_and_e_xy_root(nsw);

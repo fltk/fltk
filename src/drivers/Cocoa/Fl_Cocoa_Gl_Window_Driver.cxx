@@ -297,4 +297,15 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   return img;
 }
 
+class Fl_Gl_Cocoa_Plugin : public Fl_Cocoa_Plugin {
+public:
+  Fl_Gl_Cocoa_Plugin() : Fl_Cocoa_Plugin(name()) { }
+  virtual const char *name() { return "gl.cocoa.fltk.org"; }
+  virtual void resize(Fl_Gl_Window *glw, int x, int y, int w, int h) {
+    glw->Fl_Gl_Window::resize(x, y, w, h);
+  }
+};
+
+static Fl_Gl_Cocoa_Plugin Gl_Cocoa_Plugin;
+
 #endif // HAVE_GL
