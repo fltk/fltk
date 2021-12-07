@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 // Copyright 2012 IMM
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -17,6 +17,7 @@
 
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
+#include "Fl_Native_File_Chooser_Kdialog.H"
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <FL/platform.H>
@@ -907,17 +908,38 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  if (Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
-    // First Time here, try to find the GTK libs if they are installed
-    if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
-      Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs();
+  // Use kdialog if available at run-time and if using the KDE desktop,
+  // else, use GTK dialog if available at run-time
+  // otherwise, use FLTK file chooser.
+  platform_fnfc = NULL;
+  if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
+    const char *desktop = getenv("XDG_CURRENT_DESKTOP");
+    if (desktop && strcmp(desktop, "KDE") == 0) {
+      if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
+        // First Time here, try to find kdialog
+        FILE *pipe = popen("kdialog -v 2> /dev/null", "r");
+        if (pipe) {
+          char line[100] = "";
+          fgets(line, sizeof(line), pipe);
+          if (strlen(line) > 0) Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog = true;
+          pclose(pipe);
+        }
+        Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog = true;
+      }
+      // if we found kdialog, we will use the Fl_Kdialog_Native_File_Chooser_Driver
+      if (Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog) platform_fnfc = new Fl_Kdialog_Native_File_Chooser_Driver(val);
     }
-    Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs = -1;
-  }
-  // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
-  if (Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs) platform_fnfc = new Fl_GTK_Native_File_Chooser_Driver(val);
-  else
+#if HAVE_DLSYM && HAVE_DLFCN_H
+    if (!platform_fnfc) {
+      if ( Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
+        // First Time here, try to find the GTK libs if they are installed
+        Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs();
+        Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs = -1;
+      }
+      // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
+      if (Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs) platform_fnfc = new Fl_GTK_Native_File_Chooser_Driver(val);
+    }
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
-    platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
+  }
+  if (!platform_fnfc) platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
 }

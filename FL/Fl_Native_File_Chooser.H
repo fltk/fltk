@@ -27,7 +27,9 @@
 
         class Fl_Native_File_Chooser_FLTK_Driver   <== this API implementation is the default FLTK file chooser
                 class Fl_GTK_Native_File_Chooser_Driver  <== this API implementation runs a GTK file chooser
+                class Fl_Kdialog_Native_File_Chooser_Driver  <== this API implementation runs a KDE file chooser
                                         it is determined at run-time if the GTK dynamic libraries are available
+                                        and the KDE file chooser runs under the KDE desktop
 
         class Fl_Quartz_Native_File_Chooser_Driver  <== this API implementation runs a Mac OS X file chooser
 
