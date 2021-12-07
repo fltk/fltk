@@ -29,17 +29,17 @@ The positions of the boxes inside the TR and BL groups are also
 relative to the main window, but the boxes inside the TL and BR
 sub-windows are positioned relative to the enclosing sub-window.
 
-In other words the widget hierarchy and positions can be summarized as:
+In other words, the widget hierarchy and positions can be summarized as:
 <pre>
     Fl_Window main window
-      Fl_Window TL subwindow     # x,y relative to main window
-        Fl_Box  tl box           # x,y relative to TL subwindow
-      Fl_Window BR subwindow     # x,y relative to main window
-        Fl_Box  br box           # x,y relative to BR subwindow
-      Fl_Group  TR group         # x,y relative to main window
-        Fl_Box  tr box           # x,y relative to main window
-      Fl_Group  BL group         # x,y relative to main window
-        Fl_Box  bl box           # x,y relative to main window
+      Fl_Window TL subwindow     # x, y relative to main window
+        Fl_Box  tl box           # x, y relative to TL subwindow
+      Fl_Window BR subwindow     # x, y relative to main window
+        Fl_Box  br box           # x, y relative to BR subwindow
+      Fl_Group  TR group         # x, y relative to main window
+        Fl_Box  tr box           # x, y relative to main window
+      Fl_Group  BL group         # x, y relative to main window
+        Fl_Box  bl box           # x, y relative to main window
 </pre>
 
 
@@ -107,7 +107,7 @@ so that you can scroll and view the entire contents.
 
 The Fl_Tabs widget provides a front-to-back stack of individual
 panels which usually contain Fl_Group widgets and their children.
-The user can switch between panels by clicking on a small
+The user can switch between panels by clicking on the small
 tabs that protrude from the panels. The appearance of each tab
 is determined by the child widget's label and related attributes.
 

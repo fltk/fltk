@@ -1,5 +1,5 @@
 //
-// Coordinate demonstation program for the Fast Light Tool Kit (FLTK).
+// Coordinate demonstration program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2021 by Bill Spitzak and others.
 //
@@ -49,39 +49,41 @@ public:
     Fl_Window* tl_window = new Fl_Window(0, 0, 250, 100);
     tl_window->box(FL_ENGRAVED_BOX);
     Title* tl_title = new Title(10, 10, 230, 40, FL_RED,
-      "FL_Window TL(0, 0, 250, 100)\nx,y relative to main window");
+      "FL_Window TL(0, 0, 250, 100)\nx, y relative to main window");
     Box* tl_box = new Box(25, 50, 200, 40, FL_RED,
-      "FL_Box tl(25, 50, 200, 40)\nx,y relative to TL window");
+      "FL_Box tl(25, 50, 200, 40)\nx, y relative to TL window");
     tl_window->end();
 
     Fl_Window* br_window = new Fl_Window(250, 100, 250, 100);
     br_window->box(FL_ENGRAVED_BOX);
     Title* br_title = new Title(10, 10, 230, 40, FL_MAGENTA,
-      "FL_Window BR(300, 110, 300, 110)\nx,y relative to main window");
+      "FL_Window BR(300, 110, 300, 110)\nx, y relative to main window");
     Box* br_box = new Box(25, 50, 200, 40, FL_MAGENTA,
-      "FL_Box br(25, 50, 200, 40)\nx,y relative to BR window");
+      "FL_Box br(25, 50, 200, 40)\nx, y relative to BR window");
     br_window->end();
 
     Fl_Group* tr_group = new Fl_Group(250, 0, 250, 100);
     tr_group->box(FL_ENGRAVED_BOX);
     Title* tr_title = new Title(260, 10, 230, 40, FL_BLUE,
-      "FL_Group TR(250, 0, 250, 100)\nx,y relative to main window");
+      "FL_Group TR(250, 0, 250, 100)\nx, y relative to main window");
     Box* tr_box = new Box(275, 50, 200, 40, FL_BLUE,
-      "FL_Box tr(275, 50, 200, 40)\nx,y relative to main window");
+      "FL_Box tr(275, 50, 200, 40)\nx, y relative to main window");
     tr_group->end();
   
     Fl_Group* bl_group = new Fl_Group(0, 100, 250, 100);
     bl_group->box(FL_ENGRAVED_BOX);
     Title* bl_title = new Title(10, 110, 230, 40, FL_BLACK,
-      "FL_Group BL(0, 100, 250, 100)\nx,y relative to main window");
+      "FL_Group BL(0, 100, 250, 100)\nx, y relative to main window");
     Box* bl_box = new Box(25, 150, 200, 40, FL_BLACK,
-      "FL_Box bl(25, 150, 200, 40)\nx,y relative to main window");
+      "FL_Box bl(25, 150, 200, 40)\nx, y relative to main window");
     bl_group->end();
   
     // member variable
     message_box = new Fl_Box(0, 201, 500, 30);
     message_box->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER);
     message_box->box(FL_ENGRAVED_BOX);
+    message_box->labelfont(FL_COURIER);
+    message_box->labelsize(12);
 
     end();
   }
@@ -89,7 +91,7 @@ public:
 protected:
   int handle(int event) {
     static char buffer[128];
-    static const char* fmt = "Mouse position relative to main window: %4d,%4d";
+    static const char* fmt = "Mouse position relative to main window: %3d,%3d";
     int result = Fl_Window::handle(event);
     switch (event) {
       case FL_ENTER:
@@ -119,45 +121,5 @@ private:
 int main(int argc, char** argv) {
   MainWindow window(500, 232, "FLTK Coordinate Systems");
   window.show(argc, argv);
-  return Fl::run();
-}
-
-int main0(int argc, char ** argv) {
-  Fl_Window window(600, 300, "FLTK Coordinate Systems");
-
-  Fl_Window tl_window(0, 0, 300, 110);
-  tl_window.box(FL_ENGRAVED_BOX);
-  Title tl_title(5, 10, 290, 40, FL_RED,
-    "FL_Window TL(0, 0, 300, 130)\nx,y relative to main window");
-  Box tl_box(25, 60, 250, 40, FL_RED,
-    "FL_Box tl(25, 60, 250, 40)\nx,y relative to TL window");
-  tl_window.end();
-
-  Fl_Window br_window(300, 110, 300, 110);
-  br_window.box(FL_ENGRAVED_BOX);
-  Title br_title(5, 10, 290, 40, FL_MAGENTA,
-    "FL_Window BR(300, 110, 300, 110)\nx,y relative to main window");
-  Box br_box(25, 60, 250, 40, FL_MAGENTA,
-    "FL_Box br(25, 60, 250, 40)\nx,y relative to BR window");
-  br_window.end();
-
-  Fl_Group tr_group(300, 0, 300, 110);
-  tr_group.box(FL_ENGRAVED_BOX);
-  Title tr_title(305, 10, 290, 40, FL_BLUE,
-    "FL_Group TR(300, 0, 300, 130)\nx,y relative to main window");
-  Box tr_box(325, 60, 250, 40, FL_BLUE,
-    "FL_Box tr(325, 60, 250, 40)\nx,y relative to main window");
-  tr_group.end();
-  
-  Fl_Group bl_group(0, 110, 300, 110);
-  bl_group.box(FL_ENGRAVED_BOX);
-  Title bl_title(5, 120, 290, 40, FL_BLACK,
-    "FL_Group BL(0, 110, 300, 110)\nx,y relative to main window");
-  Box bl_box(25, 170, 250, 40, FL_BLACK,
-    "FL_Box bl(25, 170, 250, 40)\nx,y relative to main window");
-  bl_group.end();
-  
-  window.end();
-  window.show(argc,argv);
   return Fl::run();
 }
