@@ -147,6 +147,7 @@ static void delete_children(Fl_Type *p) {
   for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
   for (; f != p; ) {
     Fl_Type *g = f->prev;
+    widget_browser->deleting(f);
     delete f;
     f = g;
   }
@@ -158,6 +159,7 @@ void delete_all(int selected_only) {
     if (f->selected || !selected_only) {
       delete_children(f);
       Fl_Type *g = f->next;
+      widget_browser->deleting(f);
       delete f;
       f = g;
     } else f = f->next;
@@ -250,13 +252,24 @@ const char* Fl_Type::title() {
   return type_name();
 }
 
-// add a list of widgets as a new child of p:
+/**
+ Add this list/tree of widgets as a new child of p.
+
+ \c this is not part of the widget browser. \c p should be in the
+ widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
+
+ This methods updates the widget_browser.
+
+ \param[in] p insert \c this tree as a child of \c p
+ */
 void Fl_Type::add(Fl_Type *p) {
   if (p && parent == p) return;
   undo_checkpoint();
   parent = p;
+  // p is not in the Widget_Browser, so we must run the linked list to find the last entry
   Fl_Type *end = this;
   while (end->next) end = end->next;
+  // run the list again to set the future node levels
   Fl_Type *q;
   int newlevel;
   if (p) {
@@ -268,6 +281,7 @@ void Fl_Type::add(Fl_Type *p) {
   }
   for (Fl_Type *t = this->next; t; t = t->next) t->level += (newlevel-level);
   level = newlevel;
+  // now link this tree after p
   if (q) {
     prev = q->prev;
     prev->next = this;
@@ -283,28 +297,52 @@ void Fl_Type::add(Fl_Type *p) {
     last = end;
     prev = end->next = 0;
   }
+  // tell this that it was added, so it can update itself
   if (p) p->add_child(this,0);
   open_ = 1;
   fixvisible(this);
   set_modflag(1);
+  // run the p tree a last time to make sure the widget_browser updates correctly
+  Fl_Type *a = p;
+  for (Fl_Type *t = this; t && a != end; a = t, t = t->next)
+    widget_browser->inserting(a, t);
   widget_browser->redraw();
 }
 
-// add to a parent before another widget:
+/**
+ Add this list/tree of widgets as a new sibling before p.
+
+ \c this is not part of the widget browser. \c p should be in the
+ widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
+
+ This methods updates the widget_browser.
+
+ \param[in] p insert \c this tree as a child of \c p
+ */
 void Fl_Type::insert(Fl_Type *g) {
+  // p is not in the Widget_Browser, so we must run the linked list to find the last entry
   Fl_Type *end = this;
   while (end->next) end = end->next;
+  // this wil get the sam parent as g
   parent = g->parent;
+  // run the list again to set the future node levels
   int newlevel = g->level;
   visible = g->visible;
   for (Fl_Type *t = this->next; t; t = t->next) t->level += newlevel-level;
   level = newlevel;
+  // insert this in the list before g
   prev = g->prev;
   if (prev) prev->next = this; else first = this;
   end->next = g;
   g->prev = end;
   fixvisible(this);
+  // tell parent that it has a new child, so it can update itself
   if (parent) parent->add_child(this, g);
+  // run this tree a last time to make sure the widget_browser updates correctly
+  Fl_Type *a = prev;
+  for (Fl_Type *t = this; t && a != end; a = t, t = t->next)
+    if (a)
+      widget_browser->inserting(a, t);
   widget_browser->redraw();
 }
 
@@ -326,27 +364,39 @@ int Fl_Type::msgnum() {
 
 /**
  Remove this node and all its children from the parent node.
+
+ This does not delete anything. The resulting list//tree will no longer be in
+ the widget_browser, so \c Fl_Type::first and \c Fl_Type::last do not apply
+ to it.
+
  \return the node that follows this node after the operation; can be NULL
  */
 Fl_Type *Fl_Type::remove() {
-  // -- find the last child of this node
+  // find the last child of this node
   Fl_Type *end = this;
   for (;;) {
-    if (!end->next || end->next->level <= level) break;
+    if (!end->next || end->next->level <= level)
+      break;
     end = end->next;
   }
-  // -- unlink this node from the previous one
-  if (prev) prev->next = end->next;
-  else first = end->next;
-  // -- unlink the last child from their next node
-  if (end->next) end->next->prev = prev;
-  else last = prev;
+  // unlink this node from the previous one
+  if (prev)
+    prev->next = end->next;
+  else
+    first = end->next;
+  // unlink the last child from their next node
+  if (end->next)
+    end->next->prev = prev;
+  else
+    last = prev;
   Fl_Type *r = end->next;
   prev = end->next = 0;
-  // -- allow the parent to update changes in the UI
+  // allow the parent to update changes in the UI
   if (parent) parent->remove_child(this);
   parent = 0;
-  widget_browser->redraw_lines();
+  // tell the widget_browser that we removed some nodes
+  for (Fl_Type *t = this; t; t = t->next)
+    widget_browser->deleting(t);
   widget_browser->redraw();
   selection_changed(0);
   return r;
@@ -388,14 +438,23 @@ void Fl_Type::open() {
   printf("Open of '%s' is not yet implemented\n",type_name());
 }
 
-// move f (and its children) into list before g:
 // returns pointer to whatever is after f & children
+
+/**
+ Move this node (and its children) into list before g.
+ \param[in] p move \c this tree before \c p
+ */
 void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
                                 level, g->level);
+  // Find the last child in the list
   Fl_Type* n;
-  for (n = next; n && n->level > level; n = n->next) {/*empty*/}
+  for (n = next; n && n->level > level; n = n->next) ;
   if (n == g) return;
+  // Tell the widget browser that we delete them
+  for (n = next; n && n->level > level; n = n->next)
+    widget_browser->deleting(n);
+  // now link this tree before g
   Fl_Type *l = n ? n->prev : Fl_Type::last;
   prev->next = n;
   if (n) n->prev = prev; else Fl_Type::last = prev;
@@ -403,8 +462,13 @@ void Fl_Type::move_before(Fl_Type* g) {
   l->next = g;
   if (prev) prev->next = this; else Fl_Type::first = this;
   g->prev = l;
+  // tell parent that it has a new child, so it can update itself
   if (parent && is_widget()) parent->move_child(this,g);
-  widget_browser->inserting(g, this);
+  // run this tree a last time to make sure the widget_browser updates correctly
+  Fl_Type *a = prev;
+  for (Fl_Type *t = this; t && a != n; a = t, t = t->next)
+    if (a)
+      widget_browser->inserting(a, t);
   widget_browser->display(this);
   widget_browser->redraw();
 }

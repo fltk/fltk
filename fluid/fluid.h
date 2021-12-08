@@ -63,6 +63,7 @@ extern Fl_Menu_Item *save_item;
 extern Fl_Menu_Item *history_item;
 extern Fl_Menu_Item *widgetbin_item;
 extern Fl_Menu_Item *sourceview_item;
+extern Fl_Menu_Item *overlay_item;
 
 extern int modflag;
 

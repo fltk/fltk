@@ -127,6 +127,9 @@ Fl_Menu_Item *widgetbin_item = NULL;
 /// Menuitem to show or hide the source view, label will change if view is visible.
 Fl_Menu_Item *sourceview_item = NULL;
 
+/// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
+Fl_Menu_Item *overlay_item = NULL;
+
 ////////////////////////////////////////////////////////////////
 
 /// Filename of the current .fl design file
@@ -1426,6 +1429,7 @@ void make_main_window() {
     history_item = (Fl_Menu_Item*)main_menubar->find_item(open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
+    overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();

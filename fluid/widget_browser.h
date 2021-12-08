@@ -34,29 +34,30 @@ extern void reveal_in_browser(Fl_Type *t);
 
 class Widget_Browser : public Fl_Browser_
 {
-    friend class Fl_Type;
+  friend class Fl_Type;
 
-    static void callback_stub(Fl_Widget *o, void *) {
-        ((Widget_Browser *)o)->callback();
-    }
+  static void callback_stub(Fl_Widget *o, void *) {
+    ((Widget_Browser *)o)->callback();
+  }
 
-    Fl_Type* pushedtitle;
+  Fl_Type* pushedtitle;
 
-    // required routines for Fl_Browser_ subclass:
-    void *item_first() const ;
-    void *item_next(void *) const ;
-    void *item_prev(void *) const ;
-    int item_selected(void *) const ;
-    void item_select(void *,int);
-    int item_width(void *) const ;
-    int item_height(void *) const ;
-    void item_draw(void *,int,int,int,int) const ;
-    int incr_height() const ;
+  // required routines for Fl_Browser_ subclass:
+  void *item_first() const ;
+  void *item_next(void *) const ;
+  void *item_prev(void *) const ;
+  int item_selected(void *) const ;
+  void item_select(void *,int);
+  int item_width(void *) const ;
+  int item_height(void *) const ;
+  void item_draw(void *,int,int,int,int) const ;
+  int incr_height() const ;
 
 public:
-    int handle(int);
-    void callback();
-    Widget_Browser(int,int,int,int,const char * =0);
+  Widget_Browser(int,int,int,int,const char * =NULL);
+  int handle(int);
+  void callback();
+  void deleting(Fl_Type *inType) { Fl_Browser_::deleting((void*)inType); }
 };
 
 #endif // _FLUID_WIDGET_BROWSER_H

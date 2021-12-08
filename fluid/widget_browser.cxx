@@ -47,26 +47,26 @@ Widget_Browser *widget_browser = NULL;
  Shortcut to have the widget browser graphics refreshed soon.
  */
 void redraw_browser() {
-    widget_browser->redraw();
+  widget_browser->redraw();
 }
 
 /**
  Shortcut to create the widget browser.
  */
 Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
-    return (widget_browser = new Widget_Browser(x,y,w,h));
+  return (widget_browser = new Widget_Browser(x,y,w,h));
 }
 
 /**
  Make sure thet the caller is visible in the widget browser.
  \param[in] caller scroll the browser in y so that caller
-    is visible (may be NULL)
+ is visible (may be NULL)
  */
 void redraw_widget_browser(Fl_Type *caller)
 {
-    if (caller)
-        widget_browser->display(caller);
-    widget_browser->redraw();
+  if (caller)
+    widget_browser->display(caller);
+  widget_browser->redraw();
 }
 
 /**
@@ -75,7 +75,7 @@ void redraw_widget_browser(Fl_Type *caller)
  \oaram[in] v the new selection state (1=select, 0=de-select)
  */
 void select(Fl_Type *o, int v) {
-    widget_browser->select(o,v,1);
+  widget_browser->select(o,v,1);
 }
 
 /**
@@ -83,14 +83,14 @@ void select(Fl_Type *o, int v) {
  \param[in] o select this node
  */
 void select_only(Fl_Type *o) {
-    widget_browser->select_only(o,1);
+  widget_browser->select_only(o,1);
 }
 
 /**
  Deselect all nodes in the widget browser.
  */
 void deselect() {
-    widget_browser->deselect();
+  widget_browser->deselect();
 }
 
 /**
@@ -119,20 +119,20 @@ void reveal_in_browser(Fl_Type *t) {
 // ---- local functions
 
 /**
-  Copy the given string str to buffer p with no more than maxl characters.
+ Copy the given string str to buffer p with no more than maxl characters.
 
-  Add "..." if string was truncated.
+ Add "..." if string was truncated.
 
-  Quote characters are NOT counted.
+ Quote characters are NOT counted.
 
-  \param[out] p return the resulting string in this buffer, terminated with
+ \param[out] p return the resulting string in this buffer, terminated with
     a NUL byte
-  \param[in] str copy this string; utf8 aware
-  \param[in] maxl maximum number of letter to copy until we print
+ \param[in] str copy this string; utf8 aware
+ \param[in] maxl maximum number of letter to copy until we print
     the elipsis (...)
-  \param[in] auote if set, the resulting string is embedded in double quotes
-  \returns pointer to end of string (before terminating null byte).
-  \note the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
+ \param[in] auote if set, the resulting string is embedded in double quotes
+ \returns pointer to end of string (before terminating null byte).
+ \note the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
     or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
     character can consist of 4 bytes, "..." adds 3 bytes, quotes '""' add two
     bytes, and the terminating null byte adds another byte.
@@ -177,7 +177,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
  */
 Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l)
 : Fl_Browser_(X,Y,W,H,l),
-  pushedtitle(NULL)
+pushedtitle(NULL)
 {
   type(FL_MULTI_BROWSER);
   Fl_Widget::callback(callback_stub);
@@ -254,26 +254,26 @@ int Widget_Browser::incr_height() const {
 }
 
 /**
-  Draw an item in the widget browser.
+ Draw an item in the widget browser.
 
-  A browser line starts with a variable size space. This space directly
-  relates to the level of the type entry.
+ A browser line starts with a variable size space. This space directly
+ relates to the level of the type entry.
 
-  If this type has the ability to store children, a triangle follows,
-  pointing right (closed) or pointing down (open, children shown).
+ If this type has the ability to store children, a triangle follows,
+ pointing right (closed) or pointing down (open, children shown).
 
-  Next follows an icon that is specific to the type. This makes it easy to
-  spot certain types.
+ Next follows an icon that is specific to the type. This makes it easy to
+ spot certain types.
 
-  Now follows some text. For classes and widgets, this is the type itself,
-  followed by the name of the object. Other objects show their content as
-  text, possibly abbreviated with an ellipsis.
+ Now follows some text. For classes and widgets, this is the type itself,
+ followed by the name of the object. Other objects show their content as
+ text, possibly abbreviated with an ellipsis.
 
-  \param v      v is a pointer to the actual widget type and can be cast safely
-                to Fl_Type
-  \param X,Y    these give the position in window coordinates of the top left
-                corner of this line
-*/
+ \param v      v is a pointer to the actual widget type and can be cast safely
+    to Fl_Type
+ \param X,Y    these give the position in window coordinates of the top left
+    corner of this line
+ */
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
@@ -427,19 +427,19 @@ void Widget_Browser::callback() {
 }
 
 /**
-  Override the event handling for this browser.
+ Override the event handling for this browser.
 
-  The vertical mouse position corresponds to an entry in the type tree.
-  The horizontal position has the following hot zones:
-  - 0-3 is the widget frame and ignored
-  - the next hot zone starts 12*indent pixels further to the right
-  - the next 13 pixels refer to the arrow that indicates children for the item
-  - 18 pixels follow for the icon
-  - the remaining part is filled with text
+ The vertical mouse position corresponds to an entry in the type tree.
+ The horizontal position has the following hot zones:
+ - 0-3 is the widget frame and ignored
+ - the next hot zone starts 12*indent pixels further to the right
+ - the next 13 pixels refer to the arrow that indicates children for the item
+ - 18 pixels follow for the icon
+ - the remaining part is filled with text
 
-  \param[in] e the incoming event type
-  \return 0 if the event is not supported, and 1 if the event was "used up"
-*/
+ \param[in] e the incoming event type
+ \return 0 if the event is not supported, and 1 if the event was "used up"
+ */
 int Widget_Browser::handle(int e) {
   static Fl_Type *title;
   Fl_Type *l;
