@@ -102,7 +102,6 @@ class FL_EXPORT Fl_Scroll : public Fl_Group {
   int scrollbar_size_;
   static void hscrollbar_cb(Fl_Widget*, void*);
   static void scrollbar_cb(Fl_Widget*, void*);
-  void fix_scrollbar_order();
   static void draw_clip(void*,int,int,int,int);
 
 protected:      //  (STR#1895)
@@ -147,6 +146,7 @@ protected:      //  (STR#1895)
 
 protected:
 
+  void fix_scrollbar_order();
   void bbox(int&,int&,int&,int&) const;
   void draw();
 
