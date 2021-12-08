@@ -14,28 +14,37 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../src/flstring.h"
-#include <stdarg.h>
+#include "code.h"
+
+#include "Fl_Group_Type.h"
+#include "Fl_Window_Type.h"
+#include "Fl_Function_Type.h"
+#include "alignment_panel.h"
+#include "file.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_string.h>
-#include "Fl_Type.h"
-#include "alignment_panel.h"
+#include <FL/filename.H>
+#include "../src/flstring.h"
 
-static FILE *code_file;
-static FILE *header_file;
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-extern char i18n_program[];
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
+/// \defgroup cfile C Code File Operations
+/// \{
 
-// return true if c can be in a C identifier.  I needed this so
-// it is not messed up by locale settings:
+static FILE *code_file = NULL;
+static FILE *header_file = NULL;
+
+int indentation = 0;
+int write_number = 0;
+int write_sourceview = 0;
+
+/**
+ Return true if c can be in a C identifier.
+ I needed this so it is not messed up by locale settings.
+ */
 int is_id(char c) {
   return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='_';
 }
@@ -59,6 +68,7 @@ id::~id() {
 
 static id* id_root;
 
+// TODO: document me
 const char* unique_id(void* o, const char* type, const char* name, const char* label) {
   char buffer[128];
   char* q = buffer;
@@ -93,9 +103,13 @@ const char* unique_id(void* o, const char* type, const char* name, const char* l
 ////////////////////////////////////////////////////////////////
 // return current indentation:
 
-static const char* spaces = "                ";
-int indentation;
+
+/**
+ Return a C string that indents code to the current depth.
+ */
 const char* indent() {
+  static const char* spaces = "                ";
+
   int i = indentation; if (i>16) i = 16;
   return spaces+16-i;
 }
@@ -149,7 +163,9 @@ int write_declare(const char *format, ...) {
 int varused_test;
 int varused;
 
-// write an array of C characters (adds a null):
+/**
+ Write an array of C characters (adds a null).
+ */
 void write_cstring(const char *s, int length) {
   if (varused_test) {
     varused = 1;
@@ -232,10 +248,14 @@ void write_cstring(const char *s, int length) {
   putc('\"', code_file);
 }
 
-// write a C string, quoting characters if necessary:
+/**
+ Write a C string, quoting characters if necessary.
+ */
 void write_cstring(const char *s) {write_cstring(s, (int)strlen(s));}
 
-// write an array of C binary data (does not add a null):
+/**
+ Write an array of C binary data (does not add a null).
+ */
 void write_cdata(const char *s, int length) {
   if (varused_test) {
     varused = 1;
@@ -269,6 +289,7 @@ void write_cdata(const char *s, int length) {
   putc('}', code_file);
 }
 
+// TODO: document me
 void vwrite_c(const char* format, va_list args) {
   if (varused_test) {
     varused = 1;
@@ -277,6 +298,7 @@ void vwrite_c(const char* format, va_list args) {
   vfprintf(code_file, format, args);
 }
 
+// TODO: document me
 void write_c(const char* format,...) {
   va_list args;
   va_start(args, format);
@@ -284,7 +306,9 @@ void write_c(const char* format,...) {
   va_end(args);
 }
 
-// write code (c) of size (n) to C file, with optional comment (com) w/o trailing space
+/**
+ Write code (c) of size (n) to C file, with optional comment (com) w/o trailing space.
+ */
 void write_cc(const char *indent, int n, const char *c, const char *com) {
   if (*com)
     write_c("%s%.*s; %s\n", indent, n, c, com);
@@ -292,6 +316,7 @@ void write_cc(const char *indent, int n, const char *c, const char *com) {
     write_c("%s%.*s;\n", indent, n, c);
 }
 
+// TODO: document me
 void write_h(const char* format,...) {
   if (varused_test) return;
   va_list args;
@@ -300,7 +325,9 @@ void write_h(const char* format,...) {
   va_end(args);
 }
 
-// write code (c) of size (n) to H file, with optional comment (com) w/o trailing space
+/**
+ Write code (c) of size (n) to H file, with optional comment (com) w/o trailing space.
+ */
 void write_hc(const char *indent, int n, const char* c, const char *com) {
   if (*com)
     write_h("%s%.*s; %s\n", indent, n, c, com);
@@ -308,13 +335,10 @@ void write_hc(const char *indent, int n, const char* c, const char *com) {
     write_h("%s%.*s;\n", indent, n, c);
 }
 
-#include <FL/filename.H>
-int write_number;
-int write_sourceview;
-extern Fl_Widget_Class_Type *current_widget_class;
 
-// recursively dump code, putting children between the two parts
-// of the parent code:
+/**
+ Recursively dump code, putting children between the two parts of the parent code.
+ */
 static Fl_Type* write_code(Fl_Type* p) {
   if (write_sourceview) {
     p->code_position = (int)ftell(code_file);
@@ -367,11 +391,8 @@ static Fl_Type* write_code(Fl_Type* p) {
   return q;
 }
 
-extern const char* header_file_name;
-extern Fl_Class_Type *current_class;
-
-
-/** \brief Write the source and header files for the current design.
+/**
+ Write the source and header files for the current design.
 
  If the files already exist, they will be overwritten.
 
@@ -625,11 +646,22 @@ int write_strings(const char *sfile) {
   return fclose(fp);
 }
 
-////////////////////////////////////////////////////////////////
-
-void Fl_Type::write_static() {}
-void Fl_Type::write_code1() {
-  write_h("// Header for %s\n", title());
-  write_c("// Code for %s\n", title());
+/**
+ Write the public/private/protected keywords inside the class.
+ This avoids repeating these words if the mode is already set.
+ */
+void write_public(int state) {
+  if (!current_class && !current_widget_class) return;
+  if (current_class && current_class->write_public_state == state) return;
+  if (current_widget_class && current_widget_class->write_public_state == state) return;
+  if (current_class) current_class->write_public_state = state;
+  if (current_widget_class) current_widget_class->write_public_state = state;
+  switch (state) {
+    case 0: write_h("private:\n"); break;
+    case 1: write_h("public:\n"); break;
+    case 2: write_h("protected:\n"); break;
+  }
 }
-void Fl_Type::write_code2() {}
+
+/// \}
+

@@ -18,12 +18,21 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "Fl_Group_Type.h"
+
+#include "fluid.h"
+#include "file.h"
+#include "code.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Table.H>
+#include <FL/Fl_Menu_Item.H>
 #include <FL/fl_message.H>
-#include "Fl_Widget_Type.h"
+#include <FL/Fl_Scroll.H>
 #include "../src/flstring.h"
+
+#include <stdio.h>
 
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
@@ -54,8 +63,6 @@ void fix_group_size(Fl_Type *tt) {
   }
   t->o->resize(X,Y,R-X,B-Y);
 }
-
-extern int force_parent;
 
 void group_cb(Fl_Widget *, void *) {
   // Find the current widget:
@@ -105,8 +112,6 @@ void ungroup_cb(Fl_Widget *, void *) {
 }
 
 ////////////////////////////////////////////////////////////////
-
-#include <stdio.h>
 
 void Fl_Group_Type::write_code1() {
   Fl_Widget_Type::write_code1();
@@ -379,8 +384,6 @@ void Fl_Group_Type::copy_properties() {
 
 ////////////////////////////////////////////////////////////////
 // some other group subclasses that fluid does not treat specially:
-
-#include <FL/Fl_Scroll.H>
 
 const char scroll_type_name[] = "Fl_Scroll";
 

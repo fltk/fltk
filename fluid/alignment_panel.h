@@ -19,17 +19,12 @@
 #ifndef alignment_panel_h
 #define alignment_panel_h
 #include <FL/Fl.H>
+#include "fluid.h"
+#include "widget_browser.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/filename.H>
-extern void load_history();
-extern void redraw_browser();
-extern int show_comments;
-extern int G_use_external_editor;
-extern char G_external_editor_command[512];
-extern int show_coredevmenus;
 extern struct Fl_Menu_Item *dbmanager_item;
-extern Fl_Preferences fluid_prefs;
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>

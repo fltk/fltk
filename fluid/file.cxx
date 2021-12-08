@@ -19,21 +19,55 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "file.h"
+
+#include "fluid.h"
+#include "factory.h"
+#include "Fl_Function_Type.h"
+#include "Fl_Widget_Type.h"
+#include "Fl_Window_Type.h"
+#include "alignment_panel.h"
+#include "widget_browser.h"
+#include "code.h"
+
+#include <FL/Fl.H>
+#include <FL/Fl_Group.H>
+#include <FL/fl_string.h>
+#include <FL/fl_message.H>
+#include "../src/flstring.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "../src/flstring.h"
 #include <stdarg.h>
-#include "alignment_panel.h"
-#include <FL/Fl.H>
-#include <FL/fl_string.h>
-#include "Fl_Widget_Type.h"
+
+/// \defgroup flfile .fl Design File Operations
+/// \{
+
+// This file contains code to read and write .fl file.
+// TODO: there is a name confusion with routines that write to the C and Header files which must be fixed.
+
+static FILE *fout;
+static FILE *fin;
+
+static int needspace;
+static int lineno;
+static const char *fname;
+
+int fdesign_flip;
+int fdesign_magic;
+
+double read_version;
 
 ////////////////////////////////////////////////////////////////
 // BASIC FILE WRITING:
 
-static FILE *fout;
-
-int open_write(const char *s) {
+/**
+ Open teh .fl design file for writing.
+ If the filename is NULL, associate stdout instead.
+ \param[in] s the filename or NULL for stdout
+ \return 1 if successful. 0 if the operation failed
+ */
+static int open_write(const char *s) {
   if (!s) {fout = stdout; return 1;}
   FILE *f = fl_fopen(s,"w");
   if (!f) return 0;
@@ -41,7 +75,11 @@ int open_write(const char *s) {
   return 1;
 }
 
-int close_write() {
+/**
+ Close the .fl desing file.
+ Don't close, if data was sent to stdout.
+ */
+static int close_write() {
   if (fout != stdout) {
     int x = fclose(fout);
     fout = stdout;
@@ -50,10 +88,9 @@ int close_write() {
   return 1;
 }
 
-static int needspace;
-int is_id(char); // in code.C
-
-// write a string, quoting characters if necessary:
+/**
+ Write a string to the .fl file, quoting characters if necessary.
+ */
 void write_word(const char *w) {
   if (needspace) putc(' ', fout);
   needspace = 1;
@@ -86,9 +123,11 @@ void write_word(const char *w) {
   putc('}', fout);
 }
 
-// write an arbitrary formatted word, or a comment, etc.
-// if needspace is set, then one space is written before the string
-// unless the format starts with a newline character ('\n'):
+/**
+ Write an arbitrary formatted word to the .fl file, or a comment, etc. .
+ If needspace is set, then one space is written before the string
+ unless the format starts with a newline character '\\n'.
+ */
 void write_string(const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -98,35 +137,43 @@ void write_string(const char *format, ...) {
   needspace = !isspace(format[strlen(format)-1] & 255);
 }
 
-// start a new line and indent it for a given nesting level:
+/**
+ Start a new line in the .fl file and indent it for a given nesting level.
+ */
 void write_indent(int n) {
   fputc('\n',fout);
   while (n--) {fputc(' ',fout); fputc(' ',fout);}
   needspace = 0;
 }
 
-// write a '{' at the given indenting level:
+/**
+ Write a '{' to the .fl file at the given indenting level.
+ */
 void write_open(int) {
   if (needspace) fputc(' ',fout);
   fputc('{',fout);
   needspace = 0;
 }
 
-// write a '}' at the given indenting level:
+/**
+ Write a '}' to the .fl file at the given indenting level.
+ */
 void write_close(int n) {
   if (needspace) write_indent(n);
   fputc('}',fout);
   needspace = 1;
 }
 
+
 ////////////////////////////////////////////////////////////////
 // BASIC FILE READING:
 
-static FILE *fin;
-static int lineno;
-static const char *fname;
-
-int open_read(const char *s) {
+/**
+ Open an .fl file for reading.
+ \param[in] s filename, if NULL, read from stdin instead
+ \return 0 if the operation failed, 1 if it succeeded
+ */
+static int open_read(const char *s) {
   lineno = 1;
   if (!s) {fin = stdin; fname = "stdin"; return 1;}
   FILE *f = fl_fopen(s,"r");
@@ -136,7 +183,11 @@ int open_read(const char *s) {
   return 1;
 }
 
-int close_read() {
+/**
+ Close the .fl file.
+ \return 0 if the operation failed, 1 if it succeeded
+ */
+static int close_read() {
   if (fin != stdin) {
     int x = fclose(fin);
     fin = 0;
@@ -145,8 +196,12 @@ int close_read() {
   return 1;
 }
 
-#include <FL/fl_message.H>
-
+/**
+ Display an error while reading the file.
+ If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
+ print to stdout.
+ \note Matt: I am not sure why it is done this way. Shouldn;t this depend on \c batch_mode?
+ */
 void read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -162,6 +217,9 @@ void read_error(const char *format, ...) {
   va_end(args);
 }
 
+/**
+ Convert a single ASCII char, assumed to be a hex digit, into its decimal value.
+ */
 static int hexdigit(int x) {
   if (isdigit(x)) return x-'0';
   if (isupper(x)) return x-'A'+10;
@@ -169,7 +227,11 @@ static int hexdigit(int x) {
   return 20;
 }
 
-
+/**
+ Convert an ASCII sequence form the .fl file that starts with a \\ into a single character.
+ Conversion includes the common C style \\ characters like \\n, \x## hex
+ values, and \o### octal values.
+ */
 static int read_quoted() {      // read whatever character is after a \ .
   int c,d,x;
   switch(c = fgetc(fin)) {
@@ -203,16 +265,13 @@ static int read_quoted() {      // read whatever character is after a \ .
   return(c);
 }
 
-// return a word read from the file, or NULL at the EOF:
-// This will skip all comments (# to end of line), and evaluate
-// all \xxx sequences and use \ at the end of line to remove the newline.
-// A word is any one of:
-//      a continuous string of non-space chars except { and } and #
-//      everything between matching {...} (unless wantbrace != 0)
-//      the characters '{' and '}'
-
 static char *buffer;
 static int buflen;
+
+/**
+ A simple growing buffer.
+ Oh how I wish sometimes we would upgrade to moder C++.
+ */
 static void expand_buffer(int length) {
   if (length >= buflen) {
     if (!buflen) {
@@ -226,6 +285,17 @@ static void expand_buffer(int length) {
   }
 }
 
+/**
+ Return a word read from the .fl file, or NULL at the EOF.
+
+ This will skip all comments (# to end of line), and evaluate
+ all \\xxx sequences and use \\ at the end of line to remove the newline.
+
+ A word is any one of:
+  - a continuous string of non-space chars except { and } and #
+  - everything between matching {...} (unless wantbrace != 0)
+  - the characters '{' and '}'
+ */
 const char *read_word(int wantbrace) {
   int x;
 
@@ -295,19 +365,12 @@ const char *read_word(int wantbrace) {
 
 ////////////////////////////////////////////////////////////////
 
-// global int variables:
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
-
-
-extern int header_file_set;
-extern int code_file_set;
-extern const char* header_file_name;
-extern const char* code_file_name;
-
+/**
+ Write an .fl design description file.
+ \param[in] filename create this file, and if it exists, overwrite it
+ \param[in] selected_only write only the selected nodes in the widget_tree. This
+    is used to implement copy and paste.
+ */
 int write_file(const char *filename, int selected_only) {
   if (!open_write(filename)) return 0;
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
@@ -349,12 +412,9 @@ int write_file(const char *filename, int selected_only) {
 ////////////////////////////////////////////////////////////////
 // read all the objects out of the input file:
 
-void read_fdesign();
-
-double read_version;
-
-extern Fl_Type *Fl_Type_make(const char *tn);
-
+/**
+ Read child node in the .fl design file.
+ */
 static void read_children(Fl_Type *p, int paste) {
   Fl_Type::current = p;
   for (;;) {
@@ -491,8 +551,12 @@ static void read_children(Fl_Type *p, int paste) {
   }
 }
 
-extern void deselect();
-
+/**
+ Read a .fl design file.
+ \param[in] filename read this file
+ \param[in] merge if this is set, merge the file into an existing design
+ \return 0 if the operation failed, 1 if it succeeded
+ */
 int read_file(const char *filename, int merge) {
   Fl_Type *o;
   read_version = 0.0;
@@ -512,8 +576,7 @@ int read_file(const char *filename, int merge) {
 ////////////////////////////////////////////////////////////////
 // Read Forms and XForms fdesign files:
 
-int read_fdesign_line(const char*& name, const char*& value) {
-
+static int read_fdesign_line(const char*& name, const char*& value) {
   int length = 0;
   int x;
   // find a colon:
@@ -550,10 +613,6 @@ int read_fdesign_line(const char*& name, const char*& value) {
   return 1;
 }
 
-int fdesign_flip;
-int fdesign_magic;
-#include <FL/Fl_Group.H>
-
 static const char *class_matcher[] = {
 "FL_CHECKBUTTON", "Fl_Check_Button",
 "FL_ROUNDBUTTON", "Fl_Round_Button",
@@ -585,6 +644,13 @@ static const char *class_matcher[] = {
 "24","Fl_Value_Slider",
 0};
 
+/**
+ Read a XForms design file.
+ .fl and .fd file start with the same header. Fluid can recognize .fd XForms
+ Design files by a magic number. It will read them and map XForms widgets onto
+ FLTK widgets.
+ \see http://xforms-toolkit.org
+ */
 void read_fdesign() {
   fdesign_magic = atoi(read_word());
   fdesign_flip = (fdesign_magic < 13000);
@@ -639,3 +705,6 @@ void read_fdesign() {
     }
   }
 }
+
+/// \}
+

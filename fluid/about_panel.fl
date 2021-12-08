@@ -5,7 +5,7 @@ code_name {.cxx}
 comment {//
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,8 +36,8 @@ Function {make_about_panel()} {open
   }} {}
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {340 190 345 180} type Double color 50 selection_color 47 hide hotspot
-    code0 {\#include "../src/flstring.h"} non_modal
+    xywh {449 217 345 180} type Double color 50 selection_color 47 hotspot
+    code0 {\#include "../src/flstring.h"} non_modal visible
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
@@ -53,7 +53,7 @@ Version x.x.x}
     }
     Fl_Box {} {
       label {(Copyright)}
-      comment {Label edited dynamically:} selected
+      comment {Label edited dynamically:}
       xywh {135 90 200 45} align 148
       code0 {o->label(cbuf);}
     }
@@ -71,5 +71,5 @@ Version x.x.x}
 }
 
 data fluid_org_png {
-  comment {Embedded image for internal fluid.html web page.} public local filename {../documentation/src/fluid-org.png}
+  comment {Embedded image for internal fluid.html web page.} selected public local filename {../documentation/src/fluid-org.png}
 }

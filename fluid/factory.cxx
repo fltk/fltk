@@ -22,16 +22,20 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "factory.h"
+
+#include "fluid.h"
+#include "Fl_Window_Type.h"
+#include "undo.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree.H>
-#include <stdio.h>
 #include "../src/flstring.h"
-#include "undo.h"
 
-#include "Fl_Widget_Type.h"
+#include <stdio.h>
 
 extern Fl_Pixmap *pixmap[];
 
@@ -1116,7 +1120,6 @@ void fill_in_New_Menu() {
 }
 
 // use keyword to pick the type, this is used to parse files:
-int reading_file;
 Fl_Type *Fl_Type_make(const char *tn) {
   reading_file = 1; // makes labels be null
   Fl_Type *r = 0;

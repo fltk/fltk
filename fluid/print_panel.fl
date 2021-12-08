@@ -20,29 +20,26 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <stdio.h>} {private local
-}
-
-decl {\#include <stdlib.h>} {private local
-}
-
-decl {\#include "../src/flstring.h"} {private local
+decl {\#include "fluid.h"} {selected private local
 }
 
 decl {\#include <FL/fl_string.h>} {private local
 }
 
-decl {\#include <FL/Fl_Preferences.H>} {private local
+decl {\#include "../src/flstring.h"} {private local
 }
 
-decl {extern Fl_Preferences fluid_prefs;} {private local
+decl {\#include <stdlib.h>} {private local
+}
+
+decl {\#include <stdio.h>} {private local
 }
 
 Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
-    label Print open
-    xywh {394 209 465 235} type Double hide modal
+    label Print
+    xywh {465 222 465 235} type Double modal visible
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -215,8 +212,8 @@ print_collate_group[1 - i]->hide();}
   Fl_Window print_properties_panel {
     label {Printer Properties}
     callback {print_properties_panel->hide();
-print_update_status();} open
-    xywh {400 537 290 130} type Double hide modal
+print_update_status();}
+    xywh {462 486 290 130} type Double modal visible
   } {
     Fl_Choice print_page_size {
       label {Page Size:}

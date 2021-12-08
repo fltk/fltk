@@ -20,6 +20,12 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "fluid.h"} {public global
+}
+
+decl {\#include "widget_browser.h"} {public global
+}
+
 decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 }
 
@@ -38,37 +44,16 @@ decl {\#include <FL/fl_ask.H>} {private global
 decl {\#include <string.h>} {private global
 }
 
-decl {extern void load_history();} {public local
-}
-
-decl {extern void redraw_browser();} {public local
-}
-
-decl {extern int show_comments;} {public local
-}
-
-decl {extern int G_use_external_editor;} {public local
-}
-
-decl {extern char G_external_editor_command[512];} {public local
-}
-
-decl {extern int show_coredevmenus;} {public local
-}
-
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
-}
-
-decl {extern Fl_Preferences fluid_prefs;} {public local
 }
 
 Function {make_project_window()} {open
 } {
   Fl_Window project_window {
-    label {Project Settings} open
-    xywh {396 475 399 252} type Double hide
+    label {Project Settings}
+    xywh {473 246 399 252} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} modal
+    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
@@ -162,11 +147,12 @@ decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
 decl {void scheme_cb(Fl_Choice *, void *);} {public local
 }
 
-Function {make_settings_window()} {} {
+Function {make_settings_window()} {open
+} {
   Fl_Window settings_window {
-    label {GUI Settings} open
-    xywh {355 85 360 355} type Double hide resizable
-    code0 {o->size_range(o->w(), o->h());} non_modal
+    label {GUI Settings}
+    xywh {442 538 360 355} type Double resizable
+    code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -295,11 +281,11 @@ Examples:
   }
 }
 
-Function {make_shell_window()} {open
+Function {make_shell_window()} {open selected
 } {
   Fl_Window shell_window {
-    label {Shell Command} open
-    xywh {761 190 365 125} type Double hide
+    label {Shell Command}
+    xywh {873 248 365 125} type Double visible
   } {
     Fl_Input shell_command_input {
       label {Command:}
@@ -345,8 +331,8 @@ Function {make_shell_window()} {open
     }
   }
   Fl_Window shell_run_window {
-    label {Shell Command Output} open
-    xywh {454 363 555 430} type Double hide resizable
+    label {Shell Command Output}
+    xywh {887 409 555 430} type Double resizable visible
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
@@ -364,10 +350,11 @@ shell_run_window->hide();}
   }
 }
 
-Function {make_layout_window()} {} {
+Function {make_layout_window()} {open
+} {
   Fl_Window grid_window {
-    label {Layout Settings} open
-    xywh {812 369 310 245} type Double hide non_modal
+    label {Layout Settings}
+    xywh {545 376 310 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x
@@ -558,7 +545,7 @@ Function {writePrefs()} {
 }} {}
 }
 
-Function {show_global_settings_window()} {open return_type void
+Function {show_global_settings_window()} {return_type void
 } {
   code {if (!global_settings_window)
   make_global_settings_window();
@@ -749,7 +736,7 @@ Default is on.} xywh {245 366 100 25} down_box BORDER_BOX
       } {
         MenuItem {} {
           label off
-          user_data 0 user_data_type long selected
+          user_data 0 user_data_type long
           xywh {30 30 31 20}
         }
         MenuItem {} {
@@ -781,7 +768,7 @@ Default is on.} xywh {245 442 100 25} down_box BORDER_BOX
       } {
         MenuItem {} {
           label off
-          user_data 0 user_data_type long selected
+          user_data 0 user_data_type long
           xywh {30 30 31 20}
         }
         MenuItem {} {

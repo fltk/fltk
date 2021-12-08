@@ -15,11 +15,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "StyleParse.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>     // bsearch()
-#include "StyleParse.h"
 
 // Sorted list of C/C++ keywords...
 static const char * const code_keywords[] = {

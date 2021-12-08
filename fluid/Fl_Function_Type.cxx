@@ -13,46 +13,58 @@
 //
 //     https://www.fltk.org/bugs.php
 //
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Preferences.H>
-#include <FL/Fl_File_Chooser.H>
+
+#include "Fl_Function_Type.h"
+
+#include "fluid.h"
+#include "Fl_Window_Type.h"
+#include "Fl_Group_Type.h"
+#include "widget_browser.h"
+#include "file.h"
+#include "code.h"
+#include "function_panel.h"
+#include "comments.h"
+
 #include <FL/fl_string.h>
-#include "Fl_Type.h"
-#include <FL/fl_show_input.H>
 #include <FL/Fl_File_Chooser.H>
-#include "alignment_panel.h"
+#include <FL/fl_ask.H>
 #include "../src/flstring.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#ifdef _WIN32
-  #include "ExternalCodeEditor_WIN32.h"
-#else
-  #include "ExternalCodeEditor_UNIX.h"
-#endif
+/// Set a current class, so that the code of the children is generated correctly.
+Fl_Class_Type *current_class = NULL;
 
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
-extern char i18n_program[];
+/**
+ Return 1 if the list contains a function with the given signature at the top level.
+ \param[in] rtype return type
+ \param[in] sig function signature
+ \return 1 if found.
+ */
+int has_toplevel_function(const char *rtype, const char *sig) {
+  Fl_Type *child;
+  for (child = Fl_Type::first; child; child = child->next) {
+    if (!child->is_in_class() && strcmp(child->type_name(), "Function")==0) {
+      const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
+      if (fn->has_signature(rtype, sig))
+        return 1;
+    }
+  }
+  return 0;
+}
 
-extern int batch_mode;
-
-extern void redraw_browser();
-extern void goto_source_dir();
-extern void leave_source_dir();
-extern Fl_Window *main_window;
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
 
 static char buffer[128]; // for error messages
 
-// check a quoted string ending in either " or ' or >:
+/**
+ Check a quoted string contains a character.
+ This is used to find a matchin " or ' in a string.
+ \param[inout] c start searching here, return where we found \c type
+ \param[in] type find this character
+ \return NULL if the character was found, else a pointer to a static string
+    with an error message
+ */
 const char *_q_check(const char * & c, int type) {
   for (;;) switch (*c++) {
     case '\0':
@@ -66,7 +78,15 @@ const char *_q_check(const char * & c, int type) {
   }
 }
 
-// check normal code, match braces and parenthesis:
+/**
+ Check normal code, match brackets and parenthesis.
+ Recursively run a line of code and make sure that
+ {, ", ', and ( are matched.
+ \param[inout] c start searching here, return the end of the search
+ \param[in] type find this character match
+ \return NULL if the character was found, else a pointer to a static string
+    with an error message
+ */
 const char *_c_check(const char * & c, int type) {
   const char *d;
   for (;;) switch (*c++) {
@@ -117,14 +137,58 @@ const char *_c_check(const char * & c, int type) {
   }
 }
 
+/**
+ Check legality of c code (sort of) and return error:
+ Make sure that {, ", ', and ( are matched.
+ \param[in] c start searching here
+ \param[in] type find this character match
+ \return NULL if the character was found, else a pointer to a static string
+    with an error message
+ \note This function checks every conceivable line of code, which is not
+    always wanted. It can't differentiate characters in comments, and the
+    user may well intend to leave a curly bracket open
+    (i.e. namesapece { ... } ). We should make this option user selectable.
+ */
 const char *c_check(const char *c, int type) {
   return _c_check(c,type);
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Function_Type implemntation
 
-int Fl_Function_Type::is_public() const {return public_;}
+/** \class Fl_Function_Type
+ Manage a C++ function node in the Fluid design.
 
+ A function can have a signature (name followed by arguments), a return type
+ and a comment section. If can be local or global, and it can be declared a C
+ or C++ function.
+ */
+
+/// Prototype for a function to be used by the factory.
+Fl_Function_Type Fl_Function_type;
+
+/**
+ Create a new function.
+ */
+Fl_Function_Type::Fl_Function_Type() :
+  Fl_Type(),
+  return_type(0L),
+  public_(0),
+  cdecl_(0),
+  constructor(0),
+  havewidgets(0)
+{ }
+
+/**
+ Destructor.
+ */
+Fl_Function_Type::~Fl_Function_Type() {
+  if (return_type) free((void*)return_type);
+}
+
+/**
+ Create a new function for the widget tree.
+ \return the new node
+ */
 Fl_Type *Fl_Function_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -138,6 +202,12 @@ Fl_Type *Fl_Function_Type::make() {
   return o;
 }
 
+/**
+ Write function specific properties to an .fl file.
+  - "private"/"public" indicates the state of the function
+  - "C" is written if we want a C signature instead of C++
+  - "return_type" is followed by the return type of the function
+ */
 void Fl_Function_Type::write_properties() {
   Fl_Type::write_properties();
   switch (public_) {
@@ -151,6 +221,10 @@ void Fl_Function_Type::write_properties() {
   }
 }
 
+/**
+ Read function specific properties fron an .fl file.
+ \param[in] c read from this string
+ */
 void Fl_Function_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -165,9 +239,9 @@ void Fl_Function_Type::read_property(const char *c) {
   }
 }
 
-#include "function_panel.h"
-#include <FL/fl_ask.H>
-
+/**
+ Open the function_panel dialog box to edit this function.
+ */
 void Fl_Function_Type::open() {
   if (!function_panel) make_function_panel();
   f_return_type_input->static_value(return_type);
@@ -240,10 +314,19 @@ BREAK2:
   function_panel->hide();
 }
 
-Fl_Function_Type Fl_Function_type;
+/**
+ Return 1 if the function is global.
+ \return 1 if public, 0 if local.
+ */
+int Fl_Function_Type::is_public() const {
+  return public_;
+}
 
-extern const char* subclassname(Fl_Type*);
-
+/**
+ Write the code for the source and the header file.
+ This writes the code that goes \b before all children of this class.
+ \see write_code2()
+ */
 void Fl_Function_Type::write_code1() {
   constructor=0;
   havewidgets = 0;
@@ -397,6 +480,11 @@ void Fl_Function_Type::write_code1() {
   indentation += 2;
 }
 
+/**
+ Write the code for the source and the header file.
+ This writes the code that goes \b after all children of this class.
+ \see write_code1()
+ */
 void Fl_Function_Type::write_code2() {
   Fl_Type *child;
   const char *var = "w";
@@ -417,6 +505,12 @@ void Fl_Function_Type::write_code2() {
   indentation = 0;
 }
 
+/**
+ Check if the return type and signature s match.
+ \param[in] rtype function return type
+ \param[in] sig function name followed by arguments
+ \return 1 if they match, 0 if not
+ */
 int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
   if (rtype && !return_type) return 0;
   if (!name()) return 0;
@@ -427,8 +521,35 @@ int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
   return 0;
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Code_Type declaration
 
+/** \class Fl_Code_Type
+ Manage a block of C++ code in the Fluid design.
+
+ This node manages an arbitrary block of code inside a function that will
+ be written into the source code file. Fl_Code_Block has no comment field.
+ However, the first line of code will be shown in the widget browser.
+
+ \todo Fl_Code_Block stores the cursor position in text editor, but it does not
+    store the view position (scrollbars). Make sure that we can always see
+    the cursor when opening the dialog. (it's not stored in the .fl file)
+ */
+
+/// Prototype for code to be used by the factory.
+Fl_Code_Type Fl_Code_type;
+
+/**
+ Constructor.
+ */
+Fl_Code_Type::Fl_Code_Type() {
+  cursor_position_ = 0;
+}
+
+/**
+ Make a new code node.
+ If the parent node is not a function, a message box will pop up and
+ the request will be ignored.
+ */
 Fl_Type *Fl_Code_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
@@ -443,6 +564,9 @@ Fl_Type *Fl_Code_Type::make() {
   return o;
 }
 
+/**
+ Open the code_panel or an external editor to edit this code section.
+ */
 void Fl_Code_Type::open() {
   // Using an external code editor? Open it..
   if ( G_use_external_editor && G_external_editor_command[0] ) {
@@ -477,8 +601,9 @@ BREAK2:
   code_panel->hide();
 }
 
-Fl_Code_Type Fl_Code_type;
-
+/**
+ Grab changes from an external editor and write this node.
+ */
 void Fl_Code_Type::write() {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
@@ -487,6 +612,9 @@ void Fl_Code_Type::write() {
   Fl_Type::write();
 }
 
+/**
+ Write the code block with the correct indentation.
+ */
 void Fl_Code_Type::write_code1() {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
@@ -513,10 +641,82 @@ void Fl_Code_Type::write_code1() {
     write_c("\n");
 }
 
-void Fl_Code_Type::write_code2() {}
+/**
+ See if external editor is open.
+ */
+int Fl_Code_Type::is_editing() {
+  return editor_.is_editing();
+}
 
-////////////////////////////////////////////////////////////////
+/**
+ Reap the editor's pid
+ \return -2: editor not open
+ \return -1: wait failed
+ \return 0: process still running
+ \return \>0: process finished + reaped (returns pid)
+ */
+int Fl_Code_Type::reap_editor() {
+  return editor_.reap_editor();
+}
 
+/**
+ Handle external editor file modifications.
+ If changed, record keeping is updated and file's contents is loaded into ram
+ \return 0: file unchanged or not editing
+ \return 1: file changed, internal records updated, 'code' has new content
+ \return -1: error getting file info (get_ms_errmsg() has reason)
+ \todo Figure out how saving a fluid file can be intercepted to grab
+    current contents of editor file..
+ */
+int Fl_Code_Type::handle_editor_changes() {
+  const char *newcode = 0;
+  switch ( editor_.handle_changes(&newcode) ) {
+    case 1: {            // (1)=changed
+      name(newcode);     // update value in ram
+      free((void*)newcode);
+      return 1;
+    }
+    case -1: return -1;  // (-1)=error -- couldn't read file (dialog showed reason)
+    default: break;      // (0)=no change
+  }
+  return 0;
+}
+
+// ---- Fl_CodeBlock_Type implemntation
+
+/** \class Fl_CodeBlock_Type
+ Manage two blocks of C++ code enclosing its children.
+
+ This node manages two lines of code that enclose all children
+ of this node. This is usually an if..then clause.
+
+ \todo this node could support multiple lines of code for each block.
+ */
+
+/// Prototype for a block of code to be used by the factory.
+Fl_CodeBlock_Type Fl_CodeBlock_type;
+
+/**
+ Constructor.
+ */
+Fl_CodeBlock_Type::Fl_CodeBlock_Type() :
+  Fl_Type(),
+  after(NULL)
+{ }
+
+/**
+ Destructor.
+ */
+Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
+  if (after)
+    free((void*)after);
+}
+
+/**
+ Make a new code block.
+ If the parent node is not a function or another codeblock, a message box will
+ pop up and the request will be ignored.
+ */
 Fl_Type *Fl_CodeBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
@@ -532,6 +732,11 @@ Fl_Type *Fl_CodeBlock_Type::make() {
   return o;
 }
 
+/**
+ Write the specific properties for this node.
+  - "after" is followed by the code that comes after the children
+ The "before" code is stored in the name() field.
+ */
 void Fl_CodeBlock_Type::write_properties() {
   Fl_Type::write_properties();
   if (after) {
@@ -540,6 +745,9 @@ void Fl_CodeBlock_Type::write_properties() {
   }
 }
 
+/**
+ Read the node specifc properties.
+ */
 void Fl_CodeBlock_Type::read_property(const char *c) {
   if (!strcmp(c,"after")) {
     storestring(read_word(),after);
@@ -548,6 +756,9 @@ void Fl_CodeBlock_Type::read_property(const char *c) {
   }
 }
 
+/**
+ Open the codeblock_panel.
+ */
 void Fl_CodeBlock_Type::open() {
   if (!codeblock_panel) make_codeblock_panel();
   code_before_input->static_value(name());
@@ -574,22 +785,49 @@ BREAK2:
   codeblock_panel->hide();
 }
 
-Fl_CodeBlock_Type Fl_CodeBlock_type;
-
+/**
+ Write the "before" code.
+ */
 void Fl_CodeBlock_Type::write_code1() {
   const char* c = name();
   write_c("%s%s {\n", indent(), c ? c : "");
   indentation += 2;
 }
 
+/**
+ Write the "after" code.
+ */
 void Fl_CodeBlock_Type::write_code2() {
   indentation -= 2;
   if (after) write_c("%s} %s\n", indent(), after);
   else write_c("%s}\n", indent());
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Decl_Type declaration
 
+/** \class Fl_Decl_Type
+ Manage the C/C++ declaration of a variable.
+
+ This node manages a single line of code that can be in the header or the source
+ code, and can be made static.
+
+ \todo this node could support multiple lines.
+ */
+
+/// Prototype for a declaration to be used by the factory.
+Fl_Decl_Type Fl_Decl_type;
+
+/**
+ Constructor.
+ */
+Fl_Decl_Type::Fl_Decl_Type() :
+  public_(0),
+  static_(1)
+{ }
+
+/**
+ Return 1 if this declaration and its parents are public.
+ */
 int Fl_Decl_Type::is_public() const
 {
   Fl_Type *p = parent;
@@ -601,6 +839,9 @@ int Fl_Decl_Type::is_public() const
   return 0;
 }
 
+/**
+ Make a new declaration.
+ */
 Fl_Type *Fl_Decl_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -613,6 +854,11 @@ Fl_Type *Fl_Decl_Type::make() {
   return o;
 }
 
+/**
+ Write the specific properties.
+  - "private"/"public"/"protected"
+  - "local"/"global" if this is static or not
+ */
 void Fl_Decl_Type::write_properties() {
   Fl_Type::write_properties();
   switch (public_) {
@@ -626,6 +872,9 @@ void Fl_Decl_Type::write_properties() {
     write_string("global");
 }
 
+/**
+ Read the specific properties.
+ */
 void Fl_Decl_Type::read_property(const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
@@ -642,6 +891,9 @@ void Fl_Decl_Type::read_property(const char *c) {
   }
 }
 
+/**
+ Open the decl_panel to edit this node.
+ */
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
   decl_input->static_value(name());
@@ -701,8 +953,11 @@ BREAK2:
   decl_panel->hide();
 }
 
-Fl_Decl_Type Fl_Decl_type;
-
+/**
+ Write the code to the source and header files.
+ \todo There are a lot of side effect in this node depending on the given text
+    and the parent node which should really be documented.
+ */
 void Fl_Decl_Type::write_code1() {
   const char* c = name();
   if (!c) return;
@@ -767,10 +1022,38 @@ void Fl_Decl_Type::write_code1() {
   }
 }
 
-void Fl_Decl_Type::write_code2() {}
+// ---- Fl_Data_Type declaration
 
-////////////////////////////////////////////////////////////////
+/** \class Fl_Data_Type
+ Manage data from an external arbitrary file.
 
+ The content of the file will be stored in binary inside the generated
+ code. This can be used to store images inline in the source code,
+ */
+
+/// Prototype for a data node to be used by the factory.
+Fl_Data_Type Fl_Data_type;
+
+/**
+ Constructor.
+ */
+Fl_Data_Type::Fl_Data_Type() :
+  Fl_Decl_Type(),
+  filename_(NULL),
+  text_mode_(0)
+{ }
+
+/**
+ Destructor.
+ */
+Fl_Data_Type::~Fl_Data_Type() {
+  if (filename_)
+    free((void*)filename_);
+}
+
+/**
+ Create an empty inline data node.
+ */
 Fl_Type *Fl_Data_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -785,6 +1068,11 @@ Fl_Type *Fl_Data_Type::make() {
   return o;
 }
 
+/**
+ Write additional properties.
+  - "filename" followed by the filename of the file to inline
+  - "textmode" if data is written in ASCII vs. binary
+ */
 void Fl_Data_Type::write_properties() {
   Fl_Decl_Type::write_properties();
   if (filename_) {
@@ -796,6 +1084,9 @@ void Fl_Data_Type::write_properties() {
   }
 }
 
+/**
+ Read specific properties.
+ */
 void Fl_Data_Type::read_property(const char *c) {
   if (!strcmp(c,"filename")) {
     storestring(read_word(), filename_, 1);
@@ -806,6 +1097,9 @@ void Fl_Data_Type::read_property(const char *c) {
   }
 }
 
+/**
+ Open the data_panel to edit this node.
+ */
 void Fl_Data_Type::open() {
   if (!data_panel) make_data_panel();
   data_input->static_value(name());
@@ -908,8 +1202,9 @@ BREAK2:
   data_panel->hide();
 }
 
-Fl_Data_Type Fl_Data_type;
-
+/**
+ Write the content of the external file inline into the source code.
+ */
 void Fl_Data_Type::write_code1() {
   const char *message = 0;
   const char *c = name();
@@ -1005,12 +1300,43 @@ void Fl_Data_Type::write_code1() {
   if (data) free(data);
 }
 
-void Fl_Data_Type::write_code2() {}
+// ---- Fl_DeclBlock_Type declaration
 
-////////////////////////////////////////////////////////////////
+/** \class Fl_DeclBlock_Type
+ Manage a declaration block.
 
+ Declaration blocks have two text field that are written before and after
+ the children of this block. This block is located at the top level and
+ is written to the source file, and to the header file, if declared public.
+ */
+
+/// Prototype for a declaration block to be used by the factory.
+Fl_DeclBlock_Type Fl_DeclBlock_type;
+
+/**
+ Constructor.
+ */
+Fl_DeclBlock_Type::Fl_DeclBlock_Type() :
+  Fl_Type(),
+  after(NULL)
+{ }
+
+/**
+ Destructor.
+ */
+Fl_DeclBlock_Type::~Fl_DeclBlock_Type() {
+  if (after)
+    free((void*)after);
+}
+
+/**
+ Return 1 if this block is public.
+ */
 int Fl_DeclBlock_Type::is_public() const {return public_;}
 
+/**
+ Create a new declaration block.
+ */
 Fl_Type *Fl_DeclBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -1023,6 +1349,11 @@ Fl_Type *Fl_DeclBlock_Type::make() {
   return o;
 }
 
+/**
+ Write the specific properties.
+  - "public"/"protected"
+  - "after" followed by the second code block.
+ */
 void Fl_DeclBlock_Type::write_properties() {
   Fl_Type::write_properties();
   switch (public_) {
@@ -1033,6 +1364,9 @@ void Fl_DeclBlock_Type::write_properties() {
   write_word(after);
 }
 
+/**
+ Read the specific properties.
+ */
 void Fl_DeclBlock_Type::read_property(const char *c) {
   if(!strcmp(c,"public")) {
     public_ = 1;
@@ -1045,6 +1379,9 @@ void Fl_DeclBlock_Type::read_property(const char *c) {
   }
 }
 
+/**
+ Open the declblock_panel to edit this node.
+ */
 void Fl_DeclBlock_Type::open() {
   if (!declblock_panel) make_declblock_panel();
   decl_before_input->static_value(name());
@@ -1081,8 +1418,10 @@ BREAK2:
   declblock_panel->hide();
 }
 
-Fl_DeclBlock_Type Fl_DeclBlock_type;
-
+/**
+ Write the \b before code to the source file, and to the header file if declared public.
+ The before code is stored in the name() field.
+ */
 void Fl_DeclBlock_Type::write_code1() {
   const char* c = name();
   if (public_)
@@ -1090,6 +1429,9 @@ void Fl_DeclBlock_Type::write_code1() {
   write_c("%s\n", c);
 }
 
+/**
+ Write the \b after code to the source file, and to the header file if declared public.
+ */
 void Fl_DeclBlock_Type::write_code2() {
   const char* c = after;
   if (public_)
@@ -1097,8 +1439,31 @@ void Fl_DeclBlock_Type::write_code2() {
   write_c("%s\n", c);
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Comment_Type declaration
 
+/** \class Fl_Comment_Type
+ Manage a comment node.
+
+ The comment field takes one or more lines of ASCII text. If the text starts
+ with a '/' and a '*', Fluid assumes that the text is already formatted. If not,
+ every line will be preceded with "// ".
+ */
+
+/// Prototype for a comment node to be used by the factory.
+Fl_Comment_Type Fl_Comment_type;
+
+/**
+ Constructor.
+ */
+Fl_Comment_Type::Fl_Comment_Type() :
+  in_c_(1),
+  in_h_(1),
+  style_(0)
+{ }
+
+/**
+ Make a new comment node.
+ */
 Fl_Type *Fl_Comment_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
@@ -1113,12 +1478,20 @@ Fl_Type *Fl_Comment_Type::make() {
   return o;
 }
 
+/**
+ Write respective properties.
+  - "in_source"/"not_in_source" if the comment will be written to the source code
+  - "in_header"/"not_in_header" if the comment will be written to the header file
+ */
 void Fl_Comment_Type::write_properties() {
   Fl_Type::write_properties();
   if (in_c_) write_string("in_source"); else write_string("not_in_source");
   if (in_h_) write_string("in_header"); else write_string("not_in_header");
 }
 
+/**
+ Read extra properties.
+ */
 void Fl_Comment_Type::read_property(const char *c) {
   if (!strcmp(c,"in_source")) {
     in_c_ = 1;
@@ -1133,8 +1506,12 @@ void Fl_Comment_Type::read_property(const char *c) {
   }
 }
 
-#include "comments.h"
-
+/**
+ Load available preset comments.
+ Fluid comes with GPL and LGPL preset for comments. Users can
+ add their own presets which are stored per user in a seperate
+ preferences database.
+ */
 static void load_comments_preset(Fl_Preferences &menu) {
   static const char * const predefined_comment[] = {
     "GNU Public License/GPL Header",  "GNU Public License/GPL Footer",
@@ -1149,6 +1526,9 @@ static void load_comments_preset(Fl_Preferences &menu) {
   }
 }
 
+/**
+ Open the comment_panel to edit this node.
+ */
 void Fl_Comment_Type::open() {
   if (!comment_panel) make_comment_panel();
   const char *text = name();
@@ -1268,6 +1648,9 @@ BREAK2:
   comment_panel->hide();
 }
 
+/**
+ Create a title for the Widget Browser by extracting the first 50 characters of the comment.
+ */
 const char *Fl_Comment_Type::title() {
   const char* n = name();
   if (!n || !*n) return type_name();
@@ -1289,8 +1672,9 @@ const char *Fl_Comment_Type::title() {
   return title_buf;
 }
 
-Fl_Comment_Type Fl_Comment_type;
-
+/**
+ Write the comment to the files.
+ */
 void Fl_Comment_Type::write_code1() {
   const char* c = name();
   if (!c) return;
@@ -1331,66 +1715,74 @@ void Fl_Comment_Type::write_code1() {
   free(txt);
 }
 
-void Fl_Comment_Type::write_code2() {}
+// ---- Fl_Class_Type declaration
 
-////////////////////////////////////////////////////////////////
+/** \class Fl_Class_Type
+ Manage a class declaration and implementation.
 
-const char* Fl_Type::class_name(const int need_nest) const {
-  Fl_Type* p = parent;
-  while (p) {
-    if (p->is_class()) {
-      // see if we are nested in another class, we must fully-qualify name:
-      // this is lame but works...
-      const char* q = 0;
-      if(need_nest) q=p->class_name(need_nest);
-      if (q) {
-        static char s[256];
-        if (q != s) strlcpy(s, q, sizeof(s));
-        strlcat(s, "::", sizeof(s));
-        strlcat(s, p->name(), sizeof(s));
-        return s;
-      }
-      return p->name();
-    }
-    p = p->parent;
-  }
-  return 0;
+ \todo This is pretty complex and needs to be revisited to give
+    a good description.
+ */
+
+/// Prototype for a class node to be used by the factory.
+Fl_Class_Type Fl_Class_type;
+
+/**
+ Constructor.
+ */
+Fl_Class_Type::Fl_Class_Type() :
+  Fl_Type(),
+  subclass_of(NULL),
+  public_(1),
+  class_prefix(NULL)
+{ }
+
+/**
+ Destructor.
+ */
+Fl_Class_Type::~Fl_Class_Type() {
+  if (subclass_of)
+    free((void*)subclass_of);
+  if (class_prefix)
+    free((void*)class_prefix);
 }
 
 /**
- If this Type resides inside a class, this function returns the class type, or null.
+ Return 1 if this class is marked public.
  */
-const Fl_Class_Type *Fl_Type::is_in_class() const {
-  Fl_Type* p = parent;
-  while (p) {
-    if (p->is_class()) {
-      return (Fl_Class_Type*)p;
-    }
-    p = p->parent;
-  }
-  return 0;
+int Fl_Class_Type::is_public() const {
+  return public_;
 }
 
-int Fl_Class_Type::is_public() const {return public_;}
-
+/**
+ Set the prefixx string.
+ */
 void Fl_Class_Type::prefix(const char*p) {
   free((void*) class_prefix);
   class_prefix=fl_strdup(p ? p : "" );
 }
 
+/**
+ Make a new class node.
+ */
 Fl_Type *Fl_Class_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Class_Type *o = new Fl_Class_Type();
   o->name("UserInterface");
-  o->class_prefix=0;
-  o->subclass_of = 0;
+  o->class_prefix = NULL;
+  o->subclass_of = NULL;
   o->public_ = 1;
   o->add(p);
   o->factory = this;
   return o;
 }
 
+/**
+ Write the respective properties.
+  - ":" followed by the super class
+  - "private"/"protected"
+ */
 void Fl_Class_Type::write_properties() {
   Fl_Type::write_properties();
   if (subclass_of) {
@@ -1403,6 +1795,9 @@ void Fl_Class_Type::write_properties() {
   }
 }
 
+/**
+ Read additional properties.
+ */
 void Fl_Class_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -1415,6 +1810,9 @@ void Fl_Class_Type::read_property(const char *c) {
   }
 }
 
+/**
+ Open the class_panel to edit the class name and superclass name.
+ */
 void Fl_Class_Type::open() {
   if (!class_panel) make_class_panel();
   char fullname[FL_PATH_MAX]="";
@@ -1485,23 +1883,9 @@ BREAK2:
   class_panel->hide();
 }
 
-Fl_Class_Type Fl_Class_type;
-
-Fl_Class_Type *current_class;
-extern Fl_Widget_Class_Type *current_widget_class;
-void write_public(int state) {
-  if (!current_class && !current_widget_class) return;
-  if (current_class && current_class->write_public_state == state) return;
-  if (current_widget_class && current_widget_class->write_public_state == state) return;
-  if (current_class) current_class->write_public_state = state;
-  if (current_widget_class) current_widget_class->write_public_state = state;
-  switch (state) {
-    case 0: write_h("private:\n"); break;
-    case 1: write_h("public:\n"); break;
-    case 2: write_h("protected:\n"); break;
-  }
-}
-
+/**
+ Write the header code that declares this class.
+ */
 void Fl_Class_Type::write_code1() {
   parent_class = current_class;
   current_class = this;
@@ -1516,6 +1900,9 @@ void Fl_Class_Type::write_code1() {
   write_h("{\n");
 }
 
+/**
+ Write the header code that ends the declaration of this class.
+ */
 void Fl_Class_Type::write_code2() {
   write_h("};\n");
   current_class = parent_class;

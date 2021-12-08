@@ -14,56 +14,37 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "fluid.h"
+
+#include "Fl_Type.h"
+#include "Fl_Function_Type.h"
+#include "Fl_Group_Type.h"
+#include "Fl_Window_Type.h"
+#include "widget_browser.h"
+#include "shell_command.h"
+#include "factory.h"
+#include "pixmaps.h"
+#include "undo.h"
+#include "file.h"
+#include "code.h"
+
+#include "alignment_panel.h"
+#include "function_panel.h"
+#include "template_panel.h"
+#include "about_panel.h"
+
 #include <FL/Fl.H>
 #ifdef __APPLE__
 #include <FL/platform.H> // for fl_open_callback
 #endif
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Help_Dialog.H>
-#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Plugin.H>
-#include <FL/fl_ask.H>
-#include <FL/fl_draw.H>
-#include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_PNG_Image.H>
-#include <FL/fl_message.H>
-#include <FL/filename.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
-#include <FL/fl_utf8.h>
 #include <FL/fl_string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
 #include <locale.h>     // setlocale()..
-#include <time.h>   // time(), localtime(), etc.
-
 #include "../src/flstring.h"
-#include "alignment_panel.h"
-#include "function_panel.h"
-#include "template_panel.h"
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#  include <direct.h>
-#  include <windows.h>
-#  include <io.h>
-#  include <fcntl.h>
-#  include <commdlg.h>
-#  include <FL/platform.H>
-#else
-#  include <unistd.h>
-#endif
-
-#include "pixmaps.h"
-#include "about_panel.h"
-#include "undo.h"
-
-#include "Fl_Type.h"
 
 extern "C"
 {
@@ -77,46 +58,160 @@ extern "C"
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
+/// \defgroup globals Fluid Global Variables, Functions and Calbacks
+/// \{
+
 //
 // Globals..
 //
+
+/// Fluid-wide help dialog.
 static Fl_Help_Dialog *help_dialog = 0;
 
+Fl_Menu_Bar *main_menubar = NULL;
+Fl_Window *main_window;
+
+/// Fluid application preferences, allways accessible, will be flushed when app closes.
 Fl_Preferences  fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
+
+/// Align widget position and size when designing, saved in app preferences and project file.
 int gridx = 5;
+
+/// Align widget position and size when designing, saved in app preferences and project file.
 int gridy = 5;
+
+/// Activate snapping to grid, saved in app preferences and project file.
 int snap = 1;
+
+/// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
+
+/// Show widget comments in the browser, saved in app preferences.
 int show_comments = 1;
+
+/// Use external editor for editing Fl_Code_Type, saved in app preferences.
 int G_use_external_editor = 0;
+
+/// Debugging help for external Fl_Code_Type editor.
 int G_debug = 0;
+
+/// Run this command to load an Fl_Code_Type into an external editor, save in app preferences.
 char G_external_editor_command[512];
-int show_coredevmenus = 1;
+
+
+/// \todo Functionality unclear.
+int force_parent = 0;
+
+/// This is set to create different labels when creating new widgets.
+/// \todo Details unclear.
+int reading_file = 0;
+
 
 // File history info...
+
+/// Stores the absolute filename of the last 10 design files, saved in app preferences.
 char    absolute_history[10][FL_PATH_MAX];
+
+/// This list of filenames is computed from \c absolute_history and displayed in the main menu.
 char    relative_history[10][FL_PATH_MAX];
 
-void    load_history();
-void    update_history(const char *);
+/// Menuitem to save a .fl design file, will be deactivated if the design is unchanged.
+Fl_Menu_Item *save_item = NULL;
 
-// Shell command support...
-void    show_shell_window();
+/// First Menuitem that shows the .fl design file hisory.
+Fl_Menu_Item *history_item = NULL;
 
-Fl_Menu_Item *save_item = 0L;
-Fl_Menu_Item *history_item = 0L;
-Fl_Menu_Item *widgetbin_item = 0L;
-Fl_Menu_Item *sourceview_item = 0L;
+/// Menuitem to show or hide the widget bin, label will change if bin is visible.
+Fl_Menu_Item *widgetbin_item = NULL;
+
+/// Menuitem to show or hide the source view, label will change if view is visible.
+Fl_Menu_Item *sourceview_item = NULL;
 
 ////////////////////////////////////////////////////////////////
 
-static const char *filename;
-void set_filename(const char *c);
-void set_modflag(int mf);
-int modflag;
+/// Filename of the current .fl design file
+static const char *filename = NULL;
 
-static char* pwd;
-static char in_source_dir;
+/// Set if the current design has been modified compared to the associated .fl design file.
+int modflag = 0;
+
+/// Application work directory, stored here when temporarily changing to the source code directory.
+/// \see goto_source_dir()
+static char* pwd = NULL;
+
+/// Set, if the current working directory is in the source code folder vs. the app working space.
+/// \see goto_source_dir()
+static char in_source_dir = 0;
+
+/// Set, if Fluid was started with the command line argument -u
+int update_file = 0;            // fluid -u
+
+/// Set, if Fluid was started with the command line argument -c
+int compile_file = 0;           // fluid -c
+
+/// Set, if Fluid was started with the command line argument -cs
+int compile_strings = 0;        // fluic -cs
+
+/// Set, if Fluid runs in batch mode, and no user interface is activated.
+int batch_mode = 0;             // if set (-c, -u) don't open display
+
+/// If set, commandline overrides header file name in .fl file.
+int header_file_set = 0;
+
+/// If set, commandline overrides source code file name in .fl file.
+int code_file_set = 0;
+
+/// Hold the default extension for header files, or the entire filename if set via command line.
+const char* header_file_name = ".h";
+
+/// Hold the default extension for source code  files, or the entire filename if set via command line.
+const char* code_file_name = ".cxx";
+
+
+/// Saved in the .fl design file.
+/// \todo document me
+int i18n_type = 0;
+
+/// Saved in the .fl design file.
+/// \todo document me
+const char* i18n_include = "";
+
+/// Saved in the .fl design file.
+/// \todo document me
+const char* i18n_function = "";
+
+/// Saved in the .fl design file.
+/// \todo document me
+const char* i18n_file = "";
+
+/// Saved in the .fl design file.
+/// \todo document me
+const char* i18n_set = "";
+
+/// \todo document me
+char i18n_program[FL_PATH_MAX] = "";
+
+/// \todo document me
+int pasteoffset = 0;
+
+/// \todo document me
+static int ipasteoffset = 0;
+
+
+// ---- Sourceview definition
+
+void update_sourceview_position();
+void update_sourceview_position_cb(Fl_Tabs*, void*);
+void update_sourceview_cb(Fl_Button*, void*);
+void update_sourceview_timer(void*);
+
+// ----
+
+/**
+ Change the current working directory to the source code folder.
+ Remember the the previous directory, so \c leave_source_dir() can return there.
+ \see leave_source_dir(), pwd, in_source_dir
+ */
 void goto_source_dir() {
   if (in_source_dir) return;
   if (!filename || !*filename) return;
@@ -136,6 +231,10 @@ void goto_source_dir() {
   in_source_dir = 1;
 }
 
+/**
+ Change the current working directory to its previous directory.
+ \see goto_source_dir(), pwd, in_source_dir
+ */
 void leave_source_dir() {
   if (!in_source_dir) return;
   if (fl_chdir(pwd) < 0) {
@@ -144,6 +243,17 @@ void leave_source_dir() {
   in_source_dir = 0;
 }
 
+/**
+ Position the given window window based on entries in the app preferences.
+ Customizable by user; feature can be switched off.
+ The window is not shown or hidden by this function, but a value is returned
+ to indicate the state to the caller.
+ \param[in] w position this window
+ \param[in] prefsName name of the preferences item that stores the window settings
+ \param[in] Visible default value if window is hidden or shown
+ \param[in] X, Y, W, H default size and position if nothing is specified in the preferences
+ \return 1 if the caller should make the window visible, 0 if hidden.
+ */
 char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0 ) {
   Fl_Preferences pos(fluid_prefs, prefsName);
   if (prevpos_button->value()) {
@@ -161,6 +271,11 @@ char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, in
   return Visible;
 }
 
+/**
+ Save the position and visibility state of a window to the app preferences.
+ \param[in] w save this window data
+ \param[in] prefsName name of the preferences item that stores the window settings
+ */
 void save_position(Fl_Window *w, const char *prefsName) {
   Fl_Preferences pos(fluid_prefs, prefsName);
   pos.set("x", w->x());
@@ -170,9 +285,11 @@ void save_position(Fl_Window *w, const char *prefsName) {
   pos.set("visible", (int)(w->shown() && w->visible()));
 }
 
-Fl_Window *main_window;
-Fl_Menu_Bar *main_menubar;
-
+/**
+ Return the path and filename of a temporary file for cut or duplicated data.
+ \param[in] which 0 gets the cut/copy/paste buffer, 1 gets the duplication buffer
+ \return a pointer to a string in a static buffer
+ */
 static char* cutfname(int which = 0) {
   static char name[2][FL_PATH_MAX];
   static char beenhere = 0;
@@ -188,10 +305,13 @@ static char* cutfname(int which = 0) {
   return name[which];
 }
 
-// Timer to watch for external editor modifications
-//    If one or more external editors open, check if their files were modified.
-//    If so: reload to ram, update size/mtime records, and change fluid's 'modified' state.
-//
+/**
+ Timer to watch for external editor modifications.
+
+ If one or more external editors open, check if their files were modified.
+ If so: reload to ram, update size/mtime records, and change fluid's
+ 'modified' state.
+ */
 static void external_editor_timer(void*) {
   int editors_open = ExternalCodeEditor::editors_open();
   if ( G_debug ) printf("--- TIMER --- External editors open=%d\n", editors_open);
@@ -223,6 +343,12 @@ static void external_editor_timer(void*) {
   }
 }
 
+/**
+ Save the current design to the file given by \c filename.
+ If automatic, this overwrites an existing file. If iinteractive, if will
+ verify with the user.
+ \param[in] v if v is not NULL, or no filename is set, open a filechooser.
+ */
 void save_cb(Fl_Widget *, void *v) {
   Fl_Native_File_Chooser fnfc;
   const char *c = filename;
@@ -261,6 +387,10 @@ void save_cb(Fl_Widget *, void *v) {
   }
 }
 
+/**
+ Save a design template.
+ \todo We should document the concept of templates.
+ */
 void save_template_cb(Fl_Widget *, void *) {
   // Setup the template panel...
   if (!template_panel) make_template_panel();
@@ -367,6 +497,10 @@ void save_template_cb(Fl_Widget *, void *) {
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
+/**
+ Reload the file set by \c filename, replacing the current design.
+ If the design was modified, a dialog will ask for confirmation.
+ */
 void revert_cb(Fl_Widget *,void *) {
   if (modflag) {
     if (!fl_choice("This user interface has been changed. Really revert?",
@@ -383,6 +517,10 @@ void revert_cb(Fl_Widget *,void *) {
   undo_clear();
 }
 
+/**
+ Exit Fluid; we hope you had a nice experience.
+ If the design was modified, a dialog will ask for confirmation.
+ */
 void exit_cb(Fl_Widget *,void *) {
 
   // Stop any external editor update timers
@@ -433,8 +571,12 @@ void exit_cb(Fl_Widget *,void *) {
 
 #ifdef __APPLE__
 
-void
-apple_open_cb(const char *c) {
+/**
+ Handle app launch with an associated filename (macOS only).
+ Should there be a modified design already, Fluid asks for user confirmation.
+ \param[in] c the filename of the new design
+ */
+void apple_open_cb(const char *c) {
   if (modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before opening another one?", "Don't Save",
@@ -469,6 +611,11 @@ apple_open_cb(const char *c) {
 }
 #endif // __APPLE__
 
+/**
+ Open a file chooser and load a new file.
+ If the current design was modified, Fluid will ask for user confirmation.
+ \param[in] v if v is set, Fluid will not ask for confirmation.
+ */
 void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
@@ -517,6 +664,11 @@ void open_cb(Fl_Widget *, void *v) {
   }
 }
 
+/**
+ Open a file from history.
+ If the current design was modified, Fluid will ask for user confirmation.
+ \param[in] v points to the absolute path and filename.
+ */
 void open_history_cb(Fl_Widget *, void *v) {
   if (modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
@@ -552,6 +704,11 @@ void open_history_cb(Fl_Widget *, void *v) {
   }
 }
 
+/**
+ Close the current design and create a new, empty one.
+ If the current design was modified, Fluid will ask for user confirmation.
+ \param[in] v if v is set, don't ask for confirmation
+ */
 void new_cb(Fl_Widget *, void *v) {
   // Check if the current file has been modified...
   if (!v && modflag) {
@@ -573,6 +730,12 @@ void new_cb(Fl_Widget *, void *v) {
   set_filename(NULL);
 }
 
+/**
+ Open the template browser and load a new file from templates.
+ If the current design was modified, Fluid will ask for user confirmation.
+ \param[in] w widget that caused this request, unused
+ \param[in] v if v is set, don't ask for confirmation
+ */
 void new_from_template_cb(Fl_Widget *w, void *v) {
   new_cb(w, v);
 
@@ -668,26 +831,11 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
   undo_clear();
 }
 
-int exit_early = 0;
-int update_file = 0;            // fluid -u
-int compile_file = 0;           // fluid -c
-int compile_strings = 0;        // fluic -cs
-int batch_mode = 0;             // if set (-c, -u) don't open display
-int header_file_set = 0;
-int code_file_set = 0;
-const char* header_file_name = ".h";
-const char* code_file_name = ".cxx";
-int i18n_type = 0;
-const char* i18n_include = "";
-const char* i18n_function = "";
-const char* i18n_file = "";
-const char* i18n_set = "";
-char i18n_program[FL_PATH_MAX] = "";
-
-/** \brief Generate the C++ source and header filenames and write those files.
+/**
+ Generate the C++ source and header filenames and write those files.
 
  This function creates the source filename by setting the file
- extension to  \c code_file_name and a header filename
+ extension to \c code_file_name and a header filename
  with the extension \c code_file_name which are both
  settable by the user.
 
@@ -737,10 +885,16 @@ int write_code_files() {
   return 0;
 }
 
+/**
+ Callback to write C++ code and header files.
+ */
 void write_cb(Fl_Widget *, void *) {
     write_code_files();
 }
 
+/**
+ Write the strings that are used in i18n.
+ */
 void write_strings_cb(Fl_Widget *, void *) {
   static const char *exts[] = { ".txt", ".po", ".msg" };
   if (!filename) {
@@ -764,6 +918,9 @@ void write_strings_cb(Fl_Widget *, void *) {
   }
 }
 
+/**
+ Show the editor for the \c current Fl_Type.
+ */
 void openwidget_cb(Fl_Widget *, void *) {
   if (!Fl_Type::current) {
     fl_message("Please select a widget");
@@ -772,18 +929,9 @@ void openwidget_cb(Fl_Widget *, void *) {
   Fl_Type::current->open();
 }
 
-void toggle_overlays(Fl_Widget *,void *);
-
-void select_all_cb(Fl_Widget *,void *);
-void select_none_cb(Fl_Widget *,void *);
-
-void group_cb(Fl_Widget *, void *);
-
-void ungroup_cb(Fl_Widget *, void *);
-
-extern int pasteoffset;
-static int ipasteoffset;
-
+/**
+ User chose to copy the currently selected widgets.
+ */
 void copy_cb(Fl_Widget*, void*) {
   if (!Fl_Type::current) {
     fl_beep();
@@ -796,7 +944,9 @@ void copy_cb(Fl_Widget*, void*) {
   }
 }
 
-extern void select_only(Fl_Type *);
+/**
+ User chose to cut the currently selected widgets.
+ */
 void cut_cb(Fl_Widget *, void *) {
   if (!Fl_Type::current) {
     fl_beep();
@@ -813,8 +963,12 @@ void cut_cb(Fl_Widget *, void *) {
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
+  //widget_browser->redraw_lines();
 }
 
+/**
+ User chose to delete the currently selected widgets.
+ */
 void delete_cb(Fl_Widget *, void *) {
   if (!Fl_Type::current) {
     fl_beep();
@@ -829,8 +983,9 @@ void delete_cb(Fl_Widget *, void *) {
   if (p) select_only(p);
 }
 
-extern int force_parent;
-
+/**
+ User chose to paste the widgets from the cut buffer.
+ */
 void paste_cb(Fl_Widget*, void*) {
   //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
@@ -847,7 +1002,9 @@ void paste_cb(Fl_Widget*, void*) {
   force_parent = 0;
 }
 
-// Duplicate the selected widgets...
+/**
+ Duplicate the selected widgets.
+ */
 void duplicate_cb(Fl_Widget*, void*) {
   if (!Fl_Type::current) {
     fl_beep();
@@ -873,29 +1030,25 @@ void duplicate_cb(Fl_Widget*, void*) {
   force_parent = 0;
 }
 
-void earlier_cb(Fl_Widget*,void*);
-
-void later_cb(Fl_Widget*,void*);
-
-Fl_Type *sort(Fl_Type *parent);
-
+/**
+ User wants to sort selected widgets by y coordinate.
+ */
 static void sort_cb(Fl_Widget *,void *) {
-  sort((Fl_Type*)0);
+  sort((Fl_Type*)NULL);
 }
 
-void show_project_cb(Fl_Widget *, void *);
-void show_grid_cb(Fl_Widget *, void *);
-void show_settings_cb(Fl_Widget *, void *);
-void show_global_settings_cb(Fl_Widget *, void *);
-
-void align_widget_cb(Fl_Widget *, long);
-void widget_size_cb(Fl_Widget *, long);
-
+/**
+ Open the "About" dialog.
+ */
 void about_cb(Fl_Widget *, void *) {
   if (!about_panel) make_about_panel();
   about_panel->show();
 }
 
+/**
+ Open a dialog to show the HTML help page form the FLTK documentation folder.
+ \param[in] name name of the HTML help file.
+ */
 void show_help(const char *name) {
   const char    *docdir;
   char          helpname[FL_PATH_MAX];
@@ -960,16 +1113,25 @@ void show_help(const char *name) {
   help_dialog->show();
 }
 
+/**
+ User wants help on Fluid.
+ */
 void help_cb(Fl_Widget *, void *) {
   show_help("fluid.html");
 }
 
+/**
+ User wants to see the Fluid manual.
+ */
 void manual_cb(Fl_Widget *, void *) {
   show_help("index.html");
 }
 
+// ---- Printing
 
-////////////////////////////////////////////////////////////////
+/**
+ Open the dialog to allow the user to print the current window.
+ */
 void print_menu_cb(Fl_Widget *, void *) {
   int w, h, ww, hh;
   int frompage, topage;
@@ -1036,13 +1198,23 @@ void print_menu_cb(Fl_Widget *, void *) {
   printjob.end_job();
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Main menu bar
 
-extern Fl_Menu_Item New_Menu[];
+/**
+ This is the main Fluid menu.
 
-void toggle_widgetbin_cb(Fl_Widget *, void *);
-void toggle_sourceview_cb(Fl_Double_Window *, void *);
+ Design history is manipulated right inside this menu structure.
+ Some menuitem change or deactivate correctly, but most items just trigger
+ various callbacks.
 
+ \c New_Menu creates new widgets and is explained in detail in another location.
+
+ \see New_Menu
+ \todo This menu need some major modernisation. Menus are too long and their
+    sorting is not always obvious.
+ \todo Shortcuts are all over the palce (Alt, Ctrl, Command, Shift-Ctrl,
+    function keys), and there should be a help page listing all shortcuts.
+ */
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"&New", FL_COMMAND+'n', new_cb, 0},
@@ -1136,14 +1308,10 @@ Fl_Menu_Item Main_Menu[] = {
   {0},
 {0}};
 
-#define BROWSERWIDTH 300
-#define BROWSERHEIGHT 500
-#define WINWIDTH 300
-#define MENUHEIGHT 25
-#define WINHEIGHT (BROWSERHEIGHT+MENUHEIGHT)
-
-extern void fill_in_New_Menu();
-
+/**
+ Change the app's and hence preview the design's scheme.
+ The scheme setting is stored inthe app preferences.
+ */
 void scheme_cb(Fl_Choice *, void *) {
   if (batch_mode)
     return;
@@ -1169,6 +1337,10 @@ void scheme_cb(Fl_Choice *, void *) {
   fluid_prefs.set("scheme", scheme_choice->value());
 }
 
+/**
+ Show or hide the widget bin.
+ The state is stored in the app preferences.
+ */
 void toggle_widgetbin_cb(Fl_Widget *, void *) {
   if (!widgetbin_panel) {
     make_widgetbin();
@@ -1184,7 +1356,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
   }
 }
 
-
+/**
+ Show or hide the source code preview.
+ The state is stored in the app preferences.
+ */
 void toggle_sourceview_cb(Fl_Double_Window *, void *) {
   if (!sourceview_panel) {
     make_sourceview();
@@ -1212,10 +1387,17 @@ void toggle_sourceview_cb(Fl_Double_Window *, void *) {
   }
 }
 
+/**
+ Show or hide the source code preview, called from a button.
+ The state is stored in the app preferences.
+ */
 void toggle_sourceview_b_cb(Fl_Button*, void *) {
   toggle_sourceview_cb(0,0);
 }
 
+/**
+ Build the main app window and create a few other dialogs.
+ */
 void make_main_window() {
   if (!batch_mode) {
     fluid_prefs.get("snap", snap, 1);
@@ -1256,7 +1438,13 @@ void make_main_window() {
   }
 }
 
-// Load file history from preferences...
+/**
+ Load file history from preferences.
+
+ This loads the absolute filepaths of the last 10 used design files.
+ It also computes and stores the relative filepaths for display in
+ the main menu.
+ */
 void load_history() {
   int   i;              // Looping var
   int   max_files;
@@ -1283,7 +1471,15 @@ void load_history() {
   }
 }
 
-// Update file history from preferences...
+/**
+ Update file history from preferences.
+
+ Add this new filepath to the history and update the main menu.
+ Writes the new file history to the app preferences.
+
+ \param[in] flname path or filename of .fl file, will be converted into an
+    absolute file path based on the current working directory.
+ */
 void update_history(const char *flname) {
   int   i;              // Looping var
   char  absolute[FL_PATH_MAX];
@@ -1335,222 +1531,10 @@ void update_history(const char *flname) {
   fluid_prefs.flush();
 }
 
-// ********** portable process class definition **********
-
-class Fl_Process {
-public:
-  // construction / destruction
-  Fl_Process() {_fpt= NULL;}
-  ~Fl_Process() {if (_fpt) close();}
-
-  // FIXME: popen needs the UTF-8 equivalent fl_popen
-  FILE * popen  (const char *cmd, const char *mode="r");
-  //not necessary here: FILE * fl_fopen (const char *file, const char *mode="r");
-  int  close();
-
-  FILE * desc() const { return _fpt;} // non-null if file is open
-  char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, (int)s, _fpt) : NULL;}
-
-  // returns fileno(FILE*):
-  // (file must be open, i.e. _fpt must be non-null)
-  // *FIXME* we should find a better solution for the 'fileno' issue
-  int get_fileno() const {
-#ifdef _MSC_VER
-    return _fileno(_fpt); // suppress MSVC warning
-#else
-    return fileno(_fpt);
-#endif
-  } // non null if file is open
-
-#if defined(_WIN32)  && !defined(__CYGWIN__)
-protected:
-  HANDLE pin[2], pout[2], perr[2];
-  char ptmode;
-  PROCESS_INFORMATION pi;
-  STARTUPINFO si;
-
-  static bool createPipe(HANDLE * h, BOOL bInheritHnd=TRUE);
-
-private:
-  FILE * freeHandles()  {
-    clean_close(pin[0]);    clean_close(pin[1]);
-    clean_close(pout[0]);   clean_close(pout[1]);
-    clean_close(perr[0]);   clean_close(perr[1]);
-    return NULL; // convenient for error management
-  }
-  static void clean_close(HANDLE& h);
-#endif
-
-protected:
-  FILE * _fpt;
-};
-
-#if defined(_WIN32)  && !defined(__CYGWIN__)
-bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
-  SECURITY_ATTRIBUTES sa;
-  sa.nLength = sizeof(sa);
-  sa.lpSecurityDescriptor = NULL;
-  sa.bInheritHandle = bInheritHnd;
-  return CreatePipe (&h[0],&h[1],&sa,0) ? true : false;
-}
-#endif
-// portable open process:
-FILE * Fl_Process::popen(const char *cmd, const char *mode) {
-#if defined(_WIN32)  && !defined(__CYGWIN__)
-  // PRECONDITIONS
-  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return NULL;
-  if (_fpt) close(); // close first before reuse
-
-  ptmode = *mode;
-  pin[0] = pin[1] = pout[0] = pout[1] = perr[0] = perr[1] = INVALID_HANDLE_VALUE;
-  // stderr to stdout wanted ?
-  int fusion = (strstr(cmd,"2>&1") !=NULL);
-
-  // Create windows pipes
-  if (!createPipe(pin) || !createPipe(pout) || (!fusion && !createPipe(perr) ) )
-        return freeHandles(); // error
-
-  // Initialize Startup Info
-  ZeroMemory(&si, sizeof(STARTUPINFO));
-  si.cb           = sizeof(STARTUPINFO);
-  si.dwFlags    = STARTF_USESTDHANDLES;
-  si.hStdInput    = pin[0];
-  si.hStdOutput   = pout[1];
-  si.hStdError  = fusion ? pout[1] : perr [1];
-
-  if ( CreateProcess(NULL, (LPTSTR) cmd,NULL,NULL,TRUE,
-                     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
-    // don't need theses handles inherited by child process:
-    clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]);
-    HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
-    _fpt = _fdopen(_open_osfhandle((fl_intptr_t) h,_O_BINARY),mode);
-    h= INVALID_HANDLE_VALUE;  // reset the handle pointer that is shared
-    // with _fpt so we don't free it twice
-  }
-
-  if (!_fpt)  freeHandles();
-  return _fpt;
-#else
-  _fpt=::popen(cmd,mode);
-  return _fpt;
-#endif
-}
-
-int Fl_Process::close() {
-#if defined(_WIN32)  && !defined(__CYGWIN__)
-  if (_fpt) {
-    fclose(_fpt);
-    clean_close(perr[0]);
-    clean_close(pin[1]);
-    clean_close(pout[0]);
-    _fpt = NULL;
-    return 0;
-  }
-  return -1;
-#else
-  int ret = ::pclose(_fpt);
-  _fpt=NULL;
-  return ret;
-#endif
-}
-
-#if defined(_WIN32)  && !defined(__CYGWIN__)
-void Fl_Process::clean_close(HANDLE& h) {
-  if (h!= INVALID_HANDLE_VALUE) CloseHandle(h);
-  h = INVALID_HANDLE_VALUE;
-}
-#endif
-// ********** Fl_Process class end **********
-
-static Fl_Process s_proc;
-
-// Shell command support...
-
-static bool prepare_shell_command(const char * &command)  { // common pre-shell command code all platforms
-  shell_window->hide();
-  if (s_proc.desc()) {
-    fl_alert("Previous shell command still running!");
-    return false;
-  }
-  if ((command = shell_command_input->value()) == NULL || !*command) {
-    fl_alert("No shell command entered!");
-    return false;
-  }
-  if (shell_savefl_button->value()) {
-    save_cb(0, 0);
-  }
-  if (shell_writecode_button->value()) {
-    write_code_files();
-  }
-  if (shell_writemsgs_button->value()) {
-    write_strings_cb(0, 0);
-  }
-  return true;
-}
-
-// Support the full piped shell command...
-void
-shell_pipe_cb(FL_SOCKET, void*) {
-  char  line[1024]="";          // Line from command output...
-
-  if (s_proc.get_line(line, sizeof(line)) != NULL) {
-    // Add the line to the output list...
-    shell_run_terminal->append(line);
-  } else {
-    // End of file; tell the parent...
-    Fl::remove_fd(s_proc.get_fileno());
-    s_proc.close();
-    shell_run_terminal->append("... END SHELL COMMAND ...\n");
-  }
-}
-
-void
-do_shell_command(Fl_Return_Button*, void*) {
-  const char    *command=NULL;  // Command to run
-
-  if (!prepare_shell_command(command)) return;
-
-  // Show the output window and clear things...
-  shell_run_terminal->text("");
-  shell_run_terminal->append(command);
-  shell_run_terminal->append("\n");
-  shell_run_window->label("Shell Command Running...");
-
-  if (s_proc.popen((char *)command) == NULL) {
-    fl_alert("Unable to run shell command: %s", strerror(errno));
-    return;
-  }
-
-  shell_run_button->deactivate();
-
-  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
-  int x, y, w, h;
-  pos.get("x", x, -1);
-  pos.get("y", y, 0);
-  pos.get("w", w, 640);
-  pos.get("h", h, 480);
-  if (x!=-1) {
-    shell_run_window->resize(x, y, w, h);
-  }
-  shell_run_window->show();
-
-  Fl::add_fd(s_proc.get_fileno(), shell_pipe_cb);
-
-  while (s_proc.desc()) Fl::wait();
-
-  shell_run_button->activate();
-  shell_run_window->label("Shell Command Complete");
-  fl_beep();
-
-  while (shell_run_window->shown()) Fl::wait();
-}
-
-void
-show_shell_window() {
-  shell_window->hotspot(shell_command_input);
-  shell_window->show();
-}
-
+/**
+ Set the filename of the current .fl design.
+ \param[in] c the new absolute filename and path
+ */
 void set_filename(const char *c) {
   if (filename) free((void *)filename);
   filename = c ? fl_strdup(c) : NULL;
@@ -1561,17 +1545,58 @@ void set_filename(const char *c) {
   set_modflag(modflag);
 }
 
-//
-// The Source View system offers an immediate preview of the code
-// files that will be generated by FLUID. It also marks the code
-// generated for the last selected item in the header and the source
-// file.
-//
+/**
+ Set the "modified" flag and update the title of the main window.
+ \param[in] mf 0 to clear the modflag, 1 to mark the design "modified"
+ */
+void set_modflag(int mf) {
+  const char    *basename;
+  static char   title[FL_PATH_MAX];
 
-//
-// Update the header and source code highlighting depending on the
-// currently selected object
-//
+  modflag = mf;
+
+  if (main_window) {
+    if (!filename) basename = "Untitled.fl";
+    else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
+#if defined(_WIN32)
+    else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
+#endif // _WIN32
+    else basename = filename;
+
+    if (modflag) {
+      snprintf(title, sizeof(title), "%s (modified)", basename);
+      main_window->label(title);
+    } else main_window->label(basename);
+  }
+  // if the UI was modified in any way, update the Source View panel
+  if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
+  {
+    // we will only update earliest 0.5 seconds after the last change, and only
+    // if no other change was made, so dragging a widget will not generate any
+    // CPU load
+    Fl::remove_timeout(update_sourceview_timer, 0);
+    Fl::add_timeout(0.5, update_sourceview_timer, 0);
+  }
+
+  // Enable/disable the Save menu item...
+  if (modflag) save_item->activate();
+  else save_item->deactivate();
+}
+
+// ---- Sourceview implementation
+
+static char *sv_source_filename = NULL;
+static char *sv_header_filename = NULL;
+
+/**
+ Update the header and source code highlighting depending on the
+ currently selected object
+
+ The Source View system offers an immediate preview of the code
+ files that will be generated by FLUID. It also marks the code
+ generated for the last selected item in the header and the source
+ file.
+ */
 void update_sourceview_position()
 {
   if (!sourceview_panel || !sourceview_panel->visible())
@@ -1605,18 +1630,18 @@ void update_sourceview_position()
   }
 }
 
+/**
+ Callback to update the sourceview position.
+ */
 void update_sourceview_position_cb(Fl_Tabs*, void*)
 {
   update_sourceview_position();
 }
 
-static char *sv_source_filename = 0;
-static char *sv_header_filename = 0;
-
-//
-// Generate a header and source file in a temporary directory and
-// load those into the Code Viewer widgets.
-//
+/**
+ Generate a header and source file in a temporary directory and
+ load those into the Code Viewer widgets.
+ */
 void update_sourceview_cb(Fl_Button*, void*)
 {
   if (!sourceview_panel || !sourceview_panel->visible())
@@ -1662,48 +1687,23 @@ void update_sourceview_cb(Fl_Button*, void*)
   header_file_name = header_file_name_bak;
 }
 
+/**
+ This is called by the timer itself
+ */
 void update_sourceview_timer(void*)
 {
   update_sourceview_cb(0,0);
 }
 
-// Set the "modified" flag and update the title of the main window...
-void set_modflag(int mf) {
-  const char    *basename;
-  static char   title[FL_PATH_MAX];
+// ---- Main program entry point
 
-  modflag = mf;
-
-  if (main_window) {
-    if (!filename) basename = "Untitled.fl";
-    else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
-#if defined(_WIN32)
-    else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
-#endif // _WIN32
-    else basename = filename;
-
-    if (modflag) {
-      snprintf(title, sizeof(title), "%s (modified)", basename);
-      main_window->label(title);
-    } else main_window->label(basename);
-  }
-  // if the UI was modified in any way, update the Source View panel
-  if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
-  {
-    // we will only update earliest 0.5 seconds after the last change, and only
-    // if no other change was made, so dragging a widget will not generate any
-    // CPU load
-    Fl::remove_timeout(update_sourceview_timer, 0);
-    Fl::add_timeout(0.5, update_sourceview_timer, 0);
-  }
-
-  // Enable/disable the Save menu item...
-  if (modflag) save_item->activate();
-  else save_item->deactivate();
-}
-
-////////////////////////////////////////////////////////////////
-
+/**
+ Handle command line arguments.
+ \param[in] argc number of arguments in the list
+ \param[in] argv pointer to an array of arguments
+ \param[inout] i current argument index
+ \return number of arguments used; if 0, the argument is not supported
+ */
 static int arg(int argc, char** argv, int& i) {
   if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
   if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
@@ -1720,13 +1720,6 @@ static int arg(int argc, char** argv, int& i) {
     header_file_set  = 1;
     i += 2;
     return 2;
-  }
-  Fl_Plugin_Manager pm("commandline");
-  int j, n = pm.plugins();
-  for (j=0; j<n; j++) {
-    Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(j);
-    int r = pi->arg(argc, argv, i);
-    if (r) return r;
   }
   return 0;
 }
@@ -1751,8 +1744,27 @@ static void sigint(SIGARG) {
   quit_flag = 1;
 }
 }
+
 #endif
 
+/**
+ Start Fluid.
+
+ Fluid can run in interactive mode with a full user interface to design new
+ user interfaces and write the C++ files to manage them,
+
+ Fluid can run form the command line in batch mode to convert .fl design files
+ into C++ source and header files. In batch mode, no diplay is needed,
+ particularly no X11 connection will be attempted on Linux/Unix.
+
+ \param[in] argc number of arguments in the list
+ \param[in] argv pointer to an array of arguments
+ \return in batch mode, an error code will be returned via \c exit() . This
+    function return 1, if there was an error in the parameters list.
+ \todo On MSWindows, Fluid can under certain conditions open a dialog box, even
+    in batch mode. Is that intentional? Does it circumvent issues with Windows'
+ stderr and stdout?
+ */
 int main(int argc,char **argv) {
   int i = 1;
 
@@ -1768,37 +1780,19 @@ int main(int argc,char **argv) {
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
       " -d : enable internal debugging\n";
-      int len = (int)(strlen(msg) + strlen(argv[0]?argv[0]:"fluid") + strlen(Fl::help));
-    Fl_Plugin_Manager pm("commandline");
-    int i, n = pm.plugins();
-    for (i=0; i<n; i++) {
-      Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
-      if (pi) len += (int)strlen(pi->help());
-    }
-    char *buf = (char*)malloc(len+1);
-    sprintf(buf, msg, argv[0]);
-    for (i=0; i<n; i++) {
-      Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
-      if (pi) strcat(buf, pi->help());
-    }
-    strcat(buf, Fl::help);
 #ifdef _MSC_VER
-    fl_message("%s\n", buf);
+    fl_message("%s\n", msg);
 #else
-    fprintf(stderr, "%s\n", buf);
+    fprintf(stderr, "%s\n", msg);
 #endif
-    free(buf);
     return 1;
   }
-  if (exit_early)
-    exit(0);
 
   const char *c = argv[i];
 
   fl_register_images();
 
   make_main_window();
-
 
   if (c) set_filename(c);
   if (!batch_mode) {
@@ -1862,3 +1856,6 @@ int main(int argc,char **argv) {
 
   return (0);
 }
+
+/// \}
+

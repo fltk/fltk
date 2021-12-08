@@ -14,10 +14,14 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "align_widget.h"
+
+#include "fluid.h"
+#include "Fl_Group_Type.h"
+#include "undo.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "Fl_Widget_Type.h"
-#include "undo.h"
 
 /**
  the first behaviour always uses the first selected widget as a reference

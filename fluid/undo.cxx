@@ -14,10 +14,15 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl.H>
-#include "Fl_Type.h"
 #include "undo.h"
+
+#include "fluid.h"
+#include "file.h"
+#include "Fl_Type.h"
+
+#include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/Fl_Menu_Bar.H>
 #include <FL/filename.H>
 #include "../src/flstring.h"
 
@@ -28,12 +33,6 @@
 #else
 #  include <unistd.h>
 #endif // _WIN32 && !__CYGWIN__
-
-
-extern Fl_Preferences   fluid_prefs;    // FLUID preferences
-extern Fl_Menu_Item     Main_Menu[];    // Main menu
-extern Fl_Menu_Bar     *main_menubar;   // Main menubar
-
 
 
 //

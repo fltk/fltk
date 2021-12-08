@@ -20,31 +20,31 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include "fluid.h"} {private local
+}
+
+decl {\#include <FL/Fl_Shared_Image.H>} {private local
+}
+
+decl {\#include <FL/fl_ask.H>} {private local
+}
+
+decl {\#include <FL/fl_string.h>} {private local
+}
+
+decl {\#include <FL/filename.H>} {selected private local
+}
+
+decl {\#include "../src/flstring.h"} {private local
+}
+
 decl {\#include <stdio.h>} {private local
 }
 
 decl {\#include <stdlib.h>} {private local
 }
 
-decl {\#include "../src/flstring.h"} {private local
-}
-
-decl {\#include <FL/fl_string.h>} {private local
-}
-
 decl {\#include <errno.h>} {private local
-}
-
-decl {\#include <FL/filename.H>} {private local
-}
-
-decl {\#include <FL/fl_ask.H>} {private local
-}
-
-decl {\#include <FL/Fl_Shared_Image.H>} {private local
-}
-
-decl {\#include <FL/Fl_Preferences.H>} {private local
 }
 
 declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN32 && !__CYGWIN__}
@@ -55,9 +55,6 @@ declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN
   }
   decl {\#include <unistd.h>} {private local
   }
-}
-
-decl {extern Fl_Preferences fluid_prefs;} {private local
 }
 
 Function {make_template_panel()} {open
@@ -71,8 +68,8 @@ template_preview->image(0);
 template_browser->deselect();
 template_name->value("");
 template_instance->value("");
-template_panel->hide();} open
-    xywh {398 200 460 355} type Double hide resizable modal
+template_panel->hide();}
+    xywh {455 202 460 355} type Double resizable modal visible
   } {
     Fl_Browser template_browser {
       label {Available Templates:}
@@ -207,7 +204,7 @@ template_browser->remove(item);
 template_browser->do_callback();} {}
 }
 
-Function {template_load()} {open return_type void
+Function {template_load()} {return_type void
 } {
   code {int i;
 char name[1024], filename[1400], path[1024], *ptr;
@@ -262,6 +259,5 @@ for (i = 0; i < num_files; i ++) {
   free(files[i]);
 }
 
-if (num_files > 0) free(files);} {selected
-  }
+if (num_files > 0) free(files);} {}
 }

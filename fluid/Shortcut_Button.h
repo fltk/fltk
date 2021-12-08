@@ -14,6 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#ifndef _FLUID_SHORTCUT_BUTTON_H
+#define _FLUID_SHORTCUT_BUTTON_H
+
 #include <FL/Fl_Button.H>
 
 class Shortcut_Button : public Fl_Button {
@@ -24,3 +27,6 @@ public:
   Shortcut_Button(int X,int Y,int W,int H, const char* l = 0) :
     Fl_Button(X,Y,W,H,l) {svalue = 0;}
 };
+
+#endif
+

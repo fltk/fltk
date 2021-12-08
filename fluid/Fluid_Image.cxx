@@ -14,21 +14,27 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "Fluid_Image.h"
+
+#include "fluid.h"
+#include "Fl_Group_Type.h"
+#include "Fl_Window_Type.h"
+#include "file.h"
+#include "code.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
+#include <FL/Fl_Window.H>
 #include <FL/filename.H>
 #include <FL/fl_string.h>
 #include <FL/fl_utf8.h>     // fl_fopen()
-#include "Fl_Type.h"
-#include "Fluid_Image.h"
+#include <FL/Fl_File_Chooser.H>
 #include "../src/flstring.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
-extern void goto_source_dir(); // in fluid.cxx
-extern void leave_source_dir(); // in fluid.cxx
 
 void Fluid_Image::image(Fl_Widget *o) {
   if (o->window() != o) o->image(img);
@@ -235,8 +241,6 @@ Fluid_Image::~Fluid_Image() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-#include <FL/Fl_File_Chooser.H>
 
 const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {

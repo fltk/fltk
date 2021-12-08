@@ -33,8 +33,10 @@ set (CPPFILES
   fluid.cxx
   function_panel.cxx
   pixmaps.cxx
+  shell_command.cxx
   template_panel.cxx
   undo.cxx
+  widget_browser.cxx
   widget_panel.cxx
 )
 
@@ -42,19 +44,30 @@ set (CPPFILES
 
 set (HEADERFILES
   CodeEditor.h
+  Fl_Function_Type.h
+  Fl_Group_Type.h
+  Fl_Menu_Type.h
   Fl_Type.h
   Fl_Widget_Type.h
+  Fl_Window_Type.h
   Fluid_Image.h
   Shortcut_Button.h
   StyleParse.h
   about_panel.h
+  align_widget.h
   alignment_panel.h
+  code.h
   comments.h
+  factory.h
+  file.h
+  fluid.h
   function_panel.h
   print_panel.h
   pixmaps.h
+  shell_command.h
   template_panel.h
   undo.h
+  widget_browser.h
   widget_panel.h
 )
 

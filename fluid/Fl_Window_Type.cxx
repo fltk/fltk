@@ -18,6 +18,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "Fl_Window_Type.h"
+
+#include "fluid.h"
+#include "widget_browser.h"
+#include "undo.h"
+#include "alignment_panel.h"
+#include "file.h"
+#include "code.h"
+#include "widget_panel.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_message.H>
@@ -25,17 +35,11 @@
 #include <FL/platform.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Round_Button.H>
-#include "Fl_Widget_Type.h"
-#include "undo.h"
+#include "../src/flstring.h"
+
 #include <math.h>
 #include <stdlib.h>
-#include "alignment_panel.h"
 #include <stdio.h>
-
-extern int gridx;
-extern int gridy;
-extern int snap;
-extern int show_guides;
 
 int include_H_from_C = 1;
 int use_FL_COMMAND = 0;
@@ -48,8 +52,6 @@ extern const char* i18n_set;
 extern Fl_Preferences   fluid_prefs;
 
 inline int fl_min(int a, int b) { return (a < b ? a : b); }
-
-#include "widget_panel.h"
 
 // Update the XYWH values in the widget panel...
 static void update_xywh() {
@@ -173,9 +175,6 @@ void i18n_int_cb(Fl_Int_Input *i, void *) {
 
   set_modflag(1);
 }
-
-extern const char* header_file_name;
-extern const char* code_file_name;
 
 void show_project_cb(Fl_Widget *, void *) {
   if(project_window==0) make_project_window();
@@ -1350,9 +1349,6 @@ int Fl_Window_Type::handle(int event) {
 
 ////////////////////////////////////////////////////////////////
 
-#include <stdio.h>
-#include "../src/flstring.h"
-
 void Fl_Window_Type::write_code1() {
   Fl_Widget_Type::write_code1();
 }
@@ -1393,7 +1389,6 @@ void Fl_Window_Type::write_properties() {
   if (o->visible()) write_string("visible");
 }
 
-extern int pasteoffset;
 void Fl_Window_Type::read_property(const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;

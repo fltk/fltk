@@ -14,17 +14,30 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "Fl_Widget_Type.h"
+
+#include "fluid.h"
+#include "Fl_Window_Type.h"
+#include "Fl_Group_Type.h"
+#include "Fl_Menu_Type.h"
+#include "Fl_Function_Type.h"
+#include "file.h"
+#include "code.h"
+#include "Fluid_Image.h"
+#include "alignment_panel.h"
+#include "widget_panel.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Table.H>
 #include <FL/Fl_Input.H>
-#include "Fl_Widget_Type.h"
-#include "alignment_panel.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Window.H>
+#include <FL/fl_show_colormap.H>
 #include "../src/flstring.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,16 +47,6 @@
 // adds it to the Fl_Widget hierarchy, creates a new Fl_Type
 // instance, sets the widget pointers, and makes all the display
 // update correctly...
-
-extern int reading_file;
-int force_parent;
-extern int gridx;
-extern int gridy;
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
 
 int Fl_Widget_Type::default_size = FL_NORMAL_SIZE;
 
@@ -163,8 +166,6 @@ Fl_Type *Fl_Widget_Type::make() {
   t->redraw();
   return t;
 }
-
-#include "Fluid_Image.h"
 
 void Fl_Widget_Type::setimage(Fluid_Image *i) {
   if (i == image || is_window()) return;
@@ -286,9 +287,6 @@ Fl_Type *sort(Fl_Type *parent) {
 
 ////////////////////////////////////////////////////////////////
 // The control panels!
-
-#include "widget_panel.h"
-#include <FL/fl_show_colormap.H>
 
 static Fl_Window *the_panel;
 
@@ -2089,11 +2087,6 @@ void Fl_Widget_Type::write_static() {
   }
 }
 
-const char *Fl_Type::callback_name() {
-  if (is_name(callback())) return callback();
-  return unique_id(this, "cb", name(), label());
-}
-
 extern int varused_test, varused;
 
 void Fl_Widget_Type::write_code1() {
@@ -2532,8 +2525,6 @@ void Fl_Widget_Type::write_properties() {
   }
 }
 
-int pasteoffset;
-extern double read_version;
 void Fl_Widget_Type::read_property(const char *c) {
   int x,y,w,h; Fl_Font f; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
@@ -2698,7 +2689,6 @@ Fl_Menu_Item boxmenu1[] = {
   {"11",                0,0,(void *)FL_DOWN_FRAME},
 {0}};
 
-extern int fdesign_flip;
 int lookup_symbol(const char *, int &, int numberok = 0);
 
 int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {

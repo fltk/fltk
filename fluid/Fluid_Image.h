@@ -19,10 +19,9 @@
 //
 
 #ifndef FLUID_IMAGE_H
-#  define FLUID_IMAGE_H
+#define FLUID_IMAGE_H
 
-#  include <FL/Fl_Shared_Image.H>
-
+#include <FL/Fl_Shared_Image.H>
 
 class Fluid_Image {
   const char *name_;

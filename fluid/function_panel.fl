@@ -20,28 +20,22 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <FL/Fl_Pixmap.H>} {private local
+decl {\#include "fluid.h"} {private local
+}
+
+decl {\#include "pixmaps.h"} {private local
+}
+
+decl {\#include "factory.h"} {private local
 }
 
 decl {\#include "Fl_Type.h"} {private local
 }
 
+decl {\#include "widget_browser.h"} {selected private local
+}
+
 decl {\#include "undo.h"} {private local
-}
-
-decl {extern class Fl_Pixmap *pixmap[];} {private local
-}
-
-decl {extern class Fl_Type *Fl_Type_make(const char*);} {private local
-}
-
-decl {extern void select_only(Fl_Type*);} {private local
-}
-
-decl {extern void exit_cb(Fl_Widget*, void*);} {private global
-}
-
-decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
 }
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {
@@ -50,10 +44,11 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {
   code {return 0;} {}
 }
 
-Function {make_function_panel()} {} {
+Function {make_function_panel()} {open
+} {
   Fl_Window function_panel {
-    label {Function/Method Properties} open
-    xywh {557 523 343 232} type Double hide resizable modal
+    label {Function/Method Properties}
+    xywh {101 713 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -131,14 +126,15 @@ Function {make_function_panel()} {} {
   }
 }
 
-Function {make_code_panel()} {} {
+Function {make_code_panel()} {open
+} {
   Fl_Window code_panel {
     label {Code Properties}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
-code_panel->hide(); // otherwise hide..} open
-    xywh {503 450 540 180} type Double labelsize 11 hide resizable
-    code0 {o->size_range(200, 150);} modal
+code_panel->hide(); // otherwise hide..}
+    xywh {425 882 540 180} type Double labelsize 11 resizable
+    code0 {o->size_range(200, 150);} modal visible
   } {
     Fl_Text_Editor code_input {
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
@@ -167,11 +163,12 @@ code_input->linenumber_width(60);
 code_input->linenumber_size(code_input->Fl_Text_Display::textsize());} {}
 }
 
-Function {make_codeblock_panel()} {} {
+Function {make_codeblock_panel()} {open
+} {
   Fl_Window codeblock_panel {
-    label {Code Block Properties} open
-    xywh {468 221 300 115} type Double labelsize 11 hide resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
+    label {Code Block Properties}
+    xywh {806 735 300 115} type Double labelsize 11 resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
   } {
     Fl_Input code_before_input {
       label {Conditional code block}
@@ -199,11 +196,12 @@ Function {make_codeblock_panel()} {} {
   }
 }
 
-Function {make_declblock_panel()} {} {
+Function {make_declblock_panel()} {open
+} {
   Fl_Window declblock_panel {
-    label {Declaration Block Properties} open
-    xywh {428 215 300 135} type Double labelsize 11 hide resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
+    label {Declaration Block Properties}
+    xywh {806 564 300 135} type Double labelsize 11 resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 280 20}
@@ -255,10 +253,11 @@ Function {make_declblock_panel()} {} {
   }
 }
 
-Function {make_decl_panel()} {} {
+Function {make_decl_panel()} {open
+} {
   Fl_Window decl_panel {
-    label {Declaration Properties} open
-    xywh {480 333 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Declaration Properties}
+    xywh {445 609 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -331,10 +330,11 @@ Function {make_decl_panel()} {} {
   }
 }
 
-Function {make_data_panel()} {} {
+Function {make_data_panel()} {open
+} {
   Fl_Window data_panel {
-    label {Inline Data Properties} open
-    xywh {472 191 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Inline Data Properties}
+    xywh {449 337 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -419,10 +419,11 @@ Function {make_data_panel()} {} {
   }
 }
 
-Function {make_class_panel()} {} {
+Function {make_class_panel()} {open
+} {
   Fl_Window class_panel {
-    label {Class Properties} open
-    xywh {497 585 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
+    label {Class Properties}
+    xywh {795 337 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -540,8 +541,8 @@ Function {make_widgetbin()} {open
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {445 273 600 102} type Single align 80 non_modal visible
+  toggle_widgetbin_cb((Fl_Widget*)o, v);}
+    xywh {449 206 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       label Code open
@@ -844,7 +845,7 @@ else
       }
       Fl_Button {} {
         user_data {"radiomenuitem"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip {Radio Menu Item} xywh {425 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[55]);}
       }

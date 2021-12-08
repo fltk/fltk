@@ -35,8 +35,10 @@ CPPFILES = \
 	fluid.cxx \
 	function_panel.cxx \
 	pixmaps.cxx \
+	shell_command.cxx \
 	template_panel.cxx \
 	undo.cxx \
+	widget_browser.cxx \
 	widget_panel.cxx
 
 # ExternalCodeEditor: platform specific files

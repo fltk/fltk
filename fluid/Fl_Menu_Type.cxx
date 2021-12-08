@@ -20,15 +20,27 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl.H>
-#include "Fl_Widget_Type.h"
+#include "Fl_Menu_Type.h"
+
+#include "fluid.h"
+#include "Fl_Window_Type.h"
 #include "alignment_panel.h"
+#include "file.h"
+#include "code.h"
+#include "Fluid_Image.h"
+#include "Shortcut_Button.h"
+
+#include <FL/Fl.H>
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Output.H>
+#include <FL/fl_draw.H>
 #include "../src/flstring.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,14 +49,6 @@ Fl_Menu_Item menu_item_type_menu[] = {
   {"Toggle",0,0,(void*)FL_MENU_BOX},
   {"Radio",0,0,(void*)FL_MENU_RADIO},
   {0}};
-
-extern int reading_file;
-extern int force_parent;
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
 
 static char submenuflag;
 static uchar menuitemtype = 0;
@@ -173,8 +177,6 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
   }
   return unique_id(t, "menu", t->name(), t->label());
 }
-
-#include "Fluid_Image.h"
 
 void Fl_Menu_Item_Type::write_static() {
   if (callback() && is_name(callback()) && !user_defined(callback()))
@@ -525,7 +527,6 @@ void Fl_Menu_Type::copy_properties() {
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Menu_Button.H>
 Fl_Menu_Item button_type_menu[] = {
   {"normal",0,0,(void*)0},
   {"popup1",0,0,(void*)Fl_Menu_Button::POPUP1},
@@ -581,10 +582,6 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 
 ////////////////////////////////////////////////////////////////
 // Shortcut entry item in panel:
-
-#include <FL/Fl_Output.H>
-#include "Shortcut_Button.h"
-#include <FL/fl_draw.H>
 
 void Shortcut_Button::draw() {
   if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);

@@ -7,24 +7,29 @@
 #ifndef _EXTCODEEDITOR_H
 #define _EXTCODEEDITOR_H
 
+#include <FL/Fl.H>
+
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */
-
 #include <sys/types.h>  /* stat().. */
 #include <sys/stat.h>
 #include <unistd.h>
+
+// ---- ExternalCodeEditor declaration
 
 class ExternalCodeEditor {
   int pid_;
   time_t file_mtime_;                   // last modify time of the file (used to determine if file changed)
   size_t file_size_;                    // last file size (used to determine if changed)
   const char *filename_;
+
 protected:
   void kill_editor();
   const char *create_tmpdir();
   const char *tmp_filename();
   int start_editor(const char *cmd, const char *filename);
   void set_filename(const char *val);
+
 public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();

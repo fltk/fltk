@@ -15,7 +15,9 @@
 //
 
 #ifndef undo_h
-#  define undo_h
+#define undo_h
+
+class Fl_Widget;
 
 extern int undo_current;                // Current undo level in buffer
 extern int undo_last;                   // Last undo level in buffer

@@ -1,7 +1,8 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
+// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,51 +22,44 @@
 // Include necessary headers...
 //
 
+#include "StyleParse.h"
+
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Text_Buffer.H>
-#include <FL/Fl_Text_Editor.H>
-#include "StyleParse.h"
+
+// ---- CodeEditor declaration
 
 class CodeEditor : public Fl_Text_Editor {
   friend class StyleParse;
 
   static Fl_Text_Display::Style_Table_Entry styletable[];
-
-  // 'style_parse()' - Parse text and produce style data.
   static void style_parse(const char *tbuff, char *sbuff, int len, char style);
-
-  // 'style_unfinished_cb()' - Update unfinished styles.
   static void style_unfinished_cb(int, void*);
-
-  // 'style_update()' - Update the style buffer...
   static void style_update(int pos, int nInserted, int nDeleted,
                            int /*nRestyled*/, const char * /*deletedText*/,
                            void *cbArg);
-
   static int auto_indent(int, CodeEditor* e);
 
-  public:
-
+public:
   CodeEditor(int X, int Y, int W, int H, const char *L=0);
   ~CodeEditor();
   int top_line() { return get_absolute_top_line_number(); }
-
-  // attempt to make the fluid code editor widget honour textsize setting
   void textsize(Fl_Fontsize s);
 };
 
+// ---- CodeViewer declaration
+
 class CodeViewer : public CodeEditor {
-
-  public:
-
+public:
   CodeViewer(int X, int Y, int W, int H, const char *L=0);
 
-  protected:
-
+protected:
   int handle(int ev) { return Fl_Text_Display::handle(ev); }
   void draw();
 };

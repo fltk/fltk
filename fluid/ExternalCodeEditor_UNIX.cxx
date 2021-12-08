@@ -3,6 +3,14 @@
 //
 //      Note: This entire file Unix only
 
+#include "ExternalCodeEditor_UNIX.h"
+
+#include "fluid.h"
+
+#include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
+#include <FL/fl_ask.H>  /* fl_alert() */
+#include <FL/fl_string.h> /* fl_strdup() */
+
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */
 #include <sys/types.h>  /* stat().. */
@@ -13,14 +21,6 @@
 #include <unistd.h>
 #include <stdlib.h>     /* free().. */
 #include <stdio.h>      /* snprintf().. */
-
-#include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
-#include <FL/fl_ask.H>  /* fl_alert() */
-#include <FL/fl_string.h> /* fl_strdup() */
-
-#include "ExternalCodeEditor_UNIX.h"
-
-extern int G_debug;     // defined in fluid.cxx
 
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
@@ -40,7 +40,20 @@ static int is_dir(const char *dirname) {
   return(S_ISDIR(buf.st_mode) ? 1 : 0);     // a dir?
 }
 
-// CTOR
+// ---- ExternalCodeEditor implementation
+
+/** \class ExternalCodeEditor
+ Support for an external C++ code editor for Fluid Code block.
+
+ This class can launch and quit a user defined program for editiing
+ code outside of Fluid.
+ It observes changes in the external file and updates the Fluid
+ widget to stay synchronized.
+ */
+
+/**
+ Create the manager for external code editors.
+ */
 ExternalCodeEditor::ExternalCodeEditor() {
   pid_        = -1;
   filename_   = 0;
@@ -48,7 +61,10 @@ ExternalCodeEditor::ExternalCodeEditor() {
   file_size_  = 0;
 }
 
-// DTOR
+/**
+ Destroy the manager.
+ This also closes the external editor.
+ */
 ExternalCodeEditor::~ExternalCodeEditor() {
   if ( G_debug )
     printf("ExternalCodeEditor() DTOR CALLED (this=%p, pid=%ld)\n",
@@ -57,20 +73,28 @@ ExternalCodeEditor::~ExternalCodeEditor() {
   set_filename(0);  // free()s filename
 }
 
-// [Protected] Set the filename. Handles memory allocation/free
-//     If set to NULL, frees memory.
-//
+/**
+ Set the filename for the file we wish to edit.
+ Handles memory allocation/free.
+ If set to NULL, frees memory.
+ \param[in] val new filename
+ */
 void ExternalCodeEditor::set_filename(const char *val) {
   if ( filename_ ) free((void*)filename_);
   filename_ = val ? fl_strdup(val) : 0;
 }
 
-// [Public] Is editor running?
+/**
+ Is editor running?
+ \return 1 if we are currently editing a file.
+ */
 int ExternalCodeEditor::is_editing() {
   return( (pid_ != -1) ? 1 : 0 );
 }
 
-// [Protected] Wait for editor to close
+/**
+ Wait for editor to close
+ */
 void ExternalCodeEditor::close_editor() {
   if ( G_debug ) printf("close_editor() called: pid=%ld\n", long(pid_));
   // Wait until editor is closed + reaped
@@ -101,10 +125,12 @@ void ExternalCodeEditor::close_editor() {
   }
 }
 
-// [Protected] Kill the running editor (if any)
-//   Kills the editor, reaps the process, and removes the tmp file.
-//   The dtor calls this to ensure no editors remain running when fluid exits.
-//
+/**
+ Kill the running editor (if any).
+
+ Kills the editor, reaps the process, and removes the tmp file.
+ The dtor calls this to ensure no editors remain running when fluid exits.
+ */
 void ExternalCodeEditor::kill_editor() {
   if ( G_debug ) printf("kill_editor() called: pid=%ld\n", (long)pid_);
   if ( !is_editing() ) return;  // editor not running? return..
@@ -137,15 +163,18 @@ void ExternalCodeEditor::kill_editor() {
   return;
 }
 
-// [Public] Handle if file changed since last check, and update records if so.
-// Load new data into 'code', which caller must free().
-// If 'force' set, forces reload even if file size/time didn't change.
-//
-// Returns:
-//     0 -- file unchanged or not editing
-//     1 -- file changed, internal records updated, 'code' has new content
-//    -1 -- error getting file info (strerror() has reason)
-//
+/**
+ Handle if file changed since last check, and update records if so.
+
+ Load new data into 'code', which caller must free().
+ If 'force' set, forces reload even if file size/time didn't change.
+
+ \param[in] code
+ \param[in] force
+ \return 0 if file unchanged or not editing
+ \return 1 if file changed, internal records updated, 'code' has new content
+ \return -1 error getting file info (strerror() has reason)
+*/
 int ExternalCodeEditor::handle_changes(const char **code, int force) {
   code[0] = 0;
   if ( !is_editing() ) return 0;
@@ -190,12 +219,12 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   return ret;
 }
 
-// [Public] Remove the tmp file (if it exists), and zero out filename/mtime/size
-// Returns:
-//    -1 -- on error (dialog is posted as to why)
-//     0 -- no file to remove
-//     1 -- file was removed
-//
+/**
+ Remove the tmp file (if it exists), and zero out filename/mtime/size.
+ \return -1 on error (dialog is posted as to why)
+ \return 0 no file to remove
+ \return 1 -- file was removed
+ */
 int ExternalCodeEditor::remove_tmpfile() {
   const char *tmpfile = filename();
   if ( !tmpfile ) return 0;
@@ -213,18 +242,20 @@ int ExternalCodeEditor::remove_tmpfile() {
   return 1;
 }
 
-// [Static/Public] Return tmpdir name for this fluid instance.
-//     Returns pointer to static memory.
-//
+/**
+ Return tmpdir name for this fluid instance.
+ \return pointer to static memory.
+ */
 const char* ExternalCodeEditor::tmpdir_name() {
   static char dirname[100];
   snprintf(dirname, sizeof(dirname), "/tmp/.fluid-%ld", (long)getpid());
   return dirname;
 }
 
-// [Static/Public] Clear the external editor's tempdir
-//    Static so that the main program can call it on exit to clean up.
-//
+/**
+ Clear the external editor's tempdir.
+ Static so that the main program can call it on exit to clean up.
+ */
 void ExternalCodeEditor::tmpdir_clear() {
   const char *tmpdir = tmpdir_name();
   if ( is_dir(tmpdir) ) {
@@ -235,9 +266,11 @@ void ExternalCodeEditor::tmpdir_clear() {
   }
 }
 
-// [Protected] Creates temp dir (if doesn't exist) and returns the dirname
-// as a static string. Returns NULL on error, dialog shows reason.
-//
+/**
+ Creates temp dir (if doesn't exist) and returns the dirname
+ as a static string.
+ \return NULL on error, dialog shows reason.
+ */
 const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
   if ( ! is_dir(dirname) ) {
@@ -250,26 +283,26 @@ const char* ExternalCodeEditor::create_tmpdir() {
   return dirname;
 }
 
-// [Protected] Returns temp filename in static buffer.
-//    Returns NULL if can't, posts dialog explaining why.
-//
+/**
+ Returns temp filename in static buffer.
+ \return NULL if can't, posts dialog explaining why.
+ */
 const char* ExternalCodeEditor::tmp_filename() {
   static char path[512];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  extern const char *code_file_name;   // fluid's global
   const char *ext  = code_file_name;   // e.g. ".cxx"
   snprintf(path, sizeof(path), "%s/%p%s", tmpdir, (void*)this, ext);
   path[sizeof(path)-1] = 0;
   return path;
 }
 
-// [Static/Local] Save string 'code' to 'filename', returning file's mtime/size
-// 'code' can be NULL -- writes an empty file if so.
-// Returns:
-//    0 on success
-//   -1 on error (posts dialog with reason)
-//
+/**
+ Save string 'code' to 'filename', returning file's mtime/size.
+ 'code' can be NULL -- writes an empty file if so.
+ \return 0 on success
+ \return -1 on error (posts dialog with reason)
+ */
 static int save_file(const char *filename, const char *code) {
   int fd = open(filename, O_WRONLY|O_CREAT, 0666);
   if ( fd == -1 ) {
@@ -291,14 +324,14 @@ static int save_file(const char *filename, const char *code) {
   return(ret);
 }
 
-// [Static/Local] Convert string 's' to array of argv[], useful for execve()
-//     o 's' will be modified (words will be NULL separated)
-//     o argv[] will end up pointing to the words of 's'
-//     o Caller must free argv with: free(argv);
-//   Returns:
-//     o -1 in case of memory allocation error
-//     o number of arguments in argv (same value as in argc)
-//
+/**
+ Convert string 's' to array of argv[], useful for execve().
+  - 's' will be modified (words will be NULL separated)
+  - argv[] will end up pointing to the words of 's'
+  - Caller must free argv with: free(argv);
+ \return -1 in case of memory allocation error
+ \return number of arguments in argv (same value as in argc)
+ */
 static int make_args(char *s,         // string containing words (gets trashed!)
                      int *aargc,      // pointer to argc
                      char ***aargv) { // pointer to argv
@@ -316,11 +349,11 @@ static int make_args(char *s,         // string containing words (gets trashed!)
   return(t);
 }
 
-// [Protected] Start editor in background (fork/exec)
-// Returns:
-//    >  0 on success, leaves editor child process running as 'pid_'
-//    > -1 on error, posts dialog with reason (child exits)
-//
+/**
+ Start editor in background (fork/exec)
+ \return 0 on success, leaves editor child process running as 'pid_'
+ \return -1 on error, posts dialog with reason (child exits)
+ */
 int ExternalCodeEditor::start_editor(const char *editor_cmd,
                                      const char *filename) {
   if ( G_debug ) printf("start_editor() cmd='%s', filename='%s'\n",
@@ -354,17 +387,18 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   return 0;
 }
 
-// [Public] Try to reap external editor process
-// If 'pid_reaped' not NULL, returns PID of reaped editor.
-// Returns:
-//   -2 -- editor not open
-//   -1 -- waitpid() failed (errno has reason)
-//    0 -- process still running
-//    1 -- process finished + reaped ('pid_reaped' has pid), pid_ set to -1.
-//         Handles removing tmpfile/zeroing file_mtime/file_size/filename
-//
-// If return value <=0, 'pid_reaped' is set to zero.
-//
+/**
+ Try to reap external editor process.
+
+ If 'pid_reaped' not NULL, returns PID of reaped editor.
+
+ \return -2: editor not open
+ \return -1: waitpid() failed (errno has reason)
+ \return 0: process still running
+ \return 1: process finished + reaped ('pid_reaped' has pid), pid_ set to -1.
+    Handles removing tmpfile/zeroing file_mtime/file_size/filename
+ \return If return value <=0, 'pid_reaped' is set to zero.
+ */
 int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
   if ( pid_reaped ) *pid_reaped = 0;
   if ( !is_editing() ) return -2;
@@ -388,14 +422,15 @@ int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
   return 1;
 }
 
-// [Public] Open external editor using 'editor_cmd' to edit 'code'
-// 'code' contains multiline code to be edited as a temp file.
-//
-// Returns:
-//   0 if succeeds
-//  -1 if can't open editor (already open, etc),
-//     errors were shown to user in a dialog
-//
+/**
+ Open external editor using 'editor_cmd' to edit 'code'.
+
+ 'code' contains multiline code to be edited as a temp file.
+
+ \return 0 if succeeds
+ \return -1 if can't open editor (already open, etc),
+    errors were shown to user in a dialog
+ */
 int ExternalCodeEditor::open_editor(const char *editor_cmd,
                                     const char *code) {
   // Make sure a temp filename exists
@@ -446,31 +481,38 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
   return 0;
 }
 
-// [Public/Static] Start update timer
+/**
+ Start update timer.
+ */
 void ExternalCodeEditor::start_update_timer() {
   if ( !L_update_timer_cb ) return;
   if ( G_debug ) printf("--- TIMER: STARTING UPDATES\n");
   Fl::add_timeout(2.0, L_update_timer_cb);
 }
 
-// [Public/Static] Stop update timer
+/**
+ Stop update timer.
+ */
 void ExternalCodeEditor::stop_update_timer() {
   if ( !L_update_timer_cb ) return;
   if ( G_debug ) printf("--- TIMER: STOPPING UPDATES\n");
   Fl::remove_timeout(L_update_timer_cb);
 }
 
-// [Public/Static] Set app's external editor update timer callback
-//   This is the app's callback callback we start while editors are open,
-//   and stop when all editors are closed.
-//
+/**
+ Set app's external editor update timer callback.
+
+ This is the app's callback callback we start while editors are open,
+ and stop when all editors are closed.
+ */
 void ExternalCodeEditor::set_update_timer_callback(Fl_Timeout_Handler cb) {
   L_update_timer_cb = cb;
 }
 
-// [Static/Public] See if any external editors are open.
-//   App's timer cb can see if any editors need checking..
-//
+/**
+ See if any external editors are open.
+ App's timer cb can see if any editors need checking..
+ */
 int ExternalCodeEditor::editors_open() {
   return L_editors_open;
 }
