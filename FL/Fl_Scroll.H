@@ -39,6 +39,19 @@
   blinking during redrawing, but that can be solved by using a
   Fl_Double_Window.
 
+  The Fl_Scroll widget calculates the bounding box of all its children
+  by using their widget positions and sizes (x, y, w, h). Outside labels
+  are not considered. If you need outside labels of any widgets or free
+  space outside of this bounding box you can add a tiny invisible Fl_Box
+  at the relevant corner(s) of the Fl_Scroll widget, for instance:
+  \code
+    Fl_Scroll scroll(100, 100, 200, 200); // Fl_Scroll at (100, 100)
+    Fl_Box(100, 100, 1, 1);               // Fl_Box in top left corner
+    Fl_Input(150, 120, 60, 30, "Input:"); // left most widget with label
+    // ... more widgets ...
+    scroll.end();
+  \endcode
+
   By default you can scroll in both directions, and the scrollbars
   disappear if the data will fit in the area of the scroll.
 
