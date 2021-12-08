@@ -213,9 +213,13 @@ if (USE_X11)
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
-    Fl_Native_File_Chooser_Kdialog.cxx
     Fl_get_key.cxx
   )
+  
+  if (OPTION_USE_KDIALOG)
+    set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx)
+  endif (OPTION_USE_KDIALOG)
+
   if (USE_XFT)
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx

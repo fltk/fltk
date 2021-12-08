@@ -369,3 +369,9 @@
  */
 
 #cmakedefine FL_CFG_NO_FILESYSTEM_SUPPORT 1
+
+/*
+ * Do we want class Fl_Native_File_Chooser to run kdialog when desktop is KDE?
+ */
+
+#cmakedefine01 USE_KDIALOG

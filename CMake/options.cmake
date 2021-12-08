@@ -610,6 +610,15 @@ endif (OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
+option (OPTION_USE_KDIALOG "Fl_Native_File_Chooser may run kdialog" ON)
+if (OPTION_USE_KDIALOG)
+  set (USE_KDIALOG 1)
+else ()
+  set (USE_KDIALOG 0)
+endif (OPTION_USE_KDIALOG)
+#######################################################################
+
+#######################################################################
 option (OPTION_CREATE_ANDROID_STUDIO_IDE "create files needed to compile FLTK for Android" OFF)
 #######################################################################
 

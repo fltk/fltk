@@ -17,7 +17,9 @@
 
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
-#include "Fl_Native_File_Chooser_Kdialog.H"
+#if USE_KDIALOG
+#  include "Fl_Native_File_Chooser_Kdialog.H"
+#endif
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <FL/platform.H>
@@ -913,6 +915,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   // otherwise, use FLTK file chooser.
   platform_fnfc = NULL;
   if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
+#if USE_KDIALOG
     const char *desktop = getenv("XDG_CURRENT_DESKTOP");
     if (desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {
       if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
@@ -929,6 +932,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
       // if we found kdialog, we will use the Fl_Kdialog_Native_File_Chooser_Driver
       if (Fl_Kdialog_Native_File_Chooser_Driver::did_find_kdialog) platform_fnfc = new Fl_Kdialog_Native_File_Chooser_Driver(val);
     }
+#endif // USE_KDIALOG
 #if HAVE_DLSYM && HAVE_DLFCN_H
     if (!platform_fnfc) {
       if ( Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
