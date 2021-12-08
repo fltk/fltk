@@ -529,10 +529,6 @@ int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
  This node manages an arbitrary block of code inside a function that will
  be written into the source code file. Fl_Code_Block has no comment field.
  However, the first line of code will be shown in the widget browser.
-
- \todo Fl_Code_Block stores the cursor position in text editor, but it does not
-    store the view position (scrollbars). Make sure that we can always see
-    the cursor when opening the dialog. (it's not stored in the .fl file)
  */
 
 /// Prototype for code to be used by the factory.
@@ -541,9 +537,11 @@ Fl_Code_Type Fl_Code_type;
 /**
  Constructor.
  */
-Fl_Code_Type::Fl_Code_Type() {
-  cursor_position_ = 0;
-}
+Fl_Code_Type::Fl_Code_Type() :
+  cursor_position_(0),
+  code_input_scroll_row(0),
+  code_input_scroll_col(0)
+{}
 
 /**
  Make a new code node.
@@ -580,6 +578,7 @@ void Fl_Code_Type::open() {
   const char *text = name();
   code_input->buffer()->text( text ? text : "" );
   code_input->insert_position(cursor_position_);
+  code_input->scroll(code_input_scroll_row, code_input_scroll_col);
   code_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -597,6 +596,8 @@ void Fl_Code_Type::open() {
     break;
   }
   cursor_position_ = code_input->insert_position();
+  code_input_scroll_row = code_input->scroll_row();
+  code_input_scroll_col = code_input->scroll_col();
 BREAK2:
   code_panel->hide();
 }

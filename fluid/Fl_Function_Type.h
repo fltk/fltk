@@ -72,6 +72,8 @@ public:
 class Fl_Code_Type : public Fl_Type {
   ExternalCodeEditor editor_;
   int cursor_position_;
+  int code_input_scroll_row;
+  int code_input_scroll_col;
 
 public:
   Fl_Code_Type();

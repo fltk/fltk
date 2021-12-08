@@ -4146,18 +4146,25 @@ int Fl_Text_Display::handle(int event) {
 
 /*
  Convert an x pixel position into a column number.
+ The width of a column is calculated as the average width of a few
+ representative characters, giving a good estimate for proportional fonts.
+ This method does not take the possition of the scroll bars into account.
+ \param[in] x offset to the left edge of the text in FLTK units.
+ \return approximation to the corresponding text column
+ \see col_to_x()
  */
-double Fl_Text_Display::x_to_col(double y) const
+double Fl_Text_Display::x_to_col(double x) const
 {
   if (!mColumnScale) {
     mColumnScale = string_width("Mitg", 4, 'A') / 4.0;
   }
-  return (y/mColumnScale)+0.5;
+  return (x/mColumnScale)+0.5;
 }
 
 
 /**
  Convert a column number into an x pixel position.
+ \see x_to_col()
  */
 double Fl_Text_Display::col_to_x(double col) const
 {

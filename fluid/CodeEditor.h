@@ -51,6 +51,8 @@ public:
   ~CodeEditor();
   int top_line() { return get_absolute_top_line_number(); }
   void textsize(Fl_Fontsize s);
+  int scroll_row() { return mTopLineNum; }
+  int scroll_col() { return mHorizOffset; }
 };
 
 // ---- CodeViewer declaration
