@@ -43,6 +43,8 @@
         - \ref common_labels
         - \ref drawing_images
 
+    \subpage coordinates
+
     \subpage resize
 
     \subpage editor

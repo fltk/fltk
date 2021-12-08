@@ -640,8 +640,8 @@ combined with any modifiers like \p Shift , \p Alt , and \p Control.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="resize.html">
-    How does resizing work?
+    <a class="el" href="coordinates.html">
+    Coordinates and Layout Widgets
     [Next]
     </a>
   </td>

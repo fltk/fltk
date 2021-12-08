@@ -1,6 +1,6 @@
 /**
 
- \page resize How does resizing work?
+ \page resize How Does Resizing Work?
 
 This chapter describes the basic mechanism behind the creation
 of resizable user interface elements in FLTK.
@@ -280,9 +280,9 @@ To summarize the key points of the new technique:
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="common.html">
+    <a class="el" href="coordinates.html">
     [Prev]
-    Common Widgets and Attributes
+    Coordinates and Layout Widgets
     </a>
   </td>
   <td width="10%" align="CENTER">
