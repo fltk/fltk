@@ -290,7 +290,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {469 233 365 200} type Double modal size_range {365 200 365 200} visible
+    xywh {468 233 365 200} type Double modal size_range {365 200 365 200} visible
   } {
     Fl_Group {} {open
       xywh {0 0 365 165}
@@ -314,7 +314,13 @@ Function {make_shell_window()} {open
       Fl_Check_Button shell_use_fl_button {
         label {use settings in .fl design files}
         callback {g_shell_use_fl_settings = shell_use_fl_button->value();
-fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);}
+fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);
+if (g_shell_use_fl_settings) {
+  shell_settings_read();
+} else {
+  shell_prefs_get();
+}
+update_shell_window();} selected
         tooltip {check to read and write shell command from and to .fl files} xywh {82 110 180 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Box {} {
@@ -326,7 +332,7 @@ fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);}
         Fl_Button {} {
           label {save as default}
           callback {apply_shell_window();
-shell_prefs_set();} selected
+shell_prefs_set();}
           tooltip {update the Fluid app settings for external shell commands to the current settings} xywh {82 134 104 20} labelsize 12
         }
         Fl_Box {} {

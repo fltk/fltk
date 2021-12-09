@@ -342,13 +342,20 @@ void do_shell_command(Fl_Return_Button*, void*) {
  Fluid app settings are saved per user and per machine.
  */
 void show_shell_window() {
+  update_shell_window();
+  shell_window->hotspot(shell_command_input);
+  shell_window->show();
+}
+
+/**
+ Update the shell properties dialog box.
+ */
+void update_shell_window() {
   shell_command_input->value(g_shell_command);
   shell_savefl_button->value(g_shell_save_fl);
   shell_writecode_button->value(g_shell_save_code);
   shell_writemsgs_button->value(g_shell_save_strings);
   shell_use_fl_button->value(g_shell_use_fl_settings);
-  shell_window->hotspot(shell_command_input);
-  shell_window->show();
 }
 
 /**

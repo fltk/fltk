@@ -1,0 +1,36 @@
+
+
+/**
+
+ \page code Code Nodes
+
+ Overview of code nodes.
+
+ \section function Functions and Methods
+
+ Creating functions and methods.
+
+ \code
+ #include "test.fl"
+ \endcode
+
+ \section code Code
+
+ \section codeblock Code Block
+
+ \section declaration Declaration
+
+ \section declarationblock Declaration Block
+
+ \section class Classes
+
+ Fluid can create a new C++ class.
+
+ \section widgetclass Widget Class
+
+ \section comment Comments
+
+ \section inlineddata Inlined Data
+
+ */
+

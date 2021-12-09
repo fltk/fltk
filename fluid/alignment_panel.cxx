@@ -337,6 +337,12 @@ Fl_Check_Button *shell_use_fl_button=(Fl_Check_Button *)0;
 static void cb_shell_use_fl_button(Fl_Check_Button*, void*) {
   g_shell_use_fl_settings = shell_use_fl_button->value();
 fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);
+if (g_shell_use_fl_settings) {
+  shell_settings_read();
+} else {
+  shell_prefs_get();
+}
+update_shell_window();
 }
 
 static void cb_save(Fl_Button*, void*) {

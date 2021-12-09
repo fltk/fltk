@@ -32,6 +32,7 @@
 #endif
 
 void show_shell_window();
+void update_shell_window();
 void apply_shell_window();
 void do_shell_command(class Fl_Return_Button*, void*);
 
