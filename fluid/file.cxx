@@ -537,20 +537,26 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
         if (shell_settings_windows.command)
           free((void*)shell_settings_windows.command);
         shell_settings_windows.command = fl_strdup(read_word());
+        goto CONTINUE;
       } else if (strcmp(c, "win_shell_flags")==0) {
         shell_settings_windows.flags = atoi(read_word());
+        goto CONTINUE;
       } else if (strcmp(c, "linux_shell_cmd")==0) {
         if (shell_settings_linux.command)
           free((void*)shell_settings_linux.command);
         shell_settings_linux.command = fl_strdup(read_word());
+        goto CONTINUE;
       } else if (strcmp(c, "linux_shell_flags")==0) {
         shell_settings_linux.flags = atoi(read_word());
+        goto CONTINUE;
       } else if (strcmp(c, "mac_shell_cmd")==0) {
         if (shell_settings_macos.command)
           free((void*)shell_settings_macos.command);
         shell_settings_macos.command = fl_strdup(read_word());
+        goto CONTINUE;
       } else if (strcmp(c, "mac_shell_flags")==0) {
         shell_settings_macos.flags = atoi(read_word());
+        goto CONTINUE;
       }
     }
     {
