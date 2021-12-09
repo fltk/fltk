@@ -26,6 +26,102 @@
 
 static Fl_Process s_proc;
 
+/// Shell settings in the .fl file
+Shell_Settings shell_settings_windows = { };
+Shell_Settings shell_settings_linux = { };
+Shell_Settings shell_settings_macos = { };
+
+/// Current shell command, stored in .fl file for each platform, and in app prefs
+char *g_shell_command = NULL;
+
+/// Save .fl file before running, stored in .fl file for each platform, and in app prefs
+int g_shell_save_fl = 1;
+
+/// Save code file before running, stored in .fl file for each platform, and in app prefs
+int g_shell_save_code = 1;
+
+/// Save strings file before running, stored in .fl file for each platform, and in app prefs
+int g_shell_save_strings = 0;
+
+/// Use these settings from .fl files, stored in app prefs
+int g_shell_use_fl_settings = 1;
+
+/**
+ Read the default shell settings from the app preferences.
+ */
+void shell_prefs_get()
+{
+  fluid_prefs.get("shell_command", g_shell_command, "echo \"Custom Shell Command\"");
+  fluid_prefs.get("shell_savefl", g_shell_save_fl, 1);
+  fluid_prefs.get("shell_writecode", g_shell_save_code, 1);
+  fluid_prefs.get("shell_writemsgs", g_shell_save_strings, 0);
+  fluid_prefs.get("shell_use_fl", g_shell_use_fl_settings, 1);
+}
+
+/**
+ Write the current shell settings to the app preferences.
+ */
+void shell_prefs_set()
+{
+  fluid_prefs.set("shell_command", g_shell_command);
+  fluid_prefs.set("shell_savefl", g_shell_save_fl);
+  fluid_prefs.set("shell_writecode", g_shell_save_code);
+  fluid_prefs.set("shell_writemsgs", g_shell_save_strings);
+  fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);
+}
+
+/**
+ Copy shell settings from the .fl buffer if use_fl_settings is set.
+ */
+void shell_settings_read()
+{
+  if (g_shell_use_fl_settings==0)
+    return;
+#if defined(_WIN32)
+  Shell_Settings &shell_settings = shell_settings_windows;
+#elif defined(__APPLE__)
+  Shell_Settings &shell_settings = shell_settings_macos;
+#else
+  Shell_Settings &shell_settings = shell_settings_linux;
+#endif
+  if (g_shell_command)
+    free((void*)g_shell_command);
+  g_shell_command = NULL;
+  if (shell_settings.command)
+    g_shell_command = strdup(shell_settings.command);
+  g_shell_save_fl = ((shell_settings.flags&1)==1);
+  g_shell_save_code = ((shell_settings.flags&2)==2);
+  g_shell_save_strings = ((shell_settings.flags&4)==4);
+}
+
+/**
+ Copy current shell settings to the .fl buffer if use_fl_settings is set.
+ */
+void shell_settings_write()
+{
+  if (g_shell_use_fl_settings==0)
+    return;
+#if defined(_WIN32)
+  Shell_Settings &shell_settings = shell_settings_windows;
+#elif defined(__APPLE__)
+  Shell_Settings &shell_settings = shell_settings_macos;
+#else
+  Shell_Settings &shell_settings = shell_settings_linux;
+#endif
+  if (shell_settings.command)
+    free((void*)shell_settings.command);
+  shell_settings.command = NULL;
+  if (g_shell_command)
+    shell_settings.command = strdup(g_shell_command);
+  shell_settings.flags = 0;
+  if (g_shell_save_fl)
+    shell_settings.flags |= 1;
+  if (g_shell_save_code)
+    shell_settings.flags |= 2;
+  if (g_shell_save_strings)
+    shell_settings.flags |= 4;
+}
+
 /** \class Fl_Process
  \todo Explain.
  */
@@ -153,17 +249,17 @@ static bool prepare_shell_command(const char * &command)  { // common pre-shell 
     fl_alert("Previous shell command still running!");
     return false;
   }
-  if ((command = shell_command_input->value()) == NULL || !*command) {
+  if ((command = g_shell_command) == NULL || !*command) {
     fl_alert("No shell command entered!");
     return false;
   }
-  if (shell_savefl_button->value()) {
+  if (g_shell_save_fl) {
     save_cb(0, 0);
   }
-  if (shell_writecode_button->value()) {
+  if (g_shell_save_code) {
     write_code_files();
   }
-  if (shell_writemsgs_button->value()) {
+  if (g_shell_save_strings) {
     write_strings_cb(0, 0);
   }
   return true;
@@ -226,9 +322,44 @@ void do_shell_command(Fl_Return_Button*, void*) {
 
 /**
  Show a dialog box to run an external shell command.
+
+ Copies the current settings into the dialog box.
+
+ This dialog box offers a field for a command line and three check buttons
+ to generate and save various files before the command is run.
+
+ If the fourth checkbox, "use settings in .fl design files" is checked,
+ all shell settings will be store in the current .fl file, and they will
+ be read and restored when the .fl is loaded again.
+
+ Fluid will save different shell settings for different operating system as
+ it is common that a different OS requires a different shell command.
+
+ Fluid comes with default shell settings. Pressing the "save as default" button
+ will store the current setting in the Fluid app settings and are used for new
+ designs, or if the "use settings..." box is not checked.
+
+ Fluid app settings are saved per user and per machine.
  */
 void show_shell_window() {
+  shell_command_input->value(g_shell_command);
+  shell_savefl_button->value(g_shell_save_fl);
+  shell_writecode_button->value(g_shell_save_code);
+  shell_writemsgs_button->value(g_shell_save_strings);
+  shell_use_fl_button->value(g_shell_use_fl_settings);
   shell_window->hotspot(shell_command_input);
   shell_window->show();
+}
+
+/**
+ Copy the sshe;l settings from the dialog box into the variables.
+ */
+void apply_shell_window() {
+  if (g_shell_command)
+    free((void*)g_shell_command);
+  g_shell_command = strdup(shell_command_input->value());
+  g_shell_save_fl = shell_savefl_button->value();
+  g_shell_save_code = shell_writecode_button->value();
+  g_shell_save_strings = shell_writemsgs_button->value();
 }
 

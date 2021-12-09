@@ -39,6 +39,7 @@ copied or otherwise examined.
 #include "code.h"
 #include "undo.h"
 #include "pixmaps.h"
+#include "shell_command.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
@@ -167,8 +168,10 @@ void delete_all(int selected_only) {
   if(!selected_only) {
     include_H_from_C=1;
     use_FL_COMMAND=0;
+    // reset the setting for the external shell command
+    shell_prefs_get();
+    shell_settings_write();
   }
-
   selection_changed(0);
 }
 

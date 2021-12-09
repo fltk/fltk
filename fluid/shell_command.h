@@ -32,6 +32,29 @@
 #endif
 
 void show_shell_window();
+void apply_shell_window();
+void do_shell_command(class Fl_Return_Button*, void*);
+
+typedef struct {
+  char *command;
+  int flags;
+} Shell_Settings;
+
+extern Shell_Settings shell_settings_windows;
+extern Shell_Settings shell_settings_linux;
+extern Shell_Settings shell_settings_macos;
+
+extern char *g_shell_command;
+extern int g_shell_save_fl;
+extern int g_shell_save_code;
+extern int g_shell_save_strings;
+extern int g_shell_use_fl_settings;
+
+void shell_prefs_get();
+void shell_prefs_set();
+void shell_settings_read();
+void shell_settings_write();
+
 
 class Fl_Process {
 public:

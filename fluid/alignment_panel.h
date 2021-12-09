@@ -21,6 +21,7 @@
 #include <FL/Fl.H>
 #include "fluid.h"
 #include "widget_browser.h"
+#include "shell_command.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/filename.H>
@@ -73,11 +74,11 @@ Fl_Double_Window* make_settings_window();
 extern Fl_Menu_Item menu_scheme_choice[];
 extern Fl_Double_Window *shell_window;
 extern Fl_Input *shell_command_input;
+extern Fl_Check_Button *shell_savefl_button;
 extern Fl_Check_Button *shell_writecode_button;
 extern Fl_Check_Button *shell_writemsgs_button;
-extern Fl_Check_Button *shell_savefl_button;
+extern Fl_Check_Button *shell_use_fl_button;
 #include <FL/Fl_Return_Button.H>
-extern void do_shell_command(Fl_Return_Button*, void*);
 extern Fl_Double_Window *shell_run_window;
 #include <FL/Fl_Simple_Terminal.H>
 extern Fl_Simple_Terminal *shell_run_terminal;

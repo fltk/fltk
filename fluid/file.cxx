@@ -28,6 +28,7 @@
 #include "Fl_Window_Type.h"
 #include "alignment_panel.h"
 #include "widget_browser.h"
+#include "shell_command.h"
 #include "code.h"
 
 #include <FL/Fl.H>
@@ -392,9 +393,23 @@ int write_file(const char *filename, int selected_only) {
         break;
     }
   }
+  shell_settings_write();
   if (!selected_only) {
     write_string("\nheader_name"); write_word(header_file_name);
     write_string("\ncode_name"); write_word(code_file_name);
+
+    if (shell_settings_windows.command) {
+      write_string("\nwin_shell_cmd"); write_word(shell_settings_windows.command);
+      write_string("\nwin_shell_flags"); write_string("%d", shell_settings_windows.flags);
+    }
+    if (shell_settings_linux.command) {
+      write_string("\nlinux_shell_cmd"); write_word(shell_settings_linux.command);
+      write_string("\nlinux_shell_flags"); write_string("%d", shell_settings_linux.flags);
+    }
+    if (shell_settings_macos.command) {
+      write_string("\nmac_shell_cmd"); write_word(shell_settings_macos.command);
+      write_string("\nmac_shell_flags"); write_string("%d", shell_settings_macos.flags);
+    }
   }
   for (Fl_Type *p = Fl_Type::first; p;) {
     if (!selected_only || p->selected) {
@@ -413,9 +428,16 @@ int write_file(const char *filename, int selected_only) {
 // read all the objects out of the input file:
 
 /**
- Read child node in the .fl design file.
+ Recursively read child nodes in the .fl design file.
+
+ If this is the first call, also read the global settings for this design.
+
+ \param[in] p parent node or NULL
+ \param[in] paste if set, merge into existing design, else replace design
+ \param[in] options_read this is set if the options were already found in
+    a previous call
  */
-static void read_children(Fl_Type *p, int paste) {
+static void read_children(Fl_Type *p, int paste, char options_read=0) {
   Fl_Type::current = p;
   for (;;) {
     const char *c = read_word();
@@ -430,85 +452,107 @@ static void read_children(Fl_Type *p, int paste) {
       break;
     }
 
-    // this is the first word in a .fd file:
-    if (!strcmp(c,"Magic:")) {
-      read_fdesign();
-      return;
-    }
+    // Make sure that we don;t go through the list of options for child nodes
+    if (!options_read) {
+      // this is the first word in a .fd file:
+      if (!strcmp(c,"Magic:")) {
+        read_fdesign();
+        return;
+      }
 
-    if (!strcmp(c,"version")) {
-      c = read_word();
-      read_version = strtod(c,0);
-      if (read_version<=0 || read_version>double(FL_VERSION+0.00001))
-        read_error("unknown version '%s'",c);
-      continue;
-    }
+      if (!strcmp(c,"version")) {
+        c = read_word();
+        read_version = strtod(c,0);
+        if (read_version<=0 || read_version>double(FL_VERSION+0.00001))
+          read_error("unknown version '%s'",c);
+        continue;
+      }
 
-    // back compatibility with Vincent Penne's original class code:
-    if (!p && !strcmp(c,"define_in_struct")) {
-      Fl_Type *t = Fl_Type_make("class");
-      t->name(read_word());
-      Fl_Type::current = p = t;
-      paste = 1; // stops "missing }" error
-      continue;
-    }
+      // back compatibility with Vincent Penne's original class code:
+      if (!p && !strcmp(c,"define_in_struct")) {
+        Fl_Type *t = Fl_Type_make("class");
+        t->name(read_word());
+        Fl_Type::current = p = t;
+        paste = 1; // stops "missing }" error
+        continue;
+      }
 
-    if (!strcmp(c,"do_not_include_H_from_C")) {
-      include_H_from_C=0;
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"use_FL_COMMAND")) {
-      use_FL_COMMAND=1;
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_type")) {
-      i18n_type = atoi(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_function")) {
-      i18n_function = fl_strdup(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_file")) {
-      i18n_file = fl_strdup(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_set")) {
-      i18n_set = fl_strdup(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_include")) {
-      i18n_include = fl_strdup(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_type"))
-    {
-      i18n_type = atoi(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"i18n_type"))
-    {
-      i18n_type = atoi(read_word());
-      goto CONTINUE;
-    }
-    if (!strcmp(c,"header_name")) {
-      if (!header_file_set) header_file_name = fl_strdup(read_word());
-      else read_word();
-      goto CONTINUE;
-    }
+      if (!strcmp(c,"do_not_include_H_from_C")) {
+        include_H_from_C=0;
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"use_FL_COMMAND")) {
+        use_FL_COMMAND=1;
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_type")) {
+        i18n_type = atoi(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_function")) {
+        i18n_function = fl_strdup(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_file")) {
+        i18n_file = fl_strdup(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_set")) {
+        i18n_set = fl_strdup(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_include")) {
+        i18n_include = fl_strdup(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_type"))
+      {
+        i18n_type = atoi(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"i18n_type"))
+      {
+        i18n_type = atoi(read_word());
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"header_name")) {
+        if (!header_file_set) header_file_name = fl_strdup(read_word());
+        else read_word();
+        goto CONTINUE;
+      }
 
-    if (!strcmp(c,"code_name")) {
-      if (!code_file_set) code_file_name = fl_strdup(read_word());
-      else read_word();
-      goto CONTINUE;
-    }
+      if (!strcmp(c,"code_name")) {
+        if (!code_file_set) code_file_name = fl_strdup(read_word());
+        else read_word();
+        goto CONTINUE;
+      }
 
-    if (!strcmp(c, "snap") || !strcmp(c, "gridx") || !strcmp(c, "gridy")) {
-      // grid settings are now global
-      read_word();
-      goto CONTINUE;
-    }
+      if (!strcmp(c, "snap") || !strcmp(c, "gridx") || !strcmp(c, "gridy")) {
+        // grid settings are now global
+        read_word();
+        goto CONTINUE;
+      }
 
+      if (strcmp(c, "win_shell_cmd")==0) {
+        if (shell_settings_windows.command)
+          free((void*)shell_settings_windows.command);
+        shell_settings_windows.command = fl_strdup(read_word());
+      } else if (strcmp(c, "win_shell_flags")==0) {
+        shell_settings_windows.flags = atoi(read_word());
+      } else if (strcmp(c, "linux_shell_cmd")==0) {
+        if (shell_settings_linux.command)
+          free((void*)shell_settings_linux.command);
+        shell_settings_linux.command = fl_strdup(read_word());
+      } else if (strcmp(c, "linux_shell_flags")==0) {
+        shell_settings_linux.flags = atoi(read_word());
+      } else if (strcmp(c, "mac_shell_cmd")==0) {
+        if (shell_settings_macos.command)
+          free((void*)shell_settings_macos.command);
+        shell_settings_macos.command = fl_strdup(read_word());
+      } else if (strcmp(c, "mac_shell_flags")==0) {
+        shell_settings_macos.flags = atoi(read_word());
+      }
+    }
     {
       Fl_Type *t = Fl_Type_make(c);
       if (!t) {
@@ -516,6 +560,9 @@ static void read_children(Fl_Type *p, int paste) {
         continue;
       }
       t->name(read_word());
+
+      // After reading the first widget, we no longer need to look for options
+      options_read = 1;
 
       c = read_word(1);
       if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
@@ -542,7 +589,7 @@ static void read_children(Fl_Type *p, int paste) {
         read_error("Missing child list for %s\n",t->title());
         goto REUSE_C;
       }
-      read_children(t, 0);
+      read_children(t, 0, options_read);
     }
 
     Fl_Type::current = p;
@@ -560,16 +607,25 @@ static void read_children(Fl_Type *p, int paste) {
 int read_file(const char *filename, int merge) {
   Fl_Type *o;
   read_version = 0.0;
-  if (!open_read(filename)) return 0;
-  if (merge) deselect(); else    delete_all();
+  if (!open_read(filename))
+    return 0;
+  if (merge)
+    deselect();
+  else
+    delete_all();
   read_children(Fl_Type::current, merge);
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
   for (o = Fl_Type::first; o; o = o->next)
-    if (o->is_menu_button()) o->add_child(0,0);
+    if (o->is_menu_button())
+      o->add_child(0,0);
   for (o = Fl_Type::first; o; o = o->next)
-    if (o->selected) {Fl_Type::current = o; break;}
+    if (o->selected) {
+      Fl_Type::current = o;
+      break;
+    }
   selection_changed(Fl_Type::current);
+  shell_settings_read();
   return close_read();
 }
 

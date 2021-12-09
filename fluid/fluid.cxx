@@ -1409,6 +1409,7 @@ void make_main_window() {
     fluid_prefs.get("show_guides", show_guides, 0);
     fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
     fluid_prefs.get("show_comments", show_comments, 1);
+    shell_prefs_get();
     make_layout_window();
     make_shell_window();
   }
