@@ -208,7 +208,8 @@ void Fl_Menu_Item_Type::write_static() {
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_c(", %s", ut);
     if (use_v) write_c(" v");
-    write_c(") {\n  %s", callback());
+    write_c(") {\n");
+    write_c_indented(callback());
     if (*(d-1) != ';') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;

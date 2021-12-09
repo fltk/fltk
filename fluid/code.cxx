@@ -137,6 +137,10 @@ included::~included() {
 }
 static included *included_root;
 
+/**
+ Print a formatted line to the header file, unless the same line was produced before.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 int write_declare(const char *format, ...) {
   va_list args;
   char buf[1024];
@@ -164,7 +168,20 @@ int varused_test;
 int varused;
 
 /**
- Write an array of C characters (adds a null).
+ Write a C string to the code file, escaping non-ASCII characters.
+
+ Adds " before and after the text.
+
+ A list of control characters and ", ', and \\ are escaped by adding a \\ in
+ front of them. Escape ?? by wrinting ?\\?. All other characters that are not
+ between 32 and 126 inclusive will be escaped as octal characters.
+
+ This function is utf8 agnostic.
+
+ \param[in] s write this string
+ \param[in] length write so many bytes in this string
+
+ \see write_cstring(const char*)
  */
 void write_cstring(const char *s, int length) {
   if (varused_test) {
@@ -249,12 +266,18 @@ void write_cstring(const char *s, int length) {
 }
 
 /**
- Write a C string, quoting characters if necessary.
+ Write a C string, escaping non-ASCII characters.
+ \param[in] s write this string
+ \see write_cstring(const char*, int)
  */
-void write_cstring(const char *s) {write_cstring(s, (int)strlen(s));}
+void write_cstring(const char *s) {
+  write_cstring(s, (int)strlen(s));
+}
 
 /**
  Write an array of C binary data (does not add a null).
+ The output is bracketed in { and }. The content is written
+ as decimal bytes, i.e. `{ 1, 2, 200 }`
  */
 void write_cdata(const char *s, int length) {
   if (varused_test) {
@@ -289,7 +312,11 @@ void write_cdata(const char *s, int length) {
   putc('}', code_file);
 }
 
-// TODO: document me
+/**
+ Print a formatted line to the source file.
+ \param[in] format printf-style formatting text
+ \param[in] arg list of arguments
+ */
 void vwrite_c(const char* format, va_list args) {
   if (varused_test) {
     varused = 1;
@@ -298,7 +325,10 @@ void vwrite_c(const char* format, va_list args) {
   vfprintf(code_file, format, args);
 }
 
-// TODO: document me
+/**
+ Print a formatted line to the source file.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 void write_c(const char* format,...) {
   va_list args;
   va_start(args, format);
@@ -316,7 +346,10 @@ void write_cc(const char *indent, int n, const char *c, const char *com) {
     write_c("%s%.*s;\n", indent, n, c);
 }
 
-// TODO: document me
+/**
+ Print a formatted line to the header file.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 void write_h(const char* format,...) {
   if (varused_test) return;
   va_list args;
@@ -333,6 +366,25 @@ void write_hc(const char *indent, int n, const char* c, const char *com) {
     write_h("%s%.*s; %s\n", indent, n, c, com);
   else
     write_h("%s%.*s;\n", indent, n, c);
+}
+
+/**
+ Write one or more lines of code, indenting each one of them.
+ \param[in] textlines one or more lines of text, seperated by \\n
+ */
+void write_c_indented(const char *textlines) {
+  if (textlines) {
+    indentation+=2;
+    for (;;) {
+      const char *newline = strchr(textlines, '\n');
+      if (!newline) break;
+      write_c("%s%.*s\n", indent(), (int)(newline-textlines), textlines);
+      textlines = newline+1;
+    }
+    if (*textlines)
+      write_c("%s%s", indent(), textlines);
+    indentation-=2;
+  }
 }
 
 

@@ -405,7 +405,11 @@ void Fl_Function_Type::write_code1() {
       }
       *sptr = '\0';
 
-      write_h("%s;\n", s);
+      if (s[strlen(s)-1] == '}') {  // special case for inlined functions
+        write_h("%s\n", s);
+      } else {
+        write_h("%s;\n", s);
+      }
       // skip all function default param. init in body:
       int skips=0,skipc=0;
       int nc=0,plevel=0;

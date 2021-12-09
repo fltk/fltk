@@ -315,12 +315,12 @@ void Fl_Type::add(Fl_Type *p) {
 /**
  Add this list/tree of widgets as a new sibling before p.
 
- \c this is not part of the widget browser. \c p should be in the
+ \c this is not part of the widget browser. \c g should be in the
  widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
 
  This methods updates the widget_browser.
 
- \param[in] p insert \c this tree as a child of \c p
+ \param[in] g insert \c this tree as a child of \c p
  */
 void Fl_Type::insert(Fl_Type *g) {
   // p is not in the Widget_Browser, so we must run the linked list to find the last entry
@@ -445,7 +445,7 @@ void Fl_Type::open() {
 
 /**
  Move this node (and its children) into list before g.
- \param[in] p move \c this tree before \c p
+ \param[in] g move \c this tree before \c g
  */
 void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",

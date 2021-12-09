@@ -54,7 +54,7 @@ Fl_Text_Display::Style_Table_Entry CodeEditor::
 /**
  Parse text and produce style data.
  \param[in] in_tbuff text buffer to parse
- \param[inout] in_sbuf style buffer we modify
+ \param[inout] in_sbuff style buffer we modify
  \param[in] in_len byte length to parse
  \param[in] in_style starting style letter
  */

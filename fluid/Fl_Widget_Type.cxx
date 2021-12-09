@@ -1952,7 +1952,8 @@ void selection_changed(Fl_Type *p) {
 
 // test to see if user named a function, or typed in code:
 int is_name(const char *c) {
-  for (; *c; c++) if (ispunct(*c) && *c!='_' && *c!=':') return 0;
+  for (; *c; c++)
+    if ((ispunct(*c)||*c=='\n') && *c!='_' && *c!=':') return 0;
   return 1;
 }
 
@@ -2052,7 +2053,8 @@ void Fl_Widget_Type::write_static() {
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_c(", %s", ut);
     if (use_v) write_c(" v");
-    write_c(") {\n  %s", callback());
+    write_c(") {\n");
+    write_c_indented(callback());
     if (*(d-1) != ';') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;

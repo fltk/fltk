@@ -2,9 +2,9 @@
 
 /**
 
- \page code Code Nodes
+\page codeNodes Code Nodes
 
- Overview of code nodes.
+Overview of code nodes.
 
 
 \section function Functions and Methods
@@ -153,8 +153,23 @@ is no text after the keyword.
 
 ### Further Options ###
 
+Users can define a comment text in the *comment* field. The first line of the
+comment will be shown in the widget browser. The comment text will be generated
+in the source file ahead of thefunction.
+```
+// .cxx
+/*
+ My multilen comment
+ will be here
+ */
+Fl_Window* make_window() {
+```
+
 Fluid recognizes default values in the argument list and geneartes them in the
 declaration, but omits them in the implementation.
+
+A short function body can be appended in the *Name* field. With no child, this
+creates an inlined function in the header file.
 
 <!-- ----------------------------------------------------------------------- -->
 

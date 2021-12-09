@@ -125,9 +125,9 @@ void write_word(const char *w) {
 }
 
 /**
- Write an arbitrary formatted word to the .fl file, or a comment, etc. .
+ Write an arbitrary formatted word to the .fl file, or a comment, etc .
  If needspace is set, then one space is written before the string
- unless the format starts with a newline character '\\n'.
+ unless the format starts with a newline character \\n.
  */
 void write_string(const char *format, ...) {
   va_list args;
@@ -229,9 +229,9 @@ static int hexdigit(int x) {
 }
 
 /**
- Convert an ASCII sequence form the .fl file that starts with a \\ into a single character.
- Conversion includes the common C style \\ characters like \\n, \x## hex
- values, and \o### octal values.
+ Convert an ASCII sequence form the \.fl file that starts with a \\ into a single character.
+ Conversion includes the common C style \\ characters like \\n, \\x## hex
+ values, and \\o### octal values.
  */
 static int read_quoted() {      // read whatever character is after a \ .
   int c,d,x;

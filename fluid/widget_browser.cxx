@@ -72,7 +72,7 @@ void redraw_widget_browser(Fl_Type *caller)
 /**
  Select or deselect a node in the widget browser.
  \param[in] o (de)select this node
- \oaram[in] v the new selection state (1=select, 0=de-select)
+ \param[in] v the new selection state (1=select, 0=de-select)
  */
 void select(Fl_Type *o, int v) {
   widget_browser->select(o,v,1);
@@ -130,7 +130,7 @@ void reveal_in_browser(Fl_Type *t) {
  \param[in] str copy this string; utf8 aware
  \param[in] maxl maximum number of letter to copy until we print
     the elipsis (...)
- \param[in] auote if set, the resulting string is embedded in double quotes
+ \param[in] quote if set, the resulting string is embedded in double quotes
  \returns pointer to end of string (before terminating null byte).
  \note the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
     or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
@@ -384,7 +384,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
 
 /**
  Override the method to return the width of an item representation in Flixels.
- \param l this item
+ \param v this item
  \return width in FLTK units
  */
 int Widget_Browser::item_width(void *v) const {
