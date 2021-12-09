@@ -2,6 +2,8 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+mac_shell_cmd {echo "I love Fluid"}
+mac_shell_flags 3
 comment {//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +34,7 @@ decl {\#include "factory.h"} {private local
 decl {\#include "Fl_Type.h"} {private local
 }
 
-decl {\#include "widget_browser.h"} {selected private local
+decl {\#include "widget_browser.h"} {private local
 }
 
 decl {\#include "undo.h"} {private local
@@ -47,18 +49,18 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {Function/Method Properties}
+    label {Function/Method Properties} open
     xywh {101 713 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
     } {
-      Fl_Choice f_public_member_choice {
+      Fl_Choice f_public_member_choice {open
         tooltip {Change member access attribute.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
       } {
         MenuItem {} {
           label private
-          user_data 0 user_data_type long
+          user_data 0 user_data_type long selected
           xywh {5 5 100 20} labelsize 11
         }
         MenuItem {} {
@@ -72,11 +74,11 @@ Function {make_function_panel()} {open
           xywh {5 5 100 20} labelsize 11
         }
       }
-      Fl_Choice f_public_choice {
+      Fl_Choice f_public_choice {open
         tooltip {Change widget accessibility.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
       } {
         MenuItem {} {
-          label local
+          label static
           user_data 0 user_data_type long
           xywh {15 15 100 20} labelsize 11
         }

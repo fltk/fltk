@@ -250,10 +250,12 @@ void Fl_Function_Type::open() {
     f_public_member_choice->value(public_);
     f_public_member_choice->show();
     f_public_choice->hide();
+    f_c_button->hide();
   } else {
     f_public_choice->value(public_>0);
     f_public_choice->show();
     f_public_member_choice->hide();
+    f_c_button->show();
   }
   f_c_button->value(cdecl_);
   const char *c = comment();

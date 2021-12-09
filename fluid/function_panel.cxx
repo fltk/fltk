@@ -45,7 +45,7 @@ Fl_Menu_Item menu_f_public_member_choice[] = {
 Fl_Choice *f_public_choice=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_f_public_choice[] = {
- {"local", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"static", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"global", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
