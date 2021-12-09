@@ -187,25 +187,25 @@ protected:
   static char *strfree(char *val);
   static char *strnew(const char *val);
 public:
-  Fl_Native_File_Chooser_Driver(int val) {}
+  Fl_Native_File_Chooser_Driver(int) {}
   virtual ~Fl_Native_File_Chooser_Driver() {}
-  virtual void type(int t) {}
+  virtual void type(int) {}
   virtual int type() const  {return 0;}
-  virtual void options(int o) {}
+  virtual void options(int) {}
   virtual int options() const {return 0;}
   virtual int count() const {return 0;}
   virtual const char *filename() const  {return 0;}
-  virtual const char *filename(int i) const  {return 0;}
-  virtual void directory(const char *val)  {}
+  virtual const char *filename(int) const  {return 0;}
+  virtual void directory(const char *)  {}
   virtual const char *directory() const {return 0;}
-  virtual void title(const char *t) {}
+  virtual void title(const char *) {}
   virtual const char* title() const {return 0;}
   virtual const char *filter() const  {return 0;}
-  virtual void filter(const char *f) {}
+  virtual void filter(const char *) {}
   virtual int filters() const  {return 0;}
-  virtual void filter_value(int i)  {}
+  virtual void filter_value(int)  {}
   virtual int filter_value() const  {return 0;}
-  virtual void preset_file(const char*f)  {}
+  virtual void preset_file(const char*)  {}
   virtual const char* preset_file() const {return 0;}
   virtual const char *errmsg() const  {return 0;}
   virtual int show()  {return 1;}

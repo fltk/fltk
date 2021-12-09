@@ -373,7 +373,7 @@ public:
   virtual void overlay_rect(int x, int y, int w , int h);
   virtual float override_scale();
   virtual void restore_scale(float);
-  virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return NULL; }
+  virtual PangoFontDescription* pango_font_description(Fl_Font) { return NULL; }
   virtual void antialias(int state);
   virtual int antialias();
 };

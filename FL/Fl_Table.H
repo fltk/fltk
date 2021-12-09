@@ -323,11 +323,11 @@ protected:
     </tr>
     </table>
 
-    \p row and \p col will be set to the row and column number
-    of the cell being drawn. In the case of row headers, \p col will be \a 0.
-    In the case of column headers, \p row will be \a 0.
+    \p R and \p C will be set to the row and column number
+    of the cell being drawn. In the case of row headers, \p C will be \a 0.
+    In the case of column headers, \p R will be \a 0.
 
-    <tt>x/y/w/h</tt> will be the position and dimensions of where the cell
+    <tt>X/Y/W/H</tt> will be the position and dimensions of where the cell
     should be drawn.
 
     In the case of custom widgets, a minimal draw_cell() override might
@@ -384,7 +384,7 @@ protected:
    */
   virtual void draw_cell(TableContext context, int R=0, int C=0,
                          int X=0, int Y=0, int W=0, int H=0)
-  { }                                           // overridden by deriving class
+  { (void)context; (void)R; (void)C; (void)X; (void)Y; (void)W; (void)H;}                                           // overridden by deriving class
 
   long row_scroll_position(int row);            // find scroll position of row (in pixels)
   long col_scroll_position(int col);            // find scroll position of col (in pixels)

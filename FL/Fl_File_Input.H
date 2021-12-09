@@ -87,7 +87,7 @@ public:
     \deprecated Will be removed in FLTK 1.5.0 or higher.
     \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
     */
-  void          errorcolor(Fl_Color c) {}
+  void          errorcolor(Fl_Color c) {(void)c;}
 
   int   value(const char *str);
   int   value(const char *str, int len);
