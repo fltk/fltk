@@ -116,6 +116,7 @@ void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
    * have sufficient GL capability to support our font texture pile mechansim,
    * allowing XFT to render the face directly. */
   // Face already set by gl_bitmap_font in this case.
+  (void)fd; (void)r;
 # else
   Fl_Xlib_Font_Descriptor *gl_fd = (Fl_Xlib_Font_Descriptor*)fd;
   if (gl_fd->glok[r]) return;
@@ -273,13 +274,14 @@ Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
 }
 
 static bool ctxErrorOccurred = false;
-static int ctxErrorHandler( Display *dpy, XErrorEvent *ev )
+static int ctxErrorHandler( Display *, XErrorEvent * )
 {
   ctxErrorOccurred = true;
   return 0;
 }
 
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+  (void)window; (void)layer;
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
 

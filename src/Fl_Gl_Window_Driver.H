@@ -58,26 +58,26 @@ public:
   static Fl_Gl_Window_Driver *newGlWindowDriver(Fl_Gl_Window *w);
   static Fl_Gl_Window_Driver *global();
   virtual float pixels_per_unit() {return 1;}
-  virtual void before_show(int& need_after) {}
+  virtual void before_show(int&) {}
   virtual void after_show() {}
   virtual void invalidate();
-  virtual int mode_(int m, const int *a) {return 0;}
+  virtual int mode_(int /*m*/, const int * /*a*/) {return 0;}
   virtual void make_current_before() {}
   virtual void make_current_after() {}
   virtual void swap_buffers() {}
-  virtual void resize(int is_a_resize, int w, int h) {}
+  virtual void resize(int /*is_a_resize*/, int /*w*/, int /*h*/) {}
   virtual char swap_type();
-  virtual int flush_begin(char& valid_f) {return 0;}
-  virtual void gl_hide_before(void *& overlay) {} // the default implementation may be enough
+  virtual int flush_begin(char&) {return 0;}
+  virtual void gl_hide_before(void *&) {} // the default implementation may be enough
   static Fl_Gl_Choice *find_begin(int m, const int *alistp);
   static void add_context(GLContext ctx);
   static void del_context(GLContext ctx);
   // Return one of these structures for a given gl mode.
   // The second argument is a glX attribute list, and is used if mode is zero.
   // This is not supported on Win32:
-  virtual Fl_Gl_Choice *find(int mode, const int *alistp) {return NULL;}
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0) {return 0;}
-  virtual void set_gl_context(Fl_Window* w, GLContext context) {}
+  virtual Fl_Gl_Choice *find(int /*mode*/, const int * /*alistp*/) {return NULL;}
+  virtual GLContext create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer = 0) {(void)layer; return 0;}
+  virtual void set_gl_context(Fl_Window*, GLContext) {}
   virtual void delete_gl_context(GLContext) {}
   virtual void make_overlay(void* &o);
   virtual void hide_overlay() {} // the default implementation may be enough
@@ -91,9 +91,9 @@ public:
   virtual void draw_string_legacy(const char* str, int n); // support for gl_draw()
   void draw_string_legacy_get_list(const char* str, int n); // support for gl_draw()
   static void draw_string_legacy_glut(const char* str, int n); // support for gl_draw()
-  virtual void get_list(Fl_Font_Descriptor* fd, int r) {} // support for gl_draw() without textures
-  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {} // support for gl_font() without textures
-  virtual int overlay_color(Fl_Color i) {return 0;} // support for gl_color() with HAVE_GL_OVERLAY
+  virtual void get_list(Fl_Font_Descriptor*, int) {} // support for gl_draw() without textures
+  virtual void gl_bitmap_font(Fl_Font_Descriptor *) {} // support for gl_font() without textures
+  virtual int overlay_color(Fl_Color) {return 0;} // support for gl_color() with HAVE_GL_OVERLAY
   static void draw_string_with_texture(const char* str, int n); // cross-platform
   // support for gl_draw(). The cross-platform version may be enough.
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);

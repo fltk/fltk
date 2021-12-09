@@ -127,7 +127,7 @@ public:
   void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   // ---
-  Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
+  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar */*array*/) { return 0L; }
 
   void ps_origin(int x, int y);
   void ps_translate(int, int);

@@ -33,6 +33,7 @@ cp936ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
 static int
 cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv; (void)r; (void)wc; (void)n;
   return 0;
 }
 #endif /* NEED_TOMB */

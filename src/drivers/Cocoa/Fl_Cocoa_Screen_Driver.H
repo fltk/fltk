@@ -100,8 +100,8 @@ public:
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
 
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
-  virtual float scale(int n) {return scale_;}
-  virtual void scale(int n, float f) { scale_ = f;}
+  virtual float scale(int /*nscreen*/) {return scale_;}
+  virtual void scale(int /*nscreen*/, float f) { scale_ = f;}
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 private:

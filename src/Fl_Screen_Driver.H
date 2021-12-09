@@ -69,8 +69,8 @@ public:
   static char bg2_set;
   static char fg_set;
 
-  virtual float scale(int n) { return 1; }
-  virtual void scale(int n, float f) {}
+  virtual float scale(int) { return 1; }
+  virtual void scale(int /*n*/, float /*f*/) {}
   static Fl_Screen_Driver *newScreenDriver();
   // --- display management
   virtual void display(const char *disp);
@@ -83,7 +83,7 @@ public:
   virtual int h() { return 600; } // default, override in driver!
   virtual int screen_count();
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) {
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int /*n*/) {
     X = 0;
     Y = 0;
     W = 800;
@@ -95,18 +95,19 @@ public:
   virtual void screen_dpi(float &h, float &v, int n = 0) { // override in driver!
     h = 72;
     v = 72;
+    (void)n;
   }
   void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) {
     screen_xywh(X, Y, W, H, n);
   }
   // --- audible output
-  virtual void beep(int type) {}
+  virtual void beep(int) {}
   // --- global events
   virtual void flush() {}                                  // must override
-  virtual double wait(double time_to_wait) { return 0.0; } // must override
+  virtual double wait(double) { return 0.0; } // must override
   virtual int ready() { return 0; }                        // must override
-  virtual void grab(Fl_Window *win) {}
+  virtual void grab(Fl_Window *) {}
   // --- global colors
   /* the default implementation of parse_color() may be enough */
   virtual int parse_color(const char *p, uchar &r, uchar &g, uchar &b);
@@ -114,10 +115,10 @@ public:
   /* the default implementation of get_system_scheme() may be enough */
   virtual const char *get_system_scheme();
   // --- global timers
-  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {}
-  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {}
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) { return 0; }
-  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) {}
+  virtual void add_timeout(double, Fl_Timeout_Handler, void *) {}
+  virtual void repeat_timeout(double, Fl_Timeout_Handler, void *) {}
+  virtual int has_timeout(Fl_Timeout_Handler, void *) { return 0; }
+  virtual void remove_timeout(Fl_Timeout_Handler, void *) {}
 
   static int secret_input_character;
   /* Implement to indicate whether complex text input may involve marked text.
@@ -126,7 +127,7 @@ public:
   */
   virtual int has_marked_text() const { return 0; }
   virtual void reset_marked_text() {}
-  virtual void insertion_point_location(int x, int y, int height) {}
+  virtual void insertion_point_location(int /*x*/, int /*y*/, int /*height*/) {}
   // implement so text-editing widgets support dead keys
   virtual int compose(int &del) {
     del = 0;
@@ -136,7 +137,7 @@ public:
   virtual void compose_reset();
   // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
   // the selected text during the D&D operation
-  virtual int dnd(int use_selection = 0) { return 0; }
+  virtual int dnd(int use_selection = 0) { (void)use_selection; return 0; }
   // null means no platform-specific key bindings for Fl_Text_Editor
   Fl_Text_Editor::Key_Binding *text_editor_extra_key_bindings;
   // default implementation may be enough
@@ -166,9 +167,11 @@ public:
 
     win is the window to capture from, or NULL to capture from the current offscreen
   */
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
+  virtual Fl_RGB_Image *read_win_rectangle(int /*X*/, int /*Y*/, int /*w*/, int /*h*/, Fl_Window *,
                                            bool may_capture_subwins = false,
                                            bool *did_capture_subwins = NULL) {
+    (void)may_capture_subwins;
+    (void)did_capture_subwins;
     return NULL;
   }
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
@@ -178,7 +181,7 @@ public:
   // the default implementation may be enough
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
   // implement to support Fl::get_mouse()
-  virtual int get_mouse(int &x, int &y) { return 0; }
+  virtual int get_mouse(int &/*x*/, int &/*y*/) { return 0; }
   // optional methods to enable/disable input methods for complex scripts
   virtual void enable_im() {}
   virtual void disable_im() {}
@@ -189,7 +192,7 @@ public:
   // optional method to close display access
   virtual void close_display() {}
   // compute dimensions of an Fl_Offscreen
-  virtual void offscreen_size(Fl_Offscreen off, int &width, int &height) {}
+  virtual void offscreen_size(Fl_Offscreen, int &/*width*/, int &/*height*/) {}
 
   void rescale_all_windows_from_screen(int screen, float f);
   static void transient_scale_display(float f, int nscreen);

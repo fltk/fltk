@@ -146,13 +146,13 @@ public:
   virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();
-  virtual void resize(int X,int Y,int W,int H) {}
+  virtual void resize(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void hide() {}
   int hide_common();
   virtual void map() {}
   virtual void unmap() {}
   virtual void fullscreen_on() {}
-  virtual void fullscreen_off(int X, int Y, int W, int H) {}
+  virtual void fullscreen_off(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void use_border();
   virtual void size_range();
   virtual void iconize() {}
@@ -160,7 +160,7 @@ public:
     *top = *left = *right = *bottom = 0;
   }
   virtual void show_with_args_begin() {}
-  virtual void show_with_args_end(int argc, char **argv) {}
+  virtual void show_with_args_end(int /*argc*/, char ** /*argv*/) {}
   virtual int can_do_overlay();
   virtual void redraw_overlay();
 
@@ -170,20 +170,21 @@ public:
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // platform-independent, support function
-  virtual void shape(const Fl_Image* img) {}
-  virtual void shape_alpha_(Fl_Image* img, int offset) {}
+  virtual void shape(const Fl_Image*) {}
+  virtual void shape_alpha_(Fl_Image*, int /*offset*/) {}
 
   // --- window icon stuff
-  virtual void icons(const Fl_RGB_Image *icons[], int count) {}
+  virtual void icons(const Fl_RGB_Image* /*icons*/[], int /*count*/) {}
   virtual const void *icon() const {return NULL;}
-  virtual void icon(const void * ic) {}
+  virtual void icon(const void *) {}
   virtual void free_icons() {}
 
   // --- window printing/drawing helper
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
                                             Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
-                     void (*draw_area)(void*, int,int,int,int), void* data) { return 0; }
+  virtual int scroll(int /*src_x*/, int /*src_y*/, int /*src_w*/, int /*src_h*/,
+                     int /*dest_x*/, int /*dest_y*/,
+                     void (*)(void*, int,int,int,int), void*) { return 0; }
   static inline Fl_Window_Driver* driver(const Fl_Window *win) {return win->pWindowDriver;}
 };
 

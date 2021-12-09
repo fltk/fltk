@@ -31,7 +31,7 @@ public:
   virtual ~Fl_Sys_Menu_Bar_Driver();
   virtual void update() {}
   virtual void draw() { bar->Fl_Menu_Bar::draw();}
-  virtual void about(Fl_Callback *cb, void *data) {}
+  virtual void about(Fl_Callback *, void *) {}
   virtual int add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) {
     return bar->Fl_Menu_Bar::add(label, shortcut, cb, user_data, flags);
   }
