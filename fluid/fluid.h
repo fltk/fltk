@@ -92,7 +92,7 @@ extern int pasteoffset;
 // ---- public functions
 
 extern void set_filename(const char *c);
-extern void set_modflag(int mf);
+extern void set_modflag(int mf, int mfc=-1);
 
 // ---- public callback functions
 

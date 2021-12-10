@@ -77,7 +77,7 @@ Fl_Input *v_input[4]={(Fl_Input *)0};
 
 static void cb_1(Fl_Tile*, void* v) {
   wComment->do_callback(wComment, v);
-wCallback->do_callback(wCallback, v);
+  wCallback->do_callback(wCallback, v);
 }
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
@@ -107,6 +107,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -513,7 +514,6 @@ ive to the origin at construction time");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label Font:");
           o->labelfont(1);
           o->labelsize(11);

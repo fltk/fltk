@@ -55,14 +55,15 @@ decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 Function {make_project_window()} {open
 } {
   Fl_Window project_window {
-    label {Project Settings}
+    label {Project Settings} open
     xywh {473 246 399 252} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
-      callback {project_window->hide();}
+      callback {project_window->hide();
+set_modflag(-1, -1);}
       tooltip {Close this dialog.} xywh {328 216 60 25}
     }
     Fl_Tabs {} {open
@@ -70,7 +71,7 @@ Function {make_project_window()} {open
     } {
       Fl_Group {} {
         label Output open
-        xywh {10 36 378 169} hide
+        xywh {10 36 378 169}
       } {
         Fl_Box {} {
           label {Use "name.ext" to set a file name or just ".ext" to set extension.}
@@ -85,7 +86,7 @@ Function {make_project_window()} {open
         Fl_Input code_file_input {
           label {Code File:}
           user_data 1 user_data_type {void*}
-          callback code_input_cb
+          callback code_input_cb selected
           tooltip {The name of the generated code file.} xywh {119 128 252 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Check_Button include_H_from_C_button {
@@ -101,7 +102,7 @@ Function {make_project_window()} {open
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 36 378 169}
+        xywh {10 36 378 169} hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
@@ -290,7 +291,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {468 233 365 200} type Double modal size_range {365 200 365 200} visible
+    xywh {287 318 365 200} type Double modal size_range {365 200 365 200} visible
   } {
     Fl_Group {} {open
       xywh {0 0 365 165}
@@ -320,7 +321,7 @@ if (g_shell_use_fl_settings) {
 } else {
   shell_prefs_get();
 }
-update_shell_window();} selected
+update_shell_window();}
         tooltip {check to read and write shell command from and to .fl files} xywh {82 110 180 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Box {} {

@@ -138,6 +138,9 @@ static const char *filename = NULL;
 /// Set if the current design has been modified compared to the associated .fl design file.
 int modflag = 0;
 
+/// Set if the code files are older than the current design.
+int modflag_c = 0;
+
 /// Application work directory, stored here when temporarily changing to the source code directory.
 /// \see goto_source_dir()
 static char* pwd = NULL;
@@ -385,7 +388,7 @@ void save_cb(Fl_Widget *, void *v) {
   }
 
   if (v != (void *)2) {
-    set_modflag(0);
+    set_modflag(0, 1);
     undo_save = undo_current;
   }
 }
@@ -516,7 +519,7 @@ void revert_cb(Fl_Widget *,void *) {
     return;
   }
   undo_resume();
-  set_modflag(0);
+  set_modflag(0, 0);
   undo_clear();
 }
 
@@ -607,7 +610,7 @@ void apple_open_cb(const char *c) {
   }
 
   // Loaded a file; free the old filename...
-  set_modflag(0);
+  set_modflag(0, 0);
   undo_resume();
   undo_clear();
   if (oldfilename) free((void *)oldfilename);
@@ -661,7 +664,7 @@ void open_cb(Fl_Widget *, void *v) {
     set_modflag(1);
   } else {
     // Loaded a file; free the old filename...
-    set_modflag(0);
+    set_modflag(0, 0);
     undo_clear();
     if (oldfilename) free((void *)oldfilename);
   }
@@ -698,7 +701,7 @@ void open_history_cb(Fl_Widget *, void *v) {
     if (main_window) main_window->label(filename);
     return;
   }
-  set_modflag(0);
+  set_modflag(0, 0);
   undo_resume();
   undo_clear();
   if (oldfilename) {
@@ -731,6 +734,7 @@ void new_cb(Fl_Widget *, void *v) {
   // Clear the current data...
   delete_all();
   set_filename(NULL);
+  set_modflag(0, 0);
 }
 
 /**
@@ -863,7 +867,7 @@ int write_code_files() {
     strlcpy(cname, fl_filename_name(filename), sizeof(cname));
     fl_filename_setext(cname, sizeof(cname), code_file_name);
   } else {
-    strlcpy(cname, code_file_name, sizeof(hname));
+    strlcpy(cname, code_file_name, sizeof(cname));
   }
   if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
     strlcpy(hname, fl_filename_name(filename), sizeof(hname));
@@ -881,8 +885,11 @@ int write_code_files() {
   } else {
     if (!x) {
       fl_message("Can't write %s: %s", cname, strerror(errno));
-    } else if (completion_button->value()) {
-      fl_message("Wrote %s", cname);
+    } else {
+      set_modflag(-1, 0);
+      if (completion_button->value()) {
+        fl_message("Wrote %s", cname);
+      }
     }
   }
   return 0;
@@ -1552,13 +1559,37 @@ void set_filename(const char *c) {
 
 /**
  Set the "modified" flag and update the title of the main window.
- \param[in] mf 0 to clear the modflag, 1 to mark the design "modified"
- */
-void set_modflag(int mf) {
-  const char    *basename;
-  static char   title[FL_PATH_MAX];
 
-  modflag = mf;
+ The first argument sets the modifaction state of the current design against
+ the corresponding .fl design file. Any change to the widget tree will mark
+ the design 'modified'. Saving the design will mark it clean.
+
+ The second argument is optional and set the modification state of the current
+ design against the source code and header file. Any change to the tree,
+ including saving the tree, will mark the code 'outdated'. Generating source
+ code and header files will clear this flag until the next modification.
+
+ \param[in] mf 0 to clear the modflag, 1 to mark the design "modified", -1 to
+    ignore this parameter
+ \param[in] mfc default -1 to let \c mf control \c modflag_c, 0 to mark the
+    code files current, 1 to mark it out of date.
+ */
+void set_modflag(int mf, int mfc) {
+  const char *basename;
+  const char *code_ext = NULL;
+  static char title[FL_PATH_MAX];
+
+  // Update the modflag_c to the worst possible condition. We could be a bit
+  // more graceful and compare modification times of the files, but C++ has
+  // no API for that until C++17.
+  if (mf!=-1) {
+    modflag = mf;
+    if (mfc==-1 && mf==1)
+      mfc = mf;
+  }
+  if (mfc!=-1) {
+    modflag_c = mfc;
+  }
 
   if (main_window) {
     if (!filename) basename = "Untitled.fl";
@@ -1568,10 +1599,16 @@ void set_modflag(int mf) {
 #endif // _WIN32
     else basename = filename;
 
-    if (modflag) {
-      snprintf(title, sizeof(title), "%s (modified)", basename);
-      main_window->label(title);
-    } else main_window->label(basename);
+    if (code_file_name)
+      code_ext = fl_filename_ext(code_file_name);
+    else
+      code_ext = ".cxx";
+
+    char mod_star = modflag ? '*' : ' ';
+    char mod_c_star = modflag_c ? '*' : ' ';
+    snprintf(title, sizeof(title), "%s%c  %s%c",
+             basename, mod_star, code_ext, mod_c_star);
+    main_window->label(title);
   }
   // if the UI was modified in any way, update the Source View panel
   if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())

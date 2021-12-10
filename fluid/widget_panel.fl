@@ -2,6 +2,8 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+mac_shell_cmd {echo "Fluid is nice"}
+mac_shell_flags 3
 comment {//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +22,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include "Fl_Widget_Type.h"} {selected private global
+decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
 Function {make_widget_panel()} {
@@ -38,7 +40,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -434,8 +436,8 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group {} {
         label Style
-        callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide
+        callback propagate_load selected
+        xywh {10 30 400 330} labelsize 11 when 0
       } {
         Fl_Group {} {
           label {Label Font:}
