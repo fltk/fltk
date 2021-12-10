@@ -274,6 +274,7 @@ void Fl_Message::resizeform() {
       button_[i]->resize(x, h - 10 - max_h, button_w[i] - 10, max_h);
     }
   }
+  window_->init_sizes();
 }
 
 /**
@@ -376,6 +377,7 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
   if (g)
     Fl::grab(0);
   Fl_Group *current_group = Fl_Group::current(); // make sure the dialog does not interfere with any active group
+  Fl_Group::current(0);
   window_->show();
   Fl_Group::current(current_group);
   while (window_->shown())
