@@ -39,8 +39,7 @@
  Lookup table for all supported styles.
  Every table entry describes a rendering style for the corresponding text.
  */
-Fl_Text_Display::Style_Table_Entry CodeEditor::
-                styletable[] = {        // Style table
+Fl_Text_Display::Style_Table_Entry CodeEditor::styletable[] = {   // Style table
                   { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
                   { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // B - Line comments
                   { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // C - Block comments

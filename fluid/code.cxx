@@ -315,7 +315,7 @@ void write_cdata(const char *s, int length) {
 /**
  Print a formatted line to the source file.
  \param[in] format printf-style formatting text
- \param[in] arg list of arguments
+ \param[in] args list of arguments
  */
 void vwrite_c(const char* format, va_list args) {
   if (varused_test) {
