@@ -1322,9 +1322,8 @@ int Fl_Window_Type::handle(int event) {
     case FL_Up:    dx = 0; dy = -1; goto ARROW;
     case FL_Down:  dx = 0; dy = +1; goto ARROW;
     ARROW:
-      // for some reason BOTTOM/TOP are swapped... should be fixed...
-      drag = (Fl::event_state(FL_SHIFT)) ? (RIGHT|TOP) : DRAG;
-      if (Fl::event_state(FL_CTRL)) {dx *= gridx; dy *= gridy;}
+      drag = (Fl::event_state(FL_SHIFT)) ? (RIGHT|BOTTOM) : DRAG;
+      if (Fl::event_state(FL_COMMAND)) {dx *= gridx; dy *= gridy;}
       moveallchildren();
       drag = 0;
       return 1;

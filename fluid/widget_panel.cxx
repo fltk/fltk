@@ -107,7 +107,6 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -514,6 +513,7 @@ ive to the origin at construction time");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label Font:");
           o->labelfont(1);
           o->labelsize(11);

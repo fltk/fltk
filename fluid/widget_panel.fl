@@ -40,7 +40,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -436,8 +436,8 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group {} {
         label Style
-        callback propagate_load selected
-        xywh {10 30 400 330} labelsize 11 when 0
+        callback propagate_load
+        xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           label {Label Font:}
