@@ -36,7 +36,7 @@ public:
   Fl_Menu_Item* subtypes() {return menu_item_type_menu;}
   const char* type_name() {return "MenuItem";}
   const char* alt_type_name() {return "fltk::Item";}
-  Fl_Type* make();
+  Fl_Type* make(Strategy strategy);
   int is_menu_item() const {return 1;}
   int is_button() const {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) {return 0;}
@@ -53,14 +53,14 @@ public:
 class Fl_Radio_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
   const char* type_name() {return "RadioMenuItem";}
-  Fl_Type* make();
+  Fl_Type* make(Strategy strategy);
   int pixmapID() { return 55; }
 };
 
 class Fl_Checkbox_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
   const char* type_name() {return "CheckMenuItem";}
-  Fl_Type* make();
+  Fl_Type* make(Strategy strategy);
   int pixmapID() { return 54; }
 };
 
@@ -71,7 +71,7 @@ public:
   const char* alt_type_name() {return "fltk::ItemGroup";}
   int is_parent() const {return 1;}
   int is_button() const {return 0;} // disable shortcut
-  Fl_Type* make();
+  Fl_Type* make(Strategy strategy);
   // changes to submenu must propagate up so build_menu is called
   // on the parent Fl_Menu_Type:
   void add_child(Fl_Type*a, Fl_Type*b) {parent->add_child(a,b);}

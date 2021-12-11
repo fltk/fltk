@@ -187,15 +187,16 @@ Fl_Function_Type::~Fl_Function_Type() {
 
 /**
  Create a new function for the widget tree.
+ \param[in] strategy new function add after current or as last child
  \return the new node
  */
-Fl_Type *Fl_Function_Type::make() {
+Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Function_Type *o = new Fl_Function_Type();
   o->name("make_window()");
   o->return_type = 0;
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   o->public_ = 1;
   o->cdecl_ = 0;
@@ -556,8 +557,10 @@ Fl_Code_Type::Fl_Code_Type() :
  Make a new code node.
  If the parent node is not a function, a message box will pop up and
  the request will be ignored.
+ \param[in] strategy add code after current or as last child
+ \return new Code node
  */
-Fl_Type *Fl_Code_Type::make() {
+Fl_Type *Fl_Code_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
   if (!p) {
@@ -566,7 +569,7 @@ Fl_Type *Fl_Code_Type::make() {
   }
   Fl_Code_Type *o = new Fl_Code_Type();
   o->name("printf(\"Hello, World!\\n\");");
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }
@@ -726,8 +729,10 @@ Fl_CodeBlock_Type::~Fl_CodeBlock_Type() {
  Make a new code block.
  If the parent node is not a function or another codeblock, a message box will
  pop up and the request will be ignored.
+ \param[in] strategy add after current or as last child
+ \return new CodeBlock
  */
-Fl_Type *Fl_CodeBlock_Type::make() {
+Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
   if (!p) {
@@ -737,7 +742,7 @@ Fl_Type *Fl_CodeBlock_Type::make() {
   Fl_CodeBlock_Type *o = new Fl_CodeBlock_Type();
   o->name("if (test())");
   o->after = 0;
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }
@@ -851,15 +856,17 @@ int Fl_Decl_Type::is_public() const
 
 /**
  Make a new declaration.
+ \param[in] strategy add after current or as last child
+ \return new Declaration node
  */
-Fl_Type *Fl_Decl_Type::make() {
+Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Decl_Type *o = new Fl_Decl_Type();
   o->public_ = 0;
   o->static_ = 1;
   o->name("int x;");
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }
@@ -966,7 +973,7 @@ BREAK2:
 /**
  Write the code to the source and header files.
  \todo There are a lot of side effect in this node depending on the given text
-    and the parent node which should really be documented.
+    and the parent node. They need to be understood and documented.
  */
 void Fl_Decl_Type::write_code1() {
   const char* c = name();
@@ -1063,8 +1070,10 @@ Fl_Data_Type::~Fl_Data_Type() {
 
 /**
  Create an empty inline data node.
+ \param[in] strategy add after current or as last child
+ \return new inline data node
  */
-Fl_Type *Fl_Data_Type::make() {
+Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Data_Type *o = new Fl_Data_Type();
@@ -1073,7 +1082,7 @@ Fl_Type *Fl_Data_Type::make() {
   o->filename_ = 0;
   o->text_mode_ = 0;
   o->name("myInlineData");
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }
@@ -1352,15 +1361,17 @@ int Fl_DeclBlock_Type::is_public() const {return public_;}
 
 /**
  Create a new declaration block.
+ \param[in] strategy add after current or as last child
+ \return new Declaration Blocknode
  */
-Fl_Type *Fl_DeclBlock_Type::make() {
+Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
   o->public_ = 0;
   o->after = fl_strdup("#endif");
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }
@@ -1479,8 +1490,10 @@ Fl_Comment_Type::Fl_Comment_Type() :
 
 /**
  Make a new comment node.
+ \param[in] strategy add after current or as last child
+ \return new Comment node
  */
-Fl_Type *Fl_Comment_Type::make() {
+Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
   Fl_Comment_Type *o = new Fl_Comment_Type();
@@ -1488,7 +1501,7 @@ Fl_Type *Fl_Comment_Type::make() {
   o->in_h_ = 1;
   o->style_ = 0;
   o->name("my comment");
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   o->title_buf[0] = 0;
   return o;
@@ -1735,9 +1748,6 @@ void Fl_Comment_Type::write_code1() {
 
 /** \class Fl_Class_Type
  Manage a class declaration and implementation.
-
- \todo This is pretty complex and needs to be revisited to give
-    a good description.
  */
 
 /// Prototype for a class node to be used by the factory.
@@ -1780,8 +1790,10 @@ void Fl_Class_Type::prefix(const char*p) {
 
 /**
  Make a new class node.
+ \param[in] strategy add after current or as last child
+ \return new Class node
  */
-Fl_Type *Fl_Class_Type::make() {
+Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Class_Type *o = new Fl_Class_Type();
@@ -1789,7 +1801,7 @@ Fl_Type *Fl_Class_Type::make() {
   o->class_prefix = NULL;
   o->subclass_of = NULL;
   o->public_ = 1;
-  o->add(p);
+  o->add(p, strategy);
   o->factory = this;
   return o;
 }

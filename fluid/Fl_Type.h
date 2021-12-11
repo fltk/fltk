@@ -21,6 +21,13 @@
 #include <FL/fl_draw.H>
 
 class Fl_Type;
+class Fl_Group_Type;
+class Fl_Window_Type;
+
+typedef enum {
+  kAddAsLastChild = 0,
+  kAddAfterCurrent
+} Strategy;
 
 void fixvisible(Fl_Type *p);
 void delete_all(int selected_only=0);
@@ -52,15 +59,15 @@ protected:
 
 public: // things that should not be public:
 
-  Fl_Type *parent; // parent, which is previous in list
+  Fl_Type *parent;
   char new_selected; // browser highlight
   char selected; // copied here by selection_changed()
   char open_;   // state of triangle in browser
   char visible; // true if all parents are open
   char rtti;    // hack because I have no rtti, this is 0 for base class
   int level;    // number of parents over this
-  static Fl_Type *first, *last; // linked list of all objects
-  Fl_Type *next, *prev; // linked list of all objects
+  static Fl_Type *first, *last;
+  Fl_Type *next, *prev;
 
   Fl_Type *factory;
   const char *callback_name();
@@ -74,9 +81,12 @@ protected:
 public:
 
   virtual ~Fl_Type();
-  virtual Fl_Type *make() = 0;
+  virtual Fl_Type *make(Strategy strategy) = 0;
 
-  void add(Fl_Type *parent); // add as new child
+  Fl_Window_Type *window();
+  Fl_Group_Type *group();
+
+  void add(Fl_Type *parent, Strategy strategy);
   void insert(Fl_Type *n); // insert into list before n
   Fl_Type* remove();    // remove from list
   void move_before(Fl_Type*); // move before a sibling
@@ -104,6 +114,8 @@ public:
   virtual void remove_child(Fl_Type*) { }
 
   static Fl_Type *current;  // most recently picked object
+  static Fl_Type *current_dnd;
+
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:

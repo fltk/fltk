@@ -18,6 +18,7 @@
 
 #include "function_panel.h"
 #include "fluid.h"
+#include "Shortcut_Button.h"
 #include "pixmaps.h"
 #include "factory.h"
 #include "Fl_Type.h"
@@ -704,16 +705,11 @@ Fl_Double_Window* make_comment_panel() {
 }
 
 void type_make_cb(Fl_Widget*,void*d) {
-  undo_checkpoint();
-    Fl_Type *t = Fl_Type_make((char*)d);
-    if (t) {
-      select_only(t);
-      set_modflag(1);
-      t->open();
-    } else {
-      undo_current --;
-      undo_last --;
-    }
+  const char *type_name = (const char*)d;
+  if (Fl_Type::current && Fl_Type::current->is_group())
+    add_new_widget_from_user(type_name, kAddAsLastChild);
+  else
+    add_new_widget_from_user(type_name, kAddAfterCurrent);
 }
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
@@ -789,306 +785,674 @@ Fl_Window* make_widgetbin() {
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(87, 19, 79, 79, "Groups");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(89, 21, 24, 24);
+      { Widget_Bin_Window_Button* o = new Widget_Bin_Window_Button(89, 21, 24, 24);
         o->tooltip("Window");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Window"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[1]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(114, 21, 24, 24);
+      } // Widget_Bin_Window_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 21, 24, 24);
         o->tooltip("Group");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Group"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[6]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(139, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(139, 21, 24, 24);
         o->tooltip("Pack");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Pack"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[22]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(89, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(89, 46, 24, 24);
         o->tooltip("Tabs");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tabs"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[13]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(114, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 46, 24, 24);
         o->tooltip("Scroll");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Scroll"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[19]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(89, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(89, 71, 24, 24);
         o->tooltip("Tile");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tile"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[20]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(114, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(114, 71, 24, 24);
         o->tooltip("Wizard");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Wizard"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[21]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(171, 19, 54, 79, "Buttons");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(173, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 21, 24, 24);
         o->tooltip("Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[2]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(198, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 21, 24, 24);
         o->tooltip("Return Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Return_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[23]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(173, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 46, 24, 24);
         o->tooltip("Light Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Light_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[24]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(198, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 46, 24, 24);
         o->tooltip("Repeat Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Repeat_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[25]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(173, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(173, 71, 24, 24);
         o->tooltip("Check Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Check_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[3]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(198, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(198, 71, 24, 24);
         o->tooltip("Round Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Round_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[4]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(230, 19, 104, 79, "Valuators");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(232, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 21, 24, 24);
         o->tooltip("Slider");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Slider"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[37]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(257, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 21, 24, 24);
         o->tooltip("Scroll Bar");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Scrollbar"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[38]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(282, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 21, 24, 24);
         o->tooltip("Value Slider");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Slider"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[39]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(307, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(307, 21, 24, 24);
         o->tooltip("Value Output");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Output"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[45]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(232, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 46, 24, 24);
         o->tooltip("Adjuster");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Adjuster"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[40]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(257, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 46, 24, 24);
         o->tooltip("Counter");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Counter"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[41]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(282, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 46, 24, 24);
         o->tooltip("Dial");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Dial"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[42]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(232, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(232, 71, 24, 24);
         o->tooltip("Roller");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Roller"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[43]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(257, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(257, 71, 24, 24);
         o->tooltip("Spinner");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Spinner"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[47]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(282, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(282, 71, 24, 24);
         o->tooltip("Value Input");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Input"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[44]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(339, 19, 54, 79, "Text");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(341, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 21, 24, 24);
         o->tooltip("Input");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[14]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(366, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 21, 24, 24);
         o->tooltip("Output");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Output"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[27]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(341, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 46, 24, 24);
         o->tooltip("Text Edit");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Editor"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[29]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(366, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 46, 24, 24);
         o->tooltip("Text Display");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Display"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[28]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(341, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(341, 71, 24, 24);
         o->tooltip("File Input");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Input"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[30]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(366, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(366, 71, 24, 24);
         o->tooltip("Simple Terminal");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Simple_Terminal"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[52]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(398, 19, 79, 79, "Menus");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(400, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 21, 24, 24);
         o->tooltip("Input Choice");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input_Choice"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[53]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(425, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 21, 24, 24);
         o->tooltip("Menu Item");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("menuitem"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[16]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(450, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(450, 21, 24, 24);
         o->tooltip("Menu Bar");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Bar"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[17]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(400, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 46, 24, 24);
         o->tooltip("Menu Button");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Button"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[26]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(425, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 46, 24, 24);
         o->tooltip("Checkbox Menu Item");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("checkmenuitem"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[54]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(450, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(450, 46, 24, 24);
         o->tooltip("Sub Menu");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("submenu"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[18]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(400, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(400, 71, 24, 24);
         o->tooltip("Choice");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Choice"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[15]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(425, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(425, 71, 24, 24);
         o->tooltip("Radio Menu Item");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("radiomenuitem"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[55]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(482, 19, 54, 79, "Browsers");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(484, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 21, 24, 24);
         o->tooltip("Browser");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Browser"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[31]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(509, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 21, 24, 24);
         o->tooltip("Tree");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tree"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[50]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(484, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 46, 24, 24);
         o->tooltip("Check Browser");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Check_Browser"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[32]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(509, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 46, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Help_View"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[35]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(484, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(484, 71, 24, 24);
         o->tooltip("File Browser");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Browser"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[33]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(509, 71, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(509, 71, 24, 24);
         o->tooltip("Table");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Table"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[51]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(540, 19, 55, 79, "Misc");
       o->labelsize(12);
-      { Fl_Button* o = new Fl_Button(542, 21, 24, 24);
+      { Widget_Bin_Button* o = new Widget_Bin_Button(542, 21, 24, 24);
         o->tooltip("Box");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Box"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[5]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(567, 21, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(567, 21, 24, 24);
         o->tooltip("Clock");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Clock"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[34]);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(542, 46, 24, 24);
+      } // Widget_Bin_Button* o
+      { Widget_Bin_Button* o = new Widget_Bin_Button(542, 46, 24, 24);
         o->tooltip("Progress");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Progress"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[36]);
-      } // Fl_Button* o
+      } // Widget_Bin_Button* o
       o->end();
     } // Fl_Group* o
     widgetbin_panel->set_non_modal();

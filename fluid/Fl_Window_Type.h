@@ -68,7 +68,7 @@ public:
   Fl_Window_Type() { drag = dx = dy = 0; sr_min_w = sr_min_h = sr_max_w = sr_max_h = 0; }
   uchar modal, non_modal;
 
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   virtual const char *type_name() {return "Fl_Window";}
   virtual const char *alt_type_name() {return "fltk::Window";}
 
@@ -116,7 +116,7 @@ public:
 
   void write_code1();
   void write_code2();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   virtual const char *type_name() {return "widget_class";}
   int pixmapID() { return 48; }
   int is_parent() const {return 1;}

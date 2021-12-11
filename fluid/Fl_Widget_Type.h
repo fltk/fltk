@@ -73,7 +73,7 @@ public:
   void setinactive(Fluid_Image *);
 
   Fl_Widget_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void open();
 
   const char *extra_code(int n) const {return extra_code_[n];}

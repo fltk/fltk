@@ -54,7 +54,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) {
     igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() {return new Fl_Group_Type();}
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2();
   void add_child(Fl_Type*, Fl_Type*);

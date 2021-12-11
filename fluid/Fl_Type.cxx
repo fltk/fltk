@@ -14,6 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/// \defgroup fl_type Basic Node for all Widgets and Functions
+/// \{
+
 /** \class Fl_Type
 Each object described by Fluid is one of these objects.  They
 are all stored in a double-linked list.
@@ -34,6 +37,7 @@ copied or otherwise examined.
 #include "Fl_Function_Type.h"
 #include "Fl_Widget_Type.h"
 #include "Fl_Window_Type.h"
+#include "Fl_Group_Type.h"
 #include "widget_browser.h"
 #include "file.h"
 #include "code.h"
@@ -53,6 +57,8 @@ copied or otherwise examined.
 
 Fl_Type *Fl_Type::first = NULL;
 Fl_Type *Fl_Type::last = NULL;
+Fl_Type *Fl_Type::current = NULL;
+Fl_Type *Fl_Type::current_dnd = NULL;
 
 Fl_Type *in_this_only; // set if menu popped-up in window
 
@@ -217,6 +223,31 @@ void fixvisible(Fl_Type *p) {
 
 // ---- implemenation of Fl_Type
 
+/** \var Fl_Type *Fl_Type::parent
+ Link to the parent node in the tree structure.
+ Used for simulating a tree structure via a doubly linked list.
+ */
+/** \var Fl_Type *Fl_Type::level
+ Zero based depth of the node within the tree structure.
+ Level is used to emulate a tree structure: the first node with a lower
+ level in the prev list would be the parent of this node. If the next member
+ has a higher level value, it is this nodes first child. At the same level,
+ it would be the first sibling.
+ */
+/** \var Fl_Type *Fl_Type::next
+ Points to the next node in the doubly linked list.
+ If this is NULL, we are at the end of the list.
+ Used for simulating a tree structure via a doubly linked list.
+ */
+/** \var Fl_Type *Fl_Type::prev
+ Link to the next node in the tree structure.
+ If this is NULL, we are at the beginning of the list.
+ Used for simulating a tree structure via a doubly linked list.
+ */
+
+/**
+ Constructor and base for any node in the widget tree.
+ */
 Fl_Type::Fl_Type() {
   factory = 0;
   parent = 0;
@@ -235,11 +266,20 @@ Fl_Type::Fl_Type() {
   code_position_end = header_position_end = -1;
 }
 
+/**
+ Destructor for any node in the tree.
+
+ The destructor removes itself from the doubly linked list. This is dangerous,
+ because the node does not know if it is part of the widget tree, or if it is
+ in a seperate tree. We try to take care of that as well as possible.
+ */
 Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.
   if (widget_browser) widget_browser->deleting(this);
   if (prev) prev->next = next; else first = next;
   if (next) next->prev = prev; else last = prev;
+  if (Fl_Type::last==this) Fl_Type::last = prev;
+  if (Fl_Type::first==this) Fl_Type::first = next;
   if (current == this) current = 0;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
@@ -259,26 +299,54 @@ const char* Fl_Type::title() {
 }
 
 /**
- Add this list/tree of widgets as a new child of p.
+ Return the window that contains this widget.
+ \return NULL if this is not a widget.
+ */
+Fl_Window_Type *Fl_Type::window() {
+  if (!is_widget())
+    return NULL;
+  for (Fl_Type *t = this; t; t=t->parent)
+    if (t->is_window())
+      return (Fl_Window_Type*)t;
+  return NULL;
+}
 
- \c this is not part of the widget browser. \c p should be in the
+/**
+ Return the group that contains this widget.
+ \return NULL if this is not a widget.
+ */
+Fl_Group_Type *Fl_Type::group() {
+  if (!is_widget())
+    return NULL;
+  for (Fl_Type *t = this; t; t=t->parent)
+    if (t->is_group())
+      return (Fl_Group_Type*)t;
+  return NULL;
+}
+
+/**
+ Add this list/tree of widgets as a new last child of p.
+
+ \c this must not be part of the widget browser. \c p however must be in the
  widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
 
  This methods updates the widget_browser.
 
  \param[in] p insert \c this tree as a child of \c p
+ \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
  */
-void Fl_Type::add(Fl_Type *p) {
+void Fl_Type::add(Fl_Type *p, Strategy strategy) {
   if (p && parent == p) return;
   undo_checkpoint();
   parent = p;
-  // p is not in the Widget_Browser, so we must run the linked list to find the last entry
+  // 'this' is not in the Widget_Browser, so we must run the linked list to find the last entry
   Fl_Type *end = this;
   while (end->next) end = end->next;
   // run the list again to set the future node levels
-  Fl_Type *q;
+  Fl_Type *q; // insert 'this' before q
   int newlevel;
   if (p) {
+    // find the last node that is a child or grandchild of p
     for (q = p->next; q && q->level > p->level; q = q->next) {/*empty*/}
     newlevel = p->level+1;
   } else {
@@ -287,7 +355,7 @@ void Fl_Type::add(Fl_Type *p) {
   }
   for (Fl_Type *t = this->next; t; t = t->next) t->level += (newlevel-level);
   level = newlevel;
-  // now link this tree after p
+  // now link 'this' and its children before 'q', or last, if 'q' is NULL
   if (q) {
     prev = q->prev;
     prev->next = this;
@@ -308,6 +376,22 @@ void Fl_Type::add(Fl_Type *p) {
   open_ = 1;
   fixvisible(this);
   set_modflag(1);
+
+  if (strategy==kAddAfterCurrent && current) {
+    // we have current, t is the new node, p is the parent
+    // find the next child of the parent after current
+    //t->add(p); // add as a last child
+    Fl_Type *cc = current;
+    for (cc = current->next; cc; cc=cc->next) {
+      if (cc->level<=this->level)
+        break;
+    }
+    if (cc && cc->level==this->level && cc!=this) {
+      this->move_before(cc);
+    }
+    select(this, 1);
+  }
+
   // run the p tree a last time to make sure the widget_browser updates correctly
   Fl_Type *a = p;
   for (Fl_Type *t = this; t && a != end; a = t, t = t->next)
@@ -316,20 +400,20 @@ void Fl_Type::add(Fl_Type *p) {
 }
 
 /**
- Add this list/tree of widgets as a new sibling before p.
+ Add `this` list/tree of widgets as a new sibling before `g`.
 
- \c this is not part of the widget browser. \c g should be in the
- widget_browser, so \c Fl_Type::first and \c Fl_Type::last are valid for \c p.
+ `This` is not part of the widget browser. `g` must be in the
+ widget_browser, so `Fl_Type::first` and `Fl_Type::last` are valid for `g .
 
  This methods updates the widget_browser.
 
- \param[in] g insert \c this tree as a child of \c p
+ \param[in] g pointer to a node within the tree
  */
 void Fl_Type::insert(Fl_Type *g) {
-  // p is not in the Widget_Browser, so we must run the linked list to find the last entry
+  // 'this' is not in the Widget_Browser, so we must run the linked list to find the last entry
   Fl_Type *end = this;
   while (end->next) end = end->next;
-  // this wil get the sam parent as g
+  // 'this' will get the same parent as 'g'
   parent = g->parent;
   // run the list again to set the future node levels
   int newlevel = g->level;
@@ -733,4 +817,6 @@ void Fl_Type::write_code1() {
 
 void Fl_Type::write_code2() {
 }
+
+/// \}
 

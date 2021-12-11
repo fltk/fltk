@@ -28,5 +28,19 @@ public:
     Fl_Button(X,Y,W,H,l) {svalue = 0;}
 };
 
+class Widget_Bin_Button : public Fl_Button {
+public:
+  int handle(int);
+  Widget_Bin_Button(int X,int Y,int W,int H, const char* l = 0) :
+  Fl_Button(X,Y,W,H,l) { }
+};
+
+class Widget_Bin_Window_Button : public Fl_Button {
+public:
+  int handle(int);
+  Widget_Bin_Window_Button(int X,int Y,int W,int H, const char* l = 0) :
+  Fl_Button(X,Y,W,H,l) { }
+};
+
 #endif
 

@@ -99,7 +99,9 @@ int G_debug = 0;
 char G_external_editor_command[512];
 
 
-/// \todo Functionality unclear.
+/// If set, if the `current` node is a group, and a new group is added, it will
+/// be added as sibling to the first group instead of inside the group.
+/// \todo Needs to be verified.
 int force_parent = 0;
 
 /// This is set to create different labels when creating new widgets.
@@ -197,10 +199,10 @@ const char* i18n_set = "";
 /// \todo document me
 char i18n_program[FL_PATH_MAX] = "";
 
-/// \todo document me
+/// Offset in pixels when adding widgets from an .fl file.
 int pasteoffset = 0;
 
-/// \todo document me
+/// Paste offset incrementing at every paste command.
 static int ipasteoffset = 0;
 
 
@@ -999,11 +1001,16 @@ void delete_cb(Fl_Widget *, void *) {
 void paste_cb(Fl_Widget*, void*) {
   //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
+  // TODO: make the paste offset more predictable, if any at all.
+  // TODO: Don't use the grid if the user switched it off.
   if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
   if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
   undo_checkpoint();
   undo_suspend();
-  if (!read_file(cutfname(), 1)) {
+  Strategy strategy = kAddAfterCurrent;
+  if (Fl_Type::current && Fl_Type::current->is_group())
+    strategy = kAddAsLastChild;
+  if (!read_file(cutfname(), 1, strategy)) {
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
   undo_resume();
@@ -1031,7 +1038,7 @@ void duplicate_cb(Fl_Widget*, void*) {
 
   undo_checkpoint();
   undo_suspend();
-  if (!read_file(cutfname(1), 1)) {
+  if (!read_file(cutfname(1), 1, kAddAfterCurrent)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));

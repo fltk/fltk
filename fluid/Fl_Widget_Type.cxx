@@ -92,7 +92,12 @@ Fl_Widget_Type::ideal_spacing(int &x, int &y) {
     x = y = 10;
 }
 
-Fl_Type *Fl_Widget_Type::make() {
+/**
+ Make a new Widget node.
+ \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \return new node
+ */
+Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
   // Find the current widget, or widget to copy:
   Fl_Type *qq = Fl_Type::current;
   while (qq && (!qq->is_widget() || qq->is_menu_item())) qq = qq->parent;
@@ -162,7 +167,7 @@ Fl_Type *Fl_Widget_Type::make() {
   // Put it in the parent:
   //  ((Fl_Group *)(p->o))->add(t->o); (done by Fl_Type::add())
   // add to browser:
-  t->add(p);
+  t->add(p, strategy);
   t->redraw();
   return t;
 }
@@ -1913,8 +1918,6 @@ void Fl_Widget_Type::open() {
   if (numselected) the_panel->show();
 }
 
-Fl_Type *Fl_Type::current;
-
 extern void redraw_overlays();
 extern void check_redraw_corresponding_parent(Fl_Type*);
 extern void redraw_browser();
@@ -2373,9 +2376,6 @@ void Fl_Widget_Type::write_widget_code() {
     if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
     write_c("));\n");
   }
-  // avoid the unsupported combination of flegs when user sets
-  // "when" to "FL_WHEN_NEVER", but keeps the "no change" set.
-  // FIXME: This could be reflected in the GUI by graying out the button.
   Fl_When ww = o->when();
   if (ww==FL_WHEN_NOT_CHANGED)
     ww = FL_WHEN_NEVER;
