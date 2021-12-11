@@ -540,7 +540,6 @@ int Fl_WinAPI_Screen_Driver::ready() {
   return get_wsock_mod() ? s_wsock_select(0, &fdt[0], &fdt[1], &fdt[2], &t) : 0;
 }
 
-//FILE *LOG=fopen("log.log","w");
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -549,21 +548,36 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     return;
 
   beenHereDoneThat = 1;
-  typedef void *fl_DPI_AWARENESS_CONTEXT;
-  typedef BOOL(WINAPI * SetProcessDpiAwarenessContext_type)(fl_DPI_AWARENESS_CONTEXT);
-  SetProcessDpiAwarenessContext_type fl_SetProcessDpiAwarenessContext =
-      (SetProcessDpiAwarenessContext_type)GetProcAddress(LoadLibrary("User32.DLL"), "SetProcessDpiAwarenessContext");
-  if (fl_SetProcessDpiAwarenessContext) {
-    const fl_DPI_AWARENESS_CONTEXT fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = (fl_DPI_AWARENESS_CONTEXT)(-4);
-    is_dpi_aware = fl_SetProcessDpiAwarenessContext(fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+  // test whether DpiAwareness has been set before via a manifest
+  /*enum PROCESS_DPI_AWARENESS { // in shellscalingapi.h from Window 8.1
+    PROCESS_DPI_UNAWARE,
+    PROCESS_SYSTEM_DPI_AWARE,
+    PROCESS_PER_MONITOR_DPI_AWARE
+  };*/
+  typedef HRESULT(WINAPI * GetProcessDpiAwareness_type)(HANDLE, int *);
+  GetProcessDpiAwareness_type fl_GetProcessDpiAwareness =
+      (GetProcessDpiAwareness_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "GetProcessDpiAwareness");
+  int awareness;
+  if (!fl_GetProcessDpiAwareness || fl_GetProcessDpiAwareness(NULL, &awareness) != S_OK) {
+    awareness = 0; //corresponds to PROCESS_DPI_UNAWARE;
   }
-  if (!is_dpi_aware) {
-    typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
-    SetProcessDpiAwareness_type fl_SetProcessDpiAwareness =
-        (SetProcessDpiAwareness_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "SetProcessDpiAwareness");
-    if (fl_SetProcessDpiAwareness) {
-      const int fl_PROCESS_PER_MONITOR_DPI_AWARE = 2;
-      if (fl_SetProcessDpiAwareness(fl_PROCESS_PER_MONITOR_DPI_AWARE) == S_OK) is_dpi_aware = true;
+  if (awareness == 0 /*PROCESS_DPI_UNAWARE*/) { // DpiAwareness has not been set via a manifest
+    typedef void *fl_DPI_AWARENESS_CONTEXT;
+    typedef BOOL(WINAPI * SetProcessDpiAwarenessContext_type)(fl_DPI_AWARENESS_CONTEXT);
+    SetProcessDpiAwarenessContext_type fl_SetProcessDpiAwarenessContext =
+    (SetProcessDpiAwarenessContext_type)GetProcAddress(LoadLibrary("User32.DLL"), "SetProcessDpiAwarenessContext");
+    if (fl_SetProcessDpiAwarenessContext) {
+      const fl_DPI_AWARENESS_CONTEXT fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = (fl_DPI_AWARENESS_CONTEXT)(-4);
+      is_dpi_aware = fl_SetProcessDpiAwarenessContext(fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+    }
+    if (!is_dpi_aware) {
+      typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
+      SetProcessDpiAwareness_type fl_SetProcessDpiAwareness =
+      (SetProcessDpiAwareness_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "SetProcessDpiAwareness");
+      if (fl_SetProcessDpiAwareness) {
+        const int fl_PROCESS_PER_MONITOR_DPI_AWARE = 2;
+        if (fl_SetProcessDpiAwareness(fl_PROCESS_PER_MONITOR_DPI_AWARE) == S_OK) is_dpi_aware = true;
+      }
     }
   }
   OleInitialize(0L);
@@ -1763,7 +1777,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
       static AdjustWindowRectExForDpi_type fl_AdjustWindowRectExForDpi =
         (AdjustWindowRectExForDpi_type)GetProcAddress(LoadLibrary("User32.DLL"), "AdjustWindowRectExForDpi");
       BOOL ok;
-      if ( fl_AdjustWindowRectExForDpi) {
+      if (is_dpi_aware && fl_AdjustWindowRectExForDpi) {
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
         UINT dpi = UINT(sd->dpi[Fl_Window_Driver::driver(w)->screen_num()][0]);
         ok = fl_AdjustWindowRectExForDpi(&r, style, FALSE, styleEx, dpi);
