@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_message.H>
+#include <FL/fl_string.h>
 
 #include <errno.h>
 
@@ -88,7 +89,7 @@ void shell_settings_read()
     free((void*)g_shell_command);
   g_shell_command = NULL;
   if (shell_settings.command)
-    g_shell_command = strdup(shell_settings.command);
+    g_shell_command = fl_strdup(shell_settings.command);
   g_shell_save_fl = ((shell_settings.flags&1)==1);
   g_shell_save_code = ((shell_settings.flags&2)==2);
   g_shell_save_strings = ((shell_settings.flags&4)==4);
@@ -112,7 +113,7 @@ void shell_settings_write()
     free((void*)shell_settings.command);
   shell_settings.command = NULL;
   if (g_shell_command)
-    shell_settings.command = strdup(g_shell_command);
+    shell_settings.command = fl_strdup(g_shell_command);
   shell_settings.flags = 0;
   if (g_shell_save_fl)
     shell_settings.flags |= 1;
@@ -364,7 +365,7 @@ void update_shell_window() {
 void apply_shell_window() {
   if (g_shell_command)
     free((void*)g_shell_command);
-  g_shell_command = strdup(shell_command_input->value());
+  g_shell_command = fl_strdup(shell_command_input->value());
   g_shell_save_fl = shell_savefl_button->value();
   g_shell_save_code = shell_writecode_button->value();
   g_shell_save_strings = shell_writemsgs_button->value();
