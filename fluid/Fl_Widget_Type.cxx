@@ -1726,21 +1726,30 @@ void value_cb(Fl_Value_Input* i, void* v) {
 Fl_Menu_Item *Fl_Widget_Type::subtypes() {return 0;}
 
 void subtype_cb(Fl_Choice* i, void* v) {
+  static Fl_Menu_Item empty_type_menu[] = {
+    {"Normal",0,0,(void*)0},
+    {0}};
+
   if (v == LOAD) {
     Fl_Menu_Item* m = current_widget->subtypes();
-    if (!m) {i->deactivate(); return;}
-    i->menu(m);
-    int j;
-    for (j = 0;; j++) {
-      if (!m[j].text) {j = 0; break;}
-      if (current_widget->is_spinner()) {
-        if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
-      } else {
-        if (m[j].argument() == current_widget->o->type()) break;
+    if (!m) {
+      i->menu(empty_type_menu);
+      i->value(0);
+      i->deactivate();
+    } else {
+      i->menu(m);
+      int j;
+      for (j = 0;; j++) {
+        if (!m[j].text) {j = 0; break;}
+        if (current_widget->is_spinner()) {
+          if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
+        } else {
+          if (m[j].argument() == current_widget->o->type()) break;
+        }
       }
+      i->value(j);
+      i->activate();
     }
-    i->value(j);
-    i->activate();
     i->redraw();
   } else {
     int mod = 0;
