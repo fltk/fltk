@@ -561,6 +561,7 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
   if (!fl_GetProcessDpiAwareness || fl_GetProcessDpiAwareness(NULL, &awareness) != S_OK) {
     awareness = 0; //corresponds to PROCESS_DPI_UNAWARE;
   }
+  if (awareness == 2 /*PROCESS_PER_MONITOR_DPI_AWARE*/) is_dpi_aware = true;
   if (awareness == 0 /*PROCESS_DPI_UNAWARE*/) { // DpiAwareness has not been set via a manifest
     typedef void *fl_DPI_AWARENESS_CONTEXT;
     typedef BOOL(WINAPI * SetProcessDpiAwarenessContext_type)(fl_DPI_AWARENESS_CONTEXT);
