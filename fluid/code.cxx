@@ -37,8 +37,11 @@
 static FILE *code_file = NULL;
 static FILE *header_file = NULL;
 
+/// Store the current indentation level for the C source code.
 int indentation = 0;
+
 int write_number = 0;
+
 int write_sourceview = 0;
 
 /**
@@ -105,14 +108,45 @@ const char* unique_id(void* o, const char* type, const char* name, const char* l
 
 
 /**
- Return a C string that indents code to the current depth.
- */
-const char* indent() {
-  static const char* spaces = "                ";
+ Return a C string that indents code to the given depth.
 
-  int i = indentation; if (i>16) i = 16;
-  return spaces+16-i;
+ Indentation can be changed by modifying the multiplicator (``*2`` to keep
+ the FLTK indent style). Changing `spaces` to a list of tabs would generate
+ tab indents instead. This function can also be used for fixed depth indents
+ in the header file.
+
+ Do *not* ever make this a user preference, or you will end up writing a
+ fully featured code formatter.
+
+ \param[in] set generate this indent depth
+ \return pointer to a static string
+ */
+const char *indent(int set) {
+  static const char* spaces = "                                ";
+  int i = set * 2;
+  if (i>32) i = 32;
+  if (i<0) i = 0;
+  return spaces+32-i;
 }
+
+/**
+ Return a C string that indents code to the current source file depth.
+ \return pointer to a static string
+ */
+const char *indent() {
+  return indent(indentation);
+}
+
+/**
+ Return a C string that indents code to the current source file depth plus an offset.
+ \param[in] offset adds a temporary offset for this call only; this does not
+    change the `indentation` variable; offset can be negative
+ \return pointer to a static string
+ */
+const char *indent_plus(int offset) {
+  return indent(indentation+offset);
+}
+
 
 ////////////////////////////////////////////////////////////////
 // declarations/include files:
@@ -360,6 +394,10 @@ void write_h(const char* format,...) {
 
 /**
  Write code (c) of size (n) to H file, with optional comment (com) w/o trailing space.
+ \param[in] indent indentation string for all lines
+ \param[in] n number of bytes in code line
+ \param[in] c line of code
+ \param[in] com optional commentary
  */
 void write_hc(const char *indent, int n, const char* c, const char *com) {
   if (*com)
@@ -374,7 +412,7 @@ void write_hc(const char *indent, int n, const char* c, const char *com) {
  */
 void write_c_indented(const char *textlines) {
   if (textlines) {
-    indentation+=2;
+    indentation++;
     for (;;) {
       const char *newline = strchr(textlines, '\n');
       if (!newline) break;
@@ -383,7 +421,7 @@ void write_c_indented(const char *textlines) {
     }
     if (*textlines)
       write_c("%s%s", indent(), textlines);
-    indentation-=2;
+    indentation--;
   }
 }
 

@@ -1505,54 +1505,56 @@ void Fl_Widget_Class_Type::write_code1() {
   const char *c = subclass();
   if (!c) c = "Fl_Group";
 
+  write_c("\n");
   write_comment_h();
   write_h("\nclass %s : public %s {\n", name(), c);
   if (strstr(c, "Window")) {
-    write_h("  void _%s();\n", trimclassname(name()));
+    write_h("%svoid _%s();\n", indent(1), trimclassname(name()));
     write_h("public:\n");
-    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", trimclassname(name()));
-    write_h("  %s(int W, int H, const char *L = 0);\n", trimclassname(name()));
-    write_h("  %s();\n", trimclassname(name()));
+    write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n", indent(1), trimclassname(name()));
+    write_h("%s%s(int W, int H, const char *L = 0);\n", indent(1), trimclassname(name()));
+    write_h("%s%s();\n", indent(1), trimclassname(name()));
 
     // a constructor with all four dimensions plus label
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), trimclassname(name()));
-    write_c("  : %s(X, Y, W, H, L) {\n", c);
-    write_c("  _%s();\n", trimclassname(name()));
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
+    write_c("%s%s(X, Y, W, H, L)\n{\n", indent(1), c);
+    write_c("%s_%s();\n", indent(1), trimclassname(name()));
     write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    write_c("%s::%s(int W, int H, const char *L)\n", name(), trimclassname(name()));
-    write_c("  : %s(0, 0, W, H, L) {\n", c);
-    write_c("  clear_flag(16);\n");
-    write_c("  _%s();\n", trimclassname(name()));
+    write_c("%s::%s(int W, int H, const char *L) :\n", name(), trimclassname(name()));
+    write_c("%s%s(0, 0, W, H, L)\n{\n", indent(1), c);
+    write_c("%sclear_flag(16);\n", indent(1));
+    write_c("%s_%s();\n", indent(1), trimclassname(name()));
     write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
-    write_c("%s::%s()\n", name(), trimclassname(name()));
-    write_c("  : %s(0, 0, %d, %d, ", c, o->w(), o->h());
+    write_c("%s::%s() :\n", name(), trimclassname(name()));
+    write_c("%s%s(0, 0, %d, %d, ", indent(1), c, o->w(), o->h());
     const char *cstr = label();
     if (cstr) write_cstring(cstr);
     else write_c("0");
-    write_c(") {\n");
-    write_c("  clear_flag(16);\n");
-    write_c("  _%s();\n", trimclassname(name()));
+    write_c(")\n{\n");
+    write_c("%sclear_flag(16);\n", indent(1));
+    write_c("%s_%s();\n", indent(1), trimclassname(name()));
     write_c("}\n\n");
 
     write_c("void %s::_%s() {\n", name(), trimclassname(name()));
-//    write_c("  %s *w = this;\n", name());
+//    write_c("%s%s *w = this;\n", indent(1), name());
   } else {
     write_h("public:\n");
-    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", trimclassname(name()));
-
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), trimclassname(name()));
+    write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n",
+            indent(1), trimclassname(name()));
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
     if (wc_relative)
-      write_c("  : %s(0, 0, W, H, L) {\n", c);
+      write_c("%s%s(0, 0, W, H, L)\n{\n", indent(1), c);
     else
-      write_c("  : %s(X, Y, W, H, L) {\n", c);
+      write_c("%s%s(X, Y, W, H, L)\n{\n", indent(1), c);
   }
 
-//  write_c("  %s *o = this;\n", name());
+//  write_c("%s%s *o = this;\n", indent(1), name());
 
+  indentation++;
   write_widget_code();
 }
 
@@ -1570,6 +1572,7 @@ void Fl_Widget_Class_Type::write_code2() {
   write_c("%send();\n", indent());
   if (((Fl_Window*)o)->resizable() == o)
     write_c("%sresizable(this);\n", indent());
+  indentation--;
   write_c("}\n");
 }
 

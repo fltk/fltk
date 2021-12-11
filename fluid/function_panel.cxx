@@ -1,7 +1,7 @@
 //
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -146,7 +146,7 @@ Fl_Double_Window *code_panel=(Fl_Double_Window *)0;
 static void cb_code_panel(Fl_Double_Window*, void*) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
-code_panel->hide(); // otherwise hide..;
+  code_panel->hide(); // otherwise hide..;
 }
 
 CodeEditor *code_input=(CodeEditor *)0;
@@ -720,9 +720,9 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 static void cb_widgetbin_panel(Fl_Window* o, void* v) {
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-  exit_cb((Fl_Widget*)o, v);
-else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);
+    exit_cb((Fl_Widget*)o, v);
+  else
+    toggle_widgetbin_cb((Fl_Widget*)o, v);
 }
 
 Fl_Window* make_widgetbin() {

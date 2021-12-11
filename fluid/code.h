@@ -27,7 +27,9 @@ extern int write_sourceview;
 
 int is_id(char c);
 const char* unique_id(void* o, const char*, const char*, const char*);
-extern const char* indent();
+const char *indent();
+const char *indent(int set);
+const char *indent_plus(int offset);
 int write_declare(const char *, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_cstring(const char *,int length);
 void write_cstring(const char *);
