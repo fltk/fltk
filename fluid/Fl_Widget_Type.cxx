@@ -1728,7 +1728,11 @@ Fl_Menu_Item *Fl_Widget_Type::subtypes() {return 0;}
 void subtype_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
     Fl_Menu_Item* m = current_widget->subtypes();
-    if (!m) {i->deactivate(); return;}
+    if (!m) {
+      i->clear();
+      i->deactivate();
+      return;
+    }
     i->menu(m);
     int j;
     for (j = 0;; j++) {
