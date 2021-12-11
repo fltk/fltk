@@ -382,7 +382,7 @@ void Fl_Function_Type::write_code1() {
         size_t n = strlen(k);
         if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
-      write_h("  ");
+      write_h("%s", indent(1));
       if (is_static) write_h("static ");
       if (is_virtual) write_h("virtual ");
       if (!constructor) {
@@ -482,8 +482,9 @@ void Fl_Function_Type::write_code1() {
     }
   }
 
-  if (havewidgets && child && !child->name()) write_c("  %s* w;\n", subclassname(child));
-  indentation += 2;
+  if (havewidgets && child && !child->name())
+    write_c("%s%s* w;\n", indent(1), subclassname(child));
+  indentation++;
 }
 
 /**
@@ -501,10 +502,12 @@ void Fl_Function_Type::write_code2() {
   }
 
   if (ismain()) {
-    if (havewidgets) write_c("  %s->show(argc, argv);\n", var);
-    if (havechildren) write_c("  return Fl::run();\n");
+    if (havewidgets)
+      write_c("%s%s->show(argc, argv);\n", indent(1), var);
+    if (havechildren)
+      write_c("%sreturn Fl::run();\n", indent(1));
   } else if (havewidgets && !constructor && !return_type) {
-    write_c("  return %s;\n", var);
+    write_c("%sreturn %s;\n", indent(1), var);
   }
   if (havechildren)
     write_c("}\n");
@@ -798,14 +801,14 @@ BREAK2:
 void Fl_CodeBlock_Type::write_code1() {
   const char* c = name();
   write_c("%s%s {\n", indent(), c ? c : "");
-  indentation += 2;
+  indentation++;
 }
 
 /**
  Write the "after" code.
  */
 void Fl_CodeBlock_Type::write_code2() {
-  indentation -= 2;
+  indentation--;
   if (after) write_c("%s} %s\n", indent(), after);
   else write_c("%s}\n", indent());
 }
@@ -975,8 +978,8 @@ void Fl_Decl_Type::write_code1() {
                         || (!strncmp(c,"struct",6) && isspace(c[6]))
                         ) ) {
     write_public(public_);
-    write_comment_h("  ");
-    write_h("  %s\n", c);
+    write_comment_h(indent(1));
+    write_h("%s%s\n", indent(1), c);
     return;
   }
   // handle putting #include, extern, using or typedef into decl:
@@ -1006,8 +1009,8 @@ void Fl_Decl_Type::write_code1() {
   while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
     write_public(public_);
-    write_comment_h("  ");
-    write_hc("  ", int(e-c), c, csc);
+    write_comment_h(indent(1));
+    write_hc(indent(1), int(e-c), c, csc);
   } else {
     if (public_) {
       if (static_)
@@ -1241,14 +1244,17 @@ void Fl_Data_Type::write_code1() {
   }
   if (is_in_class()) {
     write_public(public_);
-    write_comment_h("  ");
     if (text_mode_) {
-      write_h("  static const char *%s;\n", c);
+      write_h("%sstatic const char *%s;\n", indent(1), c);
+      write_c("\n");
+      write_comment_c();
       write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
       if (message) write_c("#error %s %s\n", message, fn);
       write_cstring(data, nData);
     } else {
-      write_h("  static unsigned char %s[%d];\n", c, nData);
+      write_h("%sstatic unsigned char %s[%d];\n", indent(1), c, nData);
+      write_c("\n");
+      write_comment_c();
       write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
       if (message) write_c("#error %s %s\n", message, fn);
       write_cdata(data, nData);
@@ -1260,12 +1266,14 @@ void Fl_Data_Type::write_code1() {
       if (static_) {
         if (text_mode_) {
           write_h("extern const char *%s;\n", c);
+          write_c("\n");
           write_comment_c();
           write_c("const char *%s = /* text inlined from %s */\n", c, fn);
           if (message) write_c("#error %s %s\n", message, fn);
           write_cstring(data, nData);
         } else {
           write_h("extern unsigned char %s[%d];\n", c, nData);
+          write_c("\n");
           write_comment_c();
           write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
           if (message) write_c("#error %s %s\n", message, fn);
@@ -1281,6 +1289,7 @@ void Fl_Data_Type::write_code1() {
           write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
     } else {
+      write_c("\n");
       write_comment_c();
       if (static_)
         write_c("static ");

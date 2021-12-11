@@ -36,62 +36,62 @@ Fl_Double_Window *template_panel=(Fl_Double_Window *)0;
 
 static void cb_template_panel(Fl_Double_Window*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
-if (img) img->release();
-template_preview->image(0);
-
-template_browser->deselect();
-template_name->value("");
-template_instance->value("");
-template_panel->hide();
+  if (img) img->release();
+  template_preview->image(0);
+  
+  template_browser->deselect();
+  template_name->value("");
+  template_instance->value("");
+  template_panel->hide();
 }
 
 Fl_Browser *template_browser=(Fl_Browser *)0;
 
 static void cb_template_browser(Fl_Browser*, void*) {
   if (Fl::event_clicks()) {
-  template_panel->hide();
-  return;
-}
-Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
-if (img) img->release();
-template_preview->image(0);
-template_preview->redraw();
-
-int item = template_browser->value();
-
-if (item <= 1) template_instance->deactivate();
-else template_instance->activate();
-
-if (item < 1) {
-  template_submit->deactivate();
-  template_delete->deactivate();
-  return;
-}
-
-template_submit->activate();
-
-const char *flfile = (const char *)template_browser->data(item);
-if (!flfile) {
-  template_delete->deactivate();
-  return;
-}
-
-template_name->value(template_browser->text(item));
-
-template_delete->activate();
-
-char pngfile[1024], *ext;
-
-strlcpy(pngfile, flfile, sizeof(pngfile));
-if ((ext = strrchr(pngfile, '.')) == NULL) return;
-strcpy(ext, ".png");
-
-img = Fl_Shared_Image::get(pngfile);
-
-if (img) {
-  template_preview->image(img);
+    template_panel->hide();
+    return;
+  }
+  Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+  if (img) img->release();
+  template_preview->image(0);
   template_preview->redraw();
-};
+  
+  int item = template_browser->value();
+  
+  if (item <= 1) template_instance->deactivate();
+  else template_instance->activate();
+  
+  if (item < 1) {
+    template_submit->deactivate();
+    template_delete->deactivate();
+    return;
+  }
+  
+  template_submit->activate();
+  
+  const char *flfile = (const char *)template_browser->data(item);
+  if (!flfile) {
+    template_delete->deactivate();
+    return;
+  }
+  
+  template_name->value(template_browser->text(item));
+  
+  template_delete->activate();
+  
+  char pngfile[1024], *ext;
+  
+  strlcpy(pngfile, flfile, sizeof(pngfile));
+  if ((ext = strrchr(pngfile, '.')) == NULL) return;
+  strcpy(ext, ".png");
+  
+  img = Fl_Shared_Image::get(pngfile);
+  
+  if (img) {
+    template_preview->image(img);
+    template_preview->redraw();
+  }
 }
 
 Fl_Box *template_preview=(Fl_Box *)0;
@@ -100,9 +100,9 @@ Fl_Input *template_name=(Fl_Input *)0;
 
 static void cb_template_name(Fl_Input*, void*) {
   if (strlen(template_name->value())) {
-  template_submit->activate();
-  if (Fl::event_key() == FL_Enter) template_panel->hide();
-} else template_submit->deactivate();
+    template_submit->activate();
+    if (Fl::event_key() == FL_Enter) template_panel->hide();
+  } else template_submit->deactivate();
 }
 
 Fl_Input *template_instance=(Fl_Input *)0;
@@ -111,23 +111,23 @@ Fl_Button *template_delete=(Fl_Button *)0;
 
 static void cb_Cancel(Fl_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
-if (img) img->release();
-template_preview->image(0);
-
-template_browser->deselect();
-template_name->value("");
-template_instance->value("");
-template_panel->hide();
+  if (img) img->release();
+  template_preview->image(0);
+  
+  template_browser->deselect();
+  template_name->value("");
+  template_instance->value("");
+  template_panel->hide();
 }
 
 Fl_Return_Button *template_submit=(Fl_Return_Button *)0;
 
 static void cb_template_submit(Fl_Return_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
-if (img) img->release();
-template_preview->image(0);
-
-template_panel->hide();
+  if (img) img->release();
+  template_preview->image(0);
+  
+  template_panel->hide();
 }
 
 Fl_Double_Window* make_template_panel() {

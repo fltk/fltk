@@ -171,8 +171,11 @@ void delete_all(int selected_only) {
     // reset the setting for the external shell command
     shell_prefs_get();
     shell_settings_write();
+    widget_browser->hposition(0);
+    widget_browser->position(0);
   }
   selection_changed(0);
+  widget_browser->redraw();
 }
 
 // update a string member:
@@ -553,7 +556,8 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 /**
-  Write a comment into the header file.
+ Write a comment into the header file.
+ \param[in] pre indent the comment by this string
 */
 void Fl_Type::write_comment_h(const char *pre)
 {
@@ -609,22 +613,32 @@ void Fl_Type::write_comment_inline_c(const char *pre)
       // single line comment
       if (pre) write_c("%s", pre);
       write_c("// %s\n", s);
-      if (!pre) write_c("%s  ", indent());
+      if (!pre) write_c("%s", indent_plus(1));
     } else {
       write_c("%s/*\n", pre?pre:"");
-      if (pre) write_c("%s ", pre); else write_c("%s   ", indent());
+      if (pre)
+        write_c("%s ", pre);
+      else
+        write_c("%s ", indent_plus(1));
       while(*s) {
         if (*s=='\n') {
           if (s[1]) {
-            if (pre) write_c("\n%s ", pre); else write_c("\n%s   ", indent());
+            if (pre)
+              write_c("\n%s ", pre);
+            else
+              write_c("\n%s ", indent_plus(1));
           }
         } else {
           write_c("%c", *s); // FIXME this is much too slow!
         }
         s++;
       }
-      if (pre) write_c("\n%s */\n", pre); else write_c("\n%s   */\n", indent());
-      if (!pre) write_c("%s  ", indent());
+      if (pre)
+        write_c("\n%s */\n", pre);
+      else
+        write_c("\n%s */\n", indent_plus(1));
+      if (!pre)
+        write_c("%s", indent_plus(1));
     }
   }
 }

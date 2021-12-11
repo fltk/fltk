@@ -2066,7 +2066,7 @@ void Fl_Widget_Type::write_static() {
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
-      write_c("  ((%s*)(o", k);
+      write_c("%s((%s*)(o", indent(1), k);
       Fl_Type *q = 0;
       for (Fl_Type* p = parent; p && p->is_widget(); q = p, p = p->parent)
         write_c("->parent()");
@@ -2097,15 +2097,15 @@ void Fl_Widget_Type::write_code1() {
   if (c) {
     if (class_name(1)) {
       write_public(public_);
-      write_h("  %s *%s;\n", t, c);
+      write_h("%s%s *%s;\n", indent(1), t, c);
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
     const char* cn = callback_name();
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_public(0);
-    write_h("  inline void %s_i(%s*, %s);\n", cn, t, ut);
-    write_h("  static void %s(%s*, %s);\n", cn, t, ut);
+    write_h("%sinline void %s_i(%s*, %s);\n", indent(1), cn, t, ut);
+    write_h("%sstatic void %s(%s*, %s);\n", indent(1), cn, t, ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_window();
@@ -2184,7 +2184,7 @@ void Fl_Widget_Type::write_code1() {
   }
   write_c(");\n");
 
-  indentation += 2;
+  indentation++;
 
   if (wused) write_c("%sw = o; if (w) {/* empty */}\n", indent());
 
@@ -2396,7 +2396,7 @@ void Fl_Widget_Type::write_extra_code() {
 }
 
 void Fl_Widget_Type::write_block_close() {
-  indentation -= 2;
+  indentation--;
   write_c("%s} // %s* %s\n", indent(), subclassname(this),
           name() ? name() : "o");
 }

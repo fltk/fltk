@@ -144,9 +144,10 @@ void Fluid_Image::write_initializer(const char *type_name, const char *format, .
    } */
   va_list ap;
   va_start(ap, format);
-  write_c("static Fl_Image *%s() {\n  static Fl_Image *image = new %s(", function_name_, type_name);
+  write_c("static Fl_Image *%s() {\n%sstatic Fl_Image *image = new %s(",
+          function_name_, indent(1), type_name);
   vwrite_c(format, ap);
-  write_c(");\n  return image;\n}\n");
+  write_c(");\n%sreturn image;\n}\n", indent(1));
   va_end(ap);
 }
 

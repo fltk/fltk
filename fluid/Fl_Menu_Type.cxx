@@ -221,7 +221,7 @@ void Fl_Menu_Item_Type::write_static() {
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      write_c("  ((%s*)(o", k);
+      write_c("%s((%s*)(o", indent(1), k);
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
@@ -348,8 +348,8 @@ void Fl_Menu_Item_Type::write_code1() {
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      if (i18n_type) write_h("  static unsigned char %s_i18n_done;\n", mname);
-      write_h("  static Fl_Menu_Item %s[];\n", mname);
+      if (i18n_type) write_h("%sstatic unsigned char %s_i18n_done;\n", indent(1), mname);
+      write_h("%sstatic Fl_Menu_Item %s[];\n", indent(1), mname);
     } else {
       if (i18n_type) write_h("extern unsigned char %s_i18n_done;\n", mname);
       write_h("extern Fl_Menu_Item %s[];\n", mname);
@@ -360,7 +360,7 @@ void Fl_Menu_Item_Type::write_code1() {
   if (c) {
     if (class_name(1)) {
       write_public(public_);
-      write_h("  static Fl_Menu_Item *%s;\n", c);
+      write_h("%sstatic Fl_Menu_Item *%s;\n", indent(1), c);
     } else {
       if (c==name())
         write_h("#define %s (%s+%d)\n", c, mname, i);
@@ -374,8 +374,8 @@ void Fl_Menu_Item_Type::write_code1() {
       const char* cn = callback_name();
       const char* ut = user_data_type() ? user_data_type() : "void*";
       write_public(0);
-      write_h("  inline void %s_i(Fl_Menu_*, %s);\n", cn, ut);
-      write_h("  static void %s(Fl_Menu_*, %s);\n", cn, ut);
+      write_h("%sinline void %s_i(Fl_Menu_*, %s);\n", indent(1), cn, ut);
+      write_h("%sstatic void %s(Fl_Menu_*, %s);\n", indent(1), cn, ut);
     }
   }
 
@@ -395,7 +395,7 @@ void Fl_Menu_Item_Type::write_code1() {
         menuItemInitialized = 1;
         write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
       }
-      write_c("%s  %s\n", indent(), extra_code(n));
+      write_c("%s%s\n", indent_plus(1), extra_code(n));
     }
   }
   if (menuItemInitialized)
@@ -492,21 +492,21 @@ void Fl_Menu_Type::write_code2() {
       }
       if (nLabel) {
         write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
-        write_c("%s  int i=0;\n", indent());
-        write_c("%s  for ( ; i<%d; i++)\n", indent(), nItem);
-        write_c("%s    if (%s[i].label())\n", indent(), mName);
+        write_c("%sint i=0;\n", indent_plus(1));
+        write_c("%sfor ( ; i<%d; i++)\n", indent_plus(1), nItem);
+        write_c("%sif (%s[i].label())\n", indent_plus(2), mName);
         switch (i18n_type) {
           case 1:
-            write_c("%s      %s[i].label(%s(%s[i].label()));\n",
-                    indent(), mName, i18n_function, mName);
+            write_c("%s%s[i].label(%s(%s[i].label()));\n",
+                    indent_plus(3), mName, i18n_function, mName);
             break;
           case 2:
-            write_c("%s      %s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
-                    indent(), mName, i18n_file[0] ? i18n_file : "_catalog",
+            write_c("%s%s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
+                    indent_plus(3), mName, i18n_file[0] ? i18n_file : "_catalog",
                     i18n_set, mi->msgnum(), mName);
             break;
         }
-        write_c("%s  %s_i18n_done = 1;\n", indent(), mName);
+        write_c("%s%s_i18n_done = 1;\n", indent_plus(1), mName);
         write_c("%s}\n", indent());
       }
     }

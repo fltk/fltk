@@ -264,11 +264,11 @@ static void cb_Close(Fl_Return_Button* o, void*) {
 
 Fl_Double_Window* make_about_panel() {
   static char cbuf[200] = "";
-    if (!cbuf[0]) {
-      time_t t = time(0);
-      struct tm *lt = localtime(&t);
-      sprintf(cbuf, "Copyright © 1998 - %d\nby Bill Spitzak and others", lt->tm_year+1900);
-    }
+  if (!cbuf[0]) {
+    time_t t = time(0);
+    struct tm *lt = localtime(&t);
+    sprintf(cbuf, "Copyright © 1998 - %d\nby Bill Spitzak and others", lt->tm_year+1900);
+  }
   { about_panel = new Fl_Double_Window(345, 180, "About FLUID");
     about_panel->color(FL_LIGHT1);
     about_panel->selection_color(FL_DARK1);
@@ -303,6 +303,7 @@ Fl_Double_Window* make_about_panel() {
   } // Fl_Double_Window* about_panel
   return about_panel;
 }
+
 /**
  Embedded image for internal fluid.html web page.
 */

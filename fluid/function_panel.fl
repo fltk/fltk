@@ -7,7 +7,7 @@ mac_shell_flags 3
 comment {//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,7 +60,7 @@ Function {make_function_panel()} {open
       } {
         MenuItem {} {
           label private
-          user_data 0 user_data_type long selected
+          user_data 0 user_data_type long
           xywh {5 5 100 20} labelsize 11
         }
         MenuItem {} {
@@ -84,7 +84,7 @@ Function {make_function_panel()} {open
         }
         MenuItem {} {
           label global
-          user_data 1 user_data_type long
+          user_data 1 user_data_type long selected
           xywh {15 15 100 20} labelsize 11
         }
       }
@@ -133,7 +133,7 @@ Function {make_code_panel()} {open
   Fl_Window code_panel {
     label {Code Properties}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
-    return; // ignore Escape
+  return; // ignore Escape
 code_panel->hide(); // otherwise hide..}
     xywh {425 882 540 180} type Double labelsize 11 resizable
     code0 {o->size_range(200, 150);} modal visible

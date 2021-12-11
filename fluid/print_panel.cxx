@@ -45,21 +45,21 @@ Fl_Round_Button *print_all=(Fl_Round_Button *)0;
 
 static void cb_print_all(Fl_Round_Button*, void*) {
   print_from->deactivate();
-print_to->deactivate();
+  print_to->deactivate();
 }
 
 Fl_Round_Button *print_pages=(Fl_Round_Button *)0;
 
 static void cb_print_pages(Fl_Round_Button*, void*) {
   print_from->activate();
-print_to->activate();
+  print_to->activate();
 }
 
 Fl_Round_Button *print_selection=(Fl_Round_Button *)0;
 
 static void cb_print_selection(Fl_Round_Button*, void*) {
   print_from->deactivate();
-print_to->deactivate();
+  print_to->deactivate();
 }
 
 Fl_Int_Input *print_from=(Fl_Int_Input *)0;
@@ -70,22 +70,22 @@ Fl_Spinner *print_copies=(Fl_Spinner *)0;
 
 static void cb_print_copies(Fl_Spinner*, void*) {
   if (print_copies->value() == 1) {
-  print_collate_button->deactivate();
-  print_collate_group[0]->deactivate();
-  print_collate_group[1]->deactivate();
-} else {
-  print_collate_button->activate();
-  print_collate_group[0]->activate();
-  print_collate_group[1]->activate();
-};
+    print_collate_button->deactivate();
+    print_collate_group[0]->deactivate();
+    print_collate_group[1]->deactivate();
+  } else {
+    print_collate_button->activate();
+    print_collate_group[0]->activate();
+    print_collate_group[1]->activate();
+  }
 }
 
 Fl_Check_Button *print_collate_button=(Fl_Check_Button *)0;
 
 static void cb_print_collate_button(Fl_Check_Button*, void*) {
   int i = print_collate_button->value() != 0;
-print_collate_group[i]->show();
-print_collate_group[1 - i]->hide();
+  print_collate_group[i]->show();
+  print_collate_group[1 - i]->hide();
 }
 
 Fl_Group *print_collate_group[2]={(Fl_Group *)0};
@@ -100,7 +100,7 @@ Fl_Double_Window *print_properties_panel=(Fl_Double_Window *)0;
 
 static void cb_print_properties_panel(Fl_Double_Window*, void*) {
   print_properties_panel->hide();
-print_update_status();
+  print_update_status();
 }
 
 Fl_Choice *print_page_size=(Fl_Choice *)0;
@@ -214,24 +214,24 @@ Fl_Button *print_output_mode[4]={(Fl_Button *)0};
 
 static void cb_Save(Fl_Return_Button*, void*) {
   print_properties_panel->hide();
-
-char name[1024];
-int val;
-const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
-
-snprintf(name, sizeof(name), "%s/page_size", printer);
-fluid_prefs.set(name, print_page_size->value());
-
-snprintf(name, sizeof(name), "%s/output_mode", printer);
-for (val = 0; val < 4; val ++) {
-  if (print_output_mode[val]->value()) break;
-}
-fluid_prefs.set(name, val);
+  
+  char name[1024];
+  int val;
+  const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
+  
+  snprintf(name, sizeof(name), "%s/page_size", printer);
+  fluid_prefs.set(name, print_page_size->value());
+  
+  snprintf(name, sizeof(name), "%s/output_mode", printer);
+  for (val = 0; val < 4; val ++) {
+    if (print_output_mode[val]->value()) break;
+  }
+  fluid_prefs.set(name, val);
 }
 
 static void cb_Cancel1(Fl_Button*, void*) {
   print_properties_panel->hide();
-print_update_status();
+  print_update_status();
 }
 
 static void cb_Use(Fl_Button*, void*) {
