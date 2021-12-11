@@ -49,7 +49,7 @@ class Fl_Function_Type : public Fl_Type {
 public:
   Fl_Function_Type();
   ~Fl_Function_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2();
   void open();
@@ -77,7 +77,7 @@ class Fl_Code_Type : public Fl_Type {
 
 public:
   Fl_Code_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write();
   void write_code1();
   void write_code2() { }
@@ -100,7 +100,7 @@ class Fl_CodeBlock_Type : public Fl_Type {
 public:
   Fl_CodeBlock_Type();
   ~Fl_CodeBlock_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2();
   void open();
@@ -123,7 +123,7 @@ protected:
 
 public:
   Fl_Decl_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2() { }
   void open();
@@ -143,7 +143,7 @@ class Fl_Data_Type : public Fl_Decl_Type {
 public:
   Fl_Data_Type();
   ~Fl_Data_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2() {}
   void open();
@@ -162,7 +162,7 @@ class Fl_DeclBlock_Type : public Fl_Type {
 public:
   Fl_DeclBlock_Type();
   ~Fl_DeclBlock_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2();
   void open();
@@ -183,7 +183,7 @@ class Fl_Comment_Type : public Fl_Type {
 
 public:
   Fl_Comment_Type();
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2() { }
   void open();
@@ -210,7 +210,7 @@ public:
   char write_public_state; // true when public: has been printed
   Fl_Class_Type* parent_class; // save class if nested
 //
-  Fl_Type *make();
+  Fl_Type *make(Strategy strategy);
   void write_code1();
   void write_code2();
   void open();

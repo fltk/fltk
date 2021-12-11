@@ -26,9 +26,11 @@
 
 #include "fluid.h"
 #include "Fl_Window_Type.h"
+#include "pixmaps.h"
 #include "undo.h"
 
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
@@ -36,8 +38,7 @@
 #include "../src/flstring.h"
 
 #include <stdio.h>
-
-extern Fl_Pixmap *pixmap[];
+#include <stdlib.h>
 
 ////////////////////////////////////////////////////////////////
 
@@ -168,8 +169,6 @@ public:
 static Fl_Round_Button_Type Fl_Round_Button_type;
 
 ////////////////////////////////////////////////////////////////
-
-extern int batch_mode;
 
 #include <FL/Fl_Browser.H>
 #include <FL/Fl_Check_Browser.H>
@@ -956,12 +955,106 @@ extern class Fl_Wizard_Type Fl_Wizard_type;
 extern void select(Fl_Type *,int);
 extern void select_only(Fl_Type *);
 
-#include <FL/Fl_Window.H>
+/**
+ List all known types.
+ This is used to convert a type name into a pointer to the prototype.
+ This list may contain types that are supported in .fl files, but not
+ available in the *New* menu.
+ */
+static Fl_Type *known_types[] = {
+  // functions
+  (Fl_Type*)&Fl_Function_type,
+  (Fl_Type*)&Fl_Code_type,
+  (Fl_Type*)&Fl_CodeBlock_type,
+  (Fl_Type*)&Fl_Decl_type,
+  (Fl_Type*)&Fl_DeclBlock_type,
+  (Fl_Type*)&Fl_Class_type,
+  (Fl_Type*)&Fl_Widget_Class_type,
+  (Fl_Type*)&Fl_Comment_type,
+  (Fl_Type*)&Fl_Data_type,
+  // groups
+  (Fl_Type*)&Fl_Window_type,
+  (Fl_Type*)&Fl_Group_type,
+  (Fl_Type*)&Fl_Pack_type,
+  (Fl_Type*)&Fl_Tabs_type,
+  (Fl_Type*)&Fl_Scroll_type,
+  (Fl_Type*)&Fl_Tile_type,
+  (Fl_Type*)&Fl_Wizard_type,
+  // buttons
+  (Fl_Type*)&Fl_Button_type,
+  (Fl_Type*)&Fl_Return_Button_type,
+  (Fl_Type*)&Fl_Light_Button_type,
+  (Fl_Type*)&Fl_Check_Button_type,
+  (Fl_Type*)&Fl_Repeat_Button_type,
+  (Fl_Type*)&Fl_Round_Button_type,
+  // valuators
+  (Fl_Type*)&Fl_Slider_type,
+  (Fl_Type*)&Fl_Scrollbar_type,
+  (Fl_Type*)&Fl_Value_Slider_type,
+  (Fl_Type*)&Fl_Adjuster_type,
+  (Fl_Type*)&Fl_Counter_type,
+  (Fl_Type*)&Fl_Spinner_type,
+  (Fl_Type*)&Fl_Dial_type,
+  (Fl_Type*)&Fl_Roller_type,
+  (Fl_Type*)&Fl_Value_Input_type,
+  (Fl_Type*)&Fl_Value_Output_type,
+  // text
+  (Fl_Type*)&Fl_Input_type,
+  (Fl_Type*)&Fl_Output_type,
+  (Fl_Type*)&Fl_Text_Editor_type,
+  (Fl_Type*)&Fl_Text_Display_type,
+  (Fl_Type*)&Fl_File_Input_type,
+  (Fl_Type*)&Fl_Simple_Terminal_type,
+  // menus
+  (Fl_Type*)&Fl_Menu_Bar_type,
+  (Fl_Type*)&Fl_Menu_Button_type,
+  (Fl_Type*)&Fl_Choice_type,
+  (Fl_Type*)&Fl_Input_Choice_type,
+  (Fl_Type*)&Fl_Submenu_type,
+  (Fl_Type*)&Fl_Menu_Item_type,
+  (Fl_Type*)&Fl_Checkbox_Menu_Item_type,
+  (Fl_Type*)&Fl_Radio_Menu_Item_type,
+  // browsers
+  (Fl_Type*)&Fl_Browser_type,
+  (Fl_Type*)&Fl_Check_Browser_type,
+  (Fl_Type*)&Fl_File_Browser_type,
+  (Fl_Type*)&Fl_Tree_type,
+  (Fl_Type*)&Fl_Help_View_type,
+  (Fl_Type*)&Fl_Table_type,
+  // misc
+  (Fl_Type*)&Fl_Box_type,
+  (Fl_Type*)&Fl_Clock_type,
+  (Fl_Type*)&Fl_Progress_type,
+};
 
-static void cb(Fl_Widget *, void *v) {
+/**
+ Create and add a new widget to the widget tree.
+
+ Fluid will try to set a default postion for widgets to the user's expectation.
+ Using the context menu will put new widgets at the position of the mouse click.
+ Pulldown menu and bin actions will generate widgets no too far from previously
+ added widgets in the same group.
+
+ Widgets can be added by dragging them from the widget bin to the
+ desired location.
+
+ By setting the strategy, widgets are added as the last child of a group (this
+ is done when reading them from a file), or close to the current widget, which
+ the user would expect in interactive mode.
+
+ \param[in] inPrototype pointer to one of the FL_..._type prototype; note the
+    lower case 't' in type.
+ \param[in] strategy add after current or as last child
+
+ \see add_new_widget_from_file(const char*, int)
+ add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(const char*, int)
+ */
+Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_checkpoint();
   undo_suspend();
-  Fl_Type *t = ((Fl_Type*)v)->make();
+  Fl_Type *ins = Fl_Type::current;
+  Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
     if (t->is_widget() && !t->is_window()) {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
@@ -994,6 +1087,23 @@ static void cb(Fl_Widget *, void *v) {
         }
       }
     }
+#if 0
+    // Fluid inserts widgets always as the last child of a matching group.
+    // This is great when reading a file, but if users do thins interactively,
+    // they expect the new widget close to where they worked previously.
+    if (ins) {
+      // if the new and current widget are siblings, just move it here.
+      if (ins->level==t->level) {
+      Fl_Type *c;
+      for (c=t; c && c!=ins && c->level>=t->level; c=c->prev) { }
+        if (c==ins) {
+          t->move_before(ins); // together the same as 'move_after'
+          ins->move_before(t);
+        }
+      }
+    }
+#endif
+    // make the new widget visible
     select_only(t);
     set_modflag(1);
     t->open();
@@ -1002,6 +1112,36 @@ static void cb(Fl_Widget *, void *v) {
     undo_last --;
   }
   undo_resume();
+  return t;
+}
+
+/**
+ Create and add a new widget to the widget tree.
+ \param[in] inName find the right prototype by this name
+ \param[in] strategy where to add the node
+ \return the newly created node
+ \see add_new_widget_from_file(const char*, int)
+ add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(const char*, int)
+ */
+Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
+  Fl_Type *prototype = typename_to_prototype(inName);
+  if (prototype)
+    return add_new_widget_from_user(prototype, strategy);
+  else
+    return NULL;
+}
+
+/**
+ Callback for all menu items.
+ */
+static void cb(Fl_Widget *, void *v) {
+  Fl_Type *t = NULL;
+  if (Fl_Type::current && Fl_Type::current->is_group())
+    t = ((Fl_Type*)v)->make(kAddAsLastChild);
+  else
+    t = ((Fl_Type*)v)->make(kAddAfterCurrent);
+  select_only(t);
 }
 
 Fl_Menu_Item New_Menu[] = {
@@ -1080,10 +1220,15 @@ Fl_Menu_Item New_Menu[] = {
 
 #include <FL/Fl_Multi_Label.H>
 
-// Modify a menuitem to display an icon in front of the label. This is
-// implemented using Fl_Multi_Label as the labeltype (FL_MULTI_LABEL).
-// The icon (ic) may be null. If ic is null only the text (txt) is assigned
-// to the label - Fl_Multi_Label is not used. txt must not be null.
+/**
+ Modify a menuitem to display an icon in front of the label.
+ This is implemented using Fl_Multi_Label as the labeltype (FL_MULTI_LABEL).
+ The icon may be null. If ic is null only the text (is assigned
+ to the label and Fl_Multi_Label is not used.
+ \param[in] mi pointer to tme menu item that will be modified
+ \param[in] ic icon for the menu, may be NULL
+ \param[in] txt new label text, may *not* be NULL, will not be copied
+ */
 static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
 {
   if (ic) {
@@ -1097,9 +1242,10 @@ static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
     ml->typea = FL_IMAGE_LABEL;
     ml->typeb = FL_NORMAL_LABEL;
     ml->label(mi);
+  } else {
+    if (txt != mi->text)
+      mi->label(txt);
   }
-  else if (txt != mi->text)
-    mi->label(txt);
 }
 
 void fill_in_New_Menu() {
@@ -1119,25 +1265,48 @@ void fill_in_New_Menu() {
   }
 }
 
-// use keyword to pick the type, this is used to parse files:
-Fl_Type *Fl_Type_make(const char *tn) {
-  reading_file = 1; // makes labels be null
-  Fl_Type *r = 0;
-  for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
-    Fl_Menu_Item *m = New_Menu+i;
-    if (!m->user_data()) continue;
-    Fl_Type *t = (Fl_Type*)(m->user_data());
-    if (!fl_ascii_strcasecmp(tn,t->type_name())) {
-        r = t->make();
-        break;
-    }
-    if (!fl_ascii_strcasecmp(tn,t->alt_type_name())) {
-        r = t->make();
-        break;
-    }
+/**
+ Find the correct prototype for a given type name.
+ \param[in] inName a C string that must match type_name() or alt_type_name() of
+    one of the known Fl_Type classes.
+ \return the matching prototype or NULL
+ */
+Fl_Type *typename_to_prototype(const char *inName)
+{
+  if (inName==NULL || *inName==0)
+    return NULL;
+  for (unsigned i = 0; i < sizeof(known_types)/sizeof(*known_types); i++) {
+    Fl_Type *prototype = known_types[i];
+    if (fl_ascii_strcasecmp(inName, prototype->type_name())==0)
+      return prototype;
+    if (fl_ascii_strcasecmp(inName, prototype->alt_type_name())==0)
+      return prototype;
   }
+  return NULL;
+}
+
+/**
+ Create and add a new type node to the widget tree.
+
+ This is used by the .fl file reader. New types are always created as
+ the last child of the first compatible parent. New widgets have a default
+ setup. Their position, sizem and label will be read next in the file.
+
+ \param[in] inName a C string that described the type we want
+ \param[in] strategy add after current or as last child
+ \return the type node that was created or NULL
+ \see add_new_widget_from_file(const char*, int)
+ add_new_widget_from_user(Fl_Type*, int)
+ add_new_widget_from_user(const char*, int)
+*/
+Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
+  reading_file = 1; // makes labels be null
+  Fl_Type *prototype = typename_to_prototype(inName);
+  if (!prototype)
+    return NULL;
+  Fl_Type *new_node = prototype->make(strategy);
   reading_file = 0;
-  return r;
+  return new_node;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1268,8 +1437,6 @@ static symbol table[] = {
   {"VERT_NICE_SLIDER",          FL_VERT_NICE_SLIDER},
   {"HOR_NICE_SLIDER",           FL_HOR_NICE_SLIDER},
 };
-
-#include <stdlib.h>
 
 int lookup_symbol(const char *name, int &v, int numberok) {
   if (name[0]=='F' && name[1]=='L' && name[2]=='_') name += 3;

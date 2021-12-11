@@ -19,6 +19,7 @@
 #include "fluid.h"
 #include "file.h"
 #include "Fl_Type.h"
+#include "widget_browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
@@ -107,11 +108,19 @@ void undo_cb(Fl_Widget *, void *) {
   }
 
   undo_suspend();
+  // Undo first deletes all widgets which resets the widget_tree browser.
+  // Save the current scroll position, so we don;t scroll back to 0 at undo.
+  int x = widget_browser->hposition();
+  int y = widget_browser->position();
   if (!read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     undo_resume();
     return;
   }
+  // Restore old browser position.
+  // Ideally, we would save the browser position insied the undo file.
+  widget_browser->hposition(x);
+  widget_browser->position(y);
 
   undo_current --;
 

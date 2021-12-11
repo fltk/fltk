@@ -42,8 +42,13 @@ void igroup::resize(int X, int Y, int W, int H) {
 
 Fl_Group_Type Fl_Group_type;    // the "factory"
 
-Fl_Type *Fl_Group_Type::make() {
-  return Fl_Widget_Type::make();
+/**
+ Create and add a new Group node.
+ \param[in] strategy add after current or as last child
+ \return new Group node
+ */
+Fl_Type *Fl_Group_Type::make(Strategy strategy) {
+  return Fl_Widget_Type::make(strategy);
 }
 
 void fix_group_size(Fl_Type *tt) {
@@ -74,14 +79,14 @@ void group_cb(Fl_Widget *, void *) {
   }
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
   force_parent = 1;
-  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make());
+  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
   for (Fl_Type *t = Fl_Type::first; t;) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next; continue;}
     Fl_Type *nxt = t->remove();
-    t->add(n);
+    t->add(n, kAddAsLastChild);
     t = nxt;
   }
   fix_group_size(n);

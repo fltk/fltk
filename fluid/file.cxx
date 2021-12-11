@@ -45,7 +45,8 @@
 /// \{
 
 // This file contains code to read and write .fl file.
-// TODO: there is a name confusion with routines that write to the C and Header files which must be fixed.
+// TODO: there is a name confusion with routines that write to the C and Header
+// TODO: files vs. thos the write to th fl file which should be fixed.
 
 static FILE *fout;
 static FILE *fin;
@@ -434,10 +435,11 @@ int write_file(const char *filename, int selected_only) {
 
  \param[in] p parent node or NULL
  \param[in] paste if set, merge into existing design, else replace design
- \param[in] options_read this is set if the options were already found in
-    a previous call
+ \param[in] strategy add nodes after current or as last child
+ \param[in] skip_options this is set if the options were already found in
+    a previous call, and there is no need to waste time searchingg for them.
  */
-static void read_children(Fl_Type *p, int paste, char options_read=0) {
+static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options=0) {
   Fl_Type::current = p;
   for (;;) {
     const char *c = read_word();
@@ -453,7 +455,7 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
     }
 
     // Make sure that we don;t go through the list of options for child nodes
-    if (!options_read) {
+    if (!skip_options) {
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {
         read_fdesign();
@@ -470,7 +472,7 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
 
       // back compatibility with Vincent Penne's original class code:
       if (!p && !strcmp(c,"define_in_struct")) {
-        Fl_Type *t = Fl_Type_make("class");
+        Fl_Type *t = add_new_widget_from_file("class", kAddAsLastChild);
         t->name(read_word());
         Fl_Type::current = p = t;
         paste = 1; // stops "missing }" error
@@ -560,15 +562,15 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
       }
     }
     {
-      Fl_Type *t = Fl_Type_make(c);
+      Fl_Type *t = add_new_widget_from_file(c, strategy);
       if (!t) {
         read_error("Unknown word \"%s\"", c);
         continue;
       }
-      t->name(read_word());
-
       // After reading the first widget, we no longer need to look for options
-      options_read = 1;
+      skip_options = 1;
+
+      t->name(read_word());
 
       c = read_word(1);
       if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
@@ -595,7 +597,7 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
         read_error("Missing child list for %s\n",t->title());
         goto REUSE_C;
       }
-      read_children(t, 0, options_read);
+      read_children(t, 0, strategy, skip_options);
     }
 
     Fl_Type::current = p;
@@ -608,9 +610,11 @@ static void read_children(Fl_Type *p, int paste, char options_read=0) {
  Read a .fl design file.
  \param[in] filename read this file
  \param[in] merge if this is set, merge the file into an existing design
+    at Fl_Type::current
+ \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
-int read_file(const char *filename, int merge) {
+int read_file(const char *filename, int merge, Strategy strategy) {
   Fl_Type *o;
   read_version = 0.0;
   if (!open_read(filename))
@@ -619,7 +623,7 @@ int read_file(const char *filename, int merge) {
     deselect();
   else
     delete_all();
-  read_children(Fl_Type::current, merge);
+  read_children(Fl_Type::current, merge, strategy);
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
   for (o = Fl_Type::first; o; o = o->next)
@@ -720,7 +724,7 @@ void read_fdesign() {
   Fl_Widget_Type *group = 0;
   Fl_Widget_Type *widget = 0;
   if (!Fl_Type::current) {
-    Fl_Type *t = Fl_Type_make("Function");
+    Fl_Type *t = add_new_widget_from_file("Function", kAddAsLastChild);
     t->name("create_the_forms()");
     Fl_Type::current = t;
   }
@@ -731,7 +735,7 @@ void read_fdesign() {
 
     if (!strcmp(name,"Name")) {
 
-      window = (Fl_Widget_Type*)Fl_Type_make("Fl_Window");
+      window = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Window", kAddAsLastChild);
       window->name(value);
       window->label(value);
       Fl_Type::current = widget = window;
@@ -739,7 +743,7 @@ void read_fdesign() {
     } else if (!strcmp(name,"class")) {
 
       if (!strcmp(value,"FL_BEGIN_GROUP")) {
-        group = widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Group");
+        group = widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Group", kAddAsLastChild);
         Fl_Type::current = group;
       } else if (!strcmp(value,"FL_END_GROUP")) {
         if (group) {
@@ -754,10 +758,10 @@ void read_fdesign() {
         for (int i = 0; class_matcher[i]; i += 2)
           if (!strcmp(value,class_matcher[i])) {
             value = class_matcher[i+1]; break;}
-        widget = (Fl_Widget_Type*)Fl_Type_make(value);
+        widget = (Fl_Widget_Type*)add_new_widget_from_file(value, kAddAsLastChild);
         if (!widget) {
           printf("class %s not found, using Fl_Button\n", value);
-          widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Button");
+          widget = (Fl_Widget_Type*)add_new_widget_from_file("Fl_Button", kAddAsLastChild);
         }
       }
 

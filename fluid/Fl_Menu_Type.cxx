@@ -100,8 +100,12 @@ void Fl_Input_Choice_Type::build_menu() {
   o->redraw();
 }
 
-
-Fl_Type *Fl_Menu_Item_Type::make() {
+/**
+ Create and add a new Menu Item node.
+ \param[in] strategy add after current or as last child
+ \return new Menu Item node
+ */
+Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   // Find the current menu item:
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
@@ -122,28 +126,43 @@ Fl_Type *Fl_Menu_Item_Type::make() {
   t->o = new Fl_Button(0,0,100,20);
   t->o->type(menuitemtype);
   t->factory = this;
-  t->add(p);
+  t->add(p, strategy);
   if (!reading_file) t->label(submenuflag ? "submenu" : "item");
   return t;
 }
 
-Fl_Type *Fl_Checkbox_Menu_Item_Type::make() {
+/**
+ Create and add a new Checkbox Menu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
     menuitemtype = FL_MENU_TOGGLE;
-    Fl_Type* t = Fl_Menu_Item_Type::make();
+    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
     menuitemtype = 0;
     return t;
 }
 
-Fl_Type *Fl_Radio_Menu_Item_Type::make() {
+/**
+ Create and add a new Radio ButtonMenu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
     menuitemtype = FL_MENU_RADIO;
-    Fl_Type* t = Fl_Menu_Item_Type::make();
+    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
     menuitemtype = 0;
     return t;
 }
 
-Fl_Type *Fl_Submenu_Type::make() {
+/**
+ Create and add a new Submenu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
   submenuflag = 1;
-  Fl_Type* t = Fl_Menu_Item_Type::make();
+  Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
   submenuflag = 0;
   return t;
 }
@@ -584,47 +603,6 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 ////////////////////////////////////////////////////////////////
 // Shortcut entry item in panel:
 
-void Shortcut_Button::draw() {
-  if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
-  else draw_box(FL_UP_BOX, FL_WHITE);
-  fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-        if (use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
-                char buf[1024];
-                fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
-                fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-        } else {
-                fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-        }
-}
-
-int Shortcut_Button::handle(int e) {
-  when(0); type(FL_TOGGLE_BUTTON);
-  if (e == FL_KEYBOARD) {
-    if (!value()) return 0;
-    int v = Fl::event_text()[0];
-    if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
-      if (isupper(v)) {
-        v = tolower(v);
-        v |= FL_SHIFT;
-      }
-      v = v | (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL));
-    } else {
-      v = (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) | Fl::event_key();
-      if (v == FL_BackSpace && svalue) v = 0;
-    }
-    if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
-    return 1;
-  } else if (e == FL_UNFOCUS) {
-    int c = changed(); value(0); if (c) set_changed();
-    return 1;
-  } else if (e == FL_FOCUS) {
-    return value();
-  } else {
-    int r = Fl_Button::handle(e);
-    if (e == FL_RELEASE && value() && Fl::focus() != this) take_focus();
-    return r;
-  }
-}
 
 void shortcut_in_cb(Shortcut_Button* i, void* v) {
   if (v == LOAD) {

@@ -27,6 +27,7 @@
 #include "file.h"
 #include "code.h"
 #include "widget_panel.h"
+#include "factory.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
@@ -349,7 +350,12 @@ int Overlay_Window::handle(int e) {
   return ret;
 }
 
-Fl_Type *Fl_Window_Type::make() {
+/**
+ Make and add a new WIndow node.
+ \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
+ \return new node
+ */
+Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_code_block()) p = p->parent;
   if (!p) {
@@ -372,7 +378,7 @@ Fl_Type *Fl_Window_Type::make() {
   Overlay_Window *w = new Overlay_Window(100,100);
   w->window = myo;
   myo->o = w;
-  myo->add(p);
+  myo->add(p, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   return myo;
@@ -1181,8 +1187,60 @@ int Fl_Window_Type::popupx = 0x7FFFFFFF; // mark as invalid (MAXINT)
 int Fl_Window_Type::popupy = 0x7FFFFFFF;
 
 int Fl_Window_Type::handle(int event) {
-  static Fl_Type* selection;
+  static Fl_Type* selection = NULL;
   switch (event) {
+  case FL_DND_ENTER:
+    Fl::belowmouse(o);
+  case FL_DND_DRAG:
+    {
+      // find the innermost item clicked on:
+      selection = this;
+      for (Fl_Type* i=next; i && i->level>level; i=i->next)
+        if (i->is_group()) {
+          Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
+          for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
+            if (!o1->visible()) goto CONTINUE_DND;
+          if (Fl::event_inside(myo->o)) {
+            selection = myo;
+            if (Fl::event_clicks()==1)
+              reveal_in_browser(myo);
+          }
+        }
+    CONTINUE_DND:
+      if (selection && !selection->selected) {
+        select_only(selection);
+        ((Overlay_Window *)o)->redraw_overlay();
+      }
+    }
+  case FL_DND_RELEASE:
+    return 1;
+  case FL_PASTE:
+    { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
+      if (prototype==NULL)
+        return 0;
+
+      in_this_only = this;
+      popupx = Fl::event_x();
+      popupy = Fl::event_y();
+      // If the selected widget at dnd start and the drop target are the same,
+      // or in the same group, add after selection. Otherwise, just add
+      // at the end of the selected group.
+      if (   Fl_Type::current_dnd->group()
+          && selection->group()
+          && Fl_Type::current_dnd->group()==selection->group())
+      {
+        Fl_Type *cc = Fl_Type::current;
+        Fl_Type::current = Fl_Type::current_dnd;
+        add_new_widget_from_user(prototype, kAddAfterCurrent);
+        Fl_Type::current = cc;
+      } else {
+        add_new_widget_from_user(prototype, kAddAsLastChild);
+      }
+      popupx = 0x7FFFFFFF;
+      popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
+      in_this_only = NULL;
+      return 1;
+    }
   case FL_PUSH:
     x1 = mx = Fl::event_x();
     y1 = my = Fl::event_y();
@@ -1439,7 +1497,12 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 Fl_Widget_Class_Type Fl_Widget_Class_type;
 Fl_Widget_Class_Type *current_widget_class = 0;
 
-Fl_Type *Fl_Widget_Class_Type::make() {
+/**
+ Create and add a new Widget Class node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
   while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) p = p->parent;
   Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
@@ -1460,7 +1523,7 @@ Fl_Type *Fl_Widget_Class_Type::make() {
   Overlay_Window *w = new Overlay_Window(100,100);
   w->window = myo;
   myo->o = w;
-  myo->add(p);
+  myo->add(p, strategy);
   myo->modal = 0;
   myo->non_modal = 0;
   myo->wc_relative = 0;

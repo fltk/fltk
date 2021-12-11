@@ -17,6 +17,8 @@
 #ifndef _FLUID_FILE_H
 #define _FLUID_FILE_H
 
+#include "Fl_Type.h"
+
 #include <FL/fl_attr.h>
 
 extern double read_version;
@@ -34,7 +36,7 @@ const char *read_word(int wantbrace = 0);
 
 int write_file(const char *, int selected_only = 0);
 
-int read_file(const char *, int merge);
+int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
 void read_fdesign();
 
 #endif // _FLUID_FILE_H
