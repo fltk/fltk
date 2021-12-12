@@ -174,9 +174,11 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
   if (fnt && must_free_fnt) free(fnt);
   if (!change) return;
 
-
+  float s = scale();
+  XRectangle fl_spot_unscaled = { short(fl_spot.x * s), short(fl_spot.y * s),
+    (unsigned short)(fl_spot.width * s), (unsigned short)(fl_spot.height * s) };
   preedit_attr = XVaCreateNestedList(0,
-                                     XNSpotLocation, &fl_spot,
+                                     XNSpotLocation, &fl_spot_unscaled,
                                      XNFontSet, fs, NULL);
   XSetICValues(fl_xim_ic, XNPreeditAttributes, preedit_attr, NULL);
   XFree(preedit_attr);
