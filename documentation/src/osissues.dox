@@ -583,6 +583,17 @@ DrawSomething(fl_gc, ..., fl_brush());
 It may also be useful to refer to Fl_Window::current()
 to get the window's size or position.
 
+\subsection osissues_windows_highdpi HighDPI support
+FLTK apps for the Windows platform are by default "Per-monitor DPI-aware V2".
+This means that any window automatically adjusts its physical size
+in relation to the scaling factor of the display where it maps.
+This also means that all drawings (e.g., text, lines, images)
+take advantage of the full resolution of the display in use.
+FLTK apps may also use the manifest mechanism
+to declare their level of DPI awareness. The FLTK library
+adapts to the DPI awareness level set in the app's manifest, which can be lower
+than the default level if the manifest sets it so.
+
 \subsection osissues_windows_scaling Display Scaling Factor
 
 FLTK uses the value given by function GetDpiForMonitor() divided by 96.
