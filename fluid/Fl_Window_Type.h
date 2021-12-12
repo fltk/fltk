@@ -99,6 +99,9 @@ public:
 };
 
 class Fl_Widget_Class_Type : private Fl_Window_Type {
+protected:
+  Fl_Menu_Item* subtypes() {return 0;}
+
 public:
   Fl_Widget_Class_Type() {
     write_public_state = 0;

@@ -2442,7 +2442,7 @@ void Fl_Widget_Type::write_properties() {
   if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
     write_string("type");
     write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
-  } else if (o->type() != tplate->type() || is_window()) {
+  } else if (subtypes() && (o->type() != tplate->type() || is_window())) {
     write_string("type");
     write_word(item_name(subtypes(), o->type()));
   }
