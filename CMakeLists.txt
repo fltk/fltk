@@ -124,9 +124,9 @@ add_subdirectory(src)
 # build fluid
 #######################################################################
 
-if (NOT ANDROID)
+if (FLTK_BUILD_FLUID AND NOT ANDROID)
   add_subdirectory(fluid)
-endif()
+endif ()
 
 #######################################################################
 # variables shared by export and install
@@ -152,11 +152,19 @@ configure_file (
 #######################################################################
 
 if (FLTK_BUILD_TEST)
-  add_subdirectory (test)
+  if (FLTK_FLUID_EXECUTABLE)
+    add_subdirectory (test)
+  else ()
+    message (FATAL_ERROR "Building tests requires the use of FLUID, please enable FLTK_BUILD_FLUID.")
+  endif (FLTK_FLUID_EXECUTABLE)
 endif (FLTK_BUILD_TEST)
 
 if (FLTK_BUILD_EXAMPLES)
-  add_subdirectory (examples)
+  if (FLTK_FLUID_EXECUTABLE)
+    add_subdirectory (examples)
+  else ()
+    message (FATAL_ERROR "Building examples requires the use of FLUID, please enable FLTK_BUILD_FLUID.")
+  endif (FLTK_FLUID_EXECUTABLE)
 endif (FLTK_BUILD_EXAMPLES)
 
 #######################################################################
@@ -230,6 +238,12 @@ if (OPTION_BUILD_SHARED_LIBS)
   message (STATUS "Shared libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
 else ()
   message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
+endif ()
+
+if (FLTK_BUILD_FLUID)
+  message (STATUS "FLUID will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
+else ()
+  message (STATUS "FLUID will not be built (set FLTK_BUILD_FLUID=ON to build)")
 endif ()
 
 if (FLTK_BUILD_TEST)

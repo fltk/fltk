@@ -22,6 +22,10 @@
 # USAGE: FLTK_RUN_FLUID TARGET_NAME "FLUID_SOURCE [.. FLUID_SOURCE]"
 
 function (FLTK_RUN_FLUID TARGET SOURCES)
+  if (NOT FLTK_FLUID_EXECUTABLE)
+    message (WARNING "FLTK_RUN_FLUID cannot be used without a valid FLTK_FLUID_EXECUTABLE")
+    return ()
+  endif ()
   set (CXX_FILES)
   foreach (src ${SOURCES})
     if ("${src}" MATCHES "\\.fl$")
