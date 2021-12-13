@@ -710,6 +710,45 @@ static const char *class_matcher[] = {
 "24","Fl_Value_Slider",
 0};
 
+
+/**
+ Copied from forms_compatibility.cxx so we don't have to link to fltk_forms.
+ */
+void Fl_Group::forms_end() {
+  // set the dimensions of a group to surround contents
+  if (children() && !w()) {
+    Fl_Widget*const* a = array();
+    Fl_Widget* o = *a++;
+    int rx = o->x();
+    int ry = o->y();
+    int rw = rx+o->w();
+    int rh = ry+o->h();
+    for (int i=children_-1; i--;) {
+      o = *a++;
+      if (o->x() < rx) rx = o->x();
+      if (o->y() < ry) ry = o->y();
+      if (o->x()+o->w() > rw) rw = o->x()+o->w();
+      if (o->y()+o->h() > rh) rh = o->y()+o->h();
+    }
+    x(rx);
+    y(ry);
+    w(rw-rx);
+    h(rh-ry);
+  }
+  // flip all the children's coordinate systems:
+  if (fdesign_flip) {
+    Fl_Widget* o = (type()>=FL_WINDOW) ? this : window();
+    int Y = o->h();
+    Fl_Widget*const* a = array();
+    for (int i=children(); i--;) {
+      Fl_Widget* ow = *a++;
+      int newy = Y-ow->y()-ow->h();
+      ow->y(newy);
+    }
+  }
+  end();
+}
+
 /**
  Read a XForms design file.
  .fl and .fd file start with the same header. Fluid can recognize .fd XForms
