@@ -106,7 +106,7 @@ else ()
   add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
 endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
-target_link_libraries (fluid fltk fltk_images fltk_forms)
+target_link_libraries (fluid fltk fltk_images)
 if (FLTK_HAVE_CAIRO)
   fl_target_link_directories (fluid PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 endif (FLTK_HAVE_CAIRO)
