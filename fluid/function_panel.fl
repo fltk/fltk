@@ -528,7 +528,11 @@ Function {make_comment_panel()} {} {
 Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 } {
   code {const char *type_name = (const char*)d;
-add_new_widget_from_user(type_name);} {}
+if (Fl_Type::current && Fl_Type::current->is_group())
+  add_new_widget_from_user(type_name, kAddAsLastChild);
+else
+  add_new_widget_from_user(type_name, kAddAfterCurrent);} {selected
+  }
 }
 
 Function {make_widgetbin()} {open
@@ -606,7 +610,7 @@ else
     } {
       Fl_Button {} {
         user_data {"Fl_Window"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Window xywh {89 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[1]);}
         class Widget_Bin_Window_Button

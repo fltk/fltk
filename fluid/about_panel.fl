@@ -61,12 +61,12 @@ Version x.x.x}
     }
     Fl_Button {} {
       label {View License...}
-      callback {show_help("license.html");}
+      callback {show_help("license.html");} selected
       xywh {115 145 123 25} labelcolor 136
     }
     Fl_Return_Button {} {
       label Close
-      callback {((Fl_Window*)(o->parent()))->hide();} selected
+      callback {((Fl_Window*)(o->parent()))->hide();}
       xywh {250 145 83 25}
     }
   }
