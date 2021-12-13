@@ -1846,7 +1846,7 @@ void live_mode_cb(Fl_Button*o,void *) {
         Fl_Group::current(0);
         int w = live_widget->w();
         int h = live_widget->h();
-        live_window = new Fl_Double_Window(w+20, h+55, "Fluid Live Mode Widget");
+        live_window = new Fl_Double_Window(w+20, h+55, "Fluid Live Resize");
         live_window->box(FL_FLAT_BOX);
         live_window->color(FL_GREEN);
         Fl_Group *rsz = new Fl_Group(0, h+20, 130, 35);
@@ -1854,7 +1854,7 @@ void live_mode_cb(Fl_Button*o,void *) {
         Fl_Box *rsz_dummy = new Fl_Box(110, h+20, 1, 25);
         rsz_dummy->box(FL_NO_BOX);
         rsz->resizable(rsz_dummy);
-        Fl_Button *btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Mode");
+        Fl_Button *btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Resize");
         btn->labelsize(12);
         btn->callback(leave_live_mode_cb);
         rsz->end();
@@ -1873,6 +1873,7 @@ void live_mode_cb(Fl_Button*o,void *) {
             live_window->size_range(mw, mh, MW, MH);
         }
         live_window->show();
+        live_widget->show();
       } else o->value(0);
     } else o->value(0);
   } else {

@@ -666,7 +666,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Group {} {
+    Fl_Group {} {open
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Box {} {
@@ -680,7 +680,7 @@ wCallback->do_callback(wCallback, v);} open
         xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
-        label {Live &Mode}
+        label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {155 370 80 20} type Toggle labelsize 11
       }
