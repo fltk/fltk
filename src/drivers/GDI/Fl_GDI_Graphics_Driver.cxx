@@ -259,8 +259,7 @@ extern flTypeImmReleaseContext flImmReleaseContext;
 void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
   if (!win) return;
-  Fl_Window* tw = win;
-  while (tw->parent()) tw = tw->window(); // find top level window
+  Fl_Window* tw = win->top_window();
 
   if (!tw->shown())
     return;
@@ -269,9 +268,10 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
 
   if (himc) {
     COMPOSITIONFORM cfs;
+    float s = scale();
     cfs.dwStyle = CFS_POINT;
-    cfs.ptCurrentPos.x = X;
-    cfs.ptCurrentPos.y = Y - tw->labelsize();
+    cfs.ptCurrentPos.x = X * s;
+    cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
     MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
     flImmSetCompositionWindow(himc, &cfs);
     flImmReleaseContext(fl_xid(tw), himc);
