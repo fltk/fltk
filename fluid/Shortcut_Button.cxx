@@ -129,7 +129,7 @@ int Widget_Bin_Button::handle(int inEvent)
         // make it into a dnd event
         const char *type_name = (const char*)user_data();
         Fl_Type::current_dnd = Fl_Type::current;
-        Fl::copy(type_name, strlen(type_name)+1, 0);
+        Fl::copy(type_name, (int)strlen(type_name)+1, 0);
         Fl::dnd();
         return 1;
       }
