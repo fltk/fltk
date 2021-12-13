@@ -190,3 +190,5 @@ int Widget_Bin_Window_Button::handle(int inEvent)
   }
   return Fl_Button::handle(inEvent);
 }
+
+/// \}

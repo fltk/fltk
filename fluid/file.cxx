@@ -6,7 +6,7 @@
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -44,9 +44,9 @@
 /// \defgroup flfile .fl Design File Operations
 /// \{
 
-// This file contains code to read and write .fl file.
+// This file contains code to read and write .fl files.
 // TODO: there is a name confusion with routines that write to the C and Header
-// TODO: files vs. thos the write to th fl file which should be fixed.
+// TODO: files vs. those that write to the .fl file which should be fixed.
 
 static FILE *fout;
 static FILE *fin;
@@ -78,7 +78,7 @@ static int open_write(const char *s) {
 }
 
 /**
- Close the .fl desing file.
+ Close the .fl design file.
  Don't close, if data was sent to stdout.
  */
 static int close_write() {
@@ -272,7 +272,7 @@ static int buflen;
 
 /**
  A simple growing buffer.
- Oh how I wish sometimes we would upgrade to moder C++.
+ Oh how I wish sometimes we would upgrade to modern C++.
  */
 static void expand_buffer(int length) {
   if (length >= buflen) {
@@ -712,41 +712,52 @@ static const char *class_matcher[] = {
 
 
 /**
- Copied from forms_compatibility.cxx so we don't have to link to fltk_forms.
- */
-void Fl_Group::forms_end() {
-  // set the dimensions of a group to surround contents
-  if (children() && !w()) {
-    Fl_Widget*const* a = array();
+  Finish a group of widgets and optionally transform its children's coordinates.
+
+  Implements the same functionality as Fl_Group::forms_end() from the forms
+  compatibility library would have done:
+
+  - resize the group to surround its children if the group's w() == 0
+  - optionally flip the \p y coordinates of all children relative to the group's window
+  - Fl_Group::end() the group
+
+  \note Copied from forms_compatibility.cxx and modified as a static fluid
+    function so we don't have to link to fltk_forms.
+
+  \param[in]  g     the Fl_Group widget
+  \param[in]  flip  flip children's \p y coordinates if true (non-zero)
+*/
+static void forms_end(Fl_Group *g, int flip) {
+  // set the dimensions of a group to surround its contents
+  const int nc = g->children();
+  if (nc && !g->w()) {
+    Fl_Widget*const* a = g->array();
     Fl_Widget* o = *a++;
     int rx = o->x();
     int ry = o->y();
     int rw = rx+o->w();
     int rh = ry+o->h();
-    for (int i=children_-1; i--;) {
+    for (int i = nc - 1; i--;) {
       o = *a++;
       if (o->x() < rx) rx = o->x();
       if (o->y() < ry) ry = o->y();
-      if (o->x()+o->w() > rw) rw = o->x()+o->w();
-      if (o->y()+o->h() > rh) rh = o->y()+o->h();
+      if (o->x() + o->w() > rw) rw = o->x() + o->w();
+      if (o->y() + o->h() > rh) rh = o->y() + o->h();
     }
-    x(rx);
-    y(ry);
-    w(rw-rx);
-    h(rh-ry);
+    g->Fl_Widget::resize(rx, ry, rw-rx, rh-ry);
   }
   // flip all the children's coordinate systems:
-  if (fdesign_flip) {
-    Fl_Widget* o = (type()>=FL_WINDOW) ? this : window();
+  if (nc && flip) {
+    Fl_Widget* o = (g->as_window()) ? g : g->window();
     int Y = o->h();
-    Fl_Widget*const* a = array();
-    for (int i=children(); i--;) {
+    Fl_Widget*const* a = g->array();
+    for (int i = nc; i--;) {
       Fl_Widget* ow = *a++;
-      int newy = Y-ow->y()-ow->h();
-      ow->y(newy);
+      int newy = Y - ow->y() - ow->h();
+      ow->Fl_Widget::resize(ow->x(), newy, ow->w(), ow->h());
     }
   }
-  end();
+  g->end();
 }
 
 /**
@@ -788,7 +799,7 @@ void read_fdesign() {
         if (group) {
           Fl_Group* g = (Fl_Group*)(group->o);
           g->begin();
-          g->forms_end();
+          forms_end(g, fdesign_flip);
           Fl_Group::current(0);
         }
         group = widget = 0;
@@ -812,4 +823,3 @@ void read_fdesign() {
 }
 
 /// \}
-
