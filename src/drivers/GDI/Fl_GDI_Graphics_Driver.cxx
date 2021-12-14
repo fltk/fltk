@@ -271,7 +271,7 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
     COMPOSITIONFORM cfs;
     float s = scale();
     cfs.dwStyle = CFS_POINT;
-    cfs.ptCurrentPos.x = X * s;
+    cfs.ptCurrentPos.x = int(X * s);
     cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
     // Attempt to have temporary text entered by input method use scaled font.
     // Does good, but still not always effective.

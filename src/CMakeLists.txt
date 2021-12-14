@@ -215,7 +215,7 @@ if (USE_X11)
     Fl_Native_File_Chooser_GTK.cxx
     Fl_get_key.cxx
   )
-  
+
   if (OPTION_USE_KDIALOG)
     set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx)
   endif (OPTION_USE_KDIALOG)

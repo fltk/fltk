@@ -69,7 +69,7 @@ public:
     Box* tr_box = new Box(275, 50, 200, 40, FL_BLUE,
       "Fl_Box tr(275, 50, 200, 40)\nx, y relative to main window");
     tr_group->end();
-  
+
     Fl_Group* bl_group = new Fl_Group(0, 100, 250, 100);
     bl_group->box(FL_ENGRAVED_BOX);
     Title* bl_title = new Title(10, 110, 230, 40, FL_BLACK,
@@ -77,7 +77,7 @@ public:
     Box* bl_box = new Box(25, 150, 200, 40, FL_BLACK,
       "Fl_Box bl(25, 150, 200, 40)\nx, y relative to main window");
     bl_group->end();
-  
+
     // member variable
     message_box = new Fl_Box(0, 201, 500, 30);
     message_box->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER);

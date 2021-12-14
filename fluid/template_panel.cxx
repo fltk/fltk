@@ -38,7 +38,7 @@ static void cb_template_panel(Fl_Double_Window*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
   template_preview->image(0);
-  
+
   template_browser->deselect();
   template_name->value("");
   template_instance->value("");
@@ -56,38 +56,38 @@ static void cb_template_browser(Fl_Browser*, void*) {
   if (img) img->release();
   template_preview->image(0);
   template_preview->redraw();
-  
+
   int item = template_browser->value();
-  
+
   if (item <= 1) template_instance->deactivate();
   else template_instance->activate();
-  
+
   if (item < 1) {
     template_submit->deactivate();
     template_delete->deactivate();
     return;
   }
-  
+
   template_submit->activate();
-  
+
   const char *flfile = (const char *)template_browser->data(item);
   if (!flfile) {
     template_delete->deactivate();
     return;
   }
-  
+
   template_name->value(template_browser->text(item));
-  
+
   template_delete->activate();
-  
+
   char pngfile[1024], *ext;
-  
+
   strlcpy(pngfile, flfile, sizeof(pngfile));
   if ((ext = strrchr(pngfile, '.')) == NULL) return;
   strcpy(ext, ".png");
-  
+
   img = Fl_Shared_Image::get(pngfile);
-  
+
   if (img) {
     template_preview->image(img);
     template_preview->redraw();
@@ -113,7 +113,7 @@ static void cb_Cancel(Fl_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
   template_preview->image(0);
-  
+
   template_browser->deselect();
   template_name->value("");
   template_instance->value("");
@@ -126,7 +126,7 @@ static void cb_template_submit(Fl_Return_Button*, void*) {
   Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
   if (img) img->release();
   template_preview->image(0);
-  
+
   template_panel->hide();
 }
 
