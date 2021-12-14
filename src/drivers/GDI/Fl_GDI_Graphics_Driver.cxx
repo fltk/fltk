@@ -21,6 +21,7 @@
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include "../../Fl_Screen_Driver.H"
+#include "Fl_Font.H"
 
 #if USE_GDIPLUS
 static ULONG_PTR gdiplusToken = 0;
@@ -272,6 +273,9 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
     cfs.dwStyle = CFS_POINT;
     cfs.ptCurrentPos.x = X * s;
     cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
+    // Attempt to have temporary text entered by input method use scaled font.
+    // Does good, but still not always effective.
+    SelectObject((HDC)gc(), ((Fl_GDI_Font_Descriptor*)font_descriptor())->fid);
     MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
     flImmSetCompositionWindow(himc, &cfs);
     flImmReleaseContext(fl_xid(tw), himc);
