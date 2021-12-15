@@ -39,7 +39,7 @@ void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_cc(const char *, int, const char*, const char*);
 void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_hc(const char *, int, const char*, const char*);
-void write_c_indented(const char *textlines);
+void write_c_indented(const char *textlines, int inIndent, char inTrailwWith);
 int write_code(const char *cfile, const char *hfile);
 int write_strings(const char *sfile);
 void write_public(int state); // writes pubic:/private: as needed

@@ -410,18 +410,35 @@ void write_hc(const char *indent, int n, const char* c, const char *com) {
  Write one or more lines of code, indenting each one of them.
  \param[in] textlines one or more lines of text, seperated by \\n
  */
-void write_c_indented(const char *textlines) {
+void write_c_indented(const char *textlines, int inIndent, char inTrailwWith) {
   if (textlines) {
-    indentation++;
+    indentation += inIndent;
     for (;;) {
+      int line_len;
       const char *newline = strchr(textlines, '\n');
-      if (!newline) break;
-      write_c("%s%.*s\n", indent(), (int)(newline-textlines), textlines);
+      if (newline)
+        line_len = (int)(newline-textlines);
+      else
+        line_len = strlen(textlines);
+      if (textlines[0]=='\n') {
+        // avoid trailing spaces
+      } else if (textlines[0]=='#') {
+        // don't indent preprocessor statments starting with '#'
+        write_c("%.*s", (int)(newline-textlines), textlines);
+      } else {
+        // indent all other text lines
+        write_c("%s%.*s", indent(), (int)(newline-textlines), textlines);
+      }
+      if (newline) {
+        write_c("\n");
+      } else {
+        if (inTrailwWith)
+          write_c("%c", inTrailwWith);
+        break;
+      }
       textlines = newline+1;
     }
-    if (*textlines)
-      write_c("%s%s", indent(), textlines);
-    indentation--;
+    indentation -= inIndent;
   }
 }
 

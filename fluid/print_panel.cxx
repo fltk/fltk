@@ -214,14 +214,14 @@ Fl_Button *print_output_mode[4]={(Fl_Button *)0};
 
 static void cb_Save(Fl_Return_Button*, void*) {
   print_properties_panel->hide();
-  
+
   char name[1024];
   int val;
   const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
-  
+
   snprintf(name, sizeof(name), "%s/page_size", printer);
   fluid_prefs.set(name, print_page_size->value());
-  
+
   snprintf(name, sizeof(name), "%s/output_mode", printer);
   for (val = 0; val < 4; val ++) {
     if (print_output_mode[val]->value()) break;

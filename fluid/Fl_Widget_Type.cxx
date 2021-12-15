@@ -2067,7 +2067,7 @@ void Fl_Widget_Type::write_static() {
     write_c(", %s", ut);
     if (use_v) write_c(" v");
     write_c(") {\n");
-    write_c_indented(callback());
+    write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;
