@@ -394,11 +394,15 @@ int write_file(const char *filename, int selected_only) {
         break;
     }
   }
-  shell_settings_write();
+
   if (!selected_only) {
     write_string("\nheader_name"); write_word(header_file_name);
     write_string("\ncode_name"); write_word(code_file_name);
 
+#if 0
+    // https://github.com/fltk/fltk/issues/328
+    // Project wide settings require a redesign.
+    shell_settings_write();
     if (shell_settings_windows.command) {
       write_string("\nwin_shell_cmd"); write_word(shell_settings_windows.command);
       write_string("\nwin_shell_flags"); write_string("%d", shell_settings_windows.flags);
@@ -411,7 +415,9 @@ int write_file(const char *filename, int selected_only) {
       write_string("\nmac_shell_cmd"); write_word(shell_settings_macos.command);
       write_string("\nmac_shell_flags"); write_string("%d", shell_settings_macos.flags);
     }
+#endif
   }
+
   for (Fl_Type *p = Fl_Type::first; p;) {
     if (!selected_only || p->selected) {
       p->write();
