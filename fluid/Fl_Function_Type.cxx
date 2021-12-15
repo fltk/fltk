@@ -634,24 +634,7 @@ void Fl_Code_Type::write_code1() {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
 
-  const char* c = name();
-  if (!c) return;
-
-  const char *pch;
-  const char *ind = indent();
-  while( (pch=strchr(c,'\n')) )
-  {
-    int line_len = int(pch - c);
-    if (line_len < 1)
-      write_c("\n");
-    else
-      write_c("%s%.*s\n", ind, line_len, c);
-    c = pch+1;
-  }
-  if (*c)
-    write_c("%s%s\n", ind, c);
-  else
-    write_c("\n");
+  write_c_indented(name(), 0, '\n');
 }
 
 /**
