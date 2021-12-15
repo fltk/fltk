@@ -2,8 +2,6 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-mac_shell_cmd {echo "Fluid is nice"}
-mac_shell_flags 3
 comment {//
 // FLUID print panel for the Fast Light Tool Kit (FLTK).
 //
@@ -214,7 +212,7 @@ print_collate_group[1 - i]->hide();}
   Fl_Window print_properties_panel {
     label {Printer Properties}
     callback {print_properties_panel->hide();
-print_update_status();} selected
+print_update_status();}
     xywh {462 486 290 130} type Double modal visible
   } {
     Fl_Choice print_page_size {
@@ -330,7 +328,7 @@ if (defname[0]) {
 print_update_status();} {}
 }
 
-Function {print_update_status()} {open return_type void
+Function {print_update_status()} {open selected return_type void
 } {
   code {FILE *lpstat;
 char command[1024];
