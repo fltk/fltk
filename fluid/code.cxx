@@ -419,15 +419,15 @@ void write_c_indented(const char *textlines, int inIndent, char inTrailwWith) {
       if (newline)
         line_len = (int)(newline-textlines);
       else
-        line_len = strlen(textlines);
+        line_len = (int)strlen(textlines);
       if (textlines[0]=='\n') {
         // avoid trailing spaces
       } else if (textlines[0]=='#') {
         // don't indent preprocessor statments starting with '#'
-        write_c("%.*s", (int)(newline-textlines), textlines);
+        write_c("%.*s", line_len, textlines);
       } else {
         // indent all other text lines
-        write_c("%s%.*s", indent(), (int)(newline-textlines), textlines);
+        write_c("%s%.*s", indent(), line_len, textlines);
       }
       if (newline) {
         write_c("\n");

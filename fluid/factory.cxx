@@ -1053,7 +1053,6 @@ static Fl_Type *known_types[] = {
 Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_checkpoint();
   undo_suspend();
-  Fl_Type *ins = Fl_Type::current;
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
     if (t->is_widget() && !t->is_window()) {
@@ -1087,22 +1086,6 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         }
       }
     }
-#if 0
-    // Fluid inserts widgets always as the last child of a matching group.
-    // This is great when reading a file, but if users do thins interactively,
-    // they expect the new widget close to where they worked previously.
-    if (ins) {
-      // if the new and current widget are siblings, just move it here.
-      if (ins->level==t->level) {
-      Fl_Type *c;
-      for (c=t; c && c!=ins && c->level>=t->level; c=c->prev) { }
-        if (c==ins) {
-          t->move_before(ins); // together the same as 'move_after'
-          ins->move_before(t);
-        }
-      }
-    }
-#endif
     // make the new widget visible
     select_only(t);
     set_modflag(1);
