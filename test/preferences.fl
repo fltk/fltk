@@ -45,7 +45,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {408 202 298 311} type Double hide
+    xywh {586 277 298 311} type Double visible
   } {
     Fl_Button {} {
       label Cancel
@@ -62,7 +62,7 @@ Function {} {open return_type int
       xywh {20 30 115 225} box ENGRAVED_FRAME align 5
     } {
       Fl_Input wAlarm {
-        label {Alarm at:}
+        label {Alarm at:} selected
         xywh {25 55 45 20} align 5
       }
       Fl_Choice wAmPm {open
@@ -268,8 +268,7 @@ Fl_Preferences app( Fl_Preferences::USER, project, application );
     eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
     void *data;
     eat.get( "binFoo2", data, 0, 0 );
-  **/} {selected
-  }
+  **/} {}
 }
 
 Function {writePrefs()} {open return_type void

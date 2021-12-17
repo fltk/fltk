@@ -485,6 +485,7 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)0);
   Fl::pushed(w);
   w->handle(FL_PUSH);
+  Fl::focus(NULL);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
@@ -586,6 +587,7 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)0);
   Fl::pushed(w);
   w->handle(FL_PUSH);
+  Fl::focus(NULL);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
