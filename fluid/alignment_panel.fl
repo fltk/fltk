@@ -2,8 +2,6 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-mac_shell_cmd {echo "I love Fluid"}
-mac_shell_flags 3
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -56,7 +54,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {473 246 399 252} type Double
+    xywh {473 246 399 275} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -64,14 +62,14 @@ Function {make_project_window()} {open
       label Close
       callback {project_window->hide();
 set_modflag(-1, -1);}
-      tooltip {Close this dialog.} xywh {328 216 60 25}
+      tooltip {Close this dialog.} xywh {328 239 60 25}
     }
     Fl_Tabs {} {open
-      xywh {10 10 378 195} selection_color 12
+      xywh {10 10 378 218} selection_color 12
     } {
       Fl_Group {} {
         label Output open
-        xywh {10 36 378 169}
+        xywh {10 36 378 192}
       } {
         Fl_Box {} {
           label {Use "name.ext" to set a file name or just ".ext" to set extension.}
@@ -86,7 +84,7 @@ set_modflag(-1, -1);}
         Fl_Input code_file_input {
           label {Code File:}
           user_data 1 user_data_type {void*}
-          callback code_input_cb selected
+          callback code_input_cb
           tooltip {The name of the generated code file.} xywh {119 128 252 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Check_Button include_H_from_C_button {
@@ -99,10 +97,15 @@ set_modflag(-1, -1);}
           callback use_FL_COMMAND_button_cb
           tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {117 176 272 20} down_box DOWN_BOX
         }
+        Fl_Check_Button utf8_in_src_button {
+          label {allow Unicode UTF-8 in source code}
+          callback utf8_in_src_cb selected
+          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UFT-8 characters unchanged.} xywh {117 199 272 20} down_box DOWN_BOX
+        }
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 36 378 169} hide
+        xywh {10 36 378 192} hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
@@ -291,7 +294,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {287 318 365 200} type Double modal size_range {365 200 365 200} visible
+    xywh {544 751 365 200} type Double modal size_range {365 200 365 200} visible
   } {
     Fl_Group {} {open
       xywh {0 0 365 165}
@@ -385,7 +388,7 @@ Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
     label {Layout Settings}
-    xywh {545 376 310 245} type Double non_modal visible
+    xywh {885 274 310 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x

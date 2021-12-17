@@ -36,6 +36,8 @@ Fl_Check_Button *include_H_from_C_button=(Fl_Check_Button *)0;
 
 Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)0;
 
+Fl_Check_Button *utf8_in_src_button=(Fl_Check_Button *)0;
+
 Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_i18n_type_chooser[] = {
@@ -54,14 +56,14 @@ Fl_Int_Input *i18n_set_input=(Fl_Int_Input *)0;
 Fl_Input *i18n_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
-  { project_window = new Fl_Double_Window(399, 252, "Project Settings");
-    { Fl_Button* o = new Fl_Button(328, 216, 60, 25, "Close");
+  { project_window = new Fl_Double_Window(399, 275, "Project Settings");
+    { Fl_Button* o = new Fl_Button(328, 239, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 378, 195);
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 378, 218);
       o->selection_color((Fl_Color)12);
-      { Fl_Group* o = new Fl_Group(10, 36, 378, 169, "Output");
+      { Fl_Group* o = new Fl_Group(10, 36, 378, 192, "Output");
         { Fl_Box* o = new Fl_Box(20, 49, 340, 49, "Use \"name.ext\" to set a file name or just \".ext\" to set extension.");
           o->align(Fl_Align(132|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -91,9 +93,16 @@ Fl_Double_Window* make_project_window() {
           use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
           use_FL_COMMAND_button->callback((Fl_Callback*)use_FL_COMMAND_button_cb);
         } // Fl_Check_Button* use_FL_COMMAND_button
+        { utf8_in_src_button = new Fl_Check_Button(117, 199, 272, 20, "allow Unicode UTF-8 in source code");
+          utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca\
+ped using octal notation `\\0123`. If this option is checked, Fluid will write\
+ UFT-8 characters unchanged.");
+          utf8_in_src_button->down_box(FL_DOWN_BOX);
+          utf8_in_src_button->callback((Fl_Callback*)utf8_in_src_cb);
+        } // Fl_Check_Button* utf8_in_src_button
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 36, 378, 169, "Internationalization");
+      { Fl_Group* o = new Fl_Group(10, 36, 378, 192, "Internationalization");
         o->hide();
         { i18n_type_chooser = new Fl_Choice(100, 48, 136, 25, "Use:");
           i18n_type_chooser->tooltip("Type of internationalization to use.");
