@@ -298,7 +298,7 @@ static Check *first_check, *next_check, *free_check;
    if (!state_changed) return;
    state_changed = false;
    do_expensive_calculation();
-   widget-&gt;redraw();
+   widget->redraw();
   }
 
   main() {
