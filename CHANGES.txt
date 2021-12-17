@@ -17,11 +17,19 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
 
   New Features and Extensions
 
+  - Windows platform: added support for using a manifest to set the
+    application's level of DPI awareness (issue #309).
+  - X11 platform: class Fl_Native_File_Chooser will run the KDE file dialog
+    rather than the GTK dialog if the current desktop is KDE and if command
+    "kdialog" is available on the running platform (issue #278).
   - The undocumented feature FLTK_CONSOLIDATE_MOTION is now OFF on X11 like
     on macOS. In FLTK 1.3 this feature has been ON on X11. The macro can now
     be set on the compiler commandline and can be used to reduce the number
     of mouse move events sent to the application but it may be unreliable.
     Recommendation: let it switched OFF unless you really need it.
+  - New function fl_capture_window() to capture the content of a rectangular
+    zone of a mapped window and return it as an Fl_RGB_Image. It improves
+    with HighDPI displays what can be done with fl_read_image().
   - The Windows platform now draws oblique and curved lines in antialiased
     form. The new function void fl_antialias(int state); allows to turn off
     or on such antialiased drawing. The new function int fl_antialias(); returns
@@ -76,6 +84,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
     styles for the Window menu, even not to create it.
   - New function: int fl_open_ext(const char* fname, int binary, int oflags, ...)
     to control the opening of files in binary/text mode in a cross-platform way.
+  - Fix for issue #247 : loading SVG image with BOM.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.
   - Fl_Text_Selection got a new method length() and returns 0 in length()
@@ -138,6 +147,9 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
   Other Improvements
 
   - (add new items here)
+  - Fixed X11 Input Method window badly positioned with Fl_Text_Editor
+    widget (issue #270).
+  - Added support for macOS 12.0 "Monterey".
   - Fixed X11 copy-paste and drag-and-drop target selection (issue #182).
     This fix has been backported to 1.3.6 as well.
   - Added support for macOS 11.0 "Big Sur" and for building for
