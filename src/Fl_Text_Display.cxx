@@ -396,7 +396,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  
  \note Style information in the style buffer must have the same byte offset as
  the corresponding character in the text buffer. UTF-8 characters can have a 
- length of four, in some cases even six bytes. Style information must take 
+ maximum length of four bytes. Style information must take 
  this into account and fill the unused bytes with 0. See `fl_utf8len()`.
  
  Text: "*g* r &uuml; *n*" , where normal style is 'A', and bold is 'B'
