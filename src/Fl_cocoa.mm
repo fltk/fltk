@@ -133,8 +133,10 @@ typedef OSStatus (*TSMSetDocumentProperty_type)(TSMDocumentID, OSType, UInt32, v
 static TSMSetDocumentProperty_type TSMSetDocumentProperty;
 typedef OSStatus (*TSMRemoveDocumentProperty_type)(TSMDocumentID, OSType);
 static TSMRemoveDocumentProperty_type TSMRemoveDocumentProperty;
-typedef CFArrayRef (*TISCreateASCIICapableInputSourceList_type)(void);
-static TISCreateASCIICapableInputSourceList_type TISCreateASCIICapableInputSourceList;
+typedef CFArrayRef (*TISCreateInputSourceList_type)(CFDictionaryRef, Boolean);
+static TISCreateInputSourceList_type TISCreateInputSourceList;
+static CFStringRef kTISTypeKeyboardLayout;
+static CFStringRef kTISPropertyInputSourceType;
 
 typedef void (*KeyScript_type)(short);
 static KeyScript_type KeyScript;
@@ -1490,8 +1492,15 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
         TSMRemoveDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag);
       else {
         CFArrayRef inputSources;
-
-        inputSources = TISCreateASCIICapableInputSourceList();
+        CFDictionaryRef filter;
+        // FLΤΚ previously used TISCreateASCIICapableInputSourceList(),
+        // which mostly hits the mark. But it excludes things like Greek
+        // and Cyrillic keyboards. So let's be more explicit.
+        filter = CFDictionaryCreate(NULL, (const void **)kTISPropertyInputSourceType,
+                                          (const void **)kTISTypeKeyboardLayout,
+                                          1, NULL, NULL);
+        inputSources = TISCreateInputSourceList(filter, false);
+        CFRelease(filter);
         TSMSetDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag,
                                sizeof(CFArrayRef), &inputSources);
         CFRelease(inputSources);
@@ -1771,11 +1780,17 @@ static int input_method_startup()
   if (retval == -1) {
     fl_open_display();
     if (fl_mac_os_version >= 100500) {
+      // These symbols are no longer visible in Apple doc.
+      // They do exist in Carbon.framework --> HIToolbox.framework --> TextServices.h
       TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_Darwin_System_Driver::get_carbon_function("TSMGetActiveDocument");
       TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMSetDocumentProperty");
       TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMRemoveDocumentProperty");
-      TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_Darwin_System_Driver::get_carbon_function("TISCreateASCIICapableInputSourceList");
-      retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateASCIICapableInputSourceList ? 1 : 0);
+      // These symbols are no longer visible in Apple doc.
+      // They do exist in Carbon.framework --> HIToolbox.framework --> TextInputSources.h
+      TISCreateInputSourceList = (TISCreateInputSourceList_type)Fl_Darwin_System_Driver::get_carbon_function("TISCreateInputSourceList");
+      kTISTypeKeyboardLayout = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISTypeKeyboardLayout");
+      kTISPropertyInputSourceType = (CFStringRef)Fl_Darwin_System_Driver::get_carbon_function("kTISPropertyInputSourceType");
+      retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateInputSourceList && kTISTypeKeyboardLayout && kTISPropertyInputSourceType ? 1 : 0);
     } else {
       KeyScript = (KeyScript_type)Fl_Darwin_System_Driver::get_carbon_function("KeyScript");
       retval = (KeyScript? 1 : 0);
