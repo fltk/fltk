@@ -175,9 +175,11 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote)
  \todo It would be nice to be able to grab one or more nodes and mmove them
     within the hierarchy.
  */
-Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l)
-: Fl_Browser_(X,Y,W,H,l),
-pushedtitle(NULL)
+Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l) :
+  Fl_Browser_(X,Y,W,H,l),
+  pushedtitle(NULL),
+  saved_h_scroll_(0),
+  saved_v_scroll_(0)
 {
   type(FL_MULTI_BROWSER);
   Fl_Widget::callback(callback_stub);
@@ -504,4 +506,70 @@ int Widget_Browser::handle(int e) {
   return Fl_Browser_::handle(e);
 }
 
+/**
+ Save the current scrollbar postion during rebuild.
+ */
+void Widget_Browser::save_scroll_position() {
+  saved_h_scroll_ = hposition();
+  saved_v_scroll_ = position();
+}
+
+/**
+ Restore the previous scrollbar postion after rebuild.
+ */
+void Widget_Browser::restore_scroll_position() {
+  hposition(saved_h_scroll_);
+  position(saved_v_scroll_);
+}
+
+/**
+ Rebuild the browser layout to reflect multiple changes.
+ This clears internal caches, recalculates the scroll bar sizes, and
+ sends a redraw() request to the widget.
+ */
+void Widget_Browser::rebuild() {
+  save_scroll_position();
+  new_list();
+  damage(FL_DAMAGE_SCROLL);
+  redraw();
+  restore_scroll_position();
+}
+
+/**
+ Rebuild the browser layout and make sure that the given item is visible.
+ \param[in] inNode pointer to a widget node derived from Fl_Type.
+ */
+void Widget_Browser::display(Fl_Type *inNode) {
+  if (!inNode) {
+    // Alternative: find the first (last?) visible selected item.
+    return;
+  }
+  // remeber our current scroll position
+  int currentV = position(), newV = currentV;
+  int nodeV = 0;
+  // find the inNode in the tree and check, if it is already visible
+  Fl_Type *p=Fl_Type::first;
+  for ( ; p && p!=inNode; p=p->next) {
+    if (p->visible)
+      nodeV += item_height(p);
+  }
+  if (p) {
+    int xx, yy, ww, hh;
+    bbox(xx, yy, ww, hh);
+    int frame_top = xx-x();
+    int frame_bottom = frame_top + hh;
+    int node_height = item_height(inNode);
+    int margin_height = 2 * item_quick_height(inNode);
+    if (margin_height>hh/2) margin_height = hh/2;
+    // is the inNode above the current scroll position?
+    if (nodeV<currentV+margin_height)
+      newV = nodeV - margin_height;
+    else if (nodeV>currentV+frame_bottom-margin_height-node_height)
+      newV = nodeV - frame_bottom + margin_height + node_height;
+    if (newV<0)
+      newV = 0;
+  }
+  if (newV!=currentV)
+    position(newV);
+}
 

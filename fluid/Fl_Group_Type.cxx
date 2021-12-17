@@ -23,6 +23,7 @@
 #include "fluid.h"
 #include "file.h"
 #include "code.h"
+#include "widget_browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -90,6 +91,7 @@ void group_cb(Fl_Widget *, void *) {
     t = nxt;
   }
   fix_group_size(n);
+  widget_browser->rebuild();
 }
 
 void ungroup_cb(Fl_Widget *, void *) {
@@ -114,6 +116,7 @@ void ungroup_cb(Fl_Widget *, void *) {
     n = nxt;
   }
   delete q;
+  widget_browser->rebuild();
 }
 
 ////////////////////////////////////////////////////////////////

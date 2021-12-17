@@ -37,6 +37,7 @@ copied or otherwise examined.
 #include "Fl_Window_Type.h"
 #include "factory.h"
 #include "widget_panel.h"
+#include "widget_browser.h"
 
 #include <FL/platform.H>
 #include <FL/Fl_Button.H>
@@ -185,6 +186,8 @@ int Widget_Bin_Window_Button::handle(int inEvent)
             w->position(Fl::event_x_root(), Fl::event_y_root());
           }
         }
+        widget_browser->display(Fl_Type::current);
+        widget_browser->rebuild();
       }
       return Fl_Button::handle(inEvent);
   }

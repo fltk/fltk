@@ -41,6 +41,8 @@ class Widget_Browser : public Fl_Browser_
   }
 
   Fl_Type* pushedtitle;
+  int saved_h_scroll_;
+  int saved_v_scroll_;
 
   // required routines for Fl_Browser_ subclass:
   void *item_first() const ;
@@ -57,7 +59,10 @@ public:
   Widget_Browser(int,int,int,int,const char * =NULL);
   int handle(int);
   void callback();
-  void deleting(Fl_Type *inType) { Fl_Browser_::deleting((void*)inType); }
+  void save_scroll_position();
+  void restore_scroll_position();
+  void rebuild();
+  void display(Fl_Type *);
 };
 
 #endif // _FLUID_WIDGET_BROWSER_H

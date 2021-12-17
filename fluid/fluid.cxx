@@ -517,9 +517,11 @@ void revert_cb(Fl_Widget *,void *) {
   undo_suspend();
   if (!read_file(filename, 0)) {
     undo_resume();
+    widget_browser->rebuild();
     fl_message("Can't read %s: %s", filename, strerror(errno));
     return;
   }
+  widget_browser->rebuild();
   undo_resume();
   set_modflag(0, 0);
   undo_clear();
@@ -652,6 +654,7 @@ void open_cb(Fl_Widget *, void *v) {
   undo_suspend();
   if (!read_file(c, v!=0)) {
     undo_resume();
+    widget_browser->rebuild();
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -659,6 +662,7 @@ void open_cb(Fl_Widget *, void *v) {
     return;
   }
   undo_resume();
+  widget_browser->rebuild();
   if (v) {
     // Inserting a file; restore the original filename...
     free((void *)filename);
@@ -697,6 +701,7 @@ void open_history_cb(Fl_Widget *, void *v) {
   if (!read_file(filename, 0)) {
     undo_resume();
     undo_clear();
+    widget_browser->rebuild();
     fl_message("Can't read %s: %s", filename, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -706,6 +711,7 @@ void open_history_cb(Fl_Widget *, void *v) {
   set_modflag(0, 0);
   undo_resume();
   undo_clear();
+  widget_browser->rebuild();
   if (oldfilename) {
     free((void *)oldfilename);
     oldfilename = 0L;
@@ -737,6 +743,7 @@ void new_cb(Fl_Widget *, void *v) {
   delete_all();
   set_filename(NULL);
   set_modflag(0, 0);
+  widget_browser->rebuild();
 }
 
 /**
@@ -836,6 +843,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
     }
   }
 
+  widget_browser->rebuild();
   set_modflag(0);
   undo_clear();
 }
@@ -975,7 +983,7 @@ void cut_cb(Fl_Widget *, void *) {
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
-  //widget_browser->redraw_lines();
+  widget_browser->rebuild();
 }
 
 /**
@@ -993,6 +1001,7 @@ void delete_cb(Fl_Widget *, void *) {
   while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
+  widget_browser->rebuild();
 }
 
 /**
@@ -1011,9 +1020,12 @@ void paste_cb(Fl_Widget*, void*) {
   if (Fl_Type::current && Fl_Type::current->is_group())
     strategy = kAddAsLastChild;
   if (!read_file(cutfname(), 1, strategy)) {
+    widget_browser->rebuild();
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
   undo_resume();
+  widget_browser->display(Fl_Type::current);
+  widget_browser->rebuild();
   pasteoffset = 0;
   ipasteoffset += 10;
   force_parent = 0;
@@ -1042,6 +1054,8 @@ void duplicate_cb(Fl_Widget*, void*) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));
+  widget_browser->display(Fl_Type::current);
+  widget_browser->rebuild();
   undo_resume();
 
   force_parent = 0;
@@ -1052,6 +1066,7 @@ void duplicate_cb(Fl_Widget*, void*) {
  */
 static void sort_cb(Fl_Widget *,void *) {
   sort((Fl_Type*)NULL);
+  widget_browser->rebuild();
 }
 
 /**

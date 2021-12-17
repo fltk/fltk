@@ -82,6 +82,7 @@ void redo_cb(Fl_Widget *, void *) {
   undo_suspend();
   if (!read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
+    widget_browser->rebuild();
     undo_resume();
     return;
   }
@@ -90,6 +91,7 @@ void redo_cb(Fl_Widget *, void *) {
 
   // Update modified flag...
   set_modflag(undo_current != undo_save);
+  widget_browser->rebuild();
 
   // Update undo/redo menu items...
   if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
@@ -109,18 +111,17 @@ void undo_cb(Fl_Widget *, void *) {
 
   undo_suspend();
   // Undo first deletes all widgets which resets the widget_tree browser.
-  // Save the current scroll position, so we don;t scroll back to 0 at undo.
-  int x = widget_browser->hposition();
-  int y = widget_browser->position();
+  // Save the current scroll position, so we don't scroll back to 0 at undo.
+  if (widget_browser) widget_browser->save_scroll_position();
   if (!read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
+    widget_browser->rebuild();
     undo_resume();
     return;
   }
   // Restore old browser position.
   // Ideally, we would save the browser position insied the undo file.
-  widget_browser->hposition(x);
-  widget_browser->position(y);
+  if (widget_browser) widget_browser->restore_scroll_position();
 
   undo_current --;
 
@@ -130,6 +131,7 @@ void undo_cb(Fl_Widget *, void *) {
   // Update undo/redo menu items...
   if (undo_current <= 0) Main_Menu[undo_item].deactivate();
   Main_Menu[redo_item].activate();
+  widget_browser->rebuild();
   undo_resume();
 }
 
