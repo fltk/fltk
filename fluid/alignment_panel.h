@@ -44,6 +44,8 @@ extern void include_H_from_C_button_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *include_H_from_C_button;
 extern void use_FL_COMMAND_button_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *use_FL_COMMAND_button;
+extern void utf8_in_src_cb(Fl_Check_Button*, void*);
+extern Fl_Check_Button *utf8_in_src_button;
 #include <FL/Fl_Choice.H>
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;

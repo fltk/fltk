@@ -269,6 +269,18 @@ void write_cstring(const char *s, int length) {
         linelength++;
         break;
       }
+      // if the UTF-8 option is checked, write unicode characters verbatim
+        if (utf8_in_src && (c&0x80)) {
+          if ((c&0x40)) {
+            // This is the first character in a utf-8 sequence (0b11......).
+            // A line break would be ok here. Do not put linebreak in front of
+            // following characters (0b10......)
+            if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+          }
+          putc(c, code_file);
+          linelength++;
+          break;
+        }
       // otherwise we must print it as an octal constant:
       c &= 255;
       if (c < 8) {

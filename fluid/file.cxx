@@ -381,6 +381,8 @@ int write_file(const char *filename, int selected_only) {
     write_string("\ndo_not_include_H_from_C");
   if(use_FL_COMMAND)
     write_string("\nuse_FL_COMMAND");
+  if (utf8_in_src)
+    write_string("\nutf8_in_src");
   if (i18n_type) {
     write_string("\ni18n_type %d", i18n_type);
     write_string("\ni18n_include %s", i18n_include);
@@ -491,6 +493,10 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
       }
       if (!strcmp(c,"use_FL_COMMAND")) {
         use_FL_COMMAND=1;
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"utf8_in_src")) {
+        utf8_in_src=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
