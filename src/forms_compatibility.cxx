@@ -27,7 +27,7 @@ void fl_end_form() {
 
 void Fl_Group::forms_end() {
   // set the dimensions of a group to surround contents
-  const int nc = g->children();
+  const int nc = children();
   if (nc && !w()) {
     Fl_Widget*const* a = array();
     Fl_Widget* o = *a++;
