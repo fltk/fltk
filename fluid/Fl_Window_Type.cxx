@@ -1239,6 +1239,8 @@ int Fl_Window_Type::handle(int event) {
       popupx = 0x7FFFFFFF;
       popupy = 0x7FFFFFFF; // mark as invalid (MAXINT)
       in_this_only = NULL;
+      widget_browser->display(Fl_Type::current);
+      widget_browser->rebuild();
       return 1;
     }
   case FL_PUSH:

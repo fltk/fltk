@@ -112,7 +112,9 @@ void select_none_cb(Fl_Widget *,void *) {
   selection_changed(p);
 }
 
-// move selected widgets in their parent's list:
+/**
+ Callback to move all selected items before their previous unselected sibling.
+ */
 void earlier_cb(Fl_Widget*,void*) {
   Fl_Type *f;
   int mod = 0;
@@ -129,8 +131,13 @@ void earlier_cb(Fl_Widget*,void*) {
     f = nxt;
   }
   if (mod) set_modflag(1);
+  widget_browser->display(Fl_Type::current);
+  widget_browser->rebuild();
 }
 
+/**
+ Callback to move all selected items after their next unselected sibling.
+ */
 void later_cb(Fl_Widget*,void*) {
   Fl_Type *f;
   int mod = 0;
@@ -147,6 +154,8 @@ void later_cb(Fl_Widget*,void*) {
     f = prv;
   }
   if (mod) set_modflag(1);
+  widget_browser->display(Fl_Type::current);
+  widget_browser->rebuild();
 }
 
 static void delete_children(Fl_Type *p) {
@@ -154,7 +163,6 @@ static void delete_children(Fl_Type *p) {
   for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
   for (; f != p; ) {
     Fl_Type *g = f->prev;
-    widget_browser->deleting(f);
     delete f;
     f = g;
   }
@@ -166,7 +174,6 @@ void delete_all(int selected_only) {
     if (f->selected || !selected_only) {
       delete_children(f);
       Fl_Type *g = f->next;
-      widget_browser->deleting(f);
       delete f;
       f = g;
     } else f = f->next;
@@ -275,7 +282,6 @@ Fl_Type::Fl_Type() {
  */
 Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.
-  if (widget_browser) widget_browser->deleting(this);
   if (prev) prev->next = next; else first = next;
   if (next) next->prev = prev; else last = prev;
   if (Fl_Type::last==this) Fl_Type::last = prev;
@@ -394,8 +400,6 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
 
   // run the p tree a last time to make sure the widget_browser updates correctly
   Fl_Type *a = p;
-  for (Fl_Type *t = this; t && a != end; a = t, t = t->next)
-    widget_browser->inserting(a, t);
   widget_browser->redraw();
 }
 
@@ -430,9 +434,6 @@ void Fl_Type::insert(Fl_Type *g) {
   if (parent) parent->add_child(this, g);
   // run this tree a last time to make sure the widget_browser updates correctly
   Fl_Type *a = prev;
-  for (Fl_Type *t = this; t && a != end; a = t, t = t->next)
-    if (a)
-      widget_browser->inserting(a, t);
   widget_browser->redraw();
 }
 
@@ -485,8 +486,6 @@ Fl_Type *Fl_Type::remove() {
   if (parent) parent->remove_child(this);
   parent = 0;
   // tell the widget_browser that we removed some nodes
-  for (Fl_Type *t = this; t; t = t->next)
-    widget_browser->deleting(t);
   widget_browser->redraw();
   selection_changed(0);
   return r;
@@ -532,18 +531,17 @@ void Fl_Type::open() {
 
 /**
  Move this node (and its children) into list before g.
+ Both `this` and `g` must be in the widget browser.
+ The caller must make sure that the widget browser is rebuilt correctly.
  \param[in] g move \c this tree before \c g
  */
 void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
                                 level, g->level);
   // Find the last child in the list
-  Fl_Type* n;
+  Fl_Type *n;
   for (n = next; n && n->level > level; n = n->next) ;
   if (n == g) return;
-  // Tell the widget browser that we delete them
-  for (n = next; n && n->level > level; n = n->next)
-    widget_browser->deleting(n);
   // now link this tree before g
   Fl_Type *l = n ? n->prev : Fl_Type::last;
   prev->next = n;
@@ -554,13 +552,6 @@ void Fl_Type::move_before(Fl_Type* g) {
   g->prev = l;
   // tell parent that it has a new child, so it can update itself
   if (parent && is_widget()) parent->move_child(this,g);
-  // run this tree a last time to make sure the widget_browser updates correctly
-  Fl_Type *a = prev;
-  for (Fl_Type *t = this; t && a != n; a = t, t = t->next)
-    if (a)
-      widget_browser->inserting(a, t);
-  widget_browser->display(this);
-  widget_browser->redraw();
 }
 
 
