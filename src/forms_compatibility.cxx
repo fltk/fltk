@@ -24,21 +24,23 @@ char fl_flip = 2;
 void fl_end_form() {
   while (Fl_Group::current()) Fl_Group::current()->forms_end();
 }
+
 void Fl_Group::forms_end() {
   // set the dimensions of a group to surround contents
-  if (children() && !w()) {
+  const int nc = g->children();
+  if (nc && !w()) {
     Fl_Widget*const* a = array();
     Fl_Widget* o = *a++;
     int rx = o->x();
     int ry = o->y();
     int rw = rx+o->w();
     int rh = ry+o->h();
-    for (int i=children_-1; i--;) {
+    for (int i = nc - 1; i--;) {
       o = *a++;
       if (o->x() < rx) rx = o->x();
       if (o->y() < ry) ry = o->y();
-      if (o->x()+o->w() > rw) rw = o->x()+o->w();
-      if (o->y()+o->h() > rh) rh = o->y()+o->h();
+      if (o->x() + o->w() > rw) rw = o->x() + o->w();
+      if (o->y() + o->h() > rh) rh = o->y() + o->h();
     }
     x(rx);
     y(ry);
@@ -46,13 +48,13 @@ void Fl_Group::forms_end() {
     h(rh-ry);
   }
   // flip all the children's coordinate systems:
-  if (fl_flip) {
-    Fl_Widget* o = (type()>=FL_WINDOW) ? this : window();
+  if (nc && fl_flip) {
+    Fl_Widget* o = as_window() ? this : window();
     int Y = o->h();
     Fl_Widget*const* a = array();
-    for (int i=children(); i--;) {
+    for (int i = nc; i--;) {
       Fl_Widget* ow = *a++;
-      int newy = Y-ow->y()-ow->h();
+      int newy = Y - ow->y() - ow->h();
       ow->y(newy);
     }
   }
