@@ -100,7 +100,7 @@ set_modflag(-1, -1);}
         Fl_Check_Button utf8_in_src_button {
           label {allow Unicode UTF-8 in source code}
           callback utf8_in_src_cb selected
-          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UFT-8 characters unchanged.} xywh {117 199 272 20} down_box DOWN_BOX
+          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {117 199 272 20} down_box DOWN_BOX
         }
       }
       Fl_Group {} {
