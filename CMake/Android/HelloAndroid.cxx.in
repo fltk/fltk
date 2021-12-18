@@ -43,15 +43,15 @@
   - no support for dead-key entry
   - no Shift-Tab
 
-  * test/CubeMain.cxx     : UNSUPPROTED - needs OpenGL
-  * test/CubeView.cxx     : UNSUPPROTED - needs OpenGL
-  * test/shape.cxx        : UNSUPPROTED - needs OpenGL
-  * test/cube.cxx         : UNSUPPROTED - needs OpenGL
-  * test/fractals.cxx     : UNSUPPROTED - needs OpenGL
-  * test/fracviewer.cxx   : UNSUPPROTED - needs OpenGL
-  * test/fullscreen.cxx   : UNSUPPROTED - needs OpenGL
-  * test/gl_overlay.cxx   : UNSUPPROTED - needs OpenGL
-  * test/glpuzzle.cxx     : UNSUPPROTED - needs OpenGL
+  * test/CubeMain.cxx     : UNSUPPORTED - needs OpenGL
+  * test/CubeView.cxx     : UNSUPPORTED - needs OpenGL
+  * test/shape.cxx        : UNSUPPORTED - needs OpenGL
+  * test/cube.cxx         : UNSUPPORTED - needs OpenGL
+  * test/fractals.cxx     : UNSUPPORTED - needs OpenGL
+  * test/fracviewer.cxx   : UNSUPPORTED - needs OpenGL
+  * test/fullscreen.cxx   : UNSUPPORTED - needs OpenGL
+  * test/gl_overlay.cxx   : UNSUPPORTED - needs OpenGL
+  * test/glpuzzle.cxx     : UNSUPPORTED - needs OpenGL
   * test/mandelbrot.cxx   : UNSUPPORTED - needs Fluid
   * test/keyboard.cxx     : UNSUPPORTED - needs Fluid
   * test/CubeViewUI.fl
@@ -66,7 +66,6 @@
   * test/preferences.fl
   * test/tabs.fl
   * test/cairo_test.cxx   : UNSUPPORTED - needs Cairo
-  * test/connect.cxx      : UNSUPPORTED - Android is not Linux
   * test/tiled_image.cxx  : UNSUPPORTED - X11 only
   * test/forms.cxx        : UNSUPPORTED - needs Forms
 
