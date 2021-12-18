@@ -2,6 +2,7 @@
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
+// Copyright 2019-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -437,7 +438,7 @@ void SudokuSound::play(char note) {
     Sleep(NOTE_DURATION);
   } else Beep(frequencies[note - 'A'], NOTE_DURATION);
 
-#elif USE_X11
+#elif defined(FLTK_USE_X11)
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
     // Use ALSA to play the sound...

@@ -1,7 +1,7 @@
 //
-// Definition of Android window driver.
+// Definition of Android window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2018-2020 by Bill Spitzak and others.
+// Copyright 2018-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -667,7 +667,7 @@ void Fl_WinAPI_Window_Driver::hide() {
     fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
     fl_window = (HWND)-1;
     fl_graphics_driver->gc(0);
-# ifdef FLTK_USE_CAIRO
+# ifdef FLTK_HAVE_CAIROEXT
     if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
   }

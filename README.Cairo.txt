@@ -83,36 +83,6 @@ For more details, please have a look to the doxygen documentation,
 in the Modules section.
 
 
- Future considerations
------------------------
-
-From Bill:
-First there is the FLTK_HAVE_CAIRO configuration option. This indicates that
-any Cairo calls are available. In this case you get something like this:
-
-// static variable holding the last Cairo context FLTK set:
-cairo_t* Fl::cr;
-
-// Make cr draw in this window. This hides the ugly platform-dependent
-// part of getting Cairo going:
-void Fl::cairo_make_current(Fl_Window*)
-
-*** POST 1.3 potential Cairo use:
-// Set cr to something you made yourself. This lets you reuse functions
-// that use cr, and also tells FLTK that cr is not one of its own and
-// thus cannot be destroyed or reused for a different window:
-void Fl::cairo_make_current(cairo_t*)
-
-Second there is the FLTK_USE_CAIRO configuration option. This means that all
-drawing is done using Cairo. In this case when a widget draw() method is
-called, it is exactly as though cairo_make_current(window) has been done.
-***
-
-Note that it should be possible to compile so FLTK_HAVE_CAIRO works even
-if FLTK_USE_CAIRO does not, and so that turning on FLTK_USE_CAIRO does not
-break any programs written for FLTK_HAVE_CAIRO.
-
-
  PLATFORM SPECIFIC NOTES
 =========================
 

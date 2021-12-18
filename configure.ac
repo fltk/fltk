@@ -85,7 +85,8 @@ AC_SUBST(OPTIM)
 
 
 dnl Other options
-AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [use Cairo library])) AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for cairo extended use]))
+AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [use Cairo library]))
+AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for cairo extended use]))
 
 AC_ARG_ENABLE([cp936], AS_HELP_STRING([--enable-cp936], [turn on CP936]))
 AS_IF([test x$enable_cp936 = xyes], [
@@ -220,7 +221,7 @@ CAIROLIBS=""
 
 AS_IF([test x$enable_cairoext = xyes], [
     AS_IF([$PKGCONFIG --exists cairo], [
-        AC_DEFINE([FLTK_USE_CAIRO])
+        AC_DEFINE([FLTK_HAVE_CAIROEXT])
         AC_DEFINE([FLTK_HAVE_CAIRO])
         CAIRODIR="cairo"
         CAIROFLAGS="$($PKGCONFIG --cflags cairo)"
@@ -1010,7 +1011,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     CXXFLAGS="$CXXFLAGS $X_CFLAGS"
     LDFLAGS="$X_LIBS $LDFLAGS"
     DSOFLAGS="$X_LIBS $DSOFLAGS"
-    AC_DEFINE([USE_X11])
+    AC_DEFINE([FLTK_USE_X11])
     BUILD="X11"
     AS_IF([test "x$x_includes" != x], [
         ac_cpp="$ac_cpp -I$x_includes"
@@ -1615,7 +1616,7 @@ AC_SUBST([BINARY_DIR])
 
 dnl Write all of the files...
 AC_CONFIG_HEADERS([config.h:configh.in])
-AC_CONFIG_HEADERS([FL/abi-version.h:abi-version.in])
+AC_CONFIG_HEADERS([FL/fl_config.h:fl_config.in])
 AC_CONFIG_FILES([makeinclude fltk.list fltk-config fltk.spec FL/Makefile])
 AC_OUTPUT
 

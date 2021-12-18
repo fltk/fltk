@@ -28,6 +28,12 @@
  */
 
 /*
+ * Always include the public build configuration header
+ */
+
+#include <FL/fl_config.h>
+
+/*
  * Where to find files...
  */
 
@@ -151,16 +157,6 @@
 
 #cmakedefine __APPLE_QUARTZ__ 1
 
-
-/*
- * USE_X11
- *
- * Should we use X11 for the current platform
- *
- */
-
-#cmakedefine USE_X11 1
-
 /*
  * USE_SDL
  *
@@ -270,23 +266,6 @@
 #cmakedefine HAVE_LIBPNG 1
 #cmakedefine HAVE_LIBZ 1
 #cmakedefine HAVE_LIBJPEG 1
-
-/*
- * FLTK_USE_CAIRO
- *
- * Do we have the cairo library available and want extended cairo use in FLTK ?
- * This implies to link cairo.lib in all FLTK based apps.
- */
-
-#cmakedefine FLTK_USE_CAIRO 1
-
-/*
- * FLTK_HAVE_CAIRO
- *
- * Do we have the cairo library available?
- */
-
-#cmakedefine FLTK_HAVE_CAIRO 1
 
 /*
  * Which header file do we include for libpng?

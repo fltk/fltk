@@ -110,7 +110,7 @@ int main(int argc, char ** argv) {
            " - : default visual\n"
            " r : call Fl::visual(FL_RGB)\n"
            " c : call Fl::own_colormap()\n",argv[0]);
-#if USE_X11
+#ifdef FLTK_USE_X11
     printf(" # : use this visual with an empty colormap:\n");
     list_visuals();
 #endif
@@ -123,7 +123,7 @@ int main(int argc, char ** argv) {
     } else if (argv[i][0] == 'c') {
       Fl::own_colormap();
     } else if (argv[i][0] != '-') {
-#if USE_X11
+#ifdef FLTK_USE_X11
       int visid = atoi(argv[i]);
       fl_open_display();
       XVisualInfo templt; int num;

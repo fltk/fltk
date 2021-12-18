@@ -116,6 +116,11 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   set_target_properties   (${TARGET_NAME} PROPERTIES OUTPUT_NAME ${NAME})
   target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
+  # we must link all programs with fltk_cairo if option CAIROEXT is enabled
+  if (FLTK_HAVE_CAIROEXT)
+    target_link_libraries (${TARGET_NAME} fltk_cairo cairo)
+  endif ()
+
   if (FLTK_HAVE_CAIRO)
     fl_target_link_directories (${TARGET_NAME} PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
   endif ()

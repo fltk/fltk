@@ -27,6 +27,12 @@
  */
 
 /*
+ * Always include the public build configuration header
+ */
+
+#include <FL/fl_config.h>
+
+/*
  * Where to find files...
  */
 
@@ -150,16 +156,6 @@
 
 #undef __APPLE_QUARTZ__
 
-
-/*
- * USE_X11
- *
- * Should we use X11 for the current platform
- *
- */
-
-#undef USE_X11
-
 /*
  * USE_SDL
  *
@@ -270,23 +266,6 @@
 #undef HAVE_LIBPNG
 #undef HAVE_LIBZ
 #undef HAVE_LIBJPEG
-
-/*
- * FLTK_USE_CAIRO
- *
- * Do we have the cairo library available and want extended cairo use in FLTK ?
- * This implies to link cairo.lib in all FLTK based apps.
- */
-
-#undef FLTK_USE_CAIRO
-
-/*
- * FLTK_HAVE_CAIRO
- *
- * Do we have the cairo library available?
- */
-
-#undef FLTK_HAVE_CAIRO
 
 /*
  * Which header file do we include for libpng?

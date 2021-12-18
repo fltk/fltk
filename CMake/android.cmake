@@ -31,8 +31,8 @@ configure_file(
 
 # create a custom abi file for this setup
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/abi-version.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/FL/abi-version.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/fl_config.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/FL/fl_config.h"
   @ONLY
 )
 

@@ -24,11 +24,11 @@
 // Cairo is currently supported for the following platforms:
 // Win32, Apple Quartz, X11
 
-#if defined(USE_X11) // X11
+#if defined(FLTK_USE_X11)         // X11
 #  include <cairo-xlib.h>
-#elif defined(_WIN32)
+#elif defined(_WIN32)             // Windows
 #  include <cairo-win32.h>
-#elif defined(__APPLE_QUARTZ__) // PORTME: Cairo Support
+#elif defined(__APPLE_QUARTZ__)   // macOS
 #  include <cairo-quartz.h>
 #else
 #  error Cairo is not supported on this platform.
@@ -43,7 +43,7 @@ Fl_Cairo_State Fl::cairo_state_;        ///< contains all necessary info for cur
 // Fl_Cairo_State class impl
 
 void  Fl_Cairo_State::autolink(bool b)  {
-#ifdef FLTK_USE_CAIRO
+#ifdef FLTK_HAVE_CAIROEXT
   autolink_ = b;
 #else
   Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
@@ -86,7 +86,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
 #ifndef __APPLE__
   float scale = Fl::screen_scale(wi->screen_num()); // get the screen scaling factor
 #endif
-#if defined(USE_X11)
+#if defined(FLTK_USE_X11)
   cairo_ctxt = Fl::cairo_make_current(0, wi->w() * scale, wi->h() * scale);
 #else
   // on macOS, scaling is done before by Fl_Window::make_current(), on Windows, the size is not used
@@ -105,7 +105,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
  */
 
 static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
-# if defined(USE_X11)
+# if defined(FLTK_USE_X11)
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
 # elif   defined(_WIN32)
     return cairo_win32_surface_create((HDC) gc);
@@ -123,7 +123,7 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 */
 cairo_t * Fl::cairo_make_current(void *gc) {
     int W=0,H=0;
-#if defined(USE_X11)
+#if defined(FLTK_USE_X11)
   // FIXME X11 get W,H
   // gc will be the window handle here
   // # warning FIXME get W,H for cairo_make_current(void*)

@@ -107,6 +107,12 @@ else ()
 endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries (fluid fltk fltk_images)
+
+# we must link all programs with fltk_cairo if option CAIROEXT is enabled
+if (FLTK_HAVE_CAIROEXT)
+  target_link_libraries (fluid fltk_cairo cairo)
+endif (FLTK_HAVE_CAIROEXT)
+
 if (FLTK_HAVE_CAIRO)
   fl_target_link_directories (fluid PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 endif (FLTK_HAVE_CAIRO)

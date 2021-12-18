@@ -172,13 +172,13 @@ file (GLOB
 
 # add generated header files in build directory
 list (APPEND HEADER_FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/../FL/abi-version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/../FL/fl_config.h
   ${CMAKE_CURRENT_BINARY_DIR}/../config.h
 )
 
 set (GL_HEADER_FILES)  # FIXME: not (yet?) defined
 
-if ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
+if ((FLTK_USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
   set (PSFILES
   )
 else ()
@@ -186,11 +186,11 @@ else ()
     drivers/PostScript/Fl_PostScript.cxx
     drivers/PostScript/Fl_PostScript_image.cxx
   )
-endif ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
+endif ((FLTK_USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
 
 set (DRIVER_FILES)
 
-if (USE_X11)
+if (FLTK_USE_X11)
 
   # X11 (including APPLE with X11)
 
@@ -362,7 +362,7 @@ else ()
     drivers/GDI/Fl_Font.H
   )
 
-endif (USE_X11)
+endif (FLTK_USE_X11)
 
 source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
@@ -408,13 +408,13 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
-if (USE_X11)
+if (FLTK_USE_X11)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
 elseif (APPLE)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx)
 elseif (WIN32)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx)
-endif (USE_X11)
+endif (FLTK_USE_X11)
 
 set (GL_DRIVER_HEADER_FILES
   drivers/OpenGL/Fl_OpenGL_Display_Device.H
@@ -453,7 +453,7 @@ set (CFILES
   xutf8/case.c
 )
 
-if (USE_X11)
+if (FLTK_USE_X11)
   list (APPEND CFILES
     xutf8/keysym2Ucs.c
     scandir_posix.c
@@ -465,7 +465,7 @@ if (USE_X11)
       # xutf8/utf8Input.c  # not used
     )
   endif (NOT USE_XFT)
-endif (USE_X11)
+endif (FLTK_USE_X11)
 
 if (WIN32)
   list (APPEND CFILES
@@ -515,9 +515,9 @@ if (USE_THREADS)
   list (APPEND OPTIONAL_LIBS ${CMAKE_THREAD_LIBS_INIT})
 endif (USE_THREADS)
 
-if (USE_X11)
+if (FLTK_USE_X11)
   list (APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
-endif (USE_X11)
+endif (FLTK_USE_X11)
 
 if (USE_SDL)
   list (APPEND OPTIONAL_LIBS ${SDL2_LIBRARY})

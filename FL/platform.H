@@ -1,7 +1,7 @@
 //
 // Platform header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,6 +28,7 @@
 #if !defined(FL_PLATFORM_H) && !defined(FL_DOXYGEN)
 #  define FL_PLATFORM_H
 
+#   include <FL/fl_config.h>
 #   include <FL/Fl_Export.H>
 #   include <FL/platform_types.h>
 #   include <FL/fl_types.h> // for uchar
@@ -42,9 +43,6 @@ class Fl_Window;
 #  else // X11
 #   include <FL/fl_types.h>
 #   include <FL/Enumerations.H>
-#    if !defined(USE_X11)
-#      define USE_X11 1
-#    endif
 #    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
 #      pragma set woff 3322
 #    endif
@@ -125,7 +123,7 @@ public:
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-#  if defined(USE_X11) // for backward compatibility
+#  if defined(FLTK_USE_X11) // for backward compatibility
   static void make_xid(Fl_Window*, XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
 #  endif

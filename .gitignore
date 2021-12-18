@@ -42,7 +42,7 @@ etc/FLTKConfig.cmake
 /TAGS
 
 # /FL
-/FL/abi-version.h
+/FL/fl_config.h
 /FL/Makefile
 /FL/*.bck
 

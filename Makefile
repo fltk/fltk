@@ -68,7 +68,7 @@ distclean: clean
 	$(RM) fltk-config fltk.list makeinclude
 	$(RM) fltk.spec
 	$(RM) FL/Makefile
-	$(RM) FL/abi-version.h
+	$(RM) FL/fl_config.h
 	$(RM) documentation/*.$(CAT1EXT)
 	$(RM) documentation/*.$(CAT3EXT)
 	$(RM) documentation/*.$(CAT6EXT)

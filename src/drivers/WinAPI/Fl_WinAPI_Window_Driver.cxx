@@ -1,5 +1,5 @@
 //
-// Definition of Apple Cocoa window driver.
+// Definition of Windows window driver for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2021 by Bill Spitzak and others.
 //
@@ -16,8 +16,8 @@
 
 
 #include <config.h>
-#include <FL/fl_draw.H>
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
@@ -495,7 +495,7 @@ void Fl_WinAPI_Window_Driver::hide() {
     fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
     fl_window = (HWND)-1;
     fl_graphics_driver->gc(0);
-# ifdef FLTK_USE_CAIRO
+# ifdef FLTK_HAVE_CAIROEXT
     if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
   }

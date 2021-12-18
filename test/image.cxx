@@ -5,7 +5,7 @@
 // as an icon or postage stamp.  Use fl_draw_image to go directly
 // from an buffered image that changes often.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -71,7 +71,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/platform.H>
-#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
+#if defined(FLTK_USE_X11)
 #include "list_visuals.cxx"
 #endif
 
@@ -87,7 +87,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#if defined(USE_X11)
+#if defined(FLTK_USE_X11)
   int i = 1;
 
   Fl::args(argc,argv,i,arg);

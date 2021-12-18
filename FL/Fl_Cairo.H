@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,6 +20,9 @@
 
 #ifndef FL_CAIRO_H
 # define FL_CAIRO_H
+
+# include <FL/fl_config.h> // build configuration
+
 # ifdef FLTK_HAVE_CAIRO
 
 // Cairo is currently supported for the following platforms:
@@ -39,7 +42,9 @@
    A private internal & unique corresponding object is created to
    permit cairo context state handling while keeping it opaque.
    For internal use only.
-   \note Only available when configure has the --enable-cairo option
+   \note Only available when configure has the --enable-cairo or
+        --enable-cairoext option or one or both of the CMake options
+        OPTION_CAIRO or OPTION_CAIROEXT is set (ON)
 */
 class FL_EXPORT Fl_Cairo_State {
 public:

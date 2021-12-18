@@ -1,7 +1,7 @@
 //
 // Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,15 +14,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
+#include <FL/Fl.H>      // includes <FL/fl_config.h>
 
-#ifdef FLTK_HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO  // defined in <FL/fl_config.h> since FLTK 1.4.0
 
 #include <FL/Fl_Cairo_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/math.h>
+
 #define DEF_WIDTH 0.03
 
 // uncomment the following line to enable Cairo context autolink feature:
@@ -145,7 +146,9 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-#else
+
+#else // (!FLTK_HAVE_CAIRO)
+
 #include <FL/fl_ask.H>
 
 int main(int argc, char **argv) {
@@ -155,4 +158,4 @@ int main(int argc, char **argv) {
     "or one of the CMake options OPTION_CAIRO or OPTION_CAIROEXT, respectively.");
   return 0;
 }
-#endif
+#endif // (FLTK_HAVE_CAIRO)

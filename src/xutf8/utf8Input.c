@@ -1,6 +1,7 @@
 /*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
+ * Copyright 2004-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -15,7 +16,7 @@
 
 #include <config.h>
 
-#if defined(USE_X11)
+#if defined(FLTK_USE_X11)
 
 #include "../Xutf8.h"
 #include <X11/X.h>

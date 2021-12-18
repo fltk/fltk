@@ -142,8 +142,8 @@ include (CMake/variables.cmake)
 include (CMake/export.cmake)
 
 configure_file (
-  ${CMAKE_CURRENT_SOURCE_DIR}/abi-version.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/FL/abi-version.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/fl_config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/FL/fl_config.h
   @ONLY
 )
 

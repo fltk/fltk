@@ -24,13 +24,13 @@
 /*
  ******************************************************************************
  * FL_ABI_VERSION is defined by configure or CMake since FLTK 1.3.4.
- * It is written to FL/abi-version.h and #included here.
+ * It is written to FL/fl_config.h and #included here.
  ******************************************************************************
  * For more informations on FL_ABI_VERSION see README.abi-version.txt.
  ******************************************************************************
  */
 
-#include <FL/abi-version.h>
+#include <FL/fl_config.h>
 
 #  include "Fl_Export.H"
 #  include "fl_types.h"

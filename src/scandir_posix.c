@@ -31,7 +31,7 @@
  */
 
 #include <config.h>
-#if defined(USE_X11) && !defined(HAVE_SCANDIR)
+#if defined(FLTK_USE_X11) && !defined(HAVE_SCANDIR)
 
 #ifndef HAVE_PTHREAD
    /* Switch system headers into POSIX.1-1990 mode */
@@ -217,11 +217,11 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   return result;
 }
 
-#else /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
+#else /* defined(FLTK_USE_X11) && !defined(HAVE_SCANDIR) */
 
 /* avoid (gcc) compiler warning [-Wpedantic]
    "ISO C forbids an empty translation unit" */
 
 typedef int dummy;
 
-#endif /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
+#endif /* defined(FLTK_USE_X11) && !defined(HAVE_SCANDIR) */

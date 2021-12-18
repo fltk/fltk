@@ -21,6 +21,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
+#include <FL/fl_config.h> // build configuration
 #include <FL/Fl_Export.H>
 #include <FL/platform_types.h> // for FL_SOCKET
 #include <FL/fl_casts.H>       // experimental

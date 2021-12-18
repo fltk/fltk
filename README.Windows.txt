@@ -2,6 +2,15 @@
 ------------------------------------------------------------
 
 
+
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+***   CAUTION: This file is outdated. This needs a major rework!   ***
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+
+
+
  CONTENTS
 ==========
 
@@ -413,10 +422,9 @@ without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
 
-  add all files from ide\VisualC2008\FL to the FL directory copied above
-    (this is currently only one file: abi-version.h)
+  add <build_dir>/FL/fl_config.h
 
-  copy all .lib files from the fltk lib directory to the VC lib directory
+  copy all .lib files from the fltk build directory to the VC lib directory
 
   copy fluid.exe in the fluid directory to the bin directory
 

@@ -40,7 +40,7 @@ and '1' is the major version number.
 The default ABI version for all FLTK 1.4.x versions is 10400 (the binary
 version of FLTK 1.4.0), but you can configure another version, e.g.
 10401 for FLTK 1.4.1 to enable the ABI features of FLTK 1.4.1 and all
-previous versions. See CHANGES file.
+previous versions. See CHANGES.txt file.
 
 
 Depending on how you build FLTK, there are two different ways to configure
@@ -57,7 +57,7 @@ the version number.
         ./configure --with-abiversion=10401
         make
 
-    This will generate FL/abi-version.h and build FLTK as usual.
+    This will generate FL/fl_config.h and build FLTK as usual.
 
     Note: you should always make sure that you compile everything from
     scratch if you change the ABI version or any other configuration
@@ -110,7 +110,7 @@ the version number.
 General note on CMake:
 ----------------------
 
-    CMake generates FL/abi-version.h in the build tree. You may run
+    CMake generates FL/fl_config.h in the build tree. You may run
     'make install' to install the FLTK library including all headers in
     the chosen installation directory, although this is not necessary.
 

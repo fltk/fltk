@@ -698,7 +698,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: Xutf8.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Font.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/abi-version.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Device.H
