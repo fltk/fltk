@@ -96,7 +96,7 @@ Fl_Double_Window* make_project_window() {
         { utf8_in_src_button = new Fl_Check_Button(117, 199, 272, 20, "allow Unicode UTF-8 in source code");
           utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca\
 ped using octal notation `\\0123`. If this option is checked, Fluid will write\
- UFT-8 characters unchanged.");
+ UTF-8 characters unchanged.");
           utf8_in_src_button->down_box(FL_DOWN_BOX);
           utf8_in_src_button->callback((Fl_Callback*)utf8_in_src_cb);
         } // Fl_Check_Button* utf8_in_src_button
