@@ -400,7 +400,6 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
   }
 
   // run the p tree a last time to make sure the widget_browser updates correctly
-  Fl_Type *a = p;
   widget_browser->redraw();
 }
 
@@ -434,7 +433,6 @@ void Fl_Type::insert(Fl_Type *g) {
   // tell parent that it has a new child, so it can update itself
   if (parent) parent->add_child(this, g);
   // run this tree a last time to make sure the widget_browser updates correctly
-  Fl_Type *a = prev;
   widget_browser->redraw();
 }
 
