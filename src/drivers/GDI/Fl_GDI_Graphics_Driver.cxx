@@ -275,7 +275,8 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
     cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
     // Attempt to have temporary text entered by input method use scaled font.
     // Does good, but still not always effective.
-    SelectObject((HDC)gc(), ((Fl_GDI_Font_Descriptor*)font_descriptor())->fid);
+    Fl_GDI_Font_Descriptor *desc = (Fl_GDI_Font_Descriptor*)font_descriptor();
+    if (desc) SelectObject((HDC)gc(), desc->fid);
     MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
     flImmSetCompositionWindow(himc, &cfs);
     flImmReleaseContext(fl_xid(tw), himc);
