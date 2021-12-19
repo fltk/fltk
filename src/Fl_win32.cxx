@@ -2684,7 +2684,7 @@ void fl_free_fonts(void) {
     s = fl_fonts + i;
     for (f = s->first; f; f = ff) {
       ff = f->next;
-      delete f;
+      delete (Fl_GDI_Font_Descriptor*)f;
       s->first = ff;
     }
   }
