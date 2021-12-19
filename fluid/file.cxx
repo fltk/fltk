@@ -393,7 +393,10 @@ int write_file(const char *filename, int selected_only) {
         write_string("\ni18n_static_function"); write_word(i18n_static_function);
         break;
     case 2 : /* POSIX catgets */
-        if (i18n_file[0]) write_string("\ni18n_file"); write_word(i18n_file);
+        if (i18n_file[0]) {
+          write_string("\ni18n_file");
+          write_word(i18n_file);
+        }
         write_string("\ni18n_set"); write_word(i18n_set);
         break;
     }
