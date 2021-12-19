@@ -45,11 +45,6 @@
 int include_H_from_C = 1;
 int use_FL_COMMAND = 0;
 int utf8_in_src = 0;
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
 
 extern Fl_Preferences   fluid_prefs;
 
@@ -125,31 +120,43 @@ void i18n_type_cb(Fl_Choice *c, void *) {
   switch (i18n_type = c->value()) {
   case 0 : /* None */
       i18n_include_input->hide();
+      i18n_conditional_input->hide();
       i18n_file_input->hide();
       i18n_set_input->hide();
       i18n_function_input->hide();
+      i18n_static_function_input->hide();
       break;
   case 1 : /* GNU gettext */
       i18n_include_input->value("<libintl.h>");
       i18n_include = i18n_include_input->value();
+      i18n_conditional_input->value("");
+      i18n_conditional = i18n_conditional_input->value();
       i18n_function_input->value("gettext");
       i18n_function = i18n_function_input->value();
+      i18n_static_function_input->value("gettext_noop");
+      i18n_static_function = i18n_static_function_input->value();
       i18n_include_input->show();
+      i18n_conditional_input->show();
       i18n_file_input->hide();
       i18n_set_input->hide();
       i18n_function_input->show();
+      i18n_static_function_input->show();
       break;
   case 2 : /* POSIX cat */
       i18n_include_input->value("<nl_types.h>");
+      i18n_include = i18n_include_input->value();
+      i18n_conditional_input->value("");
+      i18n_conditional = i18n_conditional_input->value();
       i18n_file_input->value("");
       i18n_file = i18n_file_input->value();
       i18n_set_input->value("1");
       i18n_set = i18n_set_input->value();
       i18n_include_input->show();
-      i18n_include = i18n_include_input->value();
+      i18n_conditional_input->show();
       i18n_file_input->show();
       i18n_set_input->show();
       i18n_function_input->hide();
+      i18n_static_function_input->hide();
       break;
   }
 
@@ -161,10 +168,14 @@ void i18n_text_cb(Fl_Input *i, void *) {
 
   if (i == i18n_function_input)
     i18n_function = i->value();
+  else if (i == i18n_static_function_input)
+    i18n_static_function = i->value();
   else if (i == i18n_file_input)
     i18n_file = i->value();
   else if (i == i18n_include_input)
     i18n_include = i->value();
+  else if (i == i18n_conditional_input)
+    i18n_conditional = i->value();
 
   set_modflag(1);
 }
@@ -187,27 +198,35 @@ void show_project_cb(Fl_Widget *, void *) {
   code_file_input->value(code_file_name);
   i18n_type_chooser->value(i18n_type);
   i18n_function_input->value(i18n_function);
+  i18n_static_function_input->value(i18n_static_function);
   i18n_file_input->value(i18n_file);
   i18n_set_input->value(i18n_set);
   i18n_include_input->value(i18n_include);
+  i18n_conditional_input->value(i18n_conditional);
   switch (i18n_type) {
   case 0 : /* None */
       i18n_include_input->hide();
+      i18n_conditional_input->hide();
       i18n_file_input->hide();
       i18n_set_input->hide();
       i18n_function_input->hide();
+      i18n_static_function_input->hide();
       break;
   case 1 : /* GNU gettext */
       i18n_include_input->show();
+      i18n_conditional_input->show();
       i18n_file_input->hide();
       i18n_set_input->hide();
       i18n_function_input->show();
+      i18n_static_function_input->show();
       break;
   case 2 : /* POSIX cat */
       i18n_include_input->show();
+      i18n_conditional_input->show();
       i18n_file_input->show();
       i18n_set_input->show();
       i18n_function_input->hide();
+      i18n_static_function_input->hide();
       break;
   }
   project_window->hotspot(project_window);

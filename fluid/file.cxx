@@ -385,14 +385,16 @@ int write_file(const char *filename, int selected_only) {
     write_string("\nutf8_in_src");
   if (i18n_type) {
     write_string("\ni18n_type %d", i18n_type);
-    write_string("\ni18n_include %s", i18n_include);
+    write_string("\ni18n_include"); write_word(i18n_include);
+    write_string("\ni18n_conditional"); write_word(i18n_conditional);
     switch (i18n_type) {
     case 1 : /* GNU gettext */
-        write_string("\ni18n_function %s", i18n_function);
+        write_string("\ni18n_function"); write_word(i18n_function);
+        write_string("\ni18n_static_function"); write_word(i18n_static_function);
         break;
     case 2 : /* POSIX catgets */
-        if (i18n_file[0]) write_string("\ni18n_file %s", i18n_file);
-        write_string("\ni18n_set %s", i18n_set);
+        if (i18n_file[0]) write_string("\ni18n_file"); write_word(i18n_file);
+        write_string("\ni18n_set"); write_word(i18n_set);
         break;
     }
   }
@@ -507,6 +509,10 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
         i18n_function = fl_strdup(read_word());
         goto CONTINUE;
       }
+      if (!strcmp(c,"i18n_static_function")) {
+        i18n_static_function = fl_strdup(read_word());
+        goto CONTINUE;
+      }
       if (!strcmp(c,"i18n_file")) {
         i18n_file = fl_strdup(read_word());
         goto CONTINUE;
@@ -519,9 +525,8 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
         i18n_include = fl_strdup(read_word());
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_type"))
-      {
-        i18n_type = atoi(read_word());
+      if (!strcmp(c,"i18n_conditional")) {
+        i18n_conditional = fl_strdup(read_word());
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type"))

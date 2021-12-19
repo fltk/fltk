@@ -49,11 +49,15 @@ Fl_Menu_Item menu_i18n_type_chooser[] = {
 
 Fl_Input *i18n_include_input=(Fl_Input *)0;
 
+Fl_Input *i18n_conditional_input=(Fl_Input *)0;
+
 Fl_Input *i18n_file_input=(Fl_Input *)0;
 
 Fl_Int_Input *i18n_set_input=(Fl_Int_Input *)0;
 
 Fl_Input *i18n_function_input=(Fl_Input *)0;
+
+Fl_Input *i18n_static_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
   { project_window = new Fl_Double_Window(399, 275, "Project Settings");
@@ -61,9 +65,10 @@ Fl_Double_Window* make_project_window() {
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 378, 218);
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 379, 218);
       o->selection_color((Fl_Color)12);
-      { Fl_Group* o = new Fl_Group(10, 36, 378, 192, "Output");
+      o->labelcolor(FL_BACKGROUND2_COLOR);
+      { Fl_Group* o = new Fl_Group(10, 36, 379, 192, "Output");
         { Fl_Box* o = new Fl_Box(20, 49, 340, 49, "Use \"name.ext\" to set a file name or just \".ext\" to set extension.");
           o->align(Fl_Align(132|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -89,7 +94,7 @@ Fl_Double_Window* make_project_window() {
           include_H_from_C_button->callback((Fl_Callback*)include_H_from_C_button_cb);
         } // Fl_Check_Button* include_H_from_C_button
         { use_FL_COMMAND_button = new Fl_Check_Button(117, 176, 272, 20, "Menu shortcuts use FL_COMMAND");
-          use_FL_COMMAND_button->tooltip("Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.");
+          use_FL_COMMAND_button->tooltip("Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts");
           use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
           use_FL_COMMAND_button->callback((Fl_Callback*)use_FL_COMMAND_button_cb);
         } // Fl_Check_Button* use_FL_COMMAND_button
@@ -104,7 +109,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 36, 378, 192, "Internationalization");
         o->hide();
-        { i18n_type_chooser = new Fl_Choice(100, 48, 136, 25, "Use:");
+        { i18n_type_chooser = new Fl_Choice(128, 48, 136, 25, "Use:");
           i18n_type_chooser->tooltip("Type of internationalization to use.");
           i18n_type_chooser->box(FL_THIN_UP_BOX);
           i18n_type_chooser->down_box(FL_BORDER_BOX);
@@ -112,21 +117,29 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           i18n_type_chooser->callback((Fl_Callback*)i18n_type_cb);
           i18n_type_chooser->menu(menu_i18n_type_chooser);
         } // Fl_Choice* i18n_type_chooser
-        { i18n_include_input = new Fl_Input(100, 78, 272, 20, "#include:");
+        { i18n_include_input = new Fl_Input(128, 78, 243, 20, "#include:");
           i18n_include_input->tooltip("The include file for internationalization.");
           i18n_include_input->box(FL_THIN_DOWN_BOX);
           i18n_include_input->labelfont(1);
           i18n_include_input->textfont(4);
           i18n_include_input->callback((Fl_Callback*)i18n_text_cb);
         } // Fl_Input* i18n_include_input
-        { i18n_file_input = new Fl_Input(100, 104, 272, 20, "File:");
+        { i18n_conditional_input = new Fl_Input(128, 103, 243, 20, "Conditional:");
+          i18n_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
+le FLTK_GETTEXT_FOUND");
+          i18n_conditional_input->box(FL_THIN_DOWN_BOX);
+          i18n_conditional_input->labelfont(1);
+          i18n_conditional_input->textfont(4);
+          i18n_conditional_input->callback((Fl_Callback*)i18n_text_cb);
+        } // Fl_Input* i18n_conditional_input
+        { i18n_file_input = new Fl_Input(128, 128, 243, 20, "File:");
           i18n_file_input->tooltip("The name of the message catalog.");
           i18n_file_input->box(FL_THIN_DOWN_BOX);
           i18n_file_input->labelfont(1);
           i18n_file_input->textfont(4);
           i18n_file_input->callback((Fl_Callback*)i18n_text_cb);
         } // Fl_Input* i18n_file_input
-        { i18n_set_input = new Fl_Int_Input(100, 128, 272, 20, "Set:");
+        { i18n_set_input = new Fl_Int_Input(128, 153, 243, 20, "Set:");
           i18n_set_input->tooltip("The message set number.");
           i18n_set_input->type(2);
           i18n_set_input->box(FL_THIN_DOWN_BOX);
@@ -134,13 +147,22 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           i18n_set_input->textfont(4);
           i18n_set_input->callback((Fl_Callback*)i18n_int_cb);
         } // Fl_Int_Input* i18n_set_input
-        { i18n_function_input = new Fl_Input(100, 103, 272, 20, "Function:");
-          i18n_function_input->tooltip("The function to call to internationalize the labels and tooltips.");
+        { i18n_function_input = new Fl_Input(128, 128, 243, 20, "Function:");
+          i18n_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or\
+ \"_\"");
           i18n_function_input->box(FL_THIN_DOWN_BOX);
           i18n_function_input->labelfont(1);
           i18n_function_input->textfont(4);
           i18n_function_input->callback((Fl_Callback*)i18n_text_cb);
         } // Fl_Input* i18n_function_input
+        { i18n_static_function_input = new Fl_Input(128, 153, 243, 20, "Static Function:");
+          i18n_static_function_input->tooltip("function to call to translate static text, The function to call to internatio\
+nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
+          i18n_static_function_input->box(FL_THIN_DOWN_BOX);
+          i18n_static_function_input->labelfont(1);
+          i18n_static_function_input->textfont(4);
+          i18n_static_function_input->callback((Fl_Callback*)i18n_text_cb);
+        } // Fl_Input* i18n_static_function_input
         o->end();
       } // Fl_Group* o
       o->end();
@@ -525,7 +547,7 @@ Fl_Double_Window* make_layout_window() {
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
-    { Fl_Group* o = new Fl_Group(105, 115, 170, 75);
+    { Fl_Group* o = new Fl_Group(105, 115, 192, 75);
       { def_widget_size[0] = new Fl_Round_Button(115, 115, 70, 25);
         def_widget_size[0]->type(102);
         def_widget_size[0]->down_box(FL_ROUND_DOWN_BOX);

@@ -573,28 +573,55 @@ int write_code(const char *s, const char *t) {
   }
 
   write_declare("#include <FL/Fl.H>");
-  if (i18n_type && i18n_include[0]) {
-    if (i18n_include[0] != '<' &&
-        i18n_include[0] != '\"')
-      write_c("#include \"%s\"\n", i18n_include);
-    else
-      write_c("#include %s\n", i18n_include);
-    if (i18n_type == 2) {
-      if (i18n_file[0]) write_c("extern nl_catd %s;\n", i18n_file);
-      else {
-        write_c("// Initialize I18N stuff now for menus...\n");
-        write_c("#include <locale.h>\n");
-        write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
-        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n",
-                   i18n_program);
-      }
-    }
-  }
   if (t && include_H_from_C) {
     if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
     } else {
       write_c("#include \"%s\"\n", t);
+    }
+  }
+  if (i18n_type && i18n_include[0]) {
+    int conditional = (i18n_conditional[0]!=0);
+    if (conditional) {
+      write_c("#ifdef %s\n", i18n_conditional);
+      indentation++;
+    }
+    if (i18n_include[0] != '<' &&
+        i18n_include[0] != '\"')
+      write_c("#%sinclude \"%s\"\n", indent(), i18n_include);
+    else
+      write_c("#%sinclude %s\n", indent(), i18n_include);
+    if (i18n_type == 2) {
+      if (i18n_file[0]) write_c("extern nl_catd %s;\n", i18n_file);
+      else {
+        write_c("// Initialize I18N stuff now for menus...\n");
+        write_c("#%sinclude <locale.h>\n", indent());
+        write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
+        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n",
+                   i18n_program);
+      }
+    }
+    if (conditional) {
+      write_c("#else\n");
+      if (i18n_type == 1) {
+        if (i18n_function[0]) {
+          write_c("#%sifndef %s\n", indent(), i18n_function);
+          write_c("#%sdefine %s(text) text\n", indent_plus(1), i18n_function);
+          write_c("#%sendif\n", indent());
+        }
+      }
+      if (i18n_type == 2) {
+        write_c("#%sifndef catgets\n", indent());
+        write_c("#%sdefine catgets(catalog, set, msgid, text) text\n", indent_plus(1));
+        write_c("#%sendif\n", indent());
+      }
+      indentation--;
+      write_c("#endif\n");
+    }
+    if (i18n_type == 1 && i18n_static_function[0]) {
+      write_c("#ifndef %s\n", i18n_static_function);
+      write_c("#%sdefine %s(text) text\n", indent_plus(1), i18n_static_function);
+      write_c("#endif\n");
     }
   }
   for (Fl_Type* p = first_type; p;) {
