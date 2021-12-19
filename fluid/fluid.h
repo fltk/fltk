@@ -82,7 +82,9 @@ extern const char* code_file_name;
 
 extern int i18n_type;
 extern const char* i18n_include;
+extern const char* i18n_conditional;
 extern const char* i18n_function;
+extern const char* i18n_static_function;
 extern const char* i18n_file;
 extern const char* i18n_set;;
 extern char i18n_program[FL_PATH_MAX];

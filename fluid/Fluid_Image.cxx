@@ -157,6 +157,11 @@ void Fluid_Image::write_code(const char *var, int inactive) {
   if (img) write_c("%s%s->%s( %s() );\n", indent(), var, inactive ? "deimage" : "image", function_name_);
 }
 
+void Fluid_Image::write_inline(int inactive) {
+  if (img)
+    write_c("%s()", function_name_);
+}
+
 
 ////////////////////////////////////////////////////////////////
 

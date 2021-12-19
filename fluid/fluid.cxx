@@ -180,13 +180,46 @@ const char* code_file_name = ".cxx";
 /// \todo document me
 int i18n_type = 0;
 
-/// Saved in the .fl design file.
-/// \todo document me
+/**
+ For either type of translation, write a #include statement into the
+ source file.
+
+ This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext, or
+ `<nl_types.h>` for Posix catgets.
+
+ Fluid accepts filenames in quotes or in \< and \>. If neither is found,
+ double quotes are added.
+ If this value is emty, no include statement will be generated.
+
+ Saved in the .fl design file.
+ */
 const char* i18n_include = "";
 
-/// Saved in the .fl design file.
-/// \todo document me
+const char* i18n_conditional = "";
+
+/**
+ For the gettext/intl.h options, this is the function that translates text
+ at runtime.
+
+ This is usually "gettext" or "_".
+ This should not be empty.
+ Saved in the .fl design file.
+
+ */
 const char* i18n_function = "";
+
+/**
+ For the gettext/intl.h options, this is the function that marks the
+ translation of text at initialisation time.
+
+ This is usually "gettext_noop" or "N_".
+ This should not be empty.
+ Fluid will translate static text (usually in menu items) later when used
+ for the first time.
+
+ Saved in the .fl design file.
+ */
+const char* i18n_static_function = "";
 
 /// Saved in the .fl design file.
 /// \todo document me

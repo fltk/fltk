@@ -1,5 +1,10 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0400
+i18n_type 1
+i18n_include {<libintl.h>}
+i18n_conditional FLTK_GETTEXT_FOUND
+i18n_function gettext
+i18n_static_function gettext_noop
 header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local
@@ -45,7 +50,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {586 277 298 311} type Double visible
+    xywh {585 277 298 311} type Double visible
   } {
     Fl_Button {} {
       label Cancel
@@ -62,7 +67,7 @@ Function {} {open return_type int
       xywh {20 30 115 225} box ENGRAVED_FRAME align 5
     } {
       Fl_Input wAlarm {
-        label {Alarm at:} selected
+        label {Alarm at:}
         xywh {25 55 45 20} align 5
       }
       Fl_Choice wAmPm {open
@@ -73,7 +78,7 @@ Function {} {open return_type int
           xywh {0 0 100 20}
         }
         MenuItem {} {
-          label {p.m.}
+          label {p.m.} selected
           xywh {0 0 100 20}
         }
       }

@@ -39,6 +39,7 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Multi_Label.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -53,6 +54,32 @@ Fl_Menu_Item menu_item_type_menu[] = {
 static char submenuflag;
 static uchar menuitemtype = 0;
 
+static void delete_dependents(Fl_Menu_Item *m) {
+  if (!m)
+    return;
+  int level = 0;
+  for (;;m++) {
+    if (m->label()==NULL) {
+      if (level==0) {
+        break;
+      } else {
+        level--;
+      }
+    }
+    if (m->flags&FL_SUBMENU)
+      level++;
+    if (m->labeltype()==FL_MULTI_LABEL)
+      delete (Fl_Multi_Label*)m->label();
+  }
+}
+
+static void delete_menu(Fl_Menu_Item *m) {
+  if (!m)
+    return;
+  delete_dependents(m);
+  delete[] m;
+}
+
 void Fl_Input_Choice_Type::build_menu() {
   Fl_Input_Choice* w = (Fl_Input_Choice*)o;
   // count how many Fl_Menu_Item structures needed:
@@ -63,23 +90,35 @@ void Fl_Input_Choice_Type::build_menu() {
     n++;
   }
   if (!n) {
-    if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+    if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
     w->menu(0);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
     if (menusize<n) {
-      if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+      if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
       menusize = n+10;
       w->menu(new Fl_Menu_Item[menusize]);
+    } else {
+      if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
       Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
-      if (i->o->image()) i->o->image()->label(m);
-      else {
+      if (i->o->image()) {
+        if (i->o->label() && i->o->label()[0]) {
+          Fl_Multi_Label *ml = new Fl_Multi_Label;
+          ml->labela = (char*)i->o->image();
+          ml->labelb = i->o->label();
+          ml->typea = FL_IMAGE_LABEL;
+          ml->typeb = FL_NORMAL_LABEL;
+          ml->label(m);
+        } else {
+          i->o->image()->label(m);
+        }
+      } else {
         m->label(i->o->label() ? i->o->label() : "(nolabel)");
         m->labeltype(i->o->labeltype());
       }
@@ -198,6 +237,8 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
 }
 
 void Fl_Menu_Item_Type::write_static() {
+  if (image && label() && label()[0])
+    write_declare("#include <FL/Fl_Multi_Label.H>");
   if (callback() && is_name(callback()) && !user_defined(callback()))
     write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
                   user_data_type() ? user_data_type() : "void*");
@@ -265,11 +306,9 @@ void Fl_Menu_Item_Type::write_static() {
   const char* k = class_name(1);
   if (k) {
     int i;
-    if (i18n_type) write_c("\nunsigned char %s::%s_i18n_done = 0;", k, menu_name(i));
     write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
   } else {
     int i;
-    if (i18n_type) write_c("\nunsigned char %s_i18n_done = 0;", menu_name(i));
     write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
   }
   Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
@@ -331,9 +370,21 @@ void Fl_Menu_Item_Type::write_item() {
 
   write_comment_inline_c(" ");
   write_c(" {");
-  if (image) write_c("0");
-  else if (label()) write_cstring(label()); // we will call i18n when the widget is instantiated for the first time
-  else write_c("\"\"");
+  if (label() && label()[0])
+    switch (i18n_type) {
+      case 1:
+        // we will call i18n when the menu is instantiated for the first time
+        write_c("%s(", i18n_static_function);
+        write_cstring(label());
+        write_c(")");
+        break;
+      case 2:
+        // fall through: strings can't be translated before a catalog is choosen
+      default:
+        write_cstring(label());
+    }
+  else
+    write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
                 int s = ((Fl_Button*)o)->shortcut();
                 if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
@@ -361,16 +412,22 @@ void Fl_Menu_Item_Type::write_item() {
   write_c("},\n");
 }
 
+void start_menu_initialiser(int &initialized, const char *name, int index) {
+  if (!initialized) {
+    initialized = 1;
+    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), name, index);
+    indentation++;
+  }
+}
+
 void Fl_Menu_Item_Type::write_code1() {
   int i; const char* mname = menu_name(i);
 
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      if (i18n_type) write_h("%sstatic unsigned char %s_i18n_done;\n", indent(1), mname);
       write_h("%sstatic Fl_Menu_Item %s[];\n", indent(1), mname);
     } else {
-      if (i18n_type) write_h("extern unsigned char %s_i18n_done;\n", mname);
       write_h("extern Fl_Menu_Item %s[];\n", mname);
     }
   }
@@ -401,24 +458,59 @@ void Fl_Menu_Item_Type::write_code1() {
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
-    write_c("%s%s = &%s[%d];\n", indent(), name(), mname, i);
+    write_c("%s%s = &%s[%d];\n", indent_plus(1), name(), mname, i);
   }
   if (image) {
-    menuItemInitialized = 1;
-    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
-    image->write_code("o");
+    start_menu_initialiser(menuItemInitialized, mname, i);
+    if (label() && label()[0]) {
+      write_c("%sFl_Multi_Label *ml = new Fl_Multi_Label;\n", indent());
+      write_c("%sml->labela = (char*)", indent());
+      image->write_inline();
+      write_c(";\n");
+      if (i18n_type==0) {
+        write_c("%sml->labelb = o->label();\n", indent());
+      } else if (i18n_type==1) {
+        write_c("%sml->labelb = %s(o->label());\n",
+                indent(), i18n_function);
+      } else if (i18n_type==2) {
+        write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
+                indent(), i18n_file[0] ? i18n_file : "_catalog",
+                i18n_set, msgnum());
+      }
+      write_c("%sml->typea = FL_IMAGE_LABEL;\n", indent());
+      write_c("%sml->typeb = FL_NORMAL_LABEL;\n", indent());
+      write_c("%sml->label(o);\n", indent());
+    } else {
+      image->write_code("o");
+    }
+  }
+  if (i18n_type && label() && label()[0]) {
+    Fl_Labeltype t = o->labeltype();
+    if (image) {
+      // label was already copied a few lines up
+    } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
+               || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
+      start_menu_initialiser(menuItemInitialized, mname, i);
+      if (i18n_type==1) {
+        write_c("%so->label(%s(o->label()));\n",
+                indent(), i18n_function);
+      } else if (i18n_type==2) {
+        write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
+                indent(), i18n_file[0] ? i18n_file : "_catalog",
+                i18n_set, msgnum());
+      }
+    }
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && !isdeclare(extra_code(n))) {
-      if (!menuItemInitialized) {
-        menuItemInitialized = 1;
-        write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
-      }
-      write_c("%s%s\n", indent_plus(1), extra_code(n));
+      start_menu_initialiser(menuItemInitialized, mname, i);
+      write_c("%s%s\n", indent(), extra_code(n));
     }
   }
-  if (menuItemInitialized)
+  if (menuItemInitialized) {
+    indentation--;
     write_c("%s}\n",indent());
+  }
 }
 
 void Fl_Menu_Item_Type::write_code2() {}
@@ -440,23 +532,35 @@ void Fl_Menu_Type::build_menu() {
     n++;
   }
   if (!n) {
-    if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+    if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
     w->menu(0);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
     if (menusize<n) {
-      if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+      if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
       menusize = n+10;
       w->menu(new Fl_Menu_Item[menusize]);
+    } else {
+      if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
       Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
-      if (i->o->image()) i->o->image()->label(m);
-      else {
+      if (i->o->image()) {
+        if (i->o->label() && i->o->label()[0]) {
+          Fl_Multi_Label *ml = new Fl_Multi_Label;
+          ml->labela = (char*)i->o->image();
+          ml->labelb = i->o->label();
+          ml->typea = FL_IMAGE_LABEL;
+          ml->typeb = FL_NORMAL_LABEL;
+          ml->label(m);
+        } else {
+          i->o->image()->label(m);
+        }
+      } else {
         m->label(i->o->label() ? i->o->label() : "(nolabel)");
         m->labeltype(i->o->labeltype());
       }
@@ -498,38 +602,6 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
 
 void Fl_Menu_Type::write_code2() {
   if (next && next->is_menu_item()) {
-    if (i18n_type) {
-      // take care of i18n now!
-      Fl_Menu_Item_Type *mi = (Fl_Menu_Item_Type*)next;
-      int i, nItem = 0, nLabel = 0;
-      const char *mName = mi->menu_name(i);
-      for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
-        if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
-        int thislevel = q->level; if (q->is_parent()) thislevel++;
-        int nextlevel =
-            (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
-        nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
-      }
-      if (nLabel) {
-        write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
-        write_c("%sint i=0;\n", indent_plus(1));
-        write_c("%sfor ( ; i<%d; i++)\n", indent_plus(1), nItem);
-        write_c("%sif (%s[i].label())\n", indent_plus(2), mName);
-        switch (i18n_type) {
-          case 1:
-            write_c("%s%s[i].label(%s(%s[i].label()));\n",
-                    indent_plus(3), mName, i18n_function, mName);
-            break;
-          case 2:
-            write_c("%s%s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
-                    indent_plus(3), mName, i18n_file[0] ? i18n_file : "_catalog",
-                    i18n_set, mi->msgnum(), mName);
-            break;
-        }
-        write_c("%s%s_i18n_done = 1;\n", indent_plus(1), mName);
-        write_c("%s}\n", indent());
-      }
-    }
     write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
             unique_id(this, "menu", name(), label()));
   }

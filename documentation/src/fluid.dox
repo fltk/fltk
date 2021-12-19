@@ -1503,8 +1503,10 @@ existing template, and click "Delete Template".
 \section fluid_i18n Internationalization with FLUID
 
 FLUID supports internationalization (I18N for short) of label
-strings used by widgets. The preferences window
-(<tt>Ctrl+p</tt>) provides access to the I18N options.
+strings and tooltips used by widgets. The GNU gettext option also
+supports deferred translation of statically initialised menu item
+labels. The preferences window (<tt>Ctrl+p</tt>) provides access
+to the I18N options.
 
 \subsection fluid_i18n_methods I18N Methods
 
@@ -1530,10 +1532,10 @@ need to call \p setlocale() and \p textdomain() or
 message file.
 
 To use GNU gettext for I18N, open the preferences window and
-choose "GNU gettext" from the \b Use: chooser. Two new input
+choose "GNU gettext" from the \b Use: chooser. Four new input
 fields will then appear to control the include file and
-function/macro name to use when retrieving the localized label
-strings.
+function/macro names to use when retrieving localized label
+strings in dynamic allocation and static initialisation.
 
  \image html fluid-gettext.png "Internationalization using GNU gettext"
  \image latex fluid-gettext.png "Internationalization using GNU gettext" width=10cm
@@ -1543,9 +1545,23 @@ field controls the header file to include for
 I18N; by default this is \b <libintl.h>, the
 standard I18N file for GNU gettext.
 
+If the \b Conditional: field contains a macro name, i18n will only be compiled
+into the product if this macro is defined. The build system should define the
+macro only if all required headers and libraries are available. If the macro
+is not defined, no headers are included and `gettext` passes text through
+untranslated.
+
 The \b Function: field controls the function (or macro) that
 will retrieve the localized message; by default the
 \p gettext function will be called.
+
+The **Static Function:** field names a macro that will mark static text
+fields for extraction with the `xgettext` tool. The default macro name is
+\p gettext_noop and will be defined as `#define gettext_noop(text) text`
+right after the `#include` statement. Fluid will do its best to call
+`gettext` on static texts after the textdomain was set by the user.
+
+\see [GNU gettext special cases](https://www.gnu.org/software/gettext/manual/html_node/Special-cases.html)
 
 \subsection fluid_catgets_i18n Using POSIX catgets for I18N
 

@@ -179,6 +179,7 @@ void delete_all(int selected_only) {
     } else f = f->next;
   }
   if(!selected_only) {
+    // FIXME: undo/redo uses this function, resetting the following preferences randomly
     include_H_from_C=1;
     use_FL_COMMAND=0;
     utf8_in_src = 0;

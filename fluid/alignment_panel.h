@@ -51,11 +51,13 @@ extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;
 extern void i18n_text_cb(Fl_Input*, void*);
 extern Fl_Input *i18n_include_input;
+extern Fl_Input *i18n_conditional_input;
 extern Fl_Input *i18n_file_input;
 #include <FL/Fl_Int_Input.H>
 extern void i18n_int_cb(Fl_Int_Input*, void*);
 extern Fl_Int_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
+extern Fl_Input *i18n_static_function_input;
 Fl_Double_Window* make_project_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern void i18n_cb(Fl_Choice *,void *);
