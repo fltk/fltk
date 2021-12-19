@@ -30,19 +30,19 @@
 
 void Fl_Help_Dialog::cb_back__i(Fl_Button*, void*) {
   if (index_ > 0)
-  index_ --;
+    index_ --;
 
-if (index_ == 0)
-  back_->deactivate();
+  if (index_ == 0)
+    back_->deactivate();
 
-forward_->activate();
+  forward_->activate();
 
-int l = line_[index_];
+  int l = line_[index_];
 
-if (strcmp(view_->filename(), file_[index_]) != 0)
-  view_->load(file_[index_]);
+  if (strcmp(view_->filename(), file_[index_]) != 0)
+    view_->load(file_[index_]);
 
-view_->topline(l);
+  view_->topline(l);
 }
 void Fl_Help_Dialog::cb_back_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_back__i(o,v);
@@ -50,19 +50,19 @@ void Fl_Help_Dialog::cb_back_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_forward__i(Fl_Button*, void*) {
   if (index_ < max_)
-  index_ ++;
+    index_ ++;
 
-if (index_ >= max_)
-  forward_->deactivate();
+  if (index_ >= max_)
+    forward_->deactivate();
 
-back_->activate();
+  back_->activate();
 
-int l = view_->topline();
+  int l = view_->topline();
 
-if (strcmp(view_->filename(), file_[index_]) != 0)
-  view_->load(file_[index_]);
+  if (strcmp(view_->filename(), file_[index_]) != 0)
+    view_->load(file_[index_]);
 
-view_->topline(l);
+  view_->topline(l);
 }
 void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_forward__i(o,v);
@@ -70,11 +70,11 @@ void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) {
   if (view_->textsize() > 8)
-  view_->textsize(view_->textsize() - 2);
+    view_->textsize(view_->textsize() - 2);
 
-if (view_->textsize() <= 8)
-  smaller_->deactivate();
-larger_->activate();
+  if (view_->textsize() <= 8)
+    smaller_->deactivate();
+  larger_->activate();
 }
 void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_smaller__i(o,v);
@@ -82,11 +82,11 @@ void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) {
   if (view_->textsize() < 18)
-  view_->textsize(view_->textsize() + 2);
+    view_->textsize(view_->textsize() + 2);
 
-if (view_->textsize() >= 18)
-  larger_->deactivate();
-smaller_->activate();
+  if (view_->textsize() >= 18)
+    larger_->deactivate();
+  smaller_->activate();
 }
 void Fl_Help_Dialog::cb_larger_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_larger__i(o,v);
@@ -101,43 +101,43 @@ void Fl_Help_Dialog::cb_find_(Fl_Input* o, void* v) {
 
 void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
   if (view_->filename())
-{
-  if (view_->changed())
   {
-    index_ ++;
-
-    if (index_ >= 100)
+    if (view_->changed())
     {
-      memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
-      memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
-      index_ -= 10;
+      index_ ++;
+
+      if (index_ >= 100)
+      {
+        memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
+        memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
+        index_ -= 10;
+      }
+
+      max_ = index_;
+
+      strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+      line_[index_] = view_->topline();
+
+      if (index_ > 0)
+        back_->activate();
+      else
+        back_->deactivate();
+
+      forward_->deactivate();
+      window_->label(view_->title());
     }
-
-    max_ = index_;
-
-    strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+    else // if ! view_->changed()
+    {
+      strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
+      line_[index_] = view_->topline();
+    }
+  } else { // if ! view_->filename()
+    index_ = 0; // hitting an internal page will disable the back/fwd buffer
+    file_[index_][0] = 0; // unnamed internal page
     line_[index_] = view_->topline();
-
-    if (index_ > 0)
-      back_->activate();
-    else
-      back_->deactivate();
-
+    back_->deactivate();
     forward_->deactivate();
-    window_->label(view_->title());
   }
-  else // if ! view_->changed()
-  {
-    strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
-    line_[index_] = view_->topline();
-  }
-} else { // if ! view_->filename()
-  index_ = 0; // hitting an internal page will disable the back/fwd buffer
-  file_[index_][0] = 0; // unnamed internal page
-  line_[index_] = view_->topline();
-  back_->deactivate();
-  forward_->deactivate();
-};
 }
 void Fl_Help_Dialog::cb_view_(Fl_Help_View* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_view__i(o,v);

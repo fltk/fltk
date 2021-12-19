@@ -28,9 +28,9 @@
 
 void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
   fileName->value("");
-fileList->deselect();
-Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();
+  fileList->deselect();
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  window->hide();
 }
 void Fl_File_Chooser::cb_window(Fl_Double_Window* o, void* v) {
   ((Fl_File_Chooser*)(o->user_data()))->cb_window_i(o,v);
@@ -104,9 +104,9 @@ void Fl_File_Chooser::cb_fileName(Fl_File_Input* o, void* v) {
 void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
   window->hide();
 
-// Do any callback that is registered...
-if (callback_)
-  (*callback_)(this, data_);
+  // Do any callback that is registered...
+  if (callback_)
+    (*callback_)(this, data_);
 }
 void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_okButton_i(o,v);
@@ -114,9 +114,9 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
 
 void Fl_File_Chooser::cb_cancelButton_i(Fl_Button*, void*) {
   fileName->value("");
-fileList->deselect();
-Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();
+  fileList->deselect();
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  window->hide();
 }
 void Fl_File_Chooser::cb_cancelButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_cancelButton_i(o,v);
