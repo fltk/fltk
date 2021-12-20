@@ -50,6 +50,9 @@ endif (OPTION_CREATE_LINKS)
 
 # generate FLTKConfig.cmake for installed directory use
 set (INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
+if (FLTK_HAVE_CAIRO)
+  list (APPEND INCLUDE_DIRS ${PKG_CAIRO_INCLUDE_DIRS})
+endif ()
 
 set (CONFIG_PATH ${CMAKE_INSTALL_PREFIX}/${FLTK_CONFIG_PATH})
 
