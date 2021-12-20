@@ -454,7 +454,7 @@ int glutExtensionSupported( const char* extension )
   if (!extension || strchr(extension, ' ')) return 0;
 
   const char *extensions, *start;
-  const int len = (const int)strlen( extension );
+  const int len = (int)strlen(extension);
 
   start = extensions = (const char *) glGetString(GL_EXTENSIONS);
 
