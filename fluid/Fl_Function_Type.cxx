@@ -994,9 +994,8 @@ void Fl_Decl_Type::write_code1() {
   const char* e = c+strlen(c), *csc = c;
   while (csc<e && (csc[0]!='/' || csc[1]!='/')) csc++;
   if (csc!=e) e = csc; // comment found
-                       // lose all trailing semicolons so I can add one:
+  // lose spaces between text and comment, if any
   while (e>c && e[-1]==' ') e--;
-  while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
     write_public(public_);
     write_comment_h(indent(1));
