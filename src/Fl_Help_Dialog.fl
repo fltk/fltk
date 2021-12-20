@@ -192,8 +192,7 @@ fl_register_images();} {}
     code {view_->set_changed();
 int ret = view_->load(f);
 window_->label(view_->title());
-return ret;} {selected
-    }
+return ret;} {}
   }
   Function {position(int xx, int yy)} {return_type void
   } {
@@ -233,7 +232,7 @@ else
   } {
     code {view_->topline(n);} {}
   }
-  Function {topline(int n)} {return_type void
+  Function {topline(int n)} {selected return_type void
   } {
     code {view_->topline(n);} {}
   }

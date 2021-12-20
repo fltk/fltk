@@ -384,12 +384,20 @@ void write_c(const char* format,...) {
 
 /**
  Write code (c) of size (n) to C file, with optional comment (com) w/o trailing space.
+ if the code line does not end in a ';' or '}', a ';' will be added.
+ \param[in] indent indentation string for all lines
+ \param[in] n number of bytes in code line
+ \param[in] c line of code
+ \param[in] com optional commentary
  */
 void write_cc(const char *indent, int n, const char *c, const char *com) {
+  write_c("%s%.*s", indent, n, c);
+  char cc = c[n-1];
+  if (cc!='}' && cc!=';')
+    write_c(";");
   if (*com)
-    write_c("%s%.*s; %s\n", indent, n, c, com);
-  else
-    write_c("%s%.*s;\n", indent, n, c);
+    write_c(" %s", com);
+  write_c("\n");
 }
 
 /**
@@ -406,16 +414,20 @@ void write_h(const char* format,...) {
 
 /**
  Write code (c) of size (n) to H file, with optional comment (com) w/o trailing space.
+ if the code line does not end in a ';' or '}', a ';' will be added.
  \param[in] indent indentation string for all lines
  \param[in] n number of bytes in code line
  \param[in] c line of code
  \param[in] com optional commentary
  */
 void write_hc(const char *indent, int n, const char* c, const char *com) {
+  write_h("%s%.*s", indent, n, c);
+  char cc = c[n-1];
+  if (cc!='}' && cc!=';')
+    write_h(";");
   if (*com)
-    write_h("%s%.*s; %s\n", indent, n, c, com);
-  else
-    write_h("%s%.*s;\n", indent, n, c);
+    write_h(" %s", com);
+  write_h("\n");
 }
 
 /**
