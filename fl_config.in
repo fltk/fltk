@@ -14,6 +14,8 @@
  *     https://www.fltk.org/bugs.php
  */
 
+#ifndef _FL_fl_config_h_
+#define _FL_fl_config_h_
 
 /*
  * FL_ABI_VERSION (ABI version)
@@ -51,3 +53,5 @@
  */
 
 #undef FLTK_USE_X11
+
+#endif /* _FL_fl_config_h_ */

@@ -1,3 +1,4 @@
+/* FL/fl_config.h.  Generated from fl_config.cmake.in by CMake.  */
 /*
  * Build configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -14,6 +15,8 @@
  *     https://www.fltk.org/bugs.php
  */
 
+#ifndef _FL_fl_config_h_
+#define _FL_fl_config_h_
 
 /*
  * FL_ABI_VERSION (ABI version):
@@ -51,3 +54,5 @@
  */
 
 #cmakedefine FLTK_USE_X11 1
+
+#endif /* _FL_fl_config_h_ */
