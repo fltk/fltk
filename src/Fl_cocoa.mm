@@ -977,8 +977,8 @@ static NSInteger modal_window_level(void)
   NSInteger level;
 
   level = max_normal_window_level();
-  if (level < NSModalPanelWindowLevel)
-    return NSModalPanelWindowLevel;
+  if (level < NSStatusWindowLevel)
+    return NSStatusWindowLevel;
 
   // Need some room for non-modal windows
   level += 2;
@@ -1482,9 +1482,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   /* Fullscreen windows obscure all other windows so we need to return
-   to a "normal" level when the user switches to another window,
-   unless this other window is above the fullscreen window */
-  if (window->fullscreen_active() && [NSApp keyWindow] && [[NSApp keyWindow] level] <= [nsw level]) {
+   to a "normal" level when the user switches to another window or other app */
+  if (window->fullscreen_active()) {
     [nsw setLevel:NSNormalWindowLevel];
     fixup_window_levels();
   }
@@ -3098,7 +3097,15 @@ void Fl_Window::fullscreen_x() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
     [i->xid setStyleMask:NSBorderlessWindowMask]; //10.6
 #endif
-    [i->xid setLevel:NSStatusWindowLevel];
+    if ([i->xid isKeyWindow]) {
+       if ([i->xid level] != NSStatusWindowLevel) {
+         [i->xid setLevel:NSStatusWindowLevel];
+         fixup_window_levels();
+       }
+    } else if([i->xid level] != NSNormalWindowLevel) {
+       [i->xid setLevel:NSNormalWindowLevel];
+       fixup_window_levels();
+    }
     int sx, sy, sw, sh, X, Y, W, H;
     int top = fullscreen_screen_top;
     int bottom = fullscreen_screen_bottom;
