@@ -124,12 +124,24 @@ endif (USE_GDIPLUS)
 # install fluid
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+
+  # On macOS, Fluid must be installed twice. The bundled version of Fluid needs
+  # to go into the /Applications folder to make it visible as a user App with
+  # full GUI. The binary without bundle should go into ${FLTK_BINDIR}, usually
+  # /usr/local/bin, so it will be picked up as a command line tool by
+  # the build process of other apps.
+
   # create bundle
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-  set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
-  # install
-  install (TARGETS fluid DESTINATION ${FLTK_BINDIR})
+  # The line below would wrongly install /Applications/fluid.icns
+  #set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
+  # install GUI tool
+  install (TARGETS fluid DESTINATION "/Applications")
+
+  # install command line tool
+  install (PROGRAMS $<TARGET_FILE:fluid> DESTINATION ${FLTK_BINDIR} )
+
 else()
   install (TARGETS fluid
     EXPORT FLTK-Targets
