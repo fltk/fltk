@@ -134,6 +134,13 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
   static XIC ic = NULL;
 
   if (!fl_xim_ic || !fl_is_over_the_spot) return;
+  if (Fl::focus()) { // handle case when text widget is inside subwindow
+    Fl_Window *focuswin = Fl::focus()->window();
+    while (focuswin && focuswin->parent()) {
+      X += focuswin->x(); Y += focuswin->y();
+      focuswin = focuswin->window();
+    }
+  }
   //XSetICFocus(fl_xim_ic);
   if (X != fl_spot.x || Y != fl_spot.y) {
     fl_spot.x = X;
