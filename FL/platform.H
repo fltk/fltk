@@ -28,9 +28,8 @@
 #if !defined(FL_PLATFORM_H) && !defined(FL_DOXYGEN)
 #  define FL_PLATFORM_H
 
-#   include <FL/fl_config.h>
 #   include <FL/Fl_Export.H>
-#   include <FL/platform_types.h>
+#   include <FL/platform_types.h> // will bring in FL/fl_config.h
 #   include <FL/fl_types.h> // for uchar
 class Fl_Window;
 
@@ -40,7 +39,7 @@ class Fl_Window;
 #    include "mac.H"
 #  elif defined(__ANDROID__)
 #    include "android.H"
-#  else // X11
+#  elif defined(FLTK_USE_X11)
 #   include <FL/fl_types.h>
 #   include <FL/Enumerations.H>
 #    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files

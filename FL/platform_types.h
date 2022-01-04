@@ -46,6 +46,8 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 #ifndef FL_PLATFORM_TYPES_H
 #define FL_PLATFORM_TYPES_H
 
+#include <FL/fl_config.h>
+
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
   Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
@@ -136,7 +138,7 @@ typedef struct __GLXcontextRec *GLContext;
 #include <sys/types.h>
 #include <dirent.h>
 
-#else /* X11 */
+#elif defined(FLTK_USE_X11)
 
 typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
