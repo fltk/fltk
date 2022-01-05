@@ -43,6 +43,7 @@ animated.o: ../FL/Fl_Widget.H
 animated.o: ../FL/Fl_Window.H
 animated.o: ../FL/platform.H
 animated.o: ../FL/platform_types.h
+animated.o: ../FL/x11.H
 arc.o: ../FL/Enumerations.H
 arc.o: ../FL/Fl.H
 arc.o: ../FL/Fl_Bitmap.H
@@ -140,6 +141,7 @@ blocks.o: ../FL/Fl_XBM_Image.H
 blocks.o: ../FL/Fl_XPM_Image.H
 blocks.o: ../FL/platform.H
 blocks.o: ../FL/platform_types.h
+blocks.o: ../FL/x11.H
 blocks.o: pixmaps/blast.xpm
 blocks.o: pixmaps/blue.xpm
 blocks.o: pixmaps/blue_bomb.xpm
@@ -287,6 +289,7 @@ cairo_test.o: ../FL/Fl_Window.H
 cairo_test.o: ../FL/math.h
 cairo_test.o: ../FL/platform.H
 cairo_test.o: ../FL/platform_types.h
+cairo_test.o: ../FL/x11.H
 checkers.o: ../FL/Enumerations.H
 checkers.o: ../FL/Fl.H
 checkers.o: ../FL/fl_ask.H
@@ -455,6 +458,7 @@ color_chooser.o: ../FL/Fl_Widget.H
 color_chooser.o: ../FL/Fl_Window.H
 color_chooser.o: ../FL/platform.H
 color_chooser.o: ../FL/platform_types.h
+color_chooser.o: ../FL/x11.H
 color_chooser.o: list_visuals.cxx
 cube.o: ../config.h
 cube.o: ../FL/Enumerations.H
@@ -632,6 +636,7 @@ demo.o: ../FL/Fl_Widget.H
 demo.o: ../FL/Fl_Window.H
 demo.o: ../FL/platform.H
 demo.o: ../FL/platform_types.h
+demo.o: ../FL/x11.H
 device.o: ../FL/Enumerations.H
 device.o: ../FL/filename.H
 device.o: ../FL/Fl.H
@@ -777,6 +782,7 @@ editor.o: ../FL/Fl_Widget.H
 editor.o: ../FL/Fl_Window.H
 editor.o: ../FL/platform.H
 editor.o: ../FL/platform_types.h
+editor.o: ../FL/x11.H
 fast_slow.o: ../FL/Enumerations.H
 fast_slow.o: ../FL/Fl.H
 fast_slow.o: ../FL/Fl_Bitmap.H
@@ -1201,6 +1207,7 @@ image.o: ../FL/Fl_Widget.H
 image.o: ../FL/Fl_Window.H
 image.o: ../FL/platform.H
 image.o: ../FL/platform_types.h
+image.o: ../FL/x11.H
 image.o: list_visuals.cxx
 inactive.o: ../FL/Enumerations.H
 inactive.o: ../FL/Fl.H
@@ -1413,6 +1420,7 @@ list_visuals.o: ../FL/Fl_Export.H
 list_visuals.o: ../FL/fl_types.h
 list_visuals.o: ../FL/platform.H
 list_visuals.o: ../FL/platform_types.h
+list_visuals.o: ../FL/x11.H
 mandelbrot.o: ../FL/Enumerations.H
 mandelbrot.o: ../FL/Fl.H
 mandelbrot.o: ../FL/Fl_Bitmap.H
@@ -1624,6 +1632,7 @@ offscreen.o: ../FL/Fl_Widget.H
 offscreen.o: ../FL/Fl_Window.H
 offscreen.o: ../FL/platform.H
 offscreen.o: ../FL/platform_types.h
+offscreen.o: ../FL/x11.H
 output.o: ../FL/Enumerations.H
 output.o: ../FL/Fl.H
 output.o: ../FL/Fl_Bitmap.H
@@ -2215,6 +2224,7 @@ sudoku.o: ../FL/Fl_Window.H
 sudoku.o: ../FL/math.h
 sudoku.o: ../FL/platform.H
 sudoku.o: ../FL/platform_types.h
+sudoku.o: ../FL/x11.H
 sudoku.o: pixmaps/sudoku.xbm
 symbols.o: ../FL/Enumerations.H
 symbols.o: ../FL/Fl.H
@@ -2375,6 +2385,7 @@ tiled_image.o: ../FL/Fl_Widget.H
 tiled_image.o: ../FL/Fl_Window.H
 tiled_image.o: ../FL/platform.H
 tiled_image.o: ../FL/platform_types.h
+tiled_image.o: ../FL/x11.H
 tiled_image.o: list_visuals.cxx
 tiled_image.o: pixmaps/tile.xpm
 tree.o: ../FL/Enumerations.H

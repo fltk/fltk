@@ -393,18 +393,18 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  Style buffers, tables and their associated memory are managed by the caller.
 
  Styles are ranged from 65 ('A') to 126.
- 
+
  \note Style information in the style buffer must have the same byte offset as
- the corresponding character in the text buffer. UTF-8 characters can have a 
- maximum length of four bytes. Style information must take 
+ the corresponding character in the text buffer. UTF-8 characters can have a
+ maximum length of four bytes. Style information must take
  this into account and fill the unused bytes with 0. See `fl_utf8len()`.
- 
+
  Text: "*g* r &uuml; *n*" , where normal style is 'A', and bold is 'B'
  \code
  Text Buffer(hex):  67 72 c3 bc 6e : gr..n
  Style Buffer(hex): 42 41 41 00 42 : BAA.B
  \endcode
- 
+
  \param styleBuffer this buffer works in parallel to the text buffer. For every
    character in the text buffer, the style buffer has a byte at the same offset
    that contains an index into an array of possible styles.

@@ -670,6 +670,7 @@ Fl_Menu_Type.o: ../FL/Fl_Menu_Bar.H
 Fl_Menu_Type.o: ../FL/Fl_Menu_Button.H
 Fl_Menu_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Menu_Type.o: ../FL/fl_message.H
+Fl_Menu_Type.o: ../FL/Fl_Multi_Label.H
 Fl_Menu_Type.o: ../FL/Fl_Output.H
 Fl_Menu_Type.o: ../FL/Fl_Pixmap.H
 Fl_Menu_Type.o: ../FL/Fl_Plugin.H
@@ -899,6 +900,7 @@ Fl_Window_Type.o: ../FL/Fl_Widget.H
 Fl_Window_Type.o: ../FL/Fl_Window.H
 Fl_Window_Type.o: ../FL/platform.H
 Fl_Window_Type.o: ../FL/platform_types.h
+Fl_Window_Type.o: ../FL/x11.H
 Fl_Window_Type.o: ../src/flstring.h
 Fl_Window_Type.o: alignment_panel.h
 Fl_Window_Type.o: code.h
@@ -1130,6 +1132,7 @@ Shortcut_Button.o: ../FL/Fl_Widget.H
 Shortcut_Button.o: ../FL/Fl_Window.H
 Shortcut_Button.o: ../FL/platform.H
 Shortcut_Button.o: ../FL/platform_types.h
+Shortcut_Button.o: ../FL/x11.H
 Shortcut_Button.o: ../src/flstring.h
 Shortcut_Button.o: CodeEditor.h
 Shortcut_Button.o: factory.h

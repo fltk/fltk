@@ -205,17 +205,17 @@ public:
 
   /**
     Vertical scrollbar. Public, so that it can be accessed directly.
-    
-    Use `scrollbar_left()` or `scrollbar_right()` to change what side 
+
+    Use `scrollbar_left()` or `scrollbar_right()` to change what side
     the vertical scrollbar is drawn on.
-    
+
     Use `scrollbar.align(int)` (see `Fl_Widget::align(Fl_Align)`)
     to change what side either of the scrollbars is drawn on.
 
-    If the `FL_ALIGN_LEFT` bit is on, the vertical scrollbar is on 
-    the left. If the `FL_ALIGN_TOP` bit is on, the horizontal 
-    scrollbar is on the top. Note that only the alignment flags in 
-    scrollbar are considered. The flags in hscrollbar however 
+    If the `FL_ALIGN_LEFT` bit is on, the vertical scrollbar is on
+    the left. If the `FL_ALIGN_TOP` bit is on, the horizontal
+    scrollbar is on the top. Note that only the alignment flags in
+    scrollbar are considered. The flags in hscrollbar however
     are ignored.
    */
   Fl_Scrollbar scrollbar;

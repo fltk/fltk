@@ -16,3 +16,4 @@ Fl_Cairo.o: ../FL/Fl_Widget.H
 Fl_Cairo.o: ../FL/Fl_Window.H
 Fl_Cairo.o: ../FL/platform.H
 Fl_Cairo.o: ../FL/platform_types.h
+Fl_Cairo.o: ../FL/x11.H

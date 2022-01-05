@@ -451,10 +451,10 @@ class BlockWindow : public Fl_Double_Window {
 
   private:
 
-  int		frames_,
-		frames_per_second_;
-  time_t	frame_time_;
-  bool		show_fps_;
+  int           frames_,
+                frames_per_second_;
+  time_t        frame_time_;
+  bool          show_fps_;
 
   Fl_Button     *help_button_,
                 *play_button_;
