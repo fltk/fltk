@@ -124,6 +124,8 @@ void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H
   // nothing to do, reimplement in driver if needed
 }
 
+void Fl_Graphics_Driver::set_status(int X, int Y, int W, int H) {}
+
 
 /** see fl_reset_spot() */
 void Fl_Graphics_Driver::reset_spot()

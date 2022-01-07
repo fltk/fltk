@@ -141,11 +141,6 @@ static CFStringRef kTISPropertyInputSourceType;
 typedef void (*KeyScript_type)(short);
 static KeyScript_type KeyScript;
 
-/* fltk-utf8 placekeepers */
-void fl_set_status(int x, int y, int w, int h)
-{
-}
-
 
 /*
  * Mac keyboard lookup table

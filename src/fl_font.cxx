@@ -58,3 +58,8 @@ void fl_reset_spot()
 {
   Fl_Graphics_Driver::default_driver().reset_spot();
 }
+
+void fl_set_status(int X, int Y, int W, int H)
+{
+  Fl_Graphics_Driver::default_driver().set_status(X, Y, W, H);
+}

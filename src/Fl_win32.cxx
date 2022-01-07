@@ -328,8 +328,6 @@ static struct FD {
 
 extern unsigned int fl_codepage;
 
-void fl_set_status(int x, int y, int w, int h) {}
-
 void Fl_WinAPI_System_Driver::add_fd(int n, int events, void (*cb)(FL_SOCKET, void *), void *v) {
   remove_fd(n, events);
   int i = nfds++;

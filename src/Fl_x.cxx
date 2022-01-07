@@ -585,7 +585,7 @@ static void fl_new_ic()
 }
 
 
-void fl_set_status(int x, int y, int w, int h)
+void Fl_Xlib_Graphics_Driver::set_status(int x, int y, int w, int h)
 {
   XVaNestedList status_attr;
   status_area.x = x;
