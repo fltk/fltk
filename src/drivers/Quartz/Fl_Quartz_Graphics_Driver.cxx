@@ -17,7 +17,7 @@
 #include <config.h>
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
-#include "../../Fl_Screen_Driver.H"
+#include "../Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
@@ -181,4 +181,12 @@ void Fl_Quartz_Graphics_Driver::restore_scale(float s) {
     Fl::screen_driver()->scale(0, s);
     CGContextScaleCTM(gc_, s, s);
   }
+}
+
+void Fl_Quartz_Graphics_Driver::set_spot(int /*font*/, int size, int X, int Y, int /*W*/, int /*H*/, Fl_Window* /*win*/) {
+  Fl_Cocoa_Screen_Driver::insertion_point_location(X, Y, size);
+}
+
+void Fl_Quartz_Graphics_Driver::reset_spot() {
+  Fl_Cocoa_Screen_Driver::reset_marked_text();
 }

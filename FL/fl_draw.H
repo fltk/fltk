@@ -1076,9 +1076,25 @@ FL_EXPORT const char *fl_expand_text(const char *from, char *buf, int maxbuf, do
 // XIM:
 /** \todo provide user documentation for fl_set_status function */
 FL_EXPORT void fl_set_status(int X, int Y, int W, int H);
-/** \todo provide user documentation for fl_set_spot function */
+/** Inform text input methods about the current text insertion cursor.
+ \param font Font currently in use in text input.
+ \param size Size of the current font.
+ \param X,Y Position of the bottom of the current text insertion cursor.
+ \param W,H Width and height of the current text insertion cursor.
+ \param win Points to the Fl_Window object containing the current text widget, or NULL.
+ */
 FL_EXPORT void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win = 0);
-/** \todo provide user documentation for fl_reset_spot function*/
+/** Resets marked text.
+
+ In many languages, typing a character can involve multiple keystrokes. For
+ example, the Ä can be composed of two dots (¨) on top of the
+ character, followed by the letter A (on a Mac with U.S. keyboard, you'd
+ type Alt-U, Shift-A. To inform the user that the dots may be followed by
+ another character, the ¨ is underlined).
+
+ Call this function if character composition needs to be aborted for some
+ reason. One such example would be the text input widget losing focus.
+ */
 FL_EXPORT void fl_reset_spot(void);
 
 

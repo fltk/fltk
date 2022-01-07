@@ -670,9 +670,10 @@ int Fl_Text_Editor::handle(int event) {
       if (Fl::screen_driver()->has_marked_text() && buffer()->selected() && Fl::compose_state) {
         int pos = insert_position();
         buffer()->select(pos, pos);
-        Fl::reset_marked_text();
+        fl_reset_spot();
       }
       if (buffer()->selected()) redraw(); // Redraw selections...
+      // FALLTHROUGH
     case FL_HIDE:
       if (when() & FL_WHEN_RELEASE) maybe_do_callback();
       return 1;

@@ -377,7 +377,6 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       } else {
         fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
-      Fl::insertion_point_location((int)xpos+curx, Y+ypos+height, height);
       ypos_cur = ypos+height; //fix issue #270
     }
 

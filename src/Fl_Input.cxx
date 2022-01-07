@@ -469,7 +469,7 @@ int Fl_Input::handle(int event) {
     case FL_UNFOCUS:
       if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
         this->mark( this->position() );
-        Fl::reset_marked_text();
+        fl_reset_spot();
       }
       break;
     case FL_FOCUS:

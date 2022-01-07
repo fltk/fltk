@@ -122,12 +122,9 @@ public:
 
   static int secret_input_character;
   /* Implement to indicate whether complex text input may involve marked text.
-    When it does, has_marked_text returns non zero and reset_marked_text() and
-    insertion_point_location() must also be implemented.
+    When it does, has_marked_text returns non zero.
   */
   virtual int has_marked_text() const { return 0; }
-  virtual void reset_marked_text() {}
-  virtual void insertion_point_location(int /*x*/, int /*y*/, int /*height*/) {}
   // implement so text-editing widgets support dead keys
   virtual int compose(int &del) {
     del = 0;

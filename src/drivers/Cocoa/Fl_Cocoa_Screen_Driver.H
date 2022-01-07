@@ -86,9 +86,9 @@ public:
   virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int has_marked_text() const;
-  virtual void reset_marked_text();
-  virtual void insertion_point_location(int x, int y, int height);
-  int insertion_point_location(int *px, int *py, int *pheight);
+  static void reset_marked_text();
+  static void insertion_point_location(int x, int y, int height);
+  static int insertion_point_location(int *px, int *py, int *pheight);
   virtual int dnd(int use_selection);
   virtual int compose(int &del);
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);

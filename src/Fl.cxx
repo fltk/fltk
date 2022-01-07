@@ -1885,31 +1885,6 @@ int Fl::dnd()
   return Fl::screen_driver()->dnd();
 }
 
-/**
- Resets marked text.
-
- In many languages, typing a character can involve multiple keystrokes. For
- example, the Ä can be composed of two dots (¨) on top of the
- character, followed by the letter A (on a Mac with U.S. keyboard, you'd
- type Alt-U, Shift-A. To inform the user that the dots may be followed by
- another character, the ¨ is underlined).
-
- Call this function if character composition needs to be aborted for some
- reason. One such example would be the text input widget losing focus.
- */
-void Fl::reset_marked_text() {
-  Fl::screen_driver()->reset_marked_text();
-}
-
-/**
-  Sets window coordinates and height of insertion point.
-
- \see Fl::compose(int& del) for a detailed description.
-*/
-void Fl::insertion_point_location(int x, int y, int height) {
-  Fl::screen_driver()->insertion_point_location(x, y, height);
-}
-
 int Fl::event_key(int k) {
   return system_driver()->event_key(k);
 }

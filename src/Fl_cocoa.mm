@@ -2674,7 +2674,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 
 - (void)unmarkText {
   fl_lock_function();
-  Fl::reset_marked_text();
+  Fl_Cocoa_Screen_Driver::reset_marked_text();
   fl_unlock_function();
   //NSLog(@"unmarkText");
 }
@@ -2720,7 +2720,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   glyphRect.size.width = 0;
 
   int x, y, height;
-  if (((Fl_Cocoa_Screen_Driver*)Fl::screen_driver())->insertion_point_location(&x, &y, &height)) {
+  if (Fl_Cocoa_Screen_Driver::insertion_point_location(&x, &y, &height)) {
     glyphRect.origin.x = (CGFloat)x;
     glyphRect.origin.y = (CGFloat)y;
   } else {
@@ -4623,4 +4623,13 @@ void Fl_Cocoa_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int coun
   if (count >= 1) {
     default_icon = rgb_to_nsimage(icons[0]);
   }
+}
+
+// Deprecated in 1.4 - only for backward compatibility with 1.3
+void Fl::insertion_point_location(int x, int y, int height) {
+  Fl_Cocoa_Screen_Driver::insertion_point_location(x, y, height);
+}
+// Deprecated in 1.4 - only for backward compatibility with 1.3
+void Fl::reset_marked_text() {
+  Fl_Cocoa_Screen_Driver::reset_marked_text();
 }

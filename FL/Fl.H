@@ -146,8 +146,11 @@ public:
 
   static Fl_Screen_Driver *screen_driver();
   static Fl_System_Driver *system_driver();
-  static void reset_marked_text(); // resets marked text
-  static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
+#ifdef __APPLE__ // deprecated in 1.4 - only for compatibility with 1.3
+  static void reset_marked_text();
+  static void insertion_point_location(int x, int y, int height);
+#endif
+
 
   /** Get the box shadow width of all "shadow" boxtypes in pixels.
     \since 1.4.0
