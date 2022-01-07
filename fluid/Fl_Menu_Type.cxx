@@ -102,6 +102,11 @@ void Fl_Input_Choice_Type::build_menu() {
     } else {
       if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
+    // Menus are already built during the .fl file reading process, so if the
+    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // not be set, and deleting dependants will randomly free memory.
+    // Clearing the array should avoid that.
+    memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
@@ -544,6 +549,11 @@ void Fl_Menu_Type::build_menu() {
     } else {
       if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
+    // Menus are already built during the .fl file reading process, so if the
+    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // not be set, and deleting dependants will randomly free memory.
+    // Clearing the array should avoid that.
+    memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
