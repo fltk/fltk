@@ -1,7 +1,7 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// The Fl_Group is the only defined container type in FLTK.
+// Fl_Group is the basic container type in FLTK. Other container types
+// (classes) are usually subclasses of Fl_Group.
 
 // Fl_Window itself is a subclass of this, and most of the event
 // handling is designed so windows themselves work correctly.
@@ -300,16 +301,6 @@ int Fl_Group::handle(int event) {
     return 0;
   }
 }
-
-//void Fl_Group::focus(Fl_Widget *o) {Fl::focus(o); o->handle(FL_FOCUS);}
-
-#if 0
-const char *nameof(Fl_Widget *o) {
-  if (!o) return "NULL";
-  if (!o->label()) return "<no label>";
-  return o->label();
-}
-#endif
 
 // try to move the focus in response to a keystroke:
 int Fl_Group::navigation(int key) {
@@ -800,19 +791,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
       int T = p->y();
       int B = T + p->h();
 
-#if 0 // old widget resizing code: used up to FLTK 1.3.x, deactivated 29 Mar 2018
-      // FIXME: This should be removed before the release of FLTK 1.4.0
-
-      if (L >= RR) L += dw;
-      else if (L > RL) L = RL+((L-RL)*(RR+dw-RL)+(RR-RL)/2)/(RR-RL);
-      if (R >= RR) R += dw;
-      else if (R > RL) R = RL+((R-RL)*(RR+dw-RL)+(RR-RL)/2)/(RR-RL);
-      if (T >= RB) T += dh;
-      else if (T > RT) T = RT+((T-RT)*(RB+dh-RT)+(RB-RT)/2)/(RB-RT);
-      if (B >= RB) B += dh;
-      else if (B > RT) B = RT+((B-RT)*(RB+dh-RT)+(RB-RT)/2)/(RB-RT);
-
-#else // much simpler code from Francois Ostiguy: since FLTK 1.4.0
+      // widget resizing code from Francois Ostiguy (since FLTK 1.4.0)
 
       if (L >= RR) L += dw;
       else if (L > RL) L += dw * (L-RL) / (RR-RL);
@@ -822,8 +801,6 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
       else if (T > RT) T += dh * (T-RT) / (RB-RT);
       if (B >= RB) B += dh;
       else if (B > RT) B += dh * (B-RT) / (RB-RT);
-
-#endif // old / new (1.4.0++) widget resizing code
 
       o->resize(L+dx, T+dy, R-L, B-T);
     }
