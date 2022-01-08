@@ -38,6 +38,8 @@ Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)0;
 
 Fl_Check_Button *utf8_in_src_button=(Fl_Check_Button *)0;
 
+Fl_Check_Button *avoid_early_includes_button=(Fl_Check_Button *)0;
+
 Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_i18n_type_chooser[] = {
@@ -60,15 +62,15 @@ Fl_Input *i18n_function_input=(Fl_Input *)0;
 Fl_Input *i18n_static_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
-  { project_window = new Fl_Double_Window(399, 275, "Project Settings");
-    { Fl_Button* o = new Fl_Button(328, 239, 60, 25, "Close");
+  { project_window = new Fl_Double_Window(399, 298, "Project Settings");
+    { Fl_Button* o = new Fl_Button(328, 267, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 379, 218);
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 379, 246);
       o->selection_color((Fl_Color)12);
       o->labelcolor(FL_BACKGROUND2_COLOR);
-      { Fl_Group* o = new Fl_Group(10, 36, 379, 192, "Output");
+      { Fl_Group* o = new Fl_Group(10, 36, 379, 220, "Output");
         { Fl_Box* o = new Fl_Box(20, 49, 340, 49, "Use \"name.ext\" to set a file name or just \".ext\" to set extension.");
           o->align(Fl_Align(132|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -105,9 +107,14 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           utf8_in_src_button->down_box(FL_DOWN_BOX);
           utf8_in_src_button->callback((Fl_Callback*)utf8_in_src_cb);
         } // Fl_Check_Button* utf8_in_src_button
+        { avoid_early_includes_button = new Fl_Check_Button(117, 222, 272, 20, "avoid early include of Fl.H");
+          avoid_early_includes_button->tooltip("Do not emit #include <FL//Fl.H> until it is needed by another include file.");
+          avoid_early_includes_button->down_box(FL_DOWN_BOX);
+          avoid_early_includes_button->callback((Fl_Callback*)avoid_early_includes_cb);
+        } // Fl_Check_Button* avoid_early_includes_button
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 36, 378, 192, "Internationalization");
+      { Fl_Group* o = new Fl_Group(10, 36, 378, 220, "Internationalization");
         o->hide();
         { i18n_type_chooser = new Fl_Choice(128, 48, 136, 25, "Use:");
           i18n_type_chooser->tooltip("Type of internationalization to use.");

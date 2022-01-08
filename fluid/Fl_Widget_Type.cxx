@@ -2015,6 +2015,7 @@ int isdeclare(const char *c) {
 void Fl_Widget_Type::write_static() {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
+    write_declare("#include <FL/Fl.H>");
     write_declare("#include <FL/%s.H>", t);
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {

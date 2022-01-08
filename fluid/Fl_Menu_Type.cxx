@@ -242,8 +242,10 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
 }
 
 void Fl_Menu_Item_Type::write_static() {
-  if (image && label() && label()[0])
+  if (image && label() && label()[0]) {
+    write_declare("#include <FL/Fl.H>");
     write_declare("#include <FL/Fl_Multi_Label.H>");
+  }
   if (callback() && is_name(callback()) && !user_defined(callback()))
     write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
                   user_data_type() ? user_data_type() : "void*");

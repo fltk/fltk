@@ -584,7 +584,9 @@ int write_code(const char *s, const char *t) {
   fprintf(header_file, "#define %s\n", define_name);
   }
 
-  write_declare("#include <FL/Fl.H>");
+  if (avoid_early_includes==0) {
+    write_declare("#include <FL/Fl.H>");
+  }
   if (t && include_H_from_C) {
     if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
