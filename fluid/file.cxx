@@ -383,6 +383,8 @@ int write_file(const char *filename, int selected_only) {
     write_string("\nuse_FL_COMMAND");
   if (utf8_in_src)
     write_string("\nutf8_in_src");
+  if (avoid_early_includes)
+    write_string("\navoid_early_includes");
   if (i18n_type) {
     write_string("\ni18n_type %d", i18n_type);
     write_string("\ni18n_include"); write_word(i18n_include);
@@ -502,6 +504,10 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
       }
       if (!strcmp(c,"utf8_in_src")) {
         utf8_in_src=1;
+        goto CONTINUE;
+      }
+      if (!strcmp(c,"avoid_early_includes")) {
+        avoid_early_includes=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {

@@ -35,7 +35,7 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 }
 
-decl {\#include <FL/filename.H>} {public local
+decl {\#include <FL/filename.H>} {selected public local
 }
 
 decl {\#include <FL/Fl_Preferences.H>} {private global
@@ -54,7 +54,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {472 246 399 275} type Double
+    xywh {472 246 399 298} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -62,14 +62,14 @@ Function {make_project_window()} {open
       label Close
       callback {project_window->hide();
 set_modflag(-1, -1);}
-      tooltip {Close this dialog.} xywh {328 239 60 25}
+      tooltip {Close this dialog.} xywh {328 267 60 25}
     }
     Fl_Tabs {} {open
-      xywh {10 10 379 218} selection_color 12 labelcolor 7
+      xywh {10 10 379 246} selection_color 12 labelcolor 7
     } {
       Fl_Group {} {
-        label Output open selected
-        xywh {10 36 379 192}
+        label Output open
+        xywh {10 36 379 220}
       } {
         Fl_Box {} {
           label {Use "name.ext" to set a file name or just ".ext" to set extension.}
@@ -102,10 +102,15 @@ set_modflag(-1, -1);}
           callback utf8_in_src_cb
           tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {117 199 272 20} down_box DOWN_BOX
         }
+        Fl_Check_Button avoid_early_includes_button {
+          label {avoid early include of Fl.H}
+          callback avoid_early_includes_cb
+          tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {117 222 272 20} down_box DOWN_BOX
+        }
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 36 378 192} hide
+        xywh {10 36 378 220} hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}

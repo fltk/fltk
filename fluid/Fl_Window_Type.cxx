@@ -45,6 +45,7 @@
 int include_H_from_C = 1;
 int use_FL_COMMAND = 0;
 int utf8_in_src = 0;
+int avoid_early_includes = 0;
 
 extern Fl_Preferences   fluid_prefs;
 
@@ -194,6 +195,7 @@ void show_project_cb(Fl_Widget *, void *) {
   include_H_from_C_button->value(include_H_from_C);
   use_FL_COMMAND_button->value(use_FL_COMMAND);
   utf8_in_src_button->value(utf8_in_src);
+  avoid_early_includes_button->value(avoid_early_includes);
   header_file_input->value(header_file_name);
   code_file_input->value(code_file_name);
   i18n_type_chooser->value(i18n_type);
@@ -289,6 +291,13 @@ void utf8_in_src_cb(Fl_Check_Button *b, void*) {
   if (utf8_in_src != b->value()) {
     set_modflag(1);
     utf8_in_src = b->value();
+  }
+}
+
+void avoid_early_includes_cb(Fl_Check_Button *b, void*) {
+  if (avoid_early_includes != b->value()) {
+    set_modflag(1);
+    avoid_early_includes = b->value();
   }
 }
 

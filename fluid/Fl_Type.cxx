@@ -183,6 +183,7 @@ void delete_all(int selected_only) {
     include_H_from_C=1;
     use_FL_COMMAND=0;
     utf8_in_src = 0;
+    avoid_early_includes = 0;
     // reset the setting for the external shell command
     shell_prefs_get();
     shell_settings_write();
