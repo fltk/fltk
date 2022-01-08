@@ -2321,6 +2321,11 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
     if (shown()) {pWindow->redraw();}
   } else {
     x(X); y(Y);
+    if (fl_xim_win && Fl::focus()) {
+      // Force the Input Method auxiliary window to move too.
+      Fl::focus()->handle(FL_FOCUS);
+      fl_set_spot(fl_font(), fl_size(), Fl::focus()->x(), Fl::focus()->y() + fl_size(), Fl::focus()->w(), Fl::focus()->h(), NULL);
+    }
   }
 
   if (resize_from_program && is_a_resize && !pWindow->resizable()) {
