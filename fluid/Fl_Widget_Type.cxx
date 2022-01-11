@@ -2200,7 +2200,9 @@ void Fl_Widget_Type::write_code1() {
 
   indentation++;
 
-  if (wused) write_c("%sw = o; if (w) {/* empty */}\n", indent());
+  // Avoid compiler warning for unused variable.
+  // Also avoid quality control warnings about incorrect allocation error handling.
+  if (wused) write_c("%sw = o; (void)w;\n", indent());
 
   write_widget_code();
 }
