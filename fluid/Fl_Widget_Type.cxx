@@ -213,13 +213,10 @@ Fl_Widget_Type::Fl_Widget_Type() {
 
 Fl_Widget_Type::~Fl_Widget_Type() {
   if (o) {
-    o->hide();
     Fl_Window *win = o->window();
+    delete o;
     if (win)
       win->redraw();
-    if (o->parent())
-      ((Fl_Group*)o->parent())->remove(*o);
-    delete o;
   }
   if (subclass_) free((void*)subclass_);
   if (tooltip_) free((void*)tooltip_);
