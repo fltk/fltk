@@ -58,16 +58,34 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // note: this is used by the Fl_Input_Choice ctor.
   static void inp_cb(Fl_Widget*, void *data);
 
+protected:
   // Custom resize behavior -- input stretches, menu button doesn't
-  inline int inp_x() { return(x() + Fl::box_dx(box())); }
-  inline int inp_y() { return(y() + Fl::box_dy(box())); }
-  inline int inp_w() { return(w() - Fl::box_dw(box()) - 20); }
-  inline int inp_h() { return(h() - Fl::box_dh(box())); }
 
-  inline int menu_x() { return(x() + w() - 20 - Fl::box_dx(box())); }
-  inline int menu_y() { return(y() + Fl::box_dy(box())); }
-  inline int menu_w() { return(20); }
-  inline int menu_h() { return(h() - Fl::box_dh(box())); }
+  /** The methods inp_x(), inp_y(), inp_w() and inp_h() return the
+      desired position and size of the internal Fl_Input widget.
+      These can be overridden by a subclass to redefine positioning.
+      See code example in the Description for subclassing details.
+  */
+  virtual int inp_x() const { return(x() + Fl::box_dx(box())); }
+  /** See inp_x() for info. */
+  virtual int inp_y() const { return(y() + Fl::box_dy(box())); }
+  /** See inp_x() for info. */
+  virtual int inp_w() const { return(w() - Fl::box_dw(box()) - 20); }
+  /** See inp_x() for info. */
+  virtual int inp_h() const { return(h() - Fl::box_dh(box())); }
+
+  /** The methods menu_x(), menu_y(), menu_w() and menu_h() return the
+      desired position and size of the internal Fl_Menu_Button widget.
+      These can be overridden by a subclass to redefine positioning.
+      See code example in the Description for subclassing details.
+  */
+  virtual int menu_x() const { return(x() + w() - 20 - Fl::box_dx(box())); }
+  /** See menu_x() for info. */
+  virtual int menu_y() const { return(y() + Fl::box_dy(box())); }
+  /** See menu_x() for info. */
+  virtual int menu_w() const { return(20); }
+  /** See menu_x() for info. */
+  virtual int menu_h() const { return(h() - Fl::box_dh(box())); }
 
 public:
 

@@ -54,19 +54,18 @@
       - 1: the user picked a different item in the choice menu
       - 0: the user typed or pasted directly into the input field
 
-  Example use:
+  \par Example Use of Fl_Input_Choice
   \code
   #include <stdio.h>
   #include <FL/Fl.H>
   #include <FL/Fl_Double_Window.H>
   #include <FL/Fl_Input_Choice.H>
+  // Fl_Input_Choice callback()
   void choice_cb(Fl_Widget *w, void *userdata) {
-
     // Show info about the picked item
     Fl_Input_Choice *choice = (Fl_Input_Choice*)w;
     printf("*** Choice Callback:\n");
     printf("    widget's text value='%s'\n", choice->value());   // normally all you need
-
     // Access the menu via menubutton()..
     const Fl_Menu_Item *item = choice->menubutton()->mvalue();
     printf("    item label()='%s'\n", item ? item->label() : "(No item)");
@@ -90,6 +89,39 @@
     return Fl::run();
   }
   \endcode
+
+ \par Subclassing Example
+ One can subclass Fl_Input_Choice to override the virtual methods inp_x/y/w/h()
+ and menu_x/y/w/h() to take control of the internal Fl_Input and Fl_Menu_Button widget
+ positioning. In this example, input and menubutton's positions are swapped:
+ \code
+  #include <FL/Fl.H>
+  #include <FL/Fl_Window.H>
+  #include <FL/Fl_Input_Choice.H>
+
+  class MyInputChoice : public Fl_Input_Choice {
+  protected:
+    virtual int inp_x()  const { return x() + Fl::box_dx(box()) + menu_w(); }  // override to reposition
+    virtual int menu_x() const { return x() + Fl::box_dx(box()); }             // override to reposition
+  public:
+    MyInputChoice(int X,int Y,int W,int H,const char*L=0) : Fl_Input_Choice(X,Y,W,H,L) {
+      resize(X,Y,W,H);  // necessary for ctor to trigger our overrides
+    }
+  };
+
+  int main(int argc, char **argv) {
+    Fl_Window *win = new Fl_Window(400,300);
+    MyInputChoice *mychoice = new MyInputChoice(150,40,150,25,"Right Align Input");
+    mychoice->add("Aaa");
+    mychoice->add("Bbb");
+    mychoice->add("Ccc");
+    win->end();
+    win->resizable(win);
+    win->show();
+    return Fl::run();
+  }
+ \endcode
+
 */
 
 /** Constructor for private menu button. */
