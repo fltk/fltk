@@ -32,8 +32,8 @@
 
   \brief A combination of the input widget and a menu button.
 
-  \image html input_choice.jpg
-  \image latex input_choice.jpg "Fl_Input_Choice widget" width=6cm
+  \image html input_choice.png
+  \image latex input_choice.png "Fl_Input_Choice widget" width=6cm
 
   The user can either type into the input area, or use the
   menu button chooser on the right to choose an item which loads
@@ -142,6 +142,56 @@ void Fl_Input_Choice::InputMenuButton::draw() {
   if (Fl::focus() == this) draw_focus();
 }
 
+// Make pulldown menu appear under entire width of widget
+const Fl_Menu_Item* Fl_Input_Choice::InputMenuButton::popup() {
+  menu_end();
+  redraw();
+  Fl_Widget_Tracker mb(this);
+  // Make menu appear under entire width of Fl_Input_Choice parent group
+  const Fl_Menu_Item *m = menu()->pulldown(parent()->x(), y(), parent()->w(), h(), 0, this);
+  picked(m);
+  if (mb.exists()) redraw();
+  return m;
+}
+
+// Invokes our popup() method to ensure pulldown menu appears full width under widget
+//    (This is the same handle() code in Fl_Menu_Button and Fl_Choice)
+//
+int Fl_Input_Choice::InputMenuButton::handle(int e) {
+  if (!menu() || !menu()->text) return 0;
+  switch (e) {
+  case FL_ENTER: /* FALLTHROUGH */
+  case FL_LEAVE:
+    return (box() && !type()) ? 1 : 0;
+  case FL_PUSH:
+    if (!box()) {
+      if (Fl::event_button() != 3) return 0;
+    } else if (type()) {
+      if (!(type() & (1 << (Fl::event_button()-1)))) return 0;
+    }
+    if (Fl::visible_focus()) Fl::focus(this);
+    popup();
+    return 1;
+  case FL_KEYBOARD:
+    if (!box()) return 0;
+    if (Fl::event_key() == ' ' &&
+        !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
+      popup();
+      return 1;
+    } else return 0;
+  case FL_SHORTCUT:
+    if (Fl_Widget::test_shortcut()) {popup(); return 1;}
+    return test_shortcut() != 0;
+  case FL_FOCUS: /* FALLTHROUGH */
+  case FL_UNFOCUS:
+    if (box() && Fl::visible_focus()) {
+      redraw();
+      return 1;
+    }
+  default:
+    return 0;
+  }
+}
 
 /** Callback for the Fl_Input_Choice menu. */
 

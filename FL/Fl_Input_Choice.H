@@ -45,8 +45,10 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // Private class to handle slightly 'special' behavior of menu button
   class InputMenuButton : public Fl_Menu_Button {
     void draw();
+    const Fl_Menu_Item* popup();
   public:
     InputMenuButton(int X, int Y, int W, int H, const char *L=0);
+    int handle(int e);
   };
 
   Fl_Input *inp_;
