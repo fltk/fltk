@@ -313,7 +313,7 @@ struct FL_EXPORT Fl_Menu_Item {
   int value() const {return (flags & FL_MENU_VALUE) ? 1 : 0;}
   /**
     Turns the check or radio item "on" for the menu item. Note that this
-    does not turn off any adjacent radio items like set_only() does.
+    does not turn off any adjacent radio items like setonly() does.
   */
   void set() {flags |= FL_MENU_VALUE;}
 
