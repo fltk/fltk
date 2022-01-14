@@ -182,11 +182,38 @@ Fl_Widget::~Fl_Widget() {
   if (callback_ == default_callback) cleanup_readqueue(this);
 }
 
-/** Draws a focus box for the widget at the given position and size. */
+/**
+  Draws a focus box for the widget at the given position and size.
 
-void Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+  This method does nothing if
+  - the global option Fl::visible_focus() or
+  - the per-widget option visible_focus()
+  is false (off).
+
+  This means that Fl_Widget::draw_focus() or one of the more specialized
+  methods can be called without checking these visible focus options.
+
+  \note This method must only be called if the widget has the focus.
+        This is not tested internally.
+
+  The boxtype \p bt is used to calculate the inset so the focus box is drawn
+  inside the box borders.
+
+  The default focus box drawing color is black. The background color \p bg
+  is used to determine a better visible color if necessary by using
+  fl_contrast() with the given background color.
+
+  \param[in]  bt        Boxtype that needs to be considered (frame width)
+  \param[in]  X,Y,W,H   Bounding box
+  \param[in]  bg        Background color
+
+  \see Fl_Widget::draw_focus()
+  \see Fl_Widget::draw_focus(Fl_Boxtype, int, int, int, int) const
+*/
+void Fl_Widget::draw_focus(Fl_Boxtype bt, int X, int Y, int W, int H, Fl_Color bg) const {
   if (!Fl::visible_focus()) return;
-  switch (B) {
+  if (!visible_focus()) return;
+  switch (bt) {
     case FL_DOWN_BOX:
     case FL_DOWN_FRAME:
     case FL_THIN_DOWN_BOX:
@@ -196,15 +223,16 @@ void Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
     default:
       break;
   }
-  X += Fl::box_dx(B);
-  Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B)+1;
-  H -= Fl::box_dh(B)+1;
+  X += Fl::box_dx(bt);
+  Y += Fl::box_dy(bt);
+  W -= Fl::box_dw(bt)+1;
+  H -= Fl::box_dh(bt)+1;
 
-  fl_color(fl_contrast(FL_BLACK, color()));
+  Fl_Color savecolor = fl_color();
+  fl_color(fl_contrast(FL_BLACK, bg));
   fl_focus_rect(X, Y, W, H);
+  fl_color(savecolor);
 }
-
 
 void Fl_Widget::activate() {
   if (!active()) {

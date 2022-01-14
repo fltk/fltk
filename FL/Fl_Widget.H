@@ -169,9 +169,28 @@ protected:
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
   void draw_backdrop() const;
-  /** draws a focus rectangle around the widget */
-  void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
-  void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) const;
+
+  /** Draws a focus rectangle around the widget.
+    This method uses the widget's boxtype and coordinates and its
+    background color color().
+    \see Fl_Widget::draw_focus(Fl_Boxtype, int, int, int, int, Fl_Color) const
+  */
+  void draw_focus() const {
+    draw_focus(box(), x(), y(), w(), h(), color());
+  }
+
+  /** Draws a focus rectangle around the widget.
+    This method uses the given boxtype and coordinates and the widget's
+    background color color().
+    \see Fl_Widget::draw_focus(Fl_Boxtype, int, int, int, int, Fl_Color) const
+  */
+  void draw_focus(Fl_Boxtype t, int X, int Y, int W, int H) const {
+    draw_focus(t, X, Y, W, H, color());
+
+  }
+  // See documentation in Fl_Widget.cxx
+  void draw_focus(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color bg) const;
+
   void draw_label() const;
   void draw_label(int, int, int, int) const;
 
@@ -845,7 +864,7 @@ public:
       \retval 0 if this widget has no visible focus.
       \see visible_focus(int), set_visible_focus(), clear_visible_focus()
    */
-  unsigned int visible_focus() { return flags_ & VISIBLE_FOCUS; }
+  unsigned int visible_focus() const { return flags_ & VISIBLE_FOCUS; }
 
   /** The default callback for all widgets that don't set a callback.
 

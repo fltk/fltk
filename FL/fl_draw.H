@@ -299,7 +299,12 @@ inline void fl_rect(Fl_Rect r) {
   fl_rect(r.x(), r.y(), r.w(), r.h());
 }
 
-/** Draw a dotted rectangle, used to indicate keyboard focus on a widget. */
+/** Draw a dotted rectangle, used to indicate keyboard focus on a widget.
+
+  This method draws the rectangle in the current color and independent of
+  the Fl::visible_focus() option. You may need to set the current color
+  with fl_color() before you call this.
+*/
 inline void fl_focus_rect(int x, int y, int w, int h) {
   fl_graphics_driver->focus_rect(x, y, w, h);
 }
