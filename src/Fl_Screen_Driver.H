@@ -206,6 +206,7 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  virtual void make_transient(void *, void *, Fl_Window *) {}
 };
 
 #endif // !FL_SCREEN_DRIVER_H

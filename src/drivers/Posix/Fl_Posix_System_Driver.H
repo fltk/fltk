@@ -88,7 +88,6 @@ public:
   virtual void lock_ring();
   virtual void unlock_ring();
 #endif
-  virtual void make_transient(void */*ptr_gtk*/, void */*gtk_window*/, Fl_Window *) {}
   virtual void emulate_modal_dialog() {}
 };
 

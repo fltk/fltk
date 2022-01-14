@@ -64,7 +64,6 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
-  virtual void make_transient(void *ptr_gtk, void *gtk_window, Fl_Window *win);
   virtual void emulate_modal_dialog();
 };
 

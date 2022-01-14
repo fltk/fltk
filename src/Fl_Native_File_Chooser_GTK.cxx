@@ -29,6 +29,7 @@
 #include <FL/fl_string.h>
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/X11/Fl_X11_System_Driver.H"
+#include "Fl_Screen_Driver.H"
 
 /* --------------------- Type definitions from GLIB and GTK --------------------- */
 /* all of this is from the public gnome API, so unlikely to change */
@@ -761,7 +762,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
   if (firstw) {
-    ((Fl_Posix_System_Driver*)Fl::system_driver())->make_transient(Fl_Posix_System_Driver::ptr_gtk, gtkw_ptr, firstw);
+    Fl::screen_driver()->make_transient(Fl_Posix_System_Driver::ptr_gtk, gtkw_ptr, firstw);
   }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
   fl_gtk_toggle_button_set_active((GtkToggleButton *)show_hidden_button, state);

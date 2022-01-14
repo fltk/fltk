@@ -23,6 +23,7 @@
 #ifndef FL_X11_SCREEN_DRIVER_H
 #define FL_X11_SCREEN_DRIVER_H
 
+#include <config.h>
 #include "../../Fl_Screen_Driver.H"
 
 
@@ -102,6 +103,9 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  virtual void make_transient(void *ptr_gtk, void *gtk_window, Fl_Window *win);
+#endif
 };
 
 
