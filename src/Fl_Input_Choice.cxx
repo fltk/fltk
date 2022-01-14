@@ -33,7 +33,7 @@
   \brief A combination of the input widget and a menu button.
 
   \image html input_choice.png
-  \image latex input_choice.png "Fl_Input_Choice widget" width=6cm
+  \image latex input_choice.png "Fl_Input_Choice widget" width=12cm
 
   The user can either type into the input area, or use the
   menu button chooser on the right to choose an item which loads
@@ -135,7 +135,7 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
 /** Draws the private menu button. */
 
 void Fl_Input_Choice::InputMenuButton::draw() {
-  draw_box(FL_UP_BOX, color());
+  draw_box();
   fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
   int xc = x()+w()/2, yc=y()+h()/2;
   fl_polygon(xc-5,yc-3,xc+5,yc-3,xc,yc+3);
@@ -255,15 +255,12 @@ Fl_Input_Choice::Fl_Input_Choice (int X, int Y, int W, int H, const char *L)
 : Fl_Group(X,Y,W,H,L) {
   Fl_Group::box(FL_DOWN_BOX);
   align(FL_ALIGN_LEFT);                                 // default like Fl_Input
-  inp_ = new Fl_Input(inp_x(), inp_y(),
-                      inp_w(), inp_h());
+  inp_ = new Fl_Input(inp_x(), inp_y(), inp_w(), inp_h());
   inp_->callback(inp_cb, (void*)this);
   inp_->box(FL_FLAT_BOX);                               // cosmetic
   inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
-  menu_ = new InputMenuButton(menu_x(), menu_y(),
-                              menu_w(), menu_h());
+  menu_ = new InputMenuButton(menu_x(), menu_y(), menu_w(), menu_h());
   menu_->callback(menu_cb, (void*)this);
-  menu_->box(FL_FLAT_BOX);                              // cosmetic
   end();
 }
 
