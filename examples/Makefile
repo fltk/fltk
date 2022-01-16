@@ -6,6 +6,7 @@ SHELL = /bin/sh
 
 # Executables
 ALL = browser-simple$(EXEEXT) \
+      cairo-draw-x$(EXEEXT) \
       chart-simple$(EXEEXT) \
       draggable-group$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
@@ -43,6 +44,14 @@ ALL = browser-simple$(EXEEXT) \
 
 # default target -- build everything
 default all: $(ALL)
+
+# Special rules for building cairo app
+cairo-draw-x.o: cairo-draw-x.cxx
+	@echo "*** Compile $<..."
+	$(CXX) -I.. $(CXXFLAGS_CAIRO) -c $< -o $@
+cairo-draw-x$(EXEEXT): cairo-draw-x.o
+	@echo "*** Link $<..."
+	$(CXX) $< $(LINKFLTK) $(LINKFLTK_CAIRO) -o $@
 
 # clean everything
 clean:

@@ -49,6 +49,13 @@ LDLIBS="@LIBS@"
 OPTIM="@OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
+# Config
+if grep -q '^#define FLTK_HAVE_CAIRO 1' $selfdir/FL/fl_config.h; then
+    FLTK_HAVE_CAIRO=1
+else
+    FLTK_HAVE_CAIRO=0
+fi
+
 # Check for local invocation, and update paths accordingly...
 if test -f "$selfdir/FL/Fl_Window.H"; then
 	includedir="$selfdir"
@@ -75,7 +82,7 @@ if test -d $includedir/FL/images; then
 	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
 fi
 
-if test -f "$libdir/libfltk_cairo.a"; then
+if [ $FLTK_HAVE_CAIRO = 1 ]; then
 	CFLAGS="$CAIROFLAGS $CFLAGS"
 	CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
 fi
@@ -249,7 +256,7 @@ if test x$use_images = xyes; then
     LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
 fi
 
-if test x$use_cairo = xyes; then
+if test x$use_cairo = xyes -a $FLTK_HAVE_CAIRO = 1; then
     LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
     LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
 fi
