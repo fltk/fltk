@@ -1,7 +1,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -206,7 +206,6 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
-  virtual void make_transient(void *, void *, Fl_Window *) {}
 };
 
 #endif // !FL_SCREEN_DRIVER_H

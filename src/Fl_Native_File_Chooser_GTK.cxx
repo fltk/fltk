@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 // Copyright 2012 IMM
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -29,6 +29,7 @@
 #include <FL/fl_string.h>
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/X11/Fl_X11_System_Driver.H"
+#include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
 
 /* --------------------- Type definitions from GLIB and GTK --------------------- */
@@ -624,6 +625,11 @@ static void minus_cb(GtkWidget *togglebutton, GtkImage *preview) {
 }
 
 
+static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
+  return 0;
+}
+
+
 int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 {
   int result = 1;
@@ -759,19 +765,42 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   }
   fl_gtk_file_chooser_set_extra_widget((GtkFileChooser *)gtkw_ptr, extra);
   fl_gtk_widget_show_all(extra);
-  Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
-  if (firstw) {
-    Fl::screen_driver()->make_transient(Fl_Posix_System_Driver::ptr_gtk, gtkw_ptr, firstw);
-  }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
   fl_gtk_toggle_button_set_active((GtkToggleButton *)show_hidden_button, state);
+  
+  Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
+  // prevent FLTK from processing any event
+  Fl::event_dispatch(fnfc_dispatch);
+  struct win_dims {
+    Fl_Window *win;
+    int minw,minh,maxw,maxh;
+    struct win_dims *next;
+  } *first_dim = NULL;
+  // consider all bordered, top-level FLTK windows
+  Fl_Window *win = Fl::first_window();
+  while (win) {
+    if (win->border()) {
+      Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
+      win_dims *dim = new win_dims;
+      dim->win = win;
+      dim->minw = dr->minw();
+      dim->minh = dr->minh();
+      dim->maxw = dr->maxw();
+      dim->maxh = dr->maxh();
+      //make win un-resizable
+      win->size_range(win->w(), win->h(), win->w(), win->h());
+      dim->next = first_dim;
+      first_dim = dim;
+    }
+    win = Fl::next_window(win);
+  }
 
   gint response_id = GTK_RESPONSE_NONE;
   fl_g_signal_connect_data(gtkw_ptr, "response", G_CALLBACK(run_response_handler), &response_id, NULL, (GConnectFlags) 0);
   while (response_id == GTK_RESPONSE_NONE) { // loop that shows the GTK dialog window
     fl_gtk_main_iteration(); // one iteration of the GTK event loop
-    ((Fl_Posix_System_Driver*)Fl::system_driver())->emulate_modal_dialog();
+    while (Fl::ready()) Fl::check(); // queued iterations of the FLTK event loop
   }
 
   if (response_id == GTK_RESPONSE_ACCEPT) {
@@ -828,6 +857,15 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   // I think this is analogus to doing an Fl::check() - we need this here to make sure
   // the GtkFileChooserDialog is removed from the display correctly
   while (fl_gtk_events_pending ()) fl_gtk_main_iteration ();
+
+  Fl::event_dispatch(old_dispatch);
+  while (first_dim) {
+    win_dims *dim = first_dim;
+    //give back win its resizing parameters
+    dim->win->size_range(dim->minw, dim->minh, dim->maxw, dim->maxh);
+    first_dim = dim->next;
+    delete dim;
+  }
 
   return result;
 } // fl_gtk_chooser_wrapper

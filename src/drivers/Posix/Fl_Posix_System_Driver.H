@@ -2,7 +2,7 @@
 // Definition of POSIX system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -88,7 +88,6 @@ public:
   virtual void lock_ring();
   virtual void unlock_ring();
 #endif
-  virtual void emulate_modal_dialog() {}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

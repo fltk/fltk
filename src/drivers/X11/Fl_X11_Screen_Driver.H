@@ -2,7 +2,7 @@
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -103,9 +103,6 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  virtual void make_transient(void *ptr_gtk, void *gtk_window, Fl_Window *win);
-#endif
 };
 
 

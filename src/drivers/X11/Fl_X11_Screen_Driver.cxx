@@ -1,7 +1,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1399,43 +1399,3 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
 }
 
 #endif // USE_XFT
-
-#if HAVE_DLSYM && HAVE_DLFCN_H
-void Fl_X11_Screen_Driver::make_transient(void *ptr_gtk, void *gtkw_window, Fl_Window *win) {
-  typedef int gboolean;
-  typedef struct _GdkDrawable GdkWindow;
-  typedef struct _GtkWidget GtkWidget;
-
-  typedef unsigned long (*XX_gdk_x11_window_get_type)();
-  static XX_gdk_x11_window_get_type fl_gdk_x11_window_get_type = NULL;
-
-  typedef gboolean (*XX_g_type_check_instance_is_a)(void *type_instance, unsigned long iface_type);
-  static XX_g_type_check_instance_is_a fl_g_type_check_instance_is_a = NULL;
-
-  typedef Window (*gdk_to_X11_t)(GdkWindow*);
-  static gdk_to_X11_t fl_gdk_to_X11 = NULL;
-
-  typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
-  static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
-
-  if (!fl_gdk_to_X11) {
-    fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
-    if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
-    if (!fl_gdk_to_X11) return;
-    fl_gdk_x11_window_get_type = (XX_gdk_x11_window_get_type)dlsym(ptr_gtk, "gdk_x11_window_get_type");
-    fl_g_type_check_instance_is_a = (XX_g_type_check_instance_is_a)dlsym(ptr_gtk, "g_type_check_instance_is_a");
-    fl_gtk_widget_get_window = (XX_gtk_widget_get_window)dlsym(ptr_gtk, "gtk_widget_get_window");
-    if (!fl_gtk_widget_get_window) return;
-  }
-  GdkWindow* gdkw = fl_gtk_widget_get_window((GtkWidget*)gtkw_window);
-
-  // Make sure the Dialog is an X11 window because it's not on Wayland.
-  // Until we find how to make a wayland window transient for an X11 window,
-  // we make the GTK window transient only when it's X11-based.
-  if ( (!fl_gdk_x11_window_get_type) || (!fl_g_type_check_instance_is_a) ||
-      fl_g_type_check_instance_is_a(gdkw, fl_gdk_x11_window_get_type()) ) {
-    Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
-    if (xw) XSetTransientForHint(fl_display, xw, fl_xid(win)); // set the GTK window transient for the last FLTK win
-  }
-}
-#endif //HAVE_DLSYM && HAVE_DLFCN_H

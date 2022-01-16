@@ -2,7 +2,7 @@
 // Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -616,20 +616,6 @@ void Fl_X11_System_Driver::own_colormap() {
   for (i = 0; i < 16; i ++)
     XAllocColor(fl_display, fl_colormap, colors + i);
 #endif // USE_COLORMAP
-}
-
-
-void Fl_X11_System_Driver::emulate_modal_dialog() {
-  while (XEventsQueued(fl_display, QueuedAfterReading)) { // emulate modal dialog
-    XEvent xevent;
-    XNextEvent(fl_display, &xevent);
-    Window xid = xevent.xany.window;
-    if (xevent.type == ConfigureNotify) xid = xevent.xmaprequest.window;
-    if (!fl_find(xid)) continue; // skip events to non-FLTK windows
-    // process Expose and ConfigureNotify events
-    if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent);
-  }
-  Fl::flush(); // do the drawings needed after Expose events
 }
 
 #endif // !defined(FL_DOXYGEN)
