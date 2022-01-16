@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,10 +17,11 @@
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
-
+#include "Fl_Window_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 
 /* Fl_Kdialog_Native_File_Chooser_Driver : file chooser based on the "kdialog" command */
@@ -47,8 +48,25 @@ Fl_Kdialog_Native_File_Chooser_Driver::~Fl_Kdialog_Native_File_Chooser_Driver() 
 }
 
 
+void Fl_Kdialog_Native_File_Chooser_Driver::fnfc_fd_cb(int fd,
+                      Fl_Kdialog_Native_File_Chooser_Driver::fnfc_pipe_struct *data) {
+  char tmp[FL_PATH_MAX];
+  int l = read(fd, tmp, sizeof(tmp)-1);
+  if (l > 0) {
+    tmp[l] = 0;
+    data->all_files = Fl_Native_File_Chooser_Driver::strapp(data->all_files, tmp);
+  } else {
+    data->fd = -1;
+  }
+}
+
+
+static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
+  return 0;
+}
+
+
 int Fl_Kdialog_Native_File_Chooser_Driver::show() {
-  Fl::flush(); // to close menus if necessary
   const char *option;
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY: {
@@ -103,25 +121,61 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
   strcat(command, "2> /dev/null"); // get rid of stderr output
 //puts(command);
   FILE *pipe = popen(command, "r");
-  char *all_files = NULL;
+  fnfc_pipe_struct data;
+  data.all_files = NULL;
   if (pipe) {
-    char *p, tmp[FL_PATH_MAX];
-    do {
-      p = fgets(tmp, sizeof(tmp), pipe);
-      if (p) all_files = strapp(all_files, p);
+    data.fd = fileno(pipe);
+    Fl::add_fd(data.fd, FL_READ, (Fl_FD_Handler)fnfc_fd_cb, &data);
+    Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
+    // prevent FLTK from processing any event
+    Fl::event_dispatch(fnfc_dispatch);
+    struct win_dims {
+      Fl_Window *win;
+      int minw,minh,maxw,maxh;
+      struct win_dims *next;
+    } *first_dim = NULL;
+    // consider all bordered, top-level FLTK windows
+    Fl_Window *win = Fl::first_window();
+    while (win) {
+      if (!win->parent() && win->border()) {
+        Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
+        win_dims *dim = new win_dims;
+        dim->win = win;
+        dim->minw = dr->minw();
+        dim->minh = dr->minh();
+        dim->maxw = dr->maxw();
+        dim->maxh = dr->maxh();
+        //make win un-resizable
+        win->size_range(win->w(), win->h(), win->w(), win->h());
+        dim->next = first_dim;
+        first_dim = dim;
+      }
+      win = Fl::next_window(win);
     }
-    while (p);
+    // run event loop until pipe finishes
+    while (data.fd >= 0) Fl::wait();
+    Fl::remove_fd(fileno(pipe));
     pclose(pipe);
-    if (all_files) {
-      if (all_files[strlen(all_files)-1] == '\n') all_files[strlen(all_files)-1] = 0;
+    // return to previous event processing by FLTK
+    Fl::event_dispatch(old_dispatch);
+    while (first_dim) {
+      win_dims *dim = first_dim;
+      //give back win its resizing parameters
+      dim->win->size_range(dim->minw, dim->minh, dim->maxw, dim->maxh);
+      first_dim = dim->next;
+      delete dim;
+    }
+    if (data.all_files) {
+      // process text received from pipe
+      if (data.all_files[strlen(data.all_files)-1] == '\n') data.all_files[strlen(data.all_files)-1] = 0;
       for (int i = 0; i < _tpathnames; i++) delete[] _pathnames[i];
       delete[] _pathnames;
-      p = all_files;
+      char *p = data.all_files;
       int count = 1;
       while ((p = strchr(p+1, ' '))) count++;
       _pathnames = new char*[count];
       _tpathnames = 0;
-      char *q = strtok(all_files, " ");
+      char *q = strtok(data.all_files, " ");
       while (q) {
         _pathnames[_tpathnames] = new char[strlen(q)+1];
         strcpy(_pathnames[_tpathnames], q);
@@ -133,7 +187,7 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
   delete[] command;
   if (_title) { free(_title); _title = NULL; }
   if (!pipe) return -1;
-  return (all_files == NULL ? 1 : 0);
+  return (data.all_files == NULL ? 1 : 0);
 }
 
 

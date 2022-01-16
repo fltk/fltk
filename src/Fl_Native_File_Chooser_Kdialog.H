@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,11 @@
 
 class FL_EXPORT Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
   friend class Fl_Native_File_Chooser;
+  struct fnfc_pipe_struct {
+    char *all_files;
+    int fd;
+  };
+  static void fnfc_fd_cb(int fd, fnfc_pipe_struct *data);
   char **_pathnames;
   int _tpathnames;
   char *_directory;
