@@ -50,7 +50,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {585 277 298 311} type Double visible
+    xywh {585 277 298 311} type Double hide
   } {
     Fl_Button {} {
       label Cancel

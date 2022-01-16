@@ -51,7 +51,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {101 713 343 232} type Double resizable modal visible
+    xywh {101 713 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -136,8 +136,8 @@ Function {make_code_panel()} {open
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   return; // ignore Escape
 code_panel->hide(); // otherwise hide..}
-    xywh {425 882 540 180} type Double labelsize 11 resizable
-    code0 {o->size_range(200, 150);} modal visible
+    xywh {425 882 540 180} type Double labelsize 11 hide resizable
+    code0 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor code_input {
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
@@ -170,8 +170,8 @@ Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
     label {Code Block Properties}
-    xywh {806 735 300 115} type Double labelsize 11 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {806 735 300 115} type Double labelsize 11 hide resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Input code_before_input {
       label {Conditional code block}
@@ -203,8 +203,8 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {Declaration Block Properties}
-    xywh {806 564 300 135} type Double labelsize 11 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {806 564 300 135} type Double labelsize 11 hide resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Group {} {open
       xywh {10 10 280 20}
@@ -260,7 +260,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label {Declaration Properties}
-    xywh {445 609 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {445 609 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -337,7 +337,7 @@ Function {make_data_panel()} {open
 } {
   Fl_Window data_panel {
     label {Inline Data Properties}
-    xywh {449 337 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {449 337 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -426,7 +426,7 @@ Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
     label {Class Properties}
-    xywh {795 337 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
+    xywh {795 337 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -541,7 +541,7 @@ Function {make_widgetbin()} {open
   exit_cb((Fl_Widget*)o, v);
 else
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {449 206 600 102} type Single align 80 non_modal visible
+    xywh {449 206 600 102} type Single align 80 hide non_modal
   } {
     Fl_Group {} {
       label Code open

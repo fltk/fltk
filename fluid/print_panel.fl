@@ -39,7 +39,7 @@ Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
     label Print
-    xywh {465 222 465 235} type Double modal visible
+    xywh {465 222 465 235} type Double hide modal
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -213,7 +213,7 @@ print_collate_group[1 - i]->hide();}
     label {Printer Properties}
     callback {print_properties_panel->hide();
 print_update_status();}
-    xywh {462 486 290 130} type Double modal visible
+    xywh {462 486 290 130} type Double hide modal
   } {
     Fl_Choice print_page_size {
       label {Page Size:}

@@ -93,7 +93,7 @@ Fl_Double_Window* make_widget_panel() {
   Fl_Double_Window* w;
   { // Use a Double Window to avoid flickering.
     Fl_Double_Window* o = new Fl_Double_Window(420, 400);
-    w = o; if (w) {/* empty */}
+    w = o; (void)w;
     o->labelsize(11);
     o->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     o->hotspot(o);

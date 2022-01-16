@@ -69,7 +69,7 @@ template_browser->deselect();
 template_name->value("");
 template_instance->value("");
 template_panel->hide();}
-    xywh {455 202 460 355} type Double resizable modal visible
+    xywh {455 202 460 355} type Double hide resizable modal
   } {
     Fl_Browser template_browser {
       label {Available Templates:}

@@ -54,9 +54,9 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {472 246 399 298} type Double
+    xywh {472 246 399 298} type Double hide
     code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
+    code1 {\#include <FL/Fl_Tooltip.H>} modal
   } {
     Fl_Button {} {
       label Close
@@ -175,8 +175,8 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings}
-    xywh {442 538 360 355} type Double resizable
-    code0 {o->size_range(o->w(), o->h());} non_modal visible
+    xywh {442 538 360 355} type Double hide resizable
+    code0 {o->size_range(o->w(), o->h());} non_modal
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -309,7 +309,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {544 751 365 200} type Double modal size_range {365 200 365 200} visible
+    xywh {544 751 365 200} type Double hide modal size_range {365 200 365 200}
   } {
     Fl_Group {} {open
       xywh {0 0 365 165}
@@ -381,7 +381,7 @@ shell_window->hide();}
   }
   Fl_Window shell_run_window {
     label {Shell Command Output}
-    xywh {887 409 555 430} type Double resizable visible
+    xywh {887 409 555 430} type Double hide resizable
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
@@ -403,7 +403,7 @@ Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
     label {Layout Settings}
-    xywh {745 303 310 245} type Double non_modal visible
+    xywh {745 303 310 245} type Double hide non_modal
   } {
     Fl_Input horizontal_input {
       label x

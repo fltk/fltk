@@ -36,8 +36,8 @@ if (!cbuf[0]) {
 }} {}
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {449 217 345 180} type Double color 50 selection_color 47 hotspot
-    code0 {\#include "../src/flstring.h"} non_modal visible
+    xywh {449 217 345 180} type Double color 50 selection_color 47 hide hotspot
+    code0 {\#include "../src/flstring.h"} non_modal
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
