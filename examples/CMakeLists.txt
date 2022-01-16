@@ -83,6 +83,14 @@ set (IMAGE_SOURCES
 )
 
 ############################################################
+# examples requiring cairo
+############################################################
+
+set (CAIRO_SOURCES
+  cairo-draw-x
+)
+
+############################################################
 # examples requiring OpenGL + libGLEW
 ############################################################
 
@@ -113,6 +121,24 @@ endforeach (src)
 
 foreach (src ${IMAGE_SOURCES})
   CREATE_EXAMPLE (${src} ${src}.cxx "fltk_images;fltk")
+endforeach (src)
+
+############################################################
+# create example programs requiring cairo
+############################################################
+
+if (FLTK_HAVE_CAIRO)
+  set (cairo_libs "fltk;cairo")
+  if (TARGET fltk_cairo)
+    set (cairo_libs fltk_cairo ${cairo_libs})
+  endif ()
+else ()
+  set(cairo_libs "fltk")
+endif ()
+
+foreach (src ${CAIRO_SOURCES})
+  message(STATUS "CAIRO: ${src} (${cairo_libs})")
+  CREATE_EXAMPLE (${src} ${src}.cxx "${cairo_libs}")
 endforeach (src)
 
 ############################################################
