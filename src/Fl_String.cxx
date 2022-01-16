@@ -1,7 +1,7 @@
 //
 // Basic Fl_String class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,12 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl_String_class.H>
+#include <FL/Fl_String.H>
 
 #include <stdio.h>
 #include <string.h>
 
-/** \file src/Fl_String_class.cxx
+/** \file src/Fl_String.cxx
   Basic Fl_String class for FLTK.
 */
 

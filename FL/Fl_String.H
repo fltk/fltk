@@ -1,7 +1,7 @@
 //
 // Basic Fl_String header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,10 +14,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FL_Fl_String_class_H_
-#define _FL_Fl_String_class_H_
+#ifndef _FL_Fl_String_H_
+#define _FL_Fl_String_H_
 
-/** \file FL/Fl_String_class.H
+/** \file FL/Fl_String.H
   Basic Fl_String class for FLTK.
 */
 
@@ -111,4 +111,4 @@ public:
 
 }; // class Fl_String
 
-#endif // _FL_Fl_String_class_H_
+#endif // _FL_Fl_String_H_

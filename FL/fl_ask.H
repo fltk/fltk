@@ -22,7 +22,7 @@
 #define _FL_fl_ask_H_
 
 #include <FL/Enumerations.H>
-#include <FL/Fl_String_class.H>
+#include <FL/Fl_String.H>
 #include <FL/fl_attr.h>
 
 class Fl_Widget;

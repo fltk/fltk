@@ -61,7 +61,7 @@ alignment_panel.o: ../FL/Fl_Scrollbar.H
 alignment_panel.o: ../FL/Fl_Simple_Terminal.H
 alignment_panel.o: ../FL/Fl_Slider.H
 alignment_panel.o: ../FL/Fl_Spinner.H
-alignment_panel.o: ../FL/Fl_String_class.H
+alignment_panel.o: ../FL/Fl_String.H
 alignment_panel.o: ../FL/Fl_Tabs.H
 alignment_panel.o: ../FL/Fl_Text_Buffer.H
 alignment_panel.o: ../FL/Fl_Text_Display.H
@@ -217,7 +217,7 @@ ExternalCodeEditor_UNIX.o: ../FL/fl_config.h
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Export.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Menu_Item.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Preferences.H
-ExternalCodeEditor_UNIX.o: ../FL/Fl_String_class.H
+ExternalCodeEditor_UNIX.o: ../FL/Fl_String.H
 ExternalCodeEditor_UNIX.o: ../FL/fl_string_functions.h
 ExternalCodeEditor_UNIX.o: ../FL/fl_types.h
 ExternalCodeEditor_UNIX.o: ../FL/fl_utf8.h
@@ -339,7 +339,7 @@ file.o: ../FL/Fl_Shared_Image.H
 file.o: ../FL/Fl_Simple_Terminal.H
 file.o: ../FL/Fl_Slider.H
 file.o: ../FL/Fl_Spinner.H
-file.o: ../FL/Fl_String_class.H
+file.o: ../FL/Fl_String.H
 file.o: ../FL/fl_string_functions.h
 file.o: ../FL/Fl_Tabs.H
 file.o: ../FL/Fl_Text_Buffer.H
@@ -421,7 +421,7 @@ fluid.o: ../FL/Fl_Shared_Image.H
 fluid.o: ../FL/Fl_Simple_Terminal.H
 fluid.o: ../FL/Fl_Slider.H
 fluid.o: ../FL/Fl_Spinner.H
-fluid.o: ../FL/Fl_String_class.H
+fluid.o: ../FL/Fl_String.H
 fluid.o: ../FL/fl_string_functions.h
 fluid.o: ../FL/Fl_Tabs.H
 fluid.o: ../FL/Fl_Text_Buffer.H
@@ -500,7 +500,7 @@ Fluid_Image.o: ../FL/Fl_Rect.H
 Fluid_Image.o: ../FL/Fl_Return_Button.H
 Fluid_Image.o: ../FL/Fl_RGB_Image.H
 Fluid_Image.o: ../FL/Fl_Shared_Image.H
-Fluid_Image.o: ../FL/Fl_String_class.H
+Fluid_Image.o: ../FL/Fl_String.H
 Fluid_Image.o: ../FL/fl_string_functions.h
 Fluid_Image.o: ../FL/Fl_Tabs.H
 Fluid_Image.o: ../FL/Fl_Tile.H
@@ -563,7 +563,7 @@ Fl_Function_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Function_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Function_Type.o: ../FL/Fl_Shared_Image.H
 Fl_Function_Type.o: ../FL/Fl_Slider.H
-Fl_Function_Type.o: ../FL/Fl_String_class.H
+Fl_Function_Type.o: ../FL/Fl_String.H
 Fl_Function_Type.o: ../FL/fl_string_functions.h
 Fl_Function_Type.o: ../FL/Fl_Tabs.H
 Fl_Function_Type.o: ../FL/Fl_Text_Buffer.H
@@ -621,7 +621,7 @@ Fl_Group_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Group_Type.o: ../FL/Fl_Scroll.H
 Fl_Group_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Group_Type.o: ../FL/Fl_Slider.H
-Fl_Group_Type.o: ../FL/Fl_String_class.H
+Fl_Group_Type.o: ../FL/Fl_String.H
 Fl_Group_Type.o: ../FL/Fl_Table.H
 Fl_Group_Type.o: ../FL/Fl_Tabs.H
 Fl_Group_Type.o: ../FL/fl_types.h
@@ -685,7 +685,7 @@ Fl_Menu_Type.o: ../FL/Fl_Shared_Image.H
 Fl_Menu_Type.o: ../FL/Fl_Simple_Terminal.H
 Fl_Menu_Type.o: ../FL/Fl_Slider.H
 Fl_Menu_Type.o: ../FL/Fl_Spinner.H
-Fl_Menu_Type.o: ../FL/Fl_String_class.H
+Fl_Menu_Type.o: ../FL/Fl_String.H
 Fl_Menu_Type.o: ../FL/Fl_Tabs.H
 Fl_Menu_Type.o: ../FL/Fl_Text_Buffer.H
 Fl_Menu_Type.o: ../FL/Fl_Text_Display.H
@@ -808,7 +808,7 @@ Fl_Widget_Type.o: ../FL/fl_show_colormap.H
 Fl_Widget_Type.o: ../FL/Fl_Simple_Terminal.H
 Fl_Widget_Type.o: ../FL/Fl_Slider.H
 Fl_Widget_Type.o: ../FL/Fl_Spinner.H
-Fl_Widget_Type.o: ../FL/Fl_String_class.H
+Fl_Widget_Type.o: ../FL/Fl_String.H
 Fl_Widget_Type.o: ../FL/Fl_Table.H
 Fl_Widget_Type.o: ../FL/Fl_Tabs.H
 Fl_Widget_Type.o: ../FL/Fl_Text_Buffer.H
@@ -885,7 +885,7 @@ Fl_Window_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Window_Type.o: ../FL/Fl_Simple_Terminal.H
 Fl_Window_Type.o: ../FL/Fl_Slider.H
 Fl_Window_Type.o: ../FL/Fl_Spinner.H
-Fl_Window_Type.o: ../FL/Fl_String_class.H
+Fl_Window_Type.o: ../FL/Fl_String.H
 Fl_Window_Type.o: ../FL/Fl_Tabs.H
 Fl_Window_Type.o: ../FL/Fl_Text_Buffer.H
 Fl_Window_Type.o: ../FL/Fl_Text_Display.H
@@ -1071,7 +1071,7 @@ shell_command.o: ../FL/Fl_Scrollbar.H
 shell_command.o: ../FL/Fl_Simple_Terminal.H
 shell_command.o: ../FL/Fl_Slider.H
 shell_command.o: ../FL/Fl_Spinner.H
-shell_command.o: ../FL/Fl_String_class.H
+shell_command.o: ../FL/Fl_String.H
 shell_command.o: ../FL/fl_string_functions.h
 shell_command.o: ../FL/Fl_Tabs.H
 shell_command.o: ../FL/Fl_Text_Buffer.H
@@ -1169,7 +1169,7 @@ template_panel.o: ../FL/Fl_Menu_Item.H
 template_panel.o: ../FL/Fl_Preferences.H
 template_panel.o: ../FL/Fl_Return_Button.H
 template_panel.o: ../FL/Fl_Shared_Image.H
-template_panel.o: ../FL/Fl_String_class.H
+template_panel.o: ../FL/Fl_String.H
 template_panel.o: ../FL/fl_string_functions.h
 template_panel.o: ../FL/fl_types.h
 template_panel.o: ../FL/fl_utf8.h
