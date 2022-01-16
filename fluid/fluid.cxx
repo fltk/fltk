@@ -42,7 +42,7 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <locale.h>     // setlocale()..
 #include "../src/flstring.h"
 

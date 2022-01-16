@@ -47,7 +47,7 @@
 #include "flstring.h"
 #include <FL/fl_ask.H>
 #include "Fl_Message.h"     // intentionally "hidden" in src/...
-#include "FL/fl_string.h"   // fl_strdup()
+#include "FL/fl_string_functions.h"   // fl_strdup()
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>

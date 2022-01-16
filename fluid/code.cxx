@@ -23,7 +23,7 @@
 #include "file.h"
 
 #include <FL/Fl.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/filename.H>
 #include "../src/flstring.h"
 

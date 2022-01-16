@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "flstring.h"
 
 

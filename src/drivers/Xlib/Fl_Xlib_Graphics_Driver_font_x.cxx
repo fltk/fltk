@@ -20,7 +20,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "Fl_Font.H"
 
 #include <stdio.h>

@@ -23,7 +23,7 @@ comment {//
 decl {\#include "fluid.h"} {private local
 }
 
-decl {\#include <FL/fl_string.h>} {private local
+decl {\#include <FL/fl_string_functions.h>} {private local
 }
 
 decl {\#include "../src/flstring.h"} {private local

@@ -9,7 +9,7 @@
 
 #include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
 #include <FL/fl_ask.H>  /* fl_alert() */
-#include <FL/fl_string.h> /* fl_strdup() */
+#include <FL/fl_string_functions.h> /* fl_strdup() */
 
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */

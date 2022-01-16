@@ -28,7 +28,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>     // fl_text_extents()
-#include <FL/fl_string.h>   // fl_strdup()
+#include <FL/fl_string_functions.h>   // fl_strdup()
 #include <stdlib.h>         // malloc, free
 
 // WINDOW/WIDGET SIZES

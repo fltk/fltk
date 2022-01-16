@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h> // fl_strdup()
+#include <FL/fl_string_functions.h> // fl_strdup()
 #include <FL/Fl_Check_Browser.H>
 
 /* This uses a cache for faster access when you're scanning the list

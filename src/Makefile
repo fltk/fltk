@@ -158,7 +158,7 @@ CPPFILES = \
 	fl_shadow_box.cxx \
 	fl_shortcut.cxx \
 	fl_show_colormap.cxx \
-	fl_string.cxx \
+	fl_string_functions.cxx \
 	fl_symbols.cxx \
 	fl_utf8.cxx \
 	fl_vertex.cxx \

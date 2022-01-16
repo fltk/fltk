@@ -60,7 +60,7 @@ void fl_cleanup_dc_list(void);
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/fl_utf8.h>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Enumerations.H>

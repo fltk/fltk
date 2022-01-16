@@ -17,7 +17,7 @@
 
 #include "Fl_X11_System_Driver.H"
 #include <FL/Fl_File_Browser.H>
-#include <FL/fl_string.h>  // fl_strdup
+#include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
 #include "../../flstring.h"
 

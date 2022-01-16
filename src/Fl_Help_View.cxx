@@ -56,7 +56,7 @@
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include <FL/filename.H>        // fl_open_uri()
-#include <FL/fl_string.h>       // fl_strdup()
+#include <FL/fl_string_functions.h>       // fl_strdup()
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>

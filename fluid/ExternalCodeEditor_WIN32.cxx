@@ -19,7 +19,7 @@
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
 #include <FL/fl_utf8.h> // fl_utf8fromwc()
-#include <FL/fl_string.h> // fl_strdup()
+#include <FL/fl_string_functions.h> // fl_strdup()
 
 #include "ExternalCodeEditor_WIN32.h"
 

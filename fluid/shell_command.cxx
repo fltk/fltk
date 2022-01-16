@@ -21,7 +21,7 @@
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_message.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 #include <errno.h>
 

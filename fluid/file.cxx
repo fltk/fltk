@@ -33,7 +33,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/fl_message.H>
 #include "../src/flstring.h"
 

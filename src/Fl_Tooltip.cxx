@@ -18,7 +18,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>

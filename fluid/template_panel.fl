@@ -29,7 +29,7 @@ decl {\#include <FL/Fl_Shared_Image.H>} {private local
 decl {\#include <FL/fl_ask.H>} {private local
 }
 
-decl {\#include <FL/fl_string.h>} {private local
+decl {\#include <FL/fl_string_functions.h>} {private local
 }
 
 decl {\#include <FL/filename.H>} {selected private local

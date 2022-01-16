@@ -1486,8 +1486,8 @@ menubar.o: ../FL/Fl_RGB_Image.H
 menubar.o: ../FL/Fl_Scrollbar.H
 menubar.o: ../FL/Fl_Simple_Terminal.H
 menubar.o: ../FL/Fl_Slider.H
-menubar.o: ../FL/fl_string.h
 menubar.o: ../FL/Fl_String_class.H
+menubar.o: ../FL/fl_string_functions.h
 menubar.o: ../FL/Fl_Sys_Menu_Bar.H
 menubar.o: ../FL/Fl_Text_Buffer.H
 menubar.o: ../FL/Fl_Text_Display.H
@@ -2513,7 +2513,7 @@ unittests.o: ../FL/Fl_Scroll.H
 unittests.o: ../FL/Fl_Scrollbar.H
 unittests.o: ../FL/Fl_Simple_Terminal.H
 unittests.o: ../FL/Fl_Slider.H
-unittests.o: ../FL/fl_string.h
+unittests.o: ../FL/fl_string_functions.h
 unittests.o: ../FL/Fl_Table.H
 unittests.o: ../FL/Fl_Tabs.H
 unittests.o: ../FL/Fl_Text_Buffer.H
@@ -2578,7 +2578,7 @@ utf8.o: ../FL/Fl_RGB_Image.H
 utf8.o: ../FL/Fl_Scroll.H
 utf8.o: ../FL/Fl_Scrollbar.H
 utf8.o: ../FL/Fl_Slider.H
-utf8.o: ../FL/fl_string.h
+utf8.o: ../FL/fl_string_functions.h
 utf8.o: ../FL/Fl_Tile.H
 utf8.o: ../FL/fl_types.h
 utf8.o: ../FL/fl_utf8.h

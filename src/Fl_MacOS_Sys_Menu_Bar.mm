@@ -17,7 +17,7 @@
 #if defined(__APPLE__)
 
 #include <FL/platform.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include "flstring.h"
 #include <stdio.h>

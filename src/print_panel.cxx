@@ -36,7 +36,7 @@
 #include "../src/flstring.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Int_Input.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 static Fl_Double_Window *print_panel=(Fl_Double_Window *)0;
 static Fl_Group *print_panel_controls=(Fl_Group *)0;

@@ -6,7 +6,7 @@
 
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Preferences.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 //////////////////////
 // Fl_Tree.cxx

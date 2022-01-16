@@ -354,7 +354,7 @@
 #include <FL/platform.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 #include <stdio.h>
 #include <stdlib.h>

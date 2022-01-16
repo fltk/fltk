@@ -25,7 +25,7 @@
 // string with a % sign in it!
 
 #include <FL/Fl_Menu_.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>

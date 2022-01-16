@@ -24,7 +24,7 @@
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/platform.H>
 #include <stdarg.h>
 #include <time.h>

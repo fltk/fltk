@@ -28,7 +28,7 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <stdlib.h>
 
 extern "C" {

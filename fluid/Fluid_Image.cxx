@@ -26,7 +26,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Window.H>
 #include <FL/filename.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/fl_utf8.h>     // fl_fopen()
 #include <FL/Fl_File_Chooser.H>
 #include "../src/flstring.h"

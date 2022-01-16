@@ -34,7 +34,7 @@
 #include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl_Image.H>        // icon
 #include <stdio.h>
 #include <stdlib.h>

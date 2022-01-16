@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string.h>     // fl_strdup()
+#include <FL/fl_string_functions.h>     // fl_strdup()
 #include "flstring.h"
 #include <limits.h>
 #include <ctype.h>

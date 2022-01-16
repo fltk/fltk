@@ -28,7 +28,7 @@
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 #include <stdio.h>
 #include <stdlib.h>

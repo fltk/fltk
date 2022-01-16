@@ -32,7 +32,7 @@ extern "C" {
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Rect.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"

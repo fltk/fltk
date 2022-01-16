@@ -28,7 +28,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <stdlib.h>
 #include "flstring.h"
 

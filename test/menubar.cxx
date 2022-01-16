@@ -30,7 +30,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Simple_Terminal.H>
 #include <FL/fl_ask.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 #define TERMINAL_HEIGHT 120
 

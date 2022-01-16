@@ -26,7 +26,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #import <Cocoa/Cocoa.h>
 
 typedef OSStatus (*PMSessionSetDocumentFormatGeneration_type)(

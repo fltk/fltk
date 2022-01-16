@@ -14,7 +14,7 @@
  *     https://www.fltk.org/bugs.php
  */
 
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <string.h>  // strdup/_strdup
 #include "Fl_System_Driver.H"
 

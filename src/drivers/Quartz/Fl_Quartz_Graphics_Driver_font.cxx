@@ -75,7 +75,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_utf8.h> // for fl_utf8toUtf16()
-#include <FL/fl_string.h> // fl_strdup()
+#include <FL/fl_string_functions.h> // fl_strdup()
 
 Fl_Fontdesc* fl_fonts = NULL;
 

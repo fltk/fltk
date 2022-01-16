@@ -18,7 +18,7 @@
 
 #include "print_panel.h"
 #include "fluid.h"
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include "../src/flstring.h"
 #include <stdlib.h>
 #include <stdio.h>

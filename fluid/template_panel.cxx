@@ -20,7 +20,7 @@
 #include "fluid.h"
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_ask.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/filename.H>
 #include "../src/flstring.h"
 #include <stdio.h>

@@ -29,7 +29,7 @@
 
 #define FNFC_MAX_PATH 32768     // XXX: MAX_PATH under win32 is 260, too small for modern use
 
-#include <FL/fl_string.h>       // fl_strdup()
+#include <FL/fl_string_functions.h>       // fl_strdup()
 #include "flstring.h"           // fl_strlcpy()/cat()
 #include <FL/Fl_Native_File_Chooser.H>
 #  include <windows.h>

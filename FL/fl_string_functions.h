@@ -1,7 +1,7 @@
 /*
  * Platform agnostic string portability functions for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 2020 by Bill Spitzak and others.
+ * Copyright 2020-2022 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -15,12 +15,12 @@
  */
 
 /**
-  \file fl_string.h
+  \file fl_string_functions.h
   \brief Public header for FLTK's own platform agnostic string handling.
 */
 
-#ifndef _FL_fl_string_h_
-#define _FL_fl_string_h_
+#ifndef _FL_fl_string_functions_h_
+#define _FL_fl_string_functions_h_
 
 #include "Fl_Export.H"
 #include "fl_types.h"
@@ -44,4 +44,4 @@ FL_EXPORT char* fl_strdup(const char *s);
 #endif /* __cplusplus */
 
 
-#endif /* _FL_fl_string_h_ */
+#endif /* _FL_fl_string_functions_h_ */

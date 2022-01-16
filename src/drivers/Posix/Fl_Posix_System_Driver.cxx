@@ -19,7 +19,7 @@
 #include "../../flstring.h"
 #include <FL/Fl_File_Icon.H>
 #include <FL/filename.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl.H>
 #include <locale.h>
 #include <stdio.h>

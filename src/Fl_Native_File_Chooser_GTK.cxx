@@ -26,7 +26,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/X11/Fl_X11_System_Driver.H"
 #include "Fl_Window_Driver.H"

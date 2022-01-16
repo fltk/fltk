@@ -25,7 +25,7 @@
 #include "function_panel.h"
 #include "comments.h"
 
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"

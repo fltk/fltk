@@ -8,7 +8,7 @@
 #include <FL/Fl_Tree_Item.H>
 #include <FL/Fl_Tree_Prefs.H>
 #include <FL/Fl_Tree.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 
 //////////////////////
 // Fl_Tree_Item.cxx

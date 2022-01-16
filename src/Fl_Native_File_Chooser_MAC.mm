@@ -27,7 +27,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
-#include <FL/fl_string.h>
+#include <FL/fl_string_functions.h>
 #define MAXFILTERS      80
 #import <Cocoa/Cocoa.h>
 
