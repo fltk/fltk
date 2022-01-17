@@ -42,6 +42,39 @@
    so that the only thing you have to do is to provide your cairo code.
    All cairo context handling is achieved transparently.
 
+   The default coordinate system for cairo drawing commands within Fl_Cario_Window
+   is FLTK's coordinate system, where the `x,y,w,h` values are releative to the
+   top/left corner of the Fl_Cairo_Window, as one would expect with regular
+   FLTK drawing commands, e.g.: `(0&le;x&le;w-1),(0&le;y&le;h-1)`. \b Example:
+   \code
+   static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+       // Draw an "X"
+       const double xmax = (window->w() - 1);
+       const double ymax = (window->h() - 1);
+       cairo_set_line_width(cr, 1.00);                               // line width for drawing
+       cairo_set_source_rgb(cr, 1.0, 0.5, 0.0);                      // orange
+       cairo_move_to(cr, 0.0, 0.0);  cairo_line_to(cr, xmax, ymax);  // draw diagonal "\"
+       cairo_move_to(cr, 0.0, ymax); cairo_line_to(cr, xmax, 0.0);   // draw diagonal "/"
+       cairo_stroke(cr);                                             // stroke the lines
+   }
+   \endcode
+
+   The FLTK coordinate system differs from the default native cairo coordinate system
+   which uses normalized `(0.0&hellip;1.0)` values for x and y, e.g.: `(0&le;x&le;1.0),(0&le;y&le;1.0)`.
+   So beware of this when copy/pasting cairo example programs that assume normalized values.
+   If need be, you can revert to the cairo coordinate system by simply calling `cairo_scale()`
+   with the widget's `w()` and `h()` values. \b Example:
+
+   \code
+   static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+       cairo_scale(cr, window->w(), window->h());    // use cairo's default coordinate system
+       [..use 0.0 to 1.0 values from here on..]
+   }
+   \endcode
+
+   \see examples/cairo-draw-x.cxx
+   \see test/cairo_test.cxx
+
    \note You can alternatively define your custom cairo FLTK window,
    and thus at least override the draw() method to provide custom cairo
    support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)

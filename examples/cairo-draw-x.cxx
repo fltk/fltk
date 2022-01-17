@@ -24,7 +24,7 @@ static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
     const double xmax = (window->w() - 1);
     const double ymax = (window->h() - 1);
 
-    // Draw green "X"
+    // Draw orange "X"
     //     Draws an X to four corners of resizable window.
     //     See Fl_Cairo_Window docs for more info.
     //
