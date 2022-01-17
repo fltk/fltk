@@ -137,7 +137,6 @@ else ()
 endif ()
 
 foreach (src ${CAIRO_SOURCES})
-  message(STATUS "CAIRO: ${src} (${cairo_libs})")
   CREATE_EXAMPLE (${src} ${src}.cxx "${cairo_libs}")
 endforeach (src)
 
