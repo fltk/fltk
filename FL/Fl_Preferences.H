@@ -32,7 +32,7 @@
    simple configuration mechanism for UNIX.
 
    Fl_Preferences uses a hierarchy to store data. It
-   bundles similar data into groups and manages entries in these
+   can bundle similar data into groups and manages entries in these
    groups as name/value pairs.
 
    Preferences are stored in text files that can be edited
@@ -241,7 +241,7 @@ public:  // older Sun compilers need this (public definition of the following cl
 
   class FL_EXPORT Node {        // a node contains a list to all its entries
                                 // and all means to manage the tree structure
-    Node *child_, *next_;
+    Node *first_child_, *next_;
     union {                     // these two are mutually exclusive
       Node *parent_;            // top_ bit clear
       RootNode *root_node_;          // top_ bit set
