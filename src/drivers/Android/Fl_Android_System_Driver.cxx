@@ -834,6 +834,9 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
   }
 }
 
+/*
+ Note: `prefs` can be NULL!
+ */
 char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                                   const char *application)
 {

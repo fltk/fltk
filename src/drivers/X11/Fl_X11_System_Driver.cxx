@@ -415,7 +415,10 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
           b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
 }
 
-char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+/*
+ Note: `prefs` can be NULL!
+ */
+char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root, const char *vendor,
                                                 const char *application)
 {
   static char *filename = 0L;

@@ -1,7 +1,7 @@
 //
 // Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002-2010 by Matthias Melcher.
+// Copyright 2002-2022 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -67,8 +67,10 @@ public:
      Define the scope of the preferences.
    */
   enum Root {
+    ERROR = -1,        ///< Returned if storage could not be determined.
     SYSTEM = 0,        ///< Preferences are used system-wide
     USER,              ///< Preferences apply only to the current user
+    MEMORY,            ///< Returned if querying runtime prefs
     ROOT_MASK = 0xFF,  ///< masks for the values above
     CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
     CORE_SYSTEM = CORE|SYSTEM,
@@ -120,6 +122,7 @@ public:
 
   static void file_access(unsigned int flags);
   static unsigned int file_access();
+  static Root filename( char *buffer, size_t buffer_size, Root root, const char *vendor, const char *application );
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
   Fl_Preferences( const char *path, const char *vendor, const char *application );
@@ -130,6 +133,8 @@ public:
   Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
   virtual ~Fl_Preferences();
+
+  Root filename( char *buffer, size_t buffer_size);
 
   /** Return an ID that can later be reused to open more references to this dataset.
    */
@@ -236,7 +241,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Node *child_, *next_;
     union {                     // these two are mutually exclusive
       Node *parent_;            // top_ bit clear
-      RootNode *root_;          // top_ bit set
+      RootNode *root_node_;          // top_ bit set
     };
     char *path_;
     Entry *entry_;
@@ -265,7 +270,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Node *addChild( const char *path );
     void setParent( Node *parent );
     Node *parent() { return top_?0L:parent_; }
-    void setRoot(RootNode *r) { root_ = r; top_ = 1; }
+    void setRoot(RootNode *r) { root_node_ = r; top_ = 1; }
     RootNode *findRoot();
     char remove();
     char dirty();
@@ -290,7 +295,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;
-    Root root_;
+    Root root_type_;
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
     RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );
@@ -299,6 +304,8 @@ public:  // older Sun compilers need this (public definition of the following cl
     int read();
     int write();
     char getPath( char *path, int pathlen );
+    char *filename() { return filename_; }
+    Root root() { return root_type_; }
   };
   friend class RootNode;
 

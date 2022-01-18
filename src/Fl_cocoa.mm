@@ -4528,7 +4528,10 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
   return fl_mac_os_version;
 }
 
-char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root,
+/*
+ Note: `prefs` can be NULL!
+ */
+char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root,
                                                    const char *vendor, const char *application)
 {
   static char *filename = 0L;

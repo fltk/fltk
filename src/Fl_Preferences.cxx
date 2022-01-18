@@ -1,7 +1,7 @@
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2011-2020 by Bill Spitzak and others.
+// Copyright 2011-2022 by Bill Spitzak and others.
 // Copyright 2002-2010 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -101,6 +101,45 @@ unsigned int Fl_Preferences::file_access()
 }
 
 /**
+ Determine the file name and path to preferences that would be openend with these
+ parameters.
+
+ Find the possible location of a preference file on disk without touching any
+ of the pathname componennts. This can be used to check if a preferneces file
+ already exists.
+
+ \param[out] buffer write the reulting path into this buffer
+ \param[in] buffer_size size of the `buffer` in bytes
+ \param[in] root can be \c USER or \c SYSTEM for user specific or system
+    wide preferences
+ \param[in] vendor unique text describing the company or author of this file,
+    must be a valid filepath segment
+ \param[in] application unique text describing the application, must be a
+    valid filepath segment
+ \return the input root value, or Fl_Preferences::ERROR if the path could not be
+    determined.
+ \see Fl_Preferences( Root root, const char *vendor, const char *application )
+ */
+Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size, Root root, const char *vendor, const char *application )
+{
+  Root ret = ERROR;
+  if (buffer && buffer_size>0) {
+    char *fn = Fl::system_driver()->preference_rootnode(NULL, root, vendor, application);
+    if (fn) {
+      fl_strlcpy(buffer, fn, buffer_size);
+      // FLTK always returns forward slashes in paths
+      { char *s; for ( s = buffer; *s; s++ ) if ( *s == '\\' ) *s = '/'; }
+      ret = root;
+      ::free(fn);
+    } else {
+      buffer[0] = 0;
+    }
+  }
+  return ret;
+}
+
+
+/**
  The constructor creates a group that manages name/value pairs and
  child groups. Groups are ready for reading and writing at any time.
  The root argument is either Fl_Preferences::USER
@@ -153,10 +192,6 @@ unsigned int Fl_Preferences::file_access()
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
 
- \todo (Matt) Before the release of 1.4.0, I want to make a further attempt to write a preferences file smarter. I
- plan to use a subgroup of the "runtime" preferences to store data and stay accessible until the application
- exits. Data would be stored under <tt>./\$(vendor)/\$(application).prefs</tt> in RAM, but not on disk.
-
  \todo (Matt) I want a way to access the type of the root preferences (SYSTEM, USER, MEMORY), and the state of
  the file access (OK, FILE_SYSTEM_FAIL, PERMISSION_FAIL, etc.), and probably the dirty() flag as well.
 
@@ -205,20 +240,21 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
 /**
    \brief Create or access a group of preferences using a name.
    \param[in] parent the parameter parent is a pointer to the parent group.
-              \p Parent may be \p NULL. It then refers to an application internal
-              database which exists only once, and remains in RAM only until the
-              application quits. This database is used to manage plugins and other
-              data indexes by strings.
+              If \p Parent is \p NULL, the new Preferences item refers to an
+              application internal database ("runtime prefs") which exists only
+              once, and remains in RAM only until the application quits.
+              This database is used to manage plugins and other data indexes
+              by strings. Runtime Prefs are \em not thread-safe.
    \param[in] group a group name that is used as a key into the database
    \see Fl_Preferences( Fl_Preferences&, const char *group )
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group ) {
-  if (parent==0) {
+  if (parent==NULL) {
     if (!runtimePrefs) {
       runtimePrefs = new Fl_Preferences();
       runtimePrefs->node = new Node( "." );
       runtimePrefs->rootNode = new RootNode( runtimePrefs );
-      runtimePrefs->node->setRoot(rootNode);
+      runtimePrefs->node->setRoot(runtimePrefs->rootNode);
     }
     parent = runtimePrefs;
   }
@@ -311,6 +347,34 @@ Fl_Preferences::~Fl_Preferences() {
   // Valgrind does not complain (Cygwin does though)
   node = 0L;
   rootNode = 0L;
+}
+
+/**
+ Return the file name and path to the Preferences file.
+
+ If the preferences have not changed or have not been flushed, the file
+ or directory may not have been created yet.
+
+ \param[out] buffer write the reulting path into this buffer
+ \param[in] buffer_size size of the `buffer` in bytes
+ \return the root type at creation type, or MEMORY for runtime prefs.
+ */
+Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size)
+{
+  if (!buffer || buffer_size==0)
+    return ERROR;
+  RootNode *rn = rootNode;
+  if (!rn)
+    return ERROR;
+  if (rn->root()==MEMORY)
+    return MEMORY;
+  char *fn = rn->filename();
+  if (!fn)
+    return ERROR;
+  fl_strlcpy(buffer, fn, buffer_size);
+  if (buffer[0]==0)
+    return ERROR;
+  return rn->root();
 }
 
 /**
@@ -909,7 +973,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   filename_(0L),
   vendor_(0L),
   application_(0L),
-  root_(root)
+  root_type_(root)
 {
   char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
   filename_    = filename ? fl_strdup(filename) : 0L;
@@ -925,7 +989,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, con
   filename_(0L),
   vendor_(0L),
   application_(0L),
-  root_(Fl_Preferences::USER)
+  root_type_(Fl_Preferences::USER)
 {
 
   if (!vendor)
@@ -950,7 +1014,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs )
   filename_(0L),
   vendor_(0L),
   application_(0L),
-  root_(Fl_Preferences::USER)
+  root_type_(Fl_Preferences::MEMORY)
 {
 }
 
@@ -978,15 +1042,15 @@ Fl_Preferences::RootNode::~RootNode() {
 int Fl_Preferences::RootNode::read() {
   if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
-  if ( (root_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_READ_OK) ) {
+  if ( (root_type_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_READ_OK) ) {
     prefs_->node->clearDirtyFlags();
     return -1;
   }
-  if ( ((root_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::USER) && !(fileAccess_ & Fl_Preferences::USER_READ_OK) ) {
+  if ( ((root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::USER) && !(fileAccess_ & Fl_Preferences::USER_READ_OK) ) {
     prefs_->node->clearDirtyFlags();
     return -1;
   }
-  if ( ((root_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::SYSTEM) && !(fileAccess_ & Fl_Preferences::SYSTEM_READ_OK) ) {
+  if ( ((root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::SYSTEM) && !(fileAccess_ & Fl_Preferences::SYSTEM_READ_OK) ) {
     prefs_->node->clearDirtyFlags();
     return -1;
   }
@@ -1027,11 +1091,11 @@ int Fl_Preferences::RootNode::read() {
 int Fl_Preferences::RootNode::write() {
   if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
-  if ( (root_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_WRITE_OK) )
+  if ( (root_type_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_WRITE_OK) )
     return -1;
-  if ( ((root_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::USER) && !(fileAccess_ & Fl_Preferences::USER_WRITE_OK) )
+  if ( ((root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::USER) && !(fileAccess_ & Fl_Preferences::USER_WRITE_OK) )
     return -1;
-  if ( ((root_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::SYSTEM) && !(fileAccess_ & Fl_Preferences::SYSTEM_WRITE_OK) )
+  if ( ((root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::SYSTEM) && !(fileAccess_ & Fl_Preferences::SYSTEM_WRITE_OK) )
     return -1;
   fl_make_path_for_file(filename_);
   FILE *f = fl_fopen( filename_, "wb" );
@@ -1111,7 +1175,7 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
 }
 
 // create a node that represents a group
-// - path must be a single word, prferable alnum(), dot and underscore only. Space is ok.
+// - path must be a single word, preferable alnum(), dot and underscore only. Space is ok.
 Fl_Preferences::Node::Node( const char *path ) {
   if ( path ) path_ = fl_strdup( path ); else path_ = 0;
   child_ = 0; next_ = 0; parent_ = 0;
@@ -1234,7 +1298,7 @@ Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot() {
   Node *n = this;
   do {
     if (n->top_)
-      return n->root_;
+      return n->root_node_;
     n = n->parent();
   } while (n);
   return 0L;
