@@ -295,8 +295,7 @@ Fl_Preferences app( Fl_Preferences::USER, project, application );
     eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
     void *data;
     eat.get( "binFoo2", data, 0, 0 );
-  **/} {selected
-  }
+  **/} {}
 }
 
 Function {writePrefs()} {open return_type void
@@ -357,5 +356,6 @@ Function {writePrefs()} {open return_type void
   /* sample code only: */
   //unsigned int hex = 0x2387efcd;
   //eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  //eat.set( "binFoo2", (void*)&bed, 256 );} {}
+  //eat.set( "binFoo2", (void*)&bed, 256 );} {selected
+  }
 }

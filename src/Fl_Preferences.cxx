@@ -130,7 +130,6 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
       // FLTK always returns forward slashes in paths
       { char *s; for ( s = buffer; *s; s++ ) if ( *s == '\\' ) *s = '/'; }
       ret = root;
-      ::free(fn);
     } else {
       buffer[0] = 0;
     }
@@ -191,9 +190,6 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  \param[in] root can be \c USER or \c SYSTEM for user specific or system wide preferences
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
-
- \todo (Matt) I want a way to access the type of the root preferences (SYSTEM, USER, MEMORY), and the state of
- the file access (OK, FILE_SYSTEM_FAIL, PERMISSION_FAIL, etc.), and probably the dirty() flag as well.
 
  \todo (Matt) Also, I need to explain runtime preferences.
 
@@ -900,13 +896,40 @@ char Fl_Preferences::getUserdataPath( char *path, int pathlen ) {
 }
 
 /**
- Writes all preferences to disk. This function works only with
- the base preferences group. This function is rarely used as
- deleting the base preferences flushes automatically.
+ Writes preferences to disk if they were modified.
+
+ This method can be used to verify that writing a preferences file went well.
+ Deleting the base preferences object will also write the contents of the
+ database to disk.
+
+ \return -1 if anything went wrong, i.e. file could not be opened, permissions
+    blocked writing, etc.
+ \return 0 if the file was written to disk. This does not check if the disk ran
+    out of space and the file is truncated.
+ \return 1 if there no data written to the database and no write attempt
+    to disk was made.
  */
-void Fl_Preferences::flush() {
-  if ( rootNode && node->dirty() )
-    rootNode->write();
+int Fl_Preferences::flush() {
+  int ret = dirty();
+  if (ret!=1)
+    return ret;
+  return rootNode->write();
+}
+
+/**
+ Check if there were changes to the database that need to be written to disk.
+
+ \return 1 if the database will be written to disk by `flush` or destructor.
+ \return 0 if the databse is unchanged since the last write operation.
+ \return -1 f there is an internal database error.
+ */
+int Fl_Preferences::dirty() {
+  Node *n = node;
+  while (n && n->parent())
+    n = n->parent();
+  if (!n)
+    return -1;
+  return n->dirty();
 }
 
 //-----------------------------------------------------------------------------

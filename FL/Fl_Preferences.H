@@ -186,7 +186,9 @@ public:
 
   char getUserdataPath( char *path, int pathlen );
 
-  void flush();
+  int flush();
+
+  int dirty();
 
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
