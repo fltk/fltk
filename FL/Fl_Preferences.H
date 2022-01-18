@@ -181,6 +181,7 @@ public:
   char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
   char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
+  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size );
 
   int size( const char *entry );
 

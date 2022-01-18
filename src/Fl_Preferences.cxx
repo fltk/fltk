@@ -147,17 +147,13 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  This constructor creates the <i>base</i> instance for all
  following entries and reads existing databases into memory. The
  vendor argument is a unique text string identifying the
- development team or vendor of an application.  A domain name or
+ development team or vendor of an application. A domain name or
  an EMail address are great unique names, e.g.
  "research.matthiasm.com" or "fluid.fltk.org". The
  application argument can be the working title or final
  name of your application. Both vendor and
  application must be valid UNIX path segments and
  may contain forward slashes to create deeper file structures.
-
- A set of Preferences marked "run-time" exists exactly once per application and
- only as long as the application runs. It can be used as a database for
- volatile information. FLTK uses it to register plugins at run-time.
 
  \note On \b Windows, the directory is constructed by querying the <i>Common AppData</i>
  or <i>AppData</i> key of the <tt>Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders</tt>
@@ -191,9 +187,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
 
- \todo (Matt) Also, I need to explain runtime preferences.
-
- \todo (Matt) Lastly, I think I have to put short sample code in the Doxygen docs. The test app is just not enough.
+ \see Fl_Preferences(Fl_Preferences *parent, const char *group) with parent set to NULL
  */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application ) {
   node = new Node( "." );
@@ -234,7 +228,40 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
 }
 
 /**
-   \brief Create or access a group of preferences using a name.
+ \brief Create or access a group of preferences using a name.
+
+ Parent should point to a previously created parent preferences group to
+ create a preferences hierarchy.
+
+ If `parent` is set to `NULL`, an unnamed database will be accessed that exists
+ only in local memory and is not associated with a file on disk. The root type
+ of this databse is set to `Fl_Preferences::MEMORY`.
+
+ * the memory database is \em not shared among multiple instances of the same app
+ * memory databses are \em not thread safe
+ * all data will be lost when the app quits
+
+ ```{.cpp}
+ void some_function() {
+   Fl_Preferences guide( NULL, "Guide" );
+   guide.set("answer", 42);
+ }
+ void other_function() {
+   int x;
+   Fl_Preferences guide( NULL, "Guide" );
+   guide.get("answer", x, -1);
+ }
+ ```
+
+ FLTK uses the memory database to manage plugins. See `Fl_Plugin`.
+
+ \param[in] parent the parameter parent is a pointer to the parent group.
+ If \p Parent is \p NULL, the new Preferences item refers to an
+ application internal database ("runtime prefs") which exists only
+ once, and remains in RAM only until the application quits.
+ This database is used to manage plugins and other data indexes
+ by strings. Runtime Prefs are \em not thread-safe.
+
    \param[in] parent the parameter parent is a pointer to the parent group.
               If \p Parent is \p NULL, the new Preferences item refers to an
               application internal database ("runtime prefs") which exists only
@@ -755,19 +782,17 @@ static void *decodeHex( const char *src, int &size ) {
 }
 
 /**
- Reads an entry from the group. A default value must be
- supplied. The return value indicates if the value was available
- (non-zero) or the default was used (0).
- 'maxSize' is the maximum length of text that will be read.
+ Reads a binary entry from the group, ancoded in hexadecimal blocks.
 
  \param[in] key name of entry
  \param[out] data value returned from preferences or default value if none was set
- \param[in] defaultValue default value to be used if no preference was set
+ \param[in] defaultValue default value
  \param[in] defaultSize size of default value array
- \param[in] maxSize maximum length of value
+ \param[in] maxSize maximum length of value, to receive the number of bytes
+    read, use the function below instead.
  \return 0 if the default value was used
 
- \todo maxSize should receive the number of bytes that were read.
+ \see Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int *maxSize )
  */
 char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int maxSize ) {
   const char *v = node->get( key );
@@ -780,6 +805,45 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
   }
   if ( defaultValue )
     memmove( data, defaultValue, defaultSize>maxSize?maxSize:defaultSize );
+  return 0;
+}
+
+/**
+ Reads a binary entry from the group, ancoded in hexadecimal blocks.
+ A binary (not hex) default value can be supplied.
+ The return value indicates if the value was available (non-zero) or the
+ default was used (0).
+ `maxSize` is the maximum length of text that will be read and returns the
+ actual number of bytes read.
+
+ \param[in] key name of entry
+ \param[out] data value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \param[in] defaultSize size of default value array
+ \param[inout] maxSize maximum length of value and actual number of bytes set
+ \return 0 if the default value was used
+ */
+char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int *maxSize ) {
+  if (!maxSize || !data)
+    return -1;
+  int capacity = *maxSize;
+  const char *v = node->get( key );
+  if ( v ) {
+    int nFound;
+    void *w = decodeHex( v, nFound );
+    int nWrite = (nFound>capacity) ? capacity : nFound;
+    memmove( data, w,  nWrite);
+    free( w );
+    *maxSize = nWrite;
+    return 1;
+  }
+  if ( defaultValue ) {
+    int nWrite = (defaultSize>capacity) ? capacity : defaultSize;
+    memmove( data, defaultValue, nWrite );
+    *maxSize = nWrite;
+  } else {
+    *maxSize = 0;
+  }
   return 0;
 }
 
