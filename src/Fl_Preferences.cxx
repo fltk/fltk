@@ -116,13 +116,13 @@ unsigned int Fl_Preferences::file_access()
     must be a valid filepath segment
  \param[in] application unique text describing the application, must be a
     valid filepath segment
- \return the input root value, or Fl_Preferences::ERROR if the path could not be
-    determined.
+ \return the input root value, or Fl_Preferences::UNKNOWN_ROOT_TYPE if the path
+    could not be determined.
  \see Fl_Preferences( Root root, const char *vendor, const char *application )
  */
 Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size, Root root, const char *vendor, const char *application )
 {
-  Root ret = ERROR;
+  Root ret = UNKNOWN_ROOT_TYPE;
   if (buffer && buffer_size>0) {
     char *fn = Fl::system_driver()->preference_rootnode(NULL, root, vendor, application);
     if (fn) {
@@ -197,7 +197,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
 
  \todo (Matt) Also, I need to explain runtime preferences.
 
- \todo (Matt) Lastly, I think I have to put short sample code in the Doxygen docs. The test app ist just not enough.
+ \todo (Matt) Lastly, I think I have to put short sample code in the Doxygen docs. The test app is just not enough.
  */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application ) {
   node = new Node( "." );
@@ -362,18 +362,18 @@ Fl_Preferences::~Fl_Preferences() {
 Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size)
 {
   if (!buffer || buffer_size==0)
-    return ERROR;
+    return UNKNOWN_ROOT_TYPE;
   RootNode *rn = rootNode;
   if (!rn)
-    return ERROR;
+    return UNKNOWN_ROOT_TYPE;
   if (rn->root()==MEMORY)
     return MEMORY;
   char *fn = rn->filename();
   if (!fn)
-    return ERROR;
+    return UNKNOWN_ROOT_TYPE;
   fl_strlcpy(buffer, fn, buffer_size);
   if (buffer[0]==0)
-    return ERROR;
+    return UNKNOWN_ROOT_TYPE;
   return rn->root();
 }
 

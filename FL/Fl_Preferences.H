@@ -67,7 +67,7 @@ public:
      Define the scope of the preferences.
    */
   enum Root {
-    ERROR = -1,        ///< Returned if storage could not be determined.
+    UNKNOWN_ROOT_TYPE = -1, ///< Returned if storage could not be determined.
     SYSTEM = 0,        ///< Preferences are used system-wide
     USER,              ///< Preferences apply only to the current user
     MEMORY,            ///< Returned if querying runtime prefs

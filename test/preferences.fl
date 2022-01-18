@@ -209,7 +209,7 @@ double doubleValue;
 char path[ FL_PATH_MAX ];
 Fl_Preferences::Root root = 
   Fl_Preferences::filename(path, FL_PATH_MAX, Fl_Preferences::USER, project, application);
-if (root == Fl_Preferences::ERROR) {
+if (root == Fl_Preferences::UNKNOWN_ROOT_TYPE) {
   printf("Location of future Preferences file not found.\\n");
 } else {
   printf("Preferences file will be located at:\\n%s\\n", path);
@@ -218,7 +218,7 @@ if (root == Fl_Preferences::ERROR) {
 Fl_Preferences app( Fl_Preferences::USER, project, application );
 
   root = app.filename(path, FL_PATH_MAX);
-  if (root == Fl_Preferences::ERROR) {
+  if (root == Fl_Preferences::UNKNOWN_ROOT_TYPE) {
     printf("Location of app Preferences file not found.\\n");
   } else if (root == Fl_Preferences::MEMORY) {
     printf("App Preferences are memory mapped.\\n");
