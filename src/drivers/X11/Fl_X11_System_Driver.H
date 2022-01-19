@@ -31,6 +31,8 @@ public:
   virtual void display_arg(const char *arg);
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  virtual int clocale_snprintf(char *output, size_t output_size, const char *format, va_list args);
+  virtual int clocale_sscanf(const char *input, const char *format, va_list args);
   // these 2 are in Fl_get_key.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);

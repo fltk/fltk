@@ -79,10 +79,15 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
   return new Fl_X11_System_Driver();
 }
 
+#if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
+static locale_t c_locale = NULL;
+#endif
+
 
 int Fl_X11_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
 #if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
-  static locale_t c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
+  if (!c_locale)
+    c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
   locale_t previous_locale = uselocale(c_locale);
   int retval = vfprintf(output, format, args);
   uselocale(previous_locale);
@@ -95,6 +100,35 @@ int Fl_X11_System_Driver::clocale_printf(FILE *output, const char *format, va_li
   return retval;
 }
 
+int Fl_X11_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+#if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
+  if (!c_locale)
+    c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
+  locale_t previous_locale = uselocale(c_locale);
+  int retval = vsnprintf(output, output_size, format, args);
+  uselocale(previous_locale);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsnprintf(output, output_size, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+}
+
+int Fl_X11_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+#if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
+  if (!c_locale)
+    c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
+  locale_t previous_locale = uselocale(c_locale);
+  int retval = vsscanf(input, format, args);
+  uselocale(previous_locale);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsscanf(input, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+}
 
 // Find a program in the path...
 static char *path_find(const char *program, char *filename, int filesize) {

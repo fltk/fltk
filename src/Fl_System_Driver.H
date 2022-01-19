@@ -128,6 +128,8 @@ public:
   virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
   // implement to shield fprintf() from locale changes in decimal point
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  virtual int clocale_snprintf(char *output, size_t output_size, const char *format, va_list args);
+  virtual int clocale_sscanf(const char *input, const char *format, va_list args);
   // implement functions telling whether a key is pressed
   virtual int event_key(int) {return 0;}
   virtual int get_key(int) {return 0;}

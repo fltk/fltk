@@ -116,10 +116,15 @@ int Fl_Darwin_System_Driver::arg_and_value(const char *name, const char *value) 
   return strcmp(name, "NSDocumentRevisionsDebugMode") == 0;
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+static locale_t postscript_locale = NULL;
+#endif
+
 int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) {
-    static locale_t postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    if (!postscript_locale)
+      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
     return vfprintf_l(output, postscript_locale, format, args);
   }
 #endif
@@ -129,6 +134,37 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
   setlocale(LC_NUMERIC, saved_locale);
   return retval;
 }
+
+int Fl_Darwin_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400) {
+    if (!postscript_locale)
+      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    return vsnprintf_l(output, output_size, postscript_locale, format, args);
+  }
+#endif
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsnprintf(output, output_size, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+  return retval;
+}
+
+int Fl_Darwin_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400) {
+    if (!postscript_locale)
+      postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    return vsscanf_l(input, postscript_locale, format, args);
+  }
+#endif
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsscanf(input, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+  return retval;
+}
+
 
 /* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
  Supports old Mac OS X versions that may use a couple of Carbon calls:
