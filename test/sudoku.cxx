@@ -625,7 +625,7 @@ SudokuCell::handle(int event) {
 
 // Sudoku class globals...
 Fl_Help_Dialog  *Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
-Fl_Preferences  Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
+Fl_Preferences  Sudoku::prefs_(Fl_Preferences::USER_L, "fltk.org", "sudoku");
 
 
 // Create a Sudoku game window...

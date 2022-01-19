@@ -487,6 +487,14 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
   return retval;
 }
 
+int Fl_WinAPI_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+  //... write me
+}
+
+int Fl_WinAPI_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+  //... write me
+}
+
 int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list,
                                            int (*sort)(struct dirent **, struct dirent **),
                                            char *errmsg, int errmsg_sz ) {
@@ -834,6 +842,9 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
   }
 }
 
+/*
+ Note: `prefs` can be NULL!
+ */
 char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                                   const char *application)
 {

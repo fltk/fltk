@@ -455,9 +455,14 @@ unsigned Fl_WinAPI_System_Driver::utf8from_mb(char *dst, unsigned dstlen, const 
   return ret;
 }
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+static _locale_t c_locale = NULL;
+#endif
+
 int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
-  static _locale_t c_locale = _create_locale(LC_NUMERIC, "C");
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
   int retval = _vfprintf_l(output, format, c_locale, args);
 #else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
@@ -467,6 +472,35 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
 #endif
   return retval;
 }
+
+int Fl_WinAPI_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
+  int retval = _vsnprintf_l(output, output_size, format, c_locale, args);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsnprintf(output, output_size, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+  return retval;
+}
+
+int Fl_WinAPI_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
+  int retval = _vsscanf_l(input, format, c_locale, args);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsscanf(input, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+  return retval;
+}
+
 
 int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list,
                                            int (*sort)(struct dirent **, struct dirent **),
@@ -814,7 +848,10 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
   }
 }
 
-char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+/*
+ Note: `prefs` can be NULL!
+ */
+char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root, const char *vendor,
                                                   const char *application)
 {
 #  define FLPREFS_RESOURCE      "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"

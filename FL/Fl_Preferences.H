@@ -1,7 +1,7 @@
 //
 // Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002-2010 by Matthias Melcher.
+// Copyright 2002-2022 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,31 +24,74 @@
 #  include "Fl_Export.H"
 
 /**
-   \brief Fl_Preferences provides methods to store user
-   settings between application starts.
+ \brief Fl_Preferences store user settings between application starts.
 
-   It is similar to the
-   Registry on Windows and Preferences on MacOS, and provides a
-   simple configuration mechanism for UNIX.
+ Fl_Preferences are similar to the Registry on Windows and Preferences on MacOS,
+ providing a simple method to store customisable user settings between app
+ launches, i.e. the previous window position or a history of previously
+ used documents.
 
-   Fl_Preferences uses a hierarchy to store data. It
-   bundles similar data into groups and manages entries in these
-   groups as name/value pairs.
+ Preferences are organized in a hierarchy of groups. Every group can contain
+ more groups and any number of kay/value pairs. Keys can be text strings
+ containing ASCII letters, digits, periods, and underscores. Forward slashes
+ in a key name are treated as subgroups, i.e the key 'window/width' would
+ actually refere to the key 'width' inside the group 'window'.
 
-   Preferences are stored in text files that can be edited
-   manually. The file format is easy to read and relatively
-   forgiving. Preferences files are the same on all platforms. User
-   comments in preference files are preserved. Filenames are unique
-   for each application by using a vendor/application naming
-   scheme. The user must provide default values for all entries to
-   ensure proper operation should preferences be corrupted or not
-   yet exist.
+ Keys have usually a unique name within their group. Duplicate kays are
+ possible though and can beaccessed using the index based functions.
 
-   Entries can be of any length. However, the size of each
-   preferences file should be kept small for performance
-   reasons. One application can have multiple preferences files.
-   Extensive binary data however should be stored in separate
-   files: see \a Fl_Preferences::getUserdataPath() .
+ A value should be an ASCII string. Control characters and utf8 sequences are
+ stores as octal values. Long strings will wrap at the line ending and will be
+ reassembled when reading the file back.
+
+ Many shortcuts exist to set and get numerical values and binary data.
+
+ Preferences are stored in text files that can be edited manually if needed.
+ The file format is easy to read and relatively forgiving. Preferences files
+ are the same on all platforms. User comments in preference files are preserved.
+ Filenames are unique for each application by using a vendor/application naming
+ scheme. The user must provide default values for all entries to ensure proper
+ operation should preferences be corrupted or not yet exist.
+
+ FLTK preferences are not meant to replace a fully features database. No merging
+ of data takes place. If several instances of an app access the same database at
+ the same time, only the most recent changes will persist.
+
+ Preferences should no be used to store document data. The .prefs file should
+ be kept small for performance reasons. One application can have multiple
+ preferences files. Extensive binary data however should be stored in separate
+ files: see \a Fl_Preferences::getUserdataPath() .
+
+ Fl_Preferences are not thread-safe. They can temprorarily change the locale
+ on some platforms during read an write access, which is alse observable in
+ other threads of the same app.
+
+ Typically a preferences database is read at startup and close, and then writte
+ again at app shutdown:
+ ```.cpp
+ int appWindowWidth, appWindowHeight;
+ void launch() {
+   Fl_Preferences app(Fl_Preferences::USER_L, "matthiasm.com", "hello");
+   // 'app' constructor will be called, reading data from .prefs file
+   Fl_Preferences window(app, "window");
+   window.get("width", appWindowWidth, 800);
+   window.get("height", appWindowHeight, 600);
+   // 'app' destructor will be called, writing data to .prefs file
+ }
+ void quit() {
+   Fl_Preferences app(Fl_Preferences::USER_L, "matthiasm.com", "hello");
+   Fl_Preferences window(app, "window");
+   window.set("width", appWindowWidth);
+   window.set("height", appWindowHeight);
+ }
+ ```
+
+ \see Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
+
+ As a special case, Fl_Preferences can be memeory mapped and not be associated
+ with a file on disk.
+
+ \see Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group )
 
    \note Starting with FLTK 1.3, preference databases are expected to
      be in UTF-8 encoding. Previous databases were stored in the
@@ -59,6 +102,14 @@
      the preferences files has changed slightly. Please see
      Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
      for details.
+
+   \note Starting with FLTK 1.4, preference files should be created with
+     `SYSTEM_L` or `USER_L` to be interchangeable between computers with
+     differing loacale settings. The legacy modes, `LOCAL` and `SYSTEM`, will
+     read and write floating point values using the decimal point of the
+     current locale. As a result, a fp-value would be writte '3,1415' on a
+     German machine, and would be read back as '3.0' on a US machine because
+     the comma would not be recoginized as an alternative decimal point.
  */
 class FL_EXPORT Fl_Preferences {
 
@@ -67,12 +118,17 @@ public:
      Define the scope of the preferences.
    */
   enum Root {
-    SYSTEM = 0,        ///< Preferences are used system-wide
-    USER,              ///< Preferences apply only to the current user
+    UNKNOWN_ROOT_TYPE = -1, ///< Returned if storage could not be determined.
+    SYSTEM = 0,        ///< Preferences are used system-wide, deprecated, see SYSTEM_L
+    USER,              ///< Preferences apply only to the current user, deprecated, see USER_L
+    MEMORY,            ///< Returned if querying runtime prefs
     ROOT_MASK = 0xFF,  ///< masks for the values above
     CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
     CORE_SYSTEM = CORE|SYSTEM,
-    CORE_USER = CORE|USER
+    CORE_USER = CORE|USER,
+    C_LOCALE = 0x1000, ///< this flag should always be set, it makes sure that floating point values wre writte correctly independently of the current locale
+    SYSTEM_L = SYSTEM|C_LOCALE, ///< Preferences are used system-wide
+    USER_L = USER|C_LOCALE,     ///< Preferences apply only to the current user
   };
 
   /**
@@ -120,6 +176,7 @@ public:
 
   static void file_access(unsigned int flags);
   static unsigned int file_access();
+  static Root filename( char *buffer, size_t buffer_size, Root root, const char *vendor, const char *application );
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
   Fl_Preferences( const char *path, const char *vendor, const char *application );
@@ -130,6 +187,8 @@ public:
   Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
   virtual ~Fl_Preferences();
+
+  Root filename( char *buffer, size_t buffer_size);
 
   /** Return an ID that can later be reused to open more references to this dataset.
    */
@@ -176,12 +235,15 @@ public:
   char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
   char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
+  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size );
 
   int size( const char *entry );
 
   char getUserdataPath( char *path, int pathlen );
 
-  void flush();
+  int flush();
+
+  int dirty();
 
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
@@ -233,10 +295,10 @@ public:  // older Sun compilers need this (public definition of the following cl
 
   class FL_EXPORT Node {        // a node contains a list to all its entries
                                 // and all means to manage the tree structure
-    Node *child_, *next_;
+    Node *first_child_, *next_;
     union {                     // these two are mutually exclusive
       Node *parent_;            // top_ bit clear
-      RootNode *root_;          // top_ bit set
+      RootNode *root_node_;          // top_ bit set
     };
     char *path_;
     Entry *entry_;
@@ -265,7 +327,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Node *addChild( const char *path );
     void setParent( Node *parent );
     Node *parent() { return top_?0L:parent_; }
-    void setRoot(RootNode *r) { root_ = r; top_ = 1; }
+    void setRoot(RootNode *r) { root_node_ = r; top_ = 1; }
     RootNode *findRoot();
     char remove();
     char dirty();
@@ -290,7 +352,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;
-    Root root_;
+    Root root_type_;
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
     RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );
@@ -299,6 +361,8 @@ public:  // older Sun compilers need this (public definition of the following cl
     int read();
     int write();
     char getPath( char *path, int pathlen );
+    char *filename() { return filename_; }
+    Root root() { return root_type_; }
   };
   friend class RootNode;
 

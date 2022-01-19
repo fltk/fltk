@@ -45,6 +45,8 @@ public:
   virtual int single_arg(const char *arg);
   virtual int arg_and_value(const char *name, const char *value);
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  virtual int clocale_snprintf(char *output, size_t output_size, const char *format, va_list args);
+  virtual int clocale_sscanf(const char *input, const char *format, va_list args);
   static void *get_carbon_function(const char *name);
   static int calc_mac_os_version(); // computes the fl_mac_os_version global variable
   static unsigned short *compute_macKeyLookUp();

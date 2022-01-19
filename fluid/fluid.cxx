@@ -72,7 +72,7 @@ Fl_Menu_Bar *main_menubar = NULL;
 Fl_Window *main_window;
 
 /// Fluid application preferences, allways accessible, will be flushed when app closes.
-Fl_Preferences  fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
+Fl_Preferences  fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 
 /// Align widget position and size when designing, saved in app preferences and project file.
 int gridx = 5;
