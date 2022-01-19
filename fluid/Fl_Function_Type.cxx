@@ -1530,7 +1530,7 @@ static void load_comments_preset(Fl_Preferences &menu) {
     "FLTK/Header" };
   int i;
   menu.set("n", 5);
-  Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+  Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
   for (i=0; i<5; i++) {
     menu.set(Fl_Preferences::Name(i), predefined_comment[i]);
     db.set(predefined_comment[i], comment_text[i]);
@@ -1545,7 +1545,7 @@ void Fl_Comment_Type::open() {
   const char *text = name();
   {
     int i=0, n=0;
-    Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+    Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
     comment_predefined->clear();
     comment_predefined->add("_Edit/Add current comment...");
     comment_predefined->add("_Edit/Remove last selection...");
@@ -1583,9 +1583,9 @@ void Fl_Comment_Type::open() {
             char *name = fl_strdup(xname);
             for (char*s=name;*s;s++) if (*s==':') *s = ';';
             int n;
-            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
             db.set(name, comment_input->buffer()->text());
-            Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
             menu.get("n", n, 0);
             menu.set(Fl_Preferences::Name(n), name);
             menu.set("n", ++n);
@@ -1599,10 +1599,10 @@ void Fl_Comment_Type::open() {
           } else if (fl_choice("Are you sure that you want to delete the entry\n"
                                "\"%s\"\nfrom the database?", "Cancel", "Delete",
                                NULL, itempath)) {
-            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
             db.deleteEntry(itempath);
             comment_predefined->remove(last_selected_item);
-            Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+            Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
             int i, n;
             for (i=4, n=0; i<comment_predefined->size(); i++) {
               const Fl_Menu_Item *mi = comment_predefined->menu()+i;
@@ -1617,7 +1617,7 @@ void Fl_Comment_Type::open() {
           // load the selected comment from the database
           if (comment_predefined->item_pathname(itempath, 255)==0) {
             if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
-            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
             char *text;
             db.get(itempath, text, "(no text found in data base)");
             comment_input->buffer()->text(text);

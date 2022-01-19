@@ -497,7 +497,7 @@ class BlockWindow : public Fl_Double_Window {
 };
 
 
-Fl_Preferences  BlockWindow::prefs_(Fl_Preferences::USER, "fltk.org", "blocks");
+Fl_Preferences  BlockWindow::prefs_(Fl_Preferences::USER_L, "fltk.org", "blocks");
 
 
 int main(int argc, char *argv[]) {
