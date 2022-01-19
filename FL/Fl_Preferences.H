@@ -40,9 +40,9 @@
  Keys have usually a unique name within their group. Duplicate kays are
  possible though and can beaccessed using the index based functions.
 
- A value should be an ASCII string. Utf8 chaacters are tolerated. When store in
- the 'prefs file, long strings will wrap at the line ending and will be
- reassembled when reading teh file back.
+ A value should be an ASCII string. Control characters and utf8 sequences are
+ stores as octal values. Long strings will wrap at the line ending and will be
+ reassembled when reading the file back.
 
  Many shortcuts exist to set and get numerical values and binary data.
 
