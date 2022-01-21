@@ -48,33 +48,33 @@ public:
 
     Fl_Window* tl_window = new Fl_Window(0, 0, 250, 100);
     tl_window->box(FL_ENGRAVED_BOX);
-    Title* tl_title = new Title(10, 10, 230, 40, FL_RED,
+    /* Title* tl_title = */ new Title(10, 10, 230, 40, FL_RED,
       "Fl_Window TL(0, 0, 250, 100)\nx, y relative to main window");
-    Box* tl_box = new Box(25, 50, 200, 40, FL_RED,
+    /* Box* tl_box = */ new Box(25, 50, 200, 40, FL_RED,
       "Fl_Box tl(25, 50, 200, 40)\nx, y relative to TL window");
     tl_window->end();
 
     Fl_Window* br_window = new Fl_Window(250, 100, 250, 100);
     br_window->box(FL_ENGRAVED_BOX);
-    Title* br_title = new Title(10, 10, 230, 40, FL_MAGENTA,
+    /* Title* br_title = */ new Title(10, 10, 230, 40, FL_MAGENTA,
       "Fl_Window BR(250, 100, 250, 100)\nx, y relative to main window");
-    Box* br_box = new Box(25, 50, 200, 40, FL_MAGENTA,
+    /* Box* br_box = */ new Box(25, 50, 200, 40, FL_MAGENTA,
       "Fl_Box br(25, 50, 200, 40)\nx, y relative to BR window");
     br_window->end();
 
     Fl_Group* tr_group = new Fl_Group(250, 0, 250, 100);
     tr_group->box(FL_ENGRAVED_BOX);
-    Title* tr_title = new Title(260, 10, 230, 40, FL_BLUE,
+    /* Title* tr_title = */ new Title(260, 10, 230, 40, FL_BLUE,
       "Fl_Group TR(250, 0, 250, 100)\nx, y relative to main window");
-    Box* tr_box = new Box(275, 50, 200, 40, FL_BLUE,
+    /* Box* tr_box = */ new Box(275, 50, 200, 40, FL_BLUE,
       "Fl_Box tr(275, 50, 200, 40)\nx, y relative to main window");
     tr_group->end();
 
     Fl_Group* bl_group = new Fl_Group(0, 100, 250, 100);
     bl_group->box(FL_ENGRAVED_BOX);
-    Title* bl_title = new Title(10, 110, 230, 40, FL_BLACK,
+    /* Title* bl_title = */ new Title(10, 110, 230, 40, FL_BLACK,
       "Fl_Group BL(0, 100, 250, 100)\nx, y relative to main window");
-    Box* bl_box = new Box(25, 150, 200, 40, FL_BLACK,
+    /* Box* bl_box = */ new Box(25, 150, 200, 40, FL_BLACK,
       "Fl_Box bl(25, 150, 200, 40)\nx, y relative to main window");
     bl_group->end();
 

@@ -113,6 +113,7 @@ int Fl_X11_System_Driver::clocale_snprintf(char *output, size_t output_size, con
   int retval = vsnprintf(output, output_size, format, args);
   setlocale(LC_NUMERIC, saved_locale);
 #endif
+  return retval;
 }
 
 int Fl_X11_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
@@ -128,6 +129,7 @@ int Fl_X11_System_Driver::clocale_sscanf(const char *input, const char *format, 
   int retval = vsscanf(input, format, args);
   setlocale(LC_NUMERIC, saved_locale);
 #endif
+  return retval;
 }
 
 // Find a program in the path...
