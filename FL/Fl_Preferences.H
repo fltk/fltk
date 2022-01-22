@@ -140,7 +140,7 @@ public:
    */
   typedef void *ID;
 
-  static const char *newUUID();
+  static const char *new_UUID();
 
   /** Set this, if no call to Fl_Preferences shall access the file sytem
    @see Fl_Preferences::file_access(unsigned int)
@@ -208,15 +208,15 @@ public:
 
   int groups();
   const char *group( int num_group );
-  char groupExists( const char *key );
-  char deleteGroup( const char *group );
-  char deleteAllGroups();
+  char group_exists( const char *key );
+  char delete_group( const char *group );
+  char delete_all_groups();
 
   int entries();
   const char *entry( int index );
-  char entryExists( const char *key );
-  char deleteEntry( const char *entry );
-  char deleteAllEntries();
+  char entry_exists( const char *key );
+  char delete_entry( const char *entry );
+  char delete_all_entries();
 
   char clear();
 
@@ -239,14 +239,21 @@ public:
 
   int size( const char *entry );
 
-  char getUserdataPath( char *path, int pathlen );
+  char get_userdata_path( char *path, int pathlen );
 
   int flush();
 
   int dirty();
 
-  // char export( const char *filename, Type fileFormat );
-  // char import( const char *filename );
+  // Deprecated
+  static const char *newUUID() { return new_UUID(); }
+  char groupExists( const char *key ) { return group_exists(key); }
+  char deleteGroup( const char *group ) { return delete_group(group); }
+  char deleteAllGroups() { return delete_all_groups(); }
+  char entryExists( const char *key ) { return entry_exists(key); }
+  char deleteEntry( const char *entry ) { return delete_entry(entry); }
+  char deleteAllEntries() { return delete_all_entries(); }
+  char getUserdataPath( char *path, int pathlen ) { return get_userdata_path(path, pathlen); }
 
   /**
      'Name' provides a simple method to create numerical or more complex

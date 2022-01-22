@@ -63,7 +63,7 @@ static int clocale_sscanf(const char *input, const char *format, ...)
  \return a pointer to a static buffer containing the new UUID in ASCII format.
          The buffer is overwritten during every call to this function!
  */
-const char *Fl_Preferences::newUUID() {
+const char *Fl_Preferences::new_UUID() {
   Fl::system_driver()->newUUID(uuidBuffer);
   return uuidBuffer;
 }
@@ -126,7 +126,7 @@ unsigned int Fl_Preferences::file_access()
  of the pathname componennts. This can be used to check if a preferneces file
  already exists.
 
- \param[out] buffer write the reulting path into this buffer
+ \param[out] buffer write the resulting path into this buffer
  \param[in] buffer_size size of the `buffer` in bytes
  \param[in] root can be \c USER_L or \c SYSTEM_L for user specific or system
     wide preferences
@@ -457,7 +457,7 @@ const char *Fl_Preferences::group( int num_group ) {
    \param[in] key name of group that is searched for
    \return 0 if no group by that name was found
  */
-char Fl_Preferences::groupExists( const char *key ) {
+char Fl_Preferences::group_exists( const char *key ) {
   return node->search( key ) ? 1 : 0 ;
 }
 
@@ -470,7 +470,7 @@ char Fl_Preferences::groupExists( const char *key ) {
    \param[in] group name of the group to delete
    \return 0 if call failed
  */
-char Fl_Preferences::deleteGroup( const char *group ) {
+char Fl_Preferences::delete_group( const char *group ) {
   Node *nd = node->search( group );
   if ( nd ) return nd->remove();
   return 0;
@@ -479,7 +479,7 @@ char Fl_Preferences::deleteGroup( const char *group ) {
 /**
  Delete all groups.
  */
-char Fl_Preferences::deleteAllGroups() {
+char Fl_Preferences::delete_all_groups() {
   node->deleteAllChildren();
   return 1;
 }
@@ -511,7 +511,7 @@ const char *Fl_Preferences::entry( int index ) {
    \param[in] key name of entry that is searched for
    \return 0 if entry was not found
  */
-char Fl_Preferences::entryExists( const char *key ) {
+char Fl_Preferences::entry_exists( const char *key ) {
   return node->getEntry( key )>=0 ? 1 : 0 ;
 }
 
@@ -523,14 +523,14 @@ char Fl_Preferences::entryExists( const char *key ) {
    \param[in] key name of entry to delete
    \return 0 if deleting the entry failed
  */
-char Fl_Preferences::deleteEntry( const char *key ) {
+char Fl_Preferences::delete_entry( const char *key ) {
   return node->deleteEntry( key );
 }
 
 /**
  Delete all entries.
  */
-char Fl_Preferences::deleteAllEntries() {
+char Fl_Preferences::delete_all_entries() {
   node->deleteAllEntries();
   return 1;
 }
@@ -1012,7 +1012,7 @@ int Fl_Preferences::size( const char *key ) {
 
  \see Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
  */
-char Fl_Preferences::getUserdataPath( char *path, int pathlen ) {
+char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
   if ( rootNode )
     return rootNode->getPath( path, pathlen );
   return 0;
