@@ -84,7 +84,7 @@ endif (WIN32)
 
 source_group("Header Files" FILES ${HEADERFILES})
 
-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+if (APPLE AND (NOT OPTION_APPLE_X11))
   set (ICON_NAME fluid.icns)
   set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
   add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${HEADERFILES} ${ICON_PATH})
@@ -104,7 +104,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 else ()
   add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+endif (APPLE AND (NOT OPTION_APPLE_X11))
 
 target_link_libraries (fluid fltk fltk_images)
 
@@ -123,7 +123,7 @@ endif (USE_GDIPLUS)
 
 # install fluid
 
-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+if (APPLE AND (NOT OPTION_APPLE_X11))
 
   # On macOS, Fluid must be installed twice. The bundled version of Fluid needs
   # to go into the /Applications folder to make it visible as a user App with
@@ -149,7 +149,7 @@ else()
     LIBRARY DESTINATION ${FLTK_LIBDIR}
     ARCHIVE DESTINATION ${FLTK_LIBDIR}
   )
-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+endif (APPLE AND (NOT OPTION_APPLE_X11))
 
 # install desktop files
 

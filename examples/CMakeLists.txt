@@ -146,7 +146,7 @@ endforeach (src)
 
 # Note: macOS does not need libGLEW
 
-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+if (APPLE AND (NOT OPTION_APPLE_X11))
   if (NOT LIB_GLEW)
     set (LIB_GLEW TRUE)
   endif ()

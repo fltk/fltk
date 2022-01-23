@@ -72,12 +72,6 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 typedef intptr_t fl_intptr_t;
 typedef uintptr_t fl_uintptr_t;
 
-#elif defined(__ANDROID__)
-
-#include <sys/stat.h>
-typedef intptr_t fl_intptr_t;
-typedef uintptr_t fl_uintptr_t;
-
 #else /* ! _WIN64 */
 
 typedef long fl_intptr_t;
@@ -121,22 +115,6 @@ typedef struct HGLRC__ *GLContext;
 #else
    struct dirent {char d_name[1];};
 #endif
-
-#elif defined(__ANDROID__)
-
-#ifdef __cplusplus
-typedef class Fl_Rect_Region *Fl_Region;
-#else
-typedef struct Fl_Rect_Region *Fl_Region;
-#endif
-
-// TODO: the types below have not yet been ported
-typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
-typedef int FL_SOCKET;
-typedef struct __GLXcontextRec *GLContext;
-#include <sys/types.h>
-#include <dirent.h>
 
 #elif defined(FLTK_USE_X11)
 
