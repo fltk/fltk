@@ -178,7 +178,7 @@ list (APPEND HEADER_FILES
 
 set (GL_HEADER_FILES)  # FIXME: not (yet?) defined
 
-if ((FLTK_USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
+if (FLTK_USE_X11 AND NOT OPTION_PRINT_SUPPORT)
   set (PSFILES
   )
 else ()
@@ -186,7 +186,7 @@ else ()
     drivers/PostScript/Fl_PostScript.cxx
     drivers/PostScript/Fl_PostScript_image.cxx
   )
-endif ((FLTK_USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
+endif (FLTK_USE_X11 AND NOT OPTION_PRINT_SUPPORT)
 
 set (DRIVER_FILES)
 
@@ -241,35 +241,6 @@ if (FLTK_USE_X11)
     drivers/Xlib/Fl_Font.H
   )
 
-elseif (USE_SDL)
-
-  # SDL2
-
-  set (DRIVER_FILES
-    drivers/Pico/Fl_Pico_System_Driver.cxx
-    drivers/Pico/Fl_Pico_Screen_Driver.cxx
-    drivers/Pico/Fl_Pico_Window_Driver.cxx
-    drivers/Pico/Fl_Pico_Graphics_Driver.cxx
-    drivers/Pico/Fl_Pico_Copy_Surface.cxx
-    drivers/Pico/Fl_Pico_Image_Surface.cxx
-    drivers/PicoSDL/Fl_PicoSDL_System_Driver.cxx
-    drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.cxx
-    drivers/PicoSDL/Fl_PicoSDL_Window_Driver.cxx
-    drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.cxx
-    drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.cxx
-    drivers/PicoSDL/Fl_PicoSDL_Image_Surface.cxx
-  )
-  set (DRIVER_HEADER_FILES
-    drivers/Pico/Fl_Pico_System_Driver.H
-    drivers/Pico/Fl_Pico_Screen_Driver.H
-    drivers/Pico/Fl_Pico_Window_Driver.H
-    drivers/Pico/Fl_Pico_Graphics_Driver.H
-    drivers/PicoSDL/Fl_PicoSDL_System_Driver.H
-    drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.H
-    drivers/PicoSDL/Fl_PicoSDL_Window_Driver.H
-    drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.H
-  )
-
 elseif (APPLE)
 
   # Apple Quartz
@@ -301,34 +272,6 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H
     drivers/Quartz/Fl_Font.H
   )
-
-elseif (ANDROID)
-
-  # Android
-
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-  set (DRIVER_FILES
-    drivers/Android/Fl_Android_Application.cxx
-    drivers/Android/Fl_Android_System_Driver.cxx
-    drivers/Android/Fl_Android_Screen_Driver.cxx
-    drivers/Android/Fl_Android_Screen_Keyboard.cxx
-    drivers/Android/Fl_Android_Window_Driver.cxx
-    drivers/Android/Fl_Android_Image_Surface_Driver.cxx
-    drivers/Android/Fl_Android_Graphics_Driver.cxx
-    drivers/Android/Fl_Android_Graphics_Clipping.cxx
-    drivers/Android/Fl_Android_Graphics_Font.cxx
-  )
-  set (DRIVER_HEADER_FILES
-    drivers/Android/Fl_Android_Application.H
-    drivers/Android/Fl_Android_System_Driver.H
-    drivers/Android/Fl_Android_Screen_Driver.H
-    drivers/Android/Fl_Android_Window_Driver.H
-    drivers/Android/Fl_Android_Graphics_Driver.H
-    drivers/Android/Fl_Android_Graphics_Clipping.H
-    drivers/Android/Fl_Android_Graphics_Font.H
-  )
-
 
 else ()
 
@@ -473,7 +416,7 @@ if (WIN32)
   )
 endif (WIN32)
 
-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+if (APPLE AND (NOT OPTION_APPLE_X11))
   set (MMFILES
     Fl_cocoa.mm
     drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
@@ -483,7 +426,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 else()
   set (MMFILES
   )
-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+endif (APPLE AND (NOT OPTION_APPLE_X11))
 
 
 #######################################################################
@@ -518,10 +461,6 @@ endif (USE_THREADS)
 if (FLTK_USE_X11)
   list (APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
 endif (FLTK_USE_X11)
-
-if (USE_SDL)
-  list (APPEND OPTIONAL_LIBS ${SDL2_LIBRARY})
-endif (USE_SDL)
 
 if (WIN32)
   list (APPEND OPTIONAL_LIBS comctl32 ws2_32)

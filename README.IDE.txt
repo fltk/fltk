@@ -3,10 +3,10 @@
 -----------------------------------------
 
 Since FLTK 1.4 we do no longer include IDE [1] solution files in our
-source distribution. [2]
+source distribution.
 
 If you want to build the FLTK library with an IDE you need to use
-CMake [3] to generate the IDE files from the source distribution.
+CMake [2] to generate the IDE files from the source distribution.
 
 The FLTK team will officially support generation of selected IDE projects,
 particularly Visual C++ and Xcode. Older version support of these IDE
@@ -45,8 +45,4 @@ Note: "Not supported" doesn't mean that a particular generator does not work,
     for instance Visual Studio, Xcode, Eclipse, ...
     https://en.wikipedia.org/wiki/Integrated_development_environment
 
-[2] The only exception is the Android Studio IDE in ide/AndroidStudio3
-    currently provided for testing. This IDE solution is likely to be
-    moved elsewhere or removed entirely before FLTK 1.4 will be released.
-
-[3] https://cmake.org/
+[2] https://cmake.org/

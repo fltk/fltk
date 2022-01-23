@@ -43,7 +43,7 @@ const int Fl_System_Driver::fl_YNegative =   0x0020;
 // and/or use their own table. It is defined here "static" and assigned
 // in the constructor to avoid static initialization race conditions.
 //
-// As of June 2018 these platforms are Windows and Android. X11 does not
+// As of January 2022 the only platform is Windows. X11 does not
 // use a key table at all.
 // Platforms that use their own key tables must assign them in their
 // constructors (which overwrites the pointer and size).

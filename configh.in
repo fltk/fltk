@@ -157,16 +157,6 @@
 #undef __APPLE_QUARTZ__
 
 /*
- * USE_SDL
- *
- * Should we use SDL for the current platform
- * *FIXME* USE_SDL not yet implemented in configure !
- *
- */
-
-#undef USE_SDL
-
-/*
  * HAVE_GL_OVERLAY:
  *
  * It is possible your GL has an overlay even if X does not.  If so,

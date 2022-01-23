@@ -158,15 +158,6 @@
 #cmakedefine __APPLE_QUARTZ__ 1
 
 /*
- * USE_SDL
- *
- * Should we use SDL for the current platform
- *
- */
-
-#cmakedefine USE_SDL 1
-
-/*
  * HAVE_GL_OVERLAY:
  *
  * It is possible your GL has an overlay even if X does not.  If so,

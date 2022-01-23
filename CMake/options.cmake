@@ -65,7 +65,6 @@ endif (WIN32)
 #######################################################################
 if (APPLE)
   option (OPTION_APPLE_X11 "use X11" OFF)
-  option (OPTION_APPLE_SDL "use SDL" OFF)
   if (CMAKE_OSX_SYSROOT)
     list (APPEND FLTK_CFLAGS "-isysroot ${CMAKE_OSX_SYSROOT}")
   endif (CMAKE_OSX_SYSROOT)
@@ -99,14 +98,6 @@ if (OPTION_APPLE_X11)
     list (APPEND FLTK_CFLAGS "${TEMP_INCLUDE_DIR}")
   endif (X11_INCLUDE_DIR)
 endif (OPTION_APPLE_X11)
-
-if (OPTION_APPLE_SDL)
-  find_package (SDL2 REQUIRED)
-  if (SDL2_FOUND)
-    set (USE_SDL 1)
-    list (APPEND FLTK_LDLIBS SDL2_LIBRARY)
-  endif (SDL2_FOUND)
-endif (OPTION_APPLE_SDL)
 
 #######################################################################
 option (OPTION_USE_POLL "use poll if available" OFF)
@@ -238,8 +229,6 @@ if (OPTION_USE_GL)
     set (OPENGL_LIBRARIES -L${PATH_TO_XLIBS} -lGLU -lGL)
     unset(HAVE_GL_GLU_H CACHE)
     find_file (HAVE_GL_GLU_H GL/glu.h PATHS ${X11_INCLUDE_DIR})
-  elseif (OPTION_APPLE_SDL)
-    set (OPENGL_FOUND FALSE)
   else()
     include (FindOpenGL)
     if (APPLE)
@@ -616,10 +605,6 @@ if (OPTION_USE_KDIALOG)
 else ()
   set (USE_KDIALOG 0)
 endif (OPTION_USE_KDIALOG)
-#######################################################################
-
-#######################################################################
-option (OPTION_CREATE_ANDROID_STUDIO_IDE "create files needed to compile FLTK for Android" OFF)
 #######################################################################
 
 #######################################################################

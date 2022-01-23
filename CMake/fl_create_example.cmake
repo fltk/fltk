@@ -46,8 +46,7 @@
 #   quotes if more than one library is required, e.g. "fltk_gl;fltk"
 #
 # CREATE_EXAMPLE can have an optional fourth argument with a list of options
-# - the option ANDROID_OK is set if CREATE_EXAMPLE creates code for Android
-#   builds in addition to the native build
+# - these options are currently not used
 #
 ################################################################################
 
@@ -62,11 +61,11 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   # create macOS bundle? 0 = no, 1 = yes
 
-  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+  if (APPLE AND (NOT OPTION_APPLE_X11))
     set (MAC_BUNDLE 1)
   else ()
     set (MAC_BUNDLE 0)
-  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+  endif (APPLE AND (NOT OPTION_APPLE_X11))
 
   # rename target name "help" (reserved since CMake 2.8.12)
   # FIXME: not necessary in FLTK 1.4 but left for compatibility (06/2020)
@@ -164,15 +163,17 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   endif (MAC_BUNDLE)
 
   ######################################################################
-  # Parse optional fourth argument "ANDROID_OK", see description above.
+  # Parse optional fourth argument, see description above.
   ######################################################################
 
-  if (${ARGC} GREATER 3)
-    foreach (OPTION ${ARGV3})
-      if (${OPTION} STREQUAL "ANDROID_OK" AND OPTION_CREATE_ANDROID_STUDIO_IDE)
-        CREATE_ANDROID_IDE_FOR_TEST (${NAME} ${SOURCES} ${LIBRARIES})
-      endif ()
-    endforeach ()
-  endif ()
+  # code left commented out as an example
+
+  # *unused* #  if (${ARGC} GREATER 3)
+  # *unused* #    foreach (OPTION ${ARGV3})
+  # *unused* #      if (${OPTION} STREQUAL "xxx")
+  # *unused* #        # do something ...
+  # *unused* #      endif ()
+  # *unused* #    endforeach ()
+  # *unused* #  endif ()
 
 endmacro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)

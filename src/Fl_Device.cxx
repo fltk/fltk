@@ -50,7 +50,7 @@
       |
       +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
       +- Fl_SVG_Graphics_Driver: platform-independent graphics driver for Scalable Vector Graphics drawing
-      +- Fl_..._Graphics_Driver: platform-specific graphics driver (MacOS, Android, Pico)
+      +- Fl_..._Graphics_Driver: platform-specific graphics driver (MacOS)
           +- Fl_Quartz_Printer_Graphics_Driver: MacOS-specific, for drawing to printers
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
