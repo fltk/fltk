@@ -32,19 +32,19 @@
  used documents.
 
  Preferences are organized in a hierarchy of groups. Every group can contain
- more groups and any number of kay/value pairs. Keys can be text strings
+ more groups and any number of key/value pairs. Keys can be text strings
  containing ASCII letters, digits, periods, and underscores. Forward slashes
  in a key name are treated as subgroups, i.e the key 'window/width' would
- actually refere to the key 'width' inside the group 'window'.
+ actually refer to the key 'width' inside the group 'window'.
 
- Keys have usually a unique name within their group. Duplicate kays are
- possible though and can beaccessed using the index based functions.
+ Keys usually have a unique name within their group. Duplicate keys are
+ possible though and can be accessed using the index based functions.
 
- A value should be an ASCII string. Control characters and utf8 sequences are
- stores as octal values. Long strings will wrap at the line ending and will be
+ A value can be an UTF-8 string. Control characters and UTF-8 sequences are
+ stores as octal values. Long strings are wrap at the line ending and will be
  reassembled when reading the file back.
 
- Many shortcuts exist to set and get numerical values and binary data.
+ Several methods allow setting and getting numerical values and binary data.
 
  Preferences are stored in text files that can be edited manually if needed.
  The file format is easy to read and relatively forgiving. Preferences files
@@ -60,16 +60,17 @@
  Preferences should no be used to store document data. The .prefs file should
  be kept small for performance reasons. One application can have multiple
  preferences files. Extensive binary data however should be stored in separate
- files: see \a Fl_Preferences::getUserdataPath() .
+ files: see \a Fl_Preferences::get_userdata_path() .
 
  Fl_Preferences are not thread-safe. They can temprorarily change the locale
- on some platforms during read an write access, which is alse observable in
- other threads of the same app.
+ on some platforms during read an write access, which is also changes it
+ temporarily in other threads of the same app.
 
- Typically a preferences database is read at startup and close, and then writte
- again at app shutdown:
- ```.cpp
+ Typically a preferences database is read at startup, and then reopended and
+ written at app shutdown:
+ ```
  int appWindowWidth, appWindowHeight;
+
  void launch() {
    Fl_Preferences app(Fl_Preferences::USER_L, "matthiasm.com", "hello");
    // 'app' constructor will be called, reading data from .prefs file
@@ -78,6 +79,7 @@
    window.get("height", appWindowHeight, 600);
    // 'app' destructor will be called, writing data to .prefs file
  }
+
  void quit() {
    Fl_Preferences app(Fl_Preferences::USER_L, "matthiasm.com", "hello");
    Fl_Preferences window(app, "window");
@@ -88,10 +90,11 @@
 
  \see Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
 
- As a special case, Fl_Preferences can be memeory mapped and not be associated
+ As a special case, Fl_Preferences can be memory mapped and not be associated
  with a file on disk.
 
  \see Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group )
+ for more details on memory mapped preferences.
 
    \note Starting with FLTK 1.3, preference databases are expected to
      be in UTF-8 encoding. Previous databases were stored in the
@@ -121,14 +124,14 @@ public:
     UNKNOWN_ROOT_TYPE = -1, ///< Returned if storage could not be determined.
     SYSTEM = 0,        ///< Preferences are used system-wide, deprecated, see SYSTEM_L
     USER,              ///< Preferences apply only to the current user, deprecated, see USER_L
-    MEMORY,            ///< Returned if querying runtime prefs
+    MEMORY,            ///< Returned if querying memory mapped preferences
     ROOT_MASK = 0xFF,  ///< masks for the values above
     CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
     CORE_SYSTEM = CORE|SYSTEM,
     CORE_USER = CORE|USER,
     C_LOCALE = 0x1000, ///< this flag should always be set, it makes sure that floating point values wre writte correctly independently of the current locale
-    SYSTEM_L = SYSTEM|C_LOCALE, ///< Preferences are used system-wide
-    USER_L = USER|C_LOCALE,     ///< Preferences apply only to the current user
+    SYSTEM_L = SYSTEM|C_LOCALE, ///< Preferences are used system-wide, locale independent
+    USER_L = USER|C_LOCALE,     ///< Preferences apply only to the current user, locale independent
   };
 
   /**
@@ -245,7 +248,7 @@ public:
 
   int dirty();
 
-  // Deprecated
+  /** \cond PRIVATE */
   static const char *newUUID() { return new_UUID(); }
   char groupExists( const char *key ) { return group_exists(key); }
   char deleteGroup( const char *group ) { return delete_group(group); }
@@ -254,6 +257,7 @@ public:
   char deleteEntry( const char *entry ) { return delete_entry(entry); }
   char deleteAllEntries() { return delete_all_entries(); }
   char getUserdataPath( char *path, int pathlen ) { return get_userdata_path(path, pathlen); }
+  /** \endcond */
 
   /**
      'Name' provides a simple method to create numerical or more complex

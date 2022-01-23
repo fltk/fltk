@@ -157,10 +157,16 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
 
 
 /**
- The constructor creates a group that manages name/value pairs and
- child groups. Groups are ready for reading and writing at any time.
- The root argument is either `Fl_Preferences::USER_L`
- or `Fl_Preferences::SYSTEM_L`.
+ The constructor creates a group that manages key/value pairs and
+ child groups.
+
+ Preferences can be stored per user using the root type
+ `Fl_Preferences::USER_L`, or stored system-wide using
+ `Fl_Preferences::SYSTEM_L`.
+
+ Groups and key/value pairs can be read and written randomly. Reading undefined
+ values will return the default value. Writing undefined values will create
+ all required groups and key/vlaue pairs.
 
  This constructor creates the <i>base</i> instance for all following entries
  and reads the database from disk into memory if it exists.
@@ -192,19 +198,22 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  check the path member of the passwd struct returned by \c getpwuid(getuid()) .
  If all attempts fail, data will be stored in RAM only and be lost when the
  app exits.
- \par The \c SYSTEM preferences filename is hardcoded as
+
+ The \c SYSTEM preferences filename is hardcoded as
  <tt>/etc/fltk/\$(vendor)/\$(application).prefs</tt> .
- \par For backward compatibility, the old \c USER `.prefs` file naming scheme
+
+ For backward compatibility, the old \c USER `.prefs` file naming scheme
  <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> is checked first.
  If that file does not exist, the environment variable `$XDG_CONFIG_HOME` is
- read as a base directory. If not set, the base directory defaults to
- `$HOME/.config/`.
- \par The user preferences will be stored in
+ read as a base directory. If `$XDG_CONFIG_HOME` not set, the base directory
+ defaults to `$HOME/.config/`.
+
+ The user preferences will be stored in
  <tt>\$(directory)/\$(vendor)/\$(application).prefs</tt>, The user data path
  will be
  <tt>\$(directory)/\$(vendor)/\$(application)/</tt>
 
- \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
+ In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
  would be empty, generating <tt>\$(vendor)/\$(application).prefs</tt>, which
  was used relative to the current working directory.
 
@@ -277,11 +286,11 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
  only in local memory and is not associated with a file on disk. The root type
  of this databse is set to `Fl_Preferences::MEMORY`.
 
- * the memory database is \em not shared among multiple instances of the same app
- * memory databses are \em not thread safe
- * all data will be lost when the app quits
+ - the memory database is \em not shared among multiple instances of the same app
+ - memory databses are \em not thread safe
+ - all data will be lost when the app quits
 
- ```{.cpp}
+ ```
  void some_function() {
    Fl_Preferences guide( NULL, "Guide" );
    guide.set("answer", 42);
