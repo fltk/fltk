@@ -192,10 +192,17 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  check the path member of the passwd struct returned by \c getpwuid(getuid()) .
  If all attempts fail, data will be stored in RAM only and be lost when the
  app exits.
- The filename and path is then constructed as
- <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> .
- The \c SYSTEM directory is hardcoded as
+ \par The \c SYSTEM preferences filename is hardcoded as
  <tt>/etc/fltk/\$(vendor)/\$(application).prefs</tt> .
+ \par For backward compatibility, the old \c USER `.prefs` file naming scheme
+ <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> is checked first.
+ If that file does not exist, the environment variable `$XDG_CONFIG_HOME` is
+ read as a base directory. If not set, the base directory defaults to
+ `$HOME/.config/`.
+ \par The user preferences will be stored in
+ <tt>\$(directory)/\$(vendor)/\$(application).prefs</tt>, The user data path
+ will be
+ <tt>\$(directory)/\$(vendor)/\$(application)/</tt>
 
  \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
  would be empty, generating <tt>\$(vendor)/\$(application).prefs</tt>, which
