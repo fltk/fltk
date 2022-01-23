@@ -50,7 +50,11 @@ OPTIM="@OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
 # Config
-if grep -q '^#define FLTK_HAVE_CAIRO 1' $selfdir/FL/fl_config.h; then
+if ( ( test -f "$includedir/FL/fl_config.h" && \
+       grep -q '^#define FLTK_HAVE_CAIRO 1' "$includedir/FL/fl_config.h" ) \
+     || \
+     ( test -f "$selfdir/FL/fl_config.h" && \
+       grep -q '^#define FLTK_HAVE_CAIRO 1' "$selfdir/FL/fl_config.h" ) ) ; then
     FLTK_HAVE_CAIRO=1
 else
     FLTK_HAVE_CAIRO=0
