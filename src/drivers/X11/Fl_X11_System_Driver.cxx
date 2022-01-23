@@ -459,19 +459,19 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_P
 {
   static char *filename = 0L;
   if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
-  const char *e;
+  const char *home;
   switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::USER:
-      e = getenv("HOME");
+      home = getenv("HOME");
       // make sure that $HOME is set to an existing directory
-      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+      if ( (home==NULL) || (home[0]==0) || (::access(home, F_OK)==-1) ) {
         struct passwd *pw = getpwuid(getuid());
-        e = pw->pw_dir;
+        home = pw->pw_dir;
       }
-      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
-        return 0L;
+      if ( (home==0L) || (home[0]==0) || (::access(home, F_OK)==-1) ) {
+        return NULL;
       } else {
-        strlcpy(filename, e, FL_PATH_MAX);
+        strlcpy(filename, home, FL_PATH_MAX);
         if (filename[strlen(filename)-1] != '/')
           strlcat(filename, "/", FL_PATH_MAX);
         strlcat(filename, ".fltk/", FL_PATH_MAX);
@@ -483,13 +483,50 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_P
   }
 
   // Make sure that the parameters are not NULL
-  if ( (vendor==0L) || (vendor[0]==0) )
+  if ( (vendor==NULL) || (vendor[0]==0) )
     vendor = "unknown";
-  if ( (application==0L) || (application[0]==0) )
+  if ( (application==NULL) || (application[0]==0) )
     application = "unknown";
 
   snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "%s/%s.prefs", vendor, application);
+
+  // If this is the SYSTEM path, we are done
+  if ((root&Fl_Preferences::ROOT_MASK)!=Fl_Preferences::USER)
+    return filename;
+
+  // If the legacy file exists, we are also done
+  if (::access(filename, F_OK)==0)
+    return filename;
+
+  // This is USER mode, and there is no legacy file. Create an XDG conforming path.
+  // Check $XDG_CONFIG_HOME, and if it isn't set, default to $HOME/.config
+  const char *xdg = getenv("XDG_CONFIG_HOME");
+  if (xdg==NULL) {
+    xdg = "~/.config";
+  }
+  filename[0] = 0;
+  if (strncmp(xdg, "~/", 2)==0) {
+    strlcpy(filename, home, FL_PATH_MAX);
+    strlcat(filename, "/", FL_PATH_MAX);
+    strlcat(filename, xdg+2, FL_PATH_MAX);
+  } else if (strncmp(xdg, "$HOME/", 6)==0) {
+    strlcpy(filename, home, FL_PATH_MAX);
+    strlcat(filename, "/", FL_PATH_MAX);
+    strlcat(filename, xdg+6, FL_PATH_MAX);
+  } else if (strncmp(xdg, "${HOME}/", 8)==0) {
+    strlcpy(filename, home, FL_PATH_MAX);
+    strlcat(filename, "/", FL_PATH_MAX);
+    strlcat(filename, xdg+8, FL_PATH_MAX);
+  } else {
+    strlcpy(filename, xdg, FL_PATH_MAX);
+  }
+  strlcat(filename, "/", FL_PATH_MAX);
+  strlcat(filename, vendor, FL_PATH_MAX);
+  strlcat(filename, "/", FL_PATH_MAX);
+  strlcat(filename, application, FL_PATH_MAX);
+  strlcat(filename, ".prefs", FL_PATH_MAX);
+
   return filename;
 }
 

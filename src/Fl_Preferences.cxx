@@ -63,7 +63,7 @@ static int clocale_sscanf(const char *input, const char *format, ...)
  \return a pointer to a static buffer containing the new UUID in ASCII format.
          The buffer is overwritten during every call to this function!
  */
-const char *Fl_Preferences::newUUID() {
+const char *Fl_Preferences::new_UUID() {
   Fl::system_driver()->newUUID(uuidBuffer);
   return uuidBuffer;
 }
@@ -126,7 +126,7 @@ unsigned int Fl_Preferences::file_access()
  of the pathname componennts. This can be used to check if a preferneces file
  already exists.
 
- \param[out] buffer write the reulting path into this buffer
+ \param[out] buffer write the resulting path into this buffer
  \param[in] buffer_size size of the `buffer` in bytes
  \param[in] root can be \c USER_L or \c SYSTEM_L for user specific or system
     wide preferences
@@ -157,10 +157,16 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
 
 
 /**
- The constructor creates a group that manages name/value pairs and
- child groups. Groups are ready for reading and writing at any time.
- The root argument is either `Fl_Preferences::USER_L`
- or `Fl_Preferences::SYSTEM_L`.
+ The constructor creates a group that manages key/value pairs and
+ child groups.
+
+ Preferences can be stored per user using the root type
+ `Fl_Preferences::USER_L`, or stored system-wide using
+ `Fl_Preferences::SYSTEM_L`.
+
+ Groups and key/value pairs can be read and written randomly. Reading undefined
+ values will return the default value. Writing undefined values will create
+ all required groups and key/vlaue pairs.
 
  This constructor creates the <i>base</i> instance for all following entries
  and reads the database from disk into memory if it exists.
@@ -192,12 +198,22 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  check the path member of the passwd struct returned by \c getpwuid(getuid()) .
  If all attempts fail, data will be stored in RAM only and be lost when the
  app exits.
- The filename and path is then constructed as
- <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> .
- The \c SYSTEM directory is hardcoded as
+
+ The \c SYSTEM preferences filename is hardcoded as
  <tt>/etc/fltk/\$(vendor)/\$(application).prefs</tt> .
 
- \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
+ For backward compatibility, the old \c USER `.prefs` file naming scheme
+ <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> is checked first.
+ If that file does not exist, the environment variable `$XDG_CONFIG_HOME` is
+ read as a base directory. If `$XDG_CONFIG_HOME` not set, the base directory
+ defaults to `$HOME/.config/`.
+
+ The user preferences will be stored in
+ <tt>\$(directory)/\$(vendor)/\$(application).prefs</tt>, The user data path
+ will be
+ <tt>\$(directory)/\$(vendor)/\$(application)/</tt>
+
+ In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
  would be empty, generating <tt>\$(vendor)/\$(application).prefs</tt>, which
  was used relative to the current working directory.
 
@@ -270,11 +286,11 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
  only in local memory and is not associated with a file on disk. The root type
  of this databse is set to `Fl_Preferences::MEMORY`.
 
- * the memory database is \em not shared among multiple instances of the same app
- * memory databses are \em not thread safe
- * all data will be lost when the app quits
+ - the memory database is \em not shared among multiple instances of the same app
+ - memory databses are \em not thread safe
+ - all data will be lost when the app quits
 
- ```{.cpp}
+ ```
  void some_function() {
    Fl_Preferences guide( NULL, "Guide" );
    guide.set("answer", 42);
@@ -457,7 +473,7 @@ const char *Fl_Preferences::group( int num_group ) {
    \param[in] key name of group that is searched for
    \return 0 if no group by that name was found
  */
-char Fl_Preferences::groupExists( const char *key ) {
+char Fl_Preferences::group_exists( const char *key ) {
   return node->search( key ) ? 1 : 0 ;
 }
 
@@ -470,7 +486,7 @@ char Fl_Preferences::groupExists( const char *key ) {
    \param[in] group name of the group to delete
    \return 0 if call failed
  */
-char Fl_Preferences::deleteGroup( const char *group ) {
+char Fl_Preferences::delete_group( const char *group ) {
   Node *nd = node->search( group );
   if ( nd ) return nd->remove();
   return 0;
@@ -479,7 +495,7 @@ char Fl_Preferences::deleteGroup( const char *group ) {
 /**
  Delete all groups.
  */
-char Fl_Preferences::deleteAllGroups() {
+char Fl_Preferences::delete_all_groups() {
   node->deleteAllChildren();
   return 1;
 }
@@ -511,7 +527,7 @@ const char *Fl_Preferences::entry( int index ) {
    \param[in] key name of entry that is searched for
    \return 0 if entry was not found
  */
-char Fl_Preferences::entryExists( const char *key ) {
+char Fl_Preferences::entry_exists( const char *key ) {
   return node->getEntry( key )>=0 ? 1 : 0 ;
 }
 
@@ -523,14 +539,14 @@ char Fl_Preferences::entryExists( const char *key ) {
    \param[in] key name of entry to delete
    \return 0 if deleting the entry failed
  */
-char Fl_Preferences::deleteEntry( const char *key ) {
+char Fl_Preferences::delete_entry( const char *key ) {
   return node->deleteEntry( key );
 }
 
 /**
  Delete all entries.
  */
-char Fl_Preferences::deleteAllEntries() {
+char Fl_Preferences::delete_all_entries() {
   node->deleteAllEntries();
   return 1;
 }
@@ -1012,7 +1028,7 @@ int Fl_Preferences::size( const char *key ) {
 
  \see Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
  */
-char Fl_Preferences::getUserdataPath( char *path, int pathlen ) {
+char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
   if ( rootNode )
     return rootNode->getPath( path, pathlen );
   return 0;
