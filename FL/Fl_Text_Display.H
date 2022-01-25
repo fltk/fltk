@@ -146,6 +146,17 @@ public:
     Fl_Font     font;   ///< text font
     Fl_Fontsize size;   ///< text font size
     unsigned    attr;   ///< currently unused (this may be changed in the future)
+    Fl_Color    bgcolor;///< text background color if ATTR_BGCOLOR or ATTR_BGCOLOR_EXT is set
+  };
+
+  /**
+   attribute flags
+   */
+  enum {
+    ATTR_BGCOLOR      = 0x0001, ///< use the background color
+    ATTR_BGCOLOR_EXT_ = 0x0002, ///< internal use
+    ATTR_BGCOLOR_EXT  = 0x0003  ///< extend background color to the end of the line
+    // how about underscore, strikethrough, undersquigle(color)?
   };
 
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
