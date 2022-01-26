@@ -2348,12 +2348,13 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
+    int baseline = Y + mMaxsize - fl_descent();
     // Make sure antialiased ÄÖÜ do not leak on line above:
     // on X11+Xft the antialiased part of characters such as ÄÖÜ leak on the bottom pixel of the line above
     static int can_leak = Fl::screen_driver()->text_display_can_leak();
     // Clip top an bottom only. Add margin to avoid clipping horizontally
     if (can_leak) fl_push_clip(x(), Y, w(), mMaxsize);
-    fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+    fl_draw( string, nChars, X, baseline);
     if (styleRec) {
       if (styleRec->attr & ATTR_LINES_MASK) {
         int pitch = fsize/7;
@@ -2373,12 +2374,12 @@ void Fl_Text_Display::draw_string(int style,
           DRAW_DOTTED_UNDERLINE:
             fl_line_style(FL_DOT, pitch);
           DRAW_UNDERLINE:
-            fl_xyline(X, Y + mMaxsize - fl_descent()/2, toX);
+            fl_xyline(X, baseline + fl_descent()/2, toX);
             break;
           case ATTR_STRIKE_THROUGH:
             fl_color(foreground);
             fl_line_style(FL_SOLID, pitch);
-            fl_xyline(X, Y + mMaxsize-2*fl_descent(), toX);
+            fl_xyline(X, baseline - (fl_height()-fl_descent())/3, toX);
             break;
         }
         fl_line_style(FL_SOLID, 1);
