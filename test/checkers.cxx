@@ -907,7 +907,7 @@ public:
 #define BOXSIZE 52
 #define BORDER 4
 #define BOARDSIZE (8*BOXSIZE+BORDER)
-#define BMOFFSET 5
+#define BMOFFSET 3
 
 static int erase_this;  // real location of dragging piece, don't draw it
 static int dragging;    // piece being dragged
@@ -1018,6 +1018,7 @@ void Board::animate(node* move, int backwards) {
     int y = y1+(y2-y1)*j/STEPS;
     drag_piece(move->from,x,y);
     Fl::flush();
+    Fl::wait(0.01);
   }
   drop_piece(t);
   if (move->jump) redraw();
