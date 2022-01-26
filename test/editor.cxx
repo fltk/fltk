@@ -61,9 +61,9 @@ Fl_Text_Display::Style_Table_Entry
                      { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS, Fl_Text_Display::ATTR_BGCOLOR, FL_LIGHT2  }, // B - Line comments
                      { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS, Fl_Text_Display::ATTR_BGCOLOR_EXT, FL_LIGHT2 }, // C - Block comments
                      { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
-                     { FL_DARK_RED,   FL_COURIER,           TS }, // E - Directives
-                     { FL_DARK_RED,   FL_COURIER_BOLD,      TS }, // F - Types
-                     { FL_BLUE,       FL_COURIER_BOLD,      TS }, // G - Keywords
+                     { FL_DARK_RED,   FL_COURIER,           TS, Fl_Text_Display::ATTR_GRAMMAR }, // E - Directives
+                     { FL_DARK_RED,   FL_COURIER_BOLD,      TS, Fl_Text_Display::ATTR_STRIKE_THROUGH }, // F - Types
+                     { FL_BLUE,       FL_COURIER_BOLD,      TS, Fl_Text_Display::ATTR_SPELLING }, // G - Keywords
                    };
 const char         *code_keywords[] = { // List of known C/C++ keywords...
                      "and",

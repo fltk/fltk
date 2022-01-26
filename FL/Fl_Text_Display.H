@@ -159,7 +159,8 @@ public:
     ATTR_UNDERLINE      = 0x0004, ///< a single underline, underline types ar mutually exclusive
     ATTR_GRAMMAR        = 0x0008, ///< grammar suggestion (blue dotted underline)
     ATTR_SPELLING       = 0x000C, ///< spelling suggestion (red dotted underline)
-    ATTR_STRIKE_THROUGH = 0x0010  ///< line through the middle of the text
+    ATTR_STRIKE_THROUGH = 0x0010, ///< line through the middle of the text
+    ATTR_LINES_MASK     = 0x001C, ///< all underline and strike through types combined
     // how about underscore, strikethrough, undersquigle(color)?
   };
 

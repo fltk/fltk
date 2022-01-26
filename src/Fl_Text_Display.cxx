@@ -2274,7 +2274,7 @@ void Fl_Text_Display::draw_string(int style,
                                   const char *string, int nChars) const {
   IS_UTF8_ALIGNED(string)
 
-  const Style_Table_Entry * styleRec;
+  const Style_Table_Entry *styleRec = NULL;
 
   /* Draw blank area rather than text, if that was the request */
   if ( style & FILL_MASK ) {
@@ -2354,6 +2354,37 @@ void Fl_Text_Display::draw_string(int style,
     // Clip top an bottom only. Add margin to avoid clipping horizontally
     if (can_leak) fl_push_clip(x(), Y, w(), mMaxsize);
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+    if (styleRec) {
+      if (styleRec->attr & ATTR_LINES_MASK) {
+        int pitch = fsize/7;
+        int prevAA = fl_antialias();
+        fl_antialias(1);
+        switch (styleRec->attr & ATTR_LINES_MASK) {
+          case ATTR_UNDERLINE:
+            fl_color(foreground);
+            fl_line_style(FL_SOLID, pitch);
+            goto DRAW_UNDERLINE;
+            break;
+          case ATTR_GRAMMAR:
+            fl_color(FL_BLUE);
+            goto DRAW_DOTTED_UNDERLINE;
+          case ATTR_SPELLING:
+            fl_color(FL_RED);
+          DRAW_DOTTED_UNDERLINE:
+            fl_line_style(FL_DOT, pitch);
+          DRAW_UNDERLINE:
+            fl_xyline(X, Y + mMaxsize - fl_descent()/2, toX);
+            break;
+          case ATTR_STRIKE_THROUGH:
+            fl_color(foreground);
+            fl_line_style(FL_SOLID, pitch);
+            fl_xyline(X, Y + mMaxsize-2*fl_descent(), toX);
+            break;
+        }
+        fl_line_style(FL_SOLID, 1);
+        fl_antialias(prevAA);
+      }
+    }
     if (Fl::screen_driver()->has_marked_text() && Fl::compose_state && (style & PRIMARY_MASK)) {
       fl_color( fl_color_average(foreground, background, 0.6f) );
       fl_line(X, Y + mMaxsize - 1, X + (int)fl_width(string, nChars), Y + mMaxsize - 1);
