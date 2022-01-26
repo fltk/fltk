@@ -153,9 +153,13 @@ public:
    attribute flags
    */
   enum {
-    ATTR_BGCOLOR      = 0x0001, ///< use the background color
-    ATTR_BGCOLOR_EXT_ = 0x0002, ///< internal use
-    ATTR_BGCOLOR_EXT  = 0x0003  ///< extend background color to the end of the line
+    ATTR_BGCOLOR        = 0x0001, ///< use the background color
+    ATTR_BGCOLOR_EXT_   = 0x0002, ///< internal use
+    ATTR_BGCOLOR_EXT    = 0x0003, ///< extend background color to the end of the line
+    ATTR_UNDERLINE      = 0x0004, ///< a single underline, underline types ar mutually exclusive
+    ATTR_GRAMMAR        = 0x0008, ///< grammar suggestion (blue dotted underline)
+    ATTR_SPELLING       = 0x000C, ///< spelling suggestion (red dotted underline)
+    ATTR_STRIKE_THROUGH = 0x0010  ///< line through the middle of the text
     // how about underscore, strikethrough, undersquigle(color)?
   };
 
