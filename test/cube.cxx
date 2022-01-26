@@ -231,14 +231,6 @@ void makeform(const char *name) {
     Fl_Box *rt_resizer = new Fl_Box(rt_grp_x-5, rt_grp_y, 10, rt_grp_h);
     rt_resizer->box(FL_NO_BOX);
 
-#if HAVE_GL
-    // overlay a button onto an OpenGL window
-    lt_cube->begin();
-    Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
-    test->box(FL_ROUND_UP_BOX);
-    lt_cube->end();
-#endif // HAVE_GL
-
   form->end();
   form->resizable(rt_resizer);
   form->size_range(form->w(), form->h()); // minimum window size
