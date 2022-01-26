@@ -644,6 +644,9 @@ static int forward(int menu) { // go to next item in menu menu if possible
 }
 
 static int backward(int menu) { // previous item in menu menu if possible
+  // `menu` is -1 if no item is currently selected, we return 0
+  if (menu<0)
+    return 0;
   menustate &pp = *p;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
@@ -719,7 +722,10 @@ int menuwindow::handle_part1(int e) {
     switch (Fl::event_key()) {
     case FL_BackSpace:
     BACKTAB:
-      if (!backward(pp.menu_number)) {pp.item_number = -1;backward(pp.menu_number);}
+      if (!backward(pp.menu_number)) {
+        pp.item_number = -1;
+        backward(pp.menu_number);
+      }
       return 1;
     case FL_Up:
       if (pp.menubar && pp.menu_number == 0) {
