@@ -2352,7 +2352,7 @@ void Fl_Text_Display::draw_string(int style,
     // Make sure antialiased ÄÖÜ do not leak on line above:
     // on X11+Xft the antialiased part of characters such as ÄÖÜ leak on the bottom pixel of the line above
     static int can_leak = Fl::screen_driver()->text_display_can_leak();
-    // Clip top an bottom only. Add margin to avoid clipping horizontally
+    // Clip top and bottom only. Add margin to avoid clipping horizontally
     if (can_leak) fl_push_clip(x(), Y, w(), mMaxsize);
     fl_draw( string, nChars, X, baseline);
     if (styleRec) {

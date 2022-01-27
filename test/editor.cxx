@@ -57,13 +57,23 @@ const int line_num_width = 75;
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
                    styletable[] = {     // Style table
+#ifdef TESTING_ATTRIBUTES
                      { FL_BLACK,      FL_COURIER,           TS }, // A - Plain
                      { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS, Fl_Text_Display::ATTR_BGCOLOR, FL_LIGHT2  }, // B - Line comments
                      { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS, Fl_Text_Display::ATTR_BGCOLOR_EXT, FL_LIGHT2 }, // C - Block comments
-                     { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
+                     { FL_BLUE,       FL_COURIER,           TS, Fl_Text_Display::ATTR_UNDERLINE }, // D - Strings
                      { FL_DARK_RED,   FL_COURIER,           TS, Fl_Text_Display::ATTR_GRAMMAR }, // E - Directives
                      { FL_DARK_RED,   FL_COURIER_BOLD,      TS, Fl_Text_Display::ATTR_STRIKE_THROUGH }, // F - Types
                      { FL_BLUE,       FL_COURIER_BOLD,      TS, Fl_Text_Display::ATTR_SPELLING }, // G - Keywords
+#else
+                     { FL_BLACK,      FL_COURIER,           TS }, // A - Plain
+                     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // B - Line comments
+                     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // C - Block comments
+                     { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
+                     { FL_DARK_RED,   FL_COURIER,           TS }, // E - Directives
+                     { FL_DARK_RED,   FL_COURIER_BOLD,      TS }, // F - Types
+                     { FL_BLUE,       FL_COURIER_BOLD,      TS }, // G - Keywords
+#endif
                    };
 const char         *code_keywords[] = { // List of known C/C++ keywords...
                      "and",

@@ -156,12 +156,11 @@ public:
     ATTR_BGCOLOR        = 0x0001, ///< use the background color
     ATTR_BGCOLOR_EXT_   = 0x0002, ///< internal use
     ATTR_BGCOLOR_EXT    = 0x0003, ///< extend background color to the end of the line
-    ATTR_UNDERLINE      = 0x0004, ///< a single underline, underline types ar mutually exclusive
+    ATTR_UNDERLINE      = 0x0004, ///< a single underline, underline types are mutually exclusive
     ATTR_GRAMMAR        = 0x0008, ///< grammar suggestion (blue dotted underline)
     ATTR_SPELLING       = 0x000C, ///< spelling suggestion (red dotted underline)
     ATTR_STRIKE_THROUGH = 0x0010, ///< line through the middle of the text
     ATTR_LINES_MASK     = 0x001C, ///< all underline and strike through types combined
-    // how about underscore, strikethrough, undersquigle(color)?
   };
 
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
