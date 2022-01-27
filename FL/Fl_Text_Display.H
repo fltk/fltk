@@ -142,10 +142,25 @@ public:
    \see Fl_Text_Display::highlight_data()
    */
   struct Style_Table_Entry {
-    Fl_Color    color;  ///< text color
-    Fl_Font     font;   ///< text font
-    Fl_Fontsize size;   ///< text font size
-    unsigned    attr;   ///< currently unused (this may be changed in the future)
+    Fl_Color    color;    ///< text color
+    Fl_Font     font;     ///< text font
+    Fl_Fontsize size;     ///< text font size
+    unsigned    attr;     ///< further attributes for the text style (see `ATTR_BGCOLOR`, etc.)
+    Fl_Color    bgcolor;  ///< text background color if `ATTR_BGCOLOR` or `ATTR_BGCOLOR_EXT` is set
+  };
+
+  /**
+   attribute flags in `Style_Table_Entry.attr`
+   */
+  enum {
+    ATTR_BGCOLOR        = 0x0001, ///< use the background color in the `bgcolor` field
+    ATTR_BGCOLOR_EXT_   = 0x0002, ///< (internal use)
+    ATTR_BGCOLOR_EXT    = 0x0003, ///< extend background color to the end of the line
+    ATTR_UNDERLINE      = 0x0004, ///< a single underline, underline types are mutually exclusive
+    ATTR_GRAMMAR        = 0x0008, ///< grammar suggestion (blue dotted underline)
+    ATTR_SPELLING       = 0x000C, ///< spelling suggestion (red dotted underline)
+    ATTR_STRIKE_THROUGH = 0x0010, ///< line through the middle of the text
+    ATTR_LINES_MASK     = 0x001C, ///< the mask for all underline and strike through types
   };
 
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
