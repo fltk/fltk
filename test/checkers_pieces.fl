@@ -17,13 +17,13 @@ comment {//
 //
 //     https://www.fltk.org/bugs.php
 //
-} {selected in_source in_header
+} {in_source in_header
 }
 
 data pixmaps_black_checker_png {public local filename {pixmaps/black_checker.png}
 }
 
-data pixmaps_white_checker_png {public local filename {pixmaps/white_checker.png}
+data pixmaps_white_checker_png {selected public local filename {pixmaps/white_checker.png}
 }
 
 data pixmaps_black_checker_king_png {public local filename {pixmaps/black_checker_king.png}
