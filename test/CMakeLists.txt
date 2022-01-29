@@ -139,9 +139,28 @@ CREATE_EXAMPLE (tile tile.cxx fltk)
 CREATE_EXAMPLE (tiled_image tiled_image.cxx fltk)
 CREATE_EXAMPLE (tree tree.fl fltk)
 CREATE_EXAMPLE (twowin twowin.cxx fltk)
+SET (UNITTEST_SRCS
+  unittests.cxx
+  unittest_about.cxx
+  unittest_points.cxx
+  unittest_lines.cxx
+  unittest_rects.cxx
+  unittest_circles.cxx
+  unittest_text.cxx
+  unittest_symbol.cxx
+  unittest_images.cxx
+  unittest_viewport.cxx
+  unittest_scrollbarsize.cxx
+  unittest_schemes.cxx
+  unittest_simple_terminal.cxx
+)
+if (OPENGL_FOUND)
+  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "fltk_gl;fltk") # opt. Fl_Gl_Window
+else()
+  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" fltk) # w/o Fl_Gl_Window
+endif()
 CREATE_EXAMPLE (utf8 utf8.cxx fltk)
 CREATE_EXAMPLE (valuators valuators.fl fltk)
-CREATE_EXAMPLE (unittests unittests.cxx fltk)
 CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
 CREATE_EXAMPLE (wizard wizard.cxx fltk)
 

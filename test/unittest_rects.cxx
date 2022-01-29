@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>         // fl_text_extents()
 

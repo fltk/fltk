@@ -21,6 +21,8 @@
 // v1.0 - Submit for svn
 // v1.1 - Matthias seperated all tests into multiple source files for hopefully easier handling
 
+#include "unittests.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
@@ -31,129 +33,89 @@
 #include <FL/fl_string_functions.h>   // fl_strdup()
 #include <stdlib.h>         // malloc, free
 
-// WINDOW/WIDGET SIZES
-#define MAINWIN_W       700                             // main window w()
-#define MAINWIN_H       400                             // main window h()
-#define BROWSER_X       10                              // browser x()
-#define BROWSER_Y       25                              // browser y()
-#define BROWSER_W       150                             // browser w()
-#define BROWSER_H       MAINWIN_H-35                    // browser h()
-#define TESTAREA_X      (BROWSER_W + 20)                // test area x()
-#define TESTAREA_Y      25                              // test area y()
-#define TESTAREA_W      (MAINWIN_W - BROWSER_W - 30)    // test area w()
-#define TESTAREA_H      BROWSER_H                       // test area h()
-
-typedef void (*UnitTestCallback)(const char*,Fl_Group*);
-
 class MainWindow *mainwin = 0;
-Fl_Hold_Browser *browser = 0;
+class Fl_Hold_Browser *browser = 0;
 
-// This class helps to automagically register a new test with the unittest app.
-// Please see the examples on how this is used.
-class UnitTest {
-public:
-  UnitTest(const char *label, Fl_Widget* (*create)()) :
-    fWidget(0L)
-  {
-    fLabel = fl_strdup(label);
-    fCreate = create;
-    add(this);
-  }
-  ~UnitTest() {
-    delete fWidget;
-    free(fLabel);
-  }
-  const char *label() {
-    return fLabel;
-  }
-  void create() {
-    fWidget = fCreate();
-    if (fWidget) fWidget->hide();
-  }
-  void show() {
-    if (fWidget) fWidget->show();
-  }
-  void hide() {
-    if (fWidget) fWidget->hide();
-  }
-  static int numTest() { return nTest; }
-  static UnitTest *test(int i) { return fTest[i]; }
-private:
-  char *fLabel;
-  Fl_Widget *(*fCreate)();
-  Fl_Widget *fWidget;
+UnitTest::UnitTest(const char *label, Fl_Widget* (*create)()) :
+  fWidget(0L)
+{
+  fLabel = fl_strdup(label);
+  fCreate = create;
+  add(this);
+}
 
-  static void add(UnitTest *t) {
-    fTest[nTest] = t;
-    nTest++;
-  }
-  static int nTest;
-  static UnitTest *fTest[];
-};
+UnitTest::~UnitTest() {
+  delete fWidget;
+  free(fLabel);
+}
+
+const char *UnitTest::label() {
+  return fLabel;
+}
+
+void UnitTest::create() {
+  fWidget = fCreate();
+  if (fWidget) fWidget->hide();
+}
+
+void UnitTest::show() {
+  if (fWidget) fWidget->show();
+}
+
+void UnitTest::hide() {
+  if (fWidget) fWidget->hide();
+}
+
+void UnitTest::add(UnitTest *t) {
+  fTest[nTest] = t;
+  nTest++;
+}
 
 int UnitTest::nTest = 0;
 UnitTest *UnitTest::fTest[200];
 
+MainWindow::MainWindow(int w, int h, const char *l) :
+Fl_Double_Window(w, h, l),
+fTestAlignment(0)
+{ }
 
-// The main window needs an additional drawing feature in order to support
-// the viewport alignment test.
-class MainWindow : public Fl_Double_Window {
-public:
-  MainWindow(int w, int h, const char *l=0L) :
-    Fl_Double_Window(w, h, l),
-    fTestAlignment(0)
-  { }
-  // this code is used by the viewport alignment test
-  void drawAlignmentIndicators() {
-    const int sze = 16;
-    // top left corner
-    fl_color(FL_GREEN); fl_yxline(0, sze, 0, sze);
-    fl_color(FL_RED);   fl_yxline(-1, sze, -1, sze);
-    fl_color(FL_WHITE); fl_rectf(3, 3, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(3, 3, sze-2, sze-2);
-    // bottom left corner
-    fl_color(FL_GREEN); fl_yxline(0, h()-sze-1, h()-1, sze);
-    fl_color(FL_RED);   fl_yxline(-1, h()-sze-1, h(), sze);
-    fl_color(FL_WHITE); fl_rectf(3, h()-sze-1, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(3, h()-sze-1, sze-2, sze-2);
-    // bottom right corner
-    fl_color(FL_GREEN); fl_yxline(w()-1, h()-sze-1, h()-1, w()-sze-1);
-    fl_color(FL_RED);   fl_yxline(w(), h()-sze-1, h(), w()-sze-1);
-    fl_color(FL_WHITE); fl_rectf(w()-sze-1, h()-sze-1, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(w()-sze-1, h()-sze-1, sze-2, sze-2);
-    // top right corner
-    fl_color(FL_GREEN); fl_yxline(w()-1, sze, 0, w()-sze-1);
-    fl_color(FL_RED);   fl_yxline(w(), sze, -1, w()-sze-1);
-    fl_color(FL_WHITE); fl_rectf(w()-sze-1, 3, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(w()-sze-1, 3, sze-2, sze-2);
+void MainWindow::drawAlignmentIndicators() {
+  const int sze = 16;
+  // top left corner
+  fl_color(FL_GREEN); fl_yxline(0, sze, 0, sze);
+  fl_color(FL_RED);   fl_yxline(-1, sze, -1, sze);
+  fl_color(FL_WHITE); fl_rectf(3, 3, sze-2, sze-2);
+  fl_color(FL_BLACK); fl_rect(3, 3, sze-2, sze-2);
+  // bottom left corner
+  fl_color(FL_GREEN); fl_yxline(0, h()-sze-1, h()-1, sze);
+  fl_color(FL_RED);   fl_yxline(-1, h()-sze-1, h(), sze);
+  fl_color(FL_WHITE); fl_rectf(3, h()-sze-1, sze-2, sze-2);
+  fl_color(FL_BLACK); fl_rect(3, h()-sze-1, sze-2, sze-2);
+  // bottom right corner
+  fl_color(FL_GREEN); fl_yxline(w()-1, h()-sze-1, h()-1, w()-sze-1);
+  fl_color(FL_RED);   fl_yxline(w(), h()-sze-1, h(), w()-sze-1);
+  fl_color(FL_WHITE); fl_rectf(w()-sze-1, h()-sze-1, sze-2, sze-2);
+  fl_color(FL_BLACK); fl_rect(w()-sze-1, h()-sze-1, sze-2, sze-2);
+  // top right corner
+  fl_color(FL_GREEN); fl_yxline(w()-1, sze, 0, w()-sze-1);
+  fl_color(FL_RED);   fl_yxline(w(), sze, -1, w()-sze-1);
+  fl_color(FL_WHITE); fl_rectf(w()-sze-1, 3, sze-2, sze-2);
+  fl_color(FL_BLACK); fl_rect(w()-sze-1, 3, sze-2, sze-2);
+}
+
+void MainWindow::draw() {
+  Fl_Double_Window::draw();
+  if (fTestAlignment) {
+    drawAlignmentIndicators();
   }
-  void draw() {
-    Fl_Double_Window::draw();
-    if (fTestAlignment) {
-      drawAlignmentIndicators();
-    }
-  }
-  void testAlignment(int v) {
-    fTestAlignment = v;
-    redraw();
-  }
-  int fTestAlignment;
-};
+}
+
+void MainWindow::testAlignment(int v) {
+  fTestAlignment = v;
+  redraw();
+}
 
 //------- include the various unit tests as inline code -------
-
-#include "unittest_about.cxx"
-#include "unittest_points.cxx"
-#include "unittest_lines.cxx"
-#include "unittest_rects.cxx"
-#include "unittest_circles.cxx"
-#include "unittest_text.cxx"
-#include "unittest_symbol.cxx"
-#include "unittest_images.cxx"
-#include "unittest_viewport.cxx"
-#include "unittest_scrollbarsize.cxx"
-#include "unittest_schemes.cxx"
-#include "unittest_simple_terminal.cxx"
 
 // callback whenever the browser value changes
 void Browser_CB(Fl_Widget*, void*) {

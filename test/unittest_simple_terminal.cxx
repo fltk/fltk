@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <time.h>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Simple_Terminal.H>
