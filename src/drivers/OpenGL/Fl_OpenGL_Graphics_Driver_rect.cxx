@@ -29,6 +29,7 @@
 
 // --- line and polygon drawing with integer coordinates
 
+// tested in hidpi
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
   glBegin(GL_POINTS);
   glVertex2i(x, y);
@@ -44,16 +45,10 @@ void Fl_OpenGL_Graphics_Driver::rect(int x, int y, int w, int h) {
   glEnd();
 }
 
+// tested in hidpi
 void Fl_OpenGL_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  // OpenGL has the natural origin at the bottom left. Drawing in FLTK
-  // coordinates requires that we shift the rectangle one pixel up.
-  glBegin(GL_POLYGON);
-  glVertex2i(x, y-1);
-  glVertex2i(x+w, y-1);
-  glVertex2i(x+w, y+h-1);
-  glVertex2i(x, y+h-1);
-  glEnd();
+  glRectf(x-0.5f, y-0.5f, x+w-0.5f, y+h-0.5f);
 }
 
 void Fl_OpenGL_Graphics_Driver::line(int x, int y, int x1, int y1) {
@@ -163,8 +158,20 @@ void Fl_OpenGL_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, 
 
 void Fl_OpenGL_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   // TODO: implement OpenGL clipping
+  // The current implementation manages to get the coordinates right, but
+  // they are not saved on the stack.
+  // Also, clipping regions can be arbitrary in shape, but GL scissors are
+  // limited to a box. We could either use a bounding box, or use a a stencil
+  // map, which requires extra OpenGL support.
   if (rstackptr < region_stack_max) rstack[++rstackptr] = 0L;
   else Fl::warning("Fl_OpenGL_Graphics_Driver::push_clip: clip stack overflow!\n");
+  Fl_Gl_Window *win = Fl_Gl_Window::current()->as_gl_window();
+  if (win) {
+    float scale = win->pixels_per_unit();
+    int hh = win->h()-h+1-y;
+    glScissor(x*scale, hh*scale, (w-1)*scale, (h-1)*scale);
+    glEnable(GL_SCISSOR_TEST);
+  }
 }
 
 int Fl_OpenGL_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
@@ -181,4 +188,5 @@ int Fl_OpenGL_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 void Fl_OpenGL_Graphics_Driver::restore_clip() {
   // TODO: implement OpenGL clipping
   fl_clip_state_number++;
+  glDisable(GL_SCISSOR_TEST);
 }

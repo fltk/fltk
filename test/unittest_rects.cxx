@@ -50,4 +50,4 @@ public:
   }
 };
 
-UnitTest rects("rectangles", RectTest::create);
+UnitTest rects(3, "rectangles", RectTest::create);

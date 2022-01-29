@@ -83,4 +83,4 @@ public:
   }
 };
 
-UnitTest circle("circles and arcs", CircleTest::create);
+UnitTest circle(4, "circles and arcs", CircleTest::create);

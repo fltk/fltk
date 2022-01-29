@@ -36,12 +36,12 @@
 class MainWindow *mainwin = 0;
 class Fl_Hold_Browser *browser = 0;
 
-UnitTest::UnitTest(const char *label, Fl_Widget* (*create)()) :
+UnitTest::UnitTest(int index, const char *label, Fl_Widget* (*create)()) :
   fWidget(0L)
 {
   fLabel = fl_strdup(label);
   fCreate = create;
-  add(this);
+  add(index, this);
 }
 
 UnitTest::~UnitTest() {
@@ -66,13 +66,14 @@ void UnitTest::hide() {
   if (fWidget) fWidget->hide();
 }
 
-void UnitTest::add(UnitTest *t) {
-  fTest[nTest] = t;
-  nTest++;
+void UnitTest::add(int index, UnitTest *t) {
+  fTest[index] = t;
+  if (index>=nTest)
+    nTest = index+1;
 }
 
 int UnitTest::nTest = 0;
-UnitTest *UnitTest::fTest[200];
+UnitTest *UnitTest::fTest[200] = { 0 };
 
 MainWindow::MainWindow(int w, int h, const char *l) :
 Fl_Double_Window(w, h, l),
@@ -146,16 +147,31 @@ int main(int argc, char **argv) {
   int i, n = UnitTest::numTest();
   for (i=0; i<n; i++) {
     UnitTest *t = UnitTest::test(i);
-    mainwin->begin();
-    t->create();
-    mainwin->end();
-    browser->add(t->label(), (void*)t);
+    if (t) {
+      mainwin->begin();
+      t->create();
+      mainwin->end();
+      browser->add(t->label(), (void*)t);
+    }
   }
 
   mainwin->resizable(mainwin);
   mainwin->show(argc,argv);
   // Select first test in browser, and show that test.
-  browser->select(1);
+  browser->select(2);
   Browser_CB(browser,0);
   return(Fl::run());
 }
+
+//  0 unittest_about.cxx
+//  1 unittest_points.cxx
+//  2 unittest_lines.cxx
+//  3 unittest_rects.cxx
+//  4 unittest_circles.cxx
+//  5 unittest_text.cxx
+//  6 unittest_symbol.cxx
+//  7 unittest_images.cxx
+//  8 unittest_viewport.cxx
+//  9 unittest_scrollbarsize.cxx
+// 10 unittest_schemes.cxx
+// 11 unittest_simple_terminal.cxx

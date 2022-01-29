@@ -219,4 +219,4 @@ public:
     }
 };
 
-UnitTest scrollbarsize("scrollbar size", ScrollBarSizeTest::create);
+UnitTest scrollbarsize(9, "scrollbar size", ScrollBarSizeTest::create);

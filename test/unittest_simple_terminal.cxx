@@ -117,4 +117,4 @@ public:
   }
 };
 
-UnitTest simple_terminal("simple terminal", SimpleTerminal::create);
+UnitTest simple_terminal(11, "simple terminal", SimpleTerminal::create);

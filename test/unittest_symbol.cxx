@@ -88,4 +88,4 @@ public:
   }
 };
 
-UnitTest symbolExtents("symbol text", SymbolTest::create);
+UnitTest symbolExtents(6, "symbol text", SymbolTest::create);

@@ -337,6 +337,25 @@ void Fl_Gl_Window::init() {
 void Fl_Gl_Window::draw_overlay() {}
 
 
+void Fl_Gl_Window::draw_begin() {
+  Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glPushMatrix();
+  glLoadIdentity();
+  GLint viewport[4];
+  glGetIntegerv (GL_VIEWPORT, viewport);
+  if (viewport[2] != pixel_w() || viewport[3] != pixel_h()) {
+    glViewport(0, 0, pixel_w(), pixel_h());
+  }
+  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+  float scale = pixels_per_unit(); // should be 1 or 2 (2 if highres OpenGL) times the app scale
+  glLineWidth((GLfloat)scale);
+  glPointSize((GLfloat)scale);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
+  glEnable(GL_BLEND); // FIXME: push on state stack
+}
+
 /** Draws the Fl_Gl_Window.
   You \e \b must subclass Fl_Gl_Window and provide an implementation for
   draw().  You may also provide an implementation of draw_overlay()
@@ -389,26 +408,29 @@ void Fl_Gl_Window::draw_overlay() {}
     }
   \endcode
 
+  Regular FLTK widgets can be added as children to the Fl_Gl_Window. To
+  correctly overlay the widgets, Fl_Gl_Window::draw() must be called after
+  rendering the main scene.
+  \code
+  void mywindow::draw() {
+    // draw 3d graphics scene
+    Fl_Gl_Window::draw();
+    // -- or --
+    draw_begin();
+    Fl_Window::draw();
+    // other 2d drawing calls, overlays, etc.
+    draw_end();
+  }
+  \endcode
+
 */
 void Fl_Gl_Window::draw() {
-  Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
-  glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_DEPTH_TEST);
-  glPushMatrix();
-  glLoadIdentity();
-  GLint viewport[4];
-  glGetIntegerv (GL_VIEWPORT, viewport);
-  if (viewport[2] != pixel_w() || viewport[3] != pixel_h()) {
-    glViewport(0, 0, pixel_w(), pixel_h());
-  }
-  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
-//  glOrtho(0, w(), h(), 0, -1, 1);
-  glLineWidth((GLfloat)pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
-  glEnable(GL_BLEND); // FIXME: push on state stack
-
+  draw_begin();
   Fl_Window::draw();
+  draw_end();
+}
 
+void Fl_Gl_Window::draw_end() {
   glPopMatrix();
   glPopAttrib();
   Fl_Surface_Device::pop_current();

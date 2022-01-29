@@ -295,4 +295,4 @@ Fl_RGB_Image *ImageTest::i_ga = 0;
 Fl_RGB_Image *ImageTest::i_rgb = 0;
 Fl_RGB_Image *ImageTest::i_rgba = 0;
 
-UnitTest images("drawing images", ImageTest::create);
+UnitTest images(7, "drawing images", ImageTest::create);

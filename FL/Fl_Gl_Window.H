@@ -67,7 +67,9 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   int mode(int, const int *);
   static int gl_plugin_linkage();
 protected:
+  void draw_begin();
   virtual void draw();
+  void draw_end();
 
 public:
   void show();

@@ -76,4 +76,4 @@ public:
   }
 };
 
-UnitTest lines("drawing lines", LineTest::create);
+UnitTest lines(2, "drawing lines", LineTest::create);

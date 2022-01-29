@@ -41,7 +41,7 @@ extern class Fl_Hold_Browser *browser;
 // Please see the examples on how this is used.
 class UnitTest {
 public:
-  UnitTest(const char *label, Fl_Widget* (*create)());
+  UnitTest(int index, const char *label, Fl_Widget* (*create)());
   ~UnitTest();
   const char *label();
   void create();
@@ -53,7 +53,7 @@ private:
   char *fLabel;
   Fl_Widget *(*fCreate)();
   Fl_Widget *fWidget;
-  static void add(UnitTest *t);
+  static void add(int index, UnitTest *t);
   static int nTest;
   static UnitTest *fTest[];
 };
