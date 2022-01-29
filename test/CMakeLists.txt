@@ -155,7 +155,7 @@ SET (UNITTEST_SRCS
   unittest_simple_terminal.cxx
 )
 if (OPENGL_FOUND)
-  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "fltk_gl;fltk") # opt. Fl_Gl_Window
+  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "fltk_gl;fltk;${OPENGL_LIBRARIES}") # opt. Fl_Gl_Window
 else()
   CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" fltk) # w/o Fl_Gl_Window
 endif()

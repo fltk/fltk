@@ -16,9 +16,12 @@
 
 #include "unittests.h"
 
+#include <config.h>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
+#if HAVE_GL
 #include <FL/Fl_Gl_Window.H>
+#endif
 
 //
 //------- test the point drawing capabilities of this implementation ----------
@@ -43,6 +46,8 @@ public:
     }
   }
 };
+
+#if HAVE_GL
 
 class GLTestWin : public Fl_Gl_Window {
 public:
@@ -124,9 +129,13 @@ public:
   }
 };
 
+#endif
+
 class PointTest : public Fl_Group {
   PointTestWin *align_test_win;
+#if HAVE_GL
   GLTestWin *gl_test_win;
+#endif
 public:
   static Fl_Widget *create() {
     return new PointTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
@@ -184,6 +193,7 @@ public:
                );
 
     a+=100;
+#if HAVE_GL
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
@@ -230,6 +240,7 @@ public:
                );
 
     gl_test_win = new GLTestWin(a+24+8, b+9-5, 10, 4*24+2*16);
+#endif
 
     t = new Fl_Box(x+w-1,y+h-1, 1, 1);
     resizable(t);
@@ -282,12 +293,14 @@ public:
         fl_point(xx+i+1, yy+j+1);
     fl_pop_clip();
     // Test 3a: pixel alignment inside the OpenGL window
+#if HAVE_GL
     xx = a+24+108; yy = b+2*24+2*16+9-5;
     fl_color(FL_BLACK);
     for (i=-4; i<14; i++) {
       fl_point(xx+i, yy);
       fl_point(xx+i, yy+9);
     }
+#endif
   }
 };
 
