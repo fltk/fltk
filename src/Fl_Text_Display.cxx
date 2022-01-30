@@ -164,6 +164,9 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   textfont_ = FL_HELVETICA;             // textfont()
   textsize_ = FL_NORMAL_SIZE;           // textsize()
   textcolor_ = FL_FOREGROUND_COLOR;     // textcolor()
+  grammar_underline_color_ = FL_RED;
+  spelling_underline_color_ = FL_BLUE;
+  secondary_selection_color_ = FL_GRAY;
   mLineNumLeft = 0;             // XXX: UNUSED
   mLineNumWidth = 0;
 
@@ -2319,17 +2322,36 @@ void Fl_Text_Display::draw_string(int style,
       } else {
         background = fl_color_average(bgbasecolor, selection_color(), 0.6f);
       }
+    } else if (style & SECONDARY_MASK) {
+      if (Fl::focus() == (Fl_Widget*)this) {
+        background = fl_color_average(bgbasecolor, secondary_selection_color(), 0.5f);
+      } else {
+        background = fl_color_average(bgbasecolor, secondary_selection_color(), 0.6f);
+      }
     } else {
       background = bgbasecolor;
     }
     foreground = (style & PRIMARY_MASK) ? fl_contrast(styleRec->color, background) : styleRec->color;
   } else if (style & PRIMARY_MASK) {
-    if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
-    else background = fl_color_average(color(), selection_color(), 0.4f);
+    if (Fl::focus() == (Fl_Widget*)this) {
+      background = selection_color();
+    } else {
+      background = fl_color_average(color(), selection_color(), 0.4f);
+    }
     foreground = fl_contrast(textcolor(), background);
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
-    else background = fl_color_average(color(), selection_color(), 0.6f);
+    if (Fl::focus() == (Fl_Widget*)this) {
+      background = fl_color_average(color(), selection_color(), 0.5f);
+    } else {
+      background = fl_color_average(color(), selection_color(), 0.6f);
+    }
+    foreground = fl_contrast(textcolor(), background);
+  } else if (style & SECONDARY_MASK) {
+    if (Fl::focus() == (Fl_Widget*)this) {
+      background = secondary_selection_color();
+    } else {
+      background = fl_color_average(color(), secondary_selection_color(), 0.4f);
+    }
     foreground = fl_contrast(textcolor(), background);
   } else {
     foreground = textcolor();
@@ -2367,10 +2389,10 @@ void Fl_Text_Display::draw_string(int style,
             goto DRAW_UNDERLINE;
             break;
           case ATTR_GRAMMAR:
-            fl_color(FL_BLUE);
+            fl_color(grammar_underline_color());
             goto DRAW_DOTTED_UNDERLINE;
           case ATTR_SPELLING:
-            fl_color(FL_RED);
+            fl_color(spelling_underline_color());
           DRAW_DOTTED_UNDERLINE:
             fl_line_style(FL_DOT, pitch);
           DRAW_UNDERLINE:
