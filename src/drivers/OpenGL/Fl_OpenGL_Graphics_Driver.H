@@ -46,10 +46,16 @@ public:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  // ---- clipping
   void push_clip(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  int not_clipped(int x, int y, int w, int h);
+  void pop_clip();
+  void push_no_clip();
+  Fl_Region clip_region();
+  void clip_region(Fl_Region r);
   void restore_clip();
+  int not_clipped(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  // ---- matrix transformed drawing
   void transformed_vertex(double xf, double yf);
   void begin_points();
   void end_points();

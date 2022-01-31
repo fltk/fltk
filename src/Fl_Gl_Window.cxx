@@ -352,8 +352,10 @@ void Fl_Gl_Window::draw_begin() {
   float scale = pixels_per_unit(); // should be 1 or 2 (2 if highres OpenGL) times the app scale
   glLineWidth((GLfloat)scale);
   glPointSize((GLfloat)scale);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
-  glEnable(GL_BLEND); // FIXME: push on state stack
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glDisable(GL_SCISSOR_TEST);
+  // TODO: all of the settings should be saved on the GL stack
 }
 
 /** Draws the Fl_Gl_Window.
