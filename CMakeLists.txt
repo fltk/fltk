@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -18,12 +18,6 @@
 #######################################################################
 # set CMake minimum version (must be before `project()`
 #######################################################################
-
-# Note: previous (1.3.5) minimum version
-# cmake_minimum_required (VERSION 2.6.3)
-
-# Note: minimum CMake version required by GNUInstallDirs
-# cmake_minimum_required (VERSION 2.8.4)
 
 # Minimum CMake version required by FLTK 1.4 (06/2020, work in progress)
 cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
@@ -223,6 +217,24 @@ if (FLTK_BUILD_EXAMPLES)
   message (STATUS "Example programs will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/examples")
 else ()
   message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
+endif ()
+
+if (FLTK_USE_BUILTIN_JPEG)
+  message (STATUS "Image Libraries: JPEG = Builtin")
+else ()
+  message (STATUS "Image Libraries: JPEG = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_PNG)
+  message (STATUS "                 PNG  = Builtin")
+else ()
+  message (STATUS "                 PNG  = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_ZLIB)
+  message (STATUS "                 ZLIB = Builtin")
+else ()
+  message (STATUS "                 ZLIB = System")
 endif ()
 
 message ("")

@@ -511,23 +511,23 @@ target_link_libraries (fltk_forms fltk)
 FL_ADD_LIBRARY (fltk_images STATIC "${IMGCPPFILES}")
 target_link_libraries (fltk_images fltk)
 
-if (NOT FLTK_USE_BUILTIN_JPEG)
-  target_link_libraries (fltk_images ${FLTK_JPEG_LIBRARIES})
-else()
+if (FLTK_USE_BUILTIN_JPEG)
   target_link_libraries (fltk_images fltk_jpeg)
-endif (NOT FLTK_USE_BUILTIN_JPEG)
-
-if (OPTION_USE_SYSTEM_ZLIB)
-  target_link_libraries (fltk_images ${FLTK_ZLIB_LIBRARIES})
 else()
+  target_link_libraries (fltk_images ${FLTK_JPEG_LIBRARIES})
+endif ()
+
+if (FLTK_USE_BUILTIN_ZLIB)
   target_link_libraries (fltk_images fltk_z)
-endif (OPTION_USE_SYSTEM_ZLIB)
-
-if (OPTION_USE_SYSTEM_LIBPNG)
-  target_link_libraries (fltk_images ${FLTK_PNG_LIBRARIES})
 else()
+  target_link_libraries (fltk_images ${FLTK_ZLIB_LIBRARIES})
+endif ()
+
+if (FLTK_USE_BUILTIN_PNG)
   target_link_libraries (fltk_images fltk_png)
-endif (OPTION_USE_SYSTEM_LIBPNG)
+else()
+  target_link_libraries (fltk_images ${FLTK_PNG_LIBRARIES})
+endif ()
 
 #######################################################################
 
@@ -557,23 +557,23 @@ if (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
   FL_ADD_LIBRARY (fltk_images SHARED "${IMGCPPFILES}")
   target_link_libraries (fltk_images_SHARED fltk_SHARED)
 
-  if (NOT FLTK_USE_BUILTIN_JPEG)
-    target_link_libraries (fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
-  else()
+  if (FLTK_USE_BUILTIN_JPEG)
     target_link_libraries (fltk_images_SHARED fltk_jpeg_SHARED)
-  endif (NOT FLTK_USE_BUILTIN_JPEG)
-
-  if (OPTION_USE_SYSTEM_LIBPNG)
-    target_link_libraries (fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
   else()
+    target_link_libraries (fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
+  endif ()
+
+  if (FLTK_USE_BUILTIN_PNG)
     target_link_libraries (fltk_images_SHARED fltk_png_SHARED)
-  endif (OPTION_USE_SYSTEM_LIBPNG)
-
-  if (OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries (fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
   else()
+    target_link_libraries (fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
+  endif ()
+
+  if (FLTK_USE_BUILTIN_ZLIB)
     target_link_libraries (fltk_images_SHARED fltk_z_SHARED)
-  endif (OPTION_USE_SYSTEM_ZLIB)
+  else()
+    target_link_libraries (fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
+  endif ()
 
   ###################################################################
 
@@ -603,23 +603,23 @@ if (OPTION_BUILD_SHARED_LIBS AND MSVC)
   FL_ADD_LIBRARY (fltk SHARED "${SOURCES}")
   target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS})
 
-  if (NOT FLTK_USE_BUILTIN_JPEG)
-    target_link_libraries (fltk_SHARED ${FLTK_JPEG_LIBRARIES})
-  else()
+  if (FLTK_USE_BUILTIN_JPEG)
     target_link_libraries (fltk_SHARED fltk_jpeg_SHARED)
-  endif (NOT FLTK_USE_BUILTIN_JPEG)
-
-  if (OPTION_USE_SYSTEM_LIBPNG)
-    target_link_libraries (fltk_SHARED ${FLTK_PNG_LIBRARIES})
   else()
+    target_link_libraries (fltk_SHARED ${FLTK_JPEG_LIBRARIES})
+  endif ()
+
+  if (FLTK_USE_BUILTIN_PNG)
     target_link_libraries (fltk_SHARED fltk_png_SHARED)
-  endif (OPTION_USE_SYSTEM_LIBPNG)
-
-  if (OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries (fltk_SHARED ${FLTK_ZLIB_LIBRARIES})
   else()
+    target_link_libraries (fltk_SHARED ${FLTK_PNG_LIBRARIES})
+  endif ()
+
+  if (FLTK_USE_BUILTIN_ZLIB)
     target_link_libraries (fltk_SHARED fltk_z_SHARED)
-  endif (OPTION_USE_SYSTEM_ZLIB)
+  else()
+    target_link_libraries (fltk_SHARED ${FLTK_ZLIB_LIBRARIES})
+  endif ()
 
   if (OPENGL_FOUND)
     target_link_libraries (fltk_SHARED ${OPENGL_LIBRARIES})
