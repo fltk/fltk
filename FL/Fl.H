@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -510,6 +510,7 @@ int main() {
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
   // private
+  static void run_idle();
   static void run_checks();
   static void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0); // platform dependent
   static void add_fd(int fd, Fl_FD_Handler cb, void* = 0); // platform dependent

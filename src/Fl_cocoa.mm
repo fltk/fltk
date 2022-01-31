@@ -1,7 +1,7 @@
 //
-// MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
+// macOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,6 +27,7 @@ extern "C" {
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
+#include "Fl_Timeout.h"
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
@@ -749,6 +750,10 @@ static int do_queued_events( double time = 0.0 )
     dataready.StartThread();
   }
 
+  // Elapse timeouts and calculate waiting time
+  Fl_Timeout::elapse_timeouts();
+  time = Fl_Timeout::time_to_wait(time);
+
   fl_unlock_function();
   NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
                                       untilDate:[NSDate dateWithTimeIntervalSinceNow:time]
@@ -773,22 +778,11 @@ double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
   if (dropped_files_list) { // when the list of dropped files is not empty, open one and remove it from list
     drain_dropped_files_list();
   }
-  Fl::run_checks();
-  static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  if (Fl::idle) {
-    if (!in_idle) {
-      in_idle = 1;
-      Fl::idle();
-      in_idle = 0;
-    }
-    // the idle function may turn off idle, we can then wait:
-    if (Fl::idle) time_to_wait = 0.0;
-  }
   if (fl_mac_os_version < 101100) NSDisableScreenUpdates(); // 10.3 Makes updates to all windows appear as a single event
   Fl::flush();
   if (fl_mac_os_version < 101100) NSEnableScreenUpdates(); // 10.3
-  if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
+  if (Fl::idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   int retval = do_queued_events(time_to_wait);
 

@@ -114,11 +114,6 @@ public:
   virtual void get_system_colors() {}
   /* the default implementation of get_system_scheme() may be enough */
   virtual const char *get_system_scheme();
-  // --- global timers
-  virtual void add_timeout(double, Fl_Timeout_Handler, void *) {}
-  virtual void repeat_timeout(double, Fl_Timeout_Handler, void *) {}
-  virtual int has_timeout(Fl_Timeout_Handler, void *) { return 0; }
-  virtual void remove_timeout(Fl_Timeout_Handler, void *) {}
 
   static int secret_input_character;
   /* Implement to indicate whether complex text input may involve marked text.

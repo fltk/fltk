@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,7 @@
 #include "Fl_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 #include "Fl_System_Driver.H"
+#include "Fl_Timeout.h"
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
@@ -228,24 +229,22 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 }
 
 //
-//
-// timer support
-//
+// cross-platform timer support
 //
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->add_timeout(time, cb, argp);
+  Fl_Timeout::add_timeout(time, cb, argp);
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->repeat_timeout(time, cb, argp);
+  Fl_Timeout::repeat_timeout(time, cb, argp);
 }
 
 /**
  Returns true if the timeout exists and has not been called yet.
  */
 int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
-  return Fl::screen_driver()->has_timeout(cb, argp);
+  return Fl_Timeout::has_timeout(cb, argp);
 }
 
 /**
@@ -256,7 +255,7 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
         This may change in the future.
  */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->remove_timeout(cb, argp);
+  Fl_Timeout::remove_timeout(cb, argp);
 }
 
 
@@ -429,9 +428,45 @@ void fl_trigger_clipboard_notify(int source) {
 }
 
 ////////////////////////////////////////////////////////////////
-// wait/run/check/ready:
+// idle/wait/run/check/ready:
 
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
+
+/*
+  Private, undocumented method to run idle callbacks.
+
+  FLTK guarantees that idle callbacks will never be called recursively,
+  i.e. while an idle callback is being executed.
+
+  This method should (must) be the only way to run idle callbacks to
+  ensure that the `in_idle' flag is respected.
+
+  Idle callbacks are executed whenever Fl::wait() is called and no events
+  are waiting to be serviced.
+
+  If Fl::idle is set (non-NULL) this points at a function that executes
+  the first idle callback and appends it to the end of the list of idle
+  callbacks. For details see static function call_idle() in Fl_add_idle.cxx.
+
+  If it is NULL then no idle callbacks are active and Fl::run_idle() returns
+  immediately.
+
+  Note: idle callbacks can be queued in nested FLTK event loops like
+  ```
+    while (win->shown())
+      Fl::wait();
+  ```
+  if an event (timeout or button click etc.) handler calls Fl::add_idle()
+  or even in Fl::flush() if a draw() method calls Fl::add_idle().
+*/
+void Fl::run_idle() {
+  static char in_idle;
+  if (Fl::idle && !in_idle) {
+    in_idle = 1;
+    Fl::idle();
+    in_idle = 0;
+  }
+}
 
 /**
  Waits a maximum of \p time_to_wait seconds or until "something happens".
@@ -444,8 +479,29 @@ void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
  occurs (this will happen on X11 if a signal happens).
 */
 double Fl::wait(double time_to_wait) {
+
+  // platform independent part:
+
   // delete all widgets that were listed during callbacks
   do_widget_deletion();
+
+  Fl_Timeout::do_timeouts(); // execute timer callbacks
+
+  Fl::run_checks();
+
+  Fl::run_idle();
+
+  // the idle function may turn off idle, we can then wait,
+  // or it leaves Fl::idle active and we set time_to_wait to 0
+  if (Fl::idle) {
+    time_to_wait = 0.0;
+  } else {
+    // limit time by next timer interval
+    time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
+  }
+
+  // platform dependent part:
+
   return screen_driver()->wait(time_to_wait);
 }
 

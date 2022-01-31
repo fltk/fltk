@@ -31,6 +31,8 @@
 #include <FL/filename.H>
 #include <sys/time.h>
 
+#include "../../Fl_Timeout.h"
+
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 #endif
@@ -55,52 +57,6 @@ extern const char *fl_bg;
 extern const char *fl_bg2;
 // end of extern additions workaround
 
-//
-// X11 timers
-//
-
-
-////////////////////////////////////////////////////////////////////////
-// Timeouts are stored in a sorted list (*first_timeout), so only the
-// first one needs to be checked to see if any should be called.
-// Allocated, but unused (free) Timeout structs are stored in another
-// linked list (*free_timeout).
-
-struct Timeout {
-  double time;
-  void (*cb)(void*);
-  void* arg;
-  Timeout* next;
-};
-static Timeout* first_timeout, *free_timeout;
-
-// I avoid the overhead of getting the current time when we have no
-// timeouts by setting this flag instead of getting the time.
-// In this case calling elapse_timeouts() does nothing, but records
-// the current time, and the next call will actually elapse time.
-static char reset_clock = 1;
-
-static void elapse_timeouts() {
-  static struct timeval prevclock;
-  struct timeval newclock;
-  gettimeofday(&newclock, NULL);
-  double elapsed = newclock.tv_sec - prevclock.tv_sec +
-    (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
-  prevclock.tv_sec = newclock.tv_sec;
-  prevclock.tv_usec = newclock.tv_usec;
-  if (reset_clock) {
-    reset_clock = 0;
-  } else if (elapsed > 0) {
-    for (Timeout* t = first_timeout; t; t = t->next) t->time -= elapsed;
-  }
-}
-
-
-// Continuously-adjusted error value, this is a number <= 0 for how late
-// we were at calling the last timeout. This appears to make repeat_timeout
-// very accurate even when processing takes a significant portion of the
-// time interval:
-static double missed_timeout_by;
 
 /**
  Creates a driver that manages all screen and display related calls.
@@ -411,39 +367,6 @@ void Fl_X11_Screen_Driver::flush()
 
 double Fl_X11_Screen_Driver::wait(double time_to_wait)
 {
-  static char in_idle;
-
-  if (first_timeout) {
-    elapse_timeouts();
-    Timeout *t;
-    while ((t = first_timeout)) {
-      if (t->time > 0) break;
-      // The first timeout in the array has expired.
-      missed_timeout_by = t->time;
-      // We must remove timeout from array before doing the callback:
-      void (*cb)(void*) = t->cb;
-      void *argp = t->arg;
-      first_timeout = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-      // Now it is safe for the callback to do add_timeout:
-      cb(argp);
-    }
-  } else {
-    reset_clock = 1; // we are not going to check the clock
-  }
-  Fl::run_checks();
-  if (Fl::idle) {
-    if (!in_idle) {
-      in_idle = 1;
-      Fl::idle();
-      in_idle = 0;
-    }
-    // the idle function may turn off idle, we can then wait:
-    if (Fl::idle) time_to_wait = 0.0;
-  }
-  if (first_timeout && first_timeout->time < time_to_wait)
-    time_to_wait = first_timeout->time;
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
     int ret = this->poll_or_select_with_delay(0.0);
@@ -452,25 +375,20 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
   } else {
     // do flush first so that user sees the display:
     Fl::flush();
-    if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
+    if (Fl::idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
-    else if (first_timeout && first_timeout->time < time_to_wait) {
-      // another timeout may have been queued within flush(), see STR #3188
-      time_to_wait = first_timeout->time >= 0.0 ? first_timeout->time : 0.0;
+    else {
+      Fl_Timeout::elapse_timeouts();
+      time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
     }
     return this->poll_or_select_with_delay(time_to_wait);
   }
 }
 
 
-int Fl_X11_Screen_Driver::ready()
-{
-  if (first_timeout) {
-    elapse_timeouts();
-    if (first_timeout->time <= 0) return 1;
-  } else {
-    reset_clock = 1;
-  }
+int Fl_X11_Screen_Driver::ready() {
+  Fl_Timeout::elapse_timeouts();
+  if (Fl_Timeout::time_to_wait(1.0) <= 0.0) return 1;
   return this->poll_or_select();
 }
 
@@ -598,67 +516,6 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
   return s;
 }
 
-// ######################   *FIXME*   ########################
-// ######################   *FIXME*   ########################
-// ######################   *FIXME*   ########################
-
-
-//
-// X11 timers
-//
-
-void Fl_X11_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  elapse_timeouts();
-  missed_timeout_by = 0;
-  repeat_timeout(time, cb, argp);
-}
-
-void Fl_X11_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  time += missed_timeout_by; if (time < -.05) time = 0;
-  Timeout* t = free_timeout;
-  if (t) {
-      free_timeout = t->next;
-  } else {
-      t = new Timeout;
-  }
-  t->time = time;
-  t->cb = cb;
-  t->arg = argp;
-  // insert-sort the new timeout:
-  Timeout** p = &first_timeout;
-  while (*p && (*p)->time <= time) p = &((*p)->next);
-  t->next = *p;
-  *p = t;
-}
-
-/**
-  Returns true if the timeout exists and has not been called yet.
-*/
-int Fl_X11_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout* t = first_timeout; t; t = t->next)
-    if (t->cb == cb && t->arg == argp) return 1;
-  return 0;
-}
-
-/**
-  Removes a timeout callback. It is harmless to remove a timeout
-  callback that no longer exists.
-
-  \note This version removes all matching timeouts, not just the first one.
-        This may change in the future.
-*/
-void Fl_X11_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout** p = &first_timeout; *p;) {
-    Timeout* t = *p;
-    if (t->cb == cb && (t->arg == argp || !argp)) {
-      *p = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-    } else {
-      p = &(t->next);
-    }
-  }
-}
 
 int Fl_X11_Screen_Driver::compose(int& del) {
   int condition;
