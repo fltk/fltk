@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,6 +54,7 @@ void fl_cleanup_dc_list(void);
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
+#include "Fl_Timeout.h"
 #include <FL/Fl_Graphics_Driver.H> // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
@@ -417,16 +418,6 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
 
   int have_message = 0;
 
-  Fl::run_checks();
-
-  // idle processing
-  static char in_idle;
-  if (Fl::idle && !in_idle) {
-    in_idle = 1;
-    Fl::idle();
-    in_idle = 0;
-  }
-
   if (nfds) {
     // For Windows we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
@@ -469,6 +460,9 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
   fl_unlock_function();
 
   time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);
+
+  time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
+
   int t_msec = (int)(time_to_wait * 1000.0 + 0.5);
   MsgWaitForMultipleObjects(0, NULL, FALSE, t_msec, QS_ALLINPUT);
 

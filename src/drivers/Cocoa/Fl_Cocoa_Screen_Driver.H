@@ -2,7 +2,7 @@
 // Definition of Apple Cocoa Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -80,11 +80,6 @@ public:
   virtual void grab(Fl_Window* win);
   // --- global colors
   virtual void get_system_colors();
-  // --- global timers
-  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
-  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int has_marked_text() const;
   static void reset_marked_text();
   static void insertion_point_location(int x, int y, int height);
