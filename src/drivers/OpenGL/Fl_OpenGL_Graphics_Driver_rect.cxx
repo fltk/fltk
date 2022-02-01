@@ -29,7 +29,6 @@
 
 // --- line and polygon drawing with integer coordinates
 
-// tested in hidpi
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
   glBegin(GL_POINTS);
   glVertex2i(x, y);
@@ -37,15 +36,14 @@ void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
 }
 
 void Fl_OpenGL_Graphics_Driver::rect(int x, int y, int w, int h) {
-  glBegin(GL_LINE_LOOP);
-  glVertex2i(x, y);
-  glVertex2i(x+w, y);
-  glVertex2i(x+w, y+h);
-  glVertex2i(x, y+h);
+  glBegin(GL_LINES);
+  glVertex2f(x-0.5f, y); glVertex2f(x+w-0.5f, y);
+  glVertex2f(x+w-1.0f, y); glVertex2f(x+w-1.0f, y+h-0.5f);
+  glVertex2f(x, y); glVertex2f(x, y+h-0.5f);
+  glVertex2f(x-0.5f, y+h-1.0f); glVertex2f(x+w-0.5f, y+h-1.0f);
   glEnd();
 }
 
-// tested in hidpi
 void Fl_OpenGL_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
   glRectf(x-0.5f, y-0.5f, x+w-0.5f, y+h-0.5f);

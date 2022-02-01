@@ -142,7 +142,6 @@ public:
     // 520x365, resizable
   }
   PointTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-    Fl::use_high_res_GL(1);
     label("Testing the fl_point call.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
@@ -304,4 +303,4 @@ public:
   }
 };
 
-UnitTest points(1, "drawing points", PointTest::create);
+UnitTest points(1, "Drawing Points", PointTest::create);

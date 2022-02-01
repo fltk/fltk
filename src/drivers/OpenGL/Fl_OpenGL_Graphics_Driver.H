@@ -29,6 +29,8 @@
  \brief OpenGL specific graphics class.
  */
 class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
+protected:
+  float pixels_per_unit_;
 public:
   // --- line and polygon drawing with integer coordinates
   void point(int x, int y);

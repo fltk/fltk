@@ -54,4 +54,9 @@ void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
     }
     glEnable(GL_LINE_STIPPLE);
   }
+  float s = 1.0f;
+  Fl_Gl_Window *win = Fl_Gl_Window::current()->as_gl_window();
+  if (win) s = win->pixels_per_unit();
+
+  glLineWidth((GLfloat)width*s);
 }

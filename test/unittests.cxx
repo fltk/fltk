@@ -138,6 +138,7 @@ int main(int argc, char **argv) {
   Fl::get_system_colors();
   Fl::scheme(Fl::scheme()); // init scheme before instantiating tests
   Fl::visual(FL_RGB);
+  Fl::use_high_res_GL(1);
   mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "FLTK Unit Tests");
   browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
@@ -158,7 +159,7 @@ int main(int argc, char **argv) {
   mainwin->resizable(mainwin);
   mainwin->show(argc,argv);
   // Select first test in browser, and show that test.
-  browser->select(2);
+  browser->select(4);
   Browser_CB(browser,0);
   return(Fl::run());
 }
