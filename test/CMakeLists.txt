@@ -144,7 +144,7 @@ SET (UNITTEST_SRCS
   unittest_about.cxx
   unittest_points.cxx
   unittest_lines.cxx
-  unittest_rects.cxx
+  unittest_fast_shapes.cxx
   unittest_circles.cxx
   unittest_text.cxx
   unittest_symbol.cxx
