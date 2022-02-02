@@ -3949,50 +3949,11 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
                              nil];
     [NSApp orderFrontStandardAboutPanelWithOptions:options];
 }
-//#include <FL/Fl_PostScript.H>
 - (void)printPanel
 {
-  Fl_Printer printer;
-  //Fl_PostScript_File_Device printer;
-  int w, h, ww, wh;
-  Fl_Window *win = Fl::first_window();
-  if(!win) return;
-  if (win->parent()) win = win->top_window();
-  if( printer.begin_job(1) ) return;
-  if( printer.begin_page() ) return;
+  bool grab_decoration = ([print_with_titlebar_item state] == NSOnState);
   fl_lock_function();
-  // scale the printer device so that the window fits on the page
-  float scale = 1;
-  printer.printable_rect(&w, &h);
-  if ([print_with_titlebar_item state] == NSOnState) {
-    ww = win->decorated_w();
-    wh = win->decorated_h();
-  } else {
-    ww = win->w();
-    wh = win->h();
-  }
-  if (ww>w || wh>h) {
-    scale = (float)w/win->w();
-    if ((float)h/wh < scale) scale = (float)h/wh;
-    printer.scale(scale);
-    printer.printable_rect(&w, &h);
-  }
-//#define ROTATE 1
-#ifdef ROTATE
-  printer.scale(scale * 0.8, scale * 0.8);
-  printer.printable_rect(&w, &h);
-  printer.origin(w/2, h/2 );
-  printer.rotate(20.);
-#else
-  printer.origin(w/2, h/2);
-#endif
-  if ([print_with_titlebar_item state] == NSOnState)
-    printer.draw_decorated_window(win, -ww/2, -wh/2);
-  else
-    printer.draw(win, -ww/2, -wh/2);
-  //printer.print_window_part(win,0,0,win->w(),win->h(), -ww/2, -wh/2);
-  printer.end_page();
-  printer.end_job();
+  Fl_Screen_Driver::print_or_copy_window(Fl::first_window(), grab_decoration, 1);
   fl_unlock_function();
 }
 - (void)terminate:(id)sender

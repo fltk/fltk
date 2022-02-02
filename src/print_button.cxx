@@ -38,14 +38,17 @@
 // Currently the shortcut can't be configured and is always ALT+SHIFT+'s'.
 // Todo: make the shortcut configurable.
 
+#include <FL/Fl_Window.H>
+#include "Fl_Screen_Driver.H"
+#include <FL/Fl_Printer.H>
+#include <FL/Fl_PostScript.H>
+#include <FL/Fl_Copy_Surface.H>
+
+//#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
 
-#include <FL/Fl_Printer.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
-#include <FL/Fl_Copy_Surface.H>
-#include <FL/Fl_Image_Surface.H>
-#include <FL/Fl_RGB_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 
@@ -66,7 +69,7 @@ static Fl_Check_Button *deco_button = 0;  // window decoration button
 //  2: copy window to clipboard
 // else: see 2.
 
-static void output_cb(Fl_Widget *o, void *data) {
+static void output_cb(Fl_Widget * /*unused*/, void *data) {
 
   print_window->hide();
   Fl_Window *win = Fl::first_window();
@@ -75,58 +78,7 @@ static void output_cb(Fl_Widget *o, void *data) {
   // print window again (which ends the program)
 
   if (!win) return;
-
-  int mode = fl_int(data);
-  int deco = deco_button->value();
-  int ww = deco ? win->decorated_w() : win->w();
-  int wh = deco ? win->decorated_h() : win->h();
-
-  if (mode == 1) { // print window
-
-    Fl_Printer printer;
-    int w, h;
-    if (printer.begin_job(1)) { // fail or cancel
-      print_window->show();
-      return;
-    }
-    if (printer.begin_page()) { // fail or cancel
-      print_window->show();
-      return;
-    }
-    printer.printable_rect(&w, &h);
-    // scale the printer device so that the window fits on the page
-    float scale = 1;
-    if (ww > w || wh > h) {
-      scale = (float)w / ww;
-      if ((float)h / wh < scale)
-        scale = (float)h / wh;
-      printer.scale(scale, scale);
-      printer.printable_rect(&w, &h);
-    }
-#ifdef ROTATE
-    printer.scale(scale * 0.8, scale * 0.8);
-    printer.printable_rect(&w, &h);
-    printer.origin(w / 2, h / 2);
-    printer.rotate(ROTATE);
-    printer.print_widget(win, -win->w() / 2, -win->h() / 2);
-#else
-    printer.origin(w / 2, h / 2);
-    printer.print_window(win, -ww / 2, -wh / 2);
-#endif
-    printer.end_page();
-    printer.end_job();
-
-  } else { // copy window to clipboard
-
-    Fl_Copy_Surface *surf = new Fl_Copy_Surface(ww, wh);
-    if (deco)
-      surf->draw_decorated_window(win); // draw the window content
-    else
-      surf->draw(win); // draw the window content
-    delete surf;       // put the window on the clipboard
-
-  } // print | copy
-
+  Fl_Screen_Driver::print_or_copy_window(win, deco_button->value(), fl_int(data));
   print_window->show();
 }
 
@@ -190,3 +142,65 @@ int fl_create_print_window() {
 }
 
 #endif // USE_PRINT_BUTTON
+
+/**
+ To print or copy to clipboard a window.
+ \param win The window to process
+ \param grab_decoration true means the window titlebar is processed too
+ \param mode 1 means print, other means copy
+ */
+int Fl_Screen_Driver::print_or_copy_window(Fl_Window *win, bool grab_decoration, int mode)
+{
+  if (!win) return 0;
+
+  int ww = grab_decoration ? win->decorated_w() : win->w();
+  int wh = grab_decoration ? win->decorated_h() : win->h();
+
+  if (mode == 1) { // print window
+
+    // exchange the 2 constructors below to test class Fl_PostScript_File_Device
+    Fl_Printer printer;
+    //Fl_PostScript_File_Device printer;
+    int w, h;
+    if (printer.begin_job(1)) { // fail or cancel
+      return 1;
+    }
+    if (printer.begin_page()) { // fail or cancel
+      return 1;
+    }
+    printer.printable_rect(&w, &h);
+    // scale the printer device so that the window fits on the page
+    float scale = 1;
+    if (ww > w || wh > h) {
+      scale = (float)w / ww;
+      if ((float)h / wh < scale)
+        scale = (float)h / wh;
+      printer.scale(scale, scale);
+      printer.printable_rect(&w, &h);
+    }
+#ifdef ROTATE
+    printer.scale(scale * 0.8, scale * 0.8);
+    printer.printable_rect(&w, &h);
+    printer.origin(w / 2, h / 2);
+    printer.rotate(ROTATE);
+    printer.print_widget(win, -win->w() / 2, -win->h() / 2);
+#else
+    printer.origin(w / 2, h / 2);
+    if (grab_decoration) printer.draw_decorated_window(win, -ww / 2, -wh / 2);
+    else printer.draw(win, -ww / 2, -wh / 2);
+#endif
+    printer.end_page();
+    printer.end_job();
+
+  } else { // copy window to clipboard
+
+    Fl_Copy_Surface *surf = new Fl_Copy_Surface(ww, wh);
+    if (grab_decoration)
+      surf->draw_decorated_window(win); // draw the window content
+    else
+      surf->draw(win); // draw the window content
+    delete surf;       // put the window on the clipboard
+
+  } // print | copy
+  return 0;
+}
