@@ -3902,6 +3902,28 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   return 1;
 }
 
+@interface PrintWithTitlebarItem : NSMenuItem {
+}
+- (void) toggleCallback;
+@end
+
+@implementation PrintWithTitlebarItem
+- (void) toggleCallback {
+  NSMenuItem *item = [self representedObject];
+  const char *title;
+  if ([self state] == NSOnState) {
+    [self setState:NSOffState];
+    title = Fl_Mac_App_Menu::print_no_titlebar;
+  } else {
+    [self setState:NSOnState];
+    title = Fl_Mac_App_Menu::print_with_titlebar;
+  }
+  [item setTitle:NSLocalizedString([NSString stringWithUTF8String:title], nil)];
+}
+@end
+
+static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
+
 @interface FLaboutItemTarget : NSObject
 {
 }
@@ -3942,8 +3964,13 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   // scale the printer device so that the window fits on the page
   float scale = 1;
   printer.printable_rect(&w, &h);
-  ww = win->decorated_w();
-  wh = win->decorated_h();
+  if ([print_with_titlebar_item state] == NSOnState) {
+    ww = win->decorated_w();
+    wh = win->decorated_h();
+  } else {
+    ww = win->w();
+    wh = win->h();
+  }
   if (ww>w || wh>h) {
     scale = (float)w/win->w();
     if ((float)h/wh < scale) scale = (float)h/wh;
@@ -3959,7 +3986,10 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
 #else
   printer.origin(w/2, h/2);
 #endif
-  printer.print_window(win, -ww/2, -wh/2);
+  if ([print_with_titlebar_item state] == NSOnState)
+    printer.draw_decorated_window(win, -ww/2, -wh/2);
+  else
+    printer.draw(win, -ww/2, -wh/2);
   //printer.print_window_part(win,0,0,win->w(),win->h(), -ww/2, -wh/2);
   printer.end_page();
   printer.end_job();
@@ -3992,7 +4022,7 @@ static void createAppleMenu(void)
   [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
   // Print front window
-  title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::print], nil);
+  title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::print_with_titlebar], nil);
   if ([title length] > 0) {
     menuItem = [appleMenu
                 addItemWithTitle:title
@@ -4000,6 +4030,16 @@ static void createAppleMenu(void)
                 keyEquivalent:@""];
     [menuItem setTarget:about];
     [menuItem setEnabled:YES];
+  // Toggle "Print Window with titlebar" / "Print Window"
+    title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::toggle_print_titlebar], nil);
+    print_with_titlebar_item = [[PrintWithTitlebarItem alloc] initWithTitle:title
+                                                  action:@selector(toggleCallback)
+                                           keyEquivalent:@""];
+    [appleMenu addItem:print_with_titlebar_item];
+    [print_with_titlebar_item setTarget:print_with_titlebar_item];
+    [print_with_titlebar_item setRepresentedObject:menuItem];
+    [print_with_titlebar_item setState:NSOnState];
+    [print_with_titlebar_item setEnabled:YES];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     }
   if (fl_mac_os_version >= 100400) { // services+hide+quit already in menu in OS 10.3

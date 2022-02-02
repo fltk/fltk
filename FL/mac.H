@@ -140,10 +140,14 @@ public:
   /** Localizable text for the "About xxx" application menu item */
   static const char *about;
   /** Localizable text for the "Print Front Window" application menu item.
-   This menu item won't be displayed if Fl_Mac_App_Menu::print
+   This menu item and next one won't be displayed if Fl_Mac_App_Menu::print
    is set to an empty string.
    */
-  static const char *print;
+  static const char *print_with_titlebar;
+  /** Localizable text for the "Print Front Window" application menu item. */
+  static const char *print_no_titlebar;
+  /** Localizable text for the "Toggle print titlebar" application menu item. */
+  static const char *toggle_print_titlebar;
   /** Localizable text for the "Services" application menu item */
   static const char *services;
   /** Localizable text for the "Hide xxx" application menu item */
@@ -155,8 +159,8 @@ public:
   /** Localizable text for the "Quit xxx" application menu item */
   static const char *quit;
   /** Adds custom menu item(s) to the application menu of the system menu bar.
-   They are positioned after the "Print Front Window" item, or at its place
-   if it was removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
+   They are positioned after the "Print Front Window / Toggle printing of titlebar" items, or at their place
+   if they were removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
    \param m zero-ending array of Fl_Menu_Item 's.
    */
   static void custom_application_menu_items(const Fl_Menu_Item *m);

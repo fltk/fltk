@@ -74,7 +74,9 @@ Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
 
 // Apple App Menu
 const char *Fl_Mac_App_Menu::about = "About %@";
-const char *Fl_Mac_App_Menu::print = "Print Front Window";
+const char *Fl_Mac_App_Menu::print_with_titlebar = "Print Front Window & Titlebar";
+const char *Fl_Mac_App_Menu::print_no_titlebar = "Print Front Window";
+const char *Fl_Mac_App_Menu::toggle_print_titlebar = "Toggle printing of titlebar";
 const char *Fl_Mac_App_Menu::services = "Services";
 const char *Fl_Mac_App_Menu::hide = "Hide %@";
 const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
@@ -504,8 +506,8 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
   NSInteger to_index;
   if ([[menu itemAtIndex:2] action] != @selector(printPanel)) { // the 'Print' item was removed
     [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
-    to_index = 2;
-  } else to_index = 3; // after the "Print Front Window" item
+    to_index = 3;
+  } else to_index = 4; // after the "Print Front Window/Toggle" items
   NSInteger count = [menu numberOfItems];
   createSubMenu(menu, m, NULL, @selector(customCallback)); // add new items at end of application menu
   NSInteger count2 = [menu numberOfItems];
