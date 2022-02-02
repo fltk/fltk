@@ -18,6 +18,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Anim_GIF_Image.H>
 #include <stdio.h>
 
 #include "pixmaps/porsche.xpm"
@@ -28,7 +29,7 @@ Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb,*inactb;
 Fl_Button *b;
 Fl_Double_Window *w;
 
-void button_cb(Fl_Widget *,void *) {
+void button_cb(Fl_Widget *wgt,void *) {
   int i = 0;
   if (leftb->value()) i |= FL_ALIGN_LEFT;
   if (rightb->value()) i |= FL_ALIGN_RIGHT;
@@ -43,8 +44,10 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 int dvisual = 0;
+int animate = 0;
 int arg(int, char **argv, int &i) {
   if (argv[i][1] == '8') {dvisual = 1; i++; return 1;}
+  if (argv[i][1] == 'a') {animate = 1; i++; return 1;}
   return 0;
 }
 
@@ -53,11 +56,21 @@ int arg(int, char **argv, int &i) {
 int main(int argc, char **argv) {
   int i = 1;
   if (Fl::args(argc,argv,i,arg) < argc)
-    Fl::fatal(" -8 # : use default visual\n%s\n",Fl::help);
+    Fl::fatal(" -8 # : use default visual\n"
+              " -a : use animated GIF as pixmap\n%s\n",Fl::help);
 
   Fl_Double_Window window(400,400); ::w = &window;
   Fl_Button b(140,160,120,120,"Pixmap"); ::b = &b;
-  Fl_Pixmap *pixmap = new Fl_Pixmap(porsche_xpm);
+  Fl_Pixmap *pixmap = 0;
+  if (!animate)
+    pixmap = new Fl_Pixmap(porsche_xpm);
+  else {
+    Fl_Anim_GIF_Image *anim = new Fl_Anim_GIF_Image("pixmaps/fltk_animated2.gif");
+    anim->canvas(&b, Fl_Anim_GIF_Image::DontResizeCanvas);
+    anim->scale(96,96,1,1);
+    pixmap = anim;
+    anim->start();
+  }
   Fl_Pixmap *depixmap;
   depixmap = (Fl_Pixmap *)pixmap->copy();
   depixmap->inactive();

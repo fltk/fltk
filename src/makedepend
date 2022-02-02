@@ -1954,6 +1954,11 @@ Fl_get_system_colors.o: flstring.h
 Fl_get_system_colors.o: Fl_Screen_Driver.H
 Fl_get_system_colors.o: Fl_System_Driver.H
 Fl_get_system_colors.o: tile.xpm
+Fl_Anim_GIF_Image.o: ../config.h
+Fl_Anim_GIF_Image.o: ../FL/Fl_Anim_GIF_Image.H
+Fl_Anim_GIF_Image.o: ../FL/Fl_GIF_Image.H
+Fl_Anim_GIF_Image.o: ../FL/Fl_Image.H
+Fl_Anim_GIF_Image.o: ../FL/Fl_Pixmap.H
 Fl_GIF_Image.o: ../config.h
 Fl_GIF_Image.o: ../FL/Enumerations.H
 Fl_GIF_Image.o: ../FL/Fl.H

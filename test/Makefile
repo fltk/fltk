@@ -51,6 +51,7 @@ OBJUNITTEST = \
 CPPFILES =\
 	adjuster.cxx \
 	animated.cxx \
+	animgifimage.cxx \
 	arc.cxx \
 	ask.cxx \
 	bitmap.cxx \
@@ -145,6 +146,7 @@ CPPFILES =\
 
 ALL =	\
 	animated$(EXEEXT) \
+	animgifimage$(EXEEXT) \
 	adjuster$(EXEEXT) \
 	arc$(EXEEXT) \
 	ask$(EXEEXT) \
@@ -343,6 +345,10 @@ adjuster$(EXEEXT): adjuster.o
 
 animated$(EXEEXT): animated.o
 
+animgifimage$(EXEEXT): animgifimage.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) animgifimage.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+
 arc$(EXEEXT): arc.o
 
 ask$(EXEEXT): ask.o
@@ -512,7 +518,9 @@ overlay$(EXEEXT): overlay.o
 
 pack$(EXEEXT): pack.o
 
-pixmap$(EXEEXT): pixmap.o
+pixmap$(EXEEXT): pixmap.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ pixmap.o $(LINKFLTKIMG) $(LDLIBS)
 
 pixmap_browser$(EXEEXT): pixmap_browser.o $(IMGLIBNAME)
 	echo Linking $@...
@@ -616,7 +624,10 @@ threads.o:	threads.h
 
 tile$(EXEEXT): tile.o
 
-tiled_image$(EXEEXT): tiled_image.o
+tiled_image$(EXEEXT): tiled_image.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) tiled_image.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
 
 tree$(EXEEXT): tree.o
 tree.cxx:	tree.fl ../fluid/fluid$(EXEEXT)

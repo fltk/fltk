@@ -1,7 +1,7 @@
 //
 // GIF image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,10 +36,51 @@ public:
   // constructor with length (since 1.4.0)
   Fl_GIF_Image(const char* imagename, const unsigned char *data, const size_t length);
 
+  static bool is_animated(const char *name_);
+  /** Sets how the shared image core routine should treat animated GIF files.
+   The default is to treat them as ordinary GIF's e.g. it creates a Fl_GIF_Image object.
+   If this variable is set, then an animated GIF object Fl_Anim_GIF_Image is created.
+   */
+  static bool animate;
+
 protected:
 
-  void load_gif_(class Fl_Image_Reader &rdr);
+  // Proteced constructors needed for animated GIF support through Fl_Anim_GIF_Image.
+  Fl_GIF_Image(const char* filename, bool anim);
+  Fl_GIF_Image(const char* imagename, const unsigned char *data, const size_t length, bool anim);
+  // Protected default constructor needed for Fl_Anim_GIF_Image.
+  Fl_GIF_Image();
 
+  void load_gif_(class Fl_Image_Reader &rdr, bool anim=false);
+
+  void load(const char* filename, bool anim);
+  void load(const char* imagename, const unsigned char *data, const size_t length, bool anim);
+
+  // Internal structure to "glue" animated GIF support into Fl_GIF_Image.
+  // This data is passed during decoding to the Fl_Anim_GIF_Image class.
+  struct GIF_FRAME {
+    int ifrm, width, height, x, y, w, h,
+        clrs, bkgd, trans,
+        dispose, delay;
+    const uchar *bptr;
+    const struct CPAL {
+      uchar r, g, b;
+    } *cpal;
+    GIF_FRAME(int frame, uchar *data) : ifrm(frame), bptr(data) {}
+    GIF_FRAME(int frame, int W, int H, int fx, int fy, int fw, int fh, uchar *data) :
+      ifrm(frame), width(W), height(H), x(fx), y(fy), w(fw), h(fh), bptr(data) {}
+    void disposal(int mode, int delay) { dispose = mode; this->delay = delay; }
+    void colors(int nclrs, int bg, int tp) { clrs = nclrs; bkgd = bg; trans = tp; }
+  };
+
+  // Internal virtual methods, which are called during decoding to pass data
+  // to the Fl_Anim_GIF_Image class.
+  virtual void on_frame_data(GIF_FRAME &gf) {}
+  virtual void on_extension_data(GIF_FRAME &gf) {}
+
+private:
+
+  void lzw_decode(Fl_Image_Reader &rdr, uchar *Image, int Width, int Height, int CodeSize, int ColorMapSize, int Interlace);
 };
 
 #endif

@@ -24,8 +24,17 @@
 //
 
 #include <FL/Fl_Help_Dialog.H>
+#include <FL/Fl_GIF_Image.H>
 #include <FL/filename.H>        /* FL_PATH_MAX */
+#include <FL/Fl.H>              /* Fl::first_window(), etc */
 #include <string.h>             /* strcpy(), etc */
+
+static void cb_refresh(void *d) {
+  // trigger a redraw of the window to see animated GIF's
+  if (Fl::first_window())
+    Fl::first_window()->redraw();
+  Fl::repeat_timeout(1./10, cb_refresh, d);
+}
 
 //
 // 'main()' - Display the help GUI...
@@ -35,6 +44,7 @@ int                             // O - Exit status
 main(int  argc,                 // I - Number of command-line arguments
      char *argv[])              // I - Command-line arguments
 {
+  Fl_GIF_Image::animate = true; // create animated shared .GIF images
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
   int i;
   if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
@@ -44,6 +54,7 @@ main(int  argc,                 // I - Number of command-line arguments
 
   help->show(1, argv);
 
+  Fl::add_timeout(1./10, cb_refresh, help); // to animate GIF's
   Fl::run();
 
   delete help;

@@ -39,10 +39,13 @@
 	@d:Images...:@di
 		@di:Fl_Bitmap:bitmap
 		@di:Fl_Pixmap:pixmap
+		@di:Fl_Pixmap\nanimated:pixmap -a
 		@di:Fl_RGB\n_Image:image
 		@di:Fl_Shared\n_Image:pixmap_browser
 		@di:Fl_Tiled\n_Image:tiled_image
+		@di:Fl_Tiled\n_Image\nanimated:tiled_image -a
 		@di:transparency:animated
+		@di:Fl_Anim\n_GIF_Image:animgifimage -t pixmaps
 	@d:cursor:cursor
 	@d:labels:label
 	@d:offscreen:offscreen
