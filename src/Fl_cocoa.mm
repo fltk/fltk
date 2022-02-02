@@ -3916,7 +3916,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
     title = Fl_Mac_App_Menu::print_no_titlebar;
   } else {
     [self setState:NSOnState];
-    title = Fl_Mac_App_Menu::print_with_titlebar;
+    title = Fl_Mac_App_Menu::print;
   }
   [item setTitle:NSLocalizedString([NSString stringWithUTF8String:title], nil)];
 }
@@ -4022,7 +4022,7 @@ static void createAppleMenu(void)
   [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
   // Print front window
-  title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::print_with_titlebar], nil);
+  title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::print], nil);
   if ([title length] > 0) {
     menuItem = [appleMenu
                 addItemWithTitle:title

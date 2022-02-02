@@ -143,7 +143,7 @@ public:
    This menu item and next one won't be displayed if Fl_Mac_App_Menu::print
    is set to an empty string.
    */
-  static const char *print_with_titlebar;
+  static const char *print;
   /** Localizable text for the "Print Front Window" application menu item. */
   static const char *print_no_titlebar;
   /** Localizable text for the "Toggle print titlebar" application menu item. */
