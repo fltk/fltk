@@ -389,7 +389,7 @@ void Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data) {
 
   clip_notify_list = node;
 
-  Fl::system_driver()->clipboard_notify_change();
+  Fl::screen_driver()->clipboard_notify_change();
 }
 
 void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
@@ -402,7 +402,7 @@ void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
       *prev = node->next;
       delete node;
 
-      Fl::system_driver()->clipboard_notify_change();
+      Fl::screen_driver()->clipboard_notify_change();
 
       return;
     }
@@ -502,7 +502,7 @@ double Fl::wait(double time_to_wait) {
 
   // platform dependent part:
 
-  return screen_driver()->wait(time_to_wait);
+  return system_driver()->wait(time_to_wait);
 }
 
 #define FOREVER 1e20
@@ -589,7 +589,7 @@ int Fl::check() {
 */
 int Fl::ready()
 {
-  return screen_driver()->ready();
+  return system_driver()->ready();
 }
 
 int Fl::program_should_quit_ = 0;
@@ -1444,12 +1444,12 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   \see Fl::paste(Fl_Widget &receiver, int clipboard, const char* type)
 */
 void Fl::paste(Fl_Widget &receiver) {
-  Fl::system_driver()->paste(receiver, 0, Fl::clipboard_plain_text);
+  Fl::screen_driver()->paste(receiver, 0, Fl::clipboard_plain_text);
 }
 
 void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type)
 {
-  Fl::system_driver()->paste(receiver, clipboard, type);
+  Fl::screen_driver()->paste(receiver, clipboard, type);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1958,12 +1958,12 @@ const char * fl_filename_name(const char *name) {
 }
 
 void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
-  Fl::system_driver()->copy(stuff, len, clipboard, type);
+  Fl::screen_driver()->copy(stuff, len, clipboard, type);
 }
 
 int Fl::clipboard_contains(const char *type)
 {
-  return Fl::system_driver()->clipboard_contains(type);
+  return Fl::screen_driver()->clipboard_contains(type);
 }
 
 

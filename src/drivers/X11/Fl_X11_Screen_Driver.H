@@ -45,8 +45,6 @@ protected:
   } FLScreenInfo;
   FLScreenInfo screens[MAX_SCREENS];
   float dpi[MAX_SCREENS][2];
-  int poll_or_select();
-  int poll_or_select_with_delay(double time_to_wait);
   int get_mouse_unscaled(int &xx, int &yy);
 
 public:
@@ -78,8 +76,6 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
-  virtual double wait(double time_to_wait);
-  virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
@@ -98,6 +94,14 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  // this one is in Fl_x.cxx
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual int clipboard_contains(const char *type);
+  // this one is in Fl_x.cxx
+  virtual void clipboard_notify_change();
 };
 
 

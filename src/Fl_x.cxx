@@ -235,7 +235,7 @@ void (*fl_unlock_function)() = nothing;
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.
-int Fl_X11_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
+int Fl_X11_System_Driver::poll_or_select_with_delay(double time_to_wait) {
 
   // OpenGL and other broken libraries call XEventsQueued
   // unnecessarily and thus cause the file descriptor to not be ready,
@@ -288,8 +288,8 @@ int Fl_X11_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
   return n;
 }
 
-// just like Fl_X11_Screen_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
-int Fl_X11_Screen_Driver::poll_or_select() {
+// just like Fl_X11_System_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
+int Fl_X11_System_Driver::poll_or_select() {
   if (XQLength(fl_display)) return 1;
   if (!nfds) return 0; // nothing to select or poll
 #  if USE_POLL
@@ -879,7 +879,7 @@ static Fl_RGB_Image *own_bmp_to_RGB(char *bmp) {
 }
 
 // Call this when a "paste" operation happens:
-void Fl_X11_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
     if (type == Fl::clipboard_plain_text && fl_selection_type[clipboard] == type) {
@@ -908,7 +908,7 @@ void Fl_X11_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
                     fl_xid(Fl::first_window()), fl_event_time);
 }
 
-int Fl_X11_System_Driver::clipboard_contains(const char *type)
+int Fl_X11_Screen_Driver::clipboard_contains(const char *type)
 {
   if (fl_i_own_selection[1]) {
     return fl_selection_type[1] == type;
@@ -1007,7 +1007,7 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 ////////////////////////////////////////////////////////////////
 // Code for copying to clipboard and DnD out of the program:
 
-void Fl_X11_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
 
   if (clipboard >= 2) {
@@ -1182,7 +1182,7 @@ static void handle_clipboard_timestamp(int clipboard, Time time)
   fl_trigger_clipboard_notify(clipboard);
 }
 
-void Fl_X11_System_Driver::clipboard_notify_change() {
+void Fl_X11_Screen_Driver::clipboard_notify_change() {
   // Reset the timestamps if we've going idle so that you don't
   // get a bogus immediate trigger next time they're activated.
   if (fl_clipboard_notify_empty()) {

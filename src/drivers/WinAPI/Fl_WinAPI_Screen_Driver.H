@@ -61,8 +61,6 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
-  virtual double wait(double time_to_wait);
-  virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
   virtual void get_system_colors();
@@ -86,6 +84,14 @@ public:
   }
   virtual void desktop_scale_factor();
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  // this one is implemented in Fl_win32.cxx
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  // this one is implemented in Fl_win32.cxx
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  // this one is implemented in Fl_win32.cxx
+  virtual int clipboard_contains(const char *type);
+  // this one is implemented in Fl_win32.cxx
+  virtual void clipboard_notify_change();
 };
 
 

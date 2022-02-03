@@ -365,34 +365,6 @@ void Fl_X11_Screen_Driver::flush()
 }
 
 
-double Fl_X11_Screen_Driver::wait(double time_to_wait)
-{
-  if (time_to_wait <= 0.0) {
-    // do flush second so that the results of events are visible:
-    int ret = this->poll_or_select_with_delay(0.0);
-    Fl::flush();
-    return ret;
-  } else {
-    // do flush first so that user sees the display:
-    Fl::flush();
-    if (Fl::idle) // 'idle' may have been set within flush()
-      time_to_wait = 0.0;
-    else {
-      Fl_Timeout::elapse_timeouts();
-      time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
-    }
-    return this->poll_or_select_with_delay(time_to_wait);
-  }
-}
-
-
-int Fl_X11_Screen_Driver::ready() {
-  Fl_Timeout::elapse_timeouts();
-  if (Fl_Timeout::time_to_wait(1.0) <= 0.0) return 1;
-  return this->poll_or_select();
-}
-
-
 extern void fl_fix_focus(); // in Fl.cxx
 
 

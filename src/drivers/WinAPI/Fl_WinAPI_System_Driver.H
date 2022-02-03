@@ -107,14 +107,6 @@ public:
   virtual int case_insensitive_filenames() {return 1;}
   // this one is implemented in Fl_win32.cxx
   virtual const char *filename_name(const char *buf);
-  // this one is implemented in Fl_win32.cxx
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
-  // this one is implemented in Fl_win32.cxx
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
-  // this one is implemented in Fl_win32.cxx
-  virtual int clipboard_contains(const char *type);
-  // this one is implemented in Fl_win32.cxx
-  virtual void clipboard_notify_change();
   virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
@@ -123,6 +115,8 @@ public:
   virtual char* strdup(const char *s) { return ::_strdup(s); }
   virtual void lock_ring();
   virtual void unlock_ring();
+  virtual double wait(double time_to_wait);
+  virtual int ready();
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

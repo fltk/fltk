@@ -225,14 +225,6 @@ public:
   static const char * const tree_close_xpm[]; // used by tree_closepixmap()
   // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
   virtual int tree_connector_style();
-  // implement to support copy-to-clipboard
-  virtual void copy(const char */*stuff*/, int /*len*/, int /*clipboard*/, const char */*type*/) {}
-  // implement to support paste-from-clipboard
-  virtual void paste(Fl_Widget &, int /*clipboard*/, const char */*type*/) {}
-  // implement to support paste-from-clipboard
-  virtual int clipboard_contains(const char */*type*/) {return 0;}
-  //  implement to support paste-from-clipboard
-  virtual void clipboard_notify_change() {}
   virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
@@ -249,6 +241,8 @@ public:
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
   virtual void lock_ring() {}
   virtual void unlock_ring() {}
+  virtual double wait(double) { return 0.0; } // must override
+  virtual int ready() { return 0; }                        // must override
 };
 
 #endif // FL_SYSTEM_DRIVER_H

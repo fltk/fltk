@@ -75,8 +75,6 @@ public:
   // --- audible output
   virtual void beep(int type);
   // --- global events
-  virtual double wait(double time_to_wait);
-  virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
   virtual void get_system_colors();
@@ -99,6 +97,9 @@ public:
   virtual void scale(int /*nscreen*/, float f) { scale_ = f;}
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  virtual int clipboard_contains(const char *type);
 private:
   float scale_;
 };

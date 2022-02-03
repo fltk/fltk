@@ -105,8 +105,6 @@ public:
   virtual void beep(int) {}
   // --- global events
   virtual void flush() {}                                  // must override
-  virtual double wait(double) { return 0.0; } // must override
-  virtual int ready() { return 0; }                        // must override
   virtual void grab(Fl_Window *) {}
   // --- global colors
   /* the default implementation of parse_color() may be enough */
@@ -203,6 +201,14 @@ public:
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
   // this one is implemented in print_button.cxx
   static int print_or_copy_window(Fl_Window*, bool, int);
+  // implement to support copy-to-clipboard
+  virtual void copy(const char */*stuff*/, int /*len*/, int /*clipboard*/, const char */*type*/) {}
+  // implement to support paste-from-clipboard
+  virtual void paste(Fl_Widget &, int /*clipboard*/, const char */*type*/) {}
+  // implement to support paste-from-clipboard
+  virtual int clipboard_contains(const char */*type*/) {return 0;}
+  //  implement to support paste-from-clipboard
+  virtual void clipboard_notify_change() {}
 };
 
 #endif // !FL_SCREEN_DRIVER_H

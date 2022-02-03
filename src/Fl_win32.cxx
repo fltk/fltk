@@ -414,7 +414,7 @@ static void process_awake_handler_requests(void) {
 // It *should* return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.  This version
 // always returns 1.
-double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
+double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
 
   int have_message = 0;
 
@@ -518,8 +518,8 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
   return 1;
 }
 
-// just like Fl_WinAPI_Screen_Driver::wait(0.0) except no callbacks are done:
-int Fl_WinAPI_Screen_Driver::ready() {
+// just like Fl_WinAPI_System_Driver::wait(0.0) except no callbacks are done:
+int Fl_WinAPI_System_Driver::ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE))
     return 1;
   if (!nfds)
@@ -764,7 +764,7 @@ void fl_update_clipboard(void) {
 }
 
 // call this when you create a selection:
-void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_WinAPI_Screen_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len < 0)
     return;
   if (clipboard >= 2)
@@ -789,7 +789,7 @@ void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, co
 }
 
 // Call this when a "paste" operation happens:
-void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+void Fl_WinAPI_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (!clipboard || (fl_i_own_selection[clipboard] && strcmp(type, Fl::clipboard_plain_text) == 0)) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
@@ -940,7 +940,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
   }
 }
 
-int Fl_WinAPI_System_Driver::clipboard_contains(const char *type) {
+int Fl_WinAPI_Screen_Driver::clipboard_contains(const char *type) {
   int retval = 0;
   if (!OpenClipboard(NULL))
     return 0;
@@ -1008,7 +1008,7 @@ void fl_clipboard_notify_retarget(HWND wnd) {
     fl_clipboard_notify_target(fl_xid(Fl::first_window()));
 }
 
-void Fl_WinAPI_System_Driver::clipboard_notify_change() {
+void Fl_WinAPI_Screen_Driver::clipboard_notify_change() {
   // untarget clipboard monitor if no handlers are registered
   if (clipboard_wnd != NULL && fl_clipboard_notify_empty()) {
     fl_clipboard_notify_untarget(clipboard_wnd);

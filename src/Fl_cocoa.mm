@@ -439,7 +439,7 @@ void Fl_Darwin_System_Driver::remove_fd(int n)
 /*
  * Check if there is actually a message pending
  */
-int Fl_Cocoa_Screen_Driver::ready()
+int Fl_Darwin_System_Driver::ready()
 
 {
   NSEvent *retval = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
@@ -773,7 +773,7 @@ static int do_queued_events( double time = 0.0 )
   return got_events;
 }
 
-double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
+double Fl_Darwin_System_Driver::wait(double time_to_wait)
 {
   if (dropped_files_list) { // when the list of dropped files is not empty, open one and remove it from list
     drain_dropped_files_list();
@@ -3597,7 +3597,7 @@ static void resize_selection_buffer(int len, int clipboard) {
  * len: size of selected data
  * type: always "plain/text" for now
  */
-void Fl_Darwin_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_Cocoa_Screen_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
@@ -3695,7 +3695,7 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
 }
 
 // Call this when a "paste" operation happens:
-void Fl_Darwin_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+void Fl_Cocoa_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (type[0] == 0) type = Fl::clipboard_plain_text;
   if (clipboard) {
     Fl::e_clipboard_type = "";
@@ -3723,7 +3723,7 @@ void Fl_Darwin_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
   receiver.handle(FL_PASTE);
 }
 
-int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
+int Fl_Cocoa_Screen_Driver::clipboard_contains(const char *type) {
   NSString *found = nil;
   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
     found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];

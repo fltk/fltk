@@ -20,6 +20,7 @@
 #include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
 #include "../../flstring.h"
+#include "../../Fl_Timeout.h"
 
 #include <X11/Xlib.h>
 #include <locale.h>
@@ -692,6 +693,32 @@ void Fl_X11_System_Driver::own_colormap() {
   for (i = 0; i < 16; i ++)
     XAllocColor(fl_display, fl_colormap, colors + i);
 #endif // USE_COLORMAP
+}
+
+int Fl_X11_System_Driver::ready() {
+  Fl_Timeout::elapse_timeouts();
+  if (Fl_Timeout::time_to_wait(1.0) <= 0.0) return 1;
+  return this->poll_or_select();
+}
+
+double Fl_X11_System_Driver::wait(double time_to_wait)
+{
+  if (time_to_wait <= 0.0) {
+    // do flush second so that the results of events are visible:
+    int ret = this->poll_or_select_with_delay(0.0);
+    Fl::flush();
+    return ret;
+  } else {
+    // do flush first so that user sees the display:
+    Fl::flush();
+    if (Fl::idle) // 'idle' may have been set within flush()
+      time_to_wait = 0.0;
+    else {
+      Fl_Timeout::elapse_timeouts();
+      time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
+    }
+    return this->poll_or_select_with_delay(time_to_wait);
+  }
 }
 
 #endif // !defined(FL_DOXYGEN)

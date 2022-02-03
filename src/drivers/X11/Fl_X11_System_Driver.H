@@ -54,18 +54,15 @@ public:
   virtual void own_colormap();
   // this one is in Fl_x.cxx
   virtual const char *filename_name(const char *buf);
-  // this one is in Fl_x.cxx
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
-  // this one is in Fl_x.cxx
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
-  // this one is in Fl_x.cxx
-  virtual int clipboard_contains(const char *type);
-  // this one is in Fl_x.cxx
-  virtual void clipboard_notify_change();
   virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
+  virtual double wait(double time_to_wait);
+  virtual int ready();
+  // 2 additional virtual members
+  virtual int poll_or_select();
+  virtual int poll_or_select_with_delay(double time_to_wait);
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */
