@@ -199,8 +199,6 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
-  // this one is implemented in print_button.cxx
-  static int print_or_copy_window(Fl_Window*, bool, int);
   // implement to support copy-to-clipboard
   virtual void copy(const char */*stuff*/, int /*len*/, int /*clipboard*/, const char */*type*/) {}
   // implement to support paste-from-clipboard

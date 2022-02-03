@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,6 +42,7 @@
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/X11/Fl_X11_System_Driver.H"
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver.H"
+#  include "print_button.h"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
@@ -51,6 +52,7 @@
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
 #  include "Xutf8.h"
+
 #define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
 #if USE_XRANDR
 #include <dlfcn.h>

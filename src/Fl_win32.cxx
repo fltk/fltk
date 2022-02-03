@@ -55,6 +55,7 @@ void fl_cleanup_dc_list(void);
 #include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
 #include "Fl_Timeout.h"
+#include "print_button.h"
 #include <FL/Fl_Graphics_Driver.H> // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"

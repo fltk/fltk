@@ -40,6 +40,7 @@ extern "C" {
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 #include "drivers/Darwin/Fl_Darwin_System_Driver.H"
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
+#include "print_button.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -3953,7 +3954,7 @@ static PrintWithTitlebarItem *print_with_titlebar_item = NULL;
 {
   bool grab_decoration = ([print_with_titlebar_item state] == NSOnState);
   fl_lock_function();
-  Fl_Screen_Driver::print_or_copy_window(Fl::first_window(), grab_decoration, 1);
+  fl_print_or_copy_window(Fl::first_window(), grab_decoration, 1);
   fl_unlock_function();
 }
 - (void)terminate:(id)sender

@@ -1,7 +1,7 @@
 //
 // "Print Window" functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,13 +38,12 @@
 // Currently the shortcut can't be configured and is always ALT+SHIFT+'s'.
 // Todo: make the shortcut configurable.
 
-#include <FL/Fl_Window.H>
-#include "Fl_Screen_Driver.H"
+#include "print_button.h"
+
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Copy_Surface.H>
 
-//#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
 
 #include <FL/Fl_Button.H>
@@ -78,7 +77,7 @@ static void output_cb(Fl_Widget * /*unused*/, void *data) {
   // print window again (which ends the program)
 
   if (!win) return;
-  Fl_Screen_Driver::print_or_copy_window(win, deco_button->value(), fl_int(data));
+  fl_print_or_copy_window(win, deco_button->value(), fl_int(data));
   print_window->show();
 }
 
@@ -143,14 +142,16 @@ int fl_create_print_window() {
 
 #endif // USE_PRINT_BUTTON
 
-/**
- To print or copy to clipboard a window.
- \param win The window to process
- \param grab_decoration true means the window titlebar is processed too
- \param mode 1 means print, other means copy
- */
-int Fl_Screen_Driver::print_or_copy_window(Fl_Window *win, bool grab_decoration, int mode)
-{
+/* undocumented function:
+
+  Print a window or copy its contents to the clipboard.
+
+    win              The window to process
+    grab_decoration  true means the window titlebar is processed too
+    mode             1 means print, other means copy
+*/
+int fl_print_or_copy_window(Fl_Window *win, bool grab_decoration, int mode) {
+
   if (!win) return 0;
 
   int ww = grab_decoration ? win->decorated_w() : win->w();
