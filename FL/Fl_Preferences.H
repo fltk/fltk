@@ -121,17 +121,20 @@ public:
      Define the scope of the preferences.
    */
   enum Root {
-    UNKNOWN_ROOT_TYPE = -1, ///< Returned if storage could not be determined.
-    SYSTEM = 0,        ///< Preferences are used system-wide, deprecated, see SYSTEM_L
-    USER,              ///< Preferences apply only to the current user, deprecated, see USER_L
-    MEMORY,            ///< Returned if querying memory mapped preferences
-    ROOT_MASK = 0xFF,  ///< masks for the values above
-    CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
-    CORE_SYSTEM = CORE|SYSTEM,
-    CORE_USER = CORE|USER,
-    C_LOCALE = 0x1000, ///< this flag should always be set, it makes sure that floating point values wre writte correctly independently of the current locale
-    SYSTEM_L = SYSTEM|C_LOCALE, ///< Preferences are used system-wide, locale independent
-    USER_L = USER|C_LOCALE,     ///< Preferences apply only to the current user, locale independent
+    UNKNOWN_ROOT_TYPE = -1,            ///< Returned if storage could not be determined.
+    SYSTEM            =  0,            ///< Preferences are used system-wide, deprecated, see SYSTEM_L
+    USER,                              ///< Preferences apply only to the current user, deprecated, see USER_L
+    MEMORY,                            ///< Returned if querying memory mapped preferences
+    ROOT_MASK     = 0x00FF,            ///< mask for the values above
+    CORE          = 0x0100,            ///< OR'd by FLTK to read and write core library preferences and options
+    C_LOCALE      = 0x1000,            ///< this flag should always be set, it makes sure that floating point
+                                       ///< values are written correctly independently of the current locale
+    SYSTEM_L      = SYSTEM | C_LOCALE, ///< Preferences are used system-wide, locale independent
+    USER_L        = USER | C_LOCALE,   ///< Preferences apply only to the current user, locale independent
+    CORE_SYSTEM_L = CORE | SYSTEM_L,   ///< same as CORE | SYSTEM | C_LOCALE
+    CORE_USER_L   = CORE | USER_L,     ///< same as CORE | USER | C_LOCALE
+    CORE_SYSTEM   = CORE | SYSTEM,     ///< deprecated, same as CORE | SYSTEM
+    CORE_USER     = CORE | USER,       ///< deprecated, same as CORE | USER
   };
 
   /**

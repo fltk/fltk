@@ -455,31 +455,36 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
 /*
  Note: `prefs` can be NULL!
  */
-char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root, const char *vendor,
+char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/,
+                                                Fl_Preferences::Root root,
+                                                const char *vendor,
                                                 const char *application)
 {
   static char *filename = 0L;
   if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
-  const char *home;
-  switch (root&Fl_Preferences::ROOT_MASK) {
+  const char *home = "";
+  int pref_type = root & Fl_Preferences::ROOT_MASK;
+  switch (pref_type) {
     case Fl_Preferences::USER:
       home = getenv("HOME");
       // make sure that $HOME is set to an existing directory
-      if ( (home==NULL) || (home[0]==0) || (::access(home, F_OK)==-1) ) {
+      if ((home == NULL) || (home[0] == 0) || (::access(home, F_OK) == -1)) {
         struct passwd *pw = getpwuid(getuid());
-        home = pw->pw_dir;
+        if (pw)
+          home = pw->pw_dir;
       }
-      if ( (home==0L) || (home[0]==0) || (::access(home, F_OK)==-1) ) {
+      if ((home == 0L) || (home[0] == 0) || (::access(home, F_OK) == -1))
         return NULL;
-      } else {
-        strlcpy(filename, home, FL_PATH_MAX);
-        if (filename[strlen(filename)-1] != '/')
-          strlcat(filename, "/", FL_PATH_MAX);
-        strlcat(filename, ".fltk/", FL_PATH_MAX);
-      }
+      strlcpy(filename, home, FL_PATH_MAX);
+      if (filename[strlen(filename) - 1] != '/')
+        strlcat(filename, "/", FL_PATH_MAX);
+      strlcat(filename, ".fltk/", FL_PATH_MAX);
       break;
     case Fl_Preferences::SYSTEM:
       strcpy(filename, "/etc/fltk/");
+      break;
+    default:              // MEMORY
+      filename[0] = '\0'; // empty string
       break;
   }
 
@@ -492,8 +497,8 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_P
   snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "%s/%s.prefs", vendor, application);
 
-  // If this is the SYSTEM path, we are done
-  if ((root&Fl_Preferences::ROOT_MASK)!=Fl_Preferences::USER)
+  // If this is not the USER path (i.e. SYSTEM or MEMORY), we are done
+  if ((pref_type) != Fl_Preferences::USER)
     return filename;
 
   // If the legacy file exists, we are also done
