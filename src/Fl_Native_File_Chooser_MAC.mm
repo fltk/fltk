@@ -1,8 +1,8 @@
 //
-// FLTK native OS file chooser widget
+// FLTK native OS file chooser widget for macOS
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,8 +19,6 @@
 //      o When doing 'open file', only dir is preset, not filename.
 //        Possibly 'preset_file' could be used to select the filename.
 //
-
-#ifdef __APPLE__
 
 #include <FL/Fl.H>
 #include <FL/platform.H> // for fl_mac_os_version
@@ -759,5 +757,3 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
   [localPool release];
   return (retval == 1 ? 0 : 1);
 }
-
-#endif // __APPLE__
