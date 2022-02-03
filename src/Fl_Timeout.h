@@ -146,8 +146,6 @@ protected:
     used like a stack (last in, first out).
 
     \see Fl_Timeout::push()                 Member function (method)
-    \see Fl_Timeout *Fl_Timeout::pop()      Static function
-    \see Fl_Timeout *Fl_Timeout::current()  TStatic function
   */
   static Fl_Timeout *current_timeout;   // list of "current" timeouts
 

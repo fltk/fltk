@@ -319,7 +319,7 @@ Fl_Timeout *Fl_Timeout::get(double time, Fl_Timeout_Handler cb, void *data) {
 #endif
   }
 
-  memset(t, 0, sizeof(*t));
+  t->next = 0;
   t->delay(time);
   t->callback = cb;
   t->data = data;
