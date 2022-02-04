@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
+#include <FL/fl_ask.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
@@ -184,6 +185,12 @@ void print_cb(Fl_Widget *w, void *data)
 #define MARGIN2   (MARGIN*2)
 #define MARGIN3   (MARGIN*3)
 
+void show_info_cb(Fl_Widget*, void*) {
+  fl_message("This is an example of using FLTK widgets inside OpenGL windows.\n"
+             "Multiple widgets can be added to Fl_Gl_Windows. They will be\n"
+             "rendered as overlays over the scene.");
+}
+
 void makeform(const char *name) {
   // Widget's XYWH's
   int form_w = 800 + 4 * MARGIN;             // main window width
@@ -207,10 +214,12 @@ void makeform(const char *name) {
     lt_grp->begin();
       // left GL window
       lt_cube = new cube_box(lt_cub_x, lt_cub_y, lt_cub_w, lt_cub_h, 0);
-  lt_cube->begin();
-  Fl_Widget *w = new Fl_Button(lt_cub_x+10, lt_cub_y+10, 100, 30, "Hello GL!");
-  w->box(FL_ROUND_UP_BOX );
-  lt_cube->end();
+
+      lt_cube->begin();
+      Fl_Widget *w = new Fl_Button(10, 10, 120, 30, "FLTK over GL");
+      w->box(FL_ROUND_UP_BOX );
+      w->callback(show_info_cb);
+      lt_cube->end();
 
       // center group
       Fl_Group *ct_grp = new Fl_Group(ct_grp_x, ct_grp_y, ct_grp_w, ct_grp_h);

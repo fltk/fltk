@@ -118,4 +118,4 @@ public:
   }
 };
 
-UnitTest lines(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);
+//UnitTest lines(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);
