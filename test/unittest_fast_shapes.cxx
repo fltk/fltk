@@ -215,7 +215,7 @@ public:
     Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    NativeRectTest *nr = new NativeRectTest(a+23, b-1, 200, 200);
+    /* NativeRectTest *nr = */ new NativeRectTest(a+23, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 18, 18, "1");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -276,7 +276,7 @@ public:
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    GLRectTest *glr = new GLRectTest(a+31, b-1, 200, 200);
+    /*GLRectTest *glr = */ new GLRectTest(a+31, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 26, 18, "1a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);

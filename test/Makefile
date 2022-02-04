@@ -16,6 +16,36 @@
 
 include ../makeinclude
 
+CPPUNITTEST = \
+	unittests.cxx \
+	unittest_about.cxx \
+	unittest_points.cxx \
+	unittest_complex_shapes.cxx \
+	unittest_fast_shapes.cxx \
+	unittest_circles.cxx \
+	unittest_text.cxx \
+	unittest_symbol.cxx \
+	unittest_images.cxx \
+	unittest_viewport.cxx \
+	unittest_scrollbarsize.cxx \
+	unittest_schemes.cxx \
+	unittest_simple_terminal.cxx
+
+OBJUNITTEST = \
+	unittests.o \
+	unittest_about.o \
+	unittest_points.o \
+	unittest_complex_shapes.o \
+	unittest_fast_shapes.o \
+	unittest_circles.o \
+	unittest_text.o \
+	unittest_symbol.o \
+	unittest_images.o \
+	unittest_viewport.o \
+	unittest_scrollbarsize.o \
+	unittest_schemes.o \
+	unittest_simple_terminal.o
+
 CPPFILES =\
 	adjuster.cxx \
 	animated.cxx \
@@ -103,25 +133,12 @@ CPPFILES =\
 	tiled_image.cxx \
 	tree.cxx \
 	twowin.cxx \
-	unittests.cxx \
-	unittest_about.cxx \
-	unittest_points.cxx \
-	unittest_lines.cxx \
-	unittest_fast_shapes.cxx \
-	unittest_circles.cxx \
-	unittest_text.cxx \
-	unittest_symbol.cxx \
-	unittest_images.cxx \
-	unittest_viewport.cxx \
-	unittest_scrollbarsize.cxx \
-	unittest_schemes.cxx \
-	unittest_simple_terminal.cxx \
 	utf8.cxx \
 	valuators.cxx \
-	windowfocus.cxx
+	windowfocus.cxx \
+	$(CPPUNITTEST)
 
 ALL =	\
-	unittests$(EXEEXT) \
 	animated$(EXEEXT) \
 	adjuster$(EXEEXT) \
 	arc$(EXEEXT) \
@@ -212,7 +229,8 @@ GLALL = \
 	fullscreen$(EXEEXT) \
 	gl_overlay$(EXEEXT) \
 	glpuzzle$(EXEEXT) \
-	shape$(EXEEXT)
+	shape$(EXEEXT) \
+	unittests$(EXEEXT)
 
 all:	$(ALL) $(GLDEMOS)
 
@@ -311,11 +329,7 @@ uninstall-osx:
 $(ALL): $(LIBNAME)
 
 # General demos...
-unittests$(EXEEXT): unittests.o unittest_about.o unittest_points.o \
-                    unittest_lines.o unittest_fast_shapes.o unittest_circles.o \
-                    unittest_text.o unittest_symbol.o unittest_images.o \
-                    unittest_viewport.o unittest_scrollbarsize.o unittest_schemes.o \
-                    unittest_simple_terminal.o
+unittests$(EXEEXT): $(OBJUNITTEST)
 
 adjuster$(EXEEXT): adjuster.o
 
@@ -636,6 +650,11 @@ glpuzzle$(EXEEXT): glpuzzle.o
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+unittests$(EXEEXT): $(OBJUNITTEST)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJUNITTEST) $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 shape$(EXEEXT): shape.o

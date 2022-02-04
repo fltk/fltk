@@ -73,7 +73,7 @@ public:
   }
   ComplexShapesTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("Testing complex shape drawing.\n\n"
-          "Complx Shapes in FLTK are rendered using floating point coordinates "
+          "Complex Shapes in FLTK are rendered using floating point coordinates "
           "which can be transformed through a matrix.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);

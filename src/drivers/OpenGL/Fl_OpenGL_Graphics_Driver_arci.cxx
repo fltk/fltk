@@ -27,7 +27,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <FL/math.h>
 
 void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;

@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
   mainwin->resizable(mainwin);
   mainwin->show(argc,argv);
   // Select first test in browser, and show that test.
-  browser->select(kTestComplexShapes+1);
+  browser->select(kTestAbout+1);
   Browser_CB(browser,0);
   return(Fl::run());
 }

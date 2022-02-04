@@ -326,11 +326,11 @@ int Fl_OpenGL_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int 
   Fl_Gl_Region &g = gl_rstack[gl_rstackptr-1];
   if (g.state==kStateFull)
     return 0;
-  int r = x+w, b = y + h, R, B;
+  int r = x+w, b = y + h;
   int gr = g.x+g.w, gb = g.y+g.h;
   X = gl_max(x, g.x);
   Y = gl_max(y, g.y);
   W = gl_min(r, gr) - X;
-  H = gl_min(r, gr) - Y;
+  H = gl_min(b, gb) - Y;
   return (x!=X || y!=Y || w!=W || h!=H);
 }
