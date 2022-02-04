@@ -303,4 +303,4 @@ public:
   }
 };
 
-UnitTest points(1, "Drawing Points", PointTest::create);
+UnitTest points(kTestPoints, "Drawing Points", PointTest::create);

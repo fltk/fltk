@@ -143,7 +143,7 @@ SET (UNITTEST_SRCS
   unittests.cxx
   unittest_about.cxx
   unittest_points.cxx
-  unittest_lines.cxx
+  unittest_complex_shapes.cxx
   unittest_fast_shapes.cxx
   unittest_circles.cxx
   unittest_text.cxx

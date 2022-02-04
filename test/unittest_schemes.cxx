@@ -326,4 +326,4 @@ public:
   }
 };
 
-UnitTest schemestest(10, "schemes test", SchemesTest::create);
+UnitTest schemestest(kTestSchemes, "Schemes Test", SchemesTest::create);

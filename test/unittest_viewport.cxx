@@ -48,4 +48,4 @@ public:
   }
 };
 
-UnitTest viewport(8, "viewport test", ViewportTest::create);
+UnitTest viewport(kTestViewport, "Viewport Test", ViewportTest::create);

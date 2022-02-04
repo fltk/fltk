@@ -37,6 +37,21 @@ typedef void (*UnitTestCallback)(const char*, class Fl_Group*);
 extern class MainWindow *mainwin;
 extern class Fl_Hold_Browser *browser;
 
+enum {
+  kTestAbout = 0,
+  kTestPoints,
+  kTestFastShapes,
+  kTestCircles,
+  kTestComplexShapes,
+  kTestText,
+  kTestSymbol,
+  kTestImages,
+  kTestViewport,
+  kTestScrollbarsize,
+  kTestSchemes,
+  kTestSimpleTerminal
+};
+
 // This class helps to automatically register a new test with the unittest app.
 // Please see the examples on how this is used.
 class UnitTest {

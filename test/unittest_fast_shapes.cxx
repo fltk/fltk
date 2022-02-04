@@ -25,6 +25,7 @@
 
 #if 0
 
+// TODO:
 void fl_line(int x, int y, int x1, int y1)
 void fl_line(int x, int y, int x1, int y1, int x2, int y2)
 
@@ -37,8 +38,6 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
 
 Draw vertical and horizontal lines. A vertical line is drawn first, then a horizontal, then a vertical.
-void fl_arc(int x, int y, int w, int h, double a1, double a2)
-void fl_pie(int x, int y, int w, int h, double a1, double a2)
 
 #endif
 
@@ -204,10 +203,11 @@ public:
     return new RectTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
   RectTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-    label("testing the fl_rect call\n"
+    label("Testing FLTK fast shape calls.\n"
+          "These calls draw horizontal and vertical lines, frames, and rectangles.\n\n"
           "No red pixels should be visible. "
           "If you see bright red lines, or if parts of the green frames are hidden, "
-          "the rect drawing alignment is off.");
+          "drawing alignment is off.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
 
@@ -215,7 +215,7 @@ public:
     Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    NativeRectTest *nr = new NativeRectTest(a+23, b-1, 200, 280);
+    NativeRectTest *nr = new NativeRectTest(a+23, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 18, 18, "1");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -276,7 +276,7 @@ public:
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    GLRectTest *glr = new GLRectTest(a+31, b-1, 200, 280);
+    GLRectTest *glr = new GLRectTest(a+31, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 26, 18, "1a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -339,4 +339,4 @@ public:
   }
 };
 
-UnitTest rects(3, "Fast Shapes", RectTest::create);
+UnitTest rects(kTestFastShapes, "Fast Shapes", RectTest::create);

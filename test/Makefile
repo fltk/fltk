@@ -104,6 +104,18 @@ CPPFILES =\
 	tree.cxx \
 	twowin.cxx \
 	unittests.cxx \
+	unittest_about.cxx \
+	unittest_points.cxx \
+	unittest_lines.cxx \
+	unittest_fast_shapes.cxx \
+	unittest_circles.cxx \
+	unittest_text.cxx \
+	unittest_symbol.cxx \
+	unittest_images.cxx \
+	unittest_viewport.cxx \
+	unittest_scrollbarsize.cxx \
+	unittest_schemes.cxx \
+	unittest_simple_terminal.cxx \
 	utf8.cxx \
 	valuators.cxx \
 	windowfocus.cxx
@@ -299,11 +311,11 @@ uninstall-osx:
 $(ALL): $(LIBNAME)
 
 # General demos...
-unittests$(EXEEXT): unittests.o
-
-unittests.o: unittests.cxx unittest_about.cxx unittest_points.cxx unittest_lines.cxx unittest_circles.cxx \
-	unittest_rects.cxx unittest_text.cxx unittest_symbol.cxx unittest_viewport.cxx unittest_images.cxx \
-	unittest_schemes.cxx unittest_scrollbarsize.cxx unittest_simple_terminal.cxx
+unittests$(EXEEXT): unittests.o unittest_about.o unittest_points.o \
+                    unittest_lines.o unittest_fast_shapes.o unittest_circles.o \
+                    unittest_text.o unittest_symbol.o unittest_images.o \
+                    unittest_viewport.o unittest_scrollbarsize.o unittest_schemes.o \
+                    unittest_simple_terminal.o
 
 adjuster$(EXEEXT): adjuster.o
 

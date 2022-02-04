@@ -53,4 +53,4 @@ public:
   }
 };
 
-UnitTest about(0, "About...", About::create);
+UnitTest about(kTestAbout, "About...", About::create);

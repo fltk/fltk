@@ -207,6 +207,11 @@ void makeform(const char *name) {
     lt_grp->begin();
       // left GL window
       lt_cube = new cube_box(lt_cub_x, lt_cub_y, lt_cub_w, lt_cub_h, 0);
+  lt_cube->begin();
+  Fl_Widget *w = new Fl_Button(lt_cub_x+10, lt_cub_y+10, 100, 30, "Hello GL!");
+  w->box(FL_ROUND_UP_BOX );
+  lt_cube->end();
+
       // center group
       Fl_Group *ct_grp = new Fl_Group(ct_grp_x, ct_grp_y, ct_grp_w, ct_grp_h);
       ct_grp->begin();
