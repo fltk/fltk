@@ -60,44 +60,44 @@ void arc(int xi, int yi, int w, int h, double a1, double a2)
 }
 
 void draw_circles() {
-  int a = 0, b = 0, i;
+  int a = 0, b = 0, w=40, h=40, i;
   // 1: draw a circle and a filled circle
   fl_color(FL_RED);
-  arc(a+1, b+1, 40-2, 40-2, 0.0, 360.0);
+  arc(a+1, b+1, w-2, h-2, 0.0, 360.0);
   fl_color(FL_GREEN);
-  arc(a, b, 40, 40, 0.0, 360.0);
-  arc(a+2, b+2, 40-4, 40-4, 0.0, 360.0);
+  arc(a, b, w, h, 0.0, 360.0);
+  arc(a+2, b+2, w-4, h-4, 0.0, 360.0);
   fl_color(FL_BLACK);
   // TODO: in OpenGL, the line width is too small for hidpi
-  fl_arc(a+1, b+1, 40-1, 40-1, 0.0, 360.0);
+  fl_arc(a+1, b+1, w-1, h-1, 0.0, 360.0);
   fl_color(FL_RED);
-  arc(a+1+50, b+1, 40-2, 40-2, 0.0, 360.0);
+  arc(a+1+50, b+1, w-2, h-2, 0.0, 360.0);
   fl_color(FL_GREEN);
-  arc(a+50, b, 40, 40, 0.0, 360.0);
+  arc(a+50, b, w, h, 0.0, 360.0);
   fl_color(FL_BLACK);
   // TODO: in OpenGL, we need to thicken the pie drawing
-  fl_pie(a+1+50, b+1, 40-1, 40-1, 0.0, 360.0);
+  fl_pie(a+1+50, b+1, w-1, h-1, 0.0, 360.0);
   b+=44;
   // 2: draw arcs and pies
   fl_color(FL_RED);
-  arc(a+1, b+1, 40-2, 40-2, 45.0, 315.0);
+  arc(a+1, b+1, w-2, h-2, 45.0, 315.0);
   fl_color(FL_GREEN);
-  arc(a, b, 40, 40, 45.0, 315.0);
-  arc(a+2, b+2, 40-4, 40-4, 45.0, 315.0);
+  arc(a, b, w, h, 45.0, 315.0);
+  arc(a+2, b+2, w-4, h-4, 45.0, 315.0);
   fl_color(FL_BLACK);
   // TODO: in OpenGL, the line width is too small for hidpi
-  fl_arc(a+1, b+1, 40-1, 40-1, 45.0, 315.0);
+  fl_arc(a+1, b+1, w-1, h-1, 45.0, 315.0);
   fl_color(FL_RED);
-  arc(a+1+50, b+1, 40-2, 40-2, 45.0, 315.0);
+  arc(a+1+50, b+1, w-2, h-2, 45.0, 315.0);
   fl_line(a+50+20, b+20, a+50+20+14, b+20-14);
   fl_line(a+50+20, b+20, a+50+20+14, b+20+14);
   fl_color(FL_GREEN);
-  arc(a+50, b, 40, 40, 45.0, 315.0);
+  arc(a+50, b, w, h, 45.0, 315.0);
   fl_line(a+50+21, b+20, a+50+21+14, b+20-14);
   fl_line(a+50+21, b+20, a+50+21+14, b+20+14);
   fl_color(FL_BLACK);
   // TODO: in OpenGL, we need to thicken the pie drawing
-  fl_pie(a+1+50, b+1, 40-1, 40-1, 45.0, 315.0);
+  fl_pie(a+1+50, b+1, w-1, h-1, 45.0, 315.0);
 #if 0
   fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
   // test fl_arc for full circles

@@ -81,4 +81,4 @@ public:
   }
 };
 
-UnitTest textExtents(kTestText, "Rendering Text", TextExtentsTest::create);
+UnitTest textExtents(kTestText, "Rendering text", TextExtentsTest::create);

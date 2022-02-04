@@ -339,16 +339,27 @@ void Fl_Gl_Window::draw_overlay() {}
 
 void Fl_Gl_Window::draw_begin() {
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
+
+  if (!valid()) {
+    glViewport(0, 0, pixel_w(), pixel_h());
+    valid(1);
+  }
+
   glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_DEPTH_TEST);
+  glPushAttrib(GL_TRANSFORM_BIT);
+
+  glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  GLint viewport[4];
-  glGetIntegerv (GL_VIEWPORT, viewport);
-  if (viewport[2] != pixel_w() || viewport[3] != pixel_h()) {
-    glViewport(0, 0, pixel_w(), pixel_h());
-  }
   glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+
   float scale = pixels_per_unit(); // should be 1 or 2 (2 if highres OpenGL) times the app scale
   glLineWidth((GLfloat)scale);
   glPointSize((GLfloat)scale);
@@ -356,6 +367,19 @@ void Fl_Gl_Window::draw_begin() {
   glEnable(GL_BLEND);
   glDisable(GL_SCISSOR_TEST);
   // TODO: all of the settings should be saved on the GL stack
+}
+
+void Fl_Gl_Window::draw_end() {
+  glMatrixMode(GL_MODELVIEW_MATRIX);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+
+  glPopAttrib(); // GL_TRANSFORM_BIT
+  glPopAttrib(); // GL_ENABLE_BIT
+
+  Fl_Surface_Device::pop_current();
 }
 
 /** Draws the Fl_Gl_Window.
@@ -431,13 +455,6 @@ void Fl_Gl_Window::draw() {
   Fl_Window::draw();
   draw_end();
 }
-
-void Fl_Gl_Window::draw_end() {
-  glPopMatrix();
-  glPopAttrib();
-  Fl_Surface_Device::pop_current();
-}
-
 
 /**
  Handle some FLTK events as needed.
