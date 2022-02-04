@@ -260,7 +260,7 @@ int main(int argc, char **argv) {
   speed->value(lt_cube->speed = rt_cube->speed = 0.0);
 #endif
   size->bounds(4,0.01);
-  size->value(lt_cube->size = rt_cube->size = 1.0);
+  size->value(lt_cube->size = rt_cube->size = 3.0);
   flat->value(1); lt_cube->wire = 0; rt_cube->wire = 1;
   form->label("cube");
   form->show(argc,argv);
