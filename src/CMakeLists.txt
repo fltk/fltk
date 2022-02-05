@@ -33,7 +33,6 @@ set (CPPFILES
   Fl_Counter.cxx
   Fl_Device.cxx
   Fl_Dial.cxx
-  Fl_Help_Dialog_Dox.cxx
   Fl_Double_Window.cxx
   Fl_File_Browser.cxx
   Fl_File_Chooser.cxx
