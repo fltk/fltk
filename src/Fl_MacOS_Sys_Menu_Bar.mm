@@ -507,7 +507,7 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
   if ([[menu itemAtIndex:2] action] != @selector(printPanel)) { // the 'Print' item was removed
     [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
     to_index = 2;
-  } else to_index = 4; // after the "Print Front Window/Toggle" items
+  } else to_index = 5; // after the "Print Front Window/Toggle" items and the separator
   NSInteger count = [menu numberOfItems];
   createSubMenu(menu, m, NULL, @selector(customCallback)); // add new items at end of application menu
   NSInteger count2 = [menu numberOfItems];
