@@ -1,7 +1,7 @@
 #
 # PNG library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -31,12 +31,32 @@ set(PNG_SRCS
   pngwrite.c
   pngwtran.c
   pngwutil.c
-
-  # build on ARM (Apple M1 systems)
-  arm/arm_init.c
-  arm/filter_neon_intrinsics.c
-  arm/palette_neon_intrinsics.c
 )
+
+#######################################################################
+# Build some files on ARM (e.g. Apple M1 systems)
+#######################################################################
+
+# We can only determine the target architecture if it is set
+# in CMAKE_OSX_ARCHITECTURES, otherwise we *assume* it is true and
+# compile these files even if this results in some warnings.
+# This includes all non-macOS platforms.
+
+if (CMAKE_OSX_ARCHITECTURES)
+  string(REGEX MATCH "arm64" is_arm "${CMAKE_OSX_ARCHITECTURES}")
+else ()
+  set (is_arm TRUE)
+endif ()
+
+if (is_arm)
+  LIST (APPEND PNG_SRCS
+    arm/arm_init.c
+    arm/filter_neon_intrinsics.c
+    arm/palette_neon_intrinsics.c
+  )
+endif ()
+
+unset (is_arm)
 
 #######################################################################
 # Build the static library
