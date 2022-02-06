@@ -165,6 +165,20 @@ void Fl_OpenGL_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, 
   glEnd();
 }
 
+void Fl_OpenGL_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
+  float width = line_width_;
+  int stipple = line_stipple_;
+  line_style(FL_DOT, 1);
+  glBegin(GL_LINE_LOOP);
+  glVertex2f(x+0.5f, y+0.5f);
+  glVertex2f(x+w+0.5f, y+0.5f);
+  glVertex2f(x+w+0.5f, y+h+0.5f);
+  glVertex2f(x+0.5f, y+h+0.5f);
+  glEnd();
+  line_style(stipple, width);
+}
+
+
 // -----------------------------------------------------------------------------
 
 static int gl_min(int a, int b) { return (a<b) ? a : b; }

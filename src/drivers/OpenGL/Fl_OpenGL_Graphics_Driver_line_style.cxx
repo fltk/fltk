@@ -35,6 +35,7 @@ void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
   line_width_ = width;
 
   int stipple = style & 0x00ff;
+  line_stipple_ = stipple;
 //  int cap     = style & 0x0f00;
 //  int join    = style & 0xf000;
 
@@ -45,28 +46,16 @@ void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
     char enable = 1;
     switch (stipple & 0x00ff) {
       case FL_DASH:
-        if (pixels_per_unit_<1.5f)
-          glLineStipple(width, 0x0F0F); // ....****....****
-        else
-          glLineStipple(width, 0x00FF); // ....****....****
+        glLineStipple(pixels_per_unit_*line_width_, 0x0F0F); // ....****....****
         break;
       case FL_DOT:
-        if (pixels_per_unit_<1.5f)
-          glLineStipple(width, 0x5555); // .*.*.*.*.*.*.*.*
-        else
-          glLineStipple(width, 0xCCCC); // .*.*.*.*.*.*.*.*
+        glLineStipple(pixels_per_unit_*line_width_, 0x5555); // .*.*.*.*.*.*.*.*
         break;
       case FL_DASHDOT:
-        if (pixels_per_unit_<1.5f)
-          glLineStipple(width, 0x2727); // ..*..***..*..***
-        else
-          glLineStipple(width, 0x0c3f); // ..*..***..*..***
+        glLineStipple(pixels_per_unit_*line_width_, 0x2727); // ..*..***..*..***
         break;
       case FL_DASHDOTDOT:
-        if (pixels_per_unit_<1.5f)
-          glLineStipple(width, 0x5757); // .*.*.***.*.*.***
-        else
-          glLineStipple(width, 0x333f); // .*.*.***.*.*.***
+        glLineStipple(pixels_per_unit_*line_width_, 0x5757); // .*.*.***.*.*.***
         break;
       default:
         glLineStipple(1, 0xFFFF);
