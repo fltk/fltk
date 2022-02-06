@@ -217,7 +217,8 @@ void makeform(const char *name) {
 
       lt_cube->begin();
       Fl_Widget *w = new Fl_Button(10, 10, 120, 30, "FLTK over GL");
-      w->box(FL_ROUND_UP_BOX );
+      w->color(FL_FREE_COLOR);
+      w->box(FL_BORDER_BOX );
       w->callback(show_info_cb);
       lt_cube->end();
 
@@ -252,6 +253,7 @@ void makeform(const char *name) {
 
 int main(int argc, char **argv) {
   Fl::use_high_res_GL(1);
+  Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 75);
   makeform(argv[0]);
   speed->bounds(4,0);
 #if HAVE_GL

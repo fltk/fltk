@@ -1062,6 +1062,7 @@ int main() {
 
   // color map:
   static void   set_color(Fl_Color, uchar, uchar, uchar);
+  static void   set_color(Fl_Color, uchar, uchar, uchar, uchar);
   /**
     Sets an entry in the fl_color index table. You can set it to any
     8-bit RGB color. The color is not allocated until fl_color(i) is used.
@@ -1069,6 +1070,7 @@ int main() {
   static void   set_color(Fl_Color i, unsigned c); // platform dependent
   static unsigned get_color(Fl_Color i);
   static void   get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue);
+  static void   get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue, uchar &alpha);
   /**
     Frees the specified color from the colormap, if applicable.
     If overlay is non-zero then the color is freed from the
