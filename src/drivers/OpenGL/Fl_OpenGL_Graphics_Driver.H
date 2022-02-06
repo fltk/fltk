@@ -24,12 +24,20 @@
 #define FL_OPENGL_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/fl_draw.H>
 
 /**
  \brief OpenGL specific graphics class.
  */
 class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 public:
+  float pixels_per_unit_;
+  float line_width_;
+  int line_stipple_;
+  Fl_OpenGL_Graphics_Driver() :
+  pixels_per_unit_(1.0f),
+  line_width_(1.0f),
+  line_stipple_(FL_SOLID) { }
   // --- line and polygon drawing with integer coordinates
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
@@ -46,10 +54,17 @@ public:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void focus_rect(int x, int y, int w, int h);
+  // ---- clipping
   void push_clip(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  int not_clipped(int x, int y, int w, int h);
+  void pop_clip();
+  void push_no_clip();
+  Fl_Region clip_region();
+  void clip_region(Fl_Region r);
   void restore_clip();
+  int not_clipped(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  // ---- matrix transformed drawing
   void transformed_vertex(double xf, double yf);
   void begin_points();
   void end_points();

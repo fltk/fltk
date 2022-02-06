@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
@@ -86,4 +88,4 @@ public:
   }
 };
 
-UnitTest symbolExtents("symbol text", SymbolTest::create);
+UnitTest symbolExtents(kTestSymbol, "Symbol Text", SymbolTest::create);

@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
+#include <FL/fl_ask.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
@@ -184,6 +185,12 @@ void print_cb(Fl_Widget *w, void *data)
 #define MARGIN2   (MARGIN*2)
 #define MARGIN3   (MARGIN*3)
 
+void show_info_cb(Fl_Widget*, void*) {
+  fl_message("This is an example of using FLTK widgets inside OpenGL windows.\n"
+             "Multiple widgets can be added to Fl_Gl_Windows. They will be\n"
+             "rendered as overlays over the scene.");
+}
+
 void makeform(const char *name) {
   // Widget's XYWH's
   int form_w = 800 + 4 * MARGIN;             // main window width
@@ -207,6 +214,14 @@ void makeform(const char *name) {
     lt_grp->begin();
       // left GL window
       lt_cube = new cube_box(lt_cub_x, lt_cub_y, lt_cub_w, lt_cub_h, 0);
+
+      lt_cube->begin();
+      Fl_Widget *w = new Fl_Button(10, 10, 120, 30, "FLTK over GL");
+      w->color(FL_FREE_COLOR);
+      w->box(FL_BORDER_BOX );
+      w->callback(show_info_cb);
+      lt_cube->end();
+
       // center group
       Fl_Group *ct_grp = new Fl_Group(ct_grp_x, ct_grp_y, ct_grp_w, ct_grp_h);
       ct_grp->begin();
@@ -238,6 +253,7 @@ void makeform(const char *name) {
 
 int main(int argc, char **argv) {
   Fl::use_high_res_GL(1);
+  Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 75);
   makeform(argv[0]);
   speed->bounds(4,0);
 #if HAVE_GL
@@ -246,7 +262,7 @@ int main(int argc, char **argv) {
   speed->value(lt_cube->speed = rt_cube->speed = 0.0);
 #endif
   size->bounds(4,0.01);
-  size->value(lt_cube->size = rt_cube->size = 1.0);
+  size->value(lt_cube->size = rt_cube->size = 3.0);
   flat->value(1); lt_cube->wire = 0; rt_cube->wire = 1;
   form->label("cube");
   form->show(argc,argv);

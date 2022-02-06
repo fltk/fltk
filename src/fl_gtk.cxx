@@ -234,6 +234,16 @@ static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
   draw(FILL,        x,   y, w,   h, 2);
 
+  gtk_color(fl_color_average(FL_WHITE, c, 0.1f));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 2);
+  draw(LOWER_RIGHT, x,   y, w,   h, 3);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.2f));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 1);
+  draw(LOWER_RIGHT, x,   y, w,   h, 2);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5f));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 0);
+  draw(LOWER_RIGHT, x,   y, w,   h, 1);
+
   gtk_color(fl_color_average(FL_BLACK, c, 0.05f));
   draw(UPPER_LEFT,  x,   y, w,   h, 2);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 1);

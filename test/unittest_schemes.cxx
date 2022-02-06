@@ -16,6 +16,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Choice.H>
 
 // needed by Edmanuel's test layout
@@ -324,4 +326,4 @@ public:
   }
 };
 
-UnitTest schemestest("schemes test", SchemesTest::create);
+UnitTest schemestest(kTestSchemes, "Schemes Test", SchemesTest::create);

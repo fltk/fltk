@@ -14,23 +14,67 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
+#if 0
+
+// TODO:
+void fl_push_matrix()
+void fl_pop_matrix()
+
+void fl_scale(double x,double y)
+void fl_scale(double x)
+void fl_translate(double x,double y)
+void fl_rotate(double d)
+void fl_mult_matrix(double a,double b,double c,double d,double x,double y)
+
+double fl_transform_x(double x, double y)
+double fl_transform_y(double x, double y)
+double fl_transform_dx(double x, double y)
+double fl_transform_dy(double x, double y)
+void fl_transformed_vertex(double xf, double yf)
+
+void fl_begin_points()
+void fl_end_points()
+
+void fl_begin_line()
+void fl_end_line()
+
+void fl_begin_loop()
+void fl_end_loop()
+
+void fl_begin_polygon()
+void fl_end_polygon()
+
+void fl_begin_complex_polygon()
+void fl_gap()
+void fl_end_complex_polygon()
+
+void fl_vertex(double x,double y)
+
+void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
+
+void fl_arc(double x, double y, double r, double start, double end)
+void fl_circle(double x, double y, double r)
+
+
+#endif
+
 //
-//------- test the line drawing capabilities of this implementation ----------
+//------- test Complex Shape drawing capabilities of this implementation ----------
 //
-class LineTest : public Fl_Box {
+class ComplexShapesTest : public Fl_Box {
 public:
   static Fl_Widget *create() {
-    return new LineTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new ComplexShapesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
-  LineTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
-    label("testing the integer based fl_line calls\n"
-          "No red pixels should be visible.\n"
-          "If you see bright red pixels, the line drawing alignment is off,\n"
-          "or the last pixel in a line does not get drawn.\n"
-          "If you see dark red pixels, anti-aliasing must be switched off.");
+  ComplexShapesTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
+    label("Testing complex shape drawing.\n\n"
+          "Complex Shapes in FLTK are rendered using floating point coordinates "
+          "which can be transformed through a matrix.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
   }
@@ -74,4 +118,4 @@ public:
   }
 };
 
-UnitTest lines("drawing lines", LineTest::create);
+//UnitTest lines(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);

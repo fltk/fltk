@@ -27,20 +27,21 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <FL/math.h>
 
 void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
   while (a2<a1) a2 += 360.0;  // TODO: write a sensible fmod angle alignment here
-  a1 = a1/180.0f*M_PI; a2 = a2/180.0f*M_PI;
-  double cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-  double rMax; if (w<h) rMax = h/2; else rMax = w/2;
+  a1 = a1/180.0*M_PI; a2 = a2/180.0*M_PI;
+  double cx = x + 0.5*w, cy = y + 0.5*h;
+  double rx = 0.5*w-0.3, ry = 0.5*h-0.3;
+  double rMax; if (w>h) rMax = rx; else rMax = ry;
   int nSeg = (int)(10 * sqrt(rMax))+1;
   double incr = (a2-a1)/(double)nSeg;
 
   glBegin(GL_LINE_STRIP);
-  for (int i=0; i<nSeg; i++) {
-    glVertex2d(cx+cos(a1)*rMax, cy-sin(a1)*rMax);
+  for (int i=0; i<=nSeg; i++) {
+    glVertex2d(cx+cos(a1)*rx, cy-sin(a1)*ry);
     a1 += incr;
   }
   glEnd();
@@ -53,16 +54,17 @@ void Fl_OpenGL_Graphics_Driver::arc(double x, double y, double r, double start, 
 void Fl_OpenGL_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
   while (a2<a1) a2 += 360.0;  // TODO: write a sensible fmod angle alignment here
-  a1 = a1/180.0f*M_PI; a2 = a2/180.0f*M_PI;
-  double cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-  double rMax; if (w<h) rMax = h/2; else rMax = w/2;
+  a1 = a1/180.0*M_PI; a2 = a2/180.0*M_PI;
+  double cx = x + 0.5*w, cy = y + 0.5*h;
+  double rx = 0.5*w, ry = 0.5*h;
+  double rMax; if (w>h) rMax = rx; else rMax = ry;
   int nSeg = (int)(10 * sqrt(rMax))+1;
   double incr = (a2-a1)/(double)nSeg;
 
   glBegin(GL_TRIANGLE_FAN);
   glVertex2d(cx, cy);
-  for (int i=0; i<nSeg+1; i++) {
-    glVertex2d(cx+cos(a1)*rMax, cy-sin(a1)*rMax);
+  for (int i=0; i<=nSeg; i++) {
+    glVertex2d(cx+cos(a1)*rx, cy-sin(a1)*ry);
     a1 += incr;
   }
   glEnd();

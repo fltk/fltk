@@ -26,6 +26,7 @@ extern int fl_gl_load_plugin;
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_utf8.h>
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H"
 
 #include <stdlib.h>
 #  if (HAVE_DLSYM && HAVE_DLFCN_H)
@@ -337,6 +338,53 @@ void Fl_Gl_Window::init() {
 void Fl_Gl_Window::draw_overlay() {}
 
 
+void Fl_Gl_Window::draw_begin() {
+  Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
+  Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)fl_graphics_driver;
+  drv->pixels_per_unit_ = pixels_per_unit();
+
+  if (!valid()) {
+    glViewport(0, 0, pixel_w(), pixel_h());
+    valid(1);
+  }
+
+  glPushAttrib(GL_ENABLE_BIT);
+  glPushAttrib(GL_TRANSFORM_BIT);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+//  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+  glOrtho(0.0, w(), h(), 0.0, -1.0, 1.0);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+
+  glLineWidth((GLfloat)(drv->pixels_per_unit_*drv->line_width_));
+  glPointSize((GLfloat)(drv->pixels_per_unit_));
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glDisable(GL_SCISSOR_TEST);
+  // TODO: all of the settings should be saved on the GL stack
+}
+
+void Fl_Gl_Window::draw_end() {
+  glMatrixMode(GL_MODELVIEW_MATRIX);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+
+  glPopAttrib(); // GL_TRANSFORM_BIT
+  glPopAttrib(); // GL_ENABLE_BIT
+
+  Fl_Surface_Device::pop_current();
+}
+
 /** Draws the Fl_Gl_Window.
   You \e \b must subclass Fl_Gl_Window and provide an implementation for
   draw().  You may also provide an implementation of draw_overlay()
@@ -389,31 +437,27 @@ void Fl_Gl_Window::draw_overlay() {}
     }
   \endcode
 
+  Regular FLTK widgets can be added as children to the Fl_Gl_Window. To
+  correctly overlay the widgets, Fl_Gl_Window::draw() must be called after
+  rendering the main scene.
+  \code
+  void mywindow::draw() {
+    // draw 3d graphics scene
+    Fl_Gl_Window::draw();
+    // -- or --
+    draw_begin();
+    Fl_Window::draw();
+    // other 2d drawing calls, overlays, etc.
+    draw_end();
+  }
+  \endcode
+
 */
 void Fl_Gl_Window::draw() {
-  Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
-  glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_DEPTH_TEST);
-  glPushMatrix();
-  glLoadIdentity();
-  GLint viewport[4];
-  glGetIntegerv (GL_VIEWPORT, viewport);
-  if (viewport[2] != pixel_w() || viewport[3] != pixel_h()) {
-    glViewport(0, 0, pixel_w(), pixel_h());
-  }
-  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
-//  glOrtho(0, w(), h(), 0, -1, 1);
-  glLineWidth((GLfloat)pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
-  glEnable(GL_BLEND); // FIXME: push on state stack
-
+  draw_begin();
   Fl_Window::draw();
-
-  glPopMatrix();
-  glPopAttrib();
-  Fl_Surface_Device::pop_current();
+  draw_end();
 }
-
 
 /**
  Handle some FLTK events as needed.

@@ -2535,9 +2535,9 @@ unittests.o: ../FL/platform_types.h
 unittests.o: unittest_about.cxx
 unittests.o: unittest_circles.cxx
 unittests.o: unittest_images.cxx
-unittests.o: unittest_lines.cxx
+unittests.o: unittest_complex_shapes.cxx
 unittests.o: unittest_points.cxx
-unittests.o: unittest_rects.cxx
+unittests.o: unittest_fast_shapes.cxx
 unittests.o: unittest_schemes.cxx
 unittests.o: unittest_scrollbarsize.cxx
 unittests.o: unittest_simple_terminal.cxx

@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
@@ -79,4 +81,4 @@ public:
   }
 };
 
-UnitTest textExtents("rendering text", TextExtentsTest::create);
+UnitTest textExtents(kTestText, "Rendering text", TextExtentsTest::create);

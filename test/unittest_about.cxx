@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Help_View.H>
 
 //
@@ -51,4 +53,4 @@ public:
   }
 };
 
-UnitTest about("About...", About::create);
+UnitTest about(kTestAbout, "About...", About::create);

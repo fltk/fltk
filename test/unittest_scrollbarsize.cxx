@@ -14,7 +14,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Browser.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Table.H>
@@ -216,4 +219,4 @@ public:
     }
 };
 
-UnitTest scrollbarsize("scrollbar size", ScrollBarSizeTest::create);
+UnitTest scrollbarsize(kTestScrollbarsize, "Scrollbar Size", ScrollBarSizeTest::create);

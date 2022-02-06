@@ -14,11 +14,15 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Check_Button.H>
 #include <FL/fl_draw.H>
+
+#include <stdlib.h>
 
 // Note: currently (March 2010) fl_draw_image() supports transparency with
 //       alpha channel only on Apple (Mac OS X), but Fl_RGB_Image->draw()
@@ -291,4 +295,4 @@ Fl_RGB_Image *ImageTest::i_ga = 0;
 Fl_RGB_Image *ImageTest::i_rgb = 0;
 Fl_RGB_Image *ImageTest::i_rgba = 0;
 
-UnitTest images("drawing images", ImageTest::create);
+UnitTest images(kTestImages, "Drawing Images", ImageTest::create);

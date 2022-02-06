@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "unittests.h"
+
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
@@ -46,4 +48,4 @@ public:
   }
 };
 
-UnitTest viewport("viewport test", ViewportTest::create);
+UnitTest viewport(kTestViewport, "Viewport Test", ViewportTest::create);
