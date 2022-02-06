@@ -33,8 +33,8 @@ void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2)
   if (w <= 0 || h <= 0) return;
   while (a2<a1) a2 += 360.0;  // TODO: write a sensible fmod angle alignment here
   a1 = a1/180.0*M_PI; a2 = a2/180.0*M_PI;
-  double cx = x + 0.5*w - 0.5, cy = y + 0.5*h - 0.5;
-  double rx = 0.5*w-0.5, ry = 0.5*h-0.5;
+  double cx = x + 0.5*w, cy = y + 0.5*h;
+  double rx = 0.5*w-0.3, ry = 0.5*h-0.3;
   double rMax; if (w>h) rMax = rx; else rMax = ry;
   int nSeg = (int)(10 * sqrt(rMax))+1;
   double incr = (a2-a1)/(double)nSeg;
@@ -55,8 +55,8 @@ void Fl_OpenGL_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2)
   if (w <= 0 || h <= 0) return;
   while (a2<a1) a2 += 360.0;  // TODO: write a sensible fmod angle alignment here
   a1 = a1/180.0*M_PI; a2 = a2/180.0*M_PI;
-  double cx = x + 0.5*w - 0.5, cy = y + 0.5*h - 0.5;
-  double rx = 0.5*w+0.15, ry = 0.5*h+0.15;
+  double cx = x + 0.5*w, cy = y + 0.5*h;
+  double rx = 0.5*w, ry = 0.5*h;
   double rMax; if (w>h) rMax = rx; else rMax = ry;
   int nSeg = (int)(10 * sqrt(rMax))+1;
   double incr = (a2-a1)/(double)nSeg;

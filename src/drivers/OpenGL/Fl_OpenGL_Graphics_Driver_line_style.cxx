@@ -31,32 +31,52 @@
 // OpenGL implementation does not support cap and join types
 
 void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
   if (width<1) width = 1;
+  line_width_ = width;
 
-  if (style==FL_SOLID) {
+  int stipple = style & 0x00ff;
+//  int cap     = style & 0x0f00;
+//  int join    = style & 0xf000;
+
+  if (stipple==FL_SOLID) {
     glLineStipple(1, 0xFFFF);
     glDisable(GL_LINE_STIPPLE);
   } else {
-    switch (style) {
+    char enable = 1;
+    switch (stipple & 0x00ff) {
       case FL_DASH:
-        glLineStipple(width, 0x0F0F); // ....****....****
+        if (pixels_per_unit_<1.5f)
+          glLineStipple(width, 0x0F0F); // ....****....****
+        else
+          glLineStipple(width, 0x00FF); // ....****....****
         break;
       case FL_DOT:
-        glLineStipple(width, 0x5555); // .*.*.*.*.*.*.*.*
+        if (pixels_per_unit_<1.5f)
+          glLineStipple(width, 0x5555); // .*.*.*.*.*.*.*.*
+        else
+          glLineStipple(width, 0xCCCC); // .*.*.*.*.*.*.*.*
         break;
       case FL_DASHDOT:
-        glLineStipple(width, 0x2727); // ..*..***..*..***
+        if (pixels_per_unit_<1.5f)
+          glLineStipple(width, 0x2727); // ..*..***..*..***
+        else
+          glLineStipple(width, 0x0c3f); // ..*..***..*..***
         break;
       case FL_DASHDOTDOT:
-        glLineStipple(width, 0x5757); // .*.*.***.*.*.***
+        if (pixels_per_unit_<1.5f)
+          glLineStipple(width, 0x5757); // .*.*.***.*.*.***
+        else
+          glLineStipple(width, 0x333f); // .*.*.***.*.*.***
         break;
+      default:
+        glLineStipple(1, 0xFFFF);
+        enable = 0;
     }
-    glEnable(GL_LINE_STIPPLE);
+    if (enable)
+      glEnable(GL_LINE_STIPPLE);
+    else
+      glDisable(GL_LINE_STIPPLE);
   }
-  float s = 1.0f;
-  Fl_Gl_Window *win = Fl_Gl_Window::current()->as_gl_window();
-  if (win) s = win->pixels_per_unit();
-
-  glLineWidth((GLfloat)width*s);
+  glLineWidth( (GLfloat)(pixels_per_unit_ * line_width_) );
+  glPointSize( (GLfloat)(pixels_per_unit_) );
 }

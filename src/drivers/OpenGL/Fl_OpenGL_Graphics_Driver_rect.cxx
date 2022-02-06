@@ -26,98 +26,109 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl.H>
+#include <FL/math.h>
 
 // --- line and polygon drawing with integer coordinates
 
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
   glBegin(GL_POINTS);
-  glVertex2i(x, y);
+  glVertex2f(x+0.5f, y+0.5f);
   glEnd();
 }
 
 void Fl_OpenGL_Graphics_Driver::rect(int x, int y, int w, int h) {
-  glBegin(GL_LINES);
-  glVertex2f(x-0.5f, y); glVertex2f(x+w-0.5f, y);
-  glVertex2f(x+w-1.0f, y); glVertex2f(x+w-1.0f, y+h-0.5f);
-  glVertex2f(x, y); glVertex2f(x, y+h-0.5f);
-  glVertex2f(x-0.5f, y+h-1.0f); glVertex2f(x+w-0.5f, y+h-1.0f);
-  glEnd();
+  float offset = line_width_ / 2.0f;
+  float xx = x+0.5f, yy = y+0.5f;
+  float rr = x+w-0.5f, bb = y+h-0.5f;
+  glRectf(xx-offset, yy-offset, rr+offset, yy+offset);
+  glRectf(xx-offset, bb-offset, rr+offset, bb+offset);
+  glRectf(xx-offset, yy-offset, xx+offset, bb+offset);
+  glRectf(rr-offset, yy-offset, rr+offset, bb+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  glRectf(x-0.5f, y-0.5f, x+w-0.5f, y+h-0.5f);
+  glRectf(x, y, x+w, y+h);
 }
 
 void Fl_OpenGL_Graphics_Driver::line(int x, int y, int x1, int y1) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x1, y1);
-  glEnd();
-  point(x1, y1);
+  if (x==x1 && y==y1) return;
+  if (x==x1) {
+    yxline(x, y, y1);
+    return;
+  }
+  if (y==y1) {
+    xyline(x, y, x1);
+    return;
+  }
+  float xx = x+0.5f, xx1 = x1+0.5f;
+  float yy = y+0.5f, yy1 = y1+0.5f;
+  if (line_width_==1.0f) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(xx, yy);
+    glVertex2f(xx1, yy1);
+    glEnd();
+  } else {
+    float dx = xx1-xx, dy = yy1-yy;
+    float len = sqrtf(dx*dx+dy*dy);
+    dx = dx/len*line_width_*0.5f;
+    dy = dy/len*line_width_*0.5f;
+
+    glBegin(GL_TRIANGLE_STRIP);
+    glVertex2f(xx-dy, yy+dx);
+    glVertex2f(xx+dy, yy-dx);
+    glVertex2f(xx1-dy, yy1+dx);
+    glVertex2f(xx1+dy, yy1-dx);
+    glEnd();
+  }
 }
 
 void Fl_OpenGL_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x1, y1);
-  glVertex2i(x2, y2);
-  glEnd();
-  point(x2, y2);
+  // TODO: no corner types (miter) yet
+  line(x, y, x1, y1);
+  line(x1, y1, x2, y2);
 }
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x1, y);
-  glEnd();
-  point(x1, y);
+  float offset = line_width_ / 2.0f;
+  float xx = x, yy = y+0.5f, rr = x1+1.0f;
+  glRectf(xx, yy-offset, rr, yy+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x1, y);
-  glVertex2i(x1, y2);
-  glEnd();
-  point(x1, y2);
+  float offset = line_width_ / 2.0f;
+  float xx = x, yy = y+0.5f, rr = x1+0.5f, bb = y2+1.0f;
+  glRectf(xx, yy-offset, rr+offset, yy+offset);
+  glRectf(rr-offset, yy+offset, rr+offset, bb);
 }
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x1, y);
-  glVertex2i(x1, y2);
-  glVertex2i(x3, y2);
-  glEnd();
-  point(x3, y2);
+  float offset = line_width_ / 2.0f;
+  float xx = x, yy = y+0.5f, xx1 = x1+0.5f, rr = x3+1.0f, bb = y2+0.5;
+  glRectf(xx, yy-offset, xx1+offset, yy+offset);
+  glRectf(xx1-offset, yy+offset, xx1+offset, bb+offset);
+  glRectf(xx1+offset, bb-offset, rr, bb+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x, y1);
-  glEnd();
-  point(x, y1);
+  float offset = line_width_ / 2.0f;
+  float xx = x+0.5f, yy = y, bb = y1+1.0f;
+  glRectf(xx-offset, yy, xx+offset, bb);
 }
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x, y1);
-  glVertex2i(x2, y1);
-  glEnd();
-  point(x2, y1);
+  float offset = line_width_ / 2.0f;
+  float xx = x+0.5f, yy = y, rr = x2+1.0f, bb = y1+0.5f;
+  glRectf(xx-offset, yy, xx+offset, bb+offset);
+  glRectf(xx+offset, bb-offset, rr, bb+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x, y);
-  glVertex2i(x, y1);
-  glVertex2i(x2, y1);
-  glVertex2i(x2, y3);
-  glEnd();
-  point(x2, y3);
+  float offset = line_width_ / 2.0f;
+  float xx = x+0.5f, yy = y, yy1 = y1+0.5f, rr = x2+0.5f, bb = y3+1.0f;
+  glRectf(xx-offset, yy, xx+offset, yy1+offset);
+  glRectf(xx+offset, yy1-offset, rr+offset, yy1+offset);
+  glRectf(rr-offset, yy1+offset, rr+offset, bb);
 }
 
 void Fl_OpenGL_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {

@@ -138,7 +138,7 @@ void gl_draw(const char* str, int n) {
  \see  gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n, int x, int y) {
-  glRasterPos2f(x-0.5f, y-0.5f);
+  glRasterPos2i(x, y);
   gl_draw(str, n);
 }
 

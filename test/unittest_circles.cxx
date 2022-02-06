@@ -78,12 +78,18 @@ void draw_circles() {
   b+=44;
   // ---- 2: draw arcs and pies
   fl_color(FL_RED);
+//  arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
   arc(a+1, b+1, w-2, h-2, 45.0, 315.0);
+//  arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
+//  arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
   fl_color(FL_GREEN);
   arc(a, b, w, h, 45.0, 315.0);
   arc(a+2, b+2, w-4, h-4, 45.0, 315.0);
   fl_color(FL_BLACK);
+//  fl_arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
   fl_arc(a+1, b+1, w-1, h-1, 45.0, 315.0);
+//  fl_arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
+//  fl_arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
   fl_color(FL_RED);
   // ----
   arc(a+1+50, b+1, w-2, h-2, 45.0, 315.0);

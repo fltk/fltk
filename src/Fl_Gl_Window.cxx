@@ -26,6 +26,7 @@ extern int fl_gl_load_plugin;
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_utf8.h>
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H"
 
 #include <stdlib.h>
 #  if (HAVE_DLSYM && HAVE_DLFCN_H)
@@ -339,6 +340,8 @@ void Fl_Gl_Window::draw_overlay() {}
 
 void Fl_Gl_Window::draw_begin() {
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
+  Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)fl_graphics_driver;
+  drv->pixels_per_unit_ = pixels_per_unit();
 
   if (!valid()) {
     glViewport(0, 0, pixel_w(), pixel_h());
@@ -351,7 +354,8 @@ void Fl_Gl_Window::draw_begin() {
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+//  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+  glOrtho(0.0, w(), h(), 0.0, -1.0, 1.0);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -360,9 +364,8 @@ void Fl_Gl_Window::draw_begin() {
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_POINT_SMOOTH);
 
-  float scale = pixels_per_unit(); // should be 1 or 2 (2 if highres OpenGL) times the app scale
-  glLineWidth((GLfloat)scale);
-  glPointSize((GLfloat)scale);
+  glLineWidth((GLfloat)(drv->pixels_per_unit_*drv->line_width_));
+  glPointSize((GLfloat)(drv->pixels_per_unit_));
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glDisable(GL_SCISSOR_TEST);

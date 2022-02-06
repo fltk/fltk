@@ -163,6 +163,25 @@ void draw_fast_shapes() {
   fl_yxline(a+47, b+1, b+18, a+84);
   fl_yxline(a+92, b+1, b+10, a+127, b+19);
   fl_line_style(FL_SOLID, 1);
+  // 6: fast diagonal lines
+  b+=24;
+  fl_color(FL_GREEN);
+  fl_point(a, b); fl_point(a+1, b); fl_point(a, b+1);
+  fl_point(a+20, b+20); fl_point(a+19, b+20); fl_point(a+20, b+19);
+  fl_color(FL_RED);
+  fl_point(a+1, b+1); fl_point(a+19, b+19);
+  fl_color(FL_BLACK);
+  fl_line(a+1, b+1, a+19, b+19);
+  fl_color(FL_GREEN);
+  fl_point(a+25+1, b); fl_point(a+25, b+1); fl_point(a+25+4, b); fl_point(a+25, b+4);
+  fl_point(a+25+20, b+19); fl_point(a+25+19, b+20); fl_point(a+25+16, b+20); fl_point(a+25+20, b+16);
+  fl_color(FL_RED);
+  fl_point(a+25+2, b+2); fl_point(a+25+18, b+18);
+  fl_color(FL_BLACK);
+  fl_line_style(FL_SOLID, 5);
+  fl_line(a+25+1, b+1, a+25+19, b+19);
+  fl_line(a+50+1, b+1, a+50+20, b+20, a+50+39, b+1);
+  fl_line_style(FL_SOLID, 1);
 }
 
 #if HAVE_GL
@@ -269,6 +288,17 @@ public:
                // Things to look out for:
                "If green pixels are missing or red pixels are showing, fl_yxline must be adjusted."
                );
+    b+=48;
+    t = new Fl_Box(a, b, 18, 18, "6");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing fl_line(int...).\n\n"
+               // Description:
+               "This draws 2 lines at differnet widths, and one connected line.\n\n"
+               // Things to look out for:
+               "Green and red pixels mark the beginning and end of single lines."
+               "The line caps should be flat, the joints shoould be of type \"miter\"."
+               );
 
 #if HAVE_GL
 
@@ -331,6 +361,17 @@ public:
                "This draws 3 versions of fl_yxline surronded with a green outline.\n\n"
                // Things to look out for:
                "If green pixels are missing or red pixels are showing, fl_yxline must be adjusted."
+               );
+    b+=48;
+    t = new Fl_Box(a, b, 26, 18, "6a");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing fl_line(int...).\n\n"
+               // Description:
+               "This draws 2 lines at differnet widths, and one connected line.\n\n"
+               // Things to look out for:
+               "Green and red pixels mark the beginning and end of single lines."
+               "The line caps should be flat, the joints shoould be of type \"miter\"."
                );
 #endif
 
