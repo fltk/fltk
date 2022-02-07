@@ -519,6 +519,9 @@ public:
    added by the window manager.
 
    Same as h() if applied to a subwindow, or if window is not yet mapped.
+   \note Under X11, it's not possible to compute decorated_h() - h()
+   to obtain the height of the titlebar <b> during a resize operation</b>.
+   That computation is to best done when the window is first mapped.
    */
   int decorated_h() const;
 
