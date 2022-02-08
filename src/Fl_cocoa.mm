@@ -2474,8 +2474,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
       CGImageRelease(img);
     }
   }
-  Fl_X::q_release_context();
 #endif
+  Fl_X::q_release_context();
   if (!through_Fl_X_flush) window->clear_damage();
   through_drawRect = NO;
   fl_unlock_function();
