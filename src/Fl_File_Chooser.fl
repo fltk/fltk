@@ -389,7 +389,8 @@ else
   }
   Function {user_data(void *d)} {return_type void
   } {
-    code {data_ = d;} {}
+    code {data_ = d;} {selected
+    }
   }
   decl {const char *value(int f = 1);} {public local
   }
@@ -399,25 +400,33 @@ else
   } {
     code {return window->visible();} {}
   }
-  Function {position(int x, int y)} {selected return_type void
+  Function {position(int x, int y)} {return_type void
   } {
     code {window->position(x, y);} {}
   }
-  Function {x()} {return_type int
+  Function {x() const} {return_type int
   } {
     code {return window->x();} {}
   }
-  Function {y()} {return_type int
+  Function {y() const} {return_type int
   } {
     code {return window->y();} {}
   }
-  Function {w()} {return_type int
+  Function {w() const} {return_type int
   } {
     code {return window->w();} {}
   }
-  Function {h()} {return_type int
+  Function {h() const} {return_type int
   } {
     code {return window->h();} {}
+  }
+  Function {size(int w, int h)} {open return_type void
+  } {
+    code {window->size(w, h);} {}
+  }
+  Function {resize(int x, int y, int w, int h)} {open return_type void
+  } {
+    code {window->resize(x, y, w, h);} {}
   }
   decl {static const char *add_favorites_label;} {
     comment {[standard text may be customized at run-time]} public local
