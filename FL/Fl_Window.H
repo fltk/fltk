@@ -512,6 +512,7 @@ public:
   /** Returns the window width including any frame added by the window manager.
 
    Same as w() if applied to a subwindow, or if window is not yet mapped.
+   \see decorated_h().
    */
   int decorated_w() const;
 
@@ -519,9 +520,14 @@ public:
    added by the window manager.
 
    Same as h() if applied to a subwindow, or if window is not yet mapped.
-   \note Under X11, it's not possible to compute decorated_h() - h()
-   to obtain the height of the titlebar <b> during a resize operation</b>.
-   That computation is to best done when the window is first mapped.
+   \note Under X11, FLTK is able to compute the size of window titlebars and borders
+   only if these decoration elements are strictly X11-based. When that's not the case,
+   decorated_h() returns the same value as h() and decorated_w() as w(), and FLTK
+   cannot access window decorations.
+   
+   \note Under X11 again, the values returned by decorated_h() and decorated_w()
+   may not be reliable <b> during a resize operation</b>. The size of decoration elements
+   of a window is best computed when the window is first mapped.
    */
   int decorated_h() const;
 
