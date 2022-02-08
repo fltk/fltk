@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Forms timer object for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Emulate the Forms Timer object
@@ -27,7 +25,7 @@
 #include "Fl_System_Driver.H"
 #include <stdio.h>
 
-#define FL_TIMER_BLINKRATE	0.2
+#define FL_TIMER_BLINKRATE      0.2
 
 void fl_gettime(long* sec, long* usec) {
   time_t tt_sec;
@@ -106,12 +104,12 @@ Fl_Timer::~Fl_Timer() {
   size, and label string. The type parameter can be any of the
   following symbolic constants:
 
-  \li	FL_NORMAL_TIMER - The timer just does the callback and
-	displays the string "Timer" in the widget.
-  \li	FL_VALUE_TIMER - The timer does the callback and displays
-	the current timer value in the widget.
-  \li	FL_HIDDEN_TIMER - The timer just does the callback and
-	does not display anything.
+  \li   FL_NORMAL_TIMER - The timer just does the callback and
+        displays the string "Timer" in the widget.
+  \li   FL_VALUE_TIMER - The timer does the callback and displays
+        the current timer value in the widget.
+  \li   FL_HIDDEN_TIMER - The timer just does the callback and
+        does not display anything.
 */
 Fl_Timer::Fl_Timer(uchar t, int X, int Y, int W, int H, const char* l)
 
@@ -148,7 +146,3 @@ void Fl_Timer::suspended(char d) {
     Fl::remove_timeout(stepcb, this);
   }
 }
-
-//
-// End of "$Id$".
-//

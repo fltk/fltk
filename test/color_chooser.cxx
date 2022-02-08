@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color chooser test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -28,9 +26,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
 #include "list_visuals.cxx"
-#endif
 
 int width = 100;
 int height = 100;
@@ -45,8 +41,8 @@ void make_image() {
     for (int x = 0; x < width; x++) {
       double X = double(x)/(width-1);
       *p++ = uchar(255*((1-X)*(1-Y))); // red in upper-left
-      *p++ = uchar(255*((1-X)*Y));	// green in lower-left
-      *p++ = uchar(255*(X*Y));	// blue in lower-right
+      *p++ = uchar(255*((1-X)*Y));     // green in lower-left
+      *p++ = uchar(255*(X*Y));         // blue in lower-right
     }
   }
 }
@@ -114,7 +110,7 @@ int main(int argc, char ** argv) {
            " - : default visual\n"
            " r : call Fl::visual(FL_RGB)\n"
            " c : call Fl::own_colormap()\n",argv[0]);
-#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
+#ifdef FLTK_USE_X11
     printf(" # : use this visual with an empty colormap:\n");
     list_visuals();
 #endif
@@ -127,7 +123,7 @@ int main(int argc, char ** argv) {
     } else if (argv[i][0] == 'c') {
       Fl::own_colormap();
     } else if (argv[i][0] != '-') {
-#if !defined(_WIN32) && !defined(__APPLE__) && !defined(__ANDROID__)
+#ifdef FLTK_USE_X11
       int visid = atoi(argv[i]);
       fl_open_display();
       XVisualInfo templt; int num;
@@ -145,7 +141,3 @@ int main(int argc, char ** argv) {
   window.show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /*
@@ -26,13 +25,13 @@ XMODIFIERS="@im=kinput2"; export XMODIFIERS
 LANG=ja_JP; export LANG
 ./test
 
-	to open a conversion window press "Shift space"
-	type some keys.
-	press space.
-	select glyph with arrows keys.
-	press return.
-	press return.
-	press "Shift space" to close the window
+        to open a conversion window press "Shift space"
+        type some keys.
+        press space.
+        select glyph with arrows keys.
+        press return.
+        press return.
+        press "Shift space" to close the window
 
 LANG=ar_AE; export LANG
 LANG=he_IL; export LANG
@@ -58,10 +57,10 @@ export LANG=C; export XMODIFIERS="@im=interxim"
 #include <X11/Intrinsic.h>
 #include <X11/Xmd.h>
 
-char *jp_txt = "é  UTF-8 e\xCC\x82=\xC3\xAA"
-		"  \357\274\270\357\274\254\357\274\246\357\274"
-		"\244\345\220\215\343\201\247\346\214\207    \345\256\232"
-		"\343\201\231\343\202\213";
+char *jp_txt = "Ã©  UTF-8 e\xCC\x82=\xC3\xAA"
+                "  \357\274\270\357\274\254\357\274\246\357\274"
+                "\244\345\220\215\343\201\247\346\214\207    \345\256\232"
+                "\343\201\231\343\202\213";
 
 char *rtl_txt = "->e\xCC\x82=\xC3\xAA";
 
@@ -104,7 +103,7 @@ int main(int argc, char**argv) {
 
   if (!XSetLocaleModifiers(""))
     puts("X locale modifiers not supported, using default");
-  
+
   dpy = XOpenDisplay(0);
   if (!dpy) { puts("cannot open display.\n"); exit(-1); }
   scr = DefaultScreen(dpy);
@@ -112,10 +111,10 @@ int main(int argc, char**argv) {
   set_attr.event_mask = KeyPressMask|FocusChangeMask;
   set_attr.background_pixel = WhitePixel(dpy, DefaultScreen(dpy));
   set_attr.border_pixel = BlackPixel(dpy, DefaultScreen(dpy));
-  w = XCreateWindow(dpy, root, 10,10,200,100,0, 
-		    DefaultDepth(dpy, DefaultScreen(dpy)),
-		    InputOutput, DefaultVisual(dpy, DefaultScreen(dpy)),
-		    CWEventMask | CWBackPixel | CWBorderPixel, &set_attr);
+  w = XCreateWindow(dpy, root, 10,10,200,100,0,
+                    DefaultDepth(dpy, DefaultScreen(dpy)),
+                    InputOutput, DefaultVisual(dpy, DefaultScreen(dpy)),
+                    CWEventMask | CWBackPixel | CWBorderPixel, &set_attr);
   if (!w) {
     puts("cannot creat window.\n");
     exit(-1);
@@ -127,12 +126,12 @@ int main(int argc, char**argv) {
   wm_hints.flags = InputHint;
 
   XmbSetWMProperties(dpy, w, "test", "test", NULL, 0,
-		     NULL, &wm_hints, &class_hints);
+                     NULL, &wm_hints, &class_hints);
 
   XMapWindow(dpy, w);
   xim_im = XOpenIM(dpy, NULL, "test", "Test");
-  if (!xim_im) { 
-    puts("cannot Open Input Manager: Try default.\n"); 
+  if (!xim_im) {
+    puts("cannot Open Input Manager: Try default.\n");
     XSetLocaleModifiers("@im=");
     xim_im = XOpenIM(dpy, NULL, "test", "Test");
     if (!xim_im) {
@@ -151,11 +150,11 @@ int main(int argc, char**argv) {
   }
 
   xim_ic = XCreateIC(xim_im,
-		     XNInputStyle, 
-		     (XIMPreeditNothing | XIMStatusNothing),
-		     XNClientWindow, w,
-		     XNFocusWindow, w,
-		     NULL);
+                     XNInputStyle,
+                     (XIMPreeditNothing | XIMStatusNothing),
+                     XNClientWindow, w,
+                     XNFocusWindow, w,
+                     NULL);
   if (!xim_ic) {
     puts("cannot create Input Context.\n");
     exit(-1);
@@ -164,26 +163,26 @@ int main(int argc, char**argv) {
   XSetICFocus(xim_ic);
 
   /***************************************************************
-   *  I don't recommend to use a font base name list similar 
-   *  to the following one in a real application ;-) 
-   *  You should use an iso8859-1 font, plus a single font for 
+   *  I don't recommend to use a font base name list similar
+   *  to the following one in a real application ;-)
+   *  You should use an iso8859-1 font, plus a single font for
    *  your language.
    ***************************************************************/
-  fontset = XCreateUtf8FontStruct(dpy, 
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8858-3," /* not valid */
-	  "-*-*-medium-r-*-*-*-*-*-*-*-*-iso8859-1,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-6,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-8,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-ksc5601.1987-0,"
-	  "-*-symbol-*-*-*-*-*-*-*-*-*-*-adobe-fontspecific," 
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-2,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-koi8-1,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0208.1983-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0212.1990-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-big5-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0201.1976-0,"
-	  "-*-unifont-*-*-*-*-*-*-*-*-*-*-iso10646-1[0x300 0x400_0x500],"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-*-*"); 
+  fontset = XCreateUtf8FontStruct(dpy,
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8858-3," /* not valid */
+          "-*-*-medium-r-*-*-*-*-*-*-*-*-iso8859-1,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-6,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-8,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-ksc5601.1987-0,"
+          "-*-symbol-*-*-*-*-*-*-*-*-*-*-adobe-fontspecific,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-2,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-koi8-1,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0208.1983-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0212.1990-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-big5-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0201.1976-0,"
+          "-*-unifont-*-*-*-*-*-*-*-*-*-*-iso10646-1[0x300 0x400_0x500],"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
 
   /* THIS PART IS NOT REQUIERED */
   nb_font = fontset->nb_font;
@@ -191,10 +190,10 @@ int main(int argc, char**argv) {
   while (nb_font > 0) {
     nb_font--;
     if (fontset->fonts[nb_font]) {
-      printf("encoding=\"\" fid=%d \n  %s\n", 
+      printf("encoding=\"\" fid=%d \n  %s\n",
       /*     fontset->encodings[nb_font], */
-	     fontset->fonts[nb_font]->fid,
-	     fontset->font_name_list[nb_font]);
+             fontset->fonts[nb_font]->fid,
+             fontset->font_name_list[nb_font]);
     }
   }
   /* END OF NOT REQUIERED PART*/
@@ -227,17 +226,17 @@ int main(int argc, char**argv) {
       XSetLocaleModifiers("@im=");
       xim_im = XOpenIM(dpy, NULL, "test", "Test");
       if (xim_im) {
-	xim_ic = XCreateIC(xim_im,
-	                   XNInputStyle, (XIMPreeditNothing | XIMStatusNothing),
-			   XNClientWindow, w,
-			   XNFocusWindow, w,
-			   NULL);
+        xim_ic = XCreateIC(xim_im,
+                           XNInputStyle, (XIMPreeditNothing | XIMStatusNothing),
+                           XNClientWindow, w,
+                           XNFocusWindow, w,
+                           NULL);
       } else {
-	xim_ic = NULL;
+        xim_ic = NULL;
       }
       if (!xim_ic) {
-	puts("Crash recovery failed. exiting.\n");
-	exit(-1);
+        puts("Crash recovery failed. exiting.\n");
+        exit(-1);
       }
     }
     if (xevent.type != DestroyNotify) {
@@ -247,20 +246,20 @@ int main(int argc, char**argv) {
     if (xevent.type == FocusIn && xim_ic) XSetICFocus(xim_ic);
 
     if (xevent.type == KeyPress && !filtered) {
-      len = XUtf8LookupString(xim_ic, &xevent.xkey, 
-			      buf, 127, &keysym, &status);
+      len = XUtf8LookupString(xim_ic, &xevent.xkey,
+                              buf, 127, &keysym, &status);
 
       if (len == 1 && buf[0] == '\b') {
-	x -= XUtf8TextWidth(fontset, buf, len);
-	XUtf8DrawImageString(dpy, w, fontset, gc, 
-			     x, y, buf, len);
+        x -= XUtf8TextWidth(fontset, buf, len);
+        XUtf8DrawImageString(dpy, w, fontset, gc,
+                             x, y, buf, len);
       } else if (len == 1 && buf[0] == '\r') {
-	y += fontset->ascent + fontset->descent;
-	x = 0;
-	XCloseIM(xim_im);
+        y += fontset->ascent + fontset->descent;
+        x = 0;
+        XCloseIM(xim_im);
       } else {
-	XUtf8DrawImageString(dpy, w, fontset, gc, x, y, buf, len);
-	x += XUtf8TextWidth(fontset, buf, len);
+        XUtf8DrawImageString(dpy, w, fontset, gc, x, y, buf, len);
+        x += XUtf8TextWidth(fontset, buf, len);
       }
 
       XUtf8DrawString(dpy, w, fontset, gc, 0, 20, jp_txt, strlen(jp_txt));
@@ -277,7 +276,3 @@ int main(int argc, char**argv) {
   XFreeUtf8FontStruct(dpy, fontset);
   return 0;
 }
-
-/*
- * End of "$Id$".
- */

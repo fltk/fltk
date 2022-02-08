@@ -1,34 +1,40 @@
 //
-// "$Id$"
-//
 // Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#include "Fluid_Image.h"
+
+#include "fluid.h"
+#include "Fl_Group_Type.h"
+#include "Fl_Window_Type.h"
+#include "file.h"
+#include "code.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include "Fl_Type.h"
-#include "Fluid_Image.h"
+#include <FL/Fl_Window.H>
+#include <FL/filename.H>
+#include <FL/fl_string_functions.h>
+#include <FL/fl_utf8.h>     // fl_fopen()
+#include <FL/Fl_File_Chooser.H>
 #include "../src/flstring.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <FL/filename.H>
-
-extern void goto_source_dir(); // in fluid.cxx
-extern void leave_source_dir(); // in fluid.cxx
 
 void Fluid_Image::image(Fl_Widget *o) {
   if (o->window() != o) o->image(img);
@@ -55,7 +61,7 @@ void Fluid_Image::write_static() {
       pixmap_header_written = write_number;
     }
     write_c("static const char *%s[] = {\n", idata_name);
-    write_cstring(img->data()[0], strlen(img->data()[0]));
+    write_cstring(img->data()[0], (int)strlen(img->data()[0]));
 
     int i;
     int ncolors, chars_per_color;
@@ -68,7 +74,7 @@ void Fluid_Image::write_static() {
     } else {
       for (i = 1; i <= ncolors; i ++) {
         write_c(",\n");
-        write_cstring(img->data()[i], strlen(img->data()[i]));
+        write_cstring(img->data()[i], (int)strlen(img->data()[i]));
       }
     }
     for (; i < img->count(); i ++) {
@@ -107,12 +113,12 @@ void Fluid_Image::write_static() {
       if (nData) {
         char *data = (char*)calloc(nData, 1);
         if (fread(data, nData, 1, f)==0) { /* ignore */ }
-        write_cdata(data, nData);
+        write_cdata(data, (int)nData);
         free(data);
       }
       fclose(f);
     }
-    
+
     write_c(";\n");
     write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
   } else {
@@ -121,7 +127,7 @@ void Fluid_Image::write_static() {
     if (image_header_written != write_number) {
       write_c("#include <FL/Fl_Image.H>\n");
       image_header_written = write_number;
-    } 
+    }
     write_c("static const unsigned char %s[] =\n", idata_name);
     const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
     write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
@@ -138,9 +144,10 @@ void Fluid_Image::write_initializer(const char *type_name, const char *format, .
    } */
   va_list ap;
   va_start(ap, format);
-  write_c("static Fl_Image *%s() {\n  static Fl_Image *image = new %s(", function_name_, type_name);
+  write_c("static Fl_Image *%s() {\n%sstatic Fl_Image *image = new %s(",
+          function_name_, indent(1), type_name);
   vwrite_c(format, ap);
-  write_c(");\n  return image;\n}\n");
+  write_c(");\n%sreturn image;\n}\n", indent(1));
   va_end(ap);
 }
 
@@ -148,6 +155,11 @@ void Fluid_Image::write_code(const char *var, int inactive) {
   /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
    This code calls a function output before by Fluid_Image::write_initializer() */
   if (img) write_c("%s%s->%s( %s() );\n", indent(), var, inactive ? "deimage" : "image", function_name_);
+}
+
+void Fluid_Image::write_inline(int inactive) {
+  if (img)
+    write_c("%s()", function_name_);
 }
 
 
@@ -206,7 +218,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
 }
 
 Fluid_Image::Fluid_Image(const char *iname) {
-  name_ = strdup(iname);
+  name_ = fl_strdup(iname);
   written = 0;
   refcount = 0;
   img = Fl_Shared_Image::get(iname);
@@ -236,8 +248,6 @@ Fluid_Image::~Fluid_Image() {
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_File_Chooser.H>
-
 const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {
   goto_source_dir();
@@ -249,8 +259,3 @@ Fluid_Image *ui_find_image(const char *oldname) {
   leave_source_dir();
   return ret;
 }
-
-
-//
-// End of "$Id$".
-//

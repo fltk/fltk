@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -9,16 +7,13 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_QUARTZ
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/platform.H>
 #include "Fl_Quartz_Graphics_Driver.H"
@@ -55,13 +50,14 @@ Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_
     static CGDataConsumerCallbacks callbacks = { Fl_Quartz_Copy_Surface_Driver::MyPutBytes, NULL };
     myconsumer = CGDataConsumerCreate((void*) pdfdata, &callbacks);
   }
-  CGRect bounds = CGRectMake(0, 0, w, h );
+  float d = fl_graphics_driver->scale();
+  CGRect bounds = CGRectMake(0, 0, w * d, h * d);
   gc = CGPDFContextCreate(myconsumer, &bounds, NULL);
   CGDataConsumerRelease(myconsumer);
   if (gc) {
     CGContextBeginPage(gc, &bounds);
-    CGContextTranslateCTM(gc, 0.5, h-0.5);
-    CGContextScaleCTM(gc, 1.0f, -1.0f);
+    CGContextScaleCTM(gc, d, -d);
+    CGContextTranslateCTM(gc, 0.5, -h + 0.5);
     CGContextSaveGState(gc);
   }
 }
@@ -88,24 +84,3 @@ void Fl_Quartz_Copy_Surface_Driver::translate(int x, int y) {
 void Fl_Quartz_Copy_Surface_Driver::untranslate() {
   CGContextRestoreGState(gc);
 }
-
-void Fl_Quartz_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
-  CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();
-  if (!layer) {
-    return Fl_Widget_Surface::draw_decorated_window(win, x_offset, y_offset);
-  }
-  CGContextSaveGState(gc);
-  int bt = win->decorated_h() - win->h();
-  CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-  float s = Fl::screen_scale(win->screen_num());
-  CGContextScaleCTM(gc, 1/s, s >= 1 ? -1/s : -1);
-  Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt*s);
-  CGContextRestoreGState(gc);  
-  draw(win, x_offset, y_offset + bt); // print the window inner part
-}
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

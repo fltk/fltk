@@ -21,6 +21,6 @@
 | 360 | 240 | F |    Ò  Ú  Û  Ù  ı  ˆ  ˜  ¯  ˘  ˙  ˚  ¸  ˝  ˛  ˇ |
 +-----+-----+---+-------------------------------------------------+
 
-File:		MacRoman_utf-8.txt
-Encoding:	UTF-8
-Note:		0xF0 (MacRoman) = U+F8FF (Unicode) = Apple logo
+File:           MacRoman_utf-8.txt
+Encoding:       UTF-8
+Note:           0xF0 (MacRoman) = U+F8FF (Unicode) = Apple logo

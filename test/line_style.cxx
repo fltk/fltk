@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Line style demo for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2000-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -39,8 +37,8 @@ public:
 void test_box::draw() {
   Fl_Double_Window::draw();
   fl_color((uchar)(sliders[0]->value()),
-	   (uchar)(sliders[1]->value()),
-	   (uchar)(sliders[2]->value()));
+           (uchar)(sliders[1]->value()),
+           (uchar)(sliders[2]->value()));
   // dashes
   char dashes[5];
   dashes[0] = char(sliders[5]->value());
@@ -52,7 +50,7 @@ void test_box::draw() {
     choice[0]->mvalue()->argument() +
     choice[1]->mvalue()->argument() +
     choice[2]->mvalue()->argument(),
-    long(sliders[3]->value()),		// width
+    long(sliders[3]->value()),          // width
     dashes);
 
   // draw the defined fl_rect and fl_vertex first and then
@@ -75,27 +73,27 @@ void test_box::draw() {
 }
 
 Fl_Menu_Item style_menu[] = {
-  {"FL_SOLID",	0, 0, (void*)FL_SOLID},
-  {"FL_DASH",	0, 0, (void*)FL_DASH},
-  {"FL_DOT",	0, 0, (void*)FL_DOT},
+  {"FL_SOLID",  0, 0, (void*)FL_SOLID},
+  {"FL_DASH",   0, 0, (void*)FL_DASH},
+  {"FL_DOT",    0, 0, (void*)FL_DOT},
   {"FL_DASHDOT",0, 0, (void*)FL_DASHDOT},
   {"FL_DASHDOTDOT", 0, 0, (void*)FL_DASHDOTDOT},
   {0}
 };
 
 Fl_Menu_Item cap_menu[] = {
-  {"default",		0, 0, 0},
-  {"FL_CAP_FLAT",	0, 0, (void*)FL_CAP_FLAT},
-  {"FL_CAP_ROUND",	0, 0, (void*)FL_CAP_ROUND},
-  {"FL_CAP_SQUARE",	0, 0, (void*)FL_CAP_SQUARE},
+  {"default",           0, 0, 0},
+  {"FL_CAP_FLAT",       0, 0, (void*)FL_CAP_FLAT},
+  {"FL_CAP_ROUND",      0, 0, (void*)FL_CAP_ROUND},
+  {"FL_CAP_SQUARE",     0, 0, (void*)FL_CAP_SQUARE},
   {0}
 };
 
 Fl_Menu_Item join_menu[] = {
-  {"default",		0, 0, 0},
-  {"FL_JOIN_MITER",	0, 0, (void*)FL_JOIN_MITER},
-  {"FL_JOIN_ROUND",	0, 0, (void*)FL_JOIN_ROUND},
-  {"FL_JOIN_BEVEL",	0, 0, (void*)FL_JOIN_BEVEL},
+  {"default",           0, 0, 0},
+  {"FL_JOIN_MITER",     0, 0, (void*)FL_JOIN_MITER},
+  {"FL_JOIN_ROUND",     0, 0, (void*)FL_JOIN_ROUND},
+  {"FL_JOIN_BEVEL",     0, 0, (void*)FL_JOIN_BEVEL},
   {0}
 };
 
@@ -162,7 +160,3 @@ int main(int argc, char **argv) {
   form->show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

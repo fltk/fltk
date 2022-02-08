@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -11,22 +9,21 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
  Implementation of the member functions of class Fl.
  */
 
-#include "config_lib.h"
-
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include "Fl_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 #include "Fl_System_Driver.H"
+#include "Fl_Timeout.h"
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
@@ -40,124 +37,47 @@
 #endif // DEBUG || DEBUG_WATCH
 
 //
-// Runtime configuration flags
-//
-#ifdef FL_CFG_GFX_XLIB
-bool Fl::cfg_gfx_xlib = 1;
-#else
-bool Fl::cfg_gfx_xlib = 0;
-#endif
-#ifdef FL_CFG_GFX_QUARTZ
-bool Fl::cfg_gfx_quartz = 1;
-#else
-bool Fl::cfg_gfx_quartz = 0;
-#endif
-#ifdef FL_CFG_GFX_GDI
-bool Fl::cfg_gfx_gdi = 1;
-#else
-bool Fl::cfg_gfx_gdi = 0;
-#endif
-#ifdef FL_CFG_GFX_OPENGL
-bool Fl::cfg_gfx_opengl = 1;
-#else
-bool Fl::cfg_gfx_opengl = 0;
-#endif
-#ifdef FL_CFG_GFX_CAIRO
-bool Fl::cfg_gfx_cairo = 1;
-#else
-bool Fl::cfg_gfx_cairo = 0;
-#endif
-#ifdef FL_CFG_GFX_DIRECTX
-bool Fl::cfg_gfx_directx = 1;
-#else
-bool Fl::cfg_gfx_directx = 0;
-#endif
-
-#ifdef FL_CFG_PRN_PS
-bool Fl::cfg_prn_ps = 1;
-#else
-bool Fl::cfg_prn_ps = 0;
-#endif
-#ifdef FL_CFG_PRN_QUARTZ
-bool Fl::cfg_prn_quartz = 1;
-#else
-bool Fl::cfg_prn_quartz = 0;
-#endif
-#ifdef FL_CFG_PRN_GDI
-bool Fl::cfg_prn_gdi = 1;
-#else
-bool Fl::cfg_prn_gdi = 0;
-#endif
-
-#ifdef FL_CFG_WIN_X11
-bool Fl::cfg_win_x11 = 1;
-#else
-bool Fl::cfg_win_x11 = 0;
-#endif
-#ifdef FL_CFG_WIN_COCOA
-bool Fl::cfg_win_cocoa = 1;
-#else
-bool Fl::cfg_win_cocoa = 0;
-#endif
-#ifdef FL_CFG_WIN_WIN32
-bool Fl::cfg_win_win32 = 1;
-#else
-bool Fl::cfg_win_win32 = 0;
-#endif
-
-#ifdef FL_CFG_SYS_POSIX
-bool Fl::cfg_sys_posix = 1;
-#else
-bool Fl::cfg_sys_posix = 0;
-#endif
-#ifdef FL_CFG_SYS_WIN32
-bool Fl::cfg_sys_win32 = 1;
-#else
-bool Fl::cfg_sys_win32 = 0;
-#endif
-
-//
 // Globals...
 //
 
 Fl_Widget *fl_selection_requestor;
 
 #ifndef FL_DOXYGEN
-Fl_Widget	*Fl::belowmouse_,
-		*Fl::pushed_,
-		*Fl::focus_,
-		*Fl::selection_owner_;
-int		Fl::damage_,
-		Fl::e_number,
-		Fl::e_x,
-		Fl::e_y,
-		Fl::e_x_root,
-		Fl::e_y_root,
-		Fl::e_dx,
-		Fl::e_dy,
-		Fl::e_state,
-		Fl::e_clicks,
-		Fl::e_is_click,
-		Fl::e_keysym,
-		Fl::e_original_keysym,
-		Fl::scrollbar_size_ = 16,
-		Fl::menu_linespacing_ = 4;	// 4: was a local macro in Fl_Menu.cxx called "LEADING"
+Fl_Widget       *Fl::belowmouse_,
+                *Fl::pushed_,
+                *Fl::focus_,
+                *Fl::selection_owner_;
+int             Fl::damage_,
+                Fl::e_number,
+                Fl::e_x,
+                Fl::e_y,
+                Fl::e_x_root,
+                Fl::e_y_root,
+                Fl::e_dx,
+                Fl::e_dy,
+                Fl::e_state,
+                Fl::e_clicks,
+                Fl::e_is_click,
+                Fl::e_keysym,
+                Fl::e_original_keysym,
+                Fl::scrollbar_size_ = 16,
+                Fl::menu_linespacing_ = 4;      // 4: was a local macro in Fl_Menu.cxx called "LEADING"
 
-char		*Fl::e_text = (char *)"";
-int		Fl::e_length;
-const char	*Fl::e_clipboard_type = "";
-void		*Fl::e_clipboard_data = NULL;
+char            *Fl::e_text = (char *)"";
+int             Fl::e_length;
+const char      *Fl::e_clipboard_type = "";
+void            *Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
 
-unsigned char	Fl::options_[] = { 0, 0 };
-unsigned char	Fl::options_read_ = 0;
+unsigned char   Fl::options_[] = { 0, 0 };
+unsigned char   Fl::options_read_ = 0;
 
 
-Fl_Window	*fl_xfocus = NULL; // which window X thinks has focus
-Fl_Window	*fl_xmousewin;     // which window X thinks has FL_ENTER
-Fl_Window	*Fl::grab_;        // most recent Fl::grab()
-Fl_Window	*Fl::modal_;       // topmost modal() window
+Fl_Window       *fl_xfocus = NULL; // which window X thinks has focus
+Fl_Window       *fl_xmousewin;     // which window X thinks has FL_ENTER
+Fl_Window       *Fl::grab_;        // most recent Fl::grab()
+Fl_Window       *Fl::modal_;       // topmost modal() window
 
 #endif // FL_DOXYGEN
 
@@ -191,7 +111,7 @@ Fl_System_Driver *Fl::system_driver()
   Returns the compiled-in value of the FL_VERSION constant. This
   is useful for checking the version of a shared library.
 
-  \deprecated	Use int Fl::api_version() instead.
+  \deprecated   Use int Fl::api_version() instead.
 */
 double Fl::version() {
   return FL_VERSION;
@@ -266,8 +186,8 @@ void Fl::menu_linespacing(int H) {
     To find out, whether the event is inside a child widget of the
     current window, you can use Fl::event_inside(const Fl_Widget *).
 
-    \param[in] xx,yy,ww,hh	bounding box
-    \return			non-zero, if mouse event is inside
+    \param[in] xx,yy,ww,hh      bounding box
+    \return                     non-zero, if mouse event is inside
 */
 int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
   int mx = e_x - xx;
@@ -299,8 +219,8 @@ int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
 
     \see Fl::event_inside(int, int, int, int)
 
-    \param[in] o	child widget to be tested
-    \return		non-zero, if mouse event is inside the widget
+    \param[in] o        child widget to be tested
+    \return             non-zero, if mouse event is inside the widget
 */
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   int mx = e_x - o->x();
@@ -309,35 +229,33 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 }
 
 //
-//
-// timer support
-//
+// cross-platform timer support
 //
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->add_timeout(time, cb, argp);
+  Fl_Timeout::add_timeout(time, cb, argp);
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->repeat_timeout(time, cb, argp);
+  Fl_Timeout::repeat_timeout(time, cb, argp);
 }
 
 /**
  Returns true if the timeout exists and has not been called yet.
  */
 int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
-  return Fl::screen_driver()->has_timeout(cb, argp);
+  return Fl_Timeout::has_timeout(cb, argp);
 }
 
 /**
  Removes a timeout callback. It is harmless to remove a timeout
  callback that no longer exists.
 
- \note	This version removes all matching timeouts, not just the first one.
-	This may change in the future.
+ \note  This version removes all matching timeouts, not just the first one.
+        This may change in the future.
  */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  Fl::screen_driver()->remove_timeout(cb, argp);
+  Fl_Timeout::remove_timeout(cb, argp);
 }
 
 
@@ -379,7 +297,7 @@ static Check *first_check, *next_check, *free_check;
    if (!state_changed) return;
    state_changed = false;
    do_expensive_calculation();
-   widget-&gt;redraw();
+   widget->redraw();
   }
 
   main() {
@@ -471,7 +389,7 @@ void Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data) {
 
   clip_notify_list = node;
 
-  Fl::system_driver()->clipboard_notify_change();
+  Fl::screen_driver()->clipboard_notify_change();
 }
 
 void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
@@ -484,7 +402,7 @@ void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
       *prev = node->next;
       delete node;
 
-      Fl::system_driver()->clipboard_notify_change();
+      Fl::screen_driver()->clipboard_notify_change();
 
       return;
     }
@@ -510,9 +428,45 @@ void fl_trigger_clipboard_notify(int source) {
 }
 
 ////////////////////////////////////////////////////////////////
-// wait/run/check/ready:
+// idle/wait/run/check/ready:
 
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
+
+/*
+  Private, undocumented method to run idle callbacks.
+
+  FLTK guarantees that idle callbacks will never be called recursively,
+  i.e. while an idle callback is being executed.
+
+  This method should (must) be the only way to run idle callbacks to
+  ensure that the `in_idle' flag is respected.
+
+  Idle callbacks are executed whenever Fl::wait() is called and no events
+  are waiting to be serviced.
+
+  If Fl::idle is set (non-NULL) this points at a function that executes
+  the first idle callback and appends it to the end of the list of idle
+  callbacks. For details see static function call_idle() in Fl_add_idle.cxx.
+
+  If it is NULL then no idle callbacks are active and Fl::run_idle() returns
+  immediately.
+
+  Note: idle callbacks can be queued in nested FLTK event loops like
+  ```
+    while (win->shown())
+      Fl::wait();
+  ```
+  if an event (timeout or button click etc.) handler calls Fl::add_idle()
+  or even in Fl::flush() if a draw() method calls Fl::add_idle().
+*/
+void Fl::run_idle() {
+  static char in_idle;
+  if (Fl::idle && !in_idle) {
+    in_idle = 1;
+    Fl::idle();
+    in_idle = 0;
+  }
+}
 
 /**
  Waits a maximum of \p time_to_wait seconds or until "something happens".
@@ -525,9 +479,30 @@ void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
  occurs (this will happen on X11 if a signal happens).
 */
 double Fl::wait(double time_to_wait) {
+
+  // platform independent part:
+
   // delete all widgets that were listed during callbacks
   do_widget_deletion();
-  return screen_driver()->wait(time_to_wait);
+
+  Fl_Timeout::do_timeouts(); // execute timer callbacks
+
+  Fl::run_checks();
+
+  Fl::run_idle();
+
+  // the idle function may turn off idle, we can then wait,
+  // or it leaves Fl::idle active and we set time_to_wait to 0
+  if (Fl::idle) {
+    time_to_wait = 0.0;
+  } else {
+    // limit time by next timer interval
+    time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
+  }
+
+  // platform dependent part:
+
+  return system_driver()->wait(time_to_wait);
 }
 
 #define FOREVER 1e20
@@ -614,7 +589,7 @@ int Fl::check() {
 */
 int Fl::ready()
 {
-  return screen_driver()->ready();
+  return system_driver()->ready();
 }
 
 int Fl::program_should_quit_ = 0;
@@ -659,7 +634,12 @@ Fl_Window* Fl::first_window() {
   \param[in] window must be shown and not NULL
 */
 Fl_Window* Fl::next_window(const Fl_Window* window) {
-  Fl_X* i = Fl_X::i(window)->next;
+  Fl_X* i = window ? Fl_X::i(window) : 0;
+  if (!i) {
+    Fl::error("Fl::next_window() failed: window (%p) not shown.", window);
+    return 0;
+  }
+  i = i->next;
   return i ? i->w : 0;
 }
 
@@ -1417,7 +1397,7 @@ int Fl::handle_(int e, Fl_Window* window)
       return 1;
     }
     // Finally try sending it to the window, the event occurred in
-    if (send_event(FL_MOUSEWHEEL, window, window)) return 1;
+    if (send_event(FL_MOUSEWHEEL, window, window->top_window())) return 1;
   default:
     break;
   }
@@ -1464,12 +1444,12 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   \see Fl::paste(Fl_Widget &receiver, int clipboard, const char* type)
 */
 void Fl::paste(Fl_Widget &receiver) {
-  Fl::system_driver()->paste(receiver, 0, Fl::clipboard_plain_text);
+  Fl::screen_driver()->paste(receiver, 0, Fl::clipboard_plain_text);
 }
 
 void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type)
 {
-  Fl::system_driver()->paste(receiver, clipboard, type);
+  Fl::screen_driver()->paste(receiver, clipboard, type);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1773,7 +1753,7 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
 #ifdef DEBUG_WATCH
     else { // found widget pointer
       printf("release_widget_pointer: (%d/%d) %8p => %8p\n",
-	     i+1, num_widget_watch, wp, *wp);
+             i+1, num_widget_watch, wp, *wp);
     }
 #endif //DEBUG_WATCH
   }
@@ -1961,31 +1941,6 @@ int Fl::dnd()
   return Fl::screen_driver()->dnd();
 }
 
-/**
- Resets marked text.
-
- In many languages, typing a character can involve multiple keystrokes. For
- example, the Ä can be composed of two dots (¨) on top of the
- character, followed by the letter A (on a Mac with U.S. keyboard, you'd
- type Alt-U, Shift-A. To inform the user that the dots may be followed by
- another character, the ¨ is underlined).
-
- Call this function if character composition needs to be aborted for some
- reason. One such example would be the text input widget losing focus.
- */
-void Fl::reset_marked_text() {
-  Fl::screen_driver()->reset_marked_text();
-}
-
-/**
-  Sets window coordinates and height of insertion point.
-
- \see Fl::compose(int& del) for a detailed description.
-*/
-void Fl::insertion_point_location(int x, int y, int height) {
-  Fl::screen_driver()->insertion_point_location(x, y, height);
-}
-
 int Fl::event_key(int k) {
   return system_driver()->event_key(k);
 }
@@ -2003,12 +1958,12 @@ const char * fl_filename_name(const char *name) {
 }
 
 void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
-  Fl::system_driver()->copy(stuff, len, clipboard, type);
+  Fl::screen_driver()->copy(stuff, len, clipboard, type);
 }
 
 int Fl::clipboard_contains(const char *type)
 {
-  return Fl::system_driver()->clipboard_contains(type);
+  return Fl::screen_driver()->clipboard_contains(type);
 }
 
 
@@ -2130,17 +2085,12 @@ float Fl::screen_scale(int n) {
   return Fl::screen_driver()->scale(n);
 }
 
-/** Set the value of the GUI scaling factor for screen number \p n.
-When this function is called before the first window is show()'n it sets the
- application's initial scaling factor value. Otherwise, it sets the scale factor value of all windows mapped to screen number \p n */
+/** Sets the value of the GUI scaling factor for screen number \p n.
+ Also sets the scale factor value of all windows mapped to screen number \p n, if any.
+ */
 void Fl::screen_scale(int n, float factor) {
   if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return;
-  if (Fl::first_window()) {
-    Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
-  } else {
-    Fl::screen_driver()->scale(n, factor);
-    Fl_Graphics_Driver::default_driver().scale(factor);
-  }
+  Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
 }
 
 /**
@@ -2177,7 +2127,3 @@ FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
 FL_EXPORT const char* fl_local_meta  = Fl::system_driver()->meta_name();
 FL_EXPORT const char* fl_local_alt   = Fl::system_driver()->alt_name();
 FL_EXPORT const char* fl_local_ctrl  = Fl::system_driver()->control_name();
-
-//
-// End of "$Id$".
-//

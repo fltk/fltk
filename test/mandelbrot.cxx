@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "mandelbrot_ui.h"
@@ -105,16 +103,16 @@ int Drawing_Area::idle() {
       double wx = xx; double wy = yi;
       if (julia) xx = jX;
       for (int i=0; ; i++) {
-	if (i >= iterations) {*p = 0; break;}
-	double t = wx*wx - wy*wy + xx;
-	wy = 2*wx*wy + yy;
-	wx = t;
-	if (wx*wx + wy*wy > 4) {
-	  wx = t = 1-double(i)/(1<<10);
-	  if (t <= 0) t = 0; else for (i=brightness; i--;) t*=wx;
-	  *p = 255-int(254*t);
-	  break;
-	}
+        if (i >= iterations) {*p = 0; break;}
+        double t = wx*wx - wy*wy + xx;
+        wy = 2*wx*wy + yy;
+        wx = t;
+        if (wx*wx + wy*wy > 4) {
+          wx = t = 1-double(i)/(1<<10);
+          if (t <= 0) t = 0; else for (i=brightness; i--;) t*=wx;
+          *p = 255-int(254*t);
+          break;
+        }
       }
       p++;
     }
@@ -157,34 +155,34 @@ int Drawing_Area::handle(int event) {
     if (button == 1) {
       erase_box();
       if (dragged && sw > 3 && sh > 3) {
-	X = X + (sx+sw/2-x()-W/2)*scale/W;
-	Y = Y + (-sy-sh/2+y()+H/2)*scale/W;
-	scale = sw*scale/W;
+        X = X + (sx+sw/2-x()-W/2)*scale/W;
+        Y = Y + (-sy-sh/2+y()+H/2)*scale/W;
+        scale = sw*scale/W;
       } else if (!dragged) {
-	scale = 2*scale;
-	if (julia) {
-	  if (scale >= 4) {
-	    scale = 4;
-	    X = Y = 0;
-	  }
-	} else {
-	  if (scale >= 2.5) {
-	    scale = 2.5;
-	    X = -.75;
-	    Y = 0;
-	  }
-	}
+        scale = 2*scale;
+        if (julia) {
+          if (scale >= 4) {
+            scale = 4;
+            X = Y = 0;
+          }
+        } else {
+          if (scale >= 2.5) {
+            scale = 2.5;
+            X = -.75;
+            Y = 0;
+          }
+        }
       } else return 1;
       ((Drawing_Window*)(user_data()))->update_label();
       new_display();
     } else if (!julia) {
       if (!jbrot.d) {
-	jbrot.make_window();
-	jbrot.d->julia = 1;
-	jbrot.d->X = 0;
-	jbrot.d->Y = 0;
-	jbrot.d->scale = 4;
-	jbrot.update_label();
+        jbrot.make_window();
+        jbrot.d->julia = 1;
+        jbrot.d->X = 0;
+        jbrot.d->Y = 0;
+        jbrot.d->scale = 4;
+        jbrot.update_label();
       }
       jbrot.d->jX = X + (ix-x()-W/2)*scale/W;
       jbrot.d->jY = Y + (H/2-iy+y())*scale/W;
@@ -212,7 +210,3 @@ void Drawing_Area::resize(int XX,int YY,int WW,int HH) {
   }
   Fl_Box::resize(XX,YY,WW,HH);
 }
-
-//
-// End of "$Id$".
-//

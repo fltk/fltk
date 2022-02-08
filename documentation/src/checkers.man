@@ -19,6 +19,6 @@ to a "king" which can move both forwards and backwards.
 .SH SEE ALSO
 fltk(3)
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHORS
 Bill Spitzak and others.

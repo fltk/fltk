@@ -1,28 +1,26 @@
 //
-// "$Id$"
-//
 // Windows screen interface for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_Graphics_Driver.H>
+#include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
@@ -127,7 +125,7 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
-        goto way_out;
+        return;
       }
     }
   }
@@ -139,8 +137,6 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].right = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
-way_out:
-  desktop_scale_factor();
 }
 
 
@@ -148,10 +144,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  X = work_area[n].left/scale_of_screen[n];
-  Y = work_area[n].top/scale_of_screen[n];
-  W = (work_area[n].right - work_area[n].left)/scale_of_screen[n];
-  H = (work_area[n].bottom - work_area[n].top)/scale_of_screen[n];
+  X = int(work_area[n].left/scale_of_screen[n]);
+  Y = int(work_area[n].top/scale_of_screen[n]);
+  W = int((work_area[n].right - work_area[n].left)/scale_of_screen[n]);
+  H = int((work_area[n].bottom - work_area[n].top)/scale_of_screen[n]);
 }
 
 
@@ -163,10 +159,10 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].left/scale_of_screen[n];
-    Y = screens[n].top/scale_of_screen[n];
-    W = (screens[n].right - screens[n].left)/scale_of_screen[n];
-    H = (screens[n].bottom - screens[n].top)/scale_of_screen[n];
+    X = int(screens[n].left/scale_of_screen[n]);
+    Y = int(screens[n].top/scale_of_screen[n]);
+    W = int((screens[n].right - screens[n].left)/scale_of_screen[n]);
+    H = int((screens[n].bottom - screens[n].top)/scale_of_screen[n]);
   } else {
     /* Fallback if something is broken... */
     X = 0;
@@ -175,6 +171,16 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     H = GetSystemMetrics(SM_CYSCREEN);
   }
 }
+
+
+void Fl_WinAPI_Screen_Driver::screen_xywh_unscaled(int &X, int &Y, int &W, int &H, int n) {
+  if (num_screens < 0) init();
+  if ((n < 0) || (n >= num_screens)) n = 0;
+  X = screens[n].left;
+  Y = screens[n].top;
+  W = screens[n].right - screens[n].left;
+  H = screens[n].bottom - screens[n].top;
+};
 
 
 void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
@@ -315,155 +321,12 @@ static void getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,ucha
 
 void Fl_WinAPI_Screen_Driver::get_system_colors()
 {
-  if (!bg2_set) getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
-  if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
-  if (!bg_set) getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
-  getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
+  if (!bg2_set) getsyscolor(COLOR_WINDOW,       fl_bg2,Fl::background2);
+  if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,    fl_fg, Fl::foreground);
+  if (!bg_set) getsyscolor(COLOR_BTNFACE,       fl_bg, Fl::background);
+  getsyscolor(COLOR_HIGHLIGHT,  0,     set_selection_color);
 }
 
-
-// ---- timers
-
-
-struct Win32Timer
-{
-  UINT_PTR handle;
-  Fl_Timeout_Handler callback;
-  void *data;
-};
-static Win32Timer* win32_timers;
-static int win32_timer_alloc;
-static int win32_timer_used;
-static HWND s_TimerWnd;
-
-
-static void realloc_timers()
-{
-  if (win32_timer_alloc == 0) {
-    win32_timer_alloc = 8;
-  }
-  win32_timer_alloc *= 2;
-  Win32Timer* new_timers = new Win32Timer[win32_timer_alloc];
-  memset(new_timers, 0, sizeof(Win32Timer) * win32_timer_used);
-  memcpy(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
-  Win32Timer* delete_me = win32_timers;
-  win32_timers = new_timers;
-  delete [] delete_me;
-}
-
-
-static void delete_timer(Win32Timer& t)
-{
-  KillTimer(s_TimerWnd, t.handle);
-  memset(&t, 0, sizeof(Win32Timer));
-}
-
-
-static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
-                                    WPARAM wParam, LPARAM lParam)
-{
-  switch (msg) {
-    case WM_TIMER:
-    {
-      unsigned int id = (unsigned) (wParam - 1);
-      if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
-        Fl_Timeout_Handler cb   = win32_timers[id].callback;
-        void*              data = win32_timers[id].data;
-        delete_timer(win32_timers[id]);
-        if (cb) {
-          (*cb)(data);
-        }
-      }
-    }
-      return 0;
-
-    default:
-      break;
-  }
-  return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-
-void Fl_WinAPI_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  repeat_timeout(time, cb, data);
-}
-
-
-void Fl_WinAPI_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  int timer_id = -1;
-  for (int i = 0;  i < win32_timer_used;  ++i) {
-    if ( !win32_timers[i].handle ) {
-      timer_id = i;
-      break;
-    }
-  }
-  if (timer_id == -1) {
-    if (win32_timer_used == win32_timer_alloc) {
-      realloc_timers();
-    }
-    timer_id = win32_timer_used++;
-  }
-  unsigned int elapsed = (unsigned int)(time * 1000);
-
-  if ( !s_TimerWnd ) {
-    const char* timer_class = "FLTimer";
-    WNDCLASSEX wc;
-    memset(&wc, 0, sizeof(wc));
-    wc.cbSize = sizeof (wc);
-    wc.style = CS_CLASSDC;
-    wc.lpfnWndProc = (WNDPROC)s_TimerProc;
-    wc.hInstance = fl_display;
-    wc.lpszClassName = timer_class;
-    /*ATOM atom =*/ RegisterClassEx(&wc);
-    // create a zero size window to handle timer events
-    s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                timer_class, "",
-                                WS_POPUP,
-                                0, 0, 0, 0,
-                                NULL, NULL, fl_display, NULL);
-    // just in case this OS won't let us create a 0x0 size window:
-    if (!s_TimerWnd)
-      s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                  timer_class, "",
-                                  WS_POPUP,
-                                  0, 0, 1, 1,
-                                  NULL, NULL, fl_display, NULL);
-    ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
-  }
-
-  win32_timers[timer_id].callback = cb;
-  win32_timers[timer_id].data     = data;
-
-  win32_timers[timer_id].handle =
-  SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
-}
-
-
-int Fl_WinAPI_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0;  i < win32_timer_used;  ++i) {
-    Win32Timer& t = win32_timers[i];
-    if (t.handle  &&  t.callback == cb  &&  t.data == data) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-
-void Fl_WinAPI_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  int i;
-  for (i = 0;  i < win32_timer_used;  ++i) {
-    Win32Timer& t = win32_timers[i];
-    if (t.handle  &&  t.callback == cb  &&
-        (t.data == data  ||  data == NULL)) {
-      delete_timer(t);
-    }
-  }
-}
 
 int Fl_WinAPI_Screen_Driver::compose(int &del) {
   unsigned char ascii = (unsigned char)Fl::e_text[0];
@@ -484,47 +347,40 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
 
 Fl_RGB_Image *                                                  // O - image or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(
-                                            int   X,		// I - Left position
-                                            int   Y,		// I - Top position
-                                            int   w,		// I - Width of area to read
-                                            int   h,		// I - Height of area to read
+                                            int   X,            // I - Left position
+                                            int   Y,            // I - Top position
+                                            int   w,            // I - Width of area to read
+                                            int   h,            // I - Height of area to read
                                             Fl_Window *win,     // I - window to capture from or NULL to capture from current offscreen
                                             bool may_capture_subwins, bool *did_capture_subwins)
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
   int ws, hs;
-  if (int(s) == s) { ws = w * s; hs = h * s;}
+  if (int(s) == s) { ws = w * int(s); hs = h * int(s);}
   else {
-    ws = (w+1)*s; // matches what Fl_Graphics_Driver::cache_size() does
-    hs = (h+1)*s;
+    ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Fl_Scalable_Graphics_Driver::floor(X, s),
+    hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Fl_Scalable_Graphics_Driver::floor(Y, s);
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs, win);
+  return read_win_rectangle_unscaled(Fl_Scalable_Graphics_Driver::floor(X, s), Fl_Scalable_Graphics_Driver::floor(Y, s), ws, hs, win);
 }
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
-  int	d = 3;			// Depth of image
-  int alpha = 0; uchar *p = NULL;
-  // Allocate the image data array as needed...  
-  const uchar *oldp = p;
-  if (!p) p = new uchar[w * h * d];
-  
-  // Initialize the default colors/alpha in the whole image...
-  memset(p, alpha, w * h * d);
-  
+  // Depth of image is always 3 here
+
   // Grab all of the pixels in the image...
-  
+
   // Assure that we are not trying to read non-existing data. If it is so, the
   // function should still work, but the out-of-bounds part of the image is
   // untouched (initialized with the alpha value or 0 (black), resp.).
-  
+
   int ww = w; // We need the original width for output data line size
-  
+
   int shift_x = 0; // X target shift if X modified
   int shift_y = 0; // Y target shift if X modified
-  
+
   if (X < 0) {
     shift_x = -X;
     w += X;
@@ -535,66 +391,69 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
     h += Y;
     Y = 0;
   }
-  
-  if (h < 1 || w < 1) return 0/*p*/;		// nothing to copy
-  
-  int line_size = ((3*w+3)/4) * 4;	// each line is aligned on a DWORD (4 bytes)
-  uchar *dib = new uchar[line_size*h];	// create temporary buffer to read DIB
-  
+
+  if (h < 1 || w < 1) return 0;            // nothing to copy
+
+  // Allocate and initialize the image data array
+  size_t arraySize = ((size_t)w * h) * 3;
+  uchar *p = new uchar[arraySize];
+  memset(p, 0, arraySize);
+
+  int line_size = ((3*w+3)/4) * 4;      // each line is aligned on a DWORD (4 bytes)
+  uchar *dib = new uchar[line_size*h];  // create temporary buffer to read DIB
+
   // fill in bitmap info for GetDIBits
-  
+
   BITMAPINFO   bi;
   bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bi.bmiHeader.biWidth = w;
-  bi.bmiHeader.biHeight = -h;		// negative => top-down DIB
+  bi.bmiHeader.biHeight = -h;           // negative => top-down DIB
   bi.bmiHeader.biPlanes = 1;
-  bi.bmiHeader.biBitCount = 24;		// 24 bits RGB
+  bi.bmiHeader.biBitCount = 24;         // 24 bits RGB
   bi.bmiHeader.biCompression = BI_RGB;
   bi.bmiHeader.biSizeImage = 0;
   bi.bmiHeader.biXPelsPerMeter = 0;
   bi.bmiHeader.biYPelsPerMeter = 0;
   bi.bmiHeader.biClrUsed = 0;
   bi.bmiHeader.biClrImportant = 0;
-  
+
   // copy bitmap from original DC (Window, Fl_Offscreen, ...)
   if (win && Fl_Window::current() != win) win->make_current();
   HDC gc = (HDC)fl_graphics_driver->gc();
   HDC hdc = CreateCompatibleDC(gc);
   HBITMAP hbm = CreateCompatibleBitmap(gc,w,h);
-  
-  int save_dc = SaveDC(hdc);			// save context for cleanup
-  SelectObject(hdc,hbm);			// select bitmap
-  BitBlt(hdc,0,0,w,h,gc,X,Y,SRCCOPY);	// copy image section to DDB
-  
+
+  int save_dc = SaveDC(hdc);                    // save context for cleanup
+  SelectObject(hdc,hbm);                        // select bitmap
+  BitBlt(hdc,0,0,w,h,gc,X,Y,SRCCOPY);   // copy image section to DDB
+
   // copy RGB image data to the allocated DIB
-  
+
   GetDIBits(hdc, hbm, 0, h, dib, (BITMAPINFO *)&bi, DIB_RGB_COLORS);
-  
+
   // finally copy the image data to the user buffer
-  
+
   for (int j = 0; j<h; j++) {
-    const uchar *src = dib + j * line_size;			// source line
-    uchar *tg = p + (j + shift_y) * d * ww + shift_x * d;	// target line
+    const uchar *src = dib + j * line_size;                     // source line
+    uchar *tg = p + (j + shift_y) * 3 * ww + shift_x * 3;       // target line
     for (int i = 0; i<w; i++) {
       uchar b = *src++;
       uchar g = *src++;
-      *tg++ = *src++;	// R
-      *tg++ = g;	// G
-      *tg++ = b;	// B
-      if (alpha)
-        *tg++ = alpha;	// alpha
+      *tg++ = *src++;   // R
+      *tg++ = g;        // G
+      *tg++ = b;        // B
     }
   }
-  
+
   // free used GDI and other structures
-  
-  RestoreDC(hdc,save_dc);	// reset DC
+
+  RestoreDC(hdc,save_dc);       // reset DC
   DeleteDC(hdc);
   DeleteObject(hbm);
-  delete[] dib;		// delete DIB temporary buffer
-  
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
-  if (!oldp) rgb->alloc_array = 1;
+  delete[] dib;         // delete DIB temporary buffer
+
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, 3);
+  rgb->alloc_array = 1;
   return rgb;
 }
 
@@ -622,7 +481,3 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
   }
   return screen;
 }
-
-//
-// End of "$Id$".
-//

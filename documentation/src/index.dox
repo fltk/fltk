@@ -10,10 +10,10 @@
   <TD><CENTER>
     <B>FLTK 1.4.0 Programming Manual</B>
 
-    Revision 11 by F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+    By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
-    Copyright 1998-2020 by Bill Spitzak and others.
+    Copyright 1998-2021 by Bill Spitzak and others.
   </CENTER></TD>
 </TR>
 </TABLE>
@@ -38,30 +38,39 @@
     \subpage basics
 
     \subpage common
-	- \ref common_colors
-	- \ref common_boxtypes
-	- \ref common_labels
-	- \ref drawing_images
+        - \ref common_colors
+        - \ref common_boxtypes
+        - \ref common_labels
+        - \ref drawing_images
+
+    \subpage coordinates
+
+    \subpage resize
 
     \subpage editor
 
     \subpage drawing
+        - \ref drawing_WhenCanYouDraw
+        - \ref drawing_DrawingUnit
+        - \ref drawing_DrawingFunctions
+        - \ref drawing_images
+        - \ref drawing_offscreen
 
     \subpage events
-	- \ref events_event_xxx
-	- \ref events_propagation
+        - \ref events_event_xxx
+        - \ref events_propagation
+
+  </TD>
+  <TD ALIGN="LEFT" VALIGN="TOP">
 
     \subpage subclassing
 
     \subpage opengl
 
     \subpage fluid
-	- \ref fluid_widget_attributes
-	- \ref fluid_selecting_moving
-	- \ref fluid_images
-
-  </TD>
-  <TD ALIGN="LEFT" VALIGN="TOP">
+        - \ref fluid_widget_attributes
+        - \ref fluid_selecting_moving
+        - \ref fluid_images
 
     \subpage advanced
 
@@ -70,25 +79,25 @@
     &nbsp;
 
     <b>Appendices:</b>
-	- \subpage enumerations
+        - \subpage enumerations
 
-	-  \subpage glut
-		- \ref glut_Fl_Glut_Window
-		<!-- - Fl_Glut_Window (not yet commented ?) -->
+        -  \subpage glut
+                - \ref glut_Fl_Glut_Window
+                <!-- - Fl_Glut_Window (not yet commented ?) -->
 
-	- \subpage forms
+        - \subpage forms
 
-	- \subpage osissues
+        - \subpage osissues
 
-	- \subpage migration_1_4
+        - \subpage migration_1_4
 
-	- \subpage development
+        - \subpage development
 
-	- \subpage license
+        - \subpage license
 
-	- \subpage examples
+        - \subpage examples
 
-	- \subpage FAQ
+        - \subpage FAQ
 
   </TD>
 </TR>

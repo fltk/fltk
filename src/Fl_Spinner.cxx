@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -32,7 +30,7 @@
 */
 
 void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
-  double v;				// New value
+  double v;                             // New value
 
   if (w == &(sb->input_)) {
     // Something changed in the input field...
@@ -50,9 +48,9 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
     v = sb->value_ + sb->step_;
     if (v > sb->maximum_) {
       if (sb->wrap_)
-	v = sb->minimum_;
+        v = sb->minimum_;
       else
-	v = sb->maximum_;
+        v = sb->maximum_;
     }
     sb->value_ = v;
     sb->update();
@@ -61,9 +59,9 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
     v = sb->value_ - sb->step_;
     if (v < sb->minimum_) {
       if (sb->wrap_)
-	v = sb->maximum_;
+        v = sb->maximum_;
       else
-	v = sb->minimum_;
+        v = sb->minimum_;
     }
     sb->value_ = v;
     sb->update();
@@ -138,11 +136,11 @@ int Fl_Spinner::handle(int event) {
     case FL_KEYDOWN:
     case FL_SHORTCUT:
       if (Fl::event_key() == FL_Up) {
-	up_button_.do_callback();
-	return 1;
+        up_button_.do_callback();
+        return 1;
       } else if (Fl::event_key() == FL_Down) {
-	down_button_.do_callback();
-	return 1;
+        down_button_.do_callback();
+        return 1;
       }
       return 0;
 
@@ -212,8 +210,3 @@ int Fl_Spinner::Fl_Spinner_Input::handle(int event) {
   }
   return Fl_Input::handle(event);
 }
-
-
-//
-// End of "$Id$".
-//

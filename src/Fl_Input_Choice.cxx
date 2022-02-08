@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // An input/chooser widget.
 //            ______________  ____
 //           |              || __ |
@@ -14,11 +12,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -34,8 +32,8 @@
 
   \brief A combination of the input widget and a menu button.
 
-  \image html input_choice.jpg
-  \image latex input_choice.jpg "Fl_Input_Choice widget" width=6cm
+  \image html input_choice.png
+  \image latex input_choice.png "Fl_Input_Choice widget" width=12cm
 
   The user can either type into the input area, or use the
   menu button chooser on the right to choose an item which loads
@@ -56,19 +54,18 @@
       - 1: the user picked a different item in the choice menu
       - 0: the user typed or pasted directly into the input field
 
-  Example use:
+  \par Example Use of Fl_Input_Choice
   \code
   #include <stdio.h>
   #include <FL/Fl.H>
   #include <FL/Fl_Double_Window.H>
   #include <FL/Fl_Input_Choice.H>
+  // Fl_Input_Choice callback()
   void choice_cb(Fl_Widget *w, void *userdata) {
-
     // Show info about the picked item
     Fl_Input_Choice *choice = (Fl_Input_Choice*)w;
     printf("*** Choice Callback:\n");
     printf("    widget's text value='%s'\n", choice->value());   // normally all you need
-
     // Access the menu via menubutton()..
     const Fl_Menu_Item *item = choice->menubutton()->mvalue();
     printf("    item label()='%s'\n", item ? item->label() : "(No item)");
@@ -92,6 +89,39 @@
     return Fl::run();
   }
   \endcode
+
+ \par Subclassing Example
+ One can subclass Fl_Input_Choice to override the virtual methods inp_x/y/w/h()
+ and menu_x/y/w/h() to take control of the internal Fl_Input and Fl_Menu_Button widget
+ positioning. In this example, input and menubutton's positions are swapped:
+ \code
+  #include <FL/Fl.H>
+  #include <FL/Fl_Window.H>
+  #include <FL/Fl_Input_Choice.H>
+
+  class MyInputChoice : public Fl_Input_Choice {
+  protected:
+    virtual int inp_x()  const { return x() + Fl::box_dx(box()) + menu_w(); }  // override to reposition
+    virtual int menu_x() const { return x() + Fl::box_dx(box()); }             // override to reposition
+  public:
+    MyInputChoice(int X,int Y,int W,int H,const char*L=0) : Fl_Input_Choice(X,Y,W,H,L) {
+      resize(X,Y,W,H);  // necessary for ctor to trigger our overrides
+    }
+  };
+
+  int main(int argc, char **argv) {
+    Fl_Window *win = new Fl_Window(400,300);
+    MyInputChoice *mychoice = new MyInputChoice(150,40,150,25,"Right Align Input");
+    mychoice->add("Aaa");
+    mychoice->add("Bbb");
+    mychoice->add("Ccc");
+    win->end();
+    win->resizable(win);
+    win->show();
+    return Fl::run();
+  }
+ \endcode
+
 */
 
 /** Constructor for private menu button. */
@@ -105,13 +135,63 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
 /** Draws the private menu button. */
 
 void Fl_Input_Choice::InputMenuButton::draw() {
-  draw_box(FL_UP_BOX, color());
+  draw_box();
   fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
   int xc = x()+w()/2, yc=y()+h()/2;
   fl_polygon(xc-5,yc-3,xc+5,yc-3,xc,yc+3);
   if (Fl::focus() == this) draw_focus();
 }
 
+// Make pulldown menu appear under entire width of widget
+const Fl_Menu_Item* Fl_Input_Choice::InputMenuButton::popup() {
+  menu_end();
+  redraw();
+  Fl_Widget_Tracker mb(this);
+  // Make menu appear under entire width of Fl_Input_Choice parent group
+  const Fl_Menu_Item *m = menu()->pulldown(parent()->x(), y(), parent()->w(), h(), 0, this);
+  picked(m);
+  if (mb.exists()) redraw();
+  return m;
+}
+
+// Invokes our popup() method to ensure pulldown menu appears full width under widget
+//    (This is the same handle() code in Fl_Menu_Button and Fl_Choice)
+//
+int Fl_Input_Choice::InputMenuButton::handle(int e) {
+  if (!menu() || !menu()->text) return 0;
+  switch (e) {
+  case FL_ENTER: /* FALLTHROUGH */
+  case FL_LEAVE:
+    return (box() && !type()) ? 1 : 0;
+  case FL_PUSH:
+    if (!box()) {
+      if (Fl::event_button() != 3) return 0;
+    } else if (type()) {
+      if (!(type() & (1 << (Fl::event_button()-1)))) return 0;
+    }
+    if (Fl::visible_focus()) Fl::focus(this);
+    popup();
+    return 1;
+  case FL_KEYBOARD:
+    if (!box()) return 0;
+    if (Fl::event_key() == ' ' &&
+        !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
+      popup();
+      return 1;
+    } else return 0;
+  case FL_SHORTCUT:
+    if (Fl_Widget::test_shortcut()) {popup(); return 1;}
+    return test_shortcut() != 0;
+  case FL_FOCUS: /* FALLTHROUGH */
+  case FL_UNFOCUS:
+    if (box() && Fl::visible_focus()) {
+      redraw();
+      return 1;
+    }
+  default:
+    return 0;
+  }
+}
 
 /** Callback for the Fl_Input_Choice menu. */
 
@@ -119,7 +199,7 @@ void Fl_Input_Choice::menu_cb(Fl_Widget*, void *data) {
   Fl_Input_Choice *o=(Fl_Input_Choice *)data;
   Fl_Widget_Tracker wp(o);
   const Fl_Menu_Item *item = o->menubutton()->mvalue();
-  if (item && item->flags & (FL_SUBMENU|FL_SUBMENU_POINTER)) return;	// ignore submenus
+  if (item && item->flags & (FL_SUBMENU|FL_SUBMENU_POINTER)) return;    // ignore submenus
   if (!strcmp(o->inp_->value(), o->menu_->text()))
   {
     o->Fl_Widget::clear_changed();
@@ -174,16 +254,13 @@ void Fl_Input_Choice::inp_cb(Fl_Widget*, void *data) {
 Fl_Input_Choice::Fl_Input_Choice (int X, int Y, int W, int H, const char *L)
 : Fl_Group(X,Y,W,H,L) {
   Fl_Group::box(FL_DOWN_BOX);
-  align(FL_ALIGN_LEFT);					// default like Fl_Input
-  inp_ = new Fl_Input(inp_x(), inp_y(),
-                      inp_w(), inp_h());
+  align(FL_ALIGN_LEFT);                                 // default like Fl_Input
+  inp_ = new Fl_Input(inp_x(), inp_y(), inp_w(), inp_h());
   inp_->callback(inp_cb, (void*)this);
-  inp_->box(FL_FLAT_BOX);				// cosmetic
+  inp_->box(FL_FLAT_BOX);                               // cosmetic
   inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
-  menu_ = new InputMenuButton(menu_x(), menu_y(),
-                              menu_w(), menu_h());
+  menu_ = new InputMenuButton(menu_x(), menu_y(), menu_w(), menu_h());
   menu_->callback(menu_cb, (void*)this);
-  menu_->box(FL_FLAT_BOX);				// cosmetic
   end();
 }
 
@@ -239,7 +316,7 @@ void Fl_Input_Choice::clear_changed() {
     choice->update_menubutton();     // cause menubutton to reflect this value too
                                      // (returns 1 if match was found, 0 if not)
     // Verify menubutton()'s value.
-    printf("menu button choice index=%d, value=%s\n", 
+    printf("menu button choice index=%d, value=%s\n",
                                 choice->menubutton()->value(),    // would be -1 if update not done
                                 choice->menubutton()->text());    // would be NULL if update not done
     \endcode
@@ -258,9 +335,5 @@ int Fl_Input_Choice::update_menubutton() {
       return 1;
     }
   }
-  return 0;		// not found
+  return 0;             // not found
 }
-
-//
-// End of "$Id$".
-//

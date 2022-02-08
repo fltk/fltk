@@ -16,13 +16,15 @@ ifeq '$(OS)' "Windows_NT"
 EXEEXT = .exe
 endif
 
-FLTKCONFIG   = ../fltk-config
-CXX          = $(shell $(FLTKCONFIG) --cxx)
-CXXFLAGS     = $(shell $(FLTKCONFIG) --cxxflags) -Wall -I.
-LINKFLTK     = $(shell $(FLTKCONFIG) --ldstaticflags)
-LINKFLTK_GL  = $(shell $(FLTKCONFIG) --use-gl --ldstaticflags)
-LINKFLTK_IMG = $(shell $(FLTKCONFIG) --use-images --ldstaticflags)
-LINKFLTK_ALL = $(shell $(FLTKCONFIG) --use-images --use-gl --ldstaticflags)
+FLTKCONFIG     = ../fltk-config
+CXX            = $(shell $(FLTKCONFIG) --cxx)
+CXXFLAGS       = $(shell $(FLTKCONFIG) --cxxflags) -Wall -I.
+LINKFLTK       = $(shell $(FLTKCONFIG) --ldstaticflags)
+LINKFLTK_GL    = $(shell $(FLTKCONFIG) --use-gl --ldstaticflags)
+LINKFLTK_IMG   = $(shell $(FLTKCONFIG) --use-images --ldstaticflags)
+LINKFLTK_ALL   = $(shell $(FLTKCONFIG) --use-images --use-gl --ldstaticflags)
+CXXFLAGS_CAIRO = $(shell $(FLTKCONFIG) --use-cairo --cxxflags)
+LINKFLTK_CAIRO = $(shell $(FLTKCONFIG) --use-cairo --ldstaticflags)
 .SUFFIXES: .cxx .h .fl .o $(EXEEXT)
 
 # HOW TO COMPILE

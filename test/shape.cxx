@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tiny OpenGL demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -49,11 +47,11 @@ void shape_window::draw() {
   }
 // draw an amazing graphic:
   glClear(GL_COLOR_BUFFER_BIT);
-  glColor3f(.5,.6,.7);
+  glColor3f(.5f, .6f, .7f);
   glBegin(GL_POLYGON);
   for (int j=0; j<sides; j++) {
     double ang = j*2*M_PI/sides;
-    glVertex3f(cos(ang),sin(ang),0);
+    glVertex3f((GLfloat)cos(ang), (GLfloat)sin(ang), 0);
   }
   glEnd();
 }
@@ -62,7 +60,7 @@ void shape_window::draw() {
 
 #include <FL/Fl_Box.H>
 class shape_window : public Fl_Box {
-public:	
+public:
   int sides;
   shape_window(int x,int y,int w,int h,const char *l=0)
     :Fl_Box(FL_DOWN_BOX,x,y,w,h,l){
@@ -100,10 +98,6 @@ int main(int argc, char **argv) {
 
   window.end();
   window.show(argc,argv);
-    
+
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

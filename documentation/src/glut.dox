@@ -1,6 +1,6 @@
 /**
 
- \page	glut	GLUT Compatibility
+ \page  glut    GLUT Compatibility
 
 This appendix describes the GLUT compatibility header file supplied with
 FLTK. FLTK's GLUT compatibility is based on the original GLUT 3.7 and
@@ -42,7 +42,7 @@ to compile:
 \li \p glutLayerGet(GLUT_LAYER_IN_USE)
 \li \p glutPushWindow()
 \li \p glutSetColor(), \p glutGetColor(), \p glutCopyColormap()
-\li \p glutVideoResize() missing. 
+\li \p glutVideoResize() missing.
 \li \p glutWarpPointer()
 \li \p glutWindowStatusFunc()
 \li Spaceball, buttonbox, dials, and tablet functions
@@ -94,17 +94,17 @@ Fl_Window parent window must already be shown.
 
 \li Don't call \p glutInit().
 \li Create your Fl_Window, and any FLTK widgets.  Leave a
-    blank area in the window for your GLUT window. 
+    blank area in the window for your GLUT window.
 \li \p show() the Fl_Window.  Perhaps call \p show(argc,argv).
 \li Call <tt>window->begin()</tt> so that the GLUT window will  be
-    automatically added to it. 
+    automatically added to it.
 \li Use \p glutInitWindowSize() and \p glutInitWindowPosition()
-    to set the location in the  parent window to put the GLUT window. 
+    to set the location in the  parent window to put the GLUT window.
 \li Put your GLUT code next.  It probably does not need many changes.
     Call <tt>window->end()</tt> immediately after the
     \p glutCreateWindow()!
 \li You can call either \p glutMainLoop(), Fl::run(),
-    or loop calling Fl::wait() to run  the program. 
+    or loop calling Fl::wait() to run  the program.
 
 
 \section glut_Fl_Glut_Window class Fl_Glut_Window
@@ -139,7 +139,7 @@ or make the window current.
 
 <tt>window->make_current()</tt> is the same as \p glutSetWindow(number).
 If the window has not had \p show() called on it yet, some functions
-that assume an OpenGL context will not work. 
+that assume an OpenGL context will not work.
 If you do \p show() the window, call \p make_current()
 again to set the context.
 
@@ -152,57 +152,57 @@ be altered directly:
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" ALT="Fl_Glut_Window public members.">
 <TR>
-	<TH>member</TH>
-	<TH>description</TH>
+        <TH>member</TH>
+        <TH>description</TH>
 </TR>
 <TR>
-	<TD>display</TD>
-	<TD>A pointer to the function to call to draw the normal planes.</TD>
+        <TD>display</TD>
+        <TD>A pointer to the function to call to draw the normal planes.</TD>
 </TR>
 <TR>
-	<TD>entry</TD>
-	<TD>A pointer to the function to call when the mouse moves into
-	or out of the window.</TD>
+        <TD>entry</TD>
+        <TD>A pointer to the function to call when the mouse moves into
+        or out of the window.</TD>
 </TR>
 <TR>
-	<TD>keyboard</TD>
-	<TD>A pointer to the function to call when a regular key is pressed.</TD>
+        <TD>keyboard</TD>
+        <TD>A pointer to the function to call when a regular key is pressed.</TD>
 </TR>
 <TR>
-	<TD>menu[3]</TD>
-	<TD>The menu to post when one of the mouse buttons is pressed.</TD>
+        <TD>menu[3]</TD>
+        <TD>The menu to post when one of the mouse buttons is pressed.</TD>
 </TR>
 <TR>
-	<TD>mouse</TD>
-	<TD>A pointer to the function to call when a button is pressed or
-	released.</TD>
+        <TD>mouse</TD>
+        <TD>A pointer to the function to call when a button is pressed or
+        released.</TD>
 </TR>
 <TR>
-	<TD>motion</TD>
-	<TD>A pointer to the function to call when the mouse is moved with
-	a button down.</TD>
+        <TD>motion</TD>
+        <TD>A pointer to the function to call when the mouse is moved with
+        a button down.</TD>
 </TR>
 <TR>
-	<TD>overlaydisplay</TD>
-	<TD>A pointer to the function to call to draw the overlay planes.</TD>
+        <TD>overlaydisplay</TD>
+        <TD>A pointer to the function to call to draw the overlay planes.</TD>
 </TR>
 <TR>
-	<TD>passivemotion</TD>
-	<TD>A pointer to the function to call when the mouse is moved with
-	no buttons down.</TD>
+        <TD>passivemotion</TD>
+        <TD>A pointer to the function to call when the mouse is moved with
+        no buttons down.</TD>
 </TR>
 <TR>
-	<TD>reshape</TD>
-	<TD>A pointer to the function to call when the window is resized.</TD>
+        <TD>reshape</TD>
+        <TD>A pointer to the function to call when the window is resized.</TD>
 </TR>
 <TR>
-	<TD>special</TD>
-	<TD>A pointer to the function to call when a special key is pressed.</TD>
+        <TD>special</TD>
+        <TD>A pointer to the function to call when a special key is pressed.</TD>
 </TR>
 <TR>
-	<TD>visibility</TD>
-	<TD>A pointer to the function to call when the window is iconified
-	or restored (made visible.)</TD>
+        <TD>visibility</TD>
+        <TD>A pointer to the function to call when the window is iconified
+        or restored (made visible.)</TD>
 </TR>
 </TABLE></CENTER>
 

@@ -1,33 +1,37 @@
 //
-// "$Id$"
-//
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef CUBEVIEW_H
 #define CUBEVIEW_H 1
+
 #include <config.h>
+
+// Note to editor: the following code can and should be copied
+// to the fluid tutorial in 'documentation/src/fluid.dox'
+// *without* '#if HAVE_GL' preprocessor statements, leaving
+// only those parts where the condition is true.
+
+// [\code in documentation/src/fluid.dox]
 #include <FL/Fl.H>
 #if HAVE_GL
-#  include <FL/Fl_Gl_Window.H>
-#  include <FL/gl.h>
+#include <FL/Fl_Gl_Window.H>
+#include <FL/gl.h>
 #else
-#  include <FL/Fl_Box.H>
+#include <FL/Fl_Box.H>
 #endif /* HAVE_GL */
-
-#include <stdlib.h>
 
 #if HAVE_GL
 class CubeView : public Fl_Gl_Window {
@@ -36,80 +40,77 @@ class CubeView : public Fl_Box {
 #endif /* HAVE_GL */
 
 public:
-    // this value determines the scaling factor used to draw the cube.
-    double size;
+  CubeView(int x, int y, int w, int h, const char *l = 0);
 
-    CubeView(int x,int y,int w,int h,const char *l=0);
+  // This value determines the scaling factor used to draw the cube.
+  double size;
 
-    /* Set the rotation about the vertical (y ) axis.
-     *
-     * This function is called by the horizontal roller in CubeViewUI and the
-     * initialize button in CubeViewUI.
-     */
-    void v_angle(double angle){vAng=angle;}
-    
-    // Return the rotation about the vertical (y ) axis.
-    double v_angle() const {return vAng;}
+  /* Set the rotation about the vertical (y) axis.
+   *
+   * This function is called by the horizontal roller in
+   * CubeViewUI and the initialize button in CubeViewUI.
+   */
+  void v_angle(double angle) { vAng = angle; }
 
-    /* Set the rotation about the horizontal (x ) axis.
-     *
-     * This function is called by the vertical roller in CubeViewUI and the
-     * initialize button in CubeViewUI.
-     */
+  // Return the rotation about the vertical (y) axis.
+  double v_angle() const { return vAng; }
 
-    void h_angle(double angle){hAng=angle;}
+  /* Set the rotation about the horizontal (x) axis.
+   *
+   * This function is called by the vertical roller in
+   * CubeViewUI and the initialize button in CubeViewUI.
+   */
 
-    // the rotation about the horizontal (x ) axis.
-    double h_angle() const {return hAng;}
+  void h_angle(double angle) { hAng = angle; }
 
-    /* Sets the x shift of the cube view camera.
-     *
-     * This function is called by the slider in CubeViewUI and the
-     * initialize button in CubeViewUI.
-     */
-    void panx(double x){xshift=x;}
-    /* Sets the y shift of the cube view camera.
-     *
-     * This function is called by the slider in CubeViewUI and the
-     * initialize button in CubeViewUI.
-     */
-    void pany(double y){yshift=y;}
+  // The rotation about the horizontal (x) axis.
+  double h_angle() const { return hAng; }
+
+  /* Sets the x shift of the cube view camera.
+   *
+   * This function is called by the slider in CubeViewUI
+   * and the initialize button in CubeViewUI.
+   */
+  void panx(double x) { xshift = x; }
+
+  /* Sets the y shift of the cube view camera.
+   *
+   * This function is called by the slider in CubeViewUI
+   * and the initialize button in CubeViewUI.
+   */
+  void pany(double y) { yshift = y; }
 
 #if HAVE_GL
-    /*The widget class draw() override.
-     *
-     *The draw() function initialize Gl for another round o f drawing
-     * then calls specialized functions for drawing each of the
-     * entities displayed in the cube view.
-     *
-     */
-    void draw();    
+  /* The widget class draw() override.
+   *
+   * The draw() function initializes Gl for another round of
+   * drawing, then calls specialized functions for drawing each
+   * of the entities displayed in the cube view.
+   */
+  void draw();
 #endif /* HAVE_GL */
+
 private:
-
-    /*  Draw the cube boundaries
-     *
-     *Draw the faces of the cube using the boxv[] vertices, using
-     * GL_LINE_LOOP for the faces. The color is \#defined by CUBECOLOR.
-     */
+  /*  Draw the cube boundaries.
+   *
+   * Draw the faces of the cube using the boxv[] vertices,
+   * using GL_LINE_LOOP for the faces.
+   */
 #if HAVE_GL
-    void drawCube();
+  void drawCube();
 #else
-    void drawCube() { }
+  void drawCube() {}
 #endif /* HAVE_GL */
-    
-    double vAng,hAng;
-    double xshift,yshift;
 
+  double vAng, hAng;
+  double xshift, yshift;
 
-    float boxv0[3];float boxv1[3];
-    float boxv2[3];float boxv3[3];
-    float boxv4[3];float boxv5[3];
-    float boxv6[3];float boxv7[3];
-
+  float boxv0[3]; float boxv1[3];
+  float boxv2[3]; float boxv3[3];
+  float boxv4[3]; float boxv5[3];
+  float boxv6[3]; float boxv7[3];
 };
-#endif
 
-//
-// End of "$Id$".
-//
+// [\endcode in documentation/src/fluid.dox]
+
+#endif // CUBEVIEW_H

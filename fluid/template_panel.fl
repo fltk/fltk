@@ -3,8 +3,6 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // FLUID template support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -15,11 +13,29 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
+}
+
+decl {\#include "fluid.h"} {private local
+}
+
+decl {\#include <FL/Fl_Shared_Image.H>} {private local
+}
+
+decl {\#include <FL/fl_ask.H>} {private local
+}
+
+decl {\#include <FL/fl_string_functions.h>} {private local
+}
+
+decl {\#include <FL/filename.H>} {selected private local
+}
+
+decl {\#include "../src/flstring.h"} {private local
 }
 
 decl {\#include <stdio.h>} {private local
@@ -28,22 +44,7 @@ decl {\#include <stdio.h>} {private local
 decl {\#include <stdlib.h>} {private local
 }
 
-decl {\#include "../src/flstring.h"} {private local
-}
-
 decl {\#include <errno.h>} {private local
-}
-
-decl {\#include <FL/filename.H>} {private local
-}
-
-decl {\#include <FL/fl_ask.H>} {private local
-}
-
-decl {\#include <FL/Fl_Shared_Image.H>} {private local
-}
-
-decl {\#include <FL/Fl_Preferences.H>} {private local
 }
 
 declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN32 && !__CYGWIN__}
@@ -54,9 +55,6 @@ declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN
   }
   decl {\#include <unistd.h>} {private local
   }
-}
-
-decl {extern Fl_Preferences fluid_prefs;} {private local
 }
 
 Function {make_template_panel()} {open
@@ -70,8 +68,8 @@ template_preview->image(0);
 template_browser->deselect();
 template_name->value("");
 template_instance->value("");
-template_panel->hide();} open
-    xywh {398 200 460 355} type Double hide resizable modal
+template_panel->hide();}
+    xywh {455 202 460 355} type Double hide resizable modal
   } {
     Fl_Browser template_browser {
       label {Available Templates:}
@@ -206,7 +204,7 @@ template_browser->remove(item);
 template_browser->do_callback();} {}
 }
 
-Function {template_load()} {open return_type void
+Function {template_load()} {return_type void
 } {
   code {int i;
 char name[1024], filename[1400], path[1024], *ptr;
@@ -226,13 +224,13 @@ if (!sample_templates_generated) {
   if (f) {
     fputs(
 "\# data file for the Fltk User Interface Designer (fluid)\\nversion 1.0400\\nheader_name {.h}\\n"
-"code_name {.cxx}\\ncomment {//\\n// \\"$Id$\\"\\n//\\n// @INSTANCE@ for the Fast Light Tool Kit (FLT"
+"code_name {.cxx}\\ncomment {//\\n// @INSTANCE@ for the Fast Light Tool Kit (FLT"
 "K).\\n//\\n// Copyright 1998-2020 by Bill Spitzak and others.\\n//\\n// This library is free sof"
 "tware. Distribution and use rights are outlined in\\n// the file \\"COPYING\\" which should have "
 "been included with this file.  If this\\n// file is missing or damaged, see the license at:\\n"
-"//\\n//     https://www.fltk.org/COPYING.php\\n//\\n// Please report all bugs and problems on th"
-"e following page:\\n//\\n//     https://www.fltk.org/str.php\\n//\\n} {selected in_source in_head"
-"er\\n}\\n\\ncomment {\\n//\\n// End of \\"$Id$\\".\\n//} {in_source in_header\\n}\\n", f);
+"//\\n//     https://www.fltk.org/COPYING.php\\n//\\n// Please see the following page on how to report "
+"bugs and issues:\\n//\\n//     https://www.fltk.org/bugs.php\\n//\\n} {selected in_source in_head"
+"er\\n}\\n", f);
     fclose(f);
   }
   sample_templates_generated = 1;
@@ -255,18 +253,11 @@ for (i = 0; i < num_files; i ++) {
 
     // Add the template to the browser...
     snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
-    template_browser->add(name, strdup(filename));
+    template_browser->add(name, fl_strdup(filename));
   }
 
   free(files[i]);
 }
 
-if (num_files > 0) free(files);} {selected
-  }
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
+if (num_files > 0) free(files);} {}
 }

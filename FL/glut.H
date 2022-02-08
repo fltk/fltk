@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Emulation of GLUT using fltk.
@@ -37,7 +35,7 @@
 #  include "Fl.H"
 #  include "Fl_Gl_Window.H"
 
-/** 
+/**
   GLUT is emulated using this window class and these static variables
   (plus several more static variables hidden in glut_compatibility.cxx):
 */
@@ -67,8 +65,8 @@ public: // so the inline functions work
   ~Fl_Glut_Window();
 };
 
-extern FL_EXPORT Fl_Glut_Window *glut_window;	// the current window
-extern FL_EXPORT int glut_menu;			// the current menu
+extern FL_EXPORT Fl_Glut_Window *glut_window;   // the current window
+extern FL_EXPORT int glut_menu;                 // the current menu
 
 // function pointers that are not per-window:
 extern FL_EXPORT void (*glut_idle_function)();
@@ -83,18 +81,18 @@ FL_EXPORT void glutInit(int *argcp, char **argv); // creates first window
 
 FL_EXPORT void glutInitDisplayMode(unsigned int mode);
 // the FL_ symbols have the same value as the GLUT ones:
-#  define GLUT_RGB	FL_RGB
-#  define GLUT_RGBA	FL_RGB
-#  define GLUT_INDEX	FL_INDEX
-#  define GLUT_SINGLE	FL_SINGLE
-#  define GLUT_DOUBLE	FL_DOUBLE
-#  define GLUT_ACCUM	FL_ACCUM
-#  define GLUT_ALPHA	FL_ALPHA
-#  define GLUT_DEPTH	FL_DEPTH
-#  define GLUT_STENCIL	FL_STENCIL
+#  define GLUT_RGB      FL_RGB
+#  define GLUT_RGBA     FL_RGB
+#  define GLUT_INDEX    FL_INDEX
+#  define GLUT_SINGLE   FL_SINGLE
+#  define GLUT_DOUBLE   FL_DOUBLE
+#  define GLUT_ACCUM    FL_ACCUM
+#  define GLUT_ALPHA    FL_ALPHA
+#  define GLUT_DEPTH    FL_DEPTH
+#  define GLUT_STENCIL  FL_STENCIL
 #  define GLUT_MULTISAMPLE FL_MULTISAMPLE
-#  define GLUT_STEREO	FL_STEREO
-// #  define GLUT_LUMINANCE		512
+#  define GLUT_STEREO   FL_STEREO
+// #  define GLUT_LUMINANCE             512
 
 FL_EXPORT void glutInitWindowPosition(int x, int y);
 
@@ -141,29 +139,29 @@ inline void glutFullScreen() {glut_window->fullscreen();}
 
 inline void glutSetCursor(Fl_Cursor cursor) {glut_window->cursor(cursor);}
 // notice that the numeric values are different than glut:
-#  define GLUT_CURSOR_RIGHT_ARROW		((Fl_Cursor)2)
-#  define GLUT_CURSOR_LEFT_ARROW		((Fl_Cursor)67)
-#  define GLUT_CURSOR_INFO			FL_CURSOR_HAND
-#  define GLUT_CURSOR_DESTROY			((Fl_Cursor)45)
-#  define GLUT_CURSOR_HELP			FL_CURSOR_HELP
-#  define GLUT_CURSOR_CYCLE			((Fl_Cursor)26)
-#  define GLUT_CURSOR_SPRAY			((Fl_Cursor)63)
-#  define GLUT_CURSOR_WAIT			FL_CURSOR_WAIT
-#  define GLUT_CURSOR_TEXT			FL_CURSOR_INSERT
-#  define GLUT_CURSOR_CROSSHAIR			FL_CURSOR_CROSS
-#  define GLUT_CURSOR_UP_DOWN			FL_CURSOR_NS
-#  define GLUT_CURSOR_LEFT_RIGHT		FL_CURSOR_WE
-#  define GLUT_CURSOR_TOP_SIDE			FL_CURSOR_N
-#  define GLUT_CURSOR_BOTTOM_SIDE		FL_CURSOR_S
-#  define GLUT_CURSOR_LEFT_SIDE			FL_CURSOR_W
-#  define GLUT_CURSOR_RIGHT_SIDE		FL_CURSOR_E
-#  define GLUT_CURSOR_TOP_LEFT_CORNER		FL_CURSOR_NW
-#  define GLUT_CURSOR_TOP_RIGHT_CORNER		FL_CURSOR_NE
-#  define GLUT_CURSOR_BOTTOM_RIGHT_CORNER	FL_CURSOR_SE
-#  define GLUT_CURSOR_BOTTOM_LEFT_CORNER	FL_CURSOR_SW
-#  define GLUT_CURSOR_INHERIT			FL_CURSOR_DEFAULT
-#  define GLUT_CURSOR_NONE			FL_CURSOR_NONE
-#  define GLUT_CURSOR_FULL_CROSSHAIR		FL_CURSOR_CROSS
+#  define GLUT_CURSOR_RIGHT_ARROW               ((Fl_Cursor)2)
+#  define GLUT_CURSOR_LEFT_ARROW                ((Fl_Cursor)67)
+#  define GLUT_CURSOR_INFO                      FL_CURSOR_HAND
+#  define GLUT_CURSOR_DESTROY                   ((Fl_Cursor)45)
+#  define GLUT_CURSOR_HELP                      FL_CURSOR_HELP
+#  define GLUT_CURSOR_CYCLE                     ((Fl_Cursor)26)
+#  define GLUT_CURSOR_SPRAY                     ((Fl_Cursor)63)
+#  define GLUT_CURSOR_WAIT                      FL_CURSOR_WAIT
+#  define GLUT_CURSOR_TEXT                      FL_CURSOR_INSERT
+#  define GLUT_CURSOR_CROSSHAIR                 FL_CURSOR_CROSS
+#  define GLUT_CURSOR_UP_DOWN                   FL_CURSOR_NS
+#  define GLUT_CURSOR_LEFT_RIGHT                FL_CURSOR_WE
+#  define GLUT_CURSOR_TOP_SIDE                  FL_CURSOR_N
+#  define GLUT_CURSOR_BOTTOM_SIDE               FL_CURSOR_S
+#  define GLUT_CURSOR_LEFT_SIDE                 FL_CURSOR_W
+#  define GLUT_CURSOR_RIGHT_SIDE                FL_CURSOR_E
+#  define GLUT_CURSOR_TOP_LEFT_CORNER           FL_CURSOR_NW
+#  define GLUT_CURSOR_TOP_RIGHT_CORNER          FL_CURSOR_NE
+#  define GLUT_CURSOR_BOTTOM_RIGHT_CORNER       FL_CURSOR_SE
+#  define GLUT_CURSOR_BOTTOM_LEFT_CORNER        FL_CURSOR_SW
+#  define GLUT_CURSOR_INHERIT                   FL_CURSOR_DEFAULT
+#  define GLUT_CURSOR_NONE                      FL_CURSOR_NONE
+#  define GLUT_CURSOR_FULL_CROSSHAIR            FL_CURSOR_CROSS
 
 inline void glutWarpPointer(int, int) { /* do nothing */ }
 
@@ -212,11 +210,11 @@ inline void glutKeyboardFunc(void (*f)(uchar key, int x, int y)) {
 
 inline void glutMouseFunc(void (*f)(int b, int state, int x, int y)) {
   glut_window->mouse = f;}
-#  define GLUT_LEFT_BUTTON		0
-#  define GLUT_MIDDLE_BUTTON		1
-#  define GLUT_RIGHT_BUTTON		2
-#  define GLUT_DOWN			0
-#  define GLUT_UP			1
+#  define GLUT_LEFT_BUTTON              0
+#  define GLUT_MIDDLE_BUTTON            1
+#  define GLUT_RIGHT_BUTTON             2
+#  define GLUT_DOWN                     0
+#  define GLUT_UP                       1
 
 inline void glutMotionFunc(void (*f)(int x, int y)) {glut_window->motion= f;}
 
@@ -244,28 +242,28 @@ enum {GLUT_MENU_NOT_IN_USE, GLUT_MENU_IN_USE};
 
 inline void glutSpecialFunc(void (*f)(int key, int x, int y)) {
   glut_window->special = f;}
-#  define GLUT_KEY_F1			1
-#  define GLUT_KEY_F2			2
-#  define GLUT_KEY_F3			3
-#  define GLUT_KEY_F4			4
-#  define GLUT_KEY_F5			5
-#  define GLUT_KEY_F6			6
-#  define GLUT_KEY_F7			7
-#  define GLUT_KEY_F8			8
-#  define GLUT_KEY_F9			9
-#  define GLUT_KEY_F10			10
-#  define GLUT_KEY_F11			11
-#  define GLUT_KEY_F12			12
+#  define GLUT_KEY_F1                   1
+#  define GLUT_KEY_F2                   2
+#  define GLUT_KEY_F3                   3
+#  define GLUT_KEY_F4                   4
+#  define GLUT_KEY_F5                   5
+#  define GLUT_KEY_F6                   6
+#  define GLUT_KEY_F7                   7
+#  define GLUT_KEY_F8                   8
+#  define GLUT_KEY_F9                   9
+#  define GLUT_KEY_F10                  10
+#  define GLUT_KEY_F11                  11
+#  define GLUT_KEY_F12                  12
 // WARNING: Different values than GLUT uses:
-#  define GLUT_KEY_LEFT			FL_Left
-#  define GLUT_KEY_UP			FL_Up
-#  define GLUT_KEY_RIGHT		FL_Right
-#  define GLUT_KEY_DOWN			FL_Down
-#  define GLUT_KEY_PAGE_UP		FL_Page_Up
-#  define GLUT_KEY_PAGE_DOWN		FL_Page_Down
-#  define GLUT_KEY_HOME			FL_Home
-#  define GLUT_KEY_END			FL_End
-#  define GLUT_KEY_INSERT		FL_Insert
+#  define GLUT_KEY_LEFT                 FL_Left
+#  define GLUT_KEY_UP                   FL_Up
+#  define GLUT_KEY_RIGHT                FL_Right
+#  define GLUT_KEY_DOWN                 FL_Down
+#  define GLUT_KEY_PAGE_UP              FL_Page_Up
+#  define GLUT_KEY_PAGE_DOWN            FL_Page_Down
+#  define GLUT_KEY_HOME                 FL_Home
+#  define GLUT_KEY_END                  FL_End
+#  define GLUT_KEY_INSERT               FL_Insert
 
 //inline void glutSpaceballMotionFunc(void (*)(int x, int y, int z));
 
@@ -286,14 +284,14 @@ inline void glutOverlayDisplayFunc(void (*f)()) {
 
 //inline void glutWindowStatusFunc(void (*)(int state));
 //enum {GLUT_HIDDEN, GLUT_FULLY_RETAINED, GLUT_PARTIALLY_RETAINED,
-//	GLUT_FULLY_COVERED};
+//      GLUT_FULLY_COVERED};
 
 //inline void glutSetColor(int, GLfloat red, GLfloat green, GLfloat blue);
 
 //inline GLfloat glutGetColor(int ndx, int component);
-//#define GLUT_RED			0
-//#define GLUT_GREEN			1
-//#define GLUT_BLUE			2
+//#define GLUT_RED                      0
+//#define GLUT_GREEN                    1
+//#define GLUT_BLUE                     2
 
 //inline void glutCopyColormap(int win);
 
@@ -325,36 +323,36 @@ enum {
 //GLUT_ELAPSED_TIME,
 };
 
-#  define GLUT_WINDOW_STENCIL_SIZE	GL_STENCIL_BITS
-#  define GLUT_WINDOW_DEPTH_SIZE	GL_DEPTH_BITS
-#  define GLUT_WINDOW_RED_SIZE		GL_RED_BITS
-#  define GLUT_WINDOW_GREEN_SIZE	GL_GREEN_BITS
-#  define GLUT_WINDOW_BLUE_SIZE		GL_BLUE_BITS
-#  define GLUT_WINDOW_ALPHA_SIZE	GL_ALPHA_BITS
-#  define GLUT_WINDOW_ACCUM_RED_SIZE	GL_ACCUM_RED_BITS
-#  define GLUT_WINDOW_ACCUM_GREEN_SIZE	GL_ACCUM_GREEN_BITS
-#  define GLUT_WINDOW_ACCUM_BLUE_SIZE	GL_ACCUM_BLUE_BITS
-#  define GLUT_WINDOW_ACCUM_ALPHA_SIZE	GL_ACCUM_ALPHA_BITS
-#  define GLUT_WINDOW_DOUBLEBUFFER	GL_DOUBLEBUFFER
-#  define GLUT_WINDOW_RGBA		GL_RGBA
-#  define GLUT_WINDOW_COLORMAP_SIZE	GL_INDEX_BITS
+#  define GLUT_WINDOW_STENCIL_SIZE      GL_STENCIL_BITS
+#  define GLUT_WINDOW_DEPTH_SIZE        GL_DEPTH_BITS
+#  define GLUT_WINDOW_RED_SIZE          GL_RED_BITS
+#  define GLUT_WINDOW_GREEN_SIZE        GL_GREEN_BITS
+#  define GLUT_WINDOW_BLUE_SIZE         GL_BLUE_BITS
+#  define GLUT_WINDOW_ALPHA_SIZE        GL_ALPHA_BITS
+#  define GLUT_WINDOW_ACCUM_RED_SIZE    GL_ACCUM_RED_BITS
+#  define GLUT_WINDOW_ACCUM_GREEN_SIZE  GL_ACCUM_GREEN_BITS
+#  define GLUT_WINDOW_ACCUM_BLUE_SIZE   GL_ACCUM_BLUE_BITS
+#  define GLUT_WINDOW_ACCUM_ALPHA_SIZE  GL_ACCUM_ALPHA_BITS
+#  define GLUT_WINDOW_DOUBLEBUFFER      GL_DOUBLEBUFFER
+#  define GLUT_WINDOW_RGBA              GL_RGBA
+#  define GLUT_WINDOW_COLORMAP_SIZE     GL_INDEX_BITS
 #  ifdef GL_SAMPLES_SGIS
-#    define GLUT_WINDOW_NUM_SAMPLES	GL_SAMPLES_SGIS
+#    define GLUT_WINDOW_NUM_SAMPLES     GL_SAMPLES_SGIS
 #  else
-#    define GLUT_WINDOW_NUM_SAMPLES	GLUT_RETURN_ZERO
+#    define GLUT_WINDOW_NUM_SAMPLES     GLUT_RETURN_ZERO
 #  endif
-#  define GLUT_WINDOW_STEREO		GL_STEREO
+#  define GLUT_WINDOW_STEREO            GL_STEREO
 
-#  define GLUT_HAS_KEYBOARD		600
-#  define GLUT_HAS_MOUSE		601
-#  define GLUT_HAS_SPACEBALL		602
-#  define GLUT_HAS_DIAL_AND_BUTTON_BOX	603
-#  define GLUT_HAS_TABLET		604
-#  define GLUT_NUM_MOUSE_BUTTONS	605
-#  define GLUT_NUM_SPACEBALL_BUTTONS	606
-#  define GLUT_NUM_BUTTON_BOX_BUTTONS	607
-#  define GLUT_NUM_DIALS		608
-#  define GLUT_NUM_TABLET_BUTTONS	609
+#  define GLUT_HAS_KEYBOARD             600
+#  define GLUT_HAS_MOUSE                601
+#  define GLUT_HAS_SPACEBALL            602
+#  define GLUT_HAS_DIAL_AND_BUTTON_BOX  603
+#  define GLUT_HAS_TABLET               604
+#  define GLUT_NUM_MOUSE_BUTTONS        605
+#  define GLUT_NUM_SPACEBALL_BUTTONS    606
+#  define GLUT_NUM_BUTTON_BOX_BUTTONS   607
+#  define GLUT_NUM_DIALS                608
+#  define GLUT_NUM_TABLET_BUTTONS       609
 FL_EXPORT int glutDeviceGet(GLenum type);
 
 // WARNING: these values are different than GLUT uses:
@@ -364,12 +362,12 @@ FL_EXPORT int glutDeviceGet(GLenum type);
 inline int glutGetModifiers() {return Fl::event_state() & (GLUT_ACTIVE_SHIFT | GLUT_ACTIVE_CTRL | GLUT_ACTIVE_ALT);}
 
 FL_EXPORT int glutLayerGet(GLenum);
-#  define GLUT_OVERLAY_POSSIBLE		800
-//#define GLUT_LAYER_IN_USE		801
-//#define GLUT_HAS_OVERLAY		802
-#  define GLUT_TRANSPARENT_INDEX		803
-#  define GLUT_NORMAL_DAMAGED		804
-#  define GLUT_OVERLAY_DAMAGED		805
+#  define GLUT_OVERLAY_POSSIBLE         800
+//#define GLUT_LAYER_IN_USE             801
+//#define GLUT_HAS_OVERLAY              802
+#  define GLUT_TRANSPARENT_INDEX                803
+#  define GLUT_NORMAL_DAMAGED           804
+#  define GLUT_OVERLAY_DAMAGED          805
 
 extern "C" {
 typedef void (*GLUTproc)();
@@ -378,16 +376,16 @@ typedef void (*GLUTproc)();
 FL_EXPORT GLUTproc glutGetProcAddress(const char *procName);
 
 //inline int glutVideoResizeGet(GLenum param);
-//#define GLUT_VIDEO_RESIZE_POSSIBLE	900
-//#define GLUT_VIDEO_RESIZE_IN_USE	901
-//#define GLUT_VIDEO_RESIZE_X_DELTA	902
-//#define GLUT_VIDEO_RESIZE_Y_DELTA	903
-//#define GLUT_VIDEO_RESIZE_WIDTH_DELTA	904
+//#define GLUT_VIDEO_RESIZE_POSSIBLE    900
+//#define GLUT_VIDEO_RESIZE_IN_USE      901
+//#define GLUT_VIDEO_RESIZE_X_DELTA     902
+//#define GLUT_VIDEO_RESIZE_Y_DELTA     903
+//#define GLUT_VIDEO_RESIZE_WIDTH_DELTA 904
 //#define GLUT_VIDEO_RESIZE_HEIGHT_DELTA 905
-//#define GLUT_VIDEO_RESIZE_X		906
-//#define GLUT_VIDEO_RESIZE_Y		907
-//#define GLUT_VIDEO_RESIZE_WIDTH	908
-//#define GLUT_VIDEO_RESIZE_HEIGHT	909
+//#define GLUT_VIDEO_RESIZE_X           906
+//#define GLUT_VIDEO_RESIZE_Y           907
+//#define GLUT_VIDEO_RESIZE_WIDTH       908
+//#define GLUT_VIDEO_RESIZE_HEIGHT      909
 
 //inline void glutSetupVideoResizing();
 
@@ -438,15 +436,15 @@ struct Fl_Glut_StrokeChar {
 };
 
 struct Fl_Glut_StrokeFont {
-  char* Name;				// The source font name
-  int Quantity;				// Number of chars in font
-  GLfloat Height;			// Height of the characters
+  char* Name;                           // The source font name
+  int Quantity;                         // Number of chars in font
+  GLfloat Height;                       // Height of the characters
   const Fl_Glut_StrokeChar** Characters;// The characters mapping
 };
 extern FL_EXPORT Fl_Glut_StrokeFont glutStrokeRoman;
 extern FL_EXPORT Fl_Glut_StrokeFont glutStrokeMonoRoman;
-#  define GLUT_STROKE_ROMAN		(&glutStrokeRoman)
-#  define GLUT_STROKE_MONO_ROMAN	(&glutStrokeMonoRoman)
+#  define GLUT_STROKE_ROMAN             (&glutStrokeRoman)
+#  define GLUT_STROKE_MONO_ROMAN        (&glutStrokeMonoRoman)
 
 FL_EXPORT void glutStrokeCharacter(void *font, int character);
 FL_EXPORT GLfloat glutStrokeHeight(void *font);
@@ -475,7 +473,3 @@ FL_EXPORT void glutWireIcosahedron();
 FL_EXPORT void glutSolidIcosahedron();
 
 #endif // !Fl_glut_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Sys_Menu_Bar_Driver_H
@@ -33,7 +31,7 @@ public:
   virtual ~Fl_Sys_Menu_Bar_Driver();
   virtual void update() {}
   virtual void draw() { bar->Fl_Menu_Bar::draw();}
-  virtual void about(Fl_Callback *cb, void *data) {}
+  virtual void about(Fl_Callback *, void *) {}
   virtual int add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) {
     return bar->Fl_Menu_Bar::add(label, shortcut, cb, user_data, flags);
   }
@@ -57,7 +55,3 @@ public:
 #endif // !defined(FL_DOXYGEN)
 
 #endif // Fl_Sys_Menu_Bar_Driver_H
-
-//
-// End of "$Id$".
-//

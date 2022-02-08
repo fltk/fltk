@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // BMP image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -29,19 +27,15 @@
  */
 class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
-  public:
+public:
 
-    Fl_BMP_Image(const char* filename);
-    Fl_BMP_Image(const char* imagename, const unsigned char *data);
+  Fl_BMP_Image(const char* filename);
+  Fl_BMP_Image(const char* imagename, const unsigned char *data, const long length = -1);
 
-  protected:
+protected:
 
-    void load_bmp_(class Fl_Image_Reader &rdr);
+  void load_bmp_(class Fl_Image_Reader &rdr);
 
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

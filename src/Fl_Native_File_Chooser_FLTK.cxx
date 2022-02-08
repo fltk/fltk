@@ -1,6 +1,5 @@
-// "$Id$"
 //
-// FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog 
+// FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
 // Copyright 2012 IMM
@@ -9,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -44,10 +43,10 @@ Fl_Native_File_Chooser_FLTK_Driver::Fl_Native_File_Chooser_FLTK_Driver(int val) 
   _file_chooser= NULL;
   if (val >= 0) {
     _file_chooser = new Fl_File_Chooser(NULL, NULL, 0, NULL);
-    type(val);			// do this after _file_chooser created
+    type(val);                  // do this after _file_chooser created
     }
   _nfilters    = 0;
-} 
+}
 
 Fl_Native_File_Chooser_FLTK_Driver::~Fl_Native_File_Chooser_FLTK_Driver() {
   delete _file_chooser;
@@ -133,8 +132,8 @@ int Fl_Native_File_Chooser_FLTK_Driver::show() {
 
   // OPTIONS: NEW FOLDER
   if ( options() & Fl_Native_File_Chooser::NEW_FOLDER )
-    _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);	// on
-  
+    _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);       // on
+
   // SHOW
   _file_chooser->show();
 
@@ -236,22 +235,22 @@ const char *Fl_Native_File_Chooser_FLTK_Driver::directory() const {
 //     for freeing with strfree().
 //
 void Fl_Native_File_Chooser_FLTK_Driver::parse_filter() {
-  _parsedfilt = strfree(_parsedfilt);	// clear previous parsed filter (if any)
+  _parsedfilt = strfree(_parsedfilt);   // clear previous parsed filter (if any)
   _nfilters = 0;
   char *in = _filter;
   if ( !in ) return;
 
   int has_name = strchr(in, '\t') ? 1 : 0;
 
-  char mode = has_name ? 'n' : 'w';	// parse mode: n=title, w=wildcard
-  char wildcard[1024] = "";		// parsed wildcard
+  char mode = has_name ? 'n' : 'w';     // parse mode: n=title, w=wildcard
+  char wildcard[1024] = "";             // parsed wildcard
   char name[1024] = "";
 
   // Parse filter user specified
   for ( ; 1; in++ ) {
     /*** DEBUG
     printf("WORKING ON '%c': mode=<%c> name=<%s> wildcard=<%s>\n",
-			*in, mode,     name,     wildcard);
+                        *in, mode,     name,     wildcard);
     ***/
 
     switch (*in) {
@@ -259,40 +258,40 @@ void Fl_Native_File_Chooser_FLTK_Driver::parse_filter() {
       case '\t':
         if ( mode != 'n' ) goto regchar;
         mode = 'w';
-        break; 
+        break;
       // ESCAPE NEXT CHAR
       case '\\':
-	++in;
-	goto regchar; 
+        ++in;
+        goto regchar;
       // FINISHED PARSING ONE OF POSSIBLY SEVERAL FILTERS?
       case '\r':
       case '\n':
       case '\0':
-	// APPEND NEW FILTER TO LIST
-	if ( wildcard[0] ) {
-	  // OUT: "name(wild)\tname(wild)"
-	  char comp[2048];
-	  sprintf(comp, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
-					    name, wildcard);
-	  _parsedfilt = strapp(_parsedfilt, comp);
-	  _nfilters++;
-	  //DEBUG printf("DEBUG: PARSED FILT NOW <%s>\n", _parsedfilt);
-	}
-	// RESET
-	wildcard[0] = name[0] = '\0';
-	mode = strchr(in, '\t') ? 'n' : 'w';
-	// DONE?
-	if ( *in == '\0' ) return;	// done
-	else continue;			// not done yet, more filters
+        // APPEND NEW FILTER TO LIST
+        if ( wildcard[0] ) {
+          // OUT: "name(wild)\tname(wild)"
+          char comp[2048];
+          sprintf(comp, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
+                                            name, wildcard);
+          _parsedfilt = strapp(_parsedfilt, comp);
+          _nfilters++;
+          //DEBUG printf("DEBUG: PARSED FILT NOW <%s>\n", _parsedfilt);
+        }
+        // RESET
+        wildcard[0] = name[0] = '\0';
+        mode = strchr(in, '\t') ? 'n' : 'w';
+        // DONE?
+        if ( *in == '\0' ) return;      // done
+        else continue;                  // not done yet, more filters
 
       // Parse all other chars
-      default:				// handle all non-special chars
-      regchar:				// handle regular char
-	switch ( mode ) {
-	  case 'n': chrcat(name, *in);     continue;
-	  case 'w': chrcat(wildcard, *in); continue;
-	}
-	break;
+      default:                          // handle all non-special chars
+      regchar:                          // handle regular char
+        switch ( mode ) {
+          case 'n': chrcat(name, *in);     continue;
+          case 'w': chrcat(wildcard, *in); continue;
+        }
+        break;
     }
   }
   //NOTREACHED
@@ -315,7 +314,3 @@ int Fl_Native_File_Chooser_FLTK_Driver::exist_dialog() {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

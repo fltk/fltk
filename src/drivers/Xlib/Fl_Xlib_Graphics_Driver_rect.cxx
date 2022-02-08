@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -21,7 +19,7 @@
  \brief X11 Xlib specific line and polygon drawing with integer coordinates.
  */
 
-#include "../../config_lib.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -140,8 +138,8 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
   window corner, but with a line width so that a part of the line should
   be visible (in this case 2 of 5 pixels):
 
-  fl_line_style (FL_SOLID,5);	// line width = 5
-  fl_rect (-1,-1,100,100);	// top/left: 2 pixels visible
+  fl_line_style (FL_SOLID,5);   // line width = 5
+  fl_rect (-1,-1,100,100);      // top/left: 2 pixels visible
 
   In this example case, no clipping would be done, because X can
   handle it and clip unneeded pixels.
@@ -156,9 +154,9 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 /*
   clip_rect() returns 1 if the area is invisible (clipped) because ...
 
-  (a) w <= 0 or h <= 0				i.e. nothing is visible
-  (b) x+w < clip_min() or y+h < clip_min()	i.e. left of or above visible area
-  (c) x > clip_max() or y > clip_max()		i.e. right of or below visible area
+  (a) w <= 0 or h <= 0                          i.e. nothing is visible
+  (b) x+w < clip_min() or y+h < clip_min()      i.e. left of or above visible area
+  (c) x > clip_max() or y > clip_max()          i.e. right of or below visible area
 
   clip_min() and clip_max() are the minimal and maximal x/y coordinate values
   used for clipping.
@@ -175,9 +173,9 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 
 int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
 
-  if (w <= 0 || h <= 0) return 1;			// (a)
-  if (x+w < clip_min() || y+h < clip_min()) return 1;	// (b)
-  if (x > clip_max() || y > clip_max()) return 1;	// (c)
+  if (w <= 0 || h <= 0) return 1;                       // (a)
+  if (x+w < clip_min() || y+h < clip_min()) return 1;   // (b)
+  if (x > clip_max() || y > clip_max()) return 1;       // (c)
 
   if (x < clip_min()) { w -= (clip_min()-x); x = clip_min(); }
   if (y < clip_min()) { h -= (clip_min()-y); y = clip_min(); }
@@ -197,8 +195,8 @@ int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
 Fl_Region Fl_Xlib_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
   Fl_Region r = XCreateRegion(); // create an empty region
-  if (clip_rect(x, y, w, h))	 // outside valid coordinate space
-    return r;			 // empty region
+  if (clip_rect(x, y, w, h))     // outside valid coordinate space
+    return r;                    // empty region
   R.x = x; R.y = y; R.width = w; R.height = h;
   XUnionRectWithRegion(&R, r, r);
   return r;
@@ -210,123 +208,92 @@ void Fl_Xlib_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 
 // --- line and polygon drawing
 
-// called only when scale_ has integer value
-void Fl_Xlib_Graphics_Driver::rect_unscaled(float fx, float fy, float fw, float fh) {
-  if (fw<=0 || fh<=0) return;
-  int deltaf = scale() >= 2 ? scale()-1 : 0;
-  fx += offset_x_*scale(); fy += offset_y_*scale();
-  int x = fx; int y = fy;
-  int w = int(fw) - 1 - deltaf;
-  int h = int(fh) - 1 - deltaf;
+void Fl_Xlib_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
+  w = this->floor(x + w) - this->floor(x);
+  h = this->floor(y + h) - this->floor(y);
+  x = this->floor(x) + floor(offset_x_);
+  y = this->floor(y) + floor(offset_y_);
+  if (!clip_rect(x, y, w, h)) {
+    int lw_save = line_width_;       // preserve current line_width
+    if (line_width_ == 0)
+      line_style(FL_DOT, 1);
+    else
+      line_style(FL_DOT);
+    XDrawRectangle(fl_display, fl_window, gc_, x, y, w, h);
+    if (lw_save == 0)
+      line_style(FL_SOLID, 0);       // restore line type and width
+    else
+      line_style(FL_SOLID);
+  }
+}
+
+void Fl_Xlib_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {
+  x += floor(offset_x_);
+  y += floor(offset_y_);
   if (!clip_rect(x, y, w, h))
-    XDrawRectangle(fl_display, fl_window, gc_, x+line_delta_, y+line_delta_, w, h);
+    XFillRectangle(fl_display, fl_window, gc_, x, y, w, h);
 }
 
-void Fl_Xlib_Graphics_Driver::rectf_unscaled(float fx, float fy, float fw, float fh) {
-  if (fw<=0 || fh<=0) return;
-  int deltaf = scale() >= 2 ? scale()/2 : 0;
-  fx += offset_x_*scale(); fy += offset_y_*scale();
-  int x = fx-deltaf; int y = fy-deltaf;
-  // make sure no unfilled area lies between rectf(x,y,w,h) and  rectf(x+w,y,1,h) or rectf(x,y+w,w,1)
-  int w = int(int(fx/scale()+fw/scale()+0.5)*scale()) - int(fx);
-  int h = int(int(fy/scale()+fh/scale()+0.5)*scale()) - int(fy);
-  if (!clip_rect(x, y, w, h))
-    XFillRectangle(fl_display, fl_window, gc_, x+line_delta_, y+line_delta_, w, h);
+void Fl_Xlib_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1) {
+   draw_clipped_line(x + this->floor(offset_x_) , y + this->floor(offset_y_) ,
+                    x1 + this->floor(offset_x_) , y1 + this->floor(offset_y_) );
 }
 
-void Fl_Xlib_Graphics_Driver::point_unscaled(float fx, float fy) {
-  int deltaf = scale() >= 2 ? scale()/2 : 0;
-  int x = fx+offset_x_*scale()-deltaf;
-  int y = fy+offset_y_*scale()-deltaf;
-  int width = scale() >= 1 ? scale() : 1;
-  // *FIXME* This needs X coordinate clipping:
-  XFillRectangle(fl_display, fl_window, gc_, x+line_delta_, y+line_delta_, width, width);
+void Fl_Xlib_Graphics_Driver::xyline_unscaled(int x, int y, int x1) {
+  if (line_width_ >= 2) x1++;
+  x += floor(offset_x_) ;
+  y += floor(offset_y_) ;
+  x1 += floor(offset_x_) ;
+  draw_clipped_line(x, y, x1, y);
 }
 
-void Fl_Xlib_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1) {
-  if (x == x1) yxline_unscaled(x, y, y1);
-  else if (y == y1) xyline_unscaled(x, y, x1);
-  else draw_clipped_line(x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, x1+offset_x_*scale()+line_delta_, y1+offset_y_*scale()+line_delta_);
+void Fl_Xlib_Graphics_Driver::yxline_unscaled(int x, int y, int y1) {
+  if (line_width_ >= 2) y1++;
+  x += floor(offset_x_) ;
+  y += floor(offset_y_) ;
+  y1 += floor(offset_y_) ;
+  draw_clipped_line(x, y, x, y1);
 }
 
-void Fl_Xlib_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
-  XPoint p[3];
-  p[0].x = x+offset_x_*scale()+line_delta_;  p[0].y = y+offset_y_*scale()+line_delta_;
-  p[1].x = x1+offset_x_*scale()+line_delta_; p[1].y = y1+offset_y_*scale()+line_delta_;
-  p[2].x = x2+offset_x_*scale()+line_delta_; p[2].y = y2+offset_y_*scale()+line_delta_;
-  // *FIXME* This needs X coordinate clipping!
-  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
-}
-
-void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
-  x+=offset_x_*scale(); y+=offset_y_*scale(); x1 += offset_x_*scale();
-  int tw = line_width_ ? line_width_ : 1; // true line width
-  if (x > x1) { float exch = x; x = x1; x1 = exch; }
-  int ix = clip_xy(x+line_delta_); if (scale() >= 2) ix -= int(scale()/2);
-  int iy = clip_xy(y+line_delta_);
-  // make sure that line output by xyline(a,b,c) extends to pixel just at left of where xyline(c+1,b,d) begins
-  int ix1 = int(x1/scale()+1.5)*scale()-1;
-  ix1 += line_delta_; if (scale() >= 4) ix1 -= 1;
-  draw_clipped_line(ix, iy, ix1, iy);
-  // make sure no unfilled area lies between xyline(x,y,x1) and xyline(x,y+1,x1)
-  if (y+line_delta_ + scale() >= iy + tw+1 - 0.001 )
-    draw_clipped_line(ix, iy+1, ix1, iy+1);
-}
-
-void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
-  x+=offset_x_*scale(); y+=offset_y_*scale(); y1 += offset_y_*scale();
-  int tw = line_width_ ? line_width_ : 1; // true line width
-  if (y > y1) { float exch = y; y = y1; y1 = exch; }
-  int ix = clip_xy(x+line_delta_);
-  int iy = clip_xy(y+line_delta_); if (scale() >= 2) iy -= int(scale()/2);
-  int iy1 = int(y1/scale()+1.5)*scale()-1;
-  // make sure that line output by yxline(a,b,c) extends to pixel just above where yxline(a,c+1,d) begins
-  iy1 += line_delta_; if (scale() >= 4) iy1 -= 1;
-  draw_clipped_line(ix, iy, ix, iy1);
-  // make sure no unfilled area lies between yxline(x,y,y1) and yxline(x+1,y,y1)
-  if (x+line_delta_+scale() >= ix + tw+1 -0.001)
-    draw_clipped_line(ix+1, iy, ix+1, iy1);
-}
-
-void Fl_Xlib_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
+void Fl_Xlib_Graphics_Driver::loop_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
-  p[0].x = x +offset_x_*scale()+line_delta_;  p[0].y = y +offset_y_*scale()+line_delta_;
-  p[1].x = x1 +offset_x_*scale()+line_delta_; p[1].y = y1 +offset_y_*scale()+line_delta_;
-  p[2].x = x2 +offset_x_*scale()+line_delta_; p[2].y = y2 +offset_y_*scale()+line_delta_;
-  p[3].x = x +offset_x_*scale()+line_delta_;  p[3].y = y +offset_y_*scale()+line_delta_;
+  p[0].x = x + floor(offset_x_) ;  p[0].y = y + floor(offset_y_) ;
+  p[1].x = x1 + floor(offset_x_) ; p[1].y = y1 + floor(offset_y_) ;
+  p[2].x = x2 + floor(offset_x_) ; p[2].y = y2 + floor(offset_y_) ;
+  p[3].x = p[0].x;  p[3].y = p[0].y;
   // *FIXME* This needs X coordinate clipping!
   XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
+void Fl_Xlib_Graphics_Driver::loop_unscaled(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
-  p[0].x = x+offset_x_*scale()+line_delta_;  p[0].y = y+offset_y_*scale()+line_delta_;
-  p[1].x = x1 +offset_x_*scale()+line_delta_; p[1].y = y1+offset_y_*scale()+line_delta_;
-  p[2].x = x2+offset_x_*scale()+line_delta_; p[2].y = y2+offset_y_*scale()+line_delta_;
-  p[3].x = x3+offset_x_*scale()+line_delta_; p[3].y = y3+offset_y_*scale()+line_delta_;
-  p[4].x = x+offset_x_*scale()+line_delta_;  p[4].y = y+offset_y_*scale()+line_delta_;
+  p[0].x = x + floor(offset_x_) ;  p[0].y = y + floor(offset_y_) ;
+  p[1].x = x1 + floor(offset_x_) ; p[1].y = y1 + floor(offset_y_) ;
+  p[2].x = x2 + floor(offset_x_) ; p[2].y = y2 + floor(offset_y_) ;
+  p[3].x = x3 + floor(offset_x_) ; p[3].y = y3 + floor(offset_y_) ;
+  p[4].x = p[0].x;  p[4].y = p[0].y;
   // *FIXME* This needs X coordinate clipping!
   XDrawLines(fl_display, fl_window, gc_, p, 5, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
+void Fl_Xlib_Graphics_Driver::polygon_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
-  p[0].x = x+offset_x_*scale()+line_delta_;  p[0].y = y+offset_y_*scale()+line_delta_;
-  p[1].x = x1+offset_x_*scale()+line_delta_; p[1].y = y1+offset_y_*scale()+line_delta_;
-  p[2].x = x2+offset_x_*scale()+line_delta_; p[2].y = y2+offset_y_*scale()+line_delta_;
-  p[3].x = x+offset_x_*scale()+line_delta_;  p[3].y = y+offset_y_*scale()+line_delta_;
+  p[0].x = x + floor(offset_x_) ;  p[0].y = y + floor(offset_y_) ;
+  p[1].x = x1 + floor(offset_x_) ; p[1].y = y1 + floor(offset_y_) ;
+  p[2].x = x2 + floor(offset_x_) ; p[2].y = y2 + floor(offset_y_) ;
+  p[3].x = p[0].x;  p[3].y = p[0].y;
   // *FIXME* This needs X coordinate clipping!
   XFillPolygon(fl_display, fl_window, gc_, p, 3, Convex, 0);
   XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
+void Fl_Xlib_Graphics_Driver::polygon_unscaled(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
-  p[0].x = x+offset_x_*scale()+line_delta_;  p[0].y = y+offset_y_*scale()+line_delta_;
-  p[1].x = x1+offset_x_*scale()+line_delta_; p[1].y = y1+offset_y_*scale()+line_delta_;
-  p[2].x = x2+offset_x_*scale()+line_delta_; p[2].y = y2+offset_y_*scale()+line_delta_;
-  p[3].x = x3+offset_x_*scale()+line_delta_; p[3].y = y3+offset_y_*scale()+line_delta_;
-  p[4].x = x+offset_x_*scale()+line_delta_;  p[4].y = y+offset_y_*scale()+line_delta_;
+  p[0].x = x + floor(offset_x_) ;  p[0].y = y + floor(offset_y_) ;
+  p[1].x = x1 + floor(offset_x_) ; p[1].y = y1 + floor(offset_y_) ;
+  p[2].x = x2 + floor(offset_x_) ; p[2].y = y2 + floor(offset_y_) ;
+  p[3].x = x3 + floor(offset_x_) ; p[3].y = y3 + floor(offset_y_) ;
+  p[4].x = p[0].x;  p[4].y = p[0].y;
   // *FIXME* This needs X coordinate clipping!
   XFillPolygon(fl_display, fl_window, gc_, p, 4, Convex, 0);
   XDrawLines(fl_display, fl_window, gc_, p, 5, 0);
@@ -365,9 +332,18 @@ void Fl_Xlib_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 
 int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H) {
   X = x; Y = y; W = w; H = h;
+  // pre-clip rectangle to 16-bit coordinates (STR #3134)
+  if (clip_rect(X, Y, W, H)) { // entirely clipped (outside)
+    W = H = 0;
+    return 2;
+  }
   Fl_Region r = rstack[rstackptr];
-  if (!r) return 0;
-  switch (XRectInRegion(r, x, y, w, h)) {
+  if (!r) { // no clipping region
+    if (X != x || Y != y || W != w || H != h) // pre-clipped
+      return 1; // partially outside, region differs
+    return 0;
+  }
+  switch (XRectInRegion(r, X, Y, W, H)) {
     case 0: // completely outside
       W = H = 0;
       return 2;
@@ -376,7 +352,7 @@ int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y
     default: // partial:
       break;
   }
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region rr = XRectangleRegion(X, Y, W, H);
   Fl_Region temp = XCreateRegion();
   XIntersectRegion(r, rr, temp);
   XRectangle rect;
@@ -392,7 +368,7 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   Fl_Region r = rstack[rstackptr];
   if (!r) return 1;
   // get rid of coordinates outside the 16-bit range the X calls take.
-  if (clip_rect(x,y,w,h)) return 0;	// clipped
+  if (clip_rect(x,y,w,h)) return 0;     // clipped
   return XRectInRegion(r, x, y, w, h);
 }
 
@@ -408,7 +384,3 @@ void Fl_Xlib_Graphics_Driver::restore_clip() {
     else XSetClipMask(fl_display, gc_, 0);
   }
 }
-
-//
-// End of "$Id$".
-//

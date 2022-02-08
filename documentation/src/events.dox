@@ -1,7 +1,7 @@
 /**
 
- \page	events Handling Events
- 
+ \page  events Handling Events
+
 This chapter discusses the FLTK event model and how to handle
 events in your program or widget.
 
@@ -20,7 +20,7 @@ Other information about the most recent event is stored in
 static locations and acquired by calling the
 \ref events_event_xxx.
 This static information remains valid until the next event
-is read from the window system, so it is ok to look at it outside 
+is read from the window system, so it is ok to look at it outside
 of the
 \p handle()
 method.
@@ -59,7 +59,7 @@ the matching \p FL_RELEASE events.
 If
 \p handle()
 returns zero then FLTK will try sending the \p FL_PUSH to
-another widget. 
+another widget.
 
 \subsection events_fl_drag FL_DRAG
 
@@ -84,7 +84,7 @@ return non-zero when handling \p FL_PUSH.
 
 \subsection events_fl_move FL_MOVE
 
-The mouse has moved without any mouse buttons held down. 
+The mouse has moved without any mouse buttons held down.
 This event is sent to the
 Fl::belowmouse()
 widget.
@@ -169,7 +169,7 @@ If you are writing a text-editing widget you may also want to call the
 Fl::compose()
 function to translate individual keystrokes into characters.
 
-\p FL_KEYUP events are sent to the widget that 
+\p FL_KEYUP events are sent to the widget that
 currently has focus. This is not necessarily the same widget
 that received the corresponding \p FL_KEYDOWN event
 because focus may have changed between events.
@@ -241,12 +241,12 @@ class
 \p handle()
 method!</I>
 
-\note	The events in this chapter ("Widget Events"), i.e.
-	FL_ACTIVATE, FL_DEACTIVATE, FL_SHOW, and FL_HIDE,
-	are the only events deactivated and invisible widgets
-	can usually get, depending on their states. Under certain
-	circumstances, there may also be FL_LEAVE or FL_UNFOCUS
-	events delivered to deactivated or hidden widgets.
+\note   The events in this chapter ("Widget Events"), i.e.
+        FL_ACTIVATE, FL_DEACTIVATE, FL_SHOW, and FL_HIDE,
+        are the only events deactivated and invisible widgets
+        can usually get, depending on their states. Under certain
+        circumstances, there may also be FL_LEAVE or FL_UNFOCUS
+        events delivered to deactivated or hidden widgets.
 
 \section events_clipboard Clipboard Events
 
@@ -266,17 +266,17 @@ selection indication. Most modern programs ignore this.
 
 \section events_dnd Drag and Drop Events
 
-FLTK supports drag and drop of text and files from any 
+FLTK supports drag and drop of text and files from any
 application on the desktop to an FLTK widget. Text is transferred
 using UTF-8 encoding. Files are received as a list of full path
-and file names, separated by newline. 
+and file names, separated by newline.
 
 On some X11 platforms, files are received as a URL-encoded UTF-8 string,
-that is, non-ASCII bytes (and a few others such as space and %) are 
+that is, non-ASCII bytes (and a few others such as space and %) are
 replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
 The \ref fl_decode_uri() function can be used to transform in-place
 the received string into a proper UTF-8 string. On these platforms,
-strings corresponding to dropped files are further prepended 
+strings corresponding to dropped files are further prepended
 by <tt>file://</tt> (or other prefixes such as <tt>computer://</tt>).
 
 See Fl::dnd() for drag and drop from an FLTK widget.
@@ -308,7 +308,7 @@ The mouse has moved out of the widget.
 
 \subsection events_fl_dnd_release FL_DND_RELEASE
 
-The user has released the mouse button dropping data into 
+The user has released the mouse button dropping data into
 the widget. If the widget returns 1, it will receive the data in
 the immediately following \p FL_PASTE event.
 
@@ -324,7 +324,7 @@ Use Fl::add_handler() to be notified of this event.
 The application window has been changed from normal to fullscreen, or
 from fullscreen to normal. If you are using a X window manager which
 supports Extended Window Manager Hints, this event will not be
-delivered until the change has actually happened. 
+delivered until the change has actually happened.
 
 
 \section events_event_xxx Fl::event_*() methods
@@ -337,7 +337,7 @@ and
 \p callback()
 methods.
 
-These are all trivial inline functions and thus very fast and small: 
+These are all trivial inline functions and thus very fast and small:
 
 \li Fl::event_button()
 \li Fl::event_clicks()
@@ -361,7 +361,7 @@ These are all trivial inline functions and thus very fast and small:
 
 Widgets receive events via the virtual handle() function. The argument indicates
 the type of event that can be handled. The widget must indicate if it handled the
-event by returning 1. FLTK will then remove the event and wait for further events 
+event by returning 1. FLTK will then remove the event and wait for further events
 from the host. If the widget's handle function returns 0, FLTK may redistribute
 the event based on a few rules.
 
@@ -399,7 +399,7 @@ Mouse motion (FL_MOVE) events are sent to the Fl::belowmouse() widget, i.e.
 the widget that returned 1 on the last FL_ENTER event.
 
 Mouse wheel events are sent to the window that caused the event. The window
-propagates the event down the tree, first to the widget that is below the 
+propagates the event down the tree, first to the widget that is below the
 mouse pointer, and if that does not succeed, to all other widgets in the group.
 This ensures that scroll widgets work as expected with the widget furthest
 down in the hierarchy getting the first opportunity to use the wheel event,
@@ -407,22 +407,22 @@ but also giving scroll bars, that are not directly below the mouse a chance.
 
 Keyboard events are sent directly to the widget that has keyboard focus.
 If the focused widget rejects the event, it is resent as a shortcut event,
-first to the top-most window, then to the widget below the mouse pointer, 
+first to the top-most window, then to the widget below the mouse pointer,
 propagating up the hierarchy to all its parents. Those send the event also
-to all widgets that are not below the mouse pointer. Now if that did not work 
+to all widgets that are not below the mouse pointer. Now if that did not work
 out, the shortcut is sent to all registered shortcut handlers.
 
 If we are still unsuccessful, the event handler flips the case of the shortcut
-letter and starts over. Finally, if the key is "escape", FLTK sends a close 
+letter and starts over. Finally, if the key is "escape", FLTK sends a close
 event to the top-most window.
 
-All other events are pretty much sent right away to the window that created 
+All other events are pretty much sent right away to the window that created
 the event.
 
 Widgets can "grab" events. The grabbing window gets all events exclusively, but
 usually by the same rules as described above.
 
-Windows can also request exclusivity in event handling by making the 
+Windows can also request exclusivity in event handling by making the
 window modal.
 
 
@@ -433,7 +433,7 @@ requires that you call the Fl::compose() function if you are
 writing your own text editor widget.
 
 Currently, all characters made by single key strokes
-with or without modifier keys, or by system-defined character 
+with or without modifier keys, or by system-defined character
 compose sequences (that can involve dead keys or a compose key) can be input.
 You should call Fl::compose() in case any
 enhancements to this processing are done in the future. The

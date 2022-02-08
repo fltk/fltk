@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,23 +9,23 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Xcode on macOS includes files by recursing down into directories.
 // This code catches the cycle and directly includes the required file.
-#ifdef fl_math_h_cyclic_include 
+#ifdef fl_math_h_cyclic_include
 #  include "/usr/include/math.h"
 #endif
 
 #ifndef fl_math_h
 #  define fl_math_h
 
-#  define fl_math_h_cyclic_include 
+#  define fl_math_h_cyclic_include
 #  include <math.h>
-#  undef fl_math_h_cyclic_include 
+#  undef fl_math_h_cyclic_include
 
 #  ifndef M_PI
 #    define M_PI            3.14159265358979323846
@@ -50,8 +48,3 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 #  endif // (_WIN32 || CRAY) && !__MINGW32__
 
 #endif // !fl_math_h
-
-
-//
-// End of "$Id$".
-//

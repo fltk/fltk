@@ -1,113 +1,38 @@
 //
-// "$Id$"
-//
 // Device test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Roman Kantor and others.
+// Copyright 1998-2021 by Roman Kantor and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <math.h>
 #include <FL/Fl.H>
-
-#include <FL/Fl_Overlay_Window.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Radio_Round_Button.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Clock.H>
-#include "pixmaps/porsche.xpm"
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Round_Button.H>
-
-
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_SVG_File_Surface.H>
 
-#include <FL/Fl_File_Chooser.H>
-#include <FL/fl_draw.H>
-
-
-#define sorceress_width 75
-#define sorceress_height 75
-
-
-// shameles copy from bitmap...
-static uchar sorceress_bits[] = {
-  0xfc, 0x7e, 0x40, 0x20, 0x90, 0x00, 0x07, 0x80, 0x23, 0x00, 0x00, 0xc6,
-  0xc1, 0x41, 0x98, 0xb8, 0x01, 0x07, 0x66, 0x00, 0x15, 0x9f, 0x03, 0x47,
-  0x8c, 0xc6, 0xdc, 0x7b, 0xcc, 0x00, 0xb0, 0x71, 0x0e, 0x4d, 0x06, 0x66,
-  0x73, 0x8e, 0x8f, 0x01, 0x18, 0xc4, 0x39, 0x4b, 0x02, 0x23, 0x0c, 0x04,
-  0x1e, 0x03, 0x0c, 0x08, 0xc7, 0xef, 0x08, 0x30, 0x06, 0x07, 0x1c, 0x02,
-  0x06, 0x30, 0x18, 0xae, 0xc8, 0x98, 0x3f, 0x78, 0x20, 0x06, 0x02, 0x20,
-  0x60, 0xa0, 0xc4, 0x1d, 0xc0, 0xff, 0x41, 0x04, 0xfa, 0x63, 0x80, 0xa1,
-  0xa4, 0x3d, 0x00, 0x84, 0xbf, 0x04, 0x0f, 0x06, 0xfc, 0xa1, 0x34, 0x6b,
-  0x01, 0x1c, 0xc9, 0x05, 0x06, 0xc7, 0x06, 0xbe, 0x11, 0x1e, 0x43, 0x30,
-  0x91, 0x05, 0xc3, 0x61, 0x02, 0x30, 0x1b, 0x30, 0xcc, 0x20, 0x11, 0x00,
-  0xc1, 0x3c, 0x03, 0x20, 0x0a, 0x00, 0xe8, 0x60, 0x21, 0x00, 0x61, 0x1b,
-  0xc1, 0x63, 0x08, 0xf0, 0xc6, 0xc7, 0x21, 0x03, 0xf8, 0x08, 0xe1, 0xcf,
-  0x0a, 0xfc, 0x4d, 0x99, 0x43, 0x07, 0x3c, 0x0c, 0xf1, 0x9f, 0x0b, 0xfc,
-  0x5b, 0x81, 0x47, 0x02, 0x16, 0x04, 0x31, 0x1c, 0x0b, 0x1f, 0x17, 0x89,
-  0x4d, 0x06, 0x1a, 0x04, 0x31, 0x38, 0x02, 0x07, 0x56, 0x89, 0x49, 0x04,
-  0x0b, 0x04, 0xb1, 0x72, 0x82, 0xa1, 0x54, 0x9a, 0x49, 0x04, 0x1d, 0x66,
-  0x50, 0xe7, 0xc2, 0xf0, 0x54, 0x9a, 0x58, 0x04, 0x0d, 0x62, 0xc1, 0x1f,
-  0x44, 0xfc, 0x51, 0x90, 0x90, 0x04, 0x86, 0x63, 0xe0, 0x74, 0x04, 0xef,
-  0x31, 0x1a, 0x91, 0x00, 0x02, 0xe2, 0xc1, 0xfd, 0x84, 0xf9, 0x30, 0x0a,
-  0x91, 0x00, 0x82, 0xa9, 0xc0, 0xb9, 0x84, 0xf9, 0x31, 0x16, 0x81, 0x00,
-  0x42, 0xa9, 0xdb, 0x7f, 0x0c, 0xff, 0x1c, 0x16, 0x11, 0x00, 0x02, 0x28,
-  0x0b, 0x07, 0x08, 0x60, 0x1c, 0x02, 0x91, 0x00, 0x46, 0x29, 0x0e, 0x00,
-  0x00, 0x00, 0x10, 0x16, 0x11, 0x02, 0x06, 0x29, 0x04, 0x00, 0x00, 0x00,
-  0x10, 0x16, 0x91, 0x06, 0xa6, 0x2a, 0x04, 0x00, 0x00, 0x00, 0x18, 0x24,
-  0x91, 0x04, 0x86, 0x2a, 0x04, 0x00, 0x00, 0x00, 0x18, 0x27, 0x93, 0x04,
-  0x96, 0x4a, 0x04, 0x00, 0x00, 0x00, 0x04, 0x02, 0x91, 0x04, 0x86, 0x4a,
-  0x0c, 0x00, 0x00, 0x00, 0x1e, 0x23, 0x93, 0x04, 0x56, 0x88, 0x08, 0x00,
-  0x00, 0x00, 0x90, 0x21, 0x93, 0x04, 0x52, 0x0a, 0x09, 0x80, 0x01, 0x00,
-  0xd0, 0x21, 0x95, 0x04, 0x57, 0x0a, 0x0f, 0x80, 0x27, 0x00, 0xd8, 0x20,
-  0x9d, 0x04, 0x5d, 0x08, 0x1c, 0x80, 0x67, 0x00, 0xe4, 0x01, 0x85, 0x04,
-  0x79, 0x8a, 0x3f, 0x00, 0x00, 0x00, 0xf4, 0x11, 0x85, 0x06, 0x39, 0x08,
-  0x7d, 0x00, 0x00, 0x18, 0xb7, 0x10, 0x81, 0x03, 0x29, 0x12, 0xcb, 0x00,
-  0x7e, 0x30, 0x28, 0x00, 0x85, 0x03, 0x29, 0x10, 0xbe, 0x81, 0xff, 0x27,
-  0x0c, 0x10, 0x85, 0x03, 0x29, 0x32, 0xfa, 0xc1, 0xff, 0x27, 0x94, 0x11,
-  0x85, 0x03, 0x28, 0x20, 0x6c, 0xe1, 0xff, 0x07, 0x0c, 0x01, 0x85, 0x01,
-  0x28, 0x62, 0x5c, 0xe3, 0x8f, 0x03, 0x4e, 0x91, 0x80, 0x05, 0x39, 0x40,
-  0xf4, 0xc2, 0xff, 0x00, 0x9f, 0x91, 0x84, 0x05, 0x31, 0xc6, 0xe8, 0x07,
-  0x7f, 0x80, 0xcd, 0x00, 0xc4, 0x04, 0x31, 0x06, 0xc9, 0x0e, 0x00, 0xc0,
-  0x48, 0x88, 0xe0, 0x04, 0x79, 0x04, 0xdb, 0x12, 0x00, 0x30, 0x0c, 0xc8,
-  0xe4, 0x04, 0x6d, 0x06, 0xb6, 0x23, 0x00, 0x18, 0x1c, 0xc0, 0x84, 0x04,
-  0x25, 0x0c, 0xff, 0xc2, 0x00, 0x4e, 0x06, 0xb0, 0x80, 0x04, 0x3f, 0x8a,
-  0xb3, 0x83, 0xff, 0xc3, 0x03, 0x91, 0x84, 0x04, 0x2e, 0xd8, 0x0f, 0x3f,
-  0x00, 0x00, 0x5f, 0x83, 0x84, 0x04, 0x2a, 0x70, 0xfd, 0x7f, 0x00, 0x00,
-  0xc8, 0xc0, 0x84, 0x04, 0x4b, 0xe2, 0x2f, 0x01, 0x00, 0x08, 0x58, 0x60,
-  0x80, 0x04, 0x5b, 0x82, 0xff, 0x01, 0x00, 0x08, 0xd0, 0xa0, 0x84, 0x04,
-  0x72, 0x80, 0xe5, 0x00, 0x00, 0x08, 0xd2, 0x20, 0x44, 0x04, 0xca, 0x02,
-  0xff, 0x00, 0x00, 0x08, 0xde, 0xa0, 0x44, 0x04, 0x82, 0x02, 0x6d, 0x00,
-  0x00, 0x08, 0xf6, 0xb0, 0x40, 0x02, 0x82, 0x07, 0x3f, 0x00, 0x00, 0x08,
-  0x44, 0x58, 0x44, 0x02, 0x93, 0x3f, 0x1f, 0x00, 0x00, 0x30, 0x88, 0x4f,
-  0x44, 0x03, 0x83, 0x23, 0x3e, 0x00, 0x00, 0x00, 0x18, 0x60, 0xe0, 0x07,
-  0xe3, 0x0f, 0xfe, 0x00, 0x00, 0x00, 0x70, 0x70, 0xe4, 0x07, 0xc7, 0x1b,
-  0xfe, 0x01, 0x00, 0x00, 0xe0, 0x3c, 0xe4, 0x07, 0xc7, 0xe3, 0xfe, 0x1f,
-  0x00, 0x00, 0xff, 0x1f, 0xfc, 0x07, 0xc7, 0x03, 0xf8, 0x33, 0x00, 0xc0,
-  0xf0, 0x07, 0xff, 0x07, 0x87, 0x02, 0xfc, 0x43, 0x00, 0x60, 0xf0, 0xff,
-  0xff, 0x07, 0x8f, 0x06, 0xbe, 0x87, 0x00, 0x30, 0xf8, 0xff, 0xff, 0x07,
-  0x8f, 0x14, 0x9c, 0x8f, 0x00, 0x00, 0xfc, 0xff, 0xff, 0x07, 0x9f, 0x8d,
-  0x8a, 0x0f, 0x00, 0x00, 0xfe, 0xff, 0xff, 0x07, 0xbf, 0x0b, 0x80, 0x1f,
-  0x00, 0x00, 0xff, 0xff, 0xff, 0x07, 0x7f, 0x3a, 0x80, 0x3f, 0x00, 0x80,
-  0xff, 0xff, 0xff, 0x07, 0xff, 0x20, 0xc0, 0x3f, 0x00, 0x80, 0xff, 0xff,
-  0xff, 0x07, 0xff, 0x01, 0xe0, 0x7f, 0x00, 0xc0, 0xff, 0xff, 0xff, 0x07,
-  0xff, 0x0f, 0xf8, 0xff, 0x40, 0xe0, 0xff, 0xff, 0xff, 0x07, 0xff, 0xff,
-  0xff, 0xff, 0x40, 0xf0, 0xff, 0xff, 0xff, 0x07, 0xff, 0xff, 0xff, 0xff,
-  0x41, 0xf0, 0xff, 0xff, 0xff, 0x07};
+#include "pixmaps/porsche.xpm"
+#include "pixmaps/sorceress.xbm"
 
 class MyWidget: public Fl_Box{
 protected:
@@ -122,7 +47,7 @@ protected:
     fl_color(FL_YELLOW);
     fl_rectf(x()+7,y()+7,w()-14,h()-14);
     fl_color(FL_BLUE);
-    
+
     fl_rect(x()+8,y()+8,w()-16,h()-16);
     fl_push_clip(x()+25,y()+25,w()-50, h()-50);
     fl_color(FL_BLACK);
@@ -131,32 +56,30 @@ protected:
     fl_line(x()+27,y()+h()-27,x()+w()-27,y()+27);
     //fl_rect(x()+30,y()+30,w()-60,h()-60);
     fl_pop_clip();
-    
   }
 public:
   MyWidget(int x, int y):Fl_Box(x,y,100,100, "Clipping and rect(f):\nYellow rect.framed\nby B-Y-G-R rect. 1 p.\nthick. Your printer may \nrender very thin lines\nsurrounding \"X\""){
     align(FL_ALIGN_TOP);
     labelsize(10);
-  };
+  }
 };
 
-
-class MyWidget2: public Fl_Box{
+class MyWidget2: public Fl_Box {
 protected:
-  void draw(){
+  void draw() {
     Fl_Box::draw();
     int d;
     //    fl_line_style(0);
     for(d=y()+5;d<48+y();d+=2){
       fl_xyline(x()+5,d,x()+48);
     }
-    
+
     fl_push_clip(x()+52,y()+5,45,43);
     for(d=y()+5;d<150+y();d+=3){
       fl_line(x()+52,d,x()+92,d-40);
     }
     fl_pop_clip();
-    
+
     fl_line_style(FL_DASH);
     fl_xyline(x()+5,y()+55,x()+48);
     fl_line_style(FL_DOT);
@@ -167,39 +90,39 @@ protected:
     fl_xyline(x()+5,y()+64,x()+48);
     fl_line_style(0,0,(char*)"\7\3\7\2");
     fl_xyline(x()+5,y()+67,x()+48);
-    
+
     fl_line_style(0);
-    
+
     fl_line(x()+5,y()+72,x()+25,y()+95);
     fl_line(x()+8,y()+72,x()+28,y()+95,x()+31,y()+72);
-    
+
     fl_color(FL_YELLOW);
     fl_polygon(x()+11, y()+72,x()+27,y()+91,x()+29,y()+72);
     fl_color(FL_RED);
     fl_loop(x()+11, y()+72,x()+27,y()+91,x()+29,y()+72);
-    
+
     fl_color(FL_BLUE); ////
     fl_line_style(FL_SOLID, 6);
     fl_loop(x()+31, y()+12,x()+47,y()+31,x()+49,y()+12);
     fl_line_style(0);
-    
+
     fl_color(200,0,200);
     fl_polygon(x()+35,y()+72,x()+33,y()+95,x()+48,y()+95,x()+43,y()+72);
     fl_color(FL_GREEN);
     fl_loop(x()+35,y()+72,x()+33,y()+95,x()+48,y()+95,x()+43,y()+72);
-    
-    fl_color(FL_BLUE);    
+
+    fl_color(FL_BLUE);
     fl_yxline(x()+65,y()+63,y()+66);
-    fl_color(FL_GREEN);    
+    fl_color(FL_GREEN);
     fl_yxline(x()+66,y()+66,y()+63);
-    
+
     fl_color(FL_BLUE);
     fl_rect(x()+80,y()+55,5,5);
     fl_color(FL_YELLOW);
     fl_rectf(x()+81,y()+56,3,3);
     fl_color(FL_BLACK);
     fl_point(x()+82,y()+57);
-    
+
     fl_color(FL_BLUE);
     fl_rect(x()+56, y()+79, 24, 17);
     fl_color(FL_CYAN);
@@ -208,9 +131,9 @@ protected:
     fl_arc(x()+57, y()+80, 22 ,15 ,40, 270);
     fl_color(FL_YELLOW);
     fl_pie(x()+58, y()+81, 20 ,13 ,40, 270);
-    
+
     fl_line_style(0);
-    
+
     fl_color(FL_BLACK);
     fl_point(x()+58,y()+58);
     fl_color(FL_RED);
@@ -221,7 +144,7 @@ protected:
     fl_xyline(x()+61,y()+58,x()+62);
     fl_color(FL_RED);
     fl_xyline(x()+62,y()+59,x()+61);
-    
+
     fl_color(FL_GREEN);
     fl_yxline(x()+57,y()+58,y()+59,x()+58);
     fl_color(FL_BLUE);
@@ -230,26 +153,25 @@ protected:
     fl_xyline(x()+58,y()+61,x()+56,y()+63);
     fl_color(FL_GREEN);
     fl_yxline(x()+57,y()+63,y()+62,x()+58);
-    
+
     fl_color(FL_BLUE);
     fl_line(x()+58,y()+63, x()+60, y()+65);
     fl_color(FL_BLACK);
     fl_line(x()+61,y()+65, x()+59, y()+63);
-    
+
     fl_color(FL_BLACK);
-  };
-  
+  }
+
 public:
-  MyWidget2(int x, int y):Fl_Box(x,y,100,100, "Integer primitives"){
+  MyWidget2(int x, int y):Fl_Box(x,y,100,100, "Integer primitives") {
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
-
-class MyWidget3: public Fl_Box{
+class MyWidget3: public Fl_Box {
 protected:
-  void draw(){
+  void draw() {
     Fl_Box::draw();
     double d;
     //    fl_line_style(0);
@@ -261,7 +183,7 @@ protected:
       fl_end_line();
     }
     fl_pop_clip();
-    
+
     fl_push_clip(x()+52,y()+5,45,43);
     for(d=y()+5;d<150+y();d+=2.3052){
       fl_begin_line();
@@ -270,16 +192,14 @@ protected:
       fl_end_line();
     }
     fl_pop_clip();
-    
-  };
+
+  }
 public:
-  MyWidget3(int x, int y):Fl_Box(x,y,100,100, "Sub-pixel drawing of\nlines 1.63 points apart\nOn the screen you\ncan see aliasing, the\nprinter should render\nthem properly"){
+  MyWidget3(int x, int y):Fl_Box(x,y,100,100, "Sub-pixel drawing of\nlines 1.63 points apart\nOn the screen you\ncan see aliasing, the\nprinter should render\nthem properly") {
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
-
-
 
 class MyWidget4: public Fl_Box{
 protected:
@@ -288,7 +208,7 @@ protected:
     fl_push_matrix();
     fl_translate(x(),y());
     fl_scale(.75,.75);
-    
+
     fl_line_style(FL_SOLID , 5);
     fl_begin_line();
     fl_vertex(10, 160);
@@ -305,8 +225,8 @@ protected:
     fl_vertex(50, 190);
     fl_end_line();
     fl_line_style(0);
-    
-    fl_color(FL_GREEN);   
+
+    fl_color(FL_GREEN);
     fl_line_style(FL_SOLID | FL_CAP_ROUND |FL_JOIN_ROUND , 5);
     fl_begin_line();
     fl_vertex(10, 140);
@@ -314,7 +234,7 @@ protected:
     fl_vertex(60, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLUE);
     fl_line_style(FL_SOLID | FL_CAP_SQUARE |FL_JOIN_BEVEL , 5);
     fl_begin_line();
@@ -323,7 +243,7 @@ protected:
     fl_vertex(70, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLACK);
     fl_line_style(FL_DASH , 5);
     fl_begin_line();
@@ -332,7 +252,7 @@ protected:
     fl_vertex(80, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_RED);
     fl_line_style(FL_DASH |FL_CAP_FLAT , 5);
     fl_begin_line();
@@ -341,7 +261,7 @@ protected:
     fl_vertex(90, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_GREEN);
     fl_line_style(FL_DASH |FL_CAP_ROUND , 5);
     fl_begin_line();
@@ -350,8 +270,7 @@ protected:
     fl_vertex(100, 190);
     fl_end_line();
     fl_line_style(0);
-    
-    
+
     fl_color(FL_BLUE);
     fl_line_style(FL_DASH |FL_CAP_SQUARE , 5);
     fl_begin_line();
@@ -360,7 +279,7 @@ protected:
     fl_vertex(110, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLACK);
     fl_line_style(FL_DOT, 5);
     fl_begin_line();
@@ -369,7 +288,7 @@ protected:
     fl_vertex(120, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_RED);
     fl_line_style(FL_DOT | FL_CAP_FLAT, 5);
     fl_begin_line();
@@ -378,7 +297,7 @@ protected:
     fl_vertex(130, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_GREEN);
     fl_line_style(FL_DOT | FL_CAP_ROUND, 5);
     fl_begin_line();
@@ -387,7 +306,7 @@ protected:
     fl_vertex(140, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLUE);
     fl_line_style(FL_DOT | FL_CAP_SQUARE, 5);
     fl_begin_line();
@@ -396,7 +315,7 @@ protected:
     fl_vertex(150, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLACK);
     fl_line_style(FL_DASHDOT |FL_CAP_ROUND |FL_JOIN_ROUND , 5);
     fl_begin_line();
@@ -405,7 +324,7 @@ protected:
     fl_vertex(160, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_RED);
     fl_line_style(FL_DASHDOTDOT |FL_CAP_SQUARE |FL_JOIN_BEVEL , 5);
     fl_begin_line();
@@ -414,8 +333,7 @@ protected:
     fl_vertex(170, 190);
     fl_end_line();
     fl_line_style(0);
-    
-    
+
     fl_color(FL_GREEN);
     fl_line_style(FL_DASHDOTDOT |FL_CAP_ROUND |FL_JOIN_ROUND , 5);
     fl_begin_line();
@@ -424,34 +342,33 @@ protected:
     fl_vertex(180, 190);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_color(FL_BLUE);
     fl_line_style(0, 5, (char*)"\12\3\4\2\2\1");
     fl_begin_line();
     fl_vertex(10, 10);
     fl_vertex(190, 10);
     fl_vertex(190, 190);
-    
+
     fl_end_line();
     fl_line_style(0);
-    fl_pop_matrix();    
-    
+    fl_pop_matrix();
+
     fl_color(FL_BLACK);
-  };
+  }
 public:
   MyWidget4(int x, int y):Fl_Box(x,y+10,150,150, "Line styles"){
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
 
-
-class MyWidget5: public Fl_Box{
+class MyWidget5: public Fl_Box {
 protected:
   void draw(){
     Fl_Box::draw();
     fl_push_matrix();
-    
+
     fl_translate(x(),y());
     fl_push_matrix();
     fl_mult_matrix(1,3,0,1,0,-20);
@@ -461,39 +378,39 @@ protected:
     fl_vertex(100,-80);
     fl_vertex(100,-190);
     fl_end_polygon();
-    
+
     fl_color(FL_RED);
     fl_line_style(FL_DASHDOT, 7);
     fl_begin_loop();
-    
+
     fl_vertex(10,10);
     fl_vertex(100,-80);
     fl_vertex(100,-190);
     fl_end_loop();
     fl_line_style(0);
-    
+
     fl_color(FL_BLUE);
     fl_line_style(FL_SOLID, 3);
     fl_begin_loop();
     fl_circle(60,-50,30);
     fl_end_loop();
     fl_line_style(0);
-    
+
     fl_pop_matrix();
     fl_scale(1.8,1);
-    
+
     fl_color(FL_YELLOW);
     fl_begin_polygon();
     fl_arc(30,90,20,-45,200);
     fl_end_polygon();
-    
+
     fl_color(FL_BLACK);
     fl_line_style(FL_DASH, 3);
     fl_begin_line();
     fl_arc(30,90,20,-45,200);
     fl_end_line();
     fl_line_style(0);
-    
+
     fl_translate(15,0);
     fl_scale(1.5,3);
     fl_begin_complex_polygon();
@@ -511,16 +428,15 @@ protected:
     fl_vertex(40,10);
     fl_vertex(35,20);
     fl_end_complex_polygon();
-    
+
     fl_pop_matrix();
-  };
+  }
 public:
   MyWidget5(int x, int y):Fl_Box(x,y,230,250, "Complex (double) drawings:\nBlue ellipse may not be\ncorrectly transformed\ndue to non-orthogonal\ntransformation"){
     labelsize(10);
     align(FL_ALIGN_TOP);
-  };
+  }
 };
-
 
 uchar *image;
 int width = 80;
@@ -534,12 +450,12 @@ void make_image() {
     for (int x = 0; x < width; x++) {
       double X = double(x)/(width-1);
       *p++ = uchar(255*((1-X)*(1-Y))); // red in upper-left
-      *p++ = uchar(255*((1-X)*Y));	// green in lower-left
-      *p++ = uchar(255*(X*Y));	// blue in lower-right
+      *p++ = uchar(255*((1-X)*Y));     // green in lower-left
+      *p++ = uchar(255*(X*Y));         // blue in lower-right
       X -= 0.5;
       Y -= 0.5;
       int alpha = (int)(350 * sqrt(X * X + Y * Y));
-      if (alpha < 255) *p++ = uchar(alpha);	// alpha transparency
+      if (alpha < 255) *p++ = uchar(alpha);     // alpha transparency
       else *p++ = 255;
       Y += 0.5;
     }
@@ -550,7 +466,6 @@ void close_tmp_win(Fl_Widget *win, void *data) {
   ((Fl_Shared_Image*)data)->release();
   Fl::delete_widget(win);
 }
-
 
 Fl_Widget *target;
 const  char *operation;
@@ -563,7 +478,7 @@ void copy(Fl_Widget *, void *data) {
       W = target->as_window()->decorated_w();
       H = target->as_window()->decorated_h();
       decorated = 1;
-     }
+    }
     else {
       W = target->w();
       H = target->h();
@@ -580,7 +495,7 @@ void copy(Fl_Widget *, void *data) {
     delete rgb_surf;
     Fl_Surface_Device::pop_current();
     if (img) {
-      Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10);
+      Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10, "Fl_Image_Surface");
       g2->color(FL_YELLOW);
       Fl_Box *b = new Fl_Box(FL_NO_BOX,5,5,img->w(), img->h(),0);
       b->image(img);
@@ -590,8 +505,7 @@ void copy(Fl_Widget *, void *data) {
     }
     return;
   }
-  
-  
+
   if (strcmp(operation, "Fl_Copy_Surface") == 0) {
     Fl_Copy_Surface *copy_surf;
     if (target->as_window() && !target->parent()) {
@@ -608,7 +522,7 @@ void copy(Fl_Widget *, void *data) {
     delete copy_surf;
     Fl_Surface_Device::pop_current();
     }
-  
+
   if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {
     Fl_Paged_Device *p;
     int err;
@@ -623,19 +537,92 @@ void copy(Fl_Widget *, void *data) {
     }
     if (!err) {
       p->begin_page();
-      if (target->as_window()) p->print_window(target->as_window());
+      if (target->as_window()) {
+        int w, h;
+        p->printable_rect(&w, &h);
+        p->origin(w/2, h/2);
+        p->print_window(target->as_window(), -target->w()/2, -target->h()/2);
+      }
       else p->print_widget(target);
       p->end_page();
       p->end_job();
     } else if (err > 1 && err_message) {fl_alert("%s", err_message); delete[] err_message;}
     delete p;
   }
+
+  if (strcmp(operation, "Fl_EPS_File_Surface") == 0) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Save a .eps file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("EPS\t*.eps\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (!fnfc.show() ) {
+      FILE *eps = fl_fopen(fnfc.filename(), "w");
+      if (eps) {
+        int ww, wh;
+        if (target->as_window())  {
+          ww = target->as_window()->decorated_w();
+          wh = target->as_window()->decorated_h();
+        } else {
+          ww = target->w();
+          wh = target->h();
+        }
+        Fl_EPS_File_Surface p(ww, wh, eps);
+        if (p.file()) {
+          if (target->as_window()) p.draw_decorated_window(target->as_window());
+          else p.draw(target);
+        }
+      }
+    }
+  }
+
+  if (strcmp(operation, "Fl_SVG_File_Surface") == 0) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Save a .svg file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("SVG\t*.svg\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (!fnfc.show() ) {
+      FILE *svg = fl_fopen(fnfc.filename(), "w");
+      if (svg) {
+        int ww, wh;
+        if (target->as_window())  {
+          ww = target->as_window()->decorated_w();
+          wh = target->as_window()->decorated_h();
+        } else {
+          ww = target->w();
+          wh = target->h();
+        }
+        Fl_SVG_File_Surface surface(ww, wh, svg);
+        if (surface.file()) {
+          if (target->as_window()) surface.draw_decorated_window(target->as_window());
+          else surface.draw(target);
+          if (surface.close()) fl_message("Error while writing to SVG file %s", fnfc.filename());
+        }
+      }
+    }
+  }
+
+  if (strcmp(operation, "fl_capture_window()") == 0) {
+    Fl_Window *win = target->as_window() ? target->as_window() : target->window();
+    int X = target->as_window() ? 0 : target->x();
+    int Y = target->as_window() ? 0 : target->y();
+    Fl_RGB_Image *img = fl_capture_window(win, X, Y, target->w(), target->h());
+    if (img) {
+      Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10, "fl_capture_window()");
+      g2->color(FL_YELLOW);
+      Fl_Box *b = new Fl_Box(FL_NO_BOX,5,5,img->w(), img->h(),0);
+      b->image(img);
+      g2->end();
+      g2->callback(close_tmp_win, img);
+      g2->show();
+    }
+  }
 }
 
-
-class My_Button:public Fl_Button{
+class My_Button:public Fl_Button {
 protected:
-  void draw(){
+  void draw() {
     if (type() == FL_HIDDEN_BUTTON) return;
     Fl_Color col = value() ? selection_color() : color();
     draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
@@ -645,12 +632,11 @@ protected:
     fl_line(x()+w()-15,y()+10,x()+15,y()+h()-23);
     fl_line_style(0);
     draw_label();
-    
-  };
+
+  }
 public:
   My_Button(int x, int y, int w, int h, const char * label = 0):Fl_Button(x,y,w,h,label){}
 };
-
 
 void target_cb(Fl_Widget* wid, void *data)
 {
@@ -663,112 +649,114 @@ void operation_cb(Fl_Widget* wid, void *data)
 }
 
 int main(int argc, char ** argv) {
-  
-  //Fl::scheme("plastic");  
-  
-  Fl_Window * w2 = new Fl_Window(500,560,"Graphics test");
-  
-  Fl_Group *c2 =new Fl_Group(3, 43, 494, 514 );
-  
-  new MyWidget(10,140);
-  new MyWidget2(110,80);
-  new MyWidget3(220,140);
-  new MyWidget4(330,70);
-  new MyWidget5(140,270);
-  
+
+  Fl::scheme("plastic");
+
+  Fl_Window * w2 = new Fl_Window(500,568,"Graphics test");
+
+  Fl_Group *c2 =new Fl_Group(3, 56, 494, 514 );
+
+  new MyWidget(10,140+16);
+  new MyWidget2(110,80+16);
+  new MyWidget3(220,140+16);
+  new MyWidget4(330,70+16);
+  new MyWidget5(140,270+16);
+
   make_image();
   Fl_RGB_Image *rgb = new Fl_RGB_Image(image, width, height, 4);
-  My_Button b_rgb(10,245,100,100,"RGB with alpha");
+  My_Button b_rgb(10,245+16,100,100,"RGB with alpha");
   b_rgb.image(rgb);
-  
-  My_Button b_pixmap(10,345,100,100,"Pixmap");
+
+  My_Button b_pixmap(10,345+16,100,100,"Pixmap");
   Fl_Pixmap *pixmap = new Fl_Pixmap(porsche_xpm);
   b_pixmap.image(pixmap);
-  
-  My_Button b_bitmap(10,445,100,100,"Bitmap");
+
+  My_Button b_bitmap(10,445+16,100,100,"Bitmap");
   b_bitmap.labelcolor(FL_GREEN);
   b_bitmap.image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
-  
-  new Fl_Clock(360,230,120,120);
-  Fl_Return_Button * ret = new Fl_Return_Button (360, 360, 120,30, "Return");
+
+  new Fl_Clock(360,230+16,120,120);
+  Fl_Return_Button * ret = new Fl_Return_Button (360, 360+16, 120,30, "Return");
   ret->deactivate();
-  Fl_Button but1(360, 390, 30, 30, "@->|");
+  Fl_Button but1(360, 390+16, 30, 30, "@->|");
   but1.labelcolor(FL_DARK3);
-  Fl_Button but2(390, 390, 30, 30, "@UpArrow");
+  Fl_Button but2(390, 390+16, 30, 30, "@UpArrow");
   but2.labelcolor(FL_DARK3);
-  Fl_Button but3(420, 390, 30, 30, "@DnArrow");
+  Fl_Button but3(420, 390+16, 30, 30, "@DnArrow");
   but3.labelcolor(FL_DARK3);
-  Fl_Button but4(450, 390, 30, 30, "@+");
+  Fl_Button but4(450, 390+16, 30, 30, "@+");
   but4.labelcolor(FL_DARK3);
-  Fl_Button but5(360, 425, 120, 30, "Hello, World");
+  Fl_Button but5(360, 425+16, 120, 30, "Hello, World");
   but5.labelfont(FL_BOLD|FL_ITALIC);
   but5.labeltype(FL_SHADOW_LABEL);
   but5.box(FL_ROUND_UP_BOX);
-  
-  Fl_Button but6(360, 460, 120, 30, "Plastic");
+
+  Fl_Button but6(360, 460+16, 120, 30, "Plastic");
   but6.box(FL_PLASTIC_UP_BOX);
-  
+
   Fl_Group *group;
-  { Fl_Group* o = new Fl_Group(360, 495, 120, 40); group=o;
+  { Fl_Group* o = new Fl_Group(360, 495+16, 120, 40); group=o;
     o->box(FL_UP_BOX);
-    { Fl_Group* o = new Fl_Group(365, 500, 110, 30);
+    { Fl_Group* o = new Fl_Group(365, 500+16, 110, 30);
       o->box(FL_THIN_UP_FRAME);
-      { Fl_Round_Button* o = new Fl_Round_Button(365, 500, 40, 30, "rad");
+      { Fl_Round_Button* o = new Fl_Round_Button(365, 500+16, 40, 30, "rad");
         o->value(1);
       }
-      { Fl_Check_Button* o = new Fl_Check_Button(410, 500, 60, 30, "check");
+      { Fl_Check_Button* o = new Fl_Check_Button(410, 500+16, 60, 30, "check");
         o->value(1);
-        
       }
       o->end();
     }
     o->end();
     o->deactivate();
   }
-  Fl_Box tx(120,492,230,50,"Background is not printed because\nencapsulating group, which we are\n printing, has not set the box type");
+  Fl_Box tx(120,492+16,230,50,"Background is not printed because\nencapsulating group, which we are\n printing, has not set the box type");
   tx.box(FL_SHADOW_BOX);
   tx.labelsize(12);
-  
+
   tx.hide();
-  
+
   c2->end();
-  
+
   Fl_Radio_Round_Button *rb;
-  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,60);
+  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,73);
   w3->box(FL_DOWN_BOX);
-  Fl_Group *g1 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
-  rb = new Fl_Radio_Round_Button(5,5,150,12, "Fl_Image_Surface"); 
+  Fl_Group *g1 = new Fl_Group(0,0,w3->w(),w3->h());
+  rb = new Fl_Radio_Round_Button(5,4,150,12, "Fl_Image_Surface");
   rb->set(); rb->callback(operation_cb, NULL); operation = rb->label(); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,18,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,31,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
-  rb = new Fl_Radio_Round_Button(5,44,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,4,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,17,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,17,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,30,150,12, "Fl_EPS_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,30,150,12, "Fl_SVG_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,43,150,12, "fl_capture_window()"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   g1->end();
-  
-  Fl_Group *g2 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
-  rb = new Fl_Radio_Round_Button(170,5,150,12, "Decorated Window"); 
-  rb->set(); rb->callback(target_cb, w2); target = w2;
-  rb = new Fl_Radio_Round_Button(170,22,150,12, "Sub-window"); rb->callback(target_cb, w3);
-  rb = new Fl_Radio_Round_Button(170,39,150,12, "Group"); rb->callback(target_cb, group);
+
+  Fl_Group *g2 = new Fl_Group(0,0,w3->w(),w3->h());
+  Fl_Box *box = new Fl_Box(FL_BORDER_BOX, 4, 55, 340, 16, NULL);
+  box->color(FL_LIGHT3);
+  rb = new Fl_Radio_Round_Button(5,57,140,12, "Decorated window");
+  rb->labelsize(12); rb->set(); rb->callback(target_cb, w2); target = w2;
+  rb = new Fl_Radio_Round_Button(160,57,100,12, "Sub-window");
+  rb->labelsize(12); rb->callback(target_cb, w3);
+  rb = new Fl_Radio_Round_Button(275,57,60,12, "Group");
+  rb->labelsize(12);rb->callback(target_cb, group);
   g2->end();
-  Fl_Button *b4 = new Fl_Button(330, (w3->h() - 25)/2, 150, 25, "GO");
+  Fl_Button *b4 = new Fl_Button(380, (w3->h() - 25)/2, 100, 25, "GO");
   b4->callback((Fl_Callback*)copy,NULL);
   w3->end();
-  
+
   w2->end();
   Fl_RGB_Image *rgba_icon = new Fl_RGB_Image(pixmap);
   Fl_Window::default_icon(rgba_icon);
-  //w2->icon(rgba_icon);
+  // w2->icon(rgba_icon);
   delete rgba_icon;
   w2->show(argc, argv);
-  
+
   Fl::run();
   delete pixmap;
   delete b_bitmap.image();
   delete rgb;
-  
+
   return 0;
 }
-
-//
-// End of "$Id$"
-//

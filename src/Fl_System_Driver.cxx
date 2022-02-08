@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A base class for platform specific system calls.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -45,7 +43,7 @@ const int Fl_System_Driver::fl_YNegative =   0x0020;
 // and/or use their own table. It is defined here "static" and assigned
 // in the constructor to avoid static initialization race conditions.
 //
-// As of June 2018 these platforms are Windows and Android. X11 does not
+// As of January 2022 the only platform is Windows. X11 does not
 // use a key table at all.
 // Platforms that use their own key tables must assign them in their
 // constructors (which overwrites the pointer and size).
@@ -137,7 +135,7 @@ void Fl_System_Driver::fatal(const char *format, va_list args) {
 
 /* the following function was stolen from the X sources as indicated. */
 
-/* Copyright 	Massachusetts Institute of Technology  1985, 1986, 1987 */
+/* Copyright    Massachusetts Institute of Technology  1985, 1986, 1987 */
 /* $XConsortium: XParseGeom.c,v 11.18 91/02/21 17:23:05 rws Exp $ */
 
 /*
@@ -168,7 +166,7 @@ static int ReadInteger(char* string, char** NextString)
 {
   int Result = 0;
   int Sign = 1;
-  
+
   if (*string == '+')
     string++;
   else if (*string == '-') {
@@ -193,11 +191,11 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   unsigned int tempWidth = 0, tempHeight = 0;
   int tempX = 0, tempY = 0;
   char *nextCharacter;
-  
+
   if ( (string == NULL) || (*string == '\0')) return(mask);
   if (*string == '=')
     string++;  /* ignore possible '=' at beg of geometry spec */
-  
+
   strind = (char *)string;
   if (*strind != '+' && *strind != '-' && *strind != 'x') {
     tempWidth = ReadInteger(strind, &nextCharacter);
@@ -206,7 +204,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     strind = nextCharacter;
     mask |= fl_WidthValue;
   }
-  
+
   if (*strind == 'x' || *strind == 'X') {
     strind++;
     tempHeight = ReadInteger(strind, &nextCharacter);
@@ -215,7 +213,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     strind = nextCharacter;
     mask |= fl_HeightValue;
   }
-  
+
   if ((*strind == '+') || (*strind == '-')) {
     if (*strind == '-') {
       strind++;
@@ -224,7 +222,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
         return (0);
       strind = nextCharacter;
       mask |= fl_XNegative;
-      
+
     } else {
       strind++;
       tempX = ReadInteger(strind, &nextCharacter);
@@ -241,7 +239,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
           return(0);
         strind = nextCharacter;
         mask |= fl_YNegative;
-        
+
       } else {
         strind++;
         tempY = ReadInteger(strind, &nextCharacter);
@@ -252,12 +250,12 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
       mask |= fl_YValue;
     }
   }
-  
+
   /* If strind isn't at the end of the string the it's an invalid
    geometry specification. */
-  
+
   if (*strind != '\0') return (0);
-  
+
   if (mask & fl_XValue)
     *x = tempX;
   if (mask & fl_YValue)
@@ -359,10 +357,10 @@ unsigned Fl_System_Driver::utf8to_mb(const char* src, unsigned srclen, char* dst
     fl_utf8towc(src, srclen, buf, length+1);
   }
   if (dstlen) {
-    ret = wcstombs(dst, buf, dstlen);
-    if (ret >= (int)dstlen-1) ret = wcstombs(0,buf,0);
+    ret = (int)wcstombs(dst, buf, dstlen);
+    if (ret >= (int)dstlen-1) ret = (int)wcstombs(0,buf,0);
   } else {
-    ret = wcstombs(0,buf,0);
+    ret = (int)wcstombs(0,buf,0);
   }
   if (buf != lbuf) free(buf);
   if (ret >= 0) return (unsigned)ret;
@@ -381,9 +379,9 @@ unsigned Fl_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* s
   wchar_t* buf = lbuf;
   int length;
   unsigned ret;
-  length = mbstowcs(buf, src, 1024);
+  length = (int)mbstowcs(buf, src, 1024);
   if (length >= 1024) {
-    length = mbstowcs(0, src, 0)+1;
+    length = (int)mbstowcs(0, src, 0)+1;
     buf = (wchar_t*)(malloc(length*sizeof(wchar_t)));
     mbstowcs(buf, src, length);
   }
@@ -406,28 +404,36 @@ int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list a
   return vfprintf(output, format, args);
 }
 
+int Fl_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+  return vsnprintf(output, output_size, format, args);
+}
+
+int Fl_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+  return vsscanf(input, format, args);
+}
+
 int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
   char *temp = new char[tolen];
   strlcpy(temp,from, tolen);
   char *start = temp;
   char *end = temp+strlen(temp);
-  
+
   int ret = 0;
-  
-  for (char *a=temp; a<end; ) {	// for each slash component
+
+  for (char *a=temp; a<end; ) { // for each slash component
     char *e; for (e=a; e<end && *e != '/'; e++) {/*empty*/} // find next slash
     const char *value = 0; // this will point at substitute value
     switch (*a) {
-      case '~':	// a home directory name
-        if (e <= a+1) {	// current user's directory
+      case '~': // a home directory name
+        if (e <= a+1) { // current user's directory
           value = getenv("HOME");
-        } else {	// another user's directory
+        } else {        // another user's directory
           char t = *e; *(char *)e = 0;
           value = getpwnam(a+1);
           *(char *)e = t;
         }
         break;
-      case '$':		/* an environment variable */
+      case '$':         /* an environment variable */
       {char t = *e; *(char *)e = 0; value = getenv(a+1); *(char *)e = t;}
         break;
     }
@@ -451,9 +457,11 @@ int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
 }
 
 int Fl_System_Driver::file_browser_load_directory(const char *directory, char *filename,
-                                                  size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
+                                                  size_t name_size, dirent ***pfiles,
+                                                  Fl_File_Sort_F *sort,
+                                                  char *errmsg, int errmsg_sz)
 {
-  return filename_list(directory, pfiles, sort);
+  return filename_list(directory, pfiles, sort, errmsg, errmsg_sz);
 }
 
 int Fl_System_Driver::file_type(const char *filename)
@@ -498,7 +506,3 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

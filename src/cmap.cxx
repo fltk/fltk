@@ -7,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//   https://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//   https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -44,31 +44,31 @@ static short cmap[256][3] = {
 
   // 3-bit colormap:
 
-  {  0,  0,  0},	// black
-  {III,  0,  0},	// red
-  {  0,III,  0},	// green
-  {III,III,  0},	// yellow
-  {  0,  0,III},	// blue
-  {III,  0,III},	// magenta
-  {  0,III,III},	// cyan
-  {III,III,III},	// white
+  {  0,  0,  0},        // black
+  {III,  0,  0},        // red
+  {  0,III,  0},        // green
+  {III,III,  0},        // yellow
+  {  0,  0,III},        // blue
+  {III,  0,III},        // magenta
+  {  0,III,III},        // cyan
+  {III,III,III},        // white
 
   // pastel versions of those colors, from SGI's standard color map:
 
-  { 85, 85, 85},	// 1/3 gray
-  {198,113,113},	// salmon? pale red?
-  {113,198,113},	// pale green
-  {142,142, 56},	// khaki
-  {113,113,198},	// pale blue
-  {142, 56,142},	// purple, orchid, pale magenta
-  { 56,142,142},	// cadet blue, aquamarine, pale cyan
+  { 85, 85, 85},        // 1/3 gray
+  {198,113,113},        // salmon? pale red?
+  {113,198,113},        // pale green
+  {142,142, 56},        // khaki
+  {113,113,198},        // pale blue
+  {142, 56,142},        // purple, orchid, pale magenta
+  { 56,142,142},        // cadet blue, aquamarine, pale cyan
 
   // The next location (15) is used for FL_SELECTION_COLOR. It formerly was
   // 2/3 gray but this is changed to be the Windows blue color. This allows
   // the default behavior on both X and Windows to match:
-  // {170,170,170},	// old 2/3 gray color
+  // {170,170,170},     // old 2/3 gray color
 
-  {  0,  0,128},	// 15 = FL_SELECTION_COLOR
+  {  0,  0,128},        // 15 = FL_SELECTION_COLOR
 
   // These next 16 (index 16 - 31) are the FL_FREE_COLOR area. In some
   // versions of fltk these were filled with random colors that a Irix 5.3
@@ -77,7 +77,7 @@ static short cmap[256][3] = {
   // This version uses colors that NewTek has assigned for their GUI
   // (from George Yohng):
 
-  {168,168,152},	// 16 = FL_FREE_COLOR
+  {168,168,152},        // 16 = FL_FREE_COLOR
   {232,232,216},
   {104,104, 88},
   {152,168,168},
@@ -92,7 +92,7 @@ static short cmap[256][3] = {
   {144,144,144},
   {192,192,192},
   { 80, 80, 80},
-  {160,160,160},	// 31
+  {160,160,160},        // 31
 
   // The rest of the colormap is a gray ramp and table, filled in below:
 };
@@ -149,10 +149,10 @@ int main() {
   for (b = 0; b < 5; b++) {
     for (r = 0; r < 5; r++) {
       for (g = 0; g < 8; g++) {
-	cmap[i][0] = r * 255 / 4;
-	cmap[i][1] = g * 255 / 7;
-	cmap[i][2] = b * 255 / 4;
-	i++;
+        cmap[i][0] = r * 255 / 4;
+        cmap[i][1] = g * 255 / 7;
+        cmap[i][2] = b * 255 / 4;
+        i++;
       }
     }
   }
@@ -170,11 +170,11 @@ int main() {
   printf("// the file \"COPYING\" which should have been included with this file.  If this\n");
   printf("// file is missing or damaged, see the license at:\n");
   printf("//\n");
-  printf("//   https://www.fltk.org/COPYING.php\n");
+  printf("//     https://www.fltk.org/COPYING.php\n");
   printf("//\n");
-  printf("// Please report all bugs and problems on the following page:\n");
+  printf("// Please see the following page on how to report bugs and issues:\n");
   printf("//\n");
-  printf("//   https://www.fltk.org/str.php\n");
+  printf("//     https://www.fltk.org/bugs.php\n");
   printf("//\n");
 
   // write color map values
@@ -195,7 +195,3 @@ int main() {
 
   return 0;
 }
-
-//
-// End of "$Id$".
-//

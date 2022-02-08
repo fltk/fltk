@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // These box types provide a cross between Aqua and KDE buttons; kindof
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Box drawing code for an obscure box type.
@@ -41,9 +39,9 @@ inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
 #ifdef USE_OLD_PLASTIC_COLOR
   return fl_color_average((Fl_Color)gc, bc, 0.75f);
 #else
-  unsigned	grgb = Fl::get_color((Fl_Color)gc),
-		brgb = Fl::get_color(bc);
-  int		red, green, blue, gray;
+  unsigned      grgb = Fl::get_color((Fl_Color)gc),
+                brgb = Fl::get_color(bc);
+  int           red, green, blue, gray;
 
 
   gray  = ((grgb >> 24) & 255);
@@ -146,10 +144,10 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
 
 static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   const uchar *g = fl_gray_ramp();
-  int	i, j;
-  int	clen = (int) strlen(c) - 1;
-  int	chalf = clen / 2;
-  int	cstep = 1;
+  int   i, j;
+  int   clen = (int) strlen(c) - 1;
+  int   chalf = clen / 2;
+  int   cstep = 1;
 
   if (h < (w * 2)) {
     // Horizontal shading...
@@ -218,9 +216,9 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   const uchar *g = fl_gray_ramp();
-  int	i;
-  int 	clen = (int) (strlen(c) - 1);
-  int 	chalf = clen / 2;
+  int   i;
+  int   clen = (int) (strlen(c) - 1);
+  int   chalf = clen / 2;
 
   if (w>h) {
     int d = h/2;
@@ -365,8 +363,3 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
 
   return _FL_PLASTIC_UP_BOX;
 }
-
-
-//
-// End of "$Id$".
-//

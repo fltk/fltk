@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -74,7 +72,6 @@ unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set
 
 void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
 
-void Fl_Window_Driver::flush_menu() { pWindow->Fl_Window::flush(); }
 
 /**
  Draw the window content.
@@ -94,7 +91,6 @@ void Fl_Window_Driver::make_current() { }
  */
 void Fl_Window_Driver::show() { }
 
-void Fl_Window_Driver::show_menu() { pWindow->Fl_Window::show(); }
 
 /**
  Change the window title.
@@ -153,17 +149,17 @@ void Fl_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_I
 // This function is available for use by platform-specific, Fl_Window_Driver-derived classes
 int Fl_Window_Driver::hide_common() {
   pWindow->clear_visible();
-  
+
   if (!shown()) return 1;
-  
+
   // remove from the list of windows:
   Fl_X* ip = Fl_X::i(pWindow);
   Fl_X** pp = &Fl_X::first;
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return 1;
   *pp = ip->next;
-  
+
   pWindow->i = 0;
-  
+
   // recursively remove any subwindows:
   for (Fl_X *wi = Fl_X::first; wi;) {
     Fl_Window* W = wi->w;
@@ -173,14 +169,14 @@ int Fl_Window_Driver::hide_common() {
       wi = Fl_X::first;
     } else wi = wi->next;
   }
-  
+
   if (pWindow == Fl::modal_) { // we are closing the modal window, find next one:
     Fl_Window* W;
     for (W = Fl::first_window(); W; W = Fl::next_window(W))
       if (W->modal()) break;
     Fl::modal_ = W;
   }
-  
+
   // Make sure no events are sent to this window:
   fl_throw_focus(pWindow);
   pWindow->handle(FL_HIDE);
@@ -241,10 +237,10 @@ bool Fl_Window_Driver::is_a_rescale_ = false;
 void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_f) {
   screen_num(ns);
   Fl_Graphics_Driver::default_driver().scale(new_f);
-  int X = pWindow->x()*old_f/new_f, Y = pWindow->y()*old_f/new_f;
+  int X = int(pWindow->x() * old_f / new_f), Y = int(pWindow->y() * old_f / new_f);
   int W, H;
   if (pWindow->fullscreen_active()) {
-    W = pWindow->w() * old_f/new_f; H = pWindow->h() * old_f/new_f;
+    W = int(pWindow->w() * old_f / new_f); H = int(pWindow->h() * old_f / new_f);
   } else {
     W = pWindow->w(); H = pWindow->h();
     int sX, sY, sW, sH;
@@ -265,7 +261,3 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

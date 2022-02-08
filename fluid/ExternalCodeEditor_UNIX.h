@@ -1,6 +1,4 @@
 //
-// "$Id$".
-//
 //       External code editor management class for Unix
 //
 //       Handles starting and keeping track of an external text editor,
@@ -9,29 +7,34 @@
 #ifndef _EXTCODEEDITOR_H
 #define _EXTCODEEDITOR_H
 
+#include <FL/Fl.H>
+
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */
-
 #include <sys/types.h>  /* stat().. */
 #include <sys/stat.h>
 #include <unistd.h>
+
+// ---- ExternalCodeEditor declaration
 
 class ExternalCodeEditor {
   int pid_;
   time_t file_mtime_;                   // last modify time of the file (used to determine if file changed)
   size_t file_size_;                    // last file size (used to determine if changed)
   const char *filename_;
+
 protected:
   void kill_editor();
   const char *create_tmpdir();
   const char *tmp_filename();
   int start_editor(const char *cmd, const char *filename);
   void set_filename(const char *val);
+
 public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();
   int is_editing();
-  pid_t reap_editor();
+  int reap_editor(pid_t *pid_reaped=NULL);
   void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);
@@ -47,6 +50,3 @@ public:
 };
 
 #endif /*_EXTCODEEDITOR_H */
-//
-// End of "$Id$".
-//

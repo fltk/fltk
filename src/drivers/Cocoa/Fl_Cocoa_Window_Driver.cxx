@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa window driver.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,15 +7,15 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Cocoa_Window_Driver.H"
 #include "../../Fl_Screen_Driver.H"
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
@@ -53,6 +51,7 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
   cursor = nil;
   window_flags_ = 0;
   icon_image = NULL;
+  screen_num_ = 0;
 }
 
 
@@ -264,6 +263,7 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
 static const unsigned mapped_mask = 1;
 static const unsigned changed_mask = 2;
 static const unsigned view_resized_mask = 4;
+static const unsigned through_resize_mask = 8;
 
 bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
   return window_flags_ & mapped_mask;
@@ -292,6 +292,15 @@ void Fl_Cocoa_Window_Driver::view_resized(bool b) {
   else window_flags_ &= ~view_resized_mask;
 }
 
+bool Fl_Cocoa_Window_Driver::through_resize() {
+  return window_flags_ & through_resize_mask;
+}
+
+void Fl_Cocoa_Window_Driver::through_resize(bool b) {
+  if (b) window_flags_ |= through_resize_mask;
+  else window_flags_ &= ~through_resize_mask;
+}
+
 
 // clip the graphics context to rounded corners
 void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
@@ -318,48 +327,28 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   int htop, hleft, hright, hbottom;
   Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
   if (htop == 0) return; // when window is fullscreen
-  CALayer *layer = get_titlebar_layer();
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);
-  uchar *rgba = new uchar[4 * scaled_w * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * scaled_w, 2 * htop, 8, 8 * scaled_w, cspace, kCGImageAlphaPremultipliedLast);
+  const int factor = (mapped_to_retina() ? 2 : 1);
+  int data_w = factor * scaled_w, data_h = factor * htop;
+  uchar *rgba = new uchar[4 * data_w * data_h];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGContextClearRect(auxgc, CGRectMake(0,0,2*scaled_w,2*htop));
-  CGContextScaleCTM(auxgc, 2, 2);
-  if (layer) {
-    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
-    if (fl_mac_os_version >= 101300) {
-      // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
-      uchar *p = rgba;
-      uchar *last = rgba + 4 * scaled_w * htop * 4;
-      while (p < last) {
-        uchar q = *(p+3);
-        if (q && q != 0xff) {
-          float m = 255./q;
-          *p++ *= m;
-          *p++ *= m;
-          *p++ *= m;
-          *p++ = 0xff;
-        } else p += 4;
-      }
-    }
-  } else {
-    Fl_Graphics_Driver::default_driver().scale(1);
-    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop, false);
-    Fl_Graphics_Driver::default_driver().scale(s);
-    CGContextSaveGState(auxgc);
-    clip_to_rounded_corners(auxgc, scaled_w, htop);
-    CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);
-    CGContextRestoreGState(auxgc);
-    CFRelease(img);
-  }
-  top = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
+  CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
+  CGContextScaleCTM(auxgc, factor, factor);
+  draw_titlebar_to_context(auxgc, scaled_w, htop);
+  top = new Fl_RGB_Image(rgba, data_w, data_h, 4);
   top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
 }
 
-//
-// End of "$Id$".
-//
+void Fl_Cocoa_Window_Driver::screen_num(int n) {
+  screen_num_ = n;
+}
+
+int Fl_Cocoa_Window_Driver::screen_num() {
+  if (pWindow->parent()) return pWindow->top_window()->screen_num();
+  else return screen_num_;
+}

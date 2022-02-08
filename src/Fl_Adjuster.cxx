@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Adjuster widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -48,11 +46,11 @@ void Fl_Adjuster::draw() {
   else
     fl_color(fl_inactive(selection_color()));
   fastarrow.draw(x()+(W-fastarrow_width)/2,
-		 y()+2*dy+(H-fastarrow_height)/2, W, H);
+                 y()+2*dy+(H-fastarrow_height)/2, W, H);
   mediumarrow.draw(x()+dx+(W-mediumarrow_width)/2,
-		   y()+dy+(H-mediumarrow_height)/2, W, H);
+                   y()+dy+(H-mediumarrow_height)/2, W, H);
   slowarrow.draw(x()+2*dx+(W-slowarrow_width)/2,
-		 y()+(H-slowarrow_width)/2, W, H);
+                 y()+(H-slowarrow_width)/2, W, H);
   if (Fl::focus() == this) draw_focus();
 }
 
@@ -66,51 +64,51 @@ int Fl_Adjuster::handle(int event) {
       if (Fl::visible_focus()) Fl::focus(this);
       ix = mx;
       if (w()>=h())
-	drag = 3*(mx-x())/w() + 1;
+        drag = 3*(mx-x())/w() + 1;
       else
-	drag = 3-3*(Fl::event_y()-y()-1)/h();
+        drag = 3-3*(Fl::event_y()-y()-1)/h();
       { Fl_Widget_Tracker wp(this);
-	handle_push();
-	if (wp.deleted()) return 1;
+        handle_push();
+        if (wp.deleted()) return 1;
       }
       redraw();
       return 1;
     case FL_DRAG:
       if (w() >= h()) {
-	delta = x()+(drag-1)*w()/3;	// left edge of button
-	if (mx < delta)
-	  delta = mx-delta;
-	else if (mx > (delta+w()/3)) // right edge of button
-	  delta = mx-delta-w()/3;
-	else
-	  delta = 0;
+        delta = x()+(drag-1)*w()/3;     // left edge of button
+        if (mx < delta)
+          delta = mx-delta;
+        else if (mx > (delta+w()/3)) // right edge of button
+          delta = mx-delta-w()/3;
+        else
+          delta = 0;
       } else {
-	if (mx < x())
-	  delta = mx-x();
-	else if (mx > (x()+w()))
-	  delta = mx-x()-w();
-	else
-	  delta = 0;
+        if (mx < x())
+          delta = mx-x();
+        else if (mx > (x()+w()))
+          delta = mx-x()-w();
+        else
+          delta = 0;
       }
       switch (drag) {
-	case 3: v = increment(previous_value(), delta); break;
-	case 2: v = increment(previous_value(), delta*10); break;
-	default:v = increment(previous_value(), delta*100); break;
+        case 3: v = increment(previous_value(), delta); break;
+        case 2: v = increment(previous_value(), delta*10); break;
+        default:v = increment(previous_value(), delta*100); break;
       }
       handle_drag(soft() ? softclamp(v) : clamp(v));
       return 1;
     case FL_RELEASE:
       if (Fl::event_is_click()) { // detect click but no drag
-	if (Fl::event_state()&0xF0000) delta = -10;
-	else delta = 10;
-	switch (drag) {
-	  case 3: v = increment(previous_value(), delta); break;
-	  case 2: v = increment(previous_value(), delta*10); break;
-	  default:v = increment(previous_value(), delta*100); break;
-	}
-	Fl_Widget_Tracker wp(this);
-	handle_drag(soft() ? softclamp(v) : clamp(v));
-	if (wp.deleted()) return 1;
+        if (Fl::event_state()&0xF0000) delta = -10;
+        else delta = 10;
+        switch (drag) {
+          case 3: v = increment(previous_value(), delta); break;
+          case 2: v = increment(previous_value(), delta*10); break;
+          default:v = increment(previous_value(), delta*100); break;
+        }
+        Fl_Widget_Tracker wp(this);
+        handle_drag(soft() ? softclamp(v) : clamp(v));
+        if (wp.deleted()) return 1;
       }
       drag = 0;
       redraw();
@@ -118,23 +116,23 @@ int Fl_Adjuster::handle(int event) {
       return 1;
     case FL_KEYBOARD :
       switch (Fl::event_key()) {
-	case FL_Up:
+        case FL_Up:
           if (w() > h()) return 0;
-	  handle_drag(clamp(increment(value(),-1)));
-	  return 1;
-	case FL_Down:
+          handle_drag(clamp(increment(value(),-1)));
+          return 1;
+        case FL_Down:
           if (w() > h()) return 0;
-	  handle_drag(clamp(increment(value(),1)));
-	  return 1;
-	case FL_Left:
+          handle_drag(clamp(increment(value(),1)));
+          return 1;
+        case FL_Left:
           if (w() < h()) return 0;
-	  handle_drag(clamp(increment(value(),-1)));
-	  return 1;
-	case FL_Right:
+          handle_drag(clamp(increment(value(),-1)));
+          return 1;
+        case FL_Right:
           if (w() < h()) return 0;
-	  handle_drag(clamp(increment(value(),1)));
-	  return 1;
-	default:
+          handle_drag(clamp(increment(value(),1)));
+          return 1;
+        default:
           return 0;
       }
       // break not required because of switch...
@@ -167,7 +165,3 @@ Fl_Adjuster::Fl_Adjuster(int X, int Y, int W, int H, const char* l)
   drag = 0;
   soft_ = 1;
 }
-
-//
-// End of "$Id$".
-//

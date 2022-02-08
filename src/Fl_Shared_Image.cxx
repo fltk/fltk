@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -32,13 +30,13 @@
 // Global class vars...
 //
 
-Fl_Shared_Image **Fl_Shared_Image::images_ = 0;	// Shared images
-int	Fl_Shared_Image::num_images_ = 0;	// Number of shared images
-int	Fl_Shared_Image::alloc_images_ = 0;	// Allocated shared images
+Fl_Shared_Image **Fl_Shared_Image::images_ = 0; // Shared images
+int     Fl_Shared_Image::num_images_ = 0;       // Number of shared images
+int     Fl_Shared_Image::alloc_images_ = 0;     // Allocated shared images
 
 Fl_Shared_Handler *Fl_Shared_Image::handlers_ = 0;// Additional format handlers
-int	Fl_Shared_Image::num_handlers_ = 0;	// Number of format handlers
-int	Fl_Shared_Image::alloc_handlers_ = 0;	// Allocated format handlers
+int     Fl_Shared_Image::num_handlers_ = 0;     // Number of format handlers
+int     Fl_Shared_Image::alloc_handlers_ = 0;   // Allocated format handlers
 
 
 //
@@ -91,22 +89,22 @@ int Fl_Shared_Image::num_images() {
   same width and height. The second step will match if there is an image
   marked \p original with the same name, regardless of width and height.
 
-  \returns	Whether the images match or their relative sort order (see text).
+  \returns      Whether the images match or their relative sort order (see text).
 
-  \retval	0	the images match
-  \retval	<0	Image \p i0 is \e less than image \p i1
-  \retval	>0	Image \p i0 is \e greater than image \p i1
+  \retval       0       the images match
+  \retval       <0      Image \p i0 is \e less than image \p i1
+  \retval       >0      Image \p i0 is \e greater than image \p i1
 */
 int
-Fl_Shared_Image::compare(Fl_Shared_Image **i0,		// I - First image
-                         Fl_Shared_Image **i1) {	// I - Second image
+Fl_Shared_Image::compare(Fl_Shared_Image **i0,          // I - First image
+                         Fl_Shared_Image **i1) {        // I - Second image
   int i = strcmp((*i0)->name(), (*i1)->name());
 
   if (i) return i;
-  else if (((*i0)->w() == 0 && (*i1)->original_) ||
-           ((*i1)->w() == 0 && (*i0)->original_)) return 0;
-  else if ((*i0)->w() != (*i1)->w()) return (*i0)->w() - (*i1)->w();
-  else return (*i0)->h() - (*i1)->h();
+  else if (((*i0)->data_w() == 0 && (*i1)->original_) ||
+           ((*i1)->data_w() == 0 && (*i0)->original_)) return 0;
+  else if ((*i0)->data_w() != (*i1)->data_w()) return (*i0)->data_w() - (*i1)->data_w();
+  else return (*i0)->data_h() - (*i1)->data_h();
 }
 
 
@@ -133,8 +131,8 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
   The constructors are protected and cannot be used directly
   from a program. Use the get() method instead.
 */
-Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
-                                 Fl_Image   *img)	// I - Image
+Fl_Shared_Image::Fl_Shared_Image(const char *n,         // I - Filename
+                                 Fl_Image   *img)       // I - Image
   : Fl_Image(0,0,0) {
   name_ = new char[strlen(n) + 1];
   strcpy((char *)name_, n);
@@ -159,7 +157,7 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
 */
 void
 Fl_Shared_Image::add() {
-  Fl_Shared_Image	**temp;		// New image pointer array...
+  Fl_Shared_Image       **temp;         // New image pointer array...
 
   if (num_images_ >= alloc_images_) {
     // Allocate more memory...
@@ -219,7 +217,7 @@ Fl_Shared_Image::~Fl_Shared_Image() {
   so that no hole will occur.
 */
 void Fl_Shared_Image::release() {
-  int	i;	// Looping var...
+  int   i;      // Looping var...
 
   refcount_ --;
   if (refcount_ > 0) return;
@@ -250,30 +248,32 @@ void Fl_Shared_Image::release() {
 /** Reloads the shared image from disk. */
 void Fl_Shared_Image::reload() {
   // Load image from disk...
-  int		i;		// Looping var
-  FILE		*fp;		// File pointer
-  uchar		header[64];	// Buffer for auto-detecting files
-  Fl_Image	*img;		// New image
+  int           i;              // Looping var
+  int           count = 0;      // number of bytes read from image header
+  FILE          *fp;            // File pointer
+  uchar         header[64];     // Buffer for auto-detecting files
+  Fl_Image      *img;           // New image
 
   if (!name_) return;
 
   if ((fp = fl_fopen(name_, "rb")) != NULL) {
-    if (fread(header, 1, sizeof(header), fp)==0) { /* ignore */ }
+    count = (int)fread(header, 1, sizeof(header), fp);
     fclose(fp);
+    if (count == 0)
+      return;
   } else {
     return;
   }
 
   // Load the image as appropriate...
-  if (memcmp(header, "#define", 7) == 0) // XBM file
+  if (count >= 7 && memcmp(header, "#define", 7) == 0) // XBM file
     img = new Fl_XBM_Image(name_);
-  else if (memcmp(header, "/* XPM */", 9) == 0) // XPM file
+  else if (count >= 9 && memcmp(header, "/* XPM */", 9) == 0) // XPM file
     img = new Fl_XPM_Image(name_);
   else {
     // Not a standard format; try an image handler...
     for (i = 0, img = 0; i < num_handlers_; i ++) {
-      img = (handlers_[i])(name_, header, sizeof(header));
-
+      img = (handlers_[i])(name_, header, count);
       if (img) break;
     }
   }
@@ -282,17 +282,13 @@ void Fl_Shared_Image::reload() {
     if (alloc_image_) delete image_;
 
     alloc_image_ = 1;
-
-    if ((img->w() != w() && w()) || (img->h() != h() && h())) {
-      // Make sure the reloaded image is the same size as the existing one.
-      Fl_Image *temp = img->copy(w(), h());
-      delete img;
-      image_ = temp;
-    } else {
-      image_ = img;
-    }
-
+    image_ = img;
+    int W = w();
+    int H = h();
     update();
+    // Make sure the reloaded image gets the same drawing size as the existing one.
+    if (W)
+      scale(W, H, 0, 1);
   }
 }
 
@@ -305,8 +301,8 @@ void Fl_Shared_Image::reload() {
 
 Fl_Image *
 Fl_Shared_Image::copy(int W, int H) {
-  Fl_Image		*temp_image;	// New image file
-  Fl_Shared_Image	*temp_shared;	// New shared image
+  Fl_Image              *temp_image;    // New image file
+  Fl_Shared_Image       *temp_shared;   // New shared image
 
   // Make a copy of the image we're sharing...
   if (!image_) temp_image = 0;
@@ -333,8 +329,8 @@ Fl_Shared_Image::copy(int W, int H) {
 //
 
 void
-Fl_Shared_Image::color_average(Fl_Color c,	// I - Color to blend with
-                               float    i) {	// I - Blend fraction
+Fl_Shared_Image::color_average(Fl_Color c,      // I - Color to blend with
+                               float    i) {    // I - Blend fraction
   if (!image_) return;
 
   image_->color_average(c, i);
@@ -398,8 +394,8 @@ void Fl_Shared_Image::uncache()
   when no longer needed.
 */
 Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
-  Fl_Shared_Image	*key,		// Image key
-			**match;	// Matching image
+  Fl_Shared_Image       *key,           // Image key
+                        **match;        // Matching image
 
   if (num_images_) {
     key = new Fl_Shared_Image();
@@ -441,10 +437,10 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
   copy with width \p W and height \p H is also added to the list of
   shared images.
 
-  \note	If the sizes differ, then \e two images are created as mentioned above.
-	This is intentional so the original image is cached and preserved.
-	If you request the same image with another size later, then the
-	\b original image will be found, copied, resized, and returned.
+  \note If the sizes differ, then \e two images are created as mentioned above.
+        This is intentional so the original image is cached and preserved.
+        If you request the same image with another size later, then the
+        \b original image will be found, copied, resized, and returned.
 
   Shared JPEG and PNG images can also be created from memory by using their
   named memory access constructor.
@@ -460,7 +456,7 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
   \see Fl_PNG_Image::Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int maxsize)
 */
 Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
-  Fl_Shared_Image	*temp;		// Image
+  Fl_Shared_Image       *temp;          // Image
 
   if ((temp = find(name, W, H)) != NULL) return temp;
 
@@ -485,9 +481,9 @@ Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
 
 /** Builds a shared image from a pre-existing Fl_RGB_Image.
 
- \param[in] rgb		an Fl_RGB_Image used to build a new shared image.
- \param[in] own_it	1 if the shared image should delete \p rgb when
-			it is itself deleted, 0 otherwise
+ \param[in] rgb         an Fl_RGB_Image used to build a new shared image.
+ \param[in] own_it      1 if the shared image should delete \p rgb when
+                        it is itself deleted, 0 otherwise
 
  \version 1.3.4
 */
@@ -501,11 +497,23 @@ Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
 
 
 /** Adds a shared image handler, which is basically a test function
-    for adding new formats.
+  for adding new image formats.
+
+  This function will be called when an Fl_Shared_Image is to be loaded
+  (for instance with Fl_Shared_Image::get()) and the image type is not
+  known to FLTK.
+
+  All registered image handlers will be called in the order of registration.
+  You should always call fl_register_images() before adding your own
+  handlers - unless you need to override a known image file type which
+  should be rare.
+
+  \see Fl_Shared_Handler for more information of the function you need
+    to define.
 */
 void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
-  int			i;		// Looping var...
-  Fl_Shared_Handler	*temp;		// New image handler array...
+  int                   i;              // Looping var...
+  Fl_Shared_Handler     *temp;          // New image handler array...
 
   // First see if we have already added the handler...
   for (i = 0; i < num_handlers_; i ++) {
@@ -533,7 +541,7 @@ void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
 
 /** Removes a shared image handler. */
 void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
-  int	i;				// Looping var...
+  int   i;                              // Looping var...
 
   // First see if the handler has been added...
   for (i = 0; i < num_handlers_; i ++) {
@@ -551,8 +559,3 @@ void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
            (num_handlers_ - i) * sizeof(Fl_Shared_Handler ));
   }
 }
-
-
-//
-// End of "$Id$".
-//

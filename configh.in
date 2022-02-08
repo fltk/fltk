@@ -1,20 +1,36 @@
 /*
- * "$Id$"
- *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
+
+/*
+ * Note: configure syntax vs. CMake syntax in source files (examples):
+ *
+ *   configh.in               configh.cmake.in
+ *   ---------------------    ----------------------------
+ *   [#]define HAVE_GL 0      [#]cmakedefine01 HAVE_GL
+ *   [#]undef HAVE_SNPRINTF   [#]cmakedefine HAVE_SNPRINTF 1
+ *
+ *   The former defines the given macro either as 0 or 1,
+ *   the latter either does not define the macro or defines it as 1.
+ */
+
+/*
+ * Always include the public build configuration header
+ */
+
+#include <FL/fl_config.h>
 
 /*
  * Where to find files...
@@ -99,22 +115,6 @@
 #define USE_PANGO 0
 
 /*
- * HAVE_XDBE:
- *
- * Do we have the X double-buffer extension?
- */
-
-#define HAVE_XDBE 0
-
-/*
- * USE_XDBE:
- *
- * Actually try to use the double-buffer extension?
- */
-
-#define USE_XDBE HAVE_XDBE
-
-/*
  * HAVE_XFIXES:
  *
  * Do we have the X fixes extension?
@@ -156,37 +156,6 @@
 
 #undef __APPLE_QUARTZ__
 
-
-/*
- * USE_X11
- *
- * Should we use X11 for the current platform
- *
- */
-
-#undef USE_X11
-
-/*
- * USE_SDL
- *
- * Should we use SDL for the current platform
- * *FIXME* Not yet implemented in configure !
- *
- */
-
-#undef USE_SDL
-
-/*
- * HAVE_OVERLAY:
- *
- * Use the X overlay extension?  FLTK will try to use an overlay
- * visual for Fl_Overlay_Window, the Gl_Window overlay, and for the
- * menus.  Setting this to zero will remove a substantial amount of
- * code from FLTK.  Overlays have only been tested on SGI servers!
- */
-
-#define HAVE_OVERLAY 0
-
 /*
  * HAVE_GL_OVERLAY:
  *
@@ -194,7 +163,7 @@
  * set this to 1.
  */
 
-#define HAVE_GL_OVERLAY HAVE_OVERLAY
+#define HAVE_GL_OVERLAY 0
 
 /*
  * WORDS_BIGENDIAN:
@@ -287,24 +256,6 @@
 #undef HAVE_LIBPNG
 #undef HAVE_LIBZ
 #undef HAVE_LIBJPEG
-#undef FLTK_USE_NANOSVG
-
-/*
- * FLTK_USE_CAIRO
- *
- * Do we have the cairo library available and want extended cairo use in FLTK ?
- * This implies to link cairo.lib in all FLTK based apps.
- */
-
-#undef FLTK_USE_CAIRO
-
-/*
- * FLTK_HAVE_CAIRO
- *
- * Do we have the cairo library available?
- */
-
-#undef FLTK_HAVE_CAIRO
 
 /*
  * Which header file do we include for libpng?
@@ -321,11 +272,25 @@
 #undef HAVE_PNG_SET_TRNS_TO_ALPHA
 
 /*
+* FLTK_USE_SVG
+*
+* Do we want FLTK to read and write SVG-formatted files ?
+*/
+
+#undef FLTK_USE_SVG
+
+/*
  * Do we have POSIX threading?
  */
 
 #undef HAVE_PTHREAD
 #undef HAVE_PTHREAD_H
+
+/*
+ * Do we have PTHREAD_MUTEX_RECURSIVE?
+ */
+
+#undef HAVE_PTHREAD_MUTEX_RECURSIVE
 
 /*
  * Do we have the ALSA library?
@@ -361,12 +326,22 @@
 #undef FL_NO_PRINT_SUPPORT
 
 /*
+ * Do we use GDI+ to get antialiased graphics?
+ */
+
+#ifdef _WIN32
+#define USE_GDIPLUS 0
+#endif
+
+/*
  * Do we want filename handling and a filechooser?
- * *FIXME* Not yet implemented in configure !
+ * *FIXME* FL_CFG_NO_FILESYSTEM_SUPPORT not yet implemented in configure !
  */
 
 #undef FL_CFG_NO_FILESYSTEM_SUPPORT
 
 /*
- * End of "$Id$".
+ * Do we want class Fl_Native_File_Chooser to run kdialog when desktop is KDE?
  */
+
+#define USE_KDIALOG 1

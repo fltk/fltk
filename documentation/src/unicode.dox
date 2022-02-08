@@ -484,7 +484,7 @@ converts the strings to lower case Unicode as part of the comparison.
   \b OksiD
 - char* fl_getenv(const char* name)
   \b OksiD
-- char fl_make_path(const char* path)	- returns char ?
+- char fl_make_path(const char* path)   - returns char ?
   \b OksiD
 - void fl_make_path_for_file(const char* path)
   \b OksiD

@@ -2,6 +2,15 @@
 ------------------------------------------------------------
 
 
+
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+***   CAUTION: This file is outdated. This needs a major rework!   ***
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+
+
+
  CONTENTS
 ==========
 
@@ -214,11 +223,16 @@ If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type the
 following:
 
-  NOCONFIGURE=1 ./autogen.sh
+  autoconf
 
 Now configure your FLTK installation:
 
   ./configure
+
+Hint: Instead of executing `autoconf` and `configure` followed by `make`
+to build FLTK (see next section) you can also run `make` directly which
+will create and execute the 'configure' script with default parameters
+and build FLTK with the default configuration.
 
 ADVANCED: type "./configure --help" to get a complete list of optional
 configuration parameters. These should be pretty self-explanatory. Some
@@ -408,10 +422,9 @@ without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
 
-  add all files from ide\VisualC2008\FL to the FL directory copied above
-    (this is currently only one file: abi-version.h)
+  add <build_dir>/FL/fl_config.h
 
-  copy all .lib files from the fltk lib directory to the VC lib directory
+  copy all .lib files from the fltk build directory to the VC lib directory
 
   copy fluid.exe in the fluid directory to the bin directory
 
@@ -514,11 +527,11 @@ The following links may be of use:
 
   1. Main Cygwin homepage:
 
-	https://www.cygwin.com/
+        https://www.cygwin.com/
 
   2. Main MinGW homepage:
 
-	http://www.mingw.org/
+        http://www.mingw.org/
 
      In particular look for the MinGW FAQ at this link for
      a lot of useful MinGW-native development documentation.
@@ -526,7 +539,7 @@ The following links may be of use:
 
   3. Check out the FLTK newsgroups at the FLTK homepage:
 
-	https://www.fltk.org/
+        https://www.fltk.org/
 
      Its archival search facilities are EXTREMELY useful
      to check back through previous problems with this
@@ -534,15 +547,15 @@ The following links may be of use:
 
   4. GNU Compiler Collection (GCC) compiler homepage:
 
-	https://gcc.gnu.org/
+        https://gcc.gnu.org/
 
   5. OpenGL page - for OpenGL and GLUT libs
 
-	https://www.opengl.org/
+        https://www.opengl.org/
 
   6. CMake homepage:
 
-	https://cmake.org/
+        https://cmake.org/
 
   Note: all links in this document have been checked on Mar 21, 2020.
     We can't guarantee that these links are still valid any time later.

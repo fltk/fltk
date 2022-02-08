@@ -9,15 +9,15 @@ SET (DROP_LOCATION "/cgi-bin/HTTPUploadDartFile.cgi")
 SET (TRIGGER_SITE "http://${DROP_SITE}/cgi-bin/Submit-Fltk-TestingResults.pl")
 
 # Project Home Page
-SET (PROJECT_URL "http://www.fltk.org")
+SET (PROJECT_URL "https://www.fltk.org")
 
-# Dart server configuration 
+# Dart server configuration
 SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/fltk-rollup-dashboard.sh")
 SET (CVS_WEB_URL "http://cvs.sourceforge.net/viewcvs.py/fltk/fltk/")
 SET (CVS_WEB_CVSROOT "fltk")
 
 SET (USE_GNATS "On")
-SET (GNATS_WEB_URL "http://www.fltk.org/str.php")
+SET (GNATS_WEB_URL "https://www.fltk.org/bugs.php")
 
 # Continuous email delivery variables
 SET (CONTINUOUS_FROM "fltk-dashboard@public.kitware.com")

@@ -1,6 +1,6 @@
 /**
 
- \page	opengl Using OpenGL
+ \page  opengl Using OpenGL
 
 This chapter discusses using FLTK for your OpenGL applications.
 
@@ -55,15 +55,15 @@ glDrawBuffer(GL_BACK);
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>Note:</B>
+        <TD><B>Note:</B>
 
-	If you are using the Mesa graphics library, the call
-	to \p glDrawBuffer() is not required and will slow
-	down drawing considerably. The preprocessor instructions
-	shown above will optimize your code based upon the
-	graphics library used.
+        If you are using the Mesa graphics library, the call
+        to \p glDrawBuffer() is not required and will slow
+        down drawing considerably. The preprocessor instructions
+        shown above will optimize your code based upon the
+        graphics library used.
 
-	</TD>
+        </TD>
 
 </TR>
 </TABLE></CENTER>
@@ -150,12 +150,12 @@ loading functions by doing:
 
 \code
   case FL_PUSH:
-    make_current();	// make OpenGL context current
+    make_current();     // make OpenGL context current
     if (!valid()) {
 
       ... set up projection exactly the same as draw ...
 
-      valid(1);		// stop it from doing this next time
+      valid(1);         // stop it from doing this next time
     }
     ... ok to call NON-DRAWING OpenGL code here, such as hit
     detection, loading textures, etc...
@@ -257,6 +257,75 @@ adhere to for maximum portability:
 Do \e not call \p gl_start() or
 \p gl_finish() when drawing into an Fl_Gl_Window !
 
+
+\section opengl_with_fltk_widgets Using FLTK widgets in OpenGL Windows
+
+FLTK widgets can be added to `Fl_Gl_Window`s just as they would be added to
+`Fl_Window`s. They are rendered as an overlay over the user defined
+OpenGL graphics using 'fl_..' graphics calls that are implemented in GL.
+
+`Fl_Gl_Window` does not add subsequent widgets as children by default as
+`Fl_Window` does. Call `myGlWindow->begin()` after creating the GL window to
+automatically add following widgets. Remember to call `myGlWindow->end()`.
+
+\code
+class My_Gl_Window : public Fl_Gl_Window {
+...
+  void draw();
+...
+};
+
+...
+myGlWindow = new My_Gl_Window(0, 0, 500, 500);
+myGlWindow->begin();
+myButton = new Fl_Button(10, 10, 120, 24, "Hello!");
+myGlWindow->end();
+...
+
+void My_Gl_Window::draw() {
+  // ... user GL drawing code
+  Fl_Gl_Window::draw(); // Draw FLTK child widgets.
+}
+\endcode
+
+Users can draw into the overlay by using GL graphics calls as well as all
+`fl_...` graphics calls from the "Drawing Fast Shapes" section.
+
+\code
+void My_Gl_Window::draw() {
+  // ... user GL drawing code
+  Fl_Gl_Window::draw_begin(); // Set up 1:1 projection
+  Fl_Window::draw();          // Draw FLTK children
+  fl_color(FL_RED);
+  fl_rect(10, 10, 100, 100);
+  Fl_Gl_Window::draw_end();   // Restore GL state
+}
+\endcode
+
+Widgets can be drawn with transparencies by assigning an alpha value to a
+colormap entry and using that color in the widget.
+
+\code
+Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 127); // 50% transparent yellow
+myGlWindow = new My_Gl_Window(0, 0, 500, 500);
+myGlWindow->begin();
+myButton = new Fl_Button(10, 10, 120, 24, "Hello!");
+myButton->box(FL_BORDER_BOX);
+myButton->color(FL_FREE_COLOR);
+myGlWindow->end();
+\endcode
+
+Transparencies can also be set directly when drawing. This can be used to
+create custom box types and RGB overlay drawings with an alpha channel.
+
+\code
+fl_color(0, 255, 0, 127); // 50% transparent green
+fl_rectf(10, 10, 100, 100);
+fl_color(FL_RED); // back to opaque red
+fl_rect(20, 20, 80, 80);
+\endcode
+
+
 \section opengl_drawing OpenGL Drawing Functions
 
 FLTK provides some useful OpenGL drawing functions. They can
@@ -283,7 +352,7 @@ void gl_font(Fl_Font fontid, int size)
 
 \par
 Sets the current OpenGL font to the same font you get by calling
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 
 int gl_height() <br>
 int gl_descent() <br>
@@ -317,7 +386,7 @@ void gl_draw(const char *s, int x, int y, int w, int h, Fl_Align)
 Draws a string formatted into a box, with newlines and tabs
 expanded, other control characters changed to ^X, and aligned
 with the edges or center. Exactly the same output as
-\ref ssect_Text "fl_draw()".
+\ref drawing_text "fl_draw()".
 
 \section opengl_speed Speeding up OpenGL
 
@@ -453,10 +522,10 @@ void OptimizerWindow::draw() {
 
   // Clear the window...
   context_->clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
-                  0.0f,		// Red
-		  0.0f,		// Green
-		  0.0f,		// Blue
-		  1.0f);	// Alpha
+                  0.0f,         // Red
+                  0.0f,         // Green
+                  0.0f,         // Blue
+                  1.0f);        // Alpha
 
   // Then draw the scene (if any)...
   if (scene_)

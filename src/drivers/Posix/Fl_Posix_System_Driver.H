@@ -1,10 +1,8 @@
 //
-// "$Id$"
-//
 // Definition of POSIX system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -12,9 +10,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -25,6 +23,7 @@
 #ifndef FL_POSIX_SYSTEM_DRIVER_H
 #define FL_POSIX_SYSTEM_DRIVER_H
 
+#include <config.h>
 #include "../../Fl_System_Driver.H"
 #include <stdlib.h>
 #include <unistd.h>
@@ -40,6 +39,7 @@
  - directory and file access
  - system time and system timer
  - multithreading
+ - string management
  */
 
 class Fl_Posix_System_Driver : public Fl_System_Driver
@@ -66,7 +66,14 @@ public:
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
-  virtual void *dlopen(const char *filename);
+#if HAVE_DLFCN_H
+  virtual void *load(const char *filename);
+#if HAVE_DLSYM
+  static void *ptr_gtk;
+  static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
+#endif
+#endif
+  static void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
   // these 4 are implemented in Fl_lock.cxx
   virtual void awake(void*);
   virtual int lock();
@@ -76,10 +83,11 @@ public:
   virtual const char *home_directory_name() { return ::getenv("HOME"); }
   virtual int dot_file_hidden() {return 1;}
   virtual void gettime(time_t *sec, int *usec);
+  virtual char* strdup(const char *s) {return ::strdup(s);}
+#if defined(HAVE_PTHREAD)
+  virtual void lock_ring();
+  virtual void unlock_ring();
+#endif
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H
-
-//
-// End of "$Id$".
-//

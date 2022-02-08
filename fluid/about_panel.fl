@@ -3,11 +3,9 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,9 +13,9 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -31,14 +29,14 @@ decl {void show_help(const char *name);} {public local
 Function {make_about_panel()} {open
 } {
   code {static char cbuf[200] = "";
-  if (!cbuf[0]) {
-    time_t t = time(0);
-    struct tm *lt = localtime(&t);
-    sprintf(cbuf, "Copyright © 1998 - %d\\nby Bill Spitzak and others", lt->tm_year+1900);
-  }} {}
+if (!cbuf[0]) {
+  time_t t = time(0);
+  struct tm *lt = localtime(&t);
+  sprintf(cbuf, "Copyright © 1998 - %d\\nby Bill Spitzak and others", lt->tm_year+1900);
+}} {}
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {340 190 345 180} type Double color 50 selection_color 47 hide hotspot
+    xywh {449 217 345 180} type Double color 50 selection_color 47 hide hotspot
     code0 {\#include "../src/flstring.h"} non_modal
   } {
     Fl_Box {} {
@@ -55,13 +53,13 @@ Version x.x.x}
     }
     Fl_Box {} {
       label {(Copyright)}
-      comment {Label edited dynamically:} selected
+      comment {Label edited dynamically:}
       xywh {135 90 200 45} align 148
       code0 {o->label(cbuf);}
     }
     Fl_Button {} {
       label {View License...}
-      callback {show_help("license.html");}
+      callback {show_help("license.html");} selected
       xywh {115 145 123 25} labelcolor 136
     }
     Fl_Return_Button {} {
@@ -74,10 +72,4 @@ Version x.x.x}
 
 data fluid_org_png {
   comment {Embedded image for internal fluid.html web page.} public local filename {../documentation/src/fluid-org.png}
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

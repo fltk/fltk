@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 //////////////////////
 // Fl_Tree_Prefs.cxx
@@ -13,80 +11,23 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
+#include <config.h>
 
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>
 
-#ifdef FL_CFG_WIN_COCOA
-#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
-#endif
-
 // INTERNAL: BUILT IN OPEN/STOW XPMS
 //    These can be replaced via prefs.openicon()/closeicon()
 //
-
-#ifdef FL_CFG_WIN_COCOA
-
-const char * const Fl_Darwin_System_Driver::tree_open_xpm_darwin[] = {
-  "11 11 2 1",
-  ".  c None",
-  "@  c #000000",
-  "...@.......",
-  "...@@......",
-  "...@@@.....",
-  "...@@@@....",
-  "...@@@@@...",
-  "...@@@@@@..",
-  "...@@@@@...",
-  "...@@@@....",
-  "...@@@.....",
-  "...@@......",
-  "...@......."
-};
-
-const char * const Fl_Darwin_System_Driver::tree_close_xpm_darwin[] = {
-  "11 11 2 1",
-  ".  c None",
-  "@  c #000000",
-  "...........",
-  "...........",
-  "...........",
-  "@@@@@@@@@@@",
-  ".@@@@@@@@@.",
-  "..@@@@@@@..",
-  "...@@@@@...",
-  "....@@@....",
-  ".....@.....",
-  "...........",
-  "..........."
-};
-
-Fl_Pixmap *Fl_Darwin_System_Driver::tree_openpixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_open_xpm_darwin);
-  return pixmap;
-}
-
-Fl_Pixmap *Fl_Darwin_System_Driver::tree_closepixmap() {
-  static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_close_xpm_darwin);
-  return pixmap;
-}
-
-int Fl_Darwin_System_Driver::tree_connector_style() {
-  return FL_TREE_CONNECTOR_NONE;
-}
-
-#endif // FL_CFG_WIN_COCOA
-
 
 /**
  \cond DriverDev
@@ -96,9 +37,9 @@ int Fl_Darwin_System_Driver::tree_connector_style() {
 
 const char * const Fl_System_Driver::tree_open_xpm[] = {
   "11 11 3 1",
-  ".	c #fefefe",
-  "#	c #444444",
-  "@	c #000000",
+  ".    c #fefefe",
+  "#    c #444444",
+  "@    c #000000",
   "###########",
   "#.........#",
   "#.........#",
@@ -114,9 +55,9 @@ const char * const Fl_System_Driver::tree_open_xpm[] = {
 
 const char * const Fl_System_Driver::tree_close_xpm[] = {
 "11 11 3 1",
-".	c #fefefe",
-"#	c #444444",
-"@	c #000000",
+".      c #fefefe",
+"#      c #444444",
+"@      c #000000",
 "###########",
 "#.........#",
 "#.........#",
@@ -208,8 +149,8 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelmarginleft        = 3;
   _widgetmarginleft       = 3;
   _linespacing            = 0;
-  _labelfgcolor           = FL_BLACK;
-  _labelbgcolor           = 0xffffffff;		// we use this as 'transparent'
+  _labelfgcolor           = FL_FOREGROUND_COLOR;
+  _labelbgcolor           = 0xffffffff;         // we use this as 'transparent'
   _connectorcolor         = Fl_Color(43);
   _connectorstyle         = (Fl_Tree_Connector)Fl::system_driver()->tree_connector_style();
   _openimage              = Fl::system_driver()->tree_openpixmap();
@@ -244,7 +185,3 @@ Fl_Tree_Prefs::~Fl_Tree_Prefs() {
   if ( _closedeimage ) delete _closedeimage;
   if ( _userdeimage )  delete _userdeimage;
 }
-
-//
-// End of "$Id$".
-//

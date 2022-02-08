@@ -1,81 +1,116 @@
 #
-# "$Id$"
-#
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
-
-# Prevent annoying warning under Cygwin; this must be before project().
-# Remove when CMake >= 2.8.4 is required
-set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-
-project(FLTK)
-cmake_minimum_required(VERSION 2.6.3)
 
 #######################################################################
-# define some macros
+# set CMake minimum version (must be before `project()`
 #######################################################################
-include(CMake/macros.cmake)
+
+# Minimum CMake version required by FLTK 1.4 (06/2020, work in progress)
+cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
+
+#######################################################################
+
+# Use "legacy mode" of FindOpenGL (avoid CMake developer warning).
+# Note: we're using FindOpenGL with `OPENGL_LIBRARIES` and not (yet)
+# the `OpenGL::GL` target. This may be changed in the future.
+# See https://cmake.org/cmake/help/latest/policy/CMP0072.html
+# Update Feb 28, 2021: To avoid a warning about "OLD" policies we set
+# OpenGL_GL_PREFERENCE directly to "LEGACY" (other option: "GLVND").
+
+# if (POLICY CMP0072)
+#   cmake_policy (SET CMP0072 OLD)
+# endif ()
+
+set (OpenGL_GL_PREFERENCE LEGACY)
+
+#######################################################################
+# define the FLTK project and version
+#######################################################################
+
+project (FLTK VERSION 1.4.0)
+
+#######################################################################
+# include macro and function definitions for general usage
+#######################################################################
+
+include (CMake/fl_debug_var.cmake)
+include (CMake/fl_add_library.cmake)
+include (CMake/compatibility.cmake)
+
+if (0)
+  fl_debug_var (FLTK_VERSION_MAJOR)
+  fl_debug_var (FLTK_VERSION_MINOR)
+  fl_debug_var (FLTK_VERSION_PATCH)
+  fl_debug_var (FLTK_VERSION)
+  fl_debug_var (CMAKE_VERSION)
+endif ()
 
 #######################################################################
 # basic setup
 #######################################################################
-include(CMake/setup.cmake)
+include (CMake/setup.cmake)
 
 #######################################################################
 # check for headers, libraries and functions
 #######################################################################
-include(CMake/resources.cmake)
+include (CMake/resources.cmake)
 
 #######################################################################
 # options
 #######################################################################
-include(CMake/options.cmake)
-
-#######################################################################
-# Android Studio setup
-#######################################################################
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-  include(CMake/android.cmake)
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
-
+include (CMake/options.cmake)
 
 #######################################################################
 # print (debug) several build variables and options
 #######################################################################
 
 set (debug_build 0) # set to 1 to show debug info
+
 if (debug_build)
   message ("")
   message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set debug_build to 0 to disable the following info:")
-  fl_debug_var(WIN32)
-  fl_debug_var(MINGW)
-  fl_debug_var(CYGWIN)
-  fl_debug_var(MSVC)
-  fl_debug_var(UNIX)
-  fl_debug_var(APPLE)
-  fl_debug_var(ANDROID)
-  fl_debug_var(CMAKE_BUILD_TYPE)
-  fl_debug_var(CMAKE_SIZEOF_VOID_P)
-  fl_debug_var(OPTION_OPTIM)
-  fl_debug_var(CMAKE_C_FLAGS)
-  fl_debug_var(CMAKE_CXX_FLAGS)
-  fl_debug_var(CMAKE_EXE_LINKER_FLAGS)
+  fl_debug_var (WIN32)
+  fl_debug_var (MINGW)
+  fl_debug_var (CYGWIN)
+  fl_debug_var (MSVC)
+  fl_debug_var (UNIX)
+  fl_debug_var (APPLE)
+  fl_debug_var (CMAKE_BUILD_TYPE)
+  fl_debug_var (CMAKE_SIZEOF_VOID_P)
+  fl_debug_var (OPTION_OPTIM)
+  fl_debug_var (CMAKE_C_FLAGS)
+  fl_debug_var (CMAKE_CXX_FLAGS)
+  fl_debug_var (CMAKE_EXE_LINKER_FLAGS)
   message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: end of debug_build info.")
 endif (debug_build)
+
 unset (debug_build)
+
+#######################################################################
+# build the FLTK libraries
+#######################################################################
+
+add_subdirectory(src)
+
+#######################################################################
+# build fluid
+#######################################################################
+
+add_subdirectory(fluid)
 
 #######################################################################
 # variables shared by export and install
@@ -83,34 +118,124 @@ unset (debug_build)
 # install.cmake creates these files for an installed FLTK
 # these two would only differ in paths, so common variables are set here
 #######################################################################
-include(CMake/variables.cmake)
+include (CMake/variables.cmake)
 
 #######################################################################
 # final config and export
 #######################################################################
-include(CMake/export.cmake)
+include (CMake/export.cmake)
 
-configure_file(
- ${CMAKE_CURRENT_SOURCE_DIR}/abi-version.cmake.in
- ${CMAKE_CURRENT_BINARY_DIR}/FL/abi-version.h
- @ONLY
- )
-
-#######################################################################
-# build examples - these have to be built after fluid is built/imported
-#######################################################################
-if(OPTION_BUILD_EXAMPLES)
-   add_subdirectory(test)
-endif(OPTION_BUILD_EXAMPLES)
+configure_file (
+  ${CMAKE_CURRENT_SOURCE_DIR}/fl_config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/FL/fl_config.h
+  @ONLY
+)
 
 #######################################################################
-# Android Studio wrapup
+# options to build test/demo and example programs
 #######################################################################
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-  CREATE_ANDROID_IDE_WRAPUP()
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
+
+if (FLTK_BUILD_TEST)
+  add_subdirectory (test)
+endif (FLTK_BUILD_TEST)
+
+if (FLTK_BUILD_EXAMPLES)
+  add_subdirectory (examples)
+endif (FLTK_BUILD_EXAMPLES)
 
 #######################################################################
 # installation
 #######################################################################
-include(CMake/install.cmake)
+include (CMake/install.cmake)
+
+#######################################################################
+# Generate Library Export Headers          *** EXPERIMENTAL *** WIP ***
+#######################################################################
+
+# Enable (1) or disable (0) generation of experimental headers (WIP)
+set (GENERATE_EXPORT_HEADERS 0)
+
+if (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
+
+  include (GenerateExportHeader)
+
+  generate_export_header (fltk_SHARED
+    BASE_NAME fl
+    EXPORT_FILE_NAME FL/fltk_export.h
+    STATIC_DEFINE FL_STATIC_LIB
+  )
+
+  if (NOT MSVC)
+
+    # Visual Studio builds only one shared lib (DLL)
+
+    generate_export_header (fltk_images_SHARED
+      BASE_NAME fl_images
+      EXPORT_FILE_NAME FL/fltk_images_export.h
+      STATIC_DEFINE FL_STATIC_LIB
+    )
+
+    generate_export_header (fltk_forms_SHARED
+      BASE_NAME fl_forms
+      EXPORT_FILE_NAME FL/fltk_forms_export.h
+      STATIC_DEFINE FL_STATIC_LIB
+    )
+
+    generate_export_header (fltk_gl_SHARED
+      BASE_NAME fl_gl
+      EXPORT_FILE_NAME FL/fltk_gl_export.h
+      STATIC_DEFINE FL_STATIC_LIB
+    )
+
+  endif (NOT MSVC)
+
+endif (OPTION_BUILD_SHARED_LIBS AND GENERATE_EXPORT_HEADERS)
+
+#######################################################################
+# Output Configuration Summary
+#######################################################################
+
+include (FeatureSummary)
+
+message ("")
+set (_descr "${PROJECT_NAME} ${FLTK_VERSION} generated by CMake ${CMAKE_VERSION}")
+feature_summary (WHAT ALL DESCRIPTION "Configuration Summary for ${_descr} --\n")
+
+message (STATUS "Static libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
+
+if (OPTION_BUILD_SHARED_LIBS)
+  message (STATUS "Shared libraries will be built in ${CMAKE_CURRENT_BINARY_DIR}/lib")
+else ()
+  message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
+endif ()
+
+if (FLTK_BUILD_TEST)
+  message (STATUS "Test programs    will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/test")
+endif ()
+
+if (FLTK_BUILD_EXAMPLES)
+  message (STATUS "Example programs will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/examples")
+else ()
+  message (STATUS "Example programs will not be built (set FLTK_BUILD_EXAMPLES=ON to build)")
+endif ()
+
+if (FLTK_USE_BUILTIN_JPEG)
+  message (STATUS "Image Libraries: JPEG = Builtin")
+else ()
+  message (STATUS "Image Libraries: JPEG = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_PNG)
+  message (STATUS "                 PNG  = Builtin")
+else ()
+  message (STATUS "                 PNG  = System")
+endif ()
+
+if (FLTK_USE_BUILTIN_ZLIB)
+  message (STATUS "                 ZLIB = Builtin")
+else ()
+  message (STATUS "                 ZLIB = System")
+endif ()
+
+message ("")
+message (STATUS "End of Configuration Summary --\n")

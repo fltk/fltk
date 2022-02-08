@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // ========================================================================
 //  DO NOT EDIT FL/Fl_Help_Dialog.H and src/Fl_Help_Dialog.cxx !!!
@@ -32,19 +30,19 @@
 
 void Fl_Help_Dialog::cb_back__i(Fl_Button*, void*) {
   if (index_ > 0)
-  index_ --;
+    index_ --;
 
-if (index_ == 0)
-  back_->deactivate();
+  if (index_ == 0)
+    back_->deactivate();
 
-forward_->activate();
+  forward_->activate();
 
-int l = line_[index_];
+  int l = line_[index_];
 
-if (strcmp(view_->filename(), file_[index_]) != 0)
-  view_->load(file_[index_]);
+  if (strcmp(view_->filename(), file_[index_]) != 0)
+    view_->load(file_[index_]);
 
-view_->topline(l);
+  view_->topline(l);
 }
 void Fl_Help_Dialog::cb_back_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_back__i(o,v);
@@ -52,19 +50,19 @@ void Fl_Help_Dialog::cb_back_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_forward__i(Fl_Button*, void*) {
   if (index_ < max_)
-  index_ ++;
+    index_ ++;
 
-if (index_ >= max_)
-  forward_->deactivate();
+  if (index_ >= max_)
+    forward_->deactivate();
 
-back_->activate();
+  back_->activate();
 
-int l = view_->topline();
+  int l = view_->topline();
 
-if (strcmp(view_->filename(), file_[index_]) != 0)
-  view_->load(file_[index_]);
+  if (strcmp(view_->filename(), file_[index_]) != 0)
+    view_->load(file_[index_]);
 
-view_->topline(l);
+  view_->topline(l);
 }
 void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_forward__i(o,v);
@@ -72,11 +70,11 @@ void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) {
   if (view_->textsize() > 8)
-  view_->textsize(view_->textsize() - 2);
+    view_->textsize(view_->textsize() - 2);
 
-if (view_->textsize() <= 8)
-  smaller_->deactivate();
-larger_->activate();
+  if (view_->textsize() <= 8)
+    smaller_->deactivate();
+  larger_->activate();
 }
 void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_smaller__i(o,v);
@@ -84,11 +82,11 @@ void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
 
 void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) {
   if (view_->textsize() < 18)
-  view_->textsize(view_->textsize() + 2);
+    view_->textsize(view_->textsize() + 2);
 
-if (view_->textsize() >= 18)
-  larger_->deactivate();
-smaller_->activate();
+  if (view_->textsize() >= 18)
+    larger_->deactivate();
+  smaller_->activate();
 }
 void Fl_Help_Dialog::cb_larger_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_larger__i(o,v);
@@ -103,43 +101,43 @@ void Fl_Help_Dialog::cb_find_(Fl_Input* o, void* v) {
 
 void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
   if (view_->filename())
-{
-  if (view_->changed())
   {
-    index_ ++;
-
-    if (index_ >= 100)
+    if (view_->changed())
     {
-      memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
-      memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
-      index_ -= 10;
+      index_ ++;
+
+      if (index_ >= 100)
+      {
+        memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
+        memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
+        index_ -= 10;
+      }
+
+      max_ = index_;
+
+      strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+      line_[index_] = view_->topline();
+
+      if (index_ > 0)
+        back_->activate();
+      else
+        back_->deactivate();
+
+      forward_->deactivate();
+      window_->label(view_->title());
     }
-
-    max_ = index_;
-
-    strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+    else // if ! view_->changed()
+    {
+      strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
+      line_[index_] = view_->topline();
+    }
+  } else { // if ! view_->filename()
+    index_ = 0; // hitting an internal page will disable the back/fwd buffer
+    file_[index_][0] = 0; // unnamed internal page
     line_[index_] = view_->topline();
-
-    if (index_ > 0)
-      back_->activate();
-    else
-      back_->deactivate();
-
+    back_->deactivate();
     forward_->deactivate();
-    window_->label(view_->title());
   }
-  else // if ! view_->changed()
-  {
-    strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
-    line_[index_] = view_->topline();
-  }
-} else { // if ! view_->filename()
-  index_ = 0; // hitting an internal page will disable the back/fwd buffer
-  file_[index_][0] = 0; // unnamed internal page
-  line_[index_] = view_->topline();
-  back_->deactivate();
-  forward_->deactivate();
-};
 }
 void Fl_Help_Dialog::cb_view_(Fl_Help_View* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_view__i(o,v);
@@ -201,11 +199,11 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
   } // Fl_Double_Window* window_
   back_->deactivate();
   forward_->deactivate();
-  
+
   index_    = -1;
   max_      = 0;
   find_pos_ = 0;
-  
+
   fl_register_images();
 }
 
@@ -246,12 +244,12 @@ void Fl_Help_Dialog::show(int argc, char **argv) {
 
 void Fl_Help_Dialog::textsize(Fl_Fontsize s) {
   view_->textsize(s);
-  
+
   if (s <= 8)
     smaller_->deactivate();
   else
     smaller_->activate();
-  
+
   if (s >= 18)
     larger_->deactivate();
   else
@@ -295,7 +293,3 @@ int Fl_Help_Dialog::x() {
 int Fl_Help_Dialog::y() {
   return (window_->y());
 }
-
-//
-// End of "$Id$".
-//

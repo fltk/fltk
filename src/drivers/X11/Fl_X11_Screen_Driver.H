@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -25,13 +23,14 @@
 #ifndef FL_X11_SCREEN_DRIVER_H
 #define FL_X11_SCREEN_DRIVER_H
 
+#include <config.h>
 #include "../../Fl_Screen_Driver.H"
 
 
 class Fl_Window;
 
 
-class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver 
+class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver
 {
   friend class Fl_Screen_Driver;
 protected:
@@ -46,8 +45,6 @@ protected:
   } FLScreenInfo;
   FLScreenInfo screens[MAX_SCREENS];
   float dpi[MAX_SCREENS][2];
-  int poll_or_select();
-  int poll_or_select_with_delay(double time_to_wait);
   int get_mouse_unscaled(int &xx, int &yy);
 
 public:
@@ -59,7 +56,7 @@ public:
   virtual void desktop_scale_factor();
   int screen_num_unscaled(int x, int y);
 #endif
-  
+
   static int ewmh_supported();
   static void copy_image(const unsigned char* data, int W, int H, int destination);
   // --- display management
@@ -79,22 +76,15 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
-  virtual double wait(double time_to_wait);
-  virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
   virtual const char *get_system_scheme();
-  // --- global timers
-  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
-  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual void compose_reset();
-  virtual int text_display_can_leak();
+  virtual int text_display_can_leak() const;
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
@@ -104,11 +94,15 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  // this one is in Fl_x.cxx
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual int clipboard_contains(const char *type);
+  // this one is in Fl_x.cxx
+  virtual void clipboard_notify_change();
 };
 
 
 #endif // FL_X11_SCREEN_DRIVER_H
-
-//
-// End of "$Id$".
-//

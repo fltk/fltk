@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Demonstrate deriving a class with draggable children.
 //
 // Copyright 2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // K Dmitrij <kdiman@...> wrote on Wed, 26 Jul 2017 19:54:12 +0000 in
@@ -99,70 +97,70 @@ public:
     switch (e) {
 
       case FL_PUSH: {
-	if (Fl::event_button() == FL_RIGHT_MOUSE) {
-	  if (Fl::belowmouse()->parent() == this) {
-	    drag_widget = Fl::belowmouse();
+        if (Fl::event_button() == FL_RIGHT_MOUSE) {
+          if (Fl::belowmouse()->parent() == this) {
+            drag_widget = Fl::belowmouse();
 
-	    // save pointer offsets relative to drag_widget's x/y position
-	    xoff = Fl::event_x() - drag_widget->x();
-	    yoff = Fl::event_y() - drag_widget->y();
+            // save pointer offsets relative to drag_widget's x/y position
+            xoff = Fl::event_x() - drag_widget->x();
+            yoff = Fl::event_y() - drag_widget->y();
 
-	    top_level(drag_widget); // raise to top for visible feedback
-	    redraw();
-	    return 1;
-	  }
-	}
-	break;
+            top_level(drag_widget); // raise to top for visible feedback
+            redraw();
+            return 1;
+          }
+        }
+        break;
       }
 
       case FL_DRAG: {
-	if (!drag_widget)
-	  break;
+        if (!drag_widget)
+          break;
 
-	int nX = Fl::event_x() - xoff; // new x coordinate
-	int nY = Fl::event_y() - yoff; // new y coordinate
+        int nX = Fl::event_x() - xoff; // new x coordinate
+        int nY = Fl::event_y() - yoff; // new y coordinate
 
-	int bbx = Fl::box_dx(box()); // left and right border width
-	int bby = Fl::box_dy(box()); // top and bottom border width
+        int bbx = Fl::box_dx(box()); // left and right border width
+        int bby = Fl::box_dy(box()); // top and bottom border width
 
-	// keep the widget inside its parent's borders
+        // keep the widget inside its parent's borders
 
-	if (nX < x() + bbx) {
-	  nX = x() + bbx;
-	} else if (nX + drag_widget->w() > x() + w() - bbx) {
-	  nX = x() + w() - drag_widget->w() - bbx;
-	}
+        if (nX < x() + bbx) {
+          nX = x() + bbx;
+        } else if (nX + drag_widget->w() > x() + w() - bbx) {
+          nX = x() + w() - drag_widget->w() - bbx;
+        }
 
-	if (nY < y() + bby) {
-	  nY = y() + bby;
-	} else if (nY + drag_widget->h() > y() + h() - bby) {
-	  nY = y() + h() - drag_widget->h() - bby;
-	}
+        if (nY < y() + bby) {
+          nY = y() + bby;
+        } else if (nY + drag_widget->h() > y() + h() - bby) {
+          nY = y() + h() - drag_widget->h() - bby;
+        }
 
-	drag_widget->position(nX, nY); // set the new position
-	redraw();
-	return 1;
+        drag_widget->position(nX, nY); // set the new position
+        redraw();
+        return 1;
       }
 
       case FL_RELEASE: {
-	if (drag_widget && Fl::event_button() == FL_RIGHT_MOUSE) {
+        if (drag_widget && Fl::event_button() == FL_RIGHT_MOUSE) {
 
-	  // Optional: restore the original widget order in the group.
-	  // Remove the next statement (or comment it out) if not desired.
-	  insert(*drag_widget, drag_index);
+          // Optional: restore the original widget order in the group.
+          // Remove the next statement (or comment it out) if not desired.
+          insert(*drag_widget, drag_index);
 
-	  init_sizes(); // save widget positions for later resizing
-	  drag_widget = 0;
-	  redraw();
-	  if (parent())
-	    parent()->redraw();
-	  return 1;
-	}
-	break;
+          init_sizes(); // save widget positions for later resizing
+          drag_widget = 0;
+          redraw();
+          if (parent())
+            parent()->redraw();
+          return 1;
+        }
+        break;
       }
 
       default:
-	break;
+        break;
     } // switch(e)
 
     return Fl_Group::handle(e);
@@ -189,11 +187,11 @@ void button_cb(Fl_Widget *w, void *v) {
 
 // tooltips:
 
-const char *tt_drag =	"Drag this DraggableGroup and/or its child groups and squares. "
-			"Use the right mouse button (MB3) to drag objects.";
-const char *tt_group =	"You can drag this Fl_Group, but not its children (squares).";
+const char *tt_drag =   "Drag this DraggableGroup and/or its child groups and squares. "
+                        "Use the right mouse button (MB3) to drag objects.";
+const char *tt_group =  "You can drag this Fl_Group, but not its children (squares).";
 const char *tt_button = "You can drag this button with the right mouse button "
-			"and you can click it with the left mouse button.";
+                        "and you can click it with the left mouse button.";
 
 // main program:
 
@@ -270,7 +268,3 @@ int main() {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tiny OpenGL v3 demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdarg.h>
@@ -86,17 +84,17 @@ public:
       glCompileShader(vs);
       glGetShaderiv(vs, GL_COMPILE_STATUS, &err);
       if (err != GL_TRUE) {
-	glGetShaderInfoLog(vs, sizeof(CLOG), &length, CLOG); 
-	add_output("vs ShaderInfoLog=%s\n",CLOG);
-	}
+        glGetShaderInfoLog(vs, sizeof(CLOG), &length, CLOG);
+        add_output("vs ShaderInfoLog=%s\n",CLOG);
+        }
       fs = glCreateShader(GL_FRAGMENT_SHADER);
       glShaderSource(fs, 1, &fss, NULL);
       glCompileShader(fs);
       glGetShaderiv(fs, GL_COMPILE_STATUS, &err);
       if (err != GL_TRUE) {
-	glGetShaderInfoLog(fs, sizeof(CLOG), &length, CLOG); 
-	add_output("fs ShaderInfoLog=%s\n",CLOG);
-	}     
+        glGetShaderInfoLog(fs, sizeof(CLOG), &length, CLOG);
+        add_output("fs ShaderInfoLog=%s\n",CLOG);
+        }
       // Attach the shaders
       shaderProgram = glCreateProgram();
       glAttachShader(shaderProgram, vs);
@@ -121,11 +119,11 @@ public:
         0.5,-0.5,0.0,1.0,   1.0,1.0,1.0,1.0};
       glGenVertexArrays(1, &vertexArrayObject);
       glBindVertexArray(vertexArrayObject);
-      
+
       glGenBuffers(1, &vertexBuffer);
       glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
       glBufferData(GL_ARRAY_BUFFER, 4*8*sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
-      
+
       glEnableVertexAttribArray((GLuint)positionAttribute);
       glEnableVertexAttribArray((GLuint)colourAttribute  );
       glVertexAttribPointer((GLuint)positionAttribute, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
@@ -157,7 +155,7 @@ public:
       if (gl_version_major < 3) add_output("\nThis platform does not support OpenGL V3\n\n");
       redraw();
     }
-    
+
     if (event == FL_PUSH && gl_version_major >= 3) {
       static float factor = 1.1;
       GLfloat data[4];
@@ -228,8 +226,4 @@ int main(int argc, char **argv)
   topwin->show(argc, argv);
   Fl::run();
 }
-
-//
-// End of "$Id$".
-//
 

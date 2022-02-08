@@ -3,11 +3,9 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,35 +13,32 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
 
-decl {\#include <FL/Fl_Pixmap.H>} {private local
+decl {\#include "fluid.h"} {private local
+}
+
+decl {\#include "Shortcut_Button.h"} {private global
+}
+
+decl {\#include "pixmaps.h"} {private local
+}
+
+decl {\#include "factory.h"} {private local
 }
 
 decl {\#include "Fl_Type.h"} {private local
 }
 
+decl {\#include "widget_browser.h"} {private local
+}
+
 decl {\#include "undo.h"} {private local
-}
-
-decl {extern class Fl_Pixmap *pixmap[];} {private local
-}
-
-decl {extern class Fl_Type *Fl_Type_make(const char*);} {private local
-}
-
-decl {extern void select_only(Fl_Type*);} {private local
-}
-
-decl {extern void exit_cb(Fl_Widget*, void*);} {private global
-}
-
-decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
 }
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {
@@ -52,15 +47,16 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {
   code {return 0;} {}
 }
 
-Function {make_function_panel()} {} {
+Function {make_function_panel()} {open
+} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {557 523 343 232} type Double hide resizable modal
+    xywh {101 713 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
     } {
-      Fl_Choice f_public_member_choice {
+      Fl_Choice f_public_member_choice {open
         tooltip {Change member access attribute.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
       } {
         MenuItem {} {
@@ -79,11 +75,11 @@ Function {make_function_panel()} {} {
           xywh {5 5 100 20} labelsize 11
         }
       }
-      Fl_Choice f_public_choice {
+      Fl_Choice f_public_choice {open
         tooltip {Change widget accessibility.} xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
       } {
         MenuItem {} {
-          label local
+          label static
           user_data 0 user_data_type long
           xywh {15 15 100 20} labelsize 11
         }
@@ -133,13 +129,14 @@ Function {make_function_panel()} {} {
   }
 }
 
-Function {make_code_panel()} {} {
+Function {make_code_panel()} {open
+} {
   Fl_Window code_panel {
     label {Code Properties}
-    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
-    return; // ignore Escape
-code_panel->hide(); // otherwise hide..} open
-    xywh {503 450 540 180} type Double labelsize 11 hide resizable
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+  return; // ignore Escape
+code_panel->hide(); // otherwise hide..}
+    xywh {425 882 540 180} type Double labelsize 11 hide resizable
     code0 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor code_input {
@@ -169,10 +166,11 @@ code_input->linenumber_width(60);
 code_input->linenumber_size(code_input->Fl_Text_Display::textsize());} {}
 }
 
-Function {make_codeblock_panel()} {} {
+Function {make_codeblock_panel()} {open
+} {
   Fl_Window codeblock_panel {
-    label {Code Block Properties} open
-    xywh {468 221 300 115} type Double labelsize 11 hide resizable
+    label {Code Block Properties}
+    xywh {806 735 300 115} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Input code_before_input {
@@ -201,10 +199,11 @@ Function {make_codeblock_panel()} {} {
   }
 }
 
-Function {make_declblock_panel()} {} {
+Function {make_declblock_panel()} {open
+} {
   Fl_Window declblock_panel {
-    label {Declaration Block Properties} open
-    xywh {428 215 300 135} type Double labelsize 11 hide resizable
+    label {Declaration Block Properties}
+    xywh {806 564 300 135} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Group {} {open
@@ -257,10 +256,11 @@ Function {make_declblock_panel()} {} {
   }
 }
 
-Function {make_decl_panel()} {} {
+Function {make_decl_panel()} {open
+} {
   Fl_Window decl_panel {
-    label {Declaration Properties} open
-    xywh {480 333 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Declaration Properties}
+    xywh {445 609 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -333,10 +333,11 @@ Function {make_decl_panel()} {} {
   }
 }
 
-Function {make_data_panel()} {} {
+Function {make_data_panel()} {open
+} {
   Fl_Window data_panel {
-    label {Inline Data Properties} open
-    xywh {472 191 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    label {Inline Data Properties}
+    xywh {449 337 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -421,10 +422,11 @@ Function {make_data_panel()} {} {
   }
 }
 
-Function {make_class_panel()} {} {
+Function {make_class_panel()} {open
+} {
   Fl_Window class_panel {
-    label {Class Properties} open
-    xywh {497 585 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
+    label {Class Properties}
+    xywh {795 337 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -521,18 +523,14 @@ Function {make_comment_panel()} {} {
   }
 }
 
-Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
+Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 } {
-  code {undo_checkpoint();
-  Fl_Type *t = Fl_Type_make((char*)d);
-  if (t) {
-    select_only(t);
-    set_modflag(1);
-    t->open();
-  } else {
-    undo_current --;
-    undo_last --;
-  }} {}
+  code {const char *type_name = (const char*)d;
+if (Fl_Type::current && Fl_Type::current->is_group())
+  add_new_widget_from_user(type_name, kAddAsLastChild);
+else
+  add_new_widget_from_user(type_name, kAddAfterCurrent);} {selected
+  }
 }
 
 Function {make_widgetbin()} {open
@@ -541,358 +539,424 @@ Function {make_widgetbin()} {open
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
-else  
+else
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {410 171 574 85} type Single align 80 hide non_modal
+    xywh {449 206 600 102} type Single align 80 hide non_modal
   } {
     Fl_Group {} {
-      xywh {3 3 79 79}
+      label Code open
+      xywh {3 19 79 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Function"}
         callback type_make_cb
-        tooltip Function xywh {5 5 24 24} box THIN_UP_BOX
+        tooltip Function xywh {5 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[7]);}
       }
       Fl_Button {} {
         user_data {"Class"}
         callback type_make_cb
-        tooltip Class xywh {30 5 24 24} box THIN_UP_BOX
+        tooltip Class xywh {30 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[12]);}
       }
       Fl_Button {} {
         user_data {"comment"}
         callback type_make_cb
-        tooltip Comment xywh {55 5 24 24} box THIN_UP_BOX
+        tooltip Comment xywh {55 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[46]);}
       }
       Fl_Button {} {
         user_data {"Code"}
         callback type_make_cb
-        tooltip Code xywh {5 30 24 24} box THIN_UP_BOX
+        tooltip Code xywh {5 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[8]);}
       }
       Fl_Button {} {
         user_data {"CodeBlock"}
         callback type_make_cb
-        tooltip {Code Block} xywh {30 30 24 24} box THIN_UP_BOX
+        tooltip {Code Block} xywh {30 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[9]);}
       }
       Fl_Button {} {
         user_data {"widget_class"}
         callback type_make_cb
-        tooltip {Widget Class} xywh {55 30 24 24} box THIN_UP_BOX
+        tooltip {Widget Class} xywh {55 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[48]);}
       }
       Fl_Button {} {
         user_data {"decl"}
         callback type_make_cb
-        tooltip Declaration xywh {5 55 24 24} box THIN_UP_BOX
+        tooltip Declaration xywh {5 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[10]);}
       }
       Fl_Button {} {
         user_data {"declblock"}
         callback type_make_cb
-        tooltip {Declaration Block} xywh {30 55 24 24} box THIN_UP_BOX
+        tooltip {Declaration Block} xywh {30 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[11]);}
       }
       Fl_Button {} {
         user_data {"data"}
         callback type_make_cb
-        tooltip {Inline Data} xywh {55 55 24 24} box THIN_UP_BOX
+        tooltip {Inline Data} xywh {55 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[49]);}
       }
     }
     Fl_Group {} {
-      xywh {87 3 79 79}
+      label Groups open
+      xywh {87 19 79 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Window"}
         callback type_make_cb
-        tooltip Window xywh {89 5 24 24} box THIN_UP_BOX
+        tooltip Window xywh {89 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[1]);}
+        class Widget_Bin_Window_Button
       }
       Fl_Button {} {
         user_data {"Fl_Group"}
         callback type_make_cb
-        tooltip Group xywh {114 5 24 24} box THIN_UP_BOX
+        tooltip Group xywh {114 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[6]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Pack"}
         callback type_make_cb
-        tooltip Pack xywh {139 5 24 24} box THIN_UP_BOX
+        tooltip Pack xywh {139 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[22]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Tabs"}
         callback type_make_cb
-        tooltip Tabs xywh {89 30 24 24} box THIN_UP_BOX
+        tooltip Tabs xywh {89 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[13]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Scroll"}
         callback type_make_cb
-        tooltip Scroll xywh {114 30 24 24} box THIN_UP_BOX
+        tooltip Scroll xywh {114 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[19]);}
-      }
-      Fl_Button {} {
-        user_data {"Fl_Table"}
-        callback type_make_cb
-        tooltip Table xywh {139 30 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[51]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Tile"}
         callback type_make_cb
-        tooltip Tile xywh {89 55 24 24} box THIN_UP_BOX
+        tooltip Tile xywh {89 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[20]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Wizard"}
         callback type_make_cb
-        tooltip Wizard xywh {114 55 24 24} box THIN_UP_BOX
+        tooltip Wizard xywh {114 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[21]);}
+        class Widget_Bin_Button
       }
     }
     Fl_Group {} {
-      xywh {171 3 54 79}
+      label Buttons open
+      xywh {171 19 54 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Button"}
         callback type_make_cb
-        tooltip Button xywh {173 5 24 24} box THIN_UP_BOX
+        tooltip Button xywh {173 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[2]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Return_Button"}
         callback type_make_cb
-        tooltip {Return Button} xywh {198 5 24 24} box THIN_UP_BOX
+        tooltip {Return Button} xywh {198 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[23]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Light_Button"}
         callback type_make_cb
-        tooltip {Light Button} xywh {173 30 24 24} box THIN_UP_BOX
+        tooltip {Light Button} xywh {173 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[24]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Repeat_Button"}
         callback type_make_cb
-        tooltip {Repeat Button} xywh {198 30 24 24} box THIN_UP_BOX
+        tooltip {Repeat Button} xywh {198 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[25]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Check_Button"}
         callback type_make_cb
-        tooltip {Check Button} xywh {173 55 24 24} box THIN_UP_BOX
+        tooltip {Check Button} xywh {173 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[3]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Round_Button"}
         callback type_make_cb
-        tooltip {Round Button} xywh {198 55 24 24} box THIN_UP_BOX
+        tooltip {Round Button} xywh {198 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[4]);}
+        class Widget_Bin_Button
       }
     }
     Fl_Group {} {
-      xywh {230 3 104 79}
+      label Valuators open
+      xywh {230 19 104 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Slider"}
         callback type_make_cb
-        tooltip Slider xywh {232 5 24 24} box THIN_UP_BOX
+        tooltip Slider xywh {232 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[37]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Scrollbar"}
         callback type_make_cb
-        tooltip {Scroll Bar} xywh {257 5 24 24} box THIN_UP_BOX
+        tooltip {Scroll Bar} xywh {257 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[38]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Value_Slider"}
         callback type_make_cb
-        tooltip {Value Slider} xywh {282 5 24 24} box THIN_UP_BOX
+        tooltip {Value Slider} xywh {282 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[39]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Value_Output"}
         callback type_make_cb
-        tooltip {Value Output} xywh {307 5 24 24} box THIN_UP_BOX
+        tooltip {Value Output} xywh {307 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[45]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Adjuster"}
         callback type_make_cb
-        tooltip Adjuster xywh {232 30 24 24} box THIN_UP_BOX
+        tooltip Adjuster xywh {232 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[40]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Counter"}
         callback type_make_cb
-        tooltip Counter xywh {257 30 24 24} box THIN_UP_BOX
+        tooltip Counter xywh {257 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[41]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Dial"}
         callback type_make_cb
-        tooltip Dial xywh {282 30 24 24} box THIN_UP_BOX
+        tooltip Dial xywh {282 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[42]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Roller"}
         callback type_make_cb
-        tooltip Roller xywh {232 55 24 24} box THIN_UP_BOX
+        tooltip Roller xywh {232 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[43]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Spinner"}
         callback type_make_cb
-        tooltip Spinner xywh {257 55 24 24} box THIN_UP_BOX
+        tooltip Spinner xywh {257 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[47]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Value_Input"}
         callback type_make_cb
-        tooltip {Value Input} xywh {282 55 24 24} box THIN_UP_BOX
+        tooltip {Value Input} xywh {282 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[44]);}
+        class Widget_Bin_Button
       }
     }
-    Fl_Group {} {open
-      xywh {339 3 54 79}
+    Fl_Group {} {
+      label Text open
+      xywh {339 19 54 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Input"}
         callback type_make_cb
-        tooltip Input xywh {341 5 24 24} box THIN_UP_BOX
+        tooltip Input xywh {341 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[14]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Output"}
         callback type_make_cb
-        tooltip Output xywh {366 5 24 24} box THIN_UP_BOX
+        tooltip Output xywh {366 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[27]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Text_Editor"}
         callback type_make_cb
-        tooltip {Text Edit} xywh {341 30 24 24} box THIN_UP_BOX
+        tooltip {Text Edit} xywh {341 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[29]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Text_Display"}
         callback type_make_cb
-        tooltip {Text Display} xywh {366 30 24 24} box THIN_UP_BOX
+        tooltip {Text Display} xywh {366 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[28]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_File_Input"}
         callback type_make_cb
-        tooltip {File Input} xywh {341 55 24 24} box THIN_UP_BOX
+        tooltip {File Input} xywh {341 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[30]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Simple_Terminal"}
-        callback type_make_cb selected
-        tooltip {File Input} xywh {366 55 24 24} box THIN_UP_BOX
+        callback type_make_cb
+        tooltip {Simple Terminal} xywh {366 71 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[52]);}
+        class Widget_Bin_Button
       }
     }
     Fl_Group {} {
-      xywh {398 3 54 79}
+      label Menus open
+      xywh {398 19 79 79} labelsize 12
     } {
-      Fl_Button {} {
-        user_data {"Fl_Menu_Bar"}
-        callback type_make_cb
-        tooltip {Menu Bar} xywh {400 5 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[17]);}
-      }
       Fl_Button {} {
         user_data {"Fl_Input_Choice"}
         callback type_make_cb
-        tooltip {Input Choice} xywh {425 5 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[15]);}
-      }
-      Fl_Button {} {
-        user_data {"Fl_Menu_Button"}
-        callback type_make_cb
-        tooltip {Menu Button} xywh {400 30 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[26]);}
+        tooltip {Input Choice} xywh {400 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[53]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"menuitem"}
         callback type_make_cb
-        tooltip {Menu Item} xywh {425 30 24 24} box THIN_UP_BOX
+        tooltip {Menu Item} xywh {425 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[16]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
-        user_data {"Fl_Choice"}
+        user_data {"Fl_Menu_Bar"}
         callback type_make_cb
-        tooltip Choice xywh {400 55 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[15]);}
+        tooltip {Menu Bar} xywh {450 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[17]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Menu_Button"}
+        callback type_make_cb
+        tooltip {Menu Button} xywh {400 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[26]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"checkmenuitem"}
+        callback type_make_cb
+        tooltip {Checkbox Menu Item} xywh {425 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[54]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"submenu"}
         callback type_make_cb
-        tooltip {Sub Menu} xywh {425 55 24 24} box THIN_UP_BOX
+        tooltip {Sub Menu} xywh {450 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[18]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Choice"}
+        callback type_make_cb
+        tooltip Choice xywh {400 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[15]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"radiomenuitem"}
+        callback type_make_cb
+        tooltip {Radio Menu Item} xywh {425 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[55]);}
+        class Widget_Bin_Button
       }
     }
     Fl_Group {} {
-      xywh {457 3 54 79}
+      label Browsers open
+      xywh {482 19 54 79} labelsize 12
     } {
       Fl_Button {} {
         user_data {"Fl_Browser"}
         callback type_make_cb
-        tooltip Browser xywh {459 5 24 24} box THIN_UP_BOX
+        tooltip Browser xywh {484 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[31]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Tree"}
         callback type_make_cb
-        tooltip Tree xywh {484 5 24 24} box THIN_UP_BOX
+        tooltip Tree xywh {509 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[50]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Check_Browser"}
         callback type_make_cb
-        tooltip {Check Browser} xywh {459 30 24 24} box THIN_UP_BOX
+        tooltip {Check Browser} xywh {484 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[32]);}
-      }
-      Fl_Button {} {
-        user_data {"Fl_File_Browser"}
-        callback type_make_cb
-        tooltip {File Browser} xywh {459 55 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[33]);}
-      }
-    }
-    Fl_Group {} {
-      xywh {515 3 55 79}
-    } {
-      Fl_Button {} {
-        user_data {"Fl_Box"}
-        callback type_make_cb
-        tooltip Box xywh {517 5 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[5]);}
-      }
-      Fl_Button {} {
-        user_data {"Fl_Clock"}
-        callback type_make_cb
-        tooltip Clock xywh {542 5 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[34]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Help_View"}
         callback type_make_cb
-        tooltip {Help Browser} xywh {517 30 24 24} box THIN_UP_BOX
+        tooltip {Help Browser} xywh {509 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[35]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_File_Browser"}
+        callback type_make_cb
+        tooltip {File Browser} xywh {484 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[33]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Table"}
+        callback type_make_cb
+        tooltip Table xywh {509 71 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[51]);}
+        class Widget_Bin_Button
+      }
+    }
+    Fl_Group {} {
+      label Misc open
+      xywh {540 19 55 79} labelsize 12
+    } {
+      Fl_Button {} {
+        user_data {"Fl_Box"}
+        callback type_make_cb
+        tooltip Box xywh {542 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[5]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Clock"}
+        callback type_make_cb
+        tooltip Clock xywh {567 21 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[34]);}
+        class Widget_Bin_Button
       }
       Fl_Button {} {
         user_data {"Fl_Progress"}
         callback type_make_cb
-        tooltip Progress xywh {517 55 24 24} box THIN_UP_BOX
+        tooltip Progress xywh {542 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[36]);}
+        class Widget_Bin_Button
       }
     }
   }
@@ -963,7 +1027,5 @@ Function {make_sourceview()} {} {
 }
 
 comment {
-//
-// End of "$Id$".
 //} {in_source in_header
 }

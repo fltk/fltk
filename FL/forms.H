@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef __FORMS_H__
@@ -38,116 +36,116 @@ typedef Fl_Window FL_FORM;
 #define TRUE 1
 #endif
 
-#define FL_ON		1
-#define FL_OK		1
-#define FL_VALID	1
-#define FL_PREEMPT	1
-#define FL_AUTO		2
-#define FL_WHEN_NEEDED	FL_AUTO
-#define FL_OFF		0
-#define FL_NONE		0
-#define FL_CANCEL	0
-#define FL_INVALID	0
-#define FL_IGNORE	-1
-//#define FL_CLOSE	-2 // this variable is never used in FLTK Forms. It is removed becaus it conflicts with the window FL_CLOSE event
+#define FL_ON           1
+#define FL_OK           1
+#define FL_VALID        1
+#define FL_PREEMPT      1
+#define FL_AUTO         2
+#define FL_WHEN_NEEDED  FL_AUTO
+#define FL_OFF          0
+#define FL_NONE         0
+#define FL_CANCEL       0
+#define FL_INVALID      0
+#define FL_IGNORE       -1
+//#define FL_CLOSE      -2 // this variable is never used in FLTK Forms. It is removed becaus it conflicts with the window FL_CLOSE event
 
-#define FL_LCOL		FL_BLACK
-#define FL_COL1		FL_GRAY
-#define FL_MCOL		FL_LIGHT1
-#define FL_LEFT_BCOL	FL_LIGHT3 // 53 is better match
-#define FL_TOP_BCOL	FL_LIGHT2 // 51
-#define FL_BOTTOM_BCOL	FL_DARK2  // 40
-#define FL_RIGHT_BCOL	FL_DARK3  // 36
-#define FL_INACTIVE	FL_INACTIVE_COLOR
-#define FL_INACTIVE_COL	FL_INACTIVE_COLOR
-#define FL_FREE_COL1	FL_FREE_COLOR
-#define FL_FREE_COL2	((Fl_Color)(FL_FREE_COLOR+1))
-#define FL_FREE_COL3	((Fl_Color)(FL_FREE_COLOR+2))
-#define FL_FREE_COL4	((Fl_Color)(FL_FREE_COLOR+3))
-#define FL_FREE_COL5	((Fl_Color)(FL_FREE_COLOR+4))
-#define FL_FREE_COL6	((Fl_Color)(FL_FREE_COLOR+5))
-#define FL_FREE_COL7	((Fl_Color)(FL_FREE_COLOR+6))
-#define FL_FREE_COL8	((Fl_Color)(FL_FREE_COLOR+7))
-#define FL_FREE_COL9	((Fl_Color)(FL_FREE_COLOR+8))
-#define FL_FREE_COL10	((Fl_Color)(FL_FREE_COLOR+9))
-#define FL_FREE_COL11	((Fl_Color)(FL_FREE_COLOR+10))
-#define FL_FREE_COL12	((Fl_Color)(FL_FREE_COLOR+11))
-#define FL_FREE_COL13	((Fl_Color)(FL_FREE_COLOR+12))
-#define FL_FREE_COL14	((Fl_Color)(FL_FREE_COLOR+13))
-#define FL_FREE_COL15	((Fl_Color)(FL_FREE_COLOR+14))
-#define FL_FREE_COL16	((Fl_Color)(FL_FREE_COLOR+15))
-#define FL_TOMATO	((Fl_Color)(131))
-#define FL_INDIANRED	((Fl_Color)(164))
-#define FL_SLATEBLUE	((Fl_Color)(195))
-#define FL_DARKGOLD	((Fl_Color)(84))
-#define FL_PALEGREEN	((Fl_Color)(157))
-#define FL_ORCHID	((Fl_Color)(203))
-#define FL_DARKCYAN	((Fl_Color)(189))
-#define FL_DARKTOMATO	((Fl_Color)(113))
-#define FL_WHEAT	((Fl_Color)(174))
+#define FL_LCOL         FL_BLACK
+#define FL_COL1         FL_GRAY
+#define FL_MCOL         FL_LIGHT1
+#define FL_LEFT_BCOL    FL_LIGHT3 // 53 is better match
+#define FL_TOP_BCOL     FL_LIGHT2 // 51
+#define FL_BOTTOM_BCOL  FL_DARK2  // 40
+#define FL_RIGHT_BCOL   FL_DARK3  // 36
+#define FL_INACTIVE     FL_INACTIVE_COLOR
+#define FL_INACTIVE_COL FL_INACTIVE_COLOR
+#define FL_FREE_COL1    FL_FREE_COLOR
+#define FL_FREE_COL2    ((Fl_Color)(FL_FREE_COLOR+1))
+#define FL_FREE_COL3    ((Fl_Color)(FL_FREE_COLOR+2))
+#define FL_FREE_COL4    ((Fl_Color)(FL_FREE_COLOR+3))
+#define FL_FREE_COL5    ((Fl_Color)(FL_FREE_COLOR+4))
+#define FL_FREE_COL6    ((Fl_Color)(FL_FREE_COLOR+5))
+#define FL_FREE_COL7    ((Fl_Color)(FL_FREE_COLOR+6))
+#define FL_FREE_COL8    ((Fl_Color)(FL_FREE_COLOR+7))
+#define FL_FREE_COL9    ((Fl_Color)(FL_FREE_COLOR+8))
+#define FL_FREE_COL10   ((Fl_Color)(FL_FREE_COLOR+9))
+#define FL_FREE_COL11   ((Fl_Color)(FL_FREE_COLOR+10))
+#define FL_FREE_COL12   ((Fl_Color)(FL_FREE_COLOR+11))
+#define FL_FREE_COL13   ((Fl_Color)(FL_FREE_COLOR+12))
+#define FL_FREE_COL14   ((Fl_Color)(FL_FREE_COLOR+13))
+#define FL_FREE_COL15   ((Fl_Color)(FL_FREE_COLOR+14))
+#define FL_FREE_COL16   ((Fl_Color)(FL_FREE_COLOR+15))
+#define FL_TOMATO       ((Fl_Color)(131))
+#define FL_INDIANRED    ((Fl_Color)(164))
+#define FL_SLATEBLUE    ((Fl_Color)(195))
+#define FL_DARKGOLD     ((Fl_Color)(84))
+#define FL_PALEGREEN    ((Fl_Color)(157))
+#define FL_ORCHID       ((Fl_Color)(203))
+#define FL_DARKCYAN     ((Fl_Color)(189))
+#define FL_DARKTOMATO   ((Fl_Color)(113))
+#define FL_WHEAT        ((Fl_Color)(174))
 
-#define FL_ALIGN_BESIDE	FL_ALIGN_INSIDE
+#define FL_ALIGN_BESIDE FL_ALIGN_INSIDE
 
-#define FL_PUP_TOGGLE	2 // FL_MENU_TOGGLE
+#define FL_PUP_TOGGLE   2 // FL_MENU_TOGGLE
 #define FL_PUP_INACTIVE 1 // FL_MENU_INACTIVE
-#define FL_NO_FRAME	FL_NO_BOX
-#define FL_ROUNDED3D_UPBOX 	FL_ROUND_UP_BOX
-#define FL_ROUNDED3D_DOWNBOX	FL_ROUND_DOWN_BOX
-#define FL_OVAL3D_UPBOX		FL_ROUND_UP_BOX
-#define FL_OVAL3D_DOWNBOX	FL_ROUND_DOWN_BOX
+#define FL_NO_FRAME     FL_NO_BOX
+#define FL_ROUNDED3D_UPBOX      FL_ROUND_UP_BOX
+#define FL_ROUNDED3D_DOWNBOX    FL_ROUND_DOWN_BOX
+#define FL_OVAL3D_UPBOX         FL_ROUND_UP_BOX
+#define FL_OVAL3D_DOWNBOX       FL_ROUND_DOWN_BOX
 
-#define FL_MBUTTON1	1
-#define FL_LEFTMOUSE	1
-#define FL_MBUTTON2	2
-#define FL_MIDDLEMOUSE	2
-#define FL_MBUTTON3	3
-#define FL_RIGHTMOUSE	3
-#define FL_MBUTTON4	4
-#define FL_MBUTTON5	5
+#define FL_MBUTTON1     1
+#define FL_LEFTMOUSE    1
+#define FL_MBUTTON2     2
+#define FL_MIDDLEMOUSE  2
+#define FL_MBUTTON3     3
+#define FL_RIGHTMOUSE   3
+#define FL_MBUTTON4     4
+#define FL_MBUTTON5     5
 
 #define FL_INVALID_STYLE 255
-#define FL_NORMAL_STYLE	FL_HELVETICA
-#define FL_BOLD_STYLE	FL_HELVETICA_BOLD
-#define FL_ITALIC_STYLE	FL_HELVETICA_ITALIC
+#define FL_NORMAL_STYLE FL_HELVETICA
+#define FL_BOLD_STYLE   FL_HELVETICA_BOLD
+#define FL_ITALIC_STYLE FL_HELVETICA_ITALIC
 #define FL_BOLDITALIC_STYLE FL_HELVETICA_BOLD_ITALIC
-#define FL_FIXED_STYLE	FL_COURIER
+#define FL_FIXED_STYLE  FL_COURIER
 #define FL_FIXEDBOLD_STYLE FL_COURIER_BOLD
 #define FL_FIXEDITALIC_STYLE FL_COURIER_ITALIC
 #define FL_FIXEDBOLDITALIC_STYLE FL_COURIER_BOLD_ITALIC
-#define FL_TIMES_STYLE	FL_TIMES
+#define FL_TIMES_STYLE  FL_TIMES
 #define FL_TIMESBOLD_STYLE FL_TIMES_BOLD
 #define FL_TIMESITALIC_STYLE FL_TIMES_ITALIC
 #define FL_TIMESBOLDITALIC_STYLE FL_TIMES_BOLD_ITALIC
 
 // hacks to change the labeltype() when passed to fl_set_object_lstyle():
-#define FL_SHADOW_STYLE		(FL_SHADOW_LABEL<<8)
-#define FL_ENGRAVED_STYLE	(FL_ENGRAVED_LABEL<<8)
-#define FL_EMBOSSED_STYLE	(FL_EMBOSSED_LABEL<<0)
+#define FL_SHADOW_STYLE         (FL_SHADOW_LABEL<<8)
+#define FL_ENGRAVED_STYLE       (FL_ENGRAVED_LABEL<<8)
+#define FL_EMBOSSED_STYLE       (FL_EMBOSSED_LABEL<<0)
 
 // size values are different from XForms, match older Forms:
-#define FL_TINY_SIZE	8
-#define FL_SMALL_SIZE	11 // 10
-//#define FL_NORMAL_SIZE	14 // 12
-#define FL_MEDIUM_SIZE	18 // 14
-#define FL_LARGE_SIZE	24 // 18
-#define FL_HUGE_SIZE	32 // 24
-#define FL_DEFAULT_SIZE	FL_SMALL_SIZE
-#define FL_TINY_FONT	FL_TINY_SIZE
-#define FL_SMALL_FONT	FL_SMALL_SIZE
-#define FL_NORMAL_FONT	FL_NORMAL_SIZE
-#define FL_MEDIUM_FONT	FL_MEDIUM_SIZE
-#define FL_LARGE_FONT	FL_LARGE_SIZE
-#define FL_HUGE_FONT	FL_HUGE_SIZE
-#define FL_NORMAL_FONT1	FL_SMALL_FONT
-#define FL_NORMAL_FONT2	FL_NORMAL_FONT
-#define FL_DEFAULT_FONT	FL_SMALL_FONT
+#define FL_TINY_SIZE    8
+#define FL_SMALL_SIZE   11 // 10
+//#define FL_NORMAL_SIZE        14 // 12
+#define FL_MEDIUM_SIZE  18 // 14
+#define FL_LARGE_SIZE   24 // 18
+#define FL_HUGE_SIZE    32 // 24
+#define FL_DEFAULT_SIZE FL_SMALL_SIZE
+#define FL_TINY_FONT    FL_TINY_SIZE
+#define FL_SMALL_FONT   FL_SMALL_SIZE
+#define FL_NORMAL_FONT  FL_NORMAL_SIZE
+#define FL_MEDIUM_FONT  FL_MEDIUM_SIZE
+#define FL_LARGE_FONT   FL_LARGE_SIZE
+#define FL_HUGE_FONT    FL_HUGE_SIZE
+#define FL_NORMAL_FONT1 FL_SMALL_FONT
+#define FL_NORMAL_FONT2 FL_NORMAL_FONT
+#define FL_DEFAULT_FONT FL_SMALL_FONT
 
-#define FL_RETURN_END_CHANGED	FL_WHEN_RELEASE
-#define FL_RETURN_CHANGED	FL_WHEN_CHANGED
-#define FL_RETURN_END		FL_WHEN_RELEASE_ALWAYS
-#define FL_RETURN_ALWAYS	(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED)
+#define FL_RETURN_END_CHANGED   FL_WHEN_RELEASE
+#define FL_RETURN_CHANGED       FL_WHEN_CHANGED
+#define FL_RETURN_END           FL_WHEN_RELEASE_ALWAYS
+#define FL_RETURN_ALWAYS        (FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED)
 
-#define FL_BOUND_WIDTH	3
+#define FL_BOUND_WIDTH  3
 
 typedef int FL_Coord;
 typedef int FL_COLOR;
@@ -276,31 +274,31 @@ inline void fl_set_form_geometry(Fl_Window* f,int x,int y,int w,int h) {
 inline void fl_adjust_form_size(Fl_Window*) {}
 
 FL_EXPORT void fl_show_form(Fl_Window* f,int p,int b,const char* n);
-enum {	// "p" argument values:
-  FL_PLACE_FREE = 0,	// make resizable
-  FL_PLACE_MOUSE = 1,	// mouse centered on form
-  FL_PLACE_CENTER = 2,	// center of the screen
+enum {  // "p" argument values:
+  FL_PLACE_FREE = 0,    // make resizable
+  FL_PLACE_MOUSE = 1,   // mouse centered on form
+  FL_PLACE_CENTER = 2,  // center of the screen
   FL_PLACE_POSITION = 4,// fixed position, resizable
-  FL_PLACE_SIZE = 8,	// fixed size, normal fltk behavior
+  FL_PLACE_SIZE = 8,    // fixed size, normal fltk behavior
   FL_PLACE_GEOMETRY =16,// fixed size and position
-  FL_PLACE_ASPECT = 32,	// keep aspect ratio (ignored)
+  FL_PLACE_ASPECT = 32, // keep aspect ratio (ignored)
   FL_PLACE_FULLSCREEN=64,// fill screen
   FL_PLACE_HOTSPOT = 128,// enables hotspot
   FL_PLACE_ICONIC = 256,// iconic (ignored)
-  FL_FREE_SIZE=(1<<14),	// force resizable
-  FL_FIX_SIZE =(1<<15)	// force off resizable
+  FL_FREE_SIZE=(1<<14), // force resizable
+  FL_FIX_SIZE =(1<<15)  // force off resizable
 };
 #define FL_PLACE_FREE_CENTER (FL_PLACE_CENTER|FL_FREE_SIZE)
 #define FL_PLACE_CENTERFREE  (FL_PLACE_CENTER|FL_FREE_SIZE)
-enum {	// "b" arguement values:
+enum {  // "b" arguement values:
   FL_NOBORDER = 0,
   FL_FULLBORDER,
   FL_TRANSIENT
-//FL_MODAL = (1<<8)	// not implemented yet in Forms
+//FL_MODAL = (1<<8)     // not implemented yet in Forms
 };
 inline void fl_set_form_hotspot(Fl_Window* w,int x,int y) {w->hotspot(x,y);}
 inline void fl_set_form_hotobject(Fl_Window* w, Fl_Widget* o) {w->hotspot(o);}
-extern FL_EXPORT char fl_flip;	// in forms.C
+extern FL_EXPORT char fl_flip;  // in forms.C
 inline void fl_flip_yorigin() {fl_flip = 1;}
 
 #define fl_prepare_form_window fl_show_form
@@ -346,8 +344,8 @@ inline void fl_drw_frame(Fl_Boxtype b,int x,int y,int w,int h,Fl_Color bgc,int=3
     fl_draw_box(b,x,y,w,h,bgc);}
 
 inline void fl_drw_text(Fl_Align align, int x, int y, int w, int h,
-		  Fl_Color fgcolor, int size, Fl_Font style,
-		  const char* s) {
+                  Fl_Color fgcolor, int size, Fl_Font style,
+                  const char* s) {
   fl_font(style,size);
   fl_color(fgcolor);
   fl_draw(s,x,y,w,h,align);
@@ -355,8 +353,8 @@ inline void fl_drw_text(Fl_Align align, int x, int y, int w, int h,
 
 // this does not work except for CENTER...
 inline void fl_drw_text_beside(Fl_Align align, int x, int y, int w, int h,
-		  Fl_Color fgcolor, int size, Fl_Font style,
-		  const char* s) {
+                  Fl_Color fgcolor, int size, Fl_Font style,
+                  const char* s) {
   fl_font(style,size);
   fl_color(fgcolor);
   fl_draw(s,x,y,w,h,align);
@@ -465,13 +463,13 @@ inline int fl_isdisplayed_browser_line(Fl_Widget* o, int n) {
 
 #include "Fl_Button.H"
 
-#define FL_NORMAL_BUTTON	0
-#define FL_TOUCH_BUTTON		4
-#define FL_INOUT_BUTTON		5
-#define FL_RETURN_BUTTON	6
-#define FL_HIDDEN_RET_BUTTON	7
-#define FL_PUSH_BUTTON		FL_TOGGLE_BUTTON
-#define FL_MENU_BUTTON		9
+#define FL_NORMAL_BUTTON        0
+#define FL_TOUCH_BUTTON         4
+#define FL_INOUT_BUTTON         5
+#define FL_RETURN_BUTTON        6
+#define FL_HIDDEN_RET_BUTTON    7
+#define FL_PUSH_BUTTON          FL_TOGGLE_BUTTON
+#define FL_MENU_BUTTON          9
 
 FL_EXPORT Fl_Button* fl_add_button(uchar t,int x,int y,int w,int h,const char* l);
 inline int fl_get_button(Fl_Widget* b) {return ((Fl_Button*)b)->value();}
@@ -528,9 +526,9 @@ inline void fl_set_chart_lcolor(Fl_Widget* o, Fl_Color v) {
 
 #include "Fl_Choice.H"
 
-#define FL_NORMAL_CHOICE	0
-#define FL_NORMAL_CHOICE2	0
-#define FL_DROPLIST_CHOICE	0
+#define FL_NORMAL_CHOICE        0
+#define FL_NORMAL_CHOICE2       0
+#define FL_DROPLIST_CHOICE      0
 
 forms_constructor(Fl_Choice, fl_add_choice)
 inline void fl_clear_choice(Fl_Widget* o) {
@@ -631,7 +629,7 @@ inline Fl_Widget* fl_add_labelframe(Fl_Boxtype i,int x,int y,int w,int h,const c
 #include "Fl_Free.H"
 inline Fl_Free*
 fl_add_free(int t,double x,double y,double w,double h,const char* l,
-	    FL_HANDLEPTR hdl) {
+            FL_HANDLEPTR hdl) {
  return (Fl_Free*)(fl_add_new(
    new Fl_Free(t,int(x),int(y),int(w),int(h),l,hdl)));
 }
@@ -657,7 +655,7 @@ FL_EXPORT int fl_show_choice(
 inline void fl_set_goodies_font(Fl_Font a, Fl_Fontsize b) {fl_message_font(a,b);}
 #define fl_show_messages fl_message
 inline int fl_show_choices(const char* c,int n,const char* b1,const char* b2,
-			   const char* b3, int) {
+                           const char* b3, int) {
   return fl_show_choice(0,c,0,n,b1,b2,b3);
 }
 
@@ -667,10 +665,10 @@ inline int do_matching(char* a, const char* b) {return fl_filename_match(a,b);}
 
 // Forms-compatible file chooser (implementation in fselect.C):
 FL_EXPORT char* fl_show_file_selector(const char* message,const char* dir,
-			    const char* pat,const char* fname);
-FL_EXPORT char*	fl_get_directory();
-FL_EXPORT char*	fl_get_pattern();
-FL_EXPORT char*	fl_get_filename();
+                            const char* pat,const char* fname);
+FL_EXPORT char* fl_get_directory();
+FL_EXPORT char* fl_get_pattern();
+FL_EXPORT char* fl_get_filename();
 
 #include "Fl_Input.H"
 forms_constructor(Fl_Input, fl_add_input)
@@ -705,9 +703,9 @@ inline const char* fl_get_input(Fl_Widget* o) {return ((Fl_Input*)o)->value();}
 #include "Fl_Menu_Button.H"
 
 // types are not implemented, they all act like FL_PUSH_MENU:
-#define FL_TOUCH_MENU		0
-#define FL_PUSH_MENU		1
-#define FL_PULLDOWN_MENU	2
+#define FL_TOUCH_MENU           0
+#define FL_PUSH_MENU            1
+#define FL_PULLDOWN_MENU        2
 forms_constructor(Fl_Menu_Button, fl_add_menu)
 
 inline void fl_clear_menu(Fl_Widget* o) {
@@ -739,7 +737,7 @@ inline const char* fl_get_menu_text(Fl_Widget* o) {
     return ((Fl_Menu_Button*)o)->text();}
 
 #include "Fl_Positioner.H"
-#define FL_NORMAL_POSITIONER	0
+#define FL_NORMAL_POSITIONER    0
 forms_constructor(Fl_Positioner, fl_add_positioner)
 inline void fl_set_positioner_xvalue(Fl_Widget* o, double v) {
     ((Fl_Positioner*)o)->xvalue(v);}
@@ -807,7 +805,7 @@ protected:
     void draw();
 public:
     Fl_FormsText(Fl_Boxtype b, int X, int Y, int W, int H, const char* l=0)
-	: Fl_Widget(X,Y,W,H,l) {box(b); align(FL_ALIGN_LEFT);}
+        : Fl_Widget(X,Y,W,H,l) {box(b); align(FL_ALIGN_LEFT);}
 };
 #define FL_NORMAL_TEXT FL_NO_BOX
 forms_constructorb(Fl_FormsText, fl_add_text)
@@ -829,8 +827,4 @@ void FL_EXPORT fl_gettime(long* sec, long* usec);
 inline int fl_double_click() {return Fl::event_clicks();}
 inline void fl_draw() {Fl::flush();}
 
-#endif	/* define __FORMS_H__ */
-
-//
-// End of "$Id$".
-//
+#endif  /* define __FORMS_H__ */

@@ -1,22 +1,20 @@
 #
-# "$Id$"
-#
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-# Note:	see ../configure.in and/or ../makeinclude for definition of
+# Note:	see ../configure.ac and/or ../makeinclude for definition of
 #	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
 CPPFILES = \
@@ -60,6 +58,7 @@ CPPFILES = \
 	Fl_Menu_Window.cxx \
 	Fl_Menu_add.cxx \
 	Fl_Menu_global.cxx \
+	Fl_Message.cxx \
 	Fl_Multi_Label.cxx \
 	Fl_Native_File_Chooser.cxx \
 	Fl_Overlay_Window.cxx \
@@ -82,6 +81,7 @@ CPPFILES = \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Spinner.cxx \
+	Fl_String.cxx \
 	Fl_Sys_Menu_Bar.cxx \
 	Fl_System_Driver.cxx \
 	Fl_Table.cxx \
@@ -92,6 +92,7 @@ CPPFILES = \
 	Fl_Text_Editor.cxx \
 	Fl_Tile.cxx \
 	Fl_Tiled_Image.cxx \
+	Fl_Timeout.cxx \
 	Fl_Tree.cxx \
 	Fl_Tree_Item.cxx \
 	Fl_Tree_Item_Array.cxx \
@@ -148,7 +149,6 @@ CPPFILES = \
 	fl_open_uri.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
-	fl_overlay_visual.cxx \
 	fl_plastic.cxx \
 	fl_read_image.cxx \
 	fl_rect.cxx \
@@ -159,10 +159,12 @@ CPPFILES = \
 	fl_shadow_box.cxx \
 	fl_shortcut.cxx \
 	fl_show_colormap.cxx \
+	fl_string_functions.cxx \
 	fl_symbols.cxx \
+	fl_utf8.cxx \
 	fl_vertex.cxx \
-	screen_xywh.cxx \
-	fl_utf8.cxx
+	print_button.cxx \
+	screen_xywh.cxx
 
 OBJCPPFILES = \
 	Fl_cocoa.mm \
@@ -199,11 +201,19 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
+GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx
+GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
+GLCPPFILES_XFT = $(GLCPPFILES_X11)
+GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
+
+GLCPPFILES += $(GLCPPFILES_$(BUILD))
+
 #	the following file currently doesn't contribute code to GLCPPFILES
 #	drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
 
 IMGCPPFILES = \
 	fl_images_core.cxx \
+	fl_write_png.cxx \
 	Fl_BMP_Image.cxx \
 	Fl_File_Icon2.cxx \
 	Fl_GIF_Image.cxx \
@@ -212,8 +222,8 @@ IMGCPPFILES = \
 	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx \
 	Fl_Image_Reader.cxx \
-	Fl_SVG_Image.cxx
-
+	Fl_SVG_Image.cxx \
+	drivers/SVG/Fl_SVG_File_Surface.cxx
 
 CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
 
@@ -258,7 +268,8 @@ XLIBCPPFILES = \
 	Fl_x.cxx \
 	fl_dnd_x.cxx \
         Fl_Native_File_Chooser_FLTK.cxx \
-        Fl_Native_File_Chooser_GTK.cxx \
+	Fl_Native_File_Chooser_GTK.cxx\
+	Fl_Native_File_Chooser_Kdialog.cxx \
         Fl_get_key.cxx
 
 # This C file is used under condition: BUILD_X11
@@ -277,7 +288,8 @@ XLIBFONTFILES = \
 
 # These C++ files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBXFTFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
 
 # These C++ files are used under condition: BUILD_GDI
 GDICPPFILES = \
@@ -583,8 +595,19 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
+# Note: The rebuild target can only be used if you have the original .fl
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	the libs must be rebuilt if any {.fl|.cxx|.h} files were changed.
+
+rebuild:
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	../fluid/fluid$(EXEEXT) -u -c Fl_File_Chooser.fl
+	../fluid/fluid$(EXEEXT) -u -c Fl_Help_Dialog.fl
+
 clean:
 	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM)	drivers/Cairo/*.o
 	-$(RM)	drivers/Cocoa/*.o
 	-$(RM)	drivers/Darwin/*.o
 	-$(RM)	drivers/GDI/*.o
@@ -592,6 +615,7 @@ clean:
 	-$(RM)	drivers/Posix/*.o
 	-$(RM)	drivers/PostScript/*.o
 	-$(RM)	drivers/Quartz/*.o
+	-$(RM)	drivers/SVG/*.o
 	-$(RM)	drivers/WinAPI/*.o
 	-$(RM)	drivers/X11/*.o
 	-$(RM)	drivers/Xlib/*.o
@@ -609,7 +633,7 @@ depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFIL
 		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)  $(XLIBCFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
-	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u >> makedepend.tmp; )
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
 	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies... generated on a Linux/Unix host !
@@ -655,7 +679,6 @@ Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
-fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
@@ -676,7 +699,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: Xutf8.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Font.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/abi-version.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Device.H
@@ -982,7 +1005,3 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
 	fi
-
-#
-# End of "$Id$".
-#

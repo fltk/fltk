@@ -85,6 +85,6 @@ fluid(1), fltk(3)
 .br
 FLTK Programming Manual
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHORS
 Bill Spitzak and others.

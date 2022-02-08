@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
 # (EPM can be found at https://www.msweet.org/epm/)
@@ -13,9 +11,9 @@
 #
 #      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      https://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 %product Fast Light Tool Kit (FLTK)
@@ -23,7 +21,7 @@
 %vendor FLTK Development Team
 %license COPYING
 %readme README.txt
-%version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
+%version @FLTK_VERSION_MAJOR@.@FLTK_VERSION_MINOR@.@FLTK_VERSION_PATCH@
 %description The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
 %description cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
 %description Microsoft(r) Windows(r), and MacOS(r) X.  FLTK provides modern
@@ -101,7 +99,7 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_DSO_VERSION@ src/libfltk_gl.so.@FL_DSO
 
 %subpackage devel
 %description FLTK Development Environment
-%description Install fltk-devel if you need to develop FLTK applications. 
+%description Install fltk-devel if you need to develop FLTK applications.
 %description You'll need to install the fltk package if you plan to run
 %description dynamically linked applications.
 
@@ -109,7 +107,6 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_DSO_VERSION@ src/libfltk_gl.so.@FL_DSO
 d 0555 root sys /Applications/fluid.app -
 d 0555 root sys /Applications/fluid.app/Contents -
 f 0444 root sys /Applications/fluid.app/Contents/Info.plist fluid/fluid.app/Contents/Info.plist
-f 0444 root sys /Applications/fluid.app/Contents/PkgInfo fluid/fluid.app/Contents/PkgInfo
 d 0555 root sys /Applications/fluid.app/Contents/MacOS -
 l 0555 root sys /Applications/fluid.app/Contents/MacOS/fluid $bindir/fluid
 d 0555 root sys /Applications/fluid.app/Contents/Resources -
@@ -378,7 +375,6 @@ f 0444 root sys $docdir/examples/ test/*.h
 d 0555 root sys /Applications/blocks.app -
 d 0555 root sys /Applications/blocks.app/Contents -
 f 0444 root sys /Applications/blocks.app/Contents/Info.plist test/blocks.app/Contents/Info.plist
-f 0444 root sys /Applications/blocks.app/Contents/PkgInfo test/blocks.app/Contents/PkgInfo
 d 0555 root sys /Applications/blocks.app/Contents/MacOS -
 f 0555 root sys /Applications/blocks.app/Contents/MacOS/blocks test/blocks
 d 0555 root sys /Applications/blocks.app/Contents/Resources -
@@ -388,7 +384,6 @@ f 0444 root sys /Applications/blocks.app/Contents/Resources/blocks.icns test/blo
 d 0555 root sys /Applications/checkers.app -
 d 0555 root sys /Applications/checkers.app/Contents -
 f 0444 root sys /Applications/checkers.app/Contents/Info.plist test/checkers.app/Contents/Info.plist
-f 0444 root sys /Applications/checkers.app/Contents/PkgInfo test/checkers.app/Contents/PkgInfo
 d 0555 root sys /Applications/checkers.app/Contents/MacOS -
 f 0555 root sys /Applications/checkers.app/Contents/MacOS/checkers test/checkers
 d 0555 root sys /Applications/checkers.app/Contents/Resources -
@@ -398,7 +393,6 @@ f 0444 root sys /Applications/checkers.app/Contents/Resources/checkers.icns test
 d 0555 root sys /Applications/sudoku.app -
 d 0555 root sys /Applications/sudoku.app/Contents -
 f 0444 root sys /Applications/sudoku.app/Contents/Info.plist test/sudoku.app/Contents/Info.plist
-f 0444 root sys /Applications/sudoku.app/Contents/PkgInfo test/sudoku.app/Contents/PkgInfo
 d 0555 root sys /Applications/sudoku.app/Contents/MacOS -
 f 0555 root sys /Applications/sudoku.app/Contents/MacOS/sudoku test/sudoku
 d 0555 root sys /Applications/sudoku.app/Contents/Resources -
@@ -428,7 +422,3 @@ f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/src/sudoku.$CAT6EXT
 f 0444 root sys $mandir/man6/blocks.6 documentation/src/blocks.man
 f 0444 root sys $mandir/man6/checkers.6 documentation/src/checkers.man
 f 0444 root sys $mandir/man6/sudoku.6 documentation/src/sudoku.man
-
-#
-# End of "$Id$".
-#

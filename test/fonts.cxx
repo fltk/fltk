@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -154,7 +152,7 @@ void add_point_cb(Fl_Widget *w, void *d)
 {
   unsigned char *fd = vec[current_char];
   while (*fd) fd++;
-  *fd = (fl_intptr_t)(d);
+  *fd = (fl_uchar)(d);
   w->parent()->redraw();
 }
 
@@ -287,12 +285,12 @@ void create_the_forms() {
   // create the sample string
   int n = 0;
   strcpy(label, "Hello, world!\n");
-  int i = strlen(label);
+  int i = (int)strlen(label);
   ulong c;
   for (c = ' '+1; c < 127; c++) {
-    if (!(c&0x1f)) label[i++]='\n';
-    if (c=='@') label[i++]=c;
-    label[i++]=c;
+    if (!(c&0x1f)) label[i++] = '\n';
+    if (c == '@') label[i++] = '@';
+    label[i++] = (char)c;
   }
   label[i++] = '\n';
   for (c = 0xA1; c < 0x600; c += 9) {
@@ -356,7 +354,7 @@ int main(int argc, char **argv) {
       char *p = buffer;
       if (t & FL_BOLD) {*p++ = '@'; *p++ = 'b';}
       if (t & FL_ITALIC) {*p++ = '@'; *p++ = 'i';}
-	  *p++ = '@'; *p++ = '.'; // Suppress subsequent formatting - some MS fonts have '@' in their name
+          *p++ = '@'; *p++ = '.'; // Suppress subsequent formatting - some MS fonts have '@' in their name
       strcpy(p,name);
       name = buffer;
     }
@@ -377,7 +375,3 @@ int main(int argc, char **argv) {
   form->show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

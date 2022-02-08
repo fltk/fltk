@@ -356,7 +356,7 @@ FLTK is available on the 'net in a bunch of locations:
 
 \par WWW
 https://www.fltk.org/ <br>
-https://www.fltk.org/str.php [for reporting bugs] <br>
+https://www.fltk.org/bugs.php [for reporting bugs] <br>
 https://www.fltk.org/software.php [download source code]<br>
 https://www.fltk.org/newsgroups.php [newsgroup/forums]
 
@@ -368,7 +368,7 @@ https://www.fltk.org/newsgroups.php [web interface]<br>
 \section intro_reporting Reporting Bugs
 
 To report a bug in FLTK, or for feature requests, please use the form at
-<A href="https://www.fltk.org/str.php">https://www.fltk.org/str.php</A>,
+<A href="https://www.fltk.org/bugs.php">https://www.fltk.org/bugs.php</A>,
 and click on "Submit Bug or Feature Request".
 
 You'll be prompted for the FLTK version, operating system & version,

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu window header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -32,17 +30,6 @@
 */
 class FL_EXPORT Fl_Menu_Window : public Fl_Single_Window {
 public:
-  void show();
-  void erase();
-  void flush();
-  void hide();
-  /** Tells if hardware overlay mode is set */
-  unsigned int overlay() {return !(flags()&NO_OVERLAY);}
-  /** Tells FLTK to use hardware overlay planes if they are available.  */
-  void set_overlay() {clear_flag(NO_OVERLAY);}
-  /** Tells FLTK to use normal drawing planes instead of overlay planes.
-      This is usually necessary if your menu contains multi-color pixmaps. */
-  void clear_overlay() {set_flag(NO_OVERLAY);}
   ~Fl_Menu_Window();
   /** Creates a new Fl_Menu_Window widget using the given size, and label string. */
   Fl_Menu_Window(int W, int H, const char *l = 0);
@@ -51,7 +38,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

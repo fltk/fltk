@@ -21,6 +21,6 @@ Press the spacebar to pause the game.
 .SH SEE ALSO
 fltk(3)
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHOR
 Michael R Sweet.

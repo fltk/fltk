@@ -1,8 +1,8 @@
-/*	gl.h
+/*      gl.h
 
-	GL to OpenGL translator.
-	If you include this, you might be able to port old GL programs.
-	There are also much better emulators available on the net.
+        GL to OpenGL translator.
+        If you include this, you might be able to port old GL programs.
+        There are also much better emulators available on the net.
 
 */
 

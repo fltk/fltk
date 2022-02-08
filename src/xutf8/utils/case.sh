@@ -9,7 +9,7 @@ IFS="
 #echo "#
 # List of case chars
 #
-# 
+#
 #       Format:  Three tab-separated columns
 #                Column #1 is the non-spacing Unicode (in hex as 0xXXXX)
 #                Column #2 is the spacing Unicode (in hex as 0xXXXX)
@@ -23,7 +23,7 @@ for line in ${nopsc}
 do
 	ucs=`echo ${line} | cut -d\; -f1`
 	name=`echo ${line} | cut -d\; -f2 | cut -d\; -f1| sed s/CAPITAL/SMALL/`
-	small=`grep ";${name};" ../UnicodeData-2.txt` 
+	small=`grep ";${name};" ../UnicodeData-2.txt`
 	if test "X${small}" != X ;then
 		tbl=`echo ${small} | cut -d\; -f1`
 	#	echo "0x${ucs}	0x${tbl}	#	${name}" >> space.txt
@@ -51,11 +51,11 @@ cat >../case.c << ENDOFTEXT
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include "headers/case.h"
@@ -63,7 +63,7 @@ cat >../case.c << ENDOFTEXT
 ENDOFTEXT
 
 echo "
-int 
+int
 XUtf8Tolower(
 	int ucs)
 {
@@ -72,7 +72,7 @@ XUtf8Tolower(
 
 tables=`cat ../headers/case_tbl.txt`
 
-for line in ${tables} 
+for line in ${tables}
 do
 	tbl=`echo ${line} | cut -d']' -f1`
 	bot=`echo ${line} | cut -d'_' -f3 | cut -d'[' -f1`

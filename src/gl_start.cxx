@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // You MUST use gl_visual() to select the default visual before doing
@@ -28,7 +26,7 @@
 // be erased when the buffers are swapped (when double buffer hardware
 // is being used)
 
-#include "config_lib.h"
+#include <config.h>
 #if HAVE_GL
 
 #include <FL/Fl.H>
@@ -39,21 +37,31 @@ class Fl_Gl_Choice;
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Window_Driver.H"
 
-static GLContext context;
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+GLContext Fl_Gl_Window_Driver::gl_start_context;
+/**
+ \}
+ \endcond
+ */
+
 static int clip_state_number=-1;
 static int pw, ph;
 float gl_start_scale = 1;
 
-static Fl_Gl_Choice* gl_choice;
+static Fl_Gl_Choice* gl_choice = NULL;
 
 /** Creates an OpenGL context */
 void gl_start() {
   gl_start_scale = Fl_Display_Device::display_device()->driver()->scale();
-  if (!context) {
+  if (!Fl_Gl_Window_Driver::gl_start_context) {
     if (!gl_choice) Fl::gl_visual(0);
-    context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
+    Fl_Gl_Window_Driver::gl_start_context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
   }
-  Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), context);
+  Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), Fl_Gl_Window_Driver::gl_start_context);
   Fl_Gl_Window_Driver::global()->gl_start();
   if (pw != int(Fl_Window::current()->w() * gl_start_scale) || ph != int(Fl_Window::current()->h() * gl_start_scale)) {
     pw = int(Fl_Window::current()->w() * gl_start_scale);
@@ -67,9 +75,9 @@ void gl_start() {
     clip_state_number = fl_graphics_driver->fl_clip_state_number;
     int x = 0, y = 0, w = 0, h = 0;
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
-		    x, y, w, h)) {
+                    x, y, w, h)) {
       fl_clip_region(Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h));
-      glScissor(x*gl_start_scale, (Fl_Window::current()->h()-(y+h))*gl_start_scale, w*gl_start_scale, h*gl_start_scale);
+      glScissor(int(x*gl_start_scale), int((Fl_Window::current()->h()-(y+h))*gl_start_scale), int(w*gl_start_scale), int(h*gl_start_scale));
       glEnable(GL_SCISSOR_TEST);
     } else {
       glDisable(GL_SCISSOR_TEST);
@@ -96,32 +104,6 @@ void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   gl_choice = c;
 }
 
-#ifdef FL_CFG_GFX_QUARTZ
-#include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
-
-void Fl_Cocoa_Gl_Window_Driver::gl_start() {
-  Fl_Cocoa_Window_Driver::gl_start(context);
-}
-
-#endif
-
-
-#ifdef FL_CFG_GFX_XLIB
-#include <FL/platform.H>
-#include "Fl_Gl_Choice.H"
-
-void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
-  Fl_Gl_Window_Driver::gl_visual(c);
-  fl_visual = c->vis;
-  fl_colormap = c->colormap;
-}
-
-void Fl_X11_Gl_Window_Driver::gl_start() {
-  glXWaitX();
-}
-
-#endif // FL_CFG_GFX_XLIB
-
 int Fl::gl_visual(int mode, int *alist) {
   Fl_Gl_Choice *c = Fl_Gl_Window_Driver::global()->find(mode,alist);
   if (!c) return 0;
@@ -135,7 +117,3 @@ int Fl::gl_visual(int mode, int *alist) {
  */
 
 #endif // HAVE_GL
-
-//
-// End of "$Id$".
-//

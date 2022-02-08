@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Based on code by Curtis Edwards
@@ -40,9 +38,9 @@
   variables, but you must declare the Fl_Pack <I>first</I>, so
   that it is destroyed last.
 
-  \param[in] X,Y	X and Y coordinates (position)
-  \param[in] W,H	width and height, respectively
-  \param[in] L		label (optional)
+  \param[in] X,Y        X and Y coordinates (position)
+  \param[in] W,H        width and height, respectively
+  \param[in] L          label (optional)
 
 */
 Fl_Pack::Fl_Pack(int X, int Y, int W, int H, const char *L)
@@ -154,7 +152,3 @@ void Fl_Pack::draw() {
     draw_label();
   }
 }
-
-//
-// End of "$Id$".
-//

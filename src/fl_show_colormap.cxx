@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Colormap color selection dialog for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -25,7 +23,7 @@
 #define BOXSIZE 14
 #define BORDER 4
 
-/** 
+/**
  This widget creates a modal window for selecting a color from the colormap.
  Pretty much unchanged from Forms.
 */
@@ -57,7 +55,7 @@ void ColorMenu::drawbox(Fl_Color c) {
   else fl_draw_box(FL_BORDER_BOX, X, Y, BOXSIZE+1, BOXSIZE+1, c);
 #else
   fl_draw_box(c == which ? FL_DOWN_BOX : FL_BORDER_BOX,
-	      X, Y, BOXSIZE+1, BOXSIZE+1, c);
+              X, Y, BOXSIZE+1, BOXSIZE+1, c);
 #endif
 }
 
@@ -133,7 +131,7 @@ Fl_Color ColorMenu::run() {
     position(Fl::event_x_root()-w()/2, Fl::event_y_root()-y()/2);
   } else {
     position(Fl::event_x_root()-(initial%8)*BOXSIZE-BOXSIZE/2-BORDER,
-	     Fl::event_y_root()-(initial/8)*BOXSIZE-BOXSIZE/2-BORDER);
+             Fl::event_y_root()-(initial/8)*BOXSIZE-BOXSIZE/2-BORDER);
   }
   show();
   Fl::grab(*this);
@@ -147,7 +145,3 @@ Fl_Color fl_show_colormap(Fl_Color oldcol) {
   ColorMenu m(oldcol);
   return m.run();
 }
-
-//
-// End of "$Id$".
-//

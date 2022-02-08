@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
-// Encompasses platform-specific printing-support code and 
+// Encompasses platform-specific printing-support code and
 // PostScript output code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Printer.H>
@@ -29,7 +27,7 @@ Fl_Printer::Fl_Printer(void) {
 Fl_Paged_Device* Fl_Printer::newPrinterDriver(void) {
   return NULL;
 }
-int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage, char **perr_message) {return 2;}
 int Fl_Printer::begin_page(void) {return 1;}
 int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
 void Fl_Printer::margins(int *left, int *top, int *right, int *bottom) {}
@@ -41,8 +39,8 @@ void Fl_Printer::translate(int x, int y) {}
 void Fl_Printer::untranslate(void) {}
 int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
-void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
+bool Fl_Printer::is_current(void) {return false;}
 Fl_Printer::~Fl_Printer(void) {}
 
 const char *Fl_Printer::dialog_title = NULL;
@@ -66,7 +64,7 @@ const char *Fl_Printer::property_save = NULL;
 const char *Fl_Printer::property_cancel = NULL;
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void) {}
-int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to) {return 1;}
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to, char **perr_message) {return 2;}
 int Fl_PostScript_File_Device::begin_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
                                           enum Fl_Paged_Device::Page_Layout layout) {return 1;}
 int Fl_PostScript_File_Device::begin_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
@@ -82,7 +80,20 @@ void Fl_PostScript_File_Device::translate(int x, int y) {}
 void Fl_PostScript_File_Device::untranslate(void) {}
 int Fl_PostScript_File_Device::end_page (void) {return 1;}
 void Fl_PostScript_File_Device::end_job(void) {}
+FILE* Fl_PostScript_File_Device::file() {return NULL;}
+void Fl_PostScript_File_Device::close_command(Fl_PostScript_Close_Command cmd) {}
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
+
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps_output,
+                                         Fl_Color background, Fl_PostScript_Close_Command closef) : Fl_Widget_Surface(NULL) {}
+Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {}
+void Fl_EPS_File_Surface::origin(int, int) {}
+void Fl_EPS_File_Surface::origin(int*, int*) {}
+int Fl_EPS_File_Surface::printable_rect(int*, int*) {return 1;}
+void Fl_EPS_File_Surface::translate(int, int) {}
+void Fl_EPS_File_Surface::untranslate() {}
+FILE* Fl_EPS_File_Surface::file() {return NULL;}
+int Fl_EPS_File_Surface::close() {return 1;}
 
 #else
 
@@ -192,11 +203,6 @@ void Fl_Printer::end_job (void)
   printer->end_job();
 }
 
-void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
-{
-  printer->draw_decorated_window(win, delta_x, delta_y);
-}
-
 void Fl_Printer::set_current(void)
 {
   printer->set_current();
@@ -212,7 +218,3 @@ Fl_Printer::~Fl_Printer(void)
 }
 
 #endif // defined(FL_NO_PRINT_SUPPORT)
-
-//
-// End of "$Id$".
-//

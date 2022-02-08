@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   sodipodi:docname="checker.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   id="svg2339"
+   version="1.1"
+   viewBox="0 0 400 400"
+   height="400"
+   width="400"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title2902">Checkers</title>
+  <defs
+     id="defs2333">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3913">
+      <stop
+         style="stop-color:#f2f2f2;stop-opacity:1"
+         offset="0"
+         id="stop3907" />
+      <stop
+         id="stop3909"
+         offset="0.42485708"
+         style="stop-color:#f2f2f2;stop-opacity:1" />
+      <stop
+         style="stop-color:#686868;stop-opacity:1"
+         offset="1"
+         id="stop3911" />
+    </linearGradient>
+    <linearGradient
+       id="White"
+       inkscape:collect="always">
+      <stop
+         id="stop3889"
+         offset="0"
+         style="stop-color:#f2f2f2;stop-opacity:1" />
+      <stop
+         style="stop-color:#f2f2f2;stop-opacity:1"
+         offset="0.5724141"
+         id="stop3897" />
+      <stop
+         id="stop3891"
+         offset="1"
+         style="stop-color:#686868;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="Black"
+       inkscape:collect="always">
+      <stop
+         id="stop3115"
+         offset="0"
+         style="stop-color:#909090;stop-opacity:1" />
+      <stop
+         style="stop-color:#101010;stop-opacity:1"
+         offset="0.66777831"
+         id="stop3862" />
+      <stop
+         id="stop3117"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+    <inkscape:path-effect
+       split_items="false"
+       oposite_fuse="false"
+       fuse_paths="false"
+       discard_orig_path="false"
+       mode="free"
+       lpeversion="1"
+       is_visible="true"
+       id="path-effect3051"
+       center_point="0,0"
+       end_point="0,0"
+       start_point="0,0"
+       effect="mirror_symmetry" />
+    <inkscape:path-effect
+       split_items="false"
+       oposite_fuse="false"
+       fuse_paths="false"
+       discard_orig_path="false"
+       mode="free"
+       lpeversion="1"
+       is_visible="true"
+       id="path-effect3049"
+       center_point="0,0"
+       end_point="0,0"
+       start_point="0,0"
+       effect="mirror_symmetry" />
+    <inkscape:path-effect
+       only_selected="false"
+       apply_with_weight="true"
+       apply_no_weight="true"
+       helper_size="0"
+       steps="2"
+       weight="33.333333"
+       lpeversion="1"
+       is_visible="true"
+       id="path-effect2980"
+       effect="bspline" />
+    <inkscape:path-effect
+       split_items="false"
+       oposite_fuse="false"
+       fuse_paths="false"
+       discard_orig_path="false"
+       mode="free"
+       lpeversion="1"
+       is_visible="true"
+       id="path-effect2970"
+       center_point="0,0"
+       end_point="0,0"
+       start_point="0,0"
+       effect="mirror_symmetry" />
+    <linearGradient
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(46.428806,43.129295,43.129295,-46.428806,110.23385,107.76259)"
+       spreadMethod="pad"
+       id="Gold">
+      <stop
+         style="stop-opacity:1;stop-color:#857435"
+         offset="0"
+         id="stop1187" />
+      <stop
+         style="stop-opacity:1;stop-color:#a19132"
+         offset="0.50122982"
+         id="stop1189" />
+      <stop
+         style="stop-opacity:1;stop-color:#a19132"
+         offset="1"
+         id="stop1191" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="138.69893"
+       x2="253.47739"
+       y1="260.68472"
+       x1="141.98361"
+       id="linearGradient3096"
+       xlink:href="#Gold"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="138.69893"
+       x2="253.47739"
+       y1="256.14572"
+       x1="146.52261"
+       id="linearGradient3098"
+       xlink:href="#Gold"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="137.02127"
+       x2="132.8855"
+       y1="274.32623"
+       x1="270.5188"
+       id="linearGradient3866"
+       xlink:href="#Black"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="324.82269"
+       x2="295.91006"
+       y1="85.957443"
+       x1="87.068634"
+       id="linearGradient3874"
+       xlink:href="#Black"
+       inkscape:collect="always" />
+    <filter
+       height="1.0024"
+       y="-0.0012"
+       width="1.0024"
+       x="-0.0012"
+       id="filter3883"
+       style="color-interpolation-filters:sRGB"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3885"
+         stdDeviation="0.13449165"
+         inkscape:collect="always" />
+    </filter>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="347.51773"
+       x2="302.71857"
+       y1="76.312057"
+       x1="105.22466"
+       id="linearGradient3895"
+       xlink:href="#White"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="133.04964"
+       x2="134.5876"
+       y1="274.32623"
+       x1="257.46915"
+       id="linearGradient3905"
+       xlink:href="#linearGradient3913"
+       inkscape:collect="always" />
+    <filter
+       height="1.1867704"
+       y="-0.093385219"
+       width="1.1867704"
+       x="-0.093385219"
+       id="filter3915"
+       style="color-interpolation-filters:sRGB"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3917"
+         stdDeviation="10.466277"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     inkscape:snap-nodes="false"
+     inkscape:object-nodes="false"
+     inkscape:snap-others="false"
+     inkscape:snap-to-guides="false"
+     inkscape:guide-bbox="true"
+     showguides="true"
+     inkscape:object-paths="false"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:snap-grids="false"
+     inkscape:window-maximized="0"
+     inkscape:window-y="66"
+     inkscape:window-x="112"
+     inkscape:window-height="1037"
+     inkscape:window-width="1448"
+     units="px"
+     showgrid="true"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer2"
+     inkscape:document-units="px"
+     inkscape:cy="200"
+     inkscape:cx="171.34752"
+     inkscape:zoom="1.7625"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:pagecheckerboard="0">
+    <sodipodi:guide
+       id="guide3037"
+       orientation="1,0"
+       position="200,201" />
+    <sodipodi:guide
+       id="guide3039"
+       orientation="0,-1"
+       position="190,200" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2336">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Checkers</dc:title>
+        <cc:license
+           rdf:resource="https://www.fltk.org/COPYING.php" />
+        <dc:date>Jan 28 2022</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Greg Ercolano, Matthias Melcher</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>fltk.org</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="display:inline"
+     inkscape:label="Shadow"
+     id="layer6"
+     inkscape:groupmode="layer">
+    <circle
+       transform="matrix(0.9999985,0,0,1.0000001,-4.9998826,-4.9999995)"
+       inkscape:label="Outer"
+       style="display:inline;opacity:0.846304;mix-blend-mode:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.01669;filter:url(#filter3915)"
+       id="circle3053-7-3"
+       cx="219.99971"
+       cy="219.99971"
+       r="134.49165" />
+  </g>
+  <g
+     style="display:inline"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="WhitePiece">
+    <circle
+       r="134.49165"
+       cy="200"
+       cx="200"
+       id="circle3053-7"
+       style="display:inline;fill:url(#linearGradient3895);fill-opacity:1;stroke:none;stroke-width:1.01669"
+       inkscape:label="Outer" />
+    <circle
+       r="89.481216"
+       cy="200"
+       cx="200"
+       id="circle3055-9"
+       style="display:inline;fill:url(#linearGradient3905);fill-opacity:1;stroke:none;stroke-width:1.03757"
+       inkscape:label="Inner" />
+  </g>
+  <g
+     style="display:none"
+     inkscape:label="BlackPiece"
+     id="layer4"
+     inkscape:groupmode="layer">
+    <circle
+       inkscape:label="Outer"
+       style="fill:url(#linearGradient3874);fill-opacity:1;stroke:none;stroke-width:1.01669;filter:url(#filter3883)"
+       id="circle3053"
+       cx="200"
+       cy="200"
+       r="134.49165" />
+    <circle
+       inkscape:label="Inner"
+       style="fill:url(#linearGradient3866);fill-opacity:1;stroke:none;stroke-width:1.03757"
+       id="circle3055"
+       cx="200"
+       cy="200"
+       r="89.481216" />
+  </g>
+  <g
+     style="display:none;opacity:1;mix-blend-mode:normal"
+     inkscape:label="Crown"
+     id="layer5"
+     inkscape:groupmode="layer">
+    <path
+       inkscape:path-effect="#path-effect3051"
+       inkscape:original-d="m 200,260 v -10 c 0,0 -25,0 -30,0 -5,0 -5,0 -5,5 0,5 0,5 5,5 5,0 30,0 30,0 z"
+       inkscape:label="Bottom"
+       inkscape:connector-curvature="0"
+       id="path3045"
+       d="m 200,260 v -10 h -30 c -5,0 -5,0 -5,5 0,5 0,5 5,5 z m 0,0 v -10 h 30 c 5,0 5,0 5,5 0,5 0,5 -5,5 z"
+       style="fill:url(#linearGradient3098);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:path-effect="#path-effect3049"
+       inkscape:original-d="m 200,135 v 105 h -35 c 0,0 -13.01247,-48.28017 -17.35303,-63.67651 -2.3708,-8.40943 2.32158,-14.22993 10.44116,-6.54407 9.6322,9.11768 17.85987,16.60643 17.85987,16.60643 0,0 2.38733,-6.0854 18.02246,-45.72411 C 196.43692,134.40867 200,135 200,135 Z"
+       inkscape:label="Top"
+       sodipodi:nodetypes="cccsscsc"
+       inkscape:connector-curvature="0"
+       id="path3047"
+       d="m 200,135 v 105 h -35 c 0,0 -13.01247,-48.28017 -17.35303,-63.67651 -2.3708,-8.40943 2.32158,-14.22993 10.44116,-6.54407 9.6322,9.11768 17.85987,16.60643 17.85987,16.60643 0,0 2.38733,-6.0854 18.02246,-45.72411 C 196.43692,134.40867 200,135 200,135 Z m 0,0 v 105 h 35 c 0,0 13.01247,-48.28017 17.35303,-63.67651 2.3708,-8.40943 -2.32158,-14.22993 -10.44116,-6.54407 -9.6322,9.11768 -17.85987,16.60643 -17.85987,16.60643 0,0 -2.38733,-6.0854 -18.02246,-45.72411 C 203.56308,134.40867 200,135 200,135 Z"
+       style="fill:url(#linearGradient3096);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Crop"
+     style="display:none">
+    <rect
+       style="fill:none;stroke-width:1.04614"
+       id="ExportPng112x112"
+       width="322"
+       height="322"
+       x="57"
+       y="57"
+       inkscape:export-xdpi="33.391304"
+       inkscape:export-ydpi="33.391304"
+       inkscape:label="ExportPng112x112"
+       inkscape:export-filename="/Users/matt/dev/fltk-1.4.git/test/pixmaps/white_checker.png">
+      <desc
+         id="desc60">Select this rectangle and export it as a PNG with 112x112 pixels in size, creating the correct image for the checkers game.</desc>
+    </rect>
+  </g>
+</svg>

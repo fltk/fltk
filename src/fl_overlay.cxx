@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Extremely limited "overlay" support.  You can use this to drag out
@@ -21,6 +19,7 @@
 // to erase the overlay before drawing anything that might intersect
 // it.
 
+#include <FL/fl_config.h>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 
@@ -44,7 +43,7 @@ static int bgx, bgy, bgw, bgh;
 
 static void draw_current_rect() {
 #ifdef USE_XOR
-# if defined(USE_X11)
+# if defined(FLTK_USE_X11)
   GC gc = (GC)fl_graphics_driver->gc();
   XSetFunction(fl_display, gc, GXxor);
   XSetForeground(fl_display, gc, 0xffffffff);
@@ -133,7 +132,3 @@ void fl_overlay_rect(int x, int y, int w, int h) {
   px = x; py = y; pw = w; ph = h;
   draw_current_rect();
 }
-
-//
-// End of "$Id$".
-//

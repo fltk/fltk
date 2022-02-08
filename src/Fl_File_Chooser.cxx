@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // =======================================================================
 //  DO NOT EDIT FL/Fl_File_Chooser.H and src/Fl_File_Chooser.cxx !!!
@@ -30,9 +28,9 @@
 
 void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
   fileName->value("");
-fileList->deselect();
-Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();
+  fileList->deselect();
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  window->hide();
 }
 void Fl_File_Chooser::cb_window(Fl_Double_Window* o, void* v) {
   ((Fl_File_Chooser*)(o->user_data()))->cb_window_i(o,v);
@@ -106,9 +104,9 @@ void Fl_File_Chooser::cb_fileName(Fl_File_Input* o, void* v) {
 void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
   window->hide();
 
-// Do any callback that is registered...
-if (callback_)
-  (*callback_)(this, data_);
+  // Do any callback that is registered...
+  if (callback_)
+    (*callback_)(this, data_);
 }
 void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_okButton_i(o,v);
@@ -116,9 +114,9 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
 
 void Fl_File_Chooser::cb_cancelButton_i(Fl_Button*, void*) {
   fileName->value("");
-fileList->deselect();
-Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();
+  fileList->deselect();
+  Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+  window->hide();
 }
 void Fl_File_Chooser::cb_cancelButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_cancelButton_i(o,v);
@@ -199,9 +197,18 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       o->callback((Fl_Callback*)cb_);
       { fileList = new Fl_File_Browser(10, 45, 295, 225);
         fileList->type(2);
+        fileList->box(FL_DOWN_BOX);
         fileList->callback((Fl_Callback*)cb_fileList);
         fileList->window()->hotspot(fileList);
       } // Fl_File_Browser* fileList
+      { errorBox = new Fl_Box(10, 45, 295, 225, "dynamic error display");
+        errorBox->box(FL_DOWN_BOX);
+        errorBox->color(FL_BACKGROUND2_COLOR);
+        errorBox->labelsize(18);
+        errorBox->labelcolor((Fl_Color)1);
+        errorBox->align(Fl_Align(133|FL_ALIGN_INSIDE));
+        errorBox->hide();
+      } // Fl_Box* errorBox
       { previewBox = new Fl_Box(305, 45, 175, 225, "?");
         previewBox->box(FL_DOWN_BOX);
         previewBox->labelsize(100);
@@ -494,6 +501,16 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
   return ret;
 }
 
-//
-// End of "$Id$".
-//
+/**
+ Show error box if val=1, hide if val=0
+*/
+void Fl_File_Chooser::show_error_box(int val) {
+  if ( val ) {
+    errorBox->color(fileList->color()); // inherit fileList's bg color
+    errorBox->show();
+    fileList->hide();
+  } else {
+    errorBox->hide();
+    fileList->show();
+  }
+}

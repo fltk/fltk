@@ -1,8 +1,6 @@
 //
-// "$Id$"
-//
-//	Simple Fl_Tabs widget example. 
-//	Originally from erco's cheat sheet 06/05/2010, permission by author.
+//      Simple Fl_Tabs widget example.
+//      Originally from erco's cheat sheet 06/05/2010, permission by author.
 //
 // Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -11,11 +9,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -47,11 +45,11 @@ int main(int argc, char *argv[]) {
       //
       Fl_Group *aaa = new Fl_Group(10,35,500-20,200-45,"Aaa");
       {
-	// Put some different buttons into the group, which will be shown
-	// when the tab is selected.
-	Fl_Button *b1 = new Fl_Button(50, 60,90,25,"Button A1"); b1->color(88+1);
-	Fl_Button *b2 = new Fl_Button(50, 90,90,25,"Button A2"); b2->color(88+2);
-	Fl_Button *b3 = new Fl_Button(50,120,90,25,"Button A3"); b3->color(88+3);
+        // Put some different buttons into the group, which will be shown
+        // when the tab is selected.
+        Fl_Button *b1 = new Fl_Button(50, 60,90,25,"Button A1"); b1->color(88+1);
+        Fl_Button *b2 = new Fl_Button(50, 90,90,25,"Button A2"); b2->color(88+2);
+        Fl_Button *b3 = new Fl_Button(50,120,90,25,"Button A3"); b3->color(88+3);
       }
       aaa->end();
 
@@ -60,14 +58,14 @@ int main(int argc, char *argv[]) {
       //
       Fl_Group *bbb = new Fl_Group(10,35,500-10,200-35,"Bbb");
       {
-	// Put some different buttons into the group, which will be shown
-	// when the tab is selected.
-	Fl_Button *b1 = new Fl_Button( 50,60,90,25,"Button B1"); b1->color(88+1);
-	Fl_Button *b2 = new Fl_Button(150,60,90,25,"Button B2"); b2->color(88+3);
-	Fl_Button *b3 = new Fl_Button(250,60,90,25,"Button B3"); b3->color(88+5);
-	Fl_Button *b4 = new Fl_Button( 50,90,90,25,"Button B4"); b4->color(88+2);
-	Fl_Button *b5 = new Fl_Button(150,90,90,25,"Button B5"); b5->color(88+4);
-	Fl_Button *b6 = new Fl_Button(250,90,90,25,"Button B6"); b6->color(88+6);
+        // Put some different buttons into the group, which will be shown
+        // when the tab is selected.
+        Fl_Button *b1 = new Fl_Button( 50,60,90,25,"Button B1"); b1->color(88+1);
+        Fl_Button *b2 = new Fl_Button(150,60,90,25,"Button B2"); b2->color(88+3);
+        Fl_Button *b3 = new Fl_Button(250,60,90,25,"Button B3"); b3->color(88+5);
+        Fl_Button *b4 = new Fl_Button( 50,90,90,25,"Button B4"); b4->color(88+2);
+        Fl_Button *b5 = new Fl_Button(150,90,90,25,"Button B5"); b5->color(88+4);
+        Fl_Button *b6 = new Fl_Button(250,90,90,25,"Button B6"); b6->color(88+6);
       }
       bbb->end();
     }
@@ -77,7 +75,3 @@ int main(int argc, char *argv[]) {
   win->show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

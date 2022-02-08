@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Demonstrate using the Fl_Progress widget in an application - erco 05/02/2005
 //
 // Copyright 2005,2012 Greg Ercolano.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -50,7 +48,7 @@ void butt_cb(Fl_Widget *butt, void *data) {
     w->end();                                  // end adding to window
     // Computation loop..
     for ( int t=1; t<=500; t++ ) {
-        progress->value(t/500.0);              // update progress bar with 0.0 ~ 1.0 value
+        progress->value(float(t/500.0));       // update progress bar with 0.0 ~ 1.0 value
         char percent[10];
         sprintf(percent, "%d%%", int((t/500.0)*100.0));
         progress->label(percent);              // update progress bar's label
@@ -72,7 +70,3 @@ int main() {
     win.show();
     return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

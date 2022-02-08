@@ -1,71 +1,71 @@
 CREDITS.txt - Fast Light Tool Kit (FLTK) Version 1.4.0
 ------------------------------------------------------
 
-    This file lists the people responsible for the toolkit you are
-    now using.  If you've been looking for your name in lights
-    but we've forgotten you here, please use the report on the
-    following page, and we'll update this file accordingly:
+  This file lists the people responsible for the toolkit you are
+  now using.  If you've been looking for your name in lights
+  but we've forgotten you here, please use the report on the
+  following page, and we'll update this file accordingly:
 
-        https://www.fltk.org/str.php
+    https://www.fltk.org/bugs.php
 
 
 CORE DEVELOPERS
 
-    The following people do the day-to-day development of FLTK:
+  The following people do the day-to-day development of FLTK:
 
-	Greg Ercolano
-	Manolo Gouy
-	Lauri Kasanen
-	Ian MacArthur
-	Pierre Ossman
-	Albrecht Schlosser
+    Greg Ercolano
+    Manolo Gouy
+    Lauri Kasanen
+    Ian MacArthur
+    Pierre Ossman
+    Albrecht Schlosser
 
-    These people have previously been active developers of FLTK:
+  These people have previously been active developers of FLTK:
 
-	Fabien Costantini (fabien67@users.sf.net)
-	Craig P. Earls
-	Curtis Edwards (trilec@users.sourceforge.net)
-	Gustavo Hime (hime@users.sourceforge.net)
-	Talbot Hughes
-	Robert Kesterson (robertk@users.sourceforge.net)
-	Matthias Melcher (mm@robowerk.com)
-	James Dean Palmer (jamespalmer@users.sourceforge.net)
-	Vincent Penne (vincentp@users.sourceforge.net)
-	Bill Spitzak (spitzak@users.sourceforge.net)
-	Michael Sweet (easysw@users.sourceforge.net)
-	Carl Thompson (clip@users.sourceforge.net)
-	Nafees Bin Zafar (nafees@users.sourceforge.net)
+    Fabien Costantini (fabien67@users.sf.net)
+    Craig P. Earls
+    Curtis Edwards (trilec@users.sourceforge.net)
+    Gustavo Hime (hime@users.sourceforge.net)
+    Talbot Hughes
+    Robert Kesterson (robertk@users.sourceforge.net)
+    Matthias Melcher (mm@robowerk.com)
+    James Dean Palmer (jamespalmer@users.sourceforge.net)
+    Vincent Penne (vincentp@users.sourceforge.net)
+    Bill Spitzak (spitzak@users.sourceforge.net)
+    Michael Sweet (easysw@users.sourceforge.net)
+    Carl Thompson (clip@users.sourceforge.net)
+    Nafees Bin Zafar (nafees@users.sourceforge.net)
 
 
 OTHER CONTRIBUTORS
 
-    The following people have contributed fixes or enhancements
-    for FLTK:
+  The following people have contributed fixes or enhancements
+  for FLTK:
 
-        Laszlo Z. Antal (LZA)
-	Teun Burgers
-	Paul Chambers
-	Stephen Davies
-	Yuri D'Elia
-	Domingo Alvarez Duarte
-	Yuri Fedorchenko
-	George Garvey
-	Duncan Gibson
-	Mikael Hultgren
-	Stuart Levy
-	Jean-Marc Lienher (OksiD)
-	Howard Lightstone
-	Mike Lindner
-	Alexander Mai
-	Alexander Rabi
-	James Roth
-	Ivan Nieto (Mr.Satan)
-	Jamie Snape
-	Andrea Suatoni
-	Michael Surette
-	Paul Sydney
-	Aaron Ucko
-	Emanuele Vicentini
-	Josef Vitu
-	Jim Wilson
-	Ken Yarnall
+    Laszlo Z. Antal (LZA)
+    Teun Burgers
+    Paul Chambers
+    Stephen Davies
+    Yuri D'Elia
+    Domingo Alvarez Duarte
+    Yuri Fedorchenko
+    George Garvey
+    Duncan Gibson
+    Mikael Hultgren
+    Stuart Levy
+    Jean-Marc Lienher (OksiD)
+    Howard Lightstone
+    Mike Lindner
+    Alexander Mai
+    Alexander Rabi
+    James Roth
+    Ivan Nieto (Mr.Satan)
+    Jamie Snape
+    Andrea Suatoni
+    Michael Surette
+    Paul Sydney
+    Aaron Ucko
+    Emanuele Vicentini
+    Josef Vitu
+    Jim Wilson
+    Ken Yarnall

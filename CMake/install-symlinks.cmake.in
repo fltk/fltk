@@ -1,17 +1,33 @@
+#
+# Installation script to create symlinks for the FLTK project using CMake
+#
+# Copyright 1998-2021 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
 
-# On unix create backward compatibility symlinks
-if(NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/Fl)
-   EXECUTE_PROCESS(COMMAND ln -s FL Fl
-      WORKING_DIRECTORY $ENV{DESTDIR}@PREFIX_INCLUDE@
-      )
-endif(NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/Fl)
+# On UNIX create backward compatibility symlinks
+if (NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/Fl)
+  EXECUTE_PROCESS(
+    COMMAND ln -s FL Fl
+    WORKING_DIRECTORY $ENV{DESTDIR}@PREFIX_INCLUDE@
+  )
+endif (NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/Fl)
 
-file(GLOB FLTK_HEADER_FILES $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/*.H)
-foreach(file ${FLTK_HEADER_FILES})
-   GET_FILENAME_COMPONENT(nameWE ${file} NAME_WE)
-   if(NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/${nameWE}.h)
-      EXECUTE_PROCESS(COMMAND ln -s ${nameWE}.H ${nameWE}.h
-         WORKING_DIRECTORY $ENV{DESTDIR}@PREFIX_INCLUDE@/FL
-      )
-   endif(NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/${nameWE}.h)
-endforeach(file)
+file (GLOB FLTK_HEADER_FILES $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/*.H)
+foreach (file ${FLTK_HEADER_FILES})
+  GET_FILENAME_COMPONENT(nameWE ${file} NAME_WE)
+  if (NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/${nameWE}.h)
+    EXECUTE_PROCESS(
+      COMMAND ln -s ${nameWE}.H ${nameWE}.h
+      WORKING_DIRECTORY $ENV{DESTDIR}@PREFIX_INCLUDE@/FL
+    )
+  endif (NOT EXISTS $ENV{DESTDIR}@PREFIX_INCLUDE@/FL/${nameWE}.h)
+endforeach (file)

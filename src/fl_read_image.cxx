@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // X11 image reading routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -36,8 +34,8 @@
  The \p alpha parameter controls whether an alpha channel is created
  and the value that is placed in the alpha channel. If 0, no alpha
  channel is generated.
- 
- \see fl_capture_window_part()
+
+ \see fl_capture_window()
  */
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
@@ -52,7 +50,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
     img = Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
   }
   int depth = alpha ? 4 : 3;
-  if (img->d() != depth) {
+  if (img && img->d() != depth) {
     uchar *data = new uchar[img->w() * img->h() * depth];
     if (depth == 4) memset(data, alpha, img->w() * img->h() * depth);
     uchar *d = data;
@@ -98,7 +96,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
  The image depth may differ between platforms.
  \version 1.4
 */
-Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h)
+Fl_RGB_Image *fl_capture_window(Fl_Window *win, int x, int y, int w, int h)
 {
   Fl_RGB_Image *rgb = NULL;
   if (win->shown()) {
@@ -107,6 +105,3 @@ Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h)
   }
   return rgb;
 }
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of X11 window driver.
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,15 +7,15 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_X11_Window_Driver.H"
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
@@ -34,87 +32,14 @@
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
 #endif
-#define ShapeBounding			0
-#define ShapeSet			0
-
-#if HAVE_OVERLAY
-extern XVisualInfo *fl_find_overlay_visual();
-extern XVisualInfo *fl_overlay_visual;
-extern Colormap fl_overlay_colormap;
-extern unsigned long fl_transparent_pixel;
-extern uchar fl_overlay; // changes how fl_color(x) works
-#endif
+#define ShapeBounding                   0
+#define ShapeSet                        0
 
 Window fl_window;
 
-#if USE_XDBE
-#include <X11/extensions/Xdbe.h>
-
-// whether the Xdbe extension is usable.
-// DO NOT call this if the window is not mapped, because we do not want fluid to open the display.
-static int can_xdbe()
-{
-  static int tried = 0;
-  static int use_xdbe = 0;
-  if (!tried) {
-    tried = 1;
-    int event_base, error_base;
-    if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
-    Drawable root = RootWindow(fl_display,fl_screen);
-    int numscreens = 1;
-    XdbeScreenVisualInfo *a = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-    if (!a) return 0;
-    for (int j = 0; j < a->count; j++) {
-      if (a->visinfo[j].visual == fl_visual->visualid) {
-        use_xdbe = 1; break;
-      }
-    }
-    XdbeFreeVisualInfo(a);
-  }
-  return use_xdbe;
-}
-
-
-void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
-{
-  pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!other_xid) {
-    other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
-    backbuffer_bad = 1;
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-  }
-  if (backbuffer_bad || erase_overlay) {
-    // Make sure we do a complete redraw...
-    if (i->region) {Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region); i->region = 0;}
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-    backbuffer_bad = 0;
-  }  
-  // Redraw as needed...
-  if (pWindow->damage()) {
-    fl_clip_region(i->region); i->region = 0;
-    fl_window = other_xid;
-    draw();
-    fl_window = i->xid;
-  }
-  // Copy contents of back buffer to window...
-  XdbeSwapInfo s;
-  s.swap_window = fl_xid(pWindow);
-  s.swap_action = XdbeCopied;
-  XdbeSwapBuffers(fl_display, &s, 1);
-}
-
-#endif // USE_XDBE
-
 
 void Fl_X11_Window_Driver::destroy_double_buffer() {
-#if USE_XDBE
-  if (can_xdbe()) {
-    XdbeDeallocateBackBufferName(fl_display, other_xid);
-  }
-  else
-#endif // USE_XDBE
-    fl_delete_offscreen(other_xid);
+  fl_delete_offscreen(other_xid);
   other_xid = 0;
 }
 
@@ -162,6 +87,15 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   if (status == 0 || root == parent) return;
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
+  // sometimes, very wide window borders are reported
+  // ignore them all:
+  XWindowAttributes w_attributes;
+  XGetWindowAttributes(fl_display, Fl_X::i(win)->xid, &w_attributes);
+  if (attributes.width - w_attributes.width >= 20) {
+    attributes.height -= (attributes.width - w_attributes.width);
+    attributes.width = w_attributes.width;
+  }
+
   int nscreen = screen_num();
   float s = Fl::screen_driver()->scale(nscreen);
   w = attributes.width / s;
@@ -181,7 +115,7 @@ int Fl_X11_Window_Driver::decorated_h()
 int Fl_X11_Window_Driver::decorated_w()
 {
   int w, h;
-  
+
   decorated_win_size(w, h);
   return w;
 }
@@ -191,8 +125,8 @@ void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);
   if (!Fl_X11_Screen_Driver::ewmh_supported())
-    pWindow->show();		// Old WMs, XMapRaised
-  else if (i)			// New WMs use the NETWM attribute:
+    pWindow->show();            // Old WMs, XMapRaised
+  else if (i)                   // New WMs use the NETWM attribute:
     activate_window();
 }
 
@@ -213,10 +147,7 @@ void Fl_X11_Window_Driver::draw_begin()
 void Fl_X11_Window_Driver::flush_double()
 {
   if (!shown()) return;
-#if USE_XDBE
-  if (can_xdbe()) flush_double_dbe(0); else
-#endif
-    flush_double(0);
+  flush_double(0);
 }
 
 void Fl_X11_Window_Driver::flush_double(int erase_overlay)
@@ -245,9 +176,6 @@ void Fl_X11_Window_Driver::flush_overlay()
   if (!shown()) return;
   int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (overlay() == pWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
-#if USE_XDBE
-  if (can_xdbe()) flush_double_dbe(erase_overlay); else
-#endif
   flush_double(erase_overlay);
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
   if (overlay() == oWindow) oWindow->draw_overlay();
@@ -351,15 +279,17 @@ void Fl_X11_Window_Driver::combine_mask()
 
 void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();
-  
+
   if (count > 0) {
     icon_->icons = new Fl_RGB_Image*[count];
     icon_->count = count;
     // FIXME: Fl_RGB_Image lacks const modifiers on methods
-    for (int i = 0;i < count;i++)
+    for (int i = 0;i < count;i++) {
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+      icon_->icons[i]->normalize();
+    }
   }
-  
+
   if (Fl_X::i(pWindow))
     set_icons();
 }
@@ -390,7 +320,7 @@ void Fl_X11_Window_Driver::free_icons() {
  (or NULL if a particular border is absent).
  Returned images can be deleted after use. Their depth and size may be platform-dependent.
  The top and bottom images extend from left of the left border to right of the right border.
- 
+
  This function exploits a feature of Fl_X11_Screen_Driver::read_win_rectangle() which,
  when called with negative 3rd argument, captures the window decoration.
  Other requirement to capture the window decoration:
@@ -447,25 +377,11 @@ void Fl_X11_Window_Driver::make_current() {
 #if USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 #endif
-  
+
 #ifdef FLTK_USE_CAIRO
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 #endif
-}
-
-
-void Fl_X11_Window_Driver::show_menu()
-{
-#if HAVE_OVERLAY
-  if (!shown() && ((Fl_Menu_Window*)pWindow)->overlay() && fl_find_overlay_visual()) {
-    XInstallColormap(fl_display, fl_overlay_colormap);
-    fl_background_pixel = int(fl_transparent_pixel);
-    Fl_X::make_xid(pWindow, fl_overlay_visual, fl_overlay_colormap);
-    fl_background_pixel = -1;
-  } else
-#endif
-    pWindow->Fl_Window::show();
 }
 
 
@@ -527,20 +443,20 @@ void Fl_X11_Window_Driver::decoration_sizes(int *top, int *left,  int *right, in
 void Fl_X11_Window_Driver::show_with_args_begin() {
   // Get defaults for drag-n-drop and focus...
   const char *key = 0, *val;
-  
+
   if (Fl::first_window()) key = Fl::first_window()->xclass();
   if (!key) key = "fltk";
-  
+
   val = XGetDefault(fl_display, key, "dndTextOps");
   if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
                             strcasecmp(val, "on") == 0 ||
                             strcasecmp(val, "yes") == 0);
-  
+
   val = XGetDefault(fl_display, key, "tooltips");
   if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
                               strcasecmp(val, "on") == 0 ||
                               strcasecmp(val, "yes") == 0);
-  
+
   val = XGetDefault(fl_display, key, "visibleFocus");
   if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
                              strcasecmp(val, "on") == 0 ||
@@ -560,107 +476,6 @@ void Fl_X11_Window_Driver::show_with_args_end(int argc, char **argv) {
                     (unsigned char *)buffer, p-buffer-1);
     delete[] buffer;
   }
-}
-
-
-#if HAVE_OVERLAY
-
-class _Fl_Overlay : public Fl_Window {
-  friend class Fl_Overlay_Window;
-  void flush();
-  void show();
-public:
-  _Fl_Overlay(int x, int y, int w, int h) : Fl_Window(x,y,w,h) {
-    set_flag(INACTIVE);
-  }
-};
-
-/*int Fl_Overlay_Window::can_do_overlay() {
- return fl_find_overlay_visual() != 0;
- }*/
-
-void _Fl_Overlay::show() {
-  if (shown()) {Fl_Window::show(); return;}
-  fl_background_pixel = int(fl_transparent_pixel);
-  Fl_X::make_xid(this, fl_overlay_visual, fl_overlay_colormap);
-  fl_background_pixel = -1;
-  // find the outermost window to tell wm about the colormap:
-  Fl_Window *w = window();
-  for (;;) {Fl_Window *w1 = w->window(); if (!w1) break; w = w1;}
-  XSetWMColormapWindows(fl_display, fl_xid(w), &(Fl_X::i(this)->xid), 1);
-}
-
-void _Fl_Overlay::flush() {
-  fl_window = fl_xid(this);
-#if defined(FLTK_USE_CAIRO)
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
-#endif
-  fl_overlay = 1;
-  Fl_Overlay_Window *w = (Fl_Overlay_Window *)parent();
-  Fl_X *myi = Fl_X::i(this);
-  if (damage() != FL_DAMAGE_EXPOSE) XClearWindow(fl_display, fl_xid(this));
-  fl_clip_region(myi->region); myi->region = 0;
-  w->draw_overlay();
-  fl_overlay = 0;
-}
-#endif // HAVE_OVERLAY
-
-
-int Fl_X11_Window_Driver::can_do_overlay() {
-#if HAVE_OVERLAY
-  return fl_find_overlay_visual() != 0;
-#endif
-  return Fl_Window_Driver::can_do_overlay();
-}
-
-void Fl_X11_Window_Driver::redraw_overlay() {
-#if HAVE_OVERLAY
-  if (!fl_display) return; // this prevents fluid -c from opening display
-  if (!overlay()) {
-    if (can_do_overlay()) {
-      Fl_Group::current(pWindow);
-      overlay(new _Fl_Overlay(0,0,w(),h()));
-      Fl_Group::current(0);
-    } else {
-      overlay(pWindow);	// fake the overlay
-    }
-  }
-  if (shown()) {
-    if (overlay() == pWindow) {
-      pWindow->clear_damage(pWindow->damage()|FL_DAMAGE_OVERLAY);
-      Fl::damage(FL_DAMAGE_CHILD);
-    } else if (!overlay()->shown())
-      overlay()->show();
-    else
-      overlay()->redraw();
-  }
-  return;
-#endif
-  Fl_Window_Driver::redraw_overlay();
-}
-
-void Fl_X11_Window_Driver::flush_menu() {
-#if HAVE_OVERLAY
-   if (!fl_overlay_visual || !overlay()) {flush_Fl_Window(); return;}
-   Fl_X *myi = Fl_X::i(pWindow);
-   fl_window = myi->xid;
-# if defined(FLTK_USE_CAIRO)
-   // capture gc changes automatically to update the cairo context adequately
-   if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
-# endif
-   fl_overlay = 1;
-   fl_clip_region(myi->region); myi->region = 0; current(pWindow);
-   draw();
-   fl_overlay = 0;
-#else
-   flush_Fl_Window();
-#endif
-}
-
-void Fl_X11_Window_Driver::erase_menu() {
-#if HAVE_OVERLAY
-  if (pWindow->shown())  XClearWindow(fl_display, fl_xid(pWindow));
-#endif
 }
 
 int Fl_X11_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
@@ -710,8 +525,3 @@ int Fl_X11_Window_Driver::screen_num() {
   return screen_num_ >= 0 ? screen_num_ : 0;
 }
 #endif // USE_XFT
-
-
-//
-// End of "$Id$".
-//

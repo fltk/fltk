@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_File_Icon routines.
 //
 // KDE icon code donated by Maarten De Boer.
@@ -11,11 +9,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -47,7 +45,7 @@
 // Icon cache...
 //
 
-Fl_File_Icon	*Fl_File_Icon::first_ = (Fl_File_Icon *)0;
+Fl_File_Icon    *Fl_File_Icon::first_ = (Fl_File_Icon *)0;
 
 
 // Registers the FL_ICON_LABEL drawing function
@@ -64,10 +62,10 @@ Fl_Labeltype fl_define_FL_ICON_LABEL() {
   \param[in] nd number of data values
   \param[in] d data values
 */
-Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
-                	   int        t,	/* I - File type */
-			   int        nd,	/* I - Number of data values */
-			   short      *d)	/* I - Data values */
+Fl_File_Icon::Fl_File_Icon(const char *p,       /* I - Filename pattern */
+                           int        t,        /* I - File type */
+                           int        nd,       /* I - Number of data values */
+                           short      *d)       /* I - Data values */
 {
   // Initialize the pattern and type...
   pattern_ = p;
@@ -98,8 +96,8 @@ Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
   allocated for it.
 */
 Fl_File_Icon::~Fl_File_Icon() {
-  Fl_File_Icon	*current,	// Current icon in list
-		*prev;		// Previous icon in list
+  Fl_File_Icon  *current,       // Current icon in list
+                *prev;          // Previous icon in list
 
 
   // Find the icon in the list...
@@ -126,10 +124,10 @@ Fl_File_Icon::~Fl_File_Icon() {
   Adds a keyword value to the icon array, returning a pointer to it.
   \param[in] d data value
 */
-short *				// O - Pointer to new data value
-Fl_File_Icon::add(short d)	// I - Data to add
+short *                         // O - Pointer to new data value
+Fl_File_Icon::add(short d)      // I - Data to add
 {
-  short	*dptr;			// Pointer to new data value
+  short *dptr;                  // Pointer to new data value
 
 
   // Allocate/reallocate memory as needed
@@ -162,12 +160,12 @@ Fl_File_Icon::add(short d)	// I - Data to add
   \param[in] filetype enumerated file type
   \return matching file icon or NULL
 */
-Fl_File_Icon *				// O - Matching file icon or NULL
+Fl_File_Icon *                          // O - Matching file icon or NULL
 Fl_File_Icon::find(const char *filename,// I - Name of file */
-                   int        filetype)	// I - Enumerated file type
+                   int        filetype) // I - Enumerated file type
 {
-  Fl_File_Icon	*current;		// Current file in list
-  const char	*name;			// Base name of filename
+  Fl_File_Icon  *current;               // Current file in list
+  const char    *name;                  // Base name of filename
 
 
   // Get file information if needed...
@@ -183,7 +181,7 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   for (current = first_; current != (Fl_File_Icon *)0; current = current->next_)
     if ((current->type_ == filetype || current->type_ == ANY) &&
         (fl_filename_match(filename, current->pattern_) ||
-	 fl_filename_match(name, current->pattern_)))
+         fl_filename_match(name, current->pattern_)))
       break;
 
   // Return the match (if any)...
@@ -197,19 +195,19 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   \param[in] active status, default is active [non-zero]
 */
 void
-Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
-        	   int      y,		// I - Upper-lefthand Y
-		   int      w,		// I - Width of bounding box
-		   int      h,		// I - Height of bounding box
-        	   Fl_Color ic,		// I - Icon color...
-        	   int      active)	// I - Active or inactive?
+Fl_File_Icon::draw(int      x,          // I - Upper-lefthand X
+                   int      y,          // I - Upper-lefthand Y
+                   int      w,          // I - Width of bounding box
+                   int      h,          // I - Height of bounding box
+                   Fl_Color ic,         // I - Icon color...
+                   int      active)     // I - Active or inactive?
 {
-  Fl_Color	c,		// Current color
-		oc;		// Outline color
-  short		*d,		// Pointer to data
-		*dend;		// End of data...
-  short		*prim;		// Pointer to start of primitive...
-  double	scale;		// Scale of icon
+  Fl_Color      c,              // Current color
+                oc;             // Outline color
+  short         *d,             // Pointer to data
+                *dend;          // End of data...
+  short         *prim;          // Pointer to start of primitive...
+  double        scale;          // Scale of icon
 
 
   // Don't try to draw a NULL array!
@@ -241,100 +239,100 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
       case END :
           if (prim)
             switch (*prim)
-	    {
-	      case LINE :
-		  fl_end_line();
-		  break;
+            {
+              case LINE :
+                  fl_end_line();
+                  break;
 
-	      case CLOSEDLINE :
-		  fl_end_loop();
-		  break;
+              case CLOSEDLINE :
+                  fl_end_loop();
+                  break;
 
-	      case POLYGON :
-		  fl_end_complex_polygon();
-		  break;
+              case POLYGON :
+                  fl_end_complex_polygon();
+                  break;
 
-	      case OUTLINEPOLYGON :
-		  fl_end_complex_polygon();
+              case OUTLINEPOLYGON :
+                  fl_end_complex_polygon();
 
-        	  oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
-	                	  ((unsigned short *)prim)[2]);
+                  oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) |
+                                  ((unsigned short *)prim)[2]);
                   if (active)
-		  {
+                  {
                     if (oc == FL_ICON_COLOR)
-		      fl_color(ic);
-		    else
-		      fl_color(oc);
-		  }
-		  else
-		  {
+                      fl_color(ic);
+                    else
+                      fl_color(oc);
+                  }
+                  else
+                  {
                     if (oc == FL_ICON_COLOR)
-		      fl_color(fl_inactive(ic));
-		    else
-		      fl_color(fl_inactive(oc));
-		  }
+                      fl_color(fl_inactive(ic));
+                    else
+                      fl_color(fl_inactive(oc));
+                  }
 
-		  fl_begin_loop();
+                  fl_begin_loop();
 
-		  prim += 3;
-		  while (*prim == VERTEX)
-		  {
-		    fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
-		    prim += 3;
-		  }
+                  prim += 3;
+                  while (*prim == VERTEX)
+                  {
+                    fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
+                    prim += 3;
+                  }
 
-        	  fl_end_loop();
-		  fl_color(c);
-		  break;
-	    }
+                  fl_end_loop();
+                  fl_color(c);
+                  break;
+            }
 
           prim = NULL;
-	  d ++;
-	  break;
+          d ++;
+          break;
 
       case COLOR :
-          c = (Fl_Color)((((unsigned short *)d)[1] << 16) | 
-	                   ((unsigned short *)d)[2]);
+          c = (Fl_Color)((((unsigned short *)d)[1] << 16) |
+                           ((unsigned short *)d)[2]);
 
           if (c == FL_ICON_COLOR)
-	    c = ic;
+            c = ic;
 
           if (!active)
-	    c = fl_inactive(c);
+            c = fl_inactive(c);
 
           fl_color(c);
-	  d += 3;
-	  break;
+          d += 3;
+          break;
 
       case LINE :
           prim = d;
-	  d ++;
-	  fl_begin_line();
-	  break;
+          d ++;
+          fl_begin_line();
+          break;
 
       case CLOSEDLINE :
           prim = d;
-	  d ++;
-	  fl_begin_loop();
-	  break;
+          d ++;
+          fl_begin_loop();
+          break;
 
       case POLYGON :
           prim = d;
-	  d ++;
-	  fl_begin_complex_polygon();
-	  break;
+          d ++;
+          fl_begin_complex_polygon();
+          break;
 
       case OUTLINEPOLYGON :
           prim = d;
-	  d += 3;
-	  fl_begin_complex_polygon();
-	  break;
+          d += 3;
+          fl_begin_complex_polygon();
+          break;
 
       case VERTEX :
           if (prim)
-	    fl_vertex(d[1] * 0.0001, d[2] * 0.0001);
-	  d += 3;
-	  break;
+            fl_vertex(d[1] * 0.0001, d[2] * 0.0001);
+          d += 3;
+          break;
 
       default : // Ignore invalid data...
           d ++;
@@ -345,49 +343,49 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
     switch (*prim)
     {
       case LINE :
-	  fl_end_line();
-	  break;
+          fl_end_line();
+          break;
 
       case CLOSEDLINE :
-	  fl_end_loop();
-	  break;
+          fl_end_loop();
+          break;
 
       case POLYGON :
-	  fl_end_polygon();
-	  break;
+          fl_end_polygon();
+          break;
 
       case OUTLINEPOLYGON :
-	  fl_end_polygon();
+          fl_end_polygon();
 
-          oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
-	                  ((unsigned short *)prim)[2]);
+          oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) |
+                          ((unsigned short *)prim)[2]);
           if (active)
-	  {
+          {
             if (oc == FL_ICON_COLOR)
-	      fl_color(ic);
-	    else
-	      fl_color(oc);
-	  }
-	  else
-	  {
+              fl_color(ic);
+            else
+              fl_color(oc);
+          }
+          else
+          {
             if (oc == FL_ICON_COLOR)
-	      fl_color(fl_inactive(ic));
-	    else
-	      fl_color(fl_inactive(oc));
-	  }
+              fl_color(fl_inactive(ic));
+            else
+              fl_color(fl_inactive(oc));
+          }
 
-	  fl_begin_loop();
+          fl_begin_loop();
 
-	  prim += 3;
-	  while (*prim == VERTEX)
-	  {
-	    fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
-	    prim += 3;
-	  }
+          prim += 3;
+          while (*prim == VERTEX)
+          {
+            fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
+            prim += 3;
+          }
 
           fl_end_loop();
-	  fl_color(c);
-	  break;
+          fl_color(c);
+          break;
     }
 
   // Restore the transform matrix
@@ -399,7 +397,7 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
   label type as needed.
   \param[in] w widget for which this icon will become the label
 */
-void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
+void Fl_File_Icon::label(Fl_Widget *w)  // I - Widget to label
 {
   w->label(FL_ICON_LABEL, (const char*)this);
 }
@@ -412,14 +410,14 @@ void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
   \param[in] a label alignment [not used]
 */
 void
-Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
-                	int            x,	// I - X position of label
-			int            y,	// I - Y position of label
-			int            w,	// I - Width of label
-			int            h,	// I - Height of label
-			Fl_Align       a)	// I - Label alignment (not used)
+Fl_File_Icon::labeltype(const Fl_Label *o,      // I - Label data
+                        int            x,       // I - X position of label
+                        int            y,       // I - Y position of label
+                        int            w,       // I - Width of label
+                        int            h,       // I - Height of label
+                        Fl_Align       a)       // I - Label alignment (not used)
 {
-  Fl_File_Icon *icon;			// Pointer to icon data
+  Fl_File_Icon *icon;                   // Pointer to icon data
 
 
   (void)a;
@@ -427,8 +425,3 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
   icon = (Fl_File_Icon *)(o->value);
   if (icon) icon->draw(x, y, w, h, (Fl_Color)(o->color));
 }
-
-
-//
-// End of "$Id$".
-//

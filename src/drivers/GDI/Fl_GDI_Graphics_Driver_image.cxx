@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Windows image drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // I hope a simple and portable method of drawing color and monochrome
@@ -110,8 +108,8 @@ static void monodither(uchar* to, const uchar* from, int w, int delta) {
 static int fl_abs(int v) { return v<0 ? -v : v; }
 
 static void innards(const uchar *buf, int X, int Y, int W, int H,
-		    int delta, int linedelta, int depth,
-		    Fl_Draw_Image_Cb cb, void* userdata, HDC gc)
+                    int delta, int linedelta, int depth,
+                    Fl_Draw_Image_Cb cb, void* userdata, HDC gc)
 {
   char indexed = 0;
 
@@ -120,7 +118,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 #endif
 
   if (depth==0) depth = 3;
-  if (indexed || !fl_can_do_alpha_blending()) 
+  if (indexed || !fl_can_do_alpha_blending())
     depth = (depth-1)|1;
 
   if (!linedelta) linedelta = W*fl_abs(delta);
@@ -149,9 +147,9 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   } else
 #endif
   if (depth<3) {
-    RGBQUAD *bmi_colors = &bmi.bmiColors[0];	// suppress warning (STR #3199)
+    RGBQUAD *bmi_colors = &bmi.bmiColors[0];    // suppress warning (STR #3199)
     for (int i=0; i<256; i++) {
-      bmi_colors[i].rgbBlue = (uchar)i;		// bmi.bmiColors[i]...
+      bmi_colors[i].rgbBlue = (uchar)i;         // bmi.bmiColors[i]...
       bmi_colors[i].rgbGreen = (uchar)i;
       bmi_colors[i].rgbRed = (uchar)i;
       bmi_colors[i].rgbReserved = (uchar)0; // must be zero
@@ -170,7 +168,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     pixelsize = 4;
   }
   int linesize = (pixelsize*w+3)&~3;
-  
+
   static U32* buffer;
   static long buffer_size;
   int blocking = h;
@@ -201,85 +199,85 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     for (k = 0; j<h && k<blocking; k++, j++) {
       const uchar* from;
       if (!buf) { // run the converter:
-	cb(userdata, x-X, y-Y+j, w, (uchar*)line_buffer);
-	from = (uchar*)line_buffer;
+        cb(userdata, x-X, y-Y+j, w, (uchar*)line_buffer);
+        from = (uchar*)line_buffer;
       } else {
-	from = buf;
-	buf += linedelta;
+        from = buf;
+        buf += linedelta;
       }
       uchar *to = (uchar*)buffer+(blocking-k-1)*linesize;
 #if USE_COLORMAP
       if (indexed) {
-	if (depth<3)
-	  monodither(to, from, w, delta);
-	else 
-	  dither(to, from, w, delta);
-	to += w;
+        if (depth<3)
+          monodither(to, from, w, delta);
+        else
+          dither(to, from, w, delta);
+        to += w;
       } else
 #endif
       {
         int i;
         switch (depth) {
-          case 1: 
+          case 1:
             for (i=w; i--; from += delta) *to++ = *from;
             break;
           case 2:
-	    for (i=w; i--; from += delta, to += 4) {
-	      uchar a = from[1];
-	      uchar gray = (from[0]*a)>>8;
-	      to[0] = gray;
-	      to[1] = gray;
-	      to[2] = gray;
-	      to[3] = a;
+            for (i=w; i--; from += delta, to += 4) {
+              uchar a = from[1];
+              uchar gray = (from[0]*a)>>8;
+              to[0] = gray;
+              to[1] = gray;
+              to[2] = gray;
+              to[3] = a;
             }
             break;
           case 3:
-	    for (i=w; i--; from += delta, to += 3) {
-	      uchar r = from[0];
-	      to[0] = from[2];
-	      to[1] = from[1];
-	      to[2] = r;
+            for (i=w; i--; from += delta, to += 3) {
+              uchar r = from[0];
+              to[0] = from[2];
+              to[1] = from[1];
+              to[2] = r;
             }
-            break;          
+            break;
           case 4:
-	    for (i=w; i--; from += delta, to += 4) {
+            for (i=w; i--; from += delta, to += 4) {
               uchar a = from[3];
-	      uchar r = from[0];
-	      to[0] = (from[2]*a)>>8;
-	      to[1] = (from[1]*a)>>8;
-	      to[2] = (r*a)>>8;
-	      to[3] = from[3];
+              uchar r = from[0];
+              to[0] = (from[2]*a)>>8;
+              to[1] = (from[1]*a)>>8;
+              to[2] = (r*a)>>8;
+              to[3] = from[3];
             }
-            break;          
-        }            
+            break;
+        }
       }
     }
     if (fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
       StretchDIBits(gc, x, y+j-k, w, k, 0, 0, w, k,
-		    (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-		    &bmi,
+                    (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
+                    &bmi,
 #if USE_COLORMAP
-		    indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
+                    indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
 #else
-		    DIB_RGB_COLORS
+                    DIB_RGB_COLORS
 #endif
-		    , SRCCOPY );
+                    , SRCCOPY );
       delete[] buffer;
       buffer = NULL;
       buffer_size = 0;
     }
     else {
       SetDIBitsToDevice(gc, x, y+j-k, w, k, 0, 0, 0, k,
-			(LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-			&bmi,
+                        (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
+                        &bmi,
 #if USE_COLORMAP
-			indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
+                        indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
 #else
-			DIB_RGB_COLORS
+                        DIB_RGB_COLORS
 #endif
-			);
+                        );
       }
   }
 }
@@ -294,7 +292,7 @@ void Fl_GDI_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y,
 }
 
 void Fl_GDI_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data, gc_);
@@ -313,7 +311,7 @@ void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, i
 }
 
 void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(0,x,y,w,h,d,0,1,cb,data, gc_);
@@ -322,19 +320,19 @@ void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void*
   }
 }
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #if USE_COLORMAP
+void Fl_GDI_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   // use the error diffusion dithering code to produce a much nicer block:
   if (fl_palette) {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,(HDC)fl_graphics_driver->gc());
+    innards(c, floor(x), floor(y), floor(x + w) - floor(x), floor(y + h) - floor(y),
+            0,0,0,0,0, (HDC)gc());
     return;
   }
-#endif
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
+  Fl_Graphics_Driver::colored_rectf(x, y, w, h, r, g, b);
 }
+#endif
 
 // 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
@@ -347,9 +345,9 @@ Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *dat
   static uchar loNibble[16] =
   { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-  int np  = GetDeviceCaps(gc_, PLANES);	//: was always one on sample machines
+  int np  = GetDeviceCaps(gc_, PLANES); //: was always one on sample machines
   int bpp = GetDeviceCaps(gc_, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
-  int Bpr = (bpp*w+7)/8;			//: bytes per row
+  int Bpr = (bpp*w+7)/8;                        //: bytes per row
   int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
   if (bpp==4) shr = (shr+1)/2;
   uchar *newarray = new uchar[(Bpr+pad)*h];
@@ -391,7 +389,7 @@ Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *dat
 
   bm = CreateBitmap(w, h, np, bpp, newarray);
   delete[] newarray;
-  
+
   return bm;
 }
 
@@ -400,10 +398,10 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(bm, W, H);
-  cx *= scale(); cy *= scale();
+  cx = this->floor(cx); cy = this->floor(cy);
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -469,7 +467,8 @@ void Fl_GDI_Printer_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, 
                                          // draw it to printer context with background color as transparent
   float scaleW = bm->data_w()/float(bm->w());
   float scaleH = bm->data_h()/float(bm->h());
-  fl_TransparentBlt(gc_, X, Y, W, H, tempdc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH, RGB(r, g, b) );
+  fl_TransparentBlt(gc_, X, Y, W, H, tempdc,
+                    int(cx * scaleW), int(cy * scaleH), int(W * scaleW), int(H * scaleH), RGB(r, g, b) );
   delete img_surf;
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
@@ -500,10 +499,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(img, W, H);
-  cx *= scale(); cy *= scale();
+  cx = this->floor(cx); cy = this->floor(cy);
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
@@ -537,21 +536,22 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   if (!*Fl_Graphics_Driver::id(rgb)) {
     cache(rgb);
   }
-  float scaleW = float(rgb->data_w())/rgb->w();
-  float scaleH = float(rgb->data_h())/rgb->h();
-  int W = WP, H = HP;
-  cache_size(rgb, W, H);
+  push_clip(XP, YP, WP, HP);
+  XP -= cx; YP -= cy;
+  WP = rgb->w(); HP = rgb->h();
+  cache_size(rgb, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH);
+    alpha_blend_(this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH, SRCCOPY);
+    StretchBlt(gc_, this->floor(XP), this->floor(YP), WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
+  pop_clip();
 }
 
 
@@ -573,7 +573,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP,
     if ( *pw != rgb->data_w() ||  *ph != rgb->data_h()) rgb->uncache();
   }
   if (!*id(rgb)) cache(rgb);
-  draw_fixed(rgb, 0, 0, WP/tr.eM11, HP/tr.eM22, cx/tr.eM11, cy/tr.eM22);
+  draw_fixed(rgb, 0, 0, int(WP / tr.eM11), int(HP / tr.eM22), int(cx / tr.eM11), int(cy / tr.eM22));
   SetWorldTransform(gc_, &old_tr);
 }
 
@@ -601,7 +601,7 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   const uchar* src = data;
   uchar* dest = newarray;
   Fl_Bitmask bm;
-  static uchar reverse[16] =	/* Bit reversal lookup table */
+  static uchar reverse[16] =    /* Bit reversal lookup table */
   { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
     0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
 
@@ -613,9 +613,9 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   }
 
   bm = CreateBitmap(w, h, 1, 1, newarray);
-  
+
   delete[] newarray;
-  
+
   return bm;
 }
 
@@ -628,10 +628,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale();
-  Y = Y*scale();
+  X = this->floor(X);
+  Y = this->floor(Y);
   cache_size(pxm, W, H);
-  cx *= scale(); cy *= scale();
+  cx = this->floor(cx); cy = this->floor(cy);
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
@@ -679,8 +679,8 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
     // print all of offscreen but its parts in background color
     float scaleW = pxm->data_w()/float(pxm->w());
     float scaleH = pxm->data_h()/float(pxm->h());
-    fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH,
-                      need_pixmap_bg_color );
+    fl_TransparentBlt(gc_, X, Y, W, H, new_gc,
+                      int(cx * scaleW), int(cy * scaleH), int(W * scaleW), int(H * scaleH), need_pixmap_bg_color );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
     need_pixmap_bg_color = 0;
@@ -690,6 +690,38 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
   }
 }
 
+// Makes an RGB triplet different from all the colors used in the pixmap
+// and computes Fl_Graphics_Driver::need_pixmap_bg_color from this triplet
+void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b, int color_count, void **data) {
+  typedef struct { uchar r; uchar g; uchar b; } UsedColor;
+  UsedColor *used_colors = *(UsedColor**)data;
+  int i;
+  r = 2; g = 3; b = 4;
+  while (1) {
+    for ( i=0; i<color_count; i++ )
+      if ( used_colors[i].r == r &&
+           used_colors[i].g == g &&
+           used_colors[i].b == b )
+        break;
+    if (i >= color_count) {
+      free((void*)used_colors);
+      *(UsedColor**)data = NULL;
+      need_pixmap_bg_color = RGB(r, g, b);
+      return;
+    }
+    if (r < 255) {
+      r++;
+    } else {
+      r = 0;
+      if (g < 255) {
+        g++;
+      } else {
+        g = 0;
+        b++;
+      }
+    }
+  }
+}
 
 void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
@@ -716,7 +748,3 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
 void Fl_GDI_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
   DeleteObject((Fl_Offscreen)offscreen);
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -37,18 +35,18 @@ void Fl_Counter::draw() {
   int xx[5], ww[5];
   if (type() == FL_NORMAL_COUNTER) {
     int W = w()*15/100;
-    xx[1] = x();	 ww[1] = W;
+    xx[1] = x();         ww[1] = W;
     xx[2] = x()+1*W;     ww[2] = W;
     xx[0] = x()+2*W;     ww[0] = w()-4*W;
     xx[3] = x()+w()-2*W; ww[3] = W;
     xx[4] = x()+w()-1*W; ww[4] = W;
   } else {
     int W = w()*20/100;
-    xx[1] = 0;	         ww[1] = 0;
-    xx[2] = x();	 ww[2] = W;
-    xx[0] = x()+W;	 ww[0] = w()-2*W;
+    xx[1] = 0;           ww[1] = 0;
+    xx[2] = x();         ww[2] = W;
+    xx[0] = x()+W;       ww[0] = w()-2*W;
     xx[3] = x()+w()-1*W; ww[3] = W;
-    xx[4] = 0;	         ww[4] = 0;
+    xx[4] = 0;           ww[4] = 0;
   }
 
   draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_BACKGROUND2_COLOR);
@@ -148,11 +146,11 @@ int Fl_Counter::handle(int event) {
   case FL_KEYBOARD :
     switch (Fl::event_key()) {
       case FL_Left:
-	handle_drag(clamp(increment(value(),-1)));
-	return 1;
+        handle_drag(clamp(increment(value(),-1)));
+        return 1;
       case FL_Right:
-	handle_drag(clamp(increment(value(),1)));
-	return 1;
+        handle_drag(clamp(increment(value(),1)));
+        return 1;
       default:
         return 0;
     }
@@ -203,8 +201,3 @@ Fl_Simple_Counter::Fl_Simple_Counter(int X,int Y,int W,int H, const char *L)
 : Fl_Counter(X,Y,W,H,L) {
   type(FL_SIMPLE_COUNTER);
 }
-
-
-//
-// End of "$Id$".
-//

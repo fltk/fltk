@@ -1,27 +1,21 @@
 //
-// "$Id$"
-//
 // Standard dialog test program for the Fast Light Tool Kit (FLTK).
 //
 // This also demonstrates how to trap attempts by the user to
 // close the last window by overriding Fl::exit
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -32,33 +26,37 @@
 
 #include <FL/fl_ask.H>
 
-void update_input_text(Fl_Widget* o, const char *input) {
-  if (input) {
-    o->copy_label(input);
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Button callback: v == 0 ("input") or 1 ("password")
+
+void rename_button(Fl_Widget *o, void *v) {
+  int what = fl_int(v);
+  Fl_String input;
+  if (what == 0) {
+    fl_message_icon_label("§");
+    input = fl_input_str(0, "Input (no size limit, use ctrl/j for newline):", o->label());
+  } else {
+    fl_message_icon_label("€");
+    input = fl_password_str(20, "Enter password (max. 20 characters):", o->label());
+  }
+  if (input.value()) {
+    o->copy_label(input.value());
     o->redraw();
   }
 }
 
-void rename_me(Fl_Widget*o) {
-  const char *input = fl_input("Input:", o->label());
-  update_input_text(o, input);
-}
-
-void rename_me_pwd(Fl_Widget*o) {
-  const char *input = fl_password("Input PWD:", o->label());
-  update_input_text(o, input);
-}
-
-void window_callback(Fl_Widget *win, void*) {
+void window_callback(Fl_Widget *win, void *) {
   int hotspot = fl_message_hotspot();
   fl_message_hotspot(0);
   fl_message_title("note: no hotspot set for this dialog");
-  int rep = fl_choice("Are you sure you want to quit?",
-		      "Cancel", "Quit", "Dunno");
+  int rep = fl_choice("Are you sure you want to quit?", "Cancel", "Quit", "Dunno");
   fl_message_hotspot(hotspot);
-  if (rep==1)
+  if (rep == 1)
     exit(0);
-  else if (rep==2) { // (Dunno)
+  else if (rep == 2) { // (Dunno)
     fl_message_position(win);
     fl_message_title("This dialog must be centered over the main window");
     fl_message("Well, maybe you should know before we quit.");
@@ -67,45 +65,61 @@ void window_callback(Fl_Widget *win, void*) {
 
 /*
   This timer callback shows a message dialog (fl_choice) window
-  every 5 seconds to test "recursive" common dialogs.
+  every 5 seconds to test "recursive" (aka nested) common dialogs.
 
   The timer can be stopped by clicking the button "Stop these funny popups"
   or pressing the Enter key. As it is currently implemented, clicking the
   "Close" button will reactivate the popups (only possible if "recursive"
   dialogs are enabled, see below).
 
-  Note 1: This dialog box is blocked in FLTK 1.3.x if another common dialog
-  is already open because the window used is a static (i.e. permanently
-  allocated) Fl_Window instance. This should be fixed in FLTK 1.4.0.
+  Note 1: This dialog box had been blocked in FLTK 1.3.x if another common
+  dialog was already open because the window used was a static (i.e. permanently
+  allocated) Fl_Window instance. This has been fixed in FLTK 1.4.0.
   See STR #334 (sic !) and also STR #2751 ("Limit input field characters").
 */
 void timer_cb(void *) {
 
   static int stop = 0;
-  static const double delta = 5.0;
+  static int n = 0;
+  const double delta = 5.0;   // delay of popups
+  const int nmax = 10;        // limit no. of popups
 
+  n++;
+  if (n >= nmax)
+    stop = 1;
   Fl_Box *message_icon = (Fl_Box *)fl_message_icon();
 
-  Fl::repeat_timeout(delta, timer_cb);
-
-  if (stop == 1) {
+  if (stop) {
     message_icon->color(FL_WHITE);
     return;
   }
 
+  Fl::repeat_timeout(delta, timer_cb);
+
   // Change the icon box color:
   Fl_Color c = message_icon->color();
-  c = (c+1) % 32;
-  if (c == message_icon->labelcolor()) c++;
+  c = (c + 1) % 32;
+  if (c == message_icon->labelcolor())
+    c++;
   message_icon->color((Fl_Color)c);
 
+  // test message title assignment with a local buffer
+  {                                 // local scope for buf
+    char buf[40];                   // test: use local variable
+    sprintf(buf, "Message #%d", n); // fill message title
+    fl_message_title(buf);          // set message title
+    strcpy(buf, "** void **");      // overwrite buffer to be sure
+  }                                 // buf goes out of scope here
+
   // pop up a message:
-  stop = fl_choice("Timeout. Click the 'Close' button.\n"
-		   "Note: this message was blocked in FLTK 1.3\n"
-		   "if another message window is open.\n"
-		   "This *should* be fixed in FLTK 1.4.0!\n"
-		   "This message should pop up every 5 seconds.",
-		   "Close", "Stop these funny popups", NULL);
+  stop |= fl_choice(
+          "Timeout. Click the 'Close' button or press Escape.\n"
+          "Note: this message had been blocked in FLTK 1.3.x\n"
+          "and earlier if another message window was open.\n"
+          "This message should pop up every 5 seconds (max. 10 times)\n"
+          "in FLTK 1.4.0 and later until stopped by clicking the button\n"
+          "below or by pressing the Enter (Return) key.\n",
+          "Close", "Stop these funny popups", NULL);
 }
 
 int main(int argc, char **argv) {
@@ -117,9 +131,9 @@ int main(int argc, char **argv) {
 
   Fl_Double_Window window(200, 105);
   Fl_Return_Button b(20, 10, 160, 35, buffer);
-  b.callback(rename_me);
+  b.callback(rename_button, (void *)(0));
   Fl_Button b2(20, 50, 160, 35, buffer2);
-  b2.callback(rename_me_pwd);
+  b2.callback(rename_button, (void *)(1));
   window.end();
   window.resizable(&b);
   window.show(argc, argv);
@@ -128,14 +142,10 @@ int main(int argc, char **argv) {
   window.callback(window_callback);
 
   // Test: set default message window title:
-  // fl_message_title_default("Default Window Title");
+  // fl_message_title_default("Default Message Title");
 
-  // Test: multiple (nested, aka "recursive") popups
+  // Test: multiple (nested, aka "recursive") popups (see timer_cb())
   Fl::add_timeout(5.0, timer_cb);
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Rapid-App style knob
@@ -117,12 +115,12 @@ void Fl_Roller::draw() {
       // draw ridges:
       double junk;
       for (double yy = -ARC+modf(offset*sin(ARC)/(W/2)/delta,&junk)*delta;;
-	   yy += delta) {
-	int yy1 = int((sin(yy)/sin(ARC)+1)*W/2);
-	if (yy1 <= 0) continue; else if (yy1 >= W-1) break;
-	fl_color(FL_DARK3); fl_yxline(X+yy1,Y+1,Y+H-1);
-	if (yy < 0) yy1--; else yy1++;
-	fl_color(FL_LIGHT1);fl_yxline(X+yy1,Y+1,Y+H-1);
+           yy += delta) {
+        int yy1 = int((sin(yy)/sin(ARC)+1)*W/2);
+        if (yy1 <= 0) continue; else if (yy1 >= W-1) break;
+        fl_color(FL_DARK3); fl_yxline(X+yy1,Y+1,Y+H-1);
+        if (yy < 0) yy1--; else yy1++;
+        fl_color(FL_LIGHT1);fl_yxline(X+yy1,Y+1,Y+H-1);
       }
       // draw edges:
       h1 = W/8+1; // distance from end the color inverts
@@ -151,12 +149,12 @@ void Fl_Roller::draw() {
       // draw ridges:
       double junk;
       for (double yy = -ARC+modf(offset*sin(ARC)/(H/2)/delta,&junk)*delta;
-	   ; yy += delta) {
-	int yy1 = int((sin(yy)/sin(ARC)+1)*H/2);
-	if (yy1 <= 0) continue; else if (yy1 >= H-1) break;
-	fl_color(FL_DARK3); fl_xyline(X+1,Y+yy1,X+W-1);
-	if (yy < 0) yy1--; else yy1++;
-	fl_color(FL_LIGHT1);fl_xyline(X+1,Y+yy1,X+W-1);
+           ; yy += delta) {
+        int yy1 = int((sin(yy)/sin(ARC)+1)*H/2);
+        if (yy1 <= 0) continue; else if (yy1 >= H-1) break;
+        fl_color(FL_DARK3); fl_xyline(X+1,Y+yy1,X+W-1);
+        if (yy < 0) yy1--; else yy1++;
+        fl_color(FL_LIGHT1);fl_xyline(X+1,Y+yy1,X+W-1);
       }
       // draw edges:
       h1 = H/8+1; // distance from end the color inverts
@@ -185,7 +183,3 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
   box(FL_UP_BOX);
   step(1,1000);
 }
-
-//
-// End of "$Id$".
-//

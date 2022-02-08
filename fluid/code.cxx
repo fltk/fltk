@@ -1,42 +1,53 @@
 //
-// "$Id$"
-//
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../src/flstring.h"
-#include <stdarg.h>
+#include "code.h"
+
+#include "Fl_Group_Type.h"
+#include "Fl_Window_Type.h"
+#include "Fl_Function_Type.h"
+#include "alignment_panel.h"
+#include "file.h"
 
 #include <FL/Fl.H>
-#include "Fl_Type.h"
-#include "alignment_panel.h"
+#include <FL/fl_string_functions.h>
+#include <FL/filename.H>
+#include "../src/flstring.h"
 
-static FILE *code_file;
-static FILE *header_file;
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-extern char i18n_program[];
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
+/// \defgroup cfile C Code File Operations
+/// \{
 
-// return true if c can be in a C identifier.  I needed this so
-// it is not messed up by locale settings:
+static FILE *code_file = NULL;
+static FILE *header_file = NULL;
+
+/// Store the current indentation level for the C source code.
+int indentation = 0;
+
+int write_number = 0;
+
+int write_sourceview = 0;
+
+/**
+ Return true if c can be in a C identifier.
+ I needed this so it is not messed up by locale settings.
+ */
 int is_id(char c) {
   return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='_';
 }
@@ -48,7 +59,7 @@ struct id {
   char* text;
   void* object;
   id *left, *right;
-  id (const char* t, void* o) : text(strdup(t)), object(o) {left = right = 0;}
+  id (const char* t, void* o) : text(fl_strdup(t)), object(o) {left = right = 0;}
   ~id();
 };
 
@@ -60,6 +71,7 @@ id::~id() {
 
 static id* id_root;
 
+// TODO: document me
 const char* unique_id(void* o, const char* type, const char* name, const char* label) {
   char buffer[128];
   char* q = buffer;
@@ -94,12 +106,47 @@ const char* unique_id(void* o, const char* type, const char* name, const char* l
 ////////////////////////////////////////////////////////////////
 // return current indentation:
 
-static const char* spaces = "                ";
-int indentation;
-const char* indent() {
-  int i = indentation; if (i>16) i = 16;
-  return spaces+16-i;
+
+/**
+ Return a C string that indents code to the given depth.
+
+ Indentation can be changed by modifying the multiplicator (``*2`` to keep
+ the FLTK indent style). Changing `spaces` to a list of tabs would generate
+ tab indents instead. This function can also be used for fixed depth indents
+ in the header file.
+
+ Do *not* ever make this a user preference, or you will end up writing a
+ fully featured code formatter.
+
+ \param[in] set generate this indent depth
+ \return pointer to a static string
+ */
+const char *indent(int set) {
+  static const char* spaces = "                                ";
+  int i = set * 2;
+  if (i>32) i = 32;
+  if (i<0) i = 0;
+  return spaces+32-i;
 }
+
+/**
+ Return a C string that indents code to the current source file depth.
+ \return pointer to a static string
+ */
+const char *indent() {
+  return indent(indentation);
+}
+
+/**
+ Return a C string that indents code to the current source file depth plus an offset.
+ \param[in] offset adds a temporary offset for this call only; this does not
+    change the `indentation` variable; offset can be negative
+ \return pointer to a static string
+ */
+const char *indent_plus(int offset) {
+  return indent(indentation+offset);
+}
+
 
 ////////////////////////////////////////////////////////////////
 // declarations/include files:
@@ -111,7 +158,7 @@ struct included {
   char *text;
   included *left, *right;
   included(const char *t) {
-    text = strdup(t);
+    text = fl_strdup(t);
     left = right = 0;
   }
   ~included();
@@ -124,6 +171,10 @@ included::~included() {
 }
 static included *included_root;
 
+/**
+ Print a formatted line to the header file, unless the same line was produced before.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 int write_declare(const char *format, ...) {
   va_list args;
   char buf[1024];
@@ -150,7 +201,22 @@ int write_declare(const char *format, ...) {
 int varused_test;
 int varused;
 
-// write an array of C characters (adds a null):
+/**
+ Write a C string to the code file, escaping non-ASCII characters.
+
+ Adds " before and after the text.
+
+ A list of control characters and ", ', and \\ are escaped by adding a \\ in
+ front of them. Escape ?? by wrinting ?\\?. All other characters that are not
+ between 32 and 126 inclusive will be escaped as octal characters.
+
+ This function is utf8 agnostic.
+
+ \param[in] s write this string
+ \param[in] length write so many bytes in this string
+
+ \see write_cstring(const char*)
+ */
 void write_cstring(const char *s, int length) {
   if (varused_test) {
     varused = 1;
@@ -197,35 +263,47 @@ void write_cstring(const char *s, int length) {
       // else fall through:
     default:
       if (c >= ' ' && c < 127) {
-	// a legal ASCII character
-	if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
-	putc(c, code_file);
-	linelength++;
-	break;
+        // a legal ASCII character
+        if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+        putc(c, code_file);
+        linelength++;
+        break;
       }
+      // if the UTF-8 option is checked, write unicode characters verbatim
+        if (utf8_in_src && (c&0x80)) {
+          if ((c&0x40)) {
+            // This is the first character in a utf-8 sequence (0b11......).
+            // A line break would be ok here. Do not put linebreak in front of
+            // following characters (0b10......)
+            if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+          }
+          putc(c, code_file);
+          linelength++;
+          break;
+        }
       // otherwise we must print it as an octal constant:
       c &= 255;
       if (c < 8) {
-	if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 2;
+        if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 2;
       } else if (c < 64) {
-	if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 3;
+        if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 3;
       } else {
-	if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 4;
+        if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 4;
       }
       // We must not put more numbers after it, because some C compilers
       // consume them as part of the quoted sequence.  Use string constant
       // pasting to avoid this:
       c = *p;
       if (p < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
-	putc('\"', code_file); linelength++;
-	if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
-	putc('\"', code_file); linelength++;
+        putc('\"', code_file); linelength++;
+        if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
+        putc('\"', code_file); linelength++;
       }
       break;
     }
@@ -233,10 +311,20 @@ void write_cstring(const char *s, int length) {
   putc('\"', code_file);
 }
 
-// write a C string, quoting characters if necessary:
-void write_cstring(const char *s) {write_cstring(s,strlen(s));}
+/**
+ Write a C string, escaping non-ASCII characters.
+ \param[in] s write this string
+ \see write_cstring(const char*, int)
+ */
+void write_cstring(const char *s) {
+  write_cstring(s, (int)strlen(s));
+}
 
-// write an array of C binary data (does not add a null):
+/**
+ Write an array of C binary data (does not add a null).
+ The output is bracketed in { and }. The content is written
+ as decimal bytes, i.e. `{ 1, 2, 200 }`
+ */
 void write_cdata(const char *s, int length) {
   if (varused_test) {
     varused = 1;
@@ -270,6 +358,11 @@ void write_cdata(const char *s, int length) {
   putc('}', code_file);
 }
 
+/**
+ Print a formatted line to the source file.
+ \param[in] format printf-style formatting text
+ \param[in] args list of arguments
+ */
 void vwrite_c(const char* format, va_list args) {
   if (varused_test) {
     varused = 1;
@@ -278,6 +371,10 @@ void vwrite_c(const char* format, va_list args) {
   vfprintf(code_file, format, args);
 }
 
+/**
+ Print a formatted line to the source file.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 void write_c(const char* format,...) {
   va_list args;
   va_start(args, format);
@@ -285,6 +382,28 @@ void write_c(const char* format,...) {
   va_end(args);
 }
 
+/**
+ Write code (c) of size (n) to C file, with optional comment (com) w/o trailing space.
+ if the code line does not end in a ';' or '}', a ';' will be added.
+ \param[in] indent indentation string for all lines
+ \param[in] n number of bytes in code line
+ \param[in] c line of code
+ \param[in] com optional commentary
+ */
+void write_cc(const char *indent, int n, const char *c, const char *com) {
+  write_c("%s%.*s", indent, n, c);
+  char cc = c[n-1];
+  if (cc!='}' && cc!=';')
+    write_c(";");
+  if (*com)
+    write_c(" %s", com);
+  write_c("\n");
+}
+
+/**
+ Print a formatted line to the header file.
+ \param[in] format printf-style formatting text, followed by a vararg list
+ */
 void write_h(const char* format,...) {
   if (varused_test) return;
   va_list args;
@@ -293,13 +412,64 @@ void write_h(const char* format,...) {
   va_end(args);
 }
 
-#include <FL/filename.H>
-int write_number;
-int write_sourceview;
-extern Fl_Widget_Class_Type *current_widget_class;
+/**
+ Write code (c) of size (n) to H file, with optional comment (com) w/o trailing space.
+ if the code line does not end in a ';' or '}', a ';' will be added.
+ \param[in] indent indentation string for all lines
+ \param[in] n number of bytes in code line
+ \param[in] c line of code
+ \param[in] com optional commentary
+ */
+void write_hc(const char *indent, int n, const char* c, const char *com) {
+  write_h("%s%.*s", indent, n, c);
+  char cc = c[n-1];
+  if (cc!='}' && cc!=';')
+    write_h(";");
+  if (*com)
+    write_h(" %s", com);
+  write_h("\n");
+}
 
-// recursively dump code, putting children between the two parts
-// of the parent code:
+/**
+ Write one or more lines of code, indenting each one of them.
+ \param[in] textlines one or more lines of text, seperated by \\n
+ */
+void write_c_indented(const char *textlines, int inIndent, char inTrailwWith) {
+  if (textlines) {
+    indentation += inIndent;
+    for (;;) {
+      int line_len;
+      const char *newline = strchr(textlines, '\n');
+      if (newline)
+        line_len = (int)(newline-textlines);
+      else
+        line_len = (int)strlen(textlines);
+      if (textlines[0]=='\n') {
+        // avoid trailing spaces
+      } else if (textlines[0]=='#') {
+        // don't indent preprocessor statments starting with '#'
+        write_c("%.*s", line_len, textlines);
+      } else {
+        // indent all other text lines
+        write_c("%s%.*s", indent(), line_len, textlines);
+      }
+      if (newline) {
+        write_c("\n");
+      } else {
+        if (inTrailwWith)
+          write_c("%c", inTrailwWith);
+        break;
+      }
+      textlines = newline+1;
+    }
+    indentation -= inIndent;
+  }
+}
+
+
+/**
+ Recursively dump code, putting children between the two parts of the parent code.
+ */
 static Fl_Type* write_code(Fl_Type* p) {
   if (write_sourceview) {
     p->code_position = (int)ftell(code_file);
@@ -318,22 +488,22 @@ static Fl_Type* write_code(Fl_Type* p) {
       if (strcmp(q->type_name(), "Function")) q = write_code(q);
       else {
         int level = q->level;
-	do {
-	  q = q->next;
-	} while (q && q->level > level);
+        do {
+          q = q->next;
+        } while (q && q->level > level);
       }
     }
 
-    // write all code that come after the children 
+    // write all code that come after the children
     p->write_code2();
 
     for (q = p->next; q && q->level > p->level;) {
       if (!strcmp(q->type_name(), "Function")) q = write_code(q);
       else {
         int level = q->level;
-	do {
-	  q = q->next;
-	} while (q && q->level > level);
+        do {
+          q = q->next;
+        } while (q && q->level > level);
       }
     }
 
@@ -341,7 +511,7 @@ static Fl_Type* write_code(Fl_Type* p) {
     current_widget_class = 0L;
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
-    // write all code that come after the children 
+    // write all code that come after the children
     p->write_code2();
   }
   if (write_sourceview) {
@@ -352,12 +522,18 @@ static Fl_Type* write_code(Fl_Type* p) {
   return q;
 }
 
-extern const char* header_file_name;
-extern Fl_Class_Type *current_class;
+/**
+ Write the source and header files for the current design.
 
+ If the files already exist, they will be overwritten.
+
+ \param[in] s filename of source code file
+ \param[in] t filename of the header file
+ \return 0 if the operation failed, 1 if it was successful
+ */
 int write_code(const char *s, const char *t) {
   const char *filemode = "w";
-  if (write_sourceview) 
+  if (write_sourceview)
     filemode = "wb";
   write_number++;
   delete id_root; id_root = 0;
@@ -376,7 +552,7 @@ int write_code(const char *s, const char *t) {
     if (!f) {fclose(code_file); return 0;}
     header_file = f;
   }
-  // if the first entry in the Type tree is a comment, then it is probably 
+  // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;
   if (first_type && first_type->is_comment()) {
@@ -406,31 +582,60 @@ int write_code(const char *s, const char *t) {
   *b = 0;
   fprintf(header_file, "#ifndef %s\n", define_name);
   fprintf(header_file, "#define %s\n", define_name);
-  }  
+  }
 
-  write_declare("#include <FL/Fl.H>");
-  if (i18n_type && i18n_include[0]) {
-    if (i18n_include[0] != '<' &&
-        i18n_include[0] != '\"')
-      write_c("#include \"%s\"\n", i18n_include);
-    else
-      write_c("#include %s\n", i18n_include);
-    if (i18n_type == 2) {
-      if (i18n_file[0]) write_c("extern nl_catd %s;\n", i18n_file);
-      else {
-        write_c("// Initialize I18N stuff now for menus...\n");
-        write_c("#include <locale.h>\n");
-	write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
-        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n",
-                   i18n_program);
-      }
-    }
+  if (avoid_early_includes==0) {
+    write_declare("#include <FL/Fl.H>");
   }
   if (t && include_H_from_C) {
     if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
       write_c("#include \"%s\"\n", fl_filename_name(t));
     } else {
       write_c("#include \"%s\"\n", t);
+    }
+  }
+  if (i18n_type && i18n_include[0]) {
+    int conditional = (i18n_conditional[0]!=0);
+    if (conditional) {
+      write_c("#ifdef %s\n", i18n_conditional);
+      indentation++;
+    }
+    if (i18n_include[0] != '<' &&
+        i18n_include[0] != '\"')
+      write_c("#%sinclude \"%s\"\n", indent(), i18n_include);
+    else
+      write_c("#%sinclude %s\n", indent(), i18n_include);
+    if (i18n_type == 2) {
+      if (i18n_file[0]) write_c("extern nl_catd %s;\n", i18n_file);
+      else {
+        write_c("// Initialize I18N stuff now for menus...\n");
+        write_c("#%sinclude <locale.h>\n", indent());
+        write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
+        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n",
+                   i18n_program);
+      }
+    }
+    if (conditional) {
+      write_c("#else\n");
+      if (i18n_type == 1) {
+        if (i18n_function[0]) {
+          write_c("#%sifndef %s\n", indent(), i18n_function);
+          write_c("#%sdefine %s(text) text\n", indent_plus(1), i18n_function);
+          write_c("#%sendif\n", indent());
+        }
+      }
+      if (i18n_type == 2) {
+        write_c("#%sifndef catgets\n", indent());
+        write_c("#%sdefine catgets(catalog, set, msgid, text) text\n", indent_plus(1));
+        write_c("#%sendif\n", indent());
+      }
+      indentation--;
+      write_c("#endif\n");
+    }
+    if (i18n_type == 1 && i18n_static_function[0]) {
+      write_c("#ifndef %s\n", i18n_static_function);
+      write_c("#%sdefine %s(text) text\n", indent_plus(1), i18n_static_function);
+      write_c("#endif\n");
     }
   }
   for (Fl_Type* p = first_type; p;) {
@@ -490,110 +695,110 @@ int write_strings(const char *sfile) {
   switch (i18n_type) {
   case 0 : /* None, just put static text out */
       fprintf(fp, "# generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       for (p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    for (const char *s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->label()) {
+            for (const char *s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             putc('\n', fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    for (const char *s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->tooltip()) {
+            for (const char *s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             putc('\n', fp);
-	  }
-	}
+          }
+        }
       }
       break;
   case 1 : /* GNU gettext, put a .po file out */
       fprintf(fp, "# generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       for (p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    const char *s;
+          if (w->label()) {
+            const char *s;
 
-	    fputs("msgid \"", fp);
-	    for (s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgid \"", fp);
+            for (s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
 
-	    fputs("msgstr \"", fp);
-	    for (s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgstr \"", fp);
+            for (s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    const char *s;
+          if (w->tooltip()) {
+            const char *s;
 
-	    fputs("msgid \"", fp);
-	    for (s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgid \"", fp);
+            for (s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
 
-	    fputs("msgstr \"", fp);
-	    for (s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgstr \"", fp);
+            for (s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
-	}
+          }
+        }
       }
       break;
   case 2 : /* POSIX catgets, put a .msg file out */
       fprintf(fp, "$ generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       fprintf(fp, "$set %s\n", i18n_set);
       fputs("$quote \"\n", fp);
 
       for (i = 1, p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    fprintf(fp, "%d \"", i ++);
-	    for (const char *s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->label()) {
+            fprintf(fp, "%d \"", i ++);
+            for (const char *s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    fprintf(fp, "%d \"", i ++);
-	    for (const char *s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->tooltip()) {
+            fprintf(fp, "%d \"", i ++);
+            for (const char *s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
-	}
+          }
+        }
       }
       break;
   }
@@ -601,15 +806,22 @@ int write_strings(const char *sfile) {
   return fclose(fp);
 }
 
-////////////////////////////////////////////////////////////////
-
-void Fl_Type::write_static() {}
-void Fl_Type::write_code1() {
-  write_h("// Header for %s\n", title());
-  write_c("// Code for %s\n", title());
+/**
+ Write the public/private/protected keywords inside the class.
+ This avoids repeating these words if the mode is already set.
+ */
+void write_public(int state) {
+  if (!current_class && !current_widget_class) return;
+  if (current_class && current_class->write_public_state == state) return;
+  if (current_widget_class && current_widget_class->write_public_state == state) return;
+  if (current_class) current_class->write_public_state = state;
+  if (current_widget_class) current_widget_class->write_public_state = state;
+  switch (state) {
+    case 0: write_h("private:\n"); break;
+    case 1: write_h("public:\n"); break;
+    case 2: write_h("protected:\n"); break;
+  }
 }
-void Fl_Type::write_code2() {}
 
-//
-// End of "$Id$".
-//
+/// \}
+

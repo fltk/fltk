@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Threading example program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -62,11 +60,11 @@ extern "C" void* prime_func(void* p)
 
   // very simple prime number calculator !
   //
-  // The return at the end of this function can never be reached and thus 
-  // will generate a warning with some compilers, however we need to have 
-  // a return statement or other compilers will complain there is no return 
-  // statement. To avoid warnings on all compilers, we fool the smart ones 
-  // into beleiving that there is a chance that we reach the end by testing 
+  // The return at the end of this function can never be reached and thus
+  // will generate a warning with some compilers, however we need to have
+  // a return statement or other compilers will complain there is no return
+  // statement. To avoid warnings on all compilers, we fool the smart ones
+  // into beleiving that there is a chance that we reach the end by testing
   // n>=0, knowing that logically, n will never be negative in this context.
   if (n>=0) for (;;) {
     int pp;
@@ -123,7 +121,7 @@ int main(int argc, char **argv)
   value2 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");
   w->end();
   w->show();
-  
+
   browser1->add("Prime numbers:");
   browser2->add("Prime numbers:");
 
@@ -157,8 +155,3 @@ int main() {
   fl_alert("Sorry, threading not supported on this platform!");
 }
 #endif // HAVE_PTHREAD || _WIN32
-
-
-//
-// End of "$Id$".
-//

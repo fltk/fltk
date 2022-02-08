@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Cross-window show/focus test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -40,8 +38,8 @@ int main(int argc, char **argv) {
 
   Fl_Box *b = new Fl_Box(10, 10, 280, 130);
   b->label("Type something to pop the subwindow up. "
-	   "The focus should stay on the input, "
-	   "and you should be able to continue typing.");
+           "The focus should stay on the input, "
+           "and you should be able to continue typing.");
   b->align(FL_ALIGN_WRAP | FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
   input1 = new Fl_Input(10, 150, 150, 25);
@@ -58,7 +56,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

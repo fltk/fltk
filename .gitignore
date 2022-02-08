@@ -22,16 +22,17 @@ etc/FLTKConfig.cmake
 *.tlog
 .vs/
 
+# VS Code (Visual Studio Code) Editor
+.vscode/
+
 # /
 /autom4te*.cache
 /build
 /clang
 /config.cache
-/config.guess
 /config.h
 /config.log
 /config.status
-/config.sub
 /configure
 /fltk-config
 /fltk.list
@@ -41,9 +42,13 @@ etc/FLTKConfig.cmake
 /TAGS
 
 # /FL
-/FL/abi-version.h
+/FL/fl_config.h
 /FL/Makefile
 /FL/*.bck
+
+# /cairo/
+/cairo/*.so*
+/cairo/*.dll
 
 # /documentation/
 /documentation/.xvpics
@@ -92,12 +97,9 @@ etc/FLTKConfig.cmake
 /fluid/*.bck
 /fluid/*.exe
 /fluid/TAGS
-
-# /fluid/fluid.app/Contents/MacOS/
-/fluid/fluid.app/Contents/MacOS/fluid
-
-# /fluid/pixmaps/
+/fluid/fluid.app
 /fluid/pixmaps/*.bck
+/fluid/documentation/html/
 
 # /lib/
 /lib/lib*
@@ -112,14 +114,11 @@ etc/FLTKConfig.cmake
 /src/*.sl*
 /src/*.a
 /src/*.bck
+/src/*.dll
 /src/*.sav
 /src/*.dylib
 
 # /test/
 # see test/.gitignore
 
-# macOS binary files
-# (see also test/.gitignore)
-
-fluid/*.app/Contents/MacOS
 **/.DS_Store

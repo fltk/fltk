@@ -11,23 +11,23 @@ may recognize this as a rewrite of an XForms program).
 
 Some of the more interesting programs:
 
-fractals:	A GLUT program with FL controls added to it
+fractals:       A GLUT program with FL controls added to it
 
-glpuzzle:	A GLUT program with no modifications
+glpuzzle:       A GLUT program with no modifications
 
-fullscreen:	Demo of how to make your window toggle to fill screen
+fullscreen:     Demo of how to make your window toggle to fill screen
 
-list_visuals:	necessary to debug X visual stuff
+list_visuals:   necessary to debug X visual stuff
 
-mandelbrot:	A true application, using panels built in Fluid
+mandelbrot:     A true application, using panels built in Fluid
 
-menubar:	Demo of how FL's menus work
+menubar:        Demo of how FL's menus work
 
-shiny:		Demo of drawing FL's controls using OpenGL
+shiny:          Demo of drawing FL's controls using OpenGL
 
-forms:		An XForms program to demonstrate emulation
+forms:          An XForms program to demonstrate emulation
 
-colbrowser:	Another XForms program that is actually useful
+colbrowser:     Another XForms program that is actually useful
 
 
 -----------------------------------------------------

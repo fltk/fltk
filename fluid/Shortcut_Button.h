@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Shortcut header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,12 +7,15 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#ifndef _FLUID_SHORTCUT_BUTTON_H
+#define _FLUID_SHORTCUT_BUTTON_H
 
 #include <FL/Fl_Button.H>
 
@@ -27,6 +28,19 @@ public:
     Fl_Button(X,Y,W,H,l) {svalue = 0;}
 };
 
-//
-// End of "$Id$".
-//
+class Widget_Bin_Button : public Fl_Button {
+public:
+  int handle(int);
+  Widget_Bin_Button(int X,int Y,int W,int H, const char* l = 0) :
+  Fl_Button(X,Y,W,H,l) { }
+};
+
+class Widget_Bin_Window_Button : public Fl_Button {
+public:
+  int handle(int);
+  Widget_Bin_Window_Button(int X,int Y,int W,int H, const char* l = 0) :
+  Fl_Button(X,Y,W,H,l) { }
+};
+
+#endif
+

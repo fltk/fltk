@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_PNM_Image routines.
 //
 // Copyright 1997-2010 by Easy Software Products.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 
@@ -51,18 +49,18 @@
 
  \param[in] filename a full path and name pointing to a valid jpeg file.
  */
-Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
+Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
   : Fl_RGB_Image(0,0,0) {
-  FILE		*fp;		// File pointer
-  int		x, y;		// Looping vars
-  char		line[1024],	// Input line
-		*lineptr;	// Pointer in line
-  uchar		*ptr,		// Pointer to pixel values
-		byte,		// Byte from file
-		bit;		// Bit in pixel
-  int		format,		// Format of PNM file
-		val,		// Pixel value
-		maxval;		// Maximum pixel value
+  FILE          *fp;            // File pointer
+  int           x, y;           // Looping vars
+  char          line[1024],     // Input line
+                *lineptr;       // Pointer in line
+  uchar         *ptr,           // Pointer to pixel values
+                byte,           // Byte from file
+                bit;            // Bit in pixel
+  int           format,         // Format of PNM file
+                val,            // Pixel value
+                maxval;         // Maximum pixel value
 
 
   if ((fp = fl_fopen(filename, "rb")) == NULL) {
@@ -119,9 +117,9 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
 
     while (lineptr != NULL && maxval == 0) {
       if (*lineptr == '\0' || *lineptr == '#') {
-	lineptr = fgets(line, sizeof(line), fp);
+        lineptr = fgets(line, sizeof(line), fp);
       } else if (isdigit(*lineptr)) {
-	maxval = strtol(lineptr, &lineptr, 10);
+        maxval = strtol(lineptr, &lineptr, 10);
       } else lineptr ++;
     }
   } else maxval = 1;
@@ -150,7 +148,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
         for (x = w(); x > 0; x --)
           if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * (1-val));
         break;
-        
+
       case 2 :
           for (x = w(); x > 0; x --)
             if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
@@ -168,7 +166,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
         for (x = w(), byte = (uchar)getc(fp), bit = 128; x > 0; x --) {
           if ((byte & bit) == 0) *ptr++ = 255; // 0 bit for white pixel
           else *ptr++ = 0; // 1 bit for black pixel
-          
+
           if (bit > 1) bit >>= 1;
           else {
             bit  = 128;
@@ -176,7 +174,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
           }
         }
         break;
-          
+
       case 5 :
       case 6 :
         if (maxval < 256) {
@@ -189,11 +187,11 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
           }
         }
         break;
-        
+
       case 7 : /* XV 3:3:2 thumbnail format */
         for (x = w(); x > 0; x --) {
           byte = (uchar)getc(fp);
-          
+
           *ptr++ = (uchar)(255 * ((byte >> 5) & 7) / 7);
           *ptr++ = (uchar)(255 * ((byte >> 2) & 7) / 7);
           *ptr++ = (uchar)(255 * (byte & 3) / 3);
@@ -204,8 +202,3 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
 
   fclose(fp);
 }
-
-
-//
-// End of "$Id$".
-//

@@ -21,5 +21,5 @@
 | 360 | 240 | F |  ð  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ý  þ  ÿ |
 +-----+-----+---+-------------------------------------------------+
 
-File:		cp1252.txt
-Encoding:	Windows CP 1252 (aka "ansi", western, ...)
+File:           cp1252.txt
+Encoding:       Windows CP 1252 (aka "ansi", western, ...)

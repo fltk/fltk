@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //      How to use Fl_Text_Editor with dynamic colors. -erco 08/29/2018
 //      Originally posted on fltk.general.
 //
@@ -25,11 +23,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -132,7 +130,3 @@ int main() {
    win->show();
    return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

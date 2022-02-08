@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL overlay test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -26,7 +24,7 @@
 #if !HAVE_GL
 #include <FL/Fl_Box.H>
 class shape_window : public Fl_Box {
-public:	
+public:
   int sides;
   shape_window(int x,int y,int w,int h,const char *l=0)
     :Fl_Box(FL_DOWN_BOX,x,y,w,h,l){
@@ -66,7 +64,7 @@ void shape_window::draw() {
     for (int j=0; j<sides; j++) {
       double ang = j*2*M_PI/sides;
       glColor3f(float(j)/sides,float(j)/sides,float(j)/sides);
-      glVertex3f(cos(ang),sin(ang),0);
+      glVertex3f((GLfloat)cos(ang), (GLfloat)sin(ang), 0);
     }
     glEnd();
   // }
@@ -85,7 +83,7 @@ void shape_window::draw_overlay() {
   glBegin(GL_LINE_LOOP);
   for (int j=0; j<overlay_sides; j++) {
     double ang = j*2*M_PI/overlay_sides;
-    glVertex3f(cos(ang),sin(ang),0);
+    glVertex3f((GLfloat)cos(ang), (GLfloat)sin(ang), 0);
   }
   glEnd();
 }
@@ -143,7 +141,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

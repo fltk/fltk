@@ -1,19 +1,17 @@
 #
-# "$Id$"
+# Top-level Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Top-level makefile for the Fast Light Tool Kit (FLTK).
-#
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 include makeinclude
@@ -70,7 +68,7 @@ distclean: clean
 	$(RM) fltk-config fltk.list makeinclude
 	$(RM) fltk.spec
 	$(RM) FL/Makefile
-	$(RM) FL/abi-version.h
+	$(RM) FL/fl_config.h
 	$(RM) documentation/*.$(CAT1EXT)
 	$(RM) documentation/*.$(CAT3EXT)
 	$(RM) documentation/*.$(CAT6EXT)
@@ -81,8 +79,6 @@ distclean: clean
 		$(RM) test/`basename $$file .fl`.h; \
 	done
 	$(RM) -rf autom4te.cache/
-	$(RM) config.guess
-	$(RM) config.sub
 	$(RM) configure
 
 fltk-config: configure configh.in fltk-config.in
@@ -95,7 +91,7 @@ fltk-config: configure configh.in fltk-config.in
 	touch config.h
 	chmod +x fltk-config
 
-makeinclude: configure configh.in makeinclude.in config.guess config.sub
+makeinclude: configure configh.in makeinclude.in
 	if test -f config.status; then \
 		./config.status --recheck; \
 		./config.status; \
@@ -107,11 +103,6 @@ makeinclude: configure configh.in makeinclude.in config.guess config.sub
 
 configure: configure.ac
 	autoconf
-
-config.guess config.sub:
-	-automake --add-missing 2> /dev/null
-	if [ ! -e config.sub   ]; then echo NOTE: Using frozen copy of config.sub;   cp misc/config.sub   . ; fi
-	if [ ! -e config.guess ]; then echo NOTE: Using frozen copy of config.guess; cp misc/config.guess . ; fi
 
 portable-dist:
 	epm -v -s fltk.xpm fltk
@@ -133,8 +124,3 @@ clang:
 	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) clean all
 clang-changes:
 	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) all
-
-
-#
-# End of "$Id$".
-#

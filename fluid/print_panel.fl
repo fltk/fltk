@@ -3,8 +3,6 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // FLUID print panel for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -15,33 +13,33 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
 
-decl {\#include <stdio.h>} {private local
+decl {\#include "fluid.h"} {private local
 }
 
-decl {\#include <stdlib.h>} {private local
+decl {\#include <FL/fl_string_functions.h>} {private local
 }
 
 decl {\#include "../src/flstring.h"} {private local
 }
 
-decl {\#include <FL/Fl_Preferences.H>} {private local
+decl {\#include <stdlib.h>} {private local
 }
 
-decl {extern Fl_Preferences fluid_prefs;} {private local
+decl {\#include <stdio.h>} {private local
 }
 
 Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
-    label Print open
-    xywh {394 209 465 235} type Double hide modal
+    label Print
+    xywh {465 222 465 235} type Double hide modal
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -53,7 +51,7 @@ Function {make_print_panel()} {open
       } {}
       Fl_Button print_properties {
         label {Properties...}
-        callback {print_properties_panel->show();} selected
+        callback {print_properties_panel->show();}
         xywh {294 10 105 25}
       }
       Fl_Box print_status {
@@ -214,8 +212,8 @@ print_collate_group[1 - i]->hide();}
   Fl_Window print_properties_panel {
     label {Printer Properties}
     callback {print_properties_panel->hide();
-print_update_status();} open
-    xywh {400 537 290 130} type Double hide modal
+print_update_status();}
+    xywh {462 486 290 130} type Double hide modal
   } {
     Fl_Choice print_page_size {
       label {Page Size:}
@@ -309,7 +307,7 @@ if ((lpstat = popen("LC_MESSAGES=C LANG=C lpstat -p -d", "r")) != NULL) {
       }
       *qptr = '\\0';
 
-      print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+      print_choice->add(qname, 0, 0, (void *)fl_strdup(name), 0);
     } else if (!strncmp(line, "system default destination: ", 28)) {
       if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\\0';
     }
@@ -330,7 +328,7 @@ if (defname[0]) {
 print_update_status();} {}
 }
 
-Function {print_update_status()} {open return_type void
+Function {print_update_status()} {open selected return_type void
 } {
   code {FILE *lpstat;
 char command[1024];
@@ -357,10 +355,4 @@ print_page_size->value(val);
 snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
 print_output_mode[val]->setonly();} {}
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

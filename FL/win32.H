@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Windows system header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Do not directly include this file, instead use <FL/platform.H>.  It will
@@ -29,7 +27,7 @@
 typedef HWND Window;
 
 // this part is included only when compiling the FLTK library or if requested explicitly
-#if defined(FL_LIBRARY) || defined(FL_INTERNALS) 
+#if defined(FL_LIBRARY) || defined(FL_INTERNALS)
 
 // In some of the distributions, the gcc header files are missing some stuff:
 #ifndef LPMINMAXINFO
@@ -52,9 +50,9 @@ extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 // most recent fl_color() or fl_rgbcolor() points at one of these:
 extern FL_EXPORT struct Fl_XMap {
-  COLORREF rgb;	// this should be the type the RGB() macro returns
-  HPEN pen;	// pen, 0 if none created yet
-  int brush;	// ref to solid brush, 0 if none created yet
+  COLORREF rgb; // this should be the type the RGB() macro returns
+  HPEN pen;     // pen, 0 if none created yet
+  int brush;    // ref to solid brush, 0 if none created yet
   int pwidth;   // the width of the pen, if present
 } *fl_current_xmap;
 inline COLORREF fl_RGB() {return fl_current_xmap->rgb;}
@@ -69,7 +67,3 @@ extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 
 #endif // FL_DOXYGEN
-
-//
-// End of "$Id$".
-//

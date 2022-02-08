@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include <ctype.h>
@@ -51,11 +49,11 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
       if (diff) {ret = diff; break;}       /* compare first non-zero digit */
     } else {
       if (cs) {
-      	/* compare case-sensitive */
-	if ((ret = *a-*b)) break;
+        /* compare case-sensitive */
+        if ((ret = *a-*b)) break;
       } else {
-	/* compare case-insensitive */
-	if ((ret = tolower(*a & 255)-tolower(*b & 255))) break;
+        /* compare case-insensitive */
+        if ((ret = tolower(*a & 255)-tolower(*b & 255))) break;
       }
 
       if (!*a) break;
@@ -69,7 +67,7 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
 /**
   Compares directory entries alphanumerically (case-insensitive).
 
-  \note	This comparison is not (yet) UTF-8 aware.
+  \note This comparison is not (yet) UTF-8 aware.
 
   \todo Make comparison UTF-8 aware.
 
@@ -108,7 +106,7 @@ int fl_casenumericsort(struct dirent **A, struct dirent **B) {
   \retval   0 A == B
   \retval  +1 A \> B
 
-  \note	This comparison is not (yet) UTF-8 aware:
+  \note This comparison is not (yet) UTF-8 aware:
     - UTF-8 characters are compared according to their binary values.
     - Locale settings may influence the result in unexpected ways.
     - The latter is particularly true for fl_casenumericsort().
@@ -122,7 +120,3 @@ int fl_casenumericsort(struct dirent **A, struct dirent **B) {
 int fl_numericsort(struct dirent **A, struct dirent **B) {
   return numericsort(A, B, 1);
 }
-
-/*
- * End of "$Id$".
- */

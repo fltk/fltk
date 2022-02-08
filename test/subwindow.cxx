@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Nested window test program for the Fast Light Tool Kit (FLTK).
 //
 // Test to make sure nested windows work.
@@ -14,11 +12,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdlib.h>
@@ -85,9 +83,9 @@ int testwindow::handle(int e) {
   if (e != FL_MOVE) printf("%s : %s\n",label(),fl_eventnames[e]);
 #endif
   if (crsr!=FL_CURSOR_DEFAULT) {
-    if (e == FL_ENTER) 
+    if (e == FL_ENTER)
       cursor(crsr);
-    if (e == FL_LEAVE) 
+    if (e == FL_LEAVE)
       cursor(FL_CURSOR_DEFAULT);
   }
   if (Fl_Window::handle(e)) return 1;
@@ -164,12 +162,12 @@ int main(int argc, char **argv) {
   subwindow->end();
   subwindow->use_cursor(FL_CURSOR_HAND);
   (new Fl_Box(FL_NO_BOX,0,0,400,100,
-	     "A child Fl_Window with children of its own may "
-	     "be useful for imbedding controls into a GL or display "
-	     "that needs a different visual.  There are bugs with the "
-	     "origins being different between drawing and events, "
-	     "which I hope I have solved."
-	     )) -> align(FL_ALIGN_WRAP);
+             "A child Fl_Window with children of its own may "
+             "be useful for imbedding controls into a GL or display "
+             "that needs a different visual.  There are bugs with the "
+             "origins being different between drawing and events, "
+             "which I hope I have solved."
+             )) -> align(FL_ALIGN_WRAP);
   popup = new Fl_Menu_Button(0,0,400,400);
   popup->type(Fl_Menu_Button::POPUP3);
   popup->add("This|is|a popup|menu");
@@ -177,7 +175,3 @@ int main(int argc, char **argv) {
   window->show(argc, argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

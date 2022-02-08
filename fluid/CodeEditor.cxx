@@ -1,280 +1,131 @@
 //
-// "$Id$"
-//
 // Code editor widget for the Fast Light Tool Kit (FLTK).
+// Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
 // Include necessary headers...
 //
 
+#include "CodeEditor.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "CodeEditor.h"
 
+// ---- CodeEditor implementation
 
-Fl_Text_Display::Style_Table_Entry CodeEditor::
-		styletable[] = {	// Style table
-		  { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
-		  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // B - Line comments
-		  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // C - Block comments
-		  { FL_BLUE,             FL_COURIER,        11 }, // D - Strings
-		  { FL_DARK_RED,         FL_COURIER,        11 }, // E - Directives
-		  { FL_DARK_RED,         FL_COURIER_BOLD,   11 }, // F - Types
-		  { FL_BLUE,             FL_COURIER_BOLD,   11 }  // G - Keywords
-		};
-const char * const CodeEditor::
-		code_keywords[] = {	// Sorted list of C/C++ keywords...
-		  "and",
-		  "and_eq",
-		  "asm",
-		  "bitand",
-		  "bitor",
-		  "break",
-		  "case",
-		  "catch",
-		  "compl",
-		  "continue",
-		  "default",
-		  "delete",
-		  "do",
-		  "else",
-		  "false",
-		  "for",
-		  "goto",
-		  "if",
-		  "new",
-		  "not",
-		  "not_eq",
-		  "operator",
-		  "or",
-		  "or_eq",
-		  "return",
-		  "switch",
-		  "template",
-		  "this",
-		  "throw",
-		  "true",
-		  "try",
-		  "while",
-		  "xor",
-		  "xor_eq"
-		};
-const char * const CodeEditor::
-		code_types[] = {	// Sorted list of C/C++ types...
-		  "auto",
-		  "bool",
-		  "char",
-		  "class",
-		  "const",
-		  "const_cast",
-		  "double",
-		  "dynamic_cast",
-		  "enum",
-		  "explicit",
-		  "extern",
-		  "float",
-		  "friend",
-		  "inline",
-		  "int",
-		  "long",
-		  "mutable",
-		  "namespace",
-		  "private",
-		  "protected",
-		  "public",
-		  "register",
-		  "short",
-		  "signed",
-		  "sizeof",
-		  "static",
-		  "static_cast",
-		  "struct",
-		  "template",
-		  "typedef",
-		  "typename",
-		  "union",
-		  "unsigned",
-		  "virtual",
-		  "void",
-		  "volatile"
-		};
+/** \class CodeEditor
+ A widget derived from Fl_Text_Editor that implements C++ code highlighting.
 
-// attempt to make the fluid code editor widget honour textsize setting
-void CodeEditor::textsize(Fl_Fontsize s) {
-  Fl_Text_Editor::textsize(s); // call base class method
-  // now attempt to update our styletable to honour the new size...
-  int entries = sizeof(styletable) / sizeof(styletable[0]);
-  for(int iter = 0; iter < entries; iter++) {
-    styletable[iter].size = s;
-  }
-} // textsize
+ CodeEditor is used in Fluid whenever the user can edit C++ source
+ code or header text.
+ */
 
+/**
+ Lookup table for all supported styles.
+ Every table entry describes a rendering style for the corresponding text.
+ */
+Fl_Text_Display::Style_Table_Entry CodeEditor::styletable[] = {   // Style table
+                  { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
+                  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // B - Line comments
+                  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // C - Block comments
+                  { FL_BLUE,             FL_COURIER,        11 }, // D - Strings
+                  { FL_DARK_RED,         FL_COURIER,        11 }, // E - Directives
+                  { FL_DARK_RED,         FL_COURIER_BOLD,   11 }, // F - Types
+                  { FL_BLUE,             FL_COURIER_BOLD,   11 }, // G - Keywords
+                  { 220, /* med cyan */  FL_COURIER,        11 }  // H - Single quote chars
+                };
 
-// 'compare_keywords()' - Compare two keywords...
-extern "C" {
-  static int compare_keywords(const void *a, const void *b) {
-    return strcmp(*((const char **)a), *((const char **)b));
-  }
-}
-
-// 'style_parse()' - Parse text and produce style data.
-void CodeEditor::style_parse(const char *text, char *style, int length) {
-  char		current;
-  int		col;
-  int		last;
-  char		buf[255],
-		*bufptr;
-  const char	*temp;
-
+/**
+ Parse text and produce style data.
+ \param[in] in_tbuff text buffer to parse
+ \param[inout] in_sbuff style buffer we modify
+ \param[in] in_len byte length to parse
+ \param[in] in_style starting style letter
+ */
+void CodeEditor::style_parse(const char *in_tbuff,         // text buffer to parse
+                             char       *in_sbuff,         // style buffer we modify
+                             int         in_len,           // byte length to parse
+                             char        in_style) {       // starting style letter
   // Style letters:
   //
-  // A - Plain
-  // B - Line comments
-  // C - Block comments
-  // D - Strings
-  // E - Directives
-  // F - Types
-  // G - Keywords
+  // 'A' - Plain
+  // 'B' - Line comments  // ..
+  // 'C' - Block comments /*..*/
+  // 'D' - Strings        "xxx"
+  // 'E' - Directives     #define, #include..
+  // 'F' - Types          void, char..
+  // 'G' - Keywords       if, while..
+  // 'H' - Chars          'x'
 
-  for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
-    if (current == 'B' || current == 'F' || current == 'G') current = 'A';
-    if (current == 'A') {
-      // Check for directives, comments, strings, and keywords...
-      if (col == 0 && *text == '#') {
-        // Set style to directive
-        current = 'E';
-      } else if (strncmp(text, "//", 2) == 0) {
-        current = 'B';
-	for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
+  StyleParse sp;
+  sp.tbuff  = in_tbuff;
+  sp.sbuff  = in_sbuff;
+  sp.len    = in_len;
+  sp.style  = in_style;
+  sp.lwhite = 1;        // 1:while parsing over leading white and first char past, 0:past white
+  sp.col    = 0;
+  sp.last   = 0;
 
-        if (length == 0) break;
-      } else if (strncmp(text, "/*", 2) == 0) {
-        current = 'C';
-      } else if (strncmp(text, "\\\"", 2) == 0) {
-        // Quoted quote...
-	*style++ = current;
-	*style++ = current;
-	text ++;
-	length --;
-	col += 2;
-	continue;
-      } else if (*text == '\"') {
-        current = 'D';
-      } else if (!last && (islower(*text) || *text == '_')) {
-        // Might be a keyword...
-	for (temp = text, bufptr = buf;
-	     (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
-	     *bufptr++ = *temp++) {
-	  // nothing
-	}
-
-        if (!islower(*temp) && *temp != '_') {
-	  *bufptr = '\0';
-
-          bufptr = buf;
-
-	  if (bsearch(&bufptr, code_types,
-	              sizeof(code_types) / sizeof(code_types[0]),
-		      sizeof(code_types[0]), compare_keywords)) {
-	    while (text < temp) {
-	      *style++ = 'F';
-	      text ++;
-	      length --;
-	      col ++;
-	    }
-
-	    text --;
-	    length ++;
-	    last = 1;
-	    continue;
-	  } else if (bsearch(&bufptr, code_keywords,
-	                     sizeof(code_keywords) / sizeof(code_keywords[0]),
-		             sizeof(code_keywords[0]), compare_keywords)) {
-	    while (text < temp) {
-	      *style++ = 'G';
-	      text ++;
-	      length --;
-	      col ++;
-	    }
-
-	    text --;
-	    length ++;
-	    last = 1;
-	    continue;
-	  }
-	}
-      }
-    } else if (current == 'C' && strncmp(text, "*/", 2) == 0) {
-      // Close a C comment...
-      *style++ = current;
-      *style++ = current;
-      text ++;
-      length --;
-      current = 'A';
-      col += 2;
-      continue;
-    } else if (current == 'D') {
-      // Continuing in string...
-      if (strncmp(text, "\\\"", 2) == 0) {
-        // Quoted end quote...
-	*style++ = current;
-	*style++ = current;
-	text ++;
-	length --;
-	col += 2;
-	continue;
-      } else if (*text == '\"') {
-        // End quote...
-	*style++ = current;
-	col ++;
-	current = 'A';
-	continue;
-      }
-    }
-
-    // Copy style info...
-    if (current == 'A' && (*text == '{' || *text == '}')) *style++ = 'G';
-    else *style++ = current;
-    col ++;
-
-    last = isalnum(*text) || *text == '_' || *text == '.';
-
-    if (*text == '\n') {
-      // Reset column and possibly reset the style
-      col = 0;
-      if (current == 'B' || current == 'E') current = 'A';
+  // Loop through the code, updating style buffer
+  char c;
+  while ( sp.len > 0 ) {
+    c = sp.tbuff[0];  // current char
+    if ( sp.style == 'C' ) {                              // Started in middle of comment block?
+      if ( !sp.parse_block_comment() ) break;
+    } else if ( strncmp(sp.tbuff, "/*", 2)==0 ) {         // C style comment block?
+      if ( !sp.parse_block_comment() ) break;
+    } else if ( c == '\\' ) {                             // Backslash escape char?
+      if ( !sp.parse_escape() ) break;
+    } else if ( strncmp(sp.tbuff, "//", 2)==0 ) {         // Line comment?
+      if ( !sp.parse_line_comment() ) break;
+    } else if ( c == '"' ) {                              // Start of double quoted string?
+      if ( !sp.parse_quoted_string('"', 'D') ) break;
+    } else if ( c == '\'' ) {                             // Start of single quoted string?
+      if ( !sp.parse_quoted_string('\'', 'H') ) break;
+    } else if ( c == '#' && sp.lwhite ) {                 // Start of '#' directive?
+      if ( !sp.parse_directive() ) break;
+    } else if ( !sp.last && (islower(c) || c == '_') ) {  // Possible C/C++ keyword?
+      if ( !sp.parse_keyword() ) break;
+    } else {                                              // All other chars?
+      if ( !sp.parse_all_else() ) break;
     }
   }
 }
 
-// 'style_unfinished_cb()' - Update unfinished styles.
-void CodeEditor::style_unfinished_cb(int, void*) { }
+/**
+ Update unfinished styles.
+ */
+void CodeEditor::style_unfinished_cb(int, void*) {
+}
 
-// 'style_update()' - Update the style buffer...
+/**
+ Update the style buffer.
+ \param[in] pos insert position in text
+ \param[in] nInserted number of bytes inserted
+ \param[in] nDeleted number of bytes deleted
+ \param[in] cbArg pointer back to the code editr
+ */
 void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
                               int /*nRestyled*/, const char * /*deletedText*/,
                               void *cbArg) {
-  CodeEditor	*editor = (CodeEditor *)cbArg;
-  int		start,				// Start of text
-		end;				// End of text
-  char		last,				// Last style on line
-		*style,				// Style data
-		*text;				// Text data
+  CodeEditor *editor = (CodeEditor*)cbArg;
+  char       *style,                         // Style data
+             *text;                          // Text data
 
 
   // If this is just a selection change, just unselect the style buffer...
@@ -301,53 +152,25 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   // callbacks...
   editor->mStyleBuffer->select(pos, pos + nInserted - nDeleted);
 
-  // Re-parse the changed region; we do this by parsing from the
-  // beginning of the line of the changed region to the end of
-  // the line of the changed region...  Then we check the last
-  // style character and keep updating if we have a multi-line
-  // comment character...
-  start = editor->mBuffer->line_start(pos);
-  // the following code checks the style of the last character of the previous
-  // line. If it is a block comment, the previous line is interpreted as well.
-  int altStart = editor->mBuffer->prev_char(start);
-  if (altStart>0) {
-    altStart = editor->mBuffer->prev_char(altStart);
-    if (altStart>=0 && editor->mStyleBuffer->byte_at(start-2)=='C')
-      start = editor->mBuffer->line_start(altStart);
-  }
-  end   = editor->mBuffer->line_end(pos + nInserted);
-  text  = editor->mBuffer->text_range(start, end);
-  style = editor->mStyleBuffer->text_range(start, end);
-  if (start==end)
-    last = 0;
-  else
-    last  = style[end - start - 1];
+  // Reparse whole buffer, don't get cute. Maybe optimize range later
+  int len = editor->buffer()->length();
+  text  = editor->mBuffer->text_range(0, len);
+  style = editor->mStyleBuffer->text_range(0, len);
 
-  style_parse(text, style, end - start);
+  style_parse(text, style, editor->mBuffer->length(), 'A');
 
-  editor->mStyleBuffer->replace(start, end, style);
-  editor->redisplay_range(start, end);
-
-  if (start==end || last != style[end - start - 1]) {
-    // The last character on the line changed styles, so reparse the
-    // remainder of the buffer...
-    free(text);
-    free(style);
-
-    end   = editor->mBuffer->length();
-    text  = editor->mBuffer->text_range(start, end);
-    style = editor->mStyleBuffer->text_range(start, end);
-
-    style_parse(text, style, end - start);
-
-    editor->mStyleBuffer->replace(start, end, style);
-    editor->redisplay_range(start, end);
-  }
+  editor->mStyleBuffer->replace(0, len, style);
+  editor->redisplay_range(0, len);
+  editor->redraw();
 
   free(text);
   free(style);
 }
 
+/**
+ Find the right indentation depth after pressing the Enter key.
+ \param[in] e pointer back to the code editor
+ */
 int CodeEditor::auto_indent(int, CodeEditor* e) {
   if (e->buffer()->selected()) {
     e->insert_position(e->buffer()->primary_selection()->start());
@@ -360,10 +183,10 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
   char *ptr;
 
   for (ptr = text; isspace(*ptr); ptr ++) {/*empty*/}
-  *ptr = '\0';  
+  *ptr = '\0';
   if (*text) {
     // use only a single 'insert' call to avoid redraw issues
-    int n = strlen(text);
+    size_t n = strlen(text);
     char *b = (char*)malloc(n+2);
     *b = '\n';
     strcpy(b+1, text);
@@ -381,7 +204,11 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
   return 1;
 }
 
-// Create a CodeEditor widget...
+/**
+ Create a CodeEditor widget.
+ \param[in] X, Y, W, H position and size of the widget
+ \param[in] L optional label
+ */
 CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
   Fl_Text_Editor(X, Y, W, H, L) {
   buffer(new Fl_Text_Buffer);
@@ -394,9 +221,9 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
 
   highlight_data(new Fl_Text_Buffer(mBuffer->length()), styletable,
                  sizeof(styletable) / sizeof(styletable[0]),
-		 'A', style_unfinished_cb, this);
+                 'A', style_unfinished_cb, this);
 
-  style_parse(text, style, mBuffer->length());
+  style_parse(text, style, mBuffer->length(), 'A');
 
   mStyleBuffer->text(style);
   delete[] style;
@@ -407,7 +234,9 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
                   (Fl_Text_Editor::Key_Func)auto_indent);
 }
 
-// Destroy a CodeEditor widget...
+/**
+ Destroy a CodeEditor widget.
+ */
 CodeEditor::~CodeEditor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
   mStyleBuffer = 0;
@@ -418,25 +247,50 @@ CodeEditor::~CodeEditor() {
   delete buf;
 }
 
+/**
+ Attempt to make the fluid code editor widget honour textsize setting.
+ This works by updating the fontsizes in the style table.
+ \param[in] s the new general height of the text font
+ */
+void CodeEditor::textsize(Fl_Fontsize s) {
+  Fl_Text_Editor::textsize(s); // call base class method
+  // now attempt to update our styletable to honour the new size...
+  int entries = sizeof(styletable) / sizeof(styletable[0]);
+  for(int iter = 0; iter < entries; iter++) {
+    styletable[iter].size = s;
+  }
+} // textsize
 
+// ---- CodeViewer implementation
+
+/** \class CodeViewer
+ A widget derived from CodeEditor with highlighting for code blocks.
+
+ This widget is used by the SourceView system to show the design's
+ source an header code. The secondary highlighting show the text
+ part that corresponds to the selected widget(s).
+ */
+
+/**
+ Create a CodeViewer widget.
+ \param[in] X, Y, W, H position and size of the widget
+ \param[in] L optional label
+ */
 CodeViewer::CodeViewer(int X, int Y, int W, int H, const char *L)
-: CodeEditor(X, Y, W, H, L) 
+: CodeEditor(X, Y, W, H, L)
 {
-  default_key_function(kf_ignore);  
+  default_key_function(kf_ignore);
   remove_all_key_bindings(&key_bindings);
   cursor_style(CARET_CURSOR);
 }
 
-
+/**
+ Tricking Fl_Text_Display into using bearable colors for this specific task.
+ */
 void CodeViewer::draw()
 {
-  // Tricking Fl_Text_Display into using bearable colors for this specific task
   Fl_Color c = Fl::get_color(FL_SELECTION_COLOR);
   Fl::set_color(FL_SELECTION_COLOR, fl_color_average(FL_BACKGROUND_COLOR, FL_FOREGROUND_COLOR, 0.9f));
   CodeEditor::draw();
   Fl::set_color(FL_SELECTION_COLOR, c);
 }
-
-//
-// End of "$Id$".
-//

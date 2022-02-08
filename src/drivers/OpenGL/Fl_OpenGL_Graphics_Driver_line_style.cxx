@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -22,7 +20,6 @@
 */
 
 #include <config.h>
-#include "../../config_lib.h"
 #include "Fl_OpenGL_Graphics_Driver.H"
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
@@ -34,31 +31,41 @@
 // OpenGL implementation does not support cap and join types
 
 void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
   if (width<1) width = 1;
+  line_width_ = width;
 
-  if (style==FL_SOLID) {
+  int stipple = style & 0x00ff;
+  line_stipple_ = stipple;
+//  int cap     = style & 0x0f00;
+//  int join    = style & 0xf000;
+
+  if (stipple==FL_SOLID) {
     glLineStipple(1, 0xFFFF);
     glDisable(GL_LINE_STIPPLE);
   } else {
-    switch (style) {
+    char enable = 1;
+    switch (stipple & 0x00ff) {
       case FL_DASH:
-        glLineStipple(width, 0x0F0F); // ....****....****
+        glLineStipple(pixels_per_unit_*line_width_, 0x0F0F); // ....****....****
         break;
       case FL_DOT:
-        glLineStipple(width, 0x5555); // .*.*.*.*.*.*.*.*
+        glLineStipple(pixels_per_unit_*line_width_, 0x5555); // .*.*.*.*.*.*.*.*
         break;
       case FL_DASHDOT:
-        glLineStipple(width, 0x2727); // ..*..***..*..***
+        glLineStipple(pixels_per_unit_*line_width_, 0x2727); // ..*..***..*..***
         break;
       case FL_DASHDOTDOT:
-        glLineStipple(width, 0x5757); // .*.*.***.*.*.***
+        glLineStipple(pixels_per_unit_*line_width_, 0x5757); // .*.*.***.*.*.***
         break;
+      default:
+        glLineStipple(1, 0xFFFF);
+        enable = 0;
     }
-    glEnable(GL_LINE_STIPPLE);
+    if (enable)
+      glEnable(GL_LINE_STIPPLE);
+    else
+      glDisable(GL_LINE_STIPPLE);
   }
+  glLineWidth( (GLfloat)(pixels_per_unit_ * line_width_) );
+  glPointSize( (GLfloat)(pixels_per_unit_) );
 }
-
-//
-// End of "$Id$".
-//

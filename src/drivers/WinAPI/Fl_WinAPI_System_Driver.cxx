@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -11,15 +9,17 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
+#include <FL/platform.H>
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string_functions.h>  // fl_strdup()
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
@@ -63,11 +63,12 @@ static wchar_t *wbuf1 = NULL;
 extern "C" {
   int fl_scandir(const char *dirname, struct dirent ***namelist,
                  int (*select)(struct dirent *),
-                 int (*compar)(struct dirent **, struct dirent **));
+                 int (*compar)(struct dirent **, struct dirent **),
+                 char *errmsg, int errmsg_len);
 }
 
 /*
-  Convert a UTF-8 string to Windows wide character encoding (UTF-16).
+  Convert UTF-8 string to Windows wide character encoding (UTF-16).
 
   This helper function is used throughout this file to convert UTF-8
   strings to Windows specific UTF-16 encoding for filenames, paths, or
@@ -85,19 +86,18 @@ extern "C" {
   'wbuf' is NULL a new buffer is allocated with realloc(). Hence the pointer
   'wbuf' can be shared among multiple calls to this function if it has been
   initialized with NULL (or malloc or realloc) before the first call.
-  Ideally every call to this function has its own static pointer though.
 
   The return value is either the old value of 'wbuf' (if the string fits)
-  or a pointer at the (re)allocated buffer.
+  or a pointer to the (re)allocated buffer.
 
   Pseudo doxygen docs (static function intentionally not documented):
 
-  param[in]	utf8	input string (UTF-8)
-  param[in,out]	wbuf	in:  pointer to output string buffer
-			out: new string (the pointer may be changed)
-  param[in]	lg	optional: input string length (default = -1)
+  param[in]     utf8    input string (UTF-8)
+  param[in,out] wbuf    in:  pointer to output string buffer or NULL
+                        out: new string (the pointer may be changed)
+  param[in]     lg      optional: input string length (default = -1)
 
-  returns	pointer to string buffer
+  returns       pointer to string buffer
 */
 static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
   unsigned len = (lg >= 0) ? (unsigned)lg : (unsigned)strlen(utf8);
@@ -129,11 +129,11 @@ static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
 
   Pseudo doxygen docs (static function intentionally not documented):
 
-  param[in]	wstr	input string (wide character, UTF-16)
-  param[in,out]	utf8	in:  pointer to output string buffer
-			out: new string (pointer may be changed)
+  param[in]     wstr    input string (wide character, UTF-16)
+  param[in,out] utf8    in:  pointer to output string buffer
+                        out: new string (pointer may be changed)
 
-  returns	pointer to string buffer
+  returns       pointer to string buffer
 */
 static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
   unsigned len = (unsigned)wcslen(wstr);
@@ -146,11 +146,10 @@ static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
 
 /*
  Creates a driver that manages all system related calls.
- 
+
  This function must be implemented once for every platform.
  */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   return new Fl_WinAPI_System_Driver();
 }
 
@@ -159,7 +158,6 @@ void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
 }
 
 void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
-
   char buf[1024];
   vsnprintf(buf, 1024, format, args);
   MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
@@ -216,7 +214,7 @@ int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {
 int Fl_WinAPI_System_Driver::open_ext(const char *fnam, int binary, int oflags, int pmode) {
   if (oflags == 0) oflags = _O_RDONLY;
   oflags |= (binary ? _O_BINARY : _O_TEXT);
-  return open(fnam, oflags, pmode);
+  return this->open(fnam, oflags, pmode);
 }
 
 FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
@@ -226,43 +224,24 @@ FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
 }
 
 int Fl_WinAPI_System_Driver::system(const char *cmd) {
-# ifdef __MINGW32__
-  return ::system(fl_utf2mbcs(cmd));
-# else
   return _wsystem(utf8_to_wchar(cmd, wbuf));
-# endif
 }
 
 int Fl_WinAPI_System_Driver::execvp(const char *file, char *const *argv) {
-# ifdef __MINGW32__
-  return _execvp(fl_utf2mbcs(file), argv);
-# else
-  wchar_t **ar;
+  int n = 0;
+  while (argv[n]) n++; // count args
+  wchar_t **ar = (wchar_t **)calloc(sizeof(wchar_t *), n + 1);
+  // convert arguments first; trailing NULL provided by calloc()
+  for (int i = 0; i < n; i++)
+    ar[i] = utf8_to_wchar(argv[i], ar[i]); // alloc and assign
+  // convert executable file and execute it ...
   utf8_to_wchar(file, wbuf);
-  
-  int i = 0, n = 0;
-  while (argv[i]) {i++; n++;}
-  ar = (wchar_t **)malloc(sizeof(wchar_t *) * (n + 1));
-  i = 0;
-  while (i <= n) {
-    unsigned wn;
-    unsigned len = (unsigned)strlen(argv[i]);
-    wn = fl_utf8toUtf16(argv[i], len, NULL, 0) + 1; // Query length
-    ar[i] = (wchar_t *)malloc(sizeof(wchar_t) * wn);
-    wn = fl_utf8toUtf16(argv[i], len, (unsigned short *)ar[i], wn); // Convert string
-    ar[i][wn] = 0;
-    i++;
-  }
-  ar[n] = NULL;
-  _wexecvp(wbuf, ar);	// STR #3040
-  i = 0;
-  while (i < n) {
+  _wexecvp(wbuf, ar);   // STR #3040
+  // clean up (reached only if _wexecvp() failed)
+  for (int i = 0; i < n; i++)
     free(ar[i]);
-    i++;
-  }
   free(ar);
-  return -1;		// STR #3040
-#endif
+  return -1;            // STR #3040
 }
 
 int Fl_WinAPI_System_Driver::chmod(const char *fnam, int mode) {
@@ -362,7 +341,7 @@ char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
   }
   if (codepage < 1) codepage = fl_codepage;
   buf[l] = 0;
-  
+
   l = MultiByteToWideChar(codepage, 0, s, len, (WCHAR*)wbufa, buf_len);
   if (l < 0) l = 0;
   wbufa[l] = 0;
@@ -377,8 +356,7 @@ unsigned Fl_WinAPI_System_Driver::utf8towc(const char *src, unsigned srclen, wch
   return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
-{
+unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen) {
   unsigned i = 0;
   unsigned count = 0;
   if (dstlen) for (;;) {
@@ -477,9 +455,14 @@ unsigned Fl_WinAPI_System_Driver::utf8from_mb(char *dst, unsigned dstlen, const 
   return ret;
 }
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+static _locale_t c_locale = NULL;
+#endif
+
 int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
-  static _locale_t c_locale = _create_locale(LC_NUMERIC, "C");
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
   int retval = _vfprintf_l(output, format, c_locale, args);
 #else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
@@ -490,11 +473,42 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
   return retval;
 }
 
-int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+int Fl_WinAPI_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
+  int retval = _vsnprintf_l(output, output_size, format, c_locale, args);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsnprintf(output, output_size, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+  return retval;
+}
+
+int Fl_WinAPI_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+  if (!c_locale)
+    c_locale = _create_locale(LC_NUMERIC, "C");
+  int retval = _vsscanf_l(input, format, c_locale, args);
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vsscanf(input, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+#endif
+  return retval;
+}
+
+
+int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list,
+                                           int (*sort)(struct dirent **, struct dirent **),
+                                           char *errmsg, int errmsg_sz) {
   // For Windows we have a special scandir implementation that uses
   // the Win32 "wide" functions for lookup, avoiding the code page mess
   // entirely. It also fixes up the trailing '/'.
-  return fl_scandir(d, list, 0, sort);
+  return fl_scandir(d, list, 0, sort, errmsg, errmsg_sz);
 }
 
 int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *from) {
@@ -503,16 +517,16 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
   char *start = temp;
   char *end = temp+strlen(temp);
   int ret = 0;
-  for (char *a=temp; a<end; ) {	// for each slash component
+  for (char *a=temp; a<end; ) { // for each slash component
     char *e; for (e=a; e<end && !isdirsep(*e); e++) {/*empty*/} // find next slash
     const char *value = 0; // this will point at substitute value
     switch (*a) {
-      case '~':	// a home directory name
-        if (e <= a+1) {	// current user's directory
+      case '~': // a home directory name
+        if (e <= a+1) { // current user's directory
           value = getenv("HOME");
         }
         break;
-      case '$':		/* an environment variable */
+      case '$':         /* an environment variable */
       {char t = *e; *(char *)e = 0; value = getenv(a+1); *(char *)e = t;}
         break;
     }
@@ -539,16 +553,16 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *fr
 }
 
 int                                                     // O - 0 if no change, 1 if changed
-Fl_WinAPI_System_Driver::filename_relative(char *to,	// O - Relative filename
+Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
                                     int        tolen,   // I - Size of "to" buffer
                                     const char *from,   // I - Absolute filename
                                     const char *base)   // I - Find path relative to this path
 {
-  char          *newslash;		// Directory separator
-  const char	*slash;			// Directory separator
+  char          *newslash;              // Directory separator
+  const char    *slash;                 // Directory separator
   char          *cwd = 0L, *cwd_buf = 0L;
-  if (base) cwd = cwd_buf = strdup(base);
-  
+  if (base) cwd = cwd_buf = fl_strdup(base);
+
   // return if "from" is not an absolute path
   if (from[0] == '\0' ||
       (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
@@ -557,7 +571,7 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,	// O - Relative filename
         if (cwd_buf) free(cwd_buf);
         return 0;
       }
-  
+
   // return if "cwd" is not an absolute path
   if (!cwd || cwd[0] == '\0' ||
       (!isdirsep(*cwd) && !isalpha(*cwd) && cwd[1] != ':' &&
@@ -566,18 +580,18 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,	// O - Relative filename
         if (cwd_buf) free(cwd_buf);
         return 0;
       }
-  
+
   // convert all backslashes into forward slashes
   for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
     *newslash = '/';
-  
+
   // test for the exact same string and return "." if so
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);
     free(cwd_buf);
     return (1);
   }
-  
+
   // test for the same drive. Return the absolute path if not
   if (tolower(*from & 255) != tolower(*cwd & 255)) {
     // Not the same drive...
@@ -585,44 +599,44 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,	// O - Relative filename
     free(cwd_buf);
     return 0;
   }
-  
+
   // compare the path name without the drive prefix
   from += 2; cwd += 2;
-  
+
   // compare both path names until we find a difference
   for (slash = from, newslash = cwd;
        *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
     else if (tolower(*slash & 255) != tolower(*newslash & 255)) break;
-  
+
   // skip over trailing slashes
   if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
       &&(newslash==cwd || !isdirsep(newslash[-1])) )
     newslash--;
-  
+
   // now go back to the first character of the first differing paths segment
   while (!isdirsep(*slash) && slash > from) slash --;
   if (isdirsep(*slash)) slash ++;
-  
+
   // do the same for the current dir
   if (isdirsep(*newslash)) newslash --;
   if (*newslash != '\0')
     while (!isdirsep(*newslash) && newslash > cwd) newslash --;
-  
+
   // prepare the destination buffer
   to[0]         = '\0';
   to[tolen - 1] = '\0';
-  
+
   // now add a "previous dir" sequence for every following slash in the cwd
   while (*newslash != '\0') {
     if (isdirsep(*newslash)) strlcat(to, "../", tolen);
     newslash ++;
   }
-  
+
   // finally add the differing path from "from"
   strlcat(to, slash, tolen);
-  
+
   free(cwd_buf);
   return 1;
 }
@@ -666,34 +680,34 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   return 1;
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
-{
-  struct _stat	s;
-  char		fn[FL_PATH_MAX];
-  int		length;
-  length = (int) strlen(n);
+int Fl_WinAPI_System_Driver::filename_isdir(const char *n) {
+  char fn[4]; // used for drive letter only: "X:/"
+  int length = (int)strlen(n);
+  // Strip trailing slash from name...
+  if (length > 0 && isdirsep(n[length - 1]))
+    length --;
+  if (length < 1)
+    return 0;
+
   // This workaround brought to you by the fine folks at Microsoft!
   // (read lots of sarcasm in that...)
-  if (length < (int)(sizeof(fn) - 1)) {
-    if (length < 4 && isalpha(n[0]) && n[1] == ':' &&
-        (isdirsep(n[2]) || !n[2])) {
-      // Always use D:/ for drive letters
-      fn[0] = n[0];
-      strcpy(fn + 1, ":/");
-      n = fn;
-    } else if (length > 0 && isdirsep(n[length - 1])) {
-      // Strip trailing slash from name...
-      length --;
-      memcpy(fn, n, length);
-      fn[length] = '\0';
-      n = fn;
-    }
+
+  if (length == 2 && isalpha(n[0]) && n[1] == ':') { // trailing '/' already "removed"
+    // Always use "X:/" for drive letters
+    fn[0] = n[0];
+    strcpy(fn + 1, ":/");
+    n = fn;
+    length = 3;
   }
-  return !_stat(n, &s) && (s.st_mode & _S_IFDIR);
+
+  // convert filename to wide chars using *length*
+  utf8_to_wchar(n, wbuf, length);
+
+  DWORD fa = GetFileAttributesW(wbuf);
+  return (fa != INVALID_FILE_ATTRIBUTES) && (fa & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n)
-{
+int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n) {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
   return filename_isdir(n);
@@ -709,16 +723,15 @@ const char *Fl_WinAPI_System_Driver::filename_ext(const char *buf) {
   return q ? q : p;
 }
 
-int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
-{
-  if (msg) snprintf(msg, msglen, "open %s", uri);  
+int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen) {
+  if (msg) snprintf(msg, msglen, "open %s", uri);
   return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
 }
 
-int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
-{
+int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename,
+                                                          int lname, Fl_File_Icon *icon) {
   int num_files = 0;
-#  ifdef __CYGWIN__
+# ifdef __CYGWIN__
   //
   // Cygwin provides an implementation of setmntent() to get the list
   // of available drives...
@@ -730,15 +743,14 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
     num_files ++;
   }
   endmntent(m);
-#  else
+# else
   //
   // Normal Windows code uses drive bits...
   //
-  DWORD	drives;		// Drive available bits
+  DWORD drives;         // Drive available bits
   drives = GetLogicalDrives();
-  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1)
-    if (drives & 1)
-    {
+  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1) {
+    if (drives & 1) {
       sprintf(filename, "%c:/", i);
       if (i < 'C') // see also: GetDriveType and GetVolumeInformation in Windows
         browser->add(filename, icon);
@@ -746,12 +758,15 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
         browser->add(filename, icon);
       num_files ++;
     }
-#  endif // __CYGWIN__
+  }
+# endif // __CYGWIN__
   return num_files;
 }
 
 int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, char *filename,
-                                                         size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
+                                                         size_t name_size, dirent ***pfiles,
+                                                         Fl_File_Sort_F *sort,
+                                                         char *errmsg, int errmsg_sz)
 {
   strlcpy(filename, directory, name_size);
   int i = (int) (strlen(filename) - 1);
@@ -760,7 +775,7 @@ int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, 
     filename[2] = '/';
   else if (filename[i] != '/' && filename[i] != '\\')
     strlcat(filename, "/", name_size);
-  return filename_list(filename, pfiles, sort);
+  return filename_list(filename, pfiles, sort, errmsg, errmsg_sz);
 }
 
 void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
@@ -773,19 +788,19 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
   UUID ud;
   UUID *pu = &ud;
   int got_uuid = 0;
-  
-  if (!hMod) {		// first time in?
+
+  if (!hMod) {          // first time in?
     hMod = LoadLibrary("Rpcrt4.dll");
   }
-  
-  if (hMod) {		// do we have a usable handle to Rpcrt4.dll?
+
+  if (hMod) {           // do we have a usable handle to Rpcrt4.dll?
     uuid_func uuid_crt = (uuid_func)GetProcAddress(hMod, "UuidCreate");
     if (uuid_crt != NULL) {
       RPC_STATUS rpc_res = uuid_crt(pu);
       if ( // is the return status OK for our needs?
-          (rpc_res == RPC_S_OK) ||		// all is well
+          (rpc_res == RPC_S_OK) ||              // all is well
           (rpc_res == RPC_S_UUID_LOCAL_ONLY) || // only unique to this machine
-          (rpc_res == RPC_S_UUID_NO_ADDRESS)	// probably only locally unique
+          (rpc_res == RPC_S_UUID_NO_ADDRESS)    // probably only locally unique
           ) {
         got_uuid = -1;
         sprintf(uuidBuffer, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
@@ -795,14 +810,14 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
       }
     }
   }
-  if (got_uuid == 0) {		// did not make a UUID - use fallback logic
+  if (got_uuid == 0) {          // did not make a UUID - use fallback logic
     unsigned char b[16];
-    time_t t = time(0);		// first 4 byte
+    time_t t = time(0);         // first 4 byte
     b[0] = (unsigned char)t;
     b[1] = (unsigned char)(t>>8);
     b[2] = (unsigned char)(t>>16);
     b[3] = (unsigned char)(t>>24);
-    int r = rand();		// four more bytes
+    int r = rand();             // four more bytes
     b[4] = (unsigned char)r;
     b[5] = (unsigned char)(r>>8);
     b[6] = (unsigned char)(r>>16);
@@ -833,11 +848,14 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
   }
 }
 
-char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+/*
+ Note: `prefs` can be NULL!
+ */
+char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root, const char *vendor,
                                                   const char *application)
 {
-#  define FLPREFS_RESOURCE	"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
-#  define FLPREFS_RESOURCEW	L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+#  define FLPREFS_RESOURCE      "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+#  define FLPREFS_RESOURCEW     L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
   static char *filename = 0L;
   // make enough room for a UTF16 pathname
   if (!filename) filename = (char*)::malloc(2*FL_PATH_MAX);
@@ -847,7 +865,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   DWORD nn;
   LONG err;
   HKEY key;
-  
+
   switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::SYSTEM:
       err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
@@ -908,7 +926,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   return filename;
 }
 
-void *Fl_WinAPI_System_Driver::dlopen(const char *filename) {
+void *Fl_WinAPI_System_Driver::load(const char *filename) {
   return LoadLibraryW(utf8_to_wchar(filename, wbuf));
 }
 
@@ -955,5 +973,65 @@ void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
 }
 
 //
-// End of "$Id$".
+// Code for lock support
 //
+
+// These pointers are in Fl_win32.cxx:
+extern void (*fl_lock_function)();
+extern void (*fl_unlock_function)();
+
+// The main thread's ID
+static DWORD main_thread;
+
+// Microsoft's version of a MUTEX...
+static CRITICAL_SECTION cs;
+static CRITICAL_SECTION *cs_ring;
+
+void Fl_WinAPI_System_Driver::unlock_ring() {
+  LeaveCriticalSection(cs_ring);
+}
+
+void Fl_WinAPI_System_Driver::lock_ring() {
+  if (!cs_ring) {
+    cs_ring = (CRITICAL_SECTION*)malloc(sizeof(CRITICAL_SECTION));
+    InitializeCriticalSection(cs_ring);
+  }
+  EnterCriticalSection(cs_ring);
+}
+
+//
+// 'unlock_function()' - Release the lock.
+//
+
+static void unlock_function() {
+  LeaveCriticalSection(&cs);
+}
+
+//
+// 'lock_function()' - Get the lock.
+//
+
+static void lock_function() {
+  EnterCriticalSection(&cs);
+}
+
+int Fl_WinAPI_System_Driver::lock() {
+  if (!main_thread) InitializeCriticalSection(&cs);
+
+  lock_function();
+
+  if (!main_thread) {
+    fl_lock_function   = lock_function;
+    fl_unlock_function = unlock_function;
+    main_thread        = GetCurrentThreadId();
+  }
+  return 0;
+}
+
+void Fl_WinAPI_System_Driver::unlock() {
+  unlock_function();
+}
+
+void Fl_WinAPI_System_Driver::awake(void* msg) {
+  PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
+}

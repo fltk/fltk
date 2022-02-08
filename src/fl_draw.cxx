@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Implementation of fl_draw(const char*,int,int,int,int,Fl_Align)
@@ -27,14 +25,14 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
-#include <FL/platform.H>	// fl_open_display()
+#include <FL/platform.H>        // fl_open_display()
 
 #include "flstring.h"
 #include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
 
-
-char fl_draw_shortcut;	// set by fl_labeltypes.cxx
+char fl_draw_shortcut;  // set by fl_labeltypes.cxx
 
 static char* underline_at;
 
@@ -42,7 +40,7 @@ static char* underline_at;
  Otherwise, use buf as buffer but don't go beyond its length of maxbuf.
  */
 static const char* expand_text_(const char* from, char*& buf, int maxbuf, double maxw, int& n,
-	       double &width, int wrap, int draw_symbols) {
+               double &width, int wrap, int draw_symbols) {
   char* e = buf+(maxbuf-4);
   underline_at = 0;
   double w = 0;
@@ -64,14 +62,14 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
     if (!c || c == ' ' || c == '\n') {
       // test for word-wrap:
       if (word_start < p && wrap) {
-	double newwidth = w + fl_width(word_end, (int) (o-word_end) );
-	if (word_end > buf && int(newwidth) > maxw) { // break before this word
-	  o = word_end;
-	  p = word_start;
-	  break;
-	}
-	word_end = o;
-	w = newwidth;
+        double newwidth = w + fl_width(word_end, (int) (o-word_end) );
+        if (word_end > buf && int(newwidth) > maxw) { // break before this word
+          o = word_end;
+          p = word_start;
+          break;
+        }
+        word_end = o;
+        w = newwidth;
       }
       if (!c) break;
       else if (c == '\n') {p++; break;}
@@ -80,7 +78,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
 
     if (o > e) {
       if (maxbuf) break; // don't overflow buffer
-      l_local_buff += (o - e) + 200; // enlarge buffer
+      l_local_buff += int(o - e) + 200; // enlarge buffer
       buf = (char*)realloc(local_buf, l_local_buff);
       e = buf + l_local_buff - 4; // update pointers to buffer content
       o = buf + (o - local_buf);
@@ -123,7 +121,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
  */
 const char*
 fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
-	       double &width, int wrap, int draw_symbols) {
+               double &width, int wrap, int draw_symbols) {
   return expand_text_(from,  buf, maxbuf, maxw,  n, width,  wrap,  draw_symbols);
 }
 
@@ -133,8 +131,8 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
   function such as fl_draw(const char*, int, int, int) to do the real work
 */
 void fl_draw(
-    const char* str,	// the (multi-line) string
-    int x, int y, int w, int h,	// bounding box
+    const char* str,    // the (multi-line) string
+    int x, int y, int w, int h, // bounding box
     Fl_Align align,
     void (*callthis)(const char*,int,int,int),
     Fl_Image* img, int draw_symbols)
@@ -252,7 +250,7 @@ void fl_draw(
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
       if (lines>1) e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen,
-				width, align&FL_ALIGN_WRAP, draw_symbols);
+                                width, align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
@@ -264,7 +262,7 @@ void fl_draw(
       callthis(linebuf,buflen,xpos,ypos-desc);
 
       if (underline_at && underline_at >= linebuf && underline_at < (linebuf + buflen))
-	callthis("_",1,xpos+int(fl_width(linebuf,(int) (underline_at-linebuf))),ypos-desc);
+        callthis("_",1,xpos+int(fl_width(linebuf,(int) (underline_at-linebuf))),ypos-desc);
 
       if (!*e || (*e == '@' && e[1] != '@')) break;
       p = e;
@@ -379,16 +377,16 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   int W = 0;
   int symwidth[2], symtotal;
 
-  symwidth[0] = 0;	// size of symbol at beginning of string (if any)
-  symwidth[1] = 0;	// size of symbol at end of string (if any)
+  symwidth[0] = 0;      // size of symbol at beginning of string (if any)
+  symwidth[1] = 0;      // size of symbol at end of string (if any)
 
   if (draw_symbols) {
     // Symbol at beginning of string?
-    const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;	// sym2 check will skip leading @@
+    const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;      // sym2 check will skip leading @@
     if (str[0] == '@' && str[1] != '@') {
-      while (*str && !isspace(*str)) { ++str; }		// skip over symbol
-      if (isspace(*str)) ++str;				// skip over trailing space
-      sym2 = str;					// sym2 check will skip leading symbol
+      while (*str && !isspace(*str)) { ++str; }         // skip over symbol
+      if (isspace(*str)) ++str;                         // skip over trailing space
+      sym2 = str;                                       // sym2 check will skip leading symbol
       symwidth[0] = h;
     }
     // Symbol at end of string?
@@ -402,7 +400,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   for (p = str, lines=0; p;) {
 //    e = expand(p, linebuf, w - symtotal, buflen, width, w != 0, draw_symbols);
     e = expand_text_(p, linebuf, 0, w - symtotal, buflen, width,
-			w != 0, draw_symbols);
+                        w != 0, draw_symbols);
     if ((int)ceil(width) > W) W = (int)ceil(width);
     lines++;
     if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
@@ -461,6 +459,127 @@ int fl_height(int font, int size) {
     return(height);
 }
 
-//
-// End of "$Id$".
-//
+/** Removes any GUI scaling factor in subsequent drawing operations.
+ This must be matched by a later call to fl_restore_scale().
+ This function can be used to transiently perform drawing operations
+ that are not rescaled by the current value of the GUI scaling factor.
+ The resulting drawing context has no clipping region.
+ \return The GUI scaling factor value that was in place when the function started.
+ */
+float fl_override_scale() {
+  return fl_graphics_driver->override_scale();
+}
+
+/** Restores the GUI scaling factor and the clipping region in subsequent drawing operations.
+ \param s Value returned by a previous call to fl_override_scale(). */
+void fl_restore_scale(float s) {
+  fl_graphics_driver->restore_scale(s);
+}
+
+/**
+  Draw a check mark inside the given bounding box.
+
+  The check mark is allowed to fill the entire box but the algorithm used
+  makes sure that a 1-pixel border is kept free if the box is large enough.
+  You need to calculate margins for box borders etc. yourself.
+
+  The check mark size is limited (minimum and maximum size) and the check
+  mark is always centered in the given box.
+
+  \note If the box is too small (bad GUI design) the check mark will be drawn
+    over the box borders. This is intentional for better user experience.
+    Otherwise users might not be able to recognize if a box is checked.
+
+  The size limits are implementation details and may be changed at any time.
+
+  \param[in]  bb   rectangle that defines the bounding box
+  \param[in]  col  Fl_Color to draw the check mark
+
+  \since 1.4.0
+*/
+
+void fl_draw_check(Fl_Rect bb, Fl_Color col) {
+
+  const int md = 6; // max. d1 value: 3 * md + 1 pixels wide
+  int tx = bb.x();
+  int ty = bb.y();
+  int tw = bb.w();
+  int th = bb.h();
+  int lh = 3;       // line height 3 means 4 pixels
+  int d1, d2;
+
+  Fl_Color saved_color = fl_color();
+
+  // make sure there's a free 1-pixel border if the area is large enough
+  if (tw > 10) {
+    tx++;
+    tw -= 2;
+  }
+  if (th > 10) {
+    ty++;
+    th -= 2;
+  }
+  // calculate d1, the width and height of the left part of the check mark
+  d1 = tw / 3;
+  d2 = 2 * d1;
+  if (d1 > md) {
+    d1 = md;
+    d2 = 2 * d1;
+  }
+  // make sure the height fits
+  if (d2 + lh + 1 > th) {
+    d2 = th - lh - 1;
+    d1 = (d2+1) / 2;
+  }
+  // check minimal size (box too small)
+  if (d1 < 2) {
+    d1 = 2;
+    d2 = 4;
+  }
+  // reduce line height (width) for small sizes
+  if (d1 < 4)
+    lh = 2;
+
+  tw = d1 + d2 + 1; // total width
+  th = d2 + lh + 1; // total height
+
+  tx = bb.x() + (bb.w() - tw + 1) / 2;  // x position (centered)
+  ty = bb.y() + (bb.h() - th + 1) / 2;  // y position (centered)
+
+  // Set DEBUG_FRAME to 1 - 3 for debugging (0 otherwise)
+  // Bit 1 set: draws a green background (the entire given box)
+  // Bit 2 set: draws a red frame around the check mark (the bounding box)
+  // The background (1) can be used to test correct positioning by the widget code
+
+#define DEBUG_FRAME (0)
+#if (DEBUG_FRAME)
+  if (DEBUG_FRAME & 1) {    // 1 = background
+    fl_color(0x88dd8800);
+    fl_rectf(bb.x(), bb.y(), bb.w(), bb.h());
+  }
+  if (DEBUG_FRAME & 2) {    // 2 = bounding box
+    fl_color(0xff000000);
+    fl_rect(tx, ty, tw, th);
+  }
+#endif
+
+  // draw the check mark
+
+  fl_color(col);
+
+  fl_begin_complex_polygon();
+
+    ty += d2 - d1;            // upper border of check mark: left to right
+    fl_vertex(tx, ty);
+    fl_vertex(tx + d1, ty + d1);
+    fl_vertex(tx + d1 + d2, ty + d1 - d2);
+    ty += lh;                 // lower border of check mark: right to left
+    fl_vertex(tx + d1 + d2, ty + d1 - d2);
+    fl_vertex(tx + d1, ty + d1);
+    fl_vertex(tx, ty);
+
+  fl_end_complex_polygon();
+
+  fl_color(saved_color);
+
+} // fl_draw_check()

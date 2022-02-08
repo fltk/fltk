@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Fl_Tiled_Image test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -35,9 +33,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/platform.H>
-#if !defined(_WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
-#endif
 
 int visid = -1;
 int arg(int argc, char **argv, int &i) {
@@ -51,7 +47,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#if !defined(_WIN32) && !defined(__APPLE__)
+#ifdef FLTK_USE_X11
   int i = 1;
 
   Fl::args(argc,argv,i,arg);
@@ -67,7 +63,7 @@ int main(int argc, char **argv) {
       exit(1);
     }
     fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-				fl_visual->visual, AllocNone);
+                                fl_visual->visual, AllocNone);
     fl_xpixel(FL_BLACK); // make sure black is allocated in overlay visuals
   } else {
     Fl::visual(FL_RGB);
@@ -90,7 +86,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

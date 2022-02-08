@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
 // Object describing an Fl_Group and links to Fl_Window_Type.C and
@@ -13,19 +11,29 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#include "Fl_Group_Type.h"
+
+#include "fluid.h"
+#include "file.h"
+#include "code.h"
+#include "widget_browser.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Table.H>
+#include <FL/Fl_Menu_Item.H>
 #include <FL/fl_message.H>
-#include "Fl_Widget_Type.h"
+#include <FL/Fl_Scroll.H>
 #include "../src/flstring.h"
+
+#include <stdio.h>
 
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
@@ -33,10 +41,15 @@ void igroup::resize(int X, int Y, int W, int H) {
   redraw();
 }
 
-Fl_Group_Type Fl_Group_type;	// the "factory"
+Fl_Group_Type Fl_Group_type;    // the "factory"
 
-Fl_Type *Fl_Group_Type::make() {
-  return Fl_Widget_Type::make();
+/**
+ Create and add a new Group node.
+ \param[in] strategy add after current or as last child
+ \return new Group node
+ */
+Fl_Type *Fl_Group_Type::make(Strategy strategy) {
+  return Fl_Widget_Type::make(strategy);
 }
 
 void fix_group_size(Fl_Type *tt) {
@@ -49,15 +62,13 @@ void fix_group_size(Fl_Type *tt) {
   for (Fl_Type *nn = t->next; nn && nn->level > t->level; nn = nn->next) {
     if (!nn->is_widget() || nn->is_menu_item()) continue;
     Fl_Widget_Type* n = (Fl_Widget_Type*)nn;
-    int x = n->o->x();	if (x < X) X = x;
-    int y = n->o->y();	if (y < Y) Y = y;
+    int x = n->o->x();  if (x < X) X = x;
+    int y = n->o->y();  if (y < Y) Y = y;
     int r = x+n->o->w();if (r > R) R = r;
     int b = y+n->o->h();if (b > B) B = b;
   }
   t->o->resize(X,Y,R-X,B-Y);
 }
-
-extern int force_parent;
 
 void group_cb(Fl_Widget *, void *) {
   // Find the current widget:
@@ -69,17 +80,18 @@ void group_cb(Fl_Widget *, void *) {
   }
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
   force_parent = 1;
-  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make());
+  Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
   n->move_before(q);
   n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
   for (Fl_Type *t = Fl_Type::first; t;) {
     if (t->level != n->level || t == n || !t->selected) {
       t = t->next; continue;}
     Fl_Type *nxt = t->remove();
-    t->add(n);
+    t->add(n, kAddAsLastChild);
     t = nxt;
   }
   fix_group_size(n);
+  widget_browser->rebuild();
 }
 
 void ungroup_cb(Fl_Widget *, void *) {
@@ -104,11 +116,10 @@ void ungroup_cb(Fl_Widget *, void *) {
     n = nxt;
   }
   delete q;
+  widget_browser->rebuild();
 }
 
 ////////////////////////////////////////////////////////////////
-
-#include <stdio.h>
 
 void Fl_Group_Type::write_code1() {
   Fl_Widget_Type::write_code1();
@@ -133,7 +144,7 @@ Fl_Menu_Item pack_type_menu[] = {
   {"VERTICAL", 0, 0, (void*)Fl_Pack::VERTICAL},
   {0}};
 
-Fl_Pack_Type Fl_Pack_type;	// the "factory"
+Fl_Pack_Type Fl_Pack_type;      // the "factory"
 
 ////////////////////////////////////////////////////////////////
 
@@ -143,7 +154,7 @@ static const int MAX_COLS = 7;
 // this is a minimal table widget used as an example when adding tables in Fluid
 class Fluid_Table : public Fl_Table {
   int data[MAX_ROWS][MAX_COLS];         // data array for cells
-  
+
   // Draw the row/col headings
   //    Make this a dark thin upbox with the text inside.
   //
@@ -153,7 +164,7 @@ class Fluid_Table : public Fl_Table {
     fl_color(FL_BLACK);
     fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
     fl_pop_clip();
-  } 
+  }
   // Draw the cell data
   //    Dark gray text on white background with subtle border
   //
@@ -166,7 +177,7 @@ class Fluid_Table : public Fl_Table {
     // Draw box border
     fl_color(color()); fl_rect(X,Y,W,H);
     fl_pop_clip();
-  } 
+  }
   // Handle drawing table's cells
   //     Fl_Table calls this function to draw each visible cell in the table.
   //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
@@ -176,15 +187,15 @@ class Fluid_Table : public Fl_Table {
     switch ( context ) {
       case CONTEXT_STARTPAGE:                   // before page is drawn..
         fl_font(FL_HELVETICA, 16);              // set the font for our drawing operations
-        return; 
+        return;
       case CONTEXT_COL_HEADER:                  // Draw column headers
         sprintf(s,"%c",'A'+COL);                // "A", "B", "C", etc.
         DrawHeader(s,X,Y,W,H);
-        return; 
+        return;
       case CONTEXT_ROW_HEADER:                  // Draw row headers
         sprintf(s,"%03d:",ROW);                 // "001:", "002:", etc
         DrawHeader(s,X,Y,W,H);
-        return; 
+        return;
       case CONTEXT_CELL:                        // Draw data in cells
         sprintf(s,"%d",data[ROW][COL]);
         DrawData(s,X,Y,W,H);
@@ -215,7 +226,7 @@ public:
 
 const char table_type_name[] = "Fl_Table";
 
-Fl_Table_Type Fl_Table_type;	// the "factory"
+Fl_Table_Type Fl_Table_type;    // the "factory"
 
 Fl_Widget *Fl_Table_Type::widget(int X,int Y,int W,int H) {
   Fluid_Table *table = new Fluid_Table(X, Y, W, H);
@@ -232,7 +243,7 @@ void itabs::resize(int X, int Y, int W, int H) {
   redraw();
 }
 
-Fl_Tabs_Type Fl_Tabs_type;	// the "factory"
+Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
 
 // This is called when user clicks on a widget in the window.  See
 // if it is a tab title, and adjust visibility and return new selection:
@@ -263,7 +274,7 @@ void iwizard::resize(int X, int Y, int W, int H) {
   redraw();
 }
 
-Fl_Wizard_Type Fl_Wizard_type;	// the "factory"
+Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
 
 // This is called when o is created.  If it is in the tab group make
 // sure it is visible:
@@ -382,8 +393,6 @@ void Fl_Group_Type::copy_properties() {
 ////////////////////////////////////////////////////////////////
 // some other group subclasses that fluid does not treat specially:
 
-#include <FL/Fl_Scroll.H>
-
 const char scroll_type_name[] = "Fl_Scroll";
 
 Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
@@ -409,7 +418,7 @@ Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH_ALWAYS", 0, 0, (void*)Fl_Scroll::BOTH_ALWAYS},
   {0}};
 
-Fl_Scroll_Type Fl_Scroll_type;	// the "factory"
+Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
 
 void Fl_Scroll_Type::copy_properties() {
   Fl_Group_Type::copy_properties();
@@ -424,13 +433,9 @@ void Fl_Scroll_Type::copy_properties() {
 
 const char tile_type_name[] = "Fl_Tile";
 
-Fl_Tile_Type Fl_Tile_type;	// the "factory"
+Fl_Tile_Type Fl_Tile_type;      // the "factory"
 
 void Fl_Tile_Type::copy_properties() {
   Fl_Group_Type::copy_properties();
   // no additional properties
 }
-
-//
-// End of "$Id$".
-//

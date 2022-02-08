@@ -1,24 +1,22 @@
 //
-// "$Id$"
-//
 // An input/chooser widget.
 //            ______________  ____
 //           |              || __ |
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -31,13 +29,6 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Menu_Button.H>
-
-// Leaving these two headers so builds don't break if user includes this
-// header and uses items from fl_draw or string (but doesn't include in src).
-// Note: this would ensure compatibility with FLTK 1.3.x.
-// Shall we? Currently not!
-// #include <FL/fl_draw.H>
-// #include <string.h>
 
 /*
   A combination of the input widget and a menu button.
@@ -54,8 +45,10 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // Private class to handle slightly 'special' behavior of menu button
   class InputMenuButton : public Fl_Menu_Button {
     void draw();
+    const Fl_Menu_Item* popup();
   public:
     InputMenuButton(int X, int Y, int W, int H, const char *L=0);
+    int handle(int e);
   };
 
   Fl_Input *inp_;
@@ -67,16 +60,34 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // note: this is used by the Fl_Input_Choice ctor.
   static void inp_cb(Fl_Widget*, void *data);
 
+protected:
   // Custom resize behavior -- input stretches, menu button doesn't
-  inline int inp_x() { return(x() + Fl::box_dx(box())); }
-  inline int inp_y() { return(y() + Fl::box_dy(box())); }
-  inline int inp_w() { return(w() - Fl::box_dw(box()) - 20); }
-  inline int inp_h() { return(h() - Fl::box_dh(box())); }
 
-  inline int menu_x() { return(x() + w() - 20 - Fl::box_dx(box())); }
-  inline int menu_y() { return(y() + Fl::box_dy(box())); }
-  inline int menu_w() { return(20); }
-  inline int menu_h() { return(h() - Fl::box_dh(box())); }
+  /** The methods inp_x(), inp_y(), inp_w() and inp_h() return the
+      desired position and size of the internal Fl_Input widget.
+      These can be overridden by a subclass to redefine positioning.
+      See code example in the Description for subclassing details.
+  */
+  virtual int inp_x() const { return(x() + Fl::box_dx(box())); }
+  /** See inp_x() for info. */
+  virtual int inp_y() const { return(y() + Fl::box_dy(box())); }
+  /** See inp_x() for info. */
+  virtual int inp_w() const { return(w() - Fl::box_dw(box()) - 20); }
+  /** See inp_x() for info. */
+  virtual int inp_h() const { return(h() - Fl::box_dh(box())); }
+
+  /** The methods menu_x(), menu_y(), menu_w() and menu_h() return the
+      desired position and size of the internal Fl_Menu_Button widget.
+      These can be overridden by a subclass to redefine positioning.
+      See code example in the Description for subclassing details.
+  */
+  virtual int menu_x() const { return(x() + w() - 20 - Fl::box_dx(box())); }
+  /** See menu_x() for info. */
+  virtual int menu_y() const { return(y() + Fl::box_dy(box())); }
+  /** See menu_x() for info. */
+  virtual int menu_w() const { return(20); }
+  /** See menu_x() for info. */
+  virtual int menu_h() const { return(h() - Fl::box_dh(box())); }
 
 public:
 
@@ -184,7 +195,3 @@ public:
 };
 
 #endif // !Fl_Input_Choice_H
-
-//
-// End of "$Id$".
-//

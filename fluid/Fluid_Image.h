@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
 // This class stores the image labels for widgets in fluid.  This is
@@ -13,18 +11,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FLUID_IMAGE_H
-#  define FLUID_IMAGE_H
+#define FLUID_IMAGE_H
 
-#  include <FL/Fl_Shared_Image.H>
-
+#include <FL/Fl_Shared_Image.H>
 
 class Fluid_Image {
   const char *name_;
@@ -44,6 +41,7 @@ public:
   void write_static();
   void write_initializer(const char *type_name, const char *format, ...);
   void write_code(const char *var, int inactive = 0);
+  void write_inline(int inactive = 0);
   const char *name() const {return name_;}
 };
 
@@ -53,7 +51,3 @@ Fluid_Image *ui_find_image(const char *);
 extern const char *ui_find_image_name;
 
 #endif
-
-//
-// End of "$Id$".
-//

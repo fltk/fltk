@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Used by fl_file_chooser
@@ -28,8 +26,8 @@
    \code
    #include <FL/filename.H>
    [..]
-   fl_filename_isdir("/etc");		// returns non-zero
-   fl_filename_isdir("/etc/hosts");	// returns 0
+   fl_filename_isdir("/etc");           // returns non-zero
+   fl_filename_isdir("/etc/hosts");     // returns 0
    \endcode
    \param[in] n the filename to parse
    \return non zero if file exists and is a directory, zero otherwise
@@ -59,10 +57,11 @@ int Fl_System_Driver::filename_isdir_quick(const char* n) {
 }
 
 
+// TODO: This should probably handle errors better (like permission denied) -erco
 int Fl_System_Driver::filename_isdir(const char* n) {
-  struct stat	s;
-  char		fn[FL_PATH_MAX];
-  int		length;
+  struct stat   s;
+  char          fn[FL_PATH_MAX];
+  int           length;
   length = (int) strlen(n);
   // Matt: Just in case, we strip the slash for other operating
   // systems as well, avoid bugs by sloppy implementations
@@ -80,7 +79,3 @@ int Fl_System_Driver::filename_isdir(const char* n) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

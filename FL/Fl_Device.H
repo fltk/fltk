@@ -1,23 +1,21 @@
 //
-// "$Id$"
-//
 // Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_Device.H 
+/** \file Fl_Device.H
  \brief declaration of classes Fl_Surface_Device, Fl_Display_Device, Fl_Device_Plugin.
 */
 
@@ -26,7 +24,6 @@
 
 #include <FL/Fl_Plugin.H>
 #include <FL/platform_types.h>
-#include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_RGB_Image;
@@ -36,34 +33,34 @@ class Fl_Widget;
  A drawing surface that's susceptible to receive graphical output.
  Any FLTK application has at any time a current drawing surface to which all drawing requests are directed.
  The current surface is given by Fl_Surface_Device::surface().
- When main() begins running, the current drawing surface has been set to the computer's display, 
+ When main() begins running, the current drawing surface has been set to the computer's display,
  an instance of the Fl_Display_Device class.
 
  A drawing surface other than the computer's display, is typically used as follows:
  <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
- <li> Call \c Fl_Surface_Device::push_current(surface); to redirect all graphics requests to \c surface which becomes the new
- current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::begin_job()).
+ <li> Call \c Fl_Surface_Device::push_current(surface); to redirect all graphics requests to
+ \c surface which becomes the new current drawing surface (not necessary with classes Fl_Printer / Fl_PostScript_File_Device
+ because it is done by Fl_Paged_Device::begin_page()).
  <li> At this point all of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
  (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface.
  Drawing surfaces from Fl_Widget_Surface derived classes allow additional ways
  to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
  <li> After all drawing requests have been performed, redirect graphics requests back to their previous destination
- with \c Fl_Surface_Device::pop_current();.
+ with \c Fl_Surface_Device::pop_current(); (not necessary with classes Fl_Printer / Fl_PostScript_File_Device).
  <li> Delete \c surface.
  </ol>
  For back-compatibility, it is also possible to use the Fl_Surface_Device::set_current() member function
  to change the current drawing surface, once to the new surface, once to the previous one.
- 
+
  Class Fl_Surface_Device can also be derived to define new kinds of graphical output
  usable with FLTK drawing functions.
- An example would be to draw to an SVG file. This would require to create a new class,
- say SVG_Surface, derived from class Fl_Surface_Device, and another new class,
- say SVG_Graphics_Driver, derived from class Fl_Graphics_Driver.
- Class SVG_Graphics_Driver should implement all virtual methods of the Fl_Graphics_Driver class
- to support all FLTK drawing functions and have them draw into SVG files. Alternatively,
- class SVG_Graphics_Driver could implement only some virtual methods, and only part of
- the FLTK drawing API would be usable when drawing to SVG files
- (see examples/SVG_File_Surface.cxx for a small, working implementation of this procedure).
+ An example would be to draw to a PDF file. This would require to create a new class,
+ say PDF_File_Surface, derived from class Fl_Surface_Device, and another new class,
+ say PDF_Graphics_Driver, derived from class Fl_Graphics_Driver.
+ Class PDF_Graphics_Driver should implement all virtual methods of the Fl_Graphics_Driver class
+ to support all FLTK drawing functions and have them draw into PDF files. Alternatively,
+ class PDF_Graphics_Driver could implement only some virtual methods, and only part of
+ the FLTK drawing API would be usable when drawing to PDF files.
  */
 class FL_EXPORT Fl_Surface_Device {
   /** The graphics driver in use by this surface. */
@@ -71,23 +68,27 @@ class FL_EXPORT Fl_Surface_Device {
   static Fl_Surface_Device *surface_; // the surface that currently receives graphics requests
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
 protected:
-  /* Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
-   Gets called each time a surface ceases to be the current drawing surface. */
+  /** FLTK calls this each time a surface ceases to be the current drawing surface.
+   This member function is mostly of interest to developers of new Fl_Surface_Device derived classes.
+   It allows to perform surface-specific operations necessary when this surface ceases to be current.
+   Each implementation should end with a call to Fl_Surface_Device::end_current(). */
   virtual void end_current() { surface_ = 0;}
   /** Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }
   /** Sets the graphics driver of this drawing surface. */
-  inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;};
+  inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;}
 public:
   virtual void set_current(void);
   virtual bool is_current();
   /** \brief Returns the graphics driver of this drawing surface. */
-  inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; };
+  inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; }
   /** The current drawing surface.
-   In other words, the Fl_Surface_Device object that currently receives all graphics requests */
+   In other words, the Fl_Surface_Device object that currently receives all graphics requests.
+   \note It's possible to transiently remove the GUI scaling factor in place in the current
+   drawing surface with \ref fl_override_scale(). */
   static inline Fl_Surface_Device *surface() {
     return surface_ ? surface_ : default_surface();
-  };
+  }
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device();
   static void push_current(Fl_Surface_Device *new_current);
@@ -106,7 +107,7 @@ public:
 
 /**
  This plugin socket allows the integration of new device drivers for special
- window or screen types. 
+ window or screen types.
  This class is not intended for use outside the FLTK library.
  It is currently used to provide an automated printing
  service and screen capture for OpenGL windows, if linked with fltk_gl.
@@ -131,7 +132,3 @@ public:
 };
 
 #endif // Fl_Device_H
-
-//
-// End of "$Id$".
-//

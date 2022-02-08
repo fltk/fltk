@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -149,40 +147,40 @@ int Fl_Scrollbar::handle(int event) {
     if (horizontal()) {
       switch (Fl::event_key()) {
       case FL_Left:
-	v -= ls;
-	break;
+        v -= ls;
+        break;
       case FL_Right:
-	v += ls;
-	break;
+        v += ls;
+        break;
       default:
-	return 0;
+        return 0;
       }
     } else { // vertical
       switch (Fl::event_key()) {
       case FL_Up:
-	v -= ls;
-	break;
+        v -= ls;
+        break;
       case FL_Down:
-	v += ls;
-	break;
+        v += ls;
+        break;
       case FL_Page_Up:
-	if (slider_size() >= 1.0) return 0;
-	v -= int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
-	v += ls;
-	break;
+        if (slider_size() >= 1.0) return 0;
+        v -= int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
+        v += ls;
+        break;
       case FL_Page_Down:
-	if (slider_size() >= 1.0) return 0;
-	v += int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
-	v -= ls;
-	break;
+        if (slider_size() >= 1.0) return 0;
+        v += int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
+        v -= ls;
+        break;
       case FL_Home:
-	v = int(minimum());
-	break;
+        v = int(minimum());
+        break;
       case FL_End:
-	v = int(maximum());
-	break;
+        v = int(maximum());
+        break;
       default:
-	return 0;
+        return 0;
       }
     }
     v = int(clamp(v));
@@ -208,9 +206,9 @@ void Fl_Scrollbar::draw() {
     Fl_Slider::draw(X+H,Y,W-2*H,H);
     if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_==1) ? fl_down(slider()) : slider(),
-	       X, Y, H, H, selection_color());
+               X, Y, H, H, selection_color());
       draw_box((pushed_==2) ? fl_down(slider()) : slider(),
-	       X+W-H, Y, H, H, selection_color());
+               X+W-H, Y, H, H, selection_color());
       if (active_r())
         fl_color(labelcolor());
       else
@@ -219,13 +217,13 @@ void Fl_Scrollbar::draw() {
       int x1 = X+(H-w1-1)/2;
       int yy1 = Y+(H-2*w1-1)/2;
       if (Fl::is_scheme("gtk+")) {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1-1, yy1+w1, x1+w1, yy1);
-	x1 += (W-H);
-	fl_polygon(x1, yy1, x1+1, yy1+w1, x1, yy1+2*w1, x1+w1, yy1+w1);
+        fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1-1, yy1+w1, x1+w1, yy1);
+        x1 += (W-H);
+        fl_polygon(x1, yy1, x1+1, yy1+w1, x1, yy1+2*w1, x1+w1, yy1+w1);
       } else {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1, yy1);
-	x1 += (W-H);
-	fl_polygon(x1, yy1, x1, yy1+2*w1, x1+w1, yy1+w1);
+        fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1, yy1);
+        x1 += (W-H);
+        fl_polygon(x1, yy1, x1, yy1+2*w1, x1+w1, yy1+w1);
       }
     }
   } else { // vertical
@@ -233,9 +231,9 @@ void Fl_Scrollbar::draw() {
     Fl_Slider::draw(X,Y+W,W,H-2*W);
     if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_==1) ? fl_down(slider()) : slider(),
-	       X, Y, W, W, selection_color());
+               X, Y, W, W, selection_color());
       draw_box((pushed_==2) ? fl_down(slider()) : slider(),
-	       X, Y+H-W, W, W, selection_color());
+               X, Y+H-W, W, W, selection_color());
       if (active_r())
         fl_color(labelcolor());
       else
@@ -244,14 +242,14 @@ void Fl_Scrollbar::draw() {
       int x1 = X+(W-2*w1-1)/2;
       int yy1 = Y+(W-w1-1)/2;
       if (Fl::is_scheme("gtk+")) {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+w1-1, x1+2*w1, yy1+w1, x1+w1, yy1);
-	yy1 += H-W;
-	fl_polygon(x1, yy1, x1+w1, yy1+1, x1+w1, yy1+w1);
-	fl_polygon(x1+w1, yy1+1, x1+2*w1, yy1, x1+w1, yy1+w1);
+        fl_polygon(x1, yy1+w1, x1+w1, yy1+w1-1, x1+2*w1, yy1+w1, x1+w1, yy1);
+        yy1 += H-W;
+        fl_polygon(x1, yy1, x1+w1, yy1+1, x1+w1, yy1+w1);
+        fl_polygon(x1+w1, yy1+1, x1+2*w1, yy1, x1+w1, yy1+w1);
       } else {
-	fl_polygon(x1, yy1+w1, x1+2*w1, yy1+w1, x1+w1, yy1);
-	yy1 += H-W;
-	fl_polygon(x1, yy1, x1+w1, yy1+w1, x1+2*w1, yy1);
+        fl_polygon(x1, yy1+w1, x1+2*w1, yy1+w1, x1+w1, yy1);
+        yy1 += H-W;
+        fl_polygon(x1, yy1, x1+w1, yy1+w1, x1+2*w1, yy1);
       }
     }
   }
@@ -276,8 +274,3 @@ Fl_Scrollbar::~Fl_Scrollbar() {
   if (pushed_)
     Fl::remove_timeout(timeout_cb, this);
 }
-
-
-//
-// End of "$Id$".
-//

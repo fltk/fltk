@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
 // This is a GLUT demo program to demonstrate fltk's GLUT emulation.
@@ -14,9 +12,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Convenience options 'n' and ' ' and command line switch '-n' added for FLTK
@@ -39,16 +37,16 @@ int main(int, char**) {
 #include <sys/types.h>
 #include <time.h>
 #include <math.h>
-#include <FL/glut.H>	// changed for fltk
+#include <FL/glut.H>    // changed for fltk
 #include <FL/glu.h>     // added for fltk
-#include "trackball.c"	// changed from trackball.h for fltk
+#include "trackball.c"  // changed from trackball.h for fltk
 
 #define WIDTH 4
 #define HEIGHT 5
 #define PIECES 10
-#define OFFSETX -2
-#define OFFSETY -2.5
-#define OFFSETZ -0.5
+#define OFFSETX -2.0f
+#define OFFSETY -2.5f
+#define OFFSETZ -0.5f
 
 typedef char Config[HEIGHT][WIDTH];
 
@@ -95,7 +93,7 @@ static struct puzzlelist *lastentry;
 
 int curX, curY, visible;
 
-#define MOVE_SPEED 0.2
+#define MOVE_SPEED 0.2f
 static unsigned char movingPiece;
 static float move_x, move_y;
 static float curquat[4];
@@ -107,7 +105,7 @@ static char xsize[PIECES + 1] =
 static char ysize[PIECES + 1] =
 {0, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2};
 static float zsize[PIECES + 1] =
-{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6};
+{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.6f};
 
 static Config startConfig =
 {
@@ -163,30 +161,30 @@ solution(Config config)
 
 float boxcoords[][3] =
 {
-  {0.2, 0.2, 0.9},
-  {0.8, 0.2, 0.9},
-  {0.8, 0.8, 0.9},
-  {0.2, 0.8, 0.9},
-  {0.2, 0.1, 0.8},
-  {0.8, 0.1, 0.8},
-  {0.9, 0.2, 0.8},
-  {0.9, 0.8, 0.8},
-  {0.8, 0.9, 0.8},
-  {0.2, 0.9, 0.8},
-  {0.1, 0.8, 0.8},
-  {0.1, 0.2, 0.8},
-  {0.2, 0.1, 0.2},
-  {0.8, 0.1, 0.2},
-  {0.9, 0.2, 0.2},
-  {0.9, 0.8, 0.2},
-  {0.8, 0.9, 0.2},
-  {0.2, 0.9, 0.2},
-  {0.1, 0.8, 0.2},
-  {0.1, 0.2, 0.2},
-  {0.2, 0.2, 0.1},
-  {0.8, 0.2, 0.1},
-  {0.8, 0.8, 0.1},
-  {0.2, 0.8, 0.1},
+  {0.2f, 0.2f, 0.9f},
+  {0.8f, 0.2f, 0.9f},
+  {0.8f, 0.8f, 0.9f},
+  {0.2f, 0.8f, 0.9f},
+  {0.2f, 0.1f, 0.8f},
+  {0.8f, 0.1f, 0.8f},
+  {0.9f, 0.2f, 0.8f},
+  {0.9f, 0.8f, 0.8f},
+  {0.8f, 0.9f, 0.8f},
+  {0.2f, 0.9f, 0.8f},
+  {0.1f, 0.8f, 0.8f},
+  {0.1f, 0.2f, 0.8f},
+  {0.2f, 0.1f, 0.2f},
+  {0.8f, 0.1f, 0.2f},
+  {0.9f, 0.2f, 0.2f},
+  {0.9f, 0.8f, 0.2f},
+  {0.8f, 0.9f, 0.2f},
+  {0.2f, 0.9f, 0.2f},
+  {0.1f, 0.8f, 0.2f},
+  {0.1f, 0.2f, 0.2f},
+  {0.2f, 0.2f, 0.1f},
+  {0.8f, 0.2f, 0.1f},
+  {0.8f, 0.8f, 0.1f},
+  {0.2f, 0.8f, 0.1f},
 };
 
 float boxnormals[][3] =
@@ -197,26 +195,26 @@ float boxnormals[][3] =
   {0, 0, -1},
   {0, -1, 0},
   {-1, 0, 0},
-  {0.7071, 0.7071, 0.0000},  /* 6 */
-  {0.7071, -0.7071, 0.0000},
-  {-0.7071, 0.7071, 0.0000},
-  {-0.7071, -0.7071, 0.0000},
-  {0.7071, 0.0000, 0.7071},  /* 10 */
-  {0.7071, 0.0000, -0.7071},
-  {-0.7071, 0.0000, 0.7071},
-  {-0.7071, 0.0000, -0.7071},
-  {0.0000, 0.7071, 0.7071},  /* 14 */
-  {0.0000, 0.7071, -0.7071},
-  {0.0000, -0.7071, 0.7071},
-  {0.0000, -0.7071, -0.7071},
-  {0.5774, 0.5774, 0.5774},  /* 18 */
-  {0.5774, 0.5774, -0.5774},
-  {0.5774, -0.5774, 0.5774},
-  {0.5774, -0.5774, -0.5774},
-  {-0.5774, 0.5774, 0.5774},
-  {-0.5774, 0.5774, -0.5774},
-  {-0.5774, -0.5774, 0.5774},
-  {-0.5774, -0.5774, -0.5774},
+  {0.7071f, 0.7071f, 0.0000f},  /* 6 */
+  {0.7071f, -0.7071f, 0.0000f},
+  {-0.7071f, 0.7071f, 0.0000f},
+  {-0.7071f, -0.7071f, 0.0000f},
+  {0.7071f, 0.0000f, 0.7071f},  /* 10 */
+  {0.7071f, 0.0000f, -0.7071f},
+  {-0.7071f, 0.0000f, 0.7071f},
+  {-0.7071f, 0.0000f, -0.7071f},
+  {0.0000f, 0.7071f, 0.7071f},  /* 14 */
+  {0.0000f, 0.7071f, -0.7071f},
+  {0.0000f, -0.7071f, 0.7071f},
+  {0.0000f, -0.7071f, -0.7071f},
+  {0.5774f, 0.5774f, 0.5774f},  /* 18 */
+  {0.5774f, 0.5774f, -0.5774f},
+  {0.5774f, -0.5774f, 0.5774f},
+  {0.5774f, -0.5774f, -0.5774f},
+  {-0.5774f, 0.5774f, 0.5774f},
+  {-0.5774f, 0.5774f, -0.5774f},
+  {-0.5774f, -0.5774f, 0.5774f},
+  {-0.5774f, -0.5774f, -0.5774f},
 };
 
 int boxfaces[][4] =
@@ -310,30 +308,30 @@ drawBox(int piece, float xoff, float yoff)
 
 float containercoords[][3] =
 {
-  {-0.1, -0.1, 1.0},
-  {-0.1, -0.1, -0.1},
-  {4.1, -0.1, -0.1},
-  {4.1, -0.1, 1.0},
-  {1.0, -0.1, 0.6},     /* 4 */
-  {3.0, -0.1, 0.6},
-  {1.0, -0.1, 0.0},
-  {3.0, -0.1, 0.0},
-  {1.0, 0.0, 0.0},      /* 8 */
-  {3.0, 0.0, 0.0},
-  {3.0, 0.0, 0.6},
-  {1.0, 0.0, 0.6},
-  {0.0, 0.0, 1.0},      /* 12 */
-  {4.0, 0.0, 1.0},
-  {4.0, 0.0, 0.0},
-  {0.0, 0.0, 0.0},
-  {0.0, 5.0, 0.0},      /* 16 */
-  {0.0, 5.0, 1.0},
-  {4.0, 5.0, 1.0},
-  {4.0, 5.0, 0.0},
-  {-0.1, 5.1, -0.1},    /* 20 */
-  {4.1, 5.1, -0.1},
-  {4.1, 5.1, 1.0},
-  {-0.1, 5.1, 1.0},
+  {-0.1f, -0.1f, 1.0f},
+  {-0.1f, -0.1f, -0.1f},
+  {4.1f, -0.1f, -0.1f},
+  {4.1f, -0.1f, 1.0f},
+  {1.0f, -0.1f, 0.6f},     /* 4 */
+  {3.0f, -0.1f, 0.6f},
+  {1.0f, -0.1f, 0.0f},
+  {3.0f, -0.1f, 0.0f},
+  {1.0f, 0.0f, 0.0f},      /* 8 */
+  {3.0f, 0.0f, 0.0f},
+  {3.0f, 0.0f, 0.6f},
+  {1.0f, 0.0f, 0.6f},
+  {0.0f, 0.0f, 1.0f},      /* 12 */
+  {4.0f, 0.0f, 1.0f},
+  {4.0f, 0.0f, 0.0f},
+  {0.0f, 0.0f, 0.0f},
+  {0.0f, 5.0f, 0.0f},      /* 16 */
+  {0.0f, 5.0f, 1.0f},
+  {4.0f, 5.0f, 1.0f},
+  {4.0f, 5.0f, 0.0f},
+  {-0.1f, 5.1f, -0.1f},    /* 20 */
+  {4.1f, 5.1f, -0.1f},
+  {4.1f, 5.1f, 1.0f},
+  {-0.1f, 5.1f, 1.0f},
 };
 
 float containernormals[][3] =
@@ -460,7 +458,7 @@ drawAll(void)
       if (piece == movingPiece) {
         drawBox(piece, move_x, move_y);
       } else {
-        drawBox(piece, j, i);
+        drawBox(piece, float(j), float(i));
       }
     }
   }
@@ -722,8 +720,8 @@ continueSolving(void)
 found_piece:
   if (!movingPiece) {
     movingPiece = movedPiece;
-    move_x = fromx;
-    move_y = fromy;
+    move_x = float(fromx);
+    move_y = float(fromy);
   }
   move_x += xadds[movedir] * MOVE_SPEED;
   move_y += yadds[movedir] * MOVE_SPEED;
@@ -868,7 +866,7 @@ int
 invertMatrix(const GLfloat src[16], GLfloat inverse[16])
 {
   int i, j, k, swap;
-  double t;
+  float t;
   GLfloat temp[4][4];
 
   for (i = 0; i < 4; i++) {
@@ -879,7 +877,7 @@ invertMatrix(const GLfloat src[16], GLfloat inverse[16])
   makeIdentity(inverse);
 
   for (i = 0; i < 4; i++) {
-    /* 
+    /*
        ** Look for largest element in column */
     swap = i;
     for (j = i + 1; j < 4; j++) {
@@ -889,7 +887,7 @@ invertMatrix(const GLfloat src[16], GLfloat inverse[16])
     }
 
     if (swap != i) {
-      /* 
+      /*
          ** Swap rows. */
       for (k = 0; k < 4; k++) {
         t = temp[i][k];
@@ -902,7 +900,7 @@ invertMatrix(const GLfloat src[16], GLfloat inverse[16])
       }
     }
     if (temp[i][i] == 0) {
-      /* 
+      /*
          ** No non-zero pivot.  The matrix is singular, which
          shouldn't ** happen.  This means the user gave us a
          bad matrix. */
@@ -928,9 +926,9 @@ invertMatrix(const GLfloat src[16], GLfloat inverse[16])
 
 /*
    ** This is a screwball function.  What it does is the following:
-   ** Given screen x and y coordinates, compute the corresponding object space 
+   ** Given screen x and y coordinates, compute the corresponding object space
    **   x and y coordinates given that the object space z is 0.9 + OFFSETZ.
-   ** Since the tops of (most) pieces are at z = 0.9 + OFFSETZ, we use that 
+   ** Since the tops of (most) pieces are at z = 0.9 + OFFSETZ, we use that
    **   number.
  */
 int
@@ -949,7 +947,7 @@ computeCoords(int piece, int mousex, int mousey,
 
   if (piece == 0)
     return 0;
-  height = zsize[piece] - 0.1 + OFFSETZ;
+  height = zsize[piece] - 0.1f + OFFSETZ;
 
   glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
   glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
@@ -957,8 +955,8 @@ computeCoords(int piece, int mousex, int mousey,
   if (!invertMatrix(finalMatrix, finalMatrix))
     return 0;
 
-  in[0] = (2.0 * (mousex - viewport[0]) / viewport[2]) - 1;
-  in[1] = (2.0 * ((H - mousey) - viewport[1]) / viewport[3]) - 1;
+  in[0] = (2.0f * (mousex - viewport[0]) / viewport[2]) - 1;
+  in[1] = (2.0f * ((H - mousey) - viewport[1]) / viewport[3]) - 1;
 
   a = in[0] * finalMatrix[0 * 4 + 2] +
     in[1] * finalMatrix[1 * 4 + 2] +
@@ -969,10 +967,10 @@ computeCoords(int piece, int mousex, int mousey,
     finalMatrix[3 * 4 + 3];
   d = finalMatrix[2 * 4 + 3];
 
-  /* 
-     ** Ok, now we need to solve for z: **   (a + b z) / (c + d 
+  /*
+     ** Ok, now we need to solve for z: **   (a + b z) / (c + d
 
-     z) = height. ** ("height" is the height in object space we 
+     z) = height. ** ("height" is the height in object space we
 
      want to solve z for) ** ** ==>  a + b z = height c +
      height d z **      bz - height d z = height c - a ** z =
@@ -984,12 +982,12 @@ computeCoords(int piece, int mousex, int mousey,
 
   z = top / bot;
 
-  /* 
+  /*
      ** Ok, no problem. ** Now we solve for x and y.  We know
      that w = c + d z, so we compute it. */
   w = c + d * z;
 
-  /* 
+  /*
      ** Now for x and y: */
   *selx = (in[0] * finalMatrix[0 * 4 + 0] +
     in[1] * finalMatrix[1 * 4 + 0] +
@@ -1027,8 +1025,8 @@ grabPiece(int piece, float selx, float sely)
     while (selecty > 0 && thePuzzle[selecty - 1][selectx] == movingPiece) {
       selecty--;
     }
-    move_x = selectx;
-    move_y = selecty;
+    move_x = float(selectx);
+    move_y = float(selecty);
     selected = 1;
     selstartx = selx;
     selstarty = sely;
@@ -1096,14 +1094,14 @@ moveSelection(float selx, float sely)
   } else {
     if (deltay > 0 && thePuzzle[selecty][selectx] == 10 &&
       selectx == 1 && selecty == 3) {
-      /* Allow visual movement of solution piece outside of the 
+      /* Allow visual movement of solution piece outside of the
 
          box */
-      move_x = selectx;
+      move_x = float(selectx);
       move_y = sely - selstarty + selecty;
     } else {
-      move_x = selectx;
-      move_y = selecty;
+      move_x = float(selectx);
+      move_y = float(selecty);
     }
   }
 }
@@ -1239,10 +1237,10 @@ motion(int x, int y)
   if (middle_mouse && !left_mouse) {
     if (mousex != x || mousey != y) {
       trackball(lastquat,
-        (2.0*mousex - W) / W,
-        (H - 2.0*mousey) / H,
-        (2.0*x - W) / W,
-        (H - 2.0*y) / H);
+        (2.0f*mousex - W) / W,
+        (H - 2.0f*mousey) / H,
+        (2.0f*x - W) / W,
+        (H - 2.0f*y) / H);
       spinning = enable_spinning; // 1 = yes, 0 = disabled (commandline -n)
     } else {
       spinning = 0;
@@ -1347,11 +1345,11 @@ init(void)
   static float lmodel_local[] =
   {GL_FALSE};
   static float light0_ambient[] =
-  {0.1, 0.1, 0.1, 1.0};
+  {0.1f, 0.1f, 0.1f, 1.0f};
   static float light0_diffuse[] =
-  {1.0, 1.0, 1.0, 0.0};
+  {1.0f, 1.0f, 1.0f, 0.0f};
   static float light0_position[] =
-  {0.8660254, 0.5, 1, 0};
+  {0.8660254f, 0.5f, 1, 0};
   static float light0_specular[] =
   {0.0, 0.0, 0.0, 0.0};
   static float bevel_mat_ambient[] =
@@ -1390,7 +1388,7 @@ init(void)
   glShadeModel(GL_FLAT);
 
   trackball(curquat, 0.0, 0.0, 0.0, 0.0);
-  srandom(time(NULL));
+  srandom((unsigned int)time(NULL));
 }
 
 static void
@@ -1497,7 +1495,3 @@ main(int argc, char **argv)
 }
 
 #endif // added for fltk's distribution
-
-//
-// End of "$Id$".
-//

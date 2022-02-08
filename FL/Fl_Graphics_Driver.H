@@ -1,20 +1,18 @@
 //
-// "$Id$"
+// Declaration of classes Fl_Graphics_Driver, Fl_Scalable_Graphics_Driver,
+// and Fl_Font_Descriptor for the Fast Light Tool Kit (FLTK).
 //
-// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
-// for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -24,7 +22,7 @@
  */
 
 /** \file Fl_Graphics_Driver.H
- \brief declaration of class Fl_Graphics_Driver.
+ \brief Declaration of class Fl_Graphics_Driver.
 */
 
 #ifndef FL_GRAPHICS_DRIVER_H
@@ -35,7 +33,6 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
-#include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
@@ -54,6 +51,7 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 struct Fl_Fontdesc;
+typedef struct _PangoFontDescription PangoFontDescription;
 
 #define FL_REGION_STACK_SIZE 10
 #define FL_MATRIX_STACK_SIZE 32
@@ -64,9 +62,9 @@ struct Fl_Fontdesc;
  drawing operations (e.g., fl_rectf()) that operate on the current drawing surface (see Fl_Surface_Device).
  Drawing operations are functionally presented in \ref drawing and as function lists
  in the \ref fl_drawings and \ref fl_attributes modules.
- 
+
  <tt>Fl_Surface_Device::surface()->driver()</tt>
- gives at any time the graphics driver used by all drawing operations. 
+ gives at any time the graphics driver used by all drawing operations.
  For compatibility with older FLTK versions, the \ref fl_graphics_driver global variable gives the same result.
  Its value changes when
  drawing operations are directed to another drawing surface by Fl_Surface_Device::push_current() /
@@ -84,6 +82,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+  friend class Fl_SVG_Image;
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
@@ -130,7 +129,7 @@ and
    draw_fixed(Fl_RGB_Image *,....) because scale-and-draw may require function Alphablend()
    from MSIMG32.DLL. In the absence of that, the draw_rgb() implementation calls
    Fl_Graphics_Driver::draw_rgb() which runs Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
-   
+
    Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
    to compute the cached form of all image types, and uncache(Fl_RGB_Image *,...),
    uncache_pixmap(fl_uintptr_t) and delete_bitmask(Fl_Bitmask) to destroy cached image forms.
@@ -142,7 +141,7 @@ private:
   virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   // the default implementation of make_unused_color_() is most probably enough
-  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b);
+  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
@@ -174,6 +173,9 @@ protected:
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
   Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
   Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
+  int p_size;
+  typedef struct { float x; float y; } XPOINT;
+  XPOINT *p;
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
@@ -235,9 +237,10 @@ protected:
   static Fl_Offscreen get_offscreen_and_delete_image_surface(Fl_Image_Surface*);
   /** For internal library use only */
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
-  
+
   Fl_Graphics_Driver();
-  void cache_size(Fl_Image *img, int &width, int &height);
+  virtual void cache_size(Fl_Image *img, int &width, int &height);
+  void cache_size_finalize(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
@@ -254,6 +257,8 @@ public:
   virtual void rect(int x, int y, int w, int h);
   virtual void focus_rect(int x, int y, int w, int h);
   virtual void rectf(int x, int y, int w, int h);
+  // the default implementation is most likely enough
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
   virtual void line(int x, int y, int x1, int y1);
   /** see fl_line(int, int, int, int, int, int) */
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
@@ -303,10 +308,12 @@ public:
   virtual double transform_dx(double x, double y);
   virtual double transform_dy(double x, double y);
   virtual void transformed_vertex(double xf, double yf);
+  virtual void transformed_vertex0(float x, float y);
   virtual void vertex(double x, double y);
   virtual void end_points();
   virtual void end_line();
   virtual void end_loop();
+  virtual void fixloop();
   virtual void end_polygon();
   virtual void end_complex_polygon();
   virtual void gap();
@@ -349,8 +356,10 @@ public:
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);
   // default implementation may be enough
   virtual float scale_bitmap_for_PostScript();
+  // next 3 are related to X Input Method
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
+  virtual void set_status(int X, int Y, int W, int H);
   // each platform implements these 3 functions its own way
   virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
@@ -364,6 +373,11 @@ public:
   virtual void font_name(int num, const char *name);
   // Defaut implementation may be enough
   virtual void overlay_rect(int x, int y, int w , int h);
+  virtual float override_scale();
+  virtual void restore_scale(float);
+  virtual PangoFontDescription* pango_font_description(Fl_Font) { return NULL; }
+  virtual void antialias(int state);
+  virtual int antialias();
 };
 
 #ifndef FL_DOXYGEN
@@ -402,16 +416,21 @@ struct Fl_Fontdesc {
  - scale the cached offscreen of image objects
  - scale the pixel arrays used when performing direct image draws
  - call the member functions of a platform-specific,
- Fl_Scalable_Graphics_Driver-derived class that do the drawings with adequately 
+ Fl_Scalable_Graphics_Driver-derived class that do the drawings with adequately
  scaled coordinates. The member functions are named with the _unscaled suffix.
  - scale and unscale the clipping region.
- 
+
  This class is presently used by the X11 and Windows platforms to support HiDPI displays.
  In the future, it may also be used by other platforms.
  */
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   Fl_Scalable_Graphics_Driver();
+  // This function aims to compute accurately int(x * s) in
+  // presence of rounding errors existing with floating point numbers
+  // and that sometimes differ between 32 and 64 bits.
+  static inline int floor(int x, float s) { return int(x * s + 0.001f); }
+  inline int floor(int x) { return Fl_Scalable_Graphics_Driver::floor(x, scale()); }
 protected:
   int line_width_;
   virtual Fl_Region scale_clip(float f);
@@ -419,32 +438,28 @@ protected:
   virtual void point(int x, int y);
   virtual void point_unscaled(float x, float y);
   virtual void rect(int x, int y, int w, int h);
-  virtual void rect_unscaled(float x, float y, float w, float h);
   virtual void rectf(int x, int y, int w, int h);
-  virtual void rectf_unscaled(float x, float y, float w, float h);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
   virtual void line(int x, int y, int x1, int y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
+  virtual void line_unscaled(int x, int y, int x1, int y1);
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
+  virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
   virtual void xyline(int x, int y, int x1);
-  virtual void xyline(int x, int y, int x1, int y2);
-  virtual void xyline(int x, int y, int x1, int y2, int x3);
-  virtual void xyline_unscaled(float x, float y, float x1);
+  virtual void xyline_unscaled(int x, int y, int x1);
   virtual void yxline(int x, int y, int y1);
-  virtual void yxline(int x, int y, int y1, int x2);
-  virtual void yxline(int x, int y, int y1, int x2, int y3);
-  virtual void yxline_unscaled(float x, float y, float y1);
+  virtual void yxline_unscaled(int x, int y, int y1);
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   virtual void circle(double x, double y, double r);
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   virtual void font(Fl_Font face, Fl_Fontsize size);
+  virtual Fl_Font font();
   virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
   virtual double width(const char *str, int n);
   virtual double width(unsigned int c);
@@ -462,15 +477,17 @@ protected:
   virtual void draw_unscaled(const char *str, int n, int x, int y);
   virtual void draw(int angle, const char *str, int n, int x, int y);
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
+  virtual void draw(const char *str, int nChars, float x, float y);
   virtual void rtl_draw(const char* str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
+  virtual void arc(double x, double y, double r, double start, double end);
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
   virtual void line_style(int style, int width=0, char* dashes=0);
-  virtual void line_style_unscaled(int style, float width, char* dashes);
-  void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono, float s);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
+  void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono);
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
@@ -481,8 +498,11 @@ protected:
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 
   void transformed_vertex(double xf, double yf);
-  virtual void transformed_vertex0(float x, float y);
   void vertex(double x, double y);
+  virtual float override_scale();
+  virtual void restore_scale(float);
+  virtual void *change_pen_width(int lwidth);
+  virtual void reset_pen_width(void *data);
 };
 #endif // FL_DOXYGEN
 
@@ -492,7 +512,3 @@ protected:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

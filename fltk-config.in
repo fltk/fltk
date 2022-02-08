@@ -1,7 +1,5 @@
 #!/bin/sh
 #
-# "$Id$"
-#
 # FLTK configuration utility.
 #
 # Copyright 2000-2016 by Bill Spitzak and others.
@@ -12,16 +10,16 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-MAJOR_VERSION=@FL_MAJOR_VERSION@
-MINOR_VERSION=@FL_MINOR_VERSION@
-PATCH_VERSION=@FL_PATCH_VERSION@
+MAJOR_VERSION=@FLTK_VERSION_MAJOR@
+MINOR_VERSION=@FLTK_VERSION_MINOR@
+PATCH_VERSION=@FLTK_VERSION_PATCH@
 VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
@@ -51,6 +49,17 @@ LDLIBS="@LIBS@"
 OPTIM="@OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
+# Config
+if ( ( test -f "$includedir/FL/fl_config.h" && \
+       grep -q '^#define FLTK_HAVE_CAIRO 1' "$includedir/FL/fl_config.h" ) \
+     || \
+     ( test -f "$selfdir/FL/fl_config.h" && \
+       grep -q '^#define FLTK_HAVE_CAIRO 1' "$selfdir/FL/fl_config.h" ) ) ; then
+    FLTK_HAVE_CAIRO=1
+else
+    FLTK_HAVE_CAIRO=0
+fi
+
 # Check for local invocation, and update paths accordingly...
 if test -f "$selfdir/FL/Fl_Window.H"; then
 	includedir="$selfdir"
@@ -77,7 +86,7 @@ if test -d $includedir/FL/images; then
 	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
 fi
 
-if test -f "$libdir/libfltk_cairo.a"; then
+if [ $FLTK_HAVE_CAIRO = 1 ]; then
 	CFLAGS="$CAIROFLAGS $CFLAGS"
 	CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
 fi
@@ -251,7 +260,7 @@ if test x$use_images = xyes; then
     LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
 fi
 
-if test x$use_cairo = xyes; then
+if test x$use_cairo = xyes -a $FLTK_HAVE_CAIRO = 1; then
     LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
     LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
 fi
@@ -405,7 +414,3 @@ fi
 if test "$echo_includedir" = "yes"; then
     echo $includedir
 fi
-
-#
-# End of "$Id$".
-#

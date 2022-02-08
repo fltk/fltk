@@ -1,27 +1,26 @@
 //
-// "$Id$"
-//
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
-#include "../../Fl_System_Driver.H"
+#include "Fl_X11_System_Driver.H"
+#include "../Posix/Fl_Posix_System_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -32,12 +31,10 @@
 #include <FL/filename.H>
 #include <sys/time.h>
 
+#include "../../Fl_Timeout.h"
+
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
-#endif
-
-#if USE_XDBE
-#include <X11/extensions/Xdbe.h>
 #endif
 
 #  include <X11/Xutil.h>
@@ -60,56 +57,10 @@ extern const char *fl_bg;
 extern const char *fl_bg2;
 // end of extern additions workaround
 
-//
-// X11 timers
-//
-
-
-////////////////////////////////////////////////////////////////////////
-// Timeouts are stored in a sorted list (*first_timeout), so only the
-// first one needs to be checked to see if any should be called.
-// Allocated, but unused (free) Timeout structs are stored in another
-// linked list (*free_timeout).
-
-struct Timeout {
-  double time;
-  void (*cb)(void*);
-  void* arg;
-  Timeout* next;
-};
-static Timeout* first_timeout, *free_timeout;
-
-// I avoid the overhead of getting the current time when we have no
-// timeouts by setting this flag instead of getting the time.
-// In this case calling elapse_timeouts() does nothing, but records
-// the current time, and the next call will actually elapse time.
-static char reset_clock = 1;
-
-static void elapse_timeouts() {
-  static struct timeval prevclock;
-  struct timeval newclock;
-  gettimeofday(&newclock, NULL);
-  double elapsed = newclock.tv_sec - prevclock.tv_sec +
-    (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
-  prevclock.tv_sec = newclock.tv_sec;
-  prevclock.tv_usec = newclock.tv_usec;
-  if (reset_clock) {
-    reset_clock = 0;
-  } else if (elapsed > 0) {
-    for (Timeout* t = first_timeout; t; t = t->next) t->time -= elapsed;
-  }
-}
-
-
-// Continuously-adjusted error value, this is a number <= 0 for how late
-// we were at calling the last timeout. This appears to make repeat_timeout
-// very accurate even when processing takes a significant portion of the
-// time interval:
-static double missed_timeout_by;
 
 /**
  Creates a driver that manages all screen and display related calls.
- 
+
  This function must be implemented once for every platform.
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
@@ -147,32 +98,13 @@ static int test_visual(XVisualInfo& v, int flags) {
   // simpler if we can't use colormapped visuals at all:
   if (v.c_class != StaticColor && v.c_class != TrueColor) return 0;
 #endif
-#if USE_XDBE
-  if (flags & FL_DOUBLE) {
-    static XdbeScreenVisualInfo *xdbejunk;
-    if (!xdbejunk) {
-      int event_base, error_base;
-      if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
-      Drawable root = RootWindow(fl_display,fl_screen);
-      int numscreens = 1;
-      xdbejunk = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-      if (!xdbejunk) return 0;
-    }
-    for (int j = 0; ; j++) {
-      if (j >= xdbejunk->count) return 0;
-      if (xdbejunk->visinfo[j].visual == v.visualid) break;
-    }
-  }
-#endif
   return 1;
 }
 
 
 int Fl_X11_Screen_Driver::visual(int flags)
 {
-#if USE_XDBE == 0
   if (flags & FL_DOUBLE) return 0;
-#endif
   open_display();
   // always use default if possible:
   if (test_visual(*fl_visual, flags)) return 1;
@@ -197,7 +129,7 @@ int Fl_X11_Screen_Driver::visual(int flags)
 static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
 
 
-void Fl_X11_Screen_Driver::init_workarea() 
+void Fl_X11_Screen_Driver::init_workarea()
 {
   Atom actual;
   unsigned long count, remaining;
@@ -287,9 +219,7 @@ void Fl_X11_Screen_Driver::init() {
 
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
-    void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-    if (!libxrandr_addr) libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
-    if (libxrandr_addr) XRRSizes_f = (XRRSizes_type)dlsym(libxrandr_addr, "XRRSizes");
+    XRRSizes_f = (XRRSizes_type)Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr", "XRRSizes");
   }
   if (XRRSizes_f) {
     int nscreens;
@@ -323,8 +253,8 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].width = xsi[i].width;
       screens[i].height = xsi[i].height;
       if (dpi_by_randr) {
-	dpi[i][0] = dpih;
-	dpi[i][1] = dpiv;
+        dpi[i][0] = dpih;
+        dpi[i][1] = dpiv;
       } else {
         int mm = DisplayWidthMM(fl_display, fl_screen);
         dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
@@ -350,13 +280,13 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].scale = 1;
 #endif
       if (dpi_by_randr) {
-	dpi[i][0] = dpih;
-	dpi[i][1] = dpiv;
+        dpi[i][0] = dpih;
+        dpi[i][1] = dpiv;
       } else {
-	int mm = DisplayWidthMM(fl_display, i);
-	dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
-	mm = DisplayHeightMM(fl_display, fl_screen);
-	dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
+        int mm = DisplayWidthMM(fl_display, i);
+        dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+        mm = DisplayHeightMM(fl_display, fl_screen);
+        dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
       }
     }
   }
@@ -435,72 +365,6 @@ void Fl_X11_Screen_Driver::flush()
 }
 
 
-double Fl_X11_Screen_Driver::wait(double time_to_wait)
-{
-  static char in_idle;
-
-  if (first_timeout) {
-    elapse_timeouts();
-    Timeout *t;
-    while ((t = first_timeout)) {
-      if (t->time > 0) break;
-      // The first timeout in the array has expired.
-      missed_timeout_by = t->time;
-      // We must remove timeout from array before doing the callback:
-      void (*cb)(void*) = t->cb;
-      void *argp = t->arg;
-      first_timeout = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-      // Now it is safe for the callback to do add_timeout:
-      cb(argp);
-    }
-  } else {
-    reset_clock = 1; // we are not going to check the clock
-  }
-  Fl::run_checks();
-  if (Fl::idle) {
-    if (!in_idle) {
-      in_idle = 1;
-      Fl::idle();
-      in_idle = 0;
-    }
-    // the idle function may turn off idle, we can then wait:
-    if (Fl::idle) time_to_wait = 0.0;
-  }
-  if (first_timeout && first_timeout->time < time_to_wait)
-    time_to_wait = first_timeout->time;
-  if (time_to_wait <= 0.0) {
-    // do flush second so that the results of events are visible:
-    int ret = this->poll_or_select_with_delay(0.0);
-    Fl::flush();
-    return ret;
-  } else {
-    // do flush first so that user sees the display:
-    Fl::flush();
-    if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
-      time_to_wait = 0.0;
-    else if (first_timeout && first_timeout->time < time_to_wait) {
-      // another timeout may have been queued within flush(), see STR #3188
-      time_to_wait = first_timeout->time >= 0.0 ? first_timeout->time : 0.0;
-    }
-    return this->poll_or_select_with_delay(time_to_wait);
-  }
-}
-
-
-int Fl_X11_Screen_Driver::ready()
-{
-  if (first_timeout) {
-    elapse_timeouts();
-    if (first_timeout->time <= 0) return 1;
-  } else {
-    reset_clock = 1;
-  }
-  return this->poll_or_select();
-}
-
-
 extern void fl_fix_focus(); // in Fl.cxx
 
 
@@ -533,8 +397,8 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
                     GrabModeAsync,
                     fl_event_time);
     }
-    Fl::grab_ = win;	// FIXME: Fl::grab_ "should be private", but we need
-			// a way to *set* the variable from the driver!
+    Fl::grab_ = win;    // FIXME: Fl::grab_ "should be private", but we need
+                        // a way to *set* the variable from the driver!
   } else {
     if (Fl::grab()) {
       // We must keep the grab in the non-EWMH fullscreen case
@@ -545,8 +409,8 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
       // this flush is done in case the picked menu item goes into
       // an infinite loop, so we don't leave the X server locked up:
       XFlush(fl_display);
-      Fl::grab_ = 0;	// FIXME: Fl::grab_ "should be private", but we need
-			// a way to *set* the variable from the driver!
+      Fl::grab_ = 0;    // FIXME: Fl::grab_ "should be private", but we need
+                        // a way to *set* the variable from the driver!
       fl_fix_focus();
     }
   }
@@ -602,11 +466,11 @@ void Fl_X11_Screen_Driver::get_system_colors()
   if (Fl::first_window()) key1 = Fl::first_window()->xclass();
   if (!key1) key1 = "fltk";
   if (!bg2_set)
-    getsyscolor("Text","background",	fl_bg2,	"#ffffff", Fl::background2);
+    getsyscolor("Text","background",    fl_bg2, "#ffffff", Fl::background2);
   if (!fg_set)
-    getsyscolor(key1,  "foreground",	fl_fg,	"#000000", Fl::foreground);
+    getsyscolor(key1,  "foreground",    fl_fg,  "#000000", Fl::foreground);
   if (!bg_set)
-    getsyscolor(key1,  "background",	fl_bg,	"#c0c0c0", Fl::background);
+    getsyscolor(key1,  "background",    fl_bg,  "#c0c0c0", Fl::background);
   getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
 }
 
@@ -624,67 +488,6 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
   return s;
 }
 
-// ######################   *FIXME*   ########################
-// ######################   *FIXME*   ########################
-// ######################   *FIXME*   ########################
-
-
-//
-// X11 timers
-//
-
-void Fl_X11_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  elapse_timeouts();
-  missed_timeout_by = 0;
-  repeat_timeout(time, cb, argp);
-}
-
-void Fl_X11_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  time += missed_timeout_by; if (time < -.05) time = 0;
-  Timeout* t = free_timeout;
-  if (t) {
-      free_timeout = t->next;
-  } else {
-      t = new Timeout;
-  }
-  t->time = time;
-  t->cb = cb;
-  t->arg = argp;
-  // insert-sort the new timeout:
-  Timeout** p = &first_timeout;
-  while (*p && (*p)->time <= time) p = &((*p)->next);
-  t->next = *p;
-  *p = t;
-}
-
-/**
-  Returns true if the timeout exists and has not been called yet.
-*/
-int Fl_X11_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout* t = first_timeout; t; t = t->next)
-    if (t->cb == cb && t->arg == argp) return 1;
-  return 0;
-}
-
-/**
-  Removes a timeout callback. It is harmless to remove a timeout
-  callback that no longer exists.
-
-  \note	This version removes all matching timeouts, not just the first one.
-	This may change in the future.
-*/
-void Fl_X11_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout** p = &first_timeout; *p;) {
-    Timeout* t = *p;
-    if (t->cb == cb && (t->arg == argp || !argp)) {
-      *p = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-    } else {
-      p = &(t->next);
-    }
-  }
-}
 
 int Fl_X11_Screen_Driver::compose(int& del) {
   int condition;
@@ -704,7 +507,7 @@ void Fl_X11_Screen_Driver::compose_reset()
   if (fl_xim_ic) XmbResetIC(fl_xim_ic);
 }
 
-int Fl_X11_Screen_Driver::text_display_can_leak() {
+int Fl_X11_Screen_Driver::text_display_can_leak() const {
 #if USE_XFT
   return 1;
 #else
@@ -720,7 +523,7 @@ fl_subimage_offsets(int a, int aw, int b, int bw, int &obw)
 {
   int off;
   int ob;
-  
+
   if (b >= a) {
     ob = b;
     off = 0;
@@ -728,15 +531,15 @@ fl_subimage_offsets(int a, int aw, int b, int bw, int &obw)
     ob = a;
     off = a - b;
   }
-  
+
   bw -= off;
-  
+
   if (ob + bw <= a + aw) {
     obw = bw;
   } else {
     obw = (a + aw) - ob;
   }
-  
+
   return off;
 }
 
@@ -750,23 +553,22 @@ extern "C" {
 
 Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins)
 {
-  XImage	*image;		// Captured image
-  int		i, maxindex;	// Looping vars
-  int           x, y;		// Current X & Y in image
-  int		d;		// Depth of image
-  unsigned char *line,		// Array to hold image row
-		*line_ptr;	// Pointer to current line image
-  unsigned char	*pixel;		// Current color value
-  XColor	colors[4096];	// Colors from the colormap...
-  unsigned char	cvals[4096][3];	// Color values from the colormap...
-  unsigned	index_mask,
-		index_shift,
-		red_mask,
-		red_shift,
-		green_mask,
-		green_shift,
-		blue_mask,
-		blue_shift;
+  XImage        *image;         // Captured image
+  int           i, maxindex;    // Looping vars
+  int           x, y;           // Current X & Y in image
+  unsigned char *line,          // Array to hold image row
+                *line_ptr;      // Pointer to current line image
+  unsigned char *pixel;         // Current color value
+  XColor        colors[4096];   // Colors from the colormap...
+  unsigned char cvals[4096][3]; // Color values from the colormap...
+  unsigned      index_mask,
+                index_shift,
+                red_mask,
+                red_shift,
+                green_mask,
+                green_shift,
+                blue_mask,
+                blue_shift;
   //
   // Under X11 we have the option of the XGetImage() interface or SGI's
   // ReadDisplay extension which does all of the really hard work for
@@ -774,12 +576,15 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   //
   int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
   if (w < 0) w = - w;
-  
+
   Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
 
   float s = allow_outside ? Fl::screen_driver()->scale(win->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
-  int ws = w * s, hs = h * s, Xs = X*s, Ys = Y*s;
-  
+  int Xs = Fl_Scalable_Graphics_Driver::floor(X, s);
+  int Ys = Fl_Scalable_Graphics_Driver::floor(Y, s);
+  int ws = Fl_Scalable_Graphics_Driver::floor(X+w, s) - Xs;
+  int hs = Fl_Scalable_Graphics_Driver::floor(Y+h, s) - Ys;
+
 #  ifdef __sgi
   if (XReadDisplayQueryExtension(fl_display, &i, &i)) {
     image = XReadDisplay(fl_display, xid, Xs, Ys, ws, hs, 0, NULL);
@@ -787,25 +592,30 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 #  else
     image = 0;
 #  endif // __sgi
-  
+
   if (!image) {
     // fetch absolute coordinates
-    int dx, dy, sx, sy, sw, sh;
+    int dx = 0, dy = 0, sx = 0, sy = 0, sw = 0, sh = 0;
     Window child_win;
-    
+
     if (win) {
       XTranslateCoordinates(fl_display, xid,
                             RootWindow(fl_display, fl_screen), Xs, Ys, &dx, &dy, &child_win);
       // screen dimensions
-      Fl::screen_xywh(sx, sy, sw, sh, Fl_Window_Driver::driver(win)->screen_num());
-      sx *= s; sy *= s; sw *= s; sh *= s;
+      int ns = Fl_Window_Driver::driver(win)->screen_num();
+      sx = screens[ns].x_org;
+      sy = screens[ns].y_org;
+      sw = screens[ns].width;
+      sh = screens[ns].height;
     }
+#if ! HAVE_XRENDER
     if (win && !allow_outside && int(s) != s) {
-      ws = (w+1) * s; // matches what Fl_Graphics_Driver::cache_size() does
+      ws = (w+1) * s; // approximates what Fl_Graphics_Driver::cache_size() does
       hs = (h+1) * s;
-      if (Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
-      if (Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
      }
+#endif
+    if (win && Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
+    if (win && Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
     if (!win || (dx >= sx && dy >= sy && dx + ws <= sx+sw && dy + hs <= sy+sh) ) {
@@ -821,7 +631,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       noffx = fl_subimage_offsets(sx, sw, dx, ws, nw);
       noffy = fl_subimage_offsets(sy, sh, dy, hs, nh);
       if (nw <= 0 || nh <= 0) return 0;
-      
+
       // allocate the image
       int bpp = fl_visual->depth + ((fl_visual->depth / 8) % 2) * 8;
       char* buf = (char*)malloc((bpp / 8) * ws * hs);
@@ -831,7 +641,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
         if (buf) free(buf);
         return 0;
       }
-      
+
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
       XImage *subimg = XGetSubImage(fl_display, xid, Xs + noffx, Ys + noffy,
                                     nw, nh, AllPlanes, ZPixmap, image, noffx, noffy);
@@ -842,13 +652,13 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       }
     }
   }
-  
+
   if (!image) return 0;
   if (s != 1) {
     w = ws;
     h = hs;
   }
-  
+
 #ifdef DEBUG
   printf("width            = %d\n", image->width);
   printf("height           = %d\n", image->height);
@@ -867,23 +677,22 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   printf("blue_mask        = %08x\n", image->blue_mask);
   printf("map_entries      = %d\n", fl_visual->visual->map_entries);
 #endif // DEBUG
-  
-  d = 3;
+
+  const int d = 3; // Depth of image
   uchar *p = NULL;
   // Allocate the image data array as needed...
-  const uchar *oldp = p;
-  if (!p) p = new uchar[w * h * d];
-  
+  p = new uchar[w * h * d];
+
   // Initialize the default colors/alpha in the whole image...
   memset(p, 0, w * h * d);
-  
+
   // Check that we have valid mask/shift values...
   if (!image->red_mask && image->bits_per_pixel > 12) {
     // Greater than 12 bits must be TrueColor...
     image->red_mask   = fl_visual->visual->red_mask;
     image->green_mask = fl_visual->visual->green_mask;
     image->blue_mask  = fl_visual->visual->blue_mask;
-    
+
 #ifdef DEBUG
     // Defined in Fl_Xlib_Graphics_Driver_color.cxx
     extern uchar fl_redmask, fl_greenmask, fl_bluemask;
@@ -900,27 +709,27 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
     printf("blue_mask        = %08x\n", image->blue_mask);
 #endif // DEBUG
   }
-  
+
   // Check if we have colormap image...
   if (!image->red_mask) {
     // Get the colormap entries for this window...
     maxindex = fl_visual->visual->map_entries;
-    
+
     for (i = 0; i < maxindex; i ++) colors[i].pixel = i;
-    
+
     XQueryColors(fl_display, fl_colormap, colors, maxindex);
-    
+
     for (i = 0; i < maxindex; i ++) {
       cvals[i][0] = colors[i].red >> 8;
       cvals[i][1] = colors[i].green >> 8;
       cvals[i][2] = colors[i].blue >> 8;
     }
-    
+
     // Read the pixels and output an RGB image...
     for (y = 0; y < image->height; y ++) {
       pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
       line  = p + y * w * d;
-      
+
       switch (image->bits_per_pixel) {
         case 1 :
           for (x = image->width, line_ptr = line, index_mask = 128;
@@ -935,7 +744,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
               line_ptr[1] = cvals[0][1];
               line_ptr[2] = cvals[0][2];
             }
-            
+
             if (index_mask > 1) {
               index_mask >>= 1;
             } else {
@@ -944,17 +753,17 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             }
           }
           break;
-          
+
         case 2 :
           for (x = image->width, line_ptr = line, index_shift = 6;
                x > 0;
                x --, line_ptr += d) {
             i = (*pixel >> index_shift) & 3;
-            
+
             line_ptr[0] = cvals[i][0];
             line_ptr[1] = cvals[i][1];
             line_ptr[2] = cvals[i][2];
-            
+
             if (index_shift > 0) {
               index_shift -= 2;
             } else {
@@ -963,18 +772,18 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             }
           }
           break;
-          
+
         case 4 :
           for (x = image->width, line_ptr = line, index_shift = 4;
                x > 0;
                x --, line_ptr += d) {
             if (index_shift == 4) i = (*pixel >> 4) & 15;
             else i = *pixel & 15;
-            
+
             line_ptr[0] = cvals[i][0];
             line_ptr[1] = cvals[i][1];
             line_ptr[2] = cvals[i][2];
-            
+
             if (index_shift > 0) {
               index_shift = 0;
             } else {
@@ -983,7 +792,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             }
           }
           break;
-          
+
         case 8 :
           for (x = image->width, line_ptr = line;
                x > 0;
@@ -993,7 +802,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             line_ptr[2] = cvals[*pixel][2];
           }
           break;
-          
+
         case 12 :
           for (x = image->width, line_ptr = line, index_shift = 0;
                x > 0;
@@ -1003,11 +812,11 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             } else {
               i = ((pixel[1] << 8) | pixel[2]) & 4095;
             }
-            
+
             line_ptr[0] = cvals[i][0];
             line_ptr[1] = cvals[i][1];
             line_ptr[2] = cvals[i][2];
-            
+
             if (index_shift == 0) {
               index_shift = 4;
             } else {
@@ -1022,46 +831,46 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
     // RGB(A) image, so figure out the shifts & masks...
     red_mask  = image->red_mask;
     red_shift = 0;
-    
+
     while ((red_mask & 1) == 0) {
       red_mask >>= 1;
       red_shift ++;
     }
-    
+
     green_mask  = image->green_mask;
     green_shift = 0;
-    
+
     while ((green_mask & 1) == 0) {
       green_mask >>= 1;
       green_shift ++;
     }
-    
+
     blue_mask  = image->blue_mask;
     blue_shift = 0;
-    
+
     while ((blue_mask & 1) == 0) {
       blue_mask >>= 1;
       blue_shift ++;
     }
-    
+
     // Read the pixels and output an RGB image...
     for (y = 0; y < image->height; y ++) {
       pixel = (unsigned char *)(image->data + y * image->bytes_per_line);
       line  = p + y * w * d;
-      
+
       switch (image->bits_per_pixel) {
         case 8 :
           for (x = image->width, line_ptr = line;
                x > 0;
                x --, line_ptr += d, pixel ++) {
             i = *pixel;
-            
+
             line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
             line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
             line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
           }
           break;
-          
+
         case 12 :
           for (x = image->width, line_ptr = line, index_shift = 0;
                x > 0;
@@ -1071,11 +880,11 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             } else {
               i = ((pixel[1] << 8) | pixel[2]) & 4095;
             }
-            
+
             line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
             line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
             line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
-            
+
             if (index_shift == 0) {
               index_shift = 4;
             } else {
@@ -1084,7 +893,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             }
           }
           break;
-          
+
         case 16 :
           if (image->byte_order == LSBFirst) {
             // Little-endian...
@@ -1092,7 +901,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 2) {
               i = (pixel[1] << 8) | pixel[0];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
@@ -1103,14 +912,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 2) {
               i = (pixel[0] << 8) | pixel[1];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
             }
           }
           break;
-          
+
         case 24 :
           if (image->byte_order == LSBFirst) {
             // Little-endian...
@@ -1118,7 +927,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 3) {
               i = (((pixel[2] << 8) | pixel[1]) << 8) | pixel[0];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
@@ -1129,14 +938,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 3) {
               i = (((pixel[0] << 8) | pixel[1]) << 8) | pixel[2];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
             }
           }
           break;
-          
+
         case 32 :
           if (image->byte_order == LSBFirst) {
             // Little-endian...
@@ -1144,7 +953,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 4) {
               i = (((((pixel[3] << 8) | pixel[2]) << 8) | pixel[1]) << 8) | pixel[0];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
@@ -1155,7 +964,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                  x > 0;
                  x --, line_ptr += d, pixel += 4) {
               i = (((((pixel[0] << 8) | pixel[1]) << 8) | pixel[2]) << 8) | pixel[3];
-              
+
               line_ptr[0] = 255 * ((i >> red_shift) & red_mask) / red_mask;
               line_ptr[1] = 255 * ((i >> green_shift) & green_mask) / green_mask;
               line_ptr[2] = 255 * ((i >> blue_shift) & blue_mask) / blue_mask;
@@ -1165,12 +974,12 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       }
     }
   }
-  
+
   // Destroy the X image we've read and return the RGB(A) image...
   XDestroyImage(image);
-  
+
   Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
-  if (!oldp) rgb->alloc_array = 1;
+  rgb->alloc_array = 1;
   return rgb;
 }
 
@@ -1191,7 +1000,7 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
 {
   int screen = -1;
   if (num_screens < 0) init();
-  
+
   for (int i = 0; i < num_screens; i ++) {
     int sx = screens[i].x_org, sy = screens[i].y_org, sw = screens[i].width, sh = screens[i].height;
     if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
@@ -1247,7 +1056,7 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
 // in the gsettings database.
 /*
  returns true under Ubuntu or Debian or FreeBSD and when the gnome scaling value has been found
- 
+
  Ubuntu:
  Change the gnome scaling factor with:
  System Settings ==> Displays ==> Scale for menu and title bars
@@ -1255,10 +1064,10 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
  gsettings get com.ubuntu.user-interface scale-factor
  Example value: {'VGA-0': 10}
  Its type is "a{si}". This value should be divided by 8 to get the correct scaling factor.
- 
+
  In Ubuntu 18, file $HOME/.config/monitors.xml contains the gnome scaling factor value,
  and FLTK reads that.
- 
+
  Debian or FreeBSD :
  Change the gnome scaling factor with:
  Tweak tools ==> Windows ==> Window scaling
@@ -1266,19 +1075,19 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
  gsettings get org.gnome.settings-daemon.plugins.xsettings overrides
  Example value: {'Gdk/WindowScalingFactor': <2>}
  Its type is "a{sv}" and v itself is of type i
- 
+
  It's also possible to use 'Tweak tools' under Ubuntu. With the standard Ubuntu desktop,
  the modified value goes to "org.gnome.settings-daemon.plugins.xsettings" as above.
- 
+
  With Gnome session flashback under Ubuntu  'Tweak tools' puts the scaling value (1 or 2)
  in "org.gnome.desktop.interface scaling-factor".
  Read the current gnome scaling factor with:
  gsettings get org.gnome.desktop.interface scaling-factor
  Its type is "u"
- 
- Thus, under Ubuntu, we read the 3 possible factor values and 
+
+ Thus, under Ubuntu, we read the 3 possible factor values and
  return the first value different from 1 to get the scaling factor.
- 
+
  =================================================================================================
  Ubuntu | default ubuntu desktop | System Settings => Displays => Scale for menu and title bars
                                               com.ubuntu.user-interface scale-factor
@@ -1303,12 +1112,12 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
   void *gobj = dlopen("libgobject-2.0.so", RTLD_LAZY);
   //fprintf(stderr,"glib=%p gio=%p gobj=%p\n",glib,gio,gobj);
   if (!glib || !gio || !gobj) return false;
-  
+
   // define pters to used functions and variables
   g_settings_list_schemas_ftype g_settings_list_schemas_f = (g_settings_list_schemas_ftype)dlsym(gio, "g_settings_list_schemas"); // 2.26
   g_settings_new_f = (g_settings_new_ftype)dlsym(gio, "g_settings_new"); // 2.26
   g_settings_get_value_f =
-		(g_settings_get_value_ftype)dlsym(gio, "g_settings_get_value"); // 2.26
+                (g_settings_get_value_ftype)dlsym(gio, "g_settings_get_value"); // 2.26
   if (!g_settings_list_schemas_f || !g_settings_new_f || !g_settings_get_value_f) return false;
   g_variant_get_ftype g_variant_get_f = (g_variant_get_ftype)dlsym(glib, "g_variant_get"); //2.24
   g_variant_iter_loop_ftype g_variant_iter_loop_f = (g_variant_iter_loop_ftype)dlsym(glib, "g_variant_iter_loop"); // 2.24
@@ -1320,7 +1129,7 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
   //g_variant_get_type_ftype g_variant_get_type_f = (g_variant_get_type_ftype)dlsym(glib, "g_variant_get_type"); // 2.24
   const unsigned *glib_major_version = (const unsigned *)dlsym(glib, "glib_major_version");
   const unsigned *glib_minor_version = (const unsigned *)dlsym(glib, "glib_minor_version");
-  
+
   // call dynamic lib functions
   if (*glib_major_version * 1000 + *glib_minor_version < 2036) {
     typedef void (*init_ftype)(void);
@@ -1331,7 +1140,7 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
   float ubuntu_f = 1, ubuntu_desktop_f = 1, gnome_f = 1;
   bool found = false;
   void *gvar;
-  
+
   bool ubuntu = false;
   // determine whether we run Ubuntu
   char line[400] = "";
@@ -1341,7 +1150,7 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
     fclose(in);
     if (s && strstr(line, "Ubuntu")) ubuntu = true;
   }
-  
+
   if (ubuntu) {
     gvar = value_of_key_in_schema(known, "com.ubuntu.user-interface", "scale-factor");
     if (gvar) {
@@ -1419,7 +1228,3 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
 }
 
 #endif // USE_XFT
-
-//
-// End of "$Id$".
-//

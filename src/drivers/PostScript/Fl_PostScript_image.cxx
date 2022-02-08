@@ -1,33 +1,72 @@
 //
-// "$Id$"
-//
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
 #if !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-
 #include <FL/Fl_PostScript.H>
+#include "Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
+#include <stdlib.h>  // abs(int)
+#include <string.h>  // memcpy()
 
+#if ! USE_PANGO
+#include <stdio.h>   // fprintf()
+#endif
+
+struct callback_data {
+  const uchar *data;
+  int D, LD;
+};
+
+static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
+  struct callback_data *cb_data;
+  const uchar *curdata;
+
+  cb_data = (struct callback_data*)data;
+  int last = x+w;
+  const size_t aD = abs(cb_data->D);
+  curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
+  for (; x<last; x++) {
+    memcpy(buf, curdata, aD);
+    buf += aD;
+    curdata += cb_data->D;
+  }
+}
+
+void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
+  if (abs(D)<3){ //mono
+    draw_image_mono(data, ix, iy, iw, ih, D, LD);
+    return;
+  }
+
+  struct callback_data cb_data;
+
+  if (!LD) LD = iw*abs(D);
+  if (D<0) data += iw*abs(D);
+  cb_data.data = data;
+  cb_data.D = D;
+  cb_data.LD = LD;
+
+  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
+}
+
+#if ! USE_PANGO
 
 //
 // Implementation of the /ASCII85Encode PostScript filter
@@ -76,7 +115,7 @@ void Fl_PostScript_Graphics_Driver::write85(void *data, const uchar *p, int len)
   const uchar *last = p + len;
   while (p < last) {
     int c = 4 - big->l4;
-    if (last-p < c) c = last-p;
+    if (last-p < c) c = int(last-p);
     memcpy(big->bytes4 + big->l4, p, c);
     p += c;
     big->l4 += c;
@@ -191,7 +230,7 @@ void Fl_PostScript_Graphics_Driver::close_rle85(void *data) // stop doing RLE+AS
 // End of implementation of the /RunLengthEncode + /ASCII85Encode PostScript filter
 //
 
- 
+
 int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, int D, int LD){
 
   mask = 0;
@@ -347,41 +386,6 @@ static inline uchar swap_byte(const uchar b) {
   return (swapped[b & 0xF] << 4) | swapped[b >> 4];
 }
 
-
-struct callback_data {
-  const uchar *data;
-  int D, LD;
-};
-
-
-static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
-  struct callback_data *cb_data;
-  const uchar *curdata;
-
-  cb_data = (struct callback_data*)data;
-  curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
-
-  memcpy(buf, curdata, w*cb_data->D);
-}
-
-
-void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
-  if (D<3){ //mono
-    draw_image_mono(data, ix, iy, iw, ih, D, LD);
-    return;
-  }
-
-  struct callback_data cb_data;
-
-  if (!LD) LD = iw*D;
-
-  cb_data.data = data;
-  cb_data.D = D;
-  cb_data.LD = LD;
-
-  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, D);
-}
-
 void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D) {
   double x = ix, y = iy, w = iw, h = ih;
 
@@ -405,12 +409,12 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
   } else {
     fprintf(output , "%g %g %g %g %i %i CI", x , y+h , w , -h , iw , ih);
   }
-  
-  int LD=iw*D;
+
+  int LD=iw*abs(D);
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
   void *big = prepare_rle85();
-  
+
   if (level2_mask) {
     for (j = ih - 1; j >= 0; j--) { // output full image data
       call(data, 0, j, iw, rgbdata);
@@ -448,19 +452,19 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
         uchar r = curdata[0];
         uchar g =  curdata[1];
         uchar b =  curdata[2];
-        
-        if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
+
+        if (lang_level_<3 && abs(D)>3) { //can do  mixing using bg_* colors)
           unsigned int a2 = curdata[3]; //must be int
           unsigned int a = 255-a2;
           r = (a2 * r + bg_r * a)/255;
           g = (a2 * g + bg_g * a)/255;
           b = (a2 * b + bg_b * a)/255;
         }
-        
+
         write_rle85(r, big); write_rle85(g, big); write_rle85(b, big);
         curdata +=D;
       }
-      
+
     }
   }
   close_rle85(big);
@@ -489,7 +493,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
     fprintf(output , "%g %g %g %g %i %i GI", x , y+h , w , -h , iw , ih);
 
 
-  if (!LD) LD = iw*D;
+  if (!LD) LD = iw*abs(D);
 
 
   int bg = (bg_r + bg_g + bg_b)/3;
@@ -508,7 +512,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
     const uchar *curdata=data+j*LD;
     for (i=0 ; i<iw ; i++) {
       uchar r = curdata[0];
-      if (lang_level_<3 && D>1) { //can do  mixing
+      if (lang_level_<3 && abs(D)>1) { //can do  mixing
 
         unsigned int a2 = curdata[1]; //must be int
         unsigned int a = 255-a2;
@@ -630,8 +634,6 @@ int Fl_PostScript_Graphics_Driver::scale_for_image_(Fl_Image *img, int XP, int Y
   return 0;
 }
 
-#endif // !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
+#endif // USE_PANGO
 
-//
-// End of "$Id$"
-//
+#endif // !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)

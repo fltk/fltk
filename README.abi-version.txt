@@ -12,13 +12,13 @@ Since FLTK 1.3.1 the FLTK team began to introduce ABI-breaking features
 wrapped in so-called ABI guards in the library code, e.g.
 
     #if FL_ABI_VERSION >= 10401
-	... new, ABI breaking code ...
+        ... new, ABI breaking code ...
     #else
-	... old, ABI preserving code ...
+        ... old, ABI preserving code ...
     #endif
 
-  Note:	In FLTK 1.3.x this preprocessor macro was named FLTK_ABI_VERSION.
-	In FLTK 1.4.0 FLTK_ABI_VERSION was renamed to FL_ABI_VERSION.
+  Note: In FLTK 1.3.x this preprocessor macro was named FLTK_ABI_VERSION.
+        In FLTK 1.4.0 FLTK_ABI_VERSION was renamed to FL_ABI_VERSION.
 
 This documentation is written for FLTK 1.4.x, but it applies to all later
 versions as well. Replace the version numbers given here with the version
@@ -40,7 +40,7 @@ and '1' is the major version number.
 The default ABI version for all FLTK 1.4.x versions is 10400 (the binary
 version of FLTK 1.4.0), but you can configure another version, e.g.
 10401 for FLTK 1.4.1 to enable the ABI features of FLTK 1.4.1 and all
-previous versions. See CHANGES file.
+previous versions. See CHANGES.txt file.
 
 
 Depending on how you build FLTK, there are two different ways to configure
@@ -53,11 +53,11 @@ the version number.
 ----------------------------------------------------------
 
     Run
-	make clean
-	./configure --with-abiversion=10401
-	make
+        make clean
+        ./configure --with-abiversion=10401
+        make
 
-    This will generate FL/abi-version.h and build FLTK as usual.
+    This will generate FL/fl_config.h and build FLTK as usual.
 
     Note: you should always make sure that you compile everything from
     scratch if you change the ABI version or any other configuration
@@ -72,11 +72,11 @@ the version number.
     ABI version, use ccmake, cmake-gui, or run cmake with the following
     command:
 
-	cmake -D OPTION_ABI_VERSION:STRING=10401 /path/to/fltk
+        cmake -D OPTION_ABI_VERSION:STRING=10401 /path/to/fltk
 
     Then execute
 
-	make
+        make
 
     You can define OPTION_ABI_VERSION to the required version number using
     one of the graphical CMake tools.
@@ -110,7 +110,7 @@ the version number.
 General note on CMake:
 ----------------------
 
-    CMake generates FL/abi-version.h in the build tree. You may run
+    CMake generates FL/fl_config.h in the build tree. You may run
     'make install' to install the FLTK library including all headers in
     the chosen installation directory, although this is not necessary.
 

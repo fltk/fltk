@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,19 +7,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
 
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <math.h>
 
 
 /**
@@ -45,6 +41,19 @@ void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(gc_, rect);
   if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+}
+
+void Fl_Quartz_Graphics_Driver::focus_rect(int x, int y, int w, int h)
+{
+  CGContextSaveGState(gc_);
+  float s = scale();
+  CGContextScaleCTM(gc_, 1/s, 1/s);
+  CGFloat lw = (s >= 1 ? floor(s) : 1);
+  CGContextSetLineWidth(gc_, lw);
+  CGFloat dots[2] = {lw, lw};
+  CGContextSetLineDash(gc_, 0, dots, 2);
+  CGContextStrokeRect(gc_, CGRectMake(x*s, y*s, (w-1)*s, (h-1)*s));
+  CGContextRestoreGState(gc_);
 }
 
 void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -299,10 +308,3 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
     }
   }
 }
-
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-//	Demonstrate Fl_Tree custom item draw callback. - erco 11/09/2013
+//      Demonstrate Fl_Tree custom item draw callback. - erco 11/09/2013
 //
 // Copyright 2013 Greg Ercolano.
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -10,14 +8,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <stdio.h>
-#include <time.h>		/* ctime.. */
+#include <time.h>               /* ctime.. */
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tree.H>
@@ -69,12 +67,12 @@ public:
     //
     // Our item's label dimensions
     int X = label_x(), Y = label_y(),
-        W = label_w(), H = label_h(); 
+        W = label_w(), H = label_h();
     // Render background
     if ( render ) {
-      if ( is_selected() ) {			// Selected? Use selectbox() style
+      if ( is_selected() ) {                    // Selected? Use selectbox() style
         fl_draw_box(prefs().selectbox(),X,Y,W,H,bg);
-      } else {					// Not Selected? use plain filled rectangle
+      } else {                                  // Not Selected? use plain filled rectangle
         fl_color(bg); fl_rectf(X,Y,W,H);
       }
     }
@@ -96,25 +94,25 @@ public:
     }
     X += 35;
     // Render the date and time, one over the other
-    fl_font(labelfont(), 8);			// small font
+    fl_font(labelfont(), 8);                    // small font
     fl_color(fg);
     const struct tm *tm = GetTimeStruct();
     char s[80];
     sprintf(s, "Date: %02d/%02d/%02d", tm->tm_mon+1, tm->tm_mday, tm->tm_year % 100);
-    lw=0, lh=0; fl_measure(s, lw, lh);		// get box around text (including white space)
+    lw=0, lh=0; fl_measure(s, lw, lh);          // get box around text (including white space)
     if ( render ) fl_draw(s, X,Y+4,W,H, FL_ALIGN_LEFT|FL_ALIGN_TOP);
     sprintf(s, "Time: %02d:%02d:%02d", tm->tm_hour, tm->tm_min, tm->tm_sec);
     if ( render ) fl_draw(s, X,Y+H/2,W,H/2, FL_ALIGN_LEFT|FL_ALIGN_TOP);
     int lw2=0, lh2=0; fl_measure(s, lw2, lh2);
     X += MAX(lw, lw2);
-    return X;			// return right most edge of what we've rendered
+    return X;                   // return right most edge of what we've rendered
   }
 };
 
 // TIMER TO HANDLE DYNAMIC CONTENT IN THE TREE
 void Timer_CB(void *data) {
   Fl_Tree *tree = (Fl_Tree*)data;
-  tree->redraw();	// keeps time updated
+  tree->redraw();       // keeps time updated
   Fl::repeat_timeout(0.2, Timer_CB, data);
 }
 
@@ -125,8 +123,8 @@ int main(int argc, char *argv[]) {
   {
     // Create the tree
     Fl_Tree *tree = new Fl_Tree(0, 0, win->w(), win->h());
-    tree->showroot(0);				// don't show root of tree
-    tree->selectmode(FL_TREE_SELECT_MULTI);	// multiselect
+    tree->showroot(0);                          // don't show root of tree
+    tree->selectmode(FL_TREE_SELECT_MULTI);     // multiselect
 
     // Add some items
     tree->add("Flintstones/Fred");
@@ -134,11 +132,11 @@ int main(int argc, char *argv[]) {
     tree->add("Flintstones/Pebbles");
     {
       MyTimeItem *myitem;
-      myitem = new MyTimeItem(tree, "Local");	// create custom item
+      myitem = new MyTimeItem(tree, "Local");   // create custom item
       myitem->labelsize(20);
       tree->add("Time Add Item/Local", myitem);
 
-      myitem = new MyTimeItem(tree, "GMT");	// create custom item
+      myitem = new MyTimeItem(tree, "GMT");     // create custom item
       myitem->labelsize(20);
       tree->add("Time Add Item/GMT", myitem);
     }
@@ -148,15 +146,15 @@ int main(int argc, char *argv[]) {
       MyTimeItem *myitem;
       item = tree->add("Time Replace Item/Local Time");
       // Replace the 'Local' item with our own
-      myitem = new MyTimeItem(tree, "Local");	// create custom item
+      myitem = new MyTimeItem(tree, "Local");   // create custom item
       myitem->labelsize(20);
-      item->replace(myitem);			// replace normal item with custom
+      item->replace(myitem);                    // replace normal item with custom
 
       item = tree->add("Time Replace Item/GMT Time");
       // Replace the 'GMT' item with our own
-      myitem = new MyTimeItem(tree, "GMT");	// create custom item
+      myitem = new MyTimeItem(tree, "GMT");     // create custom item
       myitem->labelsize(20);
-      item->replace(myitem);			// replace normal item with custom
+      item->replace(myitem);                    // replace normal item with custom
     }
     tree->add("Superjail/Warden");
     tree->add("Superjail/Jared");
@@ -176,7 +174,3 @@ int main(int argc, char *argv[]) {
   win->show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

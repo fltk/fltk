@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Printing support for Windows for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
@@ -72,12 +70,12 @@ Fl_WinAPI_Printer_Driver::~Fl_WinAPI_Printer_Driver(void) {
 static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 {
   if ( !prHDC ) return;
-  
+
   fl_window = 0;
   SetGraphicsMode(prHDC, GM_ADVANCED); // to allow for rotations
   SetMapMode(prHDC, MM_ANISOTROPIC);
   SetTextAlign(prHDC, TA_BASELINE|TA_LEFT);
-  SetBkMode(prHDC, TRANSPARENT);	
+  SetBkMode(prHDC, TRANSPARENT);
   // this matches 720 logical units to the number of device units in 10 inches of paper
   // thus the logical unit is the point (= 1/72 inch)
   SetWindowExtEx(prHDC, 720, 720, NULL);
@@ -92,7 +90,7 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
   DOCINFO     di;
   char        docName [256];
   int err = 0;
-  
+
   abortPrint = FALSE;
   memset (&pd, 0, sizeof (PRINTDLG));
   pd.lStructSize = sizeof (PRINTDLG);
@@ -154,19 +152,17 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
     y_offset = 0;
     WIN_SetupPrinterDeviceContext (hPr);
     driver()->gc(hPr);
-    this->set_current();
   }
   return err;
 }
 
 void Fl_WinAPI_Printer_Driver::end_job (void)
 {
-  Fl_Display_Device::display_device()->set_current();
   if (hPr != NULL) {
     if (! abortPrint) {
       prerr = EndDoc (hPr);
       if (prerr < 0) {
-	fl_alert ("EndDoc error %d", prerr);
+        fl_alert ("EndDoc error %d", prerr);
       }
     }
     DeleteDC (hPr);
@@ -184,14 +180,14 @@ void Fl_WinAPI_Printer_Driver::absolute_printable_rect(int *x, int *y, int *w, i
 {
   POINT         physPageSize;
   POINT         pixelsPerInch;
-  XFORM		transform;
-    
+  XFORM         transform;
+
   if (hPr == NULL) return;
   HDC gc = (HDC)driver()->gc();
   GetWorldTransform(gc, &transform);
   ModifyWorldTransform(gc, NULL, MWT_IDENTITY);
   SetWindowOrgEx(gc, 0, 0, NULL);
-  
+
   physPageSize.x = GetDeviceCaps(hPr, HORZRES);
   physPageSize.y = GetDeviceCaps(hPr, VERTRES);
   DPtoLP(hPr, &physPageSize, 1);
@@ -204,7 +200,7 @@ void Fl_WinAPI_Printer_Driver::absolute_printable_rect(int *x, int *y, int *w, i
   *w -= (pixelsPerInch.x / 2);
   top_margin = (pixelsPerInch.y / 4);
   *h -= (pixelsPerInch.y / 2);
-  
+
   *x = left_margin;
   *y = top_margin;
   origin(x_offset, y_offset);
@@ -231,9 +227,10 @@ int Fl_WinAPI_Printer_Driver::printable_rect(int *w, int *h)
 int Fl_WinAPI_Printer_Driver::begin_page (void)
 {
   int  rsult, w, h;
-  
+
   rsult = 0;
   if (hPr != NULL) {
+    Fl_Surface_Device::push_current(this);
     WIN_SetupPrinterDeviceContext (hPr);
     prerr = StartPage (hPr);
     if (prerr < 0) {
@@ -279,9 +276,10 @@ void Fl_WinAPI_Printer_Driver::rotate (float rot_angle)
 int Fl_WinAPI_Printer_Driver::end_page (void)
 {
   int  rsult;
-  
+
   rsult = 0;
   if (hPr != NULL) {
+    Fl_Surface_Device::pop_current();
     prerr = EndPage (hPr);
     if (prerr < 0) {
       abortPrint = TRUE;
@@ -332,7 +330,3 @@ void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }
-
-//
-// End of "$Id$".
-//

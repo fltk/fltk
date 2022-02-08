@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Rect header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,17 +7,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Rect_H
 #define Fl_Rect_H
 
-#include <FL/Fl_Widget.H>	// for c'tor based on Fl_Widget
+#include <FL/Fl_Widget.H>       // for c'tor based on Fl_Widget
 
 /**
   Rectangle with standard FLTK coordinates (X, Y, W, H).
@@ -60,10 +58,10 @@ public:
   Fl_Rect (const Fl_Widget* const widget)
           : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
 
-  int x() const { return x_; }		///< gets the x coordinate (left edge)
-  int y() const { return y_; }		///< gets the y coordinate (top edge)
-  int w() const { return w_; }		///< gets the width
-  int h() const { return h_; }		///< gets the height
+  int x() const { return x_; }          ///< gets the x coordinate (left edge)
+  int y() const { return y_; }          ///< gets the y coordinate (top edge)
+  int w() const { return w_; }          ///< gets the width
+  int h() const { return h_; }          ///< gets the height
 
   /** gets the right edge (x + w).
     \note r() and b() are coordinates \b outside the area of the rectangle.
@@ -74,15 +72,11 @@ public:
   */
   int b() const { return y_ + h_; }
 
-  void x(int X) { x_ = X; }		///< sets the x coordinate (left edge)
-  void y(int Y) { y_ = Y; }		///< sets the y coordinate (top edge)
-  void w(int W) { w_ = W; }		///< sets the width
-  void h(int H) { h_ = H; }		///< sets the height
+  void x(int X) { x_ = X; }             ///< sets the x coordinate (left edge)
+  void y(int Y) { y_ = Y; }             ///< sets the y coordinate (top edge)
+  void w(int W) { w_ = W; }             ///< sets the width
+  void h(int H) { h_ = H; }             ///< sets the height
 
 }; // class Fl_Rect
 
 #endif // Fl_Rect_H
-
-//
-// End of "$Id$".
-//

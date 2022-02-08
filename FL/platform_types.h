@@ -1,17 +1,15 @@
 /*
- * "$Id$"
- *
  * Copyright 2016-2018 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /** \file
@@ -48,6 +46,8 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 #ifndef FL_PLATFORM_TYPES_H
 #define FL_PLATFORM_TYPES_H
 
+#include <FL/fl_config.h>
+
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
   Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
@@ -69,12 +69,6 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 # include <stdint.h>
 #endif
 
-typedef intptr_t fl_intptr_t;
-typedef uintptr_t fl_uintptr_t;
-
-#elif defined(__ANDROID__)
-
-#include <sys/stat.h>
 typedef intptr_t fl_intptr_t;
 typedef uintptr_t fl_uintptr_t;
 
@@ -101,8 +95,8 @@ typedef int FL_SOCKET;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
-#  define FL_COMMAND	FL_META
-#  define FL_CONTROL 	FL_CTRL
+#  define FL_COMMAND    FL_META
+#  define FL_CONTROL    FL_CTRL
 
 #elif defined(_WIN32)
 typedef struct HBITMAP__ *HBITMAP;
@@ -110,7 +104,7 @@ typedef HBITMAP Fl_Offscreen;
 typedef HBITMAP Fl_Bitmask;
 typedef struct HRGN__ *Fl_Region;
 # if defined(_WIN64) && defined(_MSC_VER)
-typedef  unsigned __int64 FL_SOCKET;	/* *FIXME* - FL_SOCKET (see above) */
+typedef  unsigned __int64 FL_SOCKET;    /* *FIXME* - FL_SOCKET (see above) */
 # else
 typedef  int FL_SOCKET;
 # endif
@@ -122,23 +116,7 @@ typedef struct HGLRC__ *GLContext;
    struct dirent {char d_name[1];};
 #endif
 
-#elif defined(__ANDROID__)
-
-#ifdef __cplusplus
-typedef class Fl_Rect_Region *Fl_Region;
-#else
-typedef struct Fl_Rect_Region *Fl_Region;
-#endif
-
-// TODO: the types below have not yet been ported
-typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
-typedef int FL_SOCKET;
-typedef struct __GLXcontextRec *GLContext;
-#include <sys/types.h>
-#include <dirent.h>
-
-#else /* X11 */
+#elif defined(FLTK_USE_X11)
 
 typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
@@ -153,14 +131,10 @@ typedef struct __GLXcontextRec *GLContext;
 
 
 #ifndef __APPLE__
-#  define FL_COMMAND	FL_CTRL   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
-#  define FL_CONTROL	FL_META   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
+#  define FL_COMMAND    FL_CTRL   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
+#  define FL_CONTROL    FL_META   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
 #endif
 
 #endif /* FL_PLATFORM_TYPES_H */
 
 #endif // FL_DOXYGEN
-
-/*
- * End of "$Id$".
- */

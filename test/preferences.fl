@@ -1,5 +1,10 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0400
+i18n_type 1
+i18n_include {<libintl.h>}
+i18n_conditional FLTK_GETTEXT_FOUND
+i18n_function gettext
+i18n_static_function gettext_noop
 header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local
@@ -40,12 +45,12 @@ Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type v
 Fl::delete_widget(myWindow);} {}
 }
 
-Function {} {open return_type int
+Function {} {open selected return_type int
 } {
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {408 202 298 311} type Double hide
+    xywh {585 277 298 311} type Double hide
   } {
     Fl_Button {} {
       label Cancel
@@ -201,10 +206,32 @@ int intValue;
 char buffer[80];
 double doubleValue;
 
-Fl_Preferences app( Fl_Preferences::USER, project, application );
+char path[ FL_PATH_MAX ];
+Fl_Preferences::Root root = 
+  Fl_Preferences::filename(path, FL_PATH_MAX, Fl_Preferences::USER_L, project, application);
+if (root == Fl_Preferences::UNKNOWN_ROOT_TYPE) {
+  printf("Location of future Preferences file not found.\\n");
+} else {
+  printf("Preferences file will be located at:\\n%s\\n", path);
+}
 
-  char path[ FL_PATH_MAX ];
-  app.getUserdataPath( path, sizeof(path) );
+Fl_Preferences app( Fl_Preferences::USER_L, project, application );
+
+  root = app.filename(path, FL_PATH_MAX);
+  if (root == Fl_Preferences::UNKNOWN_ROOT_TYPE) {
+    printf("Location of app Preferences file not found.\\n");
+  } else if (root == Fl_Preferences::MEMORY) {
+    printf("App Preferences are memory mapped.\\n");
+  } else {
+    printf("App Preferences file is actually located at:\\n%s\\n", path);
+  }
+  
+  app.getUserdataPath( path, sizeof(path) );  
+  if (path[0]) {
+    printf("Preferences user data directory is located at:\\n%s\\n", path);
+  } else {
+    printf("Location of Preferences user data directory not found.\\n");
+  }
 
   Fl_Preferences bed( app, "Bed" );
     bed.get( "alarm", buffer, "8:00", 79 );
@@ -268,13 +295,12 @@ Fl_Preferences app( Fl_Preferences::USER, project, application );
     eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
     void *data;
     eat.get( "binFoo2", data, 0, 0 );
-  **/} {selected
-  }
+  **/} {}
 }
 
 Function {writePrefs()} {open return_type void
 } {
-  code {Fl_Preferences app( Fl_Preferences::USER, project, application );
+  code {Fl_Preferences app( Fl_Preferences::USER_L, project, application );
 
   Fl_Preferences bed( app, "Bed" );
 

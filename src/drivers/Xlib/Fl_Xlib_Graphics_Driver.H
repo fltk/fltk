@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -59,12 +57,14 @@ private:
   unsigned depth_; // depth of translation stack
   int stack_x_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE]; // translation stack allowing cumulative translations
   int stack_y_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE];
-  int line_delta_;
   virtual void set_current_();
   int clip_max_; // +/- x/y coordinate limit (16-bit coordinate space)
   virtual void draw_fixed(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_fixed(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_fixed(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
+#if USE_PANGO
+  double do_width_unscaled_(const char *str, int n);
+#endif
 protected:
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
@@ -72,7 +72,7 @@ protected:
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 #if HAVE_XRENDER
   virtual void draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
-  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP);
+  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP);
 #endif
   virtual int height_unscaled();
   virtual int descent_unscaled();
@@ -84,6 +84,9 @@ protected:
   static PangoContext *pctxt_;
   static PangoFontMap *pfmap_;
   static PangoLayout *playout_;
+public:
+  virtual PangoFontDescription* pango_font_description(Fl_Font fnum) { return pfd_array[fnum]; }
+private:
   static PangoFontDescription **pfd_array; // one array element for each Fl_Font
   static int pfd_array_length;
   void do_draw(int from_right, const char *str, int n, int x, int y);
@@ -93,7 +96,6 @@ protected:
   static GC gc_;
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
 #if USE_XFT
@@ -115,6 +117,7 @@ public:
 #if USE_XFT
   static void destroy_xft_draw(Window id);
 #endif
+  static int fl_overlay;
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
@@ -138,18 +141,18 @@ public:
 protected:
   virtual void transformed_vertex0(float x, float y);
   void fixloop();
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
-  virtual void point_unscaled(float x, float y);
-  virtual void rect_unscaled(float x, float y, float w, float h);
-  virtual void rectf_unscaled(float x, float y, float w, float h);
-  virtual void line_unscaled(float x, float y, float x1, float y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void yxline_unscaled(float x, float y, float y1);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void focus_rect(int x, int y, int w, int h);
+  virtual void rectf_unscaled(int x, int y, int w, int h);
+  virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+  virtual void line_unscaled(int x, int y, int x1, int y1);
+  virtual void xyline_unscaled(int x, int y, int x1);
+  virtual void *change_pen_width(int lwidth);
+  virtual void reset_pen_width(void *data);
+  virtual void yxline_unscaled(int x, int y, int y1);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 
   // Scaling and clipping stuff for internal usage.
   // Currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
@@ -186,7 +189,6 @@ protected:
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void restore_clip();
-  void begin_complex_polygon();
   void end_points();
   void end_line();
   void end_loop();
@@ -194,10 +196,9 @@ protected:
   void end_complex_polygon();
   void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void line_style_unscaled(int style, float width, char* dashes);
+  virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void pie_unscaled(int x, int y, int w, int h, double a1, double a2);
+  virtual void line_style_unscaled(int style, int width, char* dashes);
   void color(Fl_Color c);
   void set_color(Fl_Color i, unsigned int c);
   void free_color(Fl_Color i, int overlay);
@@ -207,6 +208,7 @@ protected:
   virtual float scale_bitmap_for_PostScript();
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
+  virtual void set_status(int X, int Y, int W, int H);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
 #if !USE_XFT
@@ -218,7 +220,3 @@ protected:
 };
 
 #endif // FL_XLIB_GRAPHICS_DRIVER_H
-
-//
-// End of "$Id$".
-//

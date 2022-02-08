@@ -1,23 +1,21 @@
 //
-// "$Id$"
-//
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // The Fl_Window is a window in the fltk library.
-// This is the system-independent portions.  The huge amount of 
+// This is the system-independent portions.  The huge amount of
 // crap you need to do to communicate with X is in Fl_x.cxx, the
 // equivalent (but totally different) crap for Windows is in Fl_win32.cxx
 
@@ -30,6 +28,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string_functions.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -101,7 +100,7 @@ Fl_Window::~Fl_Window() {
     This will return sub-windows if there are any, or the parent window if there's no sub-windows.
     If this widget IS the top-level window, NULL is returned.
     \retval  NULL if no window is associated with this widget.
-    \note for an Fl_Window widget, this returns its <I>parent</I> window 
+    \note for an Fl_Window widget, this returns its <I>parent</I> window
           (if any), not <I>this</I> window.
     \see top_window()
 */
@@ -119,8 +118,8 @@ Fl_Window *Fl_Widget::window() const {
 */
 Fl_Window *Fl_Widget::top_window() const {
   const Fl_Widget *w = this;
-  while (w->parent()) { w = w->parent(); }		// walk up the widget hierarchy to top-level item
-  return const_cast<Fl_Widget*>(w)->as_window();	// return if window, or NULL if not
+  while (w->parent()) { w = w->parent(); }              // walk up the widget hierarchy to top-level item
+  return const_cast<Fl_Widget*>(w)->as_window();        // return if window, or NULL if not
 }
 
 /**
@@ -132,11 +131,11 @@ Fl_Window* Fl_Widget::top_window_offset(int& xoff, int& yoff) const {
   xoff = yoff = 0;
   const Fl_Widget *w = this;
   while (w && w->window()) {
-    xoff += w->x();			// accumulate offsets
+    xoff += w->x();                     // accumulate offsets
     yoff += w->y();
-    w = w->window();			// walk up window hierarchy
+    w = w->window();                    // walk up window hierarchy
   }
-  return const_cast<Fl_Widget*>(w)->as_window();
+  return w ? const_cast<Fl_Widget*>(w)->as_window() : NULL;
 }
 
 /** Gets the x position of the window on the screen */
@@ -153,17 +152,17 @@ int Fl_Window::y_root() const {
 }
 
 void Fl_Window::label(const char *name) {
-  label(name, iconlabel());	// platform dependent
+  label(name, iconlabel());     // platform dependent
 }
 
 /** Sets the window titlebar label to a copy of a character string */
 void Fl_Window::copy_label(const char *a) {
   Fl_Widget::copy_label(a);
-  label(label(), iconlabel());	// platform dependent
+  label(label(), iconlabel());  // platform dependent
 }
 
 void Fl_Window::iconlabel(const char *iname) {
-  label(label(), iname);	// platform dependent
+  label(label(), iname);        // platform dependent
 }
 
 // the Fl::atclose pointer is provided for back compatibility.  You
@@ -227,7 +226,7 @@ void Fl_Window::default_xclass(const char *xc)
     default_xclass_ = 0L;
   }
   if (xc) {
-    default_xclass_ = strdup(xc);
+    default_xclass_ = fl_strdup(xc);
   }
 }
 
@@ -255,14 +254,14 @@ void Fl_Window::default_xclass(const char *xc)
 
   \see Fl_Window::default_xclass(const char *)
 */
-void Fl_Window::xclass(const char *xc) 
+void Fl_Window::xclass(const char *xc)
 {
   if (xclass_) {
     free(xclass_);
     xclass_ = 0L;
   }
   if (xc) {
-    xclass_ = strdup(xc);
+    xclass_ = fl_strdup(xc);
     if (!default_xclass_) {
       default_xclass(xc);
     }
@@ -333,6 +332,9 @@ void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
   If a window icon has not been set for a particular window, then the
   default window icon (see links below) or the system default icon will
   be used.
+
+  This method makes an internal copy of the \p icon pixel buffer,
+  so once set, the Fl_RGB_Image instance can be freed by the caller.
 
   \param[in] icon icon for this window, NULL to reset window icon.
 
@@ -497,7 +499,7 @@ void Fl_Window::draw()
   //   Other windows do not draw their labels at all, unless drawn by their
   //   parent widgets or by special draw() methods (derived classes).
 
-  if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
+  if (damage() & ~FL_DAMAGE_CHILD) {     // draw the entire thing
     draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
 
     if (image() && (align() & FL_ALIGN_INSIDE)) { // draw the image only
@@ -514,7 +516,7 @@ void Fl_Window::draw()
 
   pWindowDriver->draw_end();
   if (!to_display) current_ = save_current;
-# if defined(FLTK_USE_CAIRO)
+# if defined(FLTK_HAVE_CAIROEXT)
   Fl::cairo_make_current(this); // checkout if an update is necessary
 # endif
 }
@@ -587,44 +589,48 @@ int Fl_Window::handle(int ev)
         break;
     }
   }
-  
+
   return Fl_Group::handle(ev);
 }
 
 /**
- Sets the allowable range the user can resize this window to.
- This only works for top-level windows.
+  Sets the allowable range the user can resize this window to.
+  This only works for top-level windows.
 
- If this function is not called, FLTK tries to figure out the range
- from the setting of resizable():
- <UL>
- <LI>If resizable() is NULL (this is the  default) then the window cannot
-	be resized and the resize border and max-size control will not be
-	displayed for the window.</LI>
- <LI>If either dimension of resizable() is less than 100, then that is
-	considered the minimum size.  Otherwise the resizable() has a minimum
-	size of 100.</LI>
- <LI>If either dimension of resizable() is zero, then that is also the
-	maximum size (so the window cannot resize in that direction).</LI>
- </UL>
- 
- It is undefined what happens if the current size does not fit in the
- constraints passed to size_range().
+  It is undefined what happens if the current window size does not fit
+  in the constraints passed to size_range().
 
- \param[in] minWidth, minHeight The smallest the window can be.
+  If this function is \b not called, FLTK tries to figure out the range
+  from the setting of the window's resizable() widget:
+
+  - If resizable() is NULL (this is the default) then the window cannot
+    be resized and the resize border and max-size control will not be
+    displayed for the window.
+
+  - If either dimension of resizable() is zero, then the minimum size is
+    also the maximum size (so the window cannot resize in that direction).
+
+  - Otherwise the size of the resizable is irrelevant and the window's
+    minimum size is the current size and the maximum size is unlimited
+    like if size_range(w(), h(), 0, 0) was called.
+
+  \param[in] minWidth, minHeight The smallest the window can be.
     Either value must be greater than 0.
- \param[in] maxWidth, maxHeight The largest the window can be. If either is
-    equal to the minimum then you cannot resize in that direction.
+
+  \param[in] maxWidth, maxHeight The largest the window can be. If either
+    is equal to the minimum then you cannot resize in that direction.
     If either is zero then FLTK picks a maximum size in that direction
     such that the window will fill the screen.
- \param[in] deltaX, deltaY These are size increments. The window will be
+
+  \param[in] deltaX, deltaY These are size increments. The window will be
     constrained to widths of <tt>minWidth + N * deltaX</tt>, where N is any
-    non-negative integer. If these are less or equal to 1 they are ignored.
-    (this is ignored on Windows)
- \param[in] aspectRatio A flag that indicates that the window should preserve
+    non-negative integer. If these are less or equal to 1 they are ignored
+    (this is ignored on Windows).
+
+  \param[in] aspectRatio A flag that indicates that the window should preserve
     its aspect ratio. This only works if both the maximum and minimum have
     the same aspect ratio (ignored on Windows and by many X window managers).
- */
+*/
 void Fl_Window::size_range(int minWidth, int minHeight,
                            int maxWidth, int maxHeight,
                            int deltaX, int deltaY, int aspectRatio) {
@@ -643,14 +649,32 @@ int Fl_Window::screen_num() {
   return pWindowDriver->screen_num();
 }
 
+/** Set the number of the screen where to map the window.
+ Call this and set also the window's desired position before show()'ing the window.
+ This can be necessary when a system has several screens with
+ distinct scaling factor values because the window's x() and y() may not suffice to
+ uniquely identify one screen.
+ To see that, consider a system with two screens where the screen at left is A pixel-wide
+ and has a scale factor of 1 whereas the screen at right has a scale factor of 2.
+ For the sake of simplicity, consider only
+ the X coordinates of windows. FLTK coordinates translate directly to pixel coordinates on the
+ left screen, whereas FLTK coordinates multiplied by 2 correspond to pixel coordinates
+ on the right screen. Consequently, FLTK coordinates between A/2 + 1 and A-1 can map to both
+ screens.  Both window coordinates and screen number are necessary to uniquely identify
+ where a window is to be mapped.
+ */
+void Fl_Window::screen_num(int screen_num) {
+  if (!shown() && screen_num >= 0 && screen_num < Fl::screen_count()) pWindowDriver->screen_num(screen_num);
+}
+
 /** Assigns a non-rectangular shape to the window.
  This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.
  An Fl_Image of any dimension can be used as mask; it is rescaled to the window's dimension as needed.
- 
+
  The layout and widgets inside are unaware of the mask shape, and most will act as though the window's
  rectangular bounding box is available
  to them. It is up to you to make sure they adhere to the bounds of their masking shape.
- 
+
  The \p img argument can be an Fl_Bitmap, Fl_Pixmap, Fl_RGB_Image or Fl_Shared_Image:
  \li With Fl_Bitmap or Fl_Pixmap, the shaped window covers the image part where bitmap bits equal one,
  or where the pixmap is not fully transparent.
@@ -659,7 +683,7 @@ int Fl_Window::screen_num() {
  \li With an Fl_RGB_Image of depth 1 (gray-scale) or 3 (RGB), the shaped window covers the non-black image part.
  \li With an Fl_Shared_Image, the shape is determined by rules above applied to the underlying image.
  The shared image should not have been scaled through Fl_Image::scale().
- 
+
  Platform details:
  \li On the unix/linux platform, the SHAPE extension of the X server is required.
  This function does control the shape of Fl_Gl_Window instances.
@@ -671,12 +695,12 @@ int Fl_Window::screen_num() {
  with depths 1 or 3, white and black are in and out of the
  shaped window, respectively, and other colors give intermediate masking scores.
  This function does nothing with class Fl_Gl_Window.
- 
+
  The window borders and caption created by the window system are turned off by default. They
  can be re-enabled by calling Fl_Window::border(1).
- 
+
  A usage example is found at example/shapedwindow.cxx.
- 
+
  \version 1.3.3
  */
 void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
@@ -691,7 +715,3 @@ const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
 
 /** Returns true when a window is being rescaled */
 bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
-
-//
-// End of "$Id$".
-//

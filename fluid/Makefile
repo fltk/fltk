@@ -1,25 +1,24 @@
 #
-# "$Id$"
+# FLUID Makefile for the Fast Light Tool Kit (FLTK).
 #
-# FLUID makefile for the Fast Light Tool Kit (FLTK).
-#
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2021 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 include ../makeinclude
 
 CPPFILES = \
 	CodeEditor.cxx \
+	StyleParse.cxx \
 	Fl_Function_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \
@@ -27,6 +26,7 @@ CPPFILES = \
 	Fl_Widget_Type.cxx \
 	Fl_Window_Type.cxx \
 	Fluid_Image.cxx \
+	Shortcut_Button.cxx \
 	about_panel.cxx \
 	align_widget.cxx \
 	alignment_panel.cxx \
@@ -35,8 +35,11 @@ CPPFILES = \
 	file.cxx \
 	fluid.cxx \
 	function_panel.cxx \
+	pixmaps.cxx \
+	shell_command.cxx \
 	template_panel.cxx \
 	undo.cxx \
+	widget_browser.cxx \
 	widget_panel.cxx
 
 # ExternalCodeEditor: platform specific files
@@ -57,26 +60,28 @@ all:	$(FLUID) fluid$(EXEEXT)
 fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 			$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
-	$(OSX_ONLY) $(RM) -r -f fluid.app/Contents/MacOS
-	$(OSX_ONLY) mkdir fluid.app/Contents/MacOS
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKIMG) $(LDFLAGS) $(LDLIBS)
+	$(OSX_ONLY) $(RM) -r -f fluid.app
+	$(OSX_ONLY) mkdir -p fluid.app/Contents/MacOS fluid.app/Contents/Resources
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL) icons/fluid.icns fluid.app/Contents/Resources
+	$(OSX_ONLY) $(INSTALL) fluid.plist fluid.app/Contents/Info.plist
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDFLAGS) $(LDLIBS)
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bak
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
-	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
+	$(OSX_ONLY) -$(RMDIR) fluid.app
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
-	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u >> makedepend.tmp; )
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
 	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies...
@@ -104,7 +109,6 @@ install-osx:
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents
 	$(INSTALL_DATA) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
-	$(INSTALL_DATA) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
 	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
 	$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
 	$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
@@ -122,20 +126,16 @@ uninstall-linux:
 uninstall-osx:
 	$(RM) -r $(DESTDIR)/Applications/fluid.app
 
-
-#
 # Note: The rebuild target can only be used if you have the original .fl
-#       files.  This is normally only used by the FLTK maintainers...
-#
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	fluid must be rebuilt if any {.fl|.cxx|.h} files were changed.
 
-rebuild:
-	./fluid -u -c about_panel.fl
-	./fluid -u -c alignment_panel.fl
-	./fluid -u -c function_panel.fl
-	./fluid -u -c print_panel.fl
-	./fluid -u -c template_panel.fl
-	./fluid -u -c widget_panel.fl
-
-#
-# End of "$Id$".
-#
+rebuild: fluid$(EXEEXT)
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	./fluid$(EXEEXT) -u -c about_panel.fl
+	./fluid$(EXEEXT) -u -c alignment_panel.fl
+	./fluid$(EXEEXT) -u -c function_panel.fl
+	./fluid$(EXEEXT) -u -c print_panel.fl
+	./fluid$(EXEEXT) -u -c template_panel.fl
+	./fluid$(EXEEXT) -u -c widget_panel.fl

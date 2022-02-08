@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // GIF image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -33,7 +31,10 @@ class FL_EXPORT Fl_GIF_Image : public Fl_Pixmap {
 public:
 
   Fl_GIF_Image(const char* filename);
+  // deprecated constructor w/o length (for backwards compatibility)
   Fl_GIF_Image(const char* imagename, const unsigned char *data);
+  // constructor with length (since 1.4.0)
+  Fl_GIF_Image(const char* imagename, const unsigned char *data, const size_t length);
 
 protected:
 
@@ -42,7 +43,3 @@ protected:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

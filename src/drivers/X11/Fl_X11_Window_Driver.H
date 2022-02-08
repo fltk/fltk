@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -26,7 +24,7 @@
 #define FL_X11_WINDOW_DRIVER_H
 
 #include "../../Fl_Window_Driver.H"
-#include <config.h> // for USE_XDBE
+#include <config.h>
 #include <FL/platform.H> // for Cursor
 class Fl_Bitmap;
 
@@ -35,13 +33,13 @@ class Fl_Bitmap;
 
  There is one window driver for each Fl_Window. Window drivers manage window
  actions such as resizing, events, decoration, fullscreen modes, etc. . All
- drawing and rendering is managed by the Surface device and the associated 
+ drawing and rendering is managed by the Surface device and the associated
  graphics driver.
 
  - window specific event handling
  - window types and styles, depth, etc.
  - decorations
- 
+
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 
@@ -82,11 +80,7 @@ private:
   void flush_double(int erase_overlay);
   void sendxjunk();
   void activate_window();
-#ifdef USE_XDBE
-  char backbuffer_bad;
-  void flush_double_dbe(int erase_overlay);
-#endif
-  
+
 public:
   Fl_X11_Window_Driver(Fl_Window*);
   virtual ~Fl_X11_Window_Driver();
@@ -95,7 +89,7 @@ public:
   virtual int screen_num();
   static void resize_after_screen_change(void *data);
 #endif // USE_XFT
-  
+
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();
@@ -106,12 +100,9 @@ public:
   virtual void take_focus();
   virtual void flush_double();
   virtual void flush_overlay();
-  virtual void flush_menu();
-  virtual void erase_menu();
   virtual void draw_begin();
   virtual void make_current();
   virtual void show();
-  virtual void show_menu();
   virtual void resize(int X,int Y,int W,int H);
   virtual void label(const char *name, const char *mininame);
   virtual void destroy_double_buffer();
@@ -137,14 +128,8 @@ public:
   virtual void free_icons();
   void set_icons(); // driver-internal support function
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  virtual int can_do_overlay();
-  virtual void redraw_overlay();
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
 };
 
 
 #endif // FL_X11_WINDOW_DRIVER_H
-
-//
-// End of "$Id$".
-//

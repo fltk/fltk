@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unicode to UTF-8 conversion functions.
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
@@ -13,9 +11,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -46,7 +44,7 @@ static int Toupper(int ucs) {
 
   if (!table) {
     table = (unsigned short*) malloc(
-	    sizeof(unsigned short) * (NBC));
+            sizeof(unsigned short) * (NBC));
     for (i = 0; i < NBC; i++) {
       table[i] = (unsigned short) i;
     }
@@ -124,8 +122,8 @@ int fl_utf8len1(char c)
 */
 int
 fl_utf_nb_char(
-	const unsigned char 	*buf,
-	int 			len)
+        const unsigned char     *buf,
+        int                     len)
 {
   int i = 0;
   int nbc = 0;
@@ -375,9 +373,9 @@ int fl_open(const char* fname, int oflags, ...) {
 
   \param[in] fname  the UTF-8 encoded filename
   \param[in] binary if non-zero, the file is to be accessed in binary
-		    (a.k.a. untranslated) mode.
+                    (a.k.a. untranslated) mode.
   \param[in] oflags,...  these arguments are as in the standard open() function.
-			 Setting \p oflags to zero opens the file for reading.
+                         Setting \p oflags to zero opens the file for reading.
 
   \return  a file descriptor upon successful completion, or -1 in case of error.
 */
@@ -1359,7 +1357,3 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
 }
 
 /** @} */
-
-//
-// End of "$Id$".
-//

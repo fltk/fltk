@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
 // Menu items are kludged by making a phony Fl_Box widget so the normal
@@ -15,22 +13,35 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl.H>
-#include "Fl_Widget_Type.h"
+#include "Fl_Menu_Type.h"
+
+#include "fluid.h"
+#include "Fl_Window_Type.h"
 #include "alignment_panel.h"
+#include "file.h"
+#include "code.h"
+#include "Fluid_Image.h"
+#include "Shortcut_Button.h"
+
+#include <FL/Fl.H>
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Output.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Multi_Label.H>
 #include "../src/flstring.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -40,16 +51,34 @@ Fl_Menu_Item menu_item_type_menu[] = {
   {"Radio",0,0,(void*)FL_MENU_RADIO},
   {0}};
 
-extern int reading_file;
-extern int force_parent;
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_function;
-extern const char* i18n_file;
-extern const char* i18n_set;
-
 static char submenuflag;
 static uchar menuitemtype = 0;
+
+static void delete_dependents(Fl_Menu_Item *m) {
+  if (!m)
+    return;
+  int level = 0;
+  for (;;m++) {
+    if (m->label()==NULL) {
+      if (level==0) {
+        break;
+      } else {
+        level--;
+      }
+    }
+    if (m->flags&FL_SUBMENU)
+      level++;
+    if (m->labeltype()==FL_MULTI_LABEL)
+      delete (Fl_Multi_Label*)m->label();
+  }
+}
+
+static void delete_menu(Fl_Menu_Item *m) {
+  if (!m)
+    return;
+  delete_dependents(m);
+  delete[] m;
+}
 
 void Fl_Input_Choice_Type::build_menu() {
   Fl_Input_Choice* w = (Fl_Input_Choice*)o;
@@ -61,23 +90,40 @@ void Fl_Input_Choice_Type::build_menu() {
     n++;
   }
   if (!n) {
-    if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+    if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
     w->menu(0);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
     if (menusize<n) {
-      if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+      if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
       menusize = n+10;
       w->menu(new Fl_Menu_Item[menusize]);
+    } else {
+      if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
+    // Menus are already built during the .fl file reading process, so if the
+    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // not be set, and deleting dependants will randomly free memory.
+    // Clearing the array should avoid that.
+    memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
       Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
-      if (i->o->image()) i->o->image()->label(m);
-      else {
+      if (i->o->image()) {
+        if (i->o->label() && i->o->label()[0]) {
+          Fl_Multi_Label *ml = new Fl_Multi_Label;
+          ml->labela = (char*)i->o->image();
+          ml->labelb = i->o->label();
+          ml->typea = FL_IMAGE_LABEL;
+          ml->typeb = FL_NORMAL_LABEL;
+          ml->label(m);
+        } else {
+          i->o->image()->label(m);
+        }
+      } else {
         m->label(i->o->label() ? i->o->label() : "(nolabel)");
         m->labeltype(i->o->labeltype());
       }
@@ -90,7 +136,7 @@ void Fl_Input_Choice_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-	(q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_menu_item()) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -98,8 +144,12 @@ void Fl_Input_Choice_Type::build_menu() {
   o->redraw();
 }
 
-
-Fl_Type *Fl_Menu_Item_Type::make() {
+/**
+ Create and add a new Menu Item node.
+ \param[in] strategy add after current or as last child
+ \return new Menu Item node
+ */
+Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   // Find the current menu item:
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
@@ -120,28 +170,43 @@ Fl_Type *Fl_Menu_Item_Type::make() {
   t->o = new Fl_Button(0,0,100,20);
   t->o->type(menuitemtype);
   t->factory = this;
-  t->add(p);
+  t->add(p, strategy);
   if (!reading_file) t->label(submenuflag ? "submenu" : "item");
   return t;
 }
 
-Fl_Type *Fl_Checkbox_Menu_Item_Type::make() {
+/**
+ Create and add a new Checkbox Menu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Checkbox_Menu_Item_Type::make(Strategy strategy) {
     menuitemtype = FL_MENU_TOGGLE;
-    Fl_Type* t = Fl_Menu_Item_Type::make();
+    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
     menuitemtype = 0;
     return t;
 }
 
-Fl_Type *Fl_Radio_Menu_Item_Type::make() {
+/**
+ Create and add a new Radio ButtonMenu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Radio_Menu_Item_Type::make(Strategy strategy) {
     menuitemtype = FL_MENU_RADIO;
-    Fl_Type* t = Fl_Menu_Item_Type::make();
+    Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
     menuitemtype = 0;
     return t;
 }
 
-Fl_Type *Fl_Submenu_Type::make() {
+/**
+ Create and add a new Submenu Item node.
+ \param[in] strategy add after current or as last child
+ \return new node
+ */
+Fl_Type *Fl_Submenu_Type::make(Strategy strategy) {
   submenuflag = 1;
-  Fl_Type* t = Fl_Menu_Item_Type::make();
+  Fl_Type* t = Fl_Menu_Item_Type::make(strategy);
   submenuflag = 0;
   return t;
 }
@@ -176,9 +241,11 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
   return unique_id(t, "menu", t->name(), t->label());
 }
 
-#include "Fluid_Image.h"
-
 void Fl_Menu_Item_Type::write_static() {
+  if (image && label() && label()[0]) {
+    write_declare("#include <FL/Fl.H>");
+    write_declare("#include <FL/Fl_Multi_Label.H>");
+  }
   if (callback() && is_name(callback()) && !user_defined(callback()))
     write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
                   user_data_type() ? user_data_type() : "void*");
@@ -208,8 +275,9 @@ void Fl_Menu_Item_Type::write_static() {
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_c(", %s", ut);
     if (use_v) write_c(" v");
-    write_c(") {\n  %s", callback());
-    if (*(d-1) != ';') {
+    write_c(") {\n");
+    write_c_indented(callback(), 1, 0);
+    if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;
       else p = callback();
@@ -220,13 +288,13 @@ void Fl_Menu_Item_Type::write_static() {
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      write_c("  ((%s*)(o", k);
+      write_c("%s((%s*)(o", indent(1), k);
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
       if (t && !strcmp(t->type_name(), "Fl_Input_Choice"))
         write_c("->parent()");
-      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent) 
+      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         write_c("->parent()");
       if (!q || strcmp(q->type_name(), "widget_class"))
         write_c("->user_data()");
@@ -244,12 +312,10 @@ void Fl_Menu_Item_Type::write_static() {
   // entire array out:
   const char* k = class_name(1);
   if (k) {
-    int i; 
-    if (i18n_type) write_c("\nunsigned char %s::%s_i18n_done = 0;", k, menu_name(i));
+    int i;
     write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
   } else {
-    int i; 
-    if (i18n_type) write_c("\nunsigned char %s_i18n_done = 0;", menu_name(i));
+    int i;
     write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
   }
   Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
@@ -271,11 +337,11 @@ void Fl_Menu_Item_Type::write_static() {
       if (c) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
-          int i; 
+          int i;
           const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(i);
           write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
         } else {
-          // if the name is an array, only define the array. 
+          // if the name is an array, only define the array.
           // The actual assignment is in write_code1()
           write_c("Fl_Menu_Item* %s::%s;\n", k, c);
         }
@@ -311,16 +377,28 @@ void Fl_Menu_Item_Type::write_item() {
 
   write_comment_inline_c(" ");
   write_c(" {");
-  if (image) write_c("0");
-  else if (label()) write_cstring(label()); // we will call i18n when the widget is instantiated for the first time
-  else write_c("\"\"");
+  if (label() && label()[0])
+    switch (i18n_type) {
+      case 1:
+        // we will call i18n when the menu is instantiated for the first time
+        write_c("%s(", i18n_static_function);
+        write_cstring(label());
+        write_c(")");
+        break;
+      case 2:
+        // fall through: strings can't be translated before a catalog is choosen
+      default:
+        write_cstring(label());
+    }
+  else
+    write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
-		int s = ((Fl_Button*)o)->shortcut();
-		if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-			write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
-		} else {
-			write_c(", 0x%x, ", s);
-		}
+                int s = ((Fl_Button*)o)->shortcut();
+                if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+                        write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
+                } else {
+                        write_c(", 0x%x, ", s);
+                }
   } else
     write_c(", 0, ");
   if (callback()) {
@@ -337,8 +415,16 @@ void Fl_Menu_Item_Type::write_item() {
   else
     write_c(" 0,");
   write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
-	  labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
+          labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
   write_c("},\n");
+}
+
+void start_menu_initialiser(int &initialized, const char *name, int index) {
+  if (!initialized) {
+    initialized = 1;
+    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), name, index);
+    indentation++;
+  }
 }
 
 void Fl_Menu_Item_Type::write_code1() {
@@ -347,10 +433,8 @@ void Fl_Menu_Item_Type::write_code1() {
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      if (i18n_type) write_h("  static unsigned char %s_i18n_done;\n", mname);
-      write_h("  static Fl_Menu_Item %s[];\n", mname);
+      write_h("%sstatic Fl_Menu_Item %s[];\n", indent(1), mname);
     } else {
-      if (i18n_type) write_h("extern unsigned char %s_i18n_done;\n", mname);
       write_h("extern Fl_Menu_Item %s[];\n", mname);
     }
   }
@@ -359,7 +443,7 @@ void Fl_Menu_Item_Type::write_code1() {
   if (c) {
     if (class_name(1)) {
       write_public(public_);
-      write_h("  static Fl_Menu_Item *%s;\n", c);
+      write_h("%sstatic Fl_Menu_Item *%s;\n", indent(1), c);
     } else {
       if (c==name())
         write_h("#define %s (%s+%d)\n", c, mname, i);
@@ -373,32 +457,67 @@ void Fl_Menu_Item_Type::write_code1() {
       const char* cn = callback_name();
       const char* ut = user_data_type() ? user_data_type() : "void*";
       write_public(0);
-      write_h("  inline void %s_i(Fl_Menu_*, %s);\n", cn, ut);
-      write_h("  static void %s(Fl_Menu_*, %s);\n", cn, ut);
+      write_h("%sinline void %s_i(Fl_Menu_*, %s);\n", indent(1), cn, ut);
+      write_h("%sstatic void %s(Fl_Menu_*, %s);\n", indent(1), cn, ut);
     }
   }
 
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
-    write_c("%s%s = &%s[%d];\n", indent(), name(), mname, i);
+    write_c("%s%s = &%s[%d];\n", indent_plus(1), name(), mname, i);
   }
   if (image) {
-    menuItemInitialized = 1;
-    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
-    image->write_code("o");
+    start_menu_initialiser(menuItemInitialized, mname, i);
+    if (label() && label()[0]) {
+      write_c("%sFl_Multi_Label *ml = new Fl_Multi_Label;\n", indent());
+      write_c("%sml->labela = (char*)", indent());
+      image->write_inline();
+      write_c(";\n");
+      if (i18n_type==0) {
+        write_c("%sml->labelb = o->label();\n", indent());
+      } else if (i18n_type==1) {
+        write_c("%sml->labelb = %s(o->label());\n",
+                indent(), i18n_function);
+      } else if (i18n_type==2) {
+        write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
+                indent(), i18n_file[0] ? i18n_file : "_catalog",
+                i18n_set, msgnum());
+      }
+      write_c("%sml->typea = FL_IMAGE_LABEL;\n", indent());
+      write_c("%sml->typeb = FL_NORMAL_LABEL;\n", indent());
+      write_c("%sml->label(o);\n", indent());
+    } else {
+      image->write_code("o");
+    }
+  }
+  if (i18n_type && label() && label()[0]) {
+    Fl_Labeltype t = o->labeltype();
+    if (image) {
+      // label was already copied a few lines up
+    } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
+               || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
+      start_menu_initialiser(menuItemInitialized, mname, i);
+      if (i18n_type==1) {
+        write_c("%so->label(%s(o->label()));\n",
+                indent(), i18n_function);
+      } else if (i18n_type==2) {
+        write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
+                indent(), i18n_file[0] ? i18n_file : "_catalog",
+                i18n_set, msgnum());
+      }
+    }
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && !isdeclare(extra_code(n))) {
-      if (!menuItemInitialized) {
-        menuItemInitialized = 1;
-        write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
-      }
-      write_c("%s  %s\n", indent(), extra_code(n));
+      start_menu_initialiser(menuItemInitialized, mname, i);
+      write_c("%s%s\n", indent(), extra_code(n));
     }
   }
-  if (menuItemInitialized)
+  if (menuItemInitialized) {
+    indentation--;
     write_c("%s}\n",indent());
+  }
 }
 
 void Fl_Menu_Item_Type::write_code2() {}
@@ -420,23 +539,40 @@ void Fl_Menu_Type::build_menu() {
     n++;
   }
   if (!n) {
-    if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+    if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
     w->menu(0);
     menusize = 0;
   } else {
     n++; // space for null at end of menu
     if (menusize<n) {
-      if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+      if (menusize) delete_menu((Fl_Menu_Item*)(w->menu()));
       menusize = n+10;
       w->menu(new Fl_Menu_Item[menusize]);
+    } else {
+      if (menusize) delete_dependents((Fl_Menu_Item*)(w->menu()));
     }
+    // Menus are already built during the .fl file reading process, so if the
+    // end of a menu list is not read yet, the end markers (label==NULL) will
+    // not be set, and deleting dependants will randomly free memory.
+    // Clearing the array should avoid that.
+    memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:
     Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
       Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
-      if (i->o->image()) i->o->image()->label(m);
-      else {
+      if (i->o->image()) {
+        if (i->o->label() && i->o->label()[0]) {
+          Fl_Multi_Label *ml = new Fl_Multi_Label;
+          ml->labela = (char*)i->o->image();
+          ml->labelb = i->o->label();
+          ml->typea = FL_IMAGE_LABEL;
+          ml->typeb = FL_NORMAL_LABEL;
+          ml->label(m);
+        } else {
+          i->o->image()->label(m);
+        }
+      } else {
         m->label(i->o->label() ? i->o->label() : "(nolabel)");
         m->labeltype(i->o->labeltype());
       }
@@ -449,7 +585,7 @@ void Fl_Menu_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-	(q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_menu_item()) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -465,6 +601,7 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)0);
   Fl::pushed(w);
   w->handle(FL_PUSH);
+  Fl::focus(NULL);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
@@ -477,40 +614,8 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
 
 void Fl_Menu_Type::write_code2() {
   if (next && next->is_menu_item()) {
-    if (i18n_type) {
-      // take care of i18n now!
-      Fl_Menu_Item_Type *mi = (Fl_Menu_Item_Type*)next;
-      int i, nItem = 0, nLabel = 0;
-      const char *mName = mi->menu_name(i);
-      for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
-        if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
-	int thislevel = q->level; if (q->is_parent()) thislevel++;
-	int nextlevel =
-	    (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
-	nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
-      }
-      if (nLabel) {
-        write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
-        write_c("%s  int i=0;\n", indent());
-        write_c("%s  for ( ; i<%d; i++)\n", indent(), nItem);
-        write_c("%s    if (%s[i].label())\n", indent(), mName);
-        switch (i18n_type) {
-          case 1:
-            write_c("%s      %s[i].label(%s(%s[i].label()));\n",
-                    indent(), mName, i18n_function, mName);
-            break;
-          case 2:
-            write_c("%s      %s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
-                    indent(), mName, i18n_file[0] ? i18n_file : "_catalog", 
-                    i18n_set, mi->msgnum(), mName);
-            break;
-        }
-        write_c("%s  %s_i18n_done = 1;\n", indent(), mName);
-        write_c("%s}\n", indent());
-      }
-    }
     write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
-	    unique_id(this, "menu", name(), label()));
+            unique_id(this, "menu", name(), label()));
   }
   Fl_Widget_Type::write_code2();
 }
@@ -527,7 +632,6 @@ void Fl_Menu_Type::copy_properties() {
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Menu_Button.H>
 Fl_Menu_Item button_type_menu[] = {
   {"normal",0,0,(void*)0},
   {"popup1",0,0,(void*)Fl_Menu_Button::POPUP1},
@@ -567,6 +671,7 @@ Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
   w->value((Fl_Menu_Item*)0);
   Fl::pushed(w);
   w->handle(FL_PUSH);
+  Fl::focus(NULL);
   const Fl_Menu_Item* m = w->mvalue();
   if (m) {
     // restore the settings of toggles & radio items:
@@ -584,52 +689,7 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 ////////////////////////////////////////////////////////////////
 // Shortcut entry item in panel:
 
-#include <FL/Fl_Output.H>
-#include "Shortcut_Button.h"
-#include <FL/fl_draw.H>
 
-void Shortcut_Button::draw() {
-  if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
-  else draw_box(FL_UP_BOX, FL_WHITE);
-  fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-	if (use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
-		char buf[1024];
-		fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
-		fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-	} else {
-		fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-	}
-}
-
-int Shortcut_Button::handle(int e) {
-  when(0); type(FL_TOGGLE_BUTTON);
-  if (e == FL_KEYBOARD) {
-    if (!value()) return 0;
-    int v = Fl::event_text()[0];
-    if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
-      if (isupper(v)) {
-        v = tolower(v);
-        v |= FL_SHIFT;
-      }
-      v = v | (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL));
-    } else {
-      v = (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) | Fl::event_key();
-      if (v == FL_BackSpace && svalue) v = 0;
-    }
-    if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
-    return 1;
-  } else if (e == FL_UNFOCUS) {
-    int c = changed(); value(0); if (c) set_changed();
-    return 1;
-  } else if (e == FL_FOCUS) {
-    return value();
-  } else {
-    int r = Fl_Button::handle(e);
-    if (e == FL_RELEASE && value() && Fl::focus() != this) take_focus();
-    return r;
-  }
-}
-  
 void shortcut_in_cb(Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
@@ -650,27 +710,23 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
-	Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
+        Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
-	if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
+        b->shortcut(i->svalue);
+        if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_input()) {
-	Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
+        Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       } else if (o->selected && o->is_value_input()) {
-	Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
+        Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       } else if (o->selected && o->is_text_display()) {
-	Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
+        Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       }
     if (mod) set_modflag(1);
   }
 }
-
-//
-// End of "$Id$".
-//

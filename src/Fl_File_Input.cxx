@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -31,14 +29,14 @@
 // Height of directory buttons...
 //
 
-#define DIR_HEIGHT	10
+#define DIR_HEIGHT      10
 
 
 //
 // Redraw bit for directory bar...
 //
 
-#define FL_DAMAGE_BAR	0x10
+#define FL_DAMAGE_BAR   0x10
 
 
 /**
@@ -60,8 +58,8 @@ Fl_File_Input::Fl_File_Input(int X, int Y, int W, int H, const char *L)
   Draw directory buttons.
 */
 void Fl_File_Input::draw_buttons() {
-  int	i,					// Looping var
-	X;					// Current X position
+  int   i,                                      // Looping var
+        X;                                      // Current X position
 
 
   if (damage() & (FL_DAMAGE_BAR | FL_DAMAGE_ALL)) {
@@ -75,12 +73,12 @@ void Fl_File_Input::draw_buttons() {
         draw_box(pressed_ == i ? fl_down(down_box()) : down_box(),
                  x(), y(), X + buttons_[i] - xscroll(), DIR_HEIGHT, FL_GRAY);
       } else if ((X + buttons_[i] - xscroll()) > w()) {
-	draw_box(pressed_ == i ? fl_down(down_box()) : down_box(),
-        	 x() + X - xscroll(), y(), w() - X + xscroll(), DIR_HEIGHT,
-		 FL_GRAY);
+        draw_box(pressed_ == i ? fl_down(down_box()) : down_box(),
+                 x() + X - xscroll(), y(), w() - X + xscroll(), DIR_HEIGHT,
+                 FL_GRAY);
       } else {
         draw_box(pressed_ == i ? fl_down(down_box()) : down_box(),
-	         x() + X - xscroll(), y(), buttons_[i], DIR_HEIGHT, FL_GRAY);
+                 x() + X - xscroll(), y(), buttons_[i], DIR_HEIGHT, FL_GRAY);
       }
     }
 
@@ -97,9 +95,9 @@ void Fl_File_Input::draw_buttons() {
   Update the sizes of the directory buttons.
 */
 void Fl_File_Input::update_buttons() {
-  int		i;				// Looping var
-  const char	*start,				// Start of path component
-		*end;				// End of path component
+  int           i;                              // Looping var
+  const char    *start,                         // Start of path component
+                *end;                           // End of path component
 
 
 //  puts("update_buttons()");
@@ -133,9 +131,9 @@ void Fl_File_Input::update_buttons() {
   \param[in] str new string value
   \param[in] len lengh of value
 */
-int						// O - TRUE on success
-Fl_File_Input::value(const char *str,		// I - New string value
-                     int        len) {		// I - Length of value
+int                                             // O - TRUE on success
+Fl_File_Input::value(const char *str,           // I - New string value
+                     int        len) {          // I - Length of value
   damage(FL_DAMAGE_BAR);
   return Fl_Input::value(str,len);
 }
@@ -146,8 +144,8 @@ Fl_File_Input::value(const char *str,		// I - New string value
   Returns non 0 on success.
   \param[in] str new string value
 */
-int						// O - TRUE on success
-Fl_File_Input::value(const char *str) {		// I - New string value
+int                                             // O - TRUE on success
+Fl_File_Input::value(const char *str) {         // I - New string value
   damage(FL_DAMAGE_BAR);
   return Fl_Input::value(str);
 }
@@ -160,13 +158,13 @@ void Fl_File_Input::draw() {
   Fl_Boxtype b = box();
   if (damage() & (FL_DAMAGE_BAR | FL_DAMAGE_ALL)) draw_buttons();
   // this flag keeps Fl_Input_::drawtext from drawing a bogus box!
-  char must_trick_fl_input_ = 
+  char must_trick_fl_input_ =
     Fl::focus()!=this && !size() && !(damage()&FL_DAMAGE_ALL);
-  if ((damage() & FL_DAMAGE_ALL) || must_trick_fl_input_) 
+  if ((damage() & FL_DAMAGE_ALL) || must_trick_fl_input_)
     draw_box(b,x(),y()+DIR_HEIGHT,w(),h()-DIR_HEIGHT,color());
-  if (!must_trick_fl_input_) 
+  if (!must_trick_fl_input_)
     Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b)+DIR_HEIGHT,
-		        w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b)-DIR_HEIGHT);
+                        w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b)-DIR_HEIGHT);
 }
 
 
@@ -176,8 +174,8 @@ void Fl_File_Input::draw() {
   Return non zero if event is handled.
   \param[in] event
 */
-int						// O - TRUE if we handled event
-Fl_File_Input::handle(int event) 		// I - Event
+int                                             // O - TRUE if we handled event
+Fl_File_Input::handle(int event)                // I - Event
 {
 //  printf("handle(event = %d)\n", event);
   static char inButtonBar = 0;
@@ -186,9 +184,9 @@ Fl_File_Input::handle(int event) 		// I - Event
     case FL_MOVE :
     case FL_ENTER :
       if (active_r()) {
-	if (Fl::event_y() < (y() + DIR_HEIGHT)) 
+        if (Fl::event_y() < (y() + DIR_HEIGHT))
           window()->cursor(FL_CURSOR_DEFAULT);
-	else 
+        else
           window()->cursor(FL_CURSOR_INSERT);
       }
 
@@ -198,18 +196,18 @@ Fl_File_Input::handle(int event) 		// I - Event
       inButtonBar = (Fl::event_y() < (y() + DIR_HEIGHT));
     case FL_RELEASE :
     case FL_DRAG :
-      if (inButtonBar) 
+      if (inButtonBar)
         return handle_button(event);
       else
         return Fl_Input::handle(event);
 
     default :
       { Fl_Widget_Tracker wp(this);
-	if (Fl_Input::handle(event)) {
-	  if (wp.exists())
-	    damage(FL_DAMAGE_BAR);
-	  return 1;
-	}
+        if (Fl_Input::handle(event)) {
+          if (wp.exists())
+            damage(FL_DAMAGE_BAR);
+          return 1;
+        }
       }
       return 0;
   }
@@ -222,14 +220,14 @@ Fl_File_Input::handle(int event) 		// I - Event
   Return non zero if event is handled.
   \param[in] event
 */
-int						// O - TRUE if we handled event
-Fl_File_Input::handle_button(int event)		// I - Event
+int                                             // O - TRUE if we handled event
+Fl_File_Input::handle_button(int event)         // I - Event
 {
-  int		i,				// Looping var
-		X;				// Current X position
-  char		*start,				// Start of path component
-		*end;				// End of path component
-  char		newvalue[FL_PATH_MAX];		// New value
+  int           i,                              // Looping var
+                X;                              // Current X position
+  char          *start,                         // Start of path component
+                *end;                           // End of path component
+  char          newvalue[FL_PATH_MAX];          // New value
 
 
   // Figure out which button is being pressed...
@@ -276,8 +274,3 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
   return 1;
 }
-
-
-//
-// End of "$Id$".
-//

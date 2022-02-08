@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,16 +7,13 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_QUARTZ
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
@@ -76,7 +71,7 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
     driver()->scale(s);
   }
   CGContextSetShouldAntialias(offscreen, false);
-  CGContextTranslateCTM(offscreen, 0, height);  
+  CGContextTranslateCTM(offscreen, 0, height);
   CGContextScaleCTM(offscreen, 1.0f, -1.0f);
   CGContextSaveGState(offscreen);
   CGContextSetRGBFillColor(offscreen, 1, 1, 1, 0);
@@ -116,10 +111,19 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
   CGContextFlush(offscreen);
   int W = CGBitmapContextGetWidth(offscreen);
   int H = CGBitmapContextGetHeight(offscreen);
-  int save_w = width, save_h = height;
-  width = W; height = H;
-  unsigned char *data = fl_read_image(NULL, 0, 0, W, H, 0);
-  width = save_w; height = save_h;
+  int bpr = CGBitmapContextGetBytesPerRow(offscreen);
+  int bpp = CGBitmapContextGetBitsPerPixel(offscreen)/8;
+  uchar *base = (uchar*)CGBitmapContextGetData(offscreen);
+  int idx, idy;
+  uchar *pdst, *psrc;
+  unsigned char *data = new uchar[W * H * 3];
+  for (idy = 0, pdst = data; idy < H; idy ++) {
+    for (idx = 0, psrc = base + idy * bpr; idx < W; idx ++, psrc += bpp, pdst += 3) {
+      pdst[0] = psrc[0];  // R
+      pdst[1] = psrc[1];  // G
+      pdst[2] = psrc[2];  // B
+    }
+  }
   Fl_RGB_Image *image = new Fl_RGB_Image(data, W, H);
   image->alloc_array = 1;
   return image;
@@ -130,9 +134,3 @@ void Fl_Quartz_Image_Surface_Driver::end_current()
   fl_window = pre_window;
   Fl_Surface_Device::end_current();
 }
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

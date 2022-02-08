@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // PNG image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -39,8 +37,10 @@ private:
   void load_png_(const char *name_png, const unsigned char *buffer_png, int datasize);
 };
 
-#endif
+// Support functions to write PNG image files (since 1.4.0)
 
-//
-// End of "$Id$".
-//
+FL_EXPORT int fl_write_png(const char *filename, Fl_RGB_Image *img);
+FL_EXPORT int fl_write_png(const char *filename, const char *pixels, int w, int h, int d=3, int ld=0);
+FL_EXPORT int fl_write_png(const char *filename, const unsigned char *pixels, int w, int h, int d=3, int ld=0);
+
+#endif

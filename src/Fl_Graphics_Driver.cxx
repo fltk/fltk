@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -22,8 +20,8 @@
  \{
  */
 
+#include <config.h>
 #include <FL/Fl.H>
-#include "config_lib.h"
 #include <FL/Fl_Graphics_Driver.H>
 #include "Fl_Screen_Driver.H"
 #include <FL/Fl_Image.H>
@@ -31,11 +29,13 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/math.h>
 #include <FL/platform.H>
+#include <stdlib.h>
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
+/** Used by the Windows platform to print Fl_Pixmap objects. */
 unsigned Fl_Graphics_Driver::need_pixmap_bg_color = 0;
 
 /** Constructor */
@@ -43,13 +43,15 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
 {
   font_ = 0;
   size_ = 0;
-  sptr=0; rstackptr=0; 
+  sptr=0; rstackptr=0;
   rstack[0] = NULL;
   fl_clip_state_number=0;
-  m = m0; 
-  fl_matrix = &m; 
+  m = m0;
+  fl_matrix = &m;
   font_descriptor_ = NULL;
   scale_ = 1;
+  p_size = 0;
+  p = NULL;
 };
 
 /** Return the graphics driver used when drawing to the platform's display */
@@ -103,8 +105,8 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   int px = srcx, py = srcy, pw = w, ph = h;
   if (px < 0) {px = 0; pw += srcx; x -= srcx;}
   if (py < 0) {py = 0; ph += srcy; y -= srcy;}
-  if (px + pw > px_width/s) {pw = px_width/s - px;}
-  if (py + ph > px_height/s) {ph = px_height/s - py;}
+  if (px + pw > px_width/s) {pw = int(px_width/s) - px;}
+  if (py + ph > px_height/s) {ph = int(px_height/s) - py;}
   uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
   if (surface) {
     Fl_Surface_Device::pop_current();
@@ -121,6 +123,8 @@ void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H
 {
   // nothing to do, reimplement in driver if needed
 }
+
+void Fl_Graphics_Driver::set_status(int X, int Y, int W, int H) {}
 
 
 /** see fl_reset_spot() */
@@ -204,13 +208,19 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
  scale() and in slightly modifying that to help support tiled images. */
 void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
 {
-  if ( int(scale()) == scale() ) {
-    width  = width * scale();
-    height = height * scale();
-  } else {
-    width  = (width+1) * scale();
-    height = (height+1) * scale();
-  }
+  // Image tiling may require to convert the floating value of width * scale() or
+  // height * scale() to a larger integer value to avoid undrawn space between adjacent images.
+  float s = scale(), fs = width * s;
+  width = (fs - int(fs) < 0.001 ? int(fs) :
+           int((width+1) * s));
+  fs = height * s;
+  height = (fs - int(fs) < 0.001 ? int(fs) :
+           int((height+1) * s));
+  cache_size_finalize(img, width, height);
+}
+
+void Fl_Graphics_Driver::cache_size_finalize(Fl_Image *img, int &width, int &height) {
+  if (img) img->cache_size_(width, height);
 }
 
 /** Draws an Fl_Pixmap object using this graphics driver.
@@ -338,14 +348,14 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
 }
 
 void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  line(x, y, x1, y);
-  line(x1, y, x1, y2);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
 }
 
 void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  line(x, y, x1, y);
-  line(x1, y, x1, y2);
-  line(x1, y2, x3, y2);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
+  xyline(x1, y2, x3);
 }
 
 void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
@@ -353,14 +363,14 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
 }
 
 void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  line(x, y, x, y1);
-  line(x, y1, x2, y1);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
 }
 
 void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  line(x, y, x, y1);
-  line(x, y1, x2, y1);
-  line(x2, y1, x2, y3);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
+  yxline(x2, y1, y3);
 }
 
 void Fl_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
@@ -412,7 +422,7 @@ void Fl_Graphics_Driver::draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP
 
 void Fl_Graphics_Driver::draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
 
-void Fl_Graphics_Driver::make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b) {}
+void Fl_Graphics_Driver::make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data) {}
 
 /** Support function for Fl_Pixmap drawing */
 void Fl_Graphics_Driver::cache(Fl_Pixmap *img) { }
@@ -453,6 +463,11 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {}
 /** see fl_rectf() */
 void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {}
 
+void Fl_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
+  color(r, g, b);
+  rectf(x, y, w, h);
+}
+
 /** see fl_line(int, int, int, int) */
 void Fl_Graphics_Driver::line(int x, int y, int x1, int y1) {}
 
@@ -489,13 +504,20 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int
 int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {return 1;}
 
 /** see fl_begin_complex_polygon() */
-void Fl_Graphics_Driver::begin_complex_polygon() {}
+void Fl_Graphics_Driver::begin_complex_polygon() {
+  begin_polygon();
+  gap_ = 0;
+}
 
 /** see fl_transformed_vertex() */
-void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {}
+void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
+  transformed_vertex0(float(xf), float(yf));
+}
 
 /** see fl_vertex() */
-void Fl_Graphics_Driver::vertex(double x, double y) {}
+void Fl_Graphics_Driver::vertex(double x, double y) {
+  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
+}
 
 /** see fl_end_points() */
 void Fl_Graphics_Driver::end_points() {}
@@ -503,8 +525,16 @@ void Fl_Graphics_Driver::end_points() {}
 /** see fl_end_line() */
 void Fl_Graphics_Driver::end_line() {}
 
+void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
+  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+}
+
 /** see fl_end_loop() */
-void Fl_Graphics_Driver::end_loop() {}
+void Fl_Graphics_Driver::end_loop() {
+  fixloop();
+  if (n>2) transformed_vertex((float)p[0].x, (float)p[0].y);
+  end_line();
+}
 
 /** see fl_end_polygon() */
 void Fl_Graphics_Driver::end_polygon() {}
@@ -513,7 +543,15 @@ void Fl_Graphics_Driver::end_polygon() {}
 void Fl_Graphics_Driver::end_complex_polygon() {}
 
 /** see fl_gap() */
-void Fl_Graphics_Driver::gap() {}
+void Fl_Graphics_Driver::gap() {
+  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
+  if (n > gap_+2) {
+    transformed_vertex((float)p[gap_].x, (float)p[gap_].y);
+    gap_ = n;
+  } else {
+    n = gap_;
+  }
+}
 
 /** see fl_circle() */
 void Fl_Graphics_Driver::circle(double x, double y, double r) {}
@@ -570,7 +608,10 @@ Fl_Fontsize Fl_Graphics_Driver::size() {return size_; }
 double Fl_Graphics_Driver::width(const char *str, int nChars) { return 0; }
 
 /** Compute the width of Unicode character \p c if drawn with current font */
-double Fl_Graphics_Driver::width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
+double Fl_Graphics_Driver::width(unsigned int c) {
+  char buf[4];
+  return width(buf, fl_utf8encode (c, buf));
+}
 
 /** Return the current line height */
 int Fl_Graphics_Driver::height() { return size(); }
@@ -621,6 +662,27 @@ void Fl_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
   loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1);
 }
 
+float Fl_Graphics_Driver::override_scale() { return scale();}
+
+void Fl_Graphics_Driver::restore_scale(float) { }
+
+void Fl_Graphics_Driver::transformed_vertex0(float x, float y) {
+  if (!n || x != p[n-1].x || y != p[n-1].y) {
+    if (n >= p_size) {
+      p_size = p ? 2*p_size : 16;
+      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
+    }
+    p[n].x = x;
+    p[n].y = y;
+    n++;
+  }
+}
+
+void Fl_Graphics_Driver::antialias(int state) {}
+
+int Fl_Graphics_Driver::antialias() {
+  return 0;
+}
 
 /**
  \}
@@ -644,84 +706,106 @@ Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver(
 
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
 {
-  if (int(scale()) == scale()) {
-    rect_unscaled(x * scale(), y * scale(), w * scale(), h * scale());
-  } else {
-    if (w > 0 && h > 0) {
-      xyline(x, y, x+w-1);
-      yxline(x, y, y+h-1);
-      yxline(x+w-1, y, y+h-1);
-      xyline(x, y+h-1, x+w-1);
-    }
+  if (w > 0 && h > 0) {
+    xyline(x, y, x+w-1);
+    yxline(x, y, y+h-1);
+    yxline(x+w-1, y, y+h-1);
+    xyline(x, y+h-1, x+w-1);
   }
 }
 
 void Fl_Scalable_Graphics_Driver::rectf(int x, int y, int w, int h)
 {
-  rectf_unscaled(x * scale(), y * scale(), w * scale(), h * scale());
+  if (w <= 0 || h <= 0) return;
+  rectf_unscaled(this->floor(x), this->floor(y),
+                 this->floor(x + w) - this->floor(x), this->floor(y + h) - this->floor(y));
 }
 
 void Fl_Scalable_Graphics_Driver::point(int x, int y) {
-  point_unscaled(x * scale(), y * scale());
+  rectf(x, y, 1, 1);
 }
 
 void Fl_Scalable_Graphics_Driver::line(int x, int y, int x1, int y1) {
   if (y == y1) xyline(x, y, x1);
   else if (x == x1) yxline(x, y, y1);
-  else line_unscaled( x*scale(), y*scale(), x1*scale(), y1*scale());
+  else line_unscaled(this->floor(x), this->floor(y), this->floor(x1), this->floor(y1));
 }
 
 void Fl_Scalable_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-  if ( (y == y1 || x == x1) && (y2 == y1 || x2 == x1) ) { // only horizontal or vertical lines
-    line(x, y, x1, y1);
-    line(x1, y1, x2, y2);
-  } else line_unscaled( x*scale(), y*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale());
+  line_unscaled(this->floor(x), this->floor(y), this->floor(x1), this->floor(y1), this->floor(x2), this->floor(y2));
 }
 
 void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1) {
-  xyline_unscaled(x*scale(), y*scale(), x1*scale());
-}
-
-void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  xyline(x, y, x1);
-  yxline(x1, y, y2);
-}
-
-void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  xyline(x, y, x1);
-  yxline(x1, y, y2);
-  xyline(x1, y2, x3);
+  if (y < 0) return;
+  float s = scale(); int s_int = int(s);
+  int xx = (x < x1 ? x : x1);
+  int xx1 = (x < x1 ? x1 : x);
+  if (s != s_int && line_width_ <= s_int) {
+    int lwidth = this->floor((y+1)) - this->floor(y);
+    bool need_change_width = (lwidth != s_int);
+    void *data = NULL;
+    if (need_change_width) data = change_pen_width(lwidth);
+    xyline_unscaled(this->floor(xx), this->floor(y) + int(lwidth/2.f), this->floor(xx1+1)-1);
+    if (need_change_width) reset_pen_width(data);
+  } else {
+    y = this->floor(y);
+    if (line_width_ <= s_int) y += int(s/2.f);
+    xyline_unscaled(this->floor(xx), y, this->floor(xx1+1) - 1);
+  }
 }
 
 void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1) {
-  yxline_unscaled(x*scale(), y*scale(), y1*scale());
+  if (x < 0) return;
+  float s = scale();  int s_int = int(s);
+  int yy = (y < y1 ? y : y1);
+  int yy1 = (y < y1 ? y1 : y);
+  if (s != s_int && line_width_ <= s_int) {
+    int lwidth = (this->floor((x+1)) - this->floor(x));
+    bool need_change_width = (lwidth != s_int);
+    void *data = NULL;
+    if (need_change_width) data = change_pen_width(lwidth);
+    yxline_unscaled(this->floor(x) + int(lwidth/2.f), this->floor(yy), this->floor(yy1+1) - 1);
+    if (need_change_width) reset_pen_width(data);
+  } else {
+    x = this->floor(x);
+    if (line_width_ <= s_int) x += int(s/2.f);
+    yxline_unscaled(x, this->floor(yy), this->floor(yy1+1) - 1);
+  }
 }
 
-void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  yxline(x, y, y1);
-  xyline(x, y1, x2);
-}
+void *Fl_Scalable_Graphics_Driver::change_pen_width(int lwidth) {return NULL;}
 
-void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  yxline(x, y, y1);
-  xyline(x, y1, x2);
-  yxline(x2, y1, y3);
-}
+void Fl_Scalable_Graphics_Driver::reset_pen_width(void *data){}
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
-  loop_unscaled(x0*scale(), y0*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale());
+  loop_unscaled(floor(x0), floor(y0), floor(x1), floor(y1), floor(x2), floor(y2));
 }
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-    loop_unscaled(x0*scale(), y0*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale(), x3*scale(), y3*scale());
+  int X, Y, W, H;
+  if (x0 == x3 && x1 == x2 && y0 == y1 && y3 == y2) { // rectangular loop
+    X = x0 > x1 ? x1 : x0;
+    Y = y0 > y3 ? y3 : y0;
+    W = abs(x0 - x1);
+    H = abs(y0 - y3);
+    rect(X, Y, W + 1, H + 1);
+  } else if (x0 == x1 && y1 == y2 && x2 == x3 && y3 == y0) { // rectangular loop also
+    X = x0 > x3 ? x3 : x0;
+    Y = y0 > y1 ? y1 : y0;
+    W = abs(x0 - x3);
+    H = abs(y0 - y1);
+    rect(X, Y, W + 1, H + 1);
+  } else {
+    loop_unscaled(floor(x0), floor(y0), floor(x1), floor(y1), floor(x2), floor(y2), floor(x3), floor(y3));
+  }
 }
 
 void Fl_Scalable_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
-  polygon_unscaled(x0*scale(), y0*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale());
+  polygon_unscaled(floor(x0), floor(y0), floor(x1), floor(y1), floor(x2), floor(y2));
 }
 
 void Fl_Scalable_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-  polygon_unscaled(x0*scale(), y0*scale(), x1*scale(), y1*scale(), x2*scale(), y2*scale(), x3*scale(), y3*scale());
+  polygon_unscaled(floor(x0), floor(y0), floor(x1), floor(y1), floor(x2), floor(y2), floor(x3), floor(y3));
 }
 
 void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
@@ -734,7 +818,11 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
 
 void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
   if (!font_descriptor()) fl_open_display(); // to catch the correct initial value of scale_
-  font_unscaled(face, size * scale());
+  font_unscaled(face, Fl_Fontsize(size * scale()));
+}
+
+Fl_Font Fl_Scalable_Graphics_Driver::font() {
+  return Fl_Graphics_Driver::font();
 }
 
 double Fl_Scalable_Graphics_Driver::width(const char *str, int n) {
@@ -747,15 +835,15 @@ double Fl_Scalable_Graphics_Driver::width(unsigned int c) {
 
 Fl_Fontsize Fl_Scalable_Graphics_Driver::size() {
   if (!font_descriptor() ) return -1;
-  return size_unscaled()/scale();
+  return Fl_Fontsize(size_unscaled()/scale());
 }
 
 void Fl_Scalable_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h) {
   text_extents_unscaled(str, n, dx, dy, w, h);
-  dx /= scale();
-  dy /= scale();
-  w /= scale();
-  h /= scale();
+  dx = int(dx / scale());
+  dy = int(dy / scale());
+  w = int(w / scale());
+  h = int(h / scale());
 }
 
 int Fl_Scalable_Graphics_Driver::height() {
@@ -763,44 +851,61 @@ int Fl_Scalable_Graphics_Driver::height() {
 }
 
 int Fl_Scalable_Graphics_Driver::descent() {
-  return descent_unscaled()/scale();
+  return int(descent_unscaled()/scale());
 }
 
 void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
-  draw_unscaled(str, n, x*scale(), y*scale());
+  draw_unscaled(str, n, floor(x), floor(y));
   unscale_clip(r2);
+}
+
+void Fl_Scalable_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  Fl_Graphics_Driver::draw(str, n, x, y);
 }
 
 void Fl_Scalable_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   if (!size_ || !font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Region r2 = scale_clip(scale());
-  draw_unscaled(angle, str, n, x*scale(), y*scale());
+  draw_unscaled(angle, str, n, floor(x), floor(y));
   unscale_clip(r2);
 }
 
 void Fl_Scalable_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
-  rtl_draw_unscaled(str, n, x * scale(), y * scale());
+  rtl_draw_unscaled(str, n, int(x * scale()), int(y * scale()));
 }
 
-void Fl_Scalable_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
-  arc_unscaled(x * scale(), y * scale(), w * scale(), h * scale(), a1, a2);
+void Fl_Scalable_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
+  float s = scale();
+  int xx = floor(x) + int((s-1)/2);
+  int yy = floor(y) + int((s-1)/2);
+  w = floor(x+w) - xx - 1 + line_width_/2 - int(s-1);
+  h = floor(y+h) - yy - 1 + line_width_/2 - int(s-1);
+  arc_unscaled(xx, yy, w, h, a1, a2);
+}
+
+void Fl_Scalable_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
+  Fl_Graphics_Driver::arc(x, y, r, start, end);
 }
 
 void Fl_Scalable_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
-  pie_unscaled(x * scale(), y * scale(), w * scale(), h * scale(), a1, a2);
+  int xx = floor(x) - 1;
+  int yy = floor(y) - 1;
+  w = floor(x+w) - xx;
+  h = floor(y+h) - yy;
+  pie_unscaled(xx, yy, w, h, a1, a2);
 }
 
 void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes) {
-  if (width == 0) line_width_ = scale() < 2 ? 0 : scale();
-  else line_width_ = width>0 ? width*scale() : -width*scale();
+  if (width == 0) line_width_ = int(scale() < 2 ? 0 : scale());
+  else line_width_ = int(width>0 ? width*scale() : -width*scale());
   line_style_unscaled(style, line_width_, dashes);
 }
 
 /* read the image data from a pointer or with a callback, scale it, and draw it */
 void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb,
-                                                     int X, int Y, int W, int H, int D, int L, bool mono, float s) {
+                                                     int X, int Y, int W, int H, int D, int L, bool mono) {
   int aD = abs(D);
   if (L == 0) L = W*aD;
   int depth = mono ? (aD%2==0?2:1) : aD;
@@ -823,12 +928,12 @@ void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb
   rgb->alloc_array = 1;
   Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
   Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
-  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(ceil(W * s), ceil(H * s));
+  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(floor(X+W)-floor(X), floor(Y+H)-floor(Y));
   Fl_Image::RGB_scaling(keep);
   delete rgb;
   if (scaled_rgb) {
-    Fl_Region r2 = scale_clip(s);
-    draw_image_unscaled(scaled_rgb->array, X * s, Y * s, scaled_rgb->w(), scaled_rgb->h(), depth);
+    Fl_Region r2 = scale_clip(scale());
+    draw_image_unscaled(scaled_rgb->array, floor(X), floor(Y), scaled_rgb->w(), scaled_rgb->h(), depth);
     unscale_clip(r2);
     delete scaled_rgb;
   }
@@ -838,7 +943,7 @@ void Fl_Scalable_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W
   if (scale() == 1) {
     draw_image_unscaled(buf, X,Y,W,H,D,L);
   } else {
-    draw_image_rescale((void*)buf, NULL, X, Y, W, H, D, L, false, scale());
+    draw_image_rescale((void*)buf, NULL, X, Y, W, H, D, L, false);
   }
 }
 
@@ -846,7 +951,7 @@ void Fl_Scalable_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, in
   if (scale() == 1) {
     draw_image_unscaled(cb, data, X,Y,W,H,D);
   } else {
-    draw_image_rescale(data, cb, X, Y, W, H, D, 0, false, scale());
+    draw_image_rescale(data, cb, X, Y, W, H, D, 0, false);
   }
 }
 
@@ -854,7 +959,7 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono(const uchar* buf, int X,int Y,
   if (scale() == 1) {
     draw_image_mono_unscaled(buf, X,Y,W,H,D,L);
   } else {
-    draw_image_rescale((void*)buf, NULL, X, Y, W, H, D, L, true, scale());
+    draw_image_rescale((void*)buf, NULL, X, Y, W, H, D, L, true);
   }
 }
 
@@ -862,16 +967,16 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* dat
   if (scale() == 1) {
     draw_image_mono_unscaled(cb, data, X,Y,W,H,D);
   } else {
-    draw_image_rescale(data, cb, X, Y, W, H, D, 0, true, scale());
+    draw_image_rescale(data, cb, X, Y, W, H, D, 0, true);
   }
 }
 
 void Fl_Scalable_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(xf * scale(), yf * scale());
+  transformed_vertex0(float(xf * scale()), float(yf * scale()));
 }
 
 void Fl_Scalable_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0((x*m.a + y*m.c + m.x) * scale(), (x*m.b + y*m.d + m.y) * scale());
+  transformed_vertex0(float((x*m.a + y*m.c + m.x) * scale()), float((x*m.b + y*m.d + m.y) * scale()));
 }
 
 void Fl_Scalable_Graphics_Driver::unscale_clip(Fl_Region r) {
@@ -885,25 +990,26 @@ Fl_Region Fl_Scalable_Graphics_Driver::scale_clip(float f) { return 0; }
 
 void Fl_Scalable_Graphics_Driver::point_unscaled(float x, float y) {}
 
-void Fl_Scalable_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {}
+void Fl_Scalable_Graphics_Driver::rectf_unscaled(int x, int y, int w, int h) {}
 
-void Fl_Scalable_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {}
+void Fl_Scalable_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1) {}
 
-void Fl_Scalable_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1) {}
+void Fl_Scalable_Graphics_Driver::line_unscaled(int x, int y, int x1, int y1, int x2, int y2) {
+  line_unscaled(x, y, x1, y1);
+  line_unscaled(x1, y1, x2, y2);
+}
 
-void Fl_Scalable_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2) {}
+void Fl_Scalable_Graphics_Driver::xyline_unscaled(int x, int y, int x1) {}
 
-void Fl_Scalable_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {}
+void Fl_Scalable_Graphics_Driver::yxline_unscaled(int x, int y, int y1) {}
 
-void Fl_Scalable_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {}
+void Fl_Scalable_Graphics_Driver::loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2) {}
 
-void Fl_Scalable_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) {}
+void Fl_Scalable_Graphics_Driver::loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {}
 
-void Fl_Scalable_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {}
+void Fl_Scalable_Graphics_Driver::polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2) {}
 
-void Fl_Scalable_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) {}
-
-void Fl_Scalable_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {}
+void Fl_Scalable_Graphics_Driver::polygon_unscaled(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {}
 
 void Fl_Scalable_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, double ry) {}
 
@@ -927,11 +1033,11 @@ void Fl_Scalable_Graphics_Driver::draw_unscaled(int angle, const char *str, int 
 
 void Fl_Scalable_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {}
 
-void Fl_Scalable_Graphics_Driver::arc_unscaled(float x, float y, float w, float h, double a1, double a2) {}
+void Fl_Scalable_Graphics_Driver::arc_unscaled(int x, int y, int w, int h, double a1, double a2) {}
 
-void Fl_Scalable_Graphics_Driver::pie_unscaled(float x, float y, float w, float h, double a1, double a2) {}
+void Fl_Scalable_Graphics_Driver::pie_unscaled(int x, int y, int w, int h, double a1, double a2) {}
 
-void Fl_Scalable_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {}
+void Fl_Scalable_Graphics_Driver::line_style_unscaled(int style, int width, char* dashes) {}
 
 void Fl_Scalable_Graphics_Driver::draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D, int L) {}
 
@@ -941,10 +1047,20 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int
 
 void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) {}
 
-void Fl_Scalable_Graphics_Driver::transformed_vertex0(float x, float y) {}
+float Fl_Scalable_Graphics_Driver::override_scale() {
+  float s = scale();
+  if (s != 1.f) {
+    push_no_clip();
+    scale(1.f);
+  }
+  return s;
+}
+
+void Fl_Scalable_Graphics_Driver::restore_scale(float s) {
+  if (s != 1.f) {
+    scale(s);
+    pop_clip();
+  }
+}
 
 #endif
-
-//
-// End of "$Id$".
-//

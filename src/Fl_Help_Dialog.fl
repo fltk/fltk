@@ -3,21 +3,19 @@ version 1.0400
 header_name {../FL/Fl_Help_Dialog.H}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // ========================================================================
 //  DO NOT EDIT FL/Fl_Help_Dialog.H and src/Fl_Help_Dialog.cxx !!!
@@ -194,8 +192,7 @@ fl_register_images();} {}
     code {view_->set_changed();
 int ret = view_->load(f);
 window_->label(view_->title());
-return ret;} {selected
-    }
+return ret;} {}
   }
   Function {position(int xx, int yy)} {return_type void
   } {
@@ -235,7 +232,7 @@ else
   } {
     code {view_->topline(n);} {}
   }
-  Function {topline(int n)} {return_type void
+  Function {topline(int n)} {selected return_type void
   } {
     code {view_->topline(n);} {}
   }
@@ -265,10 +262,4 @@ window_->label(view_->title());} {}
   } {
     code {return (window_->y());} {}
   }
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

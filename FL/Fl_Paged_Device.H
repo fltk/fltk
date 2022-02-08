@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -9,14 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_Paged_Device.H 
+/** \file Fl_Paged_Device.H
  \brief declaration of class Fl_Paged_Device.
  */
 
@@ -32,49 +30,48 @@
 /**
  \brief Represents page-structured drawing surfaces.
 
- This class has no public constructor: don't instantiate it; use Fl_Printer 
+ This class has no public constructor: don't instantiate it; use Fl_Printer
  or Fl_PostScript_File_Device instead.
  */
 class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
 protected:
   /** \brief The constructor */
-  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
+  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {}
 public:
   /**
-   \brief Possible page formats.
-   
-   All paper formats with pre-defined width and height.
+   Possible page formats.
+   All paper formats with pre-defined width and height. The Fl_Paged_Device::page_formats array gives these widths and heights.
    */
   enum Page_Format {
     A0 = 0, /**<  A0 format */
-    A1,
-    A2,
-    A3,
+    A1, /**<  A1 format */
+    A2, /**<  A2 format */
+    A3, /**<  A3 format */
     A4, /**<  A4 format */
-    A5,
-    A6,
-    A7,
-    A8,
-    A9,
-    B0,
-    B1,
-    B2,
-    B3,
-    B4,
-    B5,
-    B6,
-    B7,
-    B8,
-    B9,
-    B10,
+    A5, /**<  A5 format */
+    A6, /**<  A6 format */
+    A7, /**<  A7 format */
+    A8, /**<  A8 format */
+    A9, /**<  A9 format */
+    B0, /**<  B0 format */
+    B1, /**<  B1 format */
+    B2, /**<  B2 format */
+    B3, /**<  B3 format */
+    B4, /**<  B4 format */
+    B5, /**<  B5 format */
+    B6, /**<  B6 format */
+    B7, /**<  B7 format */
+    B8, /**<  B8 format */
+    B9, /**<  B9 format */
+    B10, /**<  B10 format */
     C5E,
     DLE,
-    EXECUTIVE,
-    FOLIO,
-    LEDGER,
-    LEGAL,
+    EXECUTIVE, /**<   Executive format */
+    FOLIO, /**<  Folio  format */
+    LEDGER, /**<  Ledger  format */
+    LEGAL, /**<  Legal format */
     LETTER, /**<  Letter format */
-    TABLOID,
+    TABLOID, /**<   Tabloid format */
     ENVELOPE,
     MEDIA = 0x1000
   };
@@ -92,17 +89,17 @@ public:
  */
   typedef struct {
     /** \brief width in points */
-    int width; 
+    int width;
     /** \brief height in points */
-    int height; 
+    int height;
     /** \brief format name */
-    const char *name; 
+    const char *name;
   } page_format;
   /** \brief width, height and name of all elements of the enum \ref Page_Format.
    */
-  static const page_format page_formats[NO_PAGE_FORMATS];  
+  static const page_format page_formats[NO_PAGE_FORMATS];
   /** \brief The destructor */
-  virtual ~Fl_Paged_Device() {};
+  virtual ~Fl_Paged_Device() {}
   virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
   /** Synonym of begin_job(int pagecount, int *frompage, int *topage, char **perr_message).
    For API compatibility with FLTK 1.3.x */
@@ -127,8 +124,4 @@ public:
 };
 
 #endif // Fl_Paged_Device_H
-
-//
-// End of "$Id$"
-//
 

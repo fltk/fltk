@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa window driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -26,6 +24,7 @@
 #define FL_COCOA_WINDOW_DRIVER_H
 
 #include "../../Fl_Window_Driver.H"
+#include <FL/Fl_Plugin.H>
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Image;
@@ -57,13 +56,13 @@ class NSOpenGLPixelFormat;
 
  There is one window driver for each Fl_Window. Window drivers manage window
  actions such as resizing, events, decoration, fullscreen modes, etc. . All
- drawing and rendering is managed by the Surface device and the associated 
+ drawing and rendering is managed by the Surface device and the associated
  graphics driver.
 
  - window specific event handling
  - window types and styles, depth, etc.
  - decorations
- 
+
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 struct Fl_Window_Driver::shape_data_type {
@@ -87,6 +86,7 @@ private:
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
   // whether window's view received the [FLView view_did_resize] message
   unsigned window_flags_;
+  int screen_num_; // number of screen where window is mapped
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
@@ -102,6 +102,8 @@ public:
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
   bool view_resized();   // did window's view receive [FLView view_did_resize] message?
   void view_resized(bool b); // sets whether window's view received [FLView view_did_resize] message
+  bool through_resize();   // did Fl_Window::resize() run already
+  void through_resize(bool b); // set whether Fl_Window::resize() run already
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);
@@ -133,6 +135,8 @@ public:
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
+  virtual int screen_num();
+  virtual void screen_num(int n);
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
@@ -141,10 +145,9 @@ public:
   // next 4 are in Fl_cocoa.mm because they use Objective-c
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   virtual void wait_for_expose();
-  CALayer *get_titlebar_layer();
-  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
+  void draw_titlebar_to_context(CGContextRef gc, int w, int h);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
-  
+
   // these functions are OpenGL-related and use objective-c
   // they are put here to avoid libfltk_gl dependency in Fl_cocoa.mm
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
@@ -155,14 +158,18 @@ public:
   static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
   static void GL_cleardrawable(void); // uses Objective-c
   static void gl_start(NSOpenGLContext*); // uses Objective-c
-  
+
   //icons
   virtual void icons(const Fl_RGB_Image *icons[], int count);
   NSImage *icon_image;
 };
 
-#endif // FL_COCOA_WINDOW_DRIVER_H
+class Fl_Cocoa_Plugin : public Fl_Plugin {
+public:
+  Fl_Cocoa_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
+  virtual const char *klass() { return "fltk:cocoa"; }
+  virtual const char *name() = 0;
+  virtual void resize(Fl_Gl_Window *glw, int x, int y, int w, int h) = 0;
+};
 
-//
-// End of "$Id$".
-//
+#endif // FL_COCOA_WINDOW_DRIVER_H

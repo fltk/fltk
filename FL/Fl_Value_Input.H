@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Value input header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -32,31 +30,31 @@
   type(FL_FLOAT_INPUT) or type(FL_INT_INPUT) in
   there - and when they hit return or tab the value updates to
   what they typed and the callback is done.
-  
+
   <P>If step() is non-zero and integral, then the range of numbers
   is limited to integers instead of floating point numbers. As
   well as displaying the value as an integer, typed input is also
   limited to integer values, even if the hidden Fl_Input widget
   is of type(FL_FLOAT_INPUT).</P>
-  
+
   <P>If step() is non-zero, the user can also drag the
   mouse across the object and thus slide the value. The left
   button moves one step() per pixel, the middle by 10
   * step(), and the right button by 100 * step(). It
   is therefore impossible to select text by dragging across it,
   although clicking can still move the insertion cursor.</P>
-  
+
   <P>If step() is non-zero and integral, then the range
   of numbers are limited to integers instead of floating point
   values.
-  
-  <P ALIGN="CENTER">\image html Fl_Value_Input.png 
+
+  <P ALIGN="CENTER">\image html Fl_Value_Input.png
   \image latex  Fl_Value_Input.png "Fl_Value_Input" width=4cm
   \see Fl_Widget::shortcut_label(int)
 */
 class FL_EXPORT Fl_Value_Input : public Fl_Valuator {
 public:
-  /* This is the encapsulated Fl_input attribute to which 
+  /* This is the encapsulated Fl_input attribute to which
   this class delegates the value font, color and shortcut */
   Fl_Input input;
 private:
@@ -83,21 +81,21 @@ public:
   char soft() const {return soft_;}
   /**
    Returns the current shortcut key for the Input.
-   \see Fl_Value_Input::shortcut(int) 
+   \see Fl_Value_Input::shortcut(int)
   */
   int shortcut() const {return input.shortcut();}
-  /** 
+  /**
    Sets the shortcut key to \p s. Setting this
    overrides the use of '&' in the label().  The value is a bitwise
    OR of a key and a set of shift flags, for example FL_ALT | 'a'
    , FL_ALT | (FL_F + 10), or just 'a'.  A value
    of 0 disables the shortcut.
-   
-   The key can be any value returned by 
+
+   The key can be any value returned by
    Fl::event_key(), but will usually be an ASCII letter.  Use
    a lower-case letter unless you require the shift key to be held down.
-   
-   The shift flags can be any set of values accepted by 
+
+   The shift flags can be any set of values accepted by
    Fl::event_state().  If the bit is on that shift key must
    be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
    the shift flags (zero for the other bits indicates a "don't care"
@@ -125,7 +123,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

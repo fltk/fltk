@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * snprintf() and vsnprintf() functions for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include <stdio.h>
@@ -27,23 +25,56 @@
 extern "C" {
 #endif
 
+/**
+  \file vsnprintf.c
+  \brief  Portable vsnprintf() implementation.
+*/
+
+/**
+  FLTK's platform independent wrapper for the vsnprintf() C library function.
+
+  This function guarantees:
+
+  - access to vsnprintf(), even on systems that don't have it (FLTK's own
+    built-in code is used)
+
+  - Guarantees NUL termination. Even if string expands larger than the buffer,
+    a terminating NUL is included, unlike some implementations of vsnprintf(),
+    notably Microsoft Visual Studio (pre-2015), which can leave the string
+    unterminated when truncated.
+
+  If the build environment for FLTK has vsnprintf(), fl_vsnprintf()
+  is just a wrapper around the compiler's provided function. Otherwise,
+  if the function is NOT available, FLTK's own built-in version is provided.
+
+  The FLTK built in provides these style options:
+
+  - %[ -+#']
+  - *  -- padding width
+  - .* -- precision width
+  - Data types: h, l, ll, L
+  - Floating point formats: E, G, e, f, g
+  - Integer formats: B, X, b, d, i, o, u, x
+  - Pointer format: p
+  - String/char: c, s, n
+*/
 int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 #if defined(HAVE_VSNPRINTF) && defined(__linux__)
   return vsnprintf(buffer, bufsize, format, ap);
 #else
-  char		*bufptr,		/* Pointer to position in buffer */
-		*bufend,		/* Pointer to end of buffer */
-		sign,			/* Sign of format width */
-		size,			/* Size character (h, l, L) */
-		type;			/* Format type character */
-  int		width,			/* Width of field */
-		prec;			/* Number of characters of precision */
-  char		tformat[100],		/* Temporary format string for sprintf() */
-		*tptr,			/* Pointer into temporary format */
-		temp[1024];		/* Buffer for formatted numbers */
-  char		*s;			/* Pointer to string */
-  int		slen;			/* Length of string */
-  int		bytes;			/* Total number of bytes needed */
+  char          *bufptr,                /* Pointer to position in buffer */
+                *bufend,                /* Pointer to end of buffer */
+                sign,                   /* Sign of format width */
+                size,                   /* Size character (h, l, L) */
+                type;                   /* Format type character */
+  int           width,                  /* Width of field */
+                prec;                   /* Number of characters of precision */
+  char          tformat[100],           /* Temporary format string for sprintf() */
+                *tptr,                  /* Pointer into temporary format */
+                temp[1024];             /* Buffer for formatted numbers */
+  char          *s;                     /* Pointer to string */
+  int           slen;                   /* Length of string */
+  int           bytes;                  /* Total number of bytes needed */
 
 
  /*
@@ -63,7 +94,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
         if (bufptr && bufptr < bufend) *bufptr++ = *format;
         bytes ++;
         format ++;
-	continue;
+        continue;
       } else if (strchr(" -+#\'", *format)) {
         *tptr++ = *format;
         sign = *format++;
@@ -71,48 +102,48 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
       if (*format == '*') {
         /* Get width from argument... */
-	format ++;
-	width = va_arg(ap, int);
-	snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", width);
-	tptr += strlen(tptr);
+        format ++;
+        width = va_arg(ap, int);
+        snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", width);
+        tptr += strlen(tptr);
       } else {
-	width = 0;
-	while (isdigit(*format & 255)) {
-	  if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
-	  width = width * 10 + *format++ - '0';
-	}
+        width = 0;
+        while (isdigit(*format & 255)) {
+          if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+          width = width * 10 + *format++ - '0';
+        }
       }
 
       if (*format == '.') {
-	if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+        if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
         format ++;
 
         if (*format == '*') {
           /* Get precision from argument... */
-	  format ++;
-	  prec = va_arg(ap, int);
-	  snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", prec);
-	  tptr += strlen(tptr);
-	} else {
-	  prec = 0;
-	  while (isdigit(*format & 255)) {
-	    if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
-	    prec = prec * 10 + *format++ - '0';
-	  }
-	}
+          format ++;
+          prec = va_arg(ap, int);
+          snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", prec);
+          tptr += strlen(tptr);
+        } else {
+          prec = 0;
+          while (isdigit(*format & 255)) {
+            if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+            prec = prec * 10 + *format++ - '0';
+          }
+        }
       } else prec = -1;
 
       size = '\0';
 
       if (*format == 'l' && format[1] == 'l') {
         size = 'L';
-	if (tptr < (tformat + sizeof(tformat) - 2)) {
-	  *tptr++ = 'l';
-	  *tptr++ = 'l';
-	}
-	format += 2;
+        if (tptr < (tformat + sizeof(tformat) - 2)) {
+          *tptr++ = 'l';
+          *tptr++ = 'l';
+        }
+        format += 2;
       } else if (*format == 'h' || *format == 'l' || *format == 'L') {
-	if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+        if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
         size = *format++;
       }
 
@@ -123,121 +154,121 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
       *tptr = '\0';
 
       switch (type) {
-	case 'E' : /* Floating point formats */
-	case 'G' :
-	case 'e' :
-	case 'f' :
-	case 'g' :
-	  if ((width + 2) > (int)sizeof(temp)) break;
+        case 'E' : /* Floating point formats */
+        case 'G' :
+        case 'e' :
+        case 'f' :
+        case 'g' :
+          if ((width + 2) > (int)sizeof(temp)) break;
 
-	  sprintf(temp, tformat, va_arg(ap, double));
+          sprintf(temp, tformat, va_arg(ap, double));
 
           bytes += (int) strlen(temp);
 
           if (bufptr) {
-	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
-	      bufptr = bufend;
-	    } else {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
-	  }
-	  break;
+            if ((bufptr + strlen(temp)) > bufend) {
+              strncpy(bufptr, temp, (size_t)(bufend - bufptr));
+              bufptr = bufend;
+            } else {
+              strcpy(bufptr, temp);
+              bufptr += strlen(temp);
+            }
+          }
+          break;
 
         case 'B' : /* Integer formats */
-	case 'X' :
-	case 'b' :
+        case 'X' :
+        case 'b' :
         case 'd' :
-	case 'i' :
-	case 'o' :
-	case 'u' :
-	case 'x' :
-	  if ((width + 2) > (int)sizeof(temp)) break;
+        case 'i' :
+        case 'o' :
+        case 'u' :
+        case 'x' :
+          if ((width + 2) > (int)sizeof(temp)) break;
 
 #ifdef HAVE_LONG_LONG
-	  if (size == 'L')
-	    sprintf(temp, tformat, va_arg(ap, long long));
-	  else
+          if (size == 'L')
+            sprintf(temp, tformat, va_arg(ap, long long));
+          else
 #endif /* HAVE_LONG_LONG */
-	  if (size == 'l')
-	    sprintf(temp, tformat, va_arg(ap, long));
-	  else
-	    sprintf(temp, tformat, va_arg(ap, int));
+          if (size == 'l')
+            sprintf(temp, tformat, va_arg(ap, long));
+          else
+            sprintf(temp, tformat, va_arg(ap, int));
 
           bytes += (int) strlen(temp);
 
-	  if (bufptr) {
-	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
-	      bufptr = bufend;
-	    } else {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
-	  }
-	  break;
-	    
-	case 'p' : /* Pointer value */
-	  if ((width + 2) > (int)sizeof(temp)) break;
+          if (bufptr) {
+            if ((bufptr + strlen(temp)) > bufend) {
+              strncpy(bufptr, temp, (size_t)(bufend - bufptr));
+              bufptr = bufend;
+            } else {
+              strcpy(bufptr, temp);
+              bufptr += strlen(temp);
+            }
+          }
+          break;
 
-	  sprintf(temp, tformat, va_arg(ap, void *));
+        case 'p' : /* Pointer value */
+          if ((width + 2) > (int)sizeof(temp)) break;
+
+          sprintf(temp, tformat, va_arg(ap, void *));
 
           bytes += (int) strlen(temp);
 
-	  if (bufptr) {
-	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
-	      bufptr = bufend;
-	    } else {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
-	  }
-	  break;
+          if (bufptr) {
+            if ((bufptr + strlen(temp)) > bufend) {
+              strncpy(bufptr, temp, (size_t)(bufend - bufptr));
+              bufptr = bufend;
+            } else {
+              strcpy(bufptr, temp);
+              bufptr += strlen(temp);
+            }
+          }
+          break;
 
         case 'c' : /* Character or character array */
-	  bytes += width;
+          bytes += width;
 
-	  if (bufptr) {
-	    if (width <= 1) *bufptr++ = va_arg(ap, int);
-	    else {
-	      if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
+          if (bufptr) {
+            if (width <= 1) *bufptr++ = va_arg(ap, int);
+            else {
+              if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
 
-	      memcpy(bufptr, va_arg(ap, char *), (size_t)width);
-	      bufptr += width;
-	    }
-	  }
-	  break;
+              memcpy(bufptr, va_arg(ap, char *), (size_t)width);
+              bufptr += width;
+            }
+          }
+          break;
 
-	case 's' : /* String */
-	  if ((s = va_arg(ap, char *)) == NULL) s = "(null)";
+        case 's' : /* String */
+          if ((s = va_arg(ap, char *)) == NULL) s = "(null)";
 
-	  slen = (int) strlen(s);
-	  if (slen > width && prec != width) width = slen;
+          slen = (int) strlen(s);
+          if (slen > width && prec != width) width = slen;
 
           bytes += width;
 
-	  if (bufptr) {
-	    if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
+          if (bufptr) {
+            if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
 
             if (slen > width) slen = width;
 
-	    if (sign == '-') {
-	      strncpy(bufptr, s, (size_t)slen);
-	      memset(bufptr + slen, ' ', (size_t)(width - slen));
-	    } else {
-	      memset(bufptr, ' ', (size_t)(width - slen));
-	      strncpy(bufptr + width - slen, s, (size_t)slen);
-	    }
+            if (sign == '-') {
+              strncpy(bufptr, s, (size_t)slen);
+              memset(bufptr + slen, ' ', (size_t)(width - slen));
+            } else {
+              memset(bufptr, ' ', (size_t)(width - slen));
+              strncpy(bufptr + width - slen, s, (size_t)slen);
+            }
 
-	    bufptr += width;
-	  }
-	  break;
+            bufptr += width;
+          }
+          break;
 
-	case 'n' : /* Output number of chars so far */
-	  *(va_arg(ap, int *)) = bytes;
-	  break;
+        case 'n' : /* Output number of chars so far */
+          *(va_arg(ap, int *)) = bytes;
+          break;
       }
     } else {
       bytes ++;
@@ -269,8 +300,3 @@ int fl_snprintf(char* str, size_t size, const char* fmt, ...) {
 #ifdef __cplusplus
 }
 #endif
-
-/*
- * End of "$Id$".
- */
-

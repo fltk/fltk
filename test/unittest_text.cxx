@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,12 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#include "unittests.h"
 
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
@@ -41,7 +41,7 @@ class TextExtentsTest : public Fl_Widget
     fl_color(FL_BLACK);
     fl_draw(txt, X, Y);
   }
-public: 
+public:
   static Fl_Widget *create() {
     return new TextExtentsTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
@@ -60,12 +60,12 @@ public:
       fl_font(FL_HELVETICA, 30);
       int xx = x0+55;
       int yy = y0+40;
-      DrawTextAndBoxes("!abcdeABCDE\"#A", xx, yy); yy += 50;	// mixed string
-      DrawTextAndBoxes("oacs",     xx, yy); xx += 100;		// small glyphs
-      DrawTextAndBoxes("qjgIPT",   xx, yy); yy += 50; xx -= 100;	// glyphs with descenders
-      DrawTextAndBoxes("````````", xx, yy); yy += 50;		// high small glyphs
-      DrawTextAndBoxes("--------", xx, yy); yy += 50;		// mid small glyphs
-      DrawTextAndBoxes("________", xx, yy); yy += 50;		// low small glyphs
+      DrawTextAndBoxes("!abcdeABCDE\"#A", xx, yy); yy += 50;     // mixed string
+      DrawTextAndBoxes("oacs",     xx, yy); xx += 100;           // small glyphs
+      DrawTextAndBoxes("qjgIPT",   xx, yy); yy += 50; xx -= 100; // glyphs with descenders
+      DrawTextAndBoxes("````````", xx, yy); yy += 50;            // high small glyphs
+      DrawTextAndBoxes("--------", xx, yy); yy += 50;            // mid small glyphs
+      DrawTextAndBoxes("________", xx, yy); yy += 50;            // low small glyphs
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);  fl_draw("fl_measure bounding box in RED",       xx, yy); yy += 20;
@@ -81,8 +81,4 @@ public:
   }
 };
 
-UnitTest textExtents("rendering text", TextExtentsTest::create);
-
-//
-// End of "$Id$"
-//
+UnitTest textExtents(kTestText, "Rendering text", TextExtentsTest::create);

@@ -2136,6 +2136,7 @@ static const Summary16 jisx0212_uni2indx_page4e[1307] = {
 static int
 jisx0212_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv;
   if (n >= 2) {
     const Summary16 *summary = NULL;
     if (wc < 0x0460)

@@ -71,8 +71,8 @@ more CMake options using cmake-gui, ccmake, or cmake -DOPTION...
 
 These options are predefined to OFF and can be switched ON:
 
-  - OPTION_BUILD_HTML_DOCUMENTATION:BOOL=OFF	target:	html
-  - OPTION_BUILD_PDF_DOCUMENTATION:BOOL=OFF	target:	pdf
+  - OPTION_BUILD_HTML_DOCUMENTATION:BOOL=OFF    target: html
+  - OPTION_BUILD_PDF_DOCUMENTATION:BOOL=OFF     target: pdf
 
   - OPTION_INSTALL_HTML_DOCUMENTATION:BOOL=OFF
   - OPTION_INSTALL_PDF_DOCUMENTATION:BOOL=OFF
@@ -106,7 +106,7 @@ Bugs and Feature Requests:
 --------------------------
 If you find any typos, things that are unclear, or would like to
 contribute an example, section, or chapter to the FLTK manual, please
-post a question in the fltk newsgroup fltk.general or post a bug
-report or feature request at:
+post a question in the fltk group fltk.general or post a bug
+report or feature request. For more information see this page:
 
-    https://www.fltk.org/str.php
+    https://www.fltk.org/bugs.php

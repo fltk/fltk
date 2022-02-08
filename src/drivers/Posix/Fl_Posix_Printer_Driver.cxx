@@ -1,26 +1,25 @@
 //
-// "$Id$"
-//
 // PostScript priting support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 
-#if defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
+#if !defined(FL_NO_PRINT_SUPPORT)
 
 #include <FL/Fl_PostScript.H>
+#include "../PostScript/Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl_Printer.H>
 #include <FL/fl_ask.H>
 
@@ -54,14 +53,14 @@ public:
   typedef struct _GtkPrintJob GtkPrintJob;
   typedef struct _GtkWidget GtkWidget;
   struct GError;
-  
+
   GtkPrintJob *pjob; // data shared between begin_job() and end_job()
   char tmpfilename[50]; // name of temporary PostScript file containing to-be-printed data
   virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message=NULL);
   virtual void end_job();
   static bool probe_for_GTK();
   static void *ptr_gtk; // points to the GTK dynamic lib or NULL
-  
+
   typedef GtkPrintUnixDialog* (*gtk_print_unix_dialog_new_t)(const char*, void*);
   typedef int (*gtk_dialog_run_t)(GtkDialog*);
   typedef GtkPrintSettings *(*gtk_print_unix_dialog_get_settings_t)(GtkPrintUnixDialog*);
@@ -99,14 +98,14 @@ void *Fl_GTK_Printer_Driver::ptr_gtk = NULL;
 
 // test wether GTK is available at run-time
 bool Fl_GTK_Printer_Driver::probe_for_GTK() {
-  return Fl_X11_System_Driver::probe_for_GTK(2, 10, &ptr_gtk);
+  return Fl_Posix_System_Driver::probe_for_GTK(2, 10, &ptr_gtk);
 }
 
 
 int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpage, char **perr_message) {
   enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4;
   enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT ;
-  
+
   GtkPrintUnixDialog *pdialog = CALL_GTK(gtk_print_unix_dialog_new)(Fl_Printer::dialog_title, NULL); //2.10
   if (dlsym(ptr_gtk, "gtk_get_major_version") || !CALL_GTK(gtk_check_version)(2, 18, 0))
     CALL_GTK(gtk_print_unix_dialog_set_embed_page_setup)(pdialog, true); //2.18
@@ -236,7 +235,7 @@ Fl_Paged_Device* Fl_Printer::newPrinterDriver(void)
 int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage, char **perr_message) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
-  
+
   // first test version for print dialog
   if (!print_panel) make_print_panel();
   printing_style style = print_load();
@@ -247,12 +246,12 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
   { char tmp[10]; snprintf(tmp, sizeof(tmp), "%d", pages); print_to->value(tmp); }
   print_panel->show(); // this is modal
   while (print_panel->shown()) Fl::wait();
-  
+
   if (!print_start) // user clicked cancel
     return 1;
-  
+
   // get options
-  
+
   switch (print_page_size->value()) {
     case 0:
       format = Fl_Paged_Device::LETTER;
@@ -281,7 +280,7 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     default:
       format = Fl_Paged_Device::A4;
   }
-  
+
   { // page range choice
     int from = 1, to = pages;
     if (print_pages->value()) {
@@ -295,29 +294,29 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     if (lastpage) *lastpage = to;
     if (pages > 0) pages = to - from + 1;
   }
-  
+
   if (print_output_mode[0]->value()) layout = Fl_Paged_Device::PORTRAIT;
   else if (print_output_mode[1]->value()) layout = Fl_Paged_Device::LANDSCAPE;
   else if (print_output_mode[2]->value()) layout = Fl_Paged_Device::PORTRAIT;
   else layout = Fl_Paged_Device::LANDSCAPE;
-  
-  int print_pipe = print_choice->value();	// 0 = print to file, >0 = printer (pipe)
-  
+
+  int print_pipe = print_choice->value();       // 0 = print to file, >0 = printer (pipe)
+
   const char *media = print_page_size->text(print_page_size->value());
   const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
   if (!print_pipe) printer = "<File>";
-  
+
   if (!print_pipe) // fall back to file printing
     return Fl_PostScript_File_Device::begin_job (pages, format, layout);
-  
+
   // Print: pipe the output into the lp command...
-  
+
   char command[1024];
   if (style == SystemV) snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
                                  printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5), "FLTK", media);
   else snprintf(command, sizeof(command), "lpr -h -P%s -#%d -T FLTK ",
                 printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5));
-  
+
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = popen(command, "w");
   if (!ps->output) {
@@ -328,13 +327,7 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
     return 2;
   }
   ps->close_command(pclose);
-  this->set_current();
   return ps->start_postscript(pages, format, layout); // start printing
 }
 
-#endif // defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
-
-
-//
-// End of "$Id$".
-//
+#endif // !defined(FL_NO_PRINT_SUPPORT)
