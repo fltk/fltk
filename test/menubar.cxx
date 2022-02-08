@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
   menus[3] = &mb;
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
   window.resizable(&mb);
-  window.size_range(300,400,0,400);
+  window.size_range(300,400,0,400+TERMINAL_HEIGHT);
 #ifdef __APPLE__
   Fl_Choice ch2(500,100,150,25,"Use:");
   ch2.menu(menu_location);
