@@ -1,7 +1,7 @@
 //
 // Common dialog implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -149,7 +149,7 @@ Fl_Message::Fl_Message(const char *iconlabel)
   // create widgets
 
   window_ = new Fl_Window(400, 150, NULL);
-  message_ = new Fl_Box(60, 25, 340, 20);
+  message_ = new Fl_Message_Box(60, 25, 340, 20);
   message_->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
 
   input_ = new Fl_Input(60, 37, 340, 23);
@@ -542,6 +542,24 @@ void Fl_Message::message_title_default(const char *title) {
 
 void Fl_Message::icon_label(const char *str) {
   message_icon_label_ = str;
+}
+
+// handle ctrl-c (command-c on macOS) to copy message text
+
+int Fl_Message_Box::handle(int e) {
+  unsigned int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
+  switch (e) {
+    case FL_KEYBOARD:
+    case FL_SHORTCUT:
+      if (Fl::event_key() == 'c' && mods == FL_COMMAND) {
+        Fl::copy(label(), strlen(label()), 1);
+        return 1;
+      }
+      break;
+    default:
+      break;
+  }
+  return Fl_Box::handle(e);
 }
 
 /**

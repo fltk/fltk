@@ -1,7 +1,7 @@
 //
 // Common dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,9 +18,9 @@
 #define _src_Fl_Message_h_
 
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
 #include <FL/fl_ask.H>
 
-class Fl_Box;
 class Fl_Button;
 class Fl_Input;
 
@@ -31,6 +31,22 @@ class Fl_Input;
 
   \{
 */
+
+/**
+  Fl_Message_Box is a tiny class that features copying the message text.
+
+  This class is used in Fl_Message and handles ctrl-c or command-c
+  (on macOS) to copy the given message text to the clipboard.
+*/
+
+/* Note: Do not FL_EXPORT this class, it's for internal use only */
+
+class Fl_Message_Box : public Fl_Box {
+public:
+  Fl_Message_Box(int X, int Y, int W, int H)
+    : Fl_Box(X, Y, W, H) {}
+  int handle(int e);
+}; // class Fl_Message_Box
 
 /**
   This is the base class for all common FLTK dialog windows used in
@@ -130,13 +146,13 @@ public:
   // member variables and methods
 
 private:
-  Fl_Window *window_;     ///< message window
-  Fl_Box *message_;       ///< message text
-  Fl_Box *icon_;          ///< contains the icon
-  Fl_Button *button_[3];  ///< buttons used internally
-  Fl_Input *input_;       ///< normal text or secret input
-  int retval_;            ///< internally used to store the return value
-  int window_closed_;     ///< window close flag (-1 = Escape, -2 = close button)
+  Fl_Window *window_;         ///< message window
+  Fl_Message_Box *message_;   ///< message text (handles ctrl-c)
+  Fl_Box *icon_;              ///< contains the icon
+  Fl_Button *button_[3];      ///< buttons used internally
+  Fl_Input *input_;           ///< normal text or secret input
+  int retval_;                ///< internally used to store the return value
+  int window_closed_;         ///< window close flag (-1 = Escape, -2 = close button)
 
   // static (private) variables
 
