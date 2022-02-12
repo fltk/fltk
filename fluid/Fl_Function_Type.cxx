@@ -253,7 +253,7 @@ void Fl_Function_Type::open() {
     f_public_choice->hide();
     f_c_button->hide();
   } else {
-    f_public_choice->value(public_>0);
+    f_public_choice->value(public_);
     f_public_choice->show();
     f_public_member_choice->hide();
     f_c_button->show();
@@ -441,11 +441,13 @@ void Fl_Function_Type::write_code1() {
     } else {
       if (havechildren)
         write_comment_c();
-      if (public_) {
+      if (public_==1) {
         if (cdecl_)
           write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
         else
           write_h("%s%s %s;\n", rtype, star, name());
+      } else if (public_==2) {
+        // write neither the prototype nor static, the function may be declared elsewhere
       } else {
         if (havechildren)
           write_c("static ");
