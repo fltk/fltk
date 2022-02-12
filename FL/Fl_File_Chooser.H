@@ -164,6 +164,13 @@ public:
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();
+  void position(int x, int y);
+  int x() const;
+  int y() const;
+  int w() const;
+  int h() const;
+  void size(int w, int h);
+  void resize(int x, int y, int w, int h);
   /**
    [standard text may be customized at run-time]
   */

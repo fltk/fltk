@@ -454,6 +454,34 @@ int Fl_File_Chooser::visible() {
   return window->visible();
 }
 
+void Fl_File_Chooser::position(int x, int y) {
+  window->position(x, y);
+}
+
+int Fl_File_Chooser::x() const {
+  return window->x();
+}
+
+int Fl_File_Chooser::y() const {
+  return window->y();
+}
+
+int Fl_File_Chooser::w() const {
+  return window->w();
+}
+
+int Fl_File_Chooser::h() const {
+  return window->h();
+}
+
+void Fl_File_Chooser::size(int w, int h) {
+  window->size(w, h);
+}
+
+void Fl_File_Chooser::resize(int x, int y, int w, int h) {
+  window->resize(x, y, w, h);
+}
+
 Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
   Fl_Widget* ret=ext_group;
   if (gr==ext_group) {
