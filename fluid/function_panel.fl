@@ -51,7 +51,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {101 713 343 232} type Double hide resizable modal
+    xywh {540 418 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -86,6 +86,11 @@ Function {make_function_panel()} {open
         MenuItem {} {
           label global
           user_data 1 user_data_type long
+          xywh {15 15 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label local
+          user_data 2 user_data_type long
           xywh {15 15 100 20} labelsize 11
         }
       }
@@ -260,9 +265,9 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label {Declaration Properties}
-    xywh {445 609 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    xywh {497 618 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {10 10 270 20}
     } {
       Fl_Box {} {
@@ -337,7 +342,7 @@ Function {make_data_panel()} {open
 } {
   Fl_Window data_panel {
     label {Inline Data Properties}
-    xywh {449 337 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    xywh {589 362 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -529,18 +534,17 @@ Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 if (Fl_Type::current && Fl_Type::current->is_group())
   add_new_widget_from_user(type_name, kAddAsLastChild);
 else
-  add_new_widget_from_user(type_name, kAddAfterCurrent);} {selected
-  }
+  add_new_widget_from_user(type_name, kAddAfterCurrent);} {}
 }
 
-Function {make_widgetbin()} {open
+Function {make_widgetbin()} {open selected
 } {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
+  toggle_widgetbin_cb((Fl_Widget*)o, v);}
     xywh {449 206 600 102} type Single align 80 hide non_modal
   } {
     Fl_Group {} {
