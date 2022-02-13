@@ -184,7 +184,9 @@ int Widget_Bin_Window_Button::handle(int inEvent)
 
 Fluid_Coord_Input::Fluid_Coord_Input(int x, int y, int w, int h, const char *l) :
 Fl_Input(x, y, w, h, l),
-user_callback_(0L)
+user_callback_(0L),
+vars_(0L),
+vars_user_data_(0L)
 {
   Fl_Input::callback((Fl_Callback*)callback_handler_cb);
 }
@@ -197,6 +199,21 @@ void Fluid_Coord_Input::callback_handler(void *v) {
   if (user_callback_)
     (*user_callback_)(this, v);
   value( value() );
+}
+
+int Fluid_Coord_Input::eval_var(uchar *&s) const {
+  if (!vars_)
+    return 0;
+  // find the end of the variable name
+  uchar *v = s;
+  while (isalpha(*s)) s++;
+  int n = (int)(s-v);
+  // find the variable in the list
+  for (Fluid_Coord_Input_Vars *vars = vars_; vars->name_; vars++) {
+    if (strncmp((char*)v, vars->name_, n)==0 && vars->name_[n]==0)
+      return vars->callback_(this, vars_user_data_);
+  }
+  return 0;
 }
 
 /**
@@ -214,14 +231,17 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
   if (c=='-') { sgn = -1; c = *s++; }
   else if (c=='+') { sgn = 1; c = *s++; }
 
-  // TODO: variable name
-  // check for numeric value
   if (c>='0' && c<='9') {
+    // numeric value
     while (c>='0' && c<='9') {
       v = v*10 + (c-'0');
       c = *s++;
     }
+  } else if (isalpha(c)) {
+    v = eval_var(--s);
+    c = *s++;
   } else if (c=='(') {
+    // opening bracket
     v = eval(s, 5);
   } else {
     return sgn*v; // syntax error
