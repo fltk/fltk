@@ -122,7 +122,7 @@
   void MyTabCallback(Fl_Widget *w, void*) {
     Fl_Tabs *tabs = (Fl_Tabs*)w;
     // When tab changed, make sure it has same color as its group
-    tabs->selection_color( (tab->value())->color() );
+    tabs->selection_color( (tabs->value())->color() );
   }
   ..
   int main(..) {
