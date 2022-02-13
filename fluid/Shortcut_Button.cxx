@@ -14,23 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/// \defgroup fl_type Basic Node for all Widgets and Functions
-/// \{
-
-/** \class Fl_Type
-Each object described by Fluid is one of these objects.  They
-are all stored in a double-linked list.
-
-The "type" of the object is covered by the virtual functions.
-There will probably be a lot of these virtual functions.
-
-The type browser is also a list of these objects, but they
-are "factory" instances, not "real" ones.  These objects exist
-only so the "make" method can be called on them.  They are
-not in the linked list and are not written to files or
-copied or otherwise examined.
-*/
-
 #include "Shortcut_Button.h"
 
 #include "fluid.h"
@@ -194,4 +177,112 @@ int Widget_Bin_Window_Button::handle(int inEvent)
   return Fl_Button::handle(inEvent);
 }
 
-/// \}
+/** \class Fluid_Coord_Input
+ An Input field for widget coordinates and sizes.
+ This widget adds basic math capability to the text input field.
+ */
+
+Fluid_Coord_Input::Fluid_Coord_Input(int x, int y, int w, int h, const char *l) :
+Fl_Input(x, y, w, h, l),
+user_callback_(0L)
+{
+  Fl_Input::callback((Fl_Callback*)callback_handler_cb);
+}
+
+void Fluid_Coord_Input::callback_handler_cb(Fluid_Coord_Input *This, void *v) {
+  This->callback_handler(v);
+}
+
+void Fluid_Coord_Input::callback_handler(void *v) {
+  if (user_callback_)
+    (*user_callback_)(this, v);
+  value( value() );
+}
+
+/**
+ Evaluate a textual function into an integer.
+ \param s remaining text in this function
+ \param prio priority of current operation
+ \param flags
+ \return the value so far
+ */
+int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
+  int v =0, sgn = 1;
+  uchar c = *s++;
+
+  // check for unary operator
+  if (c=='-') { sgn = -1; c = *s++; }
+  else if (c=='+') { sgn = 1; c = *s++; }
+
+  // TODO: variable name
+  // check for numeric value
+  if (c>='0' && c<='9') {
+    while (c>='0' && c<='9') {
+      v = v*10 + (c-'0');
+      c = *s++;
+    }
+  } else if (c=='(') {
+    v = eval(s, 5);
+  } else {
+    return sgn*v; // syntax error
+  }
+  if (sgn==-1) v = -v;
+
+  // Now evaluate all following binary operators
+  for (;;) {
+    if (c==0) {
+      return v;
+    } else if (c=='+' || c=='-') {
+      if (prio<=4) { s--; return v; }
+      if (c=='+') { v += eval(s, 4); }
+      else if (c=='-') { v -= eval(s, 4); }
+    } else if (c=='*' || c=='/') {
+      if (prio<=3) { s--; return v; }
+      if (c=='*') { v *= eval(s, 3); }
+      else if (c=='/') { v /= eval(s, 3); }
+    } else if (c==')') {
+      return v;
+    } else {
+      return v; // syntax error
+    }
+    c = *s++;
+  }
+  return v;
+}
+
+int Fluid_Coord_Input::eval(const char *s) const
+{
+  // duplicate the text, so we can modify it
+  uchar *buf = (uchar*)strdup(s);
+  uchar *src = buf, *dst = buf;
+  // remove all whitespace to make the parser easier
+  for (;;) {
+    uchar c = *src++;
+    if (c==' ' || c=='\t') continue;
+    *dst++ = c;
+    if (c==0) break;
+  }
+  src = buf;
+  // now jump into the recursion
+  int ret = eval(src, 5);
+  ::free(buf);
+  return ret;
+}
+
+
+int Fluid_Coord_Input::value() const {
+
+//  int v = 0;
+//  v = eval("2+5+10");
+//  v = eval("2*5+20"); // 30
+//  v = eval("2+5*20"); // 102
+//  v = eval("(2+5)*20"); // 140
+//  v = eval("2*(2+5)*20"); // 140
+  return eval(text());
+}
+
+void Fluid_Coord_Input::value(int v) {
+  char buf[32];
+  fl_snprintf(buf, sizeof(buf), "%d", v);
+  text(buf);
+}

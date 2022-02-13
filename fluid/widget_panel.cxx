@@ -52,13 +52,13 @@ Fl_Menu_Item menu_1[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-Fl_Value_Input *widget_x_input=(Fl_Value_Input *)0;
+Fluid_Coord_Input *widget_x_input=(Fluid_Coord_Input *)0;
 
-Fl_Value_Input *widget_y_input=(Fl_Value_Input *)0;
+Fluid_Coord_Input *widget_y_input=(Fluid_Coord_Input *)0;
 
-Fl_Value_Input *widget_w_input=(Fl_Value_Input *)0;
+Fluid_Coord_Input *widget_w_input=(Fluid_Coord_Input *)0;
 
-Fl_Value_Input *widget_h_input=(Fl_Value_Input *)0;
+Fluid_Coord_Input *widget_h_input=(Fluid_Coord_Input *)0;
 
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -262,42 +262,62 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { widget_x_input = new Fl_Value_Input(95, 150, 55, 20, "X:");
+          { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
             widget_x_input->tooltip("The X position of the widget.");
+            widget_x_input->box(FL_DOWN_BOX);
+            widget_x_input->color(FL_BACKGROUND2_COLOR);
+            widget_x_input->selection_color(FL_SELECTION_COLOR);
+            widget_x_input->labeltype(FL_NORMAL_LABEL);
+            widget_x_input->labelfont(0);
             widget_x_input->labelsize(11);
-            widget_x_input->maximum(2048);
-            widget_x_input->step(1);
+            widget_x_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_x_input->textsize(11);
             widget_x_input->callback((Fl_Callback*)x_cb);
             widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* widget_x_input
-          { widget_y_input = new Fl_Value_Input(155, 150, 55, 20, "Y:");
+            widget_x_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_x_input
+          { widget_y_input = new Fluid_Coord_Input(155, 150, 55, 20, "Y:");
             widget_y_input->tooltip("The Y position of the widget.");
+            widget_y_input->box(FL_DOWN_BOX);
+            widget_y_input->color(FL_BACKGROUND2_COLOR);
+            widget_y_input->selection_color(FL_SELECTION_COLOR);
+            widget_y_input->labeltype(FL_NORMAL_LABEL);
+            widget_y_input->labelfont(0);
             widget_y_input->labelsize(11);
-            widget_y_input->maximum(2048);
-            widget_y_input->step(1);
+            widget_y_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_y_input->textsize(11);
             widget_y_input->callback((Fl_Callback*)y_cb);
             widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* widget_y_input
-          { widget_w_input = new Fl_Value_Input(215, 150, 55, 20, "Width:");
+            widget_y_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_y_input
+          { widget_w_input = new Fluid_Coord_Input(215, 150, 55, 20, "Width:");
             widget_w_input->tooltip("The width of the widget.");
+            widget_w_input->box(FL_DOWN_BOX);
+            widget_w_input->color(FL_BACKGROUND2_COLOR);
+            widget_w_input->selection_color(FL_SELECTION_COLOR);
+            widget_w_input->labeltype(FL_NORMAL_LABEL);
+            widget_w_input->labelfont(0);
             widget_w_input->labelsize(11);
-            widget_w_input->maximum(2048);
-            widget_w_input->step(1);
+            widget_w_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_w_input->textsize(11);
             widget_w_input->callback((Fl_Callback*)w_cb);
             widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* widget_w_input
-          { widget_h_input = new Fl_Value_Input(275, 150, 55, 20, "Height:");
+            widget_w_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_w_input
+          { widget_h_input = new Fluid_Coord_Input(275, 150, 55, 20, "Height:");
             widget_h_input->tooltip("The height of the widget.");
+            widget_h_input->box(FL_DOWN_BOX);
+            widget_h_input->color(FL_BACKGROUND2_COLOR);
+            widget_h_input->selection_color(FL_SELECTION_COLOR);
+            widget_h_input->labeltype(FL_NORMAL_LABEL);
+            widget_h_input->labelfont(0);
             widget_h_input->labelsize(11);
-            widget_h_input->maximum(2048);
-            widget_h_input->step(1);
+            widget_h_input->labelcolor(FL_FOREGROUND_COLOR);
             widget_h_input->textsize(11);
             widget_h_input->callback((Fl_Callback*)h_cb);
             widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* widget_h_input
+            widget_h_input->when(FL_WHEN_RELEASE);
+          } // Fluid_Coord_Input* widget_h_input
           { Fl_Light_Button* o = new Fl_Light_Button(335, 150, 65, 20, "Relative");
             o->tooltip("If set, widgets inside a widget class of type Fl_Group are repositioned relat\
 ive to the origin at construction time");

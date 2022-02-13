@@ -501,9 +501,9 @@ void tooltip_cb(Fl_Input* i, void *v) {
   }
 }
 
-Fl_Value_Input *x_input, *y_input, *w_input, *h_input;
+Fluid_Coord_Input *x_input, *y_input, *w_input, *h_input;
 
-void x_cb(Fl_Value_Input *i, void *v) {
+void x_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     x_input = i;
     if (current_widget->is_widget()) {
@@ -528,7 +528,7 @@ void x_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void y_cb(Fl_Value_Input *i, void *v) {
+void y_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     y_input = i;
     if (current_widget->is_widget()) {
@@ -553,7 +553,7 @@ void y_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void w_cb(Fl_Value_Input *i, void *v) {
+void w_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     w_input = i;
     if (current_widget->is_widget()) {
@@ -578,7 +578,7 @@ void w_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void h_cb(Fl_Value_Input *i, void *v) {
+void h_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     h_input = i;
     if (current_widget->is_widget()) {
