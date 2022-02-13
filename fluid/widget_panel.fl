@@ -23,13 +23,16 @@ comment {//
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
+decl {\#include "Shortcut_Button.h"} {selected public global
+}
+
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {500 209 420 400} type Double labelsize 11 align 80 hide resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0}
+    xywh {500 209 420 400} type Double labelsize 11 align 80 resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -37,7 +40,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -255,28 +258,32 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         }
         Fl_Group {} {
           label {Position:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Value_Input widget_x_input {
+          Fl_Input widget_x_input {
             label {X:}
             callback x_cb
-            tooltip {The X position of the widget.} xywh {95 150 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The X position of the widget.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
-          Fl_Value_Input widget_y_input {
+          Fl_Input widget_y_input {
             label {Y:}
             callback y_cb
-            tooltip {The Y position of the widget.} xywh {155 150 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The Y position of the widget.} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
-          Fl_Value_Input widget_w_input {
+          Fl_Input widget_w_input {
             label {Width:}
             callback w_cb
-            tooltip {The width of the widget.} xywh {215 150 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The width of the widget.} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
-          Fl_Value_Input widget_h_input {
+          Fl_Input widget_h_input {
             label {Height:}
             callback h_cb
-            tooltip {The height of the widget.} xywh {275 150 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The height of the widget.} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
+            class Fluid_Coord_Input
           }
           Fl_Light_Button {} {
             label Relative

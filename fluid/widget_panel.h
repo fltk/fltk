@@ -19,6 +19,7 @@
 #ifndef widget_panel_h
 #define widget_panel_h
 #include <FL/Fl.H>
+#include "Shortcut_Button.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Group.H>
@@ -37,17 +38,17 @@ extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Value_Input.H>
-extern void x_cb(Fl_Value_Input*, void*);
-extern Fl_Value_Input *widget_x_input;
-extern void y_cb(Fl_Value_Input*, void*);
-extern Fl_Value_Input *widget_y_input;
-extern void w_cb(Fl_Value_Input*, void*);
-extern Fl_Value_Input *widget_w_input;
-extern void h_cb(Fl_Value_Input*, void*);
-extern Fl_Value_Input *widget_h_input;
+extern void x_cb(Fluid_Coord_Input*, void*);
+extern Fluid_Coord_Input *widget_x_input;
+extern void y_cb(Fluid_Coord_Input*, void*);
+extern Fluid_Coord_Input *widget_y_input;
+extern void w_cb(Fluid_Coord_Input*, void*);
+extern Fluid_Coord_Input *widget_w_input;
+extern void h_cb(Fluid_Coord_Input*, void*);
+extern Fluid_Coord_Input *widget_h_input;
 #include <FL/Fl_Light_Button.H>
 extern void wc_relative_cb(Fl_Light_Button*, void*);
+#include <FL/Fl_Value_Input.H>
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);
 extern void max_cb(Fl_Value_Input*, void*);

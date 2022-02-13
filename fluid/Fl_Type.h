@@ -68,6 +68,9 @@ public: // things that should not be public:
   int level;    // number of parents over this
   static Fl_Type *first, *last;
   Fl_Type *next, *prev;
+  Fl_Type *prev_sibling();
+  Fl_Type *next_sibling();
+  Fl_Type *first_child();
 
   Fl_Type *factory;
   const char *callback_name();

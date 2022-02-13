@@ -501,9 +501,160 @@ void tooltip_cb(Fl_Input* i, void *v) {
   }
 }
 
-Fl_Value_Input *x_input, *y_input, *w_input, *h_input;
+Fluid_Coord_Input *x_input, *y_input, *w_input, *h_input;
 
-void x_cb(Fl_Value_Input *i, void *v) {
+static int widget_i = 0;
+
+static int vars_i_cb(const Fluid_Coord_Input*, void *v) {
+  return widget_i;
+}
+
+static int vars_x_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = (Fl_Type*)v;
+  if (t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->x();
+}
+
+static int vars_y_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = (Fl_Type*)v;
+  if (t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->y();
+}
+
+static int vars_w_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = (Fl_Type*)v;
+  if (t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->w();
+}
+
+static int vars_h_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = (Fl_Type*)v;
+  if (t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->h();
+}
+
+static int vars_px_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->parent;
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->x();
+  return 0;
+}
+
+static int vars_py_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->parent;
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->y();
+  return 0;
+}
+
+static int vars_pw_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->parent;
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->w();
+  return 0;
+}
+
+static int vars_ph_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->parent;
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->h();
+  return 0;
+}
+
+static int vars_sx_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->prev_sibling();
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->x();
+  return 0;
+}
+
+static int vars_sy_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->prev_sibling();
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->y();
+  return 0;
+}
+
+static int vars_sw_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->prev_sibling();
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->w();
+  return 0;
+}
+
+static int vars_sh_cb(const Fluid_Coord_Input*, void *v) {
+  Fl_Type *t = ((Fl_Type*)v)->prev_sibling();
+  if (t && t->is_widget())
+    return ((Fl_Widget_Type*)t)->o->h();
+  return 0;
+}
+
+static int bbox_x, bbox_y, bbox_r, bbox_b;
+static int bbox_min(int a, int b) { return (a<b) ? a : b; }
+static int bbox_max(int a, int b) { return (a>b) ? a : b; }
+
+static void calculate_bbox(Fl_Type *p) {
+  char first = 1;
+  bbox_x = bbox_y = bbox_r = bbox_b = 0;
+  for (p=p->first_child(); p; p=p->next_sibling()) {
+    if (p->is_widget()) {
+      Fl_Widget *o = ((Fl_Widget_Type*)p)->o;
+      if (first) {
+        bbox_x = o->x(); bbox_y = o->y();
+        bbox_r = o->x() + o->w(); bbox_b = o->y() + o->h();
+        first = 0;
+      } else {
+        bbox_x = bbox_min(bbox_x, o->x());
+        bbox_y = bbox_min(bbox_y, o->y());
+        bbox_r = bbox_max(bbox_r, o->x() + o->w());
+        bbox_b = bbox_max(bbox_b, o->y() + o->h());
+      }
+    }
+  }
+}
+
+static int vars_cx_cb(const Fluid_Coord_Input*, void *v) {
+  calculate_bbox((Fl_Type*)v);
+  return bbox_x;
+}
+
+static int vars_cy_cb(const Fluid_Coord_Input*, void *v) {
+  calculate_bbox((Fl_Type*)v);
+  return bbox_y;
+}
+
+static int vars_cw_cb(const Fluid_Coord_Input*, void *v) {
+  calculate_bbox((Fl_Type*)v);
+  return bbox_r - bbox_x;
+}
+
+static int vars_ch_cb(const Fluid_Coord_Input*, void *v) {
+  calculate_bbox((Fl_Type*)v);
+  return bbox_b - bbox_y;
+}
+
+Fluid_Coord_Input_Vars widget_vars[] = {
+  { "i", vars_i_cb },   // zero based counter of selected widgets
+  { "x", vars_x_cb },   // position and size of current widget
+  { "y", vars_y_cb },
+  { "w", vars_w_cb },
+  { "h", vars_h_cb },
+  { "px", vars_px_cb }, // position and size of parent widget
+  { "py", vars_py_cb },
+  { "pw", vars_pw_cb },
+  { "ph", vars_ph_cb },
+  { "sx", vars_sx_cb }, // position and size of previous sibling
+  { "sy", vars_sy_cb },
+  { "sw", vars_sw_cb },
+  { "sh", vars_sh_cb },
+  { "cx", vars_cx_cb }, // position and size of bounding box of all children
+  { "cy", vars_cy_cb },
+  { "cw", vars_cw_cb },
+  { "ch", vars_ch_cb },
+  { 0 }
+};
+
+void x_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     x_input = i;
     if (current_widget->is_widget()) {
@@ -511,16 +662,19 @@ void x_cb(Fl_Value_Input *i, void *v) {
       x_input->activate();
     } else x_input->deactivate();
   } else {
+    widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        i->variables(widget_vars, o);
         w->resize((int)i->value(), w->y(), w->w(), w->h());
         if (w->window()) w->window()->redraw();
         if (o->is_window()) {
           ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
                                        gridx, gridy, 0);
         }
+        widget_i++;
         mod = 1;
       }
     }
@@ -528,7 +682,7 @@ void x_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void y_cb(Fl_Value_Input *i, void *v) {
+void y_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     y_input = i;
     if (current_widget->is_widget()) {
@@ -536,16 +690,19 @@ void y_cb(Fl_Value_Input *i, void *v) {
       y_input->activate();
     } else y_input->deactivate();
   } else {
+    widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        i->variables(widget_vars, o);
         w->resize(w->x(), (int)i->value(), w->w(), w->h());
         if (w->window()) w->window()->redraw();
         if (o->is_window()) {
           ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
                                        gridx, gridy, 0);
         }
+        widget_i++;
         mod = 1;
       }
     }
@@ -553,7 +710,7 @@ void y_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void w_cb(Fl_Value_Input *i, void *v) {
+void w_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     w_input = i;
     if (current_widget->is_widget()) {
@@ -561,16 +718,19 @@ void w_cb(Fl_Value_Input *i, void *v) {
       w_input->activate();
     } else w_input->deactivate();
   } else {
+    widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        i->variables(widget_vars, o);
         w->resize(w->x(), w->y(), (int)i->value(), w->h());
         if (w->window()) w->window()->redraw();
         if (o->is_window()) {
           ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
                                        gridx, gridy, 0);
         }
+        widget_i++;
         mod = 1;
       }
     }
@@ -578,7 +738,7 @@ void w_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
-void h_cb(Fl_Value_Input *i, void *v) {
+void h_cb(Fluid_Coord_Input *i, void *v) {
   if (v == LOAD) {
     h_input = i;
     if (current_widget->is_widget()) {
@@ -586,16 +746,19 @@ void h_cb(Fl_Value_Input *i, void *v) {
       h_input->activate();
     } else h_input->deactivate();
   } else {
+    widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+        i->variables(widget_vars, o);
         w->resize(w->x(), w->y(), w->w(), (int)i->value());
         if (w->window()) w->window()->redraw();
         if (o->is_window()) {
           ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
                                        gridx, gridy, 0);
         }
+        widget_i++;
         mod = 1;
       }
     }

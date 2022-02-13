@@ -18,6 +18,7 @@
 #define _FLUID_SHORTCUT_BUTTON_H
 
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
 
 class Shortcut_Button : public Fl_Button {
 public:
@@ -40,6 +41,38 @@ public:
   int handle(int);
   Widget_Bin_Window_Button(int X,int Y,int W,int H, const char* l = 0) :
   Fl_Button(X,Y,W,H,l) { }
+};
+
+
+typedef int (Fluid_Coord_Callback)(class Fluid_Coord_Input const *, void*);
+
+typedef struct Fluid_Coord_Input_Vars {
+  const char *name_;
+  Fluid_Coord_Callback *callback_;
+} Fluid_Coord_Input_Vars;
+
+class Fluid_Coord_Input : public Fl_Input {
+  Fl_Callback *user_callback_;
+  Fluid_Coord_Input_Vars *vars_;
+  void *vars_user_data_;
+  static void callback_handler_cb(Fluid_Coord_Input *This, void *v);
+  void callback_handler(void *v);
+  int eval_var(uchar *&s) const;
+  int eval(uchar *&s, int prio) const;
+  int eval(const char *s) const;
+public:
+  Fluid_Coord_Input(int x, int y, int w, int h, const char *l=0L);
+  const char *text() const { return Fl_Input::value(); }
+  void text(const char *v) { Fl_Input::value(v); }
+  int value() const;
+  void value(int v);
+  void callback(Fl_Callback *cb) {
+    user_callback_ = cb;
+  }
+  void variables(Fluid_Coord_Input_Vars *vars, void *user_data) {
+    vars_ = vars;
+    vars_user_data_ = user_data;
+  }
 };
 
 #endif

@@ -299,6 +299,30 @@ Fl_Type::~Fl_Type() {
   if (comment_) free((void*)comment_);
 }
 
+// Return the previous sibling in the tree structure or NULL.
+Fl_Type *Fl_Type::prev_sibling() {
+  Fl_Type *n;
+  for (n = prev; n && n->level > level; n = n->prev) ;
+  return n;
+}
+
+// Return the next sibling in the tree structure or NULL.
+Fl_Type *Fl_Type::next_sibling() {
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) ;
+  if (n->level==level)
+    return n;
+  return 0;
+}
+
+// Return the first child or NULL
+Fl_Type *Fl_Type::first_child() {
+  Fl_Type *n = next;
+  if (n->level > level)
+    return n;
+  return NULL;
+}
+
 // Generate a descriptive text for this item, to put in browser & window titles
 const char* Fl_Type::title() {
   const char* c = name();
