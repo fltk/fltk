@@ -179,9 +179,13 @@ int Widget_Bin_Window_Button::handle(int inEvent)
 
 /** \class Fluid_Coord_Input
  An Input field for widget coordinates and sizes.
- This widget adds basic math capability to the text input field.
+ This widget adds basic math capability to the text input field and a number
+ of variables that can be used in the formula.
  */
 
+/**
+ Create an input field.
+ */
 Fluid_Coord_Input::Fluid_Coord_Input(int x, int y, int w, int h, const char *l) :
 Fl_Input(x, y, w, h, l),
 user_callback_(0L),
@@ -201,6 +205,15 @@ void Fluid_Coord_Input::callback_handler(void *v) {
   value( value() );
 }
 
+/**
+ Get the value of a variable.
+ Collects all conesecutive ASCII letters into a variable name, scans the
+ Variable list for that name, and then calls the corresponding callback from
+ the Variable array.
+ \param s points to the first character of the variable name, must point after
+    the last character of the variable name when returning.
+ \return the integer value that wasf= found or calculated
+ */
 int Fluid_Coord_Input::eval_var(uchar *&s) const {
   if (!vars_)
     return 0;
@@ -217,10 +230,10 @@ int Fluid_Coord_Input::eval_var(uchar *&s) const {
 }
 
 /**
- Evaluate a textual function into an integer.
- \param s remaining text in this function
+ Evaluate a formula into an integer, recursive part.
+ \param s remaining text in this formula, must return a pointer to the next
+    character that will be interpreted.
  \param prio priority of current operation
- \param flags
  \return the value so far
  */
 int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
@@ -270,6 +283,15 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
   return v;
 }
 
+/**
+ Evaluate a formula into an integer.
+ The interpreter understand unary plus and minus, basic integer math
+ (+, -, *, /), brackets, and can handle a user defined list of variables
+ by name. There is no error checking. We assume that the formula is
+ entered correctly.
+ \param s formula as a C string
+ \return the calculated value
+ */
 int Fluid_Coord_Input::eval(const char *s) const
 {
   // duplicate the text, so we can modify it
@@ -289,18 +311,16 @@ int Fluid_Coord_Input::eval(const char *s) const
   return ret;
 }
 
-
+/**
+ Evaluate the formula and return the result.
+ */
 int Fluid_Coord_Input::value() const {
-
-//  int v = 0;
-//  v = eval("2+5+10");
-//  v = eval("2*5+20"); // 30
-//  v = eval("2+5*20"); // 102
-//  v = eval("(2+5)*20"); // 140
-//  v = eval("2*(2+5)*20"); // 140
   return eval(text());
 }
 
+/**
+ Set the field to an integer value, replacing previous texts.
+ */
 void Fluid_Coord_Input::value(int v) {
   char buf[32];
   fl_snprintf(buf, sizeof(buf), "%d", v);
