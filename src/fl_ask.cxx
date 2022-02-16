@@ -256,6 +256,24 @@ int fl_choice_n(const char *fmt, const char *b0, const char *b1, const char *b2,
   The return value cannot be Null. The object pointed to is an Fl_Box widget.
   The returned pointer (Fl_Widget *) can be safely cast to an Fl_Box* pointer.
 
+  \note You can set some attributes of this \b default icon box. These attributes
+    are sticky, i.e. they will be used in all subsequent common dialogs unless
+    overridden by specific "one shot" variables. Setting any attribute except
+    those mentioned below causes undefined behavior.
+
+  Supported icon attributes:
+
+    - box()
+    - labelfont()
+    - labelsize()
+    - color()
+    - labelcolor()
+    - image()
+    - align()
+
+  The icon size can not be changed. If you set an image() you should scale it
+  to the available size, i.e. \p w() and \p h() of the icon box.
+
   \code #include <FL/fl_ask.H> \endcode
 */
 Fl_Widget *fl_message_icon() {
@@ -267,7 +285,7 @@ Fl_Widget *fl_message_icon() {
   This version of fl_input() is deprecated. The return value points
   to an internal allocated string that may be changed later. You must
   copy the string immediately after return from this method - at least
-  before the next call of the event loop.
+  before the next execution of the event loop.
 
   \deprecated Please use
   fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) instead.

@@ -163,11 +163,15 @@ Fl_Message::Fl_Message(const char *iconlabel)
   icon_->labelsize(icon_template->labelsize());
   icon_->color(icon_template->color());
   icon_->labelcolor(icon_template->labelcolor());
+  icon_->image(icon_template->image());
+  icon_->align(icon_template->align());
 
-  if (message_icon_label_) { // fl_message_icon_label() has been called
+  if (message_icon_label_) {                // fl_message_icon_label() has been called
     icon_->copy_label(message_icon_label_);
     message_icon_label_ = 0;
-  } else { // use default (static, per message default string)
+  } else if (icon_template->label()) {      // sticky icon template label() has been set
+    icon_->copy_label(icon_template->label());
+  } else {                                  // default string (c'tor argument)
     icon_->label(iconlabel);
   }
 
