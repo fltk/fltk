@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -188,7 +188,7 @@ public:
                // Description:
                "This draws a black frame around a white square.\n\n"
                // Things to look out for:
-               "If red pixels are visble or black pixels are missing, graphics clipping is misaligned."
+               "If red pixels are visible or black pixels are missing, graphics clipping is misaligned."
                );
 
     a+=100;
@@ -235,7 +235,7 @@ public:
                // Description:
                "This draws a black frame around a white square. The square is slightly smaller.\n\n"
                // Things to look out for:
-               "If red pixels are visble or black pixels are missing, graphics clipping is misaligned."
+               "If red pixels are visible or black pixels are missing, graphics clipping is misaligned."
                );
 
     gl_test_win = new GLTestWin(a+24+8, b+9-5, 10, 4*24+2*16);

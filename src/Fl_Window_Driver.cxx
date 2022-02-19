@@ -87,7 +87,7 @@ void Fl_Window_Driver::draw() { pWindow->draw(); }
 void Fl_Window_Driver::make_current() { }
 
 /**
- Make the window visble and raise it to the top.
+ Make the window visible and raise it to the top.
  */
 void Fl_Window_Driver::show() { }
 

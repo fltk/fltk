@@ -1,7 +1,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,7 +72,7 @@ public:
       fl_color(FL_GREEN); fl_draw("fl_text_extents bounding box in GREEN", xx, yy);
       fl_color(FL_BLACK);
       xx = x0 + 10;  yy += 30;
-      fl_draw("NOTE: On systems with text anti-aliasing (e.g. OSX Quartz)", xx, yy);
+      fl_draw("NOTE: On systems with text anti-aliasing (e.g. macOS Quartz)", xx, yy);
       w0 = h0 = 0; fl_measure("NOTE: ", w0, h0, 0);
       xx += w0; yy += h0;
       fl_draw("text may leak slightly outside the fl_text_extents()", xx, yy);
