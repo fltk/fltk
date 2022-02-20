@@ -99,9 +99,7 @@ void grid_cb(Fl_Int_Input *i, long v) {
   for (p = Fl_Type::first; p; p = p->next) {
     if (p->is_window()) {
       w = (Fl_Window_Type *)p;
-      ((Fl_Window *)(w->o))->size_range(gridx, gridy,
-                                        Fl::w(), Fl::h(),
-                                        gridx, gridy, 0);
+      ((Fl_Window *)(w->o))->size_range(gridx, gridy, Fl::w(), Fl::h());
     }
   }
 }
@@ -406,9 +404,7 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   }
   // Set the size ranges for this window; in order to avoid opening the
   // X display we use an arbitrary maximum size...
-  ((Fl_Window *)(this->o))->size_range(gridx, gridy,
-                                       3072, 2048,
-                                       gridx, gridy, 0);
+  ((Fl_Window *)(this->o))->size_range(gridx, gridy, 6144, 4096);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
@@ -460,7 +456,7 @@ void Fl_Window_Type::open() {
   }
 
   w->image(Fl::scheme_bg_);
-  w->size_range(gridx, gridy, Fl::w(), Fl::h(), gridx, gridy, 0);
+  w->size_range(gridx, gridy, Fl::w(), Fl::h());
 }
 
 // Read an image of the window
@@ -1553,9 +1549,7 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   }
   // Set the size ranges for this window; in order to avoid opening the
   // X display we use an arbitrary maximum size...
-  ((Fl_Window *)(this->o))->size_range(gridx, gridy,
-                                       3072, 2048,
-                                       gridx, gridy, 0);
+  ((Fl_Window *)(this->o))->size_range(gridx, gridy, 6144, 4096);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
