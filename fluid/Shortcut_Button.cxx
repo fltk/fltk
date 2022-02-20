@@ -272,7 +272,11 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
     } else if (c=='*' || c=='/') {
       if (prio<=3) { s--; return v; }
       if (c=='*') { v *= eval(s, 3); }
-      else if (c=='/') { v /= eval(s, 3); }
+      else if (c=='/') {
+        int x = eval(s, 3);
+        if (x!=0) // if x is zero, don't divide
+          v /= x;
+      }
     } else if (c==')') {
       return v;
     } else {
