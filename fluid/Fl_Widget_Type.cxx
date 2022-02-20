@@ -513,24 +513,28 @@ static int vars_x_cb(const Fluid_Coord_Input*, void *v) {
   Fl_Type *t = (Fl_Type*)v;
   if (t->is_widget())
     return ((Fl_Widget_Type*)t)->o->x();
+  return 0;
 }
 
 static int vars_y_cb(const Fluid_Coord_Input*, void *v) {
   Fl_Type *t = (Fl_Type*)v;
   if (t->is_widget())
     return ((Fl_Widget_Type*)t)->o->y();
+  return 0;
 }
 
 static int vars_w_cb(const Fluid_Coord_Input*, void *v) {
   Fl_Type *t = (Fl_Type*)v;
   if (t->is_widget())
     return ((Fl_Widget_Type*)t)->o->w();
+  return 0;
 }
 
 static int vars_h_cb(const Fluid_Coord_Input*, void *v) {
   Fl_Type *t = (Fl_Type*)v;
   if (t->is_widget())
     return ((Fl_Widget_Type*)t)->o->h();
+  return 0;
 }
 
 static int vars_px_cb(const Fluid_Coord_Input*, void *v) {
