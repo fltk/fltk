@@ -62,6 +62,7 @@ drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/fl_utf8.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/Fl_Widget.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/Fl_Window.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/gl.h
+drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/math.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/platform_types.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.o: ../config.h
@@ -144,6 +145,7 @@ drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Cairo.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/fl_casts.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/fl_config.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Device.H
+drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/fl_draw.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Export.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Gl_Window.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Graphics_Driver.H
@@ -157,6 +159,7 @@ drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/fl_utf8.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Widget.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/Fl_Window.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/gl.h
+drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/math.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: ../FL/platform_types.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.o: drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.o: ../FL/Enumerations.H
@@ -1870,6 +1873,7 @@ Fl_Gl_Window.o: ../FL/fl_casts.H
 Fl_Gl_Window.o: ../FL/fl_config.h
 Fl_Gl_Window.o: ../FL/Fl_Device.H
 Fl_Gl_Window.o: ../FL/Fl_Double_Window.H
+Fl_Gl_Window.o: ../FL/fl_draw.H
 Fl_Gl_Window.o: ../FL/Fl_Export.H
 Fl_Gl_Window.o: ../FL/Fl_Gl_Window.H
 Fl_Gl_Window.o: ../FL/Fl_Graphics_Driver.H
@@ -1887,6 +1891,7 @@ Fl_Gl_Window.o: ../FL/Fl_Window.H
 Fl_Gl_Window.o: ../FL/gl.h
 Fl_Gl_Window.o: ../FL/platform_types.h
 Fl_Gl_Window.o: drivers/OpenGL/Fl_OpenGL_Display_Device.H
+Fl_Gl_Window.o: drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
 Fl_Gl_Window.o: Fl_Gl_Window_Driver.H
 Fl_Gl_Window.o: Fl_Window_Driver.H
 Fl_grab.o: ../FL/Enumerations.H
