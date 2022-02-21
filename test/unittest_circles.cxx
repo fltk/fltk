@@ -40,7 +40,6 @@ void arc(int xi, int yi, int w, int h, double a1, double a2)
   int i, segs = circ * (a2-a1) / 100;
   if (segs<3) segs = 3;
 
-  int px, py;
   a1 = a1/180*M_PI;
   a2 = a2/180*M_PI;
   double step = (a2-a1)/segs;
@@ -49,11 +48,9 @@ void arc(int xi, int yi, int w, int h, double a1, double a2)
   int ny = y - sin(a1)*ry;
   fl_point(nx, ny);
   for (i=segs; i>0; i--) {
-    a1+=step;
-    px = nx; py = ny;
+    a1 += step;
     nx = x + cos(a1)*rx;
     ny = y - sin(a1)*ry;
-    //fl_line(px, py, nx, ny);
     fl_point(nx, ny);
   }
 }
