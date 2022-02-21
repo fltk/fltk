@@ -1977,7 +1977,6 @@ private:
 
 void fl_fix_focus(); // in Fl.cxx
 
-// int fl_background_pixel = -1; // color to use for background
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
@@ -2612,20 +2611,8 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
 ////////////////////////////////////////////////////////////////
 // Implement the virtual functions for the base Fl_Window class:
 
-// If the box is a filled rectangle, we can make the redisplay *look*
-// faster by using X's background pixel erasing.  We can make it
-// actually *be* faster by drawing the frame only, this is done by
-// setting fl_boxcheat, which is seen by code in fl_drawbox.cxx:
-// For Windows it looks like all windows share a background color, so
-// I use FL_GRAY for this and only do this cheat for windows that are
-// that color.
-// Actually it is totally disabled.
-// Fl_Widget *fl_boxcheat;
-// static inline int can_boxcheat(uchar b) {return (b == 1 || (b & 2) && b <= 15);}
-
 void Fl_WinAPI_Window_Driver::show() {
   if (!shown()) {
-    // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     makeWindow();
   } else {
     // Once again, we would lose the capture if we activated the window.

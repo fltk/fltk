@@ -1,7 +1,7 @@
 //
-// Windows system header file for the Fast Light Tool Kit (FLTK).
+// Windows platform header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,7 +41,6 @@ typedef HWND Window;
 
 extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
-extern FL_EXPORT int fl_background_pixel;  // hack into Fl_Window::make_xid()
 extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
 extern void fl_release_dc(HWND w, HDC dc);
 extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);

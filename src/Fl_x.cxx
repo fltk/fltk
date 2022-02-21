@@ -3198,16 +3198,9 @@ void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
 ////////////////////////////////////////////////////////////////
 // Implement the virtual functions for the base Fl_Window class:
 
-// If the box is a filled rectangle, we can make the redisplay *look*
-// faster by using X's background pixel erasing.  We can make it
-// actually *be* faster by drawing the frame only, this is done by
-// setting fl_boxcheat, which is seen by code in fl_drawbox.cxx:
-//
-// On XFree86 (and prehaps all X's) this has a problem if the window
-// is resized while a save-behind window is atop it.  The previous
-// contents are restored to the area, but this assumes the area
-// is cleared to background color.  So this is disabled in this version.
-// Fl_Window *fl_boxcheat;
+// If the box is a filled rectangle, we can make the redisplay
+// *look* faster by using X's background pixel erasing.
+
 static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 
 void Fl_X11_Window_Driver::show() {
