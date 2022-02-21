@@ -573,6 +573,7 @@ enum Fl_When { // Fl_Widget::when():
     leaving the interior unchanged. The blue color in the image below
     is the area that is not drawn by the frame types.
 
+    \anchor boxTypesImage
     \image html  boxtypes.png "FLTK Standard Box Types"
     \image latex boxtypes.png "FLTK Standard Box Types" width=12cm
 
@@ -598,34 +599,34 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
 
   FL_NO_BOX = 0,                ///< nothing is drawn at all, this box is invisible
   FL_FLAT_BOX,                  ///< a flat box
-  FL_UP_BOX,                    ///< see figure 1
-  FL_DOWN_BOX,                  ///< see figure 1
-  FL_UP_FRAME,                  ///< see figure 1
-  FL_DOWN_FRAME,                ///< see figure 1
-  FL_THIN_UP_BOX,               ///< see figure 1
-  FL_THIN_DOWN_BOX,             ///< see figure 1
-  FL_THIN_UP_FRAME,             ///< see figure 1
-  FL_THIN_DOWN_FRAME,           ///< see figure 1
-  FL_ENGRAVED_BOX,              ///< see figure 1
-  FL_EMBOSSED_BOX,              ///< see figure 1
-  FL_ENGRAVED_FRAME,            ///< see figure 1
-  FL_EMBOSSED_FRAME,            ///< see figure 1
-  FL_BORDER_BOX,                ///< see figure 1
-  _FL_SHADOW_BOX,               ///< see figure 1, use FL_SHADOW_BOX
-  FL_BORDER_FRAME,              ///< see figure 1
-  _FL_SHADOW_FRAME,             ///< see figure 1, use FL_SHADOW_FRAME
-  _FL_ROUNDED_BOX,              ///< see figure 1, use FL_ROUNDED_BOX
-  _FL_RSHADOW_BOX,              ///< see figure 1, use FL_RSHADOW_BOX
-  _FL_ROUNDED_FRAME,            ///< see figure 1, use FL_ROUNDED_FRAME
-  _FL_RFLAT_BOX,                ///< see figure 1, use FL_RFLAT_BOX
-  _FL_ROUND_UP_BOX,             ///< see figure 1, use FL_ROUND_UP_BOX
-  _FL_ROUND_DOWN_BOX,           ///< see figure 1, use FL_ROUND_DOWN_BOX
-  _FL_DIAMOND_UP_BOX,           ///< see figure 1, use FL_DIAMOND_UP_BOX
-  _FL_DIAMOND_DOWN_BOX,         ///< see figure 1, use FL_DIAMOND_DOWN_BOX
-  _FL_OVAL_BOX,                 ///< see figure 1, use FL_OVAL_BOX
-  _FL_OSHADOW_BOX,              ///< see figure 1, use FL_OSHADOW_BOX
-  _FL_OVAL_FRAME,               ///< see figure 1, use FL_OVAL_FRAME
-  _FL_OFLAT_BOX,                ///< see figure 1, use FL_OFLAT_BOX
+  FL_UP_BOX,                    ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_DOWN_BOX,                  ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_UP_FRAME,                  ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_DOWN_FRAME,                ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_THIN_UP_BOX,               ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_THIN_DOWN_BOX,             ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_THIN_UP_FRAME,             ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_THIN_DOWN_FRAME,           ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_ENGRAVED_BOX,              ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_EMBOSSED_BOX,              ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_ENGRAVED_FRAME,            ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_EMBOSSED_FRAME,            ///< see figure [Standard Box Types](@ref boxTypesImage)
+  FL_BORDER_BOX,                ///< see figure [Standard Box Types](@ref boxTypesImage)
+  _FL_SHADOW_BOX,               ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_SHADOW_BOX
+  FL_BORDER_FRAME,              ///< see figure [Standard Box Types](@ref boxTypesImage)
+  _FL_SHADOW_FRAME,             ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_SHADOW_FRAME
+  _FL_ROUNDED_BOX,              ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_ROUNDED_BOX
+  _FL_RSHADOW_BOX,              ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_RSHADOW_BOX
+  _FL_ROUNDED_FRAME,            ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_ROUNDED_FRAME
+  _FL_RFLAT_BOX,                ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_RFLAT_BOX
+  _FL_ROUND_UP_BOX,             ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_ROUND_UP_BOX
+  _FL_ROUND_DOWN_BOX,           ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_ROUND_DOWN_BOX
+  _FL_DIAMOND_UP_BOX,           ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_DIAMOND_UP_BOX
+  _FL_DIAMOND_DOWN_BOX,         ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_DIAMOND_DOWN_BOX
+  _FL_OVAL_BOX,                 ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_OVAL_BOX
+  _FL_OSHADOW_BOX,              ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_OSHADOW_BOX
+  _FL_OVAL_FRAME,               ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_OVAL_FRAME
+  _FL_OFLAT_BOX,                ///< see figure [Standard Box Types](@ref boxTypesImage), use FL_OFLAT_BOX
   _FL_PLASTIC_UP_BOX,           ///< plastic version of FL_UP_BOX, use FL_PLASTIC_UP_BOX
   _FL_PLASTIC_DOWN_BOX,         ///< plastic version of FL_DOWN_BOX, use FL_PLASTIC_DOWN_BOX
   _FL_PLASTIC_UP_FRAME,         ///< plastic version of FL_UP_FRAME, use FL_PLASTIC_UP_FRAME
