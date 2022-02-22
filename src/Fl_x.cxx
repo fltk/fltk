@@ -83,6 +83,32 @@ extern Fl_Widget *fl_selection_requestor;
 static void open_display_i(Display *d); // open display (internal)
 
 ////////////////////////////////////////////////////////////////
+
+// Hack to speed up bg box drawing - aka "boxcheat":
+// If the boxtype of a window is a filled rectangle, we can make the
+// redisplay *look* faster by using X's background pixel erasing.
+// This is done by setting a flag when the window is shown for the first time.
+
+// Note to FLTK devs:
+// This can cause unexpected behavior, for instance if the box() or
+// color() of a window is changed after show(), and it does presumably not
+// have much effect on current systems (compared to 1998).
+// It is also fragile WRT checking the box type if any other scheme than
+// the default scheme is loaded.
+// Hence this is disabled since FLTK 1.4.0 (AlbrechtS Feb 02, 2022)
+
+// Note to FLTK users:
+// You may define ENABLE_BOXCHEAT to use it anyway but please tell the
+// FLTK devs why you believe that you need it. Should we re-enable it?
+
+#ifdef ENABLE_BOXCHEAT
+static int fl_background_pixel = -1;
+static inline int can_boxcheat(Fl_Boxtype b) {
+  return (b == 1 || ((b & 2) && b <= 15));
+}
+#endif // (ENABLE_BOXCHEAT)
+
+////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
 #  if USE_POLL
@@ -2506,7 +2532,6 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
 // normally.  The global variables like fl_show_iconic are so that
 // subclasses of *that* class may change the behavior...
 
-int fl_background_pixel = -1; // hack to speed up bg box drawing
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
 static const int childEventMask = ExposureMask;
@@ -2623,11 +2648,14 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     H = sy + sh - Y;
   }
 
+#ifdef ENABLE_BOXCHEAT
   if (fl_background_pixel >= 0) {
     attr.background_pixel = fl_background_pixel;
     fl_background_pixel = -1;
     mask |= CWBackPixel;
   }
+#endif // (ENABLE_BOXCHEAT)
+
   float s = 1;
 #if USE_XFT
   //compute adequate screen where to put the window
@@ -3198,18 +3226,17 @@ void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
 ////////////////////////////////////////////////////////////////
 // Implement the virtual functions for the base Fl_Window class:
 
-// If the box is a filled rectangle, we can make the redisplay
-// *look* faster by using X's background pixel erasing.
-
-static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
-
 void Fl_X11_Window_Driver::show() {
   if (!shown()) {
     fl_open_display();
+
+#ifdef ENABLE_BOXCHEAT
     // Don't set background pixel for double-buffered windows...
     if (pWindow->type() != FL_DOUBLE_WINDOW && can_boxcheat(pWindow->box())) {
       fl_background_pixel = int(fl_xpixel(pWindow->color()));
     }
+#endif // (ENABLE_BOXCHEAT)
+
     makeWindow();
   } else {
     XMapRaised(fl_display, fl_xid(pWindow));

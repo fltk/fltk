@@ -1,7 +1,7 @@
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -277,6 +277,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   pWindowDriver->show_with_args_begin();
 
+  // note: background_pixel is no longer used since 1.4.0, but anyway ...
   // set colors first, so background_pixel is correct:
   static char beenhere;
   if (!beenhere) {
