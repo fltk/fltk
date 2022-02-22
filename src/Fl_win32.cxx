@@ -1908,8 +1908,6 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
   if (!border())
     flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
-    if (!pWindow->resizable())
-      pWindow->size_range(w(), h(), w(), h());
     int dummy_x, dummy_y, bt, bx, by;
     // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
@@ -2073,24 +2071,12 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
     style |= WS_CHILD;
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
     parent = fl_xid(w->window());
-  } else {
-    if (!size_range_set()) {
-      if (w->resizable()) {
-       Fl_Widget *o = w->resizable();
-       int minw = w->w();                     // minw is window's initial width
-       int minh = w->h();                     // minh is window's initial height
-       int maxw = (o->w() == 0) ? minw : 0;   // if resizable w()==0, disable resize w()
-       int maxh = (o->h() == 0) ? minh : 0;   // if resizable h()==0, disable resize h()
-       w->size_range(minw, minh, maxw, maxh);
-      } else {
-        w->size_range(w->w(), w->h(), w->w(), w->h());
-      }
-    }
+  } else { // top level window
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
 
     int wintype = 0;
-    if (w->border() && !w->parent()) {
-      if (size_range_set() && (maxw() != minw() || maxh() != minh()))
+    if (w->border()) {
+      if (is_resizable())
         wintype = 2;
       else
         wintype = 1;

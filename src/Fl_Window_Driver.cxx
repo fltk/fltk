@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,29 +33,34 @@ extern void fl_throw_focus(Fl_Widget *o);
 /**
  Create a new Window Driver.
 
- This calls should be derived into a new class that manages desktop windows
+ This class must be derived into a new class that manages windows
  on the target platform.
  */
-Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win) :
-pWindow(win)
-{
+Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
+  : pWindow(win) {
   shape_data_ = NULL;
   wait_for_expose_value = 0;
   other_xid = 0;
 }
 
 
-Fl_Window_Driver::~Fl_Window_Driver()
-{
+Fl_Window_Driver::~Fl_Window_Driver() {
+  // empty
 }
 
-int Fl_Window_Driver::minw() {return pWindow->minw;}
-int Fl_Window_Driver::minh() {return pWindow->minh;}
-int Fl_Window_Driver::maxw() {return pWindow->maxw;}
-int Fl_Window_Driver::maxh() {return pWindow->maxh;}
-int Fl_Window_Driver::dw() {return pWindow->dw;}
-int Fl_Window_Driver::dh() {return pWindow->dh;}
-int Fl_Window_Driver::aspect() {return pWindow->aspect;}
+// accessors to Fl_Window's size_range stuff
+
+int Fl_Window_Driver::minw() {return pWindow->minw_;}
+int Fl_Window_Driver::minh() {return pWindow->minh_;}
+int Fl_Window_Driver::maxw() {return pWindow->maxw_;}
+int Fl_Window_Driver::maxh() {return pWindow->maxh_;}
+int Fl_Window_Driver::dw() {return pWindow->dw_;}
+int Fl_Window_Driver::dh() {return pWindow->dh_;}
+int Fl_Window_Driver::aspect() {return pWindow->aspect_;}
+unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set_;}
+
+// other Fl_Window accessors
+
 int Fl_Window_Driver::force_position() {return pWindow->force_position(); }
 void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
 void Fl_Window_Driver::x(int X) {pWindow->x(X); }
@@ -66,23 +71,19 @@ int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_scree
 int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
 void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
 
-
-
-unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
-
 void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
 
 
 /**
  Draw the window content.
- A new driver can add code before or after drawing an individua window.
+ A new driver can add code before or after drawing an individual window.
  */
 void Fl_Window_Driver::draw() { pWindow->draw(); }
 
 /**
  Prepare this window for rendering.
  A new driver may prepare bitmaps and clipping areas for calls to the
- Graphics driver.
+ graphics driver.
  */
 void Fl_Window_Driver::make_current() { }
 
@@ -94,41 +95,30 @@ void Fl_Window_Driver::show() { }
 
 /**
  Change the window title.
- A new drive should provide an interface to change the title of the window
+ A new driver should provide an interface to change the title of the window
  in the title bar.
  */
 void Fl_Window_Driver::label(const char *name, const char *mininame) {}
 
-void Fl_Window_Driver::take_focus()
-{
+void Fl_Window_Driver::take_focus() {
   // nothing to do
 }
 
-
-void Fl_Window_Driver::flush_double()
-{
+void Fl_Window_Driver::flush_double() {
   flush_Fl_Window();
 }
 
-
-void Fl_Window_Driver::flush_overlay()
-{
+void Fl_Window_Driver::flush_overlay() {
   flush_Fl_Window();
 }
 
-
-void Fl_Window_Driver::draw_begin()
-{
+void Fl_Window_Driver::draw_begin() {
   // nothing to do
 }
 
-
-void Fl_Window_Driver::draw_end()
-{
+void Fl_Window_Driver::draw_end() {
   // nothing to do
 }
-
-
 
 void Fl_Window_Driver::destroy_double_buffer() {
   fl_delete_offscreen(other_xid);
@@ -193,7 +183,8 @@ void Fl_Window_Driver::use_border() {
 }
 
 void Fl_Window_Driver::size_range() {
-  pWindow->size_range_set = 1;
+  // *FIXME* This should not be necessary!
+  // pWindow->size_range_set = 1;
 }
 
 int Fl_Window_Driver::can_do_overlay() {
@@ -252,7 +243,6 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
     else if (Y+H/2 > sY+sH-1) Y = sY+sH-1-H/2-d;
   }
   is_a_rescale_ = true;
-  size_range();
   pWindow->resize(X, Y, W, H);
   is_a_rescale_ = false;
 }

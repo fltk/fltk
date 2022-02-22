@@ -1,7 +1,7 @@
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -74,10 +74,12 @@ private:
 
   const char* iconlabel_;
   char* xclass_;
-  // size_range stuff:
-  int minw, minh, maxw, maxh;
-  int dw, dh, aspect;
-  uchar size_range_set;
+
+  // private size_range stuff:
+  int minw_, minh_, maxw_, maxh_;
+  int dw_, dh_, aspect_;
+  uchar size_range_set_;        // true (1) if size_range() has been set or calculated
+
   // cursor stuff
   Fl_Cursor cursor_default;
 
@@ -118,6 +120,9 @@ protected:
   int force_position() const { return ((flags() & FORCE_POSITION)?1:0); }
 
   void free_icons();
+
+  void default_size_range();  // calculate size_range() if not set explicitly
+  int is_resizable();         // calculate size_range() and return whether this is resizable
 
 public:
 
@@ -321,6 +326,7 @@ public:
     \deprecated please use force_position(0) instead
   */
   void free_position()  {clear_flag(FORCE_POSITION);}
+
   void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0);
 
   /** See void Fl_Window::label(const char*)   */

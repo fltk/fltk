@@ -2953,8 +2953,13 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     w->border(0);
     show_iconic(0);
   }
-  if (w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
-  else winstyle = NSBorderlessWindowMask;
+  if (w->border()) {
+    winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
+    if (is_resizable())
+      winstyle |= NSResizableWindowMask;
+  } else {
+    winstyle = NSBorderlessWindowMask;
+  }
   if (show_iconic() && !w->parent()) { // prevent window from being out of work area when created iconized
     int sx, sy, sw, sh;
     Fl::screen_work_area (sx, sy, sw, sh, w->x(), w->y());
@@ -2965,23 +2970,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   int yp = w->y();
   int wp = w->w();
   int hp = w->h();
-  if (size_range_set()) {
-    if ( minh() != maxh() || minw() != maxw()) {
-      if (w->border()) winstyle |= NSResizableWindowMask;
-    }
-  } else {
-    if (w->resizable()) {
-      Fl_Widget *o = w->resizable();
-      int minw = w->w();                     // minw is window's initial width
-      int minh = w->h();                     // minh is window's initial height
-      int maxw = (o->w() == 0) ? minw : 0;   // if resizable w()==0, disable resize w()
-      int maxh = (o->h() == 0) ? minh : 0;   // if resizable h()==0, disable resize h()
-      w->size_range(minw, minh, maxw, maxh);
-      if (w->border()) winstyle |= NSResizableWindowMask;
-    } else {
-      w->size_range(w->w(), w->h(), w->w(), w->h());
-    }
-  }
+
   int xwm = xp, ywm = yp, bt, bx, by;
 
   if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) {
@@ -3291,7 +3280,6 @@ void Fl_Cocoa_Window_Driver::use_border() {
  * Tell the OS what window sizes we want to allow
  */
 void Fl_Cocoa_Window_Driver::size_range() {
-  Fl_Window_Driver::size_range();
   Fl_X *i = Fl_X::i(pWindow);
   if (i && i->xid) {
     float s = Fl::screen_driver()->scale(0);

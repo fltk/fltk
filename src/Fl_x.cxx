@@ -2356,14 +2356,9 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
     }
   }
 
-  if (resize_from_program && is_a_resize && !pWindow->resizable()) {
-    pWindow->size_range(w(), h(), w(), h());
-  }
-
   if (resize_from_program && shown()) {
     float s = Fl::screen_driver()->scale(screen_num());
     if (is_a_resize) {
-      if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
       if (is_a_move) {
         XMoveResizeWindow(fl_display, fl_xid(pWindow), rint(X*s), rint(Y*s), W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
@@ -2672,7 +2667,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   }
   Fl_X11_Window_Driver::driver(win)->screen_num(nscreen);
   s = Fl::screen_driver()->scale(nscreen);
-//if (!win->parent()) printf("win creation on screen #%d\n", nscreen);
+  // if (!win->parent()) printf("win creation on screen #%d\n", nscreen);
 #endif
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
@@ -2823,33 +2818,19 @@ void Fl_X11_Window_Driver::sendxjunk() {
   Fl_Window *w = pWindow;
   if (w->parent() || w->override()) return; // it's not a window manager window!
 
-  if (!size_range_set()) { // default size_range based on resizable():
-    if (w->resizable()) {
-      Fl_Widget *o = w->resizable();
-      int minw = w->w();                     // minw is window's initial width
-      int minh = w->h();                     // minh is window's initial height
-      int maxw = (o->w() == 0) ? minw : 0;   // if resizable w()==0, disable resize w()
-      int maxh = (o->h() == 0) ? minh : 0;   // if resizable h()==0, disable resize h()
-      w->size_range(minw, minh, maxw, maxh);
-    } else {
-      w->size_range(w->w(), w->h(), w->w(), w->h());
-    }
-    return; // because this recursively called here
-  }
-
   XSizeHints *hints = XAllocSizeHints();
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
   float s = Fl::screen_driver()->scale(screen_num());
 
-  hints->min_width = s*minw();
-  hints->min_height = s*minh();
-  hints->max_width = s*maxw();
-  hints->max_height = s*maxh();
+  hints->min_width  = s * minw();
+  hints->min_height = s * minh();
+  hints->max_width  = s * maxw();
+  hints->max_height = s * maxh();
   if (int(s) == s) { // use win size increment value only if scale is an integer. Is it possible to do better?
-    hints->width_inc = s*dw();
-    hints->height_inc = s*dh();
+    hints->width_inc  = s * dw();
+    hints->height_inc = s * dh();
   } else {
-    hints->width_inc = 0;
+    hints->width_inc  = 0;
     hints->height_inc = 0;
   }
 

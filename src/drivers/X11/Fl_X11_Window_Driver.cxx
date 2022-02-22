@@ -423,7 +423,6 @@ void Fl_X11_Window_Driver::use_border() {
 }
 
 void Fl_X11_Window_Driver::size_range() {
-  Fl_Window_Driver::size_range();
   if (shown()) sendxjunk();
 }
 

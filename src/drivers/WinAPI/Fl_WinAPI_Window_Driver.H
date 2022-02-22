@@ -2,7 +2,7 @@
 // Definition of Windows window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -89,6 +89,9 @@ public:
 
   // --- window management
   virtual Fl_X *makeWindow();
+  virtual void size_range() {
+    // currently nothing to do
+  }
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
