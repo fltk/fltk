@@ -190,7 +190,6 @@ There are symbols for naming some of the more common colors:
   - \p FL_MAGENTA
   - \p FL_CYAN
   - \p FL_WHITE
-  - \p FL_WHITE
 
 Other symbols are used as the default colors for all FLTK widgets.
 
