@@ -556,7 +556,7 @@ int Fl_Message_Box::handle(int e) {
     case FL_KEYBOARD:
     case FL_SHORTCUT:
       if (Fl::event_key() == 'c' && mods == FL_COMMAND) {
-        Fl::copy(label(), strlen(label()), 1);
+        Fl::copy(label(), int(strlen(label())), 1);
         return 1;
       }
       break;

@@ -27,6 +27,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_.H>
+#include <FL/fl_string_functions.h>
 #include "../src/flstring.h"
 
 /** \class Shortcut_Button
@@ -299,7 +300,7 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
 int Fluid_Coord_Input::eval(const char *s) const
 {
   // duplicate the text, so we can modify it
-  uchar *buf = (uchar*)strdup(s);
+  uchar *buf = (uchar*)fl_strdup(s);
   uchar *src = buf, *dst = buf;
   // remove all whitespace to make the parser easier
   for (;;) {

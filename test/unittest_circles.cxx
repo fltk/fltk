@@ -37,20 +37,20 @@ void arc(int xi, int yi, int w, int h, double a1, double a2)
   double x = xi + rx + 0.5;
   double y = yi + ry + 0.5;
   double circ = M_PI*0.5*(rx+ry);
-  int i, segs = circ * (a2-a1) / 100;
+  int i, segs = int(circ * (a2-a1) / 100);
   if (segs<3) segs = 3;
 
   a1 = a1/180*M_PI;
   a2 = a2/180*M_PI;
   double step = (a2-a1)/segs;
 
-  int nx = x + cos(a1)*rx;
-  int ny = y - sin(a1)*ry;
+  int nx = int(x + cos(a1)*rx);
+  int ny = int(y - sin(a1)*ry);
   fl_point(nx, ny);
   for (i=segs; i>0; i--) {
     a1 += step;
-    nx = x + cos(a1)*rx;
-    ny = y - sin(a1)*ry;
+    nx = int(x + cos(a1)*rx);
+    ny = int(y - sin(a1)*ry);
     fl_point(nx, ny);
   }
 }

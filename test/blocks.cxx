@@ -712,7 +712,7 @@ void BlockWindow::draw() {
   time_t curtime = time(NULL);
   frames_ ++;
   if (curtime > frame_time_) {
-    frames_per_second_ = (frames_per_second_ + 3 * frames_ / (curtime - frame_time_)) / 4;
+    frames_per_second_ = (frames_per_second_ + 3 * frames_ / int(curtime - frame_time_)) / 4;
     frames_            = 0;
     frame_time_        = curtime;
   }
@@ -1054,7 +1054,7 @@ void BlockWindow::timeout_cb(BlockWindow *bw) {
         for (j = 0, b = c->blocks; j < BLOCK_ROWS; j ++, b ++) {
           b->bomb  = bw->num_colors_ > 3 && (rand() & 127) < bw->num_colors_;
           b->color = 1 + (rand() % bw->num_colors_);
-          b->y     = j * (BLOCK_SIZE + 8) + 24;
+          b->y     = float(j * (BLOCK_SIZE + 8) + 24);
         }
       }
     }
