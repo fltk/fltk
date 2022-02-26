@@ -48,7 +48,7 @@ void Fl_OpenGL_Graphics_Driver::rect(int x, int y, int w, int h) {
 
 void Fl_OpenGL_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  glRectf(x, y, x+w, y+h);
+  glRectf((GLfloat)x, (GLfloat)y, (GLfloat)(x+w), (GLfloat)(y+h));
 }
 
 void Fl_OpenGL_Graphics_Driver::line(int x, int y, int x1, int y1) {
@@ -91,20 +91,20 @@ void Fl_OpenGL_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1) {
   float offset = line_width_ / 2.0f;
-  float xx = x, yy = y+0.5f, rr = x1+1.0f;
+  float xx = (float)x, yy = y+0.5f, rr = x1+1.0f;
   glRectf(xx, yy-offset, rr, yy+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   float offset = line_width_ / 2.0f;
-  float xx = x, yy = y+0.5f, rr = x1+0.5f, bb = y2+1.0f;
+  float xx = (float)x, yy = y+0.5f, rr = x1+0.5f, bb = y2+1.0f;
   glRectf(xx, yy-offset, rr+offset, yy+offset);
   glRectf(rr-offset, yy+offset, rr+offset, bb);
 }
 
 void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   float offset = line_width_ / 2.0f;
-  float xx = x, yy = y+0.5f, xx1 = x1+0.5f, rr = x3+1.0f, bb = y2+0.5;
+  float xx = (float)x, yy = y+0.5f, xx1 = x1+0.5f, rr = x3+1.0f, bb = y2+0.5f;
   glRectf(xx, yy-offset, xx1+offset, yy+offset);
   glRectf(xx1-offset, yy+offset, xx1+offset, bb+offset);
   glRectf(xx1+offset, bb-offset, rr, bb+offset);
@@ -112,20 +112,20 @@ void Fl_OpenGL_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1) {
   float offset = line_width_ / 2.0f;
-  float xx = x+0.5f, yy = y, bb = y1+1.0f;
+  float xx = x+0.5f, yy = (float)y, bb = y1+1.0f;
   glRectf(xx-offset, yy, xx+offset, bb);
 }
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   float offset = line_width_ / 2.0f;
-  float xx = x+0.5f, yy = y, rr = x2+1.0f, bb = y1+0.5f;
+  float xx = x+0.5f, yy = (float)y, rr = x2+1.0f, bb = y1+0.5f;
   glRectf(xx-offset, yy, xx+offset, bb+offset);
   glRectf(xx+offset, bb-offset, rr, bb+offset);
 }
 
 void Fl_OpenGL_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   float offset = line_width_ / 2.0f;
-  float xx = x+0.5f, yy = y, yy1 = y1+0.5f, rr = x2+0.5f, bb = y3+1.0f;
+  float xx = x+0.5f, yy = (float)y, yy1 = y1+0.5f, rr = x2+0.5f, bb = y3+1.0f;
   glRectf(xx-offset, yy, xx+offset, yy1+offset);
   glRectf(xx+offset, yy1-offset, rr+offset, yy1+offset);
   glRectf(rr-offset, yy1+offset, rr+offset, bb);
@@ -175,7 +175,7 @@ void Fl_OpenGL_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   glVertex2f(x+w+0.5f, y+h+0.5f);
   glVertex2f(x+0.5f, y+h+0.5f);
   glEnd();
-  line_style(stipple, width);
+  line_style(stipple, (int)width);
 }
 
 
@@ -205,10 +205,10 @@ typedef struct Fl_Gl_Region {
     Fl_Gl_Window *win = Fl_Gl_Window::current()->as_gl_window();
     if (win) {
       float scale = win->pixels_per_unit();
-      gl_x = x*scale;
-      gl_y = (win->h()-h-y+1)*scale;
-      gl_w = (w-1)*scale;
-      gl_h = (h-1)*scale;
+      gl_x = int(x*scale);
+      gl_y = int((win->h()-h-y+1)*scale);
+      gl_w = int((w-1)*scale);
+      gl_h = int((h-1)*scale);
       if (inX<=0 && inY<=0 && inX+inW>win->w() && inY+inH>=win->h()) {
         state = kStateFull;
       }

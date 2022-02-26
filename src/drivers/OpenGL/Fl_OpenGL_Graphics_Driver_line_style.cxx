@@ -32,7 +32,7 @@
 
 void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
   if (width<1) width = 1;
-  line_width_ = width;
+  line_width_ = (float)width;
 
   int stipple = style & 0x00ff;
   line_stipple_ = stipple;
@@ -46,16 +46,16 @@ void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
     char enable = 1;
     switch (stipple & 0x00ff) {
       case FL_DASH:
-        glLineStipple(pixels_per_unit_*line_width_, 0x0F0F); // ....****....****
+        glLineStipple(GLint(pixels_per_unit_*line_width_), 0x0F0F); // ....****....****
         break;
       case FL_DOT:
-        glLineStipple(pixels_per_unit_*line_width_, 0x5555); // .*.*.*.*.*.*.*.*
+        glLineStipple(GLint(pixels_per_unit_*line_width_), 0x5555); // .*.*.*.*.*.*.*.*
         break;
       case FL_DASHDOT:
-        glLineStipple(pixels_per_unit_*line_width_, 0x2727); // ..*..***..*..***
+        glLineStipple(GLint(pixels_per_unit_*line_width_), 0x2727); // ..*..***..*..***
         break;
       case FL_DASHDOTDOT:
-        glLineStipple(pixels_per_unit_*line_width_, 0x5757); // .*.*.***.*.*.***
+        glLineStipple(GLint(pixels_per_unit_*line_width_), 0x5757); // .*.*.***.*.*.***
         break;
       default:
         glLineStipple(1, 0xFFFF);
