@@ -41,10 +41,8 @@ _README.macOS.md - Building FLTK under Apple macOS_
 <a name="introduction"></a>
 ## Introduction
 
-FLTK supports macOS version 10.3 Panther and above. At the time of writing (Jan. 2019),
-FLTK compiles and runs fine on the most recent macOS 10.14 Mojave.
-
-Update (March 2021): FLTK builds and runs fine on macOS 11 (Big Sur) on Intel and
+FLTK supports macOS version 10.3 Panther and above. At the time of writing (Feb. 2022),
+FLTK compiles and runs fine on the most recent macOS 12 Monterey for both Intel and 
 the new M1 Apple Silicon (Arm) processors.
 
 FLTK 1.4 supports the following build environments on the macOS
@@ -70,7 +68,7 @@ This option requires an Apple ID and the Administrator password.
 
 In order to build FLTK, you need to install _CMake_ and _Xcode_.
 
-_Xcode_ is Apple's IDE (Integrated Devloper Environment) and can be downloaded via the
+_Xcode_ is Apple's IDE (Integrated Developer Environment) and can be downloaded via the
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12). You will
 need an Apple ID and administrator right for this. Installing _Xcode_ needs little to no
 user input, but will likely take well over an hour.
@@ -350,8 +348,8 @@ On older versions of macOS, you will have to install _Xcode_ from the
 and then install the command line tools from within _Xcode_.
 
 Apple no longer includes _autoconf_ in the _Xcode_ command line tools. To install
-_autoconf_, we first need to installe _brew_ by typing this rather cryptic command in the shell
-you will need the root password):
+_autoconf_, we first need to install _brew_ by typing this rather cryptic command in the shell
+(you will need to type the password of an administrator account):
 
 ```bash
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -362,6 +360,19 @@ After a few minutes, we can now build and install all other tools from one simpl
 ```bash
 brew install autoconf automake
 ```
+
+Alternatively, _autoconf_ can be installed without _brew_ as follows :
+
+- Download file _autoconf-latest.tar.gz_ from the <a href=https://ftp.gnu.org/gnu/autoconf/>autoconf ftp site</a>
+- Uncompress it to get directory _autoconf-x.xx/_ (where x's indicate autoconf's version number)
+- Set this directory as your current directory in the Terminal app and type :
+
+```bash
+./configure
+make
+sudo make install
+```
+
 
 <a name="bam_download"></a>
 ### Downloading and Unpacking (autoconf, make)
@@ -486,17 +497,15 @@ fltk-config --compile main.cxx
 <a name="dropstart"></a>
 ## Make an Application Launchable by Dropping Files on its Icon
 
-TODO: update for FLTK 1.4
-
 - Prepare an Info.plist file for your application derived from file
-test/mac-resources/editor.plist which allows any file to be dropped
+_test/mac-resources/editor.plist_ which allows any file to be dropped
 on the application icon.
 You can edit this file in Xcode and change
-Document types/Item 0/CFBundleTypeExtensions/Item 0
+CFBundleDocumentTypes/Item 0/CFBundleTypeExtensions/Item 0
 from the current "*" to the desired file extension. Use several items to
 declare several extensions.
 
-- Call fl_open_callback() at the beginning of your main() function that sets
+- Call function <a href=https://www.fltk.org/doc-1.4/group__group__macosx.html#ga0702a54934d10f5b72157137cf291296>fl\_open\_callback()</a> at the beginning of your main() function to set
 what function will be called when a file is dropped on the application icon.
 
 - In Xcode, set the "Info.plist File" build setting of your target application
@@ -518,9 +527,10 @@ to the Info.plist file you have prepared.
 - Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
 - Apr 17 2012 - matt: added Xcode4 documentation
 - Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
-- Apr 28 2014 - Manolo: how to build programs that run on various macOS versions
 - Mar 18 2015 - Manolo: removed uses of the Xcode3 project
 - Apr 01 2016 - Albrecht: corrected typo, formatted most line breaks < 80 columns
 - Dec 04 2018 - Albrecht: fix typo (lowercase fluid.app) for case sensitive macOS
 - Dec 28 2018 - Matt: complete rework for FLTK 1.4
 - Mar 01 2021 - Albrecht: minor updates, macOS Big Sur and Apple Silicon M1 (ARM)
+- Feb 23 2022 - Manolo: install autoconf without brew
+
