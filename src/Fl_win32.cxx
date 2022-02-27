@@ -1711,9 +1711,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 /* Implementation note about the API to get the dimensions of the top/left borders and the title bar
 
- Function fake_X_wm_style() below is used before calling CreateWindowExW() to create
+ Function fake_X_wm() below is used before calling CreateWindowExW() to create
  a window and before calling SetWindowPos(). Both of these Windows functions need the window size
- including borders and title bar. Function fake_X_wm_style() uses AdjustWindowRectExForDpi() or
+ including borders and title bar. Function fake_X_wm() uses AdjustWindowRectExForDpi() or
  AdjustWindowRectEx() to get the sizes of borders and title bar. The gotten values don't always match
  what is seen on the display, but they are the **required** values so the subsequent calls to
  CreateWindowExW() or SetWindowPos() correctly size the window.
@@ -1727,7 +1727,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
  DwmGetWindowAttribute().
  */
 
-////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////
 // This function gets the dimensions of the top/left borders and
 // the title bar, if there is one, based on the FL_BORDER, FL_MODAL
 // and FL_NONMODAL flags, and on the window's size range.
@@ -1738,13 +1738,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 //   1   |  fix   |   yes
 //   2   |  size  |   yes
 
-static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx, int &by, DWORD style, DWORD styleEx,
-                           int w_maxw, int w_minw, int w_maxh, int w_minh, uchar w_size_range_set) {
+int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by, DWORD style, DWORD styleEx) {
+
+  const Fl_Window *w = pWindow;
+
   int W = 0, H = 0, xoff = 0, yoff = 0, dx = 0, dy = 0;
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
-  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(w)->screen_num());
+  float s = Fl::screen_driver()->scale(screen_num());
   if (!w->parent()) {
     if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
@@ -1773,7 +1775,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
       BOOL ok;
       if (is_dpi_aware && fl_AdjustWindowRectExForDpi) {
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-        UINT dpi = UINT(sd->dpi[Fl_Window_Driver::driver(w)->screen_num()][0]);
+        UINT dpi = UINT(sd->dpi[screen_num()][0]);
         ok = fl_AdjustWindowRectExForDpi(&r, style, FALSE, styleEx, dpi);
       } else
         ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
@@ -1784,12 +1786,12 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
         H = r.bottom - r.top;
         bx = drawingX - r.left;
         by = r.bottom - int(drawingY + w->h() * s); // height of the bottom frame
-        bt = drawingY - r.top - by;          // height of top caption bar
+        bt = drawingY - r.top - by;                 // height of top caption bar
         xoff = bx;
         yoff = by + bt;
         dx = W - int(w->w() * s);
         dy = H - int(w->h() * s);
-        if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
+        if (maxw() != minw() || maxh() != minh())
           ret = 2;
         else
           ret = 1;
@@ -1800,7 +1802,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   // This is the original (pre 1.1.7) routine to calculate window border sizes.
   if (fallback) {
     if (w->border() && !w->parent()) {
-      if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh)) {
+      if (maxw() != minw() || maxh() != minh()) {
         ret = 2;
         bx = GetSystemMetrics(SM_CXSIZEFRAME);
         by = GetSystemMetrics(SM_CYSIZEFRAME);
@@ -1861,10 +1863,6 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   }
 
   return ret;
-}
-
-int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by) {
-  return fake_X_wm_style(pWindow, X, Y, bt, bx, by, 0, 0, maxw(), minw(), maxh(), minh(), size_range_set());
 }
 
 ////////////////////////////////////////////////////////////////
@@ -2105,7 +2103,9 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
     }
 
     int xwm = xp, ywm = yp, bt, bx, by; // these are in graphical units
-    fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, maxw(), minw(), maxh(), minh(), size_range_set());
+
+    fake_X_wm(xwm, ywm, bt, bx, by, style, styleEx);
+
     if (by + bt) {
       wp += 2 * bx;
       hp += 2 * by + bt;
