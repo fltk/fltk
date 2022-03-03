@@ -129,42 +129,12 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
     Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
     // prevent FLTK from processing any event
     Fl::event_dispatch(fnfc_dispatch);
-    struct win_dims {
-      Fl_Window *win;
-      int minw,minh,maxw,maxh;
-      struct win_dims *next;
-    } *first_dim = NULL;
-    // consider all bordered, top-level FLTK windows
-    Fl_Window *win = Fl::first_window();
-    while (win) {
-      if (!win->parent() && win->border()) {
-        Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
-        win_dims *dim = new win_dims;
-        dim->win = win;
-        dim->minw = dr->minw();
-        dim->minh = dr->minh();
-        dim->maxw = dr->maxw();
-        dim->maxh = dr->maxh();
-        //make win un-resizable
-        win->size_range(win->w(), win->h(), win->w(), win->h());
-        dim->next = first_dim;
-        first_dim = dim;
-      }
-      win = Fl::next_window(win);
-    }
     // run event loop until pipe finishes
     while (data.fd >= 0) Fl::wait();
     Fl::remove_fd(fileno(pipe));
     pclose(pipe);
     // return to previous event processing by FLTK
     Fl::event_dispatch(old_dispatch);
-    while (first_dim) {
-      win_dims *dim = first_dim;
-      //give back win its resizing parameters
-      dim->win->size_range(dim->minw, dim->minh, dim->maxw, dim->maxh);
-      first_dim = dim->next;
-      delete dim;
-    }
     if (data.all_files) {
       // process text received from pipe
       if (data.all_files[strlen(data.all_files)-1] == '\n') data.all_files[strlen(data.all_files)-1] = 0;

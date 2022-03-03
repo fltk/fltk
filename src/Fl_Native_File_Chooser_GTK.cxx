@@ -772,29 +772,6 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
   // prevent FLTK from processing any event
   Fl::event_dispatch(fnfc_dispatch);
-  struct win_dims {
-    Fl_Window *win;
-    int minw,minh,maxw,maxh;
-    struct win_dims *next;
-  } *first_dim = NULL;
-  // consider all bordered, top-level FLTK windows
-  Fl_Window *win = Fl::first_window();
-  while (win) {
-    if (win->border()) {
-      Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
-      win_dims *dim = new win_dims;
-      dim->win = win;
-      dim->minw = dr->minw();
-      dim->minh = dr->minh();
-      dim->maxw = dr->maxw();
-      dim->maxh = dr->maxh();
-      //make win un-resizable
-      win->size_range(win->w(), win->h(), win->w(), win->h());
-      dim->next = first_dim;
-      first_dim = dim;
-    }
-    win = Fl::next_window(win);
-  }
 
   gint response_id = GTK_RESPONSE_NONE;
   fl_g_signal_connect_data(gtkw_ptr, "response", G_CALLBACK(run_response_handler), &response_id, NULL, (GConnectFlags) 0);
@@ -854,18 +831,11 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   if ( response_id == GTK_RESPONSE_DELETE_EVENT) gtkw_ptr = NULL;
   else fl_gtk_widget_hide (gtkw_ptr);
 
-  // I think this is analogus to doing an Fl::check() - we need this here to make sure
+  // I think this is analogous to doing an Fl::check() - we need this here to make sure
   // the GtkFileChooserDialog is removed from the display correctly
   while (fl_gtk_events_pending ()) fl_gtk_main_iteration ();
 
   Fl::event_dispatch(old_dispatch);
-  while (first_dim) {
-    win_dims *dim = first_dim;
-    //give back win its resizing parameters
-    dim->win->size_range(dim->minw, dim->minh, dim->maxw, dim->maxh);
-    first_dim = dim->next;
-    delete dim;
-  }
 
   return result;
 } // fl_gtk_chooser_wrapper
