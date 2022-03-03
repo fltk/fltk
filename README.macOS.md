@@ -42,7 +42,7 @@ _README.macOS.md - Building FLTK under Apple macOS_
 ## Introduction
 
 FLTK supports macOS version 10.3 Panther and above. At the time of writing (Feb. 2022),
-FLTK compiles and runs fine on the most recent macOS 12 Monterey for both Intel and 
+FLTK compiles and runs fine on the most recent macOS 12 Monterey for both Intel and
 the new M1 Apple Silicon (Arm) processors.
 
 FLTK 1.4 supports the following build environments on the macOS

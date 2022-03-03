@@ -207,7 +207,7 @@ char buffer[80];
 double doubleValue;
 
 char path[ FL_PATH_MAX ];
-Fl_Preferences::Root root = 
+Fl_Preferences::Root root =
   Fl_Preferences::filename(path, FL_PATH_MAX, Fl_Preferences::USER_L, project, application);
 if (root == Fl_Preferences::UNKNOWN_ROOT_TYPE) {
   printf("Location of future Preferences file not found.\\n");
@@ -225,8 +225,8 @@ Fl_Preferences app( Fl_Preferences::USER_L, project, application );
   } else {
     printf("App Preferences file is actually located at:\\n%s\\n", path);
   }
-  
-  app.getUserdataPath( path, sizeof(path) );  
+
+  app.getUserdataPath( path, sizeof(path) );
   if (path[0]) {
     printf("Preferences user data directory is located at:\\n%s\\n", path);
   } else {

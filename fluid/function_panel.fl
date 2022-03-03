@@ -51,7 +51,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {540 418 343 232} type Double resizable modal visible
+    xywh {540 418 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}

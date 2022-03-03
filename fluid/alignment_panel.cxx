@@ -640,7 +640,7 @@ static void refreshUI() {
 static void readPrefs() {
   // read all preferences and refresh the GUI
   {
-    Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+    Fl_Preferences prefs(Fl_Preferences::SYSTEM_L, "fltk.org", "fltk");
     Fl_Preferences opt_prefs(prefs, "options");
     opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1], 2);
     opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1], 2);
@@ -651,7 +651,7 @@ static void readPrefs() {
     opt_prefs.get("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING ][1], 2);
   }
   {
-    Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
     Fl_Preferences opt_prefs(prefs, "options");
     opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0], 2);
     opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0], 2);
@@ -670,7 +670,7 @@ static void readPrefs() {
 static void writePrefs() {
   // write all preferences using the array
   {
-    Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+    Fl_Preferences prefs(Fl_Preferences::SYSTEM_L, "fltk.org", "fltk");
     Fl_Preferences opt_prefs(prefs, "options");
     if (opt[Fl::OPTION_ARROW_FOCUS][1]==2) opt_prefs.deleteEntry("ArrowFocus");
     else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1]);
@@ -688,7 +688,7 @@ static void writePrefs() {
     else opt_prefs.set("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING][1]);
   }
   {
-    Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+    Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
     Fl_Preferences opt_prefs(prefs, "options");
     if (opt[Fl::OPTION_ARROW_FOCUS][0]==2) opt_prefs.deleteEntry("ArrowFocus");
     else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0]);

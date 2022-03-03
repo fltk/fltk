@@ -1119,6 +1119,7 @@ Shortcut_Button.o: ../FL/Fl_Return_Button.H
 Shortcut_Button.o: ../FL/Fl_RGB_Image.H
 Shortcut_Button.o: ../FL/Fl_Scrollbar.H
 Shortcut_Button.o: ../FL/Fl_Slider.H
+Shortcut_Button.o: ../FL/fl_string_functions.h
 Shortcut_Button.o: ../FL/Fl_Tabs.H
 Shortcut_Button.o: ../FL/Fl_Text_Buffer.H
 Shortcut_Button.o: ../FL/Fl_Text_Display.H

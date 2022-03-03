@@ -318,7 +318,7 @@ public:
                "If green pixels are missing, filled rectangles draw too big (see fl_rectf).\n\n"
                "If red pixels are showing, filled rectangles are drawn too small."
                );
-    
+
     b+=24;
     t = new Fl_Box(a, b, 26, 18, "2a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);

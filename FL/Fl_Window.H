@@ -530,7 +530,7 @@ public:
    only if these decoration elements are strictly X11-based. When that's not the case,
    decorated_h() returns the same value as h() and decorated_w() as w(), and FLTK
    cannot access window decorations.
-   
+
    \note Under X11 again, the values returned by decorated_h() and decorated_w()
    may not be reliable <b> during a resize operation</b>. The size of decoration elements
    of a window is best computed when the window is first mapped.

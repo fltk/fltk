@@ -40,7 +40,7 @@ int Fl::compose_state = 0;
  <p>If <i>false</i> is returned, the keys should be treated as function
  keys, and del is set to zero. You could insert the text anyways, if
  you don't know what else to do.
- 
+
  <p>Text editing widgets can preferentially call fl_set_spot() to indicate the window
  coordinates of the bottom of the current insertion point and the line height.
  This way, auxiliary windows that help choosing among alternative characters
@@ -63,7 +63,7 @@ int Fl::compose_state = 0;
  <p>Finally, text editing widgets should call <tt>set_flag(MAC_USE_ACCENTS_MENU);</tt>
  in their constructor if they want to use, on the macOS platform, the feature introduced with Mac OS 10.7 "Lion"
  where pressing and holding certain keys on the keyboard opens a diacritic marks popup window.
- 
+
  \note For compatibility with FLTK 1.3, text editing widgets can call
  <tt>Fl::insertion_point_location(int x, int y, int height)</tt> and <tt>Fl::reset_marked_text()</tt>
  <u>only under the macOS platform</u>  to indicate/reset the coordinates of the current insertion point.
