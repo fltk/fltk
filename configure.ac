@@ -1077,7 +1077,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     AS_IF([test "x$x_includes" != x], [
         ac_cpp="$ac_cpp -I$x_includes"
     ])
-])
+
     dnl Check for OpenGL unless disabled...
     GLLIBS=
 
@@ -1254,6 +1254,8 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     AC_CHECK_HEADER([X11/Xregion.h], [
         AC_DEFINE([HAVE_X11_XREGION_H])
     ], [], [#include <X11/Xlib.h>])
+    
+    ])
 
     # Make symlinks since UNIX/Linux is case sensitive,
     # but Cygwin in general not.
