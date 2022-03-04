@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 by Bill Spitzak and others.
+ * Copyright 2016-2022 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -115,6 +115,17 @@ typedef struct HGLRC__ *GLContext;
 #else
    struct dirent {char d_name[1];};
 #endif
+
+#elif defined(FLTK_USE_WAYLAND)
+typedef struct fl_wld_buffer *Fl_Offscreen; /**< an offscreen drawing buffer */
+typedef struct _cairo_pattern* Fl_Bitmask;
+typedef struct flWaylandRegion* Fl_Region;
+typedef int FL_SOCKET; /**< socket or file descriptor */
+typedef void *EGLContext;
+typedef EGLContext GLContext;
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #elif defined(FLTK_USE_X11)
 

@@ -78,155 +78,16 @@ static bool have_xfixes = false;
 #    include <X11/extensions/Xrender.h>
 #  endif
 
+#  if USE_POLL
+#    include <poll.h>
+#  else
+#    define POLLIN 1
+#  endif /* USE_POLL */
+
 extern Fl_Widget *fl_selection_requestor;
 
 static void open_display_i(Display *d); // open display (internal)
 
-////////////////////////////////////////////////////////////////
-
-// Hack to speed up bg box drawing - aka "boxcheat":
-// If the boxtype of a window is a filled rectangle, we can make the
-// redisplay *look* faster by using X's background pixel erasing.
-// This is done by setting a flag when the window is shown for the first time.
-
-// Note to FLTK devs:
-// This can cause unexpected behavior, for instance if the box() or
-// color() of a window is changed after show(), and it does presumably not
-// have much effect on current systems (compared to 1998).
-// It is also fragile WRT checking the box type if any other scheme than
-// the default scheme is loaded.
-// Hence this is disabled since FLTK 1.4.0 (AlbrechtS Feb 02, 2022)
-
-// Note to FLTK users:
-// You may define ENABLE_BOXCHEAT to use it anyway but please tell the
-// FLTK devs why you believe that you need it. Should we re-enable it?
-
-#ifdef ENABLE_BOXCHEAT
-static int fl_background_pixel = -1;
-static inline int can_boxcheat(Fl_Boxtype b) {
-  return (b == 1 || ((b & 2) && b <= 15));
-}
-#endif // (ENABLE_BOXCHEAT)
-
-////////////////////////////////////////////////////////////////
-// interface to poll/select call:
-
-#  if USE_POLL
-
-#    include <poll.h>
-static pollfd *pollfds = 0;
-
-#  else
-#    if HAVE_SYS_SELECT_H
-#      include <sys/select.h>
-#    endif /* HAVE_SYS_SELECT_H */
-
-// The following #define is only needed for HP-UX 9.x and earlier:
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
-
-static fd_set fdsets[3];
-static int maxfd;
-#    define POLLIN 1
-#    define POLLOUT 4
-#    define POLLERR 8
-
-#  endif /* USE_POLL */
-
-static int nfds = 0;
-static int fd_array_size = 0;
-struct FD {
-#  if !USE_POLL
-  int fd;
-  short events;
-#  endif
-  void (*cb)(int, void*);
-  void* arg;
-};
-
-static FD *fd = 0;
-
-void Fl_X11_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  remove_fd(n,events);
-  int i = nfds++;
-  if (i >= fd_array_size) {
-    FD *temp;
-    fd_array_size = 2*fd_array_size+1;
-
-    if (!fd) temp = (FD*)malloc(fd_array_size*sizeof(FD));
-    else temp = (FD*)realloc(fd, fd_array_size*sizeof(FD));
-
-    if (!temp) return;
-    fd = temp;
-
-#  if USE_POLL
-    pollfd *tpoll;
-
-    if (!pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
-    else tpoll = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
-
-    if (!tpoll) return;
-    pollfds = tpoll;
-#  endif
-  }
-  fd[i].cb = cb;
-  fd[i].arg = v;
-#  if USE_POLL
-  pollfds[i].fd = n;
-  pollfds[i].events = events;
-#  else
-  fd[i].fd = n;
-  fd[i].events = events;
-  if (events & POLLIN) FD_SET(n, &fdsets[0]);
-  if (events & POLLOUT) FD_SET(n, &fdsets[1]);
-  if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  if (n > maxfd) maxfd = n;
-#  endif
-}
-
-void Fl_X11_System_Driver::add_fd(int n, void (*cb)(int, void*), void* v) {
-  add_fd(n, POLLIN, cb, v);
-}
-
-void Fl_X11_System_Driver::remove_fd(int n, int events) {
-  int i,j;
-# if !USE_POLL
-  maxfd = -1; // recalculate maxfd on the fly
-# endif
-  for (i=j=0; i<nfds; i++) {
-#  if USE_POLL
-    if (pollfds[i].fd == n) {
-      int e = pollfds[i].events & ~events;
-      if (!e) continue; // if no events left, delete this fd
-      pollfds[j].events = e;
-    }
-#  else
-    if (fd[i].fd == n) {
-      int e = fd[i].events & ~events;
-      if (!e) continue; // if no events left, delete this fd
-      fd[i].events = e;
-    }
-    if (fd[i].fd > maxfd) maxfd = fd[i].fd;
-#  endif
-    // move it down in the array if necessary:
-    if (j<i) {
-      fd[j] = fd[i];
-#  if USE_POLL
-      pollfds[j] = pollfds[i];
-#  endif
-    }
-    j++;
-  }
-  nfds = j;
-#  if !USE_POLL
-  if (events & POLLIN) FD_CLR(n, &fdsets[0]);
-  if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
-  if (events & POLLERR) FD_CLR(n, &fdsets[2]);
-#  endif
-}
-
-void Fl_X11_System_Driver::remove_fd(int n) {
-  remove_fd(n, -1);
-}
 
 extern int fl_send_system_handlers(void *e);
 
@@ -255,10 +116,6 @@ static void do_queued_events() {
 #endif
 }
 
-// these pointers are set by the Fl::lock() function:
-static void nothing() {}
-void (*fl_lock_function)() = nothing;
-void (*fl_unlock_function)() = nothing;
 
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
@@ -269,69 +126,13 @@ int Fl_X11_System_Driver::poll_or_select_with_delay(double time_to_wait) {
   // unnecessarily and thus cause the file descriptor to not be ready,
   // so we must check for already-read events:
   if (fl_display && XQLength(fl_display)) {do_queued_events(); return 1;}
-
-#  if !USE_POLL
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-#  endif
-  int n;
-
-  fl_unlock_function();
-
-  if (time_to_wait < 2147483.648) {
-#  if USE_POLL
-    n = ::poll(pollfds, nfds, int(time_to_wait*1000 + .5));
-#  else
-    timeval t;
-    t.tv_sec = int(time_to_wait);
-    t.tv_usec = int(1000000 * (time_to_wait-t.tv_sec));
-    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#  endif
-  } else {
-#  if USE_POLL
-    n = ::poll(pollfds, nfds, -1);
-#  else
-    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
-#  endif
-  }
-
-  fl_lock_function();
-
-  if (n > 0) {
-    for (int i=0; i<nfds; i++) {
-#  if USE_POLL
-      if (pollfds[i].revents) fd[i].cb(pollfds[i].fd, fd[i].arg);
-#  else
-      int f = fd[i].fd;
-      short revents = 0;
-      if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
-      if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
-      if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
-#  endif
-    }
-  }
-  return n;
+  return Fl_Unix_System_Driver::poll_or_select_with_delay(time_to_wait);
 }
 
 // just like Fl_X11_System_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
 int Fl_X11_System_Driver::poll_or_select() {
   if (XQLength(fl_display)) return 1;
-  if (!nfds) return 0; // nothing to select or poll
-#  if USE_POLL
-  return ::poll(pollfds, nfds, 0);
-#  else
-  timeval t;
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-  return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#  endif
+  return Fl_Unix_System_Driver::poll_or_select();
 }
 
 // replace \r\n by \n
@@ -883,28 +684,6 @@ static void read_int(uchar *c, int& i) {
   i |= (*(++c))<<24;
 }
 
-// turn BMP image FLTK produced by create_bmp() back to Fl_RGB_Image
-static Fl_RGB_Image *own_bmp_to_RGB(char *bmp) {
-  int w, h;
-  read_int((uchar*)bmp + 18, w);
-  read_int((uchar*)bmp + 22, h);
-  int R=(3*w+3)/4 * 4; // the number of bytes per row, rounded up to multiple of 4
-  bmp +=  54;
-  uchar *data = new uchar[w*h*3];
-  uchar *p = data;
-  for (int i = h-1; i >= 0; i--) {
-    char *s = bmp + i * R;
-    for (int j = 0; j < w; j++) {
-      *p++=s[2];
-      *p++=s[1];
-      *p++=s[0];
-      s+=3;
-    }
-  }
-  Fl_RGB_Image *img = new Fl_RGB_Image(data, w, h, 3);
-  img->alloc_array = 1;
-  return img;
-}
 
 // Call this when a "paste" operation happens:
 void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
@@ -918,7 +697,7 @@ void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
       Fl::e_length = fl_selection_length[clipboard];
       if (!Fl::e_text) Fl::e_text = (char *)"";
     } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
-      Fl::e_clipboard_data = own_bmp_to_RGB(fl_selection_buffer[1]);
+      Fl::e_clipboard_data = Fl_Unix_System_Driver::own_bmp_to_RGB(fl_selection_buffer[1]);
       Fl::e_clipboard_type = Fl::clipboard_image;
     } else return;
     int retval = receiver.handle(FL_PASTE);
@@ -1074,53 +853,12 @@ static void write_int(unsigned char **cp, int i) {
   *cp = c;
 }
 
-static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *return_size){
-  int R=(3*W+3)/4 * 4; // the number of bytes per row, rounded up to multiple of 4
-  int s=H*R;
-  int fs=14+40+s;
-  unsigned char *b=new unsigned char[fs];
-  unsigned char *c=b;
-  // BMP header
-  *c++='B';
-  *c++='M';
-  write_int(&c,fs);
-  write_int(&c,0);
-  write_int(&c,14+40);
-  // DIB header:
-  write_int(&c,40);
-  write_int(&c,W);
-  write_int(&c,H);
-  write_short(&c,1);
-  write_short(&c,24);//bits ber pixel
-  write_int(&c,0);//RGB
-  write_int(&c,s);
-  write_int(&c,0);// horizontal resolution
-  write_int(&c,0);// vertical resolution
-  write_int(&c,0);//number of colors. 0 -> 1<<bits_per_pixel
-  write_int(&c,0);
-  // Pixel data
-  data+=3*W*H;
-  for (int y=0;y<H;++y){
-    data-=3*W;
-    const unsigned char *s=data;
-    unsigned char *p=c;
-    for (int x=0;x<W;++x){
-      *p++=s[2];
-      *p++=s[1];
-      *p++=s[0];
-      s+=3;
-    }
-    c+=R;
-  }
-  *return_size = fs;
-  return b;
-}
 
 // takes a raw RGB image and puts it in the copy/paste buffer
 void Fl_X11_Screen_Driver::copy_image(const unsigned char *data, int W, int H, int clipboard){
   if (!data || W <= 0 || H <= 0) return;
   delete[] fl_selection_buffer[clipboard];
-  fl_selection_buffer[clipboard] = (char *) create_bmp(data,W,H,&fl_selection_length[clipboard]);
+  fl_selection_buffer[clipboard] = (char *) Fl_Unix_System_Driver::create_bmp(data,W,H,&fl_selection_length[clipboard]);
   fl_selection_buffer_length[clipboard] = fl_selection_length[clipboard];
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_image;
@@ -3182,13 +2920,6 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
 
 ////////////////////////////////////////////////////////////////
 
-// returns pointer to the filename, or null if name ends with '/'
-const char *Fl_X11_System_Driver::filename_name(const char *name) {
-  const char *p,*q;
-  if (!name) return (0);
-  for (p=q=name; *p;) if (*p++ == '/') q = p;
-  return q;
-}
 
 void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
   if (shown() && !parent()) {

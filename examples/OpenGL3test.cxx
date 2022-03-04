@@ -1,7 +1,7 @@
 //
 // Tiny OpenGL v3 demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -146,6 +146,11 @@ public:
       make_current();
 #ifndef __APPLE__
       GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+#  ifdef FLTK_USE_WAYLAND
+      // glewInit returns GLEW_ERROR_NO_GLX_DISPLAY with Wayland
+      // see https://github.com/nigels-com/glew/issues/273
+      if (err == GLEW_ERROR_NO_GLX_DISPLAY) err = GLEW_OK;
+#  endif
       if (err) Fl::warning("glewInit() failed returning %u", err);
       else add_output("Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif

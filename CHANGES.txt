@@ -1,4 +1,4 @@
-Changes in FLTK 1.4.0                            Released: ??? ?? 2021
+Changes in FLTK 1.4.0                            Released: ??? ?? 2022
 
   General Information about this Release
 
@@ -17,6 +17,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
 
   New Features and Extensions
 
+  - FLTK 1.4 introduces a new platform, Wayland, available for recent Unix
+    distributions. More information in README.Wayland.txt
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
   - X11 platform: class Fl_Native_File_Chooser will run the KDE file dialog
@@ -121,6 +123,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2021
 
   New Configuration Options (ABI Version)
 
+  - Configure option --enable-wayland allows to build the FLTK library for
+    the new Wayland platform. The corresponding CMake option is OPTION_USE_WAYLAND.
   - The new configure option --disable-gdiplus removes the possibility to draw
     antialiased lines and curves on the Windows platform. The corresponding CMake
     option is OPTION_USE_GDIPLUS.

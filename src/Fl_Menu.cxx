@@ -22,6 +22,7 @@
 
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
@@ -116,10 +117,13 @@ public:
 
 // each vertical menu has one of these:
 class menuwindow : public Fl_Menu_Window {
+  friend class Fl_Window_Driver;
+  friend class Fl_Menu_Item;
   void draw();
   void drawentry(const Fl_Menu_Item*, int i, int erase);
   int handle_part1(int);
   int handle_part2(int e, int ret);
+  static Fl_Window *parent_;
 public:
   menutitle* title;
   int handle(int);
@@ -140,6 +144,12 @@ public:
   void position(int x, int y);
   int is_inside(int x, int y);
 };
+
+Fl_Window *menuwindow::parent_ = NULL;
+
+Fl_Window *Fl_Window_Driver::menu_parent() {
+  return menuwindow::parent_;
+}
 
 extern char fl_draw_shortcut;
 
@@ -293,7 +303,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
 
-  Fl::screen_work_area(scr_x, scr_y, scr_w, scr_h);
+  Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
 
   end();
@@ -439,14 +449,14 @@ void menuwindow::autoscroll(int n) {
   int Y = y()+Fl::box_dx(box())+2+n*itemheight;
 
   int xx, ww;
-  Fl::screen_work_area(xx, scr_y, ww, scr_h);
+  Fl_Window_Driver::driver(this)->menu_window_area(xx, scr_y, ww, scr_h);
   if (Y <= scr_y) Y = scr_y-Y+10;
   else {
     Y = Y+itemheight-scr_h-scr_y;
     if (Y < 0) return;
     Y = -Y-10;
   }
-  Fl_Menu_Window::position(x(), y()+Y);
+  Fl_Window_Driver::driver(this)->reposition_menu_window(x(), y()+Y);
   // y(y()+Y); // don't wait for response from X
 }
 
@@ -885,6 +895,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 
   button = pbutton;
   if (pbutton && pbutton->window()) {
+    menuwindow::parent_ = pbutton->top_window();
     for (Fl_Window* w = pbutton->window(); w; w = w->window()) {
       X += w->x();
       Y += w->y();
@@ -892,6 +903,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   } else {
     X += Fl::event_x_root()-Fl::event_x();
     Y += Fl::event_y_root()-Fl::event_y();
+    menuwindow::parent_ = Fl::first_window();
   }
   menuwindow mw(this, X, Y, W, H, initial_item, title, menubar);
   Fl::grab(mw);
@@ -991,7 +1003,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
           int dy = n->y()-nY;
           int dx = n->x()-nX;
           int waX, waY, waW, waH;
-          Fl::screen_work_area(waX, waY, waW, waH, X, Y);
+          Fl_Window_Driver::driver(n)->menu_window_area(waX, waY, waW, waH, Fl::screen_num(X, Y));
           for (int menu = 0; menu <= pp.menu_number; menu++) {
             menuwindow* tt = pp.p[menu];
             int nx = tt->x()+dx; if (nx < waX) {nx = waX; dx = -tt->x() + waX;}
@@ -1030,6 +1042,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   while (pp.nummenus>1) delete pp.p[--pp.nummenus];
   mw.hide();
   Fl::grab(0);
+  menuwindow::parent_ = NULL;
   return m;
 }
 

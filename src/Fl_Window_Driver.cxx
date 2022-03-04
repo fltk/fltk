@@ -26,6 +26,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include "Fl_Screen_Driver.H"
 
 extern void fl_throw_focus(Fl_Widget *o);
 
@@ -245,6 +246,17 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
   is_a_rescale_ = true;
   pWindow->resize(X, Y, W, H);
   is_a_rescale_ = false;
+}
+
+void Fl_Window_Driver::reposition_menu_window(int x, int y) {
+  if (y != pWindow->y() || x != pWindow->x()) pWindow->Fl_Widget::position(x, y);
+}
+
+void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
+  int mx, my;
+  Fl_Screen_Driver *scr_driver = Fl::screen_driver();
+  if (nscreen < 0) nscreen = scr_driver->get_mouse(mx, my);
+  scr_driver->screen_work_area(X, Y, W, H, nscreen);
 }
 
 /**

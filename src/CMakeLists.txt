@@ -195,10 +195,11 @@ if (FLTK_USE_X11)
   # X11 (including APPLE with X11)
 
   set (DRIVER_FILES
-    drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Posix/Fl_Posix_Printer_Driver.cxx
     drivers/X11/Fl_X11_Screen_Driver.cxx
     drivers/X11/Fl_X11_Window_Driver.cxx
+    drivers/Posix/Fl_Posix_System_Driver.cxx
+    drivers/Unix/Fl_Unix_System_Driver.cxx
     drivers/X11/Fl_X11_System_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
@@ -239,6 +240,25 @@ if (FLTK_USE_X11)
     drivers/X11/Fl_X11_Window_Driver.H
     drivers/X11/Fl_X11_System_Driver.H
     drivers/Xlib/Fl_Font.H
+  )
+
+elseif (OPTION_USE_WAYLAND)
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_CURRENT_BINARY_DIR}")
+  set (DRIVER_FILES
+    drivers/Posix/Fl_Posix_System_Driver.cxx
+    drivers/Posix/Fl_Posix_Printer_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Screen_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Window_Driver.cxx
+    drivers/Wayland/Fl_Wayland_System_Driver.cxx
+    drivers/Unix/Fl_Unix_System_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx
+    drivers/Wayland/Fl_wayland.cxx
+    drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+    Fl_Native_File_Chooser_FLTK.cxx
+    Fl_Native_File_Chooser_GTK.cxx
+    Fl_Native_File_Chooser_Kdialog.cxx
   )
 
 elseif (APPLE)
@@ -353,6 +373,8 @@ set (GL_DRIVER_FILES
 )
 if (FLTK_USE_X11)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
+elseif (OPTION_USE_WAYLAND)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx)
 elseif (APPLE)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx)
 elseif (WIN32)
@@ -409,6 +431,40 @@ if (FLTK_USE_X11)
     )
   endif (NOT USE_XFT)
 endif (FLTK_USE_X11)
+
+if (OPTION_USE_WAYLAND)
+  pkg_check_modules(DBUS dbus-1)
+  include_directories(${DBUS_INCLUDE_DIRS})
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_CURRENT_BINARY_DIR} -fPIC -D_GNU_SOURCE  -DHAS_DBUS")
+  if (OPTION_USE_SYSTEM_LIBDECOR)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_SYSTEM_LIBDECOR")
+    get_filename_component(PATH_TO_SHARED_LIBS ${HAVE_LIB_PANGO} DIRECTORY)
+    set (LIBDECOR_PLUGIN_DIR "\\\"${PATH_TO_SHARED_LIBS}/libdecor/plugins-1\\\" " )
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLIBDECOR_PLUGIN_DIR=${LIBDECOR_PLUGIN_DIR} ")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SYSTEM_LIBDECOR")
+  else()
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/src   -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\\\"/usr/local/lib\\\" ")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_SYSTEM_LIBDECOR=0")
+  endif (OPTION_USE_SYSTEM_LIBDECOR)
+
+  if (GTK_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_GTK")
+  endif (GTK_FOUND)
+    
+  list (APPEND CFILES
+    xutf8/keysym2Ucs.c
+    scandir_posix.c
+    ../libdecor/src/cursor-settings.c
+    ../libdecor/build/fl_libdecor-plugins.c
+    )
+  if (NOT OPTION_USE_SYSTEM_LIBDECOR)
+    list (APPEND CFILES
+    ../libdecor/build/fl_libdecor.c
+    ../libdecor/src/os-compatibility.c
+    ../libdecor/src/plugins/cairo/libdecor-cairo-blur.c
+    )
+  endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
+endif (OPTION_USE_WAYLAND)
 
 if (WIN32)
   list (APPEND CFILES
@@ -494,6 +550,52 @@ if (USE_XFT)
     list (APPEND OPTIONAL_LIBS ${LIB_fontconfig})
   endif (LIB_fontconfig)
 endif (USE_XFT)
+
+if (OPTION_USE_WAYLAND)
+  add_custom_command(
+    OUTPUT xdg-shell-protocol.c xdg-shell-client-protocol.h
+    COMMAND wayland-scanner private-code /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
+    COMMAND wayland-scanner client-header /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
+    DEPENDS /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml
+    VERBATIM
+  )
+  list (APPEND STATIC_FILES "xdg-shell-protocol.c")
+  list (APPEND SHARED_FILES "xdg-shell-protocol.c")
+  if (NOT OPTION_USE_SYSTEM_LIBDECOR)
+    add_custom_command(
+      OUTPUT xdg-decoration-protocol.c xdg-decoration-client-protocol.h
+      COMMAND wayland-scanner private-code /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-protocol.c
+      COMMAND wayland-scanner client-header /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-client-protocol.h
+      DEPENDS /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+      VERBATIM
+    )
+    list (APPEND STATIC_FILES "xdg-decoration-protocol.c")
+    list (APPEND SHARED_FILES "xdg-decoration-protocol.c")
+  endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
+  add_custom_command(
+    OUTPUT text-input-protocol.c text-input-client-protocol.h
+    COMMAND wayland-scanner private-code /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml text-input-protocol.c
+    COMMAND wayland-scanner client-header /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml text-input-client-protocol.h
+    DEPENDS /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml
+    VERBATIM
+  )
+  list (APPEND STATIC_FILES "text-input-protocol.c")
+  list (APPEND SHARED_FILES "text-input-protocol.c")
+
+  if (OPTION_USE_GL)
+    list (APPEND OPTIONAL_LIBS "-lwayland-egl -lEGL")
+  endif (OPTION_USE_GL)
+  if (OPTION_USE_SYSTEM_LIBDECOR)
+    list (APPEND OPTIONAL_LIBS "-ldecor-0")
+  endif (OPTION_USE_SYSTEM_LIBDECOR)
+  list (APPEND OPTIONAL_LIBS "-lwayland-cursor -lwayland-client -lxkbcommon -ldl -ldbus-1")
+  if (GTK_FOUND)
+    list (APPEND OPTIONAL_LIBS ${GTK_LDFLAGS} )
+  endif (GTK_FOUND)
+  if (NOT OPTION_BUILD_SHARED_LIBS)
+    list (APPEND OPTIONAL_LIBS "-no-pie")
+  endif (NOT OPTION_BUILD_SHARED_LIBS)
+endif (OPTION_USE_WAYLAND)
 
 #######################################################################
 

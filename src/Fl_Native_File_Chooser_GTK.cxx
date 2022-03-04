@@ -772,7 +772,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
   // prevent FLTK from processing any event
   Fl::event_dispatch(fnfc_dispatch);
-
+  void *control = ((Fl_Unix_System_Driver*)Fl::system_driver())->control_maximize_button(NULL);
   gint response_id = GTK_RESPONSE_NONE;
   fl_g_signal_connect_data(gtkw_ptr, "response", G_CALLBACK(run_response_handler), &response_id, NULL, (GConnectFlags) 0);
   while (response_id == GTK_RESPONSE_NONE) { // loop that shows the GTK dialog window
@@ -836,6 +836,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   while (fl_gtk_events_pending ()) fl_gtk_main_iteration ();
 
   Fl::event_dispatch(old_dispatch);
+  if (control) ((Fl_Unix_System_Driver*)Fl::system_driver())->control_maximize_button(control);
 
   return result;
 } // fl_gtk_chooser_wrapper

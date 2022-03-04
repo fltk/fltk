@@ -206,6 +206,8 @@ GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
 GLCPPFILES_XFT = $(GLCPPFILES_X11)
 GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
 
+GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
+
 GLCPPFILES += $(GLCPPFILES_$(BUILD))
 
 #	the following file currently doesn't contribute code to GLCPPFILES
@@ -263,6 +265,7 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_System_Driver.cxx \
         drivers/X11/Fl_X11_System_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
 	Fl_x.cxx \
@@ -271,6 +274,25 @@ XLIBCPPFILES = \
 	Fl_Native_File_Chooser_GTK.cxx\
 	Fl_Native_File_Chooser_Kdialog.cxx \
         Fl_get_key.cxx
+        
+# These C++ files are used under condition: BUILD_WAYLAND
+WLCPPFILES = \
+	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
+        Fl_Native_File_Chooser_FLTK.cxx \
+        Fl_Native_File_Chooser_GTK.cxx \
+	Fl_Native_File_Chooser_Kdialog.cxx \
+	drivers/Posix/Fl_Posix_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_System_Driver.cxx \
+        drivers/Wayland/Fl_Wayland_System_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Screen_Driver.cxx \
+        drivers/Wayland/Fl_Wayland_Window_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx \
+	drivers/Wayland/Fl_wayland.cxx 
+
+      
+#   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
 
 # This C file is used under condition: BUILD_X11
 XLIBCFILES = \
@@ -289,6 +311,15 @@ XLIBFONTFILES = \
 # These C++ files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBXFTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+	
+# This C file is used under condition: BUILD_WAYLAND
+WLCFILES = \
+        xutf8/keysym2Ucs.c \
+        scandir_posix.c
+
+# These C++ files are used under condition: BUILD_WAYLAND
+WLXFTFILES = \
 	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
 
 # These C++ files are used under condition: BUILD_GDI
@@ -325,7 +356,7 @@ FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 # makeinclude has set this variable:
-# BUILD = {WIN|X11|XFT|OSX}
+# BUILD = {WIN|X11|XFT|OSX|WAYLAND}
 
 MMFILES_OSX = $(OBJCPPFILES)
 MMFILES = $(MMFILES_$(BUILD))
@@ -336,6 +367,8 @@ CPPFILES_OSX = $(QUARTZCPPFILES)
 CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBXFTFILES)
 CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBFONTFILES)
 
+CPPFILES_WAYLAND = $(WLCPPFILES) $(WLXFTFILES)
+
 CPPFILES_WIN = $(GDICPPFILES)
 
 CPPFILES += $(CPPFILES_$(BUILD))
@@ -344,12 +377,21 @@ CPPFILES += $(CPPFILES_$(BUILD))
 CFILES_X11 = $(XLIBCFILES) $(XLIBXCFILES)
 CFILES_XFT = $(XLIBCFILES)
 
+CFILES_WAYLAND = $(WLCFILES)
+EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libdecor-cairo-blur.o \
+  ../libdecor/build/fl_libdecor-plugins.o \
+  xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
+  ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
+EXTRA_CXXFLAGS_WAYLAND = -I.
+
 CFILES_WIN = $(GDICFILES)
 
 CFILES += $(CFILES_$(BUILD))
+CXXFLAGS += $(EXTRA_CXXFLAGS_$(BUILD))
 
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
+OBJECTS += $(EXTRA_OBJECTS_$(BUILD))
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
@@ -619,6 +661,7 @@ clean:
 	-$(RM)	drivers/WinAPI/*.o
 	-$(RM)	drivers/X11/*.o
 	-$(RM)	drivers/Xlib/*.o
+	-$(RM)	drivers/Wayland/*.o
 	-$(RM)	$(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \

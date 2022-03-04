@@ -3,7 +3,7 @@ dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2021 by Bill Spitzak and others.
+dnl Copyright 1998-2022 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -109,6 +109,8 @@ AC_ARG_ENABLE([localpng], AS_HELP_STRING([--enable-localpng], [use local PNG lib
 AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB library (default=auto)]))
 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
+
+AC_ARG_ENABLE([wayland], AS_HELP_STRING([--enable-wayland], [turn on Wayland support]))
 
 AC_ARG_ENABLE([print], AS_HELP_STRING([--disable-print], [turn off print support (X11)]))
 AS_IF([test x$enable_print = xno], [
@@ -897,6 +899,7 @@ dnl Define OS-specific stuff...
 HLINKS=
 OSX_ONLY=:
 THREADS=
+LIBDECORDIR=""
 
 AC_ARG_WITH([links], AS_HELP_STRING([--with-links], [make header links for common misspellings (default=no)]))
 
@@ -995,6 +998,64 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         THREADS="threads$EXEEXT"
     ])
 
+    AS_IF([test x$enable_wayland = xyes], [
+      dnl Prepare for Wayland...
+      
+      AS_IF([test x$PKGCONFIG = x], [
+          dnl pkg-config is not available, issue warning and abort...
+          AC_MSG_WARN([--enable-wayland: please install pkg-config.])
+          AC_MSG_ERROR([Aborting.])
+      ])
+
+      BUILD="WAYLAND"
+      AC_DEFINE([FLTK_USE_WAYLAND])
+      CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+      CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+      graphics="Wayland"
+      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon)"
+      LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
+      CXXFLAGS="$CXXFLAGS -I../libdecor/src"
+      DSOFLAGS="$LIBS $DSOFLAGS"
+      enable_pango=yes
+      LIBDECORDIR="libdecor/build"
+      LDFLAGS="$LDFLAGS -rdynamic -no-pie"
+    
+      AC_SEARCH_LIBS([dlopen], [dl])
+      AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
+      AC_CHECK_HEADER([GL/glu.h], [
+          AC_DEFINE([HAVE_GL_GLU_H])
+          GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $GLLIBS"
+      ])
+      
+      dnl Check for GTK-3 ...
+      gtk_found=no
+      CFLAGS="$($PKGCONFIG --cflags gtk+-3.0) $CFLAGS"
+      AC_CHECK_HEADERS([gtk/gtk.h], [
+          CFLAGS="$CFLAGS -DHAVE_GTK"
+          LIBS="$LIBS $($PKGCONFIG --libs gtk+-3.0)"
+          gtk_found=yes
+      ])
+        
+      dnl Check for the Pango library ...
+      pango_found=no
+      CFLAGS="$($PKGCONFIG --cflags pangocairo) $CFLAGS"
+      CXXFLAGS="$($PKGCONFIG --cflags pangocairo) $CXXFLAGS"
+      LIBS="$LIBS $($PKGCONFIG --libs pangocairo)"
+ 
+      AC_CHECK_HEADERS([pango/pangocairo.h], [
+          AC_DEFINE([USE_PANGO])
+          AC_DEFINE([USE_XFT])
+          pango_found=yes
+      ])
+
+      dnl Early abort if Pango could not be found
+      AS_IF([test x$pango_found != xyes], [
+          AC_MSG_NOTICE([--enable-wayland: Pango libs and/or headers could not be found.])
+          AC_MSG_ERROR([Aborting.])
+      ])
+
+    ], [
+
     dnl Check for X11...
     AC_PATH_XTRA
 
@@ -1016,7 +1077,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     AS_IF([test "x$x_includes" != x], [
         ac_cpp="$ac_cpp -I$x_includes"
     ])
-
+])
     dnl Check for OpenGL unless disabled...
     GLLIBS=
 
@@ -1217,6 +1278,8 @@ AC_SUBST([HLINKS])
 AC_SUBST([OSX_ONLY])
 AC_SUBST([THREADS])
 
+AC_SUBST([LIBDECORDIR])
+
 AC_SUBST([INSTALL_DESKTOP])
 AC_SUBST([UNINSTALL_DESKTOP])
 
@@ -1344,17 +1407,21 @@ AS_IF([test -n "$GCC"], [
         [AC_MSG_RESULT(no)])
     CFLAGS="$OLDCFLAGS"
 
-    dnl Make sure that shared libraries don't have undefined references
-    # See if ld supports -no-undefined...
-    AC_MSG_CHECKING([if ld supports -no-undefined])
-    OLDLDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS -Wl,-no-undefined"
-    AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([[]], [[]])],
-        [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
-         AC_MSG_RESULT(yes)],
-        [AC_MSG_RESULT(no)])
-    LDFLAGS="$OLDLDFLAGS"
+    AS_IF([test x$enable_wayland = xyes],[
+        DSOFLAGS="$DSOFLAGS -Wl,--allow-shlib-undefined"
+    ] , [
+        dnl Make sure that shared libraries don't have undefined references
+        # See if ld supports -no-undefined...
+        AC_MSG_CHECKING([if ld supports -no-undefined])
+        OLDLDFLAGS="$LDFLAGS"
+        LDFLAGS="$LDFLAGS -Wl,-no-undefined"
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM([[]], [[]])],
+          [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
+          AC_MSG_RESULT(yes)],
+          [AC_MSG_RESULT(no)])
+        LDFLAGS="$OLDLDFLAGS"
+    ])
 
     # See if ld supports -Bsymbolic-functions...
     AC_MSG_CHECKING([if ld supports -Bsymbolic-functions])
@@ -1529,7 +1596,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 ], [darwin*], [
     graphics="Quartz"
 ], [*], [
-    graphics="X11"
+    AS_IF([test x$enable_wayland != xyes], [
+        graphics="X11"
+    ])
     AS_IF([test x$xft_found = xyes], [
         graphics="$graphics + Xft"
     ])
