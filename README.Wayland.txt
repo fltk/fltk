@@ -23,7 +23,7 @@ the Wayland platform. It requires a Wayland-equipped OS which means Linux.
 Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
 The code has been tested on Debian and Ubuntu with 3 distinct Wayland compositors:
-mutter (Debian's compositor), weston, and KDE.
+mutter (Gnome's compositor), weston, and KDE.
 CJK text-input methods, as well as dead and compose keys are supported.
 
 

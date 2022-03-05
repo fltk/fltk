@@ -1406,12 +1406,12 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	libdecor_frame_set_min_content_size(&frame_gtk->frame, pref_width, 1);
         gtk_widget_size_allocate(frame_gtk->header, &allocation);
 #else // new code for FLTK
-  int min_GTK_width = 15;
-  /* // Comment out to remove need for hiding (see below) warnings sent to stderr
+  //int min_GTK_width = 15;
+  // Comment out to remove need for hiding (see below) warnings sent to stderr
   // just enough space not to create: Gtk-WARNING **: Negative content width ……
-  min_GTK_width = 134;
+  int min_GTK_width = 134;
   if (!libdecor_frame_has_capability(&frame_gtk->frame, LIBDECOR_ACTION_FULLSCREEN))
-    min_GTK_width = 100; // no maximize button, window can be narrower*/
+    min_GTK_width = 100; // no maximize button, window can be narrower
   int current_min_w, current_min_h;
   libdecor_frame_get_min_content_size(&frame_gtk->frame, &current_min_w, &current_min_h);
   bool need_change = false;
@@ -1441,12 +1441,12 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
     return;
   }
   // hack to hide "Gtk-WARNING **: Negative content width" sent to stderr
-  static FILE *null_stderr = NULL;
+  /*static FILE *null_stderr = NULL;
   if (!null_stderr) null_stderr = fopen("/dev/null", "w+");
   FILE *old_stderr = stderr;
   stderr = null_stderr;
   gtk_widget_size_allocate(frame_gtk->header, &allocation); // warnings are sent here
-  stderr = old_stderr;
+  stderr = old_stderr;*/
 #endif // end of new code for FLTK
 	draw_border_component(frame_gtk, &frame_gtk->headerbar, HEADER);
 }

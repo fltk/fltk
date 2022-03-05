@@ -1007,7 +1007,7 @@ ensure_border_surfaces(struct libdecor_frame_cairo *frame_cairo)
 	frame_cairo->shadow.opaque = false;
 	ensure_component(frame_cairo, &frame_cairo->shadow);
 
-#if ! APPLY_FLTK_CHANGES
+#if 1 // ! APPLY_FLTK_CHANGES // activate this to get feedback about its impact
 	libdecor_frame_get_min_content_size(&frame_cairo->frame,
 					    &min_width, &min_height);
 	libdecor_frame_set_min_content_size(&frame_cairo->frame, 
