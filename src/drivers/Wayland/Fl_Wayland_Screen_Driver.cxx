@@ -1426,3 +1426,20 @@ char *Fl_Wayland_Screen_Driver::get_seat_name() {
 struct xkb_keymap *Fl_Wayland_Screen_Driver::get_xkb_keymap() {
   return seat->xkb_keymap;
 }
+
+
+int Fl_Wayland_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
+  open_display();
+  mx = Fl::e_x_root; my = Fl::e_y_root;
+  int screen = screen_num_unscaled(mx, my);
+  return screen >= 0 ? screen : 0;
+}
+
+
+int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
+  int snum = get_mouse_unscaled(xx, yy);
+  float s = scale(snum);
+  xx = xx/s;
+  yy = yy/s;
+  return snum;
+}

@@ -150,11 +150,11 @@ public:
   virtual int has_marked_text() const;
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
   // --- clipboard operations
-  // this one is in Fl_wayland.cxx
+  // this one is in fl_wayland_clipboard_dnd.cxx
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
-  // this one is in Fl_wayland.cxx
+  // this one is in fl_wayland_clipboard_dnd.cxx
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
-  // this one is in Fl_wayland.cxx
+  // this one is in fl_wayland_clipboard_dnd.cxx
   virtual int clipboard_contains(const char *type);
   // --- Wayland-special
   void set_cursor();

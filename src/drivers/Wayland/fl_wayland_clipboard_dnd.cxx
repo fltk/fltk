@@ -1,7 +1,7 @@
 //
-// Wayland specific code for the Fast Light Tool Kit (FLTK).
+// Wayland-specific code for clipboard and drag-n-drop support.
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,30 +31,6 @@
 #  include "Fl_Wayland_Graphics_Driver.H"
 #  include <errno.h>
 
-
-////////////////////////////////////////////////////////////////
-
-Window fl_message_window = 0;
-int fl_screen;
-Window fl_xim_win = 0;
-char fl_is_over_the_spot = 0;
-
-
-int Fl_Wayland_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
-  open_display();
-  mx = Fl::e_x_root; my = Fl::e_y_root;
-  int screen = screen_num_unscaled(mx, my);
-  return screen >= 0 ? screen : 0;
-}
-
-
-int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
-  int snum = get_mouse_unscaled(xx, yy);
-  float s = scale(snum);
-  xx = xx/s;
-  yy = yy/s;
-  return snum;
-}
 
 ////////////////////////////////////////////////////////////////
 // Code used for copy and paste and DnD into the program:

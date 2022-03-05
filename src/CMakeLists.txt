@@ -254,7 +254,7 @@ elseif (OPTION_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx
-    drivers/Wayland/Fl_wayland.cxx
+    drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
