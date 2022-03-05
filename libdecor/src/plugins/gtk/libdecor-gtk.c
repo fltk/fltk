@@ -1444,9 +1444,9 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
   /*static FILE *null_stderr = NULL;
   if (!null_stderr) null_stderr = fopen("/dev/null", "w+");
   FILE *old_stderr = stderr;
-  stderr = null_stderr;
+  stderr = null_stderr;*/
   gtk_widget_size_allocate(frame_gtk->header, &allocation); // warnings are sent here
-  stderr = old_stderr;*/
+  //stderr = old_stderr;
 #endif // end of new code for FLTK
 	draw_border_component(frame_gtk, &frame_gtk->headerbar, HEADER);
 }
