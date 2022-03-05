@@ -118,7 +118,7 @@ public:
 // each vertical menu has one of these:
 class menuwindow : public Fl_Menu_Window {
   friend class Fl_Window_Driver;
-  friend class Fl_Menu_Item;
+  friend struct Fl_Menu_Item;
   void draw();
   void drawentry(const Fl_Menu_Item*, int i, int erase);
   int handle_part1(int);
