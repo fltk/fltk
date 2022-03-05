@@ -1024,7 +1024,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
       AC_CHECK_HEADER([GL/glu.h], [
           AC_DEFINE([HAVE_GL_GLU_H])
-          GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $GLLIBS"
+          GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $($PKGCONFIG --libs gl) $GLLIBS"
       ])
       
       dnl Check for GTK-3 ...
