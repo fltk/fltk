@@ -70,6 +70,7 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 void Fl_Gl_Window::show() {
   int need_after = 0;
   if (!shown()) {
+    Fl_Window::default_size_range();
     if (!g) {
       g = pGlWindowDriver->find(mode_,alist);
       if (!g && (mode_ & FL_DOUBLE) == FL_SINGLE) {
