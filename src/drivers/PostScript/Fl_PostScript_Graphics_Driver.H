@@ -1,7 +1,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,17 +70,27 @@ public:
   int height();
   int descent();
   void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  // draw text at width measured on display
+  void transformed_draw(const char* s, int n, double x, double y);
+  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); }
+  void draw(int angle, const char *str, int n, int x, int y) {Fl_Cairo_Graphics_Driver::draw(angle, str, n, x, y);}
+
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b) {Fl_Cairo_Graphics_Driver::color(r,g,b);}
   Fl_Color color();
   void point(int x, int y);
   int not_clipped(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  virtual PangoFontDescription* pango_font_description(Fl_Font fnum);
   virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+  // draw image classes without caching them
+  void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
 };
 
-#else // USE_PANGO
+#else // ! USE_PANGO
 
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 private:

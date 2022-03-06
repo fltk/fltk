@@ -396,6 +396,10 @@ void Fl_Wayland_Window_Driver::make_current() {
   
   struct wld_window *window = fl_xid(pWindow);
   float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
+  if (window && window->buffer) {
+    ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
+                                            &window->buffer->draw_buffer_needs_commit);
+  }
 
   // to support progressive drawing
   if ( (!Fl_Wayland_Window_Driver::in_flush) && window && window->buffer && (!window->buffer->cb)) {

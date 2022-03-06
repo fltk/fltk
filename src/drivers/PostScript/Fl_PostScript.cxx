@@ -1,7 +1,7 @@
 //
 // Classes Fl_PostScript_File_Device and Fl_PostScript_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1499,8 +1499,24 @@ int Fl_PostScript_Graphics_Driver::start_eps(int width, int height) {
   return 0;
 }
 
-PangoFontDescription* Fl_PostScript_Graphics_Driver::pango_font_description(Fl_Font fnum) {
-  return Fl_Graphics_Driver::default_driver().pango_font_description(fnum);
+
+void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
+  if (!n) return;
+  PangoFontDescription *pfd = Fl_Graphics_Driver::default_driver().pango_font_description(font());
+  pango_layout_set_font_description(pango_layout_, pfd);
+  int pwidth, pheight;
+  cairo_save(cairo_);
+  pango_layout_set_text(pango_layout_, str, n);
+  pango_layout_get_size(pango_layout_, &pwidth, &pheight);
+  if (pwidth > 0) {
+    double s = width(str, n);
+    cairo_translate(cairo_, x, y - height() + descent());
+    s = (s/pwidth) * PANGO_SCALE;
+    cairo_scale(cairo_, s, s);
+    pango_cairo_show_layout(cairo_, pango_layout_);
+  }
+  cairo_restore(cairo_);
+  check_status();
 }
 
 #endif // USE_PANGO

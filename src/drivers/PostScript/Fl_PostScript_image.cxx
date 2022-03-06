@@ -1,7 +1,7 @@
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,8 +25,10 @@
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
 
-#if ! USE_PANGO
-#include <stdio.h>   // fprintf()
+#if USE_PANGO
+#  include <cairo/cairo.h>
+#else
+#  include <stdio.h>   // fprintf()
 #endif
 
 struct callback_data {
@@ -66,7 +68,119 @@ void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy
   draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, abs(D));
 }
 
-#if ! USE_PANGO
+#if  USE_PANGO
+
+static void destroy_BGRA(void *data) {
+  delete[] (uchar*)data;
+}
+
+
+void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {
+  Fl_RGB_Image *rgb =  new Fl_RGB_Image(pxm);
+  draw_rgb_bitmap_(rgb, XP, YP, WP, HP, cx, cy);
+  delete rgb;
+}
+
+
+void Fl_PostScript_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {
+  draw_rgb_bitmap_(rgb, XP, YP, WP, HP, cx, cy);
+}
+
+
+void Fl_PostScript_Graphics_Driver::draw_bitmap(Fl_Bitmap *bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
+  draw_rgb_bitmap_(bitmap, XP, YP, WP, HP, cx, cy);
+}
+
+
+void Fl_PostScript_Graphics_Driver::draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy)
+{
+  cairo_surface_t *surf;
+  cairo_format_t format = (img->d() >= 1 ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_A1);
+  int stride = cairo_format_stride_for_width(format, img->data_w());
+  uchar *BGRA = new uchar[stride * img->data_h()];
+  memset(BGRA, 0, stride * img->data_h());
+  if (img->d() >= 1) { // process Fl_RGB_Image of all depths
+    Fl_RGB_Image *rgb = (Fl_RGB_Image*)img;
+    int lrgb = rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d();
+    uchar A = 0xff, R,G,B, *q;
+    const uchar *r;
+    float f = 1;
+    if (rgb->d() >= 3) { // color images
+       for (int j = 0; j < rgb->data_h(); j++) {
+        r = rgb->array + j * lrgb;
+        q = BGRA + j * stride;
+        for (int i = 0; i < rgb->data_w(); i++) {
+          R = *r;
+          G = *(r+1);
+          B = *(r+2);
+          if (rgb->d() == 4) {
+            A = *(r+3);
+            f = float(A)/0xff;
+          }
+          *q =  B * f;
+          *(q+1) =  G * f;
+          *(q+2) =  R * f;
+          *(q+3) =  A;
+          r += rgb->d(); q += 4;
+        }
+      }
+    } else if (rgb->d() == 1 || rgb->d() == 2) { // B&W
+      for (int j = 0; j < rgb->data_h(); j++) {
+        r = rgb->array + j * lrgb;
+        q = BGRA + j * stride;
+        for (int i = 0; i < rgb->data_w(); i++) {
+          G = *r;
+          if (rgb->d() == 2) {
+            A = *(r+1);
+            f = float(A)/0xff;
+          }
+          *(q) =  G * f;
+          *(q+1) =  G * f;
+          *(q+2) =  G * f;
+          *(q+3) =  A;
+          r += rgb->d(); q += 4;
+        }
+      }
+    }
+  } else {
+    Fl_Bitmap *bm = (Fl_Bitmap*)img;
+    uchar  *r, p;
+    unsigned *q;
+    for (int j = 0; j < bm->data_h(); j++) {
+      r = (uchar*)bm->array + j * ((bm->data_w() + 7)/8);
+      q = (unsigned*)(BGRA + j * stride);
+      unsigned k = 0, mask32 = 1;
+      p = *r;
+      for (int i = 0; i < bm->data_w(); i++) {
+        if (p&1) (*q) |= mask32;
+        k++;
+        if (k % 8 != 0) p >>= 1; else p = *(++r);
+        if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
+      }
+    }
+  }
+  surf = cairo_image_surface_create_for_data(BGRA, format, img->data_w(), img->data_h(), stride);
+  if (cairo_surface_status(surf) == CAIRO_STATUS_SUCCESS) {
+    static cairo_user_data_key_t key = {};
+    (void)cairo_surface_set_user_data(surf, &key, BGRA, destroy_BGRA);
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
+    cairo_save(cairo_);
+    cairo_rectangle(cairo_, XP-0.5, YP-0.5, WP+1, HP+1);
+    cairo_clip(cairo_);
+    if (img->d() >= 1) cairo_set_source(cairo_, pat);
+    cairo_matrix_t matrix;
+    cairo_matrix_init_scale(&matrix, double(img->data_w())/(img->w()+1), double(img->data_h())/(img->h()+1));
+    cairo_matrix_translate(&matrix, -XP+0.5+cx, -YP+0.5+cy);
+    cairo_pattern_set_matrix(pat, &matrix);
+    cairo_mask(cairo_, pat);
+    cairo_pattern_destroy(pat);
+    cairo_surface_destroy(surf);
+    cairo_restore(cairo_);
+    check_status();
+  }
+}
+
+#else // USE_PANGO
 
 //
 // Implementation of the /ASCII85Encode PostScript filter
