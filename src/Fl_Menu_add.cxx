@@ -1,7 +1,7 @@
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -235,6 +235,21 @@ int Fl_Menu_Item::insert(
   \par
   A menu item's callback must not add() items to its parent menu during the callback.
 
+  Due to backwards compatibility and historical restrictions we recommend to use
+  either
+  - static menu arrays that are not extended during runtime or
+  - dynamic, extendable menu item arrays that are entirely created by using
+    add() or insert().
+
+  This ensures that all menu arrays and strings are copied to internal storage
+  and released when required.
+
+  \note If you create menus from static Fl_Menu_Item arrays and add() or insert()
+    more menu items later, then the menu array is copied to local storage but
+    some local (static) strings may appear to "leak memory". This is a known
+    issue and discouraged usage (see description above) but the impact on
+    memory usage should typically be small.
+
   <B>Detailed Description of Parameters</B>
   \par label
   The menu item's label. This argument is required and must not be NULL.
@@ -316,12 +331,16 @@ int Fl_Menu_Item::insert(
       FL_SUBMENU           // This item is a submenu to other items
       FL_MENU_DIVIDER      // Creates divider line below this item. Also ends a group of radio buttons.
   \endcode
+  \par
+  <b><em>All other bits in \p 'flags' are reserved and must not be used.</em></b>
 
   If FL_SUBMENU is set in an item's flags, then actually two items are added:
-  the first item is the menu item (submenu title), as expected, and the second
-  item is the submenu terminating item with the label and all other members
-  set to 0. If you add submenus with the 'path' technique, then the
-  corresponding submenu terminators (maybe more than one) are added as well.
+  - the first item is the menu item (submenu title), as expected, and
+  - the second item is the submenu terminating item with the label and all
+    other members set to 0.
+
+  If you add submenus with the 'path' technique, then the corresponding submenu
+  terminators (maybe more than one) are added as well.
 
   \todo Raw integer shortcut needs examples.
         Dependent on responses to https://www.fltk.org/newsgroups.php?gfltk.coredev+v:10086 and results of STR#2344

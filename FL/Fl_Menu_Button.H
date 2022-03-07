@@ -1,7 +1,7 @@
 //
 // Menu button header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -44,14 +44,14 @@
   When the user clicks a menu item, value() is set to that item
   and then:
 
-      - The item's callback is done if one has been set; the
-        Fl_Menu_Button is passed as the Fl_Widget* argument,
-        along with any userdata configured for the callback.
+  - The item's callback is done if one has been set; the
+    Fl_Menu_Button is passed as the Fl_Widget* argument,
+    along with any userdata configured for the callback.
 
-      - If the item does not have a callback, the Fl_Menu_Button's callback
-        is done instead, along with any userdata configured for it.
-        The callback can determine which item was picked using
-        value(), mvalue(), item_pathname(), etc.
+  - If the item does not have a callback, the Fl_Menu_Button's callback
+    is done instead, along with any userdata configured for it.
+    The callback can determine which item was picked using
+    value(), mvalue(), item_pathname(), etc.
 */
 class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:

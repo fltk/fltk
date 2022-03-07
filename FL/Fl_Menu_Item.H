@@ -1,7 +1,7 @@
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,15 +25,16 @@
 /// @file
 
 enum { // values for flags:
-  FL_MENU_INACTIVE   = 1,      ///< Deactivate menu item (gray out)
-  FL_MENU_TOGGLE     = 2,      ///< Item is a checkbox toggle (shows checkbox for on/off state)
-  FL_MENU_VALUE      = 4,      ///< The on/off state for checkbox/radio buttons (if set, state is 'on')
-  FL_MENU_RADIO      = 8,      ///< Item is a radio button (one checkbox of many can be on)
-  FL_MENU_INVISIBLE  = 0x10,   ///< Item will not show up (shortcut will work)
-  FL_SUBMENU_POINTER = 0x20,   ///< Indicates user_data() is a pointer to another menu array
-  FL_SUBMENU         = 0x40,   ///< Item is a submenu to other items
-  FL_MENU_DIVIDER    = 0x80,   ///< Creates divider line below this item. Also ends a group of radio buttons
-  FL_MENU_HORIZONTAL = 0x100   ///< ??? -- reserved
+  FL_MENU_INACTIVE   = 1,          ///< Deactivate menu item (gray out)
+  FL_MENU_TOGGLE     = 2,          ///< Item is a checkbox toggle (shows checkbox for on/off state)
+  FL_MENU_VALUE      = 4,          ///< The on/off state for checkbox/radio buttons (if set, state is 'on')
+  FL_MENU_RADIO      = 8,          ///< Item is a radio button (one checkbox of many can be on)
+  FL_MENU_INVISIBLE  = 0x10,       ///< Item will not show up (shortcut will work)
+  FL_SUBMENU_POINTER = 0x20,       ///< Indicates user_data() is a pointer to another menu array
+  FL_SUBMENU         = 0x40,       ///< Item is a submenu to other items
+  FL_MENU_DIVIDER    = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons
+  FL_MENU_HORIZONTAL = 0x100,      ///< ??? -- reserved, internal (do not use)
+  FL_MENU_RESERVED   = 0xffffff00  ///< These bits are reserved for internal or future usage (do not use)
 };
 
 extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
@@ -57,15 +58,16 @@ class Fl_Menu_;
   };
 
   enum { // values for flags:
-   FL_MENU_INACTIVE   = 1,      // Deactivate menu item (gray out)
-   FL_MENU_TOGGLE     = 2,      // Item is a checkbox toggle (shows checkbox for on/off state)
-   FL_MENU_VALUE      = 4,      // The on/off state for checkbox/radio buttons (if set, state is 'on')
-   FL_MENU_RADIO      = 8,      // Item is a radio button (one checkbox of many can be on)
-   FL_MENU_INVISIBLE  = 0x10,   // Item will not show up (shortcut will work)
-   FL_SUBMENU_POINTER = 0x20,   // Indicates user_data() is a pointer to another menu array
-   FL_SUBMENU         = 0x40,   // This item is a submenu to other items
-   FL_MENU_DIVIDER    = 0x80,   // Creates divider line below this item. Also ends a group of radio buttons.
-   FL_MENU_HORIZONTAL = 0x100   // ??? -- reserved
+   FL_MENU_INACTIVE   = 1,          // Deactivate menu item (gray out)
+   FL_MENU_TOGGLE     = 2,          // Item is a checkbox toggle (shows checkbox for on/off state)
+   FL_MENU_VALUE      = 4,          // The on/off state for checkbox/radio buttons (if set, state is 'on')
+   FL_MENU_RADIO      = 8,          // Item is a radio button (one checkbox of many can be on)
+   FL_MENU_INVISIBLE  = 0x10,       // Item will not show up (shortcut will work)
+   FL_SUBMENU_POINTER = 0x20,       // Indicates user_data() is a pointer to another menu array
+   FL_SUBMENU         = 0x40,       // This item is a submenu to other items
+   FL_MENU_DIVIDER    = 0x80,       // Creates divider line below this item. Also ends a group of radio buttons.
+   FL_MENU_HORIZONTAL = 0x100,      // ??? -- reserved, internal (do not use)
+   FL_MENU_RESERVED   = 0xffffff00  // These bits are reserved for internal or future usage (do not use)
   };
   \endcode
   Typically menu items are statically defined; for example:
@@ -103,6 +105,11 @@ class Fl_Menu_;
   You should use the method functions to access structure members and
   not access them directly to avoid compatibility problems with future
   releases of FLTK.
+
+  \note Adding menu items with insert(), add(), or any of its overloaded
+    variants copies the entire menu to internal storage. Using the
+    memory of a static menu array after that would access unused (but not
+    released) memory and thus have no effect.
 */
 struct FL_EXPORT Fl_Menu_Item {
   const char *text;         ///< menu item text, returned by label()
@@ -233,7 +240,6 @@ struct FL_EXPORT Fl_Menu_Item {
 
   /**
     Sets the menu item's callback function and userdata() argument.
-    This method does not set the userdata() argument.
     The argument \p is cast to void* and stored as the userdata()
     for the menu item's callback function.
     \see Fl_Callback_p Fl_MenuItem::callback() const
