@@ -152,7 +152,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
   endif ()
   set (REQUIRED_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
 else ()
-  set (REQUIRED_LIBS fltk_gl fltk ${OPENGL_LIBRARIES} GLEW)
+  set (REQUIRED_LIBS fltk_gl fltk ${OPENGL_LIBRARIES} ${LIB_GLEW})
 endif ()
 
 if (OPENGL_FOUND AND LIB_GLEW)
