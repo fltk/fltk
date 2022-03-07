@@ -68,6 +68,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;
   pango_layout_ = NULL;
+  linestyle_ = FL_SOLID;
   clip_ = NULL;
   scale_x = scale_y = 1;
   angle = 0;
@@ -650,7 +651,7 @@ void Fl_Cairo_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
   cairo_set_line_width(cairo_, lwidth);
   cairo_translate(cairo_, lwidth/2., lwidth/2.); // translate by half of line width
   double ddash = (lwidth > 2 ? lwidth : 2);
-  if (linestyle_ == FL_DOT){
+  if (linestyle_ == FL_DOT) {
     cairo_set_dash(cairo_, &ddash, 1, 0); // dash size = line width
   }
   // rectangle in drawing units
@@ -949,6 +950,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 
 
 void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
+  if (s == 0) return;
   if (font() == fnum && size() == s) return;
   if (fnum == -1) {
     Fl_Graphics_Driver::font(0, 0);
