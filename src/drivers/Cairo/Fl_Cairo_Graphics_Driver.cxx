@@ -372,21 +372,22 @@ void Fl_Cairo_Graphics_Driver::curve(double x, double y, double x1, double y1, d
 }
 
 void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
-  if (shape_ == NONE){
+  if (shape_ == NONE) {
     cairo_save(cairo_);
     concat();
     cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
     reconcat();
     cairo_restore(cairo_);
-  } else
+  } else {
     cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
+  }
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::arc(double x, double y, double r, double start, double a){
-  if (shape_==NONE) return;
+  if (shape_ == NONE) return;
   gap_ = 0;
-  if(start > a)
+  if (start > a)
     cairo_arc(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
   else
     cairo_arc_negative(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
@@ -424,56 +425,57 @@ void Fl_Cairo_Graphics_Driver::end_points() {
 }
 
 void Fl_Cairo_Graphics_Driver::end_line() {
-  gap_=1;
+  gap_ = 1;
   reconcat();
   cairo_stroke(cairo_);
   cairo_restore(cairo_);
-  shape_=NONE;
+  shape_ = NONE;
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::end_loop(){
-  gap_=1;
+  gap_ = 1;
   reconcat();
   cairo_close_path(cairo_);
   cairo_stroke(cairo_);
   cairo_restore(cairo_);
-  shape_=NONE;
+  shape_ = NONE;
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::end_polygon() {
-  gap_=1;
+  gap_ = 1;
   reconcat();
   cairo_close_path(cairo_);
   cairo_fill(cairo_);
   cairo_restore(cairo_);
-  shape_=NONE;
+  shape_ = NONE;
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::transformed_vertex(double x, double y) {
-  if (shape_ == POINTS){
+  if (shape_ == POINTS) {
     cairo_move_to(cairo_, x, y);
     point(x, y);
     gap_ = 1;
   } else {
     reconcat();
-  if(gap_){
-    cairo_move_to(cairo_, x, y);
-    gap_=0;
-  }else
-    cairo_line_to(cairo_, x, y);
-    surface_needs_commit();
-  concat();
+    if (gap_) {
+      cairo_move_to(cairo_, x, y);
+      gap_ = 0;
+    } else {
+      cairo_line_to(cairo_, x, y);
+      surface_needs_commit();
+    }
+    concat();
   }
 }
 
 void Fl_Cairo_Graphics_Driver::push_clip(int x, int y, int w, int h) {
-  Clip * c=new Clip();
+  Clip *c = new Clip();
   clip_box(x,y,w,h,c->x,c->y,c->w,c->h);
-  c->prev=clip_;
-  clip_=c;
+  c->prev = clip_;
+  clip_ = c;
   cairo_save(cairo_);
   cairo_rectangle(cairo_, clip_->x-0.5 , clip_->y-0.5 , clip_->w  , clip_->h);
   cairo_clip(cairo_);
@@ -481,9 +483,9 @@ void Fl_Cairo_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 }
 
 void Fl_Cairo_Graphics_Driver::push_no_clip() {
-  Clip * c = new Clip();
-  c->prev=clip_;
-  clip_=c;
+  Clip *c = new Clip();
+  c->prev = clip_;
+  clip_ = c;
   clip_->x = clip_->y = clip_->w = clip_->h = -1;
   cairo_save(cairo_);
   cairo_reset_clip(cairo_);
@@ -492,8 +494,8 @@ void Fl_Cairo_Graphics_Driver::push_no_clip() {
 
 void Fl_Cairo_Graphics_Driver::pop_clip() {
   if(!clip_)return;
-  Clip * c=clip_;
-  clip_=clip_->prev;
+  Clip *c = clip_;
+  clip_ = clip_->prev;
   delete c;
   cairo_restore(cairo_);
   check_status();
