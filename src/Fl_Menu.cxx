@@ -147,9 +147,20 @@ public:
 
 Fl_Window *menuwindow::parent_ = NULL;
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
 Fl_Window *Fl_Window_Driver::menu_parent() {
   return menuwindow::parent_;
 }
+
+/**
+ \}
+ \endcond
+ */
 
 extern char fl_draw_shortcut;
 
