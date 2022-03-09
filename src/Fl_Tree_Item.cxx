@@ -434,6 +434,7 @@ Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char 
 /// \returns
 ///     - pointer to orphaned item on success
 ///     - NULL on error (could not deparent the item)
+/// \see reparent()
 ///
 Fl_Tree_Item* Fl_Tree_Item::deparent(int pos) {
   Fl_Tree_Item *orphan = _children[pos];
@@ -442,11 +443,12 @@ Fl_Tree_Item* Fl_Tree_Item::deparent(int pos) {
 }
 
 /// Reparent specified item as a child of ourself at position \p 'pos'.
-/// Typically 'newchild' was recently orphaned with deparent().
+/// Typically \p 'newchild' was recently orphaned with deparent().
 ///
 /// \returns
 ///    -  0: on success
 ///    - -1: on error (e.g. if \p 'pos' out of range) with no changes made.
+/// \see deparent()
 ///
 int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
   int ret;
@@ -455,7 +457,8 @@ int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
   return 0;
 }
 
-/// Move the item 'from' to sibling position of 'to'.
+/// Move an item within its parent using index numbers.
+/// Item is moved \p 'to' its new position \p 'from' its old position.
 ///
 /// \returns
 ///    -  0: Success
@@ -467,12 +470,14 @@ int Fl_Tree_Item::move(int to, int from) {
   return _children.move(to, from);
 }
 
-/// Move the current item above/below/into the specified 'item',
+/// Move the current item above/below/into the specified \p 'item',
 /// where \p 'op' determines the type of move:
 ///
 ///    - 0: move above \p 'item' (\p 'pos' ignored)
 ///    - 1: move below \p 'item' (\p 'pos' ignored)
 ///    - 2: move into  \p 'item' as a child (at optional position \p 'pos')
+///
+/// ..and \p 'pos' determines an optional index position after the move.
 ///
 /// \returns 0 on success. a negative number on error:
 ///     - -1: one of the items has no parent
@@ -535,7 +540,7 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
   return 0;
 }
 
-/// Move the current item above the specified 'item'.
+/// Move the current item above the specified \p 'item'.
 /// This is the equivalent of calling move(item,0,0).
 ///
 /// \returns 0 on success.<br>
@@ -548,7 +553,7 @@ int Fl_Tree_Item::move_above(Fl_Tree_Item *item) {
   return move(item, 0, 0);
 }
 
-/// Move the current item below the specified 'item'.
+/// Move the current item below the specified \p 'item'.
 /// This is the equivalent of calling move(item,1,0).
 ///
 /// \returns 0 on success.<br>
