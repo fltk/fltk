@@ -1600,12 +1600,12 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 
 	new_title = libdecor_frame_get_title(frame);
 #if APPLY_FLTK_CHANGES
-	if (frame_gtk->title && !streq(frame_gtk->title, new_title)) {
+	if (!frame_gtk->title || !streq(frame_gtk->title, new_title)) {
 #else
 	if (!streq(frame_gtk->title, new_title))
 #endif
 		redraw_needed = true;
-	free(frame_gtk->title);
+	if (frame_gtk->title) free(frame_gtk->title);
 	if (new_title)
 		frame_gtk->title = strdup(new_title);
 	else
