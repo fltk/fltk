@@ -1400,7 +1400,7 @@ void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 
 
 void Fl_Wayland_Window_Driver::label(const char *name, const char *iname) {
-  if (shown() && !parent()) {
+  if (shown() && !parent() && fl_xid(pWindow)->kind == DECORATED) {
     if (!name) name = "";
     if (!iname) iname = fl_filename_name(name);
     libdecor_frame_set_title(fl_xid(pWindow)->frame, name);
