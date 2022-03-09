@@ -22,6 +22,7 @@
 #if USE_PANGO
 
 #include "Fl_Cairo_Graphics_Driver.H"
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
@@ -68,6 +69,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;
   pango_layout_ = NULL;
+  dummy_pango_layout_ = NULL;
   linestyle_ = FL_SOLID;
   clip_ = NULL;
   scale_x = scale_y = 1;
@@ -76,7 +78,9 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   needs_commit_tag_ = NULL;
 }
 
-Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {}
+Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
+  if (pango_layout_) g_object_unref(pango_layout_);
+}
 
 const cairo_format_t Fl_Cairo_Graphics_Driver::cairo_format = CAIRO_FORMAT_ARGB32;
 
@@ -906,7 +910,145 @@ int Fl_Cairo_Graphics_Driver::descent() {
   return font_descriptor()->descent;
 }
 
-extern Fl_Fontdesc *fl_fonts;
+
+static Fl_Fontdesc built_in_table[] = {  // Pango font names
+  {"Sans"},
+  {"Sans Bold"},
+  {"Sans Italic"},
+  {"Sans Bold Italic"},
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"Monospace Italic"},
+  {"Monospace Bold Italic"},
+  {"Serif"},
+  {"Serif Bold"},
+  {"Serif Italic"},
+  {"Serif Bold Italic"},
+  {"Standard Symbols PS"}, // FL_SYMBOL
+  {"Monospace"},           // FL_SCREEN
+  {"Monospace Bold"},      // FL_SCREEN_BOLD
+  {"D050000L"},            // FL_ZAPF_DINGBATS
+};
+
+FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+
+void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
+  static int i = 0;
+  if (!i) {
+    while (i < FL_FREE_FONT) {
+      i++;
+      Fl::set_font((Fl_Font)i-1, built_in_table[i-1].name);
+    }
+  }
+}
+
+
+static int font_name_process(const char *name, char &face) {
+  int l = strlen(name);
+  face = ' ';
+  if (!memcmp(name + l - 8, " Regular", 8)) l -= 8;
+  else if (!memcmp(name + l - 6, " Plain", 6)) l -= 6;
+  else if (!memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face='P';}
+  else if (!memcmp(name + l - 7, " Italic", 7)) {l -= 7; face='I';}
+  else if (!memcmp(name + l - 5, " Bold", 5)) {l -= 5; face='B';}
+  return l;
+}
+
+typedef int (*sort_f_type)(const void *aa, const void *bb);
+
+
+static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
+  char face_a, face_b;
+  int la = font_name_process(fa->name, face_a);
+  int lb = font_name_process(fb->name, face_b);
+  int c = strncasecmp(fa->name, fb->name, la >= lb ? lb : la);
+  return (c == 0 ? face_a - face_b : c);
+}
+
+
+Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
+{
+  fl_open_display();
+  int n_families, count = 0;
+  PangoFontFamily **families;
+  static PangoFontMap *pfmap_ = pango_cairo_font_map_get_default(); // 1.10
+  Fl_Cairo_Graphics_Driver::init_built_in_fonts();
+  pango_font_map_list_families(pfmap_, &families, &n_families);
+  for (int fam = 0; fam < n_families; fam++) {
+    PangoFontFace **faces;
+    int n_faces;
+    const char *fam_name = pango_font_family_get_name (families[fam]);
+    int l = strlen(fam_name);
+    pango_font_family_list_faces(families[fam], &faces, &n_faces);
+    for (int j = 0; j < n_faces; j++) {
+      const char *p = pango_font_face_get_face_name(faces[j]);
+      // build the font's FLTK name
+      l += strlen(p) + 2;
+      char *q = new char[l];
+      sprintf(q, "%s %s", fam_name, p);
+      Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
+    }
+    /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
+  }
+  /*g_*/free(families);
+  // Sort the list into alphabetic order
+  qsort(fl_fonts + FL_FREE_FONT, count, sizeof(Fl_Fontdesc), (sort_f_type)font_sort);
+  return FL_FREE_FONT + count;
+}
+
+
+const char *Fl_Cairo_Graphics_Driver::font_name(int num) {
+  return fl_fonts[num].name;
+}
+
+
+void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name) {
+  Fl_Fontdesc *s = fl_fonts + num;
+  if (s->name) {
+    if (!strcmp(s->name, name)) {s->name = name; return;}
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
+    }
+    s->first = 0;
+  }
+  s->name = name;
+  s->fontname[0] = 0;
+  s->first = 0;
+}
+
+
+// turn a stored font name into a pretty name:
+#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
+
+const char* Fl_Cairo_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    strcpy(f->fontname, f->name); // to check
+    const char* thisFont = f->name;
+    if (!thisFont || !*thisFont) {if (ap) *ap = 0; return "";}
+    int type = 0;
+    if (strstr(f->name, "Bold")) type |= FL_BOLD;
+    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+}
+
+
+int Fl_Cairo_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  static int array[128];
+  if (!fl_fonts) fl_fonts = calc_fl_fonts();
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+  int cnt = 0;
+
+  array[0] = 0;
+  sizep = array;
+  cnt = 1;
+
+  return cnt;
+}
 
 
 Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize size) : Fl_Font_Descriptor(name, size) {
@@ -952,6 +1094,16 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 
 
 void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
+  if (!font_descriptor()) fl_open_display();
+  if (!pango_layout_) {
+    bool needs_dummy = (cairo_ == NULL);
+    if (!cairo_) {
+      cairo_surface_t *surf = cairo_image_surface_create(Fl_Cairo_Graphics_Driver::cairo_format, 100, 100);
+      cairo_ = cairo_create(surf);
+    }
+    pango_layout_ = pango_cairo_create_layout(cairo_);
+    if (needs_dummy) dummy_pango_layout_ = pango_layout_;
+  }
   if (s == 0) return;
   if (font() == fnum && size() == s) return;
   if (fnum == -1) {

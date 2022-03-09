@@ -41,6 +41,7 @@ class FL_EXPORT Fl_Cairo_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   bool *needs_commit_tag_; // NULL or points to whether cairo surface was drawn to
 protected:
+  PangoLayout *dummy_pango_layout_; // used to measure text width before showing a window
   cairo_t *cairo_;
   PangoLayout *pango_layout_;
   int linestyle_;
@@ -172,7 +173,11 @@ public:
   virtual PangoFontDescription* pango_font_description(Fl_Font /*fnum*/) {
     return ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref;
   }
-
+  static void init_built_in_fonts();
+  virtual Fl_Font set_fonts(const char* pattern_name);
+  virtual const char *font_name(int num);
+  virtual void font_name(int num, const char *name);  virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
 };
 
 #endif // FL_CAIRO_GRAPHICS_DRIVER_H
