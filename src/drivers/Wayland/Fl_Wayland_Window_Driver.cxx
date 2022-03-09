@@ -412,8 +412,12 @@ void Fl_Wayland_Window_Driver::make_current() {
 
   fl_graphics_driver->clip_region(0);
   fl_window = window;
-  if (!window->buffer) window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
+  if (!window->buffer) {
+    window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);
+    ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
+                                            &window->buffer->draw_buffer_needs_commit);
+  }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->activate(window->buffer, scale);
 
 #ifdef FLTK_USE_CAIRO
