@@ -1588,3 +1588,12 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
     //printf("menu_window_area: %dx%d - %dx%d\n",X,Y,W,H);
   } else Fl_Window_Driver::menu_window_area(X, Y, W, H, nscreen);
 }
+
+
+FL_EXPORT struct wl_surface *fl_wl_surface(Window xid) {
+  return xid->wl_surface;
+}
+
+FL_EXPORT struct _cairo *fl_wl_cairo() {
+  return ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
+}

@@ -69,11 +69,15 @@ The current scale factor value, for an Fl_Window named \e window, is given by
 One drawing unit generally corresponds to one screen pixel ...
 <li>... but not on macOS and for retina displays, where one drawing unit corresponds
 to two pixels.
+
+<li>... and not with the Wayland platform, where one drawing unit may
+correspond to 1, 2, or 3 pixels according to the current value of the
+Wayland-defined, integer-valued scale factor.
 </ul>
 
 At application start time, FLTK attempts to detect the adequate scale factor value for
-each screen of the system. Here is how that's done under the \ref osissues_x_scaling "X11"
-and \ref osissues_windows_scaling "Windows" platforms.
+each screen of the system. Here is how that's done under the \ref osissues_x_scaling "X11",
+\ref osissues_windows_scaling "Windows", and \ref osissues_wayland_scaling "Wayland" platforms.
 If the resulting scale factor is not satisfactory, and also under the macOS platform,
 it's possible to set the
 <tt>FLTK_SCALING_FACTOR</tt> environmental variable to the desired numerical value

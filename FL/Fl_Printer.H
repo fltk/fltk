@@ -59,13 +59,16 @@
  \endcode
  <b>Platform specifics</b>
  <ul>
- <li>X11 platforms:
+ <li>X11 and Wayland platforms:
  <ul><li>FLTK expresses all graphics data using (Level 2) PostScript and sends that to the selected printer.
  See class Fl_PostScript_File_Device for a description of how text and transparent images appear in print.
- <li>If the GTK library is available at run-time, class Fl_Print runs GTK's printer dialog which allows to set
+ <li>If the GTK library is available at run-time, class Fl_Printer runs GTK's printer dialog which allows to set
  printer, paper size and orientation.
- <li>If that library is not avaialble, or if Fl::option(Fl::OPTION_PRINTER_USES_GTK) has been turned off,
- class Fl_Print runs FLTK's print dialog.
+ <li>Under the KDE desktop, Fl_Printer runs the <tt>kdialog</tt> command to create KDE-styled file dialogs if
+ that command is available at run-time, unless FLTK was built with CMake and option OPTION_USE_KDIALOG turned off.
+ In that case, Fl_Printer attempts to run the GTK dialog.
+ <li>If the GTK library is not available, or if Fl::option(Fl::OPTION_PRINTER_USES_GTK) has been turned off,
+ class Fl_Printer runs FLTK's print dialog.
  <ul>
  <li>Unless it has been previously changed, the default paper size is A4.
  To change that, press the "Properties" button of the "Print" dialog window

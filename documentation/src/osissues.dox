@@ -7,6 +7,7 @@ This appendix describes the operating system specific interfaces in FLTK:
 \li \ref osissues_unix
 \li \ref osissues_win32
 \li \ref osissues_macos
+\li \ref osissues_wayland
 
 \section osissues_accessing Accessing the OS Interfaces
 
@@ -927,6 +928,81 @@ handle the Resource Fork correctly.
 FLTK uses UTF-8-encoded UNIX-style filenames and paths.
 
 \sa  group_macosx
+
+\section osissues_wayland The Wayland Interface
+
+Wayland-specific source code can be organized as follows to be distinguished
+from X11-specific source code :
+\code
+#include <FL/platform.H> // defines FLTK_USE_WAYLAND or FLTK_USE_X11 as appropriate
+
+#if defined(FLTK_USE_WAYLAND)
+… Wayland-specific source code …
+#elif defined(FLTK_USE_X11)
+… X11-specific source code …
+#endif
+\endcode
+
+extern struct wl_display *fl_display;
+\par
+After fl_open_display() has run, the \c fl_display global variable points to the
+struct wl_display representing the connection between the application and Wayland.
+Therefore, \c wl_display_get_fd(fl_display) gives the file descriptor one can
+use to communicate with the Wayland compositor according to the Wayland protocol.
+
+Window fl_xid(const Fl_Window *)
+\par
+Returns a pointer to an <u>FLTK-defined</u> structure holding Wayland-related
+data created when a window gets show()'n, or NULL if not show()'n.
+
+Fl_Window *fl_find(Window wld_win)
+\par
+Returns the Fl_Window that corresponds to the given Window, or NULL if not found.
+
+struct wl_surface *fl_wl_surface(Window wld_win)
+\par
+Returns a pointer to the struct wl_surface corresponding to a show()'n
+top-level window or subwindow.
+
+struct _cairo *fl_wl_cairo(void)
+\par
+Drawing natively to a Wayland window : Within an overridden Fl_Widget::draw() method,
+or after a call to Fl_Window::make_current(), it's possible to draw
+<u>using the Cairo library</u>. Function \c fl_wl_cairo() returns the adequate
+\c cairo_t* (equivalent to <tt>struct _cairo*</tt>) value. All FLTK-defined
+drawing functions (e.g., fl_rect(), fl_draw()) can be used too.
+
+void fl_close_display()
+\par
+This closes the Wayland connection. You do not need to call
+this to exit. It may be useful to call this if you want your program to continue
+without the Wayland connection. You cannot open the display again, and
+cannot call any FLTK functions.
+
+\subsection osissues_wayland_scaling HiDPI display support
+FLTK Wayland apps automatically scale according to the Wayland-defined, integer-valued
+scale factor. On a HiDPI display, it's enough to set this factor to 2 for
+any FLTK app to be drawn using twice as many pixels and thus to be as readable
+as it is on a regular display. With the gnome desktop, that is achieved in the
+"Displays" section of the "Settings" application, selecting 200 % for the "Scale" parameter.
+In addition to this, FLTK apps can also be scaled up or down typing ctrl/+/-/0/
+and with the \c FLTK_SCALING_FACTOR environment variable.
+
+\subsection osissues_wayland_decoration Window titlebars
+Wayland supports both client-side window decoration (CSD), where client applications
+are responsible for drawing window titlebars, and server-side window
+decoration (SSD), where the Wayland compositor itself draws window titlebars. Among 3
+tested Wayland compositors, Mutter (gnome's compositor) and Weston use CSD mode
+whereas the KDE compositor uses SSD mode. When running in CSD mode, FLTK uses a library called
+<a href=https://gitlab.gnome.org/jadahl/libdecor>libdecor</a> to draw titlebars.
+The libdecor library has been conceived to use various plug-in's to draw
+titlebars in various fashions intended to match any desktop's preferred titlebar style.
+FLTK supports drawing titlebars with any libdecor plug-in via an environment variable
+called \c LIBDECOR_PLUGIN_DIR which can be given the name of a directory containing the
+desired plug-in. When \c LIBDECOR_PLUGIN_DIR is not defined, or points to a directory
+that doesn't contain a libdecor plug-in, FLTK uses its built-in plug-in to draw titlebars.
+That is the most common situation, until libdecor plug-in's become available
+for popular UNIX desktops.
 
 
 \htmlonly

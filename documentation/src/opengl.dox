@@ -614,6 +614,27 @@ glewExperimental = GL_TRUE;
 \endcode
 before the glewInit() call.
 
+\par Testing for success of the glewInit() call
+Testing whether the glewInit() call is successful is to be done as follows:
+\code
+#include <FL/platform.H> // defines FLTK_USE_WAYLAND under the Wayland platform
+#include <FL/Fl.H> // for Fl::warning()
+#ifndef __APPLE__
+#  if defined(_WIN32)
+#    define GLEW_STATIC 1
+#  endif
+#  include <GL/glew.h>
+
+  GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+#  ifdef FLTK_USE_WAYLAND
+      // glewInit returns GLEW_ERROR_NO_GLX_DISPLAY with Wayland
+      if (err == GLEW_ERROR_NO_GLX_DISPLAY) err = GLEW_OK;
+#  endif
+  if (err != GLEW_OK) Fl::warning("glewInit() failed returning %u", err);
+#endif // ! __APPLE__
+\endcode
+
+
 \par Changes in the build process
 Link with libGLEW.so (on Unix/Linux), libglew32.a (with MinGW) or glew32.lib
 (with MS Visual Studio); no change is needed on the Mac OS platform.
