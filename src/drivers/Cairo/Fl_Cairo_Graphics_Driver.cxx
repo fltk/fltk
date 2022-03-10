@@ -930,7 +930,11 @@ static Fl_Fontdesc built_in_table[] = {  // Pango font names
   {"D050000L"},            // FL_ZAPF_DINGBATS
 };
 
-FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+#if FLTK_USE_WAYLAND
+  FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+#else
+  extern Fl_Fontdesc *fl_fonts;
+#endif
 
 void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
   static int i = 0;
