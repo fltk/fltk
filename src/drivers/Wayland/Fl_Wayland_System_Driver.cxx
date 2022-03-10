@@ -37,6 +37,7 @@ int Fl_Wayland_System_Driver::event_key(int k) {
     return Fl::event_state(8<<(k-FL_Button));
   int sym = Fl::event_key();
   if (sym >= 'a' && sym <= 'z' ) sym -= 32;
+  if (k >= 'a' && k <= 'z' )  k -= 32;
   return (Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT) && sym == k;
 }
 
