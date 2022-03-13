@@ -1,8 +1,8 @@
 #
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -517,67 +517,90 @@ endif (OPTION_USE_PANGO AND NOT OPTION_USE_WAYLAND)
 
 #######################################################################
 if ((X11_Xft_FOUND OR OPTION_USE_WAYLAND) AND OPTION_USE_PANGO)
+  pkg_check_modules(CAIRO cairo)
   pkg_check_modules(PANGOXFT pangoxft)
   pkg_check_modules(PANGOCAIRO pangocairo)
-  pkg_check_modules(CAIRO cairo)
-  # message (STATUS "PANGOXFT_FOUND=" ${PANGOXFT_FOUND})
+
   if (PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
     include_directories (${PANGOXFT_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS})
-    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
-    find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-    find_library(HAVE_LIB_PANGOCAIRO pangocairo-1.0 ${CMAKE_LIBRARY_PATH})
-    find_library(HAVE_LIB_CAIRO cairo ${CMAKE_LIBRARY_PATH})
-    find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+
+    find_library (HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
+    find_library (HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
+    find_library (HAVE_LIB_PANGOCAIRO pangocairo-1.0 ${CMAKE_LIBRARY_PATH})
+    find_library (HAVE_LIB_CAIRO cairo ${CMAKE_LIBRARY_PATH})
+    find_library (HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+
+    mark_as_advanced (HAVE_LIB_PANGO)
+    mark_as_advanced (HAVE_LIB_PANGOXFT)
+    mark_as_advanced (HAVE_LIB_PANGOCAIRO)
+    mark_as_advanced (HAVE_LIB_CAIRO)
+    mark_as_advanced (HAVE_LIB_GOBJECT)
+
     set (USE_PANGO TRUE)
-    list (APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lpangocairo-1.0 -lcairo -lgobject-2.0)
+
+    # add required libraries to fltk-config ...
+    list (APPEND FLTK_LDLIBS ${PANGOXFT_LDFLAGS})
+    list (APPEND FLTK_LDLIBS ${PANGOCAIRO_LDFLAGS})
+    list (APPEND FLTK_LDLIBS ${CAIRO_LDFLAGS})
+
+    # *FIXME* Libraries should not be added explicitly if possible
+    if (OPTION_USE_WAYLAND)
+      list (APPEND FLTK_LDLIBS -lgtk-3 -lgdk-3 -lgio-2.0)
+    endif (OPTION_USE_WAYLAND)
+
     if (APPLE)
       get_filename_component(PANGO_L_PATH ${HAVE_LIB_PANGO} PATH)
       set (LDFLAGS "${LDFLAGS} -L${PANGO_L_PATH}")
     endif (APPLE)
-  else(PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
-  # this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
-  if (APPLE AND OPTION_APPLE_X11)
-    find_file(FINK_PREFIX NAMES /opt/sw /sw)
-    list (APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
-    include_directories (${FINK_PREFIX}/include/cairo)
-    list (APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
-  endif (APPLE AND OPTION_APPLE_X11)
-  find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
-  find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
+  else (PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
-  if (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
-    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
-    find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
-    if (APPLE)
-      set (HAVE_LIB_GOBJECT TRUE)
-    else()
-      find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
-    endif (APPLE)
-  endif (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
-  if (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
-    set (USE_PANGO TRUE)
-    # message (STATUS "USE_PANGO=" ${USE_PANGO})
-    # remove last 3 components of HAVE_PANGO_H and put in PANGO_H_PREFIX
-    get_filename_component(PANGO_H_PREFIX ${HAVE_PANGO_H} PATH)
-    get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
-    get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
+    # this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
+    if (APPLE AND OPTION_APPLE_X11)
+      find_file(FINK_PREFIX NAMES /opt/sw /sw)
+      list (APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
+      include_directories (${FINK_PREFIX}/include/cairo)
+      list (APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
+    endif (APPLE AND OPTION_APPLE_X11)
 
-    get_filename_component(PANGOLIB_DIR ${HAVE_LIB_PANGO} PATH)
-    # glib.h is usually in ${PANGO_H_PREFIX}/glib-2.0/ ...
-    find_path(GLIB_H_PATH glib.h ${PANGO_H_PREFIX}/glib-2.0)
-    if (NOT GLIB_H_PATH) # ... but not under NetBSD
-      find_path(GLIB_H_PATH glib.h ${PANGO_H_PREFIX}/glib/glib-2.0)
-    endif (NOT GLIB_H_PATH)
-    include_directories (${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
-    list (APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
-  endif (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
-endif (PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
+    find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
+    find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
+
+    if (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+      find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
+      find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
+      if (APPLE)
+        set (HAVE_LIB_GOBJECT TRUE)
+      else()
+        find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+      endif (APPLE)
+    endif (HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+
+    if (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+      set (USE_PANGO TRUE)
+      # remove last 3 components of HAVE_PANGO_H and put in PANGO_H_PREFIX
+      get_filename_component(PANGO_H_PREFIX ${HAVE_PANGO_H} PATH)
+      get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
+      get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
+
+      get_filename_component(PANGOLIB_DIR ${HAVE_LIB_PANGO} PATH)
+      # glib.h is usually in ${PANGO_H_PREFIX}/glib-2.0/ ...
+      find_path(GLIB_H_PATH glib.h
+                PATHS ${PANGO_H_PREFIX}/glib-2.0
+                      ${PANGO_H_PREFIX}/glib/glib-2.0)
+      include_directories (${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
+
+      # *FIXME* Libraries should not be added explicitly if possible
+      list (APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
+
+    endif (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+  endif (PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
+
 endif ((X11_Xft_FOUND OR OPTION_USE_WAYLAND) AND OPTION_USE_PANGO)
 
 if (OPTION_USE_WAYLAND AND NOT OPTION_USE_SYSTEM_LIBDECOR)
   pkg_check_modules(GTK gtk+-3.0)
-  #set (GTK_FOUND 0) #use this to get cairo titlebars rather than GTK
+  # set (GTK_FOUND 0) # use this to get cairo titlebars rather than GTK
   if (GTK_FOUND)
     include_directories (${GTK_INCLUDE_DIRS})
   endif (GTK_FOUND)

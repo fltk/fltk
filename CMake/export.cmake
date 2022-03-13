@@ -82,11 +82,21 @@ configure_file(
   @ONLY
 )
 
-if (UNIX)
-  execute_process(COMMAND chmod 755 fltk-config
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-  )
-endif (UNIX)
+# Set execute permissions on fltk-config in build dir
+# Note: file(CHMOD) available since CMake 3.19,
+# use fallback before CMake 3.19
+
+if (CMAKE_VERSION VERSION_LESS 3.19)
+  if (UNIX OR MSYS OR MINGW)
+    execute_process(COMMAND chmod 755 fltk-config
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+  endif ()
+else (CMAKE_VERSION VERSION_LESS 3.19)
+  file (CHMOD "${CMAKE_CURRENT_BINARY_DIR}/fltk-config"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                    GROUP_READ GROUP_EXECUTE
+                    WORLD_READ WORLD_EXECUTE)
+endif (CMAKE_VERSION VERSION_LESS 3.19)
 
 # prepare some variables for config.h
 
@@ -123,6 +133,5 @@ if (OPTION_CREATE_LINKS)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/install-symlinks.cmake"
-    @ONLY
-  )
+    @ONLY)
 endif (OPTION_CREATE_LINKS)

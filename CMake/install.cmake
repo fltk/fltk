@@ -105,18 +105,15 @@ configure_file(
   @ONLY
 )
 
-if (UNIX)
-  execute_process (COMMAND chmod 755 fltk-config
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
-  )
-endif (UNIX)
+# Install fltk-config
+# Note: no need to set execute perms, install (PROGRAMS) does this
 
 install (PROGRAMS
   ${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-config
   DESTINATION ${FLTK_BINDIR}
 )
 
-if (UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))
+if (UNIX OR MSYS OR MINGW)
   macro(INSTALL_MAN FILE LEVEL)
     install(FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/documentation/src/${FILE}.man
@@ -132,4 +129,4 @@ if (UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))
   INSTALL_MAN (checkers 6)
   INSTALL_MAN (sudoku 6)
 
-endif (UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))
+endif (UNIX OR MSYS OR MINGW)
