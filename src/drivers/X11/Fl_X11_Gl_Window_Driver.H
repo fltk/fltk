@@ -20,9 +20,9 @@
 #include <config.h>
 #if HAVE_GL
 #include <FL/platform.H>
-#include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Gl_Window_Driver.H"
 
+class Fl_Gl_Choice;
 
 class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;

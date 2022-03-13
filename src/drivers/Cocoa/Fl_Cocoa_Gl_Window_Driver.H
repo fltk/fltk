@@ -17,22 +17,9 @@
 #include <config.h>
 #if HAVE_GL
 #include <FL/platform.H>
-#include <FL/gl.h>
-#include "../../Fl_Gl_Choice.H"
-//#include "../../Fl_Screen_Driver.H"
-#include "Fl_Cocoa_Window_Driver.H"
 #include "../../Fl_Gl_Window_Driver.H"
-//#include <FL/Fl_Graphics_Driver.H>
-#include <OpenGL/OpenGL.h>
-//#include <FL/Fl_Image_Surface.H>
 
-extern void gl_texture_reset();
-
-#ifdef __OBJC__
-@class NSOpenGLPixelFormat;
-#else
-class NSOpenGLPixelFormat;
-#endif // __OBJC__
+class Fl_Gl_Choice;
 
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
