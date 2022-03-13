@@ -48,6 +48,7 @@ project (FLTK VERSION 1.4.0)
 #######################################################################
 
 include (CMake/fl_debug_var.cmake)
+include (CMake/fl_debug_pkg.cmake)
 include (CMake/fl_add_library.cmake)
 include (CMake/compatibility.cmake)
 
@@ -235,6 +236,35 @@ if (FLTK_USE_BUILTIN_ZLIB)
   message (STATUS "                 ZLIB = Builtin")
 else ()
   message (STATUS "                 ZLIB = System")
+endif ()
+
+if (UNIX)
+
+  if (OPTION_USE_WAYLAND)
+    message (STATUS "Use Wayland:     Yes")
+  else ()
+    message (STATUS "Use Wayland:     No")
+  endif ()
+
+  if (USE_PANGO)
+    message (STATUS "Use Pango:       Yes")
+  else (USE_PANGO)
+    message (STATUS "Use Pango:       No")
+    if (USE_XFT)
+      message (STATUS "Use Xft:         Yes")
+    else ()
+      message (STATUS "Use Xft:         No")
+    endif (USE_XFT)
+  endif (USE_PANGO)
+
+endif (UNIX)
+
+if (FLTK_HAVE_CAIROEXT)
+  message (STATUS "Cairo support:   Yes (extended)")
+elseif (FLTK_HAVE_CAIRO)
+  message (STATUS "Cairo support:   Yes (standard)")
+else ()
+  message (STATUS "Cairo support:   No")
 endif ()
 
 message ("")
