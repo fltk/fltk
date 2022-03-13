@@ -1,8 +1,8 @@
 #
 # CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -69,9 +69,9 @@ include(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 if (CMAKE_GENERATOR MATCHES "Xcode")
-  if (${XCODE_VERSION} VERSION_GREATER_EQUAL 3.9) # CMake 3.9 and up
+  if (NOT (CMAKE_VERSION VERSION_LESS 3.9)) # CMake 3.9 and up
     # Tell Xcode to regenerate scheme information automatically whenever the
-    # CMake configuartion changes without asking the user
+    # CMake configuration changes without asking the user
     set (CMAKE_XCODE_GENERATE_SCHEME 1)
   endif()
 endif()
