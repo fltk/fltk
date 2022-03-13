@@ -20,7 +20,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
 #include "../../Fl_Window_Driver.H"
-#include "../../Fl_Gl_Window_Driver.H"
+#include "Fl_X11_Gl_Window_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #  include <GL/glx.h>
@@ -28,33 +28,6 @@
 #    typedef void *GLXFBConfig;
 #  endif
 
-class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
-  Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  virtual float pixels_per_unit();
-  virtual void before_show(int& need_after);
-  virtual int mode_(int m, const int *a);
-  virtual void swap_buffers();
-  virtual char swap_type();
-  virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
-  virtual void set_gl_context(Fl_Window* w, GLContext context);
-  virtual void delete_gl_context(GLContext);
-  virtual void make_overlay_current();
-  virtual void redraw_overlay();
-  virtual void waitGL();
-  virtual void gl_visual(Fl_Gl_Choice*); // support for Fl::gl_visual()
-  virtual void gl_start();
-  virtual void draw_string_legacy(const char* str, int n);
-  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
-  virtual void get_list(Fl_Font_Descriptor *fd, int r);
-  virtual int genlistsize();
-#if !USE_XFT
-  virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
-#endif
-  public:
-  static GLContext create_gl_context(XVisualInfo* vis);
-};
 
 // Describes crap needed to create a GLContext.
 class Fl_X11_Gl_Choice : public Fl_Gl_Choice {
@@ -359,11 +332,6 @@ void Fl_X11_Gl_Window_Driver::redraw_overlay() {
     pWindow->damage(FL_DAMAGE_OVERLAY);
 }
 
-
-Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
-{
-  return new Fl_X11_Gl_Window_Driver(w);
-}
 
 void Fl_X11_Gl_Window_Driver::before_show(int&) {
   Fl_X11_Gl_Choice *g = (Fl_X11_Gl_Choice*)this->g();

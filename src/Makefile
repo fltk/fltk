@@ -201,12 +201,15 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
-GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx
-GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
+GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx \
+		 drivers/Cocoa/fl_macOS_gl_platform_init.cxx
+GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
+		 drivers/X11/fl_X11_gl_platform_init.cxx
 GLCPPFILES_XFT = $(GLCPPFILES_X11)
-GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
-
-GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
+GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx \
+		 drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx
+GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx \
+		     drivers/Wayland/fl_wayland_gl_platform_init.cxx
 
 GLCPPFILES += $(GLCPPFILES_$(BUILD))
 
@@ -249,6 +252,7 @@ QUARTZCPPFILES = \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
         drivers/Posix/Fl_Posix_System_Driver.cxx \
 	drivers/Darwin/Fl_Darwin_System_Driver.cxx \
+	drivers/Darwin/fl_macOS_platform_init.cxx \
         Fl_get_key_mac.cxx
 
 # These C++ files are used under condition: BUILD_X11
@@ -268,6 +272,7 @@ XLIBCPPFILES = \
         drivers/Unix/Fl_Unix_System_Driver.cxx \
         drivers/X11/Fl_X11_System_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
+	drivers/X11/fl_X11_platform_init.cxx \
 	Fl_x.cxx \
 	fl_dnd_x.cxx \
         Fl_Native_File_Chooser_FLTK.cxx \
@@ -289,7 +294,8 @@ WLCPPFILES = \
 	drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx \
-	drivers/Wayland/fl_wayland_clipboard_dnd.cxx 
+	drivers/Wayland/fl_wayland_platform_init.cxx \
+	drivers/Wayland/fl_wayland_clipboard_dnd.cxx
 
       
 #   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
@@ -338,6 +344,7 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
+	drivers/WinAPI/fl_WinAPI_platform_init.cxx \
 	Fl_win32.cxx \
 	fl_dnd_win32.cxx \
         Fl_Native_File_Chooser_WIN32.cxx \

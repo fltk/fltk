@@ -35,12 +35,6 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 #endif
 
 
-Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
-{
-  return new Fl_WinAPI_Window_Driver(w);
-}
-
-
 Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {

@@ -18,23 +18,8 @@
 #include <FL/platform.H>
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
-#include <FL/Fl_Image_Surface.H>
+#include "Fl_Wayland_Image_Surface_Driver.H"
 
-class Fl_Wayland_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
-public:
-  Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
-  ~Fl_Wayland_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
-};
-
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
-{
-  return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
-}
 
 Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
   float d = 1;

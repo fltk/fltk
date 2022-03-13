@@ -20,6 +20,7 @@
 #define Fl_Quartz_Copy_Surface_Driver_H
 
 #include <FL/Fl_Copy_Surface.H>
+#include <FL/platform.H>
 
 class Fl_Quartz_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;

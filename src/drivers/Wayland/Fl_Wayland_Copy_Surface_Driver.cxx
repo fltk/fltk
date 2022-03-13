@@ -15,29 +15,12 @@
 //
 
 #include <config.h>
-#include <FL/Fl_Copy_Surface.H>
+#include "Fl_Wayland_Copy_Surface_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include <FL/platform.H>
-
-class Fl_Wayland_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
-  friend class Fl_Copy_Surface_Driver;
-  Fl_Image_Surface *img_surf;
-protected:
-  Fl_Wayland_Copy_Surface_Driver(int w, int h);
-  ~Fl_Wayland_Copy_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-};
-
-
-Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
-{
-  return new Fl_Wayland_Copy_Surface_Driver(w, h);
-}
 
 
 Fl_Wayland_Copy_Surface_Driver::Fl_Wayland_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {

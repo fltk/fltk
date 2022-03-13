@@ -152,13 +152,6 @@ Fl_Wayland_Graphics_Driver::Fl_Wayland_Graphics_Driver () : Fl_Cairo_Graphics_Dr
 }
 
 
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-  fl_graphics_driver = new Fl_Wayland_Graphics_Driver();
-  return fl_graphics_driver;
-}
-
-
 void Fl_Wayland_Graphics_Driver::activate(struct fl_wld_buffer *buffer, float scale) {
   if (dummy_pango_layout_) {
     cairo_surface_t *surf = cairo_get_target(cairo_);

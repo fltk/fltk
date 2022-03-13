@@ -30,14 +30,6 @@ extern char fl_is_over_the_spot;
 extern char *fl_get_font_xfld(int fnum, int size);
 #endif
 
-/*
- * By linking this module, the following static method will instantiate the
- * X11 Xlib Graphics driver as the main display driver.
- */
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-  return new Fl_Xlib_Graphics_Driver();
-}
 
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
 int Fl_Xlib_Graphics_Driver::fl_overlay = 0;

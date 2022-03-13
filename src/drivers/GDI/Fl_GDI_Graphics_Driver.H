@@ -177,10 +177,12 @@ public:
 #if USE_GDIPLUS
 
 class Fl_GDIplus_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+  friend class Fl_Graphics_Driver;
 private:
   Gdiplus::Color gdiplus_color_;
   Gdiplus::Pen *pen_;
   Gdiplus::SolidBrush *brush_;
+  static ULONG_PTR gdiplusToken;
 public:
   Fl_GDIplus_Graphics_Driver();
   virtual ~Fl_GDIplus_Graphics_Driver();

@@ -21,16 +21,6 @@
 #include <FL/platform.H>
 #include "../../../libdecor/src/libdecor.h"
 
-/**
- Creates a driver that manages all system related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
-  return new Fl_Wayland_System_Driver();
-}
-
 
 int Fl_Wayland_System_Driver::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)

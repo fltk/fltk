@@ -70,17 +70,6 @@ extern "C" {
 #endif
 
 
-/**
- Creates a driver that manages all system related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
-  return new Fl_X11_System_Driver();
-}
-
-
 // Find a program in the path...
 static char *path_find(const char *program, char *filename, int filesize) {
   const char    *path;                  // Search path

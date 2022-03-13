@@ -144,15 +144,6 @@ static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
   return utf8;
 }
 
-/*
- Creates a driver that manages all system related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
-  return new Fl_WinAPI_System_Driver();
-}
-
 void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
   // Show nothing for warnings under Windows...
 }

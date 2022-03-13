@@ -24,7 +24,6 @@
 #include "Fl_Font.H"
 
 #if USE_GDIPLUS
-static ULONG_PTR gdiplusToken = 0;
 
 Fl_GDIplus_Graphics_Driver::Fl_GDIplus_Graphics_Driver() : Fl_GDI_Graphics_Driver() {
   if (!fl_current_xmap) color(FL_BLACK);
@@ -51,27 +50,13 @@ int Fl_GDIplus_Graphics_Driver::antialias() {
 
 #endif
 
-/*
- * By linking this module, the following static method will instantiate the
- * Windows GDI Graphics driver as the main display driver.
- */
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-#if USE_GDIPLUS
-  // Initialize GDI+.
-  static Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  if (gdiplusToken == 0) GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-
-  Fl_Graphics_Driver *driver = new Fl_GDIplus_Graphics_Driver();
-  return driver;
-#else
-  return new Fl_GDI_Graphics_Driver();
-#endif
-}
 
 #if USE_GDIPLUS
+
+ULONG_PTR Fl_GDIplus_Graphics_Driver::gdiplusToken = 0;
+
 void Fl_GDIplus_Graphics_Driver::shutdown() {
-  Gdiplus::GdiplusShutdown(gdiplusToken);
+  Gdiplus::GdiplusShutdown(Fl_GDIplus_Graphics_Driver::gdiplusToken);
 }
 #endif
 

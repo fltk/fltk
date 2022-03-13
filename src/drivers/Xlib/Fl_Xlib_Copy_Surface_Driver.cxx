@@ -15,31 +15,12 @@
 //
 
 #include <config.h>
-#include <FL/Fl_Copy_Surface.H>
+#include "Fl_Xlib_Copy_Surface_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include "Fl_Xlib_Graphics_Driver.H"
 #include "../X11/Fl_X11_Screen_Driver.H"
-
-class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
-  friend class Fl_Copy_Surface_Driver;
-  virtual void end_current();
-protected:
-  Fl_Offscreen xid;
-  Window oldwindow;
-  Fl_Xlib_Copy_Surface_Driver(int w, int h);
-  ~Fl_Xlib_Copy_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-};
-
-
-Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
-{
-  return new Fl_Xlib_Copy_Surface_Driver(w, h);
-}
 
 
 Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {

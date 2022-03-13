@@ -157,16 +157,6 @@ extern const char *fl_bg2;
 // end of extern additions workaround
 
 
-/**
- Creates a driver that manages all screen and display related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
-{
-  return new Fl_Wayland_Screen_Driver();
-}
-
 FL_EXPORT struct wl_display *fl_display = NULL;
 
 static bool has_xrgb = false;

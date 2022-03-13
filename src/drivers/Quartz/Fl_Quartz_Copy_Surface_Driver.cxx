@@ -20,21 +20,6 @@
 #include "Fl_Quartz_Copy_Surface_Driver.H"
 #include "../Cocoa/Fl_Cocoa_Window_Driver.H"
 
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
-
-Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
-{
-  return new Fl_Quartz_Copy_Surface_Driver(w, h);
-}
-
-/**
- \}
- \endcond
- */
 
 Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
   driver(new Fl_Quartz_Printer_Graphics_Driver);

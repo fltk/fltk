@@ -19,7 +19,7 @@
 #include <FL/platform.H>
 #include "../../Fl_Screen_Driver.H"
 #include <FL/gl.h>
-#include "../../Fl_Gl_Window_Driver.H"
+#include "Fl_WinAPI_Gl_Window_Driver.H"
 #include "../../Fl_Gl_Choice.H"
 #include "Fl_WinAPI_Window_Driver.H"
 #include "../GDI/Fl_Font.H"
@@ -35,34 +35,6 @@ extern void fl_save_dc(HWND, HDC);
 
 #define DEBUG_PFD (0) // 1 = PFD selection debug output, 0 = no debug output
 
-
-class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
-  Fl_WinAPI_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  virtual float pixels_per_unit();
-  virtual int mode_(int m, const int *a);
-  virtual void make_current_after();
-  virtual void swap_buffers();
-  virtual void invalidate() {}
-  virtual int flush_begin(char& valid_f);
-  virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
-  virtual void set_gl_context(Fl_Window* w, GLContext context);
-  virtual void delete_gl_context(GLContext);
-  virtual void make_overlay_current();
-  virtual void redraw_overlay();
-  virtual void* GetProcAddress(const char *procName);
-  virtual void draw_string_legacy(const char* str, int n);
-  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
-  virtual void get_list(Fl_Font_Descriptor *fd, int r);
-  virtual int genlistsize();
-#if HAVE_GL_OVERLAY
-  virtual void gl_hide_before(void *& overlay);
-  virtual int can_do_overlay();
-  virtual int overlay_color(Fl_Color i);
-  void make_overlay(void*&overlay);
-#endif
-};
 
 // Describes crap needed to create a GLContext.
 class Fl_WinAPI_Gl_Choice : public Fl_Gl_Choice {
@@ -291,11 +263,6 @@ int Fl_WinAPI_Gl_Window_Driver::overlay_color(Fl_Color i) {
 
 #endif // HAVE_GL_OVERLAY
 
-
-Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
-{
-  return new Fl_WinAPI_Gl_Window_Driver(w);
-}
 
 float Fl_WinAPI_Gl_Window_Driver::pixels_per_unit()
 {

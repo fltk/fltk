@@ -89,16 +89,6 @@ const char *Fl_Darwin_System_Driver::control_name() {
   return "⌃\\"; // "\xe2\x8c\x83\\"; // U+2303 (up arrowhead)
 }
 
-/*
- Creates a driver that manages all system related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
-  return new Fl_Darwin_System_Driver();
-}
-
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
   // initialize key table

@@ -15,25 +15,9 @@
 //
 
 #include "Fl_Xlib_Graphics_Driver.H"
-#include <FL/Fl_Image_Surface.H>
+#include "Fl_Xlib_Image_Surface_Driver.H"
 #include "../../Fl_Screen_Driver.H"
 
-class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
-public:
-  Window pre_window;
-  Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
-  ~Fl_Xlib_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
-};
-
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
-{
-  return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
-}
 
 Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
   float d = 1;

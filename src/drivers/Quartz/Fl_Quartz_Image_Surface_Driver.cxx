@@ -16,40 +16,10 @@
 
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Image_Surface.H>
+#include "Fl_Quartz_Image_Surface_Driver.H"
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Cocoa/Fl_Cocoa_Window_Driver.H"
 #include <ApplicationServices/ApplicationServices.h>
-
-class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
-public:
-  Window pre_window;
-  Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
-  ~Fl_Quartz_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
-};
-
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
-
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
-{
-  return new Fl_Quartz_Image_Surface_Driver(w, h, high_res, off);
-}
-
-/**
- \}
- \endcond
- */
-
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {

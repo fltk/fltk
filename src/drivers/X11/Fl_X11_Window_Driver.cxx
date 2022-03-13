@@ -43,11 +43,6 @@ void Fl_X11_Window_Driver::destroy_double_buffer() {
   other_xid = 0;
 }
 
-Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
-{
-  return new Fl_X11_Window_Driver(w);
-}
-
 
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)

@@ -17,29 +17,9 @@
 
 #include "Fl_GDI_Graphics_Driver.H"
 #include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
-#include <FL/Fl_Image_Surface.H>
+#include "Fl_GDI_Image_Surface_Driver.H"
 #include <FL/platform.H>
 #include <windows.h>
-
-class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
-public:
-  Window pre_window;
-  int _savedc;
-  Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
-  ~Fl_GDI_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
-  POINT origin;
-};
-
-
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
-{
-  return new Fl_GDI_Image_Surface_Driver(w, h, high_res, off);
-}
 
 
 Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {

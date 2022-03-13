@@ -39,17 +39,6 @@ extern const char *fl_bg2;
 #endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 
-/*
- Creates a driver that manages all screen and display related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
-{
-  return new Fl_WinAPI_Screen_Driver();
-}
-
-
 int Fl_WinAPI_Screen_Driver::visual(int flags)
 {
   fl_GetDC(0);

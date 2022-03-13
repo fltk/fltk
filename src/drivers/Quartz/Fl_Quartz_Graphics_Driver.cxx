@@ -43,14 +43,6 @@ void Fl_Quartz_Graphics_Driver::init_CoreText_or_ATSU()
 }
 #endif
 
-/*
- * By linking this module, the following static method will instantiate the
- * OS X Quartz Graphics driver as the main display driver.
- */
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-  return new Fl_Quartz_Graphics_Driver();
-}
 
 void Fl_Quartz_Graphics_Driver::antialias(int state) {
 }

@@ -21,7 +21,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"
-#include "../../Fl_Gl_Window_Driver.H"
+#include "Fl_Cocoa_Gl_Window_Driver.H"
 #include <FL/Fl_Graphics_Driver.H>
 #include <OpenGL/OpenGL.h>
 #include <FL/Fl_Image_Surface.H>
@@ -34,27 +34,6 @@ extern void gl_texture_reset();
 class NSOpenGLPixelFormat;
 #endif // __OBJC__
 
-class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
-  Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  virtual float pixels_per_unit();
-  virtual void before_show(int& need_after);
-  virtual void after_show();
-  virtual int mode_(int m, const int *a);
-  virtual void make_current_before();
-  virtual void swap_buffers();
-  virtual void resize(int is_a_resize, int w, int h);
-  virtual char swap_type();
-  virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
-  virtual void set_gl_context(Fl_Window* w, GLContext context);
-  virtual void delete_gl_context(GLContext);
-  virtual void make_overlay_current();
-  virtual void redraw_overlay();
-  virtual void gl_start();
-  virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
-  virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
-};
 
 // Describes crap needed to create a GLContext.
 class Fl_Cocoa_Gl_Choice : public Fl_Gl_Choice {
@@ -119,12 +98,6 @@ void Fl_Cocoa_Gl_Window_Driver::make_overlay_current() {
 
 void Fl_Cocoa_Gl_Window_Driver::redraw_overlay() {
   pWindow->redraw();
-}
-
-
-Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
-{
-  return new Fl_Cocoa_Gl_Window_Driver(w);
 }
 
 void Fl_Cocoa_Gl_Window_Driver::before_show(int& need_after) {

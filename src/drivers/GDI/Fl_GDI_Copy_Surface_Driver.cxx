@@ -15,30 +15,12 @@
 //
 
 #include <config.h>
-#include <FL/Fl_Copy_Surface.H>
+#include "Fl_GDI_Copy_Surface_Driver.H"
 #include <FL/platform.H>
 #include "Fl_GDI_Graphics_Driver.H"
 #include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <windows.h>
-
-class Fl_GDI_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
-  friend class Fl_Copy_Surface_Driver;
-protected:
-  HDC oldgc;
-  HDC gc;
-  Fl_GDI_Copy_Surface_Driver(int w, int h);
-  ~Fl_GDI_Copy_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-};
-
-
-Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
-{
-  return new Fl_GDI_Copy_Surface_Driver(w, h);
-}
 
 
 Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {

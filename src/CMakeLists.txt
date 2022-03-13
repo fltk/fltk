@@ -210,6 +210,7 @@ if (FLTK_USE_X11)
     drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
+    drivers/X11/fl_X11_platform_init.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
@@ -240,7 +241,10 @@ if (FLTK_USE_X11)
     drivers/X11/Fl_X11_Window_Driver.H
     drivers/X11/Fl_X11_System_Driver.H
     drivers/Xlib/Fl_Font.H
-  )
+    drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.H
+    drivers/Xlib/Fl_Xlib_Image_Surface_Driver.H
+    drivers/Unix/Fl_Unix_System_Driver.H
+ )
 
 elseif (OPTION_USE_WAYLAND)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_CURRENT_BINARY_DIR}")
@@ -255,10 +259,21 @@ elseif (OPTION_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
+    drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
     Fl_Native_File_Chooser_Kdialog.cxx
+  )
+  set (DRIVER_HEADER_FILES
+    drivers/Posix/Fl_Posix_System_Driver.H
+    drivers/Wayland/Fl_Wayland_System_Driver.H
+    drivers/Wayland/Fl_Wayland_Screen_Driver.H
+    drivers/Wayland/Fl_Wayland_Window_Driver.H
+    drivers/Wayland/Fl_Wayland_Graphics_Driver.H
+    drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.H
+    drivers/Wayland/Fl_Wayland_Image_Surface_Driver.H
+    drivers/Unix/Fl_Unix_System_Driver.H
   )
 
 elseif (APPLE)
@@ -281,6 +296,7 @@ elseif (APPLE)
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
     Fl_get_key_mac.cxx
+    drivers/Darwin/fl_macOS_platform_init.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/Posix/Fl_Posix_System_Driver.H
@@ -291,6 +307,7 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
     drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H
     drivers/Quartz/Fl_Font.H
+    drivers/Quartz/Fl_Quartz_Image_Surface_Driver.H
   )
 
 else ()
@@ -316,6 +333,7 @@ else ()
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
     Fl_get_key_win32.cxx
+    drivers/WinAPI/fl_WinAPI_platform_init.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H
@@ -323,6 +341,8 @@ else ()
     drivers/WinAPI/Fl_WinAPI_Window_Driver.H
     drivers/GDI/Fl_GDI_Graphics_Driver.H
     drivers/GDI/Fl_Font.H
+    drivers/GDI/Fl_GDI_Copy_Surface_Driver.H
+    drivers/GDI/Fl_GDI_Image_Surface_Driver.H
   )
 
 endif (FLTK_USE_X11)
@@ -372,16 +392,20 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
 if (FLTK_USE_X11)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx drivers/X11/fl_X11_gl_platform_init.cxx)
+  set (GL_DRIVER_HEADER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.H)
 elseif (OPTION_USE_WAYLAND)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx drivers/Wayland/fl_wayland_gl_platform_init.cxx)
+  set (GL_DRIVER_HEADER_FILES drivers/Wayland/Fl_Wayland_Gl_Window_Driver.H)
 elseif (APPLE)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx drivers/Cocoa/fl_macOS_gl_platform_init.cxx)
+  set (GL_DRIVER_HEADER_FILES drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.H)
 elseif (WIN32)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx)
+  set (GL_DRIVER_HEADER_FILES drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.H)
 endif (FLTK_USE_X11)
 
-set (GL_DRIVER_HEADER_FILES
+set (GL_DRIVER_HEADER_FILES ${GL_DRIVER_FILES}
   drivers/OpenGL/Fl_OpenGL_Display_Device.H
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
 )

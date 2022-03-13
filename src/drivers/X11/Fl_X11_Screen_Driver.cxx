@@ -58,24 +58,6 @@ extern const char *fl_bg2;
 // end of extern additions workaround
 
 
-/**
- Creates a driver that manages all screen and display related calls.
-
- This function must be implemented once for every platform.
- */
-Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
-{
-  Fl_X11_Screen_Driver *d = new Fl_X11_Screen_Driver();
-#if USE_XFT
-  for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
-  d->current_xft_dpi = 0.; // means the value of the Xft.dpi resource is still unknown
-#else
-  secret_input_character = '*';
-#endif
-  return d;
-}
-
-
 void Fl_X11_Screen_Driver::display(const char *d)
 {
   if (d) setenv("DISPLAY", d, 1);
