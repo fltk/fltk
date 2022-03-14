@@ -62,15 +62,20 @@ Debian bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-
 -------------------------------
 
 * A deliberate design trait of Wayland makes application windows ignorant of their exact
-placement on screen. It's possible, though, to position a popup window relatively to another
-window. This allows FLTK to properly position menu and tooltip windows. But Fl_Window::position()
-has no effect on other top-level windows.
+placement on screen. It's possible, though, to position a popup window relatively to
+another window. This allows FLTK to properly position menu and tooltip windows. But
+Fl_Window::position() has no effect on other top-level windows.
 
 * With Wayland, there is no way to know if a window is currently minimized, nor is there any
 way to programmatically unset minimization of a window. Consequently, Fl_Window::show() of
 a minimized window has no effect.
 
-* With GTK-style window titlebars, the minimum width of a window is currently set at 134 pixels.
+* It's currently not possible for an app to be notified of changes to the content of
+the system clipboard, that is, Fl::add_clipboard_notify() has no effect. The FLTK API to
+read from and write to the system clipboard is fully functional, though.
+
+* With GTK-style window titlebars, the minimum width of a window is currently
+set at 134 pixels.
 
 * The library should support multi-display configurations in principle, but has not been
 tested in that situation.
