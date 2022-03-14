@@ -387,28 +387,7 @@ Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
 
 ////////////////////////////////////////////////////////////////
 
-// WARNING: if you add to this table, you must redefine FL_FREE_FONT
-// in Enumerations.H & recompile!!
-static Fl_Xlib_Fontdesc built_in_table[] = {
-{"-*-helvetica-medium-r-normal--*"},
-{"-*-helvetica-bold-r-normal--*"},
-{"-*-helvetica-medium-o-normal--*"},
-{"-*-helvetica-bold-o-normal--*"},
-{"-*-courier-medium-r-normal--*"},
-{"-*-courier-bold-r-normal--*"},
-{"-*-courier-medium-o-normal--*"},
-{"-*-courier-bold-o-normal--*"},
-{"-*-times-medium-r-normal--*"},
-{"-*-times-bold-r-normal--*"},
-{"-*-times-medium-i-normal--*"},
-{"-*-times-bold-i-normal--*"},
-{"-*-symbol-*"},
-{"-*-lucidatypewriter-medium-r-normal-sans-*"},
-{"-*-lucidatypewriter-bold-r-normal-sans-*"},
-{"-*-*zapf dingbats-*"}
-};
-
-Fl_Fontdesc* fl_fonts = (Fl_Fontdesc*)built_in_table;
+extern Fl_Fontdesc* fl_fonts;
 
 #define MAXSIZE 32767
 

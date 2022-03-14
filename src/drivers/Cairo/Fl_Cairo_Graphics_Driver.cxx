@@ -911,37 +911,15 @@ int Fl_Cairo_Graphics_Driver::descent() {
 }
 
 
-static Fl_Fontdesc built_in_table[] = {  // Pango font names
-  {"Sans"},
-  {"Sans Bold"},
-  {"Sans Italic"},
-  {"Sans Bold Italic"},
-  {"Monospace"},
-  {"Monospace Bold"},
-  {"Monospace Italic"},
-  {"Monospace Bold Italic"},
-  {"Serif"},
-  {"Serif Bold"},
-  {"Serif Italic"},
-  {"Serif Bold Italic"},
-  {"Standard Symbols PS"}, // FL_SYMBOL
-  {"Monospace"},           // FL_SCREEN
-  {"Monospace Bold"},      // FL_SCREEN_BOLD
-  {"D050000L"},            // FL_ZAPF_DINGBATS
-};
+extern Fl_Fontdesc *fl_fonts;
 
-#if FLTK_USE_WAYLAND
-  FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
-#else
-  extern Fl_Fontdesc *fl_fonts;
-#endif
 
 void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
   static int i = 0;
   if (!i) {
     while (i < FL_FREE_FONT) {
       i++;
-      Fl::set_font((Fl_Font)i-1, built_in_table[i-1].name);
+      Fl::set_font((Fl_Font)i-1, fl_fonts[i-1].name);
     }
   }
 }

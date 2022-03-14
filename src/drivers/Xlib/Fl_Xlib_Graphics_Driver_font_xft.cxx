@@ -43,73 +43,7 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
 XftDraw* Fl_Xlib_Graphics_Driver::draw_ = 0;
 Window Fl_Xlib_Graphics_Driver::draw_window = (Window)0;
 
-
-#if ! USE_PANGO
-
-// The predefined fonts that FLTK has:
-static Fl_Fontdesc built_in_table[] = {
-#if 1
-  {" sans"},
-  {"Bsans"},
-  {"Isans"},
-  {"Psans"},
-  {" mono"},
-  {"Bmono"},
-  {"Imono"},
-  {"Pmono"},
-  {" serif"},
-  {"Bserif"},
-  {"Iserif"},
-  {"Pserif"},
-  {" symbol"},
-  {" screen"},
-  {"Bscreen"},
-  {" zapf dingbats"},
-#else
-  {" helvetica"},
-  {"Bhelvetica"},
-  {"Ihelvetica"},
-  {"Phelvetica"},
-  {" courier"},
-  {"Bcourier"},
-  {"Icourier"},
-  {"Pcourier"},
-  {" times"},
-  {"Btimes"},
-  {"Itimes"},
-  {"Ptimes"},
-  {" symbol"},
-  {" lucidatypewriter"},
-  {"Blucidatypewriter"},
-  {" zapf dingbats"},
-#endif
-};
-
-#else
-
-// The predefined fonts that FLTK has with Pango:
-static Fl_Fontdesc built_in_table[] = {
-  {"Sans"},
-  {"Sans Bold"},
-  {"Sans Italic"},
-  {"Sans Bold Italic"},
-  {"Monospace"},
-  {"Monospace Bold"},
-  {"Monospace Italic"},
-  {"Monospace Bold Italic"},
-  {"Serif"},
-  {"Serif Bold"},
-  {"Serif Italic"},
-  {"Serif Bold Italic"},
-  {"Sans"},
-  {"Monospace"},
-  {"Monospace Bold"},
-  {"Sans"},
-};
-
-#endif // USE_PANGO
-
-Fl_Fontdesc* fl_fonts = built_in_table;
+extern Fl_Fontdesc* fl_fonts;
 
 Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
   return (Fl_Fontsize)(size_);
@@ -1441,7 +1375,7 @@ void Fl_Xlib_Graphics_Driver::init_built_in_fonts() {
   if (!i) {
     while (i < FL_FREE_FONT) {
       i++;
-      Fl::set_font((Fl_Font)i-1, built_in_table[i-1].name);
+      Fl::set_font((Fl_Font)i-1, fl_fonts[i-1].name);
     }
   }
 }

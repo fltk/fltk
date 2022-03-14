@@ -29,6 +29,29 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 }
 
 
+static Fl_Fontdesc built_in_table[] = {  // Pango font names
+  {"Sans"},
+  {"Sans Bold"},
+  {"Sans Italic"},
+  {"Sans Bold Italic"},
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"Monospace Italic"},
+  {"Monospace Bold Italic"},
+  {"Serif"},
+  {"Serif Bold"},
+  {"Serif Italic"},
+  {"Serif Bold Italic"},
+  {"Standard Symbols PS"}, // FL_SYMBOL
+  {"Monospace"},           // FL_SCREEN
+  {"Monospace Bold"},      // FL_SCREEN_BOLD
+  {"D050000L"},            // FL_ZAPF_DINGBATS
+};
+
+
+FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+
+
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
   fl_graphics_driver = new Fl_Wayland_Graphics_Driver();
