@@ -56,6 +56,7 @@ Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->activate(offscreen, driver()->scale());
+  fl_window = NULL;
 }
 
 void Fl_Wayland_Image_Surface_Driver::end_current() {
