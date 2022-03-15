@@ -38,6 +38,8 @@ int Fl_Xlib_Graphics_Driver::fl_overlay = 0;
  */
 GC fl_gc = 0;
 
+GC fl_x11_gc() { return fl_gc; }
+
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
   short_point = NULL;
@@ -71,14 +73,14 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
 }
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx*scale(), srcy*scale(), w*scale(), h*scale(), (x+offset_x_)*scale(), (y+offset_y_)*scale());
+  XCopyArea(fl_display, (Pixmap)pixmap, fl_window, gc_, srcx*scale(), srcy*scale(), w*scale(), h*scale(), (x+offset_x_)*scale(), (y+offset_y_)*scale());
 
 }
 
 void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
   XRectangle R;
   R.x = X; R.y = Y; R.width = W; R.height = H;
-  XUnionRectWithRegion(&R, r, r);
+  XUnionRectWithRegion(&R, (Region)r, (Region)r);
 }
 
 void Fl_Xlib_Graphics_Driver::transformed_vertex0(float fx, float fy) {
@@ -144,8 +146,8 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
 }
 
 
-Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
-  Region r = rstack[rstackptr];
+Fl_Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
+  Region r = (Region)rstack[rstackptr];
   if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
   Region r2 = XCreateRegion();
   for (int i = 0; i < r->numRects; i++) {
@@ -153,7 +155,7 @@ Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
     int y = floor(r->rects[i].y1 + offset_y_, f);
     int w = floor((r->rects[i].x2 + offset_x_) , f) - x;
     int h = floor((r->rects[i].y2 + offset_y_) , f) - y;
-    Region R = XRectangleRegion(x, y, w, h);
+    Region R = (Region)XRectangleRegion(x, y, w, h);
     XUnionRegion(R, r2, r2);
     ::XDestroyRegion(R);
   }

@@ -56,6 +56,16 @@
 
 
 /*
+ * FLTK_USE_CAIRO
+ *
+ * Do we use Cairo to draw to the display?
+ *
+ */
+ 
+#undef FLTK_USE_CAIRO
+
+
+/*
  * FLTK_USE_WAYLAND
  *
  * Do we use Wayland for the current platform?

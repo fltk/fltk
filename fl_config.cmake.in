@@ -57,6 +57,16 @@
 
 
 /*
+ * FLTK_USE_CAIRO
+ *
+ * Do we use Cairo to draw to the display?
+ *
+ */
+ 
+#cmakedefine FLTK_USE_CAIRO 1
+
+
+/*
  * FLTK_USE_WAYLAND
  *
  * Do we use Wayland for the current platform?

@@ -84,6 +84,10 @@ void Fl_Quartz_Graphics_Driver::global_gc()
   fl_gc = (CGContextRef)gc();
 }
 
+
+CGContextRef fl_mac_gc() { return fl_gc; }
+
+
 void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   CGContextRef src = (CGContextRef)osrc;
@@ -127,7 +131,8 @@ CGRect Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(int x, int y, int w, int h
   return CGRectMake(x - 0.5, y - 0.5, w, h);
 }
 
-void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r_, int X, int Y, int W, int H) {
+  struct flCocoaRegion *r = (struct flCocoaRegion*)r_;
   CGRect arg = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(X, Y, W, H);
   int j; // don't add a rectangle totally inside the Fl_Region
   for(j = 0; j < r->count; j++) {
@@ -140,15 +145,16 @@ void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int 
 }
 
 Fl_Region Fl_Quartz_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
-  Fl_Region R = (Fl_Region)malloc(sizeof(*R));
+  struct flCocoaRegion* R = (struct flCocoaRegion*)malloc(sizeof(struct flCocoaRegion));
   R->count = 1;
   R->rects = (CGRect *)malloc(sizeof(CGRect));
   *(R->rects) = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
   return R;
 }
 
-void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r) {
-  if(r) {
+void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
+  if (r_) {
+    struct flCocoaRegion *r = (struct flCocoaRegion*)r_;
     free(r->rects);
     free(r);
   }

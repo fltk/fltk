@@ -49,7 +49,7 @@ Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_
 
 void Fl_Quartz_Copy_Surface_Driver::set_current() {
   driver()->gc(gc);
-  fl_window = (Window)1;
+  fl_window = (FLWindow*)1;
   Fl_Surface_Device::set_current();
 }
 

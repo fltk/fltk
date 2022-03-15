@@ -19,16 +19,35 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-#include "Fl_Xlib_Graphics_Driver.H"
 #include "../X11/Fl_X11_Screen_Driver.H"
+#if FLTK_USE_CAIRO
+#  include <cairo-xlib.h>
+#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include <cairo/cairo.h>
+#else
+#  include "Fl_Xlib_Graphics_Driver.H"
+#endif // FLTK_USE_CAIRO
+
 
 
 Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
+#if FLTK_USE_CAIRO
+  driver(new Fl_Display_Cairo_Graphics_Driver());
+#else
   driver(new Fl_Xlib_Graphics_Driver());
+#endif
   float s = Fl_Graphics_Driver::default_driver().scale();
-  ((Fl_Xlib_Graphics_Driver*)driver())->scale(s);
+  driver()->scale(s);
   oldwindow = fl_window;
   xid = fl_create_offscreen(w,h);
+#if FLTK_USE_CAIRO
+  cairo_surface_t *surf = cairo_xlib_surface_create(fl_display, xid, fl_visual->visual, w * s, h * s);
+  cairo_ = cairo_create(surf);
+  cairo_surface_destroy(surf);
+  cairo_scale(cairo_, 1/s, 1/s);
+  cairo_save(cairo_);
+  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+#endif
   driver()->push_no_clip();
   fl_window = xid;
   driver()->color(FL_WHITE);
@@ -47,6 +66,9 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   Fl_X11_Screen_Driver::copy_image(rgb->array, rgb->w(), rgb->h(), 1);
   delete rgb;
   fl_delete_offscreen(xid);
+#if FLTK_USE_CAIRO
+  cairo_destroy(cairo_);
+#endif
   delete driver();
 }
 
@@ -55,6 +77,9 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   oldwindow = fl_window;
   fl_window = xid;
+#if FLTK_USE_CAIRO
+  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+#endif
 }
 
 void Fl_Xlib_Copy_Surface_Driver::end_current() {
@@ -63,10 +88,20 @@ void Fl_Xlib_Copy_Surface_Driver::end_current() {
 }
 
 void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
+#if FLTK_USE_CAIRO
+  cairo_save(cairo_);
+  cairo_translate(cairo_, x, y);
+#else
   ((Fl_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+#endif
+
 }
 
 
 void Fl_Xlib_Copy_Surface_Driver::untranslate() {
+#if FLTK_USE_CAIRO
+  cairo_restore(cairo_);
+#else
   ((Fl_Xlib_Graphics_Driver*)driver())->untranslate_all();
+#endif
 }

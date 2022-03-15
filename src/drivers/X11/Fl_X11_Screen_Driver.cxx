@@ -17,11 +17,9 @@
 
 #include <config.h>
 #include "Fl_X11_Screen_Driver.H"
-#include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
 #include "Fl_X11_System_Driver.H"
 #include "../Posix/Fl_Posix_System_Driver.H"
-#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
@@ -986,7 +984,7 @@ void Fl_X11_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &hei
   int px, py;
   unsigned w, h, b, d;
   Window root;
-  XGetGeometry(fl_display, off, &root, &px, &py, &w, &h, &b, &d);
+  XGetGeometry(fl_display, (Pixmap)off, &root, &px, &py, &w, &h, &b, &d);
   width = (int)w;
   height = (int)h;
 }

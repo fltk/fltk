@@ -207,9 +207,11 @@ GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx \
 GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
 		 drivers/X11/fl_X11_gl_platform_init.cxx
 GLCPPFILES_XFT = $(GLCPPFILES_X11)
+GLCPPFILES_CAIRO = $(GLCPPFILES_X11)
 GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx \
 		 drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx
 GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx \
+  		     drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
 		     drivers/Wayland/fl_wayland_gl_platform_init.cxx
 
 GLCPPFILES += $(GLCPPFILES_$(BUILD))
@@ -258,13 +260,6 @@ QUARTZCPPFILES = \
 
 # These C++ files are used under condition: BUILD_X11
 XLIBCPPFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
 	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
@@ -280,7 +275,21 @@ XLIBCPPFILES = \
 	Fl_Native_File_Chooser_GTK.cxx\
 	Fl_Native_File_Chooser_Kdialog.cxx \
         Fl_get_key.cxx
-        
+
+# These graphics driver files are used under condition: BUILD_CAIRO
+CAIROGDFILES = \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx \
+	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+
+# These graphics driver files are used under condition: BUILD_X11 AND BUILD_XFT
+XLIBGDFILES = drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
+
 # These C++ files are used under condition: BUILD_WAYLAND
 WLCPPFILES = \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
@@ -296,7 +305,16 @@ WLCPPFILES = \
 	drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx \
 	drivers/Wayland/fl_wayland_platform_init.cxx \
-	drivers/Wayland/fl_wayland_clipboard_dnd.cxx
+	drivers/Wayland/fl_wayland_clipboard_dnd.cxx \
+	drivers/X11/Fl_X11_Screen_Driver.cxx \
+	drivers/X11/Fl_X11_Window_Driver.cxx \
+	drivers/X11/Fl_X11_System_Driver.cxx \
+	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
+	Fl_x.cxx \
+	fl_dnd_x.cxx \
+	Fl_get_key.cxx
 
       
 #   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
@@ -364,7 +382,7 @@ FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 # makeinclude has set this variable:
-# BUILD = {WIN|X11|XFT|OSX|WAYLAND}
+# BUILD = {WIN|X11|XFT|CAIRO|OSX|WAYLAND}
 
 MMFILES_OSX = $(OBJCPPFILES)
 MMFILES = $(MMFILES_$(BUILD))
@@ -372,8 +390,9 @@ MMFILES = $(MMFILES_$(BUILD))
 CPPFILES += $(PSCPPFILES)
 CPPFILES_OSX = $(QUARTZCPPFILES)
 
-CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBXFTFILES)
-CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBFONTFILES)
+CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBGDFILES) $(XLIBXFTFILES)
+CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBGDFILES) $(XLIBFONTFILES)
+CPPFILES_CAIRO = $(XLIBCPPFILES) $(CAIROGDFILES)
 
 CPPFILES_WAYLAND = $(WLCPPFILES) $(WLXFTFILES)
 
@@ -383,6 +402,7 @@ CPPFILES += $(CPPFILES_$(BUILD))
 
 
 CFILES_X11 = $(XLIBCFILES) $(XLIBXCFILES)
+CFILES_CAIRO = $(XLIBCFILES)
 CFILES_XFT = $(XLIBCFILES)
 
 CFILES_WAYLAND = $(WLCFILES)

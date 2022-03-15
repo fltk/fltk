@@ -360,6 +360,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 #include <errno.h>
+#include <sys/stat.h>
 
 //
 // File chooser label strings and sort function...

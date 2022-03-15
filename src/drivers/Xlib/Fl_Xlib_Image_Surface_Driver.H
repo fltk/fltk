@@ -18,6 +18,9 @@
 #define FL_XLIB_IMAGE_SURFACE_DRIVER_H
 
 #include <FL/Fl_Image_Surface.H>
+#if FLTK_USE_CAIRO
+# include <cairo/cairo.h>
+#endif // FLTK_USE_CAIRO
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current();
@@ -29,6 +32,9 @@ public:
   void translate(int x, int y);
   void untranslate();
   Fl_RGB_Image *image();
+#if FLTK_USE_CAIRO
+  cairo_t *cairo_;
+#endif
 };
 
 #endif // FL_XLIB_IMAGE_SURFACE_DRIVER_H

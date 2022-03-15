@@ -1,7 +1,7 @@
 //
 // Class Fl_Cocoa_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -66,7 +66,7 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
   // resets the pile of string textures used to draw strings
   // necessary before the first context is created
   if (!shared_ctx) gl_texture_reset();
-  context = Fl_Cocoa_Window_Driver::create_GLcontext_for_window(((Fl_Cocoa_Gl_Choice*)g)->pixelformat, shared_ctx, window);
+  context = Fl_Cocoa_Window_Driver::create_GLcontext_for_window(((Fl_Cocoa_Gl_Choice*)g)->pixelformat, (NSOpenGLContext*)shared_ctx, window);
   if (!context) return 0;
   add_context(context);
   return (context);
@@ -76,7 +76,7 @@ void Fl_Cocoa_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) 
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    Fl_Cocoa_Window_Driver::GLcontext_makecurrent(context);
+    Fl_Cocoa_Window_Driver::GLcontext_makecurrent((NSOpenGLContext*)context);
   }
 }
 
@@ -86,7 +86,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
     cached_window = 0;
     Fl_Cocoa_Window_Driver::GL_cleardrawable();
   }
-  Fl_Cocoa_Window_Driver::GLcontext_release(context);
+  Fl_Cocoa_Window_Driver::GLcontext_release((NSOpenGLContext*)context);
   del_context(context);
 }
 
@@ -143,7 +143,7 @@ void Fl_Cocoa_Gl_Window_Driver::make_current_before() {
   if (d->changed_resolution()){
     d->changed_resolution(false);
     pWindow->invalidate();
-    Fl_Cocoa_Window_Driver::GLcontext_update(pWindow->context());
+    Fl_Cocoa_Window_Driver::GLcontext_update((NSOpenGLContext*)pWindow->context());
   }
 }
 
@@ -179,13 +179,13 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
     glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
   }
    else
-     Fl_Cocoa_Window_Driver::flush_context(pWindow->context());//aglSwapBuffers((AGLContext)context_);
+     Fl_Cocoa_Window_Driver::flush_context((NSOpenGLContext*)pWindow->context());//aglSwapBuffers((AGLContext)context_);
 }
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
-  Fl_Cocoa_Window_Driver::GLcontext_update(pWindow->context());
+  Fl_Cocoa_Window_Driver::GLcontext_update((NSOpenGLContext*)pWindow->context());
 }
 
 /* Some old Apple hardware doesn't implement the GL_EXT_texture_rectangle extension.
@@ -202,7 +202,7 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
   fl_draw(str, n, 0, fl_height() - fl_descent());
   // get the alpha channel only of the bitmap
   char *alpha_buf = new char[w*h], *r = alpha_buf, *q;
-  q = (char*)CGBitmapContextGetData(surf->offscreen());
+  q = (char*)CGBitmapContextGetData((CGContextRef)surf->offscreen());
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
       *r++ = *(q+3);
@@ -215,7 +215,7 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
 }
 
 void Fl_Cocoa_Gl_Window_Driver::gl_start() {
-  Fl_Cocoa_Window_Driver::gl_start(gl_start_context);
+  Fl_Cocoa_Window_Driver::gl_start((NSOpenGLContext*)gl_start_context);
 }
 
 // convert BGRA to RGB and also exchange top and bottom
@@ -247,8 +247,8 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
-  Fl_Cocoa_Window_Driver::GLcontext_makecurrent(glw->context());
-  Fl_Cocoa_Window_Driver::flush_context(glw->context()); // to capture also the overlay and for directGL demo
+  Fl_Cocoa_Window_Driver::GLcontext_makecurrent((NSOpenGLContext*)glw->context());
+  Fl_Cocoa_Window_Driver::flush_context((NSOpenGLContext*)glw->context()); // to capture also the overlay and for directGL demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -266,9 +266,15 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
   img->alloc_array = 1;
-  Fl_Cocoa_Window_Driver::flush_context(glw->context());
+  Fl_Cocoa_Window_Driver::flush_context((NSOpenGLContext*)glw->context());
   return img;
 }
+
+
+FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
+  return (NSOpenGLContext*)rc;
+}
+
 
 class Fl_Gl_Cocoa_Plugin : public Fl_Cocoa_Plugin {
 public:

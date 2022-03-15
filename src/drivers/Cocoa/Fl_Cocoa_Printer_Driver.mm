@@ -347,7 +347,7 @@ int Fl_Cocoa_Printer_Driver::begin_page (void)
   CGContextSaveGState(gc);
   CGContextSaveGState(gc);
   fl_line_style(FL_SOLID);
-  fl_window = (Window)1; // TODO: something better
+  fl_window = (FLWindow*)1; // TODO: something better
   fl_clip_region(0);
   return status != noErr;
 }

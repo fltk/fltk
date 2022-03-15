@@ -1,7 +1,7 @@
 //
 // Class Fl_WinAPI_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -129,8 +129,8 @@ GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const
   Fl_X* i = Fl_X::i(window);
   HDC hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc;
   if (!hdc) {
-    hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
-    fl_save_dc(i->xid, hdc);
+    hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc = GetDCEx((HWND)i->xid, 0, DCX_CACHE);
+    fl_save_dc((HWND)i->xid, hdc);
     SetPixelFormat(hdc, ((Fl_WinAPI_Gl_Choice*)g)->pixelformat, (PIXELFORMATDESCRIPTOR*)(&((Fl_WinAPI_Gl_Choice*)g)->pfd));
 #    if USE_COLORMAP
     if (fl_palette) SelectPalette(hdc, fl_palette, FALSE);
@@ -139,7 +139,7 @@ GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const
   GLContext context = layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
   if (context) {
     if (context_list && nContext)
-      wglShareLists(context_list[0], context);
+      wglShareLists((HGLRC)context_list[0], (HGLRC)context);
     add_context(context);
   }
   return context;
@@ -150,7 +150,7 @@ void Fl_WinAPI_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context)
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    wglMakeCurrent(Fl_WinAPI_Window_Driver::driver(w)->private_dc, context);
+    wglMakeCurrent(Fl_WinAPI_Window_Driver::driver(w)->private_dc, (HGLRC)context);
   }
 }
 
@@ -160,7 +160,7 @@ void Fl_WinAPI_Gl_Window_Driver::delete_gl_context(GLContext context) {
     cached_window = 0;
     wglMakeCurrent(0, 0);
   }
-  wglDeleteContext(context);
+  wglDeleteContext((HGLRC)context);
   del_context(context);
 }
 
@@ -367,5 +367,7 @@ void Fl_WinAPI_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
   SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
 }
 
+
+FL_EXPORT HGLRC fl_win32_glcontext(GLContext rc) { return (HGLRC)rc; }
 
 #endif // HAVE_GL

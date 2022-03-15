@@ -51,7 +51,7 @@ class Fl_Window;
 
 class FL_EXPORT Fl_X {
 public:
-  Window xid;
+  fl_uintptr_t xid;
   Fl_Window* w;
   Fl_Region region;
   Fl_X *next;
@@ -64,7 +64,7 @@ public:
 #  endif
 };
 
-inline Window fl_xid(const Fl_Window* w) { Fl_X *xTemp = Fl_X::i(w); return xTemp ? xTemp->xid : 0; }
+inline Window fl_xid(const Fl_Window* w) { Fl_X *xTemp = Fl_X::i(w); return xTemp ? (Window)xTemp->xid : 0; }
 #else
 extern FL_EXPORT Window fl_xid_(const Fl_Window* w);
 #  define fl_xid(w) fl_xid_(w)

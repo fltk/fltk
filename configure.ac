@@ -85,7 +85,7 @@ AC_SUBST(OPTIM)
 
 
 dnl Other options
-AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [use Cairo library]))
+AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [add support for Fl_Cairo_Window]))
 AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for cairo extended use]))
 
 AC_ARG_ENABLE([cp936], AS_HELP_STRING([--enable-cp936], [turn on CP936]))
@@ -111,6 +111,8 @@ AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
 
 AC_ARG_ENABLE([wayland], AS_HELP_STRING([--enable-wayland], [turn on Wayland support]))
+
+AC_ARG_ENABLE([usecairo], AS_HELP_STRING([--enable-usecairo], [all drawing to X11 windows uses Cairo]))
 
 AC_ARG_ENABLE([print], AS_HELP_STRING([--disable-print], [turn off print support (X11)]))
 AS_IF([test x$enable_print = xno], [
@@ -984,13 +986,18 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           AC_MSG_WARN([--enable-wayland: please install pkg-config.])
           AC_MSG_ERROR([Aborting.])
       ])
+      
+      dnl Turn option usecairo ON
+      AC_DEFINE([FLTK_USE_CAIRO])
+      AC_MSG_NOTICE([Turning on the usecairo option])
 
       BUILD="WAYLAND"
       AC_DEFINE([FLTK_USE_WAYLAND])
+      AC_DEFINE([FLTK_USE_X11]) # to build a hybrid Wayland/X11 library
       CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
-      graphics="Wayland"
-      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon)"
+      graphics="Wayland or X11 with cairo"
+      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangoxft) $($PKGCONFIG --libs x11)"
       LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
       CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"
@@ -1174,6 +1181,15 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         ])
     ])
 
+    dnl Option usecairo
+    AS_IF([test x$enable_usecairo = xyes], [
+      enable_pango=yes
+      BUILD="CAIRO"
+      AC_DEFINE([FLTK_USE_CAIRO])
+      AC_MSG_NOTICE([Processing usecairo option])
+      ]
+    )
+    
     dnl test if Pango is asked but xft was not found
     AS_IF([test x$enable_pango = xyes -a x$xft_found = xno], [
         AC_MSG_WARN([could not find the Xft headers and/or libraries required for Pango.])
@@ -1608,6 +1624,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     ])
     AS_IF([test x$xrender_found = xyes], [
         graphics="$graphics + Xrender"
+    ])
+    AS_IF([test x$enable_usecairo = xyes], [
+        graphics="$graphics + Cairo"
     ])
     AS_IF([test x$pango_found = xyes], [
         graphics="$graphics + Pango"

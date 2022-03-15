@@ -24,7 +24,7 @@
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current();
 public:
-  Window pre_window;
+  HWND pre_window;
   int _savedc;
   Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_GDI_Image_Surface_Driver();

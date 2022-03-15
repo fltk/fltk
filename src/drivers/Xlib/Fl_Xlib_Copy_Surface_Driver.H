@@ -19,6 +19,9 @@
 
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/platform.H>
+#if FLTK_USE_CAIRO
+#  include <cairo/cairo.h>
+#endif // FLTK_USE_CAIRO
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
@@ -31,6 +34,9 @@ protected:
   void set_current();
   void translate(int x, int y);
   void untranslate();
+#if FLTK_USE_CAIRO
+  cairo_t *cairo_;
+#endif
 };
 
 #endif // FL_XLIB_COPY_SURFACE_DRIVER_H

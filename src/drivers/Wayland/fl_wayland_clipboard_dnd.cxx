@@ -34,7 +34,6 @@
 
 ////////////////////////////////////////////////////////////////
 // Code used for copy and paste and DnD into the program:
-//static Window fl_dnd_source_window;
 
 static char *fl_selection_buffer[2];
 static int fl_selection_length[2];
@@ -99,7 +98,7 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
   wl_data_source_destroy(source);
   doing_dnd = false;
   if (dnd_icon) {
-    Fl_Offscreen off = (Fl_Offscreen)wl_surface_get_user_data(dnd_icon);
+    struct fl_wld_buffer * off = (struct fl_wld_buffer *)wl_surface_get_user_data(dnd_icon);
     struct wld_window fake_window;
     fake_window.buffer = off;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_window);
@@ -190,9 +189,9 @@ static Fl_Offscreen offscreen_from_text(const char *text, int scale) {
   if (width > 300*scale) width = 300*scale;
   height = nl * fl_height() + 3;
   width += 6;
-  Fl_Offscreen off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
+  struct fl_wld_buffer * off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
   memset(off->draw_buffer, 0, off->data_size);
-  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, off);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)off);
   Fl_Surface_Device::push_current(surf);
   p = text;
   fl_font(FL_HELVETICA, 10 * scale);
@@ -213,7 +212,7 @@ static Fl_Offscreen offscreen_from_text(const char *text, int scale) {
   delete surf;
   cairo_surface_flush( cairo_get_target(off->cairo_) );
   memcpy(off->data, off->draw_buffer, off->data_size);
-  return off;
+  return (Fl_Offscreen)off;
 }
 
 
@@ -226,13 +225,13 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
   wl_data_source_add_listener(source, &data_source_listener, (void*)0);
   wl_data_source_offer(source, wld_plain_text_clipboard);
   wl_data_source_set_actions(source, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
-  Fl_Offscreen off = NULL;
+  struct fl_wld_buffer * off = NULL;
   int s = 1;
   if (use_selection) {
     // use the text as dragging icon
     Fl_Widget *current = Fl::pushed() ? Fl::pushed() : Fl::first_window();
-    s = fl_xid(current->top_window())->scale;
-    off = offscreen_from_text(fl_selection_buffer[0], s);
+    s = fl_wl_xid(current->top_window())->scale;
+    off = (struct fl_wld_buffer *)offscreen_from_text(fl_selection_buffer[0], s);
     dnd_icon = wl_compositor_create_surface(scr_driver->wl_compositor);
   } else dnd_icon = NULL;
   doing_dnd = true;
@@ -571,7 +570,7 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
     receiver.handle(FL_PASTE);
   } else if (type == Fl::clipboard_image && clipboard_contains(Fl::clipboard_image)) {
     if (get_clipboard_image()) return;
-    Window xid = fl_xid(receiver.top_window());
+    struct wld_window * xid = fl_wl_xid(receiver.top_window());
     if (xid && xid->scale > 1) {
       Fl_RGB_Image *rgb = (Fl_RGB_Image*)Fl::e_clipboard_data;
       rgb->scale(rgb->data_w() / xid->scale, rgb->data_h() / xid->scale);

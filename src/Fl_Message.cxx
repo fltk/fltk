@@ -548,7 +548,7 @@ void Fl_Message::icon_label(const char *str) {
 // handle ctrl-c (command-c on macOS) to copy message text
 
 int Fl_Message_Box::handle(int e) {
-  unsigned int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
+  int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
   switch (e) {
     case FL_KEYBOARD:
     case FL_SHORTCUT:

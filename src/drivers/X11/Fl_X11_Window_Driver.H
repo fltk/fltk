@@ -26,6 +26,11 @@
 #include "../../Fl_Window_Driver.H"
 #include <config.h>
 #include <FL/platform.H> // for Cursor
+
+#if FLTK_USE_CAIRO
+typedef struct _cairo cairo_t;
+#endif // FLTK_USE_CAIRO
+
 class Fl_Bitmap;
 
 /*
@@ -71,6 +76,9 @@ private:
   int screen_num_;
   void screen_num(int n) { screen_num_ = n; }
 #endif // USE_XFT
+#if FLTK_USE_CAIRO
+  cairo_t *cairo_;
+#endif // FLTK_USE_CAIRO
   void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);

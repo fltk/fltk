@@ -227,13 +227,16 @@ static inline void checkdouble() {
 
 
 struct wl_display *Fl_Wayland_Screen_Driver::wl_display = NULL;
+struct wl_registry *Fl_Wayland_Screen_Driver::wl_registry = NULL;
 
+
+bool Fl_Wayland_Screen_Driver::wld_disabled = false;
 
 Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surface) {
   if (surface) {
     Fl_X *xp = Fl_X::first;
     while (xp) {
-      if (xp->xid->wl_surface == surface) return xp->w;
+      if (((struct wld_window*)xp->xid)->wl_surface == surface) return xp->w;
       xp = xp->next;
     }
   }
@@ -335,9 +338,9 @@ static void pointer_button(void *data,
   win = win->top_window();
   wld_event_time = time;
   if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED && seat->pointer_focus == NULL &&
-      fl_xid(win)->kind == Fl_Wayland_Window_Driver::DECORATED) {
+      (fl_wl_xid(win))->kind == Fl_Wayland_Window_Driver::DECORATED) {
     // click on titlebar
-    libdecor_frame_move(fl_xid(win)->frame, seat->wl_seat, serial);
+    libdecor_frame_move(fl_wl_xid(win)->frame, seat->wl_seat, serial);
     return;
   }
   int b = 0;
@@ -907,7 +910,7 @@ static void output_done(void *data, struct wl_output *wl_output)
 //fprintf(stderr, "output_done output=%p\n",output);
   Fl_X *xp = Fl_X::first;
   while (xp) { // all mapped windows
-    struct wld_window *win = xp->xid;
+    struct wld_window *win = (struct wld_window*)xp->xid;
     wl_list_for_each(window_output, &(win->outputs), link) { // all Fl_Wayland_Window_Driver::window_output for this window
       if (window_output->output == output) {
         Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(win->fl_win);
@@ -1041,7 +1044,7 @@ static void registry_handle_global_remove(void *data, struct wl_registry *regist
     if (output->id == name) { // the screen being removed
       Fl_X *xp = Fl_X::first;
       while (xp) { // all mapped windows
-        struct wld_window *win = xp->xid;
+        struct wld_window *win = (struct wld_window*)xp->xid;
         wl_list_for_each_safe(window_output, tmp, &(win->outputs), link) { // all Fl_Wayland_Window_Driver::window_output for this window
           if (window_output->output == output) {
             wl_list_remove(&window_output->link);
@@ -1086,16 +1089,16 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
 }
 
 void Fl_Wayland_Screen_Driver::open_display_platform() {
-  struct wl_registry *wl_registry;
-
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
     return;
 
   beenHereDoneThat = true;
-  wl_display = wl_display_connect(NULL);
   if (!wl_display) {
-    Fl::fatal("No Wayland connection\n");
+    wl_display = wl_display_connect(NULL);
+    if (!wl_display) {
+      Fl::fatal("No Wayland connection\n");
+    }
   }
   wl_list_init(&seats);
   wl_list_init(&outputs);
@@ -1121,6 +1124,7 @@ void Fl_Wayland_Screen_Driver::close_display() {
   Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
   wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
   Fl_Wayland_Screen_Driver::wl_display = NULL;
+  Fl_Wayland_Screen_Driver::wl_registry = NULL;
 }
 
 
@@ -1141,7 +1145,7 @@ void Fl_Wayland_Screen_Driver::init_workarea()
 
 
 int Fl_Wayland_Screen_Driver::x() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1150,7 +1154,7 @@ int Fl_Wayland_Screen_Driver::x() {
 }
 
 int Fl_Wayland_Screen_Driver::y() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1159,7 +1163,7 @@ int Fl_Wayland_Screen_Driver::y() {
 }
 
 int Fl_Wayland_Screen_Driver::w() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1168,7 +1172,7 @@ int Fl_Wayland_Screen_Driver::w() {
 }
 
 int Fl_Wayland_Screen_Driver::h() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1178,7 +1182,7 @@ int Fl_Wayland_Screen_Driver::h() {
 
 
 void Fl_Wayland_Screen_Driver::init() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
 }
 
 
@@ -1315,8 +1319,8 @@ const char *Fl_Wayland_Screen_Driver::get_system_scheme()
 
 Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
                                                            bool ignore, bool *p_ignore) {
-  Window xid = win ? fl_xid(win) : NULL;
-  struct fl_wld_buffer *buffer = win ? xid->buffer : (Fl_Offscreen)Fl_Surface_Device::surface()->driver()->gc();
+  struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
+  struct fl_wld_buffer *buffer = win ? xid->buffer : (struct fl_wld_buffer *)Fl_Surface_Device::surface()->driver()->gc();
   float s = win ? xid->scale * scale(win->screen_num()) :
                   Fl_Surface_Device::surface()->driver()->scale();
   int Xs, Ys, ws, hs;
@@ -1346,8 +1350,9 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
 }
 
 
-void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
+void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int &height)
 {
+  struct fl_wld_buffer *off = (struct fl_wld_buffer *)off_;
   width = off->width;
   height = off->data_size / off->stride;
 }
@@ -1456,4 +1461,9 @@ void Fl_Wayland_Screen_Driver::reset_spot() {
   Fl::compose_state = 0;
   Fl_Wayland_Screen_Driver::next_marked_length = 0;
   Fl_Wayland_Screen_Driver::insertion_point_location_is_valid = false;
+}
+
+
+struct wl_display *fl_wl_display() {
+  return Fl_Wayland_Screen_Driver::wl_display;
 }

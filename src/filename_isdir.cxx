@@ -20,6 +20,7 @@
 #include "Fl_System_Driver.H"
 #include <FL/filename.H>
 #include <FL/Fl.H>
+#include <sys/stat.h>
 
 /**
    Determines if a file exists and is a directory from its filename.

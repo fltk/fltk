@@ -18,9 +18,13 @@
 #include <config.h>
 #include "Fl_X11_Window_Driver.H"
 #include "Fl_X11_Screen_Driver.H"
-#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
+#if FLTK_USE_CAIRO
+#  include <cairo-xlib.h>
+#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#else
+#  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
+#endif // FLTK_USE_CAIRO
 
-#include "../../Fl_Screen_Driver.H"
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -52,6 +56,9 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
   memset(icon_, 0, sizeof(icon_data));
 #if USE_XFT
   screen_num_ = -1;
+#endif
+#if FLTK_USE_CAIRO
+  cairo_ = NULL;
 #endif
 }
 
@@ -151,9 +158,17 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
   if (!other_xid) {
-      other_xid = fl_create_offscreen(w(), h());
+    other_xid = fl_create_offscreen(w(), h());
+#if FLTK_USE_CAIRO
+    fl_begin_offscreen(other_xid);
+    cairo_ = ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
+    fl_end_offscreen();
+#endif
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
+#if FLTK_USE_CAIRO
+  ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+#endif
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
       fl_window = other_xid;
@@ -176,8 +191,21 @@ void Fl_X11_Window_Driver::flush_overlay()
   int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (overlay() == pWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
   flush_double(erase_overlay);
-  Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
-  if (overlay() == oWindow) oWindow->draw_overlay();
+  if (overlay() == pWindow) {
+#if FLTK_USE_CAIRO
+    float scale = fl_graphics_driver->scale();
+    int W = pWindow->w() * scale, H = pWindow->h() * scale;
+    cairo_surface_t *s = cairo_xlib_surface_create(fl_display, Fl_X::i(pWindow)->xid, fl_visual->visual, W, H);
+    cairo_t *overlay_cairo = cairo_create(s);
+    cairo_surface_destroy(s);
+    cairo_save(overlay_cairo);
+    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(overlay_cairo);
+#endif
+    pWindow->as_overlay_window()->draw_overlay();
+#if FLTK_USE_CAIRO
+    cairo_destroy(overlay_cairo);
+#endif
+  }
 }
 
 
@@ -373,7 +401,21 @@ void Fl_X11_Window_Driver::make_current() {
   }
   fl_window = fl_xid(pWindow);
   fl_graphics_driver->clip_region(0);
-#if USE_XFT
+
+#if FLTK_USE_CAIRO
+  float scale = Fl::screen_scale(screen_num()); // get the screen scaling factor
+  if (!pWindow->as_double_window()) {
+    if (!cairo_) {
+      int W = pWindow->w() * scale, H = pWindow->h() * scale;
+      cairo_surface_t *s = cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
+      cairo_ = cairo_create(s);
+      cairo_surface_destroy(s);
+      cairo_save(cairo_);
+    }
+    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  }
+  fl_graphics_driver->scale(scale);
+#elif USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 #endif
 
@@ -388,9 +430,15 @@ void Fl_X11_Window_Driver::hide() {
   Fl_X* ip = Fl_X::i(pWindow);
   if (hide_common()) return;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-# if USE_XFT
+# if USE_XFT && ! FLTK_USE_CAIRO
   Fl_Xlib_Graphics_Driver::destroy_xft_draw(ip->xid);
   screen_num_ = -1;
+# endif
+# if FLTK_USE_CAIRO
+  if (cairo_ && !pWindow->as_double_window()) {
+    cairo_destroy(cairo_);
+    cairo_ = NULL;
+  }
 # endif
   // this test makes sure ip->xid has not been destroyed already
   if (ip->xid) XDestroyWindow(fl_display, ip->xid);
@@ -503,6 +551,15 @@ Fl_X *Fl_X11_Window_Driver::makeWindow()
 const Fl_Image* Fl_X11_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
 }
+
+Fl_Window *fl_x11_find(Window xid) {
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
+}
+
+Window fl_x11_xid(const Fl_Window *win) {
+  return (Window)Fl_Window_Driver::xid(win);
+}
+
 
 #if USE_XFT
 

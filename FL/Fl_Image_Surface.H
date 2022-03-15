@@ -82,6 +82,7 @@ public:
   int printable_rect(int *w, int *h);
   Fl_Offscreen offscreen();
   void rescale();
+  Fl_Image_Surface *as_image_surface();
 };
 
 
@@ -98,6 +99,8 @@ public:
  */
 class Fl_Image_Surface_Driver : public Fl_Widget_Surface {
   friend class Fl_Image_Surface;
+private:
+  Fl_Image_Surface *image_surface_;
 protected:
   int width;
   int height;
@@ -110,6 +113,7 @@ protected:
   virtual void untranslate() = 0;
   int printable_rect(int *w, int *h);
   virtual Fl_RGB_Image *image() = 0;
+  virtual Fl_Image_Surface *as_image_surface();
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Image_Surface_Driver for the plaform.

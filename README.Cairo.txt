@@ -61,10 +61,18 @@ variable OPTION_CAIRO:BOOL=ON is set.
     transparently a Cairo context to your custom Fl_Window derived class.
     This function is intended to be used in your overloaded draw() method.
 
-(3) Adding an optional Cairo autolink context mode support which permits
+(3) FLTK instrumentation for cairo extended use :
+    Adding an optional Cairo autolink context mode support which permits
     complete and automatic synchronization of OS dependent graphical context
     and Cairo contexts, thus furthering a valid Cairo context anytime,
     in any current window.
+
+    Usage :
+    - Call Fl::cairo_autolink_context(true); before windows are shown.
+    - In an overridden widget draw method, do
+        cairo_t *cc = Fl::cairo_cc();
+    and obtain the cairo context value adequate to draw with cairo to
+    the current window.
 
     This feature should be only necessary in the following cases:
     - Intensive and almost systematic use of Cairo in an FLTK application
