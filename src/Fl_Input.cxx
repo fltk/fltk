@@ -374,7 +374,7 @@ int Fl_Input::handle_key() {
     return 1;
   }
 
-  unsigned int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
+  int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
   unsigned int shift = Fl::event_state() & FL_SHIFT;
   unsigned int multiline = (input_type() == FL_MULTILINE_INPUT) ? 1 : 0;
   //

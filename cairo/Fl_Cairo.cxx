@@ -21,17 +21,18 @@
 #include <FL/Fl_Window.H>
 
 // Cairo is currently supported for the following platforms:
-// Win32, Apple Quartz, X11
+// Win32, Apple Quartz, X11, Wayland
 
-#if defined(FLTK_USE_X11)         // X11
-#  include <cairo-xlib.h>
-#elif defined(_WIN32)             // Windows
+#if defined(_WIN32)             // Windows
 #  include <cairo-win32.h>
 #elif defined(__APPLE__)   // macOS
 #  include <cairo-quartz.h>
-#elif defined(FLTK_USE_WAYLAND)
+#elif defined(FLTK_USE_WAYLAND)  // Wayland or hybrid
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
 #  include "../src/drivers/Wayland/Fl_Wayland_Window_Driver.H"
+#  include <cairo-xlib.h>
+#elif defined(FLTK_USE_X11)         // X11
+#  include <cairo-xlib.h>
 #else
 #  error Cairo is not supported on this platform.
 #endif
@@ -73,11 +74,14 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     if (!wi) return NULL; // Precondition
   cairo_t * cairo_ctxt;
 #if defined(FLTK_USE_WAYLAND)
-  Window xid = fl_xid(wi);
-  if (!xid->buffer) return NULL; // this may happen with GL windows
-  cairo_ctxt = xid->buffer->cairo_;
-  cairo_state_.cc(cairo_ctxt, false);
-#else // !FLTK_USE_WAYLAND
+  if (fl_wl_display()) { // true means using wayland backend
+    struct wld_window *xid = fl_wl_xid(wi);
+    if (!xid->buffer) return NULL; // this may happen with GL windows
+    cairo_ctxt = xid->buffer->cairo_;
+    cairo_state_.cc(cairo_ctxt, false);
+    return cairo_ctxt;
+  }
+#endif
     if (fl_gc==0) { // means remove current cc
         Fl::cairo_cc(0); // destroy any previous cc
         cairo_state_.window(0);
@@ -102,11 +106,9 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
 #ifndef __APPLE__
   cairo_scale(cairo_ctxt, scale, scale);
 #endif
-#endif // FLTK_USE_WAYLAND
   return cairo_ctxt;
 }
 
-#if !defined(FLTK_USE_WAYLAND)
 /*
     Creates transparently a cairo_surface_t object.
     gc is an HDC context in Windows, a CGContext* in Quartz, and
@@ -194,7 +196,6 @@ cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
     return c;
 }
 
-#endif // !FLTK_USE_WAYLAND
 
 #else
 // just don't leave the libfltk_cairo lib empty to avoid warnings

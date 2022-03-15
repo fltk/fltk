@@ -143,7 +143,13 @@ the toolkit, which was already in use by several people, Bill
 came up with "FLTK", including a bogus excuse that it
 stands for "The Fast Light Toolkit".
 
-\section intro_unix Building and Installing FLTK Under UNIX and Apple macOS
+\section intro_cmake Building and Installing FLTK with CMake
+
+Starting with version 1.4, the recommended FLTK building system
+is CMake. See file README.CMake of the FLTK source tree for all information.
+It's also possible to use \p configure and \p make as follows to build and install FLTK.
+
+\section intro_unix Building and Installing FLTK Under UNIX and macOS with make
 
 In most cases you can just type "make". This will run configure with
 the default of no options and then compile everything.
@@ -196,6 +202,9 @@ Enable debugging code & symbols
 \par --disable-gl
 Disable OpenGL support
 
+\par --disable-svg
+Disable support of reading and writing of Support Vector Graphics (.svg) files.
+
 \par --disable-print
 Disable print support for an X11 platform
 
@@ -205,21 +214,38 @@ Enable generation of shared libraries
 \par --enable-threads
 Enable multithreading support
 
-\par --enable-xdbe
-Enable the X double-buffer extension
+\par --enable-wayland
+Enable the use of Wayland for all window operations, of Cairo for all graphics
+and of Pango for text drawing (Linux and FreeBSD only). Resulting FLTK apps
+use Wayland if a Wayland compositor is available at run-time, and use
+the equivalent of "--enable-x11 --enable-usecairo" otherwise.
 
-\par --enable-xft
-Enable the Xft library for anti-aliased fonts under X11
+\par --disable-xft
+Disables the Xft library, resulting in non anti-aliased fonts (X11 platform).
+
+\par --enable-usecairo
+All drawing operations use the Cairo library (rather than Xlib) producing
+antialiased graphics (X11 platform, implies --enable-pango).
 
 \par --enable-pango
-Enable the pango library for drawing any text in any script under X11.
+Enable the Pango library for drawing any text in any script with any font under X11.
 
 \par --enable-x11
+This is the default under Unix and Linux.
 When targeting cygwin, build with X11 GUI instead of windows GDI.
 Also applicable to macOS platforms supplemented with XQuartz.
 
 \par --enable-wayland
 Enable use of the Wayland system for window handling.
+
+\par --enable-cairo
+Enable support of class Fl_Cairo_Window (all platforms, requires the Cairo library).
+
+\par --enable-cairoext
+Enable the FLTK instrumentation for cairo extended use (requires --enable-cairo).
+
+\par --disable-gdiplus
+Don't use GDI+ when drawing curves and oblique lines (Windows platform).
 
 \par --enable-cp936
 Under X11, enable use of the GB2312 locale

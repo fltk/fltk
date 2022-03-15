@@ -81,7 +81,7 @@ int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();         
 
 // public variables
 void *fl_capture = 0;                   // (NSWindow*) we need this to compensate for a missing(?) mouse capture
-Window fl_window;
+FLWindow *fl_window;
 
 // forward declarations of variables in this file
 static int main_screen_height; // height of menubar-containing screen used to convert between Cocoa and FLTK global screen coordinates
@@ -803,7 +803,7 @@ static NSInteger max_normal_window_level(void)
 
   for (x = Fl_X::first;x;x = x->next) {
     NSInteger level;
-    FLWindow *cw = x->xid;
+    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (!win || !cw || ![cw isVisible])
       continue;
@@ -868,7 +868,7 @@ static void fixup_window_levels(void)
   prev_non_modal = NULL;
 
   for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = x->xid;
+    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (!win || !cw || ![cw isVisible])
       continue;
@@ -1513,7 +1513,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *top = 0;
   // sort in all regular windows
   for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = x->xid;
+    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (win && cw) {
       if (win->modal()) {
@@ -1525,7 +1525,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   // now sort in all modals
   for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = x->xid;
+    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (win && cw && [cw isVisible]) {
       if (win->modal()) {
@@ -1536,7 +1536,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   // finally all non-modals
   for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = x->xid;
+    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (win && cw && [cw isVisible]) {
       if (win->non_modal()) {
@@ -1600,8 +1600,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 { // before 10.5, subwindows are lost when application is unhidden
   fl_lock_function();
   for (Fl_X *x = Fl_X::first; x; x = x->next) {
-    if (![x->xid parentWindow]) {
-      orderfront_subwindows(x->xid);
+    if (![(FLWindow*)x->xid parentWindow]) {
+      orderfront_subwindows((FLWindow*)x->xid);
     }
   }
   fl_unlock_function();
@@ -3103,7 +3103,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     [cw setOpaque:NO]; // shaped windows must be non opaque
     [cw setBackgroundColor:[NSColor clearColor]]; // and with transparent background color
   }
-  x->xid = cw;
+  x->xid = (fl_uintptr_t)cw;
   x->w = w;
   i(x);
   wait_for_expose_value = 1;
@@ -3444,7 +3444,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
   //NSLog(@"region-count=%d damage=%u",i->region?i->region->count:0, pWindow->damage());
-  fl_window = i->xid;
+  fl_window = (FLWindow*)i->xid;
   ((Fl_Quartz_Graphics_Driver&)Fl_Graphics_Driver::default_driver()).high_resolution( mapped_to_retina() );
 
   if (pWindow->as_overlay_window() && other_xid && changed_resolution()) {
@@ -3766,7 +3766,7 @@ void Fl_Cocoa_Window_Driver::destroy(FLWindow *xid) {
 
 
 void Fl_Cocoa_Window_Driver::map() {
-  Window xid = fl_xid(pWindow);
+  FLWindow *xid = fl_xid(pWindow);
   if (pWindow && xid && ![xid parentWindow]) { // 10.2
     // after a subwindow has been unmapped, it has lost its parent window and its frame may be wrong
     [xid setSubwindowFrame];
@@ -3779,7 +3779,7 @@ void Fl_Cocoa_Window_Driver::map() {
 
 
 void Fl_Cocoa_Window_Driver::unmap() {
-  Window xid = fl_xid(pWindow);
+  FLWindow *xid = fl_xid(pWindow);
   if (pWindow && xid) {
     if (parent()) [[xid parentWindow] removeChildWindow:xid]; // necessary with at least 10.5
     [xid orderOut:nil];

@@ -14,28 +14,47 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "Fl_Xlib_Graphics_Driver.H"
+#include <FL/platform.H>
 #include "Fl_Xlib_Image_Surface_Driver.H"
 #include "../../Fl_Screen_Driver.H"
+#if FLTK_USE_CAIRO
+#  include <cairo-xlib.h>
+#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#else
+#  include "Fl_Xlib_Graphics_Driver.H"
+#endif // FLTK_USE_CAIRO
+
 
 
 Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
   float d = 1;
   if (!off) {
     fl_open_display();
-    d =  fl_graphics_driver->scale();
+    d =  Fl_Graphics_Driver::default_driver().scale();
     if (d != 1 && high_res) {
       w = int(w*d);
       h = int(h*d);
     }
-    offscreen = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
+    offscreen = (Fl_Offscreen)XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   }
+#if FLTK_USE_CAIRO
+  driver(new Fl_Display_Cairo_Graphics_Driver());
+  cairo_surface_t *s = cairo_xlib_surface_create(fl_display, offscreen, fl_visual->visual, w, h);
+  cairo_ = cairo_create(s);
+  cairo_surface_destroy(s);
+  cairo_save(cairo_);
+  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+#else
   driver(new Fl_Xlib_Graphics_Driver());
-  if (d != 1 && high_res) ((Fl_Xlib_Graphics_Driver*)driver())->scale(d);
+#endif
+  if (d != 1 && high_res) driver()->scale(d);
 }
 
 Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
-  if (offscreen && !external_offscreen) XFreePixmap(fl_display, offscreen);
+#if FLTK_USE_CAIRO
+  cairo_destroy(cairo_);
+#endif
+  if (offscreen && !external_offscreen) XFreePixmap(fl_display, (Pixmap)offscreen);
   delete driver();
 }
 
@@ -43,14 +62,26 @@ void Fl_Xlib_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   pre_window = fl_window;
   fl_window = offscreen;
+#if FLTK_USE_CAIRO
+  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+#endif
 }
 
 void Fl_Xlib_Image_Surface_Driver::translate(int x, int y) {
+#if FLTK_USE_CAIRO
+  cairo_save(cairo_);
+  cairo_translate(cairo_, x, y);
+#else
   ((Fl_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+#endif
 }
 
 void Fl_Xlib_Image_Surface_Driver::untranslate() {
+#if FLTK_USE_CAIRO
+  cairo_restore(cairo_);
+#else
   ((Fl_Xlib_Graphics_Driver*)driver())->untranslate_all();
+#endif
 }
 
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()

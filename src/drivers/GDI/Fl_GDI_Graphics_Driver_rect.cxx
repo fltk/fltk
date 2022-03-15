@@ -138,10 +138,10 @@ void Fl_GDI_Graphics_Driver::polygon_unscaled(int x, int y, int x1, int y1, int 
 // --- clipping
 
 void Fl_GDI_Graphics_Driver::push_clip(int x, int y, int w, int h) {
-  Fl_Region r;
+  HRGN r;
   if (w > 0 && h > 0) {
-    r = XRectangleRegion(x,y,w,h);
-    Fl_Region current = rstack[rstackptr];
+    r = (HRGN)XRectangleRegion(x,y,w,h);
+    HRGN current = (HRGN)rstack[rstackptr];
     if (current) {
       CombineRgn(r,r,current,RGN_AND);
     }
@@ -155,14 +155,14 @@ void Fl_GDI_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 
 int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  Fl_Region r = rstack[rstackptr];
+  HRGN r = (HRGN)rstack[rstackptr];
   if (!r) return 0;
   // The win32 API makes no distinction between partial and complete
   // intersection, so we have to check for partial intersection ourselves.
   // However, given that the regions may be composite, we have to do
   // some voodoo stuff...
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
-  Fl_Region temp = CreateRectRgn(0,0,0,0);
+  HRGN rr = (HRGN)XRectangleRegion(x,y,w,h);
+  HRGN temp = CreateRectRgn(0,0,0,0);
   int ret;
   if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
     W = H = 0;
@@ -189,7 +189,7 @@ int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y,
 
 int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  Fl_Region r = rstack[rstackptr];
+  HRGN r = (HRGN)rstack[rstackptr];
   if (!r) return 1;
   RECT rect;
   if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
@@ -206,8 +206,8 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   if (gc_) {
     HRGN r = NULL;
-    if (rstack[rstackptr]) r = scale_clip(scale());
-    SelectClipRgn(gc_, rstack[rstackptr]); // if region is NULL, clip is automatically cleared
+    if (rstack[rstackptr]) r = (HRGN)scale_clip(scale());
+    SelectClipRgn(gc_, (HRGN)rstack[rstackptr]); // if region is NULL, clip is automatically cleared
     if (r) unscale_clip(r);
   }
 }

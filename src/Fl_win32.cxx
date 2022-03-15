@@ -636,7 +636,7 @@ void Fl_WinAPI_Screen_Driver::enable_im() {
 
   Fl_X *i = Fl_X::first;
   while (i) {
-    flImmAssociateContextEx(i->xid, 0, IACE_DEFAULT);
+    flImmAssociateContextEx((HWND)i->xid, 0, IACE_DEFAULT);
     i = i->next;
   }
 
@@ -648,7 +648,7 @@ void Fl_WinAPI_Screen_Driver::disable_im() {
 
   Fl_X *i = Fl_X::first;
   while (i) {
-    flImmAssociateContextEx(i->xid, 0, 0);
+    flImmAssociateContextEx((HWND)i->xid, 0, 0);
     i = i->next;
   }
 
@@ -1288,7 +1288,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         break;
 
       case WM_PAINT: {
-        Fl_Region R, R2;
+        HRGN R, R2;
         Fl_X *i = Fl_X::i(window);
         Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
         char redraw_whole_window = false;
@@ -1307,7 +1307,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
 
         // convert i->region in FLTK units to R2 in drawing units
-        R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL);
+        R2 = Fl_GDI_Graphics_Driver::scale_region((HRGN)i->region, scale, NULL);
 
         RECT r_box;
         if (scale != 1 && GetRgnBox(R, &r_box) != NULLREGION) {
@@ -1316,10 +1316,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
           r_box.right = LONG(r_box.right / scale);
           r_box.top = LONG(r_box.top / scale);
           r_box.bottom = LONG(r_box.bottom / scale);
-          Fl_Region R3 = CreateRectRgn(r_box.left, r_box.top, r_box.right + 1, r_box.bottom + 1);
+          HRGN R3 = CreateRectRgn(r_box.left, r_box.top, r_box.right + 1, r_box.bottom + 1);
           if (!i->region) i->region = R3;
           else {
-            CombineRgn(i->region, i->region, R3, RGN_OR);
+            CombineRgn((HRGN)i->region, (HRGN)i->region, R3, RGN_OR);
             DeleteObject(R3);
           }
         }
@@ -2185,7 +2185,7 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
     wlen = fl_utf8toUtf16(w->label(), (unsigned)l, (unsigned short *)lab, wlen);
     lab[wlen] = 0;
   }
-  x->xid = CreateWindowExW(styleEx,
+  x->xid = (fl_uintptr_t)CreateWindowExW(styleEx,
                            class_namew, lab, style,
                            xp, yp, wp, hp,
                            parent,
@@ -2208,14 +2208,14 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
        for x and y. We can then use GetWindowRect to determine which
        monitor the window was placed on. */
     RECT rect;
-    GetWindowRect(x->xid, &rect);
+    GetWindowRect((HWND)x->xid, &rect);
     make_fullscreen(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
   }
 
   // Setup clipboard monitor target if there are registered handlers and
   // no window is targeted.
   if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
-    fl_clipboard_notify_target(x->xid);
+    fl_clipboard_notify_target((HWND)x->xid);
 
   wait_for_expose_value = 1;
   if (show_iconic()) {
@@ -2239,14 +2239,14 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
 
   // If we've captured the mouse, we dont want to activate any
   // other windows from the code, or we lose the capture.
-  ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
+  ShowWindow((HWND)x->xid, !showit ? SW_SHOWMINNOACTIVE :
              (Fl::grab() || (styleEx & WS_EX_TOOLWINDOW)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
 
   // Register all windows for potential drag'n'drop operations
-  RegisterDragDrop(x->xid, flIDropTarget);
+  RegisterDragDrop((HWND)x->xid, flIDropTarget);
 
   if (!im_enabled)
-    flImmAssociateContextEx(x->xid, 0, 0);
+    flImmAssociateContextEx((HWND)x->xid, 0, 0);
 
   return x;
 }
@@ -2255,6 +2255,8 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
 ////////////////////////////////////////////////////////////////
 
 HINSTANCE fl_display = GetModuleHandle(NULL);
+
+HINSTANCE fl_win32_display() { return fl_display; }
 
 void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax) {
   int td, wd, hd, dummy_x, dummy_y;
@@ -2632,10 +2634,10 @@ void Fl_WinAPI_Window_Driver::show() {
   } else {
     // Once again, we would lose the capture if we activated the window.
     Fl_X *i = Fl_X::i(pWindow);
-    if (IsIconic(i->xid))
-      OpenIcon(i->xid);
+    if (IsIconic((HWND)i->xid))
+      OpenIcon((HWND)i->xid);
     if (!fl_capture)
-      BringWindowToTop(i->xid);
+      BringWindowToTop((HWND)i->xid);
     // ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
 }

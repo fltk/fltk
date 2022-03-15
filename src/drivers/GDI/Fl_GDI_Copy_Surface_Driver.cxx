@@ -64,7 +64,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
       fl_color(FL_WHITE);    // draw white background
       fl_rectf(0, 0, W, H);
       PlayEnhMetaFile((HDC)surf->driver()->gc(), hmf, &rect); // draw metafile to offscreen buffer
-      SetClipboardData(CF_BITMAP, surf->offscreen());
+      SetClipboardData(CF_BITMAP, (HBITMAP)surf->offscreen());
       Fl_Surface_Device::pop_current();
       delete surf;
 
@@ -80,7 +80,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
 
 void Fl_GDI_Copy_Surface_Driver::set_current() {
   driver()->gc(gc);
-  fl_window = (Window)1;
+  fl_window = (HWND)1;
   Fl_Surface_Device::set_current();
 }
 

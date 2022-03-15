@@ -23,6 +23,7 @@
 #include <FL/fl_utf8.h>
 #include "utf8_internal.h"
 
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 

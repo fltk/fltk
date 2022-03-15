@@ -450,7 +450,7 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
 void Fl_WinAPI_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
 {
   BITMAP bitmap;
-  if ( GetObject(off, sizeof(BITMAP), &bitmap) ) {
+  if ( GetObject((HBITMAP)off, sizeof(BITMAP), &bitmap) ) {
     width = bitmap.bmWidth;
     height = bitmap.bmHeight;
   }

@@ -718,8 +718,8 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_RGB_Image *img) {
   if (depth == 1 || depth == 3) {
     surface = new Fl_Image_Surface(img->data_w(), img->data_h());
   } else if (fl_can_do_alpha_blending()) {
-    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->data_w(), img->data_h(), 32);
-    surface = new Fl_Image_Surface(img->data_w(), img->data_h(), 0, pixmap);
+    Pixmap pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->data_w(), img->data_h(), 32);
+    surface = new Fl_Image_Surface(img->data_w(), img->data_h(), 0, (Fl_Offscreen)pixmap);
     depth |= FL_IMAGE_WITH_ALPHA;
   } else {
     *Fl_Graphics_Driver::id(img) = 0;
@@ -806,14 +806,14 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   static XRenderPictFormat *dstfmt = XRenderFindVisualFormat(fl_display, fl_visual->visual);
-  Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
+  Picture src = XRenderCreatePicture(fl_display, (Pixmap)pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
   Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
     return 0;
   }
   Fl_Region r = scale_clip(scale());
-  const Fl_Region clipr = clip_region();
+  const Region clipr = (Region)clip_region();
   if (clipr)
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
   unscale_clip(r);
@@ -849,7 +849,7 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {
-    XFreePixmap(fl_display, (Fl_Offscreen)id_);
+    XFreePixmap(fl_display, (Pixmap)id_);
     id_ = 0;
   }
 }
@@ -882,8 +882,8 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, in
       // be done in a single Xlib call for a multi-rectangle clip region. Thus, we
       // process each rectangle of the intersection between the clip region and XYWH.
       // See also STR #3206.
-      Region r = XRectangleRegion(X,Y,W,H);
-      XIntersectRegion(r, clip_region(), r);
+      Region r = (Region)XRectangleRegion(X,Y,W,H);
+      XIntersectRegion(r, (Region)clip_region(), r);
       int X1, Y1, W1, H1;
       for (int i = 0; i < r->numRects; i++) {
         X1 = r->rects[i].x1;
@@ -929,5 +929,5 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
 }
 
 void Fl_Xlib_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
-  XFreePixmap(fl_display, (Fl_Offscreen)offscreen);
+  XFreePixmap(fl_display, (Pixmap)offscreen);
 }

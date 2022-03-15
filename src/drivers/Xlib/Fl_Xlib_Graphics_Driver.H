@@ -76,7 +76,7 @@ protected:
 #endif
   virtual int height_unscaled();
   virtual int descent_unscaled();
-  virtual Region scale_clip(float f);
+  virtual Fl_Region scale_clip(float f);
 #if USE_XFT
   void drawUCS4(const void *str, int n, int x, int y);
 #endif

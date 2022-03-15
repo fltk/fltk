@@ -1,7 +1,7 @@
 //
-// Wayland platform header file for the Fast Light Tool Kit (FLTK).
+// Wayland/X11 hybrid platform header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,16 +18,35 @@
 #  error "Never use <FL/wayland.H> directly; include <FL/platform.H> instead."
 #endif // !FL_PLATFORM_H
 
-typedef struct wld_window *Window;
+/** \file
+ Definitions of functions specific to the Wayland platform.
+*/
 
-struct flCairoRegion {
-  int count;
-  struct _cairo_rectangle *rects;
-}; // a region is the union of a series of rectangles
+// ***********  for Wayland component ***********
 
-#include <stdint.h>
 typedef struct _cairo cairo_t;
 
-FL_EXPORT struct wl_display *fl_wl_display();
-FL_EXPORT struct wl_surface *fl_wl_surface(Window xid);
-FL_EXPORT cairo_t *fl_wl_cairo();
+/** Returns the Wayland display in use */
+extern FL_EXPORT struct wl_display *fl_wl_display();
+/** Returns the wl_surface associated to a shown window */
+extern FL_EXPORT struct wl_surface *fl_wl_surface(struct wld_window *xid);
+/** Returns a platform-specific reference associated to a shown window */
+extern FL_EXPORT struct wld_window *fl_wl_xid(const Fl_Window *win);
+/** Returns the Fl_Window corresponding to a given the platform-specific window reference */
+extern FL_EXPORT Fl_Window *fl_wl_find(struct wld_window *);
+/** Returns the cairo context associated to the current window*/
+extern FL_EXPORT cairo_t *fl_wl_cairo();
+typedef void *EGLContext;
+/** Returns the EGLContext corresponding to the given GLContext */
+extern FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc);
+/** Prevent the FLTK library from using its wayland backend.
+ Call this early in your main(), before fl_open_display() runs. */
+extern FL_EXPORT void fl_disable_wayland();
+
+
+#ifndef FL_DOXYGEN
+
+//  *********** for X11 component ***********
+#  include "x11.H"
+
+#endif // FL_DOXYGEN

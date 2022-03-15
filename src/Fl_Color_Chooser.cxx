@@ -506,7 +506,7 @@ static int copy_rgb(double r, double g, double b) {
 
 int Fl_Color_Chooser::handle(int e) {
 
-  unsigned int mods = Fl::event_state() & (FL_META | FL_CTRL | FL_ALT);
+  int mods = Fl::event_state() & (FL_META | FL_CTRL | FL_ALT);
   unsigned int shift = Fl::event_state() & FL_SHIFT;
 
   switch (e) {

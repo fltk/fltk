@@ -1,7 +1,7 @@
 //
 // Class Fl_X11_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,8 +21,6 @@
 #include "../../Fl_Screen_Driver.H"
 #include "../../Fl_Window_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
-#include "../Xlib/Fl_Font.H"
-#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #  include <GL/glx.h>
 #  if ! defined(GLX_VERSION_1_3)
 #    typedef void *GLXFBConfig;
@@ -61,7 +59,7 @@ void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
    * is not working on this platform. This code might not reliably render glyphs
    * from higher codepoints. */
   if (!fl_fontsize->listbase) {
-#if USE_XFT
+#if USE_XFT && !FLTK_USE_CAIRO
     /* Ideally, for XFT, we need a glXUseXftFont implementation here... But we
      * do not have such a thing. Instead, we try to find a legacy Xlib font that
      * matches the current XFT font and use that.
@@ -288,7 +286,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
     XSetErrorHandler(oldHandler);
   }
   if (!ctx) { // use OpenGL 1-style context creation
-    ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, shared_ctx, true);
+    ctx = glXCreateContext(fl_display, ((Fl_X11_Gl_Choice*)g)->vis, (GLXContext)shared_ctx, true);
   }
   if (ctx)
     add_context(ctx);
@@ -299,7 +297,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-  GLContext context = glXCreateContext(fl_display, vis, shared_ctx, 1);
+  GLContext context = glXCreateContext(fl_display, vis, (GLXContext)shared_ctx, 1);
   if (context)
     add_context(context);
   return context;
@@ -309,7 +307,7 @@ void Fl_X11_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    glXMakeCurrent(fl_display, fl_xid(w), context);
+    glXMakeCurrent(fl_display, fl_xid(w), (GLXContext)context);
   }
 }
 
@@ -319,7 +317,7 @@ void Fl_X11_Gl_Window_Driver::delete_gl_context(GLContext context) {
     cached_window = 0;
     glXMakeCurrent(fl_display, 0, 0);
   }
-  glXDestroyContext(fl_display, context);
+  glXDestroyContext(fl_display, (GLXContext)context);
   del_context(context);
 }
 
@@ -393,5 +391,9 @@ void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
 void Fl_X11_Gl_Window_Driver::gl_start() {
   glXWaitX();
 }
+
+
+FL_EXPORT GLXContext fl_x11_glcontext(GLContext rc) { return (GLXContext)rc; }
+
 
 #endif // HAVE_GL

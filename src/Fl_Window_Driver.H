@@ -61,6 +61,8 @@ public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
+  static fl_uintptr_t xid(const Fl_Window *win);
+  static Fl_Window *find(fl_uintptr_t xid);
   int wait_for_expose_value;
   Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
   virtual int screen_num();

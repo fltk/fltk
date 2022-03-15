@@ -48,6 +48,7 @@ CPPFILES_WIN = ExternalCodeEditor_WIN32.cxx
 CPPFILES_OSX = ExternalCodeEditor_UNIX.cxx
 CPPFILES_X11 = ExternalCodeEditor_UNIX.cxx
 CPPFILES_XFT = ExternalCodeEditor_UNIX.cxx
+CPPFILES_CAIRO = ExternalCodeEditor_UNIX.cxx
 CPPFILES_WAYLAND = ExternalCodeEditor_UNIX.cxx
 
 CPPFILES += $(CPPFILES_$(BUILD))

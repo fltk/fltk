@@ -149,8 +149,9 @@ void Fl_Wayland_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
 }
 
 
-void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
+void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen src, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
+  struct fl_wld_buffer *osrc = (struct fl_wld_buffer *)src;
   int height = osrc->data_size / osrc->stride;
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);

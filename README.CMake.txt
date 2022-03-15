@@ -126,7 +126,8 @@ FLTK_BUILD_EXAMPLES - default OFF
    Builds the example programs in the 'examples' directory.
 
 OPTION_CAIRO - default OFF
-   Enables libcairo support - see README.Cairo.txt.
+   Enables support of class Fl_Cairo_Window (all platforms, requires the
+   Cairo library) - see README.Cairo.txt.
 
 OPTION_CAIROEXT - default OFF
    Enables extended libcairo support - see README.Cairo.txt.
@@ -148,7 +149,7 @@ OPTION_USE_SYSTEM_ZLIB    - default ON
    any of these options to OFF, then the built in library will be used.
 
 OPTION_USE_SVG - default ON
-   FLTK has a built in SVG library and can create (write) SVG image files.
+   FLTK has a built-in SVG library and can create (write) SVG image files.
    Turning this option off disables SVG (read and write) support.
 
 OPTION_USE_XINERAMA - default ON
@@ -158,14 +159,21 @@ OPTION_USE_XRENDER  - default ON
    These are X11 extended libraries. These libs are used if found on the
    build system unless the respective option is turned off.
 
+OPTION_USE_CAIRO - default OFF
+   Makes all drawing operations use the Cairo library (rather than Xlib)
+   producing antialiased graphics (X11 platform, implies OPTION_USE_PANGO).
+
 OPTION_USE_PANGO - default OFF
    Enables use of the Pango library for drawing text. Pango supports all
    unicode-defined scripts with limited support of right-to-left scripts.
    This option makes sense only under X11, and also requires Xft.
 
 OPTION_USE_WAYLAND - default OFF
-   Enables use of the Wayland system for all window operations.
-   This option requires a Wayland-equipped system, i.e., Linux or FreeBSD.
+   Enables the use of Wayland for all window operations, of Cairo for all
+   graphics and of Pango for text drawing (Linux only). Resulting FLTK
+   apps use Wayland when a Wayland compositor is available at run-time,
+   and use X11 for their window operations otherwise, but keep using
+   Cairo and Pango - see README.Wayland.txt.
 
 OPTION_ABI_VERSION - default EMPTY
    Use a numeric value corresponding to the FLTK ABI version you want to
@@ -182,6 +190,9 @@ OPTION_PRINT_SUPPORT - default ON
    is somewhat smaller. This option makes sense only on the Unix/Linux
    platform or when OPTION_APPLE_X11 is ON.
 
+OPTION_USE_GDIPLUS - default ON
+   Makes FLTK use GDI+ to draw oblique lines and curves resulting in
+   antialiased graphics (Windows platform only).
 
 Documentation options: these options are only available if `doxygen' is
    installed and found by CMake. PDF related options require also `latex'.

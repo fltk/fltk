@@ -24,7 +24,7 @@ FL_ABI_VERSION		= @FL_ABI_VERSION@
 
 FLTK_VERSION		= @FLTK_VERSION@
 
-# FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT | WAYLAND }
+# FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT | CAIROXLIB | WAYLAND }
 
 BUILD		= @BUILD@
 UNAME            = @UNAME@

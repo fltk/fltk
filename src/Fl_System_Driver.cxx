@@ -83,11 +83,30 @@ static Fl_System_Driver::Keyname default_key_table[] = {
   {FL_Delete,     "Delete"}
 };
 
+
+int Fl_System_Driver::command_key = 0;
+int Fl_System_Driver::control_key = 0;
+
+
+int fl_command_modifier() {
+  if (!Fl_System_Driver::command_key) Fl::system_driver();
+  return Fl_System_Driver::command_key;
+}
+
+
+int fl_control_modifier() {
+  if (!Fl_System_Driver::control_key) Fl::system_driver();
+  return Fl_System_Driver::control_key;
+}
+
+
 Fl_System_Driver::Fl_System_Driver()
 {
   // initialize default key table (used in fl_shortcut.cxx)
   key_table = default_key_table;
   key_table_size = sizeof(default_key_table)/sizeof(*default_key_table);
+  command_key = FL_CTRL;
+  control_key = FL_META;
 }
 
 Fl_System_Driver::~Fl_System_Driver()

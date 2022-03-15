@@ -187,8 +187,9 @@ public:
    and may be followed by adequate attribute values.
    */
   int mode(const int *a) {return mode(0, a);}
-  /** Returns a pointer to the GLContext that this window is using.
-   \see void context(GLContext c, int destroy_flag) */
+  /** Returns a pointer to the window's OpenGL rendering context.
+   \see void context(GLContext c, int destroy_flag)
+  */
   GLContext context() const {return context_;}
   void context(GLContext, int destroy_flag = 0);
   void make_current();

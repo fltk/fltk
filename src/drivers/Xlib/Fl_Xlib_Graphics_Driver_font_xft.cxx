@@ -720,7 +720,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
-  Region region = fl_clip_region();
+  Region region = (Region)fl_clip_region();
   if (!(region && XEmptyRegion(region))) {
     XftDrawSetClip(draw_, region);
 
@@ -756,7 +756,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
-  Region region = fl_clip_region();
+  Region region = (Region)fl_clip_region();
   if (region && XEmptyRegion(region)) return;
   XftDrawSetClip(draw_, region);
 
@@ -1192,7 +1192,7 @@ static void fl_pango_layout_get_pixel_extents(PangoLayout *layout, int &dx, int 
 
 void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, int x, int y) {
   if (!fl_display || n == 0) return;
-  Region region = clip_region();
+  Region region = (Region)clip_region();
   if (region && XEmptyRegion(region)) return;
   if (!playout_) context();
 

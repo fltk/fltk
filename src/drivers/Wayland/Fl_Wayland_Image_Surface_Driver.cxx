@@ -33,12 +33,13 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
       w = int(w*d);
       h = int(h*d);
     }
-    offscreen = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
-    offscreen->stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w);
-    offscreen->data_size = offscreen->stride * h;
-    offscreen->draw_buffer = (uchar*)malloc(offscreen->data_size);
-    offscreen->width = w;
-    Fl_Wayland_Graphics_Driver::cairo_init(offscreen, w, h, offscreen->stride, CAIRO_FORMAT_RGB24);
+    struct fl_wld_buffer *off_ = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
+    off_->stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w);
+    off_->data_size = off_->stride * h;
+    off_->draw_buffer = (uchar*)malloc(off_->data_size);
+    off_->width = w;
+    offscreen = (Fl_Offscreen)off_;
+    Fl_Wayland_Graphics_Driver::cairo_init(off_, w, h, off_->stride, CAIRO_FORMAT_RGB24);
   }
   driver(new Fl_Wayland_Graphics_Driver());
   if (d != 1 && high_res) driver()->scale(d);
@@ -47,24 +48,24 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
 
 Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) {
-    cairo_destroy(offscreen->cairo_);
-    free(offscreen->draw_buffer);
-    free(offscreen);
+    cairo_destroy(((struct fl_wld_buffer *)offscreen)->cairo_);
+    free(((struct fl_wld_buffer *)offscreen)->draw_buffer);
+    free((struct fl_wld_buffer *)offscreen);
   }
   delete driver();
 }
 
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
-  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(offscreen);
+  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer((struct fl_wld_buffer*)offscreen);
   pre_window = Fl_Wayland_Window_Driver::wld_window;
-  fl_window = Fl_Wayland_Window_Driver::wld_window = NULL;
+  Fl_Wayland_Window_Driver::wld_window = NULL;
 }
 
 void Fl_Wayland_Image_Surface_Driver::end_current() {
-  cairo_surface_t *surf = cairo_get_target(offscreen->cairo_);
+  cairo_surface_t *surf = cairo_get_target(((struct fl_wld_buffer *)offscreen)->cairo_);
   cairo_surface_flush(surf);
-  fl_window = Fl_Wayland_Window_Driver::wld_window = pre_window;
+  Fl_Wayland_Window_Driver::wld_window = pre_window;
 }
 
 void Fl_Wayland_Image_Surface_Driver::translate(int x, int y) {
@@ -77,20 +78,20 @@ void Fl_Wayland_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_Wayland_Image_Surface_Driver::image() {
   // Convert depth-4 image in draw_buffer to a depth-3 image while exchanging R and B colors
-  int height = offscreen->data_size / offscreen->stride;
-  uchar *rgb = new uchar[offscreen->width * height * 3];
+  int height = ((struct fl_wld_buffer *)offscreen)->data_size / ((struct fl_wld_buffer *)offscreen)->stride;
+  uchar *rgb = new uchar[((struct fl_wld_buffer *)offscreen)->width * height * 3];
   uchar *p = rgb;
   uchar *q;
   for (int j = 0; j < height; j++) {
-    q = offscreen->draw_buffer + j*offscreen->stride;
-    for (int i = 0; i < offscreen->width; i++) { // exchange R and B colors, transmit G
+    q = ((struct fl_wld_buffer *)offscreen)->draw_buffer + j*((struct fl_wld_buffer *)offscreen)->stride;
+    for (int i = 0; i < ((struct fl_wld_buffer *)offscreen)->width; i++) { // exchange R and B colors, transmit G
       *p = *(q+2);
       *(p+1) = *(q+1);
       *(p+2) = *q;
       p += 3; q += 4;
     }
   }
-  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, offscreen->width, height, 3);
+  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, ((struct fl_wld_buffer *)offscreen)->width, height, 3);
   image->alloc_array = 1;
   return image;
 }
