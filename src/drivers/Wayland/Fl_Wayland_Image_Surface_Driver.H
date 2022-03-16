@@ -25,11 +25,10 @@ class Fl_Wayland_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 public:
   Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Wayland_Image_Surface_Driver();
-  void set_current();
-  void end_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
+  virtual void set_current();
+  virtual void translate(int x, int y);
+  virtual void untranslate();
+  virtual Fl_RGB_Image *image();
 };
 
 #endif // FL_WAYLAND_IMAGE_SURFACE_DRIVER_H
