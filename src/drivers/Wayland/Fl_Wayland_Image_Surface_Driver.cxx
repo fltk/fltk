@@ -56,12 +56,14 @@ Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->activate(offscreen, driver()->scale());
+  pre_window = fl_window;
   fl_window = NULL;
 }
 
 void Fl_Wayland_Image_Surface_Driver::end_current() {
   cairo_surface_t *surf = cairo_get_target(offscreen->cairo_);
   cairo_surface_flush(surf);
+  fl_window = pre_window;
 }
 
 void Fl_Wayland_Image_Surface_Driver::translate(int x, int y) {

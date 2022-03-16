@@ -21,10 +21,12 @@
 
 class Fl_Wayland_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current();
+  Window pre_window;
 public:
   Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Wayland_Image_Surface_Driver();
   void set_current();
+  void end_current();
   void translate(int x, int y);
   void untranslate();
   Fl_RGB_Image *image();
