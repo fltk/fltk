@@ -242,29 +242,25 @@ static void pointer_enter(void *data,
         wl_fixed_t surface_x,
         wl_fixed_t surface_y)
 {
-  struct seat *seat = (struct seat*)data;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
-  struct wl_cursor *cursor = NULL;
-  if (win) { // use custom cursor if present
-    Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
+  if (!win) return;
+  Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
+  struct wl_cursor *cursor = driver->cursor(); // use custom cursor if present
+  if (win->parent() && !cursor) {
+    driver = Fl_Wayland_Window_Driver::driver(win->top_window());
     cursor = driver->cursor();
-    if (win->parent() && !cursor) {
-      driver = Fl_Wayland_Window_Driver::driver(win->top_window());
-      cursor = driver->cursor();
-    }
   }
+  struct seat *seat = (struct seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
-  if (win) {
-    float f = Fl::screen_scale(win->screen_num());
-    Fl::e_x = wl_fixed_to_int(surface_x) / f;
-    Fl::e_x_root = Fl::e_x + win->x();
-    Fl::e_y = wl_fixed_to_int(surface_y) / f;
-    Fl::e_y_root = Fl::e_y + win->y();
-    set_event_xy(win);
-    Fl::handle(FL_ENTER, win);
-//fprintf(stderr, "pointer_enter window=%p\n", win);
-  }
+  float f = Fl::screen_scale(win->screen_num());
+  Fl::e_x = wl_fixed_to_int(surface_x) / f;
+  Fl::e_x_root = Fl::e_x + win->x();
+  Fl::e_y = wl_fixed_to_int(surface_y) / f;
+  Fl::e_y_root = Fl::e_y + win->y();
+  set_event_xy(win);
+  Fl::handle(FL_ENTER, win);
+  //fprintf(stderr, "pointer_enter window=%p\n", win);
   seat->pointer_focus = surface;
 }
 
@@ -1391,6 +1387,7 @@ struct wl_cursor *Fl_Wayland_Screen_Driver::default_cursor() {
 
 void Fl_Wayland_Screen_Driver::default_cursor(struct wl_cursor *cursor) {
   seat->default_cursor = cursor;
+  do_set_cursor(seat);
 }
 
 struct wl_cursor *Fl_Wayland_Screen_Driver::cache_cursor(const char *cursor_name) {
