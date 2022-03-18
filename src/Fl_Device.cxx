@@ -62,8 +62,16 @@
 
 /** Make this surface the current drawing surface.
  This surface will receive all future graphics requests.
- \p Starting from FLTK 1.4.0, another convenient API to set/unset the current drawing surface
- is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().*/
+ \p Starting from FLTK 1.4.0, the preferred API to change the current drawing surface
+ is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
+ \note It's recommended to use this function only as follows :
+ \li The current drawing surface is the display;
+ \li make current another surface, e.g., an Fl_Printer or an Fl_Image_Surface object,  calling set_current() on this object;
+ \li draw to that surface;
+ \li make the display current again with Fl_Display_Device::display_device()->set_current();  . Don't do any other call to set_current() before this one.
+ 
+ Other scenarios of drawing surface changes should be performed via Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
+ */
 void Fl_Surface_Device::set_current(void)
 {
   if (surface_) surface_->end_current();
@@ -109,7 +117,11 @@ static Fl_Surface_Device *surface_stack[16];
 
 /** Pushes \p new_current on top of the stack of current drawing surfaces, and makes it current.
  \p new_current will receive all future graphics requests.
- \version 1.4.0 */
+
+ Any call to push_current() must be matched by a subsequent call to Fl_Surface_Device::pop_current().
+ The max height of this stack is 16.
+ \version 1.4.0
+ */
 void Fl_Surface_Device::push_current(Fl_Surface_Device *new_current)
 {
   if (surface_stack_height < sizeof(surface_stack)/sizeof(void*)) {
@@ -122,6 +134,7 @@ void Fl_Surface_Device::push_current(Fl_Surface_Device *new_current)
 
 /** Removes the top element from the current drawing surface stack, and makes the new top element current.
  \return A pointer to the new current drawing surface.
+ \see Fl_Surface_Device::push_current(Fl_Surface_Device *)
  \version 1.4.0 */
 Fl_Surface_Device *Fl_Surface_Device::pop_current()
 {
