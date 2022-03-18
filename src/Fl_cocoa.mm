@@ -535,6 +535,8 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)rightMouseDown:(NSEvent *)theEvent;
 - (void)otherMouseDown:(NSEvent *)theEvent;
 - (void)mouseMoved:(NSEvent *)theEvent;
+- (void)mouseEntered:(NSEvent *)theEvent;
+- (void)mouseExited:(NSEvent *)theEvent;
 - (void)mouseDragged:(NSEvent *)theEvent;
 - (void)rightMouseDragged:(NSEvent *)theEvent;
 - (void)otherMouseDragged:(NSEvent *)theEvent;
@@ -554,6 +556,8 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
 - (NSInteger)windowLevel;
+#else
+- (void)updateTrackingAreas;
 #endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context;
@@ -576,6 +580,15 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 #endif
   [[self standardWindowButton:NSWindowDocumentIconButton] setImage:nil];
   [super close];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  while (fl_mac_os_version >= 100500) {
+    NSArray *a = [[self contentView] trackingAreas];
+    if ([a count] == 0) break;
+    NSTrackingArea *ta = (NSTrackingArea*)[a objectAtIndex:0];
+    [[self contentView] removeTrackingArea:ta];
+  }
+#endif
+  [self release];
   // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
   // and before the FLWindow receives the final dealloc message
   w = NULL;
@@ -1050,6 +1063,12 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       }
       Fl::handle( sendEvent, window );
       }
+      break;
+    case NSMouseEntered :
+      Fl::handle(FL_ENTER, window);
+      break;
+    case NSMouseExited :
+      Fl::handle(FL_LEAVE, window);
       break;
     default:
       break;
@@ -2377,8 +2396,41 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   cocoaMouseHandler(theEvent);
 }
 - (void)mouseMoved:(NSEvent *)theEvent {
+  if (Fl::belowmouse()) cocoaMouseHandler(theEvent);
+}
+- (void)mouseEntered:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
+- (void)mouseExited:(NSEvent *)theEvent {
+  cocoaMouseHandler(theEvent);
+}
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+- (void)updateTrackingAreas {
+  if (fl_mac_os_version >= 100500) {
+    Fl_Window *win = [(FLWindow*)[self window] getFl_Window];
+    if (!win->parent() && !win->menu_window() && !win->tooltip_window() &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      while (true) {
+        NSArray *a = [self trackingAreas]; // 10.5
+        if ([a count] == 0) break;
+        NSTrackingArea *ta = (NSTrackingArea*)[a objectAtIndex:0];
+        [self removeTrackingArea:ta]; // 10.5
+      }
+      NSTrackingArea *tracking = [[[NSTrackingArea alloc] // 10.5
+                               initWithRect:[self frame]
+                               options:NSTrackingActiveAlways |
+                               NSTrackingMouseEnteredAndExited |
+                               NSTrackingMouseMoved
+                               owner:self
+                               userInfo:nil] autorelease];
+      if (tracking) {
+        [self addTrackingArea:tracking]; // 10.5
+      }
+      [super updateTrackingAreas];
+    }
+  }
+}
+#endif
 - (void)mouseDragged:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
@@ -3048,6 +3100,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
                                     contentRect:crect
                                       styleMask:winstyle];
   [cw setFrameOrigin:crect.origin];
+  [cw setReleasedWhenClosed:NO];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
   if (fl_mac_os_version >= 101200) {
     if (!w->parent() && (winstyle & NSTitledWindowMask) && (winstyle & NSResizableWindowMask)
