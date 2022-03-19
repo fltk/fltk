@@ -179,6 +179,7 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_I
     h(copy_source->h());
   }
   rasterized_ = false;
+  raster_w_ = raster_h_ = 0;
 }
 
 
