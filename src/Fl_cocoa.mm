@@ -588,7 +588,6 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     [[self contentView] removeTrackingArea:ta];
   }
 #endif
-  [self release];
   // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
   // and before the FLWindow receives the final dealloc message
   w = NULL;
@@ -3100,7 +3099,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
                                     contentRect:crect
                                       styleMask:winstyle];
   [cw setFrameOrigin:crect.origin];
-  [cw setReleasedWhenClosed:NO];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
   if (fl_mac_os_version >= 101200) {
     if (!w->parent() && (winstyle & NSTitledWindowMask) && (winstyle & NSResizableWindowMask)
