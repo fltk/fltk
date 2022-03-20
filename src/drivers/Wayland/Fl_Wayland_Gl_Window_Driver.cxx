@@ -299,7 +299,7 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface) {
-    //eglSwapInterval(egl_display, 0); // doesn't sem to have any effect in this context
+    //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
     if (!egl_resize_in_progress) {
       while (wl_display_prepare_read(fl_display) != 0) {
         wl_display_dispatch_pending(fl_display);
