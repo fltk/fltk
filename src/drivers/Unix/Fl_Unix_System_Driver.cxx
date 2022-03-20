@@ -837,6 +837,7 @@ int Fl_Unix_System_Driver::poll_or_select() {
 
 double Fl_Unix_System_Driver::wait(double time_to_wait)
 {
+  time_to_wait = Fl_System_Driver::wait(time_to_wait);
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
     int ret = this->poll_or_select_with_delay(0.0);

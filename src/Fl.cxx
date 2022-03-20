@@ -479,29 +479,6 @@ void Fl::run_idle() {
  occurs (this will happen on X11 if a signal happens).
 */
 double Fl::wait(double time_to_wait) {
-
-  // platform independent part:
-
-  // delete all widgets that were listed during callbacks
-  do_widget_deletion();
-
-  Fl_Timeout::do_timeouts(); // execute timer callbacks
-
-  Fl::run_checks();
-
-  Fl::run_idle();
-
-  // the idle function may turn off idle, we can then wait,
-  // or it leaves Fl::idle active and we set time_to_wait to 0
-  if (Fl::idle) {
-    time_to_wait = 0.0;
-  } else {
-    // limit time by next timer interval
-    time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
-  }
-
-  // platform dependent part:
-
   return system_driver()->wait(time_to_wait);
 }
 

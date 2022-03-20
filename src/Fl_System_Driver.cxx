@@ -1,7 +1,7 @@
 //
 // A base class for platform specific system calls.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,7 @@
 
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
+#include "Fl_Timeout.h"
 #include <FL/Fl_File_Icon.H>
 #include <FL/fl_utf8.h>
 #include <stdlib.h>
@@ -500,6 +501,43 @@ void Fl_System_Driver::open_callback(void (*)(const char *)) {
 void Fl_System_Driver::gettime(time_t *sec, int *usec) {
   *sec =  time(NULL);
   *usec = 0;
+}
+
+/**
+  Execute platform independent parts of Fl::wait(double).
+
+  Platform drivers \b MUST override this virtual method to do
+  their own stuff and call this base class method to run
+  the platform independent wait functions.
+ 
+  Overriden methods will typically call this method early and perform
+  platform-specific operations after that in order to work with the
+ \p time_to_wait value possibly modified by this method.
+  However, some platform drivers may need to do extra stuff before
+  calling this method, for instance setting up a memory pool on macOS.
+
+  \param[in] time_to_wait max time to wait
+
+  \return   new (max) time to wait after elapsing timeouts
+*/
+double Fl_System_Driver::wait(double time_to_wait) {
+
+  // delete all widgets that were listed during callbacks
+  Fl::do_widget_deletion();
+
+  Fl_Timeout::do_timeouts();
+  Fl::run_checks();
+  Fl::run_idle();
+
+  // the idle function may turn off idle, we can then wait,
+  // or it leaves Fl::idle active and we set time_to_wait to 0
+  if (Fl::idle) {
+    time_to_wait = 0.0;
+  } else {
+    // limit time by next timer interval
+    time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
+  }
+  return time_to_wait;
 }
 
 /**

@@ -792,6 +792,9 @@ double Fl_Darwin_System_Driver::wait(double time_to_wait)
     drain_dropped_files_list();
   }
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  time_to_wait = Fl_System_Driver::wait(time_to_wait);
+
   if (fl_mac_os_version < 101100) NSDisableScreenUpdates(); // 10.3 Makes updates to all windows appear as a single event
   Fl::flush();
   if (fl_mac_os_version < 101100) NSEnableScreenUpdates(); // 10.3

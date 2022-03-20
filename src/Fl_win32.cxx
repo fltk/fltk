@@ -417,6 +417,8 @@ static void process_awake_handler_requests(void) {
 // always returns 1.
 double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
 
+  time_to_wait = Fl_System_Driver::wait(time_to_wait);
+
   int have_message = 0;
 
   if (nfds) {

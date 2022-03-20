@@ -2,7 +2,7 @@
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -241,7 +241,7 @@ public:
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
   virtual void lock_ring() {}
   virtual void unlock_ring() {}
-  virtual double wait(double) { return 0.0; } // must override
+  virtual double wait(double);                             // must override
   virtual int ready() { return 0; }                        // must override
 };
 
