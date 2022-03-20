@@ -80,8 +80,7 @@ Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,     // I - Image to tile
 Fl_Image *                      // O - New image
 Fl_Tiled_Image::copy(int W,     // I - New width
                      int H) {   // I - New height
-  if (W == w() && H == h()) return this;
-  else return new Fl_Tiled_Image(image_, W, H);
+  return new Fl_Tiled_Image(image_, W, H);
 }
 
 
