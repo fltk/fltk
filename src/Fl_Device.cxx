@@ -1,7 +1,7 @@
 //
 // implementation of classes Fl_Surface_Device and Fl_Display_Device for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,13 +50,16 @@
       |
       +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
       +- Fl_SVG_Graphics_Driver: platform-independent graphics driver for Scalable Vector Graphics drawing
-      +- Fl_..._Graphics_Driver: platform-specific graphics driver (MacOS)
+      +- Fl_Quartz_Graphics_Driver: platform-specific graphics driver (MacOS)
           +- Fl_Quartz_Printer_Graphics_Driver: MacOS-specific, for drawing to printers
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
           +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
               +- Fl_GDI_Printer_Graphics_Driver: re-implements a few member functions especially for output to printer
-      +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window (only very partial implementation)
+      +- Fl_Cairo_Graphics_Driver: for X11+Pango (PostScript) and Wayland platforms
+          +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
+          +- Fl_PostScript_Graphics_Driver: for PostScript drawing with X11+Pango platform
+      +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window (only partial implementation)
 
 */
 
