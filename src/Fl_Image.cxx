@@ -76,10 +76,17 @@ void Fl_Image::draw_empty(int X, int Y) {
 }
 
 /**
-Creates a resized copy of the specified image.
-The image should be deleted (or in the case of Fl_Shared_Image, released)
-when you are done with it.
- \param W,H  width and height of the returned copied image
+  Creates a resized copy of the specified image.
+  The image should be released when you are done with it.
+
+    Note: since FLTK 1.4.0 you can use Fl_Image::release() for
+    all types of images (i.e. all subclasses of Fl_Image) instead
+    of operator \em delete for Fl_Image's and release() for
+    Fl_Shared_Image's.
+
+  \see Fl_Image::release()
+
+  \param[in] W,H  Requested width and height of the copied image
 */
 Fl_Image *Fl_Image::copy(int W, int H) {
   return new Fl_Image(W, H, d());

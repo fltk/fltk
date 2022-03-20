@@ -236,10 +236,17 @@ public:
   virtual ~Fl_Image();
   virtual Fl_Image *copy(int W, int H);
   /**
-   Creates a copy of the specified image.
-   The image should be deleted (or in the case of Fl_Shared_Image, released)
-   when you are done with it.
-   */
+    Creates a copy of the specified image.
+    The image should be released when you are done with it.
+
+    Note: since FLTK 1.4.0 you can use Fl_Image::release() for
+    all types of images (i.e. all subclasses of Fl_Image) instead
+    of operator \em delete for Fl_Image's and release() for
+    Fl_Shared_Image's.
+
+    \see Fl_Image::release()
+    \see Fl_Image::copy(int w, int h)
+  */
   Fl_Image *copy() { Fl_Image *img = copy(data_w(), data_h()); img->scale(w(), h(), 0, 1); return img;}
   virtual void color_average(Fl_Color c, float i);
   /**
