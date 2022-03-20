@@ -1,7 +1,7 @@
 //
 // Tiled image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,9 +77,9 @@ Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,     // I - Image to tile
 // 'Fl_Tiled_Image::copy()' - Copy and resize a tiled image...
 //
 
-Fl_Image *                      // O - New image
-Fl_Tiled_Image::copy(int W,     // I - New width
-                     int H) {   // I - New height
+Fl_Image *                            // O - New image
+Fl_Tiled_Image::copy(int W,           // I - New width
+                     int H) const {   // I - New height
   return new Fl_Tiled_Image(image_, W, H);
 }
 

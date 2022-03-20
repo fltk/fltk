@@ -64,7 +64,7 @@ Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *svg_data) : Fl_RGB_
 
 
 // private constructor
-Fl_SVG_Image::Fl_SVG_Image(Fl_SVG_Image *source) : Fl_RGB_Image(NULL, 0, 0, 4) {
+Fl_SVG_Image::Fl_SVG_Image(const Fl_SVG_Image *source) : Fl_RGB_Image(NULL, 0, 0, 4) {
   init_(NULL, NULL, source);
 }
 
@@ -124,7 +124,7 @@ static char *svg_inflate(const char *fname) {
 }
 #endif
 
-void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_Image *copy_source) {
+void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, const Fl_SVG_Image *copy_source) {
   if (copy_source) {
     filename = in_filedata = NULL;
     counted_svg_image_ = copy_source->counted_svg_image_;
@@ -206,7 +206,7 @@ void Fl_SVG_Image::rasterize_(int W, int H) {
 }
 
 
-Fl_Image *Fl_SVG_Image::copy(int W, int H) {
+Fl_Image *Fl_SVG_Image::copy(int W, int H) const {
   Fl_SVG_Image *svg2 = new Fl_SVG_Image(this);
   svg2->to_desaturate_ = to_desaturate_;
   svg2->average_weight_ = average_weight_;

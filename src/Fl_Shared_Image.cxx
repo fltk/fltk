@@ -300,7 +300,7 @@ void Fl_Shared_Image::reload() {
 // For doxygen docs see Fl_Image::copy().
 
 Fl_Image *
-Fl_Shared_Image::copy(int W, int H) {
+Fl_Shared_Image::copy(int W, int H) const {
   Fl_Image              *temp_image;    // New image file
   Fl_Shared_Image       *temp_shared;   // New shared image
 

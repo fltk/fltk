@@ -40,8 +40,10 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   Fl_Tiled_Image(Fl_Image *i, int W = 0, int H = 0);
   virtual ~Fl_Tiled_Image();
 
-  virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return Fl_Image::copy(); }
+  virtual Fl_Image *copy(int W, int H) const;
+  Fl_Image *copy() const {
+    return Fl_Image::copy();
+  }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);

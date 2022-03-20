@@ -145,8 +145,10 @@ public:
     return this;
   }
 
-  virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return Fl_Image::copy(); }
+  virtual Fl_Image *copy(int W, int H) const;
+  Fl_Image *copy() const {
+    return Fl_Image::copy();
+  }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);

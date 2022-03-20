@@ -234,7 +234,7 @@ public:
 
   Fl_Image(int W, int H, int D);
   virtual ~Fl_Image();
-  virtual Fl_Image *copy(int W, int H);
+  virtual Fl_Image *copy(int W, int H) const;
   /**
     Creates a copy of the specified image.
     The image should be released when you are done with it.
@@ -247,7 +247,7 @@ public:
     \see Fl_Image::release()
     \see Fl_Image::copy(int w, int h)
   */
-  Fl_Image *copy() { return copy(w(), h()); }
+  Fl_Image *copy() const { return copy(w(), h()); }
   virtual void color_average(Fl_Color c, float i);
   /**
    The inactive() method calls
@@ -340,8 +340,8 @@ public:
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);
   Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg=FL_GRAY);
   virtual ~Fl_RGB_Image();
-  virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return Fl_Image::copy(); }
+  virtual Fl_Image *copy(int W, int H) const;
+  Fl_Image *copy() const { return Fl_Image::copy(); }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);

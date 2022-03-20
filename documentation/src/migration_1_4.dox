@@ -73,6 +73,26 @@ file from its old location to the new location as documented in
 Fl_Preferences::Fl_Preferences(Root, const char*, const char*) .
 
 
+\section migration_1_4_copy_image Fl_Image::copy() 'const'
+
+Since FLTK 1.4.0 the virtual method Fl_Image::copy() has been declared
+'const' so read-only ('const') images can be copied w/o casts.
+
+This will very likely not affect user code. However, if you derived your
+own class from any of the Fl_*_Image variants \b and you overrode
+'Your'_Image::copy() then you must declare this 'const' as well, i.e.
+you must add the keyword 'const' to your declaration of copy() in your
+header file and the implementation.
+
+Code example in header file:
+\code
+  class Your_Image {
+    // ...
+    copy() const;
+    copy(int w, int h) const;
+  };
+
+
 \htmlonly
 <hr>
 <table summary="navigation bar" width="100%" border="0">

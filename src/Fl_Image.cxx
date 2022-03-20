@@ -88,7 +88,7 @@ void Fl_Image::draw_empty(int X, int Y) {
 
   \param[in] W,H  Requested width and height of the copied image
 */
-Fl_Image *Fl_Image::copy(int W, int H) {
+Fl_Image *Fl_Image::copy(int W, int H) const {
   return new Fl_Image(W, H, d());
 }
 
@@ -401,7 +401,7 @@ void Fl_RGB_Image::uncache() {
   Fl_Graphics_Driver::default_driver().uncache(this, id_, mask_);
 }
 
-Fl_Image *Fl_RGB_Image::copy(int W, int H) {
+Fl_Image *Fl_RGB_Image::copy(int W, int H) const {
   Fl_RGB_Image  *new_image;     // New RGB image
   uchar         *new_array;     // New array for image data
 
