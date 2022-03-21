@@ -47,10 +47,12 @@ static void get_ms_errmsg(char *errmsg, int errmsg_sz) {
   if ( msize == 0 ) {
     fl_snprintf(errmsg, errmsg_sz, "Error #%lu", (unsigned long)lastErr);
   } else {
+    char *src;
+    char *dst;
     /* convert message to UTF-8 */
     fl_utf8fromwc(errmsg, errmsg_sz, mbuf, msize);
     /* Remove '\r's -- they screw up fl_alert()) */
-    char *src = errmsg, *dst = errmsg;
+    src = dst = errmsg;
     for ( ; 1; src++ ) {
       if ( *src == '\0' ) { *dst = '\0'; break; }
       if ( *src != '\r' ) { *dst++ = *src; }
