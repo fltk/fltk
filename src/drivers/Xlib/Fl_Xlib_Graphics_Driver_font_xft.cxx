@@ -1321,11 +1321,11 @@ int Fl_Xlib_Graphics_Driver::descent_unscaled() {
 static int font_name_process(const char *name, char &face) {
   int l = strlen(name);
   face = ' ';
-  if (!memcmp(name + l - 8, " Regular", 8)) l -= 8;
-  else if (!memcmp(name + l - 6, " Plain", 6)) l -= 6;
-  else if (!memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face='P';}
-  else if (!memcmp(name + l - 7, " Italic", 7)) {l -= 7; face='I';}
-  else if (!memcmp(name + l - 5, " Bold", 5)) {l -= 5; face='B';}
+  if (l > 8 && !memcmp(name + l - 8, " Regular", 8)) l -= 8;
+  else if (l > 6 && !memcmp(name + l - 6, " Plain", 6)) l -= 6;
+  else if (l > 12 && !memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face='P';}
+  else if (l > 7 && !memcmp(name + l - 7, " Italic", 7)) {l -= 7; face='I';}
+  else if (l > 5 && !memcmp(name + l - 5, " Bold", 5)) {l -= 5; face='B';}
   return l;
 }
 
