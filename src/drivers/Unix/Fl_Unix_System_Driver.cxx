@@ -2,7 +2,7 @@
 // Definition of Unix/Linux system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -924,7 +924,7 @@ unsigned char *Fl_Unix_System_Driver::create_bmp(const unsigned char *data, int 
 }
 
 
-static void read_int(uchar *c, int& i) {
+void Fl_Unix_System_Driver::read_int(uchar *c, int& i) {
   i = *c;
   i |= (*(++c))<<8;
   i |= (*(++c))<<16;

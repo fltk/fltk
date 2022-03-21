@@ -70,39 +70,6 @@ extern "C" {
 #endif
 
 
-// Find a program in the path...
-static char *path_find(const char *program, char *filename, int filesize) {
-  const char    *path;                  // Search path
-  char          *ptr,                   // Pointer into filename
-                *end;                   // End of filename buffer
-
-
-  if ((path = fl_getenv("PATH")) == NULL) path = "/bin:/usr/bin";
-
-  for (ptr = filename, end = filename + filesize - 1; *path; path ++) {
-    if (*path == ':') {
-      if (ptr > filename && ptr[-1] != '/' && ptr < end) *ptr++ = '/';
-
-      strlcpy(ptr, program, end - ptr + 1);
-
-      if (!access(filename, X_OK)) return filename;
-
-      ptr = filename;
-    } else if (ptr < end) *ptr++ = *path;
-  }
-
-  if (ptr > filename) {
-    if (ptr[-1] != '/' && ptr < end) *ptr++ = '/';
-
-    strlcpy(ptr, program, end - ptr + 1);
-
-    if (!access(filename, X_OK)) return filename;
-  }
-
-  return 0;
-}
-
-
 void Fl_X11_System_Driver::display_arg(const char *arg) {
   Fl::display(arg);
 }

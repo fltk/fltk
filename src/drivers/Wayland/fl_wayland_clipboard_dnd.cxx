@@ -481,14 +481,6 @@ static const struct wl_data_device_listener data_device_listener = {
 const struct wl_data_device_listener *Fl_Wayland_Screen_Driver::p_data_device_listener = &data_device_listener;
 
 
-static void read_int(uchar *c, int& i) {
-  i = *c;
-  i |= (*(++c))<<8;
-  i |= (*(++c))<<16;
-  i |= (*(++c))<<24;
-}
-
-
 // Reads from the clipboard an image which can be in image/bmp or image/png MIME type.
 // Returns 0 if OK, != 0 if error.
 static int get_clipboard_image() {
@@ -530,8 +522,8 @@ static int get_clipboard_image() {
     ssize_t n = read(fds[0], buf, sizeof(buf)); // read size info of the BMP image
     if (n == sizeof(buf)) {
       int w, h; // size of the BMP image
-      read_int(buf + 18, w);
-      read_int(buf + 22, h);
+      Fl_Unix_System_Driver::read_int(buf + 18, w);
+      Fl_Unix_System_Driver::read_int(buf + 22, h);
       int R = ((3*w+3)/4) * 4; // the number of bytes per row of BMP image, rounded up to multiple of 4
       bmp = new char[R * h + 54];
       memcpy(bmp, buf, 54);

@@ -677,13 +677,6 @@ const char * fl_selection_type[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2] = {0,0};
 
-static void read_int(uchar *c, int& i) {
-  i = *c;
-  i |= (*(++c))<<8;
-  i |= (*(++c))<<16;
-  i |= (*(++c))<<24;
-}
-
 
 // Call this when a "paste" operation happens:
 void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
@@ -835,22 +828,6 @@ void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const
   fl_selection_type[clipboard] = Fl::clipboard_plain_text;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
   XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
-}
-
-static void write_short(unsigned char **cp, short i) {
-  unsigned char *c = *cp;
-  *c++ = i & 0xFF; i >>= 8;
-  *c++ = i & 0xFF;
-  *cp = c;
-}
-
-static void write_int(unsigned char **cp, int i) {
-  unsigned char *c = *cp;
-  *c++ = i & 0xFF; i >>= 8;
-  *c++ = i & 0xFF; i >>= 8;
-  *c++ = i & 0xFF; i >>= 8;
-  *c++ = i & 0xFF;
-  *cp = c;
 }
 
 
