@@ -1,7 +1,7 @@
 //
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,7 +51,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   font_descriptor_ = NULL;
   scale_ = 1;
   p_size = 0;
-  p = NULL;
+  xpoint = NULL;
 };
 
 /** Return the graphics driver used when drawing to the platform's display */
@@ -526,13 +526,13 @@ void Fl_Graphics_Driver::end_points() {}
 void Fl_Graphics_Driver::end_line() {}
 
 void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+  while (n>2 && xpoint[n-1].x == xpoint[0].x && xpoint[n-1].y == xpoint[0].y) n--;
 }
 
 /** see fl_end_loop() */
 void Fl_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((float)p[0].x, (float)p[0].y);
+  if (n>2) transformed_vertex((float)xpoint[0].x, (float)xpoint[0].y);
   end_line();
 }
 
@@ -544,9 +544,9 @@ void Fl_Graphics_Driver::end_complex_polygon() {}
 
 /** see fl_gap() */
 void Fl_Graphics_Driver::gap() {
-  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
+  while (n>gap_+2 && xpoint[n-1].x == xpoint[gap_].x && xpoint[n-1].y == xpoint[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex((float)p[gap_].x, (float)p[gap_].y);
+    transformed_vertex(xpoint[gap_].x, xpoint[gap_].y);
     gap_ = n;
   } else {
     n = gap_;
@@ -667,13 +667,13 @@ float Fl_Graphics_Driver::override_scale() { return scale();}
 void Fl_Graphics_Driver::restore_scale(float) { }
 
 void Fl_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
+  if (!n || x != xpoint[n-1].x || y != xpoint[n-1].y) {
     if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
+      p_size = xpoint ? 2*p_size : 16;
+      xpoint = (XPOINT*)realloc((void*)xpoint, p_size*sizeof(*xpoint));
     }
-    p[n].x = x;
-    p[n].y = y;
+    xpoint[n].x = x;
+    xpoint[n].y = y;
     n++;
   }
 }

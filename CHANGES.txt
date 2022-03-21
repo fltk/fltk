@@ -17,7 +17,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
 
   New Features and Extensions
 
-  - FLTK 1.4 introduces a new platform, Wayland, available for recent Unix
+  - FLTK 1.4 introduces a new platform, Wayland, available for recent Linux
     distributions. More information in README.Wayland.txt
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
@@ -224,7 +224,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Fixed crash for very small Fl_Color_Chooser (STR #3490).
   - Removed all shadow lint in header files (STR #2714).
   - Fixed pulldown menu position when at the bottom of the screen (STR #2880).
-  - Fixed missing item handling in Fl_Chekc_Browser (STR #3480).
+  - Fixed missing item handling in Fl_Check_Browser (STR #3480).
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
   - Reorganized Fluid Template feature (STR #3336).
   - Updated Fluid documentation and image (STR #3328).

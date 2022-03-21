@@ -1,7 +1,7 @@
 //
 // Implementation of classes Fl_SVG_Graphics_Driver and Fl_SVG_File_Surface in the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2020 by Bill Spitzak and others.
+// Copyright 2020-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -137,7 +137,6 @@ Fl_SVG_Graphics_Driver::Fl_SVG_Graphics_Driver(FILE *f) {
   user_dash_array_ = 0;
   dasharray_ = fl_strdup("none");
   p_size = 0;
-  p = NULL;
   last_rgb_name_ = NULL;
 }
 
@@ -856,7 +855,7 @@ void Fl_SVG_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2
 void Fl_SVG_Graphics_Driver::end_points() {
   for (int i=0; i<n; i++) {
     fprintf(out_, "<path d=\"M %f %f L %f %f\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" />\n",
-        p[i].x, p[i].y, p[i].x, p[i].y, red_, green_, blue_, width_);
+            xpoint[i].x, xpoint[i].y, xpoint[i].x, xpoint[i].y, red_, green_, blue_, width_);
   }
 }
 
@@ -866,9 +865,9 @@ void Fl_SVG_Graphics_Driver::end_line() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", p[0].x, p[0].y);
+  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", p[i].x, p[i].y);
+    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, "\" fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\" stroke-linecap=\"%s\" stroke-linejoin=\"%s\" />\n",
           red_, green_, blue_, width_, dasharray_, linecap_, linejoin_);
 }
@@ -880,9 +879,9 @@ void Fl_SVG_Graphics_Driver::end_polygon() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", p[0].x, p[0].y);
+  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", p[i].x, p[i].y);
+    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 
@@ -910,9 +909,9 @@ void Fl_SVG_Graphics_Driver::end_complex_polygon() {
     return;
   }
   if (n<=1) return;
-  fprintf(out_, "<path d=\"M %f %f", p[0].x, p[0].y);
+  fprintf(out_, "<path d=\"M %f %f", xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    fprintf(out_, " L %f %f", p[i].x, p[i].y);
+    fprintf(out_, " L %f %f", xpoint[i].x, xpoint[i].y);
   fprintf(out_, " z\" fill=\"rgb(%u,%u,%u)\" />\n", red_, green_, blue_);
 }
 

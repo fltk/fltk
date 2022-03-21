@@ -2,7 +2,7 @@
 // Declaration of classes Fl_Graphics_Driver, Fl_Scalable_Graphics_Driver,
 // and Fl_Font_Descriptor for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -175,7 +175,7 @@ protected:
   Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
   int p_size;
   typedef struct { float x; float y; } XPOINT;
-  XPOINT *p;
+  XPOINT *xpoint;
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }

@@ -405,7 +405,6 @@ static void fl_new_ic()
                           NULL);
   } else {
     fl_is_over_the_spot = 1;
-    XVaNestedList status_attr = NULL;
     status_attr = XVaCreateNestedList(0, XNAreaNeeded, &status_area, NULL);
 
     XGetICValues(fl_xim_ic, XNStatusAttributes, status_attr, NULL);

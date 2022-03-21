@@ -1,7 +1,7 @@
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,7 +29,7 @@
 
 void Fl_Quartz_Graphics_Driver::end_points() {
   for (int i = 0; i < n; i++) {
-    point(p[i].x, p[i].y);
+    point(xpoint[i].x, xpoint[i].y);
   }
 }
 
@@ -40,9 +40,9 @@ void Fl_Quartz_Graphics_Driver::end_line() {
   }
   if (n<=1) return;
   CGContextSetShouldAntialias(gc_, true);
-  CGContextMoveToPoint(gc_, p[0].x, p[0].y);
+  CGContextMoveToPoint(gc_, xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
+    CGContextAddLineToPoint(gc_, xpoint[i].x, xpoint[i].y);
   CGContextStrokePath(gc_);
   CGContextSetShouldAntialias(gc_, false);
 }
@@ -55,9 +55,9 @@ void Fl_Quartz_Graphics_Driver::end_polygon() {
   }
   if (n<=1) return;
   CGContextSetShouldAntialias(gc_, true);
-  CGContextMoveToPoint(gc_, p[0].x, p[0].y);
+  CGContextMoveToPoint(gc_, xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
+    CGContextAddLineToPoint(gc_, xpoint[i].x, xpoint[i].y);
   CGContextClosePath(gc_);
   CGContextFillPath(gc_);
   CGContextSetShouldAntialias(gc_, false);
@@ -71,9 +71,9 @@ void Fl_Quartz_Graphics_Driver::end_complex_polygon() {
   }
   if (n<=1) return;
   CGContextSetShouldAntialias(gc_, true);
-  CGContextMoveToPoint(gc_, p[0].x, p[0].y);
+  CGContextMoveToPoint(gc_, xpoint[0].x, xpoint[0].y);
   for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
+    CGContextAddLineToPoint(gc_, xpoint[i].x, xpoint[i].y);
   CGContextClosePath(gc_);
   CGContextFillPath(gc_);
   CGContextSetShouldAntialias(gc_, false);

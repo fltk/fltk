@@ -2,7 +2,7 @@
 // Definition of Apple Quartz graphics driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -59,7 +59,7 @@ protected:
   virtual void cache_size(Fl_Image* img, int &width, int &height);
 public:
   Fl_Quartz_Graphics_Driver();
-  virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
+  virtual ~Fl_Quartz_Graphics_Driver() { if (xpoint) free(xpoint); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) { gc_ = (CGContextRef)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
