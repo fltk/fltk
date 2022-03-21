@@ -4665,6 +4665,12 @@ void Fl_Cocoa_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int coun
   }
 }
 
+
+fl_uintptr_t Fl_Cocoa_Window_Driver::os_id() {
+  return [fl_xid(pWindow) windowNumber];
+}
+
+
 // Deprecated in 1.4 - only for backward compatibility with 1.3
 void Fl::insertion_point_location(int x, int y, int height) {
   Fl_Cocoa_Screen_Driver::insertion_point_location(x, y, height);

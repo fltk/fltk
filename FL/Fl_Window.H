@@ -556,6 +556,7 @@ public:
   int screen_num();
   void screen_num(int screen_num);
   static bool is_a_rescale();
+  fl_uintptr_t os_id();
 };
 
 #endif

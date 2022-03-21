@@ -1,7 +1,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -518,4 +518,10 @@ int Fl_X11_Window_Driver::screen_num() {
   }
   return screen_num_ >= 0 ? screen_num_ : 0;
 }
+
+
+fl_uintptr_t Fl_X11_Window_Driver::os_id() {
+  return fl_xid(pWindow);
+}
+
 #endif // USE_XFT
