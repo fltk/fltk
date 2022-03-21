@@ -243,7 +243,7 @@ protected:
   void cache_size_finalize(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
-  virtual ~Fl_Graphics_Driver() {} ///< Destructor
+  virtual ~Fl_Graphics_Driver();
   static Fl_Graphics_Driver &default_driver();
   /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
   float scale() { return scale_; }

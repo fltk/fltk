@@ -1,7 +1,7 @@
 //
 // Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -96,8 +96,7 @@ private:
   static GC gc_;
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  typedef struct {short x, y;} XPOINT;
-  XPOINT *p;
+  XPoint *short_point;
 #if USE_XFT
   static Window draw_window;
   static struct _XftDraw* draw_;

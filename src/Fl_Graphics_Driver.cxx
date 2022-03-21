@@ -54,6 +54,12 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   xpoint = NULL;
 };
 
+/** Destructor */
+Fl_Graphics_Driver::~Fl_Graphics_Driver() {
+  if (xpoint) free(xpoint);
+}
+
+
 /** Return the graphics driver used when drawing to the platform's display */
 Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
 {
@@ -532,7 +538,7 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 /** see fl_end_loop() */
 void Fl_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((float)xpoint[0].x, (float)xpoint[0].y);
+  if (n>2) transformed_vertex(xpoint[0].x, xpoint[0].y);
   end_line();
 }
 

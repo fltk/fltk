@@ -1,7 +1,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -74,6 +74,19 @@ static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
  Fl_Surface_Device::surface()->driver()->gc().
  */
 HDC fl_gc = 0;
+
+Fl_GDI_Graphics_Driver::Fl_GDI_Graphics_Driver() {
+  mask_bitmap_ = NULL;
+  gc_ = NULL;
+  long_point = NULL;
+  depth = -1;
+  origins = NULL;
+}
+
+Fl_GDI_Graphics_Driver::~Fl_GDI_Graphics_Driver() {
+  if (long_point) free(long_point);
+  delete[] origins;
+}
 
 void Fl_GDI_Graphics_Driver::global_gc()
 {
@@ -204,19 +217,19 @@ void Fl_GDI_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, 
 }
 
 void Fl_GDI_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
+  if (!n || x != long_point[n-1].x || y != long_point[n-1].y) {
     if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (POINT*)realloc((void*)p, p_size*sizeof(*p));
+      p_size = long_point ? 2*p_size : 16;
+      long_point = (POINT*)realloc((void*)long_point, p_size*sizeof(*long_point));
     }
-    p[n].x = int(x);
-    p[n].y = int(y);
+    long_point[n].x = LONG(x);
+    long_point[n].y = LONG(y);
     n++;
   }
 }
 
 void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+  while (n>2 && long_point[n-1].x == long_point[0].x && long_point[n-1].y == long_point[0].y) n--;
 }
 
 Fl_Region Fl_GDI_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {

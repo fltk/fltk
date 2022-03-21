@@ -2,7 +2,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -59,10 +59,10 @@ protected:
   int counts[20];
   uchar *mask_bitmap_;
   uchar **mask_bitmap() {return &mask_bitmap_;}
-  POINT *p;
+  POINT *long_point;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p = NULL; depth = -1; origins = NULL;}
-  virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
+  Fl_GDI_Graphics_Driver();
+  virtual ~Fl_GDI_Graphics_Driver();
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) { gc_ = (HDC)ctxt; global_gc(); }

@@ -59,7 +59,6 @@ protected:
   virtual void cache_size(Fl_Image* img, int &width, int &height);
 public:
   Fl_Quartz_Graphics_Driver();
-  virtual ~Fl_Quartz_Graphics_Driver() { if (xpoint) free(xpoint); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) { gc_ = (CGContextRef)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
