@@ -2,7 +2,7 @@
 // Definition of Wayland system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021 by Bill Spitzak and others.
+// Copyright 2021-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,8 +23,6 @@ class Fl_RGB_Image;
 
 class FL_EXPORT Fl_Unix_System_Driver : public Fl_Posix_System_Driver {
 public:
-  Fl_Unix_System_Driver() : Fl_Posix_System_Driver() {
-  }
   virtual int clocale_snprintf(char *output, size_t output_size, const char *format, va_list args);
   virtual int clocale_sscanf(const char *input, const char *format, va_list args);
   virtual int clocale_printf(FILE *output, const char *format, va_list args);

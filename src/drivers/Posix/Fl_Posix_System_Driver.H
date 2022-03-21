@@ -47,7 +47,6 @@ class Fl_Posix_System_Driver : public Fl_System_Driver
 protected:
   int run_program(const char *program, char **argv, char *msg, int msglen);
 public:
-  Fl_Posix_System_Driver() {}
   virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);

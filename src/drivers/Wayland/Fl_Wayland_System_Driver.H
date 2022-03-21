@@ -2,7 +2,7 @@
 // Definition of Wayland system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,9 +22,6 @@
 
 class FL_EXPORT Fl_Wayland_System_Driver : public Fl_Unix_System_Driver {
 public:
-  Fl_Wayland_System_Driver() : Fl_Unix_System_Driver() {
-    // Wayland system driver uses the default key table
-  }
   virtual int need_menu_handle_part2() {return 0;}
   int event_key(int k);
   int get_key(int k);
