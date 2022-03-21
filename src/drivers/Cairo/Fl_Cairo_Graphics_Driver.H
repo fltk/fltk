@@ -141,7 +141,7 @@ public:
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
   // ---
-  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar */*array*/) { return 0L; }
+  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar * /*array*/) { return 0L; }
 
   void ps_origin(int x, int y);
   void ps_translate(int, int);

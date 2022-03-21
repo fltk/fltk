@@ -78,7 +78,7 @@ public:
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *) { return 0; }
   // implement if the system adds unwanted program argument pair(s)
-  virtual int arg_and_value(const char */*name*/, const char */*value*/) { return 0; }
+  virtual int arg_and_value(const char * /*name*/, const char * /*value*/) { return 0; }
   // implement to process the -display argument
   virtual void display_arg(const char *) { }
   // default implementation should be enough
@@ -109,7 +109,7 @@ public:
   }
   virtual FILE *fopen(const char* f, const char *mode);
   virtual int system(const char*) {return -1;}
-  virtual int execvp(const char */*file*/, char *const */*argv*/) {return -1;}
+  virtual int execvp(const char * /*file*/, char *const * /*argv*/) {return -1;}
   virtual int chmod(const char* /*f*/, int /*mode*/) {return -1;}
   virtual int access(const char* /*f*/, int /*mode*/) { return -1;}
   virtual int stat(const char* /*f*/, struct stat *) { return -1;}
@@ -118,7 +118,7 @@ public:
   virtual int unlink(const char*) {return -1;}
   virtual int mkdir(const char* /*f*/, int /*mode*/) {return -1;}
   virtual int rmdir(const char*) {return -1;}
-  virtual int rename(const char* /*f*/, const char */*n*/) {return -1;}
+  virtual int rename(const char* /*f*/, const char * /*n*/) {return -1;}
 
   // the default implementation of these utf8... functions should be enough
   virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
@@ -135,7 +135,7 @@ public:
   virtual int get_key(int) {return 0;}
   // implement scandir-like function
   virtual int filename_list(const char * /*d*/, dirent ***,
-                            int (*/*sort*/)(struct dirent **, struct dirent **),
+                            int (* /*sort*/)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0) {
                               (void)errmsg; (void)errmsg_sz;
                               return -1;
@@ -161,7 +161,7 @@ public:
   // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
   virtual int need_menu_handle_part1_extra() {return 0;}
   // implement to support fl_open_uri()
-  virtual int open_uri(const char */*uri*/, char */*msg*/, int /*msglen*/) {return 0;}
+  virtual int open_uri(const char * /*uri*/, char * /*msg*/, int /*msglen*/) {return 0;}
   // the default implementation of use_tooltip_timeout_condition() may be enough
   virtual int use_tooltip_timeout_condition() {return 0;}
   // the default implementation of use_recent_tooltip_fix() may be enough
@@ -171,7 +171,7 @@ public:
   // the default implementation of need_test_shortcut_extra() may be enough
   virtual int need_test_shortcut_extra() {return 0;}
   // implement to support Fl_File_Browser::load()
-  virtual int file_browser_load_filesystem(Fl_File_Browser *, char */*filename*/, int /*lname*/, Fl_File_Icon *) {return 0;}
+  virtual int file_browser_load_filesystem(Fl_File_Browser *, char * /*filename*/, int /*lname*/, Fl_File_Icon *) {return 0;}
   // the default implementation of file_browser_load_directory() should be enough
   virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size,
                                           dirent ***pfiles, Fl_File_Sort_F *sort,
@@ -180,14 +180,14 @@ public:
   virtual void newUUID(char *uuidBuffer) { uuidBuffer[0] = 0; }
   // implement to support Fl_Preferences
   virtual char *preference_rootnode(Fl_Preferences *, Fl_Preferences::Root,
-                                    const char */*vendor*/,
-                                    const char */*application*/) {return NULL;}
+                                    const char * /*vendor*/,
+                                    const char * /*application*/) {return NULL;}
   // the default implementation of preferences_need_protection_check() may be enough
   virtual int preferences_need_protection_check() {return 0;}
   // implement to support Fl_Plugin_Manager::load()
   virtual void *load(const char *) {return NULL;}
   // the default implementation is most probably enough
-  virtual void png_extra_rgba_processing(unsigned char */*array*/, int /*w*/, int /*h*/) {}
+  virtual void png_extra_rgba_processing(unsigned char * /*array*/, int /*w*/, int /*h*/) {}
   // the default implementation is most probably enough
   virtual const char *next_dir_sep(const char *start) { return strchr(start, '/');}
   // implement to support threading
