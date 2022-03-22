@@ -115,7 +115,8 @@ CAIRODIR	= @CAIRODIR@
 EXEEXT		= @EXEEXT@
 
 # Do we build the OpenGL demos?
-GLDEMOS		= @GLDEMOS@
+GLDEMOS    = @GLDEMOS@
+GLWLDEMO   = @GLWLDEMO@
 
 # Do we build the threads demo?
 THREADS		= @THREADS@
