@@ -154,6 +154,7 @@ The Wayland platform is known to work with Fedora version 35.
 These packages are necessary to build the FLTK library, besides those present
 in a Fedora 35 Workstation distribution :
 - gcc-c++
+- autoconf
 - wayland-devel
 - wayland-protocols-devel
 - cairo-devel
