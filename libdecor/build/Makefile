@@ -22,7 +22,7 @@ OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o
 PROTOCOLS = /usr/share/wayland-protocols
 
-all : demo egl
+all : demo $(GLWLDEMO)
 
 depend:
 	: echo "libdecor/build: make depend..."

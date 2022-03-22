@@ -1021,10 +1021,20 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       LDFLAGS="$LDFLAGS -rdynamic -no-pie"
     
       AC_SEARCH_LIBS([dlopen], [dl])
-      AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
-      AC_CHECK_HEADER([GL/glu.h], [
-          AC_DEFINE([HAVE_GL_GLU_H])
-          GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $($PKGCONFIG --libs gl) $GLLIBS"
+      
+      AS_IF([test x$enable_gl != xno], [
+          AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
+          AC_CHECK_HEADER([GL/glu.h], [
+              AC_DEFINE([HAVE_GL_GLU_H])
+              GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $($PKGCONFIG --libs gl) $GLLIBS"
+          ])
+          GLWLDEMO="egl"
+      ], [
+          LINKFLTKGL=""
+          GLLIBNAME=""
+          GLDSONAME=""
+          GLDEMOS=""
+          GLWLDEMO=""
       ])
       
       dnl Check for GTK-3 ...
