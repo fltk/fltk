@@ -13,6 +13,7 @@ CONTENTS
 
  3   PLATFORM SPECIFIC NOTES
    3.1    Debian and Derivatives (like Ubuntu)
+   3.2    Fedora
 
 
 1 INTRODUCTION
@@ -22,8 +23,8 @@ Version 1.4 of the FLTK library introduces support of the public FLTK API on
 the Wayland platform. It requires a Wayland-equipped OS which means Linux.
 Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
-The code has been tested on Debian and Ubuntu with 3 distinct Wayland compositors:
-mutter (Gnome's compositor), weston, and KDE.
+The code has been tested on Debian, Ubuntu and Fedora with 3 distinct Wayland
+compositors: mutter (Gnome's compositor), weston, and KDE.
 CJK text-input methods, as well as dead and compose keys are supported.
 
 
@@ -144,3 +145,26 @@ These further packages are necessary to run FLTK apps under the Gnome-Wayland de
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
 - plasma-workspace-wayland
+
+
+3.2 Fedora
+
+The Wayland platform is known to work with Fedora version 35.
+
+These packages are necessary to build the FLTK library, besides those present
+in a Fedora 35 Workstation distribution :
+- gcc-c++
+- wayland-devel
+- wayland-protocols-devel
+- cairo-devel
+- libxkbcommon-devel
+- pango-devel
+- dbus-devel
+- libEGL-devel
+- mesa-libGLU-devel
+- gtk3-devel   <== with this, windows get a GTK-style titlebar
+- glew-devel   <== necessary to use OpenGL version 3 or above
+- cmake        <== if you plan to build with CMake
+- cmake-gui    <== if you plan to use the GUI of CMake
+
+Package installation command: sudo yum install <package-name ...>
