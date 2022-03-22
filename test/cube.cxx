@@ -39,6 +39,8 @@ public:
   cube_box(int x,int y,int w,int h,const char *l=0) :Fl_Box(FL_DOWN_BOX,x,y,w,h,l) {
     label("This demo does\nnot work without GL");
   }
+  void begin() {}
+  void end() {}
 };
 #else
 #include <FL/Fl_Gl_Window.H>
