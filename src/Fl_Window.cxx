@@ -68,9 +68,9 @@ void Fl_Window::_Fl_Window() {
 }
 
 Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
-  Fl_Group(X, Y, W, H, l),
-  pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
+  Fl_Group(X, Y, W, H, l)
 {
+  pWindowDriver = Fl_Window_Driver::newWindowDriver(this);
   _Fl_Window();
   set_flag(FORCE_POSITION);
   if (!parent()) clear_visible();
@@ -79,9 +79,9 @@ Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
 
 Fl_Window::Fl_Window(int W, int H, const char *l) :
 // fix common user error of a missing end() with current(0):
-Fl_Group((Fl_Group::current(0),0), 0, W, H, l),
-pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
+Fl_Group((Fl_Group::current(0),0), 0, W, H, l)
 {
+  pWindowDriver = Fl_Window_Driver::newWindowDriver(this);
   _Fl_Window();
   clear_visible();
 }

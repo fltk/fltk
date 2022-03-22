@@ -406,11 +406,11 @@ int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list a
 }
 
 int Fl_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
-  return vsnprintf(output, output_size, format, args);
+  return 0; // overridden in platform drivers
 }
 
 int Fl_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
-  return vsscanf(input, format, args);
+  return 0; // overridden in platform drivers
 }
 
 int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {

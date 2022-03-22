@@ -200,11 +200,11 @@ public:
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
   // implement to support copy-to-clipboard
-  virtual void copy(const char */*stuff*/, int /*len*/, int /*clipboard*/, const char */*type*/) {}
+  virtual void copy(const char * /*stuff*/, int /*len*/, int /*clipboard*/, const char * /*type*/) {}
   // implement to support paste-from-clipboard
-  virtual void paste(Fl_Widget &, int /*clipboard*/, const char */*type*/) {}
+  virtual void paste(Fl_Widget &, int /*clipboard*/, const char * /*type*/) {}
   // implement to support paste-from-clipboard
-  virtual int clipboard_contains(const char */*type*/) {return 0;}
+  virtual int clipboard_contains(const char * /*type*/) {return 0;}
   //  implement to support paste-from-clipboard
   virtual void clipboard_notify_change() {}
 };

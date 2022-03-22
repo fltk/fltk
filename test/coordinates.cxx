@@ -17,6 +17,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Window.H>
+#include "../src/flstring.h" // fl_snprintf()
 #include <stdio.h>
 
 class Box : public Fl_Box {
@@ -104,7 +105,7 @@ protected:
         result = 1;
         if (0 < Fl::event_x() && Fl::event_x() < w() &&
             0 < Fl::event_y() && Fl::event_y() < h()) {
-          snprintf(buffer, 128-1, fmt, Fl::event_x(), Fl::event_y());
+          fl_snprintf(buffer, 128-1, fmt, Fl::event_x(), Fl::event_y());
           message_box->copy_label(buffer);
         } else message_box->copy_label("");
         break;

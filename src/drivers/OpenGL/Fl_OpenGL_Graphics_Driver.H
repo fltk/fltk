@@ -98,7 +98,7 @@ public:
   int height();
   int descent();
   // ---
-  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar */*array*/) { return 0L; }
+  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar * /*array*/) { return 0L; }
   void delete_bitmask(Fl_Bitmask) { }
 };
 
