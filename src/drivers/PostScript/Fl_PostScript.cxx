@@ -261,7 +261,7 @@ int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 {
   va_list args;
   va_start(args, format);
-  int retval = Fl::system_driver()->clocale_printf(output, format, args);
+  int retval = Fl::system_driver()->clocale_vprintf(output, format, args);
   va_end(args);
   return retval;
 }

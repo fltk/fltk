@@ -450,7 +450,7 @@ unsigned Fl_WinAPI_System_Driver::utf8from_mb(char *dst, unsigned dstlen, const 
 static _locale_t c_locale = NULL;
 #endif
 
-int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+int Fl_WinAPI_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
   if (!c_locale)
     c_locale = _create_locale(LC_NUMERIC, "C");
@@ -464,7 +464,7 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
   return retval;
 }
 
-int Fl_WinAPI_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+int Fl_WinAPI_System_Driver::clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
   if (!c_locale)
     c_locale = _create_locale(LC_NUMERIC, "C");
@@ -478,17 +478,11 @@ int Fl_WinAPI_System_Driver::clocale_snprintf(char *output, size_t output_size, 
   return retval;
 }
 
-int Fl_WinAPI_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
-#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
-  if (!c_locale)
-    c_locale = _create_locale(LC_NUMERIC, "C");
-  int retval = _vsscanf_l(input, format, c_locale, args);
-#else
+int Fl_WinAPI_System_Driver::clocale_vsscanf(const char *input, const char *format, va_list args) {
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   int retval = vsscanf(input, format, args);
   setlocale(LC_NUMERIC, saved_locale);
-#endif
   return retval;
 }
 
