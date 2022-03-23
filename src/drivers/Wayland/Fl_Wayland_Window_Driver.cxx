@@ -52,6 +52,7 @@ extern "C" {
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
 
 Window fl_window;
+struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
 
 
 void Fl_Wayland_Window_Driver::destroy_double_buffer() {
@@ -405,7 +406,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   fl_graphics_driver->clip_region(0);
-  fl_window = window;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = window;
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);

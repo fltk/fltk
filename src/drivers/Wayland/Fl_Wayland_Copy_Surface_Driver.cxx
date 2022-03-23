@@ -24,7 +24,7 @@
 
 
 Fl_Wayland_Copy_Surface_Driver::Fl_Wayland_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  int os_scale = (fl_window ? fl_window->scale : 1);
+  int os_scale = (Fl_Wayland_Window_Driver::wld_window ? Fl_Wayland_Window_Driver::wld_window->scale : 1);
   img_surf = new Fl_Image_Surface(w * os_scale, h * os_scale);
   driver(img_surf->driver());
   driver()->scale(os_scale);

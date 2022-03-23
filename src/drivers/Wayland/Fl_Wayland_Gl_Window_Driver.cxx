@@ -84,10 +84,10 @@ void Fl_Wayland_Gl_Window_Driver::init() {
 char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs)
 {
   // write str to a bitmap just big enough
-  Window save_win = fl_window;
-  fl_window = NULL;
+  struct wld_window *save_win = Fl_Wayland_Window_Driver::wld_window;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = NULL;
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
-  fl_window = save_win;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = save_win;
   Fl_Font f=fl_font();
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
