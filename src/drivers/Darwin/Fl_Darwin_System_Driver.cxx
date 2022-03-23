@@ -110,7 +110,7 @@ int Fl_Darwin_System_Driver::arg_and_value(const char *name, const char *value) 
 static locale_t postscript_locale = NULL;
 #endif
 
-int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+int Fl_Darwin_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) {
     if (!postscript_locale)
@@ -125,7 +125,7 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
   return retval;
 }
 
-int Fl_Darwin_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+int Fl_Darwin_System_Driver::clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) {
     if (!postscript_locale)
@@ -140,7 +140,7 @@ int Fl_Darwin_System_Driver::clocale_snprintf(char *output, size_t output_size, 
   return retval;
 }
 
-int Fl_Darwin_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+int Fl_Darwin_System_Driver::clocale_vsscanf(const char *input, const char *format, va_list args) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) {
     if (!postscript_locale)
