@@ -943,11 +943,11 @@ from X11-specific source code :
 #endif
 \endcode
 
-extern struct wl_display *fl_display;
+extern struct wl_display *fl_wl_display();
 \par
-After fl_open_display() has run, the \c fl_display global variable points to the
+After fl_open_display() has run, function \c fl_wl_display() returns a pointer to the
 struct wl_display representing the connection between the application and Wayland.
-Therefore, \c wl_display_get_fd(fl_display) gives the file descriptor one can
+For example, \c wl_display_get_fd(fl_wl_display()) gives the file descriptor one can
 use to communicate with the Wayland compositor according to the Wayland protocol.
 
 Window fl_xid(const Fl_Window *)

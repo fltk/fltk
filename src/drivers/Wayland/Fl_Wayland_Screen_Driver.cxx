@@ -157,8 +157,6 @@ extern const char *fl_bg2;
 // end of extern additions workaround
 
 
-FL_EXPORT struct wl_display *fl_display = NULL;
-
 static bool has_xrgb = false;
 
 
@@ -223,6 +221,9 @@ static inline void checkdouble() {
   py = Fl::e_y_root;
   ptime = fl_event_time;
 }
+
+
+struct wl_display *Fl_Wayland_Screen_Driver::wl_display = NULL;
 
 
 Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surface) {
@@ -749,7 +750,7 @@ void text_input_enter(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
     zwp_text_input_v3_set_cursor_rectangle(zwp_text_input_v3,  x,  y,  width, height);
   }
   zwp_text_input_v3_commit(zwp_text_input_v3);
-  wl_display_roundtrip(fl_display);
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
 }
 
 void text_input_leave(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
@@ -1059,7 +1060,6 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
 }
 
 void Fl_Wayland_Screen_Driver::open_display_platform() {
-  struct wl_display *wl_display;
   struct wl_registry *wl_registry;
   
   static bool beenHereDoneThat = false;
@@ -1071,7 +1071,6 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   if (!wl_display) {
     Fl::fatal("No Wayland connection\n");
   }
-  fl_display = wl_display;
   wl_list_init(&seats);
   wl_list_init(&outputs);
 
@@ -1090,8 +1089,9 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
 }
 
 void Fl_Wayland_Screen_Driver::close_display() {
-  Fl::remove_fd(wl_display_get_fd(fl_display));
-  wl_display_disconnect(fl_display);
+  Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
+  wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
+  Fl_Wayland_Screen_Driver::wl_display = NULL;
 }
 
 
@@ -1112,7 +1112,7 @@ void Fl_Wayland_Screen_Driver::init_workarea()
 
 
 int Fl_Wayland_Screen_Driver::x() {
-  if (!fl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1121,7 +1121,7 @@ int Fl_Wayland_Screen_Driver::x() {
 }
 
 int Fl_Wayland_Screen_Driver::y() {
-  if (!fl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1130,7 +1130,7 @@ int Fl_Wayland_Screen_Driver::y() {
 }
 
 int Fl_Wayland_Screen_Driver::w() {
-  if (!fl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1139,7 +1139,7 @@ int Fl_Wayland_Screen_Driver::w() {
 }
 
 int Fl_Wayland_Screen_Driver::h() {
-  if (!fl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1149,7 +1149,7 @@ int Fl_Wayland_Screen_Driver::h() {
 
 
 void Fl_Wayland_Screen_Driver::init() {
-  if (!fl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
 }
 
 
@@ -1219,8 +1219,8 @@ void Fl_Wayland_Screen_Driver::beep(int type)
 
 void Fl_Wayland_Screen_Driver::flush()
 {
-  if (fl_display) {
-    wl_display_flush(fl_display);
+  if (Fl_Wayland_Screen_Driver::wl_display) {
+    wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   }
 }
 
@@ -1245,13 +1245,6 @@ void Fl_Wayland_Screen_Driver::grab(Fl_Window* win)
   } else {
     if (Fl::grab()) {
       // We must keep the grab in the non-EWMH fullscreen case
-      if (!fullscreen_win ) {
-        //XUngrabKeyboard(fl_display, fl_event_time);
-      }
-      //XUngrabPointer(fl_display, fl_event_time);
-      // this flush is done in case the picked menu item goes into
-      // an infinite loop, so we don't leave the X server locked up:
-      //XFlush(fl_display);
       Fl::grab_ = 0;    // FIXME: Fl::grab_ "should be private", but we need
                         // a way to *set* the variable from the driver!
       fl_fix_focus();
