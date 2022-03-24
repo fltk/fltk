@@ -97,9 +97,6 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
-  // ---
-  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar * /*array*/) { return 0L; }
-  void delete_bitmask(Fl_Bitmask) { }
 };
 
 #endif // FL_OPENGL_GRAPHICS_DRIVER_H
