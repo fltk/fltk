@@ -338,7 +338,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   if (pipe(fds)) return;
   wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
   close(fds[1]);
-  wl_display_flush(fl_display);
+  wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   // read in fl_selection_buffer
   char *to = fl_selection_buffer[1];
   ssize_t rest = fl_selection_buffer_length[1];
@@ -370,7 +370,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   if (pipe(fds)) return;
   wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
   close(fds[1]);
-  wl_display_flush(fl_display);
+  wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   if (rest+1 > fl_selection_buffer_length[1]) {
     delete[] fl_selection_buffer[1];
     fl_selection_buffer[1] = new char[rest+1000+1];
@@ -431,7 +431,7 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
   uint32_t supported_actions =  ret ? WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY : WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
   uint32_t preferred_action = supported_actions;
   wl_data_offer_set_actions(current_drag_offer, supported_actions, preferred_action);
-  wl_display_roundtrip(fl_display);
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   if (ret && current_drag_offer) wl_data_offer_accept(current_drag_offer, fl_dnd_serial, "text/plain");
 }
 
@@ -488,7 +488,7 @@ static int get_clipboard_image() {
   if (pipe(fds)) return 1;
   wl_data_offer_receive(fl_selection_offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
-  wl_display_roundtrip(fl_display);
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   if (strcmp(fl_selection_offer_type, "image/png") == 0) {
     char tmp_fname[21];
     Fl_Shared_Image *shared = 0;

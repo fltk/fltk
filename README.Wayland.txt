@@ -161,7 +161,6 @@ in a Fedora 35 Workstation distribution :
 - libxkbcommon-devel
 - pango-devel
 - dbus-devel
-- libEGL-devel
 - mesa-libGLU-devel
 - gtk3-devel   <== with this, windows get a GTK-style titlebar
 - glew-devel   <== necessary to use OpenGL version 3 or above

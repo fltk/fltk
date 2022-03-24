@@ -66,9 +66,9 @@ public:
   virtual int utf8locale();
   virtual unsigned utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen);
   virtual unsigned utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen);
-  virtual int clocale_printf(FILE *output, const char *format, va_list args);
-  virtual int clocale_snprintf(char *output, size_t output_size, const char *format, va_list args);
-  virtual int clocale_sscanf(const char *input, const char *format, va_list args);
+  virtual int clocale_vprintf(FILE *output, const char *format, va_list args);
+  virtual int clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args);
+  virtual int clocale_vsscanf(const char *input, const char *format, va_list args);
   // these 2 are in Fl_get_key_win32.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);

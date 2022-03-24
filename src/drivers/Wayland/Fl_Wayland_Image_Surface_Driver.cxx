@@ -25,8 +25,8 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
   float d = 1;
   if (!off) {
     fl_open_display();
-    if (fl_window) {
-      d = fl_window->scale;
+    if (Fl_Wayland_Window_Driver::wld_window) {
+      d = Fl_Wayland_Window_Driver::wld_window->scale;
     }
     d *= fl_graphics_driver->scale();
     if (d != 1 && high_res) {
@@ -56,14 +56,14 @@ Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
 void Fl_Wayland_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->activate(offscreen, driver()->scale());
-  pre_window = fl_window;
-  fl_window = NULL;
+  pre_window = Fl_Wayland_Window_Driver::wld_window;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = NULL;
 }
 
 void Fl_Wayland_Image_Surface_Driver::end_current() {
   cairo_surface_t *surf = cairo_get_target(offscreen->cairo_);
   cairo_surface_flush(surf);
-  fl_window = pre_window;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = pre_window;
 }
 
 void Fl_Wayland_Image_Surface_Driver::translate(int x, int y) {

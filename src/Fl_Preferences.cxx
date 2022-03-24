@@ -38,7 +38,7 @@ static int clocale_snprintf(char *buffer, size_t buffer_size, const char *format
 {
   va_list args;
   va_start(args, format);
-  int retval = Fl::system_driver()->clocale_snprintf(buffer, buffer_size, format, args);
+  int retval = Fl::system_driver()->clocale_vsnprintf(buffer, buffer_size, format, args);
   va_end(args);
   return retval;
 }
@@ -47,7 +47,7 @@ static int clocale_sscanf(const char *input, const char *format, ...)
 {
   va_list args;
   va_start(args, format);
-  int retval = Fl::system_driver()->clocale_sscanf(input, format, args);
+  int retval = Fl::system_driver()->clocale_vsscanf(input, format, args);
   va_end(args);
   return retval;
 }

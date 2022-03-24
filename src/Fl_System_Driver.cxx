@@ -401,15 +401,15 @@ unsigned Fl_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* s
   return srclen;
 }
 
-int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+int Fl_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
   return vfprintf(output, format, args);
 }
 
-int Fl_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+int Fl_System_Driver::clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) {
   return 0; // overridden in platform drivers
 }
 
-int Fl_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+int Fl_System_Driver::clocale_vsscanf(const char *input, const char *format, va_list args) {
   return 0; // overridden in platform drivers
 }
 
@@ -509,7 +509,7 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
   Platform drivers \b MUST override this virtual method to do
   their own stuff and call this base class method to run
   the platform independent wait functions.
- 
+
   Overriden methods will typically call this method early and perform
   platform-specific operations after that in order to work with the
  \p time_to_wait value possibly modified by this method.

@@ -52,6 +52,7 @@ extern "C" {
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
 
 Window fl_window;
+struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
 
 
 void Fl_Wayland_Window_Driver::destroy_double_buffer() {
@@ -405,7 +406,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   fl_graphics_driver->clip_region(0);
-  fl_window = window;
+  fl_window = Fl_Wayland_Window_Driver::wld_window = window;
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);
@@ -636,21 +637,6 @@ void Fl_Wayland_Window_Driver::show_with_args_begin() {
 
   if (Fl::first_window()) key = Fl::first_window()->xclass();
   if (!key) key = "fltk";
-
-  /*const char *val = XGetDefault(fl_display, key, "dndTextOps");
-  if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
-                            strcasecmp(val, "on") == 0 ||
-                            strcasecmp(val, "yes") == 0);
-
-  val = XGetDefault(fl_display, key, "tooltips");
-  if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
-                              strcasecmp(val, "on") == 0 ||
-                              strcasecmp(val, "yes") == 0);
-
-  val = XGetDefault(fl_display, key, "visibleFocus");
-  if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
-                             strcasecmp(val, "on") == 0 ||
-                             strcasecmp(val, "yes") == 0);*/
 }
 
 
@@ -662,8 +648,6 @@ void Fl_Wayland_Window_Driver::show_with_args_end(int argc, char **argv) {
     char *buffer = new char[n];
     char *p = buffer;
     for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
-    //XChangeProperty(fl_display, fl_xid(pWindow), XA_WM_COMMAND, XA_STRING, 8, 0,
-    //                (unsigned char *)buffer, p-buffer-1);
     delete[] buffer;
   }
 }
@@ -875,10 +859,10 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
     Window xid = fl_xid(pWindow);
     if (xid->kind == DECORATED) {
       while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) || !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
-        wl_display_dispatch(fl_display);
+        wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
       }
     } else if (xid->kind == UNFRAMED) {
-      wl_display_roundtrip(fl_display);
+      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     }
   }
 }
@@ -1114,7 +1098,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
 
   } else if ( pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
-    if (!scr_driver->libdecor_context) scr_driver->libdecor_context = libdecor_new(fl_display, &libdecor_iface);
+    if (!scr_driver->libdecor_context) scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display, &libdecor_iface);
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                               &libdecor_frame_iface, new_window);
 //fprintf(stderr, "makeWindow: libdecor_decorate=%p pos:%dx%d\n", new_window->frame, pWindow->x(), pWindow->y());
@@ -1378,8 +1362,8 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
   if (xdg_toplevel()) {
     xdg_toplevel_set_fullscreen(xdg_toplevel(), NULL);
     pWindow->_set_fullscreen();
-    wl_display_roundtrip(fl_display); // OK, but try to find something more specific
-    wl_display_roundtrip(fl_display);
+    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // OK, but try to find something more specific
+    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     Fl::handle(FL_FULLSCREEN, pWindow);
   }
 }
@@ -1490,6 +1474,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         fl_win->configured_width = W;
         fl_win->configured_height = H;
         if (!in_handle_configure && xdg_toplevel()) {
+          if (Fl_Window::is_a_rescale()) size_range();
           struct libdecor_state *state = libdecor_state_new(int(W * f), int(H * f));
           libdecor_frame_commit(fl_win->frame, state, NULL); // necessary only if resize is initiated by prog
           libdecor_state_free(state);
@@ -1562,12 +1547,12 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   xdg_positioner_destroy(positioner);
   xdg_popup_add_listener(xid_menu->xdg_popup, &popup_listener, xid_menu);
   wl_surface_commit(xid_menu->wl_surface);
-  wl_display_roundtrip(fl_display);
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   // delete the previous popup
   xdg_popup_destroy(old_popup);
   xdg_surface_destroy(old_xdg);
   wl_surface_destroy(old_surface);
-  wl_display_roundtrip(fl_display);
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   this->y(true_y);
 }
 
@@ -1584,10 +1569,16 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
 }
 
 
-FL_EXPORT struct wl_surface *fl_wl_surface(Window xid) {
+struct wl_surface *fl_wl_surface(Window xid) {
   return xid->wl_surface;
 }
 
-FL_EXPORT struct _cairo *fl_wl_cairo() {
+
+struct _cairo *fl_wl_cairo() {
   return ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
+}
+
+
+struct wl_display *fl_wl_display() {
+  return Fl_Wayland_Screen_Driver::wl_display;
 }

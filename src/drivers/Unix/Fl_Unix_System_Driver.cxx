@@ -73,7 +73,7 @@ static locale_t c_locale = NULL;
 #endif
 
 
-int Fl_Unix_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+int Fl_Unix_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
 #if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
   if (!c_locale)
     c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
@@ -89,7 +89,7 @@ int Fl_Unix_System_Driver::clocale_printf(FILE *output, const char *format, va_l
   return retval;
 }
 
-int Fl_Unix_System_Driver::clocale_snprintf(char *output, size_t output_size, const char *format, va_list args) {
+int Fl_Unix_System_Driver::clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) {
 #if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
   if (!c_locale)
     c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
@@ -105,7 +105,7 @@ int Fl_Unix_System_Driver::clocale_snprintf(char *output, size_t output_size, co
   return retval;
 }
 
-int Fl_Unix_System_Driver::clocale_sscanf(const char *input, const char *format, va_list args) {
+int Fl_Unix_System_Driver::clocale_vsscanf(const char *input, const char *format, va_list args) {
 #if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
   if (!c_locale)
     c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));

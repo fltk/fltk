@@ -20,8 +20,6 @@
 
 typedef struct wld_window *Window;
 
-extern struct wl_display *fl_display;
-
 struct flWaylandRegion {
   int count;
   struct _cairo_rectangle *rects;
@@ -30,5 +28,6 @@ struct flWaylandRegion {
 #include <stdint.h>
 extern FL_EXPORT uint32_t fl_event_time;
 
-extern FL_EXPORT struct wl_surface *fl_wl_surface(Window xid);
-extern FL_EXPORT struct _cairo *fl_wl_cairo();
+FL_EXPORT struct wl_display *fl_wl_display();
+FL_EXPORT struct wl_surface *fl_wl_surface(Window xid);
+FL_EXPORT struct _cairo *fl_wl_cairo();
