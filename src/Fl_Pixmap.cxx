@@ -63,7 +63,7 @@ void Fl_Pixmap::uncache() {
   }
 
   if (mask_) {
-    fl_delete_bitmask((Fl_Bitmask)mask_);
+    Fl_Graphics_Driver::default_driver().delete_bitmask(mask_);
     mask_ = 0;
   }
 }

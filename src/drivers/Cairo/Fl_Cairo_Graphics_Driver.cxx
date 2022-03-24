@@ -889,7 +889,7 @@ void Fl_Cairo_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
 }
 
 
-void Fl_Cairo_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
+void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
   cairo_pattern_t *pat = (cairo_pattern_t*)bm;
   if (pat) {
     cairo_surface_t *surf;

@@ -74,9 +74,6 @@ extern FL_EXPORT Fl_Window* fl_find(Window xid);
 extern FL_EXPORT void fl_open_display();
 extern FL_EXPORT void fl_close_display();
 extern FL_EXPORT Window fl_window;
-extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
-extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
-extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 extern FL_EXPORT void fl_open_callback(void (*)(const char *));
 

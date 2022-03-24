@@ -33,7 +33,6 @@ typedef opaque fl_intptr_t;
 typedef opaque fl_uintptr_t;
 
 typedef opaque Fl_Offscreen; /**< an offscreen drawing buffer */
-typedef opaque Fl_Bitmask; /**< mask */
 typedef opaque Fl_Region; /**< a region made of several rectangles */
 typedef opaque FL_SOCKET; /**< socket or file descriptor */
 typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL calls are rendered */
@@ -50,7 +49,7 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
-  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
+  Fl_Offscreen, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
   fl_intptr_t, fl_uintptr_t
 
   NOTE: *FIXME* AlbrechtS 13 Apr 2016 (concerning FL_SOCKET)
@@ -82,7 +81,6 @@ typedef unsigned long fl_uintptr_t;
 
 #ifdef __APPLE__
 typedef struct CGContext* Fl_Offscreen;
-typedef struct CGImage* Fl_Bitmask;
 typedef struct flCocoaRegion* Fl_Region;
 typedef int FL_SOCKET;
 #ifdef __OBJC__
@@ -101,7 +99,6 @@ typedef int FL_SOCKET;
 #elif defined(_WIN32)
 typedef struct HBITMAP__ *HBITMAP;
 typedef HBITMAP Fl_Offscreen;
-typedef HBITMAP Fl_Bitmask;
 typedef struct HRGN__ *Fl_Region;
 # if defined(_WIN64) && defined(_MSC_VER)
 typedef  unsigned __int64 FL_SOCKET;    /* *FIXME* - FL_SOCKET (see above) */
@@ -118,7 +115,6 @@ typedef struct HGLRC__ *GLContext;
 
 #elif defined(FLTK_USE_WAYLAND)
 typedef struct fl_wld_buffer *Fl_Offscreen; /**< an offscreen drawing buffer */
-typedef struct _cairo_pattern* Fl_Bitmask;
 typedef struct flWaylandRegion* Fl_Region;
 typedef int FL_SOCKET; /**< socket or file descriptor */
 typedef void *EGLContext;
@@ -130,7 +126,6 @@ typedef EGLContext GLContext;
 #elif defined(FLTK_USE_X11)
 
 typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
 typedef struct _XRegion *Fl_Region;
 typedef int FL_SOCKET;
 typedef struct __GLXcontextRec *GLContext;

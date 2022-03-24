@@ -69,8 +69,9 @@ public:
   virtual void *gc() {return gc_;}
 
   // --- bitmap stuff
-  Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
-  void delete_bitmask(Fl_Bitmask bm);
+  HBITMAP create_bitmask(int w, int h, const uchar *array); // NOT virtual
+  virtual void delete_bitmask(fl_uintptr_t bm);
+  HBITMAP create_alphamask(int w, int h, int d, int ld, const uchar *array);
   virtual void draw_unscaled(const char* str, int n, int x, int y);
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);

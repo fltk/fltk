@@ -248,8 +248,6 @@ public:
   void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   ~Fl_PostScript_Graphics_Driver();
-  // ---
-  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar * /*array*/) { return 0L; }
   virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
 
   void ps_origin(int x, int y);

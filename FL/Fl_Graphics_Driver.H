@@ -91,8 +91,6 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
   friend FL_EXPORT void gl_start();
   friend FL_EXPORT void gl_finish();
-  friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
-  friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
   /* ============== Implementation note about image drawing =========================
    A graphics driver can implement up to 6 virtual member functions to draw images:
    virtual void draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy)
@@ -132,7 +130,7 @@ and
 
    Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
    to compute the cached form of all image types, and uncache(Fl_RGB_Image *,...),
-   uncache_pixmap(fl_uintptr_t) and delete_bitmask(Fl_Bitmask) to destroy cached image forms.
+   uncache_pixmap(fl_uintptr_t) and delete_bitmask(fl_uintptr_t) to destroy cached image forms.
    Graphics drivers that use the mask_ variable of class Fl_Pixmap to cache an Fl_Pixmap
    object also reimplement the uchar **Fl_Graphics_Driver::mask_bitmap() member function.
    */
@@ -197,8 +195,6 @@ protected:
   virtual void draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
-  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
-  virtual void delete_bitmask(Fl_Bitmask bm);
   /** For internal library use only */
   static void change_image_size(Fl_Image *img, int W, int H) {
     img->w(W);
@@ -378,6 +374,7 @@ public:
   virtual PangoFontDescription* pango_font_description(Fl_Font) { return NULL; }
   virtual void antialias(int state);
   virtual int antialias();
+  virtual void delete_bitmask(fl_uintptr_t bm);
 };
 
 #ifndef FL_DOXYGEN

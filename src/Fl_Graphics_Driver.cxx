@@ -455,10 +455,7 @@ void Fl_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y
 void Fl_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) {}
 
 /** Support function for image drawing */
-Fl_Bitmask Fl_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {return 0; }
-
-/** Support function for image drawing */
-void Fl_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {}
+void Fl_Graphics_Driver::delete_bitmask(fl_uintptr_t /*bm*/) {}
 
 /** see fl_point() */
 void Fl_Graphics_Driver::point(int x, int y) {}

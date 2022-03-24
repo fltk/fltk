@@ -140,8 +140,6 @@ public:
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
-  // ---
-  Fl_Bitmask create_bitmask(int /*w*/, int /*h*/, const uchar * /*array*/) { return 0L; }
 
   void ps_origin(int x, int y);
   void ps_translate(int, int);
@@ -154,7 +152,7 @@ public:
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy);
   void cache(Fl_Bitmap *img);
-  void delete_bitmask(Fl_Bitmask bm);
+  virtual void delete_bitmask(fl_uintptr_t bm);
   void cache(Fl_Pixmap *pxm);
   void draw_pixmap(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   void uncache_pixmap(fl_uintptr_t p);

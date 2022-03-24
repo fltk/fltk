@@ -613,13 +613,13 @@ void Fl_Xlib_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r,
   }
 }
 
-Fl_Bitmask Fl_Xlib_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
+unsigned long Fl_Xlib_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
   return XCreateBitmapFromData(fl_display, fl_window, (const char *)data,
                                (w+7)&-8, h);
 }
 
-void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
-  XFreePixmap(fl_display, bm);
+void Fl_Xlib_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
+  XFreePixmap(fl_display, (unsigned long)bm);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
