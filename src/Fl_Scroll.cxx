@@ -128,9 +128,6 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   You may need to call redraw() to make sure the widget gets updated.
 
   \param[inout] si -- ScrollInfo structure, filled with data
-
-  \returns Structure containing the calculated info.
-
   \see bbox()
 */
 void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) const {

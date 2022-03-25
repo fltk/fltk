@@ -220,16 +220,13 @@ void Fl_Timeout::make_current() {
   Remove the top-most timeout from the stack of currently running
   timeout callbacks and insert it into the list of free timers.
 
-  This should always return a non-NULL value, otherwise there's a bug
-  in the library. Typical code in the library would look like:
+  Typical code in the library would look like:
   \code
     // The timeout \p Fl_Timeout *t has exired, run its callback
     t->make_current();
     (t->callback)(t->data);
     t->release();
   \endcode
-
-  \return   Fl_Timeout*   current timeout or NULL
 */
 void Fl_Timeout::release() {
   Fl_Timeout *t = current_timeout;
