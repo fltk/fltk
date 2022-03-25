@@ -37,7 +37,6 @@ set (FLTK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(GNUInstallDirs)
 
-
 set (FLTK_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH
   "Binary install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
 set (FLTK_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH
@@ -51,6 +50,20 @@ set (FLTK_MANDIR ${CMAKE_INSTALL_MANDIR} CACHE PATH
 set (FLTK_DOCDIR ${CMAKE_INSTALL_DATADIR}/doc CACHE PATH
   "Non-arch doc install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
 
+
+#######################################################################
+# initialize internally used variables
+# some of these variables are used to *append* other values later
+#######################################################################
+
+set (FLTK_LDLIBS "")
+set (FLTK_LIBRARIES "")
+set (GLLIBS "")
+set (IMAGELIBS "")
+set (LDFLAGS "")
+set (LIBS "")
+set (LINK_LIBS "")
+set (STATICIMAGELIBS "")
 
 #######################################################################
 # platform dependent information
