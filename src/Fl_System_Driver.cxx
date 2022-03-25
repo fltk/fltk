@@ -510,7 +510,7 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
   their own stuff and call this base class method to run
   the platform independent wait functions.
 
-  Overriden methods will typically call this method early and perform
+  Overridden methods will typically call this method early and perform
   platform-specific operations after that in order to work with the
  \p time_to_wait value possibly modified by this method.
   However, some platform drivers may need to do extra stuff before

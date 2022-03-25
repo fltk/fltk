@@ -28,27 +28,27 @@
 
  Fl_Preferences are similar to the Registry on Windows and Preferences on MacOS,
  providing a simple method to store customisable user settings between app
- launches, i.e. the previous window position or a history of previously
+ launches, for instance the previous window position or a history of previously
  used documents.
 
  Preferences are organized in a hierarchy of groups. Every group can contain
  more groups and any number of key/value pairs. Keys can be text strings
  containing ASCII letters, digits, periods, and underscores. Forward slashes
- in a key name are treated as subgroups, i.e the key 'window/width' would
+ in a key name are treated as subgroups, i.e. the key 'window/width' would
  actually refer to the key 'width' inside the group 'window'.
 
  Keys usually have a unique name within their group. Duplicate keys are
  possible though and can be accessed using the index based functions.
 
  A value can be an UTF-8 string. Control characters and UTF-8 sequences are
- stores as octal values. Long strings are wrap at the line ending and will be
- reassembled when reading the file back.
+ stored as octal values. Long strings are wrapped at the line ending and will
+ be reassembled when reading the file back.
 
  Several methods allow setting and getting numerical values and binary data.
 
  Preferences are stored in text files that can be edited manually if needed.
- The file format is easy to read and relatively forgiving. Preferences files
- are the same on all platforms. User comments in preference files are preserved.
+ The file format is easy to read and relatively forgiving. Preference files are
+ the same on all platforms. User comments in preference files are preserved.
  Filenames are unique for each application by using a vendor/application naming
  scheme. The user must provide default values for all entries to ensure proper
  operation should preferences be corrupted or not yet exist.
@@ -59,14 +59,14 @@
 
  Preferences should no be used to store document data. The .prefs file should
  be kept small for performance reasons. One application can have multiple
- preferences files. Extensive binary data however should be stored in separate
+ preference files. Extensive binary data however should be stored in separate
  files: see \a Fl_Preferences::get_userdata_path() .
 
- Fl_Preferences are not thread-safe. They can temprorarily change the locale
- on some platforms during read an write access, which is also changes it
+ Fl_Preferences are not thread-safe. They can temporarily change the locale
+ on some platforms during read and write access, which also changes it
  temporarily in other threads of the same app.
 
- Typically a preferences database is read at startup, and then reopended and
+ Typically a preferences database is read at startup, and then reopened and
  written at app shutdown:
  ```
  int appWindowWidth, appWindowHeight;
@@ -77,7 +77,8 @@
    Fl_Preferences window(app, "window");
    window.get("width", appWindowWidth, 800);
    window.get("height", appWindowHeight, 600);
-   // 'app' destructor will be called, writing data to .prefs file
+   // 'app' destructor will be called. This will write data to the
+   // .prefs file if any preferences were changed or added
  }
 
  void quit() {
@@ -88,12 +89,12 @@
  }
  ```
 
- \see Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
+ \see Fl_Preferences::Fl_Preferences(Root root, const char *vendor, const char *application)
 
  As a special case, Fl_Preferences can be memory mapped and not be associated
  with a file on disk.
 
- \see Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group )
+ \see Fl_Preferences::Fl_Preferences(Fl_Preferences *parent, const char *group)
  for more details on memory mapped preferences.
 
    \note Starting with FLTK 1.3, preference databases are expected to
@@ -102,17 +103,17 @@
      for text entries using international characters.
 
    \note Starting with FLTK 1.4, searching a valid path to store
-     the preferences files has changed slightly. Please see
+     the preference files has changed slightly. Please see
      Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
      for details.
 
    \note Starting with FLTK 1.4, preference files should be created with
      `SYSTEM_L` or `USER_L` to be interchangeable between computers with
-     differing loacale settings. The legacy modes, `LOCAL` and `SYSTEM`, will
+     differing locale settings. The legacy modes, `LOCAL` and `SYSTEM`, will
      read and write floating point values using the decimal point of the
-     current locale. As a result, a fp-value would be writte '3,1415' on a
+     current locale. As a result, a fp-value would be written '3,1415' on a
      German machine, and would be read back as '3.0' on a US machine because
-     the comma would not be recoginized as an alternative decimal point.
+     the comma would not be recognized as an alternative decimal point.
  */
 class FL_EXPORT Fl_Preferences {
 
@@ -122,23 +123,23 @@ public:
    */
   enum Root {
     UNKNOWN_ROOT_TYPE = -1,            ///< Returned if storage could not be determined.
-    SYSTEM            =  0,            ///< Preferences are used system-wide, deprecated, see SYSTEM_L
-    USER,                              ///< Preferences apply only to the current user, deprecated, see USER_L
+    SYSTEM            =  0,            ///< Preferences are used system-wide. Deprecated, see SYSTEM_L
+    USER,                              ///< Preferences apply only to the current user. Deprecated, see USER_L
     MEMORY,                            ///< Returned if querying memory mapped preferences
-    ROOT_MASK     = 0x00FF,            ///< mask for the values above
+    ROOT_MASK     = 0x00FF,            ///< Mask for the values above
     CORE          = 0x0100,            ///< OR'd by FLTK to read and write core library preferences and options
-    C_LOCALE      = 0x1000,            ///< this flag should always be set, it makes sure that floating point
+    C_LOCALE      = 0x1000,            ///< This flag should always be set, it makes sure that floating point
                                        ///< values are written correctly independently of the current locale
     SYSTEM_L      = SYSTEM | C_LOCALE, ///< Preferences are used system-wide, locale independent
     USER_L        = USER | C_LOCALE,   ///< Preferences apply only to the current user, locale independent
-    CORE_SYSTEM_L = CORE | SYSTEM_L,   ///< same as CORE | SYSTEM | C_LOCALE
-    CORE_USER_L   = CORE | USER_L,     ///< same as CORE | USER | C_LOCALE
-    CORE_SYSTEM   = CORE | SYSTEM,     ///< deprecated, same as CORE | SYSTEM
-    CORE_USER     = CORE | USER,       ///< deprecated, same as CORE | USER
+    CORE_SYSTEM_L = CORE | SYSTEM_L,   ///< Same as CORE | SYSTEM | C_LOCALE
+    CORE_USER_L   = CORE | USER_L,     ///< Same as CORE | USER | C_LOCALE
+    CORE_SYSTEM   = CORE | SYSTEM,     ///< Deprecated, same as CORE | SYSTEM. Use CORE_SYSTEM_L instead.
+    CORE_USER     = CORE | USER,       ///< Deprecated, same as CORE | USER. Use CORE_USER_L instead.
   };
 
   /**
-   Every Fl_Preferences-Group has a uniqe ID.
+   Every Fl_Preferences-Group has a unique ID.
 
    ID's can be retrieved from an Fl_Preferences-Group and can then be used
    to create more Fl_Preference references to the same data set, as long as the
@@ -148,36 +149,36 @@ public:
 
   static const char *new_UUID();
 
-  /** Set this, if no call to Fl_Preferences shall access the file sytem
+  /** Set this if no call to Fl_Preferences shall access the file system.
    @see Fl_Preferences::file_access(unsigned int)
    @see Fl_Preferences::file_access()
    */
   static const unsigned int NONE = 0x0000;
-  /** set this if it is ok for applications to read user preference files */
+  /** Set this if it is OK for applications to read user preference files. */
   static const unsigned int USER_READ_OK = 0x0001;
-  /** set this if it is ok for applications to create and write user preference files */
+  /** Set this if it is OK for applications to create and write user preference files. */
   static const unsigned int USER_WRITE_OK = 0x0002;
-  /** set this if it is ok for applications to read, create, and write user preference files */
+  /** Set this if it is OK for applications to read, create, and write user preference files. */
   static const unsigned int USER_OK = USER_READ_OK | USER_WRITE_OK;
-  /** set this if it is ok for applications to read system wide preference files */
+  /** Set this if it is OK for applications to read system wide preference files. */
   static const unsigned int SYSTEM_READ_OK = 0x0004;
-  /** set this if it is ok for applications to create and write system wide preference files */
+  /** Set this if it is OK for applications to create and write system wide preference files. */
   static const unsigned int SYSTEM_WRITE_OK = 0x0008;
-  /** set this if it is ok for applications to read, create, and write system wide preference files */
+  /** Set this if it is OK for applications to read, create, and write system wide preference files. */
   static const unsigned int SYSTEM_OK = SYSTEM_READ_OK | SYSTEM_WRITE_OK;
-  /** set this if it is ok for applications to read, create, and write any kind of preference files */
+  /** Set this if it is OK for applications to read, create, and write any kind of preference files. */
   static const unsigned int APP_OK = SYSTEM_OK | USER_OK;
-  /** Set this if it is ok for FLTK to read preference files. USER_READ_OK and/or SYSTEM_READ_OK must also be set. */
+  /** Set this if it is OK for FLTK to read preference files. USER_READ_OK and/or SYSTEM_READ_OK must also be set. */
   static const unsigned int CORE_READ_OK = 0x0010;
-  /** Set this if it is ok for FLTK to create or write preference files. USER_WRITE_OK and/or SYSTEM_WRITE_OK must also be set. */
+  /** Set this if it is OK for FLTK to create or write preference files. USER_WRITE_OK and/or SYSTEM_WRITE_OK must also be set. */
   static const unsigned int CORE_WRITE_OK = 0x0020;
-  /** set this if it is ok for FLTK to read, create, or write preference files */
+  /** Set this if it is OK for FLTK to read, create, or write preference files. */
   static const unsigned int CORE_OK = CORE_READ_OK | CORE_WRITE_OK;
-  /** set this to allow FLTK and applications to read preference files */
+  /** Set this to allow FLTK and applications to read preference files. */
   static const unsigned int ALL_READ_OK = USER_READ_OK | SYSTEM_READ_OK | CORE_READ_OK;
-  /** set this to allow FLTK and applications to create and write preference files */
+  /** Set this to allow FLTK and applications to create and write preference files. */
   static const unsigned int ALL_WRITE_OK = USER_WRITE_OK | SYSTEM_WRITE_OK | CORE_WRITE_OK;
-  /** set this to give FLTK and applications permission to read, write, and create preference files */
+  /** Set this to give FLTK and applications permission to read, write, and create preference files. */
   static const unsigned int ALL = ALL_READ_OK | ALL_WRITE_OK;
 
   static void file_access(unsigned int flags);
@@ -312,7 +313,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Node *first_child_, *next_;
     union {                     // these two are mutually exclusive
       Node *parent_;            // top_ bit clear
-      RootNode *root_node_;          // top_ bit set
+      RootNode *root_node_;     // top_ bit set
     };
     char *path_;
     Entry *entry_;
@@ -362,7 +363,7 @@ public:  // older Sun compilers need this (public definition of the following cl
   };
   friend class Node;
 
-  class FL_EXPORT RootNode {            // the root node manages file paths and basic reading and writing
+  class FL_EXPORT RootNode {    // the root node manages file paths and basic reading and writing
     Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;

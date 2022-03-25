@@ -123,7 +123,7 @@ unsigned int Fl_Preferences::file_access()
  these parameters.
 
  Find the possible location of a preference file on disk without touching any
- of the pathname componennts. This can be used to check if a preferneces file
+ of the pathname components. This can be used to check if a preference file
  already exists.
 
  \param[out] buffer write the resulting path into this buffer
@@ -177,7 +177,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  The application argument can be the working title or final name of your
  application.
  Both vendor and application must be valid UNIX path segments as they become
- parts of the preferences file path and may contain forward slashes to create
+ parts of the preference file path and may contain forward slashes to create
  deeper file structures.
 
  \note On \b Windows, the directory is constructed by querying the
@@ -199,7 +199,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  If all attempts fail, data will be stored in RAM only and be lost when the
  app exits.
 
- The \c SYSTEM preferences filename is hardcoded as
+ The \c SYSTEM preference filename is hardcoded as
  <tt>/etc/fltk/\$(vendor)/\$(application).prefs</tt> .
 
  For backward compatibility, the old \c USER `.prefs` file naming scheme
@@ -209,9 +209,9 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  defaults to `$HOME/.config/`.
 
  The user preferences will be stored in
- <tt>\$(directory)/\$(vendor)/\$(application).prefs</tt>, The user data path
+ <tt>\$(directory)/\$(vendor)/\$(application).prefs</tt>. The user data path
  will be
- <tt>\$(directory)/\$(vendor)/\$(application)/</tt>
+ <tt>\$(directory)/\$(vendor)/\$(application)/</tt>.
 
  In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
  would be empty, generating <tt>\$(vendor)/\$(application).prefs</tt>, which
@@ -230,7 +230,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size,
  \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path
  would be \c NULL , generating
  <tt>\<null\>/Library/Preferences/\$(vendor)/\$(application).prefs</tt>,
- which would silently fail to create a preferences file.
+ which would silently fail to create a preference file.
 
  \param[in] root can be \c USER_L or \c SYSTEM_L for user specific or system wide preferences
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
@@ -245,13 +245,13 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
 }
 
 /**
-   \brief Use this constructor to create or read a preferences file at an
+   \brief Use this constructor to create or read a preference file at an
    arbitrary position in the file system.
 
    The file name is generated in the form <tt>\$(path)/\$(application).prefs</tt>.
    If \p application is \c NULL, \p path is taken literally as the file path and name.
 
-   \param[in] path path to the directory that contains the preferences file
+   \param[in] path path to the directory that contains the preference file
    \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
    \param[in] application unique text describing the application, must be a valid filepath segment
  */
@@ -284,10 +284,10 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
 
  If `parent` is set to `NULL`, an unnamed database will be accessed that exists
  only in local memory and is not associated with a file on disk. The root type
- of this databse is set to `Fl_Preferences::MEMORY`.
+ of this database is set to `Fl_Preferences::MEMORY`.
 
  - the memory database is \em not shared among multiple instances of the same app
- - memory databses are \em not thread safe
+ - memory databases are \em not thread safe
  - all data will be lost when the app quits
 
  ```
@@ -305,11 +305,11 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group ) {
  FLTK uses the memory database to manage plugins. See `Fl_Plugin`.
 
    \param[in] parent the parameter parent is a pointer to the parent group.
-              If \p Parent is \p NULL, the new Preferences item refers to an
+              If \p parent is \p NULL, the new preferences item refers to an
               application internal database ("runtime prefs") which exists only
               once, and remains in RAM only until the application quits.
               This database is used to manage plugins and other data indexes
-              by strings. Runtime Prefs are \em not thread-safe.
+              by strings. Runtime prefs are \em not thread-safe.
    \param[in] group a group name that is used as a key into the database
    \see Fl_Preferences( Fl_Preferences&, const char *group )
  */
@@ -386,7 +386,7 @@ Fl_Preferences::Fl_Preferences(const Fl_Preferences &rhs)
 { }
 
 /**
- Assign another reference to a Preference group.
+ Assign another reference to a preference group.
  */
 Fl_Preferences &Fl_Preferences::operator=(const Fl_Preferences &rhs) {
   if (&rhs != this) {
@@ -398,29 +398,28 @@ Fl_Preferences &Fl_Preferences::operator=(const Fl_Preferences &rhs) {
 
 /**
    The destructor removes allocated resources. When used on the
-   \em base preferences group, the destructor flushes all
-   changes to the preferences file and deletes all internal
-   databases.
+   \em base preferences group, the destructor flushes all changes
+   to the preference file and deletes all internal databases.
 
    The destructor does not remove any data from the database. It merely
    deletes your reference to the database.
  */
 Fl_Preferences::~Fl_Preferences() {
   if (node && !node->parent()) delete rootNode;
-  // DO NOT delete nodes! The root node will do that after writing the preferences
-  // zero all pointer to avoid memory errors, even though
+  // DO NOT delete nodes! The root node will do that after writing the preferences.
+  // Zero all pointer to avoid memory errors, even though
   // Valgrind does not complain (Cygwin does though)
   node = 0L;
   rootNode = 0L;
 }
 
 /**
- Return the file name and path to the Preferences file.
+ Return the file name and path to the preference file.
 
  If the preferences have not changed or have not been flushed, the file
  or directory may not have been created yet.
 
- \param[out] buffer write the reulting path into this buffer
+ \param[out] buffer write the resulting path into this buffer
  \param[in] buffer_size size of the `buffer` in bytes
  \return the root type at creation type, or MEMORY for runtime prefs, it does
     not return CORE or LOCALE flags.
@@ -466,9 +465,9 @@ const char *Fl_Preferences::group( int num_group ) {
 
 /**
    Returns non-zero if a group with this name exists.
-   Group names are relative to the Preferences node and can contain a path.
+   Group names are relative to the Fl_Preferences node and can contain a path.
    "." describes the current node, "./" describes the topmost node.
-   By preceding a groupname with a "./", its path becomes relative to the topmost node.
+   By preceding a groupname with a "./" its path becomes relative to the topmost node.
 
    \param[in] key name of group that is searched for
    \return 0 if no group by that name was found
@@ -510,9 +509,8 @@ int Fl_Preferences::entries() {
 }
 
 /**
-   Returns the name of an entry. There is no guaranteed order of
-   entry names. The index must be within the range given by
-   entries().
+   Returns the name of an entry. There is no guaranteed order of entry
+   names. The index must be within the range given by entries().
 
    \param[in] index number indexing the requested entry
    \return pointer to value cstring
@@ -578,9 +576,8 @@ char Fl_Preferences::get( const char *key, int &value, int defaultValue ) {
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ was a problem storing the data in memory. However it does not reflect
+ if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] value set this entry to \p value
@@ -618,9 +615,8 @@ char Fl_Preferences::get( const char *key, float &value, float defaultValue ) {
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ was a problem storing the data in memory. However it does not reflect
+ if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] value set this entry to \p value
@@ -638,9 +634,8 @@ char Fl_Preferences::set( const char *key, float value ) {
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ was a problem storing the data in memory. However it does not reflect
+ if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] value set this entry to \p value
@@ -683,9 +678,8 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue ) 
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ was a problem storing the data in memory. However it does not reflect
+ if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] value set this entry to \p value
@@ -703,9 +697,8 @@ char Fl_Preferences::set( const char *key, double value ) {
 
 /**
  Sets an entry (name/value pair). The return value indicates if there
- was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ was a problem storing the data in memory. However it does not reflect
+ if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] value set this entry to \p value
@@ -808,8 +801,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
 /**
  Sets an entry (name/value pair). The return value indicates if there
  was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ reflect if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] text set this entry to \p value
@@ -857,7 +849,7 @@ static void *decodeHex( const char *src, int &size ) {
 }
 
 /**
- Reads a binary entry from the group, ancoded in hexadecimal blocks.
+ Reads a binary entry from the group, encoded in hexadecimal blocks.
 
  \param[in] key name of entry
  \param[out] data value returned from preferences or default value if none was set
@@ -884,7 +876,7 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
 }
 
 /**
- Reads a binary entry from the group, ancoded in hexadecimal blocks.
+ Reads a binary entry from the group, encoded in hexadecimal blocks.
  A binary (not hex) default value can be supplied.
  The return value indicates if the value was available (non-zero) or the
  default was used (0).
@@ -954,8 +946,7 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
 /**
  Sets an entry (name/value pair). The return value indicates if there
  was a problem storing the data in memory. However it does not
- reflect if the value was actually stored in the preferences
- file.
+ reflect if the value was actually stored in the preference file.
 
  \param[in] key name of entry
  \param[in] data set this entry to \p value
@@ -989,7 +980,7 @@ int Fl_Preferences::size( const char *key ) {
 }
 
 /**
- \brief Creates a path that is related to the preferences file and
+ \brief Creates a path that is related to the preference file and
  that is usable for additional application data.
 
  This function creates a directory that is named after the preferences
@@ -1000,8 +991,8 @@ int Fl_Preferences::size( const char *key ) {
  If the name is too long, it will be clipped.
 
  This function can be used with direct paths that don't end in \c .prefs .
- \a getUserDataPath() will remove any extension and end the path with a \c / . If
- the file name has no extension, \a getUserDataPath() will append \c .data/
+ \a getUserDataPath() will remove any extension and end the path with a \c / .
+ If the file name has no extension, \a getUserDataPath() will append \c .data/
  to the path name.
 
  Example:
@@ -1037,7 +1028,7 @@ char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
 /**
  Writes preferences to disk if they were modified.
 
- This method can be used to verify that writing a preferences file went well.
+ This method can be used to verify that writing a preference file went well.
  Deleting the base preferences object will also write the contents of the
  database to disk.
 
@@ -1045,12 +1036,12 @@ char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
     blocked writing, etc.
  \return 0 if the file was written to disk. This does not check if the disk ran
     out of space and the file is truncated.
- \return 1 if there no data written to the database and no write attempt
+ \return 1 if no data was written to the database and no write attempt
     to disk was made.
  */
 int Fl_Preferences::flush() {
   int ret = dirty();
-  if (ret!=1)
+  if (ret != 1)
     return ret;
   return rootNode->write();
 }
@@ -1059,7 +1050,7 @@ int Fl_Preferences::flush() {
  Check if there were changes to the database that need to be written to disk.
 
  \return 1 if the database will be written to disk by `flush` or destructor.
- \return 0 if the databse is unchanged since the last write operation.
+ \return 0 if the database is unchanged since the last write operation.
  \return -1 f there is an internal database error.
  */
 int Fl_Preferences::dirty() {
@@ -1200,7 +1191,7 @@ Fl_Preferences::RootNode::~RootNode() {
   prefs_->node = 0L;
 }
 
-// read a preferences file and construct the group tree and with all entry leafs
+// read a preference file and construct the group tree and all entry leaves
 int Fl_Preferences::RootNode::read() {
   if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
@@ -1249,7 +1240,7 @@ int Fl_Preferences::RootNode::read() {
   return 0;
 }
 
-// write the group tree and all entry leafs
+// write the group tree and all entry leaves
 int Fl_Preferences::RootNode::write() {
   if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
