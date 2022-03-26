@@ -1,8 +1,8 @@
 #
-# Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
-# Written by Michael Surette
+# Installation support for building the FLTK project using CMake (www.cmake.org)
+# Originally written by Michael Surette
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -125,8 +125,11 @@ if (UNIX OR MSYS OR MINGW)
   INSTALL_MAN (fluid 1)
   INSTALL_MAN (fltk-config 1)
   INSTALL_MAN (fltk 3)
-  INSTALL_MAN (blocks 6)
-  INSTALL_MAN (checkers 6)
-  INSTALL_MAN (sudoku 6)
+
+  # Don't (!) install man pages of games (GitHub issue #23)
+
+  # INSTALL_MAN (blocks 6)
+  # INSTALL_MAN (checkers 6)
+  # INSTALL_MAN (sudoku 6)
 
 endif (UNIX OR MSYS OR MINGW)
