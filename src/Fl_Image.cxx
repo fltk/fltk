@@ -175,7 +175,7 @@ void Fl_Image::label(Fl_Menu_Item* m) {
  \return ERR_FILE_ACCESS if there was a file access related error (errno should be set)
  \return ERR_FORMAT if image decoding failed.
  */
-int Fl_Image::fail()
+int Fl_Image::fail() const
 {
     // if no image exists, ld_ may contain a simple error code
     if ( (w_<=0) || (h_<=0) || (d_<=0) ) {
