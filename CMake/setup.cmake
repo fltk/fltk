@@ -116,7 +116,9 @@ if (WIN32)
   if (MSVC)
     add_definitions (-DWIN32_LEAN_AND_MEAN)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-    add_compile_options (/utf-8)  # This is equivalent to specifying `/source-charset:utf-8 /execution-charset:utf-8`
+    if (NOT MSVC_VERSION VERSION_LESS 1900) # Visual Studio 2015
+      add_compile_options (/utf-8)          # equivalent to `/source-charset:utf-8 /execution-charset:utf-8`
+    endif ()
     set (BORDER_WIDTH 2)
   endif (MSVC)
   if (CMAKE_C_COMPILER_ID STREQUAL GNU)
