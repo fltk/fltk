@@ -187,7 +187,7 @@ public:
     \see count(), w(), h(), data_w(), data_h(), d(), ld()
    */
   const char * const *data() const {return data_;}
-  int fail();
+  int fail() const;
   /**
     Releases an Fl_Image - the same as '\p delete \p this'.
 
