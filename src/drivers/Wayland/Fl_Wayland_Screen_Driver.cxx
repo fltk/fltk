@@ -194,14 +194,14 @@ static void do_set_cursor(struct seat *seat, struct wl_cursor *wl_cursor = NULL)
 }
 
 static uint32_t ptime;
-FL_EXPORT uint32_t fl_event_time;
+static uint32_t wld_event_time;
 static int px, py;
 
 
 static void set_event_xy(Fl_Window *win) {
   // turn off is_click if enough time or mouse movement has passed:
   if (abs(Fl::e_x_root-px)+abs(Fl::e_y_root-py) > 3 ||
-      fl_event_time >= ptime+1000) {
+      wld_event_time >= ptime+1000) {
     Fl::e_is_click = 0;
 //fprintf(stderr, "Fl::e_is_click = 0\n");
   }
@@ -219,7 +219,7 @@ static inline void checkdouble() {
   }
   px = Fl::e_x_root;
   py = Fl::e_y_root;
-  ptime = fl_event_time;
+  ptime = wld_event_time;
 }
 
 
@@ -302,7 +302,7 @@ static void pointer_motion(void *data,
   Fl::e_y = wl_fixed_to_int(surface_y) / f;
   Fl::e_y_root = Fl::e_y + win->y();
 //fprintf(stderr, "FL_MOVE on win=%p to x:%dx%d root:%dx%d\n", win, Fl::e_x, Fl::e_y, Fl::e_x_root, Fl::e_y_root);
-  fl_event_time = time;
+  wld_event_time = time;
   set_event_xy(win);
   Fl::handle(FL_MOVE, win);
 }
@@ -321,7 +321,7 @@ static void pointer_button(void *data,
   int event = 0;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
-  fl_event_time = time;
+  wld_event_time = time;
   if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED && seat->pointer_focus == NULL &&
       fl_xid(win)->kind == Fl_Wayland_Window_Driver::DECORATED) {
     // click on titlebar
@@ -356,7 +356,7 @@ static void pointer_axis(void *data,
   struct seat *seat = (struct seat*)data;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
-  fl_event_time = time;
+  wld_event_time = time;
   int delta = wl_fixed_to_int(value) / 10;
 //fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
@@ -523,7 +523,7 @@ struct key_repeat_data_t {
 #define KEY_REPEAT_INTERVAL 0.05 // sec
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
-  if ((Fl::event() == FL_KEYDOWN || (Fl_Window_Driver::menu_parent() && Fl::event() == FL_ENTER)) && fl_event_time == key_repeat_data->time) {
+  if ((Fl::event() == FL_KEYDOWN || (Fl_Window_Driver::menu_parent() && Fl::event() == FL_ENTER)) && wld_event_time == key_repeat_data->time) {
     Fl::handle(FL_KEYDOWN, key_repeat_data->window);
     Fl::add_timeout(KEY_REPEAT_INTERVAL, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
@@ -681,7 +681,7 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
   }
   // end of part used only without text-input-unstable-v3
   
-  fl_event_time = time;
+  wld_event_time = time;
   int event = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? FL_KEYDOWN : FL_KEYUP);
   // Send event to focus-containing top window as defined by FLTK,
   // otherwise send it to Wayland-defined focus window

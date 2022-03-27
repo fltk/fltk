@@ -26,7 +26,6 @@ struct flWaylandRegion {
 }; // a region is the union of a series of rectangles
 
 #include <stdint.h>
-extern FL_EXPORT uint32_t fl_event_time;
 
 FL_EXPORT struct wl_display *fl_wl_display();
 FL_EXPORT struct wl_surface *fl_wl_surface(Window xid);
