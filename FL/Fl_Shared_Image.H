@@ -160,7 +160,31 @@ public:
   static int            num_images();
   static void           add_handler(Fl_Shared_Handler f);
   static void           remove_handler(Fl_Shared_Handler f);
-};
+
+  /**
+    Returns a pointer to the internal Fl_Image object.
+
+    The output is a pointer to the \p internal image ('Fl_Image' or subclass)
+    which can be used to inspect or copy the image.
+
+    <b>Do not try to modify the image!</b> You can copy the image though
+    if you want or need to change any attributes, size etc. If all you
+    need to do is to resize the image you should use
+    Fl_Shared_Image::copy(int, int) instead.
+
+    \note The internal image (pointer) is protected for good reasons, e.g.
+      to prevent access to the image so it can't be modified by user code.
+      \b DO \b NOT cast away the 'const' to modify the image.
+
+    User code should rarely need this method. Use with caution.
+
+    \return  const Fl_Image* image, the internal Fl_Image
+
+    \since 1.4.0
+  */
+  const Fl_Image *image() const { return image_; }
+
+}; // class Fl_Shared_Image
 
 //
 // The following function is provided in the fltk_images library and
