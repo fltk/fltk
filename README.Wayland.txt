@@ -44,7 +44,7 @@ Once after "git clone", create the configure file :
 
 Prepare build with :
    ./configure --enable-wayland [--enable-shared]
-   
+
 Build with :
    make
 
@@ -97,7 +97,7 @@ the common FLTK 1.3 construct :
 will choke at compile time because it exposes X11-specific code to the non-X11, Wayland
 environment. This should be written instead :
   #include <FL/fl_config.h>
-  
+
   #ifdef __APPLE__
      *** macOS-specific code ***
   #elif defined(_WIN32)

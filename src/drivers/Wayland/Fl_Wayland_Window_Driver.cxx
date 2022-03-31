@@ -388,7 +388,7 @@ void Fl_Wayland_Window_Driver::make_current() {
     fl_alert(err_message);
     Fl::fatal(err_message);
   }
-  
+
   struct wld_window *window = fl_xid(pWindow);
   float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
   if (window && window->buffer) {
@@ -444,7 +444,7 @@ void Fl_Wayland_Window_Driver::flush() {
   }
   struct wld_window *window = fl_xid(pWindow);
   if (!window || !window->configured_width) return;
-  
+
   Fl_X *i = Fl_X::i(pWindow);
   Fl_Region r = i->region;
   float f = Fl::screen_scale(pWindow->screen_num());
@@ -466,7 +466,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Wayland_Window_Driver::in_flush = true;
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
-  
+
   wl_surface_frame(window->wl_surface);
   Fl_Wayland_Graphics_Driver::buffer_commit(window);
 }
@@ -769,7 +769,7 @@ static void handle_configure(struct libdecor_frame *frame,
   float f = Fl::screen_scale(window->fl_win->screen_num());
 
   if (!window->xdg_surface) window->xdg_surface = libdecor_frame_get_xdg_surface(frame);
-    
+
   if (window->fl_win->fullscreen_active()) {
     libdecor_frame_set_fullscreen(window->frame, NULL);
   } else if (driver->show_iconic()) {
@@ -795,17 +795,17 @@ static void handle_configure(struct libdecor_frame *frame,
       }
     } else { width = height = 0; }
   }
-    
+
   if (width == 0) {
     width = window->floating_width;
     height = window->floating_height;
     //fprintf(stderr,"handle_configure: using floating %dx%d\n",width,height);
   }
-  
+
   driver->in_handle_configure = true;
   window->fl_win->resize(0, 0, ceil(width / f), ceil(height / f));
   driver->in_handle_configure = false;
-  
+
   if (ceil(width / f) != window->configured_width || ceil(height / f) != window->configured_height) {
     if (window->buffer) {
       Fl_Wayland_Graphics_Driver::buffer_release(window);
@@ -899,7 +899,7 @@ static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, u
   struct wld_window *window = (struct wld_window*)data;
   xdg_surface_ack_configure(xdg_surface, serial);
 //fprintf(stderr, "xdg_surface_configure: surface=%p\n", window->wl_surface);
-  
+
   if (window->fl_win->w() != window->configured_width || window->fl_win->h() != window->configured_height) {
     if (window->buffer) {
       Fl_Wayland_Graphics_Driver::buffer_release(window);
@@ -1034,7 +1034,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   struct wld_window *new_window;
   Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
-  
+
   if (pWindow->parent() && !pWindow->window()->shown()) return NULL;
 
   new_window = (struct wld_window *)calloc(1, sizeof *new_window);
@@ -1049,7 +1049,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   new_window->wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   //Fl::warning("makeWindow:%p wayland-scale=%d user-scale=%.2f\n", pWindow, new_window->scale, Fl::screen_scale(0));
   wl_surface_add_listener(new_window->wl_surface, &surface_listener, new_window);
-  
+
   if (pWindow->user_data() == &Fl_Screen_Driver::transient_scale_display && Fl::first_window()) {
   // put transient scale win at center of top window by making it a child of top
     int center_x, center_y;
@@ -1059,7 +1059,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
       pWindow->position(center_x - pWindow->w()/2 ,  center_y - pWindow->h()/2);
     }
   }
-  
+
   if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip
     new_window->kind = POPUP;
     new_window->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, new_window->wl_surface);
@@ -1112,7 +1112,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     float f = Fl::screen_scale(pWindow->screen_num());
     new_window->floating_width = pWindow->w() * f;
     new_window->floating_height = pWindow->h() * f;
-    
+
   } else if (pWindow->parent()) { // for subwindows (GL or non-GL)
     new_window->kind = SUBWINDOW;
     struct wld_window *parent = fl_xid(pWindow->window());
@@ -1140,7 +1140,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     wl_surface_commit(new_window->wl_surface);
     pWindow->border(0);
   }
-    
+
   Fl_Window *old_first = Fl::first_window();
   Window first_xid = (old_first ? fl_xid(old_first) : NULL);
   Fl_X *xp = new Fl_X;
@@ -1159,7 +1159,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     xp->next = NULL;
     Fl_X::first = xp;
   }
-  
+
   if (pWindow->modal() || pWindow->non_modal()) {
     if (pWindow->modal()) Fl::modal_ = pWindow;
     if (new_window->kind == DECORATED && first_xid && first_xid->kind == DECORATED) {
@@ -1170,14 +1170,14 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
                                                           top_dr->xdg_toplevel());
     }
   }
-  
+
   size_range();
   pWindow->set_visible();
   int old_event = Fl::e_number;
   pWindow->handle(Fl::e_number = FL_SHOW); // get child windows to appear
   Fl::e_number = old_event;
   pWindow->redraw();
-  
+
   return xp;
 }
 
@@ -1462,7 +1462,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       x(0); y(0);
     }
   }
-    
+
   if (shown()) {
     struct wld_window *fl_win = fl_xid(pWindow);
     float f = Fl::screen_scale(pWindow->screen_num());
@@ -1521,7 +1521,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
     y_offset = y-1;
     y = 1;
   }
-  
+
   //printf("should move menuwindow to %d y_offset=%d y=%d\n", true_y, y_offset, pWindow->y());
   struct xdg_popup *old_popup = xid_menu->xdg_popup;
   struct xdg_surface *old_xdg = xid_menu->xdg_surface;

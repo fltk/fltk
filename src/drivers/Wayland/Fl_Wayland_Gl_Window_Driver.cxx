@@ -28,7 +28,7 @@
 #include <FL/gl.h>
 
 /* Implementation note about OpenGL drawing on the Wayland platform
- 
+
 After eglCreateWindowSurface() with attributes {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE},
 eglQueryContext() reports that EGL_RENDER_BUFFER equals EGL_BACK_BUFFER.
 This experiment suggests that the platform only supports double-buffer drawing.
@@ -61,22 +61,22 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
 
 void Fl_Wayland_Gl_Window_Driver::init() {
   EGLint major, minor;
-  
+
   if (!Fl_Wayland_Screen_Driver::wl_display) Fl::screen_driver()->open_display();
   egl_display = eglGetDisplay((EGLNativeDisplayType) Fl_Wayland_Screen_Driver::wl_display);
   if (egl_display == EGL_NO_DISPLAY) {
     Fl::fatal("Can't create egl display\n");
   }
-  
+
   if (eglInitialize(egl_display, &major, &minor) != EGL_TRUE) {
     Fl::fatal("Can't initialise egl display\n");
   }
   //printf("EGL major: %d, minor %d\n", major, minor);
-  
+
   eglGetConfigs(egl_display, NULL, 0, &configs_count);
   //printf("EGL has %d configs\n", configs_count);
   eglBindAPI(EGL_OPENGL_API);
-  
+
   gl_event_queue = wl_display_create_queue(Fl_Wayland_Screen_Driver::wl_display);
 }
 
@@ -115,7 +115,7 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
   m |= FL_DOUBLE;
   Fl_Wayland_Gl_Choice *g = (Fl_Wayland_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
-  
+
   EGLint n;
   EGLint config_attribs[] = {
     EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -128,11 +128,11 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
     EGL_STENCIL_SIZE, 0, // set at 15
     EGL_NONE
   };
-  
+
   if (m & FL_DEPTH) config_attribs[11] = 1;
   if (m & FL_MULTISAMPLE) config_attribs[13] = 1;
   if (m & FL_STENCIL) config_attribs[15] = 1;
-  
+
   static EGLConfig *configs = (void**)calloc(configs_count, sizeof(EGLConfig));
   eglChooseConfig(egl_display, config_attribs, configs, configs_count, &n);
   if (n == 0 && (m & FL_MULTISAMPLE)) {
@@ -142,7 +142,7 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
   if (n == 0) {
     Fl::fatal("failed to choose an EGL config\n");
   }
-  
+
   g = new Fl_Wayland_Gl_Choice(m, alistp, first);
   /*for (int i = 0; i < n; i++) {
     EGLint size;

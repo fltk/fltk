@@ -144,7 +144,7 @@ static void data_source_handle_action(void *data, struct wl_data_source *source,
     break;
   }
 }
-  
+
 static void data_source_handle_dnd_drop_performed(void *data, struct wl_data_source *source) {
   //printf("Drop performed\n");
 }

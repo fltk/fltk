@@ -144,7 +144,7 @@ public:
   void ps_origin(int x, int y);
   void ps_translate(int, int);
   void ps_untranslate();
-  
+
   void draw_cached_pattern_(Fl_Image *img, cairo_pattern_t *pat, int X, int Y, int W, int H, int cx, int cy);
   void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD);
   void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
@@ -156,7 +156,7 @@ public:
   void cache(Fl_Pixmap *pxm);
   void draw_pixmap(Fl_Pixmap *rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   void uncache_pixmap(fl_uintptr_t p);
-  
+
   void font(Fl_Font fnum, Fl_Fontsize s);
   Fl_Font font() { return Fl_Graphics_Driver::font(); }
   void draw(const char* s, int nBytes, int x, int y) { draw(s, nBytes, float(x), float(y)); }

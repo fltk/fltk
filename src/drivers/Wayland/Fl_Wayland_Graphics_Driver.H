@@ -24,7 +24,7 @@
 
 
 /* Implementation note about buffers FLTK uses to support display graphics under Wayland.
- 
+
  Each window is associated to an FLTK-defined object of type struct wld_window
  containing itself an FLTK-defined struct fl_wld_buffer object holding all graphics data.
  Among members of this latter structure are:
@@ -44,7 +44,7 @@
  gives the total buffer size in bytes (thus, data_size / stride gives the buffer height);
  - struct wl_callback *cb
  is used to synchronize drawing with the compositor during progressive drawing.
- 
+
  When a graphics scene is to be committed, the data_size bytes of draw_buffer are copied by memcpy()
  starting at data, and wl_buffer is attached to the wl_surface which is committed for display
  by wl_surface_commit().

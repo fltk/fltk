@@ -52,16 +52,16 @@ struct pointer_output {
 };
 
 /* Implementation note about support of 3 Wayland compositors: Mutter, Weston, KDE.
- 
+
 - About CSD and SSD :
  * Mutter and Weston use CSD (client-side decoration) which means that libdecor.so draws all window
  titlebars and responds to resize, minimization and maximization events.
  * KDE uses SSD (server-side decoration) which means the OS draws titlebars according to its own rules
  and triggers resize, minimization and maximization events.
- 
+
 - Function registry_handle_global() runs within fl_open_display() and sets public static variable
  Fl_Wayland_Screen_Driver::compositor to either Fl_Wayland_Screen_Driver::MUTTER, ::WESTON, or ::KDE.
- 
+
 - Specific operations for WESTON:
  * When a libdecor-framed window is minimized under Weston, the frame remains on display. To avoid
  that, function libdecor_frame_set_minimized() is modified so it turns off the frame's visibility, with
@@ -82,7 +82,7 @@ struct pointer_output {
  A frame callback is also created by Fl_Wayland_Window_Driver::flush() when a window redraw operation
  is needed. FLTK processes wayland events until the compositor is ready for commit and then commits
  the new window content.
- 
+
  - Support of Fl_Window::border(int) :
  FLTK uses libdecor_frame_set_visibility() to show or hide a toplevel window's frame. This doesn't work
  with KDE which uses Server-Side Decoration. In that case, FLTK hides and re-shows the window to toggle
@@ -91,7 +91,7 @@ struct pointer_output {
 
 
 /* Implementation note about screen-related information
- 
+
  struct wl_output : Wayland-defined, contains info about a screen, one such record for each screen
 
  struct Fl_Wayland_Screen_Driver::output { // FLTK defined
@@ -488,15 +488,15 @@ static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
 {
   struct seat *seat = (struct seat*)data;
   assert(format == WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1);
-  
+
   char *map_shm = (char*)mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
   assert(map_shm != MAP_FAILED);
-  
+
   struct xkb_keymap *xkb_keymap = xkb_keymap_new_from_string(seat->xkb_context, map_shm,
                                                              XKB_KEYMAP_FORMAT_TEXT_V1, XKB_KEYMAP_COMPILE_NO_FLAGS);
   munmap(map_shm, size);
   close(fd);
-  
+
   struct xkb_state *xkb_state = xkb_state_new(xkb_keymap);
   xkb_keymap_unref(seat->xkb_keymap);
   xkb_state_unref(seat->xkb_state);
@@ -680,7 +680,7 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
 //fprintf(stderr, "xkb_compose_status=%d ctxt=%p state=%p l=%d[%s]\n", status, seat->xkb_context, seat->xkb_compose_state, Fl::e_length, buf);
   }
   // end of part used only without text-input-unstable-v3
-  
+
   wld_event_time = time;
   int event = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? FL_KEYDOWN : FL_KEYUP);
   // Send event to focus-containing top window as defined by FLTK,
@@ -739,7 +739,7 @@ static const struct wl_keyboard_listener wl_keyboard_listener = {
        .repeat_info = wl_keyboard_repeat_info,
 };
 
-                                                
+
 void text_input_enter(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
                       struct wl_surface *surface) {
 //puts("text_input_enter");
@@ -823,7 +823,7 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
     wl_pointer_release(seat->wl_pointer);
     seat->wl_pointer = NULL;
   }
-  
+
   bool have_keyboard = capabilities & WL_SEAT_CAPABILITY_KEYBOARD;
   if (have_keyboard && seat->wl_keyboard == NULL) {
           seat->wl_keyboard = wl_seat_get_keyboard(wl_seat);
@@ -932,16 +932,16 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     }
     scr_driver->wl_compositor = (struct wl_compositor*)wl_registry_bind(wl_registry,
            id, &wl_compositor_interface, 4);
-    
+
   } else if (strcmp(interface, "wl_subcompositor") == 0) {
     scr_driver->wl_subcompositor = (struct wl_subcompositor*)wl_registry_bind(wl_registry,
-           id, &wl_subcompositor_interface, 1);    
-    
+           id, &wl_subcompositor_interface, 1);
+
   } else if (strcmp(interface, "wl_shm") == 0) {
     scr_driver->wl_shm = (struct wl_shm*)wl_registry_bind(wl_registry,
             id, &wl_shm_interface, 1);
     wl_shm_add_listener(scr_driver->wl_shm, &shm_listener, NULL);
-    
+
   } else if (strcmp(interface, "wl_seat") == 0) {
     if (version < 3) {
       Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
@@ -965,7 +965,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       scr_driver->seat->data_device = wl_data_device_manager_get_data_device(scr_driver->seat->data_device_manager, scr_driver->seat->wl_seat);
       wl_data_device_add_listener(scr_driver->seat->data_device, Fl_Wayland_Screen_Driver::p_data_device_listener, NULL);
     }
-    
+
   } else if (strcmp(interface, wl_data_device_manager_interface.name) == 0) {
     if (!scr_driver->seat) scr_driver->seat = (struct seat*)calloc(1, sizeof(struct seat));
     scr_driver->seat->data_device_manager = (struct wl_data_device_manager*)wl_registry_bind(wl_registry, id, &wl_data_device_manager_interface, 3);
@@ -974,7 +974,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       wl_data_device_add_listener(scr_driver->seat->data_device, Fl_Wayland_Screen_Driver::p_data_device_listener, NULL);
     }
 //fprintf(stderr, "registry_handle_global: %s\n", interface);
-    
+
   } else if (strcmp(interface, "wl_output") == 0) {
     if (version < 2) {
       Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
@@ -990,7 +990,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_list_insert(&(scr_driver->outputs), &output->link);
     scr_driver->screen_count( wl_list_length(&(scr_driver->outputs)) );
 //fprintf(stderr, "wl_output: id=%d wl_output=%p screen_count()=%d\n", id, output->wl_output, Fl::screen_count());
-    
+
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
 //fprintf(stderr, "registry_handle_global interface=%s\n", interface);
     scr_driver->xdg_wm_base = (struct xdg_wm_base *)wl_registry_bind(wl_registry, id, &xdg_wm_base_interface, 1);
@@ -1061,7 +1061,7 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
 
 void Fl_Wayland_Screen_Driver::open_display_platform() {
   struct wl_registry *wl_registry;
-  
+
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
     return;

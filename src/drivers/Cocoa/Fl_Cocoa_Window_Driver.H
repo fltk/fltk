@@ -162,7 +162,7 @@ public:
   //icons
   virtual void icons(const Fl_RGB_Image *icons[], int count);
   NSImage *icon_image;
-  
+
   virtual fl_uintptr_t os_id();
 };
 

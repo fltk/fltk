@@ -1001,7 +1001,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
     AS_IF([test x$enable_wayland = xyes], [
       dnl Prepare for Wayland...
-      
+
       AS_IF([test x$PKGCONFIG = x], [
           dnl pkg-config is not available, issue warning and abort...
           AC_MSG_WARN([--enable-wayland: please install pkg-config.])
@@ -1020,9 +1020,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
       LDFLAGS="$LDFLAGS -rdynamic -no-pie"
-    
+
       AC_SEARCH_LIBS([dlopen], [dl])
-      
+
       AS_IF([test x$enable_gl != xno], [
           AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
           AC_CHECK_HEADER([GL/glu.h], [
@@ -1037,7 +1037,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           GLDEMOS=""
           GLWLDEMO=""
       ])
-      
+
       dnl Check for GTK-3 ...
       gtk_found=no
       CFLAGS="$($PKGCONFIG --cflags gtk+-3.0) $CFLAGS"
@@ -1046,13 +1046,13 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           LIBS="$LIBS $($PKGCONFIG --libs gtk+-3.0)"
           gtk_found=yes
       ])
-        
+
       dnl Check for the Pango library ...
       pango_found=no
       CFLAGS="$($PKGCONFIG --cflags pangocairo) $CFLAGS"
       CXXFLAGS="$($PKGCONFIG --cflags pangocairo) $CXXFLAGS"
       LIBS="$LIBS $($PKGCONFIG --libs pangocairo)"
- 
+
       AC_CHECK_HEADERS([pango/pangocairo.h], [
           AC_DEFINE([USE_PANGO])
           AC_DEFINE([USE_XFT])
@@ -1265,7 +1265,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     AC_CHECK_HEADER([X11/Xregion.h], [
         AC_DEFINE([HAVE_X11_XREGION_H])
     ], [], [#include <X11/Xlib.h>])
-    
+
     ])
 
     # Make symlinks since UNIX/Linux is case sensitive,

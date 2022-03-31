@@ -34,7 +34,7 @@ static int table_size;
  \param name Name of the font to assign. The string pointer is simply stored,
  the string is not copied, so the string must be in static memory. The exact name to be used
  depends on the platform :
- 
+
  \li Windows, X11, Xft: use the family name prefixed by one character to indicate the desired font variant.
  Characters <tt>' ', 'I', 'B', 'P' </tt>denote plain, italic, bold, and bold-italic variants, respectively. For example,
  string \c "IGabriola" is to be used to denote the <tt>"Gabriola italic"</tt> font. The \c "Oblique" suffix,

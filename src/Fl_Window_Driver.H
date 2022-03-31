@@ -184,13 +184,13 @@ public:
                      int /*dest_x*/, int /*dest_y*/,
                      void (*)(void*, int,int,int,int), void*) { return 0; }
   static inline Fl_Window_Driver* driver(const Fl_Window *win) {return win->pWindowDriver;}
-  
+
   // --- support for menu windows
   // the default implementation of next 2 members is most probably enough
   virtual void reposition_menu_window(int x, int y);
   virtual void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1);
   static Fl_Window *menu_parent();
-  
+
   virtual fl_uintptr_t os_id() { return 0; }
 };
 
