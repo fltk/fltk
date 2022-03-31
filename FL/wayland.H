@@ -20,7 +20,7 @@
 
 typedef struct wld_window *Window;
 
-struct flWaylandRegion {
+struct flCairoRegion {
   int count;
   struct _cairo_rectangle *rects;
 }; // a region is the union of a series of rectangles

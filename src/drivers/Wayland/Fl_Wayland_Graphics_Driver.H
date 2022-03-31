@@ -77,10 +77,6 @@ public:
   Fl_Wayland_Graphics_Driver();
   static const uint32_t wld_format;
   void activate(struct fl_wld_buffer *buffer, float scale);
-  void clip_region(Fl_Region r);
-  Fl_Region XRectangleRegion(int x, int y, int w, int h);
-  void add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H);
-  void XDestroyRegion(Fl_Region r);
   void set_color(Fl_Color i, unsigned c);
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy);
   static struct fl_wld_buffer *create_shm_buffer(int width, int height);

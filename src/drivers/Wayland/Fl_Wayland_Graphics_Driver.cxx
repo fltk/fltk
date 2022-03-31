@@ -177,56 +177,6 @@ void Fl_Wayland_Graphics_Driver::activate(struct fl_wld_buffer *buffer, float sc
 }
 
 
-void Fl_Wayland_Graphics_Driver::clip_region(Fl_Region r) {
-  if (cairo_) {
-    cairo_reset_clip(cairo_);
-    if (r) {
-      for (int i = 0; i < r->count; i++) {
-        cairo_rectangle(cairo_, r->rects[i].x-0.5 , r->rects[i].y-0.5 , r->rects[i].width  , r->rects[i].height);
-      }
-      cairo_clip(cairo_);
-    }
-  }
-}
-
-
-Fl_Region Fl_Wayland_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
-  Fl_Region R = (Fl_Region)malloc(sizeof(*R));
-  R->count = 1;
-  R->rects = (cairo_rectangle_t *)malloc(sizeof(cairo_rectangle_t));
-  R->rects->x=x, R->rects->y=y, R->rects->width=w; R->rects->height=h;
-  return R;
-}
-
-
-// r1 ⊂ r2
-static bool CairoRectContainsRect(cairo_rectangle_t *r1, cairo_rectangle_t *r2) {
-  return r1->x >= r2->x && r1->y >= r2->y && r1->x+r1->width <= r2->x+r2->width &&
-    r1->y+r1->height <= r2->y+r2->height;
-}
-
-
-void Fl_Wayland_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
-  cairo_rectangle_t arg = {double(X), double(Y), double(W), double(H)};
-  int j; // don't add a rectangle totally inside the Fl_Region
-  for (j = 0; j < r->count; j++) {
-    if (CairoRectContainsRect(&arg, &(r->rects[j]))) break;
-  }
-  if (j >= r->count) {
-    r->rects = (cairo_rectangle_t*)realloc(r->rects, (++(r->count)) * sizeof(cairo_rectangle_t));
-    r->rects[r->count - 1] = arg;
-  }
-}
-
-
-void Fl_Wayland_Graphics_Driver::XDestroyRegion(Fl_Region r) {
-  if (r) {
-    free(r->rects);
-    free(r);
-  }
-}
-
-
 void Fl_Wayland_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     fl_cmap[i] = c;

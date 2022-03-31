@@ -176,6 +176,9 @@ public:
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);  virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
+  virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  virtual void XDestroyRegion(Fl_Region r);
+  virtual void add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H);
 };
 
 #endif // FL_CAIRO_GRAPHICS_DRIVER_H
