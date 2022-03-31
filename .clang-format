@@ -1,7 +1,7 @@
 #
 # clang-format control file for the FLTK project.
 #
-# Copyright 2017-2020 by Bill Spitzak and others.
+# Copyright 2017-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -23,10 +23,11 @@
 #
 # DO NOT USE WITHOUT CHECKING THE RESULT OF FORMATTING FOR CORRECTNESS
 # AND COMPATIBILITY WITH THE FLTK CMP!
+# https://www.fltk.org/cmp.php#CODING_STANDARDS
 #
 # For more information about clang-format please refer to the online docs at:
-# http://clang.llvm.org/docs/ClangFormat.html
-# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# https://clang.llvm.org/docs/ClangFormat.html
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 #
 # Embedded comments ("clang-format pragma's") in the source code:
 #   // clang-format off
@@ -37,10 +38,10 @@
 # This is particularly useful for embedded pixmaps and other tables
 # like menu arrays that are pre-formatted for better readability.
 
-# The options used for FLTK are based on pre-defined style options of LLVM,
+# The options used for FLTK are based on predefined style options of LLVM,
 # which are also the default settings of clang-format.
 # For a full list of LLVM settings please use
-#  clang-format -style=llvm -dump-config
+#   clang-format -style=llvm -dump-config
 
 # FLTK settings (currently experimental).
 
@@ -68,12 +69,12 @@ UseTab:                                         Never
 
 # Should we extend code lines beyond 80 columns ?
 # Default: 80
-ColumnLimit:                                    120
+ColumnLimit:                                    100
 
 # The FLTK CMP requires that case labels are indented (LLVM: false)
 IndentCaseLabels:                               true
 
-# There are sometimes more than 1 empty lines; should we keep 2 or more ?
+# Should we keep two or more consecutive empty lines ?
 # LLVM default is 1.
 
 MaxEmptyLinesToKeep:                            2
@@ -83,6 +84,7 @@ MaxEmptyLinesToKeep:                            2
 # following "Allow..." statements (leave them commented out):
 #
 # LLVM default values:
+#
 # AllowShortBlocksOnASingleLine:                false
 # AllowShortFunctionsOnASingleLine:             All
 # AllowShortIfStatementsOnASingleLine:          false
@@ -101,22 +103,26 @@ AllowShortFunctionsOnASingleLine:               Inline
 
 AlignEscapedNewlinesLeft:                       true
 
-# Include files should be left as-is until we know we can sort them
-# without any bad side effects (LLVM: true)
+# Include files should be left as-is until we *know* we can
+# sort them without bad side effects.
+# LLVM default: true
 
 SortIncludes:                                   false
 
-# Multiple constructor initializers must be on consecutive lines:
+# Multiple constructor initializers must be on consecutive lines.
+# Note: this is NOT (always) true in current FLTK code!
 
 BreakConstructorInitializersBeforeComma:        true
 
-# Constructor initializers will be indented by 2 spaces (LLVM: 4):
+# Constructor initializers will be indented by 2 spaces.
+# LLVM default: 4
 
 ConstructorInitializerIndentWidth:              2
 
 # Continuation lines (if automatically wrapped) may be indented differently.
 # This does not apply to function call arguments which are aligned to the
-# opening bracket. LLVM (default): 4
+# opening bracket.
+# LLVM default: 4
 # ContinuationIndentWidth:                      2
 
 # Most of FLTK's code uses 'void *p' as opposed to 'void* p'.
