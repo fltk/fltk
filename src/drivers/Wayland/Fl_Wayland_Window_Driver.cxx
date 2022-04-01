@@ -658,9 +658,14 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
 {
   Window xid = fl_xid(pWindow);
   struct fl_wld_buffer *buffer = xid->buffer;
-  int s = xid->scale;
+  float s = xid->scale * fl_graphics_driver->scale();
   if (s != 1) {
-    src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
+    src_x = src_x * s;
+    src_y = src_y * s;
+    src_w = src_w * s;
+    src_h = src_h * s;
+    dest_x = dest_x * s;
+    dest_y = dest_y * s;
   }
   if (src_x == dest_x) { // vertical scroll
     int i, to, step;
