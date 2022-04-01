@@ -1225,7 +1225,7 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
     struct flCairoRegion *r = (struct flCairoRegion*)rstack[rstackptr];
     if (r) {
       for (int i = 0; i < r->count; i++) {
-        cairo_rectangle(cairo_, r->rects[i].x, r->rects[i].y, r->rects[i].width, r->rects[i].height);
+        cairo_rectangle(cairo_, r->rects[i].x - 0.5, r->rects[i].y - 0.5, r->rects[i].width, r->rects[i].height);
       }
       cairo_clip(cairo_);
     }
