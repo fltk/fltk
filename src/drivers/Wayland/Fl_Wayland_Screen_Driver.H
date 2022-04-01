@@ -68,7 +68,7 @@ public:
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   int get_mouse_unscaled(int &xx, int &yy);
   void screen_count(int count) {num_screens = count;}
-  
+
   void reset_cursor();
   struct wl_cursor *xc_arrow;
   struct wl_cursor *xc_ns;
@@ -113,7 +113,7 @@ public:
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
-  
+
   Fl_Wayland_Screen_Driver();
   virtual APP_SCALING_CAPABILITY rescalable() { return PER_SCREEN_APP_SCALING; }
   virtual float scale(int n);

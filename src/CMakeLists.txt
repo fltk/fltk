@@ -474,7 +474,7 @@ if (OPTION_USE_WAYLAND)
   if (GTK_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_GTK")
   endif (GTK_FOUND)
-    
+
   list (APPEND CFILES
     xutf8/keysym2Ucs.c
     scandir_posix.c

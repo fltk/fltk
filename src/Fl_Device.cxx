@@ -72,7 +72,7 @@
  \li make current another surface, e.g., an Fl_Printer or an Fl_Image_Surface object,  calling set_current() on this object;
  \li draw to that surface;
  \li make the display current again with Fl_Display_Device::display_device()->set_current();  . Don't do any other call to set_current() before this one.
- 
+
  Other scenarios of drawing surface changes should be performed via Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().
  */
 void Fl_Surface_Device::set_current(void)
