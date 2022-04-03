@@ -243,7 +243,7 @@ int Fl_WinAPI_System_Driver::access(const char *fnam, int mode) {
   return _waccess(utf8_to_wchar(fnam, wbuf), mode);
 }
 
-int Fl_WinAPI_System_Driver::stat(const char *fnam, struct stat *b) {
+int Fl_WinAPI_System_Driver::flstat(const char *fnam, struct stat *b) {
 
   // remove trailing '/' or '\'
   unsigned len = (unsigned)strlen(fnam);

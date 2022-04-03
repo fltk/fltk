@@ -29,7 +29,8 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-#include <stdio.h>   // FILE *fl_fopen()
+#include <stdio.h>      // FILE *fl_fopen()
+#include <sys/stat.h>   // struct stat
 
 #ifdef __cplusplus
 extern "C" {

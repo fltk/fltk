@@ -54,7 +54,7 @@ public:
   virtual int execvp(const char *file, char *const *argv);
   virtual int chmod(const char *fnam, int mode);
   virtual int access(const char *fnam, int mode);
-  virtual int stat(const char *fnam, struct stat *b);
+  virtual int flstat(const char *fnam, struct stat *b);
   virtual char *getcwd(char *b, int l);
   virtual int chdir(const char *path);
   virtual int unlink(const char *fnam);

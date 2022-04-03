@@ -3,7 +3,7 @@
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
 // Copyright 2000-2010 by O'ksi'D.
-// Copyright 2016-2020 by Bill Spitzak and others.
+// Copyright 2016-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -462,7 +462,7 @@ int fl_access(const char* f, int mode) {
   \return    the return value of _wstat() on Windows or stat() on other platforms.
 */
 int fl_stat(const char* f, struct stat *b) {
-  return Fl::system_driver()->stat(f, b);
+  return Fl::system_driver()->flstat(f, b);
 }
 
 /** Cross-platform function to change the current working directory,

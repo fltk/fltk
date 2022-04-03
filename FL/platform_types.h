@@ -90,7 +90,6 @@ typedef int FL_SOCKET;
   typedef class NSOpenGLContext* GLContext;
 #endif /* __OBJC__ */
 
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 #  define FL_COMMAND    FL_META
@@ -106,7 +105,6 @@ typedef  unsigned __int64 FL_SOCKET;    /* *FIXME* - FL_SOCKET (see above) */
 typedef  int FL_SOCKET;
 # endif
 typedef struct HGLRC__ *GLContext;
-#include <sys/stat.h>
 #ifdef __MINGW32__
 #  include <dirent.h>
 #else
@@ -119,7 +117,6 @@ typedef struct flCairoRegion* Fl_Region;
 typedef int FL_SOCKET; /**< socket or file descriptor */
 typedef void *EGLContext;
 typedef EGLContext GLContext;
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -129,7 +126,6 @@ typedef unsigned long Fl_Offscreen;
 typedef struct _XRegion *Fl_Region;
 typedef int FL_SOCKET;
 typedef struct __GLXcontextRec *GLContext;
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
