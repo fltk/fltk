@@ -435,11 +435,33 @@ if (OPTION_USE_SYSTEM_LIBPNG)
 endif ()
 
 if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+
   set (FLTK_USE_BUILTIN_PNG FALSE)
   set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
-  include_directories (${PNG_INCLUDE_DIR})
+  include_directories (${PNG_INCLUDE_DIRS})
   add_definitions (${PNG_DEFINITIONS})
-else()
+
+  set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
+  list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
+
+  # FIXME - Force search! Maybe use cache to check for option changes?
+
+  unset (HAVE_PNG_H CACHE)
+  unset (HAVE_LIBPNG_PNG_H CACHE)
+
+  check_include_files (png.h HAVE_PNG_H)
+  mark_as_advanced (HAVE_PNG_H)
+
+  if (NOT HAVE_PNG_H)
+    check_include_files (libpng/png.h HAVE_LIBPNG_PNG_H)
+    mark_as_advanced (HAVE_LIBPNG_PNG_H)
+endif ()
+
+  set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
+  unset (_INCLUDE_SAVED)
+
+else ()
+
   if (OPTION_USE_SYSTEM_LIBPNG)
     message (STATUS "cannot find system png library - using built-in\n")
   endif ()
@@ -450,10 +472,9 @@ else()
   set (HAVE_PNG_H 1)
   set (HAVE_PNG_GET_VALID 1)
   set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
+  set (HAVE_LIBPNG_PNG_H 0)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
 endif ()
-
-set (HAVE_LIBPNG 1)
 
 #######################################################################
 if (X11_Xinerama_FOUND)
