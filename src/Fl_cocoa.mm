@@ -1775,6 +1775,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
       // We create a thread that does nothing so it completes very fast:
       [NSThread detachNewThreadSelector:@selector(doNothing:) toTarget:[FLWindowDelegate singleInstance] withObject:nil];
     }
+    (void)localPool; // silence warning
   }
 }
 
@@ -3021,8 +3022,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   }
   int xp = w->x();
   int yp = w->y();
-  int wp = w->w();
-  int hp = w->h();
 
   int xwm = xp, ywm = yp, bt, bx, by;
 
@@ -3040,10 +3039,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     winlevel = non_modal_window_level();
   }
 
-  if (by+bt) {
-    wp += 2*bx;
-    hp += 2*by+bt;
-  }
   if (force_position()) {
     if (!Fl::grab()) {
       xp = xwm; yp = ywm;

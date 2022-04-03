@@ -1427,6 +1427,7 @@ int Fl_Preferences::Node::write( FILE *f ) {
         fputc( '\n', f );
         src += cnt;
       }
+      (void)written; // silence warning
     }
     else
       fprintf( f, "%s\n", entry_[i].name );
