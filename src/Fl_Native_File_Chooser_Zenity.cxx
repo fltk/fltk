@@ -108,9 +108,16 @@ int Fl_Zenity_Native_File_Chooser_Driver::show() {
     default:
       option = "--file-selection";
   }
-  const char *preset = ".";
-  if (_preset_file) preset = _preset_file;
-  else if (_directory) preset = _directory;
+  char *preset = (char*)"";
+  if (_preset_file) {
+    preset = new char[strlen(_preset_file) + 15];
+    sprintf(preset, "--filename '%s'", _preset_file);
+  }
+  else if (_directory) {
+    // This doesn't actually seem to do anything, but supply it anyway.
+    preset = new char[strlen(_directory) + 15];
+    sprintf(preset, "--filename '%s'", _directory);
+  }
   char *command = new char[strlen(option) + strlen(preset) + (_title?strlen(_title)+11:0) +
                            (_parsedfilt?strlen(_parsedfilt):0) + 50];
   strcpy(command, "zenity ");
