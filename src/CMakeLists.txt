@@ -218,6 +218,10 @@ if (FLTK_USE_X11)
     Fl_get_key.cxx
   )
 
+  if (OPTION_USE_ZENITY)
+    set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Zenity.cxx)
+  endif (OPTION_USE_ZENITY)
+
   if (OPTION_USE_KDIALOG)
     set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx)
   endif (OPTION_USE_KDIALOG)

@@ -341,7 +341,14 @@
 #cmakedefine FL_CFG_NO_FILESYSTEM_SUPPORT 1
 
 /*
- * Do we want class Fl_Native_File_Chooser to run kdialog when desktop is KDE?
+ * Do we want class Fl_Native_File_Chooser to run zenity when available?
+ */
+
+#cmakedefine01 USE_ZENITY
+
+/*
+ * Do we want class Fl_Native_File_Chooser to run kdialog when zenity is
+ * unavailable and desktop is KDE?
  */
 
 #cmakedefine01 USE_KDIALOG

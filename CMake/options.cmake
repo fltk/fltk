@@ -674,6 +674,15 @@ endif (OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
+option (OPTION_USE_ZENITY "Fl_Native_File_Chooser may run zenity" ON)
+if (OPTION_USE_ZENITY)
+  set (USE_ZENITY 1)
+else ()
+  set (USE_ZENITY 0)
+endif (OPTION_USE_ZENITY)
+#######################################################################
+
+#######################################################################
 option (OPTION_USE_KDIALOG "Fl_Native_File_Chooser may run kdialog" ON)
 if (OPTION_USE_KDIALOG)
   set (USE_KDIALOG 1)
