@@ -943,7 +943,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
         }
         Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = true;
       }
-      // if we found kdialog, we will use the Fl_Kdialog_Native_File_Chooser_Driver
+      // if we found zenity, we will use the Fl_Zenity_Native_File_Chooser_Driver
       if (Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity) platform_fnfc = new Fl_Zenity_Native_File_Chooser_Driver(val);
     }
 #endif // USE_ZENITY
