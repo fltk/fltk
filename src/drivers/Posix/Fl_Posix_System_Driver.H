@@ -57,7 +57,7 @@ public:
   virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
   virtual int chmod(const char* f, int mode) {return ::chmod(f, mode);}
   virtual int access(const char* f, int mode) { return ::access(f, mode);}
-  virtual int stat(const char* f, struct stat *b) { return ::stat(f, b);}
+  virtual int flstat(const char* f, struct stat *b) { return ::stat(f, b);}
   virtual char *getcwd(char* b, int l) {return ::getcwd(b, l);}
   virtual int chdir(const char* path) {return ::chdir(path);}
   virtual int unlink(const char* f) {return ::unlink(f);}
