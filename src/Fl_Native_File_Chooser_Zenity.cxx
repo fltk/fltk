@@ -108,7 +108,7 @@ int Fl_Zenity_Native_File_Chooser_Driver::show() {
     default:
       option = "--file-selection";
   }
-  char *preset = (char*)"";
+  char *preset = NULL;
   if (_preset_file) {
     preset = new char[strlen(_preset_file) + 15];
     sprintf(preset, "--filename '%s'", _preset_file);
@@ -124,7 +124,8 @@ int Fl_Zenity_Native_File_Chooser_Driver::show() {
   if (_title) {
     sprintf(command+strlen(command), " --title '%s'", _title);
   }
-  sprintf(command+strlen(command), " %s %s ", option, preset);
+  sprintf(command+strlen(command), " %s %s ", option, preset ? preset : "");
+  delete[] preset;
   if (_parsedfilt) sprintf(command+strlen(command), " \"%s\" ", _parsedfilt);
   strcat(command, "2> /dev/null"); // get rid of stderr output
 //puts(command);
