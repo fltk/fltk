@@ -259,10 +259,12 @@
 
 /*
  * Which header file do we include for libpng?
+ *   ifdef HAVE_PNG_H : <png.h>
+ *   else             : <libpng/png.h>
+ * There is no other choice.
  */
 
 #undef HAVE_PNG_H
-#undef HAVE_LIBPNG_PNG_H
 
 /*
  * Do we have the png_xyz() functions?

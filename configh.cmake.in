@@ -260,10 +260,12 @@
 
 /*
  * Which header file do we include for libpng?
+ *   ifdef HAVE_PNG_H : <png.h>
+ *   else             : <libpng/png.h>
+ * There is no other choice.
  */
 
 #cmakedefine HAVE_PNG_H 1
-#cmakedefine HAVE_LIBPNG_PNG_H 1
 
 /*
  * Do we have the png_xyz() functions?

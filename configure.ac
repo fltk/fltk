@@ -738,7 +738,6 @@ AS_IF([test x$enable_localpng != xyes], [
             syspnginc_ok=yes
         ])
         AC_CHECK_HEADER([libpng/png.h], [
-            AC_DEFINE([HAVE_LIBPNG_PNG_H])
             syspnginc_ok=yes
         ])
         AS_IF([test x$syspnginc_ok = xyes], [
@@ -815,7 +814,6 @@ AC_SUBST([JPEGINC])
 AC_SUBST([PNG])
 AC_SUBST([PNGINC])
 AC_SUBST([HAVE_PNG_H])
-AC_SUBST([HAVE_LIBPNG_H])
 AC_SUBST([ZLIB])
 AC_SUBST([ZLIBINC])
 

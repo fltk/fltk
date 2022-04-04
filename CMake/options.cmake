@@ -444,18 +444,15 @@ if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
   set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
   list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
 
-  # FIXME - Force search! Maybe use cache to check for option changes?
+  # Note: we do not check for <libpng/png.h> explicitly.
+  # This is assumed to exist if we have PNG_FOUND and don't find <png.h>
 
-  unset (HAVE_PNG_H CACHE)
-  unset (HAVE_LIBPNG_PNG_H CACHE)
+  # FIXME - Force search by unsetting the chache variable. Maybe use
+  # FIXME - another cache variable to check for option changes?
 
-  check_include_files (png.h HAVE_PNG_H)
+  unset (HAVE_PNG_H CACHE) # force search
+  check_include_file (png.h HAVE_PNG_H)
   mark_as_advanced (HAVE_PNG_H)
-
-  if (NOT HAVE_PNG_H)
-    check_include_files (libpng/png.h HAVE_LIBPNG_PNG_H)
-    mark_as_advanced (HAVE_LIBPNG_PNG_H)
-endif ()
 
   set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
   unset (_INCLUDE_SAVED)
@@ -472,7 +469,6 @@ else ()
   set (HAVE_PNG_H 1)
   set (HAVE_PNG_GET_VALID 1)
   set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-  set (HAVE_LIBPNG_PNG_H 0)
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
 endif ()
 
