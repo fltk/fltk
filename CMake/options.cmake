@@ -472,6 +472,8 @@ else ()
   include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
 endif ()
 
+set (HAVE_LIBPNG 1)
+
 #######################################################################
 if (X11_Xinerama_FOUND)
   option (OPTION_USE_XINERAMA "use lib Xinerama" ON)
