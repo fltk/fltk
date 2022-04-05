@@ -356,7 +356,8 @@ gtk_chooser_prefs(Fl_Preferences::USER, "fltk.org", "fltk/GTK-file-chooser")
   gtkw_title = NULL;    // dialog title
   _btype = val;
   previous_filter = NULL;
-  gtk_chooser_prefs.get("Preview", want_preview, 0);
+  if (options() & Fl_Native_File_Chooser::PREVIEW) want_preview = true;
+  else gtk_chooser_prefs.get("Preview", want_preview, 0);
 }
 
 Fl_GTK_Native_File_Chooser_Driver::~Fl_GTK_Native_File_Chooser_Driver()
@@ -381,7 +382,8 @@ Fl_GTK_Native_File_Chooser_Driver::~Fl_GTK_Native_File_Chooser_Driver()
   }
   gtkw_count = 0; // assume we have no files selected now
   gtkw_title = strfree(gtkw_title);
-  gtk_chooser_prefs.set("Preview", want_preview);
+  if (!(options() & Fl_Native_File_Chooser::PREVIEW))
+    gtk_chooser_prefs.set("Preview", want_preview);
 }
 
 void Fl_GTK_Native_File_Chooser_Driver::type(int val) {
