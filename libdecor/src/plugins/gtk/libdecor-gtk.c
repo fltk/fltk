@@ -675,7 +675,7 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 		(struct libdecor_frame_gtk *) frame;
 
 #if APPLY_FLTK_CHANGES
-	if (GTK_IS_WIDGET(frame_gtk->header))
+        if (!frame_gtk->header) return; /* happens with SSD */
 #endif
 	gtk_widget_destroy(frame_gtk->header);
 #if APPLY_FLTK_CHANGES
@@ -1595,6 +1595,9 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 {
 	struct libdecor_frame_gtk *frame_gtk =
 		(struct libdecor_frame_gtk *) frame;
+#if APPLY_FLTK_CHANGES
+        if (!frame_gtk->header) return; /* happens with SSD */
+#endif
 	bool redraw_needed = false;
 	const char *new_title;
 
