@@ -1230,13 +1230,6 @@ extern void fl_fix_focus(); // in Fl.cxx
 
 void Fl_Wayland_Screen_Driver::grab(Fl_Window* win)
 {
-  Fl_Window *fullscreen_win = NULL;
-  for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
-    if (W->fullscreen_active()) {
-      fullscreen_win = W;
-      break;
-    }
-  }
   if (win) {
     if (!Fl::grab()) {
     }
