@@ -15,6 +15,38 @@
 #     https://www.fltk.org/bugs.php
 #
 
+#######################################################################
+# Important implementation note for FLTK developers
+#######################################################################
+#
+# *FIXME* In the current version of FLTK's CMake build files we're
+# using 'include_directories()' to define directories that must be
+# used in compile commands (typically "-Idirectories").
+#
+# include_directories() is a global command that affects *all* source
+# files in the current directory and all subdirectories. This can lead
+# to conflicts and should be replaced with target_include_directories()
+# which can be applied to particular targets and source files only.
+#
+# This could remove some of these potential build conflicts, for
+# instance # if the bundled image libs and Cairo or Pango are used
+# together (Pango depends on Cairo and Cairo depends on libpng).
+# However, this is not a proper solution!
+#
+# That said, order of "-I..." switches matters, and therefore the
+# bundled libraries (png, jpeg, zlib) *must* appear before any other
+# include_directories() statements that might introduce conflicts.
+# Currently 'resources.cmake' is included before this file and thus
+# 'include_directories (${FREETYPE_PATH})' is executed before this
+# file but this doesn't matter.
+#
+# This *MUST* be fixed using target_include_directories() as
+# appropriate but this would need a major rework.
+#
+# Albrecht-S April 6, 2022
+#
+#######################################################################
+
 set (DEBUG_OPTIONS_CMAKE 0)
 if (DEBUG_OPTIONS_CMAKE)
   message (STATUS "[** options.cmake **]")
@@ -46,6 +78,118 @@ set (OPTION_ABI_VERSION ""
 set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 
 #######################################################################
+#  Bundled Library Options
+#######################################################################
+
+option (OPTION_USE_SYSTEM_ZLIB      "use system zlib"    ON)
+
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
+endif ()
+
+#######################################################################
+#  Bundled Compression Library : zlib
+#######################################################################
+
+if (OPTION_USE_SYSTEM_ZLIB)
+  find_package (ZLIB)
+endif ()
+
+if (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
+  set (FLTK_USE_BUILTIN_ZLIB FALSE)
+  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
+  include_directories (${ZLIB_INCLUDE_DIRS})
+else()
+  if (OPTION_USE_SYSTEM_ZLIB)
+    message (STATUS "cannot find system zlib library - using built-in\n")
+  endif ()
+
+  add_subdirectory (zlib)
+  set (FLTK_USE_BUILTIN_ZLIB TRUE)
+  set (FLTK_ZLIB_LIBRARIES fltk_z)
+  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+endif ()
+
+set (HAVE_LIBZ 1)
+
+#######################################################################
+#  Bundled Image Library : libjpeg
+#######################################################################
+
+if (OPTION_USE_SYSTEM_LIBJPEG)
+  find_package (JPEG)
+endif ()
+
+if (OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+  set (FLTK_USE_BUILTIN_JPEG FALSE)
+  set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
+  include_directories (${JPEG_INCLUDE_DIR})
+else ()
+  if (OPTION_USE_SYSTEM_LIBJPEG)
+    message (STATUS "cannot find system jpeg library - using built-in\n")
+  endif ()
+
+  add_subdirectory (jpeg)
+  set (FLTK_USE_BUILTIN_JPEG TRUE)
+  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
+endif ()
+
+set (HAVE_LIBJPEG 1)
+
+#######################################################################
+#  Bundled Image Library : libpng
+#######################################################################
+
+if (OPTION_USE_SYSTEM_LIBPNG)
+  find_package (PNG)
+endif ()
+
+if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+
+  set (FLTK_USE_BUILTIN_PNG FALSE)
+  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
+  include_directories (${PNG_INCLUDE_DIRS})
+  add_definitions (${PNG_DEFINITIONS})
+
+  set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
+  list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
+
+  # Note: we do not check for <libpng/png.h> explicitly.
+  # This is assumed to exist if we have PNG_FOUND and don't find <png.h>
+
+  # FIXME - Force search by unsetting the chache variable. Maybe use
+  # FIXME - another cache variable to check for option changes?
+
+  unset (HAVE_PNG_H CACHE) # force search
+  check_include_file (png.h HAVE_PNG_H)
+  mark_as_advanced (HAVE_PNG_H)
+
+  set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
+  unset (_INCLUDE_SAVED)
+
+else ()
+
+  if (OPTION_USE_SYSTEM_LIBPNG)
+    message (STATUS "cannot find system png library - using built-in\n")
+  endif ()
+
+  add_subdirectory (png)
+  set (FLTK_USE_BUILTIN_PNG TRUE)
+  set (FLTK_PNG_LIBRARIES fltk_png)
+  set (HAVE_PNG_H 1)
+  set (HAVE_PNG_GET_VALID 1)
+  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
+endif ()
+
+set (HAVE_LIBPNG 1)
+
 #######################################################################
 if (UNIX)
   option (OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
@@ -365,114 +509,6 @@ if (debug_threads)
 endif (debug_threads)
 unset (debug_threads)
 
-#######################################################################
-#  Image Library Options
-#######################################################################
-
-option (OPTION_USE_SYSTEM_ZLIB      "use system zlib"    ON)
-
-if (APPLE)
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
-  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  OFF)
-else ()
-  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
-  option (OPTION_USE_SYSTEM_LIBPNG  "use system libpng"  ON)
-endif ()
-
-#######################################################################
-#  Image Library : ZLIB
-#######################################################################
-
-if (OPTION_USE_SYSTEM_ZLIB)
-  find_package (ZLIB)
-endif ()
-
-if (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
-  set (FLTK_USE_BUILTIN_ZLIB FALSE)
-  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
-  include_directories (${ZLIB_INCLUDE_DIRS})
-else()
-  if (OPTION_USE_SYSTEM_ZLIB)
-    message (STATUS "cannot find system zlib library - using built-in\n")
-  endif ()
-
-  add_subdirectory (zlib)
-  set (FLTK_USE_BUILTIN_ZLIB TRUE)
-  set (FLTK_ZLIB_LIBRARIES fltk_z)
-  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-endif ()
-
-set (HAVE_LIBZ 1)
-
-#######################################################################
-
-if (OPTION_USE_SYSTEM_LIBJPEG)
-  find_package (JPEG)
-endif ()
-
-if (OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
-  set (FLTK_USE_BUILTIN_JPEG FALSE)
-  set (FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
-  include_directories (${JPEG_INCLUDE_DIR})
-else ()
-  if (OPTION_USE_SYSTEM_LIBJPEG)
-    message (STATUS "cannot find system jpeg library - using built-in\n")
-  endif ()
-
-  add_subdirectory (jpeg)
-  set (FLTK_USE_BUILTIN_JPEG TRUE)
-  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
-endif ()
-
-set (HAVE_LIBJPEG 1)
-
-#######################################################################
-
-if (OPTION_USE_SYSTEM_LIBPNG)
-  find_package (PNG)
-endif ()
-
-if (OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
-
-  set (FLTK_USE_BUILTIN_PNG FALSE)
-  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
-  include_directories (${PNG_INCLUDE_DIRS})
-  add_definitions (${PNG_DEFINITIONS})
-
-  set (_INCLUDE_SAVED ${CMAKE_REQUIRED_INCLUDES})
-  list (APPEND CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS})
-
-  # Note: we do not check for <libpng/png.h> explicitly.
-  # This is assumed to exist if we have PNG_FOUND and don't find <png.h>
-
-  # FIXME - Force search by unsetting the chache variable. Maybe use
-  # FIXME - another cache variable to check for option changes?
-
-  unset (HAVE_PNG_H CACHE) # force search
-  check_include_file (png.h HAVE_PNG_H)
-  mark_as_advanced (HAVE_PNG_H)
-
-  set (CMAKE_REQUIRED_INCLUDES ${_INCLUDE_SAVED})
-  unset (_INCLUDE_SAVED)
-
-else ()
-
-  if (OPTION_USE_SYSTEM_LIBPNG)
-    message (STATUS "cannot find system png library - using built-in\n")
-  endif ()
-
-  add_subdirectory (png)
-  set (FLTK_USE_BUILTIN_PNG TRUE)
-  set (FLTK_PNG_LIBRARIES fltk_png)
-  set (HAVE_PNG_H 1)
-  set (HAVE_PNG_GET_VALID 1)
-  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
-endif ()
-
-set (HAVE_LIBPNG 1)
 
 #######################################################################
 if (X11_Xinerama_FOUND)
