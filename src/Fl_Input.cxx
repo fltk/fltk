@@ -428,20 +428,20 @@ int Fl_Input::handle_key() {
       return 0;                                                 // ignore other combos, pass to parent
 
     case 'a':
-      if (mods==FL_COMMAND) return kf_select_all();             // Ctrl-A, Mac:Meta-A             (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND) return kf_select_all();             // Ctrl-A, Mac:Meta-A             (Standard/OSX-HIG)
       break;                                                    // handle other combos elsewhere
     case 'c':
-      if (mods==FL_COMMAND) return kf_copy();                   // Ctrl-C, Mac:Meta-C             (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND) return kf_copy();                   // Ctrl-C, Mac:Meta-C             (Standard/OSX-HIG)
       break;                                                    // handle other combos elsewhere
     case 'v':
-      if (mods==FL_COMMAND) return kf_paste();                  // Ctrl-V, Mac:Meta-V             (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND) return kf_paste();                  // Ctrl-V, Mac:Meta-V             (Standard/OSX-HIG)
       break;                                                    // handle other combos elsewhere
     case 'x':
-      if (mods==FL_COMMAND) return kf_copy_cut();               // Ctrl-X, Mac:Meta-X             (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND) return kf_copy_cut();               // Ctrl-X, Mac:Meta-X             (Standard/OSX-HIG)
       break;
     case 'z':
-      if (mods==FL_COMMAND && !shift) return kf_undo();         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
-      if (mods==FL_COMMAND && shift)  return kf_redo();         // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND && !shift) return kf_undo();         // Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
+      if ((int)mods==FL_COMMAND && shift)  return kf_redo();         // Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
       break;                                                    // handle other combos elsewhere
   }
 
