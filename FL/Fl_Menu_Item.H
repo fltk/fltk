@@ -47,7 +47,7 @@ class Fl_Menu_;
   \code
   struct Fl_Menu_Item {
    const char*   text;     // label()
-   ulong         shortcut_;
+   int           shortcut_;
    Fl_Callback*  callback_;
    void*         user_data_;
    int           flags;
