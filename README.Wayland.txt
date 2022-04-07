@@ -138,9 +138,8 @@ in a basic Debian/Ubuntu distribution :
 - cmake          <== if you plan to build with CMake
 - cmake-qt-gui   <== if you plan to use the GUI of CMake
 
-These further packages are necessary to run FLTK apps under the Gnome-Wayland desktop:
+This package is necessary to run FLTK apps under the Gnome-Wayland desktop:
 - gnome
-- gnome-session-wayland
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
