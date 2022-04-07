@@ -373,7 +373,7 @@ void Fl_X11_Window_Driver::make_current() {
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 #endif
 
-#ifdef FLTK_USE_CAIRO
+#ifdef FLTK_HAVE_CAIROEXT
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 #endif
