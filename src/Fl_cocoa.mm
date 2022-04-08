@@ -3479,6 +3479,9 @@ void Fl_Cocoa_Window_Driver::make_current()
     gc = (CGContextRef)[nsgc performSelector:gc_sel];
   }
   Fl_Graphics_Driver::default_driver().gc(gc);
+#if defined(FLTK_HAVE_CAIROEXT)
+  CGContextSaveGState(gc); // one extra level
+#endif
   CGContextSaveGState(gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
@@ -3496,15 +3499,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   }
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(gc);
-#if defined(FLTK_HAVE_CAIROEXT)
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow); // capture gc changes automatically to update the cairo context adequately
-#endif
   fl_clip_region( 0 );
-
-#if defined(FLTK_HAVE_CAIROEXT)
-  // update the cairo_t context
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
-#endif
 }
 
 // Give the Quartz context back to the system
@@ -3517,7 +3512,7 @@ void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
   CGContextFlush(gc);
   Fl_Graphics_Driver::default_driver().gc(0);
 #if defined(FLTK_HAVE_CAIROEXT)
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
+  CGContextRestoreGState(gc);
 #endif
 }
 

@@ -14,10 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
+#include <FL/Fl.H>      // includes <FL/fl_config.h>
 
 #ifdef FLTK_HAVE_CAIRO
-#include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Window.H>
 
@@ -28,7 +27,7 @@
 #  include <cairo-xlib.h>
 #elif defined(_WIN32)             // Windows
 #  include <cairo-win32.h>
-#elif defined(__APPLE_QUARTZ__)   // macOS
+#elif defined(__APPLE__)   // macOS
 #  include <cairo-quartz.h>
 #elif defined(FLTK_USE_WAYLAND)
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
@@ -78,7 +77,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
   if (!xid->buffer) return NULL; // this may happen with GL windows
   cairo_ctxt = xid->buffer->cairo_;
   cairo_state_.cc(cairo_ctxt, false);
-#else // FLTK_USE_WAYLAND
+#else // !FLTK_USE_WAYLAND
     if (fl_gc==0) { // means remove current cc
         Fl::cairo_cc(0); // destroy any previous cc
         cairo_state_.window(0);
@@ -89,7 +88,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     if (fl_gc==Fl::cairo_state_.gc() && fl_xid(wi) == (Window) Fl::cairo_state_.window())
         return Fl::cairo_cc();
 
-    cairo_state_.window(wi);
+    cairo_state_.window((void*)fl_xid(wi));
 
 #ifndef __APPLE__
   float scale = Fl::screen_scale(wi->screen_num()); // get the screen scaling factor
@@ -119,7 +118,7 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
 # elif   defined(_WIN32)
     return cairo_win32_surface_create((HDC) gc);
-# elif defined(__APPLE_QUARTZ__)
+# elif defined(__APPLE__)
   return cairo_quartz_surface_create_for_cg_context((CGContextRef) gc, W, H);
 # else
 #  error Cairo is not supported under this platform.
@@ -137,7 +136,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
   // FIXME X11 get W,H
   // gc will be the window handle here
   // # warning FIXME get W,H for cairo_make_current(void*)
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE__)
     if (fl_window) {
       W = Fl_Window::current()->w();
       H = Fl_Window::current()->h();
@@ -181,7 +180,15 @@ cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
     // we need to (re-)create a fresh cc ...
     cairo_state_.gc(gc); // keep track for next time
     cairo_surface_t * s = cairo_create_surface(gc, W, H);
+#if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
+    CGAffineTransform at = CGContextGetCTM((CGContextRef)gc);
+    CGContextSaveGState((CGContextRef)gc);
+    CGContextConcatCTM((CGContextRef)gc, CGAffineTransformInvert(at));
+#endif
     cairo_t * c = cairo_create(s);
+#if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
+    CGContextRestoreGState((CGContextRef)gc);
+#endif
     cairo_state_.cc(c); //  and purge any previously owned context
     cairo_surface_destroy(s);
     return c;
