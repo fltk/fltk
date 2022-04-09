@@ -139,6 +139,13 @@ CREATE_EXAMPLE (tile tile.cxx fltk)
 CREATE_EXAMPLE (tiled_image tiled_image.cxx fltk)
 CREATE_EXAMPLE (tree tree.fl fltk)
 CREATE_EXAMPLE (twowin twowin.cxx fltk)
+CREATE_EXAMPLE (utf8 utf8.cxx fltk)
+CREATE_EXAMPLE (valuators valuators.fl fltk)
+CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
+CREATE_EXAMPLE (wizard wizard.cxx fltk)
+
+# unittests uses multiple source files and can be built with or w/o OpenGL and "shared"
+
 SET (UNITTEST_SRCS
   unittests.cxx
   unittest_about.cxx
@@ -155,20 +162,18 @@ SET (UNITTEST_SRCS
   unittest_simple_terminal.cxx
 )
 if (OPENGL_FOUND)
-  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "fltk_gl;fltk;${OPENGL_LIBRARIES}") # opt. Fl_Gl_Window
-else()
-  CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" fltk) # w/o Fl_Gl_Window
-endif()
-CREATE_EXAMPLE (utf8 utf8.cxx fltk)
-CREATE_EXAMPLE (valuators valuators.fl fltk)
-CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
-CREATE_EXAMPLE (wizard wizard.cxx fltk)
+  set (UNITTEST_LIBS fltk_gl fltk ${OPENGL_LIBRARIES})
+  set (UNITTEST_LIBS_SHARED fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+else ()
+  set (UNITTEST_LIBS fltk)
+  set (UNITTEST_LIBS_SHARED fltk_SHARED)
+endif ()
+CREATE_EXAMPLE (unittests "${UNITTEST_SRCS}" "${UNITTEST_LIBS}")
 
 # create additional test programs (used by developers for testing)
+
 if (extra_tests)
-  # message ("")
   foreach (name ${extra_tests})
-    # message (STATUS "Will build additional test program ${name}")
     create_example (${name} ${name}.cxx "fltk_images;fltk_gl;fltk")
   endforeach ()
 endif ()
@@ -213,11 +218,11 @@ if (OPTION_BUILD_SHARED_LIBS)
     add_library (CALL_MAIN OBJECT EXCLUDE_FROM_ALL ../src/fl_call_main.c)
 
     # define a list of shared targets so we can set COMPILE_DEFINITIONS in a loop
-    set (SHARED_TARGETS)
+    set (SHARED_TARGETS "")
 
     CREATE_EXAMPLE (hello-shared hello.cxx "fltk_SHARED;CALL_MAIN")
     CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_SHARED;CALL_MAIN")
-    CREATE_EXAMPLE (unittests-shared unittests.cxx "fltk_SHARED;CALL_MAIN")
+    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${UNITTEST_LIBS_SHARED};CALL_MAIN")
 
     list (APPEND SHARED_TARGETS hello pixmap_browser unittests)
 
@@ -229,7 +234,7 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     endif (OPENGL_FOUND)
 
-    # apply property COMPILE_DEFINITIONS in a loop for all necessary source files
+    # apply property COMPILE_DEFINITIONS "-D FL_DLL" in a loop for all necessary source files
     foreach (tgt ${SHARED_TARGETS})
       target_compile_definitions (${tgt}-shared PRIVATE "FL_DLL")
     endforeach ()
@@ -238,7 +243,7 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     CREATE_EXAMPLE (hello-shared hello.cxx fltk_SHARED)
     CREATE_EXAMPLE (pixmap_browser-shared pixmap_browser.cxx "fltk_images_SHARED;fltk_SHARED")
-    CREATE_EXAMPLE (unittests-shared unittests.cxx fltk_SHARED)
+    CREATE_EXAMPLE (unittests-shared "${UNITTEST_SRCS}" "${UNITTEST_LIBS_SHARED}")
 
     if (OPENGL_FOUND)
       CREATE_EXAMPLE (glpuzzle-shared glpuzzle.cxx "fltk_gl_SHARED;fltk_SHARED;${OPENGL_LIBRARIES}")
