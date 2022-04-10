@@ -3500,6 +3500,10 @@ void Fl_Cocoa_Window_Driver::make_current()
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(gc);
   fl_clip_region( 0 );
+#ifdef FLTK_HAVE_CAIROEXT
+  // update the cairo_t context
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+#endif
 }
 
 // Give the Quartz context back to the system
