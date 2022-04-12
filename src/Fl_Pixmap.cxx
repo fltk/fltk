@@ -1,7 +1,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -88,11 +88,11 @@ void Fl_Pixmap::copy_data() {
 
   // Figure out how many colors there are, and how big they are...
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
-  chars_per_line = chars_per_pixel * w() + 1;
+  chars_per_line = chars_per_pixel * data_w() + 1;
 
   // Allocate memory for the new array...
-  if (ncolors < 0) new_data = new char *[h() + 2];
-  else new_data = new char *[h() + ncolors + 1];
+  if (ncolors < 0) new_data = new char *[data_h() + 2];
+  else new_data = new char *[data_h() + ncolors + 1];
 
   new_data[0] = new char[strlen(data()[0]) + 1];
   strcpy(new_data[0], data()[0]);
@@ -115,13 +115,13 @@ void Fl_Pixmap::copy_data() {
   }
 
   // Copy image data...
-  for (i = 0; i < h(); i ++, new_row ++) {
+  for (i = 0; i < data_h(); i ++, new_row ++) {
     *new_row = new char[chars_per_line];
     memcpy(*new_row, data()[i + ncolors + 1], chars_per_line);
   }
 
   // Update pointers...
-  data((const char **)new_data, h() + ncolors + 1);
+  data((const char **)new_data, data_h() + ncolors + 1);
   alloc_data = 1;
 }
 
@@ -131,10 +131,11 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     return new Fl_Pixmap((char *const*)0);
   }
   // Optimize the simple copy where the width and height are the same...
-  if (W == data_w() && H == data_h()) {
+  if (W == w() && H == h()) {
     // Make an exact copy of the image and return it...
     new_image = new Fl_Pixmap(data());
     new_image->copy_data();
+    new_image->scale(W, H, 0, 1);
     return new_image;
   }
   if (W <= 0 || H <= 0) return 0;

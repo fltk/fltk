@@ -1,7 +1,7 @@
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -247,7 +247,7 @@ public:
     \see Fl_Image::release()
     \see Fl_Image::copy(int w, int h)
   */
-  Fl_Image *copy() { Fl_Image *img = copy(data_w(), data_h()); img->scale(w(), h(), 0, 1); return img;}
+  Fl_Image *copy() { Fl_Image *img = copy(w(), h()); img->scale(w(), h(), 0, 1); return img;}
   virtual void color_average(Fl_Color c, float i);
   /**
    The inactive() method calls

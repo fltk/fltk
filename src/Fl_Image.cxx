@@ -1,7 +1,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -407,7 +407,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   // Optimize the simple copy where the width and height are the same,
   // or when we are copying an empty image...
-  if ((W == data_w() && H == data_h()) ||
+  if ((W == w() && H == h()) ||
       !w() || !h() || !d() || !array) {
     if (array) {
       // Make a copy of the image data and return a new Fl_RGB_Image...
@@ -415,7 +415,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
       if (ld() && ld()!=data_w()*d()) {
         const uchar *src = array;
         uchar *dst = new_array;
-        int dy, dh = h(), wd = data_w()*d(), wld = ld();
+        int dy, dh = data_h(), wd = data_w()*d(), wld = ld();
         for (dy=0; dy<dh; dy++) {
           memcpy(dst, src, wd);
           src += wld;
@@ -426,11 +426,11 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
       }
       new_image = new Fl_RGB_Image(new_array, data_w(), data_h(), d());
       new_image->alloc_array = 1;
-
-      return new_image;
     } else {
-      return new Fl_RGB_Image(array, data_w(), data_h(), d(), ld());
+      new_image = new Fl_RGB_Image(array, data_w(), data_h(), d(), ld());
     }
+    new_image->scale(w(), h(), 0, 1);
+    return new_image;
   }
   if (W <= 0 || H <= 0) return 0;
 
@@ -560,7 +560,7 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   uchar         *new_array,
                 *new_ptr;
 
-  if (!alloc_array) new_array = new uchar[h() * w() * d()];
+  if (!alloc_array) new_array = new uchar[data_h() * data_w() * d()];
   else new_array = (uchar *)array;
 
   // Get the color to blend with...
@@ -579,19 +579,19 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   // Update the image data to do the blend...
   const uchar   *old_ptr;
   int           x, y;
-  int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
+  int   line_i = ld() ? ld() - (data_w()*d()) : 0; // increment from line end to beginning of next line
 
   if (d() < 3) {
     ig = (r * 31 + g * 61 + b * 8) / 100 * (256 - ia);
 
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
-      for (x = 0; x < w(); x ++) {
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < data_h(); y ++, old_ptr += line_i)
+      for (x = 0; x < data_w(); x ++) {
         *new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
         if (d() > 1) *new_ptr++ = *old_ptr++;
       }
   } else {
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
-      for (x = 0; x < w(); x ++) {
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < data_h(); y ++, old_ptr += line_i)
+      for (x = 0; x < data_w(); x ++) {
         *new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
         *new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
         *new_ptr++ = (*old_ptr++ * ia + ib) >> 8;
@@ -624,15 +624,15 @@ void Fl_RGB_Image::desaturate() {
   int           new_d;
 
   new_d     = d() - 2;
-  new_array = new uchar[h() * w() * new_d];
+  new_array = new uchar[data_h() * data_w() * new_d];
 
   // Copy the image data, converting to grayscale...
   const uchar   *old_ptr;
   int           x, y;
-  int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
+  int   line_i = ld() ? ld() - (data_w()*d()) : 0; // increment from line end to beginning of next line
 
-  for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
-    for (x = 0; x < w(); x ++, old_ptr += d()) {
+  for (new_ptr = new_array, old_ptr = array, y = 0; y < data_h(); y ++, old_ptr += line_i)
+    for (x = 0; x < data_w(); x ++, old_ptr += d()) {
       *new_ptr++ = (uchar)((31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100);
       if (d() > 3) *new_ptr++ = old_ptr[3];
     }
