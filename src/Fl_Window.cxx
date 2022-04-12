@@ -516,9 +516,6 @@ void Fl_Window::draw()
 
   pWindowDriver->draw_end();
   if (!to_display) current_ = save_current;
-# if defined(FLTK_HAVE_CAIROEXT)
-  Fl::cairo_make_current(this); // checkout if an update is necessary
-# endif
 }
 
 void Fl_Window::make_current()

@@ -156,6 +156,9 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
       fl_window = other_xid;
+# if defined(FLTK_HAVE_CAIROEXT)
+      if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+# endif
       draw();
       fl_window = i->xid;
     }

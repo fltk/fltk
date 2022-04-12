@@ -1,7 +1,7 @@
 //
 // Definition of Windows window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -320,6 +320,9 @@ void Fl_WinAPI_Window_Driver::flush_double()
     int savedc = SaveDC(fl_gc);
     fl_graphics_driver->gc(fl_gc);
     fl_graphics_driver->restore_clip(); // duplicate clip region into new gc
+# if defined(FLTK_HAVE_CAIROEXT)
+    if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+# endif
     draw();
     RestoreDC(fl_gc, savedc);
     DeleteDC(fl_gc);
@@ -422,6 +425,9 @@ void Fl_WinAPI_Window_Driver::make_current() {
 
   fl_graphics_driver->clip_region(0);
   ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
+#if defined(FLTK_HAVE_CAIROEXT)
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+#endif
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
