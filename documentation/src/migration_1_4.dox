@@ -43,7 +43,7 @@ code requires explicitly and don't rely on FLTK headers to include a
 particular header file.
 
 The same applies to FLTK headers. The rule is to \#include \<FL/Fl.H> as
-the first FLTK header as described in the documentation elsewhere an to
+the first FLTK header as described in the documentation elsewhere and to
 include FLTK headers for all classes you are using explicitly. You don't
 need to include headers of base classes - this is done by all FLTK headers
 as required. Besides that you need to include some support headers if you
@@ -63,14 +63,52 @@ encoding. Previous databases were stored in the current character set or
 code page which renders them incompatible for text entries using
 international characters.
 
-Starting with FLTK 1.4, searching a valid path to store the preferences
+Starting with FLTK 1.4, searching a valid path to store the preference
 files has changed slightly. Please see
 Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
 for details.
 
-If you want to retain user preferences you may want to move the preferences
-file from its old location to the new location as documented in
+On Unix/Linux platforms new FLTK preference files are stored using the
+<a href='https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html'>
+XDG Base Directory Specification</a> which means in essence that user preference
+files are stored in the user's home directory under the subdirectory \p .config,
+i.e. in \p \$HOME/.config/fltk.org/ rather than \p \$HOME/.fltk/fltk.org/.
+Existing preference files are still found and used, hence this new location
+is optional.
+
+You may want to move the preference files from their old locations to their
+new locations as documented in
 Fl_Preferences::Fl_Preferences(Root, const char*, const char*) .
+
+New Fl_Preferences types \p Fl_Preferences::USER_L, \p Fl_Preferences::SYSTEM_L
+and some more combinations with \p "_L" suffix have been defined to make
+preference files independent of the current locale. This is particularly
+important for floating point data which is stored in text form with varying
+decimal separator depending on the locale (either '.' or ','). You may want to
+change your program to use these new constants instead of those without the
+\p "_L" suffix. For more information see the documentation of Fl_Preferences.
+
+
+\section migration_1_4_add_timeout Fl::add_timeout and friends
+
+Since FLTK 1.4.0 internal timeout handling has been unified across platforms.
+This ensures equal timeout handling, improved accuracy of Fl::repeat_timeout(),
+and easier maintenance (less potential for errors).
+
+This will very likely not affect user code, however there is one subtle
+exception on macOS and Windows: in FLTK 1.3.x these platforms used system
+timers to schedule timeouts. Since FLTK 1.4.0 all platforms use the same
+internal timer management that was previously only used on Unix/Linux/X11.
+The consequence of this change is that the FLTK event loop needs to be
+executed to trigger timeout events, i.e. you must either call Fl::wait()
+repeatedly or start the event loop with Fl::run().
+
+Code that did not execute the event loop and relied on the system timers has
+never been cross platform compatible, i.e. it wouldn't work on Unix/Linux.
+An example would be code that opened a splash window, scheduled a timeout
+with Fl::add_timeout(), and waited for the timer event w/o running the
+FLTK event loop. Such code must be modified to execute Fl::run() and/or
+use Fl:: wait().
 
 
 \section migration_1_4_copy_image Fl_Image::copy() 'const'
@@ -91,6 +129,7 @@ Code example in header file:
     copy() const;
     copy(int w, int h) const;
   };
+\endcode
 
 
 \htmlonly
