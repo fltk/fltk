@@ -247,7 +247,7 @@ public:
     \see Fl_Image::release()
     \see Fl_Image::copy(int w, int h)
   */
-  Fl_Image *copy() { Fl_Image *img = copy(w(), h()); img->scale(w(), h(), 0, 1); return img;}
+  Fl_Image *copy() { return copy(w(), h()); }
   virtual void color_average(Fl_Color c, float i);
   /**
    The inactive() method calls
