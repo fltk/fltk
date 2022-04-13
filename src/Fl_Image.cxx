@@ -407,29 +407,28 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   // Optimize the simple copy where the width and height are the same,
   // or when we are copying an empty image...
-  if ((W == w() && H == h()) ||
+  if ((W == data_w() && H == data_h()) ||
       !w() || !h() || !d() || !array) {
     if (array) {
       // Make a copy of the image data and return a new Fl_RGB_Image...
-      new_array = new uchar[data_w() * data_h() * d()];
-      if (ld() && ld()!=data_w()*d()) {
+      new_array = new uchar[W * H * d()];
+      if (ld() && (ld() != W  *d())) {
         const uchar *src = array;
         uchar *dst = new_array;
-        int dy, dh = data_h(), wd = data_w()*d(), wld = ld();
+        int dy, dh = H, wd = W*d(), wld = ld();
         for (dy=0; dy<dh; dy++) {
           memcpy(dst, src, wd);
           src += wld;
           dst += wd;
         }
       } else {
-        memcpy(new_array, array, data_w() * data_h() * d());
+        memcpy(new_array, array, W * H * d());
       }
-      new_image = new Fl_RGB_Image(new_array, data_w(), data_h(), d());
+      new_image = new Fl_RGB_Image(new_array, W, H, d());
       new_image->alloc_array = 1;
     } else {
-      new_image = new Fl_RGB_Image(array, data_w(), data_h(), d(), ld());
+      new_image = new Fl_RGB_Image(array, W, H, d(), ld());
     }
-    new_image->scale(w(), h(), 0, 1);
     return new_image;
   }
   if (W <= 0 || H <= 0) return 0;

@@ -131,11 +131,10 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     return new Fl_Pixmap((char *const*)0);
   }
   // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) {
+  if (W == data_w() && H == data_h()) {
     // Make an exact copy of the image and return it...
     new_image = new Fl_Pixmap(data());
     new_image->copy_data();
-    new_image->scale(W, H, 0, 1);
     return new_image;
   }
   if (W <= 0 || H <= 0) return 0;
