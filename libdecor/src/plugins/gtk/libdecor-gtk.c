@@ -298,7 +298,6 @@ struct libdecor_plugin_gtk {
 	char *cursor_theme_name;
 	int cursor_size;
 
-	GtkApplication *app;
 	int double_click_time_ms;
 };
 
@@ -421,8 +420,6 @@ libdecor_plugin_gtk_destroy(struct libdecor_plugin *plugin)
 	wl_compositor_destroy(plugin_gtk->wl_compositor);
 	wl_subcompositor_destroy(plugin_gtk->wl_subcompositor);
 
-	g_object_unref(plugin_gtk->app);
-//	free(plugin_gtk->gtk_theme_name);
 
 	free(plugin_gtk);
 }
@@ -475,9 +472,7 @@ libdecor_plugin_gtk_dispatch(struct libdecor_plugin *plugin,
 	int ret;
 	int dispatch_count = 0;
 
-	while (g_main_context_pending(NULL)) {
-		g_main_context_iteration(NULL, timeout > 0);
-	}
+	while (g_main_context_iteration(NULL, FALSE));
 
 	while (wl_display_prepare_read(wl_display) != 0)
 		dispatch_count += wl_display_dispatch_pending(wl_display);
@@ -1401,7 +1396,7 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	gtk_widget_get_preferred_height(frame_gtk->header, NULL, &allocation.height);
 
 #if ! APPLY_FLTK_CHANGES
-        int pref_width;
+	int pref_width;
 	gtk_widget_get_preferred_width(frame_gtk->header, NULL, &pref_width);
 	libdecor_frame_set_min_content_size(&frame_gtk->frame, pref_width, 1);
         gtk_widget_size_allocate(frame_gtk->header, &allocation);
@@ -1608,7 +1603,10 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 	if (!streq(frame_gtk->title, new_title))
 #endif
 		redraw_needed = true;
-	if (frame_gtk->title) free(frame_gtk->title);
+#if APPLY_FLTK_CHANGES
+	if (frame_gtk->title)
+#endif
+	free(frame_gtk->title);
 	if (new_title)
 		frame_gtk->title = strdup(new_title);
 	else
@@ -1865,8 +1863,9 @@ libdecor_plugin_gtk_frame_get_window_size_for(
 	const int title_bar_height = (GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(
 					     frame_gtk->header) : 0);
 #else
-	const int title_bar_height = gtk_widget_get_allocated_height(
-					     ((struct libdecor_frame_gtk *)frame)->header);
+	GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
+
+	const int title_bar_height = header ? gtk_widget_get_allocated_height(header) : 0;
 #endif
 
 	switch (window_state_to_decoration_type(window_state)) {
@@ -2700,9 +2699,6 @@ static const struct wl_callback_listener globals_callback_listener = {
 	globals_callback
 };
 
-static void
-on_activate(GtkApplication* app, gpointer user_data) { }
-
 #if APPLY_FLTK_CHANGES
 /* FLTK: replace export by static which makes GTK plugin do as Cairo plugin does */
 static
@@ -2744,9 +2740,7 @@ libdecor_plugin_new(struct libdecor *context)
 				 plugin_gtk);
 
 	/* setup GTK context */
-	plugin_gtk->app = gtk_application_new("org.libdecor.gtk", G_APPLICATION_NON_UNIQUE);
-	g_signal_connect (plugin_gtk->app, "activate", G_CALLBACK(on_activate), NULL);
-	g_application_run(G_APPLICATION(plugin_gtk->app), 0, NULL);
+	gtk_init(NULL, NULL);
 
 	return &plugin_gtk->plugin;
 }
