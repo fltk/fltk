@@ -147,7 +147,7 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) const {
   Fl_Widget*const* a = array();
   for (int i=children(); i--;) {
     Fl_Widget* o = *a++;
-    if ( o==&scrollbar || o==&hscrollbar ) continue;
+    if ( o==&scrollbar || o==&hscrollbar || o->visible==0 ) continue;
     if ( first ) {
         first = 0;
         si.child.l = o->x();
