@@ -125,7 +125,7 @@ void Fl_Pixmap::copy_data() {
   alloc_data = 1;
 }
 
-Fl_Image *Fl_Pixmap::copy(int W, int H) {
+Fl_Image *Fl_Pixmap::copy(int W, int H) const {
   Fl_Pixmap     *new_image;     // New pixmap
   if (!data()) { // happens with bad pixmap data
     return new Fl_Pixmap((char *const*)0);
