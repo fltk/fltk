@@ -108,7 +108,7 @@ never been cross platform compatible, i.e. it wouldn't work on Unix/Linux.
 An example would be code that opened a splash window, scheduled a timeout
 with Fl::add_timeout(), and waited for the timer event w/o running the
 FLTK event loop. Such code must be modified to execute Fl::run() and/or
-use Fl:: wait().
+use Fl::wait().
 
 
 \section migration_1_4_copy_image Fl_Image::copy() 'const'
