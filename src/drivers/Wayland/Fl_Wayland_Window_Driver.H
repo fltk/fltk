@@ -64,12 +64,6 @@ public:
     Fl_Wayland_Screen_Driver::output* output;
     struct wl_list link;
   };
-
-  struct icon_data {
-    const void *legacy_icon;
-    Fl_RGB_Image **icons;
-    int count;
-  } *icon_;
   // --- support for screen-specific scaling factors
   struct type_for_resize_window_between_screens {
     int screen;
@@ -82,8 +76,6 @@ public:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
   void update_scale();
-
-public:
   enum kind {DECORATED, SUBWINDOW, POPUP, UNFRAMED};
   struct xdg_toplevel *xdg_toplevel();
   Fl_Wayland_Window_Driver(Fl_Window*);
@@ -127,10 +119,6 @@ public:
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   virtual void shape(const Fl_Image* img);
-  virtual void icons(const Fl_RGB_Image *icons[], int count);
-  virtual const void *icon() const;
-  virtual void icon(const void * ic);
-  virtual void free_icons();
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
   virtual void wait_for_expose();

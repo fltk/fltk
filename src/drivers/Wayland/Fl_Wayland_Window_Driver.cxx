@@ -63,8 +63,6 @@ void Fl_Wayland_Window_Driver::destroy_double_buffer() {
 
 Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_Driver(win)
 {
-  icon_ = new icon_data;
-  memset(icon_, 0, sizeof(icon_data));
   cursor_ = NULL;
   in_handle_configure = false;
   screen_num_ = -1;
@@ -99,7 +97,6 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
     delete[] data;
     delete shape_data_;
   }
-  delete icon_;
   delete_cursor_();
 }
 
@@ -290,42 +287,6 @@ void Fl_Wayland_Window_Driver::draw_end()
     cairo_mask(cr, shape_data_->mask_pattern_);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
   }
-}
-
-
-void Fl_Wayland_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
-  free_icons();
-
-  if (count > 0) {
-    icon_->icons = new Fl_RGB_Image*[count];
-    icon_->count = count;
-    // FIXME: Fl_RGB_Image lacks const modifiers on methods
-    for (int i = 0;i < count;i++) {
-      icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
-      icon_->icons[i]->normalize();
-    }
-  }
-}
-
-const void *Fl_Wayland_Window_Driver::icon() const {
-  return icon_->legacy_icon;
-}
-
-void Fl_Wayland_Window_Driver::icon(const void * ic) {
-  free_icons();
-  icon_->legacy_icon = ic;
-}
-
-void Fl_Wayland_Window_Driver::free_icons() {
-  int i;
-  icon_->legacy_icon = 0L;
-  if (icon_->icons) {
-    for (i = 0;i < icon_->count;i++)
-      delete icon_->icons[i];
-    delete [] icon_->icons;
-    icon_->icons = 0L;
-  }
-  icon_->count = 0;
 }
 
 
