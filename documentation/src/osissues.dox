@@ -990,6 +990,7 @@ and with the \c FLTK_SCALING_FACTOR environment variable.
 
 \subsection osissues_wayland_window_icon Window icons
 Standard FLTK functions Fl_Window::icon(const Fl_RGB_Image*),
+Fl_Window::icons(const Fl_RGB_Image*[], int),
 Fl_Window::default_icon(const Fl_RGB_Image*) and
 Fl_Window::default_icons(const Fl_RGB_Image*[], int) have no effect on the
 Wayland platform.
@@ -1007,9 +1008,10 @@ Exec=editor %%F
 Icon=/path/to/icon/file/editor.svg
 MimeType=text/plain
 </pre>
-- The Name= line therein determines the string displayed when the app runs.
-- One or more Name[<em>locale</em>]= lines can be used to set locale-specific app names.
-- The Icon= line accepts also \c .png files.
+- The \c Name= line therein determines the string displayed when the app runs.
+- Optionally, one or more <tt>Name[<em>locale</em>]=</tt> lines can be used to set
+locale-specific app names.
+- The \c Icon= line accepts also \c .png files.
 - put this file in \c /usr/local/share/applications/ so its available to all system users
 or in <tt>$HOME/.local/share/applications/</tt> so its available to a single user.
 
