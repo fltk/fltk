@@ -988,6 +988,31 @@ as it is on a regular display. With the gnome desktop, that is achieved in the
 In addition to this, FLTK apps can also be scaled up or down typing ctrl/+/-/0/
 and with the \c FLTK_SCALING_FACTOR environment variable.
 
+\subsection osissues_wayland_window_icon Window icons
+Standard FLTK functions Fl_Window::icon(const Fl_RGB_Image*),
+Fl_Window::default_icon(const Fl_RGB_Image*) and
+Fl_Window::default_icons(const Fl_RGB_Image*[], int) have no effect on the
+Wayland platform.
+The equivalent of a call to Fl_Window::default_icon(const Fl_RGB_Image*) to set
+the application-specific window icon can be obtained as follows, using FLTK's
+editor app as an example:
+- create a text file named \c editor.desktop containing :
+<pre>[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Editor
+Name[fr]=Editeur
+Comment=FLTK editor
+Exec=editor %%F
+Icon=/path/to/icon/file/editor.svg
+MimeType=text/plain
+</pre>
+- The Name= line therein determines the string displayed when the app runs.
+- One or more Name[<em>locale</em>]= lines can be used to set locale-specific app names.
+- The Icon= line accepts also \c .png files.
+- put this file in \c /usr/local/share/applications/ so its available to all system users
+or in <tt>$HOME/.local/share/applications/</tt> so its available to a single user.
+
 \subsection osissues_wayland_decoration Window titlebars
 Wayland supports both client-side window decoration (CSD), where client applications
 are responsible for drawing window titlebars, and server-side window
