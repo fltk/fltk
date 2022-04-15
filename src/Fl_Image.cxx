@@ -76,17 +76,28 @@ void Fl_Image::draw_empty(int X, int Y) {
 }
 
 /**
-  Creates a resized copy of the specified image.
-  The image should be released when you are done with it.
+  Creates a resized copy of the image.
 
-    Note: since FLTK 1.4.0 you can use Fl_Image::release() for
-    all types of images (i.e. all subclasses of Fl_Image) instead
-    of operator \em delete for Fl_Image's and release() for
-    Fl_Shared_Image's.
+  The copied image should be released when you are done with it.
 
-  \see Fl_Image::release()
+  Note: since FLTK 1.4.0 you can use Fl_Image::release() for all types
+  of images (i.e. all subclasses of Fl_Image) instead of operator \em delete
+  for Fl_Image's and Fl_Image::release() for Fl_Shared_Image's.
+
+  The copied image data will be converted to the requested size. RGB images
+  are resized using the algorithm set by Fl_Image::RGB_scaling().
+
+  For the copied image the following equations are true:
+  - w() == data_w() == \p W
+  - h() == data_h() == \p H
 
   \param[in] W,H  Requested width and height of the copied image
+
+  \note Since FLTK 1.4.0 this method is 'const'. If you derive your own class
+    from Fl_Image or any subclass your overridden methods of 'Fl_Image::copy() const'
+    and Fl_Image::copy(int, int) const' \b must also be 'const' for inheritage
+    to work properly. This is different than in FLTK 1.3.x and earlier where these
+    methods have not been 'const'.
 */
 Fl_Image *Fl_Image::copy(int W, int H) const {
   return new Fl_Image(W, H, d());
@@ -107,12 +118,13 @@ void Fl_Image::color_average(Fl_Color, float) {
 }
 
 /**
-  The desaturate() method converts an image to
-  grayscale. If the image contains an alpha channel (depth = 4),
+  The desaturate() method converts an image to grayscale.
+
+  If the image contains an alpha channel (depth = 4),
   the alpha channel is preserved.
 
-  An internal copy is made of the original image before
-  changes are applied, to avoid modifying the original image.
+  An internal copy is made of the original image data before
+  changes are applied, to avoid modifying the original image data.
 */
 void Fl_Image::desaturate() {
 }
@@ -128,63 +140,62 @@ Fl_Labeltype Fl_Image::define_FL_IMAGE_LABEL() {
 }
 
 /**
-  The label() methods are an obsolete way to set the
-  image attribute of a widget or menu item. Use the
-  image() or deimage() methods of the
-  Fl_Widget and Fl_Menu_Item classes
-  instead.
+  This method is an obsolete way to set the image attribute of a widget
+  or menu item.
+
+  Use the image() or deimage() methods of the Fl_Widget and Fl_Menu_Item
+  classes instead.
 */
 void Fl_Image::label(Fl_Widget* widget) {
   widget->image(this);
 }
 
 /**
-  The label() methods are an obsolete way to set the
-  image attribute of a widget or menu item. Use the
-  image() or deimage() methods of the
-  Fl_Widget and Fl_Menu_Item classes
-  instead.
+  This method is an obsolete way to set the image attribute of a widget
+  or menu item.
+
+  Use the image() or deimage() methods of the Fl_Widget and Fl_Menu_Item
+  classes instead.
 */
 void Fl_Image::label(Fl_Menu_Item* m) {
   m->label(FL_IMAGE_LABEL, (const char*)this);
 }
 
 /**
- Returns a value that is not 0 if there is currently no image
- available.
+  Returns a value that is not 0 if there is currently no image available.
 
- Example use:
- \code
-    [..]
-    Fl_Box box(X,Y,W,H);
-    Fl_JPEG_Image jpg("/tmp/foo.jpg");
-    switch ( jpg.fail() ) {
+  Example use:
+  \code
+    // [..]
+      Fl_Box box(X, Y, W, H);
+      Fl_JPEG_Image jpg("/tmp/foo.jpg");
+      switch (jpg.fail()) {
         case Fl_Image::ERR_NO_IMAGE:
         case Fl_Image::ERR_FILE_ACCESS:
-            fl_alert("/tmp/foo.jpg: %s", strerror(errno));    // shows actual os error to user
-            exit(1);
+          fl_alert("/tmp/foo.jpg: %s", strerror(errno));    // shows actual os error to user
+          exit(1);
         case Fl_Image::ERR_FORMAT:
-            fl_alert("/tmp/foo.jpg: couldn't decode image");
-            exit(1);
-    }
-    box.image(jpg);
-    [..]
- \endcode
+          fl_alert("/tmp/foo.jpg: couldn't decode image");
+          exit(1);
+      }
+      box.image(jpg);
+  \endcode
 
- \return ERR_NO_IMAGE if no image was found
- \return ERR_FILE_ACCESS if there was a file access related error (errno should be set)
- \return ERR_FORMAT if image decoding failed.
- */
-int Fl_Image::fail() const
-{
-    // if no image exists, ld_ may contain a simple error code
-    if ( (w_<=0) || (h_<=0) || (d_<=0) ) {
-        if (ld_==0)
-            return ERR_NO_IMAGE;
-        else
-            return ld_;
-    }
-    return 0;
+  \returns                Image load failure if non-zero
+  \retval 0               the image was loaded successfully
+  \retval ERR_NO_IMAGE    no image was found
+  \retval ERR_FILE_ACCESS there was a file access related error (errno should be set)
+  \retval ERR_FORMAT      image decoding failed
+*/
+int Fl_Image::fail() const {
+  // if no image exists, ld_ may contain a simple error code
+  if ((w_ <= 0) || (h_ <= 0) || (d_ <= 0)) {
+    if (ld_ == 0)
+      return ERR_NO_IMAGE;
+    else
+      return ld_;
+  }
+  return 0;
 }
 
 void

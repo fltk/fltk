@@ -40,23 +40,22 @@ enum Fl_RGB_Scaling {
 
 
 /**
- \brief Base class for image caching, scaling and drawing.
+  Base class for image caching, scaling and drawing.
 
- Fl_Image is the base class used for caching, scaling and drawing all kinds of images
- in FLTK. This class keeps track of common image data such as the pixels,
- colormap, width, height, and depth. Virtual methods are used to provide
- type-specific image handling.
+  Fl_Image is the base class used for caching, scaling and drawing all kinds of
+  images in FLTK. This class keeps track of common image data such as the pixels,
+  colormap, width, height, and depth. Virtual methods are used to provide
+  type-specific image handling.
 
- Each image possesses two (width, height) pairs. 1) The width and height of the
- image raw data are returned by data_w() and data_h(). These values are set
- when the image is created and remain unchanged. 2) The width and height
- of the area filled by the image when it gets drawn are returned by w() and h().
- The values are equal to data_w() and data_h() when the image is created,
- and can be changed by the scale() member function.
+  Each image possesses two (width, height) pairs:
+   -# The width and height of the raw image data are returned by data_w() and
+      data_h(). These values are set when the image is created and remain unchanged.
+   -# The width and height of the area filled by the image when it gets drawn are
+      returned by w() and h(). These values are equal to data_w() and data_h() when
+      the image is created and can be changed by the scale() member function.
 
- Since the Fl_Image class does not support image
- drawing by itself, calling the draw() method results in
- a box with an X in it being drawn instead.
+  Since the Fl_Image class does not support image drawing by itself, calling
+  the draw() method results in a box with an X in it being drawn instead.
 */
 class FL_EXPORT Fl_Image {
   friend class Fl_Graphics_Driver;
@@ -96,15 +95,15 @@ protected:
    */
   void d(int D) {d_ = D;}
   /**
-   Sets the current line data size in bytes.
+    Sets the current line data size in bytes.
 
-   Color images may contain extra data that is included after every
-   line of color image data and is normally not present.
+    Color images may contain extra data (padding) that is included after every
+    line of color image data and is normally not present.
 
-   If \p LD is zero, then line data size is assumed to be w() * d() bytes.
+    If \p LD is zero, then line data size is assumed to be data_w() * d() bytes.
 
-   If \p LD is non-zero, then it must be positive and larger than w() * d()
-   to account for the extra data per line.
+    If \p LD is non-zero, then it must be positive and larger than data_w() * d()
+    to account for the extra data per line.
    */
   void ld(int LD) {ld_ = LD;}
   /**
@@ -177,15 +176,17 @@ public:
 
     Fl_RGB_Image has exactly one pointer which points at the R, G, B [, A]
     data array of the image. The total size of this array depends on
-    several attributes like w(), h(), data_w(), data_h(), d() and ld()
-    and is basically data_w() * data_h() * d() but there are exceptions
-    if ld() is non-zero: see description of ld().
+    several attributes like data_w(), data_h(), d() and ld() and is basically
+    data_w() * data_h() * d() but there are exceptions if ld() is non-zero:
+    see description of ld(). Since FLTK 1.4.0 w() and h() are no longer
+    significant for the image data size if scale() has been called on the
+    image to set a different display size.
 
     Other image types have different numbers and types of data pointers
     which are implementation details and not documented here.
 
     \see count(), w(), h(), data_w(), data_h(), d(), ld()
-   */
+  */
   const char * const *data() const {return data_;}
   int fail() const;
   /**
@@ -197,18 +198,18 @@ public:
     \endcode
     where image is an \p Fl_Image \p * pointer.
 
-    However, for subclass Fl_Shared_Image this virtual method is
-    reimplemented and maintains shared images.
+    However, for subclass Fl_Shared_Image and its subclasses this virtual
+    method is reimplemented and maintains shared images.
 
-    This virtual method makes it possible to \p delete all image types in
+    This virtual method makes it possible to \p destroy all image types in
     the same way by calling
     \code
       image->release();
     \endcode
 
-    Reasoning: If you have an 'Fl_Image *' pointer and don't know if the
-    object is one of the class Fl_Shared_Image or any other subclass of
-    Fl_Image (for instance Fl_RGB_Image) then you can't just use operator
+    Reasoning: If you have an 'Fl_Image *' base class pointer and don't know
+    if the object is one of the class Fl_Shared_Image or any other subclass
+    of Fl_Image (for instance Fl_RGB_Image) then you can't just use operator
     delete since this is not appropriate for Fl_Shared_Image objects.
 
     The virtual method release() handles this properly.
@@ -236,16 +237,30 @@ public:
   virtual ~Fl_Image();
   virtual Fl_Image *copy(int W, int H) const;
   /**
-    Creates a copy of the specified image.
-    The image should be released when you are done with it.
+    Creates a copy of the image in the same size.
 
-    Note: since FLTK 1.4.0 you can use Fl_Image::release() for
-    all types of images (i.e. all subclasses of Fl_Image) instead
-    of operator \em delete for Fl_Image's and release() for
-    Fl_Shared_Image's.
+    The copied image should be released when you are done with it.
 
+    This does exactly the same as 'Fl_Image::copy(int W, int H) const' where
+    \p W and \p H are the width and height of the source image, respectively.
+    This applies also to all subclasses of Fl_Image in the FLTK library.
+
+    The following two copy() calls are equivalent:
+    \code
+      Fl_Image *img1 = new Fl_Image(...);
+      // ...
+      Fl_Image *img2 = img1->copy();
+      Fl_Image *img3 = img1->copy(img1->w(), img1->h())
+    \endcode
+
+    For details see 'Fl_Image::copy(int w, int h) const'.
     \see Fl_Image::release()
-    \see Fl_Image::copy(int w, int h)
+
+    \note Since FLTK 1.4.0 this method is 'const'. If you derive your own class
+      from Fl_Image or any subclass your overridden methods of 'Fl_Image::copy() const'
+      and Fl_Image::copy(int, int) const' \b must also be 'const' for inheritage
+      to work properly. This is different than in FLTK 1.3.x and earlier where these
+      methods have not been 'const'.
   */
   Fl_Image *copy() const { return copy(w(), h()); }
   virtual void color_average(Fl_Color c, float i);
