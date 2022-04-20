@@ -54,8 +54,8 @@ enum Fl_RGB_Scaling {
       returned by w() and h(). These values are equal to data_w() and data_h() when
       the image is created and can be changed by the scale() member function.
 
-  Since the Fl_Image class does not support image drawing by itself, calling
-  the draw() method results in a box with an X in it being drawn instead.
+  Since the Fl_Image class does not support image drawing by itself, calling the
+  Fl_Image::draw() method results in a box with an X in it being drawn instead.
 */
 class FL_EXPORT Fl_Image {
   friend class Fl_Graphics_Driver;
@@ -239,7 +239,7 @@ public:
   /**
     Creates a copy of the image in the same size.
 
-    The copied image should be released when you are done with it.
+    The new image should be released when you are done with it.
 
     This does exactly the same as 'Fl_Image::copy(int W, int H) const' where
     \p W and \p H are the width and height of the source image, respectively.

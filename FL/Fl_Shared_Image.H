@@ -176,7 +176,7 @@ public:
 
     \note The internal image (pointer) is protected for good reasons, e.g.
       to prevent access to the image so it can't be modified by user code.
-      \b DO \b NOT cast away the 'const' to modify the image.
+      \b DO \b NOT cast away the 'const' attribute to modify the image.
 
     User code should rarely need this method. Use with caution.
 

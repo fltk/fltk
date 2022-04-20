@@ -78,20 +78,27 @@ void Fl_Image::draw_empty(int X, int Y) {
 /**
   Creates a resized copy of the image.
 
-  The copied image should be released when you are done with it.
+  The new image should be released when you are done with it.
 
   Note: since FLTK 1.4.0 you can use Fl_Image::release() for all types
   of images (i.e. all subclasses of Fl_Image) instead of operator \em delete
   for Fl_Image's and Fl_Image::release() for Fl_Shared_Image's.
 
-  The copied image data will be converted to the requested size. RGB images
+  The new image data will be converted to the requested size. RGB images
   are resized using the algorithm set by Fl_Image::RGB_scaling().
 
-  For the copied image the following equations are true:
+  For the new image the following equations are true:
   - w() == data_w() == \p W
   - h() == data_h() == \p H
 
-  \param[in] W,H  Requested width and height of the copied image
+  Note: the returned image can be safely cast to the same image type as that
+  of the source image provided this type is one of Fl_RGB_Image, Fl_SVG_Image,
+  Fl_Pixmap, Fl_Bitmap, Fl_Tiled_Image, and Fl_Shared_Image.
+  Returned objects copied from images of other, derived, image classes belong
+  to the parent class appearing in this list. For example, the copy of an
+  Fl_GIF_Image is an object of class Fl_Pixmap.
+
+  \param[in] W,H  Requested width and height of the new image
 
   \note Since FLTK 1.4.0 this method is 'const'. If you derive your own class
     from Fl_Image or any subclass your overridden methods of 'Fl_Image::copy() const'
@@ -104,15 +111,17 @@ Fl_Image *Fl_Image::copy(int W, int H) const {
 }
 
 /**
-  The color_average() method averages the colors in
-  the image with the FLTK color value c. The i
-  argument specifies the amount of the original image to combine
-  with the color, so a value of 1.0 results in no color blend, and
-  a value of 0.0 results in a constant image of the specified
-  color.
+  The color_average() method averages the colors in the image with
+  the provided FLTK color value.
 
-  An internal copy is made of the original image before
-  changes are applied, to avoid modifying the original image.
+  The first argument specifies the FLTK color to be used.
+
+  The second argument specifies the amount of the original image to combine
+  with the color, so a value of 1.0 results in no color blend, and a value
+  of 0.0 results in a constant image of the specified color.
+
+  An internal copy is made of the original image data before changes are
+  applied, to avoid modifying the original image data in memory.
 */
 void Fl_Image::color_average(Fl_Color, float) {
 }
@@ -123,8 +132,8 @@ void Fl_Image::color_average(Fl_Color, float) {
   If the image contains an alpha channel (depth = 4),
   the alpha channel is preserved.
 
-  An internal copy is made of the original image data before
-  changes are applied, to avoid modifying the original image data.
+  An internal copy is made of the original image data before changes are
+  applied, to avoid modifying the original image data in memory.
 */
 void Fl_Image::desaturate() {
 }
@@ -143,19 +152,16 @@ Fl_Labeltype Fl_Image::define_FL_IMAGE_LABEL() {
   This method is an obsolete way to set the image attribute of a widget
   or menu item.
 
-  Use the image() or deimage() methods of the Fl_Widget and Fl_Menu_Item
-  classes instead.
+  \deprecated Please use Fl_Widget::image() or Fl_Widget::deimage() instead.
 */
 void Fl_Image::label(Fl_Widget* widget) {
   widget->image(this);
 }
 
 /**
-  This method is an obsolete way to set the image attribute of a widget
-  or menu item.
+  This method is an obsolete way to set the image attribute of a menu item.
 
-  Use the image() or deimage() methods of the Fl_Widget and Fl_Menu_Item
-  classes instead.
+  \deprecated Please use Fl_Menu_Item::image() instead.
 */
 void Fl_Image::label(Fl_Menu_Item* m) {
   m->label(FL_IMAGE_LABEL, (const char*)this);

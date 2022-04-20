@@ -105,7 +105,7 @@ static int gif_error(Fl_Image_Reader &rdr, int line, uchar *Image) {
 /**
   This constructor loads a GIF image from the given file.
 
-  IF a GIF image is animated, Fl_GIF_Image will only read and display the
+  If a GIF image is animated, Fl_GIF_Image will only read and display the
   first frame of the animation.
 
   The destructor frees all memory and server resources that are used by
@@ -140,7 +140,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
   \p imagename can be NULL. If a name is given, the image is added to the list of
   shared images and will be available by that name.
 
-  IF a GIF image is animated, Fl_GIF_Image will only read and display the
+  If a GIF image is animated, Fl_GIF_Image will only read and display the
   first frame of the animation.
 
   The destructor frees all memory and server resources that are used by
