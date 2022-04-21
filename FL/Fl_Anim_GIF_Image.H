@@ -126,7 +126,7 @@ public:
    and resizes all of its frame images to W x H using
    the current resize method.
    */
-  virtual Fl_Image *copy(int W, int H);
+  virtual Fl_Image *copy(int W, int H) const;
   int debug() const;
   /**
    The desaturate() method applies desaturate() to all frames

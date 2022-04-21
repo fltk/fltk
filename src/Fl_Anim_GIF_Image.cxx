@@ -606,23 +606,17 @@ void Fl_Anim_GIF_Image::color_average(Fl_Color c, float i) {
 
 
 /*virtual*/
-Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) {
+Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) const {
   Fl_Anim_GIF_Image *copied = new Fl_Anim_GIF_Image();
   // copy/resize the base image (Fl_Pixmap)
   // Note: this is not really necessary, if the draw()
   //       method never calls the base class.
   if (fi_->frames_size) {
-    int ow = w();
-    int oh = h();
-    w(fi_->frames[0].w);
-    h(fi_->frames[0].h);
     Fl_Pixmap *gif = (Fl_Pixmap *)Fl_GIF_Image::copy(W, H);
     copied->Fl_GIF_Image::data(gif->data(), gif->count());
     copied->alloc_data = gif->alloc_data;
     gif->alloc_data = 0;
     delete gif;
-    w(ow);
-    h(oh);
   }
 
   copied->w(W);
@@ -633,7 +627,7 @@ Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) {
 
   copied->uncache_ = uncache_; // copy 'inherits' frame uncache status
   copied->valid_ = valid_ && copied->fi_->frames_size == fi_->frames_size;
-  scale_frame(); // scale current frame now
+  copied->scale_frame(); // scale current frame now
   if (copied->valid_ && frame_ >= 0 && !Fl::has_timeout(cb_animate, copied))
     copied->start(); // start if original also was started
   return copied;
