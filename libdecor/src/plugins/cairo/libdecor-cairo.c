@@ -44,12 +44,6 @@
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
 
-#ifndef APPLY_FLTK_CHANGES
-#define APPLY_FLTK_CHANGES 1
-#endif
-
-/* Note for FLTK: This header file changes location, while its content stays unchanged,
- between the master and gtk_cairo_single branches */
 #include "libdecor-cairo-blur.h"
 
 static const size_t SHADOW_MARGIN = 24;	/* graspable part of the border */
