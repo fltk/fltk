@@ -656,8 +656,7 @@ keyboard_key(void *data,
 				printf("set fixed-size\n");
 				libdecor_frame_unset_capabilities(window->frame,
 							LIBDECOR_ACTION_RESIZE);
-			}
-			else {
+			} else {
 				printf("set resizeable\n");
 				libdecor_frame_set_capabilities(window->frame,
 							LIBDECOR_ACTION_RESIZE);

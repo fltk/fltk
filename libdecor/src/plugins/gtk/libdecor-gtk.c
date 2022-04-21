@@ -1486,36 +1486,6 @@ draw_decoration(struct libdecor_frame_gtk *frame_gtk)
 	}
 }
 
-static void
-set_window_geometry(struct libdecor_frame_gtk *frame_gtk)
-{
-	struct libdecor_frame *frame = &frame_gtk->frame;
-	int x = 0, y = 0, width = 0, height = 0;
-#if APPLY_FLTK_CHANGES
-	const int title_height = GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
-#else
-	const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
-
-	switch (frame_gtk->decoration_type) {
-	case DECORATION_TYPE_NONE:
-		x = 0;
-		y = 0;
-		width = libdecor_frame_get_content_width(frame);
-		height = libdecor_frame_get_content_height(frame);
-		break;
-	case DECORATION_TYPE_ALL:
-	case DECORATION_TYPE_TITLE_ONLY:
-		x = 0;
-		y = -title_height;
-		width = libdecor_frame_get_content_width(frame);
-		height = libdecor_frame_get_content_height(frame) + title_height;
-		break;
-	}
-
-	libdecor_frame_set_window_geometry(frame, x, y, width, height);
-}
-
 static enum decoration_type
 window_state_to_decoration_type(enum libdecor_window_state window_state)
 {
@@ -1571,7 +1541,6 @@ libdecor_plugin_gtk_frame_commit(struct libdecor_plugin *plugin,
 	frame_gtk->decoration_type = new_decoration_type;
 
 	draw_decoration(frame_gtk);
-	set_window_geometry(frame_gtk);
 
 	/* set fixed window size */
 	if (!resizable(frame_gtk)) {
@@ -1624,27 +1593,6 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 		draw_decoration(frame_gtk);
 		libdecor_frame_toplevel_commit(frame);
 	}
-}
-
-static void
-libdecor_plugin_gtk_frame_translate_coordinate(struct libdecor_plugin *plugin,
-					       struct libdecor_frame *frame,
-					       int content_x,
-					       int content_y,
-					       int *frame_x,
-					       int *frame_y)
-{
-	struct libdecor_frame_gtk *frame_gtk =
-		(struct libdecor_frame_gtk *) frame;
-
-	*frame_x = content_x;
-	*frame_y = content_y;
-
-#if APPLY_FLTK_CHANGES
-	*frame_y += (frame_gtk->header ? gtk_widget_get_allocated_height(frame_gtk->header) : 0);
-#else
-	*frame_y += gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
 }
 
 static void
@@ -1807,78 +1755,38 @@ libdecor_plugin_gtk_frame_popup_ungrab(struct libdecor_plugin *plugin,
 }
 
 static bool
-libdecor_plugin_gtk_configuration_get_content_size(
-		struct libdecor_plugin *plugin,
-		struct libdecor_configuration *configuration,
-		struct libdecor_frame *frame,
-		int *content_width,
-		int *content_height)
+libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
+					  struct libdecor_frame *frame,
+					  struct libdecor_configuration *configuration,
+					  int *left,
+					  int *right,
+					  int *top,
+					  int *bottom)
 {
-	struct libdecor_frame_gtk *frame_gtk =
-		(struct libdecor_frame_gtk *) frame;
-	int win_width, win_height;
-	enum libdecor_window_state state;
+	enum libdecor_window_state window_state;
 
-	if (!libdecor_configuration_get_window_size(configuration,
-						    &win_width,
-						    &win_height))
-		return false;
-
-	if (!libdecor_configuration_get_window_state(configuration, &state))
-		return false;
-#if APPLY_FLTK_CHANGES
-	const int title_bar_height = GTK_IS_WIDGET(frame_gtk->header)? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
-#else
-	const int title_bar_height = gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
-
-	switch (window_state_to_decoration_type(state)) {
-	case DECORATION_TYPE_NONE:
-		*content_width = win_width;
-		*content_height = win_height;
-		break;
-	case DECORATION_TYPE_ALL:
-	case DECORATION_TYPE_TITLE_ONLY:
-		*content_width = win_width;
-		*content_height = win_height - title_bar_height;
-		break;
+	if (configuration) {
+		if (!libdecor_configuration_get_window_state(
+			    configuration, &window_state))
+			return false;
+	} else {
+		window_state = libdecor_frame_get_window_state(frame);
 	}
 
-	return true;
-}
+	if (left)
+		*left = 0;
+	if (right)
+		*right = 0;
+	if (bottom)
+		*bottom = 0;
+	if (top) {
+		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
+		enum decoration_type type = window_state_to_decoration_type(window_state);
 
-static bool
-libdecor_plugin_gtk_frame_get_window_size_for(
-		struct libdecor_plugin *plugin,
-		struct libdecor_frame *frame,
-		struct libdecor_state *state,
-		int *window_width,
-		int *window_height)
-{
-	enum libdecor_window_state window_state =
-		libdecor_state_get_window_state (state);
-
-#if APPLY_FLTK_CHANGES
-	struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk *)frame;
-	const int title_bar_height = (GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(
-					     frame_gtk->header) : 0);
-#else
-	GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
-
-	const int title_bar_height = header ? gtk_widget_get_allocated_height(header) : 0;
-#endif
-
-	switch (window_state_to_decoration_type(window_state)) {
-	case DECORATION_TYPE_NONE:
-		*window_width = libdecor_state_get_content_width(state);
-		*window_height = libdecor_state_get_content_height(state);
-		break;
-	case DECORATION_TYPE_ALL:
-	case DECORATION_TYPE_TITLE_ONLY:
-		*window_width = libdecor_state_get_content_width(state);
-		*window_height =
-			libdecor_state_get_content_height(state) + title_bar_height;
-		break;
+		if (header && (type != DECORATION_TYPE_NONE))
+			*top = gtk_widget_get_allocated_height(header);
+		else
+			*top = 0;
 	}
 
 	return true;
@@ -1893,15 +1801,11 @@ static struct libdecor_plugin_interface gtk_plugin_iface = {
 	.frame_free = libdecor_plugin_gtk_frame_free,
 	.frame_commit = libdecor_plugin_gtk_frame_commit,
 	.frame_property_changed = libdecor_plugin_gtk_frame_property_changed,
-	.frame_translate_coordinate =
-		libdecor_plugin_gtk_frame_translate_coordinate,
+
 	.frame_popup_grab = libdecor_plugin_gtk_frame_popup_grab,
 	.frame_popup_ungrab = libdecor_plugin_gtk_frame_popup_ungrab,
 
-	.configuration_get_content_size =
-			libdecor_plugin_gtk_configuration_get_content_size,
-	.frame_get_window_size_for =
-			libdecor_plugin_gtk_frame_get_window_size_for,
+	.frame_get_border_size = libdecor_plugin_gtk_frame_get_border_size,
 };
 
 static void

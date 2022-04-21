@@ -46,6 +46,7 @@ libdecor_plugin_dummy_destroy(struct libdecor_plugin *plugin)
 	struct libdecor_plugin_dummy *plugin_dummy =
 		(struct libdecor_plugin_dummy *) plugin;
 
+	libdecor_plugin_release(plugin);
 	free(plugin_dummy);
 }
 
@@ -80,18 +81,6 @@ libdecor_plugin_dummy_frame_property_changed(struct libdecor_plugin *plugin,
 }
 
 static void
-libdecor_plugin_dummy_frame_translate_coordinate(struct libdecor_plugin *plugin,
-						 struct libdecor_frame *frame,
-						 int content_x,
-						 int content_y,
-						 int *frame_x,
-						 int *frame_y)
-{
-	*frame_x = content_x;
-	*frame_y = content_y;
-}
-
-static void
 libdecor_plugin_dummy_frame_popup_grab(struct libdecor_plugin *plugin,
 				       struct libdecor_frame *frame,
 				       const char *seat_name)
@@ -105,32 +94,6 @@ libdecor_plugin_dummy_frame_popup_ungrab(struct libdecor_plugin *plugin,
 {
 }
 
-static bool
-libdecor_plugin_dummy_configuration_get_content_size(
-		struct libdecor_plugin *plugin,
-		struct libdecor_configuration *configuration,
-		struct libdecor_frame *frame,
-		int *content_width,
-		int *content_height)
-{
-	return libdecor_configuration_get_window_size(configuration,
-						      content_width,
-						      content_height);
-}
-
-static bool
-libdecor_plugin_dummy_frame_get_window_size_for(
-		struct libdecor_plugin *plugin,
-		struct libdecor_frame *frame,
-		struct libdecor_state *state,
-		int *window_width,
-		int *window_height)
-{
-	*window_width = libdecor_state_get_content_width (state);
-	*window_height = libdecor_state_get_content_height (state);
-	return true;
-}
-
 static struct libdecor_plugin_interface dummy_plugin_iface = {
 	.destroy = libdecor_plugin_dummy_destroy,
 
@@ -138,15 +101,8 @@ static struct libdecor_plugin_interface dummy_plugin_iface = {
 	.frame_free = libdecor_plugin_dummy_frame_free,
 	.frame_commit = libdecor_plugin_dummy_frame_commit,
 	.frame_property_changed = libdecor_plugin_dummy_frame_property_changed,
-	.frame_translate_coordinate =
-		libdecor_plugin_dummy_frame_translate_coordinate,
 	.frame_popup_grab = libdecor_plugin_dummy_frame_popup_grab,
 	.frame_popup_ungrab = libdecor_plugin_dummy_frame_popup_ungrab,
-
-	.configuration_get_content_size =
-			libdecor_plugin_dummy_configuration_get_content_size,
-	.frame_get_window_size_for =
-			libdecor_plugin_dummy_frame_get_window_size_for,
 };
 
 static struct libdecor_plugin *
@@ -155,7 +111,7 @@ libdecor_plugin_new(struct libdecor *context)
 	struct libdecor_plugin_dummy *plugin_dummy;
 
 	plugin_dummy = zalloc(sizeof *plugin_dummy);
-	plugin_dummy->plugin.iface = &dummy_plugin_iface;
+	libdecor_plugin_init(&plugin_dummy->plugin, context, &dummy_plugin_iface);
 	plugin_dummy->context = context;
 
 	libdecor_notify_plugin_ready(context);
@@ -170,6 +126,7 @@ static struct libdecor_plugin_priority priorities[] = {
 LIBDECOR_EXPORT const struct libdecor_plugin_description
 libdecor_plugin_description = {
 	.api_version = LIBDECOR_PLUGIN_API_VERSION,
+	.capabilities = LIBDECOR_PLUGIN_CAPABILITY_BASE,
 	.description = "dummy libdecor plugin",
 	.priorities = priorities,
 	.constructor = libdecor_plugin_new,
