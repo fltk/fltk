@@ -16,7 +16,8 @@
 
 include ../../makeinclude
 
-CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src -fPIC -D_GNU_SOURCE -DUSE_SYSTEM_LIBDECOR=0
+CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src -fPIC -D_GNU_SOURCE \
+  -DUSE_SYSTEM_LIBDECOR=0 -DHAVE_MEMFD_CREATE -DHAVE_MKOSTEMP -DHAVE_POSIX_FALLOCATE
 OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/xdg-decoration-protocol.o ../../src/xdg-shell-protocol.o \
   ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o

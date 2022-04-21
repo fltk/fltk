@@ -32,23 +32,13 @@
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
+extern "C" {
+  int os_create_anonymous_file(off_t);
+}
 
 static int create_anonymous_file(int size, char **pshared)
 {
-  int ret;
-  int fd = memfd_create("FLTK-for-Wayland", MFD_CLOEXEC | MFD_ALLOW_SEALING);
-  if (fd < 0) {
-    Fl::fatal("memfd_create failed: %s\n", strerror(errno));
-  }
-  fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK);
-  do {
-    ret = posix_fallocate(fd, 0, size);
-  } while (ret == EINTR);
-  if (ret != 0) {
-    close(fd);
-    errno = ret;
-    Fl::fatal("creating anonymous file of size %d failed: %s\n", size, strerror(errno));
-  }
+  int fd = os_create_anonymous_file(size);
   *pshared = (char*)mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if (*pshared == MAP_FAILED) {
     close(fd);
