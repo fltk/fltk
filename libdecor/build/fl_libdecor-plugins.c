@@ -25,11 +25,14 @@
 #include <dlfcn.h>
 #include <string.h>
 #include "../src/libdecor.h"
-#include "xdg-decoration-client-protocol.h"
 #include <pango/pangocairo.h>
 
 #if USE_SYSTEM_LIBDECOR
 #include "../src/libdecor-plugin.h"
+enum zxdg_toplevel_decoration_v1_mode {
+  ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE = 1,
+  ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE = 2,
+};
 
 enum component {NONE};
 enum decoration_type {DECORATION_TYPE_NONE};
@@ -49,6 +52,8 @@ struct buffer { // identical in libdecor-cairo.c and libdecor-gtk.c
 };
 
 #else // !USE_SYSTEM_LIBDECOR
+
+#  include "xdg-decoration-client-protocol.h"
 
 const struct libdecor_plugin_description *fl_libdecor_plugin_description = NULL;
 

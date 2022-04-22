@@ -479,12 +479,12 @@ if (OPTION_USE_WAYLAND)
     xutf8/keysym2Ucs.c
     scandir_posix.c
     ../libdecor/src/cursor-settings.c
+    ../libdecor/src/os-compatibility.c
     ../libdecor/build/fl_libdecor-plugins.c
     )
   if (NOT OPTION_USE_SYSTEM_LIBDECOR)
     list (APPEND CFILES
     ../libdecor/build/fl_libdecor.c
-    ../libdecor/src/os-compatibility.c
     ../libdecor/src/plugins/cairo/libdecor-cairo-blur.c
     )
   endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
