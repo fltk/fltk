@@ -143,14 +143,7 @@ Fl_Wayland_Graphics_Driver::Fl_Wayland_Graphics_Driver () : Fl_Cairo_Graphics_Dr
 
 
 void Fl_Wayland_Graphics_Driver::activate(struct fl_wld_buffer *buffer, float scale) {
-  if (dummy_pango_layout_) {
-    cairo_surface_t *surf = cairo_get_target(cairo_);
-    cairo_destroy(cairo_);
-    cairo_surface_destroy(surf);
-    g_object_unref(dummy_pango_layout_);
-    dummy_pango_layout_ = NULL;
-    pango_layout_ = NULL;
-  }
+  if (dummy_cairo_) handle_dummy_cairo(buffer->cairo_);
   cairo_ = buffer->cairo_;
   if (pango_layout_ != buffer->pango_layout_) {
     if (pango_layout_) g_object_unref(pango_layout_);

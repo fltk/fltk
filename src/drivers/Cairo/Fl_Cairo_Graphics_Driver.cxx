@@ -69,7 +69,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;
   pango_layout_ = NULL;
-  dummy_pango_layout_ = NULL;
+  dummy_cairo_ = NULL;
   linestyle_ = FL_SOLID;
   clip_ = NULL;
   scale_x = scale_y = 1;
@@ -83,6 +83,15 @@ Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
 }
 
 const cairo_format_t Fl_Cairo_Graphics_Driver::cairo_format = CAIRO_FORMAT_ARGB32;
+
+
+void Fl_Cairo_Graphics_Driver::handle_dummy_cairo(cairo_t *cr) {
+  pango_cairo_update_layout(cr, pango_layout_); // 1.10
+  cairo_surface_t *surf = cairo_get_target(dummy_cairo_);
+  cairo_destroy(dummy_cairo_);
+  cairo_surface_destroy(surf);
+  dummy_cairo_ = NULL;
+}
 
 
 void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -1078,8 +1087,10 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
       cairo_surface_t *surf = cairo_image_surface_create(Fl_Cairo_Graphics_Driver::cairo_format, 100, 100);
       cairo_ = cairo_create(surf);
     }
-    pango_layout_ = pango_cairo_create_layout(cairo_);
-    if (needs_dummy) dummy_pango_layout_ = pango_layout_;
+    pango_layout_ = pango_cairo_create_layout(cairo_); // 1.10
+    if (needs_dummy) {
+      dummy_cairo_ = cairo_;
+    }
   }
   if (s == 0) return;
   if (font() == fnum && size() == s) return;

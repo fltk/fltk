@@ -47,6 +47,7 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
 
 Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) {
+    cairo_destroy(offscreen->cairo_);
     free(offscreen->draw_buffer);
     free(offscreen);
   }
