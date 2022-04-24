@@ -526,27 +526,6 @@ AS_CASE([$host_os], [darwin*], [
     ])
 ])
 
-dnl Does the C++ compiler support the bool type?
-AC_CACHE_CHECK([whether the compiler recognizes bool as a built-in type], ac_cv_cxx_bool,[
-    AC_LANG_PUSH([C++])
-    AC_COMPILE_IFELSE(
-        [AC_LANG_PROGRAM([[
-            int f(int  x){return 1;}
-            int f(char x){return 1;}
-            int f(bool x){return 1;}
-          ]], [[
-            bool b = true;
-            return f(b);
-        ]])],
-        [ac_cv_cxx_bool=yes],
-        [ac_cv_cxx_bool=no])
-    AC_LANG_POP([])
-])
-
-AS_IF([test "x$ac_cv_cxx_bool" != xyes], [
-    CXXFLAGS="-Dbool=char -Dfalse=0 -Dtrue=1 $CXXFLAGS"
-])
-
 
 dnl Standard headers and functions...
 AC_HEADER_DIRENT
