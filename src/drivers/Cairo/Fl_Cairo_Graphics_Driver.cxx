@@ -69,6 +69,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;
   pango_layout_ = NULL;
+  pango_layout_cairo_ = NULL;
   dummy_cairo_ = NULL;
   linestyle_ = FL_SOLID;
   clip_ = NULL;
@@ -85,12 +86,22 @@ Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
 const cairo_format_t Fl_Cairo_Graphics_Driver::cairo_format = CAIRO_FORMAT_ARGB32;
 
 
-void Fl_Cairo_Graphics_Driver::handle_dummy_cairo(cairo_t *cr) {
-  pango_cairo_update_layout(cr, pango_layout_); // 1.10
-  cairo_surface_t *surf = cairo_get_target(dummy_cairo_);
-  cairo_destroy(dummy_cairo_);
-  cairo_surface_destroy(surf);
-  dummy_cairo_ = NULL;
+void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
+  if (dummy_cairo_) {
+    g_object_unref(pango_layout_);
+    pango_layout_ = NULL;
+    cairo_surface_t *surf = cairo_get_target(dummy_cairo_);
+    cairo_destroy(dummy_cairo_);
+    cairo_surface_destroy(surf);
+    dummy_cairo_ = NULL;
+ }
+  cairo_ = cr;
+  cairo_restore(cairo_);
+  line_style(0);
+  cairo_save(cairo_);
+  if (s == 0) s = scale();
+  cairo_scale(cairo_, s, s);
+  cairo_translate(cairo_, 0.5, 0.5);
 }
 
 
@@ -1088,9 +1099,13 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
       cairo_ = cairo_create(surf);
     }
     pango_layout_ = pango_cairo_create_layout(cairo_); // 1.10
+    pango_layout_cairo_ = cairo_;
     if (needs_dummy) {
       dummy_cairo_ = cairo_;
     }
+  } else if (pango_layout_cairo_ != cairo_) {
+    pango_cairo_update_layout(cairo_, pango_layout_);
+    pango_layout_cairo_ = cairo_;
   }
   if (s == 0) return;
   if (font() == fnum && size() == s) return;

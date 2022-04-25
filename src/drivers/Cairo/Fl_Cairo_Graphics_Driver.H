@@ -43,9 +43,9 @@ private:
 protected:
   cairo_t *dummy_cairo_; // used to measure text width before showing a window
   cairo_t *cairo_;
+  cairo_t *pango_layout_cairo_;
   PangoLayout *pango_layout_;
   int linestyle_;
-  void handle_dummy_cairo(cairo_t *);
 public:
   Fl_Cairo_Graphics_Driver();
   virtual ~Fl_Cairo_Graphics_Driver();
@@ -61,6 +61,7 @@ public:
   int gap_;
   cairo_t *cr() { return cairo_; }
   PangoLayout *pango_layout() {return pango_layout_;}
+  void set_cairo(cairo_t *c, float f = 0);
 
   void check_status(void);
 

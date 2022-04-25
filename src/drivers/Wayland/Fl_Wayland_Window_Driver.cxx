@@ -374,7 +374,7 @@ void Fl_Wayland_Window_Driver::make_current() {
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
   }
-  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->activate(window->buffer, scale);
+  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, scale);
 
 #ifdef FLTK_HAVE_CAIROEXT
   // update the cairo_t context

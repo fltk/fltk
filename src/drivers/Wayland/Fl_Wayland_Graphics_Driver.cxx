@@ -113,7 +113,7 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int wi
   cairo_set_source_rgba(buffer->cairo_, 1.0, 1.0, 1.0, 0.);
   cairo_paint(buffer->cairo_);
   cairo_set_source_rgba(buffer->cairo_, .0, .0, .0, 1.0); // Black default color
-  buffer->pango_layout_ = pango_cairo_create_layout(buffer->cairo_);
+  //buffer->pango_layout_ = pango_cairo_create_layout(buffer->cairo_);
   cairo_save(buffer->cairo_);
 }
 
@@ -127,7 +127,7 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
     cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
     cairo_destroy(window->buffer->cairo_);
     cairo_surface_destroy(surf);
-    g_object_unref(window->buffer->pango_layout_);
+    //g_object_unref(window->buffer->pango_layout_);
     free(window->buffer);
     window->buffer = NULL;
   }
@@ -142,21 +142,9 @@ Fl_Wayland_Graphics_Driver::Fl_Wayland_Graphics_Driver () : Fl_Cairo_Graphics_Dr
 }
 
 
-void Fl_Wayland_Graphics_Driver::activate(struct fl_wld_buffer *buffer, float scale) {
-  if (dummy_cairo_) handle_dummy_cairo(buffer->cairo_);
-  cairo_ = buffer->cairo_;
-  if (pango_layout_ != buffer->pango_layout_) {
-    if (pango_layout_) g_object_unref(pango_layout_);
-    pango_layout_ = buffer->pango_layout_;
-    g_object_ref(pango_layout_);
-    Fl_Graphics_Driver::font(-1, -1); // signal that no font is current yet
-  }
+void Fl_Wayland_Graphics_Driver::set_buffer(struct fl_wld_buffer *buffer, float scale) {
   this->buffer_ = buffer;
-  cairo_restore(cairo_);
-  cairo_save(cairo_);
-  cairo_scale(cairo_, scale, scale);
-  cairo_translate(cairo_, 0.5, 0.5);
-  line_style(0);
+  set_cairo(buffer->cairo_, scale);
 }
 
 

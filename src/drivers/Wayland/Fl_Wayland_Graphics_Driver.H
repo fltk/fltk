@@ -65,7 +65,6 @@ struct fl_wld_buffer {
   struct wl_callback *cb;
   bool draw_buffer_needs_commit;
   cairo_t *cairo_;
-  PangoLayout *pango_layout_;
 };
 struct wld_window;
 
@@ -76,7 +75,7 @@ private:
 public:
   Fl_Wayland_Graphics_Driver();
   static const uint32_t wld_format;
-  void activate(struct fl_wld_buffer *buffer, float scale);
+  void set_buffer(struct fl_wld_buffer *buffer, float scale = 0);
   void set_color(Fl_Color i, unsigned c);
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy);
   static struct fl_wld_buffer *create_shm_buffer(int width, int height);
