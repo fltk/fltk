@@ -113,7 +113,6 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int wi
   cairo_set_source_rgba(buffer->cairo_, 1.0, 1.0, 1.0, 0.);
   cairo_paint(buffer->cairo_);
   cairo_set_source_rgba(buffer->cairo_, .0, .0, .0, 1.0); // Black default color
-  //buffer->pango_layout_ = pango_cairo_create_layout(buffer->cairo_);
   cairo_save(buffer->cairo_);
 }
 
@@ -127,7 +126,6 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
     cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
     cairo_destroy(window->buffer->cairo_);
     cairo_surface_destroy(surf);
-    //g_object_unref(window->buffer->pango_layout_);
     free(window->buffer);
     window->buffer = NULL;
   }
