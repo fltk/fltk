@@ -24,11 +24,18 @@ static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
     const double xmax = (window->w() - 1);
     const double ymax = (window->h() - 1);
 
+    // Set antialiasing mode. We could check the Cairo version at compile time but we'd
+    // also have to check the runtime version which would make this demo too complicated.
+
+    // CAIRO_ANTIALIAS_BEST    is available since Cairo version 1.12,
+    // CAIRO_ANTIALIAS_DEFAULT is available since Cairo version 1.0.
+
+    cairo_set_antialias(cr, CAIRO_ANTIALIAS_DEFAULT);             // use default antialiasing
+
     // Draw orange "X"
     //     Draws an X to four corners of resizable window.
     //     See Fl_Cairo_Window docs for more info.
     //
-    cairo_set_antialias(cr, CAIRO_ANTIALIAS_BEST);                // use best antialiasing
     cairo_set_line_width(cr, 1.00);                               // line width for drawing
     cairo_set_source_rgb(cr, 1.0, 0.5, 0.0);                      // orange
     cairo_move_to(cr, 0.0, 0.0);  cairo_line_to(cr, xmax, ymax);  // draw diagonal "\"
