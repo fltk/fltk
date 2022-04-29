@@ -1051,7 +1051,9 @@ int Fl_Cairo_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize size) : Fl_Font_Descriptor(name, size) {
   char string[70];
   strcpy(string, name);
-  sprintf(string + strlen(string), " %d", int(size * 0.75 + 0.5) ); // why reduce size?
+  // The factor of 0.75 below gives cairo-produced text the same size as
+  // Xft-produced text for the same FLTK font size.
+  sprintf(string + strlen(string), " %d", int(size * 0.75 + 0.5) );
   fontref = pango_font_description_from_string(string);
   width = NULL;
   static PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
@@ -1122,6 +1124,8 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
+  // The vertical offset size()/21. below vertically positions output text adequately
+  // relatively to the baseline (empirical observation).
   cairo_translate(cairo_, x, y - height() + descent() + size()/21.);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
