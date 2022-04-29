@@ -2410,8 +2410,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 - (void)updateTrackingAreas {
   if (fl_mac_os_version >= 100500) {
-    Fl_Window *win = [(FLWindow*)[self window] getFl_Window];
-    if (!win->parent()) {
+    if (![[self window] parentWindow]) {
       while (true) {
         NSArray *a = [self trackingAreas]; // 10.5
         if ([a count] == 0) break;
@@ -2428,8 +2427,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
       if (tracking) {
         [self addTrackingArea:tracking]; // 10.5
       }
-      [super updateTrackingAreas];
     }
+    [super updateTrackingAreas];
   }
 }
 #endif
