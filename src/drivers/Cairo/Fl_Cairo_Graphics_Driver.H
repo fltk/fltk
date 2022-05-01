@@ -165,6 +165,7 @@ public:
   void draw(const char* s, int nBytes, float x, float y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
+  int height();
   int descent();
   double width(const char *str, int n);
   double width(unsigned c);

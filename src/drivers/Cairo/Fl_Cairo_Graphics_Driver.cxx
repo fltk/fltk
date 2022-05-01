@@ -915,6 +915,12 @@ void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
 }
 
 
+int Fl_Cairo_Graphics_Driver::height() {
+  if (!font_descriptor()) font(0, 12);
+  return (font_descriptor()->ascent + font_descriptor()->descent) * 1.25;
+}
+
+
 int Fl_Cairo_Graphics_Driver::descent() {
   return font_descriptor()->descent;
 }
@@ -1118,9 +1124,7 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
-  // The vertical offset size()/6. below vertically positions output text adequately
-  // relatively to the baseline (empirical observation).
-  cairo_translate(cairo_, x, y - height() + descent() - size()/6.);
+  cairo_translate(cairo_, x, y - size() - 1);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
   cairo_restore(cairo_);
@@ -1192,7 +1196,7 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
   PangoRectangle ink_rect;
   pango_layout_get_pixel_extents(pango_layout_, &ink_rect, NULL);
   dx = ink_rect.x;
-  dy = ink_rect.y - height() + descent();
+  dy = ink_rect.y - size();
   w = ink_rect.width;
   h = ink_rect.height;
 }
