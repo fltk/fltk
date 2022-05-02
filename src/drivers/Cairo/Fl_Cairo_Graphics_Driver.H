@@ -34,6 +34,7 @@ public:
   FL_EXPORT ~Fl_Cairo_Font_Descriptor();
   PangoFontDescription *fontref;
   int **width; // array of arrays of character widths
+  int line_height;
 };
 
 

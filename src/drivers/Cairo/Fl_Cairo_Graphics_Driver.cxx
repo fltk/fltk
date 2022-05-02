@@ -917,7 +917,7 @@ void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
 
 int Fl_Cairo_Graphics_Driver::height() {
   if (!font_descriptor()) font(0, 12);
-  return (font_descriptor()->ascent + font_descriptor()->descent) * 1.25;
+  return ((Fl_Cairo_Font_Descriptor*)font_descriptor())->line_height;
 }
 
 
@@ -1063,6 +1063,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics)/PANGO_SCALE;
   descent = pango_font_metrics_get_descent(metrics)/PANGO_SCALE;
+  line_height = ceil(pango_font_metrics_get_height(metrics)/double(PANGO_SCALE));
   q_width = pango_font_metrics_get_approximate_char_width(metrics)/PANGO_SCALE;
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
