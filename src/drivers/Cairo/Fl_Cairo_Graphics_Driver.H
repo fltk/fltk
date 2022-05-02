@@ -40,12 +40,12 @@ public:
 class FL_EXPORT Fl_Cairo_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   bool *needs_commit_tag_; // NULL or points to whether cairo surface was drawn to
-protected:
   cairo_t *dummy_cairo_; // used to measure text width before showing a window
-  cairo_t *cairo_;
   cairo_t *pango_layout_cairo_;
   PangoLayout *pango_layout_;
   int linestyle_;
+protected:
+  cairo_t *cairo_;
 public:
   Fl_Cairo_Graphics_Driver();
   virtual ~Fl_Cairo_Graphics_Driver();
