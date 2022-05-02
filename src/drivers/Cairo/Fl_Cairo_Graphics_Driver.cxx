@@ -1125,7 +1125,8 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
-  cairo_translate(cairo_, x, y - size() - 1);
+  // The -1 below is necessary for Fl_Text_Display at scale = 1
+  cairo_translate(cairo_, x, y - height() + descent() -1);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
   cairo_restore(cairo_);
@@ -1197,7 +1198,7 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
   PangoRectangle ink_rect;
   pango_layout_get_pixel_extents(pango_layout_, &ink_rect, NULL);
   dx = ink_rect.x;
-  dy = ink_rect.y - size();
+  dy = ink_rect.y - height() + descent();
   w = ink_rect.width;
   h = ink_rect.height;
 }
