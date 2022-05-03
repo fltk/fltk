@@ -281,7 +281,9 @@ void Fl_Wayland_Window_Driver::draw_end()
     Fl_Wayland_Graphics_Driver *gr_dr = (Fl_Wayland_Graphics_Driver*)fl_graphics_driver;
     cairo_t *cr = gr_dr->cr();
     cairo_matrix_t matrix;
-    cairo_matrix_init_scale(&matrix, double(shape_data_->lw_)/pWindow->w() , double(shape_data_->lh_)/pWindow->h());
+    cairo_matrix_init_scale(&matrix, double(shape_data_->lw_) / (pWindow->w() + 1),
+                            double(shape_data_->lh_) / (pWindow->h() + 1) );
+    cairo_matrix_translate(&matrix, 1, 1);
     cairo_pattern_set_matrix(shape_data_->mask_pattern_, &matrix);
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
     cairo_mask(cr, shape_data_->mask_pattern_);
