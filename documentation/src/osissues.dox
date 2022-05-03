@@ -1012,8 +1012,8 @@ MimeType=text/plain
 - Optionally, one or more <tt>Name[<em>locale</em>]=</tt> lines can be used to set
 locale-specific app names.
 - The \c Icon= line accepts also \c .png files.
-- put this file in \c /usr/local/share/applications/ so its available to all system users
-or in <tt>$HOME/.local/share/applications/</tt> so its available to a single user.
+- Put this file in \c /usr/local/share/applications/ so it's available to all system users
+or in <tt>$HOME/.local/share/applications/</tt> so it's available to a single user.
 
 \subsection osissues_wayland_decoration Window titlebars
 Wayland supports both client-side window decoration (CSD), where client applications
