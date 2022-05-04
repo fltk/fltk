@@ -1125,8 +1125,8 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
-  // The -1 below is necessary for Fl_Text_Display at scale = 1
-  cairo_translate(cairo_, x, y - height() + descent() -1);
+  // The -0.5 below makes underscores visible in Fl_Text_Display at scale = 1
+  cairo_translate(cairo_, x, y - height() + descent() -0.5);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
   cairo_restore(cairo_);
