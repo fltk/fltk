@@ -65,11 +65,6 @@ class NSOpenGLPixelFormat;
 
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
-struct Fl_Window_Driver::shape_data_type {
-  Fl_Image* shape_; ///<  shape image
-  typedef struct CGImage* CGImageRef;
-  CGImageRef mask;
-};
 
 /**
  \}
@@ -80,6 +75,11 @@ struct Fl_Window_Driver::shape_data_type {
 class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
 private:
+  struct shape_data_type {
+    Fl_Image* shape_; ///<  shape image
+    typedef struct CGImage* CGImageRef;
+    CGImageRef mask;
+  } *shape_data_;
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window

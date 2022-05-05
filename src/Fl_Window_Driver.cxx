@@ -39,7 +39,6 @@ extern void fl_throw_focus(Fl_Widget *o);
  */
 Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   : pWindow(win) {
-  shape_data_ = NULL;
   wait_for_expose_value = 0;
   other_xid = 0;
 }

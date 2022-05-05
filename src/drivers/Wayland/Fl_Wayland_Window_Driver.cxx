@@ -63,6 +63,7 @@ void Fl_Wayland_Window_Driver::destroy_double_buffer() {
 
 Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_Driver(win)
 {
+  shape_data_ = NULL;
   cursor_ = NULL;
   in_handle_configure = false;
   screen_num_ = -1;

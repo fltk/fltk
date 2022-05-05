@@ -44,14 +44,6 @@ class Fl_Bitmap;
  */
 
 
-
-struct Fl_Window_Driver::shape_data_type {
-  int lw_; ///<  width of shape image
-  int lh_; ///<  height of shape image
-  Fl_Image* shape_; ///<  shape image
-  Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
-};
-
 class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
@@ -63,6 +55,12 @@ private:
     Fl_RGB_Image **icons;
     int count;
   } *icon_;
+  struct shape_data_type {
+    int lw_; ///<  width of shape image
+    int lh_; ///<  height of shape image
+    Fl_Image* shape_; ///<  shape image
+    Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
+  } *shape_data_;
 #if  USE_XFT
   // --- support for screen-specific scaling factors
   struct type_for_resize_window_between_screens {

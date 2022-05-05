@@ -39,6 +39,7 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
   icon_ = new icon_data;
+  shape_data_ = NULL;
   memset(icon_, 0, sizeof(icon_data));
   cursor = NULL;
   screen_num_ = -1;

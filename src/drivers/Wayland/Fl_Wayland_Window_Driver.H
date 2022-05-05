@@ -42,18 +42,17 @@
 
 typedef struct _cairo_pattern cairo_pattern_t;
 
-struct Fl_Window_Driver::shape_data_type {
-  int lw_; ///<  width of shape image
-  int lh_; ///<  height of shape image
-  Fl_Image* shape_; ///<  shape image
-  cairo_pattern_t *mask_pattern_;
-};
-
 
 class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
 private:
+  struct shape_data_type {
+    int lw_; ///<  width of shape image
+    int lh_; ///<  height of shape image
+    Fl_Image* shape_; ///<  shape image
+    cairo_pattern_t *mask_pattern_;
+  } *shape_data_;
   static bool in_flush; // useful for progressive window drawing
   struct wl_cursor *cursor_;
   void delete_cursor_();

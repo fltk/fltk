@@ -42,12 +42,6 @@
  */
 
 
-struct Fl_Window_Driver::shape_data_type {
-  int lw_; ///<  width of shape image
-  int lh_; ///<  height of shape image
-  Fl_Image* shape_; ///<  shape image
-  Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
-};
 
 class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
 {
@@ -58,6 +52,12 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON big_icon;
     HICON small_icon;
   };
+  struct shape_data_type {
+    int lw_; ///<  width of shape image
+    int lh_; ///<  height of shape image
+    Fl_Image* shape_; ///<  shape image
+    Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
+  } *shape_data_;
   int screen_num_;
 private:
   void shape_bitmap_(Fl_Image* b);
