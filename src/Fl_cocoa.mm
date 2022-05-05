@@ -2284,6 +2284,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
   if (!window) return; // may happen after closing full-screen window
+  if (!Fl_X::i(window)) return; // reported to happen with Gmsh (issue #434)
   fl_lock_function();
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (!through_Fl_X_flush
