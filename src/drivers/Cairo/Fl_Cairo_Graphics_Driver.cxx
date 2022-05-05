@@ -1051,7 +1051,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
 #if PANGO_VERSION_CHECK(1,44,0)
   line_height = ceil(pango_font_metrics_get_height(metrics)/double(PANGO_SCALE)); // 1.44
 #else
-  line_height = int(size * 1.3 + 0.5); // TO IMPROVE
+  line_height = int( (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 / PANGO_SCALE + 0.5);
 #endif
   q_width = pango_font_metrics_get_approximate_char_width(metrics)/PANGO_SCALE;
   pango_font_metrics_unref(metrics);
