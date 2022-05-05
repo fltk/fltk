@@ -102,7 +102,7 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       break;
 
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
-      option = "--multiple --getopenfilename";
+      option = "--multiple --getopenfilename --separate-output";
       break;
 
     default:
@@ -145,15 +145,15 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       delete[] _pathnames;
       char *p = data.all_files;
       int count = 1;
-      while ((p = strchr(p+1, ' '))) count++;
+      while ((p = strchr(p+1, '\n'))) count++;
       _pathnames = new char*[count];
       _tpathnames = 0;
-      char *q = strtok(data.all_files, " ");
+      char *q = strtok(data.all_files, "\n");
       while (q) {
         _pathnames[_tpathnames] = new char[strlen(q)+1];
         strcpy(_pathnames[_tpathnames], q);
         _tpathnames++;
-        q = strtok(NULL, " ");
+        q = strtok(NULL, "\n");
       }
     }
   }
