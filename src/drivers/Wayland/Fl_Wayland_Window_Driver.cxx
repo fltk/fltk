@@ -91,9 +91,8 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
   if (shape_data_) {
     cairo_surface_t *surface;
     cairo_pattern_get_surface(shape_data_->mask_pattern_, &surface);
-    cairo_pattern_destroy(shape_data_->mask_pattern_);
     uchar *data = cairo_image_surface_get_data(surface);
-    cairo_surface_destroy(surface);
+    cairo_pattern_destroy(shape_data_->mask_pattern_);
     delete[] data;
     delete shape_data_;
   }
@@ -206,6 +205,7 @@ void Fl_Wayland_Window_Driver::shape_bitmap_(Fl_Image* b) { // needs testing
   }
   cairo_surface_t *mask_surf = cairo_image_surface_create_for_data(bits, CAIRO_FORMAT_A1, w, h, bytesperrow);
   shape_data_->mask_pattern_ = cairo_pattern_create_for_surface(mask_surf);
+  cairo_surface_destroy(mask_surf);
   shape_data_->shape_ = b;
   shape_data_->lw_ = w;
   shape_data_->lh_ = h;
@@ -244,6 +244,7 @@ void Fl_Wayland_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   }
   cairo_surface_t *mask_surf = cairo_image_surface_create_for_data(bits, CAIRO_FORMAT_A1, w, h, bytesperrow);
   shape_data_->mask_pattern_ = cairo_pattern_create_for_surface(mask_surf);
+  cairo_surface_destroy(mask_surf);
   shape_data_->shape_ = img;
   shape_data_->lw_ = w;
   shape_data_->lh_ = h;
@@ -254,9 +255,8 @@ void Fl_Wayland_Window_Driver::shape(const Fl_Image* img) {
     if (shape_data_->mask_pattern_) {
       cairo_surface_t *surface;
       cairo_pattern_get_surface(shape_data_->mask_pattern_, &surface);
-      cairo_pattern_destroy(shape_data_->mask_pattern_);
       uchar *data = cairo_image_surface_get_data(surface);
-      cairo_surface_destroy(surface);
+      cairo_pattern_destroy(shape_data_->mask_pattern_);
       delete[] data;
     }
   }

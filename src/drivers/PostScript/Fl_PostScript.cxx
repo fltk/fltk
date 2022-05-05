@@ -1458,6 +1458,7 @@ static int init_cairo_postscript(FILE* output, cairo_t* &cairo_,
   if (cairo_surface_status(cs) != CAIRO_STATUS_SUCCESS) return 1;
   cairo_ps_surface_restrict_to_level(cs, CAIRO_PS_LEVEL_2);
   cairo_ = cairo_create(cs);
+  cairo_surface_destroy(cs);
   driver->Fl_Cairo_Graphics_Driver::font(0, 0); // to create the PangoLayout
   return 0;
 }
@@ -1667,7 +1668,6 @@ void Fl_PostScript_File_Device::end_job (void)
     fputs("\n", ps->output); // creates an stdio error
   }
   cairo_destroy(ps->cr());
-  cairo_surface_destroy(s);
   if (!error) error = fflush(ps->output);
 #else
   if (ps->nPages) {  // for eps nPages is 0 so it is fine ....
@@ -1734,7 +1734,6 @@ int Fl_EPS_File_Surface::close() {
   cairo_surface_finish(s);
   cairo_status_t status = cairo_surface_status(s);
   cairo_destroy(ps->cr());
-  cairo_surface_destroy(s);
   fflush(ps->output);
   error = ferror(ps->output);
   if (status !=  CAIRO_STATUS_SUCCESS) error = status;

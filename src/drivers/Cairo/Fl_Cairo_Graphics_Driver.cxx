@@ -90,9 +90,7 @@ void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
   if (dummy_cairo_) {
     g_object_unref(pango_layout_);
     pango_layout_ = NULL;
-    cairo_surface_t *surf = cairo_get_target(dummy_cairo_);
     cairo_destroy(dummy_cairo_);
-    cairo_surface_destroy(surf);
     dummy_cairo_ = NULL;
  }
   cairo_ = cr;
@@ -804,6 +802,7 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   if (cairo_surface_status(surf) != CAIRO_STATUS_SUCCESS) return;
   (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
   cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
+  cairo_surface_destroy(surf);
   *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)pat;
 }
 
@@ -811,10 +810,7 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
 void Fl_Cairo_Graphics_Driver::uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) {
   cairo_pattern_t *pat = (cairo_pattern_t*)id_;
   if (pat) {
-    cairo_surface_t *surf;
-    cairo_pattern_get_surface(pat, &surf);
     cairo_pattern_destroy(pat);
-    cairo_surface_destroy(surf);
     id_ = 0;
   }
 }
@@ -860,6 +856,7 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
   if (cairo_surface_status(surf) == CAIRO_STATUS_SUCCESS) {
     (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
     cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
+    cairo_surface_destroy(surf);
     *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)pat;
   }
 }
@@ -894,24 +891,12 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_Pixmap *pxm) {
 
 
 void Fl_Cairo_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
-  cairo_pattern_t *pat = (cairo_pattern_t*)p;
-  if (pat) {
-    cairo_surface_t *surf;
-    cairo_pattern_get_surface(pat, &surf);
-    cairo_pattern_destroy(pat);
-    cairo_surface_destroy(surf);
-  }
+  if (p) cairo_pattern_destroy((cairo_pattern_t*)p);
 }
 
 
 void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
-  cairo_pattern_t *pat = (cairo_pattern_t*)bm;
-  if (pat) {
-    cairo_surface_t *surf;
-    cairo_pattern_get_surface(pat, &surf);
-    cairo_pattern_destroy(pat);
-    cairo_surface_destroy(surf);
-  }
+  if (bm) cairo_pattern_destroy((cairo_pattern_t*)bm);
 }
 
 
@@ -1063,7 +1048,11 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics)/PANGO_SCALE;
   descent = pango_font_metrics_get_descent(metrics)/PANGO_SCALE;
-  line_height = ceil(pango_font_metrics_get_height(metrics)/double(PANGO_SCALE));
+#if PANGO_VERSION_CHECK(1,44,0)
+  line_height = ceil(pango_font_metrics_get_height(metrics)/double(PANGO_SCALE)); // 1.44
+#else
+  line_height = int(size * 1.3 + 0.5); // TO IMPROVE
+#endif
   q_width = pango_font_metrics_get_approximate_char_width(metrics)/PANGO_SCALE;
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
@@ -1100,6 +1089,7 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
     if (!cairo_) {
       cairo_surface_t *surf = cairo_image_surface_create(Fl_Cairo_Graphics_Driver::cairo_format, 100, 100);
       cairo_ = cairo_create(surf);
+      cairo_surface_destroy(surf);
     }
     pango_layout_ = pango_cairo_create_layout(cairo_); // 1.10
     pango_layout_cairo_ = cairo_;

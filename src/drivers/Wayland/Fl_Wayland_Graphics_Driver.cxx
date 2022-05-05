@@ -110,6 +110,7 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int wi
     Fl::fatal("Cairo error during cairo_create() %s\n", cairo_status_to_string(err));
     return;
   }
+  cairo_surface_destroy(surf);
   cairo_set_source_rgba(buffer->cairo_, 1.0, 1.0, 1.0, 0.);
   cairo_paint(buffer->cairo_);
   cairo_set_source_rgba(buffer->cairo_, .0, .0, .0, 1.0); // Black default color
@@ -123,9 +124,7 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
     wl_buffer_destroy(window->buffer->wl_buffer);
     delete[] window->buffer->draw_buffer;
     window->buffer->draw_buffer = NULL;
-    cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
     cairo_destroy(window->buffer->cairo_);
-    cairo_surface_destroy(surf);
     free(window->buffer);
     window->buffer = NULL;
   }
