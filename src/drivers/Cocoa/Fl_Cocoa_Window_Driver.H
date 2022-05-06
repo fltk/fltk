@@ -77,7 +77,6 @@ class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 private:
   struct shape_data_type {
     Fl_Image* shape_; ///<  shape image
-    typedef struct CGImage* CGImageRef;
     CGImageRef mask;
   } *shape_data_;
   void shape_bitmap_(Fl_Image* b);
