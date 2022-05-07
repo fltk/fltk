@@ -53,7 +53,6 @@
 
 #include "../Cairo/Fl_Cairo_Graphics_Driver.H"
 #include <stdint.h> // for uint32_t
-typedef struct _PangoLayout  PangoLayout;
 
 struct fl_wld_buffer {
   struct wl_buffer *wl_buffer;

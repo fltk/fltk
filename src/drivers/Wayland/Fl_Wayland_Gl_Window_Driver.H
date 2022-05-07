@@ -34,9 +34,8 @@ Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayl
 */
 
 class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
+  friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   bool egl_resize_in_progress;
-protected:
   Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win);
   virtual float pixels_per_unit();
   virtual void make_current_before();
@@ -54,7 +53,6 @@ protected:
   virtual void gl_start();
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
   char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
-public:
   static EGLDisplay egl_display;
   static EGLint configs_count;
   static struct wl_event_queue *gl_event_queue;

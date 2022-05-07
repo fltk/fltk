@@ -25,7 +25,7 @@
 class Fl_Gl_Choice;
 
 class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
+  friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual float pixels_per_unit();
   virtual void before_show(int& need_after);
@@ -48,7 +48,6 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 #if !USE_XFT
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
 #endif
-  public:
   static GLContext create_gl_context(XVisualInfo* vis);
 };
 

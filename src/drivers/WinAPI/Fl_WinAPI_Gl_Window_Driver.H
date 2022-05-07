@@ -32,7 +32,7 @@ Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayl
 */
 
 class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
-  friend class Fl_Gl_Window_Driver;
+  friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_WinAPI_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual float pixels_per_unit();
   virtual int mode_(int m, const int *a);
