@@ -36,18 +36,6 @@ extern "C" {
   int os_create_anonymous_file(off_t);
 }
 
-static int create_anonymous_file(int size, char **pshared)
-{
-  int fd = os_create_anonymous_file(size);
-  *pshared = (char*)mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  if (*pshared == MAP_FAILED) {
-    close(fd);
-    Fl::fatal("mmap failed: %s\n", strerror(errno));
-  }
-//printf("create_anonymous_file: %d\n",size);
-  return fd;
-}
-
 
 struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, int height)
 {
@@ -66,7 +54,12 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
       close(fd);
     }
     if (size > pool_size) pool_size = 2 * size;
-    fd = create_anonymous_file(pool_size, &pool_memory);
+    fd = os_create_anonymous_file(pool_size);
+    pool_memory = (char*)mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (pool_memory == MAP_FAILED) {
+      close(fd);
+      Fl::fatal("mmap failed: %s\n", strerror(errno));
+    }
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     pool = wl_shm_create_pool(scr_driver->wl_shm, fd, pool_size);
   }
