@@ -1543,7 +1543,7 @@ struct wl_surface *fl_wl_surface(Window xid) {
 }
 
 
-struct _cairo *fl_wl_cairo() {
+cairo_t *fl_wl_cairo() {
   return ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
 }
 
