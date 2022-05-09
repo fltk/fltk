@@ -56,6 +56,7 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   egl_window = NULL;
   egl_surface = NULL;
   egl_resize_in_progress = false;
+  swap_done = false;
 }
 
 
@@ -307,11 +308,9 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
       wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
       wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
     }
-    if (!egl_window) return;
-    int W = 0, H;
-    if (!pWindow->parent()) wl_egl_window_get_attached_size(egl_window, &W, &H);
-    if (!egl_resize_in_progress ||  W == 0) {
-      eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+    if (!egl_resize_in_progress || pWindow->parent() || !swap_done) {
+       eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+       swap_done = true;
     }
     egl_resize_in_progress = false;
   }
