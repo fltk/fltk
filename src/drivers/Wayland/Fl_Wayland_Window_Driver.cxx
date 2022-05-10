@@ -1303,13 +1303,12 @@ void Fl_Wayland_Window_Driver::update_scale()
 
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
+  pWindow->wait_for_expose(); // useful for border(0) just after show()
   struct libdecor_frame *frame = fl_xid(pWindow)->frame;
-  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE &&
-      fl_xid(pWindow)->xdg_surface) {
+  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE) {
     libdecor_frame_set_visibility(frame, pWindow->border());
     pWindow->redraw();
   } else {
-    pWindow->wait_for_expose(); // useful for border(0) just after show()
     Fl_Window_Driver::use_border();
   }
 }
