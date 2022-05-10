@@ -670,7 +670,7 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 		(struct libdecor_frame_gtk *) frame;
 
 #if APPLY_FLTK_CHANGES
-        if (!frame_gtk->header) return; /* happens with SSD */
+        if (!frame_gtk->header || !GTK_IS_WIDGET(frame_gtk->header)) return; /* happens with SSD (or not)*/
 #endif
 	gtk_widget_destroy(frame_gtk->header);
 #if APPLY_FLTK_CHANGES
@@ -1783,7 +1783,11 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
 		enum decoration_type type = window_state_to_decoration_type(window_state);
 
-		if (header && (type != DECORATION_TYPE_NONE))
+		if (header && (type != DECORATION_TYPE_NONE)
+#if APPLY_FLTK_CHANGES
+                    && GTK_IS_WIDGET(header)
+#endif
+                    )
 			*top = gtk_widget_get_allocated_height(header);
 		else
 			*top = 0;
@@ -2298,7 +2302,7 @@ pointer_button(void *data,
 		 state == WL_POINTER_BUTTON_STATE_PRESSED &&
 		 seat->pointer_focus == frame_gtk->headerbar.wl_surface) {
 #if APPLY_FLTK_CHANGES
-          const int title_height = frame_gtk->header ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
+          const int title_height = frame_gtk->header && GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
 #else
 	const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
 #endif

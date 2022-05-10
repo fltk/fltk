@@ -876,6 +876,7 @@ static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, u
   }
   window->configured_width = window->fl_win->w();
   window->configured_height = window->fl_win->h();
+  Fl::handle(FL_FOCUS, window->fl_win);
   window->fl_win->redraw();
   Fl_Window_Driver::driver(window->fl_win)->flush();
 }
@@ -1303,10 +1304,12 @@ void Fl_Wayland_Window_Driver::update_scale()
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
   struct libdecor_frame *frame = fl_xid(pWindow)->frame;
-  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE) {
+  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE &&
+      && fl_xid(pWindow)->xdg_surface) {
     libdecor_frame_set_visibility(frame, pWindow->border());
     pWindow->redraw();
   } else {
+    pWindow->wait_for_expose(); // useful for border(0) just after show()
     Fl_Window_Driver::use_border();
   }
 }
