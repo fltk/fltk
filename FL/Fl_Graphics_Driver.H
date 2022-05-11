@@ -443,8 +443,12 @@ protected:
   virtual void line_unscaled(int x, int y, int x1, int y1, int x2, int y2);
   virtual void xyline(int x, int y, int x1);
   virtual void xyline_unscaled(int x, int y, int x1);
+  virtual void xyline(int x, int y, int x1, int y2) {Fl_Graphics_Driver::xyline(x, y, x1, y2);}
+  virtual void xyline(int x, int y, int x1, int y2, int x3) {Fl_Graphics_Driver::xyline(x, y, x1, y2, x3);}
   virtual void yxline(int x, int y, int y1);
   virtual void yxline_unscaled(int x, int y, int y1);
+  virtual void yxline(int x, int y, int y1, int x2) {Fl_Graphics_Driver::yxline(x, y, y1, x2);}
+  virtual void yxline(int x, int y, int y1, int x2, int y3) {Fl_Graphics_Driver::yxline(x, y, y1, x2, y3);}
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void loop_unscaled(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
