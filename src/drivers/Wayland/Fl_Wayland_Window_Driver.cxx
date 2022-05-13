@@ -795,8 +795,6 @@ static void handle_configure(struct libdecor_frame *frame,
   else if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
     if (!window->fl_win->border()) libdecor_frame_set_visibility(window->frame, false);
     else if (!libdecor_frame_is_visible(window->frame)) libdecor_frame_set_visibility(window->frame, true);
-    Fl::handle(FL_FOCUS, window->fl_win);
-    fl_find(window);
   }
 
   if (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) state = libdecor_state_new(width, height);
@@ -876,7 +874,6 @@ static void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, u
   }
   window->configured_width = window->fl_win->w();
   window->configured_height = window->fl_win->h();
-  Fl::handle(FL_FOCUS, window->fl_win);
   window->fl_win->redraw();
   Fl_Window_Driver::driver(window->fl_win)->flush();
 }

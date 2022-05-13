@@ -512,6 +512,9 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 //fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are:\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
+  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl::handle(FL_FOCUS, win);
+  fl_find(fl_xid(win));
 }
 
 struct key_repeat_data_t {
@@ -704,6 +707,8 @@ static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
   struct seat *seat = (struct seat*)data;
 //fprintf(stderr, "keyboard leave fl_win=%p\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
   seat->keyboard_surface = NULL;
+  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  if (win) Fl::handle(FL_UNFOCUS, win);
 }
 
 static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
