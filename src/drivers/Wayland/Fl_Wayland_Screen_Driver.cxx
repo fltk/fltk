@@ -513,8 +513,10 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
-  Fl::handle(FL_FOCUS, win);
-  fl_find(fl_xid(win));
+  if (win) {
+    Fl::handle(FL_FOCUS, win);
+    fl_find(fl_xid(win));
+  }
 }
 
 struct key_repeat_data_t {
