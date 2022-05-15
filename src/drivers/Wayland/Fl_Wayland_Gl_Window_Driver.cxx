@@ -56,7 +56,6 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   egl_window = NULL;
   egl_surface = NULL;
   egl_resize_in_progress = false;
-  swap_done = false;
 }
 
 
@@ -242,12 +241,13 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
     wl_surface_set_buffer_scale(surface, win->scale);
-    if (pWindow->parent() && Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON) {
-      bool done = false;
-      struct wl_callback *callback = wl_surface_frame(surface);
-      wl_surface_commit(surface);
-      wl_callback_add_listener(callback, &gl_surface_frame_listener, &done);
-      while (!done) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+    bool done = false;
+    struct wl_callback *callback = wl_surface_frame(surface);
+    wl_surface_commit(surface);
+    wl_callback_add_listener(callback, &gl_surface_frame_listener, &done);
+    while (!done) {
+      wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+      eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     }
   }
 }
@@ -308,9 +308,8 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
       wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
       wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
     }
-    if (!egl_resize_in_progress || pWindow->parent() || !swap_done) {
+    if (!egl_resize_in_progress || pWindow->parent()) {
        eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-       swap_done = true;
     }
     egl_resize_in_progress = false;
   }
