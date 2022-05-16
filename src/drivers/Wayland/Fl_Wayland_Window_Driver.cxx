@@ -145,8 +145,6 @@ void Fl_Wayland_Window_Driver::take_focus()
   Window w = fl_xid(pWindow);
   if (w) {
     Fl_Widget *old_focus = Fl::focus();
-    // necessary for recent Wayland versions; may change focus
-    wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     Fl_Window *old_first = Fl::first_window();
     Window first_xid = (old_first ? fl_xid(old_first->top_window()) : NULL);
     if (first_xid && first_xid != w && xdg_toplevel()) {
@@ -159,11 +157,6 @@ void Fl_Wayland_Window_Driver::take_focus()
     }
     // this sets the first window
     fl_find(w);
-    if (old_focus && Fl::focus() != old_focus) { // reset focus as at function entry
-      extern Fl_Window *fl_xfocus;
-      fl_xfocus = old_focus->top_window();
-      Fl::focus(old_focus);
-    }
   }
 }
 
@@ -830,14 +823,18 @@ static void handle_configure(struct libdecor_frame *frame,
 void Fl_Wayland_Window_Driver::wait_for_expose()
 {
   Fl_Window_Driver::wait_for_expose();
+  Window xid = fl_xid(pWindow);
   if (pWindow->fullscreen_active()) {
-    Window xid = fl_xid(pWindow);
     if (xid->kind == DECORATED) {
       while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) || !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
         wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
       }
     } else if (xid->kind == UNFRAMED) {
       wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+    }
+  } else if (xid->kind == DECORATED) {
+    while (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+      wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     }
   }
 }
