@@ -833,7 +833,7 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
       wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     }
   } else if (xid->kind == DECORATED) {
-    while (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+    if (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     }
   }
