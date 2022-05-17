@@ -155,6 +155,7 @@ public:
   virtual const char *name() = 0;
   virtual void do_swap(Fl_Window*) = 0;
   virtual void invalidate(Fl_Window*) = 0;
+  virtual void terminate() = 0;
 };
 
 #endif // FL_WAYLAND_WINDOW_DRIVER_H

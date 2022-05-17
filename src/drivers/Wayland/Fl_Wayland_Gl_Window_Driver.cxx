@@ -327,6 +327,11 @@ public:
   virtual void invalidate(Fl_Window *w) {
     w->as_gl_window()->valid(0);
   }
+  virtual void terminate() {
+    if (Fl_Wayland_Gl_Window_Driver::egl_display != EGL_NO_DISPLAY) {
+      eglTerminate(Fl_Wayland_Gl_Window_Driver::egl_display);
+    }
+  }
 };
 
 static Fl_Wayland_Gl_Plugin Gl_Overlay_Plugin;
