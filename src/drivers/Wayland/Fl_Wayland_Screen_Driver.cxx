@@ -227,10 +227,12 @@ struct wl_display *Fl_Wayland_Screen_Driver::wl_display = NULL;
 
 
 Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surface) {
-  Fl_X *xp = Fl_X::first;
-  while (xp) {
-    if (xp->xid->wl_surface == surface) return xp->w;
-    xp = xp->next;
+  if (surface) {
+    Fl_X *xp = Fl_X::first;
+    while (xp) {
+      if (xp->xid->wl_surface == surface) return xp->w;
+      xp = xp->next;
+    }
   }
   return NULL;
 }

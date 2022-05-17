@@ -790,10 +790,12 @@ static void handle_configure(struct libdecor_frame *frame,
  "There is no way to know if the surface is currently minimized, nor is there any way to
  unset minimization on this surface. If you are looking to throttle redrawing when minimized,
  please instead use the wl_surface.frame event" */
-  if (window_state == LIBDECOR_WINDOW_STATE_NONE) {
-    Fl::handle(FL_UNFOCUS, window->fl_win);
-  }
-  else if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
+  if (window_state & LIBDECOR_WINDOW_STATE_ACTIVE) {
+    if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON) {
+      // After click on titlebar, weston calls wl_keyboard_enter() for a
+      // titlebar-related surface that FLTK can't identify, so we send FL_FOCUS here.
+      Fl::handle(FL_FOCUS, window->fl_win);
+    }
     if (!window->fl_win->border()) libdecor_frame_set_visibility(window->frame, false);
     else if (!libdecor_frame_is_visible(window->frame)) libdecor_frame_set_visibility(window->frame, true);
   }
@@ -833,6 +835,7 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
       wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     }
   } else if (xid->kind == DECORATED) {
+    // necessary for the windowfocus demo program with recent Wayland versions
     if (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     }
