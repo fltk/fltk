@@ -996,17 +996,26 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
-      LDFLAGS="$LDFLAGS -rdynamic -no-pie"
+      LDFLAGS="$LDFLAGS -rdynamic"
+      AC_SUBST([UNAME])
+      UNAME="$(uname -s)"
+      AS_CASE([$UNAME], 
+         [Linux], [LDFLAGS="$LDFLAGS -no-pie"],
+         [*], [CXXFLAGS="$CXXFLAGS -I../libdecor/build"]
+      )
 
       AC_SEARCH_LIBS([dlopen], [dl])
 
       AS_IF([test x$enable_gl != xno], [
-          AC_CHECK_HEADER([GL/gl.h], [AC_DEFINE([HAVE_GL])])
-          AC_CHECK_HEADER([GL/glu.h], [
-              AC_DEFINE([HAVE_GL_GLU_H])
-              GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs glu) $($PKGCONFIG --libs gl) $GLLIBS"
+          AS_IF([$PKGCONFIG --exists gl], [ 
+             AC_DEFINE([HAVE_GL]) 
+             GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs gl) $GLLIBS"
           ])
-          GLWLDEMO="egl"
+          AS_IF([$PKGCONFIG --exists glu], [ 
+             AC_DEFINE([HAVE_GL_GLU_H]) 
+             GLLIBS="$($PKGCONFIG --libs glu) $GLLIBS"
+          ])
+           GLWLDEMO="egl"
       ], [
           LINKFLTKGL=""
           GLLIBNAME=""

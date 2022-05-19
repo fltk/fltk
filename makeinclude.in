@@ -27,6 +27,7 @@ FLTK_VERSION		= @FLTK_VERSION@
 # FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT | WAYLAND }
 
 BUILD		= @BUILD@
+UNAME            = @UNAME@
 
 # Standard configure variables
 

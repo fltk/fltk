@@ -20,7 +20,7 @@ CONTENTS
 ==============
 
 Version 1.4 of the FLTK library introduces support of the public FLTK API on
-the Wayland platform. It requires a Wayland-equipped OS which means Linux.
+the Wayland platform. It requires a Wayland-equipped OS, namely Linux or FreeBSD.
 Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
 The code has been tested on Debian, Ubuntu and Fedora with 3 distinct Wayland
@@ -32,8 +32,8 @@ CJK text-input methods, as well as dead and compose keys are supported.
 ==========================
 
 It is possible to have your FLTK application do all its windowing and drawing
-through the Wayland protocol on Linux systems. All graphics is done via Cairo or EGL.
-All text-drawing is done via Pango.
+through the Wayland protocol on Linux or FreeBSD systems.
+All graphics is done via Cairo or EGL. All text-drawing is done via Pango.
 
  2.1 Configuration
 ---------------
@@ -167,3 +167,19 @@ in a Fedora 35 Workstation distribution :
 - cmake-gui    <== if you plan to use the GUI of CMake
 
 Package installation command: sudo yum install <package-name ...>
+
+
+3.3 FreeBSD
+
+The Wayland platform is know to work with FreeBSD version 13.1 and the sway compositor.
+
+These packages are necessary to build the FLTK library and the sway compositor:
+pkg install git autoconf pkgconf xorg urwfonts gnome seatd sway dmenu-wayland dmenu
+
+The FLTK library should be built, for now, as follows :
+
+git clone https://github.com/fltk/fltk fltk
+cd fltk
+autoconf -f
+./configure --enable-localzlib --enable-wayland
+make

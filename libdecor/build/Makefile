@@ -16,22 +16,47 @@
 
 include ../../makeinclude
 
-CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src -fPIC -D_GNU_SOURCE \
-  -DUSE_SYSTEM_LIBDECOR=0 -DHAVE_MEMFD_CREATE -DHAVE_MKOSTEMP -DHAVE_POSIX_FALLOCATE
 OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/xdg-decoration-protocol.o ../../src/xdg-shell-protocol.o \
   ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o
-PROTOCOLS = /usr/share/wayland-protocols
+
+
+#$(UNAME) is set to the product of `uname -s` in makeinclude
+
+Linux_PROTO  = /usr/share/wayland-protocols
+FreeBSD_PROTO =  /usr/local/share/wayland-protocols
+PROTOCOLS = ${${UNAME}_PROTO}
+
+Linux_INPUT =
+FreeBSD_INPUT = linux/input.h
+EXTRA_INPUT= ${${UNAME}_INPUT}
+
+Linux_CFLAGS =
+FreeBSD_CFLAGS = -I/usr/local/include
+EXTRA_DECOR =  ${${UNAME}_CFLAGS}
+
+CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src $(EXTRA_DECOR) -fPIC -D_GNU_SOURCE \
+  -DUSE_SYSTEM_LIBDECOR=0 -DHAVE_MEMFD_CREATE -DHAVE_MKOSTEMP -DHAVE_POSIX_FALLOCATE
+
+Linux_NOPIE = -no-pie
+FreeBSD_NOPIE =
+NOPIE = ${${UNAME}_NOPIE}
 
 all : demo $(GLWLDEMO)
 
 depend:
 	: echo "libdecor/build: make depend..."
+	
+linux/input.h :
+	mkdir -p linux
+	echo "#define BTN_LEFT 0x110" > linux/input.h
+	echo "#define BTN_RIGHT 0x111" >> linux/input.h
+	echo "#define BTN_MIDDLE 0x112" >> linux/input.h
 
 fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib\"
 
-fl_libdecor-plugins.o : fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
+fl_libdecor-plugins.o : $(EXTRA_INPUT) fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor-plugins.c  -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib\"
 
 libdecor-cairo-blur.o : ../src/plugins/cairo/libdecor-cairo-blur.c
@@ -65,11 +90,11 @@ cursor-settings.o : ../src/cursor-settings.c
 	    $(PROTOCOLS)/unstable/text-input/text-input-unstable-v3.xml \
 	    ../../src/text-input-client-protocol.h
 	
-demo : ../demo/demo.c $(OBJECTS)
-	$(CC)  -o demo ../demo/demo.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(OBJECTS) $(LDLIBS) -lm -rdynamic -no-pie -Wl,--defsym=fl_libdecor_using_weston=0
+demo : ../demo/demo.c $(OBJECTS) $(EXTRA_INPUT)
+	$(CC)  -o demo ../demo/demo.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(LDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0
 
 egl : ../demo/egl.c $(OBJECTS)
-	$(CC)  -o egl ../demo/egl.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(OBJECTS) $(GLDLIBS) -lm -rdynamic -no-pie -Wl,--defsym=fl_libdecor_using_weston=0
+	$(CC)  -o egl ../demo/egl.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(GLDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0 
 
 
 install:
@@ -79,3 +104,4 @@ uninstall:
 
 clean:
 	$(RM) *.o ../../src/xdg-*.c ../../src/xdg-*.h ../../src/xdg-*.o ../../src/text-input-* demo egl
+	rm -r -f linux
