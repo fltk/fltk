@@ -997,7 +997,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_proxy_set_tag((struct wl_proxy *) output->wl_output, &proxy_tag);
     wl_output_add_listener(output->wl_output, &output_listener, output);
     wl_list_insert(&(scr_driver->outputs), &output->link);
-    scr_driver->screen_count( wl_list_length(&(scr_driver->outputs)) );
+    scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
 //fprintf(stderr, "wl_output: id=%d wl_output=%p screen_count()=%d\n", id, output->wl_output, Fl::screen_count());
 
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
@@ -1041,7 +1041,7 @@ static void registry_handle_global_remove(void *data, struct wl_registry *regist
         xp = xp->next;
       }
       wl_list_remove(&output->link);
-      scr_driver->screen_count( wl_list_length(&(scr_driver->outputs)) );
+      scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
       wl_output_destroy(output->wl_output);
       free(output);
       break;

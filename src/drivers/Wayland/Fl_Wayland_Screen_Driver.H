@@ -67,7 +67,7 @@ public:
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   int get_mouse_unscaled(int &xx, int &yy);
-  void screen_count(int count) {num_screens = count;}
+  void screen_count_set(int count) {num_screens = count;}
 
   void reset_cursor();
   struct wl_cursor *xc_arrow;
