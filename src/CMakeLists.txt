@@ -576,11 +576,32 @@ if (USE_XFT)
 endif (USE_XFT)
 
 if (OPTION_USE_WAYLAND)
+  if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+    set(PROTOCOLS /usr/local/share/wayland-protocols)
+# create and populate linux/input.h needed by Fl_Wayland_Screen_Driver.cxx and libdecor plugins
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      COMMAND rm -r -f ${CMAKE_CURRENT_BINARY_DIR}/linux
+      COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/linux
+      COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      COMMAND echo "#define BTN_LEFT 0x110" > ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      COMMAND echo "#define BTN_RIGHT 0x111" >> ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      COMMAND echo "#define BTN_MIDDLE 0x112" >> ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      VERBATIM
+    )
+    SET_SOURCE_FILES_PROPERTIES(
+      ${CMAKE_CURRENT_SOURCE_DIR}/../libdecor/build/fl_libdecor_plugins.c 
+      ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Wayland/Fl_Wayland_Screen_Driver.cxx 
+      PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/linux/input.h
+      )
+  else ()
+    set(PROTOCOLS /usr/share/wayland-protocols)
+  endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
   add_custom_command(
     OUTPUT xdg-shell-protocol.c xdg-shell-client-protocol.h
-    COMMAND wayland-scanner private-code /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
-    COMMAND wayland-scanner client-header /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
-    DEPENDS /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml
+    COMMAND wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
+    COMMAND wayland-scanner client-header ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
+    DEPENDS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml
     VERBATIM
   )
   list (APPEND STATIC_FILES "xdg-shell-protocol.c")
@@ -588,9 +609,9 @@ if (OPTION_USE_WAYLAND)
   if (NOT OPTION_USE_SYSTEM_LIBDECOR)
     add_custom_command(
       OUTPUT xdg-decoration-protocol.c xdg-decoration-client-protocol.h
-      COMMAND wayland-scanner private-code /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-protocol.c
-      COMMAND wayland-scanner client-header /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-client-protocol.h
-      DEPENDS /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+      COMMAND wayland-scanner private-code ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-protocol.c
+      COMMAND wayland-scanner client-header ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml xdg-decoration-client-protocol.h
+      DEPENDS ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
       VERBATIM
     )
     list (APPEND STATIC_FILES "xdg-decoration-protocol.c")
@@ -598,9 +619,9 @@ if (OPTION_USE_WAYLAND)
   endif (NOT OPTION_USE_SYSTEM_LIBDECOR)
   add_custom_command(
     OUTPUT text-input-protocol.c text-input-client-protocol.h
-    COMMAND wayland-scanner private-code /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml text-input-protocol.c
-    COMMAND wayland-scanner client-header /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml text-input-client-protocol.h
-    DEPENDS /usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v3.xml
+    COMMAND wayland-scanner private-code ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml text-input-protocol.c
+    COMMAND wayland-scanner client-header ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml text-input-client-protocol.h
+    DEPENDS ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml
     VERBATIM
   )
   list (APPEND STATIC_FILES "text-input-protocol.c")
@@ -616,9 +637,9 @@ if (OPTION_USE_WAYLAND)
   if (GTK_FOUND)
     list (APPEND OPTIONAL_LIBS ${GTK_LDFLAGS} )
   endif (GTK_FOUND)
-  if (NOT OPTION_BUILD_SHARED_LIBS)
+  if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" AND NOT OPTION_BUILD_SHARED_LIBS)
     list (APPEND OPTIONAL_LIBS "-no-pie")
-  endif (NOT OPTION_BUILD_SHARED_LIBS)
+  endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" AND NOT OPTION_BUILD_SHARED_LIBS)
 endif (OPTION_USE_WAYLAND)
 
 #######################################################################
