@@ -54,10 +54,10 @@ linux/input.h :
 	echo "#define BTN_MIDDLE 0x112" >> linux/input.h
 
 fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c
-	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib\"
+	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib/libdecor/plugins-1\"
 
 fl_libdecor-plugins.o : $(EXTRA_INPUT) fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
-	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor-plugins.c  -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib\"
+	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor-plugins.c  -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib/libdecor/plugins-1\"
 
 libdecor-cairo-blur.o : ../src/plugins/cairo/libdecor-cairo-blur.c
 	$(CC) $(CFLAGS_DECOR) -c  ../src/plugins/cairo/libdecor-cairo-blur.c
