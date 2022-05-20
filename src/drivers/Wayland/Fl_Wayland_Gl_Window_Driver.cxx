@@ -241,13 +241,20 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
     wl_surface_set_buffer_scale(surface, win->scale);
+//TODO It's still not entirely clear how to map a GL window
+// in a compositor-independent way.
     bool done = false;
-    struct wl_callback *callback = wl_surface_frame(surface);
-    wl_surface_commit(surface);
-    wl_callback_add_listener(callback, &gl_surface_frame_listener, &done);
-    while (!done) {
-      wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+    bool special = (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::unspecified);
+    if (!special) {
+      struct wl_callback *callback = wl_surface_frame(surface);
+      wl_surface_commit(surface);
+      wl_callback_add_listener(callback, &gl_surface_frame_listener, &done);
+    }
+    int count = 0;
+    while (!done && count < 5) {
+      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
       eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+      if (special) count++;
     }
   }
 }
