@@ -49,6 +49,10 @@ include (FindPkgConfig)
 # Find header files...
 #######################################################################
 
+if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+  list (APPEND CMAKE_REQUIRED_INCLUDES /usr/local/include)
+endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+
 fl_find_header (HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
 fl_find_header (HAVE_DLFCN_H dlfcn.h)
 fl_find_header (HAVE_GL_GLU_H GL/glu.h)
