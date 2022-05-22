@@ -171,12 +171,12 @@ Package installation command: sudo yum install <package-name ...>
 
 3.3 FreeBSD
 
-The Wayland platform is know to work with FreeBSD version 13.1 and the sway compositor.
+The Wayland platform is known to work with FreeBSD version 13.1 and the sway compositor.
 
 These packages are necessary to build the FLTK library and the sway compositor:
-pkg install git autoconf pkgconf xorg urwfonts gnome seatd sway dmenu-wayland dmenu
+pkg install git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu
 
-The FLTK library can be built using either configure or CMake as follows :
+The FLTK library can be built as follows using either configure or CMake :
 
 1) Using configure
 
