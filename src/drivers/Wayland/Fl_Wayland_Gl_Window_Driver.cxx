@@ -217,16 +217,6 @@ void Fl_Wayland_Gl_Window_Driver::redraw_overlay() {
 }
 
 
-static void gl_frame_ready(void *data, struct wl_callback *cb, uint32_t time) {
-  *(bool*)data = true;
-}
-
-
-static const struct wl_callback_listener gl_surface_frame_listener = {
-  .done = gl_frame_ready,
-};
-
-
 void Fl_Wayland_Gl_Window_Driver::make_current_before() {
   if (!egl_window) {
     struct wld_window *win = fl_xid(pWindow);
@@ -241,20 +231,11 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
     wl_surface_set_buffer_scale(surface, win->scale);
-//TODO It's still not entirely clear how to map a GL window
-// in a compositor-independent way.
-    bool done = false;
-    bool special = (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::unspecified);
-    if (!special) {
-      struct wl_callback *callback = wl_surface_frame(surface);
-      wl_surface_commit(surface);
-      wl_callback_add_listener(callback, &gl_surface_frame_listener, &done);
-    }
+//TODO It's still not entirely clear how to justify the value 5 below
     int count = 0;
-    while (!done && count < 5) {
+    while (count++ < 5) {
       wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
       eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-      if (special) count++;
     }
   }
 }
