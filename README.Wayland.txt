@@ -14,6 +14,7 @@ CONTENTS
  3   PLATFORM SPECIFIC NOTES
    3.1    Debian and Derivatives (like Ubuntu)
    3.2    Fedora
+   3.3    FreeBSD
 
 
 1 INTRODUCTION
@@ -25,6 +26,7 @@ Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
 The code has been tested on Debian, Ubuntu and Fedora with 3 distinct Wayland
 compositors: mutter (Gnome's compositor), weston, and KDE.
+The code has also been tested under FreeBSD and the sway wayland compositor.
 CJK text-input methods, as well as dead and compose keys are supported.
 
 
@@ -146,7 +148,8 @@ These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - plasma-workspace-wayland
 
 
-3.2 Fedora
+  3.2 Fedora
+  ----------
 
 The Wayland platform is known to work with Fedora version 35.
 
@@ -169,7 +172,8 @@ in a Fedora 35 Workstation distribution :
 Package installation command: sudo yum install <package-name ...>
 
 
-3.3 FreeBSD
+  3.3 FreeBSD
+  -----------
 
 The Wayland platform is known to work with FreeBSD version 13.1 and the sway compositor.
 
