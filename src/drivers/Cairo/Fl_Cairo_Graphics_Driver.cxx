@@ -104,7 +104,10 @@ void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
 
 
 void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  cairo_rectangle(cairo_, x-0.5, y-0.5, w, h);
+  cairo_matrix_t mat;
+  cairo_get_matrix(cairo_, &mat);
+  double s = 1 / mat.xx;
+  cairo_rectangle(cairo_, x - 0.5, y - 0.5, w + s, h + s);
   cairo_fill(cairo_);
   check_status();
   surface_needs_commit();
@@ -499,7 +502,12 @@ void Fl_Cairo_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   c->prev = clip_;
   clip_ = c;
   cairo_save(cairo_);
-  cairo_rectangle(cairo_, clip_->x-0.5 , clip_->y-0.5 , clip_->w  , clip_->h);
+  cairo_matrix_t mat;
+  cairo_get_matrix(cairo_, &mat);
+  double s = 1 / mat.xx;
+  double ss = (2 * s < 1 ? s : 1/2.);
+  cairo_rectangle(cairo_, clip_->x - 0.5 - ss, clip_->y - 0.5 - ss ,
+                  clip_->w + s + 2 * ss, clip_->h + s + 2 * ss);
   cairo_clip(cairo_);
   check_status();
 }
