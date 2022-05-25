@@ -1090,9 +1090,9 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   if (!has_xrgb) {
     Fl::fatal("Error: no WL_SHM_FORMAT_ARGB8888 shm format\n");
   }
-  if (compositor == Fl_Wayland_Screen_Driver::unspecified) {
+  /*if (compositor == Fl_Wayland_Screen_Driver::unspecified) {
     Fl::warning("FLTK could not identify the type of the running Wayland compositor");
-  }
+  }*/
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)fd_callback, wl_display);
   fl_create_print_window();
 }

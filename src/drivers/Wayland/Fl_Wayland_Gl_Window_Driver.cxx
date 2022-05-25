@@ -231,16 +231,17 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
     wl_surface_set_buffer_scale(surface, win->scale);
-    // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen,
-    //   OpenGL3-glut-test, OpenGL3test
-    // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD
-    // Origin of the value 3 below :
-    // All tests run OK with value 3 whereas some tests fail with 2, e.g.,
-    // glpuzzle + KDE, glpuzzle + sway sometimes.
-    for (int count = 0; count < 3; count++) {
-      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-      eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+    // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
+    //   OpenGL3-glut-test, OpenGL3test.
+    // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
+    // Origin of the 3 "roundtrips" below :
+    // All tests run OK with code below but glpuzzle, OpenGL3-glut-test and gl_overlay
+    // fail sometimes under KDE and sway without the 3rd roundtrip.
+    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+    if (!pWindow->parent() || overlay()) { wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     }
+    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
   }
 }
 
