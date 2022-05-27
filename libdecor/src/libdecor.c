@@ -839,17 +839,6 @@ libdecor_frame_translate_coordinate(struct libdecor_frame *frame,
 }
 
 LIBDECOR_EXPORT void
-libdecor_frame_set_max_content_size(struct libdecor_frame *frame,
-				    int content_width,
-				    int content_height)
-{
-	struct libdecor_frame_private *frame_priv = frame->priv;
-
-	frame_priv->state.content_limits.max_width = content_width;
-	frame_priv->state.content_limits.max_height = content_height;
-}
-
-LIBDECOR_EXPORT void
 libdecor_frame_set_min_content_size(struct libdecor_frame *frame,
 				    int content_width,
 				    int content_height)
@@ -861,25 +850,36 @@ libdecor_frame_set_min_content_size(struct libdecor_frame *frame,
 }
 
 LIBDECOR_EXPORT void
-libdecor_frame_get_min_content_size(struct libdecor_frame *frame,
-				    int *pcontent_width,
-				    int *pcontent_height)
+libdecor_frame_set_max_content_size(struct libdecor_frame *frame,
+				    int content_width,
+				    int content_height)
 {
 	struct libdecor_frame_private *frame_priv = frame->priv;
 
-	*pcontent_width = frame_priv->state.content_limits.min_width;
-	*pcontent_height = frame_priv->state.content_limits.min_height;
+	frame_priv->state.content_limits.max_width = content_width;
+	frame_priv->state.content_limits.max_height = content_height;
 }
 
 LIBDECOR_EXPORT void
-libdecor_frame_get_max_content_size(struct libdecor_frame *frame,
-				    int *pcontent_width,
-				    int *pcontent_height)
+libdecor_frame_get_min_content_size(const struct libdecor_frame *frame,
+				    int *content_width,
+				    int *content_height)
 {
 	struct libdecor_frame_private *frame_priv = frame->priv;
 
-	*pcontent_width = frame_priv->state.content_limits.max_width;
-	*pcontent_height = frame_priv->state.content_limits.max_height;
+	*content_width = frame_priv->state.content_limits.min_width;
+	*content_height = frame_priv->state.content_limits.min_height;
+}
+
+LIBDECOR_EXPORT void
+libdecor_frame_get_max_content_size(const struct libdecor_frame *frame,
+				    int *content_width,
+				    int *content_height)
+{
+	struct libdecor_frame_private *frame_priv = frame->priv;
+
+	*content_width = frame_priv->state.content_limits.max_width;
+	*content_height = frame_priv->state.content_limits.max_height;
 }
 
 LIBDECOR_EXPORT enum libdecor_capabilities
@@ -1495,7 +1495,7 @@ init_plugins(struct libdecor *context)
 				if (!de)
 					break;
 
-				plugin_loader = load_plugin_loader(context, 
+				plugin_loader = load_plugin_loader(context,
 								   plugin_dir,
 								   de->d_name);
 				if (!plugin_loader)
