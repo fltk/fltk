@@ -343,7 +343,7 @@ unsigned char *fl_libdecor_titlebar_buffer(struct libdecor_frame *frame,
 {
   static const char *my_plugin = NULL;
   if (!my_plugin) my_plugin = get_libdecor_plugin_description(frame);
-  if (my_plugin && !strcmp(my_plugin, "GTK plugin")) {
+  if (my_plugin && !strcmp(my_plugin, "GTK3 plugin")) {
     return gtk_titlebar_buffer(frame, width, height, stride);
   }
   else if (my_plugin && !strcmp(my_plugin, "libdecor plugin using Cairo")) {

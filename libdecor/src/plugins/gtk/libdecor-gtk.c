@@ -1,3 +1,29 @@
+/*
+ * Copyright © 2018 Jonas Ådahl
+ * Copyright © 2019 Christian Rauch
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the
+ * next paragraph) shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "config.h"
 
 #include <linux/input.h>
@@ -12,6 +38,7 @@
 #include "libdecor-plugin.h"
 #include "utils.h"
 #include "cursor-settings.h"
+#include "os-compatibility.h"
 
 #include <cairo/cairo.h>
 
@@ -26,7 +53,7 @@
 
 #include <gtk/gtk.h>
 
-static const size_t SHADOW_MARGIN = 24;	/* graspable part of the border */
+static const size_t SHADOW_MARGIN = 24;	/* grabbable part of the border */
 
 static const char *cursor_names[] = {
 	"top_side",
@@ -40,16 +67,16 @@ static const char *cursor_names[] = {
 };
 
 enum header_element {
-	HDR_NONE,
-	HDR_HDR, /* entire header bar */
-	HDR_TITLE, /* label */
-	HDR_MIN,
-	HDR_MAX,
-	HDR_CLOSE,
+	HEADER_NONE,
+	HEADER_FULL, /* entire header bar */
+	HEADER_TITLE, /* label */
+	HEADER_MIN,
+	HEADER_MAX,
+	HEADER_CLOSE,
 };
 
 struct header_element_data {
-	const char* name;
+	const char *name;
 	enum header_element type;
 	/* pointer to button or NULL if not found*/
 	GtkWidget *widget;
@@ -82,19 +109,19 @@ find_widget_by_type(GtkWidget *widget, enum header_element type)
 {
 	char* name = NULL;
 	switch (type) {
-	case HDR_HDR:
+	case HEADER_FULL:
 		name = "headerbar.titlebar:";
 		break;
-	case HDR_TITLE:
+	case HEADER_TITLE:
 		name = "label.title:";
 		break;
-	case HDR_MIN:
+	case HEADER_MIN:
 		name = ".minimize";
 		break;
-	case HDR_MAX:
+	case HEADER_MAX:
 		name = ".maximize";
 		break;
-	case HDR_CLOSE:
+	case HEADER_CLOSE:
 		name = ".close";
 		break;
 	default:
@@ -118,18 +145,16 @@ get_header_focus(const GtkHeaderBar *header_bar, const int x, const int y)
 {
 	/* we have to check child widgets (buttons, title) before the 'HDR_HDR' root widget */
 	static const enum header_element elems[] =
-		{HDR_TITLE, HDR_MIN, HDR_MAX, HDR_CLOSE};
+		{HEADER_TITLE, HEADER_MIN, HEADER_MAX, HEADER_CLOSE};
 
-	for (size_t i=0; i<4; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(elems); i++) {
 		struct header_element_data elem =
 			find_widget_by_type(GTK_WIDGET(header_bar), elems[i]);
-		GtkAllocation allocation;
-#if APPLY_FLTK_CHANGES
-		if (elem.widget)
-#endif
-		gtk_widget_get_allocation(GTK_WIDGET(elem.widget), &allocation);
-		if (elem.widget && in_region(&allocation, &x, &y)) {
-			return elem;
+		if (elem.widget) {
+			GtkAllocation allocation;
+			gtk_widget_get_allocation(GTK_WIDGET(elem.widget), &allocation);
+			if (in_region(&allocation, &x, &y))
+				return elem;
 		}
 	}
 
@@ -441,7 +466,9 @@ libdecor_frame_gtk_new(struct libdecor_plugin_gtk *plugin_gtk)
 	cr = cairo_create(frame_gtk->shadow_blur);
 	cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 	cairo_set_source_rgba(cr, 0, 0, 0, 1);
-	cairo_rectangle(cr, boundary, boundary, size-2*boundary, size-2*boundary);
+	cairo_rectangle(cr, boundary, boundary,
+                        size - 2 * boundary,
+                        size - 2 * boundary);
 	cairo_fill(cr);
 	cairo_destroy(cr);
 	blur_surface(frame_gtk->shadow_blur, 64);
@@ -462,7 +489,7 @@ libdecor_plugin_gtk_get_fd(struct libdecor_plugin *plugin)
 
 static int
 libdecor_plugin_gtk_dispatch(struct libdecor_plugin *plugin,
-			       int timeout)
+			     int timeout)
 {
 	struct libdecor_plugin_gtk *plugin_gtk =
 		(struct libdecor_plugin_gtk *) plugin;
@@ -516,32 +543,6 @@ libdecor_plugin_gtk_frame_new(struct libdecor_plugin *plugin)
 	return &frame_gtk->frame;
 }
 
-static int
-create_anonymous_file(off_t size)
-{
-	int ret;
-
-	int fd;
-
-	fd = memfd_create("libdecor-gtk", MFD_CLOEXEC | MFD_ALLOW_SEALING);
-
-	if (fd < 0)
-		return -1;
-
-	fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK);
-
-	do {
-		ret = posix_fallocate(fd, 0, size);
-	} while (ret == EINTR);
-	if (ret != 0) {
-		close(fd);
-		errno = ret;
-		return -1;
-	}
-
-	return fd;
-}
-
 static void
 toggle_maximized(struct libdecor_frame *const frame)
 {
@@ -589,7 +590,7 @@ create_shm_buffer(struct libdecor_plugin_gtk *plugin_gtk,
 	stride = buffer_width * 4;
 	size = stride * buffer_height;
 
-	fd = create_anonymous_file(size);
+	fd = os_create_anonymous_file(size);
 	if (fd < 0) {
 		fprintf(stderr, "creating a buffer file for %d B failed: %s\n",
 			size, strerror(errno));
@@ -641,8 +642,6 @@ buffer_free(struct buffer *buffer)
 static void
 free_border_component(struct border_component *border_component)
 {
-	struct surface_output *surface_output, *surface_output_tmp;
-
 	if (border_component->wl_surface) {
 		wl_subsurface_destroy(border_component->wl_subsurface);
 		border_component->wl_subsurface = NULL;
@@ -654,6 +653,7 @@ free_border_component(struct border_component *border_component)
 		border_component->buffer = NULL;
 	}
 	if (border_component->output_list.next != NULL) {
+		struct surface_output *surface_output, *surface_output_tmp;
 		wl_list_for_each_safe(surface_output, surface_output_tmp,
 				      &border_component->output_list, link) {
 			wl_list_remove(&surface_output->link);
@@ -670,7 +670,7 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 		(struct libdecor_frame_gtk *) frame;
 
 #if APPLY_FLTK_CHANGES
-        if (!frame_gtk->header || !GTK_IS_WIDGET(frame_gtk->header)) return; /* happens with SSD (or not)*/
+        if (!GTK_IS_WIDGET(frame_gtk->header)) return; /* happens with SSD (or not)*/
 #endif
 	gtk_widget_destroy(frame_gtk->header);
 #if APPLY_FLTK_CHANGES
@@ -719,7 +719,7 @@ hide_border_surfaces(struct libdecor_frame_gtk *frame_gtk)
 
 static struct border_component *
 get_component_for_surface(struct libdecor_frame_gtk *frame_gtk,
-			  struct wl_surface *surface)
+			  const struct wl_surface *surface)
 {
 	if (frame_gtk->shadow.wl_surface == surface)
 		return &frame_gtk->shadow;
@@ -797,7 +797,7 @@ surface_enter(void *data,
 }
 
 static bool
-remove_surface_output(struct wl_list *list, struct wl_output *wl_output)
+remove_surface_output(struct wl_list *list, const struct wl_output *wl_output)
 {
 	struct surface_output *surface_output;
 	wl_list_for_each(surface_output, list, link) {
@@ -996,11 +996,9 @@ array_append(enum header_element **array, size_t *n, enum header_element item)
 }
 
 static void
-draw_header(struct libdecor_frame_gtk *frame_gtk,
-	    cairo_t *cr,
-	    cairo_surface_t *surface)
+draw_header_background(struct libdecor_frame_gtk *frame_gtk,
+		       cairo_t *cr)
 {
-	{
 	/* background */
 	GtkAllocation allocation;
 	GtkStyleContext* style;
@@ -1010,17 +1008,20 @@ draw_header(struct libdecor_frame_gtk *frame_gtk,
 	gtk_widget_get_allocation(GTK_WIDGET(frame_gtk->header), &allocation);
 	style = gtk_widget_get_style_context(frame_gtk->header);
 	gtk_render_background(style, cr, allocation.x, allocation.y, allocation.width, allocation.height);
-	}
+}
 
-	{
+static void
+draw_header_title(struct libdecor_frame_gtk *frame_gtk,
+		  cairo_surface_t *surface)
+{
 	/* title */
 	GtkWidget *label;
 	GtkAllocation allocation;
 	cairo_surface_t *label_surface = NULL;
 	cairo_t *cr;
 
-	label = find_widget_by_type(frame_gtk->header, HDR_TITLE).widget;
-	gtk_widget_get_allocation(find_widget_by_type(frame_gtk->header, HDR_TITLE).widget, &allocation);
+	label = find_widget_by_type(frame_gtk->header, HEADER_TITLE).widget;
+	gtk_widget_get_allocation(label, &allocation);
 
 	/* create subsection in which to draw label */
 	label_surface = cairo_surface_create_for_rectangle(
@@ -1028,12 +1029,158 @@ draw_header(struct libdecor_frame_gtk *frame_gtk,
 				allocation.x, allocation.y,
 				allocation.width, allocation.height);
 	cr = cairo_create(label_surface);
+	gtk_widget_size_allocate(label, &allocation);
 	gtk_widget_draw(label, cr);
 	cairo_destroy(cr);
 	cairo_surface_destroy(label_surface);
+}
+
+static void
+draw_header_button(struct libdecor_frame_gtk *frame_gtk,
+		   cairo_t *cr,
+		   cairo_surface_t *surface,
+		   enum header_element button_type,
+		   enum libdecor_window_state window_state)
+{
+	struct header_element_data elem;
+	GtkWidget *button;
+	GtkStyleContext* button_style;
+	GtkStateFlags style_state;
+
+	GtkAllocation allocation;
+
+	gchar *icon_name;
+	int scale;
+	GtkWidget *icon_widget;
+	GtkAllocation allocation_icon;
+	GtkIconInfo* icon_info;
+
+	double sx, sy;
+
+	gint icon_width, icon_height;
+
+	GdkPixbuf* icon_pixbuf;
+	cairo_surface_t* icon_surface;
+
+	gint width = 0, height = 0;
+
+	gint left = 0, top = 0, right = 0, bottom = 0;
+	GtkBorder border;
+
+	GtkBorder padding;
+
+	elem = find_widget_by_type(frame_gtk->header, button_type);
+	button = elem.widget;
+	if (!button)
+		return;
+	button_style = gtk_widget_get_style_context(button);
+	style_state = elem.state;
+
+	/* change style based on window state and focus */
+	if (!(window_state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+		style_state |= GTK_STATE_FLAG_BACKDROP;
+	}
+	if (frame_gtk->hdr_focus.widget == button) {
+		style_state |= GTK_STATE_FLAG_PRELIGHT;
+		if (frame_gtk->hdr_focus.state & GTK_STATE_FLAG_ACTIVE) {
+			style_state |= GTK_STATE_FLAG_ACTIVE;
+		}
 	}
 
-	{
+	/* background */
+	gtk_widget_get_clip(button, &allocation);
+
+	gtk_style_context_save(button_style);
+	gtk_style_context_set_state(button_style, style_state);
+	gtk_render_background(button_style, cr,
+			      allocation.x, allocation.y,
+			      allocation.width, allocation.height);
+	gtk_render_frame(button_style, cr,
+			 allocation.x, allocation.y,
+			 allocation.width, allocation.height);
+	gtk_style_context_restore(button_style);
+
+	/* symbol */
+	switch (button_type) {
+	case HEADER_MIN:
+		icon_name = "window-minimize-symbolic";
+		break;
+	case HEADER_MAX:
+		icon_name = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ?
+				    "window-restore-symbolic" :
+				    "window-maximize-symbolic";
+		break;
+	case HEADER_CLOSE:
+		icon_name = "window-close-symbolic";
+		break;
+	default:
+		icon_name = NULL;
+		break;
+	}
+
+	/* get scale */
+	cairo_surface_get_device_scale(surface, &sx, &sy);
+	scale = (sx+sy) / 2.0;
+
+	/* get original icon dimensions */
+	icon_widget = gtk_bin_get_child(GTK_BIN(button));
+	gtk_widget_get_allocation(icon_widget, &allocation_icon);
+
+	/* icon info */
+	if (!gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &icon_width, &icon_height)) {
+		icon_width = 16;
+		icon_height = 16;
+	}
+	icon_info = gtk_icon_theme_lookup_icon_for_scale(
+		gtk_icon_theme_get_default(), icon_name,
+		icon_width, scale, (GtkIconLookupFlags)0);
+
+	/* icon pixel buffer*/
+	gtk_style_context_save(button_style);
+	gtk_style_context_set_state(button_style, style_state);
+	icon_pixbuf = gtk_icon_info_load_symbolic_for_context(
+		icon_info, button_style, NULL, NULL);
+	icon_surface = gdk_cairo_surface_create_from_pixbuf(icon_pixbuf, scale, NULL);
+	gtk_style_context_restore(button_style);
+
+	/* dimensions and position */
+	gtk_style_context_get(button_style, gtk_style_context_get_state(button_style),
+			      "min-width", &width, "min-height", &height, NULL);
+
+	if (width < icon_width)
+		width = icon_width;
+	if (height < icon_height)
+		height = icon_height;
+
+	gtk_style_context_get_border(button_style, gtk_style_context_get_state(button_style), &border);
+	left += border.left;
+	right += border.right;
+	top += border.top;
+	bottom += border.bottom;
+
+	gtk_style_context_get_padding(button_style, gtk_style_context_get_state(button_style), &padding);
+	left += padding.left;
+	right += padding.right;
+	top += padding.top;
+	bottom += padding.bottom;
+
+	width += left + right;
+	height += top + bottom;
+
+	gtk_render_icon_surface(gtk_widget_get_style_context(icon_widget),
+				cr, icon_surface,
+				allocation.x + ((width - icon_width) / 2),
+				allocation.y + ((height - icon_height) / 2));
+	cairo_paint(cr);
+	cairo_surface_destroy(icon_surface);
+	g_object_unref(icon_pixbuf);
+}
+
+static void
+draw_header_buttons(struct libdecor_frame_gtk *frame_gtk,
+		    cairo_t *cr,
+		    cairo_surface_t *surface)
+{
 	/* buttons */
 	enum libdecor_window_state window_state;
 	enum header_element *buttons = NULL;
@@ -1044,163 +1191,26 @@ draw_header(struct libdecor_frame_gtk *frame_gtk,
 
 	/* set buttons by capability */
 	if (minimizable(frame_gtk))
-		array_append(&buttons, &nbuttons, HDR_MIN);
+		array_append(&buttons, &nbuttons, HEADER_MIN);
 	if (resizable(frame_gtk))
-		array_append(&buttons, &nbuttons, HDR_MAX);
+		array_append(&buttons, &nbuttons, HEADER_MAX);
 	if (closeable(frame_gtk))
-		array_append(&buttons, &nbuttons, HDR_CLOSE);
+		array_append(&buttons, &nbuttons, HEADER_CLOSE);
 
-	for (size_t i=0; i<nbuttons; i++) {
-		struct header_element_data elem;
-		GtkWidget *button;
-		GtkStyleContext* button_style;
-		GtkStateFlags style_state;
-
-		elem = find_widget_by_type(frame_gtk->header, buttons[i]);
-		button = elem.widget;
-		if (!button)
-			continue;
-		button_style = gtk_widget_get_style_context(button);
-		style_state = elem.state;
-
-		/* change style based on window state and focus */
-		if (!(window_state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
-			style_state |= GTK_STATE_FLAG_BACKDROP;
-		}
-		if (frame_gtk->hdr_focus.widget == button) {
-			style_state |= GTK_STATE_FLAG_PRELIGHT;
-			if (frame_gtk->hdr_focus.state & GTK_STATE_FLAG_ACTIVE) {
-				style_state |= GTK_STATE_FLAG_ACTIVE;
-			}
-		}
-
-		GtkAllocation allocation;
-		{
-		/* background */
-		gtk_widget_get_clip(button, &allocation);
-
-#if 0
-		// DBG
-		switch (i) {
-		case 0: cairo_set_source_rgb(cr, 1, 0, 0); break;
-		case 1: cairo_set_source_rgb(cr, 0, 1, 0); break;
-		case 2: cairo_set_source_rgb(cr, 0, 0, 1); break;
-		}
-		cairo_set_line_width(cr, 1);
-		cairo_rectangle(cr, allocation.x, allocation.y, allocation.width, allocation.height);
-		cairo_stroke_preserve(cr);
-#endif
-
-		gtk_style_context_save(button_style);
-		gtk_style_context_set_state(button_style, style_state);
-		gtk_render_background(button_style, cr,
-				      allocation.x, allocation.y,
-				      allocation.width, allocation.height);
-		gtk_render_frame(button_style, cr,
-				 allocation.x, allocation.y,
-				 allocation.width, allocation.height);
-		gtk_style_context_restore(button_style);
-		}
-
-		{
-		/* symbol */
-		gchar *icon_name;
-		int scale;
-		GtkWidget *icon_widget;
-		GtkAllocation allocation_icon;
-		GtkIconInfo* icon_info;
-
-		switch (buttons[i]) {
-		case HDR_MIN:
-			icon_name = "window-minimize-symbolic";
-			break;
-		case HDR_MAX:
-			icon_name = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ?
-					    "window-restore-symbolic" :
-					    "window-maximize-symbolic";
-			break;
-		case HDR_CLOSE:
-			icon_name = "window-close-symbolic";
-			break;
-		default:
-			icon_name = NULL;
-			break;
-		}
-
-		{
-		/* get scale */
-		double sx, sy;
-		cairo_surface_get_device_scale(surface, &sx, &sy);
-		scale = (sx+sy) / 2.0;
-		}
-
-		/* get original icon dimensions */
-		icon_widget = gtk_bin_get_child(GTK_BIN(button));
-		gtk_widget_get_allocation(icon_widget, &allocation_icon);
-
-		{
-		/* icon info */
-		gint icon_width, icon_height;
-		gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &icon_width, &icon_height);
-		icon_info = gtk_icon_theme_lookup_icon_for_scale(
-			gtk_icon_theme_get_default(), icon_name,
-			icon_width, scale, (GtkIconLookupFlags)0);
-		}
-
-		{
-		/* icon pixel buffer*/
-		gtk_style_context_save(button_style);
-		gtk_style_context_set_state(button_style, style_state);
-		GdkPixbuf* icon_pixbuf = gtk_icon_info_load_symbolic_for_context(
-			icon_info, button_style, NULL, NULL);
-		cairo_surface_t* icon_surface =
-			gdk_cairo_surface_create_from_pixbuf(icon_pixbuf, scale, NULL);
-		gtk_style_context_restore(button_style);
-
-		gint width = 0, height = 0;
-		gtk_style_context_get(button_style, gtk_style_context_get_state(button_style),
-				      "min-width", &width, "min-height", &height, NULL);
-
-		gint iconWidth, iconHeight;
-		if (!gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &iconWidth, &iconHeight)) {
-		  iconWidth = 16;
-		  iconHeight = 16;
-		}
-		if (width < iconWidth) width = iconWidth;
-		if (height < iconHeight) height = iconHeight;
-
-		gint left = 0, top = 0, right = 0, bottom = 0;
-		GtkBorder border;
-		gtk_style_context_get_border(button_style, gtk_style_context_get_state(button_style), &border);
-		left += border.left;
-		right += border.right;
-		top += border.top;
-		bottom += border.bottom;
-
-		GtkBorder padding;
-		gtk_style_context_get_padding(button_style, gtk_style_context_get_state(button_style), &padding);
-		left += padding.left;
-		right += padding.right;
-		top += padding.top;
-		bottom += padding.bottom;
-
-		width += left + right;
-		height += top + bottom;
-		int iconXPosition = (width - iconWidth) / 2;
-		int iconYPosition = (height - iconHeight) / 2;
-
-		gtk_render_icon_surface(gtk_widget_get_style_context(icon_widget),
-					cr, icon_surface,
-					allocation.x+iconXPosition,
-					allocation.y+iconYPosition);
-		cairo_paint(cr);
-		cairo_surface_destroy(icon_surface);
-		g_object_unref(icon_pixbuf);
-		}
-		} /* symbol */
+	for (size_t i = 0; i < nbuttons; i++) {
+		draw_header_button(frame_gtk, cr, surface, buttons[i], window_state);
 	} /* loop buttons */
 	free(buttons);
-	}
+}
+
+static void
+draw_header(struct libdecor_frame_gtk *frame_gtk,
+	    cairo_t *cr,
+	    cairo_surface_t *surface)
+{
+	draw_header_background(frame_gtk, cr);
+	draw_header_title(frame_gtk, surface);
+	draw_header_buttons(frame_gtk, cr, surface);
 }
 
 static void
@@ -1376,15 +1386,13 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 
 	if (!(state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
 		gtk_widget_set_state_flags(frame_gtk->window, GTK_STATE_FLAG_BACKDROP, true);
-	}
-	else {
+	} else {
 		gtk_widget_unset_state_flags(frame_gtk->window, GTK_STATE_FLAG_BACKDROP);
 	}
 
 	if (libdecor_frame_is_floating(&frame_gtk->frame)) {
 		gtk_style_context_remove_class(style, "maximized");
-	}
-	else {
+	} else {
 		gtk_style_context_add_class(style, "maximized");
 	}
 
@@ -1850,8 +1858,8 @@ struct wl_shm_listener shm_listener = {
 
 static void
 shm_callback(void *user_data,
-		 struct wl_callback *callback,
-		 uint32_t time)
+	     struct wl_callback *callback,
+	     uint32_t time)
 {
 	struct libdecor_plugin_gtk *plugin_gtk = user_data;
 	struct libdecor *context = plugin_gtk->context;
@@ -1900,7 +1908,7 @@ cursor_surface_enter(void *data,
 {
 	struct seat *seat = data;
 
-	if(own_output(wl_output)) {
+	if (own_output(wl_output)) {
 		struct cursor_output *cursor_output;
 		cursor_output = zalloc(sizeof *cursor_output);
 		cursor_output->output = wl_output_get_user_data(wl_output);
@@ -1917,7 +1925,7 @@ cursor_surface_leave(void *data,
 {
 	struct seat *seat = data;
 
-	if(own_output(wl_output)) {
+	if (own_output(wl_output)) {
 		struct cursor_output *cursor_output, *tmp;
 		wl_list_for_each_safe(cursor_output, tmp, &seat->cursor_outputs, link) {
 			if (cursor_output->output->wl_output == wl_output) {
@@ -2000,26 +2008,27 @@ component_edge(const struct border_component *cmpnt,
 	const bool left = pointer_x < margin;
 	const bool right = pointer_x > (cmpnt->buffer->width - margin);
 
-	if (top)
+	if (top) {
 		if (left)
 			return LIBDECOR_RESIZE_EDGE_TOP_LEFT;
 		else if (right)
 			return LIBDECOR_RESIZE_EDGE_TOP_RIGHT;
 		else
 			return LIBDECOR_RESIZE_EDGE_TOP;
-	else if (bottom)
+	} else if (bottom) {
 		if (left)
 			return LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
 		else if (right)
 			return LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
 		else
 			return LIBDECOR_RESIZE_EDGE_BOTTOM;
-	else if (left)
+	} else if (left) {
 		return LIBDECOR_RESIZE_EDGE_LEFT;
-	else if (right)
+	} else if (right) {
 		return LIBDECOR_RESIZE_EDGE_RIGHT;
-	else
+	} else {
 		return LIBDECOR_RESIZE_EDGE_NONE;
+	}
 }
 
 static bool
@@ -2191,9 +2200,8 @@ pointer_motion(void *data,
 		/* redraw with updated button visuals */
 		draw_title_bar(frame_gtk);
 		libdecor_frame_toplevel_commit(&frame_gtk->frame);
-	}
-	else {
-		frame_gtk->hdr_focus.type = HDR_NONE;
+	} else {
+		frame_gtk->hdr_focus.type = HEADER_NONE;
 	}
 }
 
@@ -2228,9 +2236,9 @@ pointer_button(void *data,
 				break;
 			case HEADER:
 				switch (frame_gtk->hdr_focus.type) {
-				case HDR_MIN:
-				case HDR_MAX:
-				case HDR_CLOSE:
+				case HEADER_MIN:
+				case HEADER_MAX:
+				case HEADER_CLOSE:
 					frame_gtk->hdr_focus.state |= GTK_STATE_FLAG_ACTIVE;
 					draw_title_bar(frame_gtk);
 					libdecor_frame_toplevel_commit(&frame_gtk->frame);
@@ -2266,15 +2274,15 @@ pointer_button(void *data,
 			switch (frame_gtk->active->type) {
 			case HEADER:
 				switch (frame_gtk->hdr_focus.type) {
-				case HDR_MIN:
+				case HEADER_MIN:
 					if (minimizable(frame_gtk))
 						libdecor_frame_set_minimized(
 							&frame_gtk->frame);
 					break;
-				case HDR_MAX:
+				case HEADER_MAX:
 					toggle_maximized(&frame_gtk->frame);
 					break;
-				case HDR_CLOSE:
+				case HEADER_CLOSE:
 					if (closeable(frame_gtk))
 #if APPLY_FLTK_CHANGES
 						{libdecor_frame_close(&frame_gtk->frame);
@@ -2297,21 +2305,20 @@ pointer_button(void *data,
 				break;
 			}
 		}
-	}
-	else if (button == BTN_RIGHT &&
+	} else if (button == BTN_RIGHT &&
 		 state == WL_POINTER_BUTTON_STATE_PRESSED &&
 		 seat->pointer_focus == frame_gtk->headerbar.wl_surface) {
 #if APPLY_FLTK_CHANGES
           const int title_height = frame_gtk->header && GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
 #else
-	const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
+		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
 #endif
-			libdecor_frame_show_window_menu(&frame_gtk->frame,
-							seat->wl_seat,
-							serial,
-							seat->pointer_x,
-							seat->pointer_y
-							-title_height);
+				libdecor_frame_show_window_menu(&frame_gtk->frame,
+								seat->wl_seat,
+								serial,
+								seat->pointer_x,
+								seat->pointer_y
+								-title_height);
 	}
 }
 
@@ -2430,7 +2437,7 @@ output_done(void *data,
 	struct seat *seat;
 
 	wl_list_for_each(frame_gtk,
-			&output->plugin_gtk->visible_frame_list, link) {
+			 &output->plugin_gtk->visible_frame_list, link) {
 		bool updated = false;
 		updated |= redraw_scale(frame_gtk, &frame_gtk->shadow);
 		if (updated)
@@ -2512,7 +2519,7 @@ registry_handle_global(void *user_data,
 }
 
 static void
-remove_surface_outputs(struct border_component *cmpnt, struct output *output)
+remove_surface_outputs(struct border_component *cmpnt, const struct output *output)
 {
 	struct surface_output *surface_output;
 	wl_list_for_each(surface_output, &cmpnt->output_list, link) {
@@ -2648,20 +2655,28 @@ libdecor_plugin_new(struct libdecor *context)
 				 plugin_gtk);
 
 	/* setup GTK context */
+	gdk_set_allowed_backends("wayland");
+	if (!gtk_init_check(NULL, NULL)) {
+		libdecor_notify_plugin_error(
+				plugin_gtk->context,
+				LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
+				"GTK cannot connect to Wayland compositor");
+		return NULL;
+	}
 	gtk_init(NULL, NULL);
 
 	return &plugin_gtk->plugin;
 }
 
 static struct libdecor_plugin_priority priorities[] = {
-	{ NULL, LIBDECOR_PLUGIN_PRIORITY_MEDIUM }
+	{ NULL, LIBDECOR_PLUGIN_PRIORITY_HIGH }
 };
 
 LIBDECOR_EXPORT const struct libdecor_plugin_description
 libdecor_plugin_description = {
 	.api_version = LIBDECOR_PLUGIN_API_VERSION,
 	.capabilities = LIBDECOR_PLUGIN_CAPABILITY_BASE,
-	.description = "GTK plugin",
+	.description = "GTK3 plugin",
 	.priorities = priorities,
 	.constructor = libdecor_plugin_new,
 };
