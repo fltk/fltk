@@ -104,18 +104,19 @@ void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
 
 
 void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  cairo_matrix_t mat;
-  cairo_get_matrix(cairo_, &mat);
-  double s = 1 / mat.xx;
-  cairo_rectangle(cairo_, x - 0.5, y - 0.5, w + s, h + s);
+  cairo_rectangle(cairo_, x-0.5, y-0.5, w, h);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_fill(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::rect(int x, int y, int w, int h) {
   cairo_rectangle(cairo_, x, y, w-1, h-1);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -140,7 +141,9 @@ void Fl_Cairo_Graphics_Driver::line(int x0, int y0, int x1, int y1, int x2, int 
 void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1) {
   cairo_move_to(cairo_, x, y);
   cairo_line_to(cairo_, x1, y);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -149,7 +152,9 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   cairo_move_to(cairo_, x, y);
   cairo_line_to(cairo_, x1, y);
   cairo_line_to(cairo_, x1, y2);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -159,7 +164,9 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   cairo_line_to(cairo_, x1, y);
   cairo_line_to(cairo_, x1, y2);
   cairo_line_to(cairo_, x3, y2);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -167,7 +174,9 @@ void Fl_Cairo_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
 void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1) {
   cairo_move_to(cairo_, x, y);
   cairo_line_to(cairo_, x, y1);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -176,7 +185,9 @@ void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   cairo_move_to(cairo_, x, y);
   cairo_line_to(cairo_, x, y1);
   cairo_line_to(cairo_, x2, y1);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -186,7 +197,9 @@ void Fl_Cairo_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   cairo_line_to(cairo_, x, y1);
   cairo_line_to(cairo_, x2, y1);
   cairo_line_to(cairo_, x2, y3);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
@@ -211,6 +224,9 @@ void Fl_Cairo_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int 
   cairo_line_to(cairo_, x2, y2);
   cairo_line_to(cairo_, x3, y3);
   cairo_close_path(cairo_);
+  if ((y0==y1 && x1==x2 && y2==y3 && x3==x0) || (x0==x1 && y1==y2 && x2==x3 && y3==y0)) {
+    cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
+  }
   cairo_stroke(cairo_);
   cairo_restore(cairo_);
   surface_needs_commit();
@@ -236,6 +252,9 @@ void Fl_Cairo_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, i
   cairo_line_to(cairo_, x2, y2);
   cairo_line_to(cairo_, x3, y3);
   cairo_close_path(cairo_);
+  if ((y0==y1 && x1==x2 && y2==y3 && x3==x0) || (x0==x1 && y1==y2 && x2==x3 && y3==y0)) {
+    cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
+  }
   cairo_fill(cairo_);
   cairo_restore(cairo_);
   surface_needs_commit();
@@ -502,13 +521,10 @@ void Fl_Cairo_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   c->prev = clip_;
   clip_ = c;
   cairo_save(cairo_);
-  cairo_matrix_t mat;
-  cairo_get_matrix(cairo_, &mat);
-  double s = 1 / mat.xx;
-  double ss = (2 * s < 1 ? s : 1/2.);
-  cairo_rectangle(cairo_, clip_->x - 0.5 - ss, clip_->y - 0.5 - ss ,
-                  clip_->w + s + 2 * ss, clip_->h + s + 2 * ss);
+  cairo_rectangle(cairo_, clip_->x - 0.5 , clip_->y - 0.5 , clip_->w, clip_->h);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_clip(cairo_);
+  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
 }
 
