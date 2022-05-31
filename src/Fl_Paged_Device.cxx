@@ -41,6 +41,14 @@ int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage, char *
  The page coordinates are initially in points, i.e., 1/72 inch,
  and with origin at the top left of the printable page area.
  This function also makes this surface the current drawing surface with Fl_Surface_Device::push_current().
+
+ \note begin_page() calls Fl_Surface_Device::push_current() and leaves this
+ device as the active surface. If any calls between begin_page() and end_page()
+ open dialog boxes or will otherwise draw into FLTK windows, those calls must
+ be put between a call to Fl_Surface_Device::pop_current()
+ and a call to Fl_Surface_Device::push_current(), or the content of the dialog
+ box will be rendered to the printer instead of the screen.
+
  \return 0 if OK, non-zero if any error
  */
 int Fl_Paged_Device::begin_page (void) {return 1;}
@@ -84,6 +92,12 @@ void Fl_Paged_Device::rotate(float angle) {}
 /**
  \brief To be called at the end of each page.
  This function also stops this surface from being the current drawing surface with Fl_Surface_Device::pop_current().
+
+ \note end_page() calls Fl_Surface_Device::pop_current().
+ If any calls between begin_page() and end_page()
+ open dialog boxes or will otherwise draw into FLTK windows, those calls must
+ be put between a call to Fl_Surface_Device::pop_current()
+ and a call to Fl_Surface_Device::push_current().
 
  \return 0 if OK, non-zero if any error.
  */
