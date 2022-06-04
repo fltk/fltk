@@ -1,6 +1,6 @@
 /*
  * Copyright © 2018 Jonas Ådahl
- * Copyright © 2019 Christian Rauch
+ * Copyright © 2021 Christian Rauch
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -1380,6 +1380,8 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	GtkAllocation allocation = {0, 0, frame_gtk->content_width, 0};
 	enum libdecor_window_state state;
 	GtkStyleContext *style;
+	int pref_width;
+	int current_min_w, current_min_h, W, H;
 
 	state = libdecor_frame_get_window_state((struct libdecor_frame*)frame_gtk);
 	style = gtk_widget_get_style_context(frame_gtk->window);
@@ -1398,59 +1400,30 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 
 	gtk_widget_show_all(frame_gtk->window);
 
-	gtk_header_bar_set_title(GTK_HEADER_BAR(frame_gtk->header), libdecor_frame_get_title(&frame_gtk->frame));
-
+	/* set default width, using an empty title to estimate its smallest admissible value */
+	gtk_header_bar_set_title(GTK_HEADER_BAR(frame_gtk->header), "");
+	gtk_widget_get_preferred_width(frame_gtk->header, NULL, &pref_width);
+	gtk_header_bar_set_title(GTK_HEADER_BAR(frame_gtk->header),
+		libdecor_frame_get_title(&frame_gtk->frame));
+	libdecor_frame_get_min_content_size(&frame_gtk->frame, &current_min_w, &current_min_h);
+	if (current_min_w < pref_width) {
+		current_min_w = pref_width;
+		libdecor_frame_set_min_content_size(&frame_gtk->frame, current_min_w, current_min_h);
+	}
+	W = libdecor_frame_get_content_width(&frame_gtk->frame);
+	H = libdecor_frame_get_content_height(&frame_gtk->frame);
+	if (W < current_min_w) {
+		W = current_min_w;
+		struct libdecor_state *libdecor_state = libdecor_state_new(W, H);
+		libdecor_frame_commit(&frame_gtk->frame, libdecor_state, NULL);
+		libdecor_state_free(libdecor_state);
+		return;
+	}
 	/* set default height */
 	gtk_widget_get_preferred_height(frame_gtk->header, NULL, &allocation.height);
 
-#if ! APPLY_FLTK_CHANGES
-	int pref_width;
-	gtk_widget_get_preferred_width(frame_gtk->header, NULL, &pref_width);
-	libdecor_frame_set_min_content_size(&frame_gtk->frame, pref_width, 1);
-        gtk_widget_size_allocate(frame_gtk->header, &allocation);
-#else // new code for FLTK
-  //int min_GTK_width = 15;
-  // Comment out to remove need for hiding (see below) warnings sent to stderr
-  // just enough space not to create: Gtk-WARNING **: Negative content width ……
-  int min_GTK_width = 134;
-  if (!libdecor_frame_has_capability(&frame_gtk->frame, LIBDECOR_ACTION_FULLSCREEN))
-    min_GTK_width = 100; // no maximize button, window can be narrower
-  int current_min_w, current_min_h;
-  libdecor_frame_get_min_content_size(&frame_gtk->frame, &current_min_w, &current_min_h);
-  bool need_change = false;
-  if (current_min_w < min_GTK_width) {
-    current_min_w = min_GTK_width;
-    need_change = true;
-  }
-  if (current_min_h < 1) {
-    current_min_h = 1;
-    need_change = true;
-  }
-  if (need_change) {
-    libdecor_frame_set_min_content_size(&frame_gtk->frame, current_min_w, current_min_h);
-    if (!libdecor_frame_has_capability(&frame_gtk->frame, LIBDECOR_ACTION_FULLSCREEN)) {
-      libdecor_frame_set_max_content_size(&frame_gtk->frame, current_min_w, current_min_h);
-    }
-  }
-  int W = libdecor_frame_get_content_width(&frame_gtk->frame);
-  int H = libdecor_frame_get_content_height(&frame_gtk->frame);
-  need_change = false;
-  if (W < current_min_w) {W = current_min_w; need_change=true;}
-  if (H < current_min_h) {H = current_min_h; need_change=true;}
-  if (need_change) {
-    struct libdecor_state *libdecor_state = libdecor_state_new(W, H);
-    libdecor_frame_commit(&frame_gtk->frame, libdecor_state, NULL);
-    libdecor_state_free(libdecor_state);
-    return;
-  }
-  // hack to hide "Gtk-WARNING **: Negative content width" sent to stderr
-  /*static FILE *null_stderr = NULL;
-  if (!null_stderr) null_stderr = fopen("/dev/null", "w+");
-  FILE *old_stderr = stderr;
-  stderr = null_stderr;*/
-  gtk_widget_size_allocate(frame_gtk->header, &allocation); // warnings are sent here
-  //stderr = old_stderr;
-#endif // end of new code for FLTK
+	gtk_widget_size_allocate(frame_gtk->header, &allocation);
+
 	draw_border_component(frame_gtk, &frame_gtk->headerbar, HEADER);
 }
 
@@ -2284,22 +2257,18 @@ pointer_button(void *data,
 					break;
 				case HEADER_CLOSE:
 					if (closeable(frame_gtk))
-#if APPLY_FLTK_CHANGES
-						{libdecor_frame_close(&frame_gtk->frame);
-                                                  frame_gtk->header = NULL; // marks deletion
-                                                  return;
-                                                }
-#else
-						libdecor_frame_close(&frame_gtk->frame);
-#endif
+						libdecor_frame_close(
+							&frame_gtk->frame);
 					break;
 				default:
 					break;
 				}
 				/* unset active/clicked state once released */
 				frame_gtk->hdr_focus.state &= ~GTK_STATE_FLAG_ACTIVE;
-				draw_title_bar(frame_gtk);
-				libdecor_frame_toplevel_commit(&frame_gtk->frame);
+				if (GTK_IS_WIDGET(frame_gtk->header)) {
+					draw_title_bar(frame_gtk);
+					libdecor_frame_toplevel_commit(&frame_gtk->frame);
+				}
 				break;
 			default:
 				break;
@@ -2663,7 +2632,6 @@ libdecor_plugin_new(struct libdecor *context)
 				"GTK cannot connect to Wayland compositor");
 		return NULL;
 	}
-	gtk_init(NULL, NULL);
 
 	return &plugin_gtk->plugin;
 }
