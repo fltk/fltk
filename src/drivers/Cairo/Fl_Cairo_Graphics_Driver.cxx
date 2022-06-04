@@ -114,9 +114,9 @@ void Fl_Cairo_Graphics_Driver::rectf(int x, int y, int w, int h) {
 
 void Fl_Cairo_Graphics_Driver::rect(int x, int y, int w, int h) {
   cairo_rectangle(cairo_, x, y, w-1, h-1);
-  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
+  if (linestyle_ == FL_SOLID) cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
   cairo_stroke(cairo_);
-  cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
+  if (linestyle_ == FL_SOLID) cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   check_status();
   surface_needs_commit();
 }
