@@ -21,15 +21,11 @@ OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o
 
 
-#$(UNAME) is set to the product of `uname -s` in makeinclude
+# ${UNAME} is set to the product of `uname -s` in makeinclude
 
 Linux_PROTO  = /usr/share/wayland-protocols
 FreeBSD_PROTO =  /usr/local/share/wayland-protocols
 PROTOCOLS = ${${UNAME}_PROTO}
-
-Linux_INPUT =
-FreeBSD_INPUT = linux/input.h
-EXTRA_INPUT= ${${UNAME}_INPUT}
 
 Linux_CFLAGS =
 FreeBSD_CFLAGS = -I/usr/local/include
@@ -47,16 +43,10 @@ all : demo $(GLWLDEMO)
 depend:
 	: echo "libdecor/build: make depend..."
 	
-linux/input.h :
-	mkdir -p linux
-	echo "#define BTN_LEFT 0x110" > linux/input.h
-	echo "#define BTN_RIGHT 0x111" >> linux/input.h
-	echo "#define BTN_MIDDLE 0x112" >> linux/input.h
-
 fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib/libdecor/plugins-1\"
 
-fl_libdecor-plugins.o : $(EXTRA_INPUT) fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
+fl_libdecor-plugins.o : fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor-plugins.c  -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"/usr/local/lib/libdecor/plugins-1\"
 
 libdecor-cairo-blur.o : ../src/plugins/cairo/libdecor-cairo-blur.c
@@ -90,7 +80,7 @@ cursor-settings.o : ../src/cursor-settings.c
 	    $(PROTOCOLS)/unstable/text-input/text-input-unstable-v3.xml \
 	    ../../src/text-input-client-protocol.h
 	
-demo : ../demo/demo.c $(OBJECTS) $(EXTRA_INPUT)
+demo : ../demo/demo.c $(OBJECTS)
 	$(CC)  -o demo ../demo/demo.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(LDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0
 
 egl : ../demo/egl.c $(OBJECTS)
