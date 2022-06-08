@@ -77,8 +77,8 @@ a minimized window has no effect.
 the system clipboard, that is, Fl::add_clipboard_notify() has no effect. The FLTK API to
 read from and write to the system clipboard is fully functional, though.
 
-* With GTK-style window titlebars, the minimum width of a window is currently
-set at 134 pixels.
+* With GTK-style window titlebars, narrow windows are silently forced to be wide enough
+for the titlebar to display window buttons and a few letters of the title.
 
 * The library should support multi-display configurations in principle, but has not been
 tested in that situation.
