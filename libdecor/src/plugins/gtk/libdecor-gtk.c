@@ -662,9 +662,8 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 	struct libdecor_frame_gtk *frame_gtk =
 		(struct libdecor_frame_gtk *) frame;
 
-#if APPLY_FLTK_CHANGES
-        if (!GTK_IS_WIDGET(frame_gtk->header)) return; /* happens with SSD (or not)*/
-#endif
+	/* when in SSD mode, frame_gtk->header is not a proper GTK widget */
+	if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 	gtk_widget_destroy(frame_gtk->header);
 	gtk_widget_destroy(frame_gtk->window);
 
@@ -1519,11 +1518,14 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 {
 	struct libdecor_frame_gtk *frame_gtk =
 		(struct libdecor_frame_gtk *) frame;
-#if APPLY_FLTK_CHANGES
-        if (!GTK_IS_WIDGET(frame_gtk->header)) return;
-#endif
 	bool redraw_needed = false;
 	const char *new_title;
+
+	/*
+	 * when in SSD mode, the window title is not to be managed by GTK;
+	 * this is detected by frame_gtk->header not being a proper GTK widget
+	 */
+        if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 
 	new_title = libdecor_frame_get_title(frame);
 	if (!streq(frame_gtk->title, new_title))
