@@ -42,10 +42,6 @@
 
 #include <cairo/cairo.h>
 
-#ifndef APPLY_FLTK_CHANGES
-#define APPLY_FLTK_CHANGES 1
-#endif
-
 /* Note for FLTK: This header file changes location, while its content stays unchanged,
  between the master and gtk_cairo_single branches */
 #include "../cairo/libdecor-cairo-blur.h"
@@ -2243,11 +2239,7 @@ pointer_button(void *data,
 	} else if (button == BTN_RIGHT &&
 		 state == WL_POINTER_BUTTON_STATE_PRESSED &&
 		 seat->pointer_focus == frame_gtk->headerbar.wl_surface) {
-#if APPLY_FLTK_CHANGES
-          const int title_height = GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
-#else
 		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
 				libdecor_frame_show_window_menu(&frame_gtk->frame,
 								seat->wl_seat,
 								serial,
