@@ -370,13 +370,6 @@ closeable(struct libdecor_frame_gtk *frame_gtk) {
 					     LIBDECOR_ACTION_CLOSE);
 }
 
-#if APPLY_FLTK_CHANGES
-/*FLTK : remove this useless forward declaration */
-#else
-struct libdecor_plugin *
-libdecor_plugin_new(struct libdecor *context);
-#endif
-
 static void
 buffer_free(struct buffer *buffer);
 
@@ -673,9 +666,6 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
         if (!GTK_IS_WIDGET(frame_gtk->header)) return; /* happens with SSD (or not)*/
 #endif
 	gtk_widget_destroy(frame_gtk->header);
-#if APPLY_FLTK_CHANGES
-	if (GTK_IS_WIDGET(frame_gtk->window))
-#endif
 	gtk_widget_destroy(frame_gtk->window);
 
 	free_border_component(&frame_gtk->headerbar);
@@ -900,17 +890,11 @@ ensure_title_bar_surfaces(struct libdecor_frame_gtk *frame_gtk)
 	 *       the window and headerbar would not change style (e.g. backdrop)
 	 *       after construction. So we just destroy and re-create them.
 	 */
-#if APPLY_FLTK_CHANGES
+	/* avoid warning when restoring previously turned off decoration */
 	if (GTK_IS_WIDGET(frame_gtk->header))
-#else
-	if (frame_gtk->header)
-#endif
 		gtk_widget_destroy(frame_gtk->header);
-#if APPLY_FLTK_CHANGES
+	/* avoid warning when restoring previously turned off decoration */
 	if (GTK_IS_WIDGET(frame_gtk->window))
-#else
-	if (frame_gtk->window)
-#endif
 		gtk_widget_destroy(frame_gtk->window);
 	frame_gtk->window = gtk_offscreen_window_new();
 	frame_gtk->header = gtk_header_bar_new();
@@ -949,11 +933,10 @@ calculate_component_size(struct libdecor_frame_gtk *frame_gtk,
 	content_width = libdecor_frame_get_content_width(frame);
 	content_height = libdecor_frame_get_content_height(frame);
 
-#if APPLY_FLTK_CHANGES
-	const int title_height = GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
-#else
-	const int title_height = frame_gtk->header ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
-#endif
+	/* avoid warning when restoring previously turned off decoration */
+	const int title_height = 
+	 	GTK_IS_WIDGET(frame_gtk->header)
+	 	? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
 
 	switch (component) {
 	case NONE:
@@ -970,17 +953,11 @@ calculate_component_size(struct libdecor_frame_gtk *frame_gtk,
 		return;
 	case HEADER:
 		*component_x = 0;
-#if APPLY_FLTK_CHANGES
-		*component_y = -title_height;
-#else
-		*component_y = -gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
+		/* reuse product of function call above */
+		*component_y = - title_height;
 		*component_width = gtk_widget_get_allocated_width(frame_gtk->header);
-#if APPLY_FLTK_CHANGES
+		/* reuse product of function call above */
 		*component_height = title_height;
-#else
-		*component_height = gtk_widget_get_allocated_height(frame_gtk->header);
-#endif
 		return;
 	}
 
@@ -1002,9 +979,7 @@ draw_header_background(struct libdecor_frame_gtk *frame_gtk,
 	/* background */
 	GtkAllocation allocation;
 	GtkStyleContext* style;
-#if APPLY_FLTK_CHANGES
-        if (!frame_gtk->header) return; // was deleted
-#endif
+
 	gtk_widget_get_allocation(GTK_WIDGET(frame_gtk->header), &allocation);
 	style = gtk_widget_get_style_context(frame_gtk->header);
 	gtk_render_background(style, cr, allocation.x, allocation.y, allocation.width, allocation.height);
@@ -1409,6 +1384,10 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	if (current_min_w < pref_width) {
 		current_min_w = pref_width;
 		libdecor_frame_set_min_content_size(&frame_gtk->frame, current_min_w, current_min_h);
+		if (!resizable(frame_gtk)) {
+			libdecor_frame_set_max_content_size(&frame_gtk->frame, 
+				current_min_w, current_min_h);
+		}
 	}
 	W = libdecor_frame_get_content_width(&frame_gtk->frame);
 	H = libdecor_frame_get_content_height(&frame_gtk->frame);
@@ -1541,29 +1520,19 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 	struct libdecor_frame_gtk *frame_gtk =
 		(struct libdecor_frame_gtk *) frame;
 #if APPLY_FLTK_CHANGES
-        if (!frame_gtk->header) return; /* happens with SSD */
+        if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 #endif
 	bool redraw_needed = false;
 	const char *new_title;
 
 	new_title = libdecor_frame_get_title(frame);
-#if APPLY_FLTK_CHANGES
-	if (!frame_gtk->title || !streq(frame_gtk->title, new_title)) {
-#else
 	if (!streq(frame_gtk->title, new_title))
-#endif
 		redraw_needed = true;
-#if APPLY_FLTK_CHANGES
-	if (frame_gtk->title)
-#endif
 	free(frame_gtk->title);
 	if (new_title)
 		frame_gtk->title = strdup(new_title);
 	else
 		frame_gtk->title = NULL;
-#if APPLY_FLTK_CHANGES
-        }
-#endif
 
 	if (frame_gtk->capabilities != libdecor_frame_get_capabilities(frame)) {
 		frame_gtk->capabilities = libdecor_frame_get_capabilities(frame);
@@ -1764,11 +1733,8 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
 		enum decoration_type type = window_state_to_decoration_type(window_state);
 
-		if (header && (type != DECORATION_TYPE_NONE)
-#if APPLY_FLTK_CHANGES
-                    && GTK_IS_WIDGET(header)
-#endif
-                    )
+		/* avoid warnings after decoration has been turned off */
+		if (GTK_IS_WIDGET(header) && (type != DECORATION_TYPE_NONE))
 			*top = gtk_widget_get_allocated_height(header);
 		else
 			*top = 0;
@@ -2158,10 +2124,8 @@ pointer_motion(void *data,
 		send_cursor(seat);
 
 	frame_gtk = wl_surface_get_user_data(seat->pointer_focus);
-#if APPLY_FLTK_CHANGES
-        if (!frame_gtk->header) return;
-#endif
-	if (frame_gtk->active->type == HEADER) {
+	/* avoid warnings after decoration has been turned off */
+	if (GTK_IS_WIDGET(frame_gtk->header) && frame_gtk->active->type == HEADER) {
 		struct header_element_data new_focus =  get_header_focus(
 					  GTK_HEADER_BAR(frame_gtk->header),
 					  seat->pointer_x, seat->pointer_y);
@@ -2278,7 +2242,7 @@ pointer_button(void *data,
 		 state == WL_POINTER_BUTTON_STATE_PRESSED &&
 		 seat->pointer_focus == frame_gtk->headerbar.wl_surface) {
 #if APPLY_FLTK_CHANGES
-          const int title_height = frame_gtk->header && GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
+          const int title_height = GTK_IS_WIDGET(frame_gtk->header) ? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
 #else
 		const int title_height = gtk_widget_get_allocated_height(frame_gtk->header);
 #endif
@@ -2332,10 +2296,9 @@ seat_name(void *data,
 	  struct wl_seat *wl_seat,
 	  const char *name)
 {
-#if APPLY_FLTK_CHANGES
+	/* avoid warning messages when opening/closing popup window */
 	struct seat *seat = (struct seat*)data;
         seat->name = strdup(name);
-#endif
 }
 
 static struct wl_seat_listener seat_listener = {
@@ -2583,13 +2546,7 @@ static const struct wl_callback_listener globals_callback_listener = {
 	globals_callback
 };
 
-#if APPLY_FLTK_CHANGES
-/* FLTK: replace export by static which makes GTK plugin do as Cairo plugin does */
-static
-#else
-LIBDECOR_EXPORT
-#endif
-struct libdecor_plugin *
+static struct libdecor_plugin *
 libdecor_plugin_new(struct libdecor *context)
 {
 	struct libdecor_plugin_gtk *plugin_gtk;
