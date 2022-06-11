@@ -193,16 +193,22 @@ const Fl_Image* Fl_Wayland_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
 }
 
-void Fl_Wayland_Window_Driver::shape_bitmap_(Fl_Image* b) { // needs testing
-  // complement the bits of the Fl_Bitmap and control its stride too
-  int i, j, w = b->w(), h = b->h();
+void Fl_Wayland_Window_Driver::shape_bitmap_(Fl_Image* b) {
+  Fl_Bitmap *bm = (Fl_Bitmap*)b;
+  int i, j, w = bm->data_w(), h = bm->data_h(), w_bitmap = ((w + 7) / 8);
   int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w);
   uchar* bits = new uchar[h * bytesperrow];
-  const uchar *q = ((Fl_Bitmap*)b)->array;
-  for (i = 0; i < h; i++) {
-    uchar *p = bits + i * bytesperrow;
-    for (j = 0; j < w; j++) {
-      *p++ = ~*q++;
+  // transform complement of bitmap image into CAIRO_FORMAT_A1 buffer
+  for (int j = 0; j < h; j++) {
+    uchar *r = (uchar*)bm->array + j * w_bitmap;
+    unsigned *q = (unsigned*)(bits + j * bytesperrow);
+    unsigned k = 0, mask32 = 1;
+    uchar p = ~*r;
+    for (int i = 0; i < w; i++) {
+      if (p&1) (*q) |= mask32;
+      k++;
+      if (k % 8 != 0) p >>= 1; else p = ~*(++r);
+      if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
     }
   }
   cairo_surface_t *mask_surf = cairo_image_surface_create_for_data(bits, CAIRO_FORMAT_A1, w, h, bytesperrow);
@@ -214,7 +220,7 @@ void Fl_Wayland_Window_Driver::shape_bitmap_(Fl_Image* b) { // needs testing
 }
 
 void Fl_Wayland_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
-  int i, j, d = img->d(), w = img->w(), h = img->h();
+  int i, j, d = img->d(), w = img->data_w(), h = img->data_h();
   int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w);
   unsigned u;
   uchar byte, onebit;
