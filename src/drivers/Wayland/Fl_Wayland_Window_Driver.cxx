@@ -514,8 +514,7 @@ void Fl_Wayland_Window_Driver::hide() {
 void Fl_Wayland_Window_Driver::map() {
   Fl_X* ip = Fl_X::i(pWindow);
   struct wld_window *wl_win = ip->xid;
-  if (wl_win->kind == DECORATED) libdecor_frame_map(wl_win->frame);//needs checking
-  else if (pWindow->parent() && !wl_win->subsurface) {
+  if (wl_win->kind == SUBWINDOW && !wl_win->subsurface) {
     struct wld_window *parent = fl_xid(pWindow->window());
     if (parent) {
       Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
@@ -537,8 +536,7 @@ void Fl_Wayland_Window_Driver::map() {
 void Fl_Wayland_Window_Driver::unmap() {
   Fl_X* ip = Fl_X::i(pWindow);
   struct wld_window *wl_win = ip->xid;
-  if (wl_win->kind == DECORATED && wl_win->frame) { libdecor_frame_close(wl_win->frame);//needs checking
-  } else if (wl_win->kind == SUBWINDOW && wl_win->wl_surface) {
+  if (wl_win->kind == SUBWINDOW && wl_win->wl_surface) {
     wl_surface_attach(wl_win->wl_surface, NULL, 0, 0);
     Fl_Wayland_Graphics_Driver::buffer_release(wl_win);
     wl_subsurface_destroy(wl_win->subsurface);
