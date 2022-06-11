@@ -72,7 +72,7 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
   if (isdirsep(*(a-1))) a--;
   /* remove intermediate . and .. names: */
   while (*start == '.') {
-    if (start[1]=='.' && isdirsep(start[2])) {
+    if (start[1]=='.' && (isdirsep(start[2]) || start[2]==0) ) {
       char *b;
       for (b = a-1; b >= temp && !isdirsep(*b); b--) {/*empty*/}
       if (b < temp) break;
