@@ -69,19 +69,26 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
     return 0;
   }
   a = temp+strlen(temp);
+  /* remove trailing '/' in current working directory */
   if (isdirsep(*(a-1))) a--;
   /* remove intermediate . and .. names: */
   while (*start == '.') {
-    if (start[1]=='.' && isdirsep(start[2])) {
+    if (start[1]=='.' && (isdirsep(start[2]) || start[2]==0) ) {
+      // found "..", remove the last directory segment form cwd
       char *b;
       for (b = a-1; b >= temp && !isdirsep(*b); b--) {/*empty*/}
       if (b < temp) break;
       a = b;
-      start += 3;
+      if (start[2]==0)
+        start += 2; // Skip to end of path
+      else
+        start += 3; // Skip over dir separator
     } else if (isdirsep(start[1])) {
+      // found "./" in path, just skip it
       start += 2;
     } else if (!start[1]) {
-      start ++; // Skip lone "."
+      // found "." at end of path, just skip it
+      start ++;
       break;
     } else
       break;
