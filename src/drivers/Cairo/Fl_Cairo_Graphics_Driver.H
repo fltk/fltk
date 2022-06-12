@@ -154,6 +154,8 @@ public:
   void cache(Fl_RGB_Image *rgb);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy);
+  static cairo_pattern_t *bitmap_to_pattern(Fl_Bitmap *bm, bool complement,
+                                            cairo_surface_t **p_surface);
   void cache(Fl_Bitmap *img);
   virtual void delete_bitmask(fl_uintptr_t bm);
   void cache(Fl_Pixmap *pxm);

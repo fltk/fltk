@@ -193,31 +193,15 @@ const Fl_Image* Fl_Wayland_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
 }
 
+
 void Fl_Wayland_Window_Driver::shape_bitmap_(Fl_Image* b) {
-  Fl_Bitmap *bm = (Fl_Bitmap*)b;
-  int i, j, w = bm->data_w(), h = bm->data_h(), w_bitmap = ((w + 7) / 8);
-  int bytesperrow = cairo_format_stride_for_width(CAIRO_FORMAT_A1, w);
-  uchar* bits = new uchar[h * bytesperrow];
-  // transform complement of bitmap image into CAIRO_FORMAT_A1 buffer
-  for (int j = 0; j < h; j++) {
-    uchar *r = (uchar*)bm->array + j * w_bitmap;
-    unsigned *q = (unsigned*)(bits + j * bytesperrow);
-    unsigned k = 0, mask32 = 1;
-    uchar p = ~*r;
-    for (int i = 0; i < w; i++) {
-      if (p&1) (*q) |= mask32;
-      k++;
-      if (k % 8 != 0) p >>= 1; else p = ~*(++r);
-      if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
-    }
-  }
-  cairo_surface_t *mask_surf = cairo_image_surface_create_for_data(bits, CAIRO_FORMAT_A1, w, h, bytesperrow);
-  shape_data_->mask_pattern_ = cairo_pattern_create_for_surface(mask_surf);
-  cairo_surface_destroy(mask_surf);
+  shape_data_->mask_pattern_ = Fl_Cairo_Graphics_Driver::bitmap_to_pattern(
+                                (Fl_Bitmap*)b, true, NULL);
   shape_data_->shape_ = b;
-  shape_data_->lw_ = w;
-  shape_data_->lh_ = h;
+  shape_data_->lw_ = b->data_w();
+  shape_data_->lh_ = b->data_h();
 }
+
 
 void Fl_Wayland_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   int i, j, d = img->d(), w = img->data_w(), h = img->data_h();

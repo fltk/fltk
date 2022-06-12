@@ -858,31 +858,44 @@ void Fl_Cairo_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP,
 }
 
 
-void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
+cairo_pattern_t *Fl_Cairo_Graphics_Driver::bitmap_to_pattern(Fl_Bitmap *bm,
+                                    bool complement, cairo_surface_t **p_surface) {
   int stride = cairo_format_stride_for_width(CAIRO_FORMAT_A1, bm->data_w());
+  int w_bitmap = ((bm->data_w() + 7) / 8);
   uchar *BGRA = new uchar[stride * bm->data_h()];
   memset(BGRA, 0, stride * bm->data_h());
-    uchar  *r, p;
-    unsigned *q;
-    for (int j = 0; j < bm->data_h(); j++) {
-      r = (uchar*)bm->array + j * ((bm->data_w() + 7)/8);
-      q = (unsigned*)(BGRA + j * stride);
-      unsigned k = 0, mask32 = 1;
-      p = *r;
-      for (int i = 0; i < bm->data_w(); i++) {
-        if (p&1) (*q) |= mask32;
-        k++;
-        if (k % 8 != 0) p >>= 1; else p = *(++r);
-        if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
+  for (int j = 0; j < bm->data_h(); j++) {
+    uchar *r = (uchar*)bm->array + j * w_bitmap;
+    unsigned *q = (unsigned*)(BGRA + j * stride);
+    unsigned k = 0, mask32 = 1;
+    uchar p = *r;
+    if (complement) p = ~p;
+    for (int i = 0; i < bm->data_w(); i++) {
+      if (p&1) (*q) |= mask32;
+      k++;
+      if (k % 8 != 0) p >>= 1;
+      else {
+        p = *(++r);
+        if (complement) p = ~p;
       }
+      if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
     }
-  cairo_surface_t *surf = cairo_image_surface_create_for_data(BGRA, CAIRO_FORMAT_A1, bm->data_w(), bm->data_h(), stride);
-  if (cairo_surface_status(surf) == CAIRO_STATUS_SUCCESS) {
-    (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
-    cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
-    cairo_surface_destroy(surf);
-    *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)pat;
   }
+  cairo_surface_t *surf = cairo_image_surface_create_for_data(BGRA, CAIRO_FORMAT_A1, bm->data_w(), bm->data_h(), stride);
+  cairo_pattern_t *pattern =  cairo_pattern_create_for_surface(surf);
+  if (p_surface) *p_surface = surf;
+  else cairo_surface_destroy(surf);
+  return pattern;
+}
+
+
+void Fl_Cairo_Graphics_Driver::cache(Fl_Bitmap *bm) {
+  cairo_surface_t *surf;
+  cairo_pattern_t *pattern = Fl_Cairo_Graphics_Driver::bitmap_to_pattern(bm, false, &surf);
+  uchar *BGRA = cairo_image_surface_get_data(surf);
+  (void)cairo_surface_set_user_data(surf, &data_key_for_surface, BGRA, dealloc_surface_data);
+  cairo_surface_destroy(surf);
+  *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)pattern;
 }
 
 
