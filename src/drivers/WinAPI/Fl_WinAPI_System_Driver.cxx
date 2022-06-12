@@ -54,7 +54,7 @@ typedef RPC_STATUS (WINAPI *uuid_func)(UUID __RPC_FAR *Uuid);
 #  include <mntent.h>
 #endif
 
-inline int isdirsep(char c) { return c == '/' || c == '\\'; }
+static inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
 static wchar_t *mbwbuf = NULL;
 static wchar_t *wbuf = NULL;
@@ -644,16 +644,22 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   if (isdirsep(*(a-1))) a--;
   /* remove intermediate . and .. names: */
   while (*start == '.') {
-    if (start[1]=='.' && isdirsep(start[2])) {
+    if (start[1]=='.' && (isdirsep(start[2]) || start[2]==0) ) {
+      // found "..", remove the last directory segment form cwd
       char *b;
       for (b = a-1; b >= temp && !isdirsep(*b); b--) {/*empty*/}
       if (b < temp) break;
       a = b;
-      start += 3;
+      if (start[2] == 0)
+        start += 2;
+      else
+        start += 3;
     } else if (isdirsep(start[1])) {
+      // found "./" in path, just skip it
       start += 2;
     } else if (!start[1]) {
-      start ++; // Skip lone "."
+      // found "." at end of path, just skip it
+      start ++;
       break;
     } else
       break;
