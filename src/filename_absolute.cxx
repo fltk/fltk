@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-inline int isdirsep(char c) {return c == '/';}
+static inline int isdirsep(char c) {return c == '/';}
 
 /** Makes a filename absolute from a relative filename.
     \code
