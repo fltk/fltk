@@ -124,7 +124,7 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
   }
 }
 
-// these 2 refer to the same memory layout for pixel data
+// this refers to the same memory layout for pixel data as does CAIRO_FORMAT_ARGB32
 const uint32_t Fl_Wayland_Graphics_Driver::wld_format = WL_SHM_FORMAT_ARGB8888;
 
 
