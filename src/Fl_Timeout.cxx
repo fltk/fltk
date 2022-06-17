@@ -162,9 +162,9 @@ void Fl_Timeout::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data) 
   Fl_Timeout *cur = current_timeout;
   if (cur) {
     t->time += cur->time;   // was: missed_timeout_by (always <= 0.0)
+    if (t->time < 0.0)
+      t->time = 0.001;      // at least 1 ms
   }
-  if (t->time < 0.0)
-    t->time = 0.001;        // at least 1 ms
   t->insert();
 }
 
@@ -245,8 +245,8 @@ void Fl_Timeout::release() {
     current_timeout = t->next;
   }
   // put the timer into the list of free timers
-  t->next = free_timeout;
-  free_timeout = t;
+  next = free_timeout;
+  free_timeout = this;
 }
 
 /**
@@ -317,6 +317,7 @@ Fl_Timeout *Fl_Timeout::get(double time, Fl_Timeout_Handler cb, void *data) {
   }
 
   t->next = 0;
+  t->skip = 1;          // see do_timeouts() (issue #450)
   t->delay(time);
   t->callback = cb;
   t->data = data;
@@ -358,11 +359,26 @@ void Fl_Timeout::elapse_timeouts() {
   Elapse timers and call their callbacks if any timers are expired.
 */
 void Fl_Timeout::do_timeouts() {
+
+  // Reset "skip" flag for existing timers (issue #450).
+  // For timers inserted in timer callbacks 'skip' will be true (1)
+
+  Fl_Timeout *t = first_timeout;
+  while (t) {
+    t->skip = 0;
+    t = t->next;
+  }
+
   if (first_timeout) {
     Fl_Timeout::elapse_timeouts();
-    Fl_Timeout *t;
-    while ((t = Fl_Timeout::first_timeout)) {
+    while ((t = first_timeout)) {
       if (t->time > 0) break;
+
+      // skip timers inserted during timeout handling (issue #450)
+      while (t && t->skip)
+        t = t->next;
+      if (!t || t->time > 0) break;
+
       // make this timeout the "current" timeout
       t->make_current();
       // now it is safe for the callback to do add_timeout:

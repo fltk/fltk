@@ -51,6 +51,7 @@ protected:
   Fl_Timeout_Handler callback;  // the user's callback
   void *data;                   // the user's callback data
   double time;                  // delay until timeout
+  int skip;                     // skip "new" (inserted) timers (issue #450)
 
   // constructor
   Fl_Timeout() {
@@ -58,6 +59,7 @@ protected:
     callback = 0;
     data = 0;
     time = 0;
+    skip = 0;
   }
 
   ~Fl_Timeout() {}
