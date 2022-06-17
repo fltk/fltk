@@ -1,7 +1,7 @@
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -93,7 +93,9 @@ void Fl_Counter::increment_cb() {
 
 void Fl_Counter::repeat_callback(void* v) {
   Fl_Counter* b = (Fl_Counter*)v;
-  if (b->mouseobj) {
+  int buttons = Fl::event_state() & FL_BUTTONS; // any mouse button pressed
+  int focus = (Fl::focus() == b);               // the widget has focus
+  if (b->mouseobj && buttons && focus) {
     Fl::add_timeout(REPEAT, repeat_callback, b);
     b->increment_cb();
   }
@@ -136,7 +138,8 @@ int Fl_Counter::handle(int event) {
     if (i != mouseobj) {
       Fl::remove_timeout(repeat_callback, this);
       mouseobj = (uchar)i;
-      if (i) Fl::add_timeout(INITIALREPEAT, repeat_callback, this);
+      if (i > 0)
+        Fl::add_timeout(INITIALREPEAT, repeat_callback, this);
       Fl_Widget_Tracker wp(this);
       increment_cb();
       if (wp.deleted()) return 1;
@@ -155,8 +158,10 @@ int Fl_Counter::handle(int event) {
         return 0;
     }
     // break not required because of switch...
-  case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
+    mouseobj = 0;
+    /* FALLTHROUGH */
+  case FL_FOCUS :
     if (Fl::visible_focus()) {
       redraw();
       return 1;
