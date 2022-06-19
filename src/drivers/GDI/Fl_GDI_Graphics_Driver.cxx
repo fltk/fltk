@@ -245,43 +245,6 @@ void Fl_GDI_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 }
 
 
-typedef BOOL(WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
-extern flTypeImmAssociateContextEx flImmAssociateContextEx;
-typedef HIMC(WINAPI* flTypeImmGetContext)(HWND);
-extern flTypeImmGetContext flImmGetContext;
-typedef BOOL(WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
-extern flTypeImmSetCompositionWindow flImmSetCompositionWindow;
-typedef BOOL(WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
-extern flTypeImmReleaseContext flImmReleaseContext;
-
-
-void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
-{
-  if (!win) return;
-  Fl_Window* tw = win->top_window();
-
-  if (!tw->shown())
-    return;
-
-  HIMC himc = flImmGetContext(fl_xid(tw));
-
-  if (himc) {
-    COMPOSITIONFORM cfs;
-    float s = scale();
-    cfs.dwStyle = CFS_POINT;
-    cfs.ptCurrentPos.x = int(X * s);
-    cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
-    // Attempt to have temporary text entered by input method use scaled font.
-    // Does good, but still not always effective.
-    Fl_GDI_Font_Descriptor *desc = (Fl_GDI_Font_Descriptor*)font_descriptor();
-    if (desc) SelectObject((HDC)gc(), desc->fid);
-    MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
-    flImmSetCompositionWindow(himc, &cfs);
-    flImmReleaseContext(fl_xid(tw), himc);
-  }
-}
-
-
 void Fl_GDI_Graphics_Driver::scale(float f) {
   if (f != scale()) {
     size_ = 0;

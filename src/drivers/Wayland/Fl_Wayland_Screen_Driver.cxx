@@ -1429,3 +1429,15 @@ int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
   yy = yy/s;
   return snum;
 }
+
+
+void Fl_Wayland_Screen_Driver::set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win) {
+  Fl_Wayland_Screen_Driver::insertion_point_location(x, y, height);
+}
+
+
+void Fl_Wayland_Screen_Driver::reset_spot() {
+  Fl::compose_state = 0;
+  Fl_Wayland_Screen_Driver::next_marked_length = 0;
+  Fl_Wayland_Screen_Driver::insertion_point_location_is_valid = false;
+}

@@ -25,6 +25,7 @@
 
 #include <config.h>
 #include "../../Fl_Screen_Driver.H"
+#include <X11/Xlib.h>
 
 
 class Fl_Window;
@@ -87,8 +88,7 @@ public:
   virtual int text_display_can_leak() const;
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   virtual int get_mouse(int &x, int &y);
-  virtual void enable_im();
-  virtual void disable_im();
+
   virtual void open_display_platform();
   virtual void close_display();
   // --- compute dimensions of an Fl_Offscreen
@@ -102,6 +102,23 @@ public:
   virtual int clipboard_contains(const char *type);
   // this one is in Fl_x.cxx
   virtual void clipboard_notify_change();
+  // for support of input methods
+  static char fl_is_over_the_spot;
+  static XRectangle fl_spot;
+  static int fl_spotf;
+  static int fl_spots;
+  static XIM xim_im;
+  static XIC xim_ic;
+  static Window xim_win;
+  static void new_ic();
+  static void xim_activate(Window xid);
+  static void xim_deactivate(void);
+  static void init_xim();
+  virtual void enable_im();
+  virtual void disable_im();
+  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  virtual void reset_spot();
+  virtual void set_status(int X, int Y, int W, int H);
 };
 
 

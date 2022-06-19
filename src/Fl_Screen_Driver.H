@@ -207,6 +207,10 @@ public:
   virtual int clipboard_contains(const char * /*type*/) {return 0;}
   //  implement to support paste-from-clipboard
   virtual void clipboard_notify_change() {}
+  // next 3 are related to Input Methods
+  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  virtual void reset_spot();
+  virtual void set_status(int X, int Y, int W, int H);
 };
 
 #endif // !FL_SCREEN_DRIVER_H

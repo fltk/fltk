@@ -193,13 +193,13 @@ static int get_wsock_mod() {
  */
 static HMODULE s_imm_module = 0;
 typedef BOOL(WINAPI *flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
-flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
+static flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
 typedef HIMC(WINAPI *flTypeImmGetContext)(HWND);
-flTypeImmGetContext flImmGetContext = 0;
+static flTypeImmGetContext flImmGetContext = 0;
 typedef BOOL(WINAPI *flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
-flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
+static flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
 typedef BOOL(WINAPI *flTypeImmReleaseContext)(HWND, HIMC);
-flTypeImmReleaseContext flImmReleaseContext = 0;
+static flTypeImmReleaseContext flImmReleaseContext = 0;
 
 static void get_imm_module() {
   s_imm_module = LoadLibrary("IMM32.DLL");
@@ -654,6 +654,33 @@ void Fl_WinAPI_Screen_Driver::disable_im() {
 
   im_enabled = 0;
 }
+
+void Fl_WinAPI_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{
+  if (!win) return;
+  Fl_Window* tw = win->top_window();
+
+  if (!tw->shown())
+    return;
+
+  HIMC himc = flImmGetContext(fl_xid(tw));
+
+  if (himc) {
+    COMPOSITIONFORM cfs;
+    float s = Fl_Graphics_Driver::default_driver().scale();
+    cfs.dwStyle = CFS_POINT;
+    cfs.ptCurrentPos.x = int(X * s);
+    cfs.ptCurrentPos.y = int(Y * s) - int(tw->labelsize() * s);
+    // Attempt to have temporary text entered by input method use scaled font.
+    // Does good, but still not always effective.
+    Fl_GDI_Font_Descriptor *desc = (Fl_GDI_Font_Descriptor*)Fl_Graphics_Driver::default_driver().font_descriptor();
+    if (desc) SelectObject((HDC)Fl_Graphics_Driver::default_driver().gc(), desc->fid);
+    MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
+    flImmSetCompositionWindow(himc, &cfs);
+    flImmReleaseContext(fl_xid(tw), himc);
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////
 

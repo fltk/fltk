@@ -18,6 +18,7 @@
 // Select fonts from the FLTK font table.
 #include "flstring.h"
 #include <FL/fl_draw.H>
+#include "Fl_Screen_Driver.H"
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
@@ -51,15 +52,15 @@ void fl_draw(const char* str, int l, float x, float y) {
 
 void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
-  Fl_Graphics_Driver::default_driver().set_spot(font, size, X, Y, W, H, win);
+  Fl::screen_driver()->set_spot(font, size, X, Y, W, H, win);
 }
 
 void fl_reset_spot()
 {
-  Fl_Graphics_Driver::default_driver().reset_spot();
+  Fl::screen_driver()->reset_spot();
 }
 
 void fl_set_status(int X, int Y, int W, int H)
 {
-  Fl_Graphics_Driver::default_driver().set_status(X, Y, W, H);
+  Fl::screen_driver()->set_status(X, Y, W, H);
 }

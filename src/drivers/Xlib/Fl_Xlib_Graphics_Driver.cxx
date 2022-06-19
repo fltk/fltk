@@ -24,8 +24,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-extern XIC fl_xim_ic;
-extern char fl_is_over_the_spot;
 #if !USE_XFT
 extern char *fl_get_font_xfld(int fnum, int size);
 #endif
@@ -98,89 +96,6 @@ void Fl_Xlib_Graphics_Driver::transformed_vertex0(float fx, float fy) {
 
 void Fl_Xlib_Graphics_Driver::fixloop() {  // remove equal points from closed path
   while (n>2 && short_point[n-1].x == short_point[0].x && short_point[n-1].y == short_point[0].y) n--;
-}
-
-// FIXME: should be members of Fl_Xlib_Graphics_Driver
-XRectangle fl_spot;
-int fl_spotf = -1;
-int fl_spots = -1;
-
-void Fl_Xlib_Graphics_Driver::reset_spot(void)
-{
-  fl_spot.x = -1;
-  fl_spot.y = -1;
-  //if (fl_xim_ic) XUnsetICFocus(fl_xim_ic);
-}
-
-void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
-{
-  int change = 0;
-  XVaNestedList preedit_attr;
-  static XFontSet fs = NULL;
-  char **missing_list;
-  int missing_count;
-  char *def_string;
-  char *fnt = NULL;
-  bool must_free_fnt =true;
-
-  static XIC ic = NULL;
-
-  if (!fl_xim_ic || !fl_is_over_the_spot) return;
-  if (Fl::focus()) { // handle case when text widget is inside subwindow
-    Fl_Window *focuswin = Fl::focus()->window();
-    while (focuswin && focuswin->parent()) {
-      X += focuswin->x(); Y += focuswin->y();
-      focuswin = focuswin->window();
-    }
-  }
-  //XSetICFocus(fl_xim_ic);
-  if (X != fl_spot.x || Y != fl_spot.y) {
-    fl_spot.x = X;
-    fl_spot.y = Y;
-    fl_spot.height = H;
-    fl_spot.width = W;
-    change = 1;
-  }
-  if (font != fl_spotf || size != fl_spots) {
-    fl_spotf = font;
-    fl_spots = size;
-    change = 1;
-    if (fs) {
-      XFreeFontSet(fl_display, fs);
-    }
-#if USE_XFT
-
-#if defined(__GNUC__)
-    // FIXME: warning XFT support here
-#endif /*__GNUC__*/
-
-    fnt = NULL; // fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
-    fs = XCreateFontSet(fl_display, fnt, &missing_list,
-                        &missing_count, &def_string);
-#else
-    fnt = fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
-    fs = XCreateFontSet(fl_display, fnt, &missing_list,
-                        &missing_count, &def_string);
-#endif
-  }
-  if (fl_xim_ic != ic) {
-    ic = fl_xim_ic;
-    change = 1;
-  }
-
-  if (fnt && must_free_fnt) free(fnt);
-  if (!change) return;
-
-  float s = scale();
-  XRectangle fl_spot_unscaled = { short(fl_spot.x * s), short(fl_spot.y * s),
-    (unsigned short)(fl_spot.width * s), (unsigned short)(fl_spot.height * s) };
-  preedit_attr = XVaCreateNestedList(0,
-                                     XNSpotLocation, &fl_spot_unscaled,
-                                     XNFontSet, fs, NULL);
-  XSetICValues(fl_xim_ic, XNPreeditAttributes, preedit_attr, NULL);
-  XFree(preedit_attr);
 }
 
 #if !USE_XFT

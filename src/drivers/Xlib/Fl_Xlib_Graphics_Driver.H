@@ -205,9 +205,6 @@ protected:
   void color(uchar r, uchar g, uchar b);
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);
   virtual float scale_bitmap_for_PostScript();
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
-  virtual void set_status(int X, int Y, int W, int H);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
 #if !USE_XFT

@@ -81,8 +81,6 @@ public:
   static void buffer_release(struct wld_window *window);
   static void buffer_commit(struct wld_window *window);
   static void cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format);
-  void set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win);
-  void reset_spot();
   virtual void *gc();
   virtual void gc(void *gc);
 };

@@ -513,6 +513,17 @@ int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 
 void Fl_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
 
+
+/** see fl_set_spot() */
+void Fl_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{}
+
+void Fl_Screen_Driver::set_status(int X, int Y, int W, int H) {}
+
+
+/** see fl_reset_spot() */
+void Fl_Screen_Driver::reset_spot() {}
+
 /**
  \}
  \endcond

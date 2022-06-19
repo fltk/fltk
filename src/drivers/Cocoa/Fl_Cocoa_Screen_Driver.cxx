@@ -381,3 +381,11 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
   rgb->alloc_array = 1;
   return rgb;
 }
+
+void Fl_Cocoa_Screen_Driver::set_spot(int /*font*/, int size, int X, int Y, int /*W*/, int /*H*/, Fl_Window* /*win*/) {
+  Fl_Cocoa_Screen_Driver::insertion_point_location(X, Y, size);
+}
+
+void Fl_Cocoa_Screen_Driver::reset_spot() {
+  Fl_Cocoa_Screen_Driver::reset_marked_text();
+}

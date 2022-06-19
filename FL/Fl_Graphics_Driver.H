@@ -352,10 +352,6 @@ public:
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);
   // default implementation may be enough
   virtual float scale_bitmap_for_PostScript();
-  // next 3 are related to X Input Method
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
-  virtual void set_status(int X, int Y, int W, int H);
   // each platform implements these 3 functions its own way
   virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);

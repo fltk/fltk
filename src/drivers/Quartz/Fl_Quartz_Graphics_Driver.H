@@ -173,8 +173,6 @@ protected:
   virtual void restore_scale(float);
   virtual void antialias(int state);
   virtual int antialias();
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {

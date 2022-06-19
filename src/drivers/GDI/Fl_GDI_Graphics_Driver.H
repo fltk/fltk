@@ -143,7 +143,6 @@ protected:
   void color(uchar r, uchar g, uchar b);
   void set_color(Fl_Color i, unsigned int c);
   void free_color(Fl_Color i, int overlay);
-  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual Fl_Font set_fonts(const char *name);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);

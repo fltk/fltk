@@ -124,21 +124,6 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   }
 }
 
-/** see fl_set_spot() */
-void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
-{
-  // nothing to do, reimplement in driver if needed
-}
-
-void Fl_Graphics_Driver::set_status(int X, int Y, int W, int H) {}
-
-
-/** see fl_reset_spot() */
-void Fl_Graphics_Driver::reset_spot()
-{
-  // nothing to do, reimplement in driver if needed
-}
-
 
 /** Sets the value of the fl_gc global variable when it changes */
 void Fl_Graphics_Driver::global_gc()

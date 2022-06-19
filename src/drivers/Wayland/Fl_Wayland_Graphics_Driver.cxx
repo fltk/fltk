@@ -144,18 +144,6 @@ void Fl_Wayland_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
 }
 
 
-void Fl_Wayland_Graphics_Driver::set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win) {
-  Fl_Wayland_Screen_Driver::insertion_point_location(x, y, height);
-}
-
-
-void Fl_Wayland_Graphics_Driver::reset_spot() {
-  Fl::compose_state = 0;
-  Fl_Wayland_Screen_Driver::next_marked_length = 0;
-  Fl_Wayland_Screen_Driver::insertion_point_location_is_valid = false;
-}
-
-
 void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   int height = osrc->data_size / osrc->stride;

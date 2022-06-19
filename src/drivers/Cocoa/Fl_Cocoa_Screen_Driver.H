@@ -100,6 +100,8 @@ public:
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
   virtual int clipboard_contains(const char *type);
+  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  virtual void reset_spot();
 private:
   float scale_;
 };
