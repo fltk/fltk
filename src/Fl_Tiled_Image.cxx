@@ -92,7 +92,9 @@ void
 Fl_Tiled_Image::color_average(Fl_Color c,       // I - Color to blend with
                               float    i) {     // I - Blend fraction
   if (!alloc_image_) {
-    image_       = image_->copy();
+    int W = image_->w(), H = image_->h();
+    image_       = image_->copy(image_->data_w(), image_->data_h());
+    image_->scale(W, H, 0, 1);
     alloc_image_ = 1;
   }
 
@@ -107,7 +109,9 @@ Fl_Tiled_Image::color_average(Fl_Color c,       // I - Color to blend with
 void
 Fl_Tiled_Image::desaturate() {
   if (!alloc_image_) {
-    image_       = image_->copy();
+    int W = image_->w(), H = image_->h();
+    image_       = image_->copy(image_->data_w(), image_->data_h());
+    image_->scale(W, H, 0, 1);
     alloc_image_ = 1;
   }
 

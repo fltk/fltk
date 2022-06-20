@@ -103,7 +103,8 @@ Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data, con
 : Fl_RGB_Image(0,0,0)
 {
   Fl_Image_Reader rdr;
-  if (rdr.open(imagename, data, length) == -1) {
+  int retval = (length < 0 ? rdr.open(imagename, data) : rdr.open(imagename, data, (size_t)length));
+  if (retval == -1) {
     ld(ERR_FILE_ACCESS);
   } else {
     load_bmp_(rdr);

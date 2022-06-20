@@ -190,10 +190,12 @@ Fl_Shared_Image::add() {
 void
 Fl_Shared_Image::update() {
   if (image_) {
-    w(image_->w());
-    h(image_->h());
+    int W = w(), H = h();
+    w(image_->data_w());
+    h(image_->data_h());
     d(image_->d());
     data(image_->data(), image_->count());
+    if (W && H) scale(W, H, 0, 1);
   }
 }
 
