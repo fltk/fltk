@@ -1058,6 +1058,8 @@ static const struct wl_registry_listener registry_listener = {
 
 static void fd_callback(int unused, struct wl_display *display) {
   wl_display_dispatch(display);
+  static Fl_Wayland_System_Driver *sys_dr = (Fl_Wayland_System_Driver*)Fl::system_driver();
+  while (sys_dr->poll_or_select() > 0) wl_display_dispatch(display);
 }
 
 

@@ -768,12 +768,14 @@ static int do_queued_events( double time = 0.0 )
   time = Fl_Timeout::time_to_wait(time);
 
   fl_unlock_function();
-  NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+  NSEvent *event;
+  while ( (event = [NSApp nextEventMatchingMask:NSAnyEventMask
                                       untilDate:[NSDate dateWithTimeIntervalSinceNow:time]
-                                         inMode:NSDefaultRunLoopMode dequeue:YES];
-  if (event != nil) {
+                                         inMode:NSDefaultRunLoopMode
+                                        dequeue:YES]) != nil ) {
     got_events = 1;
     [FLApplication sendEvent:event]; // will then call [NSApplication sendevent:]
+    time = 0;
   }
   fl_lock_function();
 
