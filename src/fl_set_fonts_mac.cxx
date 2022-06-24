@@ -35,13 +35,15 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
     if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
       CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
-      CTFontRef ctfont = CTFontCreateWithName(cfname, 0, NULL);
-      CFRelease(cfname);
-      cfname = CTFontCopyFullName(ctfont);
-      CFRelease(ctfont);
-      CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
-      CFRelease(cfname);
-      }
+      CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
+      if (cfname) CFRelease(cfname);
+      if (ctfont) {
+        cfname = CTFontCopyFullName(ctfont);
+        CFRelease(ctfont);
+        CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
+        CFRelease(cfname);
+      } else strlcpy(f->fontname, f->name, ENDOFBUFFER);
+    }
     else 
 #endif
       strlcpy(f->fontname, f->name, ENDOFBUFFER);
