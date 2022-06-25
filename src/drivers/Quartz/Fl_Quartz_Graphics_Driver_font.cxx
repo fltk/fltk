@@ -679,9 +679,12 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
     CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
     CFStringRef cfname = CTFontCopyPostScriptName(font);
     CFRelease(font);
-    static char fname[200];
-    CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
-    tabfontnames[i] = fl_strdup(fname); // never free'ed
+    CFDataRef cfdata = CFStringCreateExternalRepresentation(NULL, cfname, kCFStringEncodingUTF8, '?');
+    CFIndex l = CFDataGetLength(cfdata);
+    tabfontnames[i] = (char*)malloc(l+1); // never free'ed
+    memcpy(tabfontnames[i], CFDataGetBytePtr(cfdata), l);
+    tabfontnames[i][l] = 0;
+    CFRelease(cfdata);
     CFRelease(cfname);
   }
   CFRelease(arrayref);
