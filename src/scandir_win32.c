@@ -88,8 +88,6 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   }
   strcpy(findIn, dirname);
 
-  /* #if defined(__GNUC__) */
-  /* #endif */
   for (d = findIn; *d; d++) if (*d=='/') *d='\\';
   if (len==0) { strcpy(findIn, ".\\*"); }
   if ((len==2)&&findIn[1]==':'&&isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }
