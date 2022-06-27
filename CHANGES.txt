@@ -24,8 +24,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - X11 platform: class Fl_Native_File_Chooser will run the KDE file dialog
     rather than the GTK dialog if the current desktop is KDE and if command
     "kdialog" is available on the running platform (issue #278).
-  - The undocumented feature FLTK_CONSOLIDATE_MOTION is now OFF on X11 like
-    on macOS. In FLTK 1.3 this feature has been ON on X11. The macro can now
+  - The undocumented feature FLTK_CONSOLIDATE_MOTION is now OFF on X11 and
+    removed on macOS. In FLTK 1.3 this feature has been ON on X11. The macro can now
     be set on the compiler commandline and can be used to reduce the number
     of mouse move events sent to the application but it may be unreliable.
     Recommendation: let it switched OFF unless you really need it.
