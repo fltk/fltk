@@ -36,13 +36,16 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
       CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
       CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
-      if (cfname) CFRelease(cfname);
+      if (cfname) { CFRelease(cfname); cfname = NULL; }
       if (ctfont) {
         cfname = CTFontCopyFullName(ctfont);
         CFRelease(ctfont);
-        CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
-        CFRelease(cfname);
-      } else strlcpy(f->fontname, f->name, ENDOFBUFFER);
+        if (cfname) {
+          CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
+          CFRelease(cfname);
+        }
+      }
+      if (!cfname) strlcpy(f->fontname, f->name, ENDOFBUFFER);
     }
     else 
 #endif
