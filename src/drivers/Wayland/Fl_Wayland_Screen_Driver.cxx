@@ -39,6 +39,7 @@
 #include "text-input-client-protocol.h"
 #include <assert.h>
 #include <sys/mman.h>
+#include <poll.h>
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
 }
@@ -1056,10 +1057,13 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 
-static void fd_callback(int unused, struct wl_display *display) {
-  wl_display_dispatch(display);
-  static Fl_Wayland_System_Driver *sys_dr = (Fl_Wayland_System_Driver*)Fl::system_driver();
-  while (sys_dr->poll_or_select() > 0) wl_display_dispatch(display);
+static void fd_callback(int fd, struct wl_display *display) {
+  struct pollfd fds;
+  fds.fd = fd;
+  fds.events = POLLIN;
+  fds.revents = 0;
+  do wl_display_dispatch(display);
+  while (poll(&fds, 1, 0) > 0);
 }
 
 
