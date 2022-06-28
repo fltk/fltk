@@ -263,7 +263,7 @@ static void pointer_enter(void *data,
   Fl::e_y = wl_fixed_to_int(surface_y) / f;
   Fl::e_y_root = Fl::e_y + win->y();
   set_event_xy(win);
-  Fl::handle(FL_ENTER, win);
+  Fl::handle(FL_ENTER, win->top_window());
   //fprintf(stderr, "pointer_enter window=%p\n", win);
   seat->pointer_focus = surface;
 }
@@ -280,6 +280,7 @@ static void pointer_leave(void *data,
   if (win) {
     Fl::belowmouse(0);
     set_event_xy(win);
+    Fl::handle(FL_LEAVE, win->top_window());
   }
 //fprintf(stderr, "pointer_leave surface=%p window=%p\n", surface, win);
 }
