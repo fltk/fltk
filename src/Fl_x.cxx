@@ -487,7 +487,7 @@ void Fl_X11_Screen_Driver::xim_activate(Window xid) {
                  XNClientWindow, xim_win,
                  NULL);
   }
-  
+
   Fl_X11_Screen_Driver *driver = (Fl_X11_Screen_Driver*)Fl::screen_driver();
   driver->set_spot(fl_spotf, fl_spots, fl_spot.x, fl_spot.y, fl_spot.width, fl_spot.height, NULL);
 }
@@ -700,8 +700,7 @@ void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
                     fl_xid(Fl::first_window()), fl_event_time);
 }
 
-int Fl_X11_Screen_Driver::clipboard_contains(const char *type)
-{
+int Fl_X11_Screen_Driver::clipboard_contains(const char *type) {
   if (fl_i_own_selection[1]) {
     return fl_selection_type[1] == type;
   }
@@ -713,12 +712,12 @@ int Fl_X11_Screen_Driver::clipboard_contains(const char *type)
   win->wait_for_expose();
   XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD, fl_xid(win), CurrentTime);
   XFlush(fl_display);
-  do  {
+  // FIXME: The following loop may ignore up to 20 events! (AlbrechtS)
+  do {
     XNextEvent(fl_display, &event);
     if (event.type == SelectionNotify && event.xselection.property == None) return 0;
     i++;
-  }
-  while (i < 20 && event.type != SelectionNotify);
+  } while (i < 20 && event.type != SelectionNotify);
   if (i >= 20) return 0;
   XGetWindowProperty(fl_display,
                      event.xselection.requestor,
@@ -1010,15 +1009,12 @@ static int wasXExceptionRaised() {
   return xerror;
 }
 
-}
+} // extern "C"
 
-static bool getNextEvent(XEvent *event_return)
-{
+static bool getNextEvent(XEvent *event_return) {
   time_t t = time(NULL);
-  while (!XPending(fl_display))
-  {
-    if(time(NULL) - t > 10.0)
-    {
+  while (!XPending(fl_display)) {
+    if (time(NULL) - t > 10.0) {
       // fprintf(stderr,"Error: The XNextEvent never came...\n");
       return false;
     }
@@ -1027,15 +1023,13 @@ static bool getNextEvent(XEvent *event_return)
   return true;
 }
 
-static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lower_bound)
-{
+static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lower_bound) {
   // fprintf(stderr,"Incremental transfer starting due to INCR property\n");
   size_t total = 0;
   XEvent event;
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
   data = (uchar*)realloc(data, lower_bound);
-  for (;;)
-  {
+  for (;;) {
     if (!getNextEvent(&event)) break;
     if (event.type == PropertyNotify)
     {
@@ -1048,8 +1042,7 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
       long offset = 0;
       size_t num_bytes;
       // size_t slice_size = 0;
-      do
-      {
+      do {
         XGetWindowProperty(fl_display, selevent.requestor, selevent.property, offset, 70000, True,
                            AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop);
         num_bytes = nitems * (actual_format / 8);
@@ -1253,7 +1246,7 @@ int fl_handle(const XEvent& thisevent)
           else
             handle_clipboard_timestamp(0, t);
         }
-        XFree(portion); portion = 0;
+        XFree(portion);
         return true;
       }
 
@@ -1265,7 +1258,7 @@ int fl_handle(const XEvent& thisevent)
         else { // searching for text data. *FIXME* - there may be other data types!
           type = find_target_text((Atom *)portion, count);
         }
-        XFree(portion); portion = 0;
+        XFree(portion);
 
         if (!type) { // not found
           if (Fl::e_clipboard_type == Fl::clipboard_image)
@@ -1296,12 +1289,12 @@ int fl_handle(const XEvent& thisevent)
       }
       // Make sure we got something sane...
       if ((portion == NULL) || (format != 8) || (count == 0)) {
-        if (portion) { XFree(portion); portion = 0; }
+        if (portion) XFree(portion);
         return true;
       }
       sn_buffer = (unsigned char*)realloc(sn_buffer, bytesread+count+remaining+1);
-      memcpy(sn_buffer+bytesread, portion, count);
-      if (portion) { XFree(portion); portion = 0; }
+      memcpy(sn_buffer + bytesread, portion, count);
+      XFree(portion);
       bytesread += count;
       // Cannot trust data to be null terminated
       sn_buffer[bytesread] = '\0';
