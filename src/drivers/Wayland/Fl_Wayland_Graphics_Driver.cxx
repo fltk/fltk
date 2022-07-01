@@ -79,6 +79,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 
 
 void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window) {
+  if (!window->buffer->draw_buffer_needs_commit) return;
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
