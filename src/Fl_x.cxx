@@ -1029,11 +1029,18 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
   XEvent event;
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
   data = (uchar*)realloc(data, lower_bound);
+  if (!data) {
+    // fprintf(stderr, "[getIncrData:%d] realloc() FAILED, size = %ld\n", __LINE__, lower_bound);
+    Fl::fatal("Clipboard data transfer failed, size %ld too large.", lower_bound);
+  }
   for (;;) {
-    if (!getNextEvent(&event)) break;
-    if (event.type == PropertyNotify)
-    {
-      if (event.xproperty.state != PropertyNewValue) continue;
+    if (!getNextEvent(&event)) {
+      // This is unexpected but may happen if the sender (clipboard owner) no longer sends data
+      // fprintf(stderr, "[getIncrData:%d] Failed to get next event (timeout) *** break! ***\n", __LINE__);
+      break;
+    }
+    if (event.type == PropertyNotify) {
+      if (event.xproperty.state != PropertyNewValue) continue; // ignore PropertyDelete
       Atom actual_type;
       int actual_format;
       unsigned long nitems;
@@ -1048,14 +1055,38 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
         num_bytes = nitems * (actual_format / 8);
         offset += num_bytes/4;
         // slice_size += num_bytes;
-        if (total + num_bytes > (size_t)lower_bound) data = (uchar*)realloc(data, total + num_bytes);
-        memcpy(data + total, prop, num_bytes); total += num_bytes;
+        if (total + num_bytes > lower_bound) {
+          data = (uchar*)realloc(data, total + num_bytes);
+          if (!data) {
+            // fprintf(stderr, "[getIncrData():%d] realloc() FAILED, size = %ld\n", __LINE__, total + num_bytes);
+            Fl::fatal("Clipboard data transfer failed, size %ld too large.", total + num_bytes);
+          }
+        }
+        memcpy(data + total, prop, num_bytes);
+        total += num_bytes;
         if (prop) XFree(prop);
       } while (bytes_after != 0);
       // fprintf(stderr,"INCR data size:%ld\n", slice_size);
       if (num_bytes == 0) break;
     }
-    else break;
+    else {
+      // Unexpected next event. At this point we're handling the INCR protocol and can't deal with
+      // *some* other events due to potential recursions. We *could* call fl_handle(event) to handle
+      // *selected* other events but for the time being we ignore all other events!
+      // Handling the INCR protocol for very large data may take some time and multiple events.
+      // Interleaving "other" events are possible, for instance the KeyRelease event of the
+      // ctrl/v key pressed to insert the clipboard. This solution is not perfect but it can
+      // handle the INCR protocol with very large selections in most cases, although with potential
+      // side effects because other events may be ignored.
+      // See GitHub Issue #451: "Segfault if using very large selections".
+      // Note: the "fix" for Issue #451 is basically to use 'continue' rather than 'break'
+      // Debug:
+      // fprintf(stderr,
+      //   "[getIncrData:%d] getNextEvent() returned %d, not PropertyNotify (%d). Event ignored.\n",
+      //   __LINE__, event.type, PropertyNotify);
+
+      continue;
+    }
   }
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
   return (long)total;
@@ -1222,7 +1253,9 @@ int fl_handle(const XEvent& thisevent)
 
   case SelectionNotify: {
     static unsigned char* sn_buffer = 0;
-    if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
+    if (sn_buffer) {
+      free(sn_buffer); sn_buffer = 0;
+    }
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
       // The Xdnd code pastes 64K chunks together, possibly to avoid
@@ -1283,7 +1316,10 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
       if (actual == fl_INCR) {
-        bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
+        // an X11 "integer" (32 bit), the "lower bound" of the clipboard size (see ICCCM)
+        size_t lower_bound = (*(unsigned long *)portion) & 0xFFFFFFFF;
+        // fprintf(stderr, "[fl_handle:%d] INCR: lower_bound = %ld\n", __LINE__, lower_bound);
+        bytesread = getIncrData(sn_buffer, xevent.xselection, lower_bound);
         XFree(portion);
         break;
       }
