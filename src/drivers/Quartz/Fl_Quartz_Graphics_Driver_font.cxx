@@ -317,12 +317,17 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static void set_fontname_CoreText(Fl_Fontdesc *f) {
   CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
-  CTFontRef ctfont = CTFontCreateWithName(cfname, 0, NULL);
-  CFRelease(cfname);
-  cfname = CTFontCopyFullName(ctfont);
-  CFRelease(ctfont);
-  CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
-  CFRelease(cfname);
+  CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
+  if (cfname) { CFRelease(cfname); cfname = NULL; }
+  if (ctfont) {
+    cfname = CTFontCopyFullName(ctfont);
+    CFRelease(ctfont);
+    if (cfname) {
+      CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
+      CFRelease(cfname);
+    }
+  }
+  if (!cfname) strlcpy(f->fontname, f->name, ENDOFBUFFER);
 }
 #endif
 
@@ -677,9 +682,12 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
     CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
     CFStringRef cfname = CTFontCopyPostScriptName(font);
     CFRelease(font);
-    static char fname[200];
-    CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
-    tabfontnames[i] = fl_strdup(fname); // never free'ed
+    CFDataRef cfdata = CFStringCreateExternalRepresentation(NULL, cfname, kCFStringEncodingUTF8, '?');
+    CFIndex l = CFDataGetLength(cfdata);
+    tabfontnames[i] = (char*)malloc(l+1); // never free'ed
+    memcpy(tabfontnames[i], CFDataGetBytePtr(cfdata), l);
+    tabfontnames[i][l] = 0;
+    CFRelease(cfdata);
     CFRelease(cfname);
   }
   CFRelease(arrayref);

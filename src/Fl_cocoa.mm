@@ -14,10 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef FLTK_CONSOLIDATE_MOTION
-#define FLTK_CONSOLIDATE_MOTION 0
-#endif
-
 extern "C" {
 #include <pthread.h>
 }
@@ -110,11 +106,6 @@ static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
 static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
-
-#if FLTK_CONSOLIDATE_MOTION
-static Fl_Window* send_motion;
-extern Fl_Window* fl_xmousewin;
-#endif
 
 enum { FLTKTimerEvent = 1, FLTKDataReadyEvent };
 
@@ -779,12 +770,6 @@ static int do_queued_events( double time = 0.0 )
   }
   fl_lock_function();
 
-#if FLTK_CONSOLIDATE_MOTION
-  if (send_motion && send_motion == fl_xmousewin) {
-    send_motion = 0;
-    Fl::handle(FL_MOVE, fl_xmousewin);
-  }
-#endif
   return got_events;
 }
 

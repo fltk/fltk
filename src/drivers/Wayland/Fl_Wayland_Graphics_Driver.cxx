@@ -71,7 +71,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
   buffer->data_size = size;
   buffer->width = width;
   buffer->draw_buffer = new uchar[buffer->data_size];
-  buffer->draw_buffer_needs_commit = false;
+  buffer->draw_buffer_needs_commit = true;
 //fprintf(stderr, "create_shm_buffer: %dx%d = %d\n", width, height, size);
   cairo_init(buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
   return buffer;
@@ -79,6 +79,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 
 
 void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window) {
+  if (!window->buffer->draw_buffer_needs_commit) return;
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);

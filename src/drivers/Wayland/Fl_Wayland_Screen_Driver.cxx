@@ -39,6 +39,7 @@
 #include "text-input-client-protocol.h"
 #include <assert.h>
 #include <sys/mman.h>
+#include <poll.h>
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
 }
@@ -238,6 +239,25 @@ Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surfac
 }
 
 
+static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
+                                       wl_fixed_t surface_x, wl_fixed_t surface_y) {
+  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  if (!win) return NULL;
+  int delta_x = 0, delta_y = 0;
+  while (win->parent()) {
+    delta_x += win->x();
+    delta_y += win->y();
+    win = win->window();
+  }
+  float f = Fl::screen_scale(win->screen_num());
+  Fl::e_x = wl_fixed_to_int(surface_x) / f + delta_x;
+  Fl::e_x_root = Fl::e_x + win->x();
+  Fl::e_y = wl_fixed_to_int(surface_y) / f + delta_y;
+  Fl::e_y_root = Fl::e_y + win->y();
+  return win;
+}
+
+
 static void pointer_enter(void *data,
         struct wl_pointer *wl_pointer,
         uint32_t serial,
@@ -245,22 +265,13 @@ static void pointer_enter(void *data,
         wl_fixed_t surface_x,
         wl_fixed_t surface_y)
 {
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
   if (!win) return;
   Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
   struct wl_cursor *cursor = driver->cursor(); // use custom cursor if present
-  if (win->parent() && !cursor) {
-    driver = Fl_Wayland_Window_Driver::driver(win->top_window());
-    cursor = driver->cursor();
-  }
   struct seat *seat = (struct seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
-  float f = Fl::screen_scale(win->screen_num());
-  Fl::e_x = wl_fixed_to_int(surface_x) / f;
-  Fl::e_x_root = Fl::e_x + win->x();
-  Fl::e_y = wl_fixed_to_int(surface_y) / f;
-  Fl::e_y_root = Fl::e_y + win->y();
   set_event_xy(win);
   Fl::handle(FL_ENTER, win);
   //fprintf(stderr, "pointer_enter window=%p\n", win);
@@ -279,6 +290,7 @@ static void pointer_leave(void *data,
   if (win) {
     Fl::belowmouse(0);
     set_event_xy(win);
+    Fl::handle(FL_LEAVE, win->top_window());
   }
 //fprintf(stderr, "pointer_leave surface=%p window=%p\n", surface, win);
 }
@@ -291,18 +303,13 @@ static void pointer_motion(void *data,
          wl_fixed_t surface_y)
 {
   struct seat *seat = (struct seat*)data;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
+  Fl_Window *win = event_coords_from_surface(seat->pointer_focus, surface_x, surface_y);
   if (!win) return;
-  float f = Fl::screen_scale(win->screen_num());
-  Fl::e_x = wl_fixed_to_int(surface_x) / f;
-  Fl::e_x_root = Fl::e_x + win->x();
   // If there's an active grab() and the pointer is in a window other than the grab(),
   // make e_x_root too large to be in any window
   if (Fl::grab() && !Fl::grab()->menu_window() && Fl::grab() != win) {
     Fl::e_x_root = 1000000;
   }
-  Fl::e_y = wl_fixed_to_int(surface_y) / f;
-  Fl::e_y_root = Fl::e_y + win->y();
 //fprintf(stderr, "FL_MOVE on win=%p to x:%dx%d root:%dx%d\n", win, Fl::e_x, Fl::e_y, Fl::e_x_root, Fl::e_y_root);
   wld_event_time = time;
   set_event_xy(win);
@@ -323,6 +330,7 @@ static void pointer_button(void *data,
   int event = 0;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
+  win = win->top_window();
   wld_event_time = time;
   if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED && seat->pointer_focus == NULL &&
       fl_xid(win)->kind == Fl_Wayland_Window_Driver::DECORATED) {
@@ -1056,10 +1064,13 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 
-static void fd_callback(int unused, struct wl_display *display) {
-  wl_display_dispatch(display);
-  static Fl_Wayland_System_Driver *sys_dr = (Fl_Wayland_System_Driver*)Fl::system_driver();
-  while (sys_dr->poll_or_select() > 0) wl_display_dispatch(display);
+static void fd_callback(int fd, struct wl_display *display) {
+  struct pollfd fds;
+  fds.fd = fd;
+  fds.events = POLLIN;
+  fds.revents = 0;
+  do wl_display_dispatch(display);
+  while (poll(&fds, 1, 0) > 0);
 }
 
 
