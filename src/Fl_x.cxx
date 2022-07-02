@@ -1025,13 +1025,25 @@ static bool getNextEvent(XEvent *event_return) {
 
 static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lower_bound) {
   // fprintf(stderr,"Incremental transfer starting due to INCR property\n");
+  // fprintf(stderr, "[getIncrData:%d] lower_bound [in ] =%10ld\n", __LINE__, lower_bound);
+  const size_t alloc_min =   4 * 1024 * 1024; // min. initial allocation
+  const size_t alloc_max = 200 * 1024 * 1024; // max. initial allocation
+  const size_t alloc_inc =   4 * 1024 * 1024; // (min.) increase if necessary
   size_t total = 0;
+  size_t data_size = lower_bound + 1;
+  if (data_size < alloc_min) {
+    data_size = alloc_min;
+  } else if (data_size > alloc_max) {
+    data_size = alloc_max;
+  }
+  // fprintf(stderr, "[getIncrData:%d] initial alloc.    =%10ld\n", __LINE__, data_size);
+
   XEvent event;
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
-  data = (uchar*)realloc(data, lower_bound);
+  data = (uchar*)realloc(data, data_size);
   if (!data) {
-    // fprintf(stderr, "[getIncrData:%d] realloc() FAILED, size = %ld\n", __LINE__, lower_bound);
-    Fl::fatal("Clipboard data transfer failed, size %ld too large.", lower_bound);
+    // fprintf(stderr, "[getIncrData:%d] realloc() FAILED, size = %ld\n", __LINE__, data_size);
+    Fl::fatal("Clipboard data transfer failed, size %ld is too large.", data_size);
   }
   for (;;) {
     if (!getNextEvent(&event)) {
@@ -1047,7 +1059,7 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
       unsigned long bytes_after;
       unsigned char* prop = 0;
       long offset = 0;
-      size_t num_bytes;
+      size_t num_bytes = 0;
       // size_t slice_size = 0;
       do {
         XGetWindowProperty(fl_display, selevent.requestor, selevent.property, offset, 70000, True,
@@ -1055,11 +1067,16 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
         num_bytes = nitems * (actual_format / 8);
         offset += num_bytes/4;
         // slice_size += num_bytes;
-        if (total + num_bytes > lower_bound) {
-          data = (uchar*)realloc(data, total + num_bytes);
+        if (total + num_bytes + bytes_after + 1 > data_size) {
+          data_size += alloc_inc;
+          if (total + num_bytes + bytes_after + 1 > data_size)
+            data_size = total + num_bytes + bytes_after + 1;
+          // printf(" -- realloc(%9ld), total=%10ld, num_bytes=%7ld, bytes_after=%7ld (%7ld), required=%10ld\n",
+          //        data_size, total, num_bytes, bytes_after, num_bytes + bytes_after, total + num_bytes + bytes_after + 1);
+          data = (uchar*)realloc(data, data_size);
           if (!data) {
-            // fprintf(stderr, "[getIncrData():%d] realloc() FAILED, size = %ld\n", __LINE__, total + num_bytes);
-            Fl::fatal("Clipboard data transfer failed, size %ld too large.", total + num_bytes);
+            // fprintf(stderr, "[getIncrData():%d] realloc() FAILED, size = %ld\n", __LINE__, data_size);
+            Fl::fatal("Clipboard data transfer failed, size %ld is too large.", data_size);
           }
         }
         memcpy(data + total, prop, num_bytes);
@@ -1089,6 +1106,7 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
     }
   }
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
+  // fprintf(stderr, "[getIncrData:%d] total data  [out] =%10ld\n", __LINE__, (long)total);
   return (long)total;
 }
 
@@ -1316,9 +1334,26 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
       if (actual == fl_INCR) {
-        // an X11 "integer" (32 bit), the "lower bound" of the clipboard size (see ICCCM)
-        size_t lower_bound = (*(unsigned long *)portion) & 0xFFFFFFFF;
-        // fprintf(stderr, "[fl_handle:%d] INCR: lower_bound = %ld\n", __LINE__, lower_bound);
+        // From ICCCM: "The contents of the INCR property will be an integer, which
+        // represents a lower bound on the number of bytes of data in the selection."
+        //
+        // However, some X clients don't set the integer ("lower bound") in the INCR
+        // property, hence 'count' below is zero and we must not access '*portion'.
+        // Debug:
+#if (0)
+        fprintf(stderr,
+                "[fl_handle(SelectionNotify/INCR):%d] actual=%ld (INCR), format=%d, count=%ld, remaining=%ld",
+                __LINE__, actual, format, count, remaining);
+        if (portion && count > 0) {
+          fprintf(stderr,
+                ", portion=%p (%ld)", portion, *(long*)portion);
+        }
+        fprintf(stderr, "\n");
+#endif
+        size_t lower_bound = 0;
+        if (portion && count > 0) {
+          lower_bound = *(unsigned long *)portion;
+        }
         bytesread = getIncrData(sn_buffer, xevent.xselection, lower_bound);
         XFree(portion);
         break;
