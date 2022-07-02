@@ -59,6 +59,12 @@
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
 
+Fl_Color fl_message_color_ = FL_GRAY;
+Fl_Color fl_message_labelcolor_ = FL_FOREGROUND_COLOR;
+
+Fl_Color fl_message_button_color_ = FL_GRAY;
+Fl_Color fl_message_button_labelcolor_ = FL_FOREGROUND_COLOR;
+
 // pointers you can use to change FLTK to another language:
 const char *fl_no = "No";         ///< string pointer used in common dialogs, you can change it to another language
 const char *fl_yes = "Yes";       ///< string pointer used in common dialogs, you can change it to another language
