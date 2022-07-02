@@ -372,6 +372,8 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   int W2, H2;
   wl_egl_window_get_attached_size(egl_window, &W2, &H2);
   if (W2 != W || H2 != H) wl_egl_window_resize(egl_window, W, H, 0, 0);
+  glClearColor(0., 0., 0., 0.);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
