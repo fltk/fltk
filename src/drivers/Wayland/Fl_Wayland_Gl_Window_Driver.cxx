@@ -126,12 +126,14 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
     EGL_DEPTH_SIZE, 0, // set at 11
     EGL_SAMPLE_BUFFERS, 0,  // set at 13
     EGL_STENCIL_SIZE, 0, // set at 15
+    EGL_ALPHA_SIZE, 0, // set at 17
     EGL_NONE
   };
 
   if (m & FL_DEPTH) config_attribs[11] = 1;
   if (m & FL_MULTISAMPLE) config_attribs[13] = 1;
   if (m & FL_STENCIL) config_attribs[15] = 1;
+  if (m & FL_ALPHA) config_attribs[17] = (m & FL_RGB8) ? 8 : 1;
 
   static EGLConfig *configs = (void**)calloc(configs_count, sizeof(EGLConfig));
   eglChooseConfig(egl_display, config_attribs, configs, configs_count, &n);
