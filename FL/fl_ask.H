@@ -78,6 +78,20 @@ inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
   fl_message_size_ = s;
 }
 
+extern FL_EXPORT Fl_Color fl_message_color_;
+extern FL_EXPORT Fl_Color fl_message_labelcolor_;
+inline void fl_message_colors(Fl_Color b, Fl_Color l) {
+  fl_message_color_ = b;
+  fl_message_labelcolor_ = l;
+}
+
+extern FL_EXPORT Fl_Color fl_message_button_color_;
+extern FL_EXPORT Fl_Color fl_message_button_labelcolor_;
+inline void fl_message_button_colors(Fl_Color b, Fl_Color l) {
+  fl_message_button_color_ = b;
+  fl_message_button_labelcolor_ = l;
+}
+
 FL_EXPORT void fl_message_hotspot(int enable);
 FL_EXPORT int fl_message_hotspot(void);
 

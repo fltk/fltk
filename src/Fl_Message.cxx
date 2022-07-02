@@ -327,6 +327,14 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
   else
     message_->labelsize(fl_message_size_);
 
+  message_->color(fl_message_color_);
+  message_->labelcolor(fl_message_labelcolor_);
+
+  for (int b = 2; b >= 0; b--) {
+    button_[b]->color(fl_message_button_color_);
+    button_[b]->labelcolor(fl_message_button_labelcolor_);
+  }
+
   if (b0) {
     button_[0]->show();
     button_[0]->label(b0);
