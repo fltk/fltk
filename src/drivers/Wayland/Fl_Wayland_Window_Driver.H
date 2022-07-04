@@ -46,6 +46,7 @@ typedef struct _cairo_pattern cairo_pattern_t;
 class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
+  friend class Fl_Wayland_Gl_Window_Driver;
 private:
   struct shape_data_type {
     int lw_; ///<  width of shape image
@@ -56,6 +57,7 @@ private:
   static bool in_flush; // useful for progressive window drawing
   struct wl_cursor *cursor_;
   void delete_cursor_();
+  struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
 public:
   struct wl_cursor *cursor() { return cursor_; };
   bool in_handle_configure; // distinguish OS and user window resize
@@ -156,6 +158,7 @@ public:
   virtual void do_swap(Fl_Window*) = 0;
   virtual void invalidate(Fl_Window*) = 0;
   virtual void terminate() = 0;
+  virtual void destroy(struct gl_start_support *) = 0;
 };
 
 #endif // FL_WAYLAND_WINDOW_DRIVER_H

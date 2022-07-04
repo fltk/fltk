@@ -46,6 +46,15 @@ public:
   }
 };
 
+struct gl_start_support { // to support use of gl_start / gl_finish
+  struct wl_surface *surface;
+  struct wl_subsurface *subsurface;
+  struct wl_egl_window *egl_window;
+  EGLSurface egl_surface;
+};
+
+static EGLConfig wld_egl_conf = NULL;
+
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
 EGLint Fl_Wayland_Gl_Window_Driver::configs_count = 0;
 struct wl_event_queue *Fl_Wayland_Gl_Window_Driver::gl_event_queue = NULL;
@@ -172,23 +181,36 @@ GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window, cons
 //fprintf(stderr, "eglCreateContext=%p shared_ctx=%p\n", ctx, shared_ctx);
   if (ctx)
     add_context(ctx);
-  if (!egl_surface) { // useful for gl_start()
-    struct wld_window *xid = fl_xid(window);
-    float s = Fl::screen_scale(window->screen_num());
-    egl_window = wl_egl_window_create(xid->wl_surface, window->w() * s, window->h() * s);
-    egl_surface = eglCreateWindowSurface(egl_display, ((Fl_Wayland_Gl_Choice*)g)->egl_conf, egl_window, NULL);
-  }
   return ctx;
 }
 
 
 void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   struct wld_window *win = fl_xid(w);
-  if (!win || !egl_surface) return;
+  if (!win) return;
+  Fl_Wayland_Window_Driver *dr = (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);
+  EGLSurface target_egl_surface = NULL;
+  if (egl_surface) target_egl_surface = egl_surface;
+  else if (dr->gl_start_support_) target_egl_surface = dr->gl_start_support_->egl_surface;
+  if (!target_egl_surface) { // useful for gl_start()
+    dr->gl_start_support_ = new struct gl_start_support;
+    float s = Fl::screen_scale(w->screen_num());
+    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    // the GL scene will be a transparent subsurface above the cairo-drawn surface
+    dr->gl_start_support_->surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+    dr->gl_start_support_->subsurface = wl_subcompositor_get_subsurface(
+          scr_driver->wl_subcompositor, dr->gl_start_support_->surface, win->wl_surface);
+    wl_subsurface_set_position(dr->gl_start_support_->subsurface, w->x() * s, w->y() * s);
+    wl_subsurface_place_above(dr->gl_start_support_->subsurface, win->wl_surface);
+    dr->gl_start_support_->egl_window = wl_egl_window_create(
+          dr->gl_start_support_->surface, w->w() * s, w->h() * s);
+    target_egl_surface = dr->gl_start_support_->egl_surface = eglCreateWindowSurface(
+        egl_display, wld_egl_conf, dr->gl_start_support_->egl_window, NULL);
+  }
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    if (eglMakeCurrent(egl_display, egl_surface, egl_surface, (EGLContext)context)) {
+    if (eglMakeCurrent(egl_display, target_egl_surface, target_egl_surface, (EGLContext)context)) {
 //fprintf(stderr, "EGLContext %p made current\n", context);
     } else {
       Fl::error("eglMakeCurrent() failed\n");
@@ -333,6 +355,13 @@ public:
       eglTerminate(Fl_Wayland_Gl_Window_Driver::egl_display);
     }
   }
+  virtual void destroy(struct gl_start_support *gl_start_support_) {
+    eglDestroySurface(Fl_Wayland_Gl_Window_Driver::egl_display, gl_start_support_->egl_surface);
+    wl_egl_window_destroy(gl_start_support_->egl_window);
+    wl_subsurface_destroy(gl_start_support_->subsurface);
+    wl_surface_destroy(gl_start_support_->surface);
+    delete gl_start_support_;
+  }
 };
 
 static Fl_Wayland_Gl_Plugin Gl_Overlay_Plugin;
@@ -358,11 +387,14 @@ char Fl_Wayland_Gl_Window_Driver::swap_type() {
 }
 
 
-void Fl_Wayland_Gl_Window_Driver::waitGL() {
-  struct wld_window *window = fl_xid(Fl_Window::current());
-  window->buffer->draw_buffer_needs_commit = false;
+void Fl_Wayland_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
+  Fl_Gl_Window_Driver::gl_visual(c);
+  wld_egl_conf = ((Fl_Wayland_Gl_Choice*)c)->egl_conf;
 }
 
+static void delayed_redraw(Fl_Window *win) {
+  win->redraw();
+}
 
 void Fl_Wayland_Gl_Window_Driver::gl_start() {
   struct wld_window *win = fl_xid(Fl_Window::current());
@@ -370,8 +402,12 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   int W = Fl_Window::current()->w() * f;
   int H = Fl_Window::current()->h() * f;
   int W2, H2;
-  wl_egl_window_get_attached_size(egl_window, &W2, &H2);
-  if (W2 != W || H2 != H) wl_egl_window_resize(egl_window, W, H, 0, 0);
+  Fl_Wayland_Window_Driver *dr = (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(Fl_Window::current());
+  wl_egl_window_get_attached_size(dr->gl_start_support_->egl_window, &W2, &H2);
+  if (W2 != W || H2 != H) {
+    wl_egl_window_resize(dr->gl_start_support_->egl_window, W, H, 0, 0);
+    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, Fl_Window::current());
+  }
   glClearColor(0., 0., 0., 0.);
   glClear(GL_COLOR_BUFFER_BIT);
 }

@@ -67,6 +67,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   cursor_ = NULL;
   in_handle_configure = false;
   screen_num_ = -1;
+  gl_start_support_ = NULL;
 }
 
 void Fl_Wayland_Window_Driver::delete_cursor_() {
@@ -98,6 +99,16 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
     delete shape_data_;
   }
   delete_cursor_();
+  if (gl_start_support_) { // occurs only if gl_start/gl_finish was used
+    static Fl_Wayland_Plugin *plugin = NULL;
+    if (!plugin) {
+      Fl_Plugin_Manager pm("wayland.fltk.org");
+      plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
+    }
+    if (plugin) {
+      plugin->destroy(gl_start_support_);
+    }
+  }
 }
 
 

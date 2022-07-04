@@ -50,8 +50,8 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void delete_gl_context(GLContext);
   virtual void make_overlay_current();
   virtual void redraw_overlay();
-  virtual void waitGL();
   virtual void gl_start();
+  virtual void gl_visual(Fl_Gl_Choice *c);
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
   char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
   static EGLDisplay egl_display;
