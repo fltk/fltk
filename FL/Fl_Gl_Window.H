@@ -169,7 +169,7 @@ public:
    changes the current context.
 
    The FL_OPENGL3 flag is required to access OpenGL version 3 or more
-   under the X11 and MacOS platforms; it's optional under Windows.
+   under the X11 and MacOS platforms; it's optional under Windows and Wayland.
    See more details in \ref opengl3.
 
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
