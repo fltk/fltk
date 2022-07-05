@@ -485,12 +485,9 @@ const char *Fl_Message::input_innards(const char *fmt, va_list ap, const char *d
       input_buffer_[input_->size()] = '\0';
       return (input_buffer_);
 
-    } else { // new version: allocate string buffer
+    } else { // new version: return value() which will be copied
 
-      char *buf = (char *)malloc(size);
-      memcpy(buf, input_->value(), input_->size());
-      buf[input_->size()] = '\0';
-      return (buf);
+      return input_->value();
     }
 
   } else
