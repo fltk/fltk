@@ -1,5 +1,5 @@
 //
-// Definition of Posix system driver (used by both the X11 and macOS platforms).
+// Definition of Posix system driver (used by the X11, Wayland and macOS platforms).
 //
 // Copyright 1998-2021 by Bill Spitzak and others.
 //

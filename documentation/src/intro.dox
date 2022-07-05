@@ -4,7 +4,7 @@
 
 The Fast Light Tool Kit ("FLTK", pronounced
 "fulltick") is a cross-platform C++ GUI toolkit for
-UNIX&reg;/Linux&reg; (X11), Microsoft&reg; Windows&reg;, and
+UNIX&reg;/Linux&reg; (X11 or Wayland), Microsoft&reg; Windows&reg;, and
 Apple&reg; macOS&reg;. FLTK provides modern GUI functionality without the
 bloat and supports 3D graphics via OpenGL&reg; and its built-in
 GLUT emulation. It was originally developed by Mr. Bill Spitzak
@@ -94,7 +94,7 @@ Here are some of the core features unique to FLTK:
 
 \li The FLUID program (which includes every widget) is 538k.
 
-\li Written directly atop core libraries (Xlib, Windows or Cocoa) for
+\li Written directly atop core libraries (Xlib, Wayland, Windows or Cocoa) for
     maximum speed, and carefully optimized for code size and performance.
 
 \li Precise low-level compatibility between the X11, Windows and MacOS
@@ -217,6 +217,9 @@ Enable the pango library for drawing any text in any script under X11.
 \par --enable-x11
 When targeting cygwin, build with X11 GUI instead of windows GDI.
 Also applicable to macOS platforms supplemented with XQuartz.
+
+\par --enable-wayland
+Enable use of the Wayland system for window handling.
 
 \par --enable-cp936
 Under X11, enable use of the GB2312 locale

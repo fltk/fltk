@@ -889,8 +889,8 @@ FL_EXPORT void fl_draw(const char *str, int x, int y);
   Draw a nul-terminated UTF-8 string starting at the given \p x, \p y
   location and rotating \p angle degrees counter-clockwise.
   This version of fl_draw provides direct access to the text drawing
-  function of the underlying OS and is supported by Xft, Win32 and MacOS
-  fltk subsets.
+  function of the underlying OS and is supported by all fltk platforms except
+  X11 without Xft.
 */
 FL_EXPORT void fl_draw(int angle, const char *str, int x, int y);
 /**

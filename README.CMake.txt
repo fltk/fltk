@@ -163,6 +163,10 @@ OPTION_USE_PANGO - default OFF
    unicode-defined scripts with limited support of right-to-left scripts.
    This option makes sense only under X11, and also requires Xft.
 
+OPTION_USE_WAYLAND - default OFF
+   Enables use of the Wayland system for all window operations.
+   This option requires a Wayland-equipped system, i.e., Linux or FreeBSD.
+
 OPTION_ABI_VERSION - default EMPTY
    Use a numeric value corresponding to the FLTK ABI version you want to
    build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).

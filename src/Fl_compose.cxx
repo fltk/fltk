@@ -49,7 +49,7 @@ int Fl::compose_state = 0;
 
  <p>On some platforms, text input can involve marked text, that is,
  temporary text replaced by other text during the input process. This occurs,
- e.g., under macOS when using dead keys or when entering CJK characters.
+ e.g., under Wayland or macOS when using dead keys or when entering CJK characters.
  Text editing widgets should preferentially signal
  marked text, usually underlining it. Widgets can use
  <tt>int Fl::compose_state</tt> <i>after</i> having called Fl::compose(int&)

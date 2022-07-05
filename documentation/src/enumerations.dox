@@ -153,9 +153,9 @@ value:
   - FL_ALT - One of the alt keys is down.
   - FL_NUM_LOCK - The num lock is on.
   - FL_META - One of the meta/Windows keys is down.
-  - FL_COMMAND - An alias for FL_CTRL on Windows and X11,
+  - FL_COMMAND - An alias for FL_CTRL on Windows, X11 and Wayland,
     or FL_META on MacOS X.
-  - FL_CONTROL - An alias for FL_META on Windows and X11,
+  - FL_CONTROL - An alias for FL_META on Windows, X11 and Wayland,
     or FL_CTRL on MacOS X.
   - FL_SCROLL_LOCK - The scroll lock is on.
   - FL_BUTTON1 - Mouse button 1 is pushed.
