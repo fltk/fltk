@@ -939,12 +939,12 @@ void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
 
 int Fl_Cairo_Graphics_Driver::height() {
   if (!font_descriptor()) font(0, 12);
-  return ((Fl_Cairo_Font_Descriptor*)font_descriptor())->line_height;
+  return ceil(((Fl_Cairo_Font_Descriptor*)font_descriptor())->line_height /(PANGO_SCALE*scale()));
 }
 
 
 int Fl_Cairo_Graphics_Driver::descent() {
-  return font_descriptor()->descent;
+  return font_descriptor()->descent /(PANGO_SCALE*scale());
 }
 
 
@@ -1083,14 +1083,14 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   static PangoLanguage *language = pango_language_get_default(); // 1.16
   PangoFontset *fontset = pango_font_map_load_fontset(def_font_map, pango_context, fontref, language);
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
-  ascent = pango_font_metrics_get_ascent(metrics)/PANGO_SCALE;
-  descent = pango_font_metrics_get_descent(metrics)/PANGO_SCALE;
+  ascent = pango_font_metrics_get_ascent(metrics);
+  descent = pango_font_metrics_get_descent(metrics);
 #if PANGO_VERSION_CHECK(1,44,0)
-  line_height = ceil(pango_font_metrics_get_height(metrics)/double(PANGO_SCALE)); // 1.44
+  line_height = pango_font_metrics_get_height(metrics); // 1.44
 #else
-  line_height = int( (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 / PANGO_SCALE + 0.5);
+  line_height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 + 0.5;
 #endif
-  q_width = pango_font_metrics_get_approximate_char_width(metrics)/PANGO_SCALE;
+  q_width = 0; // useless;
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
 //fprintf(stderr, "[%s](%d) ascent=%d descent=%d q_width=%d\n", name, size, ascent, descent, q_width);
@@ -1119,6 +1119,12 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 
+/* Implementation note :
+ * The pango_layout_ object is created relatively to the unscaled cairo context (scale() == 1).
+ * Therefore, the cairo context is unscaled before calling pango_cairo_create_layout(),
+ * pango_cairo_show_layout(), and pango_cairo_update_layout().
+ * This way, the pixel width of a drawn string equals the sum of the widths of its characters.
+ */
 void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
   if (!font_descriptor()) fl_open_display();
   if (!pango_layout_) {
@@ -1128,13 +1134,19 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
       cairo_ = cairo_create(surf);
       cairo_surface_destroy(surf);
     }
+    cairo_save(cairo_);
+    double f = scale(); cairo_scale(cairo_, 1/f, 1/f);
     pango_layout_ = pango_cairo_create_layout(cairo_); // 1.10
+    cairo_restore(cairo_);
     pango_layout_cairo_ = cairo_;
     if (needs_dummy) {
       dummy_cairo_ = cairo_;
     }
   } else if (pango_layout_cairo_ != cairo_) {
+    cairo_save(cairo_);
+    double f = scale(); cairo_scale(cairo_, 1/f, 1/f);
     pango_cairo_update_layout(cairo_, pango_layout_);
+    cairo_restore(cairo_);
     pango_layout_cairo_ = cairo_;
   }
   if (s == 0) return;
@@ -1144,7 +1156,7 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
     return;
   }
   Fl_Graphics_Driver::font(fnum, s);
-  font_descriptor( find(fnum, s) );
+  font_descriptor( find(fnum, int(s * scale() + 0.5)) );
   pango_layout_set_font_description(pango_layout_, ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref);
 }
 
@@ -1154,6 +1166,7 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   cairo_save(cairo_);
   // The -0.5 below makes underscores visible in Fl_Text_Display at scale = 1
   cairo_translate(cairo_, x, y - height() + descent() -0.5);
+  float s = scale(); cairo_scale(cairo_, 1/s, 1/s);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
   cairo_restore(cairo_);
@@ -1185,13 +1198,18 @@ double Fl_Cairo_Graphics_Driver::width(const char* c, int n) {
   while (i < n) {
     ucs = fl_utf8decode(c + i, end, &l);
     i += l;
-    w += width(ucs);
+    w += width_unscaled_(ucs);
   }
-  return (double)w;
+  return w/(PANGO_SCALE*scale());
 }
 
 
 double Fl_Cairo_Graphics_Driver::width(unsigned int c) {
+  return width_unscaled_(c)/(PANGO_SCALE*scale());
+}
+
+
+int Fl_Cairo_Graphics_Driver::width_unscaled_(unsigned int c) {
   unsigned int r = 0;
   Fl_Cairo_Font_Descriptor *desc = NULL;
   if (c <= 0xFFFF) { // when inside basic multilingual plane
@@ -1206,28 +1224,30 @@ double Fl_Cairo_Graphics_Driver::width(unsigned int c) {
       for (int i = 0; i < 0x0400; i++) desc->width[r][i] = -1;
     } else {
       if ( desc->width[r][c & 0x03FF] >= 0 ) { // already cached
-        return (double) desc->width[r][c & 0x03FF];
+        return desc->width[r][c & 0x03FF];
       }
     }
   }
   char buf[4];
   int n = fl_utf8encode(c, buf);
   pango_layout_set_text(pango_layout_, buf, n);
-  int  W = 0, H;
-  pango_layout_get_pixel_size(pango_layout_, &W, &H);
-  if (c <= 0xFFFF) desc->width[r][c & 0x03FF] = W;
-  return (double)W;
+  PangoRectangle p_rect;
+  pango_layout_get_extents(pango_layout_, NULL, &p_rect);
+  if (c <= 0xFFFF) desc->width[r][c & 0x03FF] = p_rect.width;
+  return p_rect.width;
 }
 
 
 void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int& dy, int& w, int& h) {
   pango_layout_set_text(pango_layout_, txt, n);
   PangoRectangle ink_rect;
-  pango_layout_get_pixel_extents(pango_layout_, &ink_rect, NULL);
-  dx = ink_rect.x;
-  dy = ink_rect.y - height() + descent();
-  w = ink_rect.width;
-  h = ink_rect.height;
+  pango_layout_get_extents(pango_layout_, &ink_rect, NULL);
+  float f = PANGO_SCALE * scale();
+  Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
+  dx = ink_rect.x / f;
+  dy = (ink_rect.y - fd->line_height + fd->descent) / f;
+  w = ink_rect.width / f;
+  h = ink_rect.height / f;
 }
 
 //

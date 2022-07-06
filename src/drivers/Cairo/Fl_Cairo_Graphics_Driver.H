@@ -45,6 +45,7 @@ private:
   cairo_t *pango_layout_cairo_;
   PangoLayout *pango_layout_;
   int linestyle_;
+  int width_unscaled_(unsigned int c);
 protected:
   cairo_t *cairo_;
 public:
