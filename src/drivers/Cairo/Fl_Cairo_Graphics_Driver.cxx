@@ -1090,10 +1090,9 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
 #else
   line_height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 + 0.5;
 #endif
-  q_width = 0; // useless;
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
-//fprintf(stderr, "[%s](%d) ascent=%d descent=%d q_width=%d\n", name, size, ascent, descent, q_width);
+//fprintf(stderr, "[%s](%d) ascent=%d descent=%d\n", name, size, ascent, descent);
 }
 
 

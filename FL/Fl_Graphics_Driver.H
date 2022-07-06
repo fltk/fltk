@@ -390,7 +390,7 @@ public:
   Fl_Fontsize size; /**< font size */
   Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
   FL_EXPORT ~Fl_Font_Descriptor() {}
-  short ascent, descent, q_width;
+  short ascent, descent;
   unsigned int listbase;// base of display list, 0 = none
 };
 

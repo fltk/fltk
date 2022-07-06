@@ -39,6 +39,7 @@ public:
   ATSUTextLayout layout;
   ATSUStyle style;
 # endif
+  short q_width;
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
