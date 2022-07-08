@@ -70,6 +70,19 @@ const char *Fl_Message::message_icon_label_;
 
 Fl_Box *Fl_Message::message_icon_;
 
+Fl_Color Fl_Message::message_color_default_ = FL_GRAY;
+Fl_Color Fl_Message::message_color_ = FL_GRAY;
+Fl_Color Fl_Message::message_labelcolor_default_ = FL_FOREGROUND_COLOR;
+Fl_Color Fl_Message::message_labelcolor_ = FL_FOREGROUND_COLOR;
+Fl_Color Fl_Message::message_button_color_default_ = FL_GRAY;
+Fl_Color Fl_Message::message_button_color_ = FL_GRAY;
+Fl_Color Fl_Message::message_button_labelcolor_default_ = FL_FOREGROUND_COLOR;
+Fl_Color Fl_Message::message_button_labelcolor_ = FL_FOREGROUND_COLOR;
+Fl_Font Fl_Message::message_button_font_default_ = FL_HELVETICA;
+Fl_Font Fl_Message::message_button_font_ = FL_HELVETICA;
+Fl_Fontsize Fl_Message::message_button_fontsize_default_ = -1;
+Fl_Fontsize Fl_Message::message_button_fontsize_ = -1;
+
 char *Fl_Message::input_buffer_;
 int Fl_Message::input_size_;
 
@@ -326,6 +339,25 @@ int Fl_Message::innards(const char *fmt, va_list ap, const char *b0, const char 
     message_->labelsize(FL_NORMAL_SIZE);
   else
     message_->labelsize(fl_message_size_);
+
+  window_->color(message_color_);
+  message_color(message_color_default_); // reset
+  message_->labelcolor(message_labelcolor_);
+  message_labelcolor(message_labelcolor_default_); // reset
+
+  for (int b = 2; b >= 0; b--) {
+    button_[b]->color(message_button_color_);
+    message_button_color(message_button_color_default_); // reset
+    button_[b]->labelcolor(message_button_labelcolor_);
+    message_button_labelcolor(message_button_labelcolor_default_); // reset
+    button_[b]->labelfont(message_button_font_);
+    message_button_font(message_button_font_default_); // reset
+    if (message_button_fontsize_ == -1)
+      button_[b]->labelsize(FL_NORMAL_SIZE);
+    else
+      button_[b]->labelsize(message_button_fontsize_);
+    message_button_fontsize(message_button_fontsize_default_); // reset
+  }
 
   if (b0) {
     button_[0]->show();

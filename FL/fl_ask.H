@@ -97,6 +97,19 @@ FL_EXPORT void fl_message_title_default(const char *title);
 
 FL_EXPORT void fl_message_icon_label(const char *str);
 
+FL_EXPORT void fl_message_color(Fl_Color c);
+FL_EXPORT void fl_message_color_default(Fl_Color c);
+FL_EXPORT void fl_message_labelcolor(Fl_Color c);
+FL_EXPORT void fl_message_labelcolor_default(Fl_Color c);
+FL_EXPORT void fl_message_button_color(Fl_Color c);
+FL_EXPORT void fl_message_button_color_default(Fl_Color c);
+FL_EXPORT void fl_message_button_labelcolor(Fl_Color c);
+FL_EXPORT void fl_message_button_labelcolor_default(Fl_Color c);
+FL_EXPORT void fl_message_button_font(Fl_Font f);
+FL_EXPORT void fl_message_button_font_default(Fl_Font f);
+FL_EXPORT void fl_message_button_fontsize(Fl_Fontsize s);
+FL_EXPORT void fl_message_button_fontsize_default(Fl_Fontsize s);
+
 // pointers you can use to change FLTK to another language:
 extern FL_EXPORT const char *fl_no;
 extern FL_EXPORT const char *fl_yes;

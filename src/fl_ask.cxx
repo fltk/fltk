@@ -602,4 +602,208 @@ void fl_message_icon_label(const char *str) {
   Fl_Message::icon_label(str);
 }
 
+/** Sets the background color of the dialog window used in many common dialogs.
+
+  This background color \p c will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The background color \p c applies only to the \b next call of one of the common dialogs and
+  will be reset to the default background color for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] c    background color
+*/
+void fl_message_color(Fl_Color c) {
+  Fl_Message::message_color(c);
+}
+
+/** Sets the default background color of the dialog window used in many common dialogs.
+
+  This background color \p c will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific background color has been set
+  with fl_message_color(Fl_Color c).
+
+  The default background color is \c FL_GRAY. You can override the default background color for a
+  single dialog with fl_message_color(Fl_Color c).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] c    default background color
+*/
+void fl_message_color_default(Fl_Color c) {
+  Fl_Message::message_color_default(c);
+}
+
+/** Sets the label color of the dialog window used in many common dialogs.
+
+  This label color \p c will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The label color \p c applies only to the \b next call of one of the common dialogs and
+  will be reset to the default label color for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] c    label color
+*/
+void fl_message_labelcolor(Fl_Color c) {
+  Fl_Message::message_labelcolor(c);
+}
+
+/** Sets the default label color of the dialog window used in many common dialogs.
+
+  This label color \p c will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific label color has been set
+  with fl_message_labelcolor(Fl_Color c).
+
+  The default label color is \c FL_FOREGROUND_COLOR. You can override the default label color for a
+  single dialog with fl_message_labelcolor(Fl_Color c).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] c    default label color
+*/
+void fl_message_labelcolor_default(Fl_Color c) {
+  Fl_Message::message_labelcolor_default(c);
+}
+
+/** Sets the background color of buttons in the dialog window used in many common dialogs.
+
+  This background color \p c will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The background color \p c applies only to the \b next call of one of the common dialogs and
+  will be reset to the default background color for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] c    background color of buttons
+*/
+void fl_message_button_color(Fl_Color c) {
+  Fl_Message::message_button_color(c);
+}
+
+/** Sets the default background color of buttons in the dialog window used in many common dialogs.
+
+  This background color \p c will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific background color has been set
+  with fl_message_button_color(Fl_Color c).
+
+  The default background color is \c FL_GRAY. You can override the default background color for a
+  single dialog with fl_message_button_color(Fl_Color c).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] c    default background color of buttons
+*/
+void fl_message_button_color_default(Fl_Color c) {
+  Fl_Message::message_button_color_default(c);
+}
+
+/** Sets the label color of buttons in the dialog window used in many common dialogs.
+
+  This label color \p c will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The label color \p c applies only to the \b next call of one of the common dialogs and
+  will be reset to the default label color for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] c    label color of buttons
+*/
+void fl_message_button_labelcolor(Fl_Color c) {
+  Fl_Message::message_button_labelcolor(c);
+}
+
+/** Sets the default label color of buttons in the dialog window used in many common dialogs.
+
+  This label color \p c will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific label color has been set
+  with fl_message_button_labelcolor(Fl_Color c).
+
+  The default label color is \c FL_FOREGROUND_COLOR. You can override the default label color for a
+  single dialog with fl_message_button_labelcolor(Fl_Color c).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] c    default label color of buttons
+*/
+void fl_message_button_labelcolor_default(Fl_Color c) {
+  Fl_Message::message_button_labelcolor_default(c);
+}
+
+/** Sets the label font of buttons in the dialog window used in many common dialogs.
+
+  This label font \p f will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The label font \p f applies only to the \b next call of one of the common dialogs and
+  will be reset to the default label font for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] f    label font of buttons
+*/
+void fl_message_button_font(Fl_Font f) {
+  Fl_Message::message_button_font(f);
+}
+
+/** Sets the default label font of buttons in the dialog window used in many common dialogs.
+
+  This label font \p f will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific label font has been set
+  with fl_message_button_font(Fl_Font f).
+
+  The default label font is \c FL_HELVETICA. You can override the default label font for a
+  single dialog with fl_message_button_font(Fl_Font f).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] f    default label font of buttons
+*/
+void fl_message_button_font_default(Fl_Font f) {
+  Fl_Message::message_button_font_default(f);
+}
+
+/** Sets the label font size of buttons in the dialog window used in many common dialogs.
+
+  This label font size \p s will be used in the next call of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password().
+
+  The label font size \p s applies only to the \b next call of one of the common dialogs and
+  will be reset to the default label font size for all dialogs after that call.
+
+  \code #include <FL/fl_ask.H> \endcode
+  \param[in] s    label font size of buttons
+*/
+void fl_message_button_fontsize(Fl_Fontsize s) {
+  Fl_Message::message_button_fontsize(s);
+}
+
+/** Sets the default label font size of buttons in the dialog window used in many common dialogs.
+
+  This label font size \p s will be used in all subsequent calls of one of the
+  common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+  fl_input(), fl_password(), unless a specific label font size has been set
+  with fl_message_button_fontsize(Fl_Fontsize s).
+
+  The default label font size is \c -1. You can override the default label font size for a
+  single dialog with fl_message_button_fontsize(Fl_Fontsize s).
+
+  \code #include <FL/fl_ask.H> \endcode
+
+  \param[in] s    default label font size of buttons
+*/
+void fl_message_button_fontsize_default(Fl_Fontsize s) {
+  Fl_Message::message_button_fontsize_default(s);
+}
+
 /** @} */
