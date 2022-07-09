@@ -20,12 +20,12 @@ Current versions of bundled libraries (as of Sep 13, 2021):
   Library       Version            Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9d            2020-01-12           1.4.0
-  nanosvg       461ad7de70 [1]     2021-09-13           1.4.0
+  nanosvg       06a9113e29 [1]     2022-07-09           1.4.0
   png           libpng-1.6.37      2019-04-14           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
   --------------------------------------------------------------------------
 
-Previous versions of bundled libraries:
+Previous versions of bundled libraries (FLTK 1.3.x):
 
   Library       Version            Release date         FLTK Version
   ------------------------------------------------------------------
@@ -271,3 +271,68 @@ nanosvg:
 
     nanosvg.h:     Merge or download from FLTK's fork (see above).
     nanosvgrast.h: Merge or download from FLTK's fork (see above).
+
+  Maintaining branch 'fltk' in FLTK's fork of nanosvg (fltk/nanosvg):
+
+    Only maintainers with write access on fltk/nanosvg can do this.
+    Others can fork our fltk/nanosvg fork in their own GitHub account
+    and either open a PR on fltk/nanosvg or tell us about their
+    changes in fltk.development.
+
+    Use something similar to the following commands to update FLTK's
+    fork of nanosvg to the latest version. Commands are only examples,
+    you may need to change more or less, depending on the outstanding
+    updates.
+
+    Step 1: clone the fltk/nanosvg fork, set the remote 'upstream',
+    and update the 'master' branch:
+
+    $ cd /to/your/dev/dir
+    $ git clone https://github.com/fltk/nanosvg.git nanosvg-fltk
+    $ cd nanosvg-fltk
+    $ git remote add upstream https://github.com/memononen/nanosvg
+    $ git checkout master
+    $ git pull upstream master
+
+    Note: the 'master' branch must never be changed, i.e. it must
+    always be the same as 'upstream/master'. Never commit your own
+    (FLTK specific) changes to branch 'master'.
+
+    Step 2: rebase branch 'fltk' on the new master (upstream/master),
+    fix potential conflicts, and tag the new branch.
+
+    It is important to keep the individual FLTK specific patches intact
+    (one commit per patch) because this will preserve the history and
+    the committer and make it easier to skip single patches when they
+    are accepted upstream.
+
+    $ git checkout fltk
+    $ git rebase upstream/master
+
+    At this point you may need to fix conflicts! Do whatever is
+    necessary to update the branch 'fltk'.
+
+    Now `git tag' the 'fltk' branch for later reference.
+
+    Hint: use `git show <any-older-tag-name>' to see its contents.
+    I like to write a summary of commits in the tag comment.
+
+    $ git tag -a fltk_yyyy-mm-dd fltk
+
+    Replace 'yyyy-mm-dd' with the current date and add a comment
+    when asked for it (your editor will open an empty file).
+
+    Step 3: at this point it is recommended to copy the changed
+    header files to your working copy of the FLTK library and test
+    the changes. If anything is wrong, go back, fix the bugs
+    and change the git tag (delete and create a new one).
+
+    Step 4: push the new branch 'fltk' and the tag to the fltk/nanosvg
+    repository:
+
+    $ git push -f origin fltk
+    $ git push origin fltk_yyyy-mm-dd
+
+    Step 5: copy the changed files to your working copy of the FLTK
+    repository (if not done already), update this file accordingly,
+    and commit/push the update to the fltk/fltk repository.
