@@ -56,6 +56,9 @@ extern const char *fl_bg;
 extern const char *fl_bg2;
 // end of extern additions workaround
 
+#if !USE_XFT
+extern char *fl_get_font_xfld(int fnum, int size);
+#endif
 
 XIM Fl_X11_Screen_Driver::xim_im = 0;
 
