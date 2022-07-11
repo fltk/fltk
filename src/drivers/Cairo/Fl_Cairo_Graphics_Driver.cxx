@@ -1076,11 +1076,15 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   // The factor of 0.75 below gives cairo-produced text the same size as
   // Xft-produced text for the same FLTK font size.
   sprintf(string + strlen(string), " %d", int(size * 0.75 + 0.5) );
+  //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
   width = NULL;
+  //A PangoFontMap represents the set of fonts available for a particular rendering system.
   static PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
+  //A PangoContext stores global information used to control the itemization process.
   static PangoContext *pango_context = pango_font_map_create_context(def_font_map); // 1.22
   static PangoLanguage *language = pango_language_get_default(); // 1.16
+  //A PangoFontset represents a set of PangoFont to use when rendering text.
   PangoFontset *fontset = pango_font_map_load_fontset(def_font_map, pango_context, fontref, language);
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
@@ -1092,7 +1096,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
 #endif
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
-//fprintf(stderr, "[%s](%d) ascent=%d descent=%d\n", name, size, ascent, descent);
+//fprintf(stderr, "[%s](%d) ascent=%d descent=%d line_height=%d\n", name, size, ascent, descent, line_height);
 }
 
 
@@ -1122,7 +1126,8 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
  * The pango_layout_ object is created relatively to the unscaled cairo context (scale() == 1).
  * Therefore, the cairo context is unscaled before calling pango_cairo_create_layout(),
  * pango_cairo_show_layout(), and pango_cairo_update_layout().
- * This way, the pixel width of a drawn string equals the sum of the widths of its characters.
+ * This way, the pixel width of a drawn string equals the sum of the widths of its
+ * characters, except when kerning occurs.
  */
 void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
   if (!font_descriptor()) fl_open_display();
