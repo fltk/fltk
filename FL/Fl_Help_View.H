@@ -190,6 +190,10 @@ struct Fl_Help_Target {
      - Yacute yacute
      - yen Yuml yuml
 
+  \note You can't effectively set the box() to FL_NO_BOX, this would result
+    in FL_DOWN_BOX being used as the boxtype of the widget. This is unexpected
+    but can't be changed for backwards compatibility. If you don't want a frame
+    around the widget you can use FL_FLAT_BOX instead.
 */
 class FL_EXPORT Fl_Help_View : public Fl_Group {        // Help viewer widget
 
