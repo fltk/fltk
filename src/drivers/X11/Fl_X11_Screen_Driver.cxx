@@ -411,7 +411,6 @@ void Fl_X11_Screen_Driver::screen_dpi(float &h, float &v, int n)
 
 void Fl_X11_Screen_Driver::beep(int type)
 {
-
   int vol;
   switch (type) {
     case FL_BEEP_ERROR :
