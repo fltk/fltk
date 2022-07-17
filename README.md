@@ -13,9 +13,6 @@
 -   You can also get the source code of the current development version from the [`Git repository`](https://github.com/fltk/fltk).
 
 if you are using MSYS64 just type  `mingw-w64-x86_64-fltk` for X64 version 
-
-    For more information see README.txt:
-    https://github.com/fltk/fltk/blob/master/README.txt
     
  ## LICENSING
 
