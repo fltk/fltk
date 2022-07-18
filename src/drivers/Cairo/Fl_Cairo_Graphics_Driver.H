@@ -25,12 +25,13 @@
 #include <cairo/cairo.h>
 
 typedef struct _PangoLayout  PangoLayout;
+typedef struct _PangoContext PangoContext;
 typedef struct _PangoFontDescription PangoFontDescription;
 
 
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:
-  Fl_Cairo_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  Fl_Cairo_Font_Descriptor(const char* fontname, Fl_Fontsize size, PangoContext *context);
   FL_EXPORT ~Fl_Cairo_Font_Descriptor();
   PangoFontDescription *fontref;
   int **width; // array of arrays of character widths
@@ -42,12 +43,12 @@ class FL_EXPORT Fl_Cairo_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   bool *needs_commit_tag_; // NULL or points to whether cairo surface was drawn to
   cairo_t *dummy_cairo_; // used to measure text width before showing a window
-  cairo_t *pango_layout_cairo_;
-  PangoLayout *pango_layout_;
   int linestyle_;
   int width_unscaled_(unsigned int c);
 protected:
   cairo_t *cairo_;
+  PangoContext *pango_context_;
+  PangoLayout *pango_layout_;
 public:
   Fl_Cairo_Graphics_Driver();
   virtual ~Fl_Cairo_Graphics_Driver();

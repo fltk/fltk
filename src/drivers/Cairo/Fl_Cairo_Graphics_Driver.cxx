@@ -69,7 +69,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;
   pango_layout_ = NULL;
-  pango_layout_cairo_ = NULL;
+  pango_context_ = NULL;
   dummy_cairo_ = NULL;
   linestyle_ = FL_SOLID;
   clip_ = NULL;
@@ -81,6 +81,7 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
 
 Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
   if (pango_layout_) g_object_unref(pango_layout_);
+  if (pango_context_) g_object_unref(pango_context_);
 }
 
 const cairo_format_t Fl_Cairo_Graphics_Driver::cairo_format = CAIRO_FORMAT_ARGB32;
@@ -88,8 +89,6 @@ const cairo_format_t Fl_Cairo_Graphics_Driver::cairo_format = CAIRO_FORMAT_ARGB3
 
 void Fl_Cairo_Graphics_Driver::set_cairo(cairo_t *cr, float s) {
   if (dummy_cairo_) {
-    g_object_unref(pango_layout_);
-    pango_layout_ = NULL;
     cairo_destroy(dummy_cairo_);
     dummy_cairo_ = NULL;
  }
@@ -1070,22 +1069,20 @@ int Fl_Cairo_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 
-Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize size) : Fl_Font_Descriptor(name, size) {
-  char string[70];
+Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize size,
+                                                   PangoContext *context) :
+                                                      Fl_Font_Descriptor(name, size) {
+  char *string = new char[strlen(name) + 10];
   strcpy(string, name);
   // The factor of 0.75 below gives cairo-produced text the same size as
   // Xft-produced text for the same FLTK font size.
   sprintf(string + strlen(string), " %d", int(size * 0.75 + 0.5) );
   //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
+  delete[] string;
   width = NULL;
-  //A PangoFontMap represents the set of fonts available for a particular rendering system.
-  static PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
-  //A PangoContext stores global information used to control the itemization process.
-  static PangoContext *pango_context = pango_font_map_create_context(def_font_map); // 1.22
-  static PangoLanguage *language = pango_language_get_default(); // 1.16
   //A PangoFontset represents a set of PangoFont to use when rendering text.
-  PangoFontset *fontset = pango_font_map_load_fontset(def_font_map, pango_context, fontref, language);
+  PangoFontset *fontset = pango_font_map_load_fontset(pango_cairo_font_map_get_default(), context, fontref, pango_language_get_default());
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
@@ -1109,13 +1106,13 @@ Fl_Cairo_Font_Descriptor::~Fl_Cairo_Font_Descriptor() {
 }
 
 
-static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
+static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, PangoContext *context) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->size == size) return f;
-  f = new Fl_Cairo_Font_Descriptor(s->name, size);
+  f = new Fl_Cairo_Font_Descriptor(s->name, size, context);
   f->next = s->first;
   s->first = f;
   return f;
@@ -1123,45 +1120,34 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 
 
 /* Implementation note :
- * The pango_layout_ object is created relatively to the unscaled cairo context (scale() == 1).
- * Therefore, the cairo context is unscaled before calling pango_cairo_create_layout(),
- * pango_cairo_show_layout(), and pango_cairo_update_layout().
- * This way, the pixel width of a drawn string equals the sum of the widths of its
+ * The pixel width of a drawn string equals the sum of the widths of its
  * characters, except when kerning occurs.
  */
 void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
   if (!font_descriptor()) fl_open_display();
-  if (!pango_layout_) {
-    bool needs_dummy = (cairo_ == NULL);
-    if (!cairo_) {
-      cairo_surface_t *surf = cairo_image_surface_create(Fl_Cairo_Graphics_Driver::cairo_format, 100, 100);
-      cairo_ = cairo_create(surf);
-      cairo_surface_destroy(surf);
-    }
-    cairo_save(cairo_);
-    double f = scale(); cairo_scale(cairo_, 1/f, 1/f);
-    pango_layout_ = pango_cairo_create_layout(cairo_); // 1.10
-    cairo_restore(cairo_);
-    pango_layout_cairo_ = cairo_;
-    if (needs_dummy) {
-      dummy_cairo_ = cairo_;
-    }
-  } else if (pango_layout_cairo_ != cairo_) {
-    cairo_save(cairo_);
-    double f = scale(); cairo_scale(cairo_, 1/f, 1/f);
-    pango_cairo_update_layout(cairo_, pango_layout_);
-    cairo_restore(cairo_);
-    pango_layout_cairo_ = cairo_;
+  if (!cairo_) {
+    cairo_surface_t *surf = cairo_image_surface_create(Fl_Cairo_Graphics_Driver::cairo_format, 100, 100);
+    cairo_ = cairo_create(surf);
+    cairo_surface_destroy(surf);
+    dummy_cairo_ = cairo_;
   }
   if (s == 0) return;
-  if (font() == fnum && size() == s) return;
   if (fnum == -1) {
     Fl_Graphics_Driver::font(0, 0);
     return;
   }
   Fl_Graphics_Driver::font(fnum, s);
-  font_descriptor( find(fnum, int(s * scale() + 0.5)) );
-  pango_layout_set_font_description(pango_layout_, ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref);
+  if (!pango_context_) {
+    //A PangoFontMap represents the set of fonts available for a particular rendering system.
+    PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
+    //A PangoContext stores global information used to control the itemization process.
+    pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
+    pango_layout_ = pango_layout_new(pango_context_);
+  }
+  font_descriptor( find(fnum, int(s * scale() + 0.5), pango_context_) );
+  //If no font description is set on the layout, the font description from the layout’s context is used.
+  pango_context_set_font_description(pango_context_,
+                                  ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref);
 }
 
 

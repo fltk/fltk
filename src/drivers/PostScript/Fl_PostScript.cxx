@@ -1506,18 +1506,23 @@ int Fl_PostScript_Graphics_Driver::start_eps(int width, int height) {
 
 void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
   if (!n) return;
+  if (!pango_context_) {
+    PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
+    pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
+    pango_layout_ = pango_layout_new(pango_context_);
+  }
   PangoFontDescription *pfd = Fl_Graphics_Driver::default_driver().pango_font_description(font());
-  pango_layout_set_font_description(pango_layout(), pfd);
+  pango_layout_set_font_description(pango_layout_, pfd);
   int pwidth, pheight;
   cairo_save(cairo_);
-  pango_layout_set_text(pango_layout(), str, n);
-  pango_layout_get_size(pango_layout(), &pwidth, &pheight);
+  pango_layout_set_text(pango_layout_, str, n);
+  pango_layout_get_size(pango_layout_, &pwidth, &pheight);
   if (pwidth > 0) {
     double s = width(str, n);
     cairo_translate(cairo_, x, y - height() + descent());
     s = (s/pwidth) * PANGO_SCALE;
     cairo_scale(cairo_, s, s);
-    pango_cairo_show_layout(cairo_, pango_layout());
+    pango_cairo_show_layout(cairo_, pango_layout_);
   }
   cairo_restore(cairo_);
   check_status();
