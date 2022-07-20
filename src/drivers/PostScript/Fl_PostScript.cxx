@@ -1511,7 +1511,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
     pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
     pango_layout_ = pango_layout_new(pango_context_);
   }
-  PangoFontDescription *pfd = Fl_Graphics_Driver::default_driver().pango_font_description(font());
+  PangoFontDescription *pfd = Fl_Graphics_Driver::default_driver().pango_font_description();
   pango_layout_set_font_description(pango_layout_, pfd);
   int pwidth, pheight;
   cairo_save(cairo_);

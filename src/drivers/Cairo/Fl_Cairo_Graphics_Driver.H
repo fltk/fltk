@@ -175,13 +175,14 @@ public:
   double width(const char *str, int n);
   double width(unsigned c);
   void text_extents(const char* txt, int n, int& dx, int& dy, int& w, int& h);
-  virtual PangoFontDescription* pango_font_description(Fl_Font /*fnum*/) {
+  virtual PangoFontDescription* pango_font_description() {
     return ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref;
   }
   static void init_built_in_fonts();
   virtual Fl_Font set_fonts(const char* pattern_name);
   virtual const char *font_name(int num);
-  virtual void font_name(int num, const char *name);  virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual void font_name(int num, const char *name);
+  virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
