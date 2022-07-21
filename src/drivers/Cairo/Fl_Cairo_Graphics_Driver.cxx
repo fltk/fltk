@@ -938,12 +938,12 @@ void Fl_Cairo_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
 
 int Fl_Cairo_Graphics_Driver::height() {
   if (!font_descriptor()) font(0, 12);
-  return ceil(((Fl_Cairo_Font_Descriptor*)font_descriptor())->line_height /(PANGO_SCALE*scale()));
+  return ceil(((Fl_Cairo_Font_Descriptor*)font_descriptor())->line_height / float(PANGO_SCALE));
 }
 
 
 int Fl_Cairo_Graphics_Driver::descent() {
-  return font_descriptor()->descent /(PANGO_SCALE*scale());
+  return font_descriptor()->descent / float(PANGO_SCALE) + 0.5;
 }
 
 
@@ -1144,7 +1144,7 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
     pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
     pango_layout_ = pango_layout_new(pango_context_);
   }
-  font_descriptor( find(fnum, int(s * scale() + 0.5), pango_context_) );
+  font_descriptor( find(fnum, s, pango_context_) );
   //If no font description is set on the layout, the font description from the layout’s context is used.
   pango_context_set_font_description(pango_context_,
                                   ((Fl_Cairo_Font_Descriptor*)font_descriptor())->fontref);
@@ -1156,7 +1156,6 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   cairo_save(cairo_);
   // The -0.5 below makes underscores visible in Fl_Text_Display at scale = 1
   cairo_translate(cairo_, x, y - height() + descent() -0.5);
-  float s = scale(); cairo_scale(cairo_, 1/s, 1/s);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_);
   cairo_restore(cairo_);
@@ -1190,12 +1189,12 @@ double Fl_Cairo_Graphics_Driver::width(const char* c, int n) {
     i += l;
     w += width_unscaled_(ucs);
   }
-  return w/(PANGO_SCALE*scale());
+  return w / double(PANGO_SCALE);
 }
 
 
 double Fl_Cairo_Graphics_Driver::width(unsigned int c) {
-  return width_unscaled_(c)/(PANGO_SCALE*scale());
+  return width_unscaled_(c)/ double(PANGO_SCALE);
 }
 
 
@@ -1232,12 +1231,12 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
   pango_layout_set_text(pango_layout_, txt, n);
   PangoRectangle ink_rect;
   pango_layout_get_extents(pango_layout_, &ink_rect, NULL);
-  float f = PANGO_SCALE * scale();
+  double f = PANGO_SCALE;
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
   dx = ink_rect.x / f;
   dy = (ink_rect.y - fd->line_height + fd->descent) / f;
-  w = ink_rect.width / f;
-  h = ink_rect.height / f;
+  w = ceil(ink_rect.width / f);
+  h = ceil(ink_rect.height / f);
 }
 
 //
