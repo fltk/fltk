@@ -1,3 +1,24 @@
+CHANGES IN FLTK 1.3.9					RELEASED: ???
+
+FLTK 1.3.9 is a maintenance release with some fixes and enhancements.
+
+Details:
+
+  Albrecht Schlosser:
+    Backport X11 INCR protocol fixes from 1.4.0 (issue #451)
+    X11: Suppress compiler warnings when using gcc or clang
+
+  ManoloFLTK:
+    macOS platform: fix for issue #325 Disabling IM disables Greek and Cyrillic layouts
+    Fix fullscreen window level corner cases on macOS - cont'd
+    Fix for issue #373 apparent with macOS platform and SDK ≤ 10.13
+    Fi xfor issue #452:  Fl::get_font_name failure on OS-X.
+    Fix for issue #454 : crash in Fl::get_font_name().
+
+  YX:
+    Fix IME problem (issue #270)
+
+
 CHANGES IN FLTK 1.3.8					RELEASED: Nov 20 2021
 
 FLTK 1.3.8 is a maintenance release with some fixes and enhancements.
