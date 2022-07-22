@@ -1375,57 +1375,79 @@ static int wasXExceptionRaised() {
 
 }
 
-static bool getNextEvent(XEvent *event_return)
-{
+static bool getNextEvent(XEvent *event_return) {
   time_t t = time(NULL);
-  while(!XPending(fl_display))
-  {
-    if(time(NULL) - t > 10.0)
-    {
-      //fprintf(stderr,"Error: The XNextEvent never came...\n");
-      return false; 
+  while (!XPending(fl_display)) {
+    if (time(NULL) - t > 10.0) {
+      // fprintf(stderr,"Error: The XNextEvent never came...\n");
+      return false;
     }
   }
   XNextEvent(fl_display, event_return);
   return true;
 }
 
-static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lower_bound)
-{
-//fprintf(stderr,"Incremental transfer starting due to INCR property\n");
+static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lower_bound) {
+  // fprintf(stderr,"Incremental transfer starting due to INCR property\n");
+  // fprintf(stderr, "[getIncrData:%d] lower_bound [in ] =%10ld\n", __LINE__, lower_bound);
+  const size_t alloc_min =   4 * 1024 * 1024; // min. initial allocation
+  const size_t alloc_max = 200 * 1024 * 1024; // max. initial allocation
+  const size_t alloc_inc =   4 * 1024 * 1024; // (min.) increase if necessary
   size_t total = 0;
+  size_t data_size = lower_bound + 1;
+  if (data_size < alloc_min) {
+    data_size = alloc_min;
+  } else if (data_size > alloc_max) {
+    data_size = alloc_max;
+  }
+
   XEvent event;
-  XDeleteProperty(fl_display, selevent.requestor, selevent.property);  
-  data = (uchar*)realloc(data, lower_bound);
-  for (;;)
-  {
-    if (!getNextEvent(&event)) break;
-    if (event.type == PropertyNotify)
-    {
-      if (event.xproperty.state != PropertyNewValue) continue;
+  XDeleteProperty(fl_display, selevent.requestor, selevent.property);
+  data = (uchar*)realloc(data, data_size);
+  if (!data) {
+    Fl::fatal("Clipboard data transfer failed, size %ld is too large.", data_size);
+  }
+  for (;;) {
+    if (!getNextEvent(&event)) {
+      // This is unexpected but may happen if the sender (clipboard owner) no longer sends data
+      break;
+    }
+    if (event.type == PropertyNotify) {
+      if (event.xproperty.state != PropertyNewValue) continue; // ignore PropertyDelete
       Atom actual_type;
       int actual_format;
       unsigned long nitems;
       unsigned long bytes_after;
       unsigned char* prop = 0;
       long offset = 0;
-      size_t num_bytes;
-      //size_t slice_size = 0;
-      do
-      {
-	XGetWindowProperty(fl_display, selevent.requestor, selevent.property, offset, 70000, True,
-			   AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop);
-	num_bytes = nitems * (actual_format / 8);
-	offset += num_bytes/4;
-	//slice_size += num_bytes;
-	if (total + num_bytes > (size_t)lower_bound) data = (uchar*)realloc(data, total + num_bytes);
-	memcpy(data + total, prop, num_bytes); total += num_bytes;
-	if (prop) XFree(prop);
+      size_t num_bytes = 0;
+      do {
+        XGetWindowProperty(fl_display, selevent.requestor, selevent.property, offset, 70000, True,
+                           AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop);
+        num_bytes = nitems * (actual_format / 8);
+        offset += num_bytes/4;
+        if (total + num_bytes + bytes_after + 1 > data_size) {
+          data_size += alloc_inc;
+          if (total + num_bytes + bytes_after + 1 > data_size)
+            data_size = total + num_bytes + bytes_after + 1;
+          data = (uchar*)realloc(data, data_size);
+          if (!data) {
+            Fl::fatal("Clipboard data transfer failed, size %ld is too large.", data_size);
+          }
+        }
+        memcpy(data + total, prop, num_bytes);
+        total += num_bytes;
+        if (prop) XFree(prop);
       } while (bytes_after != 0);
-//fprintf(stderr,"INCR data size:%ld\n", slice_size);
       if (num_bytes == 0) break;
     }
-    else break;
+    else {
+      // Unexpected next event. At this point we're handling the INCR protocol and can't deal with
+      // *some* other events due to potential recursions.
+      // See GitHub Issue #451: "Segfault if using very large selections".
+      // Note: the "fix" for Issue #451 is basically to use 'continue' rather than 'break'
+      continue;
+    }
   }
   XDeleteProperty(fl_display, selevent.requestor, selevent.property);
   return (long)total;
@@ -1492,7 +1514,9 @@ int fl_handle(const XEvent& thisevent)
 
   case SelectionNotify: {
     static unsigned char* sn_buffer = 0;
-    if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
+    if (sn_buffer) {
+      free(sn_buffer); sn_buffer = 0;
+    }
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
       // The Xdnd code pastes 64K chunks together, possibly to avoid
@@ -1553,7 +1577,16 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
       if (actual == fl_INCR) {
-        bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
+        // From ICCCM: "The contents of the INCR property will be an integer, which
+        // represents a lower bound on the number of bytes of data in the selection."
+        //
+        // However, some X clients don't set the integer ("lower bound") in the INCR
+        // property, hence 'count' below is zero and we must not access '*portion'.
+        size_t lower_bound = 0;
+        if (portion && count > 0) {
+          lower_bound = *(unsigned long *)portion;
+        }
+        bytesread = getIncrData(sn_buffer, xevent.xselection, lower_bound);
         XFree(portion);
         break;
       }
@@ -1563,7 +1596,7 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
       sn_buffer = (unsigned char*)realloc(sn_buffer, bytesread+count+remaining+1);
-      memcpy(sn_buffer+bytesread, portion, count);
+      memcpy(sn_buffer + bytesread, portion, count);
       if (portion) { XFree(portion); portion = 0; }
       bytesread += count;
       // Cannot trust data to be null terminated
