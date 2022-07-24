@@ -32,6 +32,9 @@
 #include <FL/math.h> // for M_PI
 #include <pango/pangocairo.h>
 #include <cairo/cairo-ps.h>
+#  if ! PANGO_VERSION_CHECK(1,22,0)
+#    error "Requires Pango 1.22 or higher"
+#  endif
 #endif
 
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
@@ -1536,7 +1539,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
     cairo_translate(cairo_, x, y - height() + descent());
     s = (s/pwidth) * PANGO_SCALE;
     cairo_scale(cairo_, s, s);
-    pango_cairo_show_layout(cairo_, pango_layout_);
+    pango_cairo_show_layout(cairo_, pango_layout_); // 1.10
   }
   cairo_restore(cairo_);
   check_status();

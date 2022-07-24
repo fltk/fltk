@@ -1157,7 +1157,7 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   // The -0.5 below makes underscores visible in Fl_Text_Display at scale = 1
   cairo_translate(cairo_, x, y - height() + descent() -0.5);
   pango_layout_set_text(pango_layout_, str, n);
-  pango_cairo_show_layout(cairo_, pango_layout_);
+  pango_cairo_show_layout(cairo_, pango_layout_); // 1.1O
   cairo_restore(cairo_);
   surface_needs_commit();
 }
