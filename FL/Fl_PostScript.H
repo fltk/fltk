@@ -71,6 +71,10 @@ class Fl_PostScript_Graphics_Driver;
 
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
+private:
+  // memorize the display's current font to restore it when the object ceases being current
+  Fl_Font display_font_;
+  Fl_Fontsize display_size_;
 protected:
   /**
    \brief Returns the PostScript driver of this drawing surface.
@@ -139,6 +143,8 @@ public:
   FILE *file();
   /** Sets the function end_job() calls to close the file() */
   void close_command(Fl_PostScript_Close_Command cmd);
+  virtual void set_current();
+  virtual void end_current();
 };
 
 /** Encapsulated PostScript drawing surface.

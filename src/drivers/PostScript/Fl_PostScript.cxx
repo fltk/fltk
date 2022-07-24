@@ -91,6 +91,21 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
   if (ps) delete ps;
 }
 
+void Fl_PostScript_File_Device::set_current() {
+  Fl_Graphics_Driver& driver = Fl_Graphics_Driver::default_driver();
+  display_font_ = driver.font();
+  display_size_ = driver.size();
+  Fl_Paged_Device::set_current();
+}
+
+void Fl_PostScript_File_Device::end_current() {
+  if (display_font_ >= 0 && display_size_ > 0)  {
+    Fl_Graphics_Driver& driver = Fl_Graphics_Driver::default_driver();
+    driver.font(display_font_, display_size_);
+  }
+  Fl_Paged_Device::end_current();
+}
+
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
@@ -1451,16 +1466,14 @@ static cairo_status_t write_to_cairo_stream(FILE *output, unsigned char *data, u
   return (l == length ? CAIRO_STATUS_SUCCESS : CAIRO_STATUS_WRITE_ERROR);
 }
 
-static int init_cairo_postscript(FILE* output, cairo_t* &cairo_,
-                                 Fl_Cairo_Graphics_Driver *driver,
-                                 int w, int h) {
-  cairo_surface_t* cs = cairo_ps_surface_create_for_stream((cairo_write_func_t)write_to_cairo_stream, output, w, h);
-  if (cairo_surface_status(cs) != CAIRO_STATUS_SUCCESS) return 1;
+static cairo_t* init_cairo_postscript(FILE* output, int w, int h) {
+  cairo_surface_t* cs = cairo_ps_surface_create_for_stream(
+                        (cairo_write_func_t)write_to_cairo_stream, output, w, h);
+  if (cairo_surface_status(cs) != CAIRO_STATUS_SUCCESS) return NULL;
   cairo_ps_surface_restrict_to_level(cs, CAIRO_PS_LEVEL_2);
-  cairo_ = cairo_create(cs);
+  cairo_t* cairo_ = cairo_create(cs);
   cairo_surface_destroy(cs);
-  driver->Fl_Cairo_Graphics_Driver::font(0, 0); // to create the PangoLayout
-  return 0;
+  return cairo_;
 }
 
 int Fl_PostScript_Graphics_Driver::start_postscript(int pagecount,
@@ -1483,8 +1496,9 @@ int Fl_PostScript_Graphics_Driver::start_postscript(int pagecount,
     pw_ = Fl_Paged_Device::page_formats[format].width;
     ph_ = Fl_Paged_Device::page_formats[format].height;
   }
-  if (init_cairo_postscript(output, cairo_, this,
-                            Fl_Paged_Device::page_formats[format].width, Fl_Paged_Device::page_formats[format].height)) return 1;
+  cairo_ = init_cairo_postscript(output, Fl_Paged_Device::page_formats[format].width,
+                            Fl_Paged_Device::page_formats[format].height);
+  if (!cairo_) return 1;
   nPages=0;
   char feature[250];
   sprintf(feature, "%%%%BeginFeature: *PageSize %s\n<</PageSize[%d %d]>>setpagedevice\n%%%%EndFeature",
@@ -1496,8 +1510,8 @@ int Fl_PostScript_Graphics_Driver::start_postscript(int pagecount,
 int Fl_PostScript_Graphics_Driver::start_eps(int width, int height) {
   pw_ = width;
   ph_ = height;
-  if (init_cairo_postscript(output, cairo_, this,
-                            width, height)) return 1;
+  cairo_ = init_cairo_postscript(output, width, height);
+  if (!cairo_) return 1;
   cairo_ps_surface_set_eps(cairo_get_target(cairo_), true);
   nPages=0; //useful?
   return 0;
