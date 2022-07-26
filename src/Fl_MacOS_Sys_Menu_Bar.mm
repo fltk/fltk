@@ -177,7 +177,11 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   if ( (key >= (FL_F+1)) && (key <= FL_F_Last) ) { // Handle function keys
     int fkey_num = (key - FL_F);        // 1,2..
     mac_key = NSF1FunctionKey + fkey_num - 1;
-    }
+  } else if (key == FL_Escape) {
+    mac_key = 27;
+  } else if (key == FL_Tab) {
+    mac_key = 9;
+  }
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
 }
