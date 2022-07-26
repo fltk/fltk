@@ -44,13 +44,12 @@
 Fl_System_Driver::Keyname darwin_key_table[] = {
   //              v - this column may contain UTF-8 characters
   {' ',           "Space"},
-  {FL_BackSpace,  "\xe2\x8c\xab"}, // erase to the left
+  {FL_BackSpace,  "⌫"/*"\xe2\x8c\xab"*/}, // U+232B : erase to the left
   {FL_Tab,        "\xe2\x87\xa5"}, // rightwards arrow to bar
-  {0xff0b,        "\xe2\x8c\xa6"}, // erase to the right
   {FL_Enter,      "\xe2\x86\xa9"}, // leftwards arrow with hook
   {FL_Pause,      "Pause"},
   {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,     "\xe2\x90\x9b"},
+  {FL_Escape,     "⎋"}, // U+238B : broken circle with northwest arrow
   {FL_Home,       "\xe2\x86\x96"}, // north west arrow
   {FL_Left,       "\xe2\x86\x90"}, // leftwards arrow
   {FL_Up,         "\xe2\x86\x91"}, // upwards arrow
@@ -73,7 +72,7 @@ Fl_System_Driver::Keyname darwin_key_table[] = {
   {FL_Meta_R,     "Meta_R"},
   {FL_Alt_L,      "Alt_L"},
   {FL_Alt_R,      "Alt_R"},
-  {FL_Delete,     "\xe2\x8c\xa7"}  // x in a rectangle box
+  {FL_Delete,     "⌦"/*"\xe2\x8c\xa6"*/}  // U+2326 : erase to the right
 };
 
 const char *Fl_Darwin_System_Driver::shift_name() {

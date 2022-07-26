@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include "Fl_System_Driver.H"
 
 #import <Cocoa/Cocoa.h> // keep this after include of Fl_MacOS_Sys_Menu_Bar_Driver.H because of check() conflict
 
@@ -180,7 +181,13 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   } else if (key == FL_Escape) {
     mac_key = 27;
   } else if (key == FL_Tab) {
-    mac_key = 9;
+    mac_key = NSTabCharacter;
+  } else if (key == FL_Enter) {
+    mac_key = 0x0d;
+  } else if (key == FL_BackSpace) {
+    mac_key = NSBackspaceCharacter;
+  } else if (key == FL_Delete) {
+    mac_key = NSDeleteCharacter;
   }
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
