@@ -907,10 +907,6 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   return f->fontname;
 }
 
-float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
-  return 2;
-}
-
 Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   //  XftFontClose(fl_display, font);

@@ -204,11 +204,11 @@ protected:
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);
-  virtual float scale_bitmap_for_PostScript();
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
 #if !USE_XFT
   virtual unsigned font_desc_size();
+  virtual float scale_bitmap_for_PostScript();
 #endif
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
