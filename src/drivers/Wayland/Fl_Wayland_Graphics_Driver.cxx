@@ -19,21 +19,18 @@
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
-#include "text-input-client-protocol.h"
 #include <pango/pangocairo.h>
 #if ! PANGO_VERSION_CHECK(1,22,0)
 #  error "Requires Pango 1.22 or higher"
 #endif
-#define _GNU_SOURCE 1
 #include <sys/mman.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <unistd.h> // for close()
 #include <errno.h>
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 extern "C" {
-  int os_create_anonymous_file(off_t);
+  int os_create_anonymous_file(off_t); // in libdecor
 }
 
 
@@ -167,7 +164,7 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_O
 }
 
 
-void Fl_Wayland_Graphics_Driver::gc(void *off) {} // equivalent is done by activate()
+void Fl_Wayland_Graphics_Driver::gc(void *off) {} // equivalent is done by set_buffer()
 
 
 void *Fl_Wayland_Graphics_Driver::gc() {

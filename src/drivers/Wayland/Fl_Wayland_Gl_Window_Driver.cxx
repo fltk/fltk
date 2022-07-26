@@ -397,7 +397,6 @@ static void delayed_redraw(Fl_Window *win) {
 }
 
 void Fl_Wayland_Gl_Window_Driver::gl_start() {
-  struct wld_window *win = fl_xid(Fl_Window::current());
   float f = Fl::screen_scale(Fl_Window::current()->screen_num());
   int W = Fl_Window::current()->w() * f;
   int H = Fl_Window::current()->h() * f;

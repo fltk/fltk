@@ -25,14 +25,12 @@
 #include "xdg-shell-client-protocol.h"
 #include <pango/pangocairo.h>
 #include <FL/Fl_Overlay_Window.H>
-#include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Image_Surface.H>
 #include <string.h>
-#include <sys/mman.h>
 #include <math.h> // for ceil()
 #include <sys/types.h> // for pid_t
 #include <unistd.h> // for getpid()
@@ -155,7 +153,6 @@ void Fl_Wayland_Window_Driver::take_focus()
 {
   Window w = fl_xid(pWindow);
   if (w) {
-    Fl_Widget *old_focus = Fl::focus();
     Fl_Window *old_first = Fl::first_window();
     Window first_xid = (old_first ? fl_xid(old_first->top_window()) : NULL);
     if (first_xid && first_xid != w && xdg_toplevel()) {
