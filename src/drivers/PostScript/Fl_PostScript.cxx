@@ -215,14 +215,6 @@ void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, 
   Fl_Graphics_Driver::default_driver().text_extents(c, n, dx, dy, w, h);
 }
 
-
-void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
-  Fl::get_color(c, cr_, cg_, cb_);
-  color(cr_, cg_, cb_);
-}
-
-Fl_Color Fl_PostScript_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }
-
 void Fl_PostScript_Graphics_Driver::point(int x, int y){
   rectf(x,y,1,1);
 }
@@ -1061,6 +1053,13 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
   }
   fprintf(output, "] 0 setdash\n");
 }
+
+void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
+  Fl::get_color(c, cr_, cg_, cb_);
+  color(cr_, cg_, cb_);
+}
+
+Fl_Color Fl_PostScript_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }
 
 void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
