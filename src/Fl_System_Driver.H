@@ -25,6 +25,16 @@
  \brief declaration of class Fl_System_Driver.
 */
 
+/* Class hierarchy
+ + Fl_System_Driver
+ | + Fl_Posix_System_Driver
+ | | + Fl_Unix_System_Driver
+ | | | + Fl_X11_System_Driver
+ | | | + Fl_Wayland_System_Driver
+ | | + Fl_Darwin_System_Driver
+ | + Fl_WinAPI_System_Driver
+ */
+
 #ifndef FL_SYSTEM_DRIVER_H
 #define FL_SYSTEM_DRIVER_H
 
