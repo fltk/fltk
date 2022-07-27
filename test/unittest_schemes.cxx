@@ -46,6 +46,7 @@
 
 class SchemesTest : public Fl_Group {
   Fl_Choice *schemechoice;
+
   static void SchemeChoice_CB(Fl_Widget*,void *data) {
     SchemesTest *st = (SchemesTest*)data;
     const char *name = st->schemechoice->text();
@@ -53,7 +54,28 @@ class SchemesTest : public Fl_Group {
       Fl::scheme(name);         // change scheme
       st->window()->redraw();   // redraw window
     }
-  }
+  } // SchemeChoice_CB()
+
+  static void activate_subwin(Fl_Widget *w, void *data) {
+    Fl_Window *win = (Fl_Window *)data;
+    Fl_Light_Button *b = (Fl_Light_Button *)w;
+    int active = b->value();
+    if (active) b->label("active");
+    else b->label("inactive");
+    // Documentation of deactivate() states: "Currently you cannot deactivate Fl_Window widgets".
+    // However, it seems to work in this case. AlbrechtS, FLTK 1.4, July 2022
+#if (1)
+  if (active) win->activate();
+  else win->deactivate();
+#else // alternative: deactivate all widgets (works definitely)
+    for (int i = 0; i < win->children(); i++) {
+      Fl_Widget *o = win->child(i);
+      if (active) o->activate();
+      else o->deactivate();
+    }
+#endif
+  } // activate_subwin()
+
 public:
   static Fl_Widget *create() {
     return new SchemesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
@@ -74,7 +96,12 @@ public:
     }
     schemechoice->callback(SchemeChoice_CB, (void*)this);
 
+    Fl_Light_Button *active = new Fl_Light_Button(X + 300, Y, 100, 25, "active");
+    active->value(1);
+    active->selection_color(FL_RED);
+    active->align(FL_ALIGN_CENTER);
     Fl_Window *subwin = new Fl_Window(X,Y+30,W,H-30);
+    active->callback(activate_subwin, subwin);
     subwin->begin();
     {
       // Pasted from Edmanuel's gleam test app
@@ -214,7 +241,7 @@ public:
           } // Fl_Radio_Round_Button* o
           { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 220, 120, 25, "Choice 3");
             o->tooltip("Fl_Radio_Round_Button (green)");
-            o->selection_color(FL_GREEN);
+            o->selection_color(fl_darker(FL_GREEN));
           } // Fl_Radio_Round_Button* o
           { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 250, 120, 25, "Choice 4");
             o->tooltip("Fl_Radio_Round_Button (blue)");
@@ -292,7 +319,7 @@ public:
         o->box(FL_DOWN_FRAME);
         o->down_box(FL_DOWN_BOX);
         o->color(FL_DARK1);
-        o->selection_color((Fl_Color)FL_GREEN);
+        o->selection_color(fl_darker(FL_GREEN));
         o->tooltip("Fl_Check_Button with down frame");
       } // Fl_Check_Button* o
       { Fl_Input* o = new Fl_Input(220, 10, 100, 25);
