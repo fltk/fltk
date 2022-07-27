@@ -537,7 +537,7 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
     d2 = 4;
   }
   // reduce line height (width) for small sizes
-  if (d1 < 4)
+  if (d1 < 3)
     lh = 2;
 
   tw = d1 + d2 + 1; // total width
