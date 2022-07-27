@@ -1,6 +1,5 @@
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-Fl_Cairo.o: ../config.h
 Fl_Cairo.o: ../FL/Enumerations.H
 Fl_Cairo.o: ../FL/Fl.H
 Fl_Cairo.o: ../FL/Fl_Bitmap.H

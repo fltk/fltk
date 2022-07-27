@@ -256,7 +256,6 @@ buttons.o: ../FL/Fl_Light_Button.H
 buttons.o: ../FL/Fl_Repeat_Button.H
 buttons.o: ../FL/Fl_Return_Button.H
 buttons.o: ../FL/Fl_Round_Button.H
-buttons.o: ../FL/Fl_Tooltip.H
 buttons.o: ../FL/fl_types.h
 buttons.o: ../FL/fl_utf8.h
 buttons.o: ../FL/Fl_Widget.H
