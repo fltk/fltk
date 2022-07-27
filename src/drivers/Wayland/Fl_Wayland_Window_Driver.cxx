@@ -1417,6 +1417,10 @@ static void delayed_minsize(Fl_Window *win) {
 
 
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
+  struct wld_window *fl_win = fl_xid(pWindow);
+  if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
+    pWindow->wait_for_expose();
+  }
   int is_a_move = (X != x() || Y != y() || Fl_Window::is_a_rescale());
   int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
   if (is_a_move) force_position(1);
@@ -1436,7 +1440,6 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   }
 
   if (shown()) {
-    struct wld_window *fl_win = fl_xid(pWindow);
     float f = Fl::screen_scale(pWindow->screen_num());
     if (is_a_resize) {
       if (fl_win->kind == DECORATED) { // a decorated window
