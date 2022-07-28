@@ -167,7 +167,17 @@ typedef struct {
   if ( (key >= (FL_F+1)) && (key <= FL_F_Last) ) { // Handle function keys
     int fkey_num = (key - FL_F);	// 1,2..
     mac_key = NSF1FunctionKey + fkey_num - 1;
-    }
+  } else if (key == FL_Escape) {
+    mac_key = 27;
+  } else if (key == FL_Tab) {
+    mac_key = NSTabCharacter;
+  } else if (key == FL_Enter) {
+    mac_key = 0x0d;
+  } else if (key == FL_BackSpace) {
+    mac_key = NSBackspaceCharacter;
+  } else if (key == FL_Delete) {
+    mac_key = NSDeleteCharacter;
+  }
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
 }
