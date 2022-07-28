@@ -39,6 +39,7 @@ set (CPPFILES
   Fl_File_Chooser2.cxx
   Fl_File_Icon.cxx
   Fl_File_Input.cxx
+  Fl_Flex.cxx
   Fl_Graphics_Driver.cxx
   Fl_Group.cxx
   Fl_Help_View.cxx

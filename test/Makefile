@@ -74,6 +74,8 @@ CPPFILES =\
 	editor.cxx \
 	fast_slow.cxx \
 	file_chooser.cxx \
+	flex_demo.cxx \
+	flex_login.cxx \
 	fltk-versions.cxx \
 	fonts.cxx \
 	forms.cxx \
@@ -163,6 +165,8 @@ ALL =	\
 	editor$(EXEEXT) \
 	fast_slow$(EXEEXT) \
 	file_chooser$(EXEEXT) \
+	flex_demo$(EXEEXT) \
+	flex_login$(EXEEXT) \
 	fltk-versions$(EXEEXT) \
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
@@ -419,6 +423,10 @@ file_chooser$(EXEEXT): file_chooser.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+
+flex_demo$(EXEEXT): flex_demo.o
+
+flex_login$(EXEEXT): flex_login.o
 
 fltk-versions$(EXEEXT): fltk-versions.o
 

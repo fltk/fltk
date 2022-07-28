@@ -1828,6 +1828,8 @@ Fl_File_Input.o: ../FL/Fl_Window.H
 Fl_File_Input.o: ../FL/platform_types.h
 Fl_File_Input.o: flstring.h
 Fl_File_Input.o: Fl_System_Driver.H
+Fl_Flex.o: ../FL/Fl_Flex.H
+Fl_Flex.o: ../FL/Fl_Group.H
 fl_font.o: ../config.h
 fl_font.o: ../FL/Enumerations.H
 fl_font.o: ../FL/Fl.H
