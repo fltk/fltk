@@ -151,6 +151,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   Other Improvements
 
   - (add new items here)
+  - Added support for macOS 13.0 "Ventura".
   - Fixed X11 Input Method window badly positioned with Fl_Text_Editor
     widget (issue #270).
   - Added support for macOS 12.0 "Monterey".
