@@ -287,6 +287,9 @@ void Fl_Flex::set_size(Fl_Widget *w, int size) {
     return;
   }
 
+  if (size == 0)
+    return;
+
   // add to array of fixed size widgets
   if (set_size_size_ == set_size_alloc_) {
     set_size_alloc_ = alloc_size(set_size_alloc_);
