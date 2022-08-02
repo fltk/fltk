@@ -45,29 +45,29 @@ Fl_System_Driver::Keyname darwin_key_table[] = {
   //              v - this column may contain UTF-8 characters
   {' ',           "Space"},
   {FL_BackSpace,  "⌫"/*"\xe2\x8c\xab"*/}, // U+232B : erase to the left
-  {FL_Tab,        "\xe2\x87\xa5"}, // rightwards arrow to bar
-  {FL_Enter,      "\xe2\x86\xa9"}, // leftwards arrow with hook
+  {FL_Tab,        "⇥"/*"\xe2\x87\xa5"*/}, // U+21E5 rightwards arrow to bar
+  {FL_Enter,      "↩"/*"\xe2\x86\xa9"*/}, // U+21A9 leftwards arrow with hook
   {FL_Pause,      "Pause"},
   {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,     "⎋"}, // U+238B : broken circle with northwest arrow
-  {FL_Home,       "\xe2\x86\x96"}, // north west arrow
-  {FL_Left,       "\xe2\x86\x90"}, // leftwards arrow
-  {FL_Up,         "\xe2\x86\x91"}, // upwards arrow
-  {FL_Right,      "\xe2\x86\x92"}, // rightwards arrow
-  {FL_Down,       "\xe2\x86\x93"}, // downwards arrow
-  {FL_Page_Up,    "\xe2\x87\x9e"}, // upwards arrow with double stroke
-  {FL_Page_Down,  "\xe2\x87\x9f"}, // downwards arrow with double stroke
-  {FL_End,        "\xe2\x86\x98"}, // south east arrow
+  {FL_Escape,     "⎋"/*"\xe2\x8e\x8b"*/}, // U+238B : broken circle with northwest arrow
+  {FL_Home,       "↖"/*"\xe2\x86\x96"*/}, // U+2196 north west arrow
+  {FL_Left,       "←"/*"\xe2\x86\x90"*/}, // U+2190 leftwards arrow
+  {FL_Up,         "↑"/*"\xe2\x86\x91"*/}, // U+2191 upwards arrow
+  {FL_Right,      "→"/*"\xe2\x86\x92"*/}, // U+2192 rightwards arrow
+  {FL_Down,       "↓"/*"\xe2\x86\x93"*/}, // U+2193 downwards arrow
+  {FL_Page_Up,    "⇞"/*"\xe2\x87\x9e"*/}, // U+21DE upwards arrow with double stroke
+  {FL_Page_Down,  "⇟"/*"\xe2\x87\x9f"*/}, //  U+21DF downwards arrow with double stroke
+  {FL_End,        "↘"/*"\xe2\x86\x98"*/}, // U+2198 south east arrow
   {FL_Print,      "Print"},
   {FL_Insert,     "Insert"},
   {FL_Menu,       "Menu"},
   {FL_Num_Lock,   "Num_Lock"},
-  {FL_KP_Enter,   "\xe2\x8c\xa4"}, // up arrow head between two horizontal bars
+  {FL_KP_Enter,   "⌤"/*"\xe2\x8c\xa4"*/}, // U+2324 up arrow head between two horizontal bars
   {FL_Shift_L,    "Shift_L"},
   {FL_Shift_R,    "Shift_R"},
   {FL_Control_L,  "Control_L"},
   {FL_Control_R,  "Control_R"},
-  {FL_Caps_Lock,  "\xe2\x87\xaa"}, // upwards white arrow from bar
+  {FL_Caps_Lock,  "⇪"/*"\xe2\x87\xaa"*/}, // U+21EA upwards white arrow from bar
   {FL_Meta_L,     "Meta_L"},
   {FL_Meta_R,     "Meta_R"},
   {FL_Alt_L,      "Alt_L"},
