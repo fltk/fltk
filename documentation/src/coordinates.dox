@@ -21,7 +21,7 @@ In some cases it could also be a subwindow embedded in a
 higher-level window, as shown in the figure below.
 
 \image html  coordinates.png "FLTK coordinate system"
-\image latex coordinates.png "FLTK coordinate system" width=6cm
+\image latex coordinates.png "FLTK coordinate system" width=10cm
 
 The positions of the TL and BR sub-windows and the TR and BL
 groups are all relative to the top-left corner of the main window.
