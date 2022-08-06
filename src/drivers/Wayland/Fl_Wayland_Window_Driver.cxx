@@ -362,6 +362,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   // to support progressive drawing
   if ( (!Fl_Wayland_Window_Driver::in_flush) && window && window->buffer && (!window->buffer->cb)) {
     wl_surface_damage_buffer(window->wl_surface, 0, 0, pWindow->w() * scale, pWindow->h() * scale);
+    window->buffer->draw_buffer_needs_commit = true;
     window->buffer->cb = wl_surface_frame(window->wl_surface);
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
     wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
