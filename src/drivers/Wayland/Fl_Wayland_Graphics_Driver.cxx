@@ -26,6 +26,7 @@
 #include <sys/mman.h>
 #include <unistd.h> // for close()
 #include <errno.h>
+#include <string.h> // for strerror()
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 

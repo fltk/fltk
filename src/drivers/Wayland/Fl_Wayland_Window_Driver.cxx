@@ -431,6 +431,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
 
+  window->buffer->draw_buffer_needs_commit = true;
   wl_surface_frame(window->wl_surface);
   Fl_Wayland_Graphics_Driver::buffer_commit(window);
 }

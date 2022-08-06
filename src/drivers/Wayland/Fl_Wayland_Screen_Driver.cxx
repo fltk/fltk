@@ -41,6 +41,7 @@
 #include <sys/mman.h>
 #include <poll.h>
 #include <errno.h>
+#include <string.h> // for strerror()
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
 }
