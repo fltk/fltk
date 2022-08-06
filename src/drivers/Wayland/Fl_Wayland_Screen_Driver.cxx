@@ -40,6 +40,7 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <poll.h>
+#include <errno.h>
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
 }
@@ -1068,8 +1069,8 @@ static void fd_callback(int fd, struct wl_display *display) {
   struct pollfd fds = (struct pollfd) { fd, POLLIN, 0 };
   do {
     if (wl_display_dispatch(display) == -1) {
-      Fl::fatal("Fatal error while communicating with the Wayland server: errno=%d\n",
-                wl_display_get_error(display));
+      Fl::fatal("Fatal error while communicating with the Wayland server: %s",
+                strerror(errno));
     }
   }
   while (poll(&fds, 1, 0) > 0);
