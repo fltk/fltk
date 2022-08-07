@@ -1,3 +1,20 @@
+#
+# Makefile used to build example apps by 'make'
+#
+# Copyright 2020-2022 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
+#
+################################################################################
+
 include Makefile.FLTK
 
 RM    = rm -f
@@ -13,6 +30,7 @@ ALL = browser-simple$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
       howto-draw-an-x$(EXEEXT) \
+      howto-flex-simple$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-remap-numpad-keyboard-keys$(EXEEXT) \

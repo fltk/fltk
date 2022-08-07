@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt used to build example apps by the CMake build system
 #
-# Copyright 2020-2021 by Bill Spitzak and others.
+# Copyright 2020-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -37,6 +37,7 @@ set (SIMPLE_SOURCES
   howto-browser-with-icons
   howto-drag-and-drop
   howto-draw-an-x
+  howto-flex-simple
   howto-menu-with-images
   howto-parse-args
   howto-remap-numpad-keyboard-keys
