@@ -330,16 +330,13 @@ static const struct wl_callback_listener surface_frame_listener = {
 };
 
 static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
-  Window window = (Window)data;
+  struct wld_window *window = (struct wld_window *)data;
 //fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
   wl_callback_destroy(cb);
   window->buffer->cb = NULL;
   if (window->buffer->draw_buffer_needs_commit) {
-    wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
-    window->buffer->cb = wl_surface_frame(window->wl_surface);
 //fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
-    wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
   }
 }
 
@@ -353,25 +350,21 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   struct wld_window *window = fl_xid(pWindow);
-  float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
-  if (window && window->buffer) {
+  if (window->buffer) {
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush) && window && window->buffer && (!window->buffer->cb)) {
-    wl_surface_damage_buffer(window->wl_surface, 0, 0, pWindow->w() * scale, pWindow->h() * scale);
-    window->buffer->draw_buffer_needs_commit = true;
-    window->buffer->cb = wl_surface_frame(window->wl_surface);
+  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb)) {
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
-    wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
   }
 
   fl_graphics_driver->clip_region(0);
   fl_window = Fl_Wayland_Window_Driver::wld_window = window;
   if (!window->buffer) {
+    float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
@@ -431,9 +424,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
 
-  window->buffer->draw_buffer_needs_commit = true;
-  wl_surface_frame(window->wl_surface);
-  Fl_Wayland_Graphics_Driver::buffer_commit(window);
+  Fl_Wayland_Graphics_Driver::buffer_commit(window, NULL);
 }
 
 

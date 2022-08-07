@@ -76,13 +76,19 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 }
 
 
-void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window) {
-  if (!window->buffer->draw_buffer_needs_commit) return;
+void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
+                                               const struct wl_callback_listener *listener) {
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
   wl_surface_set_buffer_scale(window->wl_surface, window->scale);
+  struct wl_callback *cb = wl_surface_frame(window->wl_surface);
+  if (listener) {
+    window->buffer->cb = cb;
+    wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
+    wl_callback_add_listener(window->buffer->cb, listener, window);
+  }
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;
 //fprintf(stderr,"buffer_commit %s\n", window->fl_win->parent()?"child":"top");
