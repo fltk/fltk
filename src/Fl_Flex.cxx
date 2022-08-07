@@ -21,41 +21,12 @@
 /**
   Construct a new Fl_Flex widget with the given position, size, and label.
 
-  Fl_Flex is a container (layout) widget that provides flexible positioning
-  of its children either in one row or in one column. Fl_Flex containers can
-  be nested so you can create flexible layouts with multiple columns and rows.
-
-  Fl_Flex is designed to be as simple as possible. You can set particular
-  widget sizes or let Fl_Flex position and size the widgets to fit the container.
-
-  You can set the margin \b around all children at the inner side the box frame
-  (if any). This margin has the same size on top, bottom, and both sides.
-  The default margin size is 3.
-
-  You can set the gap size \b between all children. The gap size is the same between
-  all children. This is similar to the 'spacing' of Fl_Pack.
-  The default gap size is 3.
-
-  Fl_Flex can either consist of a single row, i.e. type() = Fl_Flex::HORIZONTAL,
-  or a single column, i.e. type() = Fl_Flex::VERTICAL. The default value is
-  \p VERTICAL for consistency with Fl_Pack but you can use \p type() to assign
-  a row (\p HORIZONTAL) layout.
-
-  If type() == Fl_Flex::HORIZONTAL widgets are resized horizontally to fit in
-  the container and their height is the full Fl_Flex height minus border size
-  and margin. You can set a fixed widget width by using set_size().
-
-  If type() == Fl_Flex::VERTICAL the above description applies equivalently
-  to the row layout, i.e. widget heights can be set etc.
+  You can set \p type(Fl_Flex::HORIZONTAL) or \p type(Fl_Flex::VERTICAL).
+  The default is \p type(Fl_Flex::VERTICAL).
 
   Alternate constructors let you specify the layout as Fl_Flex::HORIZONTAL or
   Fl_Flex::VERTICAL directly. Fl_Flex::ROW is an alias of Fl_Flex::HORIZONTAL
   and Fl_Flex::COLUMN is an alias of Fl_Flex::VERTICAL.
-
-  \note Please use the names (enum) rather than numerical values for
-    the type() argument and the \p direction parameter of the alternate
-    constructors. These constructors are backwards compatible with older
-    versions of Fl_Flex.
 
   \param[in]  X,Y   position
   \param[in]  W,H   size (width and height)
@@ -74,7 +45,7 @@ Fl_Flex::Fl_Flex(int X, int Y, int W, int H, const char *L)
 // special Fl_Flex constructors w/o label (backwards compatible with original Fl_Flex widget)
 
 /**
-  Construct a new Fl_Flex object specifying its layout.
+  Construct a new Fl_Flex widget specifying its layout.
 
   Use Fl_Flex::HORIZONTAL (aka Fl_Flex::ROW) or Fl_Flex::VERTICAL
   (aka Fl_Flex::COLUMN) as the \p direction argument.
@@ -95,7 +66,7 @@ Fl_Flex::Fl_Flex(int direction)
 }
 
 /**
-  Construct a new Fl_Flex object specifying its layout and size.
+  Construct a new Fl_Flex widget specifying its layout and size.
 
   Use Fl_Flex::HORIZONTAL (aka Fl_Flex::ROW) or Fl_Flex::VERTICAL
   (aka Fl_Flex::COLUMN) as the \p direction argument.
@@ -118,16 +89,15 @@ Fl_Flex::Fl_Flex(int w, int h, int direction)
   init(direction);
 }
 
-
 /**
-  Construct a new Fl_Flex object specifying its layout, position, and size.
+  Construct a new Fl_Flex widget specifying its layout, position, and size.
 
   Use Fl_Flex::HORIZONTAL (aka Fl_Flex::ROW) or Fl_Flex::VERTICAL
   (aka Fl_Flex::COLUMN) as the \p direction argument.
 
   This constructor sets the position and size of the widget which is suitable
-  for outer Fl_Flex widgets but does not set a widget label.
-  Use Fl_Widget::label() to set one if required.
+  for top level Fl_Flex widgets but does not set a widget label.
+  Use Fl_Widget::label() to set one if desired.
 
   \param[in]  x,y   widget position
   \param[in]  w,h   widget size
@@ -145,11 +115,14 @@ Fl_Flex::Fl_Flex(int x, int y, int w, int h, int direction)
 }
 
 void Fl_Flex::init(int t) {
-  gap_    = 3;                // default gap size
-  margin_ = 3;                // default margin size
-  set_size_ = 0;              // array of fixed size widgets
-  set_size_size_ = 0;         // number of fixed size widgets
-  set_size_alloc_ = 0;        // allocated size of array of fixed size widgets
+  gap_            = 0;      // default gap size
+  margin_left_    = 0;      // default margin size
+  margin_top_     = 0;      // default margin size
+  margin_right_   = 0;      // default margin size
+  margin_bottom_  = 0;      // default margin size
+  set_size_       = NULL;   // array of fixed size widgets
+  set_size_size_  = 0;      // number of fixed size widgets
+  set_size_alloc_ = 0;      // allocated size of array of fixed size widgets
   type(HORIZONTAL);
   if (t == VERTICAL)
     type(VERTICAL);
@@ -174,13 +147,14 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
   // Calculate total space minus gaps
   int gaps = cc > 1 ? cc - 1 : 0;
   int hori = horizontal();
-  int space = (hori ? w - dw : h - dh) - 2 * margin_;
+  int space = hori ? (w - dw - margin_left_ - margin_right_)
+                   : (h - dh - margin_top_ - margin_bottom_);
 
   // set x and y (start) position, calculate widget sizes
-  int xp = x + dx + margin_;
-  int yp = y + dy + margin_;
-  int hh = h - dh - margin_ * 2; // if horizontal: constant height of widgets
-  int vw = w - dw - margin_ * 2; // if vertical:   constant width of widgets
+  int xp = x + dx + margin_left_;
+  int yp = y + dy + margin_top_;
+  int hh = h - dh - margin_top_ - margin_bottom_; // if horizontal: constant height of widgets
+  int vw = w - dw - margin_left_ - margin_right_; // if vertical:   constant width of widgets
 
   int fw = cc;    // number of flexible widgets
 
@@ -307,7 +281,7 @@ void Fl_Flex::set_size(Fl_Widget *w, int size) {
   \retval     1   the widget has a fixed size
   \retval     0  the widget resizes dynamically
 */
-int Fl_Flex::set_size(Fl_Widget *w) {
+int Fl_Flex::set_size(Fl_Widget *w) const {
   for (int i = 0; i < set_size_size_; i++) {
     if (w == set_size_[i]) {
       return 1;
@@ -330,6 +304,6 @@ int Fl_Flex::set_size(Fl_Widget *w) {
   \param[in]  size  current size
   \return     int   new size (to be allocated)
 */
-int Fl_Flex::alloc_size(int size) {
+int Fl_Flex::alloc_size(int size) const {
   return size + 8;
 }

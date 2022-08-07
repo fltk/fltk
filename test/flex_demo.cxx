@@ -36,7 +36,7 @@ void debug_group(Fl_Group *g) {
 #endif
 } // debug_group
 
-Fl_Button *createButton(const char *caption) {
+Fl_Button *create_button(const char *caption) {
   Fl_Button *rtn = new Fl_Button(0, 0, 120, 30, caption);
   rtn->color(fl_rgb_color(225, 225, 225));
   return rtn;
@@ -74,21 +74,21 @@ void toggle_cb(Fl_Widget *w, void *v) {
   debug_group(flex);
 }
 
-Fl_Flex *createRow() {
+Fl_Flex *create_row() {
   Fl_Flex *row = new Fl_Flex(Fl_Flex::ROW);
   {
-    Fl_Button *toggle = createButton("hide OK button");
+    Fl_Button *toggle = create_button("hide OK button");
     toggle->tooltip("hide() or show() OK button");
     Fl_Box *box2 = new Fl_Box(0, 0, 120, 10, "Box2");
-    Fl_Button * okay = createButton("OK");
+    Fl_Button * okay = create_button("OK");
     new Fl_Input(0, 0, 120, 10, "");
 
     toggle->callback(toggle_cb, okay);
 
     Fl_Flex *col2 = new Fl_Flex(Fl_Flex::COLUMN);
     {
-      createButton("Top2");
-      createButton("Bottom2");
+      create_button("Top2");
+      create_button("Bottom2");
       col2->end();
       col2->margin(0, 5);
       col2->box(FL_FLAT_BOX);
@@ -110,59 +110,53 @@ Fl_Flex *createRow() {
 int main(int argc, char **argv) {
 
   Fl_Window *window = new Fl_Double_Window(100, 100, "Simple GUI Example");
-  {
-    Fl_Flex *col = new Fl_Flex(5, 5, 90, 90, Fl_Flex::COLUMN);
-    {
-      Fl_Flex *row = new Fl_Flex(Fl_Flex::ROW);
-      row->color(FL_YELLOW);
-      row->box(FL_FLAT_BOX);
-      {
-        createButton("Cancel");
-        new Fl_Box(0, 0, 120, 10, "Box1");
-        createButton("OK");
-        new Fl_Input(0, 0, 120, 10, "");
+  Fl_Flex *col = new Fl_Flex(5, 5, 90, 90, Fl_Flex::COLUMN);
+  Fl_Flex *row1 = new Fl_Flex(Fl_Flex::ROW);
+  row1->color(FL_YELLOW);
+  row1->box(FL_FLAT_BOX);
+  create_button("Cancel");
+  new Fl_Box(0, 0, 120, 10, "Box1");
+  create_button("OK");
+  new Fl_Input(0, 0, 120, 10, "");
 
-        Fl_Flex *col1 = new Fl_Flex(Fl_Flex::COLUMN);
-        {
-          createButton("Top1");
-          createButton("Bottom1");
-          col1->end();
-          col1->box(FL_FLAT_BOX);
-          col1->color(fl_rgb_color(255, 128, 128));
-          col1->margin(5, 5);
-        }
+  Fl_Flex *col1 = new Fl_Flex(Fl_Flex::COLUMN);
+  create_button("Top1");
+  create_button("Bottom1");
+  col1->box(FL_FLAT_BOX);
+  col1->color(fl_rgb_color(255, 128, 128));
+  col1->margin(5, 5);
+  col1->end();
+  row1->end();
 
-        row->end();
-      }
-      col->set_size(createRow(), 90);
-      createButton("Something1");
-      row = new Fl_Flex(Fl_Flex::ROW);
-      {
-        Fl_Button *cancel = createButton("Cancel");
-        Fl_Button *ok = createButton("OK");
-        new Fl_Input(0, 0, 120, 10, "");
+  col->set_size(create_row(), 90); // sets height of created (anonymous) row #2
 
-        row->set_size(cancel, 100);
-        row->set_size(ok, 100);
-        row->end();
-      }
-      createButton("Something2");
+  create_button("Something1"); // "row" #3
 
-      col->set_size(row, 30);
-      col->margin(0, 6);
-      col->end();
-    }
-    window->resizable(col);
-    window->color(fl_rgb_color(160, 180, 240));
-    window->box(FL_FLAT_BOX);
-    window->end();
-  }
+  Fl_Flex *row4 = new Fl_Flex(Fl_Flex::ROW);
+  Fl_Button *cancel = create_button("Cancel");
+  Fl_Button *ok = create_button("OK");
+  new Fl_Input(0, 0, 120, 10, "");
+  row4->set_size(cancel, 100);
+  row4->set_size(ok, 100);
+  row4->end();
+
+  create_button("Something2"); // "row" #5
+
+  col->set_size(row4, 30);
+  col->margin(6, 10, 6, 10);
+  col->gap(6);
+  col->end();
+
+  window->resizable(col);
+  window->color(fl_rgb_color(160, 180, 240));
+  window->box(FL_FLAT_BOX);
+  window->end();
 
   window->size_range(550, 330);
   window->resize(0, 0, 640, 480);
   window->show(argc, argv);
 
   int ret = Fl::run();
-  delete window;
+  delete window; // not necessary but useful to test for memory leaks
   return ret;
 }

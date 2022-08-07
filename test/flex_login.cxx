@@ -22,13 +22,15 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
 
-Fl_Button *createButton(const char *caption) {
+Fl_Button *create_button(const char *caption) {
   Fl_Button *rtn = new Fl_Button(0, 0, 100, 25, caption);
   rtn->color(fl_rgb_color(225, 225, 225));
   return rtn;
 }
 
-void buttonsPanel(Fl_Flex *parent) {
+// create widgets inside a column, i.e. parent is type(COLUMN)
+
+void buttons_panel(Fl_Flex *parent) {
   new Fl_Box(0, 0, 0, 0, "");
   Fl_Box *w = new Fl_Box(0, 0, 0, 0, "Welcome to Flex Login");
 
@@ -57,8 +59,8 @@ void buttonsPanel(Fl_Flex *parent) {
   Fl_Flex *brow = new Fl_Flex(Fl_Flex::ROW);
   {
     new Fl_Box(0, 0, 0, 0, "");
-    Fl_Button *reg = createButton("Register");
-    Fl_Button *login = createButton("Login");
+    Fl_Button *reg = create_button("Register");
+    Fl_Button *login = create_button("Login");
 
     brow->set_size(reg, 80);
     brow->set_size(login, 80);
@@ -77,7 +79,9 @@ void buttonsPanel(Fl_Flex *parent) {
   parent->set_size(b, 30);
 }
 
-void middlePanel(Fl_Flex *parent) {
+// create widgets inside a row, i.e. parent is type(ROW)
+
+void middle_panel(Fl_Flex *parent) {
   new Fl_Box(0, 0, 0, 0, "");
 
   Fl_Box *box = new Fl_Box(0, 0, 0, 0, "Image");
@@ -86,7 +90,7 @@ void middlePanel(Fl_Flex *parent) {
   Fl_Box *spacer = new Fl_Box(0, 0, 0, 0, "");
 
   Fl_Flex *bp = new Fl_Flex(Fl_Flex::COLUMN);
-  buttonsPanel(bp);
+  buttons_panel(bp);
   bp->end();
 
   new Fl_Box(0, 0, 0, 0, "");
@@ -96,14 +100,19 @@ void middlePanel(Fl_Flex *parent) {
   parent->set_size(bp, 300);
 }
 
+// The main panel consists of three "rows" inside a column, i.e. parent is
+// type(COLUMN). The middle panel has a fixed size (200) such that the two
+// boxes take the remaining space and middle_panel has all widgets.
+
 void mainPanel(Fl_Flex *parent) {
-  new Fl_Box(0, 0, 0, 0, "");
+
+  new Fl_Box(0, 0, 0, 0, ""); // flexible separator
 
   Fl_Flex *mp = new Fl_Flex(Fl_Flex::ROW);
-  middlePanel(mp);
+  middle_panel(mp);
   mp->end();
 
-  new Fl_Box(0, 0, 0, 0, "");
+  new Fl_Box(0, 0, 0, 0, ""); // flexible separator
 
   parent->set_size(mp, 200);
 }
@@ -111,21 +120,20 @@ void mainPanel(Fl_Flex *parent) {
 int main(int argc, char **argv) {
 
   Fl_Window *window = new Fl_Double_Window(100, 100, "Simple GUI Example");
-  {
-    Fl_Flex *col = new Fl_Flex(5, 5, 90, 90, Fl_Flex::COLUMN);
-    mainPanel(col);
-    col->end();
 
-    window->resizable(col);
-    window->color(fl_rgb_color(250, 250, 250));
-    window->end();
-  }
+  Fl_Flex *col = new Fl_Flex(5, 5, 90, 90, Fl_Flex::COLUMN);
+  mainPanel(col);
+  col->end();
+
+  window->resizable(col);
+  window->color(fl_rgb_color(250, 250, 250));
+  window->end();
 
   window->resize(0, 0, 640, 480);
   window->size_range(550, 250);
   window->show(argc, argv);
 
   int ret = Fl::run();
-  delete window;
+  delete window; // not necessary but useful to test for memory leaks
   return ret;
 }
