@@ -363,8 +363,8 @@ void Fl_Wayland_Window_Driver::make_current() {
 
   fl_graphics_driver->clip_region(0);
   fl_window = Fl_Wayland_Window_Driver::wld_window = window;
+  float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
   if (!window->buffer) {
-    float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
