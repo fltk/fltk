@@ -1744,6 +1744,7 @@ pack.o: ../FL/fl_casts.H
 pack.o: ../FL/fl_config.h
 pack.o: ../FL/Fl_Double_Window.H
 pack.o: ../FL/Fl_Export.H
+pack.o: ../FL/Fl_Flex.H
 pack.o: ../FL/Fl_Group.H
 pack.o: ../FL/Fl_Image.H
 pack.o: ../FL/Fl_Light_Button.H
