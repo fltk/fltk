@@ -1,7 +1,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,17 +77,17 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Menu_Button.H> // right click popup menu
+#include <FL/Fl_Menu_Button.H>      // right click popup menu
 #include <FL/Fl_Choice.H>
-#include <FL/Fl_Simple_Terminal.H> // tty
+#include <FL/Fl_Simple_Terminal.H>  // tty
 #include <FL/filename.H>
 #include <FL/platform.H>
-#include <FL/fl_ask.H> // fl_alert()
-#include <FL/fl_utf8.h> // fl_getcwd()
+#include <FL/fl_ask.H>              // fl_alert()
+#include <FL/fl_utf8.h>             // fl_getcwd()
 
 #define FORM_W 350
 #define FORM_H 440
-#define TTY_W  int(FORM_W*2.5)
+#define TTY_W  700
 #define TTY_H  200
 
 /* The form description */
@@ -103,6 +103,7 @@ Fl_Double_Window *form = 0;
 Fl_Group *demogrp = 0;
 Fl_Simple_Terminal *tty = 0;
 Fl_Button *but[9];
+Fl_Button *exit_button;
 
 // Allocate space to edit commands and arguments from demo.menu.
 // We "trust demo.menu" that strings don't overflow
@@ -142,56 +143,49 @@ void debug_var(const char *varname, const char *value) {
   tty->printf("%-10s = %s\n", varname, value);
 }
 
-// Show or hide the tty window
+// Show or hide the tty window. Generally this could be much simpler
+// but the extra space (10 px) at the bottom needs "special care"
+
 void show_tty(int val) {
-  if ( val ) {
-    form->size_range(FORM_W,FORM_H+TTY_H,0,0); // allow resizing
-    form->size(TTY_W,FORM_H+TTY_H);            // demo + height for tty
-    demogrp->size(FORM_W,FORM_H);
-    tty->show();                               // show tty
-    tty->resize(0, FORM_H, TTY_W, TTY_H);      // force tty position
+  if (val) {
+    tty->show();                                        // show debug terminal
+    form->size_range(FORM_W, FORM_H + TTY_H/2, 0, 0);   // allow resizing
+    form->size(TTY_W + 20, FORM_H + TTY_H + 10);        // demo + height for tty + space (10)
+    tty->size(TTY_W, TTY_H);                            // force tty size
   } else {
-    form->size_range(FORM_W,FORM_H,FORM_W,FORM_H);  // no resizing
-    tty->hide();                               // hide tty
-    form->size(FORM_W, FORM_H);                // normal demo size
+    tty->hide();                                        // hide debug terminal
+    form->size_range(FORM_W, FORM_H, FORM_W, FORM_H);   // no resizing
+    form->size(FORM_W, FORM_H);                         // normal demo size
+    tty->resize(10, FORM_H - 1, FORM_W - 20, 1);        // restore original position and size
   }
-  demogrp->size(FORM_W, FORM_H);
   form->init_sizes();
+  exit_button->take_focus();
 }
 
-// Right click popup menu handler
+// Right click popup menu handler (1 = show, 0 = hide)
 void popup_menu_cb(Fl_Widget*, void *userdata) {
-  const char *cmd = (const char*)userdata;
-  if ( strcmp(cmd, "showtty")==0 ) { show_tty(1); }
-  if ( strcmp(cmd, "hidetty")==0 ) { show_tty(0); }
+  show_tty(fl_int(userdata));
 }
 
 void create_the_forms() {
   Fl_Widget *obj;
   Fl_Menu_Button *popup;
-  form = new Fl_Double_Window(FORM_W,FORM_H);
-  form->size_range(FORM_W,FORM_H,FORM_W+1,FORM_H+1); // XXX: +1 needed or window can't be made resizable later
-  // Small terminal window parented to window, not demogrp
-  tty = new Fl_Simple_Terminal(0, form->h(), form->w(), form->h());
-  tty->history_lines(50);
-  tty->ansi(true);
-  tty->hide();
-  tty->textsize(10);
+  form = new Fl_Double_Window(FORM_W, FORM_H, "FLTK Demonstration");
+
   // Parent group for demo
-  demogrp = new Fl_Group(0,0,FORM_W,FORM_H);
-  demogrp->resizable(0);
-  demogrp->begin();
-  // Demo
-  obj = new Fl_Box(FL_FRAME_BOX,10,15,330,40,"FLTK Demonstration");
+  demogrp = new Fl_Group(0, 0, FORM_W, FORM_H - 1);
+
+  // Top demo button
+  obj = new Fl_Box(FL_FRAME_BOX, 10, 15, 330, 40, "FLTK Demonstration");
   obj->color(FL_GRAY-4);
   obj->labelsize(24);
   obj->labelfont(FL_BOLD);
   obj->labeltype(FL_ENGRAVED_LABEL);
-  obj = new Fl_Box(FL_FRAME_BOX,10,65,330,330,0);
+
+  obj = new Fl_Box(FL_FRAME_BOX, 10, 65, 330, 330, 0);
   obj->color(FL_GRAY-8);
-  obj = new Fl_Button(280,405,60,25,"Exit");
-  obj->callback(doexit);
-  Fl_Choice *choice = new Fl_Choice(75, 405, 100, 25, "Scheme:");
+
+  Fl_Choice *choice = new Fl_Choice(90, 405, 100, 25, "Scheme:");
   choice->labelfont(FL_HELVETICA_BOLD);
   choice->add("none");
   choice->add("gtk+");
@@ -204,31 +198,60 @@ void create_the_forms() {
   else if (!strcmp(Fl::scheme(), "gleam")) choice->value(2);
   else if (!strcmp(Fl::scheme(), "plastic")) choice->value(3);
   else choice->value(0);
-  obj = new Fl_Button(10,15,330,380); obj->type(FL_HIDDEN_BUTTON);
+
+  exit_button = new Fl_Button(280, 405, 60, 25, "Exit");
+  exit_button->callback(doexit);
+  exit_button->take_focus();
+
+  obj = new Fl_Button(10, 15, 330, 380);
+  obj->type(FL_HIDDEN_BUTTON);
   obj->callback(doback);
-  obj = but[0] = new Fl_Button( 30, 85,90,90);
-  obj = but[1] = new Fl_Button(130, 85,90,90);
-  obj = but[2] = new Fl_Button(230, 85,90,90);
-  obj = but[3] = new Fl_Button( 30,185,90,90);
-  obj = but[4] = new Fl_Button(130,185,90,90);
-  obj = but[5] = new Fl_Button(230,185,90,90);
-  obj = but[6] = new Fl_Button( 30,285,90,90);
-  obj = but[7] = new Fl_Button(130,285,90,90);
-  obj = but[8] = new Fl_Button(230,285,90,90);
+  obj->tooltip("Use right mouse button to show/hide debug terminal");
+
+  but[0] = new Fl_Button( 30, 85,90,90);
+  but[1] = new Fl_Button(130, 85,90,90);
+  but[2] = new Fl_Button(230, 85,90,90);
+  but[3] = new Fl_Button( 30,185,90,90);
+  but[4] = new Fl_Button(130,185,90,90);
+  but[5] = new Fl_Button(230,185,90,90);
+  but[6] = new Fl_Button( 30,285,90,90);
+  but[7] = new Fl_Button(130,285,90,90);
+  but[8] = new Fl_Button(230,285,90,90);
+
   for (int i=0; i<9; i++) {
     but[i]->align(FL_ALIGN_WRAP);
     but[i]->callback(dobut, i);
   }
-  demogrp->end();
-  // Right click popup menu
+
+  // Right click popup menu (inside demogrp)
   popup = new Fl_Menu_Button(0,0,FORM_W,FORM_H);
   popup->box(FL_NO_BOX);
   popup->type(Fl_Menu_Button::POPUP3); // pop menu on right-click
-  popup->add("Show debug terminal", 0, popup_menu_cb, (void*)"showtty");
-  popup->add("Hide debug terminal", 0, popup_menu_cb, (void*)"hidetty");
+  popup->add("Show debug terminal", 0, popup_menu_cb, (void*)1);
+  popup->add("Hide debug terminal", 0, popup_menu_cb, (void*)0);
+
+  // The resizable box of 'demogrp' ensures that the demo form is not resized
+  // if the user resizes the window while the debug terminal (tty) is shown
+  obj = new Fl_Box(FORM_W - 1, 0, 1, FORM_H);
+  obj->box(FL_NO_BOX);
+  demogrp->resizable(obj);
+
+  demogrp->end();
+
+  // Small debug terminal window parented to window, not demogrp
+  tty = new Fl_Simple_Terminal(10, FORM_H - 1, FORM_W - 20, 1);
+  tty->history_lines(50);
+  tty->ansi(true);
+  tty->hide();
+  tty->textsize(10);
+
   // End window
   form->end();
   form->resizable(tty);
+
+  // Note: do not set size_range() before show() or window can't be made resizable
+  // later (macOS and Windows only, works on Linux though)
+  // form->size_range(FORM_W, FORM_H, FORM_W, FORM_H);
 }
 
 /* Maintaining and building up the menus. */
@@ -610,6 +633,10 @@ int main(int argc, char **argv) {
 
   push_menu("@main");
   form->show(argc, argv);
+
+  // set size_range() after show() so the window can be resizable (Win + macOS)
+  form->size_range(FORM_W, FORM_H, FORM_W, FORM_H);
+
   Fl::run();
   return 0;
 }
