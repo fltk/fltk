@@ -41,13 +41,6 @@ build-autotools:
     - ./configure --enable-pango --enable-cairo
     - time make -j3
     - cd examples && time make
-  artifacts:
-    paths:
-      - lib/
-      - test/cairo_test
-      - test/glpuzzle
-      - test/unittests
-      - test/fltk-versions
 
 # Build with CMake and Ninja (with pango, cairo, building examples)
 
@@ -70,10 +63,6 @@ build-cmake:
     - date
     - time ninja
     - date
-  artifacts:
-    paths:
-      - build/lib/
-      - build/bin/
 
 # Generate and install HTML documentation
 
@@ -86,7 +75,7 @@ pages:
   # install the necessary build tools
   before_script:
     - date
-    - apt update && apt -y install make autoconf man doxygen
+    - apt update && apt -y install make autoconf man doxygen doxygen-latex
   script:
     - date
     - make clean
@@ -94,9 +83,12 @@ pages:
     - date
     - make && make html
     - date
+    - make pdf
+    - date
     - cd ..
     - mkdir -p public/
     - mv documentation/html/* public/
+    - mv documentation/fltk.pdf public/
     - date
   artifacts:
     paths:
