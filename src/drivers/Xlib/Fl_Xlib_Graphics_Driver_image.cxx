@@ -799,6 +799,14 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
  */
 int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int XP, int YP, int WP, int HP) {
   bool has_alpha = (depth == 2 || depth == 4);
+  if (!has_alpha && scale_x == 1 && scale_y == 1) {
+    // Fix for a problem visible under XQuartz with test/device and Fl_Image_Surface:
+    // the drawn image is fully black. The problem does not occur under linux.
+    // Why the problem occurs under XQuartz remains unknown.
+    // The fix is to use XCopyArea() when adequate, rather than using Xrender.
+    XCopyArea(fl_display, pixmap, fl_window, gc_, 0, 0, WP, HP, XP, YP);
+    return 1;
+  }
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
