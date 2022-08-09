@@ -836,8 +836,8 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       // "When you use a filter you'll probably want to use PictOpOver as the render op,
       // regardless of whether the source picture has an alpha channel or not, since
       // the edges may end up having alpha values after the filter has been applied."
-      // suggests this would be preferable :
-      // has_alpha = true;
+      // suggests this is necessary :
+      has_alpha = true;
     }
   }
   XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, 0, 0, 0, 0,
