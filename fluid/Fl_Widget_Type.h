@@ -25,6 +25,7 @@
 
 #define NUM_EXTRA_CODE 4
 
+class Fl_Widget_Class_Type;
 class Fl_Widget_Type;
 class Fluid_Image;
 
@@ -90,6 +91,8 @@ public:
   void hotspot(uchar v) {hotspot_ = v;}
   uchar resizable() const;
   void resizable(uchar v);
+
+  Fl_Widget_Class_Type *has_wcroot();
 
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();

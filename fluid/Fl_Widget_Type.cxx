@@ -1535,6 +1535,17 @@ void subclass_cb(Fl_Input* i, void* v) {
   }
 }
 
+Fl_Widget_Class_Type *Fl_Widget_Type::has_wcroot() {
+  Fl_Type *root = this;
+  while(root->parent){
+    root = root->parent;
+  }
+  if(!strcmp(root->type_name(), "widget_class")){
+    return (Fl_Widget_Class_Type *)root;
+  }
+  return NULL;
+}
+
 ////////////////////////////////////////////////////////////////
 
 // textstuff: set textfont, textsize, textcolor attributes:
@@ -2167,6 +2178,10 @@ int isdeclare(const char *c) {
 void Fl_Widget_Type::write_static() {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
+    Fl_Widget_Class_Type *wc_root = has_wcroot();
+    if(wc_root && wc_root->wc_relative){
+      write_declare("#include <math.h>");
+    }
     write_declare("#include <FL/Fl.H>");
     write_declare("#include <FL/%s.H>", t);
   }
@@ -2327,7 +2342,17 @@ void Fl_Widget_Type::write_code1() {
     else
       write_c("new %s(%d, %d", t, o->w(), o->h());
   } else {
-    write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
+    Fl_Widget_Class_Type *wc_root = has_wcroot();
+    if(wc_root && wc_root->wc_relative){
+      write_c("new %s(round(W*%f), round(H*%f), round(W*%f), round(H*%f)", t,
+              1.0f*o->x()/wc_root->o->w(),
+              1.0f*o->y()/wc_root->o->h(),
+              1.0f*o->w()/wc_root->o->w(),
+              1.0f*o->h()/wc_root->o->h());
+    }
+    else{
+      write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
+    }
   }
   if (label() && *label()) {
     write_c(", ");

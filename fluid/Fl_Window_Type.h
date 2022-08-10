@@ -100,7 +100,7 @@ public:
   static int popupx, popupy;
 };
 
-class Fl_Widget_Class_Type : private Fl_Window_Type {
+class Fl_Widget_Class_Type : public Fl_Window_Type {
 protected:
   Fl_Menu_Item* subtypes() {return 0;}
 
