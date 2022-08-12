@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,12 +15,68 @@
 #
 
 set (DOCS)
+set (GENERATE_DOCS FALSE)
+
+if (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
+  set (GENERATE_DOCS TRUE)
+endif ()
 
 if (OPTION_INCLUDE_DRIVER_DOCUMENTATION)
   set (DRIVER_DOCS "DriverDev")
 else ()
   set (DRIVER_DOCS "")
 endif ()
+
+#------------------------------------------------
+# generate files used for both HTML and PDF docs
+#------------------------------------------------
+
+if (GENERATE_DOCS)
+
+  # create required variables
+
+  execute_process (COMMAND date "+%Y"
+    OUTPUT_VARIABLE YEAR
+  )
+
+  # note: current locale is used for abbreviated month
+  execute_process (COMMAND date "+%b %d, %Y"
+    OUTPUT_VARIABLE CURRENT_DATE
+  )
+
+  execute_process (COMMAND git rev-parse --short=10 HEAD
+    OUTPUT_VARIABLE GIT_REVISION
+  )
+
+  # strip trailing newline
+  string (REPLACE "\n" "" GIT_REVISION ${GIT_REVISION})
+
+  execute_process (COMMAND doxygen --version
+    OUTPUT_VARIABLE DOXYGEN_VERSION_SHORT
+  )
+
+  # strip trailing git revision if doxygen was built from source
+  string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION_SHORT})
+
+  ## fl_debug_var (GIT_REVISION)
+  ## fl_debug_var (DOXYGEN_EXECUTABLE)
+  ## fl_debug_var (DOXYGEN_VERSION_SHORT)
+
+  # configure copyright.dox (includes current year)
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/copyright.dox.in
+    ${CMAKE_CURRENT_BINARY_DIR}/copyright.dox
+    @ONLY
+  )
+
+  # configure generated.dox (includes date and versions)
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated.dox.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated.dox
+    @ONLY
+  )
+
+endif (GENERATE_DOCS)
 
 #--------------------------
 # build html documentation
@@ -35,12 +91,6 @@ if (OPTION_BUILD_HTML_DOCUMENTATION)
   set (GENERATE_HTML  YES)
   set (GENERATE_LATEX NO)
   set (LATEX_HEADER   "")
-
-  configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/tiny.png
-    ${CMAKE_CURRENT_BINARY_DIR}/html/tiny.png
-    COPYONLY
-  )
 
   # configure Doxygen input file for HTML docs (Doxyfile.in)
 
@@ -86,10 +136,6 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
 
   # strip potential " (Git-hash)" from the original version
   string (REGEX REPLACE " .*$" "" DOXY_VERSION ${DOXYGEN_VERSION})
-
-  execute_process (COMMAND date +%Y
-    OUTPUT_VARIABLE YEAR
-  )
 
   # configure Doxygen input file for PDF docs (Doxybook.in)
 

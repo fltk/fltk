@@ -51,6 +51,7 @@
 #  include <FL/fl_draw.H>
 #  include <FL/platform.H>
 #  include <FL/Fl_Image_Surface.H>
+#  include <FL/Fl_Tiled_Image.H>
 #  include "../../Fl_Screen_Driver.H"
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
@@ -780,16 +781,9 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
   if (Wfull == 0 || Hfull == 0) return;
   bool need_clip = (cx || cy || WP < rgb->w() || HP < rgb->h());
   if (need_clip) push_clip(XP, YP, WP, HP);
-  int offset = 0;
-  if (Wfull > rgb->data_w() || Hfull > rgb->data_h()) {
-    // When enlarging while drawing with XRender, 1 pixel around target area seems unpainted,
-    // so we increase a bit the target area and move it 1 pixel to left and top.
-    Wfull = (rgb->w()+2)*scale(), Hfull = (rgb->h()+2)*scale();
-    offset = 1;
-  }
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
                           rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
-                          Xs + this->floor(offset_x_) - offset, Ys + this->floor(offset_y_) - offset,
+                          Xs + this->floor(offset_x_), Ys + this->floor(offset_y_),
                           Wfull, Hfull);
   if (need_clip) pop_clip();
 }
@@ -830,7 +824,10 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
-    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR) {
+    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR &&
+          !Fl_Tiled_Image::drawing_tiled_image()) {
+      // The filter is not used when drawing tiled images because drawn image edges
+      // become somewhat blurry.
       XRenderSetPictureFilter(fl_display, src, FilterBilinear, 0, 0);
       // A note at  https://www.talisman.org/~erlkonig/misc/x11-composite-tutorial/ :
       // "When you use a filter you'll probably want to use PictOpOver as the render op,
