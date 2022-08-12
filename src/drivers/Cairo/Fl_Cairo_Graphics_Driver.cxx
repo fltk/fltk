@@ -1298,4 +1298,12 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
   }
 }
 
+
+void Fl_Cairo_Graphics_Driver::cache_size(Fl_Image *unused, int &width, int &height) {
+  cairo_matrix_t matrix;
+  cairo_get_matrix(cairo_, &matrix);
+  width *= matrix.xx;
+  height *= matrix.xx;
+}
+
 #endif // USE_PANGO
