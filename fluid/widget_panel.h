@@ -46,8 +46,7 @@ extern void w_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_w_input;
 extern void h_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_h_input;
-#include <FL/Fl_Light_Button.H>
-extern void wc_relative_cb(Fl_Light_Button*, void*);
+extern void wc_relative_cb(Fl_Choice*, void*);
 #include <FL/Fl_Value_Input.H>
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);
@@ -63,6 +62,7 @@ extern void set_max_size_cb(Fl_Button*, void*);
 #include "Shortcut_Button.h"
 extern void shortcut_in_cb(Shortcut_Button*, void*);
 extern void xclass_cb(Fl_Input*, void*);
+#include <FL/Fl_Light_Button.H>
 extern void border_cb(Fl_Light_Button*, void*);
 extern void modal_cb(Fl_Light_Button*, void*);
 extern void non_modal_cb(Fl_Light_Button*, void*);
@@ -111,6 +111,7 @@ extern void cancel_cb(Fl_Button*, void*);
 Fl_Double_Window* make_widget_panel();
 extern Fl_Menu_Item menu_[];
 extern Fl_Menu_Item menu_1[];
+extern Fl_Menu_Item menu_Relative[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
 #endif
