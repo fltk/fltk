@@ -40,6 +40,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 // Make an Fl_Widget_Type subclass instance.
 // It figures out the automatic size and parent of the new widget,
@@ -754,7 +755,7 @@ void h_cb(Fluid_Coord_Input *i, void *v) {
   }
 }
 
-void wc_relative_cb(Fl_Light_Button *i, void *v) {
+void wc_relative_cb(Fl_Choice *i, void *v) {
   if (v == LOAD) {
     if (!strcmp(current_widget->type_name(), "widget_class")) {
       i->show();
@@ -2179,7 +2180,7 @@ void Fl_Widget_Type::write_static() {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
     Fl_Widget_Class_Type *wc_root = has_wcroot();
-    if(wc_root && wc_root->wc_relative){
+    if(wc_root && wc_root->wc_relative == 2){
       write_declare("#include <math.h>");
     }
     write_declare("#include <FL/Fl.H>");
@@ -2343,7 +2344,7 @@ void Fl_Widget_Type::write_code1() {
       write_c("new %s(%d, %d", t, o->w(), o->h());
   } else {
     Fl_Widget_Class_Type *wc_root = has_wcroot();
-    if(wc_root && wc_root->wc_relative){
+    if(wc_root && wc_root->wc_relative == 2){
       write_c("new %s(round(W*%f), round(H*%f), round(W*%f), round(H*%f)", t,
               1.0f*o->x()/wc_root->o->w(),
               1.0f*o->y()/wc_root->o->h(),

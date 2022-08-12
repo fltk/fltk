@@ -60,6 +60,13 @@ Fluid_Coord_Input *widget_w_input=(Fluid_Coord_Input *)0;
 
 Fluid_Coord_Input *widget_h_input=(Fluid_Coord_Input *)0;
 
+Fl_Menu_Item menu_Relative[] = {
+ {"None", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Relative", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Relative && Rescale", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"public", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -318,12 +325,15 @@ Fl_Double_Window* make_widget_panel() {
             widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_h_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_h_input
-          { Fl_Light_Button* o = new Fl_Light_Button(335, 150, 65, 20, "Relative");
-            o->tooltip("If set, widgets inside a widget class of type Fl_Group are repositioned relat\
-ive to the origin at construction time");
+          { Fl_Choice* o = new Fl_Choice(335, 150, 65, 20, "Relative:");
+            o->tooltip("If set, widgets inside a widget class of type Fl_Group are repositioned/resca\
+led relative to the origin at construction time");
+            o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
             o->callback((Fl_Callback*)wc_relative_cb);
-          } // Fl_Light_Button* o
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+            o->menu(menu_Relative);
+          } // Fl_Choice* o
           { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
