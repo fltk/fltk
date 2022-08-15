@@ -577,12 +577,14 @@ void Fl_Wayland_Window_Driver::iconize() {
 
 
 void Fl_Wayland_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-  // Ensure border is on screen; these values are generic enough
-  // to work with many window managers, and are based on KDE defaults.
-  *top = 20;
-  *left = 4;
-  *right = 4;
-  *bottom = 8;
+  struct wld_window *xid = (struct wld_window*)fl_xid(pWindow);
+  if (xid && xid->kind == DECORATED) {
+    libdecor_frame_translate_coordinate(xid->frame, 0, 0, left, top);
+    *right = *left;
+    *bottom = 0;
+  } else {
+    Fl_Window_Driver::decoration_sizes(top, left, right, bottom);
+  }
 }
 
 void Fl_Wayland_Window_Driver::show_with_args_begin() {
