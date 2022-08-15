@@ -587,27 +587,6 @@ void Fl_Wayland_Window_Driver::decoration_sizes(int *top, int *left,  int *right
   }
 }
 
-void Fl_Wayland_Window_Driver::show_with_args_begin() {
-  // Get defaults for drag-n-drop and focus...
-  const char *key = 0;
-
-  if (Fl::first_window()) key = Fl::first_window()->xclass();
-  if (!key) key = "fltk";
-}
-
-
-void Fl_Wayland_Window_Driver::show_with_args_end(int argc, char **argv) {
-  if (argc) {
-    // set the command string, used by state-saving window managers:
-    int j;
-    int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
-    char *buffer = new char[n];
-    char *p = buffer;
-    for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
-    delete[] buffer;
-  }
-}
-
 
 int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                                  void (*draw_area)(void*, int,int,int,int), void* data)
