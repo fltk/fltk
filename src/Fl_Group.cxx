@@ -645,7 +645,7 @@ void Fl_Group::remove(Fl_Widget &o) {
   Return values \> 0 are reserved for use by FLTK core widgets.
   Return values \< 0 are free to be used by user defined widgets.
 
-  \todo Reimplementation of Fl_Group::delete_widget(int) in more FLTK
+  \todo Reimplementation of Fl_Group::delete_child(int) in more FLTK
     subclasses. This is not yet complete.
 
   \param[in]  index   index of child to be removed

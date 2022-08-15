@@ -1,7 +1,7 @@
 //
-// Scroll widget for the Fast Light Tool Kit (FLTK).
+// Fl_Scroll widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,21 +26,45 @@ void Fl_Scroll::clear() {
   // and deletion. Finally they are added to Fl_Scroll's group again. This
   // is MUCH faster than removing the widgets one by one (STR #2409).
 
+  remove(hscrollbar); // remove last child first
   remove(scrollbar);
-  remove(hscrollbar);
   Fl_Group::clear();
-  add(hscrollbar);
   add(scrollbar);
+  add(hscrollbar);
 }
 
-/** Insure the scrollbars are the last children. */
+/**
+  The destructor also deletes all the children.
+
+  \see Fl_Group::~Fl_Group()
+*/
+Fl_Scroll::~Fl_Scroll() {
+  remove(hscrollbar); // remove last child first
+  remove(scrollbar);
+  Fl_Group::clear();
+}
+
+/** Ensure the scrollbars are the last children.
+
+  When Fl_Scroll is instantiated the first child of the Fl_Group is the
+  vertical scrollbar \p scrollbar and the second child is the horizontal
+  scrollbar \p hscrollbar.
+
+  These two widgets must always be the last two widgets and in this order
+  to guarantee the correct drawing order and event delivery.
+*/
 void Fl_Scroll::fix_scrollbar_order() {
   Fl_Widget** a = (Fl_Widget**)array();
-  if (a[children()-1] != &scrollbar) {
-    int i,j; for (i = j = 0; j < children(); j++)
-      if (a[j] != &hscrollbar && a[j] != &scrollbar) a[i++] = a[j];
-    a[i++] = &hscrollbar;
+  if (children() > 1 &&
+      (a[children()-2] != &scrollbar ||
+       a[children()-1] != &hscrollbar)) {
+    int i, j;
+    for (i = j = 0; j < children(); j++) {
+      if (a[j] != &hscrollbar && a[j] != &scrollbar)
+        a[i++] = a[j];
+    }
     a[i++] = &scrollbar;
+    a[i++] = &hscrollbar;
   }
 }
 
@@ -58,7 +82,7 @@ void Fl_Scroll::fix_scrollbar_order() {
   \retval     1   index out of range
   \retval     2   widget not allowed to be removed (see note)
 
-  \see Fl_Group::delete_child()
+  \see Fl_Group::delete_child(int index)
 
   \since FLTK 1.4.0
 */
@@ -447,6 +471,7 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
   Fl_Scroll* s = (Fl_Scroll*)(o->parent());
   s->scroll_to(s->xposition(), int(((Fl_Scrollbar*)o)->value()));
 }
+
 /**
   Creates a new Fl_Scroll widget using the given position,
   size, and label string. The default boxtype is FL_NO_BOX.
@@ -458,8 +483,8 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
   variables, but you must declare the Fl_Scroll <I>first</I>, so
   that it is destroyed last.
 */
-Fl_Scroll::Fl_Scroll(int X,int Y,int W,int H,const char* L)
-  : Fl_Group(X,Y,W,H,L),
+Fl_Scroll::Fl_Scroll(int X, int Y, int W, int H, const char *L)
+  : Fl_Group(X, Y, W, H, L),
     scrollbar(X+W-Fl::scrollbar_size(),Y,
               Fl::scrollbar_size(),H-Fl::scrollbar_size()),
     hscrollbar(X,Y+H-Fl::scrollbar_size(),
