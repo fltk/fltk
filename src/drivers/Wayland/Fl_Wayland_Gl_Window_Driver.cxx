@@ -64,7 +64,7 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   if (egl_display == EGL_NO_DISPLAY) init();
   egl_window = NULL;
   egl_surface = NULL;
-  egl_resize_in_progress = false;
+  egl_swap_in_progress = false;
 }
 
 
@@ -322,19 +322,16 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
     if (!overlay_buffer) return; // don't call eglSwapBuffers until overlay has been drawn
   }
 
-  if (egl_surface) {
+  if (egl_surface && !egl_swap_in_progress) {
+    egl_swap_in_progress = true;
     //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
-    if (!egl_resize_in_progress) {
-      while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
-        wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
-      }
-      wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
-      wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
+    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
+      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     }
-    if (!egl_resize_in_progress || pWindow->parent()) {
-       eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-    }
-    egl_resize_in_progress = false;
+    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
+    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+    egl_swap_in_progress = false;
   }
 }
 
@@ -366,6 +363,9 @@ public:
 
 static Fl_Wayland_Gl_Plugin Gl_Overlay_Plugin;
 
+static void delayed_flush(Fl_Gl_Window *win) {
+  win->flush();
+}
 
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
@@ -378,7 +378,9 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (W2 != W || H2 != H) {
     wl_egl_window_resize(egl_window, W, H, 0, 0);
     //fprintf(stderr, "Fl_Wayland_Gl_Window_Driver::resize to %dx%d\n", W, H);
-    if (!Fl_Window::is_a_rescale()) egl_resize_in_progress = true;
+    if (!pWindow->parent()) {
+        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_flush, pWindow);
+    }
   }
 }
 
