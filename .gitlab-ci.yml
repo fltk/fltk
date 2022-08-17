@@ -97,5 +97,4 @@ pages:
   artifacts:
     paths:
       - public
-    expire_in:
-      - 8 days
+    expire_in: 8 days
