@@ -407,12 +407,4 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-
-Fl_RGB_Image* Fl_Wayland_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h) {
-  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
-  Fl_RGB_Image *rgb = Fl_Gl_Window_Driver::capture_gl_rectangle(x, y, w, h);
-  Fl_Surface_Device::pop_current();
-  return rgb;
-}
-
 #endif // HAVE_GL
