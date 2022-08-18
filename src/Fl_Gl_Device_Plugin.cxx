@@ -1,7 +1,7 @@
 //
 // implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,7 +17,8 @@
 #include <config.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
-#include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
+#include <FL/Fl_Device.H>
+#include "Fl_Gl_Window_Driver.H"
 
 
 /**
@@ -31,7 +32,7 @@ public:
   virtual int print(Fl_Widget *w) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
-    Fl_RGB_Image *img = Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
+    Fl_RGB_Image *img =  Fl_Gl_Window_Driver::driver(glw)->capture_gl_rectangle(0, 0, glw->w(), glw->h());
     img->scale(glw->w(), glw->h());
     img->draw(0, 0);
     delete img;
@@ -40,7 +41,7 @@ public:
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) {
     Fl_Gl_Window *glw = widget->as_gl_window();
     if (!glw) return NULL;
-    return Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, x, y, w, h);
+    return Fl_Gl_Window_Driver::driver(glw)->capture_gl_rectangle(x, y, w, h);
   }
 };
 
