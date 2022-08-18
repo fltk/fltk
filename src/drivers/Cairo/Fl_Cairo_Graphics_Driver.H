@@ -188,6 +188,11 @@ public:
   virtual void XDestroyRegion(Fl_Region r);
   virtual void add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H);
   virtual void cache_size(Fl_Image *img, int &width, int &height);
+  virtual char can_do_alpha_blending();
+  virtual float override_scale();
+  virtual void restore_scale(float);
+  virtual void antialias(int state);
+  virtual int antialias();
 };
 
 #endif // FL_CAIRO_GRAPHICS_DRIVER_H
