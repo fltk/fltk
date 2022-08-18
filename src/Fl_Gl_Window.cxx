@@ -338,7 +338,10 @@ void Fl_Gl_Window::init() {
 */
 void Fl_Gl_Window::draw_overlay() {}
 
-
+/**
+ Supports drawing to an Fl_Gl_Window with the FLTK 2D drawing API.
+ \see \ref opengl_with_fltk_widgets
+ */
 void Fl_Gl_Window::draw_begin() {
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
   Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
@@ -373,6 +376,10 @@ void Fl_Gl_Window::draw_begin() {
   // TODO: all of the settings should be saved on the GL stack
 }
 
+/**
+ To be used as a match for a previous call to Fl_Gl_Window::draw_begin().
+ \see \ref opengl_with_fltk_widgets
+ */
 void Fl_Gl_Window::draw_end() {
   glMatrixMode(GL_MODELVIEW_MATRIX);
   glPopMatrix();
