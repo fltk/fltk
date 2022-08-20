@@ -98,14 +98,7 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
   }
   delete_cursor_();
   if (gl_start_support_) { // occurs only if gl_start/gl_finish was used
-    static Fl_Wayland_Plugin *plugin = NULL;
-    if (!plugin) {
-      Fl_Plugin_Manager pm("wayland.fltk.org");
-      plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
-    }
-    if (plugin) {
-      plugin->destroy(gl_start_support_);
-    }
+    gl_plugin()->destroy(gl_start_support_);
   }
 }
 
@@ -388,15 +381,8 @@ void Fl_Wayland_Window_Driver::flush() {
     Fl_Wayland_Window_Driver::in_flush = true;
     Fl_Window_Driver::flush();
     Fl_Wayland_Window_Driver::in_flush = false;
-    static Fl_Wayland_Plugin *plugin = NULL;
-    if (!plugin) {
-      Fl_Plugin_Manager pm("wayland.fltk.org");
-      plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
-    }
-    if (plugin) {
-      plugin->do_swap(pWindow); // useful only for GL win with overlay
-      if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) plugin->invalidate(pWindow);
-    }
+    gl_plugin()->do_swap(pWindow); // useful only for GL win with overlay
+    if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) gl_plugin()->invalidate(pWindow);
     return;
   }
   struct wld_window *window = fl_xid(pWindow);
@@ -1530,4 +1516,14 @@ cairo_t *fl_wl_cairo() {
 
 struct wl_display *fl_wl_display() {
   return Fl_Wayland_Screen_Driver::wl_display;
+}
+
+
+Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
+  static Fl_Wayland_Plugin *plugin = NULL;
+  if (!plugin) {
+    Fl_Plugin_Manager pm("wayland.fltk.org");
+    plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
+  }
+  return plugin;
 }
