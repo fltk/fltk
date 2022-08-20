@@ -68,7 +68,7 @@ struct fl_wld_buffer {
 struct wld_window;
 
 
-class FL_EXPORT Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 private:
   struct fl_wld_buffer *buffer_;
 public:

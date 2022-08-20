@@ -43,7 +43,7 @@
 
 
 
-class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
+class Fl_WinAPI_Window_Driver : public Fl_Window_Driver
 {
   struct icon_data {
     const void *legacy_icon;

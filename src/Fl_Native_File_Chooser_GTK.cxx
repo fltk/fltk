@@ -103,7 +103,7 @@ typedef void  (*GClosureNotify)(gpointer data, GClosure *closure);
 /* --------------------- End of Type definitions from GLIB and GTK --------------------- */
 
 
-class FL_EXPORT Fl_GTK_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
+class Fl_GTK_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
   friend class Fl_Native_File_Chooser;
 private:
   static int have_looked_for_GTK_libs;

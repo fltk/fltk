@@ -22,7 +22,7 @@ class Fl_OpenGL_Graphics_Driver;
  OpenGL Surface.
  This surface is needed as an interface between GL windows and the GL graphics driver.
  */
-class FL_EXPORT Fl_OpenGL_Display_Device : public Fl_Surface_Device {
+class Fl_OpenGL_Display_Device : public Fl_Surface_Device {
   Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver);
 public:
   static Fl_OpenGL_Display_Device *display_device();

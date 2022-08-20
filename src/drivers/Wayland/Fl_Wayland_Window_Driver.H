@@ -43,7 +43,7 @@
 typedef struct _cairo_pattern cairo_pattern_t;
 
 
-class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
+class Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
   friend class Fl_Wayland_Gl_Window_Driver;

@@ -29,7 +29,7 @@
 /**
  \brief OpenGL specific graphics class.
  */
-class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
+class Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   float pixels_per_unit_;
   float line_width_;
