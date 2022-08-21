@@ -381,7 +381,7 @@ void Fl_Gl_Window::draw_begin() {
  \see \ref opengl_with_fltk_widgets
  */
 void Fl_Gl_Window::draw_end() {
-  glMatrixMode(GL_MODELVIEW_MATRIX);
+  glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
   glMatrixMode(GL_PROJECTION);
