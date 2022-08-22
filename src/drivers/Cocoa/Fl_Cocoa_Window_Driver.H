@@ -72,7 +72,7 @@ class NSOpenGLPixelFormat;
  */
 
 
-class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
+class Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
 private:
   struct shape_data_type {

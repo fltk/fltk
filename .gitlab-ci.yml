@@ -5,9 +5,13 @@
 # (1) Continuously building FLTK with one or more build systems.
 # (2) Generating current HTML documentation and putting it online.
 #
-# The documentation will be viewable at:
+# The HTML documentation will be viewable at:
 #
-# https://fltk.gitlab.io/fltk/
+#   https://fltk.gitlab.io/fltk/
+#
+# The PDF documentation will be viewable at:
+#
+#   https://fltk.gitlab.io/fltk/fltk.pdf
 #
 # Details of this script:
 #
@@ -93,3 +97,4 @@ pages:
   artifacts:
     paths:
       - public
+    expire_in: 8 days

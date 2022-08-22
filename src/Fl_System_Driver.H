@@ -59,7 +59,7 @@ class Fl_Sys_Menu_Bar_Driver;
  This class is only for internal use by the FLTK library.
  Each supported platform implements several of the virtual methods of this class.
   */
-class FL_EXPORT Fl_System_Driver {
+class Fl_System_Driver {
   friend class Fl;
 public:
   struct Keyname {

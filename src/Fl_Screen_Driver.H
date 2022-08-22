@@ -51,7 +51,7 @@ class Fl_Input;
 
   Each supported platform implements several of the virtual methods of this class.
 */
-class FL_EXPORT Fl_Screen_Driver {
+class Fl_Screen_Driver {
 
 protected:
   Fl_Screen_Driver();

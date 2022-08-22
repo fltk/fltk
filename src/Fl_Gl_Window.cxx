@@ -1,7 +1,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -338,10 +338,13 @@ void Fl_Gl_Window::init() {
 */
 void Fl_Gl_Window::draw_overlay() {}
 
-
+/**
+ Supports drawing to an Fl_Gl_Window with the FLTK 2D drawing API.
+ \see \ref opengl_with_fltk_widgets
+ */
 void Fl_Gl_Window::draw_begin() {
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
-  Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)fl_graphics_driver;
+  Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
   drv->pixels_per_unit_ = pixels_per_unit();
 
   if (!valid()) {
@@ -373,8 +376,12 @@ void Fl_Gl_Window::draw_begin() {
   // TODO: all of the settings should be saved on the GL stack
 }
 
+/**
+ To be used as a match for a previous call to Fl_Gl_Window::draw_begin().
+ \see \ref opengl_with_fltk_widgets
+ */
 void Fl_Gl_Window::draw_end() {
-  glMatrixMode(GL_MODELVIEW_MATRIX);
+  glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
   glMatrixMode(GL_PROJECTION);
@@ -541,6 +548,49 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 Fl_Font_Descriptor** Fl_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
   extern FL_EXPORT Fl_Fontdesc *fl_fonts;
   return &(fl_fonts[fnum].first);
+}
+
+/* Captures a rectangle of a Fl_Gl_Window and returns it as an RGB image.
+ This is the platform-independent version. Some platforms may override it.
+ */
+Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
+{
+  Fl_Gl_Window *glw = pWindow;
+  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
+  // Read OpenGL context pixels directly.
+  // For extra safety, save & restore OpenGL states that are changed
+  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+  //
+  float s = glw->pixels_per_unit();
+  if (s != 1) {
+    x = int(x * s); y = int(y * s); w = int(w * s); h = int(h * s);
+  }
+  // Read a block of pixels from the frame buffer
+  int mByteWidth = w * 3;
+  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
+  uchar *baseAddress = new uchar[mByteWidth * h];
+  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
+               GL_RGB, GL_UNSIGNED_BYTE,
+               baseAddress);
+  glPopClientAttrib();
+  // GL gives a bottom-to-top image, convert it to top-to-bottom
+  uchar *tmp = new uchar[mByteWidth];
+  uchar *p = baseAddress ;
+  uchar *q = baseAddress + (h-1)*mByteWidth;
+  for (int i = 0; i < h/2; i++, p += mByteWidth, q -= mByteWidth) {
+    memcpy(tmp, p, mByteWidth);
+    memcpy(p, q, mByteWidth);
+    memcpy(q, tmp, mByteWidth);
+  }
+  delete[] tmp;
+
+  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
+  img->alloc_array = 1;
+  return img;
 }
 
 /**

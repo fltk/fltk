@@ -41,12 +41,14 @@
  */
 
 typedef struct _cairo_pattern cairo_pattern_t;
+class Fl_Wayland_Plugin;
 
 
-class FL_EXPORT Fl_Wayland_Window_Driver : public Fl_Window_Driver
+class Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
   friend class Fl_Wayland_Gl_Window_Driver;
+  friend class Fl_Wayland_Screen_Driver;
 private:
   struct shape_data_type {
     int lw_; ///<  width of shape image
@@ -55,6 +57,7 @@ private:
     cairo_pattern_t *mask_pattern_;
   } *shape_data_;
   static bool in_flush; // useful for progressive window drawing
+  static Fl_Wayland_Plugin *gl_plugin();
   struct wl_cursor *cursor_;
   void delete_cursor_();
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
@@ -113,8 +116,6 @@ public:
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
-  virtual void show_with_args_begin();
-  virtual void show_with_args_end(int argc, char **argv);
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);

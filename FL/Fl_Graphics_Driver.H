@@ -241,14 +241,26 @@ protected:
 public:
   virtual ~Fl_Graphics_Driver();
   static Fl_Graphics_Driver &default_driver();
+  // support of "complex shapes"
+  void push_matrix();
+  void pop_matrix();
+  void mult_matrix(double a, double b, double c, double d, double x, double y);
+  void rotate(double d);
+  void translate(double x,double y);
+  double transform_x(double x, double y);
+  double transform_y(double x, double y);
+  double transform_dx(double x, double y);
+  double transform_dy(double x, double y);
+  /** Return the current Fl_Font_Descriptor */
+  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  /** Set the current Fl_Font_Descriptor */
+  inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
   float scale() { return scale_; }
   /** Sets the current value of the scaling factor */
   virtual void scale(float f);
   /** Return whether the graphics driver can do alpha blending */
   virtual char can_do_alpha_blending();
-  // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
-  /** see fl_point() */
   virtual void point(int x, int y);
   virtual void rect(int x, int y, int w, int h);
   virtual void focus_rect(int x, int y, int w, int h);
@@ -288,21 +300,11 @@ public:
   virtual Fl_Region clip_region();              // has default implementation
   virtual void clip_region(Fl_Region r);        // has default implementation
   virtual void restore_clip();
-  // --- implementation is in src/fl_vertex.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_vertex.cxx
-  virtual void push_matrix();
-  virtual void pop_matrix();
-  virtual void mult_matrix(double a, double b, double c, double d, double x, double y);
-  virtual void rotate(double d);
-  virtual void translate(double x,double y);
   virtual void begin_points();
   virtual void begin_line();
   virtual void begin_loop();
   virtual void begin_polygon();
   virtual void begin_complex_polygon();
-  virtual double transform_x(double x, double y);
-  virtual double transform_y(double x, double y);
-  virtual double transform_dx(double x, double y);
-  virtual double transform_dy(double x, double y);
   virtual void transformed_vertex(double xf, double yf);
   virtual void transformed_vertex0(float x, float y);
   virtual void vertex(double x, double y);
@@ -314,16 +316,11 @@ public:
   virtual void end_complex_polygon();
   virtual void gap();
   virtual void circle(double x, double y, double r);
-  // --- implementation is in src/fl_arc.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arc.cxx if needed
   virtual void arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arci.cxx
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
-  // --- implementation is in src/fl_curve.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_curve.cxx if needed
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   virtual void line_style(int style, int width=0, char* dashes=0);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   virtual void color(Fl_Color c);
   virtual void set_color(Fl_Color i, unsigned int c);
   virtual void free_color(Fl_Color i, int overlay);
@@ -342,9 +339,6 @@ public:
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual int height();
   virtual int descent();
-  /** Return the current Fl_Font_Descriptor */
-  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
-  virtual void font_descriptor(Fl_Font_Descriptor *d);
   virtual void gc(void*);
   virtual void *gc(void);
   virtual uchar **mask_bitmap();

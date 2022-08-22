@@ -208,6 +208,9 @@ void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
 
 
 static int fl_angle_ = 0;
+// Unicode string buffer
+static unsigned short *wstr = NULL;
+static int wstr_len    = 0;
 
 #ifndef FL_DOXYGEN
 Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsize) : Fl_Font_Descriptor(name,fsize) {
@@ -220,7 +223,14 @@ Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsi
   case ' ': break;
   default: name--;
   }
-  fid = CreateFont(
+  int wn = fl_utf8toUtf16(name, strlen(name), wstr, wstr_len);
+  if (wn >= wstr_len) {
+    wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
+    wstr_len = wn + 1;
+    wn = fl_utf8toUtf16(name, strlen(name), wstr, wstr_len);
+  }
+
+  fid = CreateFontW(
     -fsize, // negative makes it use "char size"
     0,              // logical average character width
     fl_angle_*10,                   // angle of escapement
@@ -234,7 +244,7 @@ Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsi
     CLIP_DEFAULT_PRECIS,// clipping precision
     DEFAULT_QUALITY,    // output quality
     DEFAULT_PITCH,      // pitch and family
-    name                // pointer to typeface name string
+    (LPCWSTR)wstr       // pointer to typeface name string
     );
   angle = fl_angle_;
   HDC gc = (HDC)fl_graphics_driver->gc();
@@ -337,12 +347,6 @@ Fl_Fontsize Fl_GDI_Graphics_Driver::size_unscaled() {
   if (font_descriptor()) return size_;
   return -1;
 }
-
-
-// Unicode string buffer
-static unsigned short *wstr = NULL;
-static int wstr_len    = 0;
-
 
 double Fl_GDI_Graphics_Driver::width_unscaled(const char* c, int n) {
   int i = 0;

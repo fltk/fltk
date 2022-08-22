@@ -20,7 +20,7 @@
 
 #include "../Unix/Fl_Unix_System_Driver.H"
 
-class FL_EXPORT Fl_Wayland_System_Driver : public Fl_Unix_System_Driver {
+class Fl_Wayland_System_Driver : public Fl_Unix_System_Driver {
 public:
   virtual int need_menu_handle_part2() {return 0;}
   int event_key(int k);

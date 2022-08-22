@@ -112,7 +112,7 @@ public:
  It is currently used to provide an automated printing
  service and screen capture for OpenGL windows, if linked with fltk_gl.
  */
-class FL_EXPORT Fl_Device_Plugin : public Fl_Plugin {
+class Fl_Device_Plugin : public Fl_Plugin {
 public:
   /** \brief The constructor */
   Fl_Device_Plugin(const char *pluginName)

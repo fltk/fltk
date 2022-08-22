@@ -607,9 +607,6 @@ int Fl_Graphics_Driver::height() { return size(); }
 /** Return the current line descent */
 int Fl_Graphics_Driver::descent() { return 0; }
 
-/** Set the current Fl_Font_Descriptor */
-void Fl_Graphics_Driver::font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
-
 /** Sets the value of the driver-specific graphics context. */
 void Fl_Graphics_Driver::gc(void*) {}
 

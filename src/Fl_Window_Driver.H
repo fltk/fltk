@@ -48,7 +48,7 @@ class Fl_RGB_Image;
  sure that the Graphics Driver will draw into the bitmap associated with
  this window.
 */
-class FL_EXPORT Fl_Window_Driver
+class Fl_Window_Driver
 {
   friend class Fl_Window;
 private:
