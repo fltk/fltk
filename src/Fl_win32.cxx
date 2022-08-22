@@ -513,7 +513,7 @@ public:
     fl_free_fonts();        // do some WIN32 cleanup
     fl_cleanup_pens();
     OleUninitialize();
-    fl_brush_action(1);
+    if (fl_gc) fl_brush_action(1);
     fl_cleanup_dc_list();
     // This is actually too late in the cleanup process to remove the
     // clipboard notifications, but we have no earlier hook so we try
