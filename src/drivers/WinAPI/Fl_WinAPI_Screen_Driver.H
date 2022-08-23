@@ -28,7 +28,7 @@
 class Fl_Window;
 
 
-class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver
+class Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver
 {
 protected:
   RECT screens[MAX_SCREENS];

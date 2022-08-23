@@ -1,7 +1,7 @@
 #
 # Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -67,6 +67,7 @@ dist:	docs
 
 clean:
 	$(RM) Doxyfile Doxybook
+	$(RM) copyright.dox generated.dox
 	$(RM) fltk.pdf refman.pdf src/fltk-book.tex src/fltk-book.tex.in
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
@@ -131,24 +132,26 @@ uninstall-linux uninstall-osx:
 # Both files are generated from the common source file Doxyfile.in.
 # Note that Doxyfile.in is shared with CMake to configure these files.
 
-Doxyfile: Doxyfile.in
+Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
-	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@FLTK_SOURCE_DIR@/,../,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
+	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
+	    -e's,@FLTK_SOURCE_DIR@,..,' \
 	    < $< > $@
 
-Doxybook: Doxyfile.in
+Doxybook: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxybook ..."
 	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
-	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@FLTK_SOURCE_DIR@/,../,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
+	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
+	    -e's,@FLTK_SOURCE_DIR@,..,' \
 	    < $< > $@
 
 # The HTML files are generated using doxygen, and this needs
@@ -164,7 +167,6 @@ html:	$(HTMLFILES) Doxyfile
 	if test "x$(DOXYDOC)" = "x" ; then \
 	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
 	fi
-	test -d html && cp src/tiny.png html/
 
 # The PDF documentation (fltk.pdf) is generated using doxygen and LaTeX, and
 # this needs installed Doxygen and LaTeX programs and may take some time, so
@@ -191,4 +193,23 @@ src/fltk-book.tex: src/fltk-book.tex.in
 
 src/fltk-book.tex.in: src/fltk-title.tex.in
 	echo "Generating $@ ..."
-	./make_header src/fltk-title.tex.in src/fltk-book.tex.in
+	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
+	./make_header $< $@; \
+	sed -i -e"s/@GIT_REVISION@/$$GIT_REVISION/g" $@
+
+
+generated.dox: generated.dox.in
+	echo "Generating $@ ..."
+	CURRENT_DATE=`date "+%b %d, %Y"`; \
+	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
+	DOXYGEN_VERSION_SHORT=`$(DOXYDOC) --version|cut -f1 -d' '`; \
+	sed -e"s/@CURRENT_DATE@/$$CURRENT_DATE/g" \
+	    -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	    -e"s/@DOXYGEN_VERSION_SHORT@/$$DOXYGEN_VERSION_SHORT/g" \
+	    < $< > $@
+
+copyright.dox: copyright.dox.in
+	echo "Generating $@ ..."
+	YEAR=`date +%Y`; \
+	sed -e"s/@YEAR@/$$YEAR/g" \
+	    < $< > $@

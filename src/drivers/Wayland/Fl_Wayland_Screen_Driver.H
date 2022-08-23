@@ -53,7 +53,7 @@ struct seat {
   struct zwp_text_input_v3 *text_input;
 };
 
-class FL_EXPORT Fl_Wayland_Screen_Driver : public Fl_Screen_Driver
+class Fl_Wayland_Screen_Driver : public Fl_Screen_Driver
 {
   friend class Fl_Screen_Driver;
   friend class Fl_Wayland_Graphics_Driver;

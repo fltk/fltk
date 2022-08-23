@@ -1115,8 +1115,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
 }
 
 void Fl_Wayland_Screen_Driver::close_display() {
-  Fl_Plugin_Manager pm("wayland.fltk.org");
-  Fl_Wayland_Plugin *plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
+  Fl_Wayland_Plugin *plugin = Fl_Wayland_Window_Driver::gl_plugin();
   if (plugin) plugin->terminate();
 
   Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));

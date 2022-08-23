@@ -24,6 +24,7 @@
   +- Fl_Surface_Device: any kind of surface that we can draw onto -> uses an Fl_Graphics_Driver
       |
       +- Fl_Display_Device: some kind of video device (one object per app)
+      +- Fl_OpenGL_Display_Device: supports adding FLTK child widgets to an Fl_Gl_Window
       +- Fl_Widget_Surface: any FLTK widget can be drawn to it
           |
           +- Fl_Copy_Surface: draw into the clipboard (in vectorial form if the platform supports it)

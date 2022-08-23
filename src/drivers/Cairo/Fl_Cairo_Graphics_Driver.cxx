@@ -22,6 +22,7 @@
 #if USE_PANGO
 
 #include "Fl_Cairo_Graphics_Driver.H"
+#include "../../Fl_Screen_Driver.H"
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <cairo/cairo.h>
@@ -1296,6 +1297,47 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
       cairo_clip(cairo_);
     }
   }
+}
+
+
+void Fl_Cairo_Graphics_Driver::cache_size(Fl_Image *unused, int &width, int &height) {
+  cairo_matrix_t matrix;
+  cairo_get_matrix(cairo_, &matrix);
+  width *= matrix.xx;
+  height *= matrix.xx;
+}
+
+
+char Fl_Cairo_Graphics_Driver::can_do_alpha_blending() {
+  return 1;
+}
+
+
+float Fl_Cairo_Graphics_Driver::override_scale() {
+  float s = scale();
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, 1.f);
+    cairo_scale(cairo_, 1/s, 1/s);
+  }
+  return s;
+}
+
+
+void Fl_Cairo_Graphics_Driver::restore_scale(float s) {
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, s);
+    cairo_scale(cairo_, s, s);
+  }
+}
+
+
+void Fl_Cairo_Graphics_Driver::antialias(int state) {
+  cairo_set_antialias(cairo_, state ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
+}
+
+
+int Fl_Cairo_Graphics_Driver::antialias() {
+  return (cairo_get_antialias(cairo_) != CAIRO_ANTIALIAS_NONE);
 }
 
 #endif // USE_PANGO

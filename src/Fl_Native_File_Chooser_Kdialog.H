@@ -19,7 +19,7 @@
 
 #include <FL/Fl_Native_File_Chooser.H>
 
-class FL_EXPORT Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
+class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
   friend class Fl_Native_File_Chooser;
   struct fnfc_pipe_struct {
     char *all_files;

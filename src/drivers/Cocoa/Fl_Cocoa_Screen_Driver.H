@@ -45,7 +45,7 @@ class Fl_RGB_Image;
 class NSImage;
 #endif
 
-class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver
+class Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver
 {
 protected:
   struct XRectangle {int x, y, width, height;};

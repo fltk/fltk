@@ -44,7 +44,7 @@ class Fl_Bitmap;
  */
 
 
-class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
+class Fl_X11_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
   friend int fl_handle(const XEvent&);

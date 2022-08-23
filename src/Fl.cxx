@@ -2098,6 +2098,11 @@ void Fl::keyboard_screen_scaling(int value) {
   Fl_Screen_Driver::keyboard_screen_scaling = value;
 }
 
+/** Run a command line on the computer */
+int Fl::system(const char *command) {
+  return Fl::system_driver()->system(command);
+}
+
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
 FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();

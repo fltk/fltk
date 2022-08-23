@@ -98,14 +98,7 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
   }
   delete_cursor_();
   if (gl_start_support_) { // occurs only if gl_start/gl_finish was used
-    static Fl_Wayland_Plugin *plugin = NULL;
-    if (!plugin) {
-      Fl_Plugin_Manager pm("wayland.fltk.org");
-      plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
-    }
-    if (plugin) {
-      plugin->destroy(gl_start_support_);
-    }
+    gl_plugin()->destroy(gl_start_support_);
   }
 }
 
@@ -388,15 +381,8 @@ void Fl_Wayland_Window_Driver::flush() {
     Fl_Wayland_Window_Driver::in_flush = true;
     Fl_Window_Driver::flush();
     Fl_Wayland_Window_Driver::in_flush = false;
-    static Fl_Wayland_Plugin *plugin = NULL;
-    if (!plugin) {
-      Fl_Plugin_Manager pm("wayland.fltk.org");
-      plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
-    }
-    if (plugin) {
-      plugin->do_swap(pWindow); // useful only for GL win with overlay
-      if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) plugin->invalidate(pWindow);
-    }
+    gl_plugin()->do_swap(pWindow); // useful only for GL win with overlay
+    if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) gl_plugin()->invalidate(pWindow);
     return;
   }
   struct wld_window *window = fl_xid(pWindow);
@@ -577,32 +563,13 @@ void Fl_Wayland_Window_Driver::iconize() {
 
 
 void Fl_Wayland_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-  // Ensure border is on screen; these values are generic enough
-  // to work with many window managers, and are based on KDE defaults.
-  *top = 20;
-  *left = 4;
-  *right = 4;
-  *bottom = 8;
-}
-
-void Fl_Wayland_Window_Driver::show_with_args_begin() {
-  // Get defaults for drag-n-drop and focus...
-  const char *key = 0;
-
-  if (Fl::first_window()) key = Fl::first_window()->xclass();
-  if (!key) key = "fltk";
-}
-
-
-void Fl_Wayland_Window_Driver::show_with_args_end(int argc, char **argv) {
-  if (argc) {
-    // set the command string, used by state-saving window managers:
-    int j;
-    int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
-    char *buffer = new char[n];
-    char *p = buffer;
-    for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
-    delete[] buffer;
+  struct wld_window *xid = (struct wld_window*)fl_xid(pWindow);
+  if (xid && xid->kind == DECORATED) {
+    libdecor_frame_translate_coordinate(xid->frame, 0, 0, left, top);
+    *right = *left;
+    *bottom = 0;
+  } else {
+    Fl_Window_Driver::decoration_sizes(top, left, right, bottom);
   }
 }
 
@@ -1549,4 +1516,14 @@ cairo_t *fl_wl_cairo() {
 
 struct wl_display *fl_wl_display() {
   return Fl_Wayland_Screen_Driver::wl_display;
+}
+
+
+Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
+  static Fl_Wayland_Plugin *plugin = NULL;
+  if (!plugin) {
+    Fl_Plugin_Manager pm("wayland.fltk.org");
+    plugin = (Fl_Wayland_Plugin*)pm.plugin("gl.wayland.fltk.org");
+  }
+  return plugin;
 }

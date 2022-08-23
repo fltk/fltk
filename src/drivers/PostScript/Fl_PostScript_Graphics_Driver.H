@@ -41,7 +41,7 @@
 
 #include "../Cairo/Fl_Cairo_Graphics_Driver.H"
 
-class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+class Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   FILE *output;
   Fl_PostScript_Close_Command close_cmd_;
@@ -89,7 +89,7 @@ public:
 
 #else // ! USE_PANGO
 
-class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
+class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   void transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl);
   void *prepare_rle85();

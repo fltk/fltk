@@ -64,7 +64,7 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   if (egl_display == EGL_NO_DISPLAY) init();
   egl_window = NULL;
   egl_surface = NULL;
-  egl_resize_in_progress = false;
+  egl_swap_in_progress = false;
 }
 
 
@@ -188,7 +188,7 @@ GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window, cons
 void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   struct wld_window *win = fl_xid(w);
   if (!win) return;
-  Fl_Wayland_Window_Driver *dr = (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);
+  Fl_Wayland_Window_Driver *dr = Fl_Wayland_Window_Driver::driver(w);
   EGLSurface target_egl_surface = NULL;
   if (egl_surface) target_egl_surface = egl_surface;
   else if (dr->gl_start_support_) target_egl_surface = dr->gl_start_support_->egl_surface;
@@ -264,14 +264,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
-    // Origin of the 3 "roundtrips" below :
-    // All tests run OK with code below but glpuzzle, OpenGL3-glut-test and gl_overlay
-    // fail sometimes under KDE and sway without the 3rd roundtrip.
     wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-    if (!pWindow->parent() || overlay()) { wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-    }
-    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
   }
 }
 
@@ -322,19 +316,16 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
     if (!overlay_buffer) return; // don't call eglSwapBuffers until overlay has been drawn
   }
 
-  if (egl_surface) {
+  if (egl_surface && !egl_swap_in_progress) {
+    egl_swap_in_progress = true;
     //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
-    if (!egl_resize_in_progress) {
-      while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
-        wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
-      }
-      wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
-      wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
+    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
+      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     }
-    if (!egl_resize_in_progress || pWindow->parent()) {
-       eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-    }
-    egl_resize_in_progress = false;
+    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
+    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
+    egl_swap_in_progress = false;
   }
 }
 
@@ -366,6 +357,9 @@ public:
 
 static Fl_Wayland_Gl_Plugin Gl_Overlay_Plugin;
 
+static void delayed_flush(Fl_Gl_Window *win) {
+  win->flush();
+}
 
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
@@ -378,7 +372,9 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (W2 != W || H2 != H) {
     wl_egl_window_resize(egl_window, W, H, 0, 0);
     //fprintf(stderr, "Fl_Wayland_Gl_Window_Driver::resize to %dx%d\n", W, H);
-    if (!Fl_Window::is_a_rescale()) egl_resize_in_progress = true;
+    if (!pWindow->parent()) {
+        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_flush, pWindow);
+    }
   }
 }
 
@@ -401,7 +397,7 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   int W = Fl_Window::current()->w() * f;
   int H = Fl_Window::current()->h() * f;
   int W2, H2;
-  Fl_Wayland_Window_Driver *dr = (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(Fl_Window::current());
+  Fl_Wayland_Window_Driver *dr = Fl_Wayland_Window_Driver::driver(Fl_Window::current());
   wl_egl_window_get_attached_size(dr->gl_start_support_->egl_window, &W2, &H2);
   if (W2 != W || H2 != H) {
     wl_egl_window_resize(dr->gl_start_support_->egl_window, W, H, 0, 0);
@@ -409,14 +405,6 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   }
   glClearColor(0., 0., 0., 0.);
   glClear(GL_COLOR_BUFFER_BIT);
-}
-
-
-Fl_RGB_Image* Fl_Wayland_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h) {
-  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
-  Fl_RGB_Image *rgb = Fl_Gl_Window_Driver::capture_gl_rectangle(x, y, w, h);
-  Fl_Surface_Device::pop_current();
-  return rgb;
 }
 
 #endif // HAVE_GL

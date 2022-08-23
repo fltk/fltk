@@ -51,7 +51,7 @@ struct _XRegion {
 
  This class is implemented only on the Xlib platform.
  */
-class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Scalable_Graphics_Driver {
+class Fl_Xlib_Graphics_Driver : public Fl_Scalable_Graphics_Driver {
 private:
   int offset_x_, offset_y_; // translation between user and graphical coordinates: graphical = user + offset
   unsigned depth_; // depth of translation stack

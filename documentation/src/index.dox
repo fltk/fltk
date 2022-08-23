@@ -13,13 +13,13 @@
     By F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
-    Copyright &copy; 1998-2022 by Bill Spitzak and others.
+    \include{doc} copyright.dox
   </CENTER></TD>
 </TR>
 </TABLE>
 <TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
 <TR>
-  <TD>
+  <TD style="text-align: center;">
     This software and manual are provided under the terms of the GNU
     Library General Public License. Permission is granted to reproduce
     this manual or any portion for any purpose, provided this copyright
@@ -103,6 +103,7 @@
 </TR>
 </TABLE>
 
+\htmlinclude{doc} generated.dox
 
 \htmlonly
 <hr>

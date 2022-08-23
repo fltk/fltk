@@ -1334,6 +1334,7 @@ int main() {
    */
   static int draw_GL_text_with_textures() { return draw_GL_text_with_textures_; }
 
+  static int system(const char *command);
 
 #ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo Support Functions and Classes
