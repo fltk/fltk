@@ -2179,10 +2179,6 @@ int isdeclare(const char *c) {
 void Fl_Widget_Type::write_static() {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
-    Fl_Widget_Class_Type *wc_root = has_wcroot();
-    if(wc_root && wc_root->wc_relative == 2){
-      write_declare("#include <math.h>");
-    }
     write_declare("#include <FL/Fl.H>");
     write_declare("#include <FL/%s.H>", t);
   }
@@ -2345,7 +2341,7 @@ void Fl_Widget_Type::write_code1() {
   } else {
     Fl_Widget_Class_Type *wc_root = has_wcroot();
     if(wc_root && wc_root->wc_relative == 2){
-      write_c("new %s(round(W*%f), round(H*%f), round(W*%f), round(H*%f)", t,
+      write_c("new %s((int)(%f*W), (int)(%f*H), (int)(%f*W+0.5), (int)(%f*H+0.5)", t,
               1.0f*o->x()/wc_root->o->w(),
               1.0f*o->y()/wc_root->o->h(),
               1.0f*o->w()/wc_root->o->w(),
