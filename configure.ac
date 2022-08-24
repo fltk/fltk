@@ -1406,21 +1406,17 @@ AS_IF([test -n "$GCC"], [
         [AC_MSG_RESULT(no)])
     CFLAGS="$OLDCFLAGS"
 
-    AS_IF([test x$enable_wayland = xyes],[
-        DSOFLAGS="$DSOFLAGS -Wl,--allow-shlib-undefined"
-    ] , [
-        dnl Make sure that shared libraries don't have undefined references
-        # See if ld supports -no-undefined...
-        AC_MSG_CHECKING([if ld supports -no-undefined])
-        OLDLDFLAGS="$LDFLAGS"
-        LDFLAGS="$LDFLAGS -Wl,-no-undefined"
-        AC_LINK_IFELSE(
-          [AC_LANG_PROGRAM([[]], [[]])],
-          [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
-          AC_MSG_RESULT(yes)],
-          [AC_MSG_RESULT(no)])
-        LDFLAGS="$OLDLDFLAGS"
-    ])
+    dnl Make sure that shared libraries don't have undefined references
+    # See if ld supports -no-undefined...
+    AC_MSG_CHECKING([if ld supports -no-undefined])
+    OLDLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -Wl,-no-undefined"
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[]], [[]])],
+      [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
+      AC_MSG_RESULT(yes)],
+      [AC_MSG_RESULT(no)])
+    LDFLAGS="$OLDLDFLAGS"
 
     # See if ld supports -Bsymbolic-functions...
     AC_MSG_CHECKING([if ld supports -Bsymbolic-functions])

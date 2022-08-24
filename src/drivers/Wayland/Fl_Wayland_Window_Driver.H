@@ -84,7 +84,7 @@ public:
   struct xdg_toplevel *xdg_toplevel();
   Fl_Wayland_Window_Driver(Fl_Window*);
   virtual ~Fl_Wayland_Window_Driver();
-  static struct wld_window *wld_window;
+  static FL_EXPORT struct wld_window *wld_window;
   static void redraw(struct wld_window *window);
 
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);}

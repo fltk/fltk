@@ -71,7 +71,7 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
 void Fl_Wayland_Gl_Window_Driver::init() {
   EGLint major, minor;
 
-  if (!Fl_Wayland_Screen_Driver::wl_display) Fl::screen_driver()->open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_display) fl_open_display();
   egl_display = eglGetDisplay((EGLNativeDisplayType) Fl_Wayland_Screen_Driver::wl_display);
   if (egl_display == EGL_NO_DISPLAY) {
     Fl::fatal("Can't create egl display\n");
