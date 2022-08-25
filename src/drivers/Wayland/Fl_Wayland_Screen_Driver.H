@@ -63,7 +63,7 @@ class Fl_Wayland_Screen_Driver : public Fl_Screen_Driver
   static int insertion_point_height;
   static bool insertion_point_location_is_valid;
 public:
-  static FL_EXPORT struct wl_display *wl_display;
+  static struct wl_display *wl_display;
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   int get_mouse_unscaled(int &xx, int &yy);
