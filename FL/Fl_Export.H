@@ -18,7 +18,8 @@
 #  define Fl_Export_H
 
 /*
- * The following is only used when building DLLs under Windows...
+ * The following is used when building DLLs under Windows
+ * and when building .so's under unix/linux.
  */
 
 #  if defined(FL_DLL)

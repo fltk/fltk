@@ -999,7 +999,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       LDFLAGS="$LDFLAGS -rdynamic"
       AC_SUBST([UNAME])
       UNAME="$(uname -s)"
-      AS_CASE([$UNAME], 
+      AS_CASE([$UNAME],
          [Linux], [LDFLAGS="$LDFLAGS -no-pie"],
          [*], [CXXFLAGS="$CXXFLAGS -I../libdecor/build"]
       )
@@ -1007,12 +1007,12 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       AC_SEARCH_LIBS([dlopen], [dl])
 
       AS_IF([test x$enable_gl != xno], [
-          AS_IF([$PKGCONFIG --exists gl], [ 
-             AC_DEFINE([HAVE_GL]) 
+          AS_IF([$PKGCONFIG --exists gl], [
+             AC_DEFINE([HAVE_GL])
              GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs gl) $GLLIBS"
           ])
-          AS_IF([$PKGCONFIG --exists glu], [ 
-             AC_DEFINE([HAVE_GL_GLU_H]) 
+          AS_IF([$PKGCONFIG --exists glu], [
+             AC_DEFINE([HAVE_GL_GLU_H])
              GLLIBS="$($PKGCONFIG --libs glu) $GLLIBS"
           ])
            GLWLDEMO="egl"
@@ -1406,21 +1406,17 @@ AS_IF([test -n "$GCC"], [
         [AC_MSG_RESULT(no)])
     CFLAGS="$OLDCFLAGS"
 
-    AS_IF([test x$enable_wayland = xyes],[
-        DSOFLAGS="$DSOFLAGS -Wl,--allow-shlib-undefined"
-    ] , [
-        dnl Make sure that shared libraries don't have undefined references
-        # See if ld supports -no-undefined...
-        AC_MSG_CHECKING([if ld supports -no-undefined])
-        OLDLDFLAGS="$LDFLAGS"
-        LDFLAGS="$LDFLAGS -Wl,-no-undefined"
-        AC_LINK_IFELSE(
-          [AC_LANG_PROGRAM([[]], [[]])],
-          [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
-          AC_MSG_RESULT(yes)],
-          [AC_MSG_RESULT(no)])
-        LDFLAGS="$OLDLDFLAGS"
-    ])
+    dnl Make sure that shared libraries don't have undefined references
+    # See if ld supports -no-undefined...
+    AC_MSG_CHECKING([if ld supports -no-undefined])
+    OLDLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -Wl,-no-undefined"
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[]], [[]])],
+      [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
+      AC_MSG_RESULT(yes)],
+      [AC_MSG_RESULT(no)])
+    LDFLAGS="$OLDLDFLAGS"
 
     # See if ld supports -Bsymbolic-functions...
     AC_MSG_CHECKING([if ld supports -Bsymbolic-functions])

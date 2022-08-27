@@ -528,8 +528,6 @@ void Fl_Wayland_Window_Driver::size_range() {
     struct wld_window *wl_win = ip->xid;
     float f = Fl::screen_scale(pWindow->screen_num());
     if (wl_win->kind == DECORATED && wl_win->frame) {
-      libdecor_frame_set_min_content_size(wl_win->frame, minw()*f, minh()*f);
-      libdecor_frame_set_max_content_size(wl_win->frame, maxw()*f, maxh()*f);
       int X,Y,W,H;
       Fl::screen_work_area(X,Y,W,H, Fl::screen_num(x(),y(),w(),h()));
       if (maxw() && maxw() < W && maxh() && maxh() < H) {
@@ -542,6 +540,8 @@ void Fl_Wayland_Window_Driver::size_range() {
       } else {
         libdecor_frame_set_capabilities(wl_win->frame, LIBDECOR_ACTION_RESIZE);
       }
+      libdecor_frame_set_min_content_size(wl_win->frame, minw()*f, minh()*f);
+      libdecor_frame_set_max_content_size(wl_win->frame, maxw()*f, maxh()*f);
     } else if (wl_win->kind == UNFRAMED && wl_win->xdg_toplevel) {
       xdg_toplevel_set_min_size(wl_win->xdg_toplevel, minw()*f, minh()*f);
       if (maxw() && maxh())

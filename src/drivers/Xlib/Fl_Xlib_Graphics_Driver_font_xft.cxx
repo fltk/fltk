@@ -43,8 +43,6 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
 XftDraw* Fl_Xlib_Graphics_Driver::draw_ = 0;
 Window Fl_Xlib_Graphics_Driver::draw_window = (Window)0;
 
-extern Fl_Fontdesc* fl_fonts;
-
 Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
   return (Fl_Fontsize)(size_);
 }

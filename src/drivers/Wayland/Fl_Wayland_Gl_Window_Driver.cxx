@@ -71,8 +71,8 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
 void Fl_Wayland_Gl_Window_Driver::init() {
   EGLint major, minor;
 
-  if (!Fl_Wayland_Screen_Driver::wl_display) Fl::screen_driver()->open_display();
-  egl_display = eglGetDisplay((EGLNativeDisplayType) Fl_Wayland_Screen_Driver::wl_display);
+  if (!fl_wl_display()) fl_open_display();
+  egl_display = eglGetDisplay((EGLNativeDisplayType) fl_wl_display());
   if (egl_display == EGL_NO_DISPLAY) {
     Fl::fatal("Can't create egl display\n");
   }
@@ -86,17 +86,14 @@ void Fl_Wayland_Gl_Window_Driver::init() {
   //printf("EGL has %d configs\n", configs_count);
   eglBindAPI(EGL_OPENGL_API);
 
-  gl_event_queue = wl_display_create_queue(Fl_Wayland_Screen_Driver::wl_display);
+  gl_event_queue = wl_display_create_queue(fl_wl_display());
 }
 
 
 char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs)
 {
   // write str to a bitmap just big enough
-  struct wld_window *save_win = Fl_Wayland_Window_Driver::wld_window;
-  fl_window = Fl_Wayland_Window_Driver::wld_window = NULL;
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
-  fl_window = Fl_Wayland_Window_Driver::wld_window = save_win;
   Fl_Font f=fl_font();
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
@@ -264,8 +261,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
-    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_roundtrip(fl_wl_display());
+    wl_display_roundtrip(fl_wl_display());
   }
 }
 
@@ -319,11 +316,11 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   if (egl_surface && !egl_swap_in_progress) {
     egl_swap_in_progress = true;
     //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
-    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
-      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
+    while (wl_display_prepare_read(fl_wl_display()) != 0) {
+      wl_display_dispatch_pending(fl_wl_display());
     }
-    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
-    wl_display_dispatch_queue_pending(Fl_Wayland_Screen_Driver::wl_display,  gl_event_queue);
+    wl_display_read_events(fl_wl_display());
+    wl_display_dispatch_queue_pending(fl_wl_display(),  gl_event_queue);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     egl_swap_in_progress = false;
   }
