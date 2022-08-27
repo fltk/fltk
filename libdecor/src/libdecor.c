@@ -300,6 +300,9 @@ libdecor_configuration_get_content_size(struct libdecor_configuration *configura
 	if (frame_has_visible_client_side_decoration(frame) &&
 	    plugin->priv->iface->frame_get_border_size) {
 		int left, right, top, bottom;
+
+		/* Update window state for correct border size calculation */
+		frame->priv->window_state = configuration->window_state;
 		if (!plugin->priv->iface->frame_get_border_size(
 			plugin, frame, configuration, &left, &right, &top, &bottom))
 			return false;
