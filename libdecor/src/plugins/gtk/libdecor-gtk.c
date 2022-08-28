@@ -1728,6 +1728,9 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 	if (bottom)
 		*bottom = 0;
 	if (top) {
+		/* Redraw decoration to ensure size will be up-to-date */
+		draw_decoration((struct libdecor_frame_gtk *) frame);
+
 		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
 		enum decoration_type type = window_state_to_decoration_type(window_state);
 
