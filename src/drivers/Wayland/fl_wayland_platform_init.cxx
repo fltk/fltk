@@ -47,10 +47,17 @@ void fl_disable_wayland() {
 }
 
 
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   const char *backend = ::getenv("FLTK_BACKEND");
-  // fprintf(stderr, "FLTK_BACKEND='%s' XDG_RUNTIME_DIR='%s'\n",backend ? backend : "", xdg ? xdg : "");
+  const char *xdgrt = ::getenv("XDG_RUNTIME_DIR");
+  // fprintf(stderr, "FLTK_BACKEND='%s' XDG_RUNTIME_DIR='%s'\n",
+  //         backend ? backend : "", xdgrt ? xdgrt : "");
+
+  if (Fl_Wayland_Screen_Driver::wld_disabled ||
+      (backend && strcmp(backend, "x11") == 0)) {
+    return new Fl_X11_System_Driver();
+  }
+
   if (backend && strcmp(backend, "wayland") == 0) {
     Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
     if (!Fl_Wayland_Screen_Driver::wl_display) {
@@ -59,12 +66,10 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
     }
     return new Fl_Wayland_System_Driver();
   }
-  else if (backend && strcmp(backend, "x11") == 0) {
-    return new Fl_X11_System_Driver();
-  }
-  else if (!backend) {
-    if (!Fl_Wayland_Screen_Driver::wld_disabled && ::getenv("XDG_RUNTIME_DIR")) {
-      // env var XDG_RUNTIME_DIR is necessary for wayland
+
+  if (!backend) {
+    // env var XDG_RUNTIME_DIR is required for Wayland
+    if (xdgrt) {
       // is a Wayland connection available ?
       Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
       if (Fl_Wayland_Screen_Driver::wl_display) { // Yes, use Wayland drivers
@@ -72,8 +77,11 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
         return new Fl_Wayland_System_Driver();
       }
     }
+    // no Wayland connection or environment variable XDG_RUNTIME_DIR not set,
+    // falling back to X11
     return new Fl_X11_System_Driver();
   }
+
   fprintf(stderr, "Error: unexpected value of FLTK_BACKEND: '%s'\n", backend);
   exit(1);
   return NULL;
