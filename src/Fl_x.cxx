@@ -2119,8 +2119,9 @@ int fl_handle(const XEvent& thisevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
-  int is_a_move = (X != x() || Y != y() || Fl_Window::is_a_rescale());
-  int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
+  int is_a_rescale = Fl_Window::is_a_rescale();
+  int is_a_move = (X != x() || Y != y() || is_a_rescale);
+  int is_a_resize = (W != w() || H != h() || is_a_rescale);
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (is_a_move && resize_from_program) force_position(1);
@@ -2144,6 +2145,8 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
       fl_set_spot(fl_font(), fl_size(), Fl::focus()->x(), Fl::focus()->y() + fl_size(), Fl::focus()->w(), Fl::focus()->h(), NULL);
     }
   }
+
+  if (is_a_rescale) size_range();
 
   if (resize_from_program && shown()) {
     float s = Fl::screen_driver()->scale(screen_num());
