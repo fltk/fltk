@@ -619,6 +619,7 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
 
 void Fl_Wayland_Screen_Driver::compose_reset()
 {
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl::compose_state = 0;
   next_marked_length = 0;
   xkb_compose_state_reset(seat->xkb_compose_state);
