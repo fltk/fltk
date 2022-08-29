@@ -74,7 +74,7 @@
 
    \see examples/cairo-draw-x.cxx
    \see test/cairo_test.cxx
- 
+
    \note Class Fl_Cairo_Window requires the FLTK library to have been built with
    CMake option OPTION_CAIRO or configure --enable-cairo.
 

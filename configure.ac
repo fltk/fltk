@@ -986,7 +986,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           AC_MSG_WARN([--enable-wayland: please install pkg-config.])
           AC_MSG_ERROR([Aborting.])
       ])
-      
+
       dnl Turn option usecairo ON
       AC_DEFINE([FLTK_USE_CAIRO])
       AC_MSG_NOTICE([Turning on the usecairo option])
@@ -1189,7 +1189,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       AC_MSG_NOTICE([Processing usecairo option])
       ]
     )
-    
+
     dnl test if Pango is asked but xft was not found
     AS_IF([test x$enable_pango = xyes -a x$xft_found = xno], [
         AC_MSG_WARN([could not find the Xft headers and/or libraries required for Pango.])
