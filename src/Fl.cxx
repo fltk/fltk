@@ -2015,6 +2015,15 @@ void fl_close_display()
   Fl::screen_driver()->close_display();
 }
 
+/** Prevent the FLTK library from using its wayland backend.
+ Call this early in your main(), before fl_open_display() runs.
+ This has no effect on non-Wayland platforms.
+ */
+void fl_disable_wayland()
+{
+  Fl::system_driver()->disable_wayland();
+}
+
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w);
   return temp ? (Window)temp->xid : 0;

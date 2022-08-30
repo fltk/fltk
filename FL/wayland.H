@@ -39,10 +39,6 @@ extern FL_EXPORT cairo_t *fl_wl_cairo();
 typedef void *EGLContext;
 /** Returns the EGLContext corresponding to the given GLContext */
 extern FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc);
-/** Prevent the FLTK library from using its wayland backend.
- Call this early in your main(), before fl_open_display() runs. */
-extern FL_EXPORT void fl_disable_wayland();
-
 
 #ifndef FL_DOXYGEN
 

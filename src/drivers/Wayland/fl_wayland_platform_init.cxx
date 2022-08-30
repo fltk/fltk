@@ -35,18 +35,6 @@
 #include <stdio.h>
 
 
-void fl_disable_wayland() {
-  if (Fl_Wayland_Screen_Driver::wl_display) {
-    wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
-    Fl_Wayland_Screen_Driver::wl_display = NULL;
-    delete Fl_Screen_Driver::system_driver;
-    Fl_Screen_Driver::system_driver = NULL;
-  }
-  Fl_Wayland_Screen_Driver::wld_disabled = true;
-  Fl::system_driver();
-}
-
-
 Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   const char *backend = ::getenv("FLTK_BACKEND");
   const char *xdgrt = ::getenv("XDG_RUNTIME_DIR");

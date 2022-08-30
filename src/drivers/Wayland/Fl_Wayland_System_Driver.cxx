@@ -88,3 +88,21 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
     return NULL;
   }
 }
+
+
+void Fl_Wayland_System_Driver::disable_wayland() {
+  if (fl_wl_display()) {
+    fprintf(stderr, "Error: fl_disable_wayland() cannot be called "
+            "after the Wayland display was opened\n");
+    exit(1);
+  }
+
+  if (Fl_Wayland_Screen_Driver::wl_display) {
+    wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
+    Fl_Wayland_Screen_Driver::wl_display = NULL;
+    delete Fl_Screen_Driver::system_driver;
+    Fl_Screen_Driver::system_driver = NULL;
+  }
+  Fl_Wayland_Screen_Driver::wld_disabled = true;
+  Fl::system_driver();
+}
