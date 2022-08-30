@@ -22,6 +22,6 @@
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
-  if (fl_wl_display()) return new Fl_Wayland_Gl_Window_Driver(w);
+  if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Gl_Window_Driver(w);
   return new Fl_X11_Gl_Window_Driver(w);
 }

@@ -63,7 +63,7 @@ class Fl_Wayland_Screen_Driver : public Fl_Screen_Driver
   static int insertion_point_height;
   static bool insertion_point_location_is_valid;
 public:
-  static struct wl_display *wl_display;
+  static FL_EXPORT struct wl_display *wl_display;
   // use it to make sure the Wayland leg was selected and fl_open_display() has run
   static struct wl_registry *wl_registry;
   // true when an app is forbidden to use its Wayland leg
