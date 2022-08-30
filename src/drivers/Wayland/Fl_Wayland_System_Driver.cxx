@@ -21,6 +21,10 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include <FL/platform.H>
 #include "../../../libdecor/src/libdecor.h"
+#include <stdlib.h>
+
+
+bool Fl_Wayland_System_Driver::too_late_to_disable = false;
 
 
 int Fl_Wayland_System_Driver::event_key(int k) {
@@ -91,18 +95,12 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
 
 
 void Fl_Wayland_System_Driver::disable_wayland() {
-  if (fl_wl_display()) {
+  if (too_late_to_disable) {
     fprintf(stderr, "Error: fl_disable_wayland() cannot be called "
-            "after the Wayland display was opened\n");
+            "after the Wayland display was opened\n"
+            "or a Wayland window was created or the Wayland screen was accessed\n");
     exit(1);
   }
-
-  if (Fl_Wayland_Screen_Driver::wl_display) {
-    wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
-    Fl_Wayland_Screen_Driver::wl_display = NULL;
-    delete Fl_Screen_Driver::system_driver;
-    Fl_Screen_Driver::system_driver = NULL;
-  }
-  Fl_Wayland_Screen_Driver::wld_disabled = true;
-  Fl::system_driver();
+  setenv("FLTK_BACKEND", "x11", 1);
+  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
 }

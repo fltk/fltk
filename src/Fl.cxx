@@ -2016,8 +2016,8 @@ void fl_close_display()
 }
 
 /** Prevent the FLTK library from using its wayland backend.
- Call this early in your main(), before fl_open_display() runs.
- This has no effect on non-Wayland platforms.
+ Call this early in your main(), before fl_open_display() runs, or any window is created, or the screen is accessed.
+ This function has no effect on non-Wayland platforms.
  */
 void fl_disable_wayland()
 {

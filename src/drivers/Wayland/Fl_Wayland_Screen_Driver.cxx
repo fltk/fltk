@@ -230,8 +230,6 @@ struct wl_display *Fl_Wayland_Screen_Driver::wl_display = NULL;
 struct wl_registry *Fl_Wayland_Screen_Driver::wl_registry = NULL;
 
 
-bool Fl_Wayland_Screen_Driver::wld_disabled = false;
-
 Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surface) {
   if (surface) {
     Fl_X *xp = Fl_X::first;
@@ -1089,12 +1087,31 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
   reset_cursor();
 }
 
+
+bool Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed() {
+  const char *backend = getenv("FLTK_BACKEND");
+  if (wl_display && backend && strcmp(backend, "x11") == 0) {
+    wl_display_disconnect(wl_display);
+    wl_display = NULL;
+    delete Fl_Screen_Driver::system_driver;
+    Fl_Screen_Driver::system_driver = NULL;
+    return true;
+  }
+  return false;
+}
+
+
 void Fl_Wayland_Screen_Driver::open_display_platform() {
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
     return;
 
   beenHereDoneThat = true;
+  if (undo_wayland_backend_if_needed()) {
+    Fl::screen_driver()->open_display();
+    return;
+  }
+  
   if (!wl_display) {
     wl_display = wl_display_connect(NULL);
     if (!wl_display) {
@@ -1116,6 +1133,8 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   }*/
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)fd_callback, wl_display);
   fl_create_print_window();
+  Fl_Wayland_System_Driver::too_late_to_disable = true;
+puts("Using Wayland backend");
 }
 
 void Fl_Wayland_Screen_Driver::close_display() {

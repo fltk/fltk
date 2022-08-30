@@ -41,8 +41,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   // fprintf(stderr, "FLTK_BACKEND='%s' XDG_RUNTIME_DIR='%s'\n",
   //         backend ? backend : "", xdgrt ? xdgrt : "");
 
-  if (Fl_Wayland_Screen_Driver::wld_disabled ||
-      (backend && strcmp(backend, "x11") == 0)) {
+  if (backend && strcmp(backend, "x11") == 0) {
     return new Fl_X11_System_Driver();
   }
 
@@ -100,12 +99,11 @@ FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 
 
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
+  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
   if (Fl_Wayland_Screen_Driver::wl_display) {
     fl_graphics_driver = new Fl_Wayland_Graphics_Driver();
-puts("using Fl_Wayland_Graphics_Driver");
   } else {
     fl_graphics_driver = new Fl_Display_Cairo_Graphics_Driver();
-puts("using Fl_Display_Cairo_Graphics_Driver");
   }
   return fl_graphics_driver;
 }
@@ -118,7 +116,12 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
-  if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Screen_Driver();
+  if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
+  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
+  if (Fl_Wayland_Screen_Driver::wl_display) {
+    Fl_Wayland_System_Driver::too_late_to_disable = true;
+    return new Fl_Wayland_Screen_Driver();
+  }
 
   Fl_X11_Screen_Driver *d = new Fl_X11_Screen_Driver();
   for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
@@ -129,6 +132,13 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
+  if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
+  static bool been_here = false;
+  if (!been_here) {
+    been_here = true;
+    Fl_Wayland_System_Driver::too_late_to_disable = true;
+    Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
+  }
   if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Window_Driver(w);
   return new Fl_X11_Window_Driver(w);
 }

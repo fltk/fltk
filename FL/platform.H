@@ -76,6 +76,5 @@ extern FL_EXPORT void fl_close_display();
 extern FL_EXPORT Window fl_window;
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 extern FL_EXPORT void fl_open_callback(void (*)(const char *));
-extern FL_EXPORT void fl_disable_wayland();
 
 #endif // !FL_PLATFORM_H

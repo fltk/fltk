@@ -27,6 +27,7 @@ public:
   int get_key(int k);
   virtual void *control_maximize_button(void *data);
   virtual void disable_wayland();
+  static bool too_late_to_disable;
 };
 
 #endif /* FL_WAYLAND_SYSTEM_DRIVER_H */
