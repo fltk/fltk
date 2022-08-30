@@ -38,6 +38,8 @@ const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 /** Used by the Windows platform to print Fl_Pixmap objects. */
 unsigned Fl_Graphics_Driver::need_pixmap_bg_color = 0;
 
+extern unsigned fl_cmap[256]; // defined in fl_color.cxx
+
 /** Constructor */
 Fl_Graphics_Driver::Fl_Graphics_Driver()
 {
@@ -135,7 +137,9 @@ void Fl_Graphics_Driver::global_gc()
 /** see Fl::set_color(Fl_Color, unsigned) */
 void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned c)
 {
-  // nothing to do, reimplement in driver if needed
+  if (fl_cmap[i] != c) {
+    fl_cmap[i] = c;
+  }
 }
 
 

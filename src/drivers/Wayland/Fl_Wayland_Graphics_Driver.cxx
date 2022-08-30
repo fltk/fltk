@@ -28,7 +28,6 @@
 #include <errno.h>
 #include <string.h> // for strerror()
 
-extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 extern "C" {
   int os_create_anonymous_file(off_t); // in libdecor
@@ -139,13 +138,6 @@ Fl_Wayland_Graphics_Driver::Fl_Wayland_Graphics_Driver () : Fl_Cairo_Graphics_Dr
 void Fl_Wayland_Graphics_Driver::set_buffer(struct fl_wld_buffer *buffer, float scale) {
   this->buffer_ = buffer;
   set_cairo(buffer->cairo_, scale);
-}
-
-
-void Fl_Wayland_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
-  if (fl_cmap[i] != c) {
-    fl_cmap[i] = c;
-  }
 }
 
 

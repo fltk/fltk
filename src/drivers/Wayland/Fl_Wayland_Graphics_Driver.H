@@ -75,8 +75,7 @@ public:
   Fl_Wayland_Graphics_Driver();
   static const uint32_t wld_format;
   void set_buffer(struct fl_wld_buffer *buffer, float scale = 0);
-  void set_color(Fl_Color i, unsigned c);
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy);
   static struct fl_wld_buffer *create_shm_buffer(int width, int height);
   static void buffer_release(struct wld_window *window);
   static void buffer_commit(struct wld_window *window, const struct wl_callback_listener*);
