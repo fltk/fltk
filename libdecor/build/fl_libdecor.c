@@ -111,16 +111,12 @@ LIBDECOR_EXPORT struct libdecor *libdecor_new(struct wl_display *wl_display, str
   wl_callback_add_listener(context->init_callback, &init_wl_display_callback_listener, context);
   wl_list_init(&context->frames);
   // attempt to dynamically load a libdecor plugin with dlopen()
-  FILE *old_stderr = stderr;
-  stderr = fopen("/dev/null", "w+"); // avoid "Couldn't open plugin directory" messages
   if (init_plugins(context) != 0) { // attempt to load plugin by dlopen()
     // no plug-in was found by dlopen(), use built-in plugin instead
     // defined in the source code of the built-in plugin:  libdecor-cairo.c or libdecor-gtk.c
     extern const struct libdecor_plugin_description libdecor_plugin_description;
     context->plugin = libdecor_plugin_description.constructor(context);
   }
-  fclose(stderr); // restore stderr as it was before
-  stderr = old_stderr;
 
   wl_display_flush(wl_display);
   return context;
