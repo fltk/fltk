@@ -18,6 +18,7 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_System_Driver.H"
+#include "../X11/Fl_X11_System_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
@@ -1088,13 +1089,13 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
 }
 
 
-bool Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed() {
-  const char *backend = getenv("FLTK_BACKEND");
+bool Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed(const char *backend) {
+  if (!backend) backend = getenv("FLTK_BACKEND");
   if (wl_display && backend && strcmp(backend, "x11") == 0) {
     wl_display_disconnect(wl_display);
     wl_display = NULL;
-    delete Fl_Screen_Driver::system_driver;
-    Fl_Screen_Driver::system_driver = NULL;
+    if (Fl_Screen_Driver::system_driver) delete Fl_Screen_Driver::system_driver;
+    Fl_Screen_Driver::system_driver = new Fl_X11_System_Driver();
     return true;
   }
   return false;

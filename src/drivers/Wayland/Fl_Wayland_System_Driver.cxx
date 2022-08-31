@@ -101,6 +101,5 @@ void Fl_Wayland_System_Driver::disable_wayland() {
             "or a Wayland window was created or the Wayland screen was accessed\n");
     exit(1);
   }
-  setenv("FLTK_BACKEND", "x11", 1);
-  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
+  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed("x11");
 }
