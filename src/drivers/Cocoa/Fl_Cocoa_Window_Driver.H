@@ -85,7 +85,6 @@ private:
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
   // whether window's view received the [FLView view_did_resize] message
   unsigned window_flags_;
-  int screen_num_; // number of screen where window is mapped
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
@@ -134,8 +133,6 @@ public:
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
-  virtual int screen_num();
-  virtual void screen_num(int n);
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);

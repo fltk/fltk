@@ -1123,14 +1123,6 @@ void Fl_Wayland_Window_Driver::resize_after_screen_change(void *data) {
 }
 
 
-int Fl_Wayland_Window_Driver::screen_num() {
-  if (pWindow->parent()) {
-    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  }
-  return screen_num_ >= 0 ? screen_num_ : 0;
-}
-
-
 int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
 

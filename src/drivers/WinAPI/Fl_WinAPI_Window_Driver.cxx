@@ -55,19 +55,8 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
   delete icon_;
 }
 
-int Fl_WinAPI_Window_Driver::screen_num() {
-  if (pWindow->parent()) {
-    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  }
-  return screen_num_ >= 0 ? screen_num_ : 0;
-}
 
 //FILE*LOG=fopen("log.log","w");
-
-void Fl_WinAPI_Window_Driver::screen_num(int n) {
-//fprintf(LOG, "screen_num setter old=%d new=%d\n",screen_num_, n);fflush(LOG);
-  screen_num_ = n;
-}
 
 
 RECT // frame of the decorated window in screen coordinates

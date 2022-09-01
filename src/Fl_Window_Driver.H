@@ -43,7 +43,7 @@ class Fl_RGB_Image;
 
  This class is only for internal use by the FLTK library.
 
- When porting FLTK to a new platform, many mothods in this class provide
+ When porting FLTK to a new platform, many methods in this class provide
  a minimal default implementation. Some methods must be overridden to make
  sure that the Graphics Driver will draw into the bitmap associated with
  this window.
@@ -56,6 +56,7 @@ private:
 
 protected:
   Fl_Window *pWindow;
+  int screen_num_; // number of screen where window is mapped
   void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
 public:
   Fl_Window_Driver(Fl_Window *);
@@ -65,8 +66,8 @@ public:
   static Fl_Window *find(fl_uintptr_t xid);
   int wait_for_expose_value;
   Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
-  virtual int screen_num();
-  virtual void screen_num(int) {}
+  int screen_num();
+  void screen_num(int n) { screen_num_ = n; }
 
 
   // --- frequently used accessors to public window data

@@ -41,6 +41,7 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   : pWindow(win) {
   wait_for_expose_value = 0;
   other_xid = 0;
+  screen_num_ = 0;
 }
 
 
@@ -219,8 +220,10 @@ void Fl_Window_Driver::wait_for_expose() {
 }
 
 int Fl_Window_Driver::screen_num() {
-  if (pWindow->parent()) return Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  return Fl::screen_num(x(), y(), w(), h());
+  if (pWindow->parent()) {
+    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
+  }
+  return screen_num_ >= 0 ? screen_num_ : 0;
 }
 
 bool Fl_Window_Driver::is_a_rescale_ = false;

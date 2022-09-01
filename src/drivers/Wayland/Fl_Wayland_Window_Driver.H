@@ -74,8 +74,6 @@ public:
     bool busy;
   };
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
-  int screen_num_;
-  void screen_num(int n) { screen_num_ = n; }
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
@@ -88,7 +86,6 @@ public:
   static void redraw(struct wld_window *window);
 
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);}
-  virtual int screen_num();
   static void resize_after_screen_change(void *data);
 
   // --- window data

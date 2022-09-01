@@ -572,14 +572,6 @@ void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   data_for_resize_window_between_screens_.busy = false;
 }
 
-
-int Fl_X11_Window_Driver::screen_num() {
-  if (pWindow->parent()) {
-    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  }
-  return screen_num_ >= 0 ? screen_num_ : 0;
-}
-
 #endif // USE_XFT
 
 fl_uintptr_t Fl_X11_Window_Driver::os_id() {

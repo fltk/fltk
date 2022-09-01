@@ -2047,6 +2047,8 @@ int fl_handle(const XEvent& thisevent)
       }
       wd->screen_num(num);
     }
+#else // ! USE_XFT
+    Fl_Window_Driver::driver(window)->screen_num( Fl::screen_num(X, Y, W, H) );
 #endif // USE_XFT
 
     // tell Fl_Window about it and set flag to prevent echoing:

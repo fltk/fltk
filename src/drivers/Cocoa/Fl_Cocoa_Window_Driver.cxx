@@ -330,15 +330,6 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   CGContextRelease(auxgc);
 }
 
-void Fl_Cocoa_Window_Driver::screen_num(int n) {
-  screen_num_ = n;
-}
-
-int Fl_Cocoa_Window_Driver::screen_num() {
-  if (pWindow->parent()) return pWindow->top_window()->screen_num();
-  else return screen_num_;
-}
-
 
 FLWindow *fl_mac_xid(const Fl_Window *win) {
   return (FLWindow*)Fl_Window_Driver::xid(win);
