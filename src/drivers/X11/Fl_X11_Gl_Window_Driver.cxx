@@ -25,6 +25,9 @@
 #  if ! defined(GLX_VERSION_1_3)
 #    typedef void *GLXFBConfig;
 #  endif
+#if ! USE_XFT
+#  include "../Xlib/Fl_Font.H"
+#endif
 
 
 // Describes crap needed to create a GLContext.
