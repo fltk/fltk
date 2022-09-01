@@ -137,9 +137,7 @@ void Fl_Graphics_Driver::global_gc()
 /** see Fl::set_color(Fl_Color, unsigned) */
 void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned c)
 {
-  if (fl_cmap[i] != c) {
     fl_cmap[i] = c;
-  }
 }
 
 
