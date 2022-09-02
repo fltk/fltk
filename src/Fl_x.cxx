@@ -2217,7 +2217,7 @@ int Fl_X11_Screen_Driver::ewmh_supported() {
   return result;
 }
 
-#if HAVE_XRENDER
+#if HAVE_XRENDER && (!FLTK_USE_CAIRO)
 static int xrender_supported() {
   int nop1, nop2;
   fl_open_display();
