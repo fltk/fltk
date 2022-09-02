@@ -2374,10 +2374,15 @@ pointer_button(void *data,
 					toggle_maximized(&frame_cairo->frame);
 					break;
 				case BUTTON_CLOSE:
+#ifdef DONT_APPLY_FLTK_CHANGES
+                                    if (closeable(frame_cairo))
+                                            libdecor_frame_close(&frame_cairo->frame);
+#else
                                         if (closeable(frame_cairo)) {
 						libdecor_frame_close(&frame_cairo->frame);
                                                 return;
                                         }
+#endif
 					break;
 				default:
 					break;
