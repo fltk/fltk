@@ -2374,8 +2374,10 @@ pointer_button(void *data,
 					toggle_maximized(&frame_cairo->frame);
 					break;
 				case BUTTON_CLOSE:
-					if (closeable(frame_cairo))
+                                        if (closeable(frame_cairo)) {
 						libdecor_frame_close(&frame_cairo->frame);
+                                                return;
+                                        }
 					break;
 				default:
 					break;
