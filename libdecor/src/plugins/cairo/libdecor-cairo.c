@@ -2380,6 +2380,7 @@ pointer_button(void *data,
 #else
                                         if (closeable(frame_cairo)) {
 						libdecor_frame_close(&frame_cairo->frame);
+                                                seat->pointer_focus = NULL;
                                                 return;
                                         }
 #endif

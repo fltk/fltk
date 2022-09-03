@@ -2229,6 +2229,7 @@ pointer_button(void *data,
                                         if (closeable(frame_gtk)) {
 						libdecor_frame_close(
 							&frame_gtk->frame);
+                                                seat->pointer_focus = NULL;
                                                 return;
                                         }
 #endif
