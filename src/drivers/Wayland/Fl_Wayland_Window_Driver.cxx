@@ -1470,7 +1470,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
-  if (y_offset) xdg_positioner_set_offset(positioner, 0, y_offset);
+  if (y_offset) xdg_positioner_set_offset(positioner, 0, y_offset * f);
   xid_menu->xdg_popup = xdg_surface_get_popup(xid_menu->xdg_surface, parent_xid->xdg_surface, positioner);
   xdg_positioner_destroy(positioner);
   xdg_popup_add_listener(xid_menu->xdg_popup, &popup_listener, xid_menu);
