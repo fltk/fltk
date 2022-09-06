@@ -711,11 +711,12 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
     Fl::e_is_click = 0;
     Fl::handle(event, win);
   }
-  key_repeat_data_t *key_repeat_data = new key_repeat_data_t;
-  key_repeat_data->time = time;
-  key_repeat_data->window = win;
-  if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING && !(sym >= FL_Shift_L && sym <= FL_Alt_R))
+  if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING && !(sym >= FL_Shift_L && sym <= FL_Alt_R)) {
+    key_repeat_data_t *key_repeat_data = new key_repeat_data_t;
+    key_repeat_data->time = time;
+    key_repeat_data->window = win;
     Fl::add_timeout(KEY_REPEAT_DELAY, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
+  }
 }
 
 static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
@@ -1112,7 +1113,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
     Fl::screen_driver()->open_display();
     return;
   }
-  
+
   if (!wl_display) {
     wl_display = wl_display_connect(NULL);
     if (!wl_display) {
@@ -1485,7 +1486,7 @@ void Fl_Wayland_Screen_Driver::reset_spot() {
 }
 
 
-struct wl_display *fl_wl_display() {  
+struct wl_display *fl_wl_display() {
   if (!Fl_Wayland_Screen_Driver::wl_display || !Fl_Wayland_Screen_Driver::wl_registry) return NULL;
   return Fl_Wayland_Screen_Driver::wl_display;
 }
