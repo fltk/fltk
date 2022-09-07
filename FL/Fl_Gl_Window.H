@@ -47,6 +47,11 @@ class Fl_Gl_Window_Driver;
   to add a selection of widgets to an OpenGL window. The widgets will draw on top
   of any OpenGL rendering. The number of supported widgets will increase as the
   driver development improves. Program test/cube.cxx illustrates how to do that.
+ 
+  \note FLTK expects that when an Fl_Gl_Window is a child of a parent Fl_Window,
+  the child window lies entirely inside its parent window. If that's not the case, what
+  happens to the part of the GL subwindow which leaks outside its parent is undefined
+  and susceptible to be platform-specific.
 */
 class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   friend class Fl_Gl_Window_Driver;

@@ -2930,8 +2930,20 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
       addr(view, @selector(setWantsBestResolutionOpenGLSurface:), Fl::use_high_res_GL() != 0);
     }
     [context setView:view];
+    if (Fl_Cocoa_Window_Driver::driver(window)->subRect()) {
+      remove_gl_context_opacity(context);
+    }
   }
   return context;
+}
+
+void Fl_Cocoa_Window_Driver::remove_gl_context_opacity(NSOpenGLContext *ctx) {
+  GLint gl_opacity;
+  [ctx getValues:&gl_opacity forParameter:NSOpenGLContextParameterSurfaceOpacity];
+  if (gl_opacity != 0) {
+    gl_opacity = 0;
+    [ctx setValues:&gl_opacity forParameter:NSOpenGLContextParameterSurfaceOpacity];
+  }
 }
 
 void Fl_Cocoa_Window_Driver::GLcontext_update(NSOpenGLContext* ctxt)
@@ -3408,6 +3420,9 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
     }
     through_resize(0);
   }
+  
+  // make sure subwindow doesn't leak outside parent
+  if (pWindow->parent()) [fl_xid(pWindow) checkSubwindowFrame];
 }
 
 

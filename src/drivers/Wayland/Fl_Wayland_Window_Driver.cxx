@@ -48,6 +48,7 @@ extern "C" {
 }
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
+#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
@@ -66,6 +67,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   in_handle_configure = false;
   screen_num_ = -1;
   gl_start_support_ = NULL;
+  subRect_ = NULL;
 }
 
 void Fl_Wayland_Window_Driver::delete_cursor_() {
@@ -97,6 +99,7 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
     delete shape_data_;
   }
   delete_cursor_();
+  if (subRect_) delete subRect_;
   if (gl_start_support_) { // occurs only if gl_start/gl_finish was used
     gl_plugin()->destroy(gl_start_support_);
   }
@@ -354,7 +357,6 @@ void Fl_Wayland_Window_Driver::make_current() {
     Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
   }
 
-  fl_graphics_driver->clip_region(0);
   Fl_Wayland_Window_Driver::wld_window = window;
   float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
   if (!window->buffer) {
@@ -364,6 +366,14 @@ void Fl_Wayland_Window_Driver::make_current() {
                                             &window->buffer->draw_buffer_needs_commit);
   }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, scale);
+  cairo_rectangle_int_t *extents = subRect();
+  if (extents) { // make damage-to-buffer not to leak outside parent
+    Fl_Region clip_region = fl_graphics_driver->XRectangleRegion(extents->x, extents->y,
+                                                                 extents->width, extents->height);
+//printf("make_current: %dx%d %dx%d\n",extents->x, extents->y, extents->width, extents->height);
+    Fl_X::i(pWindow)->region = clip_region;
+  }
+  else fl_graphics_driver->clip_region(0);
 
 #ifdef FLTK_HAVE_CAIROEXT
   // update the cairo_t context
@@ -1060,6 +1070,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     new_window->configured_height = pWindow->h();
     wait_for_expose_value = 0;
     pWindow->border(0);
+    checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 
   } else { // a window without decoration
     new_window->kind = UNFRAMED;
@@ -1438,7 +1449,69 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       }
     }
   }
+  
+  if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
+      checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 }
+
+
+static void crect_intersect(cairo_rectangle_int_t *to, cairo_rectangle_int_t *with) {
+  int x = fl_max(to->x, with->x);
+  to->width = fl_min(to->x + to->width, with->x + with->width) - x;
+  if (to->width < 0) to->width = 0;
+  int y = fl_max(to->y, with->y);
+  to->height = fl_min(to->y + to->height, with->y + with->height) - y;
+  if (to->height < 0) to->height = 0;
+  to->x = x;
+  to->y = y;
+}
+
+
+static bool crect_equal(cairo_rectangle_int_t *to, cairo_rectangle_int_t *with) {
+  return (to->x == with->x && to->y == with->y && to->width == with->width && to->height == with->height);
+}
+
+
+void Fl_Wayland_Window_Driver::checkSubwindowFrame() {
+  if (!pWindow->parent()) return;
+  // make sure this subwindow doesn't leak out of its parent window
+  Fl_Window *from = pWindow, *parent;
+  cairo_rectangle_int_t full = {0, 0, pWindow->w(), pWindow->h()}; // full subwindow area
+  cairo_rectangle_int_t srect = full; // will become new subwindow clip
+  int fromx = 0, fromy = 0;
+  while ((parent = from->window()) != NULL) { // loop over all parent windows
+    fromx -= from->x(); // parent origin in subwindow's coordinates
+    fromy -= from->y();
+    cairo_rectangle_int_t prect = {fromx, fromy, parent->w(), parent->h()};
+    crect_intersect(&srect, &prect); // area of subwindow inside its parent
+    from = parent;
+  }
+  cairo_rectangle_int_t *r = subRect();
+  // current subwindow clip
+  cairo_rectangle_int_t current_clip = (r ? *r : full);
+  if (!crect_equal(&srect, &current_clip)) { // if new clip differs from current clip
+    if (crect_equal(&srect, &full)) r = NULL;
+    else {
+      r = &srect;
+      if (r->width == 0 || r->height == 0) {
+        r = NULL;
+      }
+    }
+    subRect(r);
+  }
+}
+
+
+void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
+  if (subRect_) delete subRect_;
+  cairo_rectangle_int_t *r2 = NULL;
+  if (r) {
+    r2 = new cairo_rectangle_int_t;
+    *r2 = *r;
+  }
+  subRect_ = r2;
+}
+
 
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   struct wld_window * xid_menu = fl_wl_xid(pWindow);

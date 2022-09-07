@@ -372,7 +372,7 @@ void Fl_Gl_Window::draw_begin() {
   glPointSize((GLfloat)(drv->pixels_per_unit_));
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
-  glDisable(GL_SCISSOR_TEST);
+  if (!pGlWindowDriver->need_scissor()) glDisable(GL_SCISSOR_TEST);
   // TODO: all of the settings should be saved on the GL stack
 }
 

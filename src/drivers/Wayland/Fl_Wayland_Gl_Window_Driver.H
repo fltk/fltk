@@ -59,6 +59,9 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void init();
   struct wl_egl_window *egl_window;
   EGLSurface egl_surface;
+public:
+  //virtual bool need_scissor() { return true; } // CONTROL_LEAKING_SUB_GL_WINDOWS
+  //void apply_scissor(); // CONTROL_LEAKING_SUB_GL_WINDOWS
 };
 
 #endif // HAVE_GL
