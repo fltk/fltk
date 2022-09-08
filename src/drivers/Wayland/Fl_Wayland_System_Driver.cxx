@@ -18,8 +18,13 @@
 #include "Fl_Wayland_System_Driver.H"
 #include <FL/Fl.H>
 #include "Fl_Wayland_Window_Driver.H"
+#include "Fl_Wayland_Screen_Driver.H"
 #include <FL/platform.H>
 #include "../../../libdecor/src/libdecor.h"
+#include <stdlib.h>
+
+
+bool Fl_Wayland_System_Driver::too_late_to_disable = false;
 
 
 int Fl_Wayland_System_Driver::event_key(int k) {
@@ -55,7 +60,7 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
     Fl_Window *win = Fl::first_window();
     while (win) {
       if (!win->parent() && win->border() &&
-          !(Fl_X::i(win)->xid->state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ) {
+          !( ((struct wld_window*)Fl_X::i(win)->xid)->state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ) {
         win_dims *dim = new win_dims;
         dim->tracker = new Fl_Widget_Tracker(win);
         Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);
@@ -86,4 +91,15 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
     }
     return NULL;
   }
+}
+
+
+void Fl_Wayland_System_Driver::disable_wayland() {
+  if (too_late_to_disable) {
+    fprintf(stderr, "Error: fl_disable_wayland() cannot be called "
+            "after the Wayland display was opened\n"
+            "or a Wayland window was created or the Wayland screen was accessed\n");
+    exit(1);
+  }
+  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed("x11");
 }

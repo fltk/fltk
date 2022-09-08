@@ -224,10 +224,10 @@ void Fl_Cocoa_Window_Driver::hide() {
   if (ip && !parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
   if ( hide_common() ) return;
   q_release_context(this);
-  if ( ip->xid == fl_window )
+  if ( ip->xid == (fl_uintptr_t)fl_window )
     fl_window = 0;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  destroy(ip->xid);
+  destroy((FLWindow*)ip->xid);
   delete subRect();
   delete ip;
 }
@@ -330,11 +330,12 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   CGContextRelease(auxgc);
 }
 
-void Fl_Cocoa_Window_Driver::screen_num(int n) {
-  screen_num_ = n;
+
+FLWindow *fl_mac_xid(const Fl_Window *win) {
+  return (FLWindow*)Fl_Window_Driver::xid(win);
 }
 
-int Fl_Cocoa_Window_Driver::screen_num() {
-  if (pWindow->parent()) return pWindow->top_window()->screen_num();
-  else return screen_num_;
+
+Fl_Window *fl_mac_find(FLWindow *xid) {
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
 }

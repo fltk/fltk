@@ -24,8 +24,8 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
-#include "Fl_System_Driver.H" // for struct stat
 #include <string.h>
+#include <sys/stat.h>
 
 
 

@@ -41,6 +41,8 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void gl_start();
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
+  virtual bool need_scissor() { return true; }
+  void apply_scissor();
 };
 
 

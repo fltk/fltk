@@ -26,6 +26,11 @@
 #include "../../Fl_Window_Driver.H"
 #include <config.h>
 #include <FL/platform.H> // for Cursor
+
+#if FLTK_USE_CAIRO
+typedef struct _cairo cairo_t;
+#endif // FLTK_USE_CAIRO
+
 class Fl_Bitmap;
 
 /*
@@ -68,9 +73,10 @@ private:
     bool busy;
   };
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
-  int screen_num_;
-  void screen_num(int n) { screen_num_ = n; }
 #endif // USE_XFT
+#if FLTK_USE_CAIRO
+  cairo_t *cairo_;
+#endif // FLTK_USE_CAIRO
   void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
@@ -84,7 +90,6 @@ public:
   virtual ~Fl_X11_Window_Driver();
   static inline Fl_X11_Window_Driver* driver(const Fl_Window *w) {return (Fl_X11_Window_Driver*)Fl_Window_Driver::driver(w);}
 #if  USE_XFT
-  virtual int screen_num();
   static void resize_after_screen_change(void *data);
 #endif // USE_XFT
 

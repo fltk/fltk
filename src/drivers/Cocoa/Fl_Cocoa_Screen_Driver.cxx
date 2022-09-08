@@ -140,7 +140,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
 {
   if (win) {
     if (!Fl::grab_) {
-      fl_capture = Fl_X::i(Fl::first_window())->xid;
+      fl_capture = (FLWindow*)(Fl_X::i(Fl::first_window())->xid);
       Fl_Cocoa_Window_Driver::driver(Fl::first_window())->set_key_window();
     }
     Fl::grab_ = win;
@@ -315,8 +315,8 @@ int Fl_Cocoa_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsi
 
 void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
 {
-  width = CGBitmapContextGetWidth(off);
-  height = CGBitmapContextGetHeight(off);
+  width = CGBitmapContextGetWidth((CGContextRef)off);
+  height = CGBitmapContextGetHeight((CGContextRef)off);
 }
 
 Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window,

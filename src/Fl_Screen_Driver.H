@@ -43,6 +43,7 @@ class Fl_Window;
 class Fl_RGB_Image;
 class Fl_Group;
 class Fl_Input;
+class Fl_System_Driver;
 
 /**
   A base class describing the interface between FLTK and screen-related operations.
@@ -68,6 +69,7 @@ public:
   static char bg_set;
   static char bg2_set;
   static char fg_set;
+  static Fl_System_Driver *system_driver;
 
   virtual float scale(int) { return 1; }
   virtual void scale(int /*n*/, float /*f*/) {}

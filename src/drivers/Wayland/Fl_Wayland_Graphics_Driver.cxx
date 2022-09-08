@@ -28,7 +28,6 @@
 #include <errno.h>
 #include <string.h> // for strerror()
 
-extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 extern "C" {
   int os_create_anonymous_file(off_t); // in libdecor
@@ -77,18 +76,16 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 
 
 void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
-                                               const struct wl_callback_listener *listener) {
+                                               const struct wl_callback_listener *listener,
+                                               bool need_damage) {
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
   wl_surface_set_buffer_scale(window->wl_surface, window->scale);
-  struct wl_callback *cb = wl_surface_frame(window->wl_surface);
-  if (listener) {
-    window->buffer->cb = cb;
-    wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
-    wl_callback_add_listener(window->buffer->cb, listener, window);
-  }
+  window->buffer->cb = wl_surface_frame(window->wl_surface);
+  if (need_damage) wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
+  wl_callback_add_listener(window->buffer->cb, listener, window);
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;
 //fprintf(stderr,"buffer_commit %s\n", window->fl_win->parent()?"child":"top");
@@ -118,6 +115,7 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int wi
 void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 {
   if (window->buffer) {
+    if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
     wl_buffer_destroy(window->buffer->wl_buffer);
     delete[] window->buffer->draw_buffer;
     window->buffer->draw_buffer = NULL;
@@ -142,15 +140,9 @@ void Fl_Wayland_Graphics_Driver::set_buffer(struct fl_wld_buffer *buffer, float 
 }
 
 
-void Fl_Wayland_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
-  if (fl_cmap[i] != c) {
-    fl_cmap[i] = c;
-  }
-}
-
-
-void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
+void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen src, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
+  struct fl_wld_buffer *osrc = (struct fl_wld_buffer *)src;
   int height = osrc->data_size / osrc->stride;
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);

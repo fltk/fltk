@@ -14,9 +14,14 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include <config.h>
 #include <FL/platform.H>
 #include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
-#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
+#if FLTK_USE_CAIRO
+#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#else
+#  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
+#endif
 #include "Fl_X11_Screen_Driver.H"
 #include "Fl_X11_System_Driver.H"
 #include "Fl_X11_Window_Driver.H"
@@ -127,7 +132,11 @@ FL_EXPORT Fl_Fontdesc* fl_fonts = (Fl_Fontdesc*)built_in_table;
 
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
+#if FLTK_USE_CAIRO
+  return new Fl_Display_Cairo_Graphics_Driver();
+#else
   return new Fl_Xlib_Graphics_Driver();
+#endif
 }
 
 

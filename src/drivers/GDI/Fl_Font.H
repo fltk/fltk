@@ -34,7 +34,7 @@ public:
 #  if HAVE_GL
   char glok[64];
 #  endif // HAVE_GL
-  FL_EXPORT ~Fl_GDI_Font_Descriptor();
+  virtual FL_EXPORT ~Fl_GDI_Font_Descriptor();
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table

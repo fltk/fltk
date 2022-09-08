@@ -32,7 +32,7 @@ typedef struct _PangoFontDescription PangoFontDescription;
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:
   Fl_Cairo_Font_Descriptor(const char* fontname, Fl_Fontsize size, PangoContext *context);
-  FL_EXPORT ~Fl_Cairo_Font_Descriptor();
+  virtual FL_EXPORT ~Fl_Cairo_Font_Descriptor();
   PangoFontDescription *fontref;
   int **width; // array of arrays of character widths
   int line_height;

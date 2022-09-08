@@ -101,6 +101,9 @@ public:
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
   virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
   static inline Fl_Gl_Window_Driver* driver(const Fl_Gl_Window *win) {return win->pGlWindowDriver;}
+  // true means the platform uses glScissor() to make sure GL subwindows
+  // don't leak outside their parent window
+  virtual bool need_scissor() { return false; }
 };
 
 #endif /* Fl_Gl_Window_Driver_H */

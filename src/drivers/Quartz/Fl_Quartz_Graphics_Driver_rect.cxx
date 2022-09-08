@@ -218,11 +218,12 @@ void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, in
 // --- clipping
 
 // intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
-static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
+static Fl_Region intersect_region_and_rect(Fl_Region current_, int x,int y,int w, int h)
 {
-  if (current == NULL) return Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h);
+  if (current_ == NULL) return Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h);
+  struct flCocoaRegion* current = (struct flCocoaRegion*)current_;
   CGRect r = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
-  Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
+  struct flCocoaRegion* outr = (struct flCocoaRegion*)malloc(sizeof(struct flCocoaRegion));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
   int j = 0;
@@ -236,7 +237,7 @@ static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w,
   }
   else {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(outr);
-    outr = Fl_Graphics_Driver::default_driver().XRectangleRegion(0,0,0,0);
+    outr = (struct flCocoaRegion*)Fl_Graphics_Driver::default_driver().XRectangleRegion(0,0,0,0);
   }
   return outr;
 }
@@ -261,7 +262,7 @@ void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 
 int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if (!r) return 0;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   CGRect u = CGRectMake(0,0,0,0);
@@ -283,7 +284,7 @@ int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int&
 
 int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if (!r) return 1;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   for (int i = 0; i < r->count; i++) {
@@ -295,7 +296,7 @@ int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 
 void Fl_Quartz_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if ( fl_window || gc_ ) { // clipping for a true window or an offscreen buffer
     if (gc_) {
       CGContextRestoreGState(gc_);

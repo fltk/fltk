@@ -116,7 +116,6 @@ protected:
   void pie(int x, int y, int w, int h, double a1, double a2);
   void line_style(int style, int width=0, char* dashes=0);
   void color(Fl_Color c);
-  void set_color(Fl_Color i, unsigned int c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
   void draw(const char *str, int n, int x, int y);

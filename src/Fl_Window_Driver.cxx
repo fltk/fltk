@@ -41,6 +41,7 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   : pWindow(win) {
   wait_for_expose_value = 0;
   other_xid = 0;
+  screen_num_ = 0;
 }
 
 
@@ -219,8 +220,10 @@ void Fl_Window_Driver::wait_for_expose() {
 }
 
 int Fl_Window_Driver::screen_num() {
-  if (pWindow->parent()) return Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  return Fl::screen_num(x(), y(), w(), h());
+  if (pWindow->parent()) {
+    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
+  }
+  return screen_num_ >= 0 ? screen_num_ : 0;
 }
 
 bool Fl_Window_Driver::is_a_rescale_ = false;
@@ -256,6 +259,32 @@ void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscr
   Fl_Screen_Driver *scr_driver = Fl::screen_driver();
   if (nscreen < 0) nscreen = scr_driver->get_mouse(mx, my);
   scr_driver->screen_work_area(X, Y, W, H, nscreen);
+}
+
+/** Returns  the platform-specific reference of the given window, or NULL if that window isn't shown.
+ \version 1.4.0 */
+fl_uintptr_t Fl_Window_Driver::xid(const Fl_Window *win) {
+  Fl_X *flx = win->i;
+  return flx ? flx->xid : 0;
+}
+
+/** Returns a pointer to the Fl_Window corresponding to the platform-specific reference \p xid of a shown window.
+ \version 1.4.0 */
+Fl_Window *Fl_Window_Driver::find(fl_uintptr_t xid) {
+  Fl_X *window;
+  for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next) {
+    if (window->xid == xid) {
+      if (window != Fl_X::first && !Fl::modal()) {
+        // make this window be first to speed up searches
+        // this is not done if modal is true to avoid messing up modal stack
+        *pp = window->next;
+        window->next = Fl_X::first;
+        Fl_X::first = window;
+      }
+      return window->w;
+    }
+  }
+  return 0;
 }
 
 /**

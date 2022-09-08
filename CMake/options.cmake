@@ -197,12 +197,20 @@ if (UNIX)
   option (OPTION_USE_WAYLAND "use Wayland" OFF)
   if (OPTION_USE_WAYLAND)
     set (FLTK_USE_WAYLAND 1)
+    set (FLTK_USE_X11 1) # to build a hybrid Wayland/X11 library
+    unset (OPTION_USE_CAIRO CACHE)
+    set (OPTION_USE_CAIRO TRUE CACHE BOOL "all drawing to X11 windows uses Cairo")
     option (OPTION_USE_SYSTEM_LIBDECOR "use libdecor from the system" OFF)
     unset (OPTION_USE_XRENDER CACHE)
     unset (OPTION_USE_XINERAMA CACHE)
     unset (OPTION_USE_XFT CACHE)
     unset (OPTION_USE_XCURSOR CACHE)
     unset (OPTION_USE_XFIXES CACHE)
+      set (HAVE_XFIXES 1)
+      set (HAVE_XRENDER 1)
+      set (USE_XFT 1)
+      set (HAVE_XCURSOR 1)
+      set (HAVE_XINERAMA 1)
     unset (OPTION_USE_PANGO CACHE)
     set (OPTION_USE_PANGO TRUE CACHE BOOL "use lib Pango")
     if (OPTION_USE_SYSTEM_LIBDECOR)
@@ -211,6 +219,9 @@ if (UNIX)
         set (OPTION_USE_SYSTEM_LIBDECOR OFF)
       endif (NOT SYSTEM_LIBDECOR_FOUND)
     endif (OPTION_USE_SYSTEM_LIBDECOR)
+
+    option (OPTION_ALLOW_GTK_PLUGIN "Allow to use libdecor's GTK plugin" ON)
+
   endif (OPTION_USE_WAYLAND)
 endif (UNIX)
 
@@ -311,7 +322,7 @@ endif (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
 # Include optional Cairo support
 #######################################################################
 
-option (OPTION_CAIRO "use lib Cairo" OFF)
+option (OPTION_CAIRO "add support for Fl_Cairo_Window" OFF)
 option (OPTION_CAIROEXT
   "use FLTK code instrumentation for Cairo extended use" OFF
 )
@@ -556,7 +567,16 @@ endif (OPTION_USE_XCURSOR)
 if (X11_Xft_FOUND)
   option (OPTION_USE_XFT "use lib Xft" ON)
   option (OPTION_USE_PANGO "use lib Pango" OFF)
+  if (NOT OPTION_USE_WAYLAND)
+    option (OPTION_USE_CAIRO "all drawing to X11 windows uses Cairo" OFF)
+  endif (NOT OPTION_USE_WAYLAND)
 endif (X11_Xft_FOUND)
+
+# test option compatibility: Cairo for Xlib requires Pango
+if (OPTION_USE_CAIRO)
+    unset (OPTION_USE_PANGO CACHE)
+    set (OPTION_USE_PANGO TRUE CACHE BOOL "use lib Pango")
+endif (OPTION_USE_CAIRO)
 
 # test option compatibility: Pango requires Xft
 if (OPTION_USE_PANGO AND NOT OPTION_USE_WAYLAND)
@@ -654,14 +674,30 @@ if ((X11_Xft_FOUND OR OPTION_USE_WAYLAND) AND OPTION_USE_PANGO)
     endif (HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
   endif (PANGOXFT_FOUND AND PANGOCAIRO_FOUND AND CAIRO_FOUND)
 
+  if (USE_PANGO AND (OPTION_USE_CAIRO OR OPTION_USE_WAYLAND))
+    set (FLTK_USE_CAIRO 1)
+    # fl_debug_var (FLTK_USE_CAIRO)
+  endif (USE_PANGO AND (OPTION_USE_CAIRO OR OPTION_USE_WAYLAND))
+
 endif ((X11_Xft_FOUND OR OPTION_USE_WAYLAND) AND OPTION_USE_PANGO)
 
 if (OPTION_USE_WAYLAND AND NOT OPTION_USE_SYSTEM_LIBDECOR)
-  pkg_check_modules(GTK gtk+-3.0)
-  # set (GTK_FOUND 0) # use this to get cairo titlebars rather than GTK
-  if (GTK_FOUND)
-    include_directories (${GTK_INCLUDE_DIRS})
-  endif (GTK_FOUND)
+
+  # Note: Disable OPTION_ALLOW_GTK_PLUGIN to get cairo titlebars rather than GTK
+  # FIXME: This needs to be redesigned! Forcing GTK_FOUND to 0 (NO) is a bad
+  # FIXME: idea because there could be unwanted side effects. AlbrechtS
+  if (OPTION_ALLOW_GTK_PLUGIN)
+    pkg_check_modules(GTK gtk+-3.0)
+    if (GTK_FOUND)
+      include_directories (${GTK_INCLUDE_DIRS})
+    endif (GTK_FOUND)
+  else ()
+    if (GTK_FOUND)
+      message (STATUS "*** FIXME: Disable GTK plugin by forcing GTK_FOUND to 0 ***")
+      set (GTK_FOUND 0)
+    endif (GTK_FOUND)
+  endif (OPTION_ALLOW_GTK_PLUGIN)
+
 endif (OPTION_USE_WAYLAND AND NOT OPTION_USE_SYSTEM_LIBDECOR)
 
 if (OPTION_USE_XFT)

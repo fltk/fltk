@@ -41,7 +41,11 @@
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/X11/Fl_X11_System_Driver.H"
+#if FLTK_USE_CAIRO
+#  include "drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#else
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver.H"
+#endif
 #  include "print_button.h"
 #  include <unistd.h>
 #  include <time.h>
@@ -52,6 +56,11 @@
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
 #  include "Xutf8.h"
+
+#if FLTK_USE_CAIRO
+#  include <cairo-xlib.h>
+#  include <cairo/cairo.h>
+#endif // FLTK_USE_CAIRO
 
 #define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
 #if USE_XRANDR
@@ -149,6 +158,7 @@ static void convert_crlf(unsigned char *string, long& len) {
 ////////////////////////////////////////////////////////////////
 
 Display *fl_display;
+Display *fl_x11_display() { return fl_display; }
 Window fl_message_window = 0;
 int fl_screen;
 XVisualInfo *fl_visual;
@@ -2037,6 +2047,8 @@ int fl_handle(const XEvent& thisevent)
       }
       wd->screen_num(num);
     }
+#else // ! USE_XFT
+    Fl_Window_Driver::driver(window)->screen_num( Fl::screen_num(X, Y, W, H) );
 #endif // USE_XFT
 
     // tell Fl_Window about it and set flag to prevent echoing:
@@ -2109,15 +2121,24 @@ int fl_handle(const XEvent& thisevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
-  int is_a_move = (X != x() || Y != y() || Fl_Window::is_a_rescale());
-  int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
+  int is_a_rescale = Fl_Window::is_a_rescale();
+  int is_a_move = (X != x() || Y != y() || is_a_rescale);
+  int is_a_resize = (W != w() || H != h() || is_a_rescale);
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (is_a_move && resize_from_program) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
     pWindow->Fl_Group::resize(X,Y,W,H);
-    if (shown()) {pWindow->redraw();}
+    if (shown()) {
+#if FLTK_USE_CAIRO
+      if (!pWindow->as_gl_window() && cairo_) {
+        float s = Fl::screen_driver()->scale(screen_num());
+        cairo_xlib_surface_set_size(cairo_get_target(cairo_), (W>0 ? int(W*s) : 1), (H>0 ? int(H*s) : 1));
+      }
+#endif
+      pWindow->redraw();
+    }
   } else {
     x(X); y(Y);
     if (Fl_X11_Screen_Driver::xim_win && Fl::focus()) {
@@ -2126,6 +2147,8 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
       fl_set_spot(fl_font(), fl_size(), Fl::focus()->x(), Fl::focus()->y() + fl_size(), Fl::focus()->w(), Fl::focus()->h(), NULL);
     }
   }
+
+  if (is_a_rescale) size_range();
 
   if (resize_from_program && shown()) {
     float s = Fl::screen_driver()->scale(screen_num());
@@ -2194,7 +2217,7 @@ int Fl_X11_Screen_Driver::ewmh_supported() {
   return result;
 }
 
-#if HAVE_XRENDER
+#if HAVE_XRENDER && (!FLTK_USE_CAIRO)
 static int xrender_supported() {
   int nop1, nop2;
   fl_open_display();
@@ -2202,6 +2225,7 @@ static int xrender_supported() {
 }
 #endif
 
+#if ! FLTK_USE_CAIRO
 char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
 #if HAVE_XRENDER
   static char result = (char)xrender_supported();
@@ -2210,6 +2234,7 @@ char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
   return 0;
 #endif
 }
+#endif
 
 extern Fl_Window *fl_xfocus;
 

@@ -48,8 +48,9 @@ extern "C" {
 }
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
+#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
-Window fl_window;
+
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
 
 
@@ -66,6 +67,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   in_handle_configure = false;
   screen_num_ = -1;
   gl_start_support_ = NULL;
+  subRect_ = NULL;
 }
 
 void Fl_Wayland_Window_Driver::delete_cursor_() {
@@ -97,6 +99,7 @@ Fl_Wayland_Window_Driver::~Fl_Wayland_Window_Driver()
     delete shape_data_;
   }
   delete_cursor_();
+  if (subRect_) delete subRect_;
   if (gl_start_support_) { // occurs only if gl_start/gl_finish was used
     gl_plugin()->destroy(gl_start_support_);
   }
@@ -112,7 +115,7 @@ void Fl_Wayland_Window_Driver::decorated_win_size(int &w, int &h)
   h = win->h();
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
   int X, titlebar_height;
-  libdecor_frame_translate_coordinate(fl_xid(win)->frame, 0, 0, &X, &titlebar_height);
+  libdecor_frame_translate_coordinate(fl_wl_xid(win)->frame, 0, 0, &X, &titlebar_height);
 //printf("titlebar_height=%d\n",titlebar_height);
   h = win->h() + ceil(titlebar_height / Fl::screen_scale(win->screen_num()));
 }
@@ -135,7 +138,7 @@ int Fl_Wayland_Window_Driver::decorated_w()
 }
 
 struct xdg_toplevel *Fl_Wayland_Window_Driver::xdg_toplevel() {
-  Window w = fl_xid(pWindow);
+  struct wld_window * w = fl_wl_xid(pWindow);
   struct xdg_toplevel *top = NULL;
   if (w->kind == DECORATED) top = libdecor_frame_get_xdg_toplevel(w->frame);
   else if (w->kind == UNFRAMED) top = w->xdg_toplevel;
@@ -144,10 +147,10 @@ struct xdg_toplevel *Fl_Wayland_Window_Driver::xdg_toplevel() {
 
 void Fl_Wayland_Window_Driver::take_focus()
 {
-  Window w = fl_xid(pWindow);
+  struct wld_window *w = fl_wl_xid(pWindow);
   if (w) {
     Fl_Window *old_first = Fl::first_window();
-    Window first_xid = (old_first ? fl_xid(old_first->top_window()) : NULL);
+    struct wld_window *first_xid = (old_first ? fl_wl_xid(old_first->top_window()) : NULL);
     if (first_xid && first_xid != w && xdg_toplevel()) {
       // this will move the target window to the front
       Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(old_first->top_window());
@@ -157,7 +160,7 @@ void Fl_Wayland_Window_Driver::take_focus()
       xdg_toplevel_set_parent(xdg_toplevel(), NULL);
     }
     // this sets the first window
-    fl_find(w);
+    fl_wl_find(w);
   }
 }
 
@@ -185,7 +188,7 @@ void Fl_Wayland_Window_Driver::flush_overlay()
     fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid, 0, 0);
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
-  Window xid = fl_xid(pWindow);
+  struct wld_window * xid = fl_wl_xid(pWindow);
   wl_surface_damage_buffer(xid->wl_surface, 0, 0, pWindow->w() * xid->scale, pWindow->h() * xid->scale);
 }
 
@@ -295,7 +298,7 @@ void Fl_Wayland_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, 
   top = left = bottom = right = NULL;
   if (pWindow->decorated_h() == h()) return;
   int htop = pWindow->decorated_h() - pWindow->h();
-  struct wld_window *wwin = fl_xid(pWindow);
+  struct wld_window *wwin = fl_wl_xid(pWindow);
   int width, height, stride;
   uchar *cairo_data = fl_libdecor_titlebar_buffer(wwin->frame, &width, &height, &stride);
   if (!cairo_data) return;
@@ -342,7 +345,7 @@ void Fl_Wayland_Window_Driver::make_current() {
     Fl::fatal(err_message);
   }
 
-  struct wld_window *window = fl_xid(pWindow);
+  struct wld_window *window = fl_wl_xid(pWindow);
   if (window->buffer) {
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
@@ -354,8 +357,7 @@ void Fl_Wayland_Window_Driver::make_current() {
     Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
   }
 
-  fl_graphics_driver->clip_region(0);
-  fl_window = Fl_Wayland_Window_Driver::wld_window = window;
+  Fl_Wayland_Window_Driver::wld_window = window;
   float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
@@ -364,12 +366,32 @@ void Fl_Wayland_Window_Driver::make_current() {
                                             &window->buffer->draw_buffer_needs_commit);
   }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, scale);
+  cairo_rectangle_int_t *extents = subRect();
+  if (extents) { // make damage-to-buffer not to leak outside parent
+    Fl_Region clip_region = fl_graphics_driver->XRectangleRegion(extents->x, extents->y,
+                                                                 extents->width, extents->height);
+//printf("make_current: %dx%d %dx%d\n",extents->x, extents->y, extents->width, extents->height);
+    Fl_X::i(pWindow)->region = clip_region;
+  }
+  else fl_graphics_driver->clip_region(0);
 
 #ifdef FLTK_HAVE_CAIROEXT
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 #endif
 }
+
+
+// used to support regular drawing
+static void surface_frame_one_shot(void *data, struct wl_callback *cb, uint32_t time) {
+  wl_callback_destroy(cb);
+  struct wld_window *window = (struct wld_window *)data;
+  window->buffer->cb = NULL;
+}
+
+static const struct wl_callback_listener surface_frame_listener_one_shot = {
+  .done = surface_frame_one_shot,
+};
 
 
 void Fl_Wayland_Window_Driver::flush() {
@@ -385,11 +407,11 @@ void Fl_Wayland_Window_Driver::flush() {
     if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) gl_plugin()->invalidate(pWindow);
     return;
   }
-  struct wld_window *window = fl_xid(pWindow);
+  struct wld_window *window = fl_wl_xid(pWindow);
   if (!window || !window->configured_width) return;
 
   Fl_X *i = Fl_X::i(pWindow);
-  Fl_Region r = i->region;
+  struct flCairoRegion* r = (struct flCairoRegion*)i->region;
   float f = Fl::screen_scale(pWindow->screen_num());
   if (r && window->buffer) {
     for (int i = 0; i < r->count; i++) {
@@ -410,7 +432,9 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
 
-  Fl_Wayland_Graphics_Driver::buffer_commit(window, NULL);
+  if (!window->buffer->cb) {
+    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener_one_shot, false);
+  }
 }
 
 
@@ -440,7 +464,7 @@ void Fl_Wayland_Window_Driver::hide() {
     ip->region = 0;
   }
   screen_num_ = -1;
-  struct wld_window *wld_win = ip->xid;
+  struct wld_window *wld_win = (struct wld_window*)ip->xid;
   if (wld_win) { // this test makes sure ip->xid has not been destroyed already
     Fl_Wayland_Graphics_Driver::buffer_release(wld_win);
 //fprintf(stderr, "Before hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
@@ -479,7 +503,7 @@ void Fl_Wayland_Window_Driver::hide() {
   }
   free(wld_win);
   if (pWindow->as_gl_window() && in_flush) {
-    ip->xid = NULL;
+    ip->xid = 0;
     ip->next = NULL; // to end the loop in calling Fl::flush()
     Fl::add_timeout(.01, (Fl_Timeout_Handler)delayed_delete_Fl_X, ip);
   } else {
@@ -490,9 +514,9 @@ void Fl_Wayland_Window_Driver::hide() {
 
 void Fl_Wayland_Window_Driver::map() {
   Fl_X* ip = Fl_X::i(pWindow);
-  struct wld_window *wl_win = ip->xid;
+  struct wld_window *wl_win = (struct wld_window*)ip->xid;
   if (wl_win->kind == SUBWINDOW && !wl_win->subsurface) {
-    struct wld_window *parent = fl_xid(pWindow->window());
+    struct wld_window *parent = fl_wl_xid(pWindow->window());
     if (parent) {
       Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
       wl_win->subsurface = wl_subcompositor_get_subsurface(scr_driver->wl_subcompositor, wl_win->wl_surface, parent->wl_surface);
@@ -512,7 +536,7 @@ void Fl_Wayland_Window_Driver::map() {
 
 void Fl_Wayland_Window_Driver::unmap() {
   Fl_X* ip = Fl_X::i(pWindow);
-  struct wld_window *wl_win = ip->xid;
+  struct wld_window *wl_win = (struct wld_window*)ip->xid;
   if (wl_win->kind == SUBWINDOW && wl_win->wl_surface) {
     wl_surface_attach(wl_win->wl_surface, NULL, 0, 0);
     Fl_Wayland_Graphics_Driver::buffer_release(wl_win);
@@ -525,7 +549,7 @@ void Fl_Wayland_Window_Driver::unmap() {
 void Fl_Wayland_Window_Driver::size_range() {
   if (shown()) {
     Fl_X* ip = Fl_X::i(pWindow);
-    struct wld_window *wl_win = ip->xid;
+    struct wld_window *wl_win = (struct wld_window*)ip->xid;
     float f = Fl::screen_scale(pWindow->screen_num());
     if (wl_win->kind == DECORATED && wl_win->frame) {
       int X,Y,W,H;
@@ -553,7 +577,7 @@ void Fl_Wayland_Window_Driver::size_range() {
 
 void Fl_Wayland_Window_Driver::iconize() {
   Fl_X* ip = Fl_X::i(pWindow);
-  struct wld_window *wl_win = ip->xid;
+  struct wld_window *wl_win = (struct wld_window*)ip->xid;
   if (wl_win->kind == DECORATED) {
     libdecor_frame_set_minimized(wl_win->frame);
     Fl::handle(FL_HIDE, pWindow);
@@ -577,7 +601,7 @@ void Fl_Wayland_Window_Driver::decoration_sizes(int *top, int *left,  int *right
 int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                                  void (*draw_area)(void*, int,int,int,int), void* data)
 {
-  Window xid = fl_xid(pWindow);
+  struct wld_window * xid = fl_wl_xid(pWindow);
   struct fl_wld_buffer *buffer = xid->buffer;
   float s = xid->scale * fl_graphics_driver->scale();
   if (s != 1) {
@@ -781,7 +805,7 @@ static void handle_configure(struct libdecor_frame *frame,
 void Fl_Wayland_Window_Driver::wait_for_expose()
 {
   Fl_Window_Driver::wait_for_expose();
-  Window xid = fl_xid(pWindow);
+  struct wld_window * xid = fl_wl_xid(pWindow);
   if (pWindow->fullscreen_active()) {
     if (xid->kind == DECORATED) {
       while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) || !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
@@ -897,7 +921,7 @@ static void popup_done(void *data, struct xdg_popup *xdg_popup) {
 #if USE_GRAB_POPUP
   if (mem_grabbing_popup == xdg_popup) {
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    libdecor_frame_popup_ungrab(fl_xid(mem_parent)->frame, scr_driver->get_seat_name());
+    libdecor_frame_popup_ungrab(fl_wl_xid(mem_parent)->frame, scr_driver->get_seat_name());
     mem_grabbing_popup = NULL;
     mem_parent = NULL;
   }
@@ -1003,7 +1027,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     if (!target) target = Fl::first_window();
     Fl_Window *parent_win = target->top_window();
     while (parent_win && parent_win->menu_window()) parent_win = Fl::next_window(parent_win);
-    Window parent_xid = fl_xid(parent_win);
+    struct wld_window * parent_xid = fl_wl_xid(parent_win);
     struct xdg_surface *parent_xdg = parent_xid->xdg_surface;
     float f = Fl::screen_scale(parent_win->screen_num());
 //fprintf(stderr, "menu parent_win=%p pos:%dx%d size:%dx%d\n", parent_win, pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
@@ -1029,7 +1053,8 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
 
   } else if ( pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
-    if (!scr_driver->libdecor_context) scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display, &libdecor_iface);
+    if (!scr_driver->libdecor_context)
+      scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display, &libdecor_iface);
     new_window->frame = libdecor_decorate(scr_driver->libdecor_context, new_window->wl_surface,
                                               &libdecor_frame_iface, new_window);
 //fprintf(stderr, "makeWindow: libdecor_decorate=%p pos:%dx%d\n", new_window->frame, pWindow->x(), pWindow->y());
@@ -1046,7 +1071,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
 
   } else if (pWindow->parent()) { // for subwindows (GL or non-GL)
     new_window->kind = SUBWINDOW;
-    struct wld_window *parent = fl_xid(pWindow->window());
+    struct wld_window *parent = fl_wl_xid(pWindow->window());
     new_window->subsurface = wl_subcompositor_get_subsurface(scr_driver->wl_subcompositor, new_window->wl_surface, parent->wl_surface);
 //fprintf(stderr, "makeWindow: subsurface=%p\n", new_window->subsurface);
     float f = Fl::screen_scale(pWindow->top_window()->screen_num());
@@ -1059,6 +1084,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     new_window->configured_height = pWindow->h();
     wait_for_expose_value = 0;
     pWindow->border(0);
+    checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 
   } else { // a window without decoration
     new_window->kind = UNFRAMED;
@@ -1073,9 +1099,9 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   }
 
   Fl_Window *old_first = Fl::first_window();
-  Window first_xid = (old_first ? fl_xid(old_first) : NULL);
+  struct wld_window * first_xid = (old_first ? fl_wl_xid(old_first) : NULL);
   Fl_X *xp = new Fl_X;
-  xp->xid = new_window;
+  xp->xid = (fl_uintptr_t)new_window;
   other_xid = 0;
   xp->w = pWindow;
   i(xp);
@@ -1119,14 +1145,6 @@ void Fl_Wayland_Window_Driver::resize_after_screen_change(void *data) {
   float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
   Fl_Window_Driver::driver(win)->resize_after_scale_change(data_for_resize_window_between_screens_.screen, f, f);
   data_for_resize_window_between_screens_.busy = false;
-}
-
-
-int Fl_Wayland_Window_Driver::screen_num() {
-  if (pWindow->parent()) {
-    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  }
-  return screen_num_ >= 0 ? screen_num_ : 0;
 }
 
 
@@ -1244,7 +1262,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
 
 void Fl_Wayland_Window_Driver::update_scale()
 {
-  struct wld_window *window = fl_xid(pWindow);
+  struct wld_window *window = fl_wl_xid(pWindow);
   int scale = 0;
   Fl_Wayland_Window_Driver::window_output *window_output;
 
@@ -1265,7 +1283,7 @@ void Fl_Wayland_Window_Driver::update_scale()
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
   pWindow->wait_for_expose(); // useful for border(0) just after show()
-  struct libdecor_frame *frame = fl_xid(pWindow)->frame;
+  struct libdecor_frame *frame = fl_wl_xid(pWindow)->frame;
   if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE) {
     libdecor_frame_set_visibility(frame, pWindow->border());
     pWindow->redraw();
@@ -1310,10 +1328,10 @@ void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
 
 
 void Fl_Wayland_Window_Driver::label(const char *name, const char *iname) {
-  if (shown() && !parent() && fl_xid(pWindow)->kind == DECORATED) {
+  if (shown() && !parent() && fl_wl_xid(pWindow)->kind == DECORATED) {
     if (!name) name = "";
     if (!iname) iname = fl_filename_name(name);
-    libdecor_frame_set_title(fl_xid(pWindow)->frame, name);
+    libdecor_frame_set_title(fl_wl_xid(pWindow)->frame, name);
   }
 }
 
@@ -1322,7 +1340,7 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
 // build a new wl_cursor and its image
   struct wl_cursor *new_cursor = (struct wl_cursor*)malloc(sizeof(struct wl_cursor));
   struct cursor_image *new_image = (struct cursor_image*)calloc(1, sizeof(struct cursor_image));
-  int scale = fl_xid(pWindow)->scale;
+  int scale = fl_wl_xid(pWindow)->scale;
   new_image->image.width = rgb->w() * scale;
   new_image->image.height = rgb->h() * scale;
   new_image->image.hotspot_x = hotx * scale;
@@ -1338,7 +1356,7 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
   new_cursor->images[0] = (struct wl_cursor_image*)new_image;
   new_cursor->name = strdup("custom cursor");
   // draw the rgb image to the cursor's drawing buffer
-  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, offscreen);
+  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)offscreen);
   Fl_Surface_Device::push_current(img_surf);
   Fl_Wayland_Graphics_Driver *driver = (Fl_Wayland_Graphics_Driver*)img_surf->driver();
   cairo_scale(driver->cr(), scale, scale);
@@ -1361,7 +1379,7 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
 // This is only to fix a bug in libdecor where what libdecor_frame_set_min_content_size()
 // does is often destroyed by libdecor-cairo.
 static void delayed_minsize(Fl_Window *win) {
-  struct wld_window *wl_win = fl_xid(win);
+  struct wld_window *wl_win = fl_wl_xid(win);
   Fl_Window_Driver *driver = Fl_Window_Driver::driver(win);
   if (wl_win->kind == Fl_Wayland_Window_Driver::DECORATED) {
     float f = Fl::screen_scale(win->screen_num());
@@ -1377,7 +1395,7 @@ static void delayed_minsize(Fl_Window *win) {
 
 
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
-  struct wld_window *fl_win = fl_xid(pWindow);
+  struct wld_window *fl_win = fl_wl_xid(pWindow);
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
@@ -1445,10 +1463,72 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       }
     }
   }
+  
+  if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
+      checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 }
 
+
+static void crect_intersect(cairo_rectangle_int_t *to, cairo_rectangle_int_t *with) {
+  int x = fl_max(to->x, with->x);
+  to->width = fl_min(to->x + to->width, with->x + with->width) - x;
+  if (to->width < 0) to->width = 0;
+  int y = fl_max(to->y, with->y);
+  to->height = fl_min(to->y + to->height, with->y + with->height) - y;
+  if (to->height < 0) to->height = 0;
+  to->x = x;
+  to->y = y;
+}
+
+
+static bool crect_equal(cairo_rectangle_int_t *to, cairo_rectangle_int_t *with) {
+  return (to->x == with->x && to->y == with->y && to->width == with->width && to->height == with->height);
+}
+
+
+void Fl_Wayland_Window_Driver::checkSubwindowFrame() {
+  if (!pWindow->parent()) return;
+  // make sure this subwindow doesn't leak out of its parent window
+  Fl_Window *from = pWindow, *parent;
+  cairo_rectangle_int_t full = {0, 0, pWindow->w(), pWindow->h()}; // full subwindow area
+  cairo_rectangle_int_t srect = full; // will become new subwindow clip
+  int fromx = 0, fromy = 0;
+  while ((parent = from->window()) != NULL) { // loop over all parent windows
+    fromx -= from->x(); // parent origin in subwindow's coordinates
+    fromy -= from->y();
+    cairo_rectangle_int_t prect = {fromx, fromy, parent->w(), parent->h()};
+    crect_intersect(&srect, &prect); // area of subwindow inside its parent
+    from = parent;
+  }
+  cairo_rectangle_int_t *r = subRect();
+  // current subwindow clip
+  cairo_rectangle_int_t current_clip = (r ? *r : full);
+  if (!crect_equal(&srect, &current_clip)) { // if new clip differs from current clip
+    if (crect_equal(&srect, &full)) r = NULL;
+    else {
+      r = &srect;
+      if (r->width == 0 || r->height == 0) {
+        r = NULL;
+      }
+    }
+    subRect(r);
+  }
+}
+
+
+void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
+  if (subRect_) delete subRect_;
+  cairo_rectangle_int_t *r2 = NULL;
+  if (r) {
+    r2 = new cairo_rectangle_int_t;
+    *r2 = *r;
+  }
+  subRect_ = r2;
+}
+
+
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
-  Window xid_menu = fl_xid(pWindow);
+  struct wld_window * xid_menu = fl_wl_xid(pWindow);
   if (y == pWindow->y() && y >= 0) return;
   int true_y = y;
   int y_offset = 0;
@@ -1468,7 +1548,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   xid_menu->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, xid_menu->wl_surface);
   xdg_surface_add_listener(xid_menu->xdg_surface, &xdg_surface_listener, xid_menu);
   struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
-  Window parent_xid = fl_xid(Fl_Window_Driver::menu_parent());
+  struct wld_window * parent_xid = fl_wl_xid(Fl_Window_Driver::menu_parent());
   float f = Fl::screen_scale(Fl_Window_Driver::menu_parent()->screen_num());
   int popup_x = x * f, popup_y = y * f;
   if (parent_xid->kind == DECORATED)
@@ -1477,7 +1557,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
-  if (y_offset) xdg_positioner_set_offset(positioner, 0, y_offset);
+  if (y_offset) xdg_positioner_set_offset(positioner, 0, y_offset * f);
   xid_menu->xdg_popup = xdg_surface_get_popup(xid_menu->xdg_surface, parent_xid->xdg_surface, positioner);
   xdg_positioner_destroy(positioner);
   xdg_popup_add_listener(xid_menu->xdg_popup, &popup_listener, xid_menu);
@@ -1504,7 +1584,7 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
 }
 
 
-struct wl_surface *fl_wl_surface(Window xid) {
+FL_EXPORT struct wl_surface *fl_wl_surface(struct wld_window *xid) {
   return xid->wl_surface;
 }
 
@@ -1514,8 +1594,13 @@ cairo_t *fl_wl_cairo() {
 }
 
 
-struct wl_display *fl_wl_display() {
-  return Fl_Wayland_Screen_Driver::wl_display;
+Fl_Window *fl_wl_find(struct wld_window *xid) {
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
+}
+
+
+struct wld_window *fl_wl_xid(const Fl_Window *win) {
+  return (struct wld_window *)Fl_Window_Driver::xid(win);
 }
 
 

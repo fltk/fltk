@@ -879,6 +879,8 @@ const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
 bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
 
 /** Returns a platform-specific identification of a shown window, or 0 if not shown.
+ \note This identification may differ from the platform-specific reference of an
+ Fl_Window object used by functions fl_x11_xid(), fl_mac_xid(), fl_x11_find(), and fl_mac_find().
  \li X11 platform: the window's XID.
  \li macOS platform: The window number of the window’s window device.
  \li other platforms: 0.

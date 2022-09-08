@@ -93,6 +93,8 @@ Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   // initialize key table
   key_table = darwin_key_table;
   key_table_size = sizeof(darwin_key_table)/sizeof(*darwin_key_table);
+  command_key = FL_META;
+  control_key = FL_CTRL;
 }
 
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {

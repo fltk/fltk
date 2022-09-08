@@ -18,13 +18,36 @@
 // include this file if _WIN32 is defined.  This is to encourage
 // portability of even the system-specific code...
 
-#ifndef FL_DOXYGEN
+#ifdef FL_DOXYGEN
+
+/** \file
+ Definitions of functions specific to the Windows platform.
+*/
+
+/** Returns the Windows-specific window reference corresponding to the given Fl_Window object */
+extern HWND fl_win32_xid(const Fl_Window *win);
+/** Returns the Fl_Window corresponding to the given Windows-specific window reference */
+extern Fl_Window *fl_win32_find(HWND);
+/** Returns the Windows-specific GL rendering context corresponding to the given GLContext  */
+extern HGLRC fl_win32_glcontext(GLContext rc);
+/** Returns the Windows-specific graphics context for the current window  */
+extern HDC fl_win32_gc();
+/** Returns the Windows-specific display in use  */
+extern HINSTANCE fl_win32_display();
+
+#else
+
 #ifndef FL_PLATFORM_H
 #  error "Never use <FL/win32.H> directly; include <FL/platform.H> instead."
 #endif // !FL_PLATFORM_H
 
 #include <windows.h>
 typedef HWND Window;
+
+typedef struct HGLRC__ *HGLRC;
+extern FL_EXPORT HGLRC fl_win32_glcontext(GLContext rc);
+extern FL_EXPORT HWND fl_win32_xid(const Fl_Window *win);
+extern FL_EXPORT Fl_Window *fl_win32_find(HWND);
 
 // this part is included only when compiling the FLTK library or if requested explicitly
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS)
@@ -60,7 +83,9 @@ FL_EXPORT HBRUSH fl_brush(); // allocates a brush if necessary
 FL_EXPORT HBRUSH fl_brush_action(int); // now does the real work
 
 extern FL_EXPORT HINSTANCE fl_display;
+extern FL_EXPORT HINSTANCE fl_win32_display();
 extern FL_EXPORT HDC fl_gc;
+extern FL_EXPORT HDC fl_win32_gc();
 extern FL_EXPORT MSG fl_msg;
 extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);

@@ -99,8 +99,10 @@ Fl_Screen_Driver *Fl::screen_driver()
 /** Returns a pointer to the unique Fl_System_Driver object of the platform */
 Fl_System_Driver *Fl::system_driver()
 {
-  static  Fl_System_Driver* system_driver_ = Fl_System_Driver::newSystemDriver();
-  return system_driver_;
+  if (!Fl_Screen_Driver::system_driver) {
+    Fl_Screen_Driver::system_driver = Fl_System_Driver::newSystemDriver();
+  }
+  return Fl_Screen_Driver::system_driver;
 }
 
 //
@@ -578,21 +580,15 @@ int Fl::program_should_quit_ = 0;
 Fl_X* Fl_X::first;
 #endif
 
+/** Returns the Fl_Window that corresponds to the given window reference,
+  or \c NULL if not found.
+  \deprecated Kept in the X11, Windows, and macOS platforms for compatibility
+    with FLTK versions before 1.4.
+    Please use fl_x11_find(Window), fl_wl_find(struct wld_window*),
+    fl_win32_find(HWND) or fl_mac_find(FLWindow*) with FLTK 1.4.0 and above.
+*/
 Fl_Window* fl_find(Window xid) {
-  Fl_X *window;
-  for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next) {
-    if (window->xid == xid) {
-      if (window != Fl_X::first && !Fl::modal()) {
-        // make this window be first to speed up searches
-        // this is not done if modal is true to avoid messing up modal stack
-        *pp = window->next;
-        window->next = Fl_X::first;
-        Fl_X::first = window;
-      }
-      return window->w;
-    }
-  }
-  return 0;
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
 }
 
 /**
@@ -630,7 +626,7 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
  */
 void Fl::first_window(Fl_Window* window) {
   if (!window || !window->shown()) return;
-  fl_find( Fl_X::i(window)->xid );
+  Fl_Window_Driver::find( Fl_X::i(window)->xid );
 }
 
 /**
@@ -2019,9 +2015,18 @@ void fl_close_display()
   Fl::screen_driver()->close_display();
 }
 
+/** Prevent the FLTK library from using its wayland backend.
+ Call this early in your main(), before fl_open_display() runs, or any window is created, or the screen is accessed.
+ This function has no effect on non-Wayland platforms.
+ */
+void fl_disable_wayland()
+{
+  Fl::system_driver()->disable_wayland();
+}
+
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w);
-  return temp ? temp->xid : 0;
+  return temp ? (Window)temp->xid : 0;
 }
 /** \addtogroup group_macosx
  \{ */

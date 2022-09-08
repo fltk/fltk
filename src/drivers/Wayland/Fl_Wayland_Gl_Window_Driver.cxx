@@ -27,12 +27,17 @@
 #include <EGL/egl.h>
 #include <FL/gl.h>
 
-/* Implementation note about OpenGL drawing on the Wayland platform
+/* Implementation notes about OpenGL drawing on the Wayland platform
 
-After eglCreateWindowSurface() with attributes {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE},
+* After eglCreateWindowSurface() with attributes {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE},
 eglQueryContext() reports that EGL_RENDER_BUFFER equals EGL_BACK_BUFFER.
 This experiment suggests that the platform only supports double-buffer drawing.
 Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayland.
+ 
+* Commented out code marked with CONTROL_LEAKING_SUB_GL_WINDOWS aims to prevent
+ sub GL windows from leaking out from their parent by making leaking parts fully transparent.
+ This code is commented out because it requires the FL_ALPHA flag to be on
+ which not all client applications do.
 */
 
 // Describes crap needed to create a GLContext.
@@ -94,7 +99,7 @@ char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
 {
   // write str to a bitmap just big enough
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
-  Fl_Font f=fl_font();
+  Fl_Font f = fl_font();
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
   fl_rectf(0, 0, w, h);
@@ -104,7 +109,8 @@ char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
   // get the R channel only of the bitmap
   char *alpha_buf = new char[w*h], *r = alpha_buf, *q;
   for (int i = 0; i < h; i++) {
-    q = (char*)surf->offscreen()->draw_buffer + i * surf->offscreen()->stride;
+    struct fl_wld_buffer *off = (struct fl_wld_buffer *)surf->offscreen();
+    q = (char*)off->draw_buffer + i * off->stride;
     for (int j = 0; j < w; j++) {
       *r++ = *q;
       q += 4;
@@ -119,6 +125,7 @@ char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
 Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
 {
   m |= FL_DOUBLE;
+  //if (pWindow->parent()) m |= FL_ALPHA; // CONTROL_LEAKING_SUB_GL_WINDOWS
   Fl_Wayland_Gl_Choice *g = (Fl_Wayland_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
 
@@ -174,16 +181,23 @@ GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window, cons
   if (context_list && nContext) shared_ctx = context_list[0];
 
   static const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-  GLContext ctx = (GLContext)eglCreateContext(egl_display, ((Fl_Wayland_Gl_Choice*)g)->egl_conf, shared_ctx?shared_ctx:EGL_NO_CONTEXT, context_attribs);
+  GLContext ctx = (GLContext)eglCreateContext(egl_display, ((Fl_Wayland_Gl_Choice*)g)->egl_conf, shared_ctx?(EGLContext)shared_ctx:EGL_NO_CONTEXT, context_attribs);
 //fprintf(stderr, "eglCreateContext=%p shared_ctx=%p\n", ctx, shared_ctx);
-  if (ctx)
+  if (ctx) {
     add_context(ctx);
+    /* CONTROL_LEAKING_SUB_GL_WINDOWS
+    if (egl_surface) {
+      eglMakeCurrent(egl_display, egl_surface, egl_surface, (EGLContext)ctx);
+      glClearColor(0., 0., 0., 1.); // set opaque black as starting background color
+      apply_scissor();
+    }*/
+  }
   return ctx;
 }
 
 
 void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
-  struct wld_window *win = fl_xid(w);
+  struct wld_window *win = fl_wl_xid(w);
   if (!win) return;
   Fl_Wayland_Window_Driver *dr = Fl_Wayland_Window_Driver::driver(w);
   EGLSurface target_egl_surface = NULL;
@@ -215,13 +229,31 @@ void Fl_Wayland_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context
   }
 }
 
+/* CONTROL_LEAKING_SUB_GL_WINDOWS
+void Fl_Wayland_Gl_Window_Driver::apply_scissor() {
+  cairo_rectangle_int_t *extents = Fl_Wayland_Window_Driver::driver(pWindow)->subRect();
+  if (extents) {
+    glDisable(GL_SCISSOR_TEST);
+    GLdouble vals[4];
+    glGetDoublev(GL_COLOR_CLEAR_VALUE, vals);
+    glClearColor(0., 0., 0., 0.);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(vals[0], vals[1], vals[2], vals[3]);
+    float s = pWindow->pixels_per_unit();
+    glScissor(s*extents->x, s*extents->y, s*extents->width, s*extents->height);
+//printf("apply_scissor %dx%d %dx%d\n",extents->x, extents->y, extents->width, extents->height);
+    glEnable(GL_SCISSOR_TEST);
+  }
+}*/
+
+
 void Fl_Wayland_Gl_Window_Driver::delete_gl_context(GLContext context) {
   if (cached_context == context) {
     cached_context = 0;
     cached_window = 0;
   }
 //EGLBoolean b =
-  eglDestroyContext(egl_display, context);
+  eglDestroyContext(egl_display, (EGLContext)context);
 //fprintf(stderr,"EGL context %p destroyed %s\n", context, b==EGL_TRUE?"successfully":"w/ error");
 //b =
   eglDestroySurface(egl_display, egl_surface);
@@ -246,7 +278,7 @@ void Fl_Wayland_Gl_Window_Driver::redraw_overlay() {
 
 void Fl_Wayland_Gl_Window_Driver::make_current_before() {
   if (!egl_window) {
-    struct wld_window *win = fl_xid(pWindow);
+    struct wld_window *win = fl_wl_xid(pWindow);
     struct wl_surface *surface = win->wl_surface;
     egl_window = wl_egl_window_create(surface, pWindow->pixel_w(), pWindow->pixel_h());
     if (egl_window == EGL_NO_SURFACE) {
@@ -270,7 +302,7 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
 float Fl_Wayland_Gl_Window_Driver::pixels_per_unit()
 {
   int ns = Fl_Window_Driver::driver(pWindow)->screen_num();
-  int wld_scale = pWindow->shown() ? fl_xid(pWindow)->scale : 1;
+  int wld_scale = pWindow->shown() ? fl_wl_xid(pWindow)->scale : 1;
   return wld_scale * Fl::screen_driver()->scale(ns);
 }
 
@@ -354,13 +386,18 @@ public:
 
 static Fl_Wayland_Gl_Plugin Gl_Overlay_Plugin;
 
+/* CONTROL_LEAKING_SUB_GL_WINDOWS
+static void delayed_scissor(Fl_Wayland_Gl_Window_Driver *dr) {
+  dr->apply_scissor();
+}*/
+
 static void delayed_flush(Fl_Gl_Window *win) {
   win->flush();
 }
 
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
-  struct wld_window *win = fl_xid(pWindow);
+  struct wld_window *win = fl_wl_xid(pWindow);
   float f = Fl::screen_scale(pWindow->screen_num());
   W = (W * win->scale) * f;
   H = (H * win->scale) * f;
@@ -373,6 +410,11 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
         Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_flush, pWindow);
     }
   }
+  /* CONTROL_LEAKING_SUB_GL_WINDOWS
+  if (Fl_Wayland_Window_Driver::driver(pWindow)->subRect()) {
+    pWindow->redraw();
+    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_scissor, this);
+  }*/
 }
 
 char Fl_Wayland_Gl_Window_Driver::swap_type() {
@@ -403,5 +445,8 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   glClearColor(0., 0., 0., 0.);
   glClear(GL_COLOR_BUFFER_BIT);
 }
+
+
+FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc) { return (EGLContext)rc; }
 
 #endif // HAVE_GL

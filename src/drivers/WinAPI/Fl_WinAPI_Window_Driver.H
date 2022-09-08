@@ -58,7 +58,6 @@ class Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     Fl_Image* shape_; ///<  shape image
     Fl_Bitmap *effective_bitmap_; ///<  auxiliary bitmap image
   } *shape_data_;
-  int screen_num_;
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
@@ -68,8 +67,6 @@ public:
   static inline Fl_WinAPI_Window_Driver* driver(const Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(w);}
   HDC private_dc; // used for OpenGL
   RECT border_width_title_bar_height(int &bx, int &by, int &bt);
-  virtual void screen_num(int n);
-  virtual int screen_num();
 
   struct icon_data *icon_;
   HCURSOR cursor;

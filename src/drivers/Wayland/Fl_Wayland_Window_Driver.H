@@ -41,6 +41,7 @@
  */
 
 typedef struct _cairo_pattern cairo_pattern_t;
+typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 class Fl_Wayland_Plugin;
 
 
@@ -56,6 +57,7 @@ private:
     Fl_Image* shape_; ///<  shape image
     cairo_pattern_t *mask_pattern_;
   } *shape_data_;
+  cairo_rectangle_int_t *subRect_;      // makes sure subwindow remains inside its parent window
   static bool in_flush; // useful for progressive window drawing
   static Fl_Wayland_Plugin *gl_plugin();
   struct wl_cursor *cursor_;
@@ -74,12 +76,13 @@ public:
     bool busy;
   };
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
-  int screen_num_;
-  void screen_num(int n) { screen_num_ = n; }
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
   void update_scale();
+  cairo_rectangle_int_t *subRect() { return subRect_; } // getter
+  void subRect(cairo_rectangle_int_t *r); // setter
+  void checkSubwindowFrame();
   enum kind {DECORATED, SUBWINDOW, POPUP, UNFRAMED};
   struct xdg_toplevel *xdg_toplevel();
   Fl_Wayland_Window_Driver(Fl_Window*);
@@ -88,7 +91,6 @@ public:
   static void redraw(struct wld_window *window);
 
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);}
-  virtual int screen_num();
   static void resize_after_screen_change(void *data);
 
   // --- window data

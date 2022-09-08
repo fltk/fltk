@@ -2221,9 +2221,18 @@ pointer_button(void *data,
 					toggle_maximized(&frame_gtk->frame);
 					break;
 				case HEADER_CLOSE:
-					if (closeable(frame_gtk))
+#ifdef DONT_APPLY_FLTK_CHANGES
+                                        if (closeable(frame_gtk))
+                                                libdecor_frame_close(
+                                                        &frame_gtk->frame);
+#else
+                                        if (closeable(frame_gtk)) {
 						libdecor_frame_close(
 							&frame_gtk->frame);
+                                                seat->pointer_focus = NULL;
+                                                return;
+                                        }
+#endif
 					break;
 				default:
 					break;

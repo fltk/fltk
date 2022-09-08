@@ -34,6 +34,7 @@
 char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
 char Fl_Screen_Driver::fg_set = 0;
+Fl_System_Driver *Fl_Screen_Driver::system_driver = NULL;
 
 int Fl_Screen_Driver::keyboard_screen_scaling = 1;
 

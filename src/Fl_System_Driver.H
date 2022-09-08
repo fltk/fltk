@@ -84,6 +84,8 @@ public:
   static const int fl_YValue;
   static const int fl_XNegative;
   static const int fl_YNegative;
+  static int command_key;
+  static int control_key;
 
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *) { return 0; }
@@ -253,6 +255,7 @@ public:
   virtual void unlock_ring() {}
   virtual double wait(double);                             // must override
   virtual int ready() { return 0; }                        // must override
+  virtual void disable_wayland() {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
