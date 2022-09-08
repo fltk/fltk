@@ -49,7 +49,7 @@ public:
   char glok[64];
 #  endif // HAVE_GL
 #  endif // USE_XFT
-  FL_EXPORT ~Fl_Xlib_Font_Descriptor();
+  virtual FL_EXPORT ~Fl_Xlib_Font_Descriptor();
 };
 
 //extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one
