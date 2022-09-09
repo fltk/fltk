@@ -431,10 +431,8 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Wayland_Window_Driver::in_flush = true;
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
-
-  if (!window->buffer->cb) {
-    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener_one_shot, false);
-  }
+  if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
+  Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener_one_shot, false);
 }
 
 
@@ -875,6 +873,7 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
                                    int32_t width, int32_t height, struct wl_array *states)
 {
   // runs for borderless top-level windows
+  // under Weston: width & height are 0 during both calls
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
   if (window->fl_win->fullscreen_active()) xdg_toplevel_set_fullscreen(xdg_toplevel, NULL);
@@ -1445,7 +1444,11 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         if (!pWindow->as_gl_window()) Fl_Wayland_Graphics_Driver::buffer_release(fl_win);
         fl_win->configured_width = W;
         fl_win->configured_height = H;
-        xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W * f, H * f);
+        W *= f; H *= f;
+        xdg_toplevel_set_min_size(fl_win->xdg_toplevel, W, H);
+        xdg_toplevel_set_max_size(fl_win->xdg_toplevel, W, H);
+        xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W, H);
+        //printf("xdg_surface_set_window_geometry: %dx%d\n",W, H);
       }
 #if defined(USE_SYSTEM_LIBDECOR) && USE_SYSTEM_LIBDECOR
       if (W < minw() || H < minh()) {
