@@ -1284,7 +1284,12 @@ void Fl_Wayland_Window_Driver::use_border() {
   pWindow->wait_for_expose(); // useful for border(0) just after show()
   struct libdecor_frame *frame = fl_wl_xid(pWindow)->frame;
   if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE) {
-    libdecor_frame_set_visibility(frame, pWindow->border());
+    if (fl_wl_xid(pWindow)->kind == DECORATED) {
+      libdecor_frame_set_visibility(frame, pWindow->border());
+    } else {
+      pWindow->hide();
+      pWindow->show();
+    }
     pWindow->redraw();
   } else {
     Fl_Window_Driver::use_border();
