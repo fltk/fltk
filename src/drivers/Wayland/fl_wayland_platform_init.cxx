@@ -21,21 +21,22 @@
 #include "Fl_Wayland_System_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
-
-#include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
-#include <cairo-xlib.h>
-#include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
-#include "../X11/Fl_X11_Screen_Driver.H"
-#include "../X11/Fl_X11_System_Driver.H"
-#include "../X11/Fl_X11_Window_Driver.H"
-#include "../Xlib/Fl_Xlib_Image_Surface_Driver.H"
-
+#if FLTK_USE_X11
+#  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
+#  include <cairo-xlib.h>
+#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../X11/Fl_X11_Screen_Driver.H"
+#  include "../X11/Fl_X11_System_Driver.H"
+#  include "../X11/Fl_X11_Window_Driver.H"
+#  include "../Xlib/Fl_Xlib_Image_Surface_Driver.H"
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 
 Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
+#if FLTK_USE_X11
   const char *backend = ::getenv("FLTK_BACKEND");
   const char *xdgrt = ::getenv("XDG_RUNTIME_DIR");
   // fprintf(stderr, "FLTK_BACKEND='%s' XDG_RUNTIME_DIR='%s'\n",
@@ -72,6 +73,9 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
   fprintf(stderr, "Error: unexpected value of FLTK_BACKEND: '%s'\n", backend);
   exit(1);
   return NULL;
+#else
+  return new Fl_Wayland_System_Driver();
+#endif
 }
 
 
@@ -99,6 +103,7 @@ FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 
 
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
+#if FLTK_USE_X11
   Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
   if (Fl_Wayland_Screen_Driver::wl_display) {
     fl_graphics_driver = new Fl_Wayland_Graphics_Driver();
@@ -106,16 +111,24 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
     fl_graphics_driver = new Fl_Display_Cairo_Graphics_Driver();
   }
   return fl_graphics_driver;
+#else
+  return new Fl_Wayland_Graphics_Driver();
+#endif
 }
 
 
 Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h) {
+#if FLTK_USE_X11
   if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Copy_Surface_Driver(w, h);
   return new Fl_Xlib_Copy_Surface_Driver(w, h);
+#else
+  return new Fl_Wayland_Copy_Surface_Driver(w, h);
+#endif
 }
 
 
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
+#if FLTK_USE_X11
   if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
   Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
   if (Fl_Wayland_Screen_Driver::wl_display) {
@@ -127,11 +140,15 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
   for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
   d->current_xft_dpi = 0.; // means the value of the Xft.dpi resource is still unknown
   return d;
+#else
+  return new Fl_Wayland_Screen_Driver();
+#endif
 }
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
+#if FLTK_USE_X11
   if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
   static bool been_here = false;
   if (!been_here) {
@@ -141,11 +158,18 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
   }
   if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Window_Driver(w);
   return new Fl_X11_Window_Driver(w);
+#else
+  return new Fl_Wayland_Window_Driver(w);
+#endif
 }
 
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
+#if FLTK_USE_X11
   if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
   return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
+#else
+  return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
+#endif
 }

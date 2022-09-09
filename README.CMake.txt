@@ -175,6 +175,10 @@ OPTION_USE_WAYLAND - default OFF
    and use X11 for their window operations otherwise, but keep using
    Cairo and Pango - see README.Wayland.txt.
 
+OPTION_WAYLAND_ONLY - default OFF
+   In conjunction with OPTION_USE_WAYLAND, restricts FLTK to support the
+   Wayland backend only.
+
 OPTION_ABI_VERSION - default EMPTY
    Use a numeric value corresponding to the FLTK ABI version you want to
    build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).

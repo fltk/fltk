@@ -17,11 +17,16 @@
 
 #include "Fl_Wayland_Gl_Window_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
+#if FLTK_USE_X11
 #include "../X11/Fl_X11_Gl_Window_Driver.H"
-
+#endif
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
+#if FLTK_USE_X11
   if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Gl_Window_Driver(w);
   return new Fl_X11_Gl_Window_Driver(w);
+#else
+  return new Fl_Wayland_Gl_Window_Driver(w);
+#endif
 }

@@ -174,7 +174,9 @@ public:
   static compositor_name compositor; // identifies the used Wayland compositor
   void set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win);
   void reset_spot();
+#if FLTK_USE_X11
   static bool undo_wayland_backend_if_needed(const char *backend = NULL);
+#endif
 };
 
 

@@ -18,7 +18,9 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_System_Driver.H"
-#include "../X11/Fl_X11_System_Driver.H"
+#if FLTK_USE_X11
+#  include "../X11/Fl_X11_System_Driver.H"
+#endif
 #include "Fl_Wayland_Graphics_Driver.H"
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
@@ -1090,6 +1092,7 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Screen_Driver() {
 }
 
 
+#if FLTK_USE_X11
 bool Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed(const char *backend) {
   if (!backend) backend = getenv("FLTK_BACKEND");
   if (wl_display && backend && strcmp(backend, "x11") == 0) {
@@ -1101,6 +1104,7 @@ bool Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed(const char *backen
   }
   return false;
 }
+#endif
 
 
 void Fl_Wayland_Screen_Driver::open_display_platform() {
@@ -1109,10 +1113,12 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
     return;
 
   beenHereDoneThat = true;
+#if FLTK_USE_X11
   if (undo_wayland_backend_if_needed()) {
     Fl::screen_driver()->open_display();
     return;
   }
+#endif
 
   if (!wl_display) {
     wl_display = wl_display_connect(NULL);

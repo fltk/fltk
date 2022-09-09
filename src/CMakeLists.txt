@@ -282,19 +282,23 @@ elseif (OPTION_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-    drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
     Fl_Native_File_Chooser_Kdialog.cxx
-    drivers/X11/Fl_X11_Screen_Driver.cxx
-    drivers/X11/Fl_X11_Window_Driver.cxx
-    drivers/X11/Fl_X11_System_Driver.cxx
-    drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
-    drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
-    Fl_x.cxx
-    fl_dnd_x.cxx
-    Fl_get_key.cxx
-  )
+    )
+    if (FLTK_USE_X11)
+      list (APPEND DRIVER_FILES
+        drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+        drivers/X11/Fl_X11_Screen_Driver.cxx
+        drivers/X11/Fl_X11_Window_Driver.cxx
+        drivers/X11/Fl_X11_System_Driver.cxx
+        drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
+        drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
+        Fl_x.cxx
+        fl_dnd_x.cxx
+        Fl_get_key.cxx
+      )
+    endif (FLTK_USE_X11)
   set (DRIVER_HEADER_FILES
     drivers/Posix/Fl_Posix_System_Driver.H
     drivers/Wayland/Fl_Wayland_System_Driver.H
@@ -426,9 +430,12 @@ set (GL_DRIVER_FILES
 if (OPTION_USE_WAYLAND)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES}
     drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
-    drivers/X11/Fl_X11_Gl_Window_Driver.cxx
     drivers/Wayland/fl_wayland_gl_platform_init.cxx)
-  set (GL_DRIVER_HEADER_FILES drivers/Wayland/Fl_Wayland_Gl_Window_Driver.H drivers/X11/Fl_X11_Gl_Window_Driver.H)
+  set (GL_DRIVER_HEADER_FILES drivers/Wayland/Fl_Wayland_Gl_Window_Driver.H)
+  if (FLTK_USE_X11)
+    list (APPEND GL_DRIVER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
+    list (APPEND GL_DRIVER_HEADER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.H)
+  endif (FLTK_USE_X11)
 elseif (FLTK_USE_X11)
   set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx drivers/X11/fl_X11_gl_platform_init.cxx)
   set (GL_DRIVER_HEADER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.H)
@@ -511,12 +518,14 @@ if (OPTION_USE_WAYLAND)
   endif (GTK_FOUND)
 
   list (APPEND CFILES
-    xutf8/keysym2Ucs.c
     scandir_posix.c
     ../libdecor/src/cursor-settings.c
     ../libdecor/src/os-compatibility.c
     ../libdecor/build/fl_libdecor-plugins.c
     )
+  if (FLTK_USE_X11)
+    list (APPEND CFILES xutf8/keysym2Ucs.c)
+  endif (FLTK_USE_X11)
   if (NOT OPTION_USE_SYSTEM_LIBDECOR)
     list (APPEND CFILES
     ../libdecor/build/fl_libdecor.c

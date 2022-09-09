@@ -108,13 +108,6 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 
-#if USE_PANGO
-struct flCairoRegion {
-  int count;
-  struct _cairo_rectangle *rects;
-}; // a region is the union of a series of rectangles
-#endif
-
 #endif // FL_LIBRARY || FL_INTERNALS
 
 #endif // FL_DOXYGEN

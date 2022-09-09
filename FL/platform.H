@@ -39,6 +39,9 @@ class Fl_Window;
 #    include "mac.H"
 #  elif defined(FLTK_USE_WAYLAND)
 #    include "wayland.H"
+#     if !FLTK_USE_X11
+        typedef struct wld_window *Window;
+#     endif
 #  elif defined(FLTK_USE_X11)
 #    include "x11.H"
 #  endif // _WIN32
@@ -58,7 +61,7 @@ public:
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-#  if defined(FLTK_USE_X11) // for backward compatibility
+#  if defined(FLTK_USE_X11) && FLTK_USE_X11 // for backward compatibility
   static void make_xid(Fl_Window*, XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
 #  endif

@@ -95,6 +95,7 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
 
 
 void Fl_Wayland_System_Driver::disable_wayland() {
+#if FLTK_USE_X11
   if (too_late_to_disable) {
     fprintf(stderr, "Error: fl_disable_wayland() cannot be called "
             "after the Wayland display was opened\n"
@@ -102,4 +103,5 @@ void Fl_Wayland_System_Driver::disable_wayland() {
     exit(1);
   }
   Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed("x11");
+#endif
 }
