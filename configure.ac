@@ -110,7 +110,7 @@ AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB 
 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
 
-AC_ARG_ENABLE([wayland], AS_HELP_STRING([--enable-wayland], [turn on Wayland support]))
+AC_ARG_ENABLE([wayland], AS_HELP_STRING([--enable-wayland], [turn on hybrid Wayland/X11 support]))
 
 AC_ARG_ENABLE([usecairo], AS_HELP_STRING([--enable-usecairo], [all drawing to X11 windows uses Cairo]))
 
@@ -993,11 +993,16 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
       BUILD="WAYLAND"
       AC_DEFINE([FLTK_USE_WAYLAND])
-      AC_DEFINE([FLTK_USE_X11]) # to build a hybrid Wayland/X11 library
+      graphics="Wayland"
+      AS_IF([test x$enable_x11 != xno], [
+       AC_DEFINE([FLTK_USE_X11]) # to build a hybrid Wayland/X11 library
+       BUILD="WAYLANDX11"
+       graphics="Wayland or X11 with cairo"
+       ])
       CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
-      graphics="Wayland or X11 with cairo"
-      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangoxft) $($PKGCONFIG --libs x11)"
+      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangoxft) "
+      AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
       LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
       CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"

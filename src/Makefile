@@ -211,8 +211,9 @@ GLCPPFILES_CAIRO = $(GLCPPFILES_X11)
 GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx \
 		 drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx
 GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx \
-  		     drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
 		     drivers/Wayland/fl_wayland_gl_platform_init.cxx
+GLCPPFILES_WAYLANDX11 = $(GLCPPFILES_WAYLAND) \
+		        drivers/X11/Fl_X11_Gl_Window_Driver.cxx
 
 GLCPPFILES += $(GLCPPFILES_$(BUILD))
 
@@ -290,7 +291,7 @@ XLIBGDFILES = drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
 
-# These C++ files are used under condition: BUILD_WAYLAND
+# These C++ files are used under conditions: BUILD_WAYLAND or BUILD_WAYLANDX11
 WLCPPFILES = \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
         Fl_Native_File_Chooser_FLTK.cxx \
@@ -305,7 +306,10 @@ WLCPPFILES = \
 	drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx \
 	drivers/Wayland/fl_wayland_platform_init.cxx \
-	drivers/Wayland/fl_wayland_clipboard_dnd.cxx \
+	drivers/Wayland/fl_wayland_clipboard_dnd.cxx
+
+# These C++ files are used under condition: BUILD_WAYLANDX11
+WLX11CPPFILES = \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_System_Driver.cxx \
@@ -343,7 +347,7 @@ WLCFILES = \
         xutf8/keysym2Ucs.c \
         scandir_posix.c
 
-# These C++ files are used under condition: BUILD_WAYLAND
+# These C++ files are used under conditions: BUILD_WAYLAND or BUILD_WAYLANDX11
 WLXFTFILES = \
 	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
 
@@ -382,7 +386,7 @@ FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 # makeinclude has set this variable:
-# BUILD = {WIN|X11|XFT|CAIRO|OSX|WAYLAND}
+# BUILD = {WIN|X11|XFT|CAIRO|OSX|WAYLAND|WAYLANDX11}
 
 MMFILES_OSX = $(OBJCPPFILES)
 MMFILES = $(MMFILES_$(BUILD))
@@ -395,6 +399,7 @@ CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBGDFILES) $(XLIBFONTFILES)
 CPPFILES_CAIRO = $(XLIBCPPFILES) $(CAIROGDFILES)
 
 CPPFILES_WAYLAND = $(WLCPPFILES) $(WLXFTFILES)
+CPPFILES_WAYLANDX11 = $(CPPFILES_WAYLAND) $(WLX11CPPFILES)
 
 CPPFILES_WIN = $(GDICPPFILES)
 
@@ -405,12 +410,14 @@ CFILES_X11 = $(XLIBCFILES) $(XLIBXCFILES)
 CFILES_CAIRO = $(XLIBCFILES)
 CFILES_XFT = $(XLIBCFILES)
 
-CFILES_WAYLAND = $(WLCFILES)
+CFILES_WAYLANDX11 = $(WLCFILES)
 EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libdecor-cairo-blur.o \
   ../libdecor/build/fl_libdecor-plugins.o \
   xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
   ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
+EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
 EXTRA_CXXFLAGS_WAYLAND = -I.
+EXTRA_CXXFLAGS_WAYLANDX11 = $(EXTRA_CXXFLAGS_WAYLAND)
 
 CFILES_WIN = $(GDICFILES)
 

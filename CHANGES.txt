@@ -124,7 +124,11 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   New Configuration Options (ABI Version)
 
   - Configure option --enable-wayland allows to build the FLTK library for
-    the new Wayland platform. The corresponding CMake option is OPTION_USE_WAYLAND.
+    the new Wayland platform while remaining compatible with X11. The
+    corresponding CMake option is OPTION_USE_WAYLAND.
+  - Configure options --enable-wayland --disable-x11 used together allow to
+    build FLTK for the Wayland backend only (no x11 backend). Under CMake, the
+    equivalent is to set both OPTION_USE_WAYLAND and OPTION_WAYLAND_ONLY.
   - The new configure option --disable-gdiplus removes the possibility to draw
     antialiased lines and curves on the Windows platform. The corresponding CMake
     option is OPTION_USE_GDIPLUS.

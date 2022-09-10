@@ -55,20 +55,24 @@ X11 is used at run time as follows:
   compositor is available;
 - if FLTK_BACKEND has another value, the library stops with error.
 
+On pure Wayland systems without the X11 headers and libraries, FLTK can be built
+with its Wayland backend only (see below).
+
  2.1 Configuration
 ------------------
 
-* Configure-based build can be performed as follows:
+   2.1.1 Configure-based build can be performed as follows:
 Once after "git clone", create the configure file :
   autoconf -f
 
 Prepare build with :
-  ./configure --enable-wayland [--enable-shared]
+  ./configure --enable-wayland
+Add  --disable-x11  to build FLTK for Wayland-only (no x11 backend).
 
 Build with :
   make
 
-* CMake-based build can be performed as follows:
+   2.1.2 CMake-based build can be performed as follows:
   cmake -S <path-to-source> -B <path-to-build> -DCMAKE_BUILD_TYPE=Release -DOPTION_USE_WAYLAND=1
 
   cd <path-to-build>; make
@@ -78,6 +82,8 @@ The FLTK Wayland platform uses a library called libdecor which handles window de
 this form of libdecor. Optionally, OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
 use the system's version of libdecor which is available on recent Linux distributions (e.g.,
 Debian Bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-cairo).
+
+Optionally, OPTION_WAYLAND_ONLY can be turned on to build FLTK for Wayland-only (no x11 backend).
 
  2.2 Known Limitations
 ----------------------
@@ -91,9 +97,9 @@ Fl_Window::position() has no effect on other top-level windows.
 way to programmatically unset minimization of a window. Consequently, Fl_Window::show() of
 a minimized window has no effect.
 
-* It's currently not possible for an app to be notified of changes to the content of
-the system clipboard, that is, Fl::add_clipboard_notify() has no effect. The FLTK API to
-read from and write to the system clipboard is fully functional, though.
+* Although the FLTK API to read from and write to the system clipboard is fully functional,
+it's currently not possible for an app to be notified of changes to the content of
+the system clipboard, that is, Fl::add_clipboard_notify() has no effect.
 
 * With GTK-style window titlebars, narrow windows are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
@@ -149,12 +155,12 @@ function or variable, and that fl_wl_display() returns non-NULL before using any
 Wayland-specific function or variable. Make sure that fl_open_display() was called
 directly or indirectly before using any such symbol.
 
-3.3 Forcing an app to always use the X11 mechanism
---------------------------------------------------
+3.3 Forcing an FLTK app to always use the X11 backend
+-----------------------------------------------------
 
 Alternatively, it's possible to force an FLTK app to use X11 in all
-situations by calling function fl_disable_wayland() early in main(), before
-fl_open_display() runs. FLTK source code and also platform-specific
+situations by calling function fl_disable_wayland() early in main(), that is,
+before fl_open_display() runs. FLTK source code and also platform-specific
 code conceived for FLTK 1.3 should run under 1.4 with that single change only.
 
 
