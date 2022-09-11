@@ -40,7 +40,9 @@
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
   Fl_RGB_Image *img;
-  if (Fl_Surface_Device::surface()->as_image_surface()) { // read from off_screen buffer
+  // TODO: strive to remove use of the fl_window global variable in platform-independent code
+  //if (Fl_Surface_Device::surface()->as_image_surface()) { // read from off_screen buffer
+  if (fl_find(fl_window)==0) { // read from off_screen buffer
     img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h, 0);
     if (!img) {
       return NULL;
