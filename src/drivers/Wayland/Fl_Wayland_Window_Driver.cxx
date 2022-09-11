@@ -50,6 +50,10 @@ extern "C" {
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
 #define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
+#if !FLTK_USE_X11
+Window fl_window = 0; // temporary, until we get rid of this global for wayland
+#endif
+
 
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
 
