@@ -39,9 +39,6 @@ class Fl_Window;
 #    include "mac.H"
 #  elif defined(FLTK_USE_WAYLAND)
 #    include "wayland.H"
-#     if !FLTK_USE_X11
-        typedef struct wld_window *Window;
-#     endif
 #  elif defined(FLTK_USE_X11)
 #    include "x11.H"
 #  endif // _WIN32

@@ -90,9 +90,6 @@ int Fl_Image_Surface_Driver::printable_rect(int *w, int *h) {
   return 0;
 }
 
-Fl_Image_Surface *Fl_Image_Surface_Driver::as_image_surface() {
-  return image_surface_;
-}
 /**
  \}
  \endcond
@@ -152,11 +149,6 @@ void Fl_Image_Surface::rescale() {
   rgb->draw(0,0);
   Fl_Surface_Device::pop_current();
   delete rgb;
-}
-
-
-Fl_Image_Surface *Fl_Image_Surface::as_image_surface() {
-  return this;
 }
 
 

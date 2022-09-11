@@ -51,7 +51,7 @@ extern "C" {
 #define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 #if !FLTK_USE_X11
-Window fl_window = 0; // temporary, until we get rid of this global for wayland
+Window fl_window = 0;
 #endif
 
 
@@ -362,6 +362,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   Fl_Wayland_Window_Driver::wld_window = window;
+  fl_window = (Window)window;
   float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(

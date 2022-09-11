@@ -40,9 +40,12 @@
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
   Fl_RGB_Image *img;
-  // TODO: strive to remove use of the fl_window global variable in platform-independent code
-  //if (Fl_Surface_Device::surface()->as_image_surface()) { // read from off_screen buffer
-  if (fl_find(fl_window)==0) { // read from off_screen buffer
+  // Under macOS and Wayland, fl_window == 0 when an Fl_Image_Surface is the current drawing
+  // surface. Otherwise, fl_window corresponds to a mapped Fl_Window.
+  // Under X11 and windows, fl_window is an offscreen buffer when an Fl_Image_Surface
+  // is the current drawing or when fl_read_image() is called inside the draw() of
+  // an Fl_Double_Window.
+  if (fl_find(fl_window) == 0) { // read from offscreen buffer or buffer of an Fl_Double_Window
     img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h, 0);
     if (!img) {
       return NULL;

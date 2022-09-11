@@ -97,11 +97,6 @@ Fl_Surface_Device::~Fl_Surface_Device()
   if (surface_ == this) surface_ = NULL;
 }
 
-/** Returns non-NULL if this surface is an Fl_Image_Surface object
- \version 1.4.0
- */
-Fl_Image_Surface *Fl_Surface_Device::as_image_surface() { return NULL; }
-
 /**  A constructor that sets the graphics driver used by the display */
 Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device(graphics_driver) {
   this->set_current();
