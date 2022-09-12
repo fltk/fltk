@@ -4627,15 +4627,15 @@ Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
 static NSImage* rgb_to_nsimage(const Fl_RGB_Image *rgb) {
   if (!rgb) return nil;
   int ld = rgb->ld();
-  if (!ld) ld = rgb->w() * rgb->d();
+  if (!ld) ld = rgb->data_w() * rgb->d();
   NSImage *win_icon = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 101000) {
-    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:rgb->w() pixelsHigh:rgb->h()
+    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:rgb->data_w() pixelsHigh:rgb->data_h()
                                                                     bitsPerSample:8 samplesPerPixel:rgb->d() hasAlpha:!(rgb->d() & 1) isPlanar:NO
                                                                    colorSpaceName:(rgb->d()<=2) ? NSDeviceWhiteColorSpace : NSDeviceRGBColorSpace
                                                                      bitmapFormat:NSAlphaNonpremultipliedBitmapFormat bytesPerRow:ld bitsPerPixel:rgb->d()*8]; // 10.4
-    memcpy([bitmap bitmapData], rgb->array, rgb->h() * ld);
+    memcpy([bitmap bitmapData], rgb->array, rgb->data_h() * ld);
     win_icon = [[NSImage alloc] initWithSize:NSMakeSize(0, 0)];
     [win_icon addRepresentation:bitmap];
     [bitmap release];
