@@ -89,8 +89,6 @@ void Fl_Cocoa_Window_Driver::draw_begin()
       CGContextClipToMask(my_gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
     CGContextSaveGState(my_gc);
-   CGAffineTransform mat = CGContextGetCTM(my_gc);
-    printf("mat.a=%g\n",mat.a);
 # endif
   }
 }
