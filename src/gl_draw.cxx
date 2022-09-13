@@ -74,13 +74,21 @@ void  gl_font(int fontid, int size) {
   if (once) {
     once = false;
     if (Fl::draw_GL_text_with_textures()) {
-      // For the font texture pile to work, we need a texture rectangle extension, so check for
-      // one here. First we check for GL_EXT_texture_rectangle and if that fails we try
-      // for GL_ARB_texture_rectangle instead. If that also fails, we fall back to the
-      // legacy methods used by fltk-1.3 and earlier.
-      has_texture_rectangle = (strstr((const char*)glGetString(GL_EXTENSIONS), "GL_EXT_texture_rectangle") != NULL);
-      if (!has_texture_rectangle) has_texture_rectangle =
-        (strstr((const char*)glGetString(GL_EXTENSIONS), "GL_ARB_texture_rectangle") != NULL);
+      int gl_version_major;
+      sscanf((const char *)glGetString(GL_VERSION), "%d", &gl_version_major);
+      //printf("gl_version_major=%d\n", gl_version_major);
+      if (gl_version_major >= 3) {
+        has_texture_rectangle = true;
+      } else {
+        const char *extensions = (const char*)glGetString(GL_EXTENSIONS);
+        if (extensions) {
+          // For the font texture pile to work, we need a texture rectangle extension, so check for
+          // one here. First we check for GL_EXT_texture_rectangle and if that fails we try
+          // for GL_ARB_texture_rectangle instead. If that also fails, we fall back to the
+          // legacy methods used by fltk-1.3 and earlier.
+          has_texture_rectangle = (strstr(extensions, "GL_EXT_texture_rectangle") != NULL || strstr(extensions, "GL_ARB_texture_rectangle") != NULL);
+        }
+      }
       Fl::draw_GL_text_with_textures(has_texture_rectangle);
     }
   }
