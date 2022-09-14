@@ -25,6 +25,7 @@
 #include <FL/Fl_Graphics_Driver.H>
 #include <OpenGL/OpenGL.h>
 #include <FL/Fl_Image_Surface.H>
+#include <dlfcn.h>
 
 extern void gl_texture_reset();
 
@@ -290,6 +291,11 @@ Fl_RGB_Image* Fl_Cocoa_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int 
   img->alloc_array = 1;
   Fl_Cocoa_Window_Driver::flush_context((NSOpenGLContext*)glw->context());
   return img;
+}
+
+
+void* Fl_Cocoa_Gl_Window_Driver::GetProcAddress(const char *procName) {
+  return dlsym(RTLD_DEFAULT, procName);
 }
 
 
