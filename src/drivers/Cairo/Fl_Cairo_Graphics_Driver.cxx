@@ -31,6 +31,7 @@
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
 
+extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 // duplicated from Fl_PostScript.cxx
 struct callback_data {
@@ -331,9 +332,29 @@ void Fl_Cairo_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned 
   check_status();
 }
 
-void Fl_Cairo_Graphics_Driver::color(Fl_Color c) {
-  Fl::get_color(c, cr_, cg_, cb_);
-  Fl_Cairo_Graphics_Driver::color(cr_, cg_, cb_);
+void Fl_Cairo_Graphics_Driver::color(Fl_Color i) {
+  Fl_Graphics_Driver::color(i);
+  if (!cairo_) return; // no context yet? We will assign the color later.
+  uchar r, g, b;
+  double fa = 1.0;
+  if (i & 0xFFFFFF00) {
+    // translate rgb colors into color index
+    r = i>>24;
+    g = i>>16;
+    b = i>> 8;
+  } else {
+    // translate index into rgb:
+    unsigned c = fl_cmap[i];
+    c = c ^ 0x000000ff; // trick to restore the color's correct alpha value
+    r = c>>24;
+    g = c>>16;
+    b = c>> 8;
+    fa = (c & 0xff)/255.0;
+  }
+  double fr = r/255.0;
+  double fg = g/255.0;
+  double fb = b/255.0;
+  cairo_set_source_rgba(cairo_, fr, fg, fb, fa);
 }
 
 Fl_Color Fl_Cairo_Graphics_Driver::color() { return Fl_Graphics_Driver::color(); }

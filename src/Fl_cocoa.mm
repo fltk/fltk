@@ -2239,6 +2239,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
                                        CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
                                        CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
   }
+  CGContextClearRect(aux_bitmap, CGRectMake(0, 0,
+                     CGBitmapContextGetWidth(aux_bitmap), CGBitmapContextGetHeight(aux_bitmap)));
   if (r) CGContextScaleCTM(aux_bitmap, 2, 2);
 }
 - (void)reset_aux_bitmap {

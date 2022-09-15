@@ -68,6 +68,8 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
  Sets an entry in the fl_color index table.
 
  You can set it to any 8-bit RGBA color.
+ \note The color transparency is effective under the Wayland, hybrid Wayland/X11 and macOS platforms, whereas it has no effect under the X11 and Windows platforms. It's also effective for widgets added to an Fl_Gl_Window.
+ \version 1.4
  */
 void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue, uchar alpha) {
   Fl::set_color((Fl_Color)(i & 255),
