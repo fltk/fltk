@@ -2363,6 +2363,7 @@ pointer_button(void *data,
 		}
 		else if (state == WL_POINTER_BUTTON_STATE_RELEASED &&
 			 frame_cairo->grab) {
+			libdecor_frame_ref(&frame_cairo->frame);
 			if (frame_cairo->grab == frame_cairo->focus) {
 				switch (frame_cairo->active->type) {
 				case BUTTON_MIN:
@@ -2374,16 +2375,8 @@ pointer_button(void *data,
 					toggle_maximized(&frame_cairo->frame);
 					break;
 				case BUTTON_CLOSE:
-#ifdef DONT_APPLY_FLTK_CHANGES
-                                    if (closeable(frame_cairo))
-                                            libdecor_frame_close(&frame_cairo->frame);
-#else
-                                        if (closeable(frame_cairo)) {
+					if (closeable(frame_cairo))
 						libdecor_frame_close(&frame_cairo->frame);
-                                                seat->pointer_focus = NULL;
-                                                return;
-                                        }
-#endif
 					break;
 				default:
 					break;
@@ -2391,6 +2384,7 @@ pointer_button(void *data,
 			}
 			frame_cairo->grab = NULL;
 			sync_active_component(frame_cairo, seat);
+			libdecor_frame_unref(&frame_cairo->frame);
 		}
 	}
 	else if (button == BTN_RIGHT &&
