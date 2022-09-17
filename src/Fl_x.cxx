@@ -2707,6 +2707,11 @@ static void icons_to_property(const Fl_RGB_Image *icons[], int count,
     const Fl_RGB_Image *image;
 
     image = icons[i];
+    bool need_delete = false;
+    if (image->w() != image->data_w() || image->h() != image->data_h()) {
+      image = (Fl_RGB_Image*)image->copy();
+      need_delete = true;
+    }
 
     data[0] = image->data_w();
     data[1] = image->data_h();
@@ -2736,6 +2741,7 @@ static void icons_to_property(const Fl_RGB_Image *icons[], int count,
       }
       in += extra_data;
     }
+    if (need_delete) delete image;
   }
 }
 
