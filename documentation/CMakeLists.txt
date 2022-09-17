@@ -44,7 +44,8 @@ if (GENERATE_DOCS)
     OUTPUT_VARIABLE CURRENT_DATE
   )
 
-  execute_process (COMMAND git rev-parse --short=10 HEAD
+  execute_process (COMMAND
+    git --git-dir=${CMAKE_SOURCE_DIR}/.git rev-parse --short=10 HEAD
     OUTPUT_VARIABLE GIT_REVISION
   )
 
