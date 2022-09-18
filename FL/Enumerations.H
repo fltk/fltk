@@ -1078,7 +1078,8 @@ const Fl_Color FL_DARK_CYAN     = 140;
 
 const Fl_Color FL_WHITE         = 255;
 
-
+/** Colors numbered between FL_FREE_COLOR and FL_FREE_COLOR + FL_NUM_FREE_COLOR - 1
+are free for the user to be given any value using Fl::set_color(). */
 #define FL_FREE_COLOR     (Fl_Color)16
 #define FL_NUM_FREE_COLOR 16
 #define FL_GRAY_RAMP      (Fl_Color)32
