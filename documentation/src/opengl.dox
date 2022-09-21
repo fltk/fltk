@@ -628,7 +628,7 @@ Testing whether the glewInit() call is successful is to be done as follows:
   GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
 #  ifdef FLTK_USE_WAYLAND
       // glewInit returns GLEW_ERROR_NO_GLX_DISPLAY with Wayland
-      if (err == GLEW_ERROR_NO_GLX_DISPLAY) err = GLEW_OK;
+      if (fl_wl_display() && err == GLEW_ERROR_NO_GLX_DISPLAY) err = GLEW_OK;
 #  endif
   if (err != GLEW_OK) Fl::warning("glewInit() failed returning %u", err);
 #endif // ! __APPLE__
