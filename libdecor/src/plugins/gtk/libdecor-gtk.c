@@ -2211,6 +2211,7 @@ pointer_button(void *data,
 		else if (state == WL_POINTER_BUTTON_STATE_RELEASED) {
 			switch (frame_gtk->active->type) {
 			case HEADER:
+				libdecor_frame_ref(&frame_gtk->frame);
 				switch (frame_gtk->hdr_focus.type) {
 				case HEADER_MIN:
 					if (minimizable(frame_gtk))
@@ -2221,18 +2222,11 @@ pointer_button(void *data,
 					toggle_maximized(&frame_gtk->frame);
 					break;
 				case HEADER_CLOSE:
-#ifdef DONT_APPLY_FLTK_CHANGES
-                                        if (closeable(frame_gtk))
-                                                libdecor_frame_close(
-                                                        &frame_gtk->frame);
-#else
                                         if (closeable(frame_gtk)) {
-						libdecor_frame_close(
-							&frame_gtk->frame);
-                                                seat->pointer_focus = NULL;
-                                                return;
+                                               libdecor_frame_close(
+                                                       &frame_gtk->frame);
+                                               seat->pointer_focus = NULL;
                                         }
-#endif
 					break;
 				default:
 					break;
@@ -2243,6 +2237,7 @@ pointer_button(void *data,
 					draw_title_bar(frame_gtk);
 					libdecor_frame_toplevel_commit(&frame_gtk->frame);
 				}
+				libdecor_frame_unref(&frame_gtk->frame);
 				break;
 			default:
 				break;
@@ -2610,4 +2605,8 @@ libdecor_plugin_description = {
 	.description = "GTK3 plugin",
 	.priorities = priorities,
 	.constructor = libdecor_plugin_new,
+	.conflicting_symbols = {
+		"png_free",
+		NULL,
+	},
 };
