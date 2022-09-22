@@ -32,6 +32,12 @@ static void gtk_color(Fl_Color c) {
 }
 
 static void gtk_up_frame(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  fl_xyline(x, y, x + w-1);
+  fl_yxline(x, y, y + h-1);
+  fl_xyline(x, y+h-1, x + w-1);
+  fl_yxline(x+w-1, y, y+h-1);
+
   gtk_color(fl_color_average(FL_WHITE, c, 0.5));
   fl_xyline(x + 2, y + 1, x + w - 3);
   fl_yxline(x + 1, y + 2, y + h - 3);

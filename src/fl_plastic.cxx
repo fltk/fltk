@@ -72,6 +72,12 @@ static void frame_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   const uchar *g = fl_gray_ramp();
   int b = ((int) strlen(c)) / 4 + 1;
 
+  fl_color(fl_color_average(FL_BLACK, bc, 0.5));
+  fl_xyline(x, y, x + w-1);
+  fl_yxline(x, y, y + h);
+  fl_xyline(x, y+h, x + w-1);
+  fl_yxline(x+w-1, y, y+h);
+
   for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
   {
     // Draw lines around the perimeter of the button, 4 colors per

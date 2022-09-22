@@ -63,6 +63,9 @@ static void gleam_color(Fl_Color c) {
 */
 
 static void shade_rect_top_bottom(int x, int y, int w, int h, Fl_Color fg1, Fl_Color fg2, float th) {
+  // unused background - it is white on macOS but black on Linux and Windows
+  gleam_color(fl_color_average( FL_BLACK, fg1, 0.5 ) );
+  fl_rectf(x, y, w, h);
   // calculate background size w/o borders
   x += 2; y += 2; w -= 4; h -= 4;
   // draw the shiny background using maximum limits
