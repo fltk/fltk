@@ -78,6 +78,21 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #ifndef MAC_OS_X_VERSION_10_14
 #define MAC_OS_X_VERSION_10_14 101400
 #endif
+#ifndef MAC_OS_X_VERSION_10_15
+#define MAC_OS_X_VERSION_10_15 101500
+#endif
+#ifndef MAC_OS_X_VERSION_10_16
+#define MAC_OS_X_VERSION_10_16 101600
+#endif
+#ifndef MAC_OS_VERSION_11_0
+#define MAC_OS_VERSION_11_0 110000
+#endif
+#ifndef MAC_OS_VERSION_12_0
+#define MAC_OS_VERSION_12_0 120000
+#endif
+#ifndef MAC_OS_VERSION_13_0
+#define MAC_OS_VERSION_13_0 130000
+#endif
 
 
 #ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h

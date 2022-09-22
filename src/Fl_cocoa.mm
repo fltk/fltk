@@ -1388,7 +1388,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       w = Fl::next_window(w);
     }
     if (w) {
-      [Fl_X::i(w)->xid makeKeyWindow];
+      [fl_mac_xid(w) makeKeyWindow];
     }
   }
   fl_unlock_function();
@@ -1562,7 +1562,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   fl_lock_function();
   for (Fl_X *x = Fl_X::first;x;x = x->next) {
     Fl_Window *w = x->w;
-    if ( !w->parent() && ![x->xid isMiniaturized]) {
+    if ( !w->parent() && ![(FLWindow*)x->xid isMiniaturized]) {
       Fl::handle(FL_SHOW, w);
       }
   }
@@ -2939,6 +2939,10 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
   return context;
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_VERSION_12_0
+#  define NSOpenGLContextParameterSurfaceOpacity NSOpenGLCPSurfaceOpacity
+#endif
+
 void Fl_Cocoa_Window_Driver::remove_gl_context_opacity(NSOpenGLContext *ctx) {
   GLint gl_opacity;
   [ctx getValues:&gl_opacity forParameter:NSOpenGLContextParameterSurfaceOpacity];
@@ -3335,8 +3339,8 @@ void Fl_Cocoa_Window_Driver::size_range() {
     int bt = get_window_frame_sizes(pWindow);
     NSSize minSize = NSMakeSize(int(minw() * s +.5) , int(minh() * s +.5) + bt);
     NSSize maxSize = NSMakeSize(maxw() ? int(maxw() * s + .5):32000, maxh() ? int(maxh() * s +.5) + bt:32000);
-    [i->xid setMinSize:minSize];
-    [i->xid setMaxSize:maxSize];
+    [(FLWindow*)i->xid setMinSize:minSize];
+    [(FLWindow*)i->xid setMaxSize:maxSize];
   }
 }
 
@@ -3367,17 +3371,17 @@ void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
 void Fl_Cocoa_Window_Driver::show() {
   Fl_X *top = NULL;
   if (parent()) top = Fl_X::i(pWindow->top_window());
-  if (!shown() && (!parent() || (top && ![top->xid isMiniaturized]))) {
+  if (!shown() && (!parent() || (top && ![(FLWindow*)top->xid isMiniaturized]))) {
     makeWindow();
   } else {
     if ( !parent() ) {
       Fl_X *i = Fl_X::i(pWindow);
-      if ([i->xid isMiniaturized]) {
+      if ([(FLWindow*)i->xid isMiniaturized]) {
         i->w->redraw();
-        [i->xid deminiaturize:nil];
+        [(FLWindow*)i->xid deminiaturize:nil];
       }
       if (!fl_capture) {
-        [i->xid makeKeyAndOrderFront:nil];
+        [(FLWindow*)i->xid makeKeyAndOrderFront:nil];
       }
     }
     else pWindow->set_visible();
@@ -4192,7 +4196,7 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   localPool = [[NSAutoreleasePool alloc] init];
   Fl_Widget *w = Fl::pushed();
   Fl_Window *win = w->top_window();
-  FLView *myview = (FLView*)[Fl_X::i(win)->xid contentView];
+  FLView *myview = (FLView*)[fl_mac_xid(win) contentView];
   NSEvent *theEvent = [NSApp currentEvent];
 
   int width, height;
