@@ -825,11 +825,14 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   }
 }
 
+static void delayed_close(Fl_Window *win) {
+  Fl::handle(FL_CLOSE, win);
+}
 
 static void handle_close(struct libdecor_frame *frame, void *user_data)
 {
   struct wld_window* wl_win = (struct wld_window*)user_data;
-  Fl::handle(FL_CLOSE, wl_win->fl_win);
+  Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_close, wl_win->fl_win);
 }
 
 
