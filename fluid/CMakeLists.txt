@@ -163,7 +163,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
   # ## set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})
 
   # install fluid GUI and commandline tools
-  install (TARGETS fluid DESTINATION "/Applications")
+  #install (TARGETS fluid DESTINATION "/Applications")
 
   # install command line tool
   install (PROGRAMS $<TARGET_FILE:fluid> DESTINATION ${FLTK_BINDIR})
