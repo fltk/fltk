@@ -622,7 +622,7 @@ if (USE_XFT)
   endif (LIB_fontconfig)
 endif (USE_XFT)
 
-if (OPTION_USE_WAYLAND)
+if (UNIX AND OPTION_USE_WAYLAND)
   if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
     set(PROTOCOLS /usr/local/share/wayland-protocols)
   else ()
@@ -674,7 +674,7 @@ if (OPTION_USE_WAYLAND)
   if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" AND NOT OPTION_BUILD_SHARED_LIBS)
     list (APPEND OPTIONAL_LIBS "-no-pie")
   endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" AND NOT OPTION_BUILD_SHARED_LIBS)
-endif (OPTION_USE_WAYLAND)
+endif (UNIX AND OPTION_USE_WAYLAND)
 
 #######################################################################
 
