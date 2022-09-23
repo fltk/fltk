@@ -278,7 +278,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
       GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
       GLX_CONTEXT_MINOR_VERSION_ARB, 2,
       //GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-      //GLX_CONTEXT_PROFILE_MASK_ARB , GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+      GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
       None
     };
     ctxErrorOccurred = false;
@@ -286,6 +286,12 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
     ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
     XSync(fl_display, false); // Sync to ensure any errors generated are processed.
     if (ctxErrorOccurred) ctx = 0;
+    if (!ctx) { // if did not work, try again asking for core profile
+      ctxErrorOccurred = false;
+      context_attribs[5] = GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
+      ctx = glXCreateContextAttribsARB(fl_display, ((Fl_X11_Gl_Choice*)g)->best_fb, shared_ctx, true, context_attribs);
+      if (ctxErrorOccurred) ctx = 0;
+    }
     XSetErrorHandler(oldHandler);
   }
   if (!ctx) { // use OpenGL 1-style context creation
