@@ -2923,6 +2923,7 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
                                               NSOpenGLContext *shared_ctx, Fl_Window *window)
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
+  if (shared_ctx && !context) context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:nil];
   if (context) {
     FLView *view = (FLView*)[fl_xid(window) contentView];
     if (fl_mac_os_version >= 100700) {
