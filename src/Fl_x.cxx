@@ -2258,6 +2258,7 @@ void Fl_X11_Window_Driver::activate_window() {
 
 /* Change an existing window to fullscreen */
 void Fl_X11_Window_Driver::fullscreen_on() {
+  pWindow->_set_fullscreen();
   if (Fl_X11_Screen_Driver::ewmh_supported()) {
     int top, bottom, left, right;
 
@@ -2277,7 +2278,6 @@ void Fl_X11_Window_Driver::fullscreen_on() {
                   top, bottom, left, right);
     send_wm_state_event(fl_xid(pWindow), 1, fl_NET_WM_STATE_FULLSCREEN);
   } else {
-    pWindow->_set_fullscreen();
     hide();
     show();
     /* We want to grab the window, not a widget, so we cannot use Fl::grab */
@@ -2287,10 +2287,10 @@ void Fl_X11_Window_Driver::fullscreen_on() {
 }
 
 void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
+  pWindow->_clear_fullscreen();
   if (Fl_X11_Screen_Driver::ewmh_supported()) {
     send_wm_state_event(fl_xid(pWindow), 0, fl_NET_WM_STATE_FULLSCREEN);
   } else {
-    pWindow->_clear_fullscreen();
     /* The grab will be lost when the window is destroyed */
     hide();
     resize(X,Y,W,H);
