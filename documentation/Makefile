@@ -68,7 +68,7 @@ dist:	docs
 clean:
 	$(RM) Doxyfile Doxybook
 	$(RM) copyright.dox generated.dox
-	$(RM) fltk.pdf refman.pdf src/fltk-book.tex src/fltk-book.tex.in
+	$(RM) fltk.pdf refman.pdf src/fltk-title.tex src/fltk-book.tex.in src/fltk-book.tex
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -182,6 +182,16 @@ refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	$(DOXYDOC) Doxybook
 	./make_pdf
 
+src/fltk-title.tex: src/fltk-title.tex.in
+	echo "Generating $@ ..."
+	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
+	sed -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	    < $< > $@
+
+src/fltk-book.tex.in: src/fltk-title.tex
+	echo "Generating $@ ..."
+	./make_header $< $@
+
 src/fltk-book.tex: src/fltk-book.tex.in
 	echo "Generating $@ ..."
 	DOXY_VERSION=`$(DOXYDOC) --version|cut -f1 -d' '`; \
@@ -189,14 +199,7 @@ src/fltk-book.tex: src/fltk-book.tex.in
 	sed -e"s/@YEAR@/$$YEAR/g" \
 	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
-	< $< > $@
-
-src/fltk-book.tex.in: src/fltk-title.tex.in
-	echo "Generating $@ ..."
-	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
-	./make_header $< $@; \
-	sed -i -e"s/@GIT_REVISION@/$$GIT_REVISION/g" $@
-
+	    < $< > $@
 
 generated.dox: generated.dox.in
 	echo "Generating $@ ..."

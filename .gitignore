@@ -51,42 +51,7 @@ etc/FLTKConfig.cmake
 /cairo/*.dll
 
 # /documentation/
-/documentation/.xvpics
-/documentation/blocks.0
-/documentation/blocks.6
-/documentation/blocks.z
-/documentation/checkers.0
-/documentation/checkers.6
-/documentation/checkers.z
-/documentation/Doxybook
-/documentation/Doxyfile
-/documentation/fltk.0
-/documentation/fltk.3
-/documentation/fltk-config.0
-/documentation/fltk-config.1
-/documentation/fltk-config.z
-/documentation/fltk.d
-/documentation/fltk.pdf
-/documentation/fltk.z
-/documentation/fluid.0
-/documentation/fluid.1
-/documentation/fluid.z
-/documentation/html
-/documentation/latex
-/documentation/sudoku.0
-/documentation/sudoku.6
-/documentation/sudoku.z
-/documentation/*.bck
-/documentation/*.bak
-/documentation/*.log
-
-# /documentation/src/
-/documentation/src/*.0
-/documentation/src/*.1
-/documentation/src/*.3
-/documentation/src/*.6
-/documentation/src/*.z
-/documentation/src/fltk-book.tex
+# see documentation/.gitignore
 
 # /examples/
 # see examples/.gitignore
