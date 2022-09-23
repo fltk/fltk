@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <FL/Fl.H>      // includes <FL/fl_config.h>
+#include <FL/platform.H>
 #if defined(__APPLE__)
 #  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED 1
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
