@@ -530,7 +530,16 @@ void menutitle::draw() {
 
 void menuwindow::draw() {
   if (damage() != FL_DAMAGE_CHILD) {    // complete redraw
-    fl_draw_box(box(), 0, 0, w(), h(), button ? button->color() : color());
+#ifdef __APPLE__
+      if ( Fl::is_scheme( "gtk+" ) || Fl::is_scheme( "plastic" ) ||
+           Fl::is_scheme( "gleam" ) )
+      {
+          fl_draw_box( FL_FLAT_BOX, 0, 0, w(), h(),
+                       button ? button->color() : color());
+      }
+#endif
+      fl_draw_box( box(), 0, 0, w(), h(), button ? button->color() : color());
+
     if (menu) {
       const Fl_Menu_Item* m; int j;
       for (m=menu->first(), j=0; m->text; j++, m = m->next()) drawentry(m, j, 0);
