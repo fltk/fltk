@@ -304,6 +304,47 @@ FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
 }
 
 
+/* macOS offers only core contexts when using GL3. This forbids to add
+ FLTK widgets to a GL3-using Fl_Gl_Window because these widgets are drawn
+ with the GL1-based Fl_OpenGL_Graphics_Driver. The solution implemented here
+ is to create, with public function fl_mac_prepare_add_widgets_to_GL3_win(),
+ an additional Fl_Gl_Window placed above and sized as the GL3-based window,
+ to give it a non opaque, GL1-based context, and to put the FLTK widgets
+ in that additional window.
+ */
+
+class transparentGlWindow : public Fl_Gl_Window { // utility class
+  bool need_remove_opacity;
+public:
+  transparentGlWindow(int x, int y, int w, int h) : Fl_Gl_Window(x, y, w, h) {
+    mode(FL_RGB8 | FL_ALPHA | FL_SINGLE);
+    need_remove_opacity = true;
+  }
+  void show() {
+    Fl_Gl_Window::show();
+    if (need_remove_opacity) {
+      need_remove_opacity = false;
+      Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(this);
+      d->remove_gl_context_opacity((NSOpenGLContext*)context());
+    }
+  }
+};
+
+
+Fl_Gl_Window *fl_mac_prepare_add_widgets_to_GL3_win(Fl_Gl_Window *gl3win) {
+  gl3win->begin();
+  transparentGlWindow *transp = new transparentGlWindow(0, 0,
+                        gl3win->w(), gl3win->h());
+  gl3win->end();
+  if (!gl3win->resizable()) gl3win->resizable(gl3win);
+  if (gl3win->shown()) {
+    transp->show();
+    gl3win->make_current();
+  }
+  return transp;
+}
+
+
 class Fl_Gl_Cocoa_Plugin : public Fl_Cocoa_Plugin {
 public:
   Fl_Gl_Cocoa_Plugin() : Fl_Cocoa_Plugin(name()) { }

@@ -138,6 +138,13 @@ public:
     GLfloat p[]={0,0};
     glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+#ifndef __APPLE__
+    // suggested by https://stackoverflow.com/questions/22293870/mixing-fixed-function-pipeline-and-programmable-pipeline-in-opengl
+    // Switch from GL3-style to GL1-style drawing;
+    // good under Windows, X11 and Wayland; impossible under macOS.
+    glUseProgram(0);
+    Fl_Gl_Window::draw(); // Draw FLTK child widgets.
+#endif
   }
   virtual int handle(int event) {
     static int first = 1;
@@ -161,6 +168,9 @@ public:
       redraw();
     }
 
+    int retval = Fl_Gl_Window::handle(event);
+    if (retval) return retval;
+    
     if (event == FL_PUSH && gl_version_major >= 3) {
       static float factor = 1.1;
       GLfloat data[4];
@@ -175,7 +185,7 @@ public:
       add_output("push  Fl_Gl_Window::pixels_per_unit()=%.1f\n", pixels_per_unit());
       return 1;
     }
-    return Fl_Gl_Window::handle(event);
+    return retval;
   }
   void reset(void) { shaderProgram = 0; }
 };
@@ -218,6 +228,25 @@ void add_output(const char *format, ...)
 }
 
 
+void button_cb(Fl_Widget *, void *) {
+  add_output("run button callback\n");
+}
+
+void add_widgets(Fl_Gl_Window *g) {
+#ifdef __APPLE__
+  g = fl_mac_prepare_add_widgets_to_GL3_win(g);
+#endif
+  Fl::set_color(FL_FREE_COLOR, 255, 0, 0, 140); // partially transparent red
+  g->begin();
+  // Create here widgets to go above the GL3 scene
+  Fl_Button* b = new Fl_Button( 0, 170, 60, 30, "button");
+  b->color(FL_FREE_COLOR);
+  b->box(FL_BORDER_BOX );
+  b->callback(button_cb, NULL);
+  g->end();
+}
+
+
 int main(int argc, char **argv)
 {
   Fl::use_high_res_GL(1);
@@ -225,6 +254,7 @@ int main(int argc, char **argv)
   SimpleGL3Window *win = new SimpleGL3Window(0, 0, 300, 300);
   win->end();
   output_win(win);
+  add_widgets(win);
   topwin->end();
   topwin->resizable(win);
   topwin->label("Click GL panel to reshape");
