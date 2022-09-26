@@ -975,7 +975,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   fl_lock_function();
 
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
-  if ( !window->shown() ) {
+  if (!window || !window->shown() ) {
     fl_unlock_function();
     return;
   }
