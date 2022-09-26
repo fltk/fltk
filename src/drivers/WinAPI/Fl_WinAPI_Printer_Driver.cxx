@@ -129,7 +129,7 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
             while (srclen > 0 && (lpMsgBuf[srclen-1] == '\n' || lpMsgBuf[srclen-1] == '\r')) srclen--;
             unsigned l = fl_utf8fromwc(NULL, 0, lpMsgBuf, srclen);
             *perr_message = new char[l+51];
-            sprintf(*perr_message, "begin_job() failed with error %lu: ", dw);
+            snprintf(*perr_message, l+51, "begin_job() failed with error %lu: ", dw);
             fl_utf8fromwc(*perr_message + strlen(*perr_message), l+1, lpMsgBuf, srclen);
             LocalFree(lpMsgBuf);
           }

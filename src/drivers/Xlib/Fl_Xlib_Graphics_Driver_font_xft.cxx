@@ -1352,7 +1352,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
       // build the font's FLTK name
       l += strlen(p) + 2;
       char *q = new char[l];
-      sprintf(q, "%s %s", fam_name, p);
+      snprintf(q, l, "%s %s", fam_name, p);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free

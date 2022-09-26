@@ -1503,7 +1503,7 @@ int Fl_PostScript_Graphics_Driver::start_postscript(int pagecount,
   if (!cairo_) return 1;
   nPages=0;
   char feature[250];
-  sprintf(feature, "%%%%BeginFeature: *PageSize %s\n<</PageSize[%d %d]>>setpagedevice\n%%%%EndFeature",
+  snprintf(feature, 250, "%%%%BeginFeature: *PageSize %s\n<</PageSize[%d %d]>>setpagedevice\n%%%%EndFeature",
           Fl_Paged_Device::page_formats[format].name, Fl_Paged_Device::page_formats[format].width, Fl_Paged_Device::page_formats[format].height);
   cairo_ps_surface_dsc_comment(cairo_get_target(cairo_), feature);
   return 0;
@@ -1635,7 +1635,7 @@ int Fl_PostScript_File_Device::begin_page (void)
 #if USE_PANGO
   cairo_ps_surface_dsc_begin_page_setup(cairo_get_target(ps->cr()));
   char feature[200];
-  sprintf(feature, "%%%%PageOrientation: %s", ps->pw_ > ps->ph_ ? "Landscape" : "Portrait");
+  snprintf(feature, 200, "%%%%PageOrientation: %s", ps->pw_ > ps->ph_ ? "Landscape" : "Portrait");
   cairo_ps_surface_dsc_comment(cairo_get_target(ps->cr()), feature);
   if (ps->pw_ > ps->ph_) {
     cairo_translate(ps->cr(), 0, ps->pw_);

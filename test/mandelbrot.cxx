@@ -72,9 +72,9 @@ int main(int argc, char **argv) {
 
 void Drawing_Window::update_label() {
   char buffer[128];
-  sprintf(buffer, "%+.10f", d->X); x_input->value(buffer);
-  sprintf(buffer, "%+.10f", d->Y); y_input->value(buffer);
-  sprintf(buffer, "%.2g", d->scale); w_input->value(buffer);
+  snprintf(buffer, 128, "%+.10f", d->X); x_input->value(buffer);
+  snprintf(buffer, 128, "%+.10f", d->Y); y_input->value(buffer);
+  snprintf(buffer, 128, "%.2g", d->scale); w_input->value(buffer);
 }
 
 void Drawing_Area::draw() {
@@ -187,7 +187,7 @@ int Drawing_Area::handle(int event) {
       jbrot.d->jX = X + (ix-x()-W/2)*scale/W;
       jbrot.d->jY = Y + (H/2-iy+y())*scale/W;
       static char s[128];
-      sprintf(s, "Julia %.7f %.7f",jbrot.d->jX,jbrot.d->jY);
+      snprintf(s, 128, "Julia %.7f %.7f",jbrot.d->jX,jbrot.d->jY);
       jbrot.window->label(s);
       jbrot.window->show();
       jbrot.d->new_display();

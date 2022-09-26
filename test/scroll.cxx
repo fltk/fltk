@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 
   int n = 0;
   for (int y=0; y<16; y++) for (int x=0; x<5; x++) {
-    char buf[20]; sprintf(buf,"%d",n++);
+    char buf[20]; snprintf(buf, 20,"%d",n++);
     Fl_Button* b = new Fl_Button(x*75,y*25+(y>=8?5*75:0),75,25);
     b->copy_label(buf);
     b->color(n);

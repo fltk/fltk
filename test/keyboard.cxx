@@ -119,20 +119,20 @@ int main(int argc, char** argv) {
     if (!k)
       keyname = "0";
     else if (k < 128) { // ASCII
-      sprintf(buffer, "'%c'", k);
+      snprintf(buffer, sizeof(buffer), "'%c'", k);
     } else if (k >= 0xa0 && k <= 0xff) { // ISO-8859-1 (international keyboards)
       char key[8];
       int kl = fl_utf8encode((unsigned)k, key);
       key[kl] = '\0';
-      sprintf(buffer, "'%s'", key);
+      snprintf(buffer, sizeof(buffer), "'%s'", key);
     } else if (k > FL_F && k <= FL_F_Last) {
-      sprintf(buffer, "FL_F+%d", k - FL_F);
+      snprintf(buffer, sizeof(buffer), "FL_F+%d", k - FL_F);
     } else if (k >= FL_KP && k <= FL_KP_Last) {
-      sprintf(buffer, "FL_KP+'%c'", k-FL_KP);
+      snprintf(buffer, sizeof(buffer), "FL_KP+'%c'", k-FL_KP);
     } else if (k >= FL_Button && k <= FL_Button+7) {
-      sprintf(buffer, "FL_Button+%d", k-FL_Button);
+      snprintf(buffer, sizeof(buffer), "FL_Button+%d", k-FL_Button);
     } else {
-      sprintf(buffer, "0x%04x", k);
+      snprintf(buffer, sizeof(buffer), "0x%04x", k);
       for (int i = 0; i < int(sizeof(table)/sizeof(*table)); i++)
         if (table[i].n == k) {keyname = table[i].text; break;}
     }

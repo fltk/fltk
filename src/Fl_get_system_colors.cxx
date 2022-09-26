@@ -210,7 +210,7 @@ int Fl::reload_scheme() {
       nb = levels[i] * b / 0xe8;
       if (nb > 255) nb = 255;
 
-      sprintf(tile_cmap[i], "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
+      snprintf(tile_cmap[i], sizeof(tile_cmap[0]), "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
 //      puts(tile_cmap[i]);
     }
 

@@ -112,7 +112,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
   GtkPrintSettings *psettings = CALL_GTK(gtk_print_unix_dialog_get_settings)(pdialog); //2.10
   CALL_GTK(gtk_print_settings_set)(psettings, "output-file-format", "ps"); //2.10
   char line[FL_PATH_MAX + 20], cwd[FL_PATH_MAX];
-  sprintf(line, "file://%s/FLTK.ps", fl_getcwd(cwd, FL_PATH_MAX));
+  snprintf(line, FL_PATH_MAX + 20, "file://%s/FLTK.ps", fl_getcwd(cwd, FL_PATH_MAX));
   CALL_GTK(gtk_print_settings_set)(psettings, "output-uri", line); //2.10
   CALL_GTK(gtk_print_unix_dialog_set_settings)(pdialog, psettings); //2.10
   CALL_GTK(g_object_unref)(psettings);
@@ -160,7 +160,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
         response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
         if (perr_message) {
           *perr_message = new char[strlen(line)+50];
-          sprintf(*perr_message, "Can't open output file %s", line);
+          snprintf(*perr_message, strlen(line)+50, "Can't open output file %s", line);
         }
       }
     } else if ( CALL_GTK(gtk_printer_accepts_ps)(gprinter) && //2.10
@@ -176,7 +176,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
         response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
         if (perr_message) {
           *perr_message = new char[strlen(tmpfilename)+50];
-          sprintf(*perr_message, "Can't create temporary file %s", tmpfilename);
+          snprintf(*perr_message, strlen(tmpfilename)+50, "Can't create temporary file %s", tmpfilename);
         }
       }
     }
@@ -322,7 +322,7 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage,
   if (!ps->output) {
     if (perr_message) {
       *perr_message = new char[strlen(command) + 50];
-      sprintf(*perr_message, "could not run command: %s", command);
+      snprintf(*perr_message, strlen(command) + 50, "could not run command: %s", command);
     }
     return 2;
   }

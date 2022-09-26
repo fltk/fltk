@@ -379,7 +379,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   Fl_Window *win = new Fl_Window((X + W/2) -w/2, (Y + H/2) -w/4, w, w/2, 0);
   b = new Fl_Box(FL_FLAT_BOX, 0, 0, w, w/2, NULL);
   char str[10];
-  sprintf(str, "%d %%", int(f * 100 + 0.5));
+  snprintf(str, 10, "%d %%", int(f * 100 + 0.5));
   b->copy_label(str);
   b->labelfont(FL_TIMES_BOLD);
   b->labelsize(Fl_Fontsize(30 * s / d->scale(nscreen)));

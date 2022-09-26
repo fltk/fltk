@@ -584,7 +584,7 @@ char Fl_Preferences::get( const char *key, int &value, int defaultValue ) {
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, int value ) {
-  sprintf( nameBuffer, "%d", value );
+  snprintf( nameBuffer, sizeof(nameBuffer), "%d", value );
   node->set( key, nameBuffer );
   return 1;
 }
@@ -1081,7 +1081,7 @@ int Fl_Preferences::dirty() {
  */
 Fl_Preferences::Name::Name( unsigned int n ) {
   data_ = (char*)malloc(20);
-  sprintf(data_, "%u", n);
+  snprintf(data_, 20, "%u", n);
 }
 
 /**
@@ -1442,7 +1442,7 @@ void Fl_Preferences::Node::setParent( Node *pn ) {
   parent_ = pn;
   next_ = pn->first_child_;
   pn->first_child_ = this;
-  sprintf( nameBuffer, "%s/%s", pn->path_, path_ );
+  snprintf( nameBuffer, sizeof(nameBuffer), "%s/%s", pn->path_, path_ );
   free( path_ );
   path_ = fl_strdup( nameBuffer );
 }
@@ -1460,7 +1460,7 @@ Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot() {
 
 // add a child to this node and set its path (try to find it first...)
 Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path ) {
-  sprintf( nameBuffer, "%s/%s", path_, path );
+  snprintf( nameBuffer, sizeof(nameBuffer), "%s/%s", path_, path );
   char *name = fl_strdup( nameBuffer );
   Node *nd = find( name );
   free( name );

@@ -457,7 +457,7 @@ static const char *find_best_font(const char *fname, int size) {
       // whoa!  A scalable font!  Use unless exact match found:
       int l = c-thisname;
       memcpy(namebuffer,thisname,l);
-      l += sprintf(namebuffer+l,"%d",size);
+      l += snprintf(namebuffer+l, 1024-l,"%d",size);
       while (*c == '0') c++;
       strcpy(namebuffer+l,c);
       name = namebuffer;

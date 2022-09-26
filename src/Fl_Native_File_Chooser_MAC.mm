@@ -334,7 +334,7 @@ void Fl_Quartz_Native_File_Chooser_Driver::parse_filter(const char *in) {
         //     If user didn't specify a name, make one
         //
         if ( name[0] == '\0' ) {
-          sprintf(name, "%.*s Files", (int)sizeof(name)-10, wildcard);
+          snprintf(name, sizeof(name), "%.*s Files", (int)sizeof(name)-10, wildcard);
         }
         // APPEND NEW FILTER TO LIST
         if ( wildcard[0] ) {
@@ -434,7 +434,8 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
     l += strlen(patterns[i]) + 3;
     }
   const char *p = filter;
-  char *q; q = new char[strlen(p) + l + 1];
+  const int t_size = strlen(p) + l + 1;
+  char *q; q = new char[t_size];
   const char *r, *s;
   char *t;
   t = q;
@@ -445,7 +446,9 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
     if (s && s < r) {
       memcpy(q, p, s - p);
       q += s - p;
-      if (rank < count) { sprintf(q, " (%s)", patterns[rank]); q += strlen(q); }
+      if (rank < count) {
+        snprintf(q, t_size-(q-t), " (%s)", patterns[rank]); q += strlen(q);
+      }
     }
     else {
       memcpy(q, p, r - p);

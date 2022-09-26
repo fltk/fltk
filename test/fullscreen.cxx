@@ -226,20 +226,20 @@ void update_screeninfo(Fl_Widget *b, void *p) {
     char line[128];
     browser->clear();
 
-    sprintf(line, "Main screen work area: %dx%d@%d,%d", Fl::w(), Fl::h(), Fl::x(), Fl::y());
+    snprintf(line, sizeof(line), "Main screen work area: %dx%d@%d,%d", Fl::w(), Fl::h(), Fl::x(), Fl::y());
     browser->add(line);
     Fl::screen_work_area(x, y, w, h);
-    sprintf(line, "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
+    snprintf(line, sizeof(line), "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
     browser->add(line);
     for (int n = 0; n < Fl::screen_count(); n++) {
         int x, y, w, h;
         float dpih, dpiv;
         Fl::screen_xywh(x, y, w, h, n);
         Fl::screen_dpi(dpih, dpiv, n);
-        sprintf(line, "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f scale:%.2f", n, w, h, x, y, dpih, dpiv, Fl::screen_scale(n));
+        snprintf(line, sizeof(line), "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f scale:%.2f", n, w, h, x, y, dpih, dpiv, Fl::screen_scale(n));
         browser->add(line);
         Fl::screen_work_area(x, y, w, h, n);
-        sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
+        snprintf(line, sizeof(line), "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
         browser->add(line);
     }
 }

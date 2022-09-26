@@ -206,9 +206,11 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   if (user_dash_array_ && user_dash_array_ != dashes) {free(user_dash_array_); user_dash_array_ = NULL;}
   if (dashes && *dashes) {
     if (dasharray_) free(dasharray_);
-    dasharray_ = (char*)calloc(10*strlen(dashes) + 1, 1);
+    int array_len = 10*strlen(dashes) + 1;
+    dasharray_ = (char*)calloc(array_len, 1);
     for (char *p = dashes; *p; p++) {
-      sprintf(dasharray_+strlen(dasharray_), "%.3f,", (*p)/s);
+      int c = snprintf(dasharray_+strlen(dasharray_), array_len, "%.3f,", (*p)/s);
+      array_len -= c;
     }
     dasharray_[strlen(dasharray_) - 1] = 0;
     if (user_dash_array_ != dashes) user_dash_array_ = fl_strdup(dashes);
@@ -228,10 +230,10 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
     float big = (is_flat ? 3*width_/s : width_*2.5f/s);
     if (dasharray_) free(dasharray_);
     dasharray_ = (char*)malloc(61);
-    if (dash_part == FL_DOT) sprintf(dasharray_, "%.3f,%.3f", dot, gap);
-    else if (dash_part == FL_DASH) sprintf(dasharray_, "%.3f,%.3f", big, gap);
-    else if (dash_part == FL_DASHDOT) sprintf(dasharray_, "%.3f,%.3f,%.3f,%.3f", big, gap, dot, gap);
-    else sprintf(dasharray_, "%.3f,%.3f,%.3f,%.3f,%.3f,%.3f", big, gap, dot, gap, dot, gap);
+    if (dash_part == FL_DOT) snprintf(dasharray_, 61, "%.3f,%.3f", dot, gap);
+    else if (dash_part == FL_DASH) snprintf(dasharray_, 61, "%.3f,%.3f", big, gap);
+    else if (dash_part == FL_DASHDOT) snprintf(dasharray_, 61, "%.3f,%.3f,%.3f,%.3f", big, gap, dot, gap);
+    else snprintf(dasharray_, 61, "%.3f,%.3f,%.3f,%.3f,%.3f,%.3f", big, gap, dot, gap, dot, gap);
   }
 }
 
@@ -604,7 +606,7 @@ void Fl_SVG_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   char name[24];
   bool need_clip = (cx || cy || WP != rgb->w() || HP != rgb->h());
   void *p = (void*)*Fl_Graphics_Driver::id(rgb);
-  if (p) sprintf(name, "FLrgb%p", p); else name[0] = 0;
+  if (p) snprintf(name, 24, "FLrgb%p", p); else name[0] = 0;
   if (!p || !last_rgb_name_ || strcmp(name, last_rgb_name_) != 0) {
     if (*name==0 && need_clip) push_clip(XP, YP, WP, HP);
 #if defined(HAVE_LIBJPEG)
@@ -627,7 +629,7 @@ void Fl_SVG_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP,
   char name[24];
   bool need_clip = (cx || cy || WP != pxm->w() || HP != pxm->h());
   void *p = (void*)*Fl_Graphics_Driver::id(pxm);
-  if (p) sprintf(name, "FLpx%p", p); else name[0] = 0;
+  if (p) snprintf(name, 24, "FLpx%p", p); else name[0] = 0;
   if (!p || !last_rgb_name_ || strcmp(name, last_rgb_name_) != 0) {
     Fl_RGB_Image *rgb = new Fl_RGB_Image(pxm);
     if (*name==0 && need_clip) push_clip(XP, YP, WP, HP);
@@ -648,7 +650,7 @@ void Fl_SVG_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, 
   char name[45];
   bool need_clip = (cx || cy || WP != bm->w() || HP != bm->h());
   void *p = (void*)*Fl_Graphics_Driver::id(bm);
-  if (p) sprintf(name, "FLbm%p%X", p, fl_color()); else name[0] = 0;
+  if (p) snprintf(name, 45, "FLbm%p%X", p, fl_color()); else name[0] = 0;
   if (!p || !last_rgb_name_ || strcmp(name, last_rgb_name_) != 0) {
     uchar R, G, B;
     Fl::get_color(fl_color(), R, G, B);
@@ -740,7 +742,7 @@ void Fl_SVG_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   Clip * c=new Clip();
   clip_box(x,y,w,h,c->x,c->y,c->w,c->h);
   c->prev=clip_;
-  sprintf(c->Id, "FLclip%d", clip_count_++);
+  snprintf(c->Id, sizeof(c->Id), "FLclip%d", clip_count_++);
   clip_=c;
   fprintf(out_, "<clipPath id=\"%s\"><rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\"/></clipPath><g clip-path=\"url(#%s)\">\n",
           c->Id, clip_->x , clip_->y , clip_->w, clip_->h, c->Id);

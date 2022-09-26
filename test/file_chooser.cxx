@@ -295,9 +295,9 @@ pdf_check(const char *name,     // I - Name of file
     return 0;
 
   home = fl_getenv("HOME");
-  sprintf(preview, "%s/.preview.ppm", home ? home : "");
+  snprintf(preview, FL_PATH_MAX, "%s/.preview.ppm", home ? home : "");
 
-  sprintf(command,
+  snprintf(command, sizeof(command),
           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
           "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
           "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
@@ -331,11 +331,11 @@ ps_check(const char *name,      // I - Name of file
     return 0;
 
   home = fl_getenv("HOME");
-  sprintf(preview, "%s/.preview.ppm", home ? home : "");
+  snprintf(preview, FL_PATH_MAX, "%s/.preview.ppm", home ? home : "");
 
   if (memcmp(header, "%!PS", 4) == 0) {
     // PS file has DSC comments; extract the first page...
-    sprintf(outname, "%s/.preview.ps", home ? home : "");
+    snprintf(outname, FL_PATH_MAX, "%s/.preview.ps", home ? home : "");
 
     if (strcmp(name, outname) != 0) {
       in   = fl_fopen(name, "rb");
@@ -360,7 +360,7 @@ ps_check(const char *name,      // I - Name of file
     outname[sizeof(outname) - 1] = '\0';
   }
 
-  sprintf(command,
+  snprintf(command, sizeof(command),
           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
           "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
           preview, outname);

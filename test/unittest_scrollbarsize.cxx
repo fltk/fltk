@@ -39,7 +39,7 @@ class MyTable : public Fl_Table {
         fl_font(FL_HELVETICA, 8);               // set font for drawing operations
         return;
       case CONTEXT_CELL:                        // Draw data in cells
-        sprintf(s, "%c", 'A'+ROW+COL);
+        snprintf(s, 10, "%c", 'A'+ROW+COL);
         fl_push_clip(X,Y,W,H);
           // Draw cell bg
           fl_color(FL_WHITE); fl_rectf(X,Y,W,H);

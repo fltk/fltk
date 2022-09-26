@@ -1006,7 +1006,7 @@ Sudoku::load_game() {
 
       SudokuCell *cell = grid_cells_[j][k];
 
-      sprintf(name, "value%d.%d", j, k);
+      snprintf(name, sizeof(name), "value%d.%d", j, k);
       if (!prefs_.get(name, val, 0)) {
         j = 9;
         grid_values_[0][0] = 0;
@@ -1015,11 +1015,11 @@ Sudoku::load_game() {
 
       grid_values_[j][k] = val;
 
-      sprintf(name, "state%d.%d", j, k);
+      snprintf(name, sizeof(name), "state%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->value(val);
 
-      sprintf(name, "readonly%d.%d", j, k);
+      snprintf(name, sizeof(name), "readonly%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->readonly(val != 0);
 
@@ -1030,7 +1030,7 @@ Sudoku::load_game() {
       }
 
       for (int m = 0; m < 8; m ++) {
-        sprintf(name, "test%d%d.%d", m, j, k);
+        snprintf(name, sizeof(name), "test%d%d.%d", m, j, k);
         prefs_.get(name, val, 0);
         cell->test_value(val, m);
       }
@@ -1261,17 +1261,17 @@ Sudoku::save_game() {
       char name[255];
       SudokuCell *cell = grid_cells_[j][k];
 
-      sprintf(name, "value%d.%d", j, k);
+      snprintf(name, sizeof(name), "value%d.%d", j, k);
       prefs_.set(name, grid_values_[j][k]);
 
-      sprintf(name, "state%d.%d", j, k);
+      snprintf(name, sizeof(name), "state%d.%d", j, k);
       prefs_.set(name, cell->value());
 
-      sprintf(name, "readonly%d.%d", j, k);
+      snprintf(name, sizeof(name), "readonly%d.%d", j, k);
       prefs_.set(name, cell->readonly());
 
       for (int m = 0; m < 8; m ++) {
-        sprintf(name, "test%d%d.%d", m, j, k);
+        snprintf(name, sizeof(name), "test%d%d.%d", m, j, k);
         prefs_.set(name, cell->test_value(m));
       }
     }

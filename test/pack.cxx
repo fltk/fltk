@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
   int xx = 35;
   for (int i = 0; i < nbuttons; i++) {
     char ltxt[8];
-    sprintf(ltxt, "b%d", i + 1);
+    snprintf(ltxt, 8, "b%d", i + 1);
     Fl_Button *b = new Fl_Button(xx, xx, 25, 25);
     b->copy_label(ltxt);
     xx += 10;

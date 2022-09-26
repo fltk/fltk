@@ -637,7 +637,7 @@ void display(void)
   glLoadIdentity();
   gluOrtho2D(0.0, winwidth, 0.0, winheight);
 
-  sprintf(buf, "FPS=%d", fps);
+  snprintf(buf, sizeof(buf), "FPS=%d", fps);
   glColor3f(1.0f, 1.0f, 1.0f);
   gl_font(FL_HELVETICA, 12);
   gl_draw(buf, 10, 10);

@@ -68,8 +68,8 @@ void font_cb(Fl_Widget *, long) {
     int j = 1;
     for (int i = 1; i<64 || i<s[n-1]; i++) {
       char buf[20];
-      if (j < n && i==s[j]) {sprintf(buf,"@b%d",i); j++;}
-      else sprintf(buf,"%d",i);
+      if (j < n && i==s[j]) {snprintf(buf, 20,"@b%d",i); j++;}
+      else snprintf(buf, 20,"%d",i);
       sizeobj->add(buf);
     }
     sizeobj->value(pickedsize);
@@ -79,7 +79,7 @@ void font_cb(Fl_Widget *, long) {
     for (int i = 0; i < n; i++) {
       if (s[i]<=pickedsize) w = i;
       char buf[20];
-      sprintf(buf,"@b%d",s[i]);
+      snprintf(buf, 20,"@b%d",s[i]);
       sizeobj->add(buf);
     }
     sizeobj->value(w+1);

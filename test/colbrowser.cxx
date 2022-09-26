@@ -157,7 +157,7 @@ static int load_browser(const char *fname)
       lr = r;
       lg = g;
       lb = b;
-      sprintf(buf, "(%3d %3d %3d) %s", r, g, b, name);
+      snprintf(buf, sizeof(buf), "(%3d %3d %3d) %s", r, g, b, name);
       colbr->add(buf);
     }
   }

@@ -563,7 +563,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
   }
 
   // write the first line of xpm data (use suffix as temp array):
-  int length = sprintf((char*)(Suffix),
+  int length = snprintf((char*)(Suffix), sizeof(Suffix),
                        "%d %d %d %d",Width,Height,-numcolors,1);
   new_data[0] = new char[length+1];
   strcpy(new_data[0], (char*)Suffix);

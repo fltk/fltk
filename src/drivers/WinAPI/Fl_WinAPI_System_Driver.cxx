@@ -742,7 +742,7 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
   drives = GetLogicalDrives();
   for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1) {
     if (drives & 1) {
-      sprintf(filename, "%c:/", i);
+      snprintf(filename, lname, "%c:/", i);
       if (i < 'C') // see also: GetDriveType and GetVolumeInformation in Windows
         browser->add(filename, icon);
       else
@@ -794,7 +794,7 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
           (rpc_res == RPC_S_UUID_NO_ADDRESS)    // probably only locally unique
           ) {
         got_uuid = -1;
-        sprintf(uuidBuffer, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+        snprintf(uuidBuffer, 36+1, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
                 pu->Data1, pu->Data2, pu->Data3, pu->Data4[0], pu->Data4[1],
                 pu->Data4[2], pu->Data4[3], pu->Data4[4],
                 pu->Data4[5], pu->Data4[6], pu->Data4[7]);
@@ -833,7 +833,7 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
     for (int ii = 0; ii < 4; ii++) {
       b[12 + ii] = (unsigned char)name[ii];
     }
-    sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+    snprintf(uuidBuffer, 36+1, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
             b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
             b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
   }

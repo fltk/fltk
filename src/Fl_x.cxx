@@ -317,7 +317,7 @@ extern "C" {
 
   static int xerror_handler(Display* d, XErrorEvent* e) {
     char buf1[128], buf2[128];
-    sprintf(buf1, "XRequest.%d", e->request_code);
+    snprintf(buf1, 128, "XRequest.%d", e->request_code);
     XGetErrorDatabaseText(d,"",buf1,buf1,buf2,128);
     XGetErrorText(d, e->error_code, buf1, 128);
     Fl::warning("%s: %s 0x%lx", buf2, buf1, e->resourceid);

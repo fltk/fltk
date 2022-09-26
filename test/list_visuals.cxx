@@ -92,7 +92,7 @@ static void print_mask(XVisualInfo* p) {
     else new_what = '?';
     if (new_what != what) {
       if (what && (what != '?' || print_anything)) {
-        q += sprintf(q,"%d%c", n, what);
+        q += snprintf(q, sizeof(buf) - (q-buf), "%d%c", n, what);
         print_anything = 1;
       }
       what = new_what;

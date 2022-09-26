@@ -54,7 +54,7 @@ void DemoTable::draw_cell(TableContext context,
                           int R, int C, int X, int Y, int W, int H)
 {
     static char s[40];
-    sprintf(s, "%d/%d", R, C);          // text for each cell
+    snprintf(s, 40, "%d/%d", R, C);          // text for each cell
 
     switch ( context )
     {
@@ -271,7 +271,7 @@ void setcellbgcolor_cb(Fl_Widget *w, void *data)
 char *itoa(int val)
 {
     static char s[80];
-    sprintf(s, "%d", val);
+    snprintf(s, 80, "%d", val);
     return(s);
 }
 

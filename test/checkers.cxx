@@ -963,7 +963,7 @@ void Board::draw() {
       int y1 = squarey(n->from)+BOXSIZE/2-5;
       int x2 = squarex(n->to)+BOXSIZE/2-5;
       int y2 = squarey(n->to)+BOXSIZE/2-5;
-      char buf[20]; sprintf(buf,"%d",num);
+      char buf[20]; snprintf(buf, 20,"%d",num);
       fl_draw(buf, x1+int((x2-x1)*.85)-3, y1+int((y2-y1)*.85)+5);
       num++;
     }

@@ -978,7 +978,7 @@ static Fl_Window *calc_transient_parent(int &center_x, int &center_y) {
 static const char *get_prog_name() {
   pid_t pid = getpid();
   char fname[100];
-  sprintf(fname, "/proc/%u/cmdline", pid);
+  snprintf(fname, 100, "/proc/%u/cmdline", pid);
   FILE *in = fopen(fname, "r");
   if (in) {
     static char line[200];

@@ -24,7 +24,7 @@
 #include <FL/Enumerations.H>
 
 #include <stdlib.h>             // malloc
-#include <stdio.h>              // sprintf
+#include <stdio.h>              // snprintf
 #include <wchar.h>
 
 #define FNFC_MAX_PATH 32768     // XXX: MAX_PATH under win32 is 260, too small for modern use
@@ -441,7 +441,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
     size_t len = strlen(winpath);
     if ( len >= _ofn_ptr->nMaxFile ) {
       char msg[80];
-      sprintf(msg, "preset_file() filename is too long: %ld is >=%ld", (long)len, (long)fsize);
+      snprintf(msg, 80, "preset_file() filename is too long: %ld is >=%ld", (long)len, (long)fsize);
       errmsg(msg);
       return(-1);
     }
@@ -490,7 +490,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
     if ( exterr == 0 ) return(1);       // user hit cancel
     // Otherwise, an error occurred..
     char msg[80];
-    sprintf(msg, "CommDlgExtendedError() code=%d", exterr);
+    snprintf(msg, 80, "CommDlgExtendedError() code=%d", exterr);
     errmsg(msg);
     return(-1);
   }
@@ -776,12 +776,12 @@ void Fl_WinAPI_Native_File_Chooser_Driver::add_filter(const char *name_in,      
   // No name? Make one..
   char name[1024];
   if ( !name_in || name_in[0] == '\0' ) {
-    sprintf(name, "%.*s Files", int(sizeof(name)-10), winfilter);
+    snprintf(name, sizeof(name), "%.*s Files", int(sizeof(name)-10), winfilter);
   } else {
     if ((strlen(name_in)+strlen(winfilter)+3) < sizeof(name)) {
-      sprintf(name, "%s (%s)", name_in, winfilter);
+      snprintf(name, sizeof(name), "%s (%s)", name_in, winfilter);
     } else {
-      sprintf(name, "%.*s", int(sizeof(name))-1, name_in);
+      snprintf(name, sizeof(name), "%.*s", int(sizeof(name))-1, name_in);
     }
   }
   dnullcat(_parsedfilt, name);

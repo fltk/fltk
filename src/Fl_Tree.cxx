@@ -2657,11 +2657,11 @@ void Fl_Tree::load(Fl_Preferences &prefs) {
     if (vn<40) {
       size_t sze = pn + strlen(key) + vn;
       p = (char*)malloc(sze+5);
-      sprintf(p, "%s/%s = %s", path, key, val);
+      snprintf(p, sze+5, "%s/%s = %s", path, key, val);
     } else {
       size_t sze = pn + strlen(key) + 40;
       p = (char*)malloc(sze+5);
-      sprintf(p, "%s/%s = %.40s...", path, key, val);
+      snprintf(p, sze+5, "%s/%s = %.40s...", path, key, val);
     }
     add(p[0]=='/'?p+1:p);
     free(p);

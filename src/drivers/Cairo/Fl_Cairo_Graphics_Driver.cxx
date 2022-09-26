@@ -1025,7 +1025,7 @@ Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
       // build the font's FLTK name
       l += strlen(p) + 2;
       char *q = new char[l];
-      sprintf(q, "%s %s", fam_name, p);
+      snprintf(q, l, "%s %s", fam_name, p);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
@@ -1098,7 +1098,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   strcpy(string, name);
   // The factor of 0.75 below gives cairo-produced text the same size as
   // Xft-produced text for the same FLTK font size.
-  sprintf(string + strlen(string), " %d", int(size * 0.75 + 0.5) );
+  snprintf(string + strlen(string), 10, " %d", int(size * 0.75 + 0.5) );
   //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
   delete[] string;

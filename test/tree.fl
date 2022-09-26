@@ -270,7 +270,7 @@ tree->add("Long Line/Longer Line/The quick brown fox jumped over the lazy dog. -
 // Add 500 items in numerical order
 for ( int t=0; t<500; t++ ) {
     static char s[80];
-    sprintf(s, "500 Items/item %04d", t+1);
+    snprintf(s, 80, "500 Items/item %04d", t+1);
     tree->add(s);
 }
 tree->close("500 Items");       // close the 500 items by default
@@ -986,7 +986,7 @@ while (item) {
         if ( parent == 0 ) parent = tree->root();
         char s[80];
         for ( int i=0; i<20000; i++ ) {
-            sprintf(s, "Item \#%d", item_id+i);
+            snprintf(s, 80, "Item \#%d", item_id+i);
             tree->add(parent, s);
         }
         item_id += 20000;

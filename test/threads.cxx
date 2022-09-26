@@ -73,7 +73,7 @@ extern "C" void* prime_func(void* p)
     for (pp=3; pp<=hn; pp+=2) if ( n%pp == 0 ) break;
     if (pp >= hn) {
       char s[128];
-      sprintf(s, "%d", n);
+      snprintf(s, 128, "%d", n);
 
       // Obtain a lock before we access the browser widget...
       Fl::lock();

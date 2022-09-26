@@ -312,10 +312,10 @@ static const char *get_libdecor_plugin_description(struct libdecor_frame *frame)
      char fname[PATH_MAX];
      const char *dir = getenv("LIBDECOR_PLUGIN_DIR");
      if (!dir) dir = LIBDECOR_PLUGIN_DIR;
-     sprintf(fname, "%s/libdecor-gtk.so", dir);
+     snprintf(fname, PATH_MAX, "%s/libdecor-gtk.so", dir);
      void *dl = dlopen(fname, RTLD_LAZY | RTLD_LOCAL);
      if (!dl) {
-       sprintf(fname, "%s/libdecor-cairo.so", dir);
+       snprintf(fname, PATH_MAX, "%s/libdecor-cairo.so", dir);
        dl = dlopen(fname, RTLD_LAZY | RTLD_LOCAL);
      }
      if (dl) plugin_description = (const struct libdecor_plugin_description*)dlsym(dl, "libdecor_plugin_description");

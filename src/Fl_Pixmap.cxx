@@ -160,7 +160,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) const {
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
   chars_per_line = chars_per_pixel * W + 1;
 
-  sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
+  snprintf(new_info, sizeof(new_info), "%d %d %d %d", W, H, ncolors, chars_per_pixel);
 
   // Figure out Bresenham step/modulus values...
   xmod   = data_w() % W;
@@ -285,10 +285,12 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
         g = (ia * g + ig) >> 8;
         b = (ia * b + ib) >> 8;
 
-        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X",
+        if (chars_per_pixel > 1) snprintf(line, sizeof(line),
+                                         "%c%c c #%02X%02X%02X",
                                          data()[color + 1][0],
                                          data()[color + 1][1], r, g, b);
-        else sprintf(line, "%c c #%02X%02X%02X", data()[color + 1][0], r, g, b);
+        else snprintf(line, sizeof(line), "%c c #%02X%02X%02X",
+                      data()[color + 1][0], r, g, b);
 
         delete[] (char *)data()[color + 1];
         ((char **)data())[color + 1] = new char[strlen(line) + 1];
@@ -361,10 +363,13 @@ void Fl_Pixmap::desaturate() {
       if (fl_parse_color(p, r, g, b)) {
         g = (uchar)((r * 31 + g * 61 + b * 8) / 100);
 
-        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X", data()[i + 1][0],
-                                         data()[i + 1][1], g, g, g);
-        else sprintf(line, "%c c #%02X%02X%02X", data()[i + 1][0], g, g, g);
-
+        if (chars_per_pixel > 1) {
+          snprintf(line, sizeof(line), "%c%c c #%02X%02X%02X",
+                   data()[i + 1][0], data()[i + 1][1], g, g, g);
+        } else {
+          snprintf(line, sizeof(line), "%c c #%02X%02X%02X",
+                   data()[i + 1][0], g, g, g);
+        }
         delete[] (char *)data()[i + 1];
         ((char **)data())[i + 1] = new char[strlen(line) + 1];
         strcpy((char *)data()[i + 1], line);

@@ -268,7 +268,7 @@ void Fl_Darwin_System_Driver::newUUID(char *uuidBuffer)
 {
   CFUUIDRef theUUID = CFUUIDCreate(NULL);
   CFUUIDBytes b = CFUUIDGetUUIDBytes(theUUID);
-  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+  snprintf(uuidBuffer, 36+1, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
           b.byte0, b.byte1, b.byte2, b.byte3, b.byte4, b.byte5, b.byte6, b.byte7,
           b.byte8, b.byte9, b.byte10, b.byte11, b.byte12, b.byte13, b.byte14, b.byte15);
   CFRelease(theUUID);

@@ -3157,7 +3157,8 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
     for (visLine=0; visLine < mNVisibleLines; visLine++) {
       lineStart = mLineStarts[visLine];
       if (lineStart != -1 && (lineStart==0 || buffer()->char_at(lineStart-1)=='\n')) {
-        sprintf(lineNumString, linenumber_format(), line);
+        snprintf(lineNumString, sizeof(lineNumString),
+                 linenumber_format(), line);
         int xx = x() + xoff + 3,
             yy = Y,
             ww = mLineNumWidth - (3*2),

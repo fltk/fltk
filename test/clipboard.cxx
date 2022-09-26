@@ -95,7 +95,7 @@ public:
       if (!cl_img)
         return 1;
       char title[300];
-      sprintf(title, "%dx%d", cl_img->w(), cl_img->h()); // display the image original size
+      snprintf(title, 300, "%dx%d", cl_img->w(), cl_img->h()); // display the image original size
 
       // optional: display extra technical info about clipboard content
 
@@ -105,20 +105,20 @@ public:
       char *p = title + strlen(title);
       int format = EnumClipboardFormats(0);
       if (format && format < CF_MAX) {
-        sprintf(p, " %d", format);
+        snprintf(p, sizeof(title) - strlen(title), " %d", format);
         p += strlen(p);
       }
       while (format) {
         format = EnumClipboardFormats(format);
         if (format && format < CF_MAX) {
-          sprintf(p, " %d", format);
+          snprintf(p, sizeof(title) - strlen(title), " %d", format);
           p += strlen(p);
         }
       }
       HANDLE h;
       if ((h = GetClipboardData(CF_DIB))) {
         LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
-        sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d",
+        snprintf(p, sizeof(title) - strlen(title), " biBitCount=%d biCompression=%d biClrUsed=%d",
                 lpBI->bmiHeader.biBitCount,
                 (int)lpBI->bmiHeader.biCompression,
                 (int)lpBI->bmiHeader.biClrUsed);

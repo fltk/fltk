@@ -100,7 +100,7 @@ static const Fl_Menu_Item mode_menu[] = {
 #ifndef FL_DOXYGEN
 int Flcc_Value_Input::format(char* buf) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
-  if (c->mode() == M_HEX) return sprintf(buf,"0x%02X", int(value()));
+  if (c->mode() == M_HEX) return snprintf(buf, 5,"0x%02X", int(value()));
   else return Fl_Valuator::format(buf);
 }
 #endif // !FL_DOXYGEN
@@ -465,7 +465,7 @@ void Fl_Color_Chooser::mode(int newMode)
 static int copy_rgb(double r, double g, double b) {
   char buf[8];
   int len;
-  len = sprintf(buf, "%02X%02X%02X", int(r * 255 + .5), int(g * 255 + .5), int(b * 255 + .5));
+  len = snprintf(buf, 8, "%02X%02X%02X", int(r * 255 + .5), int(g * 255 + .5), int(b * 255 + .5));
   Fl::copy(buf, len, 1);
   // printf("copied '%s' to clipboard\n", buf); // Debug
   return 1;

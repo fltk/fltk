@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
   //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
     char buf[100];
-    sprintf(buf,"item %d",i);
+    snprintf(buf, 100,"item %d",i);
     hugemenu[i].text = fl_strdup(buf);
   }
   Fl_Double_Window window(WIDTH,400+TERMINAL_HEIGHT);

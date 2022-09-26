@@ -271,7 +271,7 @@ void Fl_Native_File_Chooser_FLTK_Driver::parse_filter() {
         if ( wildcard[0] ) {
           // OUT: "name(wild)\tname(wild)"
           char comp[2048];
-          sprintf(comp, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
+          snprintf(comp, 2048, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
                                             name, wildcard);
           _parsedfilt = strapp(_parsedfilt, comp);
           _nfilters++;

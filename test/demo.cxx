@@ -407,17 +407,17 @@ void dobut(Fl_Widget *, long arg) {
 
   if (params[0]) {
     // we assume that we have only one argument which is a filename in 'data_path'
-    sprintf(command, "open '%s/%s%s' --args '%s/%s'", path, cmdbuf, suffix, data_path, params);
+    snprintf(command, sizeof(command), "open '%s/%s%s' --args '%s/%s'", path, cmdbuf, suffix, data_path, params);
   } else {
-    sprintf(command, "open '%s/%s%s'", path, cmdbuf, suffix);
+    snprintf(command, sizeof(command), "open '%s/%s%s'", path, cmdbuf, suffix);
   }
 
 #else // other platforms
 
   if (params[0])
-    sprintf(command, "%s/%s%s %s", path, cmdbuf, suffix, params);
+    snprintf(command, sizeof(command), "%s/%s%s %s", path, cmdbuf, suffix, params);
   else
-    sprintf(command, "%s/%s%s", path, cmdbuf, suffix);
+    snprintf(command, sizeof(command), "%s/%s%s", path, cmdbuf, suffix);
 
 #endif
 

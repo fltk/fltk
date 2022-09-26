@@ -720,21 +720,21 @@ void BlockWindow::draw() {
   // Draw the scores and level...
   char s[255];
 
-  sprintf(s, " Score: %d", score_);
+  snprintf(s, sizeof(s), " Score: %d", score_);
   fl_color(FL_WHITE);
   fl_font(FL_HELVETICA, 14);
   fl_draw(s, 40, 0, w() - 40, 20, FL_ALIGN_LEFT);
 
-  sprintf(s, "High Score: %d ", high_score_);
+  snprintf(s, sizeof(s), "High Score: %d ", high_score_);
   fl_draw(s, 0, 0, w(), 20, FL_ALIGN_RIGHT);
 
   if (level_ > 1 || title_y_ <= 0) {
-    sprintf(s, "Level: %d ", level_);
+    snprintf(s, sizeof(s), "Level: %d ", level_);
     fl_draw(s, 0, 0, w(), 20, FL_ALIGN_CENTER);
   }
 
   if (show_fps_) {
-    sprintf(s, "FPS: %d ", frames_per_second_);
+    snprintf(s, sizeof(s), "FPS: %d ", frames_per_second_);
     fl_draw(s, 0, h() - 20, w(), 20, FL_ALIGN_LEFT);
   }
 
@@ -898,7 +898,7 @@ void BlockWindow::up_level() {
   opened_columns_ = 0;
   if (num_colors_ < 7) num_colors_ ++;
   level_ ++;
-  sprintf(title_, "Level: %d", level_);
+  snprintf(title_, sizeof(title_), "Level: %d", level_);
   title_y_ = h();
 }
 

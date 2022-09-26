@@ -79,14 +79,14 @@ void Fl_Spinner::update() {
     // Fl_Valuator::format() and works well (but looks ugly)
     int c = 0;
     char temp[64], *sp = temp;
-    sprintf(temp, "%.12f", step_);
+    snprintf(temp, 64, "%.12f", step_);
     while (*sp) sp++;
     sp--;
     while (sp > temp && *sp == '0') sp--;
     while (sp > temp && (*sp >= '0' && *sp <= '9')) { sp--; c++; }
-    sprintf(s, format_, c, value_);
+    snprintf(s, sizeof(s), format_, c, value_);
   } else {
-    sprintf(s, format_, value_);
+    snprintf(s, sizeof(s), format_, value_);
   }
   input_.value(s);
 }

@@ -106,7 +106,7 @@ void timer_cb(void *) {
   // test message title assignment with a local buffer
   {                                 // local scope for buf
     char buf[40];                   // test: use local variable
-    sprintf(buf, "Message #%d", n); // fill message title
+    snprintf(buf, 40, "Message #%d", n); // fill message title
     fl_message_title(buf);          // set message title
     strcpy(buf, "** void **");      // overwrite buffer to be sure
   }                                 // buf goes out of scope here

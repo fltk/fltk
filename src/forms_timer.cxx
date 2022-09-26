@@ -49,10 +49,10 @@ void Fl_Timer::draw() {
   if (type() == FL_VALUE_TIMER && delay>0.0) {
     double d = direction_ ? total-delay : delay;
     if (d < 60.0)
-      sprintf(str, "%.1f", d);
+      snprintf(str, 32, "%.1f", d);
     else {
       tt = (int) ((d+0.05) / 60.0);
-      sprintf(str, "%d:%04.1f", tt, d - 60.0 * tt);
+      snprintf(str, 32, "%d:%04.1f", tt, d - 60.0 * tt);
     }
     fl_font(labelfont(), labelsize());
     fl_color(labelcolor());

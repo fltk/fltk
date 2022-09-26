@@ -491,7 +491,7 @@ solidifyChain(struct puzzle *puzzle)
     puzzle->backptr->solnptr = puzzle;
     puzzle = puzzle->backptr;
   }
-  sprintf(buf, "%d moves to complete!", i);
+  snprintf(buf, 256, "%d moves to complete!", i);
   glutSetWindowTitle(buf);
 }
 
@@ -763,7 +763,7 @@ solvePuzzle(void)
   }
   if (puzzles == NULL) {
     freeSolutions();
-    sprintf(buf, "I can't solve it! (%d positions examined)", i);
+    snprintf(buf, 256, "I can't solve it! (%d positions examined)", i);
     glutSetWindowTitle(buf);
     return 1;
   }

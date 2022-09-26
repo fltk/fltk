@@ -174,11 +174,11 @@ static void font_cb(Fl_Widget *, long)
       char buf[16];
       if (j < size_count && i == size_array[j])
       {
-        sprintf(buf, "@b%d", i);
+        snprintf(buf, 16, "@b%d", i);
         j++;
       }
       else
-        sprintf(buf, "%d", i);
+        snprintf(buf, 16, "%d", i);
       sizeobj->add(buf);
     }
     sizeobj->value(pickedsize);
@@ -193,7 +193,7 @@ static void font_cb(Fl_Widget *, long)
       if (size_array[i] <= pickedsize) w = i;
 
       char buf[16];
-      sprintf(buf, "@b%d", size_array[i]);
+      snprintf(buf, 16, "@b%d", size_array[i]);
       sizeobj->add(buf);
     }
     sizeobj->value(w + 1);
@@ -304,7 +304,7 @@ static void own_face_cb(Fl_Widget *, void *)
       // Show font in its own face
       // this is neat, but really slow on some systems:
       // uses each font to display its own name
-      sprintf (buffer, "@F%d@.%s", font_idx, name);
+      snprintf (buffer, sizeof(buffer), "@F%d@.%s", font_idx, name);
     }
     fontobj->add(buffer);
   }
@@ -616,7 +616,7 @@ int main(int argc, char** argv)
       i++;
     }
     buf[o] = '\0';
-    sprintf(bu, "0x%06lX", y * 16);
+    snprintf(bu, sizeof(bu), "0x%06lX", y * 16);
     Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
     b->textfont(FL_COURIER);
     b->value(fl_strdup(bu));
