@@ -530,6 +530,12 @@ void menutitle::draw() {
 
 void menuwindow::draw() {
   if (damage() != FL_DAMAGE_CHILD) {    // complete redraw
+    if ( box() != FL_FLAT_BOX && ( Fl::is_scheme( "gtk+" ) ||
+        Fl::is_scheme( "plastic") || Fl::is_scheme( "gleam" ) )) {
+      // Draw a FL_FLAT_BOX to avoid on macOS the white corners of the menus
+      fl_draw_box( FL_FLAT_BOX, 0, 0, w(), h(),
+                  button ? button->color() : color());
+    }
     fl_draw_box(box(), 0, 0, w(), h(), button ? button->color() : color());
     if (menu) {
       const Fl_Menu_Item* m; int j;
