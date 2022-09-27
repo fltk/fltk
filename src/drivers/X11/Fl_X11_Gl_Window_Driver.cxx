@@ -19,7 +19,6 @@
 #include <FL/platform.H>
 #include "../../Fl_Gl_Choice.H"
 #include "../../Fl_Screen_Driver.H"
-#include "../../Fl_Window_Driver.H"
 #include "Fl_X11_Gl_Window_Driver.H"
 #  include <GL/glx.h>
 #  if ! defined(GLX_VERSION_1_3)
@@ -347,7 +346,7 @@ void Fl_X11_Gl_Window_Driver::before_show(int&) {
 
 float Fl_X11_Gl_Window_Driver::pixels_per_unit()
 {
-  int ns = Fl_Window_Driver::driver(pWindow)->screen_num();
+  int ns = pWindow->screen_num();
   return Fl::screen_driver()->scale(ns);
 }
 
