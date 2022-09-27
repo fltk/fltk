@@ -30,9 +30,6 @@
 #  include "Fl_Screen_Driver.H"
 #  include <FL/glut.H>
 #  define MAXWINDOWS 32
-#  ifndef GL_CURRENT_PROGRAM
-#    define GL_CURRENT_PROGRAM 0x8B8D  // from glew.h
-#  endif
 
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
@@ -58,25 +55,7 @@ void Fl_Glut_Window::draw() {
   if (!valid()) {reshape(pixel_w(),pixel_h()); valid(1);}
   display();
   if (children()) {
-    if ((mode() & FL_OPENGL3)) {
-#ifndef __APPLE__
-      typedef void (*glUseProgram_type)(GLint);
-      static glUseProgram_type glUseProgram_f = NULL;
-      if (!glUseProgram_f) {
-        Fl_Gl_Window_Driver *dr = Fl_Gl_Window_Driver::driver(this);
-        glUseProgram_f = (glUseProgram_type)dr->GetProcAddress("glUseProgram");
-      }
-      GLint current_prog = 0;
-      glGetIntegerv(GL_CURRENT_PROGRAM, &current_prog);
-      // Switch from GL3-style to GL1-style drawing;
-      // good under Windows, X11 and Wayland; impossible under macOS.
-      glUseProgram_f(0);
-      // Draw FLTK child widgets
-      Fl_Gl_Window::draw();
-      // Switch back to GL3-style drawing
-      glUseProgram_f((GLuint)current_prog);
-#endif // ! __APPLE__
-    } else Fl_Gl_Window::draw(); // Draw FLTK child widgets
+    Fl_Gl_Window::draw(); // Draw FLTK child widgets
   }
   indraw = 0;
 }

@@ -605,36 +605,6 @@ to be created among your Fl_Gl_Window-derived classes:
 \endcode
 after the first glutCreateWindow() call.
 
-\li If the GL3-using window is intended to contain FLTK widgets laid over
-the GL3 scene (see \ref opengl_with_fltk_widgets), extra steps are necessary to make this possible in a
-cross-platform way.
-<ol><li>Create a function called, say, add_widgets(), charged of the creation
-of all FLTK widgets expected to be drawn above the GL3 scene, as follows
-\code
-void add_widgets(Fl_Gl_Window *g) {
-#ifdef __APPLE__
-  g = fl_mac_prepare_add_widgets_to_GL3_win(g);
-#endif
-  g->begin();
-  // … Create here FLTK widgets expected to be drawn above the GL3 scene …
-  g->end();
-}
-\endcode
-and call this function with the GL3-using window as argument to populate it
-with FLTK widgets.
-<li>
-Put
-\code
-#ifndef __APPLE__
-    glUseProgram(0); // Switch from GL3-style to GL1-style drawing
-    Fl_Gl_Window::draw(); // Draw FLTK child widgets.
-#endif
-\endcode
-at the end of your GL3 window's draw() function. This is not necessary if
-the GL3 window is built by GLUT, because Fl_Glut_Window::draw() does it.
-
-</ol>
-
 If GLEW is installed on the Mac OS development platform, it is possible
 to use the same code for all platforms, with one exception: put
 \code

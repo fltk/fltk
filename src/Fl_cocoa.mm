@@ -2940,6 +2940,28 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
   return context;
 }
 
+
+NSOpenGLContext *Fl_Cocoa_Window_Driver::gl1ctxt_create() {
+  FLView *view = (FLView*)[fl_xid(pWindow) contentView];
+  NSView *gl1view = [[NSView alloc] initWithFrame:[view frame]];
+  [view addSubview:gl1view];
+  [gl1view release];
+  NSOpenGLPixelFormat *gl1pixelformat =
+      Fl_Cocoa_Window_Driver::mode_to_NSOpenGLPixelFormat(
+                              FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
+  NSOpenGLContext *gl1ctxt = [[NSOpenGLContext alloc]
+                              initWithFormat:gl1pixelformat shareContext:nil];
+  [gl1pixelformat release];
+  remove_gl_context_opacity(gl1ctxt);
+  [gl1ctxt setView:gl1view];
+  return gl1ctxt;
+}
+
+
+void Fl_Cocoa_Window_Driver::gl1ctxt_resize(NSOpenGLContext *ctxt) {
+  [[ctxt view] setFrame:[[[ctxt view] superview] frame]];
+}
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_VERSION_12_0
 #  define NSOpenGLContextParameterSurfaceOpacity NSOpenGLCPSurfaceOpacity
 #endif

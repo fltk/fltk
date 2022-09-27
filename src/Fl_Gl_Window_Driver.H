@@ -25,6 +25,7 @@
 #define Fl_Gl_Window_Driver_H
 
 #include <FL/Fl_Gl_Window.H>
+#include <FL/gl.h> // for GLint
 
 class Fl_Gl_Choice;
 class Fl_Font_Descriptor;
@@ -33,6 +34,10 @@ class Fl_Font_Descriptor;
  platform-specific derived class from this class.
  */
 class Fl_Gl_Window_Driver {
+private:
+  GLint current_prog;
+  typedef void (*glUseProgram_type)(GLint);
+  static glUseProgram_type glUseProgram_f;
 protected:
   Fl_Gl_Window *pWindow;
 public:
@@ -53,7 +58,7 @@ public:
   void* overlay() {return pWindow->overlay;}
   void draw_overlay() {pWindow->draw_overlay();}
 
-  Fl_Gl_Window_Driver(Fl_Gl_Window *win) : pWindow(win) {}
+  Fl_Gl_Window_Driver(Fl_Gl_Window *win) : pWindow(win) {current_prog=0;}
   virtual ~Fl_Gl_Window_Driver() {}
   static Fl_Gl_Window_Driver *newGlWindowDriver(Fl_Gl_Window *w);
   static Fl_Gl_Window_Driver *global();
@@ -104,6 +109,8 @@ public:
   // true means the platform uses glScissor() to make sure GL subwindows
   // don't leak outside their parent window
   virtual bool need_scissor() { return false; }
+  virtual void switch_to_GL1();
+  virtual void switch_back();
 };
 
 #endif /* Fl_Gl_Window_Driver_H */

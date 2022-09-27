@@ -48,6 +48,15 @@ public:
 };
 
 
+Fl_Cocoa_Gl_Window_Driver::Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) :
+                              Fl_Gl_Window_Driver(win) {
+  gl1ctxt = NULL;
+}
+
+Fl_Cocoa_Gl_Window_Driver::~Fl_Cocoa_Gl_Window_Driver() {
+  if (gl1ctxt) Fl_Cocoa_Window_Driver::GLcontext_release(gl1ctxt);
+}
+
 Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl::screen_driver()->open_display(); // useful when called through gl_start()
@@ -188,9 +197,18 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 
+static void delayed_redraw(Fl_Gl_Window *win) {
+  win->redraw();
+}
+
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
   if (pWindow->shown()) apply_scissor();
   Fl_Cocoa_Window_Driver::GLcontext_update((NSOpenGLContext*)pWindow->context());
+  if (gl1ctxt) {
+    Fl_Cocoa_Window_Driver::gl1ctxt_resize(gl1ctxt);
+    Fl_Cocoa_Window_Driver::GLcontext_update(gl1ctxt);
+    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, pWindow);
+  }
 }
 
 void Fl_Cocoa_Gl_Window_Driver::apply_scissor() {
@@ -304,44 +322,26 @@ FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
 }
 
 
-/* macOS offers only core contexts when using GL3. This forbids to add
- FLTK widgets to a GL3-using Fl_Gl_Window because these widgets are drawn
+/* macOS offers only core contexts when using GL3. This forbids to draw
+ FLTK widgets in a GL3-using NSOpenGLContext because these widgets are drawn
  with the GL1-based Fl_OpenGL_Graphics_Driver. The solution implemented here
- is to create, with public function fl_mac_prepare_add_widgets_to_GL3_win(),
- an additional Fl_Gl_Window placed above and sized as the GL3-based window,
- to give it a non opaque, GL1-based context, and to put the FLTK widgets
- in that additional window.
+ is to create an additional NSView and an associated additional NSOpenGLContext
+ placed above and sized as the GL3-based window, to set the new NSOpenGLContext
+ non opaque and GL1-based, and to draw the FLTK widgets in the new
+ view/GL context.
  */
 
-class transparentGlWindow : public Fl_Gl_Window { // utility class
-  bool need_remove_opacity;
-public:
-  transparentGlWindow(int x, int y, int w, int h) : Fl_Gl_Window(x, y, w, h) {
-    mode(FL_RGB8 | FL_ALPHA | FL_SINGLE);
-    need_remove_opacity = true;
+void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
+  if (!gl1ctxt) {
+    gl1ctxt = Fl_Cocoa_Window_Driver::driver(pWindow)->gl1ctxt_create();
+    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, pWindow);
   }
-  void show() {
-    Fl_Gl_Window::show();
-    if (need_remove_opacity) {
-      need_remove_opacity = false;
-      Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(this);
-      d->remove_gl_context_opacity((NSOpenGLContext*)context());
-    }
-  }
-};
+  Fl_Cocoa_Window_Driver::GLcontext_makecurrent(gl1ctxt);
+}
 
-
-Fl_Gl_Window *fl_mac_prepare_add_widgets_to_GL3_win(Fl_Gl_Window *gl3win) {
-  gl3win->begin();
-  transparentGlWindow *transp = new transparentGlWindow(0, 0,
-                        gl3win->w(), gl3win->h());
-  gl3win->end();
-  if (!gl3win->resizable()) gl3win->resizable(gl3win);
-  if (gl3win->shown()) {
-    transp->show();
-    gl3win->make_current();
-  }
-  return transp;
+void Fl_Cocoa_Gl_Window_Driver::switch_back() {
+  glFlush();
+  Fl_Cocoa_Window_Driver::GLcontext_makecurrent((NSOpenGLContext*)pWindow->context());
 }
 
 

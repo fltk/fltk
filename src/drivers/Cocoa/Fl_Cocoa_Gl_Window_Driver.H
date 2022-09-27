@@ -20,10 +20,17 @@
 #include "../../Fl_Gl_Window_Driver.H"
 
 class Fl_Gl_Choice;
+#ifdef __OBJC__
+  @class NSOpenGLContext;
+#else
+  class NSOpenGLContext;
+#endif
 
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
+  NSOpenGLContext *gl1ctxt; // GL1 context in addition to GL3 context
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
-  Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
+  Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win);
+  ~Fl_Cocoa_Gl_Window_Driver();
   virtual float pixels_per_unit();
   virtual void before_show(int& need_after);
   virtual void after_show();
@@ -44,6 +51,8 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual bool need_scissor() { return true; }
   virtual void* GetProcAddress(const char *procName);
   void apply_scissor();
+  virtual void switch_to_GL1();
+  virtual void switch_back();
 };
 
 

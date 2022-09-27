@@ -28,7 +28,10 @@
 #include "Fl_Gl_Window_Driver.H"
 #include <FL/gl_draw.H>
 #include <stdlib.h>
-
+#ifndef GL_CURRENT_PROGRAM
+// from glew.h in Windows, glext.h in Unix, not used by FLTK's macOS platform
+#  define GL_CURRENT_PROGRAM 0x8B8D
+#endif
 GLContext *Fl_Gl_Window_Driver::context_list = 0;
 int Fl_Gl_Window_Driver::nContext = 0;
 static int NContext = 0;
@@ -55,6 +58,23 @@ void Fl_Gl_Window_Driver::del_context(GLContext ctx) {
     }
   }
   if (!nContext) gl_remove_displaylist_fonts();
+}
+
+Fl_Gl_Window_Driver::glUseProgram_type Fl_Gl_Window_Driver::glUseProgram_f = NULL;
+
+void Fl_Gl_Window_Driver::switch_to_GL1() {
+  if (!glUseProgram_f) {
+    glUseProgram_f = (glUseProgram_type)GetProcAddress("glUseProgram");
+  }
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_prog);
+  // Switch from GL3-style to GL1-style drawing;
+  // good under Windows, X11 and Wayland; not appropriate under macOS.
+  // suggested by https://stackoverflow.com/questions/22293870/mixing-fixed-function-pipeline-and-programmable-pipeline-in-opengl
+  if (current_prog) glUseProgram_f(0);
+}
+
+void Fl_Gl_Window_Driver::switch_back() {
+  if (current_prog) glUseProgram_f((GLuint)current_prog);
 }
 
 Fl_Gl_Choice *Fl_Gl_Window_Driver::first;

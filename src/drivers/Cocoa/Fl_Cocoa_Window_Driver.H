@@ -155,6 +155,8 @@ public:
   static void GL_cleardrawable(void); // uses Objective-c
   static void gl_start(NSOpenGLContext*); // uses Objective-c
   static void remove_gl_context_opacity(NSOpenGLContext*); // uses Objective-c
+  NSOpenGLContext *gl1ctxt_create(); // uses Objective-c
+  static void gl1ctxt_resize(NSOpenGLContext*); // uses Objective-c
 
   //icons
   virtual void icons(const Fl_RGB_Image *icons[], int count);

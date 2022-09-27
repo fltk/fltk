@@ -262,6 +262,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (is_a_resize) valid(0);
   pGlWindowDriver->resize(is_a_resize, W, H);
   Fl_Window::resize(X,Y,W,H);
+  //pGlWindowDriver->resize(is_a_resize, W, H);//essai
 }
 
 /**
@@ -343,6 +344,7 @@ void Fl_Gl_Window::draw_overlay() {}
  \see \ref opengl_with_fltk_widgets
  */
 void Fl_Gl_Window::draw_begin() {
+  if (mode() & FL_OPENGL3) pGlWindowDriver->switch_to_GL1();
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
   Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
   drv->pixels_per_unit_ = pixels_per_unit();
@@ -391,6 +393,7 @@ void Fl_Gl_Window::draw_end() {
   glPopAttrib(); // GL_ENABLE_BIT
 
   Fl_Surface_Device::pop_current();
+  if (mode() & FL_OPENGL3) pGlWindowDriver->switch_back();
 }
 
 /** Draws the Fl_Gl_Window.

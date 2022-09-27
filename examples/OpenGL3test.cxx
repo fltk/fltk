@@ -128,23 +128,17 @@ public:
       glEnableVertexAttribArray((GLuint)colourAttribute  );
       glVertexAttribPointer((GLuint)positionAttribute, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
       glVertexAttribPointer((GLuint)colourAttribute  , 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (char*)0+4*sizeof(GLfloat));
+      glUseProgram(shaderProgram);
     }
     else if ((!valid())) {
       glViewport(0, 0, pixel_w(), pixel_h());
     }
     glClearColor(0.08, 0.8, 0.8, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
     GLfloat p[]={0,0};
     glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-#ifndef __APPLE__
-    // suggested by https://stackoverflow.com/questions/22293870/mixing-fixed-function-pipeline-and-programmable-pipeline-in-opengl
-    // Switch from GL3-style to GL1-style drawing;
-    // good under Windows, X11 and Wayland; impossible under macOS.
-    glUseProgram(0);
     Fl_Gl_Window::draw(); // Draw FLTK child widgets.
-#endif
   }
   virtual int handle(int event) {
     static int first = 1;
@@ -233,9 +227,6 @@ void button_cb(Fl_Widget *, void *) {
 }
 
 void add_widgets(Fl_Gl_Window *g) {
-#ifdef __APPLE__
-  g = fl_mac_prepare_add_widgets_to_GL3_win(g);
-#endif
   Fl::set_color(FL_FREE_COLOR, 255, 0, 0, 140); // partially transparent red
   g->begin();
   // Create here widgets to go above the GL3 scene

@@ -154,9 +154,6 @@ extern FLWindow *fl_mac_xid(const Fl_Window *win);
 /** Returns the Fl_Window corresponding to the given macOS-specific window reference */
 extern Fl_Window *fl_mac_find(FLWindow *);
 class Fl_Gl_Window;
-/** Call this to make possible the addition of FLTK widgets to a GL3-using Fl_Gl_Window.
- \see \ref opengl3 */
-extern Fl_Gl_Window *fl_mac_prepare_add_widgets_to_GL3_win(Fl_Gl_Window *);
 
 /** The version number of the running Mac OS X (e.g., 100604 for 10.6.4, 101300 for 10.13).
  FLTK initializes this global variable before main() begins running. If
