@@ -2953,6 +2953,11 @@ NSOpenGLContext *Fl_Cocoa_Window_Driver::gl1ctxt_create() {
                               initWithFormat:gl1pixelformat shareContext:nil];
   [gl1pixelformat release];
   remove_gl_context_opacity(gl1ctxt);
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+    [gl1view setWantsBestResolutionOpenGLSurface:YES];
+  }
+#endif
   [gl1ctxt setView:gl1view];
   return gl1ctxt;
 }
