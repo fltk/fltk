@@ -191,8 +191,10 @@ void toggle_double(Fl_Widget *wid, void *data) {
   SimpleGL3Window *glwin = (SimpleGL3Window*)data;
   int flags = glwin->mode();
   if (doublebuff) flags |= FL_DOUBLE; else flags &= ~FL_DOUBLE;
-  glwin->mode(flags);
   glwin->reset();
+  glwin->hide();
+  glwin->mode(flags);
+  glwin->show();
 }
 
 
@@ -227,7 +229,7 @@ void button_cb(Fl_Widget *, void *) {
 }
 
 void add_widgets(Fl_Gl_Window *g) {
-  Fl::set_color(FL_FREE_COLOR, 255, 0, 0, 140); // partially transparent red
+  Fl::set_color(FL_FREE_COLOR, 255, 255, 255, 140); // partially transparent white
   g->begin();
   // Create here widgets to go above the GL3 scene
   Fl_Button* b = new Fl_Button( 0, 170, 60, 30, "button");

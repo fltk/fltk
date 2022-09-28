@@ -53,10 +53,6 @@ Fl_Cocoa_Gl_Window_Driver::Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) :
   gl1ctxt = NULL;
 }
 
-Fl_Cocoa_Gl_Window_Driver::~Fl_Cocoa_Gl_Window_Driver() {
-  if (gl1ctxt) Fl_Cocoa_Window_Driver::GLcontext_release(gl1ctxt);
-}
-
 Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl::screen_driver()->open_display(); // useful when called through gl_start()
@@ -331,17 +327,43 @@ FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
  view/GL context.
  */
 
+static struct win_view {
+  Fl_Gl_Window *win;
+  NSView *gl1view;
+  NSOpenGLContext *gl1ctxt;
+} win_view_struct;
+
+void Fl_Cocoa_Gl_Window_Driver::delayed_addgl1ctxt(void *d) {
+  struct win_view *data = (struct win_view *)d;
+  Fl_Cocoa_Window_Driver::driver(data->win)->gl1ctxt_add(data->gl1ctxt, data->gl1view);
+  data->win->redraw();
+}
+
 void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
   if (!gl1ctxt) {
-    gl1ctxt = Fl_Cocoa_Window_Driver::driver(pWindow)->gl1ctxt_create();
-    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, pWindow);
+    gl1ctxt = Fl_Cocoa_Window_Driver::driver(pWindow)->gl1ctxt_create(
+                &win_view_struct.gl1view);
+    win_view_struct.win = pWindow;
+    win_view_struct.gl1ctxt = gl1ctxt;
+    Fl::add_timeout(0.01,
+            Fl_Cocoa_Gl_Window_Driver::delayed_addgl1ctxt,
+            &win_view_struct);
   }
   Fl_Cocoa_Window_Driver::GLcontext_makecurrent(gl1ctxt);
+  glClearColor(0., 0., 0., 0.);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Fl_Cocoa_Gl_Window_Driver::switch_back() {
   glFlush();
   Fl_Cocoa_Window_Driver::GLcontext_makecurrent((NSOpenGLContext*)pWindow->context());
+}
+
+void Fl_Cocoa_Gl_Window_Driver::gl_hide_before(void *&) {
+  if (gl1ctxt) {
+  	Fl_Cocoa_Window_Driver::GLcontext_release(gl1ctxt);
+    gl1ctxt = 0;
+  }
 }
 
 

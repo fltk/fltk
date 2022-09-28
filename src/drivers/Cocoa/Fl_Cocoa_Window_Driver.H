@@ -36,6 +36,7 @@ class Fl_Window;
 @class FLWindow;
 @class NSOpenGLContext;
 @class NSOpenGLPixelFormat;
+@class NSView;
 #else
 class CALayer;
 class NSCursor;
@@ -43,6 +44,7 @@ class NSImage;
 class FLWindow;
 class NSOpenGLContext;
 class NSOpenGLPixelFormat;
+class NSView;
 #endif // __OBJC__
 
 /**
@@ -155,7 +157,8 @@ public:
   static void GL_cleardrawable(void); // uses Objective-c
   static void gl_start(NSOpenGLContext*); // uses Objective-c
   static void remove_gl_context_opacity(NSOpenGLContext*); // uses Objective-c
-  NSOpenGLContext *gl1ctxt_create(); // uses Objective-c
+  NSOpenGLContext *gl1ctxt_create(NSView **); // uses Objective-c
+  void gl1ctxt_add(NSOpenGLContext*, NSView*); // uses Objective-c
   static void gl1ctxt_resize(NSOpenGLContext*); // uses Objective-c
 
   //icons

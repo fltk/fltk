@@ -2941,25 +2941,29 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
 }
 
 
-NSOpenGLContext *Fl_Cocoa_Window_Driver::gl1ctxt_create() {
+NSOpenGLContext *Fl_Cocoa_Window_Driver::gl1ctxt_create(NSView **gl1view) {
   FLView *view = (FLView*)[fl_xid(pWindow) contentView];
-  NSView *gl1view = [[NSView alloc] initWithFrame:[view frame]];
-  [view addSubview:gl1view];
-  [gl1view release];
+  *gl1view = [[NSView alloc] initWithFrame:[view frame]];
   NSOpenGLPixelFormat *gl1pixelformat =
       Fl_Cocoa_Window_Driver::mode_to_NSOpenGLPixelFormat(
                               FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
   NSOpenGLContext *gl1ctxt = [[NSOpenGLContext alloc]
                               initWithFormat:gl1pixelformat shareContext:nil];
   [gl1pixelformat release];
-  remove_gl_context_opacity(gl1ctxt);
+  return gl1ctxt;
+}
+
+void Fl_Cocoa_Window_Driver::gl1ctxt_add(NSOpenGLContext *gl1ctxt, NSView *gl1view) {
+  FLView *flview = (FLView*)[fl_xid(pWindow) contentView];
+  [flview addSubview:gl1view];
+  [gl1view release];
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
   if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
     [gl1view setWantsBestResolutionOpenGLSurface:YES];
   }
 #endif
   [gl1ctxt setView:gl1view];
-  return gl1ctxt;
+  remove_gl_context_opacity(gl1ctxt);
 }
 
 
