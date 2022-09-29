@@ -202,7 +202,7 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
-GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.cxx \
+GLCPPFILES_OSX = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.mm \
 		 drivers/Cocoa/fl_macOS_gl_platform_init.cxx
 GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
 		 drivers/X11/fl_X11_gl_platform_init.cxx
@@ -427,7 +427,7 @@ CXXFLAGS += $(EXTRA_CXXFLAGS_$(BUILD))
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 OBJECTS += $(EXTRA_OBJECTS_$(BUILD))
-GLOBJECTS = $(GLCPPFILES:.cxx=.o)
+GLOBJECTS = $(GLCPPFILES:.cxx=.o) $(GLCPPFILES:.mm=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 

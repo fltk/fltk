@@ -28,7 +28,6 @@ class Fl_Gl_Choice;
 
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   NSOpenGLContext *gl1ctxt; // GL1 context in addition to GL3 context
-  static void delayed_addgl1ctxt(void *data);
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win);
   virtual float pixels_per_unit();
