@@ -91,6 +91,7 @@ FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 FL_EXPORT void gl_measure(const char*, int& x, int& y);
 FL_EXPORT void gl_texture_pile_height(int max);
 FL_EXPORT int  gl_texture_pile_height();
+FL_EXPORT void gl_texture_reset();
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 

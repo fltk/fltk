@@ -319,11 +319,6 @@ int gl_texture_fifo::already_known(const char *str, int n)
 
 static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class instance
 
-void gl_texture_reset()
-{
-  if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
-}
-
 
 // Cross-platform implementation of the texture mechanism for text rendering
 // using textures with the alpha channel only.
@@ -464,6 +459,15 @@ int gl_texture_pile_height(void)
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
   return gl_fifo->size();
 }
+
+/** To call after GL operations that may invalidate textures used to draw text in GL scenes
+ (e.g., switch between FL_DOUBLE / FL_SINGLE modes).
+ */
+void gl_texture_reset()
+{
+  if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
+}
+
 
 /**
  Changes the maximum height of the pile of pre-computed string textures

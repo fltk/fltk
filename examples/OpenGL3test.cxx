@@ -30,7 +30,7 @@
 #  endif
 #  include <GL/glew.h>
 #endif
-
+#include <FL/gl.h> // for gl_texture_reset()
 
 void add_output(const char *format, ...);
 
@@ -50,8 +50,7 @@ public:
     gl_version_major = 0;
   }
   void draw(void) {
-    if (gl_version_major < 3) return;
-    if (!shaderProgram) {
+    if (gl_version_major >= 3 && !shaderProgram) {
       GLuint  vs;
       GLuint  fs;
       int Mslv, mslv; // major and minor version numbers of the shading language
@@ -135,9 +134,11 @@ public:
     }
     glClearColor(0.08, 0.8, 0.8, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    GLfloat p[]={0,0};
-    glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    if (shaderProgram) {
+      GLfloat p[]={0,0};
+      glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    }
     Fl_Gl_Window::draw(); // Draw FLTK child widgets.
   }
   virtual int handle(int event) {
@@ -158,7 +159,12 @@ public:
       const uchar *glv = glGetString(GL_VERSION);
       add_output("GL_VERSION=%s\n", glv);
       sscanf((const char *)glv, "%d", &gl_version_major);
-      if (gl_version_major < 3) add_output("\nThis platform does not support OpenGL V3\n\n");
+      if (gl_version_major < 3) {
+        add_output("\nThis platform does not support OpenGL V3 :\n"
+                   "FLTK widgets will appear but the programmed "
+                   "rendering pipeline will not run.\n");
+        mode(mode() & !FL_OPENGL3);
+      }
       redraw();
     }
 
@@ -181,7 +187,7 @@ public:
     }
     return retval;
   }
-  void reset(void) { shaderProgram = 0; }
+  void reset(void) { shaderProgram = 0; gl_texture_reset(); }
 };
 
 

@@ -27,7 +27,6 @@
 #include <FL/Fl_Image_Surface.H>
 #include <dlfcn.h>
 
-extern void gl_texture_reset();
 
 #ifdef __OBJC__
 @class NSOpenGLPixelFormat;
