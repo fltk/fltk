@@ -550,7 +550,7 @@ and OpenGL 3.
 To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag
 when calling Fl_Gl_Window::mode(int a) or glutInitDisplayMode().
 
-<b>On the Windows, X11, and Wayland platforms</b>, FLTK creates contexts
+<b>On the Windows and Linux platforms</b>, FLTK creates contexts
 implementing the highest OpenGL version supported by the hardware.
 Such contexts may also be compatible with lower OpenGL versions.
 Access to functions from OpenGL
@@ -561,14 +561,31 @@ necessary to install the GLEW library (see below).
 <b>On the macOS platform</b>, MacOS 10.7 or above is required;
 GLEW is possible but not necessary. FLTK creates contexts for OpenGL
 versions 1 and 2 without the FL_OPENGL3
-flag and for OpenGL versions 3.2 and above with it.
+flag and for OpenGL versions 3.2 and above (<b>but not below</b>) with it.
 
-\par GLEW installation (X11, Wayland, and Windows platforms)
-GLEW is available as a package for most Linux distributions and in source
-form at http://glew.sourceforge.net/.
-For the Windows platform, a Visual Studio static library (glew32.lib) can
-be downloaded from the same web site; a MinGW-style static library (libglew32.a)
-can be built from source with the make command.
+\par GLEW installation (Linux and Windows platforms)
+FLTK needs a header file, \c GL/glew.h, and a library, \c libGLEW.* or
+equivalent, to support OpenGL 3 and above.
+<br>These can be obtained for most Linux distributions
+by installing package libglew-dev.
+<br>For the Windows platform :
+<ul>
+<li> the header and a Visual Studio static library (glew32.lib) can
+be downloaded from http://glew.sourceforge.net/ ;
+<li> a MinGW-style static library (libglew32.a)
+can be built from source (same web site) with the make command.
+Alternatively, pre-built files are available for these architectures :
+<ul><li>x86: download files
+<a href=https://github.com/McNopper/OpenGL/blob/42fa2736e2b37db1df99c2b205279855ec6f2b1d/External/x86/Windows/MinGW/include/GL/glew.h>
+glew.h</a> and
+<a href=https://github.com/McNopper/OpenGL/blob/42fa2736e2b37db1df99c2b205279855ec6f2b1d/External/x86/Windows/MinGW/lib/libglew32.a>
+libglew32.a</a>;
+<li>x86_64: install GLEW as an MSYS2 package with command :
+\code
+pacman -S mingw-w64-x86_64-glew
+\endcode
+</ul>
+</ul>
 
 \par  Source-level changes for OpenGL 3:
 \li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>,
