@@ -313,17 +313,11 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return copy;}
 
-static void delayed_redraw(Fl_Gl_Window *win) {
-  win->redraw();
-}
-
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
   if (pWindow->shown()) apply_scissor();
   [(NSOpenGLContext*)pWindow->context() update];
   if (gl1ctxt) {
-    [[gl1ctxt view] setFrame:[[[gl1ctxt view] superview] frame]];
     [gl1ctxt update];
-    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, pWindow);
   }
 }
 
@@ -474,6 +468,8 @@ void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
   if (!gl1ctxt) {
     NSView *view = [fl_xid(pWindow) contentView];
     win_view_struct.gl1view = [[NSView alloc] initWithFrame:[view frame]];
+    [win_view_struct.gl1view setAutoresizingMask:
+                                NSViewWidthSizable|NSViewHeightSizable];
     NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
                                 FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
     gl1ctxt = [[NSOpenGLContext alloc]
