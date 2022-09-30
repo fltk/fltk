@@ -1,6 +1,6 @@
 ---
 name: FLTK build or usage question
-about: Please use our FLTK discussions group (forum) fltk.general for your question!
+about: Please use our FLTK discussions group (forum) fltk.general for your question
 title: ''
 labels: ''
 assignees: ''

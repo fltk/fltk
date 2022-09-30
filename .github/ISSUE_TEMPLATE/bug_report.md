@@ -32,7 +32,7 @@ If applicable, add screenshots to help explain your problem.
 **FLTK Version**
 Please complete the following information and delete non-applicable lines:
  - Version: [e.g. 1.4.0]
- - Installed system version from: [e.g. Debian 11.4 Bullseye]
+ - Installed as package from: [e.g. Debian 11.4 Bullseye]
  - Downloaded and self-built from: [e.g. Git, Snapshot and version, or tarball/zip]
  - If from Git, branch: [e.g. master, branch-1.3]
  - If from Git, commit: [e.g. 7d58e2385452]
