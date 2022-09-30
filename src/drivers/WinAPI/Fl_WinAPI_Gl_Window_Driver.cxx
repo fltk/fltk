@@ -25,6 +25,10 @@
 #include "../GDI/Fl_Font.H"
 extern void fl_save_dc(HWND, HDC);
 
+#ifndef GL_CURRENT_PROGRAM
+#  define GL_CURRENT_PROGRAM 0x8B8D // from glew.h
+#endif
+
 // STR #3119: select pixel format with composition support
 // ... and no more than 32 color bits (8 bits/color)
 // Ref: PixelFormatDescriptor Object
@@ -365,6 +369,22 @@ void Fl_WinAPI_Gl_Window_Driver::get_list(Fl_Font_Descriptor *fd, int r) {
   HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), gl_fd->fid);
   wglUseFontBitmapsW((HDC)fl_graphics_driver->gc(), ii, 0x400, gl_fd->listbase+ii);
   SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
+}
+
+
+typedef void (WINAPI *glUseProgram_type)(GLint);
+static glUseProgram_type glUseProgram_f = NULL;
+
+void Fl_WinAPI_Gl_Window_Driver::switch_to_GL1() {
+  if (!glUseProgram_f) {
+    glUseProgram_f = (glUseProgram_type)GetProcAddress("glUseProgram");
+  }
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_prog);
+  if (current_prog) glUseProgram_f(0);
+}
+
+void Fl_WinAPI_Gl_Window_Driver::switch_back() {
+  if (current_prog) glUseProgram_f((GLuint)current_prog);
 }
 
 

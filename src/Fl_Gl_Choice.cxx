@@ -33,14 +33,7 @@
 #  define GL_CURRENT_PROGRAM 0x8B8D
 #endif
 
-// TODO: remove that from this platform-independent source file
-#ifdef _WIN32
-#  include <windows.h> // for WINAPI
-#else
-#  define WINAPI
-#endif
-
-typedef void (WINAPI *glUseProgram_type)(GLint);
+typedef void (*glUseProgram_type)(GLint);
 static glUseProgram_type glUseProgram_f = NULL;
 
 GLContext *Fl_Gl_Window_Driver::context_list = 0;

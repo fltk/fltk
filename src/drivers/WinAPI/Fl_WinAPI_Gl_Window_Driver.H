@@ -51,6 +51,8 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
   virtual void get_list(Fl_Font_Descriptor *fd, int r);
   virtual int genlistsize();
+  virtual void switch_to_GL1();
+  virtual void switch_back();
 #if HAVE_GL_OVERLAY
   virtual void gl_hide_before(void *& overlay);
   virtual int can_do_overlay();

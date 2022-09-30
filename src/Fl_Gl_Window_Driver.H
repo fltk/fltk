@@ -34,9 +34,8 @@ class Fl_Font_Descriptor;
  platform-specific derived class from this class.
  */
 class Fl_Gl_Window_Driver {
-private:
-  GLint current_prog;
 protected:
+  GLint current_prog;
   Fl_Gl_Window *pWindow;
 public:
   static GLContext cached_context;
