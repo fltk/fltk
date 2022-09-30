@@ -188,6 +188,14 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
     mac_key = NSBackspaceCharacter;
   } else if (key == FL_Delete) {
     mac_key = NSDeleteCharacter;
+  } else if (key == FL_Up) {
+    mac_key = NSUpArrowFunctionKey;
+  } else if (key == FL_Down) {
+    mac_key = NSDownArrowFunctionKey;
+  } else if (key == FL_Left) {
+    mac_key = NSLeftArrowFunctionKey;
+  } else if (key == FL_Right) {
+    mac_key = NSRightArrowFunctionKey;
   }
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
