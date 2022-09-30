@@ -36,8 +36,6 @@ class Fl_Font_Descriptor;
 class Fl_Gl_Window_Driver {
 private:
   GLint current_prog;
-  typedef void (*glUseProgram_type)(GLint);
-  static glUseProgram_type glUseProgram_f;
 protected:
   Fl_Gl_Window *pWindow;
 public:

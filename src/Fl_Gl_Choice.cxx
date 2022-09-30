@@ -32,6 +32,17 @@
 // from glew.h in Windows, glext.h in Unix, not used by FLTK's macOS platform
 #  define GL_CURRENT_PROGRAM 0x8B8D
 #endif
+
+// TODO: remove that from this platform-independent source file
+#ifdef _WIN32
+#  include <windows.h> // for WINAPI
+#else
+#  define WINAPI
+#endif
+
+typedef void (WINAPI *glUseProgram_type)(GLint);
+static glUseProgram_type glUseProgram_f = NULL;
+
 GLContext *Fl_Gl_Window_Driver::context_list = 0;
 int Fl_Gl_Window_Driver::nContext = 0;
 static int NContext = 0;
@@ -60,7 +71,6 @@ void Fl_Gl_Window_Driver::del_context(GLContext ctx) {
   if (!nContext) gl_remove_displaylist_fonts();
 }
 
-Fl_Gl_Window_Driver::glUseProgram_type Fl_Gl_Window_Driver::glUseProgram_f = NULL;
 
 void Fl_Gl_Window_Driver::switch_to_GL1() {
   if (!glUseProgram_f) {
