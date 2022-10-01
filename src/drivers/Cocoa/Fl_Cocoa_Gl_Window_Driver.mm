@@ -322,10 +322,10 @@ void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
 }
 
 void Fl_Cocoa_Gl_Window_Driver::apply_scissor() {
+  if (glIsEnabled(GL_SCISSOR_TEST)) glDisable(GL_SCISSOR_TEST);
   CGRect *extents = Fl_Cocoa_Window_Driver::driver(pWindow)->subRect();
   if (extents) {
     remove_gl_context_opacity((NSOpenGLContext*)pWindow->context());
-    glDisable(GL_SCISSOR_TEST);
     GLdouble vals[4];
     glGetDoublev(GL_COLOR_CLEAR_VALUE, vals);
     glClearColor(0., 0., 0., 0.);
