@@ -253,8 +253,9 @@ static int ctxErrorHandler( Display *, XErrorEvent * )
   return 0;
 }
 
-GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
-  (void)window; (void)layer;
+GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window,
+                                                     const Fl_Gl_Choice* g) {
+  (void)window;
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
 
@@ -302,6 +303,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
   return ctx;
 }
 
+/* This is no longer used
 GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
@@ -309,7 +311,7 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(XVisualInfo *vis) {
   if (context)
     add_context(context);
   return context;
-}
+}*/
 
 void Fl_X11_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   if (context != cached_context || w != cached_window) {

@@ -78,7 +78,7 @@ public:
   // The second argument is a glX attribute list, and is used if mode is zero.
   // This is not supported on Win32:
   virtual Fl_Gl_Choice *find(int /*mode*/, const int * /*alistp*/) {return NULL;}
-  virtual GLContext create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer = 0) {(void)layer; return 0;}
+  virtual GLContext create_gl_context(Fl_Window*, const Fl_Gl_Choice*) {return 0;}
   virtual void set_gl_context(Fl_Window*, GLContext) {}
   virtual void delete_gl_context(GLContext) {}
   virtual void make_overlay(void* &o);

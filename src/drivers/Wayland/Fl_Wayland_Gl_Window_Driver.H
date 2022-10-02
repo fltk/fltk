@@ -45,7 +45,7 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
+  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
   virtual void delete_gl_context(GLContext);
   virtual void make_overlay_current();

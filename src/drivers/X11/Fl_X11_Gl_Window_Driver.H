@@ -33,7 +33,7 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void swap_buffers();
   virtual char swap_type();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
+  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
   virtual void delete_gl_context(GLContext);
   virtual void make_overlay_current();
@@ -48,7 +48,7 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 #if !USE_XFT
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
 #endif
-  static GLContext create_gl_context(XVisualInfo* vis);
+  //static GLContext create_gl_context(XVisualInfo* vis);
 };
 
 

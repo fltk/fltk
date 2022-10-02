@@ -128,7 +128,8 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 }
 
 
-GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer)
+GLContext Fl_WinAPI_Gl_Window_Driver::do_create_gl_context(Fl_Window* window,
+                      const Fl_Gl_Choice* g, int layer)
 {
   Fl_X* i = Fl_X::i(window);
   HDC hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc;
@@ -149,6 +150,11 @@ GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const
   return context;
 }
 
+
+GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g)
+{
+  do_create_gl_context(window, g, 0);
+}
 
 void Fl_WinAPI_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
   if (context != cached_context || w != cached_window) {
@@ -208,7 +214,7 @@ void Fl_WinAPI_Gl_Window_Driver::gl_hide_before(void *& overlay) {
 void Fl_WinAPI_Gl_Window_Driver::make_overlay(void*&overlay) {
   if (overlay) return;
 
-  GLContext context = create_gl_context(pWindow, g(), 1);
+  GLContext context = do_create_gl_context(pWindow, g(), 1);
   if (!context) {overlay = pWindow; return;} // fake the overlay
 
   HDC hdc = Fl_WinAPI_Window_Driver::driver(pWindow)->private_dc;

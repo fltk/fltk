@@ -176,7 +176,8 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
 }
 
 
-GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+GLContext Fl_Wayland_Gl_Window_Driver::create_gl_context(Fl_Window* window,
+                                                         const Fl_Gl_Choice* g) {
   GLContext shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
 

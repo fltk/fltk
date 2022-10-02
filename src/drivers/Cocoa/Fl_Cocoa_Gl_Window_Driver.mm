@@ -186,7 +186,7 @@ static NSOpenGLContext *create_GLcontext_for_window(
   return context;
 }
 
-GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) {
   GLContext context, shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
   // resets the pile of string textures used to draw strings
