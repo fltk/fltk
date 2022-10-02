@@ -153,7 +153,7 @@ GLContext Fl_WinAPI_Gl_Window_Driver::do_create_gl_context(Fl_Window* window,
 
 GLContext Fl_WinAPI_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g)
 {
-  do_create_gl_context(window, g, 0);
+  return do_create_gl_context(window, g, 0);
 }
 
 void Fl_WinAPI_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) {
