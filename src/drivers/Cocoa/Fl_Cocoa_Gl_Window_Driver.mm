@@ -217,6 +217,10 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
   }
   [(NSOpenGLContext*)context release];
   del_context(context);
+  if (gl1ctxt) {
+    [gl1ctxt release];
+    gl1ctxt = 0;
+  }
 }
 
 void Fl_Cocoa_Gl_Window_Driver::make_overlay_current() {
@@ -489,14 +493,6 @@ void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
 void Fl_Cocoa_Gl_Window_Driver::switch_back() {
   glFlush();
   [(NSOpenGLContext*)pWindow->context() makeCurrentContext];
-}
-
-
-void Fl_Cocoa_Gl_Window_Driver::gl_hide_before(void *&) {
-  if (gl1ctxt) {
-    [gl1ctxt release];
-    gl1ctxt = 0;
-  }
 }
 
 

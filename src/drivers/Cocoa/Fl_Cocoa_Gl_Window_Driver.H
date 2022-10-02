@@ -52,7 +52,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void apply_scissor();
   virtual void switch_to_GL1();
   virtual void switch_back();
-  virtual void gl_hide_before(void *&);
 };
 
 
