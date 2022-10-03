@@ -505,9 +505,8 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
   NSRange selectedRange;
-@public
-  BOOL is_opaque;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
+@public
   CGContextRef aux_bitmap; // all drawing to view goes there and is finally copied to the CALayer
 #endif
 }
@@ -688,11 +687,9 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     FLView *view = (FLView*)[xid contentView];
     if (CGRectEqualToRect(srect, full)) {
       r = NULL;
-      view->is_opaque = (w->shape() == NULL);
     } else {
       r = new CGRect(srect);
       if (r->size.width == 0 && r->size.height == 0) r->origin.x = r->origin.y = 0;
-      view->is_opaque = NO;
     }
     d->subRect(r);
     w->redraw();
@@ -2203,9 +2200,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  */
 
 @implementation FLView
-- (BOOL)isOpaque {
-  return is_opaque;
-}
 - (BOOL)did_view_resolution_change {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
@@ -3001,7 +2995,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   [cw setContentView:myview];
   [myview release];
   [cw setLevel:winlevel];
-  myview->is_opaque = (w->shape() == NULL);
 
   q_set_window_title(cw, w->label(), w->iconlabel());
   NSImage *icon = icon_image; // is a window or default icon present?
