@@ -16,6 +16,9 @@
 
 set (DOCS)
 set (GENERATE_DOCS FALSE)
+set (GIT_REVISION "")
+set (YEAR "")
+set (CURRENT_DATE "")
 
 if (OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
   set (GENERATE_DOCS TRUE)
@@ -44,24 +47,33 @@ if (GENERATE_DOCS)
     OUTPUT_VARIABLE CURRENT_DATE
   )
 
+  # find git revision
+
+  # FIXME: This must also work with tarballs where git is not available.
+  #        For now we just ignore errors and set GIT_REVISION = "unkown".
+  #        In the future tarball/zip generation should create a file
+  #        that contains the git revision.
+
   execute_process (COMMAND
     git --git-dir=${CMAKE_SOURCE_DIR}/.git rev-parse --short=10 HEAD
     OUTPUT_VARIABLE GIT_REVISION
+    ERROR_QUIET
   )
+  # strip trailing newline from git revision
+  string (REPLACE "\n" "" GIT_REVISION "${GIT_REVISION}")
+  # set to "'unkown'" if git is not available
+  if (GIT_REVISION STREQUAL "")
+    set (GIT_REVISION "'unkown'")
+  endif()
 
-  # strip trailing newline
-  string (REPLACE "\n" "" GIT_REVISION ${GIT_REVISION})
+  # find doxygen version
 
-  execute_process (COMMAND doxygen --version
-    OUTPUT_VARIABLE DOXYGEN_VERSION_SHORT
-  )
-
-  # strip trailing git revision if doxygen was built from source
-  string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION_SHORT})
-
-  ## fl_debug_var (GIT_REVISION)
-  ## fl_debug_var (DOXYGEN_EXECUTABLE)
-  ## fl_debug_var (DOXYGEN_VERSION_SHORT)
+  if (DOXYGEN_FOUND)
+    # strip trailing git revision if doxygen was built from source
+    string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION})
+    # strip trailing newline
+    string (REPLACE "\n" "" DOXYGEN_VERSION_SHORT "${DOXYGEN_VERSION_SHORT}")
+  endif (DOXYGEN_FOUND)
 
   # configure copyright.dox (includes current year)
   configure_file (
@@ -76,6 +88,14 @@ if (GENERATE_DOCS)
     ${CMAKE_CURRENT_BINARY_DIR}/generated.dox
     @ONLY
   )
+
+  if (0) # debug
+    fl_debug_var (GIT_REVISION)
+    fl_debug_var (DOXYGEN_FOUND)
+    fl_debug_var (DOXYGEN_EXECUTABLE)
+    fl_debug_var (DOXYGEN_VERSION)
+    fl_debug_var (DOXYGEN_VERSION_SHORT)
+  endif ()
 
 endif (GENERATE_DOCS)
 
