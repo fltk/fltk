@@ -122,11 +122,22 @@ void Fl_Cairo_Graphics_Driver::rect(int x, int y, int w, int h) {
   surface_needs_commit();
 }
 
+static bool need_antialias_none(cairo_t *cairo_, int style) {
+  cairo_matrix_t matrix;
+  cairo_get_matrix(cairo_, &matrix);
+  double width = cairo_get_line_width(cairo_) * matrix.xx;
+  bool needit = (style == FL_SOLID && width < 1.5);
+  if (needit) cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_NONE);
+  return needit;
+}
+
 void Fl_Cairo_Graphics_Driver::line(int x1, int y1, int x2, int y2) {
   cairo_new_path(cairo_);
   cairo_move_to(cairo_, x1, y1);
   cairo_line_to(cairo_, x2, y2);
+  bool needit = need_antialias_none(cairo_, linestyle_);
   cairo_stroke(cairo_);
+  if (needit) cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   surface_needs_commit();
 }
 
@@ -135,7 +146,9 @@ void Fl_Cairo_Graphics_Driver::line(int x0, int y0, int x1, int y1, int x2, int 
   cairo_move_to(cairo_, x0, y0);
   cairo_line_to(cairo_, x1, y1);
   cairo_line_to(cairo_, x2, y2);
+  bool needit = need_antialias_none(cairo_, linestyle_);
   cairo_stroke(cairo_);
+  if (needit) cairo_set_antialias(cairo_, CAIRO_ANTIALIAS_DEFAULT);
   surface_needs_commit();
 }
 
@@ -477,12 +490,11 @@ void Fl_Cairo_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double
   cairo_save(cairo_);
   begin_polygon();
   cairo_translate(cairo_, x + w/2.0 -0.5 , y + h/2.0 - 0.5);
-  cairo_scale(cairo_, (w-1)/2.0 , (h-1)/2.0);
+  cairo_scale(cairo_, w/2.0 , h/2.0);
   vertex(0,0);
   arc(0.0,0.0, 1, a2, a1);
   end_polygon();
   cairo_restore(cairo_);
-  surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::end_points() {
