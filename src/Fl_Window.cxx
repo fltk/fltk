@@ -385,8 +385,10 @@ const void *Fl_Window::icon() const {
   return pWindowDriver->icon();
 }
 
-/** Sets the current icon window target dependent data.
-  \deprecated in 1.3.3
+/** Platform-specific method to set the window icon usable on Windows and X11 only.
+ See \ref osissues_x_icon for its use under X11, and \ref osissues_icon_windows under Windows.
+  \deprecated in 1.3.3 in favor of platform-independent methods Fl_Window::icon(const Fl_RGB_Image *icon)
+ and Fl_Window::icons(const Fl_RGB_Image *icons[], int count).
  */
 void Fl_Window::icon(const void * ic) {
   pWindowDriver->icon(ic);

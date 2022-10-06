@@ -390,12 +390,14 @@ before compilation.
 
 \subsection osissues_x_icon Setting the Icon of a Window
 
-FLTK currently supports setting a window's icon \b before it
-is shown using the Fl_Window::icon() method.
+FLTK recommends to set window icons using these platform-independent methods:
+Fl_Window::icon(const Fl_RGB_Image *) and Fl_Window::icons(const Fl_RGB_Image *[], int).
+See also methods setting default window icons Fl_Window::default_icon(const Fl_RGB_Image *)
+and Fl_Window::default_icons(const Fl_RGB_Image *[], int).
 
-void Fl_Window::icon(const void *)
-
-\par
+FLTK on X11 also supports, for backward compatibility, use of the deprecated method
+Fl_Window::icon(const void *) as follows :
+<br>
 Sets the icon for the window to the passed pointer. You will
 need to cast the icon \c Pixmap to a \c char* when
 calling this method. To set a monochrome icon using a bitmap compiled
@@ -411,7 +413,6 @@ Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
 window->icon((const void*)p);
 \endcode
 
-\par
 To use a multi-colored icon, the XPM format and library
 should be used as follows:
 \code
@@ -428,7 +429,6 @@ XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
 window->icon((const void *)p);
 \endcode
 
-\par
 When using the Xpm library, be sure to include it in the list
 of libraries that are used to link the application (usually "-lXpm").
 
@@ -445,6 +445,8 @@ of libraries that are used to link the application (usually "-lXpm").
 </TR>
 </TABLE>
 </CENTER>
+
+Any window icon must be set with the above methods before the window is shown.
 
 \subsection osissues_xresources X Resources
 
@@ -613,13 +615,14 @@ This matches the value of
 
 \subsection osissues_icon_windows Setting the Icon of a Window
 
-FLTK currently supports setting a window's icon *before* it
-is shown using the Fl_Window::icon() method.
+FLTK recommends to set window icons using these platform-independent methods:
+Fl_Window::icon(const Fl_RGB_Image *) and Fl_Window::icons(const Fl_RGB_Image *[], int).
+See also methods setting default window icons Fl_Window::default_icon(const Fl_RGB_Image *)
+and Fl_Window::default_icons(const Fl_RGB_Image *[], int).
 
-void Fl_Window::icon(const void *)
-
-\par
-Sets the icon for the window to the passed pointer. You will
+FLTK on Windows also supports, for backward compatibility, use of the deprecated method
+Fl_Window::icon(const void *) as follows :
+<br>Set the icon for the window to the passed pointer. You will
 need to cast the \c HICON handle to a \c char* when
 calling this method. To set the icon using an icon resource
 compiled with your application use:
@@ -627,7 +630,6 @@ compiled with your application use:
 window->icon((const void *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 \endcode
 
-\par
 You can also use the \c LoadImage() and related
 functions to load specific resolutions or create the icon from
 bitmap data.
@@ -645,6 +647,8 @@ bitmap data.
 </TR>
 </TABLE>
 </CENTER>
+
+Any window icon must be set with the above methods before the window is shown.
 
 \subsection osissues_msdos_console How to Not Get a MSDOS Console Window
 
