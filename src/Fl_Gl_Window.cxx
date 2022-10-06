@@ -344,6 +344,7 @@ void Fl_Gl_Window::draw_overlay() {}
  */
 void Fl_Gl_Window::draw_begin() {
   if (mode() & FL_OPENGL3) pGlWindowDriver->switch_to_GL1();
+  damage(FL_DAMAGE_ALL); // always redraw all GL widgets above the GL scene
   Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
   Fl_OpenGL_Graphics_Driver *drv = (Fl_OpenGL_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
   drv->pixels_per_unit_ = pixels_per_unit();

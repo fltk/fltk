@@ -163,7 +163,7 @@ public:
         add_output("\nThis platform does not support OpenGL V3 :\n"
                    "FLTK widgets will appear but the programmed "
                    "rendering pipeline will not run.\n");
-        mode(mode() & !FL_OPENGL3);
+        mode(mode() & ~FL_OPENGL3);
       }
       redraw();
     }
@@ -230,18 +230,22 @@ void add_output(const char *format, ...)
 }
 
 
-void button_cb(Fl_Widget *, void *) {
-  add_output("run button callback\n");
+void button_cb(Fl_Widget *widget, void *) {
+  add_output("run %s callback\n", widget->label());
 }
 
 void add_widgets(Fl_Gl_Window *g) {
   Fl::set_color(FL_FREE_COLOR, 255, 255, 255, 140); // partially transparent white
   g->begin();
   // Create here widgets to go above the GL3 scene
-  Fl_Button* b = new Fl_Button( 0, 170, 60, 30, "button");
+  Fl_Button* b = new Fl_Button( 0, 0, 60, 30, "button");
   b->color(FL_FREE_COLOR);
-  b->box(FL_BORDER_BOX );
+  b->box(FL_DOWN_BOX );
   b->callback(button_cb, NULL);
+  Fl_Button* b2 = new Fl_Button( 0, 170, 60, 30, "button2");
+  b2->color(FL_FREE_COLOR);
+  b2->box(FL_BORDER_BOX );
+  b2->callback(button_cb, NULL);
   g->end();
 }
 
