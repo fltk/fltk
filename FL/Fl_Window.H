@@ -351,13 +351,42 @@ public:
   void icon(const Fl_RGB_Image*);
   void icons(const Fl_RGB_Image*[], int);
 
-#if defined(_WIN32) && !defined(FL_DOXYGEN)
+#if defined(_WIN32) || defined(FL_DOXYGEN)
   typedef struct HICON__* HICON;
   // These 2 member functions break the driver model but are kept for back compatibility.
   // They are implemented in Fl_win32.cxx
+  
+  /** Sets the default window icons (Windows platform only).
+
+   Convenience function to set the default icons using Windows'
+   native HICON icon handles.
+
+   The given icons are copied. You can free the icons immediately after
+   this call.
+
+   \param[in] big_icon default large icon for all windows
+   subsequently created
+   \param[in] small_icon default small icon for all windows
+   subsequently created
+
+   \see Fl_Window::default_icon(const Fl_RGB_Image *)
+   \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+   \see Fl_Window::icon(const Fl_RGB_Image *)
+   \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+   \see Fl_Window::icons(HICON, HICON)
+   */
   static void default_icons(HICON big_icon, HICON small_icon);
+  
+  /** Sets the window icons using HICON handles (Windows platform only).
+
+   The given icons are copied. You can free the icons immediately after
+   this call.
+
+   \param[in] big_icon large window icon
+   \param[in] small_icon  small window icon
+   */
   void icons(HICON big_icon, HICON small_icon);
-#endif
+#endif // defined(_WIN32) || defined(FL_DOXYGEN)
 
   /* for legacy compatibility */
   const void* icon() const;
