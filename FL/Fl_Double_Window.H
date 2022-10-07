@@ -35,6 +35,7 @@ public:
   */
   virtual Fl_Double_Window *as_double_window() {return this; }
   void show();
+  /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
   void resize(int,int,int,int);
   void hide();

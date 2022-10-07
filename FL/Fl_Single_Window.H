@@ -32,6 +32,7 @@
 class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
   void show();
+  /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
 
    /**
@@ -45,8 +46,6 @@ public:
     position, size, and label (title) string.
   */
   Fl_Single_Window(int X, int Y, int W, int H, const char *l=0);
-
-  int make_current();
 };
 
 #endif
