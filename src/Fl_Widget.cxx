@@ -1,7 +1,7 @@
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -131,10 +131,6 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
-  if (!fl_graphics_driver) {
-    // Make sure fl_graphics_driver is initialized. Important if we are called by a static initializer.
-    Fl_Display_Device::display_device();
-  }
 }
 
 void Fl_Widget::resize(int X, int Y, int W, int H) {

@@ -35,50 +35,6 @@
 #include <stdio.h>
 
 
-Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
-#if FLTK_USE_X11
-  const char *backend = ::getenv("FLTK_BACKEND");
-  const char *xdgrt = ::getenv("XDG_RUNTIME_DIR");
-  // fprintf(stderr, "FLTK_BACKEND='%s' XDG_RUNTIME_DIR='%s'\n",
-  //         backend ? backend : "", xdgrt ? xdgrt : "");
-
-  if (backend && strcmp(backend, "x11") == 0) {
-    return new Fl_X11_System_Driver();
-  }
-
-  if (backend && strcmp(backend, "wayland") == 0) {
-    Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
-    if (!Fl_Wayland_Screen_Driver::wl_display) {
-      fprintf(stderr, "Error: no Wayland connection available, FLTK_BACKEND = '%s'\n", backend);
-      exit(1);
-    }
-    return new Fl_Wayland_System_Driver();
-  }
-
-  if (!backend) {
-    // env var XDG_RUNTIME_DIR is required for Wayland
-    if (xdgrt) {
-      // is a Wayland connection available ?
-      Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
-      if (Fl_Wayland_Screen_Driver::wl_display) { // Yes, use Wayland drivers
-        // puts("using wayland");
-        return new Fl_Wayland_System_Driver();
-      }
-    }
-    // no Wayland connection or environment variable XDG_RUNTIME_DIR not set,
-    // falling back to X11
-    return new Fl_X11_System_Driver();
-  }
-
-  fprintf(stderr, "Error: unexpected value of FLTK_BACKEND: '%s'\n", backend);
-  exit(1);
-  return NULL;
-#else
-  return new Fl_Wayland_System_Driver();
-#endif
-}
-
-
 static Fl_Fontdesc built_in_table[] = {  // Pango font names
   {"Sans"},
   {"Sans Bold"},
@@ -102,37 +58,89 @@ static Fl_Fontdesc built_in_table[] = {  // Pango font names
 FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 
 
+#if FLTK_USE_X11
+
+static bool attempt_wayland() {
+  if (Fl_Wayland_Screen_Driver::wl_display) return true;
+  static bool first = true;
+  static bool disable_wl = false;
+  if (first) { // get the value if it exists and cache it
+    void *sym = Fl_Posix_System_Driver::dlopen_or_dlsym(NULL, "fl_disable_wayland");
+    if (sym) {
+      disable_wl = *(bool *)sym;
+      // printf("fl_disable_wayland = %s\n", disable_wl ? "true" : "false");
+    }
+    first = false;
+  }
+  if (disable_wl)
+    return false;
+  const char *backend = ::getenv("FLTK_BACKEND");
+  // fprintf(stderr, "FLTK_BACKEND='%s'\n", backend ? backend : "");
+  if (backend && strcmp(backend, "x11") == 0) {
+    return false;
+  }
+
+  if (backend && strcmp(backend, "wayland") == 0) {
+    Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
+    if (!Fl_Wayland_Screen_Driver::wl_display) {
+      fprintf(stderr, "Error: no Wayland connection available, FLTK_BACKEND = '%s'\n", backend);
+      exit(1);
+    }
+    return true;
+  }
+
+  if (!backend) {
+    // env var XDG_RUNTIME_DIR is required for Wayland
+    const char *xdgrt = ::getenv("XDG_RUNTIME_DIR");
+    if (xdgrt) {
+      // is a Wayland connection available ?
+      Fl_Wayland_Screen_Driver::wl_display = wl_display_connect(NULL);
+      if (Fl_Wayland_Screen_Driver::wl_display) { // Yes, use Wayland drivers
+        // puts("using wayland");
+        return true;
+      }
+    }
+    // no Wayland connection or environment variable XDG_RUNTIME_DIR not set,
+    // falling back to X11
+    return false;
+  }
+
+  fprintf(stderr, "Error: unexpected value of FLTK_BACKEND: '%s'\n", backend);
+  exit(1);
+  return false;
+}
+
+#endif // FLTK_USE_X11
+
+
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
+#if FLTK_USE_X11
+  if (!attempt_wayland()) return new Fl_X11_System_Driver();
+#endif
+  return new Fl_Wayland_System_Driver();
+}
+
+
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
 #if FLTK_USE_X11
-  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
-  if (Fl_Wayland_Screen_Driver::wl_display) {
-    fl_graphics_driver = new Fl_Wayland_Graphics_Driver();
-  } else {
-    fl_graphics_driver = new Fl_Display_Cairo_Graphics_Driver();
-  }
-  return fl_graphics_driver;
-#else
-  return new Fl_Wayland_Graphics_Driver();
+  if (!attempt_wayland()) return new Fl_Display_Cairo_Graphics_Driver();
 #endif
+  return new Fl_Wayland_Graphics_Driver();
 }
 
 
 Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h) {
 #if FLTK_USE_X11
-  if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Copy_Surface_Driver(w, h);
-  return new Fl_Xlib_Copy_Surface_Driver(w, h);
-#else
-  return new Fl_Wayland_Copy_Surface_Driver(w, h);
+  if (!Fl_Wayland_Screen_Driver::wl_display) return new Fl_Xlib_Copy_Surface_Driver(w, h);
 #endif
+  return new Fl_Wayland_Copy_Surface_Driver(w, h);
 }
 
 
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
 #if FLTK_USE_X11
   if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
-  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
   if (Fl_Wayland_Screen_Driver::wl_display) {
-    Fl_Wayland_System_Driver::too_late_to_disable = true;
     return new Fl_Wayland_Screen_Driver();
   }
 
@@ -149,27 +157,17 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
 #if FLTK_USE_X11
-  if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
-  static bool been_here = false;
-  if (!been_here) {
-    been_here = true;
-    Fl_Wayland_System_Driver::too_late_to_disable = true;
-    Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed();
-  }
-  if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Window_Driver(w);
-  return new Fl_X11_Window_Driver(w);
-#else
-  return new Fl_Wayland_Window_Driver(w);
+  if (!attempt_wayland()) return new Fl_X11_Window_Driver(w);
 #endif
+  return new Fl_Wayland_Window_Driver(w);
 }
 
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
 #if FLTK_USE_X11
-  if (Fl_Wayland_Screen_Driver::wl_display) return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
-  return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
-#else
-  return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
+  if (!Fl_Wayland_Screen_Driver::wl_display)
+    return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
 #endif
+  return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
 }

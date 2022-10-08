@@ -61,8 +61,6 @@ extern FL_EXPORT const char* fl_local_ctrl;  ///< string pointer used in shortcu
 extern FL_EXPORT const char* fl_local_meta;  ///< string pointer used in shortcuts, you can change it to another language
 extern FL_EXPORT const char* fl_local_shift; ///< string pointer used in shortcuts, you can change it to another language
 
-extern FL_EXPORT void fl_disable_wayland();
-
 /** \defgroup  callback_functions  Callback Function Typedefs
 
   \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.

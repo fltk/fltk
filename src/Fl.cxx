@@ -2111,14 +2111,19 @@ void fl_close_display()
   Fl::screen_driver()->close_display();
 }
 
-/** Prevent the FLTK library from using its wayland backend.
- Call this early in your main(), before fl_open_display() runs, or any window is created, or the screen is accessed.
- This function has no effect on non-Wayland platforms.
+#ifdef FL_DOXYGEN
+/** Prevent the FLTK library from using its Wayland backend and forces it to use its X11 backend.
+ Put this declaration somewhere in your code outside the body of any function  :
+ \code
+ FL_EXPORT bool fl_disable_wayland = true;
+ \endcode
+ This declaration makes sure source code developed for FLTK 1.3, including X11-specific code,
+ will build and run with FLTK 1.4 and its Wayland platform with this single source code level change.
+ This declaration has no effect on non-Wayland platforms.
+ Don't put this declaration if you want the Wayland backend to be used when it's available.
  */
-void fl_disable_wayland()
-{
-  Fl::system_driver()->disable_wayland();
-}
+FL_EXPORT bool fl_disable_wayland = true;
+#endif // FL_DOXYGEN
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w);
