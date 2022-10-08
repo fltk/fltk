@@ -24,9 +24,6 @@
 #include <stdlib.h>
 
 
-bool Fl_Wayland_System_Driver::too_late_to_disable = false;
-
-
 int Fl_Wayland_System_Driver::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)
     return Fl::event_state(8<<(k-FL_Button));
@@ -91,17 +88,4 @@ void *Fl_Wayland_System_Driver::control_maximize_button(void *data) {
     }
     return NULL;
   }
-}
-
-
-void Fl_Wayland_System_Driver::disable_wayland() {
-#if FLTK_USE_X11
-  if (too_late_to_disable) {
-    fprintf(stderr, "Error: fl_disable_wayland() cannot be called "
-            "after the Wayland display was opened\n"
-            "or a Wayland window was created or the Wayland screen was accessed\n");
-    exit(1);
-  }
-  Fl_Wayland_Screen_Driver::undo_wayland_backend_if_needed("x11");
-#endif
 }

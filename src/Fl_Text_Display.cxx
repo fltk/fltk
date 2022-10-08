@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2021 by Bill Spitzak and others.
+// Copyright 2001-2022 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -486,6 +486,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
  */
 void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
+  // Make sure the display is opened.
+  Fl_Display_Device::display_device();
   // did we have scrollbars initially?
   unsigned int hscrollbarvisible = mHScrollBar->visible();
   unsigned int vscrollbarvisible = mVScrollBar->visible();

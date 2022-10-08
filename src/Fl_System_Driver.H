@@ -253,7 +253,6 @@ public:
   virtual void unlock_ring() {}
   virtual double wait(double);                             // must override
   virtual int ready() { return 0; }                        // must override
-  virtual void disable_wayland() {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
