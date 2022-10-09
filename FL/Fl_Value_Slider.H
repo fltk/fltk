@@ -1,7 +1,7 @@
 //
 // Value slider header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 /**
   The Fl_Value_Slider widget is a Fl_Slider widget
   with a box displaying the current value.
-  <P ALIGN=CENTER>\image html value_slider.png
+  \image html value_slider.png
   \image latex  value_slider.png "Fl_Value_Slider" width=4cm
 */
 class FL_EXPORT Fl_Value_Slider : public Fl_Slider {

@@ -1,7 +1,7 @@
 //
 // Dial header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,7 +32,7 @@
 /**
   The Fl_Dial widget provides a circular dial to control a
   single floating point value.
-  <P ALIGN=CENTER>\image html dial.png
+  \image html dial.png
   \image latex dial.png "Fl_Dial" width=4cm
   Use type() to set the type of the dial to:
   <UL>

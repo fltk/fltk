@@ -1,7 +1,7 @@
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -34,7 +34,7 @@
   FL_WHEN_RELEASE callback won't be called if the directory clicked
   is the same as the current one.
 
-  <P align=CENTER> \image html Fl_File_Input.png </P>
+  \image html Fl_File_Input.png
   \image latex Fl_File_Input.png "Fl_File_Input"  width=6cm
 
   \note As all Fl_Input derived objects, Fl_File_Input may call its callback

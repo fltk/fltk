@@ -1,7 +1,7 @@
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@
 
   There are probably more of these classes in FLTK than any others:
 
-  <P ALIGN=CENTER>\image html valuators.png</P>
+  \image html  valuators.png
   \image latex valuators.png "Valuators derived from Fl_Valuators" width=10cm
 
   In the above diagram each box surrounds an actual subclass.  These

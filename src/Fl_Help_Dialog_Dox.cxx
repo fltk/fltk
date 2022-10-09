@@ -1,7 +1,7 @@
 //
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,8 +23,8 @@
   The Fl_Help_Dialog class is not part of the FLTK core library, but instead
   of \em fltk_images. Use \c --use-images when compiling with \c fltk-config .
 
-  <P ALIGN=CENTER> \image html Fl_Help_Dialog.png </P>
-  \image latex  Fl_Help_Dialog.png "Fl_Help_Dialog" width=8cm
+  \image html  Fl_Help_Dialog.png </P>
+  \image latex Fl_Help_Dialog.png "Fl_Help_Dialog" width=8cm
 */
 
 /** \fn Fl_Help_Dialog::Fl_Help_Dialog()

@@ -1,7 +1,7 @@
 //
 // Counter header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
   Controls a single floating point value with button (or keyboard) arrows.
   Double arrows buttons achieve larger steps than simple arrows.
   \see Fl_Spinner for value input with vertical step arrows.
-  <P align=center>\image html counter.png</P>
+  \image html counter.png
   \image latex counter.png "Fl_Counter" width=4cm
 
   \todo Refactor the doxygen comments for Fl_Counter type() documentation.
