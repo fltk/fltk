@@ -831,10 +831,8 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
           A = *(r+3);
           f = float(A)/0xff;
         }
-        *q =  B * f;
-        *(q+1) =  G * f;
-        *(q+2) =  R * f;
-        *(q+3) =  A;
+        // this produces ARGB data in native endian
+        *(uint32_t *)q = A << 24 | (uchar)(R*f) << 16 | (uchar)(G*f) << 8 | (uchar)(B*f);
         r += rgb->d(); q += 4;
       }
     }
@@ -848,10 +846,9 @@ void Fl_Cairo_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
           A = *(r+1);
           f = float(A)/0xff;
         }
-        *(q) =  G * f;
-        *(q+1) =  G * f;
-        *(q+2) =  G * f;
-        *(q+3) =  A;
+        G = (uchar)(G * f);
+        // this produces ARGB data in native endian
+        *(uint32_t *)q = A << 24 | G << 16 | G << 8 | G;
         r += rgb->d(); q += 4;
       }
     }
