@@ -97,17 +97,10 @@ static double elapsed_time() {
 }
 
 /**
-  Insert a timer entry into the active timer queue.
+  Insert this timer entry into the active timer queue.
 
-  The base class Fl_Timeout inserts the timer as the first entry in
-  the queue of active timers. The default implementation is sufficient
-  for macOS and Windows.
-
-  Derived classes (e.g. Fl_Timeout) can override this method.
-  Currently the Posix timeout handling (Unix, Linux) does this so
-  the timer queue entries are ordered by due time.
-
-  \param[in]  t  Timer to be inserted (Fl_Timeout or derived class)
+  The timer is inserted at the required position so the timer queue
+  is always ordered by due time.
 */
 void Fl_Timeout::insert() {
   Fl_Timeout **p = (Fl_Timeout **)&first_timeout;
