@@ -898,24 +898,41 @@ cairo_pattern_t *Fl_Cairo_Graphics_Driver::bitmap_to_pattern(Fl_Bitmap *bm,
   uchar *BGRA = new uchar[stride * bm->data_h()];
   memset(BGRA, 0, stride * bm->data_h());
   for (int j = 0; j < bm->data_h(); j++) {
-    uchar *r = (uchar*)bm->array + j * w_bitmap;
-    unsigned *q = (unsigned*)(BGRA + j * stride);
-    unsigned k = 0, mask32 = 1;
-    uchar p = *r;
-    if (complement) p = ~p;
+    uchar *r = (uchar *)bm->array + j * w_bitmap;
+    uint32_t *q = (uint32_t *)(BGRA + j * stride);
+    int k = 0;
+    uint32_t mask32;
+    uchar p;
     for (int i = 0; i < bm->data_w(); i++) {
-      if (p&1) (*q) |= mask32;
-      k++;
-      if (k % 8 != 0) p >>= 1;
-      else {
-        p = *(++r);
-        if (complement) p = ~p;
+      if (k == 0) {
+#if WORDS_BIGENDIAN
+        mask32 = (uint32_t)(1 << 31);
+#else
+        mask32 = 1;
+#endif
       }
-      if (k % 32 != 0) mask32 <<= 1; else {q++; mask32 = 1;}
+      if ((k & 7) == 0) { // (k & 7) == (k % 8)
+        p = *r++;
+        if (complement)
+          p = ~p;
+      }
+      if (p & 1)
+        (*q) |= mask32;
+      k++;
+      p >>= 1;
+#if WORDS_BIGENDIAN
+      mask32 >>= 1;
+#else
+      mask32 <<= 1;
+#endif
+      if (k == 32) {
+        k = 0;
+        q++;
+      }
     }
   }
   cairo_surface_t *surf = cairo_image_surface_create_for_data(BGRA, CAIRO_FORMAT_A1, bm->data_w(), bm->data_h(), stride);
-  cairo_pattern_t *pattern =  cairo_pattern_create_for_surface(surf);
+  cairo_pattern_t *pattern = cairo_pattern_create_for_surface(surf);
   if (p_surface) *p_surface = surf;
   else cairo_surface_destroy(surf);
   return pattern;
