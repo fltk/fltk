@@ -103,7 +103,6 @@ protected:
   uchar **mask_bitmap() {return &mask;}
 public:
   Fl_PostScript_Graphics_Driver();
-  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS};
 
   class Clip {
   public:
@@ -131,7 +130,6 @@ public:
    */
   int clocale_printf(const char *format, ...);
 
-  enum SHAPE shape_;
   int linewidth_;// need for clipping, lang level 1-2
   int linestyle_;//
   unsigned char cr_,cg_,cb_;

@@ -58,7 +58,6 @@ protected:
 public:
   Fl_Cairo_Graphics_Driver();
   virtual ~Fl_Cairo_Graphics_Driver();
-  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS};
 
   class Clip {
   public:
@@ -74,7 +73,6 @@ public:
 
   void check_status(void);
 
-  enum SHAPE shape_;
   unsigned char cr_,cg_,cb_;
   char  linedash_[256];//should be enough
   void concat();  // transform ror scalable dradings...

@@ -55,6 +55,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   scale_ = 1;
   p_size = 0;
   xpoint = NULL;
+  what = NONE;
 };
 
 /** Destructor */

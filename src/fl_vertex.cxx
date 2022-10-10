@@ -90,7 +90,7 @@ void Fl_Graphics_Driver::translate(double x,double y) {
 /** see fl_begin_points() */
 void Fl_Graphics_Driver::begin_points() {
   n = 0;
-  what = POINT_;
+  what = POINTS;
 }
 
 /** see fl_begin_line() */

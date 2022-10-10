@@ -79,7 +79,7 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   angle = 0;
   left_margin = top_margin = 0;
   needs_commit_tag_ = NULL;
-  shape_ = NONE;
+  what = NONE;
 }
 
 Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
@@ -393,7 +393,7 @@ void Fl_Cairo_Graphics_Driver::begin_points() {
   concat();
   cairo_new_path(cairo_);
   gap_=1;
-  shape_=POINTS;
+  what=POINTS;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_line() {
@@ -401,7 +401,7 @@ void Fl_Cairo_Graphics_Driver::begin_line() {
   concat();
   cairo_new_path(cairo_);
   gap_=1;
-  shape_=LINE;
+  what=LINE;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_loop() {
@@ -409,7 +409,7 @@ void Fl_Cairo_Graphics_Driver::begin_loop() {
   concat();
   cairo_new_path(cairo_);
   gap_=1;
-  shape_=LOOP;
+  what=LOOP;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_polygon() {
@@ -417,11 +417,11 @@ void Fl_Cairo_Graphics_Driver::begin_polygon() {
   concat();
   cairo_new_path(cairo_);
   gap_=1;
-  shape_=POLYGON;
+  what=POLYGON;
 }
 
 void Fl_Cairo_Graphics_Driver::vertex(double x, double y) {
-  if (shape_==POINTS){
+  if (what==POINTS){
     cairo_move_to(cairo_, x, y);
     gap_=1;
     return;
@@ -437,8 +437,8 @@ void Fl_Cairo_Graphics_Driver::vertex(double x, double y) {
 
 void Fl_Cairo_Graphics_Driver::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3)
 {
-  if(shape_==NONE) return;
-  if (shape_ == POINTS) Fl_Graphics_Driver::curve(x, y, x1, y1, x2, y2, x3, y3);
+  if(what==NONE) return;
+  if (what == POINTS) Fl_Graphics_Driver::curve(x, y, x1, y1, x2, y2, x3, y3);
   else {
   if(gap_)
     cairo_move_to(cairo_, x, y);
@@ -451,7 +451,7 @@ void Fl_Cairo_Graphics_Driver::curve(double x, double y, double x1, double y1, d
 }
 
 void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
-  if (shape_ == NONE) {
+  if (what == NONE) {
     cairo_save(cairo_);
     concat();
     cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
@@ -465,7 +465,7 @@ void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
 }
 
 void Fl_Cairo_Graphics_Driver::arc(double x, double y, double r, double start, double a){
-  if (shape_ == NONE) return;
+  if (what == NONE) return;
   gap_ = 0;
   if (start > a)
     cairo_arc(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
@@ -508,7 +508,7 @@ void Fl_Cairo_Graphics_Driver::end_line() {
   reconcat();
   cairo_stroke(cairo_);
   cairo_restore(cairo_);
-  shape_ = NONE;
+  what = NONE;
   surface_needs_commit();
 }
 
@@ -518,7 +518,7 @@ void Fl_Cairo_Graphics_Driver::end_loop(){
   cairo_close_path(cairo_);
   cairo_stroke(cairo_);
   cairo_restore(cairo_);
-  shape_ = NONE;
+  what = NONE;
   surface_needs_commit();
 }
 
@@ -528,12 +528,12 @@ void Fl_Cairo_Graphics_Driver::end_polygon() {
   cairo_close_path(cairo_);
   cairo_fill(cairo_);
   cairo_restore(cairo_);
-  shape_ = NONE;
+  what = NONE;
   surface_needs_commit();
 }
 
 void Fl_Cairo_Graphics_Driver::transformed_vertex(double x, double y) {
-  if (shape_ == POINTS) {
+  if (what == POINTS) {
     cairo_move_to(cairo_, x, y);
     point(x, y);
     gap_ = 1;

@@ -166,7 +166,7 @@ protected:
   matrix m; ///< current transformation matrix
   int n; ///< For internal use by FLTK
   int gap_; ///< For internal use by FLTK
-  int what; ///< For internal use by FLTK
+  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS} what;
   int rstackptr; ///< For internal use by FLTK
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
   Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
@@ -175,7 +175,6 @@ protected:
   typedef struct { float x; float y; } XPOINT;
   XPOINT *xpoint;
 #ifndef FL_DOXYGEN
-  enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
   inline int vertex_kind() {return what;}
 #endif

@@ -149,7 +149,7 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
   clip_ = NULL;
-  shape_ = NONE;
+  what = NONE;
 }
 
 /** \brief The destructor. */
@@ -1257,7 +1257,7 @@ void Fl_PostScript_Graphics_Driver::begin_points(){
 
   fprintf(output, "BP\n");
   gap_=1;
-  shape_=POINTS;
+  what=POINTS;
 }
 
 void Fl_PostScript_Graphics_Driver::begin_line(){
@@ -1265,7 +1265,7 @@ void Fl_PostScript_Graphics_Driver::begin_line(){
   concat();
   fprintf(output, "BP\n");
   gap_=1;
-  shape_=LINE;
+  what=LINE;
 }
 
 void Fl_PostScript_Graphics_Driver::begin_loop(){
@@ -1273,7 +1273,7 @@ void Fl_PostScript_Graphics_Driver::begin_loop(){
   concat();
   fprintf(output, "BP\n");
   gap_=1;
-  shape_=LOOP;
+  what=LOOP;
 }
 
 void Fl_PostScript_Graphics_Driver::begin_polygon(){
@@ -1281,11 +1281,11 @@ void Fl_PostScript_Graphics_Driver::begin_polygon(){
   concat();
   fprintf(output, "BP\n");
   gap_=1;
-  shape_=POLYGON;
+  what=POLYGON;
 }
 
 void Fl_PostScript_Graphics_Driver::vertex(double x, double y){
-  if(shape_==POINTS){
+  if(what==POINTS){
     clocale_printf("%g %g MT\n", x , y);
     gap_=1;
     return;
@@ -1298,7 +1298,7 @@ void Fl_PostScript_Graphics_Driver::vertex(double x, double y){
 }
 
 void Fl_PostScript_Graphics_Driver::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3){
-  if(shape_==NONE) return;
+  if(what==NONE) return;
   if(gap_)
     clocale_printf("%g %g MT\n", x , y);
   else
@@ -1310,7 +1310,7 @@ void Fl_PostScript_Graphics_Driver::curve(double x, double y, double x1, double 
 
 
 void Fl_PostScript_Graphics_Driver::circle(double x, double y, double r){
-  if(shape_==NONE){
+  if(what==NONE){
     fprintf(output, "GS\n");
     concat();
     //    fprintf(output, "BP\n");
@@ -1325,7 +1325,7 @@ void Fl_PostScript_Graphics_Driver::circle(double x, double y, double r){
 }
 
 void Fl_PostScript_Graphics_Driver::arc(double x, double y, double r, double start, double a){
-  if(shape_==NONE) return;
+  if(what==NONE) return;
   gap_=0;
   if(start>a)
     clocale_printf("%g %g %g %g %g arc\n", x , y , r , -start, -a);
@@ -1370,7 +1370,7 @@ void Fl_PostScript_Graphics_Driver::end_points(){
   reconcat();
   fprintf(output, "ELP\n"); //??
   fprintf(output, "GR\n");
-  shape_=NONE;
+  what=NONE;
 }
 
 void Fl_PostScript_Graphics_Driver::end_line(){
@@ -1378,14 +1378,14 @@ void Fl_PostScript_Graphics_Driver::end_line(){
   reconcat();
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-  shape_=NONE;
+  what=NONE;
 }
 void Fl_PostScript_Graphics_Driver::end_loop(){
   gap_=1;
   reconcat();
   fprintf(output, "ECP\n");
   fprintf(output, "GR\n");
-  shape_=NONE;
+  what=NONE;
 }
 
 void Fl_PostScript_Graphics_Driver::end_polygon(){
@@ -1394,7 +1394,7 @@ void Fl_PostScript_Graphics_Driver::end_polygon(){
   reconcat();
   fprintf(output, "EFP\n");
   fprintf(output, "GR\n");
-  shape_=NONE;
+  what=NONE;
 }
 
 void Fl_PostScript_Graphics_Driver::transformed_vertex(double x, double y){
