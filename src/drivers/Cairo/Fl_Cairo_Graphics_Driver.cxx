@@ -79,6 +79,7 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   angle = 0;
   left_margin = top_margin = 0;
   needs_commit_tag_ = NULL;
+  shape_ = NONE;
 }
 
 Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
@@ -454,6 +455,7 @@ void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
     cairo_save(cairo_);
     concat();
     cairo_arc(cairo_, x, y, r, 0, 2*M_PI);
+    cairo_stroke(cairo_);
     reconcat();
     cairo_restore(cairo_);
   } else {

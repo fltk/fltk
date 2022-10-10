@@ -149,6 +149,7 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
   clip_ = NULL;
+  shape_ = NONE;
 }
 
 /** \brief The destructor. */
