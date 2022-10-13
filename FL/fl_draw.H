@@ -618,10 +618,15 @@ inline void fl_arc(double x, double y, double r, double start, double end) {
 }
 /**
   fl_circle(x,y,r) is equivalent to fl_arc(x,y,r,0,360), but may be faster.
+ \param[in] x,y,r center and radius of circle
 
-  It must be the \e only thing in the path: if you want a circle as part of
-  a complex polygon you must use fl_arc().
-  \param[in] x,y,r center and radius of circle
+ \note fl_circle() is best used as part of the \ref drawing_complex  API, that is,
+ flanked by fl_begin_XXX() and fl_end_XXX() calls where XXX can be 'loop' or 'polygon'
+ to draw, respectively a circle or a disk. Transformation functions (e.g., fl_scale(double, double))
+ can be also used for fl_circle() to draw empty of filled ellipses.
+ It must be the \e only thing in the path: if you want a circle as part of
+ a complex polygon you must use fl_arc().
+ <br>Nevertheless, fl_circle() can also be used by itself to draw circles.
 */
 inline void fl_circle(double x, double y, double r) {
   fl_graphics_driver->circle(x, y, r);
