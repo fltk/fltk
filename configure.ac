@@ -1208,21 +1208,38 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AS_IF([test x$PKGCONFIG != x], [
             dnl pkg-config is available, use it...
             dnl AC_MSG_NOTICE([--enable-pango: using pkg-config ...])
-            CXXFLAGS="$($PKGCONFIG --cflags pangoxft pangocairo) $CXXFLAGS"
-            LIBS="$($PKGCONFIG --libs pangoxft pangocairo) $LIBS"
+            CXXFLAGS="$($PKGCONFIG --cflags pangocairo) $CXXFLAGS"
+            AS_CASE([$host_os], [darwin*], [], [*], [
+              CXXFLAGS="$($PKGCONFIG --cflags pangoxft) $CXXFLAGS"
+            ])
+            LIBS="$($PKGCONFIG --libs pangocairo) $LIBS"
+            AS_CASE([$host_os], [darwin*], [
+              LIBS="/opt/homebrew/lib/libcairo.dylib $LIBS"
+            ], [*], [
+              LIBS="$($PKGCONFIG --libs pangoxft) $LIBS"
+            ])
         ], [
             dnl pkg-config is not available, issue warning and continue...
             AC_MSG_WARN([--enable-pango: please install pkg-config. Continuing anyway.])
         ])
 
         CPPFLAGS="$CXXFLAGS"
-        AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h], [
+        AS_CASE([$host_os], [darwin*],
+          [AC_CHECK_HEADERS([pango/pango.h], [
+            AC_CHECK_LIB([pango-1.0], [pango_layout_new], [
+              AC_DEFINE([USE_PANGO])
+              pango_found=yes
+              ])
+          ])
+        ],[*], [
+          AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h], [
             AC_CHECK_LIB([pango-1.0], [pango_layout_new], [
                 AC_CHECK_LIB([pangoxft-1.0], [pango_xft_render_layout], [
                     AC_DEFINE([USE_PANGO])
                     pango_found=yes
                 ])
             ])
+          ])
         ])
 
         dnl Early abort if --enable-pango was requested but Pango could not be found
