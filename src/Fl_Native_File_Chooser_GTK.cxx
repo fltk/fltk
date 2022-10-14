@@ -926,6 +926,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   // else, use GTK dialog if available at run-time
   // otherwise, use FLTK file chooser.
   platform_fnfc = NULL;
+  fl_open_display();
   if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
 #if USE_KDIALOG
     const char *desktop = getenv("XDG_CURRENT_DESKTOP");
