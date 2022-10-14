@@ -1079,6 +1079,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     LIBS="$LIBS -lX11 $X_EXTRA_LIBS"
     CFLAGS="$CFLAGS $X_CFLAGS"
     CXXFLAGS="$CXXFLAGS $X_CFLAGS"
+    AS_CASE([$host_os], [darwin*], [
+      DARWIN_LDFLAGS="$LDFLAGS"
+    ])
     LDFLAGS="$X_LIBS $LDFLAGS"
     DSOFLAGS="$X_LIBS $DSOFLAGS"
     AC_DEFINE([FLTK_USE_X11])
@@ -1212,11 +1215,12 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
             AS_CASE([$host_os], [darwin*], [], [*], [
               CXXFLAGS="$($PKGCONFIG --cflags pangoxft) $CXXFLAGS"
             ])
-            LIBS="$($PKGCONFIG --libs pangocairo) $LIBS"
             AS_CASE([$host_os], [darwin*], [
-              LIBS="/opt/homebrew/lib/libcairo.dylib $LIBS"
+              DARWIN_SAVE_LIBS=$LIBS
+              DARWIN_PANGO_LIBS="$($PKGCONFIG --libs pangocairo)"
+              LIBS="$($PKGCONFIG --libs pangocairo) $LIBS"
             ], [*], [
-              LIBS="$($PKGCONFIG --libs pangoxft) $LIBS"
+              LIBS="$($PKGCONFIG --libs pangocairo --libs pangoxft) $LIBS"
             ])
         ], [
             dnl pkg-config is not available, issue warning and continue...
@@ -1229,6 +1233,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
             AC_CHECK_LIB([pango-1.0], [pango_layout_new], [
               AC_DEFINE([USE_PANGO])
               pango_found=yes
+              LIBS=$DARWIN_SAVE_LIBS
               ])
           ])
         ],[*], [
@@ -1284,7 +1289,16 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
             ])
         ], [], [#include <X11/Xlib.h>])
     ])
-
+    
+    AS_CASE([$host_os], [darwin*], [
+      AS_IF([test x$pango_found = xyes], [
+        #place X_LIBS after homebrew's pango libs
+        LIBS="$DARWIN_PANGO_LIBS $X_LIBS $LIBS"
+        #remove X_LIBS from LDFLAGS while keeping its initial content
+        LDFLAGS="$DARWIN_LDFLAGS"
+      ])
+    ])
+    
     dnl Check for the X11/Xregion.h header file...
     AC_CHECK_HEADER([X11/Xregion.h], [
         AC_DEFINE([HAVE_X11_XREGION_H])
