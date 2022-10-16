@@ -127,10 +127,18 @@ int Fl_X11_Window_Driver::decorated_w()
 void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);
-  if (!Fl_X11_Screen_Driver::ewmh_supported())
-    pWindow->show();            // Old WMs, XMapRaised
-  else if (i)                   // New WMs use the NETWM attribute:
+  if (!Fl_X11_Screen_Driver::ewmh_supported()) {
+
+    // Save and restore the current group because 'show()' sets it to NULL.
+    // See issue #515: Fl::focus() changes Fl_Group::current() to null.
+
+    Fl_Group *cg = Fl_Group::current(); // save current group
+    pWindow->show();                    // old WMs, XMapRaised
+    Fl_Group::current(cg);              // restore current group
+  }
+  else if (i) {                         // New WMs use the NETWM attribute:
     activate_window();
+  }
 }
 
 
