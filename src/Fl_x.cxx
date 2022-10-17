@@ -1551,7 +1551,7 @@ int fl_handle(const XEvent& thisevent)
         XGetWindowProperty(fl_display, fl_dnd_source_window, fl_XdndTypeList,
                            0, 0x8000000L, False, XA_ATOM, &actual, &format,
                            &count, &remaining, &cm_buffer);
-        if (actual != XA_ATOM || format != 32 || count<4 || !cm_buffer) {
+        if (actual != XA_ATOM || format != 32 || (count<4 && count!=1) || !cm_buffer) {
           if ( cm_buffer ) { XFree(cm_buffer); cm_buffer = 0; }
           goto FAILED;
         }
