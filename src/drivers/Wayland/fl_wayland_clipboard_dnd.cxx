@@ -441,6 +441,7 @@ static void data_device_handle_leave(void *data, struct wl_data_device *data_dev
 
 static void data_device_handle_drop(void *data, struct wl_data_device *data_device) {
   if (!current_drag_offer) return;
+  Fl::handle(FL_ENTER, fl_dnd_target_window); // useful to set the belowmouse widget
   int ret = Fl::handle(FL_DND_RELEASE, fl_dnd_target_window);
 //printf("data_device_handle_drop ret=%d doing_dnd=%d\n", ret, doing_dnd);
 
