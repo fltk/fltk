@@ -242,7 +242,7 @@ void Fl_Flex::end() {
 void Fl_Flex::set_size(Fl_Widget *w, int size) {
   if (size <= 0)
     size = 0;
-  w->resize(0, 0, size, size);
+  w->size(size, size);
 
   int idx = -1;
   for (int i = 0; i < set_size_size_; i++) {
