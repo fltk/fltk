@@ -323,6 +323,22 @@ in the GUI (cmake-gui).
           to include both the build tree (first) and then the FLTK source
           tree in the compiler's header search list.
 
+     2.4.2 Visual Studio 2019 / NMake
+    --------------------------------------
+     This uses cmake to generate + build FLTK in Release mode using nmake,
+     using purely the command line (never need to open the Visual Studio IDE)
+     using Multithreaded (/MT) and optimizer level 2 (/O2):
+
+         mkdir build-nmake
+         cd build-nmake
+         cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="/MT /O2 /Ob2 /D NDEBUG" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /D NDEBUG" ..
+         nmake all
+
+     ..which results in a colorful percentage output crawl similar to what
+     we see with unix 'make'.
+                                                -erco@seriss.com
+                                                 fltk.coredev - Mar 12 2022
+
 
  2.5  Building under Windows with MinGW using Makefiles
 --------------------------------------------------------
