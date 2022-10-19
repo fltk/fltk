@@ -88,6 +88,7 @@ static void data_source_handle_send(void *data, struct wl_data_source *source, c
 }
 
 static Fl_Window *fl_dnd_target_window = 0;
+static wl_surface *fl_dnd_target_surface = 0;
 static bool doing_dnd = false; // true when DnD is in action
 static wl_surface *dnd_icon = NULL; // non null when DnD uses text as cursor
 static wl_cursor* save_cursor = NULL; // non null when DnD uses "dnd-copy" cursor
@@ -399,11 +400,17 @@ static void data_device_handle_enter(void *data, struct wl_data_device *data_dev
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
 //printf("Drag entered our surface %p(win=%p) at %dx%d\n", surface, win, wl_fixed_to_int(x), wl_fixed_to_int(y));
   if (win) {
+    fl_dnd_target_surface = surface;
     float f = Fl::screen_scale(win->screen_num());
-    fl_dnd_target_window = win;
     Fl::e_x = wl_fixed_to_int(x) / f;
-    Fl::e_x_root = Fl::e_x + fl_dnd_target_window->x();
     Fl::e_y = wl_fixed_to_int(y) / f;
+    while (win->parent()) {
+      Fl::e_x += win->x();
+      Fl::e_y += win->y();
+      win = win->window();
+    }
+    fl_dnd_target_window = win;
+    Fl::e_x_root = Fl::e_x + fl_dnd_target_window->x();
     Fl::e_y_root = Fl::e_y + fl_dnd_target_window->y();
     Fl::handle(FL_DND_ENTER, fl_dnd_target_window);
     current_drag_offer = offer;
@@ -421,9 +428,15 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
   int ret = 0;
   if (fl_dnd_target_window) {
     float f = Fl::screen_scale(fl_dnd_target_window->screen_num());
+    Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(fl_dnd_target_surface);
     Fl::e_x = wl_fixed_to_int(x) / f;
-    Fl::e_x_root = Fl::e_x + fl_dnd_target_window->x();
     Fl::e_y = wl_fixed_to_int(y) / f;
+    while (win->parent()) {
+      Fl::e_x += win->x();
+      Fl::e_y += win->y();
+      win = win->window();
+    }
+    Fl::e_x_root = Fl::e_x + fl_dnd_target_window->x();
     Fl::e_y_root = Fl::e_y + fl_dnd_target_window->y();
     ret = Fl::handle(FL_DND_DRAG, fl_dnd_target_window);
   }
