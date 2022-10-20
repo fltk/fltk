@@ -449,6 +449,7 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
 
 static void data_device_handle_leave(void *data, struct wl_data_device *data_device) {
 //printf("Drag left our surface\n");
+  Fl::handle(FL_DND_LEAVE, fl_dnd_target_window);
 }
 
 
