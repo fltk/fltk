@@ -112,29 +112,19 @@ void Fl_Timeout::insert() {
 }
 
 /**
-  Returns whether the given timeout is active.
-
-  This returns whether a timeout handler already exists in the queue
-  of active timers.
-
-  If \p data == NULL only the Fl_Timeout_Handler \p cb must match to return
-  true, otherwise \p data must also match.
-
-  \note It is a restriction that there is no way to look for a timeout whose
-    \p data is NULL (zero). Therefore using 0 (zero, NULL) as the timeout
-    \p data value is discouraged, unless you're sure that you will never
-    need to use <kbd>Fl::has_timeout(callback, (void *)0);</kbd>.
-
-  Implements Fl::has_timeout(Fl_Timeout_Handler cb, void *data)
+  Returns true if the timeout exists and has not been called yet.
 
   \param[in]  cb    Timer callback (must match)
-  \param[in]  data  Wildcard if NULL, must match otherwise
+  \param[in]  data  Callback user data (must match)
 
   \returns      whether the timer was found in the queue
   \retval   0   not found
   \retval   1   found
-*/
 
+  Implements Fl::has_timeout(Fl_Timeout_Handler cb, void *data)
+
+  \see Fl::has_timeout(Fl_Timeout_Handler cb, void *data)
+*/
 int Fl_Timeout::has_timeout(Fl_Timeout_Handler cb, void *data) {
   for (Fl_Timeout *t = first_timeout; t; t = t->next) {
     if (t->callback == cb && t->data == data)
@@ -143,11 +133,38 @@ int Fl_Timeout::has_timeout(Fl_Timeout_Handler cb, void *data) {
   return 0;
 }
 
+/**
+  Adds a one-shot timeout callback.
+
+  The callback function \p cb will be called by Fl::wait() at \p time seconds
+  after this function is called.
+
+  \param[in]  time    delta time in seconds until the timer expires
+  \param[in]  cb      callback function
+  \param[in]  data    optional user data (default: \p NULL)
+
+  Implements Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
+
+  \see Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
+*/
 void Fl_Timeout::add_timeout(double time, Fl_Timeout_Handler cb, void *data) {
   elapse_timeouts();
   Fl_Timeout *t = get(time, cb, data);
-  t->Fl_Timeout::insert();
+  t->insert();
 }
+
+/**
+  Repeats a timeout callback from the expiration of the previous timeout,
+  allowing for more accurate timing.
+
+  \param[in]  time    delta time in seconds until the timer expires
+  \param[in]  cb      callback function
+  \param[in]  data    optional user data (default: \p NULL)
+
+  Implements Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
+
+  \see Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
+*/
 
 void Fl_Timeout::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data) {
   elapse_timeouts();
@@ -162,13 +179,17 @@ void Fl_Timeout::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data) 
 }
 
 /**
-  Remove a timeout callback. It is harmless to remove a timeout
-  callback that no longer exists.
+  Remove a timeout callback.
 
-  \note This version removes all matching timeouts, not just the first one.
-    This may change in the future.
+  This method removes all matching timeouts, not just the first one.
+  This may change in the future.
+
+  \param[in]  cb    Timer callback to be removed (must match)
+  \param[in]  data  Wildcard if NULL, must match otherwise
 
   Implements Fl::remove_timeout(Fl_Timeout_Handler cb, void *data)
+
+  \see Fl::remove_timeout(Fl_Timeout_Handler cb, void *data)
 */
 void Fl_Timeout::remove_timeout(Fl_Timeout_Handler cb, void *data) {
   for (Fl_Timeout** p = &first_timeout; *p;) {

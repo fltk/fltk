@@ -90,7 +90,9 @@ typedef void (Fl_Label_Measure_F)(const Fl_Label *label, int &width, int &height
 /** Signature of some box drawing functions passed as parameters */
 typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
 
-/** Signature of some timeout callback functions passed as parameters */
+/** Signature of timeout callback functions passed as parameters.
+  Please see Fl::add_timeout() for details.
+*/
 typedef void (*Fl_Timeout_Handler)(void *data);
 
 /** Signature of some wakeup callback functions passed as parameters */
@@ -451,63 +453,16 @@ public:
   static void program_should_quit(int should_i) { program_should_quit_ = should_i; }
 
   static Fl_Widget* readqueue();
-  /**
-  Adds a one-shot timeout callback.  The function will be called by
-  Fl::wait() at <i>t</i> seconds after this function is called.
-  The optional void* argument is passed to the callback.
 
-  You can have multiple timeout callbacks. To remove a timeout
-  callback use Fl::remove_timeout().
+  //
+  // cross-platform timer support
+  //
 
-  If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
-  reschedule the subsequent timeouts.
+  static void add_timeout(double t, Fl_Timeout_Handler cb, void *data = 0);
+  static void repeat_timeout(double t, Fl_Timeout_Handler cb, void *data = 0);
+  static int  has_timeout(Fl_Timeout_Handler cb, void *data = 0);
+  static void remove_timeout(Fl_Timeout_Handler cb, void *data = 0);
 
-  The following code will print "TICK" each second on
-  stdout with a fair degree of accuracy:
-
-  \code
-#include <stdio.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-void callback(void*) {
-  printf("TICK\n");
-  Fl::repeat_timeout(1.0, callback);    // retrigger timeout
-}
-int main() {
-  Fl_Window win(100,100);
-  win.show();
-  Fl::add_timeout(1.0, callback);       // set up first timeout
-  return Fl::run();
-}
-  \endcode
-  */
-  static void add_timeout(double t, Fl_Timeout_Handler,void* = 0); // platform dependent
-  /**
-  Repeats a timeout callback from the expiration of the
-  previous timeout, allowing for more accurate timing.
-
-  You may only call this method inside a timeout callback of the same timer
-  or at least a closely related timer, otherwise the timing accuracy can't
-  be improved and the behavior is undefined.
-
-  The following code will print "TICK" each second on
-  stdout with a fair degree of accuracy:
-
-  \code
-    void callback(void*) {
-      puts("TICK");
-      Fl::repeat_timeout(1.0, callback);
-    }
-
-    int main() {
-      Fl::add_timeout(1.0, callback);
-      return Fl::run();
-    }
-  \endcode
-  */
-  static void repeat_timeout(double t, Fl_Timeout_Handler, void* = 0); // platform dependent
-  static int  has_timeout(Fl_Timeout_Handler, void* = 0);
-  static void remove_timeout(Fl_Timeout_Handler, void* = 0);
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
