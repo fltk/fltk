@@ -444,7 +444,7 @@ The linker flags are located in the "Linker Settings" tab under "Other Linker
 Options". Add the flags to `fltk-config --ldstaticflags` in front of the
 second "`".
 
-Code:Blocks can be set up to use fluid to manage modules.
+Code::Blocks can be set up to use fluid to manage modules.
 The following info is from an FLTK user posted on fltk.general 06/17/2013:
 
 """
