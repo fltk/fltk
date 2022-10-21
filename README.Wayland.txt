@@ -1,28 +1,28 @@
-README.Wayland.txt - Wayland platform support for FLTK
+README.Wayland.txt - Wayland Platform Support for FLTK
 ------------------------------------------------------
 
 
-CONTENTS
+Contents
 ========
 
- 1   INTRODUCTION
+ 1   Introduction
 
- 2   WAYLAND SUPPORT FOR FLTK
+ 2   Wayland Support for FLTK
    2.1    Configuration
    2.2    Known Limitations
 
- 3   PREPARING PLATFORM-SPECIFIC CODE FOR THE WAYLAND PLATFORM
-   3.1    Handling X11-specific source code
-   3.2    Handling X11- and Wayland-specific source code in the same app
-   3.3    Forcing an app to always use the X11 mechanism
+ 3   Preparing Platform Specific Code for the Wayland Platform
+   3.1    Handling X11 specific Source Code
+   3.2    Handling X11 and Wayland Specific Source Code in the Same App
+   3.3    Forcing an FLTK App to Always Use the X11 Backend
 
- 4   PLATFORM SPECIFIC NOTES
+ 4   Platform Specific Notes
    4.1    Debian and Derivatives (like Ubuntu)
    4.2    Fedora
    4.3    FreeBSD
 
 
-1 INTRODUCTION
+1 Introduction
 ==============
 
 Version 1.4 of the FLTK library introduces support of the public FLTK API on
@@ -35,12 +35,12 @@ The code has also been tested under FreeBSD and the sway wayland compositor.
 CJK text-input methods, as well as dead and compose keys are supported.
 
 
-2 WAYLAND SUPPORT FOR FLTK
+2 Wayland Support for FLTK
 ==========================
 
-On Linux and FreeBSD systems, and provided a Wayland compositor is available at run-time,
-it is possible to have your FLTK application do all its windowing through the
-Wayland protocol, all its graphics with Cairo or EGL, and all text-drawing with
+On Linux and FreeBSD systems, and provided a Wayland compositor is available at
+run-time, it is possible to have your FLTK application do all its windowing through
+the Wayland protocol, all its graphics with Cairo or EGL, and all text-drawing with
 Pango. If no Wayland compositor is available at run-time, FLTK falls back to
 using X11 or OpenGL for its windowing. Cairo and Pango remain used for graphics
 and text, respectively.
@@ -111,14 +111,14 @@ tested in that situation.
 so feedback on this subject would be helpful.
 
 
-3 PREPARING PLATFORM-SPECIFIC CODE FOR THE WAYLAND PLATFORM
+3 Preparing Platform Specific Code for the Wayland Platform
 ===========================================================
 
 While platform-independent source code prepared for FLTK 1.3 is expected
 to be compatible with no change with FLTK 1.4 and the Wayland platform,
 platform-specific code may require some attention.
 
-3.1 Handling X11-specific source code
+3.1 Handling X11 specific Source Code
 -------------------------------------
 
 If an FLTK 1.4 application contains X11-specific code, execution of this code
@@ -127,8 +127,8 @@ To ensure that X11-specific code gets called only when an X11 connection is acti
 check that function fl_x11_display() returns non-NULL before using any X11-specific
 function or variable.
 
-3.2 Handling X11- and Wayland-specific source code in the same app
-------------------------------------------------------------------
+3.2 Handling X11 and Wayland Specific Source Code in the Same App
+-----------------------------------------------------------------
 
 The recommended way to prepare and use platform-specific code that would contain
 both X11-specific and Wayland-specific parts is as follows :
@@ -155,16 +155,16 @@ function or variable, and that fl_wl_display() returns non-NULL before using any
 Wayland-specific function or variable. Make sure that fl_open_display() was called
 directly or indirectly before using any such symbol.
 
-3.3 Forcing an FLTK app to always use the X11 backend
+3.3 Forcing an FLTK App to Always Use the X11 Backend
 -----------------------------------------------------
 
-Alternatively, it's possible to force an FLTK app to use X11 in all
+Alternatively, it is possible to force an FLTK app to use X11 in all
 situations by calling function fl_disable_wayland() early in main(), that is,
 before fl_open_display() runs. FLTK source code and also platform-specific
 code conceived for FLTK 1.3 should run under 1.4 with that single change only.
 
 
-4 PLATFORM SPECIFIC NOTES
+4 Platform Specific Notes
 =========================
 
 The following are notes about building FLTK for the Wayland platform
@@ -201,6 +201,8 @@ This package is necessary to run FLTK apps under the Gnome-Wayland desktop:
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
 - plasma-workspace-wayland
+
+Package installation command: sudo apt-get install <package-name ...>
 
 
 4.2 Fedora
