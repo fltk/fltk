@@ -38,6 +38,14 @@ class Fl_Rect;
   this group, and to other groups. The only modifier grabbed is shift
   (for shift-tab), so that ctrl-tab, alt-up, and such are free
   for the app to use as shortcuts.
+
+  To remove a widget from the group and destroy it, in 1.3.x (and up)
+  you can simply use:
+  \code
+  delete some_widget;
+  \endcode
+  ..and this will trigger proper scheduling of the widget's removal
+  from its parent group.
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
