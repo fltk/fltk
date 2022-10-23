@@ -91,8 +91,6 @@ public:
   virtual int single_arg(const char *) { return 0; }
   // implement if the system adds unwanted program argument pair(s)
   virtual int arg_and_value(const char * /*name*/, const char * /*value*/) { return 0; }
-  // implement to process the -display argument
-  virtual void display_arg(const char *) { }
   // default implementation should be enough
   virtual int XParseGeometry(const char* string, int* x, int* y, unsigned int* width, unsigned int* height);
   static void warning(const char* format, ...);

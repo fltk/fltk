@@ -21,6 +21,7 @@
 #include <FL/Fl_Window.H>
 #include "Fl_Window_Driver.H"
 #include "Fl_System_Driver.H"
+#include "Fl_Screen_Driver.H"
 #include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
 #include <FL/fl_draw.H>
@@ -172,7 +173,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     geometry = v;
 
   } else if (fl_match(s, "display", 2)) {
-    Fl::system_driver()->display_arg(v);
+    Fl::screen_driver()->display(v);
 
   } else if (Fl::system_driver()->arg_and_value(s, v)) {
     // nothing to do

@@ -148,6 +148,7 @@ public:
   virtual int get_mouse(int &x, int &y);
   virtual void open_display_platform();
   virtual void close_display();
+  virtual void display(const char *d);
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual int has_marked_text() const;

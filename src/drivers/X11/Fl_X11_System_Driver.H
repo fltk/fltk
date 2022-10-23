@@ -28,7 +28,6 @@ public:
     key_table = NULL;
     key_table_size = 0;
   }
-  virtual void display_arg(const char *arg);
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
   // these 2 are in Fl_get_key.cxx
   virtual int event_key(int k);

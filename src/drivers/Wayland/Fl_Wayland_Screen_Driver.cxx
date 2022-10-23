@@ -1492,6 +1492,12 @@ void Fl_Wayland_Screen_Driver::reset_spot() {
 }
 
 
+void Fl_Wayland_Screen_Driver::display(const char *d)
+{
+  if (d) ::setenv("WAYLAND_DISPLAY", d, 1);
+}
+
+
 struct wl_display *fl_wl_display() {
   if (!Fl_Wayland_Screen_Driver::wl_display || !Fl_Wayland_Screen_Driver::wl_registry) return NULL;
   return Fl_Wayland_Screen_Driver::wl_display;

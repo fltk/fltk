@@ -70,10 +70,6 @@ extern "C" {
 #endif
 
 
-void Fl_X11_System_Driver::display_arg(const char *arg) {
-  Fl::display(arg);
-}
-
 int Fl_X11_System_Driver::XParseGeometry(const char* string, int* x, int* y,
                                          unsigned int* width, unsigned int* height) {
   return ::XParseGeometry(string, x, y, width, height);
