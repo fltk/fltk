@@ -38,6 +38,7 @@ extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
 #include <FL/Fl_Box.H>
+extern void position_group_cb(Fl_Group*, void*);
 extern void x_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_x_input;
 extern void y_cb(Fluid_Coord_Input*, void*);
@@ -48,8 +49,10 @@ extern void h_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_h_input;
 #include <FL/Fl_Light_Button.H>
 extern void wc_relative_cb(Fl_Light_Button*, void*);
-extern void values_group_cb(Fl_Group*, void*);
+extern void flex_size_group_cb(Fl_Group*, void*);
 #include <FL/Fl_Value_Input.H>
+extern void flex_size_cb(Fl_Value_Input*, void*);
+extern void values_group_cb(Fl_Group*, void*);
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);
 extern void max_cb(Fl_Value_Input*, void*);

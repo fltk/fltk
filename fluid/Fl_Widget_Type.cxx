@@ -2047,6 +2047,77 @@ void flex_margin_gap_cb(Fl_Value_Input* i, void* v) {
   flex_margin_cb(i, v, load_gap, update_gap);
 }
 
+void position_group_cb(Fl_Group* g, void* v) {
+  if (v == LOAD) {
+    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+      g->hide();
+    } else {
+      g->show();
+    }
+  }
+  propagate_load(g, v);
+}
+
+void flex_size_group_cb(Fl_Group* g, void* v) {
+  if (v == LOAD) {
+    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+      g->show();
+    } else {
+      g->hide();
+    }
+  }
+  propagate_load(g, v);
+}
+
+void flex_size_cb(Fl_Value_Input* i, void* v) {
+  if (v == LOAD) {
+    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+      Fl_Widget_Type* wt = (Fl_Widget_Type*)current_widget;
+      Fl_Widget* w = (Fl_Widget*)wt->o;
+      Fl_Flex_Type* ft = (Fl_Flex_Type*)current_widget->parent;
+      Fl_Flex* f = (Fl_Flex*)ft->o;
+      int set = f->set_size(w);
+      if (set) {
+        if (f->horizontal()) {
+          i->value(w->w());
+        } else {
+          i->value(w->h());
+        }
+      } else {
+        i->value(0);
+      }
+    }
+  } else {
+    int mod = 0;
+    int new_value = (int)i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && Fl_Flex_Type::parent_is_flex(o)) {
+        Fl_Widget_Type* wt = (Fl_Widget_Type*)o;
+        Fl_Widget* w = (Fl_Widget*)wt->o;
+        Fl_Flex_Type* ft = (Fl_Flex_Type*)o->parent;
+        Fl_Flex* f = (Fl_Flex*)ft->o;
+        int new_size = (int)i->value();
+        int was_set = f->set_size(w);
+        if (new_size==0) {
+          if (was_set) {
+            f->set_size(w, 0);
+            f->layout();
+            mod = 1;
+          }
+        } else {
+          int old_size = f->horizontal() ? w->w() : w->h();
+          if (old_size!=new_size || !was_set) {
+            f->set_size(w, new_size);
+            f->layout();
+            mod = 1;
+          }
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
 // subtypes:
@@ -2092,6 +2163,8 @@ void subtype_cb(Fl_Choice* i, void* v) {
           else
             q->o->type(n);
           q->redraw();
+          if (q->is_flex())
+            ((Fl_Flex*)((Fl_Flex_Type*)q)->o)->layout();
           mod = 1;
         }
       }

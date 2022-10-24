@@ -126,6 +126,7 @@ public:
   virtual void write_properties();
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
+  virtual void postprocess_read() { }
 
   // write code, these are called in order:
   virtual void write_static(); // write static stuff to .c file

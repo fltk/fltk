@@ -26,6 +26,7 @@
 
 #include "fluid.h"
 #include "Fl_Window_Type.h"
+#include "Fl_Group_Type.h"
 #include "pixmaps.h"
 #include "undo.h"
 
@@ -35,6 +36,7 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree.H>
+#include <FL/Fl_Flex.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -1057,7 +1059,8 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_window()) {
+    if (t->is_widget() && !t->is_window())
+    {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
 
       // Set font sizes...
@@ -1073,18 +1076,24 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if (!strcmp(wt->type_name(), "Fl_Menu_Bar")) {
-        // Move and resize the menubar across the top of the window...
-        wt->o->resize(0, 0, w, h);
+      if ((t->parent && t->parent->is_flex())) {
+        Fl_Flex_Type* ft = ((Fl_Flex_Type*)t->parent);
+        Fl_Flex* f = ((Fl_Flex*)ft->o);
+        f->layout();
       } else {
-        if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
-          // If this callback was called from the RMB popup menu in a window,
-          // popupx and popupy will contain the mouse coordinates at RMB event.
-          wt->o->resize(Fl_Window_Type::popupx, Fl_Window_Type::popupy, w, h);
+        if (!strcmp(wt->type_name(), "Fl_Menu_Bar")) {
+          // Move and resize the menubar across the top of the window...
+          wt->o->resize(0, 0, w, h);
         } else {
-          // If popupx is invalid, use the default position and find a good
-          // size for the widget.
-          wt->o->size(w, h);
+          if (Fl_Window_Type::popupx != 0x7FFFFFFF) {
+            // If this callback was called from the RMB popup menu in a window,
+            // popupx and popupy will contain the mouse coordinates at RMB event.
+            wt->o->resize(Fl_Window_Type::popupx, Fl_Window_Type::popupy, w, h);
+          } else {
+            // If popupx is invalid, use the default position and find a good
+            // size for the widget.
+            wt->o->size(w, h);
+          }
         }
       }
     }

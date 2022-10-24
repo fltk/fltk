@@ -242,8 +242,8 @@ void Fl_Flex::end() {
 void Fl_Flex::set_size(Fl_Widget *w, int size) {
   if (size <= 0)
     size = 0;
-  w->resize(0, 0, size, size);
 
+  // find w in our fixed size list
   int idx = -1;
   for (int i = 0; i < set_size_size_; i++) {
     if (set_size_[i] == w) {
@@ -252,25 +252,31 @@ void Fl_Flex::set_size(Fl_Widget *w, int size) {
     }
   }
 
-  // remove from array ?
+  // remove from array, if we want the widget to be flexible, but an entry was found
   if (size == 0 && idx >= 0) {
-    for (int i = idx; i < set_size_size_ - 2; i++) {
+    for (int i = idx; i < set_size_size_ - 1; i++) {
       set_size_[i] = set_size_[i+1];
     }
     set_size_size_--;
     return;
   }
 
+  // if w is meant to be flexible, we are done now
   if (size == 0)
     return;
 
-  // add to array of fixed size widgets
-  if (set_size_size_ == set_size_alloc_) {
-    set_size_alloc_ = alloc_size(set_size_alloc_);
-    set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
+  // if we have no entry yet, add to array of fixed size widgets
+  if (idx==-1) {
+    if (set_size_size_ == set_size_alloc_) {
+      set_size_alloc_ = alloc_size(set_size_alloc_);
+      set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
+    }
+    set_size_[set_size_size_] = w;
+    set_size_size_++;
   }
-  set_size_[set_size_size_] = w;
-  set_size_size_++;
+
+  // if w is meant to be fixed, set its new size
+  w->resize(0, 0, size, size);
 }
 
 /**

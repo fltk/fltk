@@ -34,6 +34,7 @@
 #include "../src/flstring.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
@@ -181,6 +182,17 @@ void Fl_Flex_Type::write_properties()
     write_string("margins {%d %d %d %d}", lm, tm, rm, bm);
   if (f->gap())
     write_string("gap %d", f->gap());
+  int nSet = 0;
+  for (int i=0; i<f->children(); i++)
+    if (f->set_size(f->child(i)))
+      nSet++;
+  if (nSet) {
+    write_string("size_set {%d", nSet);
+    for (int i=0; i<f->children(); i++)
+      if (f->set_size(f->child(i)))
+        write_string(" %d", i);
+    write_string("}");
+  }
 }
 
 void Fl_Flex_Type::read_property(const char *c)
@@ -194,9 +206,36 @@ void Fl_Flex_Type::read_property(const char *c)
     int g;
     if (sscanf(read_word(),"%d",&g))
       f->gap(g);
+  } else if (!strcmp(c,"size_set")) {
+    read_word(1); // must be '{'
+    const char *nStr = read_word(1); // number of indices in table
+    fixedSizeTableSize = atoi(nStr);
+    fixedSizeTable = new int[fixedSizeTableSize];
+    for (int i=0; i<fixedSizeTableSize; i++) {
+      const char *ix = read_word(1); // child at that index is fixed in size
+      fixedSizeTable[i] = atoi(ix);
+    }
+    read_word(1); // must be '}'
   } else {
     Fl_Group_Type::read_property(c);
   }
+}
+
+void Fl_Flex_Type::postprocess_read()
+{
+  if (fixedSizeTableSize==0) return;
+  Fl_Flex* f = (Fl_Flex*)o;
+  for (int i=0; i<fixedSizeTableSize; i++) {
+    int ix = fixedSizeTable[i];
+    if (ix>=0 && ix<f->children()) {
+      Fl_Widget *ci = f->child(ix);
+      f->set_size(ci, f->horizontal()?ci->w():ci->h());
+    }
+  }
+  fixedSizeTableSize = 0;
+  delete[] fixedSizeTable;
+  fixedSizeTable = NULL;
+  f->layout();
 }
 
 void Fl_Flex_Type::write_code2() {
@@ -208,9 +247,37 @@ void Fl_Flex_Type::write_code2() {
     write_c("%s%s->margins(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
   if (f->gap())
     write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
+  for (int i=0; i<f->children(); ++i) {
+    Fl_Widget *ci = f->child(i);
+    if (f->set_size(ci))
+      write_c("%s%s->set_size(%s->child(%d), %d);\n", indent(), var, var, i,
+              f->horizontal() ? ci->w() : ci->h());
+  }
   Fl_Group_Type::write_code2();
 }
 
+void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
+  Fl_Group_Type::add_child(a, b);
+//  ((Fl_Flex*)o)->layout();
+}
+
+void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
+  Fl_Group_Type::move_child(a, b);
+  ((Fl_Flex*)o)->layout();
+}
+
+void Fl_Flex_Type::remove_child(Fl_Type* a) {
+  if (a->is_widget())
+    ((Fl_Flex*)o)->set_size(((Fl_Widget_Type*)a)->o, 0);
+  Fl_Group_Type::remove_child(a);
+  ((Fl_Flex*)o)->layout();
+}
+
+int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
+  return (current_widget->is_widget()
+          && current_widget->parent
+          && current_widget->parent->is_flex());
+}
 
 ////////////////////////////////////////////////////////////////
 

@@ -88,7 +88,10 @@ extern Fl_Menu_Item flex_type_menu[];
 
 class Fl_Flex_Type : public Fl_Group_Type {
   Fl_Menu_Item *subtypes() {return flex_type_menu;}
+  int fixedSizeTableSize;
+  int *fixedSizeTable;
 public:
+  Fl_Flex_Type() : fixedSizeTableSize(0), fixedSizeTable(NULL) { }
   virtual const char *type_name() {return flex_type_name;}
   virtual const char *alt_type_name() {return "fltk::FlexGroup";}
   Fl_Widget_Type *_make() { return new Fl_Flex_Type(); }
@@ -98,20 +101,13 @@ public:
   void write_properties();
   void read_property(const char *);
   void copy_properties();
-  // int margins(int *left, int *top, int *right, int *bottom) const
-  // void margin(int left, int top, int right, int bottom)
-  // int gap() const
-  // void gap(int g)
-  // int horizontal() const
-  // void set_size(Fl_Widget *w, int size);
-  // int set_size(Fl_Widget *w) const // sic.
-
+  void postprocess_read();
   void write_code2();
-//  void add_child(Fl_Type*, Fl_Type*);
-//  void move_child(Fl_Type*, Fl_Type*);
-//  void remove_child(Fl_Type*);
-
+  void add_child(Fl_Type*, Fl_Type*);
+  void move_child(Fl_Type*, Fl_Type*);
+  void remove_child(Fl_Type*);
   int is_flex() const {return 1;}
+  static int parent_is_flex(Fl_Type*);
 };
 
 extern const char table_type_name[];
