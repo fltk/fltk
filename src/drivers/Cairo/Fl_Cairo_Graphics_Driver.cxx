@@ -30,6 +30,7 @@
 #include <math.h>
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
+#include <stdint.h>  // uint32_t
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
