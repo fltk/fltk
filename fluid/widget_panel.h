@@ -48,12 +48,20 @@ extern void h_cb(Fluid_Coord_Input*, void*);
 extern Fluid_Coord_Input *widget_h_input;
 #include <FL/Fl_Light_Button.H>
 extern void wc_relative_cb(Fl_Light_Button*, void*);
+extern void values_group_cb(Fl_Group*, void*);
 #include <FL/Fl_Value_Input.H>
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);
 extern void max_cb(Fl_Value_Input*, void*);
 extern void step_cb(Fl_Value_Input*, void*);
 extern void value_cb(Fl_Value_Input*, void*);
+extern void flex_margin_group_cb(Fl_Group*, void*);
+extern void flex_margin_left_cb(Fl_Value_Input*, void*);
+extern void flex_margin_top_cb(Fl_Value_Input*, void*);
+extern void flex_margin_right_cb(Fl_Value_Input*, void*);
+extern void flex_margin_bottom_cb(Fl_Value_Input*, void*);
+extern void flex_margin_gap_cb(Fl_Value_Input*, void*);
+extern void size_range_group_cb(Fl_Group*, void*);
 extern void min_w_cb(Fl_Value_Input*, void*);
 extern void min_h_cb(Fl_Value_Input*, void*);
 extern void set_min_size_cb(Fl_Button*, void*);

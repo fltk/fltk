@@ -146,6 +146,72 @@ Fl_Menu_Item pack_type_menu[] = {
 
 Fl_Pack_Type Fl_Pack_type;      // the "factory"
 
+void Fl_Pack_Type::copy_properties()
+{
+  Fl_Group_Type::copy_properties();
+  Fl_Pack *d = (Fl_Pack*)live_widget, *s =(Fl_Pack*)o;
+  d->spacing(s->spacing());
+}
+
+////////////////////////////////////////////////////////////////
+
+const char flex_type_name[] = "Fl_Flex";
+
+Fl_Menu_Item flex_type_menu[] = {
+  {"HORIZONTAL", 0, 0, (void*)Fl_Flex::HORIZONTAL},
+  {"VERTICAL", 0, 0, (void*)Fl_Flex::VERTICAL},
+  {0}};
+
+Fl_Flex_Type Fl_Flex_type;      // the "factory"
+
+void Fl_Flex_Type::copy_properties()
+{
+  Fl_Group_Type::copy_properties();
+// TODO:  Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
+// TODO:  d->spacing(s->spacing());
+}
+
+void Fl_Flex_Type::write_properties()
+{
+  Fl_Group_Type::write_properties();
+  Fl_Flex* f = (Fl_Flex*)o;
+  int lm, tm, rm, bm;
+  f->margins(&lm, &tm, &rm, &bm);
+  if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
+    write_string("margins {%d %d %d %d}", lm, tm, rm, bm);
+  if (f->gap())
+    write_string("gap %d", f->gap());
+}
+
+void Fl_Flex_Type::read_property(const char *c)
+{
+  Fl_Flex* f = (Fl_Flex*)o;
+  if (!strcmp(c,"margins")) {
+    int lm, tm, rm, bm;
+    if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
+      f->margin(lm, tm, rm, bm);
+  } else if (!strcmp(c,"gap")) {
+    int g;
+    if (sscanf(read_word(),"%d",&g))
+      f->gap(g);
+  } else {
+    Fl_Group_Type::read_property(c);
+  }
+}
+
+void Fl_Flex_Type::write_code2() {
+  const char *var = name() ? name() : "o";
+  Fl_Flex* f = (Fl_Flex*)o;
+  int lm, tm, rm, bm;
+  f->margins(&lm, &tm, &rm, &bm);
+  if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
+    write_c("%s%s->margins(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
+  if (f->gap())
+    write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
+  Fl_Group_Type::write_code2();
+}
+
+
 ////////////////////////////////////////////////////////////////
 
 static const int MAX_ROWS = 14;

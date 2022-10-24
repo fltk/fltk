@@ -938,6 +938,7 @@ extern class Fl_Window_Type Fl_Window_type;
 extern class Fl_Widget_Class_Type Fl_Widget_Class_type;
 extern class Fl_Group_Type Fl_Group_type;
 extern class Fl_Pack_Type Fl_Pack_type;
+extern class Fl_Flex_Type Fl_Flex_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
 extern class Fl_Scroll_Type Fl_Scroll_type;
 extern class Fl_Table_Type Fl_Table_type;
@@ -976,6 +977,7 @@ static Fl_Type *known_types[] = {
   (Fl_Type*)&Fl_Window_type,
   (Fl_Type*)&Fl_Group_type,
   (Fl_Type*)&Fl_Pack_type,
+  (Fl_Type*)&Fl_Flex_type,
   (Fl_Type*)&Fl_Tabs_type,
   (Fl_Type*)&Fl_Scroll_type,
   (Fl_Type*)&Fl_Tile_type,
@@ -1143,6 +1145,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Window_type},
   {0,0,cb,(void*)&Fl_Group_type},
   {0,0,cb,(void*)&Fl_Pack_type},
+  {0,0,cb,(void*)&Fl_Flex_type},
   {0,0,cb,(void*)&Fl_Tabs_type},
   {0,0,cb,(void*)&Fl_Scroll_type},
   {0,0,cb,(void*)&Fl_Tile_type},

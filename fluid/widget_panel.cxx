@@ -332,7 +332,7 @@ ive to the origin at construction time");
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Values:");
           o->labelfont(1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
+          o->callback((Fl_Callback*)values_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
             o->tooltip("The size of the slider.");
@@ -375,10 +375,62 @@ ive to the origin at construction time");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Margins:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)flex_margin_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
+          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
+            o->tooltip("Left margin in group.");
+            o->labelsize(11);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_left_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
+            o->tooltip("Top margin in group.");
+            o->labelsize(11);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_top_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
+            o->tooltip("Right margin in group.");
+            o->labelsize(11);
+            o->step(1);
+            o->value(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_right_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
+            o->tooltip("Bottom margin in group.");
+            o->labelsize(11);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_bottom_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->step(1);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Size Range:");
           o->labelfont(1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
+          o->callback((Fl_Callback*)size_range_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           o->hide();
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");

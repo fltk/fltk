@@ -23,7 +23,7 @@ comment {//
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
-decl {\#include "Shortcut_Button.h"} {selected public global
+decl {\#include "Shortcut_Button.h"} {public global
 }
 
 Function {make_widget_panel()} {
@@ -31,8 +31,8 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {500 209 420 400} type Double labelsize 11 align 80 hide resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0}
+    xywh {500 209 420 400} type Double labelsize 11 align 80 resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -296,7 +296,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         }
         Fl_Group {} {
           label {Values:}
-          callback propagate_load
+          callback values_group_cb open
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input {} {
@@ -329,8 +329,42 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           }
         }
         Fl_Group {} {
+          label {Margins:}
+          callback flex_margin_group_cb open
+          xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
+        } {
+          Fl_Value_Input {} {
+            label {Left:}
+            callback flex_margin_left_cb
+            tooltip {Left margin in group.} xywh {95 185 55 20} labelsize 11 align 5 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Top:}
+            callback flex_margin_top_cb
+            tooltip {Top margin in group.} xywh {155 185 55 20} labelsize 11 align 5 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Right:}
+            callback flex_margin_right_cb
+            tooltip {Right margin in group.} xywh {215 185 55 20} labelsize 11 align 5 step 1 value 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Bottom:}
+            callback flex_margin_bottom_cb
+            tooltip {Bottom margin in group.} xywh {275 185 55 20} labelsize 11 align 5 step 1 textsize 11
+          }
+          Fl_Value_Input {} {
+            label {Gap:}
+            callback flex_margin_gap_cb
+            tooltip {Gap between children.} xywh {335 185 55 20} labelsize 11 align 5 step 1 textsize 11
+          }
+          Fl_Box {} {
+            xywh {395 185 0 20} resizable
+          }
+        }
+        Fl_Group {} {
           label {Size Range:}
-          callback propagate_load
+          callback size_range_group_cb open selected
           xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input {} {

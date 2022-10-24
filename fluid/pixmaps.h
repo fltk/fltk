@@ -75,6 +75,7 @@ extern Fl_Pixmap *data_pixmap;
 extern Fl_Pixmap *tree_pixmap;
 extern Fl_Pixmap *table_pixmap;
 extern Fl_Pixmap *simple_terminal_pixmap;
+extern Fl_Pixmap *flex_pixmap;
 
 extern Fl_Pixmap *pixmap[];
 

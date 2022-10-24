@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Flex.H>
 #include <FL/Fl_Wizard.H>
 
 void group_cb(Fl_Widget *, void *);
@@ -80,6 +81,37 @@ public:
   Fl_Widget_Type *_make() {return new Fl_Pack_Type();}
   int pixmapID() { return 22; }
   void copy_properties();
+};
+
+extern const char flex_type_name[];
+extern Fl_Menu_Item flex_type_menu[];
+
+class Fl_Flex_Type : public Fl_Group_Type {
+  Fl_Menu_Item *subtypes() {return flex_type_menu;}
+public:
+  virtual const char *type_name() {return flex_type_name;}
+  virtual const char *alt_type_name() {return "fltk::FlexGroup";}
+  Fl_Widget_Type *_make() { return new Fl_Flex_Type(); }
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
+  int pixmapID() { return 56; }
+  void write_properties();
+  void read_property(const char *);
+  void copy_properties();
+  // int margins(int *left, int *top, int *right, int *bottom) const
+  // void margin(int left, int top, int right, int bottom)
+  // int gap() const
+  // void gap(int g)
+  // int horizontal() const
+  // void set_size(Fl_Widget *w, int size);
+  // int set_size(Fl_Widget *w) const // sic.
+
+  void write_code2();
+//  void add_child(Fl_Type*, Fl_Type*);
+//  void move_child(Fl_Type*, Fl_Type*);
+//  void remove_child(Fl_Type*);
+
+  int is_flex() const {return 1;}
 };
 
 extern const char table_type_name[];

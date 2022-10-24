@@ -77,6 +77,7 @@
 #include "pixmaps/flInputChoice.xpm"
 #include "pixmaps/flCheckMenuitem.xpm"
 #include "pixmaps/flRadioMenuitem.xpm"
+#include "pixmaps/flFlex.xpm"
 
 Fl_Pixmap *lock_pixmap;
 Fl_Pixmap *protected_pixmap;
@@ -137,8 +138,9 @@ Fl_Pixmap *simple_terminal_pixmap;
 Fl_Pixmap *input_choice_pixmap;
 Fl_Pixmap *check_menuitem_pixmap;
 Fl_Pixmap *radio_menuitem_pixmap;
+Fl_Pixmap *flex_pixmap;
 
-Fl_Pixmap *pixmap[56];
+Fl_Pixmap *pixmap[57];
 
 void loadPixmaps()
 {
@@ -211,5 +213,7 @@ void loadPixmaps()
   pixmap[53] = input_choice_pixmap = new Fl_Pixmap(flInputChoice_xpm); input_choice_pixmap->scale(16, 16);
   pixmap[54] = check_menuitem_pixmap = new Fl_Pixmap(flCheckMenuitem_xpm); check_menuitem_pixmap->scale(16, 16);
   pixmap[55] = radio_menuitem_pixmap = new Fl_Pixmap(flRadioMenuitem_xpm); radio_menuitem_pixmap->scale(16, 16);
+
+  pixmap[56] = flex_pixmap = new Fl_Pixmap(flFlex_xpm); flex_pixmap->scale(16, 16);
 }
 

@@ -1614,8 +1614,7 @@ void textcolor_cb(Fl_Button* i, void* v) {
 
 void min_w_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {i->parent()->hide(); return;}
-    i->parent()->show();
+    if (!current_widget->is_window()) return;
     i->value(((Fl_Window_Type*)current_widget)->sr_min_w);
   } else {
     int mod = 0;
@@ -1717,10 +1716,6 @@ void set_max_size_cb(Fl_Button*, void* v) {
 
 void slider_size_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_window())
-      i->parent()->hide();
-    else
-      i->parent()->show();
     if (current_widget->is_valuator()<2) {i->deactivate(); return;}
     i->activate();
     i->value(((Fl_Slider*)(current_widget->o))->slider_size());
@@ -1874,6 +1869,182 @@ void value_cb(Fl_Value_Input* i, void* v) {
     }
     if (mod) set_modflag(1);
   }
+}
+
+// The following three callbacks cooperate, showing only one of the groups of
+// widgets that use the same space in the dialog.
+
+void values_group_cb(Fl_Group* g, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_flex()) {
+      g->hide();
+    } else if (current_widget->is_window()) {
+      g->hide();
+    } else {
+      g->show();
+    }
+    propagate_load(g, v);
+  }
+}
+
+void flex_margin_group_cb(Fl_Group* g, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_flex()) {
+      g->show();
+    } else {
+      g->hide();
+    }
+    propagate_load(g, v);
+  }
+}
+
+void size_range_group_cb(Fl_Group* g, void* v) {
+  if (v == LOAD) {
+    if (current_widget->is_window()) {
+      g->show();
+    } else {
+      g->hide();
+    }
+    propagate_load(g, v);
+  }
+}
+
+
+static void flex_margin_cb(Fl_Value_Input* i, void* v,
+                           void (*load_margin)(Fl_Flex*,Fl_Value_Input*),
+                           int (*update_margin)(Fl_Flex*,int)) {
+  if (v == LOAD) {
+    if (current_widget->is_flex()) {
+      load_margin((Fl_Flex*)current_widget->o, i);
+    }
+  } else {
+    int mod = 0;
+    int new_value = (int)i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_flex()) {
+        Fl_Flex_Type* q = (Fl_Flex_Type*)o;
+        Fl_Flex* w = (Fl_Flex*)q->o;
+        if (update_margin(w, new_value)) {
+          w->layout();
+          mod = 1;
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
+static void load_left_margin(Fl_Flex *w, Fl_Value_Input* i)
+{
+  int v;
+  w->margins(&v, NULL, NULL, NULL);
+  i->value((double)v);
+}
+
+static int update_left_margin(Fl_Flex *w, int new_value)
+{
+  int l, t, r, b;
+  w->margins(&l, &t, &r, &b);
+  if (new_value!=l) {
+    w->margin(new_value, t, r, b);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void flex_margin_left_cb(Fl_Value_Input* i, void* v) {
+  flex_margin_cb(i, v, load_left_margin, update_left_margin);
+}
+
+static void load_top_margin(Fl_Flex *w, Fl_Value_Input* i)
+{
+  int v;
+  w->margins(NULL, &v, NULL, NULL);
+  i->value((double)v);
+}
+
+static int update_top_margin(Fl_Flex *w, int new_value)
+{
+  int l, t, r, b;
+  w->margins(&l, &t, &r, &b);
+  if (new_value!=t) {
+    w->margin(l, new_value, r, b);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void flex_margin_top_cb(Fl_Value_Input* i, void* v) {
+  flex_margin_cb(i, v, load_top_margin, update_top_margin);
+}
+
+static void load_right_margin(Fl_Flex *w, Fl_Value_Input* i)
+{
+  int v;
+  w->margins(NULL, NULL, &v, NULL);
+  i->value((double)v);
+}
+
+static int update_right_margin(Fl_Flex *w, int new_value)
+{
+  int l, t, r, b;
+  w->margins(&l, &t, &r, &b);
+  if (new_value!=r) {
+    w->margin(l, t, new_value, b);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void flex_margin_right_cb(Fl_Value_Input* i, void* v) {
+  flex_margin_cb(i, v, load_right_margin, update_right_margin);
+}
+
+static void load_bottom_margin(Fl_Flex *w, Fl_Value_Input* i)
+{
+  int v;
+  w->margins(NULL, NULL, NULL, &v);
+  i->value((double)v);
+}
+
+static int update_bottom_margin(Fl_Flex *w, int new_value)
+{
+  int l, t, r, b;
+  w->margins(&l, &t, &r, &b);
+  if (new_value!=b) {
+    w->margin(l, t, r, new_value);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void flex_margin_bottom_cb(Fl_Value_Input* i, void* v) {
+  flex_margin_cb(i, v, load_bottom_margin, update_bottom_margin);
+}
+
+static void load_gap(Fl_Flex *w, Fl_Value_Input* i)
+{
+  int v = w->gap();
+  i->value((double)v);
+}
+
+static int update_gap(Fl_Flex *w, int new_value)
+{
+  int g = w->gap();
+  if (new_value!=g) {
+    w->gap(new_value);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void flex_margin_gap_cb(Fl_Value_Input* i, void* v) {
+  flex_margin_cb(i, v, load_gap, update_gap);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -3048,9 +3219,3 @@ void Fl_Widget_Type::copy_properties() {
     w->parent()->resizable(o);
 }
 
-void Fl_Pack_Type::copy_properties()
-{
-  Fl_Group_Type::copy_properties();
-  Fl_Pack *d = (Fl_Pack*)live_widget, *s =(Fl_Pack*)o;
-  d->spacing(s->spacing());
-}
