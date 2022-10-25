@@ -804,7 +804,28 @@ void Fl_Window_Type::draw_overlay() {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
-      if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
+      if (!show_guides || !drag || numselected != 1) {
+        if (Fl_Flex_Type::parent_is_flex(q) && !Fl_Flex_Type::is_fixed(q)) {
+          if (((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o)->horizontal()) {
+            int yh = y + (t-y)/2;
+            fl_begin_loop();
+            fl_vertex(x+2, yh); fl_vertex(x+12, yh+5); fl_vertex(x+12, yh-5);
+            fl_end_loop();
+            fl_begin_loop();
+            fl_vertex(r-3, yh); fl_vertex(r-13, yh+5); fl_vertex(r-13, yh-5);
+            fl_end_loop();
+          } else {
+            int xh = x + (r-x)/2;
+            fl_begin_loop();
+            fl_vertex(xh, y+2); fl_vertex(xh+5, y+12); fl_vertex(xh-5, y+12);
+            fl_end_loop();
+            fl_begin_loop();
+            fl_vertex(xh, t-3); fl_vertex(xh+5, t-13); fl_vertex(xh-5, t-13);
+            fl_end_loop();
+          }
+        }
+        fl_rect(x,y,r-x,t-y);
+      }
       if (x < mysx) mysx = x;
       if (y < mysy) mysy = y;
       if (r > mysr) mysr = r;
