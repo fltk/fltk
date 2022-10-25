@@ -273,7 +273,7 @@ void Fl_Flex_Type::write_code2() {
   int lm, tm, rm, bm;
   f->margins(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_c("%s%s->margins(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
+    write_c("%s%s->margin(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
   if (f->gap())
     write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
   for (int i=0; i<f->children(); ++i) {
