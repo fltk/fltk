@@ -343,9 +343,30 @@ void Fl_Flex_Type::change_subtype_to(int n) {
 }
 
 int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
-  return (current_widget->is_widget()
-          && current_widget->parent
-          && current_widget->parent->is_flex());
+  return (t->is_widget()
+          && t->parent
+          && t->parent->is_flex());
+}
+
+int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
+  if (!t->is_widget()) return 0;
+  if (!t->parent) return 0;
+  if (!t->parent->is_flex()) return 0;
+  Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
+  Fl_Flex* f = (Fl_Flex*)ft->o;
+  Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
+  if (fixed_only && !f->set_size(w)) return 0;
+  return f->horizontal() ? w->w() : w->h();
+}
+
+int Fl_Flex_Type::is_fixed(Fl_Type *t) {
+  if (!t->is_widget()) return 0;
+  if (!t->parent) return 0;
+  if (!t->parent->is_flex()) return 0;
+  Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
+  Fl_Flex* f = (Fl_Flex*)ft->o;
+  Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
+  return f->set_size(w);
 }
 
 ////////////////////////////////////////////////////////////////

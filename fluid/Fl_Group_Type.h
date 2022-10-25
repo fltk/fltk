@@ -111,6 +111,8 @@ public:
   int is_flex() const {return 1;}
   void change_subtype_to(int n);
   static int parent_is_flex(Fl_Type*);
+  static int size(Fl_Type*, char fixed_only=0);
+  static int is_fixed(Fl_Type*);
 };
 
 extern const char table_type_name[];

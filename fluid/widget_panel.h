@@ -52,6 +52,10 @@ extern void wc_relative_cb(Fl_Light_Button*, void*);
 extern void flex_size_group_cb(Fl_Group*, void*);
 #include <FL/Fl_Value_Input.H>
 extern void flex_size_cb(Fl_Value_Input*, void*);
+extern Fl_Value_Input *widget_flex_size;
+#include <FL/Fl_Check_Button.H>
+extern void flex_fixed_cb(Fl_Check_Button*, void*);
+extern Fl_Check_Button *widget_flex_fixed;
 extern void values_group_cb(Fl_Group*, void*);
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);

@@ -60,6 +60,10 @@ Fluid_Coord_Input *widget_w_input=(Fluid_Coord_Input *)0;
 
 Fluid_Coord_Input *widget_h_input=(Fluid_Coord_Input *)0;
 
+Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
+
+Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
+
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"public", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -262,6 +266,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
           { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
             widget_x_input->tooltip("The X position of the widget.");
             widget_x_input->box(FL_DOWN_BOX);
@@ -334,14 +339,18 @@ ive to the origin at construction time");
           o->labelsize(11);
           o->callback((Fl_Callback*)flex_size_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
-          { Fl_Value_Input* o = new Fl_Value_Input(95, 150, 55, 20, "Size:");
-            o->tooltip("Fixed Width or Height of widget, or 0 to make it flexible.");
-            o->labelsize(11);
-            o->textsize(11);
-            o->callback((Fl_Callback*)flex_size_cb);
-            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          } // Fl_Value_Input* o
+          { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
+            widget_flex_size->tooltip("Fixed Width or Height of widget, or 0 to make it flexible.");
+            widget_flex_size->labelsize(11);
+            widget_flex_size->textsize(11);
+            widget_flex_size->callback((Fl_Callback*)flex_size_cb);
+            widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* widget_flex_size
+          { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
+            widget_flex_fixed->down_box(FL_DOWN_BOX);
+            widget_flex_fixed->labelsize(11);
+            widget_flex_fixed->callback((Fl_Callback*)flex_fixed_cb);
+          } // Fl_Check_Button* widget_flex_fixed
           { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
