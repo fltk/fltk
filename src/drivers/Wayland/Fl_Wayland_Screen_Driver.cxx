@@ -332,7 +332,6 @@ static void pointer_button(void *data,
          uint32_t state)
 {
   struct seat *seat = (struct seat*)data;
-  seat->serial = serial;
   int event = 0;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
@@ -656,7 +655,6 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
   struct seat *seat = (struct seat*)data;
-  seat->serial = serial;
   static char buf[128];
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(seat->xkb_state, keycode);
