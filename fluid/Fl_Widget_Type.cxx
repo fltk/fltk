@@ -2160,11 +2160,11 @@ void subtype_cb(Fl_Choice* i, void* v) {
         if (q->subtypes()==m) {
           if (q->is_spinner())
             ((Fl_Spinner*)q->o)->type(n);
+          else if (q->is_flex())
+            ((Fl_Flex_Type*)q)->change_subtype_to(n);
           else
             q->o->type(n);
           q->redraw();
-          if (q->is_flex())
-            ((Fl_Flex*)((Fl_Flex_Type*)q)->o)->layout();
           mod = 1;
         }
       }

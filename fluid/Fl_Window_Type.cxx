@@ -1194,7 +1194,7 @@ void Fl_Window_Type::moveallchildren()
       // move all the children, whether selected or not:
       Fl_Type* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_widget() && !p->is_menu_item()) {
+        if (p->is_widget() && !p->is_menu_item() && !myo->is_flex()) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);

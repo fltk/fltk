@@ -165,11 +165,38 @@ Fl_Menu_Item flex_type_menu[] = {
 
 Fl_Flex_Type Fl_Flex_type;      // the "factory"
 
+Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
+  Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
+  live_widget = grp;
+  copy_properties();
+  suspend_auto_layout = 1;
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) {
+    if (n->level == level+1)
+      n->enter_live_mode();
+  }
+  suspend_auto_layout = 0;
+  Fl_Flex *d = grp, *s =(Fl_Flex*)o;
+  int nc = s->children(), nd = d->children();
+  if (nc>nd) nc = nd;
+  for (int i=0; i<nc; i++) {
+    if (s->set_size(s->child(i))) {
+      Fl_Widget *dc = d->child(i);
+      d->set_size(d->child(i), s->horizontal() ? dc->w() : dc->h());
+    }
+  }
+  grp->end(); //this also updates the layout
+  return live_widget;
+}
+
 void Fl_Flex_Type::copy_properties()
 {
   Fl_Group_Type::copy_properties();
-// TODO:  Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
-// TODO:  d->spacing(s->spacing());
+  Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
+  int lm, tm, rm, bm, gp;
+  s->margins(&lm, &tm, &rm, &bm);
+  d->margin(lm, tm, rm, bm);
+  d->gap( s->gap() );
 }
 
 void Fl_Flex_Type::write_properties()
@@ -198,6 +225,7 @@ void Fl_Flex_Type::write_properties()
 void Fl_Flex_Type::read_property(const char *c)
 {
   Fl_Flex* f = (Fl_Flex*)o;
+  suspend_auto_layout = 1;
   if (!strcmp(c,"margins")) {
     int lm, tm, rm, bm;
     if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
@@ -236,6 +264,7 @@ void Fl_Flex_Type::postprocess_read()
   delete[] fixedSizeTable;
   fixedSizeTable = NULL;
   f->layout();
+  suspend_auto_layout = 0;
 }
 
 void Fl_Flex_Type::write_code2() {
@@ -258,12 +287,14 @@ void Fl_Flex_Type::write_code2() {
 
 void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
   Fl_Group_Type::add_child(a, b);
-//  ((Fl_Flex*)o)->layout();
+  if (!suspend_auto_layout)
+    ((Fl_Flex*)o)->layout();
 }
 
 void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
   Fl_Group_Type::move_child(a, b);
-  ((Fl_Flex*)o)->layout();
+  if (!suspend_auto_layout)
+    ((Fl_Flex*)o)->layout();
 }
 
 void Fl_Flex_Type::remove_child(Fl_Type* a) {
@@ -271,6 +302,44 @@ void Fl_Flex_Type::remove_child(Fl_Type* a) {
     ((Fl_Flex*)o)->set_size(((Fl_Widget_Type*)a)->o, 0);
   Fl_Group_Type::remove_child(a);
   ((Fl_Flex*)o)->layout();
+}
+
+// Change from HORIZONTAL to VERTICAL or back.
+// Children in a horizontal Flex have already the full vertical height. If we
+// just change to vertical, the accumulated hight of all children is too big.
+// We need to relayout existing children.
+void Fl_Flex_Type::change_subtype_to(int n) {
+  Fl_Flex* f = (Fl_Flex*)o;
+  int nc = f->children();
+  if (f->type()==n || nc==0) return;
+
+  int dx = Fl::box_dx(f->box());
+  int dy = Fl::box_dy(f->box());
+  int dw = Fl::box_dw(f->box());
+  int dh = Fl::box_dh(f->box());
+  int lm, tm, rm, bm;
+  f->margins(&lm, &tm, &rm, &bm);
+  int gap = f->gap();
+  int fw = f->w()-dw-lm-rm-(nc*gap);
+  if (fw<=nc) fw = nc; // avoid division by zero
+  int fh = f->h()-dh-tm-bm-(nc*gap);
+  if (fh<=nc) fh = nc; // avoid division by zero
+
+  if (f->type()==Fl_Flex::HORIZONTAL && n==Fl_Flex::VERTICAL) {
+    float scl = (float)fh/(float)fw;
+    for (int i=0; i<nc; i++) {
+      Fl_Widget* c = f->child(i);
+      c->size(f->w(), (int)(c->w()*scl));
+    }
+  } else if (f->type()==Fl_Flex::VERTICAL && n==Fl_Flex::HORIZONTAL) {
+    float scl = (float)fw/(float)fh;
+    for (int i=0; i<nc; i++) {
+      Fl_Widget* c = f->child(i);
+      c->size((int)(c->h()*scl), f->h());
+    }
+  }
+  f->type(n);
+  f->layout();
 }
 
 int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
