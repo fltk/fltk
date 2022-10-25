@@ -42,6 +42,7 @@ struct seat {
   struct wl_surface *pointer_focus;
   int pointer_scale;
   uint32_t serial;
+  uint32_t pointer_enter_serial;
   struct wl_data_device_manager *data_device_manager;
   struct wl_data_device *data_device;
   struct wl_data_source *data_source;

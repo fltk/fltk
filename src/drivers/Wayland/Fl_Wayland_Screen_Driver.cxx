@@ -188,7 +188,7 @@ static void do_set_cursor(struct seat *seat, struct wl_cursor *wl_cursor = NULL)
   if (!wl_cursor) wl_cursor = seat->default_cursor;
   image = wl_cursor->images[0];
   buffer = wl_cursor_image_get_buffer(image);
-  wl_pointer_set_cursor(seat->wl_pointer, seat->serial,
+  wl_pointer_set_cursor(seat->wl_pointer, seat->pointer_enter_serial,
             seat->cursor_surface,
             image->hotspot_x / scale,
             image->hotspot_y / scale);
@@ -278,6 +278,7 @@ static void pointer_enter(void *data,
   struct seat *seat = (struct seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
+  seat->pointer_enter_serial = serial;
   set_event_xy(win);
   Fl::handle(FL_ENTER, win);
   //fprintf(stderr, "pointer_enter window=%p\n", win);
@@ -332,6 +333,7 @@ static void pointer_button(void *data,
          uint32_t state)
 {
   struct seat *seat = (struct seat*)data;
+  seat->serial = serial;
   int event = 0;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
@@ -655,6 +657,7 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
   struct seat *seat = (struct seat*)data;
+  seat->serial = serial;
   static char buf[128];
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(seat->xkb_state, keycode);
