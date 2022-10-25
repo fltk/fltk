@@ -85,7 +85,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
   Window target_window = 0;
   Fl_Window* local_window = 0;
   int dndversion = 4; int dest_x, dest_y;
-  XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
+  XSetSelectionOwner(fl_display, fl_XdndSelection, source_window, fl_event_time);
 
   while (Fl::pushed()) {
     // figure out what window we are pointing at:
