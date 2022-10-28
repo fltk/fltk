@@ -1,7 +1,7 @@
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -151,6 +151,14 @@ public:
     children. Widgets that are horizontally or vertically inside the
     dimensions of the box are scaled to the new size. Widgets outside the
     box are moved.
+
+    \note The resizable of a group \b must be one of
+      - NULL
+      - the group itself
+      - a direct child of the group.
+    \note If you set any other widget that is not a direct child of the group as
+      its resizable then the behavior is undefined. This is \b not checked by
+      Fl_Group for historical reasons.
 
     In these examples the gray area is the resizable:
 

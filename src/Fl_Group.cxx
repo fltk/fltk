@@ -501,6 +501,7 @@ void Fl_Group::remove(int index) {
   if (index < 0 || index >= children_) return;
   Fl_Widget &o = *child(index);
   if (&o == savedfocus_) savedfocus_ = 0;
+  if (&o == resizable_) resizable_ = this;
   if (o.parent_ == this) {      // this should always be true
     o.parent_ = 0;
   }
