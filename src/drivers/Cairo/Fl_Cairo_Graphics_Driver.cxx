@@ -467,8 +467,8 @@ void Fl_Cairo_Graphics_Driver::circle(double x, double y, double r){
 
 void Fl_Cairo_Graphics_Driver::arc(double x, double y, double r, double start, double a){
   if (what == NONE) return;
+  if (what == POLYGON && gap_ == 1) cairo_new_sub_path(cairo_);
   gap_ = 0;
-  cairo_new_sub_path(cairo_);
   if (start > a)
     cairo_arc(cairo_, x, y, r, -start*M_PI/180, -a*M_PI/180);
   else
