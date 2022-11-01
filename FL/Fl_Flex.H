@@ -168,6 +168,8 @@ protected:
 
   virtual int alloc_size(int size) const;
 
+  void on_remove(int); /* override */
+
 public:
 
   /** Returns the left margin size of the widget.
