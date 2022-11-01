@@ -20,6 +20,7 @@
 
 #include "Fl_Window_Type.h"
 
+#include "Fl_Group_Type.h"
 #include "fluid.h"
 #include "widget_browser.h"
 #include "undo.h"
@@ -54,10 +55,15 @@ inline int fl_min(int a, int b) { return (a < b ? a : b); }
 // Update the XYWH values in the widget panel...
 static void update_xywh() {
   if (current_widget && current_widget->is_widget()) {
-    widget_x_input->value(((Fl_Widget_Type *)current_widget)->o->x());
-    widget_y_input->value(((Fl_Widget_Type *)current_widget)->o->y());
-    widget_w_input->value(((Fl_Widget_Type *)current_widget)->o->w());
-    widget_h_input->value(((Fl_Widget_Type *)current_widget)->o->h());
+    Fl_Widget *o = ((Fl_Widget_Type *)current_widget)->o;
+    widget_x_input->value(o->x());
+    widget_y_input->value(o->y());
+    widget_w_input->value(o->w());
+    widget_h_input->value(o->h());
+    if (Fl_Flex_Type::parent_is_flex(current_widget)) {
+      widget_flex_size->value(Fl_Flex_Type::size(current_widget));
+      widget_flex_fixed->value(Fl_Flex_Type::is_fixed(current_widget));
+    }
   }
 }
 
@@ -798,7 +804,28 @@ void Fl_Window_Type::draw_overlay() {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
-      if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
+      if (!show_guides || !drag || numselected != 1) {
+        if (Fl_Flex_Type::parent_is_flex(q) && !Fl_Flex_Type::is_fixed(q)) {
+          if (((Fl_Flex*)((Fl_Flex_Type*)q->parent)->o)->horizontal()) {
+            int yh = y + (t-y)/2;
+            fl_begin_loop();
+            fl_vertex(x+2, yh); fl_vertex(x+12, yh+5); fl_vertex(x+12, yh-5);
+            fl_end_loop();
+            fl_begin_loop();
+            fl_vertex(r-3, yh); fl_vertex(r-13, yh+5); fl_vertex(r-13, yh-5);
+            fl_end_loop();
+          } else {
+            int xh = x + (r-x)/2;
+            fl_begin_loop();
+            fl_vertex(xh, y+2); fl_vertex(xh+5, y+12); fl_vertex(xh-5, y+12);
+            fl_end_loop();
+            fl_begin_loop();
+            fl_vertex(xh, t-3); fl_vertex(xh+5, t-13); fl_vertex(xh-5, t-13);
+            fl_end_loop();
+          }
+        }
+        fl_rect(x,y,r-x,t-y);
+      }
       if (x < mysx) mysx = x;
       if (y < mysy) mysy = y;
       if (r > mysr) mysr = r;
@@ -1188,13 +1215,28 @@ void Fl_Window_Type::moveallchildren()
   for (i=next; i && i->level>level;) {
     if (i->selected && i->is_widget() && !i->is_menu_item()) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
-      int x,y,r,t;
+      int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
       myo->o->resize(x,y,r-x,t-y);
+      if (Fl_Flex_Type::parent_is_flex(myo)) {
+        Fl_Flex_Type* ft = (Fl_Flex_Type*)myo->parent;
+        Fl_Flex* f = (Fl_Flex*)ft->o;
+        if (f->horizontal()) {
+          if (myo->o->w()!=ow) {
+            f->set_size(myo->o, myo->o->w());
+            f->layout();
+          }
+        } else {
+          if (myo->o->h()!=oh) {
+            f->set_size(myo->o, myo->o->h());
+            f->layout();
+          }
+        }
+      }
       // move all the children, whether selected or not:
       Fl_Type* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_widget() && !p->is_menu_item()) {
+        if (p->is_widget() && !p->is_menu_item() && !myo->is_flex()) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);

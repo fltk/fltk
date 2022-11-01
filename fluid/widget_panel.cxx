@@ -60,6 +60,10 @@ Fluid_Coord_Input *widget_w_input=(Fluid_Coord_Input *)0;
 
 Fluid_Coord_Input *widget_h_input=(Fluid_Coord_Input *)0;
 
+Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
+
+Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
+
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"public", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -260,8 +264,9 @@ Fl_Double_Window* make_widget_panel() {
         { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Position:");
           o->labelfont(1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
+          o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
           { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
             widget_x_input->tooltip("The X position of the widget.");
             widget_x_input->box(FL_DOWN_BOX);
@@ -329,10 +334,33 @@ ive to the origin at construction time");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)flex_size_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
+            widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
+            widget_flex_size->labelsize(11);
+            widget_flex_size->textsize(11);
+            widget_flex_size->callback((Fl_Callback*)flex_size_cb);
+            widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* widget_flex_size
+          { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
+            widget_flex_fixed->tooltip("If checked, the size of the widget stays fixed.");
+            widget_flex_fixed->down_box(FL_DOWN_BOX);
+            widget_flex_fixed->labelsize(11);
+            widget_flex_fixed->callback((Fl_Callback*)flex_fixed_cb);
+          } // Fl_Check_Button* widget_flex_fixed
+          { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Values:");
           o->labelfont(1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
+          o->callback((Fl_Callback*)values_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
             o->tooltip("The size of the slider.");
@@ -375,10 +403,56 @@ ive to the origin at construction time");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Margins:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)flex_margin_group_cb);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
+          { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
+            o->tooltip("Left margin in group.");
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_left_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
+            o->tooltip("Top margin in group.");
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_top_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
+            o->tooltip("Right margin in group.");
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_right_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
+            o->tooltip("Bottom margin in group.");
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_bottom_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
+            o->tooltip("Gap between children.");
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)flex_margin_gap_cb);
+            o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Value_Input* o
+          { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            Fl_Group::current()->resizable(o);
+          } // Fl_Box* o
+          o->end();
+        } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 185, 300, 20, "Size Range:");
           o->labelfont(1);
           o->labelsize(11);
-          o->callback((Fl_Callback*)propagate_load);
+          o->callback((Fl_Callback*)size_range_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           o->hide();
           { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");

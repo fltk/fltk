@@ -50,7 +50,7 @@ Function {use_tab_navigation(int, Fl_Text_Editor*)} {
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {Function/Method Properties} open
+    label {Function/Method Properties}
     xywh {540 418 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
@@ -537,15 +537,15 @@ else
   add_new_widget_from_user(type_name, kAddAfterCurrent);} {}
 }
 
-Function {make_widgetbin()} {open selected
+Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);}
-    xywh {449 206 600 102} type Single align 80 hide non_modal
+  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
+    xywh {449 206 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       label Code open
@@ -643,6 +643,13 @@ else
         callback type_make_cb
         tooltip Scroll xywh {114 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[19]);}
+        class Widget_Bin_Button
+      }
+      Fl_Button {} {
+        user_data {"Fl_Flex"}
+        callback type_make_cb selected
+        tooltip Flex xywh {139 46 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[56]);}
         class Widget_Bin_Button
       }
       Fl_Button {} {

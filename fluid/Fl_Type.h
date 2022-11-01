@@ -126,6 +126,7 @@ public:
   virtual void write_properties();
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
+  virtual void postprocess_read() { }
 
   // write code, these are called in order:
   virtual void write_static(); // write static stuff to .c file
@@ -155,6 +156,7 @@ public:
   virtual int is_menu_item() const {return 0;}
   virtual int is_menu_button() const {return 0;}
   virtual int is_group() const {return 0;}
+  virtual int is_flex() const {return 0;}
   virtual int is_window() const {return 0;}
   virtual int is_code() const {return 0;}
   virtual int is_code_block() const {return 0;}

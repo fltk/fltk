@@ -236,41 +236,50 @@ void Fl_Flex::end() {
 
   If \p size is 0 (zero) or negative the widget size is reset to flexible size.
 
-  \param[in]  w   widget to be affected
+  \param[in]  child widget to be affected
   \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 */
-void Fl_Flex::set_size(Fl_Widget *w, int size) {
+void Fl_Flex::set_size(Fl_Widget *child, int size) {
   if (size <= 0)
     size = 0;
-  w->resize(0, 0, size, size);
 
+  // find w in our fixed size list
   int idx = -1;
   for (int i = 0; i < set_size_size_; i++) {
-    if (set_size_[i] == w) {
+    if (set_size_[i] == child) {
       idx = i;
       break;
     }
   }
 
-  // remove from array ?
+  // remove from array, if we want the widget to be flexible, but an entry was found
   if (size == 0 && idx >= 0) {
-    for (int i = idx; i < set_size_size_ - 2; i++) {
+    for (int i = idx; i < set_size_size_ - 1; i++) {
       set_size_[i] = set_size_[i+1];
     }
     set_size_size_--;
     return;
   }
 
+  // if w is meant to be flexible, we are done now
   if (size == 0)
     return;
 
-  // add to array of fixed size widgets
-  if (set_size_size_ == set_size_alloc_) {
-    set_size_alloc_ = alloc_size(set_size_alloc_);
-    set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
+  // if we have no entry yet, add to array of fixed size widgets
+  if (idx == -1) {
+    if (set_size_size_ == set_size_alloc_) {
+      set_size_alloc_ = alloc_size(set_size_alloc_);
+      set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
+    }
+    set_size_[set_size_size_] = child;
+    set_size_size_++;
   }
-  set_size_[set_size_size_] = w;
-  set_size_size_++;
+
+  // if the child size is meant to be fixed, set its new size
+  if (horizontal())
+    child->size(size, h()-margin_top_-margin_bottom_-Fl::box_dh(box()));
+  else
+    child->size(w()-margin_left_-margin_right_-Fl::box_dw(box()), size);
 }
 
 /**

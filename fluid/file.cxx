@@ -624,6 +624,7 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
         goto REUSE_C;
       }
       read_children(t, 0, strategy, skip_options);
+      t->postprocess_read();
     }
 
     Fl_Type::current = p;

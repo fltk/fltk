@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Flex.H>
 #include <FL/Fl_Wizard.H>
 
 void group_cb(Fl_Widget *, void *);
@@ -80,6 +81,38 @@ public:
   Fl_Widget_Type *_make() {return new Fl_Pack_Type();}
   int pixmapID() { return 22; }
   void copy_properties();
+};
+
+extern const char flex_type_name[];
+extern Fl_Menu_Item flex_type_menu[];
+
+class Fl_Flex_Type : public Fl_Group_Type {
+  Fl_Menu_Item *subtypes() {return flex_type_menu;}
+  int fixedSizeTableSize;
+  int *fixedSizeTable;
+  int suspend_auto_layout;
+public:
+  Fl_Flex_Type() : fixedSizeTableSize(0), fixedSizeTable(NULL), suspend_auto_layout(0) { }
+  virtual const char *type_name() {return flex_type_name;}
+  virtual const char *alt_type_name() {return "fltk::FlexGroup";}
+  Fl_Widget_Type *_make() { return new Fl_Flex_Type(); }
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
+  int pixmapID() { return 56; }
+  void write_properties();
+  void read_property(const char *);
+  Fl_Widget *enter_live_mode(int top=0);
+  void copy_properties();
+  void postprocess_read();
+  void write_code2();
+  void add_child(Fl_Type*, Fl_Type*);
+  void move_child(Fl_Type*, Fl_Type*);
+  void remove_child(Fl_Type*);
+  int is_flex() const {return 1;}
+  void change_subtype_to(int n);
+  static int parent_is_flex(Fl_Type*);
+  static int size(Fl_Type*, char fixed_only=0);
+  static int is_fixed(Fl_Type*);
 };
 
 extern const char table_type_name[];
