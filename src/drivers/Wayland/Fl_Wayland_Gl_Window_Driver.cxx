@@ -33,7 +33,7 @@
 eglQueryContext() reports that EGL_RENDER_BUFFER equals EGL_BACK_BUFFER.
 This experiment suggests that the platform only supports double-buffer drawing.
 Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayland.
- 
+
 * Commented out code marked with CONTROL_LEAKING_SUB_GL_WINDOWS aims to prevent
  sub GL windows from leaking out from their parent by making leaking parts fully transparent.
  This code is commented out because it requires the FL_ALPHA flag to be on

@@ -1289,7 +1289,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
             ])
         ], [], [#include <X11/Xlib.h>])
     ])
-    
+
     AS_CASE([$host_os], [darwin*], [
       AS_IF([test x$pango_found = xyes], [
         #place X_LIBS after homebrew's pango libs
@@ -1298,7 +1298,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         LDFLAGS="$DARWIN_LDFLAGS"
       ])
     ])
-    
+
     dnl Check for the X11/Xregion.h header file...
     AC_CHECK_HEADER([X11/Xregion.h], [
         AC_DEFINE([HAVE_X11_XREGION_H])

@@ -1479,7 +1479,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
       }
     }
   }
-  
+
   if (fl_win && fl_win->kind == SUBWINDOW && fl_win->subsurface)
       checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 }

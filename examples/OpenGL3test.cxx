@@ -170,7 +170,7 @@ public:
 
     int retval = Fl_Gl_Window::handle(event);
     if (retval) return retval;
-    
+
     if (event == FL_PUSH && gl_version_major >= 3) {
       static float factor = 1.1;
       GLfloat data[4];

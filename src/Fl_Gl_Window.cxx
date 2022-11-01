@@ -526,7 +526,7 @@ char Fl_Gl_Window_Driver::swap_type() {return UNDEFINED;}
 void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #if defined(HAVE_GLXGETPROCADDRESSARB)
   return (void*)glXGetProcAddressARB((const GLubyte *)procName);
-  
+
 #elif (HAVE_DLSYM && HAVE_DLFCN_H)
 #  ifdef RTLD_DEFAULT
       void *rtld_default = RTLD_DEFAULT;

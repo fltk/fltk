@@ -355,7 +355,7 @@ public:
   typedef struct HICON__* HICON;
   // These 2 member functions break the driver model but are kept for back compatibility.
   // They are implemented in Fl_win32.cxx
-  
+
   /** Sets the default window icons (Windows platform only).
 
    Convenience function to set the default icons using Windows'
@@ -376,7 +376,7 @@ public:
    \see Fl_Window::icons(HICON, HICON)
    */
   static void default_icons(HICON big_icon, HICON small_icon);
-  
+
   /** Sets the window icons using HICON handles (Windows platform only).
 
    The given icons are copied. You can free the icons immediately after

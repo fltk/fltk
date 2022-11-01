@@ -3281,7 +3281,7 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
     }
     through_resize(0);
   }
-  
+
   // make sure subwindow doesn't leak outside parent
   if (pWindow->parent()) [fl_xid(pWindow) checkSubwindowFrame];
 }
