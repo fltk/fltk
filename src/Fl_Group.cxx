@@ -389,22 +389,22 @@ void Fl_Group::clear() {
   if (contains(pushed)) pushed = this;  // set it to be the group, if it's a child
   Fl::pushed(this);                     // for fl_fix_focus etc.
 
-  // okay, now it is safe to destroy the children:
+  // Implementation note (AlbrechtS, Nov. 01, 2022):
+  // For some obscure reason the order of all children had been
+  // reversed in FLTK 1.3.x so the first child would be deleted
+  // first but this is no longer done since FLTK 1.4.0.
+  // Reasoning:
+  //   (1) it is supposedly better to remove children in the
+  //       order "last in, first out"
+  //   (2) it would not be compatible with the new subclass
+  //       notification feature Fl_Group::on_remove().
+  // See git commit a918292547cfb154 or earlier for removed code.
+  // End of implementation note.
 
-#define REVERSE_CHILDREN
-#ifdef  REVERSE_CHILDREN
-  // Reverse the order of the children. Doing this and deleting
-  // always the last child is much faster than the other way around.
-  if (children_ > 1) {
-    Fl_Widget *temp;
-    Fl_Widget **a = (Fl_Widget**)array();
-    for (int i=0,j=children_-1; i<children_/2; i++,j--) {
-      temp = a[i];
-      a[i] = a[j];
-      a[j] = temp;
-    }
-  }
-#endif // REVERSE_CHILDREN
+  // Okay, now it is safe to destroy the children. Children are
+  // removed and deleted in the order from last child to first
+  // child which is much faster than the other way around and
+  // should be the "natural order" (last in, first out).
 
   while (children_) {                   // delete all children
     int idx = children_-1;              // last child's index
