@@ -258,8 +258,8 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         }
         Fl_Group {} {
           label {Position:}
-          callback position_group_cb open
-          xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
+          callback position_group_cb open selected
+          xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input widget_x_input {
             label {X:}
@@ -297,7 +297,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         Fl_Group {} {
           label {Flex Parent:}
           callback flex_size_group_cb open
-          xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
+          xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
         } {
           Fl_Value_Input widget_flex_size {
             label {Size:}
@@ -306,7 +306,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           }
           Fl_Check_Button widget_flex_fixed {
             label fixed
-            callback flex_fixed_cb selected
+            callback flex_fixed_cb
             tooltip {If checked, the size of the widget stays fixed.} xywh {155 150 55 20} down_box DOWN_BOX labelsize 11
           }
           Fl_Box {} {

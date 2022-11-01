@@ -266,7 +266,6 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->hide();
           { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
             widget_x_input->tooltip("The X position of the widget.");
             widget_x_input->box(FL_DOWN_BOX);
@@ -339,6 +338,7 @@ ive to the origin at construction time");
           o->labelsize(11);
           o->callback((Fl_Callback*)flex_size_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->hide();
           { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
             widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
             widget_flex_size->labelsize(11);
