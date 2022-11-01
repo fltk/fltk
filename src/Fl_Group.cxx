@@ -459,7 +459,7 @@ Fl_Group::~Fl_Group() {
  array can be preserved (e.g. Fl_Scroll keeps its scroll bars as the last
  two children).
 
- By returing -1, Fl_Group::insert will not add the child to
+ By returning -1, Fl_Group::insert will not add the child to
  array_. This is not recommended, but Fl_Table does something similar to
  forward children to a hidden group.
 
