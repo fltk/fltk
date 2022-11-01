@@ -74,6 +74,9 @@ protected:
   void update_child(Fl_Widget& widget) const;
   Fl_Rect *bounds();
   int  *sizes(); // FLTK 1.3 compatibility
+  virtual int on_insert(Fl_Widget*, int);
+  virtual int on_move(int, int);
+  virtual void on_remove(int);
 
 public:
 

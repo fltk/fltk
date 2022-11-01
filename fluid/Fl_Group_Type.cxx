@@ -550,7 +550,6 @@ void Fl_Table_Type::remove_child(Fl_Type* cc) {
 void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  ((Fl_Group*)o)->remove(c->o);
   ((Fl_Group*)o)->insert(*(c->o), b);
   o->redraw();
 }
@@ -558,7 +557,6 @@ void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  ((Fl_Table*)o)->remove(*(c->o));
   ((Fl_Table*)o)->insert(*(c->o), b);
   o->redraw();
 }

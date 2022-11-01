@@ -412,6 +412,7 @@ void Fl_Group::clear() {
     if (w->parent()==this) {            // should always be true
       if (children_>2) {                // optimized removal
         w->parent_ = 0;                 // reset child's parent
+        on_remove(idx);
         children_--;                    // update counter
       } else {                          // slow removal
         remove(idx);
@@ -447,6 +448,60 @@ Fl_Group::~Fl_Group() {
 }
 
 /**
+ Allow derived groups to act when a widget is added as a child.
+
+ Widgets derived from Fl_Group may store additional data for their children.
+ Overriding this method will allow derived classes to generate these data
+ structures just before the child is added.
+
+ This method usually returns the same index that was given in the parameters.
+ By setting a new index, the position of other widgets in the child pointer
+ array can be preserved (e.g. Fl_Scroll keeps its scroll bars as the last
+ two children).
+
+ By returing -1, Fl_Group::insert will not add the child to
+ array_. This is not recommended, but Fl_Table does something similar to
+ forward children to a hidden group.
+
+ \param candidate the candidate will be added to the child array_ after this
+            method returns.
+ \param index add the child at this position in the array_
+ \return index to position the child as planned
+ \return a new index to force the child to a different position
+ \return -1 to keep the group from adding the candidate
+ */
+int Fl_Group::on_insert(Fl_Widget *candidate, int index) {
+  (void)candidate;
+  return index;
+}
+
+/**
+ Allow derived groups to act when a widget is moved within the group.
+
+ Widgets derived from Fl_Group may store additional data for their children.
+ Overriding this method will allow derived classes to move these data
+ structures just before the child itself is moved.
+
+ This method usually returns the new index that was given in the
+ parameters. By setting a different destination index, the position of other
+ widgets in the child pointer array can be preserved.
+
+ By returning -1, Fl_Group::insert will not move the child.
+
+ \param oldIndex the current index of the child that will be moved
+ \param newIndex the new index of the child, counted with the old
+    child already removed
+ \return index to position the child as planned
+ \return a new index to force the child to a different position
+ \return -1 to keep the group from adding the candidate
+ */
+int Fl_Group::on_move(int oldIndex, int newIndex) {
+  (void)oldIndex;
+  return newIndex;
+}
+
+
+/**
   The widget is removed from its current group (if any) and then
   inserted into this group. It is put at index n - or at the end,
   if n >= children(). This can also be used to rearrange
@@ -456,12 +511,25 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
     Fl_Group* g = o.parent();
     int n = g->find(o);
-    if (g == this) {
+    if (g == this) { // avoid expensive remove() and add() if we just move a widget within the group
       if (index > n) index--;
-      if (index == n) return;
+      index = on_move(n, index);
+      if (index == n) return; // this includes (children_ == 1)
+      if (index >= children_ || index < 0) return;
+      if (index > n)
+        memmove(array_+n, array_+(n+1), (index-n) * sizeof(Fl_Widget*));
+      else
+        memmove(array_+(index+1), array_+index, (n-index) * sizeof(Fl_Widget*));
+      array_[index] = &o;
+      init_sizes();
+      return;
     }
     g->remove(n);
   }
+
+  index = on_insert(&o, index);
+  if (index==-1) return;
+  
   o.parent_ = this;
   if (children_ == 0) { // use array pointer to point at single child
     child1_ = &o;
@@ -488,6 +556,22 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
 void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
 
 /**
+ Allow derived groups to act when a child widget is removed from the group.
+
+ Widgets derived from Fl_Group may store additional data for their children.
+ Overriding this method will allow derived classes to remove these data
+ structures just before the child is removed.
+
+ \note if children are removed by Fl_Group::clear(), this method is still
+ called, but the original indices may be reversed.
+
+ \param index remove the child at this position in the array_
+ */
+void Fl_Group::on_remove(int index) {
+  (void)index;
+}
+
+/**
   Removes the widget at \p index from the group but does not delete it.
 
   This method does nothing if \p index is out of bounds.
@@ -499,6 +583,8 @@ void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
 */
 void Fl_Group::remove(int index) {
   if (index < 0 || index >= children_) return;
+  on_remove(index);
+
   Fl_Widget &o = *child(index);
   if (&o == savedfocus_) savedfocus_ = 0;
   if (o.parent_ == this) {      // this should always be true
