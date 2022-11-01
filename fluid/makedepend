@@ -86,6 +86,7 @@ align_widget.o: ../FL/fl_config.h
 align_widget.o: ../FL/Fl_Device.H
 align_widget.o: ../FL/fl_draw.H
 align_widget.o: ../FL/Fl_Export.H
+align_widget.o: ../FL/Fl_Flex.H
 align_widget.o: ../FL/Fl_Graphics_Driver.H
 align_widget.o: ../FL/Fl_Group.H
 align_widget.o: ../FL/Fl_Image.H
@@ -127,6 +128,7 @@ code.o: ../FL/Fl_Device.H
 code.o: ../FL/Fl_Double_Window.H
 code.o: ../FL/fl_draw.H
 code.o: ../FL/Fl_Export.H
+code.o: ../FL/Fl_Flex.H
 code.o: ../FL/Fl_Graphics_Driver.H
 code.o: ../FL/Fl_Group.H
 code.o: ../FL/Fl_Image.H
@@ -248,6 +250,7 @@ factory.o: ../FL/Fl_Export.H
 factory.o: ../FL/Fl_File_Browser.H
 factory.o: ../FL/Fl_File_Icon.H
 factory.o: ../FL/Fl_File_Input.H
+factory.o: ../FL/Fl_Flex.H
 factory.o: ../FL/Fl_Graphics_Driver.H
 factory.o: ../FL/Fl_Group.H
 factory.o: ../FL/Fl_Help_View.H
@@ -258,6 +261,7 @@ factory.o: ../FL/Fl_Light_Button.H
 factory.o: ../FL/Fl_Menu_Item.H
 factory.o: ../FL/Fl_Multi_Label.H
 factory.o: ../FL/Fl_Output.H
+factory.o: ../FL/Fl_Pack.H
 factory.o: ../FL/Fl_Pixmap.H
 factory.o: ../FL/Fl_Plugin.H
 factory.o: ../FL/Fl_Preferences.H
@@ -272,6 +276,7 @@ factory.o: ../FL/Fl_Scrollbar.H
 factory.o: ../FL/Fl_Simple_Terminal.H
 factory.o: ../FL/Fl_Slider.H
 factory.o: ../FL/Fl_Spinner.H
+factory.o: ../FL/Fl_Tabs.H
 factory.o: ../FL/Fl_Text_Buffer.H
 factory.o: ../FL/Fl_Text_Display.H
 factory.o: ../FL/Fl_Text_Editor.H
@@ -287,10 +292,12 @@ factory.o: ../FL/Fl_Value_Output.H
 factory.o: ../FL/Fl_Value_Slider.H
 factory.o: ../FL/Fl_Widget.H
 factory.o: ../FL/Fl_Window.H
+factory.o: ../FL/Fl_Wizard.H
 factory.o: ../FL/platform_types.h
 factory.o: ../src/flstring.h
 factory.o: factory.h
 factory.o: fluid.h
+factory.o: Fl_Group_Type.h
 factory.o: Fl_Type.h
 factory.o: Fl_Widget_Type.h
 factory.o: Fl_Window_Type.h
@@ -389,6 +396,7 @@ fluid.o: ../FL/Fl_File_Browser.H
 fluid.o: ../FL/Fl_File_Chooser.H
 fluid.o: ../FL/Fl_File_Icon.H
 fluid.o: ../FL/Fl_File_Input.H
+fluid.o: ../FL/Fl_Flex.H
 fluid.o: ../FL/Fl_Graphics_Driver.H
 fluid.o: ../FL/Fl_Group.H
 fluid.o: ../FL/Fl_Help_Dialog.H
@@ -483,6 +491,7 @@ Fluid_Image.o: ../FL/Fl_File_Browser.H
 Fluid_Image.o: ../FL/Fl_File_Chooser.H
 Fluid_Image.o: ../FL/Fl_File_Icon.H
 Fluid_Image.o: ../FL/Fl_File_Input.H
+Fluid_Image.o: ../FL/Fl_Flex.H
 Fluid_Image.o: ../FL/Fl_Graphics_Driver.H
 Fluid_Image.o: ../FL/Fl_Group.H
 Fluid_Image.o: ../FL/Fl_Image.H
@@ -543,6 +552,7 @@ Fl_Function_Type.o: ../FL/Fl_File_Browser.H
 Fl_Function_Type.o: ../FL/Fl_File_Chooser.H
 Fl_Function_Type.o: ../FL/Fl_File_Icon.H
 Fl_Function_Type.o: ../FL/Fl_File_Input.H
+Fl_Function_Type.o: ../FL/Fl_Flex.H
 Fl_Function_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Function_Type.o: ../FL/Fl_Group.H
 Fl_Function_Type.o: ../FL/Fl_Image.H
@@ -607,6 +617,7 @@ Fl_Group_Type.o: ../FL/fl_config.h
 Fl_Group_Type.o: ../FL/Fl_Device.H
 Fl_Group_Type.o: ../FL/fl_draw.H
 Fl_Group_Type.o: ../FL/Fl_Export.H
+Fl_Group_Type.o: ../FL/Fl_Flex.H
 Fl_Group_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Group_Type.o: ../FL/Fl_Group.H
 Fl_Group_Type.o: ../FL/Fl_Image.H
@@ -723,6 +734,7 @@ Fl_Type.o: ../FL/fl_config.h
 Fl_Type.o: ../FL/Fl_Device.H
 Fl_Type.o: ../FL/fl_draw.H
 Fl_Type.o: ../FL/Fl_Export.H
+Fl_Type.o: ../FL/Fl_Flex.H
 Fl_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Type.o: ../FL/Fl_Group.H
 Fl_Type.o: ../FL/Fl_Image.H
@@ -778,6 +790,7 @@ Fl_Widget_Type.o: ../FL/Fl_Device.H
 Fl_Widget_Type.o: ../FL/Fl_Double_Window.H
 Fl_Widget_Type.o: ../FL/fl_draw.H
 Fl_Widget_Type.o: ../FL/Fl_Export.H
+Fl_Widget_Type.o: ../FL/Fl_Flex.H
 Fl_Widget_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Widget_Type.o: ../FL/Fl_Group.H
 Fl_Widget_Type.o: ../FL/Fl_Image.H
@@ -862,6 +875,7 @@ Fl_Window_Type.o: ../FL/Fl_Device.H
 Fl_Window_Type.o: ../FL/Fl_Double_Window.H
 Fl_Window_Type.o: ../FL/fl_draw.H
 Fl_Window_Type.o: ../FL/Fl_Export.H
+Fl_Window_Type.o: ../FL/Fl_Flex.H
 Fl_Window_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Window_Type.o: ../FL/Fl_Group.H
 Fl_Window_Type.o: ../FL/Fl_Image.H
@@ -873,6 +887,7 @@ Fl_Window_Type.o: ../FL/Fl_Menu_.H
 Fl_Window_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Window_Type.o: ../FL/fl_message.H
 Fl_Window_Type.o: ../FL/Fl_Overlay_Window.H
+Fl_Window_Type.o: ../FL/Fl_Pack.H
 Fl_Window_Type.o: ../FL/Fl_Pixmap.H
 Fl_Window_Type.o: ../FL/Fl_Plugin.H
 Fl_Window_Type.o: ../FL/Fl_Preferences.H
@@ -898,6 +913,7 @@ Fl_Window_Type.o: ../FL/Fl_Valuator.H
 Fl_Window_Type.o: ../FL/Fl_Value_Input.H
 Fl_Window_Type.o: ../FL/Fl_Widget.H
 Fl_Window_Type.o: ../FL/Fl_Window.H
+Fl_Window_Type.o: ../FL/Fl_Wizard.H
 Fl_Window_Type.o: ../FL/platform.H
 Fl_Window_Type.o: ../FL/platform_types.h
 Fl_Window_Type.o: ../FL/x11.H
@@ -908,6 +924,7 @@ Fl_Window_Type.o: CodeEditor.h
 Fl_Window_Type.o: factory.h
 Fl_Window_Type.o: file.h
 Fl_Window_Type.o: fluid.h
+Fl_Window_Type.o: Fl_Group_Type.h
 Fl_Window_Type.o: Fl_Type.h
 Fl_Window_Type.o: Fl_Widget_Type.h
 Fl_Window_Type.o: Fl_Window_Type.h
@@ -993,6 +1010,7 @@ pixmaps.o: pixmaps/flDeclarationBlock.xpm
 pixmaps.o: pixmaps/flDial.xpm
 pixmaps.o: pixmaps/flFileBrowser.xpm
 pixmaps.o: pixmaps/flFileInput.xpm
+pixmaps.o: pixmaps/flFlex.xpm
 pixmaps.o: pixmaps/flFunction.xpm
 pixmaps.o: pixmaps/flGroup.xpm
 pixmaps.o: pixmaps/flHelp.xpm
@@ -1097,6 +1115,7 @@ Shortcut_Button.o: ../FL/Fl_Browser_.H
 Shortcut_Button.o: ../FL/Fl_Button.H
 Shortcut_Button.o: ../FL/Fl_Cairo.H
 Shortcut_Button.o: ../FL/fl_casts.H
+Shortcut_Button.o: ../FL/Fl_Check_Button.H
 Shortcut_Button.o: ../FL/Fl_Choice.H
 Shortcut_Button.o: ../FL/fl_config.h
 Shortcut_Button.o: ../FL/Fl_Device.H
@@ -1254,6 +1273,7 @@ widget_panel.o: ../FL/Fl_Box.H
 widget_panel.o: ../FL/Fl_Button.H
 widget_panel.o: ../FL/Fl_Cairo.H
 widget_panel.o: ../FL/fl_casts.H
+widget_panel.o: ../FL/Fl_Check_Button.H
 widget_panel.o: ../FL/Fl_Choice.H
 widget_panel.o: ../FL/fl_config.h
 widget_panel.o: ../FL/Fl_Device.H
