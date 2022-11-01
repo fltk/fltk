@@ -236,17 +236,17 @@ void Fl_Flex::end() {
 
   If \p size is 0 (zero) or negative the widget size is reset to flexible size.
 
-  \param[in]  w   widget to be affected
+  \param[in]  child widget to be affected
   \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 */
-void Fl_Flex::set_size(Fl_Widget *w, int size) {
+void Fl_Flex::set_size(Fl_Widget *child, int size) {
   if (size <= 0)
     size = 0;
 
   // find w in our fixed size list
   int idx = -1;
   for (int i = 0; i < set_size_size_; i++) {
-    if (set_size_[i] == w) {
+    if (set_size_[i] == child) {
       idx = i;
       break;
     }
@@ -271,12 +271,15 @@ void Fl_Flex::set_size(Fl_Widget *w, int size) {
       set_size_alloc_ = alloc_size(set_size_alloc_);
       set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
     }
-    set_size_[set_size_size_] = w;
+    set_size_[set_size_size_] = child;
     set_size_size_++;
   }
 
-  // if w is meant to be fixed, set its new size
-  w->resize(0, 0, size, size);
+  // if the child size is meant to be fixed, set its new size
+  if (horizontal())
+    child->size(size, h()-margin_top_-margin_bottom_-Fl::box_dh(box()));
+  else
+    child->size(w()-margin_left_-margin_right_-Fl::box_dw(box()), size);
 }
 
 /**

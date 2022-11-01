@@ -302,12 +302,12 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           Fl_Value_Input widget_flex_size {
             label {Size:}
             callback flex_size_cb
-            tooltip {Fixed Width or Height of widget, or 0 to make it flexible.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
+            tooltip {Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Check_Button widget_flex_fixed {
             label fixed
             callback flex_fixed_cb selected
-            xywh {155 150 55 20} down_box DOWN_BOX labelsize 11
+            tooltip {If checked, the size of the widget stays fixed.} xywh {155 150 55 20} down_box DOWN_BOX labelsize 11
           }
           Fl_Box {} {
             xywh {398 150 1 20} resizable
