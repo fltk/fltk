@@ -493,7 +493,7 @@ int Fl_Group::on_insert(Fl_Widget *candidate, int index) {
     child already removed
  \return index to position the child as planned
  \return a new index to force the child to a different position
- \return -1 to keep the group from adding the candidate
+ \return -1 to keep the group from moving the child
  */
 int Fl_Group::on_move(int oldIndex, int newIndex) {
   (void)oldIndex;
@@ -528,7 +528,7 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   }
 
   index = on_insert(&o, index);
-  if (index==-1) return;
+  if (index == -1) return;
 
   o.parent_ = this;
   if (children_ == 0) { // use array pointer to point at single child
