@@ -193,7 +193,7 @@ void Fl_Flex_Type::copy_properties()
 {
   Fl_Group_Type::copy_properties();
   Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
-  int lm, tm, rm, bm, gp;
+  int lm, tm, rm, bm;
   s->margins(&lm, &tm, &rm, &bm);
   d->margin(lm, tm, rm, bm);
   d->gap( s->gap() );
@@ -313,8 +313,6 @@ void Fl_Flex_Type::change_subtype_to(int n) {
   int nc = f->children();
   if (f->type()==n || nc==0) return;
 
-  int dx = Fl::box_dx(f->box());
-  int dy = Fl::box_dy(f->box());
   int dw = Fl::box_dw(f->box());
   int dh = Fl::box_dh(f->box());
   int lm, tm, rm, bm;
