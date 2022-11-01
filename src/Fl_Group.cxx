@@ -562,9 +562,6 @@ void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
  Overriding this method will allow derived classes to remove these data
  structures just before the child is removed.
 
- \note if children are removed by Fl_Group::clear(), this method is still
- called, but the original indices may be reversed.
-
  \param index remove the child at this position in the array_
  */
 void Fl_Group::on_remove(int index) {
