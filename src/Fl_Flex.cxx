@@ -133,6 +133,14 @@ Fl_Flex::~Fl_Flex() {
     free(set_size_);
 }
 
+/*
+ Fl_Group calls this method when a child widget is about to be removed.
+ Make sure that the widget is also removed from our fixed list.
+ */
+void Fl_Flex::on_remove(int index) {
+  set_size(child(index), 0);
+}
+
 void Fl_Flex::resize(int x, int y, int w, int h) {
 
   Fl_Widget::resize(x, y, w, h);
