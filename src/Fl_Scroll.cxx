@@ -52,6 +52,12 @@ Fl_Scroll::~Fl_Scroll() {
 
   These two widgets must always be the last two widgets and in this order
   to guarantee the correct drawing order and event delivery.
+
+  Since FLTK 1.4.0 the new method on_insert() modifies the insert position
+  of other children if it would be after the scrollbars.
+
+  \internal If everything works as intended this method does no longer do
+    anything because the scrollbars will always be in the correct places.
 */
 void Fl_Scroll::fix_scrollbar_order() {
   Fl_Widget** a = (Fl_Widget**)array();
@@ -68,6 +74,35 @@ void Fl_Scroll::fix_scrollbar_order() {
   }
 }
 
+/**
+  Change insert position of a child before it is added.
+
+  Fix insert position if the new child is planned to be inserted after
+  the scrollbars.
+  We can assume that the scrollbars are always the last two children!
+
+  Fl_Group calls this when a new widget is added. We return the new
+  index if the new widget would be added after the scrollbars.
+
+  \param[in] candidate the candidate will be added to the child array_ after
+                       this method returns.
+  \param[in] index     add the child at this position in the array_
+
+  \return  index to position the child as planned
+  \return  a new index to force the child to a different position
+  \return  -1 to keep the group from adding the candidate
+
+  \version 1.4.0
+
+  \see Fl_Group::on_insert(Fl_Widget *candidate, int index)
+*/
+int Fl_Scroll::on_insert(Fl_Widget *candidate, int index) {
+  if (children() > 1 && index > children() - 2 &&
+      candidate != &scrollbar && candidate != &hscrollbar) {
+    index = children() - 2;
+  }
+  return index;
+}
 
 /**
   Removes the widget at \p index from the group and deletes it.
