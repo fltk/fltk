@@ -31,7 +31,7 @@ Linux_CFLAGS =
 FreeBSD_CFLAGS = -I/usr/local/include
 EXTRA_DECOR =  ${${UNAME}_CFLAGS}
 
-CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src $(EXTRA_DECOR) -fPIC -D_GNU_SOURCE \
+CFLAGS_DECOR =  -I. -I../.. -I../../src -I../src -I../src/plugins $(EXTRA_DECOR) -fPIC -D_GNU_SOURCE \
   -DUSE_SYSTEM_LIBDECOR=0 -DHAVE_MEMFD_CREATE -DHAVE_MKOSTEMP -DHAVE_POSIX_FALLOCATE
 
 Linux_NOPIE = -no-pie
@@ -49,8 +49,8 @@ fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c .
 fl_libdecor-plugins.o : fl_libdecor-plugins.c ../src/plugins/cairo/libdecor-cairo.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor-plugins.c  -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"\"
 
-libdecor-cairo-blur.o : ../src/plugins/cairo/libdecor-cairo-blur.c
-	$(CC) $(CFLAGS_DECOR) -c  ../src/plugins/cairo/libdecor-cairo-blur.c
+libdecor-cairo-blur.o : ../src/plugins/common/libdecor-cairo-blur.c
+	$(CC) $(CFLAGS_DECOR) -c  ../src/plugins/common/libdecor-cairo-blur.c
 
 os-compatibility.o : ../src/os-compatibility.c
 	$(CC) $(CFLAGS_DECOR) -c  ../src/os-compatibility.c

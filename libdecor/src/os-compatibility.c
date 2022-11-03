@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -86,11 +87,27 @@ static int
 os_resize_anonymous_file(int fd, off_t size)
 {
 #ifdef HAVE_POSIX_FALLOCATE
+	sigset_t mask;
+	sigset_t old_mask;
+
+	/* posix_fallocate() might be interrupted, so we need to check
+	 * for EINTR and retry in that case.
+	 * However, in the presence of an alarm, the interrupt may trigger
+	 * repeatedly and prevent a large posix_fallocate() to ever complete
+	 * successfully, so we need to first block SIGALRM to prevent
+	 * this.
+	 */
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGALRM);
+	sigprocmask(SIG_BLOCK, &mask, &old_mask);
 	/* 
-	 * Filesystems that do support fallocate will return EINVAL or
+	 * Filesystems that do not support fallocate will return EINVAL or
 	 * EOPNOTSUPP. In this case we need to fall back to ftruncate
 	 */
-	errno = posix_fallocate(fd, 0, size);
+	do {
+		errno = posix_fallocate(fd, 0, size);
+	} while (errno == EINTR);
+	sigprocmask(SIG_SETMASK, &old_mask, NULL);
 	if (errno == 0)
 		return 0;
 	else if (errno != EINVAL && errno != EOPNOTSUPP)

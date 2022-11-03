@@ -1,5 +1,6 @@
 /*
  * Copyright © 2018 Jonas Ådahl
+ * Copyright © 2019 Christian Rauch
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -44,7 +45,7 @@
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
 
-#include "libdecor-cairo-blur.h"
+#include "common/libdecor-cairo-blur.h"
 
 static const size_t SHADOW_MARGIN = 24;	/* graspable part of the border */
 static const size_t TITLE_HEIGHT = 24;

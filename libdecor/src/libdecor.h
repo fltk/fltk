@@ -1,6 +1,7 @@
 /*
  * Copyright © 2017-2018 Red Hat Inc.
  * Copyright © 2018 Jonas Ådahl
+ * Copyright © 2019 Christian Rauch
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the

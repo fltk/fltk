@@ -42,9 +42,7 @@
 
 #include <cairo/cairo.h>
 
-/* Note for FLTK: This header file changes location, while its content stays unchanged,
- between the master and gtk_cairo_single branches */
-#include "../cairo/libdecor-cairo-blur.h"
+#include "common/libdecor-cairo-blur.h"
 #include <poll.h>
 
 #include <gtk/gtk.h>
