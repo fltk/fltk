@@ -88,11 +88,11 @@ extern Fl_Menu_Item flex_type_menu[];
 
 class Fl_Flex_Type : public Fl_Group_Type {
   Fl_Menu_Item *subtypes() {return flex_type_menu;}
-  int fixedSizeTableSize;
-  int *fixedSizeTable;
+  int fixedSizeTupleSize; /* number of pairs in array */
+  int *fixedSizeTuple; /* [ index, size, index2, size2, ... ] */
   int suspend_auto_layout;
 public:
-  Fl_Flex_Type() : fixedSizeTableSize(0), fixedSizeTable(NULL), suspend_auto_layout(0) { }
+  Fl_Flex_Type() : fixedSizeTupleSize(0), fixedSizeTuple(NULL), suspend_auto_layout(0) { }
   virtual const char *type_name() {return flex_type_name;}
   virtual const char *alt_type_name() {return "fltk::FlexGroup";}
   Fl_Widget_Type *_make() { return new Fl_Flex_Type(); }
