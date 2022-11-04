@@ -48,6 +48,7 @@ static int pixmap_header_written = 0;
 static int bitmap_header_written = 0;
 static int image_header_written = 0;
 static int jpeg_header_written = 0;
+static int svg_header_written = 0;
 
 void Fluid_Image::write_static() {
   if (!img) return;
@@ -121,6 +122,33 @@ void Fluid_Image::write_static() {
 
     write_c(";\n");
     write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+  } else if (strcmp(fl_filename_ext(name()), ".svg")==0) {
+    // Write svg image data...
+    write_c("\n");
+    if (svg_header_written != write_number) {
+      write_c("#include <FL/Fl_SVG_Image.H>\n");
+      svg_header_written = write_number;
+    }
+    write_c("static const char %s[] =\n", idata_name);
+
+    FILE *f = fl_fopen(name(), "rb");
+    if (!f) {
+      // message = "Can't inline file into source code. Can't open";
+    } else {
+      fseek(f, 0, SEEK_END);
+      size_t nData = ftell(f);
+      fseek(f, 0, SEEK_SET);
+      if (nData) {
+        char *data = (char*)calloc(nData+1, 1);
+        if (fread(data, nData, 1, f)==0) { /* ignore */ }
+        write_cstring(data, (int)nData);
+        free(data);
+      }
+      fclose(f);
+    }
+
+    write_c(";\n");
+    write_initializer("Fl_SVG_Image", "NULL, %s", idata_name);
   } else {
     // Write image data...
     write_c("\n");
@@ -252,7 +280,7 @@ const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {
   goto_source_dir();
   fl_file_chooser_ok_label("Use Image");
-  const char *name = fl_file_chooser("Image?","Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm})",oldname,1);
+  const char *name = fl_file_chooser("Image?","Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg})",oldname,1);
   fl_file_chooser_ok_label(NULL);
   ui_find_image_name = name;
   Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : 0;
