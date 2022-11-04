@@ -76,7 +76,8 @@ void write_data_source_cb(FL_SOCKET fd, data_source_write_struct *data) {
 static void data_source_handle_send(void *data, struct wl_data_source *source, const char *mime_type, int fd) {
   fl_intptr_t rank = (fl_intptr_t)data;
 //fprintf(stderr, "data_source_handle_send: %s fd=%d l=%d\n", mime_type, fd, fl_selection_length[1]);
-  if (strcmp(mime_type, wld_plain_text_clipboard) == 0 || strcmp(mime_type, "text/plain") == 0 || strcmp(mime_type, "image/bmp") == 0) {
+  if (!Fl::pushed()) { close(fd); }
+  else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 || strcmp(mime_type, "text/plain") == 0 || strcmp(mime_type, "image/bmp") == 0) {
     data_source_write_struct *write_data = new data_source_write_struct;
     write_data->rest = fl_selection_length[rank];
     write_data->from = fl_selection_buffer[rank];
@@ -440,7 +441,7 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
     Fl::e_y_root = Fl::e_y + fl_dnd_target_window->y();
     ret = Fl::handle(FL_DND_DRAG, fl_dnd_target_window);
   }
-  uint32_t supported_actions =  ret ? WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY : WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
+  uint32_t supported_actions =  ret && (Fl::pushed() || !doing_dnd) ? WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY : WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
   uint32_t preferred_action = supported_actions;
   wl_data_offer_set_actions(current_drag_offer, supported_actions, preferred_action);
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
