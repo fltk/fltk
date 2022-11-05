@@ -980,6 +980,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
 
+  if (pWindow->parent() && !pWindow->window()) return NULL;
   if (pWindow->parent() && !pWindow->window()->shown()) return NULL;
 
   new_window = (struct wld_window *)calloc(1, sizeof *new_window);
