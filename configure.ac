@@ -1027,7 +1027,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
              AC_DEFINE([HAVE_GL_GLU_H])
              GLLIBS="$($PKGCONFIG --libs glu) $GLLIBS"
           ])
-           GLWLDEMO="egl"
+          AC_CHECK_LIB([GL], [glXGetProcAddressARB], [AC_DEFINE([HAVE_GLXGETPROCADDRESSARB])
+             ],, [-lm])
+          GLWLDEMO="egl"
       ], [
           LINKFLTKGL=""
           GLLIBNAME=""
