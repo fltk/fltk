@@ -20,6 +20,7 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scroll.H>
+#include <FL/Fl_Int_Vector.H>
 
 /**
   A table of widgets or other content.
@@ -154,35 +155,8 @@ private:
   };
   unsigned int flags_;
 
-  // An STL-ish vector without templates
-  class FL_EXPORT IntVector {
-    int *arr;
-    unsigned int _size;
-    void init() {
-      arr = 0;
-      _size = 0;
-    }
-    void copy(int *newarr, unsigned int newsize);
-  public:
-    IntVector() { init(); }                                     // CTOR
-    ~IntVector();                                               // DTOR
-    IntVector(IntVector&o) { init(); copy(o.arr, o._size); }    // COPY CTOR
-    IntVector& operator=(IntVector&o) {                         // ASSIGN
-      init();
-      copy(o.arr, o._size);
-      return(*this);
-    }
-    int operator[](int x) const { return(arr[x]); }
-    int& operator[](int x) { return(arr[x]); }
-    unsigned int size() { return(_size); }
-    void size(unsigned int count);
-    int pop_back() { int tmp = arr[_size-1]; _size--; return(tmp); }
-    void push_back(int val) { unsigned int x = _size; size(_size+1); arr[x] = val; }
-    int back() { return(arr[_size-1]); }
-  };
-
-  IntVector _colwidths;                 // column widths in pixels
-  IntVector _rowheights;                // row heights in pixels
+  Fl_Int_Vector _colwidths;             // column widths in pixels
+  Fl_Int_Vector _rowheights;            // row heights in pixels
 
   Fl_Cursor _last_cursor;               // last mouse cursor before changed to 'resize' cursor
 

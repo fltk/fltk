@@ -26,27 +26,6 @@
 #include <stdlib.h>             // realloc/free
 
 
-// An STL-ish vector without templates (private to Fl_Table)
-
-void Fl_Table::IntVector::copy(int *newarr, unsigned int newsize) {
-    size(newsize);
-    memcpy(arr, newarr, newsize * sizeof(int));
-}
-
-Fl_Table::IntVector::~IntVector() { // DTOR
-  if (arr)
-    free(arr);
-  arr = 0;
-}
-
-void Fl_Table::IntVector::size(unsigned int count) {
-  if (count != _size) {
-    arr = (int*)realloc(arr, count * sizeof(int));
-    _size = count;
-  }
-}
-
-
 /** Sets the vertical scroll position so 'row' is at the top,
     and causes the screen to redraw.
 */
