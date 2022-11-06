@@ -754,7 +754,7 @@ void h_cb(Fluid_Coord_Input *i, void *v) {
   }
 }
 
-void wc_relative_cb(Fl_Light_Button *i, void *v) {
+void wc_relative_cb(Fl_Choice *i, void *v) {
   if (v == LOAD) {
     if (!strcmp(current_widget->type_name(), "widget_class")) {
       i->show();

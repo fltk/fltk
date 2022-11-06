@@ -1608,12 +1608,17 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
 
 void Fl_Widget_Class_Type::write_properties() {
   Fl_Window_Type::write_properties();
-  if (wc_relative) write_string("position_relative");
+  if (wc_relative==1)
+    write_string("position_relative");
+  else if (wc_relative==2)
+    write_string("position_relative_rescale");
 }
 
 void Fl_Widget_Class_Type::read_property(const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
+  } else if (!strcmp(c,"position_relative_rescale")) {
+      wc_relative = 2;
   } else {
     Fl_Window_Type::read_property(c);
   }
@@ -1684,8 +1689,10 @@ void Fl_Widget_Class_Type::write_code1() {
     write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n",
             indent(1), trimclassname(name()));
     write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
-    if (wc_relative)
+    if (wc_relative==1)
       write_c("%s%s(0, 0, W, H, L)\n{\n", indent(1), c);
+    else if (wc_relative==2)
+      write_c("%s%s(0, 0, %d, %d, L)\n{\n", indent(1), c, o->w(), o->h());
     else
       write_c("%s%s(X, Y, W, H, L)\n{\n", indent(1), c);
   }
@@ -1698,7 +1705,10 @@ void Fl_Widget_Class_Type::write_code1() {
 
 void Fl_Widget_Class_Type::write_code2() {
   write_extra_code();
-  if (wc_relative) write_c("%sposition(X, Y);\n", indent());
+  if (wc_relative==1)
+    write_c("%sposition(X, Y);\n", indent());
+  else if (wc_relative==2)
+    write_c("%sresize(X, Y, W, H);\n", indent());
   if (modal) write_c("%sset_modal();\n", indent());
   else if (non_modal) write_c("%sset_non_modal();\n", indent());
   if (!((Fl_Window*)o)->border()) write_c("%sclear_border();\n", indent());

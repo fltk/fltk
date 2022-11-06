@@ -111,7 +111,7 @@ public:
   }
   // state variables for output:
   char write_public_state; // true when public: has been printed
-  char wc_relative; // if true, reposition all child widgets in an Fl_Group
+  char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
   virtual void write_properties();
   virtual void read_property(const char *);
