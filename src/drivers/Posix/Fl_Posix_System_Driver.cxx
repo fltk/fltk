@@ -216,17 +216,21 @@ void *Fl_Posix_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *
 #endif
     if (func_ptr) return func_ptr;
   }
-#ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
+#ifdef __APPLE_CC__ // allows using on Darwin + XQuartz + (homebrew or fink)
   if (lib_name) {
     char path[FL_PATH_MAX];
     snprintf(path, FL_PATH_MAX, "/opt/X11/lib/%s.dylib", lib_name);
     lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
     if (!lib_address) {
-      snprintf(path, FL_PATH_MAX, "/opt/sw/lib/%s.dylib", lib_name);
+      snprintf(path, FL_PATH_MAX, "/opt/homebrew/lib/%s.dylib", lib_name);
       lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
       if (!lib_address) {
-        snprintf(path, FL_PATH_MAX, "/sw/lib/%s.dylib", lib_name);
+        snprintf(path, FL_PATH_MAX, "/opt/sw/lib/%s.dylib", lib_name);
         lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+        if (!lib_address) {
+          snprintf(path, FL_PATH_MAX, "/sw/lib/%s.dylib", lib_name);
+          lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+        }
       }
     }
   }
