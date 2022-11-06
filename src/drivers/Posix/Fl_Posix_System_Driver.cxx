@@ -247,7 +247,7 @@ void *Fl_Posix_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *
 void *Fl_Posix_System_Driver::ptr_gtk = NULL;
 
 bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gtk) {
-  typedef void (*init_t)(int*, void*);
+  typedef int (*init_t)(int*, char***);
   init_t init_f = NULL;
   // was GTK previously loaded?
   if (Fl_Posix_System_Driver::ptr_gtk) { // yes, it was.
@@ -287,7 +287,10 @@ bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gt
   char *p = setlocale(LC_ALL, NULL);
   if (p) before = fl_strdup(p);
   int ac = 0;
-  init_f(&ac, NULL); // may change the locale
+  if ( !init_f(&ac, NULL) ) { // may change the locale
+    free(before);
+    return false;
+  }
   if (before) {
     setlocale(LC_ALL, before); // restore calling program's current locale
     free(before);
