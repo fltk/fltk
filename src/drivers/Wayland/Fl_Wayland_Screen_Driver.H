@@ -23,7 +23,7 @@
 #ifndef FL_WAYLAND_SCREEN_DRIVER_H
 #define FL_WAYLAND_SCREEN_DRIVER_H
 
-#include "../../Fl_Screen_Driver.H"
+#include "../Unix/Fl_Unix_Screen_Driver.H"
 #include <wayland-client.h>
 
 class Fl_Window;
@@ -54,7 +54,7 @@ struct seat {
   struct zwp_text_input_v3 *text_input;
 };
 
-class Fl_Wayland_Screen_Driver : public Fl_Screen_Driver
+class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
   friend class Fl_Wayland_Graphics_Driver;
@@ -176,6 +176,9 @@ public:
   static compositor_name compositor; // identifies the used Wayland compositor
   void set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win);
   void reset_spot();
+  virtual void *control_maximize_button(void *data);
+  int event_key(int k);
+  int get_key(int k);
 };
 
 

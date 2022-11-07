@@ -24,14 +24,14 @@
 #define FL_X11_SCREEN_DRIVER_H
 
 #include <config.h>
-#include "../../Fl_Screen_Driver.H"
+#include "../Unix/Fl_Unix_Screen_Driver.H"
 #include <X11/Xlib.h>
 
 
 class Fl_Window;
 
 
-class Fl_X11_Screen_Driver : public Fl_Screen_Driver
+class Fl_X11_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
 protected:
@@ -58,10 +58,21 @@ public:
   int screen_num_unscaled(int x, int y);
 #endif
 
+  Fl_X11_Screen_Driver();
   static int ewmh_supported();
   static void copy_image(const unsigned char* data, int W, int H, int destination);
   // --- display management
   virtual void display(const char *disp);
+  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
+  virtual int poll_or_select_with_delay(double time_to_wait);
+  virtual int poll_or_select();
+  virtual void own_colormap();
+  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
+  virtual int need_menu_handle_part1_extra() {return 1;}
+  virtual int need_menu_handle_part2() {return 1;}
+  // these 2 are in Fl_get_key.cxx
+  virtual int event_key(int);
+  virtual int get_key(int);
   virtual int visual(int flags);
   // --- screen configuration
   void init_workarea();

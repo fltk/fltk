@@ -44,10 +44,6 @@ public:
   virtual void remove_fd(int);
   double wait(double time_to_wait);
   int ready();
-  // 3 additional virtual members
-  virtual int poll_or_select_with_delay(double time_to_wait);
-  virtual int poll_or_select();
-  virtual void *control_maximize_button(void *data);
   static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *return_size);
   static Fl_RGB_Image *own_bmp_to_RGB(char *bmp);
   static void read_int(uchar *c, int& i);

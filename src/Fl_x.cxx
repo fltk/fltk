@@ -40,7 +40,7 @@
 #  include "flstring.h"
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
-#  include "drivers/X11/Fl_X11_System_Driver.H"
+#  include "drivers/Unix/Fl_Unix_System_Driver.H"
 #if FLTK_USE_CAIRO
 #  include "drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H"
 #else
@@ -129,19 +129,18 @@ static void do_queued_events() {
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.
-int Fl_X11_System_Driver::poll_or_select_with_delay(double time_to_wait) {
-
+int Fl_X11_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
   // OpenGL and other broken libraries call XEventsQueued
   // unnecessarily and thus cause the file descriptor to not be ready,
   // so we must check for already-read events:
   if (fl_display && XQLength(fl_display)) {do_queued_events(); return 1;}
-  return Fl_Unix_System_Driver::poll_or_select_with_delay(time_to_wait);
+  return Fl_Unix_Screen_Driver::poll_or_select_with_delay(time_to_wait);
 }
 
-// just like Fl_X11_System_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
-int Fl_X11_System_Driver::poll_or_select() {
+// just like Fl_X11_Screen_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
+int Fl_X11_Screen_Driver::poll_or_select() {
   if (XQLength(fl_display)) return 1;
-  return Fl_Unix_System_Driver::poll_or_select();
+  return Fl_Unix_Screen_Driver::poll_or_select();
 }
 
 // replace \r\n by \n

@@ -29,8 +29,6 @@
  + Fl_System_Driver
  | + Fl_Posix_System_Driver
  | | + Fl_Unix_System_Driver
- | | | + Fl_X11_System_Driver
- | | | + Fl_Wayland_System_Driver
  | | + Fl_Darwin_System_Driver
  | + Fl_WinAPI_System_Driver
  */
@@ -61,29 +59,12 @@ class Fl_Sys_Menu_Bar_Driver;
   */
 class Fl_System_Driver {
   friend class Fl;
-public:
-  struct Keyname {
-    unsigned int key;
-    const char* name;
-  };
 protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
-  // key_table and key_table_size are used in fl_shortcut to translate key names
-  Keyname *key_table;
-  int key_table_size;
 public:
   virtual ~Fl_System_Driver();
-  // These flags are useful after calling XParseGeometry(). They indicate which of its arguments
-  // contain meaningful data upon return.
-  static const int fl_NoValue;
-  static const int fl_WidthValue;
-  static const int fl_HeightValue;
-  static const int fl_XValue;
-  static const int fl_YValue;
-  static const int fl_XNegative;
-  static const int fl_YNegative;
   static int command_key;
   static int control_key;
 
@@ -91,8 +72,6 @@ public:
   virtual int single_arg(const char *) { return 0; }
   // implement if the system adds unwanted program argument pair(s)
   virtual int arg_and_value(const char * /*name*/, const char * /*value*/) { return 0; }
-  // default implementation should be enough
-  virtual int XParseGeometry(const char* string, int* x, int* y, unsigned int* width, unsigned int* height);
   static void warning(const char* format, ...);
   // implement to set the default effect of Fl::warning()
   virtual void warning(const char* format, va_list args);
@@ -140,9 +119,6 @@ public:
   virtual int clocale_vprintf(FILE *output, const char *format, va_list args);
   virtual int clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args);
   virtual int clocale_vsscanf(const char *input, const char *format, va_list args);
-  // implement functions telling whether a key is pressed
-  virtual int event_key(int) {return 0;}
-  virtual int get_key(int) {return 0;}
   // implement scandir-like function
   virtual int filename_list(const char * /*d*/, dirent ***,
                             int (* /*sort*/)(struct dirent **, struct dirent **),
@@ -166,18 +142,12 @@ public:
   virtual const char *filename_ext(const char *buf);
   // implement to support fl_filename_name()
   virtual const char *filename_name(const char *buf) {return buf;}
-  // whether a platform uses additional code in Fl_Menu::handle(int e)
-  virtual int need_menu_handle_part2() {return 0;}
-  // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
-  virtual int need_menu_handle_part1_extra() {return 0;}
   // implement to support fl_open_uri()
   virtual int open_uri(const char * /*uri*/, char * /*msg*/, int /*msglen*/) {return 0;}
   // the default implementation of use_tooltip_timeout_condition() may be enough
   virtual int use_tooltip_timeout_condition() {return 0;}
   // the default implementation of use_recent_tooltip_fix() may be enough
   virtual int use_recent_tooltip_fix() {return 0;}
-  // the default implementation of shortcut_add_key_name() is in src/fl_shortcut.cxx
-  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
   // the default implementation of need_test_shortcut_extra() may be enough
   virtual int need_test_shortcut_extra() {return 0;}
   // implement to support Fl_File_Browser::load()
@@ -225,8 +195,6 @@ public:
   // the implementations of local_to_mac_roman() and mac_roman_to_local() are in fl_encoding_mac_roman.cxx
   virtual const char *local_to_mac_roman(const char *t, int n);
   virtual const char *mac_roman_to_local(const char *t, int n);
-  // the default implementation is most probably enough
-  virtual void own_colormap() {}
   // the default implementations of tree_openpixmap() and tree_closepixmap() are
   // in Fl_Tree_Prefs.cxx and can be enough
   virtual Fl_Pixmap *tree_openpixmap();

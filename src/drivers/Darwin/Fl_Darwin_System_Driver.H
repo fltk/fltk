@@ -51,9 +51,6 @@ public:
   static int calc_mac_os_version(); // computes the fl_mac_os_version global variable
   static unsigned short *compute_macKeyLookUp();
 
-  // these 2 are in Fl_get_key_mac.cxx
-  virtual int event_key(int k);
-  virtual int get_key(int k);
   virtual int filename_list(const char *d, dirent ***list,
                             int (*sort)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0);

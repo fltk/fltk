@@ -2011,11 +2011,11 @@ int Fl::dnd()
 }
 
 int Fl::event_key(int k) {
-  return system_driver()->event_key(k);
+  return screen_driver()->event_key(k);
 }
 
 int Fl::get_key(int k) {
-  return system_driver()->get_key(k);
+  return screen_driver()->get_key(k);
 }
 
 void Fl::get_mouse(int &x, int &y) {

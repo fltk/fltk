@@ -23,7 +23,7 @@
 // get huge color changes when switching windows.
 
 #include <FL/Fl.H>
-#include "Fl_System_Driver.H"
+#include "Fl_Screen_Driver.H"
 
 /** \fn Fl::own_colormap()
  Makes FLTK use its <a href="fltk-colormap.png">own colormap</a>.  This may make FLTK display better
@@ -33,5 +33,5 @@
  <P>This does nothing if the current visual is not colormapped.
  */
 void Fl::own_colormap() {
-  Fl::system_driver()->own_colormap();
+  Fl::screen_driver()->own_colormap();
 }

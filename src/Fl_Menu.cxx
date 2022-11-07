@@ -21,7 +21,7 @@
 // Fl_Menu_ widget.
 
 #include <FL/Fl.H>
-#include "Fl_System_Driver.H"
+#include "Fl_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
@@ -696,11 +696,11 @@ int menuwindow::handle(int e) {
    then STR #2619 does not occur. need_menu_handle_part1_extra() activates this fix.
 
    FLTK 1.3.4 behavior:
-    Fl::system_driver()->need_menu_handle_part2() returns true on Mac + X11
-    Fl::system_driver()->need_menu_handle_part1_extra() returns true on X11
+    Fl::screen_driver()->need_menu_handle_part2() returns true on Mac + X11
+    Fl::screen_driver()->need_menu_handle_part1_extra() returns true on X11
 
    Alternative behavior that seems equally correct:
-    Fl::system_driver()->need_menu_handle_part2() returns true on Mac
+    Fl::screen_driver()->need_menu_handle_part2() returns true on Mac
     need_menu_handle_part1_extra() does not exist
 
    Other alternative:
@@ -710,7 +710,7 @@ int menuwindow::handle(int e) {
     the menu disappears after the end of the resize rather than at its beginning.
     Apple applications do close popups at the beginning of resizes.
    */
-  static int use_part2 = Fl::system_driver()->need_menu_handle_part2();
+  static int use_part2 = Fl::screen_driver()->need_menu_handle_part2();
   int ret = handle_part1(e);
   if (use_part2) ret = handle_part2(e, ret);
   return ret;
@@ -810,7 +810,7 @@ int menuwindow::handle_part1(int e) {
     }
     break;
   case FL_MOVE: {
-    static int use_part1_extra = Fl::system_driver()->need_menu_handle_part1_extra();
+    static int use_part1_extra = Fl::screen_driver()->need_menu_handle_part1_extra();
     if (use_part1_extra && pp.state == DONE_STATE) {
       return 1; // Fix for STR #2619
     }

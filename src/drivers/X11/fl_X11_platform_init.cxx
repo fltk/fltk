@@ -23,7 +23,7 @@
 #  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif
 #include "Fl_X11_Screen_Driver.H"
-#include "Fl_X11_System_Driver.H"
+#include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_X11_Window_Driver.H"
 #include "../Xlib/Fl_Xlib_Image_Surface_Driver.H"
 #include "../Xlib/Fl_Font.H"
@@ -155,7 +155,7 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 
 Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 {
-  return new Fl_X11_System_Driver();
+  return new Fl_Unix_System_Driver();
 }
 
 

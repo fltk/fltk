@@ -35,7 +35,7 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
 #include <dlfcn.h>   // for dlopen et al
 #include <unistd.h>  // for mkstemp
 #include <FL/filename.H>
-#include "../X11/Fl_X11_System_Driver.H"
+#include "../Unix/Fl_Unix_System_Driver.H"
 #define GTK_PAPER_NAME_LETTER "na_letter"
 #define GTK_RESPONSE_NONE 0
 #define GTK_RESPONSE_OK -5

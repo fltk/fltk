@@ -270,7 +270,7 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
         drivers/Unix/Fl_Unix_System_Driver.cxx \
-        drivers/X11/Fl_X11_System_Driver.cxx \
+	drivers/Unix/Fl_Unix_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
 	drivers/X11/fl_X11_platform_init.cxx \
 	Fl_x.cxx \
@@ -302,7 +302,7 @@ WLCPPFILES = \
 	Fl_Native_File_Chooser_Kdialog.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
         drivers/Unix/Fl_Unix_System_Driver.cxx \
-        drivers/Wayland/Fl_Wayland_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_Screen_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Screen_Driver.cxx \
         drivers/Wayland/Fl_Wayland_Window_Driver.cxx \
 	drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx \
@@ -315,7 +315,6 @@ WLCPPFILES = \
 WLX11CPPFILES = \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
-	drivers/X11/Fl_X11_System_Driver.cxx \
 	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \

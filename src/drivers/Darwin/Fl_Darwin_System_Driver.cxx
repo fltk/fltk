@@ -35,45 +35,6 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 
-// This key table is used for the Darwin system driver. It is defined here
-// "static" and assigned in the constructor to avoid static initialization
-// race conditions. It is used in fl_shortcut.cxx.
-//
-// This table must be in numeric order by fltk (X) keysym number:
-
-Fl_System_Driver::Keyname darwin_key_table[] = {
-  //              v - this column may contain UTF-8 characters
-  {' ',           "Space"},
-  {FL_BackSpace,  "⌫"/*"\xe2\x8c\xab"*/}, // U+232B : erase to the left
-  {FL_Tab,        "⇥"/*"\xe2\x87\xa5"*/}, // U+21E5 rightwards arrow to bar
-  {FL_Enter,      "↩"/*"\xe2\x86\xa9"*/}, // U+21A9 leftwards arrow with hook
-  {FL_Pause,      "Pause"},
-  {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,     "⎋"/*"\xe2\x8e\x8b"*/}, // U+238B : broken circle with northwest arrow
-  {FL_Home,       "↖"/*"\xe2\x86\x96"*/}, // U+2196 north west arrow
-  {FL_Left,       "←"/*"\xe2\x86\x90"*/}, // U+2190 leftwards arrow
-  {FL_Up,         "↑"/*"\xe2\x86\x91"*/}, // U+2191 upwards arrow
-  {FL_Right,      "→"/*"\xe2\x86\x92"*/}, // U+2192 rightwards arrow
-  {FL_Down,       "↓"/*"\xe2\x86\x93"*/}, // U+2193 downwards arrow
-  {FL_Page_Up,    "⇞"/*"\xe2\x87\x9e"*/}, // U+21DE upwards arrow with double stroke
-  {FL_Page_Down,  "⇟"/*"\xe2\x87\x9f"*/}, //  U+21DF downwards arrow with double stroke
-  {FL_End,        "↘"/*"\xe2\x86\x98"*/}, // U+2198 south east arrow
-  {FL_Print,      "Print"},
-  {FL_Insert,     "Insert"},
-  {FL_Menu,       "Menu"},
-  {FL_Num_Lock,   "Num_Lock"},
-  {FL_KP_Enter,   "⌤"/*"\xe2\x8c\xa4"*/}, // U+2324 up arrow head between two horizontal bars
-  {FL_Shift_L,    "Shift_L"},
-  {FL_Shift_R,    "Shift_R"},
-  {FL_Control_L,  "Control_L"},
-  {FL_Control_R,  "Control_R"},
-  {FL_Caps_Lock,  "⇪"/*"\xe2\x87\xaa"*/}, // U+21EA upwards white arrow from bar
-  {FL_Meta_L,     "Meta_L"},
-  {FL_Meta_R,     "Meta_R"},
-  {FL_Alt_L,      "Alt_L"},
-  {FL_Alt_R,      "Alt_R"},
-  {FL_Delete,     "⌦"/*"\xe2\x8c\xa6"*/}  // U+2326 : erase to the right
-};
 
 const char *Fl_Darwin_System_Driver::shift_name() {
   return "⇧\\"; // "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
@@ -90,9 +51,6 @@ const char *Fl_Darwin_System_Driver::control_name() {
 
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
-  // initialize key table
-  key_table = darwin_key_table;
-  key_table_size = sizeof(darwin_key_table)/sizeof(*darwin_key_table);
   command_key = FL_META;
   control_key = FL_CTRL;
 }

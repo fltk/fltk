@@ -69,9 +69,6 @@ public:
   virtual int clocale_vprintf(FILE *output, const char *format, va_list args);
   virtual int clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args);
   virtual int clocale_vsscanf(const char *input, const char *format, va_list args);
-  // these 2 are in Fl_get_key_win32.cxx
-  virtual int event_key(int k);
-  virtual int get_key(int k);
   virtual int filename_list(const char *d, dirent ***list,
                             int (*sort)(struct dirent **, struct dirent **),
                             char *errmsg=NULL, int errmsg_sz=0);

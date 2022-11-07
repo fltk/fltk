@@ -94,6 +94,9 @@ public:
   virtual void clipboard_notify_change();
   // this one is implemented in Fl_win32.cxx
   void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  // these two are implemented in Fl_get_key_win32.cxx
+  virtual int event_key(int);
+  virtual int get_key(int);
 };
 
 

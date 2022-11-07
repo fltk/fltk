@@ -16,6 +16,7 @@
 //
 
 #include "Fl_Unix_System_Driver.H"
+#include "Fl_Unix_Screen_Driver.H"
 #include <FL/Fl_File_Browser.H>
 #include <FL/fl_string_functions.h>  // fl_strdup
 #include <FL/platform.H>
@@ -641,55 +642,22 @@ const char *Fl_Unix_System_Driver::filename_name(const char *name) {
 }
 
 
-////////////////////////////////////////////////////////////////
-// interface to poll/select call:
-
-#  if USE_POLL
-
-#    include <poll.h>
-static pollfd *pollfds = 0;
-
-#  else
-#    if HAVE_SYS_SELECT_H
-#      include <sys/select.h>
-#    endif /* HAVE_SYS_SELECT_H */
-
-// The following #define is only needed for HP-UX 9.x and earlier:
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
-
-static fd_set fdsets[3];
-static int maxfd;
-#    define POLLIN 1
-#    define POLLOUT 4
-#    define POLLERR 8
-
-#  endif /* USE_POLL */
-
-static int nfds = 0;
 static int fd_array_size = 0;
-struct FD {
-#  if !USE_POLL
-  int fd;
-  short events;
-#  endif
-  void (*cb)(int, void*);
-  void* arg;
-};
-
-static FD *fd = 0;
 
 void Fl_Unix_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   remove_fd(n,events);
-  int i = nfds++;
+  int i = Fl_Unix_Screen_Driver::nfds++;
   if (i >= fd_array_size) {
-    FD *temp;
+    Fl_Unix_Screen_Driver::FD *temp;
     fd_array_size = 2*fd_array_size+1;
 
-    if (!fd) temp = (FD*)malloc(fd_array_size*sizeof(FD));
-    else temp = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+    if (!Fl_Unix_Screen_Driver::fd) temp =
+      (Fl_Unix_Screen_Driver::FD*)malloc(fd_array_size*sizeof(Fl_Unix_Screen_Driver::FD));
+    else temp = (Fl_Unix_Screen_Driver::FD*)realloc(Fl_Unix_Screen_Driver::fd,
+                          fd_array_size*sizeof(Fl_Unix_Screen_Driver::FD));
 
     if (!temp) return;
-    fd = temp;
+    Fl_Unix_Screen_Driver::fd = temp;
 
 #  if USE_POLL
     pollfd *tpoll;
@@ -701,18 +669,18 @@ void Fl_Unix_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), vo
     pollfds = tpoll;
 #  endif
   }
-  fd[i].cb = cb;
-  fd[i].arg = v;
+  Fl_Unix_Screen_Driver::fd[i].cb = cb;
+  Fl_Unix_Screen_Driver::fd[i].arg = v;
 #  if USE_POLL
   pollfds[i].fd = n;
   pollfds[i].events = events;
 #  else
-  fd[i].fd = n;
-  fd[i].events = events;
-  if (events & POLLIN) FD_SET(n, &fdsets[0]);
-  if (events & POLLOUT) FD_SET(n, &fdsets[1]);
-  if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  if (n > maxfd) maxfd = n;
+  Fl_Unix_Screen_Driver::fd[i].fd = n;
+  Fl_Unix_Screen_Driver::fd[i].events = events;
+  if (events & POLLIN) FD_SET(n, &Fl_Unix_Screen_Driver::fdsets[0]);
+  if (events & POLLOUT) FD_SET(n, &Fl_Unix_Screen_Driver::fdsets[1]);
+  if (events & POLLERR) FD_SET(n, &Fl_Unix_Screen_Driver::fdsets[2]);
+  if (n > Fl_Unix_Screen_Driver::maxfd) Fl_Unix_Screen_Driver::maxfd = n;
 #  endif
 }
 
@@ -723,9 +691,9 @@ void Fl_Unix_System_Driver::add_fd(int n, void (*cb)(int, void*), void* v) {
 void Fl_Unix_System_Driver::remove_fd(int n, int events) {
   int i,j;
 # if !USE_POLL
-  maxfd = -1; // recalculate maxfd on the fly
+  Fl_Unix_Screen_Driver::maxfd = -1; // recalculate maxfd on the fly
 # endif
-  for (i=j=0; i<nfds; i++) {
+  for (i=j=0; i<Fl_Unix_Screen_Driver::nfds; i++) {
 #  if USE_POLL
     if (pollfds[i].fd == n) {
       int e = pollfds[i].events & ~events;
@@ -733,27 +701,27 @@ void Fl_Unix_System_Driver::remove_fd(int n, int events) {
       pollfds[j].events = e;
     }
 #  else
-    if (fd[i].fd == n) {
-      int e = fd[i].events & ~events;
+    if (Fl_Unix_Screen_Driver::fd[i].fd == n) {
+      int e = Fl_Unix_Screen_Driver::fd[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
-      fd[i].events = e;
+      Fl_Unix_Screen_Driver::fd[i].events = e;
     }
-    if (fd[i].fd > maxfd) maxfd = fd[i].fd;
+    if (Fl_Unix_Screen_Driver::fd[i].fd > Fl_Unix_Screen_Driver::maxfd) Fl_Unix_Screen_Driver::maxfd = Fl_Unix_Screen_Driver::fd[i].fd;
 #  endif
     // move it down in the array if necessary:
     if (j<i) {
-      fd[j] = fd[i];
+      Fl_Unix_Screen_Driver::fd[j] = Fl_Unix_Screen_Driver::fd[i];
 #  if USE_POLL
       pollfds[j] = pollfds[i];
 #  endif
     }
     j++;
   }
-  nfds = j;
+  Fl_Unix_Screen_Driver::nfds = j;
 #  if !USE_POLL
-  if (events & POLLIN) FD_CLR(n, &fdsets[0]);
-  if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
-  if (events & POLLERR) FD_CLR(n, &fdsets[2]);
+  if (events & POLLIN) FD_CLR(n, &Fl_Unix_Screen_Driver::fdsets[0]);
+  if (events & POLLOUT) FD_CLR(n, &Fl_Unix_Screen_Driver::fdsets[1]);
+  if (events & POLLERR) FD_CLR(n, &Fl_Unix_Screen_Driver::fdsets[2]);
 #  endif
 }
 
@@ -762,85 +730,13 @@ void Fl_Unix_System_Driver::remove_fd(int n) {
 }
 
 
-// these pointers are set by the Fl::lock() function:
-static void nothing() {}
-void (*fl_lock_function)() = nothing;
-void (*fl_unlock_function)() = nothing;
-
-
-// This is never called with time_to_wait < 0.0:
-// It should return negative on error, 0 if nothing happens before
-// timeout, and >0 if any callbacks were done.
-int Fl_Unix_System_Driver::poll_or_select_with_delay(double time_to_wait) {
-#  if !USE_POLL
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-#  endif
-  int n;
-
-  fl_unlock_function();
-
-  if (time_to_wait < 2147483.648) {
-#  if USE_POLL
-    n = ::poll(pollfds, nfds, int(time_to_wait*1000 + .5));
-#  else
-    timeval t;
-    t.tv_sec = int(time_to_wait);
-    t.tv_usec = int(1000000 * (time_to_wait-t.tv_sec));
-    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#  endif
-  } else {
-#  if USE_POLL
-    n = ::poll(pollfds, nfds, -1);
-#  else
-    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
-#  endif
-  }
-
-  fl_lock_function();
-
-  if (n > 0) {
-    for (int i=0; i<nfds; i++) {
-#  if USE_POLL
-      if (pollfds[i].revents) fd[i].cb(pollfds[i].fd, fd[i].arg);
-#  else
-      int f = fd[i].fd;
-      short revents = 0;
-      if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
-      if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
-      if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
-#  endif
-    }
-  }
-  return n;
-}
-
-int Fl_Unix_System_Driver::poll_or_select() {
-  if (!nfds) return 0; // nothing to select or poll
-#  if USE_POLL
-  return ::poll(pollfds, nfds, 0);
-#  else
-  timeval t;
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-  return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#  endif
-}
-
-
 double Fl_Unix_System_Driver::wait(double time_to_wait)
 {
+  Fl_Unix_Screen_Driver *scr_dr = (Fl_Unix_Screen_Driver*)Fl::screen_driver();
   time_to_wait = Fl_System_Driver::wait(time_to_wait);
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
-    int ret = this->poll_or_select_with_delay(0.0);
+    int ret = scr_dr->poll_or_select_with_delay(0.0);
     Fl::flush();
     return ret;
   } else {
@@ -852,15 +748,16 @@ double Fl_Unix_System_Driver::wait(double time_to_wait)
       Fl_Timeout::elapse_timeouts();
       time_to_wait = Fl_Timeout::time_to_wait(time_to_wait);
     }
-    return this->poll_or_select_with_delay(time_to_wait);
+    return scr_dr->poll_or_select_with_delay(time_to_wait);
   }
 }
 
 int Fl_Unix_System_Driver::ready()
 {
+  Fl_Unix_Screen_Driver *scr_dr = (Fl_Unix_Screen_Driver*)Fl::screen_driver();
   Fl_Timeout::elapse_timeouts();
   if (Fl_Timeout::time_to_wait(1.0) <= 0.0) return 1;
-  return this->poll_or_select();
+  return scr_dr->poll_or_select();
 }
 
 
@@ -953,9 +850,4 @@ Fl_RGB_Image *Fl_Unix_System_Driver::own_bmp_to_RGB(char *bmp) {
   Fl_RGB_Image *img = new Fl_RGB_Image(data, w, h, 3);
   img->alloc_array = 1;
   return img;
-}
-
-
-void *Fl_Unix_System_Driver::control_maximize_button(void *data) {
-  return NULL;
 }

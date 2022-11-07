@@ -14,11 +14,11 @@
 //     https://www.fltk.org/bugs.php
 //
 
-
+#include <config.h>
 #include "Fl_Wayland_Copy_Surface_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
-#include "Fl_Wayland_System_Driver.H"
+#include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
 #if FLTK_USE_X11
@@ -26,7 +26,6 @@
 #  include <cairo-xlib.h>
 #  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
 #  include "../X11/Fl_X11_Screen_Driver.H"
-#  include "../X11/Fl_X11_System_Driver.H"
 #  include "../X11/Fl_X11_Window_Driver.H"
 #  include "../Xlib/Fl_Xlib_Image_Surface_Driver.H"
 #endif
@@ -114,10 +113,7 @@ static bool attempt_wayland() {
 
 
 Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
-#if FLTK_USE_X11
-  if (!attempt_wayland()) return new Fl_X11_System_Driver();
-#endif
-  return new Fl_Wayland_System_Driver();
+  return new Fl_Unix_System_Driver();
 }
 
 

@@ -102,6 +102,10 @@ public:
   virtual int clipboard_contains(const char *type);
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
+  virtual int need_menu_handle_part2() {return 1;}
+  // these 2 are in Fl_get_key_mac.cxx
+  virtual int event_key(int);
+  virtual int get_key(int);
 private:
   float scale_;
 };

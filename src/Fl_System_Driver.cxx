@@ -32,57 +32,6 @@
 #include "flstring.h"
 #include <time.h>
 
-const int Fl_System_Driver::fl_NoValue =     0x0000;
-const int Fl_System_Driver::fl_WidthValue =  0x0004;
-const int Fl_System_Driver::fl_HeightValue = 0x0008;
-const int Fl_System_Driver::fl_XValue =      0x0001;
-const int Fl_System_Driver::fl_YValue =      0x0002;
-const int Fl_System_Driver::fl_XNegative =   0x0010;
-const int Fl_System_Driver::fl_YNegative =   0x0020;
-
-// This default key table is used for all system drivers that don't define
-// and/or use their own table. It is defined here "static" and assigned
-// in the constructor to avoid static initialization race conditions.
-//
-// As of January 2022 the only platform is Windows. X11 does not
-// use a key table at all.
-// Platforms that use their own key tables must assign them in their
-// constructors (which overwrites the pointer and size).
-
-static Fl_System_Driver::Keyname default_key_table[] = {
-  {' ',           "Space"},
-  {FL_BackSpace,  "Backspace"},
-  {FL_Tab,        "Tab"},
-  {0xff0b/*XK_Clear*/, "Clear"},
-  {FL_Enter,      "Enter"}, // X says "Enter"
-  {FL_Pause,      "Pause"},
-  {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,     "Escape"},
-  {FL_Home,       "Home"},
-  {FL_Left,       "Left"},
-  {FL_Up,         "Up"},
-  {FL_Right,      "Right"},
-  {FL_Down,       "Down"},
-  {FL_Page_Up,    "Page_Up"}, // X says "Prior"
-  {FL_Page_Down,  "Page_Down"}, // X says "Next"
-  {FL_End,        "End"},
-  {FL_Print,      "Print"},
-  {FL_Insert,     "Insert"},
-  {FL_Menu,       "Menu"},
-  {FL_Num_Lock,   "Num_Lock"},
-  {FL_KP_Enter,   "KP_Enter"},
-  {FL_Shift_L,    "Shift_L"},
-  {FL_Shift_R,    "Shift_R"},
-  {FL_Control_L,  "Control_L"},
-  {FL_Control_R,  "Control_R"},
-  {FL_Caps_Lock,  "Caps_Lock"},
-  {FL_Meta_L,     "Meta_L"},
-  {FL_Meta_R,     "Meta_R"},
-  {FL_Alt_L,      "Alt_L"},
-  {FL_Alt_R,      "Alt_R"},
-  {FL_Delete,     "Delete"}
-};
-
 
 int Fl_System_Driver::command_key = 0;
 int Fl_System_Driver::control_key = 0;
@@ -102,9 +51,6 @@ int fl_control_modifier() {
 
 Fl_System_Driver::Fl_System_Driver()
 {
-  // initialize default key table (used in fl_shortcut.cxx)
-  key_table = default_key_table;
-  key_table_size = sizeof(default_key_table)/sizeof(*default_key_table);
   command_key = FL_CTRL;
   control_key = FL_META;
 }
@@ -151,140 +97,6 @@ void Fl_System_Driver::fatal(const char *format, va_list args) {
   fputc('\n', stderr);
   fflush(stderr);
   exit(1);
-}
-
-/* the following function was stolen from the X sources as indicated. */
-
-/* Copyright    Massachusetts Institute of Technology  1985, 1986, 1987 */
-/* $XConsortium: XParseGeom.c,v 11.18 91/02/21 17:23:05 rws Exp $ */
-
-/*
- Permission to use, copy, modify, distribute, and sell this software and its
- documentation for any purpose is hereby granted without fee, provided that
- the above copyright notice appear in all copies and that both that
- copyright notice and this permission notice appear in supporting
- documentation, and that the name of M.I.T. not be used in advertising or
- publicity pertaining to distribution of the software without specific,
- written prior permission.  M.I.T. makes no representations about the
- suitability of this software for any purpose.  It is provided "as is"
- without express or implied warranty.
- */
-
-/*
-    XParseGeometry parses strings of the form
-   "=<width>x<height>{+-}<xoffset>{+-}<yoffset>", where
-   width, height, xoffset, and yoffset are unsigned integers.
-   Example:  "=80x24+300-49"
-   The equal sign is optional.
-   It returns a bitmask that indicates which of the four values
-   were actually found in the string.  For each value found,
-   the corresponding argument is updated;  for each value
-   not found, the corresponding argument is left unchanged.
- */
-
-static int ReadInteger(char* string, char** NextString)
-{
-  int Result = 0;
-  int Sign = 1;
-
-  if (*string == '+')
-    string++;
-  else if (*string == '-') {
-    string++;
-    Sign = -1;
-  }
-  for (; (*string >= '0') && (*string <= '9'); string++) {
-    Result = (Result * 10) + (*string - '0');
-  }
-  *NextString = string;
-  if (Sign >= 0)
-    return (Result);
-  else
-    return (-Result);
-}
-
-int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
-                   unsigned int* width, unsigned int* height)
-{
-  int mask = Fl_System_Driver::fl_NoValue;
-  char *strind;
-  unsigned int tempWidth = 0, tempHeight = 0;
-  int tempX = 0, tempY = 0;
-  char *nextCharacter;
-
-  if ( (string == NULL) || (*string == '\0')) return(mask);
-  if (*string == '=')
-    string++;  /* ignore possible '=' at beg of geometry spec */
-
-  strind = (char *)string;
-  if (*strind != '+' && *strind != '-' && *strind != 'x') {
-    tempWidth = ReadInteger(strind, &nextCharacter);
-    if (strind == nextCharacter)
-      return (0);
-    strind = nextCharacter;
-    mask |= fl_WidthValue;
-  }
-
-  if (*strind == 'x' || *strind == 'X') {
-    strind++;
-    tempHeight = ReadInteger(strind, &nextCharacter);
-    if (strind == nextCharacter)
-      return (0);
-    strind = nextCharacter;
-    mask |= fl_HeightValue;
-  }
-
-  if ((*strind == '+') || (*strind == '-')) {
-    if (*strind == '-') {
-      strind++;
-      tempX = -ReadInteger(strind, &nextCharacter);
-      if (strind == nextCharacter)
-        return (0);
-      strind = nextCharacter;
-      mask |= fl_XNegative;
-
-    } else {
-      strind++;
-      tempX = ReadInteger(strind, &nextCharacter);
-      if (strind == nextCharacter)
-        return(0);
-      strind = nextCharacter;
-    }
-    mask |= fl_XValue;
-    if ((*strind == '+') || (*strind == '-')) {
-      if (*strind == '-') {
-        strind++;
-        tempY = -ReadInteger(strind, &nextCharacter);
-        if (strind == nextCharacter)
-          return(0);
-        strind = nextCharacter;
-        mask |= fl_YNegative;
-
-      } else {
-        strind++;
-        tempY = ReadInteger(strind, &nextCharacter);
-        if (strind == nextCharacter)
-          return(0);
-        strind = nextCharacter;
-      }
-      mask |= fl_YValue;
-    }
-  }
-
-  /* If strind isn't at the end of the string the it's an invalid
-   geometry specification. */
-
-  if (*strind != '\0') return (0);
-
-  if (mask & fl_XValue)
-    *x = tempX;
-  if (mask & fl_YValue)
-    *y = tempY;
-  if (mask & fl_WidthValue)
-    *width = tempWidth;
-  if (mask & fl_HeightValue)
-    *height = tempHeight;
-  return (mask);
 }
 
 unsigned Fl_System_Driver::utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen) {

@@ -27,7 +27,7 @@
 #  include "../../flstring.h"
 #  include "Fl_Wayland_Screen_Driver.H"
 #  include "Fl_Wayland_Window_Driver.H"
-#  include "Fl_Wayland_System_Driver.H"
+#  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
 #  include <errno.h>
 

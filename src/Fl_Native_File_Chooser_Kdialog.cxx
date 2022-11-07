@@ -18,7 +18,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
 #include "Fl_Window_Driver.H"
-#include "drivers/Unix/Fl_Unix_System_Driver.H"
+#include "drivers/Unix/Fl_Unix_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,14 +136,14 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
     Fl_Event_Dispatch old_dispatch = Fl::event_dispatch();
     // prevent FLTK from processing any event
     Fl::event_dispatch(fnfc_dispatch);
-    void *control = ((Fl_Unix_System_Driver*)Fl::system_driver())->control_maximize_button(NULL);
+    void *control = ((Fl_Unix_Screen_Driver*)Fl::screen_driver())->control_maximize_button(NULL);
     // run event loop until pipe finishes
     while (data.fd >= 0) Fl::wait();
     Fl::remove_fd(fileno(pipe));
     pclose(pipe);
     // return to previous event processing by FLTK
     Fl::event_dispatch(old_dispatch);
-    if (control) ((Fl_Unix_System_Driver*)Fl::system_driver())->control_maximize_button(control);
+    if (control) ((Fl_Unix_Screen_Driver*)Fl::screen_driver())->control_maximize_button(control);
     if (data.all_files) {
       // process text received from pipe
       if (data.all_files[strlen(data.all_files)-1] == '\n') data.all_files[strlen(data.all_files)-1] = 0;

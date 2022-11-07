@@ -202,7 +202,7 @@ if (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
     drivers/X11/Fl_X11_Window_Driver.cxx
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Unix/Fl_Unix_System_Driver.cxx
-    drivers/X11/Fl_X11_System_Driver.cxx
+    drivers/Unix/Fl_Unix_Screen_Driver.cxx
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     drivers/X11/fl_X11_platform_init.cxx
@@ -250,7 +250,6 @@ if (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
     drivers/Posix/Fl_Posix_System_Driver.H
     drivers/X11/Fl_X11_Screen_Driver.H
     drivers/X11/Fl_X11_Window_Driver.H
-    drivers/X11/Fl_X11_System_Driver.H
     drivers/Xlib/Fl_Xlib_Graphics_Driver.H
     drivers/Xlib/Fl_Font.H
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.H
@@ -273,9 +272,9 @@ elseif (OPTION_USE_WAYLAND)
   set (DRIVER_FILES
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Posix/Fl_Posix_Printer_Driver.cxx
+    drivers/Unix/Fl_Unix_Screen_Driver.cxx
     drivers/Wayland/Fl_Wayland_Screen_Driver.cxx
     drivers/Wayland/Fl_Wayland_Window_Driver.cxx
-    drivers/Wayland/Fl_Wayland_System_Driver.cxx
     drivers/Unix/Fl_Unix_System_Driver.cxx
     drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx
@@ -292,7 +291,6 @@ elseif (OPTION_USE_WAYLAND)
         drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
         drivers/X11/Fl_X11_Screen_Driver.cxx
         drivers/X11/Fl_X11_Window_Driver.cxx
-        drivers/X11/Fl_X11_System_Driver.cxx
         drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
         drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
         Fl_x.cxx
@@ -302,7 +300,6 @@ elseif (OPTION_USE_WAYLAND)
     endif (FLTK_USE_X11)
   set (DRIVER_HEADER_FILES
     drivers/Posix/Fl_Posix_System_Driver.H
-    drivers/Wayland/Fl_Wayland_System_Driver.H
     drivers/Wayland/Fl_Wayland_Screen_Driver.H
     drivers/Wayland/Fl_Wayland_Window_Driver.H
     drivers/Wayland/Fl_Wayland_Graphics_Driver.H

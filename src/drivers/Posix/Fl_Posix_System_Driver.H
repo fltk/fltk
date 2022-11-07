@@ -64,7 +64,6 @@ public:
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual const char *getpwnam(const char *login);
-  virtual int need_menu_handle_part2() {return 1;}
 #if HAVE_DLFCN_H
   virtual void *load(const char *filename);
 #if HAVE_DLSYM

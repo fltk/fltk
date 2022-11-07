@@ -70,12 +70,40 @@ public:
   static char bg2_set;
   static char fg_set;
   static Fl_System_Driver *system_driver;
+  // These flags are useful after calling XParseGeometry(). They indicate which of its
+  // arguments contain meaningful data upon return.
+  static const int fl_NoValue;
+  static const int fl_WidthValue;
+  static const int fl_HeightValue;
+  static const int fl_XValue;
+  static const int fl_YValue;
+  static const int fl_XNegative;
+  static const int fl_YNegative;
+  // key_table and key_table_size are used in fl_shortcut to translate key names
+  struct Keyname {
+    unsigned int key;
+    const char* name;
+  } *key_table;
+  int key_table_size;
 
   virtual float scale(int) { return 1; }
   virtual void scale(int /*n*/, float /*f*/) {}
   static Fl_Screen_Driver *newScreenDriver();
-  // --- display management
-  virtual void display(const char *disp);
+  // implement to process the -display argument and support the DISPLAY env var
+  virtual void display(const char *) { }
+  // default implementation should be enough
+  virtual int XParseGeometry(const char* string, int* x, int* y, unsigned int* width, unsigned int* height);
+  // the default implementation is most probably enough
+  virtual void own_colormap() {}
+  // the default implementation of shortcut_add_key_name() is in src/fl_shortcut.cxx
+  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
+  // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
+  virtual int need_menu_handle_part1_extra() {return 0;}
+  // whether a platform uses additional code in Fl_Menu::handle(int e)
+  virtual int need_menu_handle_part2() {return 0;}
+  // implement functions telling whether a key is pressed
+  virtual int event_key(int) {return 0;}
+  virtual int get_key(int) {return 0;}
   virtual int visual(int flags);
   // --- screen configuration
   virtual void init() {}
