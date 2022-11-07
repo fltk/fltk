@@ -34,7 +34,7 @@ by the Type hierarchy 'Tree'. Options and Types are composed of `Words` and
 Line Endings
 ------------
 
-Although Fluid writes all line endings as '\n', readers should tolerated '\r\n'
+Although Fluid writes all line endings as '\n', readers should tolerate '\r\n'
 MSWindows line endings as well. Except for the header, the Fluid reader does not
 differentiate between a line ending and a space character outside of a 'word'.
 
