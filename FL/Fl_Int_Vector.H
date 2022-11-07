@@ -120,7 +120,7 @@ public:
   }
 
   /** Return the number of integer elements in the array. */
-  unsigned int size() {
+  unsigned int size() const {
     return size_;
   }
 
@@ -150,7 +150,7 @@ public:
     \warning You must not call back() if the array is empty, i.e. if (size() == 0).
     \todo Internals should maybe assert(size_ != 0)
   */
-  int back() {
+  int back() const {
     return arr_[size_ - 1];
   }
 
