@@ -11,7 +11,7 @@ History
 
 Fluid, the Fast Light User Interface Designer was started in the 1990's loosely
 based on 'fdesign', a GUI designer that came with the 'Forms Library', later
-'XFroms Library'. Fluid's .fd file format was originally compatible to XFroms,
+'XForms Library'. Fluid's .fd file format was originally compatible with XForms,
 but later evolved somewhat ad'hoc to become what it is today.
 
 
