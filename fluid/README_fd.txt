@@ -2,7 +2,7 @@
 Fluid .fd file format version 1.4
 =================================
 
-This file explains the histroy of the Fluid .fd format and faitfully describes
+This file explains the history of the Fluid .fd format and faithfully describes
 all elements of the format and its caveats.
 
 
