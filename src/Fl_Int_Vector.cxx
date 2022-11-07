@@ -40,10 +40,6 @@ Fl_Int_Vector::~Fl_Int_Vector() {
 
   Shrinking truncates the array and frees memory of truncated elements.
   Enlarging creates new elements that are zero in value.
-
-  \warning
-    Only currently advised use is to shrink the array size, i.e. (count < size()),
-    since assignment via index (e.g. v[x] = 123) is not yet supported.
 */
 void Fl_Int_Vector::size(unsigned int count) {
   if (count == 0) {             // zero? special case frees memory
