@@ -36,24 +36,30 @@ Fl_Int_Vector::~Fl_Int_Vector() {
 /**
   Set the size of the array to \p count.
 
-  A size of zero empties the array completely and frees all memory.
+  Setting size to zero clears the array and frees any memory it used.
+
+  Shrinking truncates the array and frees memory of truncated elements.
+  Enlarging creates new elements that are zero in value.
 
   \warning
-    - Only advised use currently is to shrink the array size, i.e. (count < size()).
-    - Currently enlarging the array leaves the new values uninitialized.
-    - When assignment via indexes is supported, i.e. v[x] = 123, array enlargement should zero new values
-  \todo Check if count > size, and if so init new values to 0.
+    Only currently advised use is to shrink the array size, i.e. (count < size()),
+    since assignment via index (e.g. v[x] = 123) is not yet supported.
 */
 void Fl_Int_Vector::size(unsigned int count) {
-  if (count <= 0) {
+  if (count == 0) {             // zero? special case frees memory
     if (arr_)
       free(arr_);
     arr_ = 0;
     size_ = 0;
     return;
   }
-  if (count > size_) {
+  if (count > size_) {          // array enlarged? realloc + init new vals to 0
     arr_ = (int *)realloc(arr_, count * sizeof(int));
-    size_ = count;
+    while ( size_ < count ) {
+      arr_[size_++] = 0;
+    }
+    return;                     // leaves with size_ == count
   }
+  // count <= size_? just truncate
+  size_ = count;
 }

@@ -32,14 +32,15 @@
 
   Common use:
   \code
+  #include <stdio.h>
   #include <FL/Fl_Int_Vector.H>
   int main() {
       Fl_Int_Vector v;
 
-      // Create an array of values 1,2,3:
-      v.push_back(1);   // add first element
-      v.push_back(2);   // add second element
-      v.push_back(3);   // add third element
+      // Create an array of values 11,22,33:
+      v.push_back(11);   // add first element
+      v.push_back(22);   // add second element
+      v.push_back(33);   // add third element
 
       // Loop through printing the values
       for ( unsigned int i=0; i<v.size(); i++ )
@@ -52,7 +53,7 @@
   \endcode
 
   \todo
-      - Add other std::vector methods like empty(), erase(), etc.
+      - Add other std::vector methods like erase(), etc.
       - Make memory blocking size flexible, and add related methods like capacity(), reserve(), shrink_to_fit(), etc.
       - Add non-std methods that are nevertheless needed, e.g. insert(index,val), delete(index), delete(start, end), swap(a_idx,b_idx)
       - Add a way to change the elements by index, e.g. v[2] = 222; (which is currently NOT supported)
@@ -123,7 +124,7 @@ public:
     Removes the last element the last element and returns its value.
 
     \warning You must not call pop_back() if the array is empty, i.e. if (size() == 0).
-    \todo Internals should probably assert(size_ != 0)
+    \todo Internals should maybe assert(size_ != 0)
   */
   int pop_back() {
     int tmp = arr_[size_ - 1];
@@ -141,10 +142,18 @@ public:
   /**
     Return the last element in the array.
     \warning You must not call back() if the array is empty, i.e. if (size() == 0).
-    \todo Internals should probably assert(size_ != 0)
+    \todo Internals should maybe assert(size_ != 0)
   */
   int back() {
     return arr_[size_ - 1];
+  }
+
+  /**
+    Checks if array has no elements.
+    Same as a test for (size() == 0).
+  */
+  bool empty() const {
+    return (size_ == 0) ? true : false;
   }
 };
 
