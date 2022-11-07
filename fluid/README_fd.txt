@@ -360,7 +360,7 @@ Type "Fl_Widget" <word> : C++ variable name
       If the word is "image", TBD.
       Or one of "NORMAL_LABEL", "SHADOW_LABEL", "ENGRAVED_LABEL",
       "EMBOSSED_LABEL", or "NO_LABEL"
-  "labelfont" <word> : intger
+  "labelfont" <word> : integer
   "labelsize" <word> : intger
   "labelcolor" <word> : intger
   "align" <word> : intger
