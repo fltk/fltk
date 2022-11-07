@@ -347,7 +347,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "deimage" <word> : deactivated image name
   "type" <word> : integer
   "box" <word> : text or integer (see fltk boxtypes)
-  "down_box" <word> : (is_botton() or Fl_Input_choice" or is_menu_button())
+  "down_box" <word> : (is_button() or Fl_Input_choice" or is_menu_button())
       text or integer (see fltk boxtypes)
   "value" <word> : (is_burron()) integer
   "value" <word> : (is_valuator(), is_spinner()) double
