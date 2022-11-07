@@ -353,7 +353,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "value" <word> : (is_valuator(), is_spinner()) double
   "color" <word> :
       If word starts with "0x", the rest of the field is a hex number.
-      If two intergers follow, this is color and selection_color (not written).
+      If two integers follow, this is color and selection_color (not written).
       If one integer follows, it's the color index.
   "selection_color" <word> : integer color index
   "labeltype" <word> :
