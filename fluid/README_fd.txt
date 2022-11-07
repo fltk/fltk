@@ -289,7 +289,7 @@ All Types <word>
   “user_data_type” <word> : usually “void*” or “long”
   “callback” <word> : a function name or a function body
   “comment” <word> : one or many lines of text
-  “open” : group centent visible in the Fluid tree browser
+  “open” : group content visible in the Fluid tree browser
   “selected” : type was selected in tree view
 
 
