@@ -349,7 +349,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "box" <word> : text or integer (see fltk boxtypes)
   "down_box" <word> : (is_button() or Fl_Input_choice" or is_menu_button())
       text or integer (see fltk boxtypes)
-  "value" <word> : (is_burron()) integer
+  "value" <word> : (is_button()) integer
   "value" <word> : (is_valuator(), is_spinner()) double
   "color" <word> :
       If word starts with "0x", the rest of the field is a hex number.
