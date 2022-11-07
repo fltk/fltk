@@ -1,10 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0400
-i18n_type 1
-i18n_include {<libintl.h>}
-i18n_conditional FLTK_GETTEXT_FOUND
-i18n_function gettext
-i18n_static_function gettext_noop
 header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local
