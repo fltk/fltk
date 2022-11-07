@@ -134,9 +134,9 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
-#if FLTK_USE_X11
   if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
-  if (Fl_Wayland_Screen_Driver::wl_display) {
+#if FLTK_USE_X11
+  if (attempt_wayland()) {
     return new Fl_Wayland_Screen_Driver();
   }
 
@@ -162,7 +162,7 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
 #if FLTK_USE_X11
-  if (!Fl_Wayland_Screen_Driver::wl_display)
+  if (!attempt_wayland())
     return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
 #endif
   return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);

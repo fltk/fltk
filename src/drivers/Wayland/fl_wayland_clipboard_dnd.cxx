@@ -76,7 +76,7 @@ void write_data_source_cb(FL_SOCKET fd, data_source_write_struct *data) {
 static void data_source_handle_send(void *data, struct wl_data_source *source, const char *mime_type, int fd) {
   fl_intptr_t rank = (fl_intptr_t)data;
 //fprintf(stderr, "data_source_handle_send: %s fd=%d l=%d\n", mime_type, fd, fl_selection_length[1]);
-  if (!Fl::pushed()) { close(fd); }
+  if (!Fl::pushed()) { close(fd); wl_data_source_destroy(source); }
   else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 || strcmp(mime_type, "text/plain") == 0 || strcmp(mime_type, "image/bmp") == 0) {
     data_source_write_struct *write_data = new data_source_write_struct;
     write_data->rest = fl_selection_length[rank];
