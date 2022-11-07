@@ -65,7 +65,7 @@ so "#define" is written as '{\#define}`.
 The characters ‘{‘ and ‘}’ are also escaped with a '\' unless every opening
 ‘{‘ in the sequnece is matched with a closing ‘}’.
 
-Note: line endings are copied verbatim and become significat within a Word.
+Note: line endings are copied verbatim and become significant within a Word.
 
 
 Strings
