@@ -20,9 +20,51 @@
 
 #include <FL/Fl.H>
 
+/** \file FL/Fl_Int_Vector.H
+  An STL-ish vector implemented without templates.
+*/
+
+/**
+  An STL-ish vector without templates.
+
+  Handles dynamic memory management of an integer array, and allows
+  array elements to be accessed with zero based indexing: v[0], v[1]..
+
+  Common use:
+  \code
+  #include <FL/Fl_Int_Vector.H>
+  int main() {
+      Fl_Int_Vector v;
+
+      // Create an array of values 1,2,3:
+      v.push_back(1);   // add first element
+      v.push_back(2);   // add second element
+      v.push_back(3);   // add third element
+
+      // Loop through printing the values
+      for ( unsigned int i=0; i<v.size(); i++ )
+          printf("%d ", v[i]);  // access the elements
+      printf("\n");
+
+      // Clear the array
+      v.size(0);
+  }
+  \endcode
+
+  \todo
+      - Add other std::vector methods like empty(), erase(), etc.
+      - Make memory blocking size flexible, and add related methods like capacity(), reserve(), shrink_to_fit(), etc.
+      - Add non-std methods that are nevertheless needed, e.g. insert(index,val), delete(index), delete(start, end), swap(a_idx,b_idx)
+      - Add a way to change the elements by index, e.g. v[2] = 222; (which is currently NOT supported)
+*/
 class FL_EXPORT Fl_Int_Vector {
   int *arr_;
   unsigned int size_;
+
+  /**
+    Initialize internals.
+    Private: For use internally by the class's ctors only.
+  */
   void init() {
     arr_ = 0;
     size_ = 0;
@@ -30,51 +72,77 @@ class FL_EXPORT Fl_Int_Vector {
   void copy(int *newarr, unsigned int newsize);
 
 public:
+  /** Create an empty vector of integers. */
   Fl_Int_Vector() {
     init();
   }
 
   ~Fl_Int_Vector();
 
-  // copy constructor
+  /** Copy constructor. */
   Fl_Int_Vector(Fl_Int_Vector &o) {
     init();
     copy(o.arr_, o.size_);
   }
 
-  // assignment operator
+  /**
+    Assignment operator. Similar to the copy constructor,
+    creates a separate copy of the source array, freeing any
+    previous contents in the current integer array.
+  */
   Fl_Int_Vector &operator=(Fl_Int_Vector &o) {
     init();
     copy(o.arr_, o.size_);
     return *this;
   }
 
+  /**
+    Access the specified integer element at index position \p x.
+    \warning No range checking is done on \p x, which must be less than size().
+  */
   int operator[](int x) const {
     return arr_[x];
   }
 
+  /**
+    Access the specified integer element at index position \p x as a reference.
+    \warning No range checking is done on \p x, which must be less than size().
+  */
   int &operator[](int x) {
     return arr_[x];
   }
 
+  /** Return the number of integer elements in the array. */
   unsigned int size() {
     return size_;
   }
 
   void size(unsigned int count);
 
+  /**
+    Removes the last element the last element and returns its value.
+
+    \warning You must not call pop_back() if the array is empty, i.e. if (size() == 0).
+    \todo Internals should probably assert(size_ != 0)
+  */
   int pop_back() {
     int tmp = arr_[size_ - 1];
     size_--;
     return tmp;
   }
 
+  /** Appends \p val to the array, enlarging the array by one. */
   void push_back(int val) {
     unsigned int x = size_;
     size(size_ + 1);
     arr_[x] = val;
   }
 
+  /**
+    Return the last element in the array.
+    \warning You must not call back() if the array is empty, i.e. if (size() == 0).
+    \todo Internals should probably assert(size_ != 0)
+  */
   int back() {
     return arr_[size_ - 1];
   }
