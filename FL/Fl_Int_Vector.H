@@ -42,6 +42,9 @@
       v.push_back(22);   // add second element
       v.push_back(33);   // add third element
 
+      // Assignment by subscript
+      v[1] = 222;        // changes 2nd element from 22 to 222
+
       // Loop through printing the values
       for ( unsigned int i=0; i<v.size(); i++ )
           printf("%d ", v[i]);  // access the elements
@@ -56,7 +59,6 @@
       - Add other std::vector methods like erase(), etc.
       - Make memory blocking size flexible, and add related methods like capacity(), reserve(), shrink_to_fit(), etc.
       - Add non-std methods that are nevertheless needed, e.g. insert(index,val), delete(index), delete(start, end), swap(a_idx,b_idx)
-      - Add a way to change the elements by index, e.g. v[2] = 222; (which is currently NOT supported)
 */
 class FL_EXPORT Fl_Int_Vector {
   int *arr_;
@@ -107,6 +109,10 @@ public:
 
   /**
     Access the specified integer element at index position \p x as a reference.
+
+    This allows assignment by index through the returned reference, e.g. arr[1] = 222;
+    where arr[1] ends up being a reference to ptr[1], and then 222 is assigned to that ref.
+
     \warning No range checking is done on \p x, which must be less than size().
   */
   int &operator[](int x) {
