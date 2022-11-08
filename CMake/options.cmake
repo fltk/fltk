@@ -659,6 +659,9 @@ if ((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND OPTION_USE_PANGO)
     # *FIXME* Libraries should not be added explicitly if possible
     if (OPTION_USE_WAYLAND)
       list (APPEND FLTK_LDLIBS -lgtk-3 -lgdk-3 -lgio-2.0)
+      if (NOT OPTION_WAYLAND_ONLY)
+        list (APPEND FLTK_LDLIBS -lX11)
+      endif (NOT OPTION_WAYLAND_ONLY)
     endif (OPTION_USE_WAYLAND)
 
     if (APPLE)
