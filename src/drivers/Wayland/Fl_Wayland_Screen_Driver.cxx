@@ -1473,7 +1473,18 @@ void Fl_Wayland_Screen_Driver::reset_spot() {
 
 void Fl_Wayland_Screen_Driver::display(const char *d)
 {
-  if (d) ::setenv("WAYLAND_DISPLAY", d, 1);
+  if (d && !seat) { // if display was opened, it's too late
+    if (wl_display) {
+      // only the wl_display_connect() call was done, redo it because the target
+      // Wayland compositor may be different
+      wl_display_disconnect(wl_display);
+    }
+    wl_display = wl_display_connect(d);
+    if (!wl_display) {
+      fprintf(stderr, "Error: '%s' is not an active Wayland socket\n", d);
+      exit(1);
+    }
+  }
 }
 
 
