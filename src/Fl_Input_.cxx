@@ -371,6 +371,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       // cursor position may need to be recomputed (see STR #2486)
       curx = int(expandpos(p, value()+position(), buf, 0)+.5);
       if (readonly()) {
+        // Draw '^' caret cursor
         fl_line((int)(xpos+curx-2.5f), Y+ypos+height-1,
                 (int)(xpos+curx+0.5f), Y+ypos+height-4,
                 (int)(xpos+curx+3.5f), Y+ypos+height-1);

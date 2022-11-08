@@ -34,6 +34,15 @@
   and need scrollbars, or full color control of characters,
   then use Fl_Text_Display. If you want to display HTML text,
   use Fl_Help_View.
+
+  A caret cursor (^) shows the keyboard navigation mark
+  for keyboard selection of the output text, e.g. Arrow Keys
+  to move the cursor, Shift + Arrow Keys to create a text
+  selection, and '^C' to copy the selected text to the paste buffer.
+  The caret cursor can be disabled by disabling the widget's
+  "visible focus" using clear_visible_focus(), inherited from the
+  Fl_Widget base class. Doing this also disables the widget's
+  keyboard navigation.
 */
 class FL_EXPORT Fl_Multiline_Output : public Fl_Output {
 public:
