@@ -221,7 +221,7 @@ another opening ‘{‘, followed by a list of types, followed by a closing ‘}
     label Surprise ...                    option parameter
   } {                                   end_of_options start_of_children
     Fl_Button {} {                        type name start_of_options
-      label {Don't panic...!}               option paramater
+      label {Don't panic...!}               option parameter
       hide                                  option
     }                                     end_of_options
   }                                     end_of_children
