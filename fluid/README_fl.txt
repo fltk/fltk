@@ -130,7 +130,7 @@ Note: if the version number is above the internal version number, Fluid will
       which is beyond the scope of this document.
 
 Note: fdesign files (.fd) start with the text "Magic:". Fluid can read these
-      files, but Forms/XFroms files are beyond the scope of this document.
+      files, but Forms/XForms files are beyond the scope of this document.
 
 
 Options
