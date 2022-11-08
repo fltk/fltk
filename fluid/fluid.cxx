@@ -149,7 +149,7 @@ static char* app_work_dir = NULL;
 
 /// Set, if the current working directory is in the source code folder vs. the app working space.
 /// \see goto_source_dir()
-static char in_source_dir = 0;
+static char in_designfile_dir = 0;
 
 /// Set, if Fluid was started with the command line argument -u
 int update_file = 0;            // fluid -u
@@ -253,9 +253,9 @@ void update_sourceview_timer(void*);
  Remember the the previous directory, so \c leave_source_dir() can return there.
  \see leave_source_dir(), pwd, in_source_dir
  */
-void goto_source_dir() {
-  in_source_dir++;
-  if (in_source_dir>1) return;
+void goto_designfile_dir() {
+  in_designfile_dir++;
+  if (in_designfile_dir>1) return;
   if (!filename || !*filename) return;
   const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
@@ -282,10 +282,10 @@ void goto_source_dir() {
  Change the current working directory to its previous directory.
  \see goto_source_dir(), pwd, in_source_dir
  */
-void leave_source_dir() {
-  if (in_source_dir == 0) return; // error: called leave_... more often the goto_...
-  in_source_dir--;
-  if (in_source_dir) return;
+void leave_designfile_dir() {
+  if (in_designfile_dir == 0) return; // error: called leave_... more often the goto_...
+  in_designfile_dir--;
+  if (in_designfile_dir) return;
   if (fl_chdir(app_work_dir) < 0) {
     fprintf(stderr, "Can't chdir to %s : %s\n", app_work_dir, strerror(errno));
   }
@@ -926,9 +926,9 @@ int write_code_files() {
   } else {
     strlcpy(hname, header_file_name, sizeof(hname));
   }
-  if (!batch_mode) goto_source_dir();
+  if (!batch_mode) goto_designfile_dir();
   int x = write_code(cname,hname);
-  if (!batch_mode) leave_source_dir();
+  if (!batch_mode) leave_designfile_dir();
   strlcat(cname, " and ", sizeof(cname));
   strlcat(cname, hname, sizeof(cname));
   if (batch_mode) {
@@ -965,9 +965,9 @@ void write_strings_cb(Fl_Widget *, void *) {
   char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
   fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
-  if (!batch_mode) goto_source_dir();
+  if (!batch_mode) goto_designfile_dir();
   int x = write_strings(sname);
-  if (!batch_mode) leave_source_dir();
+  if (!batch_mode) leave_designfile_dir();
   if (batch_mode) {
     if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
   } else {
