@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -64,6 +64,14 @@ public:
 protected:
   int handle(int ev) { return Fl_Text_Display::handle(ev); }
   void draw();
+};
+
+// ---- DesignViewer declaration
+
+class DesignViewer : public Fl_Text_Display {
+public:
+  DesignViewer(int X, int Y, int W, int H, const char *L=0);
+  int top_line() { return get_absolute_top_line_number(); }
 };
 
 #endif // !CodeEditor_h

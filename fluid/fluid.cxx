@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1615,7 +1615,7 @@ void set_filename(const char *c) {
 /**
  Set the "modified" flag and update the title of the main window.
 
- The first argument sets the modifaction state of the current design against
+ The first argument sets the modification state of the current design against
  the corresponding .fl design file. Any change to the widget tree will mark
  the design 'modified'. Saving the design will mark it clean.
 
@@ -1684,6 +1684,7 @@ void set_modflag(int mf, int mfc) {
 
 static char *sv_source_filename = NULL;
 static char *sv_header_filename = NULL;
+static char *sv_design_filename = NULL;
 
 /**
  Update the header and source code highlighting depending on the
@@ -1732,18 +1733,21 @@ void update_sourceview_position()
  */
 void update_sourceview_position_cb(Fl_Tabs*, void*)
 {
+  // make sure that the selected tab shows the current view
+  update_sourceview_cb(0,0);
+  // highlight the selected widget in the selected tab
   update_sourceview_position();
 }
 
 /**
- Generate a header and source file in a temporary directory and
- load those into the Code Viewer widgets.
+ Generate a header, source, strings, or design file in a temporary directory
+ and load those into the Code Viewer widgets.
  */
 void update_sourceview_cb(Fl_Button*, void*)
 {
   if (!sourceview_panel || !sourceview_panel->visible())
     return;
-  // generate space for the source and header file filenames
+
   if (!sv_source_filename) {
     sv_source_filename = (char*)malloc(FL_PATH_MAX);
     fluid_prefs.getUserdataPath(sv_source_filename, FL_PATH_MAX);
@@ -1754,34 +1758,55 @@ void update_sourceview_cb(Fl_Button*, void*)
     fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
     strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
-
-  strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
-  fl_filename_setext(i18n_program, sizeof(i18n_program), "");
-  const char *code_file_name_bak = code_file_name;
-  code_file_name = sv_source_filename;
-  const char *header_file_name_bak = header_file_name;
-  header_file_name = sv_header_filename;
-
-  // generate the code and load the files
-  write_sourceview = 1;
-  // generate files
-  if (write_code(sv_source_filename, sv_header_filename))
-  {
-    // load file into source editor
-    int pos = sv_source->top_line();
-    sv_source->buffer()->loadfile(sv_source_filename);
-    sv_source->scroll(pos, 0);
-    // load file into header editor
-    pos = sv_header->top_line();
-    sv_header->buffer()->loadfile(sv_header_filename);
-    sv_header->scroll(pos, 0);
-    // update the source code highlighting
-    update_sourceview_position();
+  if (!sv_design_filename) {
+    sv_design_filename = (char*)malloc(FL_PATH_MAX);
+    fluid_prefs.getUserdataPath(sv_design_filename, FL_PATH_MAX);
+    strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
   }
-  write_sourceview = 0;
 
-  code_file_name = code_file_name_bak;
-  header_file_name = header_file_name_bak;
+  if (sv_design->visible_r()) {
+    write_file(sv_design_filename);
+    int top = sv_design->top_line();
+    sv_design->buffer()->loadfile(sv_design_filename);
+    sv_design->scroll(top, 0);
+  } else if (sv_strings->visible_r()) {
+    static const char *exts[] = { ".txt", ".po", ".msg" };
+    char fn[FL_PATH_MAX];
+    fluid_prefs.getUserdataPath(fn, FL_PATH_MAX);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[i18n_type]);
+    write_strings(fn);
+    int top = sv_strings->top_line();
+    sv_strings->buffer()->loadfile(fn);
+    sv_strings->scroll(top, 0);
+  } else if (sv_source->visible_r() || sv_header->visible_r()) {
+    strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
+    fl_filename_setext(i18n_program, sizeof(i18n_program), "");
+    const char *code_file_name_bak = code_file_name;
+    code_file_name = sv_source_filename;
+    const char *header_file_name_bak = header_file_name;
+    header_file_name = sv_header_filename;
+
+    // generate the code and load the files
+    write_sourceview = 1;
+    // generate files
+    if (write_code(sv_source_filename, sv_header_filename))
+    {
+      // load file into source editor
+      int pos = sv_source->top_line();
+      sv_source->buffer()->loadfile(sv_source_filename);
+      sv_source->scroll(pos, 0);
+      // load file into header editor
+      pos = sv_header->top_line();
+      sv_header->buffer()->loadfile(sv_header_filename);
+      sv_header->scroll(pos, 0);
+      // update the source code highlighting
+      update_sourceview_position();
+    }
+    write_sourceview = 0;
+
+    code_file_name = code_file_name_bak;
+    header_file_name = header_file_name_bak;
+  }
 }
 
 /**

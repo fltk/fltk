@@ -114,6 +114,8 @@ extern void update_sourceview_position_cb(Fl_Tabs*, void*);
 extern Fl_Tabs *sv_tab;
 extern CodeViewer *sv_source;
 extern CodeViewer *sv_header;
+extern DesignViewer *sv_strings;
+extern DesignViewer *sv_design;
 extern void update_sourceview_cb(Fl_Button*, void*);
 extern Fl_Light_Button *sv_autorefresh;
 extern Fl_Light_Button *sv_autoposition;
