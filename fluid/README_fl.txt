@@ -182,7 +182,7 @@ an option is missing, a default value is assumed.
   "win_shell_cmd" <word> : string, this is the recommended command when calling
       the shell on an MSWindows machine. Implementation may be problematic.
 
-  "win_shell_flags" <word> : integer, interpreted as a bit filed: bit 0 is set
+  "win_shell_flags" <word> : integer, interpreted as a bit field: bit 0 is set
       if the .fl must be save before runing the shell command, bit 1 is set for
       saving the source code, bit 2 is set for saving text strings.
 
