@@ -344,11 +344,11 @@ static void pointer_button(void *data,
     return;
   }
   int b = 0;
-  Fl::e_state = 0;
+  Fl::e_state &= ~FL_BUTTONS;
   if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-    if (button == BTN_LEFT) {Fl::e_state = FL_BUTTON1; b = 1;}
-    else if (button == BTN_RIGHT) {Fl::e_state = FL_BUTTON3; b = 3;}
-    else if (button == BTN_MIDDLE) {Fl::e_state = FL_BUTTON2; b = 2;}
+    if (button == BTN_LEFT) {Fl::e_state |= FL_BUTTON1; b = 1;}
+    else if (button == BTN_RIGHT) {Fl::e_state |= FL_BUTTON3; b = 3;}
+    else if (button == BTN_MIDDLE) {Fl::e_state |= FL_BUTTON2; b = 2;}
     Fl::e_keysym = FL_Button + b;
   }
   Fl::e_dx = Fl::e_dy = 0;
@@ -737,7 +737,7 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
 {
   struct seat *seat = (struct seat*)data;
   xkb_state_update_mask(seat->xkb_state, mods_depressed, mods_latched, mods_locked, 0, 0, group);
-  Fl::e_state = 0;
+  Fl::e_state &= ~(FL_SHIFT+FL_CTRL+FL_ALT+FL_CAPS_LOCK+FL_NUM_LOCK);
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_SHIFT, XKB_STATE_MODS_DEPRESSED))
     Fl::e_state |= FL_SHIFT;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_CTRL, XKB_STATE_MODS_DEPRESSED))
@@ -746,6 +746,8 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
     Fl::e_state |= FL_ALT;
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_CAPS, XKB_STATE_MODS_LOCKED))
     Fl::e_state |= FL_CAPS_LOCK;
+  if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_NUM, XKB_STATE_MODS_LOCKED))
+    Fl::e_state |= FL_NUM_LOCK;
 //fprintf(stderr, "mods_depressed=%u Fl::e_state=%X\n", mods_depressed, Fl::e_state);
 }
 
