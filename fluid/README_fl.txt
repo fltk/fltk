@@ -228,7 +228,7 @@ another opening ‘{‘, followed by a list of types, followed by a closing ‘}
 
 The file ends when there are no more types.
 
-Note: the "class" type has an additional Word following immediatley after
+Note: the "class" type has an additional Word following immediately after
       the keyword. It contains the prefix for the class. A class definition may
       be written as:
 
