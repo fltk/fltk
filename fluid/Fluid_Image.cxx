@@ -104,9 +104,11 @@ void Fluid_Image::write_static() {
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
 
+    goto_source_dir();
     FILE *f = fl_fopen(name(), "rb");
+    leave_source_dir();
     if (!f) {
-      // message = "Can't inline file into source code. Can't open";
+      write_file_error("JPEG");
     } else {
       fseek(f, 0, SEEK_END);
       size_t nData = ftell(f);
@@ -131,9 +133,11 @@ void Fluid_Image::write_static() {
     }
     write_c("static const char %s[] =\n", idata_name);
 
+    goto_source_dir();
     FILE *f = fl_fopen(name(), "rb");
+    leave_source_dir();
     if (!f) {
-      // message = "Can't inline file into source code. Can't open";
+      write_file_error("SVG");
     } else {
       fseek(f, 0, SEEK_END);
       size_t nData = ftell(f);
@@ -162,6 +166,13 @@ void Fluid_Image::write_static() {
     write_c(";\n");
     write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
   }
+}
+
+void Fluid_Image::write_file_error(const char *fmt) {
+  write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
+  goto_source_dir();
+  write_c("// Searching in path \"%s\"\n", fl_getcwd(0, FL_PATH_MAX));
+  leave_source_dir();
 }
 
 void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {

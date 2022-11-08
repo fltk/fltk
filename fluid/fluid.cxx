@@ -145,7 +145,7 @@ int modflag_c = 0;
 
 /// Application work directory, stored here when temporarily changing to the source code directory.
 /// \see goto_source_dir()
-static char* pwd = NULL;
+static char* app_work_dir = NULL;
 
 /// Set, if the current working directory is in the source code folder vs. the app working space.
 /// \see goto_source_dir()
@@ -254,22 +254,28 @@ void update_sourceview_timer(void*);
  \see leave_source_dir(), pwd, in_source_dir
  */
 void goto_source_dir() {
-  if (in_source_dir) return;
+  in_source_dir++;
+  if (in_source_dir>1) return;
   if (!filename || !*filename) return;
   const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
   char buffer[FL_PATH_MAX];
   strlcpy(buffer, filename, sizeof(buffer));
-  int n = (int)(p-filename); if (n>1) n--; buffer[n] = 0;
-  if (!pwd) {
-    pwd = fl_getcwd(0, FL_PATH_MAX);
-    if (!pwd) {fprintf(stderr, "getwd : %s\n",strerror(errno)); return;}
+  int n = (int)(p-filename);
+  if (n>1) n--;
+  buffer[n] = 0;
+  if (!app_work_dir) {
+    app_work_dir = fl_getcwd(0, FL_PATH_MAX);
+    if (!app_work_dir) {
+      fprintf(stderr, "goto_source_dir: getwd: %s\n", strerror(errno));
+      return;
+    }
   }
-  if (fl_chdir(buffer) < 0) {
-    fprintf(stderr, "Can't chdir to %s : %s\n", buffer, strerror(errno));
+  if (buffer[0] && (fl_chdir(buffer) < 0)) {
+    fprintf(stderr, "goto_source_dir: can't chdir to %s: %s\n", buffer, strerror(errno));
     return;
   }
-  in_source_dir = 1;
+  // fprintf(stderr, "chdir to %s\n", fl_getcwd(0, FL_PATH_MAX));
 }
 
 /**
@@ -277,11 +283,13 @@ void goto_source_dir() {
  \see goto_source_dir(), pwd, in_source_dir
  */
 void leave_source_dir() {
-  if (!in_source_dir) return;
-  if (fl_chdir(pwd) < 0) {
-    fprintf(stderr, "Can't chdir to %s : %s\n", pwd, strerror(errno));
+  if (in_source_dir == 0) return; // error: called leave_... more often the goto_...
+  in_source_dir--;
+  if (in_source_dir) return;
+  if (fl_chdir(app_work_dir) < 0) {
+    fprintf(stderr, "Can't chdir to %s : %s\n", app_work_dir, strerror(errno));
   }
-  in_source_dir = 0;
+  // fprintf(stderr, "chdir back to %s\n", app_work_dir);
 }
 
 /**
