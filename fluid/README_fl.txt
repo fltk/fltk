@@ -250,7 +250,7 @@ Note: the hierarchical dependency is implemented twice and somewhat conflicting
       virtual functions, which does not always match the type hierarchy.
 
 
-The list of known types adn their inheritance is:
+The list of known types and their inheritance is:
 
   Fl_Type (note: can't be written)
    +-- Function
