@@ -125,7 +125,7 @@ Note: the version number corresponds not so much to the version of Fluid, but
       change unexpectedly.
 
 Note: if the version number is above the internal version number, Fluid will
-      report an error and continue reading, hoping fo rthe best.
+      report an error and continue reading, hoping for the best.
       There are no other uses inside the Fluid reader except for fltk2 features
       which is beyond the scope of this document.
 
