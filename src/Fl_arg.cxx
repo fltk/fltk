@@ -277,7 +277,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   // note: background_pixel is no longer used since 1.4.0, but anyway ...
   // set colors first, so background_pixel is correct:
-  static char beenhere;
+  static char beenhere = 0;
   if (!beenhere) {
     if (geometry) {
       int fl = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
