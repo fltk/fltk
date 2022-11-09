@@ -57,7 +57,6 @@ struct seat {
 class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
-  friend class Fl_Wayland_Graphics_Driver;
   static int insertion_point_x;
   static int insertion_point_y;
   static int insertion_point_width;

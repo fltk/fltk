@@ -47,7 +47,6 @@ class Fl_Wayland_Plugin;
 
 class Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
-  friend class Fl_X;
   friend class Fl_Wayland_Gl_Window_Driver;
   friend class Fl_Wayland_Screen_Driver;
 private:
