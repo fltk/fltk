@@ -1484,6 +1484,10 @@ CodeViewer *sv_source=(CodeViewer *)0;
 
 CodeViewer *sv_header=(CodeViewer *)0;
 
+DesignViewer *sv_strings=(DesignViewer *)0;
+
+DesignViewer *sv_design=(DesignViewer *)0;
+
 Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
 Fl_Light_Button *sv_autoposition=(Fl_Light_Button *)0;
@@ -1536,6 +1540,48 @@ Fl_Double_Window* make_sourceview() {
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
         } // CodeViewer* sv_header
+        o->end();
+      } // Fl_Group* o
+      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
+        o->labelsize(13);
+        o->hide();
+        { DesignViewer* o = sv_strings = new DesignViewer(20, 50, 480, 390);
+          sv_strings->box(FL_DOWN_FRAME);
+          sv_strings->color(FL_BACKGROUND2_COLOR);
+          sv_strings->selection_color(FL_SELECTION_COLOR);
+          sv_strings->labeltype(FL_NORMAL_LABEL);
+          sv_strings->labelfont(0);
+          sv_strings->labelsize(14);
+          sv_strings->labelcolor(FL_FOREGROUND_COLOR);
+          sv_strings->textfont(4);
+          sv_strings->textsize(11);
+          sv_strings->align(Fl_Align(FL_ALIGN_TOP));
+          sv_strings->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(sv_strings);
+          o->linenumber_width(60);
+          o->linenumber_size(o->Fl_Text_Display::textsize());
+        } // DesignViewer* sv_strings
+        o->end();
+      } // Fl_Group* o
+      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Design");
+        o->labelsize(13);
+        o->hide();
+        { DesignViewer* o = sv_design = new DesignViewer(20, 50, 480, 390);
+          sv_design->box(FL_DOWN_FRAME);
+          sv_design->color(FL_BACKGROUND2_COLOR);
+          sv_design->selection_color(FL_SELECTION_COLOR);
+          sv_design->labeltype(FL_NORMAL_LABEL);
+          sv_design->labelfont(0);
+          sv_design->labelsize(14);
+          sv_design->labelcolor(FL_FOREGROUND_COLOR);
+          sv_design->textfont(4);
+          sv_design->textsize(11);
+          sv_design->align(Fl_Align(FL_ALIGN_TOP));
+          sv_design->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(sv_design);
+          o->linenumber_width(60);
+          o->linenumber_size(o->Fl_Text_Display::textsize());
+        } // DesignViewer* sv_design
         o->end();
       } // Fl_Group* o
       sv_tab->end();

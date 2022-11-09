@@ -1128,9 +1128,9 @@ void Fl_Data_Type::open() {
       if (w == data_panel_cancel) goto BREAK2;
       else if (w == data_panel_ok) break;
       else if (w == data_filebrowser) {
-        goto_source_dir();
+        goto_designfile_dir();
         const char *fn = fl_file_chooser("Load Inline Data", 0L, data_filename->value(), 1);
-        leave_source_dir();
+        leave_designfile_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
             set_modflag(1);
@@ -1217,9 +1217,9 @@ void Fl_Data_Type::write_code1() {
   int nData = -1;
   // path should be set correctly already
   if (filename_ && !write_sourceview) {
-    goto_source_dir();
+    goto_designfile_dir();
     FILE *f = fl_fopen(filename_, "rb");
-    leave_source_dir();
+    leave_designfile_dir();
     if (!f) {
       message = "Can't include data from file. Can't open";
     } else {

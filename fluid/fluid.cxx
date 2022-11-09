@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -145,11 +145,11 @@ int modflag_c = 0;
 
 /// Application work directory, stored here when temporarily changing to the source code directory.
 /// \see goto_source_dir()
-static char* pwd = NULL;
+static char* app_work_dir = NULL;
 
 /// Set, if the current working directory is in the source code folder vs. the app working space.
 /// \see goto_source_dir()
-static char in_source_dir = 0;
+static char in_designfile_dir = 0;
 
 /// Set, if Fluid was started with the command line argument -u
 int update_file = 0;            // fluid -u
@@ -253,35 +253,43 @@ void update_sourceview_timer(void*);
  Remember the the previous directory, so \c leave_source_dir() can return there.
  \see leave_source_dir(), pwd, in_source_dir
  */
-void goto_source_dir() {
-  if (in_source_dir) return;
+void goto_designfile_dir() {
+  in_designfile_dir++;
+  if (in_designfile_dir>1) return;
   if (!filename || !*filename) return;
   const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
   char buffer[FL_PATH_MAX];
   strlcpy(buffer, filename, sizeof(buffer));
-  int n = (int)(p-filename); if (n>1) n--; buffer[n] = 0;
-  if (!pwd) {
-    pwd = fl_getcwd(0, FL_PATH_MAX);
-    if (!pwd) {fprintf(stderr, "getwd : %s\n",strerror(errno)); return;}
+  int n = (int)(p-filename);
+  if (n>1) n--;
+  buffer[n] = 0;
+  if (!app_work_dir) {
+    app_work_dir = fl_getcwd(0, FL_PATH_MAX);
+    if (!app_work_dir) {
+      fprintf(stderr, "goto_source_dir: getwd: %s\n", strerror(errno));
+      return;
+    }
   }
-  if (fl_chdir(buffer) < 0) {
-    fprintf(stderr, "Can't chdir to %s : %s\n", buffer, strerror(errno));
+  if (buffer[0] && (fl_chdir(buffer) < 0)) {
+    fprintf(stderr, "goto_source_dir: can't chdir to %s: %s\n", buffer, strerror(errno));
     return;
   }
-  in_source_dir = 1;
+  // fprintf(stderr, "chdir to %s\n", fl_getcwd(0, FL_PATH_MAX));
 }
 
 /**
  Change the current working directory to its previous directory.
  \see goto_source_dir(), pwd, in_source_dir
  */
-void leave_source_dir() {
-  if (!in_source_dir) return;
-  if (fl_chdir(pwd) < 0) {
-    fprintf(stderr, "Can't chdir to %s : %s\n", pwd, strerror(errno));
+void leave_designfile_dir() {
+  if (in_designfile_dir == 0) return; // error: called leave_... more often the goto_...
+  in_designfile_dir--;
+  if (in_designfile_dir) return;
+  if (fl_chdir(app_work_dir) < 0) {
+    fprintf(stderr, "Can't chdir to %s : %s\n", app_work_dir, strerror(errno));
   }
-  in_source_dir = 0;
+  // fprintf(stderr, "chdir back to %s\n", app_work_dir);
 }
 
 /**
@@ -918,9 +926,9 @@ int write_code_files() {
   } else {
     strlcpy(hname, header_file_name, sizeof(hname));
   }
-  if (!batch_mode) goto_source_dir();
+  if (!batch_mode) goto_designfile_dir();
   int x = write_code(cname,hname);
-  if (!batch_mode) leave_source_dir();
+  if (!batch_mode) leave_designfile_dir();
   strlcat(cname, " and ", sizeof(cname));
   strlcat(cname, hname, sizeof(cname));
   if (batch_mode) {
@@ -957,9 +965,9 @@ void write_strings_cb(Fl_Widget *, void *) {
   char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
   fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
-  if (!batch_mode) goto_source_dir();
+  if (!batch_mode) goto_designfile_dir();
   int x = write_strings(sname);
-  if (!batch_mode) leave_source_dir();
+  if (!batch_mode) leave_designfile_dir();
   if (batch_mode) {
     if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
   } else {
@@ -1615,7 +1623,7 @@ void set_filename(const char *c) {
 /**
  Set the "modified" flag and update the title of the main window.
 
- The first argument sets the modifaction state of the current design against
+ The first argument sets the modification state of the current design against
  the corresponding .fl design file. Any change to the widget tree will mark
  the design 'modified'. Saving the design will mark it clean.
 
@@ -1684,6 +1692,7 @@ void set_modflag(int mf, int mfc) {
 
 static char *sv_source_filename = NULL;
 static char *sv_header_filename = NULL;
+static char *sv_design_filename = NULL;
 
 /**
  Update the header and source code highlighting depending on the
@@ -1732,18 +1741,21 @@ void update_sourceview_position()
  */
 void update_sourceview_position_cb(Fl_Tabs*, void*)
 {
+  // make sure that the selected tab shows the current view
+  update_sourceview_cb(0,0);
+  // highlight the selected widget in the selected tab
   update_sourceview_position();
 }
 
 /**
- Generate a header and source file in a temporary directory and
- load those into the Code Viewer widgets.
+ Generate a header, source, strings, or design file in a temporary directory
+ and load those into the Code Viewer widgets.
  */
 void update_sourceview_cb(Fl_Button*, void*)
 {
   if (!sourceview_panel || !sourceview_panel->visible())
     return;
-  // generate space for the source and header file filenames
+
   if (!sv_source_filename) {
     sv_source_filename = (char*)malloc(FL_PATH_MAX);
     fluid_prefs.getUserdataPath(sv_source_filename, FL_PATH_MAX);
@@ -1754,34 +1766,55 @@ void update_sourceview_cb(Fl_Button*, void*)
     fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
     strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
-
-  strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
-  fl_filename_setext(i18n_program, sizeof(i18n_program), "");
-  const char *code_file_name_bak = code_file_name;
-  code_file_name = sv_source_filename;
-  const char *header_file_name_bak = header_file_name;
-  header_file_name = sv_header_filename;
-
-  // generate the code and load the files
-  write_sourceview = 1;
-  // generate files
-  if (write_code(sv_source_filename, sv_header_filename))
-  {
-    // load file into source editor
-    int pos = sv_source->top_line();
-    sv_source->buffer()->loadfile(sv_source_filename);
-    sv_source->scroll(pos, 0);
-    // load file into header editor
-    pos = sv_header->top_line();
-    sv_header->buffer()->loadfile(sv_header_filename);
-    sv_header->scroll(pos, 0);
-    // update the source code highlighting
-    update_sourceview_position();
+  if (!sv_design_filename) {
+    sv_design_filename = (char*)malloc(FL_PATH_MAX);
+    fluid_prefs.getUserdataPath(sv_design_filename, FL_PATH_MAX);
+    strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
   }
-  write_sourceview = 0;
 
-  code_file_name = code_file_name_bak;
-  header_file_name = header_file_name_bak;
+  if (sv_design->visible_r()) {
+    write_file(sv_design_filename);
+    int top = sv_design->top_line();
+    sv_design->buffer()->loadfile(sv_design_filename);
+    sv_design->scroll(top, 0);
+  } else if (sv_strings->visible_r()) {
+    static const char *exts[] = { ".txt", ".po", ".msg" };
+    char fn[FL_PATH_MAX];
+    fluid_prefs.getUserdataPath(fn, FL_PATH_MAX);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[i18n_type]);
+    write_strings(fn);
+    int top = sv_strings->top_line();
+    sv_strings->buffer()->loadfile(fn);
+    sv_strings->scroll(top, 0);
+  } else if (sv_source->visible_r() || sv_header->visible_r()) {
+    strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
+    fl_filename_setext(i18n_program, sizeof(i18n_program), "");
+    const char *code_file_name_bak = code_file_name;
+    code_file_name = sv_source_filename;
+    const char *header_file_name_bak = header_file_name;
+    header_file_name = sv_header_filename;
+
+    // generate the code and load the files
+    write_sourceview = 1;
+    // generate files
+    if (write_code(sv_source_filename, sv_header_filename))
+    {
+      // load file into source editor
+      int pos = sv_source->top_line();
+      sv_source->buffer()->loadfile(sv_source_filename);
+      sv_source->scroll(pos, 0);
+      // load file into header editor
+      pos = sv_header->top_line();
+      sv_header->buffer()->loadfile(sv_header_filename);
+      sv_header->scroll(pos, 0);
+      // update the source code highlighting
+      update_sourceview_position();
+    }
+    write_sourceview = 0;
+
+    code_file_name = code_file_name_bak;
+    header_file_name = header_file_name_bak;
+  }
 }
 
 /**

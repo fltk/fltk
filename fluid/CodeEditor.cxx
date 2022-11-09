@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -294,3 +294,17 @@ void CodeViewer::draw()
   CodeEditor::draw();
   Fl::set_color(FL_SELECTION_COLOR, c);
 }
+
+// ---- DesignViewer implementation
+
+/**
+ Create a DesignViewer widget.
+ \param[in] X, Y, W, H position and size of the widget
+ \param[in] L optional label
+ */
+DesignViewer::DesignViewer(int X, int Y, int W, int H, const char *L)
+: Fl_Text_Display(X, Y, W, H, L)
+{
+  buffer(new Fl_Text_Buffer);
+}
+

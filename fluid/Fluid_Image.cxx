@@ -104,9 +104,11 @@ void Fluid_Image::write_static() {
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
 
+    goto_designfile_dir();
     FILE *f = fl_fopen(name(), "rb");
+    leave_designfile_dir();
     if (!f) {
-      // message = "Can't inline file into source code. Can't open";
+      write_file_error("JPEG");
     } else {
       fseek(f, 0, SEEK_END);
       size_t nData = ftell(f);
@@ -131,9 +133,11 @@ void Fluid_Image::write_static() {
     }
     write_c("static const char %s[] =\n", idata_name);
 
+    goto_designfile_dir();
     FILE *f = fl_fopen(name(), "rb");
+    leave_designfile_dir();
     if (!f) {
-      // message = "Can't inline file into source code. Can't open";
+      write_file_error("SVG");
     } else {
       fseek(f, 0, SEEK_END);
       size_t nData = ftell(f);
@@ -162,6 +166,13 @@ void Fluid_Image::write_static() {
     write_c(";\n");
     write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
   }
+}
+
+void Fluid_Image::write_file_error(const char *fmt) {
+  write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
+  goto_designfile_dir();
+  write_c("// Searching in path \"%s\"\n", fl_getcwd(0, FL_PATH_MAX));
+  leave_designfile_dir();
 }
 
 void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {
@@ -213,11 +224,11 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
 
   // no, so now see if the file exists:
 
-  goto_source_dir();
+  goto_designfile_dir();
   FILE *f = fl_fopen(iname,"rb");
   if (!f) {
     read_error("%s : %s",iname,strerror(errno));
-    leave_source_dir();
+    leave_designfile_dir();
     return 0;
   }
   fclose(f);
@@ -229,7 +240,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
     ret = 0;
     read_error("%s : unrecognized image format", iname);
   }
-  leave_source_dir();
+  leave_designfile_dir();
   if (!ret) return 0;
 
   // make a new entry in the table:
@@ -278,12 +289,12 @@ Fluid_Image::~Fluid_Image() {
 
 const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {
-  goto_source_dir();
+  goto_designfile_dir();
   fl_file_chooser_ok_label("Use Image");
   const char *name = fl_file_chooser("Image?","Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg})",oldname,1);
   fl_file_chooser_ok_label(NULL);
   ui_find_image_name = name;
   Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : 0;
-  leave_source_dir();
+  leave_designfile_dir();
   return ret;
 }
