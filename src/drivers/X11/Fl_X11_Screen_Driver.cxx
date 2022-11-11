@@ -394,6 +394,7 @@ void Fl_X11_Screen_Driver::screen_dpi(float &h, float &v, int n)
 }
 
 
+// Implements fl_beep(). See documentation in src/fl_ask.cxx.
 void Fl_X11_Screen_Driver::beep(int type)
 {
   int vol;

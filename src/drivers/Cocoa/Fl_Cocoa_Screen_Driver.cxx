@@ -158,11 +158,7 @@ void Fl_Cocoa_Screen_Driver::screen_dpi(float &h, float &v, int n)
 }
 
 
-/**
- Emits a system beep message.
- \param[in] type   The beep type from the \ref Fl_Beep enumeration.
- \note \#include <FL/fl_ask.H>
- */
+// Implements fl_beep(). See documentation in src/fl_ask.cxx.
 void Fl_Cocoa_Screen_Driver::beep(int type) {
   switch (type) {
     case FL_BEEP_DEFAULT :

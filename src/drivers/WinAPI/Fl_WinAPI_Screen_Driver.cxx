@@ -231,6 +231,7 @@ int Fl_WinAPI_Screen_Driver::w()
 }
 
 
+// Implements fl_beep(). See documentation in src/fl_ask.cxx.
 void Fl_WinAPI_Screen_Driver::beep(int type)
 {
   switch (type) {
