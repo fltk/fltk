@@ -33,7 +33,7 @@
 #######################################################################
 
 macro (fl_debug_var name)
-  set (min_len 30)
+  set (min_len 32)
   set (var "${name}")
   string(LENGTH "${var}" len)
   while (len LESS min_len)
