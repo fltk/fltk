@@ -1,7 +1,7 @@
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,9 +69,27 @@ const char *fl_close = "Close";   ///< string pointer used in common dialogs, yo
 // fltk functions:
 
 /**
-  Emits a system beep message.
+  Emits a system beep.
 
-  \param[in] type The beep type from the \ref Fl_Beep enumeration.
+  This function is platform specific. Depending on the input \p type a different
+  sound may be played or the system speaker may beep with a different volume.
+
+  On X the system speaker is used which may not work at all on newer systems
+  that don't have a speaker. Since 1.4.0 \c FL_BEEP_DEFAULT and other types
+  honor the system or user settings whereas \c FL_BEEP_ERROR uses 100% volume.
+  This may be changed in a future version.
+
+  On Wayland an ASCII \p BEL (0x07) is output to stderr.
+
+  On Windows the \c MessageBeep() function is used to play different sounds
+  depending on the \p type argument.
+
+  On macOS the system beep function \c NSBeep() is used for \c FL_BEEP_DEFAULT
+  and \c FL_BEEP_ERROR. Other types are ignored.
+
+  On other platforms the behavior is undefined and may change in the future.
+
+  \param[in] type The beep type from the \ref Fl_Beep enumeration (optional)
 
   \code #include <FL/fl_ask.H> \endcode
 */
