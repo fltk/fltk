@@ -577,7 +577,7 @@ int main(int argc, char** argv)
                        latin1, (unsigned int)strlen(latin1));
   utf8[l] = '\0';
   strcat(utf8, emoji);
-  l = strlen(utf8);
+  l = (int)strlen(utf8);
 
   make_font_chooser();
   extra_font = FL_TIMES_BOLD_ITALIC;

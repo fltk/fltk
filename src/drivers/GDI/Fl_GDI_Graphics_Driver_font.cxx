@@ -223,11 +223,11 @@ Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsi
   case ' ': break;
   default: name--;
   }
-  int wn = fl_utf8toUtf16(name, strlen(name), wstr, wstr_len);
+  int wn = fl_utf8toUtf16(name, (unsigned int)strlen(name), wstr, wstr_len);
   if (wn >= wstr_len) {
     wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
     wstr_len = wn + 1;
-    wn = fl_utf8toUtf16(name, strlen(name), wstr, wstr_len);
+    wn = fl_utf8toUtf16(name, (unsigned int)strlen(name), wstr, wstr_len);
   }
 
   fid = CreateFontW(
