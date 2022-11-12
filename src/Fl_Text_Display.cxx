@@ -1985,9 +1985,6 @@ int Fl_Text_Display::handle_vline(
 {
   IS_UTF8_ALIGNED2(buffer(), lineStartPos)
 
-  // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the
-  // FIXME: character for selection, and one on the character center for cursors.
-
   /* STR #2531
 
    The variables startStyle and styleX seem to introduce some additional
