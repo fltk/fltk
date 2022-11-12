@@ -111,9 +111,9 @@ add_subdirectory(src)
 # build fluid
 #######################################################################
 
-if (FLTK_BUILD_FLUID AND NOT CMAKE_CROSSCOMPILING)
+if (FLTK_BUILD_FLUID)
   add_subdirectory (fluid)
-endif (FLTK_BUILD_FLUID AND NOT CMAKE_CROSSCOMPILING)
+endif (FLTK_BUILD_FLUID)
 
 #######################################################################
 # variables shared by export and install
