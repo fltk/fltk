@@ -30,7 +30,7 @@ if (CMAKE_CROSSCOMPILING)
   )
   set (FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
   set (FLUID_EXPORT "")                     # don't export fluid
-else ()
+elseif (FLTK_BUILD_FLUID)
   # use the fluid executable we build
   if (WIN32)
     set (FLTK_FLUID_EXECUTABLE fluid-cmd)
@@ -39,6 +39,8 @@ else ()
     set (FLTK_FLUID_EXECUTABLE fluid)
     set (FLUID_EXPORT fluid)                # export fluid
   endif ()
+else ()
+  set (FLTK_FLUID_EXECUTABLE NOTFOUND)
 endif (CMAKE_CROSSCOMPILING)
 
 # generate FLTK-Targets.cmake for build directory use

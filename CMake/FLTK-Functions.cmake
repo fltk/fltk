@@ -22,6 +22,15 @@
 # USAGE: FLTK_RUN_FLUID TARGET_NAME "FLUID_SOURCE [.. FLUID_SOURCE]"
 
 function (FLTK_RUN_FLUID TARGET SOURCES)
+
+  if (NOT FLTK_BUILD_FLUID)
+    message (WARNING "Not building ${SOURCES}. FLTK_BUILD_FLUID is OFF.")
+    return ()
+  elseif (NOT FLTK_FLUID_EXECUTABLE)
+    message (WARNING "Not building ${SOURCES}. FLUID executable not found.")
+    return ()
+  endif (NOT FLTK_BUILD_FLUID)
+
   set (CXX_FILES)
   foreach (src ${SOURCES})
     if ("${src}" MATCHES "\\.fl$")
@@ -36,6 +45,7 @@ function (FLTK_RUN_FLUID TARGET SOURCES)
     endif ("${src}" MATCHES "\\.fl$")
   endforeach ()
   set (${TARGET} ${CXX_FILES} PARENT_SCOPE)
+
 endfunction (FLTK_RUN_FLUID TARGET SOURCES)
 
 #######################################################################

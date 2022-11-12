@@ -111,7 +111,9 @@ add_subdirectory(src)
 # build fluid
 #######################################################################
 
-add_subdirectory(fluid)
+if (FLTK_BUILD_FLUID AND NOT CMAKE_CROSSCOMPILING)
+  add_subdirectory (fluid)
+endif (FLTK_BUILD_FLUID AND NOT CMAKE_CROSSCOMPILING)
 
 #######################################################################
 # variables shared by export and install
@@ -209,6 +211,12 @@ if (OPTION_BUILD_SHARED_LIBS)
 else ()
   message (STATUS "Shared libraries will not be built (set OPTION_BUILD_SHARED_LIBS=ON to build)")
 endif ()
+
+if (FLTK_BUILD_FLUID)
+   message (STATUS "FLUID will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
+ else ()
+   message (STATUS "FLUID will not be built (set FLTK_BUILD_FLUID=ON to build)")
+ endif ()
 
 if (FLTK_BUILD_TEST)
   message (STATUS "Test programs    will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/test")
