@@ -23,13 +23,10 @@
 
 function (FLTK_RUN_FLUID TARGET SOURCES)
 
-  if (NOT FLTK_BUILD_FLUID)
-    message (WARNING "Not building ${SOURCES}. FLTK_BUILD_FLUID is OFF.")
-    return ()
-  elseif (NOT FLTK_FLUID_EXECUTABLE)
+  if (NOT FLTK_FLUID_EXECUTABLE)
     message (WARNING "Not building ${SOURCES}. FLUID executable not found.")
     return ()
-  endif (NOT FLTK_BUILD_FLUID)
+  endif (NOT FLTK_FLUID_EXECUTABLE)
 
   set (CXX_FILES)
   foreach (src ${SOURCES})
