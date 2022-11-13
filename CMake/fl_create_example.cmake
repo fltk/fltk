@@ -91,17 +91,13 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   # generate source files from .fl files, add output to sources
 
   if (flsrcs)
-    if (NOT FLTK_BUILD_FLUID)
-      message(STATUS "Example app \"${NAME}\" will not be built (set FLTK_BUILD_FLUID=ON to build).")
-      return ()
-    elseif (NOT FLTK_FLUID_EXECUTABLE)
+    if (NOT FLTK_FLUID_EXECUTABLE)
       message(STATUS "Example app \"${NAME}\" will not be built. FLUID executable not found.")
       return ()
-    else ()
-      FLTK_RUN_FLUID (FLUID_SOURCES "${flsrcs}")
-      list (APPEND srcs ${FLUID_SOURCES})
-      unset (FLUID_SOURCES)
-    endif (NOT FLTK_BUILD_FLUID)
+    endif ()
+    FLTK_RUN_FLUID (FLUID_SOURCES "${flsrcs}")
+    list (APPEND srcs ${FLUID_SOURCES})
+    unset (FLUID_SOURCES)
   endif (flsrcs)
 
   # set macOS (icon) resource path if applicable
