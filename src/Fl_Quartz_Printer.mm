@@ -76,7 +76,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
     NSPrintPanel *panel = [NSPrintPanel printPanel];
     //from 10.5
-    [panel setOptions:NSPrintPanelShowsCopies | NSPrintPanelShowsPageRange | NSPrintPanelShowsPageSetupAccessory];
+    [panel setOptions:NSPrintPanelShowsCopies | NSPrintPanelShowsPageRange | NSPrintPanelShowsPageSetupAccessory | NSPrintPanelShowsOrientation | NSPrintPanelShowsPaperSize];
     NSInteger retval = -1;
     Fl_Window *top = Fl::first_window();
     NSWindow *main = (top ? (NSWindow*)fl_xid(top->top_window()) : nil);
