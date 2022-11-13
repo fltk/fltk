@@ -179,27 +179,18 @@ an option is missing, a default value is assumed.
 
   "gridy" <word> : ignored
 
-  "win_shell_cmd" <word> : string, this is the recommended command when calling
-      the shell on an MSWindows machine. Implementation may be problematic.
-
-  "win_shell_flags" <word> : integer, interpreted as a bit field: bit 0 is set
-      if the .fl must be save before runing the shell command, bit 1 is set for
-      saving the source code, bit 2 is set for saving text strings.
-
-  "linux_shell_cmd" <word> : as above for Linux
-
-  "linux_shell_flags" <word> :  : as above for Linux
-
-  "mac_shell_cmd" <word> : as above for macOS
-
-  "mac_shell_flags" <word> : as above for macOS
-
 Note: There is no keyword that marks the end of the options section. The
-      Tree section starts when a word is not in the options list. If the word
-      is not a vaild type, Fluid will give an error message and try to continue
-      to read the file. Using new option keywords makes .fl files incompatible
-      to earlier versions of Fluid. Due to the forgiving interpreter, files may
-      still be read correctly despite error messages.
+      option list ends when a word is not in the options list and it is in 
+      the list of known types. 
+      
+      If the word is neither an option nor a vaild type, Fluid will give an
+      error message and try to continue to read the file. Using new option
+      keywords makes .fl files incompatible to earlier versions of Fluid. 
+      Due to the forgiving interpreter, files may still be read correctly
+      despite error messages.
+      
+      If a word is in the list of know types, the type is read, including
+      optional children. No more options are allowed beyond this point.
 
 
 Tree
