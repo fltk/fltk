@@ -50,7 +50,7 @@
 #
 ################################################################################
 
-macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
+function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   set (srcs)                    # source files
   set (flsrcs)                  # fluid source (.fl) files
@@ -91,6 +91,10 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   # generate source files from .fl files, add output to sources
 
   if (flsrcs)
+    if (NOT FLTK_FLUID_EXECUTABLE)
+      message(STATUS "Example app \"${NAME}\" will not be built. FLUID executable not found.")
+      return ()
+    endif ()
     FLTK_RUN_FLUID (FLUID_SOURCES "${flsrcs}")
     list (APPEND srcs ${FLUID_SOURCES})
     unset (FLUID_SOURCES)
@@ -176,4 +180,4 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   # *unused* #    endforeach ()
   # *unused* #  endif ()
 
-endmacro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
+endfunction ()

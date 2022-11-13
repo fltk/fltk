@@ -10,7 +10,7 @@
 #  FLTK_INCLUDE_DIRS      - FLTK include directories
 #  FLTK_LIBRARIES         - list of FLTK libraries built (not yet implemented)
 #  FLTK_FLUID_EXECUTABLE  - needed by the function FLTK_RUN_FLUID
-#                          (or the deprecated fltk_wrap_ui() CMake command)
+#                           (or the deprecated fltk_wrap_ui() CMake command)
 #
 # It defines the following deprecated variables for backwards
 # compatibility (do not use for new projects):

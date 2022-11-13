@@ -119,6 +119,9 @@ OPTION_BUILD_SHARED_LIBS - default OFF
    Normally FLTK is built as static libraries which makes more portable
    binaries.  If you want to use shared libraries, this will build them too.
 
+FLTK_BUILD_FLUID - default ON
+    Builds the Fast Light User-Interface Designer ("FLUID").
+
 FLTK_BUILD_TEST - default ON
    Builds the test and demo programs in the 'test' directory.
 

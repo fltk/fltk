@@ -122,14 +122,17 @@ if (UNIX OR MSYS OR MINGW)
     )
   endmacro (INSTALL_MAN FILE LEVEL)
 
-  INSTALL_MAN (fluid 1)
+  if (FLTK_BUILD_FLUID)
+    INSTALL_MAN (fluid 1)
+  endif (FLTK_BUILD_FLUID)
   INSTALL_MAN (fltk-config 1)
   INSTALL_MAN (fltk 3)
 
-  # Don't (!) install man pages of games (GitHub issue #23)
-
-  # INSTALL_MAN (blocks 6)
-  # INSTALL_MAN (checkers 6)
-  # INSTALL_MAN (sudoku 6)
+  if (FLTK_BUILD_TEST AND FLTK_BUILD_FLUID)
+    # Don't (!) install man pages of games (GitHub issue #23)
+    # INSTALL_MAN (blocks 6)
+    # INSTALL_MAN (checkers 6)
+    # INSTALL_MAN (sudoku 6)
+  endif ()
 
 endif (UNIX OR MSYS OR MINGW)
