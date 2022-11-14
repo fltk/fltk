@@ -206,7 +206,7 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   if (user_dash_array_ && user_dash_array_ != dashes) {free(user_dash_array_); user_dash_array_ = NULL;}
   if (dashes && *dashes) {
     if (dasharray_) free(dasharray_);
-    int array_len = 10*strlen(dashes) + 1;
+    int array_len = int(10*strlen(dashes) + 1);
     dasharray_ = (char*)calloc(array_len, 1);
     for (char *p = dashes; *p; p++) {
       int c = snprintf(dasharray_+strlen(dasharray_), array_len, "%.3f,", (*p)/s);
