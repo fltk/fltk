@@ -147,9 +147,9 @@ int modflag_c = 0;
 /// \see goto_source_dir()
 static char* app_work_dir = NULL;
 
-/// Set, if the current working directory is in the source code folder vs. the app working space.
-/// \see goto_source_dir()
-static char in_designfile_dir = 0;
+/// Used as a counter to set the .fl project dir as the current directory.
+/// \see enter_project_dir(), leave_project_dir()
+static char in_project_dir = 0;
 
 /// Set, if Fluid was started with the command line argument -u
 int update_file = 0;            // fluid -u
@@ -249,47 +249,69 @@ void update_sourceview_timer(void*);
 // ----
 
 /**
- Change the current working directory to the source code folder.
- Remember the the previous directory, so \c leave_source_dir() can return there.
- \see leave_source_dir(), pwd, in_source_dir
+ Change the current working directory to the .fl project directory.
+
+ Every call to enter_project_dir() must have a corresponding leave_project_dir()
+ call. Enter and leave calls can be nested.
+
+ The first call to enter_project_dir() remembers the original directory, usually
+ the launch directory of the application. Nested calls will increment a nesting
+ counter. When the nesting counter is back to 0, leave_project_dir() will return
+ to the original directory.
+
+ The global variable 'filename' must be set to the current project file with
+ absolute or relative path information.
+
+ \see leave_project_dir(), pwd, in_project_dir
  */
-void goto_designfile_dir() {
-  in_designfile_dir++;
-  if (in_designfile_dir>1) return;
-  if (!filename || !*filename) return;
-  const char *p = fl_filename_name(filename);
-  if (p <= filename) return; // it is in the current directory
-  char buffer[FL_PATH_MAX];
-  strlcpy(buffer, filename, sizeof(buffer));
-  int n = (int)(p-filename);
-  if (n>1) n--;
-  buffer[n] = 0;
-  if (!app_work_dir) {
-    app_work_dir = fl_getcwd(0, FL_PATH_MAX);
-    if (!app_work_dir) {
-      fprintf(stderr, "goto_source_dir: getwd: %s\n", strerror(errno));
-      return;
-    }
+void enter_project_dir() {
+  if (in_project_dir<0) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() calls unmatched\n");
+    return;
   }
-  if (buffer[0] && (fl_chdir(buffer) < 0)) {
-    fprintf(stderr, "goto_source_dir: can't chdir to %s: %s\n", buffer, strerror(errno));
+  in_project_dir++;
+  // check if we are already in the project dir and do nothing if so
+  if (in_project_dir>1) return;
+  // check if there is an active project, and do nothing if there is none
+  if (!filename || !*filename) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() no filename set\n");
+    return;
+  }
+  // get the absolute path to the current project
+  char project_path[FL_PATH_MAX]; project_path[0] = 0;
+  fl_filename_absolute(project_path, FL_PATH_MAX, filename);
+  // cut the name part and leave only the path to our project
+  char *p = (char*)fl_filename_name(project_path);
+  if (p) *p = 0;
+  // store the current working directory for later
+  if (!app_work_dir) app_work_dir = (char*)malloc(FL_PATH_MAX);
+  fl_getcwd(app_work_dir, FL_PATH_MAX);
+  // now set the current directory to the path of our .fl file
+  if (fl_chdir(project_path)==-1) {
+    fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
+            project_path, strerror(errno));
     return;
   }
   // fprintf(stderr, "chdir to %s\n", fl_getcwd(0, FL_PATH_MAX));
 }
 
 /**
- Change the current working directory to its previous directory.
- \see goto_source_dir(), pwd, in_source_dir
+ Change the current working directory to the previous directory.
+ \see enter_project_dir(), pwd, in_project_dir
  */
-void leave_designfile_dir() {
-  if (in_designfile_dir == 0) return; // error: called leave_... more often the goto_...
-  in_designfile_dir--;
-  if (in_designfile_dir) return;
-  if (fl_chdir(app_work_dir) < 0) {
-    fprintf(stderr, "Can't chdir to %s : %s\n", app_work_dir, strerror(errno));
+void leave_project_dir() {
+  if (in_project_dir == 0) {
+    fprintf(stderr, "** Fluid internal error: leave_project_dir() calls unmatched\n");
+    return;
   }
-  // fprintf(stderr, "chdir back to %s\n", app_work_dir);
+  in_project_dir--;
+  // still nested, stay in the project directory
+  if (in_project_dir > 0) return;
+  // no longer nested, return to the original, usually the application working directory
+  if (fl_chdir(app_work_dir) < 0) {
+    fprintf(stderr, "** Fluid internal error: leave_project_dir() can't chdir back to %s : %s\n",
+            app_work_dir, strerror(errno));
+  }
 }
 
 /**
@@ -926,9 +948,9 @@ int write_code_files() {
   } else {
     strlcpy(hname, header_file_name, sizeof(hname));
   }
-  if (!batch_mode) goto_designfile_dir();
+  if (!batch_mode) enter_project_dir();
   int x = write_code(cname,hname);
-  if (!batch_mode) leave_designfile_dir();
+  if (!batch_mode) leave_project_dir();
   strlcat(cname, " and ", sizeof(cname));
   strlcat(cname, hname, sizeof(cname));
   if (batch_mode) {
@@ -965,9 +987,9 @@ void write_strings_cb(Fl_Widget *, void *) {
   char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
   fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
-  if (!batch_mode) goto_designfile_dir();
+  if (!batch_mode) enter_project_dir();
   int x = write_strings(sname);
-  if (!batch_mode) leave_designfile_dir();
+  if (!batch_mode) leave_project_dir();
   if (batch_mode) {
     if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
   } else {
@@ -1835,6 +1857,8 @@ void update_sourceview_timer(void*)
  \return number of arguments used; if 0, the argument is not supported
  */
 static int arg(int argc, char** argv, int& i) {
+  if (argv[i][0]!='-')
+    return 0;
   if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
   if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
@@ -1842,14 +1866,21 @@ static int arg(int argc, char** argv, int& i) {
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     code_file_name = argv[i+1];
     code_file_set  = 1;
+    batch_mode++;
     i += 2;
     return 2;
   }
   if (argv[i][1] == 'h' && !argv[i][2]) {
-    header_file_name = argv[i+1];
-    header_file_set  = 1;
-    i += 2;
-    return 2;
+    if (i+1 < argc) {
+      header_file_name = argv[i+1];
+      header_file_set  = 1;
+      batch_mode++;
+      i += 2;
+      return 2;
+    } else {
+      // a lone "-h" without a filename will output the help string
+      return 0;
+    }
   }
   return 0;
 }
@@ -1901,7 +1932,9 @@ int main(int argc,char **argv) {
   setlocale(LC_ALL, "");      // enable multilanguage errors in file chooser
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
 
-  if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
+  if (   (Fl::args(argc,argv,i,arg) == 0)   // unsupported argument found
+      || (batch_mode && (i != argc-1))      // .fl filename missing
+      || (!batch_mode && (i < argc-1)) ) {  // more than one filename found
     static const char *msg =
       "usage: %s <switches> name.fl\n"
       " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"

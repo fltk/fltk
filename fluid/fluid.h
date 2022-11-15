@@ -67,8 +67,8 @@ extern Fl_Menu_Item *overlay_item;
 
 extern int modflag;
 
-extern void goto_designfile_dir();
-extern void leave_designfile_dir();
+extern void enter_project_dir();
+extern void leave_project_dir();
 
 extern int update_file;            // fluid -u
 extern int compile_file;           // fluid -c
