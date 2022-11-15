@@ -1,7 +1,7 @@
 //
 // SVG image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2017 by Bill Spitzak and others.
+// Copyright 2017-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_Screen_Driver.H"
+#include "Fl_System_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -56,16 +57,19 @@ static double strtoll(const char *str, char **endptr, int base) {
  \param filename Name of a .svg or .svgz file, or NULL.
  \param svg_data A pointer to the memory location of the SVG image data.
  This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
+ \param length When 0, indicates that \p svg_data contains SVG text, otherwise \p svg_data is
+  a  buffer of \p length  bytes containing GZ-compressed SVG data.
  \note In-memory SVG data is parsed by the object constructor and is not used after construction.
+ When \p length > 0, parameter \p svg_data may safely be cast from data of type <em>const unsigned char *</em>.
  */
-Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *svg_data) : Fl_RGB_Image(NULL, 0, 0, 4) {
-  init_(filename, svg_data, NULL);
+Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *svg_data, size_t length) : Fl_RGB_Image(NULL, 0, 0, 4) {
+  init_(filename, (const unsigned char *)svg_data, NULL, length);
 }
 
 
 // private constructor
 Fl_SVG_Image::Fl_SVG_Image(const Fl_SVG_Image *source) : Fl_RGB_Image(NULL, 0, 0, 4) {
-  init_(NULL, NULL, source);
+  init_(NULL, NULL, source, 0);
 }
 
 
@@ -86,47 +90,63 @@ float Fl_SVG_Image::svg_scaling_(int W, int H) {
 
 #if defined(HAVE_LIBZ)
 
-static char *svg_inflate(const char *fname) {
-  FILE *in = fl_fopen(fname, "r");
-  if (!in) return NULL;
-  unsigned char header[2];
-  if (fread(header, 2, 1, in) < 1) {
-    fclose(in);
-    return NULL;
-  }
-  int direct = (header[0] != 0x1f || header[1] != 0x8b);
-  fseek(in, 0, SEEK_END);
-  long size = ftell(in);
-  fclose(in);
-  int fd = fl_open_ext(fname, 1, 0);
-  if (fd < 0) return NULL;
-  gzFile gzf =  gzdopen(fd, "r");
-  if (!gzf) return NULL;
+/* Implementation note about decompression of svgz file or in-memory data.
+ It seems necessary to use the gzdopen()/gzread() API to inflate a gzip'ed
+ file or byte buffer. Writing the in-memory gzip'ed data to an anonymous pipe
+ and calling gzread() on the read end of this pipe is a solution for the in-memory case.
+ But non-blocking write to the pipe is needed to do that in the main thread,
+ and that seems impossible with Windows anonymous pipes.
+ Therefore, the anonymous pipe is handled in 2 ways:
+ 1) Under Windows, a child thread writes to the write end of the pipe and
+ the main thread reads from the read end with gzread().
+ 2) Under Posix systems, the write end of the pipe is made non-blocking
+ with a fcntl() call, and the main thread successively writes to the write
+ end and reads from the read end with gzread(). This allows to not have
+ libfltk_images requiring a threading library.
+ */
+
+static char *svg_inflate(gzFile gzf, // can be a file or the read end of a pipe
+                         size_t size, // size of compressed data or of file
+                         bool is_compressed, // true when file or byte buffer is gzip'ed
+                         int fdwrite, // write end of pipe if >= 0
+                         const unsigned char *bytes // byte buffer to write to pipe
+                         ) {
+  size_t rest_bytes = size;
   int l;
-  long out_size = direct ? size + 1 : 3*size + 1;
+  size_t out_size = is_compressed ? 3 * size + 1 : size + 1;
   char *out = (char*)malloc(out_size);
   char *p = out;
   do {
-    if ((!direct) && p + size > out + out_size) {
+    if (is_compressed && p + size > out + out_size) {
       out_size += size;
       char *tmp = (char*)realloc(out, out_size + 1);
       p = tmp + (p - out);
       out = tmp;
     }
+    if ( fdwrite >= 0 && Fl::system_driver()->write_nonblocking_fd(fdwrite, bytes, rest_bytes) ) {
+      free(out);
+      out = NULL;
+      is_compressed = false;
+      break;
+    }
+
     l = gzread(gzf, p, size);
     if (l > 0) {
       p += l; *p = 0;
     }
-  } while ((!direct) && l >0);
+  } while (is_compressed && l >0);
   gzclose(gzf);
-  if (!direct) out = (char*)realloc(out, (p-out)+1);
+  if (is_compressed) out = (char*)realloc(out, (p-out)+1);
   return out;
 }
-#endif
 
-void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, const Fl_SVG_Image *copy_source) {
+#endif // defined(HAVE_LIBZ)
+
+
+void Fl_SVG_Image::init_(const char *filename, const unsigned char *in_filedata, const Fl_SVG_Image *copy_source, size_t length) {
   if (copy_source) {
-    filename = in_filedata = NULL;
+    filename = NULL;
+    in_filedata = NULL;
     counted_svg_image_ = copy_source->counted_svg_image_;
     counted_svg_image_->ref_count++;
   } else {
@@ -138,10 +158,35 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, const Fl
   to_desaturate_ = false;
   average_weight_ = 1;
   proportional = true;
-  if (filename) {
+  bool is_compressed = true;
+  
+  if (filename || length) { // process file or byte buffer
 #if defined(HAVE_LIBZ)
-    filedata = svg_inflate(filename);
-#else
+    int fdread, fdwrite = -1;
+    if (length) { // process gzip'ed byte buffer
+      // Pipe gzip'ed byte buffer into gzlib inflate algorithm.
+      // Under Windows, gzip'ed byte buffer is written to pipe by child thread.
+      // Under Posix, gzip'ed byte buffer is written to pipe by non-blocking write
+      // done by main thread.
+      Fl::system_driver()->pipe_support(fdread, fdwrite, in_filedata, length);
+    } else { // read or decompress a .svg or .svgz file
+      struct stat svg_file_stat;
+      fl_stat(filename, &svg_file_stat); // get file size
+      fdread = fl_open_ext(filename, 1, 0);
+      // read a possibly gzip'ed file and return result as char string
+      length = svg_file_stat.st_size;
+      is_compressed = (strcmp(filename + strlen(filename) - 5, ".svgz") == 0);
+    }
+    gzFile gzf =  (fdread >= 0 ? gzdopen(fdread, "rb") : NULL);
+    if (gzf) {
+      filedata = svg_inflate(gzf, length, is_compressed, fdwrite, in_filedata);
+    } else {
+      if (fdread >= 0) Fl::system_driver()->close_fd(fdread);
+      if (fdwrite >= 0) Fl::system_driver()->close_fd(fdwrite);
+    }
+
+#else // ! HAVE_LIBZ
+    // without libz, read .svg file
     FILE *fp = fl_fopen(filename, "rb");
     if (fp) {
       fseek(fp, 0, SEEK_END);
@@ -160,10 +205,12 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, const Fl
     }
 #endif // HAVE_LIBZ
     if (!filedata) ld(ERR_FILE_ACCESS);
-  } else {
+  } else { // handle non-gzip'ed svg data as a char string
     // XXX: Make internal copy -- nsvgParse() modifies filedata during parsing (!)
-    filedata = in_filedata ? fl_strdup(in_filedata) : NULL;
+    filedata = in_filedata ? fl_strdup((const char *)in_filedata) : NULL;
   }
+
+  // filedata is NULL or contains SVG data as a char string
   if (filedata) {
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);
     free(filedata);     // made with svg_inflate|malloc|strdup
