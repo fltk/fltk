@@ -83,7 +83,7 @@ void Fl_Cairo_State::autolink(bool b) {
   \note Only available when configure has the --enable-cairo option
 
   \return the valid cairo_t* Cairo context associated to this window.
-  \retval NULL if \wi is NULL or maybe with GL windows under Wayland
+  \retval NULL if \a wi is NULL or maybe with GL windows under Wayland
 */
 cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
   if (!wi)
