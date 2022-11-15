@@ -1,7 +1,7 @@
 //
 // Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -114,6 +114,8 @@ public:
   virtual void unlock_ring();
   virtual double wait(double time_to_wait);
   virtual int ready();
+  virtual void pipe_support(int &, int &, const unsigned char *, size_t );
+  virtual int close_fd(int fd);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

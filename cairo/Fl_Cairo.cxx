@@ -39,7 +39,11 @@
 #elif defined(FLTK_USE_WAYLAND)   // Wayland or hybrid
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
 #  include "../src/drivers/Wayland/Fl_Wayland_Window_Driver.H"
-#  include <cairo-xlib.h>
+#  if defined(FLTK_USE_X11) 
+#    include <cairo-xlib.h>
+#  else
+     static void *fl_gc = NULL;
+#  endif
 #elif defined(FLTK_USE_X11)       // X11
 #  include <cairo-xlib.h>
 #else
@@ -79,7 +83,7 @@ void Fl_Cairo_State::autolink(bool b) {
   \note Only available when configure has the --enable-cairo option
 
   \return the valid cairo_t* Cairo context associated to this window.
-  \retval NULL if \wi is NULL or maybe with GL windows under Wayland
+  \retval NULL if \a wi is NULL or maybe with GL windows under Wayland
 */
 cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
   if (!wi)
@@ -135,6 +139,8 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 #if defined(FLTK_USE_X11)
   return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
+#elif defined(FLTK_USE_WAYLAND)
+  return NULL;
 #elif defined(_WIN32)
   return cairo_win32_surface_create((HDC)gc);
 #elif defined(__APPLE__)
@@ -151,7 +157,7 @@ static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 */
 cairo_t *Fl::cairo_make_current(void *gc) {
   int W = 0, H = 0;
-#if defined(FLTK_USE_X11)
+#if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
   // FIXME X11 get W,H
   // gc will be the window handle here
   // # warning FIXME get W,H for cairo_make_current(void*)

@@ -1,7 +1,7 @@
 //
 // Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -124,35 +124,45 @@ void Fluid_Image::write_static() {
 
     write_c(";\n");
     write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
-  } else if (strcmp(fl_filename_ext(name()), ".svg")==0) {
+  } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
+    bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
     write_c("\n");
     if (svg_header_written != write_number) {
       write_c("#include <FL/Fl_SVG_Image.H>\n");
       svg_header_written = write_number;
     }
-    write_c("static const char %s[] =\n", idata_name);
+    write_c(
+            (gzipped ? "static const unsigned char %s[] =\n" : "static const char %s[] =\n"),
+            idata_name);
 
     enter_project_dir();
     FILE *f = fl_fopen(name(), "rb");
     leave_project_dir();
+    size_t nData = 0;
     if (!f) {
       write_file_error("SVG");
     } else {
       fseek(f, 0, SEEK_END);
-      size_t nData = ftell(f);
+      nData = ftell(f);
       fseek(f, 0, SEEK_SET);
       if (nData) {
         char *data = (char*)calloc(nData+1, 1);
         if (fread(data, nData, 1, f)==0) { /* ignore */ }
-        write_cstring(data, (int)nData);
+        if (gzipped)
+          write_cdata(data, (int)nData);
+        else
+          write_cstring(data, (int)nData);
         free(data);
       }
       fclose(f);
     }
 
     write_c(";\n");
-    write_initializer("Fl_SVG_Image", "NULL, %s", idata_name);
+    if (gzipped)
+      write_initializer("Fl_SVG_Image", "NULL, (const char*)%s, %ld", idata_name, nData);
+    else
+      write_initializer("Fl_SVG_Image", "NULL, %s", idata_name);
   } else {
     // Write image data...
     write_c("\n");
@@ -291,7 +301,13 @@ const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {
   enter_project_dir();
   fl_file_chooser_ok_label("Use Image");
-  const char *name = fl_file_chooser("Image?","Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg})",oldname,1);
+  const char *name = fl_file_chooser("Image?",
+            "Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg"
+#ifdef HAVE_LIBZ
+                        ",svgz"
+#endif
+                                     "})",
+            oldname,1);
   fl_file_chooser_ok_label(NULL);
   ui_find_image_name = name;
   Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : 0;
