@@ -255,14 +255,14 @@ void update_sourceview_timer(void*);
  call. Enter and leave calls can be nested.
 
  The first call to enter_project_dir() remembers the original directory, usually
- the launch directory of the application. Nested cllas will incrment a nesting
- counter. When the nesting counter is back to 0, leave_source_dir() will return
+ the launch directory of the application. Nested calls will increment a nesting
+ counter. When the nesting counter is back to 0, leave_project_dir() will return
  to the original directory.
 
- The global variable 'filenae' must be set to the current project file with
+ The global variable 'filename' must be set to the current project file with
  absolute or relative path information.
 
- \see leave_source_dir(), pwd, in_project_dir
+ \see leave_project_dir(), pwd, in_project_dir
  */
 void enter_project_dir() {
   if (in_project_dir<0) {
