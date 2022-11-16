@@ -337,7 +337,7 @@ Type "Function" <word> : function signature
       and/or “static” to further define the function.
   ... : inherits more from Fl_Type
 
-Type codeblock <word> : C++ code, usually an 'if
+Type codeblock <word> : C++ code, for example "if (test())"
 
   "after" <word> : C++ code or comment following the closing '}'
   ... : inherits more from Fl_Type
@@ -412,8 +412,8 @@ Type "Fl_Widget" <word> : C++ variable name
   "hide" : default visible
   "deactivate" : default active
   "resizable" : default fixed
-  "hotspot" : make hotspot
-  "divider" : make hotspot
+  "hotspot" : make a widget a hotspot
+  "divider" : add a divider under a menu item
   "class" <word> : superclass
   "shortcut" <word> : integer
   "code0" or "code1" or "code2" or "code3" <word> : C++ extra code lines
