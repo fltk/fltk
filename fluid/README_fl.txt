@@ -1,8 +1,8 @@
 
-Fluid .fl file format version 1.4
+FLUID .fl file format version 1.4
 =================================
 
-This text explains the history of the Fluid .fl format and faithfully describes
+This text explains the history of the FLUID .fl format and faithfully describes
 all elements of the format and its caveats.
 
 
@@ -23,8 +23,8 @@ with the ability to create ready-to-compile C++ code. Fluid can also be used
 as a command line tool to translate .fl files directly into source code. It
 can be integrated into build scripts and most IDEs as an external tool.
 
-.fl files describe a hierarchical graphical user interface for the 'fltk'
-library as a tree structure. Elements in the tree can be fltk widgets as well
+.fl files describe a hierarchical graphical user interface for the 'FLTK'
+library as a tree structure. Elements in the tree can be FLTK Widgets as well
 as functional components like classes, C++ functions, variables, etc. .
 Fluid calls all elements in the hierarchy 'Type'.
 
@@ -33,7 +33,7 @@ Line Endings
 ------------
 
 Although Fluid writes all line endings as '\n', readers should tolerate '\r\n'
-MSWindows line endings as well. Except for the header, the Fluid reader does not
+MSWindows line endings as well. Except for the Header, the Fluid reader does not
 differentiate between a line ending and a space character outside of a 'word'.
 
 
@@ -50,7 +50,7 @@ File Structure
 --------------
 
 .fl files start with a 'Header', followed by a list of 'Options', followed
-by a hierarchy of 'Type' entires, the 'Tree'. All elements besides the header
+by a hierarchy of 'Type' entires, the 'Tree'. All elements besides the Header
 are composed of 'Words', 'Strings', and 'Groups'.
 
 
@@ -71,7 +71,7 @@ The special characters ‘\’ and ‘#’ are escaped by prepending the ‘\’
 so "#define" is written as '{\#define}`.
 
 The characters ‘{‘ and ‘}’ are also escaped with a '\' unless every opening
-‘{‘ in the word is matched with a closing ‘}’.
+‘{‘ in the Word is matched with a closing ‘}’.
 
 Note: line endings are copied verbatim and become significant within a Word.
 
@@ -108,7 +108,7 @@ Elements
 Header
 ------
 
-The header for any .fl file is
+The Header for any .fl file is
 
   # data file for the Fltk User Interface Designer (fluid)
 
@@ -137,7 +137,7 @@ Options
 -------
 
 Options are usually comprised of a Word, two Words, or a Word and a String. If
-an option is missing, a default value is assumed.
+an Option is missing, a default value is assumed.
 
   "Magic:" : used by fdesign, not written by Fluid
 
@@ -179,27 +179,27 @@ an option is missing, a default value is assumed.
 
   "gridy" <word> : ignored
 
-Note: There is no keyword that marks the end of the options section. The
-      option list ends when a word is not in the options list and it is in
-      the list of known types.
+Note: There is no keyword that marks the end of the Options section. The
+      Option list ends when a Word is not in the Options list and it is in
+      the list of known Types.
 
-      If the word is neither an option nor a vaild type, Fluid will give an
-      error message and try to continue to read the file. Using new option
+      If the Word is neither an Option nor a vaild Type, Fluid will give an
+      error message and try to continue to read the file. Using new Option
       keywords makes .fl files incompatible to earlier versions of Fluid.
       Due to the forgiving interpreter, files may still be read correctly
       despite error messages.
 
-      If a word is in the list of known types, the type is read, including
-      optional children. No more options are allowed beyond this point.
+      If a Word is in the list of known Types, the Type is read, including
+      optional children. No more Options are allowed beyond this point.
 
 
 Tree
 ====
 
-If a keyword is read that is not in the option list, we start reading Types.
+If a keyword is read that is not in the Option list, we start reading Types.
 Types represent all possible entries in the hierarchy including C functions,
-class definitions, and of course all widgets. A Type is any of the supported
-widgets classes, or one of the following:
+class definitions, and of course all Widgets. A Type is any of the supported
+Widgets classes, or one of the following:
 
 Function, code, codeblock, decl, data, declblock, comment, class, widget_class
 
@@ -209,11 +209,11 @@ a closing ‘}’. If the Type has children, they are stored in a Group between
 another opening ‘{‘, followed by a list of Types, followed by a closing ‘}’.
 
   Fl_Group MyGroup {                    Type name start_of_options
-    label Surprise ...                    option parameter
+    label Surprise ...                    Option parameter
   } {                                   end_of_options start_of_children
     Fl_Button {} {                        Type name start_of_options
-      label {Don't panic...!}               option parameter
-      hide                                  option
+      label {Don't panic...!}               Option parameter
+      hide                                  Option
     }                                     end_of_options
   }                                     end_of_children
 
@@ -238,10 +238,10 @@ Types loosely similar to fltk.
 
 Note: the hierarchical dependency is implemented twice and somewhat conflicting
       in Fluid via the Fl_..._Type hierarchy, and by using '::is_some_type()'
-      virtual functions, which does not always match the type hierarchy.
+      virtual functions, which does not always match the Type hierarchy.
 
 
-The list of known types and their inheritance is:
+The list of known Types and their inheritance is:
 
   Fl_Type (note: can't be written)
    +-- Function
@@ -325,8 +325,8 @@ Type Fl_Type <word>
   “user_data_type” <word> : usually “void*” or “long”
   “callback” <word> : a function name or a function body
   “comment” <word> : one or many lines of text
-  “open” : group content visible in the Fluid tree browser
-  “selected” : type was selected in tree view
+  “open” : Group content visible in the Fluid tree browser
+  “selected” : Type was selected in tree view
 
 Type "Function" <word> : function signature
 
@@ -388,12 +388,12 @@ Type "Fl_Widget" <word> : C++ variable name
   "value" <word> : (is_button()) integer
   "value" <word> : (is_valuator(), is_spinner()) double
   "color" <word> :
-      If word starts with "0x", the rest of the field is a hex number.
+      If Word starts with "0x", the rest of the field is a hex number.
       If two integers follow, this is color and selection_color (deprecated).
       If one integer follows, it's the color index.
   "selection_color" <word> : integer color index
   "labeltype" <word> :
-      If the word is "image", TBD.
+      If the Word is "image", TBD.
       Or one of "NORMAL_LABEL", "SHADOW_LABEL", "ENGRAVED_LABEL",
       "EMBOSSED_LABEL", or "NO_LABEL"
   "labelfont" <word> : integer, font index
@@ -412,7 +412,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "hide" : default visible
   "deactivate" : default active
   "resizable" : default fixed
-  "hotspot" : make a widget a hotspot
+  "hotspot" : make a Widget a hotspot
   "divider" : add a divider under a menu item
   "class" <word> : superclass
   "shortcut" <word> : integer
@@ -422,10 +422,10 @@ Type "Fl_Widget" <word> : C++ variable name
 
 Type "Fl_Flex" <word> : C++ variable name
 
-  "margins" <word> : this word is written with printf as "{%d %d %d %d}",
+  "margins" <word> : this Word is written with printf as "{%d %d %d %d}",
       left, top, right, bottom
   "gap" <word> : integer
-  "set_size_tuples" <word> : this word is written with printf "{%d", where %d
+  "set_size_tuples" <word> : this Word is written with printf "{%d", where %d
       encodes the number of tuples to follow, and zero or more " %d %d"
       containing the index and size of that child, followed by a '}'.
   ... : inherits more from Fl_Group
@@ -437,9 +437,9 @@ Type "Fl_Window" <word> : C++ variable name
   "visible" : show window when opening file in Fluid
   "noborder" : borderless window
   "xclass" <word> : see fltk
-  "size_range" : this word is written with printf as "{%d %d %d %d}",
+  "size_range" : this Word is written with printf as "{%d %d %d %d}",
       min_w, min_h, max_w, max_h
-  "xywh" <word> : this word is written with printf as "{%d %d %d %d}",
+  "xywh" <word> : this Word is written with printf as "{%d %d %d %d}",
       x, y, w, h. This as actually read in the Fl_Widget Type, but here
       it ensures that window is not created as a subwindow.
   ... : inherits more from Fl_Widget (not Fl_Group)
