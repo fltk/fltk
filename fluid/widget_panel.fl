@@ -264,30 +264,38 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           Fl_Input widget_x_input {
             label {X:}
             callback x_cb
-            tooltip {The X position of the widget.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
+            tooltip {The X position of the widget as a number or formula.
+Formulas can be simple math, including the variables
+x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input widget_y_input {
             label {Y:}
             callback y_cb
-            tooltip {The Y position of the widget.} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
+            tooltip {The Y position of the widget as a number or formula.
+Formulas can be simple math, including the variables
+y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input widget_w_input {
             label {Width:}
             callback w_cb
-            tooltip {The width of the widget.} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
+            tooltip {The width of the widget as a number or formula.
+Formulas can be simple math, including the variables
+w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Input widget_h_input {
             label {Height:}
-            callback h_cb
-            tooltip {The height of the widget.} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
+            callback h_cb selected
+            tooltip {The height of the widget as a number or formula.
+Formulas can be simple math, including the variables
+h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             class Fluid_Coord_Input
           }
           Fl_Choice {} {
             label {Children:}
-            callback wc_relative_cb open selected
+            callback wc_relative_cb open
             tooltip {When instantiating a widget class, the children can either be fixed in their original position, automatically be repositioned, or both repsositioned and resized to fit the container.} xywh {335 150 65 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
             MenuItem {} {
