@@ -1028,6 +1028,25 @@ the image.
 The position fields show the current position and size of the
 widget box. Enter new values to move and/or resize a widget.
 
+\par
+These fields understand basic math and variables.
+Appending <tt>+10</tt> to the <b>X</b> coordinate will move a widget 10 units
+to the right without having to reenter the value.
+Entering the formula <tt>w+3</tt> in the <b>Width</b> field will widen all
+selected Widgets by 3 units.
+The formula <tt>py+i*20</tt> in the <b>Y</b> field will order all selected
+widgets vertically in their group by increments of 20 units.
+
+\par
+<table>
+<tr><th>Name</th><th>Value</th></tr>
+<tr><td> `i` </td><td> zero based counter of selected widgets </td></tr>
+<tr><td> `x`, `y`, `w`, `h` </td><td> position and size of the current widget </td></tr>
+<tr><td> `px`, `py`, `pw`, `ph` </td><td> dimensions of the parent widget </td></tr>
+<tr><td> `sx`, `sy`, `sw`, `sh` </td><td> dimensions of the previous sibling </td></tr>
+<tr><td> `cx`, `cy`, `cw`, `ch` </td><td> bounding box of all children </td></tr>
+</table>
+
 \par Values (text fields)
 
 \par

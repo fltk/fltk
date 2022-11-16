@@ -274,7 +274,8 @@ Fl_Double_Window* make_widget_panel() {
           o->callback((Fl_Callback*)position_group_cb);
           o->align(Fl_Align(FL_ALIGN_LEFT));
           { widget_x_input = new Fluid_Coord_Input(95, 150, 55, 20, "X:");
-            widget_x_input->tooltip("The X position of the widget.");
+            widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple \
+math, including the variables\nx, px, sx, cx, and i");
             widget_x_input->box(FL_DOWN_BOX);
             widget_x_input->color(FL_BACKGROUND2_COLOR);
             widget_x_input->selection_color(FL_SELECTION_COLOR);
@@ -288,7 +289,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_x_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_x_input
           { widget_y_input = new Fluid_Coord_Input(155, 150, 55, 20, "Y:");
-            widget_y_input->tooltip("The Y position of the widget.");
+            widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple \
+math, including the variables\ny, py, sy, cy, and i");
             widget_y_input->box(FL_DOWN_BOX);
             widget_y_input->color(FL_BACKGROUND2_COLOR);
             widget_y_input->selection_color(FL_SELECTION_COLOR);
@@ -302,7 +304,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_y_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_y_input
           { widget_w_input = new Fluid_Coord_Input(215, 150, 55, 20, "Width:");
-            widget_w_input->tooltip("The width of the widget.");
+            widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,\
+ including the variables\nw, pw, sw, cw, and i");
             widget_w_input->box(FL_DOWN_BOX);
             widget_w_input->color(FL_BACKGROUND2_COLOR);
             widget_w_input->selection_color(FL_SELECTION_COLOR);
@@ -316,7 +319,8 @@ Fl_Double_Window* make_widget_panel() {
             widget_w_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_w_input
           { widget_h_input = new Fluid_Coord_Input(275, 150, 55, 20, "Height:");
-            widget_h_input->tooltip("The height of the widget.");
+            widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math\
+, including the variables\nh, ph, sh, ch, and i");
             widget_h_input->box(FL_DOWN_BOX);
             widget_h_input->color(FL_BACKGROUND2_COLOR);
             widget_h_input->selection_color(FL_SELECTION_COLOR);

@@ -26,6 +26,7 @@
 #include "Fluid_Image.h"
 #include "alignment_panel.h"
 #include "widget_panel.h"
+#include "undo.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -666,6 +667,7 @@ void x_cb(Fluid_Coord_Input *i, void *v) {
       x_input->activate();
     } else x_input->deactivate();
   } else {
+    undo_checkpoint();
     widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
@@ -690,6 +692,7 @@ void y_cb(Fluid_Coord_Input *i, void *v) {
       y_input->activate();
     } else y_input->deactivate();
   } else {
+    undo_checkpoint();
     widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
@@ -714,6 +717,7 @@ void w_cb(Fluid_Coord_Input *i, void *v) {
       w_input->activate();
     } else w_input->deactivate();
   } else {
+    undo_checkpoint();
     widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
@@ -738,6 +742,7 @@ void h_cb(Fluid_Coord_Input *i, void *v) {
       h_input->activate();
     } else h_input->deactivate();
   } else {
+    undo_checkpoint();
     widget_i = 0;
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
