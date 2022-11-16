@@ -621,6 +621,7 @@ Fl_Group_Type.o: ../FL/Fl_Flex.H
 Fl_Group_Type.o: ../FL/Fl_Graphics_Driver.H
 Fl_Group_Type.o: ../FL/Fl_Group.H
 Fl_Group_Type.o: ../FL/Fl_Image.H
+Fl_Group_Type.o: ../FL/Fl_Int_Vector.H
 Fl_Group_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Group_Type.o: ../FL/fl_message.H
 Fl_Group_Type.o: ../FL/Fl_Pack.H
@@ -798,6 +799,7 @@ Fl_Widget_Type.o: ../FL/Fl_Input.H
 Fl_Widget_Type.o: ../FL/Fl_Input_.H
 Fl_Widget_Type.o: ../FL/Fl_Input_Choice.H
 Fl_Widget_Type.o: ../FL/Fl_Int_Input.H
+Fl_Widget_Type.o: ../FL/Fl_Int_Vector.H
 Fl_Widget_Type.o: ../FL/Fl_Light_Button.H
 Fl_Widget_Type.o: ../FL/Fl_Menu.H
 Fl_Widget_Type.o: ../FL/Fl_Menu_.H

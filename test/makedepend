@@ -2315,6 +2315,7 @@ table.o: ../FL/Fl_Group.H
 table.o: ../FL/Fl_Image.H
 table.o: ../FL/Fl_Input.H
 table.o: ../FL/Fl_Input_.H
+table.o: ../FL/Fl_Int_Vector.H
 table.o: ../FL/Fl_Light_Button.H
 table.o: ../FL/Fl_Menu_.H
 table.o: ../FL/Fl_Menu_Item.H
@@ -2776,6 +2777,7 @@ unittest_scrollbarsize.o: ../FL/Fl_Export.H
 unittest_scrollbarsize.o: ../FL/Fl_Graphics_Driver.H
 unittest_scrollbarsize.o: ../FL/Fl_Group.H
 unittest_scrollbarsize.o: ../FL/Fl_Image.H
+unittest_scrollbarsize.o: ../FL/Fl_Int_Vector.H
 unittest_scrollbarsize.o: ../FL/Fl_Pixmap.H
 unittest_scrollbarsize.o: ../FL/Fl_Plugin.H
 unittest_scrollbarsize.o: ../FL/Fl_Preferences.H

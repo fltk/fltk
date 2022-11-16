@@ -39,7 +39,7 @@
 #elif defined(FLTK_USE_WAYLAND)   // Wayland or hybrid
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
 #  include "../src/drivers/Wayland/Fl_Wayland_Window_Driver.H"
-#  if defined(FLTK_USE_X11) 
+#  if defined(FLTK_USE_X11)
 #    include <cairo-xlib.h>
 #  else
      static void *fl_gc = NULL;

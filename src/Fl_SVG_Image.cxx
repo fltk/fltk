@@ -159,7 +159,7 @@ void Fl_SVG_Image::init_(const char *filename, const unsigned char *in_filedata,
   average_weight_ = 1;
   proportional = true;
   bool is_compressed = true;
-  
+
   if (filename || length) { // process file or byte buffer
 #if defined(HAVE_LIBZ)
     int fdread, fdwrite = -1;
