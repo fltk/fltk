@@ -105,6 +105,24 @@ int Fl_Scroll::on_insert(Fl_Widget *candidate, int index) {
 }
 
 /**
+ Change new position of a child before it is moved.
+
+ Fix new position if the new child is planned to be moved after the scrollbars.
+ We can assume that the scrollbars are always the last two children!
+
+ Fl_Group calls this when a widget is moved within the list of children.
+ We return a new index if the widget would be moved after the scrollbars.
+
+ \param oldIndex the current index of the child that will be moved
+ \param newIndex the new index of the child
+ \return new index, possibly corrected to avoid last two scrollbar entries
+ */
+int Fl_Scroll::on_move(int oldIndex, int newIndex) {
+  // Compensate index for the widget that will be removed before it re-inserted
+  return on_insert( child(oldIndex), newIndex+1 ) - 1;
+}
+
+/**
   Removes the widget at \p index from the group and deletes it.
 
   This method does nothing if \p index is out of bounds or

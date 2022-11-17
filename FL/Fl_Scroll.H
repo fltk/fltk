@@ -146,8 +146,8 @@ protected:      //  (STR#1895)
 
 protected:
 
-  virtual int on_insert(Fl_Widget*, int);
-  // virtual int on_move(int, int);         // Not (yet) implemented. Do we need this?
+  int on_insert(Fl_Widget*, int); // override
+  int on_move(int, int); // override
   void fix_scrollbar_order();
   void bbox(int&,int&,int&,int&) const;
   void draw();

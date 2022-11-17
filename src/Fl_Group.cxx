@@ -489,10 +489,9 @@ int Fl_Group::on_insert(Fl_Widget *candidate, int index) {
  By returning -1, Fl_Group::insert will not move the child.
 
  \param oldIndex the current index of the child that will be moved
- \param newIndex the new index of the child, counted with the old
-    child already removed
- \return index to position the child as planned
- \return a new index to force the child to a different position
+ \param newIndex the new index of the child
+ \return \p newIndex to position the child as planned
+ \return a different index to force the child to a different position
  \return -1 to keep the group from moving the child
  */
 int Fl_Group::on_move(int oldIndex, int newIndex) {
@@ -511,11 +510,11 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
     Fl_Group* g = o.parent();
     int n = g->find(o);
-    if (g == this) { // avoid expensive remove() and add() if we just move a widget within the group
-      if (index > n) index--;
+    if (g == this) {
+      // avoid expensive remove() and add() if we just move a widget within the group
       index = on_move(n, index);
-      if (index == n) return; // this includes (children_ == 1)
-      if (index >= children_ || index < 0) return;
+      if ((index == n) || (index < 0)) return; // this includes (children_ == 1)
+      if (index >= children_) index = children_ - 1;
       if (index > n)
         memmove(array_+n, array_+(n+1), (index-n) * sizeof(Fl_Widget*));
       else
