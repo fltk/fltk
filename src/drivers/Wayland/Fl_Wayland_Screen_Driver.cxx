@@ -1106,7 +1106,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
       Fl::fatal("No Wayland connection\n");
     }
   }
-puts("Using Wayland backend");
+  //puts("Using Wayland backend");
   wl_list_init(&seats);
   wl_list_init(&outputs);
 
