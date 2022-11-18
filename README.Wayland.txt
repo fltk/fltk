@@ -38,7 +38,7 @@ CJK text-input methods, as well as dead and compose keys are supported.
 2 Wayland Support for FLTK
 ==========================
 
-On Linux and FreeBSD systems, the FLTK library can be configured so FLTK apps
+On Linux and FreeBSD systems, the FLTK library is by default configured so FLTK apps
 do all their windowing through the Wayland protocol, all their graphics with
 Cairo or EGL, and all text-drawing with Pango. If no Wayland compositor is
 available at run-time, FLTK apps fall back to using X11 for windowing.
@@ -62,29 +62,23 @@ with its Wayland backend only (see below).
  2.1 Configuration
 ------------------
 
-   2.1.1 Configure-based build can be performed as follows:
-Once after "git clone", create the configure file :
-  autoconf -f
+On Linux and FreeBSD systems equipped with the adequate software packages
+(see section 4 below), the default building procedure produces a Wayland/X11
+hybrid library. On systems lacking all or part of Wayland-required packages,
+the default building procedure produces a X11-based library.
 
-Prepare build with :
-  ./configure --enable-wayland
-Add  --disable-x11  to build FLTK for Wayland-only (no x11 backend).
+Use -DOPTION_USE_WAYLAND=OFF with CMake or "configure --disable-wayland" to build
+FLTK for the X11 library when the default would build for Wayland.
 
-Build with :
-  make
-
-   2.1.2 CMake-based build can be performed as follows:
-  cmake -S <path-to-source> -B <path-to-build>  -DOPTION_USE_WAYLAND=1
-
-  cd <path-to-build>; make
+CMake OPTION_WAYLAND_ONLY or "--disable-x11" configure argument can
+be used to produce a Wayland-only library which can be useful, e.g., when
+cross-compiling for systems that lack X11 headers and libraries.
 
 The FLTK Wayland platform uses a library called libdecor which handles window decorations
 (i.e., titlebars, shade). Libdecor is bundled in the FLTK source code and FLTK uses by default
-this form of libdecor. Optionally, OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
+this form of libdecor. CMake OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
 use the system's version of libdecor which is available on recent Linux distributions (e.g.,
 Debian Bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-cairo).
-
-Optionally, OPTION_WAYLAND_ONLY can be turned on to build FLTK for Wayland-only (no x11 backend).
 
  2.2 Known Limitations
 ----------------------
@@ -132,7 +126,7 @@ function or variable.
 -----------------------------------------------------------------
 
 The recommended way to prepare and use platform-specific code that would contain
-both X11-specific and Wayland-specific parts is as follows :
+X11-specific and possibly Wayland-specific parts is as follows :
 
 a) Organize platform-specific code as follows :
 
@@ -143,9 +137,12 @@ a) Organize platform-specific code as follows :
   #elif defined(_WIN32)
      *** Windows-specific code ***
   #else
+  #  ifdef FLTK_USE_X11
      *** X11-specific code ***
-
+  #  endif
+  #  ifdef FLTK_USE_WAYLAND
      *** Wayland-specific code ***
+  #  endif
   #endif
 
 b) Make sure to use distinct names for global variables and functions
@@ -241,17 +238,5 @@ These packages are necessary to build the FLTK library and the sway compositor:
 pkg install git autoconf pkgconf xorg urwfonts gnome glew seatd sway \
                 dmenu-wayland dmenu evdev-proto
 
-The FLTK library can be built as follows using either configure or CMake :
-
-1) Using configure
-
-cd <path-to-FLTK-source-tree>
-autoconf -f
-./configure --enable-localzlib --enable-wayland
-make
-
-2) Using CMake
-
-cmake -S <path-to-source> -B <path-to-build> -DOPTION_USE_WAYLAND=1
-
-cd <path-to-build>; make
+If FLTK is built using the configure/make procedure, include argument "--enable-localzlib"
+in the "configure" command.
