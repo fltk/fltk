@@ -125,7 +125,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     This option is OFF by default.
   - Configure option --enable-wayland allows to build the FLTK library for
     the new Wayland platform while remaining compatible with X11. The
-    corresponding CMake option is OPTION_USE_WAYLAND. This option is OFF by default.
+    corresponding CMake option is OPTION_USE_WAYLAND. This option is ON by default.
   - Configure options --enable-wayland --disable-x11 used together allow to
     build FLTK for the Wayland backend only (no x11 backend). Under CMake, the
     equivalent is to set both OPTION_USE_WAYLAND and OPTION_WAYLAND_ONLY.

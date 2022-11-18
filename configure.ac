@@ -110,7 +110,7 @@ AC_ARG_ENABLE([localzlib], AS_HELP_STRING([--enable-localzlib], [use local ZLIB 
 
 AC_ARG_ENABLE([pango], AS_HELP_STRING([--enable-pango], [turn on Pango support]))
 
-AC_ARG_ENABLE([wayland], AS_HELP_STRING([--enable-wayland], [turn on hybrid Wayland/X11 support]))
+AC_ARG_ENABLE([wayland], AS_HELP_STRING([--disable-wayland], [turn off hybrid Wayland/X11 support]))
 
 AC_ARG_ENABLE([usecairo], AS_HELP_STRING([--enable-usecairo], [all drawing to X11 windows uses Cairo]))
 
@@ -977,16 +977,40 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AC_DEFINE([HAVE_PTHREAD])
         THREADS="threads$EXEEXT"
     ])
-
-    AS_IF([test x$enable_wayland = xyes], [
-      dnl Prepare for Wayland...
-
+    
+    AS_IF([test x$enable_wayland != xno], [
       AS_IF([test x$PKGCONFIG = x], [
-          dnl pkg-config is not available, issue warning and abort...
+        dnl pkg-config is not available, issue warning and possibly abort...
+        AS_IF([test x$enable_wayland = xyes], [
           AC_MSG_WARN([--enable-wayland: please install pkg-config.])
           AC_MSG_ERROR([Aborting.])
+        ],[
+          AC_MSG_WARN([pkg-config is not found. Continuing with --disable-wayland])
+          enable_wayland="no"
+        ])
+      ],[
+        missing="no"
+        AS_IF([$PKGCONFIG --exists wayland-client],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists wayland-protocols],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists wayland-cursor],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists xkbcommon],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists dbus-1],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists pangocairo],[],[missing="yes"])
+        AS_IF([test x$missing = xyes], [
+            AC_MSG_WARN([These packages 'wayland-client wayland-protocols wayland-cursor xkbcommon dbus-1 pangocairo' are required to build FLTK for wayland.])
+            AC_MSG_WARN([At least one of them is missing.])
+          AS_IF([test x$enable_wayland = xyes], [
+            AC_MSG_ERROR([Building for Wayland is not possible. Aborting.])
+          ],[
+            AC_MSG_WARN([Continuing with --disable-wayland])
+            enable_wayland="no"
+          ])
+        ])
       ])
+    ])
 
+    AS_IF([test x$enable_wayland != xno], [
+      dnl Prepare for Wayland...
       dnl Turn option usecairo ON
       AC_DEFINE([FLTK_USE_CAIRO])
       AC_MSG_NOTICE([Turning on the usecairo option])
@@ -1001,7 +1025,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        ])
       CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
-      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangoxft) "
+      LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
       LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
       CXXFLAGS="$CXXFLAGS -I../libdecor/src"
@@ -1145,7 +1169,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
     dnl Check for the Xft library unless disabled...
     xft_found=no
-    AS_IF([test x$enable_xft != xno], [
+    AS_IF([test x$enable_xft != xno -a x$enable_wayland = xno], [
         # Try pkg-config first (freetype2 deprecated freetype-config from some version on)
         FT_FLAGS=""
         AS_IF([test "x$PKGCONFIG" != x], [
@@ -1645,7 +1669,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 ], [darwin*], [
     graphics="Quartz"
 ], [*], [
-    AS_IF([test x$enable_wayland != xyes], [
+    AS_IF([test x$enable_wayland = xno], [
         graphics="X11"
     ])
     AS_IF([test x$xft_found = xyes], [
