@@ -246,7 +246,7 @@ else ()
   message (STATUS "                 ZLIB = System")
 endif ()
 
-if (UNIX)
+if (UNIX AND NOT (APPLE AND NOT OPTION_APPLE_X11))
 
   if (OPTION_USE_WAYLAND)
     message (STATUS "Use Wayland:             Yes (when available at run-time)")
@@ -271,7 +271,7 @@ if (UNIX)
     endif (USE_XFT)
   endif (USE_PANGO)
 
-endif (UNIX)
+endif (UNIX AND NOT (APPLE AND NOT OPTION_APPLE_X11))
 
 if (FLTK_HAVE_CAIROEXT)
   message (STATUS "Fl_Cairo_Window support: Yes (extended)")
