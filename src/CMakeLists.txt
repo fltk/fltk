@@ -624,11 +624,15 @@ if (USE_XFT)
 endif (USE_XFT)
 
 if (UNIX AND OPTION_USE_WAYLAND)
-  if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
-    set(PROTOCOLS /usr/local/share/wayland-protocols)
-  else ()
-    set(PROTOCOLS /usr/share/wayland-protocols)
-  endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+  if (NOT (CMAKE_VERSION VERSION_LESS 3.4))
+    pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir) # requires cmake 3.4
+  else()
+    if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+      set(PROTOCOLS /usr/local/share/wayland-protocols)
+    else ()
+      set(PROTOCOLS /usr/share/wayland-protocols)
+    endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+  endif (NOT (CMAKE_VERSION VERSION_LESS 3.4))
   add_custom_command(
     OUTPUT xdg-shell-protocol.c xdg-shell-client-protocol.h
     COMMAND wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
