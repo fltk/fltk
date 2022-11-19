@@ -16,6 +16,7 @@
 ################################################################################
 
 include (../CMake/fl_create_example.cmake)
+include (../CMake/FLTK-Functions.cmake)
 
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/examples)
 file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
