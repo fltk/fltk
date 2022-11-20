@@ -513,8 +513,11 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
     if (g == this) {
       // avoid expensive remove() and add() if we just move a widget within the group
       index = on_move(n, index);
-      if ((index == n) || (index < 0)) return; // this includes (children_ == 1)
-      if (index >= children_) index = children_ - 1;
+      if (index < 0) return;      // don't move: requested by subclass
+      if (index > children_)
+        index = children_;
+      if (index > n) index--;     // compensate for removal and re-insertion
+      if (index == n) return;     // same position; this includes (children_ == 1)
       if (index > n)
         memmove(array_+n, array_+(n+1), (index-n) * sizeof(Fl_Widget*));
       else
