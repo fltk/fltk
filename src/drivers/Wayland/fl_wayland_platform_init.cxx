@@ -21,7 +21,7 @@
 #include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
 #  include <cairo-xlib.h>
 #  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
@@ -57,7 +57,7 @@ static Fl_Fontdesc built_in_table[] = {  // Pango font names
 FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 
 
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
 
 static bool attempt_wayland() {
   if (Fl_Wayland_Screen_Driver::wl_display) return true;
@@ -118,7 +118,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
 
 
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
   if (!attempt_wayland()) return new Fl_Display_Cairo_Graphics_Driver();
 #endif
   return new Fl_Wayland_Graphics_Driver();
@@ -126,7 +126,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
 
 
 Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h) {
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
   if (!Fl_Wayland_Screen_Driver::wl_display) return new Fl_Xlib_Copy_Surface_Driver(w, h);
 #endif
   return new Fl_Wayland_Copy_Surface_Driver(w, h);
@@ -135,7 +135,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
   if (!Fl_Screen_Driver::system_driver) Fl::system_driver();
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
   if (attempt_wayland()) {
     return new Fl_Wayland_Screen_Driver();
   }
@@ -152,7 +152,7 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() {
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
   if (!attempt_wayland()) return new Fl_X11_Window_Driver(w);
 #endif
   return new Fl_Wayland_Window_Driver(w);
@@ -161,7 +161,7 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
-#if FLTK_USE_X11
+#ifdef FLTK_USE_X11
   if (!attempt_wayland())
     return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
 #endif
