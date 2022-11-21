@@ -202,6 +202,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
   }
 
   fl_local_grab = 0;
+  Fl::handle(FL_RELEASE, source_fl_win);
   source_fl_win->cursor(FL_CURSOR_DEFAULT);
   return 1;
 }
