@@ -3961,12 +3961,13 @@ void Fl_Text_Display::draw(void) {
   fl_pop_clip();
 }
 
-// GitHub Issue #196: internal selection nd visible selection can run out of
+// GitHub Issue #196: internal selection and visible selection can run out of
 // sync, giving the user unexpected keyboard selection. The code block below
 // captures that and fixes it.
-// set pos to the drag target postion or -1 if we don;t know
-// if pos is -1, and key is not -1, key can be set to indicate a direction (e.g. FL_Left)
-// return 0 if nothing changed, return 1 if dragPos or mCursorPos were modified.
+// - set pos to the drag target postion or -1 if we don't know
+// - if pos is -1, and key is not -1, key can be set to indicate a direction
+//   (e.g. FL_Left)
+// return 0 if nothing changed, return 1 if dragPos or mCursorPos were modified
 int fl_text_drag_prepare(int pos, int key, Fl_Text_Display* d) {
   if (d->buffer()->selected()) {
     int start, end;
