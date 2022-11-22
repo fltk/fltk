@@ -284,6 +284,7 @@ int Fl_Text_Editor::kf_enter(int, Fl_Text_Editor* e) {
   return 1;
 }
 
+extern int fl_text_drag_prepare(int pos, int key, Fl_Text_Display* d);
 extern void fl_text_drag_me(int pos, Fl_Text_Display* d);
 /** Moves the text cursor in the direction indicated by key \p 'c' in editor \p 'e'.
     Supported values for 'c' are currently:
@@ -339,6 +340,7 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
     \see kf_move()
 */
 int Fl_Text_Editor::kf_shift_move(int c, Fl_Text_Editor* e) {
+  fl_text_drag_prepare(-1, c, e);
   kf_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
   char *copy = e->buffer()->selection_text();
@@ -441,6 +443,7 @@ int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
     \see kf_meta_move().
 */
 int Fl_Text_Editor::kf_m_s_move(int c, Fl_Text_Editor* e) {
+  fl_text_drag_prepare(-1, c, e);
   kf_meta_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
   return 1;
@@ -450,6 +453,7 @@ int Fl_Text_Editor::kf_m_s_move(int c, Fl_Text_Editor* e) {
     \see kf_ctrl_move().
 */
 int Fl_Text_Editor::kf_c_s_move(int c, Fl_Text_Editor* e) {
+  fl_text_drag_prepare(-1, c, e);
   kf_ctrl_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
   return 1;
@@ -709,7 +713,7 @@ int Fl_Text_Editor::handle(int event) {
         dragType = DRAG_NONE;
         if(buffer()->selected()) {
           buffer()->unselect();
-          }
+        }
         int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
         insert_position(pos);
         Fl::paste(*this, 0);

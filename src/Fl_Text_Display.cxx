@@ -3961,7 +3961,38 @@ void Fl_Text_Display::draw(void) {
   fl_pop_clip();
 }
 
-
+// GitHub Issue #196: internal selection nd visible selection can run out of
+// sync, giving the user unexpected keyboard selection. The code block below
+// captures that and fixes it.
+// set pos to the drag target postion or -1 if we don;t know
+// if pos is -1, and key is not -1, key can be set to indicate a direction (e.g. FL_Left)
+// return 0 if nothing changed, return 1 if dragPos or mCursorPos were modified.
+int fl_text_drag_prepare(int pos, int key, Fl_Text_Display* d) {
+  if (d->buffer()->selected()) {
+    int start, end;
+    d->buffer()->selection_position(&start, &end);
+    if ( (d->dragPos!=start || d->mCursorPos!=end) && (d->dragPos!=end || d->mCursorPos!=start) ) {
+      if (pos!=-1) {
+        if (pos<start) {
+          d->mCursorPos = start;
+          d->dragPos = end;
+        } else {
+          d->mCursorPos = end;
+          d->dragPos = start;
+        }
+      } else if (key!=-1) {
+        switch (key) {
+          case FL_Home: case FL_Left: case FL_Up: case FL_Page_Up:
+            d->dragPos = end; d->mCursorPos = start; break;
+          default:
+            d->dragPos = start; d->mCursorPos = end; break;
+        }
+      }
+      return 1;
+    }
+  }
+  return 0;
+}
 
 // this processes drag events due to mouse for Fl_Text_Display and
 // also drags due to cursor movement with shift held down for
@@ -4079,8 +4110,12 @@ int Fl_Text_Display::handle(int event) {
       }
       if (Fl_Group::handle(event)) return 1;
       if (Fl::event_state()&FL_SHIFT) {
-        if (!buffer()->primary_selection()->selected())
-            dragPos = insert_position();
+        if (buffer()->primary_selection()->selected()) {
+          int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
+          fl_text_drag_prepare(pos, -1, this);
+        } else {
+          dragPos = insert_position();
+        }
         return handle(FL_DRAG);
       }
       dragging = 1;
@@ -4114,6 +4149,7 @@ int Fl_Text_Display::handle(int event) {
       if (dragType==DRAG_START_DND) {
         if (!Fl::event_is_click() && Fl::dnd_text_ops()) {
           const char* copy = buffer()->selection_text();
+          Fl::copy(copy, strlen(copy));
           Fl::screen_driver()->dnd(1);
           free((void*)copy);
         }
