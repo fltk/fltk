@@ -218,6 +218,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
   [(NSOpenGLContext*)context release];
   del_context(context);
   if (gl1ctxt) {
+    [[gl1ctxt view] release];
     [gl1ctxt release];
     gl1ctxt = 0;
   }
@@ -456,7 +457,6 @@ static struct win_view {
 static void delayed_addgl1ctxt(struct win_view *data) {
   NSView *flview = [fl_mac_xid(data->win) contentView];
   [flview addSubview:data->gl1view];
-  [data->gl1view release];
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
   if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
     [data->gl1view setWantsBestResolutionOpenGLSurface:YES];
