@@ -3987,6 +3987,9 @@ int fl_text_drag_prepare(int pos, int key, Fl_Text_Display* d) {
           default:
             d->dragPos = start; d->mCursorPos = end; break;
         }
+      } else {
+        d->dragPos = start;
+        d->mCursorPos = end;
       }
       return 1;
     }
