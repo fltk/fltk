@@ -856,6 +856,7 @@ Fl_Widget_Type.o: Fl_Window_Type.h
 Fl_Widget_Type.o: shell_command.h
 Fl_Widget_Type.o: Shortcut_Button.h
 Fl_Widget_Type.o: StyleParse.h
+Fl_Widget_Type.o: undo.h
 Fl_Widget_Type.o: widget_browser.h
 Fl_Widget_Type.o: widget_panel.h
 Fl_Window_Type.o: ../config.h
