@@ -124,6 +124,7 @@ public:
     WRAP_AT_BOUNDS  /**< wrap text so that it fits into the widget width */
   };
 
+  friend int fl_text_drag_prepare(int pos, int key, Fl_Text_Display* d);
   friend void fl_text_drag_me(int pos, Fl_Text_Display* d);
 
   typedef void (*Unfinished_Style_Cb)(int, void *);
