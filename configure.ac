@@ -1044,9 +1044,11 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 
       AS_IF([test x$enable_gl != xno], [
           AS_IF([$PKGCONFIG --exists gl], [
-             AC_DEFINE([HAVE_GL])
-             GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs gl) $GLLIBS"
-          ])
+            AS_IF([$PKGCONFIG --exists egl], [
+              AS_IF([$PKGCONFIG --exists wayland-egl], [
+                AC_DEFINE([HAVE_GL])
+                GLLIBS="$($PKGCONFIG --libs wayland-egl) $($PKGCONFIG --libs egl) $($PKGCONFIG --libs gl) $GLLIBS"
+          ])])])
           AS_IF([$PKGCONFIG --exists glu], [
              AC_DEFINE([HAVE_GL_GLU_H])
              GLLIBS="$($PKGCONFIG --libs glu) $GLLIBS"
