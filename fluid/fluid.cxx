@@ -1943,10 +1943,15 @@ int main(int argc,char **argv) {
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
       " -d : enable internal debugging\n";
+    const char *app_name = NULL;
+    if ( (argc > 0) && argv[0] && argv[0][0] )
+      app_name = fl_filename_name(argv[0]);
+    if ( !app_name || !app_name[0])
+      app_name = "fluid";
 #ifdef _MSC_VER
-    fl_message("%s\n", msg);
+    fl_message(msg, app_name);
 #else
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, msg, app_name);
 #endif
     return 1;
   }
