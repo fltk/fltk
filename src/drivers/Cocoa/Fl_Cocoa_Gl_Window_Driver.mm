@@ -447,11 +447,11 @@ FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
  view/GL context.
  */
 
-static struct win_view {
+struct win_view {
   Fl_Gl_Window *win;
   NSView *gl1view;
   NSOpenGLContext *gl1ctxt;
-} win_view_struct;
+};
 
 
 static void delayed_addgl1ctxt(struct win_view *data) {
@@ -465,24 +465,25 @@ static void delayed_addgl1ctxt(struct win_view *data) {
   [data->gl1ctxt setView:data->gl1view];
   remove_gl_context_opacity(data->gl1ctxt);
   data->win->redraw();
+  delete data;
 }
 
 
 void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
   if (!gl1ctxt) {
     NSView *view = [fl_xid(pWindow) contentView];
-    win_view_struct.gl1view = [[NSView alloc] initWithFrame:[view frame]];
-    [win_view_struct.gl1view setAutoresizingMask:
+    struct win_view *win_view_struct = new struct win_view;
+    win_view_struct->gl1view = [[NSView alloc] initWithFrame:[view frame]];
+    [win_view_struct->gl1view setAutoresizingMask:
                                 NSViewWidthSizable|NSViewHeightSizable];
     NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
                                 FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
     gl1ctxt = [[NSOpenGLContext alloc]
                                 initWithFormat:gl1pixelformat shareContext:nil];
     [gl1pixelformat release];
-    win_view_struct.win = pWindow;
-    win_view_struct.gl1ctxt = gl1ctxt;
-    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_addgl1ctxt,
-                    &win_view_struct);
+    win_view_struct->win = pWindow;
+    win_view_struct->gl1ctxt = gl1ctxt;
+    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_addgl1ctxt, win_view_struct);
   }
   [gl1ctxt makeCurrentContext];
   glClearColor(0., 0., 0., 0.);
