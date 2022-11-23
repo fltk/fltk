@@ -38,11 +38,12 @@ Linux_NOPIE = -no-pie
 FreeBSD_NOPIE =
 NOPIE = ${${UNAME}_NOPIE}
 
-all : demo $(GLWLDEMO)
+# Don't build libdecor demo programs automatically: demo $(GLWLDEMO)
+all : $(OBJECTS)
 
 depend:
 	: echo "libdecor/build: make depend..."
-	
+
 fl_libdecor.o : fl_libdecor.c ../src/libdecor.c ../../src/xdg-shell-protocol.c ../../src/xdg-decoration-protocol.c ../../src/text-input-protocol.c
 	$(CC) $(CFLAGS) $(CFLAGS_DECOR) -c  fl_libdecor.c -DLIBDECOR_PLUGIN_API_VERSION=1 -DLIBDECOR_PLUGIN_DIR=\"\"
 
@@ -79,12 +80,12 @@ cursor-settings.o : ../src/cursor-settings.c
 	wayland-scanner client-header \
 	    $(PROTOCOLS)/unstable/text-input/text-input-unstable-v3.xml \
 	    ../../src/text-input-client-protocol.h
-	
+
 demo : ../demo/demo.c $(OBJECTS)
 	$(CC)  -o demo ../demo/demo.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(LDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0
 
 egl : ../demo/egl.c $(OBJECTS)
-	$(CC)  -o egl ../demo/egl.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(GLDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0 
+	$(CC)  -o egl ../demo/egl.c -D_GNU_SOURCE -I../.. -I../src -I. -I../../src $(EXTRA_DECOR) $(OBJECTS) $(GLDLIBS) -lm -rdynamic $(NOPIE) -Wl,--defsym=fl_libdecor_using_weston=0
 
 
 install:

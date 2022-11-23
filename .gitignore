@@ -83,7 +83,18 @@ etc/FLTKConfig.cmake
 /src/*.sav
 /src/*.dylib
 
-# /test/
-# see test/.gitignore
+# Wayland build artifacts (generated files)
+
+src/text-input-client-protocol.h
+src/text-input-protocol.c
+src/xdg-decoration-client-protocol.h
+src/xdg-decoration-protocol.c
+src/xdg-shell-client-protocol.h
+src/xdg-shell-protocol.c
+
+# Wayland demo programs (no longer being built)
+
+# libdecor/build/demo
+# libdecor/build/egl
 
 **/.DS_Store
