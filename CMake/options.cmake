@@ -740,17 +740,10 @@ endif ((X11_Xft_FOUND OR NOT USE_PANGOXFT) AND OPTION_USE_PANGO)
 if (OPTION_USE_WAYLAND AND NOT OPTION_USE_SYSTEM_LIBDECOR)
 
   # Note: Disable OPTION_ALLOW_GTK_PLUGIN to get cairo titlebars rather than GTK
-  # FIXME: This needs to be redesigned! Forcing GTK_FOUND to 0 (NO) is a bad
-  # FIXME: idea because there could be unwanted side effects. AlbrechtS
   if (OPTION_ALLOW_GTK_PLUGIN)
     pkg_check_modules(GTK gtk+-3.0)
     if (GTK_FOUND)
       include_directories (${GTK_INCLUDE_DIRS})
-    endif (GTK_FOUND)
-  else ()
-    if (GTK_FOUND)
-      message (STATUS "*** FIXME: Disable GTK plugin by forcing GTK_FOUND to 0 ***")
-      set (GTK_FOUND 0)
     endif (GTK_FOUND)
   endif (OPTION_ALLOW_GTK_PLUGIN)
 
