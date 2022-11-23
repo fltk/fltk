@@ -842,9 +842,10 @@ int menuwindow::handle_part1(int e) {
             return 1;
           }
           if (pp.current_item && pp.menu_number==0 && !pp.current_item->submenu()) {
-            if (e==FL_PUSH)
+            if (e==FL_PUSH) {
               pp.state = DONE_STATE;
-            setitem(0, -1, 0);
+              setitem(0, -1, 0);
+            }
             return 1;
           }
           // all others can stay selected
