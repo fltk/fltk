@@ -220,6 +220,8 @@ static int fl_draw_arrow_choice(Fl_Rect r, Fl_Color col) {
 void fl_draw_arrow(Fl_Rect r, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
   int ret = 0;
+  Fl_Color saved_color = fl_color();
+
   debug_arrow(r);
 
   // implementation of all arrow types
@@ -252,5 +254,7 @@ void fl_draw_arrow(Fl_Rect r, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
     fl_line(r.x(), r.y(), r.r(), r.b());
     fl_line(r.x(), r.b(), r.r(), r.y());
   }
+
+  fl_color(saved_color);
 
 } // fl_draw_arrow()
