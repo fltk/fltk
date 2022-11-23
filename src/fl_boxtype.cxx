@@ -318,7 +318,7 @@ static struct {
   {fl_border_box,       1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX
   {fl_border_frame,     1,1,2,2,0}, // _FL_OVAL_FRAME
   {fl_flat_box,         0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
-  {fl_up_box,           4,4,8,8,0}, // _FL_PLASTIC_UP_BOX
+  {fl_up_box,           2,2,4,4,0}, // _FL_PLASTIC_UP_BOX
   {fl_down_box,         2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
   {fl_up_frame,         2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME
   {fl_down_frame,       2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME
