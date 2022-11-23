@@ -115,7 +115,7 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
       save_cursor = NULL;
     }
     if (fl_dnd_target_window) {
-      Fl::handle(FL_DND_LEAVE, fl_dnd_target_window);
+      Fl::handle(FL_RELEASE, fl_dnd_target_window);
       fl_dnd_target_window = 0;
     }
     Fl::pushed(0);
@@ -454,7 +454,7 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
 
 static void data_device_handle_leave(void *data, struct wl_data_device *data_device) {
 //printf("Drag left our surface\n");
-  Fl::handle(FL_DND_LEAVE, fl_dnd_target_window);
+if (current_drag_offer)  Fl::handle(FL_DND_LEAVE, fl_dnd_target_window);
 }
 
 
