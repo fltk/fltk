@@ -977,7 +977,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AC_DEFINE([HAVE_PTHREAD])
         THREADS="threads$EXEEXT"
     ])
-    
+
     AS_IF([test x$enable_wayland != xno], [
       AS_IF([test x$PKGCONFIG = x], [
         dnl pkg-config is not available, issue warning and possibly abort...
