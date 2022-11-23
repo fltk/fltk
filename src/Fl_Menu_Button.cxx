@@ -16,6 +16,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
 
 
@@ -24,18 +25,32 @@ static Fl_Menu_Button   *pressed_menu_button_ = 0;
 
 void Fl_Menu_Button::draw() {
   if (!box() || type()) return;
+
+  // FIXME: size and coordinate calculation (H, X, Y) should be simplified when
+  //        the "old code" below is entirely removed (left as is for comparison).
+  //        AlbrechtS Nov. 23, 2022
+
   int H = (labelsize()-3)&-2;
   int X = x()+w()-H-Fl::box_dx(box())-Fl::box_dw(box())-1;
   int Y = y()+(h()-H)/2;
+
   draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
   draw_label(x()+Fl::box_dx(box()), y(), X-x()+2, h());
   if (Fl::focus() == this) draw_focus();
-  // ** if (box() == FL_FLAT_BOX) return; // for XForms compatibility
-  // FIXME_ARROW: use fl_draw_arrow()
+
+#if (0) // old code: outline of an engraved down-arrow for all schemes
+
   fl_color(active_r() ? FL_DARK3 : fl_inactive(FL_DARK3));
   fl_line(X+H/2, Y+H, X, Y, X+H, Y);
   fl_color(active_r() ? FL_LIGHT3 : fl_inactive(FL_LIGHT3));
   fl_line(X+H, Y, X+H/2, Y+H);
+
+#else // new code: filled down-arrow whose style dependends on the current scheme
+
+  Fl_Color arrow_color = active_r() ? FL_DARK3 : fl_inactive(FL_DARK3);
+  fl_draw_arrow(Fl_Rect(X-1, Y-1, H+4, H+4), FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
+
+#endif
 }
 
 
