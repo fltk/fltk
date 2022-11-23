@@ -295,16 +295,24 @@ void CodeViewer::draw()
   Fl::set_color(FL_SELECTION_COLOR, c);
 }
 
-// ---- DesignViewer implementation
+// ---- TextViewer implementation
 
 /**
- Create a DesignViewer widget.
+ Create a TextViewer widget.
  \param[in] X, Y, W, H position and size of the widget
  \param[in] L optional label
  */
-DesignViewer::DesignViewer(int X, int Y, int W, int H, const char *L)
+TextViewer::TextViewer(int X, int Y, int W, int H, const char *L)
 : Fl_Text_Display(X, Y, W, H, L)
 {
   buffer(new Fl_Text_Buffer);
 }
 
+/**
+ Avoid memory leaks.
+ */
+TextViewer::~TextViewer() {
+  Fl_Text_Buffer *buf = mBuffer;
+  buffer(0);
+  delete buf;
+}

@@ -1484,9 +1484,9 @@ CodeViewer *sv_source=(CodeViewer *)0;
 
 CodeViewer *sv_header=(CodeViewer *)0;
 
-DesignViewer *sv_strings=(DesignViewer *)0;
+TextViewer *sv_strings=(TextViewer *)0;
 
-DesignViewer *sv_design=(DesignViewer *)0;
+TextViewer *sv_project=(TextViewer *)0;
 
 Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
@@ -1545,7 +1545,7 @@ Fl_Double_Window* make_sourceview() {
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
         o->labelsize(13);
         o->hide();
-        { DesignViewer* o = sv_strings = new DesignViewer(20, 50, 480, 390);
+        { TextViewer* o = sv_strings = new TextViewer(20, 50, 480, 390);
           sv_strings->box(FL_DOWN_FRAME);
           sv_strings->color(FL_BACKGROUND2_COLOR);
           sv_strings->selection_color(FL_SELECTION_COLOR);
@@ -1560,28 +1560,28 @@ Fl_Double_Window* make_sourceview() {
           Fl_Group::current()->resizable(sv_strings);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // DesignViewer* sv_strings
+        } // TextViewer* sv_strings
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Design");
+      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
         o->labelsize(13);
         o->hide();
-        { DesignViewer* o = sv_design = new DesignViewer(20, 50, 480, 390);
-          sv_design->box(FL_DOWN_FRAME);
-          sv_design->color(FL_BACKGROUND2_COLOR);
-          sv_design->selection_color(FL_SELECTION_COLOR);
-          sv_design->labeltype(FL_NORMAL_LABEL);
-          sv_design->labelfont(0);
-          sv_design->labelsize(14);
-          sv_design->labelcolor(FL_FOREGROUND_COLOR);
-          sv_design->textfont(4);
-          sv_design->textsize(11);
-          sv_design->align(Fl_Align(FL_ALIGN_TOP));
-          sv_design->when(FL_WHEN_RELEASE);
-          Fl_Group::current()->resizable(sv_design);
+        { TextViewer* o = sv_project = new TextViewer(20, 50, 480, 390);
+          sv_project->box(FL_DOWN_FRAME);
+          sv_project->color(FL_BACKGROUND2_COLOR);
+          sv_project->selection_color(FL_SELECTION_COLOR);
+          sv_project->labeltype(FL_NORMAL_LABEL);
+          sv_project->labelfont(0);
+          sv_project->labelsize(14);
+          sv_project->labelcolor(FL_FOREGROUND_COLOR);
+          sv_project->textfont(4);
+          sv_project->textsize(11);
+          sv_project->align(Fl_Align(FL_ALIGN_TOP));
+          sv_project->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(sv_project);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // DesignViewer* sv_design
+        } // TextViewer* sv_project
         o->end();
       } // Fl_Group* o
       sv_tab->end();

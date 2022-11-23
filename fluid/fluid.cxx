@@ -1794,11 +1794,11 @@ void update_sourceview_cb(Fl_Button*, void*)
     strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
   }
 
-  if (sv_design->visible_r()) {
+  if (sv_project->visible_r()) {
     write_file(sv_design_filename);
-    int top = sv_design->top_line();
-    sv_design->buffer()->loadfile(sv_design_filename);
-    sv_design->scroll(top, 0);
+    int top = sv_project->top_line();
+    sv_project->buffer()->loadfile(sv_design_filename);
+    sv_project->scroll(top, 0);
   } else if (sv_strings->visible_r()) {
     static const char *exts[] = { ".txt", ".po", ".msg" };
     char fn[FL_PATH_MAX];
@@ -2021,6 +2021,8 @@ int main(int argc,char **argv) {
 #endif // _WIN32
 
   undo_clear();
+  if (g_shell_command)
+    ::free(g_shell_command);
 
   return (0);
 }

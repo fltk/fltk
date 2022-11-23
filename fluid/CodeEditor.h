@@ -68,9 +68,10 @@ protected:
 
 // ---- DesignViewer declaration
 
-class DesignViewer : public Fl_Text_Display {
+class TextViewer : public Fl_Text_Display {
 public:
-  DesignViewer(int X, int Y, int W, int H, const char *L=0);
+  TextViewer(int X, int Y, int W, int H, const char *L=0);
+  ~TextViewer();
   int top_line() { return get_absolute_top_line_number(); }
 };
 

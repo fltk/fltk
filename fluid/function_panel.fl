@@ -1017,18 +1017,18 @@ Function {make_sourceview()} {open
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class DesignViewer
+          class TextViewer
         }
       }
       Fl_Group {} {
-        label Design open
+        label Project open
         xywh {10 35 500 415} labelsize 13 hide
       } {
-        Fl_Text_Display sv_design {
+        Fl_Text_Display sv_project {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class DesignViewer
+          class TextViewer
         }
       }
     }
