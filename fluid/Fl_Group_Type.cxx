@@ -315,30 +315,32 @@ void Fl_Flex_Type::remove_child(Fl_Type* a) {
 // We need to relayout existing children.
 void Fl_Flex_Type::change_subtype_to(int n) {
   Fl_Flex* f = (Fl_Flex*)o;
+  if (f->type()==n) return;
+
   int nc = f->children();
-  if (f->type()==n || nc==0) return;
-
-  int dw = Fl::box_dw(f->box());
-  int dh = Fl::box_dh(f->box());
-  int lm, tm, rm, bm;
-  f->margins(&lm, &tm, &rm, &bm);
-  int gap = f->gap();
-  int fw = f->w()-dw-lm-rm-(nc*gap);
-  if (fw<=nc) fw = nc; // avoid division by zero
-  int fh = f->h()-dh-tm-bm-(nc*gap);
-  if (fh<=nc) fh = nc; // avoid division by zero
-
-  if (f->type()==Fl_Flex::HORIZONTAL && n==Fl_Flex::VERTICAL) {
-    float scl = (float)fh/(float)fw;
-    for (int i=0; i<nc; i++) {
-      Fl_Widget* c = f->child(i);
-      c->size(f->w(), (int)(c->w()*scl));
-    }
-  } else if (f->type()==Fl_Flex::VERTICAL && n==Fl_Flex::HORIZONTAL) {
-    float scl = (float)fw/(float)fh;
-    for (int i=0; i<nc; i++) {
-      Fl_Widget* c = f->child(i);
-      c->size((int)(c->h()*scl), f->h());
+  if (nc > 0) {
+    int dw = Fl::box_dw(f->box());
+    int dh = Fl::box_dh(f->box());
+    int lm, tm, rm, bm;
+    f->margins(&lm, &tm, &rm, &bm);
+    int gap = f->gap();
+    int fw = f->w()-dw-lm-rm-(nc*gap);
+    if (fw<=nc) fw = nc; // avoid division by zero
+    int fh = f->h()-dh-tm-bm-(nc*gap);
+    if (fh<=nc) fh = nc; // avoid division by zero
+    
+    if (f->type()==Fl_Flex::HORIZONTAL && n==Fl_Flex::VERTICAL) {
+      float scl = (float)fh/(float)fw;
+      for (int i=0; i<nc; i++) {
+        Fl_Widget* c = f->child(i);
+        c->size(f->w(), (int)(c->w()*scl));
+      }
+    } else if (f->type()==Fl_Flex::VERTICAL && n==Fl_Flex::HORIZONTAL) {
+      float scl = (float)fw/(float)fh;
+      for (int i=0; i<nc; i++) {
+        Fl_Widget* c = f->child(i);
+        c->size((int)(c->h()*scl), f->h());
+      }
     }
   }
   f->type(n);

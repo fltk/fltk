@@ -283,14 +283,15 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
     } else {
       return v; // syntax error
     }
-    c = *s++;
+    c = *s;
+    if (c) s++;
   }
   return v;
 }
 
 /**
  Evaluate a formula into an integer.
- The interpreter understand unary plus and minus, basic integer math
+ The interpreter understands unary plus and minus, basic integer math
  (+, -, *, /), brackets, and can handle a user defined list of variables
  by name. There is no error checking. We assume that the formula is
  entered correctly.

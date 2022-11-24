@@ -67,7 +67,18 @@ protected:
 
 public:
 
-  Fl_Window_Type() { drag = dx = dy = 0; sr_min_w = sr_min_h = sr_max_w = sr_max_h = 0; }
+  Fl_Window_Type() :
+    mx(0), my(0),
+    x1(0), y1(0),
+    bx(0), by(0), br(0), bt(0),
+    sx(0), sy(0), sr(0), st(0),
+    dx(0), dy(0),
+    drag(0),
+    numselected(0),
+    recalc(0),
+    modal(0), non_modal(0),
+    sr_min_w(0), sr_min_h(0), sr_max_w(0), sr_max_h(0)
+  { }
   uchar modal, non_modal;
 
   Fl_Type *make(Strategy strategy);
