@@ -24,7 +24,7 @@ will translate all text into the current locale when
 generating the UI.
 
 
-In this small example, 'getttext' is only emulated.} {selected in_source not_in_header
+In this small example, 'getttext' is only emulated.} {in_source not_in_header
 }
 
 decl {\#include <FL/Fl_Preferences.H>} {public local
@@ -283,7 +283,7 @@ Function {} {open return_type int
     }
     Fl_Choice wLanguage {
       label {Language:}
-      callback {fl_message(_("Please restart the app to use your new language setting."));} open
+      callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open selected
       xywh {120 269 105 20} down_box BORDER_BOX
       code0 {\#include <FL/fl_ask.h>}
     } {
