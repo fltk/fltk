@@ -119,7 +119,7 @@ static char *svg_inflate(gzFile gzf, // can be a file or the read end of a pipe
   do {
     if (is_compressed && p + size > out + out_size) {
       out_size += size;
-      unsigned delta = (p - out);
+      size_t delta = (p - out);
       out = (char*)realloc(out, out_size + 1);
       p = out + delta;
     }
