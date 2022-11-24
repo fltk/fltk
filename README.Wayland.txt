@@ -177,26 +177,21 @@ Under Debian, the Wayland platform requires version 11 (a.k.a. Bullseye) or more
 Under Ubuntu, the Wayland platform is known to work with version 20.04 (focal fossa) or
 more recent.
 
-These packages are necessary to build the FLTK library, in addition to those present
-in a basic Debian/Ubuntu distribution :
-- g++
-- gdb
+These packages are necessary to build the FLTK library, in addition to those listed
+in section 2.1 of file README.Unix.txt :
 - make
-- git
-- autoconf
-- libglu1-mesa-dev
 - libpango1.0-dev
 - libwayland-dev
 - wayland-protocols
 - libdbus-1-dev
 - libxkbcommon-dev
-- libgtk-3-dev   <== with this, windows get a GTK-style titlebar
+- libgtk-3-dev   <== highly recommended, gives windows a GTK-style titlebar
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake
 - cmake-qt-gui   <== if you plan to use the GUI of CMake
 
 This package is necessary to run FLTK apps under the Gnome-Wayland desktop:
-- gnome
+- gnome-core
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
@@ -210,9 +205,8 @@ Package installation command: sudo apt-get install <package-name ...>
 
 The Wayland platform is known to work with Fedora version 35.
 
-These packages are necessary to build the FLTK library, besides those present
-in a Fedora 35 Workstation distribution :
-- gcc-c++
+These packages are necessary to build the FLTK library, in addition to
+package groups listed in section 2.2 of file README.Unix.txt :
 - autoconf
 - wayland-devel
 - wayland-protocols-devel
@@ -221,7 +215,7 @@ in a Fedora 35 Workstation distribution :
 - pango-devel
 - dbus-devel
 - mesa-libGLU-devel
-- gtk3-devel   <== with this, windows get a GTK-style titlebar
+- gtk3-devel   <== highly recommended, gives windows a GTK-style titlebar
 - glew-devel   <== necessary to use OpenGL version 3 or above
 - cmake        <== if you plan to build with CMake
 - cmake-gui    <== if you plan to use the GUI of CMake
@@ -235,8 +229,9 @@ Package installation command: sudo yum install <package-name ...>
 The Wayland platform is known to work with FreeBSD version 13.1 and the sway compositor.
 
 These packages are necessary to build the FLTK library and the sway compositor:
-pkg install git autoconf pkgconf xorg urwfonts gnome glew seatd sway \
-                dmenu-wayland dmenu evdev-proto
+git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
+
+Package installation command: sudo pkg install <package-name ...>
 
 If FLTK is built using the configure/make procedure, include argument "--enable-localzlib"
 in the "configure" command.
