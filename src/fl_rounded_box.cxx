@@ -27,7 +27,6 @@
 #define BW (Fl::box_shadow_width())
 
 static void rbox(int fill, int x, int y, int w, int h) {
-  int i;
   int rs, rsy;
   rs = w*2/5; rsy = h*2/5;
   if (rs > rsy) rs = rsy; // use smaller radius
