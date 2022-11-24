@@ -295,8 +295,8 @@ inline void fl_rect(int x, int y, int w, int h) {
  The radius code is optimized for speed and works best for values between
  5 and 15 units.
  */
-inline void fl_rrect(int x, int y, int w, int h, int r) {
-  fl_graphics_driver->rrect(x, y, w, h, r);
+inline void fl_rounded_rect(int x, int y, int w, int h, int r) {
+  fl_graphics_driver->rounded_rect(x, y, w, h, r);
 }
 
 /**
@@ -333,8 +333,8 @@ inline void fl_rectf(int x, int y, int w, int h) {
  The radius code is optimized for speed and works best for values between
  5 and 15 units.
 */
-inline void fl_rrectf(int x, int y, int w, int h, int r) {
-  fl_graphics_driver->rrectf(x, y, w, h, r);
+inline void fl_rounded_rectf(int x, int y, int w, int h, int r) {
+  fl_graphics_driver->rounded_rectf(x, y, w, h, r);
 }
 
 /** Color with passed color a rectangle that exactly fills the given bounding box. */

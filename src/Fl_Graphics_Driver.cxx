@@ -490,12 +490,12 @@ void Fl_Graphics_Driver::_rbox(int fill, int x, int y, int w, int h, int r) {
 }
 
 /** see fl_rrect() */
-void Fl_Graphics_Driver::rrect(int x, int y, int w, int h, int r) {
+void Fl_Graphics_Driver::rounded_rect(int x, int y, int w, int h, int r) {
   _rbox(0, x, y, w, h, r);
 }
 
 /** see fl_rrectf() */
-void Fl_Graphics_Driver::rrectf(int x, int y, int w, int h, int r) {
+void Fl_Graphics_Driver::rounded_rectf(int x, int y, int w, int h, int r) {
   _rbox(1, x, y, w, h, r);
 }
 

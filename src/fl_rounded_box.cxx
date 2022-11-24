@@ -33,9 +33,9 @@ static void rbox(int fill, int x, int y, int w, int h) {
   if (rs > rsy) rs = rsy; // use smaller radius
   if (rs > RS) rs = RS;
   if (fill)
-    fl_rrectf(x, y, w, h, rs);
+    fl_rounded_rectf(x, y, w, h, rs);
   else
-    fl_rrect(x, y, w, h, rs);
+    fl_rounded_rect(x, y, w, h, rs);
 }
 
 static void fl_rflat_box(int x, int y, int w, int h, Fl_Color c) {
