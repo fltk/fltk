@@ -79,11 +79,12 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
     if (o > e) {
       if (maxbuf) break; // don't overflow buffer
       l_local_buff += int(o - e) + 200; // enlarge buffer
-      buf = (char*)realloc(local_buf, l_local_buff);
-      e = buf + l_local_buff - 4; // update pointers to buffer content
-      o = buf + (o - local_buf);
-      word_end = buf + (word_end - local_buf);
-      local_buf = buf;
+      unsigned delta_o = (o - local_buf);
+      unsigned delta_end = (word_end - local_buf);
+      local_buf = (char*)realloc(local_buf, l_local_buff);
+      e = local_buf + l_local_buff - 4; // update pointers to buffer content
+      o = local_buf + delta_o;
+      word_end = local_buf + delta_end;
     }
 
     if (c == '\t') {
