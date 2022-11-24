@@ -291,6 +291,15 @@ inline void fl_rect(int x, int y, int w, int h) {
 }
 
 /**
+ Draw a 1-pixel rounded border \e inside the given bounding box.
+ The radius code is optimized for speed and works best for values between
+ 5 and 15 units.
+ */
+inline void fl_rounded_rect(int x, int y, int w, int h, int r) {
+  fl_graphics_driver->rounded_rect(x, y, w, h, r);
+}
+
+/**
   Draw a 1-pixel border \e inside the given bounding box.
   This is the same as fl_rect(int x, int y, int w, int h) but with
   Fl_Rect \p r as input argument.
@@ -318,6 +327,14 @@ inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {
 /** Color with current color a rectangle that exactly fills the given bounding box. */
 inline void fl_rectf(int x, int y, int w, int h) {
   fl_graphics_driver->rectf(x, y, w, h);
+}
+
+/** Color with current color a rounded rectangle that exactly fills the given bounding box.
+ The radius code is optimized for speed and works best for values between
+ 5 and 15 units.
+*/
+inline void fl_rounded_rectf(int x, int y, int w, int h, int r) {
+  fl_graphics_driver->rounded_rectf(x, y, w, h, r);
 }
 
 /** Color with passed color a rectangle that exactly fills the given bounding box. */

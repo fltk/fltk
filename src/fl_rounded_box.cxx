@@ -23,35 +23,18 @@
 //  RS = max. corner radius
 //  BW = box shadow width
 
-#define RN 5
 #define RS (Fl::box_border_radius_max())
 #define BW (Fl::box_shadow_width())
 
-static double offset[RN] = { 0.0, 0.07612, 0.29289, 0.61732, 1.0};
-
-static inline void fl_vertex_r(double x, double y) {
-  fl_vertex(x + 0.5, y + 0.5);
-}
-
 static void rbox(int fill, int x, int y, int w, int h) {
-  int i;
   int rs, rsy;
   rs = w*2/5; rsy = h*2/5;
   if (rs > rsy) rs = rsy; // use smaller radius
   if (rs > RS) rs = RS;
-  if (rs == 5) rs = 4;  // use only even sizes for small corners (STR #2943)
-  if (rs == 7) rs = 8;  // note: 8 is better than 6 (really)
-
-  if (fill) fl_begin_polygon(); else fl_begin_loop();
-  for (i=0; i<RN; i++)
-    fl_vertex_r(x + offset[RN-i-1]*rs, y + offset[i] * rs);
-  for (i=0; i<RN; i++)
-    fl_vertex_r(x + offset[i]*rs, y + h-1 - offset[RN-i-1] * rs);
-  for (i=0; i<RN; i++)
-    fl_vertex_r(x + w-1 - offset[RN-i-1]*rs, y + h-1 - offset[i] * rs);
-  for (i=0; i<RN; i++)
-    fl_vertex_r(x + w-1 - offset[i]*rs, y + offset[RN-i-1] * rs);
-  if (fill) fl_end_polygon(); else fl_end_loop();
+  if (fill)
+    fl_rounded_rectf(x, y, w, h, rs);
+  else
+    fl_rounded_rect(x, y, w, h, rs);
 }
 
 static void fl_rflat_box(int x, int y, int w, int h, Fl_Color c) {

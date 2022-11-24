@@ -455,6 +455,50 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {}
 /** see fl_rectf() */
 void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {}
 
+void Fl_Graphics_Driver::_rbox(int fill, int x, int y, int w, int h, int r) {
+  static double lut[] = { 0.0, 0.07612, 0.29289, 0.61732, 1.0};
+  if (r == 5) r = 4;  // use only even sizes for small corners (STR #2943)
+  if (r == 7) r = 8;  // note: 8 is better than 6 (really)
+  double xd = x, yd = y, rd = (x+w-1), bd = (y+h-1);
+  double rr = r;
+  if (fill) begin_polygon(); else begin_loop();
+  // top left
+  transformed_vertex(xd+lut[0]*rr, yd+lut[4]*rr);
+  transformed_vertex(xd+lut[1]*rr, yd+lut[3]*rr);
+  transformed_vertex(xd+lut[2]*rr, yd+lut[2]*rr);
+  transformed_vertex(xd+lut[3]*rr, yd+lut[1]*rr);
+  transformed_vertex(xd+lut[4]*rr, yd+lut[0]*rr);
+  // top right
+  transformed_vertex(rd-lut[4]*rr, yd+lut[0]*rr);
+  transformed_vertex(rd-lut[3]*rr, yd+lut[1]*rr);
+  transformed_vertex(rd-lut[2]*rr, yd+lut[2]*rr);
+  transformed_vertex(rd-lut[1]*rr, yd+lut[3]*rr);
+  transformed_vertex(rd-lut[0]*rr, yd+lut[4]*rr);
+  // bottom right
+  transformed_vertex(rd-lut[0]*rr, bd-lut[4]*rr);
+  transformed_vertex(rd-lut[1]*rr, bd-lut[3]*rr);
+  transformed_vertex(rd-lut[2]*rr, bd-lut[2]*rr);
+  transformed_vertex(rd-lut[3]*rr, bd-lut[1]*rr);
+  transformed_vertex(rd-lut[4]*rr, bd-lut[0]*rr);
+  // bottom left
+  transformed_vertex(xd+lut[4]*rr, bd-lut[0]*rr);
+  transformed_vertex(xd+lut[3]*rr, bd-lut[1]*rr);
+  transformed_vertex(xd+lut[2]*rr, bd-lut[2]*rr);
+  transformed_vertex(xd+lut[1]*rr, bd-lut[3]*rr);
+  transformed_vertex(xd+lut[0]*rr, bd-lut[4]*rr);
+  if (fill) fl_end_polygon(); else fl_end_loop();
+}
+
+/** see fl_rrect() */
+void Fl_Graphics_Driver::rounded_rect(int x, int y, int w, int h, int r) {
+  _rbox(0, x, y, w, h, r);
+}
+
+/** see fl_rrectf() */
+void Fl_Graphics_Driver::rounded_rectf(int x, int y, int w, int h, int r) {
+  _rbox(1, x, y, w, h, r);
+}
+
 void Fl_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   color(r, g, b);
   rectf(x, y, w, h);

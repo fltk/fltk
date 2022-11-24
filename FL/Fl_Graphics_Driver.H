@@ -264,6 +264,9 @@ public:
   virtual void rect(int x, int y, int w, int h);
   virtual void focus_rect(int x, int y, int w, int h);
   virtual void rectf(int x, int y, int w, int h);
+  virtual void _rbox(int fill, int x, int y, int w, int h, int r);
+  virtual void rounded_rect(int x, int y, int w, int h, int r);
+  virtual void rounded_rectf(int x, int y, int w, int h, int r);
   // the default implementation is most likely enough
   virtual void colored_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
   virtual void line(int x, int y, int x1, int y1);

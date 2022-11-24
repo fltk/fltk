@@ -461,6 +461,12 @@ void fl_rect(int x, int y, int w, int h, Fl_Color c)
 \par
 Draw a 1-pixel border \e inside this bounding box.
 
+void fl_rounded_rect(int x, int y, int w, int h, int radius)
+void fl_rounded_rectf(int x, int y, int w, int h, int radius)
+
+\par
+Draw an outlined or filled rectangle with rounded corners.
+
 void fl_line(int x, int y, int x1, int y1) <br>
 void fl_line(int x, int y, int x1, int y1, int x2, int y2)
 
