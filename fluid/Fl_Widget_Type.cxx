@@ -670,17 +670,23 @@ void x_cb(Fluid_Coord_Input *i, void *v) {
     undo_checkpoint();
     widget_i = 0;
     int mod = 0;
+    int v = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         i->variables(widget_vars, o);
-        w->resize((int)i->value(), w->y(), w->w(), w->h());
+        v = i->value();
+        w->resize(v, w->y(), w->w(), w->h());
         if (w->window()) w->window()->redraw();
         widget_i++;
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      i->value(v);    // change the displayed value to the result of the last
+                      // calculation. Keep the formula if it was not used.
+    }
   }
 }
 
@@ -695,17 +701,22 @@ void y_cb(Fluid_Coord_Input *i, void *v) {
     undo_checkpoint();
     widget_i = 0;
     int mod = 0;
+    int v = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         i->variables(widget_vars, o);
-        w->resize(w->x(), (int)i->value(), w->w(), w->h());
+        v = i->value();
+        w->resize(w->x(), v, w->w(), w->h());
         if (w->window()) w->window()->redraw();
         widget_i++;
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      i->value(v);
+    }
   }
 }
 
@@ -720,17 +731,22 @@ void w_cb(Fluid_Coord_Input *i, void *v) {
     undo_checkpoint();
     widget_i = 0;
     int mod = 0;
+    int v = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         i->variables(widget_vars, o);
-        w->resize(w->x(), w->y(), (int)i->value(), w->h());
+        v = i->value();
+        w->resize(w->x(), w->y(), v, w->h());
         if (w->window()) w->window()->redraw();
         widget_i++;
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      i->value(v);
+    }
   }
 }
 
@@ -745,17 +761,22 @@ void h_cb(Fluid_Coord_Input *i, void *v) {
     undo_checkpoint();
     widget_i = 0;
     int mod = 0;
+    int v = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         i->variables(widget_vars, o);
-        w->resize(w->x(), w->y(), w->w(), (int)i->value());
+        v = i->value();
+        w->resize(w->x(), w->y(), w->w(), v);
         if (w->window()) w->window()->redraw();
         widget_i++;
         mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      i->value(v);
+    }
   }
 }
 

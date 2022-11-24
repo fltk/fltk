@@ -203,7 +203,8 @@ void Fluid_Coord_Input::callback_handler_cb(Fluid_Coord_Input *This, void *v) {
 void Fluid_Coord_Input::callback_handler(void *v) {
   if (user_callback_)
     (*user_callback_)(this, v);
-  value( value() );
+  // do *not* update the value to show the evaluated fomule here, because the
+  // values of the variables have already updated after the user callback.
 }
 
 /**
@@ -238,14 +239,20 @@ int Fluid_Coord_Input::eval_var(uchar *&s) const {
  \return the value so far
  */
 int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
-  int v =0, sgn = 1;
+  int v = 0, sgn = 1;
   uchar c = *s++;
+
+  // check for end of text
+  if (c==0) { s--; return sgn*v; }
 
   // check for unary operator
   if (c=='-') { sgn = -1; c = *s++; }
   else if (c=='+') { sgn = 1; c = *s++; }
 
-  if (c>='0' && c<='9') {
+  // read value, variable, or bracketed term
+  if (c==0) {
+    s--; return sgn*v;
+  } else if (c>='0' && c<='9') {
     // numeric value
     while (c>='0' && c<='9') {
       v = v*10 + (c-'0');
@@ -265,6 +272,7 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
   // Now evaluate all following binary operators
   for (;;) {
     if (c==0) {
+      s--;
       return v;
     } else if (c=='+' || c=='-') {
       if (prio<=4) { s--; return v; }
@@ -283,8 +291,7 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
     } else {
       return v; // syntax error
     }
-    c = *s;
-    if (c) s++;
+    c = *s++;
   }
   return v;
 }
