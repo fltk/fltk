@@ -1,7 +1,7 @@
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -149,6 +149,8 @@ static Fl_Pixmap        tile(tile_xpm);
         - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
                     (Colin Jones and Edmanuel Torres).
 
+        - "oxy" - Subset of Dmitrij K's oxy scheme (STR 2675, 3477)
+
     Uppercase scheme names are equivalent, but the stored scheme name will
     always be lowercase and Fl::scheme() will return this lowercase name.
 
@@ -167,6 +169,7 @@ int Fl::scheme(const char *s) {
     else if (!fl_ascii_strcasecmp(s, "gtk+")) s = fl_strdup("gtk+");
     else if (!fl_ascii_strcasecmp(s, "plastic")) s = fl_strdup("plastic");
     else if (!fl_ascii_strcasecmp(s, "gleam")) s = fl_strdup("gleam");
+    else if (!fl_ascii_strcasecmp(s, "oxy")) s = fl_strdup("oxy");
     else s = 0;
   }
   if (scheme_) free((void*)scheme_);
@@ -272,6 +275,27 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   FL_GLEAM_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_GLEAM_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_GLEAM_ROUND_DOWN_BOX);
+
+    // Use slightly thinner scrollbars...
+    Fl::scrollbar_size(15);
+  } else if (scheme_ && !fl_ascii_strcasecmp(scheme_, "oxy")) {
+    // Oxy scheme
+    if (scheme_bg_) {
+      delete scheme_bg_;
+      scheme_bg_ = (Fl_Image *)0;
+    }
+
+    set_boxtype(FL_UP_FRAME,        FL_OXY_UP_FRAME);
+    set_boxtype(FL_DOWN_FRAME,      FL_OXY_DOWN_FRAME);
+    set_boxtype(FL_THIN_UP_FRAME,   FL_OXY_THIN_UP_FRAME);
+    set_boxtype(FL_THIN_DOWN_FRAME, FL_OXY_THIN_DOWN_FRAME);
+
+    set_boxtype(FL_UP_BOX,          FL_OXY_UP_BOX);
+    set_boxtype(FL_DOWN_BOX,        FL_OXY_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_OXY_THIN_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_OXY_THIN_DOWN_BOX);
+    set_boxtype(_FL_ROUND_UP_BOX,   FL_OXY_ROUND_UP_BOX);
+    set_boxtype(_FL_ROUND_DOWN_BOX, FL_OXY_ROUND_DOWN_BOX);
 
     // Use slightly thinner scrollbars...
     Fl::scrollbar_size(15);

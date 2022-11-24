@@ -203,9 +203,9 @@ void Fl_Scrollbar::draw() {
   int H = h() - Fl::box_dh(box());
   Fl_Rect ab; // arrow box
 
-  int inset = 3;
+  int inset = 2;
   if (W < 8 || H < 8)
-    inset = 2;
+    inset = 1;
 
   if (horizontal()) {
     if (W < 3*H) {

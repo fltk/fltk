@@ -476,10 +476,6 @@ void menuwindow::autoscroll(int n) {
 void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
-  // FIXME: size and coordinate calculation (sz, x1, y1) should be simplified when
-  //        the "old code" below is entirely removed (left as is for comparison).
-  //        AlbrechtS Nov. 23, 2022
-
   int BW = Fl::box_dx(box());
   int xx = BW;
   int W = w();
@@ -497,19 +493,14 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
 
   // the shortcuts and arrows assume fl_color() was left set by draw():
   if (m->submenu()) {
-    int sz = (hh-7)&-2;
-    int y1 = yy+(hh-sz)/2;
-    int x1 = xx+ww-sz-3;
 
-#if (0) // old code, independent of active scheme (left for comparison)
+    // calculate the bounding box of the submenu pointer (arrow)
+    int sz = (hh-2) & -2;
+    int x1 = xx + ww - sz - 2;
+    int y1 = yy + (hh-sz)/2 + 1;
 
-    fl_polygon(x1+2, y1, x1+2, y1+sz, x1+sz/2+2, y1+sz/2);
-
-#else // right arrow whose style dependends on the active scheme
-
-    fl_draw_arrow(Fl_Rect(x1-1, y1-1, sz+2, sz+2), FL_ARROW_SINGLE, FL_ORIENT_RIGHT, fl_color());
-
-#endif
+    // draw an arrow whose style dependends on the active scheme
+    fl_draw_arrow(Fl_Rect(x1, y1, sz, sz), FL_ARROW_SINGLE, FL_ORIENT_RIGHT, fl_color());
 
   } else if (m->shortcut_) {
     Fl_Font f = m->labelsize_ || m->labelfont_ ? (Fl_Font)m->labelfont_ :

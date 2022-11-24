@@ -190,13 +190,15 @@ void create_the_forms() {
   choice->add("none");
   choice->add("gtk+");
   choice->add("gleam");
+  choice->add("oxy");
   choice->add("plastic");
   choice->callback((Fl_Callback *)doscheme);
   Fl::scheme(NULL);
-  if (!Fl::scheme()) choice->value(0);
-  else if (!strcmp(Fl::scheme(), "gtk+")) choice->value(1);
-  else if (!strcmp(Fl::scheme(), "gleam")) choice->value(2);
-  else if (!strcmp(Fl::scheme(), "plastic")) choice->value(3);
+  if (!Fl::scheme())                         choice->value(0);
+  else if (!strcmp(Fl::scheme(), "gtk+"))    choice->value(1);
+  else if (!strcmp(Fl::scheme(), "gleam"))   choice->value(2);
+  else if (!strcmp(Fl::scheme(), "oxy"))     choice->value(3);
+  else if (!strcmp(Fl::scheme(), "plastic")) choice->value(4);
   else choice->value(0);
 
   exit_button = new Fl_Button(280, 405, 60, 25, "Exit");

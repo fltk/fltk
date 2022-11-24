@@ -5,7 +5,7 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -137,8 +137,9 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
 void Fl_Input_Choice::InputMenuButton::draw() {
   draw_box();
   fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-  int xc = x()+w()/2, yc=y()+h()/2;
-  fl_polygon(xc-5,yc-3,xc+5,yc-3,xc,yc+3);
+  Fl_Rect ab(this);
+  ab.inset(1);
+  fl_draw_arrow(ab, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_color());
   if (Fl::focus() == this) draw_focus();
 }
 

@@ -65,15 +65,16 @@ void Fl_Choice::draw() {
 
   // Arrow box or horizontal divider line, depending on the current scheme
 
-  // Scheme:          Box or divider line
+  // Scheme:            Box or divider line
   // ----------------------------------------
-  // Default (None):  Arrow box (FL_UP_BOX)
-  // gtk+, gleam:     Divider line
-  // else:            Nothing (!)
+  // Default (None):    Arrow box (FL_UP_BOX)
+  // gtk+, gleam, oxy:  Divider line
+  // else:              Nothing (!)
 
   if (Fl::scheme()) {
     if (Fl::is_scheme("gtk+") ||
-        Fl::is_scheme("gleam")) {
+        Fl::is_scheme("gleam") ||
+        Fl::is_scheme("oxy")) {
       // draw the divider
       int x1 = x() + w() - 20 - dx;
       int y1 = y() + h() / 2;

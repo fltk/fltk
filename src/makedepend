@@ -1589,6 +1589,7 @@ fl_draw.o: ../FL/platform.H
 fl_draw.o: ../FL/platform_types.h
 fl_draw.o: ../FL/x11.H
 fl_draw.o: flstring.h
+fl_draw.o: fl_oxy.h
 fl_draw_arrow.o: ../FL/Enumerations.H
 fl_draw_arrow.o: ../FL/Fl.H
 fl_draw_arrow.o: ../FL/Fl_Cairo.H
@@ -1599,6 +1600,7 @@ fl_draw_arrow.o: ../FL/Fl_Export.H
 fl_draw_arrow.o: ../FL/fl_types.h
 fl_draw_arrow.o: ../FL/fl_utf8.h
 fl_draw_arrow.o: ../FL/platform_types.h
+fl_draw_arrow.o: fl_oxy.h
 fl_draw_pixmap.o: ../config.h
 fl_draw_pixmap.o: ../FL/Enumerations.H
 fl_draw_pixmap.o: ../FL/filename.H
@@ -2536,6 +2538,7 @@ Fl_Menu_Button.o: ../FL/Fl_Image.H
 Fl_Menu_Button.o: ../FL/Fl_Menu_.H
 Fl_Menu_Button.o: ../FL/Fl_Menu_Button.H
 Fl_Menu_Button.o: ../FL/Fl_Menu_Item.H
+Fl_Menu_Button.o: ../FL/Fl_Rect.H
 Fl_Menu_Button.o: ../FL/fl_types.h
 Fl_Menu_Button.o: ../FL/fl_utf8.h
 Fl_Menu_Button.o: ../FL/Fl_Widget.H
@@ -2909,6 +2912,19 @@ Fl_own_colormap.o: ../FL/Fl_Valuator.H
 Fl_own_colormap.o: ../FL/Fl_Widget.H
 Fl_own_colormap.o: ../FL/platform_types.h
 Fl_own_colormap.o: Fl_Screen_Driver.H
+fl_oxy.o: ../FL/Enumerations.H
+fl_oxy.o: ../FL/Fl.H
+fl_oxy.o: ../FL/Fl_Cairo.H
+fl_oxy.o: ../FL/fl_casts.H
+fl_oxy.o: ../FL/fl_config.h
+fl_oxy.o: ../FL/fl_draw.H
+fl_oxy.o: ../FL/Fl_Export.H
+fl_oxy.o: ../FL/Fl_Rect.H
+fl_oxy.o: ../FL/fl_types.h
+fl_oxy.o: ../FL/fl_utf8.h
+fl_oxy.o: ../FL/Fl_Widget.H
+fl_oxy.o: ../FL/platform_types.h
+fl_oxy.o: fl_oxy.h
 Fl_Pack.o: ../FL/Enumerations.H
 Fl_Pack.o: ../FL/Fl.H
 Fl_Pack.o: ../FL/Fl_Cairo.H

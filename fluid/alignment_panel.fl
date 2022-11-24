@@ -207,6 +207,10 @@ Function {make_settings_window()} {open
         label Gleam
         xywh {20 20 35 25}
       }
+      MenuItem {} {
+        label Oxy
+        xywh {30 30 35 25}
+      }
     }
     Fl_Group {} {open
       xywh {20 43 330 161} labelfont 1 align 0

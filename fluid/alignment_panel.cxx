@@ -191,6 +191,7 @@ Fl_Menu_Item menu_scheme_choice[] = {
  {"Plastic", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"GTK+", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Gleam", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Oxy", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

@@ -22,6 +22,11 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_utf8.h>
+#include "fl_oxy.h"
+
+// Debug mode: if you design a widget or want to check its layout,
+// then enable one or both flags of DEBUG_ARROW (below) so you can
+// see where the arrows (i.e. their bounding boxes) are positioned
 
 #ifndef DEBUG_ARROW
 #define DEBUG_ARROW (0)         // 0 = off, 1 = green background, 2 = red frame, 3 = both
@@ -224,7 +229,14 @@ void fl_draw_arrow(Fl_Rect r, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
   debug_arrow(r);
 
-  // implementation of all arrow types
+  // special case: arrows for the "oxy" scheme
+
+  if (Fl::is_scheme("oxy")) {
+    oxy_arrow(r, t, o, col);
+    return;
+  }
+
+  // implementation of all arrow types for other schemes
 
   switch(t) {
     case FL_ARROW_SINGLE:

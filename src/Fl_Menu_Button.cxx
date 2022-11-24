@@ -26,31 +26,23 @@ static Fl_Menu_Button   *pressed_menu_button_ = 0;
 void Fl_Menu_Button::draw() {
   if (!box() || type()) return;
 
-  // FIXME: size and coordinate calculation (H, X, Y) should be simplified when
-  //        the "old code" below is entirely removed (left as is for comparison).
-  //        AlbrechtS Nov. 23, 2022
+  // calculate position and size of virtual "arrow box" (choice button)
 
-  int H = (labelsize()-3)&-2;
-  int X = x()+w()-H-Fl::box_dx(box())-Fl::box_dw(box())-1;
-  int Y = y()+(h()-H)/2;
+  int ah = h() - Fl::box_dh(box());
+  int aw = ah > 20 ? 20 : ah; // limit width: don't waste space for button
+  int ax = x() + w() - Fl::box_dx(box()) - aw;
+  int ay = y() + (h() - ah) / 2;
+
+  // the remaining space is used to draw the label
 
   draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
-  draw_label(x()+Fl::box_dx(box()), y(), X-x()+2, h());
+  draw_label(x() + Fl::box_dx(box()), y(), w() - Fl::box_dw(box()) - aw, h());
   if (Fl::focus() == this) draw_focus();
 
-#if (0) // old code: outline of an engraved down-arrow for all schemes
-
-  fl_color(active_r() ? FL_DARK3 : fl_inactive(FL_DARK3));
-  fl_line(X+H/2, Y+H, X, Y, X+H, Y);
-  fl_color(active_r() ? FL_LIGHT3 : fl_inactive(FL_LIGHT3));
-  fl_line(X+H, Y, X+H/2, Y+H);
-
-#else // new code: filled down-arrow whose style dependends on the current scheme
+  // draw the arrow (choice button)
 
   Fl_Color arrow_color = active_r() ? FL_DARK3 : fl_inactive(FL_DARK3);
-  fl_draw_arrow(Fl_Rect(X-1, Y-1, H+4, H+4), FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
-
-#endif
+  fl_draw_arrow(Fl_Rect(ax, ay, aw, ah), FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrow_color);
 }
 
 

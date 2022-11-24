@@ -28,6 +28,8 @@
 #include <FL/platform.H>        // fl_open_display()
 
 #include "flstring.h"
+#include "fl_oxy.h"
+
 #include <ctype.h>
 #include <math.h>
 #include <stdlib.h>

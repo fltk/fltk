@@ -152,6 +152,7 @@ CPPFILES = \
 	fl_open_uri.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
+	fl_oxy.cxx \
 	fl_plastic.cxx \
 	fl_read_image.cxx \
 	fl_rect.cxx \

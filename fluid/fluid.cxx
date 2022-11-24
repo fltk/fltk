@@ -1427,6 +1427,9 @@ void scheme_cb(Fl_Choice *, void *) {
     case 4 : // Gleam
       Fl::scheme("gleam");
       break;
+    case 5 : // Oxy
+      Fl::scheme("oxy");
+      break;
   }
 
   fluid_prefs.set("scheme", scheme_choice->value());

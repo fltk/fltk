@@ -653,6 +653,18 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
   _FL_GLEAM_THIN_DOWN_BOX,      ///< gleam version of FL_THIN_DOWN_BOX, use FL_GLEAM_THIN_DOWN_BOX
   _FL_GLEAM_ROUND_UP_BOX,       ///< gleam version of FL_ROUND_UP_BOX, use FL_GLEAM_ROUND_UP_BOX
   _FL_GLEAM_ROUND_DOWN_BOX,     ///< gleam version of FL_ROUND_DOWN_BOX, use FL_GLEAM_ROUND_DOWN_BOX
+  _FL_OXY_UP_BOX,               ///< oxy version of FL_UP_BOX, use FL_OXY_UP_BOX
+  _FL_OXY_DOWN_BOX,             ///< oxy version of FL_DOWN_BOX, use FL_OXY_DOWN_BOX
+  _FL_OXY_UP_FRAME,             ///< oxy version of FL_UP_FRAME, use FL_OXY_UP_FRAME
+  _FL_OXY_DOWN_FRAME,           ///< oxy version of FL_DOWN_FRAME, use FL_OXY_DOWN_FRAME
+  _FL_OXY_THIN_UP_BOX,          ///< oxy version of FL_THIN_UP_BOX, use FL_OXY_THIN_UP_BOX
+  _FL_OXY_THIN_DOWN_BOX,        ///< oxy version of FL_THIN_DOWN_BOX, use FL_OXY_THIN_DOWN_BOX
+  _FL_OXY_THIN_UP_FRAME,        ///< oxy version of FL_THIN_UP_FRAME, use FL_OXY_THIN_UP_FRAME
+  _FL_OXY_THIN_DOWN_FRAME,      ///< oxy version of FL_THIN_DOWN_FRAME, use FL_OXY_THIN_DOWN_FRAME
+  _FL_OXY_ROUND_UP_BOX,         ///< oxy version of FL_ROUND_UP_BOX, use FL_OXY_ROUND_UP_BOX
+  _FL_OXY_ROUND_DOWN_BOX,       ///< oxy version of FL_ROUND_DOWN_BOX, use FL_OXY_ROUND_DOWN_BOX
+  _FL_OXY_BUTTON_UP_BOX,        ///< FL_OXY_BUTTON_UP_BOX (new boxtype ?), use FL_OXY_BUTTON_UP_BOX
+  _FL_OXY_BUTTON_DOWN_BOX,      ///< FL_OXY_BUTTON_DOWN_BOX (new boxtype ?), use FL_OXY_BUTTON_DOWN_BOX
   FL_FREE_BOXTYPE               ///< the first free box type for creation of new box types
 };
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
@@ -708,6 +720,20 @@ extern FL_EXPORT Fl_Boxtype fl_define_FL_GLEAM_UP_BOX();
 #define FL_GLEAM_THIN_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GLEAM_UP_BOX()+5)
 #define FL_GLEAM_ROUND_UP_BOX (Fl_Boxtype)(fl_define_FL_GLEAM_UP_BOX()+6)
 #define FL_GLEAM_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GLEAM_UP_BOX()+7)
+
+extern FL_EXPORT Fl_Boxtype fl_define_FL_OXY_UP_BOX();
+#define FL_OXY_UP_BOX fl_define_FL_OXY_UP_BOX()
+#define FL_OXY_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+1)
+#define FL_OXY_UP_FRAME (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+2)
+#define FL_OXY_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+3)
+#define FL_OXY_THIN_UP_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+4)
+#define FL_OXY_THIN_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+5)
+#define FL_OXY_THIN_UP_FRAME (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+6)
+#define FL_OXY_THIN_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+7)
+#define FL_OXY_ROUND_UP_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+8)
+#define FL_OXY_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+9)
+#define FL_OXY_BUTTON_UP_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+10)
+#define FL_OXY_BUTTON_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+11)
 
 // conversions of box types to other boxtypes:
 /**
