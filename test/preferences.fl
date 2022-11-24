@@ -285,7 +285,7 @@ Function {} {open return_type int
       label {Language:}
       callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open selected
       xywh {120 269 105 20} down_box BORDER_BOX
-      code0 {\#include <FL/fl_ask.h>}
+      code0 {\#include <FL/fl_ask.H>}
     } {
       MenuItem {} {
         label English
