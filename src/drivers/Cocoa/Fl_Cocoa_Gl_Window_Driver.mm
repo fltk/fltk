@@ -255,10 +255,14 @@ void Fl_Cocoa_Gl_Window_Driver::after_show() {
     NSView *view = [fl_mac_xid(pWindow) contentView];
     NSView *gl1view = [[NSView alloc] initWithFrame:[view frame]];
     [gl1view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-    NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
+    static NSOpenGLContext *shared_gl1_ctxt = nil;
+    static NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
                                 FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
-    gl1ctxt = [[NSOpenGLContext alloc] initWithFormat:gl1pixelformat shareContext:nil];
-    [gl1pixelformat release];
+    gl1ctxt = [[NSOpenGLContext alloc] initWithFormat:gl1pixelformat shareContext:shared_gl1_ctxt];
+    if (!shared_gl1_ctxt) {
+      shared_gl1_ctxt = gl1ctxt;
+      [shared_gl1_ctxt retain];
+    }
     [view addSubview:gl1view];
   #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
