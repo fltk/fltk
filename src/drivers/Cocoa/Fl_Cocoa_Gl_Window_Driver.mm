@@ -29,6 +29,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+/* macOS offers only core contexts when using GL3. This forbids to draw
+ FLTK widgets in a GL3-using NSOpenGLContext because these widgets are drawn
+ with the GL1-based Fl_OpenGL_Graphics_Driver. The solution implemented here
+ is to create an additional NSView and an associated additional NSOpenGLContext
+ (gl1ctxt) placed above and sized as the GL3-based window, to set the new
+ NSOpenGLContext non opaque and GL1-based, and to draw the FLTK widgets in the
+ new view/GL1 context.
+ */
+
 // Describes crap needed to create a GLContext.
 class Fl_Cocoa_Gl_Choice : public Fl_Gl_Choice {
   friend class Fl_Cocoa_Gl_Window_Driver;
@@ -241,6 +250,24 @@ void Fl_Cocoa_Gl_Window_Driver::before_show(int& need_after) {
 void Fl_Cocoa_Gl_Window_Driver::after_show() {
   // Makes sure the GL context is created to avoid drawing twice the window when first shown
   pWindow->make_current();
+  if ((mode() & FL_OPENGL3) && !gl1ctxt) {
+    // Create transparent GL1 scene above the GL3 scene to hold child widgets and/or text
+    NSView *view = [fl_mac_xid(pWindow) contentView];
+    NSView *gl1view = [[NSView alloc] initWithFrame:[view frame]];
+    [gl1view setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
+                                FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
+    gl1ctxt = [[NSOpenGLContext alloc] initWithFormat:gl1pixelformat shareContext:nil];
+    [gl1pixelformat release];
+    [view addSubview:gl1view];
+  #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
+    if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+      [gl1view setWantsBestResolutionOpenGLSurface:YES];
+    }
+  #endif
+    [gl1ctxt setView:gl1view];
+    remove_gl_context_opacity(gl1ctxt);
+  }
 }
 
 float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
@@ -438,53 +465,7 @@ FL_EXPORT NSOpenGLContext *fl_mac_glcontext(GLContext rc) {
 }
 
 
-/* macOS offers only core contexts when using GL3. This forbids to draw
- FLTK widgets in a GL3-using NSOpenGLContext because these widgets are drawn
- with the GL1-based Fl_OpenGL_Graphics_Driver. The solution implemented here
- is to create an additional NSView and an associated additional NSOpenGLContext
- placed above and sized as the GL3-based window, to set the new NSOpenGLContext
- non opaque and GL1-based, and to draw the FLTK widgets in the new
- view/GL context.
- */
-
-struct win_view {
-  Fl_Gl_Window *win;
-  NSView *gl1view;
-  NSOpenGLContext *gl1ctxt;
-};
-
-
-static void delayed_addgl1ctxt(struct win_view *data) {
-  NSView *flview = [fl_mac_xid(data->win) contentView];
-  [flview addSubview:data->gl1view];
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
-    [data->gl1view setWantsBestResolutionOpenGLSurface:YES];
-  }
-#endif
-  [data->gl1ctxt setView:data->gl1view];
-  remove_gl_context_opacity(data->gl1ctxt);
-  data->win->redraw();
-  delete data;
-}
-
-
 void Fl_Cocoa_Gl_Window_Driver::switch_to_GL1() {
-  if (!gl1ctxt) {
-    NSView *view = [fl_xid(pWindow) contentView];
-    struct win_view *win_view_struct = new struct win_view;
-    win_view_struct->gl1view = [[NSView alloc] initWithFrame:[view frame]];
-    [win_view_struct->gl1view setAutoresizingMask:
-                                NSViewWidthSizable|NSViewHeightSizable];
-    NSOpenGLPixelFormat *gl1pixelformat = mode_to_NSOpenGLPixelFormat(
-                                FL_RGB8 | FL_ALPHA | FL_SINGLE, NULL);
-    gl1ctxt = [[NSOpenGLContext alloc]
-                                initWithFormat:gl1pixelformat shareContext:nil];
-    [gl1pixelformat release];
-    win_view_struct->win = pWindow;
-    win_view_struct->gl1ctxt = gl1ctxt;
-    Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_addgl1ctxt, win_view_struct);
-  }
   [gl1ctxt makeCurrentContext];
   glClearColor(0., 0., 0., 0.);
   glClear(GL_COLOR_BUFFER_BIT);
