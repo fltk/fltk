@@ -233,14 +233,18 @@ void Fl_Cocoa_Window_Driver::hide() {
 
 int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data)
 {
+  if ( (src_x < 0) || (src_y < 0) )
+    return 1;
+  if ( (src_x+src_w > pWindow->w()) || (src_y+src_h > pWindow->h()) )
+    return 1;
   CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);
-  if (img) {
-    // the current surface is generally the display, but is an Fl_Image_Surface when scrolling an Fl_Overlay_Window
-    Fl_Quartz_Graphics_Driver *qgd = (Fl_Quartz_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
-    float s = qgd->scale();
-    qgd->draw_CGImage(img, dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
-    CFRelease(img);
-  }
+  if (!img)
+    return 1;
+  // the current surface is generally the display, but is an Fl_Image_Surface when scrolling an Fl_Overlay_Window
+  Fl_Quartz_Graphics_Driver *qgd = (Fl_Quartz_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
+  float s = qgd->scale();
+  qgd->draw_CGImage(img, dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
+  CFRelease(img);
   return 0;
 }
 
