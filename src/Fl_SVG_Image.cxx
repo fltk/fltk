@@ -130,7 +130,7 @@ static char *svg_inflate(gzFile gzf, // can be a file or the read end of a pipe
       break;
     }
 
-    l = gzread(gzf, p, size);
+    l = gzread(gzf, p, (unsigned int)size);
     if (l > 0) {
       p += l; *p = 0;
     }

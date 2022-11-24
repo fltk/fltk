@@ -328,7 +328,7 @@ void Fl_Flex_Type::change_subtype_to(int n) {
     if (fw<=nc) fw = nc; // avoid division by zero
     int fh = f->h()-dh-tm-bm-(nc*gap);
     if (fh<=nc) fh = nc; // avoid division by zero
-    
+
     if (f->type()==Fl_Flex::HORIZONTAL && n==Fl_Flex::VERTICAL) {
       float scl = (float)fh/(float)fw;
       for (int i=0; i<nc; i++) {
