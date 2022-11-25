@@ -59,7 +59,7 @@ static void single_arrow(Fl_Rect bb, Fl_Orientation o,
 
   // this is for "single" arrows (Fl_Arrow_Type FL_ARROW_SINGLE) only !
 
-  float angle = int(o) * 45.0;
+  float angle = int(o) * 45.0f;
 
   int tx = x1 + (w1 + 1)/2;
   int ty = y1 + (h1 + 1)/2;
@@ -70,19 +70,19 @@ static void single_arrow(Fl_Rect bb, Fl_Orientation o,
 
   int x0 = -(dx+1)/2;
 
-  arrow_begin(active, col, hcol, 0.38);
+  arrow_begin(active, col, hcol, 0.38f);
   fl_vertex(x0,          -dx);
   fl_vertex(x0 + dx,      0);
   fl_vertex(x0,           dx);
   arrow_end();
 
-  arrow_begin(active, col, hcol, 0.58);
+  arrow_begin(active, col, hcol, 0.58f);
   fl_vertex(x0,          -dx + 1);
   fl_vertex(x0 + dx - 1,  0);
   fl_vertex(x0,           dx - 1);
   arrow_end();
 
-  arrow_begin(active, col, hcol, 0.78);
+  arrow_begin(active, col, hcol, 0.78f);
   fl_vertex(x0 + 1,      -dx);
   fl_vertex(x0 + dx + 1,  0);
   fl_vertex(x0 + 1,       dx);
@@ -171,11 +171,11 @@ static void _oxy_up_box_(int x, int y, int w, int h, Fl_Color bg) {
     groff = 0.0f;
   }
   float gradoffset = groff;
-  float stepoffset = (1.0 / (float)h);
+  float stepoffset = (1.0f / (float)h);
   int xw = x + w - 1;
   //    from bottom to top
   for (int _y = y; _y < y + h; _y++) {
-    fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
@@ -189,11 +189,11 @@ static void _oxy_down_box_(int x, int y, int w, int h, Fl_Color bg) {
     groff = 0.0f;
   }
   float gradoffset = groff;
-  float stepoffset = (1.0 / (float)h);
+  float stepoffset = (1.0f / (float)h);
   int xw = x + w - 1;
   //    from top to bottom
   for (int _y = y + h - 1; _y >= y; _y--) {
-    fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
@@ -203,18 +203,18 @@ static void _oxy_down_box_(int x, int y, int w, int h, Fl_Color bg) {
 static void _oxy_button_up_box_(int x, int y, int w, int h, Fl_Color bg) {
   int half_h = h / 2;
   float gradoffset = 0.15f;
-  float stepoffset = (1.0 / (float)half_h);
+  float stepoffset = (1.0f / (float)half_h);
   Fl_Color col = fl_color_average(bg, FL_WHITE, 0.5);
   int xw = x + w - 1;
   for (int _y = y; _y <= y + half_h; _y++) {
-    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
   gradoffset = 0.0f;
   col = bg;
   for (int _y = y + h - 1; _y >= y + half_h - 1; _y--) {
-    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
@@ -223,19 +223,19 @@ static void _oxy_button_up_box_(int x, int y, int w, int h, Fl_Color bg) {
 
 // draw gradient for button down box
 static void _oxy_button_down_box_(int x, int y, int w, int h, Fl_Color bg) {
-  bg = fl_color_average(bg, FL_BLACK, 0.88);
+  bg = fl_color_average(bg, FL_BLACK, 0.88f);
   int half_h = h / 2, xw = x + w - 1;
-  float gradoffset = 0.15f, stepoffset = (1.0 / (float)half_h);
+  float gradoffset = 0.15f, stepoffset = (1.0f / (float)half_h);
   Fl_Color col = fl_color_average(bg, FL_WHITE, 0.5);
   for (int _y = y; _y <= y + half_h; _y++) {
-    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
   gradoffset = 0.0f;
   col = bg;
   for (int _y = y + h - 1; _y >= y + half_h - 1; _y--) {
-    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0) ? gradoffset : 1.0));
+    fl_color(fl_color_average(col, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
     gradoffset += stepoffset;
   }
@@ -300,7 +300,7 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       }
       case _FL_OXY_ROUND_UP_BOX:
       case _FL_OXY_ROUND_DOWN_BOX:
-        _oxy_rounded_box_(x, y, w, h, oxy_color(fl_color_average(col, FL_WHITE, 0.82)));
+        _oxy_rounded_box_(x, y, w, h, oxy_color(fl_color_average(col, FL_WHITE, 0.82f)));
         break;
       default: { break; }
     }
@@ -309,26 +309,26 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
   Fl_Color leftline = col, topline = col, rightline = col, bottomline = col;
 
   if (typebox == _FL_OXY_ROUND_UP_BOX || typebox == _FL_OXY_ROUND_DOWN_BOX) {
-    leftline = fl_color_average(col, FL_WHITE, 0.88);
-    leftline = topline = rightline = bottomline = fl_color_average(leftline, FL_BLACK, 0.97);
+    leftline = fl_color_average(col, FL_WHITE, 0.88f);
+    leftline = topline = rightline = bottomline = fl_color_average(leftline, FL_BLACK, 0.97f);
   }
 
   else if (typebox == _FL_OXY_UP_BOX || typebox == _FL_OXY_UP_FRAME) {
-    topline = fl_color_average(col, FL_BLACK, 0.95);
-    leftline = fl_color_average(col, FL_BLACK, 0.85);
+    topline = fl_color_average(col, FL_BLACK, 0.95f);
+    leftline = fl_color_average(col, FL_BLACK, 0.85f);
     rightline = leftline;
-    bottomline = fl_color_average(col, FL_BLACK, 0.88);
+    bottomline = fl_color_average(col, FL_BLACK, 0.88f);
   }
 
   else if (typebox == _FL_OXY_DOWN_BOX || typebox == _FL_OXY_DOWN_FRAME) {
-    topline = fl_color_average(col, FL_BLACK, 0.88);
-    leftline = fl_color_average(col, FL_BLACK, 0.85);
+    topline = fl_color_average(col, FL_BLACK, 0.88f);
+    leftline = fl_color_average(col, FL_BLACK, 0.85f);
     rightline = leftline;
-    bottomline = fl_color_average(col, FL_BLACK, 0.95);
+    bottomline = fl_color_average(col, FL_BLACK, 0.95f);
   }
 
   else if (typebox == _FL_OXY_BUTTON_UP_BOX || typebox == _FL_OXY_BUTTON_DOWN_BOX) {
-    topline = leftline = rightline = bottomline = fl_color_average(col, FL_BLACK, 0.85);
+    topline = leftline = rightline = bottomline = fl_color_average(col, FL_BLACK, 0.85f);
   }
 
   // draw border
@@ -351,27 +351,27 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
   if (is_shadow) {
 
     if (typebox == _FL_OXY_ROUND_UP_BOX) {
-      topline = fl_color_average(col, FL_WHITE, 0.35);
-      bottomline = fl_color_average(col, FL_BLACK, 0.94);
+      topline = fl_color_average(col, FL_WHITE, 0.35f);
+      bottomline = fl_color_average(col, FL_BLACK, 0.94f);
     }
 
     else if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
-      topline = fl_color_average(col, FL_BLACK, 0.94);
-      bottomline = fl_color_average(col, FL_WHITE, 0.35);
+      topline = fl_color_average(col, FL_BLACK, 0.94f);
+      bottomline = fl_color_average(col, FL_WHITE, 0.35f);
     }
 
     else if (typebox == _FL_OXY_UP_BOX || typebox == _FL_OXY_UP_FRAME) {
-      topline = fl_color_average(col, FL_WHITE, 0.35);
-      leftline = fl_color_average(col, FL_WHITE, 0.4);
+      topline = fl_color_average(col, FL_WHITE, 0.35f);
+      leftline = fl_color_average(col, FL_WHITE, 0.4f);
       rightline = leftline;
-      bottomline = fl_color_average(col, FL_BLACK, 0.8);
+      bottomline = fl_color_average(col, FL_BLACK, 0.8f);
     }
 
     else if (typebox == _FL_OXY_DOWN_BOX || typebox == _FL_OXY_DOWN_FRAME) {
-      topline = fl_color_average(col, FL_BLACK, 0.8);
-      leftline = fl_color_average(col, FL_BLACK, 0.94);
+      topline = fl_color_average(col, FL_BLACK, 0.8f);
+      leftline = fl_color_average(col, FL_BLACK, 0.94f);
       rightline = leftline;
-      bottomline = fl_color_average(col, FL_WHITE, 0.35);
+      bottomline = fl_color_average(col, FL_WHITE, 0.35f);
     }
 
     int xw1 = x + w - 1;
