@@ -803,7 +803,11 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   uchar *bitmap = *pbitmap;
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)create_bitmask(img->data_w(), img->data_h(), bitmap);
+    // Note: activating the surface device changes graphics drivers.
+    // Don't use 'this', but the new driver instead.
+    *Fl_Graphics_Driver::mask(img) =
+      (fl_uintptr_t)((Fl_GDI_Graphics_Driver *)fl_graphics_driver)->
+      create_bitmask(img->data_w(), img->data_h(), bitmap);
     delete[] bitmap;
   }
   *pbitmap = 0;
