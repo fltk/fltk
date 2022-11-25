@@ -86,8 +86,6 @@ void Fl_String::alloc_buf(int size) {
     return;
   if (size > 0 && size <= capacity_)
     return;
-  if (capacity_ > 0)
-    return;
 
   int new_size = (size + 1 + 15) & (~15); // round upwards
   char *new_value = new char[new_size];
