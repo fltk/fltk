@@ -55,9 +55,9 @@ static void draw(int which, int x,int y,int w,int h, int inset, Fl_Color color)
   }
   if (which == FILL) {
     if (w < h)
-      fl_rectf(x, y+d/2, w, h-(d&-2));
+      fl_rectf(x, y+d/2, w, h-(d&-2)+1);
     else if (w > h)
-      fl_rectf(x+d/2, y, w-(d&-2), h);
+      fl_rectf(x+d/2, y, w-(d&-2)+1, h);
   } else {
     if (w < h) {
       if (which != UPPER_LEFT) fl_yxline(x+w-1, y+d/2-1, y+h-d/2+1);
