@@ -69,7 +69,7 @@ public:
   virtual void *gc() {return gc_;}
 
   // --- bitmap stuff
-  HBITMAP create_bitmask(int w, int h, const uchar *array); // NOT virtual
+  static HBITMAP create_bitmask(int w, int h, const uchar *array); // NOT virtual
   virtual void delete_bitmask(fl_uintptr_t bm);
   HBITMAP create_alphamask(int w, int h, int d, int ld, const uchar *array);
   virtual void draw_unscaled(const char* str, int n, int x, int y);

@@ -65,7 +65,7 @@ public:
   char can_do_alpha_blending();
 
   // --- bitmap stuff
-  CGImageRef create_bitmask(int w, int h, const uchar *array); // NOT virtual
+  static CGImageRef create_bitmask(int w, int h, const uchar *array); // NOT virtual
   virtual void delete_bitmask(fl_uintptr_t bm);
   void draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_bitmap(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);

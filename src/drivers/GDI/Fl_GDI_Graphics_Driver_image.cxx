@@ -337,7 +337,7 @@ void Fl_GDI_Graphics_Driver::colored_rectf(int x, int y, int w, int h, uchar r, 
 // Create an N-bit bitmap for masking...
 HBITMAP Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
   // this won't work when the user changes display mode during run or
-  // has two screens with differnet depths
+  // has two screens with different depths
   HBITMAP bm;
   static uchar hiNibble[16] =
   { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
@@ -345,8 +345,9 @@ HBITMAP Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) 
   static uchar loNibble[16] =
   { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-  int np  = GetDeviceCaps(gc_, PLANES); //: was always one on sample machines
-  int bpp = GetDeviceCaps(gc_, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+  HDC current_gc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
+  int np  = GetDeviceCaps(current_gc, PLANES); //: was always one on sample machines
+  int bpp = GetDeviceCaps(current_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
   int Bpr = (bpp*w+7)/8;                        //: bytes per row
   int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
   if (bpp==4) shr = (shr+1)/2;
@@ -803,11 +804,8 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   uchar *bitmap = *pbitmap;
   if (bitmap) {
-    // Note: activating the surface device changes graphics drivers.
-    // Don't use 'this', but the new driver instead.
     *Fl_Graphics_Driver::mask(img) =
-      (fl_uintptr_t)((Fl_GDI_Graphics_Driver *)fl_graphics_driver)->
-      create_bitmask(img->data_w(), img->data_h(), bitmap);
+      (fl_uintptr_t)create_bitmask(img->data_w(), img->data_h(), bitmap);
     delete[] bitmap;
   }
   *pbitmap = 0;
