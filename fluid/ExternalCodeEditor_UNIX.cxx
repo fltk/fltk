@@ -288,12 +288,12 @@ const char* ExternalCodeEditor::create_tmpdir() {
  \return NULL if can't, posts dialog explaining why.
  */
 const char* ExternalCodeEditor::tmp_filename() {
-  static char path[512];
+  static char path[FL_PATH_MAX+1];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext  = code_file_name;   // e.g. ".cxx"
-  snprintf(path, sizeof(path), "%s/%p%s", tmpdir, (void*)this, ext);
-  path[sizeof(path)-1] = 0;
+  const char *ext = P.code_file_name;   // e.g. ".cxx"
+  snprintf(path, FL_PATH_MAX, "%s/%p%s", tmpdir, (void*)this, ext);
+  path[FL_PATH_MAX] = 0;
   return path;
 }
 

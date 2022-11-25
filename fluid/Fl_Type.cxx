@@ -124,6 +124,7 @@ void earlier_cb(Fl_Widget*,void*) {
       Fl_Type* g;
       for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
+        if (!mod) undo_checkpoint();
         f->move_before(g);
         mod = 1;
       }
@@ -147,6 +148,7 @@ void later_cb(Fl_Widget*,void*) {
       Fl_Type* g;
       for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
+        if (!mod) undo_checkpoint();
         g->move_before(f);
         mod = 1;
       }
@@ -179,11 +181,6 @@ void delete_all(int selected_only) {
     } else f = f->next;
   }
   if(!selected_only) {
-    // FIXME: undo/redo uses this function, resetting the following preferences randomly
-    include_H_from_C=1;
-    use_FL_COMMAND=0;
-    utf8_in_src = 0;
-    avoid_early_includes = 0;
     // reset the setting for the external shell command
     shell_prefs_get();
     shell_settings_write();

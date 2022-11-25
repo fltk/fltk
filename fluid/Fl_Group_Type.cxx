@@ -24,6 +24,7 @@
 #include "file.h"
 #include "code.h"
 #include "widget_browser.h"
+#include "undo.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -79,6 +80,8 @@ void group_cb(Fl_Widget *, void *) {
     fl_message("Please select widgets to group");
     return;
   }
+  undo_checkpoint();
+  undo_suspend();
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
   force_parent = 1;
   Fl_Group_Type *n = (Fl_Group_Type*)(Fl_Group_type.make(kAddAsLastChild));
@@ -93,6 +96,8 @@ void group_cb(Fl_Widget *, void *) {
   }
   fix_group_size(n);
   widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
 }
 
 void ungroup_cb(Fl_Widget *, void *) {
@@ -111,6 +116,8 @@ void ungroup_cb(Fl_Widget *, void *) {
       return;
     }
   }
+  undo_checkpoint();
+  undo_suspend();
   for (n = q->next; n && n->level > q->level;) {
     Fl_Type *nxt = n->remove();
     n->insert(q);
@@ -118,6 +125,8 @@ void ungroup_cb(Fl_Widget *, void *) {
   }
   delete q;
   widget_browser->rebuild();
+  undo_resume();
+  set_modflag(1);
 }
 
 ////////////////////////////////////////////////////////////////

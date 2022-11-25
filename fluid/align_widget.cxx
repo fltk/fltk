@@ -56,10 +56,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -93,10 +91,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -127,10 +123,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -160,10 +154,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -197,10 +189,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -231,10 +221,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -272,10 +260,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -315,10 +301,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -352,10 +336,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -385,10 +367,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -420,10 +400,8 @@ void align_widget_cb(Fl_Widget*, long how)
         {
           if (!changed) {
             changed = 1;
-            set_modflag(1);
             undo_checkpoint();
           }
-
           Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
           if (o->next && o->next->level > o->level && !o->next->selected &&
               !o->is_menu_button()) {
@@ -444,10 +422,8 @@ void align_widget_cb(Fl_Widget*, long how)
       {
         if (!changed) {
           changed = 1;
-          set_modflag(1);
           undo_checkpoint();
         }
-
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
         int center2;
@@ -473,10 +449,8 @@ void align_widget_cb(Fl_Widget*, long how)
       {
         if (!changed) {
           changed = 1;
-          set_modflag(1);
           undo_checkpoint();
         }
-
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
         Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
         int center2;
@@ -498,6 +472,8 @@ void align_widget_cb(Fl_Widget*, long how)
       }
     break;
   }
+  if (changed)
+    set_modflag(1);
 }
 
 
@@ -509,7 +485,6 @@ void widget_size_cb(Fl_Widget *, long size) {
     if (o->selected && o->is_widget()) {
       if (!changed) {
         changed = 1;
-        set_modflag(1);
         undo_checkpoint();
       }
 
@@ -525,4 +500,6 @@ void widget_size_cb(Fl_Widget *, long size) {
       if (w->window()) w->window()->redraw();
     }
   }
+  if (changed)
+    set_modflag(1);
 }

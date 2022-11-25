@@ -25,11 +25,6 @@
 
 class Fl_Widget_Class_Type;
 
-extern int include_H_from_C;
-extern int use_FL_COMMAND;
-extern int utf8_in_src;
-extern int avoid_early_includes;
-
 extern Fl_Menu_Item window_type_menu[];
 extern Fl_Widget_Class_Type *current_widget_class;
 void toggle_overlays(Fl_Widget *,void *);

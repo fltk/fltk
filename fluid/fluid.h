@@ -20,6 +20,7 @@
 #include <FL/filename.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_String.H>
 
 #define BROWSERWIDTH 300
 #define BROWSERHEIGHT 500
@@ -75,21 +76,47 @@ extern int compile_file;           // fluid -c
 extern int compile_strings;        // fluic -cs
 extern int batch_mode;
 
-extern int header_file_set;
-extern int code_file_set;
-extern const char* header_file_name;
-extern const char* code_file_name;
-
-extern int i18n_type;
-extern const char* i18n_include;
-extern const char* i18n_conditional;
-extern const char* i18n_function;
-extern const char* i18n_static_function;
-extern const char* i18n_file;
-extern const char* i18n_set;;
-extern char i18n_program[FL_PATH_MAX];
-
 extern int pasteoffset;
+
+// ---- string handling
+
+class Fd_String : public Fl_String
+{
+public:
+  Fd_String() : Fl_String("") { }
+  Fd_String(const char* s) : Fl_String(s) { }
+  int empty() { return size()==0; }
+  void operator=(const char* s) { value(s); }
+  operator const char* () const { return value(); }
+};
+
+// ---- project settings
+
+class Project {
+public:
+  Project();
+  ~Project();
+  void reset();
+
+  int i18n_type;
+  Fd_String i18n_include;
+  Fd_String i18n_conditional;
+  Fd_String i18n_function;
+  Fd_String i18n_static_function;
+  Fd_String i18n_file;
+  Fd_String i18n_set;
+  char i18n_program[FL_PATH_MAX+1];
+  int include_H_from_C;
+  int use_FL_COMMAND;
+  int utf8_in_src;
+  int avoid_early_includes;
+  int header_file_set = 0;
+  int code_file_set = 0;
+  Fd_String header_file_name;
+  Fd_String code_file_name;
+};
+
+extern Project P;
 
 // ---- public functions
 
