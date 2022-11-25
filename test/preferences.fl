@@ -1,7 +1,32 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0400
+i18n_type 1
+i18n_include {<stdio.h>}
+i18n_conditional {}
+i18n_function _
+i18n_static_function N_
 header_name {.h}
 code_name {.cxx}
+comment {About test/preferences:
+
+The preferences app shows two features of FLTK and FLUID.
+
+The Fl_Preferences class is used as a storage for user
+settings between app launches. Fl_Preferences can store 
+small amounts of arbitrary data in an .ini file format
+which can be retrieved again at the next app launch.
+
+The FLUID setup uses GNU gettext for internationalisation
+(i18n). FLUID finds the texts that need to be translated
+and writes them into .po files that can be processed by 
+the GNU gettext tools. FLUID produces source code that
+will translate all text into the current locale when
+generating the UI.
+
+
+In this small example, 'getttext' is only emulated.} {in_source not_in_header
+}
+
 decl {\#include <FL/Fl_Preferences.H>} {public local
 }
 
@@ -17,16 +42,81 @@ decl {\#include <FL/filename.H>} {private local
 decl {\#include <FL/fl_ask.H>} {private local
 }
 
-decl {void readPrefs();} {public local
+decl {\#define _(text) gettext(text)} {private local
 }
 
-decl {void writePrefs();} {public local
+decl {int g_language = 0;} {
+  comment {Current languages are:
+ 0 = English
+ 1 = German} private global
 }
 
 decl {const char *project = "fltk.org";} {private local
 }
 
 decl {const char *application = "test/preferences";} {private local
+}
+
+Function {gettext(const char *text)} {
+  comment {This is a minimal implementation of the GNU gettext API
+for systems that don't have GNU libintl library.} open return_type {const char*}
+} {
+  code {static const char* translation_table[][2] = {
+	{ "Alarm at:", "Wecken um:" },
+	{ "Bread:", "Brot:" },
+	{ "Breakfast:", "Frühstück:" },
+	{ "Cancel", "Abbrechen" },
+	{ "Drink:", "Getränk:" },
+	{ "English", "Englisch" },
+	{ "German", "Deutsch" },
+	{ "Get Up:", "Aufstehen:" },
+	{ "Language:", "Sprache:" },
+	{ "My Preferences", "Meine Vorlieben" },
+	{ "NY Times", "Der Spiegel" },
+	{ "Newspaper:", "Tageszeitung:" },
+	{ "OK", "OK" },
+	{ "Please restart the app to use your new language setting.",
+	   "Bitte starten Sie die App erneut um Ihre Spracheinstellung zu nutzen." },
+	{ "Wear:", "Schuhwerk:" },
+	{ "a.m.", "früh" },
+	{ "bare foot", "barfuß" },
+	{ "brush teeth", "Zähne putzen" },
+	{ "coffee", "Kaffee" },
+	{ "eggs", "Eier" },
+	{ "flip flops", "Schlappen" },
+	{ "juice", "Saft" },
+	{ "left side", "linke Seite" },
+	{ "min.", "Min." },
+	{ "of the bed", "vom Bett" },
+	{ "p.m.", "spät" },
+	{ "right side", "rechte Seite" },
+	{ "rye", "Roggen" },
+	{ "sandals", "Sandalen" },
+	{ "shave", "rasieren" },
+	{ "shoes", "Schuhe" },
+	{ "shower", "duschen" },
+	{ "sourdough", "Sauerteig" },
+	{ "tea", "Tee" },
+	{ "wheat", "Weizen" },
+	{ "white", "Weißbrot" },
+	{ "with butter", "mit Butter" },
+	{ "with milk", "mit Milch" },
+};
+int lang = g_language;
+int i, n = 38;
+const char *found = 0L;
+
+// As this is just a minimal demo, I did not implement binary search.
+for (i=0; i<n; i++) {
+  if (strcmp(text, translation_table[i][0])==0) {
+    found = translation_table[i][lang];
+    break;
+  }
+}
+if (found) 
+  return found;
+else
+  return text;} {}
 }
 
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
@@ -40,22 +130,23 @@ Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type v
 Fl::delete_widget(myWindow);} {}
 }
 
-Function {} {open selected return_type int
+Function {} {open return_type int
 } {
+  code {readLanguagePrefs();} {}
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {585 277 298 311} type Double hide
+    xywh {562 185 298 347} type Double visible
   } {
     Fl_Button {} {
       label Cancel
       callback closeWindowCB
-      xywh {210 275 75 25}
+      xywh {210 303 75 25}
     }
     Fl_Button {} {
       label OK
       callback saveAndCloseWindowCB
-      xywh {125 275 75 25}
+      xywh {125 303 75 25}
     }
     Fl_Group {} {
       label {Get Up:} open
@@ -128,7 +219,7 @@ Function {} {open selected return_type int
       }
     }
     Fl_Group {} {
-      label {Breakfast::} open
+      label {Breakfast:} open
       xywh {160 30 115 225} box ENGRAVED_FRAME align 5
     } {
       Fl_Choice wDrink {
@@ -156,7 +247,7 @@ Function {} {open selected return_type int
         label {Bread:} open
         xywh {165 110 105 20} down_box BORDER_BOX align 5
       } {
-        MenuItem {} {
+        MenuItem flWheatItem {
           label wheat
           xywh {0 0 100 20}
         }
@@ -169,7 +260,7 @@ Function {} {open selected return_type int
           xywh {0 0 100 20}
         }
         MenuItem {} {
-          label {sour doh}
+          label sourdough
           xywh {0 0 100 20}
         }
       }
@@ -190,8 +281,30 @@ Function {} {open selected return_type int
         xywh {165 225 105 20} align 5
       }
     }
+    Fl_Choice wLanguage {
+      label {Language:}
+      callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open selected
+      xywh {120 269 105 20} down_box BORDER_BOX
+      code0 {\#include <FL/fl_ask.H>}
+    } {
+      MenuItem {} {
+        label English
+        xywh {20 20 100 20}
+      }
+      MenuItem {} {
+        label German
+        xywh {20 20 100 20}
+      }
+    }
   }
   code {readPrefs();} {}
+}
+
+Function {readLanguagePrefs()} {
+  comment {Read the language setting before we create the UI.} open return_type void
+} {
+  code {Fl_Preferences app( Fl_Preferences::USER_L, project, application );
+app.get( "language", g_language, 0 );} {}
 }
 
 Function {readPrefs()} {open return_type void
@@ -227,6 +340,8 @@ Fl_Preferences app( Fl_Preferences::USER_L, project, application );
   } else {
     printf("Location of Preferences user data directory not found.\\n");
   }
+  
+  wLanguage->value( g_language );
 
   Fl_Preferences bed( app, "Bed" );
     bed.get( "alarm", buffer, "8:00", 79 );
@@ -271,7 +386,7 @@ Fl_Preferences app( Fl_Preferences::USER_L, project, application );
     wMinutes->value( doubleValue );
 
     char *flexBuffer;
-    eat.get( "newspaper", flexBuffer, "NY Tymes" );
+    eat.get( "newspaper", flexBuffer, gettext("NY Times") );
     wPaper->value( flexBuffer );
     if ( flexBuffer ) free( flexBuffer );
 
@@ -297,6 +412,8 @@ Function {writePrefs()} {open return_type void
 } {
   code {Fl_Preferences app( Fl_Preferences::USER_L, project, application );
 
+  app.set( "language", wLanguage->value() );
+  
   Fl_Preferences bed( app, "Bed" );
 
     bed.set( "alarm", wAlarm->value() );
