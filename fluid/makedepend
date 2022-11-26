@@ -97,6 +97,7 @@ align_widget.o: ../FL/Fl_Plugin.H
 align_widget.o: ../FL/Fl_Preferences.H
 align_widget.o: ../FL/Fl_Rect.H
 align_widget.o: ../FL/Fl_RGB_Image.H
+align_widget.o: ../FL/Fl_String.H
 align_widget.o: ../FL/Fl_Tabs.H
 align_widget.o: ../FL/fl_types.h
 align_widget.o: ../FL/fl_utf8.h
@@ -153,6 +154,7 @@ code.o: ../FL/Fl_Shared_Image.H
 code.o: ../FL/Fl_Simple_Terminal.H
 code.o: ../FL/Fl_Slider.H
 code.o: ../FL/Fl_Spinner.H
+code.o: ../FL/Fl_String.H
 code.o: ../FL/fl_string_functions.h
 code.o: ../FL/Fl_Tabs.H
 code.o: ../FL/Fl_Text_Buffer.H
@@ -276,6 +278,7 @@ factory.o: ../FL/Fl_Scrollbar.H
 factory.o: ../FL/Fl_Simple_Terminal.H
 factory.o: ../FL/Fl_Slider.H
 factory.o: ../FL/Fl_Spinner.H
+factory.o: ../FL/Fl_String.H
 factory.o: ../FL/Fl_Tabs.H
 factory.o: ../FL/Fl_Text_Buffer.H
 factory.o: ../FL/Fl_Text_Display.H
@@ -649,6 +652,7 @@ Fl_Group_Type.o: fluid.h
 Fl_Group_Type.o: Fl_Group_Type.h
 Fl_Group_Type.o: Fl_Type.h
 Fl_Group_Type.o: Fl_Widget_Type.h
+Fl_Group_Type.o: undo.h
 Fl_Group_Type.o: widget_browser.h
 Fl_Menu_Type.o: ../config.h
 Fl_Menu_Type.o: ../FL/Enumerations.H
@@ -750,6 +754,7 @@ Fl_Type.o: ../FL/Fl_RGB_Image.H
 Fl_Type.o: ../FL/Fl_Scrollbar.H
 Fl_Type.o: ../FL/Fl_Shared_Image.H
 Fl_Type.o: ../FL/Fl_Slider.H
+Fl_Type.o: ../FL/Fl_String.H
 Fl_Type.o: ../FL/Fl_Tabs.H
 Fl_Type.o: ../FL/fl_types.h
 Fl_Type.o: ../FL/fl_utf8.h
@@ -970,6 +975,7 @@ function_panel.o: ../FL/Fl_Return_Button.H
 function_panel.o: ../FL/Fl_RGB_Image.H
 function_panel.o: ../FL/Fl_Scrollbar.H
 function_panel.o: ../FL/Fl_Slider.H
+function_panel.o: ../FL/Fl_String.H
 function_panel.o: ../FL/Fl_Tabs.H
 function_panel.o: ../FL/Fl_Text_Buffer.H
 function_panel.o: ../FL/Fl_Text_Display.H
@@ -1141,6 +1147,7 @@ Shortcut_Button.o: ../FL/Fl_Return_Button.H
 Shortcut_Button.o: ../FL/Fl_RGB_Image.H
 Shortcut_Button.o: ../FL/Fl_Scrollbar.H
 Shortcut_Button.o: ../FL/Fl_Slider.H
+Shortcut_Button.o: ../FL/Fl_String.H
 Shortcut_Button.o: ../FL/fl_string_functions.h
 Shortcut_Button.o: ../FL/Fl_Tabs.H
 Shortcut_Button.o: ../FL/Fl_Text_Buffer.H
@@ -1227,6 +1234,7 @@ undo.o: ../FL/Fl_Rect.H
 undo.o: ../FL/Fl_RGB_Image.H
 undo.o: ../FL/Fl_Scrollbar.H
 undo.o: ../FL/Fl_Slider.H
+undo.o: ../FL/Fl_String.H
 undo.o: ../FL/fl_types.h
 undo.o: ../FL/fl_utf8.h
 undo.o: ../FL/Fl_Valuator.H
@@ -1259,6 +1267,7 @@ widget_browser.o: ../FL/Fl_Rect.H
 widget_browser.o: ../FL/Fl_RGB_Image.H
 widget_browser.o: ../FL/Fl_Scrollbar.H
 widget_browser.o: ../FL/Fl_Slider.H
+widget_browser.o: ../FL/Fl_String.H
 widget_browser.o: ../FL/fl_types.h
 widget_browser.o: ../FL/fl_utf8.h
 widget_browser.o: ../FL/Fl_Valuator.H
