@@ -267,7 +267,7 @@ void CodeEditor::textsize(Fl_Fontsize s) {
  A widget derived from CodeEditor with highlighting for code blocks.
 
  This widget is used by the SourceView system to show the design's
- source an header code. The secondary highlighting show the text
+ source and header code. The secondary highlighting show the text
  part that corresponds to the selected widget(s).
  */
 

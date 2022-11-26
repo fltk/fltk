@@ -163,24 +163,28 @@ int compile_strings = 0;        // fluic -cs
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
-/// If set, commandline overrides header file name in .fl file.
-int header_file_set = 0;
+/** \var int Project::header_file_set
+ If set, commandline overrides header file name in .fl file.
+ */
 
-/// If set, commandline overrides source code file name in .fl file.
-int code_file_set = 0;
+/** \var int Project::code_file_set
+ If set, commandline overrides source code file name in .fl file.
+ */
 
-/// Hold the default extension for header files, or the entire filename if set via command line.
-const char* header_file_name = ".h";
+/** \var int Project::header_file_name
+ Hold the default extension for header files, or the entire filename if set via command line.
+ */
 
-/// Hold the default extension for source code  files, or the entire filename if set via command line.
-const char* code_file_name = ".cxx";
+/** \var int Project::code_file_name
+ Hold the default extension for source code  files, or the entire filename if set via command line.
+ */
 
+/** \var int Project::i18n_type
+ Saved in the .fl design file.
+ \todo document me
+ */
 
-/// Saved in the .fl design file.
-/// \todo document me
-int i18n_type = 0;
-
-/**
+/** \var int Project::i18n_include
  For either type of translation, write a #include statement into the
  source file.
 
@@ -193,22 +197,22 @@ int i18n_type = 0;
 
  Saved in the .fl design file.
  */
-const char* i18n_include = "";
 
-const char* i18n_conditional = "";
+/** \var int Project::i18n_conditional
+ Saved in the .fl design file.
+ \todo document me
+ */
 
-/**
+/** \var int Project::i18n_function
  For the gettext/intl.h options, this is the function that translates text
  at runtime.
 
  This is usually "gettext" or "_".
  This should not be empty.
  Saved in the .fl design file.
-
  */
-const char* i18n_function = "";
 
-/**
+/** \var int Project::i18n_static_function
  For the gettext/intl.h options, this is the function that marks the
  translation of text at initialisation time.
 
@@ -219,18 +223,20 @@ const char* i18n_function = "";
 
  Saved in the .fl design file.
  */
-const char* i18n_static_function = "";
 
-/// Saved in the .fl design file.
-/// \todo document me
-const char* i18n_file = "";
+/** \var int Project::i18n_file
+ Saved in the .fl design file.
+ \todo document me
+ */
 
-/// Saved in the .fl design file.
-/// \todo document me
-const char* i18n_set = "";
+/** \var int Project::i18n_set
+ Saved in the .fl design file.
+ \todo document me
+ */
 
-/// \todo document me
-char i18n_program[FL_PATH_MAX] = "";
+/** \var int Project::i18n_program
+ \todo document me
+ */
 
 /// Offset in pixels when adding widgets from an .fl file.
 int pasteoffset = 0;
@@ -238,6 +244,46 @@ int pasteoffset = 0;
 /// Paste offset incrementing at every paste command.
 static int ipasteoffset = 0;
 
+// ---- project settings
+
+Project P;
+
+Project::Project() :
+  i18n_type(0),
+  i18n_program(""),
+  include_H_from_C(1),
+  use_FL_COMMAND(0),
+  utf8_in_src(0),
+  avoid_early_includes(0),
+  header_file_set(0),
+  code_file_set(0),
+  header_file_name(".h"),
+  code_file_name(".cxx")
+{ }
+
+Project::~Project() {
+}
+
+void Project::reset() {
+  ::delete_all();
+  i18n_type = 0;
+  i18n_include = "";
+  i18n_conditional = "";
+  i18n_function = "";
+  i18n_static_function = "";
+  i18n_file = "";
+  i18n_set = "";
+  i18n_program[0] = 0;
+  include_H_from_C = 1;
+  use_FL_COMMAND = 0;
+  utf8_in_src = 0;
+  avoid_early_includes = 0;
+  header_file_set = 0;
+  code_file_set = 0;
+  header_file_name = ".h";
+  code_file_name = ".cxx";
+
+}
 
 // ---- Sourceview definition
 
@@ -636,7 +682,7 @@ void exit_cb(Fl_Widget *,void *) {
   // Destroy tree
   //    Doing so causes dtors to automatically close all external editors
   //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
-  delete_all();
+  P.reset();
   ExternalCodeEditor::tmpdir_clear();
 
   exit(0);
@@ -803,7 +849,7 @@ void new_cb(Fl_Widget *, void *v) {
   }
 
   // Clear the current data...
-  delete_all();
+  P.reset();
   set_filename(NULL);
   set_modflag(0, 0);
   widget_browser->rebuild();
@@ -932,27 +978,27 @@ int write_code_files() {
     save_cb(0,0);
     if (!filename) return 1;
   }
-  char cname[FL_PATH_MAX];
-  char hname[FL_PATH_MAX];
-  strlcpy(i18n_program, fl_filename_name(filename), sizeof(i18n_program));
-  fl_filename_setext(i18n_program, sizeof(i18n_program), "");
-  if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
-    strlcpy(cname, fl_filename_name(filename), sizeof(cname));
-    fl_filename_setext(cname, sizeof(cname), code_file_name);
+  char cname[FL_PATH_MAX+1];
+  char hname[FL_PATH_MAX+1];
+  strlcpy(P.i18n_program, fl_filename_name(filename), FL_PATH_MAX);
+  fl_filename_setext(P.i18n_program, FL_PATH_MAX, "");
+  if (P.code_file_name[0] == '.' && strchr(P.code_file_name, '/') == NULL) {
+    strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
+    fl_filename_setext(cname, FL_PATH_MAX, P.code_file_name);
   } else {
-    strlcpy(cname, code_file_name, sizeof(cname));
+    strlcpy(cname, P.code_file_name, FL_PATH_MAX);
   }
-  if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
-    strlcpy(hname, fl_filename_name(filename), sizeof(hname));
-    fl_filename_setext(hname, sizeof(hname), header_file_name);
+  if (P.header_file_name[0] == '.' && strchr(P.header_file_name, '/') == NULL) {
+    strlcpy(hname, fl_filename_name(filename), FL_PATH_MAX);
+    fl_filename_setext(hname, FL_PATH_MAX, P.header_file_name);
   } else {
-    strlcpy(hname, header_file_name, sizeof(hname));
+    strlcpy(hname, P.header_file_name, FL_PATH_MAX);
   }
   if (!batch_mode) enter_project_dir();
   int x = write_code(cname,hname);
   if (!batch_mode) leave_project_dir();
-  strlcat(cname, " and ", sizeof(cname));
-  strlcat(cname, hname, sizeof(cname));
+  strlcat(cname, " and ", FL_PATH_MAX);
+  strlcat(cname, hname, FL_PATH_MAX);
   if (batch_mode) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
@@ -986,7 +1032,7 @@ void write_strings_cb(Fl_Widget *, void *) {
   }
   char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
-  fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
+  fl_filename_setext(sname, sizeof(sname), exts[P.i18n_type]);
   if (!batch_mode) enter_project_dir();
   int x = write_strings(sname);
   if (!batch_mode) leave_project_dir();
@@ -1128,8 +1174,10 @@ void duplicate_cb(Fl_Widget*, void*) {
  User wants to sort selected widgets by y coordinate.
  */
 static void sort_cb(Fl_Widget *,void *) {
+  undo_checkpoint();
   sort((Fl_Type*)NULL);
   widget_browser->rebuild();
+  set_modflag(1);
 }
 
 /**
@@ -1687,16 +1735,12 @@ void set_modflag(int mf, int mfc) {
 #endif // _WIN32
     else basename = filename;
 
-    if (code_file_name)
-      code_ext = fl_filename_ext(code_file_name);
-    else
-      code_ext = ".cxx";
-
+    code_ext = fl_filename_ext(P.code_file_name);
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';
     snprintf(title, sizeof(title), "%s%c  %s%c",
              basename, mod_star, code_ext, mod_c_star);
-    main_window->label(title);
+    main_window->copy_label(title);
   }
   // if the UI was modified in any way, update the Source View panel
   if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
@@ -1806,18 +1850,18 @@ void update_sourceview_cb(Fl_Button*, void*)
     static const char *exts[] = { ".txt", ".po", ".msg" };
     char fn[FL_PATH_MAX];
     fluid_prefs.getUserdataPath(fn, FL_PATH_MAX);
-    fl_filename_setext(fn, FL_PATH_MAX, exts[i18n_type]);
+    fl_filename_setext(fn, FL_PATH_MAX, exts[P.i18n_type]);
     write_strings(fn);
     int top = sv_strings->top_line();
     sv_strings->buffer()->loadfile(fn);
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
-    strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
-    fl_filename_setext(i18n_program, sizeof(i18n_program), "");
-    const char *code_file_name_bak = code_file_name;
-    code_file_name = sv_source_filename;
-    const char *header_file_name_bak = header_file_name;
-    header_file_name = sv_header_filename;
+    strlcpy(P.i18n_program, fl_filename_name(sv_source_filename), FL_PATH_MAX);
+    fl_filename_setext(P.i18n_program, FL_PATH_MAX, "");
+    Fd_String code_file_name_bak = P.code_file_name;
+    P.code_file_name = sv_source_filename;
+    Fd_String header_file_name_bak = P.header_file_name;
+    P.header_file_name = sv_header_filename;
 
     // generate the code and load the files
     write_sourceview = 1;
@@ -1837,8 +1881,8 @@ void update_sourceview_cb(Fl_Button*, void*)
     }
     write_sourceview = 0;
 
-    code_file_name = code_file_name_bak;
-    header_file_name = header_file_name_bak;
+    P.code_file_name = code_file_name_bak;
+    P.header_file_name = header_file_name_bak;
   }
 }
 
@@ -1867,16 +1911,16 @@ static int arg(int argc, char** argv, int& i) {
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
-    code_file_name = argv[i+1];
-    code_file_set  = 1;
+    P.code_file_name = argv[i+1];
+    P.code_file_set  = 1;
     batch_mode++;
     i += 2;
     return 2;
   }
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if (i+1 < argc) {
-      header_file_name = argv[i+1];
-      header_file_set  = 1;
+      P.header_file_name = argv[i+1];
+      P.header_file_set  = 1;
       batch_mode++;
       i += 2;
       return 2;

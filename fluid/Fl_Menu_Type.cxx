@@ -378,10 +378,10 @@ void Fl_Menu_Item_Type::write_item() {
   write_comment_inline_c(" ");
   write_c(" {");
   if (label() && label()[0])
-    switch (i18n_type) {
+    switch (P.i18n_type) {
       case 1:
         // we will call i18n when the menu is instantiated for the first time
-        write_c("%s(", i18n_static_function);
+        write_c("%s(", P.i18n_static_function.value());
         write_cstring(label());
         write_c(")");
         break;
@@ -394,7 +394,7 @@ void Fl_Menu_Item_Type::write_item() {
     write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
                 int s = ((Fl_Button*)o)->shortcut();
-                if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+                if (P.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
                         write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
                 } else {
                         write_c(", 0x%x, ", s);
@@ -474,15 +474,15 @@ void Fl_Menu_Item_Type::write_code1() {
       write_c("%sml->labela = (char*)", indent());
       image->write_inline();
       write_c(";\n");
-      if (i18n_type==0) {
+      if (P.i18n_type==0) {
         write_c("%sml->labelb = o->label();\n", indent());
-      } else if (i18n_type==1) {
+      } else if (P.i18n_type==1) {
         write_c("%sml->labelb = %s(o->label());\n",
-                indent(), i18n_function);
-      } else if (i18n_type==2) {
+                indent(), P.i18n_function.value());
+      } else if (P.i18n_type==2) {
         write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                indent(), i18n_file[0] ? i18n_file : "_catalog",
-                i18n_set, msgnum());
+                indent(), P.i18n_file[0] ? P.i18n_file.value() : "_catalog",
+                P.i18n_set.value(), msgnum());
       }
       write_c("%sml->typea = FL_IMAGE_LABEL;\n", indent());
       write_c("%sml->typeb = FL_NORMAL_LABEL;\n", indent());
@@ -491,20 +491,20 @@ void Fl_Menu_Item_Type::write_code1() {
       image->write_code("o");
     }
   }
-  if (i18n_type && label() && label()[0]) {
+  if (P.i18n_type && label() && label()[0]) {
     Fl_Labeltype t = o->labeltype();
     if (image) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
       start_menu_initialiser(menuItemInitialized, mname, i);
-      if (i18n_type==1) {
+      if (P.i18n_type==1) {
         write_c("%so->label(%s(o->label()));\n",
-                indent(), i18n_function);
-      } else if (i18n_type==2) {
+                indent(), P.i18n_function.value());
+      } else if (P.i18n_type==2) {
         write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                indent(), i18n_file[0] ? i18n_file : "_catalog",
-                i18n_set, msgnum());
+                indent(), P.i18n_file[0] ? P.i18n_file.value() : "_catalog",
+                P.i18n_set.value(), msgnum());
       }
     }
   }

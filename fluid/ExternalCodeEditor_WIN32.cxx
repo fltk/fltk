@@ -22,6 +22,7 @@
 #include <FL/fl_string_functions.h> // fl_strdup()
 
 #include "ExternalCodeEditor_WIN32.h"
+#include "fluid.h"
 
 #include <stdio.h>      // snprintf()
 #include <stdlib.h>
@@ -358,8 +359,7 @@ const char* ExternalCodeEditor::tmp_filename() {
   static char path[512];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  extern const char *code_file_name;    // fluid's global
-  const char *ext  = code_file_name;    // e.g. ".cxx"
+  const char *ext  = P.code_file_name;    // e.g. ".cxx"
   _snprintf(path, sizeof(path), "%s\\%p%s", tmpdir, (void*)this, ext);
   path[sizeof(path)-1] = 0;
   return path;
