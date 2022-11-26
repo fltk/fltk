@@ -68,8 +68,7 @@ static int min(int i1, int i2)
 
 class Fl_Text_Undo_Action {
 public:
-  Fl_Text_Undo_Action(Fl_Text_Buffer* text) :
-    undowidget(text),
+  Fl_Text_Undo_Action() :
     undobuffer(NULL),
     undobufferlength(0),
     undoat(0),
@@ -82,7 +81,6 @@ public:
       ::free(undobuffer);
   }
 
-  Fl_Text_Buffer *undowidget;
   char *undobuffer;
   int undobufferlength;
   int undoat;              // points after insertion
@@ -99,6 +97,10 @@ public:
       undobufferlength = n + 128;
       undobuffer = (char *)realloc(undobuffer, undobufferlength);
     }
+  }
+
+  void clear() {
+    undocut = undoinsert = 0;
   }
 };
 
@@ -133,7 +135,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPredeleteCbArgs = NULL;
   mCursorPosHint = 0;
   mCanUndo = 1;
-  mUndo = new Fl_Text_Undo_Action(this);
+  mUndo = new Fl_Text_Undo_Action();
   input_file_was_transcoded = 0;
   transcoding_warning_action = def_transcoding_warning_action;
 }
@@ -202,6 +204,9 @@ void Fl_Text_Buffer::text(const char *t)
   /* Call the saved display routine(s) to update the screen */
   call_modify_callbacks(0, deletedLength, insertedLength, 0, deletedText);
   free((void *) deletedText);
+
+  if (mCanUndo)
+    mUndo->clear();
 }
 
 
@@ -507,7 +512,7 @@ void Fl_Text_Buffer::canUndo(char flag)
 {
   if (flag) {
     if (!mCanUndo) {
-      mUndo = new Fl_Text_Undo_Action(this);
+      mUndo = new Fl_Text_Undo_Action();
     }
   } else {
     if (mCanUndo) {

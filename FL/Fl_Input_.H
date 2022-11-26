@@ -38,6 +38,8 @@
 #define FL_MULTILINE_INPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_WRAP)
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
+class Fl_Input_Undo_Action;
+
 /**
   This class provides a low-overhead text input field.
 
@@ -143,6 +145,9 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   /** \internal color of the text cursor */
   Fl_Color cursor_color_;
+
+  /** \internal local undo event */
+  Fl_Input_Undo_Action* undo_;
 
   /** \internal Horizontal cursor position in pixels while moving up or down. */
   static double up_down_pos;
