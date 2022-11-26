@@ -1023,12 +1023,12 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
        BUILD="WAYLANDX11"
        graphics="Wayland or X11 with cairo"
        ])
-      CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
-      CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+#     CFLAGS="$CFLAGS -DUSE_SYSTEM_LIBDECOR=0"
+#     CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
       LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
-      CXXFLAGS="$CXXFLAGS -I../libdecor/src"
+#     CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
