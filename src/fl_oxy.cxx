@@ -1,7 +1,7 @@
 //
 // "Oxy" Scheme drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2011 by Dmitrij K. e-mail: kdiman at live dot ru
+// Copyright 2011 by Dmitrij K. aka "kdiman"
 // Copyright 2012-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -22,30 +22,19 @@
 
 // Status of this scheme (to-do list):
 //
-// This scheme works but is still work in progress:
+// This scheme works but is not yet perfect:
 //
-// Some of the internal (static) and global functions in this file need fixes:
-// (1) parameter 'bool active' should not be necessary, the caller has to set up the colors
-// (2) parameter 'Fl_Color hcol' is currently not set up by the caller in fl_draw_arrow()
-// (3) oxy_arrow(bb, t, o, col) (4 parameters) duplicates 'col' for 'col' and 'hcol'
-//     when calling oxy_arrow(bb, t, o, true, col, col) (6 parameters)
-// (4) drawing arrows with adjacent lines does not scale well (ctrl/+/-),
-//     we should draw polygons instead, see fl_draw_check() for an example.
+// (1) Drawing on the X11 platform (w/o Cairo) can be asymmetric for some "arrows"
+// (2) Arrows are not always centered perfectly
 
 #define GROFF 0.45f // gradients offset
 
-static void arrow_begin(bool active, Fl_Color col, Fl_Color hcol, float av) {
-  Fl_Color col1 = fl_color_average(col, hcol, av);
-  fl_color(active ? col1 : fl_inactive(col1));
-  fl_begin_line();
-}
+// Draw a single arrow
+static void single_arrow(Fl_Rect bb, Fl_Orientation o, Fl_Color col) {
 
-static void arrow_end() {
-  fl_end_line();
-}
-
-static void single_arrow(Fl_Rect bb, Fl_Orientation o,
-                         bool active, Fl_Color col, Fl_Color hcol) {
+  fl_color(col);
+  fl_line_style(FL_SOLID, 1);
+  fl_push_matrix();
 
   int x1 = bb.x();
   int y1 = bb.y();
@@ -57,54 +46,49 @@ static void single_arrow(Fl_Rect bb, Fl_Orientation o,
   if (dx > 4) dx = 4;
   else if (dx < 2) dx = 2;
 
-  // this is for "single" arrows (Fl_Arrow_Type FL_ARROW_SINGLE) only !
-
   float angle = int(o) * 45.0f;
 
   int tx = x1 + (w1 + 1)/2;
   int ty = y1 + (h1 + 1)/2;
 
-  fl_push_matrix();
-  fl_translate(tx, ty);
+  const int lw = 2;       // arrow line width: n means n+1 pixels
+
+  if (o & 1)              // up or down arrow
+    fl_translate(tx, ty - (lw+1)/2);
+  else                    // left or right arrow
+    fl_translate(tx - lw/2 + 1, ty);
+
   fl_rotate(angle);
 
-  int x0 = -(dx+1)/2;
+  int x0 = -(dx)/2;
 
-  arrow_begin(active, col, hcol, 0.38f);
+  fl_begin_complex_polygon();
+
   fl_vertex(x0,          -dx);
   fl_vertex(x0 + dx,      0);
   fl_vertex(x0,           dx);
-  arrow_end();
 
-  arrow_begin(active, col, hcol, 0.58f);
-  fl_vertex(x0,          -dx + 1);
-  fl_vertex(x0 + dx - 1,  0);
-  fl_vertex(x0,           dx - 1);
-  arrow_end();
+  fl_vertex(x0 + lw,      dx);
+  fl_vertex(x0 + lw + dx, 0);
+  fl_vertex(x0 + lw,     -dx);
 
-  arrow_begin(active, col, hcol, 0.78f);
-  fl_vertex(x0 + 1,      -dx);
-  fl_vertex(x0 + dx + 1,  0);
-  fl_vertex(x0 + 1,       dx);
-  arrow_end();
+  fl_end_complex_polygon();
 
   fl_pop_matrix();
+  fl_line_style(0);
 }
 
 /**
   Draw an "arrow" GUI element for the 'oxy' scheme.
 
+  This draws one or two "arrows" depending on the arrow type \p t.
+
   \param[in]  bb       bounding box
   \param[in]  t        arrow type
   \param[in]  o        orientation
-  \param[in]  active   widget is active (true) or inactive (false)
   \param[in]  col      arrow color
-  \param[in]  hcol     "highlight" color
-
 */
-
-void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o,
-               bool active, Fl_Color col, Fl_Color hcol) {
+void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
   switch(t) {
 
@@ -113,54 +97,36 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o,
       switch (int(o)) {
         case FL_ORIENT_DOWN:
         case FL_ORIENT_UP:
-          bb.y(bb.y() - 2); // shift upwards
-          bb.h(bb.h() - 4); // reduce size
-          single_arrow(bb, o, active, col, hcol);
-          bb.y(bb.y() + 4); // shift down
-          single_arrow(bb, o, active, col, hcol);
+          bb.y(bb.y() - 2);           // shift upwards
+          bb.h(bb.h() - 4);           // reduce size
+          single_arrow(bb, o, col);
+          bb.y(bb.y() + 4);           // shift down
+          single_arrow(bb, o, col);
           break;
         default:
-          bb.x(bb.x() - 2); // shift left
-          bb.w(bb.w() - 4); // reduce size
-          single_arrow(bb, o, active, col, hcol);
-          bb.x(bb.x() + 4); // shift right
-          single_arrow(bb, o, active, col, hcol);
+          bb.x(bb.x() - 2);           // shift left
+          bb.w(bb.w() - 4);           // reduce size
+          single_arrow(bb, o, col);
+          bb.x(bb.x() + 4);           // shift right
+          single_arrow(bb, o, col);
           break;
       }
       break;
 
     case FL_ARROW_CHOICE:
 
-      bb.y(bb.y() - 2); // shift upwards
-      bb.h(bb.h() - 4); // reduce size
-      single_arrow(bb, FL_ORIENT_DOWN, active, col, hcol);
-      bb.y(bb.y() + 4); // shift down
-      single_arrow(bb, FL_ORIENT_DOWN, active, col, hcol);
+      bb.y(bb.y() - 2);               // shift upwards
+      bb.h(bb.h() - 4);               // reduce size
+      single_arrow(bb, FL_ORIENT_DOWN, col);
+      bb.y(bb.y() + 4);               // shift down
+      single_arrow(bb, FL_ORIENT_DOWN, col);
       break;
 
     default:
 
-      single_arrow(bb, o, active, col, hcol);
+      single_arrow(bb, o, col);
       break;
-
   }
-
-}
-
-
-/**
-  Draw an "arrow" GUI element for the 'oxy' scheme (simplified).
-
-  \param[in]  bb       bounding box
-  \param[in]  t        arrow type
-  \param[in]  o        orientation
-  \param[in]  col      arrow color
-*/
-
-void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
-
-  oxy_arrow(bb, t, o, true, col, col);
-
 }
 
 
@@ -173,7 +139,7 @@ static void _oxy_up_box_(int x, int y, int w, int h, Fl_Color bg) {
   float gradoffset = groff;
   float stepoffset = (1.0f / (float)h);
   int xw = x + w - 1;
-  //    from bottom to top
+  // from bottom to top
   for (int _y = y; _y < y + h; _y++) {
     fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
@@ -191,7 +157,7 @@ static void _oxy_down_box_(int x, int y, int w, int h, Fl_Color bg) {
   float gradoffset = groff;
   float stepoffset = (1.0f / (float)h);
   int xw = x + w - 1;
-  //    from top to bottom
+  // from top to bottom
   for (int _y = y + h - 1; _y >= y; _y--) {
     fl_color(fl_color_average(bg, FL_WHITE, (gradoffset < 1.0f) ? gradoffset : 1.0f));
     fl_xyline(x, _y, xw);
@@ -468,26 +434,26 @@ static void oxy_draw(int x, int y, int w, int h, Fl_Color col, int typebox, bool
       }
 
       fl_color(oxy_color(topline));
-      fl_line(x + 1, yh1 - smooth - r_offset2, x + 1, y + r_offset2 + smooth); // left side
-      fl_arc(x + 1, y + 1, Radius, Radius, 90.0, 180.0);                       // left-top corner
+      fl_line(x + 1, yh1 - smooth - r_offset2, x + 1, y + r_offset2 + smooth);  // left side
+      fl_arc(x + 1, y + 1, Radius, Radius, 90.0, 180.0);                        // left-top corner
       if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
         fl_arc(x + 1, y + 1, Radius + 1, Radius + 1, 90.0, 180.0);
-      }                                                                        // left-top corner (DOWN_BOX)
-      fl_line(x + smooth + r_offset2, y + 1, xw1 - smooth - r_offset2, y + 1); // top side
-      fl_arc(xw1 - Radius, y + 1, Radius, Radius, 00.0, 90.0);                 // right-top corner
+      }                                                                         // left-top corner (DOWN_BOX)
+      fl_line(x + smooth + r_offset2, y + 1, xw1 - smooth - r_offset2, y + 1);  // top side
+      fl_arc(xw1 - Radius, y + 1, Radius, Radius, 00.0, 90.0);                  // right-top corner
       if (typebox == _FL_OXY_ROUND_DOWN_BOX) {
         fl_arc(xw1 - Radius, y + 1, Radius + 1, Radius + 1, 00.0, 90.0);
-      }                                                                    // right-top corner (DOWN_BOX)
-      fl_line(xw2, y + smooth + r_offset2, xw2, yh1 - smooth - r_offset2); // right side
-      fl_arc(x + 1, yh1 - Radius, Radius, Radius, 180.0, 200.0);           // left-bottom corner
-      fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 340.0, 360.0);    // right-bottom
+      }                                                                         // right-top corner (DOWN_BOX)
+      fl_line(xw2, y + smooth + r_offset2, xw2, yh1 - smooth - r_offset2);      // right side
+      fl_arc(x + 1, yh1 - Radius, Radius, Radius, 180.0, 200.0);                // left-bottom corner
+      fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 340.0, 360.0);         // right-bottom
       fl_color(oxy_color(bottomline));
-      fl_arc(x + 1, yh1 - Radius, Radius, Radius, 200.0, 270.0); // left-bottom corner
+      fl_arc(x + 1, yh1 - Radius, Radius, Radius, 200.0, 270.0);                // left-bottom corner
       if (typebox == _FL_OXY_ROUND_UP_BOX) {
         fl_arc(x + 1, yh1 - Radius, Radius + 1, Radius + 1, 200.0, 270.0);
-      }                                                                    // left-bottom corner (UP_BOX)
-      fl_line(xw1 - smooth - r_offset2, yh2, x + smooth + r_offset2, yh2); // bottom side
-      fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 270.0, 340.0);    // right-bottom corner
+      }                                                                         // left-bottom corner (UP_BOX)
+      fl_line(xw1 - smooth - r_offset2, yh2, x + smooth + r_offset2, yh2);      // bottom side
+      fl_arc(xw1 - Radius, yh1 - Radius, Radius, Radius, 270.0, 340.0);         // right-bottom corner
       if (typebox == _FL_OXY_ROUND_UP_BOX) {
         fl_arc(xw1 - Radius, yh1 - Radius, Radius + 1, Radius + 1, 270.0, 340.0);
       } // right-bottom corner
