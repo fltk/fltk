@@ -110,8 +110,8 @@ public:
   int use_FL_COMMAND;
   int utf8_in_src;
   int avoid_early_includes;
-  int header_file_set = 0;
-  int code_file_set = 0;
+  int header_file_set;
+  int code_file_set;
   Fd_String header_file_name;
   Fd_String code_file_name;
 };
