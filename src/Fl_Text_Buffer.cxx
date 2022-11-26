@@ -66,32 +66,44 @@ static int min(int i1, int i2)
 
 #endif
 
+class Fl_Text_Undo_Action {
+public:
+  Fl_Text_Undo_Action() :
+    undobuffer(NULL),
+    undobufferlength(0),
+    undoat(0),
+    undocut(0),
+    undoinsert(0),
+    undoyankcut(0)
+  { }
+  ~Fl_Text_Undo_Action() {
+    if (undobuffer)
+      ::free(undobuffer);
+  }
 
-static char *undobuffer;
-static int undobufferlength;
-static Fl_Text_Buffer *undowidget;
-static int undoat;              // points after insertion
-static int undocut;             // number of characters deleted there
-static int undoinsert;          // number of characters inserted
-static int undoyankcut;         // length of valid contents of buffer, even if undocut=0
+  char *undobuffer;
+  int undobufferlength;
+  int undoat;              // points after insertion
+  int undocut;             // number of characters deleted there
+  int undoinsert;          // number of characters inserted
+  int undoyankcut;         // length of valid contents of buffer, even if undocut=0
 
-/*
- Resize the undo buffer to match at least the requested size.
- */
-static void undobuffersize(int n)
-{
-  if (n > undobufferlength) {
-    if (undobuffer) {
-      do {
-        undobufferlength *= 2;
-      } while (undobufferlength < n);
-      undobuffer = (char *) realloc(undobuffer, undobufferlength);
-    } else {
-      undobufferlength = n + 9;
-      undobuffer = (char *) malloc(undobufferlength);
+  /*
+   Resize the undo buffer to match at least the requested size.
+   */
+  void undobuffersize(int n)
+  {
+    if (n > undobufferlength) {
+      undobufferlength = n + 128;
+      undobuffer = (char *)realloc(undobuffer, undobufferlength);
     }
   }
-}
+
+  void clear() {
+    undocut = undoinsert = 0;
+  }
+};
+
 
 static void def_transcoding_warning_action(Fl_Text_Buffer *text)
 {
@@ -123,6 +135,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPredeleteCbArgs = NULL;
   mCursorPosHint = 0;
   mCanUndo = 1;
+  mUndo = new Fl_Text_Undo_Action();
   input_file_was_transcoded = 0;
   transcoding_warning_action = def_transcoding_warning_action;
 }
@@ -142,6 +155,7 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
     delete[] mPredeleteProcs;
     delete[] mPredeleteCbArgs;
   }
+  delete mUndo;
 }
 
 
@@ -190,6 +204,9 @@ void Fl_Text_Buffer::text(const char *t)
   /* Call the saved display routine(s) to update the screen */
   call_modify_callbacks(0, deletedLength, insertedLength, 0, deletedText);
   free((void *) deletedText);
+
+  if (mCanUndo)
+    mUndo->clear();
 }
 
 
@@ -449,36 +466,39 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
  */
 int Fl_Text_Buffer::undo(int *cursorPos)
 {
-  if (undowidget != this || (!undocut && !undoinsert && !mCanUndo))
+  if (!mCanUndo)
     return 0;
 
-  int ilen = undocut;
-  int xlen = undoinsert;
-  int b = undoat - xlen;
+  if (!mUndo->undocut && !mUndo->undoinsert)
+    return 0;
 
-  if (xlen && undoyankcut && !ilen) {
-    ilen = undoyankcut;
+  int ilen = mUndo->undocut;
+  int xlen = mUndo->undoinsert;
+  int b = mUndo->undoat - xlen;
+
+  if (xlen && mUndo->undoyankcut && !ilen) {
+    ilen = mUndo->undoyankcut;
   }
 
   if (xlen && ilen) {
-    undobuffersize(ilen + 1);
-    undobuffer[ilen] = 0;
-    char *tmp = fl_strdup(undobuffer);
-    replace(b, undoat, tmp);
+    mUndo->undobuffersize(ilen + 1);
+    mUndo->undobuffer[ilen] = 0;
+    char *tmp = fl_strdup(mUndo->undobuffer);
+    replace(b, mUndo->undoat, tmp);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
     free(tmp);
   } else if (xlen) {
-    remove(b, undoat);
+    remove(b, mUndo->undoat);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
   } else if (ilen) {
-    undobuffersize(ilen + 1);
-    undobuffer[ilen] = 0;
-    insert(undoat, undobuffer);
+    mUndo->undobuffersize(ilen + 1);
+    mUndo->undobuffer[ilen] = 0;
+    insert(mUndo->undoat, mUndo->undobuffer);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
-    undoyankcut = 0;
+    mUndo->undoyankcut = 0;
   }
 
   return 1;
@@ -490,10 +510,17 @@ int Fl_Text_Buffer::undo(int *cursorPos)
  */
 void Fl_Text_Buffer::canUndo(char flag)
 {
+  if (flag) {
+    if (!mCanUndo) {
+      mUndo = new Fl_Text_Undo_Action();
+    }
+  } else {
+    if (mCanUndo) {
+      delete mUndo;
+      mUndo = NULL;
+    }
+  }
   mCanUndo = flag;
-  // disabling undo also clears the last undo operation!
-  if (!mCanUndo && undowidget==this)
-    undowidget = 0;
 }
 
 
@@ -1190,15 +1217,14 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
   update_selections(pos, 0, insertedLength);
 
   if (mCanUndo) {
-    if (undowidget == this && undoat == pos && undoinsert) {
-      undoinsert += insertedLength;
+    if (mUndo->undoat == pos && mUndo->undoinsert) {
+      mUndo->undoinsert += insertedLength;
     } else {
-      undoinsert = insertedLength;
-      undoyankcut = (undoat == pos) ? undocut : 0;
+      mUndo->undoinsert = insertedLength;
+      mUndo->undoyankcut = (mUndo->undoat == pos) ? mUndo->undocut : 0;
     }
-    undoat = pos + insertedLength;
-    undocut = 0;
-    undowidget = this;
+    mUndo->undoat = pos + insertedLength;
+    mUndo->undocut = 0;
   }
 
   return insertedLength;
@@ -1214,34 +1240,33 @@ void Fl_Text_Buffer::remove_(int start, int end)
   /* if the gap is not contiguous to the area to remove, move it there */
 
   if (mCanUndo) {
-    if (undowidget == this && undoat == end && undocut) {
-      undobuffersize(undocut + end - start + 1);
-      memmove(undobuffer + end - start, undobuffer, undocut);
-      undocut += end - start;
+    if (mUndo->undoat == end && mUndo->undocut) {
+      mUndo->undobuffersize(mUndo->undocut + end - start + 1);
+      memmove(mUndo->undobuffer + end - start, mUndo->undobuffer, mUndo->undocut);
+      mUndo->undocut += end - start;
     } else {
-      undocut = end - start;
-      undobuffersize(undocut);
+      mUndo->undocut = end - start;
+      mUndo->undobuffersize(mUndo->undocut);
     }
-    undoat = start;
-    undoinsert = 0;
-    undoyankcut = 0;
-    undowidget = this;
+    mUndo->undoat = start;
+    mUndo->undoinsert = 0;
+    mUndo->undoyankcut = 0;
   }
 
   if (start > mGapStart) {
     if (mCanUndo)
-      memcpy(undobuffer, mBuf + (mGapEnd - mGapStart) + start,
+      memcpy(mUndo->undobuffer, mBuf + (mGapEnd - mGapStart) + start,
              end - start);
     move_gap(start);
   } else if (end < mGapStart) {
     if (mCanUndo)
-      memcpy(undobuffer, mBuf + start, end - start);
+      memcpy(mUndo->undobuffer, mBuf + start, end - start);
     move_gap(end);
   } else {
     int prelen = mGapStart - start;
     if (mCanUndo) {
-      memcpy(undobuffer, mBuf + start, prelen);
-      memcpy(undobuffer + prelen, mBuf + mGapEnd, end - start - prelen);
+      memcpy(mUndo->undobuffer, mBuf + start, prelen);
+      memcpy(mUndo->undobuffer + prelen, mBuf + mGapEnd, end - start - prelen);
     }
   }
 

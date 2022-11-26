@@ -60,6 +60,7 @@
 
 #include "Fl_Export.H"
 
+class Fl_Text_Undo_Action;
 
 /**
   \class Fl_Text_Selection
@@ -836,6 +837,7 @@ protected:
   int mPreferredGapSize;          /**< the default allocation for the text gap is 1024
                                        bytes and should only be increased if frequent
                                        and large changes in buffer size are expected */
+  Fl_Text_Undo_Action* mUndo;     /**< local undo event */
 };
 
 #endif
