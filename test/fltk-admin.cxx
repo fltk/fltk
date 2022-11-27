@@ -266,7 +266,7 @@ int main(int argc,char **argv) {
     return 0;
 
   Fl_Window *win = create_options_editor();
-  win->show();
+  win->show(argc, argv);
   Fl::run();
 
   return 0;
