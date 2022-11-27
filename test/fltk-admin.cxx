@@ -83,7 +83,7 @@ void print_usage(const char *argv0) {
   if (!app_name || !app_name[0])
     app_name = "fltk-admin";
   fprintf(stderr, "FLTK %d.%d.%d. Usage:\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-  fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-h] [-fltk_option]\n", app_name);
+  fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-h] [-v] [-L] [-LS] [-LU] [-fltk_option]\n", app_name);
   fprintf(stderr, "  Calling \"%s\" without options will launch in interactive mode.\n", app_name);
   fprintf(stderr, "  Options start \"-S\" for system wide settings or \"-U\" for\n"
                   "  user settings in current account.\n"
@@ -102,6 +102,68 @@ void print_usage(const char *argv0) {
   }
 }
 
+/* cmd must be 'S', 'U', or 0 */
+void list_options(char cmd) {
+  int i;
+  for (i=0; i<Fl::OPTION_LAST; i++) {
+    if (g_option[i].name) {
+      printf("%-16s", g_option[i].name);
+      if (cmd == 'S' || cmd == 0) {
+        int value = get_system_option(g_option[i].name);
+        printf(" System:%2d", value);
+      }
+      if (cmd == 'U' || cmd == 0) {
+        int value = get_user_option(g_option[i].name);
+        printf(" User:%2d", value);
+      }
+      printf("\n");
+    }
+  }
+}
+
+void handle_system_option(const char *opt, int ival) {
+  int i;
+  for (i=0; i<Fl::OPTION_LAST; i++) {
+    if (g_option[i].name && strcmp(g_option[i].name, opt)==0) {
+      if (ival == -999) {
+        int value = get_system_option(g_option[i].name);
+        if (g_verbose) fprintf(stderr, "Current value for system option %s is %d\n", opt, value);
+        printf("%d\n", value);
+      } else if (ival ==-1) {
+        if (g_verbose) fprintf(stderr, "Reset system option %s to default\n", opt);
+        clear_system_option(g_option[i].name);
+      } else {
+        if (g_verbose) fprintf(stderr, "Set system option %s to %d\n", opt, ival);
+        set_system_option(g_option[i].name, ival);
+      }
+      break;
+    }
+  }
+  if (i==Fl::OPTION_LAST)
+    fprintf(stderr, "Warning: Unrecognized user option \"%s\".\n", opt);
+}
+
+void handle_user_option(const char *opt, int ival) {
+  int i;
+  for (i=0; i<Fl::OPTION_LAST; i++) {
+    if (g_option[i].name && strcmp(g_option[i].name, opt)==0) {
+      if (ival == -999) {
+        int value = get_user_option(g_option[i].name);
+        if (g_verbose) fprintf(stderr, "Current value for user option %s is %d\n", opt, value);
+        printf("%d\n", value);
+      } else if (ival ==-1) {
+        if (g_verbose) fprintf(stderr, "Reset user option %s to default\n", opt);
+        clear_user_option(g_option[i].name);
+      } else {
+        if (g_verbose) fprintf(stderr, "Set user option %s to %d\n", opt, ival);
+        set_user_option(g_option[i].name, ival);
+      }
+      break;
+    }
+  }
+  if (i==Fl::OPTION_LAST)
+    fprintf(stderr, "Warning: Unrecognized user option \"%s\".\n", opt);
+}
 
 /*
  Command line arguments start with "-S" for system wide settings or "-U" for
@@ -115,6 +177,15 @@ static int read_command_line_args(int argc, char** argv, int& i) {
   int ival = -999;
   const char *arg = argv[i++];
 
+  if ( (strcmp(arg, "--help") == 0) || (strcmp(arg, "-h") == 0) ) {
+    print_usage(argv[0]);
+    g_batch_mode = 1;
+    return 1;
+  }
+  if ( (strcmp(arg, "--verbose") == 0) || (strcmp(arg, "-v") == 0) ) {
+    g_verbose = 1;
+    return 1;
+  }
   if (arg[0] == '-') {
     cmd = arg[1];
     if (cmd == 'U' || cmd == 'S') {
@@ -142,6 +213,7 @@ static int read_command_line_args(int argc, char** argv, int& i) {
           ival = -1;
         else {
           fprintf(stderr, "Warning: Unrecognized value \"%s\" for option \"%s\".\n", opt, val);
+          g_batch_mode = 1;
           return 1;
         }
       } else {
@@ -149,58 +221,19 @@ static int read_command_line_args(int argc, char** argv, int& i) {
       }
     }
   }
-  if ((cmd == 'h') && (arg[2] == 0)) {
-    print_usage(argv[0]);
-    g_batch_mode = 1;
-    return 1;
-  }
-  if ((cmd == 'v') && (arg[2] == 0)) {
-    g_verbose = 1;
-    return 1;
-  }
   if (cmd == 'U') { // user setting
-    int i;
-    for (i=0; i<Fl::OPTION_LAST; i++) {
-      if (g_option[i].name && strcmp(g_option[i].name, opt)==0) {
-        if (ival == -999) {
-          int value = get_user_option(g_option[i].name);
-          if (g_verbose) fprintf(stderr, "Current value for user option %s is %d\n", opt, value);
-          printf("%d\n", value);
-        } else if (ival ==-1) {
-          if (g_verbose) fprintf(stderr, "Reset user option %s to default\n", opt);
-          clear_user_option(g_option[i].name);
-        } else {
-          if (g_verbose) fprintf(stderr, "Set user option %s to %d\n", opt, ival);
-          set_user_option(g_option[i].name, ival);
-        }
-        break;
-      }
-    }
-    if (i==Fl::OPTION_LAST)
-      fprintf(stderr, "Warning: Unrecognized user option \"%s\".\n", opt);
+    handle_user_option(opt, ival);
     g_batch_mode = 1;
     return 1;
   }
   if (cmd == 'S') { // system setting
-    int i;
-    for (i=0; i<Fl::OPTION_LAST; i++) {
-      if (g_option[i].name && strcmp(g_option[i].name, opt)==0) {
-        if (ival == -999) {
-          int value = get_system_option(g_option[i].name);
-          if (g_verbose) fprintf(stderr, "Current value for system option %s is %d\n", opt, value);
-          printf("%d\n", value);
-        } else if (ival ==-1) {
-          if (g_verbose) fprintf(stderr, "Reset system option %s to default\n", opt);
-          clear_system_option(g_option[i].name);
-        } else {
-          if (g_verbose) fprintf(stderr, "Set system option %s to %d\n", opt, ival);
-          set_system_option(g_option[i].name, ival);
-        }
-        break;
-      }
-    }
-    if (i==Fl::OPTION_LAST)
-      fprintf(stderr, "Warning: Unrecognized user option \"%s\".\n", opt);
+    handle_system_option(opt, ival);
+    g_batch_mode = 1;
+    return 1;
+  }
+  // check for -L, -LS, or -LU
+  if (strcmp(arg, "-L")==0 || strcmp(arg, "-LS")==0 || strcmp(arg, "-LU")==0) {
+    list_options(arg[2]);
     g_batch_mode = 1;
     return 1;
   }
@@ -258,7 +291,8 @@ int main(int argc,char **argv) {
   init_option_data();
 
   int i = 1;
-  if (Fl::args(argc, argv, i, read_command_line_args)==0) {
+  int args_processed = Fl::args(argc, argv, i, read_command_line_args);
+  if (args_processed < argc) {
     fprintf(stderr, "ERROR: Unrecognized command line option \"%s\".\n", argv[i]);
     return 1;
   }
