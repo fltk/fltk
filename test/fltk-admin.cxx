@@ -304,7 +304,6 @@ static void init_option_data() {
   g_option[Fl::OPTION_SHOW_SCALING] = show_zoom_factor;
 }
 
-#include <unistd.h>
 void check_write_permissions(int &sys, int &user) {
   char path[FL_PATH_MAX+1];
   sys = 0;
