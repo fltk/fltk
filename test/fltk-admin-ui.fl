@@ -61,7 +61,7 @@ Function {create_options_editor()} {open
   } {
     Fl_Group {} {
       label {Keyboard Focus Options} open
-      xywh {10 10 385 96} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 10 385 96} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Box {} {
         label {System:}
@@ -180,7 +180,7 @@ Default is off.} xywh {308 71 75 22} down_box BORDER_BOX labelsize 13
     }
     Fl_Group {} {
       label {Tooltip Options} open
-      xywh {10 115 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 115 385 65} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Choice wSystemShowTooltips {
         label {Show Tooltips:}
@@ -238,7 +238,7 @@ Default is on.} xywh {308 145 75 22} down_box BORDER_BOX labelsize 13
     }
     Fl_Group {} {
       label {Drag And Drop Options} open
-      xywh {10 190 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 190 385 65} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Choice wSystemDNDText {
         label {Allow dragging Text:}
@@ -296,7 +296,7 @@ Default is on.} xywh {308 220 75 22} down_box BORDER_BOX labelsize 13
     }
     Fl_Group {} {
       label {Native File Chooser Options} open
-      xywh {10 265 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 265 385 65} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Choice wSystemGTKText {
         label {Native File Chooser uses GTK:}
@@ -358,7 +358,7 @@ Default is on.} xywh {308 295 75 22} down_box BORDER_BOX labelsize 13
     }
     Fl_Group {} {
       label {Print dialog Options} open
-      xywh {10 340 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 340 385 65} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Choice wSystemPrintGTKText {
         label {Print dialog uses GTK:}
@@ -420,7 +420,7 @@ Default is on.} xywh {308 370 75 22} down_box BORDER_BOX labelsize 13
     }
     Fl_Group {} {
       label {Scaling Factor Options} open
-      xywh {10 415 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
+      xywh {10 415 385 65} box THIN_DOWN_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
       Fl_Choice wSystemShowZoomFactor {
         label {Transiently show scaling factor:}
