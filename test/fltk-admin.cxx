@@ -15,6 +15,7 @@
 //
 
 #include "fltk-admin.h"
+#include "fltk-admin-ui.h"
 
 #include <FL/Fl.H>
 #include <FL/filename.H>
@@ -210,47 +211,44 @@ static int read_command_line_args(int argc, char** argv, int& i) {
 // Fill the option names array with the names. Some entries may stay blank.
 static void init_option_data() {
   static Fl_Option_Data arrow_focus = {
-    "ArrowFocus", 0
-    // TODO: brief, desc
+    "ArrowFocus", 0,
+    "arrow keys will move focus beyond text input field"
   };
   g_option[Fl::OPTION_ARROW_FOCUS] = arrow_focus;
 
   static Fl_Option_Data visible_focus = {
-    "VisibleFocus", 1
-    // TODO: brief, desc
+    "VisibleFocus", 1,
+    "draw a dotted rectangle in widget with keyboard focus"
   };
   g_option[Fl::OPTION_VISIBLE_FOCUS] = visible_focus;
 
   static Fl_Option_Data dnd_text = {
-    "DNDText", 1
-    // TODO: brief, desc
+    "DNDText", 1,
+    "user can drag text from FLTK into other apps"
   };
   g_option[Fl::OPTION_DND_TEXT] = dnd_text;
 
   static Fl_Option_Data show_tooltips = {
     "ShowTooltips", 1,
-    "show or hide tooltips",
-    "If tooltips are enabled (default), hovering the mouse over a widget with a "
-    "tooltip text will open a little tooltip window until the mouse leaves "
-    "the widget. If disabled, no tooltip is shown."
+    "show or hide tooltips"
   };
   g_option[Fl::OPTION_SHOW_TOOLTIPS] = show_tooltips;
 
   static Fl_Option_Data fnfc_uses_gtk = {
-    "FNFCUsesGTK", 1
-    // TODO: brief, desc
+    "FNFCUsesGTK", 1,
+    "use GTK file chooser instead of FLTK if available"
   };
   g_option[Fl::OPTION_FNFC_USES_GTK] = fnfc_uses_gtk;
 
   static Fl_Option_Data print_use_gtk = {
-    "PrintUsesGTK", 1
-    // TODO: brief, desc
+    "PrintUsesGTK", 1,
+    "use GTK printer dialog instead of FLTK if available"
   };
   g_option[Fl::OPTION_PRINTER_USES_GTK] = print_use_gtk;
 
   static Fl_Option_Data show_zoom_factor = {
-    "ShowZoomFactor", 1
-    // TODO: brief, desc
+    "ShowZoomFactor", 1,
+    "show the zoom factor in a transient yellow window"
   };
   g_option[Fl::OPTION_SHOW_SCALING] = show_zoom_factor;
 }
@@ -267,8 +265,10 @@ int main(int argc,char **argv) {
   if (g_batch_mode)
     return 0;
 
-  // TODO: create and run the GUI
-  
+  Fl_Window *win = create_options_editor();
+  win->show();
+  Fl::run();
+
   return 0;
 }
 //

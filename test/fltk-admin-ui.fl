@@ -20,369 +20,468 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <FL/Fl_Preferences.H>} {private global
-}
-
-decl {\#include <FL/fl_ask.H>} {private global
+decl {\#include "fltk-admin.h"} {private global
 }
 
 decl {\#include <string.h>} {private global
 }
 
-decl {int opt[10][2];} {
-  comment {Copy of all options in user and system mode} private local
+decl {\#include <FL/Fl_Choice.H>} {public global
 }
 
-Function {refreshUI()} {
-  comment {Update the UI using the values in the opt array} open private return_type void
+Function {update_from_system_option(Fl_Choice *w)} {open return_type void
 } {
-  code {int mode = wUserOrSystem->value();
-wVisibleFocus->value(opt[Fl::OPTION_VISIBLE_FOCUS][mode]);
-wArrowFocus->value(opt[Fl::OPTION_ARROW_FOCUS][mode]);
-wShowTooltips->value(opt[Fl::OPTION_SHOW_TOOLTIPS][mode]);
-wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);
-wGTKText->value(opt[Fl::OPTION_FNFC_USES_GTK][mode]);
-wPrintGTKText->value(opt[Fl::OPTION_PRINTER_USES_GTK][mode]);
-wShowZoomFactor->value(opt[Fl::OPTION_SHOW_SCALING][mode]);} {}
+  code {int v = get_system_option(g_option[w->argument()].name);
+w->value(v==-1?2:v);} {}
 }
 
-Function {readPrefs()} {
-  comment {read all preferences and refresh the GUI} open private return_type void
+Function {update_from_user_option(Fl_Choice *w)} {open return_type void
 } {
-  code {// read all preferences and refresh the GUI
-{
-  Fl_Preferences prefs(Fl_Preferences::SYSTEM_L, "fltk.org", "fltk");
-  Fl_Preferences opt_prefs(prefs, "options");
-  opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1], 2);
-  opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1], 2);
-  opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][1], 2);
-  opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1], 2);
-  opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][1], 2);
-  opt_prefs.get("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK ][1], 2);
-  opt_prefs.get("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING ][1], 2);
-}
-{
-  Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
-  Fl_Preferences opt_prefs(prefs, "options");
-  opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0], 2);
-  opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0], 2);
-  opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][0], 2);
-  opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0], 2);
-  opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][0], 2);
-  opt_prefs.get("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK ][0], 2);
-  opt_prefs.get("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING ][0], 2);
-}
-refreshUI();} {}
+  code {int v = get_user_option(g_option[w->argument()].name);
+w->value(v==-1?2:v);} {}
 }
 
-Function {writePrefs()} {
-  comment {write all preferences using the array} open private return_type void
+Function {set_system_option(Fl_Widget *w, void *v)} {open return_type void
 } {
-  code {// write all preferences using the array
-{
-  Fl_Preferences prefs(Fl_Preferences::SYSTEM_L, "fltk.org", "fltk");
-  Fl_Preferences opt_prefs(prefs, "options");
-  if (opt[Fl::OPTION_ARROW_FOCUS][1]==2) opt_prefs.deleteEntry("ArrowFocus");
-  else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1]);
-  if (opt[Fl::OPTION_VISIBLE_FOCUS][1]==2) opt_prefs.deleteEntry("VisibleFocus");
-  else opt_prefs.set("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1]);
-  if (opt[Fl::OPTION_DND_TEXT][1]==2) opt_prefs.deleteEntry("DNDText");
-  else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][1]);
-  if (opt[Fl::OPTION_SHOW_TOOLTIPS][1]==2) opt_prefs.deleteEntry("ShowTooltips");
-  else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1]);
-  if (opt[Fl::OPTION_FNFC_USES_GTK][1]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
-  else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][1]);
-  if (opt[Fl::OPTION_PRINTER_USES_GTK][1]==2) opt_prefs.deleteEntry("PrintUsesGTK");
-  else opt_prefs.set("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK][1]);
-  if (opt[Fl::OPTION_SHOW_SCALING][1]==2) opt_prefs.deleteEntry("ShowZoomFactor");
-  else opt_prefs.set("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING][1]);
-}
-{
-  Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
-  Fl_Preferences opt_prefs(prefs, "options");
-  if (opt[Fl::OPTION_ARROW_FOCUS][0]==2) opt_prefs.deleteEntry("ArrowFocus");
-  else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0]);
-  if (opt[Fl::OPTION_VISIBLE_FOCUS][0]==2) opt_prefs.deleteEntry("VisibleFocus");
-  else opt_prefs.set("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0]);
-  if (opt[Fl::OPTION_DND_TEXT][0]==2) opt_prefs.deleteEntry("DNDText");
-  else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][0]);
-  if (opt[Fl::OPTION_SHOW_TOOLTIPS][0]==2) opt_prefs.deleteEntry("ShowTooltips");
-  else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0]);
-  if (opt[Fl::OPTION_FNFC_USES_GTK][0]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
-  else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][0]);
-  if (opt[Fl::OPTION_PRINTER_USES_GTK][0]==2) opt_prefs.deleteEntry("PrintUsesGTK");
-  else opt_prefs.set("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK][0]);
-  if (opt[Fl::OPTION_SHOW_SCALING][0]==2) opt_prefs.deleteEntry("ShowZoomFactor");
-  else opt_prefs.set("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING][0]);
-}} {}
+  code {Fl_Choice *o = (Fl_Choice*)w;
+set_system_option(g_option[o->argument()].name, o->mvalue()->argument());} {}
 }
 
-Function {show_global_settings_window()} {open return_type void
+Function {set_user_option(Fl_Widget *w, void *v)} {open return_type void
 } {
-  code {if (!global_settings_window)
-  make_global_settings_window();
-readPrefs();
-refreshUI();
-fl_message(
-        "WARNING!\\n\\n"
-        "The following dialog changes the user interface behavior\\n"
-        "of ALL FLTK applications, for the current user, or for \\n"
-        "ALL users on this machine.\\n\\n"
-        "Please choose these settings carefully, or reset\\n"
-        "user and system settings to \\"default\\".");
-global_settings_window->show();} {}
+  code {Fl_Choice *o = (Fl_Choice*)w;
+set_user_option(g_option[o->argument()].name, o->mvalue()->argument());} {}
 }
 
-Function {make_global_settings_window()} {open
+Function {create_options_editor()} {open
 } {
-  Fl_Window global_settings_window {
-    label {FLTK Preferences} open
-    xywh {566 245 400 531} type Double color 50 visible
+  Fl_Window options_editor {
+    label {FLTK Preferences} open selected
+    xywh {566 245 405 531} type Double color 50 align 80 visible
   } {
     Fl_Group {} {
       label {Keyboard Focus Options} open
-      xywh {10 10 380 100} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 10 385 96} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wVisibleFocus {
+      Fl_Box {} {
+        label {System:}
+        xywh {225 16 75 24} labelsize 13
+      }
+      Fl_Box {} {
+        label {User:}
+        xywh {308 16 75 24} labelsize 13
+      }
+      Fl_Choice wSystemVisibleFocus {
         label {Visible Keyboard Focus:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_VISIBLE_FOCUS][mode] = wVisibleFocus->value();} open
+        user_data {Fl::OPTION_VISIBLE_FOCUS} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_VISIBLE_FOCUS
 
 If visible focus is switched on, FLTK will draw a dotted rectangle inside the widget that will receive the next keystroke. If switched off, no such indicator will be drawn and keyboard navigation is disabled.
 
-Default is on.} xywh {245 40 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 40 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {10 10 31 20}
+          xywh {10 10 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {10 10 31 20} divider
+          xywh {10 10 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {10 10 31 20}
+          user_data {-1} user_data_type long
+          xywh {10 10 31 20} labelsize 13
         }
       }
-      Fl_Choice wArrowFocus {
+      Fl_Choice wUserVisibleFocus {
+        user_data {Fl::OPTION_VISIBLE_FOCUS} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_VISIBLE_FOCUS
+
+If visible focus is switched on, FLTK will draw a dotted rectangle inside the widget that will receive the next keystroke. If switched off, no such indicator will be drawn and keyboard navigation is disabled.
+
+Default is on.} xywh {308 40 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {10 10 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {10 10 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {10 10 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wSystemArrowFocus {
         label {Arrow Keys move Focus:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_ARROW_FOCUS][mode] = wArrowFocus->value();} open
+        user_data {Fl::OPTION_ARROW_FOCUS} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_ARROW_FOCUS
 
 When switched on, moving the text cursor beyond the start or end of the text in a text widget will change focus to the next widget. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus. Switch this on, if you want the old behavior of FLTK 1.1.
 
-Default is off.} xywh {245 75 100 25} down_box BORDER_BOX
+Default is off.} xywh {225 71 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {0 0 31 20}
+          xywh {0 0 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {0 0 31 20} divider
+          xywh {0 0 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {0 0 31 20}
+          user_data {-1} user_data_type long
+          xywh {0 0 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserArrowFocus {
+        user_data {Fl::OPTION_ARROW_FOCUS} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_ARROW_FOCUS
+
+When switched on, moving the text cursor beyond the start or end of the text in a text widget will change focus to the next widget. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus. Switch this on, if you want the old behavior of FLTK 1.1.
+
+Default is off.} xywh {308 71 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {0 0 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {0 0 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {0 0 31 20} labelsize 13
         }
       }
     }
     Fl_Group {} {
       label {Tooltip Options} open
-      xywh {10 120 380 65} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 115 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wShowTooltips {
+      Fl_Choice wSystemShowTooltips {
         label {Show Tooltips:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_SHOW_TOOLTIPS][mode] = wShowTooltips->value();} open
+        user_data {Fl::OPTION_SHOW_TOOLTIPS} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_SHOW_TOOLTIPS
 
 If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tooltip window until the mouse leaves the widget. If disabled, no tooltip is shown.
 
-Default is on.} xywh {245 150 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 145 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {10 10 31 20}
+          xywh {10 10 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {10 10 31 20} divider
+          xywh {10 10 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {10 10 31 20}
+          user_data {-1} user_data_type long
+          xywh {10 10 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserShowTooltips {
+        user_data {Fl::OPTION_SHOW_TOOLTIPS} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_SHOW_TOOLTIPS
+
+If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tooltip window until the mouse leaves the widget. If disabled, no tooltip is shown.
+
+Default is on.} xywh {308 145 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {10 10 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {10 10 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {10 10 31 20} labelsize 13
         }
       }
     }
     Fl_Group {} {
       label {Drag And Drop Options} open
-      xywh {10 194 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 190 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wDNDText {
+      Fl_Choice wSystemDNDText {
         label {Allow dragging Text:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_DND_TEXT][mode] = wDNDText->value();} open
+        user_data {Fl::OPTION_DND_TEXT} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_DND_TEXT
 
 If text drag-and-drop is enabled, the user can select and drag text from any text widget. If disabled, no dragging is possible, however dropping text from other applications still works.
 
-Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 220 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {30 30 31 20}
+          xywh {30 30 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {30 30 31 20} divider
+          xywh {30 30 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {30 30 31 20}
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserDNDText {
+        user_data {Fl::OPTION_DND_TEXT} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_DND_TEXT
+
+If text drag-and-drop is enabled, the user can select and drag text from any text widget. If disabled, no dragging is possible, however dropping text from other applications still works.
+
+Default is on.} xywh {308 220 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
         }
       }
     }
     Fl_Group {} {
       label {Native File Chooser Options} open
-      xywh {10 269 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 265 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wGTKText {
+      Fl_Choice wSystemGTKText {
         label {Native File Chooser uses GTK:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_FNFC_USES_GTK ][mode] = wGTKText->value();} open
+        user_data {Fl::OPTION_FNFC_USES_GTK} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_FNFC_USES_GTK
 
 If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser class
 calls the GTK open/save file dialogs when they are available on the platfom. If disabled, the Fl_Native_File_Chooser class
 always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is available.
 
-Default is on.} xywh {245 300 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 295 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {30 30 31 20}
+          xywh {30 30 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {30 30 31 20} divider
+          xywh {30 30 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {30 30 31 20}
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserGTKText {
+        user_data {Fl::OPTION_FNFC_USES_GTK} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_FNFC_USES_GTK
+
+If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser class
+calls the GTK open/save file dialogs when they are available on the platfom. If disabled, the Fl_Native_File_Chooser class
+always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is available.
+
+Default is on.} xywh {308 295 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
         }
       }
     }
     Fl_Group {} {
       label {Print dialog Options} open
-      xywh {10 345 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 340 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wPrintGTKText {
+      Fl_Choice wSystemPrintGTKText {
         label {Print dialog uses GTK:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_PRINTER_USES_GTK ][mode] = wPrintGTKText->value();} open
+        user_data {Fl::OPTION_PRINTER_USES_GTK} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_PRINTER_USES_GTK
 
 If 'Print dialog uses GTK' is enabled, the Fl_Printer class
 calls the GTK print dialog when it's available on the platfom. If disabled, the Fl_Printer class
 always uses FLTK's own print dialog even if GTK is available.
 
-Default is on.} xywh {245 366 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 370 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {30 30 31 20}
+          xywh {30 30 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {30 30 31 20} divider
+          xywh {30 30 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {30 30 31 20}
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserPrintGTKText {
+        user_data {Fl::OPTION_PRINTER_USES_GTK} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_PRINTER_USES_GTK
+
+If 'Print dialog uses GTK' is enabled, the Fl_Printer class
+calls the GTK print dialog when it's available on the platfom. If disabled, the Fl_Printer class
+always uses FLTK's own print dialog even if GTK is available.
+
+Default is on.} xywh {308 370 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
         }
       }
     }
     Fl_Group {} {
       label {Scaling Factor Options} open
-      xywh {10 421 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+      xywh {10 415 385 65} box THIN_UP_BOX color 50 labelfont 2 labelsize 15 align 21
     } {
-      Fl_Choice wShowZoomFactor {
+      Fl_Choice wSystemShowZoomFactor {
         label {Transiently show scaling factor:}
-        callback {int mode = wUserOrSystem->value();
-opt[Fl::OPTION_SHOW_SCALING ][mode] = wShowZoomFactor->value();} open
+        user_data {Fl::OPTION_SHOW_SCALING} user_data_type long
+        callback set_system_option open
         tooltip {OPTION_SHOW_SCALING
 
 If 'Transiently show scaling factor' is enabled, the library shows in a transient yellow window the display
 scaling factor value when it is changed. If disabled, no such transient window is used.
 
-Default is on.} xywh {245 442 100 25} down_box BORDER_BOX
+Default is on.} xywh {225 445 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_system_option(o);}
       } {
         MenuItem {} {
           label off
           user_data 0 user_data_type long
-          xywh {30 30 31 20}
+          xywh {30 30 31 20} labelsize 13
         }
         MenuItem {} {
           label on
           user_data 1 user_data_type long
-          xywh {30 30 31 20} divider
+          xywh {30 30 31 20} labelsize 13 divider
         }
         MenuItem {} {
           label default
-          user_data 2 user_data_type long
-          xywh {30 30 31 20}
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+      }
+      Fl_Choice wUserShowZoomFactor {
+        user_data {Fl::OPTION_SHOW_SCALING} user_data_type long
+        callback set_user_option open
+        tooltip {OPTION_SHOW_SCALING
+
+If 'Transiently show scaling factor' is enabled, the library shows in a transient yellow window the display
+scaling factor value when it is changed. If disabled, no such transient window is used.
+
+Default is on.} xywh {308 445 75 22} down_box BORDER_BOX labelsize 13
+        code0 {update_from_user_option(o);}
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20} labelsize 13
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} labelsize 13 divider
+        }
+        MenuItem {} {
+          label default
+          user_data {-1} user_data_type long
+          xywh {30 30 31 20} labelsize 13
         }
       }
     }
-    Fl_Choice wUserOrSystem {
-      callback {refreshUI();} open
-      tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default').} xywh {10 496 141 25} down_box BORDER_BOX
-    } {
-      MenuItem {} {
-        label {User Settings}
-        user_data 0 user_data_type long
-        xywh {0 0 31 20}
-      }
-      MenuItem {} {
-        label {System Settings}
-        user_data 1 user_data_type long
-        xywh {0 0 31 20}
-      }
-    }
     Fl_Button {} {
-      label Cancel
-      callback {global_settings_window->hide();}
-      xywh {230 496 75 25}
-    }
-    Fl_Button {} {
-      label OK
-      callback {writePrefs();
-global_settings_window->hide();}
-      xywh {315 496 75 25}
+      label Close
+      callback {options_editor->hide();}
+      xywh {295 494 75 25} color 50
     }
   }
-  code {readPrefs();
-  Fl::option(Fl::OPTION_SHOW_TOOLTIPS,1); // make sure tooltips are on !} {}
 }
