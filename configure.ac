@@ -1036,8 +1036,7 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
       AC_SUBST([UNAME])
       UNAME="$(uname -s)"
       AS_CASE([$UNAME],
-         [Linux], [LDFLAGS="$LDFLAGS -no-pie"],
-         [*], [CXXFLAGS="$CXXFLAGS -I../libdecor/build"]
+         [Linux], [LDFLAGS="$LDFLAGS -no-pie"]
       )
 
       AC_SEARCH_LIBS([dlopen], [dl])
