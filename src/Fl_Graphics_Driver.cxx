@@ -489,12 +489,12 @@ void Fl_Graphics_Driver::_rbox(int fill, int x, int y, int w, int h, int r) {
   if (fill) fl_end_polygon(); else fl_end_loop();
 }
 
-/** see fl_rrect() */
+/** see fl_rounded_rect() */
 void Fl_Graphics_Driver::rounded_rect(int x, int y, int w, int h, int r) {
   _rbox(0, x, y, w, h, r);
 }
 
-/** see fl_rrectf() */
+/** see fl_rounded_rectf() */
 void Fl_Graphics_Driver::rounded_rectf(int x, int y, int w, int h, int r) {
   _rbox(1, x, y, w, h, r);
 }
