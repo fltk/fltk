@@ -225,6 +225,14 @@ void gl_rect(int x, int y, int w, int h) {
   glEnd();
 }
 
+/**
+  Fills the given rectangle with the current color.
+  \see gl_rect(int x, int y, int w, int h)
+  */
+void gl_rectf(int x,int y,int w,int h) {
+  glRecti(x,y,x+w,y+h);
+}
+
 void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   if (!ld) ld = w*d;
   GLint row_length;

@@ -588,7 +588,7 @@ pacman -S mingw-w64-x86_64-glew
 </ul>
 
 \par  Source-level changes for OpenGL 3:
-\li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>,
+\li Put this in all OpenGL-using source files (instead of, or before if needed, \#include <FL/gl.h>,
 and before \#include <FL/glut.h> if you use GLUT):
 \code
 #if defined(__APPLE__)

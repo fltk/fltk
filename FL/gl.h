@@ -55,7 +55,9 @@
 #  endif
 
 #  ifdef __APPLE__ // PORTME: OpenGL path abstraction
-#    include <OpenGL/gl.h>
+#    if !defined(__gl3_h_) // make sure OpenGL/gl3.h was not included before
+#      include <OpenGL/gl.h>
+#    endif
 #  else
 #    include <GL/gl.h>
 #  endif  // __APPLE__ // PORTME: OpenGL Path abstraction
@@ -68,11 +70,7 @@ FL_EXPORT void gl_color(Fl_Color i);
 inline void gl_color(int c) {gl_color((Fl_Color)c);}
 
 FL_EXPORT void gl_rect(int x,int y,int w,int h);
-/**
-  Fills the given rectangle with the current color.
-  \see gl_rect(int x, int y, int w, int h)
-  */
-inline void gl_rectf(int x,int y,int w,int h) {glRecti(x,y,x+w,y+h);}
+FL_EXPORT void gl_rectf(int x,int y,int w,int h);
 
 FL_EXPORT void gl_font(int fontid, int size);
 FL_EXPORT int  gl_height();
