@@ -31,7 +31,6 @@ void toggle_overlays(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
-void show_global_settings_cb(Fl_Widget *, void *);
 
 class Fl_Window_Type : public Fl_Widget_Type {
 protected:
