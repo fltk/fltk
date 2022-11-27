@@ -53,10 +53,10 @@ Function {set_user_option(Fl_Widget *w, void *v)} {open return_type void
 set_user_option(g_option[o->argument()].name, o->mvalue()->argument());} {}
 }
 
-Function {create_options_editor()} {open
+Function {create_options_editor(int system_write_ok, int user_write_ok)} {open
 } {
   Fl_Window options_editor {
-    label {FLTK Preferences} open selected
+    label {FLTK Preferences} open
     xywh {566 245 405 531} type Double color 50 align 80 visible
   } {
     Fl_Group {} {
@@ -74,13 +74,14 @@ Function {create_options_editor()} {open
       Fl_Choice wSystemVisibleFocus {
         label {Visible Keyboard Focus:}
         user_data {Fl::OPTION_VISIBLE_FOCUS} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_VISIBLE_FOCUS
 
 If visible focus is switched on, FLTK will draw a dotted rectangle inside the widget that will receive the next keystroke. If switched off, no such indicator will be drawn and keyboard navigation is disabled.
 
 Default is on.} xywh {225 40 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -107,6 +108,7 @@ If visible focus is switched on, FLTK will draw a dotted rectangle inside the wi
 
 Default is on.} xywh {308 40 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -127,13 +129,14 @@ Default is on.} xywh {308 40 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemArrowFocus {
         label {Arrow Keys move Focus:}
         user_data {Fl::OPTION_ARROW_FOCUS} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_ARROW_FOCUS
 
 When switched on, moving the text cursor beyond the start or end of the text in a text widget will change focus to the next widget. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus. Switch this on, if you want the old behavior of FLTK 1.1.
 
 Default is off.} xywh {225 71 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -160,6 +163,7 @@ When switched on, moving the text cursor beyond the start or end of the text in 
 
 Default is off.} xywh {308 71 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -185,13 +189,14 @@ Default is off.} xywh {308 71 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemShowTooltips {
         label {Show Tooltips:}
         user_data {Fl::OPTION_SHOW_TOOLTIPS} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_SHOW_TOOLTIPS
 
 If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tooltip window until the mouse leaves the widget. If disabled, no tooltip is shown.
 
 Default is on.} xywh {225 145 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -218,6 +223,7 @@ If tooltips are enabled, hovering the mouse over a widget with a tooltip text wi
 
 Default is on.} xywh {308 145 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -243,13 +249,14 @@ Default is on.} xywh {308 145 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemDNDText {
         label {Allow dragging Text:}
         user_data {Fl::OPTION_DND_TEXT} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_DND_TEXT
 
 If text drag-and-drop is enabled, the user can select and drag text from any text widget. If disabled, no dragging is possible, however dropping text from other applications still works.
 
 Default is on.} xywh {225 220 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -276,6 +283,7 @@ If text drag-and-drop is enabled, the user can select and drag text from any tex
 
 Default is on.} xywh {308 220 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -301,7 +309,7 @@ Default is on.} xywh {308 220 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemGTKText {
         label {Native File Chooser uses GTK:}
         user_data {Fl::OPTION_FNFC_USES_GTK} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_FNFC_USES_GTK
 
 If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser class
@@ -310,6 +318,7 @@ always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is availa
 
 Default is on.} xywh {225 295 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -338,6 +347,7 @@ always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is availa
 
 Default is on.} xywh {308 295 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -363,7 +373,7 @@ Default is on.} xywh {308 295 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemPrintGTKText {
         label {Print dialog uses GTK:}
         user_data {Fl::OPTION_PRINTER_USES_GTK} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_PRINTER_USES_GTK
 
 If 'Print dialog uses GTK' is enabled, the Fl_Printer class
@@ -372,6 +382,7 @@ always uses FLTK's own print dialog even if GTK is available.
 
 Default is on.} xywh {225 370 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -400,6 +411,7 @@ always uses FLTK's own print dialog even if GTK is available.
 
 Default is on.} xywh {308 370 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -425,7 +437,7 @@ Default is on.} xywh {308 370 75 22} down_box BORDER_BOX labelsize 13
       Fl_Choice wSystemShowZoomFactor {
         label {Transiently show scaling factor:}
         user_data {Fl::OPTION_SHOW_SCALING} user_data_type long
-        callback set_system_option open
+        callback set_system_option open selected
         tooltip {OPTION_SHOW_SCALING
 
 If 'Transiently show scaling factor' is enabled, the library shows in a transient yellow window the display
@@ -433,6 +445,7 @@ scaling factor value when it is changed. If disabled, no such transient window i
 
 Default is on.} xywh {225 445 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_system_option(o);}
+        code1 {if (!system_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off
@@ -460,6 +473,7 @@ scaling factor value when it is changed. If disabled, no such transient window i
 
 Default is on.} xywh {308 445 75 22} down_box BORDER_BOX labelsize 13
         code0 {update_from_user_option(o);}
+        code1 {if (!user_write_ok) o->deactivate();}
       } {
         MenuItem {} {
           label off

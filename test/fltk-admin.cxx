@@ -31,6 +31,9 @@ int g_verbose = 0;
 
 int g_batch_mode = 0;
 
+int g_system_write_ok = 0;
+int g_user_write_ok = 0;
+
 
 void set_user_option(const char *name, int value) {
   Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
@@ -83,21 +86,24 @@ void print_usage(const char *argv0) {
   if (!app_name || !app_name[0])
     app_name = "fltk-admin";
   fprintf(stderr, "FLTK %d.%d.%d. Usage:\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-  fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-h] [-v] [-L] [-LS] [-LU] [-fltk_option]\n", app_name);
-  fprintf(stderr, "  Calling \"%s\" without options will launch in interactive mode.\n", app_name);
-  fprintf(stderr, "  Options start \"-S\" for system wide settings or \"-U\" for\n"
-                  "  user settings in current account.\n"
-                  "  Values can be \"0\" or \"OFF\" to clear, or \"1\" or \"OFF\" to set the option.\n"
-                  "  A values \"-1\" or \"DEFAULT\" set the option to its default value.\n"
-                  "  Values can be \"0\" and \"1\", or \"ON\" and \"OFF\".\n"
-                  "  If no value is given the current setting is returned as \"0\" or \"1\".\n");
-  fprintf(stderr, "  This version of FLTK supports the following options:\n");
+  fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-L] [-LS] [-LU] [-f] [-v] [-h]\n", app_name);
+  fprintf(stderr, "  -Soption[=value]  change or print system wide settings\n");
+  fprintf(stderr, "  -Uoption[=value]  change or print  user settings\n");
+  fprintf(stderr, "      Values can be 0 or OFF to clear, or 1 or ON to set the option.\n"
+                  "      The value -1 or DEFAULT sets the option to its default value.\n"
+                  "      If no value is given, the current setting is returned as -1, 0, or 1.\n");
+  fprintf(stderr, "  -L, -LS, -LU  lists all current settings, system settings, or user setting\n");
+  fprintf(stderr, "  -f  suppresses error messages concerning file access permissions\n");
+  fprintf(stderr, "  -v, --verbose  prints additional informatin in command line mode\n");
+  fprintf(stderr, "  -h, --help  prints this page\n");
+  fprintf(stderr, "  Calling %s without options will launch %s interactive mode.\n\n", app_name, app_name);
+  fprintf(stderr, "  This version of %s supports the following options:\n", app_name);
   for (int i=0; i<Fl::OPTION_LAST; i++) {
     if (g_option[i].name) {
       if (g_option[i].brief)
-        fprintf(stderr, "    %-16s %s\n", g_option[i].name, g_option[i].brief);
+        fprintf(stderr, "  %-16s %s\n", g_option[i].name, g_option[i].brief);
       else
-        fprintf(stderr, "    %s\n", g_option[i].name);
+        fprintf(stderr, "  %s\n", g_option[i].name);
     }
   }
 }
@@ -127,14 +133,18 @@ void handle_system_option(const char *opt, int ival) {
     if (g_option[i].name && strcmp(g_option[i].name, opt)==0) {
       if (ival == -999) {
         int value = get_system_option(g_option[i].name);
-        if (g_verbose) fprintf(stderr, "Current value for system option %s is %d\n", opt, value);
+        if (g_verbose) printf("Current value for system option %s is %d\n", opt, value);
         printf("%d\n", value);
       } else if (ival ==-1) {
-        if (g_verbose) fprintf(stderr, "Reset system option %s to default\n", opt);
+        if (g_verbose) printf("Reset system option %s to default\n", opt);
         clear_system_option(g_option[i].name);
       } else {
-        if (g_verbose) fprintf(stderr, "Set system option %s to %d\n", opt, ival);
+        if (g_verbose) printf("Set system option %s to %d\n", opt, ival);
         set_system_option(g_option[i].name, ival);
+      }
+      if ( (ival != -999) && !g_system_write_ok ) {
+        fprintf(stderr, "ERROR: No write permission for system options\n");
+        exit(1);
       }
       break;
     }
@@ -157,6 +167,10 @@ void handle_user_option(const char *opt, int ival) {
       } else {
         if (g_verbose) fprintf(stderr, "Set user option %s to %d\n", opt, ival);
         set_user_option(g_option[i].name, ival);
+      }
+      if ( (ival != -999) && !g_user_write_ok ) {
+        fprintf(stderr, "ERROR: No write permission for user options\n");
+        exit(1);
       }
       break;
     }
@@ -184,6 +198,10 @@ static int read_command_line_args(int argc, char** argv, int& i) {
   }
   if ( (strcmp(arg, "--verbose") == 0) || (strcmp(arg, "-v") == 0) ) {
     g_verbose = 1;
+    return 1;
+  }
+  if (strcmp(arg, "-f") == 0) { // suppress write access error
+    g_system_write_ok = g_user_write_ok = 1;
     return 1;
   }
   if (arg[0] == '-') {
@@ -286,9 +304,32 @@ static void init_option_data() {
   g_option[Fl::OPTION_SHOW_SCALING] = show_zoom_factor;
 }
 
+#include <unistd.h>
+void check_write_permissions(int &sys, int &user) {
+  char path[FL_PATH_MAX+1];
+  sys = 0;
+  Fl_Preferences sys_prefs(Fl_Preferences::SYSTEM_L, "fltk.org", "fltk");
+  if (sys_prefs.file_access() & Fl_Preferences::SYSTEM_WRITE_OK) {
+    path[0] = 0;
+    sys_prefs.filename(path, FL_PATH_MAX);
+    if ( path[0] && (fl_access(path, 2) == 0) ) // W_OK
+      sys = 1;
+  }
+  user = 0;
+  Fl_Preferences user_prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
+  if (user_prefs.file_access() & Fl_Preferences::USER_WRITE_OK) {
+    path[0] = 0;
+    user_prefs.filename(path, FL_PATH_MAX);
+    if ( path[0] && (fl_access(path, 2) == 0) ) // W_OK
+      user = 1;
+  }
+}
+
 
 int main(int argc,char **argv) {
   init_option_data();
+
+  check_write_permissions(g_system_write_ok, g_user_write_ok);
 
   int i = 1;
   int args_processed = Fl::args(argc, argv, i, read_command_line_args);
@@ -299,12 +340,9 @@ int main(int argc,char **argv) {
   if (g_batch_mode)
     return 0;
 
-  Fl_Window *win = create_options_editor();
+  Fl_Window *win = create_options_editor(g_system_write_ok, g_user_write_ok);
   win->show(argc, argv);
   Fl::run();
 
   return 0;
 }
-//
-///// \}
-//
