@@ -2162,13 +2162,13 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return Fl_Graphics_Driver::default_driver().get_font_sizes(fnum, sizep);
 }
 
-/** Current value of the GUI scaling factor for screen number \p n */
+/** Current value of the GUI scaling factor for screen number \p n (n ∈ [0 , Fl::screen_count()-1]) */
 float Fl::screen_scale(int n) {
   if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return 1.;
   return Fl::screen_driver()->scale(n);
 }
 
-/** Sets the value of the GUI scaling factor for screen number \p n.
+/** Sets the value of the GUI scaling factor for screen number \p n (n ∈ [0 , Fl::screen_count()-1]).
  Also sets the scale factor value of all windows mapped to screen number \p n, if any.
  */
 void Fl::screen_scale(int n, float factor) {
