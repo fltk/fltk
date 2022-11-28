@@ -45,6 +45,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     and Fl_Image::data_h() give the width and height of the image data.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.
+  - New Fl_ICO_Image class to read Windows .ico icon files.
   - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
     graphics to SVG or EPS files, respectively.
   - Windows platform: added support for using a manifest to set the

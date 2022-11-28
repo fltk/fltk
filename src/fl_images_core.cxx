@@ -2,7 +2,7 @@
 // FLTK images library core.
 //
 // Copyright 1997-2010 by Easy Software Products.
-// Copyright 2011-2021 by Bill Spitzak and others.
+// Copyright 2011-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,7 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_SVG_Image.H>
+#include <FL/Fl_ICO_Image.H>
 #include <FL/fl_utf8.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -94,6 +95,9 @@ fl_check_images(const char *name,               // I - Filename
 
   if (memcmp(header, "BM", 2) == 0)     // BMP file
     return new Fl_BMP_Image(name);
+
+  if (memcmp(header, "\0\0\1\0", 4) == 0 && header[5] == 0)   // ICO file
+    return new Fl_ICO_Image(name);
 
   // PNM
 
