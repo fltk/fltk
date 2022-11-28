@@ -163,6 +163,10 @@ int compile_strings = 0;        // fluic -cs
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
+/// command line arguments override settings in the projectfile
+Fd_String g_code_filename_arg;
+Fd_String g_header_filename_arg;
+
 /** \var int Project::header_file_set
  If set, commandline overrides header file name in .fl file.
  */
@@ -1904,23 +1908,21 @@ void update_sourceview_timer(void*)
  \return number of arguments used; if 0, the argument is not supported
  */
 static int arg(int argc, char** argv, int& i) {
-  if (argv[i][0]!='-')
+  if (argv[i][0] != '-')
     return 0;
   if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
   if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
-    P.code_file_name = argv[i+1];
-    P.code_file_set  = 1;
+    g_code_filename_arg = argv[i+1];
     batch_mode++;
     i += 2;
     return 2;
   }
   if (argv[i][1] == 'h' && !argv[i][2]) {
-    if (i+1 < argc) {
-      P.header_file_name = argv[i+1];
-      P.header_file_set  = 1;
+    if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
+      g_header_filename_arg = argv[i+1];
       batch_mode++;
       i += 2;
       return 2;
@@ -2035,6 +2037,16 @@ int main(int argc,char **argv) {
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
   undo_resume();
+
+  // command line args override code and header filenams from the project file
+  if (!g_code_filename_arg.empty()) {
+    P.code_file_set = 1;
+    P.code_file_name = g_code_filename_arg;
+  }
+  if (!g_header_filename_arg.empty()) {
+    P.header_file_set = 1;
+    P.header_file_name = g_header_filename_arg;
+  }
 
   if (update_file) {            // fluid -u
     write_file(c,0);

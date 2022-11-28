@@ -118,6 +118,9 @@ public:
 
 extern Project P;
 
+extern Fd_String g_code_filename_arg;
+extern Fd_String g_header_filename_arg;
+
 // ---- public functions
 
 extern void set_filename(const char *c);
