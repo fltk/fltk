@@ -1,7 +1,7 @@
 //
 // PNG image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,13 +28,14 @@
   and alpha-based transparency.
 */
 class FL_EXPORT Fl_PNG_Image : public Fl_RGB_Image {
-
+  friend class Fl_ICO_Image;
 public:
 
   Fl_PNG_Image(const char* filename);
   Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int datasize);
 private:
-  void load_png_(const char *name_png, const unsigned char *buffer_png, int datasize);
+  Fl_PNG_Image(const char *filename, int offset); // used by Fl_ICO_Image
+  void load_png_(const char *name_png, int offset, const unsigned char *buffer_png, int datasize);
 };
 
 // Support functions to write PNG image files (since 1.4.0)
