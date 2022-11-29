@@ -1089,6 +1089,41 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           AC_MSG_NOTICE([--enable-wayland: Pango libs and/or headers could not be found.])
           AC_MSG_ERROR([Aborting.])
       ])
+      
+      dnl check for Xinerama, Xcursor, Xfixes, Xrender, Xregion.h
+      AS_IF([test x$enable_x11 != xno], [
+        xinerama_found=no
+        AS_IF([$PKGCONFIG --exists xinerama], [
+          AC_DEFINE(HAVE_XINERAMA)
+          LIBS="$LIBS $($PKGCONFIG --libs xinerama)"
+          xinerama_found=yes
+        ])
+
+        xcursor_found=no
+        AS_IF([$PKGCONFIG --exists xcursor], [
+          AC_DEFINE(HAVE_XCURSOR)
+          LIBS="$LIBS $($PKGCONFIG --libs xcursor)"
+          xcursor_found=yes
+        ])
+
+        xfixes_found=no
+        AS_IF([$PKGCONFIG --exists xfixes], [
+          AC_DEFINE(HAVE_XFIXES)
+          LIBS="$LIBS $($PKGCONFIG --libs xfixes)"
+          xfixes_found=yes
+        ])
+      
+        xrender_found=no
+        AS_IF([$PKGCONFIG --exists xrender], [
+          AC_DEFINE(HAVE_XRENDER)
+          LIBS="$LIBS $($PKGCONFIG --libs xrender)"
+          xrender_found=yes
+        ])
+
+        AC_CHECK_HEADER([X11/Xregion.h], [
+          AC_DEFINE([HAVE_X11_XREGION_H])
+        ], [], [#include <X11/Xlib.h>])
+      ])
 
     ], [
 
