@@ -238,8 +238,15 @@ static void draw_search(Fl_Color col)
 static void draw_arrow1(Fl_Color col)
 {
   fl_color(col);
-  BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,-0.4); EP;
-  BP; vv(0.0,0.8); vv(0.8,0.0); vv(0.0,-0.8); vv(0.0,-0.4); vv(0.0,0.4); EP;
+  if (fl_graphics_driver->can_fill_non_convex_polygon()) {
+    // draw the arrow as a 7-vertex filled polygon
+    BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,0.8); vv(0.8,0.0);
+    vv(0.0,-0.8); vv(0.0,-0.4); EP;
+  } else {
+    // draw the arrow as a rectangle plus a triangle
+    BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,-0.4); EP;
+    BP; vv(0.0,0.8); vv(0.8,0.0); vv(0.0,-0.8); vv(0.0,-0.4); vv(0.0,0.4); EP;
+  }
   set_outline_color(col);
   BC; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,0.8); vv(0.8,0.0);
       vv(0.0,-0.8); vv(0.0,-0.4); EC;

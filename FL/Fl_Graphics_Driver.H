@@ -316,6 +316,8 @@ public:
   virtual void fixloop();
   virtual void end_polygon();
   virtual void end_complex_polygon();
+  // default implementation is most probably enough
+  virtual bool can_fill_non_convex_polygon() { return true; }
   virtual void gap();
   virtual void circle(double x, double y, double r);
   virtual void arc(double x, double y, double r, double start, double end);

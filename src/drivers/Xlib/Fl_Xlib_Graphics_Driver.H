@@ -193,6 +193,7 @@ protected:
   void end_loop();
   void end_polygon();
   void end_complex_polygon();
+  bool can_fill_non_convex_polygon();
   void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   virtual void arc_unscaled(int x, int y, int w, int h, double a1, double a2);

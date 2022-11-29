@@ -76,6 +76,10 @@ void Fl_Xlib_Graphics_Driver::end_complex_polygon() {
   if (n>2) XFillPolygon(fl_display, fl_window, gc_, short_point, n, 0, 0);
 }
 
+bool Fl_Xlib_Graphics_Driver::can_fill_non_convex_polygon() {
+  return false;
+}
+
 // shortcut the closed circles so they use XDrawArc:
 // warning: these do not draw rotated ellipses correctly!
 // See fl_arc.c for portable version.
