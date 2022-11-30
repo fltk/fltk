@@ -411,6 +411,25 @@ void draw_complex(ComplexShapesTest *p) {
   fl_vertex(w, h); fl_vertex(-w, h);
   fl_end_loop();
   fl_pop_matrix();
+  // -- a rectangle with a bezier curve top
+  fl_push_matrix();
+  fl_translate(a+dx+100, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  fl_vertex(-w, 0);
+  fl_curve(-w+3, 0, -w+3, -h, w-3, h, w-3, 0);
+  fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w, 0);
+  fl_curve(-w+3, 0, 0, -h, 0, h, w-3, 0);
+  fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_loop();
+  fl_pop_matrix();
 
 
   // Test fl_begin_points(), fl_end_points()

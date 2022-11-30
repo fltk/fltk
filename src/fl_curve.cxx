@@ -46,21 +46,22 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
   fl_transformed_vertex(x,y);
 
   double x1 = fl_transform_x(X1,Y1);
-  double yy1 = fl_transform_y(X1,Y1);
+  double y1 = fl_transform_y(X1,Y1);
   double x2 = fl_transform_x(X2,Y2);
   double y2 = fl_transform_y(X2,Y2);
   double x3 = fl_transform_x(X3,Y3);
   double y3 = fl_transform_y(X3,Y3);
 
   // find the area:
-  double a = fabs((x-x2)*(y3-yy1)-(y-y2)*(x3-x1));
-  double b = fabs((x-x3)*(y2-yy1)-(y-y3)*(x2-x1));
+  double a = fabs((x-x2)*(y3-y1)-(y-y2)*(x3-x1));
+  double b = fabs((x-x3)*(y2-y1)-(y-y3)*(x2-x1));
   if (b > a) a = b;
 
   // use that to guess at the number of segments:
   int nSeg = int(sqrt(a)/4);
   if (nSeg > 1) {
     if (nSeg > 100) nSeg = 100; // make huge curves not hang forever
+    if (nSeg < 9) nSeg = 9; // make tiny curevs look bearable
 
     double e = 1.0/nSeg;
 
@@ -74,9 +75,9 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
     double dx2 = dx3 + 2*xb*e*e;
 
     // calculate the coefficients of 3rd order equation:
-    double ya = (y3-3*y2+3*yy1-y);
-    double yb = 3*(y2-2*yy1+y);
-    double yc = 3*(yy1-y);
+    double ya = (y3-3*y2+3*y1-y);
+    double yb = 3*(y2-2*y1+y);
+    double yc = 3*(y1-y);
     // calculate the forward differences:
     double dy1 = ((ya*e+yb)*e+yc)*e;
     double dy3 = 6*ya*e*e*e;
