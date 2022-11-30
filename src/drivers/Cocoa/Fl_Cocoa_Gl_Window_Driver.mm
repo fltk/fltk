@@ -56,6 +56,12 @@ Fl_Cocoa_Gl_Window_Driver::Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) :
 }
 
 
+Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
+{
+  return new Fl_Cocoa_Gl_Window_Driver(w);
+}
+
+
 static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
 {
   NSOpenGLPixelFormatAttribute attribs[32];

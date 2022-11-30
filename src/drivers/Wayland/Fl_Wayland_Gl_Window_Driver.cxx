@@ -23,6 +23,9 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Gl_Window_Driver.H"
+#ifdef FLTK_USE_X11
+#  include "../X11/Fl_X11_Gl_Window_Driver.H"
+#endif
 #include <wayland-egl.h>
 #include <EGL/egl.h>
 #include <FL/gl.h>
@@ -70,6 +73,15 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   egl_window = NULL;
   egl_surface = NULL;
   egl_swap_in_progress = false;
+}
+
+
+Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
+{
+#ifdef FLTK_USE_X11
+  if (!Fl_Wayland_Screen_Driver::wl_display) return new Fl_X11_Gl_Window_Driver(w);
+#endif
+  return new Fl_Wayland_Gl_Window_Driver(w);
 }
 
 

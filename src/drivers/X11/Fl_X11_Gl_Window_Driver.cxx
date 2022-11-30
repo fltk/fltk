@@ -44,6 +44,13 @@ public:
   }
 };
 
+#ifndef FLTK_USE_WAYLAND
+Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
+{
+  return new Fl_X11_Gl_Window_Driver(w);
+}
+#endif
+
 void Fl_X11_Gl_Window_Driver::draw_string_legacy(const char* str, int n) {
   draw_string_legacy_get_list(str, n);
 }

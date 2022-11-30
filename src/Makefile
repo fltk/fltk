@@ -205,16 +205,12 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
-GLCPPFILES_OSX = drivers/Cocoa/fl_macOS_gl_platform_init.cxx
 GLOBJCPPFILES = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.mm
-GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx \
-		 drivers/X11/fl_X11_gl_platform_init.cxx
+GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
 GLCPPFILES_XFT = $(GLCPPFILES_X11)
 GLCPPFILES_CAIRO = $(GLCPPFILES_X11)
-GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx \
-		 drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx
-GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx \
-		     drivers/Wayland/fl_wayland_gl_platform_init.cxx
+GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
+GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
 GLCPPFILES_WAYLANDX11 = $(GLCPPFILES_WAYLAND) \
 		        drivers/X11/Fl_X11_Gl_Window_Driver.cxx
 

@@ -53,6 +53,12 @@ public:
 };
 
 
+Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
+{
+  return new Fl_WinAPI_Gl_Window_Driver(w);
+}
+
+
 Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_WinAPI_Gl_Choice *g = (Fl_WinAPI_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);

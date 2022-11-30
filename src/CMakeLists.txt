@@ -428,22 +428,20 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
 if (OPTION_USE_WAYLAND)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES}
-    drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
-    drivers/Wayland/fl_wayland_gl_platform_init.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx)
   set (GL_DRIVER_HEADER_FILES drivers/Wayland/Fl_Wayland_Gl_Window_Driver.H)
   if (FLTK_USE_X11)
     list (APPEND GL_DRIVER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
     list (APPEND GL_DRIVER_HEADER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.H)
   endif (FLTK_USE_X11)
 elseif (FLTK_USE_X11)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx drivers/X11/fl_X11_gl_platform_init.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/X11/Fl_X11_Gl_Window_Driver.cxx)
   set (GL_DRIVER_HEADER_FILES drivers/X11/Fl_X11_Gl_Window_Driver.H)
 elseif (APPLE)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.mm drivers/Cocoa/fl_macOS_gl_platform_init.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.mm)
   set (GL_DRIVER_HEADER_FILES drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.H)
 elseif (WIN32)
-  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx drivers/WinAPI/fl_WinAPI_gl_platform_init.cxx)
+  set (GL_DRIVER_FILES ${GL_DRIVER_FILES} drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx)
   set (GL_DRIVER_HEADER_FILES drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.H)
 endif (OPTION_USE_WAYLAND)
 
