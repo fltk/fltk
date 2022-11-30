@@ -243,6 +243,8 @@ public:
   // support of "complex shapes"
   void push_matrix();
   void pop_matrix();
+  void load_identity();
+  void load_matrix(double a, double b, double c, double d, double x, double y);
   void mult_matrix(double a, double b, double c, double d, double x, double y);
   void rotate(double d);
   void translate(double x,double y);

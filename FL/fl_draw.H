@@ -551,6 +551,19 @@ inline void fl_rotate(double d) {
   fl_graphics_driver->rotate(d);
 }
 /**
+  Set the transformation matrix to identity.
+ */
+inline void fl_load_identity() {
+  fl_graphics_driver->load_identity();
+}
+/**
+ Set the current transformation matrix.
+ \param[in] a,b,c,d,x,y transformation matrix elements
+ */
+inline void fl_load_matrix(double a, double b, double c, double d, double x, double y) {
+  fl_graphics_driver->load_matrix(a, b, c, d, x, y);
+}
+/**
   Concatenate another transformation onto the current one.
 
   \param[in] a,b,c,d,x,y transformation matrix elements such that

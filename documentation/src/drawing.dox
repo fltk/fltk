@@ -557,6 +557,12 @@ severely limits the accuracy of these functions for complex
 graphics, so use OpenGL when greater accuracy and/or performance
 is required.
 
+void fl_load_matrix(double a,double b,double c,double d,double x,double y)
+void fl_load_identity()
+
+\par
+Set the current transformation.
+
 void fl_push_matrix() <br>
 void fl_pop_matrix()
 
