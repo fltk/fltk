@@ -16,106 +16,429 @@
 
 #include "unittests.h"
 
+#include <config.h>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Hor_Value_Slider.H>
+#include <FL/Fl_Dial.H>
+#include <FL/Fl_Positioner.H>
 #include <FL/fl_draw.H>
 
-#if 0
-
-// TODO:
-void fl_push_matrix()
-void fl_pop_matrix()
-
-void fl_scale(double x,double y)
-void fl_scale(double x)
-void fl_translate(double x,double y)
-void fl_rotate(double d)
-void fl_mult_matrix(double a,double b,double c,double d,double x,double y)
-
-double fl_transform_x(double x, double y)
-double fl_transform_y(double x, double y)
-double fl_transform_dx(double x, double y)
-double fl_transform_dy(double x, double y)
-void fl_transformed_vertex(double xf, double yf)
-
-void fl_begin_points()
-void fl_end_points()
-
-void fl_begin_line()
-void fl_end_line()
-
-void fl_begin_loop()
-void fl_end_loop()
-
-void fl_begin_polygon()
-void fl_end_polygon()
-
-void fl_begin_complex_polygon()
-void fl_gap()
-void fl_end_complex_polygon()
-
-void fl_vertex(double x,double y)
-
-void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
-
-void fl_arc(double x, double y, double r, double start, double end)
-void fl_circle(double x, double y, double r)
-
-
+#if HAVE_GL
+#include <FL/Fl_Gl_Window.H>
 #endif
 
 //
-//------- test Complex Shape drawing capabilities of this implementation ----------
+// --- test drawing circles and arcs ------
 //
-class ComplexShapesTest : public Fl_Box {
+
+class ComplexShapesTest;
+
+void draw_complex(ComplexShapesTest *p);
+
+#if HAVE_GL
+
+class GLComplexShapesTest : public Fl_Gl_Window {
 public:
-  static Fl_Widget *create() {
-    return new ComplexShapesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
-  }
-  ComplexShapesTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
-    label("Testing complex shape drawing.\n\n"
-          "Complex Shapes in FLTK are rendered using floating point coordinates "
-          "which can be transformed through a matrix.");
-    align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
-    box(FL_BORDER_BOX);
+  GLComplexShapesTest(int x, int y, int w, int h)
+  : Fl_Gl_Window(x, y, w, h) {
+    box(FL_FLAT_BOX);
+    end();
   }
   void draw() {
-    Fl_Box::draw();
-
-    int i, a = x()+10, b = y()+10; fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    // testing fl_xyline(x, y, x1)
-    fl_color(FL_RED); fl_point(a+10, b+10); fl_point(a+20, b+10);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+10, a+20);
-    // testing fl_xyline(x, y, x1, y2);
-    fl_color(FL_RED); fl_point(a+10, b+20); fl_point(a+20, b+20);
-    fl_point(a+20, b+30);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+20, a+20, b+30);
-    // testing fl_xyline(x, y, x1, y2, x3);
-    fl_color(FL_RED); fl_point(a+10, b+40); fl_point(a+20, b+40);
-    fl_point(a+20, b+50); fl_point(a+30, b+50);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+40, a+20, b+50, a+30);
-    //+++ add testing for the fl_yxline commands!
-    // testing fl_loop(x,y, x,y, x,y, x, y)
-    fl_color(FL_RED); fl_point(a+60, b+60); fl_point(a+90, b+60);
-    fl_point(a+60, b+90); fl_point(a+90, b+90);
-    fl_color(FL_BLACK);
-    fl_loop(a+60, b+60, a+90, b+60, a+90, b+90, a+60, b+90);
-
-    a = x()+120, b = y()+10; fl_color(FL_BLACK); fl_rect(a, b, 203, 203);
-    a += 101; b += 101;
-    fl_color(0xff888800);
-    for (i=-80; i<=80; i+=20) fl_line(a, b, a+i, b-100);
-    fl_color(0xff444400);
-    for (i=-80; i<=80; i+=20) fl_line(a, b, a+i, b+100);
-    fl_color(0x88ff8800);
-    for (i=-80; i<=80; i+=20) fl_line(a, b, a-100, b+i);
-    fl_color(0x44ff4400);
-    for (i=-80; i<=80; i+=20) fl_line(a, b, a+100, b+i);
-    fl_color(0x8888ff00);
-    fl_line(a, b, a-100, b-100);
-    fl_line(a, b, a+100, b-100);
-    fl_line(a, b, a+100, b+100);
-    fl_line(a, b, a-100, b+100);
+    draw_begin();
+    Fl_Window::draw();
+    draw_complex((ComplexShapesTest*)parent());
+    draw_end();
   }
 };
 
-//UnitTest lines(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);
+#endif
+
+class NativeComplexShapesTest : public Fl_Window {
+public:
+  NativeComplexShapesTest(int x, int y, int w, int h)
+  : Fl_Window(x, y, w, h) {
+    box(FL_FLAT_BOX);
+    end();
+  }
+  void draw() {
+    Fl_Window::draw();
+    draw_complex((ComplexShapesTest*)parent());
+  }
+};
+
+//
+//------- test the compelx shape drawing capabilities of this implementation ----------
+//
+class ComplexShapesTest : public Fl_Group {
+  NativeComplexShapesTest *native_test_window;
+#if HAVE_GL
+  GLComplexShapesTest *gl_test_window;
+#endif
+  static void update_cb(Fl_Widget *, void *v) {
+    ComplexShapesTest *This = (ComplexShapesTest*)v;
+    This->native_test_window->redraw();
+#if HAVE_GL
+    This->gl_test_window->redraw();
+#endif
+  }
+public:
+  Fl_Hor_Value_Slider *scale;
+  Fl_Dial *rotate;
+  Fl_Positioner *position;
+  void set_transformation() {
+    fl_translate(position->xvalue(), position->yvalue());
+    fl_rotate(-rotate->value());
+    fl_scale(scale->value(), scale->value());
+  }
+  static Fl_Widget *create() {
+    return new ComplexShapesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+  }
+  ComplexShapesTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+    label("Testing complex shape drawing.");
+    align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
+    box(FL_BORDER_BOX);
+
+    int a = x+16, b = y+34;
+    Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
+    t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    native_test_window = new NativeComplexShapesTest(a+23, b-1, 200, 200);
+
+    t = new Fl_Box(a, b, 18, 18, "1");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex drawing with transformations.\n\n"
+               // Description:
+               "Draw a point pattern, an open line, a closed line, and a covenx polygon.\n\n"
+               // Things to look out for:
+               "Use the controls at the bottom right to scale, rotate, and move the patterns."
+               );
+    b+=44;
+    t = new Fl_Box(a, b, 18, 18, "2");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex polygons.\n\n"
+               // Description:
+               "Draw polygons at different leves of complexity. "
+               "All polygons should be within the blue boundaries\n\n"
+               // Things to look out for:
+               "1: a convex polygon\n"
+               "2: a non-convex polygon\n"
+               "3: two polygons in a single operation\n"
+               "4: a polygon with a square hole in it"
+               );
+    b+=44;
+    t = new Fl_Box(a, b, 18, 18, "3");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex polygons with arcs.\n\n"
+               // Description:
+               "Draw polygons with an arc section. "
+               "All polygons should be within the blue boundaries\n\n"
+               // Things to look out for:
+               "1: a polygon with a camel hump\n"
+               "2: a polygon with a camel dip"
+               );
+#if HAVE_GL
+
+    a = x+16+250, b = y+34;
+    t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
+    t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+
+    gl_test_window = new GLComplexShapesTest(a+31, b-1, 200, 200);
+
+    t = new Fl_Box(a, b, 26, 18, "1a");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex drawing with transformations.\n\n"
+               // Description:
+               "Draw a point pattern, an open line, a closed line, and a convex polygon.\n\n"
+               // Things to look out for:
+               "Use the controls at the bottom right to scale, rotate, and move the patterns."
+               );
+    b+=44;
+    t = new Fl_Box(a, b, 28, 18, "2a");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex polygons.\n\n"
+               // Description:
+               "Draw polygons at different leves of complexity. "
+               "All polygons should be within the blue boundaries\n\n"
+               // Things to look out for:
+               "1: a convex polygon\n"
+               "2: a non-convex polygon\n"
+               "3: two polygons in a single operation\n"
+               "4: a polygon with a square hole in it"
+               );
+    b+=44;
+    t = new Fl_Box(a, b, 28, 18, "3a");
+    t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
+    t->tooltip(// Title:
+               "Testing complex polygons with arcs.\n\n"
+               // Description:
+               "Draw polygons with an arc section. "
+               "All polygons should be within the blue boundaries\n\n"
+               // Things to look out for:
+               "1: a polygon with a camel hump\n"
+               "2: a polygon with a camel dip"
+               );
+#endif
+
+    a = TESTAREA_X+TESTAREA_W-250;
+    b = TESTAREA_Y+TESTAREA_H-50;
+
+    scale = new Fl_Hor_Value_Slider(a, b+10, 120, 20, "Scale:");
+    scale->align(FL_ALIGN_TOP_LEFT);
+    scale->range(0.8, 1.2);
+    scale->value(1.0);
+    scale->callback(update_cb, this);
+
+    rotate = new Fl_Dial(a+140, b, 40, 40, "Rotate:");
+    rotate->align(FL_ALIGN_TOP_LEFT);
+    rotate->angles(0, 360);
+    rotate->range(-180.0, 180.0);
+    rotate->value(0.0);
+    rotate->callback(update_cb, this);
+
+    position = new Fl_Positioner(a+200, b, 40, 40, "Offset:");
+    position->align(FL_ALIGN_TOP_LEFT);
+    position->xbounds(-10, 10);
+    position->ybounds(-10, 10);
+    position->value(0.0, 0.0);
+    position->callback(update_cb, this);
+
+    t = new Fl_Box(a-1, b-1, 1, 1);
+    resizable(t);
+  }
+};
+
+void convex_shape(int w, int h) {
+  fl_vertex(-w/2, -h);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w, -h/2);
+}
+
+void complex_shape(int w, int h) {
+  fl_vertex(-w/2, -h);
+  fl_vertex(0, -h/2);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w/2, 0);
+  fl_vertex(-w, -h/2);
+}
+
+void two_complex_shapes(int w, int h) {
+  fl_vertex(-w/2, -h);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h-3);
+  fl_gap();
+  fl_vertex(w-3, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w, -h/2);
+}
+
+void complex_shape_with_hole(int w, int h) {
+  int w2 = w/3, h2 = h/3;
+  // clockwise
+  fl_vertex(-w/2, -h);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w, -h/2);
+  fl_gap();
+  // counterclockwise
+  fl_vertex(-w2, -h2);
+  fl_vertex(-w2,  h2);
+  fl_vertex( w2,  h2);
+  fl_vertex( w2, -h2);
+}
+
+void draw_complex(ComplexShapesTest *p) {
+  int a = 0, b = 0, dx = 20, dy = 20, w = 10, h = 10;
+  int w2 = w/3, h2 = h/3;
+  // ---- 1: draw a random shape
+  fl_color(FL_BLACK);
+  // -- points
+  fl_push_matrix();
+  fl_translate(a+dx, b+dy);
+  p->set_transformation();
+  fl_begin_points();
+  convex_shape(w, h);
+  fl_end_points();
+  fl_pop_matrix();
+  // -- lines
+  fl_push_matrix();
+  fl_translate(a+dx+50, b+dy);
+  p->set_transformation();
+  fl_begin_line();
+  convex_shape(w, h);
+  fl_end_line();
+  fl_pop_matrix();
+  // -- line loop
+  fl_push_matrix();
+  fl_translate(a+dx+100, b+dy);
+  p->set_transformation();
+  fl_begin_loop();
+  convex_shape(w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- polygon
+  fl_push_matrix();
+  fl_translate(a+dx+150, b+dy);
+  p->set_transformation();
+  fl_begin_polygon();
+  convex_shape(w, h);
+  fl_end_polygon();
+  fl_pop_matrix();
+
+  // ---- 2: draw a complex shape
+  b += 44;
+  // -- covex polygon drawn in complex mode
+  fl_push_matrix();
+  fl_translate(a+dx, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  convex_shape(w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  convex_shape(w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- non-convex polygon drawn in complex mode
+  fl_push_matrix();
+  fl_translate(a+dx+50, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  complex_shape(w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  complex_shape(w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- two part polygon with gap
+  fl_push_matrix();
+  fl_translate(a+dx+100, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  two_complex_shapes(w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w/2, -h);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h-3);
+  fl_end_loop();
+  fl_begin_loop();
+  fl_vertex(w-3, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w, -h/2);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- polygon with a hole
+  fl_push_matrix();
+  fl_translate(a+dx+150, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  complex_shape_with_hole(w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w/2, -h);
+  fl_vertex(w/2, -h);
+  fl_vertex(w, 0);
+  fl_vertex(w, h);
+  fl_vertex(0, h);
+  fl_vertex(-w, h/2);
+  fl_vertex(-w, -h/2);
+  fl_end_loop();
+  fl_begin_loop();
+  fl_vertex(-w2, -h2);
+  fl_vertex(-w2,  h2);
+  fl_vertex( w2,  h2);
+  fl_vertex( w2, -h2);
+  fl_end_loop();
+  fl_pop_matrix();
+
+  // ---- 3: draw polygons with arcs
+  b += 44;
+  // -- a rectangle with a camel hump
+  fl_push_matrix();
+  fl_translate(a+dx, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  fl_vertex(-w, 0); fl_arc(0, 0, w-3, 180.0, 0.0); fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w, 0); fl_arc(0, 0, w-3, 180.0, 0.0); fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- a rectangle with a camel dip
+  fl_push_matrix();
+  fl_translate(a+dx+50, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  fl_vertex(-w, 0); fl_arc(0, 0, w-3, 180.0, 360.0); fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w, 0); fl_arc(0, 0, w-3, 180.0, 360.0); fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+  // -- a rectangle with a bezier curve top
+  fl_push_matrix();
+  fl_translate(a+dx+100, b+dy);
+  p->set_transformation();
+  fl_color(FL_DARK2);
+  fl_begin_complex_polygon();
+  fl_vertex(-w, 0);
+  fl_curve(-w+3, 0, -w+3, -h, w-3, h, w-3, 0);
+  fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_complex_polygon();
+  fl_color(FL_BLUE);
+  fl_begin_loop();
+  fl_vertex(-w, 0);
+  fl_curve(-w+3, 0, 0, -h, 0, h, w-3, 0);
+  fl_vertex(w, 0);
+  fl_vertex(w, h); fl_vertex(-w, h);
+  fl_end_loop();
+  fl_pop_matrix();
+
+
+  // Test fl_begin_points(), fl_end_points()
+  // Test fl_begin_line() fl_end_line()
+  // Test fl_begin_loop() fl_end_loop()
+  // Test fl_begin_polygon() fl_end_polygon()
+  // Test fl_begin_complex_polygon() fl_gap() fl_arc() void fl_end_complex_polygon()
+  // Test fl_curve()
+  // Test translate, rotate, scale, push, pop
+}
+
+UnitTest complex_shapes(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);

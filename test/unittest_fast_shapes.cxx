@@ -297,7 +297,7 @@ public:
                "This draws 2 lines at differnet widths, and one connected line.\n\n"
                // Things to look out for:
                "Green and red pixels mark the beginning and end of single lines."
-               "The line caps should be flat, the joints shoould be of type \"miter\"."
+               "The line caps should be flat, the joints should be of type \"miter\"."
                );
 
 #if HAVE_GL
@@ -371,7 +371,7 @@ public:
                "This draws 2 lines at differnet widths, and one connected line.\n\n"
                // Things to look out for:
                "Green and red pixels mark the beginning and end of single lines."
-               "The line caps should be flat, the joints shoould be of type \"miter\"."
+               "The line caps should be flat, the joints should be of type \"miter\"."
                );
 #endif
 

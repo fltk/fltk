@@ -41,6 +41,7 @@
 // double Fl_OpenGL_Graphics_Driver::transform_dy(double x, double y)
 
 void Fl_OpenGL_Graphics_Driver::begin_points() {
+  Fl_Graphics_Driver::begin_points();
   glBegin(GL_POINTS);
 }
 
@@ -49,6 +50,7 @@ void Fl_OpenGL_Graphics_Driver::end_points() {
 }
 
 void Fl_OpenGL_Graphics_Driver::begin_line() {
+  Fl_Graphics_Driver::begin_line();
   glBegin(GL_LINE_STRIP);
 }
 
@@ -57,6 +59,7 @@ void Fl_OpenGL_Graphics_Driver::end_line() {
 }
 
 void Fl_OpenGL_Graphics_Driver::begin_loop() {
+  Fl_Graphics_Driver::begin_loop();
   glBegin(GL_LINE_LOOP);
 }
 
@@ -65,6 +68,7 @@ void Fl_OpenGL_Graphics_Driver::end_loop() {
 }
 
 void Fl_OpenGL_Graphics_Driver::begin_polygon() {
+  Fl_Graphics_Driver::begin_polygon();
   glBegin(GL_POLYGON);
 }
 
@@ -73,6 +77,7 @@ void Fl_OpenGL_Graphics_Driver::end_polygon() {
 }
 
 void Fl_OpenGL_Graphics_Driver::begin_complex_polygon() {
+  Fl_Graphics_Driver::begin_complex_polygon();
   glBegin(GL_POLYGON);
 }
 

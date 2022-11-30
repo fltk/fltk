@@ -42,7 +42,7 @@ enum {
   kTestPoints,
   kTestFastShapes,
   kTestCircles,
-//  kTestComplexShapes,
+  kTestComplexShapes,
   kTestText,
   kTestSymbol,
   kTestImages,

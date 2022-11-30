@@ -57,6 +57,21 @@ void Fl_Graphics_Driver::pop_matrix() {
     m = stack[--sptr];
 }
 
+/** see fl_load_identity() */
+void Fl_Graphics_Driver::load_identity() {
+  m = m0;
+}
+
+/** see fl_load_matrix() */
+void Fl_Graphics_Driver::load_matrix(double a, double b, double c, double d, double x, double y) {
+  m.a = a;
+  m.b = b;
+  m.c = c;
+  m.d = d;
+  m.x = x;
+  m.y = y;
+}
+
 /** see fl_mult_matrix() */
 void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, double x, double y) {
   matrix o;

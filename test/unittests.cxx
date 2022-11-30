@@ -140,6 +140,7 @@ int main(int argc, char **argv) {
   Fl::visual(FL_RGB);
   Fl::use_high_res_GL(1);
   mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "FLTK Unit Tests");
+  mainwin->size_range(MAINWIN_W, MAINWIN_H);
   browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
   browser->when(FL_WHEN_CHANGED);
