@@ -170,11 +170,6 @@ protected:
   int p_size;
   typedef struct { float x; float y; } XPOINT;
   XPOINT *xpoint;
-#ifndef FL_DOXYGEN
-  inline int vertex_no() { return n; }
-  inline int vertex_kind() {return what;}
-#endif
-  matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
   virtual void global_gc();
   virtual void cache(Fl_Pixmap *img);
   virtual void cache(Fl_Bitmap *img);

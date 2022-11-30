@@ -50,7 +50,6 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   rstack[0] = NULL;
   fl_clip_state_number=0;
   m = m0;
-  fl_matrix = &m;
   font_descriptor_ = NULL;
   scale_ = 1;
   p_size = 0;

@@ -1241,11 +1241,11 @@ void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int 
 }
 
 void Fl_PostScript_Graphics_Driver::concat(){
-  clocale_printf("[%g %g %g %g %g %g] CT\n", fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
+  clocale_printf("[%g %g %g %g %g %g] CT\n", m.a , m.b , m.c , m.d , m.x , m.y);
 }
 
 void Fl_PostScript_Graphics_Driver::reconcat(){
-  clocale_printf("[%g %g %g %g %g %g] RCT\n" , fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
+  clocale_printf("[%g %g %g %g %g %g] RCT\n" , m.a , m.b , m.c , m.d , m.x , m.y);
 }
 
 /////////////////  transformed (double) drawings ////////////////////////////////

@@ -376,12 +376,12 @@ Fl_Color Fl_Cairo_Graphics_Driver::color() { return Fl_Graphics_Driver::color();
 
 
 void Fl_Cairo_Graphics_Driver::concat(){
-  cairo_matrix_t mat = {fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y};
+  cairo_matrix_t mat = {m.a , m.b , m.c , m.d , m.x , m.y};
   cairo_transform(cairo_, &mat);
 }
 
 void Fl_Cairo_Graphics_Driver::reconcat(){
-  cairo_matrix_t mat = {fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y};
+  cairo_matrix_t mat = {m.a , m.b , m.c , m.d , m.x , m.y};
   cairo_status_t stat = cairo_matrix_invert(&mat);
   if (stat != CAIRO_STATUS_SUCCESS) {
     fputs("error in cairo_matrix_invert\n", stderr);
