@@ -19,9 +19,11 @@
 #include "fluid.h"
 #include "file.h"
 #include "Fl_Type.h"
+#include "Fl_Widget_Type.h"
 #include "widget_browser.h"
 
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/filename.H>
@@ -43,6 +45,7 @@
 // checkpoint files.
 //
 
+extern Fl_Window* the_panel;
 
 int undo_current = 0;                   // Current undo level in buffer
 int undo_last = 0;                      // Last undo level in buffer
@@ -80,12 +83,21 @@ void redo_cb(Fl_Widget *, void *) {
   if (undo_current >= undo_last) return;
 
   undo_suspend();
+  if (widget_browser) widget_browser->save_scroll_position();
+  int reload_panel = (the_panel && the_panel->visible());
   if (!read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
     widget_browser->rebuild();
     undo_resume();
     return;
   }
+  if (reload_panel) {
+    for (Fl_Type *t = Fl_Type::first; t; t=t->next) {
+      if (t->is_widget() && t->selected)
+        t->open();
+    }
+  }
+  if (widget_browser) widget_browser->restore_scroll_position();
 
   undo_current ++;
 
@@ -113,11 +125,18 @@ void undo_cb(Fl_Widget *, void *) {
   // Undo first deletes all widgets which resets the widget_tree browser.
   // Save the current scroll position, so we don't scroll back to 0 at undo.
   if (widget_browser) widget_browser->save_scroll_position();
+  int reload_panel = (the_panel && the_panel->visible());
   if (!read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     widget_browser->rebuild();
     undo_resume();
     return;
+  }
+  if (reload_panel) {
+    for (Fl_Type *t = Fl_Type::first; t; t=t->next) {
+      if (t->is_widget() && t->selected)
+        t->open();
+    }
   }
   // Restore old browser position.
   // Ideally, we would save the browser position insied the undo file.

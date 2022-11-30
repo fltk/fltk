@@ -295,7 +295,7 @@ Fl_Type *sort(Fl_Type *parent) {
 ////////////////////////////////////////////////////////////////
 // The control panels!
 
-static Fl_Window *the_panel;
+Fl_Window *the_panel;
 
 // All the callbacks use the argument to indicate whether to load or store.
 // This avoids the need for pointers to all the widgets, and keeps the
