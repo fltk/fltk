@@ -203,7 +203,7 @@ void Fl_Flex_Type::copy_properties()
   Fl_Group_Type::copy_properties();
   Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
   int lm, tm, rm, bm;
-  s->margins(&lm, &tm, &rm, &bm);
+  s->margin(&lm, &tm, &rm, &bm);
   d->margin(lm, tm, rm, bm);
   d->gap( s->gap() );
 }
@@ -213,9 +213,9 @@ void Fl_Flex_Type::write_properties()
   Fl_Group_Type::write_properties();
   Fl_Flex* f = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margins(&lm, &tm, &rm, &bm);
+  f->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_string("margins {%d %d %d %d}", lm, tm, rm, bm);
+    write_string("margin {%d %d %d %d}", lm, tm, rm, bm);
   if (f->gap())
     write_string("gap %d", f->gap());
   int nSet = 0;
@@ -237,7 +237,7 @@ void Fl_Flex_Type::read_property(const char *c)
 {
   Fl_Flex* f = (Fl_Flex*)o;
   suspend_auto_layout = 1;
-  if (!strcmp(c,"margins")) {
+  if (!strcmp(c,"margin")) {
     int lm, tm, rm, bm;
     if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
       f->margin(lm, tm, rm, bm);
@@ -285,7 +285,7 @@ void Fl_Flex_Type::write_code2() {
   const char *var = name() ? name() : "o";
   Fl_Flex* f = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margins(&lm, &tm, &rm, &bm);
+  f->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
     write_c("%s%s->margin(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
   if (f->gap())
@@ -331,7 +331,7 @@ void Fl_Flex_Type::change_subtype_to(int n) {
     int dw = Fl::box_dw(f->box());
     int dh = Fl::box_dh(f->box());
     int lm, tm, rm, bm;
-    f->margins(&lm, &tm, &rm, &bm);
+    f->margin(&lm, &tm, &rm, &bm);
     int gap = f->gap();
     int fw = f->w()-dw-lm-rm-(nc*gap);
     if (fw<=nc) fw = nc; // avoid division by zero

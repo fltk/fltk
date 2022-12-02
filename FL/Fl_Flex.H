@@ -23,16 +23,17 @@
 /**
   Fl_Flex is a container (layout) widget for one row or one column of widgets.
 
-  It provides flexible positioning of its children either in one row or in one column.
+  It provides flexible positioning of its children either in one row or in one
+  column.
 
   Fl_Flex is designed to be as simple as possible. You can set individual widget
   sizes or let Fl_Flex position and size the widgets to fit in the container.
   All "flexible" (i.e. non-fixed size) widgets are assigned the same width or
   height, respectively. For details see below.
 
-  You can set the margins \b around all children at the inner side the box frame
-  (if any). Fl_Flex supports setting different margin sizes on top, bottom, left
-  and right sides.
+  You can set the margins \b around all children at the inner side of the box
+  frame (if any). Fl_Flex supports setting different margin sizes on top,
+  bottom, left, and right sides.
   The default margin size is 0 on all edges of the container.
 
   You can set the gap size \b between all children. The gap size is always the
@@ -179,7 +180,7 @@ public:
 
     \note This method is useful if you never set different margin sizes.
 
-    \see int margins(int *left, int *top, int *right, int *bottom)
+    \see int margin(int *left, int *top, int *right, int *bottom)
       to get all four margin values.
     \return  size of left margin.
   */
@@ -199,7 +200,7 @@ public:
     \retval  1  all margins have the same size
     \retval  0  at least one margin has a different size
   */
-  int margins(int *left, int *top, int *right, int *bottom) const {
+  int margin(int *left, int *top, int *right, int *bottom) const {
     if (left) *left = margin_left_;
     if (top) *top = margin_top_;
     if (right) *right = margin_right_;
@@ -215,15 +216,15 @@ public:
     If you don't use the second parameter \p g or supply a negative value
     the gap size is not changed.
 
-    The margin is some free space inside the widget border \b around all child widgets.
+    The margin is the free space inside the widget border \b around all child widgets.
 
     This method sets the margin to the same size at all four edges of the Fl_Flex widget.
 
-    The gap size \p g is some free space \b between child widgets. Negative values
-    (the default if this argument is omitted) do not change the gap value.
+    The gap size \p g is the free space \b between child widgets. Negative values
+    do not change the gap value. This is the default if this argument is omitted.
 
     \param[in]    m   margin size, must be \>= 0
-    \param[in]    g   gap size, ignored (if negative)
+    \param[in]    g   gap size (ignored, if negative)
 
     \see gap(int)
   */
@@ -243,15 +244,13 @@ public:
     You must use all four parameters of this method to set the four margins in the
     order \p left, \p top, \p right, \p bottom. Negative values are set to 0 (zero).
 
-    To set all margins to equal sizes, use margin(int m)
-
-    This method sets the margin to the same size at all four edges of the widget.
+    To set all margins to equal sizes, use margin(int m) which sets all four margins
+    to the same size.
 
     \param[in]    left,top,right,bottom   margin sizes, must be \>= 0
 
     \see margin(int, int)
   */
-
   void margin(int left, int top, int right, int bottom) {
     margin_left_   = left < 0 ? 0 : left;
     margin_top_    = top < 0 ? 0 : top;

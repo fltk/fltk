@@ -2183,14 +2183,14 @@ static void flex_margin_cb(Fl_Value_Input* i, void* v,
 static void load_left_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margins(&v, NULL, NULL, NULL);
+  w->margin(&v, NULL, NULL, NULL);
   i->value((double)v);
 }
 
 static int update_left_margin(Fl_Flex *w, int new_value)
 {
   int l, t, r, b;
-  w->margins(&l, &t, &r, &b);
+  w->margin(&l, &t, &r, &b);
   if (new_value!=l) {
     w->margin(new_value, t, r, b);
     return 1;
@@ -2206,14 +2206,14 @@ void flex_margin_left_cb(Fl_Value_Input* i, void* v) {
 static void load_top_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margins(NULL, &v, NULL, NULL);
+  w->margin(NULL, &v, NULL, NULL);
   i->value((double)v);
 }
 
 static int update_top_margin(Fl_Flex *w, int new_value)
 {
   int l, t, r, b;
-  w->margins(&l, &t, &r, &b);
+  w->margin(&l, &t, &r, &b);
   if (new_value!=t) {
     w->margin(l, new_value, r, b);
     return 1;
@@ -2229,14 +2229,14 @@ void flex_margin_top_cb(Fl_Value_Input* i, void* v) {
 static void load_right_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margins(NULL, NULL, &v, NULL);
+  w->margin(NULL, NULL, &v, NULL);
   i->value((double)v);
 }
 
 static int update_right_margin(Fl_Flex *w, int new_value)
 {
   int l, t, r, b;
-  w->margins(&l, &t, &r, &b);
+  w->margin(&l, &t, &r, &b);
   if (new_value!=r) {
     w->margin(l, t, new_value, b);
     return 1;
@@ -2252,14 +2252,14 @@ void flex_margin_right_cb(Fl_Value_Input* i, void* v) {
 static void load_bottom_margin(Fl_Flex *w, Fl_Value_Input* i)
 {
   int v;
-  w->margins(NULL, NULL, NULL, &v);
+  w->margin(NULL, NULL, NULL, &v);
   i->value((double)v);
 }
 
 static int update_bottom_margin(Fl_Flex *w, int new_value)
 {
   int l, t, r, b;
-  w->margins(&l, &t, &r, &b);
+  w->margin(&l, &t, &r, &b);
   if (new_value!=b) {
     w->margin(l, t, r, new_value);
     return 1;
