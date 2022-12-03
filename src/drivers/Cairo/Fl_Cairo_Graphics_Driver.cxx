@@ -332,6 +332,7 @@ void Fl_Cairo_Graphics_Driver::line_style(int style, int width, char* dashes) {
     }
   }
   cairo_set_dash(cairo_, ddashes, l, 0);
+  cairo_set_antialias(cairo_, l ? CAIRO_ANTIALIAS_NONE : CAIRO_ANTIALIAS_DEFAULT);
   delete[] ddashes;
   check_status();
 }
