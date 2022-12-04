@@ -775,7 +775,7 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   cairo_matrix_init_scale(&matrix, double(img->data_w())/Ws, double(img->data_h())/Hs);
   cairo_matrix_translate(&matrix, -Xs , -Ys );
   cairo_pattern_set_matrix(pat, &matrix);
-  if (img->d() >= 1) cairo_paint(cairo_);
+  if (img->d() > 1) cairo_paint(cairo_);
   else cairo_mask(cairo_, pat);
   cairo_restore(cairo_);
   surface_needs_commit();
