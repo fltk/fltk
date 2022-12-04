@@ -1120,9 +1120,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
                                                       Fl_Font_Descriptor(name, size) {
   char *string = new char[strlen(name) + 10];
   strcpy(string, name);
-  // The factor of 0.75 below gives cairo-produced text the same size as
-  // Xft-produced text for the same FLTK font size.
-  snprintf(string + strlen(string), 10, " %d", int(size * 0.75 + 0.5) );
+  snprintf(string + strlen(string), 10, " %dpx", size);
   //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
   delete[] string;
