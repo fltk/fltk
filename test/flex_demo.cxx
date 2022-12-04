@@ -95,8 +95,8 @@ Fl_Flex *create_row() {
       col2->color(fl_rgb_color(255, 128, 128));
     }
 
-    row->set_size(box2, 50);
-    row->set_size(col2, 100);
+    row->fixed(box2, 50);
+    row->fixed(col2, 100);
     row->end();
 
     // TEST
@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
   col1->end();
   row1->end();
 
-  col->set_size(create_row(), 90); // sets height of created (anonymous) row #2
+  col->fixed(create_row(), 90); // sets height of created (anonymous) row #2
 
   create_button("Something1"); // "row" #3
 
@@ -136,13 +136,13 @@ int main(int argc, char **argv) {
   Fl_Button *cancel = create_button("Cancel");
   Fl_Button *ok = create_button("OK");
   new Fl_Input(0, 0, 120, 10, "");
-  row4->set_size(cancel, 100);
-  row4->set_size(ok, 100);
+  row4->fixed(cancel, 100);
+  row4->fixed(ok, 100);
   row4->end();
 
   create_button("Something2"); // "row" #5
 
-  col->set_size(row4, 30);
+  col->fixed(row4, 30);
   col->margin(6, 10, 6, 10);
   col->gap(6);
   col->end();

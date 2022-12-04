@@ -47,11 +47,11 @@
 
   If type() == Fl_Flex::HORIZONTAL widgets are resized horizontally to fit in
   the container and their height is the full Fl_Flex height minus border size
-  and margins. You can set a fixed widget width by using set_size().
+  and margins. You can set a fixed widget width by using fixed().
 
   If type() == Fl_Flex::VERTICAL widgets are resized vertically to fit in
   the container and their width is the full Fl_Flex width minus border size
-  and margins. You can set a fixed widget height by using set_size().
+  and margins. You can set a fixed widget height by using fixed().
 
   To create arbitrary spacing you can use invisible boxes of flexible or
   fixed sizes (see example below).
@@ -100,7 +100,7 @@
     Fl_Button b2(0, 0, 0, 0, "Save");
     Fl_Box    bx(0, 0, 0, 0);
     Fl_Button b3(0, 0, 0, 0, "Exit");
-    flex.set_size(bx, 60); // set fix width of invisible box
+    flex.fixed(bx, 60); // set fix width of invisible box
     flex.gap(10);
     flex.end();
     window.resizable(flex);
@@ -120,9 +120,9 @@ class FL_EXPORT Fl_Flex : public Fl_Group {
   int margin_right_;
   int margin_bottom_;
   int gap_;
-  int set_size_size_;
-  int set_size_alloc_;
-  Fl_Widget **set_size_;
+  int fixed_size_size_;
+  int fixed_size_alloc_;
+  Fl_Widget **fixed_size_;
 
 public:
 
@@ -154,14 +154,14 @@ public:
     \param[in]  w   widget to be affected
     \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 
-    \see set_size(Fl_Widget *w, int size)
+    \see fixed(Fl_Widget *w, int size)
   */
-  void set_size(Fl_Widget &w, int size) {
-    set_size(&w, size);
+  void fixed(Fl_Widget &w, int size) {
+    fixed(&w, size);
   }
 
-  void set_size(Fl_Widget *w, int size);
-  int set_size(Fl_Widget *w) const;
+  void fixed(Fl_Widget *w, int size);
+  int fixed(Fl_Widget *w) const;
 
 protected:
 
@@ -335,22 +335,22 @@ public:
 
   /**
     Deprecated.
-    \deprecated Please use set_size(Fl_Widget *) instead.
+    \deprecated Please use fixed(Fl_Widget *) instead.
 
-    \see int set_size(Fl_Widget *)
+    \see int fixed(Fl_Widget *)
   */
   bool isSetSize(Fl_Widget *w) const {
-    return (bool)set_size(w);
+    return (bool)fixed(w);
   }
 
   /**
     Set the horizontal or vertical size of a child widget.
-    \deprecated Please use set_size(Fl_Widget *, int) instead.
+    \deprecated Please use fixed(Fl_Widget *, int) instead.
 
-    \see set_size(Fl_Widget *, int)
+    \see fixed(Fl_Widget *, int)
   */
   void setSize(Fl_Widget *w, int size) {
-    set_size(w, size);
+    fixed(w, size);
   }
 
 #endif

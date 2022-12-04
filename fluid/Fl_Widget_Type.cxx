@@ -2327,10 +2327,10 @@ void flex_size_cb(Fl_Value_Input* i, void* v) {
       if (o->selected && o->is_widget() && Fl_Flex_Type::parent_is_flex(o)) {
         Fl_Widget* w = (Fl_Widget*)((Fl_Widget_Type*)o)->o;
         Fl_Flex* f = (Fl_Flex*)((Fl_Flex_Type*)o->parent)->o;
-        int was_fixed = f->set_size(w);
+        int was_fixed = f->fixed(w);
         if (new_size==0) {
           if (was_fixed) {
-            f->set_size(w, 0);
+            f->fixed(w, 0);
             f->layout();
             widget_flex_fixed->value(0);
             mod = 1;
@@ -2338,7 +2338,7 @@ void flex_size_cb(Fl_Value_Input* i, void* v) {
         } else {
           int old_size = Fl_Flex_Type::size(o);
           if (old_size!=new_size || !was_fixed) {
-            f->set_size(w, new_size);
+            f->fixed(w, new_size);
             f->layout();
             widget_flex_fixed->value(1);
             mod = 1;
@@ -2362,16 +2362,16 @@ void flex_fixed_cb(Fl_Check_Button* i, void* v) {
       if (o->selected && o->is_widget() && Fl_Flex_Type::parent_is_flex(o)) {
         Fl_Widget* w = (Fl_Widget*)((Fl_Widget_Type*)o)->o;
         Fl_Flex* f = (Fl_Flex*)((Fl_Flex_Type*)o->parent)->o;
-        int was_fixed = f->set_size(w);
+        int was_fixed = f->fixed(w);
         if (new_fixed==0) {
           if (was_fixed) {
-            f->set_size(w, 0);
+            f->fixed(w, 0);
             f->layout();
             mod = 1;
           }
         } else {
           if (!was_fixed) {
-            f->set_size(w, Fl_Flex_Type::size(o));
+            f->fixed(w, Fl_Flex_Type::size(o));
             f->layout();
             mod = 1;
           }

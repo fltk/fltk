@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
   // set gap between adjacent buttons and extra spacing (invisible box size)
   flex.gap(10);
-  flex.set_size(bx, 30); // total 50: 2 * gap + 30
+  flex.fixed(bx, 30); // total 50: 2 * gap + 30
 
   // end() groups
   flex.end();

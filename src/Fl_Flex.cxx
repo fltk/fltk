@@ -115,22 +115,22 @@ Fl_Flex::Fl_Flex(int x, int y, int w, int h, int direction)
 }
 
 void Fl_Flex::init(int t) {
-  gap_            = 0;      // default gap size
-  margin_left_    = 0;      // default margin size
-  margin_top_     = 0;      // default margin size
-  margin_right_   = 0;      // default margin size
-  margin_bottom_  = 0;      // default margin size
-  set_size_       = NULL;   // array of fixed size widgets
-  set_size_size_  = 0;      // number of fixed size widgets
-  set_size_alloc_ = 0;      // allocated size of array of fixed size widgets
+  gap_              = 0;      // default gap size
+  margin_left_      = 0;      // default margin size
+  margin_top_       = 0;      // default margin size
+  margin_right_     = 0;      // default margin size
+  margin_bottom_    = 0;      // default margin size
+  fixed_size_       = NULL;   // array of fixed size widgets
+  fixed_size_size_  = 0;      // number of fixed size widgets
+  fixed_size_alloc_ = 0;      // allocated size of array of fixed size widgets
   type(HORIZONTAL);
   if (t == VERTICAL)
     type(VERTICAL);
 }
 
 Fl_Flex::~Fl_Flex() {
-  if (set_size_)
-    free(set_size_);
+  if (fixed_size_)
+    free(fixed_size_);
 }
 
 /*
@@ -138,7 +138,7 @@ Fl_Flex::~Fl_Flex() {
  Make sure that the widget is also removed from our fixed list.
  */
 void Fl_Flex::on_remove(int index) {
-  set_size(child(index), 0);
+  fixed(child(index), 0);
 }
 
 void Fl_Flex::resize(int x, int y, int w, int h) {
@@ -171,7 +171,7 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
   for (int i = 0; i < cc; i++) {
     Fl_Widget *c = child(i);
     if (c->visible()) {
-      if (set_size(c)) {
+      if (fixed(c)) {
         space -= (hori ? c->w() : c->h());
         fw--;
       }
@@ -201,7 +201,7 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
       continue;
 
     if (hori) {
-      if (set_size(c)) {
+      if (fixed(c)) {
         c->resize(xp, yp, c->w(), hh);
       } else {
         c->resize(xp, yp, sp, hh);
@@ -209,7 +209,7 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
       }
       xp += c->w() + gap_;
     } else {
-      if (set_size(c)) {
+      if (fixed(c)) {
         c->resize(xp, yp, vw, c->h());
       } else {
         c->resize(xp, yp, vw, sp);
@@ -247,14 +247,14 @@ void Fl_Flex::end() {
   \param[in]  child widget to be affected
   \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 */
-void Fl_Flex::set_size(Fl_Widget *child, int size) {
+void Fl_Flex::fixed(Fl_Widget *child, int size) {
   if (size <= 0)
     size = 0;
 
   // find w in our fixed size list
   int idx = -1;
-  for (int i = 0; i < set_size_size_; i++) {
-    if (set_size_[i] == child) {
+  for (int i = 0; i < fixed_size_size_; i++) {
+    if (fixed_size_[i] == child) {
       idx = i;
       break;
     }
@@ -262,10 +262,10 @@ void Fl_Flex::set_size(Fl_Widget *child, int size) {
 
   // remove from array, if we want the widget to be flexible, but an entry was found
   if (size == 0 && idx >= 0) {
-    for (int i = idx; i < set_size_size_ - 1; i++) {
-      set_size_[i] = set_size_[i+1];
+    for (int i = idx; i < fixed_size_size_ - 1; i++) {
+      fixed_size_[i] = fixed_size_[i+1];
     }
-    set_size_size_--;
+    fixed_size_size_--;
     return;
   }
 
@@ -275,12 +275,12 @@ void Fl_Flex::set_size(Fl_Widget *child, int size) {
 
   // if we have no entry yet, add to array of fixed size widgets
   if (idx == -1) {
-    if (set_size_size_ == set_size_alloc_) {
-      set_size_alloc_ = alloc_size(set_size_alloc_);
-      set_size_ = (Fl_Widget **)realloc(set_size_, set_size_alloc_ * sizeof(Fl_Widget *));
+    if (fixed_size_size_ == fixed_size_alloc_) {
+      fixed_size_alloc_ = alloc_size(fixed_size_alloc_);
+      fixed_size_ = (Fl_Widget **)realloc(fixed_size_, fixed_size_alloc_ * sizeof(Fl_Widget *));
     }
-    set_size_[set_size_size_] = child;
-    set_size_size_++;
+    fixed_size_[fixed_size_size_] = child;
+    fixed_size_size_++;
   }
 
   // if the child size is meant to be fixed, set its new size
@@ -298,9 +298,9 @@ void Fl_Flex::set_size(Fl_Widget *child, int size) {
   \retval     1   the widget has a fixed size
   \retval     0  the widget resizes dynamically
 */
-int Fl_Flex::set_size(Fl_Widget *w) const {
-  for (int i = 0; i < set_size_size_; i++) {
-    if (w == set_size_[i]) {
+int Fl_Flex::fixed(Fl_Widget *w) const {
+  for (int i = 0; i < fixed_size_size_; i++) {
+    if (w == fixed_size_[i]) {
       return 1;
     }
   }

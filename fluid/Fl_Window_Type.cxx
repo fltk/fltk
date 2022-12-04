@@ -1222,12 +1222,12 @@ void Fl_Window_Type::moveallchildren()
         Fl_Flex* f = (Fl_Flex*)ft->o;
         if (f->horizontal()) {
           if (myo->o->w()!=ow) {
-            f->set_size(myo->o, myo->o->w());
+            f->fixed(myo->o, myo->o->w());
             f->layout();
           }
         } else {
           if (myo->o->h()!=oh) {
-            f->set_size(myo->o, myo->o->h());
+            f->fixed(myo->o, myo->o->h());
             f->layout();
           }
         }
