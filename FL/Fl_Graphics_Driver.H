@@ -162,7 +162,7 @@ protected:
   matrix m; ///< current transformation matrix
   int n; ///< For internal use by FLTK
   int gap_; ///< For internal use by FLTK
-  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS} what;
+  enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS, COMPLEX_POLYGON} what;
   int rstackptr; ///< For internal use by FLTK
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
   Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
