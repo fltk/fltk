@@ -137,18 +137,22 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
   // find the bounding box for this polygon
   v0 = xpoint;
   float xMin = v0->x, xMax = xMin;
-  int yMin = v0->y, yMax = yMin;
+  int yMin = (int)v0->y, yMax = yMin;
   for (i = 1; i < n; i++) {
     v0++;
-    if (v0->x == GAP) continue;
-    if (v0->x <= xMin) xMin = v0->x;
-    if (v0->x >= xMax) xMax = v0->x;
-    if (v0->y <= yMin) yMin = v0->y;
-    if (v0->y >= yMax) yMax = v0->y;
+    float v0x = v0->x;
+    int v0y = (int)v0->y;
+    if (v0x == GAP) continue;
+    if (v0x <= xMin) xMin = v0x;
+    if (v0x >= xMax) xMax = v0x;
+    if (v0y <= yMin) yMin = v0y;
+    if (v0y >= yMax) yMax = v0y;
   }
 
   int nNodes, j;
-  float nodeX[n-1], pixelX, swap;
+  float *nodeX = (float*)malloc((n-1)*sizeof(float)), swap;
+  if (!nodeX)
+    return;
 
   // loop through the rows of the image
   for (y = yMin; y < yMax; y++) {
@@ -199,12 +203,14 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
           x0 = xMin;
         if (x1 > xMax)
           x1 = xMax;
-        glVertex2f(x0, y);
-        glVertex2f(x1, y);
+        glVertex2f((GLfloat)x0, (GLfloat)y);
+        glVertex2f((GLfloat)x1, (GLfloat)y);
       }
     }
     glEnd();
   }
+
+  ::free(nodeX);
 }
 
 #else
