@@ -418,7 +418,7 @@ void draw_complex(ComplexShapesTest *p) {
   fl_color(FL_DARK2);
   fl_begin_complex_polygon();
   fl_vertex(-w, 0);
-  fl_curve(-w+3, 0, -w+3, -h, w-3, h, w-3, 0);
+  fl_curve(-w+3, 0, 0, -h, 0, h, w-3, 0);
   fl_vertex(w, 0);
   fl_vertex(w, h); fl_vertex(-w, h);
   fl_end_complex_polygon();

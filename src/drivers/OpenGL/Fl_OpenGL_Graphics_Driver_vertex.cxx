@@ -26,8 +26,21 @@
 #include <FL/gl.h>
 #include <FL/math.h>
 
+// OpenGL does not support rednering non-convex polygons. Calling
+// glBegin(GL_POLYGON); witha  complex outline will create rather random
+// errors, often overwrinting gaps and holes.
+//
+// Defining SLOW_COMPLEX_POLY will activate a line-by-line drawing method
+// for complex polygons that is correct for FLTK, but also a lot slower.
+//
+// It's recommended that SLOW_COMPLEX_POLY is defined, but fl_begin_polygon()
+// is used instead of fl_begin_complex_polygon() whenever possible.
+
 //#undef SLOW_COMPLEX_POLY
 #define SLOW_COMPLEX_POLY
+#ifdef SLOW_COMPLEX_POLY
+# define GAP (1e9f)
+#endif
 
 // Event though there are faster versions of the functions in OpenGL,
 // we use the default FLTK implementation for compatibility in the
@@ -92,23 +105,13 @@ void Fl_OpenGL_Graphics_Driver::begin_complex_polygon() {
 
 void Fl_OpenGL_Graphics_Driver::gap() {
 #ifdef SLOW_COMPLEX_POLY
-  // TODO: implement this
-  // drop gaps at the start or gap after gap
-//  if (pnVertex==0 || pnVertex==pVertexGapStart)
-//    return;
-//
-//  // create a loop
-//  Vertex &v = pVertex[pVertexGapStart];
-//  add_vertex(v.pX, v.pY, true);
-//  pVertexGapStart = pnVertex;
   // drop gaps at the start or gap after gap
   if (n==0 || n==gap_) // || pnVertex==pVertexGapStart)
     return;
-
   // create a loop
   XPOINT& p = xpoint[gap_];
   transformed_vertex(p.x, p.y);
-  transformed_vertex(999999.0, 0.0);
+  transformed_vertex(GAP, 0.0);
   gap_ = n;
 #else
   glEnd();
@@ -118,87 +121,89 @@ void Fl_OpenGL_Graphics_Driver::gap() {
 
 #ifdef SLOW_COMPLEX_POLY
 
+// Draw a complex polygon line by line from the top to the bottom.
 void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
 {
+  int i, y;
+  XPOINT *v0, *v1;
+
+  // don't bother if no polygon is defined
   if (n < 2) return;
 
-  gap(); // adds the first coordinate of this loop and marks it as a gap
-  int begin = 0, end = n;
+  // make sure that we always have a closed loop by appending the first
+  // coordinate again as the alst coordinate
+  gap();
 
-  XPOINT *v = xpoint+0;
-//  v->x = roundf(v->x);
-  v->y = roundf(v->y);
-  float xMin = v->x, xMax = xMin;
-  int yMin = v->y, yMax = yMin;
-  for (int i = begin+1; i < end; i++) {
-    v = xpoint+i;
-//    v->x = roundf(v->x);
-    v->y = roundf(v->y);
-    if (v->x < xMin) xMin = v->x;
-    if (v->x > xMax) xMax = v->x;
-    if (v->y < yMin) yMin = v->y;
-    if (v->y > yMax) yMax = v->y;
+  // find the bounding box for this polygon
+  v0 = xpoint;
+  float xMin = v0->x, xMax = xMin;
+  int yMin = v0->y, yMax = yMin;
+  for (i = 1; i < n; i++) {
+    v0++;
+    if (v0->x == GAP) continue;
+    if (v0->x <= xMin) xMin = v0->x;
+    if (v0->x >= xMax) xMax = v0->x;
+    if (v0->y <= yMin) yMin = v0->y;
+    if (v0->y >= yMax) yMax = v0->y;
   }
-  xMax++; yMax++;
 
-  int nodes, pixelY, i, j, swap;
-  float nodeX[end - begin], pixelX;
+  int nNodes, j;
+  float nodeX[n-1], pixelX, swap;
 
-  //  Loop through the rows of the image.
-  for (pixelY = yMin; pixelY < yMax; pixelY++) {
-//    printf("Y=%d\n", pixelY);
-    //  Build a list of nodes.
-    nodes = 0;
-    for (i = begin+1; i < end; i++) {
+  // loop through the rows of the image
+  for (y = yMin; y < yMax; y++) {
+    //  Build a list of all crossing points with this y axis
+    XPOINT *v0 = xpoint + 0, *v1 = xpoint + 1;
+    nNodes = 0;
+    for (i = 1; i < n; i++) {
       j = i-1;
-//      if (xpoint[j].pIsGap)
-      if (xpoint[i].x==999999.0) {
-        i++;
+      if (v1->x==GAP) { // skip the gap
+        i++; v0++; v1++;
         continue;
       }
-      if (   (xpoint[i].y < pixelY && xpoint[j].y >= pixelY)
-          || (xpoint[j].y < pixelY && xpoint[i].y >= pixelY) )
+      if (   (v1->y < y && v0->y >= y)
+          || (v0->y < y && v1->y >= y) )
       {
-        float dy = xpoint[j].y - xpoint[i].y;
-        if (fabsf(dy)>.0001) {
-          nodeX[nodes++] = (int)(xpoint[i].x +
-                                 (pixelY - xpoint[i].y) / dy
-                                 * (xpoint[j].x - xpoint[i].x));
-
+        float dy = v0->y - v1->y;
+        if (fabsf(dy)>.0001f) {
+          nodeX[nNodes++] = v1->x + ((y - v1->y) / dy) * (v0->x - v1->x);
         } else {
-          nodeX[nodes++] = xpoint[i].x;
+          nodeX[nNodes++] = v1->x;
         }
       }
+      v0++; v1++;
     }
-    //Fl_Android_Application::log_e("%d nodes (must be even!)", nodes);
 
-    //  Sort the nodes, via a simple “Bubble” sort.
+    // sort the nodes, via a simple Bubble sort
     i = 0;
-    while (i < nodes - 1) {
-      if (nodeX[i] > nodeX[i + 1]) {
+    while (i < nNodes-1) {
+      if (nodeX[i] > nodeX[i+1]) {
         swap = nodeX[i];
-        nodeX[i] = nodeX[i + 1];
-        nodeX[i + 1] = swap;
+        nodeX[i] = nodeX[i+1];
+        nodeX[i+1] = swap;
         if (i) i--;
       } else {
         i++;
       }
     }
 
-    //  Fill the pixels between node pairs.
-    for (i = 0; i < nodes; i += 2) {
-//      printf("n[%d] = %d %d\n", i, nodeX[i], nodeX[i+1]);
-      if (nodeX[i] >= xMax) break;
-      if (nodeX[i + 1] > xMin) {
-        if (nodeX[i] < xMin) nodeX[i] = xMin;
-        if (nodeX[i + 1] > xMax) nodeX[i + 1] = xMax;
-        //xyline(nodeX[i], pixelY, nodeX[i + 1]);
-        glBegin(GL_LINE_STRIP);
-        glVertex2f(nodeX[i], pixelY);
-        glVertex2f(nodeX[i+1], pixelY);
-        glEnd();
+    //  fill the pixels between node pairs
+    glBegin(GL_LINES);
+    for (i = 0; i < nNodes; i += 2) {
+      float x0 = nodeX[i];
+      if (x0 >= xMax)
+        break;
+      float x1 = nodeX[i+1];
+      if (x1 > xMin) {
+        if (x0 < xMin)
+          x0 = xMin;
+        if (x1 > xMax)
+          x1 = xMax;
+        glVertex2f(x0, y);
+        glVertex2f(x1, y);
       }
     }
+    glEnd();
   }
 }
 
