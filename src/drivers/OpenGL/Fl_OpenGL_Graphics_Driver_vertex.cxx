@@ -159,7 +159,8 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
   // loop through the rows of the image
   for (y = yMin; y < yMax; y++) {
     //  Build a list of all crossing points with this y axis
-    XPOINT *v0 = xpoint + 0, *v1 = xpoint + 1;
+    v0 = xpoint + 0;
+    v1 = xpoint + 1;
     nNodes = 0;
     for (i = 1; i < n; i++) {
       j = i-1;
