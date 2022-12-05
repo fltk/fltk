@@ -26,6 +26,8 @@
 #include <FL/gl.h>
 #include <FL/math.h>
 
+#include <stdlib.h>
+
 // OpenGL does not support rednering non-convex polygons. Calling
 // glBegin(GL_POLYGON); witha  complex outline will create rather random
 // errors, often overwrinting gaps and holes.
