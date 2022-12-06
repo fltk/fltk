@@ -112,10 +112,11 @@ extern Fl_Text_Editor *wComment;
 extern void callback_cb(CodeEditor*, void*);
 extern CodeEditor *wCallback;
 extern void user_data_cb(Fl_Input*, void*);
+#include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Item whenmenu[];
-extern void when_cb(Fl_Choice*, void*);
+extern void when_cb(Fl_Menu_Button*, void*);
 extern void user_data_type_cb(Fl_Input*, void*);
-extern void when_button_cb(Fl_Light_Button*, void*);
+extern Fl_Box *w_when_box;
 extern void revert_cb(Fl_Button*, void*);
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;

@@ -30,7 +30,7 @@ Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
-    comment {Use a Double Window to avoid flickering.} open
+    comment {Use a Double Window to avoid flickering.} open selected
     xywh {500 209 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
@@ -41,7 +41,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 when 0 resizable
+        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -51,7 +51,7 @@ Function {make_widget_panel()} {
           Fl_Input {} {
             callback label_cb
             tooltip {The label text for the widget.
-Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
+Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 6 textsize 11 resizable
           }
           Fl_Choice {} {
             callback labeltype_cb open
@@ -287,7 +287,7 @@ w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Input widget_h_input {
             label {Height:}
-            callback h_cb selected
+            callback h_cb
             tooltip {The height of the widget as a number or formula.
 Formulas can be simple math, including the variables
 h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
@@ -600,12 +600,12 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group {} {
         label {C++}
-        callback propagate_load
-        xywh {10 30 400 330} labelsize 11 when 0 hide
+        callback propagate_load open
+        xywh {10 30 400 330} labelsize 11 when 0
       } {
         Fl_Group {} {
           label {Class:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 40 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -720,10 +720,10 @@ wCallback->do_callback(wCallback, v);} open
             callback user_data_cb
             tooltip {The user data to pass into the callback code.} xywh {95 310 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
-          Fl_Choice {} {
-            label {When:}
+          Fl_Menu_Button {} {
+            label When
             callback when_cb open
-            tooltip {When to call the callback function.} xywh {300 310 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
+            tooltip {When to call the callback function.} xywh {260 310 145 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
             code0 {extern Fl_Menu_Item whenmenu[];}
             code1 {o->menu(whenmenu);}
           } {}
@@ -737,10 +737,9 @@ wCallback->do_callback(wCallback, v);} open
             callback user_data_type_cb
             tooltip {The type of the user data.} xywh {95 335 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
-          Fl_Light_Button {} {
-            label {No Change}
-            callback when_button_cb
-            tooltip {Call the callback even if the value has not changed.} xywh {300 335 105 20} selection_color 1 labelsize 11
+          Fl_Box w_when_box {
+            label FL_WHEN_NEVER
+            xywh {260 332 145 26} box FLAT_BOX selection_color 1 labelsize 8 align 192
           }
         }
       }

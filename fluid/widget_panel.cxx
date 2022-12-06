@@ -95,6 +95,8 @@ Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
 
 CodeEditor *wCallback=(CodeEditor *)0;
 
+Fl_Box *w_when_box=(Fl_Box *)0;
+
 Fl_Button *wLiveMode=(Fl_Button *)0;
 
 /**
@@ -118,6 +120,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -129,7 +132,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->textsize(11);
             o->callback((Fl_Callback*)label_cb);
-            o->when(FL_WHEN_CHANGED);
+            o->when(FL_WHEN_RELEASE_ALWAYS);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Choice* o = new Fl_Choice(284, 40, 120, 20);
@@ -744,7 +747,6 @@ sized to fit the container.");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 310, 20, "Class:");
           o->labelfont(1);
           o->labelsize(11);
@@ -890,7 +892,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->callback((Fl_Callback*)user_data_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Choice* o = new Fl_Choice(300, 310, 105, 20, "When:");
+          { Fl_Menu_Button* o = new Fl_Menu_Button(260, 310, 145, 20, "When");
             o->tooltip("When to call the callback function.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -900,7 +902,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->callback((Fl_Callback*)when_cb);
             o->when(FL_WHEN_CHANGED);
             o->menu(whenmenu);
-          } // Fl_Choice* o
+          } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 335, 310, 20, "Type:");
@@ -917,12 +919,12 @@ access the Widget pointer and \'v\' to access the user value.");
             o->callback((Fl_Callback*)user_data_type_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Light_Button* o = new Fl_Light_Button(300, 335, 105, 20, "No Change");
-            o->tooltip("Call the callback even if the value has not changed.");
-            o->selection_color((Fl_Color)1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)when_button_cb);
-          } // Fl_Light_Button* o
+          { w_when_box = new Fl_Box(260, 332, 145, 26, "FL_WHEN_NEVER");
+            w_when_box->box(FL_FLAT_BOX);
+            w_when_box->selection_color((Fl_Color)1);
+            w_when_box->labelsize(8);
+            w_when_box->align(Fl_Align(192));
+          } // Fl_Box* w_when_box
           o->end();
         } // Fl_Group* o
         o->end();

@@ -389,6 +389,8 @@ void label_cb(Fl_Input* i, void *v) {
     }
     strcpy(oldlabel,i->value());
   } else {
+//    int incremental = ( (Fl::event() != FL_HIDE) && (Fl::event() != FL_UNFOCUS) );
+//    if (incremental) undo_suspend();
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -396,6 +398,7 @@ void label_cb(Fl_Input* i, void *v) {
         mod = 1;
       }
     }
+//    if (incremental) undo_resume();
     if (mod) set_modflag(1);
   }
 }
@@ -992,39 +995,54 @@ void down_box_cb(Fl_Choice* i, void *v) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item whenmenu[] = {
-  {"Never",0,0,(void*)ZERO_ENTRY},
-  {"Release",0,0,(void*)FL_WHEN_RELEASE},
-  {"Changed",0,0,(void*)FL_WHEN_CHANGED},
-  {"Enter key",0,0,(void*)FL_WHEN_ENTER_KEY},
-  //{"Release or Enter",0,0,(void*)(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE)},
+  {"FL_WHEN_CHANGED",0,0,(void*)FL_WHEN_CHANGED, FL_MENU_TOGGLE},
+  {"FL_WHEN_NOT_CHANGED",0,0,(void*)FL_WHEN_NOT_CHANGED, FL_MENU_TOGGLE},
+  {"FL_WHEN_RELEASE",0,0,(void*)FL_WHEN_RELEASE, FL_MENU_TOGGLE},
+  {"FL_WHEN_ENTER_KEY",0,0,(void*)FL_WHEN_ENTER_KEY, FL_MENU_TOGGLE},
   {0}};
 
 static Fl_Menu_Item whensymbolmenu[] = {
-  {"FL_WHEN_NEVER",0,0,(void*)(FL_WHEN_NEVER)},
-  {"FL_WHEN_CHANGED",0,0,(void*)(FL_WHEN_CHANGED)},
-  {"FL_WHEN_RELEASE",0,0,(void*)(FL_WHEN_RELEASE)},
-  {"FL_WHEN_RELEASE_ALWAYS",0,0,(void*)(FL_WHEN_RELEASE_ALWAYS)},
-  {"FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_ENTER_KEY)},
-  {"FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)(FL_WHEN_ENTER_KEY_ALWAYS)},
-  {0}};
+  /*  0 */ {"FL_WHEN_NEVER",0,0,(void*)FL_WHEN_NEVER},
+  /*  1 */ {"FL_WHEN_CHANGED",0,0,(void*)FL_WHEN_CHANGED},
+  /*  2 */ {"FL_WHEN_NOT_CHANGED",0,0,(void*)FL_WHEN_NOT_CHANGED},
+  /*  3 */ {"FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED)},
+  /*  4 */ {"FL_WHEN_RELEASE",0,0,(void*)FL_WHEN_RELEASE},
+  /*  5 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE)},
+  /*  6 */ {"FL_WHEN_RELEASE_ALWAYS",0,0,(void*)FL_WHEN_RELEASE_ALWAYS},
+  /*  7 */ {"FL_WHEN_CHANGED | FL_WHEN_RELEASE_ALWAYS",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_RELEASE_ALWAYS)},
+  /*  8 */ {"FL_WHEN_ENTER_KEY",0,0,(void*)FL_WHEN_ENTER_KEY},
+  /*  9 */ {"FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
+  /* 10 */ {"FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)FL_WHEN_ENTER_KEY_ALWAYS},
+  /* 11 */ {"FL_WHEN_ENTER_KEY_CHANGED",0,0,(void*)FL_WHEN_ENTER_KEY_CHANGED},
+  /* 12 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY)},
+  /* 13 */ {"FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_CHANGED|FL_WHEN_ENTER_KEY)},
+  /* 14 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_ALWAYS",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_ALWAYS)},
+  /* 15 */ {"FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED",0,0,(void*)(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY_CHANGED)},
+  {0}
+};
 
-void when_cb(Fl_Choice* i, void *v) {
+void when_cb(Fl_Menu_Button* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
-    int n = current_widget->o->when() & (~FL_WHEN_NOT_CHANGED);
-    if (!n) n = ZERO_ENTRY;
-    for (int j = 0; j < int(sizeof(whenmenu)/sizeof(*whenmenu)); j++)
-      if (whenmenu[j].argument() == n) {i->value(j); break;}
+    int n = current_widget->o->when() & 15;
+    if (n&1) whenmenu[0].set(); else whenmenu[0].clear();
+    if (n&2) whenmenu[1].set(); else whenmenu[1].clear();
+    if (n&4) whenmenu[2].set(); else whenmenu[2].clear();
+    if (n&8) whenmenu[3].set(); else whenmenu[3].clear();
+    w_when_box->label(whensymbolmenu[n].label());
   } else {
     int mod = 0;
     int m = i->value();
-    int n = int(whenmenu[m].argument());
-    if (!n) return; // should not happen
-    if (n == ZERO_ENTRY) n = 0;
+    int n = 0;
+    if (whenmenu[0].value()) n |= 1;
+    if (whenmenu[1].value()) n |= 2;
+    if (whenmenu[2].value()) n |= 4;
+    if (whenmenu[3].value()) n |= 8;
+    w_when_box->label(whensymbolmenu[n].label());
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->o->when(n|(q->o->when()&FL_WHEN_NOT_CHANGED));
+        q->o->when(n);
         mod = 1;
       }
     }
@@ -1032,22 +1050,22 @@ void when_cb(Fl_Choice* i, void *v) {
   }
 }
 
-void when_button_cb(Fl_Light_Button* i, void *v) {
-  if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
-    i->value(current_widget->o->when()&FL_WHEN_NOT_CHANGED);
-  } else {
-    int mod = 0;
-    int n = i->value() ? FL_WHEN_NOT_CHANGED : 0;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->o->when(n|(q->o->when()&~FL_WHEN_NOT_CHANGED));
-        mod = 1;
-      }
-    }
-    if (mod) set_modflag(1);
-  }
+void when_button_cb(Fl_Box* i, void *v) {
+//  if (v == LOAD) {
+//    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
+//    i->value(current_widget->o->when()&FL_WHEN_NOT_CHANGED);
+//  } else {
+//    int mod = 0;
+//    int n = i->value() ? FL_WHEN_NOT_CHANGED : 0;
+//    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+//      if (o->selected && o->is_widget()) {
+//        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+//        q->o->when(n|(q->o->when()&~FL_WHEN_NOT_CHANGED));
+//        mod = 1;
+//      }
+//    }
+//    if (mod) set_modflag(1);
+//  }
 }
 
 uchar Fl_Widget_Type::resizable() const {
