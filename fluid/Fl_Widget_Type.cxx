@@ -377,24 +377,30 @@ void name_public_cb(Fl_Choice* i, void* v) {
   }
 }
 
-/* Treating UNDO for this widget.
+/* Treating UNDO for text widget.
 
- 1: the widget has its own undo handling for the text field, but we may want to do a global undo
+ Goal: we want to continiously update the UI while the user is typing text
+ (changing the label, in this case). Source View does deferred uodates, and
+ the widget browser and widget panel update on every keystroke. At the same
+ time, we want to limit undo actions to few and logical units.
+
+ Caveats:
+
+ 1: the text widget has its own undo handling for the text field, but we may want to do a global undo
  2: every o->label() call will create an undo entry, but we want only one single event for all selected widgets
  3: we want a single undo for the entire editing phase, but still propagate changes as they happen
 
  The edit process has these main states:
 
- 1: starting to edit [first_change==1 && incremental]; we must create a single undo checkpoint before anything changes
- 2: continue editing [first_change==0 && incremental] ; we must suspend any undo checkpoints
- 3: done editing, unfocus [first_change==0 && !incremental]; we must make sure that undo checkpoints are enabled again
- 4: losing focus without editing [first_change==1 && incremental]; don't create and checkpoints
+ 1: starting to edit [first_change==1 && !unfocus]; we must create a single undo checkpoint before anything changes
+ 2: continue editing [first_change==0 && !unfocus] ; we must suspend any undo checkpoints
+ 3: done editing, unfocus [first_change==0 && unfocus]; we must make sure that undo checkpoints are enabled again
+ 4: losing focus without editing [first_change==1 && unfocus]; don't create and checkpoints
 
  We must also check:
- 1: changing focus without changing text
- 2: copy and paste, drag and drop operations
- 3: save operation without unfocus event
-
+ 1: changing focus without changing text (works)
+ 2: copy and paste, drag and drop operations (works)
+ 3: save operation without unfocus event (works)
  */
 void label_cb(Fl_Input* i, void *v) {
   static int first_change = 1;
