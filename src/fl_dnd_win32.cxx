@@ -58,7 +58,7 @@ class FLDropTarget : public IDropTarget
   DWORD lastEffect;
   int px, py;
 public:
-  FLDropTarget() : m_cRefCount(0) { } // initialize
+  FLDropTarget() : m_cRefCount(1) { } // Issue #569: initialize with 1
   virtual ~FLDropTarget() { }
   HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, LPVOID *ppvObject ) {
     if (IID_IUnknown==riid || IID_IDropTarget==riid)
