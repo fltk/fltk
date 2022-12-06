@@ -117,13 +117,11 @@ extern Fl_Menu_Item whenmenu[];
 extern void when_cb(Fl_Menu_Button*, void*);
 extern void user_data_type_cb(Fl_Input*, void*);
 extern Fl_Box *w_when_box;
-extern void revert_cb(Fl_Button*, void*);
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
 extern void overlay_cb(Fl_Button*, void*);
 #include <FL/Fl_Return_Button.H>
 extern void ok_cb(Fl_Return_Button*, void*);
-extern void cancel_cb(Fl_Button*, void*);
 Fl_Double_Window* make_widget_panel();
 extern Fl_Menu_Item menu_[];
 extern Fl_Menu_Item menu_1[];

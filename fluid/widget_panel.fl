@@ -49,7 +49,7 @@ Function {make_widget_panel()} {
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb selected
+            callback label_cb
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
           }
@@ -744,18 +744,12 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {open selected
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Box {} {
         comment {Hidden resizable box}
         xywh {10 370 75 20} labelsize 11 hide resizable
-      }
-      Fl_Button {} {
-        label Revert
-        callback revert_cb
-        comment {Hidden Revert button}
-        xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
         label {Live &Resize}
@@ -771,12 +765,6 @@ wCallback->do_callback(wCallback, v);} open
         label Close
         callback ok_cb
         xywh {345 370 65 20} labelsize 11
-      }
-      Fl_Button {} {
-        label Cancel
-        callback cancel_cb
-        comment {Hidden cancel button}
-        xywh {345 370 65 20} labelsize 11 hide
       }
     }
   }

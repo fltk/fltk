@@ -377,29 +377,53 @@ void name_public_cb(Fl_Choice* i, void* v) {
   }
 }
 
-static char* oldlabel;
-static unsigned oldlabellen;
+/* Treating UNDO for this widget.
 
+ 1: the widget has its own undo handling for the text field, but we may want to do a global undo
+ 2: every o->label() call will create an undo entry, but we want only one single event for all selected widgets
+ 3: we want a single undo for the entire editing phase, but still propagate changes as they happen
+
+ The edit process has these main states:
+
+ 1: starting to edit [first_change==1 && incremental]; we must create a single undo checkpoint before anything changes
+ 2: continue editing [first_change==0 && incremental] ; we must suspend any undo checkpoints
+ 3: done editing, unfocus [first_change==0 && !incremental]; we must make sure that undo checkpoints are enabled again
+ 4: losing focus without editing [first_change==1 && incremental]; don't create and checkpoints
+
+ We must also check:
+ 1: changing focus without changing text
+ 2: copy and paste, drag and drop operations
+ 3: save operation without unfocus event
+
+ */
 void label_cb(Fl_Input* i, void *v) {
+  static int first_change = 1;
   if (v == LOAD) {
     i->static_value(current_widget->label());
-    if (strlen(i->value()) >= oldlabellen) {
-      oldlabellen = (int)strlen(i->value())+128;
-      oldlabel = (char*)realloc(oldlabel,oldlabellen);
-    }
-    strcpy(oldlabel,i->value());
+    first_change = 1;
   } else {
-    int incremental = ( (Fl::event() != FL_HIDE) && (Fl::event() != FL_UNFOCUS) );
-    if (incremental) undo_suspend();
-    int mod = 0;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        o->label(i->value());
-        mod = 1;
+    if (i->changed()) {
+      undo_suspend();
+      int mod = 0;
+      for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+        if (o->selected && o->is_widget()) {
+          if (!mod) {
+            if (first_change) {
+              undo_resume();
+              undo_checkpoint();
+              undo_suspend();
+              first_change = 0;
+            }
+            mod = 1;
+          }
+          o->label(i->value());
+        }
       }
+      undo_resume();
+      if (mod) set_modflag(1);
     }
-    if (incremental) undo_resume();
-    if (mod) set_modflag(1);
+    if ( (Fl::event() == FL_HIDE) || (Fl::event() == FL_UNFOCUS) )
+      first_change = 1;
   }
 }
 
@@ -2275,18 +2299,6 @@ void set_cb(Fl_Button*, void*) {
 void ok_cb(Fl_Return_Button* o, void* v) {
   set_cb(o,v);
   if (!haderror) the_panel->hide();
-}
-
-void revert_cb(Fl_Button*, void*) {
-  // We have to revert all dynamically changing fields:
-  // but for now only the first label works...
-  if (numselected == 1) current_widget->label(oldlabel);
-  propagate_load(the_panel, LOAD);
-}
-
-void cancel_cb(Fl_Button* o, void* v) {
-  revert_cb(o,v);
-  the_panel->hide();
 }
 
 void toggle_overlays(Fl_Widget *,void *); // in Fl_Window_Type.cxx

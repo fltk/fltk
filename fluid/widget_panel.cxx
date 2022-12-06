@@ -940,12 +940,6 @@ access the Widget pointer and \'v\' to access the user value.");
         o->hide();
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { // Hidden Revert button
-        Fl_Button* o = new Fl_Button(90, 370, 60, 20, "Revert");
-        o->labelsize(11);
-        o->callback((Fl_Callback*)revert_cb);
-        o->hide();
-      } // Fl_Button* o
       { wLiveMode = new Fl_Button(155, 370, 80, 20, "Live &Resize");
         wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
 avior.");
@@ -963,12 +957,6 @@ avior.");
         o->labelsize(11);
         o->callback((Fl_Callback*)ok_cb);
       } // Fl_Return_Button* o
-      { // Hidden cancel button
-        Fl_Button* o = new Fl_Button(345, 370, 65, 20, "Cancel");
-        o->labelsize(11);
-        o->callback((Fl_Callback*)cancel_cb);
-        o->hide();
-      } // Fl_Button* o
       o->end();
     } // Fl_Group* o
     o->size_range(o->w(), o->h());
