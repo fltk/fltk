@@ -823,6 +823,7 @@ void wc_relative_cb(Fl_Choice *i, void *v) {
     }
   } else {
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && !strcmp(current_widget->type_name(), "widget_class")) {
         Fl_Widget_Class_Type *t = (Fl_Widget_Class_Type *)o;
@@ -1131,6 +1132,7 @@ void resizable_cb(Fl_Light_Button* i,void* v) {
     i->activate();
     i->value(current_widget->resizable());
   } else {
+    undo_checkpoint();
     current_widget->resizable(i->value());
     set_modflag(1);
   }
@@ -1144,8 +1146,12 @@ void hotspot_cb(Fl_Light_Button* i,void* v) {
     i->activate();
     i->value(current_widget->hotspot());
   } else {
+    undo_checkpoint();
     current_widget->hotspot(i->value());
-    if (current_widget->is_menu_item()) {current_widget->redraw(); return;}
+    if (current_widget->is_menu_item()) {
+      current_widget->redraw();
+      return;
+    }
     if (i->value()) {
       Fl_Type *p = current_widget->parent;
       if (!p || !p->is_widget()) return;
@@ -1169,10 +1175,13 @@ void visible_cb(Fl_Light_Button* i, void* v) {
     int n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
+        if (!mod) {
+          mod = 1;
+          undo_checkpoint();
+        }
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         n ? q->o->show() : q->o->hide();
         q->redraw();
-        mod = 1;
         if (n && q->parent && q->parent->type_name()) {
           if (!strcmp(q->parent->type_name(), "Fl_Tabs")) {
             ((Fl_Tabs *)q->o->parent())->value(q->o);
@@ -1199,10 +1208,13 @@ void active_cb(Fl_Light_Button* i, void* v) {
     int n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
+        if (!mod) {
+          mod = 1;
+          undo_checkpoint();
+        }
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         n ? q->o->activate() : q->o->deactivate();
         q->redraw();
-        mod = 1;
       }
     }
     if (mod) set_modflag(1);
@@ -1403,6 +1415,7 @@ void align_cb(Fl_Button* i, void *v) {
     i->value(current_widget->o->align() & b);
   } else {
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1447,6 +1460,7 @@ void align_position_cb(Fl_Choice *i, void *v) {
     const Fl_Menu_Item *mi = i->menu() + i->value();
     Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1476,6 +1490,7 @@ void align_text_image_cb(Fl_Choice *i, void *v) {
     const Fl_Menu_Item *mi = i->menu() + i->value();
     Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1704,6 +1719,7 @@ void min_w_cb(Fl_Value_Input* i, void* v) {
     i->value(((Fl_Window_Type*)current_widget)->sr_min_w);
   } else {
     int mod = 0;
+    undo_checkpoint();
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
@@ -1721,6 +1737,7 @@ void min_h_cb(Fl_Value_Input* i, void* v) {
     i->value(((Fl_Window_Type*)current_widget)->sr_min_h);
   } else {
     int mod = 0;
+    undo_checkpoint();
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
@@ -1738,6 +1755,7 @@ void max_w_cb(Fl_Value_Input* i, void* v) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_w);
   } else {
     int mod = 0;
+    undo_checkpoint();
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
@@ -1755,6 +1773,7 @@ void max_h_cb(Fl_Value_Input* i, void* v) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_h);
   } else {
     int mod = 0;
+    undo_checkpoint();
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
@@ -1770,6 +1789,7 @@ void set_min_size_cb(Fl_Button*, void* v) {
   if (v == LOAD) {
   } else {
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
@@ -1787,6 +1807,7 @@ void set_max_size_cb(Fl_Button*, void* v) {
   if (v == LOAD) {
   } else {
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
@@ -1807,6 +1828,7 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
     i->value(((Fl_Slider*)(current_widget->o))->slider_size());
   } else {
     int mod = 0;
+    undo_checkpoint();
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1836,6 +1858,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
     }
   } else {
     int mod = 0;
+    undo_checkpoint();
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1869,6 +1892,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
     }
   } else {
     int mod = 0;
+    undo_checkpoint();
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1902,6 +1926,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
     }
   } else {
     int mod = 0;
+    undo_checkpoint();
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1936,6 +1961,7 @@ void value_cb(Fl_Value_Input* i, void* v) {
       i->deactivate();
   } else {
     int mod = 0;
+    undo_checkpoint();
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
