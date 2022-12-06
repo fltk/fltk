@@ -95,6 +95,12 @@ Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;
 
 CodeEditor *wCallback=(CodeEditor *)0;
 
+Fl_Menu_Item menu_4[] = {
+ {"void*", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"long", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Box *w_when_box=(Fl_Box *)0;
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
@@ -910,7 +916,7 @@ access the Widget pointer and \'v\' to access the user value.");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 335, 158, 20);
+          { Fl_Input_Choice* o = new Fl_Input_Choice(95, 335, 158, 20);
             o->tooltip("The type of the user data.");
             o->labelfont(1);
             o->labelsize(11);
@@ -918,7 +924,8 @@ access the Widget pointer and \'v\' to access the user value.");
             o->textsize(11);
             o->callback((Fl_Callback*)user_data_type_cb);
             Fl_Group::current()->resizable(o);
-          } // Fl_Input* o
+            o->menu(menu_4);
+          } // Fl_Input_Choice* o
           { w_when_box = new Fl_Box(260, 332, 145, 26, "FL_WHEN_NEVER");
             w_when_box->box(FL_FLAT_BOX);
             w_when_box->selection_color((Fl_Color)1);

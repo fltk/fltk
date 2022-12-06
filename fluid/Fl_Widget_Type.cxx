@@ -1569,12 +1569,12 @@ void user_data_cb(Fl_Input *i, void *v) {
   }
 }
 
-void user_data_type_cb(Fl_Input *i, void *v) {
+void user_data_type_cb(Fl_Input_Choice *i, void *v) {
   static const char *dflt = "void*";
   if (v == LOAD) {
     const char *c = current_widget->user_data_type();
     if (!c) c = dflt;
-    i->static_value(c);
+    i->value(c);
   } else {
     int mod = 0;
     const char *c = i->value();

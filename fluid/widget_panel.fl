@@ -40,7 +40,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -733,9 +733,18 @@ wCallback->do_callback(wCallback, v);} open
           callback propagate_load open
           xywh {95 335 310 20} labelfont 1 labelsize 11 align 4
         } {
-          Fl_Input {} {
-            callback user_data_type_cb
+          Fl_Input_Choice {} {
+            callback user_data_type_cb open
             tooltip {The type of the user data.} xywh {95 335 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+          } {
+            MenuItem {} {
+              label {void*}
+              xywh {0 0 31 20} labelfont 4 labelsize 11
+            }
+            MenuItem {} {
+              label long
+              xywh {0 0 31 20} labelfont 4 labelsize 11
+            }
           }
           Fl_Box w_when_box {
             label FL_WHEN_NEVER
@@ -744,7 +753,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Group {} {open selected
+    Fl_Group {} {open
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Box {} {

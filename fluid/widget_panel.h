@@ -115,7 +115,8 @@ extern void user_data_cb(Fl_Input*, void*);
 #include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Item whenmenu[];
 extern void when_cb(Fl_Menu_Button*, void*);
-extern void user_data_type_cb(Fl_Input*, void*);
+#include <FL/Fl_Input_Choice.H>
+extern void user_data_type_cb(Fl_Input_Choice*, void*);
 extern Fl_Box *w_when_box;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
@@ -128,4 +129,5 @@ extern Fl_Menu_Item menu_1[];
 extern Fl_Menu_Item menu_Children[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
+extern Fl_Menu_Item menu_4[];
 #endif
