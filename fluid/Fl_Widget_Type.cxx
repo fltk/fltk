@@ -389,8 +389,8 @@ void label_cb(Fl_Input* i, void *v) {
     }
     strcpy(oldlabel,i->value());
   } else {
-//    int incremental = ( (Fl::event() != FL_HIDE) && (Fl::event() != FL_UNFOCUS) );
-//    if (incremental) undo_suspend();
+    int incremental = ( (Fl::event() != FL_HIDE) && (Fl::event() != FL_UNFOCUS) );
+    if (incremental) undo_suspend();
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -398,7 +398,7 @@ void label_cb(Fl_Input* i, void *v) {
         mod = 1;
       }
     }
-//    if (incremental) undo_resume();
+    if (incremental) undo_resume();
     if (mod) set_modflag(1);
   }
 }

@@ -120,7 +120,6 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -132,7 +131,7 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->textsize(11);
             o->callback((Fl_Callback*)label_cb);
-            o->when(FL_WHEN_RELEASE_ALWAYS);
+            o->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
           { Fl_Choice* o = new Fl_Choice(284, 40, 120, 20);
@@ -747,6 +746,7 @@ sized to fit the container.");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 310, 20, "Class:");
           o->labelfont(1);
           o->labelsize(11);

@@ -30,7 +30,7 @@ Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
-    comment {Use a Double Window to avoid flickering.} open selected
+    comment {Use a Double Window to avoid flickering.} open
     xywh {500 209 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
@@ -41,7 +41,7 @@ Function {make_widget_panel()} {
       Fl_Group {} {
         label GUI
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 when 0 hide resizable
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -49,9 +49,9 @@ Function {make_widget_panel()} {
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb
+            callback label_cb selected
             tooltip {The label text for the widget.
-Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 6 textsize 11 resizable
+Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
           }
           Fl_Choice {} {
             callback labeltype_cb open
@@ -601,7 +601,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       Fl_Group {} {
         label {C++}
         callback propagate_load open
-        xywh {10 30 400 330} labelsize 11 when 0
+        xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           label {Class:}
