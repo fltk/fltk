@@ -1,7 +1,7 @@
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,7 +54,7 @@ Fl_Window *fl_dnd_target_window = 0;
  */
 class FLDropTarget : public IDropTarget
 {
-  DWORD m_cRefCount;
+  DWORD m_cRefCount; // for "statistics" only (issue #569)
   DWORD lastEffect;
   int px, py;
 public:
@@ -74,8 +74,7 @@ public:
   ULONG STDMETHODCALLTYPE Release() {
     long nTemp;
     nTemp = --m_cRefCount;
-    if(nTemp==0)
-      delete this;
+    // this is a static object, do not 'delete this' (issue #569)
     return nTemp;
   }
   HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {

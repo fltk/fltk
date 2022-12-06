@@ -470,6 +470,9 @@ void Fl_WinAPI_Window_Driver::hide() {
     return;
   }
 
+  // Issue #569: undo RegisterDragDrop()
+  RevokeDragDrop((HWND)ip->xid);
+
   // make sure any custom icons get freed
   // icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
   // this little trick keeps the current clipboard alive, even if we are about
