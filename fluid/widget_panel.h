@@ -90,14 +90,24 @@ extern Fl_Menu_Item fontmenu[];
 extern void labelfont_cb(Fl_Choice*, void*);
 extern void labelsize_cb(Fl_Value_Input*, void*);
 extern void labelcolor_cb(Fl_Button*, void*);
+extern Fl_Button *w_labelcolor;
+#include <FL/Fl_Menu_Button.H>
+extern Fl_Menu_Item colormenu[];
+extern void labelcolor_menu_cb(Fl_Menu_Button*, void*);
 extern Fl_Menu_Item boxmenu[];
 extern void box_cb(Fl_Choice*, void*);
 extern void color_cb(Fl_Button*, void*);
+extern Fl_Button *w_color;
+extern void color_menu_cb(Fl_Menu_Button*, void*);
 extern void down_box_cb(Fl_Choice*, void*);
 extern void color2_cb(Fl_Button*, void*);
+extern Fl_Button *w_selectcolor;
+extern void color2_menu_cb(Fl_Menu_Button*, void*);
 extern void textfont_cb(Fl_Choice*, void*);
 extern void textsize_cb(Fl_Value_Input*, void*);
 extern void textcolor_cb(Fl_Button*, void*);
+extern Fl_Button *w_textcolor;
+extern void textcolor_menu_cb(Fl_Menu_Button*, void*);
 extern void subclass_cb(Fl_Input*, void*);
 extern void subtype_cb(Fl_Choice*, void*);
 extern void name_cb(Fl_Input*, void*);
@@ -112,7 +122,6 @@ extern Fl_Text_Editor *wComment;
 extern void callback_cb(CodeEditor*, void*);
 extern CodeEditor *wCallback;
 extern void user_data_cb(Fl_Input*, void*);
-#include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Item whenmenu[];
 extern void when_cb(Fl_Menu_Button*, void*);
 #include <FL/Fl_Input_Choice.H>

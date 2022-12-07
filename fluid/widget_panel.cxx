@@ -71,6 +71,14 @@ Fl_Value_Input *widget_flex_size=(Fl_Value_Input *)0;
 
 Fl_Check_Button *widget_flex_fixed=(Fl_Check_Button *)0;
 
+Fl_Button *w_labelcolor=(Fl_Button *)0;
+
+Fl_Button *w_color=(Fl_Button *)0;
+
+Fl_Button *w_selectcolor=(Fl_Button *)0;
+
+Fl_Button *w_textcolor=(Fl_Button *)0;
+
 Fl_Menu_Item menu_2[] = {
  {"private", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"public", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -637,7 +645,7 @@ sized to fit the container.");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 40, 170, 20);
+          { Fl_Choice* o = new Fl_Choice(95, 40, 152, 20);
             o->tooltip("The style of the label text.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -648,7 +656,7 @@ sized to fit the container.");
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(264, 40, 50, 20);
+          { Fl_Value_Input* o = new Fl_Value_Input(246, 40, 50, 20);
             o->tooltip("The size of the label text.");
             o->labelsize(11);
             o->maximum(100);
@@ -657,11 +665,15 @@ sized to fit the container.");
             o->textsize(11);
             o->callback((Fl_Callback*)labelsize_cb);
           } // Fl_Value_Input* o
-          { Fl_Button* o = new Fl_Button(314, 40, 90, 20, "Label Color");
-            o->tooltip("The color of the label text.");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)labelcolor_cb);
-          } // Fl_Button* o
+          { w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
+            w_labelcolor->tooltip("The color of the label text.");
+            w_labelcolor->labelsize(11);
+            w_labelcolor->callback((Fl_Callback*)labelcolor_cb);
+          } // Fl_Button* w_labelcolor
+          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
+            o->callback((Fl_Callback*)labelcolor_menu_cb);
+            o->menu(colormenu);
+          } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 65, 309, 20, "Box:");
@@ -669,7 +681,7 @@ sized to fit the container.");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 65, 219, 20);
+          { Fl_Choice* o = new Fl_Choice(95, 65, 201, 20);
             o->tooltip("The \"up\" box of the widget.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -680,11 +692,15 @@ sized to fit the container.");
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(314, 65, 90, 20, "Color");
-            o->tooltip("The background color of the widget.");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)color_cb);
-          } // Fl_Button* o
+          { w_color = new Fl_Button(296, 65, 90, 20, "Color");
+            w_color->tooltip("The background color of the widget.");
+            w_color->labelsize(11);
+            w_color->callback((Fl_Callback*)color_cb);
+          } // Fl_Button* w_color
+          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
+            o->callback((Fl_Callback*)color_menu_cb);
+            o->menu(colormenu);
+          } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 90, 309, 20, "Down Box:");
@@ -692,22 +708,27 @@ sized to fit the container.");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 90, 219, 20);
+          { Fl_Choice* o = new Fl_Choice(95, 90, 201, 20);
             o->tooltip("The \"down\" box of the widget.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->labelcolor(FL_DARK2);
             o->textsize(11);
             o->callback((Fl_Callback*)down_box_cb);
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(314, 90, 90, 20, "Select Color");
-            o->tooltip("The selection color of the widget.");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)color2_cb);
-          } // Fl_Button* o
+          { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
+            w_selectcolor->tooltip("The selection color of the widget.");
+            w_selectcolor->labelsize(11);
+            w_selectcolor->callback((Fl_Callback*)color2_cb);
+          } // Fl_Button* w_selectcolor
+          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
+            o->callback((Fl_Callback*)color2_menu_cb);
+            o->menu(colormenu);
+          } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 115, 309, 20, "Text Font:");
@@ -715,7 +736,7 @@ sized to fit the container.");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 115, 170, 20);
+          { Fl_Choice* o = new Fl_Choice(95, 115, 152, 20);
             o->tooltip("The value text style.");
             o->box(FL_DOWN_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -726,7 +747,7 @@ sized to fit the container.");
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(264, 115, 50, 20);
+          { Fl_Value_Input* o = new Fl_Value_Input(246, 115, 50, 20);
             o->tooltip("The value text size.");
             o->labelsize(11);
             o->maximum(100);
@@ -735,11 +756,15 @@ sized to fit the container.");
             o->textsize(11);
             o->callback((Fl_Callback*)textsize_cb);
           } // Fl_Value_Input* o
-          { Fl_Button* o = new Fl_Button(314, 115, 90, 20, "Text Color");
-            o->tooltip("The value text color.");
-            o->labelsize(11);
-            o->callback((Fl_Callback*)textcolor_cb);
-          } // Fl_Button* o
+          { w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
+            w_textcolor->tooltip("The value text color.");
+            w_textcolor->labelsize(11);
+            w_textcolor->callback((Fl_Callback*)textcolor_cb);
+          } // Fl_Button* w_textcolor
+          { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
+            o->callback((Fl_Callback*)textcolor_menu_cb);
+            o->menu(colormenu);
+          } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Box* o = new Fl_Box(95, 140, 300, 40);
@@ -930,7 +955,7 @@ access the Widget pointer and \'v\' to access the user value.");
             w_when_box->box(FL_FLAT_BOX);
             w_when_box->selection_color((Fl_Color)1);
             w_when_box->labelsize(8);
-            w_when_box->align(Fl_Align(192));
+            w_when_box->align(Fl_Align(193|FL_ALIGN_INSIDE));
           } // Fl_Box* w_when_box
           o->end();
         } // Fl_Group* o

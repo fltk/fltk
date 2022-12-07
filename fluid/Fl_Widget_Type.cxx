@@ -1319,28 +1319,75 @@ void labeltype_cb(Fl_Choice* i, void *v) {
 
 ////////////////////////////////////////////////////////////////
 
+Fl_Menu_Item colormenu[] = {
+  { "Foreground Color",   0, 0, (void*)FL_FOREGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color",   0, 0, (void*)FL_BACKGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color 2", 0, 0, (void*)FL_BACKGROUND2_COLOR, 0, 0, FL_HELVETICA, 11},
+  { "Selection Color",    0, 0, (void*)FL_SELECTION_COLOR,   0, 0, FL_HELVETICA, 11},
+  { "Inactive Color",     0, 0, (void*)FL_INACTIVE_COLOR,    FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Black",              0, 0, (void*)FL_BLACK,             0, 0, FL_HELVETICA, 11},
+  { "White",              0, 0, (void*)FL_WHITE,             FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Gray 0",             0, 0, (void*)FL_GRAY0,             0, 0, FL_HELVETICA, 11},
+  { "Dark 3",             0, 0, (void*)FL_DARK3,             0, 0, FL_HELVETICA, 11},
+  { "Dark 2",             0, 0, (void*)FL_DARK2,             0, 0, FL_HELVETICA, 11},
+  { "Dark 1",             0, 0, (void*)FL_DARK1,             0, 0, FL_HELVETICA, 11},
+  { "Light 1",            0, 0, (void*)FL_LIGHT1,            0, 0, FL_HELVETICA, 11},
+  { "Light 2",            0, 0, (void*)FL_LIGHT2,            0, 0, FL_HELVETICA, 11},
+  { "Light 3",            0, 0, (void*)FL_LIGHT3,            0, 0, FL_HELVETICA, 11},
+  { 0 }
+};
+
+void color_common(Fl_Color c) {
+  int mod = 0;
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+    if (o->selected && o->is_widget()) {
+      Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+      q->o->color(c); q->o->redraw();
+      if (q->parent && q->parent->type_name() == tabs_type_name) {
+        if (q->o->parent()) q->o->parent()->redraw();
+      }
+      mod = 1;
+    }
+  }
+  if (mod) set_modflag(1);
+}
+
 void color_cb(Fl_Button* i, void *v) {
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
-    int mod = 0;
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
     c = d;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->o->color(c); q->o->redraw();
-        if (q->parent && q->parent->type_name() == tabs_type_name) {
-          if (q->o->parent()) q->o->parent()->redraw();
-        }
-        mod = 1;
-      }
-    }
-    if (mod) set_modflag(1);
+    color_common(c);
   }
   i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
+}
+
+void color_menu_cb(Fl_Menu_Button* i, void *v) {
+  Fl_Color c = current_widget->o->color();
+  if (v == LOAD) {
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
+  } else {
+    Fl_Color d = i->mvalue()->argument();
+    if (d == c) return;
+    c = d;
+    color_common(c);
+    w_color->color(c); w_color->labelcolor(fl_contrast(FL_BLACK,c)); w_color->redraw();
+  }
+}
+
+void color2_common(Fl_Color c) {
+  int mod = 0;
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+    if (o->selected && o->is_widget()) {
+      Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+      q->o->selection_color(c); q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) set_modflag(1);
 }
 
 void color2_cb(Fl_Button* i, void *v) {
@@ -1348,39 +1395,59 @@ void color2_cb(Fl_Button* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
-    int mod = 0;
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
     c = d;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->o->selection_color(c); q->o->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) set_modflag(1);
+    color2_common(c);
   }
   i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
+}
+
+void color2_menu_cb(Fl_Menu_Button* i, void *v) {
+  Fl_Color c = current_widget->o->selection_color();
+  if (v == LOAD) {
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
+  } else {
+    Fl_Color d = i->mvalue()->argument();
+    if (d == c) return;
+    c = d;
+    color2_common(c);
+    w_selectcolor->color(c); w_selectcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_selectcolor->redraw();
+  }
+}
+
+void labelcolor_common(Fl_Color c) {
+  int mod = 0;
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+    if (o->selected && o->is_widget()) {
+      Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+      q->o->labelcolor(c); q->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) set_modflag(1);
 }
 
 void labelcolor_cb(Fl_Button* i, void *v) {
   Fl_Color c = current_widget->o->labelcolor();
   if (v != LOAD) {
-    int mod = 0;
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
     c = d;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->o->labelcolor(c); q->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) set_modflag(1);
+    labelcolor_common(c);
   }
   i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
+}
+
+void labelcolor_menu_cb(Fl_Menu_Button* i, void *v) {
+  Fl_Color c = current_widget->o->labelcolor();
+  if (v != LOAD) {
+    Fl_Color d = i->mvalue()->argument();
+    if (d == c) return;
+    c = d;
+    labelcolor_common(c);
+    w_labelcolor->color(c); w_labelcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_labelcolor->redraw();
+  }
 }
 
 static Fl_Button* relative(Fl_Widget* o, int i) {
@@ -1687,27 +1754,47 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
   i->value(s);
 }
 
+void textcolor_common(Fl_Color c) {
+  Fl_Font n; int s;
+  int mod = 0;
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+    if (o->selected && o->is_widget()) {
+      Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+      q->textstuff(3,n,s,c); q->o->redraw();
+      mod = 1;
+    }
+  }
+  if (mod) set_modflag(1);
+}
+
 void textcolor_cb(Fl_Button* i, void* v) {
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
     if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
     i->activate();
   } else {
-    int mod = 0;
     c = i->color();
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
     c = d;
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
-        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        q->textstuff(3,n,s,c); q->o->redraw();
-        mod = 1;
-      }
-    }
-    if (mod) set_modflag(1);
+    textcolor_common(c);
   }
   i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
+}
+
+void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
+  Fl_Font n; int s; Fl_Color c;
+  if (v == LOAD) {
+    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
+    i->activate();
+  } else {
+    c = i->color();
+    Fl_Color d = i->mvalue()->argument();
+    if (d == c) return;
+    c = d;
+    textcolor_common(c);
+    w_textcolor->color(c); w_textcolor->labelcolor(fl_contrast(FL_BLACK,c)); w_textcolor->redraw();
+  }
 }
 
 ////////////////////////////////////////////////////////////////
