@@ -322,7 +322,7 @@ void Fl_Wayland_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, 
   top->scale(pWindow->w(), htop);
 }
 
-// used only to support progressive drawing
+// used to support both normal and progressive drawing
 static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
 
 static const struct wl_callback_listener surface_frame_listener = {
@@ -387,18 +387,6 @@ void Fl_Wayland_Window_Driver::make_current() {
 }
 
 
-// used to support regular drawing
-static void surface_frame_one_shot(void *data, struct wl_callback *cb, uint32_t time) {
-  wl_callback_destroy(cb);
-  struct wld_window *window = (struct wld_window *)data;
-  window->buffer->cb = NULL;
-}
-
-static const struct wl_callback_listener surface_frame_listener_one_shot = {
-  .done = surface_frame_one_shot,
-};
-
-
 void Fl_Wayland_Window_Driver::flush() {
   if (!pWindow->damage()) return;
   if (pWindow->as_gl_window()) {
@@ -437,7 +425,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
   if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
-  Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener_one_shot, false);
+  Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener, false);
 }
 
 
