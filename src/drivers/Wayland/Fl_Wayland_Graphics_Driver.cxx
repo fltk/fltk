@@ -89,7 +89,7 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
   window->buffer->cb = NULL;
   if (window->buffer->draw_buffer_needs_commit) {
 //fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
+    Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
 }
 
