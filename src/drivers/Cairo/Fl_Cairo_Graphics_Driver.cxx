@@ -762,20 +762,25 @@ void Fl_Cairo_Graphics_Driver::draw_cached_pattern_(Fl_Image *img, cairo_pattern
   int Hs = Fl_Scalable_Graphics_Driver::floor(Y - cy + img->h(), s) - Ys;
   if (Ws == 0 || Hs == 0) return;
   cairo_save(cairo_);
-  cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W + 0.5, H + 0.5);
-  cairo_clip(cairo_);
+  bool need_extend = (img->data_w() != Ws || img->data_h() != Hs || (W >= 2 && H >= 2));
+  if (need_extend || cx || cy || W < img->w() || H < img->h()) { // clip when necessary
+    cairo_rectangle(cairo_, X - 0.5, Y - 0.5, W + 0.5, H + 0.5);
+    cairo_clip(cairo_);
+  }
   // remove any scaling and the current "0.5" translation useful for lines but bad for images
   matrix.xx = matrix.yy = 1;
   matrix.x0 -= 0.5 * s; matrix.y0 -= 0.5 * s;
   cairo_set_matrix(cairo_, &matrix);
   if (img->d() >= 1) cairo_set_source(cairo_, pat);
-  cairo_pattern_set_filter(pat, Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR ?
+  if (need_extend) {
+    cairo_pattern_set_filter(pat, Fl_RGB_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR ?
                            CAIRO_FILTER_GOOD : CAIRO_FILTER_FAST);
-  cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
+    cairo_pattern_set_extend(pat, CAIRO_EXTEND_PAD);
+  }
   cairo_matrix_init_scale(&matrix, double(img->data_w())/Ws, double(img->data_h())/Hs);
   cairo_matrix_translate(&matrix, -Xs , -Ys );
   cairo_pattern_set_matrix(pat, &matrix);
-  if (img->d() >= 1) cairo_paint(cairo_);
+  if (img->d() > 1) cairo_paint(cairo_);
   else cairo_mask(cairo_, pat);
   cairo_restore(cairo_);
   surface_needs_commit();
@@ -1120,9 +1125,7 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
                                                       Fl_Font_Descriptor(name, size) {
   char *string = new char[strlen(name) + 10];
   strcpy(string, name);
-  // The factor of 0.75 below gives cairo-produced text the same size as
-  // Xft-produced text for the same FLTK font size.
-  snprintf(string + strlen(string), 10, " %d", int(size * 0.75 + 0.5) );
+  snprintf(string + strlen(string), 10, " %dpx", size);
   //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
   delete[] string;

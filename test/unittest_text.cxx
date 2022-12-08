@@ -17,27 +17,39 @@
 #include "unittests.h"
 
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Check_Button.H>
 #include <FL/fl_draw.H>
 
 //
 // --- fl_text_extents() tests -----------------------------------------------
+static void cb_base_bt(Fl_Widget *bt, void*) {
+  bt->parent()->redraw();
+}
 //
-class TextExtentsTest : public Fl_Widget
+class TextExtentsTest : public Fl_Group
 {
+  Fl_Check_Button *base_bt;
+
   void DrawTextAndBoxes(const char *txt, int X, int Y) {
-    int wo = 0, ho = 0;
+    int wm = 0, hm = 0, wt = 0, ht = 0;
     int dx, dy;
-    // First, we draw the bounding boxes (fl_measure and fl_text_extents)
+    // measure text so we can draw the baseline first
+    fl_measure(txt, wm, hm, 0);
+    fl_text_extents(txt, dx, dy, wt, ht);
+    // Draw a baseline before the boxes
+    if (base_bt->value()) {
+      fl_color(FL_BLUE);
+      fl_line((X - 20), Y, (X + wt + 20), Y);
+    }
+    // Then we draw the bounding boxes (fl_measure and fl_text_extents)
     // draw fl_measure() typographical bounding box
-    fl_measure(txt, wo, ho, 0);
     int desc = fl_descent();
     fl_color(FL_RED);
-    fl_rect(X, Y-ho+desc, wo, ho);
+    fl_rect(X, Y-hm+desc, wm, hm);
     // draw fl_text_extents() glyph bounding box
-    fl_text_extents(txt, dx, dy, wo, ho);
     fl_color(FL_GREEN);
-    fl_rect(X+dx, Y+dy, wo, ho);
-    // Then we draw the text to show how it fits insode each of the two boxes
+    fl_rect(X+dx, Y+dy, wt, ht);
+    // Then we draw the text to show how it fits inside each of the two boxes
     fl_color(FL_BLACK);
     fl_draw(txt, X, Y);
   }
@@ -45,7 +57,16 @@ public:
   static Fl_Widget *create() {
     return new TextExtentsTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
-  TextExtentsTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
+  TextExtentsTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+      base_bt = new Fl_Check_Button(x + w - 150, 50, 130, 20, "Show Baseline");
+      base_bt->box(FL_FLAT_BOX);
+      base_bt->down_box(FL_DOWN_BOX);
+      base_bt->callback(cb_base_bt);
+
+      Fl_Box *dummy = new Fl_Box ((x + w - 4), (y + h - 4), 2, 2);
+      resizable(dummy);
+      end();
+  }
   void draw(void) {
     int x0 = x(); // origin is current window position for Fl_Box
     int y0 = y();
@@ -56,6 +77,8 @@ public:
       // set the background colour - slightly off-white to enhance the green bounding box
       fl_color(fl_gray_ramp(FL_NUM_GRAY - 3));
       fl_rectf(x0, y0, w0, h0);
+
+      Fl_Group::draw();
 
       fl_font(FL_HELVETICA, 30);
       int xx = x0+55;
