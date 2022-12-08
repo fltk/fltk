@@ -78,8 +78,7 @@ public:
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy);
   static struct fl_wld_buffer *create_shm_buffer(int width, int height);
   static void buffer_release(struct wld_window *window);
-  static void buffer_commit(struct wld_window *window, const struct wl_callback_listener*,
-                            bool need_damage = true);
+  static void buffer_commit(struct wld_window *window, bool need_damage = true);
   static void cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format);
   virtual void *gc();
   virtual void gc(void *gc);

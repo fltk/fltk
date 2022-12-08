@@ -322,24 +322,6 @@ void Fl_Wayland_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, 
   top->scale(pWindow->w(), htop);
 }
 
-// used to support both normal and progressive drawing
-static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
-
-static const struct wl_callback_listener surface_frame_listener = {
-  .done = surface_frame_done,
-};
-
-static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
-  struct wld_window *window = (struct wld_window *)data;
-//fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
-  wl_callback_destroy(cb);
-  window->buffer->cb = NULL;
-  if (window->buffer->draw_buffer_needs_commit) {
-//fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
-  }
-}
-
 
 // make drawing go into this window (called by subclass flush() impl.)
 void Fl_Wayland_Window_Driver::make_current() {
@@ -358,7 +340,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   // to support progressive drawing
   if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb)) {
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener);
+    Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
 
   Fl_Wayland_Window_Driver::wld_window = window;
@@ -425,7 +407,7 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
   if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
-  Fl_Wayland_Graphics_Driver::buffer_commit(window, &surface_frame_listener, false);
+  Fl_Wayland_Graphics_Driver::buffer_commit(window, false);
 }
 
 
