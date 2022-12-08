@@ -74,7 +74,7 @@ void Fl_Counter::draw() {
   if (tbt == FL_UP_BOX) tbt = FL_DOWN_BOX;
   if (tbt == FL_THIN_UP_BOX) tbt = FL_THIN_DOWN_BOX;
 
-  // array boxes
+  // arrow boxes
   for (int i = 0; i < 4; i++) {
     if (mouseobj_ == i + 1)
       ab[i].boxtype = fl_down(box());
