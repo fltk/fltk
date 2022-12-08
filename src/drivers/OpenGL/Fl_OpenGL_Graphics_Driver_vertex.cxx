@@ -151,7 +151,7 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
     if (v0y >= yMax) yMax = v0y;
   }
 
-  int nNodes, j;
+  int nNodes;
   float *nodeX = (float*)malloc((n-1)*sizeof(float)), swap;
   if (!nodeX)
     return;
@@ -163,7 +163,6 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
     v1 = xpoint + 1;
     nNodes = 0;
     for (i = 1; i < n; i++) {
-      j = i-1;
       if (v1->x==GAP) { // skip the gap
         i++; v0++; v1++;
         continue;
