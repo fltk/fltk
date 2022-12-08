@@ -6,6 +6,9 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
+permissions:
+  contents: read #  to fetch code (actions/checkout)
+
 jobs:
   build-linux:
     # The CMake configure and build commands are platform agnostic and should work equally
