@@ -454,8 +454,8 @@ libdecor_frame_gtk_new(struct libdecor_plugin_gtk *plugin_gtk)
 	cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 	cairo_set_source_rgba(cr, 0, 0, 0, 1);
 	cairo_rectangle(cr, boundary, boundary,
-                        size - 2 * boundary,
-                        size - 2 * boundary);
+			size - 2 * boundary,
+			size - 2 * boundary);
 	cairo_fill(cr);
 	cairo_destroy(cr);
 	blur_surface(frame_gtk->shadow_blur, 64);
@@ -659,6 +659,7 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 	/* when in SSD mode, frame_gtk->header is not a proper GTK widget */
 	if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 	gtk_widget_destroy(frame_gtk->header);
+	if (!GTK_IS_WIDGET(frame_gtk->window)) return;
 	gtk_widget_destroy(frame_gtk->window);
 
 	free_border_component(&frame_gtk->headerbar);
@@ -927,7 +928,7 @@ calculate_component_size(struct libdecor_frame_gtk *frame_gtk,
 	content_height = libdecor_frame_get_content_height(frame);
 
 	/* avoid warning when restoring previously turned off decoration */
-	const int title_height = 
+	const int title_height =
 	 	GTK_IS_WIDGET(frame_gtk->header)
 	 	? gtk_widget_get_allocated_height(frame_gtk->header) : 0;
 
@@ -1378,7 +1379,7 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 		current_min_w = pref_width;
 		libdecor_frame_set_min_content_size(&frame_gtk->frame, current_min_w, current_min_h);
 		if (!resizable(frame_gtk)) {
-			libdecor_frame_set_max_content_size(&frame_gtk->frame, 
+			libdecor_frame_set_max_content_size(&frame_gtk->frame,
 				current_min_w, current_min_h);
 		}
 	}
@@ -1519,7 +1520,7 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 	 * when in SSD mode, the window title is not to be managed by GTK;
 	 * this is detected by frame_gtk->header not being a proper GTK widget
 	 */
-        if (!GTK_IS_WIDGET(frame_gtk->header)) return;
+	if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 
 	new_title = libdecor_frame_get_title(frame);
 	if (!streq(frame_gtk->title, new_title))
@@ -2220,11 +2221,11 @@ pointer_button(void *data,
 					toggle_maximized(&frame_gtk->frame);
 					break;
 				case HEADER_CLOSE:
-                                        if (closeable(frame_gtk)) {
-                                               libdecor_frame_close(
-                                                       &frame_gtk->frame);
-                                               seat->pointer_focus = NULL;
-                                        }
+					if (closeable(frame_gtk)) {
+					       libdecor_frame_close(
+						       &frame_gtk->frame);
+					       seat->pointer_focus = NULL;
+					}
 					break;
 				default:
 					break;
@@ -2297,7 +2298,7 @@ seat_name(void *data,
 {
 	/* avoid warning messages when opening/closing popup window */
 	struct seat *seat = (struct seat*)data;
-        seat->name = strdup(name);
+	seat->name = strdup(name);
 }
 
 static struct wl_seat_listener seat_listener = {
