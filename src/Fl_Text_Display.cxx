@@ -97,6 +97,8 @@ static int scroll_x = 0;
 Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 : Fl_Group(X, Y, W, H, l) {
 
+#define VISIBLE_LINES_INIT 1 // allow compiler to remove unused code (PR #582)
+
   // Member initialization: same order as declared in .H file
   //    Any Fl_Text_Display methods should only be called /after/ all
   //    members initialized; avoids methods referencing uninitialized values.
@@ -109,7 +111,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mCursorToHint = NO_HINT;
   mCursorStyle = NORMAL_CURSOR;
   mCursorPreferredXPos = -1;
-  mNVisibleLines = 1;
+  mNVisibleLines = VISIBLE_LINES_INIT;
   mNBufferLines = 0;
   mBuffer = NULL;
   mStyleBuffer = NULL;
@@ -118,9 +120,11 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mContinuousWrap = 0;
   mWrapMarginPix = 0;
   mLineStarts = new int[mNVisibleLines];
-  { // This code unused unless mNVisibleLines is ever initialized >1
+#if VISIBLE_LINES_INIT > 1
+  { // Note: this code is unused unless mNVisibleLines is ever initialized > 1
     for (int i=1; i<mNVisibleLines; i++) mLineStarts[i] = -1;
   }
+#endif
   mLineStarts[0] = 0;
   mTopLineNum = 1;
   mAbsTopLineNum = 1;
