@@ -3125,16 +3125,16 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
 
 #ifndef LINENUM_LEFT_OF_VSCROLL
   int vscroll_w = mVScrollBar->visible() ? mVScrollBar->w() : 0;
-  if (scrollbar_align()&FL_ALIGN_LEFT)
+  if (scrollbar_align() & FL_ALIGN_LEFT)
     xoff += vscroll_w;
 #endif
 
   Fl_Color fgcolor = isactive ? linenumber_fgcolor() : fl_inactive(linenumber_fgcolor());
   Fl_Color bgcolor = isactive ? linenumber_bgcolor() : fl_inactive(linenumber_bgcolor());
   fl_push_clip(x() + xoff,
-               y() + yoff,
+               y() + Fl::box_dy(box()),
                mLineNumWidth,
-               h() - Fl::box_dw(box()) - hscroll_h);
+               h() - Fl::box_dh(box()));
   {
     // Set background color for line number area -- LZA / STR# 2621
     // Erase background
@@ -3171,6 +3171,13 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
       Y += lineHeight;
     }
   }
+  // fill the void area to the left of the horizontal scrollbar that exists
+  // above or beneath the line number display (when on) with background color
+  fl_color(FL_BACKGROUND_COLOR);
+  if (scrollbar_align() & FL_ALIGN_TOP)
+    fl_rectf(x() + xoff, y() + Fl::box_dy(box()), mLineNumWidth, hscroll_h);
+  else
+    fl_rectf(x() + xoff, y() + h() - hscroll_h - Fl::box_dy(box()), mLineNumWidth, hscroll_h + Fl::box_dy(box()));
   fl_pop_clip();
 }
 
@@ -3878,7 +3885,7 @@ void Fl_Text_Display::draw(void) {
     if (mVScrollBar->visible() && mHScrollBar->visible())
       fl_rectf(mVScrollBar->x(), mHScrollBar->y(),
                mVScrollBar->w(), mHScrollBar->h(),
-               FL_GRAY);
+               FL_BACKGROUND_COLOR);
   }
   else if (damage() & (FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)) {
     //    printf("blanking previous cursor extrusions at Y: %d\n", mCursorOldY);
