@@ -41,9 +41,11 @@ public:
 
   Fl_ICO_Image(const char *filename, int id = -1, const unsigned char *data = NULL, const size_t datasize = 0);
   ~Fl_ICO_Image();
-/** Gives the number of icons of various resolutions present in the ICO object */
-  int idcount() { return idcount_; }
-  /** Returns the array of idcount() loaded IconDirEntry structures */
+
+  /** Returns the number of icons of various resolutions present in the ICO object. */
+  int idcount() const { return idcount_; }
+
+  /** Returns the array of idcount() loaded IconDirEntry structures. */
   IconDirEntry * const icondirentry() const { return icondirentry_; }
 
 private:
