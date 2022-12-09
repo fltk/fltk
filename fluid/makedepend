@@ -1239,11 +1239,13 @@ undo.o: ../FL/fl_types.h
 undo.o: ../FL/fl_utf8.h
 undo.o: ../FL/Fl_Valuator.H
 undo.o: ../FL/Fl_Widget.H
+undo.o: ../FL/Fl_Window.H
 undo.o: ../FL/platform_types.h
 undo.o: ../src/flstring.h
 undo.o: file.h
 undo.o: fluid.h
 undo.o: Fl_Type.h
+undo.o: Fl_Widget_Type.h
 undo.o: undo.h
 undo.o: widget_browser.h
 widget_browser.o: ../FL/Enumerations.H

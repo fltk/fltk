@@ -1397,8 +1397,11 @@ check_symbol_conflicts(const struct libdecor_plugin_description *plugin_descript
 	while (*symbol) {
 		dlerror();
 		dlsym (RTLD_DEFAULT, *symbol);
-		if (!dlerror())
+		if (!dlerror()) {
+			fprintf(stderr, "Plugin \"%s\" uses conflicting symbol \"%s\".\n",
+					plugin_description->description, *symbol);
 			return false;
+		}
 
 		symbol++;
 	}

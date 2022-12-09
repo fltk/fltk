@@ -75,9 +75,26 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 }
 
 
-void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
-                                               const struct wl_callback_listener *listener,
-                                               bool need_damage) {
+// used to support both normal and progressive drawing
+static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
+
+static const struct wl_callback_listener surface_frame_listener = {
+  .done = surface_frame_done,
+};
+
+static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
+  struct wld_window *window = (struct wld_window *)data;
+//fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
+  wl_callback_destroy(cb);
+  window->buffer->cb = NULL;
+  if (window->buffer->draw_buffer_needs_commit) {
+//fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
+    Fl_Wayland_Graphics_Driver::buffer_commit(window);
+  }
+}
+
+
+void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, bool need_damage) {
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
@@ -85,7 +102,7 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
   wl_surface_set_buffer_scale(window->wl_surface, window->scale);
   window->buffer->cb = wl_surface_frame(window->wl_surface);
   if (need_damage) wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
-  wl_callback_add_listener(window->buffer->cb, listener, window);
+  wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;
 //fprintf(stderr,"buffer_commit %s\n", window->fl_win->parent()?"child":"top");
