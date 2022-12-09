@@ -303,11 +303,14 @@ public:
   static void (*idle)();
 
 #ifndef FL_DOXYGEN
+private:
   static Fl_Awake_Handler *awake_ring_;
   static void **awake_data_;
   static int awake_ring_size_;
   static int awake_ring_head_;
   static int awake_ring_tail_;
+public:
+  static bool equal_awake_ring_ends();
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
 
