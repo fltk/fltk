@@ -29,6 +29,7 @@
 #include <sys/time.h>
 
 #include "../../Fl_Timeout.h"
+#include "../../flstring.h"
 
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
@@ -474,6 +475,15 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
 // Wrapper around XParseColor...
 int Fl_X11_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
+  // before w open the display, we try interpreting this ourselves
+  // "None" will ultimately always return 0
+  if (   (fl_ascii_strcasecmp(p, "none") == 0)
+      || (fl_ascii_strcasecmp(p, "#transparent") == 0) )
+    return 0;
+  // if it's #rgb, we can do that ourselves
+  if (Fl_Screen_Driver::parse_color(p, r, g, b))
+    return 1;
+  // it's neither "None" nor hex, so finally open the diplay and ask X11
   XColor x;
   if (!fl_display) open_display();
   if (XParseColor(fl_display, fl_colormap, p, &x)) {
