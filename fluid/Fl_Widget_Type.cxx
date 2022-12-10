@@ -1370,7 +1370,7 @@ void color_menu_cb(Fl_Menu_Button* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
-    Fl_Color d = i->mvalue()->argument();
+    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
     if (d == c) return;
     c = d;
     color_common(c);
@@ -1408,7 +1408,7 @@ void color2_menu_cb(Fl_Menu_Button* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
-    Fl_Color d = i->mvalue()->argument();
+    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
     if (d == c) return;
     c = d;
     color2_common(c);
@@ -1442,7 +1442,7 @@ void labelcolor_cb(Fl_Button* i, void *v) {
 void labelcolor_menu_cb(Fl_Menu_Button* i, void *v) {
   Fl_Color c = current_widget->o->labelcolor();
   if (v != LOAD) {
-    Fl_Color d = i->mvalue()->argument();
+    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
     if (d == c) return;
     c = d;
     labelcolor_common(c);
@@ -1789,7 +1789,7 @@ void textcolor_menu_cb(Fl_Menu_Button* i, void* v) {
     i->activate();
   } else {
     c = i->color();
-    Fl_Color d = i->mvalue()->argument();
+    Fl_Color d = (Fl_Color)(i->mvalue()->argument());
     if (d == c) return;
     c = d;
     textcolor_common(c);
@@ -3264,7 +3264,7 @@ void Fl_Widget_Type::read_property(const char *c) {
   } else if (!strcmp(c,"class")) {
     subclass(read_word());
   } else if (!strcmp(c,"shortcut")) {
-    int shortcut = strtol(read_word(),0,0);
+    int shortcut = (int)strtol(read_word(),0,0);
     if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
     else if (is_input()) ((Fl_Input_*)o)->shortcut(shortcut);
     else if (is_value_input()) ((Fl_Value_Input*)o)->shortcut(shortcut);
