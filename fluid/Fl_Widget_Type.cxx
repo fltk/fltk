@@ -1708,6 +1708,12 @@ void subclass_cb(Fl_Input* i, void* v) {
 // textstuff: set textfont, textsize, textcolor attributes:
 
 // default widget returns 0 to indicate not-implemented:
+// The first parameter specifies the operation:
+// 0: get all values
+// 1: set the text font
+// 2: set the text size
+// 3: set the text color
+// 4: get all default values for this type
 int Fl_Widget_Type::textstuff(int, Fl_Font&, int&, Fl_Color&) {return 0;}
 
 void textfont_cb(Fl_Choice* i, void* v) {
@@ -3419,6 +3425,11 @@ void Fl_Widget_Type::copy_properties() {
   if (!live_widget)
     return;
 
+  Fl_Font ff;
+  int fs;
+  Fl_Color fc;
+  textstuff(0, ff, fs, fc);
+
   // copy all attributes common to all widget types
   Fl_Widget *w = live_widget;
   w->label(o->label());
@@ -3445,18 +3456,27 @@ void Fl_Widget_Type::copy_properties() {
   if (is_input()) {
     Fl_Input_* d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
     d->shortcut(s->shortcut());
+    d->textfont(ff);
+    d->textsize(fs);
+    d->textcolor(fc);
   }
 
   // copy all attributes specific to widgets derived from Fl_Value_Input
   if (is_value_input()) {
     Fl_Value_Input* d = (Fl_Value_Input*)live_widget, *s = (Fl_Value_Input*)o;
     d->shortcut(s->shortcut());
+    d->textfont(ff);
+    d->textsize(fs);
+    d->textcolor(fc);
   }
 
   // copy all attributes specific to widgets derived from Fl_Text_Display
   if (is_text_display()) {
     Fl_Text_Display* d = (Fl_Text_Display*)live_widget, *s = (Fl_Text_Display*)o;
     d->shortcut(s->shortcut());
+    d->textfont(ff);
+    d->textsize(fs);
+    d->textcolor(fc);
   }
 
   // copy all attributes specific to Fl_Valuator and derived classes
@@ -3480,14 +3500,6 @@ void Fl_Widget_Type::copy_properties() {
     d->step(s->step());
     d->value(s->value());
   }
-
-/* TODO: implement this
-  {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
-    Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
-    if (f != ff) write_string("textfont %d", f);
-    if (s != fs) write_string("textsize %d", s);
-    if (c != fc) write_string("textcolor %d", c);
-  }}*/
 
   if (!o->visible())
     w->hide();
