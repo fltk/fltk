@@ -207,10 +207,10 @@ void undo_clear() {
 
 // Resume undo checkpoints
 void undo_resume() {
-  undo_paused = 0;
+  undo_paused--;
 }
 
 // Suspend undo checkpoints
 void undo_suspend() {
-  undo_paused = 1;
+  undo_paused++;
 }

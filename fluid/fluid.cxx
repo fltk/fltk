@@ -298,6 +298,17 @@ void update_sourceview_timer(void*);
 
 // ----
 
+extern Fl_Window *the_panel;
+// make sure that a currently changed text widgets propagates its contents
+void flush_text_widgets() {
+  if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
+    Fl_Widget *old_focus = Fl::focus();
+    Fl::focus(NULL);
+    Fl::focus(old_focus);
+  }
+}
+// ----
+
 /**
  Change the current working directory to the .fl project directory.
 
@@ -471,6 +482,7 @@ static void external_editor_timer(void*) {
  \param[in] v if v is not NULL, or no filename is set, open a filechooser.
  */
 void save_cb(Fl_Widget *, void *v) {
+  flush_text_widgets();
   Fl_Native_File_Chooser fnfc;
   const char *c = filename;
   if (v || !c || !*c) {
@@ -645,6 +657,7 @@ void revert_cb(Fl_Widget *,void *) {
  If the design was modified, a dialog will ask for confirmation.
  */
 void exit_cb(Fl_Widget *,void *) {
+  flush_text_widgets();
 
   // Stop any external editor update timers
   ExternalCodeEditor::stop_update_timer();
@@ -978,6 +991,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
  \return 1 if the operation failed, 0 if it succeeded
  */
 int write_code_files() {
+  flush_text_widgets();
   if (!filename) {
     save_cb(0,0);
     if (!filename) return 1;
@@ -1030,6 +1044,7 @@ void write_cb(Fl_Widget *, void *) {
  */
 void write_strings_cb(Fl_Widget *, void *) {
   static const char *exts[] = { ".txt", ".po", ".msg" };
+  flush_text_widgets();
   if (!filename) {
     save_cb(0,0);
     if (!filename) return;
@@ -1066,6 +1081,7 @@ void openwidget_cb(Fl_Widget *, void *) {
  User chose to copy the currently selected widgets.
  */
 void copy_cb(Fl_Widget*, void*) {
+  flush_text_widgets();
   if (!Fl_Type::current) {
     fl_beep();
     return;
@@ -1152,6 +1168,8 @@ void duplicate_cb(Fl_Widget*, void*) {
     fl_beep();
     return;
   }
+
+  flush_text_widgets();
 
   if (!write_file(cutfname(1),1)) {
     fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
