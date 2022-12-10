@@ -329,11 +329,7 @@ void Fl_Widget::copy_label(const char *a) {
 void Fl_Widget::image(Fl_Image* img) {
   if (image_bound()) {
     if (label_.image && (label_.image != img)) {
-      Fl_Shared_Image *shared_image = label_.image->as_shared_image();
-      if (shared_image)
-        shared_image->release();
-      else
-        delete label_.image;
+      label_.image->release();
     }
     bind_image(0);
   }
@@ -352,11 +348,7 @@ void Fl_Widget::bind_image(Fl_Image* img) {
 void Fl_Widget::deimage(Fl_Image* img) {
   if (deimage_bound()) {
     if (label_.deimage && (label_.deimage != img))  {
-      Fl_Shared_Image *shared_image = label_.deimage->as_shared_image();
-      if (shared_image)
-        shared_image->release();
-      else
-        delete label_.deimage;
+      label_.deimage->release();
     }
     bind_deimage(0);
   }
