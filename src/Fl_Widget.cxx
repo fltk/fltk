@@ -18,7 +18,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
-#include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
 #include <stdlib.h>
