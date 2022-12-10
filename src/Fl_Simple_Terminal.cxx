@@ -42,7 +42,7 @@ static const Fl_Text_Display::Style_Table_Entry builtin_stable[] = {
   { 0x00ffff00, FL_COURIER,      14 }, // 6  - Bright Cyan    \033[46m
   { 0xffffff00, FL_COURIER,      14 }, // 7  - Bright White   \033[47m
   { 0x00000000, FL_COURIER,      14 }, // 8  - x
-  { 0x00000000, FL_COURIER,      14 }, // 9  - x
+  { 0x00000000, FL_COURIER,      14 }, // 9  - Set default background
   { 0x00000000, FL_COURIER,      14 }, // 10 - Medium Black   \033[30m 10,30,50,..
   { 0xbb000000, FL_COURIER,      14 }, // 11 - Medium Red     \033[31m    ^^
   { 0x00bb0000, FL_COURIER,      14 }, // 12 - Medium Green   \033[32m
@@ -52,7 +52,7 @@ static const Fl_Text_Display::Style_Table_Entry builtin_stable[] = {
   { 0x00bbbb00, FL_COURIER,      14 }, // 16 - Medium Cyan    \033[36m
   { 0xbbbbbb00, FL_COURIER,      14 }, // 17 - Medium White   \033[37m  (also "\033[0m" reset)
   { 0x00000000, FL_COURIER,      14 }, // 18 - x
-  { 0x00000000, FL_COURIER,      14 }  // 19 - x
+  { 0xbbbbbb00, FL_COURIER,      14 }  // 19 - Set default foreground
 };
 static const int  builtin_stable_size = sizeof(builtin_stable);
 static const char builtin_normal_index = 17;        // the reset style index used by \033[0m
@@ -562,10 +562,12 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
                   continue;
                 case 'm':         // set color
                   if ( tv > 0 ) { // at least one value parsed?
-                    current_style_index_ = (vals[0] == 0)            // "reset"?
-                                             ? normal_style_index_   // use normal color for "reset"
-                                             : (vals[0] % nstyles);  // use user's value, wrapped to ensure not larger than table
-                    astyle = 'A' + current_style_index_;             // convert index -> style buffer char
+                    for (int i = 0; i < tv; ++i) {
+                      current_style_index_ = (vals[i] == 0)           // "reset"?
+                                              ? normal_style_index_   // use normal color for "reset"
+                                              : (vals[i] % nstyles);  // use user's value, wrapped to ensure not larger than table
+                      astyle = 'A' + current_style_index_;            // convert index -> style buffer char
+                    }
                   }
                   ++sp;
                   seqdone = 1;
