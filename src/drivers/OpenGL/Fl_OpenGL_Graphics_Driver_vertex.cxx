@@ -196,6 +196,8 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
     }
 
     //  fill the pixels between node pairs
+//    Using lines requires additional attention to the current line width and pattern
+//    We are using glRectf instead
 //    glBegin(GL_LINES);
     for (i = 0; i < nNodes; i += 2) {
       float x0 = nodeX[i];
@@ -207,7 +209,7 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
           x0 = xMin;
         if (x1 > xMax)
           x1 = xMax;
-        glRectf(x0-0.25f, y, x1+0.25f, y+1.0f);
+        glRectf((GLfloat)(x0-0.25f), (GLfloat)(y), (GLfloat)(x1+0.25f), (GLfloat)(y+1.0f));
 //        glVertex2f((GLfloat)x0, (GLfloat)y);
 //        glVertex2f((GLfloat)x1, (GLfloat)y);
       }

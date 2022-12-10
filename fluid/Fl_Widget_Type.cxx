@@ -1320,20 +1320,20 @@ void labeltype_cb(Fl_Choice* i, void *v) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item colormenu[] = {
-  { "Foreground Color",   0, 0, (void*)FL_FOREGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
-  { "Background Color",   0, 0, (void*)FL_BACKGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
-  { "Background Color 2", 0, 0, (void*)FL_BACKGROUND2_COLOR, 0, 0, FL_HELVETICA, 11},
-  { "Selection Color",    0, 0, (void*)FL_SELECTION_COLOR,   0, 0, FL_HELVETICA, 11},
-  { "Inactive Color",     0, 0, (void*)FL_INACTIVE_COLOR,    FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
-  { "Black",              0, 0, (void*)FL_BLACK,             0, 0, FL_HELVETICA, 11},
-  { "White",              0, 0, (void*)FL_WHITE,             FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
-  { "Gray 0",             0, 0, (void*)FL_GRAY0,             0, 0, FL_HELVETICA, 11},
-  { "Dark 3",             0, 0, (void*)FL_DARK3,             0, 0, FL_HELVETICA, 11},
-  { "Dark 2",             0, 0, (void*)FL_DARK2,             0, 0, FL_HELVETICA, 11},
-  { "Dark 1",             0, 0, (void*)FL_DARK1,             0, 0, FL_HELVETICA, 11},
-  { "Light 1",            0, 0, (void*)FL_LIGHT1,            0, 0, FL_HELVETICA, 11},
-  { "Light 2",            0, 0, (void*)FL_LIGHT2,            0, 0, FL_HELVETICA, 11},
-  { "Light 3",            0, 0, (void*)FL_LIGHT3,            0, 0, FL_HELVETICA, 11},
+  { "Foreground Color",   0, 0, (void*)(fl_intptr_t)FL_FOREGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color",   0, 0, (void*)(fl_intptr_t)FL_BACKGROUND_COLOR,  0, 0, FL_HELVETICA, 11},
+  { "Background Color 2", 0, 0, (void*)(fl_intptr_t)FL_BACKGROUND2_COLOR, 0, 0, FL_HELVETICA, 11},
+  { "Selection Color",    0, 0, (void*)(fl_intptr_t)FL_SELECTION_COLOR,   0, 0, FL_HELVETICA, 11},
+  { "Inactive Color",     0, 0, (void*)(fl_intptr_t)FL_INACTIVE_COLOR,    FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Black",              0, 0, (void*)(fl_intptr_t)FL_BLACK,             0, 0, FL_HELVETICA, 11},
+  { "White",              0, 0, (void*)(fl_intptr_t)FL_WHITE,             FL_MENU_DIVIDER, 0, FL_HELVETICA, 11},
+  { "Gray 0",             0, 0, (void*)(fl_intptr_t)FL_GRAY0,             0, 0, FL_HELVETICA, 11},
+  { "Dark 3",             0, 0, (void*)(fl_intptr_t)FL_DARK3,             0, 0, FL_HELVETICA, 11},
+  { "Dark 2",             0, 0, (void*)(fl_intptr_t)FL_DARK2,             0, 0, FL_HELVETICA, 11},
+  { "Dark 1",             0, 0, (void*)(fl_intptr_t)FL_DARK1,             0, 0, FL_HELVETICA, 11},
+  { "Light 1",            0, 0, (void*)(fl_intptr_t)FL_LIGHT1,            0, 0, FL_HELVETICA, 11},
+  { "Light 2",            0, 0, (void*)(fl_intptr_t)FL_LIGHT2,            0, 0, FL_HELVETICA, 11},
+  { "Light 3",            0, 0, (void*)(fl_intptr_t)FL_LIGHT3,            0, 0, FL_HELVETICA, 11},
   { 0 }
 };
 
