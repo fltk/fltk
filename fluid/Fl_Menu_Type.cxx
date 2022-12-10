@@ -488,7 +488,7 @@ void Fl_Menu_Item_Type::write_code1() {
       write_c("%sml->typeb = FL_NORMAL_LABEL;\n", indent());
       write_c("%sml->label(o);\n", indent());
     } else {
-      image->write_code("o");
+      image->write_code(0, "o");
     }
   }
   if (P.i18n_type && label() && label()[0]) {

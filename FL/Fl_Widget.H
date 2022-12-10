@@ -551,7 +551,7 @@ public:
    \param f 1: mark the image as bound, 0: mark the image as managed by the user
    \see image_bound(), bind_deimage()
    */
-  void bind_image(int f) { set_flag(IMAGE_BOUND); }
+  void bind_image(int f) { if (f) set_flag(IMAGE_BOUND); else clear_flag(IMAGE_BOUND); }
 
   /** Returns whether the image is managed by the widget.
    \retval 0 if the image is not bound to the widget
@@ -603,7 +603,7 @@ public:
    \param f 1: mark the image as bound, 0: mark the image as managed by the user
    \see deimage_bound(), bind_image()
    */
-  void bind_deimage(int f) { set_flag(DEIMAGE_BOUND); }
+  void bind_deimage(int f) { if (f) set_flag(DEIMAGE_BOUND); else clear_flag(DEIMAGE_BOUND); }
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL

@@ -49,7 +49,7 @@ Function {make_widget_panel()} {
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb selected
+            callback label_cb
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
           }
@@ -62,32 +62,44 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
         }
         Fl_Group {} {
           label {Image:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             callback image_cb
-            tooltip {The active image for the widget.} xywh {95 65 240 20} labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The active image for the widget.} xywh {95 65 220 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
             callback image_browse_cb
-            tooltip {Click to choose the active image.} xywh {334 65 70 20} labelsize 11
+            tooltip {Click to choose the active image.} xywh {314 65 70 20} labelsize 11
+          }
+          Fl_Button {} {
+            callback bind_image_cb selected
+            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 65 20 20} type Toggle
+            code0 {o->image(bind_pixmap);}
+            code3 {\#include "pixmaps.h"}
           }
         }
         Fl_Group {} {
           label {Inactive:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             callback inactive_cb
-            tooltip {The inactive image for the widget.} xywh {95 90 240 20} labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The inactive image for the widget.} xywh {95 90 220 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
             label {Browse...}
             callback inactive_browse_cb
-            tooltip {Click to choose the inactive image.} xywh {334 90 70 20} labelsize 11
+            tooltip {Click to choose the inactive image.} xywh {314 90 70 20} labelsize 11
+          }
+          Fl_Button {} {
+            callback bind_deimage_cb
+            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
+            code0 {o->image(bind_pixmap);}
+            code3 {\#include "pixmaps.h"}
           }
         }
         Fl_Group {} {

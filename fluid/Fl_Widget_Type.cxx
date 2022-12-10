@@ -210,6 +210,8 @@ Fl_Widget_Type::Fl_Widget_Type() {
   xclass = 0;
   o = 0;
   public_ = 1;
+  bind_image_ = 0;
+  bind_deimage_ = 0;
 }
 
 Fl_Widget_Type::~Fl_Widget_Type() {
@@ -475,6 +477,26 @@ void image_browse_cb(Fl_Button* b, void *v) {
   }
 }
 
+void bind_image_cb(Fl_Button* b, void *v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
+      b->activate();
+      b->value(current_widget->bind_image_);
+    } else {
+      b->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+        ((Fl_Widget_Type*)o)->bind_image_ = b->value();
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
 static Fl_Input *inactive_input;
 
 void inactive_cb(Fl_Input* i, void *v) {
@@ -514,6 +536,26 @@ void inactive_browse_cb(Fl_Button* b, void *v) {
       }
       if (mod) set_modflag(1);
     }
+  }
+}
+
+void bind_deimage_cb(Fl_Button* b, void *v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
+      b->activate();
+      b->value(current_widget->bind_deimage_);
+    } else {
+      b->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+        ((Fl_Widget_Type*)o)->bind_deimage_ = b->value();
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
   }
 }
 
@@ -2911,8 +2953,8 @@ void Fl_Widget_Type::write_widget_code() {
     write_color("color", o->color());
   if (o->selection_color() != tplate->selection_color() || subclass())
     write_color("selection_color", o->selection_color());
-  if (image) image->write_code(var);
-  if (inactive) inactive->write_code(var, 1);
+  if (image) image->write_code(bind_image_, var);
+  if (inactive) inactive->write_code(bind_deimage_, var, 1);
   if (o->labeltype() != tplate->labeltype() || subclass())
     write_c("%s%s->labeltype(FL_%s);\n", indent(), var,
             item_name(labeltypemenu, o->labeltype()));
@@ -3038,10 +3080,12 @@ void Fl_Widget_Type::write_properties() {
     write_string("image");
     write_word(image_name());
   }
+  if (bind_image_) write_string("bind_image 1");
   if (inactive_name() && *inactive_name()) {
     write_string("deimage");
     write_word(inactive_name());
   }
+  if (bind_deimage_) write_string("bind_deimage 1");
   write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
   if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
@@ -3162,8 +3206,12 @@ void Fl_Widget_Type::read_property(const char *c) {
     tooltip(read_word());
   } else if (!strcmp(c,"image")) {
     image_name(read_word());
+  } else if (!strcmp(c,"bind_image")) {
+    bind_image_ = (int)atol(read_word());
   } else if (!strcmp(c,"deimage")) {
     inactive_name(read_word());
+  } else if (!strcmp(c,"bind_deimage")) {
+    bind_deimage_ = (int)atol(read_word());
   } else if (!strcmp(c,"type")) {
     if (is_spinner())
       ((Fl_Spinner*)o)->type(item_number(subtypes(), read_word()));
