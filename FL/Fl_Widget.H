@@ -526,9 +526,18 @@ public:
   const Fl_Image* image() const {return label_.image;}
 
   /** Sets the image to use as part of the widget label when in the active state.
-   \param[in] img the new image for the label
-   \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
+
+   The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
    and, if appropriate, for deleting it after the widget's deletion.
+
+   Calling image() with a new image will delete the old image if it
+   was bound, and set the new image without binding it. If old and new are
+   the same, the image will not be deleted, but it will be unbound.
+
+   Calling image() with NULL will delete the old image if
+   it was bound and not set a new image.
+
+   \param[in] img the new image for the label
    \see bind_image(Fl_Image* img)
    */
   void image(Fl_Image* img);
@@ -540,9 +549,18 @@ public:
   void image(Fl_Image& img);
 
   /** Sets the image to use as part of the widget label when in the active state.
-   \param[in] img the new image for the label
-   \note The image will be bound to the widget. When the widget is deleted, the
+
+   The image will be bound to the widget. When the widget is deleted, the
    image will be deleted as well.
+
+   Calling bind_image() with a new image will delete the old image if it
+   was bound, and then set the new image, and bind that. If old and new image
+   are the same, nothing happens.
+
+   Calling bind_image() with NULL will delete the old image if
+   it was bound and not set a new image.
+
+   \param[in] img the new image for the label
    \see void image(Fl_Image* img)
    */
   void bind_image(Fl_Image* img);
