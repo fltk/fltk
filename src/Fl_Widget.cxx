@@ -18,6 +18,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
 #include <stdlib.h>
@@ -165,6 +166,8 @@ Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
+  image(NULL);
+  deimage(NULL);
   // remove from parent group
   if (parent_) parent_->remove(this);
 #ifdef DEBUG_DELETE
@@ -321,6 +324,52 @@ void Fl_Widget::copy_label(const char *a) {
   } else {
     label(0);
   }
+}
+
+void Fl_Widget::image(Fl_Image* img) {
+  if (image_bound()) {
+    if (label_.image && (label_.image != img)) {
+      Fl_Shared_Image *shared_image = label_.image->as_shared_image();
+      if (shared_image)
+        shared_image->release();
+      else
+        delete label_.image;
+    }
+    bind_image(0);
+  }
+  label_.image = img;
+}
+
+void Fl_Widget::image(Fl_Image& img) {
+  image(&img);
+}
+
+void Fl_Widget::bind_image(Fl_Image* img) {
+  image(img);
+  bind_image( (img != NULL) );
+}
+
+void Fl_Widget::deimage(Fl_Image* img) {
+  if (deimage_bound()) {
+    if (label_.deimage && (label_.deimage != img))  {
+      Fl_Shared_Image *shared_image = label_.deimage->as_shared_image();
+      if (shared_image)
+        shared_image->release();
+      else
+        delete label_.deimage;
+    }
+    bind_deimage(0);
+  }
+  label_.deimage = img;
+}
+
+void Fl_Widget::deimage(Fl_Image& img) {
+  deimage(&img);
+}
+
+void Fl_Widget::bind_deimage(Fl_Image* img) {
+  deimage(img);
+  bind_deimage( (img != NULL) );
 }
 
 /** Calls the widget callback function with arbitrary arguments.
