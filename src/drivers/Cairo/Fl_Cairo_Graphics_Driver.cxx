@@ -1135,7 +1135,15 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
-#if PANGO_VERSION_CHECK(1,44,0)
+/* Function pango_font_metrics_get_height() giving the line height of a pango font
+ appears with pango version 1.44. However, with pango version 1.48.10 and below,
+ this function gives values that make the underscore invisible on lowdpi display
+ and at 100% scaling (the underscore becomes visible starting at 120% scaling).
+ With pango version 1.50.6 (Ubuntu 22.04) this problem disappears.
+ Consequently, function pango_font_metrics_get_height() is not used until version 1.50.6
+*/
+//#if PANGO_VERSION_CHECK(1,44,0)
+#if PANGO_VERSION_CHECK(1,50,6)
   line_height = pango_font_metrics_get_height(metrics); // 1.44
 #else
   line_height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 + 0.5;
