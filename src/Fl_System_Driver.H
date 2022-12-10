@@ -63,6 +63,7 @@ protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
+  static bool awake_ring_empty();
 public:
   virtual ~Fl_System_Driver();
   static int command_key;

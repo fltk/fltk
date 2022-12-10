@@ -135,6 +135,7 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
+  friend Fl_System_Driver;
   Fl() {} // no constructor!
 
 private:
@@ -310,7 +311,6 @@ private:
   static int awake_ring_head_;
   static int awake_ring_tail_;
 public:
-  static bool equal_awake_ring_ends();
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
 

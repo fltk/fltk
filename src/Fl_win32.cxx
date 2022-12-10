@@ -491,7 +491,7 @@ double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
     DispatchMessageW(&fl_msg);
   }
 
-  // The following conditional test: !Fl::equal_awake_ring_ends()
+  // The following conditional test: !Fl_System_Driver::awake_ring_empty()
   //  equivalent to:
   //    (Fl::awake_ring_head_ != Fl::awake_ring_tail_)
   // is a workaround / fix for STR #3143. This works, but a better solution
@@ -512,7 +512,7 @@ double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
   // recover and process any pending awake callbacks.
   // Normally the ring buffer head and tail indices will match and this
   // comparison will do nothing. Addresses STR #3143
-  if (!Fl::equal_awake_ring_ends()) {
+  if (!Fl_System_Driver::awake_ring_empty()) {
     process_awake_handler_requests();
   }
 

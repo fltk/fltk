@@ -201,8 +201,11 @@ void Fl::unlock() {
 
 #ifndef FL_DOXYGEN
 
-bool Fl::equal_awake_ring_ends() {
-  return awake_ring_head_ == Fl::awake_ring_tail_;
+bool Fl_System_Driver::awake_ring_empty() {
+  Fl::system_driver()->lock_ring();
+  bool retval = (Fl::awake_ring_head_ == Fl::awake_ring_tail_);
+  Fl::system_driver()->unlock_ring();
+  return retval;
 }
 
 #endif // FL_DOXYGEN
