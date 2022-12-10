@@ -200,10 +200,10 @@ void Fluid_Image::write_initializer(const char *type_name, const char *format, .
   va_end(ap);
 }
 
-void Fluid_Image::write_code(const char *var, int inactive) {
+void Fluid_Image::write_code(int bind, const char *var, int inactive) {
   /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
    This code calls a function output before by Fluid_Image::write_initializer() */
-  if (img) write_c("%s%s->%s( %s() );\n", indent(), var, inactive ? "deimage" : "image", function_name_);
+  if (img) write_c("%s%s->%s%s( %s() );\n", indent(), var, bind ? "bind_" : "", inactive ? "deimage" : "image", function_name_);
 }
 
 void Fluid_Image::write_inline(int inactive) {

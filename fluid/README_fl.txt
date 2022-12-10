@@ -380,7 +380,9 @@ Type "Fl_Widget" <word> : C++ variable name
   "xywh" <word> : "{%d %d %d %d}" x, y, w, h
   "tooltip" <word> : tooltip text
   "image" <word> : image name
+  "bind_image" <word> : integer (1.4 and up)
   "deimage" <word> : deactivated image name
+  "bind_deimage" <word> : integer (1.4 and up)
   "type" <word> : integer
   "box" <word> : text or integer (see FLTK boxtypes)
   "down_box" <word> : (is_button() or Fl_Input_choice" or is_menu_button())

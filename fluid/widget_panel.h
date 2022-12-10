@@ -32,8 +32,11 @@ extern void labeltype_cb(Fl_Choice*, void*);
 extern void image_cb(Fl_Input*, void*);
 #include <FL/Fl_Button.H>
 extern void image_browse_cb(Fl_Button*, void*);
+#include "pixmaps.h"
+extern void bind_image_cb(Fl_Button*, void*);
 extern void inactive_cb(Fl_Input*, void*);
 extern void inactive_browse_cb(Fl_Button*, void*);
+extern void bind_deimage_cb(Fl_Button*, void*);
 extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
