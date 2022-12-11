@@ -26,10 +26,52 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
 
+#include <stdlib.h>
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw_bitmap(this, XP, YP, WP, HP, cx, cy);
 }
+
+
+Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
+  Fl_Image(W,H,0),
+  array((const uchar *)bits),
+  alloc_array(0),
+  id_(0),
+  cache_w_(0),
+  cache_h_(0)
+{
+  int rowBytes = (W+7)>>3;
+  int min_length = rowBytes * H;
+  if (bits_length < min_length) {
+    uchar *new_array = (uchar*)::calloc(min_length, 1);
+    memcpy(new_array, array, bits_length);
+    array = new_array;
+    alloc_array = 1;
+  }
+  data((const char **)&array, 1);
+}
+
+
+Fl_Bitmap::Fl_Bitmap(const char *bits, int bits_length, int W, int H) :
+  Fl_Image(W,H,0),
+  array((const uchar *)bits),
+  alloc_array(0),
+  id_(0),
+  cache_w_(0),
+  cache_h_(0)
+{
+  int rowBytes = (W+7)>>3;
+  int min_length = rowBytes * H;
+  if (bits_length < min_length) {
+    uchar *new_array = (uchar*)::calloc(min_length, 1);
+    memcpy(new_array, array, bits_length);
+    array = new_array;
+    alloc_array = 1;
+  }
+  data((const char **)&array, 1);
+}
+
 
 /**
   The destructor frees all memory and server resources that are used by
