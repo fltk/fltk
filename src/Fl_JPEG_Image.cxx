@@ -123,6 +123,8 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
 
  \param name A unique name or NULL
  \param data A pointer to the memory location of the JPEG image
+ \param data_length optional length of \c data. This will protect memory outside
+        of the \c data array from illegal read operations
 
  \see Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
  \see Fl_Shared_Image
