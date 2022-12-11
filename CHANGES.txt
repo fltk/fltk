@@ -43,6 +43,10 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     same function was previously available only for class Fl_Shared_Image
     and with FL_ABI_VERSION >= 10304. New member functions Fl_Image::data_w()
     and Fl_Image::data_h() give the width and height of the image data.
+  - New member functions Fl_Widget::bind_image(Fl_Image *img) and
+    Fl_Widget::bind_deimage(Fl_Image *img) to bind an image to a widget, that is,
+    to set an image to be used as part of the widget label and also
+    to be deleted when the widget is deleted.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.
   - New Fl_ICO_Image class to read Windows .ico icon files.
