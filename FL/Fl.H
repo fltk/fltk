@@ -135,7 +135,7 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
-  friend Fl_System_Driver;
+  friend class Fl_System_Driver;
   Fl() {} // no constructor!
 
 private:
