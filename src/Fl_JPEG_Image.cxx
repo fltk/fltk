@@ -127,10 +127,10 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
  \see Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
  \see Fl_Shared_Image
  */
-Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
+Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data, int data_length)
 : Fl_RGB_Image(0,0,0)
 {
-  load_jpg_(0L, name, data);
+  load_jpg_(0L, name, data, data_length);
 }
 
 
@@ -188,7 +188,7 @@ extern "C" {
 
 } // extern "C"
 
-static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
+static void jpeg_unprotected_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 {
   my_src_ptr src = (my_source_mgr*)malloc(sizeof(my_source_mgr));
   cinfo->src = &(src->pub);
@@ -211,7 +211,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  data to read from memory instead. Sharename can be set if the image is
  supposed to be added to the Fl_Shared_Image list.
  */
-void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data)
+void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data, int data_length)
 {
 #ifdef HAVE_LIBJPEG
   jpeg_decompress_struct  dinfo;    // Decompressor info
@@ -299,7 +299,10 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   if (*fp) {
     jpeg_stdio_src(&dinfo, *fp);
   } else {
-    jpeg_mem_src(&dinfo, data);
+    if (data_length==-1)
+      jpeg_unprotected_mem_src(&dinfo, data);
+    else
+      jpeg_mem_src(&dinfo, data, (size_t)data_length);
   }
   jpeg_read_header(&dinfo, TRUE);
 
