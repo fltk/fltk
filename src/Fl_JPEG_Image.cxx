@@ -209,7 +209,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  This method reads JPEG image data and creates an RGB or grayscale image.
  To avoid code duplication, we set filename if we want to read form a file or
  data to read from memory instead. Sharename can be set if the image is
- supposed to be added to teh Fl_Shared_Image list.
+ supposed to be added to the Fl_Shared_Image list.
  */
 void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data)
 {
