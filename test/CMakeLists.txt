@@ -156,6 +156,7 @@ SET (UNITTEST_SRCS
   unittest_fast_shapes.cxx
   unittest_circles.cxx
   unittest_text.cxx
+  unittest_unicode.cxx
   unittest_symbol.cxx
   unittest_images.cxx
   unittest_viewport.cxx

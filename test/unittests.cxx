@@ -21,6 +21,8 @@
 // v1.0 - Submit for svn
 // v1.1 - Matthias seperated all tests into multiple source files for hopefully easier handling
 
+// NOTE: See README-unittests.txt for how to add new tests.
+
 #include "unittests.h"
 
 #include <FL/Fl.H>

@@ -24,6 +24,7 @@ CPPUNITTEST = \
 	unittest_fast_shapes.cxx \
 	unittest_circles.cxx \
 	unittest_text.cxx \
+	unittest_unicode.cxx \
 	unittest_symbol.cxx \
 	unittest_images.cxx \
 	unittest_viewport.cxx \
@@ -39,6 +40,7 @@ OBJUNITTEST = \
 	unittest_fast_shapes.o \
 	unittest_circles.o \
 	unittest_text.o \
+	unittest_unicode.o \
 	unittest_symbol.o \
 	unittest_images.o \
 	unittest_viewport.o \

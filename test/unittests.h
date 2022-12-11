@@ -44,6 +44,7 @@ enum {
   kTestCircles,
   kTestComplexShapes,
   kTestText,
+  kUnicodeBoxTest,
   kTestSymbol,
   kTestImages,
   kTestViewport,
