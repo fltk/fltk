@@ -22,6 +22,8 @@
 #include <FL/Fl_Image.H>
 #include "flstring.h"
 
+#include <stdlib.h>
+
 void fl_restore_clip(); // from fl_rect.cxx
 
 //
@@ -374,6 +376,36 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
 {
     data((const char **)&array, 1);
     ld(LD);
+}
+
+/**
+ The constructor creates a new image from the specified data.
+
+ If the provided array is to small to contain all the image data, the
+ constructor will duplicate the data in a new array that is large enough
+ and append 0's. \c alloc_array will be set.
+
+ \see Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD)
+ */
+Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int D, int LD) :
+  Fl_Image(W,H,D),
+  array(bits),
+  alloc_array(0),
+  id_(0),
+  mask_(0),
+  cache_w_(0), cache_h_(0)
+{
+  if (D == 0) D = 3;
+  if (LD == 0) LD = W*D;
+  int min_length = LD*(H-1) + W*D;
+  if (bits_length < min_length) {
+    uchar *new_array = (uchar*)::calloc(min_length, 1);
+    memcpy(new_array, array, bits_length);
+    array = new_array;
+    alloc_array = 1;
+  }
+  data((const char **)&array, 1);
+  ld(LD);
 }
 
 

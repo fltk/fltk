@@ -353,6 +353,7 @@ private:
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);
+  Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int D, int LD);
   Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg=FL_GRAY);
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H) const;
