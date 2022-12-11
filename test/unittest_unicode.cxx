@@ -14,6 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// FLTK DEVS: utf-8 encoding must be enabled to edit this file.
+
 #include "unittests.h"
 
 #include <FL/Fl.H>
@@ -24,13 +26,24 @@
 #include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/fl_draw.H>
 
-#include "unittest_unicode_utf8.h"      // defines utf8_box_test[]
+static const char *utf8_box_test =
+  "╳╳ ██ ▏▏┏━━┓ ╔══╗ ╔═╦═╗ ██████\n"
+  "╳╳ ██ ▏▏┃  ┃ ║  ║ ╠═╬═╣ ██  ██\n"
+  "╳╳ ██ ▏▏┗━━┛ ╚══╝ ╚═╩═╝ ██████\n"
+  "\n"
+  "underbar: ______\n"
+  " overbar: ‾‾‾‾‾‾\n"
+  "\n"
+  "underbar/overbar alternate:\n"
+  "\n"
+  "___‾‾‾___‾‾‾___‾‾‾___‾‾‾___\n"
+  "‾‾‾___‾‾‾___‾‾‾___‾‾‾___‾‾‾\n";
+
 static const char *helptext =
   "In this test, ideally the box's lines should all be touching "
   "without white space between. Underbar and overbars should both "
   "be visible and not touching. All the above should be unaffected "
   "by different font sizes and font settings.";
-
 
 class UnicodeBoxTest : public Fl_Group {
   Fl_Text_Buffer      *textbuffer;
