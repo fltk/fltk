@@ -185,6 +185,7 @@ in section 2.1 of file README.Unix.txt :
 - wayland-protocols
 - libdbus-1-dev
 - libxkbcommon-dev
+- libxinerama-dev
 - libgtk-3-dev   <== highly recommended, gives windows a GTK-style titlebar
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake
