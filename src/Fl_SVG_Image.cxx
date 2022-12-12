@@ -55,7 +55,7 @@ static double strtoll(const char *str, char **endptr, int base) {
 #endif
 
 
-/** Load an SVG image froma file.
+/** Load an SVG image from a file.
 
  This constructor loads the SVG image from a .svg or .svgz file. The reader
  recognizes if the data is compressed, and decompresses it if zlib is available
@@ -216,10 +216,14 @@ static int svg_inflate(uchar *src, size_t src_length, uchar *&dst, size_t &dst_l
     chunk = next_chunk;
   }
 
-  return err == Z_STREAM_END ? Z_OK :
-  err == Z_NEED_DICT ? Z_DATA_ERROR  :
-  err == Z_BUF_ERROR && stream.avail_out ? Z_DATA_ERROR :
-  err;
+  return
+    err == Z_STREAM_END ?
+      Z_OK :
+      err == Z_NEED_DICT ?
+        Z_DATA_ERROR  :
+          err == Z_BUF_ERROR && stream.avail_out ?
+            Z_DATA_ERROR :
+            err;
 }
 
 
@@ -235,7 +239,7 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
   proportional = true;
 
   // yes, this is a const cast to avoid duplicating user supplied data
-  uchar *data = (uchar*)in_data;
+  uchar *data = const_cast<uchar*>(in_data); // 🤨 careful with this, don't overwrite user suppied data in nsvgParse()
 
   // this is to make it clear what we are doing
   const char *sharedname = data ? name : NULL;
