@@ -216,14 +216,13 @@ static int svg_inflate(uchar *src, size_t src_length, uchar *&dst, size_t &dst_l
     chunk = next_chunk;
   }
 
-  return
-    err == Z_STREAM_END ?
-      Z_OK :
-      err == Z_NEED_DICT ?
-        Z_DATA_ERROR  :
-          err == Z_BUF_ERROR && stream.avail_out ?
-            Z_DATA_ERROR :
-            err;
+  return (err == Z_STREAM_END)
+          ? Z_OK
+          : (err == Z_NEED_DICT)
+            ? Z_DATA_ERROR
+            : ((err == Z_BUF_ERROR) && stream.avail_out)
+              ? Z_DATA_ERROR
+              : err;
 }
 
 
