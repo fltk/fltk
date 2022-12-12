@@ -155,7 +155,7 @@ public:
   bool proportional;
   Fl_SVG_Image(const char *filename);
   Fl_SVG_Image(const char *sharedname, const char *svg_data);
-  Fl_SVG_Image(const char *sharedname, const uchar *svg_data, size_t length);
+  Fl_SVG_Image(const char *sharedname, const unsigned char *svg_data, size_t length);
   virtual ~Fl_SVG_Image();
   virtual Fl_Image *copy(int W, int H) const;
   Fl_Image *copy() const {

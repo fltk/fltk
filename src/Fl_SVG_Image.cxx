@@ -104,7 +104,7 @@ Fl_SVG_Image::Fl_SVG_Image(const char *sharedname, const char *svg_data) :
  \note In-memory SVG data is parsed by the object constructor and is no longer
  needed after construction.
  */
-Fl_SVG_Image::Fl_SVG_Image(const char *name, const uchar *svg_data, size_t length) :
+Fl_SVG_Image::Fl_SVG_Image(const char *name, const unsigned char *svg_data, size_t length) :
   Fl_RGB_Image(NULL, 0, 0, 4)
 {
   init_(name, svg_data, length);
@@ -239,7 +239,7 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
   proportional = true;
 
   // yes, this is a const cast to avoid duplicating user supplied data
-  uchar *data = const_cast<uchar*>(in_data); // 🤨 careful with this, don't overwrite user suppied data in nsvgParse()
+  uchar *data = const_cast<uchar*>(in_data); // 🤨 careful with this, don't overwrite user supplied data in nsvgParse()
 
   // this is to make it clear what we are doing
   const char *sharedname = data ? name : NULL;
@@ -248,6 +248,8 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
   // prepare with error data, so we can just return if an error occurs
   d(-1);
   ld(ERR_FORMAT);
+  rasterized_ = false;
+  raster_w_ = raster_h_ = 0;
 
   // if we are reading from a file, just read the entire file into a memory block
   if (!data) {
@@ -271,9 +273,9 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
   }
 
   // now if our data is compressed, we use zlib to infalte it
-#if defined(HAVE_LIBZ)
   if (length==0 || length>10) {
     if (data[0] == 0x1f && data[1] == 0x8b) {
+#if defined(HAVE_LIBZ)
       // this is gzip compressed data, so we decompress it and preplace the data array
       uchar *uncompressed_data = NULL;
       size_t uncompressed_data_length = 0;
@@ -284,14 +286,28 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
         length = (size_t)uncompressed_data_length;
         data = (uchar*)uncompressed_data;
         data[length] = 0;
+      } else {
+        if (in_data != data) free(data);
+        return;
       }
+#else
+      if (in_data != data) free(data);
+      return;
+#endif // HAVE_LIBZ
     }
   }
-#endif // HAVE_LIBZ
 
   // now our SVG data should be in text format in `data`, terminated by a NUL
   // nsvgParse is destructive, so if in_data was set, we must duplicate the data first!
-  if (in_data == data) data = (uchar*)fl_strdup((char*)in_data);
+  if (in_data == data) {
+    if (length) {
+      data = (uchar*)malloc(length+1);
+      memcpy(data, in_data, length);
+      data[length] = 0;
+    } else {
+      data = (uchar*)fl_strdup((char*)in_data);
+    }
+  }
   counted_svg_image_->svg_image = nsvgParse((char*)data, "px", 96);
   if (in_data != data) free(data);
   if (counted_svg_image_->svg_image->width != 0 && counted_svg_image_->svg_image->height != 0) {
@@ -300,8 +316,6 @@ void Fl_SVG_Image::init_(const char *name, const unsigned char *in_data, size_t 
     d(4);
     ld(0);
   }
-  rasterized_ = false;
-  raster_w_ = raster_h_ = 0;
 
   if (sharedname && w() && h()) {
     Fl_Shared_Image *si = new Fl_Shared_Image(sharedname, this);
