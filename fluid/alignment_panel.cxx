@@ -633,6 +633,7 @@ static void refreshUI() {
   wGTKText->value(opt[Fl::OPTION_FNFC_USES_GTK][mode]);
   wPrintGTKText->value(opt[Fl::OPTION_PRINTER_USES_GTK][mode]);
   wShowZoomFactor->value(opt[Fl::OPTION_SHOW_SCALING][mode]);
+  wUseZenity->value(opt[Fl::OPTION_FNFC_USES_ZENITY][mode]);
 }
 
 /**
@@ -650,6 +651,7 @@ static void readPrefs() {
     opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][1], 2);
     opt_prefs.get("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK ][1], 2);
     opt_prefs.get("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING ][1], 2);
+    opt_prefs.get("UseZenity", opt[Fl::OPTION_FNFC_USES_ZENITY ][1], 2);
   }
   {
     Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
@@ -661,6 +663,7 @@ static void readPrefs() {
     opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][0], 2);
     opt_prefs.get("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK ][0], 2);
     opt_prefs.get("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING ][0], 2);
+    opt_prefs.get("UseZenity", opt[Fl::OPTION_FNFC_USES_ZENITY ][0], 2);
   }
   refreshUI();
 }
@@ -687,6 +690,8 @@ static void writePrefs() {
     else opt_prefs.set("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK][1]);
     if (opt[Fl::OPTION_SHOW_SCALING][1]==2) opt_prefs.deleteEntry("ShowZoomFactor");
     else opt_prefs.set("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING][1]);
+    if (opt[Fl::OPTION_FNFC_USES_ZENITY][1]==2) opt_prefs.deleteEntry("UseZenity");
+    else opt_prefs.set("UseZenity", opt[Fl::OPTION_FNFC_USES_ZENITY][1]);
   }
   {
     Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "fltk");
@@ -705,6 +710,8 @@ static void writePrefs() {
     else opt_prefs.set("PrintUsesGTK", opt[Fl::OPTION_PRINTER_USES_GTK][0]);
     if (opt[Fl::OPTION_SHOW_SCALING][0]==2) opt_prefs.deleteEntry("ShowZoomFactor");
     else opt_prefs.set("ShowZoomFactor", opt[Fl::OPTION_SHOW_SCALING][0]);
+    if (opt[Fl::OPTION_FNFC_USES_ZENITY][0]==2) opt_prefs.deleteEntry("UseZenity");
+    else opt_prefs.set("UseZenity", opt[Fl::OPTION_FNFC_USES_ZENITY][0]);
   }
 }
 
@@ -795,6 +802,20 @@ Fl_Menu_Item menu_wGTKText[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Choice *wUseZenity=(Fl_Choice *)0;
+
+static void cb_wUseZenity(Fl_Choice*, void*) {
+  int mode = wUserOrSystem->value();
+  opt[Fl::OPTION_FNFC_USES_ZENITY ][mode] = wUseZenity->value();
+}
+
+Fl_Menu_Item menu_wUseZenity[] = {
+ {"off", 0,  0, (void*)(0), 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"on", 0,  0, (void*)(1), 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"default", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Choice *wPrintGTKText=(Fl_Choice *)0;
 
 static void cb_wPrintGTKText(Fl_Choice*, void*) {
@@ -845,7 +866,7 @@ static void cb_OK(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_global_settings_window() {
-  { global_settings_window = new Fl_Double_Window(400, 531, "FLTK Preferences");
+  { global_settings_window = new Fl_Double_Window(400, 572, "FLTK Preferences");
     global_settings_window->color(FL_LIGHT1);
     { Fl_Group* o = new Fl_Group(10, 10, 380, 100, "Keyboard Focus Options");
       o->box(FL_GTK_DOWN_BOX);
@@ -900,7 +921,7 @@ dropping text from other applications still works.\n\nDefault is on.");
       } // Fl_Choice* wDNDText
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(10, 269, 380, 66, "Native File Chooser Options");
+    { Fl_Group* o = new Fl_Group(10, 269, 380, 104, "Native File Chooser Options");
       o->box(FL_GTK_DOWN_BOX);
       o->labelfont(2);
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
@@ -914,13 +935,22 @@ ble.\n\nDefault is on.");
         wGTKText->callback((Fl_Callback*)cb_wGTKText);
         wGTKText->menu(menu_wGTKText);
       } // Fl_Choice* wGTKText
+      { wUseZenity = new Fl_Choice(245, 334, 100, 26, "Native File Chooser uses Zenity:");
+        wUseZenity->tooltip("OPTION_FNFC_USES_ZENITY\n\nIf \'Native File Chooser uses Zenity\' is enabled,\
+ the library uses a Zenity-based file dialog to open/save files when possible.\
+ If disabled, the GTK-based dialog is used. Default is on. Meaningful only wit\
+h Wayland/X11 platforms.");
+        wUseZenity->down_box(FL_BORDER_BOX);
+        wUseZenity->callback((Fl_Callback*)cb_wUseZenity);
+        wUseZenity->menu(menu_wUseZenity);
+      } // Fl_Choice* wUseZenity
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(10, 345, 380, 66, "Print dialog Options");
+    { Fl_Group* o = new Fl_Group(10, 384, 380, 66, "Print dialog Options");
       o->box(FL_GTK_DOWN_BOX);
       o->labelfont(2);
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
-      { wPrintGTKText = new Fl_Choice(245, 366, 100, 25, "Print dialog uses GTK:");
+      { wPrintGTKText = new Fl_Choice(245, 405, 100, 25, "Print dialog uses GTK:");
         wPrintGTKText->tooltip("OPTION_PRINTER_USES_GTK\n\nIf \'Print dialog uses GTK\' is enabled, the Fl_Pr\
 inter class\ncalls the GTK print dialog when it\'s available on the platfom. I\
 f disabled, the Fl_Printer class\nalways uses FLTK\'s own print dialog even if\
@@ -931,11 +961,11 @@ f disabled, the Fl_Printer class\nalways uses FLTK\'s own print dialog even if\
       } // Fl_Choice* wPrintGTKText
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(10, 421, 380, 66, "Scaling Factor Options");
+    { Fl_Group* o = new Fl_Group(10, 459, 380, 66, "Scaling Factor Options");
       o->box(FL_GTK_DOWN_BOX);
       o->labelfont(2);
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
-      { wShowZoomFactor = new Fl_Choice(245, 442, 100, 25, "Transiently show scaling factor:");
+      { wShowZoomFactor = new Fl_Choice(245, 483, 100, 25, "Transiently show scaling factor:");
         wShowZoomFactor->tooltip("OPTION_SHOW_SCALING\n\nIf \'Transiently show scaling factor\' is enabled, the\
  library shows in a transient yellow window the display\nscaling factor value \
 when it is changed. If disabled, no such transient window is used.\n\nDefault \
@@ -946,7 +976,7 @@ is on.");
       } // Fl_Choice* wShowZoomFactor
       o->end();
     } // Fl_Group* o
-    { wUserOrSystem = new Fl_Choice(10, 496, 141, 25);
+    { wUserOrSystem = new Fl_Choice(10, 535, 141, 25);
       wUserOrSystem->tooltip("Change settings for the current user, or default values for all users of this\
  computer. Individual users can override system options, if they set their opt\
 ions to specific values (not \'default\').");
@@ -954,10 +984,10 @@ ions to specific values (not \'default\').");
       wUserOrSystem->callback((Fl_Callback*)cb_wUserOrSystem);
       wUserOrSystem->menu(menu_wUserOrSystem);
     } // Fl_Choice* wUserOrSystem
-    { Fl_Button* o = new Fl_Button(230, 496, 75, 25, "Cancel");
+    { Fl_Button* o = new Fl_Button(230, 535, 75, 25, "Cancel");
       o->callback((Fl_Callback*)cb_Cancel1);
     } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(315, 496, 75, 25, "OK");
+    { Fl_Button* o = new Fl_Button(315, 535, 75, 25, "OK");
       o->callback((Fl_Callback*)cb_OK);
     } // Fl_Button* o
     global_settings_window->end();

@@ -17,9 +17,7 @@
 
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
-#if USE_ZENITY
-#  include "Fl_Native_File_Chooser_Zenity.H"
-#endif
+#include "Fl_Native_File_Chooser_Zenity.H"
 #if USE_KDIALOG
 #  include "Fl_Native_File_Chooser_Kdialog.H"
 #endif
@@ -934,8 +932,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   platform_fnfc = NULL;
   fl_open_display();
   if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
-#if USE_ZENITY
-    if (val != BROWSE_MULTI_DIRECTORY) {
+    if (Fl::option(Fl::OPTION_FNFC_USES_ZENITY)&& val != BROWSE_MULTI_DIRECTORY) {
       if (!Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity) {
         // First Time here, try to find zenity
         FILE *pipe = popen("zenity --version 2> /dev/null", "r");
@@ -950,7 +947,6 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
       // if we found zenity, we will use the Fl_Zenity_Native_File_Chooser_Driver
       if (Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity) platform_fnfc = new Fl_Zenity_Native_File_Chooser_Driver(val);
     }
-#endif // USE_ZENITY
 #if USE_KDIALOG
     const char *desktop = getenv("XDG_CURRENT_DESKTOP");
     if (!platform_fnfc && desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {

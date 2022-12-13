@@ -277,6 +277,7 @@ XLIBCPPFILES = \
         Fl_Native_File_Chooser_FLTK.cxx \
 	Fl_Native_File_Chooser_GTK.cxx\
 	Fl_Native_File_Chooser_Kdialog.cxx \
+	Fl_Native_File_Chooser_Zenity.cxx \
         Fl_get_key.cxx
 
 # These graphics driver files are used under condition: BUILD_CAIRO
@@ -299,6 +300,7 @@ WLCPPFILES = \
         Fl_Native_File_Chooser_FLTK.cxx \
         Fl_Native_File_Chooser_GTK.cxx \
 	Fl_Native_File_Chooser_Kdialog.cxx \
+	Fl_Native_File_Chooser_Zenity.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
         drivers/Unix/Fl_Unix_System_Driver.cxx \
         drivers/Unix/Fl_Unix_Screen_Driver.cxx \

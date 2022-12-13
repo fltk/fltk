@@ -1920,6 +1920,8 @@ bool Fl::option(Fl_Option opt)
 
       opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
       options_[OPTION_SHOW_SCALING] = tmp;
+      opt_prefs.get("UseZenity", tmp, 1);                      // default: on
+      options_[OPTION_FNFC_USES_ZENITY] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
@@ -1944,6 +1946,8 @@ bool Fl::option(Fl_Option opt)
 
       opt_prefs.get("ShowZoomFactor", tmp, -1);
       if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
+      opt_prefs.get("UseZenity", tmp, -1);
+      if (tmp >= 0) options_[OPTION_FNFC_USES_ZENITY] = tmp;
     }
     { // now, if the developer has registered this app, we could ask for per-application preferences
     }
