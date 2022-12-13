@@ -78,8 +78,6 @@
   Fl_Flex containers can be nested so you can create flexible layouts with
   multiple columns and rows. However, if your UI design is more complex you
   may want to use Fl_Grid instead.
-  At the time of this writing (Aug 7, 2022) Fl_Grid is not yet available
-  but will be added before FLTK 1.4.0 gets released.
 
   Example:
   \image html Fl_Flex_simple.png
@@ -328,32 +326,6 @@ public:
   void spacing(int i) {
     gap(i);
   }
-
-#if (1)
-
-  // Additional methods for backwards compatibility with "original" Fl_Flex widget
-
-  /**
-    Deprecated.
-    \deprecated Please use fixed(Fl_Widget *) instead.
-
-    \see int fixed(Fl_Widget *)
-  */
-  bool isSetSize(Fl_Widget *w) const {
-    return (bool)fixed(w);
-  }
-
-  /**
-    Set the horizontal or vertical size of a child widget.
-    \deprecated Please use fixed(Fl_Widget *, int) instead.
-
-    \see fixed(Fl_Widget *, int)
-  */
-  void setSize(Fl_Widget *w, int size) {
-    fixed(w, size);
-  }
-
-#endif
 
 };
 

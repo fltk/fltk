@@ -39,8 +39,8 @@
 */
 Fl_Flex::Fl_Flex(int X, int Y, int W, int H, const char *L)
   : Fl_Group(X, Y, W, H, L) {
-    init();
-  }
+  init();
+}
 
 // special Fl_Flex constructors w/o label (backwards compatible with original Fl_Flex widget)
 
@@ -54,7 +54,7 @@ Fl_Flex::Fl_Flex(int X, int Y, int W, int H, const char *L)
   for nested Fl_Flex widgets. Use one of the other constructors to set the
   desired position and size as well.
 
-  \param[in]  direction   horizontal (row) or vertical (column) layout
+  \param[in]  direction  horizontal (row) or vertical (column) layout
 
   \see Fl_Flex::Fl_Flex(int w, int h, int direction)
   \see Fl_Flex::Fl_Flex(int x, int y, int w, int h, int direction)
@@ -75,9 +75,8 @@ Fl_Flex::Fl_Flex(int direction)
   for nested Fl_Flex widgets. Use one of the other constructors to set the
   desired position as well.
 
-
-  \param[in]  w,h   widget size
-  \param[in]  direction   horizontal (row) or vertical (column) layout
+  \param[in]  w,h        widget size
+  \param[in]  direction  horizontal (row) or vertical (column) layout
 
   \see Fl_Flex::Fl_Flex(int direction)
   \see Fl_Flex::Fl_Flex(int x, int y, int w, int h, int direction)
