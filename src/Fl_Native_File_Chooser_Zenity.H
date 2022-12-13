@@ -17,38 +17,14 @@
 #ifndef FL_ZENITY_NATIVE_FILE_CHOOSER_H
 #define FL_ZENITY_NATIVE_FILE_CHOOSER_H 1
 
-#include <FL/Fl_Native_File_Chooser.H>
+#include "Fl_Native_File_Chooser_Kdialog.H"
 
-class FL_EXPORT Fl_Zenity_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
+class Fl_Zenity_Native_File_Chooser_Driver : public Fl_Kdialog_Native_File_Chooser_Driver {
   friend class Fl_Native_File_Chooser;
-  struct fnfc_pipe_struct {
-    char *all_files;
-    int fd;
-  };
-  static void fnfc_fd_cb(int fd, fnfc_pipe_struct *data);
-  char **_pathnames;
-  int _tpathnames;
-  char *_directory;
-  char *_preset_file;
-  char *_title;
   static bool did_find_zenity;
   static bool have_looked_for_zenity;
   Fl_Zenity_Native_File_Chooser_Driver(int val);
-  ~Fl_Zenity_Native_File_Chooser_Driver();
-  int count() const;
-  const char *filename() const;
-  const char *filename(int i) const;
-  int show();
-  char *parse_filter(const char *f);
-  const char *filter() const;
-  virtual void filter(const char *f);
-  int filters() const;
-  void preset_file(const char *val);
-  const char *preset_file() const;
-  void directory(const char *val);
-  const char *directory() const;
-  void title(const char *val);
-  const char *title() const;
+  virtual char *build_command();
 };
 
 #endif // FL_ZENITY_NATIVE_FILE_CHOOSER_H

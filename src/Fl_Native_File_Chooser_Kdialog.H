@@ -21,6 +21,7 @@
 
 class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK_Driver {
   friend class Fl_Native_File_Chooser;
+  friend class Fl_Zenity_Native_File_Chooser_Driver;
   struct fnfc_pipe_struct {
     char *all_files;
     int fd;
@@ -38,6 +39,7 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   int count() const;
   const char *filename() const;
   const char *filename(int i) const;
+  virtual char *build_command();
   int show();
   char *parse_filter(const char *f);
   const char *filter() const;

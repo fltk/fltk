@@ -272,6 +272,9 @@ public:
     /// value.
     /// When switched off, no such window gets displayed.
     OPTION_SHOW_SCALING,
+    /// Meaningful for the Wayland/X11 platform only. When switched on (default), the library uses a Zenity-based file dialog.
+    /// When switched off, the GTK file dialog is used instead.
+    OPTION_FNFC_USES_ZENITY,
       // don't change this, leave it always as the last element
       /// For internal use only.
     OPTION_LAST
