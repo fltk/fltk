@@ -519,7 +519,7 @@ public:
       \return the current image
    */
   Fl_Image* image() {return label_.image;}
-  
+
   /** Gets the image that is used as part of the widget label when in the active state.
       \return the current image
    */

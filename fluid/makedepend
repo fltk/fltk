@@ -858,6 +858,7 @@ Fl_Widget_Type.o: Fl_Menu_Type.h
 Fl_Widget_Type.o: Fl_Type.h
 Fl_Widget_Type.o: Fl_Widget_Type.h
 Fl_Widget_Type.o: Fl_Window_Type.h
+Fl_Widget_Type.o: pixmaps.h
 Fl_Widget_Type.o: shell_command.h
 Fl_Widget_Type.o: Shortcut_Button.h
 Fl_Widget_Type.o: StyleParse.h
@@ -889,9 +890,11 @@ Fl_Window_Type.o: ../FL/Fl_Group.H
 Fl_Window_Type.o: ../FL/Fl_Image.H
 Fl_Window_Type.o: ../FL/Fl_Input.H
 Fl_Window_Type.o: ../FL/Fl_Input_.H
+Fl_Window_Type.o: ../FL/Fl_Input_Choice.H
 Fl_Window_Type.o: ../FL/Fl_Int_Input.H
 Fl_Window_Type.o: ../FL/Fl_Light_Button.H
 Fl_Window_Type.o: ../FL/Fl_Menu_.H
+Fl_Window_Type.o: ../FL/Fl_Menu_Button.H
 Fl_Window_Type.o: ../FL/Fl_Menu_Item.H
 Fl_Window_Type.o: ../FL/fl_message.H
 Fl_Window_Type.o: ../FL/Fl_Overlay_Window.H
@@ -936,6 +939,7 @@ Fl_Window_Type.o: Fl_Group_Type.h
 Fl_Window_Type.o: Fl_Type.h
 Fl_Window_Type.o: Fl_Widget_Type.h
 Fl_Window_Type.o: Fl_Window_Type.h
+Fl_Window_Type.o: pixmaps.h
 Fl_Window_Type.o: shell_command.h
 Fl_Window_Type.o: Shortcut_Button.h
 Fl_Window_Type.o: StyleParse.h
@@ -999,6 +1003,7 @@ function_panel.o: widget_browser.h
 pixmaps.o: ../FL/Fl_Image.H
 pixmaps.o: ../FL/Fl_Pixmap.H
 pixmaps.o: pixmaps.h
+pixmaps.o: pixmaps/bind.xpm
 pixmaps.o: pixmaps/flAdjuster.xpm
 pixmaps.o: pixmaps/flBox.xpm
 pixmaps.o: pixmaps/flBrowser.xpm
@@ -1136,8 +1141,10 @@ Shortcut_Button.o: ../FL/Fl_Group.H
 Shortcut_Button.o: ../FL/Fl_Image.H
 Shortcut_Button.o: ../FL/Fl_Input.H
 Shortcut_Button.o: ../FL/Fl_Input_.H
+Shortcut_Button.o: ../FL/Fl_Input_Choice.H
 Shortcut_Button.o: ../FL/Fl_Light_Button.H
 Shortcut_Button.o: ../FL/Fl_Menu_.H
+Shortcut_Button.o: ../FL/Fl_Menu_Button.H
 Shortcut_Button.o: ../FL/Fl_Menu_Item.H
 Shortcut_Button.o: ../FL/Fl_Pixmap.H
 Shortcut_Button.o: ../FL/Fl_Plugin.H
@@ -1170,6 +1177,7 @@ Shortcut_Button.o: fluid.h
 Shortcut_Button.o: Fl_Type.h
 Shortcut_Button.o: Fl_Widget_Type.h
 Shortcut_Button.o: Fl_Window_Type.h
+Shortcut_Button.o: pixmaps.h
 Shortcut_Button.o: Shortcut_Button.h
 Shortcut_Button.o: StyleParse.h
 Shortcut_Button.o: widget_browser.h
@@ -1299,8 +1307,10 @@ widget_panel.o: ../FL/Fl_Group.H
 widget_panel.o: ../FL/Fl_Image.H
 widget_panel.o: ../FL/Fl_Input.H
 widget_panel.o: ../FL/Fl_Input_.H
+widget_panel.o: ../FL/Fl_Input_Choice.H
 widget_panel.o: ../FL/Fl_Light_Button.H
 widget_panel.o: ../FL/Fl_Menu_.H
+widget_panel.o: ../FL/Fl_Menu_Button.H
 widget_panel.o: ../FL/Fl_Menu_Item.H
 widget_panel.o: ../FL/Fl_Pixmap.H
 widget_panel.o: ../FL/Fl_Plugin.H
@@ -1325,6 +1335,7 @@ widget_panel.o: ../FL/platform_types.h
 widget_panel.o: CodeEditor.h
 widget_panel.o: Fl_Type.h
 widget_panel.o: Fl_Widget_Type.h
+widget_panel.o: pixmaps.h
 widget_panel.o: Shortcut_Button.h
 widget_panel.o: StyleParse.h
 widget_panel.o: widget_panel.h

@@ -535,6 +535,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: drivers/Posix/Fl_Posix_System_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: drivers/Unix/Fl_Unix_Screen_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: drivers/X11/Fl_X11_Screen_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: drivers/X11/Fl_X11_Window_Driver.H
+drivers/X11/Fl_X11_Screen_Driver.o: flstring.h
 drivers/X11/Fl_X11_Screen_Driver.o: Fl_Screen_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: Fl_System_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: Fl_Timeout.h
@@ -2208,6 +2209,21 @@ Fl_Help_View.o: ../FL/Fl_Widget.H
 Fl_Help_View.o: ../FL/Fl_Window.H
 Fl_Help_View.o: ../FL/platform_types.h
 Fl_Help_View.o: flstring.h
+Fl_ICO_Image.o: ../config.h
+Fl_ICO_Image.o: ../FL/Enumerations.H
+Fl_ICO_Image.o: ../FL/Fl.H
+Fl_ICO_Image.o: ../FL/Fl_BMP_Image.H
+Fl_ICO_Image.o: ../FL/Fl_Cairo.H
+Fl_ICO_Image.o: ../FL/fl_casts.H
+Fl_ICO_Image.o: ../FL/fl_config.h
+Fl_ICO_Image.o: ../FL/Fl_Export.H
+Fl_ICO_Image.o: ../FL/Fl_ICO_Image.H
+Fl_ICO_Image.o: ../FL/Fl_Image.H
+Fl_ICO_Image.o: ../FL/Fl_PNG_Image.H
+Fl_ICO_Image.o: ../FL/fl_types.h
+Fl_ICO_Image.o: ../FL/fl_utf8.h
+Fl_ICO_Image.o: ../FL/platform_types.h
+Fl_ICO_Image.o: Fl_Image_Reader.h
 Fl_Image.o: ../config.h
 Fl_Image.o: ../FL/Enumerations.H
 Fl_Image.o: ../FL/Fl.H
@@ -2230,6 +2246,7 @@ fl_images_core.o: ../FL/Fl_BMP_Image.H
 fl_images_core.o: ../FL/fl_config.h
 fl_images_core.o: ../FL/Fl_Export.H
 fl_images_core.o: ../FL/Fl_GIF_Image.H
+fl_images_core.o: ../FL/Fl_ICO_Image.H
 fl_images_core.o: ../FL/Fl_Image.H
 fl_images_core.o: ../FL/Fl_JPEG_Image.H
 fl_images_core.o: ../FL/Fl_Pixmap.H
