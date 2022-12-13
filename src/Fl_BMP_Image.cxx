@@ -205,7 +205,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
       height = ico_height;
     } else {
       // New BMP header...
-      w(rdr.read_long());
+      width = rdr.read_long();
+      w(width);
       // If the height is negative, the row order is flipped
       temp = rdr.read_long();
       if (temp < 0) row_order = 1;
