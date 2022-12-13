@@ -236,7 +236,8 @@ void Fl_Flex::end() {
 
   This sets either the width or height of a child widget, depending on the
   type() of the Fl_Flex container (Fl_Flex::HORIZONTAL or Fl_Flex::VERTICAL).
-  The other dimension is set to the full width or height of the Fl_Flex widget.
+  The other dimension is set to the full width or height of the Fl_Flex widget
+  minus margin sizes.
 
   This can be used to set a fixed widget width or height of children
   of Fl_Flex so they are not resized dynamically.
