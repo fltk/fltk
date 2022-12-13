@@ -1105,7 +1105,6 @@ void when_cb(Fl_Menu_Button* i, void *v) {
     w_when_box->label(whensymbolmenu[n].label());
   } else {
     int mod = 0;
-    int m = i->value();
     int n = 0;
     if (whenmenu[0].value()) n |= 1;
     if (whenmenu[1].value()) n |= 2;
