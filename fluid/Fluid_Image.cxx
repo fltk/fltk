@@ -94,7 +94,7 @@ void Fluid_Image::write_static() {
     write_c("static const unsigned char %s[] =\n", idata_name);
     write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
-    write_initializer( "Fl_Bitmap", "%s, %d, %d", idata_name, img->w(), img->h());
+    write_initializer( "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
   } else if (strcmp(fl_filename_ext(name()), ".jpg")==0) {
     // Write jpeg image data...
     write_c("\n");
@@ -104,6 +104,7 @@ void Fluid_Image::write_static() {
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
 
+    size_t nData = 0;
     enter_project_dir();
     FILE *f = fl_fopen(name(), "rb");
     leave_project_dir();
@@ -111,7 +112,7 @@ void Fluid_Image::write_static() {
       write_file_error("JPEG");
     } else {
       fseek(f, 0, SEEK_END);
-      size_t nData = ftell(f);
+      nData = ftell(f);
       fseek(f, 0, SEEK_SET);
       if (nData) {
         char *data = (char*)calloc(nData, 1);
@@ -123,7 +124,7 @@ void Fluid_Image::write_static() {
     }
 
     write_c(";\n");
-    write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+    write_initializer("Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
   } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
@@ -160,9 +161,9 @@ void Fluid_Image::write_static() {
 
     write_c(";\n");
     if (gzipped)
-      write_initializer("Fl_SVG_Image", "NULL, (const char*)%s, %ld", idata_name, nData);
+      write_initializer("Fl_SVG_Image", "\"%s\", (const char*)%s, %ld", fl_filename_name(name()), idata_name, nData);
     else
-      write_initializer("Fl_SVG_Image", "NULL, %s", idata_name);
+      write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
   } else {
     // Write image data...
     write_c("\n");
@@ -193,10 +194,14 @@ void Fluid_Image::write_initializer(const char *type_name, const char *format, .
    } */
   va_list ap;
   va_start(ap, format);
-  write_c("static Fl_Image *%s() {\n%sstatic Fl_Image *image = new %s(",
-          function_name_, indent(1), type_name);
+  write_c("static Fl_Image *%s() {\n", function_name_);
+  write_c("%sstatic Fl_Image *image = NULL;\n", indent(1));
+  write_c("%sif (!image)\n", indent(1));
+  write_c("%simage = new %s(", indent(2), type_name);
   vwrite_c(format, ap);
-  write_c(");\n%sreturn image;\n}\n", indent(1));
+  write_c(");\n");
+  write_c("%sreturn image;\n", indent(1));
+  write_c("}\n");
   va_end(ap);
 }
 
