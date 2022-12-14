@@ -294,9 +294,15 @@ void Fluid_Image::decrement() {
 Fluid_Image::~Fluid_Image() {
   int a;
   if (images) {
-    for (a = 0;; a++) if (images[a] == this) break;
-    numimages--;
-    for (; a < numimages; a++) images[a] = images[a+1];
+    for (a = 0; a<numimages; a++) {
+      if (images[a] == this) {
+        numimages--;
+        for (; a < numimages; a++) {
+          images[a] = images[a+1];
+        }
+        break;
+      }
+    }
   }
   if (img) img->release();
   free((void*)name_);
