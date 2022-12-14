@@ -189,11 +189,12 @@ void Fl_Image::label(Fl_Menu_Item* m) {
       box.image(jpg);
   \endcode
 
-  \returns                Image load failure if non-zero
-  \retval 0               the image was loaded successfully
-  \retval ERR_NO_IMAGE    no image was found
-  \retval ERR_FILE_ACCESS there was a file access related error (errno should be set)
-  \retval ERR_FORMAT      image decoding failed
+  \returns                  Image load failure if non-zero
+  \retval 0                 the image was loaded successfully
+  \retval ERR_NO_IMAGE      no image was found
+  \retval ERR_FILE_ACCESS   there was a file access related error (errno should be set)
+  \retval ERR_FORMAT        image decoding failed
+  \retval ERR_MEMORY_ACCESS image decoder tried to access memory outside of given memory block
 */
 int Fl_Image::fail() const {
   // if no image exists, ld_ may contain a simple error code

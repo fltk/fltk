@@ -33,6 +33,17 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 }
 
 
+/** The constructors create a new bitmap from the specified bitmap data.
+ If the provided array is to small to contain all the image data, the
+ constructor will not generate the bitmap to avoid illegale memeory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+ \param bits bitmap data, one pixels per bit, rows are rounded to the next byte
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \see Fl_Bitmap(const char *bits, int bits_length, int W, int H),
+      Fl_Bitmap(const uchar *bits, int W, int H)
+*/
 Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
   Fl_Image(W,H,0),
   array((const uchar *)bits),
@@ -43,16 +54,26 @@ Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
 {
   int rowBytes = (W+7)>>3;
   int min_length = rowBytes * H;
-  if (bits_length < min_length) {
-    uchar *new_array = (uchar*)::calloc(min_length, 1);
-    memcpy(new_array, array, bits_length);
-    array = new_array;
-    alloc_array = 1;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+  } else {
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
   }
-  data((const char **)&array, 1);
 }
 
 
+/** The constructors create a new bitmap from the specified bitmap data.
+ If the provided array is to small to contain all the image data, the
+ constructor will not generate the bitmap to avoid illegale memeory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+ \param bits bitmap data, one pixels per bit, rows are rounded to the next byte
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \see Fl_Bitmap(const uchar *bits, int bits_length, int W, int H),
+      Fl_Bitmap(const char *bits, int W, int H)
+ */
 Fl_Bitmap::Fl_Bitmap(const char *bits, int bits_length, int W, int H) :
   Fl_Image(W,H,0),
   array((const uchar *)bits),
@@ -63,13 +84,12 @@ Fl_Bitmap::Fl_Bitmap(const char *bits, int bits_length, int W, int H) :
 {
   int rowBytes = (W+7)>>3;
   int min_length = rowBytes * H;
-  if (bits_length < min_length) {
-    uchar *new_array = (uchar*)::calloc(min_length, 1);
-    memcpy(new_array, array, bits_length);
-    array = new_array;
-    alloc_array = 1;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+  } else {
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
   }
-  data((const char **)&array, 1);
 }
 
 
