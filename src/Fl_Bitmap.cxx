@@ -57,6 +57,7 @@ Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
   if (bits_length >= min_length) {
     data((const char **)&array, 1);
   } else {
+    array = NULL;
     data(NULL, 0);
     ld(ERR_MEMORY_ACCESS);
   }
@@ -87,6 +88,7 @@ Fl_Bitmap::Fl_Bitmap(const char *bits, int bits_length, int W, int H) :
   if (bits_length >= min_length) {
     data((const char **)&array, 1);
   } else {
+    array = NULL;
     data(NULL, 0);
     ld(ERR_MEMORY_ACCESS);
   }

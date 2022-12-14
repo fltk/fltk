@@ -379,12 +379,21 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
     ld(LD);
 }
 
+
 /**
  The constructor creates a new image from the specified data.
 
  If the provided array is to small to contain all the image data, the
- constructor will duplicate the data in a new array that is large enough
- and append 0's. \c alloc_array will be set.
+ constructor will not generate the image to avoid illegale memeory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+
+ \param bits image data
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \param D image depth in bytes, 1 for gray scale, 2 for gray with alpha,
+        3 for RGB, and 4 for RGB plus alpha
+ \param LD line length in bytes, or 0 to use W*D.
 
  \see Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD)
  */
@@ -399,14 +408,14 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int
   if (D == 0) D = 3;
   if (LD == 0) LD = W*D;
   int min_length = LD*(H-1) + W*D;
-  if (bits_length < min_length) {
-    uchar *new_array = (uchar*)::calloc(min_length, 1);
-    memcpy(new_array, array, bits_length);
-    array = new_array;
-    alloc_array = 1;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+    ld(LD);
+  } else {
+    array = NULL;
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
   }
-  data((const char **)&array, 1);
-  ld(LD);
 }
 
 
