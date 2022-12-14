@@ -383,8 +383,8 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
 /**
  The constructor creates a new image from the specified data.
 
- If the provided array is to small to contain all the image data, the
- constructor will not generate the image to avoid illegale memeory read
+ If the provided array is too small to contain all the image data, the
+ constructor will not generate the image to avoid illegal memeory read
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
 
  \param bits image data

@@ -189,7 +189,9 @@ void Fluid_Image::write_file_error(const char *fmt) {
 void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {
   /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
    static Fl_Image *'function_name_'() {
-     static Fl_Image *image = new 'type_name'('product of format and remaining args');
+     static Fl_Image *image = NULL;
+     if (!image)
+       image = new 'type_name'('product of format and remaining args');
      return image;
    } */
   va_list ap;
