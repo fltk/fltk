@@ -427,7 +427,7 @@ Type "Fl_Flex" <word> : C++ variable name
   "margins" <word> : this Word is written with printf as "{%d %d %d %d}",
       left, top, right, bottom
   "gap" <word> : integer
-  "set_size_tuples" <word> : this Word is written with printf "{%d", where %d
+  "fixed_size_tuples" <word> : this Word is written with printf "{%d", where %d
       encodes the number of tuples to follow, and zero or more " %d %d"
       containing the index and size of that child, followed by a '}'.
   ... : inherits more from Fl_Group

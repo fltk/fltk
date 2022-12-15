@@ -23,16 +23,17 @@
 /**
   Fl_Flex is a container (layout) widget for one row or one column of widgets.
 
-  It provides flexible positioning of its children either in one row or in one column.
+  It provides flexible positioning of its children either in one row or in one
+  column.
 
   Fl_Flex is designed to be as simple as possible. You can set individual widget
   sizes or let Fl_Flex position and size the widgets to fit in the container.
   All "flexible" (i.e. non-fixed size) widgets are assigned the same width or
   height, respectively. For details see below.
 
-  You can set the margins \b around all children at the inner side the box frame
-  (if any). Fl_Flex supports setting different margin sizes on top, bottom, left
-  and right sides.
+  You can set the margins \b around all children at the inner side of the box
+  frame (if any). Fl_Flex supports setting different margin sizes on top,
+  bottom, left, and right sides.
   The default margin size is 0 on all edges of the container.
 
   You can set the gap size \b between all children. The gap size is always the
@@ -46,11 +47,11 @@
 
   If type() == Fl_Flex::HORIZONTAL widgets are resized horizontally to fit in
   the container and their height is the full Fl_Flex height minus border size
-  and margins. You can set a fixed widget width by using set_size().
+  and margins. You can set a fixed widget width by using fixed().
 
   If type() == Fl_Flex::VERTICAL widgets are resized vertically to fit in
   the container and their width is the full Fl_Flex width minus border size
-  and margins. You can set a fixed widget height by using set_size().
+  and margins. You can set a fixed widget height by using fixed().
 
   To create arbitrary spacing you can use invisible boxes of flexible or
   fixed sizes (see example below).
@@ -77,8 +78,6 @@
   Fl_Flex containers can be nested so you can create flexible layouts with
   multiple columns and rows. However, if your UI design is more complex you
   may want to use Fl_Grid instead.
-  At the time of this writing (Aug 7, 2022) Fl_Grid is not yet available
-  but will be added before FLTK 1.4.0 gets released.
 
   Example:
   \image html Fl_Flex_simple.png
@@ -99,7 +98,7 @@
     Fl_Button b2(0, 0, 0, 0, "Save");
     Fl_Box    bx(0, 0, 0, 0);
     Fl_Button b3(0, 0, 0, 0, "Exit");
-    flex.set_size(bx, 60); // set fix width of invisible box
+    flex.fixed(bx, 60); // set fix width of invisible box
     flex.gap(10);
     flex.end();
     window.resizable(flex);
@@ -119,9 +118,9 @@ class FL_EXPORT Fl_Flex : public Fl_Group {
   int margin_right_;
   int margin_bottom_;
   int gap_;
-  int set_size_size_;
-  int set_size_alloc_;
-  Fl_Widget **set_size_;
+  int fixed_size_size_;
+  int fixed_size_alloc_;
+  Fl_Widget **fixed_size_;
 
 public:
 
@@ -153,14 +152,14 @@ public:
     \param[in]  w   widget to be affected
     \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 
-    \see set_size(Fl_Widget *w, int size)
+    \see fixed(Fl_Widget *w, int size)
   */
-  void set_size(Fl_Widget &w, int size) {
-    set_size(&w, size);
+  void fixed(Fl_Widget &w, int size) {
+    fixed(&w, size);
   }
 
-  void set_size(Fl_Widget *w, int size);
-  int set_size(Fl_Widget *w) const;
+  void fixed(Fl_Widget *w, int size);
+  int fixed(Fl_Widget *w) const;
 
 protected:
 
@@ -179,7 +178,7 @@ public:
 
     \note This method is useful if you never set different margin sizes.
 
-    \see int margins(int *left, int *top, int *right, int *bottom)
+    \see int margin(int *left, int *top, int *right, int *bottom)
       to get all four margin values.
     \return  size of left margin.
   */
@@ -199,7 +198,7 @@ public:
     \retval  1  all margins have the same size
     \retval  0  at least one margin has a different size
   */
-  int margins(int *left, int *top, int *right, int *bottom) const {
+  int margin(int *left, int *top, int *right, int *bottom) const {
     if (left) *left = margin_left_;
     if (top) *top = margin_top_;
     if (right) *right = margin_right_;
@@ -215,15 +214,15 @@ public:
     If you don't use the second parameter \p g or supply a negative value
     the gap size is not changed.
 
-    The margin is some free space inside the widget border \b around all child widgets.
+    The margin is the free space inside the widget border \b around all child widgets.
 
     This method sets the margin to the same size at all four edges of the Fl_Flex widget.
 
-    The gap size \p g is some free space \b between child widgets. Negative values
-    (the default if this argument is omitted) do not change the gap value.
+    The gap size \p g is the free space \b between child widgets. Negative values
+    do not change the gap value. This is the default if this argument is omitted.
 
     \param[in]    m   margin size, must be \>= 0
-    \param[in]    g   gap size, ignored (if negative)
+    \param[in]    g   gap size (ignored, if negative)
 
     \see gap(int)
   */
@@ -243,15 +242,13 @@ public:
     You must use all four parameters of this method to set the four margins in the
     order \p left, \p top, \p right, \p bottom. Negative values are set to 0 (zero).
 
-    To set all margins to equal sizes, use margin(int m)
-
-    This method sets the margin to the same size at all four edges of the widget.
+    To set all margins to equal sizes, use margin(int m) which sets all four margins
+    to the same size.
 
     \param[in]    left,top,right,bottom   margin sizes, must be \>= 0
 
     \see margin(int, int)
   */
-
   void margin(int left, int top, int right, int bottom) {
     margin_left_   = left < 0 ? 0 : left;
     margin_top_    = top < 0 ? 0 : top;
@@ -329,32 +326,6 @@ public:
   void spacing(int i) {
     gap(i);
   }
-
-#if (1)
-
-  // Additional methods for backwards compatibility with "original" Fl_Flex widget
-
-  /**
-    Deprecated.
-    \deprecated Please use set_size(Fl_Widget *) instead.
-
-    \see int set_size(Fl_Widget *)
-  */
-  bool isSetSize(Fl_Widget *w) const {
-    return (bool)set_size(w);
-  }
-
-  /**
-    Set the horizontal or vertical size of a child widget.
-    \deprecated Please use set_size(Fl_Widget *, int) instead.
-
-    \see set_size(Fl_Widget *, int)
-  */
-  void setSize(Fl_Widget *w, int size) {
-    set_size(w, size);
-  }
-
-#endif
 
 };
 
