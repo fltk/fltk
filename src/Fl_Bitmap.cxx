@@ -35,7 +35,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 
 /** The constructors create a new bitmap from the specified bitmap data.
  If the provided array is too small to contain all the image data, the
- constructor will not generate the bitmap to avoid illegal memeory read
+ constructor will not generate the bitmap to avoid illegal memory read
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
  \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
  \param bit_length length of the \p bits array in bytes
@@ -66,7 +66,7 @@ Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
 
 /** The constructors create a new bitmap from the specified bitmap data.
  If the provided array is too small to contain all the image data, the
- constructor will not generate the bitmap to avoid illegal memeory read
+ constructor will not generate the bitmap to avoid illegal memory read
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
  \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
  \param bit_length length of the \p bits array in bytes
