@@ -265,10 +265,10 @@ Fl_Window *create_editor()
   return win;
 }
 
-class MainWindow : public Fl_Double_Window
+class Ut_Main_Window : public Fl_Double_Window
 {
 public:
-  MainWindow(int w, int h, const char *l=0)
+  Ut_Main_Window(int w, int h, const char *l=0)
   : Fl_Double_Window(w, h, l) { }
   int handle(int event) {
     if (event==FL_KEYBOARD && Fl::event_key()==FL_F+1) {
@@ -300,7 +300,7 @@ void create_the_forms() {
   label[i] = 0;
 
   // create the basic layout
-  form = new MainWindow(550,370);
+  form = new Ut_Main_Window(550,370);
 
   tile = new Fl_Tile(0, 0, 550, 370);
 

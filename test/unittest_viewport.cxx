@@ -22,12 +22,12 @@
 //
 //------- test viewport clipping ----------
 //
-class ViewportTest : public Fl_Box {
+class Ut_Viewport_Test : public Fl_Box {
 public:
   static Fl_Widget *create() {
-    return new ViewportTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Viewport_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  ViewportTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
+  Ut_Viewport_Test(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("Testing Viewport Alignment\n\n"
           "Only green lines should be visible.\n"
           "If red lines are visible in the corners of this window,\n"
@@ -40,12 +40,12 @@ public:
   }
   void show() {
     Fl_Box::show();
-    mainwin->testAlignment(1);
+    mainwin->test_alignment(1);
   }
   void hide() {
     Fl_Box::hide();
-    mainwin->testAlignment(0);
+    mainwin->test_alignment(0);
   }
 };
 
-UnitTest viewport(kTestViewport, "Viewport Test", ViewportTest::create);
+UnitTest viewport(UT_TEST_VIEWPORT, "Viewport Test", Ut_Viewport_Test::create);

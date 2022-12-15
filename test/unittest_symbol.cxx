@@ -22,9 +22,9 @@
 //
 // Test symbol rendering
 //
-class SymbolTest : public Fl_Widget
+class Ut_Symbol_Test : public Fl_Widget
 {
-  void DrawTextAndBoxes(const char *txt, int X, int Y) {
+  void draw_text_and_boxes(const char *txt, int X, int Y) {
     int wo = 0, ho = 0;
     fl_measure(txt, wo, ho, 1);
     // Draw fl_measure() rect
@@ -46,9 +46,11 @@ class SymbolTest : public Fl_Widget
   }
 public:
   static Fl_Widget *create() {
-    return new SymbolTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Symbol_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  SymbolTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
+  Ut_Symbol_Test(int x, int y, int w, int h)
+    : Fl_Widget(x, y, w, h) {
+  }
   void draw(void) {
     int x0 = x(); // origin is current window position for Fl_Box
     int y0 = y();
@@ -63,22 +65,22 @@ public:
       fl_font(FL_HELVETICA, fsize);
       int xx = x0+10;
       int yy = y0+10;
-      DrawTextAndBoxes("Text"            ,xx,yy); yy += fsize+10;       // check no symbols
-      DrawTextAndBoxes("@->"             ,xx,yy); yy += fsize+10;       // check symbol alone
-      DrawTextAndBoxes("@-> "            ,xx,yy); yy += fsize+10;       // check symbol with trailing space
-      DrawTextAndBoxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;       // check symbol at left edge
-      DrawTextAndBoxes("Lt Arrow @<-"    ,xx,yy); yy += fsize+10;       // check symbol at right edge
-      DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;       // check symbol at lt+rt edges
-      DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;       // check @@ at left, symbol at right
-      DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;       // check symbol at left, @@ at right
-      DrawTextAndBoxes("@@ At/At @@"     ,xx,yy); yy += fsize+10;       // check @@ at left+right
+      draw_text_and_boxes("Text"            ,xx,yy); yy += fsize+10;       // check no symbols
+      draw_text_and_boxes("@->"             ,xx,yy); yy += fsize+10;       // check symbol alone
+      draw_text_and_boxes("@-> "            ,xx,yy); yy += fsize+10;       // check symbol with trailing space
+      draw_text_and_boxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;       // check symbol at left edge
+      draw_text_and_boxes("Lt Arrow @<-"    ,xx,yy); yy += fsize+10;       // check symbol at right edge
+      draw_text_and_boxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;       // check symbol at lt+rt edges
+      draw_text_and_boxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;       // check @@ at left, symbol at right
+      draw_text_and_boxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;       // check symbol at left, @@ at right
+      draw_text_and_boxes("@@ At/At @@"     ,xx,yy); yy += fsize+10;       // check @@ at left+right
       xx = x0+200;
       yy = y0+10;
-      DrawTextAndBoxes("Line1\nLine2"               ,xx,yy); yy += (fsize+10)*2; // check 2 lines, no symbol
-      DrawTextAndBoxes("@-> Line1\nLine2 @<-"       ,xx,yy); yy += (fsize+10)*2; // check 2 lines, lt+rt symbols
-      DrawTextAndBoxes("@-> Line1\nLine2\nLine3 @<-",xx,yy); yy += (fsize+10)*3; // check 3 lines, lt+rt symbols
-      DrawTextAndBoxes("@@@@"                       ,xx,yy); yy += (fsize+10);   // check abutting @@'s
-      DrawTextAndBoxes("@@ @@"                      ,xx,yy); yy += (fsize+10);   // check @@'s with space sep
+      draw_text_and_boxes("Line1\nLine2"               ,xx,yy); yy += (fsize+10)*2; // check 2 lines, no symbol
+      draw_text_and_boxes("@-> Line1\nLine2 @<-"       ,xx,yy); yy += (fsize+10)*2; // check 2 lines, lt+rt symbols
+      draw_text_and_boxes("@-> Line1\nLine2\nLine3 @<-",xx,yy); yy += (fsize+10)*3; // check 3 lines, lt+rt symbols
+      draw_text_and_boxes("@@@@"                       ,xx,yy); yy += (fsize+10);   // check abutting @@'s
+      draw_text_and_boxes("@@ @@"                      ,xx,yy); yy += (fsize+10);   // check @@'s with space sep
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);
@@ -88,4 +90,4 @@ public:
   }
 };
 
-UnitTest symbolExtents(kTestSymbol, "Symbol Text", SymbolTest::create);
+UnitTest symbolExtents(UT_TEST_SYBOL, "Symbol Text", Ut_Symbol_Test::create);

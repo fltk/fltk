@@ -21,12 +21,12 @@
 //
 //------- Introduction to FLTK drawing test -------
 //
-class About : public Fl_Help_View {
+class Ut_About_View : public Fl_Help_View {
 public:
   static Fl_Widget *create() {
-    return new About(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_About_View(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  About(int x, int y, int w, int h) : Fl_Help_View(x, y, w, h) {
+  Ut_About_View(int x, int y, int w, int h) : Fl_Help_View(x, y, w, h) {
     value(
 "<htmL><body><h2>About Unit Testing...</h2>\n"
 "The Unit Testing application can be used to verify correct graphics rendering "
@@ -53,4 +53,4 @@ public:
   }
 };
 
-UnitTest about(kTestAbout, "About...", About::create);
+UnitTest about(UT_TEST_ABOUT, "About...", Ut_About_View::create);

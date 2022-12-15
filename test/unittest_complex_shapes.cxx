@@ -31,70 +31,70 @@
 // --- test drawing circles and arcs ------
 //
 
-class ComplexShapesTest;
+class Ut_Complex_Shapes_Test;
 
-void draw_complex(ComplexShapesTest *p);
+void draw_complex(Ut_Complex_Shapes_Test *p);
 
 #if HAVE_GL
 
-class GLComplexShapesTest : public Fl_Gl_Window {
+class Ut_GL_Complex_Shapes_Test : public Fl_Gl_Window {
 public:
-  GLComplexShapesTest(int x, int y, int w, int h)
-  : Fl_Gl_Window(x, y, w, h) {
+  Ut_GL_Complex_Shapes_Test(int x, int y, int w, int h)
+    : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
     end();
   }
   void draw() {
     draw_begin();
     Fl_Window::draw();
-    draw_complex((ComplexShapesTest*)parent());
+    draw_complex((Ut_Complex_Shapes_Test*)parent());
     draw_end();
   }
 };
 
 #endif
 
-class NativeComplexShapesTest : public Fl_Window {
+class Ut_Native_Complex_Shapes_Test : public Fl_Window {
 public:
-  NativeComplexShapesTest(int x, int y, int w, int h)
-  : Fl_Window(x, y, w, h) {
+  Ut_Native_Complex_Shapes_Test(int x, int y, int w, int h)
+    : Fl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
     end();
   }
   void draw() {
     Fl_Window::draw();
-    draw_complex((ComplexShapesTest*)parent());
+    draw_complex((Ut_Complex_Shapes_Test*)parent());
   }
 };
 
 //
 //------- test the compelx shape drawing capabilities of this implementation ----------
 //
-class ComplexShapesTest : public Fl_Group {
-  NativeComplexShapesTest *native_test_window;
+class Ut_Complex_Shapes_Test : public Fl_Group {
+  Ut_Native_Complex_Shapes_Test* native_test_window;
 #if HAVE_GL
-  GLComplexShapesTest *gl_test_window;
+  Ut_GL_Complex_Shapes_Test* gl_test_window;
 #endif
-  static void update_cb(Fl_Widget *, void *v) {
-    ComplexShapesTest *This = (ComplexShapesTest*)v;
+  static void update_cb(Fl_Widget*, void *v) {
+    Ut_Complex_Shapes_Test* This = (Ut_Complex_Shapes_Test*)v;
     This->native_test_window->redraw();
 #if HAVE_GL
     This->gl_test_window->redraw();
 #endif
   }
 public:
-  Fl_Hor_Value_Slider *scale;
-  Fl_Dial *rotate;
-  Fl_Positioner *position;
+  Fl_Hor_Value_Slider* scale;
+  Fl_Dial* rotate;
+  Fl_Positioner* position;
   void set_transformation() {
     fl_translate(position->xvalue(), position->yvalue());
     fl_rotate(-rotate->value());
     fl_scale(scale->value(), scale->value());
   }
-  static Fl_Widget *create() {
-    return new ComplexShapesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+  static Fl_Widget* create() {
+    return new Ut_Complex_Shapes_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  ComplexShapesTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+  Ut_Complex_Shapes_Test(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
     label("Testing complex shape drawing.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
@@ -103,7 +103,7 @@ public:
     Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    native_test_window = new NativeComplexShapesTest(a+23, b-1, 200, 200);
+    native_test_window = new Ut_Native_Complex_Shapes_Test(a+23, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 18, 18, "1");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -146,7 +146,7 @@ public:
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    gl_test_window = new GLComplexShapesTest(a+31, b-1, 200, 200);
+    gl_test_window = new Ut_GL_Complex_Shapes_Test(a+31, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 26, 18, "1a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -185,8 +185,8 @@ public:
                );
 #endif
 
-    a = TESTAREA_X+TESTAREA_W-250;
-    b = TESTAREA_Y+TESTAREA_H-50;
+    a = UT_TESTAREA_X+UT_TESTAREA_W-250;
+    b = UT_TESTAREA_Y+UT_TESTAREA_H-50;
 
     scale = new Fl_Hor_Value_Slider(a, b+10, 120, 20, "Scale:");
     scale->align(FL_ALIGN_TOP_LEFT);
@@ -265,7 +265,7 @@ void complex_shape_with_hole(int w, int h) {
   fl_vertex( w2, -h2);
 }
 
-void draw_complex(ComplexShapesTest *p) {
+void draw_complex(Ut_Complex_Shapes_Test *p) {
   int a = 0, b = 0, dx = 20, dy = 20, w = 10, h = 10;
   int w2 = w/3, h2 = h/3;
   // ---- 1: draw a random shape
@@ -430,15 +430,6 @@ void draw_complex(ComplexShapesTest *p) {
   fl_vertex(w, h); fl_vertex(-w, h);
   fl_end_loop();
   fl_pop_matrix();
-
-
-  // Test fl_begin_points(), fl_end_points()
-  // Test fl_begin_line() fl_end_line()
-  // Test fl_begin_loop() fl_end_loop()
-  // Test fl_begin_polygon() fl_end_polygon()
-  // Test fl_begin_complex_polygon() fl_gap() fl_arc() void fl_end_complex_polygon()
-  // Test fl_curve()
-  // Test translate, rotate, scale, push, pop
 }
 
-UnitTest complex_shapes(kTestComplexShapes, "Complex Shapes", ComplexShapesTest::create);
+UnitTest complex_shapes(UT_TEST_COMPLEX_SHAPES, "Complex Shapes", Ut_Complex_Shapes_Test::create);
