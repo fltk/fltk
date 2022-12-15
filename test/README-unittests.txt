@@ -4,7 +4,7 @@ HOW TO CREATE A NEW UNIT TEST
     1) Create your new test/unittest_xxx.cxx file (or use an existing one)
 
     2) In your new cxx file, define a class derived from Fl_Group
-       for your test (e.g. TestFoo).
+       for your test (e.g. Ut_Test_Foo).
 
        The following should be a good starting template for the new file:
 
@@ -19,44 +19,42 @@ HOW TO CREATE A NEW UNIT TEST
            #include <FL/Fl_Group.H>
 
            // Your class to do the test
-           //     Your test must do its work within the TESTAREA_XYWH area.
+           //     Your test must do its work within the UT_TESTAREA_XYWH area.
            //
-           class TestFoo : public Fl_Group {
+           class Ut_Test_Foo : public Fl_Group {
            public:
              static Fl_Widget *create() {
-               return new TestFoo(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+               return new Ut_Test_Foo(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
              }
-             TestFoo(int x, int y, int w, int h) : Fl_Group(x, y, w, h) { .. }
+             Ut_Test_Foo(int x, int y, int w, int h) : Fl_Group(x, y, w, h) { .. }
            };
 
            // Create an instance of your class and register it with the main app
-           UnitTest testfoo(kTestFoo, "My foo tester", TestFoo::create);
+           UnitTest testfoo(UT_TEST_FOO, "My foo tester", Ut_Test_Foo::create);
 
                                        * * *
 
        Note that the last line in the above is what "registers" your new test
        with the unittests main application:
 
-           UnitTest testfoo(kTestFoo, "My foo tester", TestFoo::create);
-                    ------- --------   -------------   ---------------
-                     |      |          |               |
-                     |      |          |               Your class's static create() method
-                     |      |          |
-                     |      |          Text name for your test that shows up in unittests browser
+           UnitTest testfoo(UT_TEST_FOO, "My foo tester", Ut_Test_Foo::create);
+                    ------- -----------   -------------   -------------------
+                     |      |             |               |
+                     |      |             |               Your class's static create() method
+                     |      |             |
+                     |      |             Text name for your test that shows up in unittests browser
                      |      |
-                     |      Just put 'k' in front of your class name.
-                     |      (This will be defined as an enum constant in the next step)
+                     |      This will be defined as an enum constant in the next step
                      |
                      The global instance name for your test.
 
-    3) Take the 'k' name you used above, e.g. kTestFoo, and add it to the enum {}
-       at the top of the unittests.h file. Example:
+    3) Add an entry anywhere to the enum {} at the top of the unittests.h file. Example:
 
            enum {
-             kTestAbout = 0,
-             kTestPoints,
+             UT_TEST_ABOUT = 0,
+             UT_TEST_POINTS,
              ...
-             kTestFoo,         <-- ADD YOUR TEST CLASS WITH THE 'k' PREFIX
+             UT_TEST_FOO,    <-- ADD YOUR TEST CLASS NAME IN ALL CAPS
              ...
            };
 
@@ -81,7 +79,7 @@ HOW TO CREATE A NEW UNIT TEST
 
 GENERAL TEST PRACTICES
 ----------------------
-    TESTAREA_X, Y, W, and H will be the position and size of the Group,
+    UT_TESTAREA_X, Y, W, and H will be the position and size of the Group,
     and that the Group must expect to be resized, but not any smaller than
     that area.
 
