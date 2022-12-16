@@ -187,6 +187,7 @@ protected:
   void enforce_history_lines();
   void vscroll_cb2(Fl_Widget*, void*);
   static void vscroll_cb(Fl_Widget*, void*);
+  void backspace_buffer(unsigned int count);
 };
 
 #endif

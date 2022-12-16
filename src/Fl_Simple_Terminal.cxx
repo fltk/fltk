@@ -496,6 +496,27 @@ void Fl_Simple_Terminal::enforce_history_lines() {
 }
 
 /**
+ Destructive backspace from end of existing buffer() for specified \p count characters.
+ Takes into account multi-byte (Unicode) chars. So if count is 3, last 3 chars
+ are deleted from end of buffer.
+*/
+void Fl_Simple_Terminal::backspace_buffer(unsigned int count) {
+  if ( count == 0 ) return;
+  int end = buf->length();      // find end of buffer
+  int pos = end;                // pos index starts at end, walks backwards
+  while ( count-- ) {           // repeat backspace operation until done
+    pos = buf->prev_char(pos);  // move back one full char (unicode safe)
+    if ( pos < 0 ) {            // bs beyond beginning of buffer? done
+      pos = 0;
+      break;
+    }
+  }
+  // Remove chars we backspaced over
+  buf->remove(pos, end);
+  sbuf->remove(pos, end);
+}
+
+/**
  Appends new string 's' to terminal.
 
  The string can contain UTF-8, crlf's, and ANSI sequences are
@@ -512,12 +533,13 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
   // Remove ansi codes and adjust style buffer accordingly.
   if ( ansi() ) {
     int nstyles = stable_size_ / STE_SIZE;
+    int trim = 0;                           // #chars to trim (backspace into existing buffer)
     if ( len < 0 ) len = (int)strlen(s);
     // New text buffer (after ansi codes parsed+removed)
     char *ntm = (char*)malloc(len+1);       // new text memory
-    char *ntp = ntm;
+    char *ntp = ntm;                        // new text ptr
     char *nsm = (char*)malloc(len+1);       // new style memory
-    char *nsp = nsm;
+    char *nsp = nsm;                        // new style ptr
     // ANSI values
     char astyle = 'A'+current_style_index_; // the running style index
     const char *esc = 0;
@@ -584,6 +606,16 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
           }       // case '['
         }         // switch
       }           // \033
+      else if ( *sp == 8 ) {        // backspace?
+        if ( --ntp < ntm ) {        // dec ntp, see if beyond start?
+          ++trim;                   // flag need to trim existing buffer
+          ntp = ntm;                // clamp
+        }
+        if ( --nsp < nsm ) {        // adjust style buffer too
+          nsp = nsm;                // clamp
+        }
+        sp++;
+      }
       else {
         // Non-ANSI character?
         if ( *sp == '\n' ) ++lines; // keep track of #lines
@@ -595,6 +627,7 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
     *nsp = 0;
     //::printf("  RESULT: ntm='%s'\n", ntm);
     //::printf("  RESULT: nsm='%s'\n", nsm);
+    backspace_buffer(trim);     // destructive backspace into buffer (if any)
     buf->append(ntm);           // new text memory
     sbuf->append(nsm);          // new style memory
     free(ntm);
