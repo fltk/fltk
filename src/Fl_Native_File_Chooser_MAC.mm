@@ -574,7 +574,8 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   NSView *view = [[[NSView alloc] initWithFrame:rectview] autorelease];
   NSRect rectbox = NSMakeRect(0, 3, 140, 20 );
   // the "Show hidden files" button
-  NSRect hidden_files_rect = {{150, (filter ? 35 : 0)}, {80, 30}};
+  NSRect hidden_files_rect = {{150, 0}, {80, 30}};
+  if (filter) hidden_files_rect.origin.y = 35;
   NSButton *hidden_files = [[[NSButton alloc] initWithFrame:hidden_files_rect] autorelease];
   [hidden_files setButtonType:
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
