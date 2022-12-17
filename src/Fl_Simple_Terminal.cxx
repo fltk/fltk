@@ -72,9 +72,9 @@ static int strcnt(const char *s, char c) {
 //      fail    - buffer full/overflow
 //
 int Fl_Simple_Terminal::Fl_Escape_Seq::append_buf(char c) {
-  if ( bufp >= bufendp ) return fail;   // end of buffer reached?
-  *bufp++ = c;
-  *bufp   = 0;                          // keep buf[] null terminated
+  if ( bufp_ >= bufendp_ ) return fail;   // end of buffer reached?
+  *bufp_++ = c;
+  *bufp_   = 0;                           // keep buf[] null terminated
   return success;
 }
 
@@ -85,19 +85,19 @@ int Fl_Simple_Terminal::Fl_Escape_Seq::append_buf(char c) {
 //       fail    - error occurred (non-integer, or vals_[] full)
 //
 int Fl_Simple_Terminal::Fl_Escape_Seq::append_val() {
-  if ( vali == maxvals ) {              // too many vals_[] already?
-    return fail;                        // fail if vals_[] full
+  if ( vali_ == maxvals ) {               // too many vals_[] already?
+    return fail;                          // fail if vals_[] full
   }
-  if ( !valbufp || (*valbufp == 0) ) {  // no integer to parse? e.g. ESC[;m
-    vals_[vali] = 0;                    // handle as if it was zero, e.g. ESC[0;
-  } else if ( sscanf(valbufp, "%d", &vals_[vali]) != 1 ) { // Parse integer into vals_[]
-    return fail;                        // fail if parsed a non-integer
+  if ( !valbufp_ || (*valbufp_ == 0) ) {  // no integer to parse? e.g. ESC[;m
+    vals_[vali_] = 0;                     // handle as if it was zero, e.g. ESC[0;
+  } else if ( sscanf(valbufp_, "%d", &vals_[vali_]) != 1 ) { // Parse integer into vals_[]
+    return fail;                          // fail if parsed a non-integer
   }
-  if ( ++vali >= maxvals ) {            // advance val index, fail if too many vals
-    vali = maxvals-1;                   // clamp
-    return fail;                        // fail
+  if ( ++vali_ >= maxvals ) {             // advance val index, fail if too many vals
+    vali_ = maxvals-1;                    // clamp
+    return fail;                          // fail
   }
-  valbufp = 0;                          // parsed val ok, reset valbufp to NULL
+  valbufp_ = 0;                           // parsed val ok, reset valbufp to NULL
   return success;
 }
 
@@ -108,13 +108,13 @@ Fl_Simple_Terminal::Fl_Escape_Seq::Fl_Escape_Seq() {
 
 // Reset the class
 void Fl_Simple_Terminal::Fl_Escape_Seq::reset() {
-  esc_mode_ = 0;                  // disable ESC mode, so parse_in_progress() returns false
-  bufp     = buf;                 // point to beginning of buffer
-  bufendp  = buf + (maxbuf - 1);  // point to end of buffer
-  valbufp  = 0;                   // disable val ptr (no vals parsed yet)
-  vali     = 0;                   // zero val index
-  buf[0]   = 0;                   // null terminate buffer
-  vals_[0] = 0;                   // first val[] 0
+  esc_mode_ = 0;                   // disable ESC mode, so parse_in_progress() returns false
+  bufp_     = buf_;                // point to beginning of buffer
+  bufendp_ = buf_ + (maxbuf - 1);  // point to end of buffer
+  valbufp_  = 0;                   // disable val ptr (no vals parsed yet)
+  vali_    = 0;                    // zero val index
+  buf_[0]  = 0;                    // null terminate buffer
+  vals_[0] = 0;                    // first val[] 0
 }
 
 // Return current escape mode.
@@ -134,7 +134,7 @@ void Fl_Simple_Terminal::Fl_Escape_Seq::esc_mode(char val) {
 //    This is really only valid after parse() returns 'completed'.
 //
 int Fl_Simple_Terminal::Fl_Escape_Seq::total_vals() const {
-  return vali;
+  return vali_;
 }
 
 // Return the value at index i.
@@ -150,14 +150,6 @@ bool Fl_Simple_Terminal::Fl_Escape_Seq::parse_in_progress() const {
   return (esc_mode_ == 0) ? false : true;
 }
 
-// Start new escape sequence
-//    Call this whenever an ESC char is received
-//
-void Fl_Simple_Terminal::Fl_Escape_Seq::start() {
-  reset();
-  esc_mode_ = 0x1b;
-}
-
 // Handle parsing an escape sequence.
 //
 //    Call this only if parse_in_progress() is true.
@@ -168,8 +160,7 @@ void Fl_Simple_Terminal::Fl_Escape_Seq::start() {
 //
 //       while ( *s ) {                                // walk text that may contain ESC sequences
 //         if ( *s == 0x1b ) {
-//           escseq.start();                           // start parsing ESC sequence
-//           ++s;
+//           escseq.parse(*s++);                       // start parsing ESC seq (does a reset())
 //           continue;
 //         } else if ( escseq.parse_in_progress() ) {  // continuing to parse an ESC seq?
 //           switch (escseq.parse(*s++)) {             // parse char, advance s..
@@ -230,13 +221,13 @@ int Fl_Simple_Terminal::Fl_Escape_Seq::parse(char c) {
   if ( esc_mode() == 0x1b ) {              // in ESC mode?
     if ( c == '[' ) {                      // ESC[?
       esc_mode(c);                         // switch to parsing mode for ESC[#;#;#..
-      vali     = 0;                        // zero vals_[] index
-      valbufp  = 0;                        // valbufp NULL (no vals yet)
+      vali_    = 0;                        // zero vals_[] index
+      valbufp_  = 0;                       // valbufp NULL (no vals yet)
       if ( append_buf(c) < 0 ) goto pfail; // save '[' in buf
       return success;                      // success
     } else if ( c >= 'A' && c <= 'D' ) {   // ESC A/B/C/D? (cursor movement?)
       esc_mode(c);                         // use as mode
-      vali     = 0;
+      vali_    = 0;
       if ( append_buf(c) < 0 ) goto pfail; // save A/B/C/D in buf
       return success;                      // success
     } else {                               // ESCx? not supported
@@ -249,8 +240,8 @@ int Fl_Simple_Terminal::Fl_Escape_Seq::parse(char c) {
       return success;
     }
     if ( isdigit(c) ) {                    // parsing an integer?
-      if ( !valbufp )                      // valbufp not set yet?
-        { valbufp = bufp; }                // point to first char in integer string
+      if ( !valbufp_ )                     // valbufp not set yet?
+        { valbufp_ = bufp_; }              // point to first char in integer string
       if ( append_buf(c) < 0 ) goto pfail; // add value to buffer
       return success;
     }
@@ -263,8 +254,8 @@ int Fl_Simple_Terminal::Fl_Escape_Seq::parse(char c) {
     if (append_val() < 0 ) goto pfail;     // append any trailing vals just before letter
     if (append_buf(c) < 0 ) goto pfail;    // save letter in buffer
     esc_mode(c);                           // change mode to the mode setting char
-    if ( vali == 0 ) {                     // no vals were specified? assume 0 (e.g. ESC[J? assume ESC[0J)
-      vals_[vali++] = 0;                   // force vals_[0] to be 0, and vali = 1;
+    if ( vali_ == 0 ) {                    // no vals were specified? assume 0 (e.g. ESC[J? assume ESC[0J)
+      vals_[vali_++] = 0;                  // force vals_[0] to be 0, and vali = 1;
     }
     return completed;                      // completed/done
   }

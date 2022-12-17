@@ -137,12 +137,12 @@ private:
     static const int completed = 1;   // multi-step operation completed successfully
   private:
     char  esc_mode_;        // escape parsing mode state
-    char  buf[maxbuf];      // escape sequence being parsed
-    char *bufp;             // parsing ptr into buf[]
-    char *bufendp;          // end of buf[] (ptr to last valid buf char)
-    char *valbufp;          // pointer to first char in buf of integer being parsed
+    char  buf_[maxbuf];     // escape sequence being parsed
+    char *bufp_;            // parsing ptr into buf[]
+    char *bufendp_;         // end of buf[] (ptr to last valid buf char)
+    char *valbufp_;         // pointer to first char in buf of integer being parsed
     int   vals_[maxvals];   // value array for parsing #'s in ESC[#;#;#..
-    int   vali;             // parsing index into vals_[], 0 if none
+    int   vali_;            // parsing index into vals_[], 0 if none
 
     int append_buf(char c);
     int append_val();
@@ -155,7 +155,6 @@ private:
     int  total_vals() const;
     int  val(int i) const;
     bool parse_in_progress() const;
-    void start();
     int parse(char c);
   };
 
