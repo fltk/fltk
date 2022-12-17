@@ -50,6 +50,10 @@ static int image_header_written = 0;
 static int jpeg_header_written = 0;
 static int svg_header_written = 0;
 
+// TODO: give users that choice to write the original image format, which
+// requires linking the matching image reader at runtime (current default for
+// JPEG) or if we want to store the raw uncompressed pixels, which makes images
+// fast, needs no reader, but takes a lot of memory (current default for PNG)
 void Fluid_Image::write_static() {
   if (!img) return;
   const char *idata_name = unique_id(this, "idata", fl_filename_name(name()), 0);
