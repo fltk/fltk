@@ -223,11 +223,6 @@ public:
   virtual double wait(double);                             // must override
   virtual int ready() { return 0; }                        // must override
   virtual int close_fd(int) {return -1;} // to close a file descriptor
-  // next 2 for support of Fl_SVG_Image
-  virtual int write_nonblocking_fd(int , const unsigned char *&, size_t &) {return 0;}
-  virtual void pipe_support(int &fdread, int &fdwrite, const unsigned char *, size_t ) {
-    fdread = fdwrite = -1;
-  }
 };
 
 #endif // FL_SYSTEM_DRIVER_H

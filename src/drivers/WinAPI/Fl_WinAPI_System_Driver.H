@@ -114,7 +114,6 @@ public:
   virtual void unlock_ring();
   virtual double wait(double time_to_wait);
   virtual int ready();
-  virtual void pipe_support(int &, int &, const unsigned char *, size_t );
   virtual int close_fd(int fd);
 };
 

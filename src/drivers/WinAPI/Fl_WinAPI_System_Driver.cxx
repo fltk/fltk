@@ -1063,18 +1063,3 @@ static void __cdecl write_func(struct gunz_data *pdata) { // will run in child t
 int Fl_WinAPI_System_Driver::close_fd(int fd) {
   return _close(fd);
 }
-
-void Fl_WinAPI_System_Driver::pipe_support(int &fdread, int &fdwrite, const unsigned char *bytes, size_t length) {
-  int fds[2];
-  pipe_win32(fds); // create anonymous pipe
-  if (fds[0] == -1) return Fl_System_Driver::pipe_support(fdread, fdwrite, NULL, 0);
-  fdread = fds[0];
-  fdwrite = -1;
-  // prepare data transmitted to child thread
-  struct gunz_data *thread_data = (struct gunz_data*)malloc(sizeof(struct gunz_data));
-  thread_data->data = bytes;
-  thread_data->length = (unsigned)length;
-  thread_data->fd = fds[1];
-  // launch child thread that will write byte buffer to pipe's write end
-  _beginthread((void( __cdecl * )( void * ))write_func, 0, thread_data);
-}

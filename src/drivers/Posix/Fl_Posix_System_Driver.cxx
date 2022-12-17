@@ -310,30 +310,6 @@ bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gt
 
 int Fl_Posix_System_Driver::close_fd(int fd) { return close(fd); }
 
-int Fl_Posix_System_Driver::write_nonblocking_fd(int fdwrite, const unsigned char *&bytes, size_t &rest_bytes) {
-    if (rest_bytes > 0) {
-      ssize_t nw = write(fdwrite, bytes, rest_bytes);
-      if (nw == -1) {
-        close(fdwrite);
-        return 1; // error
-      }
-      bytes += nw;
-      rest_bytes -= nw;
-      if (rest_bytes == 0) close(fdwrite);
-    }
-  return 0; // success
-}
-
-void Fl_Posix_System_Driver::pipe_support(int &fdread, int &fdwrite, const unsigned char *unused, size_t unused_s) {
-  int fds[2];
-  if (pipe(fds)) { // create anonymous pipe
-    Fl_System_Driver::pipe_support(fdread, fdwrite, NULL, 0); // indicates error
-  } else {
-    fdread = fds[0];
-    fdwrite = fds[1];
-    fcntl(fdwrite, F_SETFL, O_NONBLOCK); // make pipe's write end non-blocking
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 // POSIX threading...
