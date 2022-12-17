@@ -75,18 +75,18 @@ void draw_circles() {
   b+=44;
   // ---- 2: draw arcs and pies
   fl_color(FL_RED);
-//  arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
+  //  arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
   arc(a+1, b+1, w-2, h-2, 45.0, 315.0);
-//  arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
-//  arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
+  //  arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
+  //  arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
   fl_color(FL_GREEN);
   arc(a, b, w, h, 45.0, 315.0);
   arc(a+2, b+2, w-4, h-4, 45.0, 315.0);
   fl_color(FL_BLACK);
-//  fl_arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
+  //  fl_arc(a-5, b-5, w+10, h+10, 45.0, 315.0);
   fl_arc(a+1, b+1, w-1, h-1, 45.0, 315.0);
-//  fl_arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
-//  fl_arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
+  //  fl_arc(a+5, b+5, w-10, h-10, 45.0, 315.0);
+  //  fl_arc(a+10, b+10, w-20, h-20, 45.0, 315.0);
   fl_color(FL_RED);
   // ----
   arc(a+1+50, b+1, w-2, h-2, 45.0, 315.0);
@@ -102,10 +102,10 @@ void draw_circles() {
 
 #if HAVE_GL
 
-class GLCircleTest : public Fl_Gl_Window {
+class Ut_GL_Circle_Test : public Fl_Gl_Window {
 public:
-  GLCircleTest(int x, int y, int w, int h)
-  : Fl_Gl_Window(x, y, w, h) {
+  Ut_GL_Circle_Test(int x, int y, int w, int h)
+    : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
   }
   void draw() {
@@ -118,10 +118,10 @@ public:
 
 #endif
 
-class NativeCircleTest : public Fl_Window {
+class Ut_Native_Circle_Test : public Fl_Window {
 public:
-  NativeCircleTest(int x, int y, int w, int h)
-  : Fl_Window(x, y, w, h) {
+  Ut_Native_Circle_Test(int x, int y, int w, int h)
+    : Fl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
     end();
   }
@@ -134,12 +134,13 @@ public:
 //
 //------- test the circle drawing capabilities of this implementation ----------
 //
-class CircleTest : public Fl_Group {
+class Ut_Circle_Test : public Fl_Group {
 public:
   static Fl_Widget *create() {
-    return new CircleTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Circle_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  CircleTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+  Ut_Circle_Test(int x, int y, int w, int h)
+    : Fl_Group(x, y, w, h) {
     label("Testing fast circle, arc, and pie drawing\n\n"
           "No red lines should be visible. "
           "The green outlines should not be overwritten by circle drawings.");
@@ -147,10 +148,10 @@ public:
     box(FL_BORDER_BOX);
 
     int a = x+16, b = y+34;
-    Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
+    Fl_Box* t = new Fl_Box(a, b-24, 80, 18, "native");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    /* NativeCircleTest *nr = */ new NativeCircleTest(a+23, b-1, 200, 200);
+    /* NativeCircleTest *nr = */ new Ut_Native_Circle_Test(a+23, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 18, 18, "1");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -180,7 +181,7 @@ public:
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    /* GLCircleTest *glr = */ new GLCircleTest(a+31, b-1, 200, 200);
+    /* GLCircleTest *glr = */ new Ut_GL_Circle_Test(a+31, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 26, 18, "1a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -210,4 +211,4 @@ public:
   }
 };
 
-UnitTest circle(kTestCircles, "Circles and Arcs", CircleTest::create);
+UnitTest circle(UT_TEST_CIRCLES, "Circles and Arcs", Ut_Circle_Test::create);

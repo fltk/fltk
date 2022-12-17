@@ -26,11 +26,11 @@ static void cb_base_bt(Fl_Widget *bt, void*) {
   bt->parent()->redraw();
 }
 //
-class TextExtentsTest : public Fl_Group
+class Ut_Text_Extents_Test : public Fl_Group
 {
   Fl_Check_Button *base_bt;
 
-  void DrawTextAndBoxes(const char *txt, int X, int Y) {
+  void draw_text_and_boxes(const char *txt, int X, int Y) {
     int wm = 0, hm = 0, wt = 0, ht = 0;
     int dx, dy;
     // measure text so we can draw the baseline first
@@ -55,9 +55,9 @@ class TextExtentsTest : public Fl_Group
   }
 public:
   static Fl_Widget *create() {
-    return new TextExtentsTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Text_Extents_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  TextExtentsTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+  Ut_Text_Extents_Test(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
       base_bt = new Fl_Check_Button(x + w - 150, 50, 130, 20, "Show Baseline");
       base_bt->box(FL_FLAT_BOX);
       base_bt->down_box(FL_DOWN_BOX);
@@ -83,12 +83,12 @@ public:
       fl_font(FL_HELVETICA, 30);
       int xx = x0+55;
       int yy = y0+40;
-      DrawTextAndBoxes("!abcdeABCDE\"#A", xx, yy); yy += 50;     // mixed string
-      DrawTextAndBoxes("oacs",     xx, yy); xx += 100;           // small glyphs
-      DrawTextAndBoxes("qjgIPT",   xx, yy); yy += 50; xx -= 100; // glyphs with descenders
-      DrawTextAndBoxes("````````", xx, yy); yy += 50;            // high small glyphs
-      DrawTextAndBoxes("--------", xx, yy); yy += 50;            // mid small glyphs
-      DrawTextAndBoxes("________", xx, yy); yy += 50;            // low small glyphs
+      draw_text_and_boxes("!abcdeABCDE\"#A", xx, yy); yy += 50;     // mixed string
+      draw_text_and_boxes("oacs",     xx, yy); xx += 100;           // small glyphs
+      draw_text_and_boxes("qjgIPT",   xx, yy); yy += 50; xx -= 100; // glyphs with descenders
+      draw_text_and_boxes("````````", xx, yy); yy += 50;            // high small glyphs
+      draw_text_and_boxes("--------", xx, yy); yy += 50;            // mid small glyphs
+      draw_text_and_boxes("________", xx, yy); yy += 50;            // low small glyphs
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);  fl_draw("fl_measure bounding box in RED",       xx, yy); yy += 20;
@@ -104,4 +104,4 @@ public:
   }
 };
 
-UnitTest textExtents(kTestText, "Rendering Text", TextExtentsTest::create);
+UnitTest textExtents(UT_TEST_TEXT, "Rendering Text", Ut_Text_Extents_Test::create);
