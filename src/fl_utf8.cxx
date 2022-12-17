@@ -354,7 +354,7 @@ int fl_putenv(const char* var) {
   \param[in] oflags other arguments are as in the standard open() function
   \return    a file descriptor upon successful completion, or -1 in case of error.
 
-  \see fl_fopen(), fl_open_ext().
+  \see fl_fopen(), fl_open_ext(), fl_close_fd(int fd).
 */
 int fl_open(const char* fname, int oflags, ...) {
   int pmode;
@@ -363,6 +363,14 @@ int fl_open(const char* fname, int oflags, ...) {
   pmode = va_arg (ap, int);
   va_end(ap);
   return Fl::system_driver()->open(fname, oflags, pmode);
+}
+
+/** Cross-platform function to close a file descriptor.
+ \return 0 in case of success, or -1 in case of error.
+ */
+
+int fl_close_fd(int fd) {
+  return Fl::system_driver()->close_fd(fd);
 }
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
