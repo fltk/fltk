@@ -22,6 +22,8 @@
 #include <FL/Fl_Image.H>
 #include "flstring.h"
 
+#include <stdlib.h>
+
 void fl_restore_clip(); // from fl_rect.cxx
 
 //
@@ -187,11 +189,12 @@ void Fl_Image::label(Fl_Menu_Item* m) {
       box.image(jpg);
   \endcode
 
-  \returns                Image load failure if non-zero
-  \retval 0               the image was loaded successfully
-  \retval ERR_NO_IMAGE    no image was found
-  \retval ERR_FILE_ACCESS there was a file access related error (errno should be set)
-  \retval ERR_FORMAT      image decoding failed
+  \returns                  Image load failure if non-zero
+  \retval 0                 the image was loaded successfully
+  \retval ERR_NO_IMAGE      no image was found
+  \retval ERR_FILE_ACCESS   there was a file access related error (errno should be set)
+  \retval ERR_FORMAT        image decoding failed
+  \retval ERR_MEMORY_ACCESS image decoder tried to access memory outside of given memory block
 */
 int Fl_Image::fail() const {
   // if no image exists, ld_ may contain a simple error code
@@ -374,6 +377,45 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
 {
     data((const char **)&array, 1);
     ld(LD);
+}
+
+
+/**
+ The constructor creates a new image from the specified data.
+
+ If the provided array is too small to contain all the image data, the
+ constructor will not generate the image to avoid illegal memory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+
+ \param bits image data
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \param D image depth in bytes, 1 for gray scale, 2 for gray with alpha,
+        3 for RGB, and 4 for RGB plus alpha
+ \param LD line length in bytes, or 0 to use W*D.
+
+ \see Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD)
+ */
+Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int D, int LD) :
+  Fl_Image(W,H,D),
+  array(bits),
+  alloc_array(0),
+  id_(0),
+  mask_(0),
+  cache_w_(0), cache_h_(0)
+{
+  if (D == 0) D = 3;
+  if (LD == 0) LD = W*D;
+  int min_length = LD*(H-1) + W*D;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+    ld(LD);
+  } else {
+    array = NULL;
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
+  }
 }
 
 

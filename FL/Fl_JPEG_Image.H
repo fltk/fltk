@@ -32,11 +32,11 @@ class FL_EXPORT Fl_JPEG_Image : public Fl_RGB_Image {
 public:
 
   Fl_JPEG_Image(const char *filename);
-  Fl_JPEG_Image(const char *name, const unsigned char *data);
+  Fl_JPEG_Image(const char *name, const unsigned char *data, int data_length=-1);
 
 protected:
 
-  void load_jpg_(const char *filename, const char *sharename, const unsigned char *data);
+  void load_jpg_(const char *filename, const char *sharename, const unsigned char *data, int data_length=-1);
 
 };
 

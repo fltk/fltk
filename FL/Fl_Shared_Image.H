@@ -94,6 +94,7 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
 
   friend class Fl_JPEG_Image;
   friend class Fl_PNG_Image;
+  friend class Fl_SVG_Image;
   friend class Fl_Graphics_Driver;
 
 protected:
