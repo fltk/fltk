@@ -64,12 +64,226 @@ static int strcnt(const char *s, char c) {
   return count;
 }
 
+// --- Fl_Escape_Seq ----------------------------------------------------------
+
+// Append char to buf[] safely (with bounds checking)
+//    Returns:
+//      success - ok
+//      fail    - buffer full/overflow
+//
+int Fl_Simple_Terminal::Fl_Escape_Seq::append_buf(char c) {
+  if ( bufp >= bufendp ) return fail;   // end of buffer reached?
+  *bufp++ = c;
+  *bufp   = 0;                          // keep buf[] null terminated
+  return success;
+}
+
+// Append whatever integer string is at valbufp into vals_[] safely w/bounds checking
+//    Assumes valbufp points to a null terminated string.
+//    Returns:
+//       success - parsed ok
+//       fail    - error occurred (non-integer, or vals_[] full)
+//
+int Fl_Simple_Terminal::Fl_Escape_Seq::append_val() {
+  if ( vali == maxvals ) {              // too many vals_[] already?
+    return fail;                        // fail if vals_[] full
+  }
+  if ( !valbufp || (*valbufp == 0) ) {  // no integer to parse? e.g. ESC[;m
+    vals_[vali] = 0;                    // handle as if it was zero, e.g. ESC[0;
+  } else if ( sscanf(valbufp, "%d", &vals_[vali]) != 1 ) { // Parse integer into vals_[]
+    return fail;                        // fail if parsed a non-integer
+  }
+  if ( ++vali >= maxvals ) {            // advance val index, fail if too many vals
+    vali = maxvals-1;                   // clamp
+    return fail;                        // fail
+  }
+  valbufp = 0;                          // parsed val ok, reset valbufp to NULL
+  return success;
+}
+
+// Ctor
+Fl_Simple_Terminal::Fl_Escape_Seq::Fl_Escape_Seq() {
+  reset();
+}
+
+// Reset the class
+void Fl_Simple_Terminal::Fl_Escape_Seq::reset() {
+  esc_mode_ = 0;                  // disable ESC mode, so parse_in_progress() returns false
+  bufp     = buf;                 // point to beginning of buffer
+  bufendp  = buf + (maxbuf - 1);  // point to end of buffer
+  valbufp  = 0;                   // disable val ptr (no vals parsed yet)
+  vali     = 0;                   // zero val index
+  buf[0]   = 0;                   // null terminate buffer
+  vals_[0] = 0;                   // first val[] 0
+}
+
+// Return current escape mode.
+//    This is really only valid after parse() returns 'completed'.
+//    After a reset() this will return 0.
+//
+char Fl_Simple_Terminal::Fl_Escape_Seq::esc_mode() const {
+  return esc_mode_;
+}
+
+// Set current escape mode.
+void Fl_Simple_Terminal::Fl_Escape_Seq::esc_mode(char val) {
+  esc_mode_ = val;
+}
+
+// Return the total vals parsed.
+//    This is really only valid after parse() returns 'completed'.
+//
+int Fl_Simple_Terminal::Fl_Escape_Seq::total_vals() const {
+  return vali;
+}
+
+// Return the value at index i.
+//    i is not range checked; it's assumed 0 <= i < total_vals().
+//    It is only valid to call this after parse() returns 'completed'.
+//
+int Fl_Simple_Terminal::Fl_Escape_Seq::val(int i) const {
+  return vals_[i];
+}
+
+// See if we're in the middle of parsing an ESC sequence
+bool Fl_Simple_Terminal::Fl_Escape_Seq::parse_in_progress() const {
+  return (esc_mode_ == 0) ? false : true;
+}
+
+// Start new escape sequence
+//    Call this whenever an ESC char is received
+//
+void Fl_Simple_Terminal::Fl_Escape_Seq::start() {
+  reset();
+  esc_mode_ = 0x1b;
+}
+
+// Handle parsing an escape sequence.
+//
+//    Call this only if parse_in_progress() is true.
+//    Passing ESC does a reset() and sets esc_mode() to ESC.
+//    When a full escape sequence has been parsed, 'completed' is returned (see below)
+//
+//    Typical use pattern (this is unverified code, shown just to give a general gist):
+//
+//       while ( *s ) {                                // walk text that may contain ESC sequences
+//         if ( *s == 0x1b ) {
+//           escseq.start();                           // start parsing ESC sequence
+//           ++s;
+//           continue;
+//         } else if ( escseq.parse_in_progress() ) {  // continuing to parse an ESC seq?
+//           switch (escseq.parse(*s++)) {             // parse char, advance s..
+//             case fail:    escseq.reset(); continue; // failed? reset, continue..
+//             case success: continue;                 // keep parsing..
+//             case completed:                         // parsed complete esc sequence?
+//               break;
+//           }
+//           // Handle parsed esc sequence here..
+//           switch ( escseq.esc_mode() ) {
+//             case 'm':                               // ESC[...m?
+//               for ( int i=0; i<escseq.total_vals(); i++ ) {
+//                 int val = escseq.val(i);
+//                 ..handle values here..
+//               }
+//               break;
+//             case 'J':                               // ESC[#J?
+//               ..handle..
+//               break;
+//           }
+//           escseq.reset();   // done handling escseq, reset()
+//           continue;
+//         } else {
+//           ..handle non-escape chars here..
+//         }
+//         ++s;    // advance thru string
+//       }
+//
+// Returns:
+//   fail      - error occurred: escape sequence invalid, class is reset()
+//   success   - parsing ESC sequence OK so far, still in progress/not done yet
+//   completed - complete ESC sequence was parsed, esc_mode() will be, e.g.
+//               'm' - ESC[#;#..m sequence parsed, val() has value(s) parsed
+//               'J' - ESC[#J sequence parsed, val() has value(s) parsed
+//               'A' thru 'D' - cursor up/down/right/left movement (ESC A/B/C/D)
+//
+int Fl_Simple_Terminal::Fl_Escape_Seq::parse(char c) {
+  // NOTE: During parsing esc_mode() will be:
+  //             0 - reset/not parsing
+  //          0x1b - ESC received, expecting next one of A/B/C/D or '['
+  //           '[' - actively parsing CSI sequence, e.g. ESC[
+  //
+  //       At the /end/ of parsing, after 'completed' is returned,
+  //       esc_mode() will be the mode setting char, e.g. 'm' for 'ESC[0m', etc.
+  //
+  if ( c == 0 ) {                          // NULL? (caller should really never send us this)
+    return success;                        // do nothing -- leave state unchanged, return 'success'
+  } else if ( c == 0x1b ) {                // ESC at ANY time resets class/begins new ESC sequence
+    reset();
+    esc_mode(0x1b);
+    if ( append_buf(c) < 0 ) goto pfail;   // save ESC in buf
+    return success;
+  } else if ( c < ' ' || c >= 0x7f ) {     // any other control or binary characters?
+    goto pfail;                            // reset + fail out of esc sequence parsing
+  }
+
+  // Whatever the character is, handle it depending on esc_mode..
+  if ( esc_mode() == 0x1b ) {              // in ESC mode?
+    if ( c == '[' ) {                      // ESC[?
+      esc_mode(c);                         // switch to parsing mode for ESC[#;#;#..
+      vali     = 0;                        // zero vals_[] index
+      valbufp  = 0;                        // valbufp NULL (no vals yet)
+      if ( append_buf(c) < 0 ) goto pfail; // save '[' in buf
+      return success;                      // success
+    } else if ( c >= 'A' && c <= 'D' ) {   // ESC A/B/C/D? (cursor movement?)
+      esc_mode(c);                         // use as mode
+      vali     = 0;
+      if ( append_buf(c) < 0 ) goto pfail; // save A/B/C/D in buf
+      return success;                      // success
+    } else {                               // ESCx? not supported
+      goto pfail;
+    }
+  } else if ( esc_mode() == '[' ) {        // '[' mode? e.g. ESC[...
+    if ( c == ';' ) {                      // ';' indicates end of a value, e.g. ESC[0;2..
+      if (append_val() < 0 ) goto pfail;   // append value parsed so far, vali gets inc'ed
+      if (append_buf(c) < 0 ) goto pfail;  // save ';' in buf
+      return success;
+    }
+    if ( isdigit(c) ) {                    // parsing an integer?
+      if ( !valbufp )                      // valbufp not set yet?
+        { valbufp = bufp; }                // point to first char in integer string
+      if ( append_buf(c) < 0 ) goto pfail; // add value to buffer
+      return success;
+    }
+    // Not a ; or digit? fall thru to [A-Z,a-z] check
+  } else {                                 // all other esc_mode() chars are fail/unknown
+    goto pfail;
+  }
+  if ( ( c >= 'A' && c<= 'Z') ||           // ESC#X or ESC[...X, where X is [A-Z,a-z]?
+       ( c >= 'a' && c<= 'z') ) {
+    if (append_val() < 0 ) goto pfail;     // append any trailing vals just before letter
+    if (append_buf(c) < 0 ) goto pfail;    // save letter in buffer
+    esc_mode(c);                           // change mode to the mode setting char
+    if ( vali == 0 ) {                     // no vals were specified? assume 0 (e.g. ESC[J? assume ESC[0J)
+      vals_[vali++] = 0;                   // force vals_[0] to be 0, and vali = 1;
+    }
+    return completed;                      // completed/done
+  }
+  // Any other chars? reset+fail
+pfail:
+  reset();
+  return fail;
+}
+
+//
+// --- Fl_Simple_Terminal -----------------------------------------------------
+//
+
 // Vertical scrollbar callback intercept
 void Fl_Simple_Terminal::vscroll_cb2(Fl_Widget *w, void*) {
-  scrolling = 1;
-  orig_vscroll_cb(w, orig_vscroll_data);
-  scrollaway = (mVScrollBar->value() != mVScrollBar->maximum());
-  scrolling = 0;
+  scrolling_ = 1;
+  orig_vscroll_cb_(w, orig_vscroll_data_);
+  scrollaway_ = (mVScrollBar->value() != mVScrollBar->maximum());
+  scrolling_  = 0;
 }
 void Fl_Simple_Terminal::vscroll_cb(Fl_Widget *w, void *data) {
   Fl_Simple_Terminal *o = (Fl_Simple_Terminal*)data;
@@ -83,9 +297,9 @@ Fl_Simple_Terminal::Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l) : 
   history_lines_ = 500;         // something 'reasonable'
   stay_at_bottom_ = true;
   ansi_ = false;
-  lines = 0;                    // note: lines!=mNBufferLines when lines are wrapping
-  scrollaway = false;
-  scrolling = false;
+  lines_ = 0;                    // note: lines!=mNBufferLines when lines are wrapping
+  scrollaway_ = false;
+  scrolling_ = false;
   // These defaults similar to typical DOS/unix terminals
   textfont(FL_COURIER);
   color(FL_BLACK);
@@ -102,13 +316,14 @@ Fl_Simple_Terminal::Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l) : 
   //      being present, an annoying UI bug in Fl_Text_Display.
   wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
   // Style table
-  stable_ = &builtin_stable[0];
-  stable_size_ = builtin_stable_size;
+  stable_              = &builtin_stable[0];
+  stable_size_         = builtin_stable_size;
   normal_style_index_  = builtin_normal_index;
   current_style_index_ = builtin_normal_index;
+  current_style_       = 'A' + 0;
   // Intercept vertical scrolling
-  orig_vscroll_cb = mVScrollBar->callback();
-  orig_vscroll_data = mVScrollBar->user_data();
+  orig_vscroll_cb_     = mVScrollBar->callback();
+  orig_vscroll_data_   = mVScrollBar->user_data();
   mVScrollBar->callback(vscroll_cb, (void*)this);
 }
 
@@ -348,6 +563,7 @@ int Fl_Simple_Terminal::normal_style_index() const {
 void Fl_Simple_Terminal::current_style_index(int val) {
   // Wrap index to ensure it's never larger than table
   current_style_index_ = abs(val) % (stable_size_ / STE_SIZE);
+  current_style_       = 'A' + current_style_index_;
 }
 
 /**
@@ -363,6 +579,19 @@ void Fl_Simple_Terminal::current_style_index(int val) {
 */
 int Fl_Simple_Terminal::current_style_index() const {
   return current_style_index_;
+}
+
+/**
+ Get the current style char used for style buffer.
+ This character appends in parallel with any text in the text buffer
+ to specify the per-character styling. This is typically 'A' for the
+ first entry, 'B' for the second entry, etc.
+
+ This value is changed by current_style_index(int).
+ \see current_style_index(int)
+*/
+int Fl_Simple_Terminal::current_style() const {
+  return current_style_;
 }
 
 /**
@@ -475,7 +704,7 @@ void Fl_Simple_Terminal::style_table(Fl_Text_Display::Style_Table_Entry *stable,
  should need to call this.
 */
 void Fl_Simple_Terminal::enforce_stay_at_bottom() {
-  if ( stay_at_bottom_ && buffer() && !scrollaway ) {
+  if ( stay_at_bottom_ && buffer() && !scrollaway_ ) {
     scroll(mNBufferLines, 0);
   }
 }
@@ -489,8 +718,8 @@ void Fl_Simple_Terminal::enforce_stay_at_bottom() {
  should need to call this.
 */
 void Fl_Simple_Terminal::enforce_history_lines() {
-  if ( history_lines() > -1 && lines > history_lines() ) {
-    int trimlines = lines - history_lines();
+  if ( history_lines() > -1 && lines_ > history_lines() ) {
+    int trimlines = lines_ - history_lines();
     remove_lines(0, trimlines);                         // remove lines from top
   }
 }
@@ -517,10 +746,115 @@ void Fl_Simple_Terminal::backspace_buffer(unsigned int count) {
 }
 
 /**
+ Handle appending string with ANSI escape sequences, and other 'special'
+ character processing (such as backspaces).
+*/
+void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
+    int nstyles = stable_size_ / STE_SIZE;
+    int trim = 0;                           // #chars to trim (backspace into existing buffer)
+    if ( len < 0 ) len = (int)strlen(s);
+    // New text buffer (after ansi codes parsed+removed)
+    char *ntm = (char*)malloc(len+1);       // new text memory
+    char *ntp = ntm;                        // new text ptr
+    char *nsm = (char*)malloc(len+1);       // new style memory
+    char *nsp = nsm;                        // new style ptr
+    const char *sp = s;
+    // Walk user's string looking for codes, modify new text/style text as needed
+    while ( *sp ) {
+      if (*sp == 0x1b ) {                   // start of ESC sequence?
+        escseq.parse(*sp++);                // start parsing..
+        //escseq.start();                     // start new escape sequence
+        //++sp;                               // skip ESC, continue..
+        continue;
+      }
+      if ( escseq.parse_in_progress() ) {   // ESC sequence in progress?
+        switch ( escseq.parse(*sp) ) {      // parse until completed or fail
+          case Fl_Escape_Seq::fail:         // parsing error?
+            escseq.reset();                 // ..reset and continue
+            ++sp;
+            continue;
+          case Fl_Escape_Seq::success:      // parsed ok / still in progress
+            ++sp;
+            continue;
+          case Fl_Escape_Seq::completed:    // completed parsing ESC sequence?
+            break;
+        }
+        // Escape sequence completed ok? handle it
+        //     Walk all values parsed from ESC[#;#;#..x
+        //
+        for ( int i=0; i<escseq.total_vals(); i++ ) {
+          int val = escseq.val(i);
+          switch (escseq.esc_mode() ) {
+            // ERASE IN DISPLAY (ED)
+            case 'J':                       // ESC[#J
+              switch (val) {
+                case 0:                     // ESC[0J -- clear to eol
+                  // unsupported
+                  break;
+                case 1:                     // ESC[1J -- clear to sol
+                  // unsupported
+                  break;
+                case 2:                     // ESC[2J -- clear entire screen
+                  clear();                  // clear text buffer
+                  ntp = ntm;                // clear text contents accumulated so far
+                  nsp = nsm;                // clear style contents ""
+                  break;
+              }
+              break;
+            // SELECT GRAPHIC RENDITION (SGR)
+            case 'm':
+              if ( val == 0 ) {             // ESC[0m? (reset color)
+                // Switch to "normal color"
+                current_style_index(normal_style_index_);
+              } else {                      // ESC[#m? (set some specific color)
+                // Use modulus to map into styles[] buffer
+                current_style_index(val % nstyles);
+              }
+              break;
+            // UNSUPPORTED MODES
+            default:
+              break;                         // unsupported
+          }
+        }
+        escseq.reset();                      // reset after handling escseq
+        ++sp;                                // advance thru string
+        continue;
+      } else if ( *sp == 8 ) {               // backspace?
+        if ( --ntp < ntm ) {                 // decrement ntp, are we beyond start of string?
+          ++trim;                            // beyond start: flag to trim existing buffer, clamp ntp
+          ntp = ntm;
+        } else {
+          if ( *ntp == '\n' ) {              // not beyond start: check if backspaced over \n?
+            --lines_;                        // if so, /decrement/ line count
+          }
+        }
+        if ( --nsp < nsm ) {                 // adjust style buffer too
+          nsp = nsm;                         // clamp
+        }
+        sp++;
+      } else {                               // Not ANSI or backspace? append to display
+        if ( *sp == '\n' ) ++lines_;         // crlf? keep track of #lines
+        *ntp++ = *sp++;                      // pass char thru
+        *nsp++ = current_style();            // use current style
+      }
+    } // while
+    *ntp = 0;
+    *nsp = 0;
+    //::printf("  RESULT: ntm='%s'\n", ntm);
+    //::printf("  RESULT: nsm='%s'\n", nsm);
+    backspace_buffer(trim);                  // destructive backspace into buffer (if any)
+    buf->append(ntm);                        // new text memory
+    sbuf->append(nsm);                       // new style memory
+    free(ntm);
+    free(nsm);
+}
+
+/**
  Appends new string 's' to terminal.
 
- The string can contain UTF-8, crlf's, and ANSI sequences are
- also supported when ansi(bool) is set to 'true'.
+ The string can contain UTF-8, crlf's.
+ And if ansi(bool) is set to 'true', ANSI 'ESC' sequences (such as ESC[1m)
+ and other control characters (such as backspace) are handled.
 
  \param s string to append.
 
@@ -532,110 +866,11 @@ void Fl_Simple_Terminal::backspace_buffer(unsigned int count) {
 void Fl_Simple_Terminal::append(const char *s, int len) {
   // Remove ansi codes and adjust style buffer accordingly.
   if ( ansi() ) {
-    int nstyles = stable_size_ / STE_SIZE;
-    int trim = 0;                           // #chars to trim (backspace into existing buffer)
-    if ( len < 0 ) len = (int)strlen(s);
-    // New text buffer (after ansi codes parsed+removed)
-    char *ntm = (char*)malloc(len+1);       // new text memory
-    char *ntp = ntm;                        // new text ptr
-    char *nsm = (char*)malloc(len+1);       // new style memory
-    char *nsp = nsm;                        // new style ptr
-    // ANSI values
-    char astyle = 'A'+current_style_index_; // the running style index
-    const char *esc = 0;
-    const char *sp = s;
-    // Walk user's string looking for codes, modify new text/style text as needed
-    while ( *sp ) {
-      if ( *sp == 033 ) {        // "\033.."
-        esc = sp++;
-        switch (*sp) {
-          case 0:                // "\033<NUL>"? stop
-            continue;
-          case '[': {            // "\033[.."
-            ++sp;
-            int vals[4], tv=0, seqdone=0;
-            while ( *sp && !seqdone && isdigit(*sp) ) { // "\033[#;#.."
-              char *newsp;
-              long a = strtol(sp, &newsp, 10);
-              sp = newsp;
-              vals[tv++] = (a<0) ? 0 : a;       // prevent negative values
-              if ( tv >= 4 )      // too many #'s specified? abort sequence
-                { seqdone = 1; sp = esc+1; continue; }
-              switch(*sp) {
-                case ';':         // numeric separator
-                  ++sp;
-                  continue;
-                case 'J':         // erase in display
-                  switch (vals[0]) {
-                    case 0:       // \033[0J -- clear to eol
-                      // unsupported
-                      break;
-                    case 1:       // \033[1J -- clear to sol
-                      // unsupported
-                      break;
-                    case 2:       // \033[2J -- clear entire screen
-                      clear();    // clear text buffer
-                      ntp = ntm;  // clear text contents accumulated so far
-                      nsp = nsm;  // clear style contents ""
-                      break;
-                  }
-                  ++sp;
-                  seqdone = 1;
-                  continue;
-                case 'm':         // set color
-                  if ( tv > 0 ) { // at least one value parsed?
-                    current_style_index_ = (vals[0] == 0)            // "reset"?
-                                             ? normal_style_index_   // use normal color for "reset"
-                                             : (vals[0] % nstyles);  // use user's value, wrapped to ensure not larger than table
-                    astyle = 'A' + current_style_index_;             // convert index -> style buffer char
-                  }
-                  ++sp;
-                  seqdone = 1;
-                  continue;
-                case '\0':        // EOS in middle of sequence?
-                  *ntp = 0;       // end of text
-                  *nsp = 0;       // end of style
-                  seqdone = 1;
-                  continue;
-                default:          // un-supported cmd?
-                  seqdone = 1;
-                  sp = esc+1;     // continue parsing just past esc
-                  break;
-              }   // switch
-            }     // while
-          }       // case '['
-        }         // switch
-      }           // \033
-      else if ( *sp == 8 ) {        // backspace?
-        if ( --ntp < ntm ) {        // dec ntp, see if beyond start?
-          ++trim;                   // flag need to trim existing buffer
-          ntp = ntm;                // clamp
-        }
-        if ( --nsp < nsm ) {        // adjust style buffer too
-          nsp = nsm;                // clamp
-        }
-        sp++;
-      }
-      else {
-        // Non-ANSI character?
-        if ( *sp == '\n' ) ++lines; // keep track of #lines
-        *ntp++ = *sp++;             // pass char thru
-        *nsp++ = astyle;            // use current style
-      }
-    } // while
-    *ntp = 0;
-    *nsp = 0;
-    //::printf("  RESULT: ntm='%s'\n", ntm);
-    //::printf("  RESULT: nsm='%s'\n", nsm);
-    backspace_buffer(trim);     // destructive backspace into buffer (if any)
-    buf->append(ntm);           // new text memory
-    sbuf->append(nsm);          // new style memory
-    free(ntm);
-    free(nsm);
+    append_ansi(s, len);
   } else {
-    // non-ansi buffer
+    // raw append
     buf->append(s);
-    lines += ::strcnt(s, '\n');  // count total line feeds in string added
+    lines_ += ::strcnt(s, '\n');  // count total line feeds in string added
   }
   enforce_history_lines();
   enforce_stay_at_bottom();
@@ -729,7 +964,7 @@ void Fl_Simple_Terminal::vprintf(const char *fmt, va_list ap) {
 void Fl_Simple_Terminal::clear() {
   buf->text("");
   sbuf->text("");
-  lines = 0;
+  lines_ = 0;
 }
 
 /**
@@ -750,8 +985,8 @@ void Fl_Simple_Terminal::remove_lines(int start, int count) {
   } else {
     buf->remove(spos, epos);
   }
-  lines -= count;
-  if ( lines < 0 ) lines = 0;
+  lines_ -= count;
+  if ( lines_ < 0 ) lines_ = 0;
 }
 
 /**
