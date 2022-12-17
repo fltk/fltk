@@ -177,6 +177,11 @@ private:
   int  current_style_index_; // current style used for drawing text
   char current_style_;       // current 'style char' (e.g. 'A' = first style entry)
   Fl_Escape_Seq escseq;      // escape sequence state handler
+  // String parsing vars initialized/used by append(), used by handle_backspace() etc.
+  char *ntm_;                // new text memory  (ntm) - malloc()ed by append() for output text
+  char *ntp_;                // new text ptr     (ntp) - points into ntm buffer
+  char *nsm_;                // new style memory (nsm) - malloc()ed by append() for output style
+  char *nsp_;                // new style ptr    (nsp) - points into nsm buffer
 
 public:
   Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l=0);
@@ -228,6 +233,7 @@ protected:
   void vscroll_cb2(Fl_Widget*, void*);
   static void vscroll_cb(Fl_Widget*, void*);
   void backspace_buffer(unsigned int count);
+  void handle_backspace();
   void append_ansi(const char *s, int len);
 };
 

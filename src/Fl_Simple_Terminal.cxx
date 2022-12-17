@@ -746,25 +746,46 @@ void Fl_Simple_Terminal::backspace_buffer(unsigned int count) {
 }
 
 /**
+ Handle a Unicode aware backspace.
+ This flushes the string parsed so far to Fl_Text_Display,
+ then lets Fl_Text_Display handle the unicode aware backspace.
+*/
+void Fl_Simple_Terminal::handle_backspace() {
+  // FLUSH TEXT TO TEXT DISPLAY
+  //   This prevents any Unicode multibyte char split across
+  //   our string buffer and Fl_Text_Display, and also allows
+  //   Fl_Text_Display to handle unicode aware backspace.
+
+  // 1) Null temrinate buffers
+  *ntp_ = 0;
+  *nsp_ = 0;
+  // 2) Flush text to Fl_Text_Display
+  buf->append(ntm_);    // flush text to FTD
+  sbuf->append(nsm_);   // flush style to FTD
+  // 3) Rewind buffer and sp, restore saved chars
+  ntp_ = ntm_;
+  nsp_ = nsm_;
+  // 4) Let Fl_Text_Display handle unicode aware backspace
+  backspace_buffer(1);
+} 
+
+/**
  Handle appending string with ANSI escape sequences, and other 'special'
  character processing (such as backspaces).
 */
 void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
     int nstyles = stable_size_ / STE_SIZE;
-    int trim = 0;                           // #chars to trim (backspace into existing buffer)
     if ( len < 0 ) len = (int)strlen(s);
-    // New text buffer (after ansi codes parsed+removed)
-    char *ntm = (char*)malloc(len+1);       // new text memory
-    char *ntp = ntm;                        // new text ptr
-    char *nsm = (char*)malloc(len+1);       // new style memory
-    char *nsp = nsm;                        // new style ptr
-    const char *sp = s;
+    // ntm/tsm - new text buffer (after ansi codes parsed+removed)
+    ntm_ = (char*)malloc(len+1);            // new text memory
+    ntp_ = ntm_;                            // new text ptr
+    nsm_ = (char*)malloc(len+1);            // new style memory
+    nsp_ = nsm_;                            // new style ptr
     // Walk user's string looking for codes, modify new text/style text as needed
+    const char *sp = s;
     while ( *sp ) {
       if (*sp == 0x1b ) {                   // start of ESC sequence?
         escseq.parse(*sp++);                // start parsing..
-        //escseq.start();                     // start new escape sequence
-        //++sp;                               // skip ESC, continue..
         continue;
       }
       if ( escseq.parse_in_progress() ) {   // ESC sequence in progress?
@@ -794,10 +815,16 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
                 case 1:                     // ESC[1J -- clear to sol
                   // unsupported
                   break;
-                case 2:                     // ESC[2J -- clear entire screen
+                case 2:                     // ESC[2J -- clear visible screen
+                  // NOTE: Currently we clear the /entire screen history/, and
+                  //       moves cursor to the top of buffer.
+                  //
+                  //       ESC[2J should really only clear the /visible display/
+                  //       not affecting screen history or cursor position.
+                  //
                   clear();                  // clear text buffer
-                  ntp = ntm;                // clear text contents accumulated so far
-                  nsp = nsm;                // clear style contents ""
+                  ntp_ = ntm_;              // clear text contents accumulated so far
+                  nsp_ = nsm_;              // clear style contents ""
                   break;
               }
               break;
@@ -820,33 +847,22 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
         ++sp;                                // advance thru string
         continue;
       } else if ( *sp == 8 ) {               // backspace?
-        if ( --ntp < ntm ) {                 // decrement ntp, are we beyond start of string?
-          ++trim;                            // beyond start: flag to trim existing buffer, clamp ntp
-          ntp = ntm;
-        } else {
-          if ( *ntp == '\n' ) {              // not beyond start: check if backspaced over \n?
-            --lines_;                        // if so, /decrement/ line count
-          }
-        }
-        if ( --nsp < nsm ) {                 // adjust style buffer too
-          nsp = nsm;                         // clamp
-        }
+        handle_backspace();
         sp++;
       } else {                               // Not ANSI or backspace? append to display
         if ( *sp == '\n' ) ++lines_;         // crlf? keep track of #lines
-        *ntp++ = *sp++;                      // pass char thru
-        *nsp++ = current_style();            // use current style
+        *ntp_++ = *sp++;                     // pass char thru
+        *nsp_++ = current_style();           // use current style
       }
     } // while
-    *ntp = 0;
-    *nsp = 0;
-    //::printf("  RESULT: ntm='%s'\n", ntm);
-    //::printf("  RESULT: nsm='%s'\n", nsm);
-    backspace_buffer(trim);                  // destructive backspace into buffer (if any)
-    buf->append(ntm);                        // new text memory
-    sbuf->append(nsm);                       // new style memory
-    free(ntm);
-    free(nsm);
+    *ntp_ = 0;
+    *nsp_ = 0;
+    //::printf("  RESULT: ntm='%s'\n", ntm_);
+    //::printf("  RESULT: nsm='%s'\n", nsm_);
+    buf->append(ntm_);                       // new text memory
+    sbuf->append(nsm_);                      // new style memory
+    free(ntm_);
+    free(nsm_);
 }
 
 /**
