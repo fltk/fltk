@@ -27,7 +27,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Dynamical GUI rescaling: it is possible on all platforms to rescale all
     FLTK windows mapped to a screen by typing ctrl-'+' (enlarge), ctrl-'-'
     (shrink) or ctrl-'0' (back to starting scaling factor value). Under macOS,
-    the coresponding keystrokes are cmd-'+', cmd-'-', cmd-'0'. The resulting
+    the corresponding keystrokes are cmd-'+', cmd-'-', cmd-'0'. The resulting
     GUI scaling factor (e.g., 170 %) transiently appears in a yellow popup window.
     Use new Fl::option() item OPTION_SHOW_SCALING to turn on/off these popups.
     Windows moved between screens adjust to the scaling factor of their screen.
