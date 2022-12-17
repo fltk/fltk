@@ -97,9 +97,9 @@ Fl_SVG_Image::Fl_SVG_Image(const char *sharedname, const char *svg_data) :
 
  \param sharedname if not \c NULL, a shared image will be generated with this name
  \param svg_data a pointer to the memory location of the SVG image data
- \param length optional length of \p svg_data or \c 0. This will protect memory
-        outside of the \p svg_data array from illegal read operations for
-        compressed SVG data
+ \param length of \p svg_data or \c 0 if the length is unknown. This will
+        protect memory outside of the \p svg_data array from illegal read
+        operations for compressed SVG data
 
  \note In-memory SVG data is parsed by the object constructor and is no longer
  needed after construction.
