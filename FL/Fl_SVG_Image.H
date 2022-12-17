@@ -147,14 +147,15 @@ private:
   float svg_scaling_(int W, int H);
   void rasterize_(int W, int H);
   virtual void cache_size_(int &width, int &height);
-  void init_(const char *filename, const unsigned char *filedata, const Fl_SVG_Image *copy_source,
-             size_t length);
+  void init_(const char *name, const unsigned char *filedata, size_t length);
   Fl_SVG_Image(const Fl_SVG_Image *source);
 public:
   /** Set this to \c false to allow image re-scaling that alters the image aspect ratio.
    Upon object creation, proportional is set to \c true, and the aspect ratio is kept constant.*/
   bool proportional;
-  Fl_SVG_Image(const char *filename, const char *svg_data = NULL, size_t length = 0);
+  Fl_SVG_Image(const char *filename);
+  Fl_SVG_Image(const char *sharedname, const char *svg_data);
+  Fl_SVG_Image(const char *sharedname, const unsigned char *svg_data, size_t length);
   virtual ~Fl_SVG_Image();
   virtual Fl_Image *copy(int W, int H) const;
   Fl_Image *copy() const {

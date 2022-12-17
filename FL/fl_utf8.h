@@ -179,6 +179,9 @@ FL_EXPORT int fl_open(const char *fname, int oflags, ...);
 
 FL_EXPORT int fl_open_ext(const char *fname, int binary, int oflags, ...);
 
+/* Portable wrapper around unix-style close() function */
+FL_EXPORT int fl_close_fd(int fd);
+
 /* OD: Portable UTF-8 aware unlink wrapper */
 FL_EXPORT int fl_unlink(const char *fname);
 

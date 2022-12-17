@@ -26,10 +26,74 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
 
+#include <stdlib.h>
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw_bitmap(this, XP, YP, WP, HP, cx, cy);
 }
+
+
+/** The constructors create a new bitmap from the specified bitmap data.
+ If the provided array is too small to contain all the image data, the
+ constructor will not generate the bitmap to avoid illegal memory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+ \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \see Fl_Bitmap(const char *bits, int bits_length, int W, int H),
+      Fl_Bitmap(const uchar *bits, int W, int H)
+*/
+Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
+  Fl_Image(W,H,0),
+  array((const uchar *)bits),
+  alloc_array(0),
+  id_(0),
+  cache_w_(0),
+  cache_h_(0)
+{
+  int rowBytes = (W+7)>>3;
+  int min_length = rowBytes * H;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+  } else {
+    array = NULL;
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
+  }
+}
+
+
+/** The constructors create a new bitmap from the specified bitmap data.
+ If the provided array is too small to contain all the image data, the
+ constructor will not generate the bitmap to avoid illegal memory read
+ access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
+ \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
+ \param bit_length length of the \p bits array in bytes
+ \param W image width in pixels
+ \param H image height in pixels
+ \see Fl_Bitmap(const uchar *bits, int bits_length, int W, int H),
+      Fl_Bitmap(const char *bits, int W, int H)
+ */
+Fl_Bitmap::Fl_Bitmap(const char *bits, int bits_length, int W, int H) :
+  Fl_Image(W,H,0),
+  array((const uchar *)bits),
+  alloc_array(0),
+  id_(0),
+  cache_w_(0),
+  cache_h_(0)
+{
+  int rowBytes = (W+7)>>3;
+  int min_length = rowBytes * H;
+  if (bits_length >= min_length) {
+    data((const char **)&array, 1);
+  } else {
+    array = NULL;
+    data(NULL, 0);
+    ld(ERR_MEMORY_ACCESS);
+  }
+}
+
 
 /**
   The destructor frees all memory and server resources that are used by

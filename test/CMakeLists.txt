@@ -150,6 +150,7 @@ CREATE_EXAMPLE (wizard wizard.cxx fltk)
 
 SET (UNITTEST_SRCS
   unittests.cxx
+  unittests.h
   unittest_about.cxx
   unittest_points.cxx
   unittest_complex_shapes.cxx

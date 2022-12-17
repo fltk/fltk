@@ -83,9 +83,6 @@ public:
   virtual void gettime(time_t *sec, int *usec);
   virtual char* strdup(const char *s) {return ::strdup(s);}
   virtual int close_fd(int fd);
-  // next 2 for support of Fl_SVG_Image
-  virtual int write_nonblocking_fd(int , const unsigned char *&, size_t &);
-  virtual void pipe_support(int &, int &, const unsigned char *, size_t );
 #if defined(HAVE_PTHREAD)
   virtual void lock_ring();
   virtual void unlock_ring();

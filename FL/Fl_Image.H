@@ -60,9 +60,10 @@ enum Fl_RGB_Scaling {
 class FL_EXPORT Fl_Image {
   friend class Fl_Graphics_Driver;
 public:
-  static const int ERR_NO_IMAGE    = -1;
-  static const int ERR_FILE_ACCESS = -2;
-  static const int ERR_FORMAT      = -3;
+  static const int ERR_NO_IMAGE       = -1;
+  static const int ERR_FILE_ACCESS    = -2;
+  static const int ERR_FORMAT         = -3;
+  static const int ERR_MEMORY_ACCESS  = -4;
 
 private:
   int w_, h_, d_, ld_, count_;
@@ -353,6 +354,7 @@ private:
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);
+  Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int D, int LD);
   Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg=FL_GRAY);
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H) const;

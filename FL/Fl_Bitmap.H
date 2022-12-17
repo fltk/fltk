@@ -43,12 +43,16 @@ private:
   int cache_w_, cache_h_; // size of bitmap when cached
 
 public:
-  /** The constructors create a new bitmap from the specified bitmap data */
+  /** The constructors create a new bitmap from the specified bitmap data.
+   \see Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) */
   Fl_Bitmap(const uchar *bits, int W, int H) :
     Fl_Image(W,H,0), array(bits), alloc_array(0), id_(0), cache_w_(0),cache_h_(0) {data((const char **)&array, 1);}
-  /** The constructors create a new bitmap from the specified bitmap data */
+  /** The constructors create a new bitmap from the specified bitmap data.
+   \see Fl_Bitmap(const char *bits, int bits_length, int W, int H) */
   Fl_Bitmap(const char *bits, int W, int H) :
     Fl_Image(W,H,0), array((const uchar *)bits), alloc_array(0), id_(0), cache_w_(0),cache_h_(0) {data((const char **)&array, 1);}
+  Fl_Bitmap(const uchar *bits, int bits_length, int W, int H);
+  Fl_Bitmap(const char *bits, int bits_length, int W, int H);
   virtual ~Fl_Bitmap();
   virtual Fl_Image *copy(int W, int H) const;
   Fl_Image *copy() const { return Fl_Image::copy(); }
