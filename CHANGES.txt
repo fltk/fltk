@@ -54,9 +54,14 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     graphics to SVG or EPS files, respectively.
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
-  - X11 platform: class Fl_Native_File_Chooser will run the KDE file dialog
-    rather than the GTK dialog if the current desktop is KDE and if command
-    "kdialog" is available on the running platform (issue #278).
+  - class Fl_Native_File_Chooser on the X11/Wayland platform relies on external
+    commands zenity (PR #599), or kdialog (issue #278), or on the GTK library
+    to construct file dialogs. New "Preview" switch added to the GTK dialog.
+    The libgtk-based dialog uses in priority the file chooser dialog
+    of GTK version 3 when available on the running platform, and falls back
+    to version 2 when V3 is not available. In contrast, GTK version 2 was used
+    in priority by FLTK 1.3.x. New FL::option() item OPTION_FNFC_USES_ZENITY
+    to turn on/off use of zenity-based file dialogs.
   - The undocumented feature FLTK_CONSOLIDATE_MOTION is now OFF on X11 and
     removed on macOS. In FLTK 1.3 this feature has been ON on X11. The macro can now
     be set on the compiler commandline and can be used to reduce the number
@@ -73,9 +78,6 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     the shadow width of "shadow" box types can be configured (issue #130).
     See Fl::box_border_radius_max() and Fl::box_shadow_width().
   - New fl_putenv() is a cross-platform putenv() wrapper (see docs).
-  - New "Preview" switch added to the GTK native file chooser dialog
-    available on the X11 platform. This requires function fl_register_images()
-    to have been called.
   - New public variable Fl_Image::register_images_done allows an app. to detect
     whether function fl_register_images() has been called.
   - Fix Fl::add_timeout() under Linux (STR 3516).
@@ -180,10 +182,6 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
     assumes that text is "small" WRT 16-bit coordinate space and clips
     text if at least one of the x/y coordinates is out of bounds.
   - Fix Fl::add_timeout() in draw() under Linux (STR 3188)
-  - Class Fl_Native_File_Chooser uses in priority the file chooser dialog
-    of GTK version 3 when available on the running X11 platform, and falls back
-    to version 2 when V3 is not available. In contrast, GTK version 2 was used
-    in priority by FLTK 1.3.x
   - Improved documentation for '@' symbols in labels (STR #2940).
   - Fl_Roller can now be controlled via the mouse wheel (STR #3120).
   - Tooltips hide by themselves after 12 seconds (STR #2584).
