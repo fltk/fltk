@@ -161,7 +161,6 @@ private:
 private:
   int  history_lines_;      // max lines allowed in screen history
   bool stay_at_bottom_;     // lets scroller chase last line in buffer
-  bool ansi_;               // enables ANSI sequences
   // scroll management
   int  lines_;              // #lines in buffer (optimization: Fl_Text_Buffer slow to calc this)
   bool scrollaway_;         // true when user changed vscroll away from bottom
@@ -175,7 +174,10 @@ private:
   int  normal_style_index_;  // "normal" style used by "\033[0m" reset sequence
   int  current_style_index_; // current style used for drawing text
   char current_style_;       // current 'style char' (e.g. 'A' = first style entry)
+  // ANSI escape seq
   Fl_Escape_Seq escseq;      // escape sequence state handler
+  bool ansi_;                // enables ANSI sequences
+  bool ansi_show_unknown_;   // show '¿' for unknown ESC sequences (default: off)
   // String parsing vars initialized/used by append(), used by handle_backspace() etc.
   char *ntm_;                // new text memory  (ntm) - malloc()ed by append() for output text
   char *ntp_;                // new text ptr     (ntp) - points into ntm buffer
@@ -193,6 +195,8 @@ public:
   int  history_lines() const;
   void ansi(bool val);
   bool ansi() const;
+  void ansi_show_unknown(bool val);
+  bool ansi_show_unknown() const;
   void style_table(Fl_Text_Display::Style_Table_Entry *stable, int stable_size, int normal_style_index=0);
   const Fl_Text_Display::Style_Table_Entry *style_table() const;
   int style_table_size() const;
@@ -234,6 +238,7 @@ protected:
   void backspace_buffer(unsigned int count);
   void handle_backspace();
   void append_ansi(const char *s, int len);
+  void unknown_escape();
 };
 
 #endif

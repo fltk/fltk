@@ -287,7 +287,6 @@ void Fl_Simple_Terminal::vscroll_cb(Fl_Widget *w, void *data) {
 Fl_Simple_Terminal::Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l) : Fl_Text_Display(X,Y,W,H,l) {
   history_lines_ = 500;         // something 'reasonable'
   stay_at_bottom_ = true;
-  ansi_ = false;
   lines_ = 0;                    // note: lines!=mNBufferLines when lines are wrapping
   scrollaway_ = false;
   scrolling_ = false;
@@ -312,6 +311,9 @@ Fl_Simple_Terminal::Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l) : 
   normal_style_index_  = builtin_normal_index;
   current_style_index_ = builtin_normal_index;
   current_style_       = 'A' + 0;
+  // ANSI escape seq
+  ansi_ = false;
+  ansi_show_unknown_ = false;
   // Intercept vertical scrolling
   orig_vscroll_cb_     = mVScrollBar->callback();
   orig_vscroll_data_   = mVScrollBar->user_data();
@@ -468,6 +470,23 @@ void Fl_Simple_Terminal::ansi(bool val) {
     highlight_data(sbuf, builtin_stable, 0, 'A', 0, 0);
   }
   redraw();
+}
+
+/**
+ See if we should show unknown ANSI sequences with '¿' or not.
+ \see ansi_show_unknown(bool)
+*/
+bool Fl_Simple_Terminal::ansi_show_unknown(void) const {
+  return ansi_show_unknown_;
+}
+
+/**
+ Enable showing unknown ESC sequences with the '¿' character.
+ By default this is off, and unknown escape sequences are silently ignored.
+ \see ansi_show_unknown()
+*/
+void Fl_Simple_Terminal::ansi_show_unknown(bool val) {
+  ansi_show_unknown_ = val;
 }
 
 /**
@@ -760,6 +779,16 @@ void Fl_Simple_Terminal::handle_backspace() {
   backspace_buffer(1);
 } 
 
+// Handle unknown esc sequences
+void Fl_Simple_Terminal::unknown_escape() {
+  if ( ansi_show_unknown() ) {
+    for ( const char *s = "¿"; *s; s++ ) {
+      *ntp_++ = *s;                        // emit utf-8 encoded char
+      *nsp_++ = current_style();           // use current style
+    }
+  }
+}
+
 /**
  Handle appending string with ANSI escape sequences, and other 'special'
  character processing (such as backspaces).
@@ -782,6 +811,7 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
       if ( escseq.parse_in_progress() ) {   // ESC sequence in progress?
         switch ( escseq.parse(*sp) ) {      // parse until completed or fail
           case Fl_Escape_Seq::fail:         // parsing error?
+            unknown_escape();
             escseq.reset();                 // ..reset and continue
             ++sp;
             continue;
@@ -801,10 +831,10 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
             case 'J':                       // ESC[#J
               switch (val) {
                 case 0:                     // ESC[0J -- clear to eol
-                  // unsupported
+                  unknown_escape();
                   break;
                 case 1:                     // ESC[1J -- clear to sol
-                  // unsupported
+                  unknown_escape();
                   break;
                 case 2:                     // ESC[2J -- clear visible screen
                   // NOTE: Currently we clear the /entire screen history/, and
@@ -816,6 +846,9 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
                   clear();                  // clear text buffer
                   ntp_ = ntm_;              // clear text contents accumulated so far
                   nsp_ = nsm_;              // clear style contents ""
+                  break;
+                default:                    // all other ESC[#J unsupported
+                  unknown_escape();
                   break;
               }
               break;
@@ -831,6 +864,7 @@ void Fl_Simple_Terminal::append_ansi(const char *s, int len) {
               break;
             // UNSUPPORTED MODES
             default:
+              unknown_escape();
               break;                         // unsupported
           }
         }
