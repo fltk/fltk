@@ -254,7 +254,6 @@ Project P;
 
 Project::Project() :
   i18n_type(0),
-  i18n_program(""),
   include_H_from_C(1),
   use_FL_COMMAND(0),
   utf8_in_src(0),
@@ -277,7 +276,7 @@ void Project::reset() {
   i18n_static_function = "";
   i18n_file = "";
   i18n_set = "";
-  i18n_program[0] = 0;
+  i18n_program = "";
   include_H_from_C = 1;
   use_FL_COMMAND = 0;
   utf8_in_src = 0;
@@ -998,8 +997,9 @@ int write_code_files() {
   }
   char cname[FL_PATH_MAX+1];
   char hname[FL_PATH_MAX+1];
-  strlcpy(P.i18n_program, fl_filename_name(filename), FL_PATH_MAX);
-  fl_filename_setext(P.i18n_program, FL_PATH_MAX, "");
+  P.i18n_program = fl_filename_name(filename);
+  P.i18n_program.capacity(FL_PATH_MAX);
+  fl_filename_setext(P.i18n_program.buffer(), FL_PATH_MAX, "");
   if (P.code_file_name[0] == '.' && strchr(P.code_file_name, '/') == NULL) {
     strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
     fl_filename_setext(cname, FL_PATH_MAX, P.code_file_name);
@@ -1878,8 +1878,9 @@ void update_sourceview_cb(Fl_Button*, void*)
     sv_strings->buffer()->loadfile(fn);
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
-    strlcpy(P.i18n_program, fl_filename_name(sv_source_filename), FL_PATH_MAX);
-    fl_filename_setext(P.i18n_program, FL_PATH_MAX, "");
+    P.i18n_program = fl_filename_name(sv_source_filename);
+    P.i18n_program.capacity(FL_PATH_MAX);
+    fl_filename_setext(P.i18n_program.buffer(), FL_PATH_MAX, "");
     Fd_String code_file_name_bak = P.code_file_name;
     P.code_file_name = sv_source_filename;
     Fd_String header_file_name_bak = P.header_file_name;

@@ -91,7 +91,7 @@ public:
 
 private:
   void init();
-  void alloc_buf(int size);
+  void alloc_buf(int size, bool preserve_text=false);
   void release();
 
 public:
@@ -99,10 +99,12 @@ public:
   void value(const char *str, int slen);
 
   const char *value() const { return value_; }
+  char *buffer() { return value_; }
   int size() const { return size_; }
 
   int slen() const;
   int capacity() const;
+  void capacity(int num_bytes);
 
   // ==================================  DEBUG  ==================================
 
