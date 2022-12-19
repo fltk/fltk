@@ -158,7 +158,6 @@ static int svg_inflate(uchar *src, size_t src_length, uchar *&dst, size_t &dst_l
 
   z_stream stream = { };
   int err = Z_OK;
-  const uInt max = (uInt)-1;
 
   dst = 0;
   dst_length = 0;
