@@ -1340,6 +1340,8 @@ void Fl_Cairo_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
   }
 }
 
+#define fl_max(a,b) ((a) > (b) ? (a) : (b))
+#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 void Fl_Cairo_Graphics_Driver::restore_clip() {
   if (cairo_) {
@@ -1347,10 +1349,28 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
     // apply what's in rstack
     struct flCairoRegion *r = (struct flCairoRegion*)rstack[rstackptr];
     if (r) {
+      if (!clip_) {
+        clip_ = new Clip();
+        clip_->prev = NULL;
+      }
       for (int i = 0; i < r->count; i++) {
         cairo_rectangle(cairo_, r->rects[i].x - 0.5, r->rects[i].y - 0.5, r->rects[i].width, r->rects[i].height);
+        // put in clip_ the bounding rect of region r
+        if (i == 0) {
+          clip_->x = r->rects[0].x; clip_->y = r->rects[0].y;
+          clip_->w = r->rects[0].width; clip_->h = r->rects[0].height;
+        } else {
+          int R = fl_max(r->rects[i].x + r->rects[i].width, clip_->x + clip_->w);
+          int B = fl_max(r->rects[i].y + r->rects[i].height, clip_->y + clip_->h);
+          clip_->x = fl_min(r->rects[i].x, clip_->x) ;
+          clip_->y = fl_min(r->rects[i].y, clip_->y);
+          clip_->w = R - clip_->x;
+          clip_->h = B - clip_->y;
+        }
       }
       cairo_clip(cairo_);
+    } else if (clip_) {
+      clip_->w = -1;
     }
   }
 }
