@@ -777,7 +777,7 @@ void Fl_Simple_Terminal::handle_backspace() {
   nsp_ = nsm_;
   // 4) Let Fl_Text_Display handle unicode aware backspace
   backspace_buffer(1);
-} 
+}
 
 // Handle unknown esc sequences
 void Fl_Simple_Terminal::unknown_escape() {

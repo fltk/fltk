@@ -130,7 +130,7 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
       }
       return retval;
   }
-      
+
   char *command = build_command();
 //puts(command);
   FILE *pipe = popen(command, "r");

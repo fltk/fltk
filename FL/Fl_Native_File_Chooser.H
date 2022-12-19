@@ -102,7 +102,7 @@ class Fl_Native_File_Chooser_Driver;
  to open files with a non-ASCII name).
 
  <B>Platform Specific Caveats</B>
- 
+
  - Under X11/Wayland,  what dialog opens is determined as follows:
  -# If command \p zenity is available at run-time and if \p Fl::option(OPTION_FNFC_USES_ZENITY) is
  not turned off, the \p zenity -based dialog opens. This is expected to be more appropriate
