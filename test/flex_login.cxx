@@ -40,7 +40,7 @@ void buttons_panel(Fl_Flex *parent) {
     b->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
     Fl_Input *username = new Fl_Input(0, 0, 0, 0, "");
 
-    urow->set_size(username, 180);
+    urow->fixed(username, 180);
     urow->end();
   }
 
@@ -50,7 +50,7 @@ void buttons_panel(Fl_Flex *parent) {
     b->align(FL_ALIGN_INSIDE | FL_ALIGN_RIGHT);
     Fl_Input *password = new Fl_Input(0, 0, 0, 0, "");
 
-    prow->set_size(password, 180);
+    prow->fixed(password, 180);
     prow->end();
   }
 
@@ -62,8 +62,8 @@ void buttons_panel(Fl_Flex *parent) {
     Fl_Button *reg = create_button("Register");
     Fl_Button *login = create_button("Login");
 
-    brow->set_size(reg, 80);
-    brow->set_size(login, 80);
+    brow->fixed(reg, 80);
+    brow->fixed(login, 80);
     brow->gap(20);
 
     brow->end();
@@ -71,12 +71,12 @@ void buttons_panel(Fl_Flex *parent) {
 
   Fl_Box *b = new Fl_Box(0, 0, 0, 0, "");
 
-  parent->set_size(w, 60);
-  parent->set_size(urow, 30);
-  parent->set_size(prow, 30);
-  parent->set_size(pad, 1);
-  parent->set_size(brow, 30);
-  parent->set_size(b, 30);
+  parent->fixed(w, 60);
+  parent->fixed(urow, 30);
+  parent->fixed(prow, 30);
+  parent->fixed(pad, 1);
+  parent->fixed(brow, 30);
+  parent->fixed(b, 30);
 }
 
 // create widgets inside a row, i.e. parent is type(ROW)
@@ -95,9 +95,9 @@ void middle_panel(Fl_Flex *parent) {
 
   new Fl_Box(0, 0, 0, 0, "");
 
-  parent->set_size(box, 200);
-  parent->set_size(spacer, 10);
-  parent->set_size(bp, 300);
+  parent->fixed(box, 200);
+  parent->fixed(spacer, 10);
+  parent->fixed(bp, 300);
 }
 
 // The main panel consists of three "rows" inside a column, i.e. parent is
@@ -114,7 +114,7 @@ void mainPanel(Fl_Flex *parent) {
 
   new Fl_Box(0, 0, 0, 0, ""); // flexible separator
 
-  parent->set_size(mp, 200);
+  parent->fixed(mp, 200);
 }
 
 int main(int argc, char **argv) {

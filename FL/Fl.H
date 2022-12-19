@@ -135,6 +135,7 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
+  friend class Fl_System_Driver;
   Fl() {} // no constructor!
 
 private:
@@ -271,6 +272,9 @@ public:
     /// value.
     /// When switched off, no such window gets displayed.
     OPTION_SHOW_SCALING,
+    /// Meaningful for the Wayland/X11 platform only. When switched on (default), the library uses a Zenity-based file dialog.
+    /// When switched off, the GTK file dialog is used instead.
+    OPTION_FNFC_USES_ZENITY,
       // don't change this, leave it always as the last element
       /// For internal use only.
     OPTION_LAST
@@ -303,11 +307,13 @@ public:
   static void (*idle)();
 
 #ifndef FL_DOXYGEN
+private:
   static Fl_Awake_Handler *awake_ring_;
   static void **awake_data_;
   static int awake_ring_size_;
   static int awake_ring_head_;
   static int awake_ring_tail_;
+public:
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
 

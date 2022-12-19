@@ -1224,7 +1224,7 @@ void Fl_Data_Type::write_code1() {
       message = "Can't include data from file. Can't open";
     } else {
       fseek(f, 0, SEEK_END);
-      nData = ftell(f);
+      nData = (int)ftell(f);
       fseek(f, 0, SEEK_SET);
       if (nData) {
         data = (char*)calloc(nData, 1);

@@ -21,35 +21,36 @@
 #include <FL/Fl_Double_Window.H>
 
 // WINDOW/WIDGET SIZES
-#define MAINWIN_W       700                             // main window w()
-#define MAINWIN_H       400                             // main window h()
-#define BROWSER_X       10                              // browser x()
-#define BROWSER_Y       25                              // browser y()
-#define BROWSER_W       150                             // browser w()
-#define BROWSER_H       MAINWIN_H-35                    // browser h()
-#define TESTAREA_X      (BROWSER_W + 20)                // test area x()
-#define TESTAREA_Y      25                              // test area y()
-#define TESTAREA_W      (MAINWIN_W - BROWSER_W - 30)    // test area w()
-#define TESTAREA_H      BROWSER_H                       // test area h()
+const int UT_MAINWIN_W  = 700;                                // main window w()
+const int UT_MAINWIN_H  = 400;                                // main window h()
+const int UT_BROWSER_X  = 10;                                 // browser x()
+const int UT_BROWSER_Y  = 25;                                 // browser y()
+const int UT_BROWSER_W  = 150;                                // browser w()
+const int UT_BROWSER_H  = (UT_MAINWIN_H-35);                  // browser h()
+const int UT_TESTAREA_X = (UT_BROWSER_W + 20);                // test area x()
+const int UT_TESTAREA_Y = 25;                                 // test area y()
+const int UT_TESTAREA_W = (UT_MAINWIN_W - UT_BROWSER_W - 30); // test area w()
+const int UT_TESTAREA_H = UT_BROWSER_H;                       // test area h()
 
 typedef void (*UnitTestCallback)(const char*, class Fl_Group*);
 
-extern class MainWindow *mainwin;
-extern class Fl_Hold_Browser *browser;
+extern class Ut_Main_Window*  mainwin;
+extern class Fl_Hold_Browser* browser;
 
 enum {
-  kTestAbout = 0,
-  kTestPoints,
-  kTestFastShapes,
-  kTestCircles,
-  kTestComplexShapes,
-  kTestText,
-  kTestSymbol,
-  kTestImages,
-  kTestViewport,
-  kTestScrollbarsize,
-  kTestSchemes,
-  kTestSimpleTerminal
+  UT_TEST_ABOUT = 0,
+  UT_TEST_POINTS,
+  UT_TEST_FAST_SHAPES,
+  UT_TEST_CIRCLES,
+  UT_TEST_COMPLEX_SHAPES,
+  UT_TEST_TEXT,
+  UT_TEST_UNICODE,
+  UT_TEST_SYBOL,
+  UT_TEST_IMAGES,
+  UT_TEST_VIEWPORT,
+  UT_TEST_SCROLLBARSIZE,
+  UT_TEST_SCHEMES,
+  UT_TEST_SIMPLE_TERMINAL
 };
 
 // This class helps to automatically register a new test with the unittest app.
@@ -58,30 +59,31 @@ class UnitTest {
 public:
   UnitTest(int index, const char *label, Fl_Widget* (*create)());
   ~UnitTest();
-  const char *label();
+  const char* label();
   void create();
   void show();
   void hide();
-  static int numTest() { return nTest; }
-  static UnitTest *test(int i) { return fTest[i]; }
+  static int num_tests() { return num_tests_; }
+  static UnitTest* test(int i) { return test_list_[i]; }
 private:
-  char *fLabel;
-  Fl_Widget *(*fCreate)();
-  Fl_Widget *fWidget;
-  static void add(int index, UnitTest *t);
-  static int nTest;
-  static UnitTest *fTest[];
+  char* label_;
+  Fl_Widget* (*create_)();
+  Fl_Widget* widget_;
+  static void add(int index, UnitTest* t);
+  static int num_tests_;
+  static UnitTest* test_list_[];
 };
 
 // The main window needs an additional drawing feature in order to support
 // the viewport alignment test.
-class MainWindow : public Fl_Double_Window {
+class Ut_Main_Window : public Fl_Double_Window {
 public:
-  MainWindow(int w, int h, const char *l=0L);
-  void drawAlignmentIndicators();
+  Ut_Main_Window(int w, int h, const char *l=0L);
+  void draw_alignment_indicators();
   void draw();
-  void testAlignment(int v);
-  int fTestAlignment;
+  void test_alignment(int v);
+private:
+  int draw_alignment_test_;
 };
 
 #endif

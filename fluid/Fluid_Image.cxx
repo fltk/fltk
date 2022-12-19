@@ -94,7 +94,7 @@ void Fluid_Image::write_static() {
     write_c("static const unsigned char %s[] =\n", idata_name);
     write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
-    write_initializer( "Fl_Bitmap", "%s, %d, %d", idata_name, img->w(), img->h());
+    write_initializer( "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
   } else if (strcmp(fl_filename_ext(name()), ".jpg")==0) {
     // Write jpeg image data...
     write_c("\n");
@@ -104,6 +104,7 @@ void Fluid_Image::write_static() {
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
 
+    size_t nData = 0;
     enter_project_dir();
     FILE *f = fl_fopen(name(), "rb");
     leave_project_dir();
@@ -111,7 +112,7 @@ void Fluid_Image::write_static() {
       write_file_error("JPEG");
     } else {
       fseek(f, 0, SEEK_END);
-      size_t nData = ftell(f);
+      nData = ftell(f);
       fseek(f, 0, SEEK_SET);
       if (nData) {
         char *data = (char*)calloc(nData, 1);
@@ -123,7 +124,7 @@ void Fluid_Image::write_static() {
     }
 
     write_c(";\n");
-    write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+    write_initializer("Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
   } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
@@ -160,9 +161,9 @@ void Fluid_Image::write_static() {
 
     write_c(";\n");
     if (gzipped)
-      write_initializer("Fl_SVG_Image", "NULL, (const char*)%s, %ld", idata_name, nData);
+      write_initializer("Fl_SVG_Image", "\"%s\", (const char*)%s, %ld", fl_filename_name(name()), idata_name, nData);
     else
-      write_initializer("Fl_SVG_Image", "NULL, %s", idata_name);
+      write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
   } else {
     // Write image data...
     write_c("\n");
@@ -188,22 +189,28 @@ void Fluid_Image::write_file_error(const char *fmt) {
 void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {
   /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
    static Fl_Image *'function_name_'() {
-     static Fl_Image *image = new 'type_name'('product of format and remaining args');
+     static Fl_Image *image = NULL;
+     if (!image)
+       image = new 'type_name'('product of format and remaining args');
      return image;
    } */
   va_list ap;
   va_start(ap, format);
-  write_c("static Fl_Image *%s() {\n%sstatic Fl_Image *image = new %s(",
-          function_name_, indent(1), type_name);
+  write_c("static Fl_Image *%s() {\n", function_name_);
+  write_c("%sstatic Fl_Image *image = NULL;\n", indent(1));
+  write_c("%sif (!image)\n", indent(1));
+  write_c("%simage = new %s(", indent(2), type_name);
   vwrite_c(format, ap);
-  write_c(");\n%sreturn image;\n}\n", indent(1));
+  write_c(");\n");
+  write_c("%sreturn image;\n", indent(1));
+  write_c("}\n");
   va_end(ap);
 }
 
-void Fluid_Image::write_code(const char *var, int inactive) {
+void Fluid_Image::write_code(int bind, const char *var, int inactive) {
   /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
    This code calls a function output before by Fluid_Image::write_initializer() */
-  if (img) write_c("%s%s->%s( %s() );\n", indent(), var, inactive ? "deimage" : "image", function_name_);
+  if (img) write_c("%s%s->%s%s( %s() );\n", indent(), var, bind ? "bind_" : "", inactive ? "deimage" : "image", function_name_);
 }
 
 void Fluid_Image::write_inline(int inactive) {
@@ -287,9 +294,15 @@ void Fluid_Image::decrement() {
 Fluid_Image::~Fluid_Image() {
   int a;
   if (images) {
-    for (a = 0;; a++) if (images[a] == this) break;
-    numimages--;
-    for (; a < numimages; a++) images[a] = images[a+1];
+    for (a = 0; a<numimages; a++) {
+      if (images[a] == this) {
+        numimages--;
+        for (; a < numimages; a++) {
+          images[a] = images[a+1];
+        }
+        break;
+      }
+    }
   }
   if (img) img->release();
   free((void*)name_);

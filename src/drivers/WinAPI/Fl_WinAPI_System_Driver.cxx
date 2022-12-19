@@ -1027,54 +1027,6 @@ void Fl_WinAPI_System_Driver::awake(void* msg) {
   PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
 }
 
-// create anonymous pipe in the form of 2 unix-style file descriptors
-static void pipe_win32(int fds[2]) {
-  HANDLE read_h, write_h;
-  SECURITY_ATTRIBUTES sa;
-  sa.nLength = sizeof(sa);
-  sa.lpSecurityDescriptor = NULL;
-  sa.bInheritHandle = true;
-  if (CreatePipe(&read_h, &write_h, &sa, 0) == 0) {
-    fds[0] = fds[1] = -1; // indicates error
-  } else { // create unix-style file descriptors from handles
-    fds[0] = _open_osfhandle((fl_intptr_t)read_h, _O_RDONLY | _O_BINARY);
-    fds[1] = _open_osfhandle((fl_intptr_t)write_h, _O_WRONLY | _O_BINARY);
-  }
-}
-
-struct gunz_data { // data transmitted to thread
-  const unsigned char *data;
-  unsigned length;
-  int fd;
-};
-
-static void __cdecl write_func(struct gunz_data *pdata) { // will run in child thread
-  //const unsigned char *from = pdata->data;
-  while (pdata->length > 0) {
-    int done = _write(pdata->fd, pdata->data, pdata->length);
-    if (done == -1) break;
-    pdata->length -= done;
-    pdata->data += done;
-  }
-  _close(pdata->fd);
-  free(pdata);
-}
-
 int Fl_WinAPI_System_Driver::close_fd(int fd) {
   return _close(fd);
-}
-
-void Fl_WinAPI_System_Driver::pipe_support(int &fdread, int &fdwrite, const unsigned char *bytes, size_t length) {
-  int fds[2];
-  pipe_win32(fds); // create anonymous pipe
-  if (fds[0] == -1) return Fl_System_Driver::pipe_support(fdread, fdwrite, NULL, 0);
-  fdread = fds[0];
-  fdwrite = -1;
-  // prepare data transmitted to child thread
-  struct gunz_data *thread_data = (struct gunz_data*)malloc(sizeof(struct gunz_data));
-  thread_data->data = bytes;
-  thread_data->length = (unsigned)length;
-  thread_data->fd = fds[1];
-  // launch child thread that will write byte buffer to pipe's write end
-  _beginthread((void( __cdecl * )( void * ))write_func, 0, thread_data);
 }

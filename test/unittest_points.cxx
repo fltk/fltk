@@ -27,10 +27,12 @@
 //------- test the point drawing capabilities of this implementation ----------
 //
 
-class PointTestWin : public Fl_Window {
+class Ut_Native_Point_Test : public Fl_Window {
 public:
-  PointTestWin(int x, int y, int w, int h) :
-  Fl_Window(x, y, w, h) { end(); }
+  Ut_Native_Point_Test(int x, int y, int w, int h)
+    : Fl_Window(x, y, w, h) {
+    end();
+  }
   void draw() {
     int i;
     fl_color(FL_WHITE);
@@ -49,10 +51,10 @@ public:
 
 #if HAVE_GL
 
-class GLTestWin : public Fl_Gl_Window {
+class Ut_GL_Point_Test : public Fl_Gl_Window {
 public:
-  GLTestWin(int x, int y, int w, int h) :
-  Fl_Gl_Window(x, y, w, h) {
+  Ut_GL_Point_Test(int x, int y, int w, int h)
+    : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
     end();
   }
@@ -131,17 +133,18 @@ public:
 
 #endif
 
-class PointTest : public Fl_Group {
-  PointTestWin *align_test_win;
+class Ut_Point_Test : public Fl_Group {
+  Ut_Native_Point_Test *align_test_win;
 #if HAVE_GL
-  GLTestWin *gl_test_win;
+  Ut_GL_Point_Test *gl_test_win;
 #endif
 public:
   static Fl_Widget *create() {
-    return new PointTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Point_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
     // 520x365, resizable
   }
-  PointTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+  Ut_Point_Test(int x, int y, int w, int h)
+    : Fl_Group(x, y, w, h) {
     label("Testing the fl_point call.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
@@ -179,7 +182,7 @@ public:
                // Things to look out for:
                "If parts of the black frame are clipped by the window and not visible, pixel offsets must be adjusted."
                );
-    align_test_win = new PointTestWin(a+24, b+2*24+2*16+9-5, 10, 10);
+    align_test_win = new Ut_Native_Point_Test(a+24, b+2*24+2*16+9-5, 10, 10);
 
     t = new Fl_Box(a, b+3*24+2*16, 18, 18, "4");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -238,7 +241,7 @@ public:
                "If red pixels are visible or black pixels are missing, graphics clipping is misaligned."
                );
 
-    gl_test_win = new GLTestWin(a+24+8, b+9-5, 10, 4*24+2*16);
+    gl_test_win = new Ut_GL_Point_Test(a+24+8, b+9-5, 10, 4*24+2*16);
 #endif
 
     t = new Fl_Box(x+w-1,y+h-1, 1, 1);
@@ -303,4 +306,4 @@ public:
   }
 };
 
-UnitTest points(kTestPoints, "Drawing Points", PointTest::create);
+UnitTest points(UT_TEST_POINTS, "Drawing Points", Ut_Point_Test::create);

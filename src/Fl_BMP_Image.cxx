@@ -1,7 +1,7 @@
 //
 // Fl_BMP_Image class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2011-2021 by Bill Spitzak and others.
+// Copyright 2011-2022 by Bill Spitzak and others.
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
@@ -129,7 +129,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data, con
   format supports only 1 bit for alpha. To avoid code duplication, we use
   an Fl_Image_Reader that reads data from either a file or from memory.
 */
-void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
+void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width)
 {
   int   info_size,        // Size of info header
         width,            // Width of image (pixels)
@@ -147,7 +147,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
         row_order,        // 1 = normal;  -1 = flipped row order
         start_y,          // Beginning Y
         end_y;            // Ending Y
-  long  offbits;          // Offset to image data
+  long  offbits = 0;      // Offset to image data
   uchar bit,              // Bit in image
         byte;             // Byte in image
   uchar *ptr;             // Pointer into pixels
@@ -163,17 +163,19 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   w(0); h(0); d(0); ld(0);      // make sure these are all zero
 
   // Get the header...
-  byte = rdr.read_byte();       // Check "BM" sync chars
-  bit  = rdr.read_byte();
-  if (byte != 'B' || bit != 'M') {
-    ld(ERR_FORMAT);
-    return;
-  }
+  if (ico_height < 1) {
+    byte = rdr.read_byte();       // Check "BM" sync chars
+    bit  = rdr.read_byte();
+    if (byte != 'B' || bit != 'M') {
+      ld(ERR_FORMAT);
+      return;
+    }
 
-  rdr.read_dword();             // Skip size
-  rdr.read_word();              // Skip reserved stuff
-  rdr.read_word();
-  offbits = (long)rdr.read_dword();// Read offset to image data
+    rdr.read_dword();             // Skip size
+    rdr.read_word();              // Skip reserved stuff
+    rdr.read_word();
+    offbits = (long)rdr.read_dword();// Read offset to image data
+  }
 
   // Then the bitmap information...
   info_size = rdr.read_dword();
@@ -196,12 +198,21 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 
     repcount = info_size - 12;
   } else {
-    // New BMP header...
-    width = rdr.read_long();
-    // If the height is negative, the row order is flipped
-    temp = rdr.read_long();
-    if (temp < 0) row_order = 1;
-    height = abs(temp);
+    if (ico_height > 0 && ico_width > 0) {
+      rdr.read_long();
+      rdr.read_long();
+      width = ico_width;
+      height = ico_height;
+    } else {
+      // New BMP header...
+      width = rdr.read_long();
+      w(width);
+      // If the height is negative, the row order is flipped
+      temp = rdr.read_long();
+      if (temp < 0) row_order = 1;
+      height = abs(temp);
+    }
+
     rdr.read_word();
     depth = rdr.read_word();
     compression = rdr.read_dword();

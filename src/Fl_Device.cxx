@@ -59,6 +59,7 @@
               +- Fl_GDI_Printer_Graphics_Driver: re-implements a few member functions especially for output to printer
       +- Fl_Cairo_Graphics_Driver: for X11+Pango (PostScript) and Wayland platforms
           +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
+          +- Fl_Display_Cairo_Graphics_Driver: used by X11 leg of hybrid Wayland/X11 platform
           +- Fl_PostScript_Graphics_Driver: for PostScript drawing with X11+Pango platform
       +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window (only partial implementation)
 

@@ -109,7 +109,7 @@ void grid_cb(Fl_Int_Input *i, long v) {
 void default_widget_size_cb(Fl_Round_Button *b, long size) {
   // Update the "normal" text size of new widgets...
   b->setonly();
-  Fl_Widget_Type::default_size = size;
+  Fl_Widget_Type::default_size = (int)size;
   fluid_prefs.set("widget_size", Fl_Widget_Type::default_size);
 }
 
@@ -483,6 +483,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
+    undo_checkpoint();
     ((Fl_Window_Type *)current_widget)->modal = i->value();
     set_modflag(1);
   }
@@ -494,6 +495,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
+    undo_checkpoint();
     ((Fl_Window_Type *)current_widget)->non_modal = i->value();
     set_modflag(1);
   }
@@ -505,6 +507,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
     i->show();
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
+    undo_checkpoint();
     ((Fl_Window*)(current_widget->o))->border(i->value());
     set_modflag(1);
   }
@@ -522,6 +525,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     i->value(((Fl_Widget_Type *)current_widget)->xclass);
   } else {
     int mod = 0;
+    undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         mod = 1;
@@ -1218,12 +1222,12 @@ void Fl_Window_Type::moveallchildren()
         Fl_Flex* f = (Fl_Flex*)ft->o;
         if (f->horizontal()) {
           if (myo->o->w()!=ow) {
-            f->set_size(myo->o, myo->o->w());
+            f->fixed(myo->o, myo->o->w());
             f->layout();
           }
         } else {
           if (myo->o->h()!=oh) {
-            f->set_size(myo->o, myo->o->h());
+            f->fixed(myo->o, myo->o->h());
             f->layout();
           }
         }

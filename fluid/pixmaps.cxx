@@ -18,6 +18,7 @@
 
 #include <FL/Fl_Pixmap.H>
 
+#include "pixmaps/bind.xpm"
 #include "pixmaps/lock.xpm"
 #include "pixmaps/protected.xpm"
 #include "pixmaps/invisible.xpm"
@@ -79,6 +80,7 @@
 #include "pixmaps/flRadioMenuitem.xpm"
 #include "pixmaps/flFlex.xpm"
 
+Fl_Pixmap *bind_pixmap;
 Fl_Pixmap *lock_pixmap;
 Fl_Pixmap *protected_pixmap;
 Fl_Pixmap *invisible_pixmap;
@@ -144,6 +146,7 @@ Fl_Pixmap *pixmap[57];
 
 void loadPixmaps()
 {
+  bind_pixmap = new Fl_Pixmap(bind_xpm); bind_pixmap->scale(16, 16);
   lock_pixmap = new Fl_Pixmap(lock_xpm); lock_pixmap->scale(16, 16);
   protected_pixmap = new Fl_Pixmap(protected_xpm); protected_pixmap->scale(16, 16);
   invisible_pixmap = new Fl_Pixmap(invisible_xpm); invisible_pixmap->scale(16, 16);

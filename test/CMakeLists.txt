@@ -150,12 +150,14 @@ CREATE_EXAMPLE (wizard wizard.cxx fltk)
 
 SET (UNITTEST_SRCS
   unittests.cxx
+  unittests.h
   unittest_about.cxx
   unittest_points.cxx
   unittest_complex_shapes.cxx
   unittest_fast_shapes.cxx
   unittest_circles.cxx
   unittest_text.cxx
+  unittest_unicode.cxx
   unittest_symbol.cxx
   unittest_images.cxx
   unittest_viewport.cxx

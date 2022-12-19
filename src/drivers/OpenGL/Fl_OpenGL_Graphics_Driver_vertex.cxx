@@ -138,10 +138,12 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
 
   // find the bounding box for this polygon
   v0 = xpoint;
+  v0->y -= 0.1f;
   float xMin = v0->x, xMax = xMin;
   int yMin = (int)v0->y, yMax = yMin;
   for (i = 1; i < n; i++) {
     v0++;
+    v0->y -= 0.1f;
     float v0x = v0->x;
     int v0y = (int)v0->y;
     if (v0x == GAP) continue;
@@ -157,14 +159,14 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
     return;
 
   // loop through the rows of the image
-  for (y = yMin; y < yMax; y++) {
+  for (y = yMin; y <= yMax; y++) {
     //  Build a list of all crossing points with this y axis
     v0 = xpoint + 0;
     v1 = xpoint + 1;
     nNodes = 0;
     for (i = 1; i < n; i++) {
       if (v1->x==GAP) { // skip the gap
-        i++; v0++; v1++;
+        i++; v0++; v1++; v0++; v1++;
         continue;
       }
       if (   (v1->y < y && v0->y >= y)
@@ -194,7 +196,9 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
     }
 
     //  fill the pixels between node pairs
-    glBegin(GL_LINES);
+//    Using lines requires additional attention to the current line width and pattern
+//    We are using glRectf instead
+//    glBegin(GL_LINES);
     for (i = 0; i < nNodes; i += 2) {
       float x0 = nodeX[i];
       if (x0 >= xMax)
@@ -205,11 +209,12 @@ void Fl_OpenGL_Graphics_Driver::end_complex_polygon()
           x0 = xMin;
         if (x1 > xMax)
           x1 = xMax;
-        glVertex2f((GLfloat)x0, (GLfloat)y);
-        glVertex2f((GLfloat)x1, (GLfloat)y);
+        glRectf((GLfloat)(x0-0.25f), (GLfloat)(y), (GLfloat)(x1+0.25f), (GLfloat)(y+1.0f));
+//        glVertex2f((GLfloat)x0, (GLfloat)y);
+//        glVertex2f((GLfloat)x1, (GLfloat)y);
       }
     }
-    glEnd();
+//    glEnd();
   }
 
   ::free(nodeX);

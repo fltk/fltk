@@ -1573,6 +1573,12 @@ struct wld_window *fl_wl_xid(const Fl_Window *win) {
 }
 
 
+struct wl_compositor *fl_wl_compositor() {
+  Fl_Wayland_Screen_Driver *screen_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  return screen_driver->wl_compositor;
+}
+
+
 Fl_Wayland_Plugin *Fl_Wayland_Window_Driver::gl_plugin() {
   static Fl_Wayland_Plugin *plugin = NULL;
   if (!plugin) {

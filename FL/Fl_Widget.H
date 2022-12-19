@@ -158,8 +158,9 @@ protected:
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         FULLSCREEN      = 1<<18,  ///< a fullscreen window (Fl_Window)
         MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
-        // (space for more flags)
         NEEDS_KEYBOARD  = 1<<20,  ///< set this on touch screen devices if a widget needs a keyboard when it gets Focus. @see Fl_Screen_Driver::request_keyboard()
+        IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
+        DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it no longer needed
         // a tiny bit more space for new flags...
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
@@ -518,45 +519,109 @@ public:
       \return the current image
    */
   Fl_Image* image() {return label_.image;}
+
   /** Gets the image that is used as part of the widget label when in the active state.
       \return the current image
    */
   const Fl_Image* image() const {return label_.image;}
 
   /** Sets the image to use as part of the widget label when in the active state.
-      \param[in] img the new image for the label
-      \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
+
+   The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
    and, if appropriate, for deleting it after the widget's deletion.
+
+   Calling image() with a new image will delete the old image if it
+   was bound, and set the new image without binding it. If old and new are
+   the same, the image will not be deleted, but it will be unbound.
+
+   Calling image() with NULL will delete the old image if
+   it was bound and not set a new image.
+
+   \param[in] img the new image for the label
+   \see bind_image(Fl_Image* img)
    */
-  void image(Fl_Image* img) {label_.image=img;}
+  void image(Fl_Image* img);
 
   /** Sets the image to use as part of the widget label when in the active state.
-      \param[in] img the new image for the label
+   \param[in] img the new image for the label
    \see void image(Fl_Image* img)
    */
-  void image(Fl_Image& img) {label_.image=&img;}
+  void image(Fl_Image& img);
+
+  /** Sets the image to use as part of the widget label when in the active state.
+
+   The image will be bound to the widget. When the widget is deleted, the
+   image will be deleted as well.
+
+   Calling bind_image() with a new image will delete the old image if it
+   was bound, and then set the new image, and bind that. If old and new image
+   are the same, nothing happens.
+
+   Calling bind_image() with NULL will delete the old image if
+   it was bound and not set a new image.
+
+   \param[in] img the new image for the label
+   \see void image(Fl_Image* img)
+   */
+  void bind_image(Fl_Image* img);
+
+  /** Bind the image to the widget, so the widget will delete the image when it is no longer needed.
+   \param f 1: mark the image as bound, 0: mark the image as managed by the user
+   \see image_bound(), bind_deimage()
+   */
+  void bind_image(int f) { if (f) set_flag(IMAGE_BOUND); else clear_flag(IMAGE_BOUND); }
+
+  /** Returns whether the image is managed by the widget.
+   \retval 0 if the image is not bound to the widget
+   \retval 1 if the image will be deleted when the widget is deleted
+   \see deimage_bound(), bind_image()
+   */
+  int image_bound() const {return ((flags_ & IMAGE_BOUND) ? 1 : 0);}
 
   /** Gets the image that is used as part of the widget label when in the inactive state.
       \return the current image for the deactivated widget
    */
   Fl_Image* deimage() {return label_.deimage;}
+
   /** Gets the image that is used as part of the widget label when in the inactive state.
       \return the current image for the deactivated widget
    */
   const Fl_Image* deimage() const {return label_.deimage;}
 
   /** Sets the image to use as part of the widget label when in the inactive state.
-      \param[in] img the new image for the deactivated widget
-      \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
+   \param[in] img the new image for the deactivated widget
+   \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
    and, if appropriate, for deleting it after the widget's deletion.
+   \see void bind_deimage(Fl_Image* img)
    */
-  void deimage(Fl_Image* img) {label_.deimage=img;}
+  void deimage(Fl_Image* img);
 
   /** Sets the image to use as part of the widget label when in the inactive state.
-      \param[in] img the new image for the deactivated widget
+   \param[in] img the new image for the deactivated widget
    \see void deimage(Fl_Image* img)
    */
-  void deimage(Fl_Image& img) {label_.deimage=&img;}
+  void deimage(Fl_Image& img);
+
+  /** Sets the image to use as part of the widget label when in the inactive state.
+   \param[in] img the new image for the deactivated widget
+   \note The image will be bound to the widget. When the widget is deleted, the
+   image will be deleted as well.
+   \see void deimage(Fl_Image* img)
+   */
+  void bind_deimage(Fl_Image* img);
+
+  /** Returns whether the inactive image is managed by the widget.
+   \retval 0 if the image is not bound to the widget
+   \retval 1 if the image will be deleted when the widget is deleted
+   \see image_bound(), bind_deimage()
+   */
+  int deimage_bound() const {return ((flags_ & DEIMAGE_BOUND) ? 1 : 0);}
+
+  /** Bind the inactive image to the widget, so the widget will delete the image when it is no longer needed.
+   \param f 1: mark the image as bound, 0: mark the image as managed by the user
+   \see deimage_bound(), bind_image()
+   */
+  void bind_deimage(int f) { if (f) set_flag(DEIMAGE_BOUND); else clear_flag(DEIMAGE_BOUND); }
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL

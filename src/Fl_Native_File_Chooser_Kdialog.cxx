@@ -67,31 +67,9 @@ static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
 }
 
 
-int Fl_Kdialog_Native_File_Chooser_Driver::show() {
+char *Fl_Kdialog_Native_File_Chooser_Driver::build_command() {
   const char *option;
   switch (_btype) {
-    case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY: {
-      // BROWSE_MULTI_DIRECTORY is not supported by kdialog, run GTK chooser instead
-      Fl_Native_File_Chooser fnfc(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
-      fnfc.title( title() );
-      fnfc.directory(directory());
-      fnfc.preset_file(preset_file());
-      fnfc.filter(filter());
-      fnfc.options(options());
-      int retval = fnfc.show();
-      for (int i = 0; i < _tpathnames; i++) delete[] _pathnames[i];
-      delete[] _pathnames; _pathnames = NULL;
-      _tpathnames = fnfc.count();
-      if (_tpathnames && retval == 0) {
-        _pathnames = new char*[_tpathnames];
-        for (int i = 0; i < _tpathnames; i++) {
-          _pathnames[i] = new char[strlen(fnfc.filename(i))+1];
-          strcpy(_pathnames[i], fnfc.filename(i));
-        }
-      }
-      return retval;
-    }
-      break;
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
       option = "--getexistingdirectory";
       break;
@@ -126,6 +104,34 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
              " \"%s\" ", _parsedfilt);
   }
   strcat(command, "2> /dev/null"); // get rid of stderr output
+  return command;
+}
+
+
+int Fl_Kdialog_Native_File_Chooser_Driver::show() {
+  if (_btype == Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY) {
+      // BROWSE_MULTI_DIRECTORY is not supported by kdialog, run GTK chooser instead
+      Fl_Native_File_Chooser fnfc(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
+      fnfc.title( title() );
+      fnfc.directory(directory());
+      fnfc.preset_file(preset_file());
+      fnfc.filter(filter());
+      fnfc.options(options());
+      int retval = fnfc.show();
+      for (int i = 0; i < _tpathnames; i++) delete[] _pathnames[i];
+      delete[] _pathnames; _pathnames = NULL;
+      _tpathnames = fnfc.count();
+      if (_tpathnames && retval == 0) {
+        _pathnames = new char*[_tpathnames];
+        for (int i = 0; i < _tpathnames; i++) {
+          _pathnames[i] = new char[strlen(fnfc.filename(i))+1];
+          strcpy(_pathnames[i], fnfc.filename(i));
+        }
+      }
+      return retval;
+  }
+
+  char *command = build_command();
 //puts(command);
   FILE *pipe = popen(command, "r");
   fnfc_pipe_struct data;
@@ -243,7 +249,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::filter(const char *f) {
   while (part) {
     char *p = parse_filter(part);
     _parsedfilt = strapp(_parsedfilt, p);
-    _parsedfilt = strapp(_parsedfilt, "\\n");
+    _parsedfilt = strapp(_parsedfilt, "\n");
     delete[] p;
     _nfilters++;
     part = strtok_r(NULL, "\n", &ptr);

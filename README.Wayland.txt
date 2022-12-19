@@ -29,8 +29,8 @@ Version 1.4 of the FLTK library introduces support of the public FLTK API on
 the Wayland platform. It requires a Wayland-equipped OS, namely Linux or FreeBSD.
 Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
-The code has been tested on Debian, Ubuntu and Fedora with 3 distinct Wayland
-compositors: mutter (Gnome's compositor), weston, and KDE.
+The code has been tested on Debian, Ubuntu, RaspberryPiOS and Fedora with
+3 distinct Wayland compositors: mutter (Gnome's compositor), weston, and KDE.
 The code has also been tested under FreeBSD and the sway wayland compositor.
 CJK text-input methods, as well as dead and compose keys are supported.
 
@@ -105,6 +105,9 @@ tested in that situation.
 * Text input methods have been tested without any understanding of the writing systems,
 so feedback on this subject would be helpful.
 
+* Using OpenGL inside Wayland windows doesn't seem to work on RaspberryPi hardware,
+although it works inside X11 windows on the same hardware.
+
 
 3 Preparing Platform Specific Code for the Wayland Platform
 ===========================================================
@@ -170,8 +173,8 @@ should run with a Wayland-enabled, FLTK 1.4 library with that single change only
 The following are notes about building FLTK for the Wayland platform
 on the various supported Linux distributions/OS.
 
-4.1 Debian and Derivatives (like Ubuntu)
-----------------------------------------
+4.1 Debian and Derivatives (like Ubuntu, RaspberryPiOS)
+-------------------------------------------------------
 
 Under Debian, the Wayland platform requires version 11 (a.k.a. Bullseye) or more recent.
 Under Ubuntu, the Wayland platform is known to work with version 20.04 (focal fossa) or
@@ -185,6 +188,7 @@ in section 2.1 of file README.Unix.txt :
 - wayland-protocols
 - libdbus-1-dev
 - libxkbcommon-dev
+- libxinerama-dev
 - libgtk-3-dev   <== highly recommended, gives windows a GTK-style titlebar
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake

@@ -40,7 +40,7 @@ public:
   void deimage(Fl_Widget *); // set the deimage of this widget
   void write_static();
   void write_initializer(const char *type_name, const char *format, ...);
-  void write_code(const char *var, int inactive = 0);
+  void write_code(int bind, const char *var, int inactive = 0);
   void write_inline(int inactive = 0);
   void write_file_error(const char *fmt);
   const char *name() const {return name_;}

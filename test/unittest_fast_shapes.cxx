@@ -25,7 +25,7 @@
 
 #if 0
 
-// TODO:
+// not testing yet:
 void fl_line(int x, int y, int x1, int y1)
 void fl_line(int x, int y, int x1, int y1, int x2, int y2)
 
@@ -186,10 +186,10 @@ void draw_fast_shapes() {
 
 #if HAVE_GL
 
-class GLRectTest : public Fl_Gl_Window {
+class Ut_GL_Rect_Test : public Fl_Gl_Window {
 public:
-  GLRectTest(int x, int y, int w, int h)
-  : Fl_Gl_Window(x, y, w, h) {
+  Ut_GL_Rect_Test(int x, int y, int w, int h)
+    : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
   }
   void draw() {
@@ -203,10 +203,10 @@ public:
 
 #endif
 
-class NativeRectTest : public Fl_Window {
+class Ut_Native_Rect_Test : public Fl_Window {
 public:
-  NativeRectTest(int x, int y, int w, int h)
-  : Fl_Window(x, y, w, h) {
+  Ut_Native_Rect_Test(int x, int y, int w, int h)
+    : Fl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
     end();
   }
@@ -216,12 +216,13 @@ public:
   }
 };
 
-class RectTest : public Fl_Group { // 520 x 365
+class Ut_Rect_Test : public Fl_Group { // 520 x 365
 public:
   static Fl_Widget *create() {
-    return new RectTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Rect_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  RectTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
+  Ut_Rect_Test(int x, int y, int w, int h)
+    : Fl_Group(x, y, w, h) {
     label("Testing FLTK fast shape calls.\n"
           "These calls draw horizontal and vertical lines, frames, and rectangles.\n\n"
           "No red pixels should be visible. "
@@ -234,7 +235,7 @@ public:
     Fl_Box *t = new Fl_Box(a, b-24, 80, 18, "native");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    /* NativeRectTest *nr = */ new NativeRectTest(a+23, b-1, 200, 200);
+    /* NativeRectTest *nr = */ new Ut_Native_Rect_Test(a+23, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 18, 18, "1");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -306,7 +307,7 @@ public:
     t = new Fl_Box(a, b-24, 80, 18, "OpenGL");
     t->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
-    /*GLRectTest *glr = */ new GLRectTest(a+31, b-1, 200, 200);
+    /*GLRectTest *glr = */ new Ut_GL_Rect_Test(a+31, b-1, 200, 200);
 
     t = new Fl_Box(a, b, 26, 18, "1a");
     t->box(FL_ROUNDED_BOX); t->color(FL_YELLOW);
@@ -380,4 +381,4 @@ public:
   }
 };
 
-UnitTest rects(kTestFastShapes, "Fast Shapes", RectTest::create);
+UnitTest rects(UT_TEST_FAST_SHAPES, "Fast Shapes", Ut_Rect_Test::create);

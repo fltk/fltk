@@ -66,6 +66,8 @@ public:
   const char *xclass; // junk string, used for shortcut
   Fl_Widget *o;
   int public_;
+  int bind_image_;
+  int bind_deimage_;
 
   Fluid_Image *image;
   void setimage(Fluid_Image *);

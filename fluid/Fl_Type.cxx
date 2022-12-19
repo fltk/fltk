@@ -267,7 +267,6 @@ Fl_Type::Fl_Type() {
   user_data_type_ = 0;
   callback_ = 0;
   comment_ = 0;
-  rtti = 0;
   level = 0;
   code_position = header_position = -1;
   code_position_end = header_position_end = -1;

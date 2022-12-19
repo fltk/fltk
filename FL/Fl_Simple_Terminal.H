@@ -123,21 +123,66 @@ protected:
   Fl_Text_Buffer *sbuf;     // style buffer
 
 private:
-  int history_lines_;       // max lines allowed in screen history
+  // Private class to handle parsing ESC sequences
+  //    Holds all state information for parsing esc sequences,
+  //    so sequences can span multiple block read(2) operations, etc.
+  //
+  class Fl_Escape_Seq {
+  public:
+    static const int maxbuf   = 80;
+    static const int maxvals  = 10;
+    // Return codes
+    static const int success   = 0;   // operation succeeded
+    static const int fail      = -1;  // operation failed
+    static const int completed = 1;   // multi-step operation completed successfully
+  private:
+    char  esc_mode_;        // escape parsing mode state
+    char  buf_[maxbuf];     // escape sequence being parsed
+    char *bufp_;            // parsing ptr into buf[]
+    char *bufendp_;         // end of buf[] (ptr to last valid buf char)
+    char *valbufp_;         // pointer to first char in buf of integer being parsed
+    int   vals_[maxvals];   // value array for parsing #'s in ESC[#;#;#..
+    int   vali_;            // parsing index into vals_[], 0 if none
+
+    int append_buf(char c);
+    int append_val();
+
+  public:
+    Fl_Escape_Seq();
+    void reset();
+    char esc_mode() const;
+    void esc_mode(char val);
+    int  total_vals() const;
+    int  val(int i) const;
+    bool parse_in_progress() const;
+    int parse(char c);
+  };
+
+private:
+  int  history_lines_;      // max lines allowed in screen history
   bool stay_at_bottom_;     // lets scroller chase last line in buffer
-  bool ansi_;               // enables ANSI sequences
   // scroll management
-  int lines;                // #lines in buffer (optimization: Fl_Text_Buffer slow to calc this)
-  bool scrollaway;          // true when user changed vscroll away from bottom
-  bool scrolling;           // true while scroll callback active
+  int  lines_;              // #lines in buffer (optimization: Fl_Text_Buffer slow to calc this)
+  bool scrollaway_;         // true when user changed vscroll away from bottom
+  bool scrolling_;          // true while scroll callback active
   // Fl_Text_Display vscrollbar's callback+data
-  Fl_Callback *orig_vscroll_cb;
-  void *orig_vscroll_data;
+  Fl_Callback *orig_vscroll_cb_;
+  void *orig_vscroll_data_;
   // Style table
   const Fl_Text_Display::Style_Table_Entry *stable_;  // the active style table
-  int stable_size_;         // active style table size (in bytes)
-  int normal_style_index_;  // "normal" style used by "\033[0m" reset sequence
-  int current_style_index_; // current style used for drawing text
+  int  stable_size_;         // active style table size (in bytes)
+  int  normal_style_index_;  // "normal" style used by "\033[0m" reset sequence
+  int  current_style_index_; // current style used for drawing text
+  char current_style_;       // current 'style char' (e.g. 'A' = first style entry)
+  // ANSI escape seq
+  Fl_Escape_Seq escseq;      // escape sequence state handler
+  bool ansi_;                // enables ANSI sequences
+  bool ansi_show_unknown_;   // show '¿' for unknown ESC sequences (default: off)
+  // String parsing vars initialized/used by append(), used by handle_backspace() etc.
+  char *ntm_;                // new text memory  (ntm) - malloc()ed by append() for output text
+  char *ntp_;                // new text ptr     (ntp) - points into ntm buffer
+  char *nsm_;                // new style memory (nsm) - malloc()ed by append() for output style
+  char *nsp_;                // new style ptr    (nsp) - points into nsm buffer
 
 public:
   Fl_Simple_Terminal(int X,int Y,int W,int H,const char *l=0);
@@ -150,6 +195,8 @@ public:
   int  history_lines() const;
   void ansi(bool val);
   bool ansi() const;
+  void ansi_show_unknown(bool val);
+  bool ansi_show_unknown() const;
   void style_table(Fl_Text_Display::Style_Table_Entry *stable, int stable_size, int normal_style_index=0);
   const Fl_Text_Display::Style_Table_Entry *style_table() const;
   int style_table_size() const;
@@ -157,6 +204,7 @@ public:
   int  normal_style_index() const;
   void current_style_index(int);
   int  current_style_index() const;
+  int  current_style() const;
 
   // Terminal text management
   void append(const char *s, int len=-1);
@@ -187,6 +235,10 @@ protected:
   void enforce_history_lines();
   void vscroll_cb2(Fl_Widget*, void*);
   static void vscroll_cb(Fl_Widget*, void*);
+  void backspace_buffer(unsigned int count);
+  void handle_backspace();
+  void append_ansi(const char *s, int len);
+  void unknown_escape();
 };
 
 #endif

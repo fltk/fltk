@@ -18,6 +18,7 @@
 #include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 #if USE_KDIALOG
+#  include "Fl_Native_File_Chooser_Zenity.H"
 #  include "Fl_Native_File_Chooser_Kdialog.H"
 #endif
 
@@ -923,15 +924,32 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  // Use kdialog if available at run-time and if using the KDE desktop,
-  // else, use GTK dialog if available at run-time
+  // Use zenity if available at run-time even if using the KDE desktop,
+  // because its portal integration means the KDE chooser will be used.
+  // Else use kdialog if available at run-time and if using the KDE
+  // desktop, else, use GTK dialog if available at run-time
   // otherwise, use FLTK file chooser.
   platform_fnfc = NULL;
   fl_open_display();
   if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
 #if USE_KDIALOG
+    if (Fl::option(Fl::OPTION_FNFC_USES_ZENITY)&& val != BROWSE_MULTI_DIRECTORY) {
+      if (!Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity) {
+        // First Time here, try to find zenity
+        FILE *pipe = popen("zenity --version 2> /dev/null", "r");
+        if (pipe) {
+          char *p, line[100] = "";
+          p = fgets(line, sizeof(line), pipe);
+          if (p && strlen(line) > 0) Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity = true;
+          pclose(pipe);
+        }
+        Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = true;
+      }
+      // if we found zenity, we will use the Fl_Zenity_Native_File_Chooser_Driver
+      if (Fl_Zenity_Native_File_Chooser_Driver::did_find_zenity) platform_fnfc = new Fl_Zenity_Native_File_Chooser_Driver(val);
+    }
     const char *desktop = getenv("XDG_CURRENT_DESKTOP");
-    if (desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {
+    if (!platform_fnfc && desktop && strcmp(desktop, "KDE") == 0 && val != BROWSE_MULTI_DIRECTORY) {
       if (!Fl_Kdialog_Native_File_Chooser_Driver::have_looked_for_kdialog) {
         // First Time here, try to find kdialog
         FILE *pipe = popen("kdialog -v 2> /dev/null", "r");

@@ -267,6 +267,13 @@ if (UNIX)
 
     option (OPTION_ALLOW_GTK_PLUGIN "Allow to use libdecor's GTK plugin" ON)
 
+    if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+      CHECK_INCLUDE_FILE (linux/input.h LINUX_INPUT_H)
+      if (NOT LINUX_INPUT_H)
+        message (FATAL_ERROR "Required include file 'linux/input.h' is missing. Please install package 'evdev-proto'")
+      endif (NOT LINUX_INPUT_H)
+    endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+
   endif (OPTION_USE_WAYLAND)
 endif (UNIX)
 

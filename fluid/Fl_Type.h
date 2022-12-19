@@ -64,7 +64,6 @@ public: // things that should not be public:
   char selected; // copied here by selection_changed()
   char open_;   // state of triangle in browser
   char visible; // true if all parents are open
-  char rtti;    // hack because I have no rtti, this is 0 for base class
   int level;    // number of parents over this
   static Fl_Type *first, *last;
   Fl_Type *next, *prev;

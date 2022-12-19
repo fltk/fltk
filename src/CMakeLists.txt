@@ -216,7 +216,8 @@ if (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
   )
 
   if (OPTION_USE_KDIALOG)
-    set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx)
+    set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx
+      Fl_Native_File_Chooser_Zenity.cxx)
   endif (OPTION_USE_KDIALOG)
 
   if (FLTK_USE_CAIRO)
@@ -286,8 +287,11 @@ elseif (OPTION_USE_WAYLAND)
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
-    Fl_Native_File_Chooser_Kdialog.cxx
     )
+    if (OPTION_USE_KDIALOG)
+      set (DRIVER_FILES ${DRIVER_FILES} Fl_Native_File_Chooser_Kdialog.cxx
+        Fl_Native_File_Chooser_Zenity.cxx)
+    endif (OPTION_USE_KDIALOG)
     if (FLTK_USE_X11)
       list (APPEND DRIVER_FILES
         drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
@@ -465,6 +469,7 @@ set (IMGCPPFILES
   Fl_File_Icon2.cxx
   Fl_GIF_Image.cxx
   Fl_Help_Dialog.cxx
+  Fl_ICO_Image.cxx
   Fl_JPEG_Image.cxx
   Fl_PNG_Image.cxx
   Fl_PNM_Image.cxx

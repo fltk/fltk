@@ -982,6 +982,8 @@ this to exit. It may be useful to call this if you want your program to continue
 without the Wayland connection. You cannot open the display again, and
 cannot call any FLTK functions.
 
+\see \ref wayland_H "wayland.H" for all functions specific of the Wayland platform.
+
 \subsection osissues_wayland_scaling HiDPI display support
 FLTK Wayland apps automatically scale according to the Wayland-defined, integer-valued
 scale factor. On a HiDPI display, it's enough to set this factor to 2 for

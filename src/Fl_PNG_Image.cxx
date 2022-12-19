@@ -4,7 +4,7 @@
 // Copyright 1997-2012 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
-// Copyright 2013-2021 by Bill Spitzak and others.
+// Copyright 2013-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -87,9 +87,15 @@ extern "C" {
  */
 Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
 {
-  load_png_(filename, NULL, 0);
+  load_png_(filename, 0, NULL, 0);
 }
 
+// private c'tor used by Fl_ICO_Image
+// \param     offset      Offset to seek for the begin of PNG data inside a .ICO file
+Fl_PNG_Image::Fl_PNG_Image (const char *filename, int offset): Fl_RGB_Image(0,0,0)
+{
+  load_png_(filename, offset, NULL, 0);
+}
 
 /**
  \brief Constructor that reads a PNG image from memory.
@@ -106,11 +112,11 @@ Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
 Fl_PNG_Image::Fl_PNG_Image (
       const char *name_png, const unsigned char *buffer, int maxsize): Fl_RGB_Image(0,0,0)
 {
-  load_png_(name_png, buffer, maxsize);
+  load_png_(name_png, 0, buffer, maxsize);
 }
 
 
-void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_png, int maxsize)
+void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned char *buffer_png, int maxsize)
 {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
   int i;                // Looping var
@@ -131,6 +137,12 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (!from_memory) {
     if ((*fp = fl_fopen(name_png, "rb")) == NULL) {
       ld(ERR_FILE_ACCESS);
+      delete fp;
+      return;
+    }
+    if (offset > 0 && fseek(*fp, (long)offset, SEEK_SET) == -1) {
+      fclose(*fp);
+      ld(ERR_FORMAT);
       delete fp;
       return;
     }

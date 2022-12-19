@@ -27,7 +27,7 @@
 //
 // Test new 1.3.x global vs. local scrollbar sizing
 //
-class MyTable : public Fl_Table {
+class Ut_Table : public Fl_Table {
   // Handle drawing table's cells
   //     Fl_Table calls this function to draw each visible cell in the table.
   //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
@@ -57,7 +57,8 @@ class MyTable : public Fl_Table {
   // Constructor
   //     Make our data array, and initialize the table options.
   //
-  MyTable(int X, int Y, int W, int H, const char *L=0) : Fl_Table(X,Y,W,H,L) {
+  Ut_Table(int X, int Y, int W, int H, const char *L=0)
+    : Fl_Table(X,Y,W,H,L) {
     // Rows
     rows(13);                   // how many rows
     row_height_all(10);         // default height of rows
@@ -66,7 +67,7 @@ class MyTable : public Fl_Table {
     col_width_all(10);          // default width of columns
     end();                      // end the Fl_Table group
   }
-  ~MyTable() { }
+  ~Ut_Table() { }
 };
 
 static const char *phonetics[] = {
@@ -76,10 +77,10 @@ static const char *phonetics[] = {
   "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu", NULL
 };
 
-class ScrollBarSizeTest : public Fl_Group {
+class Ut_Scrollbar_Size_Test : public Fl_Group {
     Fl_Browser      *brow_a, *brow_b, *brow_c;
     Fl_Tree         *tree_a, *tree_b, *tree_c;
-    MyTable         *table_a,*table_b,*table_c;
+    Ut_Table         *table_a,*table_b,*table_c;
     Fl_Text_Display *text_a, *text_b, *text_c;
 
     Fl_Browser *makebrowser(int X,int Y,int W,int H,const char*L=0) {
@@ -102,8 +103,8 @@ class ScrollBarSizeTest : public Fl_Group {
         }
         return(b);
     }
-    MyTable *maketable(int X,int Y,int W,int H,const char*L=0) {
-        MyTable *mta = new MyTable(X,Y,W,H,L);
+    Ut_Table *maketable(int X,int Y,int W,int H,const char*L=0) {
+        Ut_Table *mta = new Ut_Table(X,Y,W,H,L);
         mta->align(FL_ALIGN_TOP);
         mta->end();
         return(mta);
@@ -133,16 +134,17 @@ class ScrollBarSizeTest : public Fl_Group {
         in->window()->redraw();
     }
     static void slide_cb(Fl_Widget *w, void *data) {
-        ScrollBarSizeTest *o = (ScrollBarSizeTest*)data;
+        Ut_Scrollbar_Size_Test *o = (Ut_Scrollbar_Size_Test*)data;
         o->slide_cb2((Fl_Value_Slider*)w);
     }
 public:
     static Fl_Widget *create() {
-      return(new ScrollBarSizeTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H));
+      return(new Ut_Scrollbar_Size_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H));
     }
 
     // CTOR
-    ScrollBarSizeTest(int X, int Y, int W, int H) : Fl_Group(X,Y,W,H) {
+    Ut_Scrollbar_Size_Test(int X, int Y, int W, int H)
+      : Fl_Group(X,Y,W,H) {
       begin();
         //      _____________    _______________
         //     |_____________|  |_______________|
@@ -219,4 +221,4 @@ public:
     }
 };
 
-UnitTest scrollbarsize(kTestScrollbarsize, "Scrollbar Size", ScrollBarSizeTest::create);
+UnitTest scrollbarsize(UT_TEST_SCROLLBARSIZE, "Scrollbar Size", Ut_Scrollbar_Size_Test::create);

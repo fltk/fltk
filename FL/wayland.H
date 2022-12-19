@@ -19,7 +19,7 @@
 #endif // !FL_PLATFORM_H
 
 /** \file
- Definitions of functions specific to the Wayland platform.
+ \anchor wayland_H Definitions of functions specific to the Wayland platform.
 */
 
 // ***********  for Wayland component ***********
@@ -36,6 +36,13 @@ extern FL_EXPORT struct wld_window *fl_wl_xid(const Fl_Window *win);
 extern FL_EXPORT Fl_Window *fl_wl_find(struct wld_window *);
 /** Returns the cairo context associated to the current window*/
 extern FL_EXPORT cairo_t *fl_wl_cairo();
+/** Returns the wl_compositor of the current Wayland session.
+ This allows, for example, to create a wl_surface with
+ \code
+ struct wl_surface *my_wl_surface = wl_compositor_create_surface(fl_wl_compositor());
+ \endcode
+ */
+extern FL_EXPORT struct wl_compositor *fl_wl_compositor();
 typedef void *EGLContext;
 /** Returns the EGLContext corresponding to the given GLContext */
 extern FL_EXPORT EGLContext fl_wl_glcontext(GLContext rc);

@@ -189,9 +189,9 @@ Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   int nc = s->children(), nd = d->children();
   if (nc>nd) nc = nd;
   for (int i=0; i<nc; i++) {
-    if (s->set_size(s->child(i))) {
+    if (s->fixed(s->child(i))) {
       Fl_Widget *dc = d->child(i);
-      d->set_size(d->child(i), s->horizontal() ? dc->w() : dc->h());
+      d->fixed(d->child(i), s->horizontal() ? dc->w() : dc->h());
     }
   }
   grp->end(); //this also updates the layout
@@ -203,7 +203,7 @@ void Fl_Flex_Type::copy_properties()
   Fl_Group_Type::copy_properties();
   Fl_Flex *d = (Fl_Flex*)live_widget, *s =(Fl_Flex*)o;
   int lm, tm, rm, bm;
-  s->margins(&lm, &tm, &rm, &bm);
+  s->margin(&lm, &tm, &rm, &bm);
   d->margin(lm, tm, rm, bm);
   d->gap( s->gap() );
 }
@@ -213,20 +213,20 @@ void Fl_Flex_Type::write_properties()
   Fl_Group_Type::write_properties();
   Fl_Flex* f = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margins(&lm, &tm, &rm, &bm);
+  f->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_string("margins {%d %d %d %d}", lm, tm, rm, bm);
+    write_string("margin {%d %d %d %d}", lm, tm, rm, bm);
   if (f->gap())
     write_string("gap %d", f->gap());
   int nSet = 0;
   for (int i=0; i<f->children(); i++)
-    if (f->set_size(f->child(i)))
+    if (f->fixed(f->child(i)))
       nSet++;
   if (nSet) {
-    write_string("set_size_tuples {%d", nSet);
+    write_string("fixed_size_tuples {%d", nSet);
     for (int i=0; i<f->children(); i++) {
       Fl_Widget *ci = f->child(i);
-      if (f->set_size(ci))
+      if (f->fixed(ci))
         write_string(" %d %d", i, f->horizontal() ? ci->w() : ci->h());
     }
     write_string("}");
@@ -237,7 +237,7 @@ void Fl_Flex_Type::read_property(const char *c)
 {
   Fl_Flex* f = (Fl_Flex*)o;
   suspend_auto_layout = 1;
-  if (!strcmp(c,"margins")) {
+  if (!strcmp(c,"margin")) {
     int lm, tm, rm, bm;
     if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
       f->margin(lm, tm, rm, bm);
@@ -245,7 +245,7 @@ void Fl_Flex_Type::read_property(const char *c)
     int g;
     if (sscanf(read_word(),"%d",&g))
       f->gap(g);
-  } else if (!strcmp(c,"set_size_tuples")) {
+  } else if (!strcmp(c,"fixed_size_tuples")) {
     read_word(1); // must be '{'
     const char *nStr = read_word(1); // number of indices in table
     fixedSizeTupleSize = atoi(nStr);
@@ -271,7 +271,7 @@ void Fl_Flex_Type::postprocess_read()
     int size = fixedSizeTuple[2*i+1];
     if (ix>=0 && ix<f->children()) {
       Fl_Widget *ci = f->child(ix);
-      f->set_size(ci, size);
+      f->fixed(ci, size);
     }
   }
   fixedSizeTupleSize = 0;
@@ -285,15 +285,15 @@ void Fl_Flex_Type::write_code2() {
   const char *var = name() ? name() : "o";
   Fl_Flex* f = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margins(&lm, &tm, &rm, &bm);
+  f->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
     write_c("%s%s->margin(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
   if (f->gap())
     write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
   for (int i=0; i<f->children(); ++i) {
     Fl_Widget *ci = f->child(i);
-    if (f->set_size(ci))
-      write_c("%s%s->set_size(%s->child(%d), %d);\n", indent(), var, var, i,
+    if (f->fixed(ci))
+      write_c("%s%s->fixed(%s->child(%d), %d);\n", indent(), var, var, i,
               f->horizontal() ? ci->w() : ci->h());
   }
   Fl_Group_Type::write_code2();
@@ -313,7 +313,7 @@ void Fl_Flex_Type::move_child(Fl_Type* a, Fl_Type* b) {
 
 void Fl_Flex_Type::remove_child(Fl_Type* a) {
   if (a->is_widget())
-    ((Fl_Flex*)o)->set_size(((Fl_Widget_Type*)a)->o, 0);
+    ((Fl_Flex*)o)->fixed(((Fl_Widget_Type*)a)->o, 0);
   Fl_Group_Type::remove_child(a);
   ((Fl_Flex*)o)->layout();
 }
@@ -331,7 +331,7 @@ void Fl_Flex_Type::change_subtype_to(int n) {
     int dw = Fl::box_dw(f->box());
     int dh = Fl::box_dh(f->box());
     int lm, tm, rm, bm;
-    f->margins(&lm, &tm, &rm, &bm);
+    f->margin(&lm, &tm, &rm, &bm);
     int gap = f->gap();
     int fw = f->w()-dw-lm-rm-(nc*gap);
     if (fw<=nc) fw = nc; // avoid division by zero
@@ -369,7 +369,7 @@ int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
   Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
-  if (fixed_only && !f->set_size(w)) return 0;
+  if (fixed_only && !f->fixed(w)) return 0;
   return f->horizontal() ? w->w() : w->h();
 }
 
@@ -380,7 +380,7 @@ int Fl_Flex_Type::is_fixed(Fl_Type *t) {
   Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
-  return f->set_size(w);
+  return f->fixed(w);
 }
 
 ////////////////////////////////////////////////////////////////

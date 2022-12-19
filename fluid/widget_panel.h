@@ -32,8 +32,11 @@ extern void labeltype_cb(Fl_Choice*, void*);
 extern void image_cb(Fl_Input*, void*);
 #include <FL/Fl_Button.H>
 extern void image_browse_cb(Fl_Button*, void*);
+#include "pixmaps.h"
+extern void bind_image_cb(Fl_Button*, void*);
 extern void inactive_cb(Fl_Input*, void*);
 extern void inactive_browse_cb(Fl_Button*, void*);
+extern void bind_deimage_cb(Fl_Button*, void*);
 extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
@@ -90,14 +93,24 @@ extern Fl_Menu_Item fontmenu[];
 extern void labelfont_cb(Fl_Choice*, void*);
 extern void labelsize_cb(Fl_Value_Input*, void*);
 extern void labelcolor_cb(Fl_Button*, void*);
+extern Fl_Button *w_labelcolor;
+#include <FL/Fl_Menu_Button.H>
+extern Fl_Menu_Item colormenu[];
+extern void labelcolor_menu_cb(Fl_Menu_Button*, void*);
 extern Fl_Menu_Item boxmenu[];
 extern void box_cb(Fl_Choice*, void*);
 extern void color_cb(Fl_Button*, void*);
+extern Fl_Button *w_color;
+extern void color_menu_cb(Fl_Menu_Button*, void*);
 extern void down_box_cb(Fl_Choice*, void*);
 extern void color2_cb(Fl_Button*, void*);
+extern Fl_Button *w_selectcolor;
+extern void color2_menu_cb(Fl_Menu_Button*, void*);
 extern void textfont_cb(Fl_Choice*, void*);
 extern void textsize_cb(Fl_Value_Input*, void*);
 extern void textcolor_cb(Fl_Button*, void*);
+extern Fl_Button *w_textcolor;
+extern void textcolor_menu_cb(Fl_Menu_Button*, void*);
 extern void subclass_cb(Fl_Input*, void*);
 extern void subtype_cb(Fl_Choice*, void*);
 extern void name_cb(Fl_Input*, void*);
@@ -113,20 +126,20 @@ extern void callback_cb(CodeEditor*, void*);
 extern CodeEditor *wCallback;
 extern void user_data_cb(Fl_Input*, void*);
 extern Fl_Menu_Item whenmenu[];
-extern void when_cb(Fl_Choice*, void*);
-extern void user_data_type_cb(Fl_Input*, void*);
-extern void when_button_cb(Fl_Light_Button*, void*);
-extern void revert_cb(Fl_Button*, void*);
+extern void when_cb(Fl_Menu_Button*, void*);
+#include <FL/Fl_Input_Choice.H>
+extern void user_data_type_cb(Fl_Input_Choice*, void*);
+extern Fl_Box *w_when_box;
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
 extern void overlay_cb(Fl_Button*, void*);
 #include <FL/Fl_Return_Button.H>
 extern void ok_cb(Fl_Return_Button*, void*);
-extern void cancel_cb(Fl_Button*, void*);
 Fl_Double_Window* make_widget_panel();
 extern Fl_Menu_Item menu_[];
 extern Fl_Menu_Item menu_1[];
 extern Fl_Menu_Item menu_Children[];
 extern Fl_Menu_Item menu_2[];
 extern Fl_Menu_Item menu_3[];
+extern Fl_Menu_Item menu_4[];
 #endif

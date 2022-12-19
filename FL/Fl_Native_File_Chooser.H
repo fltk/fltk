@@ -103,14 +103,22 @@ class Fl_Native_File_Chooser_Driver;
 
  <B>Platform Specific Caveats</B>
 
- - Under X windows, and if Fl::OPTION_FNFC_USES_GTK has not been switched off,
- the widget attempts to use standard GTK file chooser dialogs if they are
- available at run-time on the platform, and falls back to use FLTK's Fl_File_Chooser if they are not.
- In the first case, calling fl_register_images() adds  a "Preview" button to the GTK chooser dialog.
- In the latter case, it's best if you call Fl_File_Icon::load_system_icons()
+ - Under X11/Wayland,  what dialog opens is determined as follows:
+ -# If command \p zenity is available at run-time and if \p Fl::option(OPTION_FNFC_USES_ZENITY) is
+ not turned off, the \p zenity -based dialog opens. This is expected to be more appropriate
+ than other dialog forms for sandboxed apps.
+ -# Else if the app runs under the KDE desktop and if command \p kdialog is available at run-time
+ and if the library was not built with <tt>cmake -DOPTION_USE_KDIALOG=Off</tt>, the
+ \p kdialog -based dialog opens.
+ -# Else if the GTK library is available at run-time on the computer and if \p Fl::option(OPTION_FNFC_USES_GTK) is
+ not turned off, the GTK-styled dialog opens. Call fl_register_images() to add  a "Preview" button to this dialog.
+ Use the static public attributes of class Fl_File_Chooser to localize the browser.
+ -# Otherwise, FLTK's own dialog produced by the Fl_File_Chooser class opens.
+ Call fl_register_images() to add  a "Preview" button to it.
+ It's best if you also call Fl_File_Icon::load_system_icons()
  at the start of main(), to enable the nicer looking file browser widgets.
- Use the static public attributes of class Fl_File_Chooser to localize
- the browser.
+ Use the static public attributes of class Fl_File_Chooser to localize the browser.
+
  - Some operating systems support certain OS specific options; see
  Fl_Native_File_Chooser::options() for a list.
 

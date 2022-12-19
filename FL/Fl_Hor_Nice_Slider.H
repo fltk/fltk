@@ -22,6 +22,15 @@
 
 #include "Fl_Slider.H"
 
+/** \class Fl_Hor_Nice_Slider
+
+ \brief Single thumb tab slider
+
+ \image html fl_hor_nice_slider.png "Fl_Hor_Nice_Slider with various Fl::scheme() values"
+ \image latex fl_hor_nice_slider.png "Fl_Hor_Nice_Slider with various Fl::scheme() values" width=6cm
+
+**/
+
 class FL_EXPORT Fl_Hor_Nice_Slider : public Fl_Slider {
 public:
   Fl_Hor_Nice_Slider(int X,int Y,int W,int H,const char *L=0);
