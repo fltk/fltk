@@ -104,10 +104,8 @@ public:
   int slen() const;
   int capacity() const;
 
-  // ==================================  DEBUG  ==================================
-
-  void debug(const char *info) const;           // output string info
-  void hexdump(const char *info) const;         // output info + hexdump
+  void debug(const char *info = 0) const;     // output string info
+  void hexdump(const char *info = 0) const;   // output string info + hexdump
 
 }; // class Fl_String
 

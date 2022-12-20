@@ -23,26 +23,18 @@
   Basic Fl_String class for FLTK.
 */
 
-static int string_count;
-
 Fl_String::Fl_String() {
-  string_count++;
   init();
-  // debug("created ()");
 }
 
 Fl_String::Fl_String(const char *str) {
-  string_count++;
   init();
   value(str);
-  // debug("created (str)");
 }
 
 Fl_String::Fl_String(const char *str, int size) {
-  string_count++;
   init();
   value(str, size);
-  // debug("created (str, size)");
 }
 
 void Fl_String::init() {
@@ -53,10 +45,8 @@ void Fl_String::init() {
 
 // copy constructor
 Fl_String::Fl_String(const Fl_String &in) {
-  string_count++;
   init();
   value(in.value(), in.size());
-  // debug("copied (c'tor)");
 }
 
 // copy assignment operator
@@ -76,8 +66,6 @@ Fl_String& Fl_String::operator=(const char *in) {
 }
 
 Fl_String::~Fl_String() {
-  string_count--;
-  // debug("~Fl_String()");
   delete[] value_;
 }
 
@@ -132,26 +120,49 @@ void Fl_String::release() {
 
 // =============================  DEBUG  =============================
 
-static const char fl_string_debug = 0;
+/**
+  Write some details about the string to stdout.
 
+  Nothing at all is written if \p info is NULL, otherwise the short info
+  string and details are written to stdout.
+
+  The \p info string should not be longer than 20 characters to align the
+  debug output of several strings.
+
+  \param[in]  info  short info string or NULL
+*/
 void Fl_String::debug(const char *info) const {
-  if (fl_string_debug) {
-    printf("Fl_String[%2d] '%-20s': %p, value = %p (%d/%d): '%s'.\n",
-          string_count, info, this, value_, size_, capacity_, value_);
+  if (info) {
+    printf("Fl_String '%-20s': %p, value = %p (%d/%d): '%s'\n",
+           info, this, value_, size_, capacity_, value_ ? value_ : "<NULL>");
   }
 }
 
+/**
+  Write some details about the string to stdout, followed by a hex dump of
+  the string.
+
+  The first part is the same as written by Fl_String::debug(). The following
+  part is a hexadecimal dump of all bytes of the string. Embedded \p nul bytes
+  are possible and will be dumped as well.
+
+  \param[in]  info  short info string or NULL
+
+  \see Fl_String::debug(const char *info) const
+*/
 void Fl_String::hexdump(const char *info) const {
-  if (fl_string_debug) {
-    debug(info);
-    for (int i = 0; i < size_; i++) {
-      if ((i & 15) == 0) {
-        if (i > 0) printf("\n");
-        printf("  [%04x %4d] ", i, i);
-      } else if ((i & 3) == 0)
-        printf(" ");
-      printf(" %02x", (unsigned char)value_[i]);
+  debug(info);
+  if (size_ == 0)
+    return;
+  for (int i = 0; i < size_; i++) {
+    if ((i & 15) == 0) {
+      if (i > 0)
+        printf("\n");
+      printf("  [%04x %4d] ", i, i);  // position
+    } else if ((i & 3) == 0) {        // separator after 4 bytes
+      printf(" ");
     }
-    printf("\n");
+    printf(" %02x", (unsigned char)value_[i]);
   }
+  printf("\n");
 }
