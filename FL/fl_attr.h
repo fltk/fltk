@@ -31,4 +31,52 @@
 #  define __fl_attr(x)
 #endif
 
+
+#ifdef FL_DOXYGEN
+
+/// Make FL_OVERRIDE a replacement for \c override for all compiler versions
+#define FL_OVERRIDE override
+
+#else
+
+#ifndef __cplusplus
+// C, not C++
+
+#undef FL_OVERRIDE
+
+#elif (__cplusplus >= 202002L)
+// C++20
+
+#define FL_OVERRIDE override
+
+#elif (__cplusplus >= 201703L)
+// C++17
+
+#define FL_OVERRIDE override
+
+#elif (__cplusplus >= 201402L)
+// C++14
+
+#define FL_OVERRIDE override
+
+#elif (__cplusplus >= 201103L)
+// C++11
+
+#define FL_OVERRIDE override
+
+#elif (__cplusplus >= 199711L)
+// C++98
+
+#define FL_OVERRIDE
+
+#else
+// C++ before C++98
+
+#define FL_OVERRIDE
+
+#endif // __cplusplus
+
+#endif // FL_DOXYGEN
+
+
 #endif /* !_FL_fl_attr_h_ */
