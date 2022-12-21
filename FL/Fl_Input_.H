@@ -215,7 +215,7 @@ protected:
 public:
 
   /* Change the size of the widget. */
-  void resize(int, int, int, int);
+  virtual void resize(int, int, int, int) FL_OVERRIDE;
 
   /* Constructor */
   Fl_Input_(int, int, int, int, const char* = 0);

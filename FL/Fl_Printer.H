@@ -99,20 +99,20 @@ private:
 public:
   /** The constructor */
   Fl_Printer(void);
-  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
-  int begin_page(void);
-  int printable_rect(int *w, int *h);
-  void margins(int *left, int *top, int *right, int *bottom);
-  void origin(int *x, int *y);
-  void origin(int x, int y);
-  void scale(float scale_x, float scale_y = 0.);
-  void rotate(float angle);
-  void translate(int x, int y);
-  void untranslate(void);
-  int end_page (void);
-  void end_job (void);
-  void set_current(void);
-  virtual bool is_current();
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL) FL_OVERRIDE;
+  virtual int begin_page(void) FL_OVERRIDE;
+  virtual int printable_rect(int *w, int *h) FL_OVERRIDE;
+  virtual void margins(int *left, int *top, int *right, int *bottom) FL_OVERRIDE;
+  virtual void origin(int *x, int *y) FL_OVERRIDE;
+  virtual void origin(int x, int y) FL_OVERRIDE;
+  virtual void scale(float scale_x, float scale_y = 0.) FL_OVERRIDE;
+  virtual void rotate(float angle) FL_OVERRIDE;
+  virtual void translate(int x, int y) FL_OVERRIDE;
+  virtual void untranslate(void) FL_OVERRIDE;
+  virtual int end_page (void) FL_OVERRIDE;
+  virtual void end_job (void) FL_OVERRIDE;
+  virtual void set_current(void) FL_OVERRIDE;
+  virtual bool is_current() FL_OVERRIDE;
 
   /** \name These attributes are useful for the Linux/Unix platform only.
    \{

@@ -67,26 +67,26 @@ private:
 public:
   Fl_Quartz_Native_File_Chooser_Driver(int val);
   ~Fl_Quartz_Native_File_Chooser_Driver();
-  virtual void type(int t);
-  virtual int type() const ;
-  virtual void options(int o);
-  virtual int options() const;
-  virtual int count() const;
-  virtual const char *filename() const ;
-  virtual const char *filename(int i) const ;
-  virtual void directory(const char *val) ;
-  virtual const char *directory() const;
-  virtual void title(const char *t);
-  virtual const char* title() const;
-  virtual const char *filter() const ;
-  virtual void filter(const char *f);
-  virtual int filters() const ;
-  virtual void filter_value(int i) ;
-  virtual int filter_value() const ;
-  virtual void preset_file(const char*f) ;
-  virtual const char* preset_file() const;
-  virtual const char *errmsg() const ;
-  virtual int show() ;
+  virtual void type(int t) FL_OVERRIDE;
+  virtual int type() const FL_OVERRIDE;
+  virtual void options(int o) FL_OVERRIDE;
+  virtual int options() const FL_OVERRIDE;
+  virtual int count() const FL_OVERRIDE;
+  virtual const char *filename() const FL_OVERRIDE;
+  virtual const char *filename(int i) const FL_OVERRIDE;
+  virtual void directory(const char *val) FL_OVERRIDE;
+  virtual const char *directory() const FL_OVERRIDE;
+  virtual void title(const char *t) FL_OVERRIDE;
+  virtual const char* title() const FL_OVERRIDE;
+  virtual const char *filter() const FL_OVERRIDE;
+  virtual void filter(const char *f) FL_OVERRIDE;
+  virtual int filters() const FL_OVERRIDE;
+  virtual void filter_value(int i) FL_OVERRIDE;
+  virtual int filter_value() const FL_OVERRIDE;
+  virtual void preset_file(const char*f) FL_OVERRIDE;
+  virtual const char* preset_file() const FL_OVERRIDE;
+  virtual const char *errmsg() const FL_OVERRIDE;
+  virtual int show() FL_OVERRIDE;
 };
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
