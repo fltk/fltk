@@ -93,7 +93,7 @@ protected:
 
   /** Stores the last window that was made current. See current() const */
   static Fl_Window *current_;
-  void draw();
+  virtual void draw() FL_OVERRIDE;
   /** Forces the window to be drawn, this window is also made current and calls draw(). */
   virtual void flush();
 
@@ -170,7 +170,7 @@ public:
   */
     virtual ~Fl_Window();
 
-  virtual int handle(int);
+  virtual int handle(int) FL_OVERRIDE;
 
   /**
     Changes the size and position of the window.  If shown() is true,
@@ -188,7 +188,7 @@ public:
     dimensions. It is up to the application developer to verify window
     parameters after the resize request.
   */
-  virtual void resize(int X,int Y,int W,int H);
+  virtual void resize(int X,int Y,int W,int H) FL_OVERRIDE;
   /** Sets whether or not the window manager border is around the window.
   The default value is true. <I>With some X window
   managers, this does not work after show() has been called.</I>
@@ -424,12 +424,12 @@ public:
 
     \see Fl_Window::show(int argc, char **argv)
   */
-  virtual void show();
+  virtual void show() FL_OVERRIDE;
   /**
     Removes the window from the screen.  If the window is already hidden or
     has not been shown then this does nothing and is harmless.
   */
-  virtual void hide();
+  virtual void hide() FL_OVERRIDE;
   /**
     Puts the window on the screen and parses command-line arguments.
 
@@ -567,7 +567,7 @@ public:
   int decorated_h() const;
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  virtual Fl_Window* as_window() { return this; }
+  virtual Fl_Window* as_window() FL_OVERRIDE { return this; }
 
   /**
    Return non-null if this is an Fl_Overlay_Window object.

@@ -37,9 +37,9 @@
 */
 class FL_EXPORT Fl_Roller : public Fl_Valuator {
 protected:
-  void draw();
+  virtual void draw() FL_OVERRIDE;
 public:
-  int handle(int);
+  virtual int handle(int) FL_OVERRIDE;
   Fl_Roller(int X,int Y,int W,int H,const char* L=0);
 };
 

@@ -313,13 +313,13 @@ static int overlays_invisible;
 // an overlay for the fluid ui, and special-cases the FL_NO_BOX.
 
 class Overlay_Window : public Fl_Overlay_Window {
-  void draw();
-  void draw_overlay();
+  virtual void draw() FL_OVERRIDE;
+  virtual void draw_overlay() FL_OVERRIDE;
 public:
   Fl_Window_Type *window;
-  int handle(int);
+  virtual int handle(int) FL_OVERRIDE;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {Fl_Group::current(0);}
-  void resize(int,int,int,int);
+  virtual void resize(int,int,int,int) FL_OVERRIDE;
   uchar *read_image(int &ww, int &hh);
 };
 void Overlay_Window::draw() {
