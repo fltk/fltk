@@ -69,7 +69,12 @@ Fl_String::~Fl_String() {
   delete[] value_;
 }
 
-void Fl_String::alloc_buf(int size) {
+/** Grow the buffer size to at least size+1 bytes.
+ By default, this call destroys the contents of the current buffer.
+ \param size in bytes
+ \param preserve_text copy existing text into the new buffer
+ */
+void Fl_String::alloc_buf(int size, bool preserve_text) {
   if (size < 0)
     return;
   if (size > 0 && size <= capacity_)
@@ -79,7 +84,14 @@ void Fl_String::alloc_buf(int size) {
   char *new_value = new char[new_size];
   capacity_ = new_size - 1;
 
-  size_ = 0;
+  if (preserve_text) {
+    size_ = (int)strlen(value_);
+    // the new buffer always has a higher capacity than the old one
+    // make sure we copy the trailing NUL.
+    memcpy(new_value, value_, size_+1);
+  } else {
+    size_ = 0;
+  }
   delete[] value_;
   value_ = new_value;
 }
@@ -110,6 +122,15 @@ void Fl_String::value(const char *str, int len) {
 int Fl_String::capacity() const {
   return capacity_; // > 0 ? capacity_ - 1 : capacity_;
 }
+
+/** Set the minumum capacity to num_bytes plus one for a terminating NUL.
+ The cintents of the string buffer will be copied if needed.
+ \param num_bytes minimum size of buffer
+ */
+void Fl_String::capacity(int num_bytes) {
+  alloc_buf(num_bytes, true);
+}
+
 
 void Fl_String::release() {
   delete[] value_;

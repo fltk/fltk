@@ -105,7 +105,7 @@ public:
   Fd_String i18n_static_function;
   Fd_String i18n_file;
   Fd_String i18n_set;
-  char i18n_program[FL_PATH_MAX+1];
+  Fd_String i18n_program;
   int include_H_from_C;
   int use_FL_COMMAND;
   int utf8_in_src;
