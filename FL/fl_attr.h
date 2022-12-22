@@ -44,35 +44,34 @@
 
 #undef FL_OVERRIDE
 
-#elif (__cplusplus >= 202002L)
-// C++20
-
-#define FL_OVERRIDE override
-
-#elif (__cplusplus >= 201703L)
-// C++17
-
-#define FL_OVERRIDE override
-
-#elif (__cplusplus >= 201402L)
-// C++14
-
-#define FL_OVERRIDE override
-
-#elif (__cplusplus >= 201103L)
-// C++11
-
-#define FL_OVERRIDE override
-
-#elif (__cplusplus >= 199711L)
-// C++98
-
-#define FL_OVERRIDE
-
 #else
+
+#if (__cplusplus >= 202002L)
+// put here definitions applying to C++20 and above
+#endif
+
+#if (__cplusplus >= 201703L)
+// put here definitions applying to C++17 and above
+#endif
+
+#if (__cplusplus >= 201402L)
+// put here definitions applying to C++14 and above
+#endif
+
+#if (__cplusplus >= 201103L)
+// put here definitions applying to C++11 and above
+#define FL_OVERRIDE override
+#endif
+
+#if (__cplusplus >= 199711L)
+// put here definitions applying to C++98 and above
+#endif
+
 // C++ before C++98
 
+#ifndef FL_OVERRIDE
 #define FL_OVERRIDE
+#endif
 
 #endif // __cplusplus
 
