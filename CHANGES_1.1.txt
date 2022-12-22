@@ -2449,7 +2449,7 @@ CHANGES IN FLTK 1.1.0b4                                 BETA: ??? ?? ????
 
   - Updated the flags_ member of Fl_Widget to be an
     integer instead of uchar, to support the new
-    FL_OVERRIDE flag for Fl_Window.
+    OVERRIDE flag for Fl_Window.
 
   - The parent() method of Fl_Widget now uses pointers to
     Fl_Group instead of Fl_Widget.

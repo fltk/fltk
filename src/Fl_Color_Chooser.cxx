@@ -580,7 +580,7 @@ Fl_Color_Chooser::Fl_Color_Chooser(int X, int Y, int W, int H, const char* L)
 #include <FL/Fl_Return_Button.H>
 
 class ColorChip : public Fl_Widget {
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   uchar r,g,b;
   ColorChip(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {

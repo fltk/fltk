@@ -80,59 +80,59 @@ private:
   void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
-  virtual void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
+  void shape_alpha_(Fl_Image* img, int offset) override;
   void flush_double(int erase_overlay);
   void sendxjunk();
   void activate_window();
 
 public:
   Fl_X11_Window_Driver(Fl_Window*);
-  virtual ~Fl_X11_Window_Driver() FL_OVERRIDE;
+  ~Fl_X11_Window_Driver() override;
   static inline Fl_X11_Window_Driver* driver(const Fl_Window *w) {return (Fl_X11_Window_Driver*)Fl_Window_Driver::driver(w);}
 #if  USE_XFT
   static void resize_after_screen_change(void *data);
 #endif // USE_XFT
 
   // --- window data
-  virtual int decorated_w() FL_OVERRIDE;
-  virtual int decorated_h() FL_OVERRIDE;
-  virtual const Fl_Image* shape() FL_OVERRIDE;
+  int decorated_w() override;
+  int decorated_h() override;
+  const Fl_Image* shape() override;
 
   // --- window management
-  virtual Fl_X *makeWindow() FL_OVERRIDE;
-  virtual void take_focus() FL_OVERRIDE;
-  virtual void flush_double() FL_OVERRIDE;
-  virtual void flush_overlay() FL_OVERRIDE;
-  virtual void draw_begin() FL_OVERRIDE;
-  virtual void make_current() FL_OVERRIDE;
-  virtual void show() FL_OVERRIDE;
-  virtual void resize(int X,int Y,int W,int H) FL_OVERRIDE;
-  virtual void label(const char *name, const char *mininame) FL_OVERRIDE;
-  virtual void destroy_double_buffer() FL_OVERRIDE;
-  virtual void hide() FL_OVERRIDE;
-  virtual void map() FL_OVERRIDE;
-  virtual void unmap() FL_OVERRIDE;
-  virtual void fullscreen_on() FL_OVERRIDE;
-  virtual void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
-  virtual void use_border() FL_OVERRIDE;
-  virtual void size_range() FL_OVERRIDE;
-  virtual void iconize() FL_OVERRIDE;
-  virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom) FL_OVERRIDE;
-  virtual void show_with_args_begin() FL_OVERRIDE;
-  virtual void show_with_args_end(int argc, char **argv) FL_OVERRIDE;
+  Fl_X *makeWindow() override;
+  void take_focus() override;
+  void flush_double() override;
+  void flush_overlay() override;
+  void draw_begin() override;
+  void make_current() override;
+  void show() override;
+  void resize(int X,int Y,int W,int H) override;
+  void label(const char *name, const char *mininame) override;
+  void destroy_double_buffer() override;
+  void hide() override;
+  void map() override;
+  void unmap() override;
+  void fullscreen_on() override;
+  void fullscreen_off(int X, int Y, int W, int H) override;
+  void use_border() override;
+  void size_range() override;
+  void iconize() override;
+  void decoration_sizes(int *top, int *left,  int *right, int *bottom) override;
+  void show_with_args_begin() override;
+  void show_with_args_end(int argc, char **argv) override;
   // --- window cursor stuff
-  virtual int set_cursor(Fl_Cursor) FL_OVERRIDE;
-  virtual int set_cursor(const Fl_RGB_Image*, int, int) FL_OVERRIDE;
+  int set_cursor(Fl_Cursor) override;
+  int set_cursor(const Fl_RGB_Image*, int, int) override;
 
-  virtual void shape(const Fl_Image* img) FL_OVERRIDE;
-  virtual void icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
-  virtual const void *icon() const FL_OVERRIDE;
-  virtual void icon(const void * ic) FL_OVERRIDE;
-  virtual void free_icons() FL_OVERRIDE;
+  void shape(const Fl_Image* img) override;
+  void icons(const Fl_RGB_Image *icons[], int count) override;
+  const void *icon() const override;
+  void icon(const void * ic) override;
+  void free_icons() override;
   void set_icons(); // driver-internal support function
-  virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
-  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
-  virtual fl_uintptr_t os_id() FL_OVERRIDE;
+  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) override;
+  int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) override;
+  fl_uintptr_t os_id() override;
 };
 
 

@@ -57,10 +57,10 @@ public:
 
   Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
-  virtual int handle(int event) FL_OVERRIDE;
+  int handle(int event) override;
 
 protected:
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
   /** Gets the box type used for the navigation bar. */

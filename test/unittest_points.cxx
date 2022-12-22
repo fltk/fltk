@@ -33,7 +33,7 @@ public:
     : Fl_Window(x, y, w, h) {
     end();
   }
-  virtual void draw() FL_OVERRIDE {
+  void draw() override {
     int i;
     fl_color(FL_WHITE);
     fl_rectf(0, 0, 10, 10);
@@ -58,7 +58,7 @@ public:
     box(FL_FLAT_BOX);
     end();
   }
-  virtual void draw() FL_OVERRIDE {
+  void draw() override {
     Fl_Gl_Window::draw_begin();
     Fl_Window::draw();
 
@@ -247,7 +247,7 @@ public:
     t = new Fl_Box(x+w-1,y+h-1, 1, 1);
     resizable(t);
   }
-  virtual void draw() FL_OVERRIDE {
+  void draw() override {
     Fl_Group::draw();
     int a = x()+16, b = y()+34, i, j;
     // Test 1: pixel size

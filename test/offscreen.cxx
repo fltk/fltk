@@ -48,8 +48,8 @@ public:
     return false;
   }
 private:
-  virtual void draw() FL_OVERRIDE;
-  virtual int handle(int event) FL_OVERRIDE;
+  void draw() override;
+  int handle(int event) override;
   // Generate "random" values for the line display
   double random_val(int v) const
   {

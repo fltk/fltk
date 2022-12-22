@@ -34,9 +34,6 @@
 
 #ifdef FL_DOXYGEN
 
-/// Make FL_OVERRIDE a replacement for \c override for all compiler versions
-#define FL_OVERRIDE override
-
 #else
 
 #ifdef __cplusplus
@@ -55,9 +52,10 @@
 
 #if (__cplusplus >= 201103L)
 // put here definitions applying to C++11 and above
-#define FL_OVERRIDE override
+// use C++11 override
 #else
-#define FL_OVERRIDE
+// replce non-existing `override` with no-op
+#define override
 #endif
 
 #if (__cplusplus >= 199711L)

@@ -56,92 +56,92 @@ protected:
   CGLineJoin quartz_line_join_;
   CGFloat *quartz_line_pattern;
   int quartz_line_pattern_size;
-  virtual void cache_size(Fl_Image* img, int &width, int &height) FL_OVERRIDE;
+  void cache_size(Fl_Image* img, int &width, int &height) override;
 public:
   Fl_Quartz_Graphics_Driver();
-  virtual int has_feature(driver_feature mask) FL_OVERRIDE { return mask & NATIVE; }
-  virtual void gc(void *ctxt) FL_OVERRIDE { gc_ = (CGContextRef)ctxt; global_gc(); }
-  virtual void *gc() FL_OVERRIDE {return gc_;}
-  virtual char can_do_alpha_blending() FL_OVERRIDE;
+  int has_feature(driver_feature mask) override { return mask & NATIVE; }
+  void gc(void *ctxt) override { gc_ = (CGContextRef)ctxt; global_gc(); }
+  void *gc() override {return gc_;}
+  char can_do_alpha_blending() override;
 
   // --- bitmap stuff
   static CGImageRef create_bitmask(int w, int h, const uchar *array); // NOT virtual
-  virtual void delete_bitmask(fl_uintptr_t bm) FL_OVERRIDE;
-  virtual void draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-  virtual void draw_bitmap(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-  virtual void draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
-  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) FL_OVERRIDE;
-  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) FL_OVERRIDE;
-  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) FL_OVERRIDE;
-  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) FL_OVERRIDE;
-  virtual void cache(Fl_Pixmap *img) FL_OVERRIDE;
-  virtual void cache(Fl_Bitmap *img) FL_OVERRIDE;
-  virtual void cache(Fl_RGB_Image *img) FL_OVERRIDE;
-  virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) FL_OVERRIDE;
-  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) FL_OVERRIDE;
+  void delete_bitmask(fl_uintptr_t bm) override;
+  void draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw_bitmap(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) override;
+  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) override;
+  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) override;
+  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) override;
+  void cache(Fl_Pixmap *img) override;
+  void cache(Fl_Bitmap *img) override;
+  void cache(Fl_RGB_Image *img) override;
+  void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) override;
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) override;
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
   static CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
-  virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h) FL_OVERRIDE;
-  virtual Fl_Region XRectangleRegion(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual void XDestroyRegion(Fl_Region r) FL_OVERRIDE;
+  void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h) override;
+  Fl_Region XRectangleRegion(int x, int y, int w, int h) override;
+  void XDestroyRegion(Fl_Region r) override;
   void high_resolution(bool b) { high_resolution_ = b; }
 protected:
-  virtual void point(int x, int y) FL_OVERRIDE;
-  virtual void rect(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual void rectf(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual void line(int x, int y, int x1, int y1) FL_OVERRIDE;
-  virtual void line(int x, int y, int x1, int y1, int x2, int y2) FL_OVERRIDE;
-  virtual void xyline(int x, int y, int x1) FL_OVERRIDE;
-  virtual void xyline(int x, int y, int x1, int y2) FL_OVERRIDE;
-  virtual void xyline(int x, int y, int x1, int y2, int x3) FL_OVERRIDE;
-  virtual void yxline(int x, int y, int y1) FL_OVERRIDE;
-  virtual void yxline(int x, int y, int y1, int x2) FL_OVERRIDE;
-  virtual void yxline(int x, int y, int y1, int x2, int y3) FL_OVERRIDE;
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void point(int x, int y) override;
+  void rect(int x, int y, int w, int h) override;
+  void focus_rect(int x, int y, int w, int h) override;
+  void rectf(int x, int y, int w, int h) override;
+  void line(int x, int y, int x1, int y1) override;
+  void line(int x, int y, int x1, int y1, int x2, int y2) override;
+  void xyline(int x, int y, int x1) override;
+  void xyline(int x, int y, int x1, int y2) override;
+  void xyline(int x, int y, int x1, int y2, int x3) override;
+  void yxline(int x, int y, int y1) override;
+  void yxline(int x, int y, int y1, int x2) override;
+  void yxline(int x, int y, int y1, int x2, int y3) override;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2) override;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) override;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) override;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) override;
   // --- clipping
-  virtual void push_clip(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
-  virtual int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
-  virtual void restore_clip() FL_OVERRIDE;
-  virtual void end_points() FL_OVERRIDE;
-  virtual void end_line() FL_OVERRIDE;
-  virtual void end_polygon() FL_OVERRIDE;
-  virtual void end_complex_polygon() FL_OVERRIDE;
-  virtual void circle(double x, double y, double r) FL_OVERRIDE;
-  virtual void arc(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
-  virtual void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
-  virtual void line_style(int style, int width=0, char* dashes=0) FL_OVERRIDE;
-  virtual void color(Fl_Color c) FL_OVERRIDE;
-  virtual Fl_Color color() FL_OVERRIDE { return color_; }
-  virtual void color(uchar r, uchar g, uchar b) FL_OVERRIDE;
-  virtual void draw(const char *str, int n, int x, int y) FL_OVERRIDE;
-  virtual void draw(const char *str, int n, float x, float y) FL_OVERRIDE;
-  virtual void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
+  void push_clip(int x, int y, int w, int h) override;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) override;
+  int not_clipped(int x, int y, int w, int h) override;
+  void restore_clip() override;
+  void end_points() override;
+  void end_line() override;
+  void end_polygon() override;
+  void end_complex_polygon() override;
+  void circle(double x, double y, double r) override;
+  void arc(int x, int y, int w, int h, double a1, double a2) override;
+  void pie(int x, int y, int w, int h, double a1, double a2) override;
+  void line_style(int style, int width=0, char* dashes=0) override;
+  void color(Fl_Color c) override;
+  Fl_Color color() override { return color_; }
+  void color(uchar r, uchar g, uchar b) override;
+  void draw(const char *str, int n, int x, int y) override;
+  void draw(const char *str, int n, float x, float y) override;
+  void draw(int angle, const char *str, int n, int x, int y) override;
   double width(const UniChar* txt, int n);
-  virtual void rtl_draw(const char *str, int n, int x, int y) FL_OVERRIDE;
-  virtual void font(Fl_Font face, Fl_Fontsize fsize) FL_OVERRIDE;
-  virtual double width(const char *str, int n) FL_OVERRIDE;
-  virtual double width(unsigned int c) FL_OVERRIDE;
-  virtual int height() FL_OVERRIDE;
-  virtual int descent() FL_OVERRIDE;
+  void rtl_draw(const char *str, int n, int x, int y) override;
+  void font(Fl_Font face, Fl_Fontsize fsize) override;
+  double width(const char *str, int n) override;
+  double width(unsigned int c) override;
+  int height() override;
+  int descent() override;
   virtual bool high_resolution() { return high_resolution_; }
-  virtual void global_gc() FL_OVERRIDE;
+  void global_gc() override;
   void quartz_restore_line_style();
   inline Fl_Quartz_Font_Descriptor *valid_font_descriptor();
-  virtual const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
-  virtual int get_font_sizes(Fl_Font fnum, int*& sizep) FL_OVERRIDE;
-  virtual const char *font_name(int num) FL_OVERRIDE;
-  virtual void font_name(int num, const char *name) FL_OVERRIDE;
-  virtual Fl_Fontdesc* calc_fl_fonts(void) FL_OVERRIDE;
+  const char* get_font_name(Fl_Font fnum, int* ap) override;
+  int get_font_sizes(Fl_Font fnum, int*& sizep) override;
+  const char *font_name(int num) override;
+  void font_name(int num, const char *name) override;
+  Fl_Fontdesc* calc_fl_fonts(void) override;
 
-  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h) FL_OVERRIDE;
-  virtual Fl_Font set_fonts(const char* xstarname) FL_OVERRIDE;
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h) override;
+  Fl_Font set_fonts(const char* xstarname) override;
   void set_fontname_in_fontdesc(Fl_Fontdesc *f);
-  virtual void uncache_pixmap(fl_uintptr_t p) FL_OVERRIDE;
+  void uncache_pixmap(fl_uintptr_t p) override;
 
 #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   enum {use_CoreText = 1, use_ATSU};
@@ -167,16 +167,16 @@ protected:
 #else
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
-  virtual void overlay_rect(int x, int y, int w , int h) FL_OVERRIDE;
-  virtual float override_scale() FL_OVERRIDE;
-  virtual void restore_scale(float) FL_OVERRIDE;
-  virtual void antialias(int state) FL_OVERRIDE;
-  virtual int antialias() FL_OVERRIDE;
+  void overlay_rect(int x, int y, int w , int h) override;
+  float override_scale() override;
+  void restore_scale(float) override;
+  void antialias(int state) override;
+  int antialias() override;
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
 public:
-  virtual int has_feature(driver_feature mask) FL_OVERRIDE { return mask & (NATIVE | PRINTER); }
+  int has_feature(driver_feature mask) override { return mask & (NATIVE | PRINTER); }
 };
 
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H

@@ -49,10 +49,10 @@ public:
 private:
   Fl_Window *overlay_;
 public:
-  virtual void show() FL_OVERRIDE;
-  virtual void hide() FL_OVERRIDE;
-  virtual void flush() FL_OVERRIDE;
-  virtual void resize(int,int,int,int) FL_OVERRIDE;
+  void show() override;
+  void hide() override;
+  void flush() override;
+  void resize(int,int,int,int) override;
   ~Fl_Overlay_Window();
   /** Returns non-zero if there's hardware overlay support */
   int can_do_overlay();
@@ -72,7 +72,7 @@ protected:
 public:
   /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Double_Window::show(a,b);}
-  virtual Fl_Overlay_Window *as_overlay_window() FL_OVERRIDE {return this; }
+  Fl_Overlay_Window *as_overlay_window() override {return this; }
 };
 
 #endif

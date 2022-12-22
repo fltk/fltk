@@ -28,7 +28,7 @@ Fl_Choice *choice[3];
 Fl_Check_Button *draw_line;
 
 class test_box: public Fl_Double_Window {
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   test_box(int x,int y,int w,int h,const char *l=0)
     : Fl_Double_Window(x,y,w,h,l) {}

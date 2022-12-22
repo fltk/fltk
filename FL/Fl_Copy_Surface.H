@@ -50,20 +50,20 @@ class FL_EXPORT Fl_Copy_Surface : public Fl_Widget_Surface {
 private:
   class Fl_Copy_Surface_Driver *platform_surface;
 protected:
-  virtual void translate(int x, int y) FL_OVERRIDE;
-  virtual void untranslate() FL_OVERRIDE;
+  void translate(int x, int y) override;
+  void untranslate() override;
 public:
   Fl_Copy_Surface(int w, int h);
   ~Fl_Copy_Surface();
-  virtual void set_current() FL_OVERRIDE;
-  virtual bool is_current() FL_OVERRIDE;
+  void set_current() override;
+  bool is_current() override;
   /** Returns the pixel width of the copy surface */
   int w();
   /** Returns the pixel height of the copy surface */
   int h();
-  virtual void origin(int *x, int *y) FL_OVERRIDE;
-  virtual void origin(int x, int y) FL_OVERRIDE;
-  virtual int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void origin(int *x, int *y) override;
+  void origin(int x, int y) override;
+  int printable_rect(int *w, int *h) override;
 };
 
 
@@ -88,10 +88,10 @@ protected:
   int height;
   Fl_Copy_Surface_Driver(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {}
   virtual ~Fl_Copy_Surface_Driver() {}
-  virtual void set_current() FL_OVERRIDE = 0;
-  virtual void translate(int x, int y) FL_OVERRIDE = 0;
-  virtual void untranslate() FL_OVERRIDE = 0;
-  int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void set_current() override = 0;
+  void translate(int x, int y) override = 0;
+  void untranslate() override = 0;
+  int printable_rect(int *w, int *h) override;
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Copy_Surface_Driver for the plaform.

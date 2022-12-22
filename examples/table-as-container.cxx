@@ -39,8 +39,8 @@ void button_cb(Fl_Widget *w, void*);
 //
 class WidgetTable : public Fl_Table {
 protected:
-  virtual void draw_cell(TableContext context,                  // table cell drawing
-                 int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0) FL_OVERRIDE;
+  void draw_cell(TableContext context,                  // table cell drawing
+                 int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0) override;
 
 public:
   WidgetTable(int x, int y, int w, int h, const char *l=0) : Fl_Table(x,y,w,h,l) {

@@ -48,7 +48,7 @@ void make_image() {
 }
 
 class Pens : public Fl_Box {
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   Pens(int X, int Y, int W, int H, const char* L)
   : Fl_Box(X,Y,W,H,L) {}

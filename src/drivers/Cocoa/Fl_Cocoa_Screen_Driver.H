@@ -63,49 +63,49 @@ public:
   static void breakMacEventLoop();
   // --- display management
   // --- screen configuration
-  virtual void init() FL_OVERRIDE;
-  virtual int x() FL_OVERRIDE;
-  virtual int y() FL_OVERRIDE;
-  virtual int w() FL_OVERRIDE;
-  virtual int h() FL_OVERRIDE;
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
-  virtual void screen_dpi(float &h, float &v, int n=0) FL_OVERRIDE;
+  void init() override;
+  int x() override;
+  int y() override;
+  int w() override;
+  int h() override;
+  void screen_xywh(int &X, int &Y, int &W, int &H, int n) override;
+  void screen_dpi(float &h, float &v, int n=0) override;
   // implemented in Fl_cocoa.mm because uses Objective-c
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
+  void screen_work_area(int &X, int &Y, int &W, int &H, int n) override;
   // --- audible output
-  virtual void beep(int type) FL_OVERRIDE;
+  void beep(int type) override;
   // --- global events
-  virtual void grab(Fl_Window* win) FL_OVERRIDE;
+  void grab(Fl_Window* win) override;
   // --- global colors
-  virtual void get_system_colors() FL_OVERRIDE;
-  virtual int has_marked_text() const FL_OVERRIDE;
+  void get_system_colors() override;
+  int has_marked_text() const override;
   static void reset_marked_text();
   static void insertion_point_location(int x, int y, int height);
   static int insertion_point_location(int *px, int *py, int *pheight);
-  virtual int dnd(int use_selection) FL_OVERRIDE;
-  virtual int compose(int &del) FL_OVERRIDE;
-  virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input) FL_OVERRIDE;
-  virtual int get_mouse(int &x, int &y) FL_OVERRIDE;
-  virtual void enable_im() FL_OVERRIDE;
-  virtual void disable_im() FL_OVERRIDE;
-  virtual void open_display_platform() FL_OVERRIDE;
+  int dnd(int use_selection) override;
+  int compose(int &del) override;
+  int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input) override;
+  int get_mouse(int &x, int &y) override;
+  void enable_im() override;
+  void disable_im() override;
+  void open_display_platform() override;
   // --- compute dimensions of an Fl_Offscreen
-  virtual void offscreen_size(Fl_Offscreen o, int &width, int &height) FL_OVERRIDE;
+  void offscreen_size(Fl_Offscreen o, int &width, int &height) override;
 
-  virtual APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return SYSTEMWIDE_APP_SCALING; }
-  virtual float scale(int /*nscreen*/) FL_OVERRIDE {return scale_;}
-  virtual void scale(int /*nscreen*/, float f) FL_OVERRIDE { scale_ = f;}
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
-  virtual void default_icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type) FL_OVERRIDE;
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type) FL_OVERRIDE;
-  virtual int clipboard_contains(const char *type) FL_OVERRIDE;
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win) FL_OVERRIDE;
-  virtual void reset_spot() FL_OVERRIDE;
-  virtual int need_menu_handle_part2() FL_OVERRIDE {return 1;}
+  APP_SCALING_CAPABILITY rescalable() override { return SYSTEMWIDE_APP_SCALING; }
+  float scale(int /*nscreen*/) override {return scale_;}
+  void scale(int /*nscreen*/, float f) override { scale_ = f;}
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) override;
+  void default_icons(const Fl_RGB_Image *icons[], int count) override;
+  void copy(const char *stuff, int len, int clipboard, const char *type) override;
+  void paste(Fl_Widget &receiver, int clipboard, const char *type) override;
+  int clipboard_contains(const char *type) override;
+  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win) override;
+  void reset_spot() override;
+  int need_menu_handle_part2() override {return 1;}
   // these 2 are in Fl_get_key_mac.cxx
-  virtual int event_key(int) FL_OVERRIDE;
-  virtual int get_key(int) FL_OVERRIDE;
+  int event_key(int) override;
+  int get_key(int) override;
 private:
   float scale_;
 };

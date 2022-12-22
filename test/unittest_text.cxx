@@ -67,7 +67,7 @@ public:
       resizable(dummy);
       end();
   }
-  virtual void draw(void) FL_OVERRIDE {
+  void draw(void) override {
     int x0 = x(); // origin is current window position for Fl_Box
     int y0 = y();
     int w0 = w();

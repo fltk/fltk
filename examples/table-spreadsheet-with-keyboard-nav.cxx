@@ -40,7 +40,7 @@ class Spreadsheet : public Fl_Table {
   int s_left, s_top, s_right, s_bottom;                 // kb nav + mouse selection
 
 protected:
-  virtual void draw_cell(TableContext context,int=0,int=0,int=0,int=0,int=0,int=0) FL_OVERRIDE;
+  void draw_cell(TableContext context,int=0,int=0,int=0,int=0,int=0,int=0) override;
   void event_callback2();                               // table's event callback (instance)
   static void event_callback(Fl_Widget*, void *v) {     // table's event callback (static)
     ((Spreadsheet*)v)->event_callback2();
@@ -75,11 +75,11 @@ public:
     window()->cursor(FL_CURSOR_DEFAULT);                // XXX: if we don't do this, cursor can disappear!
   }
   // Change number of rows
-  virtual void rows(int val) FL_OVERRIDE {
+  void rows(int val) override {
     Fl_Table::rows(val);
   }
   // Change number of columns
-  virtual void cols(int val) FL_OVERRIDE {
+  void cols(int val) override {
     Fl_Table::cols(val);
   }
   // Get number of rows

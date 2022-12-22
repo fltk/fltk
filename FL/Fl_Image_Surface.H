@@ -68,18 +68,18 @@ private:
   class Fl_Image_Surface_Driver *platform_surface;
   Fl_Offscreen get_offscreen_before_delete_();
 protected:
-  virtual void translate(int x, int y) FL_OVERRIDE;
-  virtual void untranslate() FL_OVERRIDE;
+  void translate(int x, int y) override;
+  void untranslate() override;
 public:
   Fl_Image_Surface(int w, int h, int high_res = 0, Fl_Offscreen off = 0);
   ~Fl_Image_Surface();
-  virtual void set_current() FL_OVERRIDE;
-  virtual bool is_current() FL_OVERRIDE;
+  void set_current() override;
+  bool is_current() override;
   Fl_RGB_Image *image();
   Fl_Shared_Image *highres_image();
-  virtual void origin(int *x, int *y) FL_OVERRIDE;
-  virtual void origin(int x, int y) FL_OVERRIDE;
-  virtual int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void origin(int *x, int *y) override;
+  void origin(int x, int y) override;
+  int printable_rect(int *w, int *h) override;
   Fl_Offscreen offscreen();
   void rescale();
 };
@@ -107,10 +107,10 @@ protected:
   int external_offscreen;
   Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
   virtual ~Fl_Image_Surface_Driver() {}
-  virtual void set_current() FL_OVERRIDE = 0;
-  virtual void translate(int x, int y) FL_OVERRIDE = 0;
-  virtual void untranslate() FL_OVERRIDE = 0;
-  virtual int printable_rect(int *w, int *h) FL_OVERRIDE;
+  void set_current() override = 0;
+  void translate(int x, int y) override = 0;
+  void untranslate() override = 0;
+  int printable_rect(int *w, int *h) override;
   virtual Fl_RGB_Image *image() = 0;
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions

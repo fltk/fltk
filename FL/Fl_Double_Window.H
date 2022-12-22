@@ -33,13 +33,13 @@ public:
   /**
     Return non-null if this is an Fl_Overlay_Window object.
   */
-  virtual Fl_Double_Window *as_double_window() FL_OVERRIDE {return this; }
-  virtual void show() FL_OVERRIDE;
+  Fl_Double_Window *as_double_window() override {return this; }
+  void show() override;
   /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  virtual void resize(int,int,int,int) FL_OVERRIDE;
-  virtual void hide() FL_OVERRIDE;
-  virtual void flush() FL_OVERRIDE;
+  void resize(int,int,int,int) override;
+  void hide() override;
+  void flush() override;
   ~Fl_Double_Window();
 
   /**

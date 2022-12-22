@@ -107,7 +107,13 @@ static const Fl_Menu_* button=0;
 
 ////////////////////////////////////////////////////////////////
 
+<<<<<<< HEAD
 class window_with_items : public Fl_Menu_Window {
+=======
+// tiny window for title of menu:
+class menutitle : public Fl_Menu_Window {
+  void draw() override;
+>>>>>>> 3e95f0b72 (New footprint `void draw() override`)
 public:
   const Fl_Menu_Item* menu;
   window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
@@ -125,14 +131,14 @@ public:
 class menuwindow : public window_with_items {
   friend class Fl_Window_Driver;
   friend struct Fl_Menu_Item;
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
   void drawentry(const Fl_Menu_Item*, int i, int erase);
   int handle_part1(int);
   int handle_part2(int e, int ret);
   static Fl_Window *parent_;
 public:
   menutitle* title;
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   int itemheight;       // zero == menubar
   int numitems;
   int selected;

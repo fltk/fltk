@@ -52,16 +52,16 @@ public:
     set_tooltip_window();
     end();
   }
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
   void layout();
   /** Shows the tooltip windows only if a tooltip text is available. */
-  virtual void show() FL_OVERRIDE {
+  void show() override {
     if (!tip) return;
 
     Fl_Menu_Window::show();
   }
 
-  virtual int handle(int e) FL_OVERRIDE {
+  int handle(int e) override {
     if (e == FL_PUSH || e == FL_KEYDOWN) {
       hide();
       Fl::remove_timeout(tooltip_hide_timeout);

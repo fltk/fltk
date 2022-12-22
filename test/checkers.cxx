@@ -894,8 +894,8 @@ void draw_piece(int which, int x, int y) {
 //----------------------------------------------------------------
 
 class Board : public Fl_Double_Window {
-  virtual void draw() FL_OVERRIDE;
-  virtual int handle(int) FL_OVERRIDE;
+  void draw() override;
+  int handle(int) override;
 public:
   void drag_piece(int, int, int);
   void drop_piece(int);

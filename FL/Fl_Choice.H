@@ -102,9 +102,9 @@
  */
 class FL_EXPORT Fl_Choice : public Fl_Menu_ {
 protected:
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 
   Fl_Choice(int X, int Y, int W, int H, const char *L = 0);
 

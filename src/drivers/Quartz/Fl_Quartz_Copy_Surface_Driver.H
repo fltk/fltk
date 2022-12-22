@@ -31,9 +31,9 @@ protected:
   Fl_Quartz_Copy_Surface_Driver(int w, int h);
   // implemented in Fl_cocoa.mm because uses Objective-c
   ~Fl_Quartz_Copy_Surface_Driver();
-  virtual void set_current() FL_OVERRIDE;
-  virtual void translate(int x, int y) FL_OVERRIDE;
-  virtual void untranslate() FL_OVERRIDE;
+  void set_current() override;
+  void translate(int x, int y) override;
+  void untranslate() override;
 };
 
 #endif /* Fl_Quartz_Copy_Surface_Driver_H */

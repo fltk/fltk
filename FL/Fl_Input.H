@@ -255,11 +255,11 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
   int kf_copy_cut();
 
 protected:
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
   int handle_key();
 
 public:
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Fl_Input(int,int,int,int,const char * = 0);
 };
 

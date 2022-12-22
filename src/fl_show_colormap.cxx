@@ -32,8 +32,8 @@ class ColorMenu : public Fl_Window {
   Fl_Color which, previous;
   int done;
   void drawbox(Fl_Color);
-  virtual void draw() FL_OVERRIDE;
-  virtual int handle(int) FL_OVERRIDE;
+  void draw() override;
+  int handle(int) override;
 public:
   ColorMenu(Fl_Color oldcol);
   Fl_Color run();

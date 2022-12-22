@@ -31,7 +31,7 @@
 */
 class FL_EXPORT Fl_Box : public Fl_Widget {
 protected:
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   /**
     - The first constructor sets box() to FL_NO_BOX, which
@@ -47,7 +47,7 @@ public:
   /**    See Fl_Box::Fl_Box(int x, int y, int w, int h, const char * = 0)   */
   Fl_Box(Fl_Boxtype b, int X, int Y, int W, int H, const char *l);
 
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 };
 
 #endif

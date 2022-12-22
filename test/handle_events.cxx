@@ -29,7 +29,7 @@
 // Class to handle events
 class app : public WINDOW_TYPE {
 protected:
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 public:
   // storage for the last event
   int eventnum, ex, ey;

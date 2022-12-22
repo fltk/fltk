@@ -47,12 +47,12 @@
 #include <FL/Fl_Box.H>
 class Fl_Box_Type : public Fl_Widget_Type {
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Box";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Widget";}
-  virtual Fl_Widget *widget(int x,int y,int w, int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Box";}
+  const char *alt_type_name() override {return "fltk::Widget";}
+  Fl_Widget *widget(int x,int y,int w, int h) override {
     return new Fl_Box(x,y,w,h,"label");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Box_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 5; }
+  Fl_Widget_Type *_make() override {return new Fl_Box_Type();}
+  int pixmapID() override { return 5; }
 };
 static Fl_Box_Type Fl_Box_type;
 
@@ -65,20 +65,20 @@ static Fl_Menu_Item buttontype_menu[] = {
   {"Radio",0,0,(void*)FL_RADIO_BUTTON},
   {0}};
 class Fl_Button_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return buttontype_menu;}
+  Fl_Menu_Item *subtypes() override {return buttontype_menu;}
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Widget_Type::ideal_size(w, h);
     w += 2 * (o->labelsize() - 4);
     h = (h / 5) * 5;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Button";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Button";}
+  const char *alt_type_name() override {return "fltk::Button";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Button_Type();}
-  virtual int is_button() const FL_OVERRIDE {return 1;}
-  virtual int pixmapID() FL_OVERRIDE { return 2; }
+  Fl_Widget_Type *_make() override {return new Fl_Button_Type();}
+  int is_button() const override {return 1;}
+  int pixmapID() override { return 2; }
 };
 static Fl_Button_Type Fl_Button_type;
 
@@ -87,18 +87,18 @@ static Fl_Button_Type Fl_Button_type;
 #include <FL/Fl_Return_Button.H>
 class Fl_Return_Button_Type : public Fl_Button_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Button_Type::ideal_size(w, h);
     int W = o->h();
     if (o->w()/3 < W) W = o->w()/3;
     w += W + 8 - o->labelsize();
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Return_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::ReturnButton";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Return_Button";}
+  const char *alt_type_name() override {return "fltk::ReturnButton";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Return_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Return_Button_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 23; }
+  Fl_Widget_Type *_make() override {return new Fl_Return_Button_Type();}
+  int pixmapID() override { return 23; }
 };
 static Fl_Return_Button_Type Fl_Return_Button_type;
 
@@ -107,12 +107,12 @@ static Fl_Return_Button_Type Fl_Return_Button_type;
 #include <FL/Fl_Repeat_Button.H>
 class Fl_Repeat_Button_Type : public Fl_Widget_Type {
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Repeat_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::RepeatButton";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Repeat_Button";}
+  const char *alt_type_name() override {return "fltk::RepeatButton";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Repeat_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Repeat_Button_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 25; }
+  Fl_Widget_Type *_make() override {return new Fl_Repeat_Button_Type();}
+  int pixmapID() override { return 25; }
 };
 static Fl_Repeat_Button_Type Fl_Repeat_Button_type;
 
@@ -121,16 +121,16 @@ static Fl_Repeat_Button_Type Fl_Repeat_Button_type;
 #include <FL/Fl_Light_Button.H>
 class Fl_Light_Button_Type : public Fl_Button_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Button_Type::ideal_size(w, h);
     w += 4;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Light_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::LightButton";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Light_Button";}
+  const char *alt_type_name() override {return "fltk::LightButton";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Light_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Light_Button_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 24; }
+  Fl_Widget_Type *_make() override {return new Fl_Light_Button_Type();}
+  int pixmapID() override { return 24; }
 };
 static Fl_Light_Button_Type Fl_Light_Button_type;
 
@@ -139,16 +139,16 @@ static Fl_Light_Button_Type Fl_Light_Button_type;
 #include <FL/Fl_Check_Button.H>
 class Fl_Check_Button_Type : public Fl_Button_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Button_Type::ideal_size(w, h);
     w += 4;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Check_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::CheckButton";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Check_Button";}
+  const char *alt_type_name() override {return "fltk::CheckButton";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Check_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Check_Button_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 3; }
+  Fl_Widget_Type *_make() override {return new Fl_Check_Button_Type();}
+  int pixmapID() override { return 3; }
 };
 static Fl_Check_Button_Type Fl_Check_Button_type;
 
@@ -157,16 +157,16 @@ static Fl_Check_Button_Type Fl_Check_Button_type;
 #include <FL/Fl_Round_Button.H>
 class Fl_Round_Button_Type : public Fl_Button_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Button_Type::ideal_size(w, h);
     w += 4;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Round_Button";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::RadioButton";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Round_Button";}
+  const char *alt_type_name() override {return "fltk::RadioButton";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Round_Button(x,y,w,h,"button");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Round_Button_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 4; }
+  Fl_Widget_Type *_make() override {return new Fl_Round_Button_Type();}
+  int pixmapID() override { return 4; }
 };
 static Fl_Round_Button_Type Fl_Round_Button_type;
 
@@ -183,10 +183,10 @@ static Fl_Menu_Item browser_type_menu[] = {
   {"Multi",0,0,(void*)FL_MULTI_BROWSER},
   {0}};
 class Fl_Browser_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  Fl_Menu_Item *subtypes() override {return browser_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Browser *myo = (Fl_Browser *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -197,9 +197,9 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Browser";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Browser";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Browser";}
+  const char *alt_type_name() override {return "fltk::Browser";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Browser* b = new Fl_Browser(x,y,w,h);
     // Fl_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
@@ -212,8 +212,8 @@ public:
     }
     return b;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Browser_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 31; }
+  Fl_Widget_Type *_make() override {return new Fl_Browser_Type();}
+  int pixmapID() override { return 31; }
 };
 static Fl_Browser_Type Fl_Browser_type;
 
@@ -230,10 +230,10 @@ int Fl_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 }
 
 class Fl_Check_Browser_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  Fl_Menu_Item *subtypes() override {return browser_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Check_Browser *myo = (Fl_Check_Browser *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -244,9 +244,9 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Check_Browser";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::CheckBrowser";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Check_Browser";}
+  const char *alt_type_name() override {return "fltk::CheckBrowser";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Check_Browser* b = new Fl_Check_Browser(x,y,w,h);
     // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
@@ -259,8 +259,8 @@ public:
     }
     return b;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Check_Browser_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 32; }
+  Fl_Widget_Type *_make() override {return new Fl_Check_Browser_Type();}
+  int pixmapID() override { return 32; }
 };
 static Fl_Check_Browser_Type Fl_Check_Browser_type;
 
@@ -278,13 +278,13 @@ int Fl_Check_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 class Fl_Tree_Type : public Fl_Widget_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     if (h < 60) h = 60;
     if (w < 80) w = 80;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Tree";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::TreeBrowser";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Tree";}
+  const char *alt_type_name() override {return "fltk::TreeBrowser";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Tree* b = new Fl_Tree(x,y,w,h);
     if (!batch_mode) {
       b->add("/A1/B1/C1");
@@ -298,16 +298,16 @@ public:
     }
     return b;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tree_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 50; }
+  Fl_Widget_Type *_make() override {return new Fl_Tree_Type();}
+  int pixmapID() override { return 50; }
 };
 static Fl_Tree_Type Fl_Tree_type;
 
 class Fl_File_Browser_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  Fl_Menu_Item *subtypes() override {return browser_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_File_Browser *myo = (Fl_File_Browser *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -318,9 +318,9 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_File_Browser";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::FileBrowser";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_File_Browser";}
+  const char *alt_type_name() override {return "fltk::FileBrowser";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_File_Browser* b = new Fl_File_Browser(x,y,w,h);
     // Fl_File_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
@@ -329,8 +329,8 @@ public:
     }
     return b;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Browser_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 33; }
+  Fl_Widget_Type *_make() override {return new Fl_File_Browser_Type();}
+  int pixmapID() override { return 33; }
 };
 static Fl_File_Browser_Type Fl_File_Browser_type;
 
@@ -354,16 +354,16 @@ static Fl_Menu_Item counter_type_menu[] = {
   {"Simple",0,0,(void*)FL_SIMPLE_COUNTER},
   {0}};
 class Fl_Counter_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return counter_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
-  virtual int pixmapID() FL_OVERRIDE { return 41; }
+  Fl_Menu_Item *subtypes() override {return counter_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
+  int is_valuator() const override {return 1;}
+  int pixmapID() override { return 41; }
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Counter";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Counter";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Counter";}
+  const char *alt_type_name() override {return "fltk::Counter";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Counter(x,y,w,h,"counter:");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Counter_Type();}
+  Fl_Widget_Type *_make() override {return new Fl_Counter_Type();}
 };
 static Fl_Counter_Type Fl_Counter_type;
 
@@ -387,11 +387,11 @@ static Fl_Menu_Item spinner_type_menu[] = {
   {"Float",  0,0,(void*)FL_FLOAT_INPUT},
   {0}};
 class Fl_Spinner_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return spinner_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
-  virtual int pixmapID() FL_OVERRIDE { return 47; }
+  Fl_Menu_Item *subtypes() override {return spinner_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
+  int pixmapID() override { return 47; }
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Spinner *myo = (Fl_Spinner *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() - 6;
@@ -401,13 +401,13 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box()) + h / 2;
     if (w < 40) w = 40  ;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Spinner";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Spinner";}
-  virtual int is_spinner() const FL_OVERRIDE { return 1; }
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Spinner";}
+  const char *alt_type_name() override {return "fltk::Spinner";}
+  int is_spinner() const override { return 1; }
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Spinner(x,y,w,h,"spinner:");
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Spinner_Type();}
+  Fl_Widget_Type *_make() override {return new Fl_Spinner_Type();}
 };
 static Fl_Spinner_Type Fl_Spinner_type;
 
@@ -434,10 +434,10 @@ static Fl_Menu_Item input_type_menu[] = {
   {"Float",0,0,(void*)FL_FLOAT_INPUT},
   {0}};
 class Fl_Input_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return input_type_menu;}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  Fl_Menu_Item *subtypes() override {return input_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Input *myo = (Fl_Input *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() - 6;
@@ -447,17 +447,17 @@ public:
     if (h < 15) h = 15;
     if (w < 15) w = 15;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Input";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Input";}
-  virtual int is_input() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Input";}
+  const char *alt_type_name() override {return "fltk::Input";}
+  int is_input() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Input *myo = new Fl_Input(x,y,w,h,"input:");
     myo->value("Text Input");
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Input_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 14; }
-  virtual void copy_properties() FL_OVERRIDE {
+  Fl_Widget_Type *_make() override {return new Fl_Input_Type();}
+  int pixmapID() override { return 14; }
+  void copy_properties() override {
     Fl_Widget_Type::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
     d->textfont(s->textfont());
@@ -484,10 +484,10 @@ int Fl_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 #include <FL/Fl_File_Input.H>
 class Fl_File_Input_Type : public Fl_Widget_Type {
-  Fl_Menu_Item *subtypes() FL_OVERRIDE {return 0;}
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  Fl_Menu_Item *subtypes() override {return 0;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_File_Input *myo = (Fl_File_Input *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() + 4;
@@ -497,16 +497,16 @@ public:
     if (h < 20) h = 20;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_File_Input";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::FileInput";}
-  virtual int is_input() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_File_Input";}
+  const char *alt_type_name() override {return "fltk::FileInput";}
+  int is_input() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_File_Input *myo = new Fl_File_Input(x,y,w,h,"file:");
     myo->value("/now/is/the/time/for/a/filename.ext");
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Input_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 30; }
+  Fl_Widget_Type *_make() override {return new Fl_File_Input_Type();}
+  int pixmapID() override { return 30; }
 };
 static Fl_File_Input_Type Fl_File_Input_type;
 
@@ -526,9 +526,9 @@ int Fl_File_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 #include <FL/Fl_Text_Display.H>
 class Fl_Text_Display_Type : public Fl_Widget_Type {
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Text_Display *myo = (Fl_Text_Display *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -539,15 +539,15 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Text_Display";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::TextDisplay";}
-  virtual int is_text_display() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Text_Display";}
+  const char *alt_type_name() override {return "fltk::TextDisplay";}
+  int is_text_display() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Text_Display *myo = new Fl_Text_Display(x,y,w,h);
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Display_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 28; }
+  Fl_Widget_Type *_make() override {return new Fl_Text_Display_Type();}
+  int pixmapID() override { return 28; }
 };
 static Fl_Text_Display_Type Fl_Text_Display_type;
 
@@ -567,9 +567,9 @@ int Fl_Text_Display_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 #include <FL/Fl_Text_Editor.H>
 class Fl_Text_Editor_Type : public Fl_Widget_Type {
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Text_Editor *myo = (Fl_Text_Editor *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -580,15 +580,15 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Text_Editor";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::TextEditor";}
-  virtual int is_text_display() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Text_Editor";}
+  const char *alt_type_name() override {return "fltk::TextEditor";}
+  int is_text_display() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Text_Editor *myo = new Fl_Text_Editor(x,y,w,h);
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Editor_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 29; }
+  Fl_Widget_Type *_make() override {return new Fl_Text_Editor_Type();}
+  int pixmapID() override { return 29; }
 };
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
@@ -609,10 +609,10 @@ int Fl_Text_Editor_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 #include <FL/Fl_Simple_Terminal.H>
 class Fl_Simple_Terminal_Type : public Fl_Text_Editor_Type {
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Simple_Terminal";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::SimpleTerminal";}
-  virtual int is_text_display() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Simple_Terminal";}
+  const char *alt_type_name() override {return "fltk::SimpleTerminal";}
+  int is_text_display() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Widget *myo = 0L;
     if (batch_mode) {
       // The Fl_Simple_Terminal constructor attaches a buffer which in turn
@@ -624,8 +624,8 @@ public:
     }
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 52; }
+  Fl_Widget_Type *_make() override {return new Fl_Simple_Terminal_Type();}
+  int pixmapID() override { return 52; }
 };
 static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
 
@@ -634,12 +634,12 @@ static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
 #include <FL/Fl_Clock.H>
 class Fl_Clock_Type : public Fl_Widget_Type {
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Clock";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Clock";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Clock";}
+  const char *alt_type_name() override {return "fltk::Clock";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Clock(x,y,w,h);}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Clock_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 34; }
+  Fl_Widget_Type *_make() override {return new Fl_Clock_Type();}
+  int pixmapID() override { return 34; }
 };
 static Fl_Clock_Type Fl_Clock_type;
 
@@ -648,7 +648,7 @@ static Fl_Clock_Type Fl_Clock_type;
 #include <FL/Fl_Help_View.H>
 class Fl_Help_View_Type : public Fl_Widget_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Help_View *myo = (Fl_Help_View *)o;
     fl_font(myo->textfont(), myo->textsize());
     h -= Fl::box_dh(o->box());
@@ -659,17 +659,17 @@ public:
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Help_View";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::HelpView";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Help_View";}
+  const char *alt_type_name() override {return "fltk::HelpView";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Help_View *myo = new Fl_Help_View(x,y,w,h);
     if (!batch_mode) {
       myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
                  "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     }
     return myo;}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Help_View_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 35; }
+  Fl_Widget_Type *_make() override {return new Fl_Help_View_Type();}
+  int pixmapID() override { return 35; }
 };
 static Fl_Help_View_Type Fl_Help_View_type;
 
@@ -678,14 +678,14 @@ static Fl_Help_View_Type Fl_Help_View_type;
 #include <FL/Fl_Progress.H>
 class Fl_Progress_Type : public Fl_Widget_Type {
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Progress";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::ProgressBar";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Progress";}
+  const char *alt_type_name() override {return "fltk::ProgressBar";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Progress *myo = new Fl_Progress(x,y,w,h,"label");
     myo->value(50);
     return myo;}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Progress_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 36; }
+  Fl_Widget_Type *_make() override {return new Fl_Progress_Type();}
+  int pixmapID() override { return 36; }
 };
 static Fl_Progress_Type Fl_Progress_type;
 
@@ -693,14 +693,14 @@ static Fl_Progress_Type Fl_Progress_type;
 
 #include <FL/Fl_Adjuster.H>
 class Fl_Adjuster_Type : public Fl_Widget_Type {
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
+  int is_valuator() const override {return 1;}
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Adjuster";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Adjuster";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Adjuster";}
+  const char *alt_type_name() override {return "fltk::Adjuster";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Adjuster(x,y,w,h);}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Adjuster_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 40; }
+  Fl_Widget_Type *_make() override {return new Fl_Adjuster_Type();}
+  int pixmapID() override { return 40; }
 };
 static Fl_Adjuster_Type Fl_Adjuster_type;
 
@@ -713,15 +713,15 @@ static Fl_Menu_Item dial_type_menu[] = {
   {"Fill",0,0,(void*)FL_FILL_DIAL},
   {0}};
 class Fl_Dial_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return dial_type_menu;}
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
+  Fl_Menu_Item *subtypes() override {return dial_type_menu;}
+  int is_valuator() const override {return 1;}
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Dial";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Dial";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Dial";}
+  const char *alt_type_name() override {return "fltk::Dial";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Dial(x,y,w,h);}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Dial_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 42; }
+  Fl_Widget_Type *_make() override {return new Fl_Dial_Type();}
+  int pixmapID() override { return 42; }
 };
 static Fl_Dial_Type Fl_Dial_type;
 
@@ -733,15 +733,15 @@ static Fl_Menu_Item roller_type_menu[] = {
   {"Horizontal",0,0,(void*)FL_HORIZONTAL},
   {0}};
 class Fl_Roller_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return roller_type_menu;}
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
+  Fl_Menu_Item *subtypes() override {return roller_type_menu;}
+  int is_valuator() const override {return 1;}
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Roller";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Roller";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Roller";}
+  const char *alt_type_name() override {return "fltk::Roller";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Roller(x,y,w,h);}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Roller_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 43; }
+  Fl_Widget_Type *_make() override {return new Fl_Roller_Type();}
+  int pixmapID() override { return 43; }
 };
 static Fl_Roller_Type Fl_Roller_type;
 
@@ -757,15 +757,15 @@ static Fl_Menu_Item slider_type_menu[] = {
   {"Horz Knob",0,0,(void*)FL_HOR_NICE_SLIDER},
   {0}};
 class Fl_Slider_Type : public Fl_Widget_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return slider_type_menu;}
-  virtual int is_valuator() const FL_OVERRIDE {return 2;}
+  Fl_Menu_Item *subtypes() override {return slider_type_menu;}
+  int is_valuator() const override {return 2;}
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Slider";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Slider";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Slider";}
+  const char *alt_type_name() override {return "fltk::Slider";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Slider(x,y,w,h,"slider:");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Slider_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 37; }
+  Fl_Widget_Type *_make() override {return new Fl_Slider_Type();}
+  int pixmapID() override { return 37; }
 };
 static Fl_Slider_Type Fl_Slider_type;
 
@@ -774,15 +774,15 @@ static Fl_Menu_Item scrollbar_type_menu[] = {
   {"Horizontal",0,0,(void*)FL_HOR_SLIDER},
   {0}};
 class Fl_Scrollbar_Type : public Fl_Slider_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return scrollbar_type_menu;}
-  virtual int is_valuator() const FL_OVERRIDE {return 3;}
+  Fl_Menu_Item *subtypes() override {return scrollbar_type_menu;}
+  int is_valuator() const override {return 3;}
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Scrollbar";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Scrollbar";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Scrollbar";}
+  const char *alt_type_name() override {return "fltk::Scrollbar";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Scrollbar(x,y,w,h);}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Scrollbar_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 38; }
+  Fl_Widget_Type *_make() override {return new Fl_Scrollbar_Type();}
+  int pixmapID() override { return 38; }
 };
 static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
@@ -794,9 +794,9 @@ static Fl_Menu_Item output_type_menu[] = {
   {"Multiline",0,0,(void*)FL_MULTILINE_OUTPUT},
   {0}};
 class Fl_Output_Type : public Fl_Input_Type {
-  virtual Fl_Menu_Item *subtypes() FL_OVERRIDE {return output_type_menu;}
+  Fl_Menu_Item *subtypes() override {return output_type_menu;}
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Output *myo = (Fl_Output *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() - 6;
@@ -806,15 +806,15 @@ public:
     if (h < 15) h = 15;
     if (w < 15) w = 15;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Output";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::Output";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Output";}
+  const char *alt_type_name() override {return "fltk::Output";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Output *myo = new Fl_Output(x,y,w,h,"output:");
     myo->value("Text Output");
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Output_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 27; }
+  Fl_Widget_Type *_make() override {return new Fl_Output_Type();}
+  int pixmapID() override { return 27; }
 };
 static Fl_Output_Type Fl_Output_type;
 
@@ -823,7 +823,7 @@ static Fl_Output_Type Fl_Output_type;
 #include <FL/Fl_Value_Input.H>
 class Fl_Value_Input_Type : public Fl_Widget_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Value_Input *myo = (Fl_Value_Input *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() - 6;
@@ -833,17 +833,17 @@ public:
     if (h < 15) h = 15;
     if (w < 15) w = 15;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Value_Input";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::ValueInput";}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
-  virtual int is_value_input() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Value_Input";}
+  const char *alt_type_name() override {return "fltk::ValueInput";}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
+  int is_valuator() const override {return 1;}
+  int is_value_input() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Value_Input *myo = new Fl_Value_Input(x,y,w,h,"value:");
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Input_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 44; }
+  Fl_Widget_Type *_make() override {return new Fl_Value_Input_Type();}
+  int pixmapID() override { return 44; }
 };
 static Fl_Value_Input_Type Fl_Value_Input_type;
 
@@ -864,7 +864,7 @@ int Fl_Value_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 #include <FL/Fl_Value_Output.H>
 class Fl_Value_Output_Type : public Fl_Widget_Type {
 public:
-  virtual void ideal_size(int &w, int &h) FL_OVERRIDE {
+  void ideal_size(int &w, int &h) override {
     Fl_Value_Output *myo = (Fl_Value_Output *)o;
     fl_font(myo->textfont(), myo->textsize());
     h = fl_height() + myo->textsize() - 6;
@@ -874,16 +874,16 @@ public:
     if (h < 15) h = 15;
     if (w < 15) w = 15;
   }
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Value_Output";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::ValueOutput";}
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
-  virtual int is_valuator() const FL_OVERRIDE {return 1;}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Value_Output";}
+  const char *alt_type_name() override {return "fltk::ValueOutput";}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
+  int is_valuator() const override {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     Fl_Value_Output *myo = new Fl_Value_Output(x,y,w,h,"value:");
     return myo;
   }
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Output_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 45; }
+  Fl_Widget_Type *_make() override {return new Fl_Value_Output_Type();}
+  int pixmapID() override { return 45; }
 };
 static Fl_Value_Output_Type Fl_Value_Output_type;
 
@@ -903,14 +903,14 @@ int Fl_Value_Output_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 #include <FL/Fl_Value_Slider.H>
 class Fl_Value_Slider_Type : public Fl_Slider_Type {
-  virtual int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override;
 public:
-  virtual const char *type_name() FL_OVERRIDE {return "Fl_Value_Slider";}
-  virtual const char *alt_type_name() FL_OVERRIDE {return "fltk::ValueSlider";}
-  virtual Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
+  const char *type_name() override {return "Fl_Value_Slider";}
+  const char *alt_type_name() override {return "fltk::ValueSlider";}
+  Fl_Widget *widget(int x,int y,int w,int h) override {
     return new Fl_Value_Slider(x,y,w,h,"slider:");}
-  virtual Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Slider_Type();}
-  virtual int pixmapID() FL_OVERRIDE { return 39; }
+  Fl_Widget_Type *_make() override {return new Fl_Value_Slider_Type();}
+  int pixmapID() override { return 39; }
 };
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
 

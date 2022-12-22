@@ -36,21 +36,21 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   static bool have_looked_for_kdialog;
   Fl_Kdialog_Native_File_Chooser_Driver(int val);
   ~Fl_Kdialog_Native_File_Chooser_Driver();
-  virtual int count() const FL_OVERRIDE;
-  virtual const char *filename() const FL_OVERRIDE;
-  virtual const char *filename(int i) const FL_OVERRIDE;
+  int count() const override;
+  const char *filename() const override;
+  const char *filename(int i) const override;
   virtual char *build_command();
-  virtual int show() FL_OVERRIDE;
+  int show() override;
   char *parse_filter(const char *f);
-  virtual const char *filter() const FL_OVERRIDE;
-  virtual void filter(const char *f) FL_OVERRIDE;
-  virtual int filters() const FL_OVERRIDE;
-  virtual void preset_file(const char *val) FL_OVERRIDE;
-  virtual const char *preset_file() const FL_OVERRIDE;
-  virtual void directory(const char *val) FL_OVERRIDE;
-  virtual const char *directory() const FL_OVERRIDE;
-  virtual void title(const char *val) FL_OVERRIDE;
-  virtual const char *title() const FL_OVERRIDE;
+  const char *filter() const override;
+  void filter(const char *f) override;
+  int filters() const override;
+  void preset_file(const char *val) override;
+  const char *preset_file() const override;
+  void directory(const char *val) override;
+  const char *directory() const override;
+  void title(const char *val) override;
+  const char *title() const override;
 };
 
 #endif // FL_KDIALOG_NATIVE_FILE_CHOOSER_H

@@ -215,14 +215,14 @@ protected:
   virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
   virtual int tab_height();
 
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
 
   Fl_Tabs(int X, int Y, int W, int H, const char *L = 0);
   virtual ~Fl_Tabs();
 
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
   Fl_Widget *value();
   int value(Fl_Widget *);
   /**

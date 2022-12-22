@@ -61,7 +61,7 @@ public:
   };
 
 protected:
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 
 public:
   Fl_Pack(int X, int Y, int W, int H, const char *L = 0);

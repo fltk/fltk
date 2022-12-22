@@ -45,7 +45,7 @@ class Fl_Message_Box : public Fl_Box {
 public:
   Fl_Message_Box(int X, int Y, int W, int H)
     : Fl_Box(X, Y, W, H) {}
-  virtual int handle(int e) FL_OVERRIDE;
+  int handle(int e) override;
 }; // class Fl_Message_Box
 
 /**

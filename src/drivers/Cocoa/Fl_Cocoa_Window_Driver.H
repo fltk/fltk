@@ -82,7 +82,7 @@ private:
     CGImageRef mask;
   } *shape_data_;
   void shape_bitmap_(Fl_Image* b);
-  virtual void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
+  void shape_alpha_(Fl_Image* img, int offset) override;
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
   // whether window's view received the [FLView view_did_resize] message
@@ -110,47 +110,47 @@ public:
   CGImageRef CGImage_from_window_rect(int x, int y, int w, int h, bool capture_subwins = true);
 
   // --- window data
-  virtual int decorated_w() FL_OVERRIDE;
-  virtual int decorated_h() FL_OVERRIDE;
-  virtual const Fl_Image* shape() FL_OVERRIDE;
+  int decorated_w() override;
+  int decorated_h() override;
+  const Fl_Image* shape() override;
 
   // --- window management
-  virtual Fl_X *makeWindow() FL_OVERRIDE;
-  virtual void take_focus() FL_OVERRIDE;
-  virtual void flush() FL_OVERRIDE;
-  virtual void flush_overlay() FL_OVERRIDE;
-  virtual void draw_begin() FL_OVERRIDE;
-  virtual void draw_end() FL_OVERRIDE;
-  virtual void make_current() FL_OVERRIDE;
-  virtual void label(const char *name, const char *mininame) FL_OVERRIDE;
-  virtual void destroy_double_buffer() FL_OVERRIDE;
-  virtual void show() FL_OVERRIDE;
-  virtual void resize(int X,int Y,int W,int H) FL_OVERRIDE;
-  virtual void hide() FL_OVERRIDE;
-  virtual void map() FL_OVERRIDE;
-  virtual void unmap() FL_OVERRIDE;
-  virtual void fullscreen_on() FL_OVERRIDE;
-  virtual void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
-  virtual void use_border() FL_OVERRIDE;
-  virtual void size_range() FL_OVERRIDE;
-  virtual void iconize() FL_OVERRIDE;
-  virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom) FL_OVERRIDE;
+  Fl_X *makeWindow() override;
+  void take_focus() override;
+  void flush() override;
+  void flush_overlay() override;
+  void draw_begin() override;
+  void draw_end() override;
+  void make_current() override;
+  void label(const char *name, const char *mininame) override;
+  void destroy_double_buffer() override;
+  void show() override;
+  void resize(int X,int Y,int W,int H) override;
+  void hide() override;
+  void map() override;
+  void unmap() override;
+  void fullscreen_on() override;
+  void fullscreen_off(int X, int Y, int W, int H) override;
+  void use_border() override;
+  void size_range() override;
+  void iconize() override;
+  void decoration_sizes(int *top, int *left,  int *right, int *bottom) override;
   // --- window cursor stuff
-  virtual int set_cursor(Fl_Cursor) FL_OVERRIDE;
-  virtual int set_cursor(const Fl_RGB_Image*, int, int) FL_OVERRIDE;
+  int set_cursor(Fl_Cursor) override;
+  int set_cursor(const Fl_RGB_Image*, int, int) override;
 
-  virtual void shape(const Fl_Image* img) FL_OVERRIDE;
+  void shape(const Fl_Image* img) override;
   // next 4 are in Fl_cocoa.mm because they use Objective-c
-  virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
-  virtual void wait_for_expose() FL_OVERRIDE;
+  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) override;
+  void wait_for_expose() override;
   void draw_titlebar_to_context(CGContextRef gc, int w, int h);
-  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
+  int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) override;
 
   //icons
-  virtual void icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
+  void icons(const Fl_RGB_Image *icons[], int count) override;
   NSImage *icon_image;
 
-  virtual fl_uintptr_t os_id() FL_OVERRIDE;
+  fl_uintptr_t os_id() override;
 };
 
 class Fl_Cocoa_Plugin : public Fl_Plugin {

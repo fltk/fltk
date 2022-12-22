@@ -26,7 +26,7 @@
 #include <FL/Fl_Gl_Window.H>
 
 class shape_window : public Fl_Gl_Window {
-  virtual void draw() FL_OVERRIDE;
+  void draw() override;
 public:
   int sides;
   shape_window(int x,int y,int w,int h,const char *l=0);

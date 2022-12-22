@@ -32,7 +32,7 @@ class Ut_Table : public Fl_Table {
   //     Fl_Table calls this function to draw each visible cell in the table.
   //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
   //
-  virtual void draw_cell(TableContext context, int ROW=0, int COL=0, int X=0, int Y=0, int W=0, int H=0) FL_OVERRIDE {
+  void draw_cell(TableContext context, int ROW=0, int COL=0, int X=0, int Y=0, int W=0, int H=0) override {
     static char s[10];
     switch ( context ) {
       case CONTEXT_STARTPAGE:                   // before page is drawn..

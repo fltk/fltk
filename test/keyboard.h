@@ -21,7 +21,7 @@
 #  include <FL/Fl_Window.H>
 
 class MyWindow : public Fl_Window {
-  virtual int handle(int) FL_OVERRIDE;
+  int handle(int) override;
 public:
   MyWindow(int w, int h, const char *t=0L)
     : Fl_Window( w, h, t ) { }
