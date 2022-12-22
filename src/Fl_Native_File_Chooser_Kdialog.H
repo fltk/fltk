@@ -36,21 +36,21 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   static bool have_looked_for_kdialog;
   Fl_Kdialog_Native_File_Chooser_Driver(int val);
   ~Fl_Kdialog_Native_File_Chooser_Driver();
-  int count() const;
-  const char *filename() const;
-  const char *filename(int i) const;
+  virtual int count() const FL_OVERRIDE;
+  virtual const char *filename() const FL_OVERRIDE;
+  virtual const char *filename(int i) const FL_OVERRIDE;
   virtual char *build_command();
-  int show();
+  virtual int show() FL_OVERRIDE;
   char *parse_filter(const char *f);
-  const char *filter() const;
-  virtual void filter(const char *f);
-  int filters() const;
-  void preset_file(const char *val);
-  const char *preset_file() const;
-  void directory(const char *val);
-  const char *directory() const;
-  void title(const char *val);
-  const char *title() const;
+  virtual const char *filter() const FL_OVERRIDE;
+  virtual void filter(const char *f) FL_OVERRIDE;
+  virtual int filters() const FL_OVERRIDE;
+  virtual void preset_file(const char *val) FL_OVERRIDE;
+  virtual const char *preset_file() const FL_OVERRIDE;
+  virtual void directory(const char *val) FL_OVERRIDE;
+  virtual const char *directory() const FL_OVERRIDE;
+  virtual void title(const char *val) FL_OVERRIDE;
+  virtual const char *title() const FL_OVERRIDE;
 };
 
 #endif // FL_KDIALOG_NATIVE_FILE_CHOOSER_H

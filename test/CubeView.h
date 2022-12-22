@@ -87,7 +87,7 @@ public:
    * drawing, then calls specialized functions for drawing each
    * of the entities displayed in the cube view.
    */
-  void draw();
+  virtual void draw() FL_OVERRIDE;
 #endif /* HAVE_GL */
 
 private:
