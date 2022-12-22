@@ -27,7 +27,7 @@ class DrawX : public Fl_Widget {
 public:
     DrawX(int X, int Y, int W, int H, const char*L=0) : Fl_Widget(X,Y,W,H,L) {
     }
-    void draw() {
+    virtual void draw() FL_OVERRIDE {
         // Draw background - a white filled rectangle
         fl_color(FL_WHITE); fl_rectf(x(),y(),w(),h());
         // Draw black 'X' over base widget's background

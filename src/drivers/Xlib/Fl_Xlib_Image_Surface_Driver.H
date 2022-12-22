@@ -23,15 +23,15 @@
 #endif // FLTK_USE_CAIRO
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
+  virtual void end_current() FL_OVERRIDE;
 public:
   Window pre_window;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Xlib_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
+  virtual void set_current() FL_OVERRIDE;
+  virtual void translate(int x, int y) FL_OVERRIDE;
+  virtual void untranslate() FL_OVERRIDE;
+  virtual Fl_RGB_Image *image() FL_OVERRIDE;
 #if FLTK_USE_CAIRO
   cairo_t *cairo_;
 #endif

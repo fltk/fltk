@@ -56,9 +56,9 @@ class FL_EXPORT Fl_Free : public Fl_Widget {
     FL_HANDLEPTR hfunc;
     static void step(void *);
 protected:
-    void draw();
+    virtual void draw() FL_OVERRIDE;
 public:
-    int handle(int e);
+    virtual int handle(int e) FL_OVERRIDE;
   Fl_Free(uchar t,int X,int Y,int W,int H,const char *L,FL_HANDLEPTR hdl);
   ~Fl_Free();
 };
