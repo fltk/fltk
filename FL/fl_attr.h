@@ -39,12 +39,7 @@
 
 #else
 
-#ifndef __cplusplus
-// C, not C++
-
-#undef FL_OVERRIDE
-
-#else
+#ifdef __cplusplus
 
 #if (__cplusplus >= 202002L)
 // put here definitions applying to C++20 and above
@@ -61,17 +56,16 @@
 #if (__cplusplus >= 201103L)
 // put here definitions applying to C++11 and above
 #define FL_OVERRIDE override
+#else
+#define FL_OVERRIDE
 #endif
 
 #if (__cplusplus >= 199711L)
 // put here definitions applying to C++98 and above
 #endif
 
-// C++ before C++98
-
-#ifndef FL_OVERRIDE
-#define FL_OVERRIDE
-#endif
+#else
+// C, not C++
 
 #endif // __cplusplus
 
