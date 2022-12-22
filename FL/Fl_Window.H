@@ -203,8 +203,14 @@ public:
   unsigned int border() const   {return !(flags() & NOBORDER);}
   /** Activates the flags NOBORDER|OVERRIDE */
   void set_override()   {set_flag(NOBORDER|OVERRIDE);}
+#ifdef FL_DOXYGEN
   /** Returns non zero if OVERRIDE flag is set, 0 otherwise. */
   unsigned int override() const  { return flags()&OVERRIDE; }
+#else
+#define FL_OVERRIDE_ override
+  unsigned int FL_OVERRIDE_() const  { return flags()&OVERRIDE; }
+#undef FL_OVERRIDE_
+#endif
   /**
     A "modal" window, when shown(), will prevent any events from
     being delivered to other windows in the same program, and will also
