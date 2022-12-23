@@ -304,7 +304,7 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
     if (data_length==-1)
       jpeg_unprotected_mem_src(&dinfo, data);
     else
-      jpeg_mem_src(&dinfo, data, (size_t)data_length);
+      jpeg_mem_src(&dinfo, const_cast<unsigned char*>(data), (size_t)data_length);
   }
   jpeg_read_header(&dinfo, TRUE);
 

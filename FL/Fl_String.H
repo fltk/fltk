@@ -91,7 +91,7 @@ public:
 
 private:
   void init();
-  void alloc_buf(int size);
+  void alloc_buf(int size, bool preserve_text=false);
   void release();
 
 public:
@@ -99,15 +99,15 @@ public:
   void value(const char *str, int slen);
 
   const char *value() const { return value_; }
+  char *buffer() { return value_; }
   int size() const { return size_; }
 
   int slen() const;
   int capacity() const;
+  void capacity(int num_bytes);
 
-  // ==================================  DEBUG  ==================================
-
-  void debug(const char *info) const;           // output string info
-  void hexdump(const char *info) const;         // output info + hexdump
+  void debug(const char *info = 0) const;     // output string info
+  void hexdump(const char *info = 0) const;   // output string info + hexdump
 
 }; // class Fl_String
 

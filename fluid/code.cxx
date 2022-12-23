@@ -612,7 +612,7 @@ int write_code(const char *s, const char *t) {
         write_c("// Initialize I18N stuff now for menus...\n");
         write_c("#%sinclude <locale.h>\n", indent());
         write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
-        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n", P.i18n_program);
+        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n", P.i18n_program.value());
       }
     }
     if (conditional) {
