@@ -30,28 +30,28 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   NSOpenGLContext *gl1ctxt; // GL1 context in addition to GL3 context
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win);
-  virtual float pixels_per_unit();
-  virtual void before_show(int& need_after);
-  virtual void after_show();
-  virtual int mode_(int m, const int *a);
-  virtual void make_current_before();
-  virtual void swap_buffers();
-  virtual void resize(int is_a_resize, int w, int h);
-  virtual char swap_type();
-  virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g);
-  virtual void set_gl_context(Fl_Window* w, GLContext context);
-  virtual void delete_gl_context(GLContext);
-  virtual void make_overlay_current();
-  virtual void redraw_overlay();
-  virtual void gl_start();
-  virtual char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
-  virtual Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h);
-  virtual bool need_scissor() { return true; }
-  virtual void* GetProcAddress(const char *procName);
+  float pixels_per_unit() FL_OVERRIDE;
+  void before_show(int& need_after) FL_OVERRIDE;
+  void after_show() FL_OVERRIDE;
+  int mode_(int m, const int *a) FL_OVERRIDE;
+  void make_current_before() FL_OVERRIDE;
+  void swap_buffers() FL_OVERRIDE;
+  void resize(int is_a_resize, int w, int h) FL_OVERRIDE;
+  char swap_type() FL_OVERRIDE;
+  Fl_Gl_Choice *find(int m, const int *alistp) FL_OVERRIDE;
+  GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) FL_OVERRIDE;
+  void set_gl_context(Fl_Window* w, GLContext context) FL_OVERRIDE;
+  void delete_gl_context(GLContext) FL_OVERRIDE;
+  void make_overlay_current() FL_OVERRIDE;
+  void redraw_overlay() FL_OVERRIDE;
+  void gl_start() FL_OVERRIDE;
+  char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs) FL_OVERRIDE;
+  Fl_RGB_Image* capture_gl_rectangle(int x, int y, int w, int h) FL_OVERRIDE;
+  bool need_scissor() FL_OVERRIDE { return true; }
+  void* GetProcAddress(const char *procName) FL_OVERRIDE;
   void apply_scissor();
-  virtual void switch_to_GL1();
-  virtual void switch_back();
+  void switch_to_GL1() FL_OVERRIDE;
+  void switch_back() FL_OVERRIDE;
 };
 
 

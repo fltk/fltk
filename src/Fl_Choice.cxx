@@ -199,7 +199,7 @@ int Fl_Choice::handle(int e) {
       if (wp.deleted()) return 1;
     } else {
       // In order to preserve the old look-n-feel of "white" menus,
-      // temporarily override the color() of this widget...
+      // temporarily FL_OVERRIDE the color() of this widget...
       Fl_Color c = color();
       color(FL_BACKGROUND2_COLOR);
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);

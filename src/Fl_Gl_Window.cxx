@@ -547,7 +547,7 @@ Fl_Font_Descriptor** Fl_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
 }
 
 /* Captures a rectangle of a Fl_Gl_Window and returns it as an RGB image.
- This is the platform-independent version. Some platforms may override it.
+ This is the platform-independent version. Some platforms may FL_OVERRIDE it.
  */
 Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
 {

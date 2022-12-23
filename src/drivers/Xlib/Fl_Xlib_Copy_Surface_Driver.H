@@ -25,15 +25,15 @@
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
-  void end_current() override;
+  void end_current() FL_OVERRIDE;
 protected:
   Fl_Offscreen xid;
   Window oldwindow;
   Fl_Xlib_Copy_Surface_Driver(int w, int h);
   ~Fl_Xlib_Copy_Surface_Driver();
-  void set_current() override;
-  void translate(int x, int y) override;
-  void untranslate() override;
+  void set_current() FL_OVERRIDE;
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
 #if FLTK_USE_CAIRO
   cairo_t *cairo_;
 #endif

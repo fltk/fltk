@@ -498,7 +498,7 @@ public:
 
   The default version on all other platforms prints the warning message to stderr.
 
-  You can override the behavior by setting the function pointer to your
+  You can FL_OVERRIDE the behavior by setting the function pointer to your
   own routine.
 
   Fl::warning() means that there was a recoverable problem, the display may
@@ -515,7 +515,7 @@ public:
 
   The default version on all other platforms prints the error message to stderr.
 
-  You can override the behavior by setting the function pointer to your
+  You can FL_OVERRIDE the behavior by setting the function pointer to your
   own routine.
 
   Fl::error() means there is a recoverable error such as the inability to read
@@ -530,7 +530,7 @@ public:
 
   The default version on all other platforms prints the error message to stderr.
 
-  You can override the behavior by setting the function pointer to your
+  You can FL_OVERRIDE the behavior by setting the function pointer to your
   own routine.
 
   Fl::fatal() must not return, as FLTK is in an unusable state, however your
@@ -571,13 +571,13 @@ public:
    Send all events to the passed window no matter where the pointer or
    focus is (including in other programs). The window <I>does not have
    to be shown()</I> , this lets the handle() method of a
-   "dummy" window override all event handling and allows you to
+   "dummy" window FL_OVERRIDE all event handling and allows you to
    map and unmap a complex set of windows (under both X and Windows
    <I>some</I> window must be mapped because the system interface needs a
    window id).
 
    If grab() is on it will also affect show() of windows by doing
-   system-specific operations (on X it turns on override-redirect).
+   system-specific operations (on X it turns on FL_OVERRIDE-redirect).
    These are designed to make menus popup reliably
    and faster on the system.
 

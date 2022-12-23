@@ -167,7 +167,7 @@ public:
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
   ~Fl_Text_Display();
 
-  int handle(int e) override;
+  int handle(int e) FL_OVERRIDE;
 
   void buffer(Fl_Text_Buffer* buf);
 
@@ -293,7 +293,7 @@ public:
     has a consistent UI, is the default behavior, and is normally
     what you want.
 
-    Only use THIS method if you really need to override the global
+    Only use THIS method if you really need to FL_OVERRIDE the global
     scrollbar size. The need for this should be rare.
 
     Setting \p newSize to the special value of 0 causes the widget to
@@ -433,7 +433,7 @@ public:
   void wrap_mode(int wrap, int wrap_margin);
 
   virtual void recalc_display();
-  void resize(int X, int Y, int W, int H) override;
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
 
   /**
    Convert an x pixel position into a column number.
@@ -471,7 +471,7 @@ protected:
   // Anything with "vline" indicates thats it deals with currently
   // visible lines.
 
-  void draw() override;
+  void draw() FL_OVERRIDE;
   void draw_text(int X, int Y, int W, int H);
   void draw_range(int start, int end);
   void draw_cursor(int, int);

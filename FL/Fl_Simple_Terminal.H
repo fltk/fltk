@@ -228,7 +228,7 @@ private:
 
 protected:
   // Fltk
-  void draw() override;
+  void draw() FL_OVERRIDE;
 
   // Internal methods
   void enforce_stay_at_bottom();

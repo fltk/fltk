@@ -582,7 +582,7 @@ void fl_message_title(const char *title) {
   fl_input(), fl_password(), unless a specific title has been set
   with fl_message_title(const char *title).
 
-  The default is no title. You can override the default title for a
+  The default is no title. You can FL_OVERRIDE the default title for a
   single dialog with fl_message_title(const char *title).
 
   The \p title string is copied internally, so that you can use a

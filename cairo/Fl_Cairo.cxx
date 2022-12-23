@@ -67,7 +67,7 @@ void Fl_Cairo_State::autolink(bool b) {
 
 /**
   Provides a corresponding Cairo context for window \a wi.
-  This is needed in a draw() override if Fl::cairo_autolink_context()
+  This is needed in a draw() FL_OVERRIDE if Fl::cairo_autolink_context()
   returns false, which is the default.
   The cairo_context() does not need to be freed as it is freed every time
   a new Cairo context is created. When the program terminates,

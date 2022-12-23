@@ -100,7 +100,7 @@ private:
   void close85(void *data);
   int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
 protected:
-  uchar **mask_bitmap() override {return &mask;}
+  uchar **mask_bitmap() FL_OVERRIDE {return &mask;}
 public:
   Fl_PostScript_Graphics_Driver();
 
@@ -172,78 +172,78 @@ public:
   void page(int format);
 
   // implementation of drawing methods
-  void color(Fl_Color c) override;
-  void color(uchar r, uchar g, uchar b) override;
-  Fl_Color color() override;
+  void color(Fl_Color c) FL_OVERRIDE;
+  void color(uchar r, uchar g, uchar b) FL_OVERRIDE;
+  Fl_Color color() FL_OVERRIDE;
 
-  void push_clip(int x, int y, int w, int h) override;
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) override;
-  int not_clipped(int x, int y, int w, int h) override;
-  void push_no_clip() override;
-  void pop_clip() override;
+  void push_clip(int x, int y, int w, int h) FL_OVERRIDE;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
+  int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
+  void push_no_clip() FL_OVERRIDE;
+  void pop_clip() FL_OVERRIDE;
 
-  void line_style(int style, int width=0, char* dashes=0) override;
+  void line_style(int style, int width=0, char* dashes=0) FL_OVERRIDE;
 
-  void rect(int x, int y, int w, int h) override;
-  void rectf(int x, int y, int w, int h) override;
+  void rect(int x, int y, int w, int h) FL_OVERRIDE;
+  void rectf(int x, int y, int w, int h) FL_OVERRIDE;
 
-  void xyline(int x, int y, int x1) override;
-  void xyline(int x, int y, int x1, int y2) override;
-  void xyline(int x, int y, int x1, int y2, int x3) override;
+  void xyline(int x, int y, int x1) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2, int x3) FL_OVERRIDE;
 
-  void yxline(int x, int y, int y1) override;
-  void yxline(int x, int y, int y1, int x2) override;
-  void yxline(int x, int y, int y1, int x2, int y3) override;
+  void yxline(int x, int y, int y1) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2, int y3) FL_OVERRIDE;
 
-  void line(int x1, int y1, int x2, int y2) override;
-  void line(int x1, int y1, int x2, int y2, int x3, int y3) override;
+  void line(int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void line(int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
 
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2) override;
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) override;
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) override;
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) override;
-  void point(int x, int y) override;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void point(int x, int y) FL_OVERRIDE;
 
-  void begin_points() override;
-  void begin_line() override;
-  void begin_loop() override;
-  void begin_polygon() override;
-  void vertex(double x, double y) override;
-  void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3) override;
-  void circle(double x, double y, double r) override;
-  void arc(double x, double y, double r, double start, double a) override;
-  void arc(int x, int y, int w, int h, double a1, double a2) override;
-  void pie(int x, int y, int w, int h, double a1, double a2) override;
-  void end_points() override;
-  void end_line() override;
-  void end_loop() override;
-  void end_polygon() override;
-  void begin_complex_polygon() override {begin_polygon();}
-  void gap() override {gap_=1;}
-  void end_complex_polygon() override {end_polygon();}
-  void transformed_vertex(double x, double y) override;
+  void begin_points() FL_OVERRIDE;
+  void begin_line() FL_OVERRIDE;
+  void begin_loop() FL_OVERRIDE;
+  void begin_polygon() FL_OVERRIDE;
+  void vertex(double x, double y) FL_OVERRIDE;
+  void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3) FL_OVERRIDE;
+  void circle(double x, double y, double r) FL_OVERRIDE;
+  void arc(double x, double y, double r, double start, double a) FL_OVERRIDE;
+  void arc(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void end_points() FL_OVERRIDE;
+  void end_line() FL_OVERRIDE;
+  void end_loop() FL_OVERRIDE;
+  void end_polygon() FL_OVERRIDE;
+  void begin_complex_polygon() FL_OVERRIDE {begin_polygon();}
+  void gap() FL_OVERRIDE {gap_=1;}
+  void end_complex_polygon() FL_OVERRIDE {end_polygon();}
+  void transformed_vertex(double x, double y) FL_OVERRIDE;
 
-  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0) override;
-  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0) override;
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) override;
-  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1) override;
+  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0) FL_OVERRIDE;
+  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0) FL_OVERRIDE;
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) FL_OVERRIDE;
+  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1) FL_OVERRIDE;
 
-  void draw(const char* s, int nBytes, int x, int y) override {transformed_draw(s,nBytes,x,y); }
-  void draw(const char* s, int nBytes, float x, float y) override {transformed_draw(s,nBytes,x,y); }
-  void draw(int angle, const char *str, int n, int x, int y) override;
-  void rtl_draw(const char* s, int n, int x, int y) override;
-  void font(int face, int size) override;
-  Fl_Font font() override;
-  double width(const char *, int) override;
-  double width(unsigned int u) override;
-  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) override;
-  int height() override;
-  int descent() override;
-  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) override;
-  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) override;
-  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) override;
+  void draw(const char* s, int nBytes, int x, int y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
+  void rtl_draw(const char* s, int n, int x, int y) FL_OVERRIDE;
+  void font(int face, int size) FL_OVERRIDE;
+  Fl_Font font() FL_OVERRIDE;
+  double width(const char *, int) FL_OVERRIDE;
+  double width(unsigned int u) FL_OVERRIDE;
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) FL_OVERRIDE;
+  int height() FL_OVERRIDE;
+  int descent() FL_OVERRIDE;
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   ~Fl_PostScript_Graphics_Driver();
-  int has_feature(driver_feature feature_mask) override { return feature_mask & PRINTER; }
+  int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
 
   void ps_origin(int x, int y);
   void ps_translate(int, int);

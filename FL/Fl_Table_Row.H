@@ -35,7 +35,7 @@
  To be useful it must be subclassed and at minimum the draw_cell()
  method must be overridden to provide the content of the cells. This widget
  does \em not manage the cell's data content; it is up to the parent
- class's draw_cell() method override to provide this.
+ class's draw_cell() method FL_OVERRIDE to provide this.
 
  Events on the cells and/or headings generate callbacks when they are
  clicked by the user.  You control when events are generated based on
@@ -112,7 +112,7 @@ private:
   TableRowSelectMode _selectmode;
 
 protected:
-  int handle(int event) override;
+  int handle(int event) FL_OVERRIDE;
   int find_cell(TableContext context,           // find cell's x/y/w/h given r/c
                 int R, int C, int &X, int &Y, int &W, int &H) {
     return(Fl_Table::find_cell(context, R, C, X, Y, W, H));
@@ -139,7 +139,7 @@ public:
    */
   ~Fl_Table_Row() { }
 
-  void rows(int val) override; // set number of rows
+  void rows(int val) FL_OVERRIDE; // set number of rows
   int rows() {                          // get number of rows
     return(Fl_Table::rows());
   }
@@ -177,7 +177,7 @@ public:
    */
   void select_all_rows(int flag=1);     // all rows to a known state
 
-  void clear() override {
+  void clear() FL_OVERRIDE {
     rows(0);            // implies clearing selection
     cols(0);
     Fl_Table::clear();  // clear the table

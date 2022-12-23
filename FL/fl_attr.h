@@ -34,6 +34,10 @@
 
 #ifdef FL_DOXYGEN
 
+/// This macro makes it safe to use the C++11 keyword \c override with
+/// older compilers.
+#define FL_OVERRIDE override
+
 #else
 
 #ifdef __cplusplus
@@ -52,10 +56,10 @@
 
 #if (__cplusplus >= 201103L)
 // put here definitions applying to C++11 and above
-// use C++11 override
+#define FL_OVERRIDE override
 #else
-// replce non-existing `override` with no-op
-#define override
+// replace non-existing `override` with no-op
+#define FL_OVERRIDE
 #endif
 
 #if (__cplusplus >= 199711L)

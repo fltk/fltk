@@ -67,26 +67,26 @@ private:
 public:
   Fl_Quartz_Native_File_Chooser_Driver(int val);
   ~Fl_Quartz_Native_File_Chooser_Driver();
-  void type(int t) override;
-  int type() const override;
-  void options(int o) override;
-  int options() const override;
-  int count() const override;
-  const char *filename() const override;
-  const char *filename(int i) const override;
-  void directory(const char *val) override;
-  const char *directory() const override;
-  void title(const char *t) override;
-  const char* title() const override;
-  const char *filter() const override;
-  void filter(const char *f) override;
-  int filters() const override;
-  void filter_value(int i) override;
-  int filter_value() const override;
-  void preset_file(const char*f) override;
-  const char* preset_file() const override;
-  const char *errmsg() const override;
-  int show() override;
+  void type(int t) FL_OVERRIDE;
+  int type() const FL_OVERRIDE;
+  void options(int o) FL_OVERRIDE;
+  int options() const FL_OVERRIDE;
+  int count() const FL_OVERRIDE;
+  const char *filename() const FL_OVERRIDE;
+  const char *filename(int i) const FL_OVERRIDE;
+  void directory(const char *val) FL_OVERRIDE;
+  const char *directory() const FL_OVERRIDE;
+  void title(const char *t) FL_OVERRIDE;
+  const char* title() const FL_OVERRIDE;
+  const char *filter() const FL_OVERRIDE;
+  void filter(const char *f) FL_OVERRIDE;
+  int filters() const FL_OVERRIDE;
+  void filter_value(int i) FL_OVERRIDE;
+  int filter_value() const FL_OVERRIDE;
+  void preset_file(const char*f) FL_OVERRIDE;
+  const char* preset_file() const FL_OVERRIDE;
+  const char *errmsg() const FL_OVERRIDE;
+  int show() FL_OVERRIDE;
 };
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {

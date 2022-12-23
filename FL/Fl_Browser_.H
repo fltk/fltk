@@ -198,7 +198,7 @@ protected:
   int leftedge() const; // x position after scrollbar & border
   void *find_item(int ypos); // item under mouse
 
-  void draw() override;
+  void draw() FL_OVERRIDE;
   Fl_Browser_(int X,int Y,int W,int H,const char *L=0);
 
 public:
@@ -224,8 +224,8 @@ public:
    */
   Fl_Scrollbar hscrollbar;
 
-  int handle(int event) override;
-  void resize(int X,int Y,int W,int H) override;
+  int handle(int event) FL_OVERRIDE;
+  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
 
   int select(void *item,int val=1,int docallbacks=0);
   int select_only(void *item,int docallbacks=0);
@@ -345,7 +345,7 @@ public:
     has a consistent UI, is the default behavior, and is normally
     what you want.
 
-    Only use THIS method if you really need to override the global
+    Only use THIS method if you really need to FL_OVERRIDE the global
     scrollbar size. The need for this should be rare.
 
     Setting \p newSize to the special value of 0 causes the widget to

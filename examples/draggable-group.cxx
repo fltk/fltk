@@ -92,7 +92,7 @@ public:
     All other events are handled in Fl_Group::handle().
     Dragged widgets are limited inside the borders of their parent group.
   */
-  int handle(int e) override {
+  int handle(int e) FL_OVERRIDE {
 
     switch (e) {
 

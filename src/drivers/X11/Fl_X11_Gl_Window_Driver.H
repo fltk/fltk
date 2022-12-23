@@ -27,24 +27,24 @@ class Fl_Gl_Choice;
 class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  float pixels_per_unit() override;
-  void before_show(int& need_after) override;
-  int mode_(int m, const int *a) override;
-  void swap_buffers() override;
-  char swap_type() override;
-  Fl_Gl_Choice *find(int m, const int *alistp) override;
-  GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) override;
-  void set_gl_context(Fl_Window* w, GLContext context) override;
-  void delete_gl_context(GLContext) override;
-  void make_overlay_current() override;
-  void redraw_overlay() override;
-  void waitGL() override;
-  void gl_visual(Fl_Gl_Choice*) override; // support for Fl::gl_visual()
-  void gl_start() override;
-  void draw_string_legacy(const char* str, int n) override;
-  void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) override;
-  void get_list(Fl_Font_Descriptor *fd, int r) override;
-  int genlistsize() override;
+  float pixels_per_unit() FL_OVERRIDE;
+  void before_show(int& need_after) FL_OVERRIDE;
+  int mode_(int m, const int *a) FL_OVERRIDE;
+  void swap_buffers() FL_OVERRIDE;
+  char swap_type() FL_OVERRIDE;
+  Fl_Gl_Choice *find(int m, const int *alistp) FL_OVERRIDE;
+  GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) FL_OVERRIDE;
+  void set_gl_context(Fl_Window* w, GLContext context) FL_OVERRIDE;
+  void delete_gl_context(GLContext) FL_OVERRIDE;
+  void make_overlay_current() FL_OVERRIDE;
+  void redraw_overlay() FL_OVERRIDE;
+  void waitGL() FL_OVERRIDE;
+  void gl_visual(Fl_Gl_Choice*) FL_OVERRIDE; // support for Fl::gl_visual()
+  void gl_start() FL_OVERRIDE;
+  void draw_string_legacy(const char* str, int n) FL_OVERRIDE;
+  void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) FL_OVERRIDE;
+  void get_list(Fl_Font_Descriptor *fd, int r) FL_OVERRIDE;
+  int genlistsize() FL_OVERRIDE;
 #if !USE_XFT
   virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
 #endif

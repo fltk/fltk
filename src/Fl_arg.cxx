@@ -228,7 +228,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   parameters. \p i should be incremented by the same amount.
 
   The \p cb handler is called \b before any other tests, so
-  <i>you can also override any standard FLTK switch</i>
+  <i>you can also FL_OVERRIDE any standard FLTK switch</i>
   (this is why FLTK can use very short switches instead of
   the long ones all other toolkits force you to use).
   See Fl::arg() for descriptions of the standard switches.

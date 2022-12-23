@@ -45,19 +45,19 @@ class Widget_Browser : public Fl_Browser_
   int saved_v_scroll_;
 
   // required routines for Fl_Browser_ subclass:
-  void *item_first() const override;
-  void *item_next(void *) const override;
-  void *item_prev(void *) const override;
-  int item_selected(void *) const override;
-  void item_select(void *,int) override;
-  int item_width(void *) const override;
-  int item_height(void *) const override;
-  void item_draw(void *,int,int,int,int) const override;
-  int incr_height() const override;
+  void *item_first() const FL_OVERRIDE;
+  void *item_next(void *) const FL_OVERRIDE;
+  void *item_prev(void *) const FL_OVERRIDE;
+  int item_selected(void *) const FL_OVERRIDE;
+  void item_select(void *,int) FL_OVERRIDE;
+  int item_width(void *) const FL_OVERRIDE;
+  int item_height(void *) const FL_OVERRIDE;
+  void item_draw(void *,int,int,int,int) const FL_OVERRIDE;
+  int incr_height() const FL_OVERRIDE;
 
 public:
   Widget_Browser(int,int,int,int,const char * =NULL);
-  int handle(int) override;
+  int handle(int) FL_OVERRIDE;
   void callback();
   void save_scroll_position();
   void restore_scroll_position();

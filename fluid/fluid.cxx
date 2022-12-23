@@ -163,7 +163,7 @@ int compile_strings = 0;        // fluic -cs
 /// Set, if Fluid runs in batch mode, and no user interface is activated.
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
-/// command line arguments override settings in the projectfile
+/// command line arguments FL_OVERRIDE settings in the projectfile
 Fd_String g_code_filename_arg;
 Fd_String g_header_filename_arg;
 
@@ -2057,7 +2057,7 @@ int main(int argc,char **argv) {
   }
   undo_resume();
 
-  // command line args override code and header filenams from the project file
+  // command line args FL_OVERRIDE code and header filenams from the project file
   if (!g_code_filename_arg.empty()) {
     P.code_file_set = 1;
     P.code_file_name = g_code_filename_arg;

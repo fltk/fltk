@@ -109,7 +109,7 @@ class window: public Fl_Double_Window {
 public:
   window(int X, int Y, const char *lbl): Fl_Double_Window(X, Y, lbl) {}
 
-  void draw() override {
+  void draw() FL_OVERRIDE {
     Fl_Double_Window::draw();
 
     // Test both cx/cy offset and clipping. Both borders should have a 5-pixel edge,

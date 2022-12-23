@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// You can also override this by redefining all of these.
+// You can also FL_OVERRIDE this by redefining all of these.
 
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"

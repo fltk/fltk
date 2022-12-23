@@ -561,7 +561,7 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
   SetWindowLong(xid, GWL_STYLE, flags);
 
-  // SWP_NOSENDCHANGING is so that we can override size limits
+  // SWP_NOSENDCHANGING is so that we can FL_OVERRIDE size limits
   SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 

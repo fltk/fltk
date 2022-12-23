@@ -44,11 +44,11 @@ protected:
   // these allow subclasses to put the dial in a smaller area:
   void draw(int, int, int, int);
   int handle(int, int, int, int, int);
-  void draw() override;
+  void draw() FL_OVERRIDE;
 
 public:
 
-  int handle(int) override;
+  int handle(int) FL_OVERRIDE;
   /**
     Creates a new Fl_Positioner widget using the given position,
     size, and label string. The default boxtype is FL_NO_BOX.

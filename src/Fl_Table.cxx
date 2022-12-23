@@ -41,7 +41,7 @@ void Fl_Table::row_position(int row) {
   vscrollbar->Fl_Slider::value(newtop);
   table_scrolled();
   redraw();
-  _row_position = row;  // HACK: override what table_scrolled() came up with
+  _row_position = row;  // HACK: FL_OVERRIDE what table_scrolled() came up with
 }
 
 /**
@@ -60,7 +60,7 @@ void Fl_Table::col_position(int col) {
   hscrollbar->Fl_Slider::value(newleft);
   table_scrolled();
   redraw();
-  _col_position = col;  // HACK: override what table_scrolled() came up with
+  _col_position = col;  // HACK: FL_OVERRIDE what table_scrolled() came up with
 }
 
 /**

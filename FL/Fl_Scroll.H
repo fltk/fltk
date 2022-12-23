@@ -146,19 +146,19 @@ protected:      //  (STR#1895)
 
 protected:
 
-  int on_insert(Fl_Widget*, int) override;
-  int on_move(int, int) override;
+  int on_insert(Fl_Widget*, int) FL_OVERRIDE;
+  int on_move(int, int) FL_OVERRIDE;
   void fix_scrollbar_order();
   void bbox(int&,int&,int&,int&) const;
-  void draw() override;
+  void draw() FL_OVERRIDE;
 
 public:
 
   Fl_Scrollbar scrollbar;
   Fl_Scrollbar hscrollbar;
 
-  void resize(int X, int Y, int W, int H) override;
-  int handle(int) override;
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
+  int handle(int) FL_OVERRIDE;
 
   Fl_Scroll(int X, int Y, int W, int H, const char *L = 0);
   virtual ~Fl_Scroll();
@@ -181,7 +181,7 @@ public:
   void clear();
 
   /* delete child n (by index) */
-  int delete_child(int n) override;
+  int delete_child(int n) FL_OVERRIDE;
 
   /**
     Gets the current size of the scrollbars' troughs, in pixels.
@@ -204,7 +204,7 @@ public:
     has a consistent UI, is the default behavior, and is normally
     what you want.
 
-    Only use THIS method if you really need to override the global
+    Only use THIS method if you really need to FL_OVERRIDE the global
     scrollbar size. The need for this should be rare.
 
     Setting \p newSize to the special value of 0 causes the widget to

@@ -40,7 +40,7 @@ void comment_cb(class Fl_Text_Editor* i, void *v);
 class Fl_Widget_Type : public Fl_Type {
   virtual Fl_Widget *widget(int,int,int,int) = 0;
   virtual Fl_Widget_Type *_make() = 0; // virtual constructor
-  void setlabel(const char *) override;
+  void setlabel(const char *) FL_OVERRIDE;
 
   const char *extra_code_[NUM_EXTRA_CODE];
   const char *subclass_;
@@ -51,12 +51,12 @@ class Fl_Widget_Type : public Fl_Type {
 
 protected:
 
-  void write_static() override;
-  void write_code1() override;
+  void write_static() FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
   void write_widget_code();
   void write_extra_code();
   void write_block_close();
-  void write_code2() override;
+  void write_code2() FL_OVERRIDE;
   void write_color(const char*, Fl_Color);
   Fl_Widget *live_widget;
 
@@ -75,8 +75,8 @@ public:
   void setinactive(Fluid_Image *);
 
   Fl_Widget_Type();
-  Fl_Type *make(Strategy strategy) override;
-  void open() override;
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void open() FL_OVERRIDE;
 
   const char *extra_code(int n) const {return extra_code_[n];}
   void extra_code(int n,const char *);
@@ -96,16 +96,16 @@ public:
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();
 
-  int is_widget() const override;
-  int is_public() const override;
+  int is_widget() const FL_OVERRIDE;
+  int is_public() const FL_OVERRIDE;
 
-  void write_properties() override;
-  void read_property(const char *) override;
-  int read_fdesign(const char*, const char*) override;
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
+  int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
-  Fl_Widget *enter_live_mode(int top=0) override;
-  void leave_live_mode() override;
-  void copy_properties() override;
+  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  void leave_live_mode() FL_OVERRIDE;
+  void copy_properties() FL_OVERRIDE;
 
   virtual void ideal_size(int &w, int &h);
   virtual void ideal_spacing(int &x, int &y);

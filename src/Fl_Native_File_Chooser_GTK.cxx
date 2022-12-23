@@ -130,16 +130,16 @@ private:
 
   int fl_gtk_chooser_wrapper(); // method that wraps the GTK widget
   Fl_GTK_Native_File_Chooser_Driver(int val);
-  ~Fl_GTK_Native_File_Chooser_Driver() override;
+  ~Fl_GTK_Native_File_Chooser_Driver() FL_OVERRIDE;
   static int did_find_GTK_libs;
   static void probe_for_GTK_libs(void);
-  void type(int) override;
-  int count() const override;
-  const char *filename() const override;
-  const char *filename(int i) const override;
-  void title(const char *) override;
-  const char* title() const override;
-  int show() override;
+  void type(int) FL_OVERRIDE;
+  int count() const FL_OVERRIDE;
+  const char *filename() const FL_OVERRIDE;
+  const char *filename(int i) const FL_OVERRIDE;
+  void title(const char *) FL_OVERRIDE;
+  const char* title() const FL_OVERRIDE;
+  int show() FL_OVERRIDE;
   void changed_output_type(const char *filter);
 
   static int custom_gtk_filter_function(const GtkFileFilterInfo*, Fl_GTK_Native_File_Chooser_Driver::pair*);

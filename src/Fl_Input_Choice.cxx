@@ -91,7 +91,7 @@
   \endcode
 
  \par Subclassing Example
- One can subclass Fl_Input_Choice to override the virtual methods inp_x/y/w/h()
+ One can subclass Fl_Input_Choice to FL_OVERRIDE the virtual methods inp_x/y/w/h()
  and menu_x/y/w/h() to take control of the internal Fl_Input and Fl_Menu_Button widget
  positioning. In this example, input and menubutton's positions are swapped:
  \code
@@ -101,8 +101,8 @@
 
   class MyInputChoice : public Fl_Input_Choice {
   protected:
-    virtual int inp_x()  const { return x() + Fl::box_dx(box()) + menu_w(); }  // override to reposition
-    virtual int menu_x() const { return x() + Fl::box_dx(box()); }             // override to reposition
+    virtual int inp_x()  const { return x() + Fl::box_dx(box()) + menu_w(); }  // FL_OVERRIDE to reposition
+    virtual int menu_x() const { return x() + Fl::box_dx(box()); }             // FL_OVERRIDE to reposition
   public:
     MyInputChoice(int X,int Y,int W,int H,const char*L=0) : Fl_Input_Choice(X,Y,W,H,L) {
       resize(X,Y,W,H);  // necessary for ctor to trigger our overrides

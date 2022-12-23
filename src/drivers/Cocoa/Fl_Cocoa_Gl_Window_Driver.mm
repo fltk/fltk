@@ -491,8 +491,8 @@ void Fl_Cocoa_Gl_Window_Driver::switch_back() {
 class Fl_Gl_Cocoa_Plugin : public Fl_Cocoa_Plugin {
 public:
   Fl_Gl_Cocoa_Plugin() : Fl_Cocoa_Plugin(name()) { }
-  virtual const char *name() { return "gl.cocoa.fltk.org"; }
-  virtual void resize(Fl_Gl_Window *glw, int x, int y, int w, int h) {
+  const char *name() FL_OVERRIDE { return "gl.cocoa.fltk.org"; }
+  void resize(Fl_Gl_Window *glw, int x, int y, int w, int h) FL_OVERRIDE {
     glw->Fl_Gl_Window::resize(x, y, w, h);
   }
 };

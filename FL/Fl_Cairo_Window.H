@@ -79,7 +79,7 @@
    CMake option OPTION_CAIRO or configure --enable-cairo.
 
    \note You can alternatively define your custom cairo FLTK window,
-   and thus at least override the draw() method to provide custom cairo
+   and thus at least FL_OVERRIDE the draw() method to provide custom cairo
    support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)
    to attach a context to your window. You should do it only when your window is
    the current window. \see Fl_Window::current()
@@ -94,7 +94,7 @@ public:
 
 protected:
   /** Overloaded to provide cairo callback support */
-  void draw() override {
+  void draw() FL_OVERRIDE {
     Fl_Double_Window::draw();
     if (draw_cb_) { // call the Cairo draw callback
       // manual method ? if yes explicitly get a cairo_context here

@@ -163,7 +163,7 @@ double Fl_Valuator::increment(double v, int n) {
   The formatted value is written into \p buffer.
   \p buffer should have space for at least 128 bytes.
 
-  You may override this function to create your own text formatting.
+  You may FL_OVERRIDE this function to create your own text formatting.
 */
 int Fl_Valuator::format(char* buffer) {
   double v = value();

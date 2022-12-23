@@ -878,7 +878,7 @@ Fl_Color Fl_Tree_Item::drawbgcolor() const {
 /// This method can be overridden to implement custom drawing
 /// by filling the label_[xywh]() area with content.
 ///
-/// A minimal example of how to override draw_item_content()
+/// A minimal example of how to FL_OVERRIDE draw_item_content()
 /// and draw just a normal item's background and label ourselves:
 ///
 /// \code

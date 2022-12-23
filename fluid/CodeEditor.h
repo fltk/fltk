@@ -62,8 +62,8 @@ public:
   CodeViewer(int X, int Y, int W, int H, const char *L=0);
 
 protected:
-  int handle(int ev)  override{ return Fl_Text_Display::handle(ev); }
-  void draw() override;
+  int handle(int ev)  FL_OVERRIDE{ return Fl_Text_Display::handle(ev); }
+  void draw() FL_OVERRIDE;
 };
 
 // ---- DesignViewer declaration

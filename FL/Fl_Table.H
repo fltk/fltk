@@ -231,7 +231,7 @@ protected:
   Fl_Scrollbar *hscrollbar;                     ///< child horizontal scrollbar widget
 
   // Fltk
-  int handle(int e) override;        // fltk handle() override
+  int handle(int e) FL_OVERRIDE;        // fltk handle() FL_OVERRIDE
 
   // Class maintenance
   void recalc_dimensions();
@@ -247,7 +247,7 @@ protected:
   // clamp r/c to known universe
 
   /**
-    Subclass should override this method to handle drawing the cells.
+    Subclass should FL_OVERRIDE this method to handle drawing the cells.
 
     This method will be called whenever the table is redrawn, once per cell.
 
@@ -304,7 +304,7 @@ protected:
     <tt>X/Y/W/H</tt> will be the position and dimensions of where the cell
     should be drawn.
 
-    In the case of custom widgets, a minimal draw_cell() override might
+    In the case of custom widgets, a minimal draw_cell() FL_OVERRIDE might
     look like the following. With custom widgets it is up to the caller to handle
     drawing everything within the dimensions of the cell, including handling the
     selection color.  Note all clipping must be handled as well; this allows drawing
@@ -397,7 +397,7 @@ protected:
   }
 
   // draw() has to be protected per FLTK convention (was public in 1.3.x)
-  void draw() override;
+  void draw() FL_OVERRIDE;
 
 public:
   Fl_Table(int X, int Y, int W, int H, const char *l=0);
@@ -732,7 +732,7 @@ public:
   void set_selection(int row_top, int col_left, int row_bot, int col_right);
   int move_cursor(int R, int C, int shiftselect);
   int move_cursor(int R, int C);
-  void resize(int X, int Y, int W, int H) override; // fltk resize() override
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE; // fltk resize() FL_OVERRIDE
 
   // This crashes sortapp() during init.
   //  void box(Fl_Boxtype val) {
@@ -1045,7 +1045,7 @@ public:
     widgets' scrollbars. This ensures your application has a consistent
     UI, is the default behavior, and is normally what you want.
 
-    Only use THIS method if you really need to override the global
+    Only use THIS method if you really need to FL_OVERRIDE the global
     scrollbar size. The need for this should be rare.
 
     Setting \p newSize to the special value of 0 causes the widget to
