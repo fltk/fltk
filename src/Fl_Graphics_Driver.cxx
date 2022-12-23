@@ -517,7 +517,7 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {}
   Default graphics driver implementation of fl_clip_box().
 
   This default implementation is sufficient for a graphics driver that does not
-  support clipping. Drivers that support clipping must FL_OVERRIDE this virtual method.
+  support clipping. Drivers that support clipping must override this virtual method.
 
   It returns
   - in (X, Y, W, H) the same values as given in (x, y, w, h) respectively

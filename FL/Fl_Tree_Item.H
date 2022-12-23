@@ -52,7 +52,7 @@
 ///
 /// New 1.3.3 ABI feature:
 /// You can define custom items by either adding a custom widget to the item
-/// with Fl_Tree_Item::widget(), or FL_OVERRIDE the draw_item_content() method
+/// with Fl_Tree_Item::widget(), or override the draw_item_content() method
 /// if you want to just redefine how the label is drawn.
 ///
 /// The following shows the Fl_Tree_Item's dimensions, useful when overriding
@@ -181,7 +181,7 @@ public:
   }
   /// Return item's label background text color.
   /// If the color is 0xffffffff, the default behavior is the parent tree's
-  /// bg color will be used. (An overloaded draw_item_content() can FL_OVERRIDE
+  /// bg color will be used. (An overloaded draw_item_content() can override
   /// this behavior.)
   Fl_Color labelbgcolor() const {
     return(_labelbgcolor);

@@ -78,7 +78,7 @@ void Fl::background2(uchar r, uchar g, uchar b) {
 }
 
 
-// these are set by Fl::args() and FL_OVERRIDE any system colors:
+// these are set by Fl::args() and override any system colors:
 const char *fl_fg = NULL;
 const char *fl_bg = NULL;
 const char *fl_bg2 = NULL;

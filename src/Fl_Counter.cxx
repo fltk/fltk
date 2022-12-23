@@ -37,7 +37,7 @@ struct arrow_box {
   Compute sizes (widths) of arrow boxes.
 
   This method computes the two sizes of the arrow boxes of Fl_Counter.
-  You can FL_OVERRIDE it in a subclass if you want to draw fancy arrows
+  You can override it in a subclass if you want to draw fancy arrows
   or change the layout. However, the basic layout is fixed and can't
   be changed w/o overriding the draw() and handle() methods.
 

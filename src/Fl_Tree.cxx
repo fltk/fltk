@@ -2527,7 +2527,7 @@ int Fl_Tree::scrollbar_size() const {
 /// has a consistent UI, and is the default behavior. Normally
 /// this is what you want.
 ///
-/// Only use this method if you really need to FL_OVERRIDE just THIS
+/// Only use this method if you really need to override just THIS
 /// instance of the widget's scrollbar size. (This need should be rare.)
 ///
 /// Setting \p size to the special value of 0 causes the widget to

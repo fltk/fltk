@@ -978,7 +978,7 @@ is on.");
     } // Fl_Group* o
     { wUserOrSystem = new Fl_Choice(10, 535, 141, 25);
       wUserOrSystem->tooltip("Change settings for the current user, or default values for all users of this\
- computer. Individual users can FL_OVERRIDE system options, if they set their opt\
+ computer. Individual users can override system options, if they set their opt\
 ions to specific values (not \'default\').");
       wUserOrSystem->down_box(FL_BORDER_BOX);
       wUserOrSystem->callback((Fl_Callback*)cb_wUserOrSystem);

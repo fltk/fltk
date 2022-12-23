@@ -337,7 +337,7 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
 /**
   Execute platform independent parts of Fl::wait(double).
 
-  Platform drivers \b MUST FL_OVERRIDE this virtual method to do
+  Platform drivers \b MUST override this virtual method to do
   their own stuff and call this base class method to run
   the platform independent wait functions.
 

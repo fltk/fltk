@@ -1924,7 +1924,7 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_FNFC_USES_ZENITY] = tmp;
     }
     { // next, check the user preferences
-      // FL_OVERRIDE system options only, if the option is set ( >= 0 )
+      // override system options only, if the option is set ( >= 0 )
       Fl_Preferences prefs(Fl_Preferences::CORE_USER, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
       opt_prefs.get("ArrowFocus", tmp, -1);
@@ -1979,7 +1979,7 @@ void Fl::option(Fl_Option opt, bool val)
   if (opt<0 || opt>=OPTION_LAST)
     return;
   if (!options_read_) {
-    // first read this option, so we don't FL_OVERRIDE our setting later
+    // first read this option, so we don't override our setting later
     option(opt);
   }
   options_[opt] = val;

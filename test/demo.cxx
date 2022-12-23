@@ -602,7 +602,7 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc, argv, i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s", argv[0], Fl::help);
   if (i < argc) {
-    // FL_OVERRIDE menu file *and* data path !
+    // override menu file *and* data path !
     fl_filename_absolute(menu, sizeof(menu), (const char *)argv[i]);
     strcpy(data_path, menu);
     fix_path(data_path);

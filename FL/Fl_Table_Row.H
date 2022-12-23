@@ -35,7 +35,7 @@
  To be useful it must be subclassed and at minimum the draw_cell()
  method must be overridden to provide the content of the cells. This widget
  does \em not manage the cell's data content; it is up to the parent
- class's draw_cell() method FL_OVERRIDE to provide this.
+ class's draw_cell() method override to provide this.
 
  Events on the cells and/or headings generate callbacks when they are
  clicked by the user.  You control when events are generated based on

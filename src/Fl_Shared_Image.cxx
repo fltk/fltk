@@ -507,7 +507,7 @@ Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
 
   All registered image handlers will be called in the order of registration.
   You should always call fl_register_images() before adding your own
-  handlers - unless you need to FL_OVERRIDE a known image file type which
+  handlers - unless you need to override a known image file type which
   should be rare.
 
   \see Fl_Shared_Handler for more information of the function you need
