@@ -450,7 +450,7 @@ void Fl_Wayland_Window_Driver::hide() {
       wld_win->frame = NULL;
       wld_win->xdg_surface = NULL;
     } else {
-      if (wld_win->kind == POPUP) {
+      if (wld_win->kind == POPUP && wld_win->xdg_popup) {
         popup_done(wld_win, wld_win->xdg_popup);
         wld_win->xdg_popup = NULL;
       }
@@ -904,6 +904,12 @@ static void popup_done(void *data, struct xdg_popup *xdg_popup) {
   }
 #endif
   xdg_popup_destroy(xdg_popup);
+  // The sway compositor calls popup_done directly and hides the menu
+  // when the app looses focus.
+  // Thus, we hide the window so FLTK and Wayland are in matching states.
+  struct wld_window *window = (struct wld_window*)data;
+  window->xdg_popup = NULL;
+  window->fl_win->hide();
 }
 
 static const struct xdg_popup_listener popup_listener = {
