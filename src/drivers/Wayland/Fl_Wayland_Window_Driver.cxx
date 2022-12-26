@@ -1005,6 +1005,13 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
     xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
     xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+    int XX, YY, WW, HH;
+    Fl::screen_xywh(XX, YY, WW, HH, parent_win->screen_num());
+    if (pWindow->h() <= HH) {
+      // prevent menuwindow from expanding beyond display bottom
+      xdg_positioner_set_constraint_adjustment(positioner,
+                                             XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y);
+    }
     new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface, parent_xdg, positioner);
     xdg_positioner_destroy(positioner);
     xdg_popup_add_listener(new_window->xdg_popup, &popup_listener, new_window);
@@ -1550,10 +1557,19 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
 void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
   Fl_Window *parent = Fl_Window_Driver::menu_parent();
   if (parent) {
-    X = parent->x();
-    Y = parent->y();
-    W = parent->w();
-    H = parent->h();
+    int XX,YY,WW,HH;
+    Fl::screen_xywh(XX, YY, WW, HH, parent->screen_num());
+    if (pWindow->h() > HH) { // the menu window is higher than the display
+      X = parent->x();
+      Y = parent->y();
+      W = parent->w();
+      H = parent->h();
+    } else { // position the menu window by wayland constraints
+      X = -50000;
+      Y = -50000;
+      W = 1000000;
+      H = 1000000;
+    }
     //printf("menu_window_area: %dx%d - %dx%d\n",X,Y,W,H);
   } else Fl_Window_Driver::menu_window_area(X, Y, W, H, nscreen);
 }
