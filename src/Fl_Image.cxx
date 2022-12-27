@@ -388,7 +388,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
 
  \param bits image data
- \param bit_length length of the \p bits array in bytes
+ \param bits_length length of the \p bits array in bytes
  \param W image width in pixels
  \param H image height in pixels
  \param D image depth in bytes, 1 for gray scale, 2 for gray with alpha,

@@ -38,7 +38,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
  constructor will not generate the bitmap to avoid illegal memory read
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
  \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
- \param bit_length length of the \p bits array in bytes
+ \param bits_length length of the \p bits array in bytes
  \param W image width in pixels
  \param H image height in pixels
  \see Fl_Bitmap(const char *bits, int bits_length, int W, int H),
@@ -69,7 +69,7 @@ Fl_Bitmap::Fl_Bitmap(const uchar *bits, int bits_length, int W, int H) :
  constructor will not generate the bitmap to avoid illegal memory read
  access and instead set \c data to NULL and \c ld to \c ERR_MEMORY_ACCESS.
  \param bits bitmap data, one pixel per bit, rows are rounded to the next byte
- \param bit_length length of the \p bits array in bytes
+ \param bits_length length of the \p bits array in bytes
  \param W image width in pixels
  \param H image height in pixels
  \see Fl_Bitmap(const uchar *bits, int bits_length, int W, int H),
