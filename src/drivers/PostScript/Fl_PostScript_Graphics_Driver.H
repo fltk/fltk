@@ -45,7 +45,7 @@ class Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   FILE *output;
   Fl_PostScript_Close_Command close_cmd_;
-  enum Fl_Paged_Device::Page_Format page_format_;
+  int page_format_;
   char *ps_filename_;
   int nPages;
   double pw_, ph_;
@@ -158,7 +158,7 @@ public:
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   //void transformed_draw(const char* s, double x, double y);
 
-  enum Fl_Paged_Device::Page_Format page_format_;
+  int page_format_;
   char *ps_filename_;
 
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
