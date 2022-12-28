@@ -19,7 +19,6 @@
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>
 #include "../../Fl_Gl_Choice.H"
-#include "../../Fl_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Gl_Window_Driver.H"

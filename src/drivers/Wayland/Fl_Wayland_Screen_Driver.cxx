@@ -17,7 +17,6 @@
 #include <config.h>
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
-#include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
@@ -26,12 +25,9 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
 #include "../../print_button.h"
 #include <dlfcn.h>
-#include <sys/time.h>
 #include <linux/input.h>
 #include <stdlib.h>
 #include <xkbcommon/xkbcommon.h>
