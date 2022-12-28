@@ -1557,6 +1557,5 @@ int Fl_Wayland_Screen_Driver::get_key(int k) {
 
 
 struct wl_display *fl_wl_display() {
-  if (!Fl_Wayland_Screen_Driver::wl_display || !Fl_Wayland_Screen_Driver::wl_registry) return NULL;
-  return Fl_Wayland_Screen_Driver::wl_display;
+  return (Fl_Wayland_Screen_Driver::wl_registry ? Fl_Wayland_Screen_Driver::wl_display : NULL);
 }
