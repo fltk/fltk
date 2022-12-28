@@ -61,7 +61,6 @@
 @main:Fluid\n(UI design tool):fluid valuators.fl
 
 @main:Cool\nDemos...:@e
-	@e:X Color\nBrowser:colbrowser rgb.txt
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle
@@ -72,17 +71,19 @@
 	@e:Clipboard\nViewer:clipboard
 
 @main:Other\nTests...:@o
-	@o:Color Choosers:color_chooser
 	@o:File Chooser:file_chooser
 	@o:Native File Chooser:native-filechooser
-	@o:Font Tests...:@of
-		@of:Fonts:fonts
-		@of:UTF-8:utf8
 	@o:HelpDialog:help_dialog help_dialog.html
 	@o:Input Choice:input_choice
 	@o:Preferences:preferences
 	@o:Threading:threads
 	@o:XForms Emulation:forms
+	@o:Colors and Fonts...:@of
+		@of:X Color\nBrowser:colbrowser rgb.txt
+		@of:Color Chooser:color_chooser
+		@of:Color Contrast:contrast
+		@of:Fonts:fonts
+		@of:UTF-8 Fonts:utf8
 
 @main:Tutorial\nfrom\nManual...:@j
 	@j:ask\n(modified):ask

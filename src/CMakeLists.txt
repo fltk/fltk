@@ -132,6 +132,7 @@ set (CPPFILES
   fl_ask.cxx
   fl_boxtype.cxx
   fl_color.cxx
+  fl_contrast.cxx
   fl_cursor.cxx
   fl_curve.cxx
   fl_diamond_box.cxx
