@@ -65,7 +65,6 @@ static EGLConfig wld_egl_conf = NULL;
 
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
 EGLint Fl_Wayland_Gl_Window_Driver::configs_count = 0;
-struct wl_event_queue *Fl_Wayland_Gl_Window_Driver::gl_event_queue = NULL;
 
 
 Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {
@@ -102,8 +101,6 @@ void Fl_Wayland_Gl_Window_Driver::init() {
   eglGetConfigs(egl_display, NULL, 0, &configs_count);
   //printf("EGL has %d configs\n", configs_count);
   eglBindAPI(EGL_OPENGL_API);
-
-  gl_event_queue = wl_display_create_queue(fl_wl_display());
 }
 
 
@@ -360,12 +357,12 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 
   if (egl_surface && !egl_swap_in_progress) {
     egl_swap_in_progress = true;
-    //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
-    while (wl_display_prepare_read(fl_wl_display()) != 0) {
-      wl_display_dispatch_pending(fl_wl_display());
+    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
+      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     }
-    wl_display_read_events(fl_wl_display());
-    wl_display_dispatch_queue_pending(fl_wl_display(),  gl_event_queue);
+    wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     egl_swap_in_progress = false;
   }

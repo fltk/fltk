@@ -55,7 +55,6 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs);
   static EGLDisplay egl_display;
   static EGLint configs_count;
-  static struct wl_event_queue *gl_event_queue;
   void init();
   struct wl_egl_window *egl_window;
   EGLSurface egl_surface;
