@@ -87,7 +87,7 @@ static void make_images() {
     // A moving blob
     const float pos = (i / (float) FRAMES) * 2 - 0.5f;
 
-    const int xoffset = int(pos * DIM);
+    const int xoffset = int(pos * (int)DIM);
     const int yoffset = 2 * DIM / 3;
     const int w = DIM / 4;
 

@@ -673,7 +673,7 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
     left_margin = 12;
     top_margin = 12;
   }
-  page_format_ = (enum Fl_Paged_Device::Page_Format)(format | layout);
+  page_format_ = (enum Fl_Paged_Device::Page_Format)((int)format | (int)layout);
   if (layout & Fl_Paged_Device::LANDSCAPE){
     ph_ = Fl_Paged_Device::page_formats[format].width;
     pw_ = Fl_Paged_Device::page_formats[format].height;
