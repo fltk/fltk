@@ -107,17 +107,7 @@ static const Fl_Menu_* button=0;
 
 ////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
 class window_with_items : public Fl_Menu_Window {
-=======
-// tiny window for title of menu:
-class menutitle : public Fl_Menu_Window {
-<<<<<<< HEAD
-  void draw() override;
->>>>>>> 3e95f0b72 (New footprint `void draw() override`)
-=======
-  void draw() FL_OVERRIDE;
->>>>>>> 6ee9fd50a (Final version `void draw() FL_OVERRIDE`)
 public:
   const Fl_Menu_Item* menu;
   window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
