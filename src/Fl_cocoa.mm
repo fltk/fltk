@@ -3155,12 +3155,14 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
      H is larger than the maximum value for the display.
      See "Crashing regression in MacOS code" in fltk.coredev.
      */
+    BOOL has_focus = [nswin isKeyWindow];
     [nswin orderOut:nil];
     [nswin setLevel:level];
     [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
     restore_window_title_and_icon(pWindow, icon_image);
     pWindow->resize(X, Y, W, H);
-    [nswin orderFront:nil];
+    if (has_focus) [nswin makeKeyAndOrderFront:nil];
+    else [nswin orderFront:nil];
   } else
 #endif
   {
