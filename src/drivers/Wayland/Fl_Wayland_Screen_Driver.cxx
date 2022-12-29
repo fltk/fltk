@@ -947,7 +947,7 @@ static struct wl_output_listener output_listener = {
 
 static void registry_handle_global(void *user_data, struct wl_registry *wl_registry,
            uint32_t id, const char *interface, uint32_t version) {
-//fprintf(stderr, "interface=%s\n", interface);
+//fprintf(stderr, "interface=%s version=%u\n", interface, version);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (strcmp(interface, "wl_compositor") == 0) {
     if (version < 4) {
