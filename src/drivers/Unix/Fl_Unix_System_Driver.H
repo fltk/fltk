@@ -34,7 +34,7 @@ public:
   int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon) FL_OVERRIDE;
   void newUUID(char *uuidBuffer) FL_OVERRIDE;
   char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
-                                    const char *application);
+                                    const char *application) FL_OVERRIDE;
   int preferences_need_protection_check() FL_OVERRIDE {return 1;}
   int utf8locale() FL_OVERRIDE;
   const char *filename_name(const char *buf) FL_OVERRIDE;

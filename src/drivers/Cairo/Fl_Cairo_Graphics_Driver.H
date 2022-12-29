@@ -133,7 +133,7 @@ public:
   void begin_polygon() FL_OVERRIDE;
   void vertex(double x, double y) FL_OVERRIDE;
   void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3) FL_OVERRIDE;
-  void circle(double x, double y, double r) ;
+  void circle(double x, double y, double r) FL_OVERRIDE;
   void arc(double x, double y, double r, double start, double a) FL_OVERRIDE;
   void arc(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
   void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
@@ -159,7 +159,7 @@ public:
   void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   void cache(Fl_RGB_Image *rgb) FL_OVERRIDE;
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) FL_OVERRIDE;
-  void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) ;
+  void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   static cairo_pattern_t *bitmap_to_pattern(Fl_Bitmap *bm, bool complement,
                                             cairo_surface_t **p_surface);
   void cache(Fl_Bitmap *img) FL_OVERRIDE;
@@ -174,7 +174,7 @@ public:
   void draw(const char* s, int nBytes, float x, float y) FL_OVERRIDE;
   void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
   void rtl_draw(const char* str, int n, int x, int y) FL_OVERRIDE;
-  int height();
+  int height() FL_OVERRIDE;
   int descent() FL_OVERRIDE;
   double width(const char *str, int n) FL_OVERRIDE;
   double width(unsigned c) FL_OVERRIDE;

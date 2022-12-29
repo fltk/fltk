@@ -59,32 +59,32 @@ public:
   void page(int format);
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   int start_eps(int width, int height);
-  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD);
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) {
+  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) FL_OVERRIDE;
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) FL_OVERRIDE {
     Fl_Cairo_Graphics_Driver::draw_image(call, data, x,y,w,h,delta);
   }
-  void font(int f, int s);
-  Fl_Font font();
-  double width(const char *s, int n);
-  double width(unsigned u);
-  int height();
-  int descent();
-  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  void font(int f, int s) FL_OVERRIDE;
+  Fl_Font font() FL_OVERRIDE;
+  double width(const char *s, int n) FL_OVERRIDE;
+  double width(unsigned u) FL_OVERRIDE;
+  int height() FL_OVERRIDE;
+  int descent() FL_OVERRIDE;
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) FL_OVERRIDE;
   // draw text at width measured on display
   void transformed_draw(const char* s, int n, double x, double y);
-  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); }
-  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); }
-  void draw(int angle, const char *str, int n, int x, int y) {Fl_Cairo_Graphics_Driver::draw(angle, str, n, x, y);}
+  void draw(const char* s, int nBytes, int x, int y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE {Fl_Cairo_Graphics_Driver::draw(angle, str, n, x, y);}
 
-  void point(int x, int y);
-  int not_clipped(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+  void point(int x, int y) FL_OVERRIDE;
+  int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
+  virtual int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
   // draw image classes without caching them
   void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
 };
 
 #else // ! USE_PANGO

@@ -371,20 +371,20 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 class Fl_Wayland_Gl_Plugin : public Fl_Wayland_Plugin {
 public:
   Fl_Wayland_Gl_Plugin() : Fl_Wayland_Plugin(name()) { }
-  virtual const char *name() { return "gl.wayland.fltk.org"; }
-  virtual void do_swap(Fl_Window *w) {
+  const char *name() FL_OVERRIDE { return "gl.wayland.fltk.org"; }
+  void do_swap(Fl_Window *w) FL_OVERRIDE {
     Fl_Gl_Window_Driver *gldr = Fl_Gl_Window_Driver::driver(w->as_gl_window());
     if (gldr->overlay() == w) gldr->swap_buffers();
   }
-  virtual void invalidate(Fl_Window *w) {
+  void invalidate(Fl_Window *w) FL_OVERRIDE {
     w->as_gl_window()->valid(0);
   }
-  virtual void terminate() {
+  void terminate() FL_OVERRIDE {
     if (Fl_Wayland_Gl_Window_Driver::egl_display != EGL_NO_DISPLAY) {
       eglTerminate(Fl_Wayland_Gl_Window_Driver::egl_display);
     }
   }
-  virtual void destroy(struct gl_start_support *gl_start_support_) {
+  void destroy(struct gl_start_support *gl_start_support_) FL_OVERRIDE {
     eglDestroySurface(Fl_Wayland_Gl_Window_Driver::egl_display, gl_start_support_->egl_surface);
     wl_egl_window_destroy(gl_start_support_->egl_window);
     wl_subsurface_destroy(gl_start_support_->subsurface);
