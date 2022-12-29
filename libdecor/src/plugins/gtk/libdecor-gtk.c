@@ -1727,17 +1727,18 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 	if (bottom)
 		*bottom = 0;
 	if (top) {
-		/* Redraw decoration to ensure size will be up-to-date */
-		draw_decoration((struct libdecor_frame_gtk *) frame);
-
 		GtkWidget *header = ((struct libdecor_frame_gtk *)frame)->header;
 		enum decoration_type type = window_state_to_decoration_type(window_state);
 
 		/* avoid warnings after decoration has been turned off */
-		if (GTK_IS_WIDGET(header) && (type != DECORATION_TYPE_NONE))
+		if (GTK_IS_WIDGET(header) && (type != DECORATION_TYPE_NONE)) {
+			/* Redraw title bar to ensure size will be up-to-date */
+			if (configuration && type == DECORATION_TYPE_TITLE_ONLY)
+				draw_title_bar((struct libdecor_frame_gtk *) frame);
 			*top = gtk_widget_get_allocated_height(header);
-		else
+		} else {
 			*top = 0;
+		}
 	}
 
 	return true;

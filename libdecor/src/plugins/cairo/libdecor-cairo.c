@@ -2712,7 +2712,7 @@ libdecor_plugin_new(struct libdecor *context)
 	plugin_cairo->font = pango_font_description_new();
 	pango_font_description_set_family(plugin_cairo->font, "sans");
 	pango_font_description_set_weight(plugin_cairo->font, PANGO_WEIGHT_BOLD);
-	pango_font_description_set_size(plugin_cairo->font, SYM_DIM * PANGO_SCALE);
+	pango_font_description_set_absolute_size(plugin_cairo->font, SYM_DIM * PANGO_SCALE);
 
 	wl_display = libdecor_get_wl_display(context);
 	plugin_cairo->wl_registry = wl_display_get_registry(wl_display);
