@@ -106,19 +106,25 @@ const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
 static const Fl_Menu_* button=0;
 
 ////////////////////////////////////////////////////////////////
+class menuwindow;
 
+// utility class covering both menuwindow and menutitle
 class window_with_items : public Fl_Menu_Window {
-public:
-  const Fl_Menu_Item* menu;
+protected:
   window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
     Fl_Menu_Window(X, Y, W, H, 0) { menu = m; }
+public:
+  const Fl_Menu_Item* menu;
+  virtual menuwindow* as_menuwindow() { return NULL; }
 };
 
 // tiny window for title of menu:
 class menutitle : public window_with_items {
   void draw() FL_OVERRIDE;
 public:
+  menutitle *extra; // additional menutitle window when the 1st one is covered by a menuwindow
   menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*);
+  ~menutitle();
 };
 
 // each vertical menu has one of these:
@@ -148,6 +154,9 @@ public:
   void autoscroll(int);
   void position(int x, int y);
   int is_inside(int x, int y);
+  menuwindow* as_menuwindow() FL_OVERRIDE { return this; }
+  int menubartitle;
+  menuwindow *origin;
 };
 
 Fl_Window *menuwindow::parent_ = NULL;
@@ -158,14 +167,57 @@ Fl_Window *menuwindow::parent_ = NULL;
  \{
  */
 
+/** The Fl_Window from which currently displayed popups originate. */
 Fl_Window *Fl_Window_Driver::menu_parent() {
   return menuwindow::parent_;
 }
 
-const Fl_Menu_Item *Fl_Window_Driver::current_menu() {
-  if (!pWindow->menu_window()) return NULL;
-  return ((window_with_items*)pWindow)->menu;
+/** Accessor to the "origin" member variable of class menuwindow.
+ Variable origin is not NULL when 2 menuwindow's occur, one being a submenu of the other;
+ it links the menuwindow at right to the one at left. */
+Fl_Window *Fl_Window_Driver::menu_leftorigin(Fl_Window *win) {
+  if (!win->menu_window()) return NULL;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  return (mwin ? mwin->origin : NULL);
 }
+
+/** Accessor to the "title" member variable of class menuwindow */
+Fl_Window *Fl_Window_Driver::menu_title(Fl_Window *win) {
+  if (!win->menu_window()) return NULL;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  return (mwin ? mwin->title : NULL);
+}
+
+/** Accessor to the "itemheight" member variable of class menuwindow */
+int Fl_Window_Driver::menu_itemheight(Fl_Window *win) {
+  if (!win->menu_window()) return 0;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  return (mwin ? mwin->itemheight : 0);
+}
+
+/** Accessor to the "menubartitle" member variable of class menuwindow */
+int Fl_Window_Driver::menu_bartitle(Fl_Window *win) {
+  if (!win->menu_window()) return 0;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  return (mwin ? mwin->menubartitle : 0);
+}
+
+/** Accessor to the "selected" member variable of class menuwindow */
+int Fl_Window_Driver::menu_selected(Fl_Window *win) {
+  if (!win->menu_window()) return 0;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  return (mwin ? mwin->selected : -1);
+}
+
+/** Create a menutitle window with same content and size as another one and another ordinate.
+ */
+Fl_Window *Fl_Window_Driver::extra_menutitle(Fl_Window *old, int Y) {
+  menutitle *t = (menutitle*)old;
+  menutitle *win = new menutitle(t->x(), Y, t->w(), t->h(), t->menu);
+  t->extra = win;
+  return win;
+}
+
 /**
  \}
  \endcond
@@ -290,6 +342,11 @@ menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
   set_modal();
   clear_border();
   set_menu_window();
+  extra = NULL;
+}
+
+menutitle::~menutitle() {
+  delete extra;
 }
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
@@ -299,6 +356,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 {
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
+  menubartitle = menubar_title;
+  origin = NULL;
 
   Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
@@ -1006,6 +1065,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       if (initial_item) { // bring up submenu containing initial item:
         menuwindow* n = new menuwindow(menutable,X,Y,W,H,initial_item,title,0,0,cw.x());
         pp.p[pp.nummenus++] = n;
+        if (pp.nummenus >= 2) pp.p[pp.nummenus-1]->origin = pp.p[pp.nummenus-2];
         // move all earlier menus to line up with this new one:
         if (n->selected>=0) {
           int dy = n->y()-nY;
@@ -1032,6 +1092,9 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
         pp.p[pp.nummenus++]= new menuwindow(menutable, nX, nY,
                                           title?1:0, 0, 0, title, 0, menubar,
                                             (title ? 0 : cw.x()) );
+        if (pp.nummenus >= 2 && pp.p[pp.nummenus-2]->itemheight) {
+          pp.p[pp.nummenus-1]->origin = pp.p[pp.nummenus-2];
+        }
       }
     } else { // !m->submenu():
       while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
