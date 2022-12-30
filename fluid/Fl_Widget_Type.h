@@ -67,7 +67,9 @@ public:
   Fl_Widget *o;
   int public_;
   int bind_image_;
+  int compress_image_;
   int bind_deimage_;
+  int compress_deimage_;
 
   Fluid_Image *image;
   void setimage(Fluid_Image *);

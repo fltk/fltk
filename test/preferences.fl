@@ -145,7 +145,7 @@ Function {} {open return_type int
     }
     Fl_Button {} {
       label OK
-      callback saveAndCloseWindowCB
+      callback saveAndCloseWindowCB selected
       xywh {125 303 75 25}
     }
     Fl_Group {} {
@@ -283,7 +283,7 @@ Function {} {open return_type int
     }
     Fl_Choice wLanguage {
       label {Language:}
-      callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open selected
+      callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open
       xywh {120 269 105 20} down_box BORDER_BOX
       code0 {\#include <FL/fl_ask.H>}
     } {

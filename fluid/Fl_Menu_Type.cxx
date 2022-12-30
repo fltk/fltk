@@ -303,7 +303,7 @@ void Fl_Menu_Item_Type::write_static() {
   }
   if (image) {
     if (image->written != write_number) {
-      image->write_static();
+      image->write_static(compress_image_);
       image->written = write_number;
     }
   }

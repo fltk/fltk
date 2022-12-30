@@ -211,7 +211,9 @@ Fl_Widget_Type::Fl_Widget_Type() {
   o = 0;
   public_ = 1;
   bind_image_ = 0;
+  compress_image_ = 1;
   bind_deimage_ = 0;
+  compress_deimage_ = 1;
 }
 
 Fl_Widget_Type::~Fl_Widget_Type() {
@@ -497,6 +499,26 @@ void bind_image_cb(Fl_Button* b, void *v) {
   }
 }
 
+void compress_image_cb(Fl_Button* b, void *v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
+      b->activate();
+      b->value(current_widget->compress_image_);
+    } else {
+      b->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+        ((Fl_Widget_Type*)o)->compress_image_ = b->value();
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
 static Fl_Input *inactive_input;
 
 void inactive_cb(Fl_Input* i, void *v) {
@@ -552,6 +574,26 @@ void bind_deimage_cb(Fl_Button* b, void *v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         ((Fl_Widget_Type*)o)->bind_deimage_ = b->value();
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
+void compress_deimage_cb(Fl_Button* b, void *v) {
+  if (v == LOAD) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
+      b->activate();
+      b->value(current_widget->compress_deimage_);
+    } else {
+      b->deactivate();
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+        ((Fl_Widget_Type*)o)->compress_deimage_ = b->value();
         mod = 1;
       }
     }
@@ -2739,13 +2781,13 @@ void Fl_Widget_Type::write_static() {
   }
   if (image) {
     if (image->written != write_number) {
-      image->write_static();
+      image->write_static(compress_image_);
       image->written = write_number;
     }
   }
   if (inactive) {
     if (inactive->written != write_number) {
-      inactive->write_static();
+      inactive->write_static(compress_deimage_);
       inactive->written = write_number;
     }
   }
@@ -3084,11 +3126,13 @@ void Fl_Widget_Type::write_properties() {
   if (image_name() && *image_name()) {
     write_string("image");
     write_word(image_name());
+    write_string("compress_image %d", compress_image_);
   }
   if (bind_image_) write_string("bind_image 1");
   if (inactive_name() && *inactive_name()) {
     write_string("deimage");
     write_word(inactive_name());
+    write_string("compress_deimage %d", compress_deimage_);
   }
   if (bind_deimage_) write_string("bind_deimage 1");
   write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
@@ -3211,12 +3255,30 @@ void Fl_Widget_Type::read_property(const char *c) {
     tooltip(read_word());
   } else if (!strcmp(c,"image")) {
     image_name(read_word());
+    // starting in 2023, `image` is always followed by `compress_image`
+    // the code below is for compatibility with older .fl files
+    const char *ext = fl_filename_ext(image_name_);
+    if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".svg")
+        && strcmp(ext, ".svgz"))
+      compress_image_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_image")) {
     bind_image_ = (int)atol(read_word());
+  } else if (!strcmp(c,"compress_image")) {
+    compress_image_ = (int)atol(read_word());
   } else if (!strcmp(c,"deimage")) {
     inactive_name(read_word());
+    // starting in 2023, `deimage` is always followed by `compress_deimage`
+    // the code below is for compatibility with older .fl files
+    const char *ext = fl_filename_ext(inactive_name_);
+    if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".svg")
+        && strcmp(ext, ".svgz"))
+      compress_deimage_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_deimage")) {
     bind_deimage_ = (int)atol(read_word());
+  } else if (!strcmp(c,"compress_deimage")) {
+    compress_deimage_ = (int)atol(read_word());
   } else if (!strcmp(c,"type")) {
     if (is_spinner())
       ((Fl_Spinner*)o)->type(item_number(subtypes(), read_word()));
