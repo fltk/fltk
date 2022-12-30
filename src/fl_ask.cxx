@@ -108,8 +108,6 @@ void fl_message(const char *fmt, ...) {
   Fl_Message msg("i");
   va_list ap;
 
-  // fl_beep(FL_BEEP_MESSAGE);
-
   va_start(ap, fmt);
   msg.innards(fmt, ap, 0, fl_close, 0);
   va_end(ap);
@@ -125,8 +123,6 @@ void fl_alert(const char *fmt, ...) {
 
   Fl_Message msg("!");
   va_list ap;
-
-  // fl_beep(FL_BEEP_ERROR);
 
   va_start(ap, fmt);
   msg.innards(fmt, ap, 0, fl_close, 0);
@@ -150,8 +146,6 @@ int fl_ask(const char *fmt, ...) {
 
   Fl_Message msg("?");
   va_list ap;
-
-  // fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, fmt);
   int r = msg.innards(fmt, ap, fl_no, fl_yes, 0);
@@ -223,8 +217,6 @@ int fl_choice(const char *fmt, const char *b0, const char *b1, const char *b2, .
   Fl_Message msg("?");
   va_list ap;
 
-  // fl_beep(FL_BEEP_QUESTION);
-
   va_start(ap, b2);
   int r = msg.innards(fmt, ap, b0, b1, b2);
   va_end(ap);
@@ -255,8 +247,6 @@ int fl_choice_n(const char *fmt, const char *b0, const char *b1, const char *b2,
 
   Fl_Message msg("?");
   va_list ap;
-
-  // fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, b2);
   int r = msg.innards(fmt, ap, b0, b1, b2);
@@ -318,8 +308,6 @@ Fl_Widget *fl_message_icon() {
 */
 const char *fl_input(const char *fmt, const char *defstr, ...) {
 
-  // fl_beep(FL_BEEP_QUESTION);
-
   Fl_Message msg("?");
   va_list ap;
   va_start(ap, defstr);
@@ -361,8 +349,6 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
 */
 Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
 
-  // fl_beep(FL_BEEP_QUESTION);
-
   Fl_Message msg("?");
   if (maxchar < 0)
     maxchar = 0;
@@ -390,8 +376,6 @@ Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
   \retval NULL if Cancel was pushed or the window was closed by the user
 */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
-
-  // fl_beep(FL_BEEP_PASSWORD);
 
   Fl_Message msg("?");
   va_list ap;
@@ -424,8 +408,6 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   \since 1.4.0
 */
 Fl_String fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) {
-
-  // fl_beep(FL_BEEP_PASSWORD);
 
   Fl_Message msg("?");
   if (maxchar < 0)
