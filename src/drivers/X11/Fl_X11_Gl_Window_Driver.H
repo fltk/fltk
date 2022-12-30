@@ -46,7 +46,7 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void get_list(Fl_Font_Descriptor *fd, int r) FL_OVERRIDE;
   int genlistsize() FL_OVERRIDE;
 #if !USE_XFT
-  virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
+  virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum) FL_OVERRIDE;
 #endif
   //static GLContext create_gl_context(XVisualInfo* vis);
 };
