@@ -211,9 +211,9 @@ Fl_Widget_Type::Fl_Widget_Type() {
   o = 0;
   public_ = 1;
   bind_image_ = 0;
-  compress_image_ = 0;
+  compress_image_ = 1;
   bind_deimage_ = 0;
-  compress_deimage_ = 0;
+  compress_deimage_ = 1;
 }
 
 Fl_Widget_Type::~Fl_Widget_Type() {
@@ -3258,10 +3258,10 @@ void Fl_Widget_Type::read_property(const char *c) {
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(image_name_);
-    if (   strcmp(ext, ".jpg")==0
-        || strcmp(ext, ".svg")==0
-        || strcmp(ext, ".svgz")==0)
-      compress_image_ = 1;
+    if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".svg")
+        && strcmp(ext, ".svgz"))
+      compress_image_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_image")) {
     bind_image_ = (int)atol(read_word());
   } else if (!strcmp(c,"compress_image")) {
@@ -3271,10 +3271,10 @@ void Fl_Widget_Type::read_property(const char *c) {
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(inactive_name_);
-    if (   strcmp(ext, ".jpg")==0
-        || strcmp(ext, ".svg")==0
-        || strcmp(ext, ".svgz")==0)
-      compress_deimage_ = 1;
+    if (   strcmp(ext, ".jpg")
+        && strcmp(ext, ".svg")
+        && strcmp(ext, ".svgz"))
+      compress_deimage_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_deimage")) {
     bind_deimage_ = (int)atol(read_word());
   } else if (!strcmp(c,"compress_deimage")) {

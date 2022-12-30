@@ -31,6 +31,9 @@ class Fluid_Image {
 protected:
   Fluid_Image(const char *name); // no public constructor
   ~Fluid_Image(); // no public destructor
+  size_t write_static_binary();
+  size_t write_static_text();
+  void write_static_rgb(const char* idata_name);
 public:
   int written;
   static Fluid_Image* find(const char *);
@@ -39,8 +42,6 @@ public:
   void image(Fl_Widget *); // set the image of this widget
   void deimage(Fl_Widget *); // set the deimage of this widget
   void write_static(int compressed);
-  size_t write_static_binary();
-  size_t write_static_text();
   void write_initializer(const char *type_name, const char *format, ...);
   void write_code(int bind, const char *var, int inactive = 0);
   void write_inline(int inactive = 0);

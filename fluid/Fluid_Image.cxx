@@ -29,6 +29,7 @@
 #include <FL/fl_string_functions.h>
 #include <FL/fl_utf8.h>     // fl_fopen()
 #include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_SVG_Image.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -49,6 +50,8 @@ static int bitmap_header_written = 0;
 static int image_header_written = 0;
 static int jpeg_header_written = 0;
 static int png_header_written = 0;
+static int gif_header_written = 0;
+static int bmp_header_written = 0;
 static int svg_header_written = 0;
 
 /** Write the contents of the name() file as binary source code. */
@@ -97,6 +100,20 @@ size_t Fluid_Image::write_static_text() {
   return nData;
 }
 
+void Fluid_Image::write_static_rgb(const char* idata_name) {
+  // Write image data...
+  write_c("\n");
+  if (image_header_written != write_number) {
+    write_c("#include <FL/Fl_Image.H>\n");
+    image_header_written = write_number;
+  }
+  write_c("static const unsigned char %s[] =\n", idata_name);
+  const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
+  write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
+  write_c(";\n");
+  write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
+}
+
 /**
  Write the static image data into the soutrce file.
 
@@ -112,7 +129,31 @@ void Fluid_Image::write_static(int compressed) {
   const char *idata_name = unique_id(this, "idata", fl_filename_name(name()), 0);
   function_name_ = unique_id(this, "image", fl_filename_name(name()), 0);
   // TODO: GIF, ICO, BMP
-  if (img->count() > 1) {
+  if (compressed && strcmp(fl_filename_ext(name()), ".gif")==0) {
+    // Write gif image data...
+    write_c("\n");
+    if (gif_header_written != write_number) {
+      write_c("#include <FL/Fl_GIF_Image.H>\n");
+      gif_header_written = write_number;
+    }
+    write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary();
+    if (nData == -1) write_file_error("GIF");
+    write_c(";\n");
+    write_initializer("Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (compressed && strcmp(fl_filename_ext(name()), ".bmp")==0) {
+    // Write bmp image data...
+    write_c("\n");
+    if (gif_header_written != write_number) {
+      write_c("#include <FL/Fl_BMP_Image.H>\n");
+      gif_header_written = write_number;
+    }
+    write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary();
+    if (nData == -1) write_file_error("BMP");
+    write_c(";\n");
+    write_initializer("Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (img->count() > 1) {
     // Write Pixmap data...
     write_c("\n");
     if (pixmap_header_written != write_number) {
@@ -177,39 +218,46 @@ void Fluid_Image::write_static(int compressed) {
     if (nData == -1) write_file_error("PNG");
     write_c(";\n");
     write_initializer("Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0)) {
+  } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
-    write_c("\n");
-    if (svg_header_written != write_number) {
-      write_c("#include <FL/Fl_SVG_Image.H>\n");
-      svg_header_written = write_number;
-    }
-    if (gzipped) {
-      write_c("static const unsigned char %s[] =\n", idata_name);
-      size_t nData = write_static_binary();
-      if (nData == -1) write_file_error("SVGZ");
-      write_c(";\n");
-      write_initializer("Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
+    if (compressed) {
+      write_c("\n");
+      if (svg_header_written != write_number) {
+        write_c("#include <FL/Fl_SVG_Image.H>\n");
+        svg_header_written = write_number;
+      }
+      if (gzipped) {
+        write_c("static const unsigned char %s[] =\n", idata_name);
+        size_t nData = write_static_binary();
+        if (nData == -1) write_file_error("SVGZ");
+        write_c(";\n");
+        write_initializer("Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
+      } else {
+        write_c("static const char %s[] =\n", idata_name);
+        size_t nData = write_static_text();
+        if (nData == -1) write_file_error("SVG");
+        write_c(";\n");
+        write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+      }
     } else {
-      write_c("static const char %s[] =\n", idata_name);
-      size_t nData = write_static_text();
-      if (nData == -1) write_file_error("SVG");
-      write_c(";\n");
-      write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+      // if FLUID runs from the command line, make sure that the image is not
+      // only loade but also rasterized, so we can write the RGB image data
+      Fl_RGB_Image* rgb_image = NULL;
+      Fl_SVG_Image* svg_image = NULL;
+      if (img->d()>0)
+        rgb_image = (Fl_RGB_Image*)img->image();
+      if (rgb_image)
+        svg_image = rgb_image->as_svg_image();
+      if (svg_image) {
+        svg_image->resize(svg_image->w(), svg_image->h());
+        write_static_rgb(idata_name);
+      } else {
+        write_file_error("RGB_from_SVG");
+      }
     }
   } else {
-    // Write image data...
-    write_c("\n");
-    if (image_header_written != write_number) {
-      write_c("#include <FL/Fl_Image.H>\n");
-      image_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
-    write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
-    write_c(";\n");
-    write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
+    write_static_rgb(idata_name);
   }
 }
 
