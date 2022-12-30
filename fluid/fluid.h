@@ -92,10 +92,10 @@ public:
 
 // ---- project settings
 
-class Project {
+class Fluid_Project {
 public:
-  Project();
-  ~Project();
+  Fluid_Project();
+  ~Fluid_Project();
   void reset();
 
   int i18n_type;
@@ -116,7 +116,7 @@ public:
   Fd_String code_file_name;
 };
 
-extern Project P;
+extern Fluid_Project g_project;
 
 extern Fd_String g_code_filename_arg;
 extern Fd_String g_header_filename_arg;

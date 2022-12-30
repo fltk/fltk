@@ -75,16 +75,16 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
             tooltip {Click to choose the active image.} xywh {294 65 70 20} labelsize 11
           }
           Fl_Button {} {
-            callback bind_image_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 65 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
             callback compress_image_cb
             tooltip {store image uncompressed as RGBA data
 or compressed in the original file format} xywh {364 65 20 20} type Toggle
             code0 {o->image(compressed_pixmap);}
+            code3 {\#include "pixmaps.h"}
+          }
+          Fl_Button {} {
+            callback bind_image_cb
+            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 65 20 20} type Toggle
+            code0 {o->image(bind_pixmap);}
             code3 {\#include "pixmaps.h"}
           }
         }
@@ -103,16 +103,16 @@ or compressed in the original file format} xywh {364 65 20 20} type Toggle
             tooltip {Click to choose the inactive image.} xywh {294 90 70 20} labelsize 11
           }
           Fl_Button {} {
-            callback bind_deimage_cb
-            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
-            code0 {o->image(bind_pixmap);}
-            code3 {\#include "pixmaps.h"}
-          }
-          Fl_Button {} {
             callback compress_deimage_cb
             tooltip {store image uncompressed as RGBA data
 or compressed in the original file format} xywh {364 90 20 20} type Toggle
             code0 {o->image(compressed_pixmap);}
+            code3 {\#include "pixmaps.h"}
+          }
+          Fl_Button {} {
+            callback bind_deimage_cb selected
+            tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
+            code0 {o->image(bind_pixmap);}
             code3 {\#include "pixmaps.h"}
           }
         }
@@ -812,7 +812,7 @@ wCallback->do_callback(wCallback, v);} open
       }
       Fl_Button wLiveMode {
         label {Live &Resize}
-        callback live_mode_cb selected
+        callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {155 370 80 20} type Toggle labelsize 11
       }
       Fl_Button {} {
