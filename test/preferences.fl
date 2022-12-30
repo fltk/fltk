@@ -146,7 +146,7 @@ Function {} {open return_type int
     Fl_Button {} {
       label OK
       callback saveAndCloseWindowCB selected
-      image {../../../checker.svgz} compress_image 1 xywh {125 303 75 25}
+      xywh {125 303 75 25}
     }
     Fl_Group {} {
       label {Get Up:} open
