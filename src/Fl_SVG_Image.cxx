@@ -171,7 +171,7 @@ static int svg_inflate(uchar *src, size_t src_length, uchar *&dst, size_t &dst_l
   // initialize zlib for inflating compressed data
   err = inflateInit2(&stream, 31);
   if (err != Z_OK) return err;
-  gz_header header;
+  gz_header header = { };
   err = inflateGetHeader(&stream, &header);
   if (err != Z_OK) return err;
 
