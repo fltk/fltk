@@ -44,11 +44,11 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
 
   // Private class to handle slightly 'special' behavior of menu button
   class InputMenuButton : public Fl_Menu_Button {
-    void draw();
+    void draw() FL_OVERRIDE;
     const Fl_Menu_Item* popup();
   public:
     InputMenuButton(int X, int Y, int W, int H, const char *L=0);
-    int handle(int e);
+    int handle(int e) FL_OVERRIDE;
   };
 
   Fl_Input *inp_;
@@ -93,7 +93,7 @@ public:
 
   Fl_Input_Choice(int X, int Y, int W, int H, const char *L=0);
 
-  void resize(int X, int Y, int W, int H);
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
 
   /** Adds an item to the menu.
     When any item is selected, the Fl_Input_Choice callback() is invoked,

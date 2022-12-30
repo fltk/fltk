@@ -44,7 +44,7 @@ public:
     box(FL_FLAT_BOX);
     end();
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_begin();
     Fl_Window::draw();
     draw_complex((Ut_Complex_Shapes_Test*)parent());
@@ -61,7 +61,7 @@ public:
     box(FL_FLAT_BOX);
     end();
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Window::draw();
     draw_complex((Ut_Complex_Shapes_Test*)parent());
   }

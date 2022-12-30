@@ -65,9 +65,9 @@
 class FL_EXPORT Fl_Menu_Bar : public Fl_Menu_ {
   friend class Fl_Sys_Menu_Bar_Driver;
 protected:
-    void draw();
+    void draw() FL_OVERRIDE;
 public:
-    int handle(int);
+    int handle(int) FL_OVERRIDE;
   /**
     Creates a new Fl_Menu_Bar widget using the given position,
     size, and label string. The default boxtype is FL_UP_BOX.

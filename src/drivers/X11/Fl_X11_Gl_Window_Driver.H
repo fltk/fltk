@@ -27,26 +27,26 @@ class Fl_Gl_Choice;
 class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  virtual float pixels_per_unit();
-  virtual void before_show(int& need_after);
-  virtual int mode_(int m, const int *a);
-  virtual void swap_buffers();
-  virtual char swap_type();
-  virtual Fl_Gl_Choice *find(int m, const int *alistp);
-  virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g);
-  virtual void set_gl_context(Fl_Window* w, GLContext context);
-  virtual void delete_gl_context(GLContext);
-  virtual void make_overlay_current();
-  virtual void redraw_overlay();
-  virtual void waitGL();
-  virtual void gl_visual(Fl_Gl_Choice*); // support for Fl::gl_visual()
-  virtual void gl_start();
-  virtual void draw_string_legacy(const char* str, int n);
-  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
-  virtual void get_list(Fl_Font_Descriptor *fd, int r);
-  virtual int genlistsize();
+  float pixels_per_unit() FL_OVERRIDE;
+  void before_show(int& need_after) FL_OVERRIDE;
+  int mode_(int m, const int *a) FL_OVERRIDE;
+  void swap_buffers() FL_OVERRIDE;
+  char swap_type() FL_OVERRIDE;
+  Fl_Gl_Choice *find(int m, const int *alistp) FL_OVERRIDE;
+  GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g) FL_OVERRIDE;
+  void set_gl_context(Fl_Window* w, GLContext context) FL_OVERRIDE;
+  void delete_gl_context(GLContext) FL_OVERRIDE;
+  void make_overlay_current() FL_OVERRIDE;
+  void redraw_overlay() FL_OVERRIDE;
+  void waitGL() FL_OVERRIDE;
+  void gl_visual(Fl_Gl_Choice*) FL_OVERRIDE; // support for Fl::gl_visual()
+  void gl_start() FL_OVERRIDE;
+  void draw_string_legacy(const char* str, int n) FL_OVERRIDE;
+  void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) FL_OVERRIDE;
+  void get_list(Fl_Font_Descriptor *fd, int r) FL_OVERRIDE;
+  int genlistsize() FL_OVERRIDE;
 #if !USE_XFT
-  virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum);
+  virtual Fl_Font_Descriptor** fontnum_to_fontdescriptor(int fnum) FL_OVERRIDE;
 #endif
   //static GLContext create_gl_context(XVisualInfo* vis);
 };

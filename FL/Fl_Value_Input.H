@@ -61,13 +61,13 @@ public:
 private:
   char soft_;
   static void input_cb(Fl_Widget*,void*);
-  virtual void value_damage(); // cause damage() due to value() changing
+  void value_damage() FL_OVERRIDE; // cause damage() due to value() changing
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
-  void resize(int,int,int,int);
+  void resize(int,int,int,int) FL_OVERRIDE;
   Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
   ~Fl_Value_Input();
 

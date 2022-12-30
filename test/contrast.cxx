@@ -75,7 +75,7 @@ public:
     return idx_;
   }
 
-  virtual void draw() {
+  void draw() FL_OVERRIDE {
     draw_box();
     // draw small filled rectangle with "original" color
     fl_color(ocol_);

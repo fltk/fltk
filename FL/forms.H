@@ -802,7 +802,7 @@ inline void fl_set_slider_precision(Fl_Widget* o, int i) {
 // meaning of FL_ALIGN_INSIDE.  Implementation in forms.cxx
 class FL_EXPORT Fl_FormsText : public Fl_Widget {
 protected:
-    void draw();
+    void draw() FL_OVERRIDE;
 public:
     Fl_FormsText(Fl_Boxtype b, int X, int Y, int W, int H, const char* l=0)
         : Fl_Widget(X,Y,W,H,l) {box(b); align(FL_ALIGN_LEFT);}

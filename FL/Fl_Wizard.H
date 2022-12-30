@@ -43,7 +43,7 @@ class FL_EXPORT Fl_Wizard : public Fl_Group {
 
 protected:
 
-  virtual void draw();
+  void draw() FL_OVERRIDE;
 
 public:
 

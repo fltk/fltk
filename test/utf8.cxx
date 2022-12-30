@@ -75,7 +75,7 @@ static void cb_exit(Fl_Button*, void*) {
  */
 class FontDisplay : public Fl_Widget
 {
-  void draw(void);
+  void draw(void) FL_OVERRIDE;
 
 public:
   int  font, size;
@@ -481,7 +481,7 @@ class right_left_input : public Fl_Input
 {
 public:
   right_left_input (int x, int y, int w, int h) : Fl_Input(x, y, w, h) {}
-  void draw() {
+  void draw() FL_OVERRIDE {
     if (type() == FL_HIDDEN_INPUT) return;
     Fl_Boxtype b = box();
     if (damage() & FL_DAMAGE_ALL) draw_box(b, color());
@@ -526,7 +526,7 @@ class UCharDropBox : public Fl_Output {
 public:
   UCharDropBox(int x, int y, int w, int h, const char *label=0) :
   Fl_Output(x, y, w, h, label) { }
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     switch (event) {
       case FL_DND_ENTER: return 1;
       case FL_DND_DRAG: return 1;

@@ -47,8 +47,8 @@ public:
 #include <FL/gl.h>
 
 class cube_box : public Fl_Gl_Window {
-  void draw();
-  int handle(int);
+  void draw() FL_OVERRIDE;
+  int handle(int) FL_OVERRIDE;
 public:
   double lasttime;
   int wire;

@@ -94,7 +94,7 @@ public:
 
 protected:
   /** Overloaded to provide cairo callback support */
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Double_Window::draw();
     if (draw_cb_) { // call the Cairo draw callback
       // manual method ? if yes explicitly get a cairo_context here

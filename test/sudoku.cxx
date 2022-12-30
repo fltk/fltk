@@ -140,8 +140,8 @@ class SudokuCell : public Fl_Widget {
   public:
 
                 SudokuCell(int X, int Y, int W, int H);
-  void          draw();
-  int           handle(int event);
+  void  draw() FL_OVERRIDE;
+  int   handle(int event) FL_OVERRIDE;
   void          readonly(bool r) { readonly_ = r; redraw(); }
   bool          readonly() const { return readonly_; }
   void          test_value(int v, int n) { test_value_[n] = v; redraw(); }
@@ -189,7 +189,7 @@ class Sudoku : public Fl_Double_Window {
   void          load_game();
   void          new_game(time_t seed);
   int           next_value(SudokuCell *c);
-  void          resize(int X, int Y, int W, int H);
+  void  resize(int X, int Y, int W, int H) FL_OVERRIDE;
   void          save_game();
   void          solve_game();
   void          update_helpers();

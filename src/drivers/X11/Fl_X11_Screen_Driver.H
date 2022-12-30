@@ -51,10 +51,10 @@ protected:
 public:
 #if USE_XFT // scaling does not work without Xft
   float current_xft_dpi; // current value of the Xft.dpi X resource
-  virtual APP_SCALING_CAPABILITY rescalable() { return PER_SCREEN_APP_SCALING; }
-  virtual float scale(int n) {return screens[n].scale;}
-  virtual void scale(int n, float f) { screens[n].scale = f;}
-  virtual void desktop_scale_factor();
+  APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return PER_SCREEN_APP_SCALING; }
+  float scale(int n) FL_OVERRIDE {return screens[n].scale;}
+  void scale(int n, float f) FL_OVERRIDE { screens[n].scale = f;}
+  void desktop_scale_factor() FL_OVERRIDE;
   int screen_num_unscaled(int x, int y);
 #endif
 
@@ -62,57 +62,57 @@ public:
   static int ewmh_supported();
   static void copy_image(const unsigned char* data, int W, int H, int destination);
   // --- display management
-  virtual void display(const char *disp);
-  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
-  virtual int poll_or_select_with_delay(double time_to_wait);
-  virtual int poll_or_select();
-  virtual void own_colormap();
-  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
-  virtual int need_menu_handle_part1_extra() {return 1;}
-  virtual int need_menu_handle_part2() {return 1;}
+  void display(const char *disp) FL_OVERRIDE;
+  int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*) FL_OVERRIDE;
+  int poll_or_select_with_delay(double time_to_wait) FL_OVERRIDE;
+  int poll_or_select() FL_OVERRIDE;
+  void own_colormap() FL_OVERRIDE;
+  const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **) FL_OVERRIDE;
+  int need_menu_handle_part1_extra() FL_OVERRIDE {return 1;}
+  int need_menu_handle_part2() FL_OVERRIDE {return 1;}
   // these 2 are in Fl_get_key.cxx
-  virtual int event_key(int);
-  virtual int get_key(int);
-  virtual int visual(int flags);
+  int event_key(int) FL_OVERRIDE;
+  int get_key(int) FL_OVERRIDE;
+  int visual(int flags) FL_OVERRIDE;
   // --- screen configuration
   void init_workarea();
-  virtual void init();
-  virtual int x();
-  virtual int y();
-  virtual int w();
-  virtual int h();
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
-  virtual void screen_dpi(float &h, float &v, int n=0);
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
+  void init() FL_OVERRIDE;
+  int x() FL_OVERRIDE;
+  int y() FL_OVERRIDE;
+  int w() FL_OVERRIDE;
+  int h() FL_OVERRIDE;
+  void screen_xywh(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
+  void screen_dpi(float &h, float &v, int n=0) FL_OVERRIDE;
+  void screen_work_area(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
   // --- audible output
-  virtual void beep(int type);
+  void beep(int type) FL_OVERRIDE;
   // --- global events
-  virtual void flush();
-  virtual void grab(Fl_Window* win);
+  void flush() FL_OVERRIDE;
+  void grab(Fl_Window* win) FL_OVERRIDE;
   // --- global colors
-  virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-  virtual void get_system_colors();
-  virtual const char *get_system_scheme();
-  virtual int dnd(int unused);
-  virtual int compose(int &del);
-  virtual void compose_reset();
-  virtual int text_display_can_leak() const;
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
-  virtual int get_mouse(int &x, int &y);
+  int parse_color(const char* p, uchar& r, uchar& g, uchar& b) FL_OVERRIDE;
+  void get_system_colors() FL_OVERRIDE;
+  const char *get_system_scheme() FL_OVERRIDE;
+  int dnd(int unused) FL_OVERRIDE;
+  int compose(int &del) FL_OVERRIDE;
+  void compose_reset() FL_OVERRIDE;
+  int text_display_can_leak() const FL_OVERRIDE;
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
+  int get_mouse(int &x, int &y) FL_OVERRIDE;
 
-  virtual void open_display_platform();
-  virtual void close_display();
+  void open_display_platform() FL_OVERRIDE;
+  void close_display() FL_OVERRIDE;
   // --- compute dimensions of an Fl_Offscreen
-  virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
-  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  void offscreen_size(Fl_Offscreen o, int &width, int &height) FL_OVERRIDE;
+  void default_icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
   // this one is in Fl_x.cxx
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  void copy(const char *stuff, int len, int clipboard, const char *type) FL_OVERRIDE;
   // this one is in Fl_x.cxx
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  void paste(Fl_Widget &receiver, int clipboard, const char *type) FL_OVERRIDE;
   // this one is in Fl_x.cxx
-  virtual int clipboard_contains(const char *type);
+  int clipboard_contains(const char *type) FL_OVERRIDE;
   // this one is in Fl_x.cxx
-  virtual void clipboard_notify_change();
+  void clipboard_notify_change() FL_OVERRIDE;
   // for support of input methods
   static char fl_is_over_the_spot;
   static XRectangle fl_spot;
@@ -125,11 +125,11 @@ public:
   static void xim_activate(Window xid);
   static void xim_deactivate(void);
   static void init_xim();
-  virtual void enable_im();
-  virtual void disable_im();
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
-  virtual void set_status(int X, int Y, int W, int H);
+  void enable_im() FL_OVERRIDE;
+  void disable_im() FL_OVERRIDE;
+  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win) FL_OVERRIDE;
+  void reset_spot() FL_OVERRIDE;
+  void set_status(int X, int Y, int W, int H) FL_OVERRIDE;
 };
 
 

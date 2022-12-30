@@ -98,30 +98,30 @@ class FL_EXPORT Fl_Browser : public Fl_Browser_ {
 protected:
 
   // required routines for Fl_Browser_ subclass:
-  void* item_first() const ;
-  void* item_next(void* item) const ;
-  void* item_prev(void* item) const ;
-  void* item_last()const ;
-  int item_selected(void* item) const ;
-  void item_select(void* item, int val);
-  int item_height(void* item) const ;
-  int item_width(void* item) const ;
-  void item_draw(void* item, int X, int Y, int W, int H) const ;
-  int full_height() const ;
-  int incr_height() const ;
-  const char *item_text(void *item) const;
+  void* item_first() const FL_OVERRIDE;
+  void* item_next(void* item) const FL_OVERRIDE;
+  void* item_prev(void* item) const FL_OVERRIDE;
+  void* item_last()const FL_OVERRIDE;
+  int item_selected(void* item) const FL_OVERRIDE;
+  void item_select(void* item, int val) FL_OVERRIDE;
+  int item_height(void* item) const FL_OVERRIDE;
+  int item_width(void* item) const FL_OVERRIDE;
+  void item_draw(void* item, int X, int Y, int W, int H) const FL_OVERRIDE;
+  int full_height() const FL_OVERRIDE;
+  int incr_height() const FL_OVERRIDE;
+  const char *item_text(void *item) const FL_OVERRIDE;
   /** Swap the items \p a and \p b.
       You must call redraw() to make any changes visible.
       \param[in] a,b the items to be swapped.
       \see swap(int,int), item_swap()
    */
-  void item_swap(void *a, void *b) { swap((FL_BLINE*)a, (FL_BLINE*)b); }
+  void item_swap(void *a, void *b) FL_OVERRIDE { swap((FL_BLINE*)a, (FL_BLINE*)b); }
   /** Return the item at specified \p line.
       \param[in] line The line of the item to return. (1 based)
       \returns The item, or NULL if line out of range.
       \see item_at(), find_line(), lineno()
    */
-  void *item_at(int line) const { return (void*)find_line(line); }
+  void *item_at(int line) const FL_OVERRIDE { return (void*)find_line(line); }
 
   FL_BLINE* find_line(int line) const ;
   FL_BLINE* _remove(int line) ;
@@ -188,10 +188,10 @@ public:
   int selected(int line) const ;
   void show(int line);
   /** Shows the entire Fl_Browser widget -- opposite of hide(). */
-  void show() { Fl_Widget::show(); }
+  void show() FL_OVERRIDE { Fl_Widget::show(); }
   void hide(int line);
   /** Hides the entire Fl_Browser widget -- opposite of show(). */
-  void hide() { Fl_Widget::hide(); }
+  void hide() FL_OVERRIDE { Fl_Widget::hide(); }
   int visible(int line) const ;
 
   int value() const ;

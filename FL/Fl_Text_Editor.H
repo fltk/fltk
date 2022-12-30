@@ -50,7 +50,7 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
 
     Fl_Text_Editor(int X, int Y, int W, int H, const char* l = 0);
     ~Fl_Text_Editor() { remove_all_key_bindings(); }
-    virtual int handle(int e);
+    int handle(int e) FL_OVERRIDE;
     /**
         Sets the current insert mode; if non-zero, new text
         is inserted before the current cursor position. Otherwise, new

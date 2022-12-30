@@ -67,7 +67,7 @@ public:
       resizable(dummy);
       end();
   }
-  void draw(void) {
+  void draw(void) FL_OVERRIDE {
     int x0 = x(); // origin is current window position for Fl_Box
     int y0 = y();
     int w0 = w();

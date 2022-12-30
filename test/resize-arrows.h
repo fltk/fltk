@@ -32,7 +32,7 @@ class Harrow : public Fl_Box {
 public:
   Harrow(int X, int Y, int W, int H, const char *T = 0);
 
-  void draw();
+  void draw() FL_OVERRIDE;
 };
 
 /** Varrow is an Fl_Box with a vertical arrow drawn down the middle.
@@ -44,7 +44,7 @@ class Varrow : public Fl_Box {
 public:
   Varrow(int X, int Y, int W, int H, const char *T = 0);
 
-  void draw();
+  void draw() FL_OVERRIDE;
 };
 
 #endif // RESIZE_ARROWS_H

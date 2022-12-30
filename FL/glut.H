@@ -43,9 +43,9 @@ class FL_EXPORT Fl_Glut_Window : public Fl_Gl_Window {
   void _init();
   int mouse_down;
 protected:
-  void draw();
-  void draw_overlay();
-  int handle(int);
+  void draw() FL_OVERRIDE;
+  void draw_overlay() FL_OVERRIDE;
+  int handle(int) FL_OVERRIDE;
 public: // so the inline functions work
   int number;
   int menu[3];

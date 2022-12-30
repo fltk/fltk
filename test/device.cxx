@@ -36,7 +36,7 @@
 
 class MyWidget: public Fl_Box{
 protected:
-  void draw(){
+  void draw() FL_OVERRIDE {
     Fl_Box::draw();
     fl_color(FL_RED);
     fl_rectf(x()+5,y()+5,w()-10,h()-10);
@@ -66,7 +66,7 @@ public:
 
 class MyWidget2: public Fl_Box {
 protected:
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Box::draw();
     int d;
     //    fl_line_style(0);
@@ -171,7 +171,7 @@ public:
 
 class MyWidget3: public Fl_Box {
 protected:
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Box::draw();
     double d;
     //    fl_line_style(0);
@@ -203,7 +203,7 @@ public:
 
 class MyWidget4: public Fl_Box{
 protected:
-  void draw(){
+  void draw() FL_OVERRIDE {
     Fl_Box::draw();
     fl_push_matrix();
     fl_translate(x(),y());
@@ -365,7 +365,7 @@ public:
 
 class MyWidget5: public Fl_Box {
 protected:
-  void draw(){
+  void draw() FL_OVERRIDE {
     Fl_Box::draw();
     fl_push_matrix();
 
@@ -622,7 +622,7 @@ void copy(Fl_Widget *, void *data) {
 
 class My_Button:public Fl_Button {
 protected:
-  void draw() {
+  void draw() FL_OVERRIDE {
     if (type() == FL_HIDDEN_BUTTON) return;
     Fl_Color col = value() ? selection_color() : color();
     draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);

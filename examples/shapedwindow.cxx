@@ -33,7 +33,7 @@ void cb(Fl_Widget *w, void *) {
 class dragbox : public Fl_Box {
 public:
   dragbox(int x, int y, int w, int h, const char *t=0) : Fl_Box(x,y,w,h,t) {}
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     static int fromx, fromy, winx, winy;
     if (event == FL_PUSH) {
       fromx = Fl::event_x_root();

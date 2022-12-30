@@ -37,7 +37,7 @@ public:
     this->mode = mode;
     end();
   }
-  void resize(int X,int Y,int W,int H) {
+  void resize(int X,int Y,int W,int H) FL_OVERRIDE {
       if ( W > 718 ) W = 718;                   // don't exceed 700 in width
       Fl_Table::resize(X,Y,W,h());              // disallow changes in height
   }
@@ -45,7 +45,7 @@ public:
   //     Fl_Table calls this function to draw each visible cell in the table.
   //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
   //
-  void draw_cell(TableContext context, int ROW, int COL, int X, int Y, int W, int H) {
+  void draw_cell(TableContext context, int ROW, int COL, int X, int Y, int W, int H) FL_OVERRIDE {
     static char s[40];
     switch ( context ) {
       case CONTEXT_STARTPAGE:         // before page is drawn..

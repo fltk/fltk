@@ -49,7 +49,7 @@ public:
     shaderProgram = 0;
     gl_version_major = 0;
   }
-  void draw(void) {
+  void draw(void) FL_OVERRIDE {
     if (gl_version_major >= 3 && !shaderProgram) {
       GLuint  vs;
       GLuint  fs;
@@ -141,7 +141,7 @@ public:
     }
     Fl_Gl_Window::draw(); // Draw FLTK child widgets.
   }
-  virtual int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     static int first = 1;
     if (first && event == FL_SHOW && shown()) {
       first = 0;

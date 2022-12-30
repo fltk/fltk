@@ -21,15 +21,15 @@
 #include <FL/platform.H>
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
+  void end_current() FL_OVERRIDE;
 public:
   FLWindow *pre_window;
   Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Quartz_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
+  void set_current() FL_OVERRIDE;
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
+  Fl_RGB_Image *image() FL_OVERRIDE;
 };
 
 #endif // FL_QUARTZ_IMAGE_SURFACE_DRIVER_H

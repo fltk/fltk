@@ -26,7 +26,7 @@
 #include <FL/math.h>
 
 class Drawing : public Fl_Widget {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   Drawing(int X,int Y,int W,int H,const char* L) : Fl_Widget(X,Y,W,H,L) {
     align(FL_ALIGN_TOP);

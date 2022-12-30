@@ -47,25 +47,25 @@ class Fl_Posix_System_Driver : public Fl_System_Driver
 protected:
   int run_program(const char *program, char **argv, char *msg, int msglen);
 public:
-  virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
-  virtual int open(const char* f, int oflags, int pmode) {
+  int mkdir(const char* f, int mode) FL_OVERRIDE {return ::mkdir(f, mode);}
+  int open(const char* f, int oflags, int pmode) FL_OVERRIDE {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);
   }
-  virtual char *getenv(const char *v) { return ::getenv(v); }
-  virtual int putenv(const char *var) {return ::putenv(strdup(var));}
-  virtual int system(const char* cmd) {return ::system(cmd);}
-  virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
-  virtual int chmod(const char* f, int mode) {return ::chmod(f, mode);}
-  virtual int access(const char* f, int mode) { return ::access(f, mode);}
-  virtual int flstat(const char* f, struct stat *b) { return ::stat(f, b);}
-  virtual char *getcwd(char* b, int l) {return ::getcwd(b, l);}
-  virtual int chdir(const char* path) {return ::chdir(path);}
-  virtual int unlink(const char* f) {return ::unlink(f);}
-  virtual int rmdir(const char* f) {return ::rmdir(f);}
-  virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
-  virtual const char *getpwnam(const char *login);
+  char *getenv(const char *v) FL_OVERRIDE { return ::getenv(v); }
+  int putenv(const char *var) FL_OVERRIDE {return ::putenv(strdup(var));}
+  int system(const char* cmd) FL_OVERRIDE {return ::system(cmd);}
+  int execvp(const char *file, char *const *argv) FL_OVERRIDE {return ::execvp(file, argv);}
+  int chmod(const char* f, int mode) FL_OVERRIDE {return ::chmod(f, mode);}
+  int access(const char* f, int mode) FL_OVERRIDE { return ::access(f, mode);}
+  int flstat(const char* f, struct stat *b) FL_OVERRIDE { return ::stat(f, b);}
+  char *getcwd(char* b, int l) FL_OVERRIDE {return ::getcwd(b, l);}
+  int chdir(const char* path) FL_OVERRIDE {return ::chdir(path);}
+  int unlink(const char* f) FL_OVERRIDE {return ::unlink(f);}
+  int rmdir(const char* f) FL_OVERRIDE {return ::rmdir(f);}
+  int rename(const char* f, const char *n) FL_OVERRIDE {return ::rename(f, n);}
+  const char *getpwnam(const char *login) FL_OVERRIDE;
 #if HAVE_DLFCN_H
-  virtual void *load(const char *filename);
+  void *load(const char *filename) FL_OVERRIDE;
 #if HAVE_DLSYM
   static void *ptr_gtk;
   static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
@@ -73,19 +73,19 @@ public:
 #endif
   static void *dlopen_or_dlsym(const char *lib_name, const char *func_name = NULL);
   // these 4 are implemented in Fl_lock.cxx
-  virtual void awake(void*);
-  virtual int lock();
-  virtual void unlock();
-  virtual void* thread_message();
-  virtual int file_type(const char *filename);
-  virtual const char *home_directory_name() { return ::getenv("HOME"); }
-  virtual int dot_file_hidden() {return 1;}
-  virtual void gettime(time_t *sec, int *usec);
-  virtual char* strdup(const char *s) {return ::strdup(s);}
-  virtual int close_fd(int fd);
+  void awake(void*) FL_OVERRIDE;
+  int lock() FL_OVERRIDE;
+  void unlock() FL_OVERRIDE;
+  void* thread_message() FL_OVERRIDE;
+  int file_type(const char *filename) FL_OVERRIDE;
+  const char *home_directory_name() FL_OVERRIDE { return ::getenv("HOME"); }
+  int dot_file_hidden() FL_OVERRIDE {return 1;}
+  void gettime(time_t *sec, int *usec) FL_OVERRIDE;
+  char* strdup(const char *s) FL_OVERRIDE {return ::strdup(s);}
+  int close_fd(int fd) FL_OVERRIDE;
 #if defined(HAVE_PTHREAD)
-  virtual void lock_ring();
-  virtual void unlock_ring();
+  void lock_ring() FL_OVERRIDE;
+  void unlock_ring() FL_OVERRIDE;
 #endif
 };
 

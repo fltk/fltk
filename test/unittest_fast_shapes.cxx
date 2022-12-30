@@ -192,7 +192,7 @@ public:
     : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_begin();
     fl_color(color());
     fl_rectf(0, 0, w(), h());
@@ -210,7 +210,7 @@ public:
     box(FL_FLAT_BOX);
     end();
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Window::draw();
     draw_fast_shapes();
   }

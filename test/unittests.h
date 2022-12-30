@@ -80,7 +80,7 @@ class Ut_Main_Window : public Fl_Double_Window {
 public:
   Ut_Main_Window(int w, int h, const char *l=0L);
   void draw_alignment_indicators();
-  void draw();
+  void draw() FL_OVERRIDE;
   void test_alignment(int v);
 private:
   int draw_alignment_test_;

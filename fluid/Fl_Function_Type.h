@@ -49,21 +49,21 @@ class Fl_Function_Type : public Fl_Type {
 public:
   Fl_Function_Type();
   ~Fl_Function_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2();
-  void open();
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE;
+  void open() FL_OVERRIDE;
   int ismain() {return name_ == 0;}
-  virtual const char *type_name() {return "Function";}
-  virtual const char *title() {
+  const char *type_name() FL_OVERRIDE {return "Function";}
+  const char *title() FL_OVERRIDE {
     return name() ? name() : "main()";
   }
-  int is_parent() const {return 1;}
-  int is_code_block() const {return 1;}
-  virtual int is_public() const;
-  int pixmapID() { return 7; }
-  void write_properties();
-  void read_property(const char *);
+  int is_parent() const FL_OVERRIDE {return 1;}
+  int is_code_block() const FL_OVERRIDE {return 1;}
+  int is_public() const FL_OVERRIDE;
+  int pixmapID() FL_OVERRIDE { return 7; }
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
 };
 
@@ -77,16 +77,16 @@ class Fl_Code_Type : public Fl_Type {
 
 public:
   Fl_Code_Type();
-  Fl_Type *make(Strategy strategy);
-  void write();
-  void write_code1();
-  void write_code2() { }
-  void open();
-  virtual const char *type_name() {return "code";}
-  int is_code_block() const {return 0;}
-  int is_code() const {return 1;}
-  int pixmapID() { return 8; }
-  virtual int is_public() const { return -1; }
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write() FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE { }
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "code";}
+  int is_code_block() const FL_OVERRIDE {return 0;}
+  int is_code() const FL_OVERRIDE {return 1;}
+  int pixmapID() FL_OVERRIDE { return 8; }
+  int is_public() const FL_OVERRIDE { return -1; }
   int is_editing();
   int reap_editor();
   int handle_editor_changes();
@@ -100,17 +100,17 @@ class Fl_CodeBlock_Type : public Fl_Type {
 public:
   Fl_CodeBlock_Type();
   ~Fl_CodeBlock_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "codeblock";}
-  int is_code_block() const {return 1;}
-  int is_parent() const {return 1;}
-  virtual int is_public() const { return -1; }
-  int pixmapID() { return 9; }
-  void write_properties();
-  void read_property(const char *);
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE;
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "codeblock";}
+  int is_code_block() const FL_OVERRIDE {return 1;}
+  int is_parent() const FL_OVERRIDE {return 1;}
+  int is_public() const FL_OVERRIDE { return -1; }
+  int pixmapID() FL_OVERRIDE { return 9; }
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
 };
 
 // ---- Fl_Decl_Type declaration
@@ -123,15 +123,15 @@ protected:
 
 public:
   Fl_Decl_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2() { }
-  void open();
-  virtual const char *type_name() {return "decl";}
-  void write_properties();
-  void read_property(const char *);
-  virtual int is_public() const;
-  int pixmapID() { return 10; }
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE { }
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "decl";}
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
+  int is_public() const FL_OVERRIDE;
+  int pixmapID() FL_OVERRIDE { return 10; }
 };
 
 // ---- Fl_Data_Type declaration
@@ -143,14 +143,14 @@ class Fl_Data_Type : public Fl_Decl_Type {
 public:
   Fl_Data_Type();
   ~Fl_Data_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2() {}
-  void open();
-  virtual const char *type_name() {return "data";}
-  void write_properties();
-  void read_property(const char *);
-  int pixmapID() { return 49; }
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE {}
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "data";}
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
+  int pixmapID() FL_OVERRIDE { return 49; }
 };
 
 // ---- Fl_DeclBlock_Type declaration
@@ -162,17 +162,17 @@ class Fl_DeclBlock_Type : public Fl_Type {
 public:
   Fl_DeclBlock_Type();
   ~Fl_DeclBlock_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "declblock";}
-  void write_properties();
-  void read_property(const char *);
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-  virtual int is_public() const;
-  int pixmapID() { return 11; }
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE;
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "declblock";}
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
+  int is_parent() const FL_OVERRIDE {return 1;}
+  int is_decl_block() const FL_OVERRIDE {return 1;}
+  int is_public() const FL_OVERRIDE;
+  int pixmapID() FL_OVERRIDE { return 11; }
 };
 
 // ---- Fl_Comment_Type declaration
@@ -183,17 +183,17 @@ class Fl_Comment_Type : public Fl_Type {
 
 public:
   Fl_Comment_Type();
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2() { }
-  void open();
-  virtual const char *type_name() {return "comment";}
-  virtual const char *title(); // string for browser
-  void write_properties();
-  void read_property(const char *);
-  virtual int is_public() const { return 1; }
-  virtual int is_comment() const { return 1; }
-  int pixmapID() { return 46; }
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE { }
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "comment";}
+  const char *title() FL_OVERRIDE; // string for browser
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
+  int is_public() const FL_OVERRIDE { return 1; }
+  int is_comment() const FL_OVERRIDE { return 1; }
+  int pixmapID() FL_OVERRIDE { return 46; }
 };
 
 // ---- Fl_Class_Type declaration
@@ -210,18 +210,18 @@ public:
   char write_public_state; // true when public: has been printed
   Fl_Class_Type* parent_class; // save class if nested
 //
-  Fl_Type *make(Strategy strategy);
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "class";}
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-  int is_class() const {return 1;}
-  virtual int is_public() const;
-  int pixmapID() { return 12; }
-  void write_properties();
-  void read_property(const char *);
+  Fl_Type *make(Strategy strategy) FL_OVERRIDE;
+  void write_code1() FL_OVERRIDE;
+  void write_code2() FL_OVERRIDE;
+  void open() FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE {return "class";}
+  int is_parent() const FL_OVERRIDE {return 1;}
+  int is_decl_block() const FL_OVERRIDE {return 1;}
+  int is_class() const FL_OVERRIDE {return 1;}
+  int is_public() const FL_OVERRIDE;
+  int pixmapID() FL_OVERRIDE { return 12; }
+  void write_properties() FL_OVERRIDE;
+  void read_property(const char *) FL_OVERRIDE;
 
   // class prefix attribute access
   void prefix(const char* p);

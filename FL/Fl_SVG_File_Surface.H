@@ -65,11 +65,11 @@ public:
   ~Fl_SVG_File_Surface();
   /** Returns the underlying FILE pointer */
   FILE *file();
-  virtual void origin(int x, int y);
-  virtual void origin(int *x, int *y);
-  virtual void translate(int x, int y);
-  virtual void untranslate();
-  virtual int printable_rect(int *w, int *h);
+  void origin(int x, int y) FL_OVERRIDE;
+  void origin(int *x, int *y) FL_OVERRIDE;
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
+  int printable_rect(int *w, int *h) FL_OVERRIDE;
   /** Closes the FILE pointer where SVG data is output.
   The underlying FILE is closed by function fclose() unless another function was set at object's construction time.
   The only operation possible after this on the Fl_SVG_File_Surface object is its destruction.

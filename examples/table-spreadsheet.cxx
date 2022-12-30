@@ -31,7 +31,7 @@ class Spreadsheet : public Fl_Table {
   int row_edit, col_edit;                               // row/col being modified
 
 protected:
-  void draw_cell(TableContext context,int=0,int=0,int=0,int=0,int=0,int=0);
+  void draw_cell(TableContext context,int=0,int=0,int=0,int=0,int=0,int=0) FL_OVERRIDE;
   void event_callback2();                               // table's event callback (instance)
   static void event_callback(Fl_Widget*,void *v) {      // table's event callback (static)
     ((Spreadsheet*)v)->event_callback2();

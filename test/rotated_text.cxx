@@ -39,7 +39,7 @@ Fl_Double_Window *window;
 //code taken from fl_engraved_label.cxx
 class Rotated_Label_Box : public Fl_Widget{
   protected:
-  void draw(){
+  void draw() FL_OVERRIDE {
     draw_box();
     fl_font(labelfont(), labelsize());
     fl_color(labelcolor());

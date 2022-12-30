@@ -27,7 +27,7 @@ int width=10,height=10;
 class overlay : public Fl_Overlay_Window {
 public:
   overlay(int w,int h) : Fl_Overlay_Window(w,h) {}
-  void draw_overlay();
+  void draw_overlay() FL_OVERRIDE;
 };
 
 void overlay::draw_overlay() {

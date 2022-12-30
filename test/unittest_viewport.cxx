@@ -38,11 +38,11 @@ public:
     align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
   }
-  void show() {
+  void show() FL_OVERRIDE {
     Fl_Box::show();
     mainwin->test_alignment(1);
   }
-  void hide() {
+  void hide() FL_OVERRIDE {
     Fl_Box::hide();
     mainwin->test_alignment(0);
   }

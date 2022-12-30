@@ -44,7 +44,7 @@
 #endif
 
 class EnterExit : public Fl_Box {
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
 public:
   EnterExit(int x, int y, int w, int h, const char *l) : Fl_Box(FL_BORDER_BOX,x,y,w,h,l) {}
 };
@@ -56,8 +56,8 @@ int EnterExit::handle(int e) {
 }
 
 class testwindow : public Fl_Window {
-  int handle(int);
-  void draw();
+  int handle(int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
   int cx, cy; char key;
   Fl_Cursor crsr;
 public:

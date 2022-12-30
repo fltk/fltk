@@ -146,7 +146,7 @@ private:
   float average_weight_;
   float svg_scaling_(int W, int H);
   void rasterize_(int W, int H);
-  virtual void cache_size_(int &width, int &height);
+  void cache_size_(int &width, int &height) FL_OVERRIDE;
   void init_(const char *name, const unsigned char *filedata, size_t length);
   Fl_SVG_Image(const Fl_SVG_Image *source);
 public:
@@ -157,17 +157,17 @@ public:
   Fl_SVG_Image(const char *sharedname, const char *svg_data);
   Fl_SVG_Image(const char *sharedname, const unsigned char *svg_data, size_t length);
   virtual ~Fl_SVG_Image();
-  virtual Fl_Image *copy(int W, int H) const;
+  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
   Fl_Image *copy() const {
     return Fl_Image::copy();
   }
   void resize(int width, int height);
-  virtual void desaturate();
-  virtual void color_average(Fl_Color c, float i);
-  virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
+  void desaturate() FL_OVERRIDE;
+  void color_average(Fl_Color c, float i) FL_OVERRIDE;
+  void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) FL_OVERRIDE;
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
-  virtual Fl_SVG_Image *as_svg_image() { return this; }
-  virtual void normalize();
+  Fl_SVG_Image *as_svg_image() FL_OVERRIDE { return this; }
+  void normalize() FL_OVERRIDE;
 };
 
 #endif // FL_SVG_IMAGE_H

@@ -36,10 +36,10 @@ class FL_EXPORT Fl_Value_Slider : public Fl_Slider {
   short value_height_;
 
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
 
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Fl_Value_Slider(int x, int y, int w, int h, const char *l = 0);
 
   /** Gets the typeface of the text in the value box. */

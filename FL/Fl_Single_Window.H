@@ -31,7 +31,7 @@
 */
 class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
-  void show();
+  void show() FL_OVERRIDE;
   /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
 

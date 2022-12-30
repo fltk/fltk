@@ -35,9 +35,9 @@
 */
 class FL_EXPORT Fl_Light_Button : public Fl_Button {
 protected:
-    virtual void draw();
+    void draw() FL_OVERRIDE;
 public:
-    virtual int handle(int);
+    int handle(int) FL_OVERRIDE;
     Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);
 };
 
