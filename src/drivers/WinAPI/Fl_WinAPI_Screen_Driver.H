@@ -45,58 +45,58 @@ public:
     for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
   }
   // --- display management
-  virtual int visual(int flags);
+  int visual(int flags) FL_OVERRIDE;
   // --- screen configuration
-  virtual void init();
-  virtual int x();
-  virtual int y();
-  virtual int w();
-  virtual int h();
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
+  void init() FL_OVERRIDE;
+  int x() FL_OVERRIDE;
+  int y() FL_OVERRIDE;
+  int w() FL_OVERRIDE;
+  int h() FL_OVERRIDE;
+  void screen_xywh(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
   void screen_xywh_unscaled(int &X, int &Y, int &W, int &H, int n);
-  virtual void screen_dpi(float &h, float &v, int n=0);
+  void screen_dpi(float &h, float &v, int n=0) FL_OVERRIDE;
   int screen_num_unscaled(int x, int y);
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
+  void screen_work_area(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
   // --- audible output
-  virtual void beep(int type);
+  void beep(int type) FL_OVERRIDE;
   // --- global events
-  virtual void flush();
-  virtual void grab(Fl_Window* win);
+  void flush() FL_OVERRIDE;
+  void grab(Fl_Window* win) FL_OVERRIDE;
   // --- global colors
-  virtual void get_system_colors();
-  virtual int dnd(int unused);
-  virtual int compose(int &del);
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
+  void get_system_colors() FL_OVERRIDE;
+  int dnd(int unused) FL_OVERRIDE;
+  int compose(int &del) FL_OVERRIDE;
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
   Fl_RGB_Image *read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win);
-  virtual int get_mouse(int &x, int &y);
-  virtual void enable_im();
-  virtual void disable_im();
-  virtual void open_display_platform();
-  virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
-  virtual APP_SCALING_CAPABILITY rescalable() {
+  int get_mouse(int &x, int &y) FL_OVERRIDE;
+  void enable_im() FL_OVERRIDE;
+  void disable_im() FL_OVERRIDE;
+  void open_display_platform() FL_OVERRIDE;
+  void offscreen_size(Fl_Offscreen off, int &width, int &height) FL_OVERRIDE;
+  APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE {
     return PER_SCREEN_APP_SCALING;
   }
-  virtual float scale(int n) {
+  float scale(int n) FL_OVERRIDE {
     return scale_of_screen[n];
   }
-  virtual void scale(int n, float f) {
+  void scale(int n, float f) FL_OVERRIDE {
     scale_of_screen[n] = f;
   }
-  virtual void desktop_scale_factor();
-  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
+  void desktop_scale_factor() FL_OVERRIDE;
+  void default_icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
   // this one is implemented in Fl_win32.cxx
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  void copy(const char *stuff, int len, int clipboard, const char *type) FL_OVERRIDE;
   // this one is implemented in Fl_win32.cxx
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  void paste(Fl_Widget &receiver, int clipboard, const char *type) FL_OVERRIDE;
   // this one is implemented in Fl_win32.cxx
-  virtual int clipboard_contains(const char *type);
+  int clipboard_contains(const char *type) FL_OVERRIDE;
   // this one is implemented in Fl_win32.cxx
-  virtual void clipboard_notify_change();
+  void clipboard_notify_change() FL_OVERRIDE;
   // this one is implemented in Fl_win32.cxx
-  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win) FL_OVERRIDE;
   // these two are implemented in Fl_get_key_win32.cxx
-  virtual int event_key(int);
-  virtual int get_key(int);
+  int event_key(int) FL_OVERRIDE;
+  int get_key(int) FL_OVERRIDE;
 };
 
 

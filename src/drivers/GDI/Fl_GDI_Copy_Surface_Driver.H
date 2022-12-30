@@ -27,9 +27,9 @@ protected:
   HDC gc;
   Fl_GDI_Copy_Surface_Driver(int w, int h);
   ~Fl_GDI_Copy_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
+  void set_current() FL_OVERRIDE;
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
 };
 
 #endif // FL_GDI_COPY_SURFACE_DRIVER_H
