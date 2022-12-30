@@ -23,6 +23,7 @@ extern Fl_Pixmap *bind_pixmap;
 extern Fl_Pixmap *lock_pixmap;
 extern Fl_Pixmap *protected_pixmap;
 extern Fl_Pixmap *invisible_pixmap;
+extern Fl_Pixmap *compressed_pixmap;
 
 extern Fl_Pixmap *window_pixmap;
 extern Fl_Pixmap *button_pixmap;

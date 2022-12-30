@@ -38,7 +38,9 @@ public:
   void increment();
   void image(Fl_Widget *); // set the image of this widget
   void deimage(Fl_Widget *); // set the deimage of this widget
-  void write_static();
+  void write_static(int compressed);
+  size_t write_static_binary();
+  size_t write_static_text();
   void write_initializer(const char *type_name, const char *format, ...);
   void write_code(int bind, const char *var, int inactive = 0);
   void write_inline(int inactive = 0);

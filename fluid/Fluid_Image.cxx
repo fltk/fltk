@@ -48,16 +48,70 @@ static int pixmap_header_written = 0;
 static int bitmap_header_written = 0;
 static int image_header_written = 0;
 static int jpeg_header_written = 0;
+static int png_header_written = 0;
 static int svg_header_written = 0;
 
-// TODO: give users that choice to write the original image format, which
-// requires linking the matching image reader at runtime (current default for
-// JPEG) or if we want to store the raw uncompressed pixels, which makes images
-// fast, needs no reader, but takes a lot of memory (current default for PNG)
-void Fluid_Image::write_static() {
+/** Write the contents of the name() file as binary source code. */
+size_t Fluid_Image::write_static_binary() {
+  size_t nData = 0;
+  enter_project_dir();
+  FILE *f = fl_fopen(name(), "rb");
+  leave_project_dir();
+  if (!f) {
+    return -1;
+  } else {
+    fseek(f, 0, SEEK_END);
+    nData = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    if (nData) {
+      char *data = (char*)calloc(nData, 1);
+      if (fread(data, nData, 1, f)==0) { /* ignore */ }
+      write_cdata(data, (int)nData);
+      free(data);
+    }
+    fclose(f);
+  }
+  return nData;
+}
+
+/** Write the contents of the name() file as textual source code. */
+size_t Fluid_Image::write_static_text() {
+  size_t nData = 0;
+  enter_project_dir();
+  FILE *f = fl_fopen(name(), "rb");
+  leave_project_dir();
+  if (!f) {
+    return -1;
+  } else {
+    fseek(f, 0, SEEK_END);
+    nData = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    if (nData) {
+      char *data = (char*)calloc(nData+1, 1);
+      if (fread(data, nData, 1, f)==0) { /* ignore */ }
+      write_cstring(data, (int)nData);
+      free(data);
+    }
+    fclose(f);
+  }
+  return nData;
+}
+
+/**
+ Write the static image data into the soutrce file.
+
+ If \p compressed is set, write the original image format, which requires
+ linking the matching image reader at runtime, or if we want to store the raw
+ uncompressed pixels, which makes images fast, needs no reader, but takes a
+ lot of memory (current default for PNG)
+
+ \param compressed write data in the original compressed file format
+ */
+void Fluid_Image::write_static(int compressed) {
   if (!img) return;
   const char *idata_name = unique_id(this, "idata", fl_filename_name(name()), 0);
   function_name_ = unique_id(this, "image", fl_filename_name(name()), 0);
+  // TODO: GIF, ICO, BMP
   if (img->count() > 1) {
     // Write Pixmap data...
     write_c("\n");
@@ -99,7 +153,7 @@ void Fluid_Image::write_static() {
     write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
     write_initializer( "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
-  } else if (strcmp(fl_filename_ext(name()), ".jpg")==0) {
+  } else if (compressed && strcmp(fl_filename_ext(name()), ".jpg")==0) {
     // Write jpeg image data...
     write_c("\n");
     if (jpeg_header_written != write_number) {
@@ -107,29 +161,23 @@ void Fluid_Image::write_static() {
       jpeg_header_written = write_number;
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
-
-    size_t nData = 0;
-    enter_project_dir();
-    FILE *f = fl_fopen(name(), "rb");
-    leave_project_dir();
-    if (!f) {
-      write_file_error("JPEG");
-    } else {
-      fseek(f, 0, SEEK_END);
-      nData = ftell(f);
-      fseek(f, 0, SEEK_SET);
-      if (nData) {
-        char *data = (char*)calloc(nData, 1);
-        if (fread(data, nData, 1, f)==0) { /* ignore */ }
-        write_cdata(data, (int)nData);
-        free(data);
-      }
-      fclose(f);
-    }
-
+    size_t nData = write_static_binary();
+    if (nData == -1) write_file_error("JPEG");
     write_c(";\n");
     write_initializer("Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
+  } else if (compressed && strcmp(fl_filename_ext(name()), ".png")==0) {
+    // Write png image data...
+    write_c("\n");
+    if (png_header_written != write_number) {
+      write_c("#include <FL/Fl_PNG_Image.H>\n");
+      png_header_written = write_number;
+    }
+    write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary();
+    if (nData == -1) write_file_error("PNG");
+    write_c(";\n");
+    write_initializer("Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (compressed && (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0)) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
     write_c("\n");
@@ -137,37 +185,19 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_SVG_Image.H>\n");
       svg_header_written = write_number;
     }
-    write_c(
-            (gzipped ? "static const unsigned char %s[] =\n" : "static const char %s[] =\n"),
-            idata_name);
-
-    enter_project_dir();
-    FILE *f = fl_fopen(name(), "rb");
-    leave_project_dir();
-    size_t nData = 0;
-    if (!f) {
-      write_file_error("SVG");
+    if (gzipped) {
+      write_c("static const unsigned char %s[] =\n", idata_name);
+      size_t nData = write_static_binary();
+      if (nData == -1) write_file_error("SVGZ");
+      write_c(";\n");
+      write_initializer("Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
     } else {
-      fseek(f, 0, SEEK_END);
-      nData = ftell(f);
-      fseek(f, 0, SEEK_SET);
-      if (nData) {
-        char *data = (char*)calloc(nData+1, 1);
-        if (fread(data, nData, 1, f)==0) { /* ignore */ }
-        if (gzipped)
-          write_cdata(data, (int)nData);
-        else
-          write_cstring(data, (int)nData);
-        free(data);
-      }
-      fclose(f);
-    }
-
-    write_c(";\n");
-    if (gzipped)
-      write_initializer("Fl_SVG_Image", "\"%s\", (const char*)%s, %ld", fl_filename_name(name()), idata_name, nData);
-    else
+      write_c("static const char %s[] =\n", idata_name);
+      size_t nData = write_static_text();
+      if (nData == -1) write_file_error("SVG");
+      write_c(";\n");
       write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+    }
   } else {
     // Write image data...
     write_c("\n");

@@ -165,7 +165,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 65, 220, 20);
+          { Fl_Input* o = new Fl_Input(95, 65, 200, 20);
             o->tooltip("The active image for the widget.");
             o->labelfont(1);
             o->labelsize(11);
@@ -173,7 +173,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)image_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(314, 65, 70, 20, "Browse...");
+          { Fl_Button* o = new Fl_Button(294, 65, 70, 20, "Browse...");
             o->tooltip("Click to choose the active image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)image_browse_cb);
@@ -184,6 +184,13 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)bind_image_cb);
             o->image(bind_pixmap);
           } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(364, 65, 20, 20);
+            o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
+mat");
+            o->type(1);
+            o->callback((Fl_Callback*)compress_image_cb);
+            o->image(compressed_pixmap);
+          } // Fl_Button* o
           o->end();
         } // Fl_Group* o
         { Fl_Group* o = new Fl_Group(95, 90, 309, 20, "Inactive:");
@@ -191,7 +198,7 @@ Fl_Double_Window* make_widget_panel() {
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Input* o = new Fl_Input(95, 90, 220, 20);
+          { Fl_Input* o = new Fl_Input(95, 90, 200, 20);
             o->tooltip("The inactive image for the widget.");
             o->labelfont(1);
             o->labelsize(11);
@@ -199,7 +206,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)inactive_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(314, 90, 70, 20, "Browse...");
+          { Fl_Button* o = new Fl_Button(294, 90, 70, 20, "Browse...");
             o->tooltip("Click to choose the inactive image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)inactive_browse_cb);
@@ -209,6 +216,13 @@ Fl_Double_Window* make_widget_panel() {
             o->type(1);
             o->callback((Fl_Callback*)bind_deimage_cb);
             o->image(bind_pixmap);
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(364, 90, 20, 20);
+            o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
+mat");
+            o->type(1);
+            o->callback((Fl_Callback*)compress_deimage_cb);
+            o->image(compressed_pixmap);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
