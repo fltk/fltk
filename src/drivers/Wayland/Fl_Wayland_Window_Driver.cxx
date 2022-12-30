@@ -339,7 +339,8 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb)) {
+  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb) &&
+      !wait_for_expose_value ) {
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
