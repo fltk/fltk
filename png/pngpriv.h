@@ -1629,7 +1629,7 @@ PNG_INTERNAL_FUNCTION(void,png_push_read_iTXt,(png_structrp png_ptr,
 PNG_INTERNAL_FUNCTION(void,png_colorspace_set_gamma,(png_const_structrp png_ptr,
     png_colorspacerp colorspace, png_fixed_point gAMA), PNG_EMPTY);
    /* Set the colorspace gamma with a value provided by the application or by
-    * the gAMA chunk on read.  The value will FL_OVERRIDE anything set by an ICC
+    * the gAMA chunk on read.  The value will override anything set by an ICC
     * profile.
     */
 

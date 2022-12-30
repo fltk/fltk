@@ -396,7 +396,7 @@ extern "C" {
  * Run time configuration allows the application to choose between
  * implementations of certain arithmetic APIs.  The default is set
  * at build time and recorded in pnglibconf.h, but it is safe to
- * FL_OVERRIDE these (and only these) settings.  Note that this won't
+ * override these (and only these) settings.  Note that this won't
  * change what the library does, only application code, and the
  * settings can (and probably should) be made on a per-file basis
  * by setting the #defines before including png.h
@@ -765,7 +765,7 @@ typedef png_row_info * png_row_infop;
 typedef png_row_info * * png_row_infopp;
 
 /* These are the function types for the I/O functions and for the functions
- * that allow the user to FL_OVERRIDE the default I/O functions with his or her
+ * that allow the user to override the default I/O functions with his or her
  * own.  The png_error_ptr type should match that of user-supplied warning
  * and error functions, while the png_rw_ptr type should match that of the
  * user read/write data functions.  Note that the 'write' function must not
@@ -1338,7 +1338,7 @@ PNG_EXPORT(49, void, png_set_quantize, (png_structrp png_ptr,
 
 /* Handle gamma correction. Screen_gamma=(display_exponent).
  * NOTE: this API simply sets the screen and file gamma values. It will
- * therefore FL_OVERRIDE the value for gamma in a PNG file if it is called after
+ * therefore override the value for gamma in a PNG file if it is called after
  * the file header has been read - use with care  - call before reading the PNG
  * file for best results!
  *

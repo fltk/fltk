@@ -206,7 +206,7 @@
 #    endif
 #  else
    /* An older compiler, or one not detected (erroneously) above,
-    * if necessary FL_OVERRIDE on the command line to get the correct
+    * if necessary override on the command line to get the correct
     * variants for the compiler.
     */
 #    ifndef PNGCAPI
