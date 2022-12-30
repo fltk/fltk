@@ -2412,7 +2412,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   attr.colormap = colormap;
   attr.border_pixel = 0;
   attr.bit_gravity = 0; // StaticGravity;
-  if (win->FL_OVERRIDE()) {
+  if (win->override()) {
     attr.override_redirect = 1;
     attr.save_under = 1;
     mask |= CWOverrideRedirect | CWSaveUnder;
@@ -2613,7 +2613,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 
 void Fl_X11_Window_Driver::sendxjunk() {
   Fl_Window *w = pWindow;
-  if (w->parent() || w->FL_OVERRIDE()) return; // it's not a window manager window!
+  if (w->parent() || w->override()) return; // it's not a window manager window!
 
   XSizeHints *hints = XAllocSizeHints();
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
