@@ -3137,6 +3137,7 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
     NSInteger level = NSNormalWindowLevel;
     if (modal()) level = modal_window_level();
     else if (non_modal()) level = non_modal_window_level();
+    BOOL has_focus = [i->xid isKeyWindow];
     [i->xid orderOut:nil];
     [i->xid setLevel:level];
     NSUInteger winstyle = (border() ?
@@ -3144,7 +3145,8 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
     if (!modal()) winstyle |= NSMiniaturizableWindowMask;
     [i->xid setStyleMask:winstyle]; //10.6
     resize(X, Y, W, H);
-    [i->xid orderFront:nil];
+    if (has_focus) [i->xid makeKeyAndOrderFront:nil];
+    else [i->xid orderFront:nil];
   } else
 #endif
   {
