@@ -1,7 +1,7 @@
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -137,7 +137,9 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
       // collect all the attribute words:
       for (int n = 3; n <= 6; n++) {
         // get the next word:
-        if (*e) e++; x = e; e = fl_font_word(x,1);
+        if (*e) e++;
+        x = e;
+        e = fl_font_word(x,1);
         int t = attribute(n,x);
         if (t < 0) {
           if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
