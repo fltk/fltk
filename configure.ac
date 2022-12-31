@@ -704,8 +704,8 @@ AS_IF([test x$enable_localpng != xyes], [
     ])
 ])
 
-# If we use the system zlib, we must also use the png zlib and vice versa
-# If either of them if not available, we fall back to using both local libraries
+# If we use the system zlib, we must also use the system png zlib and vice versa
+# If either of them is not available, we fall back to using both local libraries
 AS_IF([test x$syspnglib_ok = xyes -a x$syszlib_ok != xyes], [
     syspnglib_ok=no
     enable_localpng=yes

@@ -103,10 +103,10 @@ if (OPTION_USE_SYSTEM_LIBPNG)
   find_package (PNG)
 endif ()
 
-# If we use the system zlib, we must also use the png zlib and vice versa
-# If either of them if not available, we fall back to using both local libraries
+# If we use the system zlib, we must also use the system png zlib and vice versa
+# If either of them is not available, we fall back to using both local libraries
 if (OPTION_USE_SYSTEM_LIBPNG AND NOT (OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND))
-    set (PNG_FOOUND FALSE)
+    set (PNG_FOUND FALSE)
     set (OPTION_USE_SYSTEM_LIBPNG FALSE)
     message (STATUS "Local z lib selected: overriding png lib to local for compatibility.\n")
 endif ()
