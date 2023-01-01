@@ -38,6 +38,9 @@ decl {\#include <FL/Fl_Text_Display.H>} {public local
 decl {\#include <FL/filename.H>} {public local
 }
 
+decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
+}
+
 decl {\#include <FL/Fl_Preferences.H>} {private global
 }
 
@@ -47,11 +50,14 @@ decl {\#include <FL/fl_ask.H>} {private global
 decl {\#include <string.h>} {private global
 }
 
+decl {void init_scheme(void);} {
+  comment {// initialize the scheme from preferences} selected public global
+}
+
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 }
 
-Function {make_project_window()} {open
-} {
+Function {make_project_window()} {} {
   Fl_Window project_window {
     label {Project Settings} open
     xywh {472 246 399 298} type Double hide
@@ -168,50 +174,23 @@ set_modflag(-1, -1);}
 decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
 }
 
-decl {void scheme_cb(Fl_Choice *, void *);} {public local
+decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 }
 
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings}
-    xywh {442 538 360 355} type Double hide resizable
+    label {GUI Settings} open
+    xywh {701 666 360 355} type Double hide resizable
     code0 {o->size_range(o->w(), o->h());} non_modal
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
       callback scheme_cb open
       xywh {140 10 115 25} down_box BORDER_BOX labelfont 1
-      code0 {int s;}
-      code1 {fluid_prefs.get("scheme", s, 0);}
-      code2 {scheme_choice->value(s);}
-      code3 {scheme_cb(0, 0);}
-    } {
-      MenuItem {} {
-        label Default
-        xywh {0 0 35 25}
-      }
-      MenuItem {} {
-        label None
-        xywh {0 0 35 25}
-      }
-      MenuItem {} {
-        label Plastic
-        xywh {0 0 35 25}
-      }
-      MenuItem {} {
-        label {GTK+}
-        xywh {10 10 35 25}
-      }
-      MenuItem {} {
-        label Gleam
-        xywh {20 20 35 25}
-      }
-      MenuItem {} {
-        label Oxy
-        xywh {30 30 35 25}
-      }
-    }
+      code0 {init_scheme();}
+      class Fl_Scheme_Choice
+    } {}
     Fl_Group {} {open
       xywh {20 43 330 161} labelfont 1 align 0
     } {
@@ -327,7 +306,7 @@ Function {make_shell_window()} {open
         tooltip {save the design to the .fl file before running the command} xywh {82 39 136 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Check_Button shell_writecode_button {
-        label {save source code} selected
+        label {save source code}
         tooltip {generate the source code and header file before running the command} xywh {82 59 120 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Check_Button shell_writemsgs_button {

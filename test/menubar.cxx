@@ -23,7 +23,7 @@
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Menu_Button.H>
-#include <FL/Fl_Choice.H>
+#include <FL/Fl_Scheme_Choice.H>
 #include <FL/Fl_Value_Slider.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -229,6 +229,9 @@ int main(int argc, char **argv) {
     hugemenu[i].text = fl_strdup(buf);
   }
   Fl_Double_Window window(WIDTH,400+TERMINAL_HEIGHT);
+
+  Fl_Scheme_Choice scheme_choice(300, 50, 100, 25, "&scheme");
+
   G_tty = new Fl_Simple_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
 
   window.callback(window_cb);

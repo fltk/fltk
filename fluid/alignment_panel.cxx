@@ -179,21 +179,11 @@ nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
   } // Fl_Double_Window* project_window
   return project_window;
 }
-void scheme_cb(Fl_Choice *, void *);
+void scheme_cb(Fl_Scheme_Choice *, void *);
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 
-Fl_Choice *scheme_choice=(Fl_Choice *)0;
-
-Fl_Menu_Item menu_scheme_choice[] = {
- {"Default", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"None", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Plastic", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"GTK+", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Gleam", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Oxy", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {0,0,0,0,0,0,0,0,0}
-};
+Fl_Scheme_Choice *scheme_choice=(Fl_Scheme_Choice *)0;
 
 Fl_Check_Button *tooltips_button=(Fl_Check_Button *)0;
 
@@ -258,16 +248,20 @@ static void cb_Close1(Fl_Button*, void*) {
 
 Fl_Double_Window* make_settings_window() {
   { Fl_Double_Window* o = settings_window = new Fl_Double_Window(360, 355, "GUI Settings");
-    { scheme_choice = new Fl_Choice(140, 10, 115, 25, "Scheme: ");
+    { scheme_choice = new Fl_Scheme_Choice(140, 10, 115, 25, "Scheme: ");
+      scheme_choice->box(FL_FLAT_BOX);
       scheme_choice->down_box(FL_BORDER_BOX);
+      scheme_choice->color(FL_BACKGROUND_COLOR);
+      scheme_choice->selection_color(FL_SELECTION_COLOR);
+      scheme_choice->labeltype(FL_NORMAL_LABEL);
       scheme_choice->labelfont(1);
+      scheme_choice->labelsize(14);
+      scheme_choice->labelcolor(FL_FOREGROUND_COLOR);
       scheme_choice->callback((Fl_Callback*)scheme_cb);
-      scheme_choice->menu(menu_scheme_choice);
-      int s;
-      fluid_prefs.get("scheme", s, 0);
-      scheme_choice->value(s);
-      scheme_cb(0, 0);
-    } // Fl_Choice* scheme_choice
+      scheme_choice->align(Fl_Align(FL_ALIGN_LEFT));
+      scheme_choice->when(FL_WHEN_RELEASE);
+      init_scheme();
+    } // Fl_Scheme_Choice* scheme_choice
     { Fl_Group* o = new Fl_Group(20, 43, 330, 161);
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_CENTER));
