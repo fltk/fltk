@@ -78,7 +78,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>      // right click popup menu
-#include <FL/Fl_Choice.H>
+#include <FL/Fl_Scheme_Choice.H>
 #include <FL/Fl_Simple_Terminal.H>  // tty
 #include <FL/filename.H>
 #include <FL/platform.H>
@@ -95,13 +95,11 @@
 void doexit(Fl_Widget *, void *);
 void doback(Fl_Widget *, void *);
 void dobut(Fl_Widget *, long);
-void doscheme(Fl_Choice *c, void *) {
-  Fl::scheme(c->text(c->value()));
-}
 
 Fl_Double_Window *form = 0;
 Fl_Group *demogrp = 0;
 Fl_Simple_Terminal *tty = 0;
+Fl_Scheme_Choice *scheme_choice = 0;
 Fl_Button *but[9];
 Fl_Button *exit_button;
 
@@ -185,21 +183,8 @@ void create_the_forms() {
   obj = new Fl_Box(FL_FRAME_BOX, 10, 65, 330, 330, 0);
   obj->color(FL_GRAY-8);
 
-  Fl_Choice *choice = new Fl_Choice(90, 405, 100, 25, "Scheme:");
-  choice->labelfont(FL_HELVETICA_BOLD);
-  choice->add("none");
-  choice->add("gtk+");
-  choice->add("gleam");
-  choice->add("oxy");
-  choice->add("plastic");
-  choice->callback((Fl_Callback *)doscheme);
-  Fl::scheme(NULL);
-  if (!Fl::scheme())                         choice->value(0);
-  else if (!strcmp(Fl::scheme(), "gtk+"))    choice->value(1);
-  else if (!strcmp(Fl::scheme(), "gleam"))   choice->value(2);
-  else if (!strcmp(Fl::scheme(), "oxy"))     choice->value(3);
-  else if (!strcmp(Fl::scheme(), "plastic")) choice->value(4);
-  else choice->value(0);
+  scheme_choice = new Fl_Scheme_Choice(90, 405, 100, 25, "Scheme:");
+  scheme_choice->labelfont(FL_HELVETICA_BOLD);
 
   exit_button = new Fl_Button(280, 405, 60, 25, "Exit");
   exit_button->callback(doexit);
@@ -638,6 +623,17 @@ int main(int argc, char **argv) {
 
   // set size_range() after show() so the window can be resizable (Win + macOS)
   form->size_range(FORM_W, FORM_H, FORM_W, FORM_H);
+
+#if (0) // DEBUG (remove after testing)
+  {
+    const char *const *scheme_names = Fl_Scheme_Choice::scheme_names();
+    int ni = 0;
+    while (scheme_names[ni]) {
+      printf("scheme[%2d] = '%s'\n", ni, scheme_names[ni]);
+      ni++;
+    }
+  }
+#endif // End of debug and test statements
 
   Fl::run();
   return 0;
