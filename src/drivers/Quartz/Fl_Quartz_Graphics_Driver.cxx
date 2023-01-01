@@ -92,8 +92,8 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Of
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
-  int sw = CGBitmapContextGetWidth(src);
-  int sh = CGBitmapContextGetHeight(src);
+  int sw = (int)CGBitmapContextGetWidth(src);
+  int sh = (int)CGBitmapContextGetHeight(src);
   CGImageRef img;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) img = CGBitmapContextCreateImage(src);  // requires 10.4

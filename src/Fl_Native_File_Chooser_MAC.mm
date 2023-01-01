@@ -434,7 +434,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
     l += strlen(patterns[i]) + 3;
     }
   const char *p = filter;
-  const int t_size = strlen(p) + l + 1;
+  const int t_size = (int)strlen(p) + l + 1;
   char *q; q = new char[t_size];
   const char *r, *s;
   char *t;

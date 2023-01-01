@@ -274,7 +274,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     bDepth = 4;
 
   // Setup image and buffers...
-  if (offbits) rdr.seek(offbits);
+  if (offbits) rdr.seek((unsigned int)offbits);
   CHECK_ERROR
 
   if (((size_t)width) * height * bDepth > max_size() ) {

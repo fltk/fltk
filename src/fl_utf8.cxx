@@ -40,7 +40,7 @@
 #define NBC 0xFFFF + 1
 
 static int Toupper(int ucs) {
-  long i;
+  int i;
   static unsigned short *table = NULL;
 
   if (!table) {

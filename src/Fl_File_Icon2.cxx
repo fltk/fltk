@@ -455,15 +455,15 @@ int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
             case 3 :
                 val[0] = lineptr[0];
                 val[1] = '\0';
-                red = 255 * strtol(val, NULL, 16) / 15;
+                red = 255 * (int)strtol(val, NULL, 16) / 15;
 
                 val[0] = lineptr[1];
                 val[1] = '\0';
-                green = 255 * strtol(val, NULL, 16) / 15;
+                green = 255 * (int)strtol(val, NULL, 16) / 15;
 
                 val[0] = lineptr[2];
                 val[1] = '\0';
-                blue = 255 * strtol(val, NULL, 16) / 15;
+                blue = 255 * (int)strtol(val, NULL, 16) / 15;
                 break;
 
             case 6 :
@@ -474,17 +474,17 @@ int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
                 val[0] = lineptr[0];
                 val[1] = lineptr[1];
                 val[2] = '\0';
-                red = strtol(val, NULL, 16);
+                red = (int)strtol(val, NULL, 16);
 
                 val[0] = lineptr[j + 0];
                 val[1] = lineptr[j + 1];
                 val[2] = '\0';
-                green = strtol(val, NULL, 16);
+                green = (int)strtol(val, NULL, 16);
 
                 val[0] = lineptr[2 * j + 0];
                 val[1] = lineptr[2 * j + 1];
                 val[2] = '\0';
-                blue = strtol(val, NULL, 16);
+                blue = (int)strtol(val, NULL, 16);
                 break;
           }
 

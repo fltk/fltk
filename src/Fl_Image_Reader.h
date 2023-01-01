@@ -81,7 +81,7 @@ public:
   const char *name() const { return name_; }
 
   // skip a given number of bytes
-  void skip(unsigned int n) { seek(tell() + n); }
+  void skip(unsigned int n) { seek((unsigned int)tell() + n); }
 
 private:
   // open() sets this if we read from a file

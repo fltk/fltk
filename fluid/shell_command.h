@@ -70,7 +70,7 @@ public:
 
   int get_fileno() const;
 
-#if defined(_WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 protected:
   HANDLE pin[2], pout[2], perr[2];
   char ptmode;
