@@ -681,29 +681,6 @@ AS_IF([test x$enable_localzlib != xyes], [
     ])
 ])
 
-# Now set the Z lib and include flags according to the requested mode and availability
-AS_IF([test x$enable_localzlib = xyes -o x$syszlib_ok = xno], [
-    ZLIBINC="-I../zlib"
-    ZLIB="zlib"
-    LIBS="-lfltk_z $LIBS"
-    IMAGELIBS="-lfltk_z $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
-    AC_DEFINE([HAVE_LIBZ])
-    ac_cv_lib_z_gzgets=no # fc: is still necessary ?
-    # Finally, warn user if system lib was requested but not found
-    AS_IF([test x$enable_localzlib = xno], [
-        AC_MSG_WARN([Cannot find system z lib or header: choosing the local lib mode.])
-    ])
-], [
-    ZLIBINC=""
-    ZLIB=""
-    LIBS="-lz $LIBS"
-    IMAGELIBS="-lz $IMAGELIBS"
-    STATICIMAGELIBS="-lz $STATICIMAGELIBS"
-    AC_DEFINE([HAVE_LIBZ])
-])
-
-
 # Handle the PNG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localpng parameter is not set by user
 # Then we check the png lib usability with result in syspng_lib variable
@@ -727,7 +704,44 @@ AS_IF([test x$enable_localpng != xyes], [
     ])
 ])
 
-# The following is executed if the lib was not found usable or if local lib is required explicitly
+# If we use the system zlib, we must also use the system png zlib and vice versa
+# If either of them is not available, we fall back to using both local libraries
+AS_IF([test x$syspnglib_ok = xyes -a x$syszlib_ok != xyes], [
+    syspnglib_ok=no
+    enable_localpng=yes
+    AC_MSG_WARN([Local z lib selected: overriding png lib to local for compatibility.])
+])
+AS_IF([test x$syszlib_ok = xyes -a x$syspnglib_ok != xyes], [
+    syszlib_ok=no
+    enable_localzlib=yes
+    AC_MSG_WARN([Local png lib selected: overriding z lib to local for compatibility.])
+])
+
+
+# Now set the Z lib and include flags according to the requested mode and availability
+AS_IF([test x$enable_localzlib = xyes -o x$syszlib_ok = xno], [
+    ZLIBINC="-I../zlib"
+    ZLIB="zlib"
+    LIBS="-lfltk_z $LIBS"
+    IMAGELIBS="-lfltk_z $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
+    AC_DEFINE([HAVE_LIBZ])
+    ac_cv_lib_z_gzgets=no # fc: is still necessary ?
+    # Finally, warn user if system lib was requested but not found
+    AS_IF([test x$enable_localzlib = xno], [
+        AC_MSG_WARN([Cannot find system z lib or header: choosing the local lib mode.])
+    ])
+], [
+    ZLIBINC=""
+    ZLIB=""
+    LIBS="-lz $LIBS"
+    IMAGELIBS="-lz $IMAGELIBS"
+    STATICIMAGELIBS="-lz $STATICIMAGELIBS"
+    AC_DEFINE([HAVE_LIBZ])
+])
+
+
+# The following is executed if the png lib was not found usable or if local lib is required explicitly
 AS_IF([test x$enable_localpng = xyes -o x$syspnglib_ok = xno], [
     PNGINC="-I../png"
     PNG="png"
