@@ -44,7 +44,7 @@ void Shortcut_Button::draw() {
   if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
   else draw_box(FL_UP_BOX, FL_WHITE);
   fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-  if (P.use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
+  if (g_project.use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
     char buf[1024];
     fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
     fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);

@@ -2869,18 +2869,18 @@ void Fl_Widget_Type::write_code1() {
   }
   if (label() && *label()) {
     write_c(", ");
-    switch (P.i18n_type) {
+    switch (g_project.i18n_type) {
     case 0 : /* None */
         write_cstring(label());
         break;
     case 1 : /* GNU gettext */
-        write_c("%s(", P.i18n_function.value());
+        write_c("%s(", g_project.i18n_function.value());
         write_cstring(label());
         write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", P.i18n_file[0] ? P.i18n_file.value() : "_catalog",
-                P.i18n_set.value(), msgnum());
+        write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+                g_project.i18n_set.value(), msgnum());
         write_cstring(label());
         write_c(")");
         break;
@@ -2942,18 +2942,18 @@ void Fl_Widget_Type::write_widget_code() {
 
   if (tooltip() && *tooltip()) {
     write_c("%s%s->tooltip(",indent(), var);
-    switch (P.i18n_type) {
+    switch (g_project.i18n_type) {
     case 0 : /* None */
         write_cstring(tooltip());
         break;
     case 1 : /* GNU gettext */
-        write_c("%s(", P.i18n_function.value());
+        write_c("%s(", g_project.i18n_function.value());
         write_cstring(tooltip());
         write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", P.i18n_file[0] ? P.i18n_file.value() : "_catalog",
-                P.i18n_set.value(), msgnum() + 1);
+        write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+                g_project.i18n_set.value(), msgnum() + 1);
         write_cstring(tooltip());
         write_c(")");
         break;
@@ -2975,7 +2975,7 @@ void Fl_Widget_Type::write_widget_code() {
   else if (is_value_input()) shortcut = ((Fl_Value_Input*)o)->shortcut();
   else if (is_text_display()) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
-    if (P.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
+    if (g_project.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
       write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, shortcut & ~(FL_CTRL|FL_META));
     } else {
       write_c("%s%s->shortcut(0x%x);\n", indent(), var, shortcut);

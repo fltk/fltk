@@ -178,18 +178,18 @@ Fl_Double_Window* make_widget_panel() {
             o->labelsize(11);
             o->callback((Fl_Callback*)image_browse_cb);
           } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(384, 65, 20, 20);
-            o->tooltip("bind the image to the widget, so it will be deleted automatically");
-            o->type(1);
-            o->callback((Fl_Callback*)bind_image_cb);
-            o->image(bind_pixmap);
-          } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(364, 65, 20, 20);
             o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
 mat");
             o->type(1);
             o->callback((Fl_Callback*)compress_image_cb);
             o->image(compressed_pixmap);
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(384, 65, 20, 20);
+            o->tooltip("bind the image to the widget, so it will be deleted automatically");
+            o->type(1);
+            o->callback((Fl_Callback*)bind_image_cb);
+            o->image(bind_pixmap);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o
@@ -211,18 +211,18 @@ mat");
             o->labelsize(11);
             o->callback((Fl_Callback*)inactive_browse_cb);
           } // Fl_Button* o
-          { Fl_Button* o = new Fl_Button(384, 90, 20, 20);
-            o->tooltip("bind the image to the widget, so it will be deleted automatically");
-            o->type(1);
-            o->callback((Fl_Callback*)bind_deimage_cb);
-            o->image(bind_pixmap);
-          } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(364, 90, 20, 20);
             o->tooltip("store image uncompressed as RGBA data\nor compressed in the original file for\
 mat");
             o->type(1);
             o->callback((Fl_Callback*)compress_deimage_cb);
             o->image(compressed_pixmap);
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(384, 90, 20, 20);
+            o->tooltip("bind the image to the widget, so it will be deleted automatically");
+            o->type(1);
+            o->callback((Fl_Callback*)bind_deimage_cb);
+            o->image(bind_pixmap);
           } // Fl_Button* o
           o->end();
         } // Fl_Group* o

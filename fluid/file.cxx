@@ -377,36 +377,36 @@ int write_file(const char *filename, int selected_only) {
   if (!open_write(filename)) return 0;
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
-  if(!P.include_H_from_C)
+  if(!g_project.include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
-  if(P.use_FL_COMMAND)
+  if(g_project.use_FL_COMMAND)
     write_string("\nuse_FL_COMMAND");
-  if (P.utf8_in_src)
+  if (g_project.utf8_in_src)
     write_string("\nutf8_in_src");
-  if (P.avoid_early_includes)
+  if (g_project.avoid_early_includes)
     write_string("\navoid_early_includes");
-  if (P.i18n_type) {
-    write_string("\ni18n_type %d", P.i18n_type);
-    write_string("\ni18n_include"); write_word(P.i18n_include);
-    write_string("\ni18n_conditional"); write_word(P.i18n_conditional);
-    switch (P.i18n_type) {
+  if (g_project.i18n_type) {
+    write_string("\ni18n_type %d", g_project.i18n_type);
+    write_string("\ni18n_include"); write_word(g_project.i18n_include);
+    write_string("\ni18n_conditional"); write_word(g_project.i18n_conditional);
+    switch (g_project.i18n_type) {
     case 1 : /* GNU gettext */
-        write_string("\ni18n_function"); write_word(P.i18n_function);
-        write_string("\ni18n_static_function"); write_word(P.i18n_static_function);
+        write_string("\ni18n_function"); write_word(g_project.i18n_function);
+        write_string("\ni18n_static_function"); write_word(g_project.i18n_static_function);
         break;
     case 2 : /* POSIX catgets */
-        if (P.i18n_file[0]) {
+        if (g_project.i18n_file[0]) {
           write_string("\ni18n_file");
-          write_word(P.i18n_file);
+          write_word(g_project.i18n_file);
         }
-        write_string("\ni18n_set"); write_word(P.i18n_set);
+        write_string("\ni18n_set"); write_word(g_project.i18n_set);
         break;
     }
   }
 
   if (!selected_only) {
-    write_string("\nheader_name"); write_word(P.header_file_name);
-    write_string("\ncode_name"); write_word(P.code_file_name);
+    write_string("\nheader_name"); write_word(g_project.header_file_name);
+    write_string("\ncode_name"); write_word(g_project.code_file_name);
 
 #if 0
     // https://github.com/fltk/fltk/issues/328
@@ -495,62 +495,62 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
       }
 
       if (!strcmp(c,"do_not_include_H_from_C")) {
-        P.include_H_from_C=0;
+        g_project.include_H_from_C=0;
         goto CONTINUE;
       }
       if (!strcmp(c,"use_FL_COMMAND")) {
-        P.use_FL_COMMAND=1;
+        g_project.use_FL_COMMAND=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"utf8_in_src")) {
-        P.utf8_in_src=1;
+        g_project.utf8_in_src=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"avoid_early_includes")) {
-        P.avoid_early_includes=1;
+        g_project.avoid_early_includes=1;
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type")) {
-        P.i18n_type = atoi(read_word());
+        g_project.i18n_type = atoi(read_word());
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_function")) {
-        P.i18n_function = read_word();
+        g_project.i18n_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_static_function")) {
-        P.i18n_static_function = read_word();
+        g_project.i18n_static_function = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_file")) {
-        P.i18n_file = read_word();
+        g_project.i18n_file = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_set")) {
-        P.i18n_set = read_word();
+        g_project.i18n_set = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        P.i18n_include = read_word();
+        g_project.i18n_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        P.i18n_conditional = read_word();
+        g_project.i18n_conditional = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_type"))
       {
-        P.i18n_type = atoi(read_word());
+        g_project.i18n_type = atoi(read_word());
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {
-        if (!P.header_file_set) P.header_file_name = read_word();
+        if (!g_project.header_file_set) g_project.header_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
 
       if (!strcmp(c,"code_name")) {
-        if (!P.code_file_set) P.code_file_name = read_word();
+        if (!g_project.code_file_set) g_project.code_file_name = read_word();
         else read_word();
         goto CONTINUE;
       }
@@ -649,7 +649,7 @@ int read_file(const char *filename, int merge, Strategy strategy) {
   if (merge)
     deselect();
   else
-    P.reset();
+    g_project.reset();
   read_children(Fl_Type::current, merge, strategy);
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...

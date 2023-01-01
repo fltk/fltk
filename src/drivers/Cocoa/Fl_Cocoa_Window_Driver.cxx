@@ -243,7 +243,7 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
   // the current surface is generally the display, but is an Fl_Image_Surface when scrolling an Fl_Overlay_Window
   Fl_Quartz_Graphics_Driver *qgd = (Fl_Quartz_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
   float s = qgd->scale();
-  qgd->draw_CGImage(img, dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
+  qgd->draw_CGImage(img, dest_x, dest_y, (int)lround(s*src_w), (int)lround(s*src_h), 0, 0, src_w, src_h);
   CFRelease(img);
   return 0;
 }
