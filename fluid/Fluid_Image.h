@@ -31,8 +31,8 @@ class Fluid_Image {
 protected:
   Fluid_Image(const char *name); // no public constructor
   ~Fluid_Image(); // no public destructor
-  size_t write_static_binary();
-  size_t write_static_text();
+  size_t write_static_binary(const char* fmt);
+  size_t write_static_text(const char* fmt);
   void write_static_rgb(const char* idata_name);
 public:
   int written;
