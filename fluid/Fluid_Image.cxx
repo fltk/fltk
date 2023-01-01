@@ -149,9 +149,9 @@ void Fluid_Image::write_static(int compressed) {
   } else if (compressed && strcmp(fl_filename_ext(name()), ".bmp")==0) {
     // Write bmp image data...
     write_c("\n");
-    if (gif_header_written != write_number) {
+    if (bmp_header_written != write_number) {
       write_c("#include <FL/Fl_BMP_Image.H>\n");
-      gif_header_written = write_number;
+      bmp_header_written = write_number;
     }
     write_c("static const unsigned char %s[] =\n", idata_name);
     size_t nData = write_static_binary("BMP");
