@@ -14,8 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/* \file
-   Fl_Group, Fl_End classes . */
+/** \file
+  \brief Fl_Group and Fl_End classes.
+*/
 
 #ifndef Fl_Group_H
 #define Fl_Group_H
