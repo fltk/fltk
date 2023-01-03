@@ -1,7 +1,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -245,33 +245,11 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
           tW --;
           fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
           fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
-        } else fl_color(labelcolor_);
-
-        switch (tW) {
-          // Larger circles draw fine...
-          default :
-            fl_pie(x + td + 2, y + d + td, tW, tW, 0.0, 360.0);
-            break;
-
-          // Small circles don't draw well on many systems...
-          case 6 :
-            fl_rectf(x + td + 4, y + d + td, tW - 4, tW);
-            fl_rectf(x + td + 3, y + d + td + 1, tW - 2, tW - 2);
-            fl_rectf(x + td + 2, y + d + td + 2, tW, tW - 4);
-            break;
-
-          case 5 :
-          case 4 :
-          case 3 :
-            fl_rectf(x + td + 3, y + d + td, tW - 2, tW);
-            fl_rectf(x + td + 2, y + d + td + 1, tW, tW - 2);
-            break;
-
-          case 2 :
-          case 1 :
-            fl_rectf(x + td + 2, y + d + td, tW, tW);
-            break;
+        } else {
+          fl_color(labelcolor_);
         }
+
+        fl_draw_circle(x + td + 2, y + d + td, tW, fl_color());
 
         if (Fl::is_scheme("gtk+")) {
           fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
