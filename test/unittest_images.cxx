@@ -213,7 +213,7 @@ public:
     end(); // make sure this ImageTest group is closed
   } // constructor ends
 
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Group::draw();
 
     // top left: RGB

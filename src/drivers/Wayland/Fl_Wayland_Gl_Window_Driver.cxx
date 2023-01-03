@@ -19,7 +19,6 @@
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>
 #include "../../Fl_Gl_Choice.H"
-#include "../../Fl_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Gl_Window_Driver.H"
@@ -65,7 +64,6 @@ static EGLConfig wld_egl_conf = NULL;
 
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
 EGLint Fl_Wayland_Gl_Window_Driver::configs_count = 0;
-struct wl_event_queue *Fl_Wayland_Gl_Window_Driver::gl_event_queue = NULL;
 
 
 Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {
@@ -102,8 +100,6 @@ void Fl_Wayland_Gl_Window_Driver::init() {
   eglGetConfigs(egl_display, NULL, 0, &configs_count);
   //printf("EGL has %d configs\n", configs_count);
   eglBindAPI(EGL_OPENGL_API);
-
-  gl_event_queue = wl_display_create_queue(fl_wl_display());
 }
 
 
@@ -360,12 +356,12 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 
   if (egl_surface && !egl_swap_in_progress) {
     egl_swap_in_progress = true;
-    //eglSwapInterval(egl_display, 0); // doesn't seem to have any effect in this context
-    while (wl_display_prepare_read(fl_wl_display()) != 0) {
-      wl_display_dispatch_pending(fl_wl_display());
+    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
+      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     }
-    wl_display_read_events(fl_wl_display());
-    wl_display_dispatch_queue_pending(fl_wl_display(),  gl_event_queue);
+    wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     egl_swap_in_progress = false;
   }
@@ -375,20 +371,20 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 class Fl_Wayland_Gl_Plugin : public Fl_Wayland_Plugin {
 public:
   Fl_Wayland_Gl_Plugin() : Fl_Wayland_Plugin(name()) { }
-  virtual const char *name() { return "gl.wayland.fltk.org"; }
-  virtual void do_swap(Fl_Window *w) {
+  const char *name() FL_OVERRIDE { return "gl.wayland.fltk.org"; }
+  void do_swap(Fl_Window *w) FL_OVERRIDE {
     Fl_Gl_Window_Driver *gldr = Fl_Gl_Window_Driver::driver(w->as_gl_window());
     if (gldr->overlay() == w) gldr->swap_buffers();
   }
-  virtual void invalidate(Fl_Window *w) {
+  void invalidate(Fl_Window *w) FL_OVERRIDE {
     w->as_gl_window()->valid(0);
   }
-  virtual void terminate() {
+  void terminate() FL_OVERRIDE {
     if (Fl_Wayland_Gl_Window_Driver::egl_display != EGL_NO_DISPLAY) {
       eglTerminate(Fl_Wayland_Gl_Window_Driver::egl_display);
     }
   }
-  virtual void destroy(struct gl_start_support *gl_start_support_) {
+  void destroy(struct gl_start_support *gl_start_support_) FL_OVERRIDE {
     eglDestroySurface(Fl_Wayland_Gl_Window_Driver::egl_display, gl_start_support_->egl_surface);
     wl_egl_window_destroy(gl_start_support_->egl_window);
     wl_subsurface_destroy(gl_start_support_->subsurface);

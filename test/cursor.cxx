@@ -64,7 +64,7 @@ void setcursor(Fl_Widget *o, void *) {
 
 // draw the label without any ^C or \nnn conversions:
 class CharBox : public Fl_Box {
-  void draw() {
+  void draw() FL_OVERRIDE {
     fl_font(FL_FREE_FONT,14);
     fl_draw(label(), x()+w()/2, y()+h()/2);
   }

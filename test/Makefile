@@ -65,6 +65,7 @@ CPPFILES =\
 	clock.cxx \
 	colbrowser.cxx \
 	color_chooser.cxx \
+	contrast.cxx \
 	cube.cxx \
 	CubeMain.cxx \
 	CubeView.cxx \
@@ -159,6 +160,7 @@ ALL =	\
 	clock$(EXEEXT) \
 	colbrowser$(EXEEXT) \
 	color_chooser$(EXEEXT) \
+	contrast$(EXEEXT) \
 	cursor$(EXEEXT) \
 	curve$(EXEEXT) \
 	demo$(EXEEXT) \
@@ -393,6 +395,8 @@ colbrowser$(EXEEXT): colbrowser.o
 	$(OSX_ONLY) cp -f rgb.txt colbrowser.app/Contents/Resources/
 
 color_chooser$(EXEEXT): color_chooser.o
+
+contrast$(EXEEXT): contrast.o
 
 cursor$(EXEEXT): cursor.o
 

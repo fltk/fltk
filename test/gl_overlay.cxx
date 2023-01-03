@@ -36,8 +36,8 @@ public:
 #include <FL/Fl_Gl_Window.H>
 
 class shape_window : public Fl_Gl_Window {
-  void draw();
-  void draw_overlay();
+  void draw() FL_OVERRIDE;
+  void draw_overlay() FL_OVERRIDE;
 public:
   int sides;
   int overlay_sides;

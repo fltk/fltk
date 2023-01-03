@@ -52,7 +52,7 @@ static const int inactive  = 0; // deactivate boxes and use green background
 class BoxGroup : public Fl_Group {
   public:
     BoxGroup(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {}
-    void draw() {
+    void draw() FL_OVERRIDE {
       draw_box();
       if (outline + box_bg) { // outline or box_bg or both
         Fl_Widget*const* a = array();

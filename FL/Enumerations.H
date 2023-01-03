@@ -1118,7 +1118,53 @@ are free for the user to be given any value using Fl::set_color(). */
 
 FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
 
-FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
+/**
+  Type of a custom fl_contrast() function.
+
+  Use this signature to define your own custom fl_contrast() function together
+  with fl_contrast_mode(FL_CONTRAST_CUSTOM).
+  Example:
+  \code
+    Fl_Color my_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs, int context) {
+      // calculate contrast and ...
+      return color;
+    }
+    // call this early in your main() program:
+    fl_contrast_function(my_contrast);
+    fl_contrast_mode(FL_CONTRAST_CUSTOM);
+  \endcode
+
+  \see fl_contrast(Fl_Color, Fl_Color, Fl_Fontsize, int)
+  \see fl_contrast_mode(int)
+*/
+typedef Fl_Color (Fl_Contrast_Function)(Fl_Color, Fl_Color, Fl_Fontsize, int);
+
+FL_EXPORT void fl_contrast_function(Fl_Contrast_Function *f);
+
+/**
+  Define the possible modes to calculate fl_contrast().
+*/
+enum Fl_Contrast_Mode {
+  FL_CONTRAST_NONE = 0,     ///< always return foreground color
+  FL_CONTRAST_LEGACY,       ///< legacy (FLTK 1.3.x) contrast function
+  FL_CONTRAST_CIELAB,       ///< new (FLTK 1.4.0) default function
+  FL_CONTRAST_CUSTOM,       ///< optional custom contrast function
+  FL_CONTRAST_LAST          ///< internal use only (invalid contrast mode)
+};
+
+// The following functions are defined and documented in src/fl_contrast.cxx
+
+FL_EXPORT void fl_contrast_level(int level);
+FL_EXPORT int fl_contrast_level();
+FL_EXPORT void fl_contrast_mode(int mode);
+FL_EXPORT int fl_contrast_mode();
+
+FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg, Fl_Fontsize fs = 0, int context = 0);
+
+FL_EXPORT double fl_lightness(Fl_Color color);
+FL_EXPORT double fl_luminance(Fl_Color color);
+
+// Other color functions are defined and documented in src/fl_color.cxx
 
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 

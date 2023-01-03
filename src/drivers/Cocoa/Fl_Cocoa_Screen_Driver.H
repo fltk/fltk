@@ -63,49 +63,49 @@ public:
   static void breakMacEventLoop();
   // --- display management
   // --- screen configuration
-  virtual void init();
-  virtual int x();
-  virtual int y();
-  virtual int w();
-  virtual int h();
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
-  virtual void screen_dpi(float &h, float &v, int n=0);
+  void init() FL_OVERRIDE;
+  int x() FL_OVERRIDE;
+  int y() FL_OVERRIDE;
+  int w() FL_OVERRIDE;
+  int h() FL_OVERRIDE;
+  void screen_xywh(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
+  void screen_dpi(float &h, float &v, int n=0) FL_OVERRIDE;
   // implemented in Fl_cocoa.mm because uses Objective-c
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
+  void screen_work_area(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
   // --- audible output
-  virtual void beep(int type);
+  void beep(int type) FL_OVERRIDE;
   // --- global events
-  virtual void grab(Fl_Window* win);
+  void grab(Fl_Window* win) FL_OVERRIDE;
   // --- global colors
-  virtual void get_system_colors();
-  virtual int has_marked_text() const;
+  void get_system_colors() FL_OVERRIDE;
+  int has_marked_text() const FL_OVERRIDE;
   static void reset_marked_text();
   static void insertion_point_location(int x, int y, int height);
   static int insertion_point_location(int *px, int *py, int *pheight);
-  virtual int dnd(int use_selection);
-  virtual int compose(int &del);
-  virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
-  virtual int get_mouse(int &x, int &y);
-  virtual void enable_im();
-  virtual void disable_im();
-  virtual void open_display_platform();
+  int dnd(int use_selection) FL_OVERRIDE;
+  int compose(int &del) FL_OVERRIDE;
+  int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input) FL_OVERRIDE;
+  int get_mouse(int &x, int &y) FL_OVERRIDE;
+  void enable_im() FL_OVERRIDE;
+  void disable_im() FL_OVERRIDE;
+  void open_display_platform() FL_OVERRIDE;
   // --- compute dimensions of an Fl_Offscreen
-  virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
+  void offscreen_size(Fl_Offscreen o, int &width, int &height) FL_OVERRIDE;
 
-  virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
-  virtual float scale(int /*nscreen*/) {return scale_;}
-  virtual void scale(int /*nscreen*/, float f) { scale_ = f;}
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
-  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
-  virtual int clipboard_contains(const char *type);
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
-  virtual int need_menu_handle_part2() {return 1;}
+  APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return SYSTEMWIDE_APP_SCALING; }
+  float scale(int /*nscreen*/) FL_OVERRIDE {return scale_;}
+  void scale(int /*nscreen*/, float f) FL_OVERRIDE { scale_ = f;}
+  Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins) FL_OVERRIDE;
+  void default_icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
+  void copy(const char *stuff, int len, int clipboard, const char *type) FL_OVERRIDE;
+  void paste(Fl_Widget &receiver, int clipboard, const char *type) FL_OVERRIDE;
+  int clipboard_contains(const char *type) FL_OVERRIDE;
+  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win) FL_OVERRIDE;
+  void reset_spot() FL_OVERRIDE;
+  int need_menu_handle_part2() FL_OVERRIDE {return 1;}
   // these 2 are in Fl_get_key_mac.cxx
-  virtual int event_key(int);
-  virtual int get_key(int);
+  int event_key(int) FL_OVERRIDE;
+  int get_key(int) FL_OVERRIDE;
 private:
   float scale_;
 };

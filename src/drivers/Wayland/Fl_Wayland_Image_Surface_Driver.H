@@ -21,15 +21,15 @@
 #include <FL/platform.H>
 
 class Fl_Wayland_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current();
+  void end_current() FL_OVERRIDE;
   struct wld_window *pre_window;
 public:
   Fl_Wayland_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Wayland_Image_Surface_Driver();
-  virtual void set_current();
-  virtual void translate(int x, int y);
-  virtual void untranslate();
-  virtual Fl_RGB_Image *image();
+  void set_current() FL_OVERRIDE;
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
+  Fl_RGB_Image *image() FL_OVERRIDE;
 };
 
 #endif // FL_WAYLAND_IMAGE_SURFACE_DRIVER_H

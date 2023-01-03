@@ -97,8 +97,8 @@ private:
     void event_callback2();                                     // callback for table events
 
 protected:
-    void draw_cell(TableContext context, int R=0, int C=0,      // table cell drawing
-                   int X=0, int Y=0, int W=0, int H=0);
+    void draw_cell(TableContext context, int R=0, int C=0, // table cell drawing
+                   int X=0, int Y=0, int W=0, int H=0) FL_OVERRIDE;
     void sort_column(int col, int reverse=0);                   // sort table by a column
     void draw_sort_arrow(int X,int Y,int W,int H);
 

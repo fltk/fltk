@@ -109,8 +109,8 @@ public:
   virtual void init() {}
   virtual int x() { return 0; }
   virtual int y() { return 0; }
-  virtual int w() { return 800; } // default, override in driver!
-  virtual int h() { return 600; } // default, override in driver!
+  virtual int w() { return 800; } // default, FL_OVERRIDE in driver!
+  virtual int h() { return 600; } // default, FL_OVERRIDE in driver!
   virtual int screen_count();
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int /*n*/) {
@@ -122,7 +122,7 @@ public:
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
   virtual int screen_num(int x, int y);
   virtual int screen_num(int x, int y, int w, int h);
-  virtual void screen_dpi(float &h, float &v, int n = 0) { // override in driver!
+  virtual void screen_dpi(float &h, float &v, int n = 0) { // FL_OVERRIDE in driver!
     h = 72;
     v = 72;
     (void)n;
@@ -134,7 +134,7 @@ public:
   // --- audible output
   virtual void beep(int) {}
   // --- global events
-  virtual void flush() {}                                  // must override
+  virtual void flush() {}                                  // must FL_OVERRIDE
   virtual void grab(Fl_Window *) {}
   // --- global colors
   /* the default implementation of parse_color() may be enough */

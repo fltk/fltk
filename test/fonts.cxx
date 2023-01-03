@@ -32,7 +32,7 @@ Fl_Tile *tile;
 Fl_Window *vector_font_editor = 0;
 
 class FontDisplay : public Fl_Widget {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   int font, size;
   FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char* L = 0) :
@@ -109,7 +109,7 @@ class LetterBox : public Fl_Group
 public:
   LetterBox(int x, int y, int w, int h, const char *l)
   : Fl_Group(x, y, w, h, l) { }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_box();
     fl_push_clip(x(), y(), w(), h());
     draw_label(x(), y()-5, w(), h()-16, FL_ALIGN_CENTER);
@@ -270,7 +270,7 @@ class Ut_Main_Window : public Fl_Double_Window
 public:
   Ut_Main_Window(int w, int h, const char *l=0)
   : Fl_Double_Window(w, h, l) { }
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     if (event==FL_KEYBOARD && Fl::event_key()==FL_F+1) {
       if (!vector_font_editor) vector_font_editor = create_editor();
       vector_font_editor->show();

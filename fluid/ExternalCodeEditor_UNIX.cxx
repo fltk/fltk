@@ -291,7 +291,7 @@ const char* ExternalCodeEditor::tmp_filename() {
   static char path[FL_PATH_MAX+1];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext = P.code_file_name;   // e.g. ".cxx"
+  const char *ext = g_project.code_file_name;   // e.g. ".cxx"
   snprintf(path, FL_PATH_MAX, "%s/%p%s", tmpdir, (void*)this, ext);
   path[FL_PATH_MAX] = 0;
   return path;

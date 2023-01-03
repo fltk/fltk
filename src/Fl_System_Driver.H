@@ -220,8 +220,8 @@ public:
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
   virtual void lock_ring() {}
   virtual void unlock_ring() {}
-  virtual double wait(double);                             // must override
-  virtual int ready() { return 0; }                        // must override
+  virtual double wait(double);                             // must FL_OVERRIDE
+  virtual int ready() { return 0; }                        // must FL_OVERRIDE
   virtual int close_fd(int) {return -1;} // to close a file descriptor
 };
 

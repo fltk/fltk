@@ -24,8 +24,8 @@
 class Shortcut_Button : public Fl_Button {
 public:
   int svalue;
-  int handle(int);
-  void draw();
+  int handle(int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
   Shortcut_Button(int X,int Y,int W,int H, const char* l = 0) :
     Fl_Button(X,Y,W,H,l) {svalue = 0;}
 };
@@ -33,7 +33,7 @@ public:
 // Adding drag and drop for dragging widgets into windows.
 class Widget_Bin_Button : public Fl_Button {
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Widget_Bin_Button(int X,int Y,int W,int H, const char* l = 0) :
   Fl_Button(X,Y,W,H,l) { }
 };
@@ -41,7 +41,7 @@ public:
 // Adding drag and drop functionality to drag window prototypes onto the desktop.
 class Widget_Bin_Window_Button : public Fl_Button {
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Widget_Bin_Window_Button(int X,int Y,int W,int H, const char* l = 0) :
   Fl_Button(X,Y,W,H,l) { }
 };

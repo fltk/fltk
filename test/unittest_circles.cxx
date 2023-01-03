@@ -108,7 +108,7 @@ public:
     : Fl_Gl_Window(x, y, w, h) {
     box(FL_FLAT_BOX);
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_begin();
     Fl_Window::draw();
     draw_circles();
@@ -125,7 +125,7 @@ public:
     box(FL_FLAT_BOX);
     end();
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Window::draw();
     draw_circles();
   }

@@ -131,7 +131,7 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list,
   int dirlen;
   char *dirloc;
   // Assume that locale encoding is no less dense than UTF-8
-  dirlen = strlen(d);
+  dirlen = (int)strlen(d);
   dirloc = (char *)d;
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   int n = scandir(dirloc, list, 0, (int(*)(const struct dirent**,const struct dirent**))sort);
@@ -153,7 +153,7 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list,
   for (i=0; i<n; i++) {
     int newlen;
     dirent *de = (*list)[i];
-    int len = strlen(de->d_name);
+    int len = (int)strlen(de->d_name);
     newlen = len;
     dirent *newde = (dirent*)malloc(de->d_name - (char*)de + newlen + 2); // Add space for a / and a nul
     // Conversion to UTF-8
@@ -298,7 +298,7 @@ static int n_buf = 0;
 
 const char *Fl_Darwin_System_Driver::latin1_to_local(const char *t, int n)
 {
-  if (n==-1) n = strlen(t);
+  if (n==-1) n = (int)strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);
@@ -319,7 +319,7 @@ const char *Fl_Darwin_System_Driver::latin1_to_local(const char *t, int n)
 
 const char *Fl_Darwin_System_Driver::local_to_latin1(const char *t, int n)
 {
-  if (n==-1) n = strlen(t);
+  if (n==-1) n = (int)strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);

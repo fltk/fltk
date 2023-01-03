@@ -43,10 +43,10 @@ class FL_EXPORT Fl_Value_Output : public Fl_Valuator {
   Fl_Color textcolor_;
 
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
 
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Fl_Value_Output(int x,int y,int w,int h,const char *l=0);
 
   /**

@@ -58,7 +58,7 @@ protected:
   public:
     Fl_Spinner_Input(int X, int Y, int W, int H)
     : Fl_Input(X, Y, W, H) {}
-    int handle(int event);              // implemented in src/Fl_Spinner.cxx
+    int handle(int event) FL_OVERRIDE; // implemented in src/Fl_Spinner.cxx
   };
 
   Fl_Spinner_Input input_;              // Input field for the value
@@ -66,16 +66,16 @@ protected:
                 up_button_,             // Up button
                 down_button_;           // Down button
 
-  virtual void draw();
+  void draw() FL_OVERRIDE;
 
 public:
 
   // Constructor
   Fl_Spinner(int X, int Y, int W, int H, const char *L = 0);
   // Event handling
-  int handle(int event);
+  int handle(int event) FL_OVERRIDE;
   // Resize group and subwidgets
-  void resize(int X, int Y, int W, int H);
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
 
   /** Returns the format string for the value. */
   const char *format() const { return (format_); }

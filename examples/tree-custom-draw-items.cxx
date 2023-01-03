@@ -59,7 +59,7 @@ public:
   //    that we want the user to be able to use the horizontal scrollbar
   //    to reach.
   //
-  int draw_item_content(int render) {
+  int draw_item_content(int render) FL_OVERRIDE {
     Fl_Color fg = drawfgcolor();
     Fl_Color bg = drawbgcolor();
     //    Show the date and time as two small strings

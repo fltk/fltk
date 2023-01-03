@@ -54,7 +54,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     CGFloat *pDst = pattern;
     while (*d) { *pDst++ = (float)*d++; }
     quartz_line_pattern = pattern;
-    quartz_line_pattern_size = d-dashes;
+    quartz_line_pattern_size = (int)(d-dashes);
   } else if (style & 0xff) {
     char dash, dot, gap;
     // adjust lengths to account for cap:
@@ -73,7 +73,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     case FL_DASHDOT:    *pDst++ = dash; *pDst++ = gap; *pDst++ = dot; *pDst++ = gap; break;
     case FL_DASHDOTDOT: *pDst++ = dash; *pDst++ = gap; *pDst++ = dot; *pDst++ = gap; *pDst++ = dot; *pDst++ = gap; break;
     }
-    quartz_line_pattern_size = pDst-pattern;
+    quartz_line_pattern_size = (int)(pDst-pattern);
     quartz_line_pattern = pattern;
   } else {
     quartz_line_pattern = 0;

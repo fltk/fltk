@@ -51,11 +51,11 @@ protected:
   // these allow subclasses to put the dial in a smaller area:
   void draw(int X, int Y, int W, int H);
   int handle(int event, int X, int Y, int W, int H);
-  void draw();
+  void draw() FL_OVERRIDE;
 
 public:
 
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   /**
     Creates a new Fl_Dial widget using the given position, size,
     and label string. The default type is FL_NORMAL_DIAL.

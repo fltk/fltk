@@ -78,7 +78,7 @@ class FL_EXPORT Fl_Chart : public Fl_Widget {
     Fl_Fontsize textsize_;
     Fl_Color textcolor_;
 protected:
-    void draw();
+    void draw() FL_OVERRIDE;
 public:
     Fl_Chart(int X, int Y, int W, int H, const char *L = 0);
 

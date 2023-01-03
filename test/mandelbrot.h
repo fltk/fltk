@@ -21,7 +21,7 @@
 #include <FL/Fl_Input.H>
 
 class Drawing_Area : public Fl_Box {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   uchar *buffer;
   int W,H;
@@ -34,8 +34,8 @@ public:
   double X,Y,scale;
   int sx, sy, sw, sh; // selection box
   void erase_box();
-  int handle(int);
-  void resize(int,int,int,int);
+  int handle(int) FL_OVERRIDE;
+  void resize(int,int,int,int) FL_OVERRIDE;
   void new_display();
   enum {
     MAX_BRIGHTNESS = 16,

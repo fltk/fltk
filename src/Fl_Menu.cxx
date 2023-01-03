@@ -107,32 +107,37 @@ static const Fl_Menu_* button=0;
 
 ////////////////////////////////////////////////////////////////
 
-// tiny window for title of menu:
-class menutitle : public Fl_Menu_Window {
-  void draw();
+class window_with_items : public Fl_Menu_Window {
 public:
   const Fl_Menu_Item* menu;
+  window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
+    Fl_Menu_Window(X, Y, W, H, 0) { menu = m; }
+};
+
+// tiny window for title of menu:
+class menutitle : public window_with_items {
+  void draw() FL_OVERRIDE;
+public:
   menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*);
 };
 
 // each vertical menu has one of these:
-class menuwindow : public Fl_Menu_Window {
+class menuwindow : public window_with_items {
   friend class Fl_Window_Driver;
   friend struct Fl_Menu_Item;
-  void draw();
+  void draw() FL_OVERRIDE;
   void drawentry(const Fl_Menu_Item*, int i, int erase);
   int handle_part1(int);
   int handle_part2(int e, int ret);
   static Fl_Window *parent_;
 public:
   menutitle* title;
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   int itemheight;       // zero == menubar
   int numitems;
   int selected;
   int drawn_selected;   // last redraw has this selected
   int shortcutWidth;
-  const Fl_Menu_Item* menu;
   menuwindow(const Fl_Menu_Item* m, int X, int Y, int W, int H,
              const Fl_Menu_Item* picked, const Fl_Menu_Item* title,
              int menubar = 0, int menubar_title = 0, int right_edge = 0);
@@ -157,6 +162,10 @@ Fl_Window *Fl_Window_Driver::menu_parent() {
   return menuwindow::parent_;
 }
 
+const Fl_Menu_Item *Fl_Window_Driver::current_menu() {
+  if (!pWindow->menu_window()) return NULL;
+  return ((window_with_items*)pWindow)->menu;
+}
 /**
  \}
  \endcond
@@ -298,18 +307,17 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 }
 
 menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
-  Fl_Menu_Window(X, Y, W, H, 0) {
+  window_with_items(X, Y, W, H, L) {
   end();
   set_modal();
   clear_border();
   set_menu_window();
-  menu = L;
 }
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
                        const Fl_Menu_Item* picked, const Fl_Menu_Item* t,
                        int menubar, int menubar_title, int right_edge)
-  : Fl_Menu_Window(X, Y, Wp, Hp, 0)
+  : window_with_items(X, Y, Wp, Hp, m)
 {
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
@@ -321,7 +329,6 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   set_modal();
   clear_border();
   set_menu_window();
-  menu = m;
   if (m) m = m->first(); // find the first item that needs to be rendered
   drawn_selected = -1;
   if (button) {

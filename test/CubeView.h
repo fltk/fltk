@@ -81,13 +81,13 @@ public:
   void pany(double y) { yshift = y; }
 
 #if HAVE_GL
-  /* The widget class draw() override.
+  /* The widget class draw() FL_OVERRIDE.
    *
    * The draw() function initializes Gl for another round of
    * drawing, then calls specialized functions for drawing each
    * of the entities displayed in the cube view.
    */
-  void draw();
+  void draw() FL_OVERRIDE;
 #endif /* HAVE_GL */
 
 private:

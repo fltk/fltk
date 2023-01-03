@@ -54,7 +54,7 @@ public:
     : Fl_Box(FL_FLAT_BOX, x, y, w, h, 0) {
     align(FL_ALIGN_CENTER | FL_ALIGN_CLIP);
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_box();
     Fl_Image *img = image();
     if (img) { // draw the chess pattern below the box centered image
@@ -87,7 +87,7 @@ class clipboard_viewer : public Fl_Tabs {
 public:
   clipboard_viewer(int x, int y, int w, int h)
     : Fl_Tabs(x, y, w, h) {}
-  virtual int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     if (event != FL_PASTE)
       return Fl_Tabs::handle(event);
     if (strcmp(Fl::event_clipboard_type(), Fl::clipboard_image) == 0) { // an image is being pasted

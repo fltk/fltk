@@ -68,7 +68,7 @@ class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int shadow_; // draw shadows of hands
   void drawhands(Fl_Color,Fl_Color); // part of draw
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
   void draw(int X, int Y, int W, int H);
 public:
 
@@ -151,7 +151,7 @@ public:
  */
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
 
   Fl_Clock(int X, int Y, int W, int H,  const char *L = 0);
 

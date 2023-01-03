@@ -22,6 +22,7 @@
 #include "pixmaps/lock.xpm"
 #include "pixmaps/protected.xpm"
 #include "pixmaps/invisible.xpm"
+#include "pixmaps/compressed.xpm"
 
 #include "pixmaps/flWindow.xpm"
 #include "pixmaps/flButton.xpm"
@@ -84,6 +85,7 @@ Fl_Pixmap *bind_pixmap;
 Fl_Pixmap *lock_pixmap;
 Fl_Pixmap *protected_pixmap;
 Fl_Pixmap *invisible_pixmap;
+Fl_Pixmap *compressed_pixmap;
 
 Fl_Pixmap *window_pixmap;
 Fl_Pixmap *button_pixmap;
@@ -150,6 +152,7 @@ void loadPixmaps()
   lock_pixmap = new Fl_Pixmap(lock_xpm); lock_pixmap->scale(16, 16);
   protected_pixmap = new Fl_Pixmap(protected_xpm); protected_pixmap->scale(16, 16);
   invisible_pixmap = new Fl_Pixmap(invisible_xpm); invisible_pixmap->scale(16, 16);
+  compressed_pixmap = new Fl_Pixmap(compressed_xpm); compressed_pixmap->scale(16, 16);
 
   pixmap[1] = window_pixmap = new Fl_Pixmap(flWindow_xpm); window_pixmap->scale(16, 16);
   pixmap[2] = button_pixmap = new Fl_Pixmap(flButton_xpm); button_pixmap->scale(16, 16);

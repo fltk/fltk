@@ -117,7 +117,7 @@ void default_widget_size_cb(Fl_Round_Button *b, long size) {
 void i18n_type_cb(Fl_Choice *c, void *) {
   undo_checkpoint();
 
-  switch (P.i18n_type = c->value()) {
+  switch (g_project.i18n_type = c->value()) {
   case 0 : /* None */
       i18n_include_input->hide();
       i18n_conditional_input->hide();
@@ -128,13 +128,13 @@ void i18n_type_cb(Fl_Choice *c, void *) {
       break;
   case 1 : /* GNU gettext */
       i18n_include_input->value("<libintl.h>");
-      P.i18n_include = i18n_include_input->value();
+      g_project.i18n_include = i18n_include_input->value();
       i18n_conditional_input->value("");
-      P.i18n_conditional = i18n_conditional_input->value();
+      g_project.i18n_conditional = i18n_conditional_input->value();
       i18n_function_input->value("gettext");
-      P.i18n_function = i18n_function_input->value();
+      g_project.i18n_function = i18n_function_input->value();
       i18n_static_function_input->value("gettext_noop");
-      P.i18n_static_function = i18n_static_function_input->value();
+      g_project.i18n_static_function = i18n_static_function_input->value();
       i18n_include_input->show();
       i18n_conditional_input->show();
       i18n_file_input->hide();
@@ -144,13 +144,13 @@ void i18n_type_cb(Fl_Choice *c, void *) {
       break;
   case 2 : /* POSIX cat */
       i18n_include_input->value("<nl_types.h>");
-      P.i18n_include = i18n_include_input->value();
+      g_project.i18n_include = i18n_include_input->value();
       i18n_conditional_input->value("");
-      P.i18n_conditional = i18n_conditional_input->value();
+      g_project.i18n_conditional = i18n_conditional_input->value();
       i18n_file_input->value("");
-      P.i18n_file = i18n_file_input->value();
+      g_project.i18n_file = i18n_file_input->value();
       i18n_set_input->value("1");
-      P.i18n_set = i18n_set_input->value();
+      g_project.i18n_set = i18n_set_input->value();
       i18n_include_input->show();
       i18n_conditional_input->show();
       i18n_file_input->show();
@@ -167,15 +167,15 @@ void i18n_text_cb(Fl_Input *i, void *) {
   undo_checkpoint();
 
   if (i == i18n_function_input)
-    P.i18n_function = i->value();
+    g_project.i18n_function = i->value();
   else if (i == i18n_static_function_input)
-    P.i18n_static_function = i->value();
+    g_project.i18n_static_function = i->value();
   else if (i == i18n_file_input)
-    P.i18n_file = i->value();
+    g_project.i18n_file = i->value();
   else if (i == i18n_include_input)
-    P.i18n_include = i->value();
+    g_project.i18n_include = i->value();
   else if (i == i18n_conditional_input)
-    P.i18n_conditional = i->value();
+    g_project.i18n_conditional = i->value();
 
   set_modflag(1);
 }
@@ -184,27 +184,27 @@ void i18n_int_cb(Fl_Int_Input *i, void *) {
   undo_checkpoint();
 
   if (i == i18n_set_input)
-    P.i18n_set = i->value();
+    g_project.i18n_set = i->value();
 
   set_modflag(1);
 }
 
 void show_project_cb(Fl_Widget *, void *) {
   if(project_window==0) make_project_window();
-  include_H_from_C_button->value(P.include_H_from_C);
-  use_FL_COMMAND_button->value(P.use_FL_COMMAND);
-  utf8_in_src_button->value(P.utf8_in_src);
-  avoid_early_includes_button->value(P.avoid_early_includes);
-  header_file_input->value(P.header_file_name);
-  code_file_input->value(P.code_file_name);
-  i18n_type_chooser->value(P.i18n_type);
-  i18n_function_input->value(P.i18n_function);
-  i18n_static_function_input->value(P.i18n_static_function);
-  i18n_file_input->value(P.i18n_file);
-  i18n_set_input->value(P.i18n_set);
-  i18n_include_input->value(P.i18n_include);
-  i18n_conditional_input->value(P.i18n_conditional);
-  switch (P.i18n_type) {
+  include_H_from_C_button->value(g_project.include_H_from_C);
+  use_FL_COMMAND_button->value(g_project.use_FL_COMMAND);
+  utf8_in_src_button->value(g_project.utf8_in_src);
+  avoid_early_includes_button->value(g_project.avoid_early_includes);
+  header_file_input->value(g_project.header_file_name);
+  code_file_input->value(g_project.code_file_name);
+  i18n_type_chooser->value(g_project.i18n_type);
+  i18n_function_input->value(g_project.i18n_function);
+  i18n_static_function_input->value(g_project.i18n_static_function);
+  i18n_file_input->value(g_project.i18n_file);
+  i18n_set_input->value(g_project.i18n_set);
+  i18n_include_input->value(g_project.i18n_include);
+  i18n_conditional_input->value(g_project.i18n_conditional);
+  switch (g_project.i18n_type) {
   case 0 : /* None */
       i18n_include_input->hide();
       i18n_conditional_input->hide();
@@ -262,41 +262,41 @@ void show_global_settings_cb(Fl_Widget *, void *) {
 }
 
 void header_input_cb(Fl_Input* i, void*) {
-  if (strcmp(P.header_file_name, i->value()))
+  if (strcmp(g_project.header_file_name, i->value()))
     set_modflag(1);
-  P.header_file_name = i->value();
+  g_project.header_file_name = i->value();
 }
 void code_input_cb(Fl_Input* i, void*) {
-  if (strcmp(P.code_file_name, i->value()))
+  if (strcmp(g_project.code_file_name, i->value()))
     set_modflag(1);
-  P.code_file_name = i->value();
+  g_project.code_file_name = i->value();
 }
 
 void include_H_from_C_button_cb(Fl_Check_Button* b, void*) {
-  if (P.include_H_from_C != b->value()) {
+  if (g_project.include_H_from_C != b->value()) {
     set_modflag(1);
-    P.include_H_from_C = b->value();
+    g_project.include_H_from_C = b->value();
   }
 }
 
 void use_FL_COMMAND_button_cb(Fl_Check_Button* b, void*) {
-  if (P.use_FL_COMMAND != b->value()) {
+  if (g_project.use_FL_COMMAND != b->value()) {
     set_modflag(1);
-    P.use_FL_COMMAND = b->value();
+    g_project.use_FL_COMMAND = b->value();
   }
 }
 
 void utf8_in_src_cb(Fl_Check_Button *b, void*) {
-  if (P.utf8_in_src != b->value()) {
+  if (g_project.utf8_in_src != b->value()) {
     set_modflag(1);
-    P.utf8_in_src = b->value();
+    g_project.utf8_in_src = b->value();
   }
 }
 
 void avoid_early_includes_cb(Fl_Check_Button *b, void*) {
-  if (P.avoid_early_includes != b->value()) {
+  if (g_project.avoid_early_includes != b->value()) {
     set_modflag(1);
-    P.avoid_early_includes = b->value();
+    g_project.avoid_early_includes = b->value();
   }
 }
 
@@ -313,13 +313,13 @@ static int overlays_invisible;
 // an overlay for the fluid ui, and special-cases the FL_NO_BOX.
 
 class Overlay_Window : public Fl_Overlay_Window {
-  void draw();
-  void draw_overlay();
+  void draw() FL_OVERRIDE;
+  void draw_overlay() FL_OVERRIDE;
 public:
   Fl_Window_Type *window;
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {Fl_Group::current(0);}
-  void resize(int,int,int,int);
+  void resize(int,int,int,int) FL_OVERRIDE;
   uchar *read_image(int &ww, int &hh);
 };
 void Overlay_Window::draw() {

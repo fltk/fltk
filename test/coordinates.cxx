@@ -90,7 +90,7 @@ public:
   }
 
 protected:
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     static char buffer[128];
     static const char* fmt = "Mouse position relative to main window: %3d,%3d";
     int result = Fl_Window::handle(event);

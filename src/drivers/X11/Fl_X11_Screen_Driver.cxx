@@ -48,7 +48,7 @@
 
 extern Atom fl_NET_WORKAREA;
 
-// these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
+// these are set by Fl::args() and FL_OVERRIDE any system colors: from Fl_get_system_colors.cxx
 extern const char *fl_fg;
 extern const char *fl_bg;
 extern const char *fl_bg2;

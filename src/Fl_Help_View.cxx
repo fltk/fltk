@@ -1557,7 +1557,7 @@ void Fl_Help_View::format() {
             if (get_attr(attrs, "START", attr, sizeof(attr)) != NULL) {
               errno = 0;
               char *endptr = 0;
-              ol_num = strtol(attr, &endptr, 10);
+              ol_num = (int)strtol(attr, &endptr, 10);
               if (errno || endptr == attr || ol_num < 0)
                 ol_num = 1;
             }
@@ -2765,7 +2765,7 @@ Fl_Help_View::get_color(const char *n,  // I - Color name
 
   if (n[0] == '#') {
     // Do hex color lookup
-    rgb = strtol(n + 1, NULL, 16);
+    rgb = (int)strtol(n + 1, NULL, 16);
 
     if (strlen(n) > 4) {
       r = rgb >> 16;
@@ -3757,7 +3757,7 @@ quote_char(const char *p) {     // I - Quoted string
 
   if (!strchr(p, ';')) return -1;
   if (*p == '#') {
-    if (*(p+1) == 'x' || *(p+1) == 'X') return strtol(p+2, NULL, 16);
+    if (*(p+1) == 'x' || *(p+1) == 'X') return (int)strtol(p+2, NULL, 16);
     else return atoi(p+1);
   }
   for (i = (int)(sizeof(names) / sizeof(names[0])), nameptr = names; i > 0; i --, nameptr ++)

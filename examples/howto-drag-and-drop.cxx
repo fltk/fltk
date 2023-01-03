@@ -38,7 +38,7 @@ public:
     label("Drag\nfrom\nhere..");
   }
   // Sender event handler
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     int ret = Fl_Box::handle(event);
     switch ( event ) {
       case FL_PUSH: {             // do 'copy/dnd' when someone clicks on box
@@ -64,7 +64,7 @@ public:
     dnd_text = 0;
   }
   // Receiver event handler
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     int ret = Fl_Box::handle(event);
     int len;
     switch ( event ) {

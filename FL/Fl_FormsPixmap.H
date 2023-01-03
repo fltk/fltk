@@ -29,7 +29,7 @@
 class FL_EXPORT Fl_FormsPixmap : public Fl_Widget {
     Fl_Pixmap *b;
 protected:
-    void draw();
+    void draw() FL_OVERRIDE;
 public:
     Fl_FormsPixmap(Fl_Boxtype t, int X, int Y, int W, int H, const char *L= 0);
 

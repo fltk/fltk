@@ -117,7 +117,7 @@ void oxy_arrow(Fl_Rect bb, Fl_Arrow_Type t, Fl_Orientation o, Fl_Color col) {
 
       bb.y(bb.y() - 2);               // shift upwards
       bb.h(bb.h() - 4);               // reduce size
-      single_arrow(bb, FL_ORIENT_DOWN, col);
+      single_arrow(bb, FL_ORIENT_UP, col);
       bb.y(bb.y() + 4);               // shift down
       single_arrow(bb, FL_ORIENT_DOWN, col);
       break;

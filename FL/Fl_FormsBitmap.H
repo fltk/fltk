@@ -28,7 +28,7 @@
 class FL_EXPORT Fl_FormsBitmap : public Fl_Widget {
     Fl_Bitmap *b;
 protected:
-    void draw();
+    void draw() FL_OVERRIDE;
 public:
     Fl_FormsBitmap(Fl_Boxtype, int, int, int, int, const char * = 0);
     void set(int W, int H, const uchar *bits);

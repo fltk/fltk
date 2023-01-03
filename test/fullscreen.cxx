@@ -65,7 +65,7 @@
 #include <FL/Fl_Gl_Window.H>
 
 class shape_window : public Fl_Gl_Window {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   int sides;
   shape_window(int x,int y,int w,int h,const char *l=0);
@@ -123,7 +123,7 @@ void shape_window::draw() {
 class fullscreen_window : public Fl_Single_Window {
   public:
   fullscreen_window(int W, int H, const char *t=0);
-  int handle (int e);
+  int handle (int e) FL_OVERRIDE;
   Fl_Toggle_Light_Button *b3;
   Fl_Toggle_Light_Button *b4;
 };

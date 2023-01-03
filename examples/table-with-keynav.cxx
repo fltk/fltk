@@ -41,7 +41,7 @@ Fl_Output        *G_sum = 0;                    // displays sum of user's select
 class MyTable : public Fl_Table_Row {
 protected:
     // Handle drawing all cells in table
-    void draw_cell(TableContext context, int R=0,int C=0, int X=0,int Y=0,int W=0,int H=0) {
+    void draw_cell(TableContext context, int R=0,int C=0, int X=0,int Y=0,int W=0,int H=0) FL_OVERRIDE {
         static char s[30];
         switch ( context ) {
             case CONTEXT_COL_HEADER:
@@ -119,7 +119,7 @@ public:
             { G_sum->value(s); G_sum->redraw(); }
     }
     // Keyboard and mouse events
-    int handle(int e) {
+    int handle(int e) FL_OVERRIDE {
         int ret = Fl_Table_Row::handle(e);
         if ( e == FL_KEYBOARD && Fl::event_key() == FL_Escape ) exit(0);
         switch (e) {

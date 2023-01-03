@@ -60,7 +60,7 @@ class Fl_WinAPI_Window_Driver : public Fl_Window_Driver
   } *shape_data_;
 private:
   void shape_bitmap_(Fl_Image* b);
-  void shape_alpha_(Fl_Image* img, int offset);
+  void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
 public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
   ~Fl_WinAPI_Window_Driver();
@@ -80,43 +80,43 @@ public:
   int fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by, DWORD style = 0, DWORD styleEx = 0);
   void make_fullscreen(int X, int Y, int W, int H);
   // --- window data
-  virtual int decorated_w();
-  virtual int decorated_h();
-  virtual const Fl_Image* shape();
+  int decorated_w() FL_OVERRIDE;
+  int decorated_h() FL_OVERRIDE;
+  const Fl_Image* shape() FL_OVERRIDE;
 
   // --- window management
-  virtual Fl_X *makeWindow();
-  virtual void size_range() {
+  Fl_X *makeWindow() FL_OVERRIDE;
+  void size_range() FL_OVERRIDE {
     // currently nothing to do
   }
-  virtual void flush_double();
-  virtual void flush_overlay();
-  virtual void draw_begin();
-  virtual void make_current();
-  virtual void show();
-  virtual void label(const char *name,const char *iname);
-  virtual void resize(int X,int Y,int W,int H);
-  virtual void hide();
-  virtual void map();
-  virtual void unmap();
-  virtual void fullscreen_on();
-  virtual void fullscreen_off(int X, int Y, int W, int H);
-  virtual void iconize();
-  virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
+  void flush_double() FL_OVERRIDE;
+  void flush_overlay() FL_OVERRIDE;
+  void draw_begin() FL_OVERRIDE;
+  void make_current() FL_OVERRIDE;
+  void show() FL_OVERRIDE;
+  void label(const char *name,const char *iname) FL_OVERRIDE;
+  void resize(int X,int Y,int W,int H) FL_OVERRIDE;
+  void hide() FL_OVERRIDE;
+  void map() FL_OVERRIDE;
+  void unmap() FL_OVERRIDE;
+  void fullscreen_on() FL_OVERRIDE;
+  void fullscreen_off(int X, int Y, int W, int H) FL_OVERRIDE;
+  void iconize() FL_OVERRIDE;
+  void decoration_sizes(int *top, int *left,  int *right, int *bottom) FL_OVERRIDE;
   // --- window cursor stuff
-  virtual int set_cursor(Fl_Cursor);
-  virtual int set_cursor(const Fl_RGB_Image*, int, int);
+  int set_cursor(Fl_Cursor) FL_OVERRIDE;
+  int set_cursor(const Fl_RGB_Image*, int, int) FL_OVERRIDE;
 
-  virtual void shape(const Fl_Image* img);
-  virtual void icons(const Fl_RGB_Image *icons[], int count);
-  virtual const void *icon() const;
-  virtual void icon(const void * ic);
-  virtual void free_icons();
+  void shape(const Fl_Image* img) FL_OVERRIDE;
+  void icons(const Fl_RGB_Image *icons[], int count) FL_OVERRIDE;
+  const void *icon() const FL_OVERRIDE;
+  void icon(const void * ic) FL_OVERRIDE;
+  void free_icons() FL_OVERRIDE;
   void set_icons(); // driver-internal support function
   // this one is implemented in Fl_win32.cxx
-  virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
-                     void (*draw_area)(void*, int,int,int,int), void* data);
+  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
+  int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
+                     void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   static void resize_after_screen_change(void *data);
 };
 

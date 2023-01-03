@@ -631,9 +631,15 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS =  */src/*_win32.cxx
-EXCLUDE_PATTERNS += */src/*_mac.cxx
-EXCLUDE_PATTERNS += */src/*_x.cxx
+EXCLUDE_PATTERNS =  @FLTK_SOURCE_DIR@/src/*_win32.cxx
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_mac.cxx
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_x.cxx
+
+# Exclude Wayland specific files that are generated in the source tree
+# by configure + make
+
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/xdg*
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/text-input*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

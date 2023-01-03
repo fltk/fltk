@@ -28,6 +28,7 @@
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <windows.h>
+#include <ole2.h>
 #include <math.h>  // for ceil()
 
 #if USE_COLORMAP

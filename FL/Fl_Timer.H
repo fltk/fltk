@@ -43,9 +43,9 @@ class FL_EXPORT Fl_Timer : public Fl_Widget {
   double delay, total;
   long lastsec,lastusec;
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
   Fl_Timer(uchar t,int x,int y,int w,int h, const char *l);
   ~Fl_Timer();
   void value(double);

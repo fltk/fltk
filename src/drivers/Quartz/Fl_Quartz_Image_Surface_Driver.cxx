@@ -79,10 +79,10 @@ void Fl_Quartz_Image_Surface_Driver::untranslate() {
 Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 {
   CGContextFlush((CGContextRef)offscreen);
-  int W = CGBitmapContextGetWidth((CGContextRef)offscreen);
-  int H = CGBitmapContextGetHeight((CGContextRef)offscreen);
-  int bpr = CGBitmapContextGetBytesPerRow((CGContextRef)offscreen);
-  int bpp = CGBitmapContextGetBitsPerPixel((CGContextRef)offscreen)/8;
+  int W = (int)CGBitmapContextGetWidth((CGContextRef)offscreen);
+  int H = (int)CGBitmapContextGetHeight((CGContextRef)offscreen);
+  int bpr = (int)CGBitmapContextGetBytesPerRow((CGContextRef)offscreen);
+  int bpp = (int)CGBitmapContextGetBitsPerPixel((CGContextRef)offscreen)/8;
   uchar *base = (uchar*)CGBitmapContextGetData((CGContextRef)offscreen);
   int idx, idy;
   uchar *pdst, *psrc;

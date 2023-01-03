@@ -95,7 +95,7 @@ Fl_SVG_Image::Fl_SVG_Image(const char *sharedname, const char *svg_data) :
  commonly used for compressed binary data, but the reader recognizes if the data
  is uncompressed, and reads it as a text block.
 
- \param sharedname if not \c NULL, a shared image will be generated with this name
+ \param name if not \c NULL, a shared image will be generated with this name
  \param svg_data a pointer to the memory location of the SVG image data
  \param length of \p svg_data or \c 0 if the length is unknown. This will
         protect memory outside of the \p svg_data array from illegal read
@@ -171,7 +171,7 @@ static int svg_inflate(uchar *src, size_t src_length, uchar *&dst, size_t &dst_l
   // initialize zlib for inflating compressed data
   err = inflateInit2(&stream, 31);
   if (err != Z_OK) return err;
-  gz_header header;
+  gz_header header = { };
   err = inflateGetHeader(&stream, &header);
   if (err != Z_OK) return err;
 

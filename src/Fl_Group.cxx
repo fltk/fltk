@@ -733,7 +733,7 @@ void Fl_Group::init_sizes() {
 
   \internal Notes to developers:
     - If you change this be sure to fix Fl_Tile which also uses this array!
-    - Do not #include Fl_Rect.H in Fl_Group.H because this would introduce
+    - Do not \#include Fl_Rect.H in Fl_Group.H because this would introduce
       lots of unnecessary dependencies on Fl_Rect.H.
 */
 Fl_Rect* Fl_Group::bounds() {

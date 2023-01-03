@@ -30,6 +30,7 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Menu_Item.H>
 #include <string.h>
 #include <math.h> // for ceil()
 #include <sys/types.h> // for pid_t
@@ -338,7 +339,8 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb)) {
+  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb) &&
+      !wait_for_expose_value ) {
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }
@@ -450,7 +452,7 @@ void Fl_Wayland_Window_Driver::hide() {
       wld_win->frame = NULL;
       wld_win->xdg_surface = NULL;
     } else {
-      if (wld_win->kind == POPUP) {
+      if (wld_win->kind == POPUP && wld_win->xdg_popup) {
         popup_done(wld_win, wld_win->xdg_popup);
         wld_win->xdg_popup = NULL;
       }
@@ -904,6 +906,12 @@ static void popup_done(void *data, struct xdg_popup *xdg_popup) {
   }
 #endif
   xdg_popup_destroy(xdg_popup);
+  // The sway compositor calls popup_done directly and hides the menu
+  // when the app looses focus.
+  // Thus, we hide the window so FLTK and Wayland are in matching states.
+  struct wld_window *window = (struct wld_window*)data;
+  window->xdg_popup = NULL;
+  window->fl_win->hide();
 }
 
 static const struct xdg_popup_listener popup_listener = {
@@ -941,6 +949,44 @@ static const char *get_prog_name() {
     return p;
   }
   return "unknown";
+}
+
+
+/* Implementation note about menu windows under Wayland.
+ Wayland offers a way to position popup windows such as menu windows using constraints
+ but hides the position of the window inside the display. Each popup is located relatively
+ to a parent window which can be a popup itself and MUST overlap or at least touch this parent.
+ FLTK computes the adequate position of a menu window in the display and then maps it
+ at that position.
+ These 2 logics are quite different.
+ The approach implemented here is two-fold.
+ 1) If a menu window is not taller than the display and contains no submenu, use Wayland
+ logic to position it. The benefit is that window menus become authorized to lay outside
+ the parent window but Wayland will not make them run beyond display limits.
+ We avoid submenu-containing popups because these could lead to
+ locate the future submenu outside its parent window, which Wayland forbids.
+ We avoid very tall menu windows because navigating with FLTK inside them would require to know
+ what part of them is visible which Wayland hides.
+ 2) Otherwise, have FLTK compute the menu position under the constraint that its active item
+ must be inside the menu-containing window. This constraint ensures Wayland will accept this
+ position because the required overlap is satisfied.
+ Function use_wayland_menu_positioning() below determines wether 1) or 2) is used for any
+ window menu. The result of this function is stored in the state member of the menu window's
+ struct wld_window for fast re-use.
+ */
+
+//returns true if win is a menuwindow without submenu and is not taller than display
+static bool use_wayland_menu_positioning(Fl_Window *win, Fl_Window *parent_win) {
+  if (!win->menu_window()) return true;
+  int XX, YY, WW, HH;
+  Fl::screen_xywh(XX, YY, WW, HH, parent_win->screen_num());
+  if (win->h() > HH) return false;
+  const Fl_Menu_Item *m = Fl_Window_Driver::driver(win)->current_menu();
+  while (m->label()) {
+    if (m->flags & (FL_SUBMENU | FL_SUBMENU_POINTER)) return false;
+    m = m->next();
+  }
+  return true;
 }
 
 
@@ -999,6 +1045,12 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
     xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
     xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
     xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+    new_window->state = use_wayland_menu_positioning(pWindow, parent_win);
+    if (new_window->state) {
+      // prevent menuwindow from expanding beyond display limits
+      xdg_positioner_set_constraint_adjustment(positioner,
+                                             XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y);
+    }
     new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface, parent_xdg, positioner);
     xdg_positioner_destroy(positioner);
     xdg_popup_add_listener(new_window->xdg_popup, &popup_listener, new_window);
@@ -1544,10 +1596,20 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
 void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
   Fl_Window *parent = Fl_Window_Driver::menu_parent();
   if (parent) {
-    X = parent->x();
-    Y = parent->y();
-    W = parent->w();
-    H = parent->h();
+    struct wld_window *xid = fl_wl_xid(pWindow);
+    bool condition = xid ? xid->state : use_wayland_menu_positioning(pWindow, parent);
+    if (!condition) {
+      // keep active menu part inside parent window
+      X = parent->x();
+      Y = parent->y();
+      W = parent->w();
+      H = parent->h();
+    } else { // position the menu window by wayland constraints
+      X = -50000;
+      Y = -50000;
+      W = 1000000;
+      H = 1000000;
+    }
     //printf("menu_window_area: %dx%d - %dx%d\n",X,Y,W,H);
   } else Fl_Window_Driver::menu_window_area(X, Y, W, H, nscreen);
 }

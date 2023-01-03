@@ -489,8 +489,8 @@ class BlockWindow : public Fl_Double_Window {
   BlockWindow(int W, int H, const char *L = 0);
   ~BlockWindow();
 
-  void          draw();
-  int           handle(int event);
+  void  draw() FL_OVERRIDE;
+  int   handle(int event) FL_OVERRIDE;
   void          new_game();
   int           score() { return (score_); }
   void          up_level();

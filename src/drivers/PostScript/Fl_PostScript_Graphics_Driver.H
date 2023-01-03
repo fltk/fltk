@@ -45,7 +45,7 @@ class Fl_PostScript_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
   FILE *output;
   Fl_PostScript_Close_Command close_cmd_;
-  enum Fl_Paged_Device::Page_Format page_format_;
+  int page_format_;
   char *ps_filename_;
   int nPages;
   double pw_, ph_;
@@ -59,32 +59,32 @@ public:
   void page(int format);
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   int start_eps(int width, int height);
-  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD);
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) {
+  void draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) FL_OVERRIDE;
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) FL_OVERRIDE {
     Fl_Cairo_Graphics_Driver::draw_image(call, data, x,y,w,h,delta);
   }
-  void font(int f, int s);
-  Fl_Font font();
-  double width(const char *s, int n);
-  double width(unsigned u);
-  int height();
-  int descent();
-  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  void font(int f, int s) FL_OVERRIDE;
+  Fl_Font font() FL_OVERRIDE;
+  double width(const char *s, int n) FL_OVERRIDE;
+  double width(unsigned u) FL_OVERRIDE;
+  int height() FL_OVERRIDE;
+  int descent() FL_OVERRIDE;
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) FL_OVERRIDE;
   // draw text at width measured on display
   void transformed_draw(const char* s, int n, double x, double y);
-  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); }
-  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); }
-  void draw(int angle, const char *str, int n, int x, int y) {Fl_Cairo_Graphics_Driver::draw(angle, str, n, x, y);}
+  void draw(const char* s, int nBytes, int x, int y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE {Fl_Cairo_Graphics_Driver::draw(angle, str, n, x, y);}
 
-  void point(int x, int y);
-  int not_clipped(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+  void point(int x, int y) FL_OVERRIDE;
+  int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
+  virtual int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
   // draw image classes without caching them
   void draw_rgb_bitmap_(Fl_Image *img,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
 };
 
 #else // ! USE_PANGO
@@ -100,7 +100,7 @@ private:
   void close85(void *data);
   int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
 protected:
-  uchar **mask_bitmap() {return &mask;}
+  uchar **mask_bitmap() FL_OVERRIDE {return &mask;}
 public:
   Fl_PostScript_Graphics_Driver();
 
@@ -158,7 +158,7 @@ public:
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   //void transformed_draw(const char* s, double x, double y);
 
-  enum Fl_Paged_Device::Page_Format page_format_;
+  int page_format_;
   char *ps_filename_;
 
   void close_command(Fl_PostScript_Close_Command cmd){close_cmd_=cmd;}
@@ -172,78 +172,78 @@ public:
   void page(int format);
 
   // implementation of drawing methods
-  void color(Fl_Color c);
-  void color(uchar r, uchar g, uchar b);
-  Fl_Color color();
+  void color(Fl_Color c) FL_OVERRIDE;
+  void color(uchar r, uchar g, uchar b) FL_OVERRIDE;
+  Fl_Color color() FL_OVERRIDE;
 
-  void push_clip(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  int not_clipped(int x, int y, int w, int h);
-  void push_no_clip();
-  void pop_clip();
+  void push_clip(int x, int y, int w, int h) FL_OVERRIDE;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
+  int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
+  void push_no_clip() FL_OVERRIDE;
+  void pop_clip() FL_OVERRIDE;
 
-  void line_style(int style, int width=0, char* dashes=0);
+  void line_style(int style, int width=0, char* dashes=0) FL_OVERRIDE;
 
-  void rect(int x, int y, int w, int h);
-  void rectf(int x, int y, int w, int h);
+  void rect(int x, int y, int w, int h) FL_OVERRIDE;
+  void rectf(int x, int y, int w, int h) FL_OVERRIDE;
 
-  void xyline(int x, int y, int x1);
-  void xyline(int x, int y, int x1, int y2);
-  void xyline(int x, int y, int x1, int y2, int x3);
+  void xyline(int x, int y, int x1) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2, int x3) FL_OVERRIDE;
 
-  void yxline(int x, int y, int y1);
-  void yxline(int x, int y, int y1, int x2);
-  void yxline(int x, int y, int y1, int x2, int y3);
+  void yxline(int x, int y, int y1) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2, int y3) FL_OVERRIDE;
 
-  void line(int x1, int y1, int x2, int y2);
-  void line(int x1, int y1, int x2, int y2, int x3, int y3);
+  void line(int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void line(int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
 
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  void point(int x, int y);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void point(int x, int y) FL_OVERRIDE;
 
-  void begin_points();
-  void begin_line();
-  void begin_loop();
-  void begin_polygon();
-  void vertex(double x, double y);
-  void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3);
-  void circle(double x, double y, double r);
-  void arc(double x, double y, double r, double start, double a);
-  void arc(int x, int y, int w, int h, double a1, double a2);
-  void pie(int x, int y, int w, int h, double a1, double a2);
-  void end_points();
-  void end_line();
-  void end_loop();
-  void end_polygon();
-  void begin_complex_polygon(){begin_polygon();}
-  void gap(){gap_=1;}
-  void end_complex_polygon(){end_polygon();}
-  void transformed_vertex(double x, double y);
+  void begin_points() FL_OVERRIDE;
+  void begin_line() FL_OVERRIDE;
+  void begin_loop() FL_OVERRIDE;
+  void begin_polygon() FL_OVERRIDE;
+  void vertex(double x, double y) FL_OVERRIDE;
+  void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3) FL_OVERRIDE;
+  void circle(double x, double y, double r) FL_OVERRIDE;
+  void arc(double x, double y, double r, double start, double a) FL_OVERRIDE;
+  void arc(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void end_points() FL_OVERRIDE;
+  void end_line() FL_OVERRIDE;
+  void end_loop() FL_OVERRIDE;
+  void end_polygon() FL_OVERRIDE;
+  void begin_complex_polygon() FL_OVERRIDE {begin_polygon();}
+  void gap() FL_OVERRIDE {gap_=1;}
+  void end_complex_polygon() FL_OVERRIDE {end_polygon();}
+  void transformed_vertex(double x, double y) FL_OVERRIDE;
 
-  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0);
-  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
-  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
+  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0) FL_OVERRIDE;
+  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0) FL_OVERRIDE;
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3) FL_OVERRIDE;
+  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1) FL_OVERRIDE;
 
-  void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); }
-  void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); }
-  void draw(int angle, const char *str, int n, int x, int y);
-  void rtl_draw(const char* s, int n, int x, int y);
-  void font(int face, int size);
-  Fl_Font font();
-  double width(const char *, int);
-  double width(unsigned int u);
-  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
-  int height();
-  int descent();
-  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(const char* s, int nBytes, int x, int y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(const char* s, int nBytes, float x, float y) FL_OVERRIDE {transformed_draw(s,nBytes,x,y); }
+  void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
+  void rtl_draw(const char* s, int n, int x, int y) FL_OVERRIDE;
+  void font(int face, int size) FL_OVERRIDE;
+  Fl_Font font() FL_OVERRIDE;
+  double width(const char *, int) FL_OVERRIDE;
+  double width(unsigned int u) FL_OVERRIDE;
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) FL_OVERRIDE;
+  int height() FL_OVERRIDE;
+  int descent() FL_OVERRIDE;
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) FL_OVERRIDE;
   ~Fl_PostScript_Graphics_Driver();
-  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+  int has_feature(driver_feature feature_mask) FL_OVERRIDE { return feature_mask & PRINTER; }
 
   void ps_origin(int x, int y);
   void ps_translate(int, int);

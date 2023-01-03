@@ -100,7 +100,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
     } else if (isdigit(*lineptr)) {
-      w(strtol(lineptr, &lineptr, 10));
+      w((int)strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
 
@@ -108,7 +108,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
     } else if (isdigit(*lineptr)) {
-      h(strtol(lineptr, &lineptr, 10));
+      h((int)strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
 
@@ -119,7 +119,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
       if (*lineptr == '\0' || *lineptr == '#') {
         lineptr = fgets(line, sizeof(line), fp);
       } else if (isdigit(*lineptr)) {
-        maxval = strtol(lineptr, &lineptr, 10);
+        maxval = (int)strtol(lineptr, &lineptr, 10);
       } else lineptr ++;
     }
   } else maxval = 1;

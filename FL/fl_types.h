@@ -21,6 +21,8 @@
 #ifndef FL_TYPES_H
 #define FL_TYPES_H
 
+#include "fl_attr.h"
+
 /** \name       Miscellaneous */
 /*@{*/  /* group: Miscellaneous */
 

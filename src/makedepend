@@ -1371,6 +1371,15 @@ Fl_compose.o: ../FL/Fl_Valuator.H
 Fl_compose.o: ../FL/Fl_Widget.H
 Fl_compose.o: ../FL/platform_types.h
 Fl_compose.o: Fl_Screen_Driver.H
+fl_contrast.o: ../FL/Enumerations.H
+fl_contrast.o: ../FL/Fl.H
+fl_contrast.o: ../FL/Fl_Cairo.H
+fl_contrast.o: ../FL/fl_casts.H
+fl_contrast.o: ../FL/fl_config.h
+fl_contrast.o: ../FL/Fl_Export.H
+fl_contrast.o: ../FL/fl_types.h
+fl_contrast.o: ../FL/fl_utf8.h
+fl_contrast.o: ../FL/platform_types.h
 Fl_Copy_Surface.o: ../FL/Enumerations.H
 Fl_Copy_Surface.o: ../FL/Fl.H
 Fl_Copy_Surface.o: ../FL/Fl_Bitmap.H

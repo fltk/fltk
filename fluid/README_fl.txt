@@ -380,8 +380,10 @@ Type "Fl_Widget" <word> : C++ variable name
   "xywh" <word> : "{%d %d %d %d}" x, y, w, h
   "tooltip" <word> : tooltip text
   "image" <word> : image name
+  "compress_image" <word> : integer (1.4 and up, only if `image` is set)
   "bind_image" <word> : integer (1.4 and up)
   "deimage" <word> : deactivated image name
+  "compress_deimage" <word> : integer (1.4 and up, only if `deimage` is set)
   "bind_deimage" <word> : integer (1.4 and up)
   "type" <word> : integer
   "box" <word> : text or integer (see FLTK boxtypes)

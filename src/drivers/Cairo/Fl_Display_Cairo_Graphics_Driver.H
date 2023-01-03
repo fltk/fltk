@@ -27,11 +27,11 @@ class Fl_Display_Cairo_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 private:
   static void *gc_;
 public:
-  virtual void scale(float f);
-  virtual float scale() {return Fl_Graphics_Driver::scale();}
-  virtual void gc(void *value);
-  virtual void* gc();
-  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  void scale(float f) FL_OVERRIDE;
+  float scale() {return Fl_Graphics_Driver::scale();}
+  void gc(void *value) FL_OVERRIDE;
+  void* gc() FL_OVERRIDE;
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) FL_OVERRIDE;
  };
 
 #endif // FL_DISPLAY_CAIRO_GRAPHICS_DRIVER_H

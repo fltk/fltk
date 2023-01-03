@@ -67,26 +67,26 @@ private:
 public:
   Fl_Quartz_Native_File_Chooser_Driver(int val);
   ~Fl_Quartz_Native_File_Chooser_Driver();
-  virtual void type(int t);
-  virtual int type() const ;
-  virtual void options(int o);
-  virtual int options() const;
-  virtual int count() const;
-  virtual const char *filename() const ;
-  virtual const char *filename(int i) const ;
-  virtual void directory(const char *val) ;
-  virtual const char *directory() const;
-  virtual void title(const char *t);
-  virtual const char* title() const;
-  virtual const char *filter() const ;
-  virtual void filter(const char *f);
-  virtual int filters() const ;
-  virtual void filter_value(int i) ;
-  virtual int filter_value() const ;
-  virtual void preset_file(const char*f) ;
-  virtual const char* preset_file() const;
-  virtual const char *errmsg() const ;
-  virtual int show() ;
+  void type(int t) FL_OVERRIDE;
+  int type() const FL_OVERRIDE;
+  void options(int o) FL_OVERRIDE;
+  int options() const FL_OVERRIDE;
+  int count() const FL_OVERRIDE;
+  const char *filename() const FL_OVERRIDE;
+  const char *filename(int i) const FL_OVERRIDE;
+  void directory(const char *val) FL_OVERRIDE;
+  const char *directory() const FL_OVERRIDE;
+  void title(const char *t) FL_OVERRIDE;
+  const char* title() const FL_OVERRIDE;
+  const char *filter() const FL_OVERRIDE;
+  void filter(const char *f) FL_OVERRIDE;
+  int filters() const FL_OVERRIDE;
+  void filter_value(int i) FL_OVERRIDE;
+  int filter_value() const FL_OVERRIDE;
+  void preset_file(const char*f) FL_OVERRIDE;
+  const char* preset_file() const FL_OVERRIDE;
+  const char *errmsg() const FL_OVERRIDE;
+  int show() FL_OVERRIDE;
 };
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
@@ -434,7 +434,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
     l += strlen(patterns[i]) + 3;
     }
   const char *p = filter;
-  const int t_size = strlen(p) + l + 1;
+  const int t_size = (int)strlen(p) + l + 1;
   char *q; q = new char[t_size];
   const char *r, *s;
   char *t;

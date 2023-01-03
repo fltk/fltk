@@ -15,14 +15,15 @@ bundled image libraries need not be changed.
 
 The nanosvg library is not affected.
 
-Current versions of bundled libraries (as of Sep 13, 2021):
+Current versions of bundled libraries (as of Dec 29, 2022):
 
-  Library       Version            Release date         FLTK Version
+  Library       Version/git commit Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9d            2020-01-12           1.4.0
   nanosvg       abcd277ea4 [1]     2022-12-22           1.4.0
   png           libpng-1.6.37      2019-04-14           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
+  libdecor      3f3e5e1d   [2]     2022-12-29           1.4.0
   --------------------------------------------------------------------------
 
 Previous versions of bundled libraries (FLTK 1.3.x):
@@ -38,7 +39,7 @@ Previous versions of bundled libraries (FLTK 1.3.x):
 [1] Git commit in branch 'fltk' of https://github.com/fltk/nanosvg
     See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date"
     and file nanosvg/README.txt.
-
+[2] Git commit in https://gitlab.freedesktop.org/libdecor/libdecor
 
 General information:
 
@@ -336,3 +337,31 @@ nanosvg:
     Step 5: copy the changed files to your working copy of the FLTK
     repository (if not done already), update this file accordingly,
     and commit/push the update to the fltk/fltk repository.
+
+
+libdecor:
+
+  Website:    https://gitlab.freedesktop.org/libdecor/libdecor
+  Download:   See website and follow links.
+  Repository: git clone https://gitlab.freedesktop.org/libdecor/libdecor.git
+
+  libdecor is used by the Wayland/X11 hybrid platform to draw window
+  titlebars when FLTK apps run as Wayland clients and the running
+  Wayland compositor uses client-side decoration. In the future, when
+  libdecor will have made its way into Linux packages, FLTK will use
+  the system version of libdecor. libdecor will remain as an FLTK bundle to
+  support Linux configurations where the libdecor package is not
+  available or not installed.
+  
+  FLTK uses libdecor source files without any modification.
+  This part of the libdecor source tree is copied to directory libdecor/ of
+  the FLTK source tree:
+    demo/
+      demo.c
+      egl.c
+    LICENSE
+    README.md
+    src/    ... and files below except meson.build files
+
+  Furthermore, directory libdecor/build/ of the FLTK source tree does not
+  originate from the libdecor source tree but contains 3 FLTK-created files.

@@ -894,8 +894,8 @@ void draw_piece(int which, int x, int y) {
 //----------------------------------------------------------------
 
 class Board : public Fl_Double_Window {
-  void draw();
-  int handle(int);
+  void draw() FL_OVERRIDE;
+  int handle(int) FL_OVERRIDE;
 public:
   void drag_piece(int, int, int);
   void drop_piece(int);
