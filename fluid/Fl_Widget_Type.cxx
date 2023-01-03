@@ -1114,6 +1114,7 @@ Fl_Menu_Item whenmenu[] = {
   {"FL_WHEN_NOT_CHANGED",0,0,(void*)FL_WHEN_NOT_CHANGED, FL_MENU_TOGGLE},
   {"FL_WHEN_RELEASE",0,0,(void*)FL_WHEN_RELEASE, FL_MENU_TOGGLE},
   {"FL_WHEN_ENTER_KEY",0,0,(void*)FL_WHEN_ENTER_KEY, FL_MENU_TOGGLE},
+  {"FL_WHEN_CLOSED",0,0,(void*)FL_WHEN_CLOSED, FL_MENU_TOGGLE},
   {0}};
 
 static Fl_Menu_Item whensymbolmenu[] = {
@@ -1136,23 +1137,37 @@ static Fl_Menu_Item whensymbolmenu[] = {
   {0}
 };
 
+const char* when_symbol_name(int n) {
+  static char sym[128];
+  if (n == FL_WHEN_CLOSED) {
+    strcpy(sym, "FL_WHEN_CLOSED");
+  } else {
+    strcpy(sym, whensymbolmenu[n&15].label());
+    if (n & FL_WHEN_CLOSED)
+      strcat(sym, " | FL_WHEN_CLOSED");
+  }
+  return sym;
+}
+
 void when_cb(Fl_Menu_Button* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
-    int n = current_widget->o->when() & 15;
-    if (n&1) whenmenu[0].set(); else whenmenu[0].clear();
-    if (n&2) whenmenu[1].set(); else whenmenu[1].clear();
-    if (n&4) whenmenu[2].set(); else whenmenu[2].clear();
-    if (n&8) whenmenu[3].set(); else whenmenu[3].clear();
-    w_when_box->label(whensymbolmenu[n].label());
+    int n = current_widget->o->when();
+    if (n&FL_WHEN_CHANGED)      whenmenu[0].set(); else whenmenu[0].clear();
+    if (n&FL_WHEN_NOT_CHANGED)  whenmenu[1].set(); else whenmenu[1].clear();
+    if (n&FL_WHEN_RELEASE)      whenmenu[2].set(); else whenmenu[2].clear();
+    if (n&FL_WHEN_ENTER_KEY)    whenmenu[3].set(); else whenmenu[3].clear();
+    if (n&FL_WHEN_CLOSED)       whenmenu[4].set(); else whenmenu[4].clear();
+    w_when_box->copy_label(when_symbol_name(n));
   } else {
     int mod = 0;
     int n = 0;
-    if (whenmenu[0].value()) n |= 1;
-    if (whenmenu[1].value()) n |= 2;
-    if (whenmenu[2].value()) n |= 4;
-    if (whenmenu[3].value()) n |= 8;
-    w_when_box->label(whensymbolmenu[n].label());
+    if (whenmenu[0].value()) n |= FL_WHEN_CHANGED;
+    if (whenmenu[1].value()) n |= FL_WHEN_NOT_CHANGED;
+    if (whenmenu[2].value()) n |= FL_WHEN_RELEASE;
+    if (whenmenu[3].value()) n |= FL_WHEN_ENTER_KEY;
+    if (whenmenu[4].value()) n |= FL_WHEN_CLOSED;
+    w_when_box->copy_label(when_symbol_name(n));
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -3074,8 +3089,7 @@ void Fl_Widget_Type::write_widget_code() {
   if (ww==FL_WHEN_NOT_CHANGED)
     ww = FL_WHEN_NEVER;
   if (ww != tplate->when() || subclass())
-    write_c("%s%s->when(%s);\n", indent(), var,
-            item_name(whensymbolmenu, ww));
+    write_c("%s%s->when(%s);\n", indent(), var, when_symbol_name(ww));
   if (!o->visible() && o->parent())
     write_c("%s%s->hide();\n", indent(), var);
   if (!o->active())

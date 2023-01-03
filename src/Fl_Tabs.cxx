@@ -31,6 +31,35 @@
 #define BORDER 2
 #define EXTRASPACE 10
 #define SELECTION_BORDER 5
+#define EXTRAGAP 2
+
+
+/** Make sure that we redraw all tabs when new children are added. */
+int Fl_Tabs::on_insert(Fl_Widget* candidate, int index) {
+  redraw_tabs();
+  damage(FL_DAMAGE_EXPOSE);
+  return Fl_Group::on_insert(candidate, index);
+}
+
+/** Make sure that we redraw all tabs when children are moved. */
+int Fl_Tabs::on_move(int a, int b) {
+  redraw_tabs();
+  damage(FL_DAMAGE_EXPOSE);
+  return Fl_Group::on_move(a, b);
+}
+
+/** Make sure that we redraw all tabs when new children are removed. */
+void Fl_Tabs::on_remove(int index) {
+  redraw_tabs();
+  damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL);
+  if (child(index)->visible()) {
+    if (index+1<children())
+      value(child(index+1));
+    else if (index>0)
+      value(child(index-1));
+  }
+  Fl_Group::on_remove(index);
+}
 
 // Return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These positions are actually of the left
@@ -72,6 +101,9 @@ int Fl_Tabs::tab_positions() {
     o->measure_label(wt,ht);
     o->labeltype(ot);
     o->align(oa);
+
+    if (o->when() & FL_WHEN_CLOSED)
+      wt += labelsize()/2 + EXTRAGAP;
 
     tab_width[i] = wt + EXTRASPACE;
     tab_pos[i+1] = tab_pos[i] + tab_width[i] + BORDER;
@@ -149,6 +181,34 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   return ret;
 }
 
+/**
+ Check if the event coordinates are on the "close" button of the tab.
+ \param o check fo this widget
+ \param event_x, event_y event coordinates
+ \return 1 if we hit the close button, 0 if we ht the label
+ \note Fl_Tabs::which(int event_x, int event_y) must be called to have a
+      valid width lookup table
+ */
+int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
+  (void)event_y;
+  for (int i=0; i<children(); i++) {
+    printf("%d: %d %d %d %d\n", i, tab_pos[i], tab_pos[i+1], tab_width[i], tab_pos[i]+tab_width[i]);
+  }
+  for (int i=0; i<children(); i++) {
+    if (child(i)==o) {
+      // never hit the "close" button on a compressed tab
+      if (tab_pos[i]+tab_width[i] > tab_pos[i+1])
+        return 0;
+      // did we hit the area of teh "x"?
+      int tab_x = tab_pos[i] + x();
+      return (   (event_x >= tab_x)
+              && (event_x <  tab_x + (labelsize()+EXTRASPACE+EXTRAGAP)/2) );
+    }
+  }
+  return 0;
+}
+
+
 void Fl_Tabs::redraw_tabs()
 {
   int H = tab_height();
@@ -186,6 +246,10 @@ int Fl_Tabs::handle(int event) {
       if (o && Fl::visible_focus() && Fl::focus()!=this) {
         Fl::focus(this);
         redraw_tabs();
+      }
+      if (o && (o->when() & FL_WHEN_CLOSED) && hit_close(o, Fl::event_x(), Fl::event_y())) {
+        o->do_callback();
+        return 1; // o may be deleted at this point
       }
       if (o &&                              // Released on a tab and..
           (value(o) ||                      // tab changed value or..
@@ -344,12 +408,18 @@ enum {LEFT, RIGHT, SELECTED};
 void Fl_Tabs::draw() {
   Fl_Widget *v = value();
   int H = tab_height();
+  int ty, th;
+  if (H >= 0) {
+    ty = y(); th = H;
+  } else {
+    ty = y() + h() + H; th = -H;
+  }
+  Fl_Color c = v ? v->color() : color();
 
-  if (damage() & FL_DAMAGE_ALL) { // redraw the entire thing:
-    Fl_Color c = v ? v->color() : color();
-
+  if (damage() & FL_DAMAGE_ALL) { // redraw the children
     draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), c);
-
+  }
+  if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
     if (selection_color() != c) {
       // Draw the top or bottom SELECTION_BORDER lines of the tab pane in the
       // selection color so that the user knows which tab is selected...
@@ -358,9 +428,24 @@ void Fl_Tabs::draw() {
       draw_box(box(), x(), clip_y, w(), SELECTION_BORDER, selection_color());
       fl_pop_clip();
     }
+  }
+  if (damage() & FL_DAMAGE_ALL) { // redraw the children
     if (v) draw_child(*v);
   } else { // redraw the child
     if (v) update_child(*v);
+  }
+  if (damage() & FL_DAMAGE_EXPOSE) { // redraw the tab bar background
+    if (parent()) {
+      Fl_Widget *p = parent();
+      fl_push_clip(x(), ty, w(), th);
+      if (p->as_window())
+        fl_draw_box(p->box(), 0, 0, p->w(), p->h(), p->color());
+      else
+        fl_draw_box(p->box(), p->x(), p->y(), p->w(), p->h(), p->color());
+      fl_pop_clip();
+    } else {
+      fl_rectf(x(), ty, w(), th, color());
+    }
   }
   if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
     const int nc = children();
@@ -385,6 +470,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   int sel = (what == SELECTED);
   int dh = Fl::box_dh(box());
   int dy = Fl::box_dy(box());
+  int wc = 0; // width of "close" button if drawn, or 0
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
 
@@ -414,8 +500,18 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
-    o->draw_label(x1, y() + yofs, W, H - yofs, tab_align());
 
+    // Draw the "close" button if requested
+    if ( (o->when() & FL_WHEN_CLOSED) && (x1+W < x2) ) {
+      int sz = labelsize()/2, sy = (H - sz)/2;
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, o->labelcolor());
+      wc = sz + EXTRAGAP;
+    }
+
+    // Draw the label text
+    o->draw_label(x1 + wc, y() + yofs, W - wc, H - yofs, tab_align());
+
+    // Draw the focus box
     if (Fl::focus() == this && o->visible())
       draw_focus(bt, x1, y(), W, H, bc);
 
@@ -432,8 +528,18 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
-    o->draw_label(x1, y() + h() - H, W, H - yofs, tab_align());
 
+    // Draw the "close" button if requested
+    if ( (o->when() & FL_WHEN_CLOSED) && (x1+W < x2) ) {
+      int sz = labelsize()/2, sy = (H - sz)/2;
+      fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + h() - H -yofs/2 + sy, sz, sz, o->labelcolor());
+      wc = sz + EXTRAGAP;
+    }
+
+    // Draw the label text
+    o->draw_label(x1 + wc, y() + h() - H, W - wc, H - yofs, tab_align());
+
+    // Draw the focus box
     if (Fl::focus() == this && o->visible())
       draw_focus(bt, x1, y() + h() - H, W, H, bc);
 

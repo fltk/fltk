@@ -46,8 +46,8 @@
   children (there should be some space between the children and
   the edge of the Fl_Tabs), and the tabs may be placed
   "inverted" on the bottom - this is determined by which
-  gap is larger. It is easiest to lay this out in fluid, using the
-  fluid browser to select each child group and resize them until
+  gap is larger. It is easiest to lay this out in FLUID, using the
+  FLUID browser to select each child group and resize them until
   the tabs look the way you want them to.
 
   The background area behind and to the right of the tabs is
@@ -157,6 +157,15 @@
   \image html  tabs_uniform.png "Fl_Tabs with uniform colors"
   \image latex tabs_uniform.png "Fl_Tabs with uniform colors" width=8cm
 
+ \b Close \b Button \b on \b Tabs
+
+ Setting \ref FL_WHEN_CLOSED for any child of Fl_Tabs will render an \b X
+ symbol to the left of the label text in the corresponding tab. When clicked,
+ the child's callback will be called with FL_REASON_CLOSED. It's up to the
+ child to remove itself from its parent.
+
+ Compressed tabs show no close button until they are fully expanded.
+
   \b Resizing \b Caveats
 
   When Fl_Tabs is resized vertically, the default behavior scales the
@@ -209,11 +218,16 @@ protected:
   int tab_count;        // array size
   Fl_Align tab_align_;  // tab label alignment
 
+  int on_insert(Fl_Widget*, int) FL_OVERRIDE;
+  int on_move(int, int) FL_OVERRIDE;
+  void on_remove(int) FL_OVERRIDE;
+
   virtual void redraw_tabs();
   virtual int tab_positions();  // allocate and calculate tab positions
   virtual void clear_tab_positions();
   virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
   virtual int tab_height();
+  virtual int hit_close(Fl_Widget *o, int event_x, int event_y);
 
   void draw() FL_OVERRIDE;
 

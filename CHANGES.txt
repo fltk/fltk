@@ -51,6 +51,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - New Fl_ICO_Image class to read Windows .ico icon files.
   - New classes Fl_SVG_File_Surface and Fl_EPS_File_Surface to save any FLTK
     graphics to SVG or EPS files, respectively.
+  - Fl_Tabs now supports close buttons for individual tabs.
   - Windows platform: added support for using a manifest to set the
     application's level of DPI awareness (issue #309).
   - class Fl_Native_File_Chooser on the X11/Wayland platform relies on external
