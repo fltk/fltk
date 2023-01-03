@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -74,6 +74,7 @@ Fl_Callback_Reason Fl::callback_reason_ = FL_REASON_UNKNOWN;
 unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
 
+int             Fl::selection_to_clipboard_ = 0;
 
 Fl_Window       *fl_xfocus = NULL; // which window X thinks has focus
 Fl_Window       *fl_xmousewin;     // which window X thinks has FL_ENTER
