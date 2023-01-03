@@ -14,9 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/** \file
-    Fl static class.
- */
+/** \file FL/Fl.H
+  \brief Fl static class.
+*/
 
 #ifndef Fl_H
 #  define Fl_H
@@ -425,12 +425,9 @@ public:
   static int is_scheme(const char *name) {
     return (scheme_ && name && !strcmp(name,scheme_));
   }
-  /**
-    Called by scheme according to scheme name.
-    Loads or reloads the current scheme selection.
-    See void scheme(const char *name)
-  */
-  static int reload_scheme(); // platform dependent
+
+  static int reload_scheme(); // defined in 'src/Fl_get_system_colors.cxx'
+
   static int scrollbar_size();
   static void scrollbar_size(int W);
   static int menu_linespacing();

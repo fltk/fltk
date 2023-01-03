@@ -132,32 +132,37 @@ static Fl_Pixmap        tile(tile_xpm);
 
 
 /**
-    Sets the current widget scheme. NULL will use the scheme defined
-    in the FLTK_SCHEME environment variable or the scheme resource
-    under X11. Otherwise, any of the following schemes can be used:
+  Sets the current widget scheme. NULL will use the scheme defined
+  in the FLTK_SCHEME environment variable or the scheme resource
+  under X11. Otherwise, any of the following schemes can be used:
 
-        - "none" - This is the default look-n-feel which resembles old
-                   Windows (95/98/Me/NT/2000) and old GTK/KDE
+    - "none" - This is the default look-n-feel which resembles old
+               Windows (95/98/Me/NT/2000) and old GTK/KDE
 
-        - "base" - This is an alias for "none"
+    - "base" - This is an alias for "none"
 
-        - "plastic" - This scheme is inspired by the Aqua user interface
-                      on Mac OS X
+    - "plastic" - This scheme is inspired by the Aqua user interface
+                  on macOS
 
-        - "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
+    - "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
 
-        - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
-                    (Colin Jones and Edmanuel Torres).
+    - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
+                (Colin Jones and Edmanuel Torres).
 
-        - "oxy" - Subset of Dmitrij K's oxy scheme (STR 2675, 3477)
+    - "oxy" - This is a subset of Dmitrij K's oxy scheme (STR 2675, 3477)
 
-    Uppercase scheme names are equivalent, but the stored scheme name will
-    always be lowercase and Fl::scheme() will return this lowercase name.
+  If the given scheme name is unknown, the default scheme will be used.
 
-    If the resulting scheme name is not defined, the default scheme will
-    be used and Fl::scheme() will return NULL.
+  Setting the scheme (name) is case insensitive, but the stored scheme name will
+  always be lowercase and Fl::scheme() will return this lowercase name or
+  \p NULL if no scheme or the default scheme ("none" or "base") was set.
 
-    \see Fl::is_scheme()
+  \param[in]  s   Scheme name of NULL
+
+  \returns    Current scheme name or NULL
+  \retval     NULL if the scheme has not been set or is the default scheme
+
+  \see Fl::is_scheme()
 */
 int Fl::scheme(const char *s) {
   if (!s) {
@@ -186,7 +191,17 @@ int Fl::scheme(const char *s) {
   return reload_scheme();
 }
 
+/**
+  Called internally when setting a new scheme according to scheme name.
+  Loads or reloads the current scheme selection.
 
+  \return   Always 1 (this may change in the future)
+
+  See void Fl::scheme(const char *name)
+
+  \internal
+  \note Internal: Should this method be private?
+*/
 int Fl::reload_scheme() {
   Fl_Window *win;
 
@@ -195,13 +210,13 @@ int Fl::reload_scheme() {
     uchar r, g, b;
     int nr, ng, nb;
     int i;
-//    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
+    // static uchar levels[3] = { 0xff, 0xef, 0xe8 };
     // OSX 10.3 and higher use a background with less contrast...
     static uchar levels[3] = { 0xff, 0xf8, 0xf4 };
 
     get_color(FL_GRAY, r, g, b);
 
-//    printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
+    // printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
 
     for (i = 0; i < 3; i ++) {
       nr = levels[i] * r / 0xe8;
@@ -214,7 +229,7 @@ int Fl::reload_scheme() {
       if (nb > 255) nb = 255;
 
       snprintf(tile_cmap[i], sizeof(tile_cmap[0]), "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
-//      puts(tile_cmap[i]);
+      // puts(tile_cmap[i]);
     }
 
     tile.uncache();
