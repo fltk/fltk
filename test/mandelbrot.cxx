@@ -1,7 +1,7 @@
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,6 +78,12 @@ void Drawing_Window::update_label() {
 }
 
 void Drawing_Area::draw() {
+  if (!dx) {
+    dx = Fl::box_dx(box());
+    dy = Fl::box_dy(box());
+    W -= 2*dx;
+    H -= 2*dy;
+  }
   draw_box();
   drawn = 0;
   set_idle();
@@ -87,9 +93,9 @@ int Drawing_Area::idle() {
   if (!window()->visible()) return 0;
   if (drawn < nextline) {
     window()->make_current();
-    int yy = drawn+y()+4;
+    int yy = drawn+y()+dy;
     if (yy >= sy && yy <= sy+sh) erase_box();
-    fl_draw_image_mono(buffer+drawn*W,x()+3,yy,W,1,1,W);
+    fl_draw_image_mono(buffer+drawn*W, x()+dx, yy, W, 1, 1, W);
     drawn++;
     return 1;
   }
@@ -117,7 +123,7 @@ int Drawing_Area::idle() {
       p++;
     }
     nextline++;
-    return nextline < H;
+    return nextline <= H;
   }
   return 0;
 }
@@ -204,8 +210,8 @@ void Drawing_Area::new_display() {
 
 void Drawing_Area::resize(int XX,int YY,int WW,int HH) {
   if (WW != w() || HH != h()) {
-    W = WW-6;
-    H = HH-8;
+    W = WW - 2*dx;
+    H = HH - 2*dy;
     if (buffer) {delete[] buffer; buffer = 0; new_display();}
   }
   Fl_Box::resize(XX,YY,WW,HH);
