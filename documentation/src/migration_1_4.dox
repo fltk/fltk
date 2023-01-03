@@ -2,16 +2,14 @@
 
  \page  migration_1_4   Migrating Code from FLTK 1.3 to 1.4
 
-This appendix describes the differences between the FLTK
+This appendix describes the differences between FLTK
 1.3.x and FLTK 1.4.x functions and classes.
 
-\section migration_1_4_old_versions Migrating from FLTK 1.0 or 1.1 to 1.4
-
-If you need to migrate your code from FLTK 1.0 or 1.1 to FLTK 1.4,
-then you should first consult the relevant appendices in FLTK 1.3
-documentation online or by downloading the FLTK 1.3 documentation.
-See https://www.fltk.org/doc-1.3/index.html
-and/or https://www.fltk.org/software.php , respectively.
+If you need to migrate your code from prior FLTK versions to FLTK 1.4,
+then you should first consult the relevant appendices in the FLTK 1.3
+online documentation or by downloading the FLTK 1.3 documentation.
+See https://www.fltk.org/doc-1.3/index.html and/or
+https://www.fltk.org/software.php , respectively.
 
 
 \section migration_1_4_headers Changes in Header Files
@@ -111,25 +109,68 @@ FLTK event loop. Such code must be modified to execute Fl::run() and/or
 use Fl::wait().
 
 
+\section migration_1_4_fl_override New FL_OVERRIDE Macro
+
+FLTK 1.4 defines a new macro \p FL_OVERRIDE as "override" if a recent
+C++ standard (C++11 or higher) is used to compile your code.
+
+This macro is currently defined in FL/fl_attr.h but this may change in a
+future release. It is enough to '\#include <FL/Fl.H>' to enable this macro.
+
+Unfortunately Visual Studio does not define a meaningful value of
+\p __cplusplus to detect the C++ standard. Hence we use the Visual Studio
+version (2015 or higher) to decide whether we can define FL_OVERRIDE or not.
+
+The \p FL_OVERRIDE macro is used to decorate declarations of overridden virtual
+methods in subclasses. Example code from \p FL/Fl_Window.H:
+
+  \code
+    int handle(int) FL_OVERRIDE;
+    void resize(int X, int Y, int W, int H) FL_OVERRIDE;
+    Fl_Window * as_window() FL_OVERRIDE { return this; }
+  \endcode
+
+The \p FL_OVERRIDE macro translates to \p 'override' on newer compilers and
+to an empty string for older compilers.
+
+We recommend to add this to your overridden virtual methods in subclasses
+derived from FLTK base classes (widgets) and to compile with C++ standard
+C++11 or higher to enable the compiler to detect some errors if methods
+are not overridden correctly.
+
+You don't need to declare the overridden methods \p 'virtual' if you
+use \p FL_OVERRIDE or the keyword \p override.
+
+\b Hint: For the \p GCC and \p clang compilers you can enable the warning
+\p '-Wsuggest-override' to detect where you may (want to) add the
+\p FL_OVERRIDE macro.
+
+
 \section migration_1_4_copy_image Fl_Image::copy() 'const'
 
 Since FLTK 1.4.0 the virtual method Fl_Image::copy() has been declared
 'const' so read-only ('const') images can be copied w/o casts.
 
 This will very likely not affect user code. However, if you derived your
-own class from any of the Fl_*_Image variants \b and you overrode
-'Your'_Image::copy() then you must declare this 'const' as well, i.e.
-you must add the keyword 'const' to your declaration of copy() in your
-header file and the implementation.
+own class from any of the \p Fl_*_Image variants \b and you overrode
+\p Your_Image::copy() then you \b must declare this 'const' as well, i.e.
+you must add the keyword 'const' to the declaration of \p copy() in your
+header file and in the implementation.
+
+We suggest to add the new \p FL_OVERRIDE macro or the keyword 'override'
+(see above) to your own overridden method declarations to enable the
+compiler to detect such incompatibilities.
 
 Code example in header file:
 \code
   class Your_Image {
     // ...
-    copy() const;
-    copy(int w, int h) const;
+    copy() const FL_OVERRIDE;
+    copy(int w, int h) const FL_OVERRIDE;
   };
 \endcode
+
+Note the \p 'const' attribute \b and the \p FL_OVERRIDE macro.
 
 
 \htmlonly
