@@ -2593,6 +2593,7 @@ Fl_Tree_Item* Fl_Tree::callback_item() {
 ///
 void Fl_Tree::callback_reason(Fl_Tree_Reason reason) {
   _callback_reason = reason;
+  Fl::callback_reason_ = (Fl_Callback_Reason)reason;
 }
 
 /**

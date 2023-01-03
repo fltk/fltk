@@ -431,6 +431,29 @@ enum Fl_When { // Fl_Widget::when():
 };
 /*@}*/          // group: When Conditions
 
+
+/** \name Callback Reasons */
+/*@{*/
+/** These constants describe why a callback is performed.
+ \note Only widgets that support multiple reasons for a callback set this value.
+      Please see the widget docs.
+ \see Fl::callback_reason();
+ */
+enum Fl_Callback_Reason {
+  FL_REASON_UNKNOWN=0,    ///< unknown or unset reason
+  FL_REASON_SELECTED,     ///< an item was selected
+  FL_REASON_DESELECTED,   ///< an item was de-selected
+  FL_REASON_RESELECTED,   ///< an item was re-selected (double-clicked).
+  FL_REASON_OPENED,       ///< an item was opened
+  FL_REASON_CLOSED,       ///< an item was closed
+  FL_REASON_DRAGGED,      ///< an item was dragged into a new place
+  FL_REASON_CANCELLED,    ///< a dialog was cancelled
+  FL_REASON_CHANGED,      ///< the value of the widget was modified
+  FL_REASON_GOT_FOCUS,    ///< a widget received focus
+  FL_REASON_LOST_FOCUS,   ///< a widget lost focus
+};
+
+
 /** \name Mouse and Keyboard Events
 
     This and the following constants define the non-ASCII keys on the

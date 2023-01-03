@@ -248,7 +248,7 @@ int Fl_Tabs::handle(int event) {
         redraw_tabs();
       }
       if (o && (o->when() & FL_WHEN_CLOSED) && hit_close(o, Fl::event_x(), Fl::event_y())) {
-        o->do_callback();
+        o->do_callback(FL_REASON_CLOSED);
         return 1; // o may be deleted at this point
       }
       if (o &&                              // Released on a tab and..
@@ -258,7 +258,7 @@ int Fl_Tabs::handle(int event) {
          ) {
         Fl_Widget_Tracker wp(o);
         set_changed();
-        do_callback();
+        do_callback(FL_REASON_SELECTED);
         if (wp.deleted()) return 1;
       }
       Fl_Tooltip::current(o);
@@ -304,7 +304,7 @@ int Fl_Tabs::handle(int event) {
           if (child(i)->visible()) break;
         value(child(i - 1));
         set_changed();
-        do_callback();
+        do_callback(FL_REASON_SELECTED);
         return 1;
       case FL_Right:
         if (!children()) return 0;
@@ -313,7 +313,7 @@ int Fl_Tabs::handle(int event) {
           if (child(i)->visible()) break;
         value(child(i + 1));
         set_changed();
-        do_callback();
+        do_callback(FL_REASON_SELECTED);
         return 1;
       case FL_Down:
         redraw();
@@ -328,8 +328,12 @@ int Fl_Tabs::handle(int event) {
       if (c->test_shortcut(c->label())) {
         char sc = !c->visible();
         value(c);
-        if (sc) set_changed();
-        do_callback();
+        if (sc) {
+          set_changed();
+          do_callback(FL_REASON_SELECTED);
+        } else {
+          do_callback(FL_REASON_RESELECTED);
+        }
         return 1;
       }
     }

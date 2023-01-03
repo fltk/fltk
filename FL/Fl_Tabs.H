@@ -206,6 +206,7 @@
     -#  \ref FL_WHEN_NOT_CHANGED can happen if someone clicks on an already selected tab,
         or if a keyboard navigation attempt results in no change to the tabs,
         such as using the arrow keys while at the left or right end of the tabs.
+    -#  \p Fl::callback_reason() returns FL_REASON_SELECTED or FL_REASON_RESELECTED
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
 

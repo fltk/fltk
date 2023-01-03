@@ -962,7 +962,7 @@ public:
     \see callback()
     \see do_callback(Fl_Widget *widget, void *data)
   */
-  void do_callback() {do_callback(this, user_data_);}
+  void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {do_callback(this, user_data_, reason);}
 
   /** Calls the widget callback function with arbitrary arguments.
     \param[in] widget call the callback with \p widget as the first argument
@@ -970,13 +970,11 @@ public:
     \see callback()
     \see do_callback(Fl_Widget *widget, void *data)
   */
-  void do_callback(Fl_Widget *widget, long arg) {
-    do_callback(widget, (void*)(fl_intptr_t)arg);
+  void do_callback(Fl_Widget *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
+    do_callback(widget, (void*)(fl_intptr_t)arg, reason);
   }
 
-  // Causes a widget to invoke its callback function with arbitrary arguments.
-  // Documentation and implementation in Fl_Widget.cxx
-  void do_callback(Fl_Widget *widget, void *arg = 0);
+  void do_callback(Fl_Widget *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
 
   /* Internal use only. */
   int test_shortcut();

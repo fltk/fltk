@@ -17,7 +17,8 @@ Function {} {open
     } {
       Fl_Group {} {
         label {Label&1}
-        callback {o->parent()->remove(o);} selected
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);} selected
         tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 when 16 resizable
       } {
         Fl_Input {} {
@@ -36,7 +37,8 @@ Function {} {open
       }
       Fl_Group {} {
         label {tab&2}
-        callback {o->parent()->remove(o);}
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
         tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 60 315 235} selection_color 2 when 16 hide
       } {
         Fl_Button {} {
@@ -63,7 +65,8 @@ Function {} {open
       }
       Fl_Group {} {
         label {tab&3}
-        callback {o->parent()->remove(o);}
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
         tooltip {tab3 checks for correct keyboard navigation} xywh {10 60 315 235} selection_color 3 when 16 hide
       } {
         Fl_Button {} {
@@ -81,7 +84,8 @@ Function {} {open
       }
       Fl_Group {} {
         label {&tab4}
-        callback {o->parent()->remove(o);}
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
         tooltip {this tab shows the issue of indicating a selected tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 when 16 hide
       } {
         Fl_Button {} {

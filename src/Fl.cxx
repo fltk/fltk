@@ -69,6 +69,7 @@ const char      *Fl::e_clipboard_type = "";
 void            *Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
+Fl_Callback_Reason Fl::callback_reason_ = FL_REASON_UNKNOWN;
 
 unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
@@ -1173,6 +1174,14 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
   return ret;
 }
 
+/**
+ \brief Give the reason for calling a callback.
+ \return the reason for the current callback
+ \see Fl_Widget::when(Fl_When), Fl_Widget::do_callback(), Fl_Widget::callback()
+ */
+Fl_Callback_Reason Fl::callback_reason() {
+  return callback_reason_;
+}
 
 /**
  \brief Set a new event dispatch function.
@@ -1258,6 +1267,8 @@ int Fl::handle(int e, Fl_Window* window)
  another dispatch function. In that case, the user dispatch function must
  decide when to call Fl::handle_(int, Fl_Window*)
 
+ Callbacks can set \p FL_REASON_CLOSED and \p FL_REASON_CANCELLED.
+
  \param e the event type (Fl::event_number() is not yet set)
  \param window the window that caused this event
  \return 0 if the event was not handled
@@ -1275,7 +1286,7 @@ int Fl::handle_(int e, Fl_Window* window)
 
   case FL_CLOSE:
     if ( grab() || (modal() && window != modal()) ) return 0;
-    wi->do_callback();
+    wi->do_callback(FL_REASON_CLOSED);
     return 1;
 
   case FL_SHOW:
@@ -1425,7 +1436,7 @@ int Fl::handle_(int e, Fl_Window* window)
     // make Escape key close windows:
     if (event_key()==FL_Escape) {
       wi = modal(); if (!wi) wi = window;
-      wi->do_callback();
+      wi->do_callback(FL_REASON_CLOSED);
       return 1;
     }
 
