@@ -222,6 +222,7 @@ protected:
   int on_insert(Fl_Widget*, int) FL_OVERRIDE;
   int on_move(int, int) FL_OVERRIDE;
   void on_remove(int) FL_OVERRIDE;
+  void resize(int, int, int, int) FL_OVERRIDE;
 
   virtual void redraw_tabs();
   virtual int tab_positions();  // allocate and calculate tab positions

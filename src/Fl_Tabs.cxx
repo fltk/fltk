@@ -61,6 +61,12 @@ void Fl_Tabs::on_remove(int index) {
   Fl_Group::on_remove(index);
 }
 
+/** Make sure that we redraw all tabs when the widget size changes. */
+void Fl_Tabs::resize(int X, int Y, int W, int H) {
+  damage(FL_DAMAGE_EXPOSE);
+  Fl_Group::resize(X, Y, W, H);
+}
+
 // Return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These positions are actually of the left
 // edge of the slope.  They are either separated by the correct distance
