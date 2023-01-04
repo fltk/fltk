@@ -704,7 +704,7 @@ Sudoku::Sudoku()
 
   // Set icon for window
 #ifdef _WIN32
-  Fl_Window::default_icons();
+  Fl_Window::use_default_icon();
 #else
   Fl_Bitmap bm(sudoku_bits, sudoku_width, sudoku_height);
   Fl_Image_Surface surf(sudoku_width, sudoku_height, 1);

@@ -343,6 +343,7 @@ public:
 
   static void default_icon(const Fl_RGB_Image*);
   static void default_icons(const Fl_RGB_Image*[], int);
+  static void use_default_icon();
   void icon(const Fl_RGB_Image*);
   void icons(const Fl_RGB_Image*[], int);
 
@@ -351,7 +352,6 @@ public:
   // These 2 member functions break the driver model but are kept for back compatibility.
   // They are implemented in Fl_win32.cxx
   static void default_icons(HICON big_icon, HICON small_icon);
-  static void default_icons();
   void icons(HICON big_icon, HICON small_icon);
 #endif
 
