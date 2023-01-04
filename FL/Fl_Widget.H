@@ -707,7 +707,7 @@ public:
       FL_WHEN_RELEASE.
 
       \return set of flags
-      \see when(uchar)
+      \see when(uchar), Fl_When, do_callback(), Fl::callback_reason()
    */
   Fl_When when() const {return (Fl_When)when_;}
 
@@ -741,6 +741,7 @@ public:
       class so that you can scan a panel and do_callback() on all the ones
       that don't do their own callbacks in response to an "OK" button.
       \param[in] i set of flags
+      \see Fl_When, do_callback(), Fl::callback_reason()
    */
   void when(uchar i) {when_ = i;}
 

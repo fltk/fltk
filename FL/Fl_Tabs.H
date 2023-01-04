@@ -22,6 +22,8 @@
 
 #include "Fl_Group.H"
 
+struct Fl_Menu_Item;
+
 /**
   The Fl_Tabs widget is the "file card tabs"
   interface that allows you to put lots and lots of buttons and
@@ -214,10 +216,18 @@ class FL_EXPORT Fl_Tabs : public Fl_Group {
 
 protected:
 
+  int overflow_type;
+  int tab_offset;
   int *tab_pos;         // array of x-offsets of tabs per child + 1
   int *tab_width;       // array of widths of tabs per child + 1
   int tab_count;        // array size
   Fl_Align tab_align_;  // tab label alignment
+  int has_overflow_menu;
+  Fl_Menu_Item* overflow_menu;
+
+  void check_overflow_menu();
+  void handle_overflow_menu();
+  void draw_overflow_menu_button();
 
   int on_insert(Fl_Widget*, int) FL_OVERRIDE;
   int on_move(int, int) FL_OVERRIDE;
@@ -278,6 +288,16 @@ public:
     \see tab_align(Fl_Align)
   */
   Fl_Align tab_align() const {return tab_align_;}
+
+  enum {
+    OVERFLOW_COMPRESS = 0,
+    OVERFLOW_CLIP,
+    OVERFLOW_PULLDOWN,
+    OVERFLOW_DRAG,
+  };
+
+  void handle_overflow(int ov);
+
 };
 
 #endif

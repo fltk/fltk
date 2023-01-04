@@ -421,7 +421,7 @@ enum Fl_Event { // events
 
     \note Some widgets may not fully suppoert \p FL_WHEN_... flags.
 
-    \see Fl_Widget::when(); Fl::callback_reason();
+    \see Fl_Widget::when(), Fl::callback_reason(), Fl_Callback_Reason, Fl_Widget::do_callback()
  */
 enum Fl_When { // Fl_Widget::when():
   FL_WHEN_NEVER             =  0, ///< Never call the callback
@@ -441,11 +441,7 @@ enum Fl_When { // Fl_Widget::when():
 /*@{*/
 /** These constants describe why a callback is performed.
 
-    \note Callback Reasons are not fully implemented yet, Only widgets that
-    support multiple reasons for a callback currently set this value. Please
-    see the widget docs.
-
-    \see Fl::callback_reason(); Fl_Widget::when();
+    \see Fl::callback_reason(), Fl_Widget::when(), Fl_When
  */
 enum Fl_Callback_Reason {
   FL_REASON_UNKNOWN=0,    ///< unknown or unset reason

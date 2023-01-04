@@ -3584,6 +3584,7 @@ void Fl_Widget_Type::copy_properties() {
   w->labelsize(o->labelsize());
   w->labelcolor(o->labelcolor());
   w->align(o->align());
+  w->when(o->when());
 
   // copy all attributes specific to widgets derived from Fl_Button
   if (is_button()) {

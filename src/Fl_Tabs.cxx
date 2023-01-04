@@ -24,6 +24,7 @@
 #include <FL/Fl_Tabs.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Menu_Item.H>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -118,26 +119,29 @@ int Fl_Tabs::tab_positions() {
 
   int r = w();
   if (tab_pos[i] <= r) return selected;
-  // uh oh, they are too big:
-  // pack them against right edge:
-  tab_pos[i] = r;
-  for (i = nc; i--;) {
-    int l = r-tab_width[i];
-    if (tab_pos[i+1] < l) l = tab_pos[i+1];
-    if (tab_pos[i] <= l) break;
-    tab_pos[i] = l;
-    r -= EXTRASPACE;
-  }
-  // pack them against left edge and truncate width if they still don't fit:
-  for (i = 0; i<nc; i++) {
-    if (tab_pos[i] >= i*EXTRASPACE) break;
-    tab_pos[i] = i*EXTRASPACE;
-    int W = w()-1-EXTRASPACE*(nc-i) - tab_pos[i];
-    if (tab_width[i] > W) tab_width[i] = W;
-  }
-  // adjust edges according to visiblity:
-  for (i = nc; i > selected; i--) {
-    tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
+
+  if (overflow_type == OVERFLOW_COMPRESS) {
+    // uh oh, they are too big:
+    // pack them against right edge:
+    tab_pos[i] = r;
+    for (i = nc; i--;) {
+      int l = r-tab_width[i];
+      if (tab_pos[i+1] < l) l = tab_pos[i+1];
+      if (tab_pos[i] <= l) break;
+      tab_pos[i] = l;
+      r -= EXTRASPACE;
+    }
+    // pack them against left edge and truncate width if they still don't fit:
+    for (i = 0; i<nc; i++) {
+      if (tab_pos[i] >= i*EXTRASPACE) break;
+      tab_pos[i] = i*EXTRASPACE;
+      int W = w()-1-EXTRASPACE*(nc-i) - tab_pos[i];
+      if (tab_width[i] > W) tab_width[i] = W;
+    }
+    // adjust edges according to visiblity:
+    for (i = nc; i > selected; i--) {
+      tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
+    }
   }
   return selected;
 }
@@ -179,7 +183,7 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   const int nc = children();
   tab_positions();
   for (int i=0; i<nc; i++) {
-    if (event_x < x()+tab_pos[i+1]) {
+    if (event_x < x()+tab_pos[i+1]+tab_offset) {
       ret = child(i);
       break;
     }
@@ -198,15 +202,12 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
 int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
   (void)event_y;
   for (int i=0; i<children(); i++) {
-    printf("%d: %d %d %d %d\n", i, tab_pos[i], tab_pos[i+1], tab_width[i], tab_pos[i]+tab_width[i]);
-  }
-  for (int i=0; i<children(); i++) {
     if (child(i)==o) {
       // never hit the "close" button on a compressed tab
-      if (tab_pos[i]+tab_width[i] > tab_pos[i+1])
+      if (tab_pos[i]+tab_width[i]+tab_offset > tab_pos[i+1]+tab_offset)
         return 0;
       // did we hit the area of teh "x"?
-      int tab_x = tab_pos[i] + x();
+      int tab_x = tab_pos[i] + tab_offset + x();
       return (   (event_x >= tab_x)
               && (event_x <  tab_x + (labelsize()+EXTRASPACE+EXTRAGAP)/2) );
     }
@@ -214,6 +215,83 @@ int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
   return 0;
 }
 
+void Fl_Tabs::check_overflow_menu() {
+  int nc = children();
+  int H = tab_height(); if (H < 0) H = -H;
+  if (tab_pos[nc] > w()-H) {
+    has_overflow_menu = 1;
+  } else {
+    has_overflow_menu = 0;
+  }
+}
+
+void Fl_Tabs::handle_overflow_menu() {
+  int nc = children();
+  int H = tab_height(); if (H < 0) H = -H;
+  int vc; // number of visible children
+
+  // count visibel children
+  for (vc = 0; vc < nc; vc++) {
+    if (tab_pos[vc+1] > w()-H) break;
+  }
+  if (vc == nc) return; // children are visible
+
+  // create a menu with invisible children
+  int i, n = nc - vc;
+  overflow_menu = new Fl_Menu_Item[n+1];
+  for (i = 0; i < n; i++) {
+    overflow_menu[i].label(child(vc+i)->label());
+    overflow_menu[i].user_data(child(vc+i));
+  }
+  overflow_menu[i].label(NULL);
+
+  // show the menu and handle the selection
+  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (H>0)?(y()+H):(y()+h()));
+  if (m)
+    value((Fl_Widget*)m->user_data());
+
+  // delete the menu until we need it next time
+  if (overflow_menu) {
+    delete[] overflow_menu;
+    overflow_menu = NULL;
+  }
+
+#if 0
+  if (Fl::scheme()
+      || fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
+    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+    if (wp.deleted()) return 1;
+  } else {
+    // In order to preserve the old look-n-feel of "white" menus,
+    // temporarily override the color() of this widget...
+    Fl_Color c = color();
+    color(FL_BACKGROUND2_COLOR);
+    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+    if (wp.deleted()) return 1;
+    color(c);
+  }
+  if (!v || v->submenu()) return 1;
+  if (v != mvalue()) redraw();
+  picked(v);
+  return 1;
+#endif
+}
+
+void Fl_Tabs::draw_overflow_menu_button() {
+  int H = tab_height();
+  int X, Y;
+  if (H > 0) {
+    X = x() + w() - H;
+    Y = y();
+  } else {
+    H = -H;
+    X = x() + w() - H;
+    Y = y() + h() - H;
+  }
+  fl_draw_box(box(), X, Y, H, H, color());
+  Fl_Rect r(X, Y, H, H);
+  fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
+}
 
 void Fl_Tabs::redraw_tabs()
 {
@@ -228,25 +306,63 @@ void Fl_Tabs::redraw_tabs()
 }
 
 int Fl_Tabs::handle(int event) {
-
+  static int initial_x = 0;
+  static int initial_tab_offset = 0;
+  static int forward_motion_to_group = 0;
   Fl_Widget *o;
   int i;
 
   switch (event) {
 
   case FL_PUSH:
+    initial_x = Fl::event_x();
+    initial_tab_offset = tab_offset;
+    forward_motion_to_group = 0;
     {
       int H = tab_height();
       if (H >= 0) {
-        if (Fl::event_y() > y()+H) return Fl_Group::handle(event);
+        if (Fl::event_y() > y()+H) {
+          forward_motion_to_group = 1;
+          return Fl_Group::handle(event);
+        }
       } else {
-        if (Fl::event_y() < y()+h()+H) return Fl_Group::handle(event);
+        if (Fl::event_y() < y()+h()+H) {
+          forward_motion_to_group = 1;
+          return Fl_Group::handle(event);
+        }
+        H = - H;
+      }
+      if (has_overflow_menu && Fl::event_x() > x()+w()-H) {
+        handle_overflow_menu();
+        return 1;
       }
     }
     /* FALLTHROUGH */
   case FL_DRAG:
   case FL_RELEASE:
+    if (forward_motion_to_group) {
+      return Fl_Group::handle(event);
+    }
     o = which(Fl::event_x(), Fl::event_y());
+    if (overflow_type == OVERFLOW_DRAG) {
+      if (tab_pos[children()] < w() && tab_offset == 0) {
+        // fall through
+      } else if (!Fl::event_is_click()) {
+        tab_offset = initial_tab_offset + Fl::event_x() - initial_x;
+        if (tab_offset > 0) {
+          initial_tab_offset -= tab_offset;
+          tab_offset = 0;
+        } else {
+          int dw = tab_pos[children()] + tab_offset - w();
+          if (dw < -20) {
+            initial_tab_offset -= dw+20;
+            tab_offset -= dw+20;
+          }
+        }
+        damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL);
+        return 1;
+      }
+    }
     if (event == FL_RELEASE) {
       push(0);
       if (o && Fl::visible_focus() && Fl::focus()!=this) {
@@ -461,6 +577,7 @@ void Fl_Tabs::draw() {
     const int nc = children();
     int selected = tab_positions();
     int i;
+    fl_push_clip(x(), ty, w(), th);
     Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
@@ -473,10 +590,17 @@ void Fl_Tabs::draw() {
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, a[i], SELECTED);
     }
+    fl_pop_clip();
+    if (overflow_type == OVERFLOW_PULLDOWN)
+      check_overflow_menu();
+    if (has_overflow_menu)
+      draw_overflow_menu_button();
   }
 }
 
 void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
+  x1 += tab_offset;
+  x2 += tab_offset;
   int sel = (what == SELECTED);
   int dh = Fl::box_dh(box());
   int dy = Fl::box_dy(box());
@@ -588,14 +712,20 @@ Fl_Tabs::Fl_Tabs(int X, int Y, int W, int H, const char *L) :
 {
   box(FL_THIN_UP_BOX);
   push_ = 0;
+  overflow_type = OVERFLOW_COMPRESS;
+  tab_offset = 0;
   tab_pos = 0;
   tab_width = 0;
   tab_count = 0;
   tab_align_ = FL_ALIGN_CENTER;
+  has_overflow_menu = 0;
+  overflow_menu = NULL;
 }
 
 Fl_Tabs::~Fl_Tabs() {
   clear_tab_positions();
+  if (overflow_menu)
+    delete[] overflow_menu;
 }
 
 /**
@@ -665,3 +795,25 @@ void Fl_Tabs::clear_tab_positions() {
     tab_width = 0;
   }
 }
+
+/** Set how an overflowing tab bar is handled.
+
+ - \c OVERFLOW_COMPRESS: tabs will compress and overlay another
+ - \c OVERFLOW_CLIP: only the first tabs that fit will be displayed
+ - \c OVERFLOW_PULLDOWN: tabs that don't fit will be put into a pulldown menu
+ - \c OVERFLOW_DRAG: the tab bar can be dragged sideways to show more tabs
+ 
+ \param ov overflow type
+ */
+void Fl_Tabs::handle_overflow(int ov) {
+  overflow_type = ov;
+  tab_offset = 0;
+  has_overflow_menu = 0;
+  if (overflow_menu) {
+    delete[] overflow_menu;
+    overflow_menu = NULL;
+  }
+  damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL);
+  redraw();
+}
+
