@@ -492,9 +492,8 @@ void ExternalCodeEditor::reap_cleanup() {
 int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
   if ( pid_reaped ) *pid_reaped = 0;
   if ( !is_editing() ) return -2;
-  DWORD err;
   DWORD msecs_wait = 50;   // .05 sec
-  switch ( err = WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
+  switch ( WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
     case WAIT_TIMEOUT: {   // process didn't reap, still running
       return 0;
     }
