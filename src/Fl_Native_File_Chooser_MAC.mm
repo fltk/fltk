@@ -569,7 +569,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 
 static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filter, const char *title, int rank)
 {
-  NSPopUpButton *popup;
+  NSPopUpButton *popup = nil;
   NSRect rectview = NSMakeRect(5, 5, 350, filter ? 60 : 30);
   NSView *view = [[[NSView alloc] initWithFrame:rectview] autorelease];
   NSRect rectbox = NSMakeRect(0, 3, 140, 20 );
