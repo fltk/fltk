@@ -415,8 +415,13 @@ enum Fl_Event { // events
 /*@{*/
 /** These constants determine when a callback is performed.
 
-    \see Fl_Widget::when();
-    \todo doxygen comments for values are incomplete and maybe wrong or unclear
+    Fl_When is a bit field. Some values are merely shorcuts for common bit
+    combinations. New flags may be added in the future, so it's important to
+    mask the required bit when reading via \p when().
+
+    \note Some widgets may not fully suppoert \p FL_WHEN_... flags.
+
+    \see Fl_Widget::when(); Fl::callback_reason();
  */
 enum Fl_When { // Fl_Widget::when():
   FL_WHEN_NEVER             =  0, ///< Never call the callback
@@ -426,7 +431,7 @@ enum Fl_When { // Fl_Widget::when():
   FL_WHEN_RELEASE_ALWAYS    =  6, ///< Do the callback when the button or key is released, even if the value doesn't change
   FL_WHEN_ENTER_KEY         =  8, ///< Do the callback when the user presses the ENTER key and the value changes
   FL_WHEN_ENTER_KEY_ALWAYS  = 10, ///< Do the callback when the user presses the ENTER key, even if the value doesn't change
-  FL_WHEN_ENTER_KEY_CHANGED = 11, ///< Shortcut for (FL_WHEN_ENTER_KEY | FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED)
+  FL_WHEN_ENTER_KEY_CHANGED = 11, ///< Do callbacks whether the value changed or not, and when the ENTER key is pressed
   FL_WHEN_CLOSED            = 16  ///< Do the callback when a child of Fl_Tabs is closed
 };
 /*@}*/          // group: When Conditions
@@ -435,9 +440,12 @@ enum Fl_When { // Fl_Widget::when():
 /** \name Callback Reasons */
 /*@{*/
 /** These constants describe why a callback is performed.
- \note Only widgets that support multiple reasons for a callback set this value.
-      Please see the widget docs.
- \see Fl::callback_reason();
+
+    \note Callback Reasons are not fully implemented yet, Only widgets that
+    support multiple reasons for a callback currently set this value. Please
+    see the widget docs.
+
+    \see Fl::callback_reason(); Fl_Widget::when();
  */
 enum Fl_Callback_Reason {
   FL_REASON_UNKNOWN=0,    ///< unknown or unset reason
@@ -451,7 +459,9 @@ enum Fl_Callback_Reason {
   FL_REASON_CHANGED,      ///< the value of the widget was modified
   FL_REASON_GOT_FOCUS,    ///< a widget received focus
   FL_REASON_LOST_FOCUS,   ///< a widget lost focus
+  FL_REASON_RELEASED,     ///< the mouse button was released
 };
+/*@}*/          // group: Callback Reasons
 
 
 /** \name Mouse and Keyboard Events

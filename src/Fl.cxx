@@ -1177,7 +1177,7 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
 /**
  \brief Give the reason for calling a callback.
  \return the reason for the current callback
- \see Fl_Widget::when(Fl_When), Fl_Widget::do_callback(), Fl_Widget::callback()
+ \see Fl_Widget::when(), Fl_Widget::do_callback(), Fl_Widget::callback()
  */
 Fl_Callback_Reason Fl::callback_reason() {
   return callback_reason_;
@@ -1436,7 +1436,7 @@ int Fl::handle_(int e, Fl_Window* window)
     // make Escape key close windows:
     if (event_key()==FL_Escape) {
       wi = modal(); if (!wi) wi = window;
-      wi->do_callback(FL_REASON_CLOSED);
+      wi->do_callback(FL_REASON_CANCELLED);
       return 1;
     }
 

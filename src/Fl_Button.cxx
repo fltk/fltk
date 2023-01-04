@@ -120,7 +120,7 @@ int Fl_Button::handle(int event) {
         if (wp.deleted()) return 1;
       }
     }
-    if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_DESELECTED);
+    if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
@@ -159,7 +159,7 @@ int Fl_Button::handle(int event) {
         simulate_key_action();
       }
       if (wp.deleted()) return 1;
-      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_DESELECTED);
+      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
       return 1;
     }
     /* FALLTHROUGH */

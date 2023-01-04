@@ -113,7 +113,7 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
 
   protected:
     int handle_key();
-    void maybe_do_callback();
+    void maybe_do_callback(Fl_Callback_Reason reason = FL_REASON_CHANGED);
 
 #ifndef FL_DOXYGEN
     int insert_mode_;

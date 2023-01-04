@@ -65,10 +65,15 @@ class Fl_Widget_Tracker;
   being \c FL_WHEN_RELEASE:
   \li \c 0: The callback is not done, instead changed() is turned on.
   \li \c FL_WHEN_RELEASE: The callback is done after the user successfully
-         clicks the button, or when a shortcut is typed.
+         clicks the button, or when a shortcut is typed. The reason is
+         \p FL_REASON_RELEASED.
   \li \c FL_WHEN_CHANGED: The callback is done each time the value() changes
          (when the user pushes and releases the button, and as the mouse is
-         dragged around in and out of the button).
+         dragged around in and out of the button). The reason is set to
+         \p FL_REASON_CHANGED
+  \li \c FL_WHEN_NOT_CHANGED: The callback is done when the mouse button is
+         released, but the value did not changed. The reason is set to
+         \p FL_REASON_SELECTED
 */
 
 class FL_EXPORT Fl_Button : public Fl_Widget {

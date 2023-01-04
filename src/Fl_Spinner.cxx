@@ -70,7 +70,7 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
   }
 
   sb->set_changed();
-  sb->do_callback();
+  sb->do_callback(FL_REASON_CHANGED);
 }
 
 void Fl_Spinner::update() {
@@ -154,10 +154,10 @@ int Fl_Spinner::handle(int event) {
     case FL_KEYDOWN:
     case FL_SHORTCUT:
       if (Fl::event_key() == FL_Up) {
-        up_button_.do_callback();
+        up_button_.do_callback(FL_REASON_DRAGGED);
         return 1;
       } else if (Fl::event_key() == FL_Down) {
-        down_button_.do_callback();
+        down_button_.do_callback(FL_REASON_DRAGGED);
         return 1;
       }
       return 0;

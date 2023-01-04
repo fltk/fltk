@@ -381,13 +381,14 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
  We recommend to use Fl_Widget_Tracker to check whether the widget
  was deleted in the callback.
 
- \param[in] reason for calling this callback
  \param[in] widget call the callback with \p widget as the first argument
  \param[in] arg use \p arg as the user data (second) argument
+ \param[in] reason for calling this callback
 
  \see default_callback()
  \see callback()
  \see class Fl_Widget_Tracker
+ \see Fl::callback_reason()
  */
 void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason) {
   Fl::callback_reason_ = reason;

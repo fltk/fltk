@@ -23,7 +23,7 @@
 void Fl_Repeat_Button::repeat_callback(void *v) {
   Fl_Button *b = (Fl_Button*)v;
   Fl::add_timeout(REPEAT,repeat_callback,b);
-  b->do_callback();
+  b->do_callback(FL_REASON_RESELECTED);
 }
 
 int Fl_Repeat_Button::handle(int event) {
@@ -43,7 +43,7 @@ int Fl_Repeat_Button::handle(int event) {
     if (value(newval)) {
       if (newval) {
         Fl::add_timeout(INITIALREPEAT,repeat_callback,this);
-        do_callback();
+        do_callback(FL_REASON_SELECTED);
       } else {
         Fl::remove_timeout(repeat_callback,this);
       }

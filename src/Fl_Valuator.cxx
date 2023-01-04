@@ -101,7 +101,7 @@ void Fl_Valuator::handle_drag(double v) {
     value_ = v;
     value_damage();
     set_changed();
-    if (when() & FL_WHEN_CHANGED) do_callback();
+    if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
   }
 }
 /** Called after an FL_WHEN_RELEASE event is received and before the callback. */
@@ -113,7 +113,7 @@ void Fl_Valuator::handle_release() {
     clear_changed();
     // now do the callback only if slider in new position or always is on:
     if (value_ != previous_value_ || when() & FL_WHEN_NOT_CHANGED) {
-      do_callback();
+      do_callback(FL_REASON_RELEASED);
     }
   }
 }

@@ -110,6 +110,27 @@ const char * const fl_fontnames[] =
   "FL_ZAPF_DINGBATS",
 };
 
+/**
+ This is an array of callback reason names you can use to convert font numbers into names.
+
+ The array gets defined inline wherever your '\#include <FL/names.h>' appears.
+ */
+const char * const fl_callback_reason_names[] =
+{
+  "FL_REASON_UNKNOWN",
+  "FL_REASON_SELECTED",
+  "FL_REASON_DESELECTED",
+  "FL_REASON_RESELECTED",
+  "FL_REASON_OPENED",
+  "FL_REASON_CLOSED",
+  "FL_REASON_DRAGGED",
+  "FL_REASON_CANCELLED",
+  "FL_REASON_CHANGED",
+  "FL_REASON_GOT_FOCUS",
+  "FL_REASON_LOST_FOCUS",
+  "FL_REASON_RELEASED",
+};
+
 /** @} */
 
 #endif /* FL_NAMES_H */
