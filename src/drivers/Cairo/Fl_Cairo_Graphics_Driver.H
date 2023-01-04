@@ -50,7 +50,7 @@ private:
   bool *needs_commit_tag_; // NULL or points to whether cairo surface was drawn to
   cairo_t *dummy_cairo_; // used to measure text width before showing a window
   int linestyle_;
-  int width_unscaled_(unsigned int c);
+  int do_width_unscaled_(const char* str, int n);
 protected:
   cairo_t *cairo_;
   PangoContext *pango_context_;

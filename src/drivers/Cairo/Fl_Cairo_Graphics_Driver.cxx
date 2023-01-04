@@ -1236,31 +1236,13 @@ void Fl_Cairo_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
 }
 
 
-double Fl_Cairo_Graphics_Driver::width(const char* c, int n) {
-  if (!font_descriptor()) return -1.0;
-  int i = 0, w = 0, l;
-  const char *end = c + n;
-  unsigned int ucs;
-  while (i < n) {
-    ucs = fl_utf8decode(c + i, end, &l);
-    i += l;
-    w += width_unscaled_(ucs);
-  }
-  return w / double(PANGO_SCALE);
-}
-
-
-double Fl_Cairo_Graphics_Driver::width(unsigned int c) {
-  return width_unscaled_(c)/ double(PANGO_SCALE);
-}
-
-
-int Fl_Cairo_Graphics_Driver::width_unscaled_(unsigned int c) {
-  unsigned int r = 0;
+// cache the widths of single Unicode characters
+double Fl_Cairo_Graphics_Driver::width(unsigned int utf32) {
+  unsigned r=0;
   Fl_Cairo_Font_Descriptor *desc = NULL;
-  if (c <= 0xFFFF) { // when inside basic multilingual plane
+  if (utf32 <= 0xFFFF) {
     desc = (Fl_Cairo_Font_Descriptor*)font_descriptor();
-    r = (c & 0xFC00) >> 10;
+    r = (utf32 & 0xFC00) >> 10;
     if (!desc->width) {
       desc->width = (int**)new int*[64];
       memset(desc->width, 0, 64*sizeof(int*));
@@ -1269,17 +1251,37 @@ int Fl_Cairo_Graphics_Driver::width_unscaled_(unsigned int c) {
       desc->width[r] = (int*)new int[0x0400];
       for (int i = 0; i < 0x0400; i++) desc->width[r][i] = -1;
     } else {
-      if ( desc->width[r][c & 0x03FF] >= 0 ) { // already cached
-        return desc->width[r][c & 0x03FF];
+      if ( desc->width[r][utf32&0x03FF] >= 0 ) { // already cached
+        return desc->width[r][utf32 & 0x03FF] / double(PANGO_SCALE);
       }
     }
   }
-  char buf[4];
-  int n = fl_utf8encode(c, buf);
-  pango_layout_set_text(pango_layout_, buf, n);
+  char buf4[4];
+  int n = fl_utf8encode(utf32, buf4);
+  int width = do_width_unscaled_(buf4, n);
+  if (utf32 <= 0xFFFF) {
+    desc->width[r][utf32 & 0x03FF] = width;
+  }
+  return width / double(PANGO_SCALE);
+}
+
+
+double Fl_Cairo_Graphics_Driver::width(const char* str, int n) {
+  if (!font_descriptor()) return -1;
+  if (n == fl_utf8len(*str)) { // str contains a single unicode character
+    int l;
+    unsigned c = fl_utf8decode(str, str+n, &l);
+    return width(c); // that character's width may have been cached
+  }
+  return do_width_unscaled_(str, n) / double(PANGO_SCALE); // full width computation for multi-char strings
+}
+
+
+int Fl_Cairo_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
+  if (!n) return 0;
+  pango_layout_set_text(pango_layout_, str, n);
   PangoRectangle p_rect;
   pango_layout_get_extents(pango_layout_, NULL, &p_rect);
-  if (c <= 0xFFFF) desc->width[r][c & 0x03FF] = p_rect.width;
   return p_rect.width;
 }
 
