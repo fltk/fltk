@@ -273,14 +273,14 @@
 /// The reason the callback was invoked.
 ///
 enum Fl_Tree_Reason {
-  FL_TREE_REASON_NONE=0,        ///< unknown reason
-  FL_TREE_REASON_SELECTED,      ///< an item was selected
-  FL_TREE_REASON_DESELECTED,    ///< an item was de-selected
-  FL_TREE_REASON_RESELECTED,    ///< an item was re-selected (double-clicked).
+  FL_TREE_REASON_NONE       = FL_REASON_UNKNOWN,        ///< unknown reason
+  FL_TREE_REASON_SELECTED   = FL_REASON_SELECTED,       ///< an item was selected
+  FL_TREE_REASON_DESELECTED = FL_REASON_DESELECTED,     ///< an item was de-selected
+  FL_TREE_REASON_RESELECTED = FL_REASON_RESELECTED,     ///< an item was re-selected (double-clicked).
                                 ///< See ::Fl_Tree_Item_Reselect_Mode to enable this.
-  FL_TREE_REASON_OPENED,        ///< an item was opened
-  FL_TREE_REASON_CLOSED,        ///< an item was closed
-  FL_TREE_REASON_DRAGGED        ///< an item was dragged into a new place
+  FL_TREE_REASON_OPENED     = FL_REASON_OPENED,         ///< an item was opened
+  FL_TREE_REASON_CLOSED     = FL_REASON_CLOSED,         ///< an item was closed
+  FL_TREE_REASON_DRAGGED    = FL_REASON_DRAGGED         ///< an item was dragged into a new place
 };
 
 class FL_EXPORT Fl_Tree : public Fl_Group {

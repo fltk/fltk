@@ -577,7 +577,7 @@ int Fl_Input::handle(int event) {
 
       // For output widgets, do the callback so the app knows the user
       // did something with the mouse...
-      if (readonly()) do_callback();
+      if (readonly()) do_callback(FL_REASON_RELEASED);
 
       return 1;
 

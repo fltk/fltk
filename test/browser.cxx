@@ -168,7 +168,11 @@ int main(int argc, char **argv) {
   browser->callback(b_cb);
   if (!browser->load(fname)) {
     fl_message("Can't load '%s'\n%s\n", fname, strerror(errno));
-    exit(1);
+    browser->add("This is a test of how the browser draws lines.");
+    browser->add("This is a second line.");
+    browser->add("This is a third.");
+    browser->add("@bBold text");
+    browser->add("@iItalic text");
   }
   browser->position(0);
 

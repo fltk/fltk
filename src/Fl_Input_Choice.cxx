@@ -205,7 +205,7 @@ void Fl_Input_Choice::menu_cb(Fl_Widget*, void *data) {
   {
     o->Fl_Widget::clear_changed();
     if (o->when() & FL_WHEN_NOT_CHANGED)
-      o->do_callback();
+      o->do_callback(FL_REASON_RESELECTED);
   }
   else
   {
@@ -213,7 +213,7 @@ void Fl_Input_Choice::menu_cb(Fl_Widget*, void *data) {
     o->inp_->set_changed();
     o->Fl_Widget::set_changed();
     if (o->when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE))
-      o->do_callback();
+      o->do_callback(FL_REASON_CHANGED);
   }
 
   if (wp.deleted()) return;
@@ -233,11 +233,11 @@ void Fl_Input_Choice::inp_cb(Fl_Widget*, void *data) {
   if (o->inp_->changed()) {
     o->Fl_Widget::set_changed();
     if (o->when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE))
-      o->do_callback();
+      o->do_callback(FL_REASON_CHANGED);
   } else {
     o->Fl_Widget::clear_changed();
     if (o->when() & FL_WHEN_NOT_CHANGED)
-      o->do_callback();
+      o->do_callback(FL_REASON_RESELECTED);
   }
 
   if (wp.deleted()) return;

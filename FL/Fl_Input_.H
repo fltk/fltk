@@ -200,7 +200,7 @@ protected:
   int handletext(int e, int, int, int, int);
 
   /* Check the when() field and do a callback if indicated. */
-  void maybe_do_callback();
+  void maybe_do_callback(Fl_Callback_Reason reason = FL_REASON_UNKNOWN);
 
   /** \internal Horizontal offset of text to left edge of widget. */
   int xscroll() const {return xscroll_;}

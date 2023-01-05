@@ -188,7 +188,7 @@ int Fl_Scrollbar::handle(int event) {
       Fl_Slider::value(v);
       value_damage();
       set_changed();
-      do_callback();
+      do_callback(FL_REASON_DRAGGED);
     }
     return 1;}
   }

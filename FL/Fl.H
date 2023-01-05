@@ -202,6 +202,7 @@ public: // should be private!
   static void *e_clipboard_data;
   static const char *e_clipboard_type;
   static Fl_Event_Dispatch e_dispatch;
+  static Fl_Callback_Reason callback_reason_;
   static Fl_Widget* belowmouse_;
   static Fl_Widget* pushed_;
   static Fl_Widget* focus_;
@@ -847,6 +848,7 @@ public:
   static void remove_system_handler(Fl_System_Handler h);
   static void event_dispatch(Fl_Event_Dispatch d);
   static Fl_Event_Dispatch event_dispatch();
+  static Fl_Callback_Reason callback_reason();
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions

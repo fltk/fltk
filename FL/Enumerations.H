@@ -1,7 +1,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -415,21 +415,50 @@ enum Fl_Event { // events
 /*@{*/
 /** These constants determine when a callback is performed.
 
-    \see Fl_Widget::when();
-    \todo doxygen comments for values are incomplete and maybe wrong or unclear
+    Fl_When is a bit field. Some values are merely shorcuts for common bit
+    combinations. New flags may be added in the future, so it's important to
+    mask the required bit when reading via \p when().
+
+    \note Some widgets may not fully suppoert \p FL_WHEN_... flags.
+
+    \see Fl_Widget::when(), Fl::callback_reason(), Fl_Callback_Reason, Fl_Widget::do_callback()
  */
 enum Fl_When { // Fl_Widget::when():
-  FL_WHEN_NEVER             = 0, ///< Never call the callback
-  FL_WHEN_CHANGED           = 1, ///< Do the callback only when the widget value changes
-  FL_WHEN_NOT_CHANGED       = 2, ///< Do the callback whenever the user interacts with the widget
-  FL_WHEN_RELEASE           = 4, ///< Do the callback when the button or key is released and the value changes
-  FL_WHEN_RELEASE_ALWAYS    = 6, ///< Do the callback when the button or key is released, even if the value doesn't change
-  FL_WHEN_ENTER_KEY         = 8, ///< Do the callback when the user presses the ENTER key and the value changes
-  FL_WHEN_ENTER_KEY_ALWAYS  =10, ///< Do the callback when the user presses the ENTER key, even if the value doesn't change
-  FL_WHEN_ENTER_KEY_CHANGED =11  ///< = (FL_WHEN_ENTER_KEY | FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED)
+  FL_WHEN_NEVER             =  0, ///< Never call the callback
+  FL_WHEN_CHANGED           =  1, ///< Do the callback only when the widget value changes
+  FL_WHEN_NOT_CHANGED       =  2, ///< Do the callback whenever the user interacts with the widget
+  FL_WHEN_RELEASE           =  4, ///< Do the callback when the button or key is released and the value changes
+  FL_WHEN_RELEASE_ALWAYS    =  6, ///< Do the callback when the button or key is released, even if the value doesn't change
+  FL_WHEN_ENTER_KEY         =  8, ///< Do the callback when the user presses the ENTER key and the value changes
+  FL_WHEN_ENTER_KEY_ALWAYS  = 10, ///< Do the callback when the user presses the ENTER key, even if the value doesn't change
+  FL_WHEN_ENTER_KEY_CHANGED = 11, ///< Do callbacks whether the value changed or not, and when the ENTER key is pressed
+  FL_WHEN_CLOSED            = 16  ///< Do the callback when a child of Fl_Tabs is closed
 };
-
 /*@}*/          // group: When Conditions
+
+
+/** \name Callback Reasons */
+/*@{*/
+/** These constants describe why a callback is performed.
+
+    \see Fl::callback_reason(), Fl_Widget::when(), Fl_When
+ */
+enum Fl_Callback_Reason {
+  FL_REASON_UNKNOWN=0,    ///< unknown or unset reason
+  FL_REASON_SELECTED,     ///< an item was selected
+  FL_REASON_DESELECTED,   ///< an item was de-selected
+  FL_REASON_RESELECTED,   ///< an item was re-selected (double-clicked).
+  FL_REASON_OPENED,       ///< an item was opened
+  FL_REASON_CLOSED,       ///< an item was closed
+  FL_REASON_DRAGGED,      ///< an item was dragged into a new place
+  FL_REASON_CANCELLED,    ///< a dialog was cancelled
+  FL_REASON_CHANGED,      ///< the value of the widget was modified
+  FL_REASON_GOT_FOCUS,    ///< a widget received focus
+  FL_REASON_LOST_FOCUS,   ///< a widget lost focus
+  FL_REASON_RELEASED,     ///< the mouse button was released
+};
+/*@}*/          // group: Callback Reasons
+
 
 /** \name Mouse and Keyboard Events
 
