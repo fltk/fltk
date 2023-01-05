@@ -33,6 +33,7 @@
 #define EXTRASPACE 10
 #define SELECTION_BORDER 5
 #define EXTRAGAP 2
+#define MARGIN 20
 
 
 /** Make sure that we redraw all tabs when new children are added. */
@@ -241,23 +242,28 @@ void Fl_Tabs::check_overflow_menu() {
 void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
-  int vc; // number of visible children
+  int i, fv=-1, lv=nc; // first and last visible tab
+  if (nc==0) return;
 
   // count visibel children
-  for (vc = 0; vc < nc; vc++) {
-    if (tab_pos[vc+1] > w()-H) break;
+  for (i = 0; i < nc; i++) {
+    if (tab_pos[i]+tab_offset < 0) fv = i;
+    if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H) lv = i;
   }
-  if (vc == nc) return; // children are visible
 
-  // create a menu with invisible children
-  int i, n = nc - vc;
-  overflow_menu = new Fl_Menu_Item[n+1];
-  memset(overflow_menu, 0, sizeof(Fl_Menu_Item)*(n+1));
-  for (i = 0; i < n; i++) {
-    overflow_menu[i].label(child(vc+i)->label());
-    overflow_menu[i].user_data(child(vc+i));
+  // create a menu with all children
+  overflow_menu = new Fl_Menu_Item[nc+1];
+  memset(overflow_menu, 0, sizeof(Fl_Menu_Item)*(nc+1));
+  for (i = 0; i < nc; i++) {
+    overflow_menu[i].label(child(i)->label());
+    overflow_menu[i].user_data(child(i));
+    overflow_menu[i].labelfont(labelfont());
+    overflow_menu[i].labelsize(labelsize());
+    if ( (i == fv) || (i == lv) )
+      overflow_menu[i].flags |= FL_MENU_DIVIDER;
+    if (child(i)->visible())
+      overflow_menu[i].labelfont_ |= FL_BOLD;
   }
-  overflow_menu[i].label(NULL);
 
   // show the menu and handle the selection
   const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (tab_height()>0)?(y()+H):(y()+h()));
@@ -280,10 +286,10 @@ void Fl_Tabs::draw_overflow_menu_button() {
   } else {
     H = -H;
     X = x() + w() - H;
-    Y = y() + h() - H;
+    Y = y() + h() - H - 1;
   }
-  fl_draw_box(box(), X, Y, H, H, color());
-  Fl_Rect r(X, Y, H, H);
+  fl_draw_box(box(), X, Y, H, H+1, color());
+  Fl_Rect r(X, Y, H, H+1);
   fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
 }
 
@@ -338,19 +344,21 @@ int Fl_Tabs::handle(int event) {
       return Fl_Group::handle(event);
     }
     o = which(Fl::event_x(), Fl::event_y());
-    if (overflow_type == OVERFLOW_DRAG) {
+    if ( (overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN) ) {
       if (tab_pos[children()] < w() && tab_offset == 0) {
         // fall through
       } else if (!Fl::event_is_click()) {
         tab_offset = initial_tab_offset + Fl::event_x() - initial_x;
+        int m = 0;
+        if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height());
         if (tab_offset > 0) {
           initial_tab_offset -= tab_offset;
           tab_offset = 0;
         } else {
           int dw = tab_pos[children()] + tab_offset - w();
-          if (dw < -20) {
-            initial_tab_offset -= dw+20;
-            tab_offset -= dw+20;
+          if (dw < -m) {
+            initial_tab_offset -= dw+m;
+            tab_offset -= dw+m;
           }
         }
         damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL);
@@ -521,13 +529,33 @@ Fl_Widget* Fl_Tabs::value() {
 int Fl_Tabs::value(Fl_Widget *newvalue) {
   Fl_Widget*const* a = array();
   int ret = 0;
+  int selected = -1;
   for (int i=children(); i--;) {
     Fl_Widget* o = *a++;
     if (o == newvalue) {
       if (!o->visible()) ret = 1;
       o->show();
+      selected = children()-i-1;
     } else {
       o->hide();
+    }
+  }
+  // make sure that the selected tab is visible
+  if (   (selected >= 0)
+      && (ret == 1)
+      && ( (overflow_type == OVERFLOW_DRAG)
+        || (overflow_type == OVERFLOW_PULLDOWN) ) ) {
+    int m = MARGIN;
+    if ( (selected == 0) || (selected == children()-1) ) m = 0;
+    int mr = m;
+    if (overflow_type == OVERFLOW_PULLDOWN) mr += abs(tab_height());
+    tab_positions();
+    if (tab_pos[selected]+tab_width[selected]+tab_offset+mr > w()) {
+      tab_offset = w() - tab_pos[selected] - tab_width[selected] - mr;
+      damage(FL_DAMAGE_EXPOSE);
+    } else if (tab_pos[selected]+tab_offset-m < 0) {
+      tab_offset = -tab_pos[selected]+m;
+      damage(FL_DAMAGE_EXPOSE);
     }
   }
   return ret;
