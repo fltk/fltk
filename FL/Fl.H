@@ -453,6 +453,7 @@ public:
    \version 1.4.0
    */
   static void program_should_quit(int should_i) { program_should_quit_ = should_i; }
+  static void hide_all_windows();
 
   static Fl_Widget* readqueue();
 

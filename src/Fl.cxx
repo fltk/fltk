@@ -668,6 +668,17 @@ int Fl::ready()
   return system_driver()->ready();
 }
 
+/** Hide all visible window to make FLTK leav Fl::run().
+ Fl:run() will run as long as there are visible windows. Call hide_all_windows()
+ will hide all windows, effectively terminating the Fl::run() loop.
+ \see Fl::run()
+ */
+void Fl::hide_all_windows() {
+  while (Fl::first_window()) {
+    Fl::first_window()->hide();
+  }
+}
+
 int Fl::program_should_quit_ = 0;
 
 ////////////////////////////////////////////////////////////////
