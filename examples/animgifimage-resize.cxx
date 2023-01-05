@@ -15,11 +15,11 @@ static bool draw_grid = true;
 
 static int events(int event_) {
   if (event_ == FL_SHORTCUT && Fl::first_window()) {
-    if (Fl::get_key('g')) {
+    if (Fl::event_key()=='g') {
       draw_grid = !draw_grid;
       printf("grid: %s\n", (draw_grid ? "ON" : "OFF"));
     }
-    else if (Fl::get_key('b')) {
+    else if (Fl::event_key()=='b') {
       if (Fl_Image::scaling_algorithm() != FL_RGB_SCALING_BILINEAR)
         Fl_Image::scaling_algorithm(FL_RGB_SCALING_BILINEAR);
       else

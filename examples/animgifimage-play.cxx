@@ -163,29 +163,25 @@ static void load_next() {
 
 static int events(int event_) {
   if (event_ == FL_SHORTCUT && Fl::first_window()) {
-    if (Fl::get_key('+'))
-      change_speed(1);
-    else if (Fl::get_key('-'))
-      change_speed(-1);
-    else if (Fl::get_key(FL_Enter))
-      change_speed(0);
-    else if (Fl::get_key('n'))
-      load_next();
-    else if (Fl::get_key('z'))
-      zoom(Fl::event_shift());
-    else if (Fl::get_key('i'))
-      toggle_info(); // Note: this can raise cpu usage considerably!
-    else if (Fl::get_key('r'))
-      toggle_reverse();
-    else if (Fl::get_key(' '))
-      toggle_pause();
-    else if (paused && Fl::get_key(FL_Right))
-      next_frame();
-    else
-      return 0;
+    switch (Fl::event_key()) {
+      case '+': change_speed(1); break;
+      case '-': change_speed(-1); break;
+      case FL_Enter: change_speed(0); break;
+      case 'n': load_next(); break;
+      case 'z': zoom(Fl::event_shift()); break;
+      case 'i': toggle_info(); break; // Note: this can raise cpu usage considerably!
+      case 'r': toggle_reverse(); break;
+      case ' ': toggle_pause(); break;
+      case FL_Right:
+        if (paused && Fl::get_key(FL_Right)) next_frame();
+        break;
+      default:
+        return 0;
+    }
     Fl::first_window()->redraw();
+    return 1;
   }
-  return 1;
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
