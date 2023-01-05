@@ -146,6 +146,8 @@ int Fl_Tabs::tab_positions() {
     for (i = nc; i > selected; i--) {
       tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
     }
+    if ((selected > 0) && (tab_pos[selected-1]+tab_width[selected-1]>tab_pos[selected]))
+      tab_flags[selected] |= 1;
     tab_flags[selected] &= ~1;
   }
   return selected;
