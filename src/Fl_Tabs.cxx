@@ -260,7 +260,7 @@ void Fl_Tabs::handle_overflow_menu() {
   overflow_menu[i].label(NULL);
 
   // show the menu and handle the selection
-  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (H>0)?(y()+H):(y()+h()));
+  const Fl_Menu_Item *m = overflow_menu->popup(x()+w()-H, (tab_height()>0)?(y()+H):(y()+h()));
   if (m)
     value((Fl_Widget*)m->user_data());
 
@@ -269,26 +269,6 @@ void Fl_Tabs::handle_overflow_menu() {
     delete[] overflow_menu;
     overflow_menu = NULL;
   }
-
-#if 0
-  if (Fl::scheme()
-      || fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
-    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
-    if (wp.deleted()) return 1;
-  } else {
-    // In order to preserve the old look-n-feel of "white" menus,
-    // temporarily override the color() of this widget...
-    Fl_Color c = color();
-    color(FL_BACKGROUND2_COLOR);
-    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
-    if (wp.deleted()) return 1;
-    color(c);
-  }
-  if (!v || v->submenu()) return 1;
-  if (v != mvalue()) redraw();
-  picked(v);
-  return 1;
-#endif
 }
 
 void Fl_Tabs::draw_overflow_menu_button() {
