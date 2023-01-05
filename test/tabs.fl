@@ -5,7 +5,7 @@ code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {
-    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open
+    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open selected
     xywh {330 402 660 400} type Double resizable visible
   } {
     Fl_Box {} {
@@ -273,10 +273,6 @@ wWizard->value(wWizard->child(last));}
         tooltip {go to last page [End]} xywh {510 305 30 25} shortcut 0xff57
       }
     }
-    Fl_Input {} {
-      label {input:}
-      xywh {60 345 250 25}
-    }
     Fl_Button {} {
       label {add tab}
       callback {static int n = 6;
@@ -292,20 +288,8 @@ Fl_Box* box = new Fl_Box(15, 60, 310, 230);
 box->copy_label(buf);
 box->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
 tabs_group->add(new_tab);
-n++;} selected
-      tooltip {Add more tabs to check overflow handling.} xywh {60 307 70 30}
-    }
-    Fl_Button {} {
-      label cancel
-      callback {exit(1);}
-      xywh {490 345 70 30}
-      code0 {\#include <stdlib.h>}
-    }
-    Fl_Return_Button {} {
-      label OK
-      callback {exit(0);}
-      xywh {570 345 70 30}
-      code0 {\#include <stdlib.h>}
+n++;}
+      tooltip {Add more tabs to check overflow handling.} xywh {60 309 70 25}
     }
     Fl_Choice {} {
       label {overflow:} open
@@ -331,6 +315,22 @@ n++;} selected
         callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_DRAG);}
         xywh {0 0 31 20}
       }
+    }
+    Fl_Input {} {
+      label {input:}
+      xywh {60 345 250 25}
+    }
+    Fl_Button {} {
+      label cancel
+      callback {exit(1);}
+      xywh {490 345 70 30}
+      code0 {\#include <stdlib.h>}
+    }
+    Fl_Return_Button {} {
+      label OK
+      callback {exit(0);}
+      xywh {570 345 70 30}
+      code0 {\#include <stdlib.h>}
     }
   }
 }
