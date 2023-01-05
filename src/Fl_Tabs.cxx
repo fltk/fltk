@@ -95,7 +95,6 @@ int Fl_Tabs::tab_positions() {
   fl_draw_shortcut = 1;
 
   tab_pos[0] = Fl::box_dx(box());
-  tab_flags[0] = 0;
   for (i=0; i<nc; i++) {
     Fl_Widget* o = *a++;
     if (o->visible()) selected = i;
@@ -116,7 +115,7 @@ int Fl_Tabs::tab_positions() {
 
     tab_width[i] = wt + EXTRASPACE;
     tab_pos[i+1] = tab_pos[i] + tab_width[i] + BORDER;
-    tab_flags[i+1] = 0;
+    tab_flags[i] = 0;
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
