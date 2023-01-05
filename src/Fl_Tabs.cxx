@@ -593,7 +593,10 @@ void Fl_Tabs::draw() {
     const int nc = children();
     int selected = tab_positions();
     int i;
-    fl_push_clip(x(), ty, w(), th);
+    if (H>0)
+      fl_push_clip(x(), ty, w(), th+BORDER);
+    else
+      fl_push_clip(x(), ty-BORDER, w(), th+BORDER);
     Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
@@ -606,11 +609,11 @@ void Fl_Tabs::draw() {
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
                tab_width[i], H, a[i], SELECTED);
     }
-    fl_pop_clip();
     if (overflow_type == OVERFLOW_PULLDOWN)
       check_overflow_menu();
     if (has_overflow_menu)
       draw_overflow_menu_button();
+    fl_pop_clip();
   }
 }
 
