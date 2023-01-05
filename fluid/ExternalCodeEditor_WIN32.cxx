@@ -159,8 +159,8 @@ void ExternalCodeEditor::close_editor() {
       case -2:  // no editor running (unlikely to happen)
         return;
       case -1:  // error
-        fl_alert("Error reaping external editor\n"
-                 "pid=%ld file=%s", long(pinfo_.dwProcessId), filename());
+        fl_alert("Error reaping external editor\npid=%ld file=%s\nOS error message=%s",
+                 long(pinfo_.dwProcessId), filename(), get_ms_errmsg());
         break;
       case 0:   // process still running
         switch ( fl_choice("Please close external editor\npid=%ld file=%s",
