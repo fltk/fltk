@@ -227,6 +227,7 @@ protected:
   int tab_offset;
   int *tab_pos;         // array of x-offsets of tabs per child + 1
   int *tab_width;       // array of widths of tabs per child + 1
+  int *tab_flags;       // array of tab flag of tabs per child + 1
   int tab_count;        // array size
   Fl_Align tab_align_;  // tab label alignment
   int has_overflow_menu;
@@ -244,7 +245,7 @@ protected:
   virtual void redraw_tabs();
   virtual int tab_positions();  // allocate and calculate tab positions
   virtual void clear_tab_positions();
-  virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
+  virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, int sel);
   virtual int tab_height();
   virtual int hit_close(Fl_Widget *o, int event_x, int event_y);
 

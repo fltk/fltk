@@ -83,6 +83,7 @@ int Fl_Tabs::tab_positions() {
     if (nc) {
       tab_pos   = (int*)malloc((nc+1)*sizeof(int));
       tab_width = (int*)malloc((nc)*sizeof(int));
+      tab_flags = (int*)malloc((nc)*sizeof(int));
     }
     tab_count = nc;
   }
@@ -94,6 +95,7 @@ int Fl_Tabs::tab_positions() {
   fl_draw_shortcut = 1;
 
   tab_pos[0] = Fl::box_dx(box());
+  tab_flags[0] = 0;
   for (i=0; i<nc; i++) {
     Fl_Widget* o = *a++;
     if (o->visible()) selected = i;
@@ -114,6 +116,7 @@ int Fl_Tabs::tab_positions() {
 
     tab_width[i] = wt + EXTRASPACE;
     tab_pos[i+1] = tab_pos[i] + tab_width[i] + BORDER;
+    tab_flags[i+1] = 0;
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
@@ -129,12 +132,14 @@ int Fl_Tabs::tab_positions() {
       if (tab_pos[i+1] < l) l = tab_pos[i+1];
       if (tab_pos[i] <= l) break;
       tab_pos[i] = l;
+      tab_flags[i] |= 1;
       r -= EXTRASPACE;
     }
     // pack them against left edge and truncate width if they still don't fit:
     for (i = 0; i<nc; i++) {
       if (tab_pos[i] >= i*EXTRASPACE) break;
       tab_pos[i] = i*EXTRASPACE;
+      tab_flags[i] |= 1;
       int W = w()-1-EXTRASPACE*(nc-i) - tab_pos[i];
       if (tab_width[i] > W) tab_width[i] = W;
     }
@@ -142,6 +147,7 @@ int Fl_Tabs::tab_positions() {
     for (i = nc; i > selected; i--) {
       tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
     }
+    tab_flags[selected] &= ~1;
   }
   return selected;
 }
@@ -209,8 +215,8 @@ int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
   (void)event_y;
   for (int i=0; i<children(); i++) {
     if (child(i)==o) {
-      // never hit the "close" button on a compressed tab
-      if (tab_pos[i]+tab_width[i]+tab_offset > tab_pos[i+1]+tab_offset)
+      // never hit the "close" button on a compressed tab unless it's the active one
+      if (tab_flags[i] & 1)
         return 0;
       // did we hit the area of teh "x"?
       int tab_x = tab_pos[i] + tab_offset + x();
@@ -437,7 +443,7 @@ int Fl_Tabs::handle(int event) {
       case FL_Right:
         if (!children()) return 0;
         if (child(children() - 1)->visible()) return 0;
-        for (i = 0; i < children(); i ++)
+        for (i = 0; i < children()-1; i++)
           if (child(i)->visible()) break;
         value(child(i + 1));
         set_changed();
@@ -600,14 +606,14 @@ void Fl_Tabs::draw() {
     Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], LEFT);
+               tab_width[i], H, a[i], tab_flags[i], LEFT);
     for (i=nc-1; i > selected; i--)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], RIGHT);
+               tab_width[i], H, a[i], tab_flags[i], RIGHT);
     if (v) {
       i = selected;
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], SELECTED);
+               tab_width[i], H, a[i], tab_flags[i], SELECTED);
     }
     if (overflow_type == OVERFLOW_PULLDOWN)
       check_overflow_menu();
@@ -617,7 +623,7 @@ void Fl_Tabs::draw() {
   }
 }
 
-void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
+void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, int what) {
   x1 += tab_offset;
   x2 += tab_offset;
   int sel = (what == SELECTED);
@@ -655,7 +661,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
 
     // Draw the "close" button if requested
-    if ( (o->when() & FL_WHEN_CLOSED) && (x1+W < x2) ) {
+    if ( (o->when() & FL_WHEN_CLOSED) && !(flags & 1) ) {
       int sz = labelsize()/2, sy = (H - sz)/2;
       fl_draw_symbol("@3+", x1 + EXTRASPACE/2, y() + yofs/2 + sy, sz, sz, o->labelcolor());
       wc = sz + EXTRAGAP;
@@ -735,6 +741,7 @@ Fl_Tabs::Fl_Tabs(int X, int Y, int W, int H, const char *L) :
   tab_offset = 0;
   tab_pos = 0;
   tab_width = 0;
+  tab_flags = NULL;
   tab_count = 0;
   tab_align_ = FL_ALIGN_CENTER;
   has_overflow_menu = 0;
@@ -812,6 +819,10 @@ void Fl_Tabs::clear_tab_positions() {
   if (tab_width){
     free(tab_width);
     tab_width = 0;
+  }
+  if (tab_flags){
+    free(tab_flags);
+    tab_flags = NULL;
   }
 }
 

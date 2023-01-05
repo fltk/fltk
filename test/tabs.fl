@@ -6,19 +6,19 @@ Function {} {open
 } {
   Fl_Window foo_window {
     label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open
-    xywh {680 339 660 400} type Double resizable visible
+    xywh {330 402 660 400} type Double resizable visible
   } {
     Fl_Box {} {
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs {} {open
+    Fl_Tabs tabs_group {open
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
         label {Label&1}
         callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
-  o->parent()->remove(o);} selected
+  o->parent()->remove(o);}
         tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 when 16 resizable
       } {
         Fl_Input {} {
@@ -274,12 +274,26 @@ wWizard->value(wWizard->child(last));}
       }
     }
     Fl_Input {} {
-      label {inputA:}
-      xywh {60 310 130 25}
-    }
-    Fl_Input {} {
-      label {inputB:}
+      label {input:}
       xywh {60 345 250 25}
+    }
+    Fl_Button {} {
+      label {add tab}
+      callback {static int n = 6;
+Fl_Group::current(NULL);
+char buf[64];
+snprintf(buf, 62, "tab%d", n);
+Fl_Group* new_tab = new Fl_Group(10, 60, 315, 235);
+new_tab->copy_label(buf);
+new_tab->when(FL_WHEN_CLOSED);
+new_tab->callback((Fl_Callback*)cb_tab);
+snprintf(buf, 62, "Empty tab %d.", n);
+Fl_Box* box = new Fl_Box(15, 60, 310, 230);
+box->copy_label(buf);
+box->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
+tabs_group->add(new_tab);
+n++;} selected
+      tooltip {Add more tabs to check overflow handling.} xywh {60 307 70 30}
     }
     Fl_Button {} {
       label cancel
@@ -292,6 +306,31 @@ wWizard->value(wWizard->child(last));}
       callback {exit(0);}
       xywh {570 345 70 30}
       code0 {\#include <stdlib.h>}
+    }
+    Fl_Choice {} {
+      label {overflow:} open
+      tooltip {Change how Fl_Tabs handles more tabs than fit into the tabs space.} xywh {212 309 95 25} down_box BORDER_BOX
+    } {
+      MenuItem {} {
+        label compress
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_COMPRESS);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label clip
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_CLIP);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label pulldown
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label drag
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_DRAG);}
+        xywh {0 0 31 20}
+      }
     }
   }
 }
