@@ -733,6 +733,11 @@ public:
          a newline for a Fl_Multiline_Input) - this changes the behavior.
      \li FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED: The Enter key will do the
          callback even if the text has not changed. Useful for command fields.
+     \li \ref FL_WHEN_CLOSED : If the user requests that the widget is closed,
+         the callback is called with \ref FL_REASON_CLOSED. The \ref Fl_Tabs
+         widget checks this flag on its children to determine whether to display
+         a close button on the tab of that widget.
+
       Fl_Widget::when() is a set of bitflags used by subclasses of
       Fl_Widget to decide when to do the callback.
 

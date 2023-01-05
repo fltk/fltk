@@ -163,12 +163,15 @@ int Fl_Tabs::tab_height() {
   else return (H <= 0) ? 0 : H;
 }
 
-/**
-  Return the widget of the tab the user clicked on at \p event_x / \p event_y.
-  This is used for event handling (clicks) and by fluid to pick tabs.
+/** Return a pointer to the child widget with a tab at the given coordinates.
 
-  \returns The child widget of the tab the user clicked on, or<br>
-           0 if there are no children or if the event is outside of the tabs area.
+  The Fl_Tabs::which() method returns a pointer to the child widget of the
+  Fl_Tabs container that corresponds to the tab at the given event coordinates.
+  If the event coordinates are outside the area of the tabs or if the Fl_Tabs
+  container has no children, the method returns NULL.
+
+  \param event_x, event_y event coordinates
+  \returns pointer to the selected child widget, or NULL
 */
 Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   if (children() == 0) return 0;
@@ -191,13 +194,16 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   return ret;
 }
 
-/**
- Check if the event coordinates are on the "close" button of the tab.
- \param o check fo this widget
- \param event_x, event_y event coordinates
- \return 1 if we hit the close button, 0 if we ht the label
- \note Fl_Tabs::which(int event_x, int event_y) must be called to have a
-      valid width lookup table
+/**  Check whether the coordinates fall within the "close" button area of the tab.
+
+ The Fl_Tabs::hit_close() method checks whether the given event coordinates
+ fall within the area of the "close" button on the tab of the specified
+ child widget. This method should be called after the Fl_Tabs::which() method,
+ which updates a lookup table used to determine the width of each tab.
+
+ \param o check the tab of this widget
+ \param event_x, event_y event coordinatese
+ \return 1 if we hit the close button, and 0 otherwie
  */
 int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
   (void)event_y;
@@ -490,10 +496,15 @@ int Fl_Tabs::push(Fl_Widget *o) {
 /**
   Gets the currently visible widget/tab.
 
-  The value() is the first visible child (or the last child if none
-  are visible) and this also hides any other children.
-  This allows the tabs to be deleted, moved to other groups, and
-  show()/hide() called without it screwing up.
+  The Fl_Tabs::value() method returns a pointer to the currently visible child
+  widget of the Fl_Tabs container. The visible child is the first child that
+  is currently being displayed, or the last child if none of the children are
+  being displayed.
+
+  If child widgets have been added, moved, or deleted, this method ensures that
+  only one tab is visible at a time.
+
+  \return a pointer to the currently visible child
 */
 Fl_Widget* Fl_Tabs::value() {
   Fl_Widget* v = 0;
@@ -507,12 +518,17 @@ Fl_Widget* Fl_Tabs::value() {
   return v;
 }
 
-/**
-  Sets the widget to become the current visible widget/tab.
-  Setting the value hides all other children, and makes this one
-  visible, if it is really a child.
-  \returns 1 if there was a change (new value different from previous),<BR>
-           0 if there was no change (new value already set)
+/** Sets the widget to become the current visible widget/tab.
+
+  The Fl_Tabs::value() method allows you to set a particular child widget of
+  the Fl_Tabs container to be the currently visible widget. If the specified
+  widget is a child of the Fl_Tabs container, it will be made visible and all
+  other children will be hidden. The method returns 1 if the value was changed,
+  and 0 if the specified value was already set.
+
+  \param[in] newvalue a poiner to a child widget
+  \return 1 if a different tab was chosen
+  \return 0 if there was no change (new value already set)
 */
 int Fl_Tabs::value(Fl_Widget *newvalue) {
   Fl_Widget*const* a = array();
@@ -796,13 +812,18 @@ void Fl_Tabs::clear_tab_positions() {
   }
 }
 
-/** Set how an overflowing tab bar is handled.
+/** Set a method to handle an overflowing tab bar.
 
- - \c OVERFLOW_COMPRESS: tabs will compress and overlay another
- - \c OVERFLOW_CLIP: only the first tabs that fit will be displayed
- - \c OVERFLOW_PULLDOWN: tabs that don't fit will be put into a pulldown menu
- - \c OVERFLOW_DRAG: the tab bar can be dragged sideways to show more tabs
- 
+ The Fl_Tabs widget allows you to specify how to handle the situation where
+ there are more tabs than can be displayed at once. The available options are:
+
+ - \c OVERFLOW_COMPRESS: Tabs will be compressed and overlaid on top of each other.
+ - \c OVERFLOW_CLIP: Only the first tabs that fit will be displayed.
+ - \c OVERFLOW_PULLDOWN: Tabs that do not fit will be placed in a pull-down menu.
+ - \c OVERFLOW_DRAG: The tab bar can be dragged horizontally to reveal additional tabs.
+
+ You can set the desired behavior using the overflow() method.
+
  \param ov overflow type
  */
 void Fl_Tabs::handle_overflow(int ov) {

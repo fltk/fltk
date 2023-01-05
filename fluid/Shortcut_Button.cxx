@@ -86,9 +86,10 @@ int Shortcut_Button::handle(int e) {
 }
 
 /** \class Widget_Bin_Button
- A button for the widget bin that allows the user to drag widgets into a window.
- Dragging and dropping a new widget makes it easy for the user to position
- a widget inside a window or group.
+ The Widget_Bin_Button button is a button that can be used in the widget bin to
+ allow the user to drag and drop widgets into a window or group. This feature
+ makes it easy for the user to position a widget at a specific location within
+ the window or group. 
  */
 
 /**
@@ -124,8 +125,9 @@ int Widget_Bin_Button::handle(int inEvent)
 }
 
 /** \class Widget_Bin_Window_Button
- This button is used by the widget bin to create new windows by drag'n'drop.
- The new window will be created wherever the user drops it on the desktop.
+ The Widget_Bin_Window_Button button is used in the widget bin to create new
+ windows by dragging and dropping. When the button is dragged and dropped onto
+ the desktop, a new window will be created at the drop location.
  */
 
 /**
@@ -179,9 +181,10 @@ int Widget_Bin_Window_Button::handle(int inEvent)
 }
 
 /** \class Fluid_Coord_Input
- An Input field for widget coordinates and sizes.
- This widget adds basic math capability to the text input field and a number
- of variables that can be used in the formula.
+ The Fluid_Coord_Input widget is an input field for entering widget coordinates
+ and sizes. It includes basic math capabilities and allows the use of variables
+ in formulas. This widget is useful for specifying precise positions and
+ dimensions for widgets in a graphical user interface.
  */
 
 /**
@@ -298,10 +301,15 @@ int Fluid_Coord_Input::eval(uchar *&s, int prio) const {
 
 /**
  Evaluate a formula into an integer.
- The interpreter understands unary plus and minus, basic integer math
- (+, -, *, /), brackets, and can handle a user defined list of variables
- by name. There is no error checking. We assume that the formula is
- entered correctly.
+
+ The Fluid_Coord_Input widget includes a formula interpreter that allows you
+ to evaluate a string containing a mathematical formula and obtain the result
+ as an integer. The interpreter supports unary plus and minus, basic integer
+ math operations (such as addition, subtraction, multiplication, and division),
+ and brackets. It also allows you to define a list of variables by name and use
+ them in the formula. The interpreter does not perform error checking, so it is
+ assumed that the formula is entered correctly.
+
  \param s formula as a C string
  \return the calculated value
  */
