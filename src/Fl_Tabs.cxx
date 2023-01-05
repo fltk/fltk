@@ -252,6 +252,7 @@ void Fl_Tabs::handle_overflow_menu() {
   // create a menu with invisible children
   int i, n = nc - vc;
   overflow_menu = new Fl_Menu_Item[n+1];
+  memset(overflow_menu, 0, sizeof(Fl_Menu_Item)*(n+1));
   for (i = 0; i < n; i++) {
     overflow_menu[i].label(child(vc+i)->label());
     overflow_menu[i].user_data(child(vc+i));
