@@ -102,7 +102,7 @@ class Fl_Anim_GIF_Image::FrameInfo {
   void copy(const FrameInfo& fi);
   double convert_delay(int d) const;
   int debug() const { return debug_; }
-  bool load(const char *name);
+  bool load(const char *name, const unsigned char *data, size_t length);
   bool push_back_frame(const GifFrame &frame);
   void resize(int W, int H);
   void scale_frame(int frame);
@@ -249,10 +249,14 @@ void Fl_Anim_GIF_Image::FrameInfo::dispose(int frame) {
 }
 
 
-bool Fl_Anim_GIF_Image::FrameInfo::load(const char *name) {
+bool Fl_Anim_GIF_Image::FrameInfo::load(const char *name, const unsigned char *data, size_t length) {
   // decode using FLTK
   valid = false;
-  anim->Fl_GIF_Image::load(name, true); // calls on_frame_data() for each frame
+  if (data) {
+    anim->Fl_GIF_Image::load(name, data, length, true); // calls on_frame_data() for each frame
+  } else {
+    anim->Fl_GIF_Image::load(name, true); // calls on_frame_data() for each frame
+  }
 
   delete[] offscreen;
   offscreen = 0;
@@ -486,7 +490,7 @@ bool Fl_Anim_GIF_Image::loop = true;
 // class Fl_Anim_GIF_Image implementation
 //
 
-Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *name,
+Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *filename,
                                      Fl_Widget *canvas/* = 0*/,
                                      unsigned short flags/* = 0 */) :
   Fl_GIF_Image(),
@@ -497,10 +501,41 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *name,
   valid_(false),
   frame_(-1),
   speed_(1.),
-  fi_(new FrameInfo(this)) {
+  fi_(new FrameInfo(this))
+{
   fi_->debug_ = ((flags_ & LOG_FLAG) != 0) + 2 * ((flags_ & DEBUG_FLAG) != 0);
   fi_->optimize_mem = (flags_ & OPTIMIZE_MEMORY);
-  valid_ = load(name);
+  valid_ = load(filename, NULL, 0);
+  if (canvas_w() && canvas_h()) {
+    if (!w() && !h()) {
+      w(canvas_w());
+      h(canvas_h());
+    }
+  }
+  this->canvas(canvas, flags);
+  if (!(flags & DONT_START))
+    start();
+  else
+    frame_ = 0;
+}
+
+
+Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char* imagename, const unsigned char *data,
+                                     const size_t length, Fl_Widget *canvas /* = 0 */,
+                                     unsigned short flags /* = 0 */) :
+  Fl_GIF_Image(),
+  name_(0),
+  flags_(flags),
+  canvas_(canvas),
+  uncache_(false),
+  valid_(false),
+  frame_(-1),
+  speed_(1.),
+  fi_(new FrameInfo(this))
+{
+  fi_->debug_ = ((flags_ & LOG_FLAG) != 0) + 2 * ((flags_ & DEBUG_FLAG) != 0);
+  fi_->optimize_mem = (flags_ & OPTIMIZE_MEMORY);
+  valid_ = load(imagename, data, length);
   if (canvas_w() && canvas_h()) {
     if (!w() && !h()) {
       w(canvas_w());
@@ -711,9 +746,9 @@ void Fl_Anim_GIF_Image::frame(int frame) {
 
 
 /*static*/
-int Fl_Anim_GIF_Image::frame_count(const char *name) {
+int Fl_Anim_GIF_Image::frame_count(const char *name, const unsigned char *imgdata /* = NULL */, size_t imglength /* = 0 */) {
   Fl_Anim_GIF_Image temp;
-  temp.load(name);
+  temp.load(name, imgdata, imglength);
   int frames = temp.valid() ? temp.frames() : 0;
   return frames;
 }
@@ -784,7 +819,7 @@ bool Fl_GIF_Image::is_animated(const char *name) {
 }
 
 
-bool Fl_Anim_GIF_Image::load(const char *name) {
+bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata, size_t imglength) {
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
   free(name_);
@@ -802,7 +837,7 @@ bool Fl_Anim_GIF_Image::load(const char *name) {
   h(0);
 
   if (name_) {
-    fi_->load(name);
+    fi_->load(name, imgdata, imglength);
   }
 
   frame_ = fi_->frames_size - 1;

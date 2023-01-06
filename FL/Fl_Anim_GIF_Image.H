@@ -93,7 +93,11 @@ public:
    If 'DONT_START' is not specified in the 'flags' parameter it calls start()
    after successful load.
    */
-  Fl_Anim_GIF_Image(const char *name, Fl_Widget *canvas = 0, unsigned short flags = 0);
+  Fl_Anim_GIF_Image(const char *filename, Fl_Widget *canvas = 0, unsigned short flags = 0);
+  // constructor with length
+  Fl_Anim_GIF_Image(const char* imagename, const unsigned char *data,
+                    const size_t length, Fl_Widget *canvas = 0,
+                    unsigned short flags = 0);
   Fl_Anim_GIF_Image();
   ~Fl_Anim_GIF_Image() FL_OVERRIDE;
   /**
@@ -177,7 +181,7 @@ public:
    temporary Fl_Anim_GIF_Image object for simplicity).
    So this call may be slow with large files.
    */
-  static int frame_count(const char *name);
+  static int frame_count(const char *name, const unsigned char *imgdata = NULL, size_t imglength = 0);
   /**
    Use frame_uncache() to set or forbid frame image uncaching.
    If frame uncaching is set, frame images are not offscreen cached
@@ -196,7 +200,7 @@ public:
    the image from the given file, or to re-load an existing
    animation from another file.
    */
-  bool load(const char *name);
+  bool load(const char *name, const unsigned char *imgdata, size_t imglength);
   /**
    The loop flag can be used to (dis-)allow loop count.
    If set (which is the default), the animation will be
