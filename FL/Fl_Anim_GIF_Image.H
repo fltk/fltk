@@ -51,21 +51,21 @@ public:
      the default.
      It can be started later using the start() method.
      */
-    DontStart = 1,
+    DONT_START = 1,
     /**
      This flag indicates to the loader that it should not
      resize the canvas widget of the animation to the dimensions
      of the animation, which is the default.
      Needed for special use cases.
      */
-    DontResizeCanvas = 2,
+    DONT_RESIZE_CANVAS = 2,
     /**
      This flag indicates to the loader that it should not
      set the animation as image() member of the canvas widget,
      which is the default.
      Needed for special use cases.
      */
-    DontSetAsImage = 4,
+    DONT_SET_AS_IMAGE = 4,
     /**
      Often frames change just a small area of the animation canvas.
      This flag indicates to the loader to try using less memory,
@@ -74,28 +74,28 @@ public:
      The drawbacks are higher cpu usage during playback and maybe
      minor artefacts when resized.
      */
-    OptimizeMemory = 8,
+    OPTIMIZE_MEMORY = 8,
     /**
      This flag can be used to print informations about the
      decoding process to the console.
      */
-    Log = 64,
+    LOG_FLAG = 64,
     /**
      This flag can be used to print even more informations about
      the decoding process to the console.
      */
-    Debug = 128
+    DEBUG_FLAG = 128
   };
   /**
    The constructor creates an new animated gif object from
    the given file.
    Optionally it applies the canvas() method after successful load.
-   If not 'DontStart' is specified in the 'flags' parameter it calls start()
+   If not 'DONT_START' is specified in the 'flags' parameter it calls start()
    after successful load.
    */
   Fl_Anim_GIF_Image(const char *name, Fl_Widget *canvas = 0, unsigned short flags = 0);
   Fl_Anim_GIF_Image();
-  virtual ~Fl_Anim_GIF_Image();
+  ~Fl_Anim_GIF_Image() FL_OVERRIDE;
   /**
    The canvas() method sets or gets the current widget, that
    is used for the display of the frame images.
@@ -120,20 +120,20 @@ public:
    The color_average() method applies the specified color_average
    to all frames of the animation.
    */
-  virtual void color_average(Fl_Color c, float i);
+  void color_average(Fl_Color c, float i) FL_OVERRIDE;
   /**
    The virtual copy() method makes a copy of the animated image
    and resizes all of its frame images to W x H using
    the current resize method.
    */
-  virtual Fl_Image *copy(int W, int H) const;
+  Fl_Image *copy(int W, int H) const FL_OVERRIDE;
   int debug() const;
   /**
    The desaturate() method applies desaturate() to all frames
    of the animation.
    */
-  virtual void desaturate();
-  virtual void draw(int x, int y, int w, int h, int cx = 0, int cy = 0);
+  void desaturate() FL_OVERRIDE;
+  void draw(int x, int y, int w, int h, int cx = 0, int cy = 0) FL_OVERRIDE;
   /**
    Return the delay of frame 'frame_' `[0-frames() -1]` in seconds
    */
@@ -245,7 +245,7 @@ public:
   /**
     Uncache all cached image data now. Re-implemented from Fl_Pixmap.
   */
-  virtual void uncache();
+  void uncache() FL_OVERRIDE;
   /**
    The valid() method returns if the class has
    successfully loaded and the image has at least
@@ -273,12 +273,11 @@ protected:
   void clear_frames();
   void set_frame(int frame);
 
-private:
   static void cb_animate(void *d);
   void scale_frame();
   void set_frame();
-  virtual void on_frame_data(Fl_GIF_Image::GIF_FRAME &f);
-  virtual void on_extension_data(Fl_GIF_Image::GIF_FRAME &f);
+  void on_frame_data(Fl_GIF_Image::GIF_FRAME &f) FL_OVERRIDE;
+  void on_extension_data(Fl_GIF_Image::GIF_FRAME &f) FL_OVERRIDE;
 
 private:
 

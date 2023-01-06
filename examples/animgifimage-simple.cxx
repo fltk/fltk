@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
 
   // Create and load the animated gif as image
   // of the `canvas` widget and start it immediately.
-  // We use the `DontResizeCanvas` flag here to tell the
+  // We use the `DONT_RESIZE_CANVAS` flag here to tell the
   // animation *not* to change the canvas size (which is the default).
   const char *default_image = "../test/pixmaps/fltk_animated.gif";
   Fl_Anim_GIF_Image animgif(/*name_=*/ argv[1] ? argv[1] : default_image,
                           /*canvas_=*/ &canvas,
-                           /*flags_=*/ Fl_Anim_GIF_Image::DontResizeCanvas);
+                           /*flags_=*/ Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
   // resize animation to canvas size
   animgif.scale(canvas.w(), canvas.h(), /*can_expand*/1, /*proportional*/1);
 

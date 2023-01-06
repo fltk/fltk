@@ -226,10 +226,10 @@ int main(int argc, char *argv[]) {
   win.show();
   Fl::add_handler(events);
 
-  // use the 'DontResizeCanvas' flag to tell the animation
+  // use the 'DONT_RESIZE_CANVAS' flag to tell the animation
   // not to change the canvas size (which is the default).
-  unsigned short flags = Fl_Anim_GIF_Image::DontResizeCanvas;
-//  flags |= Fl_Anim_GIF_Image::Debug|Fl_Anim_GIF_Image::Log;
+  unsigned short flags = Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS;
+//  flags |= Fl_Anim_GIF_Image::DEBUG_FLAG|Fl_Anim_GIF_Image::LOG_FLAG;
   animgif.canvas(&canvas, flags);
 
   load_next();

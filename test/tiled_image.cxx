@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
   Fl_Double_Window window(400,400); ::w = &window;
   Fl_Group group(0,0,400,400);
   if (anim)
-    group.image(new Fl_Tiled_Image(new Fl_Anim_GIF_Image("pixmaps/fltk_animated2.gif", &group, Fl_Anim_GIF_Image::DontResizeCanvas)));
+    group.image(new Fl_Tiled_Image(new Fl_Anim_GIF_Image("pixmaps/fltk_animated2.gif", &group, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS)));
   else
     group.image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
   group.align(FL_ALIGN_INSIDE);

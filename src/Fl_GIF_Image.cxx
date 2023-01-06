@@ -694,7 +694,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
       GIF_FRAME gf(frame, ScreenWidth, ScreenHeight, XPos, YPos, Width, Height, Image);
       gf.disposal(dispose, user_input ? -delay - 1 : delay);
       gf.colors(ColorMapSize, background_color_index, has_transparent ? transparent_pixel : -1);
-      GIF_FRAME::CPAL cpal[256] = { 0 };
+      GIF_FRAME::CPAL cpal[256] = { { 0 } };
       if (HasLocalColorTable)
         gf.cpal = LocalColorTable;
       else if (HasGlobalColorTable)

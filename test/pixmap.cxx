@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     pixmap = new Fl_Pixmap(porsche_xpm);
   else {
     Fl_Anim_GIF_Image *anim = new Fl_Anim_GIF_Image("pixmaps/fltk_animated2.gif");
-    anim->canvas(&b, Fl_Anim_GIF_Image::DontResizeCanvas);
+    anim->canvas(&b, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
     anim->scale(96,96,1,1);
     pixmap = anim;
     anim->start();

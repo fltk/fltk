@@ -72,11 +72,11 @@ Fl_Window *openFile(const char *name, char *flags, bool close = false) {
   // create a canvas for the animation
   Fl_Box *canvas = test_tiles ? 0 : new Fl_Box(0, 0, 0, 0); // canvas will be resized by animation
   Fl_Box *canvas2 = 0;
-  unsigned short gif_flags = debug ? Fl_Anim_GIF_Image::Log : 0;
+  unsigned short gif_flags = debug ? Fl_Anim_GIF_Image::LOG_FLAG : 0;
   if (debug > 1)
-    gif_flags |= Fl_Anim_GIF_Image::Debug;
+    gif_flags |= Fl_Anim_GIF_Image::DEBUG_FLAG;
   if (optimize_mem)
-    gif_flags |= Fl_Anim_GIF_Image::OptimizeMemory;
+    gif_flags |= Fl_Anim_GIF_Image::OPTIMIZE_MEMORY;
 
   // create animation, specifying this canvas as display widget
   Fl_Anim_GIF_Image *animgif = new Fl_Anim_GIF_Image(name, canvas, gif_flags);
@@ -116,7 +116,7 @@ Fl_Window *openFile(const char *name, char *flags, bool close = false) {
       Fl_Group *group = new Fl_Group(0, 0, win->w(), win->h());
       group->image(tiled_image);
       group->align(FL_ALIGN_INSIDE);
-      animgif->canvas(group, Fl_Anim_GIF_Image::DontResizeCanvas | Fl_Anim_GIF_Image::DontSetAsImage );
+      animgif->canvas(group, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS | Fl_Anim_GIF_Image::DONT_SET_AS_IMAGE );
       win->resizable(group);
     } else {
       // demonstrate a way how to use same animation in another canvas simultaneously:

@@ -70,7 +70,7 @@ public:
       else {
         printf("resized to %d x %d\n", copied->w(), copied->h());
       }
-      copied->canvas(this, Fl_Anim_GIF_Image::DontResizeCanvas);
+      copied->canvas(this, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
     }
     window()->cursor(FL_CURSOR_DEFAULT);
   }
@@ -133,15 +133,15 @@ int main(int argc, char *argv[]) {
   win.show();
 
   // create/load the animated gif and start it immediately.
-  // We use the 'DontResizeCanvas' flag here to tell the
+  // We use the 'DONT_RESIZE_CANVAS' flag here to tell the
   // animation not to change the canvas size (which is the default).
-  int flags = Fl_Anim_GIF_Image::Fl_Anim_GIF_Image::DontResizeCanvas;
+  int flags = Fl_Anim_GIF_Image::Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS;
   if (optimize) {
-    flags |= Fl_Anim_GIF_Image::OptimizeMemory;
+    flags |= Fl_Anim_GIF_Image::OPTIMIZE_MEMORY;
     printf("Using memory optimization (if image supports)\n");
   }
   if (debug) {
-    flags |= Fl_Anim_GIF_Image::Debug;
+    flags |= Fl_Anim_GIF_Image::DEBUG_FLAG;
   }
   orig = new Fl_Anim_GIF_Image(/*name_=*/ fileName,
                              /*canvas_=*/ &canvas,

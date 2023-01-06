@@ -187,8 +187,8 @@ void Fl_Anim_GIF_Image::FrameInfo::copy(const FrameInfo& fi) {
     if (fi.optimize_mem) {
       frames[i].x = lround(fi.frames[i].x * scale_factor_x);
       frames[i].y = lround(fi.frames[i].y * scale_factor_y);
-      int new_w = lround(fi.frames[i].w * scale_factor_x);
-      int new_h = lround(fi.frames[i].h * scale_factor_y);
+      int new_w = (int)lround(fi.frames[i].w * scale_factor_x);
+      int new_h = (int)lround(fi.frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -387,8 +387,8 @@ void Fl_Anim_GIF_Image::FrameInfo::resize(int W, int H) {
     if (optimize_mem) {
       frames[i].x = lround(frames[i].x * scale_factor_x);
       frames[i].y = lround(frames[i].y * scale_factor_y);
-      int new_w = lround(frames[i].w * scale_factor_x);
-      int new_h = lround(frames[i].h * scale_factor_y);
+      int new_w = (int)lround(frames[i].w * scale_factor_x);
+      int new_h = (int)lround(frames[i].h * scale_factor_y);
       frames[i].w = new_w;
       frames[i].h = new_h;
     }
@@ -498,8 +498,8 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *name,
   frame_(-1),
   speed_(1.),
   fi_(new FrameInfo(this)) {
-  fi_->debug_ = ((flags_ & Log) != 0) + 2 * ((flags_ & Debug) != 0);
-  fi_->optimize_mem = (flags_ & OptimizeMemory);
+  fi_->debug_ = ((flags_ & LOG_FLAG) != 0) + 2 * ((flags_ & DEBUG_FLAG) != 0);
+  fi_->optimize_mem = (flags_ & OPTIMIZE_MEMORY);
   valid_ = load(name);
   if (canvas_w() && canvas_h()) {
     if (!w() && !h()) {
@@ -508,7 +508,7 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *name,
     }
   }
   this->canvas(canvas, flags);
-  if (!(flags & DontStart))
+  if (!(flags & DONT_START))
     start();
   else
     frame_ = 0;
@@ -540,13 +540,13 @@ void Fl_Anim_GIF_Image::canvas(Fl_Widget *canvas, unsigned short flags/* = 0*/) 
   if (canvas_)
     canvas_->image(0);
   canvas_ = canvas;
-  if (canvas_ && !(flags & DontSetAsImage))
+  if (canvas_ && !(flags & DONT_SET_AS_IMAGE))
     canvas_->image(this); // set animation as image() of canvas
-  if (canvas_ && !(flags & DontResizeCanvas))
+  if (canvas_ && !(flags & DONT_RESIZE_CANVAS))
     canvas_->size(w(), h());
   if (flags_ != flags) {
     flags_ = flags;
-    fi_->debug_ = ((flags & Log) != 0) + 2 * ((flags & Debug) != 0);
+    fi_->debug_ = ((flags & LOG_FLAG) != 0) + 2 * ((flags & DEBUG_FLAG) != 0);
   }
   // Note: 'Start' flag is *NOT* used here,
   //       but an already running animation is restarted.
@@ -875,7 +875,7 @@ Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
   scale_frame(); // scale current frame now
   this->w(fi_->canvas_w);
   this->h(fi_->canvas_h);
-  if (canvas_ && !(flags_ & DontResizeCanvas)) {
+  if (canvas_ && !(flags_ & DONT_RESIZE_CANVAS)) {
     canvas_->size(this->w(), this->h());
   }
   return *this;
@@ -883,7 +883,7 @@ Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
 
 
 Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(double scale) {
-  return resize(lround((double)w() * scale), lround((double)h() * scale));
+  return resize((int)lround((double)w() * scale), (int)lround((double)h() * scale));
 }
 
 
