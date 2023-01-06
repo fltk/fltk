@@ -41,7 +41,7 @@ class FL_EXPORT Fl_Anim_GIF_Image : public Fl_GIF_Image {
 public:
 
   /**
-   When opening a Fl_Anim_GIF_Image there are some options
+   When opening an Fl_Anim_GIF_Image there are some options
    that can be passed in a 'flags' value.
    */
   enum Flags {
@@ -68,7 +68,7 @@ public:
     DONT_SET_AS_IMAGE = 4,
     /**
      Often frames change just a small area of the animation canvas.
-     This flag indicates to the loader to try using less memory,
+     This flag indicates to the loader to try using less memory
      by storing frame data not as canvas-sized images but use the
      sizes defined in the GIF file.
      The drawbacks are higher cpu usage during playback and maybe
@@ -90,7 +90,7 @@ public:
    The constructor creates an new animated gif object from
    the given file.
    Optionally it applies the canvas() method after successful load.
-   If not 'DONT_START' is specified in the 'flags' parameter it calls start()
+   If 'DONT_START' is not specified in the 'flags' parameter it calls start()
    after successful load.
    */
   Fl_Anim_GIF_Image(const char *name, Fl_Widget *canvas = 0, unsigned short flags = 0);
@@ -98,8 +98,8 @@ public:
   ~Fl_Anim_GIF_Image() FL_OVERRIDE;
   /**
    The canvas() method sets or gets the current widget, that
-   is used for the display of the frame images.
-   The _flags_ parameter specifies wheather the canvas widget
+   is used to display the frame images.
+   The _flags_ parameter specifies whether the canvas widget
    is resized to the animation dimensions and/or its image()
    method will be used to set the current frame image
    during animation.
@@ -182,7 +182,7 @@ public:
    Use frame_uncache() to set or forbid frame image uncaching.
    If frame uncaching is set, frame images are not offscreen cached
    for re-use and will be re-created every time they are displayed.
-   This saves a lot of  memory on the expense of cpu usage and
+   This saves a lot of memory on the expense of cpu usage and
    should be carefully considered. Per default frame caching will
    be done.
    */
@@ -209,7 +209,7 @@ public:
   /**
    The min_delay value can be used to set a minimum value
    for the frame delay for playback. This is to prevent
-   cpu hogs caused by images with very low delay rates.
+   CPU hogs caused by images with very low delay rates.
    This is a global value for all Fl_Anim_GIF_Image objects.
    */
   static double min_delay;

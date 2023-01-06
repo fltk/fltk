@@ -1,7 +1,7 @@
 //
 // Fl_Anim_GIF_Image class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2016-2022 by Christian Grabner <wcout@gmx.net>.
+// Copyright 2016-2023 by Christian Grabner <wcout@gmx.net>.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -109,7 +109,7 @@ class Fl_Anim_GIF_Image::FrameInfo {
   void set_frame(int frame);
 private:
   Fl_Anim_GIF_Image *anim;          // a pointer to the Image (only needed for name())
-  bool valid;                       // flag ig valid data
+  bool valid;                       // flag if valid data
   int frames_size;                  // number of frames stored in 'frames'
   GifFrame *frames;                 // "vector" for frames
   int loop_count;                   // loop count from file

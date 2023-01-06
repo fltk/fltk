@@ -26,7 +26,6 @@ ALL = animgifimage-play$(EXEEXT) \
       animgifimage-simple$(EXEEXT) \
       animgifimage-resize$(EXEEXT) \
       browser-simple$(EXEEXT) \
-      browser-simple$(EXEEXT) \
       cairo-draw-x$(EXEEXT) \
       chart-simple$(EXEEXT) \
       draggable-group$(EXEEXT) \
