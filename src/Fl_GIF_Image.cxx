@@ -147,8 +147,8 @@ Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
 
   Construct an image from a block of memory inside the application. Fluid offers
   "binary data" chunks as a great way to add image data into the C++ source code.
-  \p imagename can be NULL. If a name is given, the image is added to the list of
-  shared images and will be available by that name.
+  \p imagename can be \c NULL. If a name is given, the image is added to the
+  list of shared images and will be available by that name.
 
   If a GIF image is animated, Fl_GIF_Image will only read and display the
   first frame of the animation.

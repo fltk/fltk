@@ -25,6 +25,19 @@
 
 #include <FL/Fl_Anim_GIF_Image.H>
 
+/** \class Fl_Anim_GIF_Image
+
+ The Fl_Anim_GIF_Image class supports loading, caching, and drawing of animated
+ Compuserve GIF<SUP>SM</SUP> images.
+
+ The class loads all images contained in the file and animates them by cycling
+ through them as defined by the delay times in the image file.
+
+ The user must supply an FLTK widget as "container" in order to see the
+ animation by specifying it in the constructor or later using the
+ canvas() method.
+*/
+
 /*static*/
 bool Fl_GIF_Image::animate = false;
 
@@ -490,9 +503,23 @@ bool Fl_Anim_GIF_Image::loop = true;
 // class Fl_Anim_GIF_Image implementation
 //
 
+/** Load an animated GIF image from a file.
+
+ This constructor creates an animated image form a GIF-formatted file.
+ Optionally it applies the \ref canvas() method after successful load.
+ If \ref DONT_START is not specified in the \p flags parameter it calls
+ \ref start() after successful load.
+
+ \param[in] filename  path and name of GIF file in the file system
+ \param[in] canvas    a widget that will show and animate the GIF, or \c NULL
+ \param[in] flags     see \ref Flags for details, or 0
+
+ \note The GIF image must be decoupled from the canvas by calling
+    `myGif->canvas(NULL);` before deleting the canvas.
+ */
 Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *filename,
-                                     Fl_Widget *canvas/* = 0*/,
-                                     unsigned short flags/* = 0 */) :
+                                     Fl_Widget *canvas /* = 0*/,
+                                     unsigned short flags /* = 0 */) :
   Fl_GIF_Image(),
   name_(0),
   flags_(flags),
@@ -520,6 +547,25 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char *filename,
 }
 
 
+/** Load an animated GIF image from memory.
+
+ This constructor creates an animated image form a GIF-formatted block in
+ memory. Optionally it applies the \ref canvas() method after successful load.
+ If \ref DONT_START is not specified in the \p flags parameter it calls
+ \ref start() after successful load.
+
+ \p imagename can be \c NULL. If a name is given, the image is added to the
+ list of shared images and will be available by that name.
+
+ \param[in] imagename   a name given to this image or \c NULL
+ \param[in] data        pointer to the start of the GIF image in memory
+ \param[in] length      length of the GIF image in memory
+ \param[in] canvas      a widget that will show and animate the GIF, or \c NULL
+ \param[in] flags       see \ref Flags for details, or 0
+
+ \note The GIF image must be decoupled from the canvas by calling
+    `myGif->canvas(NULL);` before deleting the canvas.
+ */
 Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char* imagename, const unsigned char *data,
                                      const size_t length, Fl_Widget *canvas /* = 0 */,
                                      unsigned short flags /* = 0 */) :
@@ -550,6 +596,7 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image(const char* imagename, const unsigned char 
 }
 
 
+/** Create an empty animated GIF image shell. */
 Fl_Anim_GIF_Image::Fl_Anim_GIF_Image() :
   Fl_GIF_Image(),
   name_(0),
@@ -563,14 +610,30 @@ Fl_Anim_GIF_Image::Fl_Anim_GIF_Image() :
 }
 
 
-/*virtual*/
-Fl_Anim_GIF_Image::~Fl_Anim_GIF_Image() {
+/** Release the image and all cached data.
+
+ Also removes the animation timer.
+ */
+Fl_Anim_GIF_Image::~Fl_Anim_GIF_Image() /* override */ {
   Fl::remove_timeout(cb_animate, this);
   delete fi_;
   free(name_);
 }
 
 
+/** Link the image back to a widget for automated animation.
+
+ This method sets current widget, that is used to display the frame images.
+ The \p flags parameter specifies whether the canvas widget is resized to the
+ animation dimensions and/or its \ref image() method will be used to set the
+ current frame image during animation.
+
+ \param[in] canvas a pointer to the widget that will show the animation
+ \param[in] flags see \ref Flags
+
+ \note The GIF image must be decoupled from the canvas by calling
+    `myGif->canvas(NULL);` before deleting the canvas.
+ */
 void Fl_Anim_GIF_Image::canvas(Fl_Widget *canvas, unsigned short flags/* = 0*/) {
   if (canvas_)
     canvas_->image(0);
@@ -596,16 +659,25 @@ void Fl_Anim_GIF_Image::canvas(Fl_Widget *canvas, unsigned short flags/* = 0*/) 
 }
 
 
+/** Gets the current widget, that is used to display the frame images.
+ \return a pointer to a widget
+ */
 Fl_Widget *Fl_Anim_GIF_Image::canvas() const {
   return canvas_;
 }
 
 
+/** Return the width of the animation canvas.
+ \return the width in pixel units
+ */
 int Fl_Anim_GIF_Image::canvas_w() const {
   return fi_->canvas_w;
 }
 
 
+/** Return the height of the animation canvas.
+ \return the width in pixel units
+ */
 int Fl_Anim_GIF_Image::canvas_h() const {
   return fi_->canvas_h;
 }
@@ -624,8 +696,16 @@ void Fl_Anim_GIF_Image::clear_frames() {
 }
 
 
-/*virtual*/
-void Fl_Anim_GIF_Image::color_average(Fl_Color c, float i) {
+/** Applies a color average to all frames.
+
+ The color_average() method averages the colors in the image with
+ the provided FLTK color value.
+
+ \param[in] c blend color
+ \param[in] i a value between 0.0 and 1.0 where 0 results in the blend color,
+      and 1 returns the original image
+ */
+void Fl_Anim_GIF_Image::color_average(Fl_Color c, float i) /* override */ {
   if (i < 0) {
     // immediate mode
     i = -i;
@@ -640,8 +720,15 @@ void Fl_Anim_GIF_Image::color_average(Fl_Color c, float i) {
 }
 
 
-/*virtual*/
-Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) const {
+/** Copy and resize the animation frames.
+
+ The virtual copy() method makes a copy of the animated image and resizes all
+ of its frame images to W x H using the current resize method.
+
+ \param[in] W, H new size in FLTK pixel units
+ \return the resized copy of the animation
+ */
+Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) const /* override */ {
   Fl_Anim_GIF_Image *copied = new Fl_Anim_GIF_Image();
   // copy/resize the base image (Fl_Pixmap)
   // Note: this is not really necessary, if the draw()
@@ -674,6 +761,11 @@ int Fl_Anim_GIF_Image::debug() const {
 }
 
 
+/** Return the delay of frame `[0-frames() -1]` in seconds.
+
+ \param[in] frame index into frame list
+ \return delay to next frame in seconds
+ */
 double Fl_Anim_GIF_Image::delay(int frame) const {
   if (frame >= 0 && frame < frames())
     return fi_->frames[frame].delay;
@@ -681,21 +773,32 @@ double Fl_Anim_GIF_Image::delay(int frame) const {
 }
 
 
+/** Set the delay of frame `[0-frames() -1]` in seconds.
+
+ \param[in] frame index into frame list
+ \param[in] delay to next frame in seconds
+ */
 void Fl_Anim_GIF_Image::delay(int frame, double delay) {
   if (frame >= 0 && frame < frames())
     fi_->frames[frame].delay = delay;
 }
 
 
-/*virtual*/
-void Fl_Anim_GIF_Image::desaturate() {
+/** Desaturate to all frames of the animation.
+ */
+void Fl_Anim_GIF_Image::desaturate() /* override */ {
   fi_->desaturate = true;
   set_frame();
 }
 
 
-/*virtual*/
-void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h, int cx/* = 0*/, int cy/* = 0*/) {
+/** Draw the current frame of the animation.
+
+ \param[in] x, y, w, h target rectangle
+ \param[in] cx, cy source offset
+ */
+void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h,
+                             int cx/* = 0*/, int cy/* = 0*/) /* override */ {
   if (this->image()) {
     if (fi_->optimize_mem) {
       int f0 = frame_;
@@ -708,7 +811,7 @@ void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h, int cx/* = 0*/, int cy/
         Fl_RGB_Image *rgb = fi_->frames[f].rgb;
         if (rgb) {
           float s = Fl_Graphics_Driver::default_driver().scale();
-	       rgb->scale(s*fi_->frames[f].w, s*fi_->frames[f].h, 0, 1);
+	        rgb->scale(s*fi_->frames[f].w, s*fi_->frames[f].h, 0, 1);
           rgb->draw(x + s*fi_->frames[f].x, y + s*fi_->frames[f].y, w, h, cx, cy);
         }
       }
@@ -726,11 +829,20 @@ void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h, int cx/* = 0*/, int cy/
 }
 
 
+/** Return the current frame.
+
+ \return the current frame index in the range for 0 to `frames()-1`.
+ \return -1 if the image has no frames.
+ */
 int Fl_Anim_GIF_Image::frame() const {
   return frame_;
 }
 
 
+/** Set the current frame.
+
+ \param[in] frame index into list of frames
+ */
 void Fl_Anim_GIF_Image::frame(int frame) {
   if (Fl::has_timeout(cb_animate, this)) {
     Fl::warning("Fl_Anim_GIF_Image::frame(%d): not idle!\n", frame);
@@ -745,7 +857,27 @@ void Fl_Anim_GIF_Image::frame(int frame) {
 }
 
 
-/*static*/
+/** Get the number of frames in a GIF file or in a GIF compressed data block.
+
+ The static frame_count() method is just a convenience method for
+ getting the number of images (frames) stored in a GIF file.
+
+ As this count is not readily available in the GIF header, the
+ whole GIF file has be parsed (which is done here by using a
+ temporary Fl_Anim_GIF_Image object for simplicity).
+ So this call may be slow with large files.
+
+ If \p imgdata is \c NULL, the image will be read from the file. Otherwise, it will
+ be read from memory.
+
+ \param[in] name      path and name of GIF file in the file system, ignored
+                      when reading from memeory
+ \param[in] imgdata   pointer to the start of the GIF image in memory, or
+                      \c NULL to read from a file
+ \param[in] imglength length of the GIF image in memory, or \c 0
+
+ \return the number of frames in the animation
+ */
 int Fl_Anim_GIF_Image::frame_count(const char *name, const unsigned char *imgdata /* = NULL */, size_t imglength /* = 0 */) {
   Fl_Anim_GIF_Image temp;
   temp.load(name, imgdata, imglength);
@@ -754,6 +886,14 @@ int Fl_Anim_GIF_Image::frame_count(const char *name, const unsigned char *imgdat
 }
 
 
+/** Return the frame position of a frame.
+
+ Usefull only if loaded with 'optimize_mem' and
+ the animation also has size optimized frames.
+
+ \param[in] frame index into frame list
+ \return x position in FLTK pixle units
+ */
 int Fl_Anim_GIF_Image::frame_x(int frame) const {
   if (frame >= 0 && frame < frames())
     return fi_->frames[frame].x;
@@ -761,6 +901,14 @@ int Fl_Anim_GIF_Image::frame_x(int frame) const {
 }
 
 
+/** Return the frame position of a frame.
+
+ Usefull only if loaded with 'optimize_mem' and
+ the animation also has size optimized frames.
+
+ \param[in] frame index into frame list
+ \return y position in FLTK pixle units
+ */
 int Fl_Anim_GIF_Image::frame_y(int frame) const {
   if (frame >= 0 && frame < frames())
     return fi_->frames[frame].y;
@@ -768,12 +916,29 @@ int Fl_Anim_GIF_Image::frame_y(int frame) const {
 }
 
 
+/** Return the frame dimensions of a frame.
+
+ Usefull only if loaded with 'optimize_mem' and
+ the animation also has size optimized frames.
+
+ \param[in] frame index into frame list
+ \return width in FLTK pixle units
+ */
 int Fl_Anim_GIF_Image::frame_w(int frame) const {
   if (frame >= 0 && frame < frames())
     return fi_->frames[frame].w;
   return -1;
 }
 
+
+/** Return the frame dimensions of a frame.
+
+ Usefull only if loaded with 'optimize_mem' and
+ the animation also has size optimized frames.
+
+ \param[in] frame index into frame list
+ \return height in FLTK pixle units
+ */
 int Fl_Anim_GIF_Image::frame_h(int frame) const {
   if (frame >= 0 && frame < frames())
     return fi_->frames[frame].h;
@@ -781,26 +946,50 @@ int Fl_Anim_GIF_Image::frame_h(int frame) const {
 }
 
 
+/** Use frame_uncache() to set or forbid frame image uncaching.
+
+ If frame uncaching is set, frame images are not offscreen cached
+ for re-use and will be re-created every time they are displayed.
+ This saves a lot of memory on the expense of cpu usage and
+ should be carefully considered. Per default frame caching will
+ be done.
+
+ \param[in] uncache true to disable caching
+ */
 void Fl_Anim_GIF_Image::frame_uncache(bool uncache) {
   uncache_ = uncache;
 }
 
 
+/** Return the active frame_uncache() setting.
+ \return true if caching is disabled
+ */
 bool Fl_Anim_GIF_Image::frame_uncache() const {
   return uncache_;
 }
 
 
+/** Get the number of frames in the animation.
+ \return the number of frames
+ */
 int Fl_Anim_GIF_Image::frames() const {
   return fi_->frames_size;
 }
 
 
+/** Return the current frame image.
+ \return a pointer to the image or NULL if this is not an animation.
+ */
 Fl_Image *Fl_Anim_GIF_Image::image() const {
   return frame_ >= 0 && frame_ < frames() ? fi_->frames[frame_].rgb : 0;
 }
 
 
+/** Return the image of the given frame index.
+
+ \param[in] frame_ index into list of frames
+ \return image data or NULL if the frame number is not valid.
+ */
 Fl_Image *Fl_Anim_GIF_Image::image(int frame_) const {
   if (frame_ >= 0 && frame_ < frames())
     return fi_->frames[frame_].rgb;
@@ -808,6 +997,13 @@ Fl_Image *Fl_Anim_GIF_Image::image(int frame_) const {
 }
 
 
+/** Check if this is a valid animation with more than one frame.
+
+ The \c is_animated() method is just a convenience method for testing the valid
+ flag and the frame count beeing greater 1.
+
+ \return true if the animation is valid and has multiple frames.
+ */
 bool Fl_Anim_GIF_Image::is_animated() const {
   return valid_ && fi_->frames_size > 1;
 }
@@ -819,6 +1015,18 @@ bool Fl_GIF_Image::is_animated(const char *name) {
 }
 
 
+/** Load an animation from a file or from a memory block.
+
+ The load() method is either used from the constructor to load the image from
+ the given file, or to re-load an existing animation from another file.
+
+ \param[in] name      path and name of GIF file in the file system, or the image
+                      name when reading from memory
+ \param[in] imgdata   pointer to the start of the GIF image in memory, or
+                      \c NULL to read from a file
+ \param[in] imglength length of the GIF image in memory, or \c 0
+ \return true if the animation loaded correctly
+ */
 bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata, size_t imglength) {
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
@@ -851,6 +1059,12 @@ bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata, siz
 } // load
 
 
+/** Return the name of the played file as specified in the constructor.
+
+ If read from a memory block, this returns the name of the animation.
+
+ \return pointer to a C string
+ */
 const char *Fl_Anim_GIF_Image::name() const {
   return name_;
 }
@@ -896,6 +1110,12 @@ void Fl_Anim_GIF_Image::on_extension_data(Fl_GIF_Image::GIF_FRAME &gf) {
 }
 
 
+/** Resizes the image to the specified size, replacing the current image.
+
+ If \ref DONT_RESIZE_CANVAS is not set, the canvas widget will also be resized.
+
+ \param[in] w, h new size of teh naimtion frames
+ */
 Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
   int W(w);
   int H(h);
@@ -917,6 +1137,12 @@ Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(int w, int h) {
 }
 
 
+/** Resizes the image to the specified size, replacing the current image.
+
+ If \ref DONT_RESIZE_CANVAS is not set, the canvas widget will also be resized.
+
+ \param[in] scale rescale factor in relation to current size
+ */
 Fl_Anim_GIF_Image& Fl_Anim_GIF_Image::resize(double scale) {
   return resize((int)lround((double)w() * scale), (int)lround((double)h() * scale));
 }
@@ -957,16 +1183,29 @@ void Fl_Anim_GIF_Image::set_frame(int frame) {
 }
 
 
+/** Get the animation speed factor.
+ \return the current speed factor
+ */
 double Fl_Anim_GIF_Image::speed() const {
   return speed_;
 }
 
 
+/** Set the animation speed factor.
+
+ The speed() method changes the playing speed to \p speed x original speed.
+ E.g. to play at half speed call it with 0.5, for double speed with 2.
+
+ \param[in] speed floating point speed factor
+ */
 void Fl_Anim_GIF_Image::speed(double speed) {
   speed_ = speed;
 }
 
 
+/** The start() method (re-)starts the playing of the frames.
+ \return true if the animation has frames
+ */
 bool Fl_Anim_GIF_Image::start() {
   Fl::remove_timeout(cb_animate, this);
   if (fi_->frames_size) {
@@ -976,14 +1215,19 @@ bool Fl_Anim_GIF_Image::start() {
 }
 
 
+/** The stop() method stops the playing of the frames.
+ \return true if the animation has frames
+ */
 bool Fl_Anim_GIF_Image::stop() {
   Fl::remove_timeout(cb_animate, this);
   return fi_->frames_size != 0;
 }
 
 
-/*virtual*/
-void Fl_Anim_GIF_Image::uncache() {
+/** Uncache all cached image data now.
+ Re-implemented from Fl_Pixmap.
+ */
+void Fl_Anim_GIF_Image::uncache() /* override */ {
   Fl_GIF_Image::uncache();
   for (int i=0; i < fi_->frames_size; i++) {
     if (fi_->frames[i].rgb) fi_->frames[i].rgb->uncache();
@@ -991,6 +1235,10 @@ void Fl_Anim_GIF_Image::uncache() {
 }
 
 
+/** Check if animation is valid.
+ \return true if the class has successfully loaded and the image has at least
+         one frame.
+ */
 bool Fl_Anim_GIF_Image::valid() const {
   return valid_;
 }
