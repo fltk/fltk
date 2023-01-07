@@ -130,7 +130,7 @@ void svg_cb(Fl_Widget *widget, void *) {
 }
 
 int dvisual = 0;
-int animate = 0;
+int animate = 1;
 int arg(int, char **argv, int &i) {
   if (argv[i][1] == '8') {dvisual = 1; i++; return 1;}
   if (argv[i][1] == 'a') {animate = 1; i++; return 1;}

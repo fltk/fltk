@@ -24,6 +24,7 @@
 #include <FL/Fl_Shared_Image.H>
 
 class Fluid_Image {
+  bool is_animated_gif_;
   const char *name_;
   int refcount;
   Fl_Shared_Image *img;
