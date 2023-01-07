@@ -716,7 +716,11 @@ void Fl_Anim_GIF_Image::color_average(Fl_Color c, float i) /* override */ {
   }
   fi_->average_color = c;
   fi_->average_weight = i;
-  set_frame();
+  //  Do not call set_frame()! If this is called with an indexed color before
+  //  the display connection is open, it will possible average *this* frame
+  //  with a different RGB value than the following frames.
+  //  See Fl_Image::inactive().
+  // set_frame();
 }
 
 
@@ -740,6 +744,11 @@ Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) const /* override */ {
     gif->alloc_data = 0;
     delete gif;
   }
+
+  if (name_) copied->name_ = strdup(name_);
+  copied->flags_ = flags_;
+  copied->frame_ = frame_;
+  copied->speed_ = speed_;
 
   copied->w(W);
   copied->h(H);
@@ -1027,7 +1036,7 @@ bool Fl_GIF_Image::is_animated(const char *name) {
  \param[in] imglength length of the GIF image in memory, or \c 0
  \return true if the animation loaded correctly
  */
-bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata, size_t imglength) {
+bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =NULL */, size_t imglength /* =0 */) {
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
   free(name_);
@@ -1165,7 +1174,7 @@ void Fl_Anim_GIF_Image::set_frame() {
 
 
 void Fl_Anim_GIF_Image::set_frame(int frame) {
-  int last_frame = frame_;
+//  int last_frame = frame_;
   frame_ = frame;
   // NOTE: uncaching decreases performance, but saves a lot of memory
   if (uncache_ && this->image())
@@ -1173,12 +1182,25 @@ void Fl_Anim_GIF_Image::set_frame(int frame) {
 
   fi_->set_frame(frame_);
 
-  if (canvas()) {
-    canvas()->parent() &&
-      (frame_ == 0 || (last_frame >= 0 && (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND  ||
-                                           fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS))) &&
-        (canvas()->box() == FL_NO_BOX || (canvas()->align() && !(canvas()->align() & FL_ALIGN_INSIDE)))      ?
-      canvas()->parent()->redraw() : canvas()->redraw();
+  Fl_Widget* cv = canvas();
+  if (cv) {
+    Fl_Group* parent = cv->parent();
+    bool no_bg = (cv->box() == FL_NO_BOX);
+    bool outside = (!(cv->align() & FL_ALIGN_INSIDE) && !((cv->align() & FL_ALIGN_POSITION_MASK)==FL_ALIGN_CENTER));
+//    bool dispose =    (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND)
+//                   || (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS);
+    if (parent && (no_bg || outside))
+      parent->redraw();
+    else
+      cv->redraw();
+
+// Note: the code below did not animate labels with a pixmap outside of the canvas
+//    canvas()->parent() &&
+//      (frame_ == 0 || (last_frame >= 0 && (fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_BACKGROUND  ||
+//                                           fi_->frames[last_frame].dispose == FrameInfo::DISPOSE_PREVIOUS))) &&
+//        (canvas()->box() == FL_NO_BOX || (canvas()->align() && !(canvas()->align() & FL_ALIGN_INSIDE)))      ?
+//      canvas()->parent()->redraw() : canvas()->redraw();
+
   }
 }
 
@@ -1220,6 +1242,19 @@ bool Fl_Anim_GIF_Image::start() {
  */
 bool Fl_Anim_GIF_Image::stop() {
   Fl::remove_timeout(cb_animate, this);
+  return fi_->frames_size != 0;
+}
+
+
+/** Show the next frame if the animation is stopped.
+ \return true if the animation has frames
+ */
+bool Fl_Anim_GIF_Image::next() {
+  if (fi_->frames_size && !(Fl::has_timeout(cb_animate, this))) {
+    int f = frame() + 1;
+    if (f >= frames()) f = 0;
+    frame(f);
+  }
   return fi_->frames_size != 0;
 }
 

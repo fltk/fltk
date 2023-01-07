@@ -22,7 +22,8 @@ SHELL = /bin/sh
 .SILENT:
 
 # Executables
-ALL = animgifimage-play$(EXEEXT) \
+ALL = animgifimage$(EXEEXT) \
+      animgifimage-play$(EXEEXT) \
       animgifimage-simple$(EXEEXT) \
       animgifimage-resize$(EXEEXT) \
       browser-simple$(EXEEXT) \

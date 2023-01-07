@@ -167,6 +167,7 @@ Fl_Double_Window* make_about_panel() {
     { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
       o->image( image_fluid() );
       ((Fl_Anim_GIF_Image*)(image_fluid()))->canvas(o, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
+      ((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);
     } // Fl_Box* o
     { Fl_Box* o = new Fl_Box(135, 10, 205, 75, "FLTK User\nInterface Designer\nVersion x.x.x");
       o->color((Fl_Color)12);

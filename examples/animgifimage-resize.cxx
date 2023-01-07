@@ -38,7 +38,7 @@ class Canvas : public Fl_Box {
 public:
   Canvas(int x, int y, int w, int h) :
     Inherited(x, y, w, h) {}
-  virtual void draw() {
+  void draw() FL_OVERRIDE {
     if (draw_grid) {
       // draw a transparency grid as background
       static const Fl_Color C1 = fl_rgb_color(0xcc, 0xcc, 0xcc);
@@ -78,7 +78,7 @@ public:
     Canvas *c = (Canvas *)d;
     c->do_resize(c->w(), c->h());
   }
-  virtual void resize(int x, int y, int w, int h) {
+  void resize(int x, int y, int w, int h) FL_OVERRIDE {
     Inherited::resize(x, y, w, h);
     // decouple resize event from actual resize operation
     // to avoid lockups..

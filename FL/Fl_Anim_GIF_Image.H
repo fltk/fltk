@@ -86,7 +86,7 @@ public:
   ~Fl_Anim_GIF_Image() FL_OVERRIDE;
 
   // -- file handling
-  bool load(const char *name, const unsigned char *imgdata, size_t imglength);
+  bool load(const char *name, const unsigned char *imgdata=NULL, size_t imglength=0);
   bool valid() const;
 
   // -- getters and setters
@@ -111,6 +111,7 @@ public:
   Fl_Image *image(int frame) const;
   bool start();
   bool stop();
+  bool next();
 
   /** Return if the animation is currently running or stopped.
    \return true if the animation is running
@@ -128,6 +129,7 @@ public:
   // -- overriden methods
   void color_average(Fl_Color c, float i) FL_OVERRIDE;
   Fl_Image *copy(int W, int H) const FL_OVERRIDE;
+  Fl_Image *copy() const { return Fl_Pixmap::copy(); }
   void desaturate() FL_OVERRIDE;
   void draw(int x, int y, int w, int h, int cx = 0, int cy = 0) FL_OVERRIDE;
   void uncache() FL_OVERRIDE;

@@ -18,7 +18,6 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Anim_GIF_Image.H>
 #include <FL/Fl_Tiled_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,18 +36,12 @@ void button_cb(Fl_Widget *,void *) {
 #include "list_visuals.cxx"
 
 int visid = -1;
-int anim = 0;
 int arg(int argc, char **argv, int &i) {
   if (argv[i][1] == 'v') {
     if (i+1 >= argc) return 0;
     visid = atoi(argv[i+1]);
     i += 2;
     return 2;
-  }
-  else if (argv[i][1] == 'a') {
-    anim = 1;
-    i ++;
-    return 1;
   }
   return 0;
 }
@@ -78,10 +71,7 @@ int main(int argc, char **argv) {
 
   Fl_Double_Window window(400,400); ::w = &window;
   Fl_Group group(0,0,400,400);
-  if (anim)
-    group.image(new Fl_Tiled_Image(new Fl_Anim_GIF_Image("pixmaps/fltk_animated2.gif", &group, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS)));
-  else
-    group.image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
+  group.image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
   group.align(FL_ALIGN_INSIDE);
 
   Fl_Button b(340,365,50,25,"Close"); ::b = &b;
