@@ -125,6 +125,24 @@ public:
     w_ -= Fl::box_dw(bt);
     h_ -= Fl::box_dh(bt);
   }
+
+  /** Move all edges in by \p left, \p top, \p right, \p bottom.
+
+    Shrinks the rectangle on all sides keeping the center of the
+    rectangle at the same spot.
+
+    If any value is negative, the rectangle is enlarged.
+
+    Values are not range checked; it is possible to create
+    an invalid or empty rectangle.
+  */
+  void inset(int left, int top, int right, int bottom) {
+    x_ += left;
+    y_ += top;
+    w_ -= (left + right);
+    h_ -= (top + bottom);
+  }
+
 }; // class Fl_Rect
 
 #endif // Fl_Rect_H
