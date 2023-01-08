@@ -963,18 +963,22 @@ public:
 
     This is the same as calling
     \code
-      do_callback(this, user_data());
+      do_callback(this, user_data(), reason);
     \endcode
+
+    \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
+
     \see callback()
-    \see do_callback(Fl_Widget *widget, void *data)
+    \see do_callback(Fl_Widget *widget, void *data, Fl_Callback_Reason reason), Fl_Callback_Reason
   */
   void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {do_callback(this, user_data_, reason);}
 
   /** Calls the widget callback function with arbitrary arguments.
     \param[in] widget call the callback with \p widget as the first argument
     \param[in] arg call the callback with \p arg as the user data (second) argument
+    \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
     \see callback()
-    \see do_callback(Fl_Widget *widget, void *data)
+    \see do_callback(Fl_Widget *widget, void *data), Fl_Callback_Reason
   */
   void do_callback(Fl_Widget *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
     do_callback(widget, (void*)(fl_intptr_t)arg, reason);

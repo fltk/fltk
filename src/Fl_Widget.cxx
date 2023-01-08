@@ -383,7 +383,7 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
 
  \param[in] widget call the callback with \p widget as the first argument
  \param[in] arg use \p arg as the user data (second) argument
- \param[in] reason for calling this callback
+ \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
 
  \see default_callback()
  \see callback()
