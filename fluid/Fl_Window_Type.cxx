@@ -1292,18 +1292,19 @@ int Fl_Window_Type::handle(int event) {
       if (prototype==NULL) {
         // it's not a FLUID type, so it could be the filename of an image
         const char *cfn = Fl::event_text();
-	if ((cfn == NULL) || (*cfn == 0)) return 0;
+        if ((cfn == NULL) || (*cfn == 0)) return 0;
         if (strlen(cfn) >= FL_PATH_MAX) return 0;
         char fn[FL_PATH_MAX+1];
         // some platform prepend "file://" or "computer://" or similar text
         const char *sep = strstr(cfn, "://");
-	if (sep)
-	  strcpy(fn, sep+3);
-	else 
-	  strcpy(fn, cfn);
-	int n = strlen(fn)-1;
-	if (fn[n] == '\n') fn[n--] = 0;
-	if (fn[n] == '\r') fn[n--] = 0;
+        if (sep)
+          strcpy(fn, sep+3);
+        else
+          strcpy(fn, cfn);
+        // remove possibly trailing \r\n
+        int n = (int)strlen(fn)-1;
+        if (fn[n] == '\n') fn[n--] = 0;
+        if (fn[n] == '\r') fn[n--] = 0;
         // on X11 and Wayland (?), filenames need to be decoded
 #if (defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND))
         fl_decode_uri(fn);
@@ -1327,7 +1328,8 @@ int Fl_Window_Type::handle(int event) {
           enter_project_dir();
           fl_filename_relative(rel, FL_PATH_MAX, fn);
           leave_project_dir();
-          if (Fl::event_alt()) {
+          if (Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R)) {
+          //if (Fl::event_alt()) { // TODO: X11/Wayland does not set the e_state on DND events
             tgt->inactive_name(rel);
             tgt->compress_deimage_ = 1;
             tgt->bind_deimage_ = 0;
