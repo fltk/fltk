@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fl_Help_Dialog test - Fast Light Toolkit (FLTK)</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+</head>
+<body>
+<!--
+ *
+ * Fl_Help_View test file for the Fast Light Tool Kit (FLTK).
+ *
+ * Copyright 1998-2021 by Bill Spitzak and others.
+ *
+ * This library is free software. Distribution and use rights are outlined in
+ * the file "COPYING" which should have been included with this file.  If this
+ * file is missing or damaged, see the license at:
+ *
+ *     https://www.fltk.org/COPYING.php
+ *
+ * Please see the following page on how to report bugs and issues:
+ *
+ *     https://www.fltk.org/bugs.php
+ *
+-->
+<H1>Simple HTML Tests</H1>
+<UL>
+    <LI> <a href="#PlainTest">Plain Text Test</A>
+    <LI> <a href="#EntityTest">HTML Entity Test</A>
+    <LI> <a href="#PreTest">PRE (preformatted Text) Test</A>
+    <LI> <a href="#Headings">Heading Tests</A>
+    <LI> <a href="#Lists">UL, OL, DL Lists</A>
+    <LI> <a href="#Table">TABLE Tests</A>
+    <LI> <a href="#Center">CENTER Tests</A>
+    <LI> <a href="#HR">HR (Horizontal Rule) Tests</A>
+    <LI> <a href="#Tabs">PRE Tab Indent Tests</A>
+</UL>
+<P>
+
+<A NAME="PlainTest"></A>
+<B>Plain text paragraphs</B><P>
+    The licenses for most software are designed to take away your freedom to
+    share and change it.  By contrast, the GNU General Public Licenses are
+    intended to guarantee your freedom to share and change free software--to
+    make sure the software is free for all its users.
+    <P>
+    This license, the Library General Public License, applies to some
+    specially designated Free Software Foundation software, and to any
+    other libraries whose authors decide to use it.  You can use it for
+    your libraries, too.
+    <P>
+    <I>Italic content.</I> <B>Bold content</B> <BIG>Big content.</BIG>
+    <SMALL>Small content.</SMALL> <U>Underline content.</U> <STRIKE>Strike out content.</STRIKE>
+    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR='#ff8800'>Orange #ff8800 font content.</FONT>
+    <FONT COLOR=BLUE>Blue font content.</FONT>
+    <P>
+    <FONT FACE="Helvetica">This should be Helvetica. 0123456789</FONT><BR>
+    <FONT FACE="Arial">This should be Arial. 0123456789</FONT><BR>
+    <FONT FACE="Sans">This should be Sans. 0123456789</FONT><BR>
+    <FONT FACE="Times">This should be Times. 0123456789</FONT><BR>
+    <FONT FACE="Serif">This should be Serif. 0123456789</FONT><BR>
+    <FONT FACE="Courier">This should be Courier. 0123456789</FONT><BR>
+    <FONT FACE="Symbol">This should be Symbol. 0123456789</FONT>
+    <P>
+
+<A NAME="EntityTest"></A>
+<B>HTML Entities: named, hexadecimal, and decimal</B><P>
+    <b>Special characters, formatted as named "HTML Entities", e.g. "&amp;euro;":</b><br>
+    Euro and "dagger": "&euro;" "&dagger;"<br>
+    Umlaut characters : "&auml;" "&euml;" "&iuml;" "&ouml;" "&uuml;" "&szlig;"<br>
+    Umlaut characters : "&Auml;" "&Euml;" "&Iuml;" "&Ouml;" "&Uuml;"<br>
+    Special characters : "&bull;" "&permil;" "&copy;" "&trade;" "&reg;"<br>
+    <br>
+    <b>Other scripts, formatted as hexadecimal "HTML Entities", e.g. "&amp;#x20ac;":</b><br>
+    (Should be the same symbols as below)<br>
+    Euro and "dagger": "&#x20ac;" "&#x2020;"<br>
+    Japanese (Hiragana) : "&#x3050;" "&#x306e;"<br>
+    Japanese (Katakana) : "&#x30c0;" "&#x30dd;"<br>
+    Chinese (CJK Unified Ideographs) : "&#x4e2d;" "&#x4e33;"<br>
+    <br>
+    <b>Other scripts, formatted as decimal "HTML Entities", e.g. "&amp;#8364;":</b><br>
+    (Should be the same symbols as above)<br>
+    Euro and "dagger": "&#8364;" "&#8224;"<br>
+    Japanese (Hiragana) : "&#12368;" "&#12398;"<br>
+    Japanese (Katakana) : "&#12480;" "&#12509;"<br>
+    Chinese (CJK Unified Ideographs) : "&#20013;" "&#20019;"<br>
+    <P>
+
+<A NAME="PreTest"></A>
+<B>Preformatted paragraphs</B><PRE>
+The following 2 paragraphs should be indented 4 spaces.
+
+    The licenses for most software are designed to take away
+    your freedom to share and change it.  By contrast, the
+    GNU General Public Licenses are intended to guarantee your
+    freedom to share and change free software -- to make sure
+    the software is free for all its users.
+
+    This license, the Library General Public License, applies to
+    some specially designated Free Software Foundation software,
+    and to any other libraries whose authors decide to use it.
+    You can use it for your libraries, too.
+
+The following 2 paragraphs should be indented 8 spaces.
+
+        The licenses for most software are designed to take away
+        your freedom to share and change it.  By contrast, the
+        GNU General Public Licenses are intended to guarantee
+        your freedom to share and change free software --
+        to make sure the software is free for all its users.
+
+        This license, the Library General Public License,
+        applies to some specially designated Free Software
+        Foundation software, and to any other libraries whose
+        authors decide to use it.  You can use it for your
+        libraries, too.
+
+The following text content should all be indented 4 spaces.
+
+    <I>Italic content.</I> <B>Bold content</B> <BIG>Big content.</BIG>
+    <SMALL>Small content.</SMALL> <U>Underline content.</U> <STRIKE>Strike out content.</STRIKE>
+    <FONT COLOR=RED>Red font content.</FONT> <FONT COLOR='#ff8800'>Orange #ff8800 font content.</FONT>
+    <FONT COLOR=BLUE>Blue font content.</FONT>
+</PRE>
+<P>
+
+<A NAME="Headings"></A>
+<B>Heading tests</B>
+<H1>This is H1 text</H1>
+<H2>This is H2 text</H2>
+<H3>This is H3 text</H3>
+<H4>This is H4 text</H4>
+<H5>This is H5 text</H5>
+<H6>This is H6 text</H6>
+<P>
+
+<A NAME="Lists"></A>
+<B>UL tests</B>
+<UL>
+   This text should be indented in a UL.<BR>
+   This should be a second line of indent.<P>
+   <LI> First list item with default attributes</LI>
+   <LI> Second list item</LI>
+   <LI> Third list item</LI>
+</UL>
+End of UL. Starting an OL:
+<OL>
+   This text should be indented in an OL.<BR>
+   This should be a second line of indent.<P>
+   <LI> First list item with default attributes</LI>
+   <LI> Second list item</LI>
+   <LI> Third list item</LI>
+</OL>
+Another OL with start value 10:
+<OL start="10">
+   <LI> First list item (value 10)</LI>
+   <LI> Second list item</LI>
+   <LI> Third list item</LI>
+</OL>
+End of OL. Starting a DL:
+<DL>
+  A DL has been started. This should be a list of terms.
+  Some browsers display the description indented right
+  relative to the terms, though I don't think FLTK's does this.<P>
+  <DT>First term</DT>
+  <DD>Description of first term.</DD>
+  <DT>Second term</DT>
+  <DD>Description of second term goes here.</DD>
+  <DT>Third term</DT>
+  <DD>Description of third term goes here.</DD>
+</DL>
+End of DL.
+
+<p>
+Nested OL/UL:
+<OL>
+    <LI>First numbered Item
+        <UL>
+            <LI>one thing</LI>
+            <LI>two things</LI>
+            <LI>three things</LI>
+        </UL>
+    </LI>
+    <LI>Second numbered Item
+        <UL>
+            <LI>one thing</LI>
+            <LI>two things</LI>
+            <LI>Three things</LI>
+        </UL>
+    </LI>
+</OL>
+
+<P>
+
+<A NAME="Table"></A>
+<B>Simple 2 Column Non-border Table, No Headings</B>
+<TABLE>
+  <TR>
+    <TD>Column 1</TD>  <TD>Column 2</TD>
+  </TR><TR>
+    <TD>Aaa Aaa Aaa</TD>  <TD>Xxx Xxx Xxx</TD>
+  </TR><TR>
+    <TD>Bbb Bbb Bbb</TD>  <TD>Yyy Yyy Yyy</TD>
+  </TR><TR>
+    <TD>Ccc Ccc Ccc</TD>  <TD>Zzz Zzz Zzz</TD>
+  </TR>
+</TABLE>
+<P>
+<B>Simple 2 Column Bordered Table, No Headings</B>
+<TABLE BORDER=1>
+  <TR>
+    <TD>Column 1</TD>  <TD>Column 2</TD>
+  </TR><TR>
+    <TD>Aaa Aaa Aaa</TD>  <TD>Xxx Xxx Xxx</TD>
+  </TR><TR>
+    <TD>Bbb Bbb Bbb</TD>  <TD>Yyy Yyy Yyy</TD>
+  </TR><TR>
+    <TD>Ccc Ccc Ccc</TD>  <TD>Zzz Zzz Zzz</TD>
+  </TR>
+</TABLE>
+<P>
+<B>Simple Two Column Table With Borders And Heading</B>
+<TABLE BORDER=1>
+  <TR>
+    <TH>Table Heading</TH> <TH>&nbsp;</TH>
+  </TR>
+  <TR>
+    <TD>Column 1</TD>  <TD>Column 2</TD>
+  </TR><TR>
+    <TD>Aaa Aaa Aaa</TD>  <TD>Xxx Xxx Xxx</TD>
+  </TR><TR>
+    <TD>Bbb Bbb Bbb</TD>  <TD>Yyy Yyy Yyy</TD>
+  </TR><TR>
+    <TD>Ccc Ccc Ccc</TD>  <TD>Zzz Zzz Zzz</TD>
+  </TR>
+</TABLE>
+<P>
+<B>Simple Bordered Table With Heading And 10 Cell Padding + Spacing</B>
+<TABLE BORDER=1 CELLPADDING=10 CELLSPACING=10>
+  <TR>
+    <TH colspan='2'>Table Heading</TH>
+  </TR>
+  <TR>
+    <TD>Column 1</TD>  <TD>Column 2</TD>
+  </TR><TR>
+    <TD>Aaa Aaa Aaa</TD>  <TD>Xxx Xxx Xxx</TD>
+  </TR><TR>
+    <TD>Bbb Bbb Bbb</TD>  <TD>Yyy Yyy Yyy</TD>
+  </TR><TR>
+    <TD>Ccc Ccc Ccc</TD>  <TD>Zzz Zzz Zzz</TD>
+  </TR>
+</TABLE>
+<P>
+<B>Simple Table Of Images, Two Columns, Three Rows</B>
+<TABLE BORDER=1 CELLPADDING=10 CELLSPACING=10>
+  <TR>
+    <TH colspan='2'>Table Heading</TH>
+  </TR>
+  <TR>
+    <TD>Column 1</TD>  <TD>Column 2</TD>
+  </TR><TR>
+    <TD><IMG SRC="images/FL200.png" alt="FLTK logo"></TD>
+    <TD>This is the FLTK logo</TD>
+  </TR><TR>
+    <TD><IMG SRC="images/tiny.png" alt="Tiny FLTK logo"></TD>
+    <TD>Tiny FLTK logo.</TD>
+  </TR><TR>
+    <TD><IMG SRC="images/Fl_Value_Input.png" alt="Fl_Value_Input"></TD>
+    <TD>This is an image of Fl_Value_Input</TD>
+  </TR><TR>
+    <TD><IMG SRC="images/Fl_Value_Output.png" alt="Fl_Value_Output"></TD>
+    <TD>This is an image of Fl_Value_Output</TD>
+  </TR>
+</TABLE>
+<P>
+
+<A NAME="Center"></A>
+<B>Testing Centered Text And Image</B>
+<center>This text should be centered. What follows is a line break.
+<BR>
+After the line break, still centered. What follows is a paragraph break.
+<P>
+This text should be in a paragraph break. This is paragraph #1 of 2.
+<P>
+This text should be in a paragraph break as well. This is paragraph #2 of 2.
+<P>
+What follows should be a centered image.<BR>
+<IMG SRC="images/FL200.png" alt="FLTK logo"><BR>
+That should be a centered image.
+<P>
+</center>
+<P>
+
+<A NAME="HR"></A>
+<B>Testing Horizontal Line</B>
+<HR>
+This text should be between two horizontal lines.
+<HR>
+<P>
+<A NAME="Tabs"></A>
+<B>Preformatted Indent Test</B>
+<PRE>
+    This tests that tabs and space indenting work correctly.
+    Each line should be one space right of the line preceding it
+    unless otherwise specified:
+
+0 Tab
+ 1 Space
+  2 Space
+   3 Space
+    4 Space
+     5 Space
+      6 Space
+       7 Space            __
+        8 Space             |
+    	4 Space + 1 Tab     |-- should all be
+	1 Tab             __|   same indent level
+	 1 Tab + 1 Space
+	  1 Tab + 2 Space
+	   1 Tab + 3 Space
+	    1 Tab + 4 Space
+	     1 Tab + 5 Space
+	      1 Tab + 6 Space
+	       1 Tab + 7 Space            __
+	        1 Tab + 8 Space             |
+    	        4 Space + 1 Tab + 8 Space   |-- should all be
+		2 Tab                     __|   same indent level
+		 2 Tab + 1 Space
+		  2 Tab + 2 Space
+		   2 Tab + 3 Space
+		    ..
+</PRE>
+</body>
+</html>

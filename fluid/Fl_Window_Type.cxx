@@ -1265,8 +1265,9 @@ int Fl_Window_Type::handle(int event) {
   static Fl_Type* selection = NULL;
   switch (event) {
   case FL_DND_ENTER:
-    Fl::belowmouse(o);
+    // printf("DND enter\n");
   case FL_DND_DRAG:
+    // printf("DND drag\n");
     {
       // find the innermost item clicked on:
       selection = this;
@@ -1285,13 +1286,19 @@ int Fl_Window_Type::handle(int event) {
         ((Overlay_Window *)o)->redraw_overlay();
       }
     }
+    Fl::belowmouse(o);
+    return 1;
   case FL_DND_RELEASE:
+    // printf("DND release\n");
+    Fl::belowmouse(o);
     return 1;
   case FL_PASTE:
+    // printf("DND paste\n");
     { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
       if (prototype==NULL) {
         // it's not a FLUID type, so it could be the filename of an image
         const char *cfn = Fl::event_text();
+        // printf("DND is filename %s?\n", cfn);
         if ((cfn == NULL) || (*cfn == 0)) return 0;
         if (strlen(cfn) >= FL_PATH_MAX) return 0;
         char fn[FL_PATH_MAX+1];
@@ -1315,6 +1322,7 @@ int Fl_Window_Type::handle(int event) {
         Fl_Image *img = Fl_Shared_Image::get(fn);
         if (!img || (img->ld() < 0)) return 0;
         // ok, so it is an image - now add it as image() or deimage() to the widget
+        // printf("DND check for target %s\n", fn);
         Fl_Widget_Type *tgt = NULL;
         for (Fl_Type* i=next; i && i->level>level; i=i->next) {
           if (i->is_widget()) {
@@ -1328,6 +1336,7 @@ int Fl_Window_Type::handle(int event) {
           enter_project_dir();
           fl_filename_relative(rel, FL_PATH_MAX, fn);
           leave_project_dir();
+          // printf("DND image = %s\n", fn);
           if (Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R)) {
           //if (Fl::event_alt()) { // TODO: X11/Wayland does not set the e_state on DND events
             tgt->inactive_name(rel);
