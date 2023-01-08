@@ -30,16 +30,12 @@
   color_average(), desaturate(), or inactive() methods.
 */
 class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
-private:
-  static bool drawing_tiled_image_;
 protected:
 
   Fl_Image      *image_;                // The image that is tiled
   int           alloc_image_;           // Did we allocate this image?
 
 public:
-  /** Returns true when the FLTK library is currently drawing an Fl_Tiled_Image object. */
-  static inline bool drawing_tiled_image() { return drawing_tiled_image_;};
   Fl_Tiled_Image(Fl_Image *i, int W = 0, int H = 0);
   virtual ~Fl_Tiled_Image();
 
