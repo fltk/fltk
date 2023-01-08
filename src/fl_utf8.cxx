@@ -449,8 +449,14 @@ int fl_chmod(const char* f, int mode) {
 /** Cross-platform function to test a files access() with a UTF-8 encoded
   name or value.
 
- This function is especially useful on the Windows platform where the
- standard access() function fails with UTF-8 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard access() function fails with UTF-8 encoded non-ASCII filenames.
+
+  Windows defines the mode values 0 for existence, 2 for writable, 4 for
+  readable, and 6 of readable and writable. On other systems, the modes
+  `X_OK`, `W_OK`, and `R_OK` are usually defined as 1, 2, and 4.
+
+  Upon successful completion, the value 0 is returned on all platforms.
 
   \param[in] f the UTF-8 encoded filename
   \param[in] mode the mode to test

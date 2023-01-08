@@ -37,6 +37,7 @@
 #include <FL/platform.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Round_Button.H>
+#include <FL/Fl_Shared_Image.H>
 #include "../src/flstring.h"
 
 #include <math.h>
@@ -1264,17 +1265,16 @@ int Fl_Window_Type::handle(int event) {
   static Fl_Type* selection = NULL;
   switch (event) {
   case FL_DND_ENTER:
-    Fl::belowmouse(o);
+    // printf("DND enter\n");
   case FL_DND_DRAG:
+    // printf("DND drag\n");
     {
       // find the innermost item clicked on:
       selection = this;
       for (Fl_Type* i=next; i && i->level>level; i=i->next)
         if (i->is_group()) {
           Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
-          for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
-            if (!o1->visible()) goto CONTINUE_DND;
-          if (Fl::event_inside(myo->o)) {
+          if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;
             if (Fl::event_clicks()==1)
               reveal_in_browser(myo);
@@ -1286,12 +1286,72 @@ int Fl_Window_Type::handle(int event) {
         ((Overlay_Window *)o)->redraw_overlay();
       }
     }
+    Fl::belowmouse(o);
+    return 1;
   case FL_DND_RELEASE:
+    // printf("DND release\n");
+    Fl::belowmouse(o);
     return 1;
   case FL_PASTE:
+    // printf("DND paste\n");
     { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
-      if (prototype==NULL)
-        return 0;
+      if (prototype==NULL) {
+        // it's not a FLUID type, so it could be the filename of an image
+        const char *cfn = Fl::event_text();
+        // printf("DND is filename %s?\n", cfn);
+        if ((cfn == NULL) || (*cfn == 0)) return 0;
+        if (strlen(cfn) >= FL_PATH_MAX) return 0;
+        char fn[FL_PATH_MAX+1];
+        // some platform prepend "file://" or "computer://" or similar text
+        const char *sep = strstr(cfn, "://");
+        if (sep)
+          strcpy(fn, sep+3);
+        else
+          strcpy(fn, cfn);
+        // remove possibly trailing \r\n
+        int n = (int)strlen(fn)-1;
+        if (fn[n] == '\n') fn[n--] = 0;
+        if (fn[n] == '\r') fn[n--] = 0;
+        // on X11 and Wayland (?), filenames need to be decoded
+#if (defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND))
+        fl_decode_uri(fn);
+#endif
+        // does a file by that name actually exist?
+        if (fl_access(fn, 4)==-1) return 0;
+        // but is this an image file?
+        Fl_Image *img = Fl_Shared_Image::get(fn);
+        if (!img || (img->ld() < 0)) return 0;
+        // ok, so it is an image - now add it as image() or deimage() to the widget
+        // printf("DND check for target %s\n", fn);
+        Fl_Widget_Type *tgt = NULL;
+        for (Fl_Type* i=next; i && i->level>level; i=i->next) {
+          if (i->is_widget()) {
+            Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
+            if (Fl::event_inside(myo->o) && myo->o->visible_r())
+              tgt = myo;
+          }
+        }
+        if (tgt) {
+          char rel[FL_PATH_MAX+1];
+          enter_project_dir();
+          fl_filename_relative(rel, FL_PATH_MAX, fn);
+          leave_project_dir();
+          // printf("DND image = %s\n", fn);
+          if (Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R)) {
+          //if (Fl::event_alt()) { // TODO: X11/Wayland does not set the e_state on DND events
+            tgt->inactive_name(rel);
+            tgt->compress_deimage_ = 1;
+            tgt->bind_deimage_ = 0;
+          } else {
+            tgt->image_name(rel);
+            tgt->compress_image_ = 1;
+            tgt->bind_image_ = 0;
+          }
+          select_only(tgt);
+          tgt->open();
+        }
+        return 1;
+      }
 
       in_this_only = this;
       popupx = Fl::event_x();
