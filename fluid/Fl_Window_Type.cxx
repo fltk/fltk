@@ -1291,18 +1291,22 @@ int Fl_Window_Type::handle(int event) {
     { Fl_Type *prototype = typename_to_prototype(Fl::event_text());
       if (prototype==NULL) {
         // it's not a FLUID type, so it could be the filename of an image
-        const char *fn = Fl::event_text();
+        const char *cfn = Fl::event_text();
+	if ((cfn == NULL) || (*cfn == 0)) return 0;
+        if (strlen(cfn) >= FL_PATH_MAX) return 0;
+        char fn[FL_PATH_MAX+1];
         // some platform prepend "file://" or "computer://" or similar text
-        const char *sep = strstr(fn, "://");
-        if (sep) fn = sep;
+        const char *sep = strstr(cfn, "://");
+	if (sep)
+	  strcpy(fn, sep+3);
+	else 
+	  strcpy(fn, cfn);
+	int n = strlen(fn)-1;
+	if (fn[n] == '\n') fn[n--] = 0;
+	if (fn[n] == '\r') fn[n--] = 0;
         // on X11 and Wayland (?), filenames need to be decoded
 #if (defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND))
-        char buf[FL_PATH_MAX+1];
-        if (strlen(fn)<FL_PATH_MAX) {
-          strcpy(buf, fn);
-          fl_decode_uri(buf);
-          fn = buf;
-        }
+        fl_decode_uri(fn);
 #endif
         // does a file by that name actually exist?
         if (fl_access(fn, 4)==-1) return 0;
