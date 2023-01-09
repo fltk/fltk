@@ -560,7 +560,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
 
     int i = rdr.read_byte();
     CHECK_ERROR
-    int blocklen;
+    int blocklen = 0;
 
     if (i == 0x21) {                          // a "gif extension"
       ch = rdr.read_byte();                   // extension type
@@ -726,6 +726,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
       }
 
       delete[] Image;
+      Image = NULL;
 
       if (!anim)
          break; // okay, it is only the first image we want
