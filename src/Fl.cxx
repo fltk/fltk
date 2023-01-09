@@ -258,6 +258,9 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
   reschedule the subsequent timeouts. Please see Fl::repeat_timeout() for
   an example.
+ 
+  Since version 1.4, a timeout can be started from a child thread under the
+  condition that the call to Fl::add_timeout is wrapped in Fl::lock() and Fl::unlock().
 
   \param[in]  time    delta time in seconds until the timer expires
   \param[in]  cb      callback function

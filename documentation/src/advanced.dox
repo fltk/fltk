@@ -398,7 +398,9 @@ threads on all operating systems:
     of Fl::awake(<thing>) mechanism and use that.
     (Intermixing calls to Fl::awake() should be safe with either however.)
 
-\li Don't start or cancel timers from a worker thread
+\li Starting with FLTK 1.4, it's possible to start (or cancel) a timer from a
+    worker thread under the condition that the call to Fl::add_timeout
+    (or Fl::remove_timeout) is wrapped in Fl::lock() and Fl::unlock().
 
 \li Don't change window decorations or titles from a worker thread
 
