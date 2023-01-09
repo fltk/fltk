@@ -550,10 +550,9 @@ int Fl_X11_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int
   return 0;
 }
 
-Fl_X *Fl_X11_Window_Driver::makeWindow()
+void Fl_X11_Window_Driver::makeWindow()
 {
   Fl_X::make_xid(pWindow, fl_visual, fl_colormap);
-  return Fl_X::i(pWindow);
 }
 
 const Fl_Image* Fl_X11_Window_Driver::shape() {

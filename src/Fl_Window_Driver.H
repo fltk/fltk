@@ -141,7 +141,7 @@ public:
   virtual void make_current();
   virtual void label(const char *name, const char *mininame);
 
-  virtual Fl_X *makeWindow() { return 0; }
+  virtual void makeWindow() {}
   virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();

@@ -2006,7 +2006,7 @@ void fl_fix_focus(); // in Fl.cxx
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
-Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
+void Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
   fl_open_display();
@@ -2017,7 +2017,7 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_Window *w = pWindow;
   if (w->parent() && !Fl_X::i(w->window())) {
     w->set_visible();
-    return 0L;
+    return;
   }
 
   static NameList class_name_list;
@@ -2248,8 +2248,6 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
 
   if (!im_enabled)
     flImmAssociateContextEx((HWND)x->xid, 0, 0);
-
-  return x;
 }
 
 

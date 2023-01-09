@@ -1101,14 +1101,14 @@ static void process_menu_or_tooltip(struct wld_window *new_window) {
 }
 
 
-Fl_X *Fl_Wayland_Window_Driver::makeWindow()
+void Fl_Wayland_Window_Driver::makeWindow()
 {
   struct wld_window *new_window;
   Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
 
-  if (pWindow->parent() && !pWindow->window()) return NULL;
-  if (pWindow->parent() && !pWindow->window()->shown()) return NULL;
+  if (pWindow->parent() && !pWindow->window()) return;
+  if (pWindow->parent() && !pWindow->window()->shown()) return;
 
   new_window = (struct wld_window *)calloc(1, sizeof *new_window);
   new_window->fl_win = pWindow;
@@ -1220,7 +1220,6 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   pWindow->redraw();
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window()) pWindow->wait_for_expose();
-  return xp;
 }
 
 Fl_Wayland_Window_Driver::type_for_resize_window_between_screens Fl_Wayland_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
