@@ -1219,7 +1219,7 @@ Fl_X *Fl_Wayland_Window_Driver::makeWindow()
   Fl::e_number = old_event;
   pWindow->redraw();
   // make sure each popup is mapped with its constraints before mapping next popup
-  if (pWindow->menu_window()) wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+  if (pWindow->menu_window()) pWindow->wait_for_expose();
   return xp;
 }
 
