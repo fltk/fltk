@@ -715,14 +715,35 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
 
       // We are done reading the image, now convert to xpm (first image only)
       if (!frame) {
-        w(anim ? ScreenWidth : Width);
-        h(anim ? ScreenHeight : Height);
-        d(1);
-
-        char **new_data = convert_to_xpm(Image, Width, Height, CMap, ColorMapSize, has_transparent ? transparent_pixel : -1);
-
-        data((const char **)new_data, Height + 2);
-        alloc_data = 1;
+        if (anim && ( (Width != ScreenWidth) || (Height != ScreenHeight) )) {
+          // if we are reading this for Fl_Anim_GIF_Image, we must apply offsets
+          w(ScreenWidth);
+          h(ScreenHeight);
+          d(1);
+          uchar *moved_image = new uchar[ScreenWidth*ScreenHeight];
+          memset(moved_image, has_transparent ? transparent_pixel : 0, ScreenWidth*ScreenHeight);
+          int xstart = XPos; if (xstart < 0) xstart = 0;
+          int ystart = YPos; if (ystart < 0) ystart = 0;
+          int xmax = XPos + Width;  if (xmax > ScreenWidth)  xmax = ScreenWidth;
+          int ymax = YPos + Height; if (ymax > ScreenHeight) ymax = ScreenHeight;
+          for (int y = ystart; y<ymax; y++) {
+            uchar *src = Image + (y-YPos) * Width + (xstart-XPos);
+            uchar *dst = moved_image + y*ScreenWidth + xstart;
+            memcpy(dst, src, xmax-xstart);
+          }
+          char **new_data = convert_to_xpm(moved_image, ScreenWidth, ScreenHeight, CMap, ColorMapSize, has_transparent ? transparent_pixel : -1);
+          data((const char **)new_data, Height + 2);
+          alloc_data = 1;
+          delete[] moved_image;
+        } else {
+          // Fl_GIF_Image does not apply offsets and just show the first frame at 0, 0
+          w(Width);
+          h(Height);
+          d(1);
+          char **new_data = convert_to_xpm(Image, Width, Height, CMap, ColorMapSize, has_transparent ? transparent_pixel : -1);
+          data((const char **)new_data, Height + 2);
+          alloc_data = 1;
+        }
       }
 
       delete[] Image;
