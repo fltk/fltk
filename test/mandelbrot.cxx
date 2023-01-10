@@ -53,7 +53,7 @@ const unsigned int palette[] = {
 const size_t palette_size = sizeof(palette)/sizeof(palette[0]);
 
 void get_color(float t, uchar& r, uchar& g, uchar& b) {
-  int index = (1-t) * palette_size;
+  int index = (int)((1-t) * palette_size);
   Fl_Color c = palette[index % palette_size] << 8;
   Fl::get_color(c, r, g, b);
 }
@@ -174,7 +174,7 @@ int Drawing_Area::idle() {
           wx = t = 1-double(i)/(1<<10);
           if (t <= 0) t = 0; else for (i=brightness; i--;) t*=wx;
           if (use_colors) {
-            get_color(t, *p, *(p+1), *(p+2));
+            get_color((float)t, *p, *(p+1), *(p+2));
           } else {
             *p = 255 - int(254*t);
           }

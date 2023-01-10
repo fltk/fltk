@@ -1280,7 +1280,6 @@ int Fl_Window_Type::handle(int event) {
               reveal_in_browser(myo);
           }
         }
-    CONTINUE_DND:
       if (selection && !selection->selected) {
         select_only(selection);
         ((Overlay_Window *)o)->redraw_overlay();
