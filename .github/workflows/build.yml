@@ -36,7 +36,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_WAYLAND=OFF
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOPTION_USE_WAYLAND=OFF -DCMAKE_CXX_STANDARD=98 -DCMAKE_CXX_EXTENSIONS=OFF -DCMAKE_C_FLAGS_INIT="-Wall -Wunused" -DCMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -66,7 +66,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=11 -DCMAKE_CXX_EXTENSIONS=OFF -DCMAKE_C_FLAGS_INIT="-Wall -Wunused" -DCMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -97,7 +97,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=20 -DCMAKE_CXX_EXTENSIONS=OFF -DCMAKE_C_FLAGS_INIT="-Wall -Wunused" -DCMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
