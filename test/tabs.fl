@@ -12,14 +12,14 @@ Function {} {open
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs tabs_group {open
+    Fl_Tabs tabs_group {open selected
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
-      code0 {//o->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
+      code0 {// tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
     } {
       Fl_Group {} {
         label {Label&1}
         callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
-  o->parent()->remove(o);} selected
+  o->parent()->remove(o);}
         tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 when 16 resizable
       } {
         Fl_Input {} {
