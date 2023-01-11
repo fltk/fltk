@@ -72,6 +72,7 @@ set (CPPFILES
   Fl_Return_Button.cxx
   Fl_Roller.cxx
   Fl_Round_Button.cxx
+  Fl_Scheme.cxx
   Fl_Screen_Driver.cxx
   Fl_Scroll.cxx
   Fl_Scrollbar.cxx

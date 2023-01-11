@@ -76,6 +76,7 @@ CPPFILES = \
 	Fl_Roller.cxx \
 	Fl_Round_Button.cxx \
 	Fl_Screen_Driver.cxx \
+	Fl_Scheme.cxx \
 	Fl_Scroll.cxx \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
