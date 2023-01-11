@@ -55,6 +55,7 @@
 #  endif
 
 #  ifdef __APPLE__ // PORTME: OpenGL path abstraction
+#  define GL_SILENCE_DEPRECATION 1
 #    if !defined(__gl3_h_) // make sure OpenGL/gl3.h was not included before
 #      include <OpenGL/gl.h>
 #    endif

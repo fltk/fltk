@@ -25,6 +25,9 @@
 
 #ifdef __OBJC__
   @class NSOpenGLContext;
+#  ifndef GL_SILENCE_DEPRECATION
+#    define GL_SILENCE_DEPRECATION 1
+#  endif
 #elif defined(__cplusplus)
   class NSOpenGLContext;
 #endif /* __OBJC__ */
