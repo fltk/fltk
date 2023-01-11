@@ -56,8 +56,11 @@
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
 #if HAVE_XRENDER
-#include <X11/extensions/Xrender.h>
-#endif
+#  include <X11/extensions/Xrender.h>
+#  if RENDER_MAJOR * 100 + RENDER_MAJOR < 10
+#    define RepeatPad  2
+#  endif
+#endif // HAVE_XRENDER
 
 static XImage xi;       // template used to pass info to X
 static int bytes_per_pixel;
@@ -806,8 +809,10 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   static XRenderPictFormat *dstfmt = XRenderFindVisualFormat(fl_display, fl_visual->visual);
-  Picture src = XRenderCreatePicture(fl_display, (Pixmap)pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
+  srcattr.repeat = RepeatPad;
+  Picture src = XRenderCreatePicture(fl_display, (Pixmap)pixmap, has_alpha ?fmt32:fmt24,
+                                     CPRepeat, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, 0);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
     return 0;
@@ -824,10 +829,7 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
-    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR &&
-          !Fl_Tiled_Image::drawing_tiled_image()) {
-      // The filter is not used when drawing tiled images because drawn image edges
-      // become somewhat blurry.
+    if (Fl_Image::scaling_algorithm() == FL_RGB_SCALING_BILINEAR) {
       XRenderSetPictureFilter(fl_display, src, FilterBilinear, 0, 0);
       // A note at  https://www.talisman.org/~erlkonig/misc/x11-composite-tutorial/ :
       // "When you use a filter you'll probably want to use PictOpOver as the render op,

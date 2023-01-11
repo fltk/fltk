@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,10 +69,12 @@ const char      *Fl::e_clipboard_type = "";
 void            *Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
+Fl_Callback_Reason Fl::callback_reason_ = FL_REASON_UNKNOWN;
 
 unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
 
+int             Fl::selection_to_clipboard_ = 0;
 
 Fl_Window       *fl_xfocus = NULL; // which window X thinks has focus
 Fl_Window       *fl_xmousewin;     // which window X thinks has FL_ENTER
@@ -256,6 +258,9 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
   reschedule the subsequent timeouts. Please see Fl::repeat_timeout() for
   an example.
+ 
+  Since version 1.4, a timeout can be started from a child thread under the
+  condition that the call to Fl::add_timeout is wrapped in Fl::lock() and Fl::unlock().
 
   \param[in]  time    delta time in seconds until the timer expires
   \param[in]  cb      callback function
@@ -665,6 +670,17 @@ int Fl::check() {
 int Fl::ready()
 {
   return system_driver()->ready();
+}
+
+/** Hide all visible window to make FLTK leav Fl::run().
+ Fl:run() will run as long as there are visible windows. Call hide_all_windows()
+ will hide all windows, effectively terminating the Fl::run() loop.
+ \see Fl::run()
+ */
+void Fl::hide_all_windows() {
+  while (Fl::first_window()) {
+    Fl::first_window()->hide();
+  }
 }
 
 int Fl::program_should_quit_ = 0;
@@ -1173,6 +1189,14 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
   return ret;
 }
 
+/**
+ \brief Give the reason for calling a callback.
+ \return the reason for the current callback
+ \see Fl_Widget::when(), Fl_Widget::do_callback(), Fl_Widget::callback()
+ */
+Fl_Callback_Reason Fl::callback_reason() {
+  return callback_reason_;
+}
 
 /**
  \brief Set a new event dispatch function.
@@ -1258,6 +1282,8 @@ int Fl::handle(int e, Fl_Window* window)
  another dispatch function. In that case, the user dispatch function must
  decide when to call Fl::handle_(int, Fl_Window*)
 
+ Callbacks can set \p FL_REASON_CLOSED and \p FL_REASON_CANCELLED.
+
  \param e the event type (Fl::event_number() is not yet set)
  \param window the window that caused this event
  \return 0 if the event was not handled
@@ -1275,7 +1301,7 @@ int Fl::handle_(int e, Fl_Window* window)
 
   case FL_CLOSE:
     if ( grab() || (modal() && window != modal()) ) return 0;
-    wi->do_callback();
+    wi->do_callback(FL_REASON_CLOSED);
     return 1;
 
   case FL_SHOW:
@@ -1425,7 +1451,7 @@ int Fl::handle_(int e, Fl_Window* window)
     // make Escape key close windows:
     if (event_key()==FL_Escape) {
       wi = modal(); if (!wi) wi = window;
-      wi->do_callback();
+      wi->do_callback(FL_REASON_CANCELLED);
       return 1;
     }
 

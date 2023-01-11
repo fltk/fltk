@@ -1,7 +1,7 @@
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -587,3 +587,59 @@ void fl_draw_check(Fl_Rect bb, Fl_Color col) {
   fl_color(saved_color);
 
 } // fl_draw_check()
+
+/**
+  Draw a potentially small, filled circle as a GUI element.
+
+  This method draws a filled circle, using fl_pie() if the given diameter
+  \p d is larger than 6 pixels (aka FLTK units).
+
+  If \p d is 6 or smaller it approximates a filled circle by drawing several
+  filled rectangles, depending on the size because fl_pie() might not draw
+  well on many systems for smaller sizes.
+
+  \param[in]  x0,y0   coordinates of top left of the bounding box
+  \param[in]  d       diameter == width and height of the bounding box
+  \param[in]  color   drawing color
+*/
+void fl_draw_circle(int x0, int y0, int d, Fl_Color color) {
+
+#define DEBUG_DRAW_CIRCLE (0) // bit 1 = draw bounding box (green)
+
+  Fl_Color saved_color = fl_color();
+
+#if (DEBUG_DRAW_CIRCLE & 1)
+  fl_rectf(x0, y0, d, d, FL_GREEN);
+#endif
+
+  // draw the circle
+
+  switch (d) {
+    // Larger circles draw fine...
+    default:
+      fl_pie(x0, y0, d, d, 0.0, 360.0);
+      break;
+
+    // Small circles don't draw well on many systems...
+    case 6:
+      fl_rectf(x0 + 2, y0, d - 4, d);
+      fl_rectf(x0 + 1, y0 + 1, d - 2, d - 2);
+      fl_rectf(x0, y0 + 2, d, d - 4);
+      break;
+
+    case 5:
+    case 4:
+    case 3:
+      fl_rectf(x0 + 1, y0, d - 2, d);
+      fl_rectf(x0, y0 + 1, d, d - 2);
+      break;
+
+    case 2:
+    case 1:
+      fl_rectf(x0, y0, d, d);
+      break;
+  }
+
+  fl_color(saved_color);
+
+} // fl_draw_circle()

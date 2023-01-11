@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -144,6 +144,7 @@ private:
   static int draw_GL_text_with_textures_;
   static int box_shadow_width_;
   static int box_border_radius_max_;
+  static int selection_to_clipboard_;
 
 public:
 
@@ -202,6 +203,7 @@ public: // should be private!
   static void *e_clipboard_data;
   static const char *e_clipboard_type;
   static Fl_Event_Dispatch e_dispatch;
+  static Fl_Callback_Reason callback_reason_;
   static Fl_Widget* belowmouse_;
   static Fl_Widget* pushed_;
   static Fl_Widget* focus_;
@@ -452,6 +454,7 @@ public:
    \version 1.4.0
    */
   static void program_should_quit(int should_i) { program_should_quit_ = should_i; }
+  static void hide_all_windows();
 
   static Fl_Widget* readqueue();
 
@@ -847,6 +850,7 @@ public:
   static void remove_system_handler(Fl_System_Handler h);
   static void event_dispatch(Fl_Event_Dispatch d);
   static Fl_Event_Dispatch event_dispatch();
+  static Fl_Callback_Reason callback_reason();
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions
@@ -868,7 +872,86 @@ public:
    To copy graphical data, use the Fl_Copy_Surface class. The \p type argument may allow
    in the future to copy other kinds of data.
   */
-  static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
+
+  /**
+    Copies data to the selection buffer, the clipboard, or both.
+
+    The \p destination can be:
+     - 0: selection buffer (see note below)
+     - 1: clipboard
+     - 2: both
+
+    The selection buffer exists only on the X11 platform and is used for middle-mouse
+    pastes and for drag-and-drop selections. The clipboard is used for traditional
+    copy/cut/paste operations. On all other platforms the selection buffer
+    (\p destination = 0) is mapped to the clipboard, i.e. on platforms other than X11
+    all \p destinations are equivalent and the data is always copied to the clipboard.
+
+    \note Please see Fl::section_to_clipboard() to enable duplication of the
+      selection buffer to the clipboard on X11, i.e. if \p destination = 0
+      (selection buffer) \b and Fl::selection_to_clipboard() is enabled, then
+      the data is copied to both the selection buffer and the clipboard.
+      This makes the X11 behavior similar to other platforms but keeps the
+      selection buffer for X11 specific inter process communication.
+
+    \p type should always be \p Fl::clipboard_plain_text which is the default.
+    Other values are ignored and reserved for future extensions.
+
+    \note This function is, at present, intended only to copy UTF-8 encoded
+      textual data. To copy graphical data, use the Fl_Copy_Surface class.
+      The \p type argument may allow to copy other kinds of data in the future.
+
+    \param[in]  stuff       text data to be copied
+    \param[in]  len         the number of relevant bytes in \p stuff
+    \param[in]  destination 0 = selection, 1 = clipboard, 2 = both (see description)
+    \param[in]  type        usually plain text (see description)
+
+    \internal
+      Documented here because it is platform dependent (calls the platform driver):
+    \code
+      Fl::screen_driver()->copy(stuff, len, clipboard, type);
+    \endcode
+  */
+  static void copy(const char *stuff, int len, int destination = 0,
+                   const char *type = Fl::clipboard_plain_text);
+
+  /**
+    Copies selections on X11 directly to the clipboard if enabled.
+
+    This method can be called on all platforms. Other platforms than X11 are
+    not affected by this feature.
+
+    If this is switched on (\p mode = 1), Fl::copy() copies all data to the
+    clipboard regardless of its \p destination argument. If the destination is 0
+    (selection buffer) data is copied to both the selection buffer and the clipboard.
+
+    Drag and drop is also affected since drag-and-drop data is copied to the selection
+    buffer.
+
+    You can use this to make the experience of data selection and copying more like
+    that on other platforms (Windows, macOS, and even Wayland).
+
+    The default operation mode is the standard X11 behavior (disabled).
+
+    \note This feature is experimental and enabling it may have unexpected side effects.
+      It is your own responsibility if you enable it.
+
+    \since 1.4.0
+
+    \param[in]  mode  1 = enable selection_to_clipboard, 0 = disable selection_to_clipboard
+
+    \see copy(const char *, int, int, const char *)
+  */
+  static void selection_to_clipboard(int mode) {
+    selection_to_clipboard_ = mode ? 1 : 0;
+  }
+
+  /**
+    \brief Returns the current selection_to_clipboard mode.
+
+    \see void selection_to_clipboard(int)
+  */
+  static int selection_to_clipboard() { return selection_to_clipboard_; }
 
   /**
    Pastes the data from the selection buffer (\p source is 0) or the clipboard

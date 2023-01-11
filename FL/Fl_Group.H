@@ -47,6 +47,11 @@ class Fl_Rect;
   \endcode
   ..and this will trigger proper scheduling of the widget's removal
   from its parent group.
+
+  If used as a child of \p Fl_Tabs, setting \p when(FL_WHEN_CLOSED) will
+  enable the Close button in the corresponding tab. If the user clicks the
+  Close button, the callback of this group will be called with the callback
+  reason \p FL_REASON_CLOSED.
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 

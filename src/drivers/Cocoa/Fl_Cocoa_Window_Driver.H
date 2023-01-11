@@ -115,7 +115,7 @@ public:
   const Fl_Image* shape() FL_OVERRIDE;
 
   // --- window management
-  Fl_X *makeWindow() FL_OVERRIDE;
+  void makeWindow() FL_OVERRIDE;
   void take_focus() FL_OVERRIDE;
   void flush() FL_OVERRIDE;
   void flush_overlay() FL_OVERRIDE;

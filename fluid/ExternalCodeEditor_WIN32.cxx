@@ -159,8 +159,8 @@ void ExternalCodeEditor::close_editor() {
       case -2:  // no editor running (unlikely to happen)
         return;
       case -1:  // error
-        fl_alert("Error reaping external editor\n"
-                 "pid=%ld file=%s", long(pinfo_.dwProcessId), filename());
+        fl_alert("Error reaping external editor\npid=%ld file=%s\nOS error message=%s",
+                 long(pinfo_.dwProcessId), filename(), get_ms_errmsg());
         break;
       case 0:   // process still running
         switch ( fl_choice("Please close external editor\npid=%ld file=%s",
@@ -492,9 +492,8 @@ void ExternalCodeEditor::reap_cleanup() {
 int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
   if ( pid_reaped ) *pid_reaped = 0;
   if ( !is_editing() ) return -2;
-  DWORD err;
   DWORD msecs_wait = 50;   // .05 sec
-  switch ( err = WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
+  switch ( WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
     case WAIT_TIMEOUT: {   // process didn't reap, still running
       return 0;
     }

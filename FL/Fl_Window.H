@@ -48,6 +48,9 @@ class Fl_Double_Window;
   The window's callback is done if the user tries to close a window
   using the window manager and Fl::modal() is zero or equal to the
   window. Fl_Window has a default callback that calls Fl_Window::hide().
+  Callback reasons can be \p FL_REASON_CANCELLED if the Escape key was pressed,
+  or \p FL_REASON_CLOSED when the close button is clicked. \p FL_WHEN_...
+  flags are ignored.
 */
 class FL_EXPORT Fl_Window : public Fl_Group {
   friend int Fl::arg(int argc, char **argv, int &i);

@@ -26,6 +26,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
+#include <FL/Fl_Int_Vector.H>
 #include "../../print_button.h"
 #include <dlfcn.h>
 #include <linux/input.h>
@@ -130,6 +131,8 @@ struct pointer_output {
    - hide() empties the list
    - Fl_Wayland_Window_Driver::update_scale() sets the scale info of the records for a given window
  */
+
+static Fl_Int_Vector key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
 
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::unspecified;
 
@@ -647,6 +650,23 @@ static dead_key_struct dead_keys[] = {
 
 const int dead_key_count = sizeof(dead_keys)/sizeof(struct dead_key_struct);
 
+
+static int search_int_vector(Fl_Int_Vector& v, int val) {
+  for (int pos = 0; pos < v.size(); pos++) {
+    if (v[pos] == val) return pos;
+  }
+  return -1;
+}
+
+
+static void remove_int_vector(Fl_Int_Vector& v, int val) {
+  int pos = search_int_vector(v, val);
+  if (pos < 0) return;
+  int last = v.pop_back();
+  if (last != val) v[pos] = last;
+}
+
+
 static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
@@ -655,15 +675,28 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   static char buf[128];
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(seat->xkb_state, keycode);
+  if (sym >= 'A' && sym <= 'Z') sym += 32; // replace uppercase by lowercase letter
 /*xkb_keysym_get_name(sym, buf, sizeof(buf));
 const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
 fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Screen_Driver::surface_to_window(seat->keyboard_surface));*/
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
   Fl::e_keysym = sym;
+  int for_key_vector = sym; // for support of Fl::event_key(int)
   // special processing for number keys == keycodes 10-19 :
-  if (keycode >= 10 && keycode <= 18) Fl::e_keysym = keycode + 39;
-  else if (keycode == 19) Fl::e_keysym = 48;
+  if (keycode >= 10 && keycode <= 18) {
+    Fl::e_keysym = keycode + 39;
+    for_key_vector = '1' + (keycode - 10);
+  } else if (keycode == 19) {
+    Fl::e_keysym = '0';
+    for_key_vector = '0';
+  }
+  if (for_key_vector >= 'a' && for_key_vector <= 'z') for_key_vector -= 32;
+  if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+    if (search_int_vector(key_vector, for_key_vector) < 0) key_vector.push_back(for_key_vector);
+  } else {
+    remove_int_vector(key_vector, for_key_vector);
+  }
   Fl::e_text = buf;
   Fl::e_length = strlen(buf);
   // Process dead keys and compose sequences :
@@ -724,6 +757,7 @@ static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
   seat->keyboard_surface = NULL;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
   if (win) Fl::handle(FL_UNFOCUS, win);
+  key_vector.size(0);
 }
 
 static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
@@ -946,7 +980,7 @@ static struct wl_output_listener output_listener = {
 
 static void registry_handle_global(void *user_data, struct wl_registry *wl_registry,
            uint32_t id, const char *interface, uint32_t version) {
-//fprintf(stderr, "interface=%s\n", interface);
+//fprintf(stderr, "interface=%s version=%u\n", interface, version);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (strcmp(interface, "wl_compositor") == 0) {
     if (version < 4) {
@@ -1538,12 +1572,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::event_key(int k) {
-  if (k > FL_Button && k <= FL_Button+8)
-    return Fl::event_state(8<<(k-FL_Button));
-  int sym = Fl::event_key();
-  if (sym >= 'a' && sym <= 'z' ) sym -= 32;
-  if (k >= 'a' && k <= 'z' )  k -= 32;
-  return (Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT) && sym == k;
+  return (search_int_vector(key_vector, k) >= 0);
 }
 
 

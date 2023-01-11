@@ -5,19 +5,22 @@ code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {
-    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open selected
-    xywh {516 38 660 400} type Double hide resizable
+    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open
+    xywh {330 402 660 400} type Double resizable visible
   } {
     Fl_Box {} {
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs {} {open
+    Fl_Tabs tabs_group {open selected
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
+      code0 {// tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
     } {
       Fl_Group {} {
         label {Label&1}
-        tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 resizable
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
+        tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 when 16 resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -35,7 +38,9 @@ Function {} {open
       }
       Fl_Group {} {
         label {tab&2}
-        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 60 315 235} selection_color 2 hide
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
+        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 60 315 235} selection_color 2 when 16 hide
       } {
         Fl_Button {} {
           label button1
@@ -61,7 +66,9 @@ Function {} {open
       }
       Fl_Group {} {
         label {tab&3}
-        tooltip {tab3 checks for correct keyboard navigation} xywh {10 60 315 235} selection_color 3 hide
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
+        tooltip {tab3 checks for correct keyboard navigation} xywh {10 60 315 235} selection_color 3 when 16 hide
       } {
         Fl_Button {} {
           label button2
@@ -78,7 +85,9 @@ Function {} {open
       }
       Fl_Group {} {
         label {&tab4}
-        tooltip {this tab shows the issue of indicating a selected tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 hide
+        callback {if (Fl::callback_reason()==FL_REASON_CLOSED)
+  o->parent()->remove(o);}
+        tooltip {this tab shows the issue of indicating a selected tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 when 16 hide
       } {
         Fl_Button {} {
           label button2
@@ -265,12 +274,53 @@ wWizard->value(wWizard->child(last));}
         tooltip {go to last page [End]} xywh {510 305 30 25} shortcut 0xff57
       }
     }
-    Fl_Input {} {
-      label {inputA:}
-      xywh {60 310 130 25}
+    Fl_Button {} {
+      label {add tab}
+      callback {static int n = 6;
+int X = tabs_group->x(), Y = tabs_group->y()+25;
+int W = tabs_group->w(), H = tabs_group->h()-25;
+Fl_Group::current(NULL);
+char buf[64];
+snprintf(buf, 62, "tab%d", n);
+Fl_Group* new_tab = new Fl_Group(X, Y, W, H);
+new_tab->copy_label(buf);
+new_tab->when(FL_WHEN_CLOSED);
+new_tab->callback((Fl_Callback*)cb_tab);
+snprintf(buf, 62, "Empty tab %d.", n);
+Fl_Box* box = new Fl_Box(X+5, Y+5, W-10, H-10);
+box->copy_label(buf);
+box->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
+tabs_group->add(new_tab);
+n++;}
+      tooltip {Add more tabs to check overflow handling.} xywh {60 309 70 25}
+    }
+    Fl_Choice {} {
+      label {overflow:} open
+      tooltip {Change how Fl_Tabs handles more tabs than fit into the tabs space.} xywh {212 309 95 25} down_box BORDER_BOX
+    } {
+      MenuItem {} {
+        label compress
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_COMPRESS);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label clip
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_CLIP);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label pulldown
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label drag
+        callback {tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_DRAG);}
+        xywh {0 0 31 20}
+      }
     }
     Fl_Input {} {
-      label {inputB:}
+      label {input:}
       xywh {60 345 250 25}
     }
     Fl_Button {} {

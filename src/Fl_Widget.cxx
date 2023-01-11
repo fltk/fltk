@@ -365,28 +365,33 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
 
 /** Calls the widget callback function with arbitrary arguments.
 
-  All overloads of do_callback() call this method.
-  It does nothing if the widget's callback() is NULL.
-  It clears the widget's \e changed flag \b after the callback was
-  called unless the callback is the default callback. Hence it is not
-  necessary to call clear_changed() after calling do_callback()
-  in your own widget's handle() method.
+ All overloads of do_callback() call this method.
+ It does nothing if the widget's callback() is NULL.
+ It clears the widget's \e changed flag \b after the callback was
+ called unless the callback is the default callback. Hence it is not
+ necessary to call clear_changed() after calling do_callback()
+ in your own widget's handle() method.
 
-  \note It is legal to delete the widget in the callback (i.e. in user code),
-        but you must not access the widget in the handle() method after
-        calling do_callback() if the widget was deleted in the callback.
-        We recommend to use Fl_Widget_Tracker to check whether the widget
-        was deleted in the callback.
+ A \p reason must be set for widgets if different actions can trigger
+ the same callback.
 
-  \param[in] widget call the callback with \p widget as the first argument
-  \param[in] arg use \p arg as the user data (second) argument
+ \note It is legal to delete the widget in the callback (i.e. in user code),
+ but you must not access the widget in the handle() method after
+ calling do_callback() if the widget was deleted in the callback.
+ We recommend to use Fl_Widget_Tracker to check whether the widget
+ was deleted in the callback.
 
-  \see default_callback()
-  \see callback()
-  \see class Fl_Widget_Tracker
-*/
+ \param[in] widget call the callback with \p widget as the first argument
+ \param[in] arg use \p arg as the user data (second) argument
+ \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
 
-void Fl_Widget::do_callback(Fl_Widget *widget, void *arg) {
+ \see default_callback()
+ \see callback()
+ \see class Fl_Widget_Tracker
+ \see Fl::callback_reason()
+ */
+void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason) {
+  Fl::callback_reason_ = reason;
   if (!callback_) return;
   Fl_Widget_Tracker wp(this);
   callback_(widget, arg);

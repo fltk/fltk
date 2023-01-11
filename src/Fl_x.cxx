@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -807,13 +807,19 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 ////////////////////////////////////////////////////////////////
 // Code for copying to clipboard and DnD out of the program:
 
+// See Fl::copy() for possible values of the destination (argument clipboard)
+// See also Fl::selection_to_clipboard()
 void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
 
+  // if selection_to_clipboard is enabled *and* destination is 0 (selection buffer),
+  // then copy to both (STR 3229)
+  if (clipboard == 0 && Fl::selection_to_clipboard())
+    clipboard = 2;
+
   if (clipboard >= 2) {
-    copy(stuff, len, 0, type);
-    copy(stuff, len, 1, type);
-    return;
+    copy(stuff, len, 1, type);  // copy to clipboard first (this is a recursion!)
+    clipboard = 0;              // ... and then to selection buffer: fall through
   }
 
   if (len+1 > fl_selection_buffer_length[clipboard]) {

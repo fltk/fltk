@@ -197,7 +197,7 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
   }
   e->show_insert_position();
   e->set_changed();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(FL_REASON_CHANGED);
 
   free(text);
 

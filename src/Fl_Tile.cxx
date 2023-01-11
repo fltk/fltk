@@ -269,8 +269,12 @@ int Fl_Tile::handle(int event) {
     } else
       newy = sy;
     position(sx,sy,newx,newy);
-    if (event == FL_DRAG) set_changed();
-    do_callback();
+    if (event == FL_DRAG) {
+      set_changed();
+      do_callback(FL_REASON_DRAGGED);
+    } else {
+      do_callback(FL_REASON_CHANGED);
+    }
     return 1;}
 
   }

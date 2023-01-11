@@ -20,8 +20,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 
-bool Fl_Tiled_Image::drawing_tiled_image_ = false;
-
 /**
   The constructors create a new tiled image containing the specified image.
   Use a width and height of 0 to tile the whole window/widget.
@@ -183,7 +181,6 @@ Fl_Tiled_Image::draw(int X,     // I - Starting X position
   if (W == 0 || H == 0) return;
 
   fl_push_clip(X, Y, W, H);
-  drawing_tiled_image_ = true;
 
   if (cx > 0) iw -= cx;         // crop image
   if (cy > 0) ih -= cy;
@@ -197,6 +194,5 @@ Fl_Tiled_Image::draw(int X,     // I - Starting X position
       }
     }
   }
-  drawing_tiled_image_ = false;
   fl_pop_clip();
 }

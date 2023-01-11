@@ -53,6 +53,12 @@
   accessing image data or doing stat() on a file or doing some
   other slow operation.
 
+  Callbacks are called when the value changes with \p FL_REASON_CHANGED.
+  If \p FL_WHEN_RELEASE is set, callbacks are called when the mouse button is
+  released with \p FL_REASON_CHANGED or \p FL_REASON_RESELECTED if the selection
+  did not change. If \p FL_WHEN_ENTER_KEY is set, callbacks are also called when
+  key presses or double clicks change the selection.
+
 Keyboard navigation of browser items
 ------------------------------------
 

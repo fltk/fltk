@@ -104,6 +104,9 @@ public:
   available colors, leaving you no space to exactly represent the color the
   user picks! You can however use fl_rectf() to fill a region with a simulated
   color using dithering.
+
+  Callback reasons can be \c FL_REASON_DRAGGED, \c FL_REASON_CHANGED, or
+  \c FL_REASON_RESELECTED.
  */
 /** @} */
 class FL_EXPORT Fl_Color_Chooser : public Fl_Group {

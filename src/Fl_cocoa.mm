@@ -2854,7 +2854,7 @@ void Fl_Cocoa_Window_Driver::flush()
 /*
  * go ahead, create that (sub)window
  */
-Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
+void Fl_Cocoa_Window_Driver::makeWindow()
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   Fl_Group::current(0);
@@ -3070,7 +3070,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   // if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
   if (!w->parent()) [myview did_view_resolution_change]; // to set mapped_to_retina to its current state
   [pool release];
-  return x;
 }
 
 void Fl_Cocoa_Window_Driver::fullscreen_on() {

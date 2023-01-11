@@ -52,7 +52,7 @@ int Fl_Return_Button::handle(int event) {
   if (event == FL_SHORTCUT &&
       (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)) {
     simulate_key_action();
-    do_callback();
+    do_callback(FL_REASON_SELECTED);
     return 1;
   } else
     return Fl_Button::handle(event);

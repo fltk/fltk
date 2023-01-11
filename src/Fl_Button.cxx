@@ -100,12 +100,12 @@ int Fl_Button::handle(int event) {
       value_ = newval;
       set_changed();
       redraw();
-      if (when() & FL_WHEN_CHANGED) do_callback();
+      if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
     }
     return 1;
   case FL_RELEASE:
     if (value_ == oldval) {
-      if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+      if (when() & FL_WHEN_NOT_CHANGED) do_callback(FL_REASON_SELECTED);
       return 1;
     }
     set_changed();
@@ -116,11 +116,11 @@ int Fl_Button::handle(int event) {
       set_changed();
       if (when() & FL_WHEN_CHANGED) {
         Fl_Widget_Tracker wp(this);
-        do_callback();
+        do_callback(FL_REASON_CHANGED);
         if (wp.deleted()) return 1;
       }
     }
-    if (when() & FL_WHEN_RELEASE) do_callback();
+    if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
@@ -150,16 +150,16 @@ int Fl_Button::handle(int event) {
       if (type() == FL_RADIO_BUTTON) {
         if (!value_) {
           setonly();
-          if (when() & FL_WHEN_CHANGED) do_callback();
+          if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
         }
       } else if (type() == FL_TOGGLE_BUTTON) {
         value(!value());
-        if (when() & FL_WHEN_CHANGED) do_callback();
+        if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
       } else {
         simulate_key_action();
       }
       if (wp.deleted()) return 1;
-      if (when() & FL_WHEN_RELEASE) do_callback();
+      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
       return 1;
     }
     /* FALLTHROUGH */
@@ -205,6 +205,11 @@ void Fl_Button::key_release_timeout(void *d)
   using the normal (OFF) box type by using fl_down(box()).
 
   Derived classes may handle this differently.
+
+  A button may reequest callbacks with \p whne() \p FL_WHEN_CHANGED,
+  \p FL_WHEN_NOT_CHANGED, and \p FL_WHEN_RELEASE, triggering the callback
+  reasons \p FL_REASON_CHANGED, \p FL_REASON_SELECTED,
+  and \p FL_REASON_DESELECTED.
 
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
