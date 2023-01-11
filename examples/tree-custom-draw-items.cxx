@@ -2,7 +2,7 @@
 //      Demonstrate Fl_Tree custom item draw callback. - erco 11/09/2013
 //
 // Copyright 2013 Greg Ercolano.
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tree.H>
+#include <FL/Fl_Scheme_Choice.H>
 
 #ifndef MAX
 #define MAX(a,b) ((a)>(b))?(a):(b)
@@ -77,9 +78,11 @@ public:
       }
     }
     // Render the label
+    int dx = Fl::box_dx(prefs().selectbox()) + 1;
+    int dw = Fl::box_dw(prefs().selectbox()) + 2;
     if ( render ) {
       fl_color(fg);
-      if ( label() ) fl_draw(label(), X,Y,W,H, FL_ALIGN_LEFT);
+      if ( label() ) fl_draw(label(), X+dx, Y, W-dw, H, FL_ALIGN_LEFT);
     }
     int lw=0, lh=0;
     if ( label() ) {
@@ -117,12 +120,13 @@ void Timer_CB(void *data) {
 }
 
 int main(int argc, char *argv[]) {
-  Fl::scheme("gtk+");
-  Fl_Double_Window *win = new Fl_Double_Window(350, 400, "Tree Custom Draw Items");
+  Fl::scheme("gtk+"); // default scheme: can be overridden by commandline
+  Fl_Tree *tree = 0;
+  Fl_Double_Window *win = new Fl_Double_Window(350, 450, "Tree Custom Draw Items");
   win->begin();
   {
     // Create the tree
-    Fl_Tree *tree = new Fl_Tree(0, 0, win->w(), win->h());
+    tree = new Fl_Tree(0, 0, win->w(), win->h() - 50);
     tree->showroot(0);                          // don't show root of tree
     tree->selectmode(FL_TREE_SELECT_MULTI);     // multiselect
 
@@ -166,11 +170,23 @@ int main(int argc, char *argv[]) {
     // Start with some items closed
     tree->close("Superjail");
 
+    // Optional: set a "special" selection color (light blue)
+    tree->selection_color(0xcceeff00);
+
+    // Optional: set a "special" box type for the selection box
+
+    tree->selectbox(FL_THIN_UP_BOX);
+
+    // Create the scheme choice box
+
+    new Fl_Scheme_Choice((win->w() - 130) / 2, win->h() - 40, 130, 30, "Scheme: ");
+
     // Set up a timer to keep time in tree updated
     Fl::add_timeout(0.2, Timer_CB, (void*)tree);
   }
   win->end();
-  win->resizable(win);
+  win->resizable(tree);
+  win->size_range(300, 350);
   win->show(argc, argv);
   return(Fl::run());
 }
