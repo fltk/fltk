@@ -1136,7 +1136,7 @@ static bool process_menu_or_tooltip(struct wld_window *new_window) {
 void Fl_Wayland_Window_Driver::makeWindow()
 {
   struct wld_window *new_window;
-  bool is_floatingtitle;
+  bool is_floatingtitle = false;
   Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
 

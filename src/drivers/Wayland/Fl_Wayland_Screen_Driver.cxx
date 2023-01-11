@@ -652,7 +652,7 @@ const int dead_key_count = sizeof(dead_keys)/sizeof(struct dead_key_struct);
 
 
 static int search_int_vector(Fl_Int_Vector& v, int val) {
-  for (int pos = 0; pos < v.size(); pos++) {
+  for (unsigned pos = 0; pos < v.size(); pos++) {
     if (v[pos] == val) return pos;
   }
   return -1;
