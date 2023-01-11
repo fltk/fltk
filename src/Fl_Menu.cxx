@@ -123,8 +123,9 @@ class menutitle : public window_with_items {
   void draw() FL_OVERRIDE;
 public:
   menutitle *extra; // additional menutitle window when the 1st one is covered by a menuwindow
-  menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*);
+  menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*, bool menubar = false);
   ~menutitle();
+  bool in_menubar;
 };
 
 // each vertical menu has one of these:
@@ -136,6 +137,7 @@ class menuwindow : public window_with_items {
   int handle_part1(int);
   int handle_part2(int e, int ret);
   static Fl_Window *parent_;
+  static int display_height_;
 public:
   menutitle* title;
   int handle(int) FL_OVERRIDE;
@@ -160,6 +162,7 @@ public:
 };
 
 Fl_Window *menuwindow::parent_ = NULL;
+int menuwindow::display_height_ = 0;
 
 /**
  \cond DriverDev
@@ -167,8 +170,10 @@ Fl_Window *menuwindow::parent_ = NULL;
  \{
  */
 
-/** The Fl_Window from which currently displayed popups originate. */
-Fl_Window *Fl_Window_Driver::menu_parent() {
+/** The Fl_Window from which currently displayed popups originate.
+ Optionally, gives also the height of the display containing this window */
+Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
+  if (display_height) *display_height = menuwindow::display_height_;
   return menuwindow::parent_;
 }
 
@@ -207,6 +212,13 @@ int Fl_Window_Driver::menu_selected(Fl_Window *win) {
   if (!win->menu_window()) return 0;
   menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
   return (mwin ? mwin->selected : -1);
+}
+
+/** Returns whether win is a non-menubar menutitle */
+bool Fl_Window_Driver::is_floating_title(Fl_Window *win) {
+  if (!win->menu_window()) return false;
+  Fl_Window *mwin = ((window_with_items*)win)->as_menuwindow();
+  return !mwin && !((menutitle*)win)->in_menubar;
 }
 
 /** Create a menutitle window with same content and size as another one and another ordinate.
@@ -336,13 +348,14 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   fl_draw_shortcut = 0;
 }
 
-menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
+menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L, bool inbar) :
   window_with_items(X, Y, W, H, L) {
   end();
   set_modal();
   clear_border();
   set_menu_window();
   extra = NULL;
+  in_menubar = inbar;
 }
 
 menutitle::~menutitle() {
@@ -476,7 +489,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
     if (menubar_title) {
       int dy = Fl::box_dy(button->box())+1;
       int ht = button->h()-dy*2;
-      title = new menutitle(tx, ty-ht-dy, Wtitle, ht, t);
+      title = new menutitle(tx, ty-ht-dy, Wtitle, ht, t, true);
     } else {
       int dy = 2;
       int ht = Htitle+2*BW+3;
@@ -681,6 +694,14 @@ struct menustate {
   int is_inside(int mx, int my);
 };
 static menustate* p=0;
+
+void Fl_Window_Driver::scroll_to_selected_item(Fl_Window *win) {
+  if (!p || !win->menu_window()) return;
+  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  if (mwin && p->item_number > 0) {
+    mwin->autoscroll(p->item_number);
+  }
+}
 
 // return 1 if the coordinates are inside any of the menuwindows
 int menustate::is_inside(int mx, int my) {
@@ -972,6 +993,8 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     Y += Fl::event_y_root()-Fl::event_y();
     menuwindow::parent_ = Fl::first_window();
   }
+  int XX, YY, WW;
+  Fl::screen_xywh(XX, YY, WW, menuwindow::display_height_, menuwindow::parent_->screen_num());
   menuwindow mw(this, X, Y, W, H, initial_item, title, menubar);
   Fl::grab(mw);
   menustate pp; p = &pp;

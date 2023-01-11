@@ -885,6 +885,7 @@ static const struct xdg_toplevel_listener xdg_toplevel_listener = {
 struct win_positioner {
   struct wld_window *window;
   int x, y;
+  Fl_Window *child_popup;
 };
 
 
@@ -894,10 +895,12 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
 //printf("popup_configure %p asked:%dx%d got:%dx%d\n",window->fl_win, win_pos->x,win_pos->y, x,y);
 //fprintf(stderr, "popup_configure: popup=%p data=%p xid=%p fl_win=%p\n", xdg_popup, data, window, window->fl_win);
   Fl_Window_Driver::driver(window->fl_win)->wait_for_expose_value = 0;
-  int XX, YY, WW, HH;
-  Fl::screen_xywh(XX, YY, WW, HH, window->fl_win->screen_num());
-  if (window->fl_win->h() > HH && y < win_pos->y) { // A menu taller than the display
+  int HH;
+  Fl_Window_Driver::menu_parent(&HH);
+  if (window->fl_win->h() > HH && y != win_pos->y) { // A menu taller than the display
     window->state = (y - win_pos->y);
+    // make selected item visible, if there's one
+    Fl_Window_Driver::scroll_to_selected_item(window->fl_win);
   } else if (Fl_Window_Driver::menu_title(window->fl_win) && y < win_pos->y) {
     // A menuwindow below a menutitle has been placed higher to avoid display bottom.
     // The workaround here creates an extra menutitle above the menuwindow.
@@ -922,6 +925,7 @@ static void popup_done(void *data, struct xdg_popup *xdg_popup) {
   struct win_positioner *win_pos = (struct win_positioner *)data;
   struct wld_window *window = win_pos->window;
 //fprintf(stderr, "popup_done: popup=%p data=%p xid=%p fl_win=%p\n", xdg_popup, data, window, window->fl_win);
+  if (win_pos->child_popup) win_pos->child_popup->hide();
   xdg_popup_destroy(xdg_popup);
   delete win_pos;
   // The sway compositor calls popup_done directly and hides the menu
@@ -1017,6 +1021,15 @@ static const char *get_prog_name() {
  with the same size and content as the hidden menutitle and to map it just above
  the menuwindow so it becomes visible.
  
+ Groups of popups that begin with a menutitle, the associated menuwindow, and optionally
+ a submenu window and that don't belong to an Fl_Menu_Bar are processed differently:
+ the menuwindow is mapped first, and the menutitle is mapped second above it as a child popup.
+ Fl_Window_Driver::is_floating_title() detects when such a menutitle is created,
+ global variable previous_floatingtitle is assigned the value of this menutitle, and
+ the menutitle is mapped only after the menuwindow has been mapped, as a child of it.
+ This positions the popup group in the display better in relation to where the popup
+ was created.
+ 
  In case 2) above, a tall popup is mapped with XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y
  which puts its top at the display top border. The Wayland system then calls the
  popup_configure() callback function with the x,y coordinates of the top left corner
@@ -1027,24 +1040,35 @@ static const char *get_prog_name() {
  Function Fl_Wayland_Window_Driver::menu_window_area() sets the top of the display to
  a value such that function Fl_Wayland_Window_Driver::reposition_menu_window(), called by
  menuwindow::autoscroll(int n), ensures that menu item #n is visible.
+ Fl_Wayland_Window_Driver::scroll_to_selected_item() scrolls the tall popup so its selected
+ item, when there's one, is visible.
  */
 
+// A menutitle to be mapped later as the child of a menuwindow
+static Fl_Window *previous_floatingtitle = NULL;
+static int tall_popup = 0; // to support tall menu buttons
 
-static void process_menu_or_tooltip(struct wld_window *new_window) {
+static bool process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
   new_window->kind = Fl_Wayland_Window_Driver::POPUP;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   Fl_Window *pWindow = new_window->fl_win;
   new_window->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, new_window->wl_surface);
   xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
-  struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
-  //xdg_positioner_get_version(positioner) <== gives 1 under Debian
-  struct win_positioner *win_pos = new struct win_positioner;
-  win_pos->window = new_window;
+  if (Fl_Window_Driver::is_floating_title(pWindow)) {
+    previous_floatingtitle = pWindow;
+    return true;
+  }
+  tall_popup = 0;
+  if (pWindow->menu_window() && !Fl_Window_Driver::menu_title(pWindow)) {
+    int HH;
+    Fl_Window_Driver::menu_parent(&HH);
+    if (pWindow->h() > HH) tall_popup = 1;
+  }
   Fl_Window *menu_origin = NULL;
   if (pWindow->menu_window()) {
     menu_origin = Fl_Window_Driver::menu_leftorigin(pWindow);
-    if (!menu_origin ) menu_origin = Fl_Window_Driver::menu_title(pWindow);
+    if (!menu_origin && !previous_floatingtitle) menu_origin = Fl_Window_Driver::menu_title(pWindow);
   }
   Fl_Widget *target = (pWindow->tooltip_window() ? Fl_Tooltip::current() : NULL);
   if (!target) target = Fl_Window_Driver::menu_parent();
@@ -1057,12 +1081,15 @@ static void process_menu_or_tooltip(struct wld_window *new_window) {
   float f = Fl::screen_scale(parent_win->screen_num());
   //fprintf(stderr, "menu parent_win=%p pos:%dx%d size:%dx%d\n", parent_win, pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
 //printf("window=%p menutitle=%p bartitle=%d leftorigin=%p y=%d\n", pWindow, Fl_Window_Driver::menu_title(pWindow), Fl_Window_Driver::menu_bartitle(pWindow), Fl_Window_Driver::menu_leftorigin(pWindow), pWindow->y());
-  if (Fl_Window_Driver::menu_title(pWindow)) {
+  struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
+  //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
+  int popup_x, popup_y;
+  if (Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow)) {
     xdg_positioner_set_anchor_rect(positioner, 0, 0, Fl_Window_Driver::menu_title(pWindow)->w(), Fl_Window_Driver::menu_title(pWindow)->h());
-    win_pos->x = 0;
-    win_pos->y = Fl_Window_Driver::menu_title(pWindow)->h();
+    popup_x = 0;
+    popup_y = Fl_Window_Driver::menu_title(pWindow)->h();
   } else {
-    int popup_x = pWindow->x() * f, popup_y = pWindow->y() * f;
+    popup_x = pWindow->x() * f, popup_y = pWindow->y() * f;
     if (popup_x + pWindow->w() * f < 0) popup_x = - pWindow->w() * f;
     if (menu_origin) {
       popup_x -= menu_origin->x() * f;
@@ -1075,8 +1102,7 @@ static void process_menu_or_tooltip(struct wld_window *new_window) {
     if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED)
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y, &popup_x, &popup_y);
     xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y, 1, 1);
-    win_pos->x = popup_x;
-    win_pos->y = popup_y + 1;
+    popup_y++;
   }
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
@@ -1089,6 +1115,11 @@ static void process_menu_or_tooltip(struct wld_window *new_window) {
   }
   xdg_positioner_set_constraint_adjustment(positioner, constraint);
   new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface, parent_xdg, positioner);
+  struct win_positioner *win_pos = new struct win_positioner;
+  win_pos->window = new_window;
+  win_pos->x = popup_x;
+  win_pos->y = popup_y;
+  win_pos->child_popup = NULL;
 //printf("create xdg_popup=%p data=%p xid=%p fl_win=%p\n",new_window->xdg_popup,win_pos,new_window,new_window->fl_win);
   xdg_positioner_destroy(positioner);
   xdg_popup_add_listener(new_window->xdg_popup, &popup_listener, win_pos);
@@ -1098,12 +1129,14 @@ static void process_menu_or_tooltip(struct wld_window *new_window) {
     //libdecor_frame_popup_grab(parent_xid->frame, scr_driver->get_seat_name());
   }
   wl_surface_commit(new_window->wl_surface);
+  return false;
 }
 
 
 void Fl_Wayland_Window_Driver::makeWindow()
 {
   struct wld_window *new_window;
+  bool is_floatingtitle;
   Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
 
@@ -1134,7 +1167,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   }
 
   if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip
-    process_menu_or_tooltip(new_window);
+    is_floatingtitle = process_menu_or_tooltip(new_window);
 
   } else if ( pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
@@ -1219,7 +1252,31 @@ void Fl_Wayland_Window_Driver::makeWindow()
   Fl::e_number = old_event;
   pWindow->redraw();
   // make sure each popup is mapped with its constraints before mapping next popup
-  if (pWindow->menu_window()) pWindow->wait_for_expose();
+  if (pWindow->menu_window() && !is_floatingtitle) {
+    pWindow->wait_for_expose();
+    if (previous_floatingtitle) { // map the menutitle popup now as child of pWindow
+      struct wld_window *xid = fl_wl_xid(previous_floatingtitle);
+      struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
+      xdg_positioner_set_anchor_rect(positioner, 0, 0, 1, 1);
+      float f = Fl::screen_scale(Fl_Window_Driver::menu_parent()->screen_num());
+      xdg_positioner_set_size(positioner, previous_floatingtitle->w() * f , previous_floatingtitle->h() * f );
+      xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
+      xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_TOP_RIGHT);
+      xid->xdg_popup = xdg_surface_get_popup(xid->xdg_surface, new_window->xdg_surface, positioner);
+      xdg_positioner_destroy(positioner);
+      struct win_positioner *win_pos = new struct win_positioner;
+      win_pos->window = xid;
+      win_pos->x = 0;
+      win_pos->y = 0;
+      xdg_popup_add_listener(xid->xdg_popup, &popup_listener, win_pos);
+      wl_surface_commit(xid->wl_surface);
+      previous_floatingtitle->wait_for_expose();
+      struct win_positioner *parent_win_pos =
+        (struct win_positioner*)xdg_popup_get_user_data(new_window->xdg_popup);
+      parent_win_pos->child_popup = previous_floatingtitle;
+      previous_floatingtitle = NULL;
+    }
+  }
 }
 
 Fl_Wayland_Window_Driver::type_for_resize_window_between_screens Fl_Wayland_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
@@ -1658,6 +1715,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   win_pos->window = xid_menu;
   win_pos->x = popup_x;
   win_pos->y = popup_y;
+  win_pos->child_popup = NULL;
   xdg_popup_add_listener(xid_menu->xdg_popup, &popup_listener, win_pos);
   wl_surface_commit(xid_menu->wl_surface);
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // necessary with sway
@@ -1672,10 +1730,9 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
 
 
 void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscreen) {
-  Fl_Window *parent = Fl_Window_Driver::menu_parent();
+  int HH;
+  Fl_Window *parent = Fl_Window_Driver::menu_parent(&HH);
   if (parent) {
-    int XX, YY, WW, HH;
-    Fl::screen_xywh(XX, YY, WW, HH, parent->screen_num());
     if (pWindow->menu_window() && pWindow->h() > HH) {
       // tall menu: set top (Y) and bottom (Y+H) bounds relatively to reference window
       int ih = Fl_Window_Driver::menu_itemheight(pWindow);
@@ -1686,9 +1743,14 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
       if (origin) { // has left parent
         int selected = fl_max(Fl_Window_Driver::menu_selected(origin), 0);
         Y = origin->y() + (selected + 0.5) * ih;
-      } else {
+      } else if (!Fl_Window_Driver::menu_bartitle(pWindow)) { // tall menu button
+        static int y_offset = 0;
+        if (tall_popup == 1) y_offset = pWindow->y()- ih;
+        Y = 1.5 * ih + y_offset;
+      } else { // has a menutitle
         Y = 1.5 * ih;
       }
+      tall_popup++;
     } else { // position the menu window by wayland constraints
       X = -50000;
       Y = -50000;

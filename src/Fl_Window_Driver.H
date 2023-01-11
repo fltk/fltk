@@ -192,13 +192,15 @@ public:
   // when that's not the case, as with Wayland.
   virtual void reposition_menu_window(int x, int y);
   virtual void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1);
-  static Fl_Window *menu_parent();
+  static Fl_Window *menu_parent(int *display_height = NULL);
   static Fl_Window *menu_leftorigin(Fl_Window*);
   static Fl_Window *menu_title(Fl_Window*);
   static int menu_itemheight(Fl_Window*);
   static int menu_bartitle(Fl_Window*);
   static int menu_selected(Fl_Window*);
   static Fl_Window *extra_menutitle(Fl_Window *old, int Y);
+  static bool is_floating_title(Fl_Window *);
+  static void scroll_to_selected_item(Fl_Window *);
 
   virtual fl_uintptr_t os_id() { return 0; }
 };
