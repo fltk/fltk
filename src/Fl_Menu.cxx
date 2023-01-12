@@ -112,7 +112,13 @@ class menuwindow;
 class window_with_items : public Fl_Menu_Window {
 protected:
   window_with_items(int X, int Y, int W, int H, const Fl_Menu_Item *m) :
-    Fl_Menu_Window(X, Y, W, H, 0) { menu = m; }
+    Fl_Menu_Window(X, Y, W, H, 0) {
+      menu = m;
+      set_menu_window();
+      end();
+      set_modal();
+      clear_border();
+    }
 public:
   const Fl_Menu_Item* menu;
   virtual menuwindow* as_menuwindow() { return NULL; }
@@ -347,10 +353,6 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 
 menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L, bool inbar) :
   window_with_items(X, Y, W, H, L) {
-  end();
-  set_modal();
-  clear_border();
-  set_menu_window();
   in_menubar = inbar;
 }
 
@@ -367,10 +369,6 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
 
-  end();
-  set_modal();
-  clear_border();
-  set_menu_window();
   if (m) m = m->first(); // find the first item that needs to be rendered
   drawn_selected = -1;
   if (button) {
