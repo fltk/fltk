@@ -79,7 +79,7 @@ CPPFILES =\
 	file_chooser.cxx \
 	flex_demo.cxx \
 	flex_login.cxx \
-	fltk-admin.cxx \
+	fltk-options.cxx \
 	fltk-versions.cxx \
 	fonts.cxx \
 	forms.cxx \
@@ -172,6 +172,7 @@ ALL =	\
 	file_chooser$(EXEEXT) \
 	flex_demo$(EXEEXT) \
 	flex_login$(EXEEXT) \
+	fltk-options$(EXEEXT) \
 	fltk-versions$(EXEEXT) \
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
@@ -435,9 +436,9 @@ flex_demo$(EXEEXT): flex_demo.o
 
 flex_login$(EXEEXT): flex_login.o
 
-fltk-versions$(EXEEXT): fltk-versions.o
+fltk-options$(EXEEXT): fltk-options.o
 
-fltk-admin$(EXEEXT): fltk-admin.o
+fltk-versions$(EXEEXT): fltk-versions.o
 
 fonts$(EXEEXT): fonts.o
 

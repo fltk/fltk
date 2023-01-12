@@ -186,7 +186,7 @@ void print_usage(const char *argv0) {
   if (argv0 && argv0[0])
     app_name = fl_filename_name(argv0);
   if (!app_name || !app_name[0])
-    app_name = "fltk-option";
+    app_name = "fltk-options";
   fprintf(stderr, "FLTK %d.%d.%d. Usage:\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
   fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-L] [-LS] [-LU] [-f] [-v] [-h]\n", app_name);
   fprintf(stderr, "  -Soption[=value]  change or print system wide option\n");
