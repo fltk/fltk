@@ -1,7 +1,7 @@
 //
 // Implementation of the Wayland window driver.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,6 +57,7 @@ Window fl_window = 0;
 
 
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
+bool Fl_Wayland_Window_Driver::tall_popup = false; // to support tall menu buttons
 
 
 void Fl_Wayland_Window_Driver::destroy_double_buffer() {
@@ -1024,7 +1025,6 @@ static const char *get_prog_name() {
 
 // A menutitle to be mapped later as the child of a menuwindow
 static Fl_Window *previous_floatingtitle = NULL;
-static int tall_popup = 0; // to support tall menu buttons
 
 static bool process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
@@ -1037,11 +1037,11 @@ static bool process_menu_or_tooltip(struct wld_window *new_window) {
     previous_floatingtitle = pWindow;
     return true;
   }
-  tall_popup = 0;
+  Fl_Wayland_Window_Driver::tall_popup = false;
   if (pWindow->menu_window() && !Fl_Window_Driver::menu_title(pWindow)) {
     int HH;
     Fl_Window_Driver::menu_parent(&HH);
-    if (pWindow->h() > HH) tall_popup = 1;
+    if (pWindow->h() > HH) Fl_Wayland_Window_Driver::tall_popup = true;
   }
   Fl_Window *menu_origin = NULL;
   if (pWindow->menu_window()) {
@@ -1723,12 +1723,14 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
         Y = origin->y() + (selected + 0.5) * ih;
       } else if (!Fl_Window_Driver::menu_bartitle(pWindow)) { // tall menu button
         static int y_offset = 0;
-        if (tall_popup == 1) y_offset = pWindow->y()- ih;
+        if (tall_popup) {
+          y_offset = pWindow->y()- ih;
+          tall_popup = false;
+        }
         Y = 1.5 * ih + y_offset;
       } else { // has a menutitle
         Y = 1.5 * ih;
       }
-      tall_popup++;
     } else { // position the menu window by wayland constraints
       X = -50000;
       Y = -50000;
