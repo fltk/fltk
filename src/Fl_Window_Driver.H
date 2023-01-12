@@ -198,7 +198,6 @@ public:
   static int menu_itemheight(Fl_Window*);
   static int menu_bartitle(Fl_Window*);
   static int menu_selected(Fl_Window*);
-  static Fl_Window *extra_menutitle(Fl_Window *old, int Y);
   static bool is_floating_title(Fl_Window *);
   static void scroll_to_selected_item(Fl_Window *);
 

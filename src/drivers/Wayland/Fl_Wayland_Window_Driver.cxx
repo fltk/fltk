@@ -893,7 +893,6 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
   struct win_positioner *win_pos = (struct win_positioner *)data;
   struct wld_window *window = win_pos->window;
 //printf("popup_configure %p asked:%dx%d got:%dx%d\n",window->fl_win, win_pos->x,win_pos->y, x,y);
-//fprintf(stderr, "popup_configure: popup=%p data=%p xid=%p fl_win=%p\n", xdg_popup, data, window, window->fl_win);
   Fl_Window_Driver::driver(window->fl_win)->wait_for_expose_value = 0;
   int HH;
   Fl_Window_Driver::menu_parent(&HH);
@@ -901,19 +900,6 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
     window->state = (y - win_pos->y);
     // make selected item visible, if there's one
     Fl_Window_Driver::scroll_to_selected_item(window->fl_win);
-  } else if (Fl_Window_Driver::menu_title(window->fl_win) && y < win_pos->y) {
-    // A menuwindow below a menutitle has been placed higher to avoid display bottom.
-    // The workaround here creates an extra menutitle above the menuwindow.
-    // A better way would be to move the menutitle up.
-    // A way to do that is probably xdg_popup reposition but requires version 3
-    // and xdg_popup_get_version(new_window->xdg_popup) --> 1 with Mutter
-    Fl_Window *menutitle = Fl_Window_Driver::menu_title(window->fl_win);
-    int Y = menutitle->y() - (win_pos->y - y);
-    if (Y > - menutitle->h()) { // not possible if higher than parent window top
-      Fl_Window *new_menutitle = Fl_Window_Driver::extra_menutitle(menutitle, Y);
-      new_menutitle->show();
-      new_menutitle->wait_for_expose();
-    }
   }
 }
 
@@ -1012,14 +998,6 @@ static const char *get_prog_name() {
  process_menu_or_tooltip(), makeWindow() calls wl_display_roundtrip() so its constrained
  position is known before computing the position of the next popup. This ensures each
  popup is correctly placed relatively to its parent.
- Consider a menutitle window and a menuwindow expected to map just below the menutitle.
- Wayland constraints sometimes push the menuwindow up in the display to prevent its bottom
- from expanding outside the display. Consequently, the menutitle is hidden by the
- menuwindow above it. The callbak function popup_configure() allows FLTK to detect this
- situation because the asked and effective window positions differ. Function
- Fl_Window_Driver::extra_menutitle() is used to create an additional menutitle window
- with the same size and content as the hidden menutitle and to map it just above
- the menuwindow so it becomes visible.
  
  Groups of popups that begin with a menutitle, the associated menuwindow, and optionally
  a submenu window and that don't belong to an Fl_Menu_Bar are processed differently:

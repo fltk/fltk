@@ -122,9 +122,7 @@ public:
 class menutitle : public window_with_items {
   void draw() FL_OVERRIDE;
 public:
-  menutitle *extra; // additional menutitle window when the 1st one is covered by a menuwindow
   menutitle(int X, int Y, int W, int H, const Fl_Menu_Item*, bool menubar = false);
-  ~menutitle();
   bool in_menubar;
 };
 
@@ -219,15 +217,6 @@ bool Fl_Window_Driver::is_floating_title(Fl_Window *win) {
   if (!win->menu_window()) return false;
   Fl_Window *mwin = ((window_with_items*)win)->as_menuwindow();
   return !mwin && !((menutitle*)win)->in_menubar;
-}
-
-/** Create a menutitle window with same content and size as another one and another ordinate.
- */
-Fl_Window *Fl_Window_Driver::extra_menutitle(Fl_Window *old, int Y) {
-  menutitle *t = (menutitle*)old;
-  menutitle *win = new menutitle(t->x(), Y, t->w(), t->h(), t->menu);
-  t->extra = win;
-  return win;
 }
 
 /**
@@ -354,12 +343,7 @@ menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L, bool inb
   set_modal();
   clear_border();
   set_menu_window();
-  extra = NULL;
   in_menubar = inbar;
-}
-
-menutitle::~menutitle() {
-  delete extra;
 }
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
