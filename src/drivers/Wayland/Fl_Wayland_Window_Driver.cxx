@@ -58,6 +58,8 @@ Window fl_window = 0;
 
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
 bool Fl_Wayland_Window_Driver::tall_popup = false; // to support tall menu buttons
+// A menutitle to be mapped later as the child of a menuwindow
+Fl_Window *Fl_Wayland_Window_Driver::previous_floatingtitle = NULL;
 
 
 void Fl_Wayland_Window_Driver::destroy_double_buffer() {
@@ -1004,7 +1006,7 @@ static const char *get_prog_name() {
  a submenu window and that don't belong to an Fl_Menu_Bar are processed differently:
  the menuwindow is mapped first, and the menutitle is mapped second above it as a child popup.
  Fl_Window_Driver::is_floating_title() detects when such a menutitle is created,
- global variable previous_floatingtitle is assigned the value of this menutitle, and
+ static member variable previous_floatingtitle is assigned the value of this menutitle, and
  the menutitle is mapped only after the menuwindow has been mapped, as a child of it.
  This positions the popup group in the display better in relation to where the popup
  was created.
@@ -1023,14 +1025,11 @@ static const char *get_prog_name() {
  item, when there's one, is visible.
  */
 
-// A menutitle to be mapped later as the child of a menuwindow
-static Fl_Window *previous_floatingtitle = NULL;
 
-static bool process_menu_or_tooltip(struct wld_window *new_window) {
+bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
   new_window->kind = Fl_Wayland_Window_Driver::POPUP;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  Fl_Window *pWindow = new_window->fl_win;
   new_window->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, new_window->wl_surface);
   xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
   if (Fl_Window_Driver::is_floating_title(pWindow)) {
