@@ -477,9 +477,10 @@ void Fl_Wayland_Window_Driver::hide() {
         wl_list_remove(&window_output->link);
         free(window_output);
     }
+    if (Fl_Wayland_Window_Driver::wld_window == wld_win) Fl_Wayland_Window_Driver::wld_window = NULL;
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
+    free(wld_win);
   }
-  free(wld_win);
   if (pWindow->as_gl_window() && in_flush) {
     ip->xid = 0;
     ip->next = NULL; // to end the loop in calling Fl::flush()
