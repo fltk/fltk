@@ -175,40 +175,40 @@ Fl_Window *Fl_Window_Driver::menu_parent(int *display_height) {
   return menuwindow::parent_;
 }
 
+static menuwindow *to_menuwindow(Fl_Window *win) {
+  if (!win->menu_window()) return NULL;
+  return ((window_with_items*)win)->as_menuwindow();
+}
+
 /** Accessor to the "origin" member variable of class menuwindow.
  Variable origin is not NULL when 2 menuwindow's occur, one being a submenu of the other;
  it links the menuwindow at right to the one at left. */
 Fl_Window *Fl_Window_Driver::menu_leftorigin(Fl_Window *win) {
-  if (!win->menu_window()) return NULL;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->origin : NULL);
 }
 
 /** Accessor to the "title" member variable of class menuwindow */
 Fl_Window *Fl_Window_Driver::menu_title(Fl_Window *win) {
-  if (!win->menu_window()) return NULL;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->title : NULL);
 }
 
 /** Accessor to the "itemheight" member variable of class menuwindow */
 int Fl_Window_Driver::menu_itemheight(Fl_Window *win) {
-  if (!win->menu_window()) return 0;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->itemheight : 0);
 }
 
 /** Accessor to the "menubartitle" member variable of class menuwindow */
 int Fl_Window_Driver::menu_bartitle(Fl_Window *win) {
-  if (!win->menu_window()) return 0;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->menubartitle : 0);
 }
 
 /** Accessor to the "selected" member variable of class menuwindow */
 int Fl_Window_Driver::menu_selected(Fl_Window *win) {
-  if (!win->menu_window()) return 0;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
+  menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->selected : -1);
 }
 
@@ -217,6 +217,14 @@ bool Fl_Window_Driver::is_floating_title(Fl_Window *win) {
   if (!win->menu_window()) return false;
   Fl_Window *mwin = ((window_with_items*)win)->as_menuwindow();
   return !mwin && !((menutitle*)win)->in_menubar;
+}
+
+/** Makes sure that the tall menu's selected item is visible in display */
+void Fl_Window_Driver::scroll_to_selected_item(Fl_Window *win) {
+  menuwindow *mwin = to_menuwindow(win);
+  if (mwin && mwin->selected > 0) {
+    mwin->autoscroll(mwin->selected);
+  }
 }
 
 /**
@@ -678,14 +686,6 @@ struct menustate {
   int is_inside(int mx, int my);
 };
 static menustate* p=0;
-
-void Fl_Window_Driver::scroll_to_selected_item(Fl_Window *win) {
-  if (!p || !win->menu_window()) return;
-  menuwindow *mwin = ((window_with_items*)win)->as_menuwindow();
-  if (mwin && p->item_number > 0) {
-    mwin->autoscroll(p->item_number);
-  }
-}
 
 // return 1 if the coordinates are inside any of the menuwindows
 int menustate::is_inside(int mx, int my) {
