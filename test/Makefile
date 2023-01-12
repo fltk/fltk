@@ -80,7 +80,6 @@ CPPFILES =\
 	flex_demo.cxx \
 	flex_login.cxx \
 	fltk-admin.cxx \
-	fltk-admin-ui.cxx \
 	fltk-versions.cxx \
 	fonts.cxx \
 	forms.cxx \
@@ -263,7 +262,6 @@ clean:
 	$(RM) CubeViewUI.cxx CubeViewUI.h
 	$(RM) checkers_pieces.cxx checkers_pieces.h
 	$(RM) fast_slow.cxx fast_slow.h
-	$(RM) fltk-admin-ui.cxx fltk-admin-ui.h
 	$(RM) inactive.cxx inactive.h
 	$(RM) keyboard_ui.cxx keyboard_ui.h
 	$(RM) mandelbrot_ui.cxx mandelbrot_ui.h
@@ -439,8 +437,7 @@ flex_login$(EXEEXT): flex_login.o
 
 fltk-versions$(EXEEXT): fltk-versions.o
 
-fltk-admin$(EXEEXT): fltk-admin.o fltk-admin-ui.o
-fltk-admin-ui.cxx:	fltk-admin-ui.fl ../fluid/fluid$(EXEEXT)
+fltk-admin$(EXEEXT): fltk-admin.o
 
 fonts$(EXEEXT): fonts.o
 
