@@ -967,7 +967,7 @@ static const char *get_prog_name() {
  MUST overlap or at least touch this parent.
  Constraints determine how a popup is positioned relatively to a defined area (called
  the anchor rectangle) of its parent popup/window and what happens when this position
- would place the popup partly outside the display.
+ would place the popup all or partly outside the display.
  In contrast, FLTK computes the adequate positions of menu windows in the display using
  knowledge about the display size and the location of the window in the display, and then
  maps them at these positions.
@@ -976,11 +976,10 @@ static const char *get_prog_name() {
  Let's call "source window" the non-popup window above which all popups are mapped.
  The approach implemented here is two-fold.
  1) If a menu window is not taller than the display, use Wayland constraints to position it.
- The benefit is that popups will not expand beyond display limits. The current
- implementation is constrained by the fact that the first constructed popup must overlap
- or touch the source window. Other popups are placed below, above, or at right
- of a previous popup which allows them to expand outside the source window, while constraints
- ensure they won't extend outside the display.
+ Wayland imposes that the first constructed popup must overlap or touch the source window.
+ Other popups can be placed below, above, at right, or at left of a previous popup which
+ allows them to expand outside the source window, while constraints can ensure they won't
+ extend outside the display.
  2) A menu window taller than the display is initially mapped with the constraint to
  begin at the top border of the display. This allows FLTK to know the distance between
  the source window and the display top. FLTK can later reposition the same tall popup,
@@ -992,23 +991,22 @@ static const char *get_prog_name() {
  Consequently, FLTK computes an initial layout of future popups relatively to
  the source window as if it was mapped on an infinitely large display. Then, the location
  of the first popup to be mapped is modified if necessary so it overlaps or touches the
- source window. Finally, other popups are located using Wayland logic below or to the
- right of previous popups. Wayland constraints mechanism allows to prevent these popups
- from expanding beyond display limits. It also allows a popup tentatively placed below
- a previous one to be flipped above it if that prevents the popup from expanding beyond
- display limits. This is used to unfold menu bar menus below or above the menu bar.
+ source window. Finally, other popups are located using Wayland logic below, above or to the
+ right of previous popups. Wayland constraints mechanism also allows a popup tentatively
+ placed below a previous one to be flipped above it if that prevents the popup from expanding
+ beyond display limits. This is used to unfold menu bar menus below or above the menu bar.
  After each popup is created and scheduled for being mapped on display by function
- process_menu_or_tooltip(), makeWindow() calls wl_display_roundtrip() so its constrained
+ process_menu_or_tooltip(), makeWindow() calls Fl_Window::wait_for_expose() so its constrained
  position is known before computing the position of the next popup. This ensures each
  popup is correctly placed relatively to its parent.
  
- Groups of popups that begin with a menutitle, the associated menuwindow, and optionally
- a submenu window and that don't belong to an Fl_Menu_Bar are processed differently:
+ Groups of popups containing a menutitle, the associated menuwindow, and optionally
+ a submenu window and that don't belong to an Fl_Menu_Bar are mapped in a different order:
  the menuwindow is mapped first, and the menutitle is mapped second above it as a child popup.
  Fl_Window_Driver::is_floating_title() detects when such a menutitle is created,
  static member variable previous_floatingtitle is assigned the value of this menutitle, and
  the menutitle is mapped only after the menuwindow has been mapped, as a child of it.
- This positions the popup group in the display better in relation to where the popup
+ This positions better the popup group in the display relatively to where the popup
  was created.
  
  In case 2) above, a tall popup is mapped with XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y
@@ -1021,8 +1019,8 @@ static const char *get_prog_name() {
  Function Fl_Wayland_Window_Driver::menu_window_area() sets the top of the display to
  a value such that function Fl_Wayland_Window_Driver::reposition_menu_window(), called by
  menuwindow::autoscroll(int n), ensures that menu item #n is visible.
- Fl_Wayland_Window_Driver::scroll_to_selected_item() scrolls the tall popup so its selected
- item, when there's one, is visible.
+ Fl_Window_Driver::scroll_to_selected_item() scrolls the tall popup so its selected
+ item, when there's one, is visible immediately after the tall popup is mapped on display.
  */
 
 
