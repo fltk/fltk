@@ -1,7 +1,7 @@
 //
 // Basic Fl_String class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -154,7 +154,7 @@ void Fl_String::release() {
 */
 void Fl_String::debug(const char *info) const {
   if (info) {
-    printf("Fl_String '%-20s': %p, value = %p (%d/%d): '%s'\n",
+    printf("Fl_String '%-20s': %p, value = %p (%d/%d):\n%s\n",
            info, this, value_, size_, capacity_, value_ ? value_ : "<NULL>");
   }
 }
