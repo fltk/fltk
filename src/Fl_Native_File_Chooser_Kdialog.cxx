@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -242,7 +242,8 @@ void Fl_Kdialog_Native_File_Chooser_Driver::filter(const char *f) {
   _parsedfilt = strfree(_parsedfilt);   // clear previous parsed filter (if any)
   _nfilters = 0;
   if (!f) return;
-  _filter = strdup(f);
+  _filter = new char[strlen(f) + 1];
+  strcpy(_filter, f);
   char *f2 = strdup(f);
   char *ptr;
   char *part = strtok_r(f2, "\n", &ptr);
