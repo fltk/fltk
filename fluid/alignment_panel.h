@@ -25,6 +25,11 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/filename.H>
+#include <FL/Fl_Scheme_Choice.H>
+/**
+ // initialize the scheme from preferences
+*/
+void init_scheme(void);
 extern struct Fl_Menu_Item *dbmanager_item;
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
@@ -63,10 +68,10 @@ extern Fl_Input *i18n_static_function_input;
 Fl_Double_Window* make_project_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern void i18n_cb(Fl_Choice *,void *);
-extern void scheme_cb(Fl_Choice *, void *);
+extern void scheme_cb(Fl_Scheme_Choice *, void *);
 extern Fl_Double_Window *settings_window;
-extern void scheme_cb(Fl_Choice*, void*);
-extern Fl_Choice *scheme_choice;
+extern void scheme_cb(Fl_Scheme_Choice*, void*);
+extern Fl_Scheme_Choice *scheme_choice;
 extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
@@ -77,7 +82,6 @@ extern Fl_Spinner *recent_spinner;
 extern Fl_Check_Button *use_external_editor_button;
 extern Fl_Input *editor_command_input;
 Fl_Double_Window* make_settings_window();
-extern Fl_Menu_Item menu_scheme_choice[];
 extern Fl_Double_Window *shell_window;
 extern Fl_Input *shell_command_input;
 extern Fl_Check_Button *shell_savefl_button;

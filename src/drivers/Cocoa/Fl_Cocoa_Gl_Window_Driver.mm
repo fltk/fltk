@@ -110,7 +110,7 @@ static NSOpenGLPixelFormat* mode_to_NSOpenGLPixelFormat(int m, const int *alistp
     }
     if ((m & FL_MULTISAMPLE) && fl_mac_os_version >= 100400) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-      attribs[n++] = NSOpenGLPFAMultisample, // 10.4
+      attribs[n++] = NSOpenGLPFAMultisample; // 10.4
 #endif
       attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
       attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;

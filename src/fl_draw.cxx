@@ -84,6 +84,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
       size_t delta_o = (o - local_buf);
       size_t delta_end = (word_end - local_buf);
       local_buf = (char*)realloc(local_buf, l_local_buff);
+      buf = local_buf;
       e = local_buf + l_local_buff - 4; // update pointers to buffer content
       o = local_buf + delta_o;
       word_end = local_buf + delta_end;
