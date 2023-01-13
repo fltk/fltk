@@ -2274,7 +2274,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
   if (!window) return; // may happen after closing full-screen window
-  if (!Fl_X::i(window)) return; // reported to happen with Gmsh (issue #434)
+  if (!Fl_X::flx(window)) return; // reported to happen with Gmsh (issue #434)
   fl_lock_function();
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (!through_Fl_X_flush
@@ -2289,7 +2289,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
         window->size(window->w(), window->h()); // sends message [GLcontext update]
       }
     }
-    Fl_X *i = Fl_X::i(window);
+    Fl_X *i = Fl_X::flx(window);
     if ( i->region ) {
       Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
       i->region = 0;
@@ -2362,7 +2362,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 - (void)resetCursorRects {
   Fl_Window *w = [(FLWindow*)[self window] getFl_Window];
-  Fl_X *i = (w ? Fl_X::i(w) : NULL);
+  Fl_X *i = (w ? Fl_X::flx(w) : NULL);
   if (!i) return;  // fix for STR #3128
   // We have to have at least one cursor rect for invalidateCursorRectsForView
   // to work, hence the "else" clause.
@@ -2978,7 +2978,7 @@ void Fl_Cocoa_Window_Driver::makeWindow()
   }
   x->xid = (fl_uintptr_t)cw;
   x->w = w;
-  i(x);
+  flx(x);
   wait_for_expose_value = 1;
   if (!w->parent()) {
     x->next = Fl_X::first;
@@ -3189,7 +3189,7 @@ void Fl_Cocoa_Window_Driver::use_border() {
  * Tell the OS what window sizes we want to allow
  */
 void Fl_Cocoa_Window_Driver::size_range() {
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (i && i->xid) {
     float s = Fl::screen_driver()->scale(0);
     int bt = get_window_frame_sizes(pWindow);
@@ -3213,7 +3213,7 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
  * set the window title bar name
  */
 void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
-  if (shown() || Fl_X::i(pWindow)) {
+  if (shown() || Fl_X::flx(pWindow)) {
     q_set_window_title(fl_xid(pWindow), name, mininame);
     if (fl_sys_menu_bar && Fl_Sys_Menu_Bar_Driver::window_menu_style())
       Fl_MacOS_Sys_Menu_Bar_Driver::driver()->rename_window(pWindow);
@@ -3226,12 +3226,12 @@ void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
  */
 void Fl_Cocoa_Window_Driver::show() {
   Fl_X *top = NULL;
-  if (parent()) top = Fl_X::i(pWindow->top_window());
+  if (parent()) top = Fl_X::flx(pWindow->top_window());
   if (!shown() && (!parent() || (top && ![(FLWindow*)top->xid isMiniaturized]))) {
     makeWindow();
   } else {
     if ( !parent() ) {
-      Fl_X *i = Fl_X::i(pWindow);
+      Fl_X *i = Fl_X::flx(pWindow);
       if ([(FLWindow*)i->xid isMiniaturized]) {
         i->w->redraw();
         [(FLWindow*)i->xid deminiaturize:nil];
@@ -3319,7 +3319,7 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
 void Fl_Cocoa_Window_Driver::make_current()
 {
   q_release_context();
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   //NSLog(@"region-count=%d damage=%u",i->region?i->region->count:0, pWindow->damage());
   fl_window = (FLWindow*)i->xid;
   ((Fl_Quartz_Graphics_Driver&)Fl_Graphics_Driver::default_driver()).high_resolution( mapped_to_retina() );

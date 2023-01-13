@@ -72,7 +72,7 @@ private:
   // TODO: it would make sense to merge the use of Fl_X and Fl_Window_Driver, maybe simply by
   // TODO: deriving Fl_Window_Driver from Fl_X. However, there are a lot of historic kludges
   // TODO: for some platforms around Fl_X.
-  Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
+  Fl_X *flx_; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 
   const char* iconlabel_;
@@ -400,7 +400,7 @@ public:
     ). You can tell if a window is iconified with (w->shown()
     && !w->visible()).
   */
-  int shown() {return i != 0;}
+  int shown() {return flx_ != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
     effect of opening the display.

@@ -180,7 +180,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
 {
   if (win) {
     if (!Fl::grab_) {
-      fl_capture = (FLWindow*)(Fl_X::i(Fl::first_window())->xid);
+      fl_capture = (FLWindow*)(Fl_X::flx(Fl::first_window())->xid);
       Fl_Cocoa_Window_Driver::driver(Fl::first_window())->set_key_window();
     }
     Fl::grab_ = win;

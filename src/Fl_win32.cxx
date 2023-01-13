@@ -1290,7 +1290,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_PAINT: {
         HRGN R, R2;
-        Fl_X *i = Fl_X::i(window);
+        Fl_X *i = Fl_X::flx(window);
         Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
         char redraw_whole_window = false;
         if (!i->region && window->damage()) {
@@ -1920,7 +1920,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
       pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
-      Fl_X *i = Fl_X::i(pWindow);
+      Fl_X *i = Fl_X::flx(pWindow);
       if (i && W > 0 && H > 0)
         wait_for_expose_value = 1;
     }
@@ -2011,7 +2011,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
   Fl_Window *w = pWindow;
-  if (w->parent() && !Fl_X::i(w->window())) {
+  if (w->parent() && !Fl_X::flx(w->window())) {
     w->set_visible();
     return;
   }
@@ -2165,7 +2165,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_X *x = new Fl_X;
   other_xid = 0;
   x->w = w;
-  i(x);
+  flx(x);
   x->region = 0;
   Fl_WinAPI_Window_Driver::driver(w)->private_dc = 0;
   cursor = LoadCursor(NULL, IDC_ARROW);
@@ -2449,7 +2449,7 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon) {
     Fl_WinAPI_Window_Driver::driver(this)->icon_->big_icon = CopyIcon(big_icon);
   if (small_icon != NULL)
     Fl_WinAPI_Window_Driver::driver(this)->icon_->small_icon = CopyIcon(small_icon);
-  if (Fl_X::i(this))
+  if (Fl_X::flx(this))
     Fl_WinAPI_Window_Driver::driver(this)->set_icons();
 }
 
@@ -2618,7 +2618,7 @@ void Fl_WinAPI_Window_Driver::show() {
     makeWindow();
   } else {
     // Once again, we would lose the capture if we activated the window.
-    Fl_X *i = Fl_X::i(pWindow);
+    Fl_X *i = Fl_X::flx(pWindow);
     if (IsIconic((HWND)i->xid))
       OpenIcon((HWND)i->xid);
     if (!fl_capture)

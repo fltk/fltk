@@ -719,7 +719,7 @@ Fl_Window* Fl::first_window() {
   \param[in] window must be shown and not NULL
 */
 Fl_Window* Fl::next_window(const Fl_Window* window) {
-  Fl_X* i = window ? Fl_X::i(window) : 0;
+  Fl_X* i = window ? Fl_X::flx(window) : 0;
   if (!i) {
     Fl::error("Fl::next_window() failed: window (%p) not shown.", window);
     return 0;
@@ -738,7 +738,7 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
  */
 void Fl::first_window(Fl_Window* window) {
   if (!window || !window->shown()) return;
-  Fl_Window_Driver::find( Fl_X::i(window)->xid );
+  Fl_Window_Driver::find( Fl_X::flx(window)->xid );
 }
 
 /**
@@ -1616,7 +1616,7 @@ void Fl_Widget::damage(uchar fl) {
     damage(fl, x(), y(), w(), h());
   } else {
     // damage entire window by deleting the region:
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
+    Fl_X* i = Fl_X::flx((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
     if (i->region) {
       fl_graphics_driver->XDestroyRegion(i->region);
@@ -1636,7 +1636,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     if (!wi) return;
     fl = FL_DAMAGE_CHILD;
   }
-  Fl_X* i = Fl_X::i((Fl_Window*)wi);
+  Fl_X* i = Fl_X::flx((Fl_Window*)wi);
   if (!i) return; // window not mapped, so ignore it
 
   // clip the damage to the window and quit if none:
@@ -2156,7 +2156,7 @@ FL_EXPORT bool fl_disable_wayland = true;
 #endif // FL_DOXYGEN
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
-  Fl_X *temp = Fl_X::i(w);
+  Fl_X *temp = Fl_X::flx(w);
   return temp ? (Window)temp->xid : 0;
 }
 /** \addtogroup group_macosx

@@ -1537,7 +1537,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
     Fl_Window *win = Fl::first_window();
     while (win) {
       if (!win->parent() && win->border() &&
-          !( ((struct wld_window*)Fl_X::i(win)->xid)->state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ) {
+          !( ((struct wld_window*)Fl_X::flx(win)->xid)->state & LIBDECOR_WINDOW_STATE_MAXIMIZED) ) {
         win_dims *dim = new win_dims;
         dim->tracker = new Fl_Widget_Tracker(win);
         Fl_Window_Driver *dr = Fl_Window_Driver::driver(win);

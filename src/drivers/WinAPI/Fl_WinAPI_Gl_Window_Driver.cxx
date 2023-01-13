@@ -137,7 +137,7 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 GLContext Fl_WinAPI_Gl_Window_Driver::do_create_gl_context(Fl_Window* window,
                       const Fl_Gl_Choice* g, int layer)
 {
-  Fl_X* i = Fl_X::i(window);
+  Fl_X* i = Fl_X::flx(window);
   HDC hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc;
   if (!hdc) {
     hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc = GetDCEx((HWND)i->xid, 0, DCX_CACHE);
@@ -186,7 +186,7 @@ void Fl_WinAPI_Gl_Window_Driver::make_overlay_current() {
   if (overlay() != this) {
     set_gl_context(pWindow, (GLContext)overlay());
     //  if (fl_overlay_depth)
-    //    wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
+    //    wglRealizeLayerPalette(Fl_X::flx(this)->private_dc, 1, TRUE);
   } else
 #endif
     glDrawBuffer(GL_FRONT);
