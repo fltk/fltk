@@ -1,7 +1,7 @@
 //
 // Wayland-specific code for clipboard and drag-n-drop support.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,14 +22,15 @@
 #  include <FL/Fl_Window.H>
 #  include <FL/Fl_Shared_Image.H>
 #  include <FL/Fl_Image_Surface.H>
-#  include <stdio.h>
-#  include <stdlib.h>
-#  include "../../flstring.h"
 #  include "Fl_Wayland_Screen_Driver.H"
 #  include "Fl_Wayland_Window_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
+#  include "../../flstring.h" // includes <string.h>
+
 #  include <errno.h>
+#  include <stdio.h>
+#  include <stdlib.h>
 
 
 ////////////////////////////////////////////////////////////////
@@ -319,17 +320,27 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 }
 
 
-static size_t convert_crlf(char *s, size_t len)
-{ // turn \r characters into \n and "\r\n" sequences into \n:
-  char *p;
-  size_t l = len;
-  while ((p = strchr(s, '\r'))) {
-    if (*(p+1) == '\n') {
-      memmove(p, p+1, l-(p-s));
-      len--; l--;
-    } else *p = '\n';
-    l -= p-s;
-    s = p + 1;
+// turn '\r' characters into '\n' and "\r\n" sequences into '\n'
+// returns new length
+static size_t convert_crlf(char *s, size_t len) {
+  char *src = (char *)memchr(s, '\r', len); // find first `\r` in buffer
+  if (src) {
+    char *dst = src;
+    char *end = s + len;
+    while (src < end) {
+      if (*src == '\r') {
+        if (src + 1 < end && *(src + 1) == '\n') {
+          src++; // skip '\r'
+          continue;
+        } else {
+          *dst++ = '\n'; // replace single '\r' with '\n'
+        }
+      } else {
+        *dst++ = *src;
+      }
+      src++;
+    }
+    return (dst - s);
   }
   return len;
 }
