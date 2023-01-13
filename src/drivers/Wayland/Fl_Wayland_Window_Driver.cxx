@@ -1061,9 +1061,9 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
   int popup_x, popup_y;
   if (Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow)) {
-    xdg_positioner_set_anchor_rect(positioner, 0, 0, Fl_Window_Driver::menu_title(pWindow)->w(), Fl_Window_Driver::menu_title(pWindow)->h());
+    xdg_positioner_set_anchor_rect(positioner, 0, 0, Fl_Window_Driver::menu_title(pWindow)->w() * f, Fl_Window_Driver::menu_title(pWindow)->h() * f);
     popup_x = 0;
-    popup_y = Fl_Window_Driver::menu_title(pWindow)->h();
+    popup_y = Fl_Window_Driver::menu_title(pWindow)->h() * f;
   } else {
     popup_x = pWindow->x() * f, popup_y = pWindow->y() * f;
     if (popup_x + pWindow->w() * f < 0) popup_x = - pWindow->w() * f;
