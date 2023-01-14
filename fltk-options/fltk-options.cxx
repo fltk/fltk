@@ -1,5 +1,5 @@
 //
-// fltk-option for the Fast Light Tool Kit (FLTK).
+// fltk-options for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022-2023 by Bill Spitzak and others.
 //
