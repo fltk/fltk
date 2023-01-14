@@ -194,9 +194,10 @@ void print_usage(const char *argv0) {
   fprintf(stderr, "      Values can be 0 or OFF to clear, or 1 or ON to set the option.\n"
                   "      The value -1 or DEFAULT sets the option to its default value.\n"
                   "      If no value is given, the current setting is returned as -1, 0, or 1.\n");
-  fprintf(stderr, "  -L, -LS, -LU  lists all current settings, system settings, or user setting\n");
+  fprintf(stderr, "  -L, -LS, -LU  list the value of all options, of all system settings, \n"
+                  "      or of all user setting\n");
   fprintf(stderr, "  -f  suppresses error messages concerning file access permissions\n");
-  fprintf(stderr, "  -v, --verbose  prints additional informatin in command line mode\n");
+  fprintf(stderr, "  -v, --verbose  prints additional information in command line mode\n");
   fprintf(stderr, "  -h, --help  prints this page\n\n");
   fprintf(stderr, "    This version of %s supports the following options:\n", app_name);
   Fo_Option_Descr *opt;
