@@ -1244,6 +1244,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
       win_pos->window = xid;
       win_pos->x = 0;
       win_pos->y = 0;
+      win_pos->child_popup = NULL;
       xdg_popup_add_listener(xid->xdg_popup, &popup_listener, win_pos);
       wl_surface_commit(xid->wl_surface);
       previous_floatingtitle->wait_for_expose();
