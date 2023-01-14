@@ -320,32 +320,6 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 }
 
 
-// turn '\r' characters into '\n' and "\r\n" sequences into '\n'
-// returns new length
-static size_t convert_crlf(char *s, size_t len) {
-  char *src = (char *)memchr(s, '\r', len); // find first `\r` in buffer
-  if (src) {
-    char *dst = src;
-    char *end = s + len;
-    while (src < end) {
-      if (*src == '\r') {
-        if (src + 1 < end && *(src + 1) == '\n') {
-          src++; // skip '\r'
-          continue;
-        } else {
-          *dst++ = '\n'; // replace single '\r' with '\n'
-        }
-      } else {
-        *dst++ = *src;
-      }
-      src++;
-    }
-    return (dst - s);
-  }
-  return len;
-}
-
-
 // Gets from the system the clipboard or dnd text and puts it in fl_selection_buffer[1]
 // which is enlarged if necessary.
 static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
@@ -365,7 +339,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
       fl_selection_buffer[1][ fl_selection_length[1] ] = 0;
       return;
     }
-    n = convert_crlf(to, n);
+    n = Fl_Screen_Driver::convert_crlf(to, n);
     to += n;
     rest -= n;
   }
@@ -398,7 +372,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
       close(fds[0]);
       break;
     }
-    n = convert_crlf(from, n);
+    n = Fl_Screen_Driver::convert_crlf(from, n);
     from += n;
   }
   fl_selection_length[1] = from - fl_selection_buffer[1];;

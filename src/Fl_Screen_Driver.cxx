@@ -30,6 +30,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>
+#include <string.h> // for memchr
 
 char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
@@ -707,6 +708,32 @@ int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
   if (mask & fl_HeightValue)
     *height = tempHeight;
   return (mask);
+}
+
+
+// turn '\r' characters into '\n' and "\r\n" sequences into '\n'
+// returns new length
+size_t Fl_Screen_Driver::convert_crlf(char *s, size_t len) {
+  char *src = (char *)memchr(s, '\r', len); // find first `\r` in buffer
+  if (src) {
+    char *dst = src;
+    char *end = s + len;
+    while (src < end) {
+      if (*src == '\r') {
+        if (src + 1 < end && *(src + 1) == '\n') {
+          src++; // skip '\r'
+          continue;
+        } else {
+          *dst++ = '\n'; // replace single '\r' with '\n'
+        }
+      } else {
+        *dst++ = *src;
+      }
+      src++;
+    }
+    return (dst - s);
+  }
+  return len;
 }
 
 /**

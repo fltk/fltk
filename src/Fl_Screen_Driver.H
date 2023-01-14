@@ -197,6 +197,7 @@ public:
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                  Fl_RGB_Image *full_img);
+  static size_t convert_crlf(char *s, size_t len);
   // optional platform-specific key handling for Fl_Input widget
   // the default implementation may be enough
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
