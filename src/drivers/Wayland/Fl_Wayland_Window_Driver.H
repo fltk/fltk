@@ -128,7 +128,7 @@ public:
   // menu-related stuff
   void reposition_menu_window(int x, int y) FL_OVERRIDE;
   void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;
-  static bool tall_popup; // to support tall menu buttons
+  static bool new_popup; // to support tall menu buttons
   bool process_menu_or_tooltip(struct wld_window *);
   static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
 };

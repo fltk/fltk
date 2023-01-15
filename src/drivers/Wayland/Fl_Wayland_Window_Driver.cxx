@@ -57,7 +57,7 @@ Window fl_window = 0;
 
 
 struct wld_window *Fl_Wayland_Window_Driver::wld_window = NULL;
-bool Fl_Wayland_Window_Driver::tall_popup = false; // to support tall menu buttons
+bool Fl_Wayland_Window_Driver::new_popup = false; // to support tall menu buttons
 // A menutitle to be mapped later as the child of a menuwindow
 Fl_Window *Fl_Wayland_Window_Driver::previous_floatingtitle = NULL;
 
@@ -1019,7 +1019,12 @@ static const char *get_prog_name() {
  allows FLTK to compute the distance between the source window top and the display top border.
  Function Fl_Wayland_Window_Driver::menu_window_area() sets the top of the display to
  a value such that function Fl_Wayland_Window_Driver::reposition_menu_window(), called by
- menuwindow::autoscroll(int n), ensures that menu item #n is visible.
+ menuwindow::autoscroll(int n), ensures that menu item #n is visible. Static boolean member
+ variable Fl_Wayland_Window_Driver::new_popup is useful to position tall menuwindows created
+ by an Fl_Menu_Button or Fl_Choice. It is set to true when any menu popup is created.
+ It is used each time menu_window_area() runs for a particular Fl_Menu_Button or Fl_Choice,
+ and is reset to false after its first use. This allows menu_window_area() to give the top of
+ the display an adequate value the first time and to keep this value next times it runs.
  Fl_Window_Driver::scroll_to_selected_item() scrolls the tall popup so its selected
  item, when there's one, is visible immediately after the tall popup is mapped on display.
  */
@@ -1035,12 +1040,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     previous_floatingtitle = pWindow;
     return true;
   }
-  Fl_Wayland_Window_Driver::tall_popup = false;
-  if (pWindow->menu_window() && !Fl_Window_Driver::menu_title(pWindow)) {
-    int HH;
-    Fl_Window_Driver::menu_parent(&HH);
-    if (pWindow->h() > HH) Fl_Wayland_Window_Driver::tall_popup = true;
-  }
+  Fl_Wayland_Window_Driver::new_popup = true;
   Fl_Window *menu_origin = NULL;
   if (pWindow->menu_window()) {
     menu_origin = Fl_Window_Driver::menu_leftorigin(pWindow);
@@ -1720,11 +1720,12 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
       if (origin) { // has left parent
         int selected = fl_max(Fl_Window_Driver::menu_selected(origin), 0);
         Y = origin->y() + (selected + 0.5) * ih;
-      } else if (!Fl_Window_Driver::menu_bartitle(pWindow)) { // tall menu button
+      } else if (!Fl_Window_Driver::menu_bartitle(pWindow) &&
+                 !Fl_Window_Driver::menu_title(pWindow)) { // tall menu button
         static int y_offset = 0;
-        if (tall_popup) {
+        if (new_popup) {
           y_offset = pWindow->y()- ih;
-          tall_popup = false;
+          new_popup = false;
         }
         Y = 1.5 * ih + y_offset;
       } else { // has a menutitle
