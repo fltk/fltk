@@ -1,5 +1,5 @@
 //
-// Chart widget for the Fast Light Tool Kit (FLTK).
+// Fl_Chart widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -23,7 +23,6 @@
 
 // this function is in fl_boxtype.cxx:
 void fl_rectbound(int x, int y, int w, int h, Fl_Color color);
-
 
 static const double ARCINC = (2.0 * M_PI / 360.0);
 
@@ -152,6 +151,7 @@ void Fl_Chart::draw_horbarchart(int x, int y, int w, int h, int numb, FL_CHART_E
   \p entries the array of \p numb entries,
   and \p min and \p max the boundaries.
 
+  \param[in]  type        Chart type
   \param[in]  x, y, w, h  Widget position and size
   \param[in]  numb        Number of values
   \param[in]  entries     Array of values
@@ -161,6 +161,7 @@ void Fl_Chart::draw_horbarchart(int x, int y, int w, int h, int numb, FL_CHART_E
   \param[in]  maxnumb     Maximal number of entries
   \param[in]  textcolor   Text color
 */
+
 void Fl_Chart::draw_linechart(int type, int x, int y, int w, int h, int numb,
                               FL_CHART_ENTRY entries[], double min, double max, int autosize,
                               int maxnumb, Fl_Color textcolor)
@@ -204,10 +205,11 @@ void Fl_Chart::draw_linechart(int type, int x, int y, int w, int h, int numb,
   fl_color(textcolor);
   fl_line(x, zeroh, x + w, zeroh);
   // Draw the labels
-  for (i = 0; i < numb; i++)
+  for (i = 0; i < numb; i++) {
     fl_draw(entries[i].str, x + (int)rint((i + .5) * bwidth),
             zeroh - (int)rint(entries[i].val * incr), 0, 0,
             entries[i].val >= 0 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
+  }
 }
 
 
@@ -283,14 +285,13 @@ void Fl_Chart::draw() {
 
   draw_box();
   Fl_Boxtype b = box();
-  int xx = x() + Fl::box_dx(b); // was 9 instead of dx...
+  int xx = x() + Fl::box_dx(b);
   int yy = y() + Fl::box_dy(b);
   int ww = w() - Fl::box_dw(b);
   int hh = h() - Fl::box_dh(b);
   fl_push_clip(xx, yy, ww, hh);
 
-  ww--;
-  hh--; // adjust for line thickness
+  ww--; hh--; // adjust for line thickness
 
   if (min >= max) {
     min = max = 0.0;
