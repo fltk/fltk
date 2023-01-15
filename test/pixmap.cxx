@@ -1,7 +1,7 @@
 //
 // Pixmap label test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,8 +62,11 @@ int main(int argc, char **argv) {
   depixmap = (Fl_Pixmap *)pixmap->copy();
   depixmap->inactive();
 
-  b.image(pixmap);
-  b.deimage(depixmap);
+  // "bind" images to avoid memory leak reports (valgrind, asan)
+  // note: these reports are benign because they appear at exit, but anyway
+
+  b.bind_image(pixmap);
+  b.bind_deimage(depixmap);
 
   leftb = new Fl_Toggle_Button(25,50,50,25,"left");
   leftb->callback(button_cb);
