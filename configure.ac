@@ -306,7 +306,7 @@ AS_IF([test "x$enable_shared" = xyes], [
         GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
         IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
         CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-        DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
+        DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
         AS_IF([test "x$libdir" != "x/usr/lib"], [
             DSOLINK="-R$libdir"
         ])
