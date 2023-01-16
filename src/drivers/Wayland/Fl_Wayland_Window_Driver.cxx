@@ -1672,6 +1672,7 @@ void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
 
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   if (y == pWindow->y()) return;
+  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // necessary for sway
   struct wld_window * xid_menu = fl_wl_xid(pWindow);
 //printf("reposition %dx%d[cur=%d] menu->state=%d\n", x, y, pWindow->y(), xid_menu->state);
   struct xdg_popup *old_popup = xid_menu->xdg_popup;
