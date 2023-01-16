@@ -1034,12 +1034,12 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   // a menu window or tooltip
   new_window->kind = Fl_Wayland_Window_Driver::POPUP;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  new_window->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, new_window->wl_surface);
-  xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
   if (Fl_Window_Driver::is_floating_title(pWindow)) {
     previous_floatingtitle = pWindow;
     return true;
   }
+  new_window->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, new_window->wl_surface);
+  xdg_surface_add_listener(new_window->xdg_surface, &xdg_surface_listener, new_window);
   Fl_Wayland_Window_Driver::new_popup = true;
   Fl_Window *menu_origin = NULL;
   if (pWindow->menu_window()) {
@@ -1065,7 +1065,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     popup_x = 0;
     popup_y = Fl_Window_Driver::menu_title(pWindow)->h() * f;
   } else {
-    popup_x = pWindow->x() * f, popup_y = pWindow->y() * f;
+    popup_x = pWindow->x() * f; popup_y = pWindow->y() * f;
     if (popup_x + pWindow->w() * f < 0) popup_x = - pWindow->w() * f;
     if (menu_origin) {
       popup_x -= menu_origin->x() * f;
@@ -1229,9 +1229,25 @@ void Fl_Wayland_Window_Driver::makeWindow()
   pWindow->redraw();
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
-    pWindow->wait_for_expose();
-    if (previous_floatingtitle) { // map the menutitle popup now as child of pWindow
+    pWindow->wait_for_expose(); // to map the popup
+    if (previous_floatingtitle) { // a menuwindow with a menutitle
+      //puts("previous_floatingtitle");
+      int HH;
+      Fl_Window_Driver::menu_parent(&HH);
+      if (pWindow->h() > HH) {
+        // a tall menuwindow with a menutitle: don't create the menutitle at all
+        // and undo what has been created/allocated before
+        struct wld_window *xid = fl_wl_xid(previous_floatingtitle);
+        wl_surface_destroy(xid->wl_surface);
+        free(xid);
+        Fl_Window_Driver::driver(previous_floatingtitle)->hide_common();
+        previous_floatingtitle = NULL;
+        return;
+      }
+      // map the menutitle popup now as child of pWindow
       struct wld_window *xid = fl_wl_xid(previous_floatingtitle);
+      xid->xdg_surface = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, xid->wl_surface);
+      xdg_surface_add_listener(xid->xdg_surface, &xdg_surface_listener, xid);
       struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
       xdg_positioner_set_anchor_rect(positioner, 0, 0, 1, 1);
       float f = Fl::screen_scale(Fl_Window_Driver::menu_parent()->screen_num());
@@ -1665,6 +1681,11 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   Fl_Window *menu_origin = Fl_Window_Driver::menu_title(pWindow);
   if (!menu_origin) menu_origin = Fl_Window_Driver::menu_leftorigin(pWindow);
   if (!menu_origin) menu_origin = Fl_Window_Driver::menu_parent();
+  if (Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_bartitle(pWindow) &&
+      !Fl_Window_Driver::menu_leftorigin(pWindow)) {
+    // occurs with tall popup menu
+    menu_origin = Fl_Window_Driver::menu_parent();
+  }
   // create a new popup at position (x,y) and display it above the current one
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   xid_menu->wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
@@ -1720,8 +1741,7 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
       if (origin) { // has left parent
         int selected = fl_max(Fl_Window_Driver::menu_selected(origin), 0);
         Y = origin->y() + (selected + 0.5) * ih;
-      } else if (!Fl_Window_Driver::menu_bartitle(pWindow) &&
-                 !Fl_Window_Driver::menu_title(pWindow)) { // tall menu button
+      } else if (!Fl_Window_Driver::menu_bartitle(pWindow)) { // tall menu button
         static int y_offset = 0;
         if (new_popup) {
           y_offset = pWindow->y()- ih;
