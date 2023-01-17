@@ -21,7 +21,7 @@ Current versions of bundled libraries (as of Jan 16, 2023):
   --------------------------------------------------------------------------
   jpeg          jpeg-9d            2020-01-12           1.4.0
   nanosvg       abcd277ea4 [1]     2022-12-22           1.4.0
-  png           libpng-1.6.37      2019-04-14           1.4.0
+  png           libpng-1.6.39      2022-11-20           1.4.0
   zlib          zlib-1.2.13        2022-10-13           1.4.0
   libdecor      3f3e5e1d   [2]     2022-12-29           1.4.0
   --------------------------------------------------------------------------
@@ -178,6 +178,7 @@ png:
   Download the latest libpng sources, `cd' to /path-to/libpng and run
 
     $ ./configure --with-libpng-prefix=fltk_
+    $ make
 
   This creates the header files 'pnglibconf.h' and 'pngprefix.h'
   with the 'fltk_' symbol prefix.
