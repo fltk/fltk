@@ -230,6 +230,8 @@ jpeg:
     Makefile: Same as CMakeLists.txt.
 
     fltk_jpeg_prefix.h:  Generate on a Linux system and merge (see above).
+    
+    jconfig.h: keep changes flagged with /* FLTK */
 
     Note: more to come...
 

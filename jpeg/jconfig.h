@@ -16,9 +16,9 @@
 /* #undef void */
 /* #undef const */
 /* #undef CHAR_IS_UNSIGNED */
-#define HAVE_STDDEF_H 1
+/* #define HAVE_STDDEF_H 1 */		/* FLTK */
 #define HAVE_STDLIB_H 1
-#define HAVE_LOCALE_H 1
+/* #define HAVE_LOCALE_H 1 */		/* FLTK */
 /* #undef NEED_BSD_STRINGS */
 /* #undef NEED_SYS_TYPES_H */
 /* #undef NEED_FAR_POINTERS */
@@ -43,7 +43,7 @@ typedef unsigned char boolean;
 #ifdef JPEG_INTERNALS
 
 /* #undef RIGHT_SHIFT_IS_UNSIGNED */
-#define INLINE __inline__
+/* #define INLINE __inline__ */		/* FLTK */
 /* These are for configuring the JPEG memory manager. */
 /* #undef DEFAULT_MAX_MEM */
 /* #undef NO_MKTEMP */
