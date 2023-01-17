@@ -46,7 +46,8 @@ interactive mode and provides a user interface to view and alter all
 system and current user options.
 
 Starting the tool from a shell, the command-line options `-S` and `-U` can be
-used to display or change system or user options.
+used to display or change system or user options. On MS-Windows, `fltk-options`
+is also available as `fltk-options-cmd.exe`.
 
 \section fltk-options_options List of Options
 
