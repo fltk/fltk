@@ -15,14 +15,14 @@ bundled image libraries need not be changed.
 
 The nanosvg library is not affected.
 
-Current versions of bundled libraries (as of Dec 29, 2022):
+Current versions of bundled libraries (as of Jan 16, 2023):
 
   Library       Version/git commit Release date         FLTK Version
   --------------------------------------------------------------------------
   jpeg          jpeg-9d            2020-01-12           1.4.0
   nanosvg       abcd277ea4 [1]     2022-12-22           1.4.0
   png           libpng-1.6.37      2019-04-14           1.4.0
-  zlib          zlib-1.2.11        2017-01-15           1.4.0
+  zlib          zlib-1.2.13        2022-10-13           1.4.0
   libdecor      3f3e5e1d   [2]     2022-12-29           1.4.0
   --------------------------------------------------------------------------
 
