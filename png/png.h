@@ -428,7 +428,7 @@ extern "C" {
 /* This triggers a compiler error in png.c, if png.c and png.h
  * do not agree upon the version number.
  */
-typedef char* png_libpng_version_1_6_37;
+typedef char* png_libpng_version_1_6_39;
 
 /* Basic control structions.  Read libpng-manual.txt or libpng.3 for more info.
  *
