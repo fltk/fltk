@@ -1,7 +1,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -112,10 +112,11 @@ char params[256];           // commandline arguments
 // Global path variables for all platforms and build systems
 // to avoid duplication and dynamic allocation
 
-char app_path   [FL_PATH_MAX];          // directory of all demo binaries
-char fluid_path [FL_PATH_MAX];          // binary directory of fluid
-char data_path  [FL_PATH_MAX];          // working directory of all demos
-char command    [2 * FL_PATH_MAX + 40]; // command to be executed
+char app_path     [FL_PATH_MAX];          // directory of all demo binaries
+char fluid_path   [FL_PATH_MAX];          // binary directory of fluid
+char options_path [FL_PATH_MAX];          // binary directory of fltk-options
+char data_path    [FL_PATH_MAX];          // working directory of all demos
+char command      [2 * FL_PATH_MAX + 40]; // command to be executed
 
 // platform specific suffix for executable files
 
@@ -387,6 +388,8 @@ void dobut(Fl_Widget *, long arg) {
   const char *path = app_path;
   if (!strncmp(cmdbuf, "fluid", 5))
     path = fluid_path;
+  else if (!strncmp(cmdbuf, "fltk-options", 5))
+    path = options_path;
 
   // format commandline with optional parameters
 
@@ -543,19 +546,25 @@ int main(int argc, char **argv) {
   // - "../../$CMAKE_INTDIR" for multi-config (Visual Studio or Xcode) CMake builds
 
   strcpy(fluid_path, app_path);
+  strcpy(options_path, app_path);
 
-  if (cmake_intdir)
+  if (cmake_intdir) {
     fix_path(fluid_path); // remove intermediate (build type) folder, e.g. "/Debug"
+    fix_path(options_path);
+  }
 
   fix_path(fluid_path); // remove folder name ("test")
+  fix_path(options_path);
 
 #if !defined(GENERATED_BY_CMAKE)
   strcat(fluid_path, "/fluid");
+  strcat(options_path, "/fltk-options");
 #else
   // CMake: potentially Visual Studio or Xcode (multi config)
-  if (cmake_intdir)
+  if (cmake_intdir) {
     strcat(fluid_path, cmake_intdir); // append e.g. "/Debug"
-
+    strcat(options_path, cmake_intdir);
+  }
 #endif // GENERATED_BY_CMAKE
 
   // construct data_path for the menu file and all resources (data files)
@@ -607,11 +616,12 @@ int main(int argc, char **argv) {
     fl_getcwd(cwd, sizeof(cwd));
     fix_path(cwd, 0);
 
-    debug_var("app_path",   app_path);
-    debug_var("fluid_path", fluid_path);
-    debug_var("data_path",  data_path);
-    debug_var("menu file",  menu);
-    debug_var("cwd",        cwd);
+    debug_var("app_path",     app_path);
+    debug_var("fluid_path",   fluid_path);
+    debug_var("options_path", options_path);
+    debug_var("data_path",    data_path);
+    debug_var("menu file",    menu);
+    debug_var("cwd",          cwd);
     tty->printf("\n");
   }
 
