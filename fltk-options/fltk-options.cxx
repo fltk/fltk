@@ -21,6 +21,7 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Browser.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/filename.H>
@@ -28,6 +29,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+// Set to 0 for classic design, set to 1 for Erco's alternative design
+#define FO_GUI_LAYOUT 0
 
 // command line options
 int g_verbose = 0;
@@ -457,6 +461,8 @@ void set_user_option_cb(Fl_Widget* w, void* user_data) {
   set_option(FO_USER, opt->name, value);
 }
 
+#if FO_GUI_LAYOUT==0
+
 /** Add a headline to a group of options.
  \param[in] opt pointer to the headline record
  \param[in] first true, if this is the first headline to generate
@@ -579,6 +585,97 @@ Fl_Window* build_ui() {
   window->size_range(ww, 120, ww, 32785);
   return window;
 }
+
+#else
+
+/** Build the modular user interface (ALT VERSION).
+ */
+Fl_Window* build_ui() {
+  int sb = Fl::scrollbar_size();
+  int cw = 550;
+  int ww = 10+sb+cw+sb+10;
+  int sh = 5*10 + 6*26 + 7*30;
+  Fl_Tooltip::size(11);
+  Fl_Window* window = new Fl_Double_Window(ww, 10+sh+10+25+10, "FLTK Options");
+  Fl_Browser* group_browser = new Fl_Browser(10, 25, 200, sh-15, "Groups:");
+  group_browser->align(FL_ALIGN_TOP);
+  Fo_Option_Descr *opt;
+  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+    if (opt->type == FO_HEADLINE)
+      group_browser->add(opt->text);
+  }
+  Fl_Scroll* option_scroll = new Fl_Scroll(220, 25, ww-230, sh-15);
+  option_scroll->box(FL_DOWN_BOX);
+  option_scroll->type(Fl_Scroll::VERTICAL);
+  Fl_Pack* option_list = new Fl_Pack(220+sb+3, 28, ww-230-2*sb-6, sh-18);
+
+
+  for (int i=1; i<=2; i++) {
+    Fl_Group* option_group = new Fl_Group(0, 0, ww-230-2*sb-6, 150);
+    Fl_Box* system = new Fl_Box(210-40, 0, 75, 20, "System:");
+    system->labelsize(11);
+    system->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
+    Fl_Box* user = new Fl_Box(300-40, 0, 75, 20, "User:");
+    user->labelsize(11);
+    user->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
+
+    static Fl_Menu_Item bool_option_menu[] = {
+      { "off",      0, 0, (void*)(0),   0},
+      { "on",       0, 0, (void*)(1),   FL_MENU_DIVIDER},
+      { "default",  0, 0, (void*)(-1),  0},
+      { NULL }
+    };
+
+    opt = g_option_list + i;
+    if (opt->tooltip) {
+      size_t tooltip_len = strlen(opt->name) + strlen(opt->tooltip) + 32;
+      char *tooltip_str = (char*)malloc(tooltip_len); // tollerable memeory leak
+      fl_snprintf(tooltip_str, tooltip_len-1, "%s\n\n%s\n\nDefault is %s.",
+                  opt->name, opt->tooltip, opt->bool_default ? "on" : "off");
+      Fl_Box* detail = new Fl_Box(0, 48, 330, 100);
+//      detail->box(FL_FRAME_BOX);
+      detail->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT|FL_ALIGN_TOP|FL_ALIGN_WRAP);
+      detail->copy_label(tooltip_str);
+      detail->labelsize(11);
+    }
+
+    Fl_Choice* system_choice = new Fl_Choice(210-40, 20, 75, 22, opt->text);
+    system_choice->down_box(FL_BORDER_BOX);
+    system_choice->labelsize(13);
+    system_choice->callback((Fl_Callback*)set_system_option_cb, (void*)opt);
+    system_choice->menu(bool_option_menu);
+    switch (get_option(FO_SYSTEM, opt->name)) {
+      case 0: system_choice->value(0); break;
+      case 1: system_choice->value(1); break;
+      default: system_choice->value(2); break;
+    }
+    if (!g_system_write_ok) system_choice->deactivate();
+
+    Fl_Choice* user_choice = new Fl_Choice(300-40, 20, 75, 22);
+    user_choice->down_box(FL_BORDER_BOX);
+    user_choice->labelsize(13);
+    user_choice->callback((Fl_Callback*)set_user_option_cb, (void*)opt);
+    user_choice->menu(bool_option_menu);
+    switch (get_option(FO_USER, opt->name)) {
+      case 0: user_choice->value(0); break;
+      case 1: user_choice->value(1); break;
+      default: user_choice->value(2); break;
+    }
+    if (!g_user_write_ok) user_choice->deactivate();
+    option_group->end();
+  }
+
+  option_scroll->end();
+  window->resizable(option_scroll);
+  Fl_Button* close = new Fl_Button(ww-75-20, 10+sh+10, 75, 25, "Close");
+  close->callback(close_cb);
+  window->end();
+  window->size_range(ww, 120, ww, 32785);
+  return window;
+}
+
+
+#endif
 
 /** This is where it all begins.
  */
