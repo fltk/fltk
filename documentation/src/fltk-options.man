@@ -11,7 +11,7 @@ fltk\-options
 [ \-LU ]
 [ \-f ]
 [ \-v ] [ \-\-verbose ]
-[ \-h ] [ \-\-help ]
+[ \-h[option] ] [ \-\-help [option] ]
 .SH DESCRIPTION
 \fIfltk\-options\fR is a tool that allows you to access and change settings
 related to the user interface in applications built with FLTK. These settings
@@ -52,9 +52,10 @@ Suppress error messages concerning file access permissions.
 .br
 Print additional information in command line mode.
 .TP 5
-\-h, \-\-help
+\-h[option], \-\-help [option]
 .br
-Prints a help page.
+Prints a help page. If an option is give, print detailed information
+for that option.
 .LP
 The following FLTK options are supported:
 .TP 5

@@ -51,9 +51,10 @@ is also available as `fltk-options-cmd.exe`.
 
 \section fltk-options_options List of Options
 
-Calling `fltk-options --help` gives a list of all available commands and
-options and their values. In interactive mode, tooltips will give more
-detailed informations.
+Calling `fltk-options --help` gives a list of all available commands, and
+options and their values. `fltk-options --help OPTION` prints more detailed
+information for OPTION if available. In interactive mode, tooltips provide
+this additional information.
 
 A full list of options can be found in the maunal at \ref Fl_Option .
 

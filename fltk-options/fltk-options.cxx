@@ -191,29 +191,50 @@ void print_usage(const char *argv0) {
     app_name = fl_filename_name(argv0);
   if (!app_name || !app_name[0])
     app_name = "fltk-options";
-  fprintf(stderr, "FLTK %d.%d.%d. Usage:\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
-  fprintf(stderr, "%s [-Soption[=val]] [-Uoption[=val]] [-L] [-LS] [-LU] [-f] [-v] [-h]\n", app_name);
-  fprintf(stderr, "  -Soption[=value]  change or print system wide option\n");
-  fprintf(stderr, "  -Uoption[=value]  change or print user option\n");
-  fprintf(stderr, "      Values can be 0 or OFF to clear, or 1 or ON to set the option.\n"
+  fprintf(stdout, "FLTK %d.%d.%d. Usage:\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+  fprintf(stdout, "%s [-Soption[=val]] [-Uoption[=val]] [-L] [-LS] [-LU] [-f] [-v] [-h[option]]\n", app_name);
+  fprintf(stdout, "  -Soption[=value]  change or print system wide option\n");
+  fprintf(stdout, "  -Uoption[=value]  change or print user option\n");
+  fprintf(stdout, "      Values can be 0 or OFF to clear, or 1 or ON to set the option.\n"
                   "      The value -1 or DEFAULT sets the option to its default value.\n"
                   "      If no value is given, the current setting is returned as -1, 0, or 1.\n");
-  fprintf(stderr, "  -L, -LS, -LU  list the value of all options, of all system settings, \n"
+  fprintf(stdout, "  -L, -LS, -LU  list the value of all options, of all system settings, \n"
                   "      or of all user setting\n");
-  fprintf(stderr, "  -f  suppresses error messages concerning file access permissions\n");
-  fprintf(stderr, "  -v, --verbose  prints additional information in command line mode\n");
-  fprintf(stderr, "  -h, --help  prints this page\n\n");
-  fprintf(stderr, "    This version of %s supports the following options:\n", app_name);
+  fprintf(stdout, "  -f  suppresses error messages concerning file access permissions\n");
+  fprintf(stdout, "  -v, --verbose  prints additional information in command line mode\n");
+  fprintf(stdout, "  -h[option], --help [option]  general help, or info for the given option\n\n");
+  fprintf(stdout, "    This version of %s supports the following options:\n", app_name);
   Fo_Option_Descr *opt;
   for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
     if (opt->name) {
       if (opt->brief)
-        fprintf(stderr, "  %-24s %s\n", opt->name, opt->brief);
+        fprintf(stdout, "  %-24s %s\n", opt->name, opt->brief);
       else
-        fprintf(stderr, "  %s\n", opt->name);
+        fprintf(stdout, "  %s\n", opt->name);
     }
   }
-  fprintf(stderr, "\n  Calling %s without options will launch %s interactive mode.\n", app_name, app_name);
+  fprintf(stdout, "\n  Calling %s without options will launch %s interactive mode.\n", app_name, app_name);
+}
+
+/** Print more information for a given options.
+ \param[in] options the name of the option, case insensitive
+ */
+void print_info(const char *option) {
+  Fo_Option_Descr *opt;
+  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+    if ( opt->name && (fl_ascii_strcasecmp(opt->name, option) == 0) ) {
+      if (opt->brief)
+        fprintf(stdout, "%s: %s\n", opt->name, opt->brief);
+      else
+        fprintf(stdout, "%s: see FLTK manual for details\n", opt->name);
+      if (opt->tooltip)
+        fprintf(stdout, "\n%s\n", opt->tooltip);
+      fprintf(stdout, "\nDefault is %s.\n", opt->bool_default ? "on" : "off");
+      break;
+    }
+  }
+  if (opt->type == FO_END_OF_LIST)
+    fprintf(stderr, "Warning: Unrecognized option \"%s\".\n", option);
 }
 
 /** List the current value of all options.
@@ -292,6 +313,26 @@ static int read_command_line_args(int argc, char** argv, int& i) {
   int ival = FO_PRINT_VALUE;
   const char *arg = argv[i++];
 
+  if ( (strcmp(arg, "--help") == 0)) {
+    if (argv[i] && argv[i][0]) {
+      print_info(argv[i]);
+      i++;
+    } else {
+      print_usage(argv[0]);
+    }
+    g_batch_mode = 1;
+    return 1;
+  }
+  if ( (strncmp(arg, "-h", 2) == 0) ) {
+    if (arg[2]) {
+      print_info(arg+2);
+      i++;
+    } else {
+      print_usage(argv[0]);
+    }
+    g_batch_mode = 1;
+    return 1;
+  }
   if ( (strcmp(arg, "--help") == 0) || (strcmp(arg, "-h") == 0) ) {
     print_usage(argv[0]);
     g_batch_mode = 1;
