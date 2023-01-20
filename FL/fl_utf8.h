@@ -57,7 +57,7 @@ FL_EXPORT int fl_utf8len(char c);
 FL_EXPORT int fl_utf8len1(char c);
 
 /* OD: returns the byte length of a UTF-8 text */
-FL_EXPORT int fl_utf8strlen(const char *text, int len=-1);
+FL_EXPORT int fl_utf8strlen(const char *text, int len);
 
 /* OD: returns the number of Unicode chars in the UTF-8 string */
 FL_EXPORT int fl_utf_nb_char(const unsigned char *buf, int len);
