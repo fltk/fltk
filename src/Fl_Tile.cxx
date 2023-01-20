@@ -252,7 +252,7 @@ int Fl_Tile::handle(int event) {
     // This is necessary if CONSOLIDATE_MOTION in Fl_x.cxx is turned off:
     // if (damage()) return 1; // don't fall behind
   case FL_RELEASE: {
-    if (!sdrag) return 0; // should not happen
+    if (!sdrag) break;
     Fl_Widget* r = resizable(); if (!r) r = this;
     int newx;
     if (sdrag&DRAGH) {
