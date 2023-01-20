@@ -119,7 +119,29 @@ int fl_utf8len1(char c)
 
 
 /**
+ Return the length in bytes of a UTF-8 string.
+ \param[in] text encoded in UTF-8
+ \param[in] len number of Unicode characters, -1 to test until the end of text
+ \return number of bytes that make up the Unicode string
+ \see fl_utf_nb_char(const unsigned char *buf, int len)
+ */
+int fl_utf8strlen(const char *text, int len)
+{
+  if (len == -1) return (int)strlen(text);
+  int i, n = 0;
+  for (i=len; i>0; i--) {
+    if (*text == 0) return n; // end of string
+    int nc = fl_utf8len1(*text);
+    n += nc;
+    text += nc;
+  }
+  return n;
+}
+
+
+/**
   Returns the number of Unicode chars in the UTF-8 string.
+ \see fl_utf8strlen(const char *text, int len)
 */
 int
 fl_utf_nb_char(
