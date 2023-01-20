@@ -254,6 +254,7 @@ void align_widget_cb(Fl_Widget*, long how)
     n--;
     if (n>0)
     {
+      wdt = wdt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, wsum = 0;
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
         if (o->selected && o->is_widget())
@@ -295,6 +296,7 @@ void align_widget_cb(Fl_Widget*, long how)
     n--;
     if (n>0)
     {
+      hgt = hgt/n*n; // make sure that all gaps are the same, possibly moving the rightmost widget
       int cnt = 0, hsum = 0;
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
         if (o->selected && o->is_widget())
