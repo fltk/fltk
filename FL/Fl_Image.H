@@ -272,6 +272,9 @@ public:
 
    An internal copy is made of the original image before
    changes are applied, to avoid modifying the original image.
+
+   \note The RGB color of \ref FL_BACKGROUND_COLOR may change when the
+   connection to the display is made. See fl_open_display().
    */
   void inactive() { color_average(FL_GRAY, .33f); }
   virtual void desaturate();

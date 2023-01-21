@@ -20,6 +20,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_Printer.H>
 #include <string.h>
 #include <errno.h>
@@ -35,6 +36,17 @@ Fl_Shared_Image *img;
 
 
 static char name[1024];
+
+void cb_forced_redraw(void *) {
+  Fl_Window *win = Fl::first_window();
+  while (win) {
+    if (!win->menu_window())
+      win->redraw();
+    win = Fl::next_window(win);
+  }
+  if (Fl::first_window())
+    Fl::repeat_timeout(1./10, cb_forced_redraw);
+}
 
 void load_file(const char *n) {
   if (img) {
@@ -118,8 +130,10 @@ void svg_cb(Fl_Widget *widget, void *) {
 }
 
 int dvisual = 0;
+int animate = 1;
 int arg(int, char **argv, int &i) {
   if (argv[i][1] == '8') {dvisual = 1; i++; return 1;}
+  if (argv[i][1] == 'a') {animate = 1; i++; return 1;}
   return 0;
 }
 
@@ -130,6 +144,9 @@ int main(int argc, char **argv) {
   fl_register_images();
 
   Fl::args(argc,argv,i,arg);
+
+  if (animate)
+    Fl_GIF_Image::animate = true; // create animated shared .GIF images (e.g. file chooser)
 
   Fl_Double_Window window(400,450); ::w = &window;
   Fl_Box b(10,45,380,380); ::b = &b;
@@ -146,5 +163,7 @@ int main(int argc, char **argv) {
   svg.callback(svg_cb);
 
   window.show(argc,argv);
+  if (animate)
+    Fl::add_timeout(1./10, cb_forced_redraw); // force periodic redraw
   return Fl::run();
 }

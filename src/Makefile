@@ -230,6 +230,7 @@ IMGCPPFILES = \
 	Fl_BMP_Image.cxx \
 	Fl_File_Icon2.cxx \
 	Fl_GIF_Image.cxx \
+	Fl_Anim_GIF_Image.cxx \
 	Fl_Help_Dialog.cxx \
 	Fl_ICO_Image.cxx \
 	Fl_JPEG_Image.cxx \

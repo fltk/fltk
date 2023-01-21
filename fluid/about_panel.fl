@@ -36,11 +36,12 @@ if (!cbuf[0]) {
 }} {}
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {449 217 345 180} type Double color 50 selection_color 47 hide hotspot
-    code0 {\#include "../src/flstring.h"} non_modal
+    xywh {449 217 345 180} type Double color 50 selection_color 47 hotspot
+    code0 {\#include "../src/flstring.h"} non_modal visible
   } {
-    Fl_Box {} {
-      image {icons/fluid-96.xpm} xywh {10 10 115 120}
+    Fl_Box {} {selected
+      image {icons/fluid.animated.gif} compress_image 1 xywh {10 10 115 120}
+      code0 {((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);}
     }
     Fl_Box {} {
       label {FLTK User
@@ -59,7 +60,7 @@ Version x.x.x}
     }
     Fl_Button {} {
       label {View License...}
-      callback {show_help("license.html");} selected
+      callback {show_help("license.html");}
       xywh {115 145 123 25} labelcolor 136
     }
     Fl_Return_Button {} {
