@@ -35,7 +35,7 @@
 // |<->|<-  group browser ->|<->|<- options ->|<->|
 const int FO_GAP = 10;
 const int FO_BROWSER_W = 200;
-const int FO_SCROLL_W = Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
+const int FO_SCROLL_W = 16 + 4; //Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
 const int FO_CHOICE_W = 75;
 const int FO_OPTIONS_W = 380;
 const int FO_BUTTON_W = 75;
@@ -505,7 +505,6 @@ void add_option(Fl_Pack* pack, Fo_Option_Descr* opt) {
     fl_font(FL_HELVETICA, 11);
     fl_measure(opt->tooltip, ww, hh);
     tooltip_h = hh+5;
-    printf("h: %d\n", hh);
   }
   // -- create a group that contains all the UI elements for the option
   int yy = 0;
