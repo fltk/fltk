@@ -292,6 +292,7 @@ AS_IF([test "x$enable_shared" = xyes], [
     PICFLAG=1
     SHAREDSUFFIX=""
     FLUID="fluid-shared"
+    FLTK_OPTIONS="fltk-options-shared"
 
     AS_CASE([$host_os], [darwin*], [
         DSONAME="libfltk.$FL_DSO_VERSION.dylib"
@@ -441,6 +442,7 @@ AS_IF([test "x$enable_shared" = xyes], [
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
+    FLTK_OPTIONS="fltk-options"
     LINKSHARED="$LINKFLTKCAIRO ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 ])
 
@@ -467,6 +469,7 @@ AC_SUBST([SHAREDSUFFIX])
 AC_SUBST([LINKSHARED])
 AC_SUBST([FLUID])
 AC_SUBST([FLUID_BUILD])
+AC_SUBST([FLTK_OPTIONS])
 
 
 dnl Find commands...

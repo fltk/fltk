@@ -16,7 +16,7 @@
 
 include makeinclude
 
-DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) fluid test documentation
+DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) fluid fltk-options test documentation
 
 all: makeinclude fltk-config
 	for dir in $(DIRS); do\
@@ -36,6 +36,7 @@ install: makeinclude
 install-desktop: makeinclude
 	cd documentation; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 	cd fluid; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
+	cd fltk-options; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 	cd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 
 uninstall: makeinclude
@@ -48,6 +49,7 @@ uninstall: makeinclude
 uninstall-desktop: makeinclude
 	cd documentation; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 	cd fluid; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
+	cd fltk-options; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 	cd test; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 
 depend: makeinclude
@@ -111,7 +113,7 @@ native-dist:
 	epm -v -f native fltk
 
 etags:
-	etags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.cxx fluid/*.h fluid/*.cxx test/*.h test/*.cxx
+	etags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.cxx fluid/*.h fluid/*.cxx fltk-options/*.cxx test/*.h test/*.cxx
 
 #
 # Run the clang.llvm.org static code analysis tool on the C sources.

@@ -425,9 +425,9 @@ Fl::thread_message().
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="fluid.html">
+    <a class="el" href="fltk-options.html">
     [Prev]
-    Programming with FLUID
+    FLTK Runtime Options
     </a>
   </td>
   <td width="10%" align="CENTER">
