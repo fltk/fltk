@@ -21,7 +21,7 @@
 #include <FL/Fl_Anim_GIF_Image.H>
 #include <stdio.h>
 
-#include "test/pixmaps/animated_fluid_gif.h"
+#include "pixmaps/animated_fluid_gif.h"
 
 #include <FL/Fl_Toggle_Button.H>
 
@@ -71,7 +71,7 @@ int arg(int, char **argv, int &i) {
 int main(int argc, char **argv) {
   int i = 1;
   if (Fl::args(argc,argv,i,arg) < argc)
-    Fl::fatal(" -8 # : use default visual\n", Fl::help);
+    Fl::fatal(" -8 # : use default visual\n%s\n", Fl::help);
   if (!dvisual) Fl::visual(FL_RGB);
 
   Fl_Double_Window window(400,440); ::w = &window;
