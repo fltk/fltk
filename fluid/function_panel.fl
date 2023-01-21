@@ -479,14 +479,14 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label {Comment Properties}
-    xywh {780 296 550 280} type Double labelsize 11 hide resizable
-    code0 {o->size_range(320, 180);} modal
+    label {Comment Properties} open
+    xywh {780 296 550 280} type Double labelsize 11 resizable
+    code0 {o->size_range(320, 180);} modal visible
   } {
-    Fl_Text_Editor comment_input {
-      xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
+    Fl_Text_Editor comment_input {selected
+      xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 textcolor 58 resizable
       code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
-      class CodeEditor
+      code1 {o->buffer(new Fl_Text_Buffer());}
     }
     Fl_Group {} {open
       xywh {110 250 430 20} labelsize 11
@@ -986,7 +986,7 @@ Function {make_sourceview()} {open
       xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
-        label Source open selected
+        label Source open
         xywh {10 35 500 415} labelsize 13 resizable
       } {
         Fl_Text_Editor sv_source {

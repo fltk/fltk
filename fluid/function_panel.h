@@ -94,7 +94,7 @@ extern Fl_Return_Button *c_panel_ok;
 extern Fl_Button *c_panel_cancel;
 Fl_Double_Window* make_class_panel();
 extern Fl_Double_Window *comment_panel;
-extern CodeEditor *comment_input;
+extern Fl_Text_Editor *comment_input;
 extern Fl_Return_Button *comment_panel_ok;
 extern Fl_Button *comment_panel_cancel;
 extern Fl_Light_Button *comment_in_source;
