@@ -99,8 +99,12 @@ int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
     if (!(when() & FL_WHEN_CHANGED ||
           (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
     if (changed() || when()&FL_WHEN_NOT_CHANGED) {
-      if (event == FL_RELEASE) clear_changed();
-      do_callback();
+      Fl_Callback_Reason reason = changed() ? FL_REASON_CHANGED : FL_REASON_SELECTED;
+      if (event == FL_RELEASE) {
+        clear_changed();
+        reason = FL_REASON_RELEASED;
+      }
+      do_callback(reason);
     }
     return 1;
   default:

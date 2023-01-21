@@ -5,7 +5,7 @@
 //     Origin: http://seriss.com/people/erco/fltk/#Fl_Chart
 //
 // Copyright 2008 by Greg Ercolano.
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,7 +42,9 @@ int main() {
     // Fl_Chart with a sin() wave of data
     G_chart = new Fl_Chart(20, 20, G_win->w()-40, G_win->h()-80, "Chart");
     G_chart->bounds(-125.0, 125.0);
-    for ( double t=0; t<15; t+=0.5 ) {
+    const double start = 1.5;
+    const double end = start + 15.1;
+    for (double t = start; t < end; t += 0.5) {
         double val = sin(t) * 125.0;
         static char val_str[20];
         sprintf(val_str, "%.0lf", val);

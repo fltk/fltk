@@ -48,6 +48,7 @@ $FLLIBNAME=@FLLIBNAME@
 $GLDSONAME=@GLDSONAME@
 $GLLIBNAME=@GLLIBNAME@
 $FLUID=@FLUID@
+$FLTK_OPTIONS=@FLTK_OPTIONS@
 $JPEG=@JPEG@
 $PNG=@PNG@
 $ZLIB=@ZLIB@
@@ -114,6 +115,16 @@ f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/flui
 %postinstall $bindir/fltk-config --post $bindir/fluid
 %postremove /bin/rm -rf /Applications/fluid.app
 
+d 0555 root sys /Applications/fltk-options.app -
+d 0555 root sys /Applications/fltk-options.app/Contents -
+f 0444 root sys /Applications/fltk-options.app/Contents/Info.plist fltk-options/fltk-options.app/Contents/Info.plist
+d 0555 root sys /Applications/fltk-options.app/Contents/MacOS -
+l 0555 root sys /Applications/fltk-options.app/Contents/MacOS/fltk-options $bindir/fltk-options
+d 0555 root sys /Applications/fltk-options.app/Contents/Resources -
+f 0444 root sys /Applications/fltk-options.app/Contents/Resources/fltk-options.icns fltk-options/fltk-options.app/Contents/Resources/fltk-options.icns
+%postinstall $bindir/fltk-config --post $bindir/fltk-options
+%postremove /bin/rm -rf /Applications/fltk-options.app
+
 %system !darwin
 f 0444 root sys /usr/share/applications/fluid.desktop fluid/fluid.desktop
 f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fluid.png fluid/icons/fluid-16.png
@@ -123,17 +134,28 @@ f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fluid.png fluid/icons/fluid-
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fluid.png fluid/icons/fluid-128.png
 f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/fluid.desktop
 
+f 0444 root sys /usr/share/applications/fltk-options.desktop fltk-options/fltk-options.desktop
+f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fltk-options.png fltk-options/icons/fltk-options-16.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fltk-options.png fltk-options/icons/fltk-options-32.png
+f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fltk-options.png fltk-options/icons/fltk-options-48.png
+f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fltk-options.png fltk-options/icons/fltk-options-64.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fltk-options.png fltk-options/icons/fltk-options-128.png
+f 0444 root sys /usr/share/mimelnk/application/x-fltk-options.desktop fltk-options/fltk-options.desktop
+
 %system all
 
-# FLUID
+# Applications
 f 0555 root sys $bindir/fluid fluid/$FLUID
+f 0555 root sys $bindir/fltk-options fltk-options/$FLTK_OPTIONS
 f 0555 root sys $bindir/fltk-config fltk-config
 
 # Man pages
 f 0444 root sys $mandir/cat1/fluid.$CAT1EXT documentation/src/fluid.$CAT1EXT
+f 0444 root sys $mandir/cat1/fltk-options.$CAT1EXT documentation/src/fltk-options.$CAT1EXT
 f 0444 root sys $mandir/cat1/fltk-config.$CAT1EXT documentation/src/fltk-config.$CAT1EXT
 f 0444 root sys $mandir/cat3/fltk.$CAT3EXT documentation/src/fltk.$CAT3EXT
 f 0444 root sys $mandir/man1/fluid.1 documentation/src/fluid.man
+f 0444 root sys $mandir/man1/fltk-options.1 documentation/src/fltk-options.man
 f 0444 root sys $mandir/man1/fltk-config.1 documentation/src/fltk-config.man
 f 0444 root sys $mandir/man3/fltk.3 documentation/src/fltk.man
 

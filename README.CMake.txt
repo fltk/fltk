@@ -122,6 +122,9 @@ OPTION_BUILD_SHARED_LIBS - default OFF
 FLTK_BUILD_FLUID - default ON
     Builds the Fast Light User-Interface Designer ("FLUID").
 
+FLTK_BUILD_FLTK_OPTIONS - default ON
+    Builds the FLTK options editor ("fltk-options").
+
 FLTK_BUILD_TEST - default ON
    Builds the test and demo programs in the 'test' directory.
 

@@ -1,7 +1,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,7 +78,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>      // right click popup menu
-#include <FL/Fl_Choice.H>
+#include <FL/Fl_Scheme_Choice.H>
 #include <FL/Fl_Simple_Terminal.H>  // tty
 #include <FL/filename.H>
 #include <FL/platform.H>
@@ -95,13 +95,11 @@
 void doexit(Fl_Widget *, void *);
 void doback(Fl_Widget *, void *);
 void dobut(Fl_Widget *, long);
-void doscheme(Fl_Choice *c, void *) {
-  Fl::scheme(c->text(c->value()));
-}
 
 Fl_Double_Window *form = 0;
 Fl_Group *demogrp = 0;
 Fl_Simple_Terminal *tty = 0;
+Fl_Scheme_Choice *scheme_choice = 0;
 Fl_Button *but[9];
 Fl_Button *exit_button;
 
@@ -114,10 +112,11 @@ char params[256];           // commandline arguments
 // Global path variables for all platforms and build systems
 // to avoid duplication and dynamic allocation
 
-char app_path   [FL_PATH_MAX];          // directory of all demo binaries
-char fluid_path [FL_PATH_MAX];          // binary directory of fluid
-char data_path  [FL_PATH_MAX];          // working directory of all demos
-char command    [2 * FL_PATH_MAX + 40]; // command to be executed
+char app_path     [FL_PATH_MAX];          // directory of all demo binaries
+char fluid_path   [FL_PATH_MAX];          // binary directory of fluid
+char options_path [FL_PATH_MAX];          // binary directory of fltk-options
+char data_path    [FL_PATH_MAX];          // working directory of all demos
+char command      [2 * FL_PATH_MAX + 40]; // command to be executed
 
 // platform specific suffix for executable files
 
@@ -185,21 +184,8 @@ void create_the_forms() {
   obj = new Fl_Box(FL_FRAME_BOX, 10, 65, 330, 330, 0);
   obj->color(FL_GRAY-8);
 
-  Fl_Choice *choice = new Fl_Choice(90, 405, 100, 25, "Scheme:");
-  choice->labelfont(FL_HELVETICA_BOLD);
-  choice->add("none");
-  choice->add("gtk+");
-  choice->add("gleam");
-  choice->add("oxy");
-  choice->add("plastic");
-  choice->callback((Fl_Callback *)doscheme);
-  Fl::scheme(NULL);
-  if (!Fl::scheme())                         choice->value(0);
-  else if (!strcmp(Fl::scheme(), "gtk+"))    choice->value(1);
-  else if (!strcmp(Fl::scheme(), "gleam"))   choice->value(2);
-  else if (!strcmp(Fl::scheme(), "oxy"))     choice->value(3);
-  else if (!strcmp(Fl::scheme(), "plastic")) choice->value(4);
-  else choice->value(0);
+  scheme_choice = new Fl_Scheme_Choice(90, 405, 100, 25, "Scheme:");
+  scheme_choice->labelfont(FL_HELVETICA_BOLD);
 
   exit_button = new Fl_Button(280, 405, 60, 25, "Exit");
   exit_button->callback(doexit);
@@ -402,6 +388,8 @@ void dobut(Fl_Widget *, long arg) {
   const char *path = app_path;
   if (!strncmp(cmdbuf, "fluid", 5))
     path = fluid_path;
+  else if (!strncmp(cmdbuf, "fltk-options", 5))
+    path = options_path;
 
   // format commandline with optional parameters
 
@@ -558,19 +546,25 @@ int main(int argc, char **argv) {
   // - "../../$CMAKE_INTDIR" for multi-config (Visual Studio or Xcode) CMake builds
 
   strcpy(fluid_path, app_path);
+  strcpy(options_path, app_path);
 
-  if (cmake_intdir)
+  if (cmake_intdir) {
     fix_path(fluid_path); // remove intermediate (build type) folder, e.g. "/Debug"
+    fix_path(options_path);
+  }
 
   fix_path(fluid_path); // remove folder name ("test")
+  fix_path(options_path);
 
 #if !defined(GENERATED_BY_CMAKE)
   strcat(fluid_path, "/fluid");
+  strcat(options_path, "/fltk-options");
 #else
   // CMake: potentially Visual Studio or Xcode (multi config)
-  if (cmake_intdir)
+  if (cmake_intdir) {
     strcat(fluid_path, cmake_intdir); // append e.g. "/Debug"
-
+    strcat(options_path, cmake_intdir);
+  }
 #endif // GENERATED_BY_CMAKE
 
   // construct data_path for the menu file and all resources (data files)
@@ -622,11 +616,12 @@ int main(int argc, char **argv) {
     fl_getcwd(cwd, sizeof(cwd));
     fix_path(cwd, 0);
 
-    debug_var("app_path",   app_path);
-    debug_var("fluid_path", fluid_path);
-    debug_var("data_path",  data_path);
-    debug_var("menu file",  menu);
-    debug_var("cwd",        cwd);
+    debug_var("app_path",     app_path);
+    debug_var("fluid_path",   fluid_path);
+    debug_var("options_path", options_path);
+    debug_var("data_path",    data_path);
+    debug_var("menu file",    menu);
+    debug_var("cwd",          cwd);
     tty->printf("\n");
   }
 
@@ -638,6 +633,17 @@ int main(int argc, char **argv) {
 
   // set size_range() after show() so the window can be resizable (Win + macOS)
   form->size_range(FORM_W, FORM_H, FORM_W, FORM_H);
+
+#if (0) // DEBUG (remove after testing)
+  {
+    const char *const *scheme_names = Fl_Scheme_Choice::scheme_names();
+    int ni = 0;
+    while (scheme_names[ni]) {
+      printf("scheme[%2d] = '%s'\n", ni, scheme_names[ni]);
+      ni++;
+    }
+  }
+#endif // End of debug and test statements
 
   Fl::run();
   return 0;

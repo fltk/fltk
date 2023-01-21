@@ -630,7 +630,7 @@ int Fl_Browser_::select(void* item, int val, int docallbacks) {
   }
   if (docallbacks) {
     set_changed();
-    do_callback();
+    do_callback(FL_REASON_CHANGED);
   }
   return 1;
 }
@@ -733,7 +733,7 @@ int Fl_Browser_::handle(int event) {
           if (wp.deleted()) return 1;
           if (when() & FL_WHEN_ENTER_KEY) {
             set_changed();
-            do_callback();
+            do_callback(FL_REASON_CHANGED);
           }
           return 1;
         case ' ':
@@ -807,7 +807,7 @@ J1:
       if (wp.deleted()) return 1;
       if (change && (when() & FL_WHEN_CHANGED)) {
         set_changed();
-        do_callback();
+        do_callback(FL_REASON_CHANGED);
         if (wp.deleted()) return 1;
       }
     } else {
@@ -821,7 +821,7 @@ J1:
           if (wp.deleted()) return 1;
           if (change && (when() & FL_WHEN_CHANGED)) {
             set_changed();
-            do_callback();
+            do_callback(FL_REASON_CHANGED);
             if (wp.deleted()) return 1;
           }
         }
@@ -859,7 +859,7 @@ J1:
         if (wp.deleted()) return 1;
         if (change && (when() & FL_WHEN_CHANGED)) {
           set_changed();
-          do_callback();
+          do_callback(FL_REASON_CHANGED);
           if (wp.deleted()) return 1;
         }
       }
@@ -897,7 +897,7 @@ J1:
         change |= change_t;
         if (change_t && (when() & FL_WHEN_CHANGED)) {
           set_changed();
-          do_callback();
+          do_callback(FL_REASON_CHANGED);
           if (wp.deleted()) return 1;
         }
       }
@@ -922,16 +922,16 @@ J1:
     }
     if (change) {
       set_changed();
-      if (when() & FL_WHEN_RELEASE) do_callback();
+      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_CHANGED);
     } else {
-      if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+      if (when() & FL_WHEN_NOT_CHANGED) do_callback(FL_REASON_RESELECTED);
     }
     if (wp.deleted()) return 1;
 
     // double click calls the callback: (like Enter Key)
     if (Fl::event_clicks() && (when() & FL_WHEN_ENTER_KEY)) {
       set_changed();
-      do_callback();
+      do_callback(FL_REASON_CHANGED);
     }
     return 1;
   case FL_FOCUS:

@@ -1,7 +1,7 @@
 //
 // Event names header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,6 +15,11 @@
 //
 
 // Thanks to Greg Ercolano for this addition.
+
+/**
+ \file names.h
+ This file defines arrays of human readable names for FLTK symbolic constants.
+*/
 
 #ifndef FL_NAMES_H
 #define FL_NAMES_H
@@ -108,6 +113,27 @@ const char * const fl_fontnames[] =
   "FL_SCREEN",
   "FL_SCREEN_BOLD",
   "FL_ZAPF_DINGBATS",
+};
+
+/**
+ This is an array of callback reason names you can use to convert font numbers into names.
+
+ The array gets defined inline wherever your '\#include <FL/names.h>' appears.
+ */
+const char * const fl_callback_reason_names[] =
+{
+  "FL_REASON_UNKNOWN",
+  "FL_REASON_SELECTED",
+  "FL_REASON_DESELECTED",
+  "FL_REASON_RESELECTED",
+  "FL_REASON_OPENED",
+  "FL_REASON_CLOSED",
+  "FL_REASON_DRAGGED",
+  "FL_REASON_CANCELLED",
+  "FL_REASON_CHANGED",
+  "FL_REASON_GOT_FOCUS",
+  "FL_REASON_LOST_FOCUS",
+  "FL_REASON_RELEASED",
 };
 
 /** @} */

@@ -1,7 +1,7 @@
 //
 // Tab header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,10 +22,15 @@
 
 #include "Fl_Group.H"
 
+struct Fl_Menu_Item;
+
 /**
-  The Fl_Tabs widget is the "file card tabs"
-  interface that allows you to put lots and lots of buttons and
-  switches in a panel, as popularized by many toolkits.
+  The Fl_Tabs widget is a container widget that displays a set of tabs, with
+  each tab representing a different child widget. The user can select a tab by
+  clicking on it, and the corresponding child widget will be displayed.
+  The Fl_Tabs widget is useful for organizing a large number of controls or
+  other widgets into a compact space, allowing the user to switch between
+  different sets of controls as needed.
 
   \image html  tabs.png
   \image latex tabs.png "Fl_Tabs" width=8cm
@@ -46,8 +51,8 @@
   children (there should be some space between the children and
   the edge of the Fl_Tabs), and the tabs may be placed
   "inverted" on the bottom - this is determined by which
-  gap is larger. It is easiest to lay this out in fluid, using the
-  fluid browser to select each child group and resize them until
+  gap is larger. It is easiest to lay this out in FLUID, using the
+  FLUID browser to select each child group and resize them until
   the tabs look the way you want them to.
 
   The background area behind and to the right of the tabs is
@@ -157,6 +162,19 @@
   \image html  tabs_uniform.png "Fl_Tabs with uniform colors"
   \image latex tabs_uniform.png "Fl_Tabs with uniform colors" width=8cm
 
+  \b Close \b Button \b on \b Tabs
+
+  The Fl_Tabs widget allows you to specify that a child widget should display
+  a close button in its tab. If the \ref FL_WHEN_CLOSED flag is set for the
+  child widget, an "X" symbol will be displayed to the left of the label text
+  in the tab. When the close button is clicked, the child widget's callback
+  function will be called with the \ref FL_REASON_CLOSED argument. It is then
+  the responsibility of the child widget to remove itself from the
+  Fl_Tabs container.
+
+  Tabs that are in a compressed state will not display a close button until
+  they are fully expanded.
+
   \b Resizing \b Caveats
 
   When Fl_Tabs is resized vertically, the default behavior scales the
@@ -197,6 +215,7 @@
     -#  \ref FL_WHEN_NOT_CHANGED can happen if someone clicks on an already selected tab,
         or if a keyboard navigation attempt results in no change to the tabs,
         such as using the arrow keys while at the left or right end of the tabs.
+    -#  \ref Fl::callback_reason() returns FL_REASON_SELECTED or FL_REASON_RESELECTED
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
 
@@ -204,16 +223,31 @@ class FL_EXPORT Fl_Tabs : public Fl_Group {
 
 protected:
 
+  int overflow_type;
+  int tab_offset;
   int *tab_pos;         // array of x-offsets of tabs per child + 1
   int *tab_width;       // array of widths of tabs per child + 1
+  int *tab_flags;       // array of tab flag of tabs per child + 1
   int tab_count;        // array size
   Fl_Align tab_align_;  // tab label alignment
+  int has_overflow_menu;
+  Fl_Menu_Item* overflow_menu;
+
+  void check_overflow_menu();
+  void handle_overflow_menu();
+  void draw_overflow_menu_button();
+
+  int on_insert(Fl_Widget*, int) FL_OVERRIDE;
+  int on_move(int, int) FL_OVERRIDE;
+  void on_remove(int) FL_OVERRIDE;
+  void resize(int, int, int, int) FL_OVERRIDE;
 
   virtual void redraw_tabs();
   virtual int tab_positions();  // allocate and calculate tab positions
   virtual void clear_tab_positions();
-  virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
+  virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, int sel);
   virtual int tab_height();
+  virtual int hit_close(Fl_Widget *o, int event_x, int event_y);
 
   void draw() FL_OVERRIDE;
 
@@ -225,6 +259,7 @@ public:
   int handle(int) FL_OVERRIDE;
   Fl_Widget *value();
   int value(Fl_Widget *);
+
   /**
     Returns the tab group for the tab the user has currently down-clicked on
     and remains over until FL_RELEASE. Otherwise, returns NULL.
@@ -256,12 +291,23 @@ public:
     recommended alignment to show the icon left of the text.
   */
   void tab_align(Fl_Align a) {tab_align_ = a;}
+
   /**
     Gets the tab label alignment.
 
     \see tab_align(Fl_Align)
   */
   Fl_Align tab_align() const {return tab_align_;}
+
+  enum {
+    OVERFLOW_COMPRESS = 0,
+    OVERFLOW_CLIP,
+    OVERFLOW_PULLDOWN,
+    OVERFLOW_DRAG,
+  };
+
+  void handle_overflow(int ov);
+
 };
 
 #endif

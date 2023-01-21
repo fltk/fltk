@@ -129,6 +129,9 @@ FLUID		= @FLUID@$(EXEEXT)
 # depends on the build type (native or cross-compiler)
 FLUID_BUILD	= @FLUID_BUILD@
 
+# Name of fltk-options executable we install
+FLTK_OPTIONS = @FLTK_OPTIONS@$(EXEEXT)
+
 # Possible steps for OS X build only
 OSX_ONLY	= @OSX_ONLY@
 

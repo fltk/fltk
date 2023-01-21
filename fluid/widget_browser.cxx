@@ -299,8 +299,9 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (show_comments && l->comment()) {
     copy_trunc(buf, l->comment(), 80, 0);
     comment_incr = textsize()-1;
-    if (l->new_selected) fl_color(fl_contrast(FL_DARK_GREEN,FL_SELECTION_COLOR));
-    else fl_color(fl_contrast(FL_DARK_GREEN,color()));
+    Fl_Color comment_color = fl_color_average(FL_DARK_GREEN, FL_BLACK, 0.9);
+    if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
+    else fl_color(fl_contrast(comment_color, color()));
     fl_font(textfont()+FL_ITALIC, textsize()-2);
     fl_draw(buf, X, Y+12);
     Y += comment_incr/2;

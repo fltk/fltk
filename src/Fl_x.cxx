@@ -1,7 +1,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -807,13 +807,19 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 ////////////////////////////////////////////////////////////////
 // Code for copying to clipboard and DnD out of the program:
 
+// See Fl::copy() for possible values of the destination (argument clipboard)
+// See also Fl::selection_to_clipboard()
 void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
 
+  // if selection_to_clipboard is enabled *and* destination is 0 (selection buffer),
+  // then copy to both (STR 3229)
+  if (clipboard == 0 && Fl::selection_to_clipboard())
+    clipboard = 2;
+
   if (clipboard >= 2) {
-    copy(stuff, len, 0, type);
-    copy(stuff, len, 1, type);
-    return;
+    copy(stuff, len, 1, type);  // copy to clipboard first (this is a recursion!)
+    clipboard = 0;              // ... and then to selection buffer: fall through
   }
 
   if (len+1 > fl_selection_buffer_length[clipboard]) {
@@ -1519,7 +1525,7 @@ int fl_handle(const XEvent& thisevent)
 
     case DestroyNotify: { // an X11 window was closed externally from the program
       Fl::handle(FL_CLOSE, window);
-      Fl_X* X = Fl_X::i(window);
+      Fl_X* X = Fl_X::flx(window);
       if (X) { // indicates the FLTK window was not closed
         X->xid = (Window)0; // indicates the X11 window was already destroyed
         window->hide();
@@ -1981,7 +1987,7 @@ int fl_handle(const XEvent& thisevent)
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
-    // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
+    // XInstallColormap(fl_display, Fl_X::flx(window)->colormap);
     set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
@@ -2245,7 +2251,7 @@ void Fl_X11_Window_Driver::activate_window() {
   Window prev = 0;
 
   if (fl_xfocus) {
-    Fl_X *x = Fl_X::i(fl_xfocus);
+    Fl_X *x = Fl_X::flx(fl_xfocus);
     if (!x)
       return;
     prev = x->xid;
@@ -2309,7 +2315,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X *xp = new Fl_X;
   xp->xid = winxid;
   Fl_Window_Driver::driver(win)->other_xid = 0;
-  xp->w = win; win->i = xp;
+  xp->w = win; win->flx_ = xp;
   xp->next = Fl_X::first;
   xp->region = 0;
   Fl_Window_Driver::driver(win)->wait_for_expose_value = 1;
@@ -2381,7 +2387,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   // if the window is a subwindow and our parent is not mapped yet, we
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
-  if (win->parent() && !Fl_X::i(win->window())) {
+  if (win->parent() && !Fl_X::flx(win->window())) {
     win->set_visible();
     return;
   }

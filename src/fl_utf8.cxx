@@ -119,7 +119,29 @@ int fl_utf8len1(char c)
 
 
 /**
+ Return the length in bytes of a UTF-8 string.
+ \param[in] text encoded in UTF-8
+ \param[in] len number of Unicode characters, -1 to test until the end of text
+ \return number of bytes that make up the Unicode string
+ \see fl_utf_nb_char(const unsigned char *buf, int len)
+ */
+int fl_utf8strlen(const char *text, int len)
+{
+  if (len == -1) return (int)strlen(text);
+  int i, n = 0;
+  for (i=len; i>0; i--) {
+    if (*text == 0) return n; // end of string
+    int nc = fl_utf8len1(*text);
+    n += nc;
+    text += nc;
+  }
+  return n;
+}
+
+
+/**
   Returns the number of Unicode chars in the UTF-8 string.
+ \see fl_utf8strlen(const char *text, int len)
 */
 int
 fl_utf_nb_char(
@@ -449,8 +471,14 @@ int fl_chmod(const char* f, int mode) {
 /** Cross-platform function to test a files access() with a UTF-8 encoded
   name or value.
 
- This function is especially useful on the Windows platform where the
- standard access() function fails with UTF-8 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard access() function fails with UTF-8 encoded non-ASCII filenames.
+
+  Windows defines the mode values 0 for existence, 2 for writable, 4 for
+  readable, and 6 of readable and writable. On other systems, the modes
+  `X_OK`, `W_OK`, and `R_OK` are usually defined as 1, 2, and 4.
+
+  Upon successful completion, the value 0 is returned on all platforms.
 
   \param[in] f the UTF-8 encoded filename
   \param[in] mode the mode to test

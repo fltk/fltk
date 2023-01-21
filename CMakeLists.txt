@@ -116,6 +116,14 @@ if (FLTK_BUILD_FLUID)
 endif (FLTK_BUILD_FLUID)
 
 #######################################################################
+# build fltk-options
+#######################################################################
+
+if (FLTK_BUILD_FLTK_OPTIONS)
+  add_subdirectory (fltk-options)
+endif (FLTK_BUILD_FLTK_OPTIONS)
+
+#######################################################################
 # variables shared by export and install
 # export.cmake creates configuration files for direct use in a built but uninstalled FLTK
 # install.cmake creates these files for an installed FLTK
@@ -214,9 +222,15 @@ endif ()
 
 if (FLTK_BUILD_FLUID)
    message (STATUS "FLUID will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
- else ()
+else ()
    message (STATUS "FLUID will not be built (set FLTK_BUILD_FLUID=ON to build)")
- endif ()
+endif ()
+
+if (FLTK_BUILD_FLTK_OPTIONS)
+   message (STATUS "fltk-options will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-options")
+else ()
+   message (STATUS "fltk-options will not be built (set FLTK_BUILD_FLTK_OPTIONS=ON to build)")
+endif ()
 
 if (FLTK_BUILD_TEST)
   message (STATUS "Test programs    will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/test")

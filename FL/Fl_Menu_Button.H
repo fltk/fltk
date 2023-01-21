@@ -56,6 +56,7 @@
 class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:
   void draw() FL_OVERRIDE;
+  static Fl_Menu_Button* pressed_menu_button_;
 public:
   /**
    \brief indicate what mouse buttons pop up the menu.

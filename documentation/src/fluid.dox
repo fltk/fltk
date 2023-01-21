@@ -1694,8 +1694,8 @@ On Apple computers, use the Apple Command key instead of Ctrl.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="advanced.html">
-    Advanced FLTK
+    <a class="el" href="fltk-options.html">
+    FLTK Runtime Options
     [Next]
     </a>
   </td>

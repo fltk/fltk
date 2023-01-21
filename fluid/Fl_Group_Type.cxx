@@ -658,8 +658,8 @@ Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
 void Fl_Scroll_Type::copy_properties() {
   Fl_Group_Type::copy_properties();
   Fl_Scroll *s = (Fl_Scroll*)o, *d = (Fl_Scroll*)live_widget;
-  d->position(s->xposition(), s->yposition());
-  d->type(s->type()); // TODO: get this flag from Fl_Scroll_Type!
+  d->scroll_to(s->xposition(), s->yposition());
+  d->type(s->type());
   d->scrollbar.align(s->scrollbar.align());
   d->hscrollbar.align(s->hscrollbar.align());
 }

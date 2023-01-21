@@ -1,7 +1,7 @@
 /*
  * Function attribute declarations for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2021 by Bill Spitzak and others.
+ * Copyright 1998-2023 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -14,8 +14,32 @@
  *     https://www.fltk.org/bugs.php
  */
 
+/**
+ \file fl_attr.h
+ This file defines compiler-specific macros
+*/
+
 #ifndef _FL_fl_attr_h_
 #define _FL_fl_attr_h_
+
+#ifdef FL_DOXYGEN
+
+/**
+  This macro makes it safe to use the C++11 keyword \c override with
+  older compilers.
+*/
+#define FL_OVERRIDE override
+
+/** To be used in prototypes with a variable list of arguments.
+ This macro helps detection of mismatches between format string and
+ argument list at compilation time.
+ 
+ Usage example: FL/fl_ask.H
+ */
+#define __fl_attr(x)
+
+#else
+
 
 /*
   The GNUC-specific attribute appearing below in prototypes with a variable
@@ -31,16 +55,6 @@
 #  define __fl_attr(x)
 #endif
 
-
-#ifdef FL_DOXYGEN
-
-/**
-  This macro makes it safe to use the C++11 keyword \c override with
-  older compilers.
-*/
-#define FL_OVERRIDE override
-
-#else
 
 #ifdef __cplusplus
 

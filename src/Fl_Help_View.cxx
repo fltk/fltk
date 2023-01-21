@@ -3553,7 +3553,7 @@ Fl_Help_View::topline(int top)  // I - Top line number
 
   scrollbar_.value(topline_, h() - scrollsize, 0, size_);
 
-  do_callback();
+  do_callback(FL_REASON_DRAGGED);
 
   redraw();
 }

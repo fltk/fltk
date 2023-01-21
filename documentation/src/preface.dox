@@ -31,6 +31,7 @@ This manual is organized into the following chapters and appendices:
 \li \ref subclassing
 \li \ref opengl
 \li \ref fluid
+\li \ref fltk-options
 \li \ref advanced
 \li \ref unicode
 \li \ref enumerations

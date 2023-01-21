@@ -59,6 +59,17 @@ endif ()
 unset (is_arm)
 
 #######################################################################
+# Build some files on ppc64
+# We compile these files whatever the architecture resulting in void code
+# on non-ppc64 architectures.
+#######################################################################
+
+LIST (APPEND PNG_SRCS
+  powerpc/powerpc_init.c
+  powerpc/filter_vsx_intrinsics.c
+)
+
+#######################################################################
 # Build the static library
 #######################################################################
 

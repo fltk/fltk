@@ -48,6 +48,9 @@ class Fl_Double_Window;
   The window's callback is done if the user tries to close a window
   using the window manager and Fl::modal() is zero or equal to the
   window. Fl_Window has a default callback that calls Fl_Window::hide().
+  Callback reasons can be \p FL_REASON_CANCELLED if the Escape key was pressed,
+  or \p FL_REASON_CLOSED when the close button is clicked. \p FL_WHEN_...
+  flags are ignored.
 */
 class FL_EXPORT Fl_Window : public Fl_Group {
   friend int Fl::arg(int argc, char **argv, int &i);
@@ -69,7 +72,7 @@ private:
   // TODO: it would make sense to merge the use of Fl_X and Fl_Window_Driver, maybe simply by
   // TODO: deriving Fl_Window_Driver from Fl_X. However, there are a lot of historic kludges
   // TODO: for some platforms around Fl_X.
-  Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
+  Fl_X *flx_; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 
   const char* iconlabel_;
@@ -397,7 +400,7 @@ public:
     ). You can tell if a window is iconified with (w->shown()
     && !w->visible()).
   */
-  int shown() {return i != 0;}
+  int shown() {return flx_ != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
     effect of opening the display.

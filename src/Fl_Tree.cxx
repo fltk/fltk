@@ -2571,7 +2571,7 @@ int Fl_Tree::is_hscroll_visible() const {
 void Fl_Tree::do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason) {
   callback_reason(reason);
   callback_item(item);
-  do_callback((Fl_Widget*)this, user_data());
+  do_callback((Fl_Widget*)this, user_data(), (Fl_Callback_Reason)reason);
 }
 
 /// Sets the item that was changed for this callback.

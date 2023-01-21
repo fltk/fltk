@@ -140,7 +140,7 @@ void Fl_Tree_Item::show_self(const char *indent) const {
          indent,thelabel,children(),(void*)this, (void*)_parent,
          _prev_sibling, _next_sibling, depth());
   if ( children() ) {
-    char *i2 = new char [strlen(indent)+2];
+    char *i2 = new char [strlen(indent)+3]; // 2 + nul byte
     strcpy(i2, indent);
     strcat(i2, " |");
     for ( int t=0; t<children(); t++ ) {

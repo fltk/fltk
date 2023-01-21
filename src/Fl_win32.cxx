@@ -1258,7 +1258,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (window) {
     switch (uMsg) {
 
-      case WM_DPICHANGED: { // 0x02E0
+      case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
         if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
           RECT r;
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
@@ -1290,7 +1290,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_PAINT: {
         HRGN R, R2;
-        Fl_X *i = Fl_X::i(window);
+        Fl_X *i = Fl_X::flx(window);
         Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
         char redraw_whole_window = false;
         if (!i->region && window->damage()) {
@@ -1701,12 +1701,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         fl_i_own_selection[1] = 0;
         return 1;
 
-      case WM_DISPLAYCHANGE: {// occurs when screen configuration (number, size, position) changes
+      case WM_DISPLAYCHANGE: {// when screen configuration (number, size, position) changes
         Fl::call_screen_init();
-        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-        for (int ns = 0; ns < sd->screen_count(); ns++) {
-          sd->rescale_all_windows_from_screen(ns, sd->dpi[ns][0]/96);
-        }
         Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
         return 0;
       }
@@ -1924,7 +1920,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
       pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
-      Fl_X *i = Fl_X::i(pWindow);
+      Fl_X *i = Fl_X::flx(pWindow);
       if (i && W > 0 && H > 0)
         wait_for_expose_value = 1;
     }
@@ -2006,7 +2002,7 @@ void fl_fix_focus(); // in Fl.cxx
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
-Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
+void Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
   fl_open_display();
@@ -2015,9 +2011,9 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
   Fl_Window *w = pWindow;
-  if (w->parent() && !Fl_X::i(w->window())) {
+  if (w->parent() && !Fl_X::flx(w->window())) {
     w->set_visible();
-    return 0L;
+    return;
   }
 
   static NameList class_name_list;
@@ -2169,7 +2165,7 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_X *x = new Fl_X;
   other_xid = 0;
   x->w = w;
-  i(x);
+  flx(x);
   x->region = 0;
   Fl_WinAPI_Window_Driver::driver(w)->private_dc = 0;
   cursor = LoadCursor(NULL, IDC_ARROW);
@@ -2248,8 +2244,6 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
 
   if (!im_enabled)
     flImmAssociateContextEx((HWND)x->xid, 0, 0);
-
-  return x;
 }
 
 
@@ -2455,7 +2449,7 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon) {
     Fl_WinAPI_Window_Driver::driver(this)->icon_->big_icon = CopyIcon(big_icon);
   if (small_icon != NULL)
     Fl_WinAPI_Window_Driver::driver(this)->icon_->small_icon = CopyIcon(small_icon);
-  if (Fl_X::i(this))
+  if (Fl_X::flx(this))
     Fl_WinAPI_Window_Driver::driver(this)->set_icons();
 }
 
@@ -2624,7 +2618,7 @@ void Fl_WinAPI_Window_Driver::show() {
     makeWindow();
   } else {
     // Once again, we would lose the capture if we activated the window.
-    Fl_X *i = Fl_X::i(pWindow);
+    Fl_X *i = Fl_X::flx(pWindow);
     if (IsIconic((HWND)i->xid))
       OpenIcon((HWND)i->xid);
     if (!fl_capture)

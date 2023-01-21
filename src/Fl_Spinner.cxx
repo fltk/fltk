@@ -70,7 +70,7 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
   }
 
   sb->set_changed();
-  sb->do_callback();
+  sb->do_callback(FL_REASON_CHANGED);
 }
 
 void Fl_Spinner::update() {
@@ -128,20 +128,14 @@ Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
 }
 
 void Fl_Spinner::draw() {
+  // let group draw itself; buttons are blank as they have no labels
+  Fl_Group::draw();
 
-  // draw the box and the input widget
-
-  draw_box();
-  ((Fl_Widget&)input_).draw();
-
-  // draw the buttons and the up and down arrows as their "labels"
-
-  ((Fl_Widget&)up_button_).draw();
+  // draw up/down arrows over the button's empty labels
   Fl_Rect up(up_button_);
   up.inset(up_button_.box());
   fl_draw_arrow(up, FL_ARROW_SINGLE, FL_ORIENT_UP, labelcolor());
 
-  ((Fl_Widget&)down_button_).draw();
   Fl_Rect down(down_button_);
   down.inset(down_button_.box());
   fl_draw_arrow(down, FL_ARROW_SINGLE, FL_ORIENT_DOWN, labelcolor());
@@ -154,10 +148,10 @@ int Fl_Spinner::handle(int event) {
     case FL_KEYDOWN:
     case FL_SHORTCUT:
       if (Fl::event_key() == FL_Up) {
-        up_button_.do_callback();
+        up_button_.do_callback(FL_REASON_DRAGGED);
         return 1;
       } else if (Fl::event_key() == FL_Down) {
-        down_button_.do_callback();
+        down_button_.do_callback(FL_REASON_DRAGGED);
         return 1;
       }
       return 0;

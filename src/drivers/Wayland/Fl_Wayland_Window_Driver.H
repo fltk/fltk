@@ -1,7 +1,7 @@
 //
 // Definition of Wayland window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -98,7 +98,7 @@ public:
   const Fl_Image* shape() FL_OVERRIDE;
 
   // --- window management
-  Fl_X *makeWindow() FL_OVERRIDE;
+  void makeWindow() FL_OVERRIDE;
   void take_focus() FL_OVERRIDE;
   void flush() FL_OVERRIDE;
   void flush_overlay() FL_OVERRIDE;
@@ -125,8 +125,12 @@ public:
   void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   void wait_for_expose() FL_OVERRIDE;
+  // menu-related stuff
   void reposition_menu_window(int x, int y) FL_OVERRIDE;
   void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;
+  static bool new_popup; // to support tall menu buttons
+  bool process_menu_or_tooltip(struct wld_window *);
+  static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
 };
 
 

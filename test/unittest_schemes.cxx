@@ -18,7 +18,7 @@
 
 #include "unittests.h"
 
-#include <FL/Fl_Choice.H>
+#include <FL/Fl_Scheme_Choice.H>
 
 // needed by Edmanuel's test layout
 #include <FL/Fl_Button.H>
@@ -45,16 +45,7 @@
 #include <FL/Fl_Radio_Round_Button.H>
 
 class Ut_Schemes_Test : public Fl_Group {
-  Fl_Choice *scheme_choice_;
-
-  static void scheme_choice_cb(Fl_Widget*,void *data) {
-    Ut_Schemes_Test *st = (Ut_Schemes_Test*)data;
-    const char *name = st->scheme_choice_->text();
-    if ( name ) {
-      Fl::scheme(name);         // change scheme
-      st->window()->redraw();   // redraw window
-    }
-  } // SchemeChoice_CB()
+  Fl_Scheme_Choice *scheme_choice_;
 
   static void activate_subwin(Fl_Widget *w, void *data) {
     Fl_Window *win = (Fl_Window *)data;
@@ -82,22 +73,9 @@ public:
   }
   Ut_Schemes_Test(int X,int Y,int W,int H)
     : Fl_Group(X,Y,W,H) {
-    scheme_choice_ = new Fl_Choice(X+125,Y,140,25,"FLTK Scheme");
-    scheme_choice_->add("none");
-    scheme_choice_->add("plastic");
-    scheme_choice_->add("gtk+");
-    scheme_choice_->add("gleam");
-    scheme_choice_->add("oxy");
-    scheme_choice_->value(0);
+
+    scheme_choice_ = new Fl_Scheme_Choice(X+125,Y,140,25,"FLTK Scheme");
     scheme_choice_->labelfont(FL_HELVETICA_BOLD);
-    const char *name = Fl::scheme();
-    if ( name ) {
-           if ( strcmp(name, "plastic") == 0) { scheme_choice_->value(1); }
-      else if ( strcmp(name, "gtk+")    == 0) { scheme_choice_->value(2); }
-      else if ( strcmp(name, "gleam")   == 0) { scheme_choice_->value(3); }
-      else if ( strcmp(name, "oxy")     == 0) { scheme_choice_->value(4); }
-    }
-    scheme_choice_->callback(scheme_choice_cb, (void*)this);
 
     Fl_Light_Button *active = new Fl_Light_Button(X + 300, Y, 100, 25, "active");
     active->value(1);

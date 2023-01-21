@@ -50,7 +50,7 @@ void Fl_Window::_Fl_Window() {
   } else {
     labeltype(FL_NO_LABEL);
   }
-  i = 0;
+  flx_ = 0;
   xclass_ = 0;
   iconlabel_ = 0;
   resizable(0);
@@ -482,8 +482,8 @@ void Fl_Window::flush()
 {
   if (!shown()) return;
   make_current();
-  fl_clip_region(i->region);
-  i->region = 0;
+  fl_clip_region(flx_->region);
+  flx_->region = 0;
   draw();
 }
 

@@ -220,7 +220,7 @@ int Flcc_HueBox::handle(int e) {
     if (fabs(H-ih) < 3*6.0/w()) H = ih;
     if (fabs(S-is) < 3*1.0/h()) S = is;
     if (Fl::event_state(FL_CTRL)) H = ih;
-    if (c->hsv(H, S, c->value())) c->do_callback();
+    if (c->hsv(H, S, c->value())) c->do_callback(FL_REASON_DRAGGED);
     } return 1;
   case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
@@ -292,7 +292,7 @@ int Flcc_HueBox::handle_key(int key) {
   Xf = (double)X/(double)w1;
   Yf = (double)Y/(double)h1;
   tohs(Xf, Yf, H, S);
-  if (c->hsv(H, S, c->value())) c->do_callback();
+  if (c->hsv(H, S, c->value())) c->do_callback(FL_REASON_CHANGED);
 
   return 1;
 }
@@ -347,7 +347,7 @@ int Flcc_ValueBox::handle(int e) {
     double Yf;
     Yf = 1-(Fl::event_y()-y()-Fl::box_dy(box()))/double(h()-Fl::box_dh(box()));
     if (fabs(Yf-iv)<(3*1.0/h())) Yf = iv;
-    if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
+    if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback(FL_REASON_DRAGGED);
     } return 1;
   case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
@@ -418,7 +418,7 @@ int Flcc_ValueBox::handle_key(int key) {
 
   double Yf;
   Yf = 1-((double)Y/(double)h1);
-  if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
+  if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback(FL_REASON_CHANGED);
 
   return 1;
 }
@@ -432,7 +432,7 @@ void Fl_Color_Chooser::rgb_cb(Fl_Widget* o, void*) {
   double G = c->gvalue.value();
   double B = c->bvalue.value();
   if (c->mode() == M_HSV) {
-    if (c->hsv(R,G,B)) c->do_callback();
+    if (c->hsv(R,G,B)) c->do_callback(FL_REASON_CHANGED);
     return;
   }
   if (c->mode() != M_RGB) {
@@ -440,7 +440,7 @@ void Fl_Color_Chooser::rgb_cb(Fl_Widget* o, void*) {
     G = G/255;
     B = B/255;
   }
-  if (c->rgb(R,G,B)) c->do_callback();
+  if (c->rgb(R,G,B)) c->do_callback(FL_REASON_CHANGED);
 }
 
 void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
@@ -455,7 +455,7 @@ void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
 void Fl_Color_Chooser::mode(int newMode)
 {
   choice.value(newMode);
-  choice.do_callback();
+  choice.do_callback(FL_REASON_RESELECTED);
 }
 
 // Small local helper function:

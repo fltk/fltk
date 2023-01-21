@@ -286,7 +286,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
 {
   if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!i) return; // window not yet created
 
   if (!other_xid) {
@@ -332,7 +332,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
 
   if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!i) return; // window not yet created
 
   int eraseoverlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
@@ -371,7 +371,7 @@ void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
     }
   }
 
-  if (Fl_X::i(pWindow))
+  if (Fl_X::flx(pWindow))
     set_icons();
 }
 
@@ -442,7 +442,7 @@ extern void fl_clipboard_notify_retarget(HWND wnd);
 extern void fl_update_clipboard(void);
 
 void Fl_WinAPI_Window_Driver::hide() {
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   // STR#3079: if there remains a window and a non-modal window, and the window is deleted,
   // the app remains running without any apparent window.
   // Bug mechanism: hiding an owner window unmaps the owned (non-modal) window(s)
@@ -582,7 +582,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   // Remove the xid temporarily so that Fl_WinAPI_Window_Driver::fake_X_wm() behaves like it
   // does in Fl_WinAPI_Window_Driver::makeWindow().
   HWND xid = fl_xid(pWindow);
-  Fl_X::i(pWindow)->xid = 0;
+  Fl_X::flx(pWindow)->xid = 0;
   int wx, wy, bt, bx, by;
   switch (fake_X_wm(wx, wy, bt, bx, by)) {
     case 0:
@@ -596,7 +596,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
       }
       break;
   }
-  Fl_X::i(pWindow)->xid = (fl_uintptr_t)xid;
+  Fl_X::flx(pWindow)->xid = (fl_uintptr_t)xid;
   // compute window position and size in scaled units
   float s = Fl::screen_driver()->scale(screen_num());
   int scaledX = int(ceil(X*s)), scaledY= int(ceil(Y*s)), scaledW = int(ceil(W*s)), scaledH = int(ceil(H*s));

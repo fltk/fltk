@@ -87,6 +87,11 @@ int main(int argc, char **argv) {
   depixmap->inactive();
   b.deimage(depixmap);
 
+  // "bind" images to avoid memory leak reports (valgrind, asan)
+  // note: these reports are benign because they appear at exit, but anyway
+  b.bind_image(pixmap);
+  b.bind_deimage(depixmap);
+
   leftb = new Fl_Toggle_Button(25,50,50,25,"left");
   leftb->callback(button_cb);
   rightb = new Fl_Toggle_Button(75,50,50,25,"right");

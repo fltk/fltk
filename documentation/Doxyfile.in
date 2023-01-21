@@ -565,6 +565,7 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/subclassing.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fltk-options.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox
 INPUT += @FLTK_SOURCE_DIR@/FL

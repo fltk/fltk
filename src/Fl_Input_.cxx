@@ -942,7 +942,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   mark_ = position_ = undo_->undoat;
 
   set_changed();
-  if (when()&FL_WHEN_CHANGED) do_callback();
+  if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
   return 1;
 }
 
@@ -989,7 +989,7 @@ int Fl_Input_::undo() {
     while (b1 > 0 && index(b1)!='\n') b1--;
   minimal_update(b1);
   set_changed();
-  if (when()&FL_WHEN_CHANGED) do_callback();
+  if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
   return 1;
 }
 
@@ -1013,9 +1013,9 @@ int Fl_Input_::copy_cuts() {
 /** \internal
   Checks the when() field and does a callback if indicated.
 */
-void Fl_Input_::maybe_do_callback() {
+void Fl_Input_::maybe_do_callback(Fl_Callback_Reason reason) {
   if (changed() || (when()&FL_WHEN_NOT_CHANGED)) {
-    do_callback();
+    do_callback(reason);
   }
 }
 
@@ -1055,7 +1055,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   case FL_HIDE:
     fl_reset_spot();
     if (!readonly() && (when() & FL_WHEN_RELEASE))
-      maybe_do_callback();
+      maybe_do_callback(FL_REASON_LOST_FOCUS);
     return 1;
 
   case FL_PUSH:

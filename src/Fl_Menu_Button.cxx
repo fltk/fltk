@@ -20,7 +20,7 @@
 #include <FL/fl_draw.H>
 
 
-static Fl_Menu_Button   *pressed_menu_button_ = 0;
+Fl_Menu_Button* Fl_Menu_Button::pressed_menu_button_ = NULL;
 
 
 void Fl_Menu_Button::draw() {

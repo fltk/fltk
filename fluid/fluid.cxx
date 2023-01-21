@@ -1426,8 +1426,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb,0,FL_MENU_DIVIDER},
-  {"Global &FLTK Settings...",FL_ALT+FL_SHIFT+'g',show_global_settings_cb},
+  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1475,34 +1474,80 @@ Fl_Menu_Item Main_Menu[] = {
 
 /**
  Change the app's and hence preview the design's scheme.
- The scheme setting is stored inthe app preferences.
+
+ The scheme setting is stored in the app preferences
+ - in key \p 'scheme_name' since 1.4.0
+ - in key \p 'scheme' (index: 0 - 4) in 1.3.x
+
+ This callback is triggered by changing the scheme in the
+ Fl_Scheme_Choice widget (\p Edit/GUI Settings).
+
+ \see init_scheme() for choice values and backwards compatibility
  */
-void scheme_cb(Fl_Choice *, void *) {
+void scheme_cb(Fl_Scheme_Choice *choice, void *) {
   if (batch_mode)
     return;
 
-  switch (scheme_choice->value()) {
-    case 0 : // Default
-      Fl::scheme(NULL);
-      break;
-    case 1 : // None
-      Fl::scheme("none");
-      break;
-    case 2 : // Plastic
-      Fl::scheme("plastic");
-      break;
-    case 3 : // GTK+
-      Fl::scheme("gtk+");
-      break;
-    case 4 : // Gleam
-      Fl::scheme("gleam");
-      break;
-    case 5 : // Oxy
-      Fl::scheme("oxy");
-      break;
-  }
+  // set the new scheme only if the scheme was changed
+  const char *new_scheme = choice->text(choice->value());
 
-  fluid_prefs.set("scheme", scheme_choice->value());
+  if (Fl::is_scheme(new_scheme))
+    return;
+
+  Fl::scheme(new_scheme);
+  fluid_prefs.set("scheme_name", new_scheme);
+
+  // Backwards compatibility: store 1.3 scheme index (1-4).
+  // We assume that index 0-3 (base, plastic, gtk+, gleam) are in the
+  // same order as in 1.3.x (index 1-4), higher values are ignored
+
+  int scheme_index = scheme_choice->value();
+  if (scheme_index <= 3)                          // max. index for 1.3.x (Gleam)
+    fluid_prefs.set("scheme", scheme_index + 1);  // compensate for different indexing
+}
+
+/**
+  Read Fluid's scheme preferences and set the app's scheme.
+
+  Since FLTK 1.4.0 the scheme \b name is stored as a character string
+  with key "scheme_name" in the preference database.
+
+  In FLTK 1.3.x the scheme preference was stored as an integer index
+  with key "scheme" in the database. The known schemes were hardcoded in
+  Fluid's sources (here for reference):
+
+    | Index | 1.3 Scheme Name | Choice | 1.4 Scheme Name |
+    |-------|-----------------|-------|-----------------|
+    | 0 | Default (same as None) | n/a | n/a |
+    | 1 | None (same as Default) | 0 | base |
+    | 2 | Plastic | 1 | plastic |
+    | 3 | GTK+ | 2 | gtk+ |
+    | 4 | Gleam | 3 | gleam |
+    | n/a | n/a | 4 | oxy |
+
+  The new Fluid tries to keep backwards compatibility and reads both
+  keys (\p scheme and \p scheme_name). If the latter is defined, it is used.
+  If not the old \p scheme (index) is used - but we need to subtract one to
+  get the new Fl_Scheme_Choice index (column "Choice" above).
+*/
+void init_scheme() {
+  int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
+  char *scheme_name;                        // scheme name since 1.4.0
+  fluid_prefs.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
+  if (!strcmp(scheme_name, "XXX")) {
+    fluid_prefs.get("scheme", scheme_index, 0);
+    if (scheme_index > 0) {
+      scheme_index--;
+      scheme_choice->value(scheme_index);   // set the choice value
+    }
+    if (scheme_index < 0)
+      scheme_index = 0;
+    else if (scheme_index > scheme_choice->size() - 1)
+      scheme_index = 0;
+    scheme_name = const_cast<char *>(scheme_choice->text(scheme_index));
+    fluid_prefs.set("scheme_name", scheme_name);
+  }
+  Fl::scheme(scheme_name);
 }
 
 /**
@@ -1604,7 +1649,6 @@ void make_main_window() {
   if (!batch_mode) {
     load_history();
     make_settings_window();
-    make_global_settings_window();
   }
 }
 

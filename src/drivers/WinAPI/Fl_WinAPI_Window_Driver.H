@@ -85,7 +85,7 @@ public:
   const Fl_Image* shape() FL_OVERRIDE;
 
   // --- window management
-  Fl_X *makeWindow() FL_OVERRIDE;
+  void makeWindow() FL_OVERRIDE;
   void size_range() FL_OVERRIDE {
     // currently nothing to do
   }
