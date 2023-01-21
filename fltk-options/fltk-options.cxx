@@ -21,17 +21,37 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Browser.H>
+#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/filename.H>
+#include <FL/fl_draw.H>
 #include "../src/flstring.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-// Set to 0 for classic design, set to 1 for Erco's alternative design
-#define FO_GUI_LAYOUT 0
+// user interface sizes
+// |<->|<-  group browser ->|<->|<- options ->|<->|
+const int FO_GAP = 10;
+const int FO_BROWSER_W = 200;
+const int FO_SCROLL_W = Fl::scrollbar_size() + Fl::box_dw(FL_DOWN_BOX);
+const int FO_CHOICE_W = 75;
+const int FO_OPTIONS_W = 380;
+const int FO_BUTTON_W = 75;
+const int FO_WINDOW_W = FO_GAP + FO_BROWSER_W + FO_GAP + FO_SCROLL_W + FO_OPTIONS_W + FO_SCROLL_W + FO_GAP;
+const int FO_SYSTEM_X = FO_OPTIONS_W - 2*FO_GAP - 2*FO_CHOICE_W;
+const int FO_USER_X = FO_OPTIONS_W - FO_GAP - FO_CHOICE_W;
+
+const int FO_TITLE_H = 20;
+const int FO_BROWSER_H = 340;
+const int FO_BUTTON_H = 25;
+const int FO_CHOICE_H = 22;
+const int FO_WINDOW_H = FO_GAP + FO_BROWSER_H + FO_GAP + FO_BUTTON_H + FO_GAP;
+
+Fl_Window* g_window = NULL;
+Fl_Hold_Browser* g_headline_browser = NULL;
+Fl_Scroll* g_option_scroll = NULL;
 
 // command line options
 int g_verbose = 0;
@@ -70,6 +90,7 @@ typedef struct {
   bool bool_default;
   const char* brief;
   const char* tooltip;
+  Fl_Group* ui;
 } Fo_Option_Descr;
 
 // List of all entries in the user interface, including headlines and options.
@@ -79,13 +100,13 @@ Fo_Option_Descr g_option_list[] = {
   { FO_HEADLINE, "Keyboard Focus Options" },
   { FO_OPTION_BOOL, "Visible Keyboard Focus:",
     Fl::OPTION_VISIBLE_FOCUS, "OPTION_VISIBLE_FOCUS", true,
-    "draw a dotted rectangle in widget with keyboard focus",
+    "Draw a dotted rectangle in widget with keyboard focus.",
     "If visible focus is switched on, FLTK will draw a dotted rectangle inside "
     "the widget that will receive the next keystroke. If switched off, no such "
     "indicator will be drawn and keyboard navigation is disabled." },
   { FO_OPTION_BOOL, "Arrow Keys move Focus:",
     Fl::OPTION_ARROW_FOCUS, "OPTION_ARROW_FOCUS", false,
-    "arrow keys will move focus beyond text input field",
+    "Arrow keys will move focus beyond text input field.",
     "When switched on, moving the text cursor beyond the start or end of the "
     "text in a text widget will change focus to the next widget. When switched "
     "off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab "
@@ -94,29 +115,35 @@ Fo_Option_Descr g_option_list[] = {
   { FO_HEADLINE, "Tooltip Options" },
   { FO_OPTION_BOOL, "Show Tooltips:",
     Fl::OPTION_SHOW_TOOLTIPS, "OPTION_SHOW_TOOLTIPS", true,
-    "show or hide tooltips",
+    "Show or hide tooltips.",
     "If tooltips are enabled, hovering the mouse over a widget with a tooltip "
     "text will open a little tooltip window until the mouse leaves the widget. "
     "If disabled, no tooltip is shown." },
   { FO_HEADLINE, "Drag And Drop Options" },
   { FO_OPTION_BOOL, "Allow dragging Text:",
     Fl::OPTION_DND_TEXT, "OPTION_DND_TEXT", true,
-    "user can drag text from FLTK into other apps",
+    "User can drag text from FLTK into other apps.",
     "If text drag-and-drop is enabled, the user can select and drag text from "
     "any text widget. If disabled, no dragging is possible, however dropping "
     "text from other applications still works." },
   { FO_HEADLINE, "Native File Chooser Options" },
   { FO_OPTION_BOOL, "Native File Chooser uses GTK:",
     Fl::OPTION_FNFC_USES_GTK, "OPTION_FNFC_USES_GTK", true,
-    "use GTK file chooser instead of FLTK if available",
+    "Use GTK file chooser instead of FLTK if available.",
     "If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser "
     "class calls the GTK open/save file dialogs when they are available on the "
     "platfom. If disabled, the Fl_Native_File_Chooser class always uses FLTK's "
     "own file dialog (i.e., Fl_File_Chooser) even if GTK is available." },
+  { FO_OPTION_BOOL, "Native File Chooser uses Zenity:",
+    Fl::OPTION_FNFC_USES_ZENITY, "OPTION_FNFC_USES_ZENITY", true,
+    "Use Zenity file chooser instead of FLTK if available.",
+    "Meaningful for the Wayland/X11 platform only. When switched on (default),"
+    "the library uses a Zenity-based file dialog. When switched off, the GTK"
+    "file dialog is used instead." },
   { FO_HEADLINE, "Print dialog Options" },
   { FO_OPTION_BOOL, "Print dialog uses GTK:",
     Fl::OPTION_PRINTER_USES_GTK, "OPTION_PRINTER_USES_GTK", true,
-    "use GTK printer dialog instead of FLTK if available",
+    "Use GTK printer dialog instead of FLTK if available.",
     "If 'Print dialog uses GTK' is enabled, the Fl_Printer class calls the "
     "GTK print dialog when it's available on the platfom. If disabled, the "
     "Fl_Printer class always uses FLTK's own print dialog even "
@@ -124,7 +151,7 @@ Fo_Option_Descr g_option_list[] = {
   { FO_HEADLINE, "Scaling Factor Options" },
   { FO_OPTION_BOOL, "Transiently show scaling factor:",
     Fl::OPTION_SHOW_SCALING, "OPTION_SHOW_SCALING", true,
-    "show the zoom factor in a transient popup window",
+    "Show the zoom factor in a transient popup window.",
     "If 'Transiently show scaling factor' is enabled, the library shows in a "
     "transient popup window the display scaling factor value when it is "
     "changed. If disabled, no such transient window is used." },
@@ -461,62 +488,73 @@ void set_user_option_cb(Fl_Widget* w, void* user_data) {
   set_option(FO_USER, opt->name, value);
 }
 
-#if FO_GUI_LAYOUT==0
-
-/** Add a headline to a group of options.
- \param[in] opt pointer to the headline record
- \param[in] first true, if this is the first headline to generate
+/** Add an option group to the pack group.
  */
-Fl_Group* add_headline(Fo_Option_Descr* opt, bool first) {
-  if (!first) {
-    Fl_Group* divider_container = new Fl_Group(0, 0, 385, 10);
-    Fl_Box *divider = new Fl_Box(0, 4, 385, 2);
-    divider->box(FL_THIN_DOWN_BOX);
-    divider_container->end();
-  }
-
-  Fl_Group* container = new Fl_Group(0, 0, 385, 26);
-
-  Fl_Box* headline = new Fl_Box(0, 0, 215, 26, opt->text);
-  headline->labelfont(FL_HELVETICA_ITALIC);
-  headline->labelsize(15);
-  headline->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-
-  Fl_Box* system = new Fl_Box(210, 5, 75, 20, "System:");
-  system->labelsize(11);
-  system->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
-
-  Fl_Box* user = new Fl_Box(300, 5, 75, 20, "User:");
-  user->labelsize(11);
-  user->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
-
-  container->end();
-  return container;
-}
-
-/** Add a boolean option to the UI.
- \param[in] opt pointer to the bool option record
- */
-Fl_Group* add_option_bool(Fo_Option_Descr* opt) {
+void add_option(Fl_Pack* pack, Fo_Option_Descr* opt) {
   static Fl_Menu_Item bool_option_menu[] = {
     { "off",      0, 0, (void*)(0),   0},
     { "on",       0, 0, (void*)(1),   FL_MENU_DIVIDER},
     { "default",  0, 0, (void*)(-1),  0},
     { NULL }
   };
-
-  Fl_Group* container = new Fl_Group(0, 0, 385, 30);
+  // -- get the height of the tooltip text, so we can create the correct group size
+  int tooltip_h = 0;
   if (opt->tooltip) {
-    size_t tooltip_len = strlen(opt->name) + strlen(opt->tooltip) + 32;
-    char *tooltip_str = (char*)malloc(tooltip_len); // tollerable memeory leak
-    fl_snprintf(tooltip_str, tooltip_len-1, "%s\n\n%s\n\nDefault is %s.",
-                opt->name, opt->tooltip, opt->bool_default ? "on" : "off");
-    container->tooltip(tooltip_str);
+    int ww = FO_OPTIONS_W - 2*FO_GAP - 6; // 6 is the FL_ALIGN_LEFT margin
+    int hh = 100;
+    fl_font(FL_HELVETICA, 11);
+    fl_measure(opt->tooltip, ww, hh);
+    tooltip_h = hh+5;
+    printf("h: %d\n", hh);
   }
-
-  Fl_Choice* system_choice = new Fl_Choice(210, 4, 75, 22, opt->text);
+  // -- create a group that contains all the UI elements for the option
+  int yy = 0;
+  Fl_Group* option_group = new Fl_Group(0, 0,
+                                        FO_OPTIONS_W,
+                                        2*FO_GAP + FO_BUTTON_H + tooltip_h + 2*FO_GAP + FO_CHOICE_H +17);
+  opt->ui = option_group;
+  yy += FO_GAP;
+  // -- name of the options
+  Fl_Box* name = new Fl_Box(0, yy, FO_OPTIONS_W, 21);
+  name->copy_label(opt->name);
+  name->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+  name->labelfont(FL_HELVETICA_BOLD);
+  yy += name->h();
+  // -- description
+  Fl_Box* brief = new Fl_Box(FO_GAP, yy,
+                               FO_OPTIONS_W - 2*FO_GAP, tooltip_h,
+                               opt->brief);
+  brief->labelsize(11);
+  brief->labelcolor(fl_lighter(FL_FOREGROUND_COLOR));
+  brief->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+  yy += 17;
+  // -- tooltip, if one exists
+  Fl_Box* tooltip = new Fl_Box(FO_GAP, yy,
+                               FO_OPTIONS_W - 2*FO_GAP, tooltip_h,
+                               opt->tooltip);
+  tooltip->labelfont(FL_HELVETICA);
+  tooltip->labelsize(11);
+  tooltip->labelcolor(fl_lighter(FL_FOREGROUND_COLOR));
+  tooltip->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+  yy += tooltip_h;
+  // -- default setting
+  Fl_Box* default_setting = new Fl_Box(FO_GAP, yy, FO_SYSTEM_X - FO_GAP, 14);
+  char buf[64];
+  fl_snprintf(buf, 64, "Default is %s.",opt->bool_default ? "on" : "off");  // -- label the pulldown menus
+  default_setting->copy_label(buf);
+  default_setting->labelsize(11);
+  default_setting->labelcolor(fl_lighter(FL_FOREGROUND_COLOR));
+  default_setting->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+  yy += 18;
+  // -- option text
+  Fl_Box* text = new Fl_Box(0, yy, FO_SYSTEM_X, FO_CHOICE_H);
+  text->copy_label(opt->text);
+  text->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+  // -- system choice
+  Fl_Choice* system_choice = new Fl_Choice(FO_SYSTEM_X, yy, FO_CHOICE_W, FO_CHOICE_H, "System:");
   system_choice->down_box(FL_BORDER_BOX);
-  system_choice->labelsize(13);
+  system_choice->labelsize(11);
+  system_choice->align(FL_ALIGN_TOP);
   system_choice->callback((Fl_Callback*)set_system_option_cb, (void*)opt);
   system_choice->menu(bool_option_menu);
   switch (get_option(FO_SYSTEM, opt->name)) {
@@ -525,10 +563,11 @@ Fl_Group* add_option_bool(Fo_Option_Descr* opt) {
     default: system_choice->value(2); break;
   }
   if (!g_system_write_ok) system_choice->deactivate();
-
-  Fl_Choice* user_choice = new Fl_Choice(300, 4, 75, 22);
+  // -- user choice
+  Fl_Choice* user_choice = new Fl_Choice(FO_USER_X, yy, FO_CHOICE_W, FO_CHOICE_H, "User:");
   user_choice->down_box(FL_BORDER_BOX);
-  user_choice->labelsize(13);
+  user_choice->labelsize(11);
+  user_choice->align(FL_ALIGN_TOP);
   user_choice->callback((Fl_Callback*)set_user_option_cb, (void*)opt);
   user_choice->menu(bool_option_menu);
   switch (get_option(FO_USER, opt->name)) {
@@ -537,145 +576,97 @@ Fl_Group* add_option_bool(Fo_Option_Descr* opt) {
     default: user_choice->value(2); break;
   }
   if (!g_user_write_ok) user_choice->deactivate();
-
-  container->end();
-  return container;
+      option_group->end();
 }
 
-/** Add any option record to the UI.
- \param[in] opt pointer to the bool option record
+/** Fill the options list and make the unused options invisible.
  */
-Fl_Group* add_option( Fo_Option_Descr* opt) {
-  Fl_Group* ret = NULL;
-  switch (opt->type) {
-    case FO_HEADLINE:
-      ret = add_headline(opt, (opt == g_option_list) );
-      break;
-    case FO_OPTION_BOOL:
-      ret = add_option_bool(opt);
-      break;
-    case FO_END_OF_LIST:
-      break;
-  }
-  return ret;
-}
-
-/** Build the modular user interface.
- */
-Fl_Window* build_ui() {
-  int sb = Fl::scrollbar_size();
-  int cw = 385;
-  int ww = 10+sb+cw+sb+10;
-  int sh = 5*10 + 6*26 + 7*30;
-  Fl_Tooltip::size(11);
-  Fl_Window* window = new Fl_Double_Window(ww, 10+sh+10+25+10, "FLTK Options");
-  Fl_Scroll* option_scroll = new Fl_Scroll(10, 10, ww-20, sh);
-  option_scroll->type(Fl_Scroll::VERTICAL);
-  Fl_Pack* option_list = new Fl_Pack(10+sb, 10, ww-20-2*sb, sh);
+void add_options(Fl_Pack* pack) {
   Fo_Option_Descr *opt;
   for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
-    add_option(opt);
+    if (opt->type != FO_HEADLINE)
+      add_option(pack, opt);
   }
-  option_list->end();
-  option_scroll->end();
-  window->resizable(option_scroll);
-  Fl_Button* close = new Fl_Button(ww-75-20, 10+sh+10, 75, 25, "Close");
-  close->callback(close_cb);
-  window->end();
-  window->size_range(ww, 120, ww, 32785);
-  return window;
 }
 
-#else
+void select_headline_cb(Fl_Widget*, void*) {
+  int line = g_headline_browser->value();
+  if (line) {
+    Fo_Option_Descr* sel = (Fo_Option_Descr*)g_headline_browser->data(line);
+    Fo_Option_Descr *opt;
+    bool show = false;
+    for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+      if (opt->type == FO_HEADLINE) show = false;
+      if (opt == sel) {
+        show = true;
+        g_option_scroll->label(opt->text);
+      }
+      if (opt->ui) {
+        if (show)
+          opt->ui->show();
+        else
+          opt->ui->hide();
+      }
+    }
+  } else {
+    Fo_Option_Descr *opt;
+    for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+      if (opt->ui)
+        opt->ui->show();
+    }
+    g_option_scroll->label("All Options");
+  }
+  g_window->redraw();
+}
+
+/** Fill the headline browser and set callbacks.
+ */
+void add_headlines(Fl_Hold_Browser* browser) {
+  Fo_Option_Descr *opt;
+  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
+    if (opt->type == FO_HEADLINE)
+      browser->add(opt->text, (void*)opt);
+  }
+  browser->callback(select_headline_cb, NULL);
+}
 
 /** Build the modular user interface (ALT VERSION).
  */
 Fl_Window* build_ui() {
-  int sb = Fl::scrollbar_size();
-  int cw = 550;
-  int ww = 10+sb+cw+sb+10;
-  int sh = 5*10 + 6*26 + 7*30;
   Fl_Tooltip::size(11);
-  Fl_Window* window = new Fl_Double_Window(ww, 10+sh+10+25+10, "FLTK Options");
-  Fl_Browser* group_browser = new Fl_Browser(10, 25, 200, sh-15, "Groups:");
-  group_browser->align(FL_ALIGN_TOP);
-  Fo_Option_Descr *opt;
-  for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
-    if (opt->type == FO_HEADLINE)
-      group_browser->add(opt->text);
-  }
-  Fl_Scroll* option_scroll = new Fl_Scroll(220, 25, ww-230, sh-15);
-  option_scroll->box(FL_DOWN_BOX);
-  option_scroll->type(Fl_Scroll::VERTICAL);
-  Fl_Pack* option_list = new Fl_Pack(220+sb+3, 28, ww-230-2*sb-6, sh-18);
-
-
-  for (int i=1; i<=2; i++) {
-    Fl_Group* option_group = new Fl_Group(0, 0, ww-230-2*sb-6, 150);
-    Fl_Box* system = new Fl_Box(210-40, 0, 75, 20, "System:");
-    system->labelsize(11);
-    system->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
-    Fl_Box* user = new Fl_Box(300-40, 0, 75, 20, "User:");
-    user->labelsize(11);
-    user->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
-
-    static Fl_Menu_Item bool_option_menu[] = {
-      { "off",      0, 0, (void*)(0),   0},
-      { "on",       0, 0, (void*)(1),   FL_MENU_DIVIDER},
-      { "default",  0, 0, (void*)(-1),  0},
-      { NULL }
-    };
-
-    opt = g_option_list + i;
-    if (opt->tooltip) {
-      size_t tooltip_len = strlen(opt->name) + strlen(opt->tooltip) + 32;
-      char *tooltip_str = (char*)malloc(tooltip_len); // tollerable memeory leak
-      fl_snprintf(tooltip_str, tooltip_len-1, "%s\n\n%s\n\nDefault is %s.",
-                  opt->name, opt->tooltip, opt->bool_default ? "on" : "off");
-      Fl_Box* detail = new Fl_Box(0, 48, 330, 100);
-//      detail->box(FL_FRAME_BOX);
-      detail->align(FL_ALIGN_INSIDE|FL_ALIGN_LEFT|FL_ALIGN_TOP|FL_ALIGN_WRAP);
-      detail->copy_label(tooltip_str);
-      detail->labelsize(11);
-    }
-
-    Fl_Choice* system_choice = new Fl_Choice(210-40, 20, 75, 22, opt->text);
-    system_choice->down_box(FL_BORDER_BOX);
-    system_choice->labelsize(13);
-    system_choice->callback((Fl_Callback*)set_system_option_cb, (void*)opt);
-    system_choice->menu(bool_option_menu);
-    switch (get_option(FO_SYSTEM, opt->name)) {
-      case 0: system_choice->value(0); break;
-      case 1: system_choice->value(1); break;
-      default: system_choice->value(2); break;
-    }
-    if (!g_system_write_ok) system_choice->deactivate();
-
-    Fl_Choice* user_choice = new Fl_Choice(300-40, 20, 75, 22);
-    user_choice->down_box(FL_BORDER_BOX);
-    user_choice->labelsize(13);
-    user_choice->callback((Fl_Callback*)set_user_option_cb, (void*)opt);
-    user_choice->menu(bool_option_menu);
-    switch (get_option(FO_USER, opt->name)) {
-      case 0: user_choice->value(0); break;
-      case 1: user_choice->value(1); break;
-      default: user_choice->value(2); break;
-    }
-    if (!g_user_write_ok) user_choice->deactivate();
-    option_group->end();
-  }
-
-  option_scroll->end();
-  window->resizable(option_scroll);
-  Fl_Button* close = new Fl_Button(ww-75-20, 10+sh+10, 75, 25, "Close");
+  // -- the main application window
+  g_window = new Fl_Double_Window(FO_WINDOW_W, FO_WINDOW_H,
+                                  "FLTK Options");
+  // -- a clickable browser for all headlines
+  g_headline_browser = new Fl_Hold_Browser(FO_GAP, FO_GAP + FO_TITLE_H,
+                                           FO_BROWSER_W, FO_BROWSER_H - FO_TITLE_H,
+                                           "Groups");
+  g_headline_browser->align(FL_ALIGN_TOP);
+  g_headline_browser->textsize(FL_NORMAL_SIZE+1);
+  add_headlines(g_headline_browser);
+  // -- scrollable area for all options inside a group
+  g_option_scroll = new Fl_Scroll(FO_GAP + FO_BROWSER_W + FO_GAP, FO_GAP + FO_TITLE_H,
+                                  FO_OPTIONS_W +2*FO_SCROLL_W, FO_BROWSER_H - FO_TITLE_H,
+                                  "All Options");
+  g_option_scroll->box(FL_DOWN_BOX);
+  g_option_scroll->type(Fl_Scroll::VERTICAL);
+  Fl_Pack* option_list = new Fl_Pack(g_option_scroll->x() + FO_SCROLL_W,
+                                     g_option_scroll->y() + Fl::box_dy(FL_DOWN_BOX),
+                                     FO_OPTIONS_W, 10);
+  add_options(option_list);
+  // -- end all groups
+  g_option_scroll->end();
+  g_window->resizable(g_option_scroll);
+  // -- close button
+  Fl_Button* close = new Fl_Button(FO_WINDOW_W - 2*FO_GAP-FO_BUTTON_W,
+                                   FO_WINDOW_H - FO_GAP - FO_BUTTON_H,
+                                   FO_BUTTON_W, FO_BUTTON_H,
+                                   "Close");
   close->callback(close_cb);
-  window->end();
-  window->size_range(ww, 120, ww, 32785);
-  return window;
+  g_window->end();
+  g_window->size_range(FO_WINDOW_W, 200, FO_WINDOW_W, 32767);
+  return g_window;
 }
-
-
-#endif
 
 /** This is where it all begins.
  */
