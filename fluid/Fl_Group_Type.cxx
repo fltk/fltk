@@ -37,13 +37,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// ---- Fl_Group_Type -------------------------------------------------- MARK: -
+
+Fl_Group_Type Fl_Group_type;    // the "factory"
+
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X,Y,W,H);
   redraw();
 }
-
-Fl_Group_Type Fl_Group_type;    // the "factory"
 
 /**
  Create and add a new Group node.
@@ -129,8 +131,6 @@ void ungroup_cb(Fl_Widget *, void *) {
   set_modflag(1);
 }
 
-////////////////////////////////////////////////////////////////
-
 void Fl_Group_Type::write_code1() {
   Fl_Widget_Type::write_code1();
 }
@@ -145,16 +145,63 @@ void Fl_Group_Type::write_code2() {
   write_block_close();
 }
 
-////////////////////////////////////////////////////////////////
+// This is called when o is created.  If it is in the tab group make
+// sure it is visible:
+void Fl_Group_Type::add_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  ((Fl_Group*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+// This is called when o is deleted.  If it is in the tab group make
+// sure it is not visible:
+void Fl_Group_Type::remove_child(Fl_Type* cc) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  ((Fl_Group*)o)->remove(c->o);
+  o->redraw();
+}
+
+// move, don't change selected value:
+void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  ((Fl_Group*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+// live mode support
+Fl_Widget* Fl_Group_Type::enter_live_mode(int) {
+  Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
+  return propagate_live_mode(grp);
+}
+
+void Fl_Group_Type::leave_live_mode() {
+}
+
+/**
+ copy all properties from the edit widget to the live widget
+ */
+void Fl_Group_Type::copy_properties() {
+  Fl_Widget_Type::copy_properties();
+}
+
+// ---- Fl_Pack_Type --------------------------------------------------- MARK: -
+
+Fl_Pack_Type Fl_Pack_type;      // the "factory"
 
 const char pack_type_name[] = "Fl_Pack";
 
 Fl_Menu_Item pack_type_menu[] = {
   {"HORIZONTAL", 0, 0, (void*)Fl_Pack::HORIZONTAL},
   {"VERTICAL", 0, 0, (void*)Fl_Pack::VERTICAL},
-  {0}};
+  {0}
+};
 
-Fl_Pack_Type Fl_Pack_type;      // the "factory"
+Fl_Widget *Fl_Pack_Type::enter_live_mode(int) {
+  Fl_Group *grp = new Fl_Pack(o->x(), o->y(), o->w(), o->h());
+  return propagate_live_mode(grp);
+}
 
 void Fl_Pack_Type::copy_properties()
 {
@@ -163,7 +210,7 @@ void Fl_Pack_Type::copy_properties()
   d->spacing(s->spacing());
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Flex_Type --------------------------------------------------- MARK: -
 
 const char flex_type_name[] = "Fl_Flex";
 
@@ -176,14 +223,7 @@ Fl_Flex_Type Fl_Flex_type;      // the "factory"
 
 Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
-  live_widget = grp;
-  copy_properties();
-  suspend_auto_layout = 1;
-  Fl_Type *n;
-  for (n = next; n && n->level > level; n = n->next) {
-    if (n->level == level+1)
-      n->enter_live_mode();
-  }
+  propagate_live_mode(grp);
   suspend_auto_layout = 0;
   Fl_Flex *d = grp, *s =(Fl_Flex*)o;
   int nc = s->children(), nd = d->children();
@@ -194,8 +234,7 @@ Fl_Widget *Fl_Flex_Type::enter_live_mode(int) {
       d->fixed(d->child(i), s->horizontal() ? dc->w() : dc->h());
     }
   }
-  grp->end(); //this also updates the layout
-  return live_widget;
+  return grp;
 }
 
 void Fl_Flex_Type::copy_properties()
@@ -383,7 +422,11 @@ int Fl_Flex_Type::is_fixed(Fl_Type *t) {
   return f->fixed(w);
 }
 
-////////////////////////////////////////////////////////////////
+// ---- Fl_Table_Type -------------------------------------------------- MARK: -
+
+Fl_Table_Type Fl_Table_type;    // the "factory"
+
+const char table_type_name[] = "Fl_Table";
 
 static const int MAX_ROWS = 14;
 static const int MAX_COLS = 7;
@@ -461,16 +504,46 @@ public:
   }
 };
 
-const char table_type_name[] = "Fl_Table";
-
-Fl_Table_Type Fl_Table_type;    // the "factory"
-
 Fl_Widget *Fl_Table_Type::widget(int X,int Y,int W,int H) {
   Fluid_Table *table = new Fluid_Table(X, Y, W, H);
   return table;
 }
 
-////////////////////////////////////////////////////////////////
+void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
+    fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
+               "Please refer to the documentation on Fl_Table.");
+  }
+  ((Fl_Table*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+void Fl_Table_Type::remove_child(Fl_Type* cc) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  ((Fl_Table*)o)->remove(*(c->o));
+  o->redraw();
+}
+
+void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  ((Fl_Table*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
+  Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
+  live_widget = grp;
+  copy_properties();
+  grp->end();
+  return live_widget;
+}
+
+// ---- Fl_Tabs_Type --------------------------------------------------- MARK: -
+
+Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
 
 const char tabs_type_name[] = "Fl_Tabs";
 
@@ -479,8 +552,6 @@ void itabs::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X,Y,W,H);
   redraw();
 }
-
-Fl_Tabs_Type Fl_Tabs_type;      // the "factory"
 
 // This is called when user clicks on a widget in the window.  See
 // if it is a tab title, and adjust visibility and return new selection:
@@ -501,51 +572,8 @@ Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   return (Fl_Type*)(t->value()->user_data());
 }
 
-////////////////////////////////////////////////////////////////
-
-const char wizard_type_name[] = "Fl_Wizard";
-
-// Override group's resize behavior to do nothing to children:
-void iwizard::resize(int X, int Y, int W, int H) {
-  Fl_Widget::resize(X,Y,W,H);
-  redraw();
-}
-
-Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
-
-// This is called when o is created.  If it is in the tab group make
-// sure it is visible:
-
-void Fl_Group_Type::add_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  ((Fl_Group*)o)->insert(*(c->o), b);
-  o->redraw();
-}
-
 void Fl_Tabs_Type::add_child(Fl_Type* c, Fl_Type* before) {
   Fl_Group_Type::add_child(c, before);
-}
-
-void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
-    fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
-               "Please refer to the documentation on Fl_Table.");
-  }
-  ((Fl_Table*)o)->insert(*(c->o), b);
-  o->redraw();
-}
-
-
-// This is called when o is deleted.  If it is in the tab group make
-// sure it is not visible:
-
-void Fl_Group_Type::remove_child(Fl_Type* cc) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  ((Fl_Group*)o)->remove(c->o);
-  o->redraw();
 }
 
 void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
@@ -555,94 +583,18 @@ void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
   Fl_Group_Type::remove_child(c);
 }
 
-void Fl_Table_Type::remove_child(Fl_Type* cc) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  ((Fl_Table*)o)->remove(*(c->o));
-  o->redraw();
-}
-
-// move, don't change selected value:
-
-void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  ((Fl_Group*)o)->insert(*(c->o), b);
-  o->redraw();
-}
-
-void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
-  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
-  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
-  ((Fl_Table*)o)->insert(*(c->o), b);
-  o->redraw();
-}
-
-////////////////////////////////////////////////////////////////
-// live mode support
-
-Fl_Widget *Fl_Group_Type::enter_live_mode(int) {
-  Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
-  live_widget = grp;
-  copy_properties();
-  Fl_Type *n;
-  for (n = next; n && n->level > level; n = n->next) {
-    if (n->level == level+1)
-      n->enter_live_mode();
-  }
-  grp->end();
-  return live_widget;
-}
-
 Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
   Fl_Tabs *grp = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
-  live_widget = grp;
-  copy_properties();
-  Fl_Type *n;
-  for (n = next; n && n->level > level; n = n->next) {
-    if (n->level == level+1)
-      n->enter_live_mode();
-  }
-  grp->end();
+  propagate_live_mode(grp);
   grp->value(((Fl_Tabs*)o)->value());
-  return live_widget;
+  return grp;
 }
 
-Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
-  Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
-  live_widget = grp;
-  copy_properties();
-  grp->end();
-  return live_widget;
-}
+// ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
 
-void Fl_Group_Type::leave_live_mode() {
-}
-
-/**
- copy all properties from the edit widget to the live widget
- */
-void Fl_Group_Type::copy_properties() {
-  Fl_Widget_Type::copy_properties();
-}
-
-////////////////////////////////////////////////////////////////
-// some other group subclasses that fluid does not treat specially:
+Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
 
 const char scroll_type_name[] = "Fl_Scroll";
-
-Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
-  Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
-  grp->show();
-  live_widget = grp;
-  copy_properties();
-  Fl_Type *n;
-  for (n = next; n && n->level > level; n = n->next) {
-    if (n->level == level+1)
-      n->enter_live_mode();
-  }
-  grp->end();
-  return live_widget;
-}
 
 Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH", 0, 0, 0/*(void*)Fl_Scroll::BOTH*/},
@@ -653,7 +605,11 @@ Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH_ALWAYS", 0, 0, (void*)Fl_Scroll::BOTH_ALWAYS},
   {0}};
 
-Fl_Scroll_Type Fl_Scroll_type;  // the "factory"
+Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
+  Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
+  grp->show();
+  return propagate_live_mode(grp);
+}
 
 void Fl_Scroll_Type::copy_properties() {
   Fl_Group_Type::copy_properties();
@@ -664,13 +620,25 @@ void Fl_Scroll_Type::copy_properties() {
   d->hscrollbar.align(s->hscrollbar.align());
 }
 
-////////////////////////////////////////////////////////////////
-
-const char tile_type_name[] = "Fl_Tile";
+// ---- Fl_Tile_Type --------------------------------------------------- MARK: -
 
 Fl_Tile_Type Fl_Tile_type;      // the "factory"
+
+const char tile_type_name[] = "Fl_Tile";
 
 void Fl_Tile_Type::copy_properties() {
   Fl_Group_Type::copy_properties();
   // no additional properties
+}
+
+// ---- Fl_Wizard_Type ------------------------------------------------ MARK: -
+
+Fl_Wizard_Type Fl_Wizard_type;  // the "factory"
+
+const char wizard_type_name[] = "Fl_Wizard";
+
+// Override group's resize behavior to do nothing to children:
+void iwizard::resize(int X, int Y, int W, int H) {
+  Fl_Widget::resize(X,Y,W,H);
+  redraw();
 }

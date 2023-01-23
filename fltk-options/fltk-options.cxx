@@ -615,6 +615,7 @@ void select_headline_cb(Fl_Widget*, void*) {
     }
     g_option_scroll->label("All Options");
   }
+  g_option_scroll->scroll_to(-FO_SCROLL_W+Fl::box_dy(g_option_scroll->box()), 0);
   g_window->redraw();
 }
 

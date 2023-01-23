@@ -1782,17 +1782,7 @@ void Fl_Widget_Class_Type::write_code2() {
 
 Fl_Widget *Fl_Window_Type::enter_live_mode(int) {
   Fl_Window *win = new Fl_Window(o->x(), o->y(), o->w(), o->h());
-  live_widget = win;
-  if (live_widget) {
-    copy_properties();
-    Fl_Type *n;
-    for (n = next; n && n->level > level; n = n->next) {
-      if (n->level == level+1)
-        n->enter_live_mode();
-    }
-    win->end();
-  }
-  return live_widget;
+  return propagate_live_mode(win);
 }
 
 void Fl_Window_Type::leave_live_mode() {

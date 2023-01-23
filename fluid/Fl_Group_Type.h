@@ -27,25 +27,13 @@
 void group_cb(Fl_Widget *, void *);
 void ungroup_cb(Fl_Widget *, void *);
 
+// ---- Fl_Group_Type -------------------------------------------------- MARK: -
+
 class igroup : public Fl_Group {
 public:
   void resize(int,int,int,int) FL_OVERRIDE;
   void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
   igroup(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {Fl_Group::current(0);}
-};
-
-class itabs : public Fl_Tabs {
-public:
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
-  itabs(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
-};
-
-class iwizard : public Fl_Wizard {
-public:
-  void resize(int,int,int,int) FL_OVERRIDE;
-  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
-  iwizard(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
 };
 
 class Fl_Group_Type : public Fl_Widget_Type {
@@ -64,11 +52,12 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_group() const FL_OVERRIDE {return 1;}
   int pixmapID() FL_OVERRIDE { return 6; }
-
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
+
+// ---- Fl_Pack_Type --------------------------------------------------- MARK: -
 
 extern const char pack_type_name[];
 extern Fl_Menu_Item pack_type_menu[];
@@ -80,8 +69,11 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::PackedGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Pack_Type();}
   int pixmapID() FL_OVERRIDE { return 22; }
+  Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
+
+// ---- Fl_Flex_Type --------------------------------------------------- MARK: -
 
 extern const char flex_type_name[];
 extern Fl_Menu_Item flex_type_menu[];
@@ -115,6 +107,8 @@ public:
   static int is_fixed(Fl_Type*);
 };
 
+// ---- Fl_Table_Type -------------------------------------------------- MARK: -
+
 extern const char table_type_name[];
 
 class Fl_Table_Type : public Fl_Group_Type {
@@ -130,7 +124,16 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
 };
 
+// ---- Fl_Tabs_Type --------------------------------------------------- MARK: -
+
 extern const char tabs_type_name[];
+
+class itabs : public Fl_Tabs {
+public:
+  void resize(int,int,int,int) FL_OVERRIDE;
+  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
+  itabs(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
+};
 
 class Fl_Tabs_Type : public Fl_Group_Type {
 public:
@@ -151,6 +154,8 @@ public:
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
 };
 
+// ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
+
 extern const char scroll_type_name[];
 extern Fl_Menu_Item scroll_type_menu[];
 
@@ -165,6 +170,8 @@ public:
   void copy_properties() FL_OVERRIDE;
 };
 
+// ---- Fl_Tile_Type --------------------------------------------------- MARK: -
+
 extern const char tile_type_name[];
 
 class Fl_Tile_Type : public Fl_Group_Type {
@@ -174,6 +181,15 @@ public:
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tile_Type();}
   int pixmapID() FL_OVERRIDE { return 20; }
   void copy_properties() FL_OVERRIDE;
+};
+
+// ---- Fl_Wizard_Type ------------------------------------------------- MARK: -
+
+class iwizard : public Fl_Wizard {
+public:
+  void resize(int,int,int,int) FL_OVERRIDE;
+  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
+  iwizard(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
 };
 
 extern const char wizard_type_name[];

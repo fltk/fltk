@@ -3556,6 +3556,23 @@ Fl_Widget *Fl_Widget_Type::enter_live_mode(int) {
   return live_widget;
 }
 
+Fl_Widget* Fl_Widget_Type::propagate_live_mode(Fl_Group* grp) {
+  live_widget = grp;
+  copy_properties();
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) {
+    if (n->level == level+1) {
+      Fl_Widget* proxy_child = n->enter_live_mode();
+      if (proxy_child && n->is_widget() && ((Fl_Widget_Type*)n)->resizable()) {
+        grp->resizable(proxy_child);
+      }
+    }
+  }
+  grp->end();
+  return live_widget;
+}
+
+
 void Fl_Widget_Type::leave_live_mode() {
 }
 
@@ -3647,7 +3664,5 @@ void Fl_Widget_Type::copy_properties() {
     w->hide();
   if (!o->active())
     w->deactivate();
-  if (resizable() && w->parent())
-    w->parent()->resizable(o);
 }
 

@@ -152,3 +152,17 @@ void Fl_Pack::draw() {
     draw_label();
   }
 }
+
+/** Override Fl_Group resize behaviour.
+
+ Resizing a Pack will not resize any of its children, but trigger a redraw,
+ which in turn recalculates the dimensions of all children.
+
+ \param[in] X, Y, W, H new posistion and size of Pack
+ */
+void Fl_Pack::resize(int X, int Y, int W, int H) {
+  Fl_Widget::resize(X, Y, W, H);
+  redraw();
+}
+
+

@@ -106,6 +106,7 @@ public:
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  Fl_Widget *propagate_live_mode(Fl_Group* grp);
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 
