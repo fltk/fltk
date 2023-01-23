@@ -51,8 +51,8 @@ protected:
   void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);
   int handle(int);
   void setlabel(const char *) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   Fl_Widget_Type *_make() FL_OVERRIDE {return 0;} // we don't call this
   Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return 0;}
   int recalc;           // set by fix_overlay()
@@ -121,8 +121,8 @@ public:
   void write_properties() FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
 
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   int pixmapID() FL_OVERRIDE { return 48; }

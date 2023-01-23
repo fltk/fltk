@@ -5,7 +5,7 @@ code_name {.cxx}
 comment {//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,7 +17,7 @@ comment {//
 //
 //     https://www.fltk.org/bugs.php
 //
-} {in_source in_header
+} {selected in_source in_header
 }
 
 decl {\#include "fluid.h"} {private local
@@ -483,7 +483,7 @@ Function {make_comment_panel()} {open
     xywh {780 296 550 280} type Double labelsize 11 resizable
     code0 {o->size_range(320, 180);} modal visible
   } {
-    Fl_Text_Editor comment_input {selected
+    Fl_Text_Editor comment_input {
       xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 textcolor 58 resizable
       code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
       code1 {o->buffer(new Fl_Text_Buffer());}

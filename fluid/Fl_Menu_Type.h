@@ -41,12 +41,12 @@ public:
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
   Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}
-  virtual const char* menu_name(int& i);
+  virtual const char* menu_name(Fd_Code_Writer& f, int& i);
   int flags();
-  void write_static() FL_OVERRIDE;
-  void write_item();
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_item(Fd_Code_Writer& f);
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 16; }
 };
 
@@ -105,7 +105,7 @@ public:
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE {build_menu();}
   void remove_child(Fl_Type*) FL_OVERRIDE {build_menu();}
   Fl_Type* click_test(int x, int y) FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
 

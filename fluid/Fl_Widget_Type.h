@@ -51,13 +51,13 @@ class Fl_Widget_Type : public Fl_Type {
 
 protected:
 
-  void write_static() FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_widget_code();
-  void write_extra_code();
-  void write_block_close();
-  void write_code2() FL_OVERRIDE;
-  void write_color(const char*, Fl_Color);
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_widget_code(Fd_Code_Writer& f);
+  void write_extra_code(Fd_Code_Writer& f);
+  void write_block_close(Fd_Code_Writer& f);
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_color(Fd_Code_Writer& f, const char*, Fl_Color);
   Fl_Widget *live_widget;
 
 public:

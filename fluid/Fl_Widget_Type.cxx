@@ -2735,15 +2735,15 @@ int isdeclare(const char *c) {
   return 0;
 }
 
-void Fl_Widget_Type::write_static() {
+void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
   const char* t = subclassname(this);
   if (!subclass() || (is_class() && !strncmp(t, "Fl_", 3))) {
-    write_declare("#include <FL/Fl.H>");
-    write_declare("#include <FL/%s.H>", t);
+    f.write_h_once("#include <FL/Fl.H>");
+    f.write_h_once("#include <FL/%s.H>", t);
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && isdeclare(extra_code(n)))
-      write_declare("%s", extra_code(n));
+      f.write_h_once("%s", extra_code(n));
   }
   if (callback() && is_name(callback())) {
     int write_extern_declaration = 1;
@@ -2757,17 +2757,17 @@ void Fl_Widget_Type::write_static() {
         write_extern_declaration = 0;
     }
     if (write_extern_declaration)
-      write_declare("extern void %s(%s*, %s);", callback(), t,
+      f.write_h_once("extern void %s(%s*, %s);", callback(), t,
                     user_data_type() ? user_data_type() : "void*");
   }
   const char* k = class_name(1);
   const char* c = array_name(this);
   if (c && !k && !is_class()) {
-    write_c("\n");
-    if (!public_) write_c("static ");
-    else write_h("extern %s *%s;\n", t, c);
-    if (strchr(c, '[') == NULL) write_c("%s *%s=(%s *)0;\n", t, c, t);
-    else write_c("%s *%s={(%s *)0};\n", t, c, t);
+    f.write_c("\n");
+    if (!public_) f.write_c("static ");
+    else f.write_h("extern %s *%s;\n", t, c);
+    if (strchr(c, '[') == NULL) f.write_c("%s *%s=(%s *)0;\n", t, c, t);
+    else f.write_c("%s *%s={(%s *)0};\n", t, c, t);
   }
   if (callback() && !is_name(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -2780,157 +2780,167 @@ void Fl_Widget_Type::write_static() {
       do d++; while (is_id(*d));
       while (*d && !is_id(*d)) d++;
     }
-    const char* cn = callback_name();
+    const char* cn = callback_name(f);
     if (k) {
-      write_c("\nvoid %s::%s_i(%s*", k, cn, t);
+      f.write_c("\nvoid %s::%s_i(%s*", k, cn, t);
     } else {
-      write_c("\nstatic void %s(%s*", cn, t);
+      f.write_c("\nstatic void %s(%s*", cn, t);
     }
-    if (use_o) write_c(" o");
+    if (use_o) f.write_c(" o");
     const char* ut = user_data_type() ? user_data_type() : "void*";
-    write_c(", %s", ut);
-    if (use_v) write_c(" v");
-    write_c(") {\n");
-    write_c_indented(callback(), 1, 0);
+    f.write_c(", %s", ut);
+    if (use_v) f.write_c(" v");
+    f.write_c(") {\n");
+    f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;
       else p = callback();
       // Only add trailing semicolon if the last line is not a preprocessor
       // statement...
-      if (*p != '#' && *p) write_c(";");
+      if (*p != '#' && *p) f.write_c(";");
     }
-    write_c("\n}\n");
+    f.write_c("\n}\n");
     if (k) {
-      write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
-      write_c("%s((%s*)(o", indent(1), k);
+      f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
+      f.write_c("%s((%s*)(o", f.indent(1), k);
       Fl_Type *q = 0;
       for (Fl_Type* p = parent; p && p->is_widget(); q = p, p = p->parent)
-        write_c("->parent()");
+        f.write_c("->parent()");
       if (!q || strcmp(q->type_name(), "widget_class"))
-        write_c("->user_data()");
-      write_c("))->%s_i(o,v);\n}\n", cn);
+        f.write_c("->user_data()");
+      f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
   }
   if (image) {
-    if (image->written != write_number) {
-      image->write_static(compress_image_);
-      image->written = write_number;
-    }
+    if (!f.c_contains(image))
+      image->write_static(f, compress_image_);
   }
   if (inactive) {
-    if (inactive->written != write_number) {
-      inactive->write_static(compress_deimage_);
-      inactive->written = write_number;
-    }
+    if (!f.c_contains(inactive))
+      inactive->write_static(f, compress_deimage_);
   }
 }
 
-extern int varused_test, varused;
-
-void Fl_Widget_Type::write_code1() {
+void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
   const char* t = subclassname(this);
   const char *c = array_name(this);
   if (c) {
     if (class_name(1)) {
-      write_public(public_);
-      write_h("%s%s *%s;\n", indent(1), t, c);
+      f.write_public(public_);
+      f.write_h("%s%s *%s;\n", f.indent(1), t, c);
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
-    const char* cn = callback_name();
+    const char* cn = callback_name(f);
     const char* ut = user_data_type() ? user_data_type() : "void*";
-    write_public(0);
-    write_h("%sinline void %s_i(%s*, %s);\n", indent(1), cn, t, ut);
-    write_h("%sstatic void %s(%s*, %s);\n", indent(1), cn, t, ut);
+    f.write_public(0);
+    f.write_h("%sinline void %s_i(%s*, %s);\n", f.indent(1), cn, t, ut);
+    f.write_h("%sstatic void %s(%s*, %s);\n", f.indent(1), cn, t, ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_window();
   const char *ptr;
 
-  varused = wused;
+  f.varused = wused;
 
-  if (!name() && !varused) {
-    varused |= is_parent();
+  if (!name() && !f.varused) {
+    f.varused |= is_parent();
 
-    if (!varused) {
-      varused_test = 1;
-      write_widget_code();
-      varused_test = 0;
+    if (!f.varused) {
+      f.varused_test = 1;
+      write_widget_code(f);
+      f.varused_test = 0;
     }
   }
 
-  if (!varused) {
+  if (!f.varused) {
     for (int n=0; n < NUM_EXTRA_CODE; n++)
       if (extra_code(n) && !isdeclare(extra_code(n)))
       {
         int instring = 0;
         int inname = 0;
+        int incomment = 0;
+        int incppcomment = 0;
         for (ptr = extra_code(n); *ptr; ptr ++) {
           if (instring) {
             if (*ptr == '\\') ptr++;
             else if (*ptr == '\"') instring = 0;
-          } else if (inname && !isalnum(*ptr & 255)) inname = 0;
-          else if (*ptr == '\"') instring = 1;
-          else if (isalnum(*ptr & 255) || *ptr == '_') {
+          } else if (inname && !isalnum(*ptr & 255)) {
+            inname = 0;
+          } else if (*ptr == '/' && ptr[1]=='*') {
+            incomment = 1; ptr++;
+          } else if (incomment) {
+            if (*ptr == '*' && ptr[1]=='/') {
+              incomment = 0; ptr++;
+            }
+          } else if (*ptr == '/' && ptr[1]=='/') {
+            incppcomment = 1; ptr++;
+          } else if (incppcomment) {
+            if (*ptr == '\n')
+              incppcomment = 0;
+          } else if (*ptr == '\"') {
+            instring = 1;
+          } else if (isalnum(*ptr & 255) || *ptr == '_') {
             size_t len = strspn(ptr, "0123456789_"
                                      "abcdefghijklmnopqrstuvwxyz"
                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-
             if (!strncmp(ptr, "o", len)) {
-              varused = 1;
+              f.varused = 1;
               break;
-            } else ptr += len - 1;
+            } else {
+              ptr += len - 1;
+            }
           }
         }
       }
   }
 
-  write_c("%s{ ", indent());
-  write_comment_inline_c();
-  if (varused) write_c("%s* o = ", t);
-  if (name()) write_c("%s = ", name());
+  f.write_c("%s{ ", f.indent());
+  write_comment_inline_c(f);
+  if (f.varused) f.write_c("%s* o = ", t);
+  if (name()) f.write_c("%s = ", name());
   if (is_window()) {
     // Handle special case where user is faking a Fl_Group type as a window,
     // there is no 2-argument constructor in that case:
     if (!strstr(t, "Window"))
-      write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
+      f.write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
     else
-      write_c("new %s(%d, %d", t, o->w(), o->h());
+      f.write_c("new %s(%d, %d", t, o->w(), o->h());
   } else {
-    write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
+    f.write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
   }
   if (label() && *label()) {
-    write_c(", ");
+    f.write_c(", ");
     switch (g_project.i18n_type) {
     case 0 : /* None */
-        write_cstring(label());
+        f.write_cstring(label());
         break;
     case 1 : /* GNU gettext */
-        write_c("%s(", g_project.i18n_function.value());
-        write_cstring(label());
-        write_c(")");
+        f.write_c("%s(", g_project.i18n_function.value());
+        f.write_cstring(label());
+        f.write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+        f.write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
                 g_project.i18n_set.value(), msgnum());
-        write_cstring(label());
-        write_c(")");
+        f.write_cstring(label());
+        f.write_c(")");
         break;
     }
   }
-  write_c(");\n");
+  f.write_c(");\n");
 
-  indentation++;
+  f.indentation++;
 
   // Avoid compiler warning for unused variable.
   // Also avoid quality control warnings about incorrect allocation error handling.
-  if (wused) write_c("%sw = o; (void)w;\n", indent());
+  if (wused) f.write_c("%sw = o; (void)w;\n", f.indent());
 
-  write_widget_code();
+  write_widget_code(f);
 }
 
-void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
+void Fl_Widget_Type::write_color(Fd_Code_Writer& f, const char* field, Fl_Color color) {
   const char* color_name = 0;
   switch (color) {
   case FL_FOREGROUND_COLOR:     color_name = "FL_FOREGROUND_COLOR";     break;
@@ -2962,44 +2972,44 @@ void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
   }
   const char *var = is_class() ? "this" : name() ? name() : "o";
   if (color_name) {
-    write_c("%s%s->%s(%s);\n", indent(), var, field, color_name);
+    f.write_c("%s%s->%s(%s);\n", f.indent(), var, field, color_name);
   } else {
-    write_c("%s%s->%s((Fl_Color)%d);\n", indent(), var, field, color);
+    f.write_c("%s%s->%s((Fl_Color)%d);\n", f.indent(), var, field, color);
   }
 }
 
-// this is split from write_code1() for Fl_Window_Type:
-void Fl_Widget_Type::write_widget_code() {
+// this is split from write_code1(Fd_Code_Writer& f) for Fl_Window_Type:
+void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
   const char *var = is_class() ? "this" : name() ? name() : "o";
 
   if (tooltip() && *tooltip()) {
-    write_c("%s%s->tooltip(",indent(), var);
+    f.write_c("%s%s->tooltip(",f.indent(), var);
     switch (g_project.i18n_type) {
     case 0 : /* None */
-        write_cstring(tooltip());
+        f.write_cstring(tooltip());
         break;
     case 1 : /* GNU gettext */
-        write_c("%s(", g_project.i18n_function.value());
-        write_cstring(tooltip());
-        write_c(")");
+        f.write_c("%s(", g_project.i18n_function.value());
+        f.write_cstring(tooltip());
+        f.write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+        f.write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
                 g_project.i18n_set.value(), msgnum() + 1);
-        write_cstring(tooltip());
-        write_c(")");
+        f.write_cstring(tooltip());
+        f.write_c(")");
         break;
     }
-    write_c(");\n");
+    f.write_c(");\n");
   }
 
   if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
-    write_c("%s%s->type(%d);\n", indent(), var, ((Fl_Spinner*)o)->type());
+    f.write_c("%s%s->type(%d);\n", f.indent(), var, ((Fl_Spinner*)o)->type());
   else if (o->type() != tplate->type() && !is_window())
-    write_c("%s%s->type(%d);\n", indent(), var, o->type());
+    f.write_c("%s%s->type(%d);\n", f.indent(), var, o->type());
   if (o->box() != tplate->box() || subclass())
-    write_c("%s%s->box(FL_%s);\n", indent(), var, boxname(o->box()));
+    f.write_c("%s%s->box(FL_%s);\n", f.indent(), var, boxname(o->box()));
 
   // write shortcut command if needed
   int shortcut = 0;
@@ -3009,136 +3019,136 @@ void Fl_Widget_Type::write_widget_code() {
   else if (is_text_display()) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
     if (g_project.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
-      write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, shortcut & ~(FL_CTRL|FL_META));
+      f.write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", f.indent(), var, shortcut & ~(FL_CTRL|FL_META));
     } else {
-      write_c("%s%s->shortcut(0x%x);\n", indent(), var, shortcut);
+      f.write_c("%s%s->shortcut(0x%x);\n", f.indent(), var, shortcut);
     }
   }
 
   if (is_button()) {
     Fl_Button* b = (Fl_Button*)o;
-    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
+    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
-    if (b->value()) write_c("%s%s->value(1);\n", indent(), var);
+    if (b->value()) f.write_c("%s%s->value(1);\n", f.indent(), var);
   } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
-    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
+    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
   } else if (is_menu_button()) {
     Fl_Menu_* b = (Fl_Menu_*)o;
-    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
+    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
   }
   if (o->color() != tplate->color() || subclass())
-    write_color("color", o->color());
+    write_color(f, "color", o->color());
   if (o->selection_color() != tplate->selection_color() || subclass())
-    write_color("selection_color", o->selection_color());
-  if (image) image->write_code(bind_image_, var);
-  if (inactive) inactive->write_code(bind_deimage_, var, 1);
+    write_color(f, "selection_color", o->selection_color());
+  if (image) image->write_code(f, bind_image_, var);
+  if (inactive) inactive->write_code(f, bind_deimage_, var, 1);
   if (o->labeltype() != tplate->labeltype() || subclass())
-    write_c("%s%s->labeltype(FL_%s);\n", indent(), var,
+    f.write_c("%s%s->labeltype(FL_%s);\n", f.indent(), var,
             item_name(labeltypemenu, o->labeltype()));
   if (o->labelfont() != tplate->labelfont() || subclass())
-    write_c("%s%s->labelfont(%d);\n", indent(), var, o->labelfont());
+    f.write_c("%s%s->labelfont(%d);\n", f.indent(), var, o->labelfont());
   if (o->labelsize() != tplate->labelsize() || subclass())
-    write_c("%s%s->labelsize(%d);\n", indent(), var, o->labelsize());
+    f.write_c("%s%s->labelsize(%d);\n", f.indent(), var, o->labelsize());
   if (o->labelcolor() != tplate->labelcolor() || subclass())
-    write_color("labelcolor", o->labelcolor());
+    write_color(f, "labelcolor", o->labelcolor());
   if (is_valuator()) {
     Fl_Valuator* v = (Fl_Valuator*)o;
-    Fl_Valuator* f = (Fl_Valuator*)(tplate);
-    if (v->minimum()!=f->minimum())
-      write_c("%s%s->minimum(%g);\n", indent(), var, v->minimum());
-    if (v->maximum()!=f->maximum())
-      write_c("%s%s->maximum(%g);\n", indent(), var, v->maximum());
-    if (v->step()!=f->step())
-      write_c("%s%s->step(%g);\n", indent(), var, v->step());
+    Fl_Valuator* t = (Fl_Valuator*)(tplate);
+    if (v->minimum()!=t->minimum())
+      f.write_c("%s%s->minimum(%g);\n", f.indent(), var, v->minimum());
+    if (v->maximum()!=t->maximum())
+      f.write_c("%s%s->maximum(%g);\n", f.indent(), var, v->maximum());
+    if (v->step()!=t->step())
+      f.write_c("%s%s->step(%g);\n", f.indent(), var, v->step());
     if (v->value()) {
       if (is_valuator()==3) { // Fl_Scrollbar::value(double) is nott available
-        write_c("%s%s->Fl_Slider::value(%g);\n", indent(), var, v->value());
+        f.write_c("%s%s->Fl_Slider::value(%g);\n", f.indent(), var, v->value());
       } else {
-        write_c("%s%s->value(%g);\n", indent(), var, v->value());
+        f.write_c("%s%s->value(%g);\n", f.indent(), var, v->value());
       }
     }
     if (is_valuator()>=2) {
       double x = ((Fl_Slider*)v)->slider_size();
-      double y = ((Fl_Slider*)f)->slider_size();
-      if (x != y) write_c("%s%s->slider_size(%g);\n", indent(), var, x);
+      double y = ((Fl_Slider*)t)->slider_size();
+      if (x != y) f.write_c("%s%s->slider_size(%g);\n", f.indent(), var, x);
     }
   }
   if (is_spinner()) {
     Fl_Spinner* v = (Fl_Spinner*)o;
-    Fl_Spinner* f = (Fl_Spinner*)(tplate);
-    if (v->minimum()!=f->minimum())
-      write_c("%s%s->minimum(%g);\n", indent(), var, v->minimum());
-    if (v->maximum()!=f->maximum())
-      write_c("%s%s->maximum(%g);\n", indent(), var, v->maximum());
-    if (v->step()!=f->step())
-      write_c("%s%s->step(%g);\n", indent(), var, v->step());
+    Fl_Spinner* t = (Fl_Spinner*)(tplate);
+    if (v->minimum()!=t->minimum())
+      f.write_c("%s%s->minimum(%g);\n", f.indent(), var, v->minimum());
+    if (v->maximum()!=t->maximum())
+      f.write_c("%s%s->maximum(%g);\n", f.indent(), var, v->maximum());
+    if (v->step()!=t->step())
+      f.write_c("%s%s->step(%g);\n", f.indent(), var, v->step());
     if (v->value()!=1.0f)
-      write_c("%s%s->value(%g);\n", indent(), var, v->value());
+      f.write_c("%s%s->value(%g);\n", f.indent(), var, v->value());
   }
 
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
-    Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
-    if (f != ff) write_c("%s%s->textfont(%d);\n", indent(), var, f);
-    if (s != fs) write_c("%s%s->textsize(%d);\n", indent(), var, s);
-    if (c != fc) write_color("textcolor", c);
+    Fl_Font g; int s; Fl_Color c; textstuff(0,g,s,c);
+    if (g != ff) f.write_c("%s%s->textfont(%d);\n", f.indent(), var, g);
+    if (s != fs) f.write_c("%s%s->textsize(%d);\n", f.indent(), var, s);
+    if (c != fc) write_color(f, "textcolor", c);
   }}
   const char* ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
-    write_c("%s%s->callback((Fl_Callback*)%s", indent(), var, callback_name());
+    f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
     if (ud)
-      write_c(", (void*)(%s));\n", ud);
+      f.write_c(", (void*)(%s));\n", ud);
     else
-      write_c(");\n");
+      f.write_c(");\n");
   } else if (ud) {
-    write_c("%s%s->user_data((void*)(%s));\n", indent(), var, ud);
+    f.write_c("%s%s->user_data((void*)(%s));\n", f.indent(), var, ud);
   }
   if (o->align() != tplate->align() || subclass()) {
     int i = o->align();
-    write_c("%s%s->align(Fl_Align(%s", indent(), var,
+    f.write_c("%s%s->align(Fl_Align(%s", f.indent(), var,
             item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
-    if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
-    write_c("));\n");
+    if (i & FL_ALIGN_INSIDE) f.write_c("|FL_ALIGN_INSIDE");
+    f.write_c("));\n");
   }
   Fl_When ww = o->when();
   if (ww==FL_WHEN_NOT_CHANGED)
     ww = FL_WHEN_NEVER;
   if (ww != tplate->when() || subclass())
-    write_c("%s%s->when(%s);\n", indent(), var, when_symbol_name(ww));
+    f.write_c("%s%s->when(%s);\n", f.indent(), var, when_symbol_name(ww));
   if (!o->visible() && o->parent())
-    write_c("%s%s->hide();\n", indent(), var);
+    f.write_c("%s%s->hide();\n", f.indent(), var);
   if (!o->active())
-    write_c("%s%s->deactivate();\n", indent(), var);
+    f.write_c("%s%s->deactivate();\n", f.indent(), var);
   if (!is_group() && resizable())
-    write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
+    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
   if (hotspot()) {
     if (is_class())
-      write_c("%shotspot(%s);\n", indent(), var);
+      f.write_c("%shotspot(%s);\n", f.indent(), var);
     else if (is_window())
-      write_c("%s%s->hotspot(%s);\n", indent(), var, var);
+      f.write_c("%s%s->hotspot(%s);\n", f.indent(), var, var);
     else
-      write_c("%s%s->window()->hotspot(%s);\n", indent(), var, var);
+      f.write_c("%s%s->window()->hotspot(%s);\n", f.indent(), var, var);
   }
 }
 
-void Fl_Widget_Type::write_extra_code() {
+void Fl_Widget_Type::write_extra_code(Fd_Code_Writer& f) {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (extra_code(n) && !isdeclare(extra_code(n)))
-      write_c("%s%s\n", indent(), extra_code(n));
+      f.write_c("%s%s\n", f.indent(), extra_code(n));
 }
 
-void Fl_Widget_Type::write_block_close() {
-  indentation--;
-  write_c("%s} // %s* %s\n", indent(), subclassname(this),
+void Fl_Widget_Type::write_block_close(Fd_Code_Writer& f) {
+  f.indentation--;
+  f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this),
           name() ? name() : "o");
 }
 
-void Fl_Widget_Type::write_code2() {
-  write_extra_code();
-  write_block_close();
+void Fl_Widget_Type::write_code2(Fd_Code_Writer& f) {
+  write_extra_code(f);
+  write_block_close(f);
 }
 
 ////////////////////////////////////////////////////////////////

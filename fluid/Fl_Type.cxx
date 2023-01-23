@@ -654,86 +654,86 @@ int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
  Write a comment into the header file.
  \param[in] pre indent the comment by this string
 */
-void Fl_Type::write_comment_h(const char *pre)
+void Fl_Type::write_comment_h(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    write_h("%s/**\n", pre);
+    f.write_h("%s/**\n", pre);
     const char *s = comment();
-    write_h("%s ", pre);
+    f.write_h("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_h("\n%s ", pre);
+          f.write_h("\n%s ", pre);
         }
       } else {
-        write_h("%c", *s); // FIXME this is much too slow!
+        f.write_h("%c", *s); // FIXME this is much too slow!
       }
       s++;
     }
-    write_h("\n%s*/\n", pre);
+    f.write_h("\n%s*/\n", pre);
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_c(const char *pre)
+void Fl_Type::write_comment_c(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    write_c("%s/**\n", pre);
+    f.write_c("%s/**\n", pre);
     const char *s = comment();
-    write_c("%s ", pre);
+    f.write_c("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_c("\n%s ", pre);
+          f.write_c("\n%s ", pre);
         }
       } else {
-        write_c("%c", *s); // FIXME this is much too slow!
+        f.write_c("%c", *s); // FIXME this is much too slow!
       }
       s++;
     }
-    write_c("\n%s*/\n", pre);
+    f.write_c("\n%s*/\n", pre);
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_inline_c(const char *pre)
+void Fl_Type::write_comment_inline_c(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
     if (strchr(s, '\n')==0L) {
       // single line comment
-      if (pre) write_c("%s", pre);
-      write_c("// %s\n", s);
-      if (!pre) write_c("%s", indent_plus(1));
+      if (pre) f.write_c("%s", pre);
+      f.write_c("// %s\n", s);
+      if (!pre) f.write_c("%s", f.indent_plus(1));
     } else {
-      write_c("%s/*\n", pre?pre:"");
+      f.write_c("%s/*\n", pre?pre:"");
       if (pre)
-        write_c("%s ", pre);
+        f.write_c("%s ", pre);
       else
-        write_c("%s ", indent_plus(1));
+        f.write_c("%s ", f.indent_plus(1));
       while(*s) {
         if (*s=='\n') {
           if (s[1]) {
             if (pre)
-              write_c("\n%s ", pre);
+              f.write_c("\n%s ", pre);
             else
-              write_c("\n%s ", indent_plus(1));
+              f.write_c("\n%s ", f.indent_plus(1));
           }
         } else {
-          write_c("%c", *s); // FIXME this is much too slow!
+          f.write_c("%c", *s); // FIXME this is much too slow!
         }
         s++;
       }
       if (pre)
-        write_c("\n%s */\n", pre);
+        f.write_c("\n%s */\n", pre);
       else
-        write_c("\n%s */\n", indent_plus(1));
+        f.write_c("\n%s */\n", f.indent_plus(1));
       if (!pre)
-        write_c("%s", indent_plus(1));
+        f.write_c("%s", f.indent_plus(1));
     }
   }
 }
@@ -777,9 +777,9 @@ int Fl_Type::user_defined(const char* cbname) const {
   return 0;
 }
 
-const char *Fl_Type::callback_name() {
+const char *Fl_Type::callback_name(Fd_Code_Writer& f) {
   if (is_name(callback())) return callback();
-  return unique_id(this, "cb", name(), label());
+  return f.unique_id(this, "cb", name(), label());
 }
 
 const char* Fl_Type::class_name(const int need_nest) const {
@@ -818,15 +818,15 @@ const Fl_Class_Type *Fl_Type::is_in_class() const {
   return 0;
 }
 
-void Fl_Type::write_static() {
+void Fl_Type::write_static(Fd_Code_Writer&) {
 }
 
-void Fl_Type::write_code1() {
-  write_h("// Header for %s\n", title());
-  write_c("// Code for %s\n", title());
+void Fl_Type::write_code1(Fd_Code_Writer& f) {
+  f.write_h("// Header for %s\n", title());
+  f.write_c("// Code for %s\n", title());
 }
 
-void Fl_Type::write_code2() {
+void Fl_Type::write_code2(Fd_Code_Writer&) {
 }
 
 /// \}

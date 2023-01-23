@@ -131,18 +131,18 @@ void ungroup_cb(Fl_Widget *, void *) {
   set_modflag(1);
 }
 
-void Fl_Group_Type::write_code1() {
-  Fl_Widget_Type::write_code1();
+void Fl_Group_Type::write_code1(Fd_Code_Writer& f) {
+  Fl_Widget_Type::write_code1(f);
 }
 
-void Fl_Group_Type::write_code2() {
+void Fl_Group_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  write_extra_code();
-  write_c("%s%s->end();\n", indent(), var);
+  write_extra_code(f);
+  f.write_c("%s%s->end();\n", f.indent(), var);
   if (resizable()) {
-    write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
+    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
   }
-  write_block_close();
+  write_block_close(f);
 }
 
 // This is called when o is created.  If it is in the tab group make
@@ -320,22 +320,22 @@ void Fl_Flex_Type::postprocess_read()
   suspend_auto_layout = 0;
 }
 
-void Fl_Flex_Type::write_code2() {
+void Fl_Flex_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  Fl_Flex* f = (Fl_Flex*)o;
+  Fl_Flex* fx = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margin(&lm, &tm, &rm, &bm);
+  fx->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_c("%s%s->margin(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
-  if (f->gap())
-    write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
-  for (int i=0; i<f->children(); ++i) {
-    Fl_Widget *ci = f->child(i);
-    if (f->fixed(ci))
-      write_c("%s%s->fixed(%s->child(%d), %d);\n", indent(), var, var, i,
-              f->horizontal() ? ci->w() : ci->h());
+    f.write_c("%s%s->margin(%d, %d, %d, %d);\n", f.indent(), var, lm, tm, rm, bm);
+  if (fx->gap())
+    f.write_c("%s%s->gap(%d);\n", f.indent(), var, fx->gap());
+  for (int i=0; i<fx->children(); ++i) {
+    Fl_Widget *ci = fx->child(i);
+    if (fx->fixed(ci))
+      f.write_c("%s%s->fixed(%s->child(%d), %d);\n", f.indent(), var, var, i,
+              fx->horizontal() ? ci->w() : ci->h());
   }
-  Fl_Group_Type::write_code2();
+  Fl_Group_Type::write_code2(f);
 }
 
 void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {
