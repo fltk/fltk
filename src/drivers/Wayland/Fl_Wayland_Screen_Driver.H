@@ -102,8 +102,6 @@ public:
   struct wl_list outputs; // linked list of all screens in system
   struct output { // one record for each screen
     uint32_t id;
-    short x_org;
-    short y_org;
     short width; // in pixels
     short height; // in pixels
     float dpi;

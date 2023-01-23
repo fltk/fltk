@@ -96,8 +96,6 @@ struct pointer_output {
 
  struct Fl_Wayland_Screen_Driver::output { // FLTK defined
     uint32_t id; // screen identification
-    short x_org;
-    short y_org;
     short width; // screen width in pixels
     short height; // screen height in pixels
     float dpi;
@@ -929,8 +927,6 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
       int32_t width, int32_t height, int32_t refresh)
 {
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
-  output->x_org = 0;
-  output->y_org = 0;
   output->width = width;
   output->height = height;
 //fprintf(stderr, "output_mode: [%p]=%dx%d\n",output->wl_output,width,height);
@@ -1251,8 +1247,7 @@ void Fl_Wayland_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n
     wl_list_for_each(output, &outputs, link) {
       if (i++ == n) { // n'th screen of the system
         float s = output->gui_scale * output->wld_scale;
-        X = output->x_org / s;
-        Y = output->y_org / s;
+        X = Y = 0;
         W = output->width / s;
         H = output->height / s;
         break;
@@ -1404,7 +1399,7 @@ int Fl_Wayland_Screen_Driver::screen_num_unscaled(int x, int y)
   int screen = 0;
   wl_list_for_each(output, &outputs, link) {
     int s = output->wld_scale;
-    int sx = output->x_org/s, sy = output->y_org/s, sw = output->width/s, sh = output->height/s;
+    int sx = 0, sy = 0, sw = output->width/s, sh = output->height/s;
     if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
       return screen;
     }
