@@ -299,14 +299,16 @@ Fl_Type::~Fl_Type() {
 Fl_Type *Fl_Type::prev_sibling() {
   Fl_Type *n;
   for (n = prev; n && n->level > level; n = n->prev) ;
-  return n;
+  if (n && (n->level == level))
+    return n;
+  return 0;
 }
 
 // Return the next sibling in the tree structure or NULL.
 Fl_Type *Fl_Type::next_sibling() {
   Fl_Type *n;
   for (n = next; n && n->level > level; n = n->next) ;
-  if (n->level==level)
+  if (n && (n->level == level))
     return n;
   return 0;
 }
@@ -410,9 +412,9 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
     // we have current, t is the new node, p is the parent
     // find the next child of the parent after current
     //t->add(p); // add as a last child
-    Fl_Type *cc = current;
-    for (cc = current->next; cc; cc=cc->next) {
-      if (cc->level<=this->level)
+    Fl_Type *cc;
+    for (cc = current->next; cc; cc = cc->next) {
+      if (cc->level <= this->level)
         break;
     }
     if (cc && cc->level==this->level && cc!=this) {
