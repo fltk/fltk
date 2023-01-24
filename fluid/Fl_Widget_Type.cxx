@@ -217,9 +217,6 @@ Fl_Widget_Type::Fl_Widget_Type() {
 }
 
 Fl_Widget_Type::~Fl_Widget_Type() {
-  if (current_widget == this) {
-    current_widget = NULL; // is that enough? DO we need to close the dialog?
-  }
   if (o) {
     Fl_Window *win = o->window();
     delete o;
