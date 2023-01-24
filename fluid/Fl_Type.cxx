@@ -160,9 +160,14 @@ void later_cb(Fl_Widget*,void*) {
   widget_browser->rebuild();
 }
 
+/** \brief Delete all children of a Type.
+ */
 static void delete_children(Fl_Type *p) {
   Fl_Type *f;
+  // find all types following p that are higher in level, effectively finding
+  // the last child of the last child
   for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
+  // now loop back up to p, deleting all children on the way
   for (; f != p; ) {
     Fl_Type *g = f->prev;
     delete f;
@@ -178,7 +183,9 @@ void delete_all(int selected_only) {
       Fl_Type *g = f->next;
       delete f;
       f = g;
-    } else f = f->next;
+    } else {
+      f = f->next;
+    }
   }
   if(!selected_only) {
     // reset the setting for the external shell command
@@ -281,11 +288,11 @@ Fl_Type::Fl_Type() {
  */
 Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.
-  if (prev) prev->next = next; else first = next;
-  if (next) next->prev = prev; else last = prev;
-  if (Fl_Type::last==this) Fl_Type::last = prev;
-  if (Fl_Type::first==this) Fl_Type::first = next;
-  if (current == this) current = 0;
+  if (prev) prev->next = next; // else first = next; // don't do that! The Type may not be part of the main list
+  if (next) next->prev = prev; // else last = prev;
+  if (Fl_Type::last == this) Fl_Type::last = prev;
+  if (Fl_Type::first == this) Fl_Type::first = next;
+  if (current == this) current = NULL;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
   if (label_) free((void*)label_);

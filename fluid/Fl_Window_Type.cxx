@@ -941,7 +941,7 @@ void Fl_Window_Type::draw_overlay() {
     }
 
     // Check spacing and alignment between individual widgets
-    if (drag && selection->is_widget()) {
+    if (drag && selection && selection->is_widget()) {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
         if (q != selection && q->is_widget()) {
           Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
@@ -1354,7 +1354,7 @@ int Fl_Window_Type::handle(int event) {
       // or in the same group, add after selection. Otherwise, just add
       // at the end of the selected group.
       if (   Fl_Type::current_dnd->group()
-          && selection->group()
+          && selection && selection->group()
           && Fl_Type::current_dnd->group()==selection->group())
       {
         Fl_Type *cc = Fl_Type::current;
@@ -1460,7 +1460,7 @@ int Fl_Window_Type::handle(int event) {
         for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
           if (!o1->visible()) goto CONTINUE;
         if (Fl::event_inside(myo->o)) selection = myo;
-        if (myo->o->x()>=x1 && myo->o->y()>y1 &&
+        if (myo && myo->o && myo->o->x()>=x1 && myo->o->y()>y1 &&
             myo->o->x()+myo->o->w()<mx && myo->o->y()+myo->o->h()<my) {
           n++;
           select(myo, toggle ? !myo->selected : 1);
@@ -1468,7 +1468,7 @@ int Fl_Window_Type::handle(int event) {
       CONTINUE:;
       }
       // if nothing in box, select what was clicked on:
-      if (!n) {
+      if (selection && !n) {
         select(selection, toggle ? !selection->selected : 1);
       }
     }

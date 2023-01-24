@@ -238,6 +238,7 @@ const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
     t = t->prev;
     i++;
   }
+  if (!t) return "\n#error Fl_Menu_Item_Type::menu_name, invalid f\n";
   return f.unique_id(t, "menu", t->name(), t->label());
 }
 

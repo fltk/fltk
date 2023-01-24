@@ -286,7 +286,7 @@ Fl_Type *sort(Fl_Type *parent) {
     if (!f->selected || (!f->is_widget() || f->is_menu_item())) continue;
     Fl_Widget* fw = ((Fl_Widget_Type*)f)->o;
     Fl_Type *g; // we will insert before this
-    for (g = parent->next; g != f; g = g->next) {
+    for (g = parent ? parent->next : Fl_Type::first; g != f; g = g->next) {
       if (!g->selected || g->level > f->level) continue;
       Fl_Widget* gw = ((Fl_Widget_Type*)g)->o;
       if (gw->y() > fw->y()) break;
