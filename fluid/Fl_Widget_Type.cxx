@@ -217,6 +217,9 @@ Fl_Widget_Type::Fl_Widget_Type() {
 }
 
 Fl_Widget_Type::~Fl_Widget_Type() {
+  if (current_widget == this) {
+    current_widget = NULL; // is that enough? DO we need to close the dialog?
+  }
   if (o) {
     Fl_Window *win = o->window();
     delete o;
@@ -384,7 +387,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 /* Treating UNDO for text widget.
 
  Goal: we want to continiously update the UI while the user is typing text
- (changing the label, in this case). Source View does deferred uodates, and
+ (changing the label, in this case). Source View does deferred updates, and
  the widget browser and widget panel update on every keystroke. At the same
  time, we want to limit undo actions to few and logical units.
 
@@ -397,7 +400,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
  The edit process has these main states:
 
  1: starting to edit [first_change==1 && !unfocus]; we must create a single undo checkpoint before anything changes
- 2: continue editing [first_change==0 && !unfocus] ; we must suspend any undo checkpoints
+ 2: continue editing [first_change==0 && !unfocus]; we must suspend any undo checkpoints
  3: done editing, unfocus [first_change==0 && unfocus]; we must make sure that undo checkpoints are enabled again
  4: losing focus without editing [first_change==1 && unfocus]; don't create and checkpoints
 
