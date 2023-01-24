@@ -1109,6 +1109,7 @@ const Fl_Color FL_GRAY0   = 32;                 // 'A'
 const Fl_Color FL_DARK3   = 39;                 // 'H'
 const Fl_Color FL_DARK2   = 45;                 // 'N'
 const Fl_Color FL_DARK1   = 47;                 // 'P'
+/** Default background color */
 const Fl_Color FL_BACKGROUND_COLOR  = 49;       // 'R' default background color
 const Fl_Color FL_LIGHT1  = 50;                 // 'S'
 const Fl_Color FL_LIGHT2  = 52;                 // 'U'

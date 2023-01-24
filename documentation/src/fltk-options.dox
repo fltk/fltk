@@ -56,7 +56,7 @@ options and their values. `fltk-options --help OPTION` prints more detailed
 information for OPTION if available. In interactive mode, tooltips provide
 this additional information.
 
-A full list of options can be found in the maunal at \ref Fl_Option .
+A full list of options can be found in the manual at Fl::Fl_Option.
 
 
 \htmlonly
