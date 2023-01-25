@@ -1271,6 +1271,7 @@ double Fl_Cairo_Graphics_Driver::width(unsigned int utf32) {
 
 double Fl_Cairo_Graphics_Driver::width(const char* str, int n) {
   if (!font_descriptor()) return -1;
+  if ((str == NULL) || (n == 0)) return 0.;
   if (n == fl_utf8len(*str)) { // str contains a single unicode character
     int l;
     unsigned c = fl_utf8decode(str, str+n, &l);

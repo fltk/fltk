@@ -49,7 +49,7 @@ Function {make_widget_panel()} {
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb
+            callback label_cb selected
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
           }
@@ -110,7 +110,7 @@ or compressed in the original file format} xywh {364 90 20 20} type Toggle
             code3 {\#include "pixmaps.h"}
           }
           Fl_Button {} {
-            callback bind_deimage_cb selected
+            callback bind_deimage_cb
             tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
             code0 {o->image(bind_pixmap);}
             code3 {\#include "pixmaps.h"}
