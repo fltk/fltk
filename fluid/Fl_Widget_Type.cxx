@@ -320,7 +320,7 @@ void name_cb(Fl_Input* o, void *v) {
       snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
       o->hide();
     } else {
-      o->static_value(current_widget->name());
+      o->value(current_widget->name());
       o->show();
       snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
     }
@@ -409,7 +409,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 void label_cb(Fl_Input* i, void *v) {
   static int first_change = 1;
   if (v == LOAD) {
-    i->static_value(current_widget->label());
+    i->value(current_widget->label());
     first_change = 1;
   } else {
     if (i->changed()) {
@@ -444,7 +444,7 @@ void image_cb(Fl_Input* i, void *v) {
     image_input = i;
     if (current_widget->is_widget() && !current_widget->is_window()) {
       i->activate();
-      i->static_value(((Fl_Widget_Type*)current_widget)->image_name());
+      i->value(((Fl_Widget_Type*)current_widget)->image_name());
     } else i->deactivate();
   } else {
     int mod = 0;
@@ -526,7 +526,7 @@ void inactive_cb(Fl_Input* i, void *v) {
     inactive_input = i;
     if (current_widget->is_widget() && !current_widget->is_window()) {
       i->activate();
-      i->static_value(((Fl_Widget_Type*)current_widget)->inactive_name());
+      i->value(((Fl_Widget_Type*)current_widget)->inactive_name());
     } else i->deactivate();
   } else {
     int mod = 0;
@@ -605,7 +605,7 @@ void tooltip_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     if (current_widget->is_widget()) {
       i->activate();
-      i->static_value(((Fl_Widget_Type*)current_widget)->tooltip());
+      i->value(((Fl_Widget_Type*)current_widget)->tooltip());
     } else i->deactivate();
   } else {
     int mod = 0;
@@ -1736,7 +1736,7 @@ void comment_cb(Fl_Text_Editor* i, void *v) {
 
 void user_data_cb(Fl_Input *i, void *v) {
   if (v == LOAD) {
-    i->static_value(current_widget->user_data());
+    i->value(current_widget->user_data());
   } else {
     int mod = 0;
     const char *c = i->value();
@@ -1784,7 +1784,7 @@ void user_data_type_cb(Fl_Input_Choice *i, void *v) {
 void v_input_cb(Fl_Input* i, void* v) {
   int n = fl_int(i->user_data());
   if (v == LOAD) {
-    i->static_value(current_widget->extra_code(n));
+    i->value(current_widget->extra_code(n));
   } else {
     int mod = 0;
     const char *c = i->value();
@@ -1804,7 +1804,7 @@ void v_input_cb(Fl_Input* i, void* v) {
 void subclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
-    i->static_value(current_widget->subclass());
+    i->value(current_widget->subclass());
   } else {
     int mod = 0;
     const char *c = i->value();

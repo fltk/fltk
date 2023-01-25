@@ -245,8 +245,8 @@ void Fl_Function_Type::read_property(const char *c) {
  */
 void Fl_Function_Type::open() {
   if (!function_panel) make_function_panel();
-  f_return_type_input->static_value(return_type);
-  f_name_input->static_value(name());
+  f_return_type_input->value(return_type);
+  f_name_input->value(name());
   if (is_in_class()) {
     f_public_member_choice->value(public_);
     f_public_member_choice->show();
@@ -761,8 +761,8 @@ void Fl_CodeBlock_Type::read_property(const char *c) {
  */
 void Fl_CodeBlock_Type::open() {
   if (!codeblock_panel) make_codeblock_panel();
-  code_before_input->static_value(name());
-  code_after_input->static_value(after);
+  code_before_input->value(name());
+  code_after_input->value(after);
   codeblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -898,7 +898,7 @@ void Fl_Decl_Type::read_property(const char *c) {
  */
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
-  decl_input->static_value(name());
+  decl_input->value(name());
   if (is_in_class()) {
     decl_class_choice->value(public_);
     decl_class_choice->show();
@@ -1105,7 +1105,7 @@ void Fl_Data_Type::read_property(const char *c) {
  */
 void Fl_Data_Type::open() {
   if (!data_panel) make_data_panel();
-  data_input->static_value(name());
+  data_input->value(name());
   if (is_in_class()) {
     data_class_choice->value(public_);
     data_class_choice->show();
@@ -1395,9 +1395,9 @@ void Fl_DeclBlock_Type::read_property(const char *c) {
  */
 void Fl_DeclBlock_Type::open() {
   if (!declblock_panel) make_declblock_panel();
-  decl_before_input->static_value(name());
+  decl_before_input->value(name());
   declblock_public_choice->value((public_>0));
-  decl_after_input->static_value(after);
+  decl_after_input->value(after);
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -1832,8 +1832,8 @@ void Fl_Class_Type::open() {
     sprintf(fullname,"%s %s",prefix(),name());
   else
     strcpy(fullname, name());
-  c_name_input->static_value(fullname);
-  c_subclass_input->static_value(subclass_of);
+  c_name_input->value(fullname);
+  c_subclass_input->value(subclass_of);
   c_public_button->value(public_);
   const char *c = comment();
   c_comment_input->buffer()->text(c?c:"");
