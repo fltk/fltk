@@ -24,11 +24,9 @@
 class Fl_Type;
 
 extern int fdesign_flip;
-extern int fdesign_magic;
 
 int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
 int write_file(const char *, int selected_only = 0);
-void read_fdesign();
 
 class Fd_Project_Reader
 {
@@ -36,6 +34,9 @@ protected:
   FILE *fin;
   int lineno;
   const char *fname;
+  char *buffer;
+  int buflen;
+  void expand_buffer(int length);
 
 public:
   double read_version;
