@@ -636,23 +636,23 @@ void Fl_Type::write_properties(Fd_Project_Writer &f) {
   if (selected) f.write_word("selected");
 }
 
-void Fl_Type::read_property(const char *c) {
+void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"label"))
-    label(read_word());
+    label(f.read_word());
   else if (!strcmp(c,"user_data"))
-    user_data(read_word());
+    user_data(f.read_word());
   else if (!strcmp(c,"user_data_type"))
-    user_data_type(read_word());
+    user_data_type(f.read_word());
   else if (!strcmp(c,"callback"))
-    callback(read_word());
+    callback(f.read_word());
   else if (!strcmp(c,"comment"))
-    comment(read_word());
+    comment(f.read_word());
   else if (!strcmp(c,"open"))
     open_ = 1;
   else if (!strcmp(c,"selected"))
     select(this,1);
   else
-    read_error("Unknown property \"%s\"", c);
+    f.read_error("Unknown property \"%s\"", c);
 }
 
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}

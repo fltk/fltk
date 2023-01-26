@@ -226,7 +226,7 @@ void Fl_Function_Type::write_properties(Fd_Project_Writer &f) {
  Read function specific properties fron an .fl file.
  \param[in] c read from this string
  */
-void Fl_Function_Type::read_property(const char *c) {
+void Fl_Function_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
@@ -234,9 +234,9 @@ void Fl_Function_Type::read_property(const char *c) {
   } else if (!strcmp(c,"C")) {
     cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
-    storestring(read_word(),return_type);
+    storestring(f.read_word(),return_type);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -748,11 +748,11 @@ void Fl_CodeBlock_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read the node specifc properties.
  */
-void Fl_CodeBlock_Type::read_property(const char *c) {
+void Fl_CodeBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
-    storestring(read_word(),after);
+    storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -877,7 +877,7 @@ void Fl_Decl_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Fl_Decl_Type::read_property(const char *c) {
+void Fl_Decl_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
   } else if (!strcmp(c,"private")) {
@@ -889,7 +889,7 @@ void Fl_Decl_Type::read_property(const char *c) {
   } else if (!strcmp(c,"global")) {
     static_ = 0;
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1090,13 +1090,13 @@ void Fl_Data_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read specific properties.
  */
-void Fl_Data_Type::read_property(const char *c) {
+void Fl_Data_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"filename")) {
-    storestring(read_word(), filename_, 1);
+    storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
     text_mode_ = 1;
   } else {
-    Fl_Decl_Type::read_property(c);
+    Fl_Decl_Type::read_property(f, c);
   }
 }
 
@@ -1378,15 +1378,15 @@ void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Fl_DeclBlock_Type::read_property(const char *c) {
+void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if(!strcmp(c,"public")) {
     public_ = 1;
   } else if(!strcmp(c,"protected")) {
     public_ = 2;
   } else  if (!strcmp(c,"after")) {
-    storestring(read_word(),after);
+    storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1505,7 +1505,7 @@ void Fl_Comment_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read extra properties.
  */
-void Fl_Comment_Type::read_property(const char *c) {
+void Fl_Comment_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"in_source")) {
     in_c_ = 1;
   } else if (!strcmp(c,"not_in_source")) {
@@ -1515,7 +1515,7 @@ void Fl_Comment_Type::read_property(const char *c) {
   } else if (!strcmp(c,"not_in_header")) {
     in_h_ = 0;
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1810,15 +1810,15 @@ void Fl_Class_Type::write_properties(Fd_Project_Writer &f) {
 /**
  Read additional properties.
  */
-void Fl_Class_Type::read_property(const char *c) {
+void Fl_Class_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,":")) {
-    storestring(read_word(), subclass_of);
+    storestring(f.read_word(), subclass_of);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 

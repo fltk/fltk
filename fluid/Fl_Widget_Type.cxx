@@ -3276,27 +3276,27 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
   }
 }
 
-void Fl_Widget_Type::read_property(const char *c) {
-  int x,y,w,h; Fl_Font f; int s; Fl_Color cc;
+void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
+  int x,y,w,h; Fl_Font ft; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,"xywh")) {
-    if (sscanf(read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
+    if (sscanf(f.read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
       x += pasteoffset;
       y += pasteoffset;
       // FIXME temporary change!
-      if (read_version>=2.0 && o->parent() && o->parent()!=o->window()) {
+      if (f.read_version>=2.0 && o->parent() && o->parent()!=o->window()) {
         x += o->parent()->x();
         y += o->parent()->y();
       }
       o->resize(x,y,w,h);
     }
   } else if (!strcmp(c,"tooltip")) {
-    tooltip(read_word());
+    tooltip(f.read_word());
   } else if (!strcmp(c,"image")) {
-    image_name(read_word());
+    image_name(f.read_word());
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(image_name_);
@@ -3305,11 +3305,11 @@ void Fl_Widget_Type::read_property(const char *c) {
         && strcmp(ext, ".svgz"))
       compress_image_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_image")) {
-    bind_image_ = (int)atol(read_word());
+    bind_image_ = (int)atol(f.read_word());
   } else if (!strcmp(c,"compress_image")) {
-    compress_image_ = (int)atol(read_word());
+    compress_image_ = (int)atol(f.read_word());
   } else if (!strcmp(c,"deimage")) {
-    inactive_name(read_word());
+    inactive_name(f.read_word());
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
     const char *ext = fl_filename_ext(inactive_name_);
@@ -3318,43 +3318,43 @@ void Fl_Widget_Type::read_property(const char *c) {
         && strcmp(ext, ".svgz"))
       compress_deimage_ = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_deimage")) {
-    bind_deimage_ = (int)atol(read_word());
+    bind_deimage_ = (int)atol(f.read_word());
   } else if (!strcmp(c,"compress_deimage")) {
-    compress_deimage_ = (int)atol(read_word());
+    compress_deimage_ = (int)atol(f.read_word());
   } else if (!strcmp(c,"type")) {
     if (is_spinner())
-      ((Fl_Spinner*)o)->type(item_number(subtypes(), read_word()));
+      ((Fl_Spinner*)o)->type(item_number(subtypes(), f.read_word()));
     else
-      o->type(item_number(subtypes(), read_word()));
+      o->type(item_number(subtypes(), f.read_word()));
   } else if (!strcmp(c,"box")) {
-    const char* value = read_word();
+    const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       o->box((Fl_Boxtype)x);
     } else if (sscanf(value,"%d",&x) == 1) o->box((Fl_Boxtype)x);
   } else if (is_button() && !strcmp(c,"down_box")) {
-    const char* value = read_word();
+    const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Button*)o)->down_box((Fl_Boxtype)x);
     }
   } else if (!strcmp(type_name(), "Fl_Input_Choice") && !strcmp(c,"down_box")) {
-    const char* value = read_word();
+    const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Input_Choice*)o)->down_box((Fl_Boxtype)x);
     }
   } else if (is_menu_button() && !strcmp(c,"down_box")) {
-    const char* value = read_word();
+    const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Menu_*)o)->down_box((Fl_Boxtype)x);
     }
   } else if (is_button() && !strcmp(c,"value")) {
-    const char* value = read_word();
+    const char* value = f.read_word();
     ((Fl_Button*)o)->value(atoi(value));
   } else if (!strcmp(c,"color")) {
-    const char *cw = read_word();
+    const char *cw = f.read_word();
     if (cw[0]=='0' && cw[1]=='x') {
       sscanf(cw,"0x%x",&x);
       o->color(x);
@@ -3368,12 +3368,12 @@ void Fl_Widget_Type::read_property(const char *c) {
       }
     }
   } else if (!strcmp(c,"selection_color")) {
-    if (sscanf(read_word(),"%d",&x)) o->selection_color(x);
+    if (sscanf(f.read_word(),"%d",&x)) o->selection_color(x);
   } else if (!strcmp(c,"labeltype")) {
-    c = read_word();
+    c = f.read_word();
     if (!strcmp(c,"image")) {
       Fluid_Image *i = Fluid_Image::find(label());
-      if (!i) read_error("Image file '%s' not found", label());
+      if (!i) f.read_error("Image file '%s' not found", label());
       else setimage(i);
       image_name(label());
       label("");
@@ -3381,35 +3381,35 @@ void Fl_Widget_Type::read_property(const char *c) {
       o->labeltype((Fl_Labeltype)item_number(labeltypemenu,c));
     }
   } else if (!strcmp(c,"labelfont")) {
-    if (sscanf(read_word(),"%d",&x) == 1) o->labelfont(x);
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->labelfont(x);
   } else if (!strcmp(c,"labelsize")) {
-    if (sscanf(read_word(),"%d",&x) == 1) o->labelsize(x);
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->labelsize(x);
   } else if (!strcmp(c,"labelcolor")) {
-    if (sscanf(read_word(),"%d",&x) == 1) o->labelcolor(x);
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->labelcolor(x);
   } else if (!strcmp(c,"align")) {
-    if (sscanf(read_word(),"%d",&x) == 1) o->align(x);
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->align(x);
   } else if (!strcmp(c,"when")) {
-    if (sscanf(read_word(),"%d",&x) == 1) o->when(x);
+    if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {
-    if (is_valuator()) ((Fl_Valuator*)o)->minimum(strtod(read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->minimum(strtod(read_word(),0));
+    if (is_valuator()) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"maximum")) {
-    if (is_valuator()) ((Fl_Valuator*)o)->maximum(strtod(read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->maximum(strtod(read_word(),0));
+    if (is_valuator()) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"step")) {
-    if (is_valuator()) ((Fl_Valuator*)o)->step(strtod(read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->step(strtod(read_word(),0));
+    if (is_valuator()) ((Fl_Valuator*)o)->step(strtod(f.read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->step(strtod(f.read_word(),0));
   } else if (!strcmp(c,"value")) {
-    if (is_valuator()) ((Fl_Valuator*)o)->value(strtod(read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->value(strtod(read_word(),0));
+    if (is_valuator()) ((Fl_Valuator*)o)->value(strtod(f.read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->value(strtod(f.read_word(),0));
   } else if ((!strcmp(c,"slider_size")||!strcmp(c,"size"))&&is_valuator()==2) {
-    ((Fl_Slider*)o)->slider_size(strtod(read_word(),0));
+    ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),0));
   } else if (!strcmp(c,"textfont")) {
-    if (sscanf(read_word(),"%d",&x) == 1) {f=(Fl_Font)x; textstuff(1,f,s,cc);}
+    if (sscanf(f.read_word(),"%d",&x) == 1) {ft=(Fl_Font)x; textstuff(1,ft,s,cc);}
   } else if (!strcmp(c,"textsize")) {
-    if (sscanf(read_word(),"%d",&x) == 1) {s=x; textstuff(2,f,s,cc);}
+    if (sscanf(f.read_word(),"%d",&x) == 1) {s=x; textstuff(2,ft,s,cc);}
   } else if (!strcmp(c,"textcolor")) {
-    if (sscanf(read_word(),"%d",&x) == 1) {cc=(Fl_Color)x;textstuff(3,f,s,cc);}
+    if (sscanf(f.read_word(),"%d",&x) == 1) {cc=(Fl_Color)x;textstuff(3,ft,s,cc);}
   } else if (!strcmp(c,"hide")) {
     o->hide();
   } else if (!strcmp(c,"deactivate")) {
@@ -3419,9 +3419,9 @@ void Fl_Widget_Type::read_property(const char *c) {
   } else if (!strcmp(c,"hotspot") || !strcmp(c, "divider")) {
     hotspot(1);
   } else if (!strcmp(c,"class")) {
-    subclass(read_word());
+    subclass(f.read_word());
   } else if (!strcmp(c,"shortcut")) {
-    int shortcut = (int)strtol(read_word(),0,0);
+    int shortcut = (int)strtol(f.read_word(),0,0);
     if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
     else if (is_input()) ((Fl_Input_*)o)->shortcut(shortcut);
     else if (is_value_input()) ((Fl_Value_Input*)o)->shortcut(shortcut);
@@ -3430,14 +3430,14 @@ void Fl_Widget_Type::read_property(const char *c) {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
       if (n >= 0 && n <= NUM_EXTRA_CODE) {
-        extra_code(n,read_word());
+        extra_code(n,f.read_word());
         return;
       }
     } else if (!strcmp(c,"extra_code")) {
-      extra_code(0,read_word());
+      extra_code(0,f.read_word());
       return;
     }
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 

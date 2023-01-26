@@ -26,6 +26,7 @@ class Fl_Type;
 class Fl_Group_Type;
 class Fl_Window_Type;
 
+class Fd_Project_Reader;
 class Fd_Project_Writer;
 
 typedef enum {
@@ -127,7 +128,7 @@ public:
   // read and write data to a saved file:
   virtual void write(Fd_Project_Writer &f);
   virtual void write_properties(Fd_Project_Writer &f);
-  virtual void read_property(const char *);
+  virtual void read_property(Fd_Project_Reader &f, const char *);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 

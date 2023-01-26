@@ -49,15 +49,10 @@
 // TODO: there is a name confusion with routines that write to the C and Header
 // TODO: files vs. those that write to the .fl file which should be fixed.
 
-static FILE *fin;
-
-static int lineno;
-static const char *fname;
 
 int fdesign_flip;
 int fdesign_magic;
 
-double read_version;
 
 ////////////////////////////////////////////////////////////////
 // BASIC FILE WRITING:
@@ -174,7 +169,7 @@ void Fd_Project_Writer::write_close(int n) {
  \param[in] s filename, if NULL, read from stdin instead
  \return 0 if the operation failed, 1 if it succeeded
  */
-static int open_read(const char *s) {
+int Fd_Project_Reader::open_read(const char *s) {
   lineno = 1;
   if (!s) {fin = stdin; fname = "stdin"; return 1;}
   FILE *f = fl_fopen(s,"r");
@@ -188,7 +183,7 @@ static int open_read(const char *s) {
  Close the .fl file.
  \return 0 if the operation failed, 1 if it succeeded
  */
-static int close_read() {
+int Fd_Project_Reader::close_read() {
   if (fin != stdin) {
     int x = fclose(fin);
     fin = 0;
@@ -201,9 +196,9 @@ static int close_read() {
  Display an error while reading the file.
  If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
  print to stdout.
- \note Matt: I am not sure why it is done this way. Shouldn;t this depend on \c batch_mode?
+ \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c batch_mode?
  */
-void read_error(const char *format, ...) {
+void Fd_Project_Reader::read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
   if (!fin) {
@@ -233,7 +228,7 @@ static int hexdigit(int x) {
  Conversion includes the common C style \\ characters like \\n, \\x## hex
  values, and \\o### octal values.
  */
-static int read_quoted() {      // read whatever character is after a \ .
+int Fd_Project_Reader::read_quoted() {      // read whatever character is after a \ .
   int c,d,x;
   switch(c = fgetc(fin)) {
   case '\n': lineno++; return -1;
@@ -297,7 +292,7 @@ static void expand_buffer(int length) {
   - everything between matching {...} (unless wantbrace != 0)
   - the characters '{' and '}'
  */
-const char *read_word(int wantbrace) {
+const char *Fd_Project_Reader::read_word(int wantbrace) {
   int x;
 
   // skip all the whitespace before it:
@@ -374,7 +369,7 @@ const char *read_word(int wantbrace) {
  */
 int write_file(const char *filename, int selected_only) {
   Fd_Project_Writer out;
-  out.write_project(filename, selected_only);
+  return out.write_project(filename, selected_only);
 }
 
 int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
@@ -474,7 +469,7 @@ Fd_Project_Writer::~Fd_Project_Writer()
  \param[in] skip_options this is set if the options were already found in
     a previous call, and there is no need to waste time searchingg for them.
  */
-static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options=0) {
+void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options) {
   Fl_Type::current = p;
   for (;;) {
     const char *c = read_word();
@@ -634,7 +629,7 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
       for (;;) {
         const char *cc = read_word();
         if (!cc || !strcmp(cc,"}")) break;
-        t->read_property(cc);
+        t->read_property(*this, cc);
       }
 
       if (!t->is_parent()) continue;
@@ -662,10 +657,18 @@ static void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_op
  \return 0 if the operation failed, 1 if it succeeded
  */
 int read_file(const char *filename, int merge, Strategy strategy) {
+  Fd_Project_Reader f;
+  return f.read_project(filename, merge, strategy);
+}
+
+int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy strategy) {
   Fl_Type *o;
+  undo_suspend();
   read_version = 0.0;
-  if (!open_read(filename))
+  if (!open_read(filename)) {
+    undo_resume();
     return 0;
+  }
   if (merge)
     deselect();
   else
@@ -683,13 +686,15 @@ int read_file(const char *filename, int merge, Strategy strategy) {
     }
   selection_changed(Fl_Type::current);
   shell_settings_read();
-  return close_read();
+  int ret = close_read();
+  undo_resume();
+  return ret;
 }
 
 ////////////////////////////////////////////////////////////////
 // Read Forms and XForms fdesign files:
 
-static int read_fdesign_line(const char*& name, const char*& value) {
+int Fd_Project_Reader::read_fdesign_line(const char*& name, const char*& value) {
   int length = 0;
   int x;
   // find a colon:
@@ -814,7 +819,7 @@ static void forms_end(Fl_Group *g, int flip) {
  FLTK widgets.
  \see http://xforms-toolkit.org
  */
-void read_fdesign() {
+void Fd_Project_Reader::read_fdesign() {
   fdesign_magic = atoi(read_word());
   fdesign_flip = (fdesign_magic < 13000);
   Fl_Widget_Type *window = 0;
@@ -867,6 +872,18 @@ void read_fdesign() {
         printf("Ignoring \"%s: %s\"\n", name, value);
     }
   }
+}
+
+Fd_Project_Reader::Fd_Project_Reader()
+: fin(NULL),
+  lineno(0),
+  fname(NULL),
+  read_version(0.0)
+{
+}
+
+Fd_Project_Reader::~Fd_Project_Reader()
+{
 }
 
 /// \}

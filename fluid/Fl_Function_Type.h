@@ -63,7 +63,7 @@ public:
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 7; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
 };
 
@@ -110,7 +110,7 @@ public:
   int is_public() const FL_OVERRIDE { return -1; }
   int pixmapID() FL_OVERRIDE { return 9; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 };
 
 // ---- Fl_Decl_Type declaration
@@ -129,7 +129,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "decl";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 10; }
 };
@@ -149,7 +149,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "data";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 49; }
 };
 
@@ -168,7 +168,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "declblock";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
@@ -190,7 +190,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "comment";}
   const char *title() FL_OVERRIDE; // string for browser
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
   int is_comment() const FL_OVERRIDE { return 1; }
   int pixmapID() FL_OVERRIDE { return 46; }
@@ -221,7 +221,7 @@ public:
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 12; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 
   // class prefix attribute access
   void prefix(const char* p);

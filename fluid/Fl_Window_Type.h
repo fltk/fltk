@@ -85,7 +85,7 @@ public:
   uchar *read_image(int &ww, int &hh);  // Read an image of the window
 
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -119,7 +119,7 @@ public:
   char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;

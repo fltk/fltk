@@ -21,11 +21,38 @@
 
 #include <FL/fl_attr.h>
 
-extern double read_version;
+class Fl_Type;
+
 extern int fdesign_flip;
 extern int fdesign_magic;
 
+int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
 int write_file(const char *, int selected_only = 0);
+void read_fdesign();
+
+class Fd_Project_Reader
+{
+protected:
+  FILE *fin;
+  int lineno;
+  const char *fname;
+
+public:
+  double read_version;
+
+public:
+  Fd_Project_Reader();
+  ~Fd_Project_Reader();
+  int open_read(const char *s);
+  int close_read();
+  int read_quoted();
+  void read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options=0);
+  int read_project(const char *, int merge, Strategy strategy=kAddAsLastChild);
+  void read_error(const char *format, ...);
+  const char *read_word(int wantbrace = 0);
+  int read_fdesign_line(const char*& name, const char*& value);
+  void read_fdesign();
+};
 
 class Fd_Project_Writer
 {
@@ -33,12 +60,11 @@ protected:
   FILE *fout;
   int needspace;
 
-  int open_write(const char *s);
-  int close_write();
-
 public:
   Fd_Project_Writer();
   ~Fd_Project_Writer();
+  int open_write(const char *s);
+  int close_write();
   int write_project(const char *filename, int selected_only);
   void write_word(const char *);
   void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
@@ -46,11 +72,5 @@ public:
   void write_open(int);
   void write_close(int n);
 };
-
-void read_error(const char *format, ...);
-const char *read_word(int wantbrace = 0);
-
-int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
-void read_fdesign();
 
 #endif // _FLUID_FILE_H

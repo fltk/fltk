@@ -1578,7 +1578,7 @@ void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
   if (o->visible()) f.write_string("visible");
 }
 
-void Fl_Window_Type::read_property(const char *c) {
+void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1588,18 +1588,18 @@ void Fl_Window_Type::read_property(const char *c) {
   } else if (!strcmp(c,"noborder")) {
     ((Fl_Window*)o)->border(0);
   } else if (!strcmp(c,"xclass")) {
-    storestring(read_word(),xclass);
+    storestring(f.read_word(),xclass);
     ((Fl_Window*)o)->xclass(xclass);
   } else if (!strcmp(c,"size_range")) {
     int mw, mh, MW, MH;
-    if (sscanf(read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
+    if (sscanf(f.read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
       sr_min_w = mw; sr_min_h = mh; sr_max_w = MW; sr_max_h = MH;
     }
   } else if (!strcmp(c,"xywh")) {
-    Fl_Widget_Type::read_property(c);
+    Fl_Widget_Type::read_property(f, c);
     pasteoffset = 0; // make it not apply to contents
   } else {
-    Fl_Widget_Type::read_property(c);
+    Fl_Widget_Type::read_property(f, c);
   }
 }
 
@@ -1667,13 +1667,13 @@ void Fl_Widget_Class_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("position_relative_rescale");
 }
 
-void Fl_Widget_Class_Type::read_property(const char *c) {
+void Fl_Widget_Class_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
       wc_relative = 2;
   } else {
-    Fl_Window_Type::read_property(c);
+    Fl_Window_Type::read_property(f, c);
   }
 }
 

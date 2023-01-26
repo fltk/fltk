@@ -272,32 +272,32 @@ void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
   }
 }
 
-void Fl_Flex_Type::read_property(const char *c)
+void Fl_Flex_Type::read_property(Fd_Project_Reader &f, const char *c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
   if (!strcmp(c,"margin")) {
     int lm, tm, rm, bm;
-    if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
+    if (sscanf(f.read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
       flex->margin(lm, tm, rm, bm);
   } else if (!strcmp(c,"gap")) {
     int g;
-    if (sscanf(read_word(),"%d",&g))
+    if (sscanf(f.read_word(),"%d",&g))
       flex->gap(g);
   } else if (!strcmp(c,"fixed_size_tuples")) {
-    read_word(1); // must be '{'
-    const char *nStr = read_word(1); // number of indices in table
+    f.read_word(1); // must be '{'
+    const char *nStr = f.read_word(1); // number of indices in table
     fixedSizeTupleSize = atoi(nStr);
     fixedSizeTuple = new int[fixedSizeTupleSize*2];
     for (int i=0; i<fixedSizeTupleSize; i++) {
-      const char *ix = read_word(1); // child at that index is fixed in size
+      const char *ix = f.read_word(1); // child at that index is fixed in size
       fixedSizeTuple[i*2] = atoi(ix);
-      const char *size = read_word(1); // fixed size of that child
+      const char *size = f.read_word(1); // fixed size of that child
       fixedSizeTuple[i*2+1] = atoi(size);
     }
-    read_word(1); // must be '}'
+    f.read_word(1); // must be '}'
   } else {
-    Fl_Group_Type::read_property(c);
+    Fl_Group_Type::read_property(f, c);
   }
 }
 
