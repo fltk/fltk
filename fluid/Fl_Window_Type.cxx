@@ -1567,15 +1567,15 @@ void Fl_Window_Type::write_code2(Fd_Code_Writer& f) {
   write_block_close(f);
 }
 
-void Fl_Window_Type::write_properties() {
-  Fl_Widget_Type::write_properties();
-  if (modal) write_string("modal");
-  else if (non_modal) write_string("non_modal");
-  if (!((Fl_Window*)o)->border()) write_string("noborder");
-  if (xclass) {write_string("xclass"); write_word(xclass);}
+void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Widget_Type::write_properties(f);
+  if (modal) f.write_string("modal");
+  else if (non_modal) f.write_string("non_modal");
+  if (!((Fl_Window*)o)->border()) f.write_string("noborder");
+  if (xclass) {f.write_string("xclass"); f.write_word(xclass);}
   if (sr_min_w || sr_min_h || sr_max_w || sr_max_h)
-    write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
-  if (o->visible()) write_string("visible");
+    f.write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+  if (o->visible()) f.write_string("visible");
 }
 
 void Fl_Window_Type::read_property(const char *c) {
@@ -1659,12 +1659,12 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   return myo;
 }
 
-void Fl_Widget_Class_Type::write_properties() {
-  Fl_Window_Type::write_properties();
+void Fl_Widget_Class_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Window_Type::write_properties(f);
   if (wc_relative==1)
-    write_string("position_relative");
+    f.write_string("position_relative");
   else if (wc_relative==2)
-    write_string("position_relative_rescale");
+    f.write_string("position_relative_rescale");
 }
 
 void Fl_Widget_Class_Type::read_property(const char *c) {

@@ -91,7 +91,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
   int pixmapID() FL_OVERRIDE { return 56; }
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;

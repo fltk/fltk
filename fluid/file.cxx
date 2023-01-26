@@ -30,6 +30,7 @@
 #include "widget_browser.h"
 #include "shell_command.h"
 #include "code.h"
+#include "undo.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -48,10 +49,8 @@
 // TODO: there is a name confusion with routines that write to the C and Header
 // TODO: files vs. those that write to the .fl file which should be fixed.
 
-static FILE *fout;
 static FILE *fin;
 
-static int needspace;
 static int lineno;
 static const char *fname;
 
@@ -69,7 +68,7 @@ double read_version;
  \param[in] s the filename or NULL for stdout
  \return 1 if successful. 0 if the operation failed
  */
-static int open_write(const char *s) {
+int Fd_Project_Writer::open_write(const char *s) {
   if (!s) {fout = stdout; return 1;}
   FILE *f = fl_fopen(s,"w");
   if (!f) return 0;
@@ -81,7 +80,7 @@ static int open_write(const char *s) {
  Close the .fl design file.
  Don't close, if data was sent to stdout.
  */
-static int close_write() {
+int Fd_Project_Writer::close_write() {
   if (fout != stdout) {
     int x = fclose(fout);
     fout = stdout;
@@ -93,7 +92,7 @@ static int close_write() {
 /**
  Write a string to the .fl file, quoting characters if necessary.
  */
-void write_word(const char *w) {
+void Fd_Project_Writer::write_word(const char *w) {
   if (needspace) putc(' ', fout);
   needspace = 1;
   if (!w || !*w) {fprintf(fout,"{}"); return;}
@@ -130,7 +129,7 @@ void write_word(const char *w) {
  If needspace is set, then one space is written before the string
  unless the format starts with a newline character \\n.
  */
-void write_string(const char *format, ...) {
+void Fd_Project_Writer::write_string(const char *format, ...) {
   va_list args;
   va_start(args, format);
   if (needspace && *format != '\n') fputc(' ',fout);
@@ -142,7 +141,7 @@ void write_string(const char *format, ...) {
 /**
  Start a new line in the .fl file and indent it for a given nesting level.
  */
-void write_indent(int n) {
+void Fd_Project_Writer::write_indent(int n) {
   fputc('\n',fout);
   while (n--) {fputc(' ',fout); fputc(' ',fout);}
   needspace = 0;
@@ -151,7 +150,7 @@ void write_indent(int n) {
 /**
  Write a '{' to the .fl file at the given indenting level.
  */
-void write_open(int) {
+void Fd_Project_Writer::write_open(int) {
   if (needspace) fputc(' ',fout);
   fputc('{',fout);
   needspace = 0;
@@ -160,7 +159,7 @@ void write_open(int) {
 /**
  Write a '}' to the .fl file at the given indenting level.
  */
-void write_close(int n) {
+void Fd_Project_Writer::write_close(int n) {
   if (needspace) write_indent(n);
   fputc('}',fout);
   needspace = 1;
@@ -374,7 +373,16 @@ const char *read_word(int wantbrace) {
     is used to implement copy and paste.
  */
 int write_file(const char *filename, int selected_only) {
-  if (!open_write(filename)) return 0;
+  Fd_Project_Writer out;
+  out.write_project(filename, selected_only);
+}
+
+int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
+  undo_suspend();
+  if (!open_write(filename)) {
+    undo_resume();
+    return 0;
+  }
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
   if(!g_project.include_H_from_C)
@@ -429,7 +437,7 @@ int write_file(const char *filename, int selected_only) {
 
   for (Fl_Type *p = Fl_Type::first; p;) {
     if (!selected_only || p->selected) {
-      p->write();
+      p->write(*this);
       write_string("\n");
       int q = p->level;
       for (p = p->next; p && p->level > q; p = p->next) {/*empty*/}
@@ -437,7 +445,19 @@ int write_file(const char *filename, int selected_only) {
       p = p->next;
     }
   }
-  return close_write();
+  int ret = close_write();
+  undo_resume();
+  return ret;
+}
+
+Fd_Project_Writer::Fd_Project_Writer()
+: fout(NULL),
+  needspace(1)
+{
+}
+
+Fd_Project_Writer::~Fd_Project_Writer()
+{
 }
 
 ////////////////////////////////////////////////////////////////

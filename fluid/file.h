@@ -25,16 +25,30 @@ extern double read_version;
 extern int fdesign_flip;
 extern int fdesign_magic;
 
-void write_word(const char *);
-void write_string(const char *,...) __fl_attr((__format__ (__printf__, 1, 2)));
-void write_indent(int n);
-void write_open(int);
-void write_close(int n);
+int write_file(const char *, int selected_only = 0);
+
+class Fd_Project_Writer
+{
+protected:
+  FILE *fout;
+  int needspace;
+
+  int open_write(const char *s);
+  int close_write();
+
+public:
+  Fd_Project_Writer();
+  ~Fd_Project_Writer();
+  int write_project(const char *filename, int selected_only);
+  void write_word(const char *);
+  void write_string(const char *,...) __fl_attr((__format__ (__printf__, 2, 3)));
+  void write_indent(int n);
+  void write_open(int);
+  void write_close(int n);
+};
 
 void read_error(const char *format, ...);
 const char *read_word(int wantbrace = 0);
-
-int write_file(const char *, int selected_only = 0);
 
 int read_file(const char *, int merge, Strategy strategy=kAddAsLastChild);
 void read_fdesign();

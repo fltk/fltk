@@ -26,6 +26,8 @@ class Fl_Type;
 class Fl_Group_Type;
 class Fl_Window_Type;
 
+class Fd_Project_Writer;
+
 typedef enum {
   kAddAsLastChild = 0,
   kAddAfterCurrent
@@ -123,8 +125,8 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write();
-  virtual void write_properties();
+  virtual void write(Fd_Project_Writer &f);
+  virtual void write_properties(Fd_Project_Writer &f);
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }

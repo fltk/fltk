@@ -583,57 +583,57 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 
 // write a widget and all its children:
-void Fl_Type::write() {
-    write_indent(level);
-    write_word(type_name());
+void Fl_Type::write(Fd_Project_Writer &f) {
+  f.write_indent(level);
+  f.write_word(type_name());
 
-    if (is_class()) {
-      const char * p =  ((Fl_Class_Type*)this)->prefix();
-      if (p &&  strlen(p))
-        write_word(p);
-    }
+  if (is_class()) {
+    const char * p =  ((Fl_Class_Type*)this)->prefix();
+    if (p &&  strlen(p))
+      f.write_word(p);
+  }
 
-    write_word(name());
-    write_open(level);
-    write_properties();
-    write_close(level);
-    if (!is_parent()) return;
-    // now do children:
-    write_open(level);
-    Fl_Type *child;
-    for (child = next; child && child->level > level; child = child->next)
-        if (child->level == level+1) child->write();
-    write_close(level);
+  f.write_word(name());
+  f.write_open(level);
+  write_properties(f);
+  f.write_close(level);
+  if (!is_parent()) return;
+  // now do children:
+  f.write_open(level);
+  Fl_Type *child;
+  for (child = next; child && child->level > level; child = child->next)
+    if (child->level == level+1) child->write(f);
+  f.write_close(level);
 }
 
-void Fl_Type::write_properties() {
+void Fl_Type::write_properties(Fd_Project_Writer &f) {
   // repeat this for each attribute:
   if (label()) {
-    write_indent(level+1);
-    write_word("label");
-    write_word(label());
+    f.write_indent(level+1);
+    f.write_word("label");
+    f.write_word(label());
   }
   if (user_data()) {
-    write_indent(level+1);
-    write_word("user_data");
-    write_word(user_data());
+    f.write_indent(level+1);
+    f.write_word("user_data");
+    f.write_word(user_data());
   }
   if (user_data_type()) {
-    write_word("user_data_type");
-    write_word(user_data_type());
+    f.write_word("user_data_type");
+    f.write_word(user_data_type());
   }
   if (callback()) {
-    write_indent(level+1);
-    write_word("callback");
-    write_word(callback());
+    f.write_indent(level+1);
+    f.write_word("callback");
+    f.write_word(callback());
   }
   if (comment()) {
-    write_indent(level+1);
-    write_word("comment");
-    write_word(comment());
+    f.write_indent(level+1);
+    f.write_word("comment");
+    f.write_word(comment());
   }
-  if (is_parent() && open_) write_word("open");
-  if (selected) write_word("selected");
+  if (is_parent() && open_) f.write_word("open");
+  if (selected) f.write_word("selected");
 }
 
 void Fl_Type::read_property(const char *c) {

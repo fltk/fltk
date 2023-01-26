@@ -209,16 +209,16 @@ Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   - "C" is written if we want a C signature instead of C++
   - "return_type" is followed by the return type of the function
  */
-void Fl_Function_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Function_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 2: f.write_string("protected"); break;
   }
-  if (cdecl_) write_string("C");
+  if (cdecl_) f.write_string("C");
   if (return_type) {
-    write_string("return_type");
-    write_word(return_type);
+    f.write_string("return_type");
+    f.write_word(return_type);
   }
 }
 
@@ -619,12 +619,12 @@ BREAK2:
 /**
  Grab changes from an external editor and write this node.
  */
-void Fl_Code_Type::write() {
+void Fl_Code_Type::write(Fd_Project_Writer &f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-  Fl_Type::write();
+  Fl_Type::write(f);
 }
 
 /**
@@ -737,11 +737,11 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   - "after" is followed by the code that comes after the children
  The "before" code is stored in the name() field.
  */
-void Fl_CodeBlock_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_CodeBlock_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   if (after) {
-    write_string("after");
-    write_word(after);
+    f.write_string("after");
+    f.write_word(after);
   }
 }
 
@@ -861,17 +861,17 @@ Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
   - "private"/"public"/"protected"
   - "local"/"global" if this is static or not
  */
-void Fl_Decl_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Decl_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 1: write_string("public"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 1: f.write_string("public"); break;
+    case 2: f.write_string("protected"); break;
   }
   if (static_)
-    write_string("local");
+    f.write_string("local");
   else
-    write_string("global");
+    f.write_string("global");
 }
 
 /**
@@ -1076,14 +1076,14 @@ Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   - "filename" followed by the filename of the file to inline
   - "textmode" if data is written in ASCII vs. binary
  */
-void Fl_Data_Type::write_properties() {
-  Fl_Decl_Type::write_properties();
+void Fl_Data_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Decl_Type::write_properties(f);
   if (filename_) {
-    write_string("filename");
-    write_word(filename_);
+    f.write_string("filename");
+    f.write_word(filename_);
   }
   if (text_mode_) {
-    write_string("textmode");
+    f.write_string("textmode");
   }
 }
 
@@ -1365,14 +1365,14 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   - "public"/"protected"
   - "after" followed by the second code block.
  */
-void Fl_DeclBlock_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 1: write_string("public"); break;
-    case 2: write_string("protected"); break;
+    case 1: f.write_string("public"); break;
+    case 2: f.write_string("protected"); break;
   }
-  write_string("after");
-  write_word(after);
+  f.write_string("after");
+  f.write_word(after);
 }
 
 /**
@@ -1496,10 +1496,10 @@ Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
   - "in_source"/"not_in_source" if the comment will be written to the source code
   - "in_header"/"not_in_header" if the comment will be written to the header file
  */
-void Fl_Comment_Type::write_properties() {
-  Fl_Type::write_properties();
-  if (in_c_) write_string("in_source"); else write_string("not_in_source");
-  if (in_h_) write_string("in_header"); else write_string("not_in_header");
+void Fl_Comment_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
+  if (in_c_) f.write_string("in_source"); else f.write_string("not_in_source");
+  if (in_h_) f.write_string("in_header"); else f.write_string("not_in_header");
 }
 
 /**
@@ -1795,15 +1795,15 @@ Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   - ":" followed by the super class
   - "private"/"protected"
  */
-void Fl_Class_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Class_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   if (subclass_of) {
-    write_string(":");
-    write_word(subclass_of);
+    f.write_string(":");
+    f.write_word(subclass_of);
   }
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 2: f.write_string("protected"); break;
   }
 }
 

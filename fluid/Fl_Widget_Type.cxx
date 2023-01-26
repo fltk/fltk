@@ -3153,126 +3153,126 @@ void Fl_Widget_Type::write_code2(Fd_Code_Writer& f) {
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Widget_Type::write_properties() {
-  Fl_Type::write_properties();
-  write_indent(level+1);
+void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
+  f.write_indent(level+1);
   switch (public_) {
-    case 0: write_string("private"); break;
+    case 0: f.write_string("private"); break;
     case 1: break;
-    case 2: write_string("protected"); break;
+    case 2: f.write_string("protected"); break;
   }
   if (tooltip() && *tooltip()) {
-    write_string("tooltip");
-    write_word(tooltip());
+    f.write_string("tooltip");
+    f.write_word(tooltip());
   }
   if (image_name() && *image_name()) {
-    write_string("image");
-    write_word(image_name());
-    write_string("compress_image %d", compress_image_);
+    f.write_string("image");
+    f.write_word(image_name());
+    f.write_string("compress_image %d", compress_image_);
   }
-  if (bind_image_) write_string("bind_image 1");
+  if (bind_image_) f.write_string("bind_image 1");
   if (inactive_name() && *inactive_name()) {
-    write_string("deimage");
-    write_word(inactive_name());
-    write_string("compress_deimage %d", compress_deimage_);
+    f.write_string("deimage");
+    f.write_word(inactive_name());
+    f.write_string("compress_deimage %d", compress_deimage_);
   }
-  if (bind_deimage_) write_string("bind_deimage 1");
-  write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
+  if (bind_deimage_) f.write_string("bind_deimage 1");
+  f.write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
   if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
-    write_string("type");
-    write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
+    f.write_string("type");
+    f.write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
   } else if (subtypes() && (o->type() != tplate->type() || is_window())) {
-    write_string("type");
-    write_word(item_name(subtypes(), o->type()));
+    f.write_string("type");
+    f.write_word(item_name(subtypes(), o->type()));
   }
   if (o->box() != tplate->box()) {
-    write_string("box"); write_word(boxname(o->box()));}
+    f.write_string("box"); f.write_word(boxname(o->box()));}
   if (is_input()) {
     Fl_Input_* b = (Fl_Input_*)o;
-    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
+    if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
   if (is_value_input()) {
     Fl_Value_Input* b = (Fl_Value_Input*)o;
-    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
+    if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
   if (is_text_display()) {
     Fl_Text_Display* b = (Fl_Text_Display*)o;
-    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
+    if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
   if (is_button()) {
     Fl_Button* b = (Fl_Button*)o;
     if (b->down_box()) {
-      write_string("down_box"); write_word(boxname(b->down_box()));}
-    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
-    if (b->value()) write_string("value 1");
+      f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
+    if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
+    if (b->value()) f.write_string("value 1");
   } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) {
-      write_string("down_box"); write_word(boxname(b->down_box()));}
+      f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
   } else if (is_menu_button()) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) {
-      write_string("down_box"); write_word(boxname(b->down_box()));}
+      f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
   }
   if (o->color()!=tplate->color())
-    write_string("color %d", o->color());
+    f.write_string("color %d", o->color());
   if (o->selection_color()!=tplate->selection_color())
-    write_string("selection_color %d", o->selection_color());
+    f.write_string("selection_color %d", o->selection_color());
   if (o->labeltype()!=tplate->labeltype()) {
-    write_string("labeltype");
-    write_word(item_name(labeltypemenu, o->labeltype()));
+    f.write_string("labeltype");
+    f.write_word(item_name(labeltypemenu, o->labeltype()));
   }
   if (o->labelfont()!=tplate->labelfont())
-    write_string("labelfont %d", o->labelfont());
+    f.write_string("labelfont %d", o->labelfont());
   if (o->labelsize()!=tplate->labelsize())
-    write_string("labelsize %d", o->labelsize());
+    f.write_string("labelsize %d", o->labelsize());
   if (o->labelcolor()!=tplate->labelcolor())
-    write_string("labelcolor %d", o->labelcolor());
+    f.write_string("labelcolor %d", o->labelcolor());
   if (o->align()!=tplate->align())
-    write_string("align %d", o->align());
+    f.write_string("align %d", o->align());
   if (o->when() != tplate->when())
-    write_string("when %d", o->when());
+    f.write_string("when %d", o->when());
   if (is_valuator()) {
     Fl_Valuator* v = (Fl_Valuator*)o;
-    Fl_Valuator* f = (Fl_Valuator*)(tplate);
-    if (v->minimum()!=f->minimum()) write_string("minimum %g",v->minimum());
-    if (v->maximum()!=f->maximum()) write_string("maximum %g",v->maximum());
-    if (v->step()!=f->step()) write_string("step %g",v->step());
-    if (v->value()!=0.0) write_string("value %g",v->value());
+    Fl_Valuator* t = (Fl_Valuator*)(tplate);
+    if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
+    if (v->maximum()!=t->maximum()) f.write_string("maximum %g",v->maximum());
+    if (v->step()!=t->step()) f.write_string("step %g",v->step());
+    if (v->value()!=0.0) f.write_string("value %g",v->value());
     if (is_valuator()>=2) {
       double x = ((Fl_Slider*)v)->slider_size();
-      double y = ((Fl_Slider*)f)->slider_size();
-      if (x != y) write_string("slider_size %g", x);
+      double y = ((Fl_Slider*)t)->slider_size();
+      if (x != y) f.write_string("slider_size %g", x);
     }
   }
   if (is_spinner()) {
     Fl_Spinner* v = (Fl_Spinner*)o;
-    Fl_Spinner* f = (Fl_Spinner*)(tplate);
-    if (v->minimum()!=f->minimum()) write_string("minimum %g",v->minimum());
-    if (v->maximum()!=f->maximum()) write_string("maximum %g",v->maximum());
-    if (v->step()!=f->step()) write_string("step %g",v->step());
-    if (v->value()!=1.0) write_string("value %g",v->value());
+    Fl_Spinner* t = (Fl_Spinner*)(tplate);
+    if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
+    if (v->maximum()!=t->maximum()) f.write_string("maximum %g",v->maximum());
+    if (v->step()!=t->step()) f.write_string("step %g",v->step());
+    if (v->value()!=1.0) f.write_string("value %g",v->value());
   }
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
-    Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
-    if (f != ff) write_string("textfont %d", f);
-    if (s != fs) write_string("textsize %d", s);
-    if (c != fc) write_string("textcolor %d", c);
+    Fl_Font ft; int s; Fl_Color c; textstuff(0,ft,s,c);
+    if (ft != ff) f.write_string("textfont %d", ft);
+    if (s != fs) f.write_string("textsize %d", s);
+    if (c != fc) f.write_string("textcolor %d", c);
   }}
-  if (!o->visible()) write_string("hide");
-  if (!o->active()) write_string("deactivate");
-  if (resizable()) write_string("resizable");
-  if (hotspot()) write_string(is_menu_item() ? "divider" : "hotspot");
+  if (!o->visible()) f.write_string("hide");
+  if (!o->active()) f.write_string("deactivate");
+  if (resizable()) f.write_string("resizable");
+  if (hotspot()) f.write_string(is_menu_item() ? "divider" : "hotspot");
   for (int n=0; n < NUM_EXTRA_CODE; n++) if (extra_code(n)) {
-    write_indent(level+1);
-    write_string("code%d",n);
-    write_word(extra_code(n));
+    f.write_indent(level+1);
+    f.write_string("code%d",n);
+    f.write_word(extra_code(n));
   }
   if (subclass()) {
-    write_indent(level+1);
-    write_string("class");
-    write_word(subclass());
+    f.write_indent(level+1);
+    f.write_string("class");
+    f.write_word(subclass());
   }
 }
 

@@ -62,7 +62,7 @@ public:
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 7; }
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
 };
@@ -78,7 +78,7 @@ class Fl_Code_Type : public Fl_Type {
 public:
   Fl_Code_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write() FL_OVERRIDE;
+  void write(Fd_Project_Writer &f) FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
@@ -109,7 +109,7 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
   int pixmapID() FL_OVERRIDE { return 9; }
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
 };
 
@@ -128,7 +128,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "decl";}
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 10; }
@@ -148,7 +148,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE {}
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "data";}
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 49; }
 };
@@ -167,7 +167,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "declblock";}
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
@@ -189,7 +189,7 @@ public:
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "comment";}
   const char *title() FL_OVERRIDE; // string for browser
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
   int is_comment() const FL_OVERRIDE { return 1; }
@@ -220,7 +220,7 @@ public:
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 12; }
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
 
   // class prefix attribute access

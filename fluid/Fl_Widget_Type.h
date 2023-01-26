@@ -101,7 +101,7 @@ public:
   int is_widget() const FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
 
-  void write_properties() FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
