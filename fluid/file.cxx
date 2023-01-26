@@ -705,7 +705,7 @@ void Fd_Project_Reader::read_fdesign() {
 /** \brief Construct local project writer. */
 Fd_Project_Writer::Fd_Project_Writer()
 : fout(NULL),
-needspace(1)
+  needspace(0)
 {
 }
 
