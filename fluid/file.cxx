@@ -112,9 +112,9 @@ Fd_Project_Reader::Fd_Project_Reader()
 : fin(NULL),
   lineno(0),
   fname(NULL),
-  read_version(0.0),
   buffer(NULL),
-  buflen(0)
+  buflen(0),
+  read_version(0.0)
 {
 }
 

@@ -46,16 +46,6 @@ void Fluid_Image::deimage(Fl_Widget *o) {
   if (o->window() != o) o->deimage(img);
 }
 
-static int pixmap_header_written = 0;
-static int bitmap_header_written = 0;
-static int image_header_written = 0;
-static int jpeg_header_written = 0;
-static int png_header_written = 0;
-static int gif_header_written = 0;
-static int animated_gif_header_written = 0;
-static int bmp_header_written = 0;
-static int svg_header_written = 0;
-
 /** Write the contents of the name() file as binary source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
