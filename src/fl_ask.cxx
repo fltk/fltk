@@ -208,8 +208,10 @@ int fl_ask(const char *fmt, ...) {
   \param[in] b0 text label for right button 0
   \param[in] b1 text label for middle button 1 (can be 0)
   \param[in] b2 text label for left button 2 (can be 0)
-  \retval 0 if the button with \p b0 text is pushed
-  \retval 1 if the button with \p b1 text is pushed
+  \retval 0 if the button with \p b0 text is pushed or the user pressed
+      the \c Escape key or clicked the window close button
+  \retval 1 if the button with \p b1 text is pushed or the user pressed
+      the \c Return key
   \retval 2 if the button with \p b2 text is pushed
 */
 int fl_choice(const char *fmt, const char *b0, const char *b1, const char *b2, ...) {

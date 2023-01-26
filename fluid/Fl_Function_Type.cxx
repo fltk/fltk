@@ -1401,23 +1401,28 @@ void Fl_DeclBlock_Type::open() {
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == declblock_panel_cancel) goto BREAK2;
       else if (w == declblock_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char*c = decl_before_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (message) continue;
-    name(c);
-    c = decl_after_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (message) continue;
-    storestring(c,after);
+    const char* a = decl_before_input->value();
+    while (isspace(*a)) a++;
+    const char* b = decl_after_input->value();
+    while (isspace(*b)) b++;
+    message = c_check(a&&a[0]=='#' ? a+1 : a);
+    if (!message)
+      message = c_check(b&&b[0]=='#' ? b+1 : b);
+    if (message) {
+      int v = fl_choice("%s", "try again", "keep anyway", "cancel", message);
+      printf("%d\n", v);
+      if (v==0) continue; // try again
+      if (v==1) ; // keep input
+      if (v==2) goto BREAK2;
+    }
+    name(a);
+    storestring(b, after);
     if (public_ != declblock_public_choice->value()) {
       set_modflag(1);
       public_ = declblock_public_choice->value();
