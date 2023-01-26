@@ -138,7 +138,7 @@ Fl_Double_Window* make_template_panel() {
       template_browser->labelfont(1);
       template_browser->callback((Fl_Callback*)cb_template_browser);
       template_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      template_browser->when(3);
+      template_browser->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Browser* template_browser
     { template_preview = new Fl_Box(200, 28, 250, 250);
       template_preview->box(FL_THIN_DOWN_BOX);
@@ -149,7 +149,7 @@ Fl_Double_Window* make_template_panel() {
       template_name->labelfont(1);
       template_name->textfont(4);
       template_name->callback((Fl_Callback*)cb_template_name);
-      template_name->when(3);
+      template_name->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Input* template_name
     { template_instance = new Fl_Input(198, 288, 252, 25, "Instance Name:");
       template_instance->labelfont(1);

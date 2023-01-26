@@ -44,8 +44,8 @@ public:
     igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Group_Type();}
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
@@ -91,12 +91,12 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
   int pixmapID() FL_OVERRIDE { return 56; }
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   void postprocess_read() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;

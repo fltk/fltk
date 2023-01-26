@@ -1273,6 +1273,7 @@ double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int utf32) {
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
+  if ((str == NULL) || (n == 0)) return 0.;
   if (n == fl_utf8len(*str)) { // str contains a single unicode character
     int l;
     unsigned c = fl_utf8decode(str, str+n, &l);

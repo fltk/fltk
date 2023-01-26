@@ -50,8 +50,8 @@ public:
   Fl_Function_Type();
   ~Fl_Function_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   int ismain() {return name_ == 0;}
   const char *type_name() FL_OVERRIDE {return "Function";}
@@ -62,8 +62,8 @@ public:
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 7; }
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
 };
 
@@ -78,9 +78,9 @@ class Fl_Code_Type : public Fl_Type {
 public:
   Fl_Code_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write() FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE { }
+  void write(Fd_Project_Writer &f) FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "code";}
   int is_code_block() const FL_OVERRIDE {return 0;}
@@ -101,16 +101,16 @@ public:
   Fl_CodeBlock_Type();
   ~Fl_CodeBlock_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "codeblock";}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
   int pixmapID() FL_OVERRIDE { return 9; }
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 };
 
 // ---- Fl_Decl_Type declaration
@@ -124,12 +124,12 @@ protected:
 public:
   Fl_Decl_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE { }
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "decl";}
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 10; }
 };
@@ -144,12 +144,12 @@ public:
   Fl_Data_Type();
   ~Fl_Data_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE {}
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE {}
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "data";}
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 49; }
 };
 
@@ -163,12 +163,12 @@ public:
   Fl_DeclBlock_Type();
   ~Fl_DeclBlock_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "declblock";}
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
@@ -184,13 +184,13 @@ class Fl_Comment_Type : public Fl_Type {
 public:
   Fl_Comment_Type();
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE { }
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE { }
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "comment";}
   const char *title() FL_OVERRIDE; // string for browser
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
   int is_comment() const FL_OVERRIDE { return 1; }
   int pixmapID() FL_OVERRIDE { return 46; }
@@ -211,8 +211,8 @@ public:
   Fl_Class_Type* parent_class; // save class if nested
 //
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void open() FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "class";}
   int is_parent() const FL_OVERRIDE {return 1;}
@@ -220,8 +220,8 @@ public:
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 12; }
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 
   // class prefix attribute access
   void prefix(const char* p);

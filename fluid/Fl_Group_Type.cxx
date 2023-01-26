@@ -131,18 +131,18 @@ void ungroup_cb(Fl_Widget *, void *) {
   set_modflag(1);
 }
 
-void Fl_Group_Type::write_code1() {
-  Fl_Widget_Type::write_code1();
+void Fl_Group_Type::write_code1(Fd_Code_Writer& f) {
+  Fl_Widget_Type::write_code1(f);
 }
 
-void Fl_Group_Type::write_code2() {
+void Fl_Group_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  write_extra_code();
-  write_c("%s%s->end();\n", indent(), var);
+  write_extra_code(f);
+  f.write_c("%s%s->end();\n", f.indent(), var);
   if (resizable()) {
-    write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
+    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
   }
-  write_block_close();
+  write_block_close(f);
 }
 
 // This is called when o is created.  If it is in the tab group make
@@ -247,95 +247,95 @@ void Fl_Flex_Type::copy_properties()
   d->gap( s->gap() );
 }
 
-void Fl_Flex_Type::write_properties()
+void Fl_Flex_Type::write_properties(Fd_Project_Writer &f)
 {
-  Fl_Group_Type::write_properties();
-  Fl_Flex* f = (Fl_Flex*)o;
+  Fl_Group_Type::write_properties(f);
+  Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margin(&lm, &tm, &rm, &bm);
+  flex->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_string("margin {%d %d %d %d}", lm, tm, rm, bm);
-  if (f->gap())
-    write_string("gap %d", f->gap());
+    f.write_string("margin {%d %d %d %d}", lm, tm, rm, bm);
+  if (flex->gap())
+    f.write_string("gap %d", flex->gap());
   int nSet = 0;
-  for (int i=0; i<f->children(); i++)
-    if (f->fixed(f->child(i)))
+  for (int i=0; i<flex->children(); i++)
+    if (flex->fixed(flex->child(i)))
       nSet++;
   if (nSet) {
-    write_string("fixed_size_tuples {%d", nSet);
-    for (int i=0; i<f->children(); i++) {
-      Fl_Widget *ci = f->child(i);
-      if (f->fixed(ci))
-        write_string(" %d %d", i, f->horizontal() ? ci->w() : ci->h());
+    f.write_string("fixed_size_tuples {%d", nSet);
+    for (int i=0; i<flex->children(); i++) {
+      Fl_Widget *ci = flex->child(i);
+      if (flex->fixed(ci))
+        f.write_string(" %d %d", i, flex->horizontal() ? ci->w() : ci->h());
     }
-    write_string("}");
+    f.write_string("}");
   }
 }
 
-void Fl_Flex_Type::read_property(const char *c)
+void Fl_Flex_Type::read_property(Fd_Project_Reader &f, const char *c)
 {
-  Fl_Flex* f = (Fl_Flex*)o;
+  Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
   if (!strcmp(c,"margin")) {
     int lm, tm, rm, bm;
-    if (sscanf(read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
-      f->margin(lm, tm, rm, bm);
+    if (sscanf(f.read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
+      flex->margin(lm, tm, rm, bm);
   } else if (!strcmp(c,"gap")) {
     int g;
-    if (sscanf(read_word(),"%d",&g))
-      f->gap(g);
+    if (sscanf(f.read_word(),"%d",&g))
+      flex->gap(g);
   } else if (!strcmp(c,"fixed_size_tuples")) {
-    read_word(1); // must be '{'
-    const char *nStr = read_word(1); // number of indices in table
+    f.read_word(1); // must be '{'
+    const char *nStr = f.read_word(1); // number of indices in table
     fixedSizeTupleSize = atoi(nStr);
     fixedSizeTuple = new int[fixedSizeTupleSize*2];
     for (int i=0; i<fixedSizeTupleSize; i++) {
-      const char *ix = read_word(1); // child at that index is fixed in size
+      const char *ix = f.read_word(1); // child at that index is fixed in size
       fixedSizeTuple[i*2] = atoi(ix);
-      const char *size = read_word(1); // fixed size of that child
+      const char *size = f.read_word(1); // fixed size of that child
       fixedSizeTuple[i*2+1] = atoi(size);
     }
-    read_word(1); // must be '}'
+    f.read_word(1); // must be '}'
   } else {
-    Fl_Group_Type::read_property(c);
+    Fl_Group_Type::read_property(f, c);
   }
 }
 
 void Fl_Flex_Type::postprocess_read()
 {
   if (fixedSizeTupleSize==0) return;
-  Fl_Flex* f = (Fl_Flex*)o;
+  Fl_Flex* flex = (Fl_Flex*)o;
   for (int i=0; i<fixedSizeTupleSize; i++) {
     int ix = fixedSizeTuple[2*i];
     int size = fixedSizeTuple[2*i+1];
-    if (ix>=0 && ix<f->children()) {
-      Fl_Widget *ci = f->child(ix);
-      f->fixed(ci, size);
+    if (ix>=0 && ix<flex->children()) {
+      Fl_Widget *ci = flex->child(ix);
+      flex->fixed(ci, size);
     }
   }
   fixedSizeTupleSize = 0;
   delete[] fixedSizeTuple;
   fixedSizeTuple = NULL;
-  f->layout();
+  flex->layout();
   suspend_auto_layout = 0;
 }
 
-void Fl_Flex_Type::write_code2() {
+void Fl_Flex_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  Fl_Flex* f = (Fl_Flex*)o;
+  Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
-  f->margin(&lm, &tm, &rm, &bm);
+  flex->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    write_c("%s%s->margin(%d, %d, %d, %d);\n", indent(), var, lm, tm, rm, bm);
-  if (f->gap())
-    write_c("%s%s->gap(%d);\n", indent(), var, f->gap());
-  for (int i=0; i<f->children(); ++i) {
-    Fl_Widget *ci = f->child(i);
-    if (f->fixed(ci))
-      write_c("%s%s->fixed(%s->child(%d), %d);\n", indent(), var, var, i,
-              f->horizontal() ? ci->w() : ci->h());
+    f.write_c("%s%s->margin(%d, %d, %d, %d);\n", f.indent(), var, lm, tm, rm, bm);
+  if (flex->gap())
+    f.write_c("%s%s->gap(%d);\n", f.indent(), var, flex->gap());
+  for (int i=0; i<flex->children(); ++i) {
+    Fl_Widget *ci = flex->child(i);
+    if (flex->fixed(ci))
+      f.write_c("%s%s->fixed(%s->child(%d), %d);\n", f.indent(), var, var, i,
+                flex->horizontal() ? ci->w() : ci->h());
   }
-  Fl_Group_Type::write_code2();
+  Fl_Group_Type::write_code2(f);
 }
 
 void Fl_Flex_Type::add_child(Fl_Type* a, Fl_Type* b) {

@@ -20,9 +20,14 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 
+#include "code.h"
+
 class Fl_Type;
 class Fl_Group_Type;
 class Fl_Window_Type;
+
+class Fd_Project_Reader;
+class Fd_Project_Writer;
 
 typedef enum {
   kAddAsLastChild = 0,
@@ -72,7 +77,7 @@ public: // things that should not be public:
   Fl_Type *first_child();
 
   Fl_Type *factory;
-  const char *callback_name();
+  const char *callback_name(Fd_Code_Writer& f);
 
   int code_position, header_position;
   int code_position_end, header_position_end;
@@ -121,19 +126,19 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write();
-  virtual void write_properties();
-  virtual void read_property(const char *);
+  virtual void write(Fd_Project_Writer &f);
+  virtual void write_properties(Fd_Project_Writer &f);
+  virtual void read_property(Fd_Project_Reader &f, const char *);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 
   // write code, these are called in order:
-  virtual void write_static(); // write static stuff to .c file
-  virtual void write_code1(); // code and .h before children
-  virtual void write_code2(); // code and .h after children
-  void write_comment_h(const char *ind=""); // write the commentary text into the header file
-  void write_comment_c(const char *ind=""); // write the commentary text into the source file
-  void write_comment_inline_c(const char *ind=0L); // write the commentary text
+  virtual void write_static(Fd_Code_Writer& f); // write static stuff to .c file
+  virtual void write_code1(Fd_Code_Writer& f); // code and .h before children
+  virtual void write_code2(Fd_Code_Writer& f); // code and .h after children
+  void write_comment_h(Fd_Code_Writer& f, const char *ind=""); // write the commentary text into the header file
+  void write_comment_c(Fd_Code_Writer& f, const char *ind=""); // write the commentary text into the source file
+  void write_comment_inline_c(Fd_Code_Writer& f, const char *ind=0L); // write the commentary text
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build wdgets needed for live mode
