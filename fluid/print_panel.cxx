@@ -112,6 +112,7 @@ Fl_Menu_Item menu_print_page_size[] = {
 };
 
 #include <FL/Fl_Pixmap.H>
+
 static const char *idata_print_color[] = {
 "24 24 17 1",
 " \tc None",
@@ -157,7 +158,9 @@ static const char *idata_print_color[] = {
 "     %%%%%%  ******     "
 };
 static Fl_Image *image_print_color() {
-  static Fl_Image *image = new Fl_Pixmap(idata_print_color);
+  static Fl_Image *image = NULL;
+  if (!image)
+    image = new Fl_Pixmap(idata_print_color);
   return image;
 }
 
@@ -206,7 +209,9 @@ static const char *idata_print_gray[] = {
 "     %%%%%%  ******     "
 };
 static Fl_Image *image_print_gray() {
-  static Fl_Image *image = new Fl_Pixmap(idata_print_gray);
+  static Fl_Image *image = NULL;
+  if (!image)
+    image = new Fl_Pixmap(idata_print_gray);
   return image;
 }
 
