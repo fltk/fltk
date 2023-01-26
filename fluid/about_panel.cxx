@@ -22,6 +22,7 @@ void show_help(const char *name);
 Fl_Double_Window *about_panel=(Fl_Double_Window *)0;
 
 #include <FL/Fl_Anim_GIF_Image.H>
+
 static const unsigned char idata_fluid[] =
 {71,73,70,56,57,97,96,0,96,0,132,31,0,0,1,0,3,31,63,46,48,45,0,54,108,78,80,
 77,64,123,116,124,126,123,125,173,98,107,166,116,171,204,63,220,233,19,253,254,
