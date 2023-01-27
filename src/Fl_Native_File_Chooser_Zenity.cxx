@@ -66,7 +66,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
     preset = new char[l];
     snprintf(preset, l, "--filename '%s'", _directory);
   }
-  int lcommand = 1000;
+  int lcommand = 10000;
   char *command = new char[lcommand];
   strcpy(command, "zenity ");
   if (_title) {
