@@ -87,6 +87,7 @@ typedef struct {
   const char* text;
   Fl::Fl_Option id;
   const char* name;
+  const char* prefs_name;
   bool bool_default;
   const char* brief;
   const char* tooltip;
@@ -99,13 +100,13 @@ typedef struct {
 Fo_Option_Descr g_option_list[] = {
   { FO_HEADLINE, "Keyboard Focus Options" },
   { FO_OPTION_BOOL, "Visible Keyboard Focus:",
-    Fl::OPTION_VISIBLE_FOCUS, "OPTION_VISIBLE_FOCUS", true,
+    Fl::OPTION_VISIBLE_FOCUS, "OPTION_VISIBLE_FOCUS", "VisibleFocus", true,
     "Draw a dotted rectangle in widget with keyboard focus.",
     "If visible focus is switched on, FLTK will draw a dotted rectangle inside "
     "the widget that will receive the next keystroke. If switched off, no such "
     "indicator will be drawn and keyboard navigation is disabled." },
   { FO_OPTION_BOOL, "Arrow Keys move Focus:",
-    Fl::OPTION_ARROW_FOCUS, "OPTION_ARROW_FOCUS", false,
+    Fl::OPTION_ARROW_FOCUS, "OPTION_ARROW_FOCUS", "ArrowFocus", false,
     "Arrow keys will move focus beyond text input field.",
     "When switched on, moving the text cursor beyond the start or end of the "
     "text in a text widget will change focus to the next widget. When switched "
@@ -114,35 +115,35 @@ Fo_Option_Descr g_option_list[] = {
     "behavior of FLTK 1.1." },
   { FO_HEADLINE, "Tooltip Options" },
   { FO_OPTION_BOOL, "Show Tooltips:",
-    Fl::OPTION_SHOW_TOOLTIPS, "OPTION_SHOW_TOOLTIPS", true,
+    Fl::OPTION_SHOW_TOOLTIPS, "OPTION_SHOW_TOOLTIPS", "ShowTooltips", true,
     "Show or hide tooltips.",
     "If tooltips are enabled, hovering the mouse over a widget with a tooltip "
     "text will open a little tooltip window until the mouse leaves the widget. "
     "If disabled, no tooltip is shown." },
   { FO_HEADLINE, "Drag And Drop Options" },
   { FO_OPTION_BOOL, "Allow dragging Text:",
-    Fl::OPTION_DND_TEXT, "OPTION_DND_TEXT", true,
+    Fl::OPTION_DND_TEXT, "OPTION_DND_TEXT", "DNDText", true,
     "User can drag text from FLTK into other apps.",
     "If text drag-and-drop is enabled, the user can select and drag text from "
     "any text widget. If disabled, no dragging is possible, however dropping "
     "text from other applications still works." },
   { FO_HEADLINE, "Native File Chooser Options" },
   { FO_OPTION_BOOL, "Native File Chooser uses GTK:",
-    Fl::OPTION_FNFC_USES_GTK, "OPTION_FNFC_USES_GTK", true,
+    Fl::OPTION_FNFC_USES_GTK, "OPTION_FNFC_USES_GTK", "FNFCUsesGTK", true,
     "Use GTK file chooser instead of FLTK if available.",
     "If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser "
     "class calls the GTK open/save file dialogs when they are available on the "
     "platfom. If disabled, the Fl_Native_File_Chooser class always uses FLTK's "
     "own file dialog (i.e., Fl_File_Chooser) even if GTK is available." },
   { FO_OPTION_BOOL, "Native File Chooser uses Zenity:",
-    Fl::OPTION_FNFC_USES_ZENITY, "OPTION_FNFC_USES_ZENITY", true,
+    Fl::OPTION_FNFC_USES_ZENITY, "OPTION_FNFC_USES_ZENITY", "UseZenity", true,
     "Use Zenity file chooser instead of FLTK if available.",
     "Meaningful for the Wayland/X11 platform only. When switched on (default),"
     "the library uses a Zenity-based file dialog. When switched off, the GTK"
     "file dialog is used instead." },
   { FO_HEADLINE, "Print dialog Options" },
   { FO_OPTION_BOOL, "Print dialog uses GTK:",
-    Fl::OPTION_PRINTER_USES_GTK, "OPTION_PRINTER_USES_GTK", true,
+    Fl::OPTION_PRINTER_USES_GTK, "OPTION_PRINTER_USES_GTK", "PrintUsesGTK", true,
     "Use GTK printer dialog instead of FLTK if available.",
     "If 'Print dialog uses GTK' is enabled, the Fl_Printer class calls the "
     "GTK print dialog when it's available on the platfom. If disabled, the "
@@ -150,7 +151,7 @@ Fo_Option_Descr g_option_list[] = {
     "if GTK is available." },
   { FO_HEADLINE, "Scaling Factor Options" },
   { FO_OPTION_BOOL, "Transiently show scaling factor:",
-    Fl::OPTION_SHOW_SCALING, "OPTION_SHOW_SCALING", true,
+    Fl::OPTION_SHOW_SCALING, "OPTION_SHOW_SCALING", "ShowZoomFactor", true,
     "Show the zoom factor in a transient popup window.",
     "If 'Transiently show scaling factor' is enabled, the library shows in a "
     "transient popup window the display scaling factor value when it is "
@@ -181,7 +182,7 @@ bool write_permission(Fo_Context ctx) {
  */
 void set_option(Fo_Context ctx, const char *name, int value) {
   enum Fl_Preferences::Root context =
-    (ctx==FO_SYSTEM) ? Fl_Preferences::SYSTEM_L : Fl_Preferences::USER_L;
+    (ctx==FO_SYSTEM) ? Fl_Preferences::CORE_SYSTEM : Fl_Preferences::CORE_USER;
   Fl_Preferences prefs(context, "fltk.org", "fltk");
   Fl_Preferences options(prefs, "options");
   if (value==-1)
@@ -277,13 +278,13 @@ void list_options(char cmd) {
     if (opt->name) {
       printf("%-24s", opt->name);
       if (cmd == 'S' || cmd == 0) {
-        int value = get_option(FO_SYSTEM, opt->name);
+        int value = get_option(FO_SYSTEM, opt->prefs_name);
         printf(" system:%2d", value);
       }
       if (cmd == 0)
         printf(",");
       if (cmd == 'U' || cmd == 0) {
-        int value = get_option(FO_USER, opt->name);
+        int value = get_option(FO_USER, opt->prefs_name);
         printf(" user:%2d", value);
       }
       printf("\n");
@@ -303,17 +304,17 @@ void handle_option(Fo_Context ctx, const char *name, int ival) {
   for (opt = g_option_list; opt->type!=FO_END_OF_LIST; ++opt) {
     if ( opt->name && (fl_ascii_strcasecmp(opt->name, name) == 0) ) {
       if (ival == FO_PRINT_VALUE) {
-        int value = get_option(ctx, opt->name);
+        int value = get_option(ctx, opt->prefs_name);
         if (g_verbose)
           printf("Current value for %s option %s is %d\n", ctx_name, name, value);
         else
           printf("%d\n", value);
       } else if (ival ==-1) {
         if (g_verbose) printf("Reset %s option %s to default\n", ctx_name, name);
-        clear_option(ctx, opt->name);
+        clear_option(ctx, opt->prefs_name);
       } else {
         if (g_verbose) printf("Set %s option %s to %d\n", ctx_name, name, ival);
-        set_option(ctx, opt->name, ival);
+        set_option(ctx, opt->prefs_name, ival);
       }
       if ( (ival != FO_PRINT_VALUE) && !write_permission(ctx) ) {
         fprintf(stderr, "ERROR: No write permission for %s options\n", ctx_name);
@@ -474,7 +475,7 @@ void set_system_option_cb(Fl_Widget* w, void* user_data) {
   const Fl_Menu_Item* mi = choice->mvalue();
   if (!mi) return;
   int value = (int)mi->argument();
-  set_option(FO_SYSTEM, opt->name, value);
+  set_option(FO_SYSTEM, opt->prefs_name, value);
 }
 
 /** Called when a boolenan user option is changed.
@@ -485,7 +486,7 @@ void set_user_option_cb(Fl_Widget* w, void* user_data) {
   const Fl_Menu_Item* mi = choice->mvalue();
   if (!mi) return;
   int value = (int)mi->argument();
-  set_option(FO_USER, opt->name, value);
+  set_option(FO_USER, opt->prefs_name, value);
 }
 
 /** Add an option group to the pack group.
@@ -556,7 +557,7 @@ void add_option(Fl_Pack* pack, Fo_Option_Descr* opt) {
   system_choice->align(FL_ALIGN_TOP);
   system_choice->callback((Fl_Callback*)set_system_option_cb, (void*)opt);
   system_choice->menu(bool_option_menu);
-  switch (get_option(FO_SYSTEM, opt->name)) {
+  switch (get_option(FO_SYSTEM, opt->prefs_name)) {
     case 0: system_choice->value(0); break;
     case 1: system_choice->value(1); break;
     default: system_choice->value(2); break;
@@ -569,7 +570,7 @@ void add_option(Fl_Pack* pack, Fo_Option_Descr* opt) {
   user_choice->align(FL_ALIGN_TOP);
   user_choice->callback((Fl_Callback*)set_user_option_cb, (void*)opt);
   user_choice->menu(bool_option_menu);
-  switch (get_option(FO_USER, opt->name)) {
+  switch (get_option(FO_USER, opt->prefs_name)) {
     case 0: user_choice->value(0); break;
     case 1: user_choice->value(1); break;
     default: user_choice->value(2); break;
