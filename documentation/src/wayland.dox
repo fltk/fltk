@@ -311,8 +311,9 @@ libdecor library, \c os_create_anonymous_file(), to create an adequate file and 
 file.
 
 FLTK associates to each surface a <tt>struct fl_wld_buffer</tt> (see \ref fl_wld_buffer) containing
-a pointer to the byte array of the Cairo image surface (member \c draw_buffer), a pointer to the
-Wayland buffer (member \c wl_buffer), and other information. A pointer to this
+a pointer to the byte array of the Cairo image surface (member \c draw_buffer), information about the
+Wayland buffer (members \c wl_buffer and \c data), the common size of the Cairo surface's and
+Wayland buffer's byte arrays (member \c data_size), and other information. A pointer to this
 <tt>struct fl_wld_buffer</tt> is memorized as member \c buffer of the Fl_Window's \ref wld_window.
 All drawing operations to the Fl_Window then modify the content of the Cairo image surface.
 
@@ -520,10 +521,9 @@ Functions \c text_input_delete_surrounding_text() and \c text_input_done() have
 no effect at present, without this preventing input methods that have been tested with FLTK to work
 satisfactorily.
 
-For text input methods to work as expected, it's necessary to inform them of the current location of the
-insertion point in the active surface because this information allows text input methods to map their
-auxiliary windows next to this point, where they are expected to appear.
-The flow of information on this topic is as follows:
+It's necessary to inform text input methods of the current location of the insertion point in the
+active surface. This information allows them to map their auxiliary windows next to the insertion
+point, where they are expected to appear. The flow of information on this topic is as follows:
 - The two FLTK widgets supporting text input, Fl_Input_ and Fl_Text_Display, transmit to FLTK the window
 coordinates of the bottom of the current insertion point and the line height each time they change
 calling function \c fl_set_spot().
@@ -698,7 +698,7 @@ struct fl_wld_buffer {
   int width;
   unsigned char *draw_buffer; // address of the beginning of the Cairo image surface's byte array
   struct wl_callback *cb; // non-NULL while Wayland buffer is being committed
-  bool draw_buffer_needs_commit; // true when draw_buffer has been modfied but not yet committed
+  bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
   cairo_t *cairo_; // used when drawing to the Cairo image surface
 };
 </pre>
