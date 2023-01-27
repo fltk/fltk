@@ -1,29 +1,29 @@
 //
-// "$Id$"
-//
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #if defined(__APPLE__)
 
 #include <FL/platform.H>
+#include <FL/fl_string_functions.h>
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include "flstring.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include "Fl_System_Driver.H"
 
 #import <Cocoa/Cocoa.h> // keep this after include of Fl_MacOS_Sys_Menu_Bar_Driver.H because of check() conflict
 
@@ -61,29 +61,23 @@ Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   return once;
 }
 
-/*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
-    The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
-
-    If use_index is YES, the "index" field is used, and fl_sys_menu_bar->menu() + index is the address
+/*  Class FLMenuItem, derived from NSMenuItem, associates any item of the macOS system menu
+    with a corresponding Fl_Menu_Item as follows:
+    - if the system item's tag is >= 0, fl_sys_menu_bar->menu() + tag is the address
     of the relevant Fl_Menu_Item;
-    Otherwise, the "item" field points to the relevant Fl_Menu_Item.
-    This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus, 
+    - otherwise, the system item's representedObject is the Fl_Menu_Item's address.
+    This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus,
     the address of which can be relocated by the FLTK menu logic.
-    The "item" field is used for non-relocatable Fl_Menu_Item's associated to FL_SUBMENU_POINTER.
-    Sending the getFlItem message to a MacOS system menu item (of class FLMenuItem) returns the address
+    The "representedObject" is used for non-relocatable Fl_Menu_Item's associated to FL_SUBMENU_POINTER.
+    Sending the getFlItem message to a macOS system menu item (of class FLMenuItem) returns the address
     of the relevant Fl_Menu_Item.
 */
-typedef struct {
-  union {
-    int index;
-    const Fl_Menu_Item *item;
-  };
-  BOOL use_index;
-} sys_menu_item;
 
 // Apple App Menu
 const char *Fl_Mac_App_Menu::about = "About %@";
-const char *Fl_Mac_App_Menu::print = "Print Front Window";
+const char *Fl_Mac_App_Menu::print = "Print Front Window & Titlebar";
+const char *Fl_Mac_App_Menu::print_no_titlebar = "Print Front Window";
+const char *Fl_Mac_App_Menu::toggle_print_titlebar = "Toggle printing of titlebar";
 const char *Fl_Mac_App_Menu::services = "Services";
 const char *Fl_Mac_App_Menu::hide = "Hide %@";
 const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
@@ -110,38 +104,38 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 - (const Fl_Menu_Item*) getFlItem
 // returns the Fl_Menu_Item corresponding to this system menu item
 {
-  sys_menu_item *smi = (sys_menu_item*)[(NSData*)[self representedObject] bytes];
-  if (smi->use_index) return fl_sys_menu_bar->menu() + smi->index;
-  return smi->item;
+  NSInteger tag = [self tag];
+  if (tag >= 0) return fl_sys_menu_bar->menu() + tag;
+  return *(const Fl_Menu_Item**)[(NSData*)[self representedObject] bytes];
 }
 - (void) itemCallback:(Fl_Menu_*)menu
 {
   const Fl_Menu_Item *item = [self getFlItem];
   menu->picked(item);
   Fl::flush();
-  if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
+  if ( item->flags & FL_MENU_TOGGLE ) { // update the menu toggle symbol
     [self setState:(item->value() ? NSOnState : NSOffState)];
   }
-  else if ( item->flags & FL_MENU_RADIO ) {	// update the menu radio symbols
-    NSMenu* menu = [self menu];
-    NSInteger flRank = [menu indexOfItem:self];
-    NSInteger last = [menu numberOfItems] - 1;
-    int from = flRank;
+  else if ( item->flags & FL_MENU_RADIO ) {     // update the menu radio symbols
+    NSMenu* this_menu = [self menu];
+    NSInteger flRank = [this_menu indexOfItem:self];
+    NSInteger last = [this_menu numberOfItems] - 1;
+    int from = (int)flRank;
     while(from > 0) {
-      if ([[menu itemAtIndex:from-1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:from-1] getFlItem];
+      if ([[this_menu itemAtIndex:from-1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[this_menu itemAtIndex:from-1] getFlItem];
       if ( !(item->flags & FL_MENU_RADIO) ) break;
       from--;
     }
-    int to = flRank;
+    int to = (int)flRank;
     while (to < last) {
-      if ([[menu itemAtIndex:to+1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:to+1] getFlItem];
+      if ([[this_menu itemAtIndex:to+1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[this_menu itemAtIndex:to+1] getFlItem];
       if (!(item->flags & FL_MENU_RADIO)) break;
       to++;
     }
     for(int i =  from; i <= to; i++) {
-      NSMenuItem *nsitem = [menu itemAtIndex:i];
+      NSMenuItem *nsitem = [this_menu itemAtIndex:i];
       [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
     }
   }
@@ -178,13 +172,41 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 {
   // Separate key and modifier
   int mod = key;
-  mod &= ~FL_KEY_MASK;	// modifier(s)
-  key &=  FL_KEY_MASK;	// key
+  mod &= ~FL_KEY_MASK;  // modifier(s)
+  key &=  FL_KEY_MASK;  // key
   unichar mac_key = (unichar)key;
   if ( (key >= (FL_F+1)) && (key <= FL_F_Last) ) { // Handle function keys
-    int fkey_num = (key - FL_F);	// 1,2..
+    int fkey_num = (key - FL_F);        // 1,2..
     mac_key = NSF1FunctionKey + fkey_num - 1;
-    }
+  } else if (key == FL_Escape) {
+    mac_key = 27;
+  } else if (key == FL_Tab) {
+    mac_key = NSTabCharacter;
+  } else if (key == FL_Enter) {
+    mac_key = 0x0d;
+  } else if (key == FL_BackSpace) {
+    mac_key = NSBackspaceCharacter;
+  } else if (key == FL_Delete) {
+    mac_key = NSDeleteCharacter;
+  } else if (key == FL_Up) {
+    mac_key = NSUpArrowFunctionKey;
+  } else if (key == FL_Down) {
+    mac_key = NSDownArrowFunctionKey;
+  } else if (key == FL_Left) {
+    mac_key = NSLeftArrowFunctionKey;
+  } else if (key == FL_Right) {
+    mac_key = NSRightArrowFunctionKey;
+  } else if (key == FL_Page_Up) {
+    mac_key = NSPageUpFunctionKey;
+  } else if (key == FL_Page_Down) {
+    mac_key = NSPageDownFunctionKey;
+  } else if (key == FL_KP_Enter) {
+    mac_key = 0x2324;  // "⌤" U+2324
+  } else if (key == FL_Home) {
+    mac_key = NSHomeFunctionKey;
+  } else if (key == FL_End) {
+    mac_key = NSEndFunctionKey;
+  }
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
 }
@@ -194,18 +216,19 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   NSString *title = NSLocalizedString([NSString stringWithUTF8String:name], nil);
   free(name);
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:title
-						action:selector
-					 keyEquivalent:@""];
-  sys_menu_item smi;
+                                                action:selector
+                                         keyEquivalent:@""];
   // >= 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
-  smi.index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
-  smi.use_index = (smi.index >= 0);
-  if (!smi.use_index) smi.item = mitem;
-  NSData *pointer = [NSData dataWithBytes:&smi length:sizeof(smi)];
-  [item setRepresentedObject:pointer];
+  NSInteger index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
+  [item setTag:index];
+  if (index < 0) {
+    NSData *pointer = [[NSData alloc] initWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
+    [item setRepresentedObject:pointer];
+    [pointer release];//pointer will dealloc each time item dealloc's
+  }
   [menu addItem:item];
   [item setTarget:item];
-  int retval = [menu indexOfItem:item];
+  int retval = (int)[menu indexOfItem:item];
   [item release];
   return retval;
 }
@@ -242,10 +265,9 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 #endif
 @end
 
- 
+
 void Fl_MacOS_Sys_Menu_Bar_Driver::about( Fl_Callback *cb, void *user_data)
 {
-  fl_open_display();
   Fl_Menu_Item aboutItem;
   memset(&aboutItem, 0, sizeof(Fl_Menu_Item));
   aboutItem.callback(cb);
@@ -253,9 +275,9 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::about( Fl_Callback *cb, void *user_data)
   NSMenu *appleMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
-  FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
-						 action:@selector(directCallback)
-					  keyEquivalent:@""] autorelease];
+  FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname
+                                                 action:@selector(directCallback)
+                                          keyEquivalent:@""] autorelease];
   NSData *pointer = [NSData dataWithBytes:&aboutItem length:sizeof(Fl_Menu_Item)];
   [item setRepresentedObject:pointer];
   [appleMenu insertItem:item atIndex:0];
@@ -268,7 +290,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::about( Fl_Callback *cb, void *user_data)
  */
 static void setMenuShortcut( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
 {
-  if ( !m->shortcut_ ) 
+  if ( !m->shortcut_ )
     return;
   if ( m->flags & FL_SUBMENU )
     return;
@@ -297,7 +319,7 @@ static void setMenuFlags( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
 
 static char *remove_ampersand(const char *s)
 {
-  char *ret = strdup(s);
+  char *ret = fl_strdup(s);
   const char *p = s;
   char *q = ret;
   while(*p != 0) {
@@ -323,7 +345,7 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
 {
   NSMenu *submenu;
   int miCnt, flags;
-  
+
   if (mitem) {
     NSMenuItem *menuItem;
     char *ts = remove_ampersand(mitem->text);
@@ -331,15 +353,15 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     free(ts);
     submenu = [[NSMenu alloc] initWithTitle:(NSString*)title];
     [submenu setAutoenablesItems:NO];
-    
+
     int cnt;
-    cnt = [mh numberOfItems];
+    cnt = (int)[mh numberOfItems];
     cnt--;
     menuItem = [mh itemAtIndex:cnt];
     [menuItem setSubmenu:submenu];
     [submenu release];
   } else submenu = mh;
-  
+
   while ( mm->text ) {
     if (!mm->visible() ) { // skip invisible items and submenus
       mm = mm->next(0);
@@ -369,7 +391,7 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     mm++;
   }
 }
- 
+
 
 /*
  * convert a complete Fl_Menu_Item array into a series of menus in the top menu bar
@@ -379,7 +401,7 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
 {
   NSMenu *fl_system_menu = [NSApp mainMenu];
   int count;//first, delete all existing system menus
-  count = [fl_system_menu numberOfItems];
+  count = (int)[fl_system_menu numberOfItems];
   for(int i = count - 1; i > 0; i--) {
     [fl_system_menu removeItem:[fl_system_menu itemAtIndex:i]];
   }
@@ -494,7 +516,7 @@ int Fl_MacOS_Sys_Menu_Bar_Driver::insert(int index, const char* label, int short
 
 /** \class Fl_Mac_App_Menu
  Mac OS-specific class allowing to customize and localize the application menu.
- 
+
  The public class attributes are used to build the application menu. They can be localized
  at run time to any UTF-8 text by placing instructions such as this before fl_open_display()
  gets called:
@@ -514,7 +536,7 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
   if ([[menu itemAtIndex:2] action] != @selector(printPanel)) { // the 'Print' item was removed
     [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
     to_index = 2;
-  } else to_index = 3; // after the "Print Front Window" item
+  } else to_index = 5; // after the "Print Front Window/Toggle" items and the separator
   NSInteger count = [menu numberOfItems];
   createSubMenu(menu, m, NULL, @selector(customCallback)); // add new items at end of application menu
   NSInteger count2 = [menu numberOfItems];
@@ -635,8 +657,9 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
     if (item->user_data() == win) {
       bool doit = item->value();
       remove(index);
-      if (doit) {
+      if (doit) { // select Fl::first_window() in Window menu
         item = (Fl_Menu_Item*)bar->menu() + find_first_window() + 1;
+        while (item->label() && item->user_data() != Fl::first_window()) item++;
         if (item->label()) {
           ((Fl_Window*)item->user_data())->show();
           setonly(item);
@@ -669,7 +692,3 @@ void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
 }
 
 #endif /* __APPLE__ */
-
-//
-// End of "$Id$".
-//

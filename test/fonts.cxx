@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -34,7 +32,7 @@ Fl_Tile *tile;
 Fl_Window *vector_font_editor = 0;
 
 class FontDisplay : public Fl_Widget {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   int font, size;
   FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char* L = 0) :
@@ -70,8 +68,8 @@ void font_cb(Fl_Widget *, long) {
     int j = 1;
     for (int i = 1; i<64 || i<s[n-1]; i++) {
       char buf[20];
-      if (j < n && i==s[j]) {sprintf(buf,"@b%d",i); j++;}
-      else sprintf(buf,"%d",i);
+      if (j < n && i==s[j]) {snprintf(buf, 20,"@b%d",i); j++;}
+      else snprintf(buf, 20,"%d",i);
       sizeobj->add(buf);
     }
     sizeobj->value(pickedsize);
@@ -81,7 +79,7 @@ void font_cb(Fl_Widget *, long) {
     for (int i = 0; i < n; i++) {
       if (s[i]<=pickedsize) w = i;
       char buf[20];
-      sprintf(buf,"@b%d",s[i]);
+      snprintf(buf, 20,"@b%d",s[i]);
       sizeobj->add(buf);
     }
     sizeobj->value(w+1);
@@ -111,7 +109,7 @@ class LetterBox : public Fl_Group
 public:
   LetterBox(int x, int y, int w, int h, const char *l)
   : Fl_Group(x, y, w, h, l) { }
-  void draw() {
+  void draw() FL_OVERRIDE {
     draw_box();
     fl_push_clip(x(), y(), w(), h());
     draw_label(x(), y()-5, w(), h()-16, FL_ALIGN_CENTER);
@@ -154,7 +152,7 @@ void add_point_cb(Fl_Widget *w, void *d)
 {
   unsigned char *fd = vec[current_char];
   while (*fd) fd++;
-  *fd = (fl_intptr_t)(d);
+  *fd = (fl_uchar)(d);
   w->parent()->redraw();
 }
 
@@ -267,12 +265,12 @@ Fl_Window *create_editor()
   return win;
 }
 
-class MainWindow : public Fl_Double_Window
+class Ut_Main_Window : public Fl_Double_Window
 {
 public:
-  MainWindow(int w, int h, const char *l=0)
+  Ut_Main_Window(int w, int h, const char *l=0)
   : Fl_Double_Window(w, h, l) { }
-  int handle(int event) {
+  int handle(int event) FL_OVERRIDE {
     if (event==FL_KEYBOARD && Fl::event_key()==FL_F+1) {
       if (!vector_font_editor) vector_font_editor = create_editor();
       vector_font_editor->show();
@@ -287,12 +285,12 @@ void create_the_forms() {
   // create the sample string
   int n = 0;
   strcpy(label, "Hello, world!\n");
-  int i = strlen(label);
+  int i = (int)strlen(label);
   ulong c;
   for (c = ' '+1; c < 127; c++) {
-    if (!(c&0x1f)) label[i++]='\n';
-    if (c=='@') label[i++]=c;
-    label[i++]=c;
+    if (!(c&0x1f)) label[i++] = '\n';
+    if (c == '@') label[i++] = '@';
+    label[i++] = (char)c;
   }
   label[i++] = '\n';
   for (c = 0xA1; c < 0x600; c += 9) {
@@ -302,7 +300,7 @@ void create_the_forms() {
   label[i] = 0;
 
   // create the basic layout
-  form = new MainWindow(550,370);
+  form = new Ut_Main_Window(550,370);
 
   tile = new Fl_Tile(0, 0, 550, 370);
 
@@ -356,7 +354,7 @@ int main(int argc, char **argv) {
       char *p = buffer;
       if (t & FL_BOLD) {*p++ = '@'; *p++ = 'b';}
       if (t & FL_ITALIC) {*p++ = '@'; *p++ = 'i';}
-	  *p++ = '@'; *p++ = '.'; // Suppress subsequent formatting - some MS fonts have '@' in their name
+          *p++ = '@'; *p++ = '.'; // Suppress subsequent formatting - some MS fonts have '@' in their name
       strcpy(p,name);
       name = buffer;
     }
@@ -377,7 +375,3 @@ int main(int argc, char **argv) {
   form->show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

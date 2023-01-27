@@ -1,0 +1,171 @@
+/**
+
+ \page coordinates Coordinates and Layout Widgets
+
+This chapter describes the coordinate systems that apply when
+positioning widgets manually, and some of the basics of FLTK
+layout widgets that are used to position widgets automatically.
+
+
+\section coordinates_coordinates The widget coordinate system
+
+All widgets have constructors with \p x and \p y parameters to
+let the programmer specify the desired initial position of the
+top left corner during explicit manual layout within Fl_Window
+and Fl_Group container widgets.
+
+This position is always relative to the enclosing Fl_Window,
+which is usually, but not always, the top-level application
+window, or a free-floating pop-up dialog window.
+In some cases it could also be a subwindow embedded in a
+higher-level window, as shown in the figure below.
+
+\image html  coordinates.png "FLTK coordinate system"
+\image latex coordinates.png "FLTK coordinate system" width=10cm
+
+The positions of the TL and BR sub-windows and the TR and BL
+groups are all relative to the top-left corner of the main window.
+The positions of the boxes inside the TR and BL groups are also
+relative to the main window, but the boxes inside the TL and BR
+sub-windows are positioned relative to the enclosing sub-window.
+
+In other words, the widget hierarchy and positions can be summarized as:
+<pre>
+    Fl_Window main window
+      Fl_Window TL subwindow     # x, y relative to main window
+        Fl_Box  tl box           # x, y relative to TL subwindow
+      Fl_Window BR subwindow     # x, y relative to main window
+        Fl_Box  br box           # x, y relative to BR subwindow
+      Fl_Group  TR group         # x, y relative to main window
+        Fl_Box  tr box           # x, y relative to main window
+      Fl_Group  BL group         # x, y relative to main window
+        Fl_Box  bl box           # x, y relative to main window
+</pre>
+
+
+\section coordinate_layout Layout and container widgets
+
+There are four main groups of widgets derived from Fl_Group for
+a range of different purposes.
+
+The first group are composite widgets that each contain a fixed
+set of components that work together for a specific purpose,
+rather than layout widgets as such, and are not discussed here.
+
+The second group are basically containers offering the same manual
+layout features as Fl_Group, as described above, but which add one
+new capability. These widgets are Fl_Scroll, Fl_Tabs and Fl_Wizard.
+
+The third group are layout managers that relocate and resize the
+child widgets added to them in order to satisfy a particular layout
+algorithm. These widgets are Fl_Pack and Fl_Tile.
+
+The final group consists of Fl_Window and its derivatives.
+Their special capability is that they can be top-level application
+windows and dialogs that interface with the operating system window
+manager, but can also be embedded within other windows and groups
+as shown in the example above.
+Note that the window manager may impose its own constraints on
+the position of top-level windows, and the \p x and \p y
+position parameters may be treated as hints, or even ignored.
+The Fl_Window class has an extra constructor that omits them.
+
+
+\subsection coordinates_pack The Fl_Pack layout widget
+
+The Fl_Pack widget allows the layout of its direct children as a
+single row, or column.
+If its type() is set to give the row or horizontal layout,
+the children are all resized to have the same height as the Fl_Pack
+and are moved next to each other.
+If set to give the column or vertical layout, the children are all
+resized to have the same width as the Fl_Pack and are then stacked
+below each other.
+The Fl_Pack then resizes itself to shrink-wrap itself around all
+of the children.
+
+Fl_Pack widgets are often used inside an Fl_Scroll, as shown in the
+diagram below, to avoid having to deal with tricky resize behavior
+when used with nested widgets.
+
+\image html  pack.png "Fl_Pack test program screenshot"
+\image latex pack.png "Fl_Pack test program screenshot" width=8cm
+
+
+\subsection coordinates_scroll The Fl_Scroll container widget
+
+The Fl_Scroll container widget can hold an assortment of widgets
+that may extend beyond its own width and height, in which case
+horizontal and/or vertical scrollbars may appear automatically
+so that you can scroll and view the entire contents.
+
+\image html  Fl_Scroll.png "Fl_Scroll container widget"
+\image latex Fl_Scroll.png "Fl_Scroll container widget" width=4cm
+
+
+\subsection coordinates_tabs The Fl_Tabs container widget
+
+The Fl_Tabs widget provides a front-to-back stack of individual
+panels which usually contain Fl_Group widgets and their children.
+The user can switch between panels by clicking on the small
+tabs that protrude from the panels. The appearance of each tab
+is determined by the child widget's label and related attributes.
+
+\image html  tabs.png "Fl_Tabs container widget"
+\image latex tabs.png "Fl_Tabs container widget" width=8cm
+
+
+\subsection coordinates_tile The Fl_Tile layout widget
+
+The Fl_Tile widget allows the user to resize one or more of its children
+by dragging on the border between adjacent child widgets.
+However, the programmer must first explicitly layout the child widgets
+so that their borders exactly fill the width and height of the Fl_Tile
+without having any gaps between them, or at the edges.
+Some care is needed when initially positioning the children and setting
+the resizable() widget within the Fl_Tile to prevent squeezing a child
+to have a zero width or height.
+For more information see the Fl_Tile widget manual page, and \ref resize.
+
+
+\image html  Fl_Tile.png "The Fl_Tile layout widget"
+\image latex Fl_Tile.png "The Fl_Tile layout widget" width=4cm
+
+
+\subsection coordinates_wizard The Fl_Wizard container widget
+
+The Fl_Wizard widget derives from the Fl_Tabs class, but instead
+of having tabs that the user can click to select the corresponding
+panel, the programmer uses the prev(), next() or value() methods
+to show the appropriate panel.
+For example, the user might be able to click on "Next" and "Prev"
+navigation buttons or keys, as shown below.
+
+\image html  wizard.png "FL_Wizard container widget"
+\image latex wizard.png "FL_Wizard container widget" width=4cm
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="common.html">
+    [Prev]
+    Common Widgets and Attributes
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="resize.html">
+    How Does Resizing Work?
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

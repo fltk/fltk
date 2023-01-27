@@ -1,72 +1,21 @@
-//Microsoft Developer Studio generated resource script.
 //
-#include "sudokurc.h"
-
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
+// Resource script for Sudoku game using the Fast Light Tool Kit (FLTK).
 //
-// Generated from the TEXTINCLUDE 2 resource.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
-//#include "afxres.h"
-
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
-
-/////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-//LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
 //
-// TEXTINCLUDE
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
 //
 
-1 TEXTINCLUDE DISCARDABLE
-BEGIN
-    "icons.h\0"
-END
-
-3 TEXTINCLUDE DISCARDABLE
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-2 TEXTINCLUDE DISCARDABLE
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
 //
-// Icon
+// Icon for executable
 //
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON                ICON    DISCARDABLE     "sudoku.ico"
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
-
+IDI_ICON ICON DISCARDABLE "sudoku.ico"

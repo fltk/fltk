@@ -1,23 +1,19 @@
 //
-// "$Id$"
+// Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
-
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-//
-// Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
 // Continuously display FLTK's event state.
 //
@@ -35,9 +31,7 @@
 //
 
 #include "keyboard_ui.h"
-
 #include <string.h>
-
 
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
@@ -50,8 +44,7 @@ int handle(int e) {
 }
 
 int MyWindow::handle(int msg) {
-  if (msg==FL_MOUSEWHEEL)
-  {
+  if (msg==FL_MOUSEWHEEL) {
     roller_x->value( roller_x->value() + Fl::e_dx * roller_x->step() );
     roller_y->value( roller_y->value() + Fl::e_dy * roller_y->step() );
     return 1;
@@ -99,23 +92,23 @@ int main(int argc, char** argv) {
   window->show(argc,argv);
   while (Fl::wait()) {
     const char *str;
-    
+
     // update all the buttons with the current key and shift state:
-    for (int i = 0; i < window->children(); i++) {
-      Fl_Widget* b = window->child(i);
+    for (int c = 0; c < window->children(); c++) {
+      Fl_Widget* b = window->child(c);
       if (b->callback() == (Fl_Callback*)key_cb) {
-	int i = b->argument();
-	if (!i) i = b->label()[0];
+        int i = b->argument();
+        if (!i) i = b->label()[0];
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_key(i);
         if (btn->value()!=state)
-	  btn->value(state);
+          btn->value(state);
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
-	int i = b->argument();
+        int i = b->argument();
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_state(i);
         if (btn->value()!=state)
-	  btn->value(state);
+          btn->value(state);
       }
     }
 
@@ -125,18 +118,23 @@ int main(int argc, char** argv) {
     int k = Fl::event_key();
     if (!k)
       keyname = "0";
-    else if (k < 256) {
-      sprintf(buffer, "'%c'", k);
+    else if (k < 128) { // ASCII
+      snprintf(buffer, sizeof(buffer), "'%c'", k);
+    } else if (k >= 0xa0 && k <= 0xff) { // ISO-8859-1 (international keyboards)
+      char key[8];
+      int kl = fl_utf8encode((unsigned)k, key);
+      key[kl] = '\0';
+      snprintf(buffer, sizeof(buffer), "'%s'", key);
     } else if (k > FL_F && k <= FL_F_Last) {
-      sprintf(buffer, "FL_F+%d", k - FL_F);
+      snprintf(buffer, sizeof(buffer), "FL_F+%d", k - FL_F);
     } else if (k >= FL_KP && k <= FL_KP_Last) {
-      sprintf(buffer, "FL_KP+'%c'", k-FL_KP);
+      snprintf(buffer, sizeof(buffer), "FL_KP+'%c'", k-FL_KP);
     } else if (k >= FL_Button && k <= FL_Button+7) {
-      sprintf(buffer, "FL_Button+%d", k-FL_Button);
+      snprintf(buffer, sizeof(buffer), "FL_Button+%d", k-FL_Button);
     } else {
-      sprintf(buffer, "0x%04x", k);
+      snprintf(buffer, sizeof(buffer), "0x%04x", k);
       for (int i = 0; i < int(sizeof(table)/sizeof(*table)); i++)
-	if (table[i].n == k) {keyname = table[i].text; break;}
+        if (table[i].n == k) {keyname = table[i].text; break;}
     }
     if (strcmp(key_output->value(), keyname))
       key_output->value(keyname);
@@ -147,7 +145,3 @@ int main(int argc, char** argv) {
   }
   return 0;
 }
-
-//
-// End of "$Id$".
-//

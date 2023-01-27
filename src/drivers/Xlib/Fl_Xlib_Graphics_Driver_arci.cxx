@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -26,19 +24,18 @@
   \brief Utility functions for drawing circles using integers
 */
 
-void Fl_Xlib_Graphics_Driver::arc_unscaled(float x,float y,float w,float h,double a1,double a2) {
+void Fl_Xlib_Graphics_Driver::arc_unscaled(int x, int y, int w, int h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
-  XDrawArc(fl_display, fl_window, gc_, int(x+offset_x_*scale()), int(y+offset_y_*scale()), int(w-1), int(h-1), int(a1*64),int((a2-a1)*64));
+  x += floor(offset_x_);
+  y += floor(offset_y_);
+  XDrawArc(fl_display, fl_window, gc_, x, y, w, h, int(a1*64),int((a2-a1)*64));
 }
 
-void Fl_Xlib_Graphics_Driver::pie_unscaled(float x,float y,float w,float h,double a1,double a2) {
-  if (w <= 0 || h <= 0) return;
-  x += offset_x_*scale();
-  y += offset_y_*scale();
-  XDrawArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
-  XFillArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
+void Fl_Xlib_Graphics_Driver::pie_unscaled(int x, int y, int w, int h, double a1,double a2) {
+  if (w <= 2 || h <= 2) return;
+  x += floor(offset_x_);
+  y += floor(offset_y_);
+  int extra = scale() >= 3 ? 1 : 0;
+  XDrawArc(fl_display, fl_window, gc_, x+1+extra, y+1+extra, w-2-2*extra, h-2-2*extra, int(a1*64), int((a2-a1)*64));
+  XFillArc(fl_display, fl_window, gc_, x+1, y+1, w-2, h-2, int(a1*64), int((a2-a1)*64));
 }
-
-//
-// End of "$Id$".
-//

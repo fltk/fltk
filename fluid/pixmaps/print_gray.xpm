@@ -1,5 +1,5 @@
 /* XPM */
-static char * print_gray_xpm[] = {
+static char * const print_gray_xpm[] = {
 "24 24 17 1",
 " 	c None",
 ".	c #E3E3E3",

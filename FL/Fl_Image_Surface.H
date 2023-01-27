@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Image_Surface_H
@@ -25,17 +23,17 @@
 #include <FL/platform_types.h> // for Fl_Offscreen
 
 
-/** 
+/**
  \brief Directs all graphics requests to an Fl_Image.
- 
+
  After creation of an Fl_Image_Surface object, make it the current drawing
  surface calling Fl_Surface_Device::push_current(), and all
- subsequent graphics requests will be recorded in the image. It's possible to 
- draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
+ subsequent graphics requests will be recorded in the image. It's possible to
+ draw widgets (using Fl_Image_Surface::draw()) or to use any of the
  \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
  to obtain a newly allocated Fl_RGB_Image object.
- Fl_GL_Window objects can be drawn in the image as well.
- 
+ Fl_Gl_Window objects can be drawn in the image as well.
+
  Usage example:
  \code
  // this is the widget that you want to draw into an image
@@ -43,12 +41,12 @@
 
  // create an Fl_Image_Surface object
  Fl_Image_Surface *image_surface = new Fl_Image_Surface(g->w(), g->h());
- 
+
  // direct all further graphics requests to the image
  Fl_Surface_Device::push_current(image_surface);
 
  // draw a white background
- fl_color(FL_WHITE); 
+ fl_color(FL_WHITE);
  fl_rectf(0, 0, g->w(), g->h());
 
  // draw the g widget in the image
@@ -59,7 +57,7 @@
 
  // direct graphics requests back to their previous destination
  Fl_Surface_Device::pop_current();
- 
+
  // delete the image_surface object, but not the image itself
  delete image_surface;
  \endcode
@@ -70,17 +68,18 @@ private:
   class Fl_Image_Surface_Driver *platform_surface;
   Fl_Offscreen get_offscreen_before_delete_();
 protected:
-  void translate(int x, int y);
-  void untranslate();
+  void translate(int x, int y) FL_OVERRIDE;
+  void untranslate() FL_OVERRIDE;
 public:
   Fl_Image_Surface(int w, int h, int high_res = 0, Fl_Offscreen off = 0);
   ~Fl_Image_Surface();
-  void set_current();
+  void set_current() FL_OVERRIDE;
+  bool is_current() FL_OVERRIDE;
   Fl_RGB_Image *image();
   Fl_Shared_Image *highres_image();
-  void origin(int *x, int *y);
-  void origin(int x, int y);
-  int printable_rect(int *w, int *h);
+  void origin(int *x, int *y) FL_OVERRIDE;
+  void origin(int x, int y) FL_OVERRIDE;
+  int printable_rect(int *w, int *h) FL_OVERRIDE;
   Fl_Offscreen offscreen();
   void rescale();
 };
@@ -99,18 +98,20 @@ public:
  */
 class Fl_Image_Surface_Driver : public Fl_Widget_Surface {
   friend class Fl_Image_Surface;
+private:
+  Fl_Image_Surface *image_surface_;
 protected:
   int width;
   int height;
   Fl_Offscreen offscreen;
   int external_offscreen;
-  Fl_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
+  Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
   virtual ~Fl_Image_Surface_Driver() {}
-  virtual void set_current() {}
-  virtual void translate(int x, int y) {}
-  virtual void untranslate() {}
-  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
-  virtual Fl_RGB_Image *image() {return NULL;}
+  void set_current() FL_OVERRIDE = 0;
+  void translate(int x, int y) FL_OVERRIDE = 0;
+  void untranslate() FL_OVERRIDE = 0;
+  int printable_rect(int *w, int *h) FL_OVERRIDE;
+  virtual Fl_RGB_Image *image() = 0;
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Image_Surface_Driver for the plaform.
@@ -124,7 +125,3 @@ protected:
  */
 
 #endif // Fl_Image_Surface_H
-
-//
-// End of "$Id$".
-//

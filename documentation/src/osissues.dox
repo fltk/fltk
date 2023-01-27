@@ -1,12 +1,13 @@
 /**
 
- \page	osissues	Operating System Issues
+ \page  osissues        Operating System Issues
 
 This appendix describes the operating system specific interfaces in FLTK:
 \li \ref osissues_accessing
 \li \ref osissues_unix
 \li \ref osissues_win32
 \li \ref osissues_macos
+\li \ref osissues_wayland
 
 \section osissues_accessing Accessing the OS Interfaces
 
@@ -21,24 +22,24 @@ This header file will define the appropriate interface for your environment.
 The pages that follow describe the functionality that is provided for each
 operating system.
 
-\note	These definitions used to be in FL/x.H up to FLTK 1.3.x. Usage of
-	FL/x.H is deprecated since FLTK 1.4.0. You should replace all references
-	of FL/x.H with FL/platform.H if your target is FLTK 1.4 or later.
-	FL/x.H will be retained for backwards compatibility for some
-	releases but will be removed in a later (not yet specified)
-	FLTK release.
+\note   These definitions used to be in FL/x.H up to FLTK 1.3.x. Usage of
+        FL/x.H is deprecated since FLTK 1.4.0. You should replace all references
+        of FL/x.H with FL/platform.H if your target is FLTK 1.4 or later.
+        FL/x.H will be retained for backwards compatibility for some
+        releases but will be removed in a later (not yet specified)
+        FLTK release.
 
 <CENTER>
 <TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>WARNING:</B>
+        <TD><B>WARNING:</B>
 
-	The interfaces provided by this header file may
-	change radically in new FLTK releases. Use them only
-	when an existing generic FLTK interface is not
-	sufficient.
+        The interfaces provided by this header file may
+        change radically in new FLTK releases. Use them only
+        when an existing generic FLTK interface is not
+        sufficient.
 
-	</TD>
+        </TD>
 </TR>
 </TABLE>
 </CENTER>
@@ -87,6 +88,8 @@ Window fl_xid(const Fl_Window *)
 
 \par
 Returns the XID for a window, or zero if not \c shown().
+\deprecated Kept for compatibility with FLTK versions before 1.4.
+Use preferentially fl_x11_xid(const Fl_Window *) with versions 1.4 and above.
 
 Fl_Window *fl_find(ulong xid)
 
@@ -95,6 +98,8 @@ Returns the Fl_Window that corresponds to the given
 XID, or \c NULL if not found. This function uses a cache
 so it is slightly faster than iterating through the windows
 yourself.
+\deprecated Kept for compatibility with FLTK versions before 1.4.
+Use preferentially fl_x11_find(Window) with versions 1.4 and above.
 
 int fl_handle(const XEvent &)
 
@@ -123,9 +128,11 @@ The following global variables are set before
 Fl_Widget::draw() is called, or by Fl_Window::make_current():
 
 \code
-extern Display *fl_display;
+extern Display *fl_display; // for compatibility with previous FLTK versions
+extern Display *fl_x11_display(); // preferred access starting with FLTK 1.4
 extern Window fl_window;
-extern GC fl_gc;
+extern GC fl_gc; // for compatibility with previous FLTK versions
+extern GC fl_x11_gc(); // preferred access starting with FLTK 1.4
 extern int fl_screen;
 extern XVisualInfo *fl_visual;
 extern Colormap fl_colormap;
@@ -157,17 +164,17 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 Convert a name into the red, green, and blue values of a color
 by parsing the X11 color names. On other systems, \c fl_parse_color()
 can only convert names in hexadecimal encoding, for example <tt>\#ff8083</tt>.
- 
+
 extern XFontStruct *fl_xfont
 
 \par
 Points to the font selected by the most recent
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 This is not necessarily the current font of \c fl_gc,
 which is not set until
-\ref ssect_Text "fl_draw()"
+\ref drawing_text "fl_draw()"
 is called. If FLTK was compiled with Xft support, \c fl_xfont
-will usually be 0 and \c fl_xftfont will contain a pointer 
+will usually be 0 and \c fl_xftfont will contain a pointer
 to the \c XftFont structure instead.
 
 extern void *fl_xftfont
@@ -175,8 +182,8 @@ extern void *fl_xftfont
 \par
 If FLTK was compiled with Xft support enabled, \c fl_xftfont
 points to the xft font selected by the most recent
-\ref ssect_Fonts "fl_font()".
-Otherwise it will be 0. \c fl_xftfont should be cast to 
+\ref drawing_fonts "fl_font()".
+Otherwise it will be 0. \c fl_xftfont should be cast to
 <tt>XftFont*</tt>.
 
 \subsection osissues_xvisual Changing the Display, Screen, or X Visual
@@ -283,7 +290,7 @@ An example:
 \code
 void MyWindow::show() {
   if (shown()) {Fl_Window::show(); return;}  // you must do this!
-  fl_open_display();	// necessary if this is first window
+  fl_open_display();    // necessary if this is first window
   // we only calculate the necessary visual colormap once:
   static XVisualInfo *visual;
   static Colormap colormap;
@@ -324,7 +331,7 @@ in here.
 
 \par
 The X region that is a combination of all \c damage()
-calls done so far is in <tt>Fl_X::i(this)->region</tt>. If
+calls done so far is in <tt>Fl_X::flx(this)->region</tt>. If
 \c NULL then you should redraw the entire window. The
 undocumented function \c fl_clip_region(XRegion) will
 initialize the FLTK clip stack with a region or \c NULL
@@ -341,12 +348,15 @@ undamaged image (such as a backing buffer) around.
 Here is a sample where an undamaged image is kept somewhere:
 \code
 void MyWindow::flush() {
-  fl_clip_region(Fl_X::i(this)->region);
-  Fl_X::i(this)->region = 0;
+  fl_clip_region(Fl_X::flx(this)->region);
+  Fl_X::flx(this)->region = 0;
   if (damage() != 2) {... draw things into backing store ...}
   ... copy backing store to window ...
 }
 \endcode
+
+\note For compatibility with FLTK versions before 1.4, member function
+\c Fl_X::flx(Fl_Window*) can also be written \c Fl_X::i(Fl_Window*).
 
 virtual void Fl_Window::hide()
 
@@ -383,12 +393,14 @@ before compilation.
 
 \subsection osissues_x_icon Setting the Icon of a Window
 
-FLTK currently supports setting a window's icon \b before it
-is shown using the Fl_Window::icon() method.
+FLTK recommends to set window icons using these platform-independent methods:
+Fl_Window::icon(const Fl_RGB_Image *) and Fl_Window::icons(const Fl_RGB_Image *[], int).
+See also methods setting default window icons Fl_Window::default_icon(const Fl_RGB_Image *)
+and Fl_Window::default_icons(const Fl_RGB_Image *[], int).
 
-void Fl_Window::icon(const void *)
-
-\par
+FLTK on X11 also supports, for backward compatibility, use of the deprecated method
+Fl_Window::icon(const void *) as follows :
+<br>
 Sets the icon for the window to the passed pointer. You will
 need to cast the icon \c Pixmap to a \c char* when
 calling this method. To set a monochrome icon using a bitmap compiled
@@ -404,7 +416,6 @@ Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
 window->icon((const void*)p);
 \endcode
 
-\par
 To use a multi-colored icon, the XPM format and library
 should be used as follows:
 \code
@@ -421,23 +432,24 @@ XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
 window->icon((const void *)p);
 \endcode
 
-\par
 When using the Xpm library, be sure to include it in the list
 of libraries that are used to link the application (usually "-lXpm").
 
 <CENTER>
 <TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>NOTE:</B>
-	
-	You must call Fl_Window::show(int argc, char** argv)
-	for the icon to be used. The Fl_Window::show() method
-	does not bind the icon to the window.
+        <TD><B>NOTE:</B>
 
-	</TD>
+        You must call Fl_Window::show(int argc, char** argv)
+        for the icon to be used. The Fl_Window::show() method
+        does not bind the icon to the window.
+
+        </TD>
 </TR>
 </TABLE>
 </CENTER>
+
+Any window icon must be set with the above methods before the window is shown.
 
 \subsection osissues_xresources X Resources
 
@@ -446,33 +458,39 @@ Fl_Window::show(int argc, char** argv)
 method is called, FLTK looks for the following X resources:
 
 \li \c background - The default background color
-	for widgets (color).
+        for widgets (color).
 
 \li \c dndTextOps - The default setting for
-	drag and drop text operations (boolean).
+        drag and drop text operations (boolean).
 
 \li \c foreground - The default foreground (label)
-	color for widgets (color).
+        color for widgets (color).
 
 \li \c scheme - The default scheme to use (string).
 
 \li \c selectBackground - The default selection
-	color for menus, etc. (color).
+        color for menus, etc. (color).
 
 \li <tt>Text.background</tt> - The default background
-	color for text fields (color).
+        color for text fields (color).
 
 \li \c tooltips - The default setting for
-	tooltips (boolean).
+        tooltips (boolean).
 
 \li \c visibleFocus - The default setting for
-	visible keyboard focus on non-text widgets (boolean).
+        visible keyboard focus on non-text widgets (boolean).
 
 Resources associated with the first window's Fl_Window::xclass()
 string are queried first, or if no class has been specified then
 the class "fltk" is used (e.g. <tt>fltk.background</tt>). If no
 match is found, a global search is done (e.g.
 <tt>*background</tt>).
+
+\subsection osissues_x_scaling Display Scaling Factor
+
+FLTK uses the value of the Xft.dpi resource divided by 96.
+to initialize the display scaling factor. That is also
+what is done by the gnome and KDE desktops.
 
 \section osissues_win32 The Windows Interface
 
@@ -482,7 +500,7 @@ state information and data structures.
 \subsection non_ascii_filenames Using filenames with non-ASCII characters
 
 In FLTK, all strings, including filenames, are UTF-8 encoded. The utility functions
-fl_fopen() and fl_open() allow to open files potentially having non-ASCII names in a 
+fl_fopen() and fl_open() allow to open files potentially having non-ASCII names in a
 cross-platform fashion, whereas the standard fopen()/open() functions fail to do so.
 
 \subsection osissues_wm_quit Responding to WM_QUIT
@@ -552,9 +570,11 @@ called, FLTK stores all the extra arguments you need to
 make a proper GDI call in some global variables:
 
 \code
-extern HINSTANCE fl_display;
+extern HINSTANCE fl_display; // for compatibility with previous FLTK versions
+extern HINSTANCE fl_win32_display(); // preferred access starting with FLTK 1.4
 extern HWND fl_window;
-extern HDC fl_gc;
+extern HDC fl_gc;  // for compatibility with previous FLTK versions
+extern HDC fl_win32_gc(); // preferred access starting with FLTK 1.4
 COLORREF fl_RGB();
 HPEN fl_pen();
 HBRUSH fl_brush();
@@ -577,15 +597,35 @@ DrawSomething(fl_gc, ..., fl_brush());
 It may also be useful to refer to Fl_Window::current()
 to get the window's size or position.
 
+\subsection osissues_windows_highdpi HighDPI support
+FLTK apps for the Windows platform are by default "Per-monitor DPI-aware V2".
+This means that any window automatically adjusts its physical size
+in relation to the scaling factor of the display where it maps.
+This also means that all drawings (e.g., text, lines, images)
+take advantage of the full resolution of the display in use.
+FLTK apps may also use the manifest mechanism
+to declare their level of DPI awareness. The FLTK library
+adapts to the DPI awareness level set in the app's manifest, which can be lower
+than the default level if the manifest sets it so.
+
+\subsection osissues_windows_scaling Display Scaling Factor
+
+FLTK uses the value given by function GetDpiForMonitor() divided by 96.
+to initialize the scaling factor of each display in the system.
+This matches the value of
+"Change the size of text, apps and other items" found in section
+"System" subsection "Display" of Windows settings.
+
 \subsection osissues_icon_windows Setting the Icon of a Window
 
-FLTK currently supports setting a window's icon *before* it
-is shown using the Fl_Window::icon() method.
+FLTK recommends to set window icons using these platform-independent methods:
+Fl_Window::icon(const Fl_RGB_Image *) and Fl_Window::icons(const Fl_RGB_Image *[], int).
+See also methods setting default window icons Fl_Window::default_icon(const Fl_RGB_Image *)
+and Fl_Window::default_icons(const Fl_RGB_Image *[], int).
 
-void Fl_Window::icon(const void *)
-
-\par
-Sets the icon for the window to the passed pointer. You will
+FLTK on Windows also supports, for backward compatibility, use of the deprecated method
+Fl_Window::icon(const void *) as follows :
+<br>Set the icon for the window to the passed pointer. You will
 need to cast the \c HICON handle to a \c char* when
 calling this method. To set the icon using an icon resource
 compiled with your application use:
@@ -593,7 +633,6 @@ compiled with your application use:
 window->icon((const void *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 \endcode
 
-\par
 You can also use the \c LoadImage() and related
 functions to load specific resolutions or create the icon from
 bitmap data.
@@ -601,16 +640,18 @@ bitmap data.
 <CENTER>
 <TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>NOTE:</B>
-	
-	You must call Fl_Window::show(int argc, char** argv)
-	for the icon to be used. The Fl_Window::show() method
-	does not bind the icon to the window.
+        <TD><B>NOTE:</B>
 
-	</TD>
+        You must call Fl_Window::show(int argc, char** argv)
+        for the icon to be used. The Fl_Window::show() method
+        does not bind the icon to the window.
+
+        </TD>
 </TR>
 </TABLE>
 </CENTER>
+
+Any window icon must be set with the above methods before the window is shown.
 
 \subsection osissues_msdos_console How to Not Get a MSDOS Console Window
 
@@ -642,32 +683,32 @@ them in the foreground.
 The following is a list of known bugs and problems in the Windows
 version of FLTK:
 
-\li	If a program is deactivated, <tt>Fl::wait()</tt>
-	does not return until it is activated again, even though
-	many events are delivered to the program. This can cause
-	idle background processes to stop unexpectedly. This
-	also happens while the user is dragging or resizing
-	windows or otherwise holding the mouse down. We were
-	forced to remove most of the efficiency FLTK uses for
-	redrawing in order to get windows to update while being
-	moved. This is a design error in Windows and probably
-	impossible to get around.
+\li     If a program is deactivated, <tt>Fl::wait()</tt>
+        does not return until it is activated again, even though
+        many events are delivered to the program. This can cause
+        idle background processes to stop unexpectedly. This
+        also happens while the user is dragging or resizing
+        windows or otherwise holding the mouse down. We were
+        forced to remove most of the efficiency FLTK uses for
+        redrawing in order to get windows to update while being
+        moved. This is a design error in Windows and probably
+        impossible to get around.
 
-\li	<tt>Fl_Gl_Window::can_do_overlay()</tt> returns true
-	until the first time it attempts to draw an overlay, and
-	then correctly returns whether or not there is overlay
-	hardware.
+\li     <tt>Fl_Gl_Window::can_do_overlay()</tt> returns true
+        until the first time it attempts to draw an overlay, and
+        then correctly returns whether or not there is overlay
+        hardware.
 
-\li	<tt>SetCapture</tt> (used by <tt>Fl::grab()</tt>)
-	doesn't work, and the main window title bar turns gray
-	while menus are popped up.
+\li     <tt>SetCapture</tt> (used by <tt>Fl::grab()</tt>)
+        doesn't work, and the main window title bar turns gray
+        while menus are popped up.
 
-\li	Compilation with <tt>gcc 3.4.4</tt> and <tt>-Os</tt> exposes an
-	optimisation bug in gcc. The symptom is that when drawing
-	filled circles only the perimeter is drawn. This can for instance
-	be seen in the symbols demo. Other optimisation options such
-	as -O2 and -O3 seem to work OK. More details can be found
-	in STR#1656
+\li     Compilation with <tt>gcc 3.4.4</tt> and <tt>-Os</tt> exposes an
+        optimisation bug in gcc. The symptom is that when drawing
+        filled circles only the perimeter is drawn. This can for instance
+        be seen in the symbols demo. Other optimisation options such
+        as -O2 and -O3 seem to work OK. More details can be found
+        in STR#1656
 
 \section osissues_macos The Apple OS X Interface
 
@@ -693,8 +734,8 @@ Right Click simulation with Ctrl Click
 The Apple HIG guidelines indicate applications should support
 'Ctrl Click' to simulate 'Right Click' for e.g. context menus,
 so users with one-button mice and one-click trackpads can still
-access right-click features. However, paraphrasing 
-<A HREF="http://www.fltk.org/newsgroups.php?gfltk.coredev+v:14725">
+access right-click features. However, paraphrasing
+<A HREF="https://www.fltk.org/newsgroups.php?gfltk.coredev+v:14725">
 Manolo's comment on the fltk.coredev newsgroup</A>:
 \par
 <UL><LI>
@@ -711,24 +752,24 @@ showing an example of how to do this:
 \code
     case FL_PUSH:
     {
-	int btn = Fl::event_button();
+        int btn = Fl::event_button();
 #ifdef __APPLE__
-	int ev_state = Fl::event_state();
+        int ev_state = Fl::event_state();
 #endif
-	//
-	// Context menu can be called up in one of two ways: -
-	//     1 - right click, as normally used on Windows and Linux
-	//     2 - Ctrl + left click, as sometimes used on Mac
-	//
+        //
+        // Context menu can be called up in one of two ways: -
+        //     1 - right click, as normally used on Windows and Linux
+        //     2 - Ctrl + left click, as sometimes used on Mac
+        //
 #ifdef __APPLE__
-	// On apple, check right click, and ctrl+left click
-	if ((btn == FL_RIGHT_MOUSE) || (ev_state == (FL_CTRL | FL_BUTTON1)))
+        // On apple, check right click, and ctrl+left click
+        if ((btn == FL_RIGHT_MOUSE) || (ev_state == (FL_CTRL | FL_BUTTON1)))
 #else
-	// On other platforms, only check right click as ctrl+left is used for selections
-	if (btn == FL_RIGHT_MOUSE)
+        // On other platforms, only check right click as ctrl+left is used for selections
+        if (btn == FL_RIGHT_MOUSE)
 #endif
-	{
-	    // Did we right click on the object?..
+        {
+            // Did we right click on the object?..
 \endcode
 \par
 There is a thread about this subject on fltk.coredev (Aug 1-14, 2014)
@@ -739,7 +780,7 @@ Apple "Quit" Event
 \par
 When the user presses Cmd-Q or requests a termination of the
 application, FLTK sends an \c FL_CLOSE event to all open
-windows. If any window remains open, the termination request aborts. 
+windows. If any window remains open, the termination request aborts.
 If all windows close, the application's event loop terminates,
 that is, Fl::run() returns.  The application can then follow
 FLTK's normal termination path executing cleanup code that may be programmed
@@ -775,7 +816,7 @@ Fl_Window *fl_find(Window xid)
 Returns the Fl_Window that corresponds to the given window reference,
 or \c NULL if not found.
 
-void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
+void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
 
 \par
 Attaches the callback \c cb to the "About myprog" item of the system application menu.
@@ -802,14 +843,14 @@ it is necessary to use the iconutil command-line utility.
 <key>CFBundleIconFile</key>
 <string>foo.icns</string>
 \endverbatim
-replacing <tt>foo</tt> by your application name. If you use Xcode, just add your .icns file to your 
+replacing <tt>foo</tt> by your application name. If you use Xcode, just add your .icns file to your
 application target.
 
 
 
 \subsection osissues_quartz Drawing Things Using Quartz
 All code inside Fl_Widget::draw()
-is expected to call Quartz drawing functions. The Quartz coordinate system 
+is expected to call Quartz drawing functions. The Quartz coordinate system
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
 left corner of the enclosing Fl_Window. The global variable
@@ -820,9 +861,9 @@ Include FL/platform.H to declare the \c fl_gc variable.
 All FLTK programs contain an application menu with, e.g., the About xxx, Hide xxx, and Quit xxx items.
 This menu can be internationalized/localized by any of two means.
 \li using the Fl_Mac_App_Menu class.
-\li using the standard Mac OS X localization procedure. Create a language-specific .lproj directory 
-(e.g., <tt>German.lproj</tt>) in the Resources subdirectory of the application bundle. 
-Create therein a <tt>Localizable.strings</tt> file that translates all menu items to this language. 
+\li using the standard Mac OS X localization procedure. Create a language-specific .lproj directory
+(e.g., <tt>German.lproj</tt>) in the Resources subdirectory of the application bundle.
+Create therein a <tt>Localizable.strings</tt> file that translates all menu items to this language.
 The German <tt>Localizable.strings</tt> file, for example, contains:
 \verbatim
 "About %@" = "Über %@";
@@ -840,9 +881,9 @@ and put <tt>CFBundleName = "localized name";</tt> in each such file.
 \subsection osissues_retina OpenGL and 'retina' displays
 It is possible to have OpenGL produce graphics at the high pixel resolution allowed by the so-called 'retina' displays
 present on recent Apple hardware.
-For this, call 
+For this, call
 \verbatim
-Fl::use_high_res_GL(1); 
+Fl::use_high_res_GL(1);
 \endverbatim
 before any Fl_Gl_Window is shown. Also, adapt your Fl_Gl_Window::draw() and Fl_Gl_Window::draw_overlay() methods replacing
 \verbatim
@@ -857,7 +898,8 @@ the GL scene in pixels: if the Fl_Gl_Window is mapped on a retina display, these
 reported by Fl_Widget::w() and Fl_Widget::h(); if it's mapped on a regular display, they return the same values
 as w() and h(). These methods dynamically change their values if the window is moved into/out from a retina
 display. If Fl::use_high_res_GL(1) is not called, all Fl_Gl_Window 's are drawn at low resolution.
-These methods are synonyms of w() and h() on non-Mac OS X platforms, so the source code remains cross-platform.
+These methods are useful on all platforms because Fl_Gl_Window::w() and Fl_Gl_Window::h() don't return,
+on HighDPI displays, the quantitites in pixels necessary to OpenGL functions .
 
 The Fl_Gl_Window::pixels_per_unit() method is useful when the OpenGL code depends on the pixel dimension
 of the GL scene. This occurs, e.g., if a window's handle() method uses Fl::event_x() and Fl::event_y()
@@ -894,13 +936,108 @@ fluid".
 
 It is advisable to use the Finder for moving and copying and
 Mac archiving tools like Sit for distribution as they will
-handle the Resource Fork correctly. 
+handle the Resource Fork correctly.
 
 \par Mac File Paths
 
 FLTK uses UTF-8-encoded UNIX-style filenames and paths.
 
-\sa  group_macosx 
+\sa  group_macosx
+
+\section osissues_wayland The Wayland Interface
+
+See file README.Wayland.txt for details about how to organize platform-specific
+source code for the Wayland platform.
+
+extern struct wl_display *fl_wl_display();
+\par
+After fl_open_display() has run, function \c fl_wl_display() returns a pointer to the
+struct wl_display representing the connection between the application and Wayland.
+For example, \c wl_display_get_fd(fl_wl_display()) gives the file descriptor one can
+use to communicate with the Wayland compositor according to the Wayland protocol.
+
+struct wld_window *fl_wl_xid(const Fl_Window *)
+\par
+Returns a pointer to an <u>FLTK-defined</u> structure holding Wayland-related
+data created when a window gets show()'n, or NULL if not show()'n.
+
+Fl_Window *fl_wl_find(struct wld_window * wld_win)
+\par
+Returns the Fl_Window that corresponds to the given Window, or NULL if not found.
+
+struct wl_surface *fl_wl_surface(struct wld_window *wld_win)
+\par
+Returns a pointer to the struct wl_surface corresponding to a show()'n
+top-level window or subwindow.
+
+cairo_t *fl_wl_cairo(void)
+\par
+Drawing natively to a Wayland window : Within an overridden Fl_Widget::draw() method,
+or after a call to Fl_Window::make_current(), it's possible to draw
+<u>using the Cairo library</u>. Function \c fl_wl_cairo() returns the adequate
+\c cairo_t* value. Regular FLTK coordinates, with top-left origin, are to be used.
+All FLTK-defined drawing functions (e.g., fl_rect(), fl_draw()) can be used too.
+
+void fl_close_display()
+\par
+This closes the Wayland connection. You do not need to call
+this to exit. It may be useful to call this if you want your program to continue
+without the Wayland connection. You cannot open the display again, and
+cannot call any FLTK functions.
+
+\see \ref wayland_H "wayland.H" for all functions specific of the Wayland platform.
+
+\subsection osissues_wayland_scaling HiDPI display support
+FLTK Wayland apps automatically scale according to the Wayland-defined, integer-valued
+scale factor. On a HiDPI display, it's enough to set this factor to 2 for
+any FLTK app to be drawn using twice as many pixels and thus to be as readable
+as it is on a regular display. With the gnome desktop, that is achieved in the
+"Displays" section of the "Settings" application, selecting 200 % for the "Scale" parameter.
+In addition to this, FLTK apps can also be scaled up or down typing ctrl/+/-/0/
+and with the \c FLTK_SCALING_FACTOR environment variable.
+
+\subsection osissues_wayland_window_icon Window icons
+Standard FLTK functions Fl_Window::icon(const Fl_RGB_Image*),
+Fl_Window::icons(const Fl_RGB_Image*[], int),
+Fl_Window::default_icon(const Fl_RGB_Image*) and
+Fl_Window::default_icons(const Fl_RGB_Image*[], int) have no effect on the
+Wayland platform.
+The equivalent of a call to Fl_Window::default_icon(const Fl_RGB_Image*) to set
+the application-specific window icon can be obtained as follows, using FLTK's
+editor app as an example:
+- create a text file named \c editor.desktop containing :
+<pre>[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Editor
+Name[fr]=Editeur
+Comment=FLTK editor
+Exec=editor %%F
+Icon=/path/to/icon/file/editor.svg
+MimeType=text/plain
+</pre>
+- The \c Name= line therein determines the string displayed when the app runs.
+- Optionally, one or more <tt>Name[<em>locale</em>]=</tt> lines can be used to set
+locale-specific app names.
+- The \c Icon= line accepts also \c .png files.
+- Put this file in \c /usr/local/share/applications/ so it's available to all system users
+or in <tt>$HOME/.local/share/applications/</tt> so it's available to a single user.
+
+\subsection osissues_wayland_decoration Window titlebars
+Wayland supports both client-side window decoration (CSD), where client applications
+are responsible for drawing window titlebars, and server-side window
+decoration (SSD), where the Wayland compositor itself draws window titlebars. Among 3
+tested Wayland compositors, Mutter (gnome's compositor) and Weston use CSD mode
+whereas the KDE compositor uses SSD mode. When running in CSD mode, FLTK uses a library called
+<a href=https://gitlab.gnome.org/jadahl/libdecor>libdecor</a> to draw titlebars.
+The libdecor library has been conceived to use various plug-in's to draw
+titlebars in various fashions intended to match any desktop's preferred titlebar style.
+FLTK supports drawing titlebars with any libdecor plug-in via an environment variable
+called \c LIBDECOR_PLUGIN_DIR which can be given the name of a directory containing the
+desired plug-in. When \c LIBDECOR_PLUGIN_DIR is not defined, or points to a directory
+that doesn't contain a libdecor plug-in, FLTK uses its built-in plug-in to draw titlebars.
+That is the most common situation, until libdecor plug-in's become available
+for popular UNIX desktops.
 
 
 \htmlonly
@@ -917,8 +1054,8 @@ FLTK uses UTF-8-encoded UNIX-style filenames and paths.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="migration_1_1.html">
-    Migrating Code from FLTK 1.0 to 1.1
+    <a class="el" href="migration_1_4.html">
+    Migrating Code from FLTK 1.3 to 1.4
     [Next]
     </a>
   </td>

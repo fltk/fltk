@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -26,12 +24,12 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Graphics_Driver.H>
-#include <FL/Fl.H>
 
 // fl_cmap needs to be defined globally (here) and is used in the device
-// specific graphics drivers
+// specific graphics drivers. It is required to 'FL_EXPORT' this symbol
+// to be able to build the shared FLTK libraries.
 
-unsigned fl_cmap[256] = {
+FL_EXPORT unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
@@ -66,6 +64,21 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
                 ((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
 }
 
+/**
+ Sets an entry in the fl_color index table.
+
+ You can set it to any 8-bit RGBA color.
+ \note The color transparency is effective under the Wayland, hybrid Wayland/X11 and macOS platforms, whereas it has no effect under the X11 and Windows platforms. It's also effective for widgets added to an Fl_Gl_Window.
+ \version 1.4
+ */
+void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue, uchar alpha) {
+  Fl::set_color((Fl_Color)(i & 255),
+                ((unsigned)red<<24)
+                |((unsigned)green<<16)
+                |((unsigned)blue<<8)
+                |(alpha^0xff));
+}
+
 
 void Fl::set_color(Fl_Color i, unsigned c)
 {
@@ -96,6 +109,26 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   red   = uchar(c>>24);
   green = uchar(c>>16);
   blue  = uchar(c>>8);
+}
+
+/**
+ Returns the RGBA value(s) for the given FLTK color index.
+
+ This form returns the red, green, blue, and alpha values
+ separately in referenced variables.
+
+ \see unsigned get_color(Fl_Color c)
+ */
+void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue, uchar &alpha) {
+  unsigned c;
+
+  if (i & 0xffffff00) c = (unsigned)i;
+  else c = fl_cmap[i];
+
+  red   = uchar(c>>24);
+  green = uchar(c>>16);
+  blue  = uchar(c>>8);
+  alpha = uchar(c^0x000000ff);
 }
 
 /**
@@ -136,39 +169,5 @@ Fl_Color fl_inactive(Fl_Color c) {
 }
 
 /**
- Returns a color that contrasts with the background color.
-
- This will be the foreground color if it contrasts sufficiently with the
- background color. Otherwise, returns \p FL_WHITE or \p FL_BLACK depending
- on which color provides the best contrast.
- \param[in] fg,bg foreground and background colors
- \return contrasting color
- */
-Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
-  unsigned c1, c2;	// RGB colors
-  int l1, l2;		// Luminosities
-
-  // Get the RGB values for each color...
-  if (fg & 0xffffff00) c1 = (unsigned)fg;
-  else c1 = fl_cmap[fg];
-
-  if (bg & 0xffffff00) c2 = (unsigned)bg;
-  else c2 = fl_cmap[bg];
-
-  // Compute the luminosity...
-  l1 = ((c1 >> 24) * 30 + ((c1 >> 16) & 255) * 59 + ((c1 >> 8) & 255) * 11) / 100;
-  l2 = ((c2 >> 24) * 30 + ((c2 >> 16) & 255) * 59 + ((c2 >> 8) & 255) * 11) / 100;
-
-  // Compare and return the contrasting color...
-  if ((l1 - l2) > 99) return fg;
-  else if ((l2 - l1) > 99) return fg;
-  else if (l2 > 127) return FL_BLACK;
-  else return FL_WHITE;
-}
-/**
  \}
  */
-
-//
-// End of "$Id$".
-//

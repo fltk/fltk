@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /*
@@ -34,9 +33,9 @@ int JIS0208(unsigned char * ptr) {
   while(*ptr != '\0') { ptr++; i++; }
   i++; ptr++; *(ptr+6) = '\0';
   ucs = (unsigned int)strtoul(ptr, NULL, 16);
-  if (ucs) 
-    printf("/* U+%04X */ 0x%02X, 0x%02X,\n", ucs, 
-	  (fmap & 0xFF00) >> 8, fmap & 0xFF);
+  if (ucs)
+    printf("/* U+%04X */ 0x%02X, 0x%02X,\n", ucs,
+          (fmap & 0xFF00) >> 8, fmap & 0xFF);
   while(*ptr != '\0') { ptr++; i++; }
   i++; ptr++;
   while(*ptr != '\n') { ptr++; i++; }
@@ -104,8 +103,8 @@ int JIS0212(unsigned char * ptr) {
     abort();
   }
   if (ucs)
-    printf("/* U+%04X */ 0x%02X, 0x%02X,\n", ucs, 
-	  (fmap & 0xFF00) >> 8, fmap & 0xFF);
+    printf("/* U+%04X */ 0x%02X, 0x%02X,\n", ucs,
+          (fmap & 0xFF00) >> 8, fmap & 0xFF);
   while(*ptr != '\0') { ptr++; i++; }
   i++; ptr++;
   while(*ptr != '\n') { ptr++; i++; }
@@ -153,7 +152,7 @@ int main(int argc, char **argv) {
     } else if (!strcmp("koi8-1", argv[1])) {
       nb = JIS0201(ptr);
     } else if (!strcmp("dingbats", argv[1]) ||
-	       !strcmp("symbol", argv[1])) 
+               !strcmp("symbol", argv[1]))
     {
       nb = ADOBE(ptr);
     } else {
@@ -164,7 +163,3 @@ int main(int argc, char **argv) {
   }
   return 0;
 }
-
-/*
- * End of "$Id$".
- */

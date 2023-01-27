@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,15 +7,12 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
-
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
 
 // The fltk "colormap".  This allows ui colors to be stored in 8-bit
 // locations, and provides a level of indirection so that global color
@@ -38,8 +33,8 @@ extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
   Fl_Graphics_Driver::color(i);
-  int index;
   uchar r, g, b;
+  float fa = 1.0f;
   if (i & 0xFFFFFF00) {
     // translate rgb colors into color index
     r = i>>24;
@@ -47,18 +42,21 @@ void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
     b = i>> 8;
   } else {
     // translate index into rgb:
-    index = i;
     unsigned c = fl_cmap[i];
+    c = c ^ 0x000000ff; // trick to restore the color's correct alpha value
     r = c>>24;
     g = c>>16;
     b = c>> 8;
+    uchar a = c & 0xff;
+    //printf("i=%d rgb=%u,%u,%u a=%u\n",i,r,g,b,a);
+    fa = a/255.0f;
   }
   if (!gc_) return; // no context yet? We will assign the color later.
   float fr = r/255.0f;
   float fg = g/255.0f;
   float fb = b/255.0f;
-  CGContextSetRGBFillColor(gc_, fr, fg, fb, 1.0f);
-  CGContextSetRGBStrokeColor(gc_, fr, fg, fb, 1.0f);
+  CGContextSetRGBFillColor(gc_, fr, fg, fb, fa);
+  CGContextSetRGBStrokeColor(gc_, fr, fg, fb, fa);
 }
 
 void Fl_Quartz_Graphics_Driver::color(uchar r, uchar g, uchar b) {
@@ -70,16 +68,3 @@ void Fl_Quartz_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   CGContextSetRGBFillColor(gc_, fr, fg, fb, 1.0f);
   CGContextSetRGBStrokeColor(gc_, fr, fg, fb, 1.0f);
 }
-
-// FIXME: this function should not be here! It's not part of the driver.
-void Fl_Quartz_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
-  if (fl_cmap[i] != c) {
-    fl_cmap[i] = c;
-  }
-}
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

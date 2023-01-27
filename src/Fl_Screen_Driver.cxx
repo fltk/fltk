@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // All screen related calls in a driver style class.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -25,8 +23,6 @@
 #include "Fl_Screen_Driver.H"
 #include <FL/Fl_Image.H>
 #include <FL/Fl.H>
-#include <FL/platform.H> // for fl_window
-#include <FL/Fl_Plugin.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
@@ -34,23 +30,74 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>
+#include <string.h> // for memchr
 
 char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
 char Fl_Screen_Driver::fg_set = 0;
+Fl_System_Driver *Fl_Screen_Driver::system_driver = NULL;
+const int Fl_Screen_Driver::fl_NoValue =     0x0000;
+const int Fl_Screen_Driver::fl_WidthValue =  0x0004;
+const int Fl_Screen_Driver::fl_HeightValue = 0x0008;
+const int Fl_Screen_Driver::fl_XValue =      0x0001;
+const int Fl_Screen_Driver::fl_YValue =      0x0002;
+const int Fl_Screen_Driver::fl_XNegative =   0x0010;
+const int Fl_Screen_Driver::fl_YNegative =   0x0020;
 
+// This default key table is used for all system drivers that don't define
+// and/or use their own table. It is defined here "static" and assigned
+// in the constructor to avoid static initialization race conditions.
+//
+// As of January 2022, the Windows and Wayland platforms use this table.
+// X11 does not use a key table at all; macOS has its own table.
+// Platforms that use their own key tables must assign them in their
+// constructors (which overwrites the pointer and size).
+
+static Fl_Screen_Driver::Keyname default_key_table[] = {
+  {' ',           "Space"},
+  {FL_BackSpace,  "Backspace"},
+  {FL_Tab,        "Tab"},
+  {0xff0b/*XK_Clear*/, "Clear"},
+  {FL_Enter,      "Enter"}, // X says "Enter"
+  {FL_Pause,      "Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,     "Escape"},
+  {FL_Home,       "Home"},
+  {FL_Left,       "Left"},
+  {FL_Up,         "Up"},
+  {FL_Right,      "Right"},
+  {FL_Down,       "Down"},
+  {FL_Page_Up,    "Page_Up"}, // X says "Prior"
+  {FL_Page_Down,  "Page_Down"}, // X says "Next"
+  {FL_End,        "End"},
+  {FL_Print,      "Print"},
+  {FL_Insert,     "Insert"},
+  {FL_Menu,       "Menu"},
+  {FL_Num_Lock,   "Num_Lock"},
+  {FL_KP_Enter,   "KP_Enter"},
+  {FL_Shift_L,    "Shift_L"},
+  {FL_Shift_R,    "Shift_R"},
+  {FL_Control_L,  "Control_L"},
+  {FL_Control_R,  "Control_R"},
+  {FL_Caps_Lock,  "Caps_Lock"},
+  {FL_Meta_L,     "Meta_L"},
+  {FL_Meta_R,     "Meta_R"},
+  {FL_Alt_L,      "Alt_L"},
+  {FL_Alt_R,      "Alt_R"},
+  {FL_Delete,     "Delete"}
+};
+
+int Fl_Screen_Driver::keyboard_screen_scaling = 1;
 
 Fl_Screen_Driver::Fl_Screen_Driver() :
 num_screens(-1), text_editor_extra_key_bindings(NULL)
 {
+  // initialize default key table (used in fl_shortcut.cxx)
+  key_table = default_key_table;
+  key_table_size = sizeof(default_key_table)/sizeof(*default_key_table);
 }
 
 Fl_Screen_Driver::~Fl_Screen_Driver() {
-}
-
-
-void Fl_Screen_Driver::display(const char *) {
-  // blank
 }
 
 
@@ -173,35 +220,37 @@ Image depths can differ between "to" and "from".
 
 /* Captures rectangle x,y,w,h from a mapped window or GL window.
  All sub-GL-windows that intersect x,y,w,h, and their subwindows, are also captured.
- 
+
  Arguments when this function is initially called:
  g: a window or GL window
  x,y,w,h: a rectangle in window g's coordinates
  full_img: NULL
- 
+
  Arguments when this function recursively calls itself:
  g: an Fl_Group
  x,y,w,h: a rectangle in g's coordinates if g is a window, or in g's parent window coords if g is a group
  full_img: NULL, or a previously captured image that encompasses the x,y,w,h rectangle and that
  will be partially overwritten with the new capture
- 
+
  Return value:
- An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels.
+ An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels,
+ or NULL if capture failed.
  */
 Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                           Fl_RGB_Image *full_img)
 {
+  bool captured_subwin = false;
   if ( g->as_gl_window() ) {
-    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
-    if (!pi) return full_img;
-    full_img = pi->rectangle_capture(g, x, y, w, h);
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (!plugin) return full_img;
+    full_img = plugin->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() ) {
-    if (Fl_Window::current() != g) g->as_window()->make_current();
-    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
+    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h, g->as_window(), true, &captured_subwin);
   }
+  if (!full_img) return NULL;
   float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
-  int n = g->children();
+  int n = (captured_subwin ? 0 : g->children());
   for (int i = 0; i < n; i++) {
     Fl_Widget *c = g->child(i);
     if ( !c->visible() || !c->as_group()) continue;
@@ -218,7 +267,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
         Fl_RGB_Image *img = traverse_to_gl_subwindows(c->as_window(),  origin_x - c->x(),
                                                       origin_y - c->y(), width, height, full_img);
         if (img == full_img) continue;
-        write_image_inside(full_img, img, (origin_x - x) * full_img_scale, (origin_y - y) * full_img_scale);
+        write_image_inside(full_img, img, int((origin_x - x) * full_img_scale), int((origin_y - y) * full_img_scale));
         delete img;
       }
     }
@@ -234,62 +283,62 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
     case FL_Delete: {
       int selected = (input->position() != input->mark()) ? 1 : 0;
       if (mods==0 && shift && selected)
-        return input->kf_copy_cut();		// Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
+        return input->kf_copy_cut();            // Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
       if (mods==0 && shift && !selected)
-        return input->kf_delete_char_right();	// Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
-      if (mods==0)          return input->kf_delete_char_right();	// Delete         (Standard)
-      if (mods==FL_CTRL)    return input->kf_delete_word_right();	// Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
-      return 0;							// ignore other combos, pass to parent
+        return input->kf_delete_char_right();   // Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
+      if (mods==0)          return input->kf_delete_char_right();       // Delete         (Standard)
+      if (mods==FL_CTRL)    return input->kf_delete_word_right();       // Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
+      return 0;                                                 // ignore other combos, pass to parent
     }
-      
+
     case FL_Left:
-      if (mods==0)          return input->kf_move_char_left();		// Left           (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_word_left();		// Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
-      if (mods==FL_META)    return input->kf_move_char_left();		// Meta-Left      (WP,NP,?WOW,GE,KE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_left();          // Left           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_left();          // Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_left();          // Meta-Left      (WP,NP,?WOW,GE,KE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Right:
-      if (mods==0)          return input->kf_move_char_right();	// Right          (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_word_right();	// Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
-      if (mods==FL_META)    return input->kf_move_char_right();	// Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_right(); // Right          (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_right(); // Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_right(); // Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Up:
-      if (mods==0)          return input->kf_lines_up(1);		// Up             (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_up_and_sol();	// Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_up(1);               // Up             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_up_and_sol(); // Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Down:
-      if (mods==0)          return input->kf_lines_down(1);		// Dn             (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_down_and_eol();	// Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_down(1);             // Dn             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_down_and_eol();       // Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Up:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
-      if (mods==0)          return input->kf_page_up();		// PageUp         (WP,NP,WOW,GE,KE)
-      if (mods==FL_CTRL)    return input->kf_page_up();		// Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
-      if (mods==FL_ALT)     return input->kf_page_up();		// Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_up();         // PageUp         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_up();         // Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_up();         // Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Down:
-      if (mods==0)          return input->kf_page_down();		// PageDn         (WP,NP,WOW,GE,KE)
-      if (mods==FL_CTRL)    return input->kf_page_down();		// Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
-      if (mods==FL_ALT)     return input->kf_page_down();		// Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_down();               // PageDn         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_down();               // Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_down();               // Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Home:
-      if (mods==0)          return input->kf_move_sol();		// Home           (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_top();			// Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_sol();                // Home           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_top();                     // Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_End:
-      if (mods==0)          return input->kf_move_eol();		// End            (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_bottom();			// Ctrl-End       (WP,NP,WOW,GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_eol();                // End            (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_bottom();                  // Ctrl-End       (WP,NP,WOW,GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_BackSpace:
-      if (mods==0)          return input->kf_delete_char_left();	// Backspace      (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_delete_word_left();	// Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
+      if (mods==0)          return input->kf_delete_char_left();        // Backspace      (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_delete_word_left();        // Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
       return 0;
       // ignore other combos, pass to parent
   }
@@ -307,15 +356,21 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
-        win->user_data() != &Fl_Screen_Driver::transient_scale_display) count++;
+    if (!win->parent() &&
+        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      count++;
+    }
     win = Fl::next_window(win);
   }
+  if (count == 0)
+    return;
   Fl_Window **win_array = new Fl_Window*[count];
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
-    if (!win->parent() && win->user_data() != &Fl_Screen_Driver::transient_scale_display &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen  || rescalable() == SYSTEMWIDE_APP_SCALING) ) {
+    if (!win->parent() &&
+        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);
@@ -328,10 +383,22 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   delete[] win_array;
 }
 
-static void del_transient_window(void *data) {
-  Fl_Window *win = (Fl_Window*)data;
-  delete (Fl_RGB_Image*)win->child(0)->user_data();
-  Fl::delete_widget(win);
+struct WinAndTracker {
+  Fl_Window *win;
+  Fl_Widget_Tracker *tracker;
+};
+
+static void del_transient_window(WinAndTracker *data) {
+  delete (Fl_Image*)data->win->shape();
+  Fl::delete_widget(data->win);
+  if (data->tracker) {
+    if (data->tracker->exists()) {
+      Fl::focus(data->tracker->widget());
+      data->tracker->widget()->handle(FL_FOCUS);
+    }
+    delete data->tracker;
+  }
+  delete data;
 }
 
 void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
@@ -343,11 +410,11 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   Fl_Screen_Driver *d = Fl::screen_driver();
   float s = d->scale(nscreen);
   if (s > 3) s = 3; // limit the growth of the transient window
-  Fl_Image_Surface *surf = new Fl_Image_Surface(w*s, w*s/2);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(int(w*s), int(w*s/2));
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
-  fl_rectf(-1, -1, w*s+2, w*s+2);
-  Fl_Box *b = new Fl_Box(FL_RFLAT_BOX, 0, 0, w*s, w*s/2, "");
+  fl_rectf(-1, -1, int(w*s)+2, int(w*s)+2);
+  Fl_Box *b = new Fl_Box(FL_RFLAT_BOX, 0, 0, int(w*s), int(w*s/2), "");
   b->color(FL_WHITE);
   surf->draw(b);
   delete b;
@@ -357,31 +424,35 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   //create a window shaped with the rounded box
   int X, Y, W, H;
   Fl::screen_xywh(X, Y, W, H, nscreen);
-  w /= d->scale(nscreen)/s;
+  w = int(w / (d->scale(nscreen)/s));
   Fl_Window *win = new Fl_Window((X + W/2) -w/2, (Y + H/2) -w/4, w, w/2, 0);
   b = new Fl_Box(FL_FLAT_BOX, 0, 0, w, w/2, NULL);
   char str[10];
-  sprintf(str, "%d %%", int(f * 100 + 0.5));
+  snprintf(str, 10, "%d %%", int(f * 100 + 0.5));
   b->copy_label(str);
   b->labelfont(FL_TIMES_BOLD);
-  b->labelsize(30 * s / d->scale(nscreen));
+  b->labelsize(Fl_Fontsize(30 * s / d->scale(nscreen)));
   b->labelcolor(FL_BLACK);
   b->color(Fl_Tooltip::color());
   win->end();
   win->shape(img);
-  b->user_data(img);
   win->user_data((void*)&transient_scale_display); // prevent this window from being rescaled later
   win->set_output();
   win->set_non_modal();
   Fl_Window_Driver::driver(win)->screen_num(nscreen);
   Fl_Window_Driver::driver(win)->force_position(1);
+  WinAndTracker *data = new WinAndTracker;
+  data->win = win;
+  Fl_Widget *widget = Fl::focus();
+  data->tracker = (widget ? new Fl_Widget_Tracker(widget) : NULL);
   win->show();
-  Fl::add_timeout(1, del_transient_window, win); // delete after 1 sec
+  Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
 }
 
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
 int Fl_Screen_Driver::scale_handler(int event)
 {
+  if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || (!Fl::event_command()) ) return 0;
   int key = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
   if (key == '=' || key == '-' || key == '+' || key == '0' || key == 0xE0/* for '0' on Fr keyboard */) {
@@ -406,9 +477,9 @@ int Fl_Screen_Driver::scale_handler(int event)
 #else
     // scaling factors for the standard GUI
     static float scaling_values[] = {
-      0.5, 2.f/3, 0.8, 0.9, 1.0,
-      1.1, 1.2, 4.f/3, 1.5, 1.7,
-      2.0, 2.4, 3.0};
+      0.5f, 2.f/3, 0.8f, 0.9f, 1.0f,
+      1.1f, 1.2f, 4.f/3, 1.5f, 1.7f,
+      2.0f, 2.4f, 3.0f};
 #endif
     float f, old_f = screen_dr->scale(screen)/initial_scale;
     if (key == '0' || key == 0xE0) f = 1;
@@ -435,20 +506,16 @@ int Fl_Screen_Driver::scale_handler(int event)
 
 
 // use the startup time scaling value
-float Fl_Screen_Driver::use_startup_scale_factor()
+void Fl_Screen_Driver::use_startup_scale_factor()
 {
-  float factor;
-  char *p = 0;
+  char *p;
+  int s_count = screen_count();
+  desktop_scale_factor();
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
+    float factor = 1;
     sscanf(p, "%f", &factor);
-    // checks to prevent potential crash (factor <= 0) or very large factors
-    if (factor < 0.25) factor = 0.25;
-    else if (factor > 10.0) factor = 10.0;
+    for (int i = 0; i < s_count; i++)  scale(i, factor * scale(i));
   }
-  else {
-    factor = desktop_scale_factor();
-  }
-  return factor;
 }
 
 
@@ -458,11 +525,10 @@ void Fl_Screen_Driver::open_display()
   static bool been_here = false;
   if (!been_here) {
     been_here = true;
-    int scount = screen_count(); // keep here
     if (rescalable()) {
-      float factor = use_startup_scale_factor();
-      if (factor) for (int i = 0; i < scount; i++)  scale(i, factor);
-      Fl::add_handler(Fl_Screen_Driver::scale_handler);
+      use_startup_scale_factor();
+      if (keyboard_screen_scaling && rescalable())
+        Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));
@@ -495,11 +561,182 @@ int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
   return 1;
 }
 
+void Fl_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
+
+
+/** see fl_set_spot() */
+void Fl_Screen_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{}
+
+void Fl_Screen_Driver::set_status(int X, int Y, int W, int H) {}
+
+
+/** see fl_reset_spot() */
+void Fl_Screen_Driver::reset_spot() {}
+
+
+/* the following function was stolen from the X sources as indicated. */
+
+/* Copyright    Massachusetts Institute of Technology  1985, 1986, 1987 */
+/* $XConsortium: XParseGeom.c,v 11.18 91/02/21 17:23:05 rws Exp $ */
+
+/*
+ Permission to use, copy, modify, distribute, and sell this software and its
+ documentation for any purpose is hereby granted without fee, provided that
+ the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name of M.I.T. not be used in advertising or
+ publicity pertaining to distribution of the software without specific,
+ written prior permission.  M.I.T. makes no representations about the
+ suitability of this software for any purpose.  It is provided "as is"
+ without express or implied warranty.
+ */
+
+/*
+    XParseGeometry parses strings of the form
+   "=<width>x<height>{+-}<xoffset>{+-}<yoffset>", where
+   width, height, xoffset, and yoffset are unsigned integers.
+   Example:  "=80x24+300-49"
+   The equal sign is optional.
+   It returns a bitmask that indicates which of the four values
+   were actually found in the string.  For each value found,
+   the corresponding argument is updated;  for each value
+   not found, the corresponding argument is left unchanged.
+ */
+
+static int ReadInteger(char* string, char** NextString)
+{
+  int Result = 0;
+  int Sign = 1;
+
+  if (*string == '+')
+    string++;
+  else if (*string == '-') {
+    string++;
+    Sign = -1;
+  }
+  for (; (*string >= '0') && (*string <= '9'); string++) {
+    Result = (Result * 10) + (*string - '0');
+  }
+  *NextString = string;
+  if (Sign >= 0)
+    return (Result);
+  else
+    return (-Result);
+}
+
+
+int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
+                   unsigned int* width, unsigned int* height)
+{
+  int mask = Fl_Screen_Driver::fl_NoValue;
+  char *strind;
+  unsigned int tempWidth = 0, tempHeight = 0;
+  int tempX = 0, tempY = 0;
+  char *nextCharacter;
+
+  if ( (string == NULL) || (*string == '\0')) return(mask);
+  if (*string == '=')
+    string++;  /* ignore possible '=' at beg of geometry spec */
+
+  strind = (char *)string;
+  if (*strind != '+' && *strind != '-' && *strind != 'x') {
+    tempWidth = ReadInteger(strind, &nextCharacter);
+    if (strind == nextCharacter)
+      return (0);
+    strind = nextCharacter;
+    mask |= fl_WidthValue;
+  }
+
+  if (*strind == 'x' || *strind == 'X') {
+    strind++;
+    tempHeight = ReadInteger(strind, &nextCharacter);
+    if (strind == nextCharacter)
+      return (0);
+    strind = nextCharacter;
+    mask |= fl_HeightValue;
+  }
+
+  if ((*strind == '+') || (*strind == '-')) {
+    if (*strind == '-') {
+      strind++;
+      tempX = -ReadInteger(strind, &nextCharacter);
+      if (strind == nextCharacter)
+        return (0);
+      strind = nextCharacter;
+      mask |= fl_XNegative;
+
+    } else {
+      strind++;
+      tempX = ReadInteger(strind, &nextCharacter);
+      if (strind == nextCharacter)
+        return(0);
+      strind = nextCharacter;
+    }
+    mask |= fl_XValue;
+    if ((*strind == '+') || (*strind == '-')) {
+      if (*strind == '-') {
+        strind++;
+        tempY = -ReadInteger(strind, &nextCharacter);
+        if (strind == nextCharacter)
+          return(0);
+        strind = nextCharacter;
+        mask |= fl_YNegative;
+
+      } else {
+        strind++;
+        tempY = ReadInteger(strind, &nextCharacter);
+        if (strind == nextCharacter)
+          return(0);
+        strind = nextCharacter;
+      }
+      mask |= fl_YValue;
+    }
+  }
+
+  /* If strind isn't at the end of the string the it's an invalid
+   geometry specification. */
+
+  if (*strind != '\0') return (0);
+
+  if (mask & fl_XValue)
+    *x = tempX;
+  if (mask & fl_YValue)
+    *y = tempY;
+  if (mask & fl_WidthValue)
+    *width = tempWidth;
+  if (mask & fl_HeightValue)
+    *height = tempHeight;
+  return (mask);
+}
+
+
+// turn '\r' characters into '\n' and "\r\n" sequences into '\n'
+// returns new length
+size_t Fl_Screen_Driver::convert_crlf(char *s, size_t len) {
+  char *src = (char *)memchr(s, '\r', len); // find first `\r` in buffer
+  if (src) {
+    char *dst = src;
+    char *end = s + len;
+    while (src < end) {
+      if (*src == '\r') {
+        if (src + 1 < end && *(src + 1) == '\n') {
+          src++; // skip '\r'
+          continue;
+        } else {
+          *dst++ = '\n'; // replace single '\r' with '\n'
+        }
+      } else {
+        *dst++ = *src;
+      }
+      src++;
+    }
+    return (dst - s);
+  }
+  return len;
+}
+
 /**
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

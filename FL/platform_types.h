@@ -1,17 +1,15 @@
 /*
- * "$Id$"
- *
- * Copyright 2016-2018 by Bill Spitzak and others.
+ * Copyright 2016-2022 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /** \file
@@ -34,24 +32,49 @@ typedef opaque fl_intptr_t;
  A variable of type fl_uintptr_t can also store an unsigned long int value. */
 typedef opaque fl_uintptr_t;
 
-typedef opaque Fl_Offscreen; /**< an offscreen drawing buffer */
-typedef opaque Fl_Bitmask; /**< mask */
-typedef opaque Fl_Region; /**< a region made of several rectangles */
+/**
+ Platform-specific value representing an offscreen drawing buffer.
+  \note This value can be safely cast to these types on each platform:
+  \li X11: Pixmap
+  \li Wayland: struct fl_wld_buffer *
+  \li Windows: HBITMAP
+  \li macOS:  CGContextRef
+ */
+typedef opaque Fl_Offscreen;
+
+/**
+ Pointer to a platform-specific structure representing a collection of rectangles.
+  \note This pointer can be safely cast to these types on each platform:
+  \li X11: Region as defined by X11
+  \li Wayland: struct flCairoRegion *
+  \li Windows: HRGN
+  \li macOS:  struct flCocoaRegion *
+ */
+typedef struct opaque *Fl_Region;
 typedef opaque FL_SOCKET; /**< socket or file descriptor */
-typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL calls are rendered */
+/**
+ Pointer to a platform-specific structure representing the window's OpenGL rendering context.
+  \note This pointer can be safely cast to these types on each platform:
+  \li X11: GLXContext
+  \li Wayland: EGLContext
+  \li Windows: HGLRC
+  \li macOS: NSOpenGLContext *
+ */
+typedef struct opaque *GLContext;
 
 #  define FL_COMMAND  opaque   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
 #  define FL_CONTROL  opaque   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
 
-#else
+#else /* FL_DOXYGEN */
 
 #ifndef FL_PLATFORM_TYPES_H
 #define FL_PLATFORM_TYPES_H
 
+#include <FL/fl_config.h>
+
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
-  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
-  fl_intptr_t, fl_uintptr_t
+  FL_SOCKET, struct dirent, fl_intptr_t, fl_uintptr_t
 
   NOTE: *FIXME* AlbrechtS 13 Apr 2016 (concerning FL_SOCKET)
   ----------------------------------------------------------
@@ -72,12 +95,6 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 typedef intptr_t fl_intptr_t;
 typedef uintptr_t fl_uintptr_t;
 
-#elif defined(__ANDROID__)
-
-#include <sys/stat.h>
-typedef intptr_t fl_intptr_t;
-typedef uintptr_t fl_uintptr_t;
-
 #else /* ! _WIN64 */
 
 typedef long fl_intptr_t;
@@ -85,78 +102,29 @@ typedef unsigned long fl_uintptr_t;
 
 #endif /* _WIN64 */
 
+typedef void *GLContext;
+typedef void *Fl_Region;
+typedef fl_uintptr_t  Fl_Offscreen;
 
-#ifdef __APPLE__
-typedef struct CGContext* Fl_Offscreen;
-typedef struct CGImage* Fl_Bitmask;
-typedef struct flCocoaRegion* Fl_Region;
-typedef int FL_SOCKET;
-#ifdef __OBJC__
-  @class NSOpenGLContext;
-  typedef NSOpenGLContext* GLContext;
-#elif defined(__cplusplus)
-  typedef class NSOpenGLContext* GLContext;
-#endif /* __OBJC__ */
+/* Allows all hybrid combinations except WIN32 + X11 with MSVC */
+#if defined(_WIN32) && !defined(__MINGW32__)
+  struct dirent {char d_name[1];};
+#else
+#  include <dirent.h>
+#endif
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#  define FL_COMMAND	FL_META
-#  define FL_CONTROL 	FL_CTRL
-
-#elif defined(_WIN32)
-typedef struct HBITMAP__ *HBITMAP;
-typedef HBITMAP Fl_Offscreen;
-typedef HBITMAP Fl_Bitmask;
-typedef struct HRGN__ *Fl_Region;
 # if defined(_WIN64) && defined(_MSC_VER)
-typedef  unsigned __int64 FL_SOCKET;	/* *FIXME* - FL_SOCKET (see above) */
+typedef  unsigned __int64 FL_SOCKET;    /* *FIXME* - FL_SOCKET (see above) */
 # else
 typedef  int FL_SOCKET;
 # endif
-typedef struct HGLRC__ *GLContext;
-#include <sys/stat.h>
-struct dirent {char d_name[1];};
 
-#elif defined(__ANDROID__)
-
-#ifdef __cplusplus
-typedef class Fl_Rect_Region *Fl_Region;
-#else
-typedef struct Fl_Rect_Region *Fl_Region;
-#endif
-
-// TODO: the types below have not yet been ported
-typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
-typedef int FL_SOCKET;
-typedef struct __GLXcontextRec *GLContext;
-#include <sys/types.h>
-#include <dirent.h>
-
-#else /* X11 */
-
-typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
-typedef struct _XRegion *Fl_Region;
-typedef int FL_SOCKET;
-typedef struct __GLXcontextRec *GLContext;
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-
-#endif /* __APPLE__ */
-
-
-#ifndef __APPLE__
-#  define FL_COMMAND	FL_CTRL   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
-#  define FL_CONTROL	FL_META   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
-#endif
+#include <FL/Fl_Export.H>
+extern FL_EXPORT int fl_command_modifier();
+extern FL_EXPORT int fl_control_modifier();
+#  define FL_COMMAND    fl_command_modifier()
+#  define FL_CONTROL    fl_control_modifier()
 
 #endif /* FL_PLATFORM_TYPES_H */
 
-#endif // FL_DOXYGEN
-
-/*
- * End of "$Id$".
- */
+#endif /* FL_DOXYGEN */

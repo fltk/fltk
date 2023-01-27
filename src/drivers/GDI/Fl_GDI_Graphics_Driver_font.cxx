@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Windows font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,12 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#include <config.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
@@ -43,6 +43,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_string_functions.h>
 
 // This function fills in the FLTK font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
@@ -100,12 +101,12 @@ enumcbw(CONST LOGFONTW    *lpelf,
     if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) {free(n);return 1;}
   char buffer[LF_FACESIZE + 1];
   strcpy(buffer+1, n);
-  buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
+  buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
   if (lpelf->lfWeight <= 400)
-    buffer[0] = 'B', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
+    buffer[0] = 'B', Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
+  buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
   if (lpelf->lfWeight <= 400)
-    buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
+    buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(buffer));
   free(n);
   return 1;
 } /* enumcbw */
@@ -207,6 +208,9 @@ void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
 
 
 static int fl_angle_ = 0;
+// Unicode string buffer
+static unsigned short *wstr = NULL;
+static int wstr_len    = 0;
 
 #ifndef FL_DOXYGEN
 Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsize) : Fl_Font_Descriptor(name,fsize) {
@@ -219,21 +223,28 @@ Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsi
   case ' ': break;
   default: name--;
   }
-  fid = CreateFont(
+  int wn = fl_utf8toUtf16(name, (unsigned int)strlen(name), wstr, wstr_len);
+  if (wn >= wstr_len) {
+    wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
+    wstr_len = wn + 1;
+    wn = fl_utf8toUtf16(name, (unsigned int)strlen(name), wstr, wstr_len);
+  }
+
+  fid = CreateFontW(
     -fsize, // negative makes it use "char size"
-    0,	            // logical average character width
-    fl_angle_*10,	            // angle of escapement
-    fl_angle_*10,	            // base-line orientation angle
+    0,              // logical average character width
+    fl_angle_*10,                   // angle of escapement
+    fl_angle_*10,                   // base-line orientation angle
     weight,
     italic,
-    FALSE,	        // underline attribute flag
-    FALSE,	        // strikeout attribute flag
+    FALSE,              // underline attribute flag
+    FALSE,              // strikeout attribute flag
     DEFAULT_CHARSET,    // character set identifier
-    OUT_DEFAULT_PRECIS,	// output precision
+    OUT_DEFAULT_PRECIS, // output precision
     CLIP_DEFAULT_PRECIS,// clipping precision
-    DEFAULT_QUALITY,	// output quality
-    DEFAULT_PITCH,	// pitch and family
-    name	        // pointer to typeface name string
+    DEFAULT_QUALITY,    // output quality
+    DEFAULT_PITCH,      // pitch and family
+    (LPCWSTR)wstr       // pointer to typeface name string
     );
   angle = fl_angle_;
   HDC gc = (HDC)fl_graphics_driver->gc();
@@ -337,12 +348,6 @@ Fl_Fontsize Fl_GDI_Graphics_Driver::size_unscaled() {
   return -1;
 }
 
-
-// Unicode string buffer
-static unsigned short *wstr = NULL;
-static int wstr_len    = 0;
-
-
 double Fl_GDI_Graphics_Driver::width_unscaled(const char* c, int n) {
   int i = 0;
   if (!font_descriptor()) return -1.0;
@@ -395,7 +400,7 @@ double Fl_GDI_Graphics_Driver::width_unscaled(unsigned int c) {
     for (int i = 0; i < 0x0400; i++) fl_fontsize->width[r][i] = -1;
   } else {
     if ( fl_fontsize->width[r][c&0x03FF] >= 0 ) { // already cached
-	return (double) fl_fontsize->width[r][c & 0x03FF];
+        return (double) fl_fontsize->width[r][c & 0x03FF];
     }
   }
   unsigned short ii = r * 0x400;
@@ -633,7 +638,3 @@ void Fl_GDI_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int 
   SetTextColor(gc_, oldColor);
 }
 #endif
-
-//
-// End of "$Id$".
-//

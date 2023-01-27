@@ -1,23 +1,21 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa Screen interface.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Cocoa_Screen_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"
 #include "../Quartz/Fl_Font.H"
@@ -36,26 +34,47 @@ extern void (*fl_unlock_function)();
 
 int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
 
-/**
- Creates a driver that manages all screen and display related calls.
- 
- This function must be implemented once for every platform.
- */
-Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
-{
-  return new Fl_Cocoa_Screen_Driver();
-}
+// This key table is used for the Darwin system driver. It is defined here
+// "static" and assigned in the constructor to avoid static initialization
+// race conditions. It is used in fl_shortcut.cxx.
+//
+// This table must be in numeric order by fltk (X) keysym number:
 
-/**
- \}
- \endcond
- */
+Fl_Screen_Driver::Keyname darwin_key_table[] = {
+  //              v - this column may contain UTF-8 characters
+  {' ',           "Space"},
+  {FL_BackSpace,  "⌫"/*"\xe2\x8c\xab"*/}, // U+232B : erase to the left
+  {FL_Tab,        "⇥"/*"\xe2\x87\xa5"*/}, // U+21E5 rightwards arrow to bar
+  {FL_Enter,      "↩"/*"\xe2\x86\xa9"*/}, // U+21A9 leftwards arrow with hook
+  {FL_Pause,      "Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,     "⎋"/*"\xe2\x8e\x8b"*/}, // U+238B : broken circle with northwest arrow
+  {FL_Home,       "↖"/*"\xe2\x86\x96"*/}, // U+2196 north west arrow
+  {FL_Left,       "←"/*"\xe2\x86\x90"*/}, // U+2190 leftwards arrow
+  {FL_Up,         "↑"/*"\xe2\x86\x91"*/}, // U+2191 upwards arrow
+  {FL_Right,      "→"/*"\xe2\x86\x92"*/}, // U+2192 rightwards arrow
+  {FL_Down,       "↓"/*"\xe2\x86\x93"*/}, // U+2193 downwards arrow
+  {FL_Page_Up,    "⇞"/*"\xe2\x87\x9e"*/}, // U+21DE upwards arrow with double stroke
+  {FL_Page_Down,  "⇟"/*"\xe2\x87\x9f"*/}, //  U+21DF downwards arrow with double stroke
+  {FL_End,        "↘"/*"\xe2\x86\x98"*/}, // U+2198 south east arrow
+  {FL_Print,      "Print"},
+  {FL_Insert,     "Insert"},
+  {FL_Menu,       "Menu"},
+  {FL_Num_Lock,   "Num_Lock"},
+  {FL_KP_Enter,   "⌤"/*"\xe2\x8c\xa4"*/}, // U+2324 up arrow head between two horizontal bars
+  {FL_Shift_L,    "Shift_L"},
+  {FL_Shift_R,    "Shift_R"},
+  {FL_Control_L,  "Control_L"},
+  {FL_Control_R,  "Control_R"},
+  {FL_Caps_Lock,  "⇪"/*"\xe2\x87\xaa"*/}, // U+21EA upwards white arrow from bar
+  {FL_Meta_L,     "Meta_L"},
+  {FL_Meta_R,     "Meta_R"},
+  {FL_Alt_L,      "Alt_L"},
+  {FL_Alt_R,      "Alt_R"},
+  {FL_Delete,     "⌦"/*"\xe2\x8c\xa6"*/}  // U+2326 : erase to the right
+};
+
 
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
   // Define CMD+key accelerators...
@@ -78,6 +97,11 @@ static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
 
 Fl_Cocoa_Screen_Driver::Fl_Cocoa_Screen_Driver() {
   text_editor_extra_key_bindings =  extra_bindings;
+  scale_ = 1.;
+  default_icon = nil;
+  // initialize key table
+  key_table = darwin_key_table;
+  key_table_size = sizeof(darwin_key_table)/sizeof(*darwin_key_table);
 }
 
 
@@ -134,11 +158,7 @@ void Fl_Cocoa_Screen_Driver::screen_dpi(float &h, float &v, int n)
 }
 
 
-/**
- Emits a system beep message.
- \param[in] type   The beep type from the \ref Fl_Beep enumeration.
- \note \#include <FL/fl_ask.H>
- */
+// Implements fl_beep(). See documentation in src/fl_ask.cxx.
 void Fl_Cocoa_Screen_Driver::beep(int type) {
   switch (type) {
     case FL_BEEP_DEFAULT :
@@ -151,13 +171,6 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 }
 
 
-void Fl_Cocoa_Screen_Driver::flush() {
-  CGContextRef gc = (CGContextRef)Fl_Graphics_Driver::default_driver().gc();
-  if (gc)
-    CGContextFlush(gc);
-}
-
-
 extern void fl_fix_focus(); // in Fl.cxx
 
 extern void *fl_capture;
@@ -167,7 +180,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
 {
   if (win) {
     if (!Fl::grab_) {
-      fl_capture = Fl_X::i(Fl::first_window())->xid;
+      fl_capture = (FLWindow*)(Fl_X::flx(Fl::first_window())->xid);
       Fl_Cocoa_Window_Driver::driver(Fl::first_window())->set_key_window();
     }
     Fl::grab_ = win;
@@ -217,8 +230,8 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 }
 
 
-int Fl_Cocoa_Screen_Driver::has_marked_text() {
-  return true;
+int Fl_Cocoa_Screen_Driver::has_marked_text() const {
+  return 1;
 }
 
 
@@ -254,6 +267,7 @@ void Fl_Cocoa_Screen_Driver::insertion_point_location(int x, int y, int height) 
 int Fl_Cocoa_Screen_Driver::compose(int &del) {
   int condition;
   int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
+  Fl::e_keysym == FL_JIS_Underscore || Fl::e_keysym == FL_Yen ||
   (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
   condition = Fl::e_state&(FL_META | FL_CTRL) ||
   (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
@@ -269,96 +283,97 @@ int Fl_Cocoa_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsi
 {
   switch (key) {
     case FL_Delete: {
-      if (mods==0)          return input->kf_delete_char_right();	// Delete         (OSX-HIG,TE,SA,WOX)
-      if (mods==FL_CTRL)    return input->kf_delete_char_right();	// Ctrl-Delete    (??? TE,!SA,!WOX)
-      if (mods==FL_ALT)     return input->kf_delete_word_right();	// Alt-Delete     (OSX-HIG,TE,SA)
-      return 0;							// ignore other combos, pass to parent
+      if (mods==0)          return input->kf_delete_char_right();       // Delete         (OSX-HIG,TE,SA,WOX)
+      if (mods==FL_CTRL)    return input->kf_delete_char_right();       // Ctrl-Delete    (??? TE,!SA,!WOX)
+      if (mods==FL_ALT)     return input->kf_delete_word_right();       // Alt-Delete     (OSX-HIG,TE,SA)
+      return 0;                                                 // ignore other combos, pass to parent
     }
-      
+
     case FL_Left:
-      if (mods==0)          return input->kf_move_char_left();		// Left           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_move_word_left();		// Alt-Left       (OSX-HIG)
-      if (mods==FL_META)    return input->kf_move_sol();		// Meta-Left      (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_move_sol();		// Ctrl-Left      (TE/SA)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_left();          // Left           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_move_word_left();          // Alt-Left       (OSX-HIG)
+      if (mods==FL_META)    return input->kf_move_sol();                // Meta-Left      (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_move_sol();                // Ctrl-Left      (TE/SA)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Right:
-      if (mods==0)          return input->kf_move_char_right();	// Right          (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_move_word_right();	// Alt-Right      (OSX-HIG)
-      if (mods==FL_META)    return input->kf_move_eol();		// Meta-Right     (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_move_eol();		// Ctrl-Right     (TE/SA)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_right(); // Right          (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_move_word_right(); // Alt-Right      (OSX-HIG)
+      if (mods==FL_META)    return input->kf_move_eol();                // Meta-Right     (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_move_eol();                // Ctrl-Right     (TE/SA)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Up:
-      if (mods==0)          return input->kf_lines_up(1);		// Up             (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_page_up();		// Ctrl-Up        (TE !HIG)
-      if (mods==FL_ALT)     return input->kf_move_up_and_sol();	// Alt-Up         (OSX-HIG)
-      if (mods==FL_META)    return input->kf_top();			// Meta-Up        (OSX-HIG)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_up(1);               // Up             (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_page_up();         // Ctrl-Up        (TE !HIG)
+      if (mods==FL_ALT)     return input->kf_move_up_and_sol(); // Alt-Up         (OSX-HIG)
+      if (mods==FL_META)    return input->kf_top();                     // Meta-Up        (OSX-HIG)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Down:
-      if (mods==0)          return input->kf_lines_down(1);		// Dn             (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_page_down();		// Ctrl-Dn        (TE !HIG)
-      if (mods==FL_ALT)     return input->kf_move_down_and_eol();	// Alt-Dn         (OSX-HIG)
-      if (mods==FL_META)    return input->kf_bottom();			// Meta-Dn        (OSX-HIG)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_down(1);             // Dn             (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_page_down();               // Ctrl-Dn        (TE !HIG)
+      if (mods==FL_ALT)     return input->kf_move_down_and_eol();       // Alt-Dn         (OSX-HIG)
+      if (mods==FL_META)    return input->kf_bottom();                  // Meta-Dn        (OSX-HIG)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Up:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
-      if (mods==0)          return input->kf_page_up();		// PgUp           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_page_up();		// Alt-PageUp     (OSX-HIG)
-      if (mods==FL_META)    return input->kf_top();			// Meta-PageUp    (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_up();         // PgUp           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_page_up();         // Alt-PageUp     (OSX-HIG)
+      if (mods==FL_META)    return input->kf_top();                     // Meta-PageUp    (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Down:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
-      if (mods==0)          return input->kf_page_down();		// PgDn           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_page_down();		// Alt-PageDn     (OSX-HIG)
-      if (mods==FL_META)    return input->kf_bottom();			// Meta-PageDn    (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_down();               // PgDn           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_page_down();               // Alt-PageDn     (OSX-HIG)
+      if (mods==FL_META)    return input->kf_bottom();                  // Meta-PageDn    (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Home:
-      if (mods==0)          return input->kf_top();			// Home           (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_top();			// Alt-Home       (???)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_top();                     // Home           (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_top();                     // Alt-Home       (???)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_End:
-      if (mods==0)          return input->kf_bottom();			// End            (OSX-HIG)
-      if (mods==FL_ALT)     return input->kf_bottom();			// Alt-End        (???)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_bottom();                  // End            (OSX-HIG)
+      if (mods==FL_ALT)     return input->kf_bottom();                  // Alt-End        (???)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_BackSpace:
-      if (mods==0)          return input->kf_delete_char_left();	// Backspace      (OSX-HIG)
-      if (mods==FL_CTRL)    return input->kf_delete_char_left();	// Ctrl-Backspace (TE/SA)
-      if (mods==FL_ALT)     return input->kf_delete_word_left();	// Alt-Backspace  (OSX-HIG)
-      if (mods==FL_META)    return input->kf_delete_sol();		// Meta-Backspace (OSX-HIG,!TE)
-      return 0;							// ignore other combos, pass to parent
+      if (mods==0)          return input->kf_delete_char_left();        // Backspace      (OSX-HIG)
+      if (mods==FL_CTRL)    return input->kf_delete_char_left();        // Ctrl-Backspace (TE/SA)
+      if (mods==FL_ALT)     return input->kf_delete_word_left();        // Alt-Backspace  (OSX-HIG)
+      if (mods==FL_META)    return input->kf_delete_sol();              // Meta-Backspace (OSX-HIG,!TE)
+      return 0;                                                 // ignore other combos, pass to parent
     }
   return -1;
 }
 
 void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
 {
-  width = CGBitmapContextGetWidth(off);
-  height = CGBitmapContextGetHeight(off);
+  width = (int)CGBitmapContextGetWidth((CGContextRef)off);
+  height = (int)CGBitmapContextGetHeight((CGContextRef)off);
 }
 
-Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h)
+Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window,
+                                                         bool may_capture_subwins, bool *did_capture_subwins)
 {
-  int bpp, bpr, depth = 4;
+  int bpp, bpr;
   uchar *base, *p;
-  if (!fl_window) { // read from offscreen buffer
+  if (!window) { // read from offscreen buffer
     float s = 1;
     CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();  // get bitmap context
     base = (uchar *)CGBitmapContextGetData(src);  // get data
     if(!base) return NULL;
-    int sw = CGBitmapContextGetWidth(src);
-    int sh = CGBitmapContextGetHeight(src);
+    int sw = (int)CGBitmapContextGetWidth(src);
+    int sh = (int)CGBitmapContextGetHeight(src);
     if( (sw - X < w) || (sh - Y < h) )  return NULL;
-    bpr = CGBitmapContextGetBytesPerRow(src);
-    bpp = CGBitmapContextGetBitsPerPixel(src)/8;
+    bpr = (int)CGBitmapContextGetBytesPerRow(src);
+    bpp = (int)CGBitmapContextGetBitsPerPixel(src)/8;
     Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
     int fltk_w, fltk_h;
     imgs->printable_rect(&fltk_w, &fltk_h);
@@ -369,9 +384,9 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     // Copy the image from the off-screen buffer to the memory buffer.
     int idx, idy;  // Current X & Y in image
     uchar *pdst, *psrc;
-    p = new uchar[w * h * depth];
+    p = new uchar[w * h * 4];
     for (idy = Y, pdst = p; idy < h + Y; idy ++) {
-      for (idx = 0, psrc = base + idy * bpr + X * bpp; idx < w; idx ++, psrc += bpp, pdst += depth) {
+      for (idx = 0, psrc = base + idy * bpr + X * bpp; idx < w; idx ++, psrc += bpp, pdst += 4) {
         pdst[0] = psrc[0];  // R
         pdst[1] = psrc[1];  // G
         pdst[2] = psrc[2];  // B
@@ -379,21 +394,22 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     }
     bpr = 0;
   } else { // read from window
-    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
-    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, false);
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, may_capture_subwins);
+    if (did_capture_subwins) *did_capture_subwins = may_capture_subwins;
     if (!cgimg) {
       return NULL;
     }
-    w = CGImageGetWidth(cgimg);
-    h = CGImageGetHeight(cgimg);
+    w = (int)CGImageGetWidth(cgimg);
+    h = (int)CGImageGetHeight(cgimg);
     Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
     Fl_Surface_Device::push_current(surf);
     ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(cgimg, 0, 0, w, h, 0, 0, w, h);
     CGContextRef gc = (CGContextRef)fl_graphics_driver->gc();
-    w = CGBitmapContextGetWidth(gc);
-    h = CGBitmapContextGetHeight(gc);
-    bpr = CGBitmapContextGetBytesPerRow(gc);
-    bpp = CGBitmapContextGetBitsPerPixel(gc)/8;
+    w = (int)CGBitmapContextGetWidth(gc);
+    h = (int)CGBitmapContextGetHeight(gc);
+    bpr = (int)CGBitmapContextGetBytesPerRow(gc);
+    bpp = (int)CGBitmapContextGetBitsPerPixel(gc)/8;
     base = (uchar*)CGBitmapContextGetData(gc);
     p = new uchar[bpr * h];
     memcpy(p, base, bpr * h);
@@ -401,158 +417,15 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     delete surf;
     CFRelease(cgimg);
   }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, depth, bpr);
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, 4, bpr);
   rgb->alloc_array = 1;
   return rgb;
 }
 
-//
-// MacOS X timers
-//
-
-struct MacTimeout {
-  Fl_Timeout_Handler callback;
-  void* data;
-  CFRunLoopTimerRef timer;
-  char pending;
-  CFAbsoluteTime next_timeout; // scheduled time for this timer
-};
-static MacTimeout* mac_timers;
-static int mac_timer_alloc;
-static int mac_timer_used;
-static MacTimeout* current_timer;  // the timer that triggered its callback function
-
-static void realloc_timers()
-{
-  if (mac_timer_alloc == 0) {
-    mac_timer_alloc = 8;
-    fl_open_display(); // needed because the timer creates an event
-  }
-  mac_timer_alloc *= 2;
-  MacTimeout* new_timers = new MacTimeout[mac_timer_alloc];
-  memset(new_timers, 0, sizeof(MacTimeout)*mac_timer_alloc);
-  memcpy(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
-  if (current_timer) {
-    MacTimeout* newCurrent = new_timers + (current_timer - mac_timers);
-    current_timer = newCurrent;
-  }
-  MacTimeout* delete_me = mac_timers;
-  mac_timers = new_timers;
-  delete [] delete_me;
+void Fl_Cocoa_Screen_Driver::set_spot(int /*font*/, int size, int X, int Y, int /*W*/, int /*H*/, Fl_Window* /*win*/) {
+  Fl_Cocoa_Screen_Driver::insertion_point_location(X, Y, size);
 }
 
-static void delete_timer(MacTimeout& t)
-{
-  if (t.timer) {
-    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(),
-                         t.timer,
-                         kCFRunLoopDefaultMode);
-    CFRelease(t.timer);
-    memset(&t, 0, sizeof(MacTimeout));
-  }
+void Fl_Cocoa_Screen_Driver::reset_spot() {
+  Fl_Cocoa_Screen_Driver::reset_marked_text();
 }
-
-static void do_timer(CFRunLoopTimerRef timer, void* data)
-{
-  fl_lock_function();
-  fl_intptr_t timerId = (fl_intptr_t)data;
-  current_timer = &mac_timers[timerId];
-  current_timer->pending = 0;
-  (current_timer->callback)(current_timer->data);
-  if (current_timer && current_timer->pending == 0)
-    delete_timer(*current_timer);
-  current_timer = NULL;
-  
-  Fl_Cocoa_Screen_Driver::breakMacEventLoop();
-  fl_unlock_function();
-}
-
-void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  // check, if this timer slot exists already
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    // if so, simply change the fire interval
-    if (t.callback == cb  &&  t.data == data) {
-      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
-      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
-      t.pending = 1;
-      return;
-    }
-  }
-  // no existing timer to use. Create a new one:
-  fl_intptr_t timer_id = -1;
-  // find an empty slot in the timer array
-  for (int i = 0; i < mac_timer_used; ++i) {
-    if ( !mac_timers[i].timer ) {
-      timer_id = i;
-      break;
-    }
-  }
-  // if there was no empty slot, append a new timer
-  if (timer_id == -1) {
-    // make space if needed
-    if (mac_timer_used == mac_timer_alloc) {
-      realloc_timers();
-    }
-    timer_id = mac_timer_used++;
-  }
-  // now install a brand new timer
-  MacTimeout& t = mac_timers[timer_id];
-  CFRunLoopTimerContext context = {0, (void*)timer_id, NULL,NULL,NULL};
-  CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault,
-                                                    CFAbsoluteTimeGetCurrent() + time,
-                                                    1E30,
-                                                    0,
-                                                    0,
-                                                    do_timer,
-                                                    &context
-                                                    );
-  if (timerRef) {
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(),
-                      timerRef,
-                      kCFRunLoopDefaultMode);
-    t.callback = cb;
-    t.data     = data;
-    t.timer    = timerRef;
-    t.pending  = 1;
-    t.next_timeout = CFRunLoopTimerGetNextFireDate(timerRef);
-  }
-}
-
-void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  // k = how many times 'time' seconds after the last scheduled timeout until the future
-  double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
-  if (k < 1) k = 1;
-  current_timer->next_timeout += k * time;
-  CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
-  current_timer->callback = cb;
-  current_timer->data = data;
-  current_timer->pending = 1;
-}
-
-int Fl_Cocoa_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  &&  t.data == data && t.pending) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  && ( t.data == data || data == NULL)) {
-      delete_timer(t);
-    }
-  }
-}
-
-//
-// End of "$Id$".
-//

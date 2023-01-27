@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "FLTK @FL_VERSION@"
+PROJECT_NAME           = "FLTK @FLTK_VERSION@"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -557,12 +557,15 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/preface.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/intro.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/basics.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/common.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/coordinates.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/resize.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/editor.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/drawing.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/subclassing.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fltk-options.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox
 INPUT += @FLTK_SOURCE_DIR@/FL
@@ -572,12 +575,13 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/enumerations.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/glut.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/forms.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/osissues.dox
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/migration_1_1.dox
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/migration_1_3.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/migration_1_4.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/development.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/license.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/examples.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/faq.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/wayland.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/bundled-libs.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -630,9 +634,15 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS =  */src/*_win32.cxx
-EXCLUDE_PATTERNS += */src/*_mac.cxx
-EXCLUDE_PATTERNS += */src/*_x.cxx
+EXCLUDE_PATTERNS =  @FLTK_SOURCE_DIR@/src/*_win32.cxx
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_mac.cxx
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_x.cxx
+
+# Exclude Wayland specific files that are generated in the source tree
+# by configure + make
+
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/xdg*
+EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/text-input*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -647,7 +657,8 @@ EXCLUDE_SYMBOLS  =
 # the \include command).
 
 EXAMPLE_PATH           = @CMAKE_CURRENT_SOURCE_DIR@/../test \
-                         @CMAKE_CURRENT_SOURCE_DIR@/../examples
+                         @CMAKE_CURRENT_SOURCE_DIR@/../examples \
+                         @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_CURRENT_SOURCE_DIR@
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -759,8 +770,8 @@ VERBATIM_HEADERS       = YES
 # If the alphabetical index is enabled (see ALPHABETICAL_INDEX) then
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns
 # in which this list will be split (can be a number in the range [1..20])
-
-COLS_IN_ALPHA_INDEX    = 5
+# This tag is deprecated
+#COLS_IN_ALPHA_INDEX    = 5
 
 # In case all classes in a project start with a common prefix, all
 # classes will be put under the same header in the alphabetical index.
@@ -802,7 +813,7 @@ HTML_HEADER            =
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/src/html_footer
+HTML_FOOTER            =
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -1007,7 +1018,7 @@ COMPACT_LATEX          = NO
 # by the printer. Possible values are: a4, a4wide, letter, legal and
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX
 # packages that should be included in the LaTeX output.
@@ -1312,7 +1323,8 @@ EXTERNAL_GROUPS        = YES
 # The PERL_PATH should be the absolute path and name of the perl script
 # interpreter (i.e. the result of `which perl').
 
-PERL_PATH              = /usr/bin/perl
+#** obsolete as of Doxygen 1.8.16 (use default for older versions)
+#** PERL_PATH              = /usr/bin/perl
 
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
@@ -1325,7 +1337,8 @@ PERL_PATH              = /usr/bin/perl
 # fallback. It is recommended to install and use dot, since it yields more
 # powerful graphs.
 
-CLASS_DIAGRAMS         = YES
+#** obsolete as of Doxygen 1.9.3, using default (YES) anyway
+#** CLASS_DIAGRAMS         = YES
 
 # You can define message sequence charts within doxygen comments using the \msc
 # command. Doxygen will then run the mscgen tool (see
@@ -1334,7 +1347,8 @@ CLASS_DIAGRAMS         = YES
 # the mscgen tool resides. If left empty the tool is assumed to be found in the
 # default search path.
 
-MSCGEN_PATH            =
+#** obsolete as of Doxygen 1.8.16, not used by FLTK anyway
+#** MSCGEN_PATH            =
 
 # If set to YES, the inheritance and collaboration graphs will hide
 # inheritance and usage relations if the target is undocumented
@@ -1482,7 +1496,8 @@ MAX_DOT_GRAPH_DEPTH    = 0
 # enabling this option may lead to badly anti-aliased labels on the edges of
 # a graph (i.e. they become hard to read).
 
-DOT_TRANSPARENT        = NO
+#** obsolete as of Doxygen 1.9.5, using default (NO) anyway
+#** DOT_TRANSPARENT        = NO
 
 # Set the DOT_MULTI_TARGETS tag to YES allow dot to generate multiple output
 # files in one run (i.e. multiple -o and -T options on the command line). This

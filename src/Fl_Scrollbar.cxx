@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -149,40 +147,40 @@ int Fl_Scrollbar::handle(int event) {
     if (horizontal()) {
       switch (Fl::event_key()) {
       case FL_Left:
-	v -= ls;
-	break;
+        v -= ls;
+        break;
       case FL_Right:
-	v += ls;
-	break;
+        v += ls;
+        break;
       default:
-	return 0;
+        return 0;
       }
     } else { // vertical
       switch (Fl::event_key()) {
       case FL_Up:
-	v -= ls;
-	break;
+        v -= ls;
+        break;
       case FL_Down:
-	v += ls;
-	break;
+        v += ls;
+        break;
       case FL_Page_Up:
-	if (slider_size() >= 1.0) return 0;
-	v -= int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
-	v += ls;
-	break;
+        if (slider_size() >= 1.0) return 0;
+        v -= int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
+        v += ls;
+        break;
       case FL_Page_Down:
-	if (slider_size() >= 1.0) return 0;
-	v += int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
-	v -= ls;
-	break;
+        if (slider_size() >= 1.0) return 0;
+        v += int((maximum()-minimum())*slider_size()/(1.0-slider_size()));
+        v -= ls;
+        break;
       case FL_Home:
-	v = int(minimum());
-	break;
+        v = int(minimum());
+        break;
       case FL_End:
-	v = int(maximum());
-	break;
+        v = int(maximum());
+        break;
       default:
-	return 0;
+        return 0;
       }
     }
     v = int(clamp(v));
@@ -190,7 +188,7 @@ int Fl_Scrollbar::handle(int event) {
       Fl_Slider::value(v);
       value_damage();
       set_changed();
-      do_callback();
+      do_callback(FL_REASON_DRAGGED);
     }
     return 1;}
   }
@@ -198,61 +196,56 @@ int Fl_Scrollbar::handle(int event) {
 }
 
 void Fl_Scrollbar::draw() {
-  if (damage()&FL_DAMAGE_ALL) draw_box();
-  int X = x()+Fl::box_dx(box());
-  int Y = y()+Fl::box_dy(box());
-  int W = w()-Fl::box_dw(box());
-  int H = h()-Fl::box_dh(box());
+  if (damage() & FL_DAMAGE_ALL) draw_box();
+  int X = x() + Fl::box_dx(box());
+  int Y = y() + Fl::box_dy(box());
+  int W = w() - Fl::box_dw(box());
+  int H = h() - Fl::box_dh(box());
+  Fl_Rect ab; // arrow box
+
+  int inset = 2;
+  if (W < 8 || H < 8)
+    inset = 1;
+
   if (horizontal()) {
-    if (W < 3*H) {Fl_Slider::draw(X,Y,W,H); return;}
-    Fl_Slider::draw(X+H,Y,W-2*H,H);
+    if (W < 3*H) {
+      Fl_Slider::draw(X, Y, W, H);
+      return;
+    }
+    Fl_Slider::draw(X+H, Y, W-2*H, H);
     if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_==1) ? fl_down(slider()) : slider(),
-	       X, Y, H, H, selection_color());
+               X, Y, H, H, selection_color());
       draw_box((pushed_==2) ? fl_down(slider()) : slider(),
-	       X+W-H, Y, H, H, selection_color());
-      if (active_r())
-        fl_color(labelcolor());
-      else
-        fl_color(fl_inactive(labelcolor()));
-      int w1 = (H-4)/3; if (w1 < 1) w1 = 1;
-      int x1 = X+(H-w1-1)/2;
-      int yy1 = Y+(H-2*w1-1)/2;
-      if (Fl::is_scheme("gtk+")) {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1-1, yy1+w1, x1+w1, yy1);
-	x1 += (W-H);
-	fl_polygon(x1, yy1, x1+1, yy1+w1, x1, yy1+2*w1, x1+w1, yy1+w1);
-      } else {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1, yy1);
-	x1 += (W-H);
-	fl_polygon(x1, yy1, x1, yy1+2*w1, x1+w1, yy1+w1);
-      }
+               X+W-H, Y, H, H, selection_color());
+
+      Fl_Color arrowcolor = active_r() ? labelcolor() : fl_inactive(labelcolor());
+      ab = Fl_Rect(X, Y, H, H);
+      ab.inset(inset);
+      fl_draw_arrow(ab, FL_ARROW_SINGLE, FL_ORIENT_LEFT, arrowcolor); // left arrow
+      ab = Fl_Rect(X+W-H, Y, H, H);
+      ab.inset(inset);
+      fl_draw_arrow(ab, FL_ARROW_SINGLE, FL_ORIENT_RIGHT, arrowcolor); // right arrow
     }
   } else { // vertical
-    if (H < 3*W) {Fl_Slider::draw(X,Y,W,H); return;}
-    Fl_Slider::draw(X,Y+W,W,H-2*W);
-    if (damage()&FL_DAMAGE_ALL) {
+    if (H < 3*W) {
+      Fl_Slider::draw(X, Y, W, H);
+      return;
+    }
+    Fl_Slider::draw(X, Y+W, W, H-2*W);
+    if (damage() & FL_DAMAGE_ALL) {
       draw_box((pushed_==1) ? fl_down(slider()) : slider(),
-	       X, Y, W, W, selection_color());
+               X, Y, W, W, selection_color());
       draw_box((pushed_==2) ? fl_down(slider()) : slider(),
-	       X, Y+H-W, W, W, selection_color());
-      if (active_r())
-        fl_color(labelcolor());
-      else
-        fl_color(fl_inactive(labelcolor()));
-      int w1 = (W-4)/3; if (w1 < 1) w1 = 1;
-      int x1 = X+(W-2*w1-1)/2;
-      int yy1 = Y+(W-w1-1)/2;
-      if (Fl::is_scheme("gtk+")) {
-	fl_polygon(x1, yy1+w1, x1+w1, yy1+w1-1, x1+2*w1, yy1+w1, x1+w1, yy1);
-	yy1 += H-W;
-	fl_polygon(x1, yy1, x1+w1, yy1+1, x1+w1, yy1+w1);
-	fl_polygon(x1+w1, yy1+1, x1+2*w1, yy1, x1+w1, yy1+w1);
-      } else {
-	fl_polygon(x1, yy1+w1, x1+2*w1, yy1+w1, x1+w1, yy1);
-	yy1 += H-W;
-	fl_polygon(x1, yy1, x1+w1, yy1+w1, x1+2*w1, yy1);
-      }
+               X, Y+H-W, W, W, selection_color());
+
+      Fl_Color arrowcolor = active_r() ? labelcolor() : fl_inactive(labelcolor());
+      ab = Fl_Rect(X, Y, W, W);
+      ab.inset(inset);
+      fl_draw_arrow(ab, FL_ARROW_SINGLE, FL_ORIENT_UP, arrowcolor); // up arrow
+      ab = Fl_Rect(X, Y+H-W, W, W);
+      ab.inset(inset);
+      fl_draw_arrow(ab, FL_ARROW_SINGLE, FL_ORIENT_DOWN, arrowcolor); // down arrow
     }
   }
 }
@@ -276,8 +269,3 @@ Fl_Scrollbar::~Fl_Scrollbar() {
   if (pushed_)
     Fl::remove_timeout(timeout_cb, this);
 }
-
-
-//
-// End of "$Id$".
-//

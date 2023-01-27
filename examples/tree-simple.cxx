@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-//	Simple Fl_Tree widget example. - erco 06/05/2010
+//      Simple Fl_Tree widget example. - erco 06/05/2010
 //
 // Copyright 2010 Greg Ercolano.
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <stdio.h>
 #include <FL/Fl.H>
@@ -60,8 +58,8 @@ int main(int argc, char *argv[]) {
   {
     // Create the tree
     Fl_Tree *tree = new Fl_Tree(10, 10, win->w()-20, win->h()-20);
-    tree->showroot(0);				// don't show root of tree
-    tree->callback(TreeCallback);		// setup a callback for the tree
+    tree->showroot(0);                          // don't show root of tree
+    tree->callback(TreeCallback);               // setup a callback for the tree
 
     // Add some items
     tree->add("Flintstones/Fred");
@@ -71,9 +69,9 @@ int main(int argc, char *argv[]) {
     tree->add("Simpsons/Marge");
     tree->add("Simpsons/Bart");
     tree->add("Simpsons/Lisa");
-    tree->add("Pathnames/\\/bin");		// front slashes
+    tree->add("Pathnames/\\/bin");              // front slashes
     tree->add("Pathnames/\\/usr\\/sbin");
-    tree->add("Pathnames/C:\\\\Program Files");	// backslashes
+    tree->add("Pathnames/C:\\\\Program Files"); // backslashes
     tree->add("Pathnames/C:\\\\Documents and Settings");
 
     // Start with some items closed
@@ -85,7 +83,3 @@ int main(int argc, char *argv[]) {
   win->show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

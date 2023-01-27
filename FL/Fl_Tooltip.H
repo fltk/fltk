@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -40,6 +38,10 @@ public:
   static float delay() { return delay_; }
   /**    Sets the tooltip delay. The default delay is 1.0 seconds.  */
   static void delay(float f) { delay_ = f; }
+  /**    Gets the time until an open tooltip hides again. The default delay is 12.0 seconds.  */
+  static float hidedelay() { return hidedelay_; }
+  /**    Sets the time until an open tooltip hides again. The default delay is 12.0 seconds.  */
+  static void hidedelay(float f) { hidedelay_ = f; }
   /**
     Gets the tooltip hover delay, the delay between tooltips.
     The default delay is 0.2 seconds.
@@ -105,20 +107,17 @@ private:
 
 private:
   static float delay_; //!< delay before a tooltip is shown
+  static float hidedelay_; //!< delay until tooltip is closed again
   static float hoverdelay_; //!< delay between tooltips
   static Fl_Color color_;
   static Fl_Color textcolor_;
   static Fl_Font font_;
   static Fl_Fontsize size_;
   static Fl_Widget* widget_; //!< Keeps track of the current target widget
-  static int margin_width_;	//!< distance around tooltip text left+right
-  static int margin_height_;	//!< distance around tooltip text top+bottom
-  static int wrap_width_;	//!< maximum width of tooltip text before it word wraps
+  static int margin_width_;     //!< distance around tooltip text left+right
+  static int margin_height_;    //!< distance around tooltip text top+bottom
+  static int wrap_width_;       //!< maximum width of tooltip text before it word wraps
   static const int draw_symbols_; // 1 = draw @-symbols in tooltips, 0 = no
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

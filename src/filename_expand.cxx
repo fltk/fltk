@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "Fl_System_Driver.H"
@@ -37,14 +35,10 @@
     fl_filename_expand(out, sizeof(out), "$TMPDIR/foo.txt");  // out="/var/tmp/foo.txt"
     \endcode
     \param[out] to resulting expanded filename
-    \param[in]  tolen size of the expanded filename buffer 
+    \param[in]  tolen size of the expanded filename buffer
     \param[in]  from filename containing shell variables
     \return 0 if no change, non zero otherwise
  */
 int fl_filename_expand(char *to,int tolen, const char *from) {
   return Fl::system_driver()->filename_expand(to, tolen, from);
 }
-
-//
-// End of "$Id$".
-//

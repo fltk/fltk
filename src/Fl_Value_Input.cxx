@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Value input widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // FLTK widget for drag-adjusting a floating point value.
@@ -35,7 +33,7 @@ void Fl_Value_Input::input_cb(Fl_Widget*, void* v) {
   if (nv != t.value() || t.when() & FL_WHEN_NOT_CHANGED) {
     t.set_value(nv);
     t.set_changed();
-    if (t.when()) t.do_callback();
+    if (t.when()) t.do_callback(FL_REASON_CHANGED);
   }
 }
 
@@ -94,7 +92,7 @@ int Fl_Value_Input::handle(int event) {
       Fl_Widget_Tracker wp(&input);
       input.handle(FL_PUSH);
       if (wp.exists())
-	input.handle(FL_RELEASE);
+        input.handle(FL_RELEASE);
     }
     return 1;
   case FL_FOCUS:
@@ -134,7 +132,3 @@ Fl_Value_Input::~Fl_Value_Input() {
   if (input.parent() == (Fl_Group *)this)
     input.parent(0);   // *revert* ctor kludge!
 }
-
-//
-// End of "$Id$".
-//

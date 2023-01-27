@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Two internal fltk data structures:
@@ -31,7 +29,7 @@
 class Fl_Quartz_Font_Descriptor : public Fl_Font_Descriptor {
 public:
   Fl_Quartz_Font_Descriptor(const char* fontname, Fl_Fontsize size);
-  FL_EXPORT ~Fl_Quartz_Font_Descriptor();
+  virtual FL_EXPORT ~Fl_Quartz_Font_Descriptor();
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   CTFontRef fontref;
   // the unicode span is divided in 512 blocks of 128 characters
@@ -41,12 +39,9 @@ public:
   ATSUTextLayout layout;
   ATSUStyle style;
 # endif
+  short q_width;
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 #endif
-
-//
-// End of "$Id$".
-//

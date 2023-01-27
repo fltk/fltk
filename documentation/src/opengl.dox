@@ -1,6 +1,6 @@
 /**
 
- \page	opengl Using OpenGL
+ \page  opengl Using OpenGL
 
 This chapter discusses using FLTK for your OpenGL applications.
 
@@ -14,7 +14,7 @@ OpenGL calls to draw the display. Your main program should call
 (somewhat later) FLTK will call \p draw().
 
 With a bit of care you can also use OpenGL to draw into
-normal FLTK windows. This allows you to use Gouraud shading for
+normal FLTK windows (see \ref opengl_normal below). This allows you to use Gouraud shading for
 drawing your widgets.  To do this you use the
 \ref opengl_gl_start "gl_start()" and
 \ref opengl_gl_finish "gl_finish()"
@@ -25,9 +25,9 @@ the file \p <GL/gl.h> (on macOS: \p <OpenGL/gl.h>), define
 some extra drawing functions provided by FLTK, and include the
 \p <windows.h> header file needed by Windows applications.
 
-Some simple coding rules (see \ref osissues_retina) allow to write
-cross-platform code that will draw high resolution
-OpenGL graphics if run on 'retina' displays with MacOS.
+Some simple coding rules (see \ref opengl_highdpi) allow to write
+cross-platform code that will support OpenGL run on HighDPI displays
+(including the 'retina' displays of Apple hardware).
 
 \section opengl_subclass Making a Subclass of Fl_Gl_Window
 
@@ -55,15 +55,15 @@ glDrawBuffer(GL_BACK);
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>Note:</B>
+        <TD><B>Note:</B>
 
-	If you are using the Mesa graphics library, the call
-	to \p glDrawBuffer() is not required and will slow
-	down drawing considerably. The preprocessor instructions
-	shown above will optimize your code based upon the
-	graphics library used.
+        If you are using the Mesa graphics library, the call
+        to \p glDrawBuffer() is not required and will slow
+        down drawing considerably. The preprocessor instructions
+        shown above will optimize your code based upon the
+        graphics library used.
 
-	</TD>
+        </TD>
 
 </TR>
 </TABLE></CENTER>
@@ -150,12 +150,12 @@ loading functions by doing:
 
 \code
   case FL_PUSH:
-    make_current();	// make OpenGL context current
+    make_current();     // make OpenGL context current
     if (!valid()) {
 
       ... set up projection exactly the same as draw ...
 
-      valid(1);		// stop it from doing this next time
+      valid(1);         // stop it from doing this next time
     }
     ... ok to call NON-DRAWING OpenGL code here, such as hit
     detection, loading textures, etc...
@@ -179,7 +179,29 @@ You must put <tt>glwindow->show()</tt> in your main code
 after calling \p show() on the window containing the
 OpenGL window.
 
+\section opengl_highdpi  OpenGL and support of HighDPI displays
+
+HighDPI displays (including the so-called 'retina' displays of Apple
+hardware) are supported by FLTK in such a way that 1 unit of an FLTK
+quantity (say, the value given by Fl_Gl_Window::w()) corresponds to more
+than 1 pixel on the display. Conversely, when a program specifies the width and height of the
+OpenGL viewport, it is necessary to use an API that returns quantities expressed in pixels.
+That can be done as follows:
+\code
+  Fl_Gl_Window *glw = ...;
+  glViewport(0, 0, glw->pixel_w(), glw->pixel_h());
+\endcode
+which makes use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() methods giving
+the size in pixels of an Fl_Gl_Window that is potentially mapped to a HighDPI display.
+Method Fl_Gl_Window::pixels_per_unit() can also be useful in this context.
+\note A further coding rule is necessary to properly support retina displays
+and OpenGL under macOS (see \ref osissues_retina)
+
 \section opengl_normal Using OpenGL in Normal FLTK Windows
+
+\note Drawing both with OpenGL and Quartz in a normal FLTK window is not possible
+with the macOS platform. This technique is therefore not useful under macOS because
+it permits nothing more than what is possible with class Fl_Gl_Window.
 
 You can put OpenGL code into the \p draw() method, as described in
 \ref subclassing_drawing
@@ -235,6 +257,75 @@ adhere to for maximum portability:
 Do \e not call \p gl_start() or
 \p gl_finish() when drawing into an Fl_Gl_Window !
 
+
+\section opengl_with_fltk_widgets Using FLTK widgets in OpenGL Windows
+
+FLTK widgets can be added to `Fl_Gl_Window`s just as they would be added to
+`Fl_Window`s. They are rendered as an overlay over the user defined
+OpenGL graphics using 'fl_..' graphics calls that are implemented in GL.
+
+`Fl_Gl_Window` does not add subsequent widgets as children by default as
+`Fl_Window` does. Call `myGlWindow->begin()` after creating the GL window to
+automatically add following widgets. Remember to call `myGlWindow->end()`.
+
+\code
+class My_Gl_Window : public Fl_Gl_Window {
+...
+  void draw();
+...
+};
+
+...
+myGlWindow = new My_Gl_Window(0, 0, 500, 500);
+myGlWindow->begin();
+myButton = new Fl_Button(10, 10, 120, 24, "Hello!");
+myGlWindow->end();
+...
+
+void My_Gl_Window::draw() {
+  // ... user GL drawing code
+  Fl_Gl_Window::draw(); // Draw FLTK child widgets.
+}
+\endcode
+
+Users can draw into the overlay by using GL graphics calls as well as all
+`fl_...` graphics calls from the "Drawing Fast Shapes" section.
+
+\code
+void My_Gl_Window::draw() {
+  // ... user GL drawing code
+  Fl_Gl_Window::draw_begin(); // Set up 1:1 projection
+  Fl_Window::draw();          // Draw FLTK children
+  fl_color(FL_RED);
+  fl_rect(10, 10, 100, 100);
+  Fl_Gl_Window::draw_end();   // Restore GL state
+}
+\endcode
+
+Widgets can be drawn with transparencies by assigning an alpha value to a
+colormap entry and using that color in the widget.
+
+\code
+Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 127); // 50% transparent yellow
+myGlWindow = new My_Gl_Window(0, 0, 500, 500);
+myGlWindow->begin();
+myButton = new Fl_Button(10, 10, 120, 24, "Hello!");
+myButton->box(FL_BORDER_BOX);
+myButton->color(FL_FREE_COLOR);
+myGlWindow->end();
+\endcode
+
+Transparencies can also be set directly when drawing. This can be used to
+create custom box types and RGB overlay drawings with an alpha channel.
+
+\code
+fl_color(0, 255, 0, 127); // 50% transparent green
+fl_rectf(10, 10, 100, 100);
+fl_color(FL_RED); // back to opaque red
+fl_rect(20, 20, 80, 80);
+\endcode
+
+
 \section opengl_drawing OpenGL Drawing Functions
 
 FLTK provides some useful OpenGL drawing functions. They can
@@ -261,7 +352,7 @@ void gl_font(Fl_Font fontid, int size)
 
 \par
 Sets the current OpenGL font to the same font you get by calling
-\ref ssect_Fonts "fl_font()".
+\ref drawing_fonts "fl_font()".
 
 int gl_height() <br>
 int gl_descent() <br>
@@ -295,7 +386,7 @@ void gl_draw(const char *s, int x, int y, int w, int h, Fl_Align)
 Draws a string formatted into a box, with newlines and tabs
 expanded, other control characters changed to ^X, and aligned
 with the edges or center. Exactly the same output as
-\ref ssect_Text "fl_draw()".
+\ref drawing_text "fl_draw()".
 
 \section opengl_speed Speeding up OpenGL
 
@@ -431,10 +522,10 @@ void OptimizerWindow::draw() {
 
   // Clear the window...
   context_->clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
-                  0.0f,		// Red
-		  0.0f,		// Green
-		  0.0f,		// Blue
-		  1.0f);	// Alpha
+                  0.0f,         // Red
+                  0.0f,         // Green
+                  0.0f,         // Blue
+                  1.0f);        // Alpha
 
   // Then draw the scene (if any)...
   if (scene_)
@@ -459,7 +550,7 @@ and OpenGL 3.
 To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag
 when calling Fl_Gl_Window::mode(int a) or glutInitDisplayMode().
 
-<b>On the Windows and Unix/Linux platforms</b>, FLTK creates contexts
+<b>On the Windows and Linux platforms</b>, FLTK creates contexts
 implementing the highest OpenGL version supported by the hardware.
 Such contexts may also be compatible with lower OpenGL versions.
 Access to functions from OpenGL
@@ -470,17 +561,34 @@ necessary to install the GLEW library (see below).
 <b>On the macOS platform</b>, MacOS 10.7 or above is required;
 GLEW is possible but not necessary. FLTK creates contexts for OpenGL
 versions 1 and 2 without the FL_OPENGL3
-flag and for OpenGL versions 3.2 and above with it.
+flag and for OpenGL versions 3.2 and above (<b>but not below</b>) with it.
 
-\par GLEW installation (Unix/Linux and Windows platforms)
-GLEW is available as a package for most Linux distributions and in source
-form at http://glew.sourceforge.net/.
-For the Windows platform, a Visual Studio static library (glew32.lib) can
-be downloaded from the same web site; a MinGW-style static library (libglew32.a)
-can be built from source with the make command.
+\par GLEW installation (Linux and Windows platforms)
+FLTK needs a header file, \c GL/glew.h, and a library, \c libGLEW.* or
+equivalent, to support OpenGL 3 and above.
+<br>These can be obtained for most Linux distributions
+by installing package libglew-dev.
+<br>For the Windows platform :
+<ul>
+<li> the header and a Visual Studio static library (glew32.lib) can
+be downloaded from http://glew.sourceforge.net/ ;
+<li> a MinGW-style static library (libglew32.a)
+can be built from source (same web site) with the make command.
+Alternatively, pre-built files are available for these architectures :
+<ul><li>x86: download files
+<a href=https://github.com/McNopper/OpenGL/blob/42fa2736e2b37db1df99c2b205279855ec6f2b1d/External/x86/Windows/MinGW/include/GL/glew.h>
+glew.h</a> and
+<a href=https://github.com/McNopper/OpenGL/blob/42fa2736e2b37db1df99c2b205279855ec6f2b1d/External/x86/Windows/MinGW/lib/libglew32.a>
+libglew32.a</a>;
+<li>x86_64: install GLEW as an MSYS2 package with command :
+\code
+pacman -S mingw-w64-x86_64-glew
+\endcode
+</ul>
+</ul>
 
 \par  Source-level changes for OpenGL 3:
-\li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>,
+\li Put this in all OpenGL-using source files (instead of, or before if needed, \#include <FL/gl.h>,
 and before \#include <FL/glut.h> if you use GLUT):
 \code
 #if defined(__APPLE__)
@@ -523,8 +631,29 @@ glewExperimental = GL_TRUE;
 \endcode
 before the glewInit() call.
 
+\par Testing for success of the glewInit() call
+Testing whether the glewInit() call is successful is to be done as follows:
+\code
+#include <FL/platform.H> // defines FLTK_USE_WAYLAND under the Wayland platform
+#include <FL/Fl.H> // for Fl::warning()
+#ifndef __APPLE__
+#  if defined(_WIN32)
+#    define GLEW_STATIC 1
+#  endif
+#  include <GL/glew.h>
+
+  GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+#  ifdef FLTK_USE_WAYLAND
+      // glewInit returns GLEW_ERROR_NO_GLX_DISPLAY with Wayland
+      if (fl_wl_display() && err == GLEW_ERROR_NO_GLX_DISPLAY) err = GLEW_OK;
+#  endif
+  if (err != GLEW_OK) Fl::warning("glewInit() failed returning %u", err);
+#endif // ! __APPLE__
+\endcode
+
+
 \par Changes in the build process
-Link with libGLEW.so (on Unix/Linux), libglew32.a (with MinGW) or glew32.lib
+Link with libGLEW.so (with X11 or Wayland), libglew32.a (with MinGW) or glew32.lib
 (with MS Visual Studio); no change is needed on the Mac OS platform.
 
 \htmlonly

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,18 +7,15 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
-
-#include "../../config_lib.h"
-
-#include "Fl_Quartz_Graphics_Driver.H"
 
 #include <config.h>
+#include "Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
@@ -50,8 +45,8 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
  userdata:  ?
  */
 static void innards(const uchar *buf, int X, int Y, int W, int H,
-		    int delta, int linedelta, int mono,
-		    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc, Fl_Quartz_Graphics_Driver *driver)
+                    int delta, int linedelta, int mono,
+                    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc, Fl_Quartz_Graphics_Driver *driver)
 {
   if (!linedelta) linedelta = W*abs(delta);
 
@@ -65,14 +60,14 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     tmpBuf = new uchar[ H*W*abs(delta) ];
     if (cb) {
       for (int i=0; i<H; i++) {
-	cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
+        cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
       }
     } else {
       uchar *p = tmpBuf;
       for (int i=0; i<H; i++) {
-	memcpy(p, buf+i*abs(linedelta), W*abs(delta));
-	p += W*abs(delta);
-	}
+        memcpy(p, buf+i*abs(linedelta), W*abs(delta));
+        p += W*abs(delta);
+        }
     }
     array = (void*)tmpBuf;
     linedelta = W*abs(delta);
@@ -86,8 +81,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   // a release callback is necessary when the gc is a print context because the image data
   // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
   CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, abs(linedelta)*H,
-						       tmpBuf ? dataReleaseCB : NULL
-						       );
+                                                       tmpBuf ? dataReleaseCB : NULL
+                                                       );
   CGImageRef        img = CGImageCreate( W, H, 8, 8*abs(delta), abs(linedelta),
                             lut, abs(delta)&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
@@ -115,21 +110,17 @@ void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w
   innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,1,0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,1,cb,data,gc_,this);
 }
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
-}
 
 void Fl_Quartz_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
@@ -152,13 +143,13 @@ void Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   if (!ld) ld = rgb->data_w() * rgb->d();
   CGDataProviderRef src;
   if ( has_feature(PRINTER) ) {
-    // When printing, the data at rgb->array are used when the printed page is completed,
-    // that is, after return from this function.
+    // When printing or copying to clipboard, the data at rgb->array are used when
+    // the PDF page is completed, that is, after return from this function.
     // At that stage, the rgb object has possibly been deleted. It is therefore necessary
-    // to use a copy of rgb->array for printing. The mask_ member of rgb
-    // is used to avoid repeating the copy operation if rgb is printed again.
+    // to use a copy of rgb->array. The mask_ member of rgb
+    // is used to avoid repeating the copy operation if rgb is drawn again.
     // The CGImage data provider deletes the copy at the latest of these two events:
-    // deletion of rgb, and completion of the page where rgb was printed.
+    // deletion of rgb, and completion of the PDF page where rgb was drawn.
     size_t total = ld * rgb->data_h();
     uchar *copy = new uchar[total];
     memcpy(copy, rgb->array, total);
@@ -211,12 +202,12 @@ void Fl_Quartz_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int 
   if (!*id(pxm)) {
     cache(pxm);
   }
-  
+
   CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(pxm);
   draw_CGImage(cgimg, X,Y,W,H, cx,cy, pxm->w(), pxm->h());
 }
 
-Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {
+CGImageRef Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {
   static uchar reverse[16] =    /* Bit reversal lookup table */
   { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
     0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
@@ -230,10 +221,10 @@ Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *
   CGDataProviderRef srcp = CGDataProviderCreateWithData( NULL, bmask, rowBytes*h, dataReleaseCB);
   CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
   CGDataProviderRelease(srcp);
-  return (Fl_Bitmask)id_;
+  return id_;
 }
 
-void Fl_Quartz_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
+void Fl_Quartz_Graphics_Driver::delete_bitmask(fl_uintptr_t bm) {
   if (bm) CGImageRelease((CGImageRef)bm);
 }
 
@@ -259,10 +250,10 @@ void Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Surface_Device::push_current(surf);
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   Fl_Surface_Device::pop_current();
-  CGContextRef src = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surf);
+  CGContextRef src = (CGContextRef)Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surf);
   void *cgdata = CGBitmapContextGetData(src);
-  int sw = CGBitmapContextGetWidth(src);
-  int sh = CGBitmapContextGetHeight(src);
+  int sw = (int)CGBitmapContextGetWidth(src);
+  int sh = (int)CGBitmapContextGetHeight(src);
   CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGDataProviderRef src_bytes = CGDataProviderCreateWithData(src, cgdata, sw*sh*4, pmProviderRelease);
@@ -280,40 +271,13 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
   CGContextClipToRect(gc_, CGRectOffset(rect, -0.5, -0.5 ));
   // move graphics context to origin of vertically reversed image
   // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
-  // Thus, image and surface pixels are in phase if there's no scaling.
+  // Thus, image and surface pixels are in phase.
   CGContextTranslateCTM(gc_, rect.origin.x - srcx - 0.5, rect.origin.y - srcy + sh - 0.5);
   CGContextScaleCTM(gc_, 1, -1);
-  CGAffineTransform at = CGContextGetCTM(gc_);
-  if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
-    // We handle x2 and /2 scalings that occur when drawing to
-    // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
-    bool doit = false;
-    // phase image with display pixels
-    CGFloat deltax = 0, deltay = 0;
-    if (at.a == 2) { // make .tx and .ty have even values
-      deltax = (at.tx/2 - round(at.tx/2));
-      deltay = (at.ty/2 - round(at.ty/2));
-      doit = true;
-    } else if (at.a == 0.5) {
-      doit = true;
-      if (high_resolution()) { // make .tx and .ty have int or half-int values
-        deltax = -(at.tx*2 - round(at.tx*2));
-        deltay = (at.ty*2 - round(at.ty*2));
-      } else { // make .tx and .ty have integral values
-        deltax = (at.tx - round(at.tx))*2;
-        deltay = (at.ty - round(at.ty))*2;
-      }
-    }
-    if (doit) CGContextTranslateCTM(gc_, -deltax, -deltay);
-  }
   CGContextDrawImage(gc_, CGRectMake(0, 0, sw, sh), cgimg);
   CGContextRestoreGState(gc_);
 }
 
-void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
-  CGImageRelease((CGImageRef)p);
+void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t pixmap_ref) {
+  CGImageRelease((CGImageRef)pixmap_ref);
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -59,6 +57,21 @@ void Fl_Graphics_Driver::pop_matrix() {
     m = stack[--sptr];
 }
 
+/** see fl_load_identity() */
+void Fl_Graphics_Driver::load_identity() {
+  m = m0;
+}
+
+/** see fl_load_matrix() */
+void Fl_Graphics_Driver::load_matrix(double a, double b, double c, double d, double x, double y) {
+  m.a = a;
+  m.b = b;
+  m.c = c;
+  m.d = d;
+  m.x = x;
+  m.y = y;
+}
+
 /** see fl_mult_matrix() */
 void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, double x, double y) {
   matrix o;
@@ -92,7 +105,7 @@ void Fl_Graphics_Driver::translate(double x,double y) {
 /** see fl_begin_points() */
 void Fl_Graphics_Driver::begin_points() {
   n = 0;
-  what = POINT_;
+  what = POINTS;
 }
 
 /** see fl_begin_line() */
@@ -137,7 +150,3 @@ double Fl_Graphics_Driver::transform_dy(double x, double y) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

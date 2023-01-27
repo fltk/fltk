@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Drivers code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Widget_Surface_h
@@ -34,17 +32,8 @@ protected:
   int y_offset;
   Fl_Widget_Surface(Fl_Graphics_Driver *d);
 public:
-  /**
-   Translates the current graphics origin accounting for the current rotation.
-   
-   Each translate() call must be matched by an untranslate() call.
-   Successive translate() calls add up their effects.
-   */
   virtual void translate(int x, int y);
-  /**
-   Undoes the effect of a previous translate() call.
-   */
-  virtual void untranslate(void) {}
+  virtual void untranslate();
   void draw(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
   virtual void draw_decorated_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
@@ -54,7 +43,3 @@ public:
 };
 
 #endif /* Fl_Widget_Surface_h */
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Windows keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,18 +7,18 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Return the current state of a key.  Keys are named by fltk symbols,
 // which are actually X keysyms.  So this has to translate to Windows
 // VK_x symbols.
 
-#include "drivers/WinAPI//Fl_WinAPI_System_Driver.H"
+#include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <FL/platform.H>
 
 // Convert an FLTK (X) keysym to a Windows VK symbol:
@@ -28,75 +26,75 @@
 // This table is in numeric order by FLTK symbol order for binary search:
 
 static const struct {unsigned short vk, fltk;} vktab[] = {
-  {VK_SPACE,	' '},
-  {'1',		'!'},
-  {0xde,	'\"'},
-  {'3',		'#'},
-  {'4',		'$'},
-  {'5',		'%'},
-  {'7',		'&'},
-  {0xde,	'\''},
-  {'9',		'('},
-  {'0',		')'},
-  {'8',		'*'},
-  {0xbb,	'+'},
-  {0xbc,	','},
-  {0xbd,	'-'},
-  {0xbe,	'.'},
-  {0xbf,	'/'},
-  {0xba,	':'},
-  {0xba,	';'},
-  {0xbc,	'<'},
-  {0xbb,	'='},
-  {0xbe,	'>'},
-  {0xbf,	'?'},
-  {'2',		'@'},
-  {0xdb,	'['},
-  {0xdc,	'\\'},
-  {0xdd,	']'},
-  {'6',		'^'},
-  {0xbd,	'_'},
-  {0xc0,	'`'},
-  {0xdb,	'{'},
-  {0xdc,	'|'},
-  {0xdd,	'}'},
-  {0xc0,	'~'},
-  {VK_BACK,	FL_BackSpace},
-  {VK_TAB,	FL_Tab},
-  {VK_CLEAR,	0xff0b/*XK_Clear*/},
-  {0xe2 /*VK_OEM_102*/,	FL_Iso_Key},
-  {VK_RETURN,	FL_Enter},
-  {VK_PAUSE,	FL_Pause},
-  {VK_SCROLL,	FL_Scroll_Lock},
-  {VK_ESCAPE,	FL_Escape},
-  {VK_HOME,	FL_Home},
-  {VK_LEFT,	FL_Left},
-  {VK_UP,	FL_Up},
-  {VK_RIGHT,	FL_Right},
-  {VK_DOWN,	FL_Down},
-  {VK_PRIOR,	FL_Page_Up},
-  {VK_NEXT,	FL_Page_Down},
-  {VK_END,	FL_End},
-  {VK_SNAPSHOT,	FL_Print},
-  {VK_INSERT,	FL_Insert},
-  {VK_APPS,	FL_Menu},
-  {VK_NUMLOCK,	FL_Num_Lock},
-//{VK_???,	FL_KP_Enter},
-  {VK_MULTIPLY,	FL_KP+'*'},
-  {VK_ADD,	FL_KP+'+'},
-  {VK_SUBTRACT,	FL_KP+'-'},
-  {VK_DECIMAL,	FL_KP+'.'},
-  {VK_DIVIDE,	FL_KP+'/'},
-  {VK_LSHIFT,	FL_Shift_L},
-  {VK_RSHIFT,	FL_Shift_R},
-  {VK_LCONTROL,	FL_Control_L},
-  {VK_RCONTROL,	FL_Control_R},
-  {VK_CAPITAL,	FL_Caps_Lock},
-  {VK_LWIN,	FL_Meta_L},
-  {VK_RWIN,	FL_Meta_R},
-  {VK_LMENU,	FL_Alt_L},
-  {VK_RMENU,	FL_Alt_R},
-  {VK_DELETE,	FL_Delete}
+  {VK_SPACE,    ' '},
+  {'1',         '!'},
+  {0xde,        '\"'},
+  {'3',         '#'},
+  {'4',         '$'},
+  {'5',         '%'},
+  {'7',         '&'},
+  {0xde,        '\''},
+  {'9',         '('},
+  {'0',         ')'},
+  {'8',         '*'},
+  {0xbb,        '+'},
+  {0xbc,        ','},
+  {0xbd,        '-'},
+  {0xbe,        '.'},
+  {0xbf,        '/'},
+  {0xba,        ':'},
+  {0xba,        ';'},
+  {0xbc,        '<'},
+  {0xbb,        '='},
+  {0xbe,        '>'},
+  {0xbf,        '?'},
+  {'2',         '@'},
+  {0xdb,        '['},
+  {0xdc,        '\\'},
+  {0xdd,        ']'},
+  {'6',         '^'},
+  {0xbd,        '_'},
+  {0xc0,        '`'},
+  {0xdb,        '{'},
+  {0xdc,        '|'},
+  {0xdd,        '}'},
+  {0xc0,        '~'},
+  {VK_BACK,     FL_BackSpace},
+  {VK_TAB,      FL_Tab},
+  {VK_CLEAR,    0xff0b/*XK_Clear*/},
+  {0xe2 /*VK_OEM_102*/, FL_Iso_Key},
+  {VK_RETURN,   FL_Enter},
+  {VK_PAUSE,    FL_Pause},
+  {VK_SCROLL,   FL_Scroll_Lock},
+  {VK_ESCAPE,   FL_Escape},
+  {VK_HOME,     FL_Home},
+  {VK_LEFT,     FL_Left},
+  {VK_UP,       FL_Up},
+  {VK_RIGHT,    FL_Right},
+  {VK_DOWN,     FL_Down},
+  {VK_PRIOR,    FL_Page_Up},
+  {VK_NEXT,     FL_Page_Down},
+  {VK_END,      FL_End},
+  {VK_SNAPSHOT, FL_Print},
+  {VK_INSERT,   FL_Insert},
+  {VK_APPS,     FL_Menu},
+  {VK_NUMLOCK,  FL_Num_Lock},
+//{VK_???,      FL_KP_Enter},
+  {VK_MULTIPLY, FL_KP+'*'},
+  {VK_ADD,      FL_KP+'+'},
+  {VK_SUBTRACT, FL_KP+'-'},
+  {VK_DECIMAL,  FL_KP+'.'},
+  {VK_DIVIDE,   FL_KP+'/'},
+  {VK_LSHIFT,   FL_Shift_L},
+  {VK_RSHIFT,   FL_Shift_R},
+  {VK_LCONTROL, FL_Control_L},
+  {VK_RCONTROL, FL_Control_R},
+  {VK_CAPITAL,  FL_Caps_Lock},
+  {VK_LWIN,     FL_Meta_L},
+  {VK_RWIN,     FL_Meta_R},
+  {VK_LMENU,    FL_Alt_L},
+  {VK_RMENU,    FL_Alt_R},
+  {VK_DELETE,   FL_Delete}
 };
 
 static int fltk2ms(int fltk) {
@@ -115,16 +113,12 @@ static int fltk2ms(int fltk) {
   return 0;
 }
 
-int Fl_WinAPI_System_Driver::event_key(int k) {
+int Fl_WinAPI_Screen_Driver::event_key(int k) {
   return GetKeyState(fltk2ms(k))&~1;
 }
 
-int Fl_WinAPI_System_Driver::get_key(int k) {
+int Fl_WinAPI_Screen_Driver::get_key(int k) {
   uchar foo[256];
   GetKeyboardState(foo);
   return foo[fltk2ms(k)]&~1;
 }
-
-//
-// End of "$Id$".
-//

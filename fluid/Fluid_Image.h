@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
 // This class stores the image labels for widgets in fluid.  This is
@@ -13,20 +11,22 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FLUID_IMAGE_H
-#  define FLUID_IMAGE_H
+#define FLUID_IMAGE_H
 
-#  include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Shared_Image.H>
 
+#include "code.h"
 
 class Fluid_Image {
+  bool is_animated_gif_;
   const char *name_;
   int refcount;
   Fl_Shared_Image *img;
@@ -34,6 +34,9 @@ class Fluid_Image {
 protected:
   Fluid_Image(const char *name); // no public constructor
   ~Fluid_Image(); // no public destructor
+  size_t write_static_binary(Fd_Code_Writer& f, const char* fmt);
+  size_t write_static_text(Fd_Code_Writer& f, const char* fmt);
+  void write_static_rgb(Fd_Code_Writer& f, const char* idata_name);
 public:
   int written;
   static Fluid_Image* find(const char *);
@@ -41,9 +44,11 @@ public:
   void increment();
   void image(Fl_Widget *); // set the image of this widget
   void deimage(Fl_Widget *); // set the deimage of this widget
-  void write_static();
-  void write_initializer(const char *type_name, const char *format, ...);
-  void write_code(const char *var, int inactive = 0);
+  void write_static(Fd_Code_Writer& f, int compressed);
+  void write_initializer(Fd_Code_Writer& f, const char *type_name, const char *format, ...);
+  void write_code(Fd_Code_Writer& f, int bind, const char *var, int inactive = 0);
+  void write_inline(Fd_Code_Writer& f, int inactive = 0);
+  void write_file_error(Fd_Code_Writer& f, const char *fmt);
   const char *name() const {return name_;}
 };
 
@@ -53,7 +58,3 @@ Fluid_Image *ui_find_image(const char *);
 extern const char *ui_find_image_name;
 
 #endif
-
-//
-// End of "$Id$".
-//

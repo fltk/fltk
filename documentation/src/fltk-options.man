@@ -1,0 +1,98 @@
+.TH fltk\-options 1 "Fast Light Tool Kit" "13. January 2023"
+.SH NAME
+fltk\-options \- application to get and modify FLTK runtime options.
+.sp
+.SH SYNOPSIS
+fltk\-options
+[ \-S\fIoption[=value]\fR ]
+[ \-U\fIoption[=value]\fR ]
+[ \-L ]
+[ \-LS ]
+[ \-LU ]
+[ \-f ]
+[ \-v ] [ \-\-verbose ]
+[ \-h[option] ] [ \-\-help [option] ]
+.SH DESCRIPTION
+\fIfltk\-options\fR is a tool that allows you to access and change settings
+related to the user interface in applications built with FLTK. These settings
+will be applied when the program is launched. They can be set at the system
+level or by the individual user. User settings take precedence
+over system settings.
+.LP
+The following command line arguments are supported:
+.TP 5
+\-S\fIoption[=value]\fR
+.br
+Change or print system wide option.
+.TP 5
+\-U\fIoption[=value]\fR
+.br
+Change or print user option. Values can be "0" or "OFF" to clear,
+or "1" or "ON" to set the option. The value "-1" or "DEFAULT" sets
+the option to its default value.
+If no value is given, the current setting is returned as "-1", "0", or "1".
+.TP 5
+\-L
+.br
+List the value of all options.
+.TP 5
+\-LS
+.br
+List the value of all system options.
+.TP 5
+\-LU
+.br
+List the value of all user options.
+.TP 5
+\-f
+.br
+Suppress error messages concerning file access permissions.
+.TP 5
+\-v, \-\-verbose
+.br
+Print additional information in command line mode.
+.TP 5
+\-h[option], \-\-help [option]
+.br
+Prints a help page. If an option is give, print detailed information
+for that option.
+.LP
+The following FLTK options are supported:
+.TP 5
+OPTION_VISIBLE_FOCUS
+.br
+Draw a dotted rectangle in widget with keyboard focus.
+.TP 5
+OPTION_ARROW_FOCUS
+.br
+Arrow keys will move focus beyond text input field.
+.TP 5
+OPTION_SHOW_TOOLTIPS
+.br
+Show or hide tooltips.
+.TP 5
+OPTION_DND_TEXT
+.br
+User can drag text from FLTK into other apps.
+.TP 5
+OPTION_FNFC_USES_GTK
+.br
+Use GTK file chooser instead of FLTK if available.
+.TP 5
+OPTION_PRINTER_USES_GTK
+.br
+Use GTK printer dialog instead of FLTK if available.
+.TP 5
+OPTION_SHOW_SCALING
+.br
+Show the zoom factor in a transient popup window.
+.LP
+Calling fltk-options without options will launch fltk-options interactive mode.
+.SH SEE ALSO
+fluid(1), fltk-config(1), fltk(3)
+.br
+FLTK Programming Manual
+.br
+FLTK Web Site, https://www.fltk.org/
+.SH AUTHORS
+Bill Spitzak and others.

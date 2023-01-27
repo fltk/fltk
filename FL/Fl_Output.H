@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Output header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -25,13 +23,13 @@
 #include "Fl_Input.H"
 /**
   This widget displays a piece of text.
-  
+
   When you set the value() , Fl_Output does a strcpy() to its own storage,
   which is useful for program-generated values.  The user may select
   portions of the text using the mouse and paste the contents into other
   fields or programs.
 
-  <P align=CENTER>\image html text.png</P>
+  \image html text.png
   \image latex text.png "Fl_Output" width=8cm
 
   There is a single subclass, Fl_Multiline_Output, which allows you to
@@ -56,8 +54,4 @@ public:
     Fl_Output(int X,int Y,int W,int H, const char *l = 0);
 };
 
-#endif 
-
-//
-// End of "$Id$".
-//
+#endif

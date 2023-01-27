@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Horizontal "nice" slider header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -24,13 +22,18 @@
 
 #include "Fl_Slider.H"
 
+/** \class Fl_Hor_Nice_Slider
+
+ \brief Single thumb tab slider
+
+ \image html fl_hor_nice_slider.png "Fl_Hor_Nice_Slider with various Fl::scheme() values"
+ \image latex fl_hor_nice_slider.png "Fl_Hor_Nice_Slider with various Fl::scheme() values" width=6cm
+
+**/
+
 class FL_EXPORT Fl_Hor_Nice_Slider : public Fl_Slider {
 public:
   Fl_Hor_Nice_Slider(int X,int Y,int W,int H,const char *L=0);
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

@@ -17,8 +17,8 @@ int main(int argc, char** argv) {
     for (;;) {
       c = getchar();
       while (c == '\r') {
-	c = getchar();
-	if (c != '\n') putchar(c);
+        c = getchar();
+        if (c != '\n') putchar(c);
       }
       if (c < 0) break;
       putchar(c);
@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
     for (;;) {
       c = getc(in);
       while (c == '\r') {
-	c = getc(in);
-	if (c == '\n') mod=1; else putc(c,out);
+        c = getc(in);
+        if (c == '\n') mod=1; else putc(c,out);
       }
       if (c < 0) break;
       putc(c,out);

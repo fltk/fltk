@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -102,12 +100,12 @@ int Fl_Button::handle(int event) {
       value_ = newval;
       set_changed();
       redraw();
-      if (when() & FL_WHEN_CHANGED) do_callback();
+      if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
     }
     return 1;
   case FL_RELEASE:
     if (value_ == oldval) {
-      if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+      if (when() & FL_WHEN_NOT_CHANGED) do_callback(FL_REASON_SELECTED);
       return 1;
     }
     set_changed();
@@ -117,28 +115,28 @@ int Fl_Button::handle(int event) {
       value(oldval);
       set_changed();
       if (when() & FL_WHEN_CHANGED) {
-	Fl_Widget_Tracker wp(this);
-        do_callback();
+        Fl_Widget_Tracker wp(this);
+        do_callback(FL_REASON_CHANGED);
         if (wp.deleted()) return 1;
       }
     }
-    if (when() & FL_WHEN_RELEASE) do_callback();
+    if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
-	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
+          Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
     if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
     goto triggered_by_keyboard;
   case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       if (box() == FL_NO_BOX) {
-	// Widgets with the FL_NO_BOX boxtype need a parent to
-	// redraw, since it is responsible for redrawing the
-	// background...
-	int X = x() > 0 ? x() - 1 : 0;
-	int Y = y() > 0 ? y() - 1 : 0;
-	if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+        // Widgets with the FL_NO_BOX boxtype need a parent to
+        // redraw, since it is responsible for redrawing the
+        // background...
+        int X = x() > 0 ? x() - 1 : 0;
+        int Y = y() > 0 ? y() - 1 : 0;
+        if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
       } else redraw();
       return 1;
     } else return 0;
@@ -151,17 +149,17 @@ int Fl_Button::handle(int event) {
       Fl_Widget_Tracker wp(this);
       if (type() == FL_RADIO_BUTTON) {
         if (!value_) {
-	  setonly();
-	  if (when() & FL_WHEN_CHANGED) do_callback();
+          setonly();
+          if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
         }
       } else if (type() == FL_TOGGLE_BUTTON) {
-	value(!value());
-	if (when() & FL_WHEN_CHANGED) do_callback();
+        value(!value());
+        if (when() & FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
       } else {
         simulate_key_action();
       }
       if (wp.deleted()) return 1;
-      if (when() & FL_WHEN_RELEASE) do_callback();
+      if (when() & FL_WHEN_RELEASE) do_callback(FL_REASON_RELEASED);
       return 1;
     }
     /* FALLTHROUGH */
@@ -208,6 +206,11 @@ void Fl_Button::key_release_timeout(void *d)
 
   Derived classes may handle this differently.
 
+  A button may reequest callbacks with \p whne() \p FL_WHEN_CHANGED,
+  \p FL_WHEN_NOT_CHANGED, and \p FL_WHEN_RELEASE, triggering the callback
+  reasons \p FL_REASON_CHANGED, \p FL_REASON_SELECTED,
+  and \p FL_REASON_DESELECTED.
+
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
  */
@@ -246,8 +249,3 @@ Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *L)
 {
   type(FL_TOGGLE_BUTTON);
 }
-
-
-//
-// End of "$Id$".
-//

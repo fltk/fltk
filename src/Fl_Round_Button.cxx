@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Round button for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // A subclass of Fl_Button that always draws as a round circle.  This
@@ -66,8 +64,3 @@ Fl_Radio_Round_Button::Fl_Radio_Round_Button(int X,int Y,int W,int H,const char 
 {
   type(FL_RADIO_BUTTON);
 }
-
-
-//
-// End of "$Id$".
-//

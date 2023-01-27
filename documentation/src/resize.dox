@@ -1,0 +1,301 @@
+/**
+
+ \page resize How Does Resizing Work?
+
+This chapter describes the basic mechanism behind the creation
+of resizable user interface elements in FLTK.
+
+FLTK uses a simple, but very versatile system to resize even the
+most complex dialogs and interfaces.
+The resizing is implemented within the Fl_Group widget, and the exact
+resizing behavior of that group is determined by its
+\link Fl_Group::resizable() resizable() \endlink attribute.
+
+
+\section resize_disabled Resizing can be disabled
+
+\code
+  Summary:
+    group = new Fl_Group(xg, yg, wg, hg, "No Resizing");
+    child1 = new Fl_Box(xb, yb, wb, hb, "B"); // or other widget type
+    . . .
+    group->resizable((Fl_Widget*)0); // no resizing
+    group->end()
+\endcode
+
+The \p resizable may be set to the NULL pointer,
+which means that the group will not resize.
+Note that this is the default behavior for Fl_Window and Fl_Pack
+derived widgets, and therefore the programmer must explicitly set
+the window's \p resizable attribute if they want to allow the
+window to be resized.
+
+
+\section resize_simple Resizing can be simple
+
+\code
+  Summary:
+    group = new Fl_Group(xg, yg, wg, hg, "Simple Resizing");
+    child1 = new Fl_Box(xb, yb, wb, hb, "B"); // or other widget type
+    . . .
+    group->resizable(group); // simple proportional resizing
+    group->end()
+\endcode
+
+The \p resizable may be set to the group itself,
+which means that all widgets within the group will resize
+as the group itself is resized.
+This is the default behavior for Fl_Group widgets,
+and is shown in the diagram below.
+
+If the group is stretched horizontally, the widths of
+the widgets within the group are adjusted proportionally.
+The same is true for vertical resizing.
+
+\image html resize-example1.png "Proportional resizing example"
+\image latex resize-example1.png "Proportional resizing example" width=12cm
+
+
+\section resize_complex Resizing can be complex
+
+\code
+  Summary:
+    group = new Fl_Group(xg, yg, wg, hg, "Complex Resizing");
+    child1 = new Fl_Box(xb, yb, wb, hb, "B"); // or other widget type
+    . . .
+    group->resizable(child1); // complex resizing
+    group->end()
+\endcode
+
+It is when the group's \p resizable attribute is set to one of the
+group's child widgets, that things become really interesting.
+
+In the diagram below, imagine vertical lines extending from the
+left and right sides of the yellow widget marked "resizable",
+and horizontal lines extending from the top and bottom sides.
+Exactly which widgets resize, and by how much, is determined
+by which ones lie completely or partially within this cross.
+
+The widgets marked B, C, J, K and M clearly lie completely or
+partially within the vertical part of the cross; the widgets
+marked E, F, G, H and N lie completely or partially within the
+horizontal part of the cross; and the widgets marked A, D, I
+and L do not overlap with the cross at all.
+The resizing behavior is as follows:
+
+\li the width and height of the \p resizable widget increase
+    to match the change in the width and height of the group
+    widget as it is stretched;
+
+\li the widths of those widgets that overlap with the vertical
+    part of the cross increase proportionally as the width of the
+    group widget increases, but their heights remain unchanged,
+    i.e. the widgets marked B, C, J, K and M;
+
+\li the heights of those widgets that overlap with the horizontal
+    part of the cross increase proportionally as the height of
+    the group widget increases, but their widths remain unchanged,
+    i.e. the widgets marked E, F, G, H and N;
+
+\li the widths and heights of the remaining widgets stay the same,
+    i.e. the widgets marked A, D, I and L stay the same size.
+
+\image html resize-example2.png "Complex resizing example"
+\image latex resize-example2.png "Complex resizing example" width=12cm
+
+
+\section resize_practical Practical examples
+
+Why is this so powerful, you may ask.
+Well, every widget group can have a completely independent resizing
+strategy.
+By replacing one or more of the group's "normal" child widgets with
+another group widget where all of the above rules can be applied again,
+it is possible to create a hierarchy of group widgets with very complex
+layouts and resizing behavior.
+
+Consider a simple dialog box, consisting of an icon box and a message
+area on the top and a button at the bottom right: which widget should
+be the \p resizable one?
+
+Setting the \p resizable to be the icon box won't give us what we want:
+
+\image html resize-example3a.png "Resizing dialog example (a)"
+\image latex resize-example3a.png "Resizing dialog example (a)" width=12cm
+
+The message text area would be the logical choice so that the user
+can expand the dialog to see if there is more of an explanation below
+the short error message. This results in the behavior shown in the
+diagram below.
+
+\image html resize-example3b.png "Resizing dialog example (b)"
+\image latex resize-example3b.png "Resizing dialog example (b)" width=12cm
+
+The result is close to what we want, but not quite:
+the text area will fully resize,
+the "!" icon box will resize vertically but not horizontally,
+which we can live with,
+but the "Darn!" button will - wait a minute - resize horizontally?
+
+That's ugly. How do we stop that from happening?
+Simple: put it in its own group and set the \p resizable to
+an invisible box widget, as shown in the diagram below.
+
+\image html resize-example3c.png "Resizing dialog example (c)"
+\image latex resize-example3c.png "Resizing dialog example (c)" width=12cm
+
+Now the invisible box, shown as "R", takes all of the
+horizontal resizing and the "Darn!" box will stay as it is.
+Here's the skeleton code:
+
+\code
+dialog = new Fl_Window(300, 100);
+  icon = new Fl_Box(0, 0, 50, 50, "!");
+  text = new Fl_Box(50, 0, 250, 40, "Out of Memory Error");
+  btns = new Fl_Group(50, 50, 250, 50); // parent group
+  darn = new Fl_Button(200, 50, 100, 50, "Darn!");
+     R = new Fl_Box(50, 50, 150, 50);   // "invisible" box "R"
+     R->hide();                         // make sure it's invisible
+  btns->resizable(R);                   // make "R" parent group resizable
+  btns->end();
+dialog->resizable(text);
+dialog->end();
+\endcode
+
+Imagine instead that you have a group that has a button, an input field,
+another button and a second input field, all next to each other, and
+you want the input fields to resize equally, but not the buttons.
+How could you achieve this?
+
+Setting either of the input fields to be the \p resizable leaves the
+other one fixed, as shown below:
+
+\image html resize-example4a.png "Resizing input fields example (a)"
+\image latex resize-example4a.png "Resizing input fields example (b)" width=12cm
+
+The answer is to leave the \p resizable of the group set to itself,
+and to create two equal size subgroups, each of which will resize
+equally. Add a button and input field to each subgroup, and set
+each subgroup's \p resizable to the input field, as shown below.
+Tada!
+
+\image html resize-example4b.png "Resizing input fields example (b)"
+\image latex resize-example4b.png "Resizing inut fields example (b)" width=12cm
+
+In FLTK it is possible to solve almost any layout and resizing
+problem by introducing an invisible box into a group, or an extra
+group into the widget hierarchy.
+It might take some thought to achieve exactly what you want and
+sometimes it is necessary to introduce parallel hierarchies in
+order to get widgets in different groups to resize together.
+
+Imagine you have a group containing three widgets in a row,
+and you want the widget in the middle to stay the same size
+when the group is stretched and the ones on either side and
+the padding between them to resize symmetrically.
+As described earlier, the default resizing behavior for a group
+results in proportional resizing of the child widgets (and also
+of the margins and padding between them) as shown below, which
+is clearly not what you want.
+
+\image html  resize-example5a.png "Resizing a row of widgets (a)"
+\image latex resize-example5a.png "Resizing a row of widgets (a)" width=12cm
+
+Simply adding a group around A and B and setting its \p resizable
+to A, as in the previous btn-input example, will mean that B stays
+the same size, but the other widgets won't resize symmetrically,
+so what else is needed?
+It isn't immediately obvious how to solve this problem, even for
+experienced FLTK users.
+This is possibly because users are generally advised to design
+widgets so that they don't overlap.
+
+Albrecht Schlosser proposed an innovative technique that involves
+an invisible box that deliberately overlaps others to achieve the
+desired behavior.
+For the current example, this means inserting two new groups
+into the existing group and adding a hidden resizable widget.
+
+The first group, shown in red below, extends from the left
+edge of the parent group to the middle of the gap between
+boxes B and C on the right.
+This first group contains boxes A and B,
+where A is the first group's \p resizable attribute.
+
+The second group, shown in blue, extends from the right edge
+of the first group to the right edge of the parent group.
+This second group contains box C, where C is
+the second group's \p resizable.
+
+The extra box widget is added to the parent group
+and is set as the group's \p resizable.
+The three \p resizable widgets are shown in yellow.
+
+The clever bit is that this extra box widget is not horizontally
+aligned with any of the existing groups and widgets in the usual
+way, but instead overlaps the right and left parts of the two new
+groups by the same small amount, which means that its midpoint
+is aligned with the edge between the groups.
+
+Note that, for clarity, the height of the original group has
+been increased to allow space for the additional annotation
+and to highlight the extra resizable box in the extra space
+at the bottom of the group.
+This is fine for the horizontal-only resizing shown here, but
+means that widgets A, B and C will never change height because
+the extra resizable box does not overlap them vertically.
+Only the padding below them will be resized.
+
+\image html  resize-example5b.png "Resizing a row of widgets (b)"
+\image latex resize-example5b.png "Resizing a row of widgets (b)" width=12cm
+
+In a real application, you probably want to allow widgets A,
+B and C to resize vertically while the height of any padding
+or widgets above or below remains fixed, so the extra resizable
+box has to lie within the height of widgets A, B and C.
+Obviously after calling <tt>hide()</tt> on the box it is no
+longer visible, and may therefore be the same height as the
+other widgets, or a fraction of the height, as shown below.
+
+\image html  resize-example5c.png "Resizing a row of widgets (c)"
+\image latex resize-example5c.png "Resizing a row of widgets (c)" width=12cm
+
+To summarize the key points of the new technique:
+
+\li The new resizable widget must overlap the widgets on each
+    side by exactly the same amount.
+
+\li The width of the new resizable widget is not fixed, but should
+    probably be a relatively small value to avoid potential problems.
+
+\li The total width of the two new groups must equal the width
+    of the existing group and there can be no offsets or gaps
+    between them because margins and gaps will affect the
+    resizing behavior.
+
+\li The same principles apply to vertical resizing.
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="coordinates.html">
+    [Prev]
+    Coordinates and Layout Widgets
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="editor.html">
+    Designing a Simple Text Editor
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Box drawing code for an obscure box type.
@@ -57,9 +55,9 @@ static void draw(int which, int x,int y,int w,int h, int inset, Fl_Color color)
   }
   if (which == FILL) {
     if (w < h)
-      fl_rectf(x, y+d/2, w, h-(d&-2));
+      fl_rectf(x, y+d/2, w, h-(d&-2)+1);
     else if (w > h)
-      fl_rectf(x+d/2, y, w-(d&-2), h);
+      fl_rectf(x+d/2, y, w-(d&-2)+1, h);
   } else {
     if (w < h) {
       if (which != UPPER_LEFT) fl_yxline(x+w-1, y+d/2-1, y+h-d/2+1);
@@ -75,7 +73,7 @@ extern const uchar* fl_gray_ramp();
 
 void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   const uchar *g = fl_gray_ramp();
-  draw(FILL,	    x,   y, w,   h, 2, Fl::box_color(bgcolor));
+  draw(FILL,        x,   y, w,   h, 2, Fl::box_color(bgcolor));
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g[(int)'N']);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g[(int)'H']);
   draw(UPPER_LEFT,  x,   y, w,   h, 0, (Fl_Color)g[(int)'N']);
@@ -84,12 +82,12 @@ void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g[(int)'U']);
   draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g[(int)'U']);
   draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g[(int)'W']);
-  draw(CLOSED,	    x,   y, w,   h, 2, (Fl_Color)g[(int)'A']);
+  draw(CLOSED,      x,   y, w,   h, 2, (Fl_Color)g[(int)'A']);
 }
 
 void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   const uchar *g = fl_gray_ramp();
-  draw(FILL,	    x,   y, w,   h, 2, Fl::box_color(bgcolor));
+  draw(FILL,        x,   y, w,   h, 2, Fl::box_color(bgcolor));
   draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g[(int)'H']);
   draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g[(int)'N']);
   draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g[(int)'H']);
@@ -98,7 +96,7 @@ void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g[(int)'S']);
   draw(UPPER_LEFT,  x,   y, w,   h, 1, (Fl_Color)g[(int)'W']);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g[(int)'U']);
-  draw(CLOSED,	    x,   y, w,   h, 0, (Fl_Color)g[(int)'A']);
+  draw(CLOSED,      x,   y, w,   h, 0, (Fl_Color)g[(int)'A']);
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
@@ -107,7 +105,3 @@ Fl_Boxtype fl_define_FL_ROUND_UP_BOX() {
   fl_internal_boxtype(_FL_ROUND_UP_BOX, fl_round_up_box);
   return _FL_ROUND_UP_BOX;
 }
-
-//
-// End of "$Id$".
-//

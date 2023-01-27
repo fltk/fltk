@@ -115,6 +115,7 @@ static const unsigned char koi8_r_page25[168] = {
 static int
 koi8_r_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv; (void)n;
   unsigned char c = 0;
   if (wc < 0x0080) {
     *r = wc;

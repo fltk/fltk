@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -166,8 +164,3 @@ Fl_Line_Dial::Fl_Line_Dial(int X,int Y,int W,int H, const char *L)
 : Fl_Dial(X,Y,W,H,L) {
   type(FL_LINE_DIAL);
 }
-
-
-//
-// End of "$Id$".
-//

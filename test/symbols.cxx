@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -46,15 +44,15 @@ void slider_cb(Fl_Widget *, void *) {
     if ( l && *l == '@' ) {                       // all children with '@'
       l ++;
       if ( wc->box() == FL_NO_BOX ) {             // ascii legend?
-        if (val&&sze) sprintf(buf, "@@%+d%d%s", sze, val, l);
-        else if (val) sprintf(buf, "@@%d%s", val, l);
-        else if (sze) sprintf(buf, "@@%+d%s", sze, l);
-        else          sprintf(buf, "@@%s", l);
+        if (val&&sze) snprintf(buf, sizeof(buf), "@@%+d%d%s", sze, val, l);
+        else if (val) snprintf(buf, sizeof(buf), "@@%d%s", val, l);
+        else if (sze) snprintf(buf, sizeof(buf), "@@%+d%s", sze, l);
+        else          snprintf(buf, sizeof(buf), "@@%s", l);
       } else {                                    // box with symbol
-        if (val&&sze) sprintf(buf, "@%+d%d%s", sze, val, l);
-        else if (val) sprintf(buf, "@%d%s", val, l);
-        else if (sze) sprintf(buf, "@%+d%s", sze, l);
-        else          sprintf(buf, "@%s", l);
+        if (val&&sze) snprintf(buf, sizeof(buf), "@%+d%d%s", sze, val, l);
+        else if (val) snprintf(buf, sizeof(buf), "@%d%s", val, l);
+        else if (sze) snprintf(buf, sizeof(buf), "@%+d%s", sze, l);
+        else          snprintf(buf, sizeof(buf), "@%s", l);
       }
       wc->copy_label(buf);
     }
@@ -69,7 +67,7 @@ void bt(const char *name) {
   N++;
   x = x*W+10;
   y = y*H+10;
-  sprintf(buf, "@%s", name);
+  snprintf(buf, sizeof(buf), "@%s", name);
   Fl_Box *a = new Fl_Box(x,y,W-20,H-20);
   a->box(FL_NO_BOX);
   a->copy_label(buf);
@@ -144,7 +142,3 @@ bt("@redo");
   window->show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -16,11 +14,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -57,7 +55,10 @@
 #  endif
 
 #  ifdef __APPLE__ // PORTME: OpenGL path abstraction
-#    include <OpenGL/gl.h>
+#  define GL_SILENCE_DEPRECATION 1
+#    if !defined(__gl3_h_) // make sure OpenGL/gl3.h was not included before
+#      include <OpenGL/gl.h>
+#    endif
 #  else
 #    include <GL/gl.h>
 #  endif  // __APPLE__ // PORTME: OpenGL Path abstraction
@@ -70,11 +71,7 @@ FL_EXPORT void gl_color(Fl_Color i);
 inline void gl_color(int c) {gl_color((Fl_Color)c);}
 
 FL_EXPORT void gl_rect(int x,int y,int w,int h);
-/**
-  Fills the given rectangle with the current color.
-  \see gl_rect(int x, int y, int w, int h)
-  */
-inline void gl_rectf(int x,int y,int w,int h) {glRecti(x,y,x+w,y+h);}
+FL_EXPORT void gl_rectf(int x,int y,int w,int h);
 
 FL_EXPORT void gl_font(int fontid, int size);
 FL_EXPORT int  gl_height();
@@ -93,11 +90,8 @@ FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 FL_EXPORT void gl_measure(const char*, int& x, int& y);
 FL_EXPORT void gl_texture_pile_height(int max);
 FL_EXPORT int  gl_texture_pile_height();
+FL_EXPORT void gl_texture_reset();
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 
 #endif // !FL_gl_H
-
-//
-// End of "$Id$".
-//

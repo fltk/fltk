@@ -1,25 +1,23 @@
 //
-// "$Id$"
+// Definition of Windows window driver for the Fast Light Tool Kit (FLTK).
 //
-// Definition of Apple Cocoa window driver.
-//
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
-#include <FL/fl_draw.H>
+#include <config.h>
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
@@ -30,6 +28,7 @@
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <windows.h>
+#include <ole2.h>
 #include <math.h>  // for ceil()
 
 #if USE_COLORMAP
@@ -37,16 +36,11 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 #endif
 
 
-Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
-{
-  return new Fl_WinAPI_Window_Driver(w);
-}
-
-
 Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
   icon_ = new icon_data;
+  shape_data_ = NULL;
   memset(icon_, 0, sizeof(icon_data));
   cursor = NULL;
   screen_num_ = -1;
@@ -56,25 +50,14 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 {
   if (shape_data_) {
-    delete shape_data_->todelete_;
+    delete shape_data_->effective_bitmap_;
     delete shape_data_;
   }
   delete icon_;
 }
 
-int Fl_WinAPI_Window_Driver::screen_num() {
-  if (pWindow->parent()) {
-    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
-  }
-  return screen_num_ >= 0 ? screen_num_ : 0;
-}
 
 //FILE*LOG=fopen("log.log","w");
-
-void Fl_WinAPI_Window_Driver::screen_num(int n) {
-//fprintf(LOG, "screen_num setter old=%d new=%d\n",screen_num_, n);fflush(LOG);
-  screen_num_ = n;
-}
 
 
 RECT // frame of the decorated window in screen coordinates
@@ -123,7 +106,7 @@ int Fl_WinAPI_Window_Driver::decorated_w()
   int bt, bx, by;
   float s = Fl::screen_driver()->scale(screen_num());
   border_width_title_bar_height(bx, by, bt);
-  int mini_bx = bx/s; if (mini_bx < 1) mini_bx = 1;
+  int mini_bx = int(bx/s); if (mini_bx < 1) mini_bx = 1;
   return w() + 2 * mini_bx;
 }
 
@@ -132,8 +115,8 @@ int Fl_WinAPI_Window_Driver::decorated_h()
   int bt, bx, by;
   border_width_title_bar_height(bx, by, bt);
   float s = Fl::screen_driver()->scale(screen_num());
-  int mini_by = by/s; if (mini_by < 1) mini_by = 1;
-  return h() + (bt + by)/s + mini_by;
+  int mini_by = int(by / s); if (mini_by < 1) mini_by = 1;
+  return h() + int((bt + by) / s) + mini_by;
 }
 
 
@@ -178,12 +161,13 @@ void Fl_WinAPI_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   Fl_Bitmap* bitmap = new Fl_Bitmap(bits, w, h);
   bitmap->alloc_array = 1;
   shape_bitmap_(bitmap);
-  shape_data_->todelete_ = bitmap;
+  shape_data_->effective_bitmap_ = bitmap;
+  shape_data_->shape_ = img;
 }
 
 void Fl_WinAPI_Window_Driver::shape(const Fl_Image* img) {
   if (shape_data_) {
-    if (shape_data_->todelete_) { delete shape_data_->todelete_; }
+    if (shape_data_->effective_bitmap_) { delete shape_data_->effective_bitmap_; }
   }
   else {
     shape_data_ = new shape_data_type;
@@ -191,7 +175,10 @@ void Fl_WinAPI_Window_Driver::shape(const Fl_Image* img) {
   memset(shape_data_, 0, sizeof(shape_data_type));
   pWindow->border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  if (d && img->count() >= 2) {
+    shape_pixmap_((Fl_Image*)img);
+    shape_data_->shape_ = (Fl_Image*)img;
+  }
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
@@ -205,13 +192,13 @@ static HRGN bitmap2region(Fl_Image* image) {
   /* Does this need to be dynamically determined, perhaps? */
   const int ALLOC_UNIT = 100;
   DWORD maxRects = ALLOC_UNIT;
-  
+
   RGNDATA* pData = (RGNDATA*)malloc(sizeof(RGNDATAHEADER)+(sizeof(RECT)*maxRects));
   pData->rdh.dwSize = sizeof(RGNDATAHEADER);
   pData->rdh.iType = RDH_RECTANGLES;
   pData->rdh.nCount = pData->rdh.nRgnSize = 0;
   SetRect(&pData->rdh.rcBound, MAXLONG, MAXLONG, 0, 0);
-  
+
   const int bytesPerLine = (image->w() + 7)/8;
   BYTE* p, *data = (BYTE*)*image->data();
   for (int y = 0; y < image->h(); y++) {
@@ -283,9 +270,10 @@ void Fl_WinAPI_Window_Driver::draw_begin()
     float s = Fl::screen_driver()->scale(screen_num());
     if ((shape_data_->lw_ != s*w() || shape_data_->lh_ != s*h()) && shape_data_->shape_) {
       // size of window has changed since last time
-      shape_data_->lw_ = s*w();
-      shape_data_->lh_ = s*h();
-      Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+      shape_data_->lw_ = int(s * w());
+      shape_data_->lh_ = int(s * h());
+      Fl_Image* temp = shape_data_->effective_bitmap_ ? shape_data_->effective_bitmap_ : shape_data_->shape_;
+      temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed
       delete temp;
@@ -298,7 +286,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
 {
   if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!i) return; // window not yet created
 
   if (!other_xid) {
@@ -319,17 +307,21 @@ void Fl_WinAPI_Window_Driver::flush_double()
      for an Fl_Double_Window.
      */
     HDC sgc = fl_gc;
-    fl_gc = fl_makeDC(other_xid);
+    fl_gc = fl_makeDC((HBITMAP)other_xid);
     int savedc = SaveDC(fl_gc);
     fl_graphics_driver->gc(fl_gc);
     fl_graphics_driver->restore_clip(); // duplicate clip region into new gc
+# if defined(FLTK_HAVE_CAIROEXT)
+    if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+# endif
     draw();
     RestoreDC(fl_gc, savedc);
     DeleteDC(fl_gc);
     fl_graphics_driver->gc(sgc);
 #endif
   }
-  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+  int X = 0, Y = 0, W = 0, H = 0;
+  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
 }
 
@@ -340,7 +332,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
 
   if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!i) return; // window not yet created
 
   int eraseoverlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
@@ -368,16 +360,18 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
 
 void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();
-  
+
   if (count > 0) {
     icon_->icons = new Fl_RGB_Image*[count];
     icon_->count = count;
     // FIXME: Fl_RGB_Image lacks const modifiers on methods
-    for (int i = 0;i < count;i++)
+    for (int i = 0;i < count;i++) {
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+      icon_->icons[i]->normalize();
+    }
   }
-  
-  if (Fl_X::i(pWindow))
+
+  if (Fl_X::flx(pWindow))
     set_icons();
 }
 
@@ -411,7 +405,7 @@ void Fl_WinAPI_Window_Driver::free_icons() {
 
 void Fl_WinAPI_Window_Driver::make_current() {
   fl_GetDC(fl_xid(pWindow));
-  
+
 #if USE_COLORMAP
   // Windows maintains a hardware and software color palette; the
   // SelectPalette() call updates the current soft->hard mapping
@@ -419,9 +413,12 @@ void Fl_WinAPI_Window_Driver::make_current() {
   // code does any drawing...
   fl_select_palette();
 #endif // USE_COLORMAP
-  
+
   fl_graphics_driver->clip_region(0);
   ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
+#if defined(FLTK_HAVE_CAIROEXT)
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+#endif
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
@@ -445,7 +442,7 @@ extern void fl_clipboard_notify_retarget(HWND wnd);
 extern void fl_update_clipboard(void);
 
 void Fl_WinAPI_Window_Driver::hide() {
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   // STR#3079: if there remains a window and a non-modal window, and the window is deleted,
   // the app remains running without any apparent window.
   // Bug mechanism: hiding an owner window unmaps the owned (non-modal) window(s)
@@ -455,7 +452,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   int count = 0;
   Fl_Window *win, **doit = NULL;
   for (win = Fl::first_window(); win && ip; win = Fl::next_window(win)) {
-    if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == ip->xid) {
+    if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == (HWND)ip->xid) {
       count++;
     }
   }
@@ -463,43 +460,49 @@ void Fl_WinAPI_Window_Driver::hide() {
     doit = new Fl_Window*[count];
     count = 0;
     for (win = Fl::first_window(); win && ip; win = Fl::next_window(win)) {
-      if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == ip->xid) {
+      if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == (HWND)ip->xid) {
         doit[count++] = win;
       }
     }
   }
 
-  if (hide_common()) return;
-  
+  if (hide_common()) {
+    delete[] doit; // note: `count` and `doit` may be NULL (see PR #241)
+    return;
+  }
+
+  // Issue #569: undo RegisterDragDrop()
+  RevokeDragDrop((HWND)ip->xid);
+
   // make sure any custom icons get freed
-//  icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
+  // icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
-  if (GetClipboardOwner()==ip->xid)
+  if (GetClipboardOwner() == (HWND)ip->xid)
     fl_update_clipboard();
   // Make sure we unlink this window from the clipboard chain
-  fl_clipboard_notify_retarget(ip->xid);
+  fl_clipboard_notify_retarget((HWND)ip->xid);
   // Send a message to myself so that I'll get out of the event loop...
-  PostMessage(ip->xid, WM_APP, 0, 0);
-  if (private_dc) fl_release_dc(ip->xid, private_dc);
-  if (ip->xid == fl_window && fl_graphics_driver->gc()) {
+  PostMessage((HWND)ip->xid, WM_APP, 0, 0);
+  if (private_dc) fl_release_dc((HWND)ip->xid, private_dc);
+  if ((HWND)ip->xid == fl_window && fl_graphics_driver->gc()) {
     fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
     fl_window = (HWND)-1;
     fl_graphics_driver->gc(0);
-# ifdef FLTK_USE_CAIRO
+# ifdef FLTK_HAVE_CAIROEXT
     if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
   }
-  
+
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  
+
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
-  if (p==GetParent(ip->xid)) {
-    ShowWindow(ip->xid, SW_HIDE);
+  if (p==GetParent((HWND)ip->xid)) {
+    ShowWindow((HWND)ip->xid, SW_HIDE);
     ShowWindow(p, SW_SHOWNA);
   }
-  DestroyWindow(ip->xid);
+  DestroyWindow((HWND)ip->xid);
   // end of fix for STR#3079
   if (count) {
     int ii;
@@ -508,8 +511,9 @@ void Fl_WinAPI_Window_Driver::hide() {
       if (ii != 0) doit[0]->show(); // Fix for STR#3165
       doit[ii]->show();
     }
-    delete[] doit;
   }
+  delete[] doit; // note: `count` and `doit` may be NULL (see PR #241)
+
   // Try to stop the annoying "raise another program" behavior
   if (pWindow->non_modal() && Fl::first_window() && Fl::first_window()->shown())
     Fl::first_window()->show();
@@ -530,38 +534,36 @@ void Fl_WinAPI_Window_Driver::unmap() {
 #if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
 void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
-  Fl_Window *w = pWindow;
+  HWND xid = fl_xid(pWindow);
   int top, bottom, left, right;
   int sx, sy, sw, sh;
-  
+
   top = fullscreen_screen_top();
   bottom = fullscreen_screen_bottom();
   left = fullscreen_screen_left();
   right = fullscreen_screen_right();
-  
+
   if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
     top = screen_num();
     bottom = top;
     left = top;
     right = top;
   }
-  
-  Fl::screen_xywh(sx, sy, sw, sh, top);
-  Y = sy;
-  Fl::screen_xywh(sx, sy, sw, sh, bottom);
+
+  Fl_WinAPI_Screen_Driver *scr_dr = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+  scr_dr->screen_xywh_unscaled(sx, Y, sw, sh, top);
+  scr_dr->screen_xywh_unscaled(sx, sy, sw, sh, bottom);
   H = sy + sh - Y;
-  Fl::screen_xywh(sx, sy, sw, sh, left);
-  X = sx;
-  Fl::screen_xywh(sx, sy, sw, sh, right);
+  scr_dr->screen_xywh_unscaled(X, sy, sw, sh, left);
+  scr_dr->screen_xywh_unscaled(sx, sy, sw, sh, right);
   W = sx + sw - X;
-  
-  DWORD flags = GetWindowLong(fl_xid(w), GWL_STYLE);
+
+  DWORD flags = GetWindowLong(xid, GWL_STYLE);
   flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
-  SetWindowLong(fl_xid(w), GWL_STYLE, flags);
-  
+  SetWindowLong(xid, GWL_STYLE, flags);
+
   // SWP_NOSENDCHANGING is so that we can override size limits
-  float s = Fl::screen_driver()->scale(screen_num());
-  SetWindowPos(fl_xid(w), HWND_TOP, X*s, Y*s, W*s, H*s, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
+  SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 
 #endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
@@ -580,7 +582,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   // Remove the xid temporarily so that Fl_WinAPI_Window_Driver::fake_X_wm() behaves like it
   // does in Fl_WinAPI_Window_Driver::makeWindow().
   HWND xid = fl_xid(pWindow);
-  Fl_X::i(pWindow)->xid = NULL;
+  Fl_X::flx(pWindow)->xid = 0;
   int wx, wy, bt, bx, by;
   switch (fake_X_wm(wx, wy, bt, bx, by)) {
     case 0:
@@ -594,10 +596,10 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
       }
       break;
   }
-  Fl_X::i(pWindow)->xid = xid;
+  Fl_X::flx(pWindow)->xid = (fl_uintptr_t)xid;
   // compute window position and size in scaled units
   float s = Fl::screen_driver()->scale(screen_num());
-  int scaledX = ceil(X*s), scaledY= ceil(Y*s), scaledW = ceil(W*s), scaledH = ceil(H*s);
+  int scaledX = int(ceil(X*s)), scaledY= int(ceil(Y*s)), scaledW = int(ceil(W*s)), scaledH = int(ceil(H*s));
   // Adjust for decorations (but not if that puts the decorations
   // outside the screen)
   if ((X != x()) || (Y != y())) {
@@ -645,7 +647,9 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
     first_time = 0;
   }
   float s = Fl::screen_driver()->scale(screen_num());
-  src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
+  src_x = int(src_x * s); src_y = int(src_y * s);
+  src_w = int(src_w * s); src_h = int(src_h * s);
+  dest_x = int(dest_x * s); dest_y = int(dest_y * s);
   // Now check if the source scrolling area is fully visible.
   // If it is, we will do a quick scroll and just update the
   // newly exposed area. If it is not, we go the safe route and
@@ -698,6 +702,16 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
   data_for_resize_window_between_screens_.busy = false;
 }
 
-//
-// End of "$Id$".
-//
+const Fl_Image* Fl_WinAPI_Window_Driver::shape() {
+  return shape_data_ ? shape_data_->shape_ : NULL;
+}
+
+
+HWND fl_win32_xid(const Fl_Window *win) {
+  return (HWND)Fl_Window_Driver::xid(win);
+}
+
+
+Fl_Window *fl_win32_find(HWND xid) {
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
+}

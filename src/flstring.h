@@ -1,19 +1,26 @@
 /*
- * "$Id$"
- *
  * Common string header file for the Fast Light Tool Kit (FLTK).
+ * Internal use only (see "important note" below).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
+ */
+
+ /*
+ * Important note: this header file includes '<config.h>' !
+ *
+ * This header MUST NOT be included in public headers (i.e. in 'FL/') and
+ * SHOULD NOT be included in test and demo programs (i.e. in 'test/' or
+ * 'examples/') because it includes '<config.h>'.
  */
 
 #ifndef flstring_h
@@ -45,13 +52,9 @@
  * Some of these functions are also defined in ISO C99...
  */
 
-#  if defined(_MSC_VER)
-#    define strdup _strdup
-#  endif /* _MSC_VER */
-
 #  if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#    define strcasecmp(s,t)	_stricmp((s), (t))
-#    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
+#    define strcasecmp(s,t)     _stricmp((s), (t))
+#    define strncasecmp(s,t,n)  _strnicmp((s), (t), (n))
 #  endif /* _WIN32 && ... */
 
 #  ifdef __cplusplus
@@ -94,7 +97,3 @@ FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
 #  endif /* __cplusplus */
 
 #endif /* !flstring_h */
-
-/*
- * End of "$Id$".
- */

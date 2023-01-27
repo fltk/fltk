@@ -1,0 +1,6 @@
+<br>
+<small>
+  Generated on @CURRENT_DATE@
+  from Git revision @GIT_REVISION@
+  by Doxygen @DOXYGEN_VERSION_SHORT@
+</small>

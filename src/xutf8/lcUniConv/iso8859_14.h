@@ -89,6 +89,7 @@ static const unsigned char iso8859_14_page1e_1[8] = {
 static int
 iso8859_14_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv; (void)n;
   unsigned char c = 0;
   if (wc < 0x00a0) {
     *r = wc;

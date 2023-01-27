@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // X11 image reading routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -36,21 +34,28 @@
  The \p alpha parameter controls whether an alpha channel is created
  and the value that is placed in the alpha channel. If 0, no alpha
  channel is generated.
+
+ \see fl_capture_window()
  */
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
   Fl_RGB_Image *img;
-  if (fl_find(fl_window) == 0) { // read from off_screen buffer
-    img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h);
+  // Under macOS and Wayland, fl_window == 0 when an Fl_Image_Surface is the current drawing
+  // surface. Otherwise, fl_window corresponds to a mapped Fl_Window.
+  // Under X11 and windows, fl_window is an offscreen buffer when an Fl_Image_Surface
+  // is the current drawing or when fl_read_image() is called inside the draw() of
+  // an Fl_Double_Window.
+  if (fl_find(fl_window) == 0) { // read from offscreen buffer or buffer of an Fl_Double_Window
+    img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h, 0);
     if (!img) {
       return NULL;
     }
     img->alloc_array = 1;
   } else {
-    img = Fl::screen_driver()->traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
+    img = Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
   }
   int depth = alpha ? 4 : 3;
-  if (img->d() != depth) {
+  if (img && img->d() != depth) {
     uchar *data = new uchar[img->w() * img->h() * depth];
     if (depth == 4) memset(data, alpha, img->w() * img->h() * depth);
     uchar *d = data;
@@ -88,6 +93,20 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   return image_data;
 }
 
-//
-// End of "$Id$".
-//
+/** Captures the content of a rectangular zone of a mapped window.
+ \param win a mapped Fl_Window (derived types including Fl_Gl_Window are also possible)
+ \param x,y,w,h window area to be captured. Intersecting sub-windows are captured too.
+ \return The captured pixels as an Fl_RGB_Image. The raw and
+ drawing sizes of the image can differ. Returns NULL when capture was not successful.
+ The image depth may differ between platforms.
+ \version 1.4
+*/
+Fl_RGB_Image *fl_capture_window(Fl_Window *win, int x, int y, int w, int h)
+{
+  Fl_RGB_Image *rgb = NULL;
+  if (win->shown()) {
+    rgb = Fl_Screen_Driver::traverse_to_gl_subwindows(win, x, y, w, h, NULL);
+    if (rgb) rgb->scale(w, h, 0, 1);
+  }
+  return rgb;
+}

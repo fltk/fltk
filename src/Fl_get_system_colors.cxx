@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // System color support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -23,6 +21,7 @@
 #include <FL/platform.H>
 #include <FL/math.h>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string_functions.h>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,9 +30,9 @@
 #include "tile.xpm"
 
 /**
-    Changes fl_color(FL_BACKGROUND_COLOR) to the given color, 
-    and changes the gray ramp from 32 to 56 to black to white.  These are 
-    the colors used as backgrounds by almost all widgets and used to draw 
+    Changes fl_color(FL_BACKGROUND_COLOR) to the given color,
+    and changes the gray ramp from 32 to 56 to black to white.  These are
+    the colors used as backgrounds by almost all widgets and used to draw
     the edges of all the boxtypes.
 */
 void Fl::background(uchar r, uchar g, uchar b) {
@@ -49,9 +48,9 @@ void Fl::background(uchar r, uchar g, uchar b) {
   for (int i = 0; i < FL_NUM_GRAY; i++) {
     double gray = i/(FL_NUM_GRAY-1.0);
     Fl::set_color(fl_gray_ramp(i),
-		  uchar(pow(gray,powr)*255+.5),
-		  uchar(pow(gray,powg)*255+.5),
-		  uchar(pow(gray,powb)*255+.5));
+                  uchar(pow(gray,powr)*255+.5),
+                  uchar(pow(gray,powg)*255+.5),
+                  uchar(pow(gray,powb)*255+.5));
   }
 }
 
@@ -65,9 +64,9 @@ void Fl::foreground(uchar r, uchar g, uchar b) {
 
 
 /**
-    Changes the alternative background color. This color is used as a 
+    Changes the alternative background color. This color is used as a
     background by Fl_Input and other text widgets.
-    <P>This call may change fl_color(FL_FOREGROUND_COLOR) if it 
+    <P>This call may change fl_color(FL_FOREGROUND_COLOR) if it
     does not provide sufficient contrast to FL_BACKGROUND2_COLOR.
 */
 void Fl::background2(uchar r, uchar g, uchar b) {
@@ -96,7 +95,7 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
 
     This is done by Fl_Window::show(argc,argv) before applying
     the -fg and -bg switches.
-    
+
     On X this reads some common values from the Xdefaults database.
     KDE users can set these values by running the "krdb" program, and
     newer versions of KDE set this automatically if you check the "apply
@@ -112,51 +111,58 @@ void Fl::get_system_colors()
 #define D1 BORDER_WIDTH
 #define D2 (BORDER_WIDTH+BORDER_WIDTH)
 
-extern void	fl_up_box(int, int, int, int, Fl_Color);
-extern void	fl_down_box(int, int, int, int, Fl_Color);
-extern void	fl_thin_up_box(int, int, int, int, Fl_Color);
-extern void	fl_thin_down_box(int, int, int, int, Fl_Color);
-extern void	fl_round_up_box(int, int, int, int, Fl_Color);
-extern void	fl_round_down_box(int, int, int, int, Fl_Color);
+extern void     fl_up_box(int, int, int, int, Fl_Color);
+extern void     fl_down_box(int, int, int, int, Fl_Color);
+extern void     fl_thin_up_box(int, int, int, int, Fl_Color);
+extern void     fl_thin_down_box(int, int, int, int, Fl_Color);
+extern void     fl_round_up_box(int, int, int, int, Fl_Color);
+extern void     fl_round_down_box(int, int, int, int, Fl_Color);
 
-extern void	fl_up_frame(int, int, int, int, Fl_Color);
-extern void	fl_down_frame(int, int, int, int, Fl_Color);
-extern void	fl_thin_up_frame(int, int, int, int, Fl_Color);
-extern void	fl_thin_down_frame(int, int, int, int, Fl_Color);
+extern void     fl_up_frame(int, int, int, int, Fl_Color);
+extern void     fl_down_frame(int, int, int, int, Fl_Color);
+extern void     fl_thin_up_frame(int, int, int, int, Fl_Color);
+extern void     fl_thin_down_frame(int, int, int, int, Fl_Color);
 
 #ifndef FL_DOXYGEN
-const char	*Fl::scheme_ = (const char *)0;	    // current scheme 
-Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;    // current background image for the scheme
+const char      *Fl::scheme_ = (const char *)0;     // current scheme
+Fl_Image        *Fl::scheme_bg_ = (Fl_Image *)0;    // current background image for the scheme
 #endif
 
-static Fl_Pixmap	tile(tile_xpm);
+static Fl_Pixmap        tile(tile_xpm);
 
 
 /**
-    Sets the current widget scheme. NULL will use the scheme defined
-    in the FLTK_SCHEME environment variable or the scheme resource
-    under X11. Otherwise, any of the following schemes can be used:
+  Sets the current widget scheme. NULL will use the scheme defined
+  in the FLTK_SCHEME environment variable or the scheme resource
+  under X11. Otherwise, any of the following schemes can be used:
 
-        - "none" - This is the default look-n-feel which resembles old
-                   Windows (95/98/Me/NT/2000) and old GTK/KDE
+    - "none" - This is the default look-n-feel which resembles old
+               Windows (95/98/Me/NT/2000) and old GTK/KDE
 
-        - "base" - This is an alias for "none"
+    - "base" - This is an alias for "none"
 
-        - "plastic" - This scheme is inspired by the Aqua user interface
-                      on Mac OS X
+    - "plastic" - This scheme is inspired by the Aqua user interface
+                  on macOS
 
-        - "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
+    - "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
 
-        - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
-                    (Colin Jones and Edmanuel Torres).
+    - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
+                (Colin Jones and Edmanuel Torres).
 
-    Uppercase scheme names are equivalent, but the stored scheme name will
-    always be lowercase and Fl::scheme() will return this lowercase name.
+    - "oxy" - This is a subset of Dmitrij K's oxy scheme (STR 2675, 3477)
 
-    If the resulting scheme name is not defined, the default scheme will
-    be used and Fl::scheme() will return NULL.
+  If the given scheme name is unknown, the default scheme will be used.
 
-    \see Fl::is_scheme()
+  Setting the scheme (name) is case insensitive, but the stored scheme name will
+  always be lowercase and Fl::scheme() will return this lowercase name or
+  \p NULL if no scheme or the default scheme ("none" or "base") was set.
+
+  \param[in]  s   Scheme name of NULL
+
+  \returns    Current scheme name or NULL
+  \retval     NULL if the scheme has not been set or is the default scheme
+
+  \see Fl::is_scheme()
 */
 int Fl::scheme(const char *s) {
   if (!s) {
@@ -165,9 +171,10 @@ int Fl::scheme(const char *s) {
 
   if (s) {
     if (!fl_ascii_strcasecmp(s, "none") || !fl_ascii_strcasecmp(s, "base") || !*s) s = 0;
-    else if (!fl_ascii_strcasecmp(s, "gtk+")) s = strdup("gtk+");
-    else if (!fl_ascii_strcasecmp(s, "plastic")) s = strdup("plastic");
-    else if (!fl_ascii_strcasecmp(s, "gleam")) s = strdup("gleam");
+    else if (!fl_ascii_strcasecmp(s, "gtk+")) s = fl_strdup("gtk+");
+    else if (!fl_ascii_strcasecmp(s, "plastic")) s = fl_strdup("plastic");
+    else if (!fl_ascii_strcasecmp(s, "gleam")) s = fl_strdup("gleam");
+    else if (!fl_ascii_strcasecmp(s, "oxy")) s = fl_strdup("oxy");
     else s = 0;
   }
   if (scheme_) free((void*)scheme_);
@@ -184,7 +191,17 @@ int Fl::scheme(const char *s) {
   return reload_scheme();
 }
 
+/**
+  Called internally when setting a new scheme according to scheme name.
+  Loads or reloads the current scheme selection.
 
+  \return   Always 1 (this may change in the future)
+
+  See void Fl::scheme(const char *name)
+
+  \internal
+  \note Internal: Should this method be private?
+*/
 int Fl::reload_scheme() {
   Fl_Window *win;
 
@@ -193,13 +210,13 @@ int Fl::reload_scheme() {
     uchar r, g, b;
     int nr, ng, nb;
     int i;
-//    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
+    // static uchar levels[3] = { 0xff, 0xef, 0xe8 };
     // OSX 10.3 and higher use a background with less contrast...
     static uchar levels[3] = { 0xff, 0xf8, 0xf4 };
 
     get_color(FL_GRAY, r, g, b);
 
-//    printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
+    // printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
 
     for (i = 0; i < 3; i ++) {
       nr = levels[i] * r / 0xe8;
@@ -211,8 +228,8 @@ int Fl::reload_scheme() {
       nb = levels[i] * b / 0xe8;
       if (nb > 255) nb = 255;
 
-      sprintf(tile_cmap[i], "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
-//      puts(tile_cmap[i]);
+      snprintf(tile_cmap[i], sizeof(tile_cmap[0]), "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
+      // puts(tile_cmap[i]);
     }
 
     tile.uncache();
@@ -276,6 +293,27 @@ int Fl::reload_scheme() {
 
     // Use slightly thinner scrollbars...
     Fl::scrollbar_size(15);
+  } else if (scheme_ && !fl_ascii_strcasecmp(scheme_, "oxy")) {
+    // Oxy scheme
+    if (scheme_bg_) {
+      delete scheme_bg_;
+      scheme_bg_ = (Fl_Image *)0;
+    }
+
+    set_boxtype(FL_UP_FRAME,        FL_OXY_UP_FRAME);
+    set_boxtype(FL_DOWN_FRAME,      FL_OXY_DOWN_FRAME);
+    set_boxtype(FL_THIN_UP_FRAME,   FL_OXY_THIN_UP_FRAME);
+    set_boxtype(FL_THIN_DOWN_FRAME, FL_OXY_THIN_DOWN_FRAME);
+
+    set_boxtype(FL_UP_BOX,          FL_OXY_UP_BOX);
+    set_boxtype(FL_DOWN_BOX,        FL_OXY_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_OXY_THIN_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_OXY_THIN_DOWN_BOX);
+    set_boxtype(_FL_ROUND_UP_BOX,   FL_OXY_ROUND_UP_BOX);
+    set_boxtype(_FL_ROUND_DOWN_BOX, FL_OXY_ROUND_DOWN_BOX);
+
+    // Use slightly thinner scrollbars...
+    Fl::scrollbar_size(15);
   } else {
     // Use the standard FLTK look-n-feel...
     if (scheme_bg_) {
@@ -321,8 +359,3 @@ int Fl::reload_scheme() {
 
   return 1;
 }
-
-
-//
-// End of "$Id$".
-//

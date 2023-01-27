@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -25,10 +23,10 @@
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include "../../flstring.h"
-
 #include "Fl_Xlib_Graphics_Driver.H"
+#include <stdlib.h>
 
-void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
+void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, int width, char* dashes) {
 
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the Windows dash patterns on X
@@ -47,23 +45,35 @@ void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* 
     }
     char* p = dashes = buf;
     switch (style & 0xff) {
-    case FL_DASH:	*p++ = dash; *p++ = gap; break;
-    case FL_DOT:	*p++ = dot; *p++ = gap; break;
-    case FL_DASHDOT:	*p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
-    case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
+      case FL_DASH:       *p++ = dash; *p++ = gap; break;
+      case FL_DOT:        *p++ = dot; *p++ = gap; break;
+      case FL_DASHDOT:    *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
+      case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
     }
     ndashes = p-buf;
-if (*dashes == 0) ndashes = 0;//against error with very small scaling
+    if (*dashes == 0) ndashes = 0; // against error with very small scaling
   }
   static int Cap[4] = {CapButt, CapButt, CapRound, CapProjecting};
   static int Join[4] = {JoinMiter, JoinMiter, JoinRound, JoinBevel};
   XSetLineAttributes(fl_display, gc_,
                      line_width_,
-		     ndashes ? LineOnOffDash : LineSolid,
-		     Cap[(style>>8)&3], Join[(style>>12)&3]);
+                     ndashes ? LineOnOffDash : LineSolid,
+                     Cap[(style>>8)&3], Join[(style>>12)&3]);
   if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);
 }
 
-//
-// End of "$Id$".
-//
+void *Fl_Xlib_Graphics_Driver::change_pen_width(int lwidth) {
+  XGCValues *gc_values = (XGCValues*)malloc(sizeof(XGCValues));
+  gc_values->line_width = lwidth;
+  XChangeGC(fl_display, gc_, GCLineWidth, gc_values);
+  gc_values->line_width = line_width_;
+  line_width_ = lwidth;
+  return gc_values;
+}
+
+void Fl_Xlib_Graphics_Driver::reset_pen_width(void *data) {
+  XGCValues *gc_values = (XGCValues*)data;
+  line_width_ = gc_values->line_width;
+  XChangeGC(fl_display, gc_, GCLineWidth, gc_values);
+  free(data);
+}

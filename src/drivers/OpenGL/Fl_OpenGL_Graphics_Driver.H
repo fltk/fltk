@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of OpenGL graphics driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -26,74 +24,79 @@
 #define FL_OPENGL_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/fl_draw.H>
 
 /**
  \brief OpenGL specific graphics class.
  */
-class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
+class Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 public:
+  float pixels_per_unit_;
+  float line_width_;
+  int line_stipple_;
+  Fl_OpenGL_Graphics_Driver() :
+  pixels_per_unit_(1.0f),
+  line_width_(1.0f),
+  line_stipple_(FL_SOLID) { }
   // --- line and polygon drawing with integer coordinates
-  void point(int x, int y);
-  void rect(int x, int y, int w, int h);
-  void rectf(int x, int y, int w, int h);
-  void line(int x, int y, int x1, int y1);
-  void line(int x, int y, int x1, int y1, int x2, int y2);
-  void xyline(int x, int y, int x1);
-  void xyline(int x, int y, int x1, int y2);
-  void xyline(int x, int y, int x1, int y2, int x3);
-  void yxline(int x, int y, int y1);
-  void yxline(int x, int y, int y1, int x2);
-  void yxline(int x, int y, int y1, int x2, int y3);
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  void push_clip(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  int not_clipped(int x, int y, int w, int h);
-  void restore_clip();
-  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  //void transformed_vertex0(double x, double y);
-  void transformed_vertex(double xf, double yf);
-  void vertex(double x, double y);
-  void begin_points();
-  void end_points();
-  void begin_line();
-  void end_line();
-  void begin_loop();
-  void end_loop();
-  void begin_polygon();
-  void end_polygon();
-  void begin_complex_polygon();
-  void gap();
-  void end_complex_polygon();
-  void fixloop();
-  void circle(double x, double y, double r);
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  void arc(int x, int y, int w, int h, double a1, double a2);
-  void pie(int x, int y, int w, int h, double a1, double a2);
-  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
-  void line_style(int style, int width=0, char* dashes=0);
-  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
-  void color(Fl_Color c);
-  Fl_Color color() { return color_; }
-  void color(uchar r, uchar g, uchar b);
+  void point(int x, int y) FL_OVERRIDE;
+  void rect(int x, int y, int w, int h) FL_OVERRIDE;
+  void rectf(int x, int y, int w, int h) FL_OVERRIDE;
+  void line(int x, int y, int x1, int y1) FL_OVERRIDE;
+  void line(int x, int y, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void xyline(int x, int y, int x1) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2) FL_OVERRIDE;
+  void xyline(int x, int y, int x1, int y2, int x3) FL_OVERRIDE;
+  void yxline(int x, int y, int y1) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2) FL_OVERRIDE;
+  void yxline(int x, int y, int y1, int x2, int y3) FL_OVERRIDE;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) FL_OVERRIDE;
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) FL_OVERRIDE;
+  void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
+  // ---- clipping
+  void push_clip(int x, int y, int w, int h) FL_OVERRIDE;
+  void pop_clip() FL_OVERRIDE;
+  void push_no_clip() FL_OVERRIDE;
+  Fl_Region clip_region() FL_OVERRIDE;
+  void clip_region(Fl_Region r) FL_OVERRIDE;
+  void restore_clip() FL_OVERRIDE;
+  int not_clipped(int x, int y, int w, int h) FL_OVERRIDE;
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) FL_OVERRIDE;
+  // ---- matrix transformed drawing
+  void transformed_vertex(double xf, double yf) FL_OVERRIDE;
+  void begin_points() FL_OVERRIDE;
+  void end_points() FL_OVERRIDE;
+  void begin_line() FL_OVERRIDE;
+  void end_line() FL_OVERRIDE;
+  void begin_loop() FL_OVERRIDE;
+  void end_loop() FL_OVERRIDE;
+  void begin_polygon() FL_OVERRIDE;
+  void end_polygon() FL_OVERRIDE;
+  void begin_complex_polygon() FL_OVERRIDE;
+  void gap() FL_OVERRIDE;
+  void end_complex_polygon() FL_OVERRIDE;
+  void fixloop() FL_OVERRIDE;
+  void circle(double x, double y, double r) FL_OVERRIDE;
+  void arc(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void arc(double x, double y, double r, double start, double end) FL_OVERRIDE;
+  void pie(int x, int y, int w, int h, double a1, double a2) FL_OVERRIDE;
+  void line_style(int style, int width=0, char* dashes=0) FL_OVERRIDE;
+  void color(Fl_Color c) FL_OVERRIDE;
+  Fl_Color color() FL_OVERRIDE { return color_; }
+  void color(uchar r, uchar g, uchar b) FL_OVERRIDE;
   // --- implementation is in Fl_OpenGL_Graphics_Driver_font.cxx
-  void font(Fl_Font face, Fl_Fontsize fsize);
-  void draw(const char *str, int n, int x, int y);
-  double width(const char *str, int n);
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  int height();
-  int descent();
-  // ---
-  Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
-  void delete_bitmask(Fl_Bitmask bm) { };
+  void font(Fl_Font face, Fl_Fontsize fsize) FL_OVERRIDE;
+  Fl_Font font() FL_OVERRIDE;
+  void draw(const char *str, int n, int x, int y) FL_OVERRIDE;
+  void draw(const char *str, int n, float x, float y) FL_OVERRIDE;
+  void draw(int angle, const char *str, int n, int x, int y) FL_OVERRIDE;
+  double width(const char *str, int n) FL_OVERRIDE;
+  double width(unsigned int c) FL_OVERRIDE;
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h) FL_OVERRIDE;
+  int height() FL_OVERRIDE;
+  int descent() FL_OVERRIDE;
 };
 
 #endif // FL_OPENGL_GRAPHICS_DRIVER_H
-
-//
-// End of "$Id$".
-//

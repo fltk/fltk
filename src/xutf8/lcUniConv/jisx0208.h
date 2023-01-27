@@ -2361,6 +2361,7 @@ static const Summary16 jisx0208_uni2indx_pageff[15] = {
 static int
 jisx0208_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv;
   if (n >= 2) {
     const Summary16 *summary = NULL;
     if (wc < 0x0100)

@@ -1,4 +1,3 @@
-// "$Id$"
 //
 // FLTK native OS file chooser widget
 //
@@ -9,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -186,7 +185,7 @@ int Fl_Native_File_Chooser::filters() const {
 
 /**
  Sets which filter will be initially selected.
- 
+
  The first filter is indexed as 0.
  If filter_value()==filters(), then "All Files" was chosen.
  If filter_value() > filters(), then a custom filter was set.
@@ -271,21 +270,21 @@ char *Fl_Native_File_Chooser_Driver::strfree(char *val) {
 //    'val' can be NULL; s is returned unmodified.
 //
 //    Usage:
-//	char *s = strnew("foo");	// s = "foo"
-//      s = strapp(s, "bar");		// s = "foobar"
+//      char *s = strnew("foo");        // s = "foo"
+//      s = strapp(s, "bar");           // s = "foobar"
 //
 char *Fl_Native_File_Chooser_Driver::strapp(char *s, const char *val) {
   if ( ! val ) {
-    return(s);			// Nothing to append? return s
+    return(s);                  // Nothing to append? return s
   }
   if ( ! s ) {
-    return(strnew(val));	// New string? return copy of val
+    return(strnew(val));        // New string? return copy of val
   }
   char *news = new char[strlen(s)+strlen(val)+1];
   strcpy(news, s);
   strcat(news, val);
-  delete [] s;			// delete old string
-  return(news);			// return new copy
+  delete [] s;                  // delete old string
+  return(news);                 // return new copy
 }
 
 // APPEND A CHARACTER TO A STRING
@@ -300,7 +299,3 @@ void Fl_Native_File_Chooser_Driver::chrcat(char *s, char c) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

@@ -2518,6 +2518,7 @@ static const Summary16 gb2312_uni2indx_pageff[15] = {
 static int
 gb2312_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
+  (void)conv;
   if (n >= 2) {
     const Summary16 *summary = NULL;
     if (wc < 0x0460)

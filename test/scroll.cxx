@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Scroll test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -28,7 +26,7 @@
 #include <FL/math.h>
 
 class Drawing : public Fl_Widget {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   Drawing(int X,int Y,int W,int H,const char* L) : Fl_Widget(X,Y,W,H,L) {
     align(FL_ALIGN_TOP);
@@ -97,7 +95,7 @@ int main(int argc, char** argv) {
 
   int n = 0;
   for (int y=0; y<16; y++) for (int x=0; x<5; x++) {
-    char buf[20]; sprintf(buf,"%d",n++);
+    char buf[20]; snprintf(buf, 20,"%d",n++);
     Fl_Button* b = new Fl_Button(x*75,y*25+(y>=8?5*75:0),75,25);
     b->copy_label(buf);
     b->color(n);
@@ -112,7 +110,7 @@ int main(int argc, char** argv) {
 
   Fl_Light_Button but1(150, 310, 200, 25, "box");
   but1.callback(box_cb);
-  
+
   Fl_Choice choice(150, 335, 200, 25, "type():");
   choice.menu(choices);
   choice.value(3);
@@ -129,7 +127,3 @@ int main(int argc, char** argv) {
   window.show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Multi line output header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -32,10 +30,19 @@
   Note that this widget does not support scrollbars, or per-character
   color control.
 
-  If you are presenting large amounts of read-only text 
+  If you are presenting large amounts of read-only text
   and need scrollbars, or full color control of characters,
   then use Fl_Text_Display. If you want to display HTML text,
   use Fl_Help_View.
+
+  A caret cursor (^) shows the keyboard navigation mark
+  for keyboard selection of the output text, e.g. Arrow Keys
+  to move the cursor, Shift + Arrow Keys to create a text
+  selection, and '^C' to copy the selected text to the paste buffer.
+  The caret cursor can be disabled by disabling the widget's
+  "visible focus" using clear_visible_focus(), inherited from the
+  Fl_Widget base class. Doing this also disables the widget's
+  keyboard navigation.
 */
 class FL_EXPORT Fl_Multiline_Output : public Fl_Output {
 public:
@@ -50,7 +57,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Implementation of fl_color(i), fl_color(r,g,b).
@@ -44,14 +42,14 @@ extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 // figure_out_visual() calculates masks & shifts for generating
 // pixels in true-color visuals:
 
-uchar fl_redmask;	/**< color mask used in current color map handling */
-uchar fl_greenmask;	/**< color mask used in current color map handling */
-uchar fl_bluemask;	/**< color mask used in current color map handling */
+uchar fl_redmask;       /**< color mask used in current color map handling */
+uchar fl_greenmask;     /**< color mask used in current color map handling */
+uchar fl_bluemask;      /**< color mask used in current color map handling */
 
-int fl_redshift;	/**< color shift used in current color map handling */
-int fl_greenshift;	/**< color shift used in current color map handling */
-int fl_blueshift;	/**< color shift used in current color map handling */
-int fl_extrashift;	/**< color shift used in current color map handling */
+int fl_redshift;        /**< color shift used in current color map handling */
+int fl_greenshift;      /**< color shift used in current color map handling */
+int fl_blueshift;       /**< color shift used in current color map handling */
+int fl_extrashift;      /**< color shift used in current color map handling */
 
 static uchar beenhere;
 
@@ -95,20 +93,7 @@ static void figure_out_visual() {
 
 }
 
-#  if HAVE_OVERLAY
-/** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
-Fl_XColor fl_xmap[2][256];
-/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
-uchar fl_overlay;
-Colormap fl_overlay_colormap;
-XVisualInfo* fl_overlay_visual;
-ulong fl_transparent_pixel;
-#  else
-/** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
 Fl_XColor fl_xmap[1][256];
-/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
-#    define fl_overlay 0
-#  endif
 
 void Fl_Xlib_Graphics_Driver::color(Fl_Color i) {
   if (i & 0xffffff00) {
@@ -149,7 +134,7 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
     // find closest entry in the colormap:
     Fl_Color i =
       fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-    Fl_XColor &xmap = fl_xmap[fl_overlay][i];
+    Fl_XColor &xmap = fl_xmap[Fl_Xlib_Graphics_Driver::fl_overlay][i];
     if (xmap.mapped) return xmap.pixel;
     // if not black or white, change the entry to be an exact match:
     if (i != FL_COLOR_CUBE && i != 0xFF)
@@ -200,7 +185,7 @@ ulong fl_xpixel(Fl_Color i) {
     return fl_xpixel((i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255);
   }
 
-  Fl_XColor &xmap = fl_xmap[fl_overlay][i];
+  Fl_XColor &xmap = fl_xmap[Fl_Xlib_Graphics_Driver::fl_overlay][i];
   if (xmap.mapped) return xmap.pixel;
 
   if (!beenhere) figure_out_visual();
@@ -210,9 +195,6 @@ ulong fl_xpixel(Fl_Color i) {
 
 #  if USE_COLORMAP
   Colormap colormap = fl_colormap;
-#    if HAVE_OVERLAY
-  if (fl_overlay) colormap = fl_overlay_colormap; else
-#    endif
   if (fl_redmask) {
 #  endif
     // return color for a truecolor visual:
@@ -227,15 +209,8 @@ ulong fl_xpixel(Fl_Color i) {
        ) >> fl_extrashift;
 #  if USE_COLORMAP
   }
-#    if HAVE_OVERLAY
-  static XColor* ac[2];
-  XColor*& allcolors = ac[fl_overlay];
-  static int nc[2];
-  int& numcolors = nc[fl_overlay];
-#    else
   static XColor *allcolors;
   static int numcolors;
-#    endif
 
   // I don't try to allocate colors with XAllocColor once it fails
   // with any color.  It is possible that it will work, since a color
@@ -255,10 +230,7 @@ ulong fl_xpixel(Fl_Color i) {
     // I only read the colormap once.  Again this is due to the slowness
     // of round-trips to the X server, even though other programs may alter
     // the colormap after this and make decisions here wrong.
-#    if HAVE_OVERLAY
-    if (fl_overlay) numcolors = fl_overlay_visual->colormap_size; else
-#    endif
-      numcolors = fl_visual->colormap_size;
+    numcolors = fl_visual->colormap_size;
     if (!allcolors) allcolors = new XColor[numcolors];
     for (int p = numcolors; p--;) allcolors[p].pixel = p;
     XQueryColors(fl_display, colormap, allcolors, numcolors);
@@ -268,9 +240,6 @@ ulong fl_xpixel(Fl_Color i) {
   int mindist = 0x7FFFFFFF;
   unsigned int bestmatch = 0;
   for (unsigned int n = numcolors; n--;) {
-#    if HAVE_OVERLAY
-    if (fl_overlay && n == fl_transparent_pixel) continue;
-#    endif
     XColor &a = allcolors[n];
     int d, t;
     t = int(r)-int(a.red>>8); d = t*t;
@@ -309,17 +278,10 @@ ulong fl_xpixel(Fl_Color i) {
   \param[in] overlay 0 for normal, 1 for overlay color
 */
 void Fl_Xlib_Graphics_Driver::free_color(Fl_Color i, int overlay) {
-#  if HAVE_OVERLAY
-#  else
   if (overlay) return;
-#  endif
   if (fl_xmap[overlay][i].mapped) {
 #  if USE_COLORMAP
-#    if HAVE_OVERLAY
-    Colormap colormap = overlay ? fl_overlay_colormap : fl_colormap;
-#    else
     Colormap colormap = fl_colormap;
-#    endif
     if (fl_xmap[overlay][i].mapped == 1)
       XFreeColors(fl_display, colormap, &(fl_xmap[overlay][i].pixel), 1, 0);
 #  endif
@@ -335,9 +297,6 @@ void Fl_Xlib_Graphics_Driver::free_color(Fl_Color i, int overlay) {
 void Fl_Xlib_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     free_color(i,0);
-#  if HAVE_OVERLAY
-    free_color(i,1);
-#  endif
     fl_cmap[i] = c;
   }
 }
@@ -345,7 +304,3 @@ void Fl_Xlib_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
 /**
  \}
  */
-
-//
-// End of "$Id$".
-//

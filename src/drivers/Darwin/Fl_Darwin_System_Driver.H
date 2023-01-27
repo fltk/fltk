@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
 // Definition of Apple Darwin system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -44,47 +42,46 @@ class Fl_Darwin_System_Driver : public Fl_Posix_System_Driver
 {
 public:
   Fl_Darwin_System_Driver();
-  virtual int single_arg(const char *arg);
-  virtual int arg_and_value(const char *name, const char *value);
-  virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  int single_arg(const char *arg) FL_OVERRIDE;
+  int arg_and_value(const char *name, const char *value) FL_OVERRIDE;
+  int clocale_vprintf(FILE *output, const char *format, va_list args) FL_OVERRIDE;
+  int clocale_vsnprintf(char *output, size_t output_size, const char *format, va_list args) FL_OVERRIDE;
+  int clocale_vsscanf(const char *input, const char *format, va_list args) FL_OVERRIDE;
   static void *get_carbon_function(const char *name);
   static int calc_mac_os_version(); // computes the fl_mac_os_version global variable
-  // these 2 are in Fl_get_key_mac.cxx
-  virtual int event_key(int k);
-  virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
-  virtual int open_uri(const char *uri, char *msg, int msglen);
-  virtual int need_test_shortcut_extra() {return 1;}
-  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);
-  virtual void newUUID(char *uuidBuffer);
-  virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
-                                   const char *application);
-  virtual const char *local_to_latin1(const char *t, int n);
-  virtual const char *latin1_to_local(const char *t, int n);
-  virtual const char *local_to_mac_roman(const char *t, int n);
-  virtual const char *mac_roman_to_local(const char *t, int n);
-  virtual Fl_Pixmap *tree_openpixmap();
+  static unsigned short *compute_macKeyLookUp();
+
+  int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg=NULL, int errmsg_sz=0) FL_OVERRIDE;
+  int open_uri(const char *uri, char *msg, int msglen) FL_OVERRIDE;
+  int need_test_shortcut_extra() FL_OVERRIDE {return 1;}
+  int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon) FL_OVERRIDE;
+  void newUUID(char *uuidBuffer) FL_OVERRIDE;
+  char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+                                   const char *application) FL_OVERRIDE;
+  const char *local_to_latin1(const char *t, int n) FL_OVERRIDE;
+  const char *latin1_to_local(const char *t, int n) FL_OVERRIDE;
+  const char *local_to_mac_roman(const char *t, int n) FL_OVERRIDE;
+  const char *mac_roman_to_local(const char *t, int n) FL_OVERRIDE;
+  Fl_Pixmap *tree_openpixmap() FL_OVERRIDE;
   static const char * const tree_open_xpm_darwin[]; // used by tree_openpixmap()
-  virtual Fl_Pixmap *tree_closepixmap();
+  Fl_Pixmap *tree_closepixmap() FL_OVERRIDE;
   static const char * const tree_close_xpm_darwin[]; // used by tree_closepixmap()
-  virtual int tree_connector_style();
-  virtual const char *filename_name(const char *buf);
-  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
-  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
-  virtual int clipboard_contains(const char *type);
-  virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
-  virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
-  virtual void remove_fd(int, int when);
-  virtual void remove_fd(int);
-  virtual void open_callback(void (*)(const char *));
-  virtual const char *shift_name();
-  virtual const char *meta_name();
-  virtual const char *alt_name();
-  virtual const char *control_name();
+  int tree_connector_style() FL_OVERRIDE;
+  const char *filename_name(const char *buf) FL_OVERRIDE;
+  void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0) FL_OVERRIDE;
+  void add_fd(int fd, Fl_FD_Handler cb, void* = 0) FL_OVERRIDE;
+  void remove_fd(int, int when) FL_OVERRIDE;
+  void remove_fd(int) FL_OVERRIDE;
+  void open_callback(void (*)(const char *)) FL_OVERRIDE;
+  const char *shift_name() FL_OVERRIDE;
+  const char *meta_name() FL_OVERRIDE;
+  const char *alt_name() FL_OVERRIDE;
+  const char *control_name() FL_OVERRIDE;
+  Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() FL_OVERRIDE;
+  double wait(double time_to_wait) FL_OVERRIDE;
+  int ready() FL_OVERRIDE;
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H
-
-//
-// End of "$Id$".
-//

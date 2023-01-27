@@ -2,7 +2,7 @@
  * jfdctint.c
  *
  * Copyright (C) 1991-1996, Thomas G. Lane.
- * Modification developed 2003-2013 by Guido Vollbeding.
+ * Modification developed 2003-2018 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -194,7 +194,7 @@ jpeg_fdct_islow (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[5]);
     tmp3 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[4]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM) ((tmp10 + tmp11 - 8 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[4] = (DCTELEM) ((tmp10 - tmp11) << PASS1_BITS);
 
@@ -367,7 +367,7 @@ jpeg_fdct_7x7 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp12 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[4]);
 
     z1 = tmp0 + tmp2;
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((z1 + tmp1 + tmp3 - 7 * CENTERJSAMPLE) << PASS1_BITS);
     tmp3 += tmp3;
@@ -503,7 +503,7 @@ jpeg_fdct_6x6 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp1 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[4]);
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[3]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 - 6 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[2] = (DCTELEM)
@@ -618,7 +618,7 @@ jpeg_fdct_5x5 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp0 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[4]);
     tmp1 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[3]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp2 - 5 * CENTERJSAMPLE) << (PASS1_BITS+1));
     tmp11 = MULTIPLY(tmp11, FIX(0.790569415));          /* (c2+c4)/2 */
@@ -724,7 +724,7 @@ jpeg_fdct_4x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp10 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[3]);
     tmp11 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[2]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp0 + tmp1 - 4 * CENTERJSAMPLE) << (PASS1_BITS+2));
     dataptr[2] = (DCTELEM) ((tmp0 - tmp1) << (PASS1_BITS+2));
@@ -818,7 +818,7 @@ jpeg_fdct_3x3 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 
     tmp2 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[2]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp0 + tmp1 - 3 * CENTERJSAMPLE) << (PASS1_BITS+2));
     dataptr[2] = (DCTELEM)
@@ -876,7 +876,7 @@ jpeg_fdct_3x3 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 GLOBAL(void)
 jpeg_fdct_2x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp3;
+  DCTELEM tmp0, tmp1, tmp2, tmp3;
   JSAMPROW elemptr;
 
   /* Pre-zero output coefficient block. */
@@ -904,13 +904,13 @@ jpeg_fdct_2x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
    */
 
   /* Column 0 */
-  /* Apply unsigned->signed conversion */
-  data[DCTSIZE*0] = (DCTELEM) ((tmp0 + tmp2 - 4 * CENTERJSAMPLE) << 4);
-  data[DCTSIZE*1] = (DCTELEM) ((tmp0 - tmp2) << 4);
+  /* Apply unsigned->signed conversion. */
+  data[DCTSIZE*0] = (tmp0 + tmp2 - 4 * CENTERJSAMPLE) << 4;
+  data[DCTSIZE*1] = (tmp0 - tmp2) << 4;
 
   /* Column 1 */
-  data[DCTSIZE*0+1] = (DCTELEM) ((tmp1 + tmp3) << 4);
-  data[DCTSIZE*1+1] = (DCTELEM) ((tmp1 - tmp3) << 4);
+  data[DCTSIZE*0+1] = (tmp1 + tmp3) << 4;
+  data[DCTSIZE*1+1] = (tmp1 - tmp3) << 4;
 }
 
 
@@ -921,14 +921,17 @@ jpeg_fdct_2x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 GLOBAL(void)
 jpeg_fdct_1x1 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 {
+  DCTELEM dcval;
+
   /* Pre-zero output coefficient block. */
   MEMZERO(data, SIZEOF(DCTELEM) * DCTSIZE2);
 
+  dcval = GETJSAMPLE(sample_data[0][start_col]);
+
   /* We leave the result scaled up by an overall factor of 8. */
   /* We must also scale the output by (8/1)**2 = 2**6. */
-  /* Apply unsigned->signed conversion */
-  data[0] = (DCTELEM)
-    ((GETJSAMPLE(sample_data[0][start_col]) - CENTERJSAMPLE) << 6);
+  /* Apply unsigned->signed conversion. */
+  data[0] = (dcval - CENTERJSAMPLE) << 6;
 }
 
 
@@ -976,7 +979,7 @@ jpeg_fdct_9x9 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 
     z1 = tmp0 + tmp2 + tmp3;
     z2 = tmp1 + tmp4;
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM) ((z1 + z2 - 9 * CENTERJSAMPLE) << 1);
     dataptr[6] = (DCTELEM)
       DESCALE(MULTIPLY(z1 - z2 - z2, FIX(0.707106781)),  /* c6 */
@@ -1130,7 +1133,7 @@ jpeg_fdct_10x10 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp3 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[6]);
     tmp4 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[5]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 - 10 * CENTERJSAMPLE) << 1);
     tmp12 += tmp12;
@@ -1291,7 +1294,7 @@ jpeg_fdct_11x11 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp13 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[7]);
     tmp14 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[6]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp0 + tmp1 + tmp2 + tmp3 + tmp4 + tmp5 - 11 * CENTERJSAMPLE) << 1);
     tmp5 += tmp5;
@@ -1480,7 +1483,7 @@ jpeg_fdct_12x12 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp4 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[7]);
     tmp5 = GETJSAMPLE(elemptr[5]) - GETJSAMPLE(elemptr[6]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM) (tmp10 + tmp11 + tmp12 - 12 * CENTERJSAMPLE);
     dataptr[6] = (DCTELEM) (tmp13 - tmp14 - tmp15);
     dataptr[4] = (DCTELEM)
@@ -1641,7 +1644,7 @@ jpeg_fdct_13x13 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp14 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[8]);
     tmp15 = GETJSAMPLE(elemptr[5]) - GETJSAMPLE(elemptr[7]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       (tmp0 + tmp1 + tmp2 + tmp3 + tmp4 + tmp5 + tmp6 - 13 * CENTERJSAMPLE);
     tmp6 += tmp6;
@@ -1848,7 +1851,7 @@ jpeg_fdct_14x14 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp5 = GETJSAMPLE(elemptr[5]) - GETJSAMPLE(elemptr[8]);
     tmp6 = GETJSAMPLE(elemptr[6]) - GETJSAMPLE(elemptr[7]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       (tmp10 + tmp11 + tmp12 + tmp13 - 14 * CENTERJSAMPLE);
     tmp13 += tmp13;
@@ -2047,7 +2050,7 @@ jpeg_fdct_15x15 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     z1 = tmp0 + tmp4 + tmp5;
     z2 = tmp1 + tmp3 + tmp6;
     z3 = tmp2 + tmp7;
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM) (z1 + z2 + z3 - 15 * CENTERJSAMPLE);
     z3 += z3;
     dataptr[6] = (DCTELEM)
@@ -2234,7 +2237,7 @@ jpeg_fdct_16x16 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp6 = GETJSAMPLE(elemptr[6]) - GETJSAMPLE(elemptr[9]);
     tmp7 = GETJSAMPLE(elemptr[7]) - GETJSAMPLE(elemptr[8]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 + tmp13 - 16 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[4] = (DCTELEM)
@@ -2443,7 +2446,7 @@ jpeg_fdct_16x8 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp6 = GETJSAMPLE(elemptr[6]) - GETJSAMPLE(elemptr[9]);
     tmp7 = GETJSAMPLE(elemptr[7]) - GETJSAMPLE(elemptr[8]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 + tmp13 - 16 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[4] = (DCTELEM)
@@ -2624,7 +2627,7 @@ jpeg_fdct_14x7 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp5 = GETJSAMPLE(elemptr[5]) - GETJSAMPLE(elemptr[8]);
     tmp6 = GETJSAMPLE(elemptr[6]) - GETJSAMPLE(elemptr[7]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 + tmp13 - 14 * CENTERJSAMPLE) << PASS1_BITS);
     tmp13 += tmp13;
@@ -2786,7 +2789,7 @@ jpeg_fdct_12x6 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp4 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[7]);
     tmp5 = GETJSAMPLE(elemptr[5]) - GETJSAMPLE(elemptr[6]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 - 12 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[6] = (DCTELEM) ((tmp13 - tmp14 - tmp15) << PASS1_BITS);
@@ -2922,7 +2925,7 @@ jpeg_fdct_10x5 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp3 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[6]);
     tmp4 = GETJSAMPLE(elemptr[4]) - GETJSAMPLE(elemptr[5]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 + tmp12 - 10 * CENTERJSAMPLE) << PASS1_BITS);
     tmp12 += tmp12;
@@ -3057,7 +3060,7 @@ jpeg_fdct_8x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[5]);
     tmp3 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[4]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 - 8 * CENTERJSAMPLE) << (PASS1_BITS+1));
     dataptr[4] = (DCTELEM) ((tmp10 - tmp11) << (PASS1_BITS+1));
@@ -3192,7 +3195,7 @@ jpeg_fdct_6x3 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp1 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[4]);
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[3]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 - 6 * CENTERJSAMPLE) << (PASS1_BITS+1));
     dataptr[2] = (DCTELEM)
@@ -3258,78 +3261,84 @@ jpeg_fdct_6x3 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 GLOBAL(void)
 jpeg_fdct_4x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 {
-  INT32 tmp0, tmp1;
-  INT32 tmp10, tmp11;
-  DCTELEM *dataptr;
+  DCTELEM tmp0, tmp2, tmp10, tmp12, tmp4, tmp5;
+  INT32 tmp1, tmp3, tmp11, tmp13;
+  INT32 z1, z2, z3;
   JSAMPROW elemptr;
-  int ctr;
   SHIFT_TEMPS
 
   /* Pre-zero output coefficient block. */
   MEMZERO(data, SIZEOF(DCTELEM) * DCTSIZE2);
 
   /* Pass 1: process rows.
-   * Note results are scaled up by sqrt(8) compared to a true DCT;
-   * furthermore, we scale the results by 2**PASS1_BITS.
-   * We must also scale the output by (8/4)*(8/2) = 2**3, which we add here.
+   * Note results are scaled up by sqrt(8) compared to a true DCT.
    * 4-point FDCT kernel,
    * cK represents sqrt(2) * cos(K*pi/16) [refers to 8-point FDCT].
    */
 
-  dataptr = data;
-  for (ctr = 0; ctr < 2; ctr++) {
-    elemptr = sample_data[ctr] + start_col;
+  /* Row 0 */
+  elemptr = sample_data[0] + start_col;
 
-    /* Even part */
+  /* Even part */
 
-    tmp0 = GETJSAMPLE(elemptr[0]) + GETJSAMPLE(elemptr[3]);
-    tmp1 = GETJSAMPLE(elemptr[1]) + GETJSAMPLE(elemptr[2]);
+  tmp4 = GETJSAMPLE(elemptr[0]) + GETJSAMPLE(elemptr[3]);
+  tmp5 = GETJSAMPLE(elemptr[1]) + GETJSAMPLE(elemptr[2]);
 
-    tmp10 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[3]);
-    tmp11 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[2]);
+  tmp0 = tmp4 + tmp5;
+  tmp2 = tmp4 - tmp5;
 
-    /* Apply unsigned->signed conversion */
-    dataptr[0] = (DCTELEM)
-      ((tmp0 + tmp1 - 4 * CENTERJSAMPLE) << (PASS1_BITS+3));
-    dataptr[2] = (DCTELEM) ((tmp0 - tmp1) << (PASS1_BITS+3));
+  /* Odd part */
 
-    /* Odd part */
+  z2 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[3]);
+  z3 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[2]);
 
-    tmp0 = MULTIPLY(tmp10 + tmp11, FIX_0_541196100);       /* c6 */
-    /* Add fudge factor here for final descale. */
-    tmp0 += ONE << (CONST_BITS-PASS1_BITS-4);
+  z1 = MULTIPLY(z2 + z3, FIX_0_541196100);    /* c6 */
+  /* Add fudge factor here for final descale. */
+  z1 += ONE << (CONST_BITS-3-1);
+  tmp1 = z1 + MULTIPLY(z2, FIX_0_765366865); /* c2-c6 */
+  tmp3 = z1 - MULTIPLY(z3, FIX_1_847759065); /* c2+c6 */
 
-    dataptr[1] = (DCTELEM)
-      RIGHT_SHIFT(tmp0 + MULTIPLY(tmp10, FIX_0_765366865), /* c2-c6 */
-		  CONST_BITS-PASS1_BITS-3);
-    dataptr[3] = (DCTELEM)
-      RIGHT_SHIFT(tmp0 - MULTIPLY(tmp11, FIX_1_847759065), /* c2+c6 */
-		  CONST_BITS-PASS1_BITS-3);
+  /* Row 1 */
+  elemptr = sample_data[1] + start_col;
 
-    dataptr += DCTSIZE;		/* advance pointer to next row */
-  }
+  /* Even part */
+
+  tmp4 = GETJSAMPLE(elemptr[0]) + GETJSAMPLE(elemptr[3]);
+  tmp5 = GETJSAMPLE(elemptr[1]) + GETJSAMPLE(elemptr[2]);
+
+  tmp10 = tmp4 + tmp5;
+  tmp12 = tmp4 - tmp5;
+
+  /* Odd part */
+
+  z2 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[3]);
+  z3 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[2]);
+
+  z1 = MULTIPLY(z2 + z3, FIX_0_541196100);    /* c6 */
+  tmp11 = z1 + MULTIPLY(z2, FIX_0_765366865); /* c2-c6 */
+  tmp13 = z1 - MULTIPLY(z3, FIX_1_847759065); /* c2+c6 */
 
   /* Pass 2: process columns.
-   * We remove the PASS1_BITS scaling, but leave the results scaled up
-   * by an overall factor of 8.
+   * We leave the results scaled up by an overall factor of 8.
+   * We must also scale the output by (8/4)*(8/2) = 2**3.
    */
 
-  dataptr = data;
-  for (ctr = 0; ctr < 4; ctr++) {
-    /* Even part */
+  /* Column 0 */
+  /* Apply unsigned->signed conversion. */
+  data[DCTSIZE*0] = (tmp0 + tmp10 - 8 * CENTERJSAMPLE) << 3;
+  data[DCTSIZE*1] = (tmp0 - tmp10) << 3;
 
-    /* Add fudge factor here for final descale. */
-    tmp0 = dataptr[DCTSIZE*0] + (ONE << (PASS1_BITS-1));
-    tmp1 = dataptr[DCTSIZE*1];
+  /* Column 1 */
+  data[DCTSIZE*0+1] = (DCTELEM) RIGHT_SHIFT(tmp1 + tmp11, CONST_BITS-3);
+  data[DCTSIZE*1+1] = (DCTELEM) RIGHT_SHIFT(tmp1 - tmp11, CONST_BITS-3);
 
-    dataptr[DCTSIZE*0] = (DCTELEM) RIGHT_SHIFT(tmp0 + tmp1, PASS1_BITS);
+  /* Column 2 */
+  data[DCTSIZE*0+2] = (tmp2 + tmp12) << 3;
+  data[DCTSIZE*1+2] = (tmp2 - tmp12) << 3;
 
-    /* Odd part */
-
-    dataptr[DCTSIZE*1] = (DCTELEM) RIGHT_SHIFT(tmp0 - tmp1, PASS1_BITS);
-
-    dataptr++;			/* advance pointer to next column */
-  }
+  /* Column 3 */
+  data[DCTSIZE*0+3] = (DCTELEM) RIGHT_SHIFT(tmp3 + tmp13, CONST_BITS-3);
+  data[DCTSIZE*1+3] = (DCTELEM) RIGHT_SHIFT(tmp3 - tmp13, CONST_BITS-3);
 }
 
 
@@ -3342,7 +3351,7 @@ jpeg_fdct_4x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 GLOBAL(void)
 jpeg_fdct_2x1 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 {
-  INT32 tmp0, tmp1;
+  DCTELEM tmp0, tmp1;
   JSAMPROW elemptr;
 
   /* Pre-zero output coefficient block. */
@@ -3359,12 +3368,12 @@ jpeg_fdct_2x1 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 
   /* Even part */
 
-  /* Apply unsigned->signed conversion */
-  data[0] = (DCTELEM) ((tmp0 + tmp1 - 2 * CENTERJSAMPLE) << 5);
+  /* Apply unsigned->signed conversion. */
+  data[0] = (tmp0 + tmp1 - 2 * CENTERJSAMPLE) << 5;
 
   /* Odd part */
 
-  data[1] = (DCTELEM) ((tmp0 - tmp1) << 5);
+  data[1] = (tmp0 - tmp1) << 5;
 }
 
 
@@ -3417,7 +3426,7 @@ jpeg_fdct_8x16 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[5]);
     tmp3 = GETJSAMPLE(elemptr[3]) - GETJSAMPLE(elemptr[4]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM) ((tmp10 + tmp11 - 8 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[4] = (DCTELEM) ((tmp10 - tmp11) << PASS1_BITS);
 
@@ -3607,7 +3616,7 @@ jpeg_fdct_7x14 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp12 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[4]);
 
     z1 = tmp0 + tmp2;
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((z1 + tmp1 + tmp3 - 7 * CENTERJSAMPLE) << PASS1_BITS);
     tmp3 += tmp3;
@@ -3789,7 +3798,7 @@ jpeg_fdct_6x12 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp1 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[4]);
     tmp2 = GETJSAMPLE(elemptr[2]) - GETJSAMPLE(elemptr[3]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp11 - 6 * CENTERJSAMPLE) << PASS1_BITS);
     dataptr[2] = (DCTELEM)
@@ -3938,7 +3947,7 @@ jpeg_fdct_5x10 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp0 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[4]);
     tmp1 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[3]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp10 + tmp2 - 5 * CENTERJSAMPLE) << PASS1_BITS);
     tmp11 = MULTIPLY(tmp11, FIX(0.790569415));          /* (c2+c4)/2 */
@@ -4081,7 +4090,7 @@ jpeg_fdct_4x8 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp10 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[3]);
     tmp11 = GETJSAMPLE(elemptr[1]) - GETJSAMPLE(elemptr[2]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp0 + tmp1 - 4 * CENTERJSAMPLE) << (PASS1_BITS+1));
     dataptr[2] = (DCTELEM) ((tmp0 - tmp1) << (PASS1_BITS+1));
@@ -4220,7 +4229,7 @@ jpeg_fdct_3x6 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 
     tmp2 = GETJSAMPLE(elemptr[0]) - GETJSAMPLE(elemptr[2]);
 
-    /* Apply unsigned->signed conversion */
+    /* Apply unsigned->signed conversion. */
     dataptr[0] = (DCTELEM)
       ((tmp0 + tmp1 - 3 * CENTERJSAMPLE) << (PASS1_BITS+1));
     dataptr[2] = (DCTELEM)
@@ -4309,7 +4318,6 @@ jpeg_fdct_2x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 
   /* Pass 1: process rows.
    * Note results are scaled up by sqrt(8) compared to a true DCT.
-   * We must also scale the output by (8/2)*(8/4) = 2**3, which we add here.
    */
 
   dataptr = data;
@@ -4321,18 +4329,19 @@ jpeg_fdct_2x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp0 = GETJSAMPLE(elemptr[0]);
     tmp1 = GETJSAMPLE(elemptr[1]);
 
-    /* Apply unsigned->signed conversion */
-    dataptr[0] = (DCTELEM) ((tmp0 + tmp1 - 2 * CENTERJSAMPLE) << 3);
+    /* Apply unsigned->signed conversion. */
+    dataptr[0] = (DCTELEM) (tmp0 + tmp1 - 2 * CENTERJSAMPLE);
 
     /* Odd part */
 
-    dataptr[1] = (DCTELEM) ((tmp0 - tmp1) << 3);
+    dataptr[1] = (DCTELEM) (tmp0 - tmp1);
 
     dataptr += DCTSIZE;		/* advance pointer to next row */
   }
 
   /* Pass 2: process columns.
    * We leave the results scaled up by an overall factor of 8.
+   * We must also scale the output by (8/2)*(8/4) = 2**3.
    * 4-point FDCT kernel,
    * cK represents sqrt(2) * cos(K*pi/16) [refers to 8-point FDCT].
    */
@@ -4347,21 +4356,21 @@ jpeg_fdct_2x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
     tmp10 = dataptr[DCTSIZE*0] - dataptr[DCTSIZE*3];
     tmp11 = dataptr[DCTSIZE*1] - dataptr[DCTSIZE*2];
 
-    dataptr[DCTSIZE*0] = (DCTELEM) (tmp0 + tmp1);
-    dataptr[DCTSIZE*2] = (DCTELEM) (tmp0 - tmp1);
+    dataptr[DCTSIZE*0] = (DCTELEM) ((tmp0 + tmp1) << 3);
+    dataptr[DCTSIZE*2] = (DCTELEM) ((tmp0 - tmp1) << 3);
 
     /* Odd part */
 
     tmp0 = MULTIPLY(tmp10 + tmp11, FIX_0_541196100);       /* c6 */
     /* Add fudge factor here for final descale. */
-    tmp0 += ONE << (CONST_BITS-1);
+    tmp0 += ONE << (CONST_BITS-3-1);
 
     dataptr[DCTSIZE*1] = (DCTELEM)
       RIGHT_SHIFT(tmp0 + MULTIPLY(tmp10, FIX_0_765366865), /* c2-c6 */
-		  CONST_BITS);
+		  CONST_BITS-3);
     dataptr[DCTSIZE*3] = (DCTELEM)
       RIGHT_SHIFT(tmp0 - MULTIPLY(tmp11, FIX_1_847759065), /* c2+c6 */
-		  CONST_BITS);
+		  CONST_BITS-3);
 
     dataptr++;			/* advance pointer to next column */
   }
@@ -4377,7 +4386,7 @@ jpeg_fdct_2x4 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 GLOBAL(void)
 jpeg_fdct_1x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
 {
-  INT32 tmp0, tmp1;
+  DCTELEM tmp0, tmp1;
 
   /* Pre-zero output coefficient block. */
   MEMZERO(data, SIZEOF(DCTELEM) * DCTSIZE2);
@@ -4394,12 +4403,12 @@ jpeg_fdct_1x2 (DCTELEM * data, JSAMPARRAY sample_data, JDIMENSION start_col)
   tmp0 = GETJSAMPLE(sample_data[0][start_col]);
   tmp1 = GETJSAMPLE(sample_data[1][start_col]);
 
-  /* Apply unsigned->signed conversion */
-  data[DCTSIZE*0] = (DCTELEM) ((tmp0 + tmp1 - 2 * CENTERJSAMPLE) << 5);
+  /* Apply unsigned->signed conversion. */
+  data[DCTSIZE*0] = (tmp0 + tmp1 - 2 * CENTERJSAMPLE) << 5;
 
   /* Odd part */
 
-  data[DCTSIZE*1] = (DCTELEM) ((tmp0 - tmp1) << 5);
+  data[DCTSIZE*1] = (tmp0 - tmp1) << 5;
 }
 
 #endif /* DCT_SCALING_SUPPORTED */

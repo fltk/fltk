@@ -9,7 +9,7 @@ IFS="
 #echo "#
 # List of non-spacing chars
 #
-# 
+#
 #       Format:  Three tab-separated columns
 #                Column #1 is the non-spacing Unicode (in hex as 0xXXXX)
 #                Column #2 is the spacing Unicode (in hex as 0xXXXX)
@@ -23,7 +23,7 @@ for line in ${nopsc}
 do
 	ucs=`echo ${line} | cut -d\; -f1`
 	name=`echo ${line} | cut -d\; -f2`
-	space=`grep " 0020 ${ucs};" ../UnicodeData-2.txt` 
+	space=`grep " 0020 ${ucs};" ../UnicodeData-2.txt`
 	if test "X${space}" != X ;then
 		tbl=`echo ${space} | cut -d\; -f1`
 	#	echo "0x${ucs}	0x${tbl}	#	${name}" >> space.txt
@@ -51,11 +51,11 @@ cat >../is_spacing.c << ENDOFTEXT
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include "headers/spacing.h"
@@ -63,7 +63,7 @@ cat >../is_spacing.c << ENDOFTEXT
 ENDOFTEXT
 
 echo "
-unsigned short 
+unsigned short
 XUtf8IsNonSpacing(
 	unsigned int ucs)
 {
@@ -71,7 +71,7 @@ XUtf8IsNonSpacing(
 
 tables=`cat ../headers/spacing_tbl.txt`
 
-for line in ${tables} 
+for line in ${tables}
 do
 	tbl=`echo ${line} | cut -d']' -f1`
 	bot=`echo ${line} | cut -d'_' -f3 | cut -d'[' -f1`

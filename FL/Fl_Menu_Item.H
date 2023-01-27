@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Menu_Item_H
@@ -27,15 +25,16 @@
 /// @file
 
 enum { // values for flags:
-  FL_MENU_INACTIVE = 1,		///< Deactivate menu item (gray out)
-  FL_MENU_TOGGLE= 2,		///< Item is a checkbox toggle (shows checkbox for on/off state)
-  FL_MENU_VALUE = 4,		///< The on/off state for checkbox/radio buttons (if set, state is 'on')
-  FL_MENU_RADIO = 8,		///< Item is a radio button (one checkbox of many can be on)
-  FL_MENU_INVISIBLE = 0x10,	///< Item will not show up (shortcut will work)
-  FL_SUBMENU_POINTER = 0x20,	///< Indicates user_data() is a pointer to another menu array
-  FL_SUBMENU = 0x40,		///< This item is a submenu to other items
-  FL_MENU_DIVIDER = 0x80,	///< Creates divider line below this item. Also ends a group of radio buttons.
-  FL_MENU_HORIZONTAL = 0x100	///< ??? -- reserved
+  FL_MENU_INACTIVE   = 1,          ///< Deactivate menu item (gray out)
+  FL_MENU_TOGGLE     = 2,          ///< Item is a checkbox toggle (shows checkbox for on/off state)
+  FL_MENU_VALUE      = 4,          ///< The on/off state for checkbox/radio buttons (if set, state is 'on')
+  FL_MENU_RADIO      = 8,          ///< Item is a radio button (one checkbox of many can be on)
+  FL_MENU_INVISIBLE  = 0x10,       ///< Item will not show up (shortcut will work)
+  FL_SUBMENU_POINTER = 0x20,       ///< Indicates user_data() is a pointer to another menu array
+  FL_SUBMENU         = 0x40,       ///< Item is a submenu to other items
+  FL_MENU_DIVIDER    = 0x80,       ///< Creates divider line below this item. Also ends a group of radio buttons
+  FL_MENU_HORIZONTAL = 0x100,      ///< ??? -- reserved, internal (do not use)
+  FL_MENU_RESERVED   = 0xffffff00  ///< These bits are reserved for internal or future usage (do not use)
 };
 
 extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
@@ -44,11 +43,11 @@ class Fl_Menu_;
 
 /**
   The Fl_Menu_Item structure defines a single menu item that
-  is used by the Fl_Menu_ class.  
+  is used by the Fl_Menu_ class.
   \code
   struct Fl_Menu_Item {
    const char*   text;     // label()
-   ulong         shortcut_;
+   int           shortcut_;
    Fl_Callback*  callback_;
    void*         user_data_;
    int           flags;
@@ -57,17 +56,18 @@ class Fl_Menu_;
    uchar         labelsize_;
    uchar         labelcolor_;
   };
-  
+
   enum { // values for flags:
-   FL_MENU_INACTIVE   = 1,      // Deactivate menu item (gray out)
-   FL_MENU_TOGGLE     = 2,      // Item is a checkbox toggle (shows checkbox for on/off state)
-   FL_MENU_VALUE      = 4,      // The on/off state for checkbox/radio buttons (if set, state is 'on')
-   FL_MENU_RADIO      = 8,      // Item is a radio button (one checkbox of many can be on)
-   FL_MENU_INVISIBLE  = 0x10,   // Item will not show up (shortcut will work)
-   FL_SUBMENU_POINTER = 0x20,   // Indicates user_data() is a pointer to another menu array
-   FL_SUBMENU         = 0x40,   // This item is a submenu to other items
-   FL_MENU_DIVIDER    = 0x80,   // Creates divider line below this item. Also ends a group of radio buttons.
-   FL_MENU_HORIZONTAL = 0x100   // ??? -- reserved
+   FL_MENU_INACTIVE   = 1,          // Deactivate menu item (gray out)
+   FL_MENU_TOGGLE     = 2,          // Item is a checkbox toggle (shows checkbox for on/off state)
+   FL_MENU_VALUE      = 4,          // The on/off state for checkbox/radio buttons (if set, state is 'on')
+   FL_MENU_RADIO      = 8,          // Item is a radio button (one checkbox of many can be on)
+   FL_MENU_INVISIBLE  = 0x10,       // Item will not show up (shortcut will work)
+   FL_SUBMENU_POINTER = 0x20,       // Indicates user_data() is a pointer to another menu array
+   FL_SUBMENU         = 0x40,       // This item is a submenu to other items
+   FL_MENU_DIVIDER    = 0x80,       // Creates divider line below this item. Also ends a group of radio buttons.
+   FL_MENU_HORIZONTAL = 0x100,      // ??? -- reserved, internal (do not use)
+   FL_MENU_RESERVED   = 0xffffff00  // These bits are reserved for internal or future usage (do not use)
   };
   \endcode
   Typically menu items are statically defined; for example:
@@ -96,7 +96,7 @@ class Fl_Menu_;
   \image html   menu.png
   \image latex  menu.png "menu" width=10cm
 
-  A submenu title is identified by the bit FL_SUBMENU in the 
+  A submenu title is identified by the bit FL_SUBMENU in the
   flags field, and ends with a label() that is NULL.
   You can nest menus to any depth.  A pointer to the first item in the
   submenu can be treated as an Fl_Menu array itself.  It is also
@@ -105,17 +105,22 @@ class Fl_Menu_;
   You should use the method functions to access structure members and
   not access them directly to avoid compatibility problems with future
   releases of FLTK.
+
+  \note Adding menu items with insert(), add(), or any of its overloaded
+    variants copies the entire menu to internal storage. Using the
+    memory of a static menu array after that would access unused (but not
+    released) memory and thus have no effect.
 */
 struct FL_EXPORT Fl_Menu_Item {
-  const char *text;	    ///< menu item text, returned by label()
-  int shortcut_;	    ///< menu item shortcut
+  const char *text;         ///< menu item text, returned by label()
+  int shortcut_;            ///< menu item shortcut
   Fl_Callback *callback_;   ///< menu item callback
-  void *user_data_;	    ///< menu item user_data for the menu's callback
-  int flags;		    ///< menu item flags like FL_MENU_TOGGLE, FL_MENU_RADIO
-  uchar labeltype_;	    ///< how the menu item text looks like
-  Fl_Font labelfont_;	    ///< which font for this menu item text
+  void *user_data_;         ///< menu item user_data for the menu's callback
+  int flags;                ///< menu item flags like FL_MENU_TOGGLE, FL_MENU_RADIO
+  uchar labeltype_;         ///< how the menu item text looks like
+  Fl_Font labelfont_;       ///< which font for this menu item text
   Fl_Fontsize labelsize_;   ///< size of menu item text
-  Fl_Color labelcolor_;	    ///< menu item text color
+  Fl_Color labelcolor_;     ///< menu item text color
 
   // advance N items, skipping submenus:
   const Fl_Menu_Item *next(int=1) const;
@@ -235,7 +240,6 @@ struct FL_EXPORT Fl_Menu_Item {
 
   /**
     Sets the menu item's callback function and userdata() argument.
-    This method does not set the userdata() argument.
     The argument \p is cast to void* and stored as the userdata()
     for the menu item's callback function.
     \see Fl_Callback_p Fl_MenuItem::callback() const
@@ -271,17 +275,17 @@ struct FL_EXPORT Fl_Menu_Item {
 
   /**
     Sets exactly what key combination will trigger the menu item.  The
-    value is a logical 'or' of a key and a set of shift flags, for instance 
+    value is a logical 'or' of a key and a set of shift flags, for instance
     FL_ALT+'a' or FL_ALT+FL_F+10 or just 'a'.  A value of
     zero disables the shortcut.
 
-    The key can be any value returned by Fl::event_key(), but will usually 
-    be an ASCII letter. Use a lower-case letter unless you require the shift 
+    The key can be any value returned by Fl::event_key(), but will usually
+    be an ASCII letter. Use a lower-case letter unless you require the shift
     key to be held down.
 
     The shift flags can be any set of values accepted by Fl::event_state().
-    If the bit is on that shift key must be pushed.  Meta, Alt, Ctrl, 
-    and Shift must be off if they are not in the shift flags (zero for the 
+    If the bit is on that shift key must be pushed.  Meta, Alt, Ctrl,
+    and Shift must be off if they are not in the shift flags (zero for the
     other bits indicates a "don't care" setting).
   */
   void shortcut(int s) {shortcut_ = s;}
@@ -306,16 +310,16 @@ struct FL_EXPORT Fl_Menu_Item {
   */
   int radio() const {return flags&FL_MENU_RADIO;}
   /** Returns the current value of the check or radio item.
-      This is zero (0) if the menu item is not checked and
-      non-zero otherwise. You should not rely on a particular value,
-      only zero or non-zero.
-      \note The returned value for a checked menu item as of FLTK 1.3.2
-      is FL_MENU_VALUE (4), but may be 1 in a future version.
+      This is zero (0) if the menu item is not checked and non-zero otherwise.
+      \since 1.4.0 this method returns 1 if the item is checked but you
+        should not rely on a particular value, only zero or non-zero.
+      \note The returned value for a checked menu item was FL_MENU_VALUE (4)
+        before FLTK 1.4.0.
   */
-  int value() const {return flags&FL_MENU_VALUE;}
+  int value() const {return (flags & FL_MENU_VALUE) ? 1 : 0;}
   /**
     Turns the check or radio item "on" for the menu item. Note that this
-    does not turn off any adjacent radio items like set_only() does.
+    does not turn off any adjacent radio items like setonly() does.
   */
   void set() {flags |= FL_MENU_VALUE;}
 
@@ -386,14 +390,14 @@ struct FL_EXPORT Fl_Menu_Item {
     The callback is called with the stored user_data() as its second argument.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o) const {callback_(o, user_data_);}
+  void do_callback(Fl_Widget* o) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, user_data_);}
 
   /**
     Calls the Fl_Menu_Item item's callback, and provides the Fl_Widget argument.
     This call overrides the callback's second argument with the given value \p arg.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o,void* arg) const {callback_(o, arg);}
+  void do_callback(Fl_Widget* o,void* arg) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, arg);}
 
   /**
     Calls the Fl_Menu_Item item's callback, and provides the Fl_Widget argument.
@@ -402,25 +406,38 @@ struct FL_EXPORT Fl_Menu_Item {
     the callback.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o,long arg) const {callback_(o, (void*)(fl_intptr_t)arg);}
+  void do_callback(Fl_Widget* o,long arg) const {Fl::callback_reason_=FL_REASON_SELECTED; callback_(o, (void*)(fl_intptr_t)arg);}
 
-  // back-compatibility, do not use:
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::value() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see value()
+  */
+  inline int checked() const {return value();}
 
-  /** back compatibility only \deprecated. */
-  int checked() const {return flags&FL_MENU_VALUE;}
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::set() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see set()
+  */
+  inline void check() {set();}
 
-  /** back compatibility only \deprecated. */
-  void check() {flags |= FL_MENU_VALUE;}
-
-  /** back compatibility only \deprecated. */
-  void uncheck() {flags &= ~FL_MENU_VALUE;}
+  /** Back compatibility only.
+    \deprecated
+      Please use Fl_Menu_Item::clear() instead.
+      This method will be removed in FLTK 1.5.0 or later.
+    \see clear()
+  */
+  inline void uncheck() {clear();}
 
   int insert(int,const char*,int,Fl_Callback*,void* =0, int =0);
   int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
 
   /** See int add(const char*, int shortcut, Fl_Callback*, void*, int) */
   int add(const char*a, const char* b, Fl_Callback* c,
-	  void* d = 0, int e = 0) {
+          void* d = 0, int e = 0) {
     return add(a,fl_old_shortcut(b),c,d,e);}
 
   int size() const ;
@@ -428,21 +445,17 @@ struct FL_EXPORT Fl_Menu_Item {
 
 typedef Fl_Menu_Item Fl_Menu; // back compatibility
 
-enum {	// back-compatibility enum:
-  FL_PUP_NONE	= 0,
-  FL_PUP_GREY	= FL_MENU_INACTIVE,
-  FL_PUP_GRAY	= FL_MENU_INACTIVE,
-  FL_MENU_BOX	= FL_MENU_TOGGLE,
-  FL_PUP_BOX	= FL_MENU_TOGGLE,
-  FL_MENU_CHECK	= FL_MENU_VALUE,
-  FL_PUP_CHECK	= FL_MENU_VALUE,
-  FL_PUP_RADIO	= FL_MENU_RADIO,
+enum {  // back-compatibility enum:
+  FL_PUP_NONE   = 0,
+  FL_PUP_GREY   = FL_MENU_INACTIVE,
+  FL_PUP_GRAY   = FL_MENU_INACTIVE,
+  FL_MENU_BOX   = FL_MENU_TOGGLE,
+  FL_PUP_BOX    = FL_MENU_TOGGLE,
+  FL_MENU_CHECK = FL_MENU_VALUE,
+  FL_PUP_CHECK  = FL_MENU_VALUE,
+  FL_PUP_RADIO  = FL_MENU_RADIO,
   FL_PUP_INVISIBLE = FL_MENU_INVISIBLE,
   FL_PUP_SUBMENU = FL_SUBMENU_POINTER
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

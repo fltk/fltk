@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Cocoa window driver.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,16 +7,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Cocoa_Window_Driver.H"
+#include "../../Fl_Screen_Driver.H"
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Overlay_Window.H>
@@ -26,40 +25,17 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/platform.H>
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
-
-Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
-{
-  return new Fl_Cocoa_Window_Driver(w);
-}
-
-/**
- \}
- \endcond
- */
-
+#include <math.h>
 
 
 Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
   cursor = nil;
-}
-
-
-Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
-{
-  if (shape_data_) {
-    if (shape_data_->mask) {
-      CGImageRelease(shape_data_->mask);
-    }
-    delete shape_data_;
-  }
+  window_flags_ = 0;
+  icon_image = NULL;
+  screen_num_ = 0;
+  shape_data_ = NULL;
 }
 
 
@@ -82,7 +58,7 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
     oWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-    Fl_X *myi = Fl_X::i(pWindow);
+    Fl_X *myi = Fl_X::flx(pWindow);
     fl_clip_region(myi->region); myi->region = 0;
     fl_begin_offscreen(other_xid);
     draw();
@@ -106,13 +82,13 @@ void Fl_Cocoa_Window_Driver::destroy_double_buffer()
 void Fl_Cocoa_Window_Driver::draw_begin()
 {
   if (!Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) return;
-  CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
+  CGContextRef my_gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
   if (shape_data_) {
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
-      CGContextClipToMask(gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
+      CGContextClipToMask(my_gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
-    CGContextSaveGState(gc);
+    CGContextSaveGState(my_gc);
 # endif
   }
 }
@@ -143,8 +119,8 @@ void Fl_Cocoa_Window_Driver::draw_end()
   }
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
-    CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
-    if (shape_data_) CGContextRestoreGState(gc);
+    CGContextRef my_gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
+    if (shape_data_) CGContextRestoreGState(my_gc);
   }
 # endif
 }
@@ -225,63 +201,57 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
     shape_data_ = new shape_data_type;
   }
   memset(shape_data_, 0, sizeof(shape_data_type));
-  pWindow->border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  if (d && img->count() >= 2) {
+    shape_pixmap_((Fl_Image*)img);
+    shape_data_->shape_ = (Fl_Image*)img;
+  }
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
 #endif
+  pWindow->border(false);
 }
 
 
 void Fl_Cocoa_Window_Driver::hide() {
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer
   if (ip && !parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
   if ( hide_common() ) return;
   q_release_context(this);
-  if ( ip->xid == fl_window )
+  if ( ip->xid == (fl_uintptr_t)fl_window )
     fl_window = 0;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  destroy(ip->xid);
+  destroy((FLWindow*)ip->xid);
   delete subRect();
   delete ip;
 }
 
 
-void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-  *top = 24;
-  *left = 2;
-  *right = 2;
-  *bottom = 2;
-}
-
 int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data)
 {
+  if ( (src_x < 0) || (src_y < 0) )
+    return 1;
+  if ( (src_x+src_w > pWindow->w()) || (src_y+src_h > pWindow->h()) )
+    return 1;
   CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);
-  if (img) {
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,dest_x,dest_y,src_w,src_h,0,0,src_w,src_h);
-    CFRelease(img);
-  }
+  if (!img)
+    return 1;
+  // the current surface is generally the display, but is an Fl_Image_Surface when scrolling an Fl_Overlay_Window
+  Fl_Quartz_Graphics_Driver *qgd = (Fl_Quartz_Graphics_Driver*)Fl_Surface_Device::surface()->driver();
+  float s = qgd->scale();
+  qgd->draw_CGImage(img, dest_x, dest_y, (int)lround(s*src_w), (int)lround(s*src_h), 0, 0, src_w, src_h);
+  CFRelease(img);
   return 0;
 }
 
-static const unsigned windowDidResize_mask = 1;
-
-bool Fl_Cocoa_Window_Driver::in_windowDidResize() {
-  return window_flags_ & windowDidResize_mask;
-}
-
-void Fl_Cocoa_Window_Driver::in_windowDidResize(bool b) {
-  if (b) window_flags_ |= windowDidResize_mask;
-  else window_flags_ &= ~windowDidResize_mask;
-}
-
-static const unsigned mapped_mask = 2;
-static const unsigned changed_mask = 4;
+static const unsigned mapped_mask = 1;
+static const unsigned changed_mask = 2;
+static const unsigned view_resized_mask = 4;
+static const unsigned through_resize_mask = 8;
 
 bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
   return window_flags_ & mapped_mask;
@@ -301,6 +271,25 @@ void Fl_Cocoa_Window_Driver::changed_resolution(bool b) {
   else window_flags_ &= ~changed_mask;
 }
 
+bool Fl_Cocoa_Window_Driver::view_resized() {
+  return window_flags_ & view_resized_mask;
+}
+
+void Fl_Cocoa_Window_Driver::view_resized(bool b) {
+  if (b) window_flags_ |= view_resized_mask;
+  else window_flags_ &= ~view_resized_mask;
+}
+
+bool Fl_Cocoa_Window_Driver::through_resize() {
+  return window_flags_ & through_resize_mask;
+}
+
+void Fl_Cocoa_Window_Driver::through_resize(bool b) {
+  if (b) window_flags_ |= through_resize_mask;
+  else window_flags_ &= ~through_resize_mask;
+}
+
+
 // clip the graphics context to rounded corners
 void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
   const CGFloat radius = 7.5;
@@ -313,6 +302,42 @@ void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int
   CGContextClip(gc);
 }
 
-//
-// End of "$Id$".
-//
+const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
+  return shape_data_ ? shape_data_->shape_ : NULL;
+}
+
+/* Returns images of the capture of the window title-bar.
+ On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
+ */
+void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+{
+  top = left = bottom = right = NULL;
+  int htop, hleft, hright, hbottom;
+  Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
+  if (htop == 0) return; // when window is fullscreen
+  CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  float s = Fl::screen_driver()->scale(screen_num());
+  int scaled_w = int(w() * s);
+  const int factor = (mapped_to_retina() ? 2 : 1);
+  int data_w = factor * scaled_w, data_h = factor * htop;
+  uchar *rgba = new uchar[4 * data_w * data_h];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, data_w, data_h, 8, 4 * data_w, cspace, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(cspace);
+  CGContextClearRect(auxgc, CGRectMake(0,0,data_w,data_h));
+  CGContextScaleCTM(auxgc, factor, factor);
+  draw_titlebar_to_context(auxgc, scaled_w, htop);
+  top = new Fl_RGB_Image(rgba, data_w, data_h, 4);
+  top->alloc_array = 1;
+  top->scale(w(),htop, s <1 ? 0 : 1, 1);
+  CGContextRelease(auxgc);
+}
+
+
+FLWindow *fl_mac_xid(const Fl_Window *win) {
+  return (FLWindow*)Fl_Window_Driver::xid(win);
+}
+
+
+Fl_Window *fl_mac_find(FLWindow *xid) {
+  return Fl_Window_Driver::find((fl_uintptr_t)xid);
+}

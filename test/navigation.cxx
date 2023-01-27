@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Navigation test program for the Fast Light Tool Kit (FLTK).
 //
 // Silly test of navigation keys. This is not a recommended method of
@@ -12,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -40,7 +38,7 @@ int main(int argc, char **argv) {
     // Include a toggle button to control arrow focus
     Fl_Light_Button arrowfocus_butt(10,HEIGHT+10,130,20," Arrow Focus");
     arrowfocus_butt.callback(ToggleArrowFocus_CB);
-    arrowfocus_butt.value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);	// use default
+    arrowfocus_butt.value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);  // use default
     arrowfocus_butt.tooltip("Control horizontal arrow key focus navigation behavior.\n"
                             "e.g. Fl::OPTION_ARROW_FOCUS");
   window.end(); // don't auto-add children
@@ -58,7 +56,7 @@ int main(int argc, char **argv) {
     int n; for (n=0; n < window.children(); n++) {
       Fl_Widget *o = window.child(n);
       if (x<o->x()+o->w() && x+w>o->x() &&
-	  y<o->y()+o->h() && y+h>o->y()) break;
+          y<o->y()+o->h() && y+h>o->y()) break;
       if ( !j && ( y<o->y() || (y==o->y() && x<o->x()) ) ) j = o;
     }
     // skip if intersection:
@@ -68,7 +66,3 @@ int main(int argc, char **argv) {
   window.show(argc, argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

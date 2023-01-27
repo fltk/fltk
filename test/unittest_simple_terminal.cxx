@@ -1,20 +1,20 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
+
+#include "unittests.h"
 
 #include <time.h>
 #include <FL/Fl_Group.H>
@@ -23,11 +23,11 @@
 //
 //------- test the Fl_Simple_Terminal drawing capabilities ----------
 //
-class SimpleTerminal : public Fl_Group {
+class Ut_Simple_Terminal_Test : public Fl_Group {
   Fl_Simple_Terminal *tty1;
   Fl_Simple_Terminal *tty2;
   Fl_Simple_Terminal *tty3;
-  void AnsiTestPattern(Fl_Simple_Terminal *tty) {
+  void ansi_test_pattern(Fl_Simple_Terminal *tty) {
     tty->append("\033[30mBlack          Courier 14\033[0m Normal text\n"
                 "\033[31mRed            Courier 14\033[0m Normal text\n"
                 "\033[32mGreen          Courier 14\033[0m Normal text\n"
@@ -50,7 +50,7 @@ class SimpleTerminal : public Fl_Group {
                 "\033[41mRed\033[42mGreen\033[43mYellow\033[44mBlue\033[45mMagenta\033[46mCyan\033[47mWhite\033[0m - "
                 "\033[41mX\033[42mX\033[43mX\033[44mX\033[45mX\033[46mX\033[47mX\033[0m\n");
   }
-  void GrayTestPattern(Fl_Simple_Terminal *tty) {
+  void gray_test_pattern(Fl_Simple_Terminal *tty) {
     tty->append("Grayscale Test Pattern\n"
                 "--------------------------\n"
                 "\033[0m 100% white     Courier 14\n"
@@ -63,20 +63,21 @@ class SimpleTerminal : public Fl_Group {
                 "\033[7m 30%  white     Courier 14\n"
                 "\033[8m 20%  white     Courier 14\n"
                 "\033[9m 10%  white     Courier 14\n"
-		"\033[0m");
+                "\033[0m");
   }
-  static void DateTimer_CB(void *data) {
+  static void date_timer_cb(void *data) {
     Fl_Simple_Terminal *tty = (Fl_Simple_Terminal*)data;
     time_t lt = time(NULL);
     tty->printf("The time and date is now: %s", ctime(&lt));
-    Fl::repeat_timeout(3.0, DateTimer_CB, data);
+    Fl::repeat_timeout(3.0, date_timer_cb, data);
   }
 public:
   static Fl_Widget *create() {
-    return new SimpleTerminal(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
+    return new Ut_Simple_Terminal_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
-  SimpleTerminal(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-    static Fl_Text_Display::Style_Table_Entry my_stable[] = {	// 10 entry grayscale
+  Ut_Simple_Terminal_Test(int x, int y, int w, int h)
+    : Fl_Group(x, y, w, h) {
+    static Fl_Text_Display::Style_Table_Entry my_stable[] = {   // 10 entry grayscale
       // Font Color Font Face        Font Size ANSI Sequence
       // ---------- ---------------- --------- -------------
       { 0xffffff00, FL_COURIER_BOLD, 14 },  // "\033[0m"      0   white 100%
@@ -90,7 +91,7 @@ public:
       { 0x33333300, FL_COURIER_BOLD, 14 },  // "\033[8m"      8   white 20%
       { 0x1a1a1a00, FL_COURIER_BOLD, 14 },  // "\033[9m"      9   white 10%
     };
-    int tty_h = (h/3.5);
+    int tty_h = (int)(h/3.5);
     int tty_y1 = y+(tty_h*0)+20;
     int tty_y2 = y+(tty_h*1)+40;
     int tty_y3 = y+(tty_h*2)+60;
@@ -98,27 +99,23 @@ public:
     // TTY1
     tty1 = new Fl_Simple_Terminal(x, tty_y1, w, tty_h,"Tty 1: ANSI off");
     tty1->ansi(false);
-    Fl::add_timeout(0.5, DateTimer_CB, (void*)tty1);
+    Fl::add_timeout(0.5, date_timer_cb, (void*)tty1);
 
     // TTY2
     tty2 = new Fl_Simple_Terminal(x, tty_y2, w, tty_h,"Tty 2: ANSI on");
     tty2->ansi(true);
-    AnsiTestPattern(tty2);
-    Fl::add_timeout(0.5, DateTimer_CB, (void*)tty2);
+    ansi_test_pattern(tty2);
+    Fl::add_timeout(0.5, date_timer_cb, (void*)tty2);
 
     // TTY3
     tty3 = new Fl_Simple_Terminal(x, tty_y3, w, tty_h, "Tty 3: Grayscale Style Table");
     tty3->style_table(my_stable, sizeof(my_stable), 0);
     tty3->ansi(true);
-    GrayTestPattern(tty3);
-    Fl::add_timeout(0.5, DateTimer_CB, (void*)tty3);
+    gray_test_pattern(tty3);
+    Fl::add_timeout(0.5, date_timer_cb, (void*)tty3);
 
     end();
   }
 };
 
-UnitTest simple_terminal("simple terminal", SimpleTerminal::create);
-
-//
-// End of "$Id$"
-//
+UnitTest simple_terminal(UT_TEST_SIMPLE_TERMINAL, "Simple Terminal", Ut_Simple_Terminal_Test::create);

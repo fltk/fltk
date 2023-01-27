@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
 // Hours of fun: the FLTK checkers game!
@@ -12,14 +10,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-const char* copyright = 
+const char* copyright =
 "Checkers game\n"
 "Copyright (C) 1997-2010 Bill Spitzak    spitzak@d2.com\n"
 "Original Pascal code:\n"
@@ -58,58 +56,58 @@ const char* copyright =
 #include <time.h>
 
 #ifdef VT100
-#include <ctype.h>	// toupper
+#include <ctype.h>      // toupper
 #endif
 
 ////////////////////////////////////////////////////////////////
 // The algorithim:
 
-int maxevaluate=2500;		// max number of moves to examine on a turn
-int maxnodes = 2500;		// maximum number of nodes in search tree
-int maxply = 20;		// maximum depth to look ahead
-char forcejumps = 1;		// is forced jumps rule in effect?
+int maxevaluate=2500;           // max number of moves to examine on a turn
+int maxnodes = 2500;            // maximum number of nodes in search tree
+int maxply = 20;                // maximum depth to look ahead
+char forcejumps = 1;            // is forced jumps rule in effect?
 
 // scoring parameters: (all divided by 5 from original code)
 // some signs seem to be backwards, marked them with (-) in comment
-const int spiece = 800;		// value of a piece
-const int sking = 1200;		// value of a king
-const int sadvan = 160;		// value of mypieces/theirpieces-1
-// const int smobil = ?		// moves *enemy* can make w/o being jumped
-const int sallpin = 80;		// mobil == 0
-const int sdeny = 10;		// moves enemy can make that will be jumped
-const int spin = 32;		// enemy pieces that have no move except jumped
-const int sthreat = -10;	// enemy pieces we can jump if not moved (-)
-const int sgrad = 1;		// score of piece positions
-const int sback = 10;		// back row occupied so enemy can't make king
-const int smoc2 = 200;		// more mobility, more center
-const int smoc3 = -8;		// less mobility, less center
-const int smoc4 = -80;		// more mobility, less center
-const int smode2 = -14;		// less mobility, less denied
-const int smode3 = -40;		// more mobility, more denied (-)
-const int sdemmo = -20;		// more denied, more moves (-)
-const int scent = 10;		// pieces in center
-const int skcent = 100;		// kings in center
+const int spiece = 800;         // value of a piece
+const int sking = 1200;         // value of a king
+const int sadvan = 160;         // value of mypieces/theirpieces-1
+// const int smobil = ?         // moves *enemy* can make w/o being jumped
+const int sallpin = 80;         // mobil == 0
+const int sdeny = 10;           // moves enemy can make that will be jumped
+const int spin = 32;            // enemy pieces that have no move except jumped
+const int sthreat = -10;        // enemy pieces we can jump if not moved (-)
+const int sgrad = 1;            // score of piece positions
+const int sback = 10;           // back row occupied so enemy can't make king
+const int smoc2 = 200;          // more mobility, more center
+const int smoc3 = -8;           // less mobility, less center
+const int smoc4 = -80;          // more mobility, less center
+const int smode2 = -14;         // less mobility, less denied
+const int smode3 = -40;         // more mobility, more denied (-)
+const int sdemmo = -20;         // more denied, more moves (-)
+const int scent = 10;           // pieces in center
+const int skcent = 100;         // kings in center
 
-const int depthpenalty=4;	// guess
-const int noise=2;		// values less or eq to this apart are eq
+const int depthpenalty=4;       // guess
+const int noise=2;              // values less or eq to this apart are eq
 
-// const int sattackking = 4;	// not used
+// const int sattackking = 4;   // not used
 // const int sattackpiece = 3;
 
 struct node {
   node *father;
-  node *son;		// best son
-  node *brother;	// next brother
-  short int value;	// value of this board position to player making move
+  node *son;            // best son
+  node *brother;        // next brother
+  short int value;      // value of this board position to player making move
   unsigned char from,to; // the move to reach this board
-  long int jump;	// bit map of locations jumped
+  long int jump;        // bit map of locations jumped
   unsigned char mobil;
   unsigned char deny;
   unsigned char pin;
   unsigned char threat;
   short int gradient;
-  unsigned who:1;	// 0 = black's move, 1 = white's move
-  unsigned king:1;	// 1 = move causes piece to be kinged
+  unsigned who:1;       // 0 = black's move, 1 = white's move
+  unsigned king:1;      // 1 = move causes piece to be kinged
   unsigned back:1;
   unsigned moc2:1;
   unsigned moc3:1;
@@ -119,20 +117,20 @@ struct node {
   unsigned demmo:1;
 };
 
-int nodes;		// count of nodes
+int nodes;              // count of nodes
 
-/*	Board positions:	Border positions:
+/*      Board positions:        Border positions:
 
-	      WHITE		  00  01  02  03  04
-	  05  06  07  08	04  XX  XX  XX  XX
-	09  10  11  12		  XX  XX  XX  XX  13
-	  14  15  16  17	13  XX  XX  XX  XX
-	18  19  20  21		  XX  XX  XX  XX  22
-	  23  24  25  26	22  XX  XX  XX  XX
-	27  28  29  30		  XX  XX  XX  XX  31
-	  32  33  34  36	31  XX  XX  XX  XX
-	36  37  38  39		  XX  XX  XX  XX  40
-	      BLACK		40  41  42  43  44
+              WHITE               00  01  02  03  04
+          05  06  07  08        04  XX  XX  XX  XX
+        09  10  11  12            XX  XX  XX  XX  13
+          14  15  16  17        13  XX  XX  XX  XX
+        18  19  20  21            XX  XX  XX  XX  22
+          23  24  25  26        22  XX  XX  XX  XX
+        27  28  29  30            XX  XX  XX  XX  31
+          32  33  34  36        31  XX  XX  XX  XX
+        36  37  38  39            XX  XX  XX  XX  40
+              BLACK             40  41  42  43  44
 
 */
 
@@ -150,7 +148,7 @@ typedef char piece;
 const piece flip[9] = {
   EMPTY, WHITE, BLACK, 0, 0, WHITEKING, BLACKKING, 0, BLUE};
 
-const int offset[9][4] = {	// legal move directions
+const int offset[9][4] = {      // legal move directions
   {0,0,0,0},
   {-5,-4,0,0},
   {4,5,0,0},
@@ -162,15 +160,15 @@ const int offset[9][4] = {	// legal move directions
   {0,0,0,0}
 };
 
-piece b[45];		// current board position being considered
+piece b[45];            // current board position being considered
 
-int evaluated;		// number of moves evaluated this turn
+int evaluated;          // number of moves evaluated this turn
 
 char centralsquares[45];
 char is_protected[45];
 
-piece flipboard[45];	// swapped if enemy is black
-piece *tb;		// pointer to real or swapped board
+piece flipboard[45];    // swapped if enemy is black
+piece *tb;              // pointer to real or swapped board
 #define FRIEND BLACK
 #define FRIENDKING BLACKKING
 #define ENEMY WHITE
@@ -205,11 +203,11 @@ void analyzemove(int direction,int src) {
     if (!tb[target+direction]) is_protected[target] = 1;
     piece a = tb[src]; tb[src] = EMPTY;
     if (check(target,4) || check(target,5) ||
-	check(target,-4) || check(target,-5) ||
-	(tb[src+4]&ENEMY && check(src+4,4)) ||
-	(tb[src+5]&ENEMY && check(src+5,5)) ||
-	(tb[src-4]&ENEMY && check(src-4,-4)) ||
-	(tb[src-5]&ENEMY && check(src-5,-5)))
+        check(target,-4) || check(target,-5) ||
+        (tb[src+4]&ENEMY && check(src+4,4)) ||
+        (tb[src+5]&ENEMY && check(src+5,5)) ||
+        (tb[src-4]&ENEMY && check(src-4,-4)) ||
+        (tb[src-5]&ENEMY && check(src-5,-5)))
       deniedmoves++;
     else undeniedmoves++;
     tb[src] = a;
@@ -218,7 +216,7 @@ void analyzemove(int direction,int src) {
 
 void evaluateboard(node *n,int print) {
 
-  if (!n->who) tb = b;	// move was black's
+  if (!n->who) tb = b;  // move was black's
   else {
     for (int i=0; i<45; i++) flipboard[44-i] = flip[(int)b[i]];
     tb = flipboard;
@@ -250,7 +248,7 @@ void evaluateboard(node *n,int print) {
   case ENEMY:
     deniedmoves = 0;
     undeniedmoves = 0;
-  J1:	enemypieces++;
+  J1:   enemypieces++;
     enemycent += centralsquares[i];
     if (i<36) {
       analyzemove(4,i);
@@ -297,22 +295,22 @@ void evaluateboard(node *n,int print) {
   n->demmo = n->deny>f->deny && f->deny+f->mobil>n->deny+n->mobil;
 
   total =
-    spiece	* (friendpieces - enemypieces) +
-    (sking-spiece) * (friendkings	- enemykings) +
-    //	mobil?
-    sdeny	* (n->deny	- f->deny) +
-    spin	* (n->pin	- f->pin) +
-    sthreat	* (n->threat	- f->threat) +
-    sgrad	* (n->gradient	- f->gradient) +
-    sback	* (n->back	- f->back) +
-    smoc2	* (n->moc2	- f->moc2) +
-    smoc3	* (n->moc3	- f->moc3) +
-    smoc4	* (n->moc4	- f->moc4) +
-    smode2	* (n->mode2	- f->mode2) +
-    smode3	* (n->mode3	- f->mode3) +
-    sdemmo	* (n->demmo	- f->demmo) +
-    scent	* (friendcent	- enemycent) +
-    (skcent-scent) * (friendkcent	- enemykcent);
+    spiece      * (friendpieces - enemypieces) +
+    (sking-spiece) * (friendkings       - enemykings) +
+    //  mobil?
+    sdeny       * (n->deny      - f->deny) +
+    spin        * (n->pin       - f->pin) +
+    sthreat     * (n->threat    - f->threat) +
+    sgrad       * (n->gradient  - f->gradient) +
+    sback       * (n->back      - f->back) +
+    smoc2       * (n->moc2      - f->moc2) +
+    smoc3       * (n->moc3      - f->moc3) +
+    smoc4       * (n->moc4      - f->moc4) +
+    smode2      * (n->mode2     - f->mode2) +
+    smode3      * (n->mode3     - f->mode3) +
+    sdemmo      * (n->demmo     - f->demmo) +
+    scent       * (friendcent   - enemycent) +
+    (skcent-scent) * (friendkcent       - enemykcent);
   if (!n->mobil) total += sallpin;
 
   if (!enemypieces) total = 30000;
@@ -323,9 +321,9 @@ void evaluateboard(node *n,int print) {
   if (print) {
     printf("\tParent\tNew\tScore\n");
     printf("pieces\t%d\t%d\t%d\n",enemypieces,friendpieces,
-	   spiece*(friendpieces-enemypieces));
+           spiece*(friendpieces-enemypieces));
     printf("kings\t%d\t%d\t%d\n",enemykings,friendkings,
-	   (sking-spiece)*(friendkings-enemykings));
+           (sking-spiece)*(friendkings-enemykings));
     printf("mobil\t%d\t%d\n",f->mobil,n->mobil);
     printf("deny\t%d\t%d\t%d\n",f->deny,n->deny,sdeny*(n->deny-f->deny));
     printf("pin\t%d\t%d\t%d\n",f->pin,n->pin,spin*(n->pin-f->pin));
@@ -346,7 +344,7 @@ void evaluateboard(node *n,int print) {
     n->value = total;
     evaluated++;
   }
-}	// end of evaluateboard
+}       // end of evaluateboard
 
 // --------------------- Tree management -----------------
 
@@ -389,7 +387,7 @@ void killnode(node *x) {
   freelist = x;
 }
 
-int seed;		// current random number
+int seed;               // current random number
 
 void insert(node *n) {
   int val = n->value;
@@ -417,25 +415,25 @@ void movepiece(node* f, int i, node* jnode) {
     int j = i+direction;
     if (b[j] == EMPTY) {
       if (!jnode && (!forcejumps || !f->son || !f->son->jump)) {
-	node* n = newnode();
-	n->father = f;
-	n->who = !f->who;
-	n->from = i;
-	n->to = j;
-	piece oldpiece = b[i]; b[i] = EMPTY;
-	if (!(oldpiece&KING) && n->who ? (j>=36) : (j<=8)) {
-	  n->king = 1;
-	  b[j] = oldpiece|KING;
-	}
-	else b[j] = oldpiece;
-	evaluateboard(n,0);
-	insert(n);
-	b[i] = oldpiece; b[j] = EMPTY;
+        node* n = newnode();
+        n->father = f;
+        n->who = !f->who;
+        n->from = i;
+        n->to = j;
+        piece oldpiece = b[i]; b[i] = EMPTY;
+        if (!(oldpiece&KING) && n->who ? (j>=36) : (j<=8)) {
+          n->king = 1;
+          b[j] = oldpiece|KING;
+        }
+        else b[j] = oldpiece;
+        evaluateboard(n,0);
+        insert(n);
+        b[i] = oldpiece; b[j] = EMPTY;
       }
     } else if (((b[j]^b[i])&(WHITE|BLACK))==(WHITE|BLACK) && !b[j+direction]) {
       if (forcejumps && f->son && !f->son->jump) {
-	killnode(f->son);
-	f->son = 0;
+        killnode(f->son);
+        f->son = 0;
       }
       int jumploc = j;
       j += direction;
@@ -447,14 +445,14 @@ void movepiece(node* f, int i, node* jnode) {
       n->jump = (1<<(jumploc-10));
       piece oldpiece = b[i]; b[i] = EMPTY;
       if (!(oldpiece&KING) && n->who ? (j>=36) : (j<=8)) {
-	n->king = 1;
-	b[j] = oldpiece|KING;
+        n->king = 1;
+        b[j] = oldpiece|KING;
       }
       else b[j] = oldpiece;
       if (jnode) {
-	n->from = jnode->from;
-	n->jump |= jnode->jump;
-	n->king |= jnode->king;
+        n->from = jnode->from;
+        n->jump |= jnode->jump;
+        n->king |= jnode->king;
       }
       piece jumpedpiece = b[jumploc];
       b[jumploc] = EMPTY;
@@ -470,7 +468,7 @@ void movepiece(node* f, int i, node* jnode) {
 }
 
 void expandnode(node *f) {
-  if (f->son || f->value > 28000) return;	// already done
+  if (f->son || f->value > 28000) return;       // already done
   piece turn = f->who ? BLACK : WHITE;
   for (int i=5; i<40; i++) if (b[i]&turn) movepiece(f,i,0);
   if (f->son) {
@@ -532,9 +530,9 @@ int descend(node *f) {
 
 char debug;
 
-node *calcmove(node *root) {	// return best move after root
+node *calcmove(node *root) {    // return best move after root
   expandnode(root);
-  if (!root->son) return(0);	// no move due to loss
+  if (!root->son) return(0);    // no move due to loss
   if (debug) printf("calcmove() initial nodes = %d\n",nodes);
   evaluated = 0;
   if (root->son->brother) {
@@ -555,10 +553,10 @@ node *calcmove(node *root) {	// return best move after root
 
 node *root,*undoroot;
 
-piece jumpboards[24][45];	// saved boards for undoing jumps
+piece jumpboards[24][45];       // saved boards for undoing jumps
 int nextjump;
 
-char user;	// 0 = black, 1 = white
+char user;      // 0 = black, 1 = white
 char playing;
 char autoplay;
 
@@ -610,7 +608,7 @@ node* undomove() {
   root = n->father;
   killnode(n);
   root->son = 0;
-  root->value = 0;	// prevent it from thinking game is over
+  root->value = 0;      // prevent it from thinking game is over
   playing = 1;
   if (root == undoroot) user = 0;
   return n;
@@ -624,13 +622,13 @@ void dumpnode(node *n, int help) {
   int x = n->from;
   int y = n->to;
   if (help) printf("%c%c %c%c\t- ",
-		   usermoves(x,1),usermoves(x,2),
-		   usermoves(y,1),usermoves(y,2));
+                   usermoves(x,1),usermoves(x,2),
+                   usermoves(y,1),usermoves(y,2));
   printf("%s %ss from %c%c to %c%c",
-	 n->who ? "White" : "Black",
-	 n->jump ? "jump" : "move",
-	 usermoves(x,1),usermoves(x,2),
-	 usermoves(y,1),usermoves(y,2));
+         n->who ? "White" : "Black",
+         n->jump ? "jump" : "move",
+         usermoves(x,1),usermoves(x,2),
+         usermoves(y,1),usermoves(y,2));
   if (n->jump) {
     for (int i=0; i<32; i++) if (n->jump & (1<<i))
       printf(", %c%c",usermoves(10+i,1),usermoves(10+i,2));
@@ -647,8 +645,8 @@ int abortflag;
 
 void positioncursor(int i) {
   printf("\033[%d;%dH",
-	 usermoves(i,2)-'0'+1,
-	 2*(usermoves(i,1)-'A')+1);
+         usermoves(i,2)-'0'+1,
+         2*(usermoves(i,1)-'A')+1);
 }
 
 void outpiecename(piece n) {
@@ -798,20 +796,20 @@ node *getusermove(void) {
     break;
   default:
     puts(
-	 "A(utoplay)\n"
-	 "C(opyright)\n"
-	 "D(ebug on/off)\n"
-	 "F(orce jumps rule on/off)\n"
-	 "L(ist legal moves)\n"
-	 "M(ake a move for me)\n"
-	 "N(ew game)\n"
-	 "P(redict next few moves)\n"
-	 "Q(uit)\n"
-	 "R(edraw screen)\n"
-	 "S(witch sides)\n"
-	 "U(ndo)\n"
-	 "+	- smarter\n"
-	 "-	- stupider");
+         "A(utoplay)\n"
+         "C(opyright)\n"
+         "D(ebug on/off)\n"
+         "F(orce jumps rule on/off)\n"
+         "L(ist legal moves)\n"
+         "M(ake a move for me)\n"
+         "N(ew game)\n"
+         "P(redict next few moves)\n"
+         "Q(uit)\n"
+         "R(edraw screen)\n"
+         "S(witch sides)\n"
+         "U(ndo)\n"
+         "+     - smarter\n"
+         "-     - stupider");
     expandnode(root);
     for (t = root->son; t; t = t->brother) dumpnode(t,1);
   }
@@ -825,17 +823,17 @@ int VT100main() {
     if (playing) {
       expandnode(root);
       if (!root->son) {
-	printf("%s has no move.  Game over.",root->who ? "Black" : "White");
-	playing = autoplay = 0;
+        printf("%s has no move.  Game over.",root->who ? "Black" : "White");
+        playing = autoplay = 0;
       }
     }
     node* move;
     if (playing && (autoplay || root->who == user)) {
       move = calcmove(root);
       if (move->value <= -30000) {
- 	printf("%s resigns.", move->who ? "White" : "Black");
- 	move = 0;
- 	playing = autoplay = 0;
+        printf("%s resigns.", move->who ? "White" : "Black");
+        move = 0;
+        playing = autoplay = 0;
       }
     } else {
       move = getusermove();
@@ -857,109 +855,78 @@ int VT100main() {
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Bitmap.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/fl_ask.H>
 
 //----------------------------------------------------------------
-// old 4-level NeXT images have been seperated into bitmaps so they
-// can be drawn with arbitrary colors and real transparency.  This is
-// rather tedious and perhaps fltk should provide a direct support
-// to do this:
+// Checkers pieces with built in transparency/drop shadows
+#include "checkers_pieces.h"
 
-#include "pixmaps/black_1.xbm"
-#include "pixmaps/black_2.xbm"
-#include "pixmaps/black_3.xbm"
-#include "pixmaps/black_4.xbm"
-#include "pixmaps/white_1.xbm"
-#include "pixmaps/white_2.xbm"
-#include "pixmaps/white_3.xbm"
-#include "pixmaps/white_4.xbm"
-#include "pixmaps/blackking_1.xbm"
-#include "pixmaps/blackking_2.xbm"
-#include "pixmaps/blackking_3.xbm"
-#include "pixmaps/blackking_4.xbm"
-#include "pixmaps/whiteking_1.xbm"
-#include "pixmaps/whiteking_2.xbm"
-#include "pixmaps/whiteking_3.xbm"
-#include "pixmaps/whiteking_4.xbm"
+Fl_PNG_Image *png[4];
 
-Fl_Bitmap *bm[4][4];
-
-void make_bitmaps() {
-  if (bm[0][0]) return;
-  bm[0][0] = new Fl_Bitmap(black_1_bits, black_1_width, black_1_height);
-  bm[0][1] = new Fl_Bitmap(black_2_bits, black_1_width, black_1_height);
-  bm[0][2] = new Fl_Bitmap(black_3_bits, black_1_width, black_1_height);
-  bm[0][3] = new Fl_Bitmap(black_4_bits, black_1_width, black_1_height);
-  bm[1][0] = new Fl_Bitmap(white_1_bits, black_1_width, black_1_height);
-  bm[1][1] = new Fl_Bitmap(white_2_bits, black_1_width, black_1_height);
-  bm[1][2] = new Fl_Bitmap(white_3_bits, black_1_width, black_1_height);
-  bm[1][3] = new Fl_Bitmap(white_4_bits, black_1_width, black_1_height);
-  bm[2][0] = new Fl_Bitmap(blackking_1_bits, black_1_width, black_1_height);
-  bm[2][1] = new Fl_Bitmap(blackking_2_bits, black_1_width, black_1_height);
-  bm[2][2] = new Fl_Bitmap(blackking_3_bits, black_1_width, black_1_height);
-  bm[2][3] = new Fl_Bitmap(blackking_4_bits, black_1_width, black_1_height);
-  bm[3][0] = new Fl_Bitmap(whiteking_1_bits, black_1_width, black_1_height);
-  bm[3][1] = new Fl_Bitmap(whiteking_2_bits, black_1_width, black_1_height);
-  bm[3][2] = new Fl_Bitmap(whiteking_3_bits, black_1_width, black_1_height);
-  bm[3][3] = new Fl_Bitmap(whiteking_4_bits, black_1_width, black_1_height);
+void make_pieces() {
+  if (png[0]) return;
+  int which = 0;
+  png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_black_checker_png,      sizeof(pixmaps_black_checker_png));
+  png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_white_checker_png,      sizeof(pixmaps_white_checker_png));
+  png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_black_checker_king_png, sizeof(pixmaps_black_checker_king_png));
+  png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_white_checker_king_png, sizeof(pixmaps_white_checker_king_png));
+  for (int i = 0; i < which; i++)
+    png[i]->scale(png[i]->data_w()/2, png[i]->data_h()/2);
 }
 
-#define ISIZE black_1_width
+#define ISIZE 62        // old: 56
 
 void draw_piece(int which, int x, int y) {
   if (!fl_not_clipped(x,y,ISIZE,ISIZE)) return;
   switch (which) {
-  case BLACK: which = 0; break;
-  case WHITE: which = 1; break;
-  case BLACKKING: which = 2; break;
-  case WHITEKING: which = 3; break;
-  default: return;
+    case BLACK: which = 0; break;
+    case WHITE: which = 1; break;
+    case BLACKKING: which = 2; break;
+    case WHITEKING: which = 3; break;
+    default: return;
   }
-  fl_color(FL_BLACK); bm[which][0]->draw(x, y);
-  fl_color(FL_INACTIVE_COLOR); bm[which][1]->draw(x, y);
-  fl_color(FL_SELECTION_COLOR); bm[which][2]->draw(x, y);
-  fl_color(FL_WHITE); bm[which][3]->draw(x, y);
+  png[which]->draw(x,y);
 }
 
 //----------------------------------------------------------------
 
 class Board : public Fl_Double_Window {
-  void draw();
-  int handle(int);
+  void draw() FL_OVERRIDE;
+  int handle(int) FL_OVERRIDE;
 public:
   void drag_piece(int, int, int);
   void drop_piece(int);
   void animate(node* move, int backwards);
   void computer_move(int);
-  Board(int w, int h) : Fl_Double_Window(w,h) {color(15);}
+  Board(int w, int h) : Fl_Double_Window(w,h,"FLTK Checkers") {color(15);}
 };
 
 #define BOXSIZE 52
 #define BORDER 4
 #define BOARDSIZE (8*BOXSIZE+BORDER)
-#define BMOFFSET 5
+#define BMOFFSET 3
 
 static int erase_this;  // real location of dragging piece, don't draw it
-static int dragging;	// piece being dragged
-static int dragx;	// where it is
+static int dragging;    // piece being dragged
+static int dragx;       // where it is
 static int dragy;
-static int showlegal;	// show legal moves
+static int showlegal;   // show legal moves
 
 int squarex(int i) {return (usermoves(i,1)-'A')*BOXSIZE+BMOFFSET;}
 int squarey(int i) {return (usermoves(i,2)-'1')*BOXSIZE+BMOFFSET;}
 
 void Board::draw() {
-  make_bitmaps();
+  make_pieces();
   // -- draw the board itself
   fl_draw_box(box(),0,0,w(),h(),color());
   // -- draw all dark tiles
   fl_color((Fl_Color)10 /*107*/);
   int x; for (x=0; x<8; x++) for (int y=0; y<8; y++) {
     if (!((x^y)&1)) fl_rectf(BORDER+x*BOXSIZE, BORDER+y*BOXSIZE,
-			     BOXSIZE-BORDER, BOXSIZE-BORDER);
+                             BOXSIZE-BORDER, BOXSIZE-BORDER);
   }
   // -- draw outlines around the fileds
   fl_color(FL_DARK3);
@@ -996,7 +963,7 @@ void Board::draw() {
       int y1 = squarey(n->from)+BOXSIZE/2-5;
       int x2 = squarex(n->to)+BOXSIZE/2-5;
       int y2 = squarey(n->to)+BOXSIZE/2-5;
-      char buf[20]; sprintf(buf,"%d",num);
+      char buf[20]; snprintf(buf, 20,"%d",num);
       fl_draw(buf, x1+int((x2-x1)*.85)-3, y1+int((y2-y1)*.85)+5);
       num++;
     }
@@ -1051,6 +1018,7 @@ void Board::animate(node* move, int backwards) {
     int y = y1+(y2-y1)*j/STEPS;
     drag_piece(move->from,x,y);
     Fl::flush();
+    Fl::wait(0.01);
   }
   drop_piece(t);
   if (move->jump) redraw();
@@ -1116,14 +1084,14 @@ int Board::handle(int e) {
     if (playing) {
       expandnode(root);
       for (t = root->son; t; t = t->brother) {
-	int x = squarex(t->from);
-	int y = squarey(t->from);
-	if (Fl::event_inside(x,y,BOXSIZE,BOXSIZE)) {
-	  deltax = Fl::event_x()-x;
-	  deltay = Fl::event_y()-y;
-	  drag_piece(t->from,x,y);
-	  return 1;
-	}
+        int x = squarex(t->from);
+        int y = squarey(t->from);
+        if (Fl::event_inside(x,y,BOXSIZE,BOXSIZE)) {
+          deltax = Fl::event_x()-x;
+          deltay = Fl::event_y()-y;
+          drag_piece(t->from,x,y);
+          return 1;
+        }
       }
     }
     return 0;
@@ -1165,7 +1133,7 @@ int FLTKmain(int argc, char** argv) {
   b.callback(quit_cb);
   b.show(argc,argv);
   return Fl::run();
-} 
+}
 
 void autoplay_cb(Fl_Widget*bp, void*) {
   if (autoplay) {autoplay = 0; return;}
@@ -1338,9 +1306,10 @@ int didabort(void) {
 }
 
 int main(int argc, char **argv) {
-  seed = time(0);
+  seed = (int)time(0);
   newgame();
 #ifdef BOTH
+  fl_register_images();
   int i = 1;
   if (Fl::args(argc, argv, i, arg) < argc) {
     fprintf(stderr," -t : use VT100 display\n", Fl::help);
@@ -1356,7 +1325,3 @@ int main(int argc, char **argv) {
   return VT100main();
 #endif
 }
-
-//
-// End of "$Id$".
-//

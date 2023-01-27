@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -44,13 +42,13 @@ class Fl_RGB_Image;
  \brief A base class for platform specific window handling code.
 
  This class is only for internal use by the FLTK library.
- 
- When porting FLTK to a new platform, many mothods in this class provide
+
+ When porting FLTK to a new platform, many methods in this class provide
  a minimal default implementation. Some methods must be overridden to make
  sure that the Graphics Driver will draw into the bitmap associated with
  this window.
 */
-class FL_EXPORT Fl_Window_Driver
+class Fl_Window_Driver
 {
   friend class Fl_Window;
 private:
@@ -58,18 +56,18 @@ private:
 
 protected:
   Fl_Window *pWindow;
-  struct shape_data_type;
-  shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
+  int screen_num_; // number of screen where window is mapped
   void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
+  static fl_uintptr_t xid(const Fl_Window *win);
+  static Fl_Window *find(fl_uintptr_t xid);
   int wait_for_expose_value;
   Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
-  virtual int screen_num();
-  virtual void screen_num(int) {}
-  static bool is_a_rescale() {return is_a_rescale_;};
+  int screen_num();
+  void screen_num(int n) { screen_num_ = n; }
 
 
   // --- frequently used accessors to public window data
@@ -100,11 +98,12 @@ public:
   int dw();
   int dh();
   int aspect();
+  unsigned char size_range_set();
+  int is_resizable() { return pWindow->is_resizable(); }
   int fullscreen_screen_top();
   int fullscreen_screen_bottom();
   int fullscreen_screen_left();
   int fullscreen_screen_right();
-  unsigned char size_range_set();
   int force_position();
   void force_position(int c);
   void x(int X);
@@ -112,7 +111,7 @@ public:
   void current(Fl_Window *c);
   char show_iconic() { return Fl_Window::show_iconic_; }
   void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
-  void i(Fl_X *x) { pWindow->i = x; }
+  void flx(Fl_X *x) { pWindow->flx_ = x; }
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {
     return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
@@ -121,20 +120,19 @@ public:
   void overlay(Fl_Window *o) {
     if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
   }
-  
+
   void resize_after_scale_change(int ns, float old_f, float new_f);
 
   // --- window data
   virtual int decorated_w() { return w(); } // default, should be overidden by driver
   virtual int decorated_h() { return h(); }
+  virtual const Fl_Image* shape() { return NULL; }
 
   // --- window management
   virtual void take_focus();
   virtual void flush(); // the default implementation may be enough
   virtual void flush_double();
   virtual void flush_overlay();
-  virtual void flush_menu();
-  virtual void erase_menu() {}
   /** Usable for platform-specific code executed before the platform-independent part of Fl_Window::draw() */
   virtual void draw_begin();
   /** Usable for platform-specific code executed after the platform-independent part of Fl_Window::draw() */
@@ -143,18 +141,17 @@ public:
   virtual void make_current();
   virtual void label(const char *name, const char *mininame);
 
-  virtual Fl_X *makeWindow() { return 0; }
+  virtual void makeWindow() {}
   virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();
-  virtual void show_menu();
-  virtual void resize(int X,int Y,int W,int H) {}
+  virtual void resize(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void hide() {}
   int hide_common();
   virtual void map() {}
   virtual void unmap() {}
   virtual void fullscreen_on() {}
-  virtual void fullscreen_off(int X, int Y, int W, int H) {}
+  virtual void fullscreen_off(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void use_border();
   virtual void size_range();
   virtual void iconize() {}
@@ -162,33 +159,49 @@ public:
     *top = *left = *right = *bottom = 0;
   }
   virtual void show_with_args_begin() {}
-  virtual void show_with_args_end(int argc, char **argv) {}
+  virtual void show_with_args_end(int /*argc*/, char ** /*argv*/) {}
   virtual int can_do_overlay();
   virtual void redraw_overlay();
-  
+
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // platform-independent, support function
-  virtual void shape(const Fl_Image* img) {}
-  virtual void shape_alpha_(Fl_Image* img, int offset) {}
+  virtual void shape(const Fl_Image*) {}
+  virtual void shape_alpha_(Fl_Image*, int /*offset*/) {}
 
   // --- window icon stuff
-  virtual void icons(const Fl_RGB_Image *icons[], int count) {}
+  virtual void icons(const Fl_RGB_Image* /*icons*/[], int /*count*/) {}
   virtual const void *icon() const {return NULL;}
-  virtual void icon(const void * ic) {}
+  virtual void icon(const void *) {}
   virtual void free_icons() {}
-  // each platform implements this its own way
-  static void default_icons(const Fl_RGB_Image *icons[], int count);
 
   // --- window printing/drawing helper
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
                                             Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
-                     void (*draw_area)(void*, int,int,int,int), void* data) { return 0; }
+  virtual int scroll(int /*src_x*/, int /*src_y*/, int /*src_w*/, int /*src_h*/,
+                     int /*dest_x*/, int /*dest_y*/,
+                     void (*)(void*, int,int,int,int), void*) { return 0; }
   static inline Fl_Window_Driver* driver(const Fl_Window *win) {return win->pWindowDriver;}
+
+  // --- support for menu windows
+  // The default implementation of next 2 virtual members is enough if the
+  // position of a window in a screen is known. Next static members may be useful
+  // when that's not the case, as with Wayland.
+  virtual void reposition_menu_window(int x, int y);
+  virtual void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1);
+  static Fl_Window *menu_parent(int *display_height = NULL);
+  static Fl_Window *menu_leftorigin(Fl_Window*);
+  static Fl_Window *menu_title(Fl_Window*);
+  static int menu_itemheight(Fl_Window*);
+  static int menu_bartitle(Fl_Window*);
+  static int menu_selected(Fl_Window*);
+  static bool is_floating_title(Fl_Window *);
+  static void scroll_to_selected_item(Fl_Window *);
+
+  virtual fl_uintptr_t os_id() { return 0; }
 };
 
 #endif // FL_WINDOW_DRIVER_H
@@ -197,7 +210,3 @@ public:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

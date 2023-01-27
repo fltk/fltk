@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Draws X pixmap data, keeping it stashed in a server pixmap so it
@@ -65,7 +63,7 @@ void Fl_Pixmap::uncache() {
   }
 
   if (mask_) {
-    fl_delete_bitmask((Fl_Bitmask)mask_);
+    Fl_Graphics_Driver::default_driver().delete_bitmask(mask_);
     mask_ = 0;
   }
 }
@@ -81,20 +79,20 @@ void Fl_Pixmap::label(Fl_Menu_Item* m) {
 void Fl_Pixmap::copy_data() {
   if (alloc_data) return;
 
-  char		**new_data,	// New data array
-		**new_row;	// Current row in image
-  int		i,		// Looping var
-		ncolors,	// Number of colors in image
-		chars_per_pixel,// Characters per color
-		chars_per_line;	// Characters per line
+  char          **new_data,     // New data array
+                **new_row;      // Current row in image
+  int           i,              // Looping var
+                ncolors,        // Number of colors in image
+                chars_per_pixel,// Characters per color
+                chars_per_line; // Characters per line
 
   // Figure out how many colors there are, and how big they are...
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
-  chars_per_line = chars_per_pixel * w() + 1;
+  chars_per_line = chars_per_pixel * data_w() + 1;
 
   // Allocate memory for the new array...
-  if (ncolors < 0) new_data = new char *[h() + 2];
-  else new_data = new char *[h() + ncolors + 1];
+  if (ncolors < 0) new_data = new char *[data_h() + 2];
+  else new_data = new char *[data_h() + ncolors + 1];
 
   new_data[0] = new char[strlen(data()[0]) + 1];
   strcpy(new_data[0], data()[0]);
@@ -117,18 +115,18 @@ void Fl_Pixmap::copy_data() {
   }
 
   // Copy image data...
-  for (i = 0; i < h(); i ++, new_row ++) {
+  for (i = 0; i < data_h(); i ++, new_row ++) {
     *new_row = new char[chars_per_line];
     memcpy(*new_row, data()[i + ncolors + 1], chars_per_line);
   }
 
   // Update pointers...
-  data((const char **)new_data, h() + ncolors + 1);
+  data((const char **)new_data, data_h() + ncolors + 1);
   alloc_data = 1;
 }
 
-Fl_Image *Fl_Pixmap::copy(int W, int H) {
-  Fl_Pixmap	*new_image;	// New pixmap
+Fl_Image *Fl_Pixmap::copy(int W, int H) const {
+  Fl_Pixmap     *new_image;     // New pixmap
   if (!data()) { // happens with bad pixmap data
     return new Fl_Pixmap((char *const*)0);
   }
@@ -142,27 +140,27 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   if (W <= 0 || H <= 0) return 0;
 
   // OK, need to resize the image data; allocate memory and
-  char		**new_data,	// New array for image data
-		**new_row,	// Pointer to row in image data
-		*new_ptr,	// Pointer into new array
-		new_info[255];	// New information line
-  const char	*old_ptr;	// Pointer into old array
-  int		i,		// Looping var
-		c,		// Channel number
-		sy,		// Source coordinate
-		dx, dy,		// Destination coordinates
-		xerr, yerr,	// X & Y errors
-		xmod, ymod,	// X & Y moduli
-		xstep, ystep;	// X & Y step increments
-  int		ncolors,	// Number of colors in image
-		chars_per_pixel,// Characters per color
-		chars_per_line;	// Characters per line
+  char          **new_data,     // New array for image data
+                **new_row,      // Pointer to row in image data
+                *new_ptr,       // Pointer into new array
+                new_info[255];  // New information line
+  const char    *old_ptr;       // Pointer into old array
+  int           i,              // Looping var
+                c,              // Channel number
+                sy,             // Source coordinate
+                dx, dy,         // Destination coordinates
+                xerr, yerr,     // X & Y errors
+                xmod, ymod,     // X & Y moduli
+                xstep, ystep;   // X & Y step increments
+  int           ncolors,        // Number of colors in image
+                chars_per_pixel,// Characters per color
+                chars_per_line; // Characters per line
 
   // Figure out how many colors there are, and how big they are...
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
   chars_per_line = chars_per_pixel * W + 1;
 
-  sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
+  snprintf(new_info, sizeof(new_info), "%d %d %d %d", W, H, ncolors, chars_per_pixel);
 
   // Figure out Bresenham step/modulus values...
   xmod   = data_w() % W;
@@ -199,16 +197,16 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     new_ptr  = *new_row;
 
     for (dx = W, xerr = W, old_ptr = data()[sy + ncolors + 1];
-	 dx > 0;
-	 dx --) {
+         dx > 0;
+         dx --) {
       for (c = 0; c < chars_per_pixel; c ++) *new_ptr++ = old_ptr[c];
 
       old_ptr += xstep;
       xerr    -= xmod;
 
       if (xerr <= 0) {
-	xerr    += W;
-	old_ptr += chars_per_pixel;
+        xerr    += W;
+        old_ptr += chars_per_pixel;
       }
     }
 
@@ -235,8 +233,8 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
   copy_data();
 
   // Get the color to blend with...
-  uchar		r, g, b;
-  unsigned	ia, ir, ig, ib;
+  uchar         r, g, b;
+  unsigned      ia, ir, ig, ib;
 
   Fl::get_color(c, r, g, b);
   if (i < 0.0f) i = 0.0f;
@@ -248,10 +246,10 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
   ib = b * (256 - ia);
 
   // Update the colormap to do the blend...
-  char		line[255];	// New colormap line
-  int		color,		// Looping var
-		ncolors,	// Number of colors in image
-		chars_per_pixel;// Characters per color
+  char          line[255];      // New colormap line
+  int           color,          // Looping var
+                ncolors,        // Number of colors in image
+                chars_per_pixel;// Characters per color
 
 
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
@@ -272,14 +270,14 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
       const char *p = data()[color + 1] + chars_per_pixel + 1;
       const char *previous_word = p;
       for (;;) {
-	while (*p && isspace(*p)) p++;
-	char what = *p++;
-	while (*p && !isspace(*p)) p++;
-	while (*p && isspace(*p)) p++;
-	if (!*p) {p = previous_word; break;}
-	if (what == 'c') break;
-	previous_word = p;
-	while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        char what = *p++;
+        while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        if (!*p) {p = previous_word; break;}
+        if (what == 'c') break;
+        previous_word = p;
+        while (*p && !isspace(*p)) p++;
       }
 
       if (fl_parse_color(p, r, g, b)) {
@@ -287,14 +285,16 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
         g = (ia * g + ig) >> 8;
         b = (ia * b + ib) >> 8;
 
-        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X",
-	                                 data()[color + 1][0],
-	                                 data()[color + 1][1], r, g, b);
-        else sprintf(line, "%c c #%02X%02X%02X", data()[color + 1][0], r, g, b);
+        if (chars_per_pixel > 1) snprintf(line, sizeof(line),
+                                         "%c%c c #%02X%02X%02X",
+                                         data()[color + 1][0],
+                                         data()[color + 1][1], r, g, b);
+        else snprintf(line, sizeof(line), "%c c #%02X%02X%02X",
+                      data()[color + 1][0], r, g, b);
 
         delete[] (char *)data()[color + 1];
-	((char **)data())[color + 1] = new char[strlen(line) + 1];
-	strcpy((char *)data()[color + 1], line);
+        ((char **)data())[color + 1] = new char[strlen(line) + 1];
+        strcpy((char *)data()[color + 1], line);
       }
     }
   }
@@ -308,8 +308,8 @@ void Fl_Pixmap::delete_data() {
 }
 
 void Fl_Pixmap::set_data(const char * const * p) {
-  int	height,		// Number of lines in image
-	ncolors;	// Number of colors in image
+  int   height,         // Number of lines in image
+        ncolors;        // Number of colors in image
 
   if (p) {
     sscanf(p[0],"%*d%d%d", &height, &ncolors);
@@ -327,11 +327,11 @@ void Fl_Pixmap::desaturate() {
   copy_data();
 
   // Update the colormap to grayscale...
-  char		line[255];	// New colormap line
-  int		i,		// Looping var
-		ncolors,	// Number of colors in image
-		chars_per_pixel;// Characters per color
-  uchar		r, g, b;
+  char          line[255];      // New colormap line
+  int           i,              // Looping var
+                ncolors,        // Number of colors in image
+                chars_per_pixel;// Characters per color
+  uchar         r, g, b;
 
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
 
@@ -350,31 +350,30 @@ void Fl_Pixmap::desaturate() {
       const char *p = data()[i + 1] + chars_per_pixel + 1;
       const char *previous_word = p;
       for (;;) {
-	while (*p && isspace(*p)) p++;
-	char what = *p++;
-	while (*p && !isspace(*p)) p++;
-	while (*p && isspace(*p)) p++;
-	if (!*p) {p = previous_word; break;}
-	if (what == 'c') break;
-	previous_word = p;
-	while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        char what = *p++;
+        while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        if (!*p) {p = previous_word; break;}
+        if (what == 'c') break;
+        previous_word = p;
+        while (*p && !isspace(*p)) p++;
       }
 
       if (fl_parse_color(p, r, g, b)) {
         g = (uchar)((r * 31 + g * 61 + b * 8) / 100);
 
-        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X", data()[i + 1][0],
-	                                 data()[i + 1][1], g, g, g);
-        else sprintf(line, "%c c #%02X%02X%02X", data()[i + 1][0], g, g, g);
-
+        if (chars_per_pixel > 1) {
+          snprintf(line, sizeof(line), "%c%c c #%02X%02X%02X",
+                   data()[i + 1][0], data()[i + 1][1], g, g, g);
+        } else {
+          snprintf(line, sizeof(line), "%c c #%02X%02X%02X",
+                   data()[i + 1][0], g, g, g);
+        }
         delete[] (char *)data()[i + 1];
-	((char **)data())[i + 1] = new char[strlen(line) + 1];
-	strcpy((char *)data()[i + 1], line);
+        ((char **)data())[i + 1] = new char[strlen(line) + 1];
+        strcpy((char *)data()[i + 1], line);
       }
     }
   }
 }
-
-//
-// End of "$Id$".
-//

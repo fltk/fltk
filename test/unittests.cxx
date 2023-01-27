@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Fltk unit tests
@@ -23,142 +21,109 @@
 // v1.0 - Submit for svn
 // v1.1 - Matthias seperated all tests into multiple source files for hopefully easier handling
 
+// NOTE: See README-unittests.txt for how to add new tests.
+
+#include "unittests.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
-#include <FL/fl_draw.H>		// fl_text_extents()
+#include <FL/fl_draw.H>               // fl_text_extents()
+#include <FL/fl_string_functions.h>   // fl_strdup()
+#include <stdlib.h>                   // malloc, free
 
-// WINDOW/WIDGET SIZES
-#define MAINWIN_W	700				// main window w()
-#define MAINWIN_H	400				// main window h()
-#define BROWSER_X	10				// browser x()
-#define BROWSER_Y	25				// browser y()
-#define BROWSER_W	150				// browser w()
-#define BROWSER_H	MAINWIN_H-35			// browser h()
-#define TESTAREA_X	(BROWSER_W + 20)		// test area x()
-#define TESTAREA_Y	25				// test area y()
-#define TESTAREA_W	(MAINWIN_W - BROWSER_W - 30)	// test area w()
-#define TESTAREA_H	BROWSER_H			// test area h()
+class Ut_Main_Window *mainwin = NULL;
+class Fl_Hold_Browser *browser = NULL;
 
-typedef void (*UnitTestCallback)(const char*,Fl_Group*);
+int UnitTest::num_tests_ = 0;
+UnitTest *UnitTest::test_list_[200] = { 0 };
 
-class MainWindow *mainwin = 0;
-Fl_Hold_Browser *browser = 0;
+UnitTest::UnitTest(int index, const char* label, Fl_Widget* (*create)())
+  : widget_(0L)
+{
+  label_ = fl_strdup(label);
+  create_ = create;
+  add(index, this);
+}
 
-// This class helps to automagically register a new test with the unittest app.
-// Please see the examples on how this is used.
-class UnitTest {
-public:
-  UnitTest(const char *label, Fl_Widget* (*create)()) :
-    fWidget(0L)
-  {
-    fLabel = strdup(label);
-    fCreate = create;
-    add(this);
-  }
-  ~UnitTest() {
-    delete fWidget;
-    free(fLabel);
-  }
-  const char *label() {
-    return fLabel;
-  }
-  void create() {
-    fWidget = fCreate();
-    if (fWidget) fWidget->hide();
-  }
-  void show() {
-    if (fWidget) fWidget->show();
-  }
-  void hide() {
-    if (fWidget) fWidget->hide();
-  }
-  static int numTest() { return nTest; }
-  static UnitTest *test(int i) { return fTest[i]; }
-private:
-  char *fLabel;
-  Fl_Widget *(*fCreate)();
-  Fl_Widget *fWidget;
+UnitTest::~UnitTest() {
+  delete widget_;
+  free(label_);
+}
 
-  static void add(UnitTest *t) {
-    fTest[nTest] = t;
-    nTest++;
-  }
-  static int nTest;
-  static UnitTest *fTest[];
-};
+const char *UnitTest::label() {
+  return label_;
+}
 
-int UnitTest::nTest = 0;
-UnitTest *UnitTest::fTest[200];
+void UnitTest::create() {
+  widget_ = create_();
+  if (widget_) widget_->hide();
+}
 
+void UnitTest::show() {
+  if (widget_) widget_->show();
+}
 
-// The main window needs an additional drawing feature in order to support
-// the viewport alignment test.
-class MainWindow : public Fl_Double_Window {
-public:
-  MainWindow(int w, int h, const char *l=0L) :
-    Fl_Double_Window(w, h, l),
-    fTestAlignment(0)
-  { }
-  // this code is used by the viewport alignment test
-  void drawAlignmentIndicators() {
-    const int sze = 16;
-    // top left corner
-    fl_color(FL_GREEN); fl_yxline(0, sze, 0, sze);
-    fl_color(FL_RED);   fl_yxline(-1, sze, -1, sze);
-    fl_color(FL_WHITE); fl_rectf(3, 3, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(3, 3, sze-2, sze-2);
-    // bottom left corner
-    fl_color(FL_GREEN); fl_yxline(0, h()-sze-1, h()-1, sze);
-    fl_color(FL_RED);   fl_yxline(-1, h()-sze-1, h(), sze);
-    fl_color(FL_WHITE); fl_rectf(3, h()-sze-1, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(3, h()-sze-1, sze-2, sze-2);
-    // bottom right corner
-    fl_color(FL_GREEN); fl_yxline(w()-1, h()-sze-1, h()-1, w()-sze-1);
-    fl_color(FL_RED);   fl_yxline(w(), h()-sze-1, h(), w()-sze-1);
-    fl_color(FL_WHITE); fl_rectf(w()-sze-1, h()-sze-1, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(w()-sze-1, h()-sze-1, sze-2, sze-2);
-    // top right corner
-    fl_color(FL_GREEN); fl_yxline(w()-1, sze, 0, w()-sze-1);
-    fl_color(FL_RED);   fl_yxline(w(), sze, -1, w()-sze-1);
-    fl_color(FL_WHITE); fl_rectf(w()-sze-1, 3, sze-2, sze-2);
-    fl_color(FL_BLACK); fl_rect(w()-sze-1, 3, sze-2, sze-2);
+void UnitTest::hide() {
+  if (widget_) widget_->hide();
+}
+
+void UnitTest::add(int index, UnitTest* t) {
+  test_list_[index] = t;
+  if (index >= num_tests_)
+    num_tests_ = index+1;
+}
+
+Ut_Main_Window::Ut_Main_Window(int w, int h, const char *l)
+  : Fl_Double_Window(w, h, l),
+    draw_alignment_test_(0)
+{ }
+
+void Ut_Main_Window::draw_alignment_indicators() {
+  const int SZE = 16;
+  // top left corner
+  fl_color(FL_GREEN); fl_yxline(0, SZE, 0, SZE);
+  fl_color(FL_RED);   fl_yxline(-1, SZE, -1, SZE);
+  fl_color(FL_WHITE); fl_rectf(3, 3, SZE-2, SZE-2);
+  fl_color(FL_BLACK); fl_rect(3, 3, SZE-2, SZE-2);
+  // bottom left corner
+  fl_color(FL_GREEN); fl_yxline(0, h()-SZE-1, h()-1, SZE);
+  fl_color(FL_RED);   fl_yxline(-1, h()-SZE-1, h(), SZE);
+  fl_color(FL_WHITE); fl_rectf(3, h()-SZE-1, SZE-2, SZE-2);
+  fl_color(FL_BLACK); fl_rect(3, h()-SZE-1, SZE-2, SZE-2);
+  // bottom right corner
+  fl_color(FL_GREEN); fl_yxline(w()-1, h()-SZE-1, h()-1, w()-SZE-1);
+  fl_color(FL_RED);   fl_yxline(w(), h()-SZE-1, h(), w()-SZE-1);
+  fl_color(FL_WHITE); fl_rectf(w()-SZE-1, h()-SZE-1, SZE-2, SZE-2);
+  fl_color(FL_BLACK); fl_rect(w()-SZE-1, h()-SZE-1, SZE-2, SZE-2);
+  // top right corner
+  fl_color(FL_GREEN); fl_yxline(w()-1, SZE, 0, w()-SZE-1);
+  fl_color(FL_RED);   fl_yxline(w(), SZE, -1, w()-SZE-1);
+  fl_color(FL_WHITE); fl_rectf(w()-SZE-1, 3, SZE-2, SZE-2);
+  fl_color(FL_BLACK); fl_rect(w()-SZE-1, 3, SZE-2, SZE-2);
+}
+
+void Ut_Main_Window::draw() {
+  Fl_Double_Window::draw();
+  if (draw_alignment_test_) {
+    draw_alignment_indicators();
   }
-  void draw() {
-    Fl_Double_Window::draw();
-    if (fTestAlignment) {
-      drawAlignmentIndicators();
-    }
-  }
-  void testAlignment(int v) {
-    fTestAlignment = v;
-    redraw();
-  }
-  int fTestAlignment;
-};
+}
+
+void Ut_Main_Window::test_alignment(int v) {
+  draw_alignment_test_ = v;
+  redraw();
+}
 
 //------- include the various unit tests as inline code -------
 
-#include "unittest_about.cxx"
-#include "unittest_points.cxx"
-#include "unittest_lines.cxx"
-#include "unittest_rects.cxx"
-#include "unittest_circles.cxx"
-#include "unittest_text.cxx"
-#include "unittest_symbol.cxx"
-#include "unittest_images.cxx"
-#include "unittest_viewport.cxx"
-#include "unittest_scrollbarsize.cxx"
-#include "unittest_schemes.cxx"
-#include "unittest_simple_terminal.cxx"
-
 // callback whenever the browser value changes
-void Browser_CB(Fl_Widget*, void*) {
+void UT_BROWSER_CB(Fl_Widget*, void*) {
   for ( int t=1; t<=browser->size(); t++ ) {
-    UnitTest *ti = (UnitTest*)browser->data(t);
+    UnitTest* ti = (UnitTest*)browser->data(t);
     if ( browser->selected(t) ) {
       ti->show();
     } else {
@@ -170,34 +135,34 @@ void Browser_CB(Fl_Widget*, void*) {
 
 // This is the main call. It creates the window and adds all previously
 // registered tests to the browser widget.
-int main(int argc, char **argv) {
-  Fl::args(argc,argv);
+int main(int argc, char** argv) {
+  Fl::args(argc, argv);
   Fl::get_system_colors();
   Fl::scheme(Fl::scheme()); // init scheme before instantiating tests
   Fl::visual(FL_RGB);
-  mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "FLTK Unit Tests");
-  browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
+  Fl::use_high_res_GL(1);
+  mainwin = new Ut_Main_Window(UT_MAINWIN_W, UT_MAINWIN_H, "FLTK Unit Tests");
+  mainwin->size_range(UT_MAINWIN_W, UT_MAINWIN_H);
+  browser = new Fl_Hold_Browser(UT_BROWSER_X, UT_BROWSER_Y, UT_BROWSER_W, UT_BROWSER_H, "Unit Tests");
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
   browser->when(FL_WHEN_CHANGED);
-  browser->callback(Browser_CB);
+  browser->callback(UT_BROWSER_CB);
 
-  int i, n = UnitTest::numTest();
+  int i, n = UnitTest::num_tests();
   for (i=0; i<n; i++) {
-    UnitTest *t = UnitTest::test(i);
-    mainwin->begin();
-    t->create();
-    mainwin->end();
-    browser->add(t->label(), (void*)t);
+    UnitTest* t = UnitTest::test(i);
+    if (t) {
+      mainwin->begin();
+      t->create();
+      mainwin->end();
+      browser->add(t->label(), (void*)t);
+    }
   }
 
   mainwin->resizable(mainwin);
-  mainwin->show(argc,argv);
+  mainwin->show(argc, argv);
   // Select first test in browser, and show that test.
-  browser->select(1);
-  Browser_CB(browser,0);
-  return(Fl::run());
+  browser->select(UT_TEST_ABOUT+1);
+  UT_BROWSER_CB(browser, 0);
+  return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

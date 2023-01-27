@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Two internal fltk data structures:
@@ -36,13 +34,9 @@ public:
 #  if HAVE_GL
   char glok[64];
 #  endif // HAVE_GL
-  FL_EXPORT ~Fl_GDI_Font_Descriptor();
+  virtual FL_EXPORT ~Fl_GDI_Font_Descriptor();
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 #endif
-
-//
-// End of "$Id$".
-//

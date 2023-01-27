@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -26,19 +24,21 @@
 #include "Fl_Widget.H"
 #endif
 
-#define FL_NORMAL_INPUT		0
-#define FL_FLOAT_INPUT		1
-#define FL_INT_INPUT		2
-#define FL_HIDDEN_INPUT		3
-#define FL_MULTILINE_INPUT	4
-#define FL_SECRET_INPUT		5
-#define FL_INPUT_TYPE		7
-#define FL_INPUT_READONLY	8
-#define FL_NORMAL_OUTPUT	(FL_NORMAL_INPUT | FL_INPUT_READONLY)
-#define FL_MULTILINE_OUTPUT	(FL_MULTILINE_INPUT | FL_INPUT_READONLY)
-#define FL_INPUT_WRAP		16
-#define FL_MULTILINE_INPUT_WRAP	(FL_MULTILINE_INPUT | FL_INPUT_WRAP)
+#define FL_NORMAL_INPUT         0
+#define FL_FLOAT_INPUT          1
+#define FL_INT_INPUT            2
+#define FL_HIDDEN_INPUT         3
+#define FL_MULTILINE_INPUT      4
+#define FL_SECRET_INPUT         5
+#define FL_INPUT_TYPE           7
+#define FL_INPUT_READONLY       8
+#define FL_NORMAL_OUTPUT        (FL_NORMAL_INPUT | FL_INPUT_READONLY)
+#define FL_MULTILINE_OUTPUT     (FL_MULTILINE_INPUT | FL_INPUT_READONLY)
+#define FL_INPUT_WRAP           16
+#define FL_MULTILINE_INPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_WRAP)
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
+
+class Fl_Input_Undo_Action;
 
 /**
   This class provides a low-overhead text input field.
@@ -54,16 +54,16 @@
   setting type() to one of the following values:
 
   \code
-  #define FL_NORMAL_INPUT	   0
-  #define FL_FLOAT_INPUT	   1
-  #define FL_INT_INPUT		   2
-  #define FL_MULTILINE_INPUT	   4
-  #define FL_SECRET_INPUT	   5
-  #define FL_INPUT_TYPE		   7
-  #define FL_INPUT_READONLY	   8
-  #define FL_NORMAL_OUTPUT	   (FL_NORMAL_INPUT | FL_INPUT_READONLY)
-  #define FL_MULTILINE_OUTPUT	   (FL_MULTILINE_INPUT | FL_INPUT_READONLY)
-  #define FL_INPUT_WRAP		   16
+  #define FL_NORMAL_INPUT          0
+  #define FL_FLOAT_INPUT           1
+  #define FL_INT_INPUT             2
+  #define FL_MULTILINE_INPUT       4
+  #define FL_SECRET_INPUT          5
+  #define FL_INPUT_TYPE            7
+  #define FL_INPUT_READONLY        8
+  #define FL_NORMAL_OUTPUT         (FL_NORMAL_INPUT | FL_INPUT_READONLY)
+  #define FL_MULTILINE_OUTPUT      (FL_MULTILINE_INPUT | FL_INPUT_READONLY)
+  #define FL_INPUT_WRAP            16
   #define FL_MULTILINE_INPUT_WRAP  (FL_MULTILINE_INPUT | FL_INPUT_WRAP)
   #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
   \endcode
@@ -79,6 +79,7 @@
   UTF-8 sequences and pointers into the middle of a sequence are undefined.
 
   \see Fl_Text_Display, Fl_Text_Editor for more powerful text handling widgets
+  \see Fl_Widget::shortcut_label(int)
 
   \internal
   When porting this widget from ASCII to UTF-8, previously legal pointers into
@@ -112,8 +113,8 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
       If \p position_ equals \p mark_, no text is selected */
   int mark_;
 
-  /** \internal Behavior of Tab key in multiline input widget. 
-      If enabled (default) Tab causes focus nav, otherwise Tab is inserted 
+  /** \internal Behavior of Tab key in multiline input widget.
+      If enabled (default) Tab causes focus nav, otherwise Tab is inserted
       as a character. */
   int tab_nav_;
 
@@ -144,6 +145,9 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   /** \internal color of the text cursor */
   Fl_Color cursor_color_;
+
+  /** \internal local undo event */
+  Fl_Input_Undo_Action* undo_;
 
   /** \internal Horizontal cursor position in pixels while moving up or down. */
   static double up_down_pos;
@@ -179,7 +183,7 @@ protected:
 
   /* Find the start of a line. */
   int line_start(int i) const;
-  
+
   /* Find the end of a line. */
   int line_end(int i) const;
 
@@ -196,7 +200,7 @@ protected:
   int handletext(int e, int, int, int, int);
 
   /* Check the when() field and do a callback if indicated. */
-  void maybe_do_callback();
+  void maybe_do_callback(Fl_Callback_Reason reason = FL_REASON_UNKNOWN);
 
   /** \internal Horizontal offset of text to left edge of widget. */
   int xscroll() const {return xscroll_;}
@@ -211,7 +215,7 @@ protected:
 public:
 
   /* Change the size of the widget. */
-  void resize(int, int, int, int);
+  void resize(int, int, int, int) FL_OVERRIDE;
 
   /* Constructor */
   Fl_Input_(int, int, int, int, const char* = 0);
@@ -237,19 +241,19 @@ public:
       This function returns the current value, which is a pointer
       to the internal buffer and is valid only until the next event is
       handled.
-  
-      \return pointer to an internal buffer - do not free() this    
+
+      \return pointer to an internal buffer - do not free() this
       \see Fl_Input_::value(const char*)
   */
   const char* value() const {return value_;}
 
-  /* Returns the character at index \p i. */
-  Fl_Char index(int i) const;
+  /* Returns the Unicode character at index \p i. */
+  unsigned int index(int i) const;
 
   /**
-    Returns the number of bytes in value(). 
-  
-    This may be greater than <tt>strlen(value())</tt> if there are 
+    Returns the number of bytes in value().
+
+    This may be greater than <tt>strlen(value())</tt> if there are
     \c nul characters in the text.
 
     \return number of bytes in the text
@@ -282,7 +286,7 @@ public:
   */
   int position() const {return position_;}
 
-  /** Gets the current selection mark. 
+  /** Gets the current selection mark.
     \return index into the text */
   int mark() const {return mark_;}
 
@@ -297,9 +301,9 @@ public:
   */
   int position(int p) {return position(p, p);}
 
-  /** Sets the current selection mark. 
+  /** Sets the current selection mark.
     mark(n) is the same as <tt>position(position(),n)</tt>.
-    \param m new index of the mark 
+    \param m new index of the mark
     \return 0 if the mark did not change
     \see position(), position(int, int) */
   int mark(int m) {return position(position(), m);}
@@ -359,6 +363,9 @@ public:
   */
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
 
+  /* Append text at the end. */
+  int append(const char* t, int l=0, char keep_selection=0);
+
   /* Put the current selection into the clipboard. */
   int copy(int clipboard);
 
@@ -373,11 +380,11 @@ public:
     \see Fl_Button::shortcut() */
   int shortcut() const {return shortcut_;}
 
-  /** 
+  /**
     Sets the shortcut key associated with this widget.
     Pressing the shortcut key gives text editing focus to this widget.
-    \param [in] s new shortcut keystroke 
-    \see Fl_Button::shortcut() 
+    \param [in] s new shortcut keystroke
+    \see Fl_Button::shortcut()
   */
   void shortcut(int s) {shortcut_ = s;}
 
@@ -410,52 +417,52 @@ public:
     \see textcolor() */
   void textcolor(Fl_Color n) {textcolor_ = n;}
 
-  /** Gets the color of the cursor.  
+  /** Gets the color of the cursor.
     \return the current cursor color */
   Fl_Color cursor_color() const {return cursor_color_;}
 
-  /** Sets the color of the cursor.  
+  /** Sets the color of the cursor.
     The default color for the cursor is \c FL_BLACK.
     \param [in] n the new cursor color */
   void cursor_color(Fl_Color n) {cursor_color_ = n;}
 
-  /** Gets the input field type. 
+  /** Gets the input field type.
     \return the current input type */
   int input_type() const {return type() & FL_INPUT_TYPE; }
 
-  /** Sets the input field type. 
+  /** Sets the input field type.
     A redraw() is required to reformat the input field.
     \param [in] t new input type */
   void input_type(int t) { type((uchar)(t | readonly())); }
 
-  /** Gets the read-only state of the input field.  
+  /** Gets the read-only state of the input field.
     \return non-zero if this widget is read-only */
   int readonly() const { return type() & FL_INPUT_READONLY; }
 
-  /** Sets the read-only state of the input field.  
+  /** Sets the read-only state of the input field.
     \param [in] b if \p b is 0, the text in this widget can be edited by the user */
   void readonly(int b) { if (b) type((uchar)(type() | FL_INPUT_READONLY));
                          else type((uchar)(type() & ~FL_INPUT_READONLY)); }
 
   /**
-    Gets  the word wrapping state of the input field. 
+    Gets  the word wrapping state of the input field.
     Word wrap is only functional with multi-line input fields.
   */
   int wrap() const { return type() & FL_INPUT_WRAP; }
 
   /**
-    Sets the word wrapping state of the input field. 
+    Sets the word wrapping state of the input field.
     Word wrap is only functional with multi-line input fields.
   */
   void wrap(int b) { if (b) type((uchar)(type() | FL_INPUT_WRAP));
                          else type((uchar)(type() & ~FL_INPUT_WRAP)); }
 
   /**
-    Sets whether the Tab key does focus navigation, 
+    Sets whether the Tab key does focus navigation,
     or inserts tab characters into Fl_Multiline_Input.
 
-    By default this flag is enabled to provide the 'normal' behavior 
-    most users expect; Tab navigates focus to the next widget. 
+    By default this flag is enabled to provide the 'normal' behavior
+    most users expect; Tab navigates focus to the next widget.
     To inserting an actual Tab character, users can use Ctrl-I
     or copy/paste.
 
@@ -464,8 +471,8 @@ public:
     only the mouse can be used to navigate to the next field.
 
     History: This flag was provided for backwards support of FLTK's old 1.1.x
-    behavior where Tab inserts a tab character instead of navigating 
-    focus to the next widget. This behavior was unique to Fl_Multiline_Input. 
+    behavior where Tab inserts a tab character instead of navigating
+    focus to the next widget. This behavior was unique to Fl_Multiline_Input.
     With the advent of Fl_Text_Editor, this old behavior has been deprecated.
 
     \param [in] val If \p val is 1, Tab advances focus (default).<BR>
@@ -492,8 +499,4 @@ public:
   }
 };
 
-#endif 
-
-//
-// End of "$Id$".
-//
+#endif

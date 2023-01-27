@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -36,7 +34,15 @@ struct FL_BLINE;
   lines, and manages all the storage for the text.  This is not a text
   editor or spreadsheet!  But it is useful for showing a vertical list of
   named objects to the user.
-  
+
+  \image html  fl_hold_browser.png "Fl_Hold_Browser"
+  \image latex fl_hold_browser.png "Fl_Hold_Browser" width=4cm
+
+  \par
+
+  \image html  fl_multi_browser.png "Fl_Multi_Browser"
+  \image latex fl_multi_browser.png "Fl_Multi_Browser" width=4cm
+
   Each line in the browser is identified by number. <I>The numbers
   start at one</I> (this is so that zero can be reserved for "no line" in
   the selective browsers). <I>Unless otherwise noted, the methods do not
@@ -49,9 +55,9 @@ struct FL_BLINE;
   describes.
 
   The base class does nothing when the user clicks on it.  The
-  subclasses 
-  Fl_Select_Browser, 
-  Fl_Hold_Browser, and 
+  subclasses
+  Fl_Select_Browser,
+  Fl_Hold_Browser, and
   Fl_Multi_Browser react to user clicks to select lines in
   the browser and do callbacks.
 
@@ -68,7 +74,7 @@ struct FL_BLINE;
   \code
       // How to loop through all the items in the browser
       for ( int t=1; t<=browser->size(); t++ ) {       // index 1 based..!
-	  printf("item #%d, label='%s'\n", t, browser->text(t));
+          printf("item #%d, label='%s'\n", t, browser->text(t));
       }
   \endcode
 
@@ -79,43 +85,43 @@ struct FL_BLINE;
 */
 class FL_EXPORT Fl_Browser : public Fl_Browser_ {
 
-  FL_BLINE *first;		// the array of lines
+  FL_BLINE *first;              // the array of lines
   FL_BLINE *last;
   FL_BLINE *cache;
-  int cacheline;		// line number of cache
-  int lines;                	// Number of lines
+  int cacheline;                // line number of cache
+  int lines;                    // Number of lines
   int full_height_;
   const int* column_widths_;
-  char format_char_;		// alternative to @-sign
-  char column_char_;		// alternative to tab
+  char format_char_;            // alternative to @-sign
+  char column_char_;            // alternative to tab
 
 protected:
 
   // required routines for Fl_Browser_ subclass:
-  void* item_first() const ;
-  void* item_next(void* item) const ;
-  void* item_prev(void* item) const ;
-  void* item_last()const ;
-  int item_selected(void* item) const ;
-  void item_select(void* item, int val);
-  int item_height(void* item) const ;
-  int item_width(void* item) const ;
-  void item_draw(void* item, int X, int Y, int W, int H) const ;
-  int full_height() const ;
-  int incr_height() const ;
-  const char *item_text(void *item) const;
+  void* item_first() const FL_OVERRIDE;
+  void* item_next(void* item) const FL_OVERRIDE;
+  void* item_prev(void* item) const FL_OVERRIDE;
+  void* item_last()const FL_OVERRIDE;
+  int item_selected(void* item) const FL_OVERRIDE;
+  void item_select(void* item, int val) FL_OVERRIDE;
+  int item_height(void* item) const FL_OVERRIDE;
+  int item_width(void* item) const FL_OVERRIDE;
+  void item_draw(void* item, int X, int Y, int W, int H) const FL_OVERRIDE;
+  int full_height() const FL_OVERRIDE;
+  int incr_height() const FL_OVERRIDE;
+  const char *item_text(void *item) const FL_OVERRIDE;
   /** Swap the items \p a and \p b.
       You must call redraw() to make any changes visible.
       \param[in] a,b the items to be swapped.
       \see swap(int,int), item_swap()
    */
-  void item_swap(void *a, void *b) { swap((FL_BLINE*)a, (FL_BLINE*)b); }
+  void item_swap(void *a, void *b) FL_OVERRIDE { swap((FL_BLINE*)a, (FL_BLINE*)b); }
   /** Return the item at specified \p line.
       \param[in] line The line of the item to return. (1 based)
       \returns The item, or NULL if line out of range.
       \see item_at(), find_line(), lineno()
    */
-  void *item_at(int line) const { return (void*)find_line(line); }
+  void *item_at(int line) const FL_OVERRIDE { return (void*)find_line(line); }
 
   FL_BLINE* find_line(int line) const ;
   FL_BLINE* _remove(int line) ;
@@ -182,10 +188,10 @@ public:
   int selected(int line) const ;
   void show(int line);
   /** Shows the entire Fl_Browser widget -- opposite of hide(). */
-  void show() { Fl_Widget::show(); }
+  void show() FL_OVERRIDE { Fl_Widget::show(); }
   void hide(int line);
   /** Hides the entire Fl_Browser widget -- opposite of show(). */
-  void hide() { Fl_Widget::hide(); }
+  void hide() FL_OVERRIDE { Fl_Widget::hide(); }
   int visible(int line) const ;
 
   int value() const ;
@@ -210,7 +216,7 @@ public:
     Gets the current format code prefix character, which by default is '\@'.
     A string of formatting codes at the start of each column are stripped off
     and used to modify how the rest of the line is printed:
-    
+
     \li <tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs
     \li <tt>'\@\@'</tt> Doubling the format character prints the format
       character once, followed by the rest of line
@@ -233,7 +239,7 @@ public:
     \li <tt>'\@-'</tt> draw an engraved line through the middle.
 
     Notice that the '\@.' command can be used to reliably
-    terminate the parsing.  To print a random string in a random color, use 
+    terminate the parsing.  To print a random string in a random color, use
     <tt>sprintf("@C%d@.%s", color, string)</tt> and it will work even if the
     string starts with a digit or has the format character in it.
   */
@@ -322,7 +328,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

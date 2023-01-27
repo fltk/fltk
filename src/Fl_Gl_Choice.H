@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Internal interface to set up OpenGL.
@@ -42,33 +40,7 @@
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
-#ifdef FL_CFG_GFX_QUARTZ
-#  include <OpenGL/gl.h>
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  void* pixelformat;
-#endif // FL_CFG_GFX_QUARTZ
-
-
-#ifdef FL_CFG_GFX_XLIB
-#  include <GL/glx.h>
-#  if ! defined(GLX_VERSION_1_3)
-#    typedef void *GLXFBConfig;
-#  endif
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
-      XVisualInfo *vis; /* the visual to use */ \
-      Colormap colormap; /* a colormap for that visual */ \
-      GLXFBConfig best_fb;
-#endif // FL_CFG_GFX_XLIB*/
-
-
-#ifdef FL_CFG_GFX_GDI
-#  include <FL/gl.h>
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
-      int pixelformat;	     /* the visual to use */ \
-      PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
-#endif // FL_CFG_GFX_GDI
-
-
-// Describes crap needed to create a GLContext.
+// Describes the platform-independent part of data needed to create a GLContext.
 class Fl_Gl_Choice {
   friend class Fl_Gl_Window_Driver;
   int mode;
@@ -76,13 +48,6 @@ class Fl_Gl_Choice {
   Fl_Gl_Choice *next;
 public:
   Fl_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : mode(m), alist(alistp), next(n) {}
-  FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 };
 
-#undef FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
-
 #endif // Fl_Gl_Choice_H
-
-//
-// End of "$Id$".
-//

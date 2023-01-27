@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -67,7 +65,7 @@
 #include <FL/Fl_Gl_Window.H>
 
 class shape_window : public Fl_Gl_Window {
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
   int sides;
   shape_window(int x,int y,int w,int h,const char *l=0);
@@ -79,19 +77,19 @@ Fl_Gl_Window(x,y,w,h,l) {
 }
 
 void shape_window::draw() {
-  printf("drawing size %d %d\n",w(),h());
+  // fprintf(stderr, "drawing size %d %d\n", w(), h());
   if (!valid()) {
     valid(1);
-//  printf("init\n");
+    // fprintf(stderr, "init\n");
     glLoadIdentity();
     glViewport(0,0,pixel_w(),pixel_h());
   }
   glClear(GL_COLOR_BUFFER_BIT);
-  glColor3f(.5,.6,.7);
+  glColor3f(.5f, .6f, .7f);
   glBegin(GL_POLYGON);
   for (int j = 0; j < sides; j ++) {
     double ang = j*2*M_PI/sides;
-    glVertex3f(cos(ang),sin(ang),0);
+    glVertex3f((GLfloat)cos(ang), (GLfloat)sin(ang), 0);
   }
   glEnd();
 }
@@ -125,18 +123,18 @@ void shape_window::draw() {
 class fullscreen_window : public Fl_Single_Window {
   public:
   fullscreen_window(int W, int H, const char *t=0);
-  int handle (int e);
+  int handle (int e) FL_OVERRIDE;
   Fl_Toggle_Light_Button *b3;
   Fl_Toggle_Light_Button *b4;
 };
 
-fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) { 
+fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) {
 
 }
 
 int fullscreen_window::handle(int e) {
   if (e == FL_FULLSCREEN) {
-    printf("Received FL_FULLSCREEN event\n");
+    // fprintf(stderr, "Received FL_FULLSCREEN event\n");
     b3->value(fullscreen_active());
   }
   if (Fl_Single_Window::handle(e)) return 1;
@@ -228,21 +226,21 @@ void update_screeninfo(Fl_Widget *b, void *p) {
     char line[128];
     browser->clear();
 
-    sprintf(line, "Main screen work area: %dx%d@%d,%d", Fl::w(), Fl::h(), Fl::x(), Fl::y());
+    snprintf(line, sizeof(line), "Main screen work area: %dx%d@%d,%d", Fl::w(), Fl::h(), Fl::x(), Fl::y());
     browser->add(line);
     Fl::screen_work_area(x, y, w, h);
-    sprintf(line, "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
+    snprintf(line, sizeof(line), "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
     browser->add(line);
     for (int n = 0; n < Fl::screen_count(); n++) {
-	int x, y, w, h;
+        int x, y, w, h;
         float dpih, dpiv;
-	Fl::screen_xywh(x, y, w, h, n);
+        Fl::screen_xywh(x, y, w, h, n);
         Fl::screen_dpi(dpih, dpiv, n);
-	sprintf(line, "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f", n, w, h, x, y, dpih, dpiv);
-	browser->add(line);
-	Fl::screen_work_area(x, y, w, h, n);
-	sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
-	browser->add(line);
+        snprintf(line, sizeof(line), "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f scale:%.2f", n, w, h, x, y, dpih, dpiv, Fl::screen_scale(n));
+        browser->add(line);
+        Fl::screen_work_area(x, y, w, h, n);
+        snprintf(line, sizeof(line), "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
+        browser->add(line);
     }
 }
 
@@ -269,22 +267,22 @@ int main(int argc, char **argv) {
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal("Options are:\n -2 = 2 windows\n -f = startup fullscreen\n%s",Fl::help);
 
-  fullscreen_window window(400,400+30*NUMB); window.end();
+  fullscreen_window window(460,400+30*NUMB); window.end();
 
   shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-120);
-
+  sw.set_visible(); // necessary because sw is not a child of window
 #if HAVE_GL
   sw.mode(FL_RGB);
 #endif
 
   Fl_Window *w;
-  if (twowindow) {	// make it's own window
+  if (twowindow) {      // make it's own window
     sw.resizable(&sw);
     w = &sw;
-    window.set_modal();	// makes controls stay on top when fullscreen pushed
+    window.set_modal(); // makes controls stay on top when fullscreen pushed
     argc--;
     sw.show();
-  } else {		// otherwise make a subwindow
+  } else {              // otherwise make a subwindow
     window.add(sw);
     window.resizable(&sw);
     w = &window;
@@ -329,7 +327,7 @@ int main(int argc, char **argv) {
   Fl_Browser *browser = new Fl_Browser(50,y,window.w()-60,100);
   update_screeninfo(0, browser);
   y+=100;
-  
+
   Fl_Button update(50,y,window.w()-60,30,"Update");
   update.callback(update_screeninfo, browser);
   y+=30;
@@ -338,10 +336,6 @@ int main(int argc, char **argv) {
 
   window.end();
   window.show(argc,argv);
-  
+
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

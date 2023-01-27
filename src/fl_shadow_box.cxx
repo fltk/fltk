@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Shadow box drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,17 +7,20 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-#define BW 3
+// Global parameters for box drawing algorithm:
+//
+//  BW = box shadow width
+#define BW (Fl::box_shadow_width())
 
 static void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_color(FL_DARK3);
@@ -41,7 +42,3 @@ Fl_Boxtype fl_define_FL_SHADOW_BOX() {
   fl_internal_boxtype(_FL_SHADOW_BOX, fl_shadow_box);
   return _FL_SHADOW_BOX;
 }
-
-//
-// End of "$Id$".
-//

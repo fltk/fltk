@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /*
@@ -26,13 +25,13 @@ XMODIFIERS="@im=kinput2"; export XMODIFIERS
 LANG=ja_JP; export LANG
 ./test
 
-	to open a conversion window press "Shift space"
-	type some keys.
-	press space.
-	select glyph with arrows keys.
-	press return.
-	press return.
-	press "Shift space" to close the window
+        to open a conversion window press "Shift space"
+        type some keys.
+        press space.
+        select glyph with arrows keys.
+        press return.
+        press return.
+        press "Shift space" to close the window
 
 LANG=ar_AE; export LANG
 LANG=he_IL; export LANG
@@ -60,10 +59,10 @@ export LD_PRELOAD="/usr/src/x11/xc/exports/lib/libX11.so /usr/src/x11/xc/exports
 #include <X11/Intrinsic.h>
 #include <X11/Xmd.h>
 
-char *jp_txt = "é  UTF-8 e\xCC\x82=\xC3\xAA"
-	       "  \357\274\270\357\274\254\357\274\246\357\274"
-	       "\244\345\220\215\343\201\247\346\214\207    \345\256\232"
-	       "\343\201\231\343\202\213";
+char *jp_txt = "Ã©  UTF-8 e\xCC\x82=\xC3\xAA"
+               "  \357\274\270\357\274\254\357\274\246\357\274"
+               "\244\345\220\215\343\201\247\346\214\207    \345\256\232"
+               "\343\201\231\343\202\213";
 
 char *rtl_txt = "->e\xCC\x82=\xC3\xAA";
 
@@ -102,23 +101,23 @@ int main(int argc, char**argv) {
   char **missing_charset_list_return;
   int missing_charset_count_return;
   char *def_string_return;
-  
+
   if (!setlocale(LC_ALL, ""))
     puts("locale not supported by C library, locale unchanged");
 
   if (!XSetLocaleModifiers(""))
     puts("X locale modifiers not supported, using default");
-  
+
   dpy = XOpenDisplay(0);
   scr = DefaultScreen(dpy);
   root = RootWindow(dpy, scr);
   set_attr.event_mask = KeyPressMask|FocusChangeMask;
   set_attr.background_pixel = WhitePixel(dpy, DefaultScreen(dpy));
   set_attr.border_pixel = BlackPixel(dpy, DefaultScreen(dpy));
-  w = XCreateWindow(dpy, root, 10,10,200,100,0, 
-		    DefaultDepth(dpy, DefaultScreen(dpy)),
-		    InputOutput, DefaultVisual(dpy, DefaultScreen(dpy)),
-		    CWEventMask | CWBackPixel | CWBorderPixel, &set_attr);
+  w = XCreateWindow(dpy, root, 10,10,200,100,0,
+                    DefaultDepth(dpy, DefaultScreen(dpy)),
+                    InputOutput, DefaultVisual(dpy, DefaultScreen(dpy)),
+                    CWEventMask | CWBackPixel | CWBorderPixel, &set_attr);
 
   class_hints.res_name = "test";
   class_hints.res_class = "Test";
@@ -126,7 +125,7 @@ int main(int argc, char**argv) {
   wm_hints.flags = InputHint;
 
   XmbSetWMProperties(dpy, w, "test", "test", NULL, 0,
-		     NULL, &wm_hints, &class_hints);
+                     NULL, &wm_hints, &class_hints);
 
   XMapWindow(dpy, w);
   xim_im = XOpenIM(dpy, NULL, "test", "Test");
@@ -142,33 +141,33 @@ int main(int argc, char**argv) {
   XFree(xim_styles);
 
   xim_ic = XCreateIC(xim_im,
-		     XNInputStyle, (XIMPreeditNothing | XIMStatusNothing),
-		     XNClientWindow, w,
-		     XNFocusWindow, w,
-		     NULL);
+                     XNInputStyle, (XIMPreeditNothing | XIMStatusNothing),
+                     XNClientWindow, w,
+                     XNFocusWindow, w,
+                     NULL);
   XSetICFocus(xim_ic);
 
   /***************************************************************
-   *  I don't recommend to use a font base name list similar 
+   *  I don't recommend to use a font base name list similar
    *  to the following one in a real application ;-)
    ***************************************************************/
-  fontset = XCreateFontSet(dpy, 
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8858-3," /* not valid */
-	  "-*-*-medium-r-*-*-*-*-*-*-*-*-iso8859-1,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-6,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-8,"
-	  "-*-symbol-*-*-*-*-*-*-*-*-*-*-adobe-fontspecific," 
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-2,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-koi8-1,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0208.1983-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0212.1990-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-big5-0,"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0201.1976-0,"
-	  "-*-unifont-*-*-*-*-*-*-*-*-*-*-iso10646-1[0x300 0x400_0x500],"
-	  "-*-*-*-*-*-*-*-*-*-*-*-*-*-*",
-	  &missing_charset_list_return,
-	  &missing_charset_count_return,
-	  &def_string_return); 
+  fontset = XCreateFontSet(dpy,
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8858-3," /* not valid */
+          "-*-*-medium-r-*-*-*-*-*-*-*-*-iso8859-1,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-6,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-8,"
+          "-*-symbol-*-*-*-*-*-*-*-*-*-*-adobe-fontspecific,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-2,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-koi8-1,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0208.1983-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0212.1990-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-big5-0,"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-jisx0201.1976-0,"
+          "-*-unifont-*-*-*-*-*-*-*-*-*-*-iso10646-1[0x300 0x400_0x500],"
+          "-*-*-*-*-*-*-*-*-*-*-*-*-*-*",
+          &missing_charset_list_return,
+          &missing_charset_count_return,
+          &def_string_return);
   mask = (GCForeground | GCBackground);
   xgcv.foreground = BlackPixel(dpy, DefaultScreen(dpy));
   xgcv.background = WhitePixel(dpy, DefaultScreen(dpy));
@@ -192,7 +191,7 @@ int main(int argc, char**argv) {
     if (xevent.type == FocusIn) XSetICFocus(xim_ic);
 
     if (xevent.type == KeyPress && !filtered) {
-      len = Xutf8LookupString(xim_ic, &xevent.xkey, buf, 127, &keysym, &status); 
+      len = Xutf8LookupString(xim_ic, &xevent.xkey, buf, 127, &keysym, &status);
       Xutf8DrawImageString(dpy, w, fontset, gc, x, y, buf, len);
       Xutf8DrawString(dpy, w, fontset, gc, 0, 20, jp_txt, strlen(jp_txt));
       Xutf8DrawString(dpy, w, fontset, gc, 50, 90, rtl_txt, strlen(rtl_txt));
@@ -208,7 +207,3 @@ int main(int argc, char**argv) {
   XFreeFontSet(dpy, fontset);
   return 0;
 }
-
-/*
- * End of "$Id$".
- */

@@ -1,35 +1,33 @@
 //
-// "$Id$"
-//
 // Keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2021 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "config_lib.h"
-#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
+#include <config.h>
+#if !defined(FL_DOXYGEN)
 
 // Return the current state of a key.  This is the X version.  I identify
 // keys (mostly) by the X keysym.  So this turns the keysym into a keycode
 // and looks it up in the X key bit vector, which Fl_x.cxx keeps track of.
 
 #include <FL/Fl.H>
-#include "drivers/X11/Fl_X11_System_Driver.H"
+#include "drivers/X11/Fl_X11_Screen_Driver.H"
 #include <FL/platform.H> // for fl_display
 
 extern char fl_key_vector[32]; // in Fl_x.cxx
 
-int Fl_X11_System_Driver::event_key(int k) {
+int Fl_X11_Screen_Driver::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)
     return Fl::event_state(8<<(k-FL_Button));
   int i;
@@ -45,14 +43,10 @@ int Fl_X11_System_Driver::event_key(int k) {
   return fl_key_vector[i/8] & (1 << (i%8));
 }
 
-int Fl_X11_System_Driver::get_key(int k) {
+int Fl_X11_Screen_Driver::get_key(int k) {
   fl_open_display();
   XQueryKeymap(fl_display, fl_key_vector);
   return event_key(k);
 }
 
-#endif // FL_CFG_SYS_POSIX
-
-//
-// End of "$Id$".
-//
+#endif // FL_DOXYGEN

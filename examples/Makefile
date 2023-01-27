@@ -1,3 +1,20 @@
+#
+# Makefile used to build example apps by 'make'
+#
+# Copyright 2020-2022 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     https://www.fltk.org/COPYING.php
+#
+# Please see the following page on how to report bugs and issues:
+#
+#     https://www.fltk.org/bugs.php
+#
+################################################################################
+
 include Makefile.FLTK
 
 RM    = rm -f
@@ -5,14 +22,22 @@ SHELL = /bin/sh
 .SILENT:
 
 # Executables
-ALL = clipboard$(EXEEXT) \
+ALL = animgifimage$(EXEEXT) \
+      animgifimage-play$(EXEEXT) \
+      animgifimage-simple$(EXEEXT) \
+      animgifimage-resize$(EXEEXT) \
+      browser-simple$(EXEEXT) \
+      cairo-draw-x$(EXEEXT) \
+      chart-simple$(EXEEXT) \
       draggable-group$(EXEEXT) \
-      fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
+      howto-draw-an-x$(EXEEXT) \
+      howto-flex-simple$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
+      howto-remap-numpad-keyboard-keys$(EXEEXT) \
       howto-simple-svg$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
@@ -21,13 +46,13 @@ ALL = clipboard$(EXEEXT) \
       progress-simple$(EXEEXT) \
       shapedwindow$(EXEEXT) \
       simple-terminal$(EXEEXT) \
-      SVG_File_Surface$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
       table-spreadsheet$(EXEEXT) \
       table-spreadsheet-with-keyboard-nav$(EXEEXT) \
       table-with-keynav$(EXEEXT) \
+      table-with-right-column-stretch-fit$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
@@ -41,6 +66,14 @@ ALL = clipboard$(EXEEXT) \
 
 # default target -- build everything
 default all: $(ALL)
+
+# Special rules for building cairo app
+cairo-draw-x.o: cairo-draw-x.cxx
+	@echo "*** Compile $<..."
+	$(CXX) -I.. $(CXXFLAGS_CAIRO) -c $< -o $@
+cairo-draw-x$(EXEEXT): cairo-draw-x.o
+	@echo "*** Link $<..."
+	$(CXX) $< $(LINKFLTK) $(LINKFLTK_CAIRO) -o $@
 
 # clean everything
 clean:

@@ -1,6 +1,4 @@
 //
-// $Id$
-//
 // Miscellaneous files for developers:
 //
 
@@ -53,7 +51,7 @@ Special Notes:
   I saw the same effect with other Windows editors as well. The following
   characters may be displayed "shifted left" by one position. Seems to work
   correctly on Linux (with UTF-8 encoding).
-  
+
   Mac OS Roman: 0xF0 (U+F8FF: "Apple logo") may not be printable, depending
   on installed fonts on other systems.
 
@@ -71,39 +69,35 @@ Files:
 
 The first two files are images of how it should look:
 
-  cp1252.png		full Windows Codepage 1252 (Western)
-  MacRoman_utf-8.png	full Mac OS Roman character set (w/o Apple logo)
+  cp1252.png            full Windows Codepage 1252 (Western)
+  MacRoman_utf-8.png    full Mac OS Roman character set (w/o Apple logo)
 
 The following four files contain the full Windows Codepage 1252:
 
-  cp1252.txt		native (Windows) encoding, suitable for FLTK 1.1
-  cp1252_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
-  cp1252.html		native (Windows) encoding, use with any browser
-  cp1252_utf-8.html	UTF-8 encoding, use with any browser
+  cp1252.txt            native (Windows) encoding, suitable for FLTK 1.1
+  cp1252_utf-8.txt      UTF-8 encoding, suitable for FLTK 1.3 and greater
+  cp1252.html           native (Windows) encoding, use with any browser
+  cp1252_utf-8.html     UTF-8 encoding, use with any browser
 
 The following two files contain only the ISO-8859-1 subset:
 
-  iso-8859-1.txt	native (Windows) encoding, suitable for FLTK 1.1
-  iso-8859-1_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
+  iso-8859-1.txt        native (Windows) encoding, suitable for FLTK 1.1
+  iso-8859-1_utf-8.txt  UTF-8 encoding, suitable for FLTK 1.3 and greater
 
 The following file contains the full Mac OS Roman character set:
 
-  MacRoman_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
-			(use cp1252.txt with FLTK 1.1 on Mac OS instead)
+  MacRoman_utf-8.txt    UTF-8 encoding, suitable for FLTK 1.3 and greater
+                        (use cp1252.txt with FLTK 1.1 on Mac OS instead)
 
 Other developer support files:
 ================================================================================
 
-  doxystar.cxx		Use this to reformat doxygen comments (test only).
+  doxystar.cxx          Use this to reformat doxygen comments (test only).
 
-	Compile with:	g++ -o doxystar doxystar.cxx
+        Compile with:   g++ -o doxystar doxystar.cxx
 
-	Usage:		cat file | doxystar
+        Usage:          cat file | doxystar
 
   DO NOT USE this for current code development!
 
   It is intended for testing of future code reformatting !
-
-//
-// End of $Id$.
-//

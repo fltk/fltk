@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -31,7 +29,7 @@
 
 
 void Fl_Xlib_Graphics_Driver::end_points() {
-  if (n>1) XDrawPoints(fl_display, fl_window, gc_, (XPoint*)p, n, 0);
+  if (n>1) XDrawPoints(fl_display, fl_window, gc_, short_point, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_line() {
@@ -39,13 +37,13 @@ void Fl_Xlib_Graphics_Driver::end_line() {
     end_points();
     return;
   }
-  if (n>1) XDrawLines(fl_display, fl_window, gc_, (XPoint*)p, n, 0);
+  if (n>1) XDrawLines(fl_display, fl_window, gc_, short_point, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) {
-    transformed_vertex0(p[0].x - line_delta_, p[0].y - line_delta_);
+    transformed_vertex0(short_point[0].x , short_point[0].y );
   }
   end_line();
 }
@@ -56,18 +54,13 @@ void Fl_Xlib_Graphics_Driver::end_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc_, (XPoint*)p, n, Convex, 0);
-}
-
-void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, short_point, n, Convex, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::gap() {
-  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
+  while (n>gap_+2 && short_point[n-1].x == short_point[gap_].x && short_point[n-1].y == short_point[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex0(p[gap_].x - line_delta_, p[gap_].y - line_delta_);
+    transformed_vertex0(short_point[gap_].x, short_point[gap_].y);
     gap_ = n;
   } else {
     n = gap_;
@@ -80,7 +73,11 @@ void Fl_Xlib_Graphics_Driver::end_complex_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc_, (XPoint*)p, n, 0, 0);
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, short_point, n, 0, 0);
+}
+
+bool Fl_Xlib_Graphics_Driver::can_fill_non_convex_polygon() {
+  return false;
 }
 
 // shortcut the closed circles so they use XDrawArc:
@@ -95,7 +92,3 @@ void Fl_Xlib_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, 
   (what == POLYGON ? XFillArc : XDrawArc)
     (fl_display, fl_window, gc_, llx, lly, w, h, 0, 360*64);
 }
-
-//
-// End of "$Id$".
-//

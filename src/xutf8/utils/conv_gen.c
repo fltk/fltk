@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,14 +6,14 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
-/*	
+/*
  *    generate the "if(){} else if ..." structure of ucs2fontmap()
  */
 #include <wchar.h>
@@ -37,9 +36,9 @@ int main(int argc, char **argv) {
   puts("   /*************** conv_gen.c ************/");
   buffer[len] = '\0';
   ptr = buffer;
-  
+
   printf("const int ucs2fontmap"
-	  "(char *s, unsigned int ucs, int enc)\n");
+          "(char *s, unsigned int ucs, int enc)\n");
   printf("{\n");
   printf("  switch(enc) {\n");
   printf("  case 0:\n");
@@ -49,7 +48,7 @@ int main(int argc, char **argv) {
   while (len > 0) {
     unsigned char *p = ptr;
     unsigned char *f, *t;
-    
+
     while (*p != ']') {
       i++;
       p++;
@@ -88,7 +87,7 @@ int main(int argc, char **argv) {
     while (*ptr != '\n') {
       ptr++;
       len--;
-    } 
+    }
     ptr++;
     len--;
   }
@@ -112,21 +111,21 @@ int main(int argc, char **argv) {
     ptr--;
     while (ptr != encode[i]) {
       if (*ptr == '_') {
-	*ptr = '-';
-	ptr--;
-	break;
+        *ptr = '-';
+        ptr--;
+        break;
       }
       ptr--;
     }
     while (ptr != encode[i]) {
       if (*ptr == '_') {
-	*ptr = '.';
+        *ptr = '.';
       }
       ptr--;
     }
     printf("  } else if (!strcmp(enc, \"%s\")", encode[i] +11);
 
-    if (!strcmp(encode[i] + 11, "big5-0")) { 
+    if (!strcmp(encode[i] + 11, "big5-0")) {
       printf(" || !strcmp(enc, \"big5.eten-0\")");
     } else if (!strcmp(encode[i] + 11, "dingbats")) {
       printf(" || !strcmp(enc, \"zapfdingbats\")");
@@ -140,11 +139,11 @@ int main(int argc, char **argv) {
     printf("    return %d;\n", i);
     i++;
   }
-  printf("  };\n");	
-  printf("  return -1;\n");	
-  printf("};\n\n");	
+  printf("  };\n");
+  printf("  return -1;\n");
+  printf("};\n\n");
 
-  printf("/*\n");	
+  printf("/*\n");
   printf("const char *encoding_name(int num)\n{\n");
   printf("  switch (num) {\n");
   i = 1;
@@ -156,10 +155,6 @@ int main(int argc, char **argv) {
   printf("  };\n");
   printf("  return \"iso10646-1\";\n");
   printf("};\n\n");
-  printf("*/\n");	
+  printf("*/\n");
   return 0;
 }
-
-/*
- * End of "$Id$".
- */

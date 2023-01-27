@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OS X Core Graphics debugging help for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,14 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-// This file allows easier debugging of Mac OS X Core Graphics 
+// This file allows easier debugging of Mac OS X Core Graphics
 // code. This file is normally not included into any FLTK builds,
 // but since it has proven to be tremendously useful in debugging
 // the FLTK port to "Quartz", I decided to add this file in case
@@ -28,8 +26,8 @@
 //
 // Running "./configure" will remove this line from "config.h".
 //
-// When used erreanously, Core Graphics prints warnings to 
-// stderr. This is helpful, however it is not possible to 
+// When used erreanously, Core Graphics prints warnings to
+// stderr. This is helpful, however it is not possible to
 // associate a line number or source file with the warning message.
 // This headr file outputs a trace of CG calls, interweaveing
 // them with CG warnings.
@@ -74,13 +72,13 @@
 //+StrokePath
 //+TranslateCTM
 
-inline OSStatus dbgLocation(const char *file, int line) 
+inline OSStatus dbgLocation(const char *file, int line)
 {
   fprintf(stderr, "%s:%d ", file, line);
   return 0;
 }
 
-inline OSStatus dbgEndl()     
+inline OSStatus dbgEndl()
 {
   fprintf(stderr, "\n");
   return 0;
@@ -107,7 +105,7 @@ inline void dbgCGContextFillRect(CGContextRef a, CGRect b)
   dbgCGContextFillRect(a, b); \
   fprintf(stderr, "\n"); }
 
-inline OSStatus dbgQDEndCGContext(CGrafPtr a, CGContextRef *b) 
+inline OSStatus dbgQDEndCGContext(CGrafPtr a, CGContextRef *b)
 {
   return QDEndCGContext(a, b);
 }
@@ -117,7 +115,7 @@ inline OSStatus dbgQDEndCGContext(CGrafPtr a, CGContextRef *b)
   dbgQDEndCGContext(a, b) + \
   dbgEndl() )
 
-inline OSStatus dbgQDBeginCGContext(CGrafPtr a, CGContextRef *b) 
+inline OSStatus dbgQDBeginCGContext(CGrafPtr a, CGContextRef *b)
 {
   return QDBeginCGContext(a, b);
 }
@@ -127,7 +125,7 @@ inline OSStatus dbgQDBeginCGContext(CGrafPtr a, CGContextRef *b)
   dbgQDBeginCGContext(a, b) + \
   dbgEndl() )
 
-inline void dbgClipCGContextToRegion(CGContextRef a, const Rect *b, RgnHandle c) 
+inline void dbgClipCGContextToRegion(CGContextRef a, const Rect *b, RgnHandle c)
 {
   ClipCGContextToRegion(a, b, c);
 }
@@ -148,7 +146,7 @@ inline void dbgCGContextMoveToPoint(CGContextRef context, float x, float y)
   fprintf(stderr, "\n"); }
 
 inline void dbgCGContextFillPath(CGContextRef context)
-{ 
+{
   CGContextFillPath(context);
 }
 
@@ -158,7 +156,7 @@ inline void dbgCGContextFillPath(CGContextRef context)
   fprintf(stderr, "\n"); }
 
 inline void dbgCGContextClosePath(CGContextRef context)
-{ 
+{
   CGContextClosePath(context);
 }
 
@@ -168,7 +166,7 @@ inline void dbgCGContextClosePath(CGContextRef context)
   fprintf(stderr, "\n"); }
 
 inline void dbgCGContextFlush(CGContextRef context)
-{ 
+{
   CGContextFlush(context);
 }
 
@@ -178,7 +176,7 @@ inline void dbgCGContextFlush(CGContextRef context)
   fprintf(stderr, "\n"); }
 
 inline void dbgCGContextSaveGState(CGContextRef context)
-{ 
+{
   CGContextSaveGState(context);
 }
 
@@ -188,7 +186,7 @@ inline void dbgCGContextSaveGState(CGContextRef context)
   fprintf(stderr, "\n"); }
 
 inline void dbgCGContextRestoreGState(CGContextRef context)
-{ 
+{
   CGContextRestoreGState(context);
 }
 
@@ -199,8 +197,4 @@ inline void dbgCGContextRestoreGState(CGContextRef context)
 
 
 #endif
-
-//
-// End of "$Id$".
-//
 

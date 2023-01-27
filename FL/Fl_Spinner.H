@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -38,17 +36,17 @@
 */
 class FL_EXPORT Fl_Spinner : public Fl_Group {
 
-  double	value_;			// Current value
-  double	minimum_;		// Minimum value
-  double	maximum_;		// Maximum value
-  double	step_;			// Amount to add/subtract for up/down
-  const char	*format_;		// Format string for input field
-  int		wrap_;			// wrap around at bounds (1/0)
+  double        value_;                 // Current value
+  double        minimum_;               // Minimum value
+  double        maximum_;               // Maximum value
+  double        step_;                  // Amount to add/subtract for up/down
+  const char    *format_;               // Format string for input field
+  int           wrap_;                  // wrap around at bounds (1/0)
 
 private:
 
   static void sb_cb(Fl_Widget *w, Fl_Spinner *sb); // internal callback
-  void update();				   // update input field
+  void update();                                   // update input field
 
 protected:
 
@@ -60,22 +58,24 @@ protected:
   public:
     Fl_Spinner_Input(int X, int Y, int W, int H)
     : Fl_Input(X, Y, W, H) {}
-    int handle(int event);		// implemented in src/Fl_Spinner.cxx
+    int handle(int event) FL_OVERRIDE; // implemented in src/Fl_Spinner.cxx
   };
 
-  Fl_Spinner_Input input_;		// Input field for the value
+  Fl_Spinner_Input input_;              // Input field for the value
   Fl_Repeat_Button
-		up_button_,		// Up button
-		down_button_;		// Down button
+                up_button_,             // Up button
+                down_button_;           // Down button
+
+  void draw() FL_OVERRIDE;
 
 public:
 
   // Constructor
   Fl_Spinner(int X, int Y, int W, int H, const char *L = 0);
   // Event handling
-  int handle(int event);
+  int handle(int event) FL_OVERRIDE;
   // Resize group and subwidgets
-  void resize(int X, int Y, int W, int H);
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
 
   /** Returns the format string for the value. */
   const char *format() const { return (format_); }
@@ -120,9 +120,9 @@ public:
     FLTK 1.3.x and older versions.
 
     \note Wrap mode does not apply to the input field if the input value
-	  is edited directly as a number. The input value is always
-	  clipped to the allowed range as if wrap mode was off when the
-	  input field is left (i.e. loses focus).
+          is edited directly as a number. The input value is always
+          clipped to the allowed range as if wrap mode was off when the
+          input field is left (i.e. loses focus).
 
     \see minimum(), maximum()
 
@@ -194,11 +194,16 @@ public:
     Returns the selection color of the spinner widget's input field.
   */
   Fl_Color selection_color() const { return input_.selection_color(); }
+
+  /**
+   Sets the maximum width of the input field.
+   */
+  void maximum_size(int m) { if (m > 0) input_.maximum_size(m); }
+
+  /**
+   Returns the maximum width of the input field.
+   */
+  int maximum_size() const { return input_.maximum_size(); }
 };
 
 #endif // !Fl_Spinner_H
-
-
-//
-// End of "$Id$".
-//

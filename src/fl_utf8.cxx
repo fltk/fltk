@@ -1,21 +1,19 @@
 //
-// "$Id$"
-//
 // Unicode to UTF-8 conversion functions.
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
 // Copyright 2000-2010 by O'ksi'D.
-// Copyright 2016-2017 by Bill Spitzak and others.
+// Copyright 2016-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -25,6 +23,7 @@
 #include <FL/fl_utf8.h>
 #include "utf8_internal.h"
 
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -41,12 +40,12 @@
 #define NBC 0xFFFF + 1
 
 static int Toupper(int ucs) {
-  long i;
+  int i;
   static unsigned short *table = NULL;
 
   if (!table) {
     table = (unsigned short*) malloc(
-	    sizeof(unsigned short) * (NBC));
+            sizeof(unsigned short) * (NBC));
     for (i = 0; i < NBC; i++) {
       table[i] = (unsigned short) i;
     }
@@ -120,12 +119,34 @@ int fl_utf8len1(char c)
 
 
 /**
+ Return the length in bytes of a UTF-8 string.
+ \param[in] text encoded in UTF-8
+ \param[in] len number of Unicode characters, -1 to test until the end of text
+ \return number of bytes that make up the Unicode string
+ \see fl_utf_nb_char(const unsigned char *buf, int len)
+ */
+int fl_utf8strlen(const char *text, int len)
+{
+  if (len == -1) return (int)strlen(text);
+  int i, n = 0;
+  for (i=len; i>0; i--) {
+    if (*text == 0) return n; // end of string
+    int nc = fl_utf8len1(*text);
+    n += nc;
+    text += nc;
+  }
+  return n;
+}
+
+
+/**
   Returns the number of Unicode chars in the UTF-8 string.
+ \see fl_utf8strlen(const char *text, int len)
 */
 int
 fl_utf_nb_char(
-	const unsigned char 	*buf,
-	int 			len)
+        const unsigned char     *buf,
+        int                     len)
 {
   int i = 0;
   int nbc = 0;
@@ -314,6 +335,38 @@ char *fl_getenv(const char* v) {
 }
 
 
+/** Cross-platform function to write environment variables with a UTF-8
+  encoded name or value.
+
+  This function is especially useful on the Windows platform where
+  non-ASCII environment variables are encoded as wide characters.
+
+  The given argument \p var must be encoded in UTF-8 in the form "name=value".
+  The \p 'name' part must conform to platform dependent restrictions on
+  environment variable names.
+
+  The string given in \p var is copied and optionally converted to the
+  required encoding for the platform. On platforms other than Windows
+  this function calls putenv directly.
+
+  The return value is zero on success and non-zero in case of error.
+  The value in case of error is platform specific and returned as-is.
+
+  \note The copied string is allocated on the heap and "lost" on some platforms,
+    i.e. calling fl_putenv() to change environment variables frequently may cause
+    memory leaks. There may be an option to avoid this in a future implementation.
+
+  \note This function is not thread-safe.
+
+  \param[in] var the UTF-8 encoded environment variable \p 'name=value'
+  \return  0 on success, non-zero in case of error.
+*/
+
+int fl_putenv(const char* var) {
+  return Fl::system_driver()->putenv(var);
+}
+
+
 /** Cross-platform function to open files with a UTF-8 encoded name.
 
   This function is especially useful on the Windows platform where the
@@ -323,7 +376,7 @@ char *fl_getenv(const char* v) {
   \param[in] oflags other arguments are as in the standard open() function
   \return    a file descriptor upon successful completion, or -1 in case of error.
 
-  \see fl_fopen(), fl_open_ext().
+  \see fl_fopen(), fl_open_ext(), fl_close_fd(int fd).
 */
 int fl_open(const char* fname, int oflags, ...) {
   int pmode;
@@ -332,6 +385,14 @@ int fl_open(const char* fname, int oflags, ...) {
   pmode = va_arg (ap, int);
   va_end(ap);
   return Fl::system_driver()->open(fname, oflags, pmode);
+}
+
+/** Cross-platform function to close a file descriptor.
+ \return 0 in case of success, or -1 in case of error.
+ */
+
+int fl_close_fd(int fd) {
+  return Fl::system_driver()->close_fd(fd);
 }
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
@@ -343,9 +404,9 @@ int fl_open(const char* fname, int oflags, ...) {
 
   \param[in] fname  the UTF-8 encoded filename
   \param[in] binary if non-zero, the file is to be accessed in binary
-		    (a.k.a. untranslated) mode.
+                    (a.k.a. untranslated) mode.
   \param[in] oflags,...  these arguments are as in the standard open() function.
-			 Setting \p oflags to zero opens the file for reading.
+                         Setting \p oflags to zero opens the file for reading.
 
   \return  a file descriptor upon successful completion, or -1 in case of error.
 */
@@ -410,8 +471,14 @@ int fl_chmod(const char* f, int mode) {
 /** Cross-platform function to test a files access() with a UTF-8 encoded
   name or value.
 
- This function is especially useful on the Windows platform where the
- standard access() function fails with UTF-8 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard access() function fails with UTF-8 encoded non-ASCII filenames.
+
+  Windows defines the mode values 0 for existence, 2 for writable, 4 for
+  readable, and 6 of readable and writable. On other systems, the modes
+  `X_OK`, `W_OK`, and `R_OK` are usually defined as 1, 2, and 4.
+
+  Upon successful completion, the value 0 is returned on all platforms.
 
   \param[in] f the UTF-8 encoded filename
   \param[in] mode the mode to test
@@ -432,7 +499,7 @@ int fl_access(const char* f, int mode) {
   \return    the return value of _wstat() on Windows or stat() on other platforms.
 */
 int fl_stat(const char* f, struct stat *b) {
-  return Fl::system_driver()->stat(f, b);
+  return Fl::system_driver()->flstat(f, b);
 }
 
 /** Cross-platform function to change the current working directory,
@@ -544,6 +611,9 @@ int fl_rename(const char* f, const char *n) {
 
   This function creates a \p path in the file system by recursively creating
   all directories.
+
+  \param[in] path a Unix style ('/' forward slashes) absolute or relative pathname
+  \return 1 if the path was created, 0 if creating the path failed at some point
 */
 char fl_make_path( const char *path ) {
   if (fl_access(path, 0)) {
@@ -575,11 +645,6 @@ void fl_make_path_for_file( const char *path ) {
   fl_make_path( p );
   free( p );
 } // fl_make_path_for_file()
-
-
-//============================================================
-// this part comes from file src/fl_utf.c of FLTK 1.3
-//============================================================
 
 /** Set to 1 to turn bad UTF-8 bytes into ISO-8859-1. If this is zero
   they are instead turned into the Unicode REPLACEMENT CHARACTER, of
@@ -1328,12 +1393,4 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
   return Fl::system_driver()->utf8from_mb(dst, dstlen, src, srclen);
 }
 
-//============================================================
-// end of the part from file src/fl_utf.c of FLTK 1.3
-//============================================================
-
 /** @} */
-
-//
-// End of "$Id$".
-//

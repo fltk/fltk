@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Single-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -33,9 +31,10 @@
 */
 class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
-  void show();
+  void show() FL_OVERRIDE;
+  /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  
+
    /**
     Creates a new Fl_Single_Window widget using the given
     size, and label (title) string.
@@ -47,12 +46,6 @@ public:
     position, size, and label (title) string.
   */
   Fl_Single_Window(int X, int Y, int W, int H, const char *l=0);
-  
-  int make_current();
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

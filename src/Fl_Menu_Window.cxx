@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // This is the window type used by Fl_Menu to make the pop-ups.
@@ -26,27 +24,6 @@
 #include <FL/Fl_Menu_Window.H>
 #include "Fl_Window_Driver.H"
 
-void Fl_Menu_Window::show() {
-  Fl_Window_Driver::driver(this)->show_menu();
-}
-
-void Fl_Menu_Window::flush() {
-  if (!shown()) return;
-  Fl_Window_Driver::driver(this)->flush_menu();
-}
-
-/** Erases the window, does nothing if HAVE_OVERLAY is not defined in config.h */
-void Fl_Menu_Window::erase() {
-  Fl_Window_Driver::driver(this)->erase_menu();
-}
-
-// Fix the colormap flashing on Maximum Impact Graphics by erasing the
-// menu before unmapping it:
-void Fl_Menu_Window::hide() {
-  erase();
-  Fl_Single_Window::hide();
-}
-
 /**  Destroys the window and all of its children.*/
 Fl_Menu_Window::~Fl_Menu_Window() {
   hide();
@@ -54,18 +31,13 @@ Fl_Menu_Window::~Fl_Menu_Window() {
 
 
 Fl_Menu_Window::Fl_Menu_Window(int W, int H, const char *l)
-: Fl_Single_Window(W,H,l) 
-{ 
-  image(0); 
+: Fl_Single_Window(W,H,l)
+{
+  image(0);
 }
 
 
 Fl_Menu_Window::Fl_Menu_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Single_Window(X,Y,W,H,l) { 
-  image(0); 
+: Fl_Single_Window(X,Y,W,H,l) {
+  image(0);
 }
-
-
-//
-// End of "$Id$".
-//

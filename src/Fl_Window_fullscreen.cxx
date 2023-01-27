@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Window.H>
@@ -35,7 +33,7 @@ void Fl_Window::border(int b) {
    the application may lose focus when switching out of fullscreen
    mode with some window managers. Besides, the API does not say that
    the FLTK border state should be toggled; it only says that the
-   borders should not be *visible*. 
+   borders should not be *visible*.
 */
 void Fl_Window::fullscreen() {
   no_fullscreen_x = x();
@@ -83,7 +81,3 @@ void Fl_Window::fullscreen_screens(int top, int bottom, int left, int right) {
   if (shown() && fullscreen_active())
     pWindowDriver->fullscreen_on();
 }
-
-//
-// End of "$Id$".
-//

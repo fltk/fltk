@@ -1,19 +1,17 @@
 #
-# "$Id$"
-#
 # Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 # Get configuration stuff...
@@ -31,20 +29,22 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/intro.dox \
                          $(SRC_DOCDIR)/basics.dox \
                          $(SRC_DOCDIR)/common.dox \
+                         $(SRC_DOCDIR)/coordinates.dox \
+                         $(SRC_DOCDIR)/resize.dox \
                          $(SRC_DOCDIR)/editor.dox \
                          $(SRC_DOCDIR)/drawing.dox \
                          $(SRC_DOCDIR)/events.dox \
                          $(SRC_DOCDIR)/subclassing.dox \
                          $(SRC_DOCDIR)/opengl.dox \
                          $(SRC_DOCDIR)/fluid.dox \
+                         $(SRC_DOCDIR)/fltk-options.dox \
                          $(SRC_DOCDIR)/advanced.dox \
                          $(SRC_DOCDIR)/unicode.dox \
                          $(SRC_DOCDIR)/enumerations.dox \
                          $(SRC_DOCDIR)/glut.dox \
                          $(SRC_DOCDIR)/forms.dox \
                          $(SRC_DOCDIR)/osissues.dox \
-                         $(SRC_DOCDIR)/migration_1_1.dox \
-                         $(SRC_DOCDIR)/migration_1_3.dox \
+                         $(SRC_DOCDIR)/migration_1_4.dox \
                          $(SRC_DOCDIR)/development.dox \
                          $(SRC_DOCDIR)/license.dox \
                          $(SRC_DOCDIR)/examples.dox \
@@ -52,7 +52,8 @@ HTMLFILES	= 	 \
 
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
-		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
+		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) \
+		$(SRC_DOCDIR)/fltk-options.$(CAT1EXT)
 
 all:	$(MANPAGES)
 
@@ -68,7 +69,8 @@ dist:	docs
 
 clean:
 	$(RM) Doxyfile Doxybook
-	$(RM) fltk.pdf refman.pdf src/fltk-book.tex
+	$(RM) copyright.dox generated.dox
+	$(RM) fltk.pdf refman.pdf src/fltk-title.tex src/fltk-book.tex.in src/fltk-book.tex
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -91,12 +93,14 @@ install: $(MANPAGES)
 	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/cat1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.$(CAT1EXT) "$(DESTDIR)$(mandir)/cat1"
 	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/cat3"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) "$(DESTDIR)$(mandir)/cat3"
 	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man "$(DESTDIR)$(mandir)/man1/fluid.1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man "$(DESTDIR)$(mandir)/man1/fltk-config.1"
-	-$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man3"
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.man "$(DESTDIR)$(mandir)/man1/fltk-options.1"
+  -$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man3"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man "$(DESTDIR)$(mandir)/man3/fltk.3"
 
 install-linux install-osx:
@@ -116,6 +120,8 @@ uninstall:
 	$(RM) "$(DESTDIR)$(mandir)/man1/fluid.1"
 	$(RM) "$(DESTDIR)$(mandir)/cat1/fltk-config.$(CAT1EXT)"
 	$(RM) "$(DESTDIR)$(mandir)/man1/fltk-config.1"
+	$(RM) "$(DESTDIR)$(mandir)/cat1/fltk-options.$(CAT1EXT)"
+	$(RM) "$(DESTDIR)$(mandir)/man1/fltk-options.1"
 	$(RM) "$(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)"
 	$(RM) "$(DESTDIR)$(mandir)/man3/fltk.3"
 
@@ -132,24 +138,26 @@ uninstall-linux uninstall-osx:
 # Both files are generated from the common source file Doxyfile.in.
 # Note that Doxyfile.in is shared with CMake to configure these files.
 
-Doxyfile: Doxyfile.in
+Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
-	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@FLTK_SOURCE_DIR@/,../,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
+	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
+	    -e's,@FLTK_SOURCE_DIR@,..,' \
 	    < $< > $@
 
-Doxybook: Doxyfile.in
+Doxybook: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxybook ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
-	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@FLTK_SOURCE_DIR@/,../,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
+	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
+	    -e's,@FLTK_SOURCE_DIR@,..,' \
 	    < $< > $@
 
 # The HTML files are generated using doxygen, and this needs
@@ -165,7 +173,6 @@ html:	$(HTMLFILES) Doxyfile
 	if test "x$(DOXYDOC)" = "x" ; then \
 	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
 	fi
-	test -d html && cp src/tiny.png html/
 
 # The PDF documentation (fltk.pdf) is generated using doxygen and LaTeX, and
 # this needs installed Doxygen and LaTeX programs and may take some time, so
@@ -181,14 +188,37 @@ refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	$(DOXYDOC) Doxybook
 	./make_pdf
 
+src/fltk-title.tex: src/fltk-title.tex.in
+	echo "Generating $@ ..."
+	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
+	sed -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	    < $< > $@
+
+src/fltk-book.tex.in: src/fltk-title.tex
+	echo "Generating $@ ..."
+	./make_header $< $@
+
 src/fltk-book.tex: src/fltk-book.tex.in
-	DOXY_VERSION=`$(DOXYDOC) --version`; \
+	echo "Generating $@ ..."
+	DOXY_VERSION=`$(DOXYDOC) --version|cut -f1 -d' '`; \
 	YEAR=`date +%Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
-	    -e"s/@FL_VERSION@/$(FL_VERSION)/g" \
+	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
-	< $< > $@
+	    < $< > $@
 
-#
-# End of "$Id$".
-#
+generated.dox: generated.dox.in
+	echo "Generating $@ ..."
+	CURRENT_DATE=`date "+%b %d, %Y"`; \
+	GIT_REVISION=`git rev-parse --short=10 HEAD`; \
+	DOXYGEN_VERSION_SHORT=`$(DOXYDOC) --version|cut -f1 -d' '`; \
+	sed -e"s/@CURRENT_DATE@/$$CURRENT_DATE/g" \
+	    -e"s/@GIT_REVISION@/$$GIT_REVISION/g" \
+	    -e"s/@DOXYGEN_VERSION_SHORT@/$$DOXYGEN_VERSION_SHORT/g" \
+	    < $< > $@
+
+copyright.dox: copyright.dox.in
+	echo "Generating $@ ..."
+	YEAR=`date +%Y`; \
+	sed -e"s/@YEAR@/$$YEAR/g" \
+	    < $< > $@

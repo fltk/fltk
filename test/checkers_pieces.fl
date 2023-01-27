@@ -1,0 +1,33 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+comment {//
+// Checkers images for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2022 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
+//
+} {in_source in_header
+}
+
+data pixmaps_black_checker_png {public local filename {pixmaps/black_checker.png}
+}
+
+data pixmaps_white_checker_png {selected public local filename {pixmaps/white_checker.png}
+}
+
+data pixmaps_black_checker_king_png {public local filename {pixmaps/black_checker_king.png}
+}
+
+data pixmaps_white_checker_king_png {public local filename {pixmaps/white_checker_king.png}
+}

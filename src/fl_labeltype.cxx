@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Drawing code for the (one) common label types.
@@ -43,7 +41,7 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
   fl_measure(o->value, W, H);
   if (o->image) {
     int iw = o->image->w(), ih = o->image->h();
-    if (o->align_ & FL_ALIGN_IMAGE_BACKDROP) {		// backdrop: ignore
+    if (o->align_ & FL_ALIGN_IMAGE_BACKDROP) {          // backdrop: ignore
       // ignore backdrop image for calculation
     } else if (o->align_ & FL_ALIGN_IMAGE_NEXT_TO_TEXT) { // text and image side by side
       W += iw;
@@ -60,11 +58,11 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
 static Fl_Label_Draw_F* table[MAX_LABELTYPE] = {
   fl_normal_label,
   fl_no_label,
-  fl_normal_label,	// _FL_SHADOW_LABEL,
-  fl_normal_label,	// _FL_ENGRAVED_LABEL,
-  fl_normal_label,	// _FL_EMBOSSED_LABEL,
-  fl_no_label,		// _FL_MULTI_LABEL,
-  fl_no_label,		// _FL_ICON_LABEL,
+  fl_normal_label,      // _FL_SHADOW_LABEL,
+  fl_normal_label,      // _FL_ENGRAVED_LABEL,
+  fl_normal_label,      // _FL_EMBOSSED_LABEL,
+  fl_no_label,          // _FL_MULTI_LABEL,
+  fl_no_label,          // _FL_ICON_LABEL,
   // FL_FREE_LABELTYPE+n:
   fl_no_label, fl_no_label, fl_no_label,
   fl_no_label, fl_no_label, fl_no_label,
@@ -74,7 +72,7 @@ static Fl_Label_Draw_F* table[MAX_LABELTYPE] = {
 static Fl_Label_Measure_F* measure[MAX_LABELTYPE];
 
 /** Sets the functions to call to draw and measure a specific labeltype. */
-void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m) 
+void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 {
   table[t] = f; measure[t] = m;
 }
@@ -86,7 +84,7 @@ void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
   table[type](this, X, Y, W, H, align);
 }
-/** 
+/**
     Measures the size of the label.
     \param[in,out] W, H : this is the requested size for the label text plus image;
          on return, this will contain the size needed to fit the label
@@ -137,7 +135,3 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 // include these vars here so they can be referenced without including
 // Fl_Input_ code:
 #include <FL/Fl_Input_.H>
-
-//
-// End of "$Id$".
-//

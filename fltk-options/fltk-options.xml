@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-fltk-options">
+    <comment>FLTK Options Editor</comment>
+  </mime-type>
+</mime-info>

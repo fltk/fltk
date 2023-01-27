@@ -2,12 +2,6 @@
 // exercisetablerow -- Exercise all aspects of the Fl_Table_Row widget
 //
 
-#include <stdio.h>
-#include <string.h>
-#ifdef _WIN32
-#include <stdlib.h>	// atoi
-#endif /* _WIN32 */
-
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
@@ -18,6 +12,10 @@
 #include <FL/Fl_Table_Row.H>
 #include <FL/Fl_Simple_Terminal.H>
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>     // atoi
+
 #define TERMINAL_HEIGHT 120
 
 // Globals
@@ -27,91 +25,94 @@ Fl_Simple_Terminal *G_tty = 0;
 class DemoTable : public Fl_Table_Row
 {
 private:
-    Fl_Color cell_bgcolor;				// color of cell's bg color
-    Fl_Color cell_fgcolor;				// color of cell's fg color
+    Fl_Color cell_bgcolor;                              // color of cell's bg color
+    Fl_Color cell_fgcolor;                              // color of cell's fg color
+    bool show_callbacks;                                // set to show callback msgs
 
 protected:
-    void draw_cell(TableContext context,  		// table cell drawing
-    		   int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0);
+    void draw_cell(TableContext context,                // table cell drawing
+                   int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0) FL_OVERRIDE;
     static void event_callback(Fl_Widget*, void*);
-    void event_callback2();				// callback for table events
+    void event_callback2();                             // callback for table events
 
 public:
     DemoTable(int x, int y, int w, int h, const char *l=0) : Fl_Table_Row(x,y,w,h,l)
     {
         cell_bgcolor = FL_WHITE;
         cell_fgcolor = FL_BLACK;
+        show_callbacks = false;
         callback(&event_callback, (void*)this);
-	end();
+        end();
     }
     ~DemoTable() { }
     Fl_Color GetCellFGColor() const { return(cell_fgcolor); }
     Fl_Color GetCellBGColor() const { return(cell_bgcolor); }
     void SetCellFGColor(Fl_Color val) { cell_fgcolor = val; }
     void SetCellBGColor(Fl_Color val) { cell_bgcolor = val; }
+    void ShowCallbacks(bool val)      { show_callbacks = val; }
 };
 
 // Handle drawing all cells in table
-void DemoTable::draw_cell(TableContext context, 
-			  int R, int C, int X, int Y, int W, int H)
+void DemoTable::draw_cell(TableContext context,
+                          int R, int C, int X, int Y, int W, int H)
 {
     static char s[40];
-    sprintf(s, "%d/%d", R, C);		// text for each cell
+    snprintf(s, 40, "%d/%d", R, C);          // text for each cell
 
     switch ( context )
     {
-	case CONTEXT_STARTPAGE:
-	    fl_font(FL_HELVETICA, 16);
-	    return;
+        case CONTEXT_STARTPAGE:
+            fl_font(FL_HELVETICA, 16);
+            return;
 
-	case CONTEXT_COL_HEADER:
-	    fl_push_clip(X, Y, W, H);
-	    {
-		fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
-		fl_color(FL_BLACK);
-		fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
-	    }
-	    fl_pop_clip();
-	    return;
+        case CONTEXT_COL_HEADER:
+            fl_push_clip(X, Y, W, H);
+            {
+                fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
+                fl_color(FL_BLACK);
+                fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+            }
+            fl_pop_clip();
+            return;
 
-	case CONTEXT_ROW_HEADER:
-	    fl_push_clip(X, Y, W, H);
-	    {
-		fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, row_header_color());
-		fl_color(FL_BLACK);
-		fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
-	    }
-	    fl_pop_clip();
-	    return;
+        case CONTEXT_ROW_HEADER:
+            fl_push_clip(X, Y, W, H);
+            {
+                fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, row_header_color());
+                fl_color(FL_BLACK);
+                fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+            }
+            fl_pop_clip();
+            return;
 
-	case CONTEXT_CELL:
-	{
-	    fl_push_clip(X, Y, W, H);
-	    {
-	        // BG COLOR
-		fl_color( row_selected(R) ? selection_color() : cell_bgcolor);
-		fl_rectf(X, Y, W, H);
+        case CONTEXT_CELL:
+        {
+            fl_push_clip(X, Y, W, H);
+            {
+                // BG COLOR
+                fl_color( row_selected(R) ? selection_color() : cell_bgcolor);
+                fl_rectf(X, Y, W, H);
 
-		// TEXT
-		fl_color(cell_fgcolor);
-		fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+                // TEXT
+                fl_color(cell_fgcolor);
+                fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
 
-		// BORDER
-		fl_color(color()); 
-		fl_rect(X, Y, W, H);
-	    }
-	    fl_pop_clip();
-	    return;
-	}
+                // BORDER
+                fl_color(color());
+                fl_rect(X, Y, W, H);
+            }
+            fl_pop_clip();
+            return;
+        }
 
-	case CONTEXT_TABLE:
-	    G_tty->printf("TABLE CONTEXT CALLED\n");
-	    return;
+        case CONTEXT_TABLE:
+            G_tty->printf("TABLE CONTEXT CALLED\n");
+            return;
 
-	case CONTEXT_ENDPAGE:
-	case CONTEXT_RC_RESIZE:
-	case CONTEXT_NONE:
-	    return;
+        case CONTEXT_ENDPAGE:
+        case CONTEXT_RC_RESIZE:
+        case CONTEXT_NONE:
+            return;
     }
 }
 
@@ -128,8 +129,9 @@ void DemoTable::event_callback2()
         C = callback_col();
     TableContext context = callback_context();
     const char *name = label() ? label() : "?";
-    G_tty->printf("'%s' callback: Row=%d Col=%d Context=%d Event=%d InteractiveResize? %d\n",
-                  name, R, C, (int)context, (int)Fl::event(), (int)is_interactive_resize());
+    if ( show_callbacks )
+      G_tty->printf("'%s' callback: Row=%d Col=%d Context=%d Event=%d InteractiveResize? %d\n",
+                    name, R, C, (int)context, (int)Fl::event(), (int)is_interactive_resize());
 }
 
 // GLOBAL TABLE WIDGET
@@ -179,7 +181,7 @@ void setpositionrow_cb(Fl_Widget *w, void *data)
 {
     Fl_Input *in = (Fl_Input*)data;
     int toprow = atoi(in->value());
-    if ( toprow < 0 || toprow >= G_table->rows() ) 
+    if ( toprow < 0 || toprow >= G_table->rows() )
         { fl_alert("Must be in range 0 thru #rows"); }
     else
         { G_table->row_position(toprow); }
@@ -189,7 +191,7 @@ void setpositioncol_cb(Fl_Widget *w, void *data)
 {
     Fl_Input *in = (Fl_Input*)data;
     int leftcol = atoi(in->value());
-    if ( leftcol < 0 || leftcol >= G_table->cols() ) 
+    if ( leftcol < 0 || leftcol >= G_table->cols() )
         { fl_alert("Must be in range 0 thru #cols"); }
     else
         { G_table->col_position(leftcol); }
@@ -273,7 +275,7 @@ void setcellbgcolor_cb(Fl_Widget *w, void *data)
 char *itoa(int val)
 {
     static char s[80];
-    sprintf(s, "%d", val);
+    snprintf(s, 80, "%d", val);
     return(s);
 }
 
@@ -369,6 +371,9 @@ int main(int argc, char **argv)
     G_table->col_header_height(25);
     G_table->col_resize(1);
     G_table->col_width_all(80);
+
+    // After initialization, show table's callbacks
+    G_table->ShowCallbacks(true);
 
     // Add children to window
     win.begin();
@@ -467,7 +472,7 @@ int main(int argc, char **argv)
     widgetbox.labelsize(12);
     widgetbox.textsize(12);
     widgetbox.menu(widgetbox_choices);
-    widgetbox.value(2);		// down frame
+    widgetbox.value(2);         // down frame
 
     Fl_Input tablecolor(400, 640, 120, 25, "Table Color");
     tablecolor.labelsize(12);

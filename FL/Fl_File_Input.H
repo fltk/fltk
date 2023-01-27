@@ -1,20 +1,18 @@
 //
-// "$Id$"
-//
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -36,7 +34,7 @@
   FL_WHEN_RELEASE callback won't be called if the directory clicked
   is the same as the current one.
 
-  <P align=CENTER> \image html Fl_File_Input.png </P> 
+  \image html Fl_File_Input.png
   \image latex Fl_File_Input.png "Fl_File_Input"  width=6cm
 
   \note As all Fl_Input derived objects, Fl_File_Input may call its callback
@@ -45,53 +43,60 @@
   to avoid reentrant calls if you plan to show another window or dialog box in the callback.
 */
 class FL_EXPORT Fl_File_Input : public Fl_Input {
-  
-  Fl_Color	errorcolor_;
-  char		ok_entry_;
-  uchar		down_box_;
-  short		buttons_[200];
-  short		pressed_;
 
-  void		draw_buttons();
-  int		handle_button(int event);
-  void		update_buttons();
+  char          ok_entry_;
+  uchar         down_box_;
+  short         buttons_[200];
+  short         pressed_;
+
+  void          draw_buttons();
+  int           handle_button(int event);
+  void          update_buttons();
 
 public:
 
   Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
-  virtual int handle(int event);
+  int handle(int event) FL_OVERRIDE;
 
 protected:
-  virtual void draw();
+  void draw() FL_OVERRIDE;
 
 public:
   /** Gets the box type used for the navigation bar. */
-  Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
+  Fl_Boxtype    down_box() const { return (Fl_Boxtype)down_box_; }
   /** Sets the box type to use for the navigation bar.  */
-  void		down_box(Fl_Boxtype b) { down_box_ = b; }
+  void          down_box(Fl_Boxtype b) { down_box_ = b; }
 
   /**
     Gets the current error color.
-    \todo Better docs for Fl_File_Input::errorcolor() - is it even used?
-  */
-  Fl_Color	errorcolor() const { return errorcolor_; }
-  /** Sets the current error color to \p c */
-  void		errorcolor(Fl_Color c) { errorcolor_ = c; }
 
-  int	value(const char *str);
-  int	value(const char *str, int len);
+    Returns \p FL_RED since FLTK 1.4.0 (default in 1.3.x).
+    Retained for backwards compatibility.
+
+    \deprecated Will be removed in FLTK 1.5.0 or higher.
+    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
+  */
+  Fl_Color      errorcolor() const { return FL_RED; }
+
+  /**
+    Sets the current error color to \p c.
+
+    Does nothing since FLTK 1.4.0. Retained for backwards compatibility.
+
+    \deprecated Will be removed in FLTK 1.5.0 or higher.
+    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
+    */
+  void          errorcolor(Fl_Color c) {(void)c;}
+
+  int   value(const char *str);
+  int   value(const char *str, int len);
 
   /**
     Returns the current value, which is a pointer to an internal buffer
     and is valid only until the next event is handled.
   */
-  const char	*value() { return Fl_Input_::value(); }
+  const char    *value() { return Fl_Input_::value(); }
 };
 
 #endif // !Fl_File_Input_H
-
-
-//
-// End of "$Id$".
-//

@@ -1,0 +1,199 @@
+/**
+
+ \page  migration_1_4   Migrating Code from FLTK 1.3 to 1.4
+
+This appendix describes the differences between FLTK
+1.3.x and FLTK 1.4.x functions and classes.
+
+If you need to migrate your code from prior FLTK versions to FLTK 1.4,
+then you should first consult the relevant appendices in the FLTK 1.3
+online documentation or by downloading the FLTK 1.3 documentation.
+See https://www.fltk.org/doc-1.3/index.html and/or
+https://www.fltk.org/software.php , respectively.
+
+
+\section migration_1_4_headers Changes in Header Files
+
+We strive to include only necessary header files in the public headers
+of the FLTK library to reduce dependencies and hence compile times.
+
+We try to avoid including system header files as far as possible. Known
+exceptions are \<stdio.h> where file system structures and functions are
+visible in the public API, for instance \p FILE*, and sometimes essential
+header files like \<stdlib.h> and/or \<stddef.h>. Some required platform
+headers \b may be included in platform specific header files like
+\<FL/platform.H> or \<FL/platform_types.h>.
+
+In earlier versions (1.3.x) some of the public FLTK headers included some
+not strictly required system headers by accident.
+
+The consequence for building user programs with FLTK 1.4 is that if you
+require a system or FLTK header in your user program that you don't
+\e \#include explicitly but which has been included by FLTK 1.3.x your
+FLTK 1.3 program may issue compiler errors or warnings about missing header
+files or missing declarations when compiled with FLTK 1.4.
+
+This is not a fault of FLTK 1.4 but a fault of the source code that did
+not include all required headers.
+
+Suggested solution: include all FLTK and system header files your source
+code requires explicitly and don't rely on FLTK headers to include a
+particular header file.
+
+The same applies to FLTK headers. The rule is to \#include \<FL/Fl.H> as
+the first FLTK header as described in the documentation elsewhere and to
+include FLTK headers for all classes you are using explicitly. You don't
+need to include headers of base classes - this is done by all FLTK headers
+as required. Besides that you need to include some support headers if you
+are using FLTK functions like \p fl_choice() and others. This is described
+in the function's documentation (if a required header is missing in the
+docs this is a bug).
+
+If you follow these rules your program will be compatible with both
+FLTK 1.3.x and FLTK 1.4.x as long as you use only functions and classes
+defined in FLTK 1.3.
+
+
+\section migration_1_4_preferences Fl_Preferences
+
+Starting with FLTK 1.3, preference databases are expected to be in UTF-8
+encoding. Previous databases were stored in the current character set or
+code page which renders them incompatible for text entries using
+international characters.
+
+Starting with FLTK 1.4, searching a valid path to store the preference
+files has changed slightly. Please see
+Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
+for details.
+
+On Unix/Linux platforms new FLTK preference files are stored using the
+<a href='https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html'>
+XDG Base Directory Specification</a> which means in essence that user preference
+files are stored in the user's home directory under the subdirectory \p .config,
+i.e. in \p \$HOME/.config/fltk.org/ rather than \p \$HOME/.fltk/fltk.org/.
+Existing preference files are still found and used, hence this new location
+is optional.
+
+You may want to move the preference files from their old locations to their
+new locations as documented in
+Fl_Preferences::Fl_Preferences(Root, const char*, const char*) .
+
+New Fl_Preferences types \p Fl_Preferences::USER_L, \p Fl_Preferences::SYSTEM_L
+and some more combinations with \p "_L" suffix have been defined to make
+preference files independent of the current locale. This is particularly
+important for floating point data which is stored in text form with varying
+decimal separator depending on the locale (either '.' or ','). You may want to
+change your program to use these new constants instead of those without the
+\p "_L" suffix. For more information see the documentation of Fl_Preferences.
+
+
+\section migration_1_4_add_timeout Fl::add_timeout and friends
+
+Since FLTK 1.4.0 internal timeout handling has been unified across platforms.
+This ensures equal timeout handling, improved accuracy of Fl::repeat_timeout(),
+and easier maintenance (less potential for errors).
+
+This will very likely not affect user code, however there is one subtle
+exception on macOS and Windows: in FLTK 1.3.x these platforms used system
+timers to schedule timeouts. Since FLTK 1.4.0 all platforms use the same
+internal timer management that was previously only used on Unix/Linux/X11.
+The consequence of this change is that the FLTK event loop needs to be
+executed to trigger timeout events, i.e. you must either call Fl::wait()
+repeatedly or start the event loop with Fl::run().
+
+Code that did not execute the event loop and relied on the system timers has
+never been cross platform compatible, i.e. it wouldn't work on Unix/Linux.
+An example would be code that opened a splash window, scheduled a timeout
+with Fl::add_timeout(), and waited for the timer event w/o running the
+FLTK event loop. Such code must be modified to execute Fl::run() and/or
+use Fl::wait().
+
+
+\section migration_1_4_fl_override New FL_OVERRIDE Macro
+
+FLTK 1.4 defines a new macro \p FL_OVERRIDE as "override" if a recent
+C++ standard (C++11 or higher) is used to compile your code.
+
+This macro is currently defined in FL/fl_attr.h but this may change in a
+future release. It is enough to '\#include <FL/Fl.H>' to enable this macro.
+
+Unfortunately Visual Studio does not define a meaningful value of
+\p __cplusplus to detect the C++ standard. Hence we use the Visual Studio
+version (2015 or higher) to decide whether we can define FL_OVERRIDE or not.
+
+The \p FL_OVERRIDE macro is used to decorate declarations of overridden virtual
+methods in subclasses. Example code from \p FL/Fl_Window.H:
+
+  \code
+    int handle(int) FL_OVERRIDE;
+    void resize(int X, int Y, int W, int H) FL_OVERRIDE;
+    Fl_Window * as_window() FL_OVERRIDE { return this; }
+  \endcode
+
+The \p FL_OVERRIDE macro translates to \p 'override' on newer compilers and
+to an empty string for older compilers.
+
+We recommend to add this to your overridden virtual methods in subclasses
+derived from FLTK base classes (widgets) and to compile with C++ standard
+C++11 or higher to enable the compiler to detect some errors if methods
+are not overridden correctly.
+
+You don't need to declare the overridden methods \p 'virtual' if you
+use \p FL_OVERRIDE or the keyword \p override.
+
+\b Hint: For the \p GCC and \p clang compilers you can enable the warning
+\p '-Wsuggest-override' to detect where you may (want to) add the
+\p FL_OVERRIDE macro.
+
+
+\section migration_1_4_copy_image Fl_Image::copy() 'const'
+
+Since FLTK 1.4.0 the virtual method Fl_Image::copy() has been declared
+'const' so read-only ('const') images can be copied w/o casts.
+
+This will very likely not affect user code. However, if you derived your
+own class from any of the \p Fl_*_Image variants \b and you overrode
+\p Your_Image::copy() then you \b must declare this 'const' as well, i.e.
+you must add the keyword 'const' to the declaration of \p copy() in your
+header file and in the implementation.
+
+We suggest to add the new \p FL_OVERRIDE macro or the keyword 'override'
+(see above) to your own overridden method declarations to enable the
+compiler to detect such incompatibilities.
+
+Code example in header file:
+\code
+  class Your_Image {
+    // ...
+    copy() const FL_OVERRIDE;
+    copy(int w, int h) const FL_OVERRIDE;
+  };
+\endcode
+
+Note the \p 'const' attribute \b and the \p FL_OVERRIDE macro.
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="osissues.html">
+    [Prev]
+    Operating System Issues
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="development.html">
+    Developer Information
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

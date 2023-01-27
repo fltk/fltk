@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Print panel for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -37,11 +35,7 @@
 #include <FL/Fl_Progress.H>
 enum printing_style {SystemV, BSD};
 static Fl_Double_Window* make_print_panel();
-static void print_cb(Fl_Return_Button *, void *); 
+static void print_cb(Fl_Return_Button *, void *);
 static printing_style print_load();
 static void print_update_status();
 #endif
-
-//
-// End of "$Id$".
-//

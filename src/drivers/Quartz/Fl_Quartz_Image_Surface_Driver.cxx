@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,52 +7,19 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_QUARTZ
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Image_Surface.H>
+#include "Fl_Quartz_Image_Surface_Driver.H"
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Cocoa/Fl_Cocoa_Window_Driver.H"
 #include <ApplicationServices/ApplicationServices.h>
-
-class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current_();
-public:
-  Window pre_window;
-  Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
-  ~Fl_Quartz_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
-};
-
-
-/**
- \cond DriverDev
- \addtogroup DriverDeveloper
- \{
- */
-
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
-{
-  return new Fl_Quartz_Image_Surface_Driver(w, h, high_res, off);
-}
-
-/**
- \}
- \endcond
- */
-
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
@@ -67,24 +32,25 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
     W *= s; H *= s;
   }
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  offscreen = off ? off : CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
+  offscreen = off ? off : (Fl_Offscreen)CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   driver(new Fl_Quartz_Graphics_Driver);
-  CGContextTranslateCTM(offscreen, 0.5, -0.5); // as when drawing to a window
+  CGContextTranslateCTM((CGContextRef)offscreen, 0.5*s, -0.5*s); // as when drawing to a window
   if (high_res) {
-    CGContextScaleCTM(offscreen, s, s);
+    CGContextScaleCTM((CGContextRef)offscreen, s, s);
+    driver()->scale(s);
   }
-  CGContextSetShouldAntialias(offscreen, false);
-  CGContextTranslateCTM(offscreen, 0, height);  
-  CGContextScaleCTM(offscreen, 1.0f, -1.0f);
-  CGContextSaveGState(offscreen);
-  CGContextSetRGBFillColor(offscreen, 1, 1, 1, 0);
-  CGContextFillRect(offscreen, CGRectMake(0,0,w,h));
+  CGContextSetShouldAntialias((CGContextRef)offscreen, false);
+  CGContextTranslateCTM((CGContextRef)offscreen, 0, height);
+  CGContextScaleCTM((CGContextRef)offscreen, 1.0f, -1.0f);
+  CGContextSaveGState((CGContextRef)offscreen);
+  CGContextSetRGBFillColor((CGContextRef)offscreen, 1, 1, 1, 0);
+  CGContextFillRect((CGContextRef)offscreen, CGRectMake(0,0,w,h));
 }
 
 Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) {
-    void *data = CGBitmapContextGetData(offscreen);
+    void *data = CGBitmapContextGetData((CGContextRef)offscreen);
     free(data);
     CGContextRelease((CGContextRef)offscreen);
   }
@@ -94,43 +60,47 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
 void Fl_Quartz_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   pre_window = fl_window;
-  driver()->gc(offscreen);
+  driver()->gc((CGContextRef)offscreen);
   fl_window = 0;
-  ((Fl_Quartz_Graphics_Driver*)driver())->high_resolution( CGBitmapContextGetWidth(offscreen) > width );
+  ((Fl_Quartz_Graphics_Driver*)driver())->high_resolution( CGBitmapContextGetWidth((CGContextRef)offscreen) > (size_t)width );
 }
 
 void Fl_Quartz_Image_Surface_Driver::translate(int x, int y) {
-  CGContextRestoreGState(offscreen);
-  CGContextSaveGState(offscreen);
-  CGContextTranslateCTM(offscreen, x, y);
-  CGContextSaveGState(offscreen);
+  CGContextRestoreGState((CGContextRef)offscreen);
+  CGContextSaveGState((CGContextRef)offscreen);
+  CGContextTranslateCTM((CGContextRef)offscreen, x, y);
+  CGContextSaveGState((CGContextRef)offscreen);
 }
 
 void Fl_Quartz_Image_Surface_Driver::untranslate() {
-  CGContextRestoreGState(offscreen);
+  CGContextRestoreGState((CGContextRef)offscreen);
 }
 
 Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 {
-  CGContextFlush(offscreen);
-  int W = CGBitmapContextGetWidth(offscreen);
-  int H = CGBitmapContextGetHeight(offscreen);
-  int save_w = width, save_h = height;
-  width = W; height = H;
-  unsigned char *data = fl_read_image(NULL, 0, 0, W, H, 0);
-  width = save_w; height = save_h;
+  CGContextFlush((CGContextRef)offscreen);
+  int W = (int)CGBitmapContextGetWidth((CGContextRef)offscreen);
+  int H = (int)CGBitmapContextGetHeight((CGContextRef)offscreen);
+  int bpr = (int)CGBitmapContextGetBytesPerRow((CGContextRef)offscreen);
+  int bpp = (int)CGBitmapContextGetBitsPerPixel((CGContextRef)offscreen)/8;
+  uchar *base = (uchar*)CGBitmapContextGetData((CGContextRef)offscreen);
+  int idx, idy;
+  uchar *pdst, *psrc;
+  unsigned char *data = new uchar[W * H * 3];
+  for (idy = 0, pdst = data; idy < H; idy ++) {
+    for (idx = 0, psrc = base + idy * bpr; idx < W; idx ++, psrc += bpp, pdst += 3) {
+      pdst[0] = psrc[0];  // R
+      pdst[1] = psrc[1];  // G
+      pdst[2] = psrc[2];  // B
+    }
+  }
   Fl_RGB_Image *image = new Fl_RGB_Image(data, W, H);
   image->alloc_array = 1;
   return image;
 }
 
-void Fl_Quartz_Image_Surface_Driver::end_current_()
+void Fl_Quartz_Image_Surface_Driver::end_current()
 {
   fl_window = pre_window;
+  Fl_Surface_Device::end_current();
 }
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

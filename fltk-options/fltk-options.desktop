@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=fltk-options
+Comment=FLTK Options Editor
+TryExec=fltk-options
+Exec=fltk-options %F
+Icon=fltk-options
+Terminal=false
+Type=Application
+MimeType=application/x-fltk-options;
+Categories=Development;Settings;

@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # RPM spec file for FLTK.
 #
 # Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,14 +7,14 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-%define version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
+%define version @FLTK_VERSION_MAJOR@.@FLTK_VERSION_MINOR@.@FLTK_VERSION_PATCH@
 %define release 1
 %define prefix /usr
 
@@ -27,7 +25,7 @@ Release: %{release}
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
-URL: http://www.fltk.org/
+URL: https://www.fltk.org/
 Packager: FLTK Developer <fltk@fltk.org>
 # use BuildRoot so as not to disturb the version already installed
 BuildRoot: /var/tmp/fltk-%{PACKAGE_VERSION}
@@ -44,7 +42,7 @@ Summary: FLTK Development Environment
 Group: Development/Libraries
 
 %description devel
-Install fltk-devel if you need to develop FLTK applications. 
+Install fltk-devel if you need to develop FLTK applications.
 You'll need to install the fltk package if you plan to run
 dynamically linked applications.
 
@@ -130,7 +128,3 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/icons/hicolor/*/apps/blocks.png
 %{prefix}/share/icons/hicolor/*/apps/checkers.png
 %{prefix}/share/icons/hicolor/*/apps/sudoku.png
-
-#
-# End of "$Id$".
-#

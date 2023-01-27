@@ -50,24 +50,18 @@ static const char * const comment_text[] = {
     "//",
   // FLTK/Header
     "//\n"
-    "// \"$Id$\"\n"
-    "//\n"
     "// ... for the Fast Light Tool Kit (FLTK).\n"
     "//\n"
-    "// Copyright 1998-2010 by Bill Spitzak and others.\n"
+    "// Copyright 1998-2020 by Bill Spitzak and others.\n"
     "//\n"
     "// This library is free software. Distribution and use rights are outlined in\n"
     "// the file \"COPYING\" which should have been included with this file.  If this\n"
     "// file is missing or damaged, see the license at:\n"
     "//\n"
-    "//     http://www.fltk.org/COPYING.php\n"
+    "//     https://www.fltk.org/COPYING.php\n"
     "//\n"
-    "// Please report all bugs and problems on the following page:\n"
+    "// Please see the following page on how to report bugs and issues:\n"
     "//\n"
-    "//     http://www.fltk.org/str.php\n"
-    "//\n",
-  // FLTK/Footer
-    "\n//\n"
-    "// End of \"$Id$\".\n"
-    "//",
-};
+    "//     https://www.fltk.org/bugs.php\n"
+    "//\n"
+  };

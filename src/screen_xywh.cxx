@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Screen/monitor bounding box API for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -58,7 +56,8 @@ int Fl::h()
 
 
 /**
-  Gets the number of available screens.
+  Gets the total count of available screens.
+  \note Screen numbers range from 0 to Fl::screen_count()-1 in the FLTK API.
 */
 int Fl::screen_count()
 {
@@ -133,6 +132,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
   Gets the screen number of a screen
   that contains the specified screen position \p x, \p y
   \param[in] x, y the absolute screen position
+  \return a screen number ∈ [0 , Fl::screen_count()-1]
 */
 int Fl::screen_num(int x, int y)
 {
@@ -145,6 +145,7 @@ int Fl::screen_num(int x, int y)
   which intersects the most with the rectangle
   defined by \p x, \p y, \p w, \p h.
   \param[in] x, y, w, h the rectangle to search for intersection with
+  \return a screen number ∈ [0 , Fl::screen_count()-1]
   */
 int Fl::screen_num(int x, int y, int w, int h)
 {
@@ -188,8 +189,3 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H)
   int nscreen = Fl::screen_driver()->get_mouse(mx, my);
   Fl::screen_driver()->screen_work_area(X, Y, W, H, nscreen);
 }
-
-
-//
-// End of "$Id$".
-//

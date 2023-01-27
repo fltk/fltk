@@ -21,5 +21,5 @@
 | 360 | 240 | F |  ð  ñ  ò  ó  ô  õ  ö  ÷  ø  ù  ú  û  ü  ý  þ  ÿ |
 +-----+-----+---+-------------------------------------------------+
 
-File:		iso-8859-1.txt
-Encoding:	Windows CP 1252 (aka "ansi", western, ISO-8859-1)
+File:           iso-8859-1.txt
+Encoding:       Windows CP 1252 (aka "ansi", western, ISO-8859-1)

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Wizard widget routines.
 //
 // Copyright 1997-2010 by Easy Software Products.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 
@@ -44,11 +42,11 @@
   position and size.
   <P>The inherited destructor destroys the widget and its children.
 */
-Fl_Wizard::Fl_Wizard(int        xx,	// I - Lefthand position
-                     int        yy,	// I - Upper position
-		     int        ww,	// I - Width
-		     int        hh,	// I - Height
-		     const char *l) :	// I - Label
+Fl_Wizard::Fl_Wizard(int        xx,     // I - Lefthand position
+                     int        yy,     // I - Upper position
+                     int        ww,     // I - Width
+                     int        hh,     // I - Height
+                     const char *l) :   // I - Label
     Fl_Group(xx, yy, ww, hh, l)
 {
   box(FL_THIN_UP_BOX);
@@ -60,7 +58,7 @@ Fl_Wizard::Fl_Wizard(int        xx,	// I - Lefthand position
 //
 /** Draws the wizard border and visible child. */
 void Fl_Wizard::draw() {
-  Fl_Widget	*kid;	// Visible child
+  Fl_Widget     *kid;   // Visible child
 
 
   kid = value();
@@ -87,8 +85,8 @@ void Fl_Wizard::draw() {
   is already visible, this function does nothing.
 */
 void Fl_Wizard::next() {
-  int			num_kids;
-  Fl_Widget	* const *kids;
+  int                   num_kids;
+  Fl_Widget     * const *kids;
 
 
   if ((num_kids = children()) == 0)
@@ -105,8 +103,8 @@ void Fl_Wizard::next() {
 /** Shows the previous child.*/
 void Fl_Wizard::prev()
 {
-  int			num_kids;
-  Fl_Widget	* const *kids;
+  int                   num_kids;
+  Fl_Widget     * const *kids;
 
 
   if ((num_kids = children()) == 0)
@@ -123,9 +121,9 @@ void Fl_Wizard::prev()
 /**  Gets the current visible child widget. */
 Fl_Widget* Fl_Wizard::value()
 {
-  int			num_kids;
-  Fl_Widget	* const *kids;
-  Fl_Widget		*kid;
+  int                   num_kids;
+  Fl_Widget     * const *kids;
+  Fl_Widget             *kid;
 
 
   if ((num_kids = children()) == 0)
@@ -155,8 +153,8 @@ Fl_Widget* Fl_Wizard::value()
 /**  Sets the child widget that is visible.*/
 void Fl_Wizard::value(Fl_Widget *kid)
 {
-  int			num_kids;
-  Fl_Widget	* const *kids;
+  int                   num_kids;
+  Fl_Widget     * const *kids;
 
 
   if ((num_kids = children()) == 0)
@@ -178,9 +176,3 @@ void Fl_Wizard::value(Fl_Widget *kid)
   // show the next pane may leave the cursor set to the I beam, etc...
   if (window()) window()->cursor(FL_CURSOR_DEFAULT);
 }
-
-
-
-//
-// End of "$Id$".
-//

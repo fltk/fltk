@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Do not directly include this file, instead use <FL/platform.H>.  It will
@@ -24,6 +22,16 @@
 #if !defined(FL_PLATFORM_H)
 #  error "Never use <FL/mac.H> directly; include <FL/platform.H> instead."
 #endif // !FL_PLATFORM_H
+
+#ifdef __OBJC__
+  @class NSOpenGLContext;
+#  ifndef GL_SILENCE_DEPRECATION
+#    define GL_SILENCE_DEPRECATION 1
+#  endif
+#elif defined(__cplusplus)
+  class NSOpenGLContext;
+#endif /* __OBJC__ */
+extern NSOpenGLContext *fl_mac_glcontext(GLContext rc);
 
 #ifdef __OBJC__
 @class FLWindow; // a subclass of the NSWindow Cocoa class
@@ -72,6 +80,21 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif
 #ifndef MAC_OS_X_VERSION_10_14
 #define MAC_OS_X_VERSION_10_14 101400
+#endif
+#ifndef MAC_OS_X_VERSION_10_15
+#define MAC_OS_X_VERSION_10_15 101500
+#endif
+#ifndef MAC_OS_X_VERSION_10_16
+#define MAC_OS_X_VERSION_10_16 101600
+#endif
+#ifndef MAC_OS_VERSION_11_0
+#define MAC_OS_VERSION_11_0 110000
+#endif
+#ifndef MAC_OS_VERSION_12_0
+#define MAC_OS_VERSION_12_0 120000
+#endif
+#ifndef MAC_OS_VERSION_13_0
+#define MAC_OS_VERSION_13_0 130000
 #endif
 
 
@@ -127,6 +150,13 @@ extern CGContextRef fl_gc;
  */
 void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0);
 
+/** Returns the macOS-specific graphics context for the current window */
+extern CGContextRef fl_mac_gc();
+/** Returns the macOS-specific window reference corresponding to the given Fl_Window object */
+extern FLWindow *fl_mac_xid(const Fl_Window *win);
+/** Returns the Fl_Window corresponding to the given macOS-specific window reference */
+extern Fl_Window *fl_mac_find(FLWindow *);
+class Fl_Gl_Window;
 
 /** The version number of the running Mac OS X (e.g., 100604 for 10.6.4, 101300 for 10.13).
  FLTK initializes this global variable before main() begins running. If
@@ -142,10 +172,14 @@ public:
   /** Localizable text for the "About xxx" application menu item */
   static const char *about;
   /** Localizable text for the "Print Front Window" application menu item.
-   This menu item won't be displayed if Fl_Mac_App_Menu::print 
+   This menu item and next one won't be displayed if Fl_Mac_App_Menu::print
    is set to an empty string.
    */
   static const char *print;
+  /** Localizable text for the "Print Front Window" application menu item. */
+  static const char *print_no_titlebar;
+  /** Localizable text for the "Toggle print titlebar" application menu item. */
+  static const char *toggle_print_titlebar;
   /** Localizable text for the "Services" application menu item */
   static const char *services;
   /** Localizable text for the "Hide xxx" application menu item */
@@ -157,16 +191,12 @@ public:
   /** Localizable text for the "Quit xxx" application menu item */
   static const char *quit;
   /** Adds custom menu item(s) to the application menu of the system menu bar.
-   They are positioned after the "Print Front Window" item, or at its place
-   if it was removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
+   They are positioned after the "Print Front Window / Toggle printing of titlebar" items, or at their place
+   if they were removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
    \param m zero-ending array of Fl_Menu_Item 's.
    */
   static void custom_application_menu_items(const Fl_Menu_Item *m);
 };
 
 /** @} */
-
-//
-// End of "$Id$".
-//
 

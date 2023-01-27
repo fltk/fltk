@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -23,6 +21,8 @@
 #include <stdlib.h>
 
 #include <FL/Fl_Spinner.H>
+#include <FL/Fl_Rect.H>
+#include <FL/fl_draw.H>
 
 /*
   This widget is a combination of the input widget and repeat buttons.
@@ -32,7 +32,7 @@
 */
 
 void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
-  double v;				// New value
+  double v;                             // New value
 
   if (w == &(sb->input_)) {
     // Something changed in the input field...
@@ -50,9 +50,9 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
     v = sb->value_ + sb->step_;
     if (v > sb->maximum_) {
       if (sb->wrap_)
-	v = sb->minimum_;
+        v = sb->minimum_;
       else
-	v = sb->maximum_;
+        v = sb->maximum_;
     }
     sb->value_ = v;
     sb->update();
@@ -61,16 +61,16 @@ void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
     v = sb->value_ - sb->step_;
     if (v < sb->minimum_) {
       if (sb->wrap_)
-	v = sb->maximum_;
+        v = sb->maximum_;
       else
-	v = sb->minimum_;
+        v = sb->minimum_;
     }
     sb->value_ = v;
     sb->update();
   }
 
   sb->set_changed();
-  sb->do_callback();
+  sb->do_callback(FL_REASON_CHANGED);
 }
 
 void Fl_Spinner::update() {
@@ -81,20 +81,17 @@ void Fl_Spinner::update() {
     // Fl_Valuator::format() and works well (but looks ugly)
     int c = 0;
     char temp[64], *sp = temp;
-    sprintf(temp, "%.12f", step_);
+    snprintf(temp, 64, "%.12f", step_);
     while (*sp) sp++;
     sp--;
     while (sp > temp && *sp == '0') sp--;
     while (sp > temp && (*sp >= '0' && *sp <= '9')) { sp--; c++; }
-    sprintf(s, format_, c, value_);
+    snprintf(s, sizeof(s), format_, c, value_);
   } else {
-    sprintf(s, format_, value_);
+    snprintf(s, sizeof(s), format_, value_);
   }
   input_.value(s);
 }
-
-#define FL_UP_ARROW_TX "@-42<"
-#define FL_DOWN_ARROW_TX "@-42>"
 
 /**
   Creates a new Fl_Spinner widget using the given position, size,
@@ -106,9 +103,8 @@ void Fl_Spinner::update() {
 Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
 : Fl_Group(X, Y, W, H, L),
   input_(X, Y, W - H / 2 - 2, H),
-  up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, FL_UP_ARROW_TX),
-  down_button_(X + W - H / 2 - 2, Y + H - H / 2,
-               H / 2 + 2, H / 2, FL_DOWN_ARROW_TX)
+  up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2),
+  down_button_(X + W - H / 2 - 2, Y + H - H / 2, H / 2 + 2, H / 2)
 {
   end();
 
@@ -131,6 +127,20 @@ Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
   down_button_.callback((Fl_Callback *)sb_cb, this);
 }
 
+void Fl_Spinner::draw() {
+  // let group draw itself; buttons are blank as they have no labels
+  Fl_Group::draw();
+
+  // draw up/down arrows over the button's empty labels
+  Fl_Rect up(up_button_);
+  up.inset(up_button_.box());
+  fl_draw_arrow(up, FL_ARROW_SINGLE, FL_ORIENT_UP, labelcolor());
+
+  Fl_Rect down(down_button_);
+  down.inset(down_button_.box());
+  fl_draw_arrow(down, FL_ARROW_SINGLE, FL_ORIENT_DOWN, labelcolor());
+}
+
 int Fl_Spinner::handle(int event) {
 
   switch (event) {
@@ -138,11 +148,11 @@ int Fl_Spinner::handle(int event) {
     case FL_KEYDOWN:
     case FL_SHORTCUT:
       if (Fl::event_key() == FL_Up) {
-	up_button_.do_callback();
-	return 1;
+        up_button_.do_callback(FL_REASON_DRAGGED);
+        return 1;
       } else if (Fl::event_key() == FL_Down) {
-	down_button_.do_callback();
-	return 1;
+        down_button_.do_callback(FL_REASON_DRAGGED);
+        return 1;
       }
       return 0;
 
@@ -212,8 +222,3 @@ int Fl_Spinner::Fl_Spinner_Input::handle(int event) {
   }
   return Fl_Input::handle(event);
 }
-
-
-//
-// End of "$Id$".
-//

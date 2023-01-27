@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,19 +7,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
 
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <math.h>
 
 
 /**
@@ -45,6 +41,19 @@ void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(gc_, rect);
   if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+}
+
+void Fl_Quartz_Graphics_Driver::focus_rect(int x, int y, int w, int h)
+{
+  CGContextSaveGState(gc_);
+  float s = scale();
+  CGContextScaleCTM(gc_, 1/s, 1/s);
+  CGFloat lw = (s >= 1 ? floor(s) : 1);
+  CGContextSetLineWidth(gc_, lw);
+  CGFloat dots[2] = {lw, lw};
+  CGContextSetLineDash(gc_, 0, dots, 2);
+  CGContextStrokeRect(gc_, CGRectMake(x*s, y*s, (w-1)*s, (h-1)*s));
+  CGContextRestoreGState(gc_);
 }
 
 void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -75,7 +84,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
      (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
      of size one unit by line-width.
@@ -92,7 +101,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     CGContextFillRect(gc_, CGRectMake(x-0.5, y  - quartz_line_width_/2, 1 , quartz_line_width_));
     CGContextFillRect(gc_, CGRectMake(x1  -  quartz_line_width_/2, y2-0.5, quartz_line_width_, 1));
   }
@@ -106,7 +115,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextAddLineToPoint(gc_, x3, y2);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     CGContextFillRect(gc_, CGRectMake(x-0.5, y  - quartz_line_width_/2, 1 , quartz_line_width_));
     CGContextFillRect(gc_, CGRectMake(x3-0.5, y2  - quartz_line_width_/2, 1 , quartz_line_width_));
   }
@@ -118,7 +127,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y1-0.5, quartz_line_width_, 1));
   }
@@ -131,7 +140,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x2-0.5, y1  - quartz_line_width_/2, 1 , quartz_line_width_));
   }
@@ -145,7 +154,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextAddLineToPoint(gc_, x2, y3);
   CGContextStrokePath(gc_);
-  if (high_resolution()) {
+  if (high_resolution() || scale()>=2) {
     CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x2  -  quartz_line_width_/2, y3-0.5, quartz_line_width_, 1));
   }
@@ -209,11 +218,12 @@ void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, in
 // --- clipping
 
 // intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
-static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
+static Fl_Region intersect_region_and_rect(Fl_Region current_, int x,int y,int w, int h)
 {
-  if (current == NULL) return Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h);
+  if (current_ == NULL) return Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h);
+  struct flCocoaRegion* current = (struct flCocoaRegion*)current_;
   CGRect r = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
-  Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
+  struct flCocoaRegion* outr = (struct flCocoaRegion*)malloc(sizeof(struct flCocoaRegion));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
   int j = 0;
@@ -227,7 +237,7 @@ static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w,
   }
   else {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(outr);
-    outr = Fl_Graphics_Driver::default_driver().XRectangleRegion(0,0,0,0);
+    outr = (struct flCocoaRegion*)Fl_Graphics_Driver::default_driver().XRectangleRegion(0,0,0,0);
   }
   return outr;
 }
@@ -252,7 +262,7 @@ void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 
 int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if (!r) return 0;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   CGRect u = CGRectMake(0,0,0,0);
@@ -274,7 +284,7 @@ int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int&
 
 int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if (!r) return 1;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   for (int i = 0; i < r->count; i++) {
@@ -286,7 +296,7 @@ int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 
 void Fl_Quartz_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  Fl_Region r = rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
   if ( fl_window || gc_ ) { // clipping for a true window or an offscreen buffer
     if (gc_) {
       CGContextRestoreGState(gc_);
@@ -299,10 +309,3 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
     }
   }
 }
-
-
-#endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

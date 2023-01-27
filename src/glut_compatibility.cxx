@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Emulation of Glut using fltk.
@@ -56,6 +54,9 @@ void Fl_Glut_Window::draw() {
   indraw = 1;
   if (!valid()) {reshape(pixel_w(),pixel_h()); valid(1);}
   display();
+  if (children()) {
+    Fl_Gl_Window::draw(); // Draw FLTK child widgets
+  }
   indraw = 0;
 }
 
@@ -139,10 +140,10 @@ int Fl_Glut_Window::handle(int event) {
       break;
     } else {
       if (special) {
-	int k = Fl::event_key();
-	if (k > FL_F && k <= FL_F_Last) k -= FL_F;
-	special(k,ex,ey);
-	return 1;
+        int k = Fl::event_key();
+        if (k > FL_F && k <= FL_F_Last) k -= FL_F;
+        special(k,ex,ey);
+        return 1;
       }
       break;
     }
@@ -243,14 +244,20 @@ int glutCreateWindow(const char *title) {
   W->valid(0);
   W->context_valid(0);
   W->make_current();
+  // some platforms (e.g., macOS 10.9) draw the window while show() runs
+  // but the window's draw function is not yet set when this function runs
+  W->redraw();
   return W->number;
 }
 
 int glutCreateSubWindow(int win, int x, int y, int w, int h) {
   Fl_Glut_Window *W = new Fl_Glut_Window(x,y,w,h,0);
   windows[win]->add(W);
-  if (windows[win]->shown()) W->show();
-  W->make_current();
+  if (windows[win]->shown()) {
+    W->show();
+    W->make_current();
+    W->redraw();
+  }
   return W->number;
 }
 /** Destroys the glut window, first unregister it from the glut windows list */
@@ -329,7 +336,7 @@ static Fl_Menu_Item* additem(menu *m) {
   return i;
 }
 
-void glutAddMenuEntry(char *label, int value) {
+void glutAddMenuEntry(const char *label, int value) {
   menu *m = &menus[glut_menu];
   Fl_Menu_Item* i = additem(m);
   i->text = label;
@@ -386,7 +393,7 @@ int glutGet(GLenum type) {
     else
       return 0;
 //case GLUT_WINDOW_NUM_CHILDREN:
-//case GLUT_WINDOW_CURSOR: return 
+//case GLUT_WINDOW_CURSOR: return
   case GLUT_SCREEN_WIDTH: return Fl::w();
   case GLUT_SCREEN_HEIGHT: return Fl::h();
 //case GLUT_SCREEN_WIDTH_MM:
@@ -402,9 +409,9 @@ int glutGet(GLenum type) {
   case GLUT_WINDOW_BUFFER_SIZE:
     if (glutGet(GLUT_WINDOW_RGBA))
       return glutGet(GLUT_WINDOW_RED_SIZE)+
-	glutGet(GLUT_WINDOW_GREEN_SIZE)+
-	glutGet(GLUT_WINDOW_BLUE_SIZE)+
-	glutGet(GLUT_WINDOW_ALPHA_SIZE);
+        glutGet(GLUT_WINDOW_GREEN_SIZE)+
+        glutGet(GLUT_WINDOW_BLUE_SIZE)+
+        glutGet(GLUT_WINDOW_ALPHA_SIZE);
     else
       return glutGet(GLUT_WINDOW_COLORMAP_SIZE);
   case GLUT_VERSION: return 20400;
@@ -450,8 +457,8 @@ int glutExtensionSupported( const char* extension )
   if (!extension || strchr(extension, ' ')) return 0;
 
   const char *extensions, *start;
-  const int len = strlen( extension );
-  
+  const int len = (int)strlen(extension);
+
   start = extensions = (const char *) glGetString(GL_EXTENSIONS);
 
   if (!extensions) return 0;
@@ -482,7 +489,3 @@ void glutIdleFunc(void (*f)())
 } // glutIdleFunc
 
 #endif // HAVE_GL
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * wrapper(s) around Markus Kuhn's wcwidth() implementation.
  *
  * Copyright 2006-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /* include Markus Kuhn's wcwidth() implementation.
@@ -38,7 +36,3 @@ int fl_wcwidth(unsigned int ucs) {
   /* warning: we have problems if sizeof(wchar_t) == 2 and ucs > 0xffff */
   return mk_wcwidth(ucs);
 }
-
-/*
- * End of "$Id$".
- */

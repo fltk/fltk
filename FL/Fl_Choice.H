@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Choice header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -27,6 +25,9 @@
 /**
   \class Fl_Choice
   \brief A button that is used to pop up a menu.
+
+  \image html choice.png
+  \image latex choice.png  "Fl_Choice" width=4cm
 
   This is a button that, when pushed, pops up a menu (or hierarchy of menus)
   defined by an array of Fl_Menu_Item objects.
@@ -42,7 +43,7 @@
   and then:
 
       - The item's callback is done if one has been set; the
-        Fl_Choice is passed as the Fl_Widget* argument, 
+        Fl_Choice is passed as the Fl_Widget* argument,
         along with any userdata configured for the callback.
 
       - If the item does not have a callback, the Fl_Choice widget's
@@ -62,8 +63,6 @@
   you pick the item with the mouse.  The '\&' character in item names are
   only looked at when the menu is popped up, however.
 
-  \image html choice.png
-  \image latex choice.png  "Fl_Choice" width=4cm
   \todo Refactor the doxygen comments for Fl_Choice changed() documentation.
 
   \li <tt>int Fl_Widget::changed() const</tt>
@@ -79,18 +78,39 @@
       The default down box type is \c FL_DOWN_BOX.
   \li <tt>void Fl_Choice::down_box(Fl_Boxtype b)</tt>
       Sets the current down box type to \p b.
+
+ Simple example:
+ \par
+ \code
+   #include <FL/Fl.H>
+   #include <FL/Fl_Window.H>
+   #include <FL/Fl_Choice.H>
+   int main() {
+     Fl_Window *win = new Fl_Window(300,200);
+     Fl_Choice *choice = new Fl_Choice(100,10,100,25,"Choice:");
+     choice->add("Zero");
+     choice->add("One");
+     choice->add("Two");
+     choice->add("Three");
+     choice->value(2);    // make "Two" selected by default (zero based!)
+     win->end();
+     win->show();
+     return Fl::run();
+   }
+ \endcode
+
  */
 class FL_EXPORT Fl_Choice : public Fl_Menu_ {
 protected:
-  void draw();
+  void draw() FL_OVERRIDE;
 public:
-  int handle(int);
+  int handle(int) FL_OVERRIDE;
 
   Fl_Choice(int X, int Y, int W, int H, const char *L = 0);
 
   /**
     Gets the index of the last item chosen by the user.
-    The index is zero initially.
+    The index is -1 initially.
    */
   int value() const {return Fl_Menu_::value();}
 
@@ -100,7 +120,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

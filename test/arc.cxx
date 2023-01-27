@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Arc drawing test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -25,7 +23,7 @@ double args[6] = {140, 140, 50, 0, 360, 0};
 const char* name[6] = {"X", "Y", "R", "start", "end", "rotate"};
 
 class Drawing : public Fl_Widget {
-  void draw() {
+  void draw() FL_OVERRIDE {
     fl_push_clip(x(),y(),w(),h());
     fl_color(FL_DARK3);
     fl_rectf(x(),y(),w(),h());
@@ -82,8 +80,3 @@ int main(int argc, char** argv) {
   window.show(argc,argv);
   return Fl::run();
 }
-
-
-//
-// End of "$Id$".
-//

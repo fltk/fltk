@@ -1,37 +1,64 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include "../../Fl_Screen_Driver.H"
+#include "Fl_Font.H"
 
-/*
- * By linking this module, the following static method will instantiate the
- * Windows GDI Graphics driver as the main display driver.
- */
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-  return new Fl_GDI_Graphics_Driver();
+#if USE_GDIPLUS
+
+Fl_GDIplus_Graphics_Driver::Fl_GDIplus_Graphics_Driver() : Fl_GDI_Graphics_Driver() {
+  if (!fl_current_xmap) color(FL_BLACK);
+  pen_ = new Gdiplus::Pen(gdiplus_color_, 1);
+  pen_->SetLineJoin(Gdiplus::LineJoinRound);
+  pen_->SetStartCap(Gdiplus::LineCapFlat);
+  pen_->SetEndCap(Gdiplus::LineCapFlat);
+  brush_ = new Gdiplus::SolidBrush(gdiplus_color_);
+  active = true;
 }
+
+Fl_GDIplus_Graphics_Driver::~Fl_GDIplus_Graphics_Driver() {
+  delete pen_;
+  delete brush_;
+}
+
+void Fl_GDIplus_Graphics_Driver::antialias(int state) {
+  active = state;
+}
+
+int Fl_GDIplus_Graphics_Driver::antialias() {
+  return active;
+}
+
+#endif
+
+
+#if USE_GDIPLUS
+
+ULONG_PTR Fl_GDIplus_Graphics_Driver::gdiplusToken = 0;
+
+void Fl_GDIplus_Graphics_Driver::shutdown() {
+  Gdiplus::GdiplusShutdown(Fl_GDIplus_Graphics_Driver::gdiplusToken);
+}
+#endif
 
 // Code used to switch output to an off-screen window.  See macros in
 // win32.H which save the old state in local variables.
@@ -47,6 +74,23 @@ static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
  Fl_Surface_Device::surface()->driver()->gc().
  */
 HDC fl_gc = 0;
+
+
+HDC fl_win32_gc() { return fl_gc; }
+
+
+Fl_GDI_Graphics_Driver::Fl_GDI_Graphics_Driver() {
+  mask_bitmap_ = NULL;
+  gc_ = NULL;
+  long_point = NULL;
+  depth = -1;
+  origins = NULL;
+}
+
+Fl_GDI_Graphics_Driver::~Fl_GDI_Graphics_Driver() {
+  if (long_point) free(long_point);
+  delete[] origins;
+}
 
 void Fl_GDI_Graphics_Driver::global_gc()
 {
@@ -106,7 +150,8 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
-  x *= scale(); y *= scale(); w *= scale(); h *= scale(); srcx *= scale(); srcy *= scale();
+  x = int(x * scale()); y = int(y * scale()); w = int(w * scale()); h = int(h * scale());
+  srcx = int(srcx * scale()); srcy = int(srcy * scale());
   if (srcx < 0) {w += srcx; x -= srcx; srcx = 0;}
   if (srcy < 0) {h += srcy; y -= srcy; srcy = 0;}
   int off_width, off_height;
@@ -116,7 +161,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offsc
   if (w <= 0 || h <= 0) return;
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
-  SelectObject(new_gc, bitmap);
+  SelectObject(new_gc, (HBITMAP)bitmap);
   BitBlt(gc_, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
@@ -159,7 +204,7 @@ void Fl_GDI_Graphics_Driver::translate_all(int x, int y) {
     depth = stack_height - 1;
   }
   GetWindowOrgEx((HDC)gc(), origins+depth);
-  SetWindowOrgEx((HDC)gc(), origins[depth].x - x*scale(), origins[depth].y - y*scale(), NULL);
+  SetWindowOrgEx((HDC)gc(), int(origins[depth].x - x*scale()), int(origins[depth].y - y*scale()), NULL);
   depth++;
 }
 
@@ -170,25 +215,25 @@ void Fl_GDI_Graphics_Driver::untranslate_all() {
 #endif
 
 void Fl_GDI_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
-  Fl_Region R = XRectangleRegion(X, Y, W, H);
-  CombineRgn(r, r, R, RGN_OR);
+  HRGN R = (HRGN)XRectangleRegion(X, Y, W, H);
+  CombineRgn((HRGN)r, (HRGN)r, R, RGN_OR);
   XDestroyRegion(R);
 }
 
 void Fl_GDI_Graphics_Driver::transformed_vertex0(float x, float y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
+  if (!n || x != long_point[n-1].x || y != long_point[n-1].y) {
     if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (POINT*)realloc((void*)p, p_size*sizeof(*p));
+      p_size = long_point ? 2*p_size : 16;
+      long_point = (POINT*)realloc((void*)long_point, p_size*sizeof(*long_point));
     }
-    p[n].x = x;
-    p[n].y = y;
+    long_point[n].x = LONG(x);
+    long_point[n].y = LONG(y);
     n++;
   }
 }
 
 void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+  while (n>2 && long_point[n-1].x == long_point[0].x && long_point[n-1].y == long_point[0].y) n--;
 }
 
 Fl_Region Fl_GDI_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
@@ -200,44 +245,7 @@ Fl_Region Fl_GDI_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
 }
 
 void Fl_GDI_Graphics_Driver::XDestroyRegion(Fl_Region r) {
-  DeleteObject(r);
-}
-
-
-typedef BOOL(WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
-extern flTypeImmAssociateContextEx flImmAssociateContextEx;
-typedef HIMC(WINAPI* flTypeImmGetContext)(HWND);
-extern flTypeImmGetContext flImmGetContext;
-typedef BOOL(WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
-extern flTypeImmSetCompositionWindow flImmSetCompositionWindow;
-typedef BOOL(WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
-extern flTypeImmReleaseContext flImmReleaseContext;
-
-
-void Fl_GDI_Graphics_Driver::reset_spot()
-{
-}
-
-void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
-{
-  if (!win) return;
-  Fl_Window* tw = win;
-  while (tw->parent()) tw = tw->window(); // find top level window
-
-  if (!tw->shown())
-    return;
-
-  HIMC himc = flImmGetContext(fl_xid(tw));
-
-  if (himc) {
-    COMPOSITIONFORM cfs;
-    cfs.dwStyle = CFS_POINT;
-    cfs.ptCurrentPos.x = X;
-    cfs.ptCurrentPos.y = Y - tw->labelsize();
-    MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
-    flImmSetCompositionWindow(himc, &cfs);
-    flImmReleaseContext(fl_xid(tw), himc);
-  }
+  DeleteObject((HRGN)r);
 }
 
 
@@ -252,30 +260,27 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
 
 /* Rescale region r with factor f and returns the scaled region.
  Region r is returned unchanged if r is null or f is 1.
- The input region is deleted if dr is null.
  */
 HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr) {
   if (r && f != 1) {
     DWORD size = GetRegionData(r, 0, NULL);
     RGNDATA *pdata = (RGNDATA*)malloc(size);
     GetRegionData(r, size, pdata);
-    if (!dr) DeleteObject(r);
     POINT pt = {0, 0};
     if (dr && dr->depth >= 1) { // account for translation
       GetWindowOrgEx((HDC)dr->gc(), &pt);
-      pt.x *= (f - 1);
-      pt.y *= (f - 1);
+      pt.x = int(pt.x * (f - 1));
+      pt.y = int(pt.y * (f - 1));
     }
     RECT *rects = (RECT*)&(pdata->Buffer);
-    int delta = (f > 1.75 ? 1 : 0) - int(f/2);
     for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
-      int x = rects[i].left * f + pt.x;
-      int y = rects[i].top * f + pt.y;
+      int x = Fl_Scalable_Graphics_Driver::floor(rects[i].left, f) + pt.x;
+      int y = Fl_Scalable_Graphics_Driver::floor(rects[i].top, f) + pt.y;
       RECT R2;
-      R2.left = x + delta;
-      R2.top  = y + delta;
-      R2.right = int(rects[i].right * f) + pt.x - x + R2.left;
-      R2.bottom = int(rects[i].bottom * f) + pt.y - y + R2.top;
+      R2.left = x;
+      R2.top  = y;
+      R2.right = Fl_Scalable_Graphics_Driver::floor(rects[i].right, f) + pt.x - x + R2.left;
+      R2.bottom = Fl_Scalable_Graphics_Driver::floor(rects[i].bottom, f) + pt.y - y + R2.top;
       rects[i] = R2;
     }
     r = ExtCreateRegion(NULL, size, pdata);
@@ -286,7 +291,7 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
 
 
 Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
-  HRGN r = rstack[rstackptr];
+  HRGN r = (HRGN)rstack[rstackptr];
   HRGN r2 = scale_region(r, f, this);
   return (r == r2 ? NULL : (rstack[rstackptr] = r2, r));
 }
@@ -295,6 +300,10 @@ void Fl_GDI_Graphics_Driver::set_current_() {
   restore_clip();
 }
 
-//
-// End of "$Id$".
-//
+void Fl_GDI_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
+{
+  float s = scale();
+  width  = (s == int(s) ? width * int(s) : floor(width+1));
+  height = (s == int(s) ? height * int(s) : floor(height+1));
+  cache_size_finalize(img, width, height);
+}

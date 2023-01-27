@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Boxtype test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,18 +7,19 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Scheme_Choice.H>
 #include <FL/fl_draw.H>
 
 int N = 0;
@@ -53,23 +52,23 @@ static const int inactive  = 0; // deactivate boxes and use green background
 
 class BoxGroup : public Fl_Group {
   public:
-    BoxGroup(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {};
-    void draw() {
+    BoxGroup(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {}
+    void draw() FL_OVERRIDE {
       draw_box();
       if (outline + box_bg) { // outline or box_bg or both
-	Fl_Widget*const* a = array();
-	for (int i=children(); i--;) {
-	  Fl_Widget& o = **a++;
-	  if (outline) {
-	    fl_color(FL_RED);
-	    fl_rect(o.x()-1,o.y()-1,o.w()+2,o.h()+2);
-	  }
-	  if (box_bg) {
-	    fl_color(FL_WHITE);
-	    fl_rectf(o.x(),o.y(),o.w(),o.h());
-	  }
-	  fl_color(FL_BLACK);
-	}
+        Fl_Widget*const* a = array();
+        for (int i=children(); i--;) {
+          Fl_Widget& o = **a++;
+          if (outline) {
+            fl_color(FL_RED);
+            fl_rect(o.x()-1,o.y()-1,o.w()+2,o.h()+2);
+          }
+          if (box_bg) {
+            fl_color(FL_WHITE);
+            fl_rectf(o.x(),o.y(),o.w(),o.h());
+          }
+          fl_color(FL_BLACK);
+        }
       } // outline or box_bg or both
       Fl_Group::draw_children();
     } // draw()
@@ -83,7 +82,8 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
   N++;
   x = x*W+10;
   y = y*H+10;
-  Fl_Box *b = new Fl_Box(type,x,y,square ? H-20 : W-20,H-20,name);
+  Fl_Button *b = new Fl_Button(x,y,square ? H-20 : W-20,H-20,name);
+  b->box(type);
   b->labelsize(11);
   if (inactive) {
     b->color(FL_GREEN);
@@ -105,13 +105,17 @@ int main(int argc, char ** argv) {
 #else // this code uses the nice bright blue background to show box vs. frame types
   Fl::args(argc, argv);
   Fl::get_system_colors();
-  window->color(12);// light blue
+  window->color(fl_rgb_color(51, 173, 255)); // light blue (#33adff)
 #endif
+
+  // TEST: set box shadow width and max. border radius (should be commented out)
+  // Fl::box_border_radius_max(5); // default: 15 (see documentation)
+  // Fl::box_shadow_width(6);      // default:  3 (see documentation)
 
   // set window title to show active scheme
   Fl::scheme(Fl::scheme()); // init scheme
   char title[100];
-  sprintf(title,"FLTK boxtypes: scheme = '%s'",Fl::scheme()?Fl::scheme():"none");
+  snprintf(title, 100,"FLTK boxtypes: scheme = '%s'",Fl::scheme()?Fl::scheme():"none");
   window->label(title);
 
   // create special container group for box size debugging
@@ -174,11 +178,8 @@ int main(int argc, char ** argv) {
   bt("FL_GTK_ROUND_DOWN_BOX",FL_GTK_ROUND_DOWN_BOX);
   bg->end();
   window->resizable(window);
+  Fl_Scheme_Choice scheme_choice(610, 10, 150, 30, "Scheme:");
   window->end();
   window->show();
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

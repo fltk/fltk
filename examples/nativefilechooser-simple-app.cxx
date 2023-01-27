@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-//	An example of how to use Fl_Native_File_Chooser to open & save files.
+//      An example of how to use Fl_Native_File_Chooser to open & save files.
 //
 // Copyright 2010 Greg Ercolano.
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -10,16 +8,16 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
-#include <stdio.h>	// printf
-#include <stdlib.h>	// exit,malloc
-#include <string.h>	// strerror
-#include <errno.h>	// errno
+#include <stdio.h>      // printf
+#include <stdlib.h>     // exit,malloc
+#include <string.h>     // strerror
+#include <errno.h>      // errno
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Menu_Bar.H>
@@ -62,28 +60,28 @@ class Application : public Fl_Window {
   static void open_cb(Fl_Widget *w, void *v) {
     Application *app = (Application*)v;
     app->fc->title("Open");
-    app->fc->type(Fl_Native_File_Chooser::BROWSE_FILE);		// only picks files that exist
+    app->fc->type(Fl_Native_File_Chooser::BROWSE_FILE);         // only picks files that exist
     switch ( app->fc->show() ) {
-      case -1: break;	// Error
-      case  1: break; 	// Cancel
-      default:		// Choice
+      case -1: break;   // Error
+      case  1: break;   // Cancel
+      default:          // Choice
         app->fc->preset_file(app->fc->filename());
         app->open(app->fc->filename());
-	break;
+        break;
     }
   }
   // Handle a 'Save as' request from the menu
   static void saveas_cb(Fl_Widget *w, void *v) {
     Application *app = (Application*)v;
     app->fc->title("Save As");
-    app->fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);	// need this if file doesn't exist yet
+    app->fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);    // need this if file doesn't exist yet
     switch ( app->fc->show() ) {
-      case -1: break;	// Error
-      case  1: break; 	// Cancel
-      default:		// Choice
+      case -1: break;   // Error
+      case  1: break;   // Cancel
+      default:          // Choice
         app->fc->preset_file(app->fc->filename());
         app->save(app->fc->filename());
-	break;
+        break;
     }
   }
   // Handle a 'Save' request from the menu
@@ -103,9 +101,9 @@ class Application : public Fl_Window {
     static char *filename = 0;
     if ( !filename ) {
       const char *home =
-	fl_getenv("HOME") ? fl_getenv("HOME") :            // unix
-	fl_getenv("HOME_PATH") ? fl_getenv("HOME_PATH") :  // windows
-	".";						   // other
+        fl_getenv("HOME") ? fl_getenv("HOME") :            // unix
+        fl_getenv("HOME_PATH") ? fl_getenv("HOME_PATH") :  // windows
+        ".";                                               // other
       filename = (char*)malloc(strlen(home)+20);
       sprintf(filename, "%s/untitled.txt", home);
     }
@@ -121,16 +119,16 @@ public:
     menu->add("&File/&Quit",  FL_COMMAND+'q', quit_cb);
     // Describe the demo..
     Fl_Box *box = new Fl_Box(20,25+20,w()-40,h()-40-25);
-    box->color(45); 
+    box->color(45);
     box->box(FL_FLAT_BOX);
     box->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
     box->label("This demo shows an example of implementing "
                "common 'File' menu operations like:\n"
                "    File/Open, File/Save, File/Save As\n"
-	       "..using the Fl_Native_File_Chooser widget.\n\n"
-	       "Note 'Save' and 'Save As' really *does* create files! "
-	       "This is to show how behavior differs when "
-	       "files exist vs. do not.");
+               "..using the Fl_Native_File_Chooser widget.\n\n"
+               "Note 'Save' and 'Save As' really *does* create files! "
+               "This is to show how behavior differs when "
+               "files exist vs. do not.");
     box->labelsize(12);
     // Initialize the file chooser
     fc = new Fl_Native_File_Chooser();
@@ -146,7 +144,3 @@ int main(int argc, char *argv[]) {
   app->show(argc,argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

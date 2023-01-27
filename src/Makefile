@@ -1,22 +1,20 @@
 #
-# "$Id$"
-#
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2022 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
-# Note:	see ../configure.in and/or ../makeinclude for definition of
+# Note:	see ../configure.ac and/or ../makeinclude for definition of
 #	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
 CPPFILES = \
@@ -44,6 +42,7 @@ CPPFILES = \
 	Fl_File_Chooser2.cxx \
 	Fl_File_Icon.cxx \
 	Fl_File_Input.cxx \
+	Fl_Flex.cxx \
 	Fl_Graphics_Driver.cxx \
 	Fl_Group.cxx \
 	Fl_Help_View.cxx \
@@ -52,6 +51,7 @@ CPPFILES = \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
 	Fl_Input_Choice.cxx \
+	Fl_Int_Vector.cxx \
 	Fl_Light_Button.cxx \
 	Fl_Menu.cxx \
 	Fl_Menu_.cxx \
@@ -60,6 +60,7 @@ CPPFILES = \
 	Fl_Menu_Window.cxx \
 	Fl_Menu_add.cxx \
 	Fl_Menu_global.cxx \
+	Fl_Message.cxx \
 	Fl_Multi_Label.cxx \
 	Fl_Native_File_Chooser.cxx \
 	Fl_Overlay_Window.cxx \
@@ -75,6 +76,8 @@ CPPFILES = \
 	Fl_Roller.cxx \
 	Fl_Round_Button.cxx \
 	Fl_Screen_Driver.cxx \
+	Fl_Scheme.cxx \
+	Fl_Scheme_Choice.cxx \
 	Fl_Scroll.cxx \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
@@ -82,6 +85,7 @@ CPPFILES = \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Spinner.cxx \
+	Fl_String.cxx \
 	Fl_Sys_Menu_Bar.cxx \
 	Fl_System_Driver.cxx \
 	Fl_Table.cxx \
@@ -92,6 +96,7 @@ CPPFILES = \
 	Fl_Text_Editor.cxx \
 	Fl_Tile.cxx \
 	Fl_Tiled_Image.cxx \
+	Fl_Timeout.cxx \
 	Fl_Tree.cxx \
 	Fl_Tree_Item.cxx \
 	Fl_Tree_Item_Array.cxx \
@@ -132,10 +137,12 @@ CPPFILES = \
 	fl_ask.cxx \
 	fl_boxtype.cxx \
 	fl_color.cxx \
+	fl_contrast.cxx \
 	fl_cursor.cxx \
 	fl_curve.cxx \
 	fl_diamond_box.cxx \
 	fl_draw.cxx \
+	fl_draw_arrow.cxx \
 	fl_draw_pixmap.cxx \
 	fl_encoding_latin1.cxx \
 	fl_encoding_mac_roman.cxx \
@@ -148,7 +155,7 @@ CPPFILES = \
 	fl_open_uri.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
-	fl_overlay_visual.cxx \
+	fl_oxy.cxx \
 	fl_plastic.cxx \
 	fl_read_image.cxx \
 	fl_rect.cxx \
@@ -159,10 +166,12 @@ CPPFILES = \
 	fl_shadow_box.cxx \
 	fl_shortcut.cxx \
 	fl_show_colormap.cxx \
+	fl_string_functions.cxx \
 	fl_symbols.cxx \
+	fl_utf8.cxx \
 	fl_vertex.cxx \
-	screen_xywh.cxx \
-	fl_utf8.cxx
+	print_button.cxx \
+	screen_xywh.cxx
 
 OBJCPPFILES = \
 	Fl_cocoa.mm \
@@ -195,25 +204,41 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx \
-	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
+
+GLOBJCPPFILES = drivers/Cocoa/Fl_Cocoa_Gl_Window_Driver.mm
+GLCPPFILES_X11 = drivers/X11/Fl_X11_Gl_Window_Driver.cxx
+GLCPPFILES_XFT = $(GLCPPFILES_X11)
+GLCPPFILES_CAIRO = $(GLCPPFILES_X11)
+GLCPPFILES_WIN = drivers/WinAPI/Fl_WinAPI_Gl_Window_Driver.cxx
+GLCPPFILES_WAYLAND = drivers/Wayland/Fl_Wayland_Gl_Window_Driver.cxx
+GLCPPFILES_WAYLANDX11 = $(GLCPPFILES_WAYLAND) \
+		        drivers/X11/Fl_X11_Gl_Window_Driver.cxx
+
+GLCPPFILES += $(GLCPPFILES_$(BUILD))
+GLMMFILES_OSX = $(GLOBJCPPFILES)
+GLMMFILES = $(GLMMFILES_$(BUILD))
 
 #	the following file currently doesn't contribute code to GLCPPFILES
 #	drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
 
 IMGCPPFILES = \
 	fl_images_core.cxx \
+	fl_write_png.cxx \
 	Fl_BMP_Image.cxx \
 	Fl_File_Icon2.cxx \
 	Fl_GIF_Image.cxx \
+	Fl_Anim_GIF_Image.cxx \
 	Fl_Help_Dialog.cxx \
+	Fl_ICO_Image.cxx \
 	Fl_JPEG_Image.cxx \
 	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx \
-	Fl_SVG_Image.cxx
-
+	Fl_Image_Reader.cxx \
+	Fl_SVG_Image.cxx \
+	drivers/SVG/Fl_SVG_File_Surface.cxx
 
 CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
 
@@ -237,29 +262,73 @@ QUARTZCPPFILES = \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
         drivers/Posix/Fl_Posix_System_Driver.cxx \
 	drivers/Darwin/Fl_Darwin_System_Driver.cxx \
+	drivers/Darwin/fl_macOS_platform_init.cxx \
         Fl_get_key_mac.cxx
 
 # These C++ files are used under condition: BUILD_X11
 XLIBCPPFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
 	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
-        drivers/X11/Fl_X11_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_System_Driver.cxx \
+	drivers/Unix/Fl_Unix_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
+	drivers/X11/fl_X11_platform_init.cxx \
 	Fl_x.cxx \
 	fl_dnd_x.cxx \
         Fl_Native_File_Chooser_FLTK.cxx \
-        Fl_Native_File_Chooser_GTK.cxx \
+	Fl_Native_File_Chooser_GTK.cxx\
+	Fl_Native_File_Chooser_Kdialog.cxx \
+	Fl_Native_File_Chooser_Zenity.cxx \
         Fl_get_key.cxx
+
+# These graphics driver files are used under condition: BUILD_CAIRO
+CAIROGDFILES = \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx \
+	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+
+# These graphics driver files are used under condition: BUILD_X11 AND BUILD_XFT
+XLIBGDFILES = drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
+
+# These C++ files are used under conditions: BUILD_WAYLAND or BUILD_WAYLANDX11
+WLCPPFILES = \
+	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
+        Fl_Native_File_Chooser_FLTK.cxx \
+        Fl_Native_File_Chooser_GTK.cxx \
+	Fl_Native_File_Chooser_Kdialog.cxx \
+	Fl_Native_File_Chooser_Zenity.cxx \
+	drivers/Posix/Fl_Posix_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_System_Driver.cxx \
+        drivers/Unix/Fl_Unix_Screen_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Screen_Driver.cxx \
+        drivers/Wayland/Fl_Wayland_Window_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Image_Surface_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.cxx \
+	drivers/Wayland/Fl_Wayland_Graphics_Driver.cxx \
+	drivers/Wayland/fl_wayland_platform_init.cxx \
+	drivers/Wayland/fl_wayland_clipboard_dnd.cxx
+
+# These C++ files are used under condition: BUILD_WAYLANDX11
+WLX11CPPFILES = \
+	drivers/X11/Fl_X11_Screen_Driver.cxx \
+	drivers/X11/Fl_X11_Window_Driver.cxx \
+	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
+	Fl_x.cxx \
+	fl_dnd_x.cxx \
+	Fl_get_key.cxx
+
+      
+#   fl_dnd_x.cxx  Fl_Native_File_Chooser_GTK.cxx
 
 # This C file is used under condition: BUILD_X11
 XLIBCFILES = \
@@ -277,7 +346,17 @@ XLIBFONTFILES = \
 
 # These C++ files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBXFTFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+	
+# This C file is used under condition: BUILD_WAYLAND
+WLCFILES = \
+        xutf8/keysym2Ucs.c \
+        scandir_posix.c
+
+# These C++ files are used under conditions: BUILD_WAYLAND or BUILD_WAYLANDX11
+WLXFTFILES = \
+	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
 
 # These C++ files are used under condition: BUILD_GDI
 GDICPPFILES = \
@@ -295,6 +374,7 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
+	drivers/WinAPI/fl_WinAPI_platform_init.cxx \
 	Fl_win32.cxx \
 	fl_dnd_win32.cxx \
         Fl_Native_File_Chooser_WIN32.cxx \
@@ -313,7 +393,7 @@ FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 # makeinclude has set this variable:
-# BUILD = {WIN|X11|XFT|OSX}
+# BUILD = {WIN|X11|XFT|CAIRO|OSX|WAYLAND|WAYLANDX11}
 
 MMFILES_OSX = $(OBJCPPFILES)
 MMFILES = $(MMFILES_$(BUILD))
@@ -321,8 +401,12 @@ MMFILES = $(MMFILES_$(BUILD))
 CPPFILES += $(PSCPPFILES)
 CPPFILES_OSX = $(QUARTZCPPFILES)
 
-CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBXFTFILES)
-CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBFONTFILES)
+CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBGDFILES) $(XLIBXFTFILES)
+CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBGDFILES) $(XLIBFONTFILES)
+CPPFILES_CAIRO = $(XLIBCPPFILES) $(CAIROGDFILES)
+
+CPPFILES_WAYLAND = $(WLCPPFILES) $(WLXFTFILES)
+CPPFILES_WAYLANDX11 = $(CPPFILES_WAYLAND) $(WLX11CPPFILES)
 
 CPPFILES_WIN = $(GDICPPFILES)
 
@@ -330,15 +414,27 @@ CPPFILES += $(CPPFILES_$(BUILD))
 
 
 CFILES_X11 = $(XLIBCFILES) $(XLIBXCFILES)
+CFILES_CAIRO = $(XLIBCFILES)
 CFILES_XFT = $(XLIBCFILES)
+
+CFILES_WAYLANDX11 = $(WLCFILES)
+EXTRA_OBJECTS_WAYLAND =  ../libdecor/build/fl_libdecor.o ../libdecor/build/libdecor-cairo-blur.o \
+  ../libdecor/build/fl_libdecor-plugins.o \
+  xdg-decoration-protocol.o xdg-shell-protocol.o text-input-protocol.o \
+  ../libdecor/build/cursor-settings.o ../libdecor/build/os-compatibility.o
+EXTRA_OBJECTS_WAYLANDX11 = $(EXTRA_OBJECTS_WAYLAND)
+EXTRA_CXXFLAGS_WAYLAND = -I.
+EXTRA_CXXFLAGS_WAYLANDX11 = $(EXTRA_CXXFLAGS_WAYLAND)
 
 CFILES_WIN = $(GDICFILES)
 
 CFILES += $(CFILES_$(BUILD))
+CXXFLAGS += $(EXTRA_CXXFLAGS_$(BUILD))
 
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
-GLOBJECTS = $(GLCPPFILES:.cxx=.o)
+OBJECTS += $(EXTRA_OBJECTS_$(BUILD))
+GLOBJECTS = $(GLCPPFILES:.cxx=.o) $(GLMMFILES:.mm=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 
@@ -583,8 +679,19 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
+# Note: The rebuild target can only be used if you have the original .fl
+#	files. This is normally only used by the FLTK maintainers...
+#	It *must* be executed *after* fluid has been built and
+#	the libs must be rebuilt if any {.fl|.cxx|.h} files were changed.
+
+rebuild:
+	echo 'Rebuilding fluid (.fl) and .cxx/.h files from .fl files ...'
+	../fluid/fluid$(EXEEXT) -u -c Fl_File_Chooser.fl
+	../fluid/fluid$(EXEEXT) -u -c Fl_Help_Dialog.fl
+
 clean:
 	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM)	drivers/Cairo/*.o
 	-$(RM)	drivers/Cocoa/*.o
 	-$(RM)	drivers/Darwin/*.o
 	-$(RM)	drivers/GDI/*.o
@@ -592,9 +699,12 @@ clean:
 	-$(RM)	drivers/Posix/*.o
 	-$(RM)	drivers/PostScript/*.o
 	-$(RM)	drivers/Quartz/*.o
+	-$(RM)	drivers/SVG/*.o
+	-$(RM)	drivers/Unix/*.o
 	-$(RM)	drivers/WinAPI/*.o
 	-$(RM)	drivers/X11/*.o
 	-$(RM)	drivers/Xlib/*.o
+	-$(RM)	drivers/Wayland/*.o
 	-$(RM)	$(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
@@ -609,7 +719,7 @@ depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFIL
 		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)  $(XLIBCFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
-	grep '^[a-zA-Z]' makedepend | sort -u >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )
 	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies... generated on a Linux/Unix host !
@@ -618,11 +728,11 @@ include makedepend
 # These dependencies aren't part of the makedepend file since
 # they are part of the Windows and MacOS code base...
 # Please add only non-Linux/Unix files or such that are optional
-# (like "*xft*") here:
+# (like "*non-Xft*") here:
 Fl_get_key_mac.o:	Fl_get_key_mac.cxx
 Fl_get_key_win32.o:	Fl_get_key_win32.cxx
 scandir_win32.o:   scandir_win32.c
-Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
+Fl_Native_File_Chooser_WIN32.o: Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx
 Fl_Native_File_Chooser_GTK.o:	Fl_Native_File_Chooser_GTK.cxx
@@ -655,7 +765,6 @@ Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
-fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
@@ -671,6 +780,64 @@ Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H
 Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H
 gl_draw.o:	../FL/mac.H ../FL/win32.H
 gl_start.o:	../FL/mac.H ../FL/win32.H
+# these additional dependencies are for non-Xft builds on Linux/Unix
+drivers/X11/Fl_X11_Screen_Driver.o: Xutf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../config.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Font.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_config.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Enumerations.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Bitmap.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Device.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_draw.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Export.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Graphics_Driver.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Image.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Pixmap.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Plugin.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Preferences.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_RGB_Image.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_types.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_utf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Widget.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/platform.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/platform_types.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: flstring.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: Xutf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: Xutf8.h
+gl_draw.o: Xutf8.h
+xutf8/utf8Utils.o: ../FL/Fl_Export.H
+xutf8/utf8Utils.o: Xutf8.h
+xutf8/utf8Wrap.o: ../FL/Fl_Export.H
+xutf8/utf8Wrap.o: utf8_internal.h
+xutf8/utf8Wrap.o: Xutf8.h
+xutf8/utf8Wrap.o: xutf8/headers/dingbats_.h
+xutf8/utf8Wrap.o: xutf8/headers/symbol_.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/big5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp1251.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp936ext.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/gb2312.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_10.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_11.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_13.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_14.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_15.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_2.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_3.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_4.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_6.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_7.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_8.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_9.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0201.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0212.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_r.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_u.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Wrap.o: xutf8/ucs2fontmap.c
 
 ################################################################
 
@@ -924,7 +1091,3 @@ uninstall:
 		$(RM) "$(DESTDIR)$(bindir)/$(IMGDSONAME)"; \
 		$(RM) "$(DESTDIR)$(libdir)/libfltk_images.dll.a";\
 	fi
-
-#
-# End of "$Id$".
-#

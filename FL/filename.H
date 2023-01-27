@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /** \file
@@ -96,35 +94,17 @@ FL_EXPORT void fl_filename_free_list(struct dirent ***l, int n);
  * system-defined program (added in FLTK 1.1.8)
  */
 
-FL_EXPORT int	fl_open_uri(const char *uri, char *msg = (char *)0,
-		            int msglen = 0);
+FL_EXPORT int   fl_open_uri(const char *uri, char *msg = (char *)0,
+                            int msglen = 0);
 
 FL_EXPORT void fl_decode_uri(char *uri);
 
 #  endif /* __cplusplus */
 
 /*
- * FLTK 1.0.x compatibility definitions...
+ * FLTK 1.0.x compatibility definitions (FLTK_1_0_COMPAT) dropped in 1.4.0
  */
-
-#  ifdef FLTK_1_0_COMPAT
-#    define filename_absolute	fl_filename_absolute
-#    define filename_expand	fl_filename_expand
-#    define filename_ext	fl_filename_ext
-#    define filename_isdir	fl_filename_isdir
-#    define filename_list	fl_filename_list
-#    define filename_match	fl_filename_match
-#    define filename_name	fl_filename_name
-#    define filename_relative	fl_filename_relative
-#    define filename_setext	fl_filename_setext
-#    define numericsort		fl_numericsort
-#  endif /* FLTK_1_0_COMPAT */
-
 
 #endif /* FL_FILENAME_H */
 
 /** @} */
-
-/*
- * End of "$Id$".
- */

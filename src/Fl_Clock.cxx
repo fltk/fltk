@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -212,8 +210,16 @@ static void tick(void *v) {
   time_t sec;
   int usec;
   Fl::system_driver()->gettime(&sec, &usec);
+  double delta = (1000000 - usec)/1000000.; // time till next second
+  // if current time is just before full second, show that full second
+  // and wait one more second (STR 3516)
+  if (delta < 0.1) {
+    delta += 1.0;
+    sec++;
+  }
   ((Fl_Clock*)v)->value((ulong)sec);
-  Fl::add_timeout((1000000 - usec)/1000000., tick, v); // time till next second
+
+  Fl::add_timeout(delta, tick, v);
 }
 
 int Fl_Clock::handle(int event) {
@@ -255,8 +261,3 @@ Fl_Round_Clock::Fl_Round_Clock(int X,int Y,int W,int H, const char *L)
   type(FL_ROUND_CLOCK);
   box(FL_NO_BOX);
 }
-
-
-//
-// End of "$Id$".
-//

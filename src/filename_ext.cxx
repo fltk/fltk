@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Filename extension routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "Fl_System_Driver.H"
@@ -42,10 +40,10 @@ const char *fl_filename_ext(const char *buf) {
  */
 
 /**
- Default implementation to find a filename extension.
+ Finds a filename extension.
 
  The default implementation assumes that the last `.` character separates
- the extension form the basename of a file.
+ the extension from the basename of a file.
 
  \see fl_filename_ext(const char*)
  */
@@ -63,7 +61,3 @@ const char *Fl_System_Driver::filename_ext(const char *buf) {
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

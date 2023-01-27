@@ -13,8 +13,8 @@ class Drawing_Window {open
   Function {make_window()} {open return_type void
   } {
     Fl_Window window {open
-      xywh {515 343 450 520} type Single hide resizable
-      code0 {o->size_range(220,220);}
+      xywh {255 66 450 520} type Single resizable
+      code0 {o->size_range(220,220);} visible
     } {
       Fl_Box d {
         user_data this user_data_type {void*}
@@ -48,13 +48,13 @@ d->new_display();}
 d->new_display();}
         xywh {80 50 160 15} type Horizontal box THIN_DOWN_BOX labelsize 10 align 4 step 1 slider_size 0.1
         code0 {o->bounds(0,d->MAX_BRIGHTNESS);}
-        code2 {o->value(d->DEFAULT_BRIGHTNESS);}
+        code2 {o->value(d->brightness);}
         code3 {o->slider(FL_UP_BOX);}
       }
       Fl_Box {} {
-        label {left: click = zoom out, drag = zoom in
-right click: Julia set, ctrl-P: Print} selected
-        xywh {240 50 190 30} labelsize 8 align 24 deactivate
+        label {left click: zoom out, drag: zoom in
+right click: Julia set, ctrl-M: mode, ctrl-P: Print} selected
+        xywh {240 50 190 30} labelsize 8 align 24
       }
       Fl_Slider {} {
         label {iterations:}

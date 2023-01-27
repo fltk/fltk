@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,17 +7,18 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
 // Select fonts from the FLTK font table.
 #include "flstring.h"
 #include <FL/fl_draw.H>
+#include "Fl_Screen_Driver.H"
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
@@ -53,14 +52,15 @@ void fl_draw(const char* str, int l, float x, float y) {
 
 void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
-  Fl_Graphics_Driver::default_driver().set_spot(font, size, X, Y, W, H, win);
+  Fl::screen_driver()->set_spot(font, size, X, Y, W, H, win);
 }
 
 void fl_reset_spot()
 {
-  Fl_Graphics_Driver::default_driver().reset_spot();
+  Fl::screen_driver()->reset_spot();
 }
 
-//
-// End of "$Id$".
-//
+void fl_set_status(int X, int Y, int W, int H)
+{
+  Fl::screen_driver()->set_status(X, Y, W, H);
+}

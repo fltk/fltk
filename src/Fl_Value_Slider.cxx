@@ -1,19 +1,17 @@
 //
-// "$Id$"
+// Value Slider widget for the Fast Light Tool Kit (FLTK).
 //
-// Value slider widget for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2022 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -32,21 +30,28 @@ Fl_Value_Slider::Fl_Value_Slider(int X, int Y, int W, int H, const char*l)
   textfont_ = FL_HELVETICA;
   textsize_ = 10;
   textcolor_ = FL_FOREGROUND_COLOR;
+  value_width_ = 35;
+  value_height_ = 25;
 }
 
 void Fl_Value_Slider::draw() {
   int sxx = x(), syy = y(), sww = w(), shh = h();
   int bxx = x(), byy = y(), bww = w(), bhh = h();
   if (horizontal()) {
-    bww = 35; sxx += 35; sww -= 35;
+    bww = value_width();
+    sxx += value_width();
+    sww -= value_width();
   } else {
-    syy += 25; bhh = 25; shh -= 25;
+    syy += value_height();
+    bhh = value_height();
+    shh -= value_height();
   }
-  if (damage()&FL_DAMAGE_ALL) draw_box(box(),sxx,syy,sww,shh,color());
+  if (damage() & FL_DAMAGE_ALL)
+    draw_box(box(), sxx, syy, sww, shh, color());
   Fl_Slider::draw(sxx+Fl::box_dx(box()),
-		  syy+Fl::box_dy(box()),
-		  sww-Fl::box_dw(box()),
-		  shh-Fl::box_dh(box()));
+                  syy+Fl::box_dy(box()),
+                  sww-Fl::box_dw(box()),
+                  shh-Fl::box_dh(box()));
   draw_box(box(),bxx,byy,bww,bhh,color());
   char buf[128];
   format(buf);
@@ -62,15 +67,14 @@ int Fl_Value_Slider::handle(int event) {
   }
   int sxx = x(), syy = y(), sww = w(), shh = h();
   if (horizontal()) {
-    sxx += 35; sww -= 35;
+    sxx += value_width();
+    sww -= value_width();
   } else {
-    syy += 25; shh -= 25;
+    syy += value_height();
+    shh -= value_height();
   }
-  return Fl_Slider::handle(event,
-			   sxx+Fl::box_dx(box()),
-			   syy+Fl::box_dy(box()),
-			   sww-Fl::box_dw(box()),
-			   shh-Fl::box_dh(box()));
+  return Fl_Slider::handle(event, sxx + Fl::box_dx(box()), syy + Fl::box_dy(box()),
+                           sww - Fl::box_dw(box()), shh - Fl::box_dh(box()));
 }
 
 
@@ -78,8 +82,3 @@ Fl_Hor_Value_Slider::Fl_Hor_Value_Slider(int X,int Y,int W,int H,const char *l)
 : Fl_Value_Slider(X,Y,W,H,l) {
   type(FL_HOR_SLIDER);
 }
-
-
-//
-// End of "$Id$".
-//

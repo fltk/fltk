@@ -1,7 +1,7 @@
 euc_tw: euc_tw.c
 	gcc  euc_tw.c -o  euc_tw
 
-all: convert_map create_table conv_gen  
+all: convert_map create_table conv_gen
 	./tbl_gen.sh
 	./non_spacing.sh
 	./case.sh
@@ -17,6 +17,3 @@ create_table: create_table.c
 
 clean:
 	rm -f *.o convert_map create_table conv_gen euc_tw
-
-	
-

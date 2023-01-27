@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Help_Dialog test program.
 //
 // Copyright 1999-2010 by Easy Software Products.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -26,43 +24,40 @@
 //
 
 #include <FL/Fl_Help_Dialog.H>
-#include <FL/filename.H>	/* FL_PATH_MAX */
-#include <string.h>		/* strcpy(), etc */
+#include <FL/Fl_GIF_Image.H>
+#include <FL/filename.H>        /* FL_PATH_MAX */
+#include <FL/Fl.H>              /* Fl::first_window(), etc */
+#include <string.h>             /* strcpy(), etc */
+
+static void cb_refresh(void *d) {
+  // trigger a redraw of the window to see animated GIF's
+  if (Fl::first_window())
+    Fl::first_window()->redraw();
+  Fl::repeat_timeout(1./10, cb_refresh, d);
+}
 
 //
 // 'main()' - Display the help GUI...
 //
 
-int				// O - Exit status
-main(int  argc,			// I - Number of command-line arguments
-     char *argv[])		// I - Command-line arguments
+int                             // O - Exit status
+main(int  argc,                 // I - Number of command-line arguments
+     char *argv[])              // I - Command-line arguments
 {
+  Fl_GIF_Image::animate = true; // create animated shared .GIF images
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
-  char htmlname[FL_PATH_MAX];
-  if (argc > 1) {
-    strcpy(htmlname, argv[1]);
-  } else {
-#ifdef __APPLE__
-    // bundled apps do not set the current directory
-    strcpy(htmlname, argv[0]);
-    char *slash = strrchr(htmlname, '/');
-    if (slash) strcpy(slash, "/../Resources/help_dialog.html");
-#else
-    strcpy(htmlname, "help_dialog.html");
-#endif
-  }
+  int i;
+  if (!Fl::args(argc, argv, i)) Fl::fatal(Fl::help);
+  const char *fname = (i < argc) ? argv[i] : "help_dialog.html";
 
-  help->load(htmlname);	// TODO: add error check (when load() returns int instead of void)
+  help->load(fname); // TODO: add error check (when load() returns int instead of void)
 
   help->show(1, argv);
 
+  Fl::add_timeout(1./10, cb_refresh, help); // to animate GIF's
   Fl::run();
 
   delete help;
 
   return 0;
 }
-
-//
-// End of "$Id$".
-//

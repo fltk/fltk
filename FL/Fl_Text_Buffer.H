@@ -1,19 +1,19 @@
 //
-// "$Id$"
-//
 // Header file for Fl_Text_Buffer class.
 //
-// Copyright 2001-2017 by Bill Spitzak and others.
+// Copyright 2001-2021 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
-// Please report all bugs and problems on the following page:
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -22,7 +22,7 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
-#include <stdarg.h>	/* va_start/end */
+#include <stdarg.h>     /* va_list */
 
 #undef ASSERT_UTF8
 
@@ -60,6 +60,7 @@
 
 #include "Fl_Export.H"
 
+class Fl_Text_Undo_Action;
 
 /**
   \class Fl_Text_Selection
@@ -134,7 +135,7 @@ public:
   /**
    \brief Returns true if any text is selected.
    \return  \p true if any text has been selected, or \p false
-	    if no text is selected.
+            if no text is selected.
   */
   bool selected() const { return mSelected; }
 
@@ -182,16 +183,16 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 
 
 /**
- \brief This class manages Unicode text displayed in one or more Fl_Text_Display widgets.
+ This class manages Unicode text displayed in one or more Fl_Text_Display widgets.
 
  All text in Fl_Text_Buffer must be encoded in UTF-8. All indices used in the
  function calls must be aligned to the start of a UTF-8 sequence. All indices
  and pointers returned will be aligned. All functions that return a single
  character will return that in an unsiged int in UCS-4 encoding.
 
- The Fl_Text_Buffer class is used by the Fl_Text_Display
- and Fl_Text_Editor to manage complex text data and is based upon the
- excellent NEdit text editor engine - see http://www.nedit.org/.
+ The Fl_Text_Buffer class is used by the Fl_Text_Display and Fl_Text_Editor
+ to manage complex text data and is based upon the excellent NEdit text
+ editor engine - see https://sourceforge.net/projects/nedit/.
  */
 class FL_EXPORT Fl_Text_Buffer {
 public:
@@ -478,9 +479,7 @@ public:
   void highlight(int start, int end);
 
   /**
-   Returns the highlighted text.
-
-   When you are done with the text, free it using the free() function.
+   Returns a non-zero value if text has been highlighted, 0 otherwise.
    */
   int highlight() { return mHighlight.selected(); }
 
@@ -838,10 +837,7 @@ protected:
   int mPreferredGapSize;          /**< the default allocation for the text gap is 1024
                                        bytes and should only be increased if frequent
                                        and large changes in buffer size are expected */
+  Fl_Text_Undo_Action* mUndo;     /**< local undo event */
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

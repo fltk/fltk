@@ -1,19 +1,17 @@
 /*
- * "$Id$"
- *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016-2018 by Bill Spitzak and others.
+ * Copyright 2016-2021 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /* Merged in some functionality from the fltk-2 version. IMM.
@@ -31,9 +29,8 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <stdio.h>      // FILE *fl_fopen()
+#include <sys/stat.h>   // struct stat
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,6 +55,9 @@ FL_EXPORT int fl_utf8len(char c);
 
 /* OD: returns the byte length of the first UTF-8 char sequence (returns +1 if not valid) */
 FL_EXPORT int fl_utf8len1(char c);
+
+/* OD: returns the byte length of a UTF-8 text */
+FL_EXPORT int fl_utf8strlen(const char *text, int len);
 
 /* OD: returns the number of Unicode chars in the UTF-8 string */
 FL_EXPORT int fl_utf_nb_char(const unsigned char *buf, int len);
@@ -182,6 +182,9 @@ FL_EXPORT int fl_open(const char *fname, int oflags, ...);
 
 FL_EXPORT int fl_open_ext(const char *fname, int binary, int oflags, ...);
 
+/* Portable wrapper around unix-style close() function */
+FL_EXPORT int fl_close_fd(int fd);
+
 /* OD: Portable UTF-8 aware unlink wrapper */
 FL_EXPORT int fl_unlink(const char *fname);
 
@@ -191,7 +194,10 @@ FL_EXPORT int fl_rmdir(const char *f);
 /* OD: Portable UTF-8 aware getenv wrapper */
 FL_EXPORT char* fl_getenv(const char *name);
 
-/* OD: Portable UTF-8 aware execvp wrapper */
+/* Portable UTF-8 aware putenv wrapper */
+FL_EXPORT int fl_putenv(const char *var);
+
+/* OD: Portable UTF-8 aware mkdir wrapper */
 FL_EXPORT int fl_mkdir(const char* f, int mode);
 
 /* OD: Portable UTF-8 aware rename wrapper */
@@ -215,7 +221,3 @@ FL_EXPORT char fl_make_path( const char *path );
 
 
 #endif /* _HAVE_FL_UTF8_HDR_ */
-
-/*
- * End of "$Id$".
- */

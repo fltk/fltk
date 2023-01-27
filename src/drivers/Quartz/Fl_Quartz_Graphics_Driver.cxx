@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,16 +7,17 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include "../../config_lib.h"
+#include <config.h>
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
+#include "../Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
@@ -39,21 +38,20 @@ void Fl_Quartz_Graphics_Driver::init_CoreText_or_ATSU()
   } else {
     CoreText_or_ATSU = use_CoreText;
     CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_CoreText;
-    CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_CoreText;    
+    CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_CoreText;
   }
 }
 #endif
 
-/*
- * By linking this module, the following static method will instantiate the
- * OS X Quartz Graphics driver as the main display driver.
- */
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
-{
-  return new Fl_Quartz_Graphics_Driver();
+
+void Fl_Quartz_Graphics_Driver::antialias(int state) {
 }
 
-Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
+int Fl_Quartz_Graphics_Driver::antialias() {
+  return 1;
+}
+
+Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL) {
   quartz_line_width_ = 1.f;
   quartz_line_cap_ = kCGLineCapButt;
   quartz_line_join_ = kCGLineJoinMiter;
@@ -86,22 +84,33 @@ void Fl_Quartz_Graphics_Driver::global_gc()
   fl_gc = (CGContextRef)gc();
 }
 
+
+CGContextRef fl_mac_gc() { return fl_gc; }
+
+
 void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
-  int sw = CGBitmapContextGetWidth(src);
-  int sh = CGBitmapContextGetHeight(src);
-  CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  // when output goes to a Quartz printercontext, release of the bitmap must be
-  // delayed after the end of the printed page
-  CFRetain(src);
-  CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
-  CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
-                                 src_bytes, 0L, false, kCGRenderingIntentDefault);
-  CGDataProviderRelease(src_bytes);
-  CGColorSpaceRelease(lut);
+  int sw = (int)CGBitmapContextGetWidth(src);
+  int sh = (int)CGBitmapContextGetHeight(src);
+  CGImageRef img;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400) img = CGBitmapContextCreateImage(src);  // requires 10.4
+  else
+#endif
+  {
+    CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
+    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+    // when output goes to a Quartz printercontext, release of the bitmap must be
+    // delayed after the end of the printed page
+    CFRetain(src);
+    CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
+    img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
+                        src_bytes, 0L, false, kCGRenderingIntentDefault);
+    CGDataProviderRelease(src_bytes);
+    CGColorSpaceRelease(lut);
+  }
   float s = scale();
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   // test whether osrc was created by fl_create_offscreen()
@@ -122,7 +131,8 @@ CGRect Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(int x, int y, int w, int h
   return CGRectMake(x - 0.5, y - 0.5, w, h);
 }
 
-void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r_, int X, int Y, int W, int H) {
+  struct flCocoaRegion *r = (struct flCocoaRegion*)r_;
   CGRect arg = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(X, Y, W, H);
   int j; // don't add a rectangle totally inside the Fl_Region
   for(j = 0; j < r->count; j++) {
@@ -135,20 +145,38 @@ void Fl_Quartz_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int 
 }
 
 Fl_Region Fl_Quartz_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
-  Fl_Region R = (Fl_Region)malloc(sizeof(*R));
+  struct flCocoaRegion* R = (struct flCocoaRegion*)malloc(sizeof(struct flCocoaRegion));
   R->count = 1;
   R->rects = (CGRect *)malloc(sizeof(CGRect));
   *(R->rects) = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
   return R;
 }
 
-void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r) {
-  if(r) {
+void Fl_Quartz_Graphics_Driver::XDestroyRegion(Fl_Region r_) {
+  if (r_) {
+    struct flCocoaRegion *r = (struct flCocoaRegion*)r_;
     free(r->rects);
     free(r);
   }
 }
 
-//
-// End of "$Id$".
-//
+void Fl_Quartz_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height) {
+  width *= 2 * scale();
+  height *= 2 * scale();
+}
+
+float Fl_Quartz_Graphics_Driver::override_scale() {
+  float s = scale();
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, 1.f);
+    CGContextScaleCTM(gc_, 1/s, 1/s);
+  }
+  return s;
+}
+
+void Fl_Quartz_Graphics_Driver::restore_scale(float s) {
+  if (s != 1.f && Fl_Display_Device::display_device()->is_current()) {
+    Fl::screen_driver()->scale(0, s);
+    CGContextScaleCTM(gc_, s, s);
+  }
+}

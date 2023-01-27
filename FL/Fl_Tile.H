@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tile header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Tile_H
@@ -28,14 +26,10 @@
 
 class FL_EXPORT Fl_Tile : public Fl_Group {
 public:
-  int handle(int event);
+  int handle(int event) FL_OVERRIDE;
   Fl_Tile(int X, int Y, int W, int H, const char *L=0);
-  void resize(int X, int Y, int W, int H);
+  void resize(int X, int Y, int W, int H) FL_OVERRIDE;
   void position(int oldx, int oldy, int newx, int newy);
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

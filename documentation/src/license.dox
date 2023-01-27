@@ -1,6 +1,6 @@
 /**
 
- \page	license	Software License
+ \page  license Software License
 
 \par December 11, 2001
 
@@ -8,43 +8,43 @@ The FLTK library and included programs are provided under the terms
 of the GNU Library General Public License (LGPL) with the following
 exceptions:
 
--#	Modifications to the FLTK configure script, config
-	header file, and makefiles by themselves to support
-	a specific platform do not constitute a modified or
-	derivative work.<BR>
-	<BR>
+-#      Modifications to the FLTK configure script, config
+        header file, and makefiles by themselves to support
+        a specific platform do not constitute a modified or
+        derivative work.<BR>
+        <BR>
         The authors do request that such modifications be
         contributed to the FLTK project - send all contributions
         through the "Software Trouble Report" on the following page:
-        http://www.fltk.org/str.php<BR>
-	<BR>
--#	Widgets that are subclassed from FLTK widgets do not
-	constitute a derivative work.<BR>
-	<BR>
--#	Static linking of applications and widgets to the
-	FLTK library does not constitute a derivative work
-	and does not require the author to provide source
-	code for the application or widget, use the shared
-	FLTK libraries, or link their applications or
-	widgets against a user-supplied version of FLTK.<BR>
-	<BR>
-	If you link the application or widget to a modified
-	version of FLTK, then the changes to FLTK must be
-	provided under the terms of the LGPL in sections
-	1, 2, and 4.<BR>
-	<BR>
--#	You do not have to provide a copy of the FLTK license
-	with programs that are linked to the FLTK library, nor
-	do you have to identify the FLTK license in your
-	program or documentation as required by section 6
-	of the LGPL.<BR>
-	<BR>
-	However, programs must still identify their use of FLTK.
-	The following example statement can be included in user
-	documentation to satisfy this requirement:<BR>
-	<BR>
-	<I>[program/widget] is based in part on the work of
-	the FLTK project (http://www.fltk.org).</I>
+        https://www.fltk.org/bugs.php<BR>
+        <BR>
+-#      Widgets that are subclassed from FLTK widgets do not
+        constitute a derivative work.<BR>
+        <BR>
+-#      Static linking of applications and widgets to the
+        FLTK library does not constitute a derivative work
+        and does not require the author to provide source
+        code for the application or widget, use the shared
+        FLTK libraries, or link their applications or
+        widgets against a user-supplied version of FLTK.<BR>
+        <BR>
+        If you link the application or widget to a modified
+        version of FLTK, then the changes to FLTK must be
+        provided under the terms of the LGPL in sections
+        1, 2, and 4.<BR>
+        <BR>
+-#      You do not have to provide a copy of the FLTK license
+        with programs that are linked to the FLTK library, nor
+        do you have to identify the FLTK license in your
+        program or documentation as required by section 6
+        of the LGPL.<BR>
+        <BR>
+        However, programs must still identify their use of FLTK.
+        The following example statement can be included in user
+        documentation to satisfy this requirement:<BR>
+        <BR>
+        <I>[program/widget] is based in part on the work of
+        the FLTK project (https://www.fltk.org).</I>
 
 <HR>
 
@@ -68,7 +68,7 @@ software--to make sure the software is free for all its users.
 This license, the Library General Public License, applies to some
 specially designated Free Software Foundation software, and to any
 other libraries whose authors decide to use it.  You can use it for
-your libraries, too. 
+your libraries, too.
 
 When we speak of free software, we are referring to freedom, not
 price.  Our General Public Licenses are designed to make sure that you
@@ -153,7 +153,7 @@ General Public License rather than by this special one.
 \b 0. This License Agreement applies to any software
 library which contains a notice placed by the copyright holder or other
 authorized party saying it may be distributed under the terms of this
-Library General Public License (also called &quot;this License&quot;). 
+Library General Public License (also called &quot;this License&quot;).
 Each licensee is addressed as &quot;you&quot;.
 
 A &quot;library&quot; means a collection of software functions and/or data
