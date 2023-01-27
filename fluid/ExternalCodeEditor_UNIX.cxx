@@ -76,7 +76,10 @@ ExternalCodeEditor::~ExternalCodeEditor() {
            (void*)this, (long)pid_);
   close_editor();   // close editor, delete tmp file
   set_filename(0);  // free()s filename
-  if (alert_pipe_[0] != -1) ::close(alert_pipe_[0]);
+  if (alert_pipe_[0] != -1) {
+    Fl::remove_fd(alert_pipe_[0]);
+    ::close(alert_pipe_[0]);
+  }
   if (alert_pipe_[1] != -1) ::close(alert_pipe_[1]);
 }
 
