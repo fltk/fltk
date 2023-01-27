@@ -100,7 +100,7 @@ install: $(MANPAGES)
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man "$(DESTDIR)$(mandir)/man1/fluid.1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man "$(DESTDIR)$(mandir)/man1/fltk-config.1"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.man "$(DESTDIR)$(mandir)/man1/fltk-options.1"
-  -$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man3"
+        -$(INSTALL_DIR) "$(DESTDIR)$(mandir)/man3"
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man "$(DESTDIR)$(mandir)/man3/fltk.3"
 
 install-linux install-osx:
