@@ -395,7 +395,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  as-needed highlighting, triggered by a style buffer entry of
  "unfinishedStyle".  Style buffer can trigger additional redisplay during
  a normal buffer modification if the buffer contains a primary Fl_Text_Selection
- (see extendRangeForStyleMods for more information on this protocol).
+ (see extend_range_for_styles() for more information on this protocol).
 
  Style buffers, tables and their associated memory are managed by the caller.
 
@@ -423,8 +423,6 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  \param cbArg an optional argument for the callback above, usually a pointer
    to the Text Display.
 
- \todo  "extendRangeForStyleMods" does not exist (might be a hangover
-         from the port from nedit). Find the correct function.
  \see Fl_Text_Display::style_buffer()
  */
 void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
@@ -1760,7 +1758,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   /* If the changes caused scrolling, re-paint everything and we're done. */
   if ( scrolled ) {
     textD->damage(FL_DAMAGE_EXPOSE);
-    if ( textD->mStyleBuffer )   /* See comments in extendRangeForStyleMods */
+    if ( textD->mStyleBuffer )   /* See comments in extend_range_for_styles() */
       textD->mStyleBuffer->primary_selection()->selected(0);
     return;
   }
