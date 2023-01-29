@@ -402,7 +402,9 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
         execvp(args[0], args);  // run command - doesn't return if succeeds
         if (alert_pipe_open_) {
           int err = errno;
-          ::write(alert_pipe_[1], &err, sizeof(int));
+          if (::write(alert_pipe_[1], &err, sizeof(int)) != sizeof(int)) {
+            // should not happen, but if it does, at least we tried
+          }
         }
         exit(1);
       }
@@ -555,7 +557,8 @@ int ExternalCodeEditor::editors_open() {
 void ExternalCodeEditor::alert_pipe_cb(FL_SOCKET s, void* d) {
   ExternalCodeEditor* self = (ExternalCodeEditor*)d;
   self->last_error_ = 0;
-  ::read(s, &self->last_error_, sizeof(int));
+  if (::read(s, &self->last_error_, sizeof(int)) != sizeof(int))
+    return;
   const char* cmd = self->command_line_.value();
   if (cmd && *cmd) {
     if (cmd[0] == '/') { // is this an absoluet filename?
