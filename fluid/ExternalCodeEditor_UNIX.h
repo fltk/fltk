@@ -27,6 +27,7 @@ class ExternalCodeEditor {
   Fd_String command_line_;
   int last_error_;
   int alert_pipe_[2];
+  bool alert_pipe_open_;
   static void alert_pipe_cb(FL_SOCKET, void*);
 
 protected:
@@ -35,6 +36,7 @@ protected:
   const char *tmp_filename();
   int start_editor(const char *cmd, const char *filename);
   void set_filename(const char *val);
+  void open_alert_pipe();
 
 public:
   ExternalCodeEditor();
