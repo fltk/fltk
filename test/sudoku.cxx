@@ -1005,25 +1005,6 @@ Sudoku::help_cb(Fl_Widget *, void *) {
 // Load the game from saved preferences...
 void
 Sudoku::load_game() {
-#if 0
-  for (int j = 0; j < 9; j ++) {
-    Fl_Preferences row(prefs_, Fl_Preferences::Name("Row%d", j));
-    for (int k = 0; k < 9; k ++) {
-      Fl_Preferences p(row, Fl_Preferences::Name("Col%d", k));
-      char name[255];
-      SudokuCell *cell = grid_cells_[j][k];
-      p.set("value", grid_values_[j][k]);
-      p.set("state", cell->value());
-      p.set("readonly", cell->readonly());
-      for (int m = 1; m <= 9; m ++) {
-        if (cell->mark(m))
-          p.set(Fl_Preferences::Name("m%d", m), 1);
-        else
-          p.deleteEntry(Fl_Preferences::Name("m%d", m));
-      }
-    }
-  }
-#endif
 
   // Load the current values and state of each grid...
   memset(grid_values_, 0, sizeof(grid_values_));
