@@ -1688,8 +1688,9 @@ static BOOL is_bundled() {
     NSBundle *bundle = [NSBundle mainBundle];
     if (bundle) {
       NSString *exe = [[bundle executablePath] stringByStandardizingPath];
-      NSString *bpath = [bundle bundlePath];
+      NSString *bpath = [[bundle bundlePath] stringByStandardizingPath];
       NSString *exe_dir = [exe stringByDeletingLastPathComponent];
+//NSLog(@"exe=%@ bpath=%@ exe_dir=%@",exe, bpath, exe_dir);
       if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) value = 0;
     } else value = 0;
   }
