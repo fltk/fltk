@@ -97,16 +97,16 @@ clean:
 
 install:	$(LIBJPEG)
 	echo "Installing $(LIBJPEG) in $(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(LIBJPEG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(LIBJPEG) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)"
 	echo "Installing jpeg headers in $(includedir)/FL/images..."
-	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jconfig.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jerror.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jmorecfg.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) jpeglib.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) fltk_jpeg_prefix.h $(DESTDIR)$(includedir)/FL/images
+	-$(INSTALL_DIR) "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jconfig.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jerror.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jmorecfg.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) jpeglib.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) fltk_jpeg_prefix.h "$(DESTDIR)$(includedir)/FL/images"
 
 
 #
@@ -115,13 +115,13 @@ install:	$(LIBJPEG)
 
 uninstall:
 	echo "Uninstalling libfltk_jpeg$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
+	$(RM) "$(libdir)/libfltk_jpeg$(LIBEXT)"
 	echo "Uninstalling jpeg headers in $(includedir)/FL/images..."
-	$(RM) $(includedir)/FL/images/jconfig.h
-	$(RM) $(includedir)/FL/images/jerror.h
-	$(RM) $(includedir)/FL/images/jmorecfg.h
-	$(RM) $(includedir)/FL/images/jpeglib.h
-	$(RM) $(includedir)/FL/images/fltk_jpeg_prefix.h
+	$(RM) "$(includedir)/FL/images/jconfig.h"
+	$(RM) "$(includedir)/FL/images/jerror.h"
+	$(RM) "$(includedir)/FL/images/jmorecfg.h"
+	$(RM) "$(includedir)/FL/images/jpeglib.h"
+	$(RM) "$(includedir)/FL/images/fltk_jpeg_prefix.h"
 
 
 #
