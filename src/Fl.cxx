@@ -2081,9 +2081,11 @@ int Fl::clipboard_contains(const char *type)
  Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
  file descriptor.
 
- Under UNIX/Linux/MacOS <I>any</I> file descriptor can be monitored (files,
+ Under UNIX/Linux/macOS <I>any</I> file descriptor can be monitored (files,
  devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
  Windows applications can only monitor sockets.
+ 
+ Under macOS, Fl::add_fd() opens the display if that's not been done before.
  */
 void Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)
 {
