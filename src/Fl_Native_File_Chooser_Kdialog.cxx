@@ -205,6 +205,7 @@ char *Fl_Kdialog_Native_File_Chooser_Driver::parse_filter(const char *f) {
   const char *r = strchr(f, '{');
   char *developed = NULL;
   if (r) { // with {}
+    if (r <= p) return NULL;
     char *lead = new char[r-p];
     memcpy(lead, p+1, (r-p)-1); lead[(r-p)-1] = 0;
     const char *r2 = strchr(r, '}');
