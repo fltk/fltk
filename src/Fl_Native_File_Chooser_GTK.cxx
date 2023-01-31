@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 // Copyright 2012 IMM
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -29,7 +29,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
 #include <dlfcn.h>   // for dlopen et al
-#include "drivers/Unix/Fl_Unix_System_Driver.H"
+#include "drivers/Posix/Fl_Posix_System_Driver.H"
 #include "drivers/Unix/Fl_Unix_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
