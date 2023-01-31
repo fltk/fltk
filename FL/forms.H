@@ -721,7 +721,7 @@ inline void fl_delete_menu_item(Fl_Widget* o, int i) {
 inline void fl_set_menu_item_shortcut(Fl_Widget* o, int i, const char* s) {
     ((Fl_Menu_Button*)o)->shortcut(i-1,fl_old_shortcut(s));}
 inline void fl_set_menu_item_mode(Fl_Widget* o, int i, long x) {
-    ((Fl_Menu_Button*)o)->mode(i-1,x);}
+    ((Fl_Menu_Button*)o)->mode(i-1,(int)x);}
 inline void fl_show_menu_symbol(Fl_Widget*, int ) {
 /*    ((Fl_Menu_Button*)o)->show_menu_symbol(i); */}
 // inline void fl_set_menu_popup(Fl_Widget*, int);
