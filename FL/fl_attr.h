@@ -125,7 +125,7 @@
  */
 #if defined(__clang__)
 
-#define CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
+#define FL_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
 
 // -- nothing yet --
 
@@ -139,19 +139,19 @@
  */
 #if defined(__GNUC__)
 
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define FL_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
 #ifndef __fl_attr
 #define __fl_attr(x) __attribute__ (x)
 #endif
 
-#if GCC_VERSION > 40500 // gcc 4.5.0
+#if FL_GCC_VERSION > 40500 // gcc 4.5.0
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated(msg)))
 #endif
 #endif // gcc 4.5.0
 
-#if GCC_VERSION > 30100 // gcc 3.1.0
+#if FL_GCC_VERSION > 30100 // gcc 3.1.0
 #ifndef FL_DEPRECATED
 #define FL_DEPRECATED(msg, func) func __attribute__((deprecated))
 #endif
