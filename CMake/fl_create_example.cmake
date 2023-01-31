@@ -138,8 +138,10 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
                             "${CMAKE_CURRENT_SOURCE_DIR}/mac-resources/${PLIST}")
     endif()
 
+    string(REPLACE "_" "-" FLTK_BUNDLE_ID "org.fltk.${TARGET_NAME}")
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "${TARGET_NAME}")
-    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "org.fltk.${TARGET_NAME}")
+    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER "${FLTK_BUNDLE_ID}")
+    set_target_properties (${TARGET_NAME} PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${FLTK_BUNDLE_ID}")
 
     if (ICON_NAME)
       set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
