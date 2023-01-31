@@ -170,7 +170,6 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
     }
   }
   delete[] command;
-  if (_title) { free(_title); _title = NULL; }
   if (!pipe) return -1;
   return (data.all_files == NULL ? 1 : 0);
 }

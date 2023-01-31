@@ -77,7 +77,8 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
   snprintf(command+l, lcommand-l, " %s %s ", option, preset ? preset : "");
   delete[] preset;
   if (_parsedfilt) {
-    char *p = strtok(_parsedfilt, "\n");
+    char *parsed_filter_copy = strdup(_parsedfilt); // keep _parsedfilt unchanged for re-use
+    char *p = strtok(parsed_filter_copy, "\n");
     while (p) {
       char *op = strchr(p, '(');
       l = strlen(command);
@@ -105,6 +106,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
       }
       p = strtok(NULL, "\n");
     }
+    free(parsed_filter_copy);
   }
   strcat(command, " 2> /dev/null"); // get rid of stderr output
 //puts(command);
