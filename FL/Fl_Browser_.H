@@ -243,8 +243,15 @@ public:
     the list are scrolled off the top edge of the screen.
     \see position(), hposition()
   */
-  int position() const { return position_; }
-  void position(int pos); // scroll to here
+  int vposition() const { return position_; }
+  FL_DEPRECATED("Please use vposition() instead.",
+  int position() const) { return vposition(); }
+
+  void vposition(int pos); // scroll to here
+  FL_DEPRECATED("Please use vposition(pos) instead.",
+  void position(int pos)) { return vposition(pos); }
+  void position(int x, int y) { Fl_Group::position(x, y); }
+  
   /**
     Gets the horizontal scroll position of the list as a pixel position \p pos.
     The position returned is how many pixels of the list are scrolled off the left edge

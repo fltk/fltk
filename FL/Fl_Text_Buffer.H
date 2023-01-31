@@ -164,7 +164,9 @@ public:
   int includes(int pos) const;
 
   // Returns true if selected() and the positions of this selection.
-  int position(int *startpos, int *endpos) const;
+  int selected(int *startpos, int *endpos) const;
+  FL_DEPRECATED("Please use selected(startpos, endpos) instead.",
+  int position(int *startpos, int *endpos) const) { return selected(startpos, endpos); }
 
 protected:
 
