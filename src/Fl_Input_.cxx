@@ -261,10 +261,10 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   int selstart, selend;
   if (Fl::focus()!=this && /*Fl::selection_owner()!=this &&*/ Fl::pushed()!=this)
     selstart = selend = 0;
-  else if (position() <= mark()) {
-    selstart = position(); selend = mark();
+  else if (insert_position() <= mark()) {
+    selstart = insert_position(); selend = mark();
   } else {
-    selend = position(); selstart = mark();
+    selend = insert_position(); selstart = mark();
   }
 
   setfont();
@@ -279,8 +279,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   int curx, cury;
   for (p=value(), curx=cury=lines=0; ;) {
     e = expand(p, buf);
-    if (position() >= p-value() && position() <= e-value()) {
-      curx = int(expandpos(p, value()+position(), buf, 0)+.5);
+    if (insert_position() >= p-value() && insert_position() <= e-value()) {
+      curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
       if (Fl::focus()==this && !was_up_down) up_down_pos = curx;
       cury = lines*height;
       int newscroll = xscroll_;
@@ -405,10 +405,10 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     if (Fl::focus() == this && (
                                 (Fl::screen_driver()->has_marked_text() && Fl::compose_state) ||
                                 selstart == selend) &&
-        position() >= p-value() && position() <= e-value()) {
+        insert_position() >= p-value() && insert_position() <= e-value()) {
       fl_color(cursor_color());
       // cursor position may need to be recomputed (see STR #2486)
-      curx = int(expandpos(p, value()+position(), buf, 0)+.5);
+      curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
       if (readonly()) {
         // Draw '^' caret cursor
         fl_line((int)(xpos+curx-2.5f), Y+ypos+height-1,
@@ -629,14 +629,14 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
     }
     // if the multiple click does not increase the selection, revert
     // to single-click behavior:
-    if (!drag && (mark() > position() ?
-                  (newmark >= position() && newpos <= mark()) :
-                  (newmark >= mark() && newpos <= position()))) {
+    if (!drag && (mark() > insert_position() ?
+                  (newmark >= insert_position() && newpos <= mark()) :
+                  (newmark >= mark() && newpos <= insert_position()))) {
       Fl::event_clicks(0);
       newmark = newpos = (int) (l-value());
     }
   }
-  position(newpos, newmark);
+  insert_position(newpos, newmark);
 }
 
 /**
@@ -656,7 +656,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
   \return 0 if no positions changed
   \see position(int), position(), mark(int)
 */
-int Fl_Input_::position(int p, int m) {
+int Fl_Input_::insert_position(int p, int m) {
   int is_same = 0;
   was_up_down = 0;
   if (p<0) p = 0;
@@ -730,7 +730,7 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
     if (f <= up_down_pos) l = t; else r = t-1;
   }
   int j = (int) (l-value());
-  j = position(j, keepmark ? mark_ : j);
+  j = insert_position(j, keepmark ? mark_ : j);
   was_up_down = 1;
   return j;
 }
@@ -749,10 +749,10 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
   \see Fl::copy(const char *, int, int)
 */
 int Fl_Input_::copy(int clipboard) {
-  int b = position();
+  int b = insert_position();
   int e = mark();
   if (b != e) {
-    if (b > e) {b = mark(); e = position();}
+    if (b > e) {b = mark(); e = insert_position();}
     if (input_type() == FL_SECRET_INPUT) e = b;
     Fl::copy(value()+b, e-b, clipboard);
     return 1;
@@ -780,7 +780,7 @@ int Fl_Input_::append(const char* t, int l, char keep_selection)
   int om = mark_, op = position_;
   int ret = replace(end, end, t, l);
   if (keep_selection) {
-    position(op, om);
+    insert_position(op, om);
   }
   return ret;
 }
@@ -1125,7 +1125,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
         return 1;
       } else return replace(0, size(), t, (int) (e-t));
     }
-    return replace(position(), mark(), t, (int) (e-t));}
+    return replace(insert_position(), mark(), t, (int) (e-t));}
 
   case FL_SHORTCUT:
     if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
@@ -1259,7 +1259,7 @@ int Fl_Input_::static_value(const char* str, int len) {
     xscroll_ = yscroll_ = 0;
     minimal_update(0);
   }
-  position(readonly() ? 0 : size());
+  insert_position(readonly() ? 0 : size());
   return 1;
 }
 

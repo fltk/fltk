@@ -281,7 +281,7 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
 {
   switch (key) {
     case FL_Delete: {
-      int selected = (input->position() != input->mark()) ? 1 : 0;
+      int selected = (input->insert_position() != input->mark()) ? 1 : 0;
       if (mods==0 && shift && selected)
         return input->kf_copy_cut();            // Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
       if (mods==0 && shift && !selected)
