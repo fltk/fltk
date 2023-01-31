@@ -682,7 +682,7 @@ inline void fl_set_input_color(Fl_Widget* o, Fl_Color a, Fl_Color b) {
 }
 // inline void fl_set_input_scroll(Fl_Widget*, int);
 inline void fl_set_input_cursorpos(Fl_Widget* o, int x, int /*y*/) {
-  ((Fl_Input*)o)->position(x);}
+  ((Fl_Input*)o)->insert_position(x);}
 // inline void fl_set_input_selected(Fl_Widget*, int);
 // inline void fl_set_input_selected_range(Fl_Widget*, int, int);
 // inline void fl_set_input_maxchars(Fl_Widget*, int);
@@ -695,7 +695,7 @@ inline void fl_set_input_cursorpos(Fl_Widget* o, int x, int /*y*/) {
 // inline int fl_get_input_topline(Fl_Widget*);
 // inline int fl_get_input_screenlines(Fl_Widget*);
 inline int fl_get_input_cursorpos(Fl_Widget* o, int*x, int*y) {
-  *x = ((Fl_Input*)o)->position(); *y = 0; return *x;}
+  *x = ((Fl_Input*)o)->insert_position(); *y = 0; return *x;}
 // inline int fl_get_input_numberoflines(Fl_Widget*);
 // inline void fl_get_input_format(Fl_Widget*, int*, int*);
 inline const char* fl_get_input(Fl_Widget* o) {return ((Fl_Input*)o)->value();}

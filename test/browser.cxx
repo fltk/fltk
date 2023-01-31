@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
     browser->add("@bBold text");
     browser->add("@iItalic text");
   }
-  browser->position(0);
+  browser->vposition(0);
 
   field = new Fl_Int_Input(55, 350, window.w()-55, 25, "Line #:");
   field->callback(show_cb);
