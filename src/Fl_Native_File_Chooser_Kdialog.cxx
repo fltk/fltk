@@ -208,7 +208,7 @@ char *Fl_Kdialog_Native_File_Chooser_Driver::parse_filter(const char *f) {
     char *lead = new char[r-p];
     memcpy(lead, p+1, (r-p)-1); lead[(r-p)-1] = 0;
     const char *r2 = strchr(r, '}');
-    if (!r2) return NULL;
+    if (!r2 || r2 == r + 1) return NULL;
     char *ends = new char[r2-r];
     memcpy(ends, r+1, (r2-r)-1); ends[(r2-r)-1] = 0;
     char *ptr;
@@ -249,11 +249,12 @@ void Fl_Kdialog_Native_File_Chooser_Driver::filter(const char *f) {
   char *part = strtok_r(f2, "\n", &ptr);
   while (part) {
     char *p = parse_filter(part);
-    if (!p) break;
-    _parsedfilt = strapp(_parsedfilt, p);
-    _parsedfilt = strapp(_parsedfilt, "\n");
-    delete[] p;
-    _nfilters++;
+    if (p) {
+      _parsedfilt = strapp(_parsedfilt, p);
+      _parsedfilt = strapp(_parsedfilt, "\n");
+      delete[] p;
+      _nfilters++;
+    }
     part = strtok_r(NULL, "\n", &ptr);
   }
   free(f2);
