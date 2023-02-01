@@ -527,7 +527,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
   if (win) {
     Fl::handle(FL_FOCUS, win);
-    fl_find(fl_xid(win));
+    fl_wl_find(fl_wl_xid(win));
   }
 }
 
