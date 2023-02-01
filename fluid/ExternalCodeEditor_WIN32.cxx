@@ -339,7 +339,7 @@ int ExternalCodeEditor::remove_tmpfile() {
 const char* ExternalCodeEditor::tmpdir_name() {
   wchar_t tempdirW[FL_PATH_MAX+1];
   char tempdir[FL_PATH_MAX+1];
-  if (GetTempPathW(FL_PATH_MAX, tempdirW) == 0) { // FIXME: word
+  if (GetTempPathW(FL_PATH_MAX, tempdirW) == 0) {
     strcpy(tempdir, "c:\\windows\\temp");      // fallback
   } else {
     strcpy(tempdir, wchar_to_utf8(tempdirW, abuf));
