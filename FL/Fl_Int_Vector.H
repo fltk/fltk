@@ -2,7 +2,7 @@
 // An STL-ish vector without templates for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002 by Greg Ercolano.
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 #ifndef Fl_Int_Vector_H
 #define Fl_Int_Vector_H
 
-#include <FL/Fl.H>
+#include <FL/Fl_Export.H>
 
 /** \file FL/Fl_Int_Vector.H
   An STL-ish vector implemented without templates.
