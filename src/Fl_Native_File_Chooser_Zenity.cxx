@@ -48,7 +48,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
       break;
 
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
-      option = "--file-selection --multiple";
+      option = "--file-selection --multiple --separator='\n'";
       break;
 
     default:
