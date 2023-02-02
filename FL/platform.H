@@ -1,7 +1,7 @@
 //
 // Platform header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,12 +35,12 @@ class Fl_Window;
 
 #  ifdef _WIN32
 #    include "win32.H"
-#  elif defined(__APPLE__)
-#    include "mac.H"
 #  elif defined(FLTK_USE_WAYLAND)
 #    include "wayland.H"
 #  elif defined(FLTK_USE_X11)
 #    include "x11.H"
+#  elif defined(__APPLE__)
+#    include "mac.H"
 #  endif // _WIN32
 
 //

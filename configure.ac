@@ -3,7 +3,7 @@ dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2022 by Bill Spitzak and others.
+dnl Copyright 1998-2023 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -185,7 +185,6 @@ AS_CASE([$host_os], [cygwin*], [
 ], [darwin*], [
     AS_IF([test x$enable_x11 = xyes], [
         host_os_gui="X11"
-        OPTIM="-U__APPLE__ $OPTIM"
         macosversion=$(sw_vers -productVersion | cut -d. -f2)
         macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
         AS_IF([test $macosversion_maj -ge 11 -o $macosversion -ge 13], [

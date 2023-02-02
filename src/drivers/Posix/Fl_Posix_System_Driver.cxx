@@ -1,7 +1,7 @@
 //
 // Definition of Posix system driver (used by the X11, Wayland and macOS platforms).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -262,7 +262,13 @@ bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gt
 #endif
     } else {
       // Try then with GTK2
-      Fl_Posix_System_Driver::ptr_gtk = Fl_Posix_System_Driver::dlopen_or_dlsym("libgtk-x11-2.0");
+      Fl_Posix_System_Driver::ptr_gtk = Fl_Posix_System_Driver::dlopen_or_dlsym(
+#ifdef __APPLE__
+                                                          "libgtkmacintegration-gtk2"
+#else
+                                                            "libgtk-x11-2.0"
+#endif
+                                                                                );
 #ifdef DEBUG
       if (Fl_Posix_System_Driver::ptr_gtk) {
         puts("selected GTK-2\n");

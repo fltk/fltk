@@ -1,7 +1,7 @@
 //
 // Special Cairo support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,8 +34,6 @@
 
 #if defined(_WIN32)               // Windows
 #  include <cairo-win32.h>
-#elif defined(__APPLE__)          // macOS
-#  include <cairo-quartz.h>
 #elif defined(FLTK_USE_WAYLAND)   // Wayland or hybrid
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
 #  include "../src/drivers/Wayland/Fl_Wayland_Window_Driver.H"
@@ -46,6 +44,8 @@
 #  endif
 #elif defined(FLTK_USE_X11)       // X11
 #  include <cairo-xlib.h>
+#elif defined(__APPLE__)          // macOS
+#  include <cairo-quartz.h>
 #else
 #  error Cairo is not supported on this platform.
 #endif
