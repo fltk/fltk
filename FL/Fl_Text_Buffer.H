@@ -23,6 +23,7 @@
 #define FL_TEXT_BUFFER_H
 
 #include <stdarg.h>     /* va_list */
+#include <FL/fl_attr.h>
 
 #undef ASSERT_UTF8
 
