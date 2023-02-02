@@ -19,7 +19,7 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
-#include "../Unix/Fl_Unix_System_Driver.H"
+#include <FL/filename.H>
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
 #include "xdg-shell-client-protocol.h"
@@ -873,6 +873,16 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   }
   window->configured_width = ceil(width / f);
   window->configured_height = ceil(height / f);
+  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::OWL) {
+    Fl_Window *sub = Fl::first_window();
+    while (sub) { // search still un-exposed sub-windows
+      if (sub->window() == window->fl_win) {
+        Fl_Window_Driver::driver(sub)->wait_for_expose_value = 0;
+        break;
+      }
+      sub = Fl::next_window(sub);
+    }
+  }
 }
 
 
@@ -986,7 +996,7 @@ static const char *get_prog_name() {
  the source window and the display top. FLTK can later reposition the same tall popup,
  without the constraint not to go beyond the display top, at the exact position so that
  the desired series of menu items appear in the visible part of the tall popup.
- 
+
  In case 1) above, the values that represent the display bounds are given very
  large values. That's done by member function Fl_Wayland_Window_Driver::menu_window_area().
  Consequently, FLTK computes an initial layout of future popups relatively to
@@ -1000,7 +1010,7 @@ static const char *get_prog_name() {
  process_menu_or_tooltip(), makeWindow() calls Fl_Window::wait_for_expose() so its constrained
  position is known before computing the position of the next popup. This ensures each
  popup is correctly placed relatively to its parent.
- 
+
  Groups of popups containing a menutitle, the associated menuwindow, and optionally
  a submenu window and that don't belong to an Fl_Menu_Bar are mapped in a different order:
  the menuwindow is mapped first, and the menutitle is mapped second above it as a child popup.
@@ -1009,7 +1019,7 @@ static const char *get_prog_name() {
  the menutitle is mapped only after the menuwindow has been mapped, as a child of it.
  This positions better the popup group in the display relatively to where the popup
  was created.
- 
+
  In case 2) above, a tall popup is mapped with XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y
  which puts its top at the display top border. The Wayland system then calls the
  popup_configure() callback function with the x,y coordinates of the top left corner
@@ -1145,7 +1155,9 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip
     is_floatingtitle = process_menu_or_tooltip(new_window);
 
-  } else if ( pWindow->border() && !pWindow->parent() ) { // a decorated window
+    // Don't attempt to use libdecor with OWL
+  } else if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL &&
+             pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
     if (!scr_driver->libdecor_context)
       scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display, &libdecor_iface);
@@ -1175,7 +1187,11 @@ void Fl_Wayland_Window_Driver::makeWindow()
     // "A sub-surface becomes mapped, when a non-NULL wl_buffer is applied and the parent surface is mapped."
     new_window->configured_width = pWindow->w();
     new_window->configured_height = pWindow->h();
-    wait_for_expose_value = 0;
+    if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) {
+      // With OWL, delay zeroing of subwindow's wait_for_expose_value until
+      // after their parent is configured, see xdg_toplevel_configure().
+      wait_for_expose_value = 0;
+    }
     pWindow->border(0);
     checkSubwindowFrame(); // make sure subwindow doesn't leak outside parent
 

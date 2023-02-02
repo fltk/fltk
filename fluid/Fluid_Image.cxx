@@ -123,7 +123,7 @@ void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
   if (!img) return;
   const char *idata_name = f.unique_id(this, "idata", fl_filename_name(name()), 0);
   function_name_ = f.unique_id(this, "image", fl_filename_name(name()), 0);
-  
+
   if (is_animated_gif_) {
     // Write animated gif image data...
     f.write_c("\n");

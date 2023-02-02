@@ -258,7 +258,7 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
   reschedule the subsequent timeouts. Please see Fl::repeat_timeout() for
   an example.
- 
+
   Since version 1.4, a timeout can be started from a child thread under the
   condition that the call to Fl::add_timeout is wrapped in Fl::lock() and Fl::unlock().
 
@@ -2084,7 +2084,7 @@ int Fl::clipboard_contains(const char *type)
  Under UNIX/Linux/macOS <I>any</I> file descriptor can be monitored (files,
  devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
  Windows applications can only monitor sockets.
- 
+
  Under macOS, Fl::add_fd() opens the display if that's not been done before.
  */
 void Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)

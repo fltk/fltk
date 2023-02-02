@@ -89,7 +89,7 @@ int Shortcut_Button::handle(int e) {
  The Widget_Bin_Button button is a button that can be used in the widget bin to
  allow the user to drag and drop widgets into a window or group. This feature
  makes it easy for the user to position a widget at a specific location within
- the window or group. 
+ the window or group.
  */
 
 /**

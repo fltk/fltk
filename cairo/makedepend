@@ -2,6 +2,7 @@
 
 Fl_Cairo.o: ../FL/Enumerations.H
 Fl_Cairo.o: ../FL/Fl.H
+Fl_Cairo.o: ../FL/fl_attr.h
 Fl_Cairo.o: ../FL/Fl_Bitmap.H
 Fl_Cairo.o: ../FL/Fl_Cairo.H
 Fl_Cairo.o: ../FL/fl_casts.H

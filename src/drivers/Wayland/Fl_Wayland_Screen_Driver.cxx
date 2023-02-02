@@ -527,7 +527,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
   if (win) {
     Fl::handle(FL_FOCUS, win);
-    fl_find(fl_xid(win));
+    fl_wl_find(fl_wl_xid(win));
   }
 }
 
@@ -1056,8 +1056,10 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, "org_kde_plasma_shell") == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::KDE;
     //fprintf(stderr, "Running the KDE compositor\n");
-  }
-  else if (strcmp(interface, zwp_text_input_manager_v3_interface.name) == 0) {
+  } else if (strncmp(interface, "zowl_mach_ipc", 13) == 0) {
+    Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::OWL;
+    //fprintf(stderr, "Running the Owl compositor\n");
+  } else if (strcmp(interface, zwp_text_input_manager_v3_interface.name) == 0) {
     scr_driver->text_input_base = (struct zwp_text_input_manager_v3 *) wl_registry_bind(wl_registry, id, &zwp_text_input_manager_v3_interface, 1);
     //printf("scr_driver->text_input_base=%p version=%d\n",scr_driver->text_input_base,version);
   }

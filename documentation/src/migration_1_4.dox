@@ -3,7 +3,9 @@
  \page  migration_1_4   Migrating Code from FLTK 1.3 to 1.4
 
 This appendix describes the differences between FLTK
-1.3.x and FLTK 1.4.x functions and classes.
+1.3.x and FLTK 1.4.x functions and classes and potential requirements
+to change source code. We also explain how code can be made compatible
+so it can be compiled by both FLTK 1.3.x and 1.4.x.
 
 If you need to migrate your code from prior FLTK versions to FLTK 1.4,
 then you should first consult the relevant appendices in the FLTK 1.3
@@ -20,7 +22,7 @@ of the FLTK library to reduce dependencies and hence compile times.
 We try to avoid including system header files as far as possible. Known
 exceptions are \<stdio.h> where file system structures and functions are
 visible in the public API, for instance \p FILE*, and sometimes essential
-header files like \<stdlib.h> and/or \<stddef.h>. Some required platform
+header files like \<stdlib.h> and/or \<stddef.h>. Some required system
 headers \b may be included in platform specific header files like
 \<FL/platform.H> or \<FL/platform_types.h>.
 
@@ -36,18 +38,23 @@ files or missing declarations when compiled with FLTK 1.4.
 This is not a fault of FLTK 1.4 but a fault of the source code that did
 not include all required headers.
 
+In FLTK 1.4 inclusion of \<FL/Fl.H> is no longer a strict requirement as
+it was required and documented in FLTK 1.3.x. In FLTK 1.4 you may still
+need to '\#include \<FL/Fl.H>' if you are using enumerations or methods
+of class \c Fl like Fl::run() but there are exceptions where this header
+is included by other FLTK headers, like Fl_Window.H and other subclasses.
+
 Suggested solution: include all FLTK and system header files your source
 code requires explicitly and don't rely on FLTK headers to include a
-particular header file.
+particular header file. If you want your code to be as much as possible
+compatible with FLTK 1.3.x, then you should \c '\#include \<FL/Fl.H>'
+as required by 1.3.x.
 
-The same applies to FLTK headers. The rule is to \#include \<FL/Fl.H> as
-the first FLTK header as described in the documentation elsewhere and to
-include FLTK headers for all classes you are using explicitly. You don't
-need to include headers of base classes - this is done by all FLTK headers
-as required. Besides that you need to include some support headers if you
-are using FLTK functions like \p fl_choice() and others. This is described
-in the function's documentation (if a required header is missing in the
-docs this is a bug).
+You don't need to include headers of base classes - this is done by all
+FLTK headers as required. Besides that you need to include some support
+headers if you use FLTK functions like \p fl_choice() and others.
+This is described in the function's documentation (if a required header
+is missing in the docs this is a bug).
 
 If you follow these rules your program will be compatible with both
 FLTK 1.3.x and FLTK 1.4.x as long as you use only functions and classes
