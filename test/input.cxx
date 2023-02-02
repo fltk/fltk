@@ -49,7 +49,7 @@ void test(Fl_Input *i) {
   if (i->changed()) {
     i->clear_changed(); G_tty->printf("%s '%s'\n",i->label(),i->value());
     char utf8buf[10];
-    int last = fl_utf8encode(i->index(i->position()), utf8buf);
+    int last = fl_utf8encode(i->index(i->insert_position()), utf8buf);
     utf8buf[last] = 0;
     G_tty->printf("Symbol at cursor position: %s\n", utf8buf);
   }

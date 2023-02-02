@@ -158,6 +158,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
   # create bundle
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+  set_target_properties (fluid PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fluid")
 
   # The line below would wrongly install /Applications/fluid.icns
   # ## set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})

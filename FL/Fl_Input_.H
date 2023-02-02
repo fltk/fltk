@@ -282,31 +282,37 @@ public:
 
   /** Gets the position of the text cursor.
     \return the cursor position as an index in the range 0..size()
-    \see position(int, int)
+    \see insert_position(int, int)
   */
-  int position() const {return position_;}
+  int insert_position() const { return position_; }
+  FL_DEPRECATED("Please use insert_position() instead.",
+  int position() const ) { return insert_position(); }
 
   /** Gets the current selection mark.
     \return index into the text */
   int mark() const {return mark_;}
 
   /* Sets the index for the cursor and mark. */
-  int position(int p, int m);
+  int insert_position(int p, int m);
+  FL_DEPRECATED("Please use insert_position(p, m) or Fl_Widget::position(x, y) instead.",
+  int position(int p, int m)) { return insert_position(p, m); }
 
   /** Sets the cursor position and mark.
     position(n) is the same as <tt>position(n, n)</tt>.
     \param p new index for cursor and mark
     \return 0 if no positions changed
-    \see position(int, int), position(), mark(int)
+    \see insert_position(int, int), insert_position(), mark(int)
   */
-  int position(int p) {return position(p, p);}
+  int insert_position(int p) { return insert_position(p, p); }
+  FL_DEPRECATED("Please use insert_position(p) instead.",
+  int position(int p)) { return insert_position(p); }
 
   /** Sets the current selection mark.
-    mark(n) is the same as <tt>position(position(),n)</tt>.
+    mark(n) is the same as <tt>insert_position(insert_position(),n)</tt>.
     \param m new index of the mark
     \return 0 if the mark did not change
-    \see position(), position(int, int) */
-  int mark(int m) {return position(position(), m);}
+    \see insert_position(), insert_position(int, int) */
+  int mark(int m) {return insert_position(insert_position(), m);}
 
   /* Deletes text from \p b to \p e and inserts the new string \p text. */
   int replace(int b, int e, const char *text, int ilen=0);
@@ -321,7 +327,7 @@ public:
 
     \return 0 if no data was copied
   */
-  int cut() {return replace(position(), mark(), 0);}
+  int cut() {return replace(insert_position(), mark(), 0);}
 
   /**
     Deletes the next \p n bytes rounded to characters before or after the cursor.
@@ -335,7 +341,7 @@ public:
            A negative number will cut characters to the left of the cursor.
     \return 0 if no data was copied
   */
-  int cut(int n) {return replace(position(), position()+n, 0);}
+  int cut(int n) {return replace(insert_position(), insert_position()+n, 0);}
 
   /**
     Deletes all characters between index \p a and \p b.

@@ -71,7 +71,7 @@ class Ut_Unicode_Box_Test : public Fl_Group {
     int fontsize = (int)fontsize_slider->value();
     textdisplay->textsize(fontsize);
     multilineinput->textsize(fontsize);
-    multilineinput->position(0);                // keep scrolled to top
+    multilineinput->insert_position(0);                // keep scrolled to top
     parent()->redraw();
   }
   static void font_size_slider_cb(Fl_Widget*, void *userdata) {

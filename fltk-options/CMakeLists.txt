@@ -96,6 +96,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
   # create bundle
   set_target_properties (fltk-options PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fltk-options.plist")
   set_target_properties (fltk-options PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+  set_target_properties (fltk-options PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fltk-options")
 
   # The line below would wrongly install /Applications/fltk-options.icns
   # ## set_target_properties (fltk-options PROPERTIES RESOURCE ${ICON_PATH})

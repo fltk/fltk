@@ -512,7 +512,7 @@ int Widget_Browser::handle(int e) {
  */
 void Widget_Browser::save_scroll_position() {
   saved_h_scroll_ = hposition();
-  saved_v_scroll_ = position();
+  saved_v_scroll_ = vposition();
 }
 
 /**
@@ -520,7 +520,7 @@ void Widget_Browser::save_scroll_position() {
  */
 void Widget_Browser::restore_scroll_position() {
   hposition(saved_h_scroll_);
-  position(saved_v_scroll_);
+  vposition(saved_v_scroll_);
 }
 
 /**
@@ -546,7 +546,7 @@ void Widget_Browser::display(Fl_Type *inNode) {
     return;
   }
   // remeber our current scroll position
-  int currentV = position(), newV = currentV;
+  int currentV = vposition(), newV = currentV;
   int nodeV = 0;
   // find the inNode in the tree and check, if it is already visible
   Fl_Type *p=Fl_Type::first;
@@ -571,6 +571,6 @@ void Widget_Browser::display(Fl_Type *inNode) {
       newV = 0;
   }
   if (newV!=currentV)
-    position(newV);
+    vposition(newV);
 }
 

@@ -581,7 +581,7 @@ void Fl_Text_Buffer::unselect()
  */
 int Fl_Text_Buffer::selection_position(int *start, int *end)
 {
-  return mPrimary.position(start, end);
+  return mPrimary.selected(start, end);
 }
 
 
@@ -642,7 +642,7 @@ void Fl_Text_Buffer::secondary_unselect()
  */
 int Fl_Text_Buffer::secondary_selection_position(int *start, int *end)
 {
-  return mSecondary.position(start, end);
+  return mSecondary.selected(start, end);
 }
 
 
@@ -703,7 +703,7 @@ void Fl_Text_Buffer::unhighlight()
  */
 int Fl_Text_Buffer::highlight_position(int *start, int *end)
 {
-  return mHighlight.position(start, end);
+  return mHighlight.selected(start, end);
 }
 
 
@@ -1325,7 +1325,7 @@ void Fl_Text_Selection::set(int startpos, int endpos)
 
   \see selected(), start(), end()
 */
-int Fl_Text_Selection::position(int *startpos, int *endpos) const {
+int Fl_Text_Selection::selected(int *startpos, int *endpos) const {
   if (!mSelected) {
     *startpos = 0;
     *endpos = 0;
@@ -1355,7 +1355,7 @@ char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const {
   int start, end;
 
   /* If there's no selection, return an allocated empty string */
-  if (!sel->position(&start, &end))
+  if (!sel->selected(&start, &end))
   {
     char *s = (char *) malloc(1);
     *s = '\0';
@@ -1375,7 +1375,7 @@ void Fl_Text_Buffer::remove_selection_(Fl_Text_Selection * sel)
 {
   int start, end;
 
-  if (!sel->position(&start, &end))
+  if (!sel->selected(&start, &end))
     return;
   remove(start, end);
   //undoyankcut = undocut;
@@ -1393,7 +1393,7 @@ void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection * sel,
 
   /* If there's no selection, return */
   int start, end;
-  if (!sel->position(&start, &end))
+  if (!sel->selected(&start, &end))
     return;
 
   /* Do the appropriate type of replace */

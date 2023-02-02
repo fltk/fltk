@@ -192,7 +192,7 @@ void delete_all(int selected_only) {
     shell_prefs_get();
     shell_settings_write();
     widget_browser->hposition(0);
-    widget_browser->position(0);
+    widget_browser->vposition(0);
   }
   selection_changed(0);
   widget_browser->redraw();
