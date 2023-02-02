@@ -248,7 +248,7 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   if ( !is_editing() ) return 0;
   // Sigh, have to open file to get file time/size :/
   utf8_to_wchar(filename(), wbuf);
-  HANDLE fh = CreateFileW(wbuf,      // file to read
+  HANDLE fh = CreateFileW(wbuf,           // file to read
                          GENERIC_READ,    // reading only
                          FILE_SHARE_READ, // sharing -- allow read share; just getting file size
                          NULL,            // security
