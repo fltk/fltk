@@ -33,7 +33,7 @@
 /** To be used in prototypes with a variable list of arguments.
  This macro helps detection of mismatches between format string and
  argument list at compilation time.
- 
+
  Usage example: FL/fl_ask.H
  */
 #define __fl_attr(x)

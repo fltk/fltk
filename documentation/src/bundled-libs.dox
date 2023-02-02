@@ -352,7 +352,7 @@ Run `make depend' in the jpeg folder on a Linux system after
   the system version of libdecor. libdecor will remain as an FLTK bundle to
   support Linux configurations where the libdecor package is not
   available or not installed.
-  
+
   FLTK uses libdecor source files without any modification.
   This part of the libdecor source tree is copied to directory libdecor/ of
   the FLTK source tree:
@@ -366,5 +366,5 @@ Run `make depend' in the jpeg folder on a Linux system after
 </pre>
   Furthermore, directory libdecor/build/ of the FLTK source tree does not
   originate from the libdecor source tree but contains 3 FLTK-created files.
-  
+
 */

@@ -820,7 +820,7 @@ void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h,
         Fl_RGB_Image *rgb = fi_->frames[f].rgb;
         if (rgb) {
           float s = Fl_Graphics_Driver::default_driver().scale();
-	        rgb->scale(s*fi_->frames[f].w, s*fi_->frames[f].h, 0, 1);
+                rgb->scale(s*fi_->frames[f].w, s*fi_->frames[f].h, 0, 1);
           rgb->draw(x + s*fi_->frames[f].x, y + s*fi_->frames[f].y, w, h, cx, cy);
         }
       }

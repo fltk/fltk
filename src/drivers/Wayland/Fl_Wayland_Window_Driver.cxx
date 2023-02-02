@@ -996,7 +996,7 @@ static const char *get_prog_name() {
  the source window and the display top. FLTK can later reposition the same tall popup,
  without the constraint not to go beyond the display top, at the exact position so that
  the desired series of menu items appear in the visible part of the tall popup.
- 
+
  In case 1) above, the values that represent the display bounds are given very
  large values. That's done by member function Fl_Wayland_Window_Driver::menu_window_area().
  Consequently, FLTK computes an initial layout of future popups relatively to
@@ -1010,7 +1010,7 @@ static const char *get_prog_name() {
  process_menu_or_tooltip(), makeWindow() calls Fl_Window::wait_for_expose() so its constrained
  position is known before computing the position of the next popup. This ensures each
  popup is correctly placed relatively to its parent.
- 
+
  Groups of popups containing a menutitle, the associated menuwindow, and optionally
  a submenu window and that don't belong to an Fl_Menu_Bar are mapped in a different order:
  the menuwindow is mapped first, and the menutitle is mapped second above it as a child popup.
@@ -1019,7 +1019,7 @@ static const char *get_prog_name() {
  the menutitle is mapped only after the menuwindow has been mapped, as a child of it.
  This positions better the popup group in the display relatively to where the popup
  was created.
- 
+
  In case 2) above, a tall popup is mapped with XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y
  which puts its top at the display top border. The Wayland system then calls the
  popup_configure() callback function with the x,y coordinates of the top left corner

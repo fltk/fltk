@@ -196,7 +196,7 @@ bool openDirectory(const char *dir, char *flags) {
     if (!p) continue;
     if (*(p+4)) continue; // is no extension!
     snprintf(buf, sizeof(buf), "%s/%s", dir, name);
-    if (strstr(name, "debug"))	// hack: when name contains 'debug' open single frames
+    if (strstr(name, "debug"))  // hack: when name contains 'debug' open single frames
       strcat(flags, "d");
     if (openFile(buf, flags, cnt == 0))
       cnt++;
