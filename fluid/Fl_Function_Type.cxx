@@ -1418,7 +1418,7 @@ void Fl_DeclBlock_Type::open() {
       int v = fl_choice("%s", "try again", "keep anyway", "cancel", message);
       printf("%d\n", v);
       if (v==0) continue; // try again
-      if (v==1) ; // keep input
+      if (v == 1) { } // keep input
       if (v==2) goto BREAK2;
     }
     name(a);

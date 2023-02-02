@@ -1,7 +1,7 @@
 //
 // External code editor management class for Windows
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,6 +32,26 @@ extern int G_debug;     // defined in fluid.cxx
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
 static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer callback
+static wchar_t *wbuf = NULL;
+static char *abuf = NULL;
+
+static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
+  unsigned len = (lg >= 0) ? (unsigned)lg : (unsigned)strlen(utf8);
+  unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 1; // Query length
+  wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * wn);
+  wn = fl_utf8toUtf16(utf8, len, (unsigned short *)wbuf, wn); // Convert string
+  wbuf[wn] = 0;
+  return wbuf;
+}
+
+static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
+  unsigned len = (unsigned)wcslen(wstr);
+  unsigned wn = fl_utf8fromwc(NULL, 0, wstr, len) + 1; // query length
+  utf8 = (char *)realloc(utf8, wn);
+  wn = fl_utf8fromwc(utf8, wn, wstr, len); // convert string
+  utf8[wn] = 0;
+  return utf8;
+}
 
 // [Static/Local] Get error message string for last failed WIN32 function.
 // Returns a string pointing to static memory.
@@ -66,15 +86,18 @@ static const char *get_ms_errmsg() {
 
 // [Static/Local] See if file exists
 static int is_file(const char *filename) {
-  DWORD att = GetFileAttributesA(filename);
-  if (att == INVALID_FILE_ATTRIBUTES) return 0;
+  utf8_to_wchar(filename, wbuf);
+  DWORD att = GetFileAttributesW(wbuf);
+  if (att == INVALID_FILE_ATTRIBUTES)
+    return 0;
   if ( (att & FILE_ATTRIBUTE_DIRECTORY) == 0 ) return 1;        // not a dir == file
   return 0;
 }
 
 // [Static/Local] See if dir exists
 static int is_dir(const char *dirname) {
-  DWORD att = GetFileAttributesA(dirname);
+  utf8_to_wchar(dirname, wbuf);
+  DWORD att = GetFileAttributesW(wbuf);
   if (att == INVALID_FILE_ATTRIBUTES) return 0;
   if (att & FILE_ATTRIBUTE_DIRECTORY) return 1;
   return 0;
@@ -224,7 +247,8 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   code[0] = 0;
   if ( !is_editing() ) return 0;
   // Sigh, have to open file to get file time/size :/
-  HANDLE fh = CreateFile(filename(),      // file to read
+  utf8_to_wchar(filename(), wbuf);
+  HANDLE fh = CreateFileW(wbuf,           // file to read
                          GENERIC_READ,    // reading only
                          FILE_SHARE_READ, // sharing -- allow read share; just getting file size
                          NULL,            // security
@@ -295,7 +319,8 @@ int ExternalCodeEditor::remove_tmpfile() {
   // Filename set? remove (if exists) and zero filename/mtime/size
   if ( is_file(tmpfile) ) {
     if ( G_debug ) printf("Removing tmpfile '%s'\n", tmpfile);
-    if ( DeleteFile(tmpfile) == 0 ) {
+    utf8_to_wchar(tmpfile, wbuf);
+    if (DeleteFileW(wbuf) == 0) {
       fl_alert("WARNING: Can't DeleteFile() '%s': %s", tmpfile, get_ms_errmsg());
       return -1;
     }
@@ -312,9 +337,12 @@ int ExternalCodeEditor::remove_tmpfile() {
 //     Returns pointer to static memory.
 //
 const char* ExternalCodeEditor::tmpdir_name() {
-  char tempdir[100];
-  if (GetTempPath(sizeof(tempdir), tempdir) == 0 ) {
+  wchar_t tempdirW[FL_PATH_MAX+1];
+  char tempdir[FL_PATH_MAX+1];
+  if (GetTempPathW(FL_PATH_MAX, tempdirW) == 0) {
     strcpy(tempdir, "c:\\windows\\temp");      // fallback
+  } else {
+    strcpy(tempdir, wchar_to_utf8(tempdirW, abuf));
   }
   static char dirname[100];
   _snprintf(dirname, sizeof(dirname), "%s.fluid-%ld",
@@ -330,7 +358,8 @@ void ExternalCodeEditor::tmpdir_clear() {
   const char *tmpdir = tmpdir_name();
   if ( is_dir(tmpdir) ) {
     if ( G_debug ) printf("Removing tmpdir '%s'\n", tmpdir);
-    if ( RemoveDirectory(tmpdir) == 0 ) {
+    utf8_to_wchar(tmpdir, wbuf);
+    if ( RemoveDirectoryW(wbuf) == 0 ) {
       fl_alert("WARNING: Can't RemoveDirectory() '%s': %s",
                tmpdir, get_ms_errmsg());
     }
@@ -343,7 +372,8 @@ void ExternalCodeEditor::tmpdir_clear() {
 const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
   if ( ! is_dir(dirname) ) {
-    if ( CreateDirectory(dirname,0) == 0 ) {
+    utf8_to_wchar(dirname, wbuf);
+    if (CreateDirectoryW(wbuf, 0) == 0) {
       fl_alert("can't create directory '%s': %s",
         dirname, get_ms_errmsg());
       return NULL;
@@ -378,7 +408,8 @@ static int save_file(const char *filename,
   if ( code == 0 ) code = "";   // NULL? write an empty file
   memset(&file_mtime, 0, sizeof(file_mtime));
   memset(&file_size, 0, sizeof(file_size));
-  HANDLE fh = CreateFile(filename,                // filename
+  utf8_to_wchar(filename, wbuf);
+  HANDLE fh = CreateFileW(wbuf,                   // filename
                          GENERIC_WRITE,           // write only
                          0,                       // sharing -- no share during write
                          NULL,                    // security
@@ -430,7 +461,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   if ( G_debug ) printf("start_editor() cmd='%s', filename='%s'\n",
                         editor_cmd, filename);
   // Startup info
-  STARTUPINFO sinfo;
+  STARTUPINFOW sinfo;
   memset(&sinfo, 0, sizeof(sinfo));
   sinfo.cb          = sizeof(sinfo);
   sinfo.dwFlags     = 0;
@@ -440,9 +471,10 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   // Command
   char cmd[1024];
   _snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
+  utf8_to_wchar(cmd, wbuf);
   // Start editor process
-  if (CreateProcess(NULL,               // app name
-                    (char*)cmd,         // command to exec
+  if (CreateProcessW(NULL,              // app name
+                    wbuf,               // command to exec
                     NULL,               // secure attribs
                     NULL,               // thread secure attribs
                     FALSE,              // handle inheritance
