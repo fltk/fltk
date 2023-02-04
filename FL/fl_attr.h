@@ -54,10 +54,12 @@
  FL_DEPRECATED("Outdated, don't use", int position()) { return position_; }
  \endcode
  */
-#define FL_DEPRECATED(msg, func) [[deprecated(msg)]] func
+#define FL_DEPRECATED(msg, func) \
+  /##*##* \deprecated msg *##/ \
+  func
 
 
-#else
+#else /* FL_DOXYGEN */
 
 
 /*
