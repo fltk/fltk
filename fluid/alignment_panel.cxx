@@ -410,8 +410,8 @@ static void cb_shell_run_button(Fl_Return_Button*, void*) {
 }
 
 Fl_Double_Window* make_shell_window() {
-  { shell_window = new Fl_Double_Window(365, 200, "Shell Command");
-    { Fl_Group* o = new Fl_Group(0, 0, 365, 165);
+  { shell_window = new Fl_Double_Window(375, 208, "Shell Command");
+    { Fl_Group* o = new Fl_Group(0, 0, 375, 165);
       { shell_command_input = new Fl_Input(82, 14, 277, 20, "Command:");
         shell_command_input->tooltip("external shell command");
         shell_command_input->labelfont(1);
@@ -458,8 +458,9 @@ ings");
         o->end();
       } // Fl_Group* o
       o->end();
+      Fl_Group::current()->resizable(o);
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(0, 160, 365, 40);
+    { Fl_Group* o = new Fl_Group(0, 160, 375, 48);
       { Fl_Box* o = new Fl_Box(10, 167, 135, 25);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
@@ -475,16 +476,23 @@ ings");
       o->end();
     } // Fl_Group* o
     shell_window->set_modal();
-    shell_window->size_range(365, 200, 365, 200);
+    shell_window->size_range(375, 208, 1024, 208);
     shell_window->end();
   } // Fl_Double_Window* shell_window
   { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
     { shell_run_terminal = new Fl_Simple_Terminal(10, 10, 535, 375);
       Fl_Group::current()->resizable(shell_run_terminal);
     } // Fl_Simple_Terminal* shell_run_terminal
-    { shell_run_button = new Fl_Return_Button(468, 395, 77, 25, "Close");
-      shell_run_button->callback((Fl_Callback*)cb_shell_run_button);
-    } // Fl_Return_Button* shell_run_button
+    { Fl_Group* o = new Fl_Group(10, 395, 535, 25);
+      { Fl_Box* o = new Fl_Box(10, 395, 435, 25);
+        o->hide();
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      { shell_run_button = new Fl_Return_Button(445, 395, 100, 25, "Close");
+        shell_run_button->callback((Fl_Callback*)cb_shell_run_button);
+      } // Fl_Return_Button* shell_run_button
+      o->end();
+    } // Fl_Group* o
     shell_run_window->end();
   } // Fl_Double_Window* shell_run_window
   return shell_run_window;

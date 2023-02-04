@@ -51,7 +51,7 @@ decl {\#include <string.h>} {private global
 }
 
 decl {void init_scheme(void);} {
-  comment {// initialize the scheme from preferences} selected public global
+  comment {// initialize the scheme from preferences} public global
 }
 
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
@@ -291,11 +291,11 @@ Examples:
 Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
-    label {Shell Command}
-    xywh {544 751 365 200} type Double hide modal size_range {365 200 365 200}
+    label {Shell Command} open selected
+    xywh {844 473 375 208} type Double resizable modal size_range {375 208 1024 208} visible
   } {
     Fl_Group {} {open
-      xywh {0 0 365 165}
+      xywh {0 0 375 165} resizable
     } {
       Fl_Input shell_command_input {
         label {Command:}
@@ -343,7 +343,7 @@ shell_prefs_set();}
       }
     }
     Fl_Group {} {open
-      xywh {0 160 365 40}
+      xywh {0 160 375 48}
     } {
       Fl_Box {} {
         xywh {10 167 135 25} resizable
@@ -364,20 +364,27 @@ shell_window->hide();}
   }
   Fl_Window shell_run_window {
     label {Shell Command Output}
-    xywh {887 409 555 430} type Double hide resizable
+    xywh {887 409 555 430} type Double resizable visible
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
     }
-    Fl_Return_Button shell_run_button {
-      label Close
-      callback {Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+    Fl_Group {} {open
+      xywh {10 395 535 25}
+    } {
+      Fl_Box {} {
+        xywh {10 395 435 25} hide resizable
+      }
+      Fl_Return_Button shell_run_button {
+        label Close
+        callback {Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
 pos.set("x", shell_run_window->x());
 pos.set("y", shell_run_window->y());
 pos.set("w", shell_run_window->w());
 pos.set("h", shell_run_window->h());
 shell_run_window->hide();}
-      xywh {468 395 77 25}
+        xywh {445 395 100 25}
+      }
     }
   }
 }
