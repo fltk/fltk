@@ -1252,33 +1252,31 @@ inline Fl_Color fl_color_cube(int r, int g, int b) {
 
     Cursors are provided by the system when available, or bitmaps built into
     FLTK as a fallback.
-
-    \todo enum Fl_Cursor needs maybe an image.
 */
 /* FIXME: We should renumber these, but that will break the ABI */
 enum Fl_Cursor {
-  FL_CURSOR_DEFAULT    =  0, /**< the default cursor, usually an arrow. */
-  FL_CURSOR_ARROW      = 35, /**< an arrow pointer. */
-  FL_CURSOR_CROSS      = 66, /**< crosshair. */
-  FL_CURSOR_WAIT       = 76, /**< busy indicator (for instance hourglass). */
-  FL_CURSOR_INSERT     = 77, /**< I-beam. */
-  FL_CURSOR_HAND       = 31, /**< pointing hand. */
-  FL_CURSOR_HELP       = 47, /**< question mark pointer. */
-  FL_CURSOR_MOVE       = 27, /**< 4-pointed arrow or hand. */
+  FL_CURSOR_DEFAULT    =  0, /**< the default cursor, usually an arrow: ↖*/ // U+2196
+  FL_CURSOR_ARROW      = 35, /**< an arrow pointer: ↖*/ // U+2196
+  FL_CURSOR_CROSS      = 66, /**< crosshair: ＋*/ // U+FF0B
+  FL_CURSOR_WAIT       = 76, /**< busy indicator (for instance hourglass): ⌚,⌛*/ // U+231A, U+231B
+  FL_CURSOR_INSERT     = 77, /**< I-beam: ⌶*/ // U+2336
+  FL_CURSOR_HAND       = 31, /**< pointing hand: ☜*/ // U+261C
+  FL_CURSOR_HELP       = 47, /**< question mark pointer:  ?*/
+  FL_CURSOR_MOVE       = 27, /**< 4-pointed arrow or hand: ✥, ✋*/ // U+2725, U+270B
 
   /* Resize indicators */
-  FL_CURSOR_NS         = 78, /**< up/down resize. */
-  FL_CURSOR_WE         = 79, /**< left/right resize. */
-  FL_CURSOR_NWSE       = 80, /**< diagonal resize. */
-  FL_CURSOR_NESW       = 81, /**< diagonal resize. */
-  FL_CURSOR_N          = 70, /**< upwards resize. */
-  FL_CURSOR_NE         = 69, /**< upwards, right resize. */
-  FL_CURSOR_E          = 49, /**< rightwards resize. */
-  FL_CURSOR_SE         =  8, /**< downwards, right resize. */
-  FL_CURSOR_S          =  9, /**< downwards resize. */
-  FL_CURSOR_SW         =  7, /**< downwards, left resize. */
-  FL_CURSOR_W          = 36, /**< leftwards resize. */
-  FL_CURSOR_NW         = 68, /**< upwards, left resize. */
+  FL_CURSOR_NS         = 78, /**< up/down resize: ⇕ */ // U+21D5
+  FL_CURSOR_WE         = 79, /**< left/right resize: ⇔*/ // U+21D4
+  FL_CURSOR_NWSE       = 80, /**< diagonal resize: ⤡*/ // U+2921
+  FL_CURSOR_NESW       = 81, /**< diagonal resize: ⤢*/ // U+2922
+  FL_CURSOR_N          = 70, /**< upwards resize: ⤒*/ // U+2912
+  FL_CURSOR_NE         = 69, /**< upwards, right resize: ↗*/ // U+2197
+  FL_CURSOR_E          = 49, /**< rightwards resize: ⇥*/ // U+21E5
+  FL_CURSOR_SE         =  8, /**< downwards, right resize: ⇲*/ // U+21F2
+  FL_CURSOR_S          =  9, /**< downwards resize: ⤓*/ // U+2913
+  FL_CURSOR_SW         =  7, /**< downwards, left resize: ↙*/ // U+2199
+  FL_CURSOR_W          = 36, /**< leftwards resize: ⇤*/ // U+21E4
+  FL_CURSOR_NW         = 68, /**< upwards, left resize: ⇱*/ // U+21F1
 
   FL_CURSOR_NONE       =255  /**< invisible. */
 };
