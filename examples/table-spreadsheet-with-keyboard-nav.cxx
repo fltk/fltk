@@ -1,15 +1,8 @@
 //
-//      Simple example of an interactive spreadsheet using Fl_Table.
-//      Uses Mr. Satan's technique of instancing an Fl_Input around.
-//      Modified to test Jean-Marc's mods for keyboard nav and mouse selection.
+// Simple example of an interactive spreadsheet using Fl_Table.
+// Uses Mr. Satan's technique of instancing an Fl_Input around.
 //
-//      Fl_Table[1.00/LGPL] 04/18/03 Mister Satan      -- Initial implementation, submitted to erco for Fl_Table
-//      Fl_Table[1.10/LGPL] 05/17/03 Greg Ercolano     -- Small mods to follow changes to Fl_Table
-//      Fl_Table[1.20/LGPL] 02/22/04 Jean-Marc Lienher -- Keyboard nav and mouse selection
-//      Fl_Table[1.21/LGPL] 02/22/04 Greg Ercolano     -- Small reformatting mods, comments
-//         FLTK[1.3.0/LGPL] 10/26/10 Greg Ercolano     -- Moved from Fl_Table to FLTK 1.3.x, CMP compliance
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +14,15 @@
 //
 //     https://www.fltk.org/bugs.php
 //
+
+// Modified to test Jean-Marc's mods for keyboard nav and mouse selection.
+//
+//   Fl_Table[1.00/LGPL] 04/18/03 Mister Satan      -- Initial implementation, submitted to erco for Fl_Table
+//   Fl_Table[1.10/LGPL] 05/17/03 Greg Ercolano     -- Small mods to follow changes to Fl_Table
+//   Fl_Table[1.20/LGPL] 02/22/04 Jean-Marc Lienher -- Keyboard nav and mouse selection
+//   Fl_Table[1.21/LGPL] 02/22/04 Greg Ercolano     -- Small reformatting mods, comments
+//      FLTK[1.3.0/LGPL] 10/26/10 Greg Ercolano     -- Moved from Fl_Table to FLTK 1.3.x, CMP compliance
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/Fl.H>
@@ -102,7 +104,7 @@ public:
     input->resize(X,Y,W,H);                             // Move Fl_Input widget there
     char s[30]; sprintf(s, "%d", values[R][C]);         // Load input widget with cell's current value
     input->value(s);
-    input->position(0,int(strlen(s)));                  // Select entire input field
+    input->insert_position(0, int(strlen(s)));          // Select entire input field
     input->show();                                      // Show the input widget, now that we've positioned it
     input->take_focus();
   }
