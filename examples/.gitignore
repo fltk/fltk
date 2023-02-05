@@ -3,7 +3,12 @@
 #
 # Note: *.exe will be ignored by means of ../.gitignore
 #
+animgifimage
+animgifimage-play
+animgifimage-resize
+animgifimage-simple
 browser-simple
+cairo-draw-x
 chart-simple
 draggable-group
 howto-add_fd-and-popen
