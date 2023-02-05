@@ -41,8 +41,8 @@ class Fl_Widget_Tracker;
   \class Fl_Button
   \brief Buttons generate callbacks when they are clicked by the user.
 
-  You control exactly when and how by changing the values for type() and
-  when().  Buttons can also generate callbacks in response to \c FL_SHORTCUT
+  You control exactly when and how by changing the values for type(uchar) and
+  when(uchar).  Buttons can also generate callbacks in response to \c FL_SHORTCUT
   events.  The button can either have an explicit shortcut(int s) value or a
   letter shortcut can be indicated in the label() with an '\&' character
   before it.  For the label shortcut it does not matter if \e Alt is held
@@ -50,7 +50,6 @@ class Fl_Widget_Tracker;
   to hold down the \e Alt key so that the input field does not eat the event
   first as an \c FL_KEYBOARD event.
   \see Fl_Widget::shortcut_label(int)
-  \todo Refactor the doxygen comments for Fl_Button type() documentation.
 
   For an Fl_Button object, the type() call returns one of:
   \li \c FL_NORMAL_BUTTON (0): value() remains unchanged after button press.
@@ -58,8 +57,6 @@ class Fl_Widget_Tracker;
   \li \c FL_RADIO_BUTTON: value() is set to 1 after button press, and all other
          buttons in the current group with <tt>type() == FL_RADIO_BUTTON</tt>
          are set to zero.
-
-  \todo Refactor the doxygen comments for Fl_Button when() documentation.
 
   For an Fl_Button object, the following when() values are useful, the default
   being \c FL_WHEN_RELEASE:

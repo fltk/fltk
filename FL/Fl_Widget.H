@@ -271,17 +271,14 @@ public:
   void parent(Fl_Group* p) {parent_ = p;} // for hacks only, use Fl_Group::add()
 
   /** Gets the widget type.
-      Returns the widget type value, which is used for Forms compatibility
-      and to simulate RTTI.
-
-      \todo Explain "simulate RTTI" (currently only used to decide if a widget
-      is a window, i.e. type()>=FL_WINDOW ?). Is type() really used in a way
-      that ensures "Forms compatibility" ?
+      Returns the widget type value, which gives some information about the derived widget class
+      to which the object belongs. Noticeably, the condition <tt>type() >= FL_WINDOW</tt> indicates
+      a widget is an Fl_Window or derived object.
    */
   uchar type() const {return type_;}
 
   /** Sets the widget type.
-      This is used for Forms compatibility.
+      \see type()
    */
   void type(uchar t) {type_ = t;}
 

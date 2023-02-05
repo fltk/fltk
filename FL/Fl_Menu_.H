@@ -191,7 +191,7 @@ public:
     FL_WHITE, for back compatibility.
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
-  /**    See Fl_Boxtype Fl_Menu_::down_box() const   */
+  /** Sets the box type used to surround the currently-selected items in the menus.  */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
   /** For back compatibility, same as selection_color() */
