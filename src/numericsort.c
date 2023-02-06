@@ -43,33 +43,33 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
     a += len_a;
     UTF_B = fl_utf8decode(b, end_b, &len_b);
     b += len_b;
-    if (UTF_A < 255 && UTF_B < 255 && isdigit(UTF_A) && isdigit(UTF_B)) {
+    if (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) {
       int diff,magdiff;
       while (UTF_A == '0') {UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;}
       while (UTF_B == '0') {UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;}
-      while (UTF_A < 255 && isdigit(UTF_A) && UTF_A == UTF_B) {
+      while (UTF_A <= 255 && isdigit(UTF_A) && UTF_A == UTF_B) {
         UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
         UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
       }
-      diff = (UTF_A < 255 && UTF_B < 255 && isdigit(UTF_A) && isdigit(UTF_B)) ? UTF_A - UTF_B : 0;
+      diff = (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) ? UTF_A - UTF_B : 0;
       magdiff = 0;
-      while (UTF_A < 255 && isdigit(UTF_A)) {
+      while (UTF_A <= 255 && isdigit(UTF_A)) {
         magdiff++;
         UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
       }
-      while (UTF_B < 255 && isdigit(UTF_B)) {
+      while (UTF_B <= 255 && isdigit(UTF_B)) {
         magdiff--;
         UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
       }
       if (magdiff) {ret = magdiff; break;} /* compare # of significant digits */
       if (diff) {ret = diff; break;}       /* compare first non-zero digit */
     } else {
-      if (cs || UTF_A >= 255 || UTF_B >= 255) {
+      if (cs) {
         /* compare case-sensitive */
         if ((ret = UTF_A - UTF_B)) break;
       } else {
         /* compare case-insensitive */
-        if ((ret = tolower(UTF_A)-tolower(UTF_B))) break;
+        if ((ret = fl_tolower(UTF_A) - fl_tolower(UTF_B))) break;
       }
 
       if (a >= end_a) break;
