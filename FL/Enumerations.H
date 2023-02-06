@@ -460,22 +460,19 @@ enum Fl_Callback_Reason {
 /**@}*/          // group: Callback Reasons
 
 
-/** \name Non-ASCII key names
+/** \name Names of Non-ASCII keys and mouse buttons
 
-    The following constants define the non-ASCII keys on the
-    keyboard for FL_KEYBOARD and FL_SHORTCUT events.
+    The following constants define the names of non-ASCII keys on the
+    keyboard and of mouse buttons for FL_KEYBOARD and FL_SHORTCUT events.
 
     \see Fl::event_key() and Fl::get_key(int) (use ASCII letters for all other keys):
-
-    \todo FL_Button and FL_key... constants could be structured better
-          (use an enum or some doxygen grouping ?)
  */
 
 /**@{*/
 
 // FIXME: These codes collide with valid Unicode keys
 
-#define FL_Button       0xfee8  ///< A mouse button; use Fl_Button + n for mouse button n.
+#define FL_Button       0xfee8  ///< A mouse button; use <tt>FL_Button + n</tt> for mouse button \c n.
 #define FL_BackSpace    0xff08  ///< The backspace key.
 #define FL_Tab          0xff09  ///< The tab key.
 #define FL_Iso_Key      0xff0c  ///< The additional key of ISO keyboards.
@@ -500,7 +497,7 @@ enum Fl_Callback_Reason {
 #define FL_Menu         0xff67  ///< The menu key.
 #define FL_Help         0xff68  ///< The 'help' key on Mac keyboards
 #define FL_Num_Lock     0xff7f  ///< The num lock key.
-#define FL_KP           0xff80  ///< One of the keypad numbers; use FL_KP + 'n' for digit n.
+#define FL_KP           0xff80  ///< One of the keypad numbers; use FL_KP + n' for digit n.
 #define FL_KP_Enter     0xff8d  ///< The enter key on the keypad, same as Fl_KP+'\\r'.
 #define FL_KP_Last      0xffbd  ///< The last keypad key; use to range-check keypad.
 #define FL_F            0xffbd  ///< One of the function keys; use FL_F + n for function key n.
