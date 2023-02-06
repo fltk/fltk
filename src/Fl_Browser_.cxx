@@ -994,8 +994,7 @@ void Fl_Browser_::sort(int flags) {
   // Simple bubble sort - pure lazyness on my side.
   //
   int i, j, n = -1, desc = ((flags&FL_SORT_DESCENDING)==FL_SORT_DESCENDING);
-  typedef int (*sort_f_type)(const char *, const char *);
-  sort_f_type sort_f = ( (flags&FL_SORT_CASEINSENSITIVE) ? strcasecmp : strcmp );
+  bool caseinsensitive = (flags&FL_SORT_CASEINSENSITIVE);
   void *a =item_first(), *b, *c;
   if (!a) return;
   while (a) {
@@ -1011,12 +1010,14 @@ void Fl_Browser_::sort(int flags) {
       const char *tb = item_text(b);
       c = item_next(b);
       if (desc) {
-        if (sort_f(ta, tb) < 0) {
+        if ( (caseinsensitive && strcasecmp(ta, tb) < 0) ||
+            (!caseinsensitive && strcmp(ta, tb) < 0) ) {
           item_swap(a, b);
           swapped = 1;
         }
       } else {
-        if (sort_f(ta, tb)>0) {
+        if ( (caseinsensitive && strcasecmp(ta, tb) > 0) ||
+            (!caseinsensitive && strcmp(ta, tb) > 0) ) {
           item_swap(a, b);
           swapped = 1;
         }
