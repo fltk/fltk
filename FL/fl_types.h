@@ -24,7 +24,7 @@
 #include "fl_attr.h"
 
 /** \name       Miscellaneous */
-/*@{*/  /* group: Miscellaneous */
+/**@{*/  /* group: Miscellaneous */
 
 /** unsigned char */
 typedef unsigned char uchar;
@@ -54,6 +54,6 @@ typedef unsigned long ulong;
 */
 typedef unsigned int Fl_Shortcut;
 
-/*@}*/  /* group: Miscellaneous */
+/**@}*/  /* group: Miscellaneous */
 
 #endif

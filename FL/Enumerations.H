@@ -43,7 +43,7 @@
 
     The following constants are defined:
  */
-/*@{*/
+/**@{*/
 
 /**
    The major release version of this FLTK library.
@@ -172,7 +172,7 @@
 
 #endif
 
-/*@}*/  // group: Version Numbers
+/**@}*/  // group: Version Numbers
 
 /**
     Every time a user moves the mouse pointer, clicks a button,
@@ -412,14 +412,14 @@ enum Fl_Event { // events
 };
 
 /** \name When Conditions */
-/*@{*/
+/**@{*/
 /** These constants determine when a callback is performed.
 
     Fl_When is a bit field. Some values are merely shorcuts for common bit
     combinations. New flags may be added in the future, so it's important to
     mask the required bit when reading via \p when().
 
-    \note Some widgets may not fully suppoert \p FL_WHEN_... flags.
+    \note Some widgets may not fully support \p FL_WHEN_... flags.
 
     \see Fl_Widget::when(), Fl::callback_reason(), Fl_Callback_Reason, Fl_Widget::do_callback()
  */
@@ -434,11 +434,11 @@ enum Fl_When { // Fl_Widget::when():
   FL_WHEN_ENTER_KEY_CHANGED = 11, ///< Do callbacks whether the value changed or not, and when the ENTER key is pressed
   FL_WHEN_CLOSED            = 16  ///< Do the callback when a child of Fl_Tabs is closed
 };
-/*@}*/          // group: When Conditions
+/**@}*/          // group: When Conditions
 
 
 /** \name Callback Reasons */
-/*@{*/
+/**@{*/
 /** These constants describe why a callback is performed.
 
     \see Fl::callback_reason(), Fl_Widget::when(), Fl_When
@@ -457,12 +457,12 @@ enum Fl_Callback_Reason {
   FL_REASON_LOST_FOCUS,   ///< a widget lost focus
   FL_REASON_RELEASED,     ///< the mouse button was released
 };
-/*@}*/          // group: Callback Reasons
+/**@}*/          // group: Callback Reasons
 
 
-/** \name Mouse and Keyboard Events
+/** \name Non-ASCII key names
 
-    This and the following constants define the non-ASCII keys on the
+    The following constants define the non-ASCII keys on the
     keyboard for FL_KEYBOARD and FL_SHORTCUT events.
 
     \see Fl::event_key() and Fl::get_key(int) (use ASCII letters for all other keys):
@@ -471,7 +471,7 @@ enum Fl_Callback_Reason {
           (use an enum or some doxygen grouping ?)
  */
 
-/*@{*/
+/**@{*/
 
 // FIXME: These codes collide with valid Unicode keys
 
@@ -520,24 +520,24 @@ enum Fl_Callback_Reason {
 // of Unicode. Guaranteed not to conflict with a proper Unicode character.
 
 // These primarily map to the XFree86 keysym range
-#define FL_Volume_Down  0xEF11   /* Volume control down        */
-#define FL_Volume_Mute  0xEF12   /* Mute sound from the system */
-#define FL_Volume_Up    0xEF13   /* Volume control up          */
-#define FL_Media_Play   0xEF14   /* Start playing of audio     */
-#define FL_Media_Stop   0xEF15   /* Stop playing audio         */
-#define FL_Media_Prev   0xEF16   /* Previous track             */
-#define FL_Media_Next   0xEF17   /* Next track                 */
-#define FL_Home_Page    0xEF18   /* Display user's home page   */
-#define FL_Mail         0xEF19   /* Invoke user's mail program */
-#define FL_Search       0xEF1B   /* Search                     */
-#define FL_Back         0xEF26   /* Like back on a browser     */
-#define FL_Forward      0xEF27   /* Like forward on a browser  */
-#define FL_Stop         0xEF28   /* Stop current operation     */
-#define FL_Refresh      0xEF29   /* Refresh the page           */
-#define FL_Sleep        0xEF2F   /* Put system to sleep        */
-#define FL_Favorites    0xEF30   /* Show favorite locations    */
+#define FL_Volume_Down  0xEF11   ///< Volume control down
+#define FL_Volume_Mute  0xEF12   ///< Mute sound from the system
+#define FL_Volume_Up    0xEF13   ///< Volume control up
+#define FL_Media_Play   0xEF14   ///< Start playing of audio
+#define FL_Media_Stop   0xEF15   ///< Stop playing audio
+#define FL_Media_Prev   0xEF16   ///< Previous track
+#define FL_Media_Next   0xEF17   ///< Next track
+#define FL_Home_Page    0xEF18   ///< Display user's home page
+#define FL_Mail         0xEF19   ///< Invoke user's mail program
+#define FL_Search       0xEF1B   ///< Search
+#define FL_Back         0xEF26   ///< Like back on a browser
+#define FL_Forward      0xEF27   ///< Like forward on a browser
+#define FL_Stop         0xEF28   ///< Stop current operation
+#define FL_Refresh      0xEF29   ///< Refresh the page
+#define FL_Sleep        0xEF2F   ///< Put system to sleep        
+#define FL_Favorites    0xEF30   ///< Show favorite locations
 
-/*@}*/  // group: Mouse and Keyboard Events
+/**@}*/  // group: Non-ASCII key names
 
 /** \name Mouse Buttons
 
@@ -546,13 +546,13 @@ enum Fl_Callback_Reason {
     \see Fl::event_button()
 */
 
-/*@{*/
+/**@{*/
 
 #define FL_LEFT_MOUSE   1       ///< The left mouse button
 #define FL_MIDDLE_MOUSE 2       ///< The middle mouse button
 #define FL_RIGHT_MOUSE  3       ///< The right mouse button
 
-/*@}*/          // group: Mouse Buttons
+/**@}*/          // group: Mouse Buttons
 
 
 /** \name       Event States
@@ -560,7 +560,7 @@ enum Fl_Callback_Reason {
         The following constants define bits in the Fl::event_state() value.
 */
 
-/*@{*/          // group: Event States
+/**@{*/          // group: Event States
 
 // FIXME: it would be nice to have the modifiers in the upper 8 bit so that
 //        a unicode key (24bit) can be sent as an unsigned with the modifiers.
@@ -584,7 +584,7 @@ enum Fl_Callback_Reason {
 #define FL_KEY_MASK 0x0000ffff          ///< All keys are 16 bit for now
                                         //   FIXME: Unicode needs 24 bits!
 
-/*@}*/          // group: Event States
+/**@}*/          // group: Event States
 
 /** \name Box Types
     \brief FLTK standard box types
@@ -611,7 +611,7 @@ enum Fl_Callback_Reason {
                 \see src/Fl_get_system_colors.cxx
 */
 
-/*@{*/          // group: Box Types
+/**@{*/          // group: Box Types
 
 /**
     \brief FLTK standard box types
@@ -796,7 +796,7 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
 #define FL_CIRCLE_BOX FL_ROUND_DOWN_BOX
 #define FL_DIAMOND_BOX FL_DIAMOND_DOWN_BOX
 
-/*@}*/  // group: Box Types
+/**@}*/  // group: Box Types
 
 /**
    The labeltype() method sets the type of the label.
@@ -958,7 +958,7 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_IMAGE_LABEL();
     behavior, and this behavior may be changed without notice in future
     FLTK versions.
  */
-/*@{*/
+/**@{*/
 /** FLTK type for alignment control. */
 typedef unsigned Fl_Align;
 
@@ -1029,13 +1029,13 @@ const Fl_Align FL_ALIGN_POSITION_MASK   = 0x000f;
 
 /** Mask value to test for image alignment flags. */
 const Fl_Align FL_ALIGN_IMAGE_MASK      = 0x0320;
-/*@}*/
+/**@}*/
 
 
 /** \name Font Numbers
     The following constants define the standard FLTK fonts:
  */
-/*@{*/
+/**@{*/
 /** A font number is an index into the internal font table. */
 typedef int Fl_Font;
 
@@ -1061,7 +1061,7 @@ const Fl_Font FL_BOLD                   = 1;    ///< add this to helvetica, cour
 const Fl_Font FL_ITALIC                 = 2;    ///< add this to helvetica, courier, or times
 const Fl_Font FL_BOLD_ITALIC            = 3;    ///< add this to helvetica, courier, or times
 
-/*@}*/
+/**@}*/
 
 /** Size of a font in pixels.
     This is the approximate height of a font in pixels.
@@ -1092,7 +1092,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;    ///< normal font size
     and an index >0 are reserved for special use.
 
  */
-/*@{*/
+/**@{*/
 /** An FLTK color value; see also \ref drawing_colors  */
 typedef unsigned int Fl_Color;
 
@@ -1243,10 +1243,10 @@ inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
-/*@}*/          // group: Colors
+/**@}*/          // group: Colors
 
 /** \name Cursors */
-/*@{*/
+/**@{*/
 
 /** The following constants define the mouse cursors that are available in FLTK.
 
@@ -1280,7 +1280,7 @@ enum Fl_Cursor {
 
   FL_CURSOR_NONE       =255  /**< invisible. */
 };
-/*@}*/          // group: Cursors
+/**@}*/          // group: Cursors
 
 /** FD "when" conditions */
 enum { // values for "when" passed to Fl::add_fd()
