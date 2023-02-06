@@ -1233,8 +1233,6 @@ int Fl_Text_Display::wrapped_row(int row) const {
  (scroll_() counts them too) and/or to count from the most efficient
  starting point, but the efficiency of this routine is not as important to
  the overall performance of the text display.
-
- \todo Unicode?
  */
 void Fl_Text_Display::display_insert() {
   int hOffset, topLine, X, Y;

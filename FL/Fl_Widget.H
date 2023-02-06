@@ -686,9 +686,6 @@ public:
           using only \p long values. You may want to use user_data() instead.
 
     \see user_data()
-
-    \todo [Internal] The user_data value must be implemented using
-          \p fl_intptr_t or similar to avoid 64-bit platform incompatibilities.
   */
   long argument() const {return (long)(fl_intptr_t)user_data_;}
 
