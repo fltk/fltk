@@ -603,9 +603,9 @@ enum Fl_Callback_Reason {
     \image html  boxtypes.png "FLTK Standard Box Types"
     \image latex boxtypes.png "FLTK Standard Box Types" width=12cm
 
-    \todo       Description of box types is incomplete.
-                See below for the defined enum Fl_Boxtype.
-                \see src/Fl_get_system_colors.cxx
+    \note       Not all box types are depicted in the figure above.
+                See enum  \ref Fl_Boxtype below for the complete list of box types.
+    \see Fl::get_system_colors()
 */
 
 /**@{*/          // group: Box Types
@@ -693,6 +693,9 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
   _FL_OXY_BUTTON_DOWN_BOX,      ///< FL_OXY_BUTTON_DOWN_BOX (new boxtype ?), use FL_OXY_BUTTON_DOWN_BOX
   FL_FREE_BOXTYPE               ///< the first free box type for creation of new box types
 };
+
+#ifndef FL_DOXYGEN
+
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
 #define FL_ROUND_UP_BOX fl_define_FL_ROUND_UP_BOX()
 #define FL_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_ROUND_UP_BOX()+1)
@@ -760,6 +763,8 @@ extern FL_EXPORT Fl_Boxtype fl_define_FL_OXY_UP_BOX();
 #define FL_OXY_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+9)
 #define FL_OXY_BUTTON_UP_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+10)
 #define FL_OXY_BUTTON_DOWN_BOX (Fl_Boxtype)(fl_define_FL_OXY_UP_BOX()+11)
+
+#endif // ! FL_DOXYGEN
 
 // conversions of box types to other boxtypes:
 /**
