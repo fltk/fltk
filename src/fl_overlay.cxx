@@ -99,7 +99,7 @@ static void draw_current_rect() {
 
 static void erase_current_rect() {
 #ifdef USE_XOR
-# ifdef __APPLE_QUARTZ__ // PORTME: Fl_Window_Driver - platform overlay
+# ifdef __APPLE__ // PORTME: Fl_Window_Driver - platform overlay
   fl_rect(px, py, pw, ph);
 # else
   draw_current_rect();

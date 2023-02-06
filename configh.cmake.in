@@ -148,16 +148,6 @@
 #cmakedefine01 HAVE_X11_XREGION_H
 
 /*
- * __APPLE_QUARTZ__:
- *
- * All Apple implementations are now based on Quartz and Cocoa,
- * so this flag should always be on for Mac OS X. This flag has
- * no meaning on operating systems other than Mac OS X.
- */
-
-#cmakedefine __APPLE_QUARTZ__ 1
-
-/*
  * HAVE_GL_OVERLAY:
  *
  * It is possible your GL has an overlay even if X does not.  If so,

@@ -952,8 +952,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         HLINKS="#"
     ])
 ], [darwin*], [
-    AC_DEFINE([__APPLE_QUARTZ__])
-
     BUILD="OSX"
 
     # MacOS X uses Cocoa for graphics.
