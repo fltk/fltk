@@ -1120,7 +1120,6 @@ FL_EXPORT const char *fl_expand_text(const char *from, char *buf, int maxbuf, do
                                      int &n, double &width, int wrap, int draw_symbols = 0);
 
 // XIM:
-/** \todo provide user documentation for fl_set_status function */
 FL_EXPORT void fl_set_status(int X, int Y, int W, int H);
 /** Inform text input methods about the current text insertion cursor.
  \param font Font currently in use in text input.
