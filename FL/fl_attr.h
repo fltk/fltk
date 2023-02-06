@@ -63,12 +63,25 @@
 
 
 /*
- Declare macros specific to Visual Studio.
+  Declare macros specific to Visual Studio.
 
- Visual Studio defines __cplusplus = '199711L' in all its versions which is
- not helpful for us here. For VS version number encoding see:
- https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
- */
+  Visual Studio defines __cplusplus = '199711L' in all its versions which is
+  not helpful for us here. For VS version number encoding see:
+  https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+
+  This document specifies that the macro _MSVC_LANG is defined since
+  "Visual Studio 2015 Update 3" as 201402L (default) and undefined in
+  earlier versions. It can be used to determine the C++ standard as
+  specified by the /std:c++ compiler option:
+
+  - /std:c++14      201402L  (also if /std:c++ is not used)
+  - /std:c++17      201703L
+  - /std:c++20      202002L
+  - /std:c++latest  a "higher, unspecified value" (docs of VS 2022)
+
+  As of this writing (02/2023) _MSVC_LANG is not yet used in this file
+  but it is documented for future use.
+*/
 
 #if defined(_MSC_VER)
 
