@@ -21,7 +21,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include "flstring.h"
+#include <FL/fl_utf8.h>
 
 
 // This is the base class for browsers.  To be useful it must be
@@ -1010,13 +1010,13 @@ void Fl_Browser_::sort(int flags) {
       const char *tb = item_text(b);
       c = item_next(b);
       if (desc) {
-        if ( (caseinsensitive && strcasecmp(ta, tb) < 0) ||
+        if ( (caseinsensitive && fl_utf_strcasecmp(ta, tb) < 0) ||
             (!caseinsensitive && strcmp(ta, tb) < 0) ) {
           item_swap(a, b);
           swapped = 1;
         }
       } else {
-        if ( (caseinsensitive && strcasecmp(ta, tb) > 0) ||
+        if ( (caseinsensitive && fl_utf_strcasecmp(ta, tb) > 0) ||
             (!caseinsensitive && strcmp(ta, tb) > 0) ) {
           item_swap(a, b);
           swapped = 1;
