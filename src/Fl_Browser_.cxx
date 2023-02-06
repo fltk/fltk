@@ -21,6 +21,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
+#include "flstring.h"
 
 
 // This is the base class for browsers.  To be useful it must be
