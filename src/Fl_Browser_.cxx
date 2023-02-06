@@ -984,15 +984,17 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   item_swap(void*, void*) and item_text(void*) must be implemented for this call.
   \param[in] flags FL_SORT_ASCENDING -- sort in ascending order\n
                    FL_SORT_DESCENDING -- sort in descending order\n
+                  FL_SORT_CASEINSENSITIVE -- add this to sort case-insensitively\n
                    Values other than the above will cause undefined behavior\n
                    Other flags may appear in the future.
-  \todo Add a flag to ignore case
 */
 void Fl_Browser_::sort(int flags) {
   //
   // Simple bubble sort - pure lazyness on my side.
   //
   int i, j, n = -1, desc = ((flags&FL_SORT_DESCENDING)==FL_SORT_DESCENDING);
+  typedef int (*sort_f_type)(const char *, const char *);
+  sort_f_type sort_f = ( (flags&FL_SORT_CASEINSENSITIVE) ? strcasecmp : strcmp );
   void *a =item_first(), *b, *c;
   if (!a) return;
   while (a) {
@@ -1008,12 +1010,12 @@ void Fl_Browser_::sort(int flags) {
       const char *tb = item_text(b);
       c = item_next(b);
       if (desc) {
-        if (strcmp(ta, tb)<0) {
+        if (sort_f(ta, tb) < 0) {
           item_swap(a, b);
           swapped = 1;
         }
       } else {
-        if (strcmp(ta, tb)>0) {
+        if (sort_f(ta, tb)>0) {
           item_swap(a, b);
           swapped = 1;
         }

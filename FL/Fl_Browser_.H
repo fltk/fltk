@@ -35,6 +35,7 @@
 
 #define FL_SORT_ASCENDING       0       /**< sort browser items in ascending alphabetic order. */
 #define FL_SORT_DESCENDING      1       /**< sort in descending order */
+#define FL_SORT_CASEINSENSITIVE 0x2     /**< sort case insensitively */
 
 /**
   This is the base class for browsers.  To be useful it must be
