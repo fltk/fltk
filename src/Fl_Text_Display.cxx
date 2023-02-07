@@ -1830,11 +1830,9 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
  numbering is turned on.  There is some performance cost to maintaining this
  line count, so normally absolute line numbers are not tracked if line
  numbering is off.  This routine allows callers to specify that they still
- want this line count maintained (for use via TextDPosToLineAndCol).
+ want this line count maintained (for use via Fl_Text_Display::position_to_linecol()).
  More specifically, this allows the line number reported in the statistics
  line to be calibrated in absolute lines, rather than post-wrapped lines.
-
- \todo  TextDPosToLineAndCol does not exist (nedit port?)
  */
 void Fl_Text_Display::maintain_absolute_top_line_number(int state) {
   mNeedAbsTopLineNum = state;
