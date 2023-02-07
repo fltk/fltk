@@ -230,6 +230,10 @@ void *Fl_Posix_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *
         if (!lib_address) {
           snprintf(path, FL_PATH_MAX, "/sw/lib/%s.dylib", lib_name);
           lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+          // the GTK2 shared lib has a new name under homebrew in macOS, try it:
+          if (!lib_address && !strcmp(lib_name, "libgtk-x11-2.0")) {
+            lib_address = dlopen("/opt/homebrew/lib/libgtkmacintegration-gtk2.dylib", RTLD_LAZY | RTLD_GLOBAL);
+          }
         }
       }
     }
@@ -262,13 +266,7 @@ bool Fl_Posix_System_Driver::probe_for_GTK(int major, int minor, void **p_ptr_gt
 #endif
     } else {
       // Try then with GTK2
-      Fl_Posix_System_Driver::ptr_gtk = Fl_Posix_System_Driver::dlopen_or_dlsym(
-#ifdef __APPLE__
-                                                          "libgtkmacintegration-gtk2"
-#else
-                                                            "libgtk-x11-2.0"
-#endif
-                                                                                );
+      Fl_Posix_System_Driver::ptr_gtk = Fl_Posix_System_Driver::dlopen_or_dlsym("libgtk-x11-2.0");
 #ifdef DEBUG
       if (Fl_Posix_System_Driver::ptr_gtk) {
         puts("selected GTK-2\n");
