@@ -3729,7 +3729,7 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
 
   int retLines, retLineStart;
 
-  /* if we're not wrapping use more efficient BufEndOfLine */
+  /* if we're not wrapping use more efficient Fl_Text_Buffer::line_end() */
   if (!mContinuousWrap) {
     int le = buffer()->line_end(startPos);
     int ls = buffer()->next_char(le);
@@ -3756,8 +3756,8 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
  with all of the text display code which was originally written without
  continuous wrap mode and always expects to wrap at a newline character.
 
- Given the position of the end of the line, as returned by TextDEndOfLine
- or BufEndOfLine, this returns true if there is a line terminating
+ Given the position of the end of the line, as returned by Fl_Text_Display::line_end()
+ or Fl_Text_Buffer::line_end(), this returns true if there is a line terminating
  character, and false if there's not.  On the last character in the
  buffer, this function can't tell for certain whether a trailing space was
  used as a wrap point, and just guesses that it wasn't.  So if an exact
@@ -3765,8 +3765,6 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
 
  \param lineEndPos index of character where the line wraps
  \return 1 if a \\n character causes the line wrap
-
- \todo TextDEndOfLine and BufEndOfLine functions don't exist (nedit port?)
  */
 int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
   IS_UTF8_ALIGNED2(buffer(), lineEndPos)
