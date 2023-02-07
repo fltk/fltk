@@ -15,11 +15,11 @@
 //
 
 #include <FL/Fl.H>
-#if defined(FLTK_USE_X11) && defined(__APPLE__)
-# undef __APPLE__
+#if defined(__APPLE__)  && !(defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND))
+#  define HAS_MAC_APP_MENU 1
 #endif
-#ifdef __APPLE__
-#include <FL/platform.H> // for Fl_Mac_App_Menu
+#ifdef HAS_MAC_APP_MENU
+#  include <FL/platform.H> // for Fl_Mac_App_Menu
 #endif
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
@@ -182,7 +182,7 @@ Fl_Menu_Item pulldown[] = {
   {0}
 };
 
-#ifdef __APPLE__
+#ifdef HAS_MAC_APP_MENU
 Fl_Menu_Item menu_location[] = {
   {"Fl_Menu_Bar",       0, 0, 0, FL_MENU_VALUE},
   {"Fl_Sys_Menu_Bar",   },
@@ -208,7 +208,7 @@ void menu_location_cb(Fl_Widget* w, void* data)
     menubar->show();
     }
 }
-#endif // __APPLE__
+#endif // HAS_MAC_APP_MENU
 
 void menu_linespacing_cb(Fl_Widget* w, void*) {
   Fl_Value_Slider *fvs = (Fl_Value_Slider*)w;
@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
   window.resizable(&mb);
   window.size_range(300,400,0,400+TERMINAL_HEIGHT);
-#ifdef __APPLE__
+#ifdef HAS_MAC_APP_MENU
   Fl_Choice ch2(500,100,150,25,"Use:");
   ch2.menu(menu_location);
   ch2.callback(menu_location_cb, &menubar);
@@ -283,7 +283,7 @@ int main(int argc, char **argv) {
   window.end();
 
   Fl_Sys_Menu_Bar::about(about_cb, NULL);
-#ifdef __APPLE__
+#ifdef HAS_MAC_APP_MENU
   Fl_Menu_Item custom[] = {
     {"Preferences…",  0, test_cb, NULL, FL_MENU_DIVIDER},
     {"Radio1",        0, test_cb, NULL, FL_MENU_RADIO | FL_MENU_VALUE},
