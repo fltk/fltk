@@ -81,9 +81,11 @@ public:
     list_size_(0),
     list_capacity_(0)
   { }
+
   ~Fl_Input_Undo_Action_List() {
     clear();
   }
+
   void push(Fl_Input_Undo_Action* action) {
     if (list_size_ == list_capacity_) {
       list_capacity_ += 25;
@@ -91,12 +93,14 @@ public:
     }
     list_[list_size_++] = action;
   }
+
   Fl_Input_Undo_Action* pop() {
     if (list_size_ > 0)
       return list_[--list_size_];
     else
       return NULL;
   }
+
   void clear() {
     if (list_) {
       for (int i=0; i<list_size_; i++)
