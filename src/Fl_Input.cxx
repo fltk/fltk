@@ -278,7 +278,7 @@ int Fl_Input::kf_undo() {
 // Redo. (currently unimplemented.. toggles undo() instead)
 int Fl_Input::kf_redo() {
   if (readonly()) { fl_beep(); return 1; }
-  return kf_undo();                     // currently we don't support multilevel undo
+  return redo();                     // currently we don't support multilevel undo
 }
 
 // Do a copy operation

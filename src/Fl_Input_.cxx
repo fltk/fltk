@@ -71,6 +71,45 @@ public:
   }
 };
 
+class Fl_Input_Undo_Action_List {
+  Fl_Input_Undo_Action** list_;
+  int list_size_;
+  int list_capacity_;
+public:
+  Fl_Input_Undo_Action_List() :
+    list_(NULL),
+    list_size_(0),
+    list_capacity_(0)
+  { }
+  ~Fl_Input_Undo_Action_List() {
+    clear();
+  }
+  void push(Fl_Input_Undo_Action* action) {
+    if (list_size_ == list_capacity_) {
+      list_capacity_ += 25;
+      list_ = (Fl_Input_Undo_Action**)realloc(list_, list_capacity_ * sizeof(Fl_Input_Undo_Action*));
+    }
+    list_[list_size_++] = action;
+  }
+  Fl_Input_Undo_Action* pop() {
+    if (list_size_ > 0)
+      return list_[--list_size_];
+    else
+      return NULL;
+  }
+  void clear() {
+    if (list_) {
+      for (int i=0; i<list_size_; i++)
+        delete list_[i];
+      delete list_;
+    }
+    list_ = NULL;
+    list_size_ = 0;
+    list_capacity_ = 0;
+  }
+};
+
+
 
 /** \internal
   Converts a given text segment into the text that will be rendered on screen.
@@ -186,7 +225,7 @@ double Fl_Input_::expandpos(
 /** \internal
   Marks a range of characters for update.
 
-  This call marks all characters from \p to the end of the
+  This call marks all characters from `p` to the end of the
   text buffer for update. At least these characters
   will be redrawn in the next update cycle.
 
@@ -891,6 +930,8 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
     } else if (e == undo_->undoat && (e-b)<undo_->undoinsert) {
       undo_->undoinsert -= e-b;
     } else {
+      undo_list_->push(undo_);
+      undo_ = new Fl_Input_Undo_Action();
       undo_->undobuffersize(e-b);
       memcpy(undo_->undobuffer, value_+b, e-b);
       undo_->undocut = e-b;
@@ -903,9 +944,11 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   }
 
   if (ilen) {
-    if (b == undo_->undoat)
+    if (b == undo_->undoat) {
       undo_->undoinsert += ilen;
-    else {
+    } else {
+      undo_list_->push(undo_);
+      undo_ = new Fl_Input_Undo_Action();
       undo_->undocut = 0;
       undo_->undoinsert = ilen;
     }
@@ -947,13 +990,13 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
 }
 
 /**
-  Undoes previous changes to the text buffer.
+ Apply the current undo/redo operation
 
-  This call undoes a number of previous calls to replace().
+ It's up to undo() and redo() to push and po actions to and from the lists.
 
-  \return non-zero if any change was made.
-*/
-int Fl_Input_::undo() {
+ \return 1 if the current action cahnged any text.
+ \see undo(), redo() */
+int Fl_Input_::apply_undo() {
   was_up_down = 0;
   if (!undo_->undocut && !undo_->undoinsert) return 0;
 
@@ -961,6 +1004,8 @@ int Fl_Input_::undo() {
   int xlen = undo_->undoinsert;
   int b = undo_->undoat-xlen;
   int b1 = b;
+
+  minimal_update(position_);
 
   put_in_buffer(size_+ilen);
 
@@ -989,8 +1034,42 @@ int Fl_Input_::undo() {
     while (b1 > 0 && index(b1)!='\n') b1--;
   minimal_update(b1);
   set_changed();
+}
+
+/**
+ Undoes previous changes to the text buffer.
+
+ This call undoes a number of previous calls to replace().
+
+ \return non-zero if any change was made.
+ */
+int Fl_Input_::undo() {
+  if (apply_undo() == 0)
+    return 0;
+
+  redo_list_->push(undo_);
+  undo_ = undo_list_->pop();
+  if (!undo_) undo_ = new Fl_Input_Undo_Action();
+
   if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+
   return 1;
+}
+
+/**
+ Redo previous undo operation.
+
+ This call reapplies previously executed undo operations.
+
+ \return non-zero if any change was made.
+ */
+int Fl_Input_::redo() {
+  Fl_Input_Undo_Action *redo_action = redo_list_->pop();
+  if (!redo_action) return;
+  if (undo_->undocut || undo_->undoinsert)
+    undo_list_->push(undo_);
+  undo_ = redo_action;
+  return apply_undo();
 }
 
 /**
@@ -1168,6 +1247,8 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   xscroll_ = yscroll_ = 0;
   maximum_size_ = 32767;
   shortcut_ = 0;
+  undo_list_ = new Fl_Input_Undo_Action_List();
+  redo_list_ = new Fl_Input_Undo_Action_List();
   undo_ = new Fl_Input_Undo_Action();
   set_flag(SHORTCUT_LABEL);
   set_flag(MAC_USE_ACCENTS_MENU);
@@ -1236,6 +1317,8 @@ void Fl_Input_::put_in_buffer(int len) {
 int Fl_Input_::static_value(const char* str, int len) {
   clear_changed();
   undo_->clear();
+  undo_list_->clear();
+  redo_list_->clear();
   if (str == value_ && len == size_) return 0;
   if (len) { // non-empty new value:
     if (xscroll_ || yscroll_) {
@@ -1336,6 +1419,8 @@ void Fl_Input_::resize(int X, int Y, int W, int H) {
   from the parent Fl_Group.
 */
 Fl_Input_::~Fl_Input_() {
+  delete undo_list_;
+  delete redo_list_;
   delete undo_;
   if (bufsize) free((void*)buffer);
 }
