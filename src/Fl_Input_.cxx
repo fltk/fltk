@@ -1034,6 +1034,8 @@ int Fl_Input_::apply_undo() {
     while (b1 > 0 && index(b1)!='\n') b1--;
   minimal_update(b1);
   set_changed();
+
+  return 1;
 }
 
 /**
@@ -1065,7 +1067,7 @@ int Fl_Input_::undo() {
  */
 int Fl_Input_::redo() {
   Fl_Input_Undo_Action *redo_action = redo_list_->pop();
-  if (!redo_action) return;
+  if (!redo_action) return 0;
   if (undo_->undocut || undo_->undoinsert)
     undo_list_->push(undo_);
   undo_ = redo_action;
