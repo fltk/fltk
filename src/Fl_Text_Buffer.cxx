@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2017 by Bill Spitzak and others.
+// Copyright 2001-2023 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -102,6 +102,56 @@ public:
   void clear() {
     undocut = undoinsert = 0;
   }
+
+  void print() {
+    ::printf("%d %d %d %d %s\n", undoat, undocut, undoyankcut, undoinsert, undobuffer);
+  }
+};
+
+class Fl_Text_Undo_Action_List {
+  Fl_Text_Undo_Action** list_;
+  int list_size_;
+  int list_capacity_;
+public:
+  Fl_Text_Undo_Action_List() :
+  list_(NULL),
+  list_size_(0),
+  list_capacity_(0)
+  { }
+
+  ~Fl_Text_Undo_Action_List() {
+    clear();
+  }
+
+  void push(Fl_Text_Undo_Action* action) {
+    if (list_size_ == list_capacity_) {
+      list_capacity_ += 25;
+      list_ = (Fl_Text_Undo_Action**)realloc(list_, list_capacity_ * sizeof(Fl_Text_Undo_Action*));
+    }
+    ::printf("(%d) push: ", list_size_); action->print();
+    list_[list_size_++] = action;
+  }
+
+  Fl_Text_Undo_Action* pop() {
+    if (list_size_ > 0) {
+      Fl_Text_Undo_Action *action = list_[list_size_-1];
+      ::printf("(%d) pop:  ", list_size_);
+      action->print();
+      return list_[--list_size_];
+    } else
+      return NULL;
+  }
+
+  void clear() {
+    if (list_) {
+      for (int i=0; i<list_size_; i++)
+        delete list_[i];
+      delete list_;
+    }
+    list_ = NULL;
+    list_size_ = 0;
+    list_capacity_ = 0;
+  }
 };
 
 
@@ -136,6 +186,8 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mCursorPosHint = 0;
   mCanUndo = 1;
   mUndo = new Fl_Text_Undo_Action();
+  mUndoList = new Fl_Text_Undo_Action_List();
+  mRedoList = new Fl_Text_Undo_Action_List();
   input_file_was_transcoded = 0;
   transcoding_warning_action = def_transcoding_warning_action;
 }
@@ -156,6 +208,8 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
     delete[] mPredeleteCbArgs;
   }
   delete mUndo;
+  delete mUndoList;
+  delete mRedoList;
 }
 
 
@@ -205,8 +259,11 @@ void Fl_Text_Buffer::text(const char *t)
   call_modify_callbacks(0, deletedLength, insertedLength, 0, deletedText);
   free((void *) deletedText);
 
-  if (mCanUndo)
+  if (mCanUndo) {
     mUndo->clear();
+    mUndoList->clear();
+    mRedoList->clear();
+  }
 }
 
 
@@ -459,12 +516,10 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 }
 
 
-/*
- Take the previous changes and undo them. Return the previous
- cursor position in cursorPos. Returns 1 if the undo was applied.
- CursorPos will be at a character boundary.
+/**
+ Apply the current undo/redo operation, called from undo() or redo().
  */
-int Fl_Text_Buffer::undo(int *cursorPos)
+int Fl_Text_Buffer::apply_undo(int *cursorPos)
 {
   if (!mCanUndo)
     return 0;
@@ -472,38 +527,84 @@ int Fl_Text_Buffer::undo(int *cursorPos)
   if (!mUndo->undocut && !mUndo->undoinsert)
     return 0;
 
-  int ilen = mUndo->undocut;
-  int xlen = mUndo->undoinsert;
-  int b = mUndo->undoat - xlen;
+  ::printf("Apply ");
+  mUndo->print();
+  Fl_Text_Undo_Action* u = mUndo;
+  mUndo = mUndoList->pop();
+  if (!mUndo) mUndo = new Fl_Text_Undo_Action();
+  ::printf("Stack ");
+  mUndo->print();
 
-  if (xlen && mUndo->undoyankcut && !ilen) {
-    ilen = mUndo->undoyankcut;
+  int ilen = u->undocut;
+  int xlen = u->undoinsert;
+  int b = u->undoat - xlen;
+
+
+  if (xlen && u->undoyankcut && !ilen) {
+    ilen = u->undoyankcut;
   }
 
   if (xlen && ilen) {
-    mUndo->undobuffersize(ilen + 1);
-    mUndo->undobuffer[ilen] = 0;
-    char *tmp = fl_strdup(mUndo->undobuffer);
-    replace(b, mUndo->undoat, tmp);
+    u->undobuffersize(ilen + 1);
+    u->undobuffer[ilen] = 0;
+    char *tmp = fl_strdup(u->undobuffer);
+    replace(b, u->undoat, tmp);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
     free(tmp);
   } else if (xlen) {
-    remove(b, mUndo->undoat);
+    remove(b, u->undoat);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
   } else if (ilen) {
-    mUndo->undobuffersize(ilen + 1);
-    mUndo->undobuffer[ilen] = 0;
-    insert(mUndo->undoat, mUndo->undobuffer);
+    u->undobuffersize(ilen + 1);
+    u->undobuffer[ilen] = 0;
+    insert(u->undoat, u->undobuffer);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
-    mUndo->undoyankcut = 0;
+    u->undoyankcut = 0;
   }
+  delete u;
+
+  ::printf("Keep ");
+  mUndo->print();
 
   return 1;
 }
 
+/*
+ Take the previous changes and undo them. Return the previous
+ cursor position in cursorPos. Returns 1 if the undo was applied.
+ CursorPos will be at a character boundary.
+ */
+int Fl_Text_Buffer::undo(int *cursorPos) {
+  if (!apply_undo(cursorPos))
+    return 0;
+  ::printf("RedoList ");
+  mRedoList->push(mUndo);
+  ::printf("UndoList ");
+  mUndo = mUndoList->pop();
+  if (!mUndo) mUndo = new Fl_Text_Undo_Action();
+  return 1;
+}
+
+/**
+ Redo previous undo action.
+ */
+int Fl_Text_Buffer::redo(int *cursorPos) {
+  ::printf("RedoList ");
+  Fl_Text_Undo_Action *redo_action = mRedoList->pop();
+  if (!redo_action)
+    return 0;
+
+  if (mUndo->undocut || mUndo->undoinsert) {
+    ::printf("UndoList ");
+    mUndoList->push(mUndo);
+  }
+  mUndo = redo_action;
+
+  return apply_undo(cursorPos);
+}
 
 /*
  Set a flag if undo function will work.
@@ -1220,6 +1321,9 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
     if (mUndo->undoat == pos && mUndo->undoinsert) {
       mUndo->undoinsert += insertedLength;
     } else {
+      ::printf("UndoList ");
+      mUndoList->push(mUndo);
+      mUndo = new Fl_Text_Undo_Action();
       mUndo->undoinsert = insertedLength;
       mUndo->undoyankcut = (mUndo->undoat == pos) ? mUndo->undocut : 0;
     }
@@ -1245,6 +1349,9 @@ void Fl_Text_Buffer::remove_(int start, int end)
       memmove(mUndo->undobuffer + end - start, mUndo->undobuffer, mUndo->undocut);
       mUndo->undocut += end - start;
     } else {
+      ::printf("UndoList ");
+      mUndoList->push(mUndo);
+      mUndo = new Fl_Text_Undo_Action();
       mUndo->undocut = end - start;
       mUndo->undobuffersize(mUndo->undocut);
     }

@@ -71,6 +71,7 @@ public:
   }
 };
 
+
 class Fl_Input_Undo_Action_List {
   Fl_Input_Undo_Action** list_;
   int list_size_;
@@ -1071,11 +1072,17 @@ int Fl_Input_::undo() {
  */
 int Fl_Input_::redo() {
   Fl_Input_Undo_Action *redo_action = redo_list_->pop();
-  if (!redo_action) return 0;
+  if (!redo_action)
+    return 0;
+
   if (undo_->undocut || undo_->undoinsert)
     undo_list_->push(undo_);
   undo_ = redo_action;
-  return apply_undo();
+
+  int ret = apply_undo();
+  if (ret && (when()&FL_WHEN_CHANGED)) do_callback(FL_REASON_CHANGED);
+
+  return ret;
 }
 
 /**
