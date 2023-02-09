@@ -470,6 +470,13 @@ public:
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
+
+  static Fl_Timestamp now();
+  static double seconds_since(Fl_Timestamp& then);
+  static double seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
+  static long ticks_since(Fl_Timestamp& then);
+  static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
+
   // private
   static void run_idle();
   static void run_checks();
