@@ -900,6 +900,7 @@ Fd_Code_Writer::Fd_Code_Writer()
 
 Fd_Code_Writer::~Fd_Code_Writer()
 {
+  delete id_root;
   delete ptr_in_code;
   delete text_in_code;
   delete text_in_header;
