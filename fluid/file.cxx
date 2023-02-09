@@ -121,6 +121,9 @@ Fd_Project_Reader::Fd_Project_Reader()
 /** \brief Release project reader resources. */
 Fd_Project_Reader::~Fd_Project_Reader()
 {
+  // fname is not copied, so do not free it
+  if (buffer)
+    ::free(buffer);
 }
 
 /**
