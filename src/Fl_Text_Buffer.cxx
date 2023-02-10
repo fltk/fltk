@@ -67,10 +67,10 @@ static int min(int i1, int i2)
 #endif
 
 /*
- Undo/Redo is handled with Fl_Text_Undo_Action. The names of the class memebers
+ Undo/Redo is handled with Fl_Text_Undo_Action. The names of the class members
  relate to the original action.
 
- Deleteing text will store the number of bytes deleted in `undocut`, and store
+ Deleting text will store the number of bytes deleted in `undocut`, and store
  the deleted text in `undobuffer`. `undoat` is the insertion position.
 
  Inserting text will store the number of bytes inserted in `undoinsert` and
@@ -80,7 +80,7 @@ static int min(int i1, int i2)
  called a yankcut, and the number of bytes that were deleted is stored in
  `undoyankcut`, again storing the deleted text in `undobuffer`.
 
- If an undo action is run, text is deletd and inserted via the normal
+ If an undo action is run, text is deleted and inserted via the normal
  Fl_Text_Editor methods, generating the inverse undo action (redo) in mUndo.
  */
 class Fl_Text_Undo_Action {
@@ -134,8 +134,8 @@ public:
  the redo event list is purged.
 
  If the user calls undo(), the current undo event in mUndo will be run,
- generatng a matching redo event in mUndo. The redo event is then pushed into
- the redo list, and the next undo event is popped form the undo list and made
+ generating a matching redo event in mUndo. The redo event is then pushed into
+ the redo list, and the next undo event is popped from the undo list and made
  current.
 
  A list can be locked to be protected from purging while running an undo event.
@@ -177,8 +177,9 @@ public:
   void clear() {
     if (locked_) return;
     if (list_) {
-      for (int i=0; i<list_size_; i++)
+      for (int i=0; i<list_size_; i++) {
         delete list_[i];
+      }
       delete list_;
     }
     list_ = NULL;
@@ -612,9 +613,9 @@ int Fl_Text_Buffer::undo(int *cursorPos) {
   delete action;
 
   if (ret) {
-    // push the genearted undo action to the redo list
+    // push the generated undo action to the redo list
     mRedoList->push(mUndo);
-    // drop the emty action we previously created
+    // drop the empty action we previously created
     mUndo = mUndoList->pop();
     if (mUndo) {
       delete mUndo;
@@ -1357,7 +1358,7 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
 
   if (mCanUndo) {
     if (mUndo->undoat == pos && mUndo->undoinsert) {
-      // continue inserting text at the given cursor postion
+      // continue inserting text at the given cursor position
       mUndo->undoinsert += insertedLength;
     } else {
       int yankcut = (mUndo->undoat == pos) ? mUndo->undocut : 0;

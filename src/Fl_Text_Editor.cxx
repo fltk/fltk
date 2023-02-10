@@ -132,7 +132,7 @@ static struct {
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
 //{ FL_Clear,     0,                        Fl_Text_Editor::delete_to_eol },
   { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo       },
-  { 'z',          FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_redo       }, // Windows users may be used to Ctr-Y
+  { 'z',          FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_redo       }, // MSWindows screen driver also defines Ctrl-Y
   { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo       }, // Emacs
   { '?',          FL_CTRL,                  Fl_Text_Editor::kf_redo       }, // Emacs
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },

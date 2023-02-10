@@ -105,8 +105,9 @@ public:
 
   void clear() {
     if (list_) {
-      for (int i=0; i<list_size_; i++)
+      for (int i=0; i<list_size_; i++) {
         delete list_[i];
+      }
       delete list_;
     }
     list_ = NULL;
@@ -230,7 +231,7 @@ double Fl_Input_::expandpos(
 /** \internal
   Marks a range of characters for update.
 
-  This call marks all characters from `p` to the end of the
+  This call marks all characters from \p p to the end of the
   text buffer for update. At least these characters
   will be redrawn in the next update cycle.
 
@@ -999,9 +1000,9 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
 /**
  Apply the current undo/redo operation
 
- It's up to undo() and redo() to push and po actions to and from the lists.
+ It's up to undo() and redo() to push and pop actions to and from the lists.
 
- \return 1 if the current action cahnged any text.
+ \return 1 if the current action changed any text.
  \see undo(), redo() */
 int Fl_Input_::apply_undo() {
   was_up_down = 0;

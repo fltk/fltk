@@ -38,6 +38,17 @@ extern const char *fl_bg2;
 #  include <multimon.h>
 #endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
+static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
+  // Define MS Windows specific accelerators...
+  { 'y',          FL_CTRL,                  Fl_Text_Editor::kf_redo       ,0},
+  { 0,            0,                        0                             ,0}
+};
+
+
+Fl_WinAPI_Screen_Driver::Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
+  text_editor_extra_key_bindings =  extra_bindings;
+  for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
+}
 
 int Fl_WinAPI_Screen_Driver::visual(int flags)
 {

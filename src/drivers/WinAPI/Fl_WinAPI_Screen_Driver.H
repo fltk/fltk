@@ -41,9 +41,7 @@ protected:
 
 public:
   float dpi[MAX_SCREENS][2];
-  Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
-    for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
-  }
+  Fl_WinAPI_Screen_Driver();
   // --- display management
   int visual(int flags) FL_OVERRIDE;
   // --- screen configuration
