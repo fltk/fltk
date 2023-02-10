@@ -23,7 +23,7 @@
 #define FL_TEXT_BUFFER_H
 
 #include <stdarg.h>     /* va_list */
-#include <FL/fl_attr.h>
+#include "fl_attr.h"    /* Doxygen can't find <FL/fl_attr.h> */
 
 #undef ASSERT_UTF8
 
@@ -166,7 +166,7 @@ public:
 
   // Returns true if selected() and the positions of this selection.
   int selected(int *startpos, int *endpos) const;
-  FL_DEPRECATED("Please use selected(startpos, endpos) instead.",
+  FL_DEPRECATED("Please use selected(startpos, endpos) instead (since 1.4.0).",
   int position(int *startpos, int *endpos) const) { return selected(startpos, endpos); }
 
 protected:
