@@ -107,27 +107,6 @@ extern void fl_cleanup_pens(void);
 #define round(A) int((A) + 0.5)
 #endif // _MSC_VER <= 1600
 
-// USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
-// USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
-/*
-  This feature was supposed to provide an efficient alternative to the current
-  polling method, but as it has been discussed (Thanks Albrecht!) :
-  - the async mode would imply to change the socket to non blocking mode.
-    This can have unexpected side effects for 3rd party apps, especially
-    if it is set on-the-fly when socket service is really needed, as it is
-    done today and on purpose, but still the 3rd party developer wouldn't easily
-    control the sequencing of socket operations.
-  - Finer granularity of events furthered by the async select is a plus only
-    for socket 3rd party impl., it is simply not needed for the 'light' fltk
-    use we make of wsock, so here it would also be a bad point, because of all
-    the logic add-ons necessary for using this functionality, without a clear
-    benefit.
-
-  So async mode select would not add benefits to fltk, worse, it can slowdown
-  fltk because of this finer granularity and instrumentation code to be added
-  for async mode proper operation, not mentioning the side effects...
-*/
-
 // Internal functions
 static void fl_clipboard_notify_target(HWND wnd);
 static void fl_clipboard_notify_untarget(HWND wnd);
@@ -143,54 +122,12 @@ static bool initial_clipboard = true;
 # define SOCKET int
 #endif
 
-// Disable dynamic linking/loading of Winsock DLL (STR #3454)
-// *FIXME* The old code should be entirely removed when the issue
-// is finally resolved.
-
-#if (0) // *FIXME* dynamic loading of Winsock DLL (ws2_32.dll)
-
-// note: winsock2.h has been #include'd in Fl.cxx
-#define WSCK_DLL_NAME "WS2_32.DLL"
-
-typedef int(WINAPI *fl_wsk_select_f)(int, fd_set *, fd_set *, fd_set *, const struct timeval *);
-typedef int(WINAPI *fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
-
-static HMODULE s_wsock_mod = 0;
-static fl_wsk_select_f s_wsock_select = 0;
-static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
-
-static HMODULE get_wsock_mod() {
-  if (!s_wsock_mod) {
-    s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
-    if (s_wsock_mod == NULL)
-      Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n", WSCK_DLL_NAME);
-    s_wsock_select = (fl_wsk_select_f)GetProcAddress(s_wsock_mod, "select");
-    fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f)GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
-  }
-  return s_wsock_mod;
-}
-
-#else // static linking of ws2_32.dll
-
-// *FIXME* These defines and the dummy function get_wsock_mod() must be
-// *removed* when the issue (STR #3454) is finally resolved. The code that
-// uses these defines and get_wsock_mod() must be modified to use the
-// official socket interface (select() and FL_ISSET).
-
-#define fl_wsk_fd_is_set FD_ISSET
-#define s_wsock_select select
-static int get_wsock_mod() {
-  return 1;
-}
-
-#endif // dynamic/static linking of ws2_32.dll (see above and STR #3454)
-
 /*
- Dynamic linking of imm32.dll
- This library is only needed for a hand full (four ATM) functions relating to
- international text rendering and locales. Dynamically loading reduces initial
- size and link dependencies.
- */
+  Dynamic linking of imm32.dll
+  This library is only needed for a hand full (four ATM) functions relating to
+  international text rendering and locales. Dynamically loading reduces initial
+  size and link dependencies.
+*/
 static HMODULE s_imm_module = 0;
 typedef BOOL(WINAPI *flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
 static flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
@@ -430,16 +367,16 @@ double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
 
     fd_set fdt[3];
     memcpy(fdt, fdsets, sizeof fdt); // one shot faster fdt init
-    if (get_wsock_mod() && s_wsock_select(maxfd + 1, &fdt[0], &fdt[1], &fdt[2], &t)) {
+    if (select(maxfd + 1, &fdt[0], &fdt[1], &fdt[2], &t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i++) {
         SOCKET f = fd[i].fd;
         short revents = 0;
-        if (fl_wsk_fd_is_set(f, &fdt[0]))
+        if (FD_ISSET(f, &fdt[0]))
           revents |= FL_READ;
-        if (fl_wsk_fd_is_set(f, &fdt[1]))
+        if (FD_ISSET(f, &fdt[1]))
           revents |= FL_WRITE;
-        if (fl_wsk_fd_is_set(f, &fdt[2]))
+        if (FD_ISSET(f, &fdt[2]))
           revents |= FL_EXCEPT;
         if (fd[i].events & revents)
           fd[i].cb(f, fd[i].arg);
@@ -533,7 +470,7 @@ int Fl_WinAPI_System_Driver::ready() {
   t.tv_usec = 0;
   fd_set fdt[3];
   memcpy(fdt, fdsets, sizeof fdt);
-  return get_wsock_mod() ? s_wsock_select(0, &fdt[0], &fdt[1], &fdt[2], &t) : 0;
+  return select(0, &fdt[0], &fdt[1], &fdt[2], &t);
 }
 
 
