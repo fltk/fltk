@@ -33,6 +33,7 @@ extern void fl_draw(const char*, int, float, float);
 
 ////////////////////////////////////////////////////////////////
 
+// see: Fl_Text_Undo_Action
 class Fl_Input_Undo_Action {
 public:
   Fl_Input_Undo_Action() :
@@ -71,7 +72,7 @@ public:
   }
 };
 
-
+// see: Fl_Text_Undo_Action_List
 class Fl_Input_Undo_Action_List {
   Fl_Input_Undo_Action** list_;
   int list_size_;
@@ -113,7 +114,6 @@ public:
     list_capacity_ = 0;
   }
 };
-
 
 
 /** \internal
