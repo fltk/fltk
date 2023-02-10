@@ -373,7 +373,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   drawn_selected = -1;
   if (button) {
     box(button->box());
-    if (box() == FL_NO_BOX || box() == FL_FLAT_BOX) box(FL_UP_BOX);
+    // don't force a box type, but make sure that the background is redrawn
+    if (box() == FL_NO_BOX) box(FL_FLAT_BOX);
   } else {
     box(FL_UP_BOX);
   }
