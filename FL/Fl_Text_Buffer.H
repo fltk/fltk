@@ -822,7 +822,7 @@ protected:
   /**
    Apply the current undo/redo operation, called from undo() or redo().
    */
-  int apply_undo(int *cursorPos);
+  int apply_undo(Fl_Text_Undo_Action* action, int* cursorPos);
 
   Fl_Text_Selection mPrimary;     /**< highlighted areas */
   Fl_Text_Selection mSecondary;   /**< highlighted areas */

@@ -935,6 +935,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
     } else if (e == undo_->undoat && (e-b)<undo_->undoinsert) {
       undo_->undoinsert -= e-b;
     } else {
+      redo_list_->clear();
       undo_list_->push(undo_);
       undo_ = new Fl_Input_Undo_Action();
       undo_->undobuffersize(e-b);
@@ -952,6 +953,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
     if (b == undo_->undoat) {
       undo_->undoinsert += ilen;
     } else {
+      redo_list_->clear();
       undo_list_->push(undo_);
       undo_ = new Fl_Input_Undo_Action();
       undo_->undocut = 0;

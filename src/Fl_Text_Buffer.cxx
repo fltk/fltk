@@ -66,6 +66,23 @@ static int min(int i1, int i2)
 
 #endif
 
+/*
+ Undo/Redo is handled with Fl_Text_Undo_Action. The names of the class memebers
+ relate to the original action.
+
+ Deleteing text will store the number of bytes deleted in `undocut`, and store
+ the deleted text in `undobuffer`. `undoat` is the insertion position.
+
+ Inserting text will store the number of bytes inserted in `undoinsert` and
+ `undoat` will point after the inserted text.
+
+ If text is deleted first and then text is inserted at the same position, it's
+ called a yankcut, and the number of bytes that were deleted is stored in
+ `undoyankcut`, again storing the deleted text in `undobuffer`.
+
+ If an undo action is run, text is deletd and inserted via the normal
+ Fl_Text_Editor methods, generating the inverse undo action (redo) in mUndo.
+ */
 class Fl_Text_Undo_Action {
 public:
   Fl_Text_Undo_Action() :
@@ -103,23 +120,41 @@ public:
     undocut = undoinsert = 0;
   }
 
-  void print() {
-    ::printf("%d %d %d %d %s\n", undoat, undocut, undoyankcut, undoinsert, undobuffer);
+  bool empty() {
+    return (!undocut && !undoinsert);
   }
 };
 
+/*
+ Undo events are stored in a Last In - First Out stack.
+
+ Any insertion or deletion of text will either add to the current undo event
+ in mUndo, or generate a new undo event if cursor positions are not consecutive.
+ The previously current undo event will then be pushed to the undo list and
+ the redo event list is purged.
+
+ If the user calls undo(), the current undo event in mUndo will be run,
+ generatng a matching redo event in mUndo. The redo event is then pushed into
+ the redo list, and the next undo event is popped form the undo list and made
+ current.
+
+ A list can be locked to be protected from purging while running an undo event.
+ */
 class Fl_Text_Undo_Action_List {
   Fl_Text_Undo_Action** list_;
   int list_size_;
   int list_capacity_;
+  bool locked_;
 public:
   Fl_Text_Undo_Action_List() :
   list_(NULL),
   list_size_(0),
-  list_capacity_(0)
+  list_capacity_(0),
+  locked_(false)
   { }
 
   ~Fl_Text_Undo_Action_List() {
+    unlock();
     clear();
   }
 
@@ -128,21 +163,19 @@ public:
       list_capacity_ += 25;
       list_ = (Fl_Text_Undo_Action**)realloc(list_, list_capacity_ * sizeof(Fl_Text_Undo_Action*));
     }
-    ::printf("(%d) push: ", list_size_); action->print();
     list_[list_size_++] = action;
   }
 
   Fl_Text_Undo_Action* pop() {
     if (list_size_ > 0) {
       Fl_Text_Undo_Action *action = list_[list_size_-1];
-      ::printf("(%d) pop:  ", list_size_);
-      action->print();
       return list_[--list_size_];
     } else
       return NULL;
   }
 
   void clear() {
+    if (locked_) return;
     if (list_) {
       for (int i=0; i<list_size_; i++)
         delete list_[i];
@@ -152,6 +185,9 @@ public:
     list_size_ = 0;
     list_capacity_ = 0;
   }
+
+  void lock() { locked_ = true; }
+  void unlock() { locked_ = false; }
 };
 
 
@@ -519,91 +555,93 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 /**
  Apply the current undo/redo operation, called from undo() or redo().
  */
-int Fl_Text_Buffer::apply_undo(int *cursorPos)
+int Fl_Text_Buffer::apply_undo(Fl_Text_Undo_Action* action, int* cursorPos)
 {
-  if (!mCanUndo)
+  if (action->empty())
     return 0;
 
-  if (!mUndo->undocut && !mUndo->undoinsert)
-    return 0;
+  mRedoList->lock();
 
-  ::printf("Apply ");
-  mUndo->print();
-  Fl_Text_Undo_Action* u = mUndo;
-  mUndo = mUndoList->pop();
-  if (!mUndo) mUndo = new Fl_Text_Undo_Action();
-  ::printf("Stack ");
-  mUndo->print();
+  int ilen = action->undocut;
+  int xlen = action->undoinsert;
+  int b = action->undoat - xlen;
 
-  int ilen = u->undocut;
-  int xlen = u->undoinsert;
-  int b = u->undoat - xlen;
-
-
-  if (xlen && u->undoyankcut && !ilen) {
-    ilen = u->undoyankcut;
+  if (xlen && action->undoyankcut && !ilen) {
+    ilen = action->undoyankcut;
   }
 
   if (xlen && ilen) {
-    u->undobuffersize(ilen + 1);
-    u->undobuffer[ilen] = 0;
-    char *tmp = fl_strdup(u->undobuffer);
-    replace(b, u->undoat, tmp);
+    action->undobuffersize(ilen + 1);
+    action->undobuffer[ilen] = 0;
+    char *tmp = fl_strdup(action->undobuffer);
+    replace(b, action->undoat, tmp);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
     free(tmp);
   } else if (xlen) {
-    remove(b, u->undoat);
+    remove(b, action->undoat);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
   } else if (ilen) {
-    u->undobuffersize(ilen + 1);
-    u->undobuffer[ilen] = 0;
-    insert(u->undoat, u->undobuffer);
+    action->undobuffersize(ilen + 1);
+    action->undobuffer[ilen] = 0;
+    insert(action->undoat, action->undobuffer);
     if (cursorPos)
       *cursorPos = mCursorPosHint;
-    u->undoyankcut = 0;
+    action->undoyankcut = 0;
   }
-  delete u;
 
-  ::printf("Keep ");
-  mUndo->print();
-
+  mRedoList->unlock();
   return 1;
 }
 
-/*
+/**
  Take the previous changes and undo them. Return the previous
  cursor position in cursorPos. Returns 1 if the undo was applied.
  CursorPos will be at a character boundary.
  */
 int Fl_Text_Buffer::undo(int *cursorPos) {
-  if (!apply_undo(cursorPos))
+  if (!mCanUndo || mUndo->empty())
     return 0;
-  ::printf("RedoList ");
-  mRedoList->push(mUndo);
-  ::printf("UndoList ");
-  mUndo = mUndoList->pop();
-  if (!mUndo) mUndo = new Fl_Text_Undo_Action();
-  return 1;
+
+  // save the current undo action and add an empty action to avoid generating yankcuts
+  Fl_Text_Undo_Action* action = mUndo;
+  mUndo = new Fl_Text_Undo_Action();
+
+  int ret = apply_undo(action, cursorPos);
+  delete action;
+
+  if (ret) {
+    // push the genearted undo action to the redo list
+    mRedoList->push(mUndo);
+    // drop the emty action we previously created
+    mUndo = mUndoList->pop();
+    if (mUndo) {
+      delete mUndo;
+      // pop the undo action before that and make it the current undo action
+      mUndo = mUndoList->pop();
+      if (!mUndo) mUndo = new Fl_Text_Undo_Action();
+    }
+  }
+
+  return ret;
 }
 
 /**
  Redo previous undo action.
  */
 int Fl_Text_Buffer::redo(int *cursorPos) {
-  ::printf("RedoList ");
+  if (!mCanUndo)
+    return 0;
+
   Fl_Text_Undo_Action *redo_action = mRedoList->pop();
   if (!redo_action)
     return 0;
 
-  if (mUndo->undocut || mUndo->undoinsert) {
-    ::printf("UndoList ");
-    mUndoList->push(mUndo);
-  }
-  mUndo = redo_action;
-
-  return apply_undo(cursorPos);
+  // running the redo action will also generate a new undo action
+  // Note: there is a slight chance that the current undo action and the
+  //       generated action merge into one.
+  return apply_undo(redo_action, cursorPos);
 }
 
 /*
@@ -1319,13 +1357,20 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
 
   if (mCanUndo) {
     if (mUndo->undoat == pos && mUndo->undoinsert) {
+      // continue inserting text at the given cursor postion
       mUndo->undoinsert += insertedLength;
     } else {
-      ::printf("UndoList ");
-      mUndoList->push(mUndo);
-      mUndo = new Fl_Text_Undo_Action();
+      int yankcut = (mUndo->undoat == pos) ? mUndo->undocut : 0;
+      if (!yankcut) {
+        // insert text at a new position, so generate a new undo action
+        mRedoList->clear();
+        mUndoList->push(mUndo);
+        mUndo = new Fl_Text_Undo_Action();
+      } else {
+        // we deleted and inserted at the same position, making this a yankcut
+      }
       mUndo->undoinsert = insertedLength;
-      mUndo->undoyankcut = (mUndo->undoat == pos) ? mUndo->undocut : 0;
+      mUndo->undoyankcut = yankcut;
     }
     mUndo->undoat = pos + insertedLength;
     mUndo->undocut = 0;
@@ -1345,11 +1390,13 @@ void Fl_Text_Buffer::remove_(int start, int end)
 
   if (mCanUndo) {
     if (mUndo->undoat == end && mUndo->undocut) {
+      // continue to remove text at the same cursor position
       mUndo->undobuffersize(mUndo->undocut + end - start + 1);
       memmove(mUndo->undobuffer + end - start, mUndo->undobuffer, mUndo->undocut);
       mUndo->undocut += end - start;
     } else {
-      ::printf("UndoList ");
+      // remove text at a new position, so generate a new undo action
+      mRedoList->clear();
       mUndoList->push(mUndo);
       mUndo = new Fl_Text_Undo_Action();
       mUndo->undocut = end - start;
