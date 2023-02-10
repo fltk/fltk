@@ -168,10 +168,10 @@ public:
 
   Fl_Text_Undo_Action* pop() {
     if (list_size_ > 0) {
-      Fl_Text_Undo_Action *action = list_[list_size_-1];
       return list_[--list_size_];
-    } else
+    } else {
       return NULL;
+    }
   }
 
   void clear() {
