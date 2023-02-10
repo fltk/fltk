@@ -141,8 +141,8 @@ to show the appropriate panel.
 For example, the user might be able to click on "Next" and "Prev"
 navigation buttons or keys, as shown below.
 
-\image html  wizard.png "FL_Wizard container widget"
-\image latex wizard.png "FL_Wizard container widget" width=4cm
+\image html  wizard.png "Fl_Wizard container widget"
+\image latex wizard.png "Fl_Wizard container widget" width=4cm
 
 
 \htmlonly

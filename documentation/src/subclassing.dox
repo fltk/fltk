@@ -138,7 +138,7 @@ MyClass::draw() {
 \endcode
 
 \todo Clarify Fl_Window::damage(uchar) handling - seems confused/wrong?
-      ORing value doesn't match setting behaviour in FL_Widget.H!
+      ORing value doesn't match setting behavior in Fl_Widget.H!
 
 \anchor subclassing_draw_box
 void Fl_Widget::draw_box() const <br>

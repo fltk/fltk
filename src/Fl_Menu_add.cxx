@@ -1,7 +1,7 @@
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -128,7 +128,7 @@ int Fl_Menu_Item::add(
  \param[in] sc          keyboard shortcut for new item
  \param[in] cb          callback function for new item
  \param[in] data        user data for new item
- \param[in] myflags     menu flags as described in FL_Menu_Item
+ \param[in] myflags     menu flags as described in Fl_Menu_Item
 
  \returns the index into the menu() array, where the entry was added
 */

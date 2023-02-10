@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
 #  define _WIN32_WINNT 0x0500
 # endif
 
-// recent versions of MinGW warn: "Please include winsock2.h before windows.h",
+// recent versions of MinGW warn: "Please include winsock2.h before windows.h"
 #if !defined(__CYGWIN__)
 #  include <winsock2.h>
 #endif
@@ -2227,14 +2227,14 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
     w->redraw(); // force draw to happen
   }
 
-  // Needs to be done before ShowWindow() to get the correct behaviour
+  // Needs to be done before ShowWindow() to get the correct behavior
   // when we get WM_SETFOCUS.
   if (w->modal()) {
     Fl::modal_ = w;
     fl_fix_focus();
   }
 
-  // If we've captured the mouse, we dont want to activate any
+  // If we've captured the mouse, we don't want to activate any
   // other windows from the code, or we lose the capture.
   ShowWindow((HWND)x->xid, !showit ? SW_SHOWMINNOACTIVE :
              (Fl::grab() || (styleEx & WS_EX_TOOLWINDOW)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
