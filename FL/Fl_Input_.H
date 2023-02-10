@@ -39,6 +39,7 @@
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
 class Fl_Input_Undo_Action;
+class Fl_Input_Undo_Action_List;
 
 /**
   This class provides a low-overhead text input field.
@@ -148,6 +149,8 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   /** \internal local undo event */
   Fl_Input_Undo_Action* undo_;
+  Fl_Input_Undo_Action_List* undo_list_;
+  Fl_Input_Undo_Action_List* redo_list_;
 
   /** \internal Horizontal cursor position in pixels while moving up or down. */
   static double up_down_pos;
@@ -211,6 +214,9 @@ protected:
 
   /* Return the number of lines displayed on a single page.  */
   int linesPerPage();
+
+  /* Apply the current undo/redo operation, called from undo() or redo() */
+  int apply_undo();
 
 public:
 
@@ -377,6 +383,9 @@ public:
 
   /* Undo previous changes to the text buffer. */
   int undo();
+
+  /* Redo previous undo operations. */
+  int redo();
 
   /* Copy the yank buffer to the clipboard. */
   int copy_cuts();

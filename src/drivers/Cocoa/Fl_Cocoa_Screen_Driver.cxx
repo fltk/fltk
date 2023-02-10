@@ -1,7 +1,7 @@
 //
 // Definition of Apple Cocoa Screen interface.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -79,6 +79,7 @@ Fl_Screen_Driver::Keyname darwin_key_table[] = {
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
   // Define CMD+key accelerators...
   { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       ,0},
+  { 'z',          FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_redo       ,0},
   { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        ,0},
   { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       ,0},
   { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      ,0},

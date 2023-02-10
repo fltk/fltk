@@ -1,7 +1,7 @@
 //
 // Header file for Fl_Text_Buffer class.
 //
-// Copyright 2001-2021 by Bill Spitzak and others.
+// Copyright 2001-2023 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -61,6 +61,7 @@
 
 #include "Fl_Export.H"
 
+class Fl_Text_Undo_Action_List;
 class Fl_Text_Undo_Action;
 
 /**
@@ -325,6 +326,11 @@ public:
    from the undo buffer
    */
   int undo(int *cp=0);
+
+  /**
+   Redo previous undo action.
+   */
+  int redo(int *cp=0);
 
   /**
    Lets the undo system know if we can undo changes
@@ -813,6 +819,11 @@ protected:
    */
   void update_selections(int pos, int nDeleted, int nInserted);
 
+  /**
+   Apply the current undo/redo operation, called from undo() or redo().
+   */
+  int apply_undo(Fl_Text_Undo_Action* action, int* cursorPos);
+
   Fl_Text_Selection mPrimary;     /**< highlighted areas */
   Fl_Text_Selection mSecondary;   /**< highlighted areas */
   Fl_Text_Selection mHighlight;   /**< highlighted areas */
@@ -841,6 +852,8 @@ protected:
                                        bytes and should only be increased if frequent
                                        and large changes in buffer size are expected */
   Fl_Text_Undo_Action* mUndo;     /**< local undo event */
+  Fl_Text_Undo_Action_List* mUndoList; /**< List of undo event */
+  Fl_Text_Undo_Action_List* mRedoList; /**< List of redo event */
 };
 
 #endif
