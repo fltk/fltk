@@ -30,7 +30,7 @@ public:
   Fl_Tile(int X, int Y, int W, int H, const char *L=0);
   void resize(int X, int Y, int W, int H) FL_OVERRIDE;
   void move_intersection(int oldx, int oldy, int newx, int newy);
-  FL_DEPRECATED("Please use move_intersection(p) instead (since 1.4.0).",
+  FL_DEPRECATED("in 1.4.0 - use move_intersection(p) instead",
   void position(int oldx, int oldy, int newx, int newy)) { return move_intersection(oldx, oldy, newx, newy); }
   void position(int x, int y) { Fl_Group::position(x, y); }
 };

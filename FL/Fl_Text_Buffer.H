@@ -166,7 +166,7 @@ public:
 
   // Returns true if selected() and the positions of this selection.
   int selected(int *startpos, int *endpos) const;
-  FL_DEPRECATED("Please use selected(startpos, endpos) instead (since 1.4.0).",
+  FL_DEPRECATED("in 1.4.0 - use selected(startpos, endpos) instead",
   int position(int *startpos, int *endpos) const) { return selected(startpos, endpos); }
 
 protected:

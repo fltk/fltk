@@ -285,7 +285,7 @@ public:
     \see insert_position(int, int)
   */
   int insert_position() const { return position_; }
-  FL_DEPRECATED("Please use insert_position() instead (since 1.4.0).",
+  FL_DEPRECATED("in 1.4.0 - use insert_position() instead",
   int position() const ) { return insert_position(); }
 
   /** Gets the current selection mark.
@@ -294,7 +294,7 @@ public:
 
   /* Sets the index for the cursor and mark. */
   int insert_position(int p, int m);
-  FL_DEPRECATED("Please use insert_position(p, m) or Fl_Widget::position(x, y) instead (since 1.4.0).",
+  FL_DEPRECATED("in 1.4.0 - use insert_position(p, m) or Fl_Widget::position(x, y) instead",
   int position(int p, int m)) { return insert_position(p, m); }
 
   /** Sets the cursor position and mark.
@@ -304,7 +304,7 @@ public:
     \see insert_position(int, int), insert_position(), mark(int)
   */
   int insert_position(int p) { return insert_position(p, p); }
-  FL_DEPRECATED("Please use insert_position(p) instead (since 1.4.0).",
+  FL_DEPRECATED("in 1.4.0 - use insert_position(p) instead",
   int position(int p)) { return insert_position(p); }
 
   /** Sets the current selection mark.
