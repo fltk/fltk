@@ -28,7 +28,7 @@
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
@@ -37,6 +37,7 @@
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Shortcut_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Multi_Label.H>
@@ -392,14 +393,18 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
   else
     f.write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
-                int s = ((Fl_Button*)o)->shortcut();
-                if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-                        f.write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
-                } else {
-                        f.write_c(", 0x%x, ", s);
-                }
-  } else
+    int s = ((Fl_Button*)o)->shortcut();
+    if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+      f.write_c(", ");
+      if (s & FL_COMMAND) f.write_c("FL_COMMAND|");
+      if (s & FL_CONTROL) f.write_c("FL_CONTROL|");
+      f.write_c("0x%x, ", s & ~(FL_CTRL|FL_META));
+    } else {
+      f.write_c(", 0x%x, ", s);
+    }
+  } else {
     f.write_c(", 0, ");
+  }
   if (callback()) {
     const char* k = is_name(callback()) ? 0 : class_name(1);
     if (k) {
@@ -689,16 +694,16 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 // Shortcut entry item in panel:
 
 
-void shortcut_in_cb(Shortcut_Button* i, void* v) {
+void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
-      i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
     else if (current_widget->is_input())
-      i->svalue = ((Fl_Input_*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
     else if (current_widget->is_value_input())
-      i->svalue = ((Fl_Value_Input*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
     else if (current_widget->is_text_display())
-      i->svalue = ((Fl_Text_Display*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
       return;
@@ -710,21 +715,21 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut()!=i->value()) mod = 1;
+        b->shortcut(i->value());
         if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_input()) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut()!=i->value()) mod = 1;
+        b->shortcut(i->value());
       } else if (o->selected && o->is_value_input()) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut()!=i->value()) mod = 1;
+        b->shortcut(i->value());
       } else if (o->selected && o->is_text_display()) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut()!=i->value()) mod = 1;
+        b->shortcut(i->value());
       }
     if (mod) set_modflag(1);
   }

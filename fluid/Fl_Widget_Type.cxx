@@ -3019,7 +3019,10 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   else if (is_text_display()) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
     if (g_project.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
-      f.write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", f.indent(), var, shortcut & ~(FL_CTRL|FL_META));
+      f.write_c("%s%s->shortcut(", f.indent(), var);
+      if (shortcut & FL_COMMAND) f.write_c("FL_COMMAND|");
+      if (shortcut & FL_CONTROL) f.write_c("FL_CONTROL|");
+      f.write_c("0x%x);\n", shortcut & ~(FL_CTRL|FL_META));
     } else {
       f.write_c("%s%s->shortcut(0x%x);\n", f.indent(), var, shortcut);
     }

@@ -24,11 +24,11 @@ set (CPPFILES
   Fl_Widget_Type.cxx
   Fl_Window_Type.cxx
   Fluid_Image.cxx
-  Shortcut_Button.cxx
   about_panel.cxx
   align_widget.cxx
   alignment_panel.cxx
   code.cxx
+  custom_widgets.cxx
   factory.cxx
   file.cxx
   fluid.cxx
@@ -52,13 +52,13 @@ set (HEADERFILES
   Fl_Widget_Type.h
   Fl_Window_Type.h
   Fluid_Image.h
-  Shortcut_Button.h
   StyleParse.h
   about_panel.h
   align_widget.h
   alignment_panel.h
   code.h
   comments.h
+  custom_widgets.h
   factory.h
   file.h
   fluid.h
