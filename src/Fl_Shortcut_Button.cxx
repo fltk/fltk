@@ -46,8 +46,8 @@ Fl_Shortcut_Button::Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l)
 : Fl_Button(X,Y,W,H,l),
   hot_(false),
   pre_hot_(false),
-  shortcut_value(0),
-  pre_esc_(0)
+  pre_esc_(0),
+  shortcut_value(0)
 {
   box(FL_DOWN_BOX);
   selection_color(FL_SELECTION_COLOR);
@@ -169,7 +169,7 @@ int Fl_Shortcut_Button::handle(int e) {
             v = 0;
           }
         }
-        if (v != shortcut_value) {
+        if (v != (int)shortcut_value) {
           shortcut_value = v;
           set_changed();
           redraw();

@@ -715,20 +715,20 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->value()) mod = 1;
+        if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
         if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_input()) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->value()) mod = 1;
+        if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       } else if (o->selected && o->is_value_input()) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->value()) mod = 1;
+        if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       } else if (o->selected && o->is_text_display()) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->value()) mod = 1;
+        if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
       }
     if (mod) set_modflag(1);
