@@ -182,7 +182,16 @@ private:
   Gdiplus::Color gdiplus_color_;
   Gdiplus::Pen *pen_;
   Gdiplus::SolidBrush *brush_;
-  static ULONG_PTR gdiplusToken;
+  // The code below ensures the a connection to GDIplus is only made once, and that the
+  // matching connection shutdown is also done exactly once.
+  enum {
+	  STATE_CLOSED = 0,					// no connection, token is invalid
+	  STATE_STARTUP,					// attempt to start up, avoid recursions for whatever reason
+	  STATE_OPEN,						// connection was successful and the token is valid
+	  STATE_SHUTDOWN					// shutting down the gdi connection, avoid possible recursion
+  };
+  static int gdiplus_state_;			// reflect the state of the GDIplus driver connection
+  static ULONG_PTR gdiplus_token_;		// the token that GDIplus gives to us
 public:
   Fl_GDIplus_Graphics_Driver();
   virtual ~Fl_GDIplus_Graphics_Driver();
