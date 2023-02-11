@@ -53,10 +53,22 @@ int Fl_GDIplus_Graphics_Driver::antialias() {
 
 #if USE_GDIPLUS
 
-ULONG_PTR Fl_GDIplus_Graphics_Driver::gdiplusToken = 0;
+int Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_CLOSED;
+ULONG_PTR Fl_GDIplus_Graphics_Driver::gdiplus_token_ = 0;
 
 void Fl_GDIplus_Graphics_Driver::shutdown() {
-  Gdiplus::GdiplusShutdown(Fl_GDIplus_Graphics_Driver::gdiplusToken);
+  if (gdiplus_state_ == STATE_OPEN) {
+    gdiplus_state_ = STATE_SHUTDOWN;
+    Gdiplus::GdiplusShutdown(Fl_GDIplus_Graphics_Driver::gdiplus_token_);
+    gdiplus_token_ = 0;
+    gdiplus_state_ = STATE_CLOSED;
+  } else if (gdiplus_state_ == STATE_CLOSED) {
+//    Fl::warning("Fl_GDIplus_Graphics_Driver::shutdown() called, but driver is closed.");
+  } else if (gdiplus_state_ == STATE_SHUTDOWN) {
+//    Fl::warning("Fl_GDIplus_Graphics_Driver::shutdown() called recursively.");
+  } else if (gdiplus_state_ == STATE_STARTUP) {
+//    Fl::warning("Fl_GDIplus_Graphics_Driver::shutdown() called while driver is starting up.");
+  }
 }
 #endif
 

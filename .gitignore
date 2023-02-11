@@ -90,3 +90,7 @@ src/xdg-shell-protocol.c
 
 # libdecor/build/demo
 # libdecor/build/egl
+/out/build/x64-Debug/.cmake/api/v1/query/client-MicrosoftVS/query.json
+/out/build/x64-Debug
+/CMakeSettings.json
+/CppProperties.json
