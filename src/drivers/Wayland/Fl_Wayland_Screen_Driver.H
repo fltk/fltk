@@ -2,7 +2,7 @@
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -91,6 +91,7 @@ public:
   struct wl_cursor *xc_se;
   struct wl_cursor *xc_ne;
   struct wl_cursor *xc_nw;
+  struct wl_cursor *xc_none;
   static const struct wl_data_device_listener *p_data_device_listener;
 
 public:
