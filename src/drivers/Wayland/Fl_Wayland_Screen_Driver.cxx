@@ -1412,6 +1412,7 @@ int Fl_Wayland_Screen_Driver::screen_num_unscaled(int x, int y)
 
 float Fl_Wayland_Screen_Driver::scale(int n) {
   Fl_Wayland_Screen_Driver::output *output;
+  if (wl_list_length(&outputs) == 0) return 1; // necessary under OWL
   int i = 0;
   wl_list_for_each(output, &outputs, link) {
     if (i++ == n) break;
