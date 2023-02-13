@@ -37,7 +37,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   if (Fl_GDIplus_Graphics_Driver::gdiplus_state_ == Fl_GDIplus_Graphics_Driver::STATE_CLOSED) {
     Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_STARTUP;
     Gdiplus::Status ret = GdiplusStartup(&Fl_GDIplus_Graphics_Driver::gdiplus_token_, &gdiplusStartupInput, NULL);
-    if (ret == Gdiplus::Status::Ok) {
+    if (ret == 0) { // 0 is same as Gdiplus::Status::Ok, but old mingw64 barks at that
       Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_OPEN;
     } else {
       Fl::warning("GdiplusStartup failed with error code %d.", ret);
