@@ -98,7 +98,6 @@ public:
   struct wl_compositor *wl_compositor;
   struct wl_subcompositor *wl_subcompositor;
   struct wl_shm *wl_shm;
-  struct wl_list seats;
   struct seat *seat;
   struct wl_list outputs; // linked list of all screens in system
   struct output { // one record for each screen

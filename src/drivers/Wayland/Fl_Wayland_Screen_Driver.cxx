@@ -403,6 +403,7 @@ static void init_cursors(struct seat *seat);
 
 static void try_update_cursor(struct seat *seat)
 {
+  if (wl_list_empty(&seat->pointer_outputs)) return;
   struct pointer_output *pointer_output;
   int scale = 1;
 
@@ -936,7 +937,6 @@ static void output_done(void *data, struct wl_output *wl_output)
 {
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
   Fl_Wayland_Window_Driver::window_output *window_output;
-  struct seat *seat;
 //fprintf(stderr, "output_done output=%p\n",output);
   Fl_X *xp = Fl_X::first;
   while (xp) { // all mapped windows
@@ -951,9 +951,7 @@ static void output_done(void *data, struct wl_output *wl_output)
   }
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  wl_list_for_each(seat, &(scr_driver->seats), link) {
-    try_update_cursor(seat);
-  }
+  if (scr_driver->seat) try_update_cursor(scr_driver->seat);
   scr_driver->init_workarea();
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
@@ -1135,7 +1133,6 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
     }
   }
   //puts("Using Wayland backend");
-  wl_list_init(&seats);
   wl_list_init(&outputs);
 
   wl_registry = wl_display_get_registry(wl_display);
