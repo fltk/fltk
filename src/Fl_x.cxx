@@ -2934,6 +2934,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   if (!cursor)
     return 0;
 
+  image = (Fl_RGB_Image*)image->copy();
   const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
   const uchar *i = (const uchar*)*image->data();
   XcursorPixel *o = cursor->pixels;
@@ -2984,7 +2985,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   XFreeCursor(fl_display, xc);
 
   XcursorImageDestroy(cursor);
-
+  delete image;
   return 1;
 #endif
 }
