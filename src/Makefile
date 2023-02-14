@@ -1,7 +1,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -287,7 +287,7 @@ XLIBCPPFILES = \
 # These graphics driver files are used under condition: BUILD_CAIRO
 CAIROGDFILES = \
 	drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx \
-	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+	drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.cxx
 
 # These graphics driver files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBGDFILES = drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
@@ -320,7 +320,7 @@ WLCPPFILES = \
 WLX11CPPFILES = \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
-	drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx \
+	drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	Fl_x.cxx \

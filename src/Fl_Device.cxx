@@ -1,7 +1,7 @@
 //
 // implementation of classes Fl_Surface_Device and Fl_Display_Device for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,11 +57,11 @@
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
           +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
               +- Fl_GDI_Printer_Graphics_Driver: re-implements a few member functions especially for output to printer
-      +- Fl_Cairo_Graphics_Driver: for X11+Pango (PostScript) and Wayland platforms
+      +- Fl_Cairo_Graphics_Driver: full FLTK drawing API based on Cairo and Pango
           +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
-          +- Fl_Display_Cairo_Graphics_Driver: used by X11 leg of hybrid Wayland/X11 platform
+          +- Fl_X11_Cairo_Graphics_Driver: used by X11 leg of hybrid Wayland/X11 platform
           +- Fl_PostScript_Graphics_Driver: for PostScript drawing with X11+Pango platform
-      +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window (only partial implementation)
+      +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window
 
 */
 

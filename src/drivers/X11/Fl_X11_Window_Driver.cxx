@@ -20,7 +20,7 @@
 #include "Fl_X11_Screen_Driver.H"
 #if FLTK_USE_CAIRO
 #  include <cairo-xlib.h>
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif // FLTK_USE_CAIRO
@@ -173,7 +173,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
 #if FLTK_USE_CAIRO
-  ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
 #endif
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
@@ -205,7 +205,7 @@ void Fl_X11_Window_Driver::flush_overlay()
     cairo_t *overlay_cairo = cairo_create(s);
     cairo_surface_destroy(s);
     cairo_save(overlay_cairo);
-    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(overlay_cairo);
+    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(overlay_cairo);
 #endif
     pWindow->as_overlay_window()->draw_overlay();
 #if FLTK_USE_CAIRO
@@ -418,7 +418,7 @@ void Fl_X11_Window_Driver::make_current() {
       cairo_surface_destroy(s);
       cairo_save(cairo_);
     }
-    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   }
   fl_graphics_driver->scale(scale);
 #elif USE_XFT

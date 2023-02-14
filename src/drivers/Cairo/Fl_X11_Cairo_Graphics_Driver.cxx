@@ -1,7 +1,7 @@
 //
 // Support for using Cairo to draw into X11 windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,17 +15,17 @@
 //
 
 /* \file
-    Implementation of class Fl_Display_Cairo_Graphics_Driver .
+    Implementation of class Fl_X11_Cairo_Graphics_Driver.
 */
 
-#include "Fl_Display_Cairo_Graphics_Driver.H"
+#include "Fl_X11_Cairo_Graphics_Driver.H"
 #include <FL/platform.H>
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
 #include <stdlib.h>
 
 
-void *Fl_Display_Cairo_Graphics_Driver::gc_ = NULL;
+void *Fl_X11_Cairo_Graphics_Driver::gc_ = NULL;
 GC fl_gc;
 
 
@@ -37,7 +37,7 @@ ulong fl_xpixel(Fl_Color i) {
 }
 
 
-void Fl_Display_Cairo_Graphics_Driver::scale(float f) {
+void Fl_X11_Cairo_Graphics_Driver::scale(float f) {
   Fl_Graphics_Driver::scale(f);
   if (cairo_) {
     cairo_restore(cairo_);
@@ -48,17 +48,17 @@ void Fl_Display_Cairo_Graphics_Driver::scale(float f) {
 }
 
 
-void Fl_Display_Cairo_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+void Fl_X11_Cairo_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   XCopyArea(fl_display, pixmap, fl_window, (GC)Fl_Graphics_Driver::default_driver().gc(), int(srcx*scale()), int(srcy*scale()), int(w*scale()), int(h*scale()), int(x*scale()), int(y*scale()));
 }
 
 
-void Fl_Display_Cairo_Graphics_Driver::gc(void *value) {
+void Fl_X11_Cairo_Graphics_Driver::gc(void *value) {
   gc_ = value;
   fl_gc = (GC)gc_;
 }
 
 
-void *Fl_Display_Cairo_Graphics_Driver::gc() {
+void *Fl_X11_Cairo_Graphics_Driver::gc() {
   return gc_;
 }

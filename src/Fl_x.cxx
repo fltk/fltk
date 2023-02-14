@@ -42,7 +42,7 @@
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/Unix/Fl_Unix_System_Driver.H"
 #if FLTK_USE_CAIRO
-#  include "drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif

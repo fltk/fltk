@@ -276,7 +276,7 @@ cairo_image_surface_create_for_data() for the window's or offscreen's \c draw_bu
 
 Class \c Fl_Cairo_Graphics_Driver is also used
 by the X11 leg of the hybrid Wayland-X11 platform because this leg draws to the display with
-an \c Fl_Display_Cairo_Graphics_Driver object which derives from class
+an \c Fl_X11_Cairo_Graphics_Driver object which derives from class
 \c Fl_Cairo_Graphics_Driver. Finally, \c Fl_Cairo_Graphics_Driver is also used, in the form of
 an object from its derived class \c Fl_PostScript_Graphics_Driver, when the hybrid Wayland-X11
 platform draws PostScript, or when the classic X11 platform uses Pango and draws PostScript.
