@@ -95,7 +95,7 @@ void Fl_Image::draw_empty(int X, int Y) {
 
   Note: the returned image can be safely cast to the same image type as that
   of the source image provided this type is one of Fl_RGB_Image, Fl_SVG_Image,
-  Fl_Pixmap, Fl_Bitmap, Fl_Tiled_Image, and Fl_Shared_Image.
+  Fl_Pixmap, Fl_Bitmap, Fl_Tiled_Image,  Fl_Anim_GIF_Image and Fl_Shared_Image.
   Returned objects copied from images of other, derived, image classes belong
   to the parent class appearing in this list. For example, the copy of an
   Fl_GIF_Image is an object of class Fl_Pixmap.
