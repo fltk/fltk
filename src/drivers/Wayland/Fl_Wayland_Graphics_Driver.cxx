@@ -30,7 +30,7 @@
 
 
 extern "C" {
-  int os_create_anonymous_file(off_t); // in libdecor
+#  include "../../../libdecor/src/os-compatibility.h" // for os_create_anonymous_file()
 }
 
 
