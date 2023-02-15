@@ -74,6 +74,7 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
 {
   shape_data_ = NULL;
   cursor_ = NULL;
+  standard_cursor_ = FL_CURSOR_DEFAULT;
   in_handle_configure = false;
   screen_num_ = -1;
   gl_start_support_ = NULL;
@@ -1425,6 +1426,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
       return 0;
   }
   if (cursor_) delete_cursor_();
+  standard_cursor_ = c;
   scr_driver->set_cursor();
   return 1;
 }

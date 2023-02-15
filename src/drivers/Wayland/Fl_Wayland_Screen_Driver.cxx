@@ -438,9 +438,11 @@ static void cursor_surface_enter(void *data,
   Fl_Window *win = Fl::first_window();
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
+//fprintf(stderr, "cursor_surface_enter: cursor_default=%d standard_cursor=%d\n", driver->cursor_default(), driver->standard_cursor());
     struct wl_cursor *cursor = driver->cursor();
     if (cursor) do_set_cursor(seat, cursor);
-    else driver->set_cursor(driver->cursor_default());
+    else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
+    else win->cursor(driver->standard_cursor());
   }
 }
 
