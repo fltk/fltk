@@ -112,6 +112,7 @@ public:
   char show_iconic() { return Fl_Window::show_iconic_; }
   void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
   void flx(Fl_X *x) { pWindow->flx_ = x; }
+  Fl_Cursor cursor_default() { return pWindow->cursor_default; }
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {
     return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;

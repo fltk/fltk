@@ -434,12 +434,13 @@ static void cursor_surface_enter(void *data,
 //fprintf(stderr, "cursor_surface_enter: wl_output_get_user_data(%p)=%p\n", wl_output, pointer_output->output);
   wl_list_insert(&seat->pointer_outputs, &pointer_output->link);
   try_update_cursor(seat);
-  // maintain custom window cursor
+  // maintain custom or standard window cursor
   Fl_Window *win = Fl::first_window();
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
     struct wl_cursor *cursor = driver->cursor();
     if (cursor) do_set_cursor(seat, cursor);
+    else driver->set_cursor(driver->cursor_default());
   }
 }
 
