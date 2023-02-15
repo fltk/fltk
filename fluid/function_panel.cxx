@@ -18,7 +18,7 @@
 
 #include "function_panel.h"
 #include "fluid.h"
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 #include "pixmaps.h"
 #include "factory.h"
 #include "Fl_Type.h"

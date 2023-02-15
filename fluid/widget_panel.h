@@ -19,7 +19,7 @@
 #ifndef widget_panel_h
 #define widget_panel_h
 #include <FL/Fl.H>
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Group.H>
@@ -79,8 +79,8 @@ extern void set_min_size_cb(Fl_Button*, void*);
 extern void max_w_cb(Fl_Value_Input*, void*);
 extern void max_h_cb(Fl_Value_Input*, void*);
 extern void set_max_size_cb(Fl_Button*, void*);
-#include "Shortcut_Button.h"
-extern void shortcut_in_cb(Shortcut_Button*, void*);
+#include <FL/Fl_Shortcut_Button.H>
+extern void shortcut_in_cb(Fl_Shortcut_Button*, void*);
 extern void xclass_cb(Fl_Input*, void*);
 #include <FL/Fl_Light_Button.H>
 extern void border_cb(Fl_Light_Button*, void*);

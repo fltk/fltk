@@ -26,11 +26,11 @@ CPPFILES = \
 	Fl_Widget_Type.cxx \
 	Fl_Window_Type.cxx \
 	Fluid_Image.cxx \
-	Shortcut_Button.cxx \
 	about_panel.cxx \
 	align_widget.cxx \
 	alignment_panel.cxx \
 	code.cxx \
+	custom_widgets.cxx \
 	factory.cxx \
 	file.cxx \
 	fluid.cxx \
