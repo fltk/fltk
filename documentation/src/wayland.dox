@@ -665,6 +665,7 @@ for each shown()'n Fl_Window by \c Fl_Wayland_Window_Driver::makeWindow().
 Function \c fl_wl_xid(Fl_Window*) returns a pointer to the <tt>struct wld_window</tt> of its argument.
 <pre>
 struct wld_window {
+  Fl_Window *fl_win;
   struct wl_list outputs; // linked list of outputs where this surface is mapped
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
@@ -675,7 +676,7 @@ struct wld_window {
     struct xdg_popup *xdg_popup; // for POPUP windows
     struct xdg_toplevel *xdg_toplevel; // for UNFRAMED windows
   };
-  Fl_Window *fl_win;
+  struct wl_cursor *custom_cursor; // non-null when using custom cursor
   enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
   int configured_width; // used when negotiating window size with the compositor
   int configured_height;

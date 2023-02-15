@@ -268,8 +268,7 @@ static void pointer_enter(void *data,
 {
   Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
   if (!win) return;
-  Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
-  struct wl_cursor *cursor = driver->cursor(); // use custom cursor if present
+  struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor;// use custom cursor if present
   struct seat *seat = (struct seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
@@ -439,7 +438,7 @@ static void cursor_surface_enter(void *data,
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
 //fprintf(stderr, "cursor_surface_enter: cursor_default=%d standard_cursor=%d\n", driver->cursor_default(), driver->standard_cursor());
-    struct wl_cursor *cursor = driver->cursor();
+    struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor;
     if (cursor) do_set_cursor(seat, cursor);
     else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
     else win->cursor(driver->standard_cursor());
