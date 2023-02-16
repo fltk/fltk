@@ -259,7 +259,6 @@ AC_SUBST(FLTKCAIROOPTION)
 
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
-AC_SUBST(GLWLDEMO)
 AC_SUBST(GLLIBNAME)
 AC_SUBST(IMGLIBNAME)
 AC_SUBST(CAIROLIBNAME)
@@ -1068,13 +1067,11 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           ])
           AC_CHECK_LIB([GL], [glXGetProcAddressARB], [AC_DEFINE([HAVE_GLXGETPROCADDRESSARB])
              ],, [-lm])
-          GLWLDEMO="egl"
       ], [
           LINKFLTKGL=""
           GLLIBNAME=""
           GLDSONAME=""
           GLDEMOS=""
-          GLWLDEMO=""
       ])
 
       dnl Check for GTK-3 ...

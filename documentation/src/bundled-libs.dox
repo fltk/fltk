@@ -357,14 +357,11 @@ Run `make depend' in the jpeg folder on a Linux system after
   This part of the libdecor source tree is copied to directory libdecor/ of
   the FLTK source tree:
   <pre>
-    demo/
-      demo.c
-      egl.c
     LICENSE
     README.md
     src/    ... and files below except meson.build files
 </pre>
   Furthermore, directory libdecor/build/ of the FLTK source tree does not
   originate from the libdecor source tree but contains 3 FLTK-created files.
-
+  File build/Makefile may need changes if a libdecor update adds or renames source files.
 */
