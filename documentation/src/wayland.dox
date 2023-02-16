@@ -449,14 +449,23 @@ in function \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor).
 FLTK uses function \c init_cursors() from file \c Fl_Wayland_Screen_Driver.cxx to identify the
 app's 'cursor theme' using function \c libdecor_get_cursor_settings() of library \c libdecor,
 and to store it in member variable \c cursor_theme of the \ref seat record.
-Function \c init_cursors() is itself called by a 'listener' installed when function
-\c registry_handle_global() receives a \c "wl_seat" interface, at program startup.
-It is also called when the value of the Wayland scaling factor changes.
+Function \c init_cursors() is itself called by a 'listener' called \c seat_capabilities()
+installed when function \c registry_handle_global() receives a \c "wl_seat" interface, at program
+startup. It is also called when the value of the Wayland scaling factor changes:
+\c output_done() calls \c try_update_cursor() calls \c init_cursors().
+
+Each time member function \c Fl_Window::cursor(Fl_Cursor) runs, FLTK calls
+\c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) which stores the desired cursor shape in
+member \c standard_cursor_ of the \c Fl_Wayland_Window_Driver object.
 
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
 is used to create a custom cursor shape. This operation is relatively complex, specially because
 it uses a non-public structure, <tt>struct cursor_image</tt>, defined in file \c wayland-cursor.c
-of the Wayland project source code.
+of the Wayland project source code. A pointer to the resulting <tt>struct wl_cursor</tt> object
+is stored in member \c custom_cursor of the window's \ref wld_window. Member function
+\c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor shape. This
+occurs when a window associated to a custom cursor is un-mapped and when such a window gets
+associated to a standard cursor or to a new custom cursor.
 
 
 \section wayland-text Text input
