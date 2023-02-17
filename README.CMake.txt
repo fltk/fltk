@@ -211,6 +211,11 @@ OPTION_USE_GDIPLUS - default ON
    Makes FLTK use GDI+ to draw oblique lines and curves resulting in
    antialiased graphics (Windows platform only).
 
+OPTION_USE_SYSTEM_LIBDECOR - default OFF
+   This option makes FLTK use package libdecor-0 to draw window titlebars
+   under Wayland. It's mainly meant for future use, when that package
+   and its plugins will be part of major Linux distributions.
+
 Documentation options: these options are only available if `doxygen' is
    installed and found by CMake. PDF related options require also `latex'.
 
@@ -230,11 +235,6 @@ OPTION_INSTALL_PDF_DOCUMENTATION  - default OFF
    If these options are ON then the HTML and/or PDF docs get installed
    when the 'install' target is executed, e.g. with `make install'. You
    need to select above options OPTION_BUILD_*_DOCUMENTATION as well.
-
-OPTION_USE_SYSTEM_LIBDECOR - default OFF
-   This option makes FLTK use package libdecor-0 to draw window titlebars
-   under Wayland. It's mainly meant for future use, when that package
-   and its plugins will be part of major Linux distributions.
 
  2.3  Building under Linux with Unix Makefiles
 -----------------------------------------------
