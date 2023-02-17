@@ -1402,16 +1402,6 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
       if (!scr_driver->xc_nw) return 0;
       scr_driver->default_cursor(scr_driver->xc_nw);
       break;
-    case FL_CURSOR_NONE:
-      if (!scr_driver->xc_none) {
-        static const uchar pixel[] = {0, 0, 0, 0};
-        Fl_RGB_Image image(pixel, 1, 1, 4);
-        this->set_cursor(&image, 0, 0);
-        scr_driver->xc_none = xid->custom_cursor;
-        xid->custom_cursor = NULL;
-      }
-      scr_driver->default_cursor(scr_driver->xc_none);
-      break;
 
     default:
       return 0;

@@ -415,7 +415,7 @@ function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *,…)</tt>
 use their own "buffer factory" inside Wayland functions such as \c wl_cursor_theme_get_cursor().
 Therefore, the fact that the \c wl_buffer objects behind standard cursors are never destroyed
 doesn't prevent disused <tt>struct wl_shm_pool</tt> objects from being freed because those
-buffers come a distinct "buffer factory".
+buffers come from a distinct "buffer factory".
 The "buffer factory" described here is also used by function \c offscreen_from_text() when
 displaying dragged text in a DnD operation.
 
@@ -526,13 +526,6 @@ is stored in member \c custom_cursor of the window's \ref wld_window. Member fun
 occurs when a window associated to a custom cursor is un-mapped and when such a window gets
 associated to a standard cursor or to a new custom cursor.
 
-The \c FL_CURSOR_NONE cursor shape is normally implemented by FLTK as a custom cursor shape in
-function \c fallback_cursor() of file \c src/fl_cursor.cxx. Because both FLTK classes \c Fl_Input and
-\c Fl_Text_Editor often use \c FL_CURSOR_NONE, FLTK's Wayland backend uses an additional piece of
-code to avoid the construction of a new \c wl_cursor object each time \c FL_CURSOR_NONE is set:
-function \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) creates a null-shaped \c wl_cursor
-object the first time it's called with argument \c FL_CURSOR_NONE and stores it in member \c xc_none
-of the \c Fl_Wayland_Screen_Driver object, allowing later re-use of this cursor object.
 
 \section wayland-text Text input
 

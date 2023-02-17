@@ -1452,7 +1452,7 @@ struct wl_cursor *Fl_Wayland_Screen_Driver::cache_cursor(const char *cursor_name
 void Fl_Wayland_Screen_Driver::reset_cursor() {
   xc_arrow = xc_ns = xc_wait = xc_insert = xc_hand = xc_help = xc_cross = xc_move =
   xc_north = xc_south = xc_west = xc_east = xc_we = xc_nesw = xc_nwse = xc_sw = xc_se =
-  xc_ne = xc_nw = xc_none = NULL;
+  xc_ne = xc_nw = NULL;
 }
 
 uint32_t Fl_Wayland_Screen_Driver::get_serial() {

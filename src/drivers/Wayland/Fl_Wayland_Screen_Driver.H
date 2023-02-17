@@ -91,7 +91,6 @@ public:
   struct wl_cursor *xc_se;
   struct wl_cursor *xc_ne;
   struct wl_cursor *xc_nw;
-  struct wl_cursor *xc_none;
   static const struct wl_data_device_listener *p_data_device_listener;
 
 public:
