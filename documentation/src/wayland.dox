@@ -436,27 +436,31 @@ installed by a call to function \c wl_seat_add_listener() made by function
 \section wayland-cursor Wayland cursors
 
 Wayland defines types <tt>struct wl_cursor</tt> and <tt>struct wl_cursor_theme</tt> to hold
-cursor-related data. FLTK stores in member variable
-\c default_cursor of the \ref seat record, a pointer to the currently used cursor.
-Function \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) calls \c wl_cursor_theme_get_cursor()
-to set the current cursor shape to one of the standard shapes from the \c Fl_Cursor enumeration.
-This Wayland function selects a cursor shape based on the current 'cursor theme' and a cursor name.
-Cursor names are the files of directory \c /usr/share/icons/XXXX/cursors/ where \c XXXX is the name of
-the 'cursor theme'. For example, what FLTK calls \c FL_CURSOR_INSERT corresponds to file \c xterm
-therein. The full correspondance between \c Fl_Cursor values and Wayland cursor names is found
-in function \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor).
-
-FLTK uses function \c init_cursors() from file \c Fl_Wayland_Screen_Driver.cxx to identify the
-app's 'cursor theme' using function \c libdecor_get_cursor_settings() of library \c libdecor,
-and to store it in member variable \c cursor_theme of the \ref seat record.
+cursor-related data.
+FLTK uses function \c init_cursors() from file \c Fl_Wayland_Screen_Driver.cxx to obtain the
+'cursor theme' name using function \c libdecor_get_cursor_settings() of library \c libdecor.
+Function \c wl_cursor_theme_load() then returns a pointer to an object of type
+<tt>struct wl_cursor_theme</tt> stored in member variable \c cursor_theme of the \ref seat record.
 Function \c init_cursors() is itself called by a 'listener' called \c seat_capabilities()
 installed when function \c registry_handle_global() receives a \c "wl_seat" interface, at program
 startup. It is also called when the value of the Wayland scaling factor changes:
-\c output_done() calls \c try_update_cursor() calls \c init_cursors().
+\c output_done() calls \c try_update_cursor() calls \c init_cursors(). Function \c output_done()
+belongs to a 'listener' installed when function \c registry_handle_global() receives a
+\c "wl_output" interface.
 
-Each time member function \c Fl_Window::cursor(Fl_Cursor) runs, FLTK calls
-\c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) which stores the desired cursor shape in
-member \c standard_cursor_ of the \c Fl_Wayland_Window_Driver object.
+Each time \c Fl_Window::cursor(Fl_Cursor) runs, FLTK calls
+\c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) which calls \c wl_cursor_theme_get_cursor()
+to set the current cursor shape to one of the standard shapes from the \c Fl_Cursor enumeration.
+This Wayland function selects a cursor shape based on the current \c wl_cursor_theme object
+and a cursor name and returns a pointer to a <tt>struct wl_cursor</tt>.
+Under the gnome desktop, cursor names are the files of directory \c /usr/share/icons/XXXX/cursors/
+where \c XXXX is the 'gnome cursor theme' (default= Adwaita). For example, what FLTK calls
+\c FL_CURSOR_INSERT corresponds to file \c xterm therein. The full correspondance between
+\c Fl_Cursor values and names of files therein is found in function
+\c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor). FLTK stores in member variable
+\c default_cursor of the \ref seat record, a pointer to the currently used \c wl_cursor object,
+and the current \c Fl_Cursor value in member \c standard_cursor_ of the \c Fl_Wayland_Window_Driver
+object.
 
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
 is used to create a custom cursor shape. This operation is relatively complex, specially because
@@ -467,6 +471,13 @@ is stored in member \c custom_cursor of the window's \ref wld_window. Member fun
 occurs when a window associated to a custom cursor is un-mapped and when such a window gets
 associated to a standard cursor or to a new custom cursor.
 
+The \c FL_CURSOR_NONE cursor shape is normally implemented by FLTK as a custom cursor shape in
+function \c fallback_cursor() of file \c src/fl_cursor.cxx. Because both FLTK classes \c Fl_Input and
+\c Fl_Text_Editor often use \c FL_CURSOR_NONE, FLTK's Wayland backend uses an additional piece of
+code to avoid the construction of a new \c wl_cursor object each time \c FL_CURSOR_NONE is set:
+function \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor) creates a null-shaped \c wl_cursor
+object the first time it's called with argument \c FL_CURSOR_NONE and stores it in member \c xc_none
+of the \c Fl_Wayland_Screen_Driver object, allowing later re-use of this cursor object.
 
 \section wayland-text Text input
 

@@ -22,8 +22,6 @@
 #include <FL/filename.H>
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
-#include "../../fl_cursor_none.xpm"
-#include "../../fl_cursor_help.xpm"
 #include "xdg-shell-client-protocol.h"
 #include <pango/pangocairo.h>
 #include <FL/Fl_Overlay_Window.H>
@@ -1341,14 +1339,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
       break;
     case FL_CURSOR_HELP:
       if (!scr_driver->xc_help) scr_driver->xc_help = scr_driver->cache_cursor("help");
-      if (!scr_driver->xc_help) {
-        const char **xpm = (const char**)fl_cursor_help_xpm;
-        Fl_Pixmap pxm(xpm);
-        Fl_RGB_Image image(&pxm);
-        this->set_cursor(&image, 1, 3);
-        scr_driver->xc_help = xid->custom_cursor;
-        xid->custom_cursor = NULL;
-      }
+      if (!scr_driver->xc_help) return 0;
       scr_driver->default_cursor(scr_driver->xc_help);
       break;
     case FL_CURSOR_MOVE:
@@ -1413,9 +1404,8 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
       break;
     case FL_CURSOR_NONE:
       if (!scr_driver->xc_none) {
-        const char **xpm = (const char**)fl_cursor_none_xpm;
-        Fl_Pixmap pxm(xpm);
-        Fl_RGB_Image image(&pxm);
+        static const uchar pixel[] = {0, 0, 0, 0};
+        Fl_RGB_Image image(pixel, 1, 1, 4);
         this->set_cursor(&image, 0, 0);
         scr_driver->xc_none = xid->custom_cursor;
         xid->custom_cursor = NULL;
