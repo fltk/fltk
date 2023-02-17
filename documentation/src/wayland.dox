@@ -517,14 +517,50 @@ where \c XXXX is the 'gnome cursor theme' (default= Adwaita). For example, what 
 and the current \c Fl_Cursor value in member \c standard_cursor_ of the \c Fl_Wayland_Window_Driver
 object.
 
+Finally, function do_set_cursor() of file \c Fl_Wayland_Screen_Driver.cxx makes the system pointer use
+the current \c wl_cursor object to draw its shape on screen. That's done with a call to
+\c wl_pointer_set_cursor() and a few other functions.
+
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
-is used to create a custom cursor shape. This operation is relatively complex, specially because
-it uses a non-public structure, <tt>struct cursor_image</tt>, defined in file \c wayland-cursor.c
-of the Wayland project source code. A pointer to the resulting <tt>struct wl_cursor</tt> object
-is stored in member \c custom_cursor of the window's \ref wld_window. Member function
+is used to create a custom cursor shape. This operation uses a non-public type,
+<tt>struct cursor_image</tt>, defined for FLTK in file \c Fl_Wayland_Window_Driver.cxx as copied from
+file \c wayland-cursor.c of the Wayland project source code:
+\code
+struct cursor_image {
+  struct wl_cursor_image image;
+  struct wl_cursor_theme *theme;
+  struct wl_buffer *buffer;
+  int offset;
+};
+\endcode
+This definition shows that a pointer to a \c cursor_image object can also be viewed as a pointer to the
+embedded <tt>struct wl_cursor_image</tt> object, this one being part of the public Wayland API.
+It also shows that a <tt>struct cursor_image</tt> object has an associated
+<tt>struct wl_buffer</tt> object used to contain the cursor's graphics. Function \c set_cursor()
+creates a \c cursor_image object, allocates the corresponding \c wl_buffer by a call to
+\c create_shm_buffer() and draws into that buffer the cursor's shape using regular FLTK means.
+
+The public type <tt>struct wl_cursor</tt> is essentially an array of \c wl_cursor_image objects
+and a name:
+\code
+struct wl_cursor {
+  unsigned int image_count;
+  struct wl_cursor_image **images;
+  char *name;
+};
+\endcode
+Function \c set_cursor() also creates a <tt>struct wl_cursor</tt> object containing a single
+\c wl_cursor_image, which is in fact the \c cursor_image.
+A pointer to this <tt>struct wl_cursor</tt> object is stored in member \c custom_cursor of the
+window's \ref wld_window. Finally, function \c do_set_cursor() makes the system pointer use
+the custom \c wl_cursor to draw its shape. That is how the custom cursor shape is constructed and used.
+
+Member function
 \c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor shape. This
 occurs when a window associated to a custom cursor is un-mapped and when such a window gets
 associated to a standard cursor or to a new custom cursor.
+
+
 
 
 \section wayland-text Text input
