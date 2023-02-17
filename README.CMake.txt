@@ -172,7 +172,14 @@ OPTION_USE_CAIRO - default OFF
 OPTION_USE_PANGO - default OFF
    Enables use of the Pango library for drawing text. Pango supports all
    unicode-defined scripts and gives FLTK limited support of right-to-left
-   scripts. This option makes sense only under X11, and also requires Xft.
+   scripts. This option makes sense only under X11 or Wayland, and also
+   requires Xft.
+
+OPTION_USE_KDIALOG - default ON
+   Under the KDE desktop, allows class Fl_Native_File_Chooser to use the
+   kdialog utility program to construct its file dialog windows, when that
+   utility is available at run time on the system. This option makes sense
+   only under X11 or Wayland.
 
 OPTION_USE_WAYLAND - default ON
    Enables the use of Wayland for all window operations, of Cairo for all
@@ -224,6 +231,10 @@ OPTION_INSTALL_PDF_DOCUMENTATION  - default OFF
    when the 'install' target is executed, e.g. with `make install'. You
    need to select above options OPTION_BUILD_*_DOCUMENTATION as well.
 
+OPTION_USE_SYSTEM_LIBDECOR - default OFF
+   This option makes FLTK use package libdecor-0 to draw window titlebars
+   under Wayland. It's mainly meant for future use, when that package
+   and its plugins will be part of major Linux distributions.
 
  2.3  Building under Linux with Unix Makefiles
 -----------------------------------------------
