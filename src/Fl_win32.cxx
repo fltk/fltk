@@ -1,7 +1,7 @@
 //
 // Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
 #  define _WIN32_WINNT 0x0500
 # endif
 
-// recent versions of MinGW warn: "Please include winsock2.h before windows.h",
+// recent versions of MinGW warn: "Please include winsock2.h before windows.h"
 #if !defined(__CYGWIN__)
 #  include <winsock2.h>
 #endif
@@ -107,27 +107,6 @@ extern void fl_cleanup_pens(void);
 #define round(A) int((A) + 0.5)
 #endif // _MSC_VER <= 1600
 
-// USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
-// USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
-/*
-  This feature was supposed to provide an efficient alternative to the current
-  polling method, but as it has been discussed (Thanks Albrecht!) :
-  - the async mode would imply to change the socket to non blocking mode.
-    This can have unexpected side effects for 3rd party apps, especially
-    if it is set on-the-fly when socket service is really needed, as it is
-    done today and on purpose, but still the 3rd party developer wouldn't easily
-    control the sequencing of socket operations.
-  - Finer granularity of events furthered by the async select is a plus only
-    for socket 3rd party impl., it is simply not needed for the 'light' fltk
-    use we make of wsock, so here it would also be a bad point, because of all
-    the logic add-ons necessary for using this functionality, without a clear
-    benefit.
-
-  So async mode select would not add benefits to fltk, worse, it can slowdown
-  fltk because of this finer granularity and instrumentation code to be added
-  for async mode proper operation, not mentioning the side effects...
-*/
-
 // Internal functions
 static void fl_clipboard_notify_target(HWND wnd);
 static void fl_clipboard_notify_untarget(HWND wnd);
@@ -143,54 +122,12 @@ static bool initial_clipboard = true;
 # define SOCKET int
 #endif
 
-// Disable dynamic linking/loading of Winsock DLL (STR #3454)
-// *FIXME* The old code should be entirely removed when the issue
-// is finally resolved.
-
-#if (0) // *FIXME* dynamic loading of Winsock DLL (ws2_32.dll)
-
-// note: winsock2.h has been #include'd in Fl.cxx
-#define WSCK_DLL_NAME "WS2_32.DLL"
-
-typedef int(WINAPI *fl_wsk_select_f)(int, fd_set *, fd_set *, fd_set *, const struct timeval *);
-typedef int(WINAPI *fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
-
-static HMODULE s_wsock_mod = 0;
-static fl_wsk_select_f s_wsock_select = 0;
-static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
-
-static HMODULE get_wsock_mod() {
-  if (!s_wsock_mod) {
-    s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
-    if (s_wsock_mod == NULL)
-      Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n", WSCK_DLL_NAME);
-    s_wsock_select = (fl_wsk_select_f)GetProcAddress(s_wsock_mod, "select");
-    fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f)GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
-  }
-  return s_wsock_mod;
-}
-
-#else // static linking of ws2_32.dll
-
-// *FIXME* These defines and the dummy function get_wsock_mod() must be
-// *removed* when the issue (STR #3454) is finally resolved. The code that
-// uses these defines and get_wsock_mod() must be modified to use the
-// official socket interface (select() and FL_ISSET).
-
-#define fl_wsk_fd_is_set FD_ISSET
-#define s_wsock_select select
-static int get_wsock_mod() {
-  return 1;
-}
-
-#endif // dynamic/static linking of ws2_32.dll (see above and STR #3454)
-
 /*
- Dynamic linking of imm32.dll
- This library is only needed for a hand full (four ATM) functions relating to
- international text rendering and locales. Dynamically loading reduces initial
- size and link dependencies.
- */
+  Dynamic linking of imm32.dll
+  This library is only needed for a hand full (four ATM) functions relating to
+  international text rendering and locales. Dynamically loading reduces initial
+  size and link dependencies.
+*/
 static HMODULE s_imm_module = 0;
 typedef BOOL(WINAPI *flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
 static flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
@@ -430,16 +367,16 @@ double Fl_WinAPI_System_Driver::wait(double time_to_wait) {
 
     fd_set fdt[3];
     memcpy(fdt, fdsets, sizeof fdt); // one shot faster fdt init
-    if (get_wsock_mod() && s_wsock_select(maxfd + 1, &fdt[0], &fdt[1], &fdt[2], &t)) {
+    if (select(maxfd + 1, &fdt[0], &fdt[1], &fdt[2], &t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i++) {
         SOCKET f = fd[i].fd;
         short revents = 0;
-        if (fl_wsk_fd_is_set(f, &fdt[0]))
+        if (FD_ISSET(f, &fdt[0]))
           revents |= FL_READ;
-        if (fl_wsk_fd_is_set(f, &fdt[1]))
+        if (FD_ISSET(f, &fdt[1]))
           revents |= FL_WRITE;
-        if (fl_wsk_fd_is_set(f, &fdt[2]))
+        if (FD_ISSET(f, &fdt[2]))
           revents |= FL_EXCEPT;
         if (fd[i].events & revents)
           fd[i].cb(f, fd[i].arg);
@@ -533,7 +470,7 @@ int Fl_WinAPI_System_Driver::ready() {
   t.tv_usec = 0;
   fd_set fdt[3];
   memcpy(fdt, fdsets, sizeof fdt);
-  return get_wsock_mod() ? s_wsock_select(0, &fdt[0], &fdt[1], &fdt[2], &t) : 0;
+  return select(0, &fdt[0], &fdt[1], &fdt[2], &t);
 }
 
 
@@ -1258,7 +1195,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (window) {
     switch (uMsg) {
 
-      case WM_DPICHANGED: { // 0x02E0
+      case WM_DPICHANGED: { // 0x02E0, after display re-scaling and followed by WM_DISPLAYCHANGE
         if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
           RECT r;
           Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
@@ -1290,7 +1227,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       case WM_PAINT: {
         HRGN R, R2;
-        Fl_X *i = Fl_X::i(window);
+        Fl_X *i = Fl_X::flx(window);
         Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
         char redraw_whole_window = false;
         if (!i->region && window->damage()) {
@@ -1701,12 +1638,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         fl_i_own_selection[1] = 0;
         return 1;
 
-      case WM_DISPLAYCHANGE: {// occurs when screen configuration (number, size, position) changes
+      case WM_DISPLAYCHANGE: {// when screen configuration (number, size, position) changes
         Fl::call_screen_init();
-        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-        for (int ns = 0; ns < sd->screen_count(); ns++) {
-          sd->rescale_all_windows_from_screen(ns, sd->dpi[ns][0]/96);
-        }
         Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
         return 0;
       }
@@ -1924,7 +1857,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
       pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
-      Fl_X *i = Fl_X::i(pWindow);
+      Fl_X *i = Fl_X::flx(pWindow);
       if (i && W > 0 && H > 0)
         wait_for_expose_value = 1;
     }
@@ -2015,7 +1948,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
   Fl_Window *w = pWindow;
-  if (w->parent() && !Fl_X::i(w->window())) {
+  if (w->parent() && !Fl_X::flx(w->window())) {
     w->set_visible();
     return;
   }
@@ -2169,7 +2102,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_X *x = new Fl_X;
   other_xid = 0;
   x->w = w;
-  i(x);
+  flx(x);
   x->region = 0;
   Fl_WinAPI_Window_Driver::driver(w)->private_dc = 0;
   cursor = LoadCursor(NULL, IDC_ARROW);
@@ -2231,14 +2164,14 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
     w->redraw(); // force draw to happen
   }
 
-  // Needs to be done before ShowWindow() to get the correct behaviour
+  // Needs to be done before ShowWindow() to get the correct behavior
   // when we get WM_SETFOCUS.
   if (w->modal()) {
     Fl::modal_ = w;
     fl_fix_focus();
   }
 
-  // If we've captured the mouse, we dont want to activate any
+  // If we've captured the mouse, we don't want to activate any
   // other windows from the code, or we lose the capture.
   ShowWindow((HWND)x->xid, !showit ? SW_SHOWMINNOACTIVE :
              (Fl::grab() || (styleEx & WS_EX_TOOLWINDOW)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
@@ -2453,7 +2386,7 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon) {
     Fl_WinAPI_Window_Driver::driver(this)->icon_->big_icon = CopyIcon(big_icon);
   if (small_icon != NULL)
     Fl_WinAPI_Window_Driver::driver(this)->icon_->small_icon = CopyIcon(small_icon);
-  if (Fl_X::i(this))
+  if (Fl_X::flx(this))
     Fl_WinAPI_Window_Driver::driver(this)->set_icons();
 }
 
@@ -2597,8 +2530,9 @@ int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
 
 int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   HCURSOR new_cursor;
-
-  new_cursor = image_to_icon(image, false, hotx, hoty);
+  Fl_RGB_Image *scaled_image = (Fl_RGB_Image*)image->copy();
+  new_cursor = image_to_icon(scaled_image, false, hotx, hoty);
+  delete scaled_image;
   if (new_cursor == NULL)
     return 0;
 
@@ -2622,7 +2556,7 @@ void Fl_WinAPI_Window_Driver::show() {
     makeWindow();
   } else {
     // Once again, we would lose the capture if we activated the window.
-    Fl_X *i = Fl_X::i(pWindow);
+    Fl_X *i = Fl_X::flx(pWindow);
     if (IsIconic((HWND)i->xid))
       OpenIcon((HWND)i->xid);
     if (!fl_capture)

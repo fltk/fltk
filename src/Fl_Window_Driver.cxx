@@ -144,12 +144,12 @@ int Fl_Window_Driver::hide_common() {
   if (!shown()) return 1;
 
   // remove from the list of windows:
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   Fl_X** pp = &Fl_X::first;
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return 1;
   *pp = ip->next;
 
-  pWindow->i = 0;
+  pWindow->flx_ = 0;
 
   // recursively remove any subwindows:
   for (Fl_X *wi = Fl_X::first; wi;) {
@@ -213,7 +213,7 @@ int Fl_Window_Driver::set_cursor(const Fl_RGB_Image*, int, int) {
 
 void Fl_Window_Driver::wait_for_expose() {
   if (!shown()) return;
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   while (!i || wait_for_expose_value) {
     Fl::wait();
   }
@@ -264,7 +264,7 @@ void Fl_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, int nscr
 /** Returns  the platform-specific reference of the given window, or NULL if that window isn't shown.
  \version 1.4.0 */
 fl_uintptr_t Fl_Window_Driver::xid(const Fl_Window *win) {
-  Fl_X *flx = win->i;
+  Fl_X *flx = win->flx_;
   return flx ? flx->xid : 0;
 }
 

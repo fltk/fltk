@@ -1,7 +1,7 @@
 //
 // X11-specific code to initialize wayland support.
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 #include <FL/platform.H>
 #include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
 #if FLTK_USE_CAIRO
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif
@@ -133,7 +133,7 @@ FL_EXPORT Fl_Fontdesc* fl_fonts = (Fl_Fontdesc*)built_in_table;
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
 #if FLTK_USE_CAIRO
-  return new Fl_Display_Cairo_Graphics_Driver();
+  return new Fl_X11_Cairo_Graphics_Driver();
 #else
   return new Fl_Xlib_Graphics_Driver();
 #endif

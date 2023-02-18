@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     // Add 200 random numbers to the tree
     char word[50];
     for ( int t=0; t<200; t++ ) {
-      sprintf(word, "%ld", long((float(rand()) / RAND_MAX) * 1000000));
+      sprintf(word, "%ld", long((double(rand()) / double(RAND_MAX)) * 1000000));
       G_tree->add(word);
     }
 

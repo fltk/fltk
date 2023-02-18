@@ -177,9 +177,12 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
         }
 
     default :
+      if (s->active_r())
         fl_color(s->color());
-        fl_rectf(X,Y,W,H);
-        break;
+      else
+        fl_color(fl_inactive(s->color()));
+      fl_rectf(X,Y,W,H);
+      break;
   }
   Fl_Widget*const* a = s->array();
   for (int i=s->children()-2; i--;) {

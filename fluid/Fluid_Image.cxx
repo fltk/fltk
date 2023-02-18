@@ -30,6 +30,7 @@
 #include <FL/fl_utf8.h>     // fl_fopen()
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_SVG_Image.H>
+#include <FL/Fl_Anim_GIF_Image.H>
 #include "../src/flstring.h"
 
 #include <stdio.h>
@@ -45,37 +46,28 @@ void Fluid_Image::deimage(Fl_Widget *o) {
   if (o->window() != o) o->deimage(img);
 }
 
-static int pixmap_header_written = 0;
-static int bitmap_header_written = 0;
-static int image_header_written = 0;
-static int jpeg_header_written = 0;
-static int png_header_written = 0;
-static int gif_header_written = 0;
-static int bmp_header_written = 0;
-static int svg_header_written = 0;
-
 /** Write the contents of the name() file as binary source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_binary(const char* fmt) {
+size_t Fluid_Image::write_static_binary(Fd_Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   enter_project_dir();
-  FILE *f = fl_fopen(name(), "rb");
+  FILE *in = fl_fopen(name(), "rb");
   leave_project_dir();
-  if (!f) {
-    write_file_error(fmt);
+  if (!in) {
+    write_file_error(f, fmt);
     return 0;
   } else {
-    fseek(f, 0, SEEK_END);
-    nData = ftell(f);
-    fseek(f, 0, SEEK_SET);
+    fseek(in, 0, SEEK_END);
+    nData = ftell(in);
+    fseek(in, 0, SEEK_SET);
     if (nData) {
       char *data = (char*)calloc(nData, 1);
-      if (fread(data, nData, 1, f)==0) { /* ignore */ }
-      write_cdata(data, (int)nData);
+      if (fread(data, nData, 1, in)==0) { /* ignore */ }
+      f.write_cdata(data, (int)nData);
       free(data);
     }
-    fclose(f);
+    fclose(in);
   }
   return nData;
 }
@@ -83,41 +75,38 @@ size_t Fluid_Image::write_static_binary(const char* fmt) {
 /** Write the contents of the name() file as textual source code.
  \param fmt short name of file contents for error message
  \return 0 if the file could not be opened or read */
-size_t Fluid_Image::write_static_text(const char* fmt) {
+size_t Fluid_Image::write_static_text(Fd_Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   enter_project_dir();
-  FILE *f = fl_fopen(name(), "rb");
+  FILE *in = fl_fopen(name(), "rb");
   leave_project_dir();
-  if (!f) {
-    write_file_error(fmt);
+  if (!in) {
+    write_file_error(f, fmt);
     return 0;
   } else {
-    fseek(f, 0, SEEK_END);
-    nData = ftell(f);
-    fseek(f, 0, SEEK_SET);
+    fseek(in, 0, SEEK_END);
+    nData = ftell(in);
+    fseek(in, 0, SEEK_SET);
     if (nData) {
       char *data = (char*)calloc(nData+1, 1);
-      if (fread(data, nData, 1, f)==0) { /* ignore */ }
-      write_cstring(data, (int)nData);
+      if (fread(data, nData, 1, in)==0) { /* ignore */ }
+      f.write_cstring(data, (int)nData);
       free(data);
     }
-    fclose(f);
+    fclose(in);
   }
   return nData;
 }
 
-void Fluid_Image::write_static_rgb(const char* idata_name) {
+void Fluid_Image::write_static_rgb(Fd_Code_Writer& f, const char* idata_name) {
   // Write image data...
-  write_c("\n");
-  if (image_header_written != write_number) {
-    write_c("#include <FL/Fl_Image.H>\n");
-    image_header_written = write_number;
-  }
-  write_c("static const unsigned char %s[] =\n", idata_name);
+  f.write_c("\n");
+  f.write_c_once("#include <FL/Fl_Image.H>\n");
+  f.write_c("static const unsigned char %s[] =\n", idata_name);
   const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
-  write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
-  write_c(";\n");
-  write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
+  f.write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
+  f.write_c(";\n");
+  write_initializer(f, "Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
 }
 
 /**
@@ -130,119 +119,106 @@ void Fluid_Image::write_static_rgb(const char* idata_name) {
 
  \param compressed write data in the original compressed file format
  */
-void Fluid_Image::write_static(int compressed) {
+void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
   if (!img) return;
-  const char *idata_name = unique_id(this, "idata", fl_filename_name(name()), 0);
-  function_name_ = unique_id(this, "image", fl_filename_name(name()), 0);
-  // TODO: GIF, ICO, BMP
-  if (compressed && strcmp(fl_filename_ext(name()), ".gif")==0) {
+  const char *idata_name = f.unique_id(this, "idata", fl_filename_name(name()), 0);
+  function_name_ = f.unique_id(this, "image", fl_filename_name(name()), 0);
+
+  if (is_animated_gif_) {
+    // Write animated gif image data...
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_Anim_GIF_Image.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary(f, "AnimGIF");
+    f.write_c(";\n");
+    write_initializer(f, "Fl_Anim_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".gif")==0) {
     // Write gif image data...
-    write_c("\n");
-    if (gif_header_written != write_number) {
-      write_c("#include <FL/Fl_GIF_Image.H>\n");
-      gif_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    size_t nData = write_static_binary("GIF");
-    write_c(";\n");
-    write_initializer("Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && strcmp(fl_filename_ext(name()), ".bmp")==0) {
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_GIF_Image.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary(f, "GIF");
+    f.write_c(";\n");
+    write_initializer(f, "Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".bmp")==0) {
     // Write bmp image data...
-    write_c("\n");
-    if (bmp_header_written != write_number) {
-      write_c("#include <FL/Fl_BMP_Image.H>\n");
-      bmp_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    size_t nData = write_static_binary("BMP");
-    write_c(";\n");
-    write_initializer("Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_BMP_Image.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary(f, "BMP");
+    f.write_c(";\n");
+    write_initializer(f, "Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
   } else if (img->count() > 1) {
     // Write Pixmap data...
-    write_c("\n");
-    if (pixmap_header_written != write_number) {
-      write_c("#include <FL/Fl_Pixmap.H>\n");
-      pixmap_header_written = write_number;
-    }
-    write_c("static const char *%s[] = {\n", idata_name);
-    write_cstring(img->data()[0], (int)strlen(img->data()[0]));
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_Pixmap.H>\n");
+    f.write_c("static const char *%s[] = {\n", idata_name);
+    f.write_cstring(img->data()[0], (int)strlen(img->data()[0]));
 
     int i;
     int ncolors, chars_per_color;
     sscanf(img->data()[0], "%*d%*d%d%d", &ncolors, &chars_per_color);
 
     if (ncolors < 0) {
-      write_c(",\n");
-      write_cstring(img->data()[1], ncolors * -4);
+      f.write_c(",\n");
+      f.write_cstring(img->data()[1], ncolors * -4);
       i = 2;
     } else {
       for (i = 1; i <= ncolors; i ++) {
-        write_c(",\n");
-        write_cstring(img->data()[i], (int)strlen(img->data()[i]));
+        f.write_c(",\n");
+        f.write_cstring(img->data()[i], (int)strlen(img->data()[i]));
       }
     }
     for (; i < img->count(); i ++) {
-      write_c(",\n");
-      write_cstring(img->data()[i], img->w() * chars_per_color);
+      f.write_c(",\n");
+      f.write_cstring(img->data()[i], img->w() * chars_per_color);
     }
-    write_c("\n};\n");
-    write_initializer("Fl_Pixmap", "%s", idata_name);
+    f.write_c("\n};\n");
+    write_initializer(f, "Fl_Pixmap", "%s", idata_name);
   } else if (img->d() == 0) {
     // Write Bitmap data...
-    write_c("\n");
-    if (bitmap_header_written != write_number) {
-      write_c("#include <FL/Fl_Bitmap.H>\n");
-      bitmap_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
-    write_c(";\n");
-    write_initializer( "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
-  } else if (compressed && strcmp(fl_filename_ext(name()), ".jpg")==0) {
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_Bitmap.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
+    f.write_c(";\n");
+    write_initializer(f, "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((img->w() + 7) / 8) * img->h(), img->w(), img->h());
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".jpg")==0) {
     // Write jpeg image data...
-    write_c("\n");
-    if (jpeg_header_written != write_number) {
-      write_c("#include <FL/Fl_JPEG_Image.H>\n");
-      jpeg_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    size_t nData = write_static_binary("JPEG");
-    write_c(";\n");
-    write_initializer("Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (compressed && strcmp(fl_filename_ext(name()), ".png")==0) {
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_JPEG_Image.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary(f, "JPEG");
+    f.write_c(";\n");
+    write_initializer(f, "Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(name()), ".png")==0) {
     // Write png image data...
-    write_c("\n");
-    if (png_header_written != write_number) {
-      write_c("#include <FL/Fl_PNG_Image.H>\n");
-      png_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n", idata_name);
-    size_t nData = write_static_binary("PNG");
-    write_c(";\n");
-    write_initializer("Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (strcmp(fl_filename_ext(name()), ".svg")==0 || strcmp(fl_filename_ext(name()), ".svgz")==0) {
+    f.write_c("\n");
+    f.write_c_once("#include <FL/Fl_PNG_Image.H>\n");
+    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    size_t nData = write_static_binary(f, "PNG");
+    f.write_c(";\n");
+    write_initializer(f, "Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
+  } else if (fl_ascii_strcasecmp(fl_filename_ext(name()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(name()), ".svgz")==0) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
     if (compressed) {
-      write_c("\n");
-      if (svg_header_written != write_number) {
-        write_c("#include <FL/Fl_SVG_Image.H>\n");
-        svg_header_written = write_number;
-      }
+      f.write_c("\n");
+      f.write_c_once("#include <FL/Fl_SVG_Image.H>\n");
       if (gzipped) {
-        write_c("static const unsigned char %s[] =\n", idata_name);
-        size_t nData = write_static_binary("SVGZ");
-        write_c(";\n");
-        write_initializer("Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
+        f.write_c("static const unsigned char %s[] =\n", idata_name);
+        size_t nData = write_static_binary(f, "SVGZ");
+        f.write_c(";\n");
+        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(name()), idata_name, nData);
       } else {
-        write_c("static const char %s[] =\n", idata_name);
-        write_static_text("SVG");
-        write_c(";\n");
-        write_initializer("Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
+        f.write_c("static const char %s[] =\n", idata_name);
+        write_static_text(f, "SVG");
+        f.write_c(";\n");
+        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
       }
     } else {
       // if FLUID runs from the command line, make sure that the image is not
-      // only loade but also rasterized, so we can write the RGB image data
+      // only loaded but also rasterized, so we can write the RGB image data
       Fl_RGB_Image* rgb_image = NULL;
       Fl_SVG_Image* svg_image = NULL;
       if (img->d()>0)
@@ -251,24 +227,24 @@ void Fluid_Image::write_static(int compressed) {
         svg_image = rgb_image->as_svg_image();
       if (svg_image) {
         svg_image->resize(svg_image->w(), svg_image->h());
-        write_static_rgb(idata_name);
+        write_static_rgb(f, idata_name);
       } else {
-        write_file_error("RGB_from_SVG");
+        write_file_error(f, "RGB_from_SVG");
       }
     }
   } else {
-    write_static_rgb(idata_name);
+    write_static_rgb(f, idata_name);
   }
 }
 
-void Fluid_Image::write_file_error(const char *fmt) {
-  write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
+void Fluid_Image::write_file_error(Fd_Code_Writer& f, const char *fmt) {
+  f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, name(), strerror(errno));
   enter_project_dir();
-  write_c("// Searching in path \"%s\"\n", fl_getcwd(0, FL_PATH_MAX));
+  f.write_c("// Searching in path \"%s\"\n", fl_getcwd(0, FL_PATH_MAX));
   leave_project_dir();
 }
 
-void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {
+void Fluid_Image::write_initializer(Fd_Code_Writer& f, const char *type_name, const char *format, ...) {
   /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
    static Fl_Image *'function_name_'() {
      static Fl_Image *image = NULL;
@@ -278,26 +254,32 @@ void Fluid_Image::write_initializer(const char *type_name, const char *format, .
    } */
   va_list ap;
   va_start(ap, format);
-  write_c("static Fl_Image *%s() {\n", function_name_);
-  write_c("%sstatic Fl_Image *image = NULL;\n", indent(1));
-  write_c("%sif (!image)\n", indent(1));
-  write_c("%simage = new %s(", indent(2), type_name);
-  vwrite_c(format, ap);
-  write_c(");\n");
-  write_c("%sreturn image;\n", indent(1));
-  write_c("}\n");
+  f.write_c("static Fl_Image *%s() {\n", function_name_);
+  if (is_animated_gif_)
+    f.write_c("%sFl_GIF_Image::animate = true;\n", f.indent(1));
+  f.write_c("%sstatic Fl_Image *image = NULL;\n", f.indent(1));
+  f.write_c("%sif (!image)\n", f.indent(1));
+  f.write_c("%simage = new %s(", f.indent(2), type_name);
+  f.vwrite_c(format, ap);
+  f.write_c(");\n");
+  f.write_c("%sreturn image;\n", f.indent(1));
+  f.write_c("}\n");
   va_end(ap);
 }
 
-void Fluid_Image::write_code(int bind, const char *var, int inactive) {
+void Fluid_Image::write_code(Fd_Code_Writer& f, int bind, const char *var, int inactive) {
   /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
    This code calls a function output before by Fluid_Image::write_initializer() */
-  if (img) write_c("%s%s->%s%s( %s() );\n", indent(), var, bind ? "bind_" : "", inactive ? "deimage" : "image", function_name_);
+  if (img) {
+    f.write_c("%s%s->%s%s( %s() );\n", f.indent(), var, bind ? "bind_" : "", inactive ? "deimage" : "image", function_name_);
+    if (is_animated_gif_)
+      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n", f.indent(), function_name_, var);
+  }
 }
 
-void Fluid_Image::write_inline(int inactive) {
+void Fluid_Image::write_inline(Fd_Code_Writer& f, int inactive) {
   if (img)
-    write_c("%s()", function_name_);
+    f.write_c("%s()", function_name_);
 }
 
 
@@ -326,7 +308,10 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   enter_project_dir();
   FILE *f = fl_fopen(iname,"rb");
   if (!f) {
-    read_error("%s : %s",iname,strerror(errno));
+    if (batch_mode)
+      fprintf(stderr, "Can't open image file:\n%s\n%s",iname,strerror(errno));
+    else
+      fl_message("Can't open image file:\n%s\n%s",iname,strerror(errno));
     leave_project_dir();
     return 0;
   }
@@ -337,7 +322,10 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   if (!ret->img || !ret->img->w() || !ret->img->h()) {
     delete ret;
     ret = 0;
-    read_error("%s : unrecognized image format", iname);
+    if (batch_mode)
+      fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format",iname);
+    else
+      fl_message("Can't read image file:\n%s\nunrecognized image format",iname);
   }
   leave_project_dir();
   if (!ret) return 0;
@@ -355,11 +343,20 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   return ret;
 }
 
-Fluid_Image::Fluid_Image(const char *iname) {
+Fluid_Image::Fluid_Image(const char *iname)
+  : is_animated_gif_(false)
+{
   name_ = fl_strdup(iname);
   written = 0;
   refcount = 0;
   img = Fl_Shared_Image::get(iname);
+  if (img && iname) {
+    const char *ext = fl_filename_ext(iname);
+    if (fl_ascii_strcasecmp(ext, ".gif")==0) {
+      int fc = Fl_Anim_GIF_Image::frame_count(iname);
+      if (fc > 0) is_animated_gif_ = true;
+    }
+  }
   function_name_ = NULL;
 }
 

@@ -1,0 +1,13 @@
+#
+# Files to be ignored by Git (do not commit)
+#
+
+fluid
+fluid-shared
+TAGS
+fluid.app
+pixmaps/*.bck
+
+# local documentation generation
+
+documentation/html/

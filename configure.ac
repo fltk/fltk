@@ -3,7 +3,7 @@ dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2022 by Bill Spitzak and others.
+dnl Copyright 1998-2023 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -185,7 +185,6 @@ AS_CASE([$host_os], [cygwin*], [
 ], [darwin*], [
     AS_IF([test x$enable_x11 = xyes], [
         host_os_gui="X11"
-        OPTIM="-U__APPLE__ $OPTIM"
         macosversion=$(sw_vers -productVersion | cut -d. -f2)
         macosversion_maj=$(sw_vers -productVersion | cut -d. -f1)
         AS_IF([test $macosversion_maj -ge 11 -o $macosversion -ge 13], [
@@ -260,7 +259,6 @@ AC_SUBST(FLTKCAIROOPTION)
 
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
-AC_SUBST(GLWLDEMO)
 AC_SUBST(GLLIBNAME)
 AC_SUBST(IMGLIBNAME)
 AC_SUBST(CAIROLIBNAME)
@@ -292,6 +290,7 @@ AS_IF([test "x$enable_shared" = xyes], [
     PICFLAG=1
     SHAREDSUFFIX=""
     FLUID="fluid-shared"
+    FLTK_OPTIONS="fltk-options-shared"
 
     AS_CASE([$host_os], [darwin*], [
         DSONAME="libfltk.$FL_DSO_VERSION.dylib"
@@ -306,7 +305,7 @@ AS_IF([test "x$enable_shared" = xyes], [
         GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
         IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
         CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-        DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
+        DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
         AS_IF([test "x$libdir" != "x/usr/lib"], [
             DSOLINK="-R$libdir"
         ])
@@ -441,6 +440,7 @@ AS_IF([test "x$enable_shared" = xyes], [
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
+    FLTK_OPTIONS="fltk-options"
     LINKSHARED="$LINKFLTKCAIRO ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 ])
 
@@ -467,6 +467,7 @@ AC_SUBST([SHAREDSUFFIX])
 AC_SUBST([LINKSHARED])
 AC_SUBST([FLUID])
 AC_SUBST([FLUID_BUILD])
+AC_SUBST([FLTK_OPTIONS])
 
 
 dnl Find commands...
@@ -950,8 +951,6 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         HLINKS="#"
     ])
 ], [darwin*], [
-    AC_DEFINE([__APPLE_QUARTZ__])
-
     BUILD="OSX"
 
     # MacOS X uses Cocoa for graphics.
@@ -1068,13 +1067,11 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
           ])
           AC_CHECK_LIB([GL], [glXGetProcAddressARB], [AC_DEFINE([HAVE_GLXGETPROCADDRESSARB])
              ],, [-lm])
-          GLWLDEMO="egl"
       ], [
           LINKFLTKGL=""
           GLLIBNAME=""
           GLDSONAME=""
           GLDEMOS=""
-          GLWLDEMO=""
       ])
 
       dnl Check for GTK-3 ...

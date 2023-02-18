@@ -1,7 +1,7 @@
 //
 // Wayland-specific code to initialize wayland support.
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,7 @@
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
 #  include <cairo-xlib.h>
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #  include "../X11/Fl_X11_Screen_Driver.H"
 #  include "../X11/Fl_X11_Window_Driver.H"
 #  include "../Xlib/Fl_Xlib_Image_Surface_Driver.H"
@@ -119,7 +119,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
 
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
 #ifdef FLTK_USE_X11
-  if (!attempt_wayland()) return new Fl_Display_Cairo_Graphics_Driver();
+  if (!attempt_wayland()) return new Fl_X11_Cairo_Graphics_Driver();
 #endif
   return new Fl_Wayland_Graphics_Driver();
 }

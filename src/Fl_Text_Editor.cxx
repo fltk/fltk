@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2018 by Bill Spitzak and others.
+// Copyright 2001-2023 by Bill Spitzak and others.
 //
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
@@ -132,7 +132,9 @@ static struct {
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
 //{ FL_Clear,     0,                        Fl_Text_Editor::delete_to_eol },
   { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo       },
-  { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo       },
+  { 'z',          FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_redo       }, // MSWindows screen driver also defines Ctrl-Y
+  { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo       }, // Emacs
+  { '?',          FL_CTRL,                  Fl_Text_Editor::kf_redo       }, // Emacs
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
   { FL_Delete,    FL_SHIFT,                 Fl_Text_Editor::kf_cut        },
   { 'c',          FL_CTRL,                  Fl_Text_Editor::kf_copy       },
@@ -596,14 +598,30 @@ int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
 }
 
 /** Undo last edit in the current buffer of editor \p 'e'.
-    Also deselects previous selection.
-    The key value \p 'c' is currently unused.
-*/
+ Also deselects previous selection.
+ The key value \p 'c' is currently unused.
+ */
 int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
   e->buffer()->unselect();
   Fl::copy("", 0, 0);
-  int crsr;
+  int crsr = e->insert_position();
   int ret = e->buffer()->undo(&crsr);
+  e->insert_position(crsr);
+  e->show_insert_position();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+  return ret;
+}
+
+/** Redo last undo action.
+ Also deselects previous selection.
+ The key value \p 'c' is currently unused.
+ */
+int Fl_Text_Editor::kf_redo(int , Fl_Text_Editor* e) {
+  e->buffer()->unselect();
+  Fl::copy("", 0, 0);
+  int crsr = e->insert_position();
+  int ret = e->buffer()->redo(&crsr);
   e->insert_position(crsr);
   e->show_insert_position();
   e->set_changed();

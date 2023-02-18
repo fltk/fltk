@@ -609,7 +609,7 @@ int main(int argc, char** argv)
     end_list /= 16;
   }
   argc = 1;
-  for (long y = off; y < end_list; y++) {
+  for (int y = off; y < end_list; y++) {
     int o = 0;
     char bu[25]; // index label
     char buf[16 * 6]; // utf8 text
@@ -622,7 +622,7 @@ int main(int argc, char** argv)
       i++;
     }
     buf[o] = '\0';
-    snprintf(bu, sizeof(bu), "0x%06lX", y * 16);
+    snprintf(bu, sizeof(bu), "0x%06X", y * 16);
     Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
     b->textfont(FL_COURIER);
     b->value(fl_strdup(bu));

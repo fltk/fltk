@@ -1,7 +1,7 @@
 //
 // Special Cairo support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,8 +34,6 @@
 
 #if defined(_WIN32)               // Windows
 #  include <cairo-win32.h>
-#elif defined(__APPLE__)          // macOS
-#  include <cairo-quartz.h>
 #elif defined(FLTK_USE_WAYLAND)   // Wayland or hybrid
 #  include "../src/drivers/Wayland/Fl_Wayland_Graphics_Driver.H"
 #  include "../src/drivers/Wayland/Fl_Wayland_Window_Driver.H"
@@ -46,28 +44,33 @@
 #  endif
 #elif defined(FLTK_USE_X11)       // X11
 #  include <cairo-xlib.h>
+#elif defined(__APPLE__)          // macOS
+#  include <cairo-quartz.h>
 #else
 #  error Cairo is not supported on this platform.
 #endif
 
 // static initialization
 
-Fl_Cairo_State Fl::cairo_state_;  ///< contains all necessary info for current Cairo context mapping
+Fl_Cairo_State Fl::cairo_state_; ///< current Cairo context information
 
-// Fl_Cairo_State class
+// Fl_Cairo_State
 
 void Fl_Cairo_State::autolink(bool b) {
 #ifdef FLTK_HAVE_CAIROEXT
   autolink_ = b;
 #else
-  Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
-            "available with the enable-cairoext configure option, now quitting.");
+  Fl::fatal("In Fl::autolink(bool): Cairo autolink() feature is only "
+            "available with CMake OPTION_CAIROEXT "
+            "or the enable-cairoext configure option.\n"
+            "Quitting now.");
 #endif
 }
 
 /**
-  Provides a corresponding Cairo context for window \a wi.
-  This is needed in a draw() FL_OVERRIDE if Fl::cairo_autolink_context()
+  Provides a Cairo context for window \a wi.
+
+  This is needed in a draw() override if Fl::cairo_autolink_context()
   returns false, which is the default.
   The cairo_context() does not need to be freed as it is freed every time
   a new Cairo context is created. When the program terminates,
@@ -82,7 +85,7 @@ void Fl_Cairo_State::autolink(bool b) {
 
   \note Only available when configure has the --enable-cairo option
 
-  \return the valid cairo_t* Cairo context associated to this window.
+  \return The valid cairo_t *cairo context associated to this window.
   \retval NULL if \a wi is NULL or maybe with GL windows under Wayland
 */
 cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
@@ -107,7 +110,7 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
     return 0;
   }
 
-  // don't re-create a context if it's the same gc/window couple
+  // don't re-create a context if it's the same gc/window combination
   if (fl_gc == Fl::cairo_state_.gc() && fl_xid(wi) == (Window)Fl::cairo_state_.window())
     return Fl::cairo_cc();
 
@@ -118,12 +121,14 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 #ifndef __APPLE__
   float scale = Fl::screen_scale(wi->screen_num()); // get the screen scaling factor
 #endif
+
 #if defined(FLTK_USE_X11)
   cairo_ctxt = Fl::cairo_make_current(0, wi->w() * scale, wi->h() * scale);
 #else
   // on macOS, scaling is done before by Fl_Window::make_current(), on Windows, the size is not used
   cairo_ctxt = Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
 #endif
+
 #ifndef __APPLE__
   cairo_scale(cairo_ctxt, scale, scale);
 #endif
@@ -131,10 +136,10 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 }
 
 /*
-    Creates transparently a cairo_surface_t object.
-    gc is an HDC context in Windows, a CGContext* in Quartz, and
-    a display on X11 (not used on this platform)
- */
+  Creates transparently a cairo_surface_t object.
+  gc is an HDC context in Windows, a CGContext* in Quartz, and
+  a display on X11 (not used on this platform)
+*/
 
 static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 #if defined(FLTK_USE_X11)
@@ -153,7 +158,9 @@ static cairo_surface_t *cairo_create_surface(void *gc, int W, int H) {
 /**
   Creates a Cairo context from a \a gc only, gets its window size or
   offscreen size if fl_window is null.
-  \note Only available when configure has the --enable-cairo option
+
+  \note Only available if CMake OPTION_CAIRO is enabled
+        or configure has the --enable-cairo option.
 */
 cairo_t *Fl::cairo_make_current(void *gc) {
   int W = 0, H = 0;
@@ -174,12 +181,14 @@ cairo_t *Fl::cairo_make_current(void *gc) {
 #else
 #error Cairo is not supported on this platform.
 #endif
+
   if (!gc) {
     Fl::cairo_cc(0);
     cairo_state_.gc(0); // keep track for next time
     return 0;
   }
-  if (gc == Fl::cairo_state_.gc() && fl_window == (Window)Fl::cairo_state_.window() &&
+  if (gc == Fl::cairo_state_.gc() &&
+      fl_window == (Window)Fl::cairo_state_.window() &&
       cairo_state_.cc() != 0)
     return Fl::cairo_cc();
   cairo_state_.gc(fl_gc); // keep track for next time
@@ -191,27 +200,33 @@ cairo_t *Fl::cairo_make_current(void *gc) {
 }
 
 /**
-  Creates a Cairo context from a \a gc and its size
+  Creates a Cairo context from a \p gc and the given size.
 
-  \note Only available if FLTK has been configured with one of the Cairo options
+  \note Only available if CMake OPTION_CAIRO is enabled
+        or configure has the --enable-cairo option.
 */
 cairo_t *Fl::cairo_make_current(void *gc, int W, int H) {
-  if (gc == Fl::cairo_state_.gc() && fl_window == (Window)Fl::cairo_state_.window() &&
+  if (gc == Fl::cairo_state_.gc() &&
+      fl_window == (Window)Fl::cairo_state_.window() &&
       cairo_state_.cc() != 0) // no need to create a cc, just return that one
     return cairo_state_.cc();
 
   // we need to (re-)create a fresh cc ...
   cairo_state_.gc(gc); // keep track for next time
   cairo_surface_t *s = cairo_create_surface(gc, W, H);
+
 #if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
   CGAffineTransform at = CGContextGetCTM((CGContextRef)gc);
   CGContextSaveGState((CGContextRef)gc);
   CGContextConcatCTM((CGContextRef)gc, CGAffineTransformInvert(at));
 #endif
+
   cairo_t *c = cairo_create(s);
+
 #if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
   CGContextRestoreGState((CGContextRef)gc);
 #endif
+
   cairo_state_.cc(c); //  and purge any previously owned context
   cairo_surface_destroy(s);
   return c;
@@ -220,7 +235,6 @@ cairo_t *Fl::cairo_make_current(void *gc, int W, int H) {
 // Silence compiler warning if none of the Cairo options has been configured
 
 #else
-#warning xxx
 FL_EXPORT int fltk_cairo_dummy() {
   return 1;
 }

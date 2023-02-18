@@ -93,7 +93,7 @@
 
   Pass zero as \p oldx or \p oldy to disable drag in that direction.
 */
-void Fl_Tile::position(int oldx, int oldy, int newx, int newy) {
+void Fl_Tile::move_intersection(int oldx, int oldy, int newx, int newy) {
   Fl_Widget*const* a = array();
   Fl_Rect *p = bounds();
   p += 2; // skip group & resizable's saved size
@@ -252,7 +252,7 @@ int Fl_Tile::handle(int event) {
     // This is necessary if CONSOLIDATE_MOTION in Fl_x.cxx is turned off:
     // if (damage()) return 1; // don't fall behind
   case FL_RELEASE: {
-    if (!sdrag) return 0; // should not happen
+    if (!sdrag) break;
     Fl_Widget* r = resizable(); if (!r) r = this;
     int newx;
     if (sdrag&DRAGH) {
@@ -268,7 +268,7 @@ int Fl_Tile::handle(int event) {
       else if (newy > r->y()+r->h()) newy = r->y()+r->h();
     } else
       newy = sy;
-    position(sx,sy,newx,newy);
+    move_intersection(sx, sy, newx, newy);
     if (event == FL_DRAG) {
       set_changed();
       do_callback(FL_REASON_DRAGGED);

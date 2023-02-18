@@ -24,7 +24,8 @@ include ../makeinclude
 OBJS	=	png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o \
 		pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o \
 		pngwtran.o pngmem.o pngerror.o pngpread.o \
-		arm/arm_init.o arm/filter_neon_intrinsics.o arm/palette_neon_intrinsics.o
+		arm/arm_init.o arm/filter_neon_intrinsics.o arm/palette_neon_intrinsics.o \
+		powerpc/powerpc_init.o powerpc/filter_vsx_intrinsics.o
 
 LIBPNG	=	../lib/libfltk_png$(LIBEXT)
 

@@ -299,8 +299,9 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (show_comments && l->comment()) {
     copy_trunc(buf, l->comment(), 80, 0);
     comment_incr = textsize()-1;
-    if (l->new_selected) fl_color(fl_contrast(FL_DARK_GREEN,FL_SELECTION_COLOR));
-    else fl_color(fl_contrast(FL_DARK_GREEN,color()));
+    Fl_Color comment_color = fl_color_average(FL_DARK_GREEN, FL_BLACK, 0.9f);
+    if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
+    else fl_color(fl_contrast(comment_color, color()));
     fl_font(textfont()+FL_ITALIC, textsize()-2);
     fl_draw(buf, X, Y+12);
     Y += comment_incr/2;
@@ -511,7 +512,7 @@ int Widget_Browser::handle(int e) {
  */
 void Widget_Browser::save_scroll_position() {
   saved_h_scroll_ = hposition();
-  saved_v_scroll_ = position();
+  saved_v_scroll_ = vposition();
 }
 
 /**
@@ -519,7 +520,7 @@ void Widget_Browser::save_scroll_position() {
  */
 void Widget_Browser::restore_scroll_position() {
   hposition(saved_h_scroll_);
-  position(saved_v_scroll_);
+  vposition(saved_v_scroll_);
 }
 
 /**
@@ -545,7 +546,7 @@ void Widget_Browser::display(Fl_Type *inNode) {
     return;
   }
   // remeber our current scroll position
-  int currentV = position(), newV = currentV;
+  int currentV = vposition(), newV = currentV;
   int nodeV = 0;
   // find the inNode in the tree and check, if it is already visible
   Fl_Type *p=Fl_Type::first;
@@ -570,6 +571,6 @@ void Widget_Browser::display(Fl_Type *inNode) {
       newV = 0;
   }
   if (newV!=currentV)
-    position(newV);
+    vposition(newV);
 }
 

@@ -329,7 +329,7 @@ unsigned int Fl_Widget::label_shortcut(const char *t) {
   \return true, if the entered text matches the '&x' shortcut in \p t
           false (0) otherwise.
 
-  \note Internal use only.
+  \note Useful when a widget's handle(int) method needs dedicated processing of FL_SHORTCUT.
 */
 int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   static int extra_test = Fl::system_driver()->need_test_shortcut_extra();
@@ -363,7 +363,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   \return true, if the entered text matches the widget's'&x' shortcut,
           false (0) otherwise.
 
-  \note Internal use only.
+ \note Useful when a widget's handle(int) method needs dedicated processing of FL_SHORTCUT.
 */
 
 int Fl_Widget::test_shortcut() {

@@ -23,7 +23,7 @@ comment {//
 decl {\#include "Fl_Widget_Type.h"} {private global
 }
 
-decl {\#include "Shortcut_Button.h"} {public global
+decl {\#include "custom_widgets.h"} {public global
 }
 
 Function {make_widget_panel()} {
@@ -110,7 +110,7 @@ or compressed in the original file format} xywh {364 90 20 20} type Toggle
             code3 {\#include "pixmaps.h"}
           }
           Fl_Button {} {
-            callback bind_deimage_cb selected
+            callback bind_deimage_cb
             tooltip {bind the image to the widget, so it will be deleted automatically} xywh {384 90 20 20} type Toggle
             code0 {o->image(bind_pixmap);}
             code3 {\#include "pixmaps.h"}
@@ -244,7 +244,7 @@ or compressed in the original file format} xywh {364 90 20 20} type Toggle
             MenuItem {} {
               label {bottom right}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT}
-              xywh {115 115 100 20} labelsize 11 divider
+              xywh {115 115 100 20} labelsize 11
             }
             MenuItem {} {
               label {   Outside Alignment   }
@@ -465,14 +465,17 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             xywh {395 185 0 20} resizable
           }
         }
+        Fl_Group {} {
+          label {Shortcut:} open
+          xywh {95 210 0 20} labelfont 1 labelsize 11 align 4
+        } {}
         Fl_Button {} {
-          label {Shortcut:}
           callback shortcut_in_cb
-          comment {This is a special button that grabs keystrokes directly}
+          comment {This is a special button that grabs keystrokes directly} selected
           tooltip {The shortcut key for the widget.
-Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
-          code0 {\#include "Shortcut_Button.h"}
-          class Shortcut_Button
+Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 12 labelsize 11 when 1
+          code0 {\#include <FL/Fl_Shortcut_Button.H>}
+          class Fl_Shortcut_Button
         }
         Fl_Group {} {
           label {X Class:}
@@ -513,7 +516,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
           Fl_Light_Button {} {
             label Active
             callback active_cb
-            tooltip {Activate the widget.} xywh {160 260 60 20} selection_color 1 labelsize 11
+            tooltip {Activate the widget.} xywh {160 260 60 20} shortcut 0x400061 selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Resizable
@@ -536,7 +539,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
         }
         Fl_Box {} {
-          xywh {95 305 300 5} labelsize 11 resizable
+          xywh {95 305 300 5} labelsize 11
         }
       }
       Fl_Group {} {

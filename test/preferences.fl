@@ -12,13 +12,13 @@ comment {About test/preferences:
 The preferences app shows two features of FLTK and FLUID.
 
 The Fl_Preferences class is used as a storage for user
-settings between app launches. Fl_Preferences can store 
+settings between app launches. Fl_Preferences can store
 small amounts of arbitrary data in an .ini file format
 which can be retrieved again at the next app launch.
 
 The FLUID setup uses GNU gettext for internationalisation
 (i18n). FLUID finds the texts that need to be translated
-and writes them into .po files that can be processed by 
+and writes them into .po files that can be processed by
 the GNU gettext tools. FLUID produces source code that
 will translate all text into the current locale when
 generating the UI.
@@ -62,45 +62,45 @@ Function {gettext(const char *text)} {
 for systems that don't have GNU libintl library.} open return_type {const char*}
 } {
   code {static const char* translation_table[][2] = {
-	{ "Alarm at:", "Wecken um:" },
-	{ "Bread:", "Brot:" },
-	{ "Breakfast:", "Frühstück:" },
-	{ "Cancel", "Abbrechen" },
-	{ "Drink:", "Getränk:" },
-	{ "English", "Englisch" },
-	{ "German", "Deutsch" },
-	{ "Get Up:", "Aufstehen:" },
-	{ "Language:", "Sprache:" },
-	{ "My Preferences", "Meine Vorlieben" },
-	{ "NY Times", "Der Spiegel" },
-	{ "Newspaper:", "Tageszeitung:" },
-	{ "OK", "OK" },
-	{ "Please restart the app to use your new language setting.",
-	   "Bitte starten Sie die App erneut um Ihre Spracheinstellung zu nutzen." },
-	{ "Wear:", "Schuhwerk:" },
-	{ "a.m.", "früh" },
-	{ "bare foot", "barfuß" },
-	{ "brush teeth", "Zähne putzen" },
-	{ "coffee", "Kaffee" },
-	{ "eggs", "Eier" },
-	{ "flip flops", "Schlappen" },
-	{ "juice", "Saft" },
-	{ "left side", "linke Seite" },
-	{ "min.", "Min." },
-	{ "of the bed", "vom Bett" },
-	{ "p.m.", "spät" },
-	{ "right side", "rechte Seite" },
-	{ "rye", "Roggen" },
-	{ "sandals", "Sandalen" },
-	{ "shave", "rasieren" },
-	{ "shoes", "Schuhe" },
-	{ "shower", "duschen" },
-	{ "sourdough", "Sauerteig" },
-	{ "tea", "Tee" },
-	{ "wheat", "Weizen" },
-	{ "white", "Weißbrot" },
-	{ "with butter", "mit Butter" },
-	{ "with milk", "mit Milch" },
+        { "Alarm at:", "Wecken um:" },
+        { "Bread:", "Brot:" },
+        { "Breakfast:", "Frühstück:" },
+        { "Cancel", "Abbrechen" },
+        { "Drink:", "Getränk:" },
+        { "English", "Englisch" },
+        { "German", "Deutsch" },
+        { "Get Up:", "Aufstehen:" },
+        { "Language:", "Sprache:" },
+        { "My Preferences", "Meine Vorlieben" },
+        { "NY Times", "Der Spiegel" },
+        { "Newspaper:", "Tageszeitung:" },
+        { "OK", "OK" },
+        { "Please restart the app to use your new language setting.",
+           "Bitte starten Sie die App erneut um Ihre Spracheinstellung zu nutzen." },
+        { "Wear:", "Schuhwerk:" },
+        { "a.m.", "früh" },
+        { "bare foot", "barfuß" },
+        { "brush teeth", "Zähne putzen" },
+        { "coffee", "Kaffee" },
+        { "eggs", "Eier" },
+        { "flip flops", "Schlappen" },
+        { "juice", "Saft" },
+        { "left side", "linke Seite" },
+        { "min.", "Min." },
+        { "of the bed", "vom Bett" },
+        { "p.m.", "spät" },
+        { "right side", "rechte Seite" },
+        { "rye", "Roggen" },
+        { "sandals", "Sandalen" },
+        { "shave", "rasieren" },
+        { "shoes", "Schuhe" },
+        { "shower", "duschen" },
+        { "sourdough", "Sauerteig" },
+        { "tea", "Tee" },
+        { "wheat", "Weizen" },
+        { "white", "Weißbrot" },
+        { "with butter", "mit Butter" },
+        { "with milk", "mit Milch" },
 };
 int lang = g_language;
 int i, n = 38;
@@ -113,7 +113,7 @@ for (i=0; i<n; i++) {
     break;
   }
 }
-if (found) 
+if (found)
   return found;
 else
   return text;} {}
@@ -340,7 +340,7 @@ Fl_Preferences app( Fl_Preferences::USER_L, project, application );
   } else {
     printf("Location of Preferences user data directory not found.\\n");
   }
-  
+
   wLanguage->value( g_language );
 
   Fl_Preferences bed( app, "Bed" );
@@ -413,7 +413,7 @@ Function {writePrefs()} {open return_type void
   code {Fl_Preferences app( Fl_Preferences::USER_L, project, application );
 
   app.set( "language", wLanguage->value() );
-  
+
   Fl_Preferences bed( app, "Bed" );
 
     bed.set( "alarm", wAlarm->value() );

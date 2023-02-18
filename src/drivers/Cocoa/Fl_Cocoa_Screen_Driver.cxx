@@ -1,7 +1,7 @@
 //
 // Definition of Apple Cocoa Screen interface.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -79,6 +79,7 @@ Fl_Screen_Driver::Keyname darwin_key_table[] = {
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
   // Define CMD+key accelerators...
   { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       ,0},
+  { 'z',          FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_redo       ,0},
   { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        ,0},
   { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       ,0},
   { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      ,0},
@@ -180,7 +181,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
 {
   if (win) {
     if (!Fl::grab_) {
-      fl_capture = (FLWindow*)(Fl_X::i(Fl::first_window())->xid);
+      fl_capture = (FLWindow*)(Fl_X::flx(Fl::first_window())->xid);
       Fl_Cocoa_Window_Driver::driver(Fl::first_window())->set_key_window();
     }
     Fl::grab_ = win;

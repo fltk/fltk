@@ -17,6 +17,7 @@
 
 #include <FL/Fl_Int_Vector.H>
 #include <stdlib.h>
+#include <string.h>
 
 /**
   Make a copy of another array.

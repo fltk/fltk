@@ -634,7 +634,7 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   }
 
   if (final > (full_height() - H)) final = full_height() -H;
-  position(final);
+  vposition(final);
 }
 
 /**

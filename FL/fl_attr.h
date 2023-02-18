@@ -1,7 +1,7 @@
 /*
  * Function attribute declarations for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2021 by Bill Spitzak and others.
+ * Copyright 1998-2023 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -14,25 +14,30 @@
  *     https://www.fltk.org/bugs.php
  */
 
+/**
+ \file fl_attr.h
+ This file defines compiler-specific macros
+*/
+
 #ifndef _FL_fl_attr_h_
 #define _FL_fl_attr_h_
 
-/*
-  The GNUC-specific attribute appearing below in prototypes with a variable
-  list of arguments helps detection of mismatches between format string and
-  argument list at compilation time.
 
-  Examples: see fl_ask.H
-*/
-
-#ifdef __GNUC__
-#  define __fl_attr(x) __attribute__ (x)
-#else
-#  define __fl_attr(x)
-#endif
-
-
+/**
+ This section lists macros for Doxygen documentation only. The next section
+ will define the actual macros based on the compile used and based on the
+ capabilities of the version of that compiler.
+ */
 #ifdef FL_DOXYGEN
+
+
+/** To be used in prototypes with a variable list of arguments.
+ This macro helps detection of mismatches between format string and
+ argument list at compilation time.
+
+ Usage example: FL/fl_ask.H
+ */
+#define __fl_attr(x)
 
 /**
   This macro makes it safe to use the C++11 keyword \c override with
@@ -40,51 +45,152 @@
 */
 #define FL_OVERRIDE override
 
-#else
+/**
+ Enclosing a function or method in FL_DEPRECATED marks it as no longer
+ recommended. This macro syntax can not be used if the return type contains
+ a comma, which is not the case in FLTK.
 
-#ifdef __cplusplus
+ \code
+ FL_DEPRECATED("Outdated, don't use", int position()) { return position_; }
+ \endcode
+ */
+#define FL_DEPRECATED(msg, func) \
+  /##*##* \deprecated msg *##/ \
+  func
 
-// Visual Studio defines __cplusplus = '199711L' which is not helpful.
-// We assume that Visual Studio 2015 (1900) and later support the
-// 'override' keyword. For VS version number encoding see:
-// https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+#else /* FL_DOXYGEN */
 
+
+/*
+  Declare macros specific to Visual Studio.
+
+  Visual Studio defines __cplusplus = '199711L' in all its versions which is
+  not helpful for us here. For VS version number encoding see:
+  https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+
+  This document specifies that the macro _MSVC_LANG is defined since
+  "Visual Studio 2015 Update 3" as 201402L (default) and undefined in
+  earlier versions. It can be used to determine the C++ standard as
+  specified by the /std:c++ compiler option:
+
+  - /std:c++14      201402L  (also if /std:c++ is not used)
+  - /std:c++17      201703L
+  - /std:c++20      202002L
+  - /std:c++latest  a "higher, unspecified value" (docs of VS 2022)
+
+  As of this writing (02/2023) _MSVC_LANG is not yet used in this file
+  but it is documented for future use.
+*/
+
+#if defined(_MSC_VER)
+
+#if (_MSC_VER >= 1900) // Visual Studio 2015 (14.0)
+#ifndef FL_OVERRIDE
 #define FL_OVERRIDE override
-
-#else // not Visual Studio or an older version
-
-#if (__cplusplus >= 202002L)
-// put here definitions applying to C++20 and above
 #endif
+#endif // Visual Studio 2015 (14.0)
 
-#if (__cplusplus >= 201703L)
-// put here definitions applying to C++17 and above
+#if (_MSC_VER >= 1400) // Visual Studio 2005 (8.0)
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) __declspec(deprecated(msg)) func
 #endif
+#endif // Visual Studio 2005 (8.0)
 
-#if (__cplusplus >= 201402L)
-// put here definitions applying to C++14 and above
+#if (_MSC_VER >= 1310) // Visual Studio .NET 2003 (7.1)
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) __declspec(deprecated) func
 #endif
+#endif // Visual Studio .NET 2003 (7.1)
 
-#if (__cplusplus >= 201103L)
-// put here definitions applying to C++11 and above
+#endif // Visual Studio
+
+
+/*
+ Declare macros specific to the C++ standard used.
+
+ Macros may have been declared already in previous sections.
+ */
+#if (__cplusplus >= 202002L) // C++20
+#endif // C++20
+
+#if (__cplusplus >= 201703L) // C++17
+#endif // C++17
+
+#if (__cplusplus >= 201402L) // C++14
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) [[deprecated(msg)]] func
+#endif
+#endif // C++14
+
+#if (__cplusplus >= 201103L) // C++11
+#ifndef FL_OVERRIDE
 #define FL_OVERRIDE override
-#else
-// replace non-existing `override` with no-op
+#endif
+#endif // C+11
+
+#if (__cplusplus >= 199711L) // C++89
+#endif // C++89
+
+
+/*
+ Declare macros specific to clang
+
+ Macros may have been declared already in previous sections.
+ */
+#if defined(__clang__)
+
+#define FL_CLANG_VERSION (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__)
+
+// -- nothing yet --
+
+#endif // __clang__
+
+
+/*
+ Declare macros specific to gcc.
+
+ Macros may have been declared already in previous sections.
+ */
+#if defined(__GNUC__)
+
+#define FL_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+
+#ifndef __fl_attr
+#define __fl_attr(x) __attribute__ (x)
+#endif
+
+#if FL_GCC_VERSION > 40500 // gcc 4.5.0
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) func __attribute__((deprecated(msg)))
+#endif
+#endif // gcc 4.5.0
+
+#if FL_GCC_VERSION > 30100 // gcc 3.1.0
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) func __attribute__((deprecated))
+#endif
+#endif // gcc 3.1.0
+
+#endif // __GNUC__
+
+
+/*
+ If a macro was not defined in any of the sections above, set it to no-op here.
+ */
+
+#ifndef __fl_attr
+#define __fl_attr(x)
+#endif
+
+#ifndef FL_OVERRIDE
 #define FL_OVERRIDE
 #endif
 
-#if (__cplusplus >= 199711L)
-// put here definitions applying to C++98 and above
+#ifndef FL_DEPRECATED
+#define FL_DEPRECATED(msg, func) func
 #endif
 
-#endif /* not Visual Studio */
-
-#else
-/* C, not C++ */
-
-#endif /* __cplusplus */
 
 #endif /* FL_DOXYGEN */
 

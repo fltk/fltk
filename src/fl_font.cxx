@@ -60,6 +60,11 @@ void fl_reset_spot()
   Fl::screen_driver()->reset_spot();
 }
 
+/** Related to text input methods under X11.
+ This function is presently used only by the \c utf8 test application and only for the X11 platform.
+ This function is apparently not indispensable for text input to work correctly
+ as suggested by other apps that don't use it (e.g., editor).
+ */
 void fl_set_status(int X, int Y, int W, int H)
 {
   Fl::screen_driver()->set_status(X, Y, W, H);

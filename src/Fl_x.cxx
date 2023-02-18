@@ -42,7 +42,7 @@
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/Unix/Fl_Unix_System_Driver.H"
 #if FLTK_USE_CAIRO
-#  include "drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif
@@ -1525,7 +1525,7 @@ int fl_handle(const XEvent& thisevent)
 
     case DestroyNotify: { // an X11 window was closed externally from the program
       Fl::handle(FL_CLOSE, window);
-      Fl_X* X = Fl_X::i(window);
+      Fl_X* X = Fl_X::flx(window);
       if (X) { // indicates the FLTK window was not closed
         X->xid = (Window)0; // indicates the X11 window was already destroyed
         window->hide();
@@ -1987,7 +1987,7 @@ int fl_handle(const XEvent& thisevent)
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
-    // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
+    // XInstallColormap(fl_display, Fl_X::flx(window)->colormap);
     set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
@@ -2251,7 +2251,7 @@ void Fl_X11_Window_Driver::activate_window() {
   Window prev = 0;
 
   if (fl_xfocus) {
-    Fl_X *x = Fl_X::i(fl_xfocus);
+    Fl_X *x = Fl_X::flx(fl_xfocus);
     if (!x)
       return;
     prev = x->xid;
@@ -2315,7 +2315,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X *xp = new Fl_X;
   xp->xid = winxid;
   Fl_Window_Driver::driver(win)->other_xid = 0;
-  xp->w = win; win->i = xp;
+  xp->w = win; win->flx_ = xp;
   xp->next = Fl_X::first;
   xp->region = 0;
   Fl_Window_Driver::driver(win)->wait_for_expose_value = 1;
@@ -2387,7 +2387,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   // if the window is a subwindow and our parent is not mapped yet, we
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
-  if (win->parent() && !Fl_X::i(win->window())) {
+  if (win->parent() && !Fl_X::flx(win->window())) {
     win->set_visible();
     return;
   }
@@ -2934,6 +2934,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   if (!cursor)
     return 0;
 
+  image = (Fl_RGB_Image*)image->copy();
   const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
   const uchar *i = (const uchar*)*image->data();
   XcursorPixel *o = cursor->pixels;
@@ -2984,7 +2985,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   XFreeCursor(fl_display, xc);
 
   XcursorImageDestroy(cursor);
-
+  delete image;
   return 1;
 #endif
 }

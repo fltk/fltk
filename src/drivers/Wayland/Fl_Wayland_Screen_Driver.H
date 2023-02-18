@@ -2,7 +2,7 @@
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -97,13 +97,10 @@ public:
   struct wl_compositor *wl_compositor;
   struct wl_subcompositor *wl_subcompositor;
   struct wl_shm *wl_shm;
-  struct wl_list seats;
   struct seat *seat;
   struct wl_list outputs; // linked list of all screens in system
   struct output { // one record for each screen
     uint32_t id;
-    short x_org;
-    short y_org;
     short width; // in pixels
     short height; // in pixels
     float dpi;
@@ -171,7 +168,7 @@ public:
   char  *get_seat_name();
   struct xkb_keymap *get_xkb_keymap();
   static bool own_output(struct wl_output *output);
-  typedef enum {unspecified, MUTTER, WESTON, KDE} compositor_name;
+  typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
   static compositor_name compositor; // identifies the used Wayland compositor
   void set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win) FL_OVERRIDE;
   void reset_spot() FL_OVERRIDE;

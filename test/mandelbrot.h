@@ -63,6 +63,7 @@ public:
     scale = 4.0;
     iterations = 1<<DEFAULT_ITERATIONS;
     brightness = use_colors ? DEFAULT_BRIGHTNESS_COLOR : DEFAULT_BRIGHTNESS;
+    sx = sy = sw = sh = 0;
   }
   int idle();
 };

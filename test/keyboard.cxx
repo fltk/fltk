@@ -97,14 +97,14 @@ int main(int argc, char** argv) {
     for (int c = 0; c < window->children(); c++) {
       Fl_Widget* b = window->child(c);
       if (b->callback() == (Fl_Callback*)key_cb) {
-        int i = b->argument();
+        int i = (int)b->argument();
         if (!i) i = b->label()[0];
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_key(i);
         if (btn->value()!=state)
           btn->value(state);
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
-        int i = b->argument();
+        int i = (int)b->argument();
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_state(i);
         if (btn->value()!=state)

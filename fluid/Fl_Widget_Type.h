@@ -51,13 +51,13 @@ class Fl_Widget_Type : public Fl_Type {
 
 protected:
 
-  void write_static() FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_widget_code();
-  void write_extra_code();
-  void write_block_close();
-  void write_code2() FL_OVERRIDE;
-  void write_color(const char*, Fl_Color);
+  void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_widget_code(Fd_Code_Writer& f);
+  void write_extra_code(Fd_Code_Writer& f);
+  void write_block_close(Fd_Code_Writer& f);
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_color(Fd_Code_Writer& f, const char*, Fl_Color);
   Fl_Widget *live_widget;
 
 public:
@@ -101,11 +101,12 @@ public:
   int is_widget() const FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
 
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  Fl_Widget *propagate_live_mode(Fl_Group* grp);
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 

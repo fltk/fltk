@@ -1,5 +1,11 @@
-README.bundled-libs.txt - Developer information for bundled libraries
----------------------------------------------------------------------
+/**
+
+\page bundled-libs Developer info for bundled libs
+
+This chapter details the procedure to update the libraries which are bundled inside FLTK.
+
+
+\section bundled-intro Introduction
 
 This file is mainly intended for FLTK developers and contains information
 about the current versions of all bundled libraries and about how to
@@ -15,14 +21,15 @@ bundled image libraries need not be changed.
 
 The nanosvg library is not affected.
 
-Current versions of bundled libraries (as of Dec 29, 2022):
-
+\section bundled-status Current status
+\code
+Current versions of bundled libraries (as of Jan 16, 2023):
   Library       Version/git commit Release date         FLTK Version
   --------------------------------------------------------------------------
-  jpeg          jpeg-9d            2020-01-12           1.4.0
+  jpeg          jpeg-9e            2022-01-16           1.4.0
   nanosvg       abcd277ea4 [1]     2022-12-22           1.4.0
-  png           libpng-1.6.37      2019-04-14           1.4.0
-  zlib          zlib-1.2.11        2017-01-15           1.4.0
+  png           libpng-1.6.39      2022-11-20           1.4.0
+  zlib          zlib-1.2.13        2022-10-13           1.4.0
   libdecor      3f3e5e1d   [2]     2022-12-29           1.4.0
   --------------------------------------------------------------------------
 
@@ -40,8 +47,9 @@ Previous versions of bundled libraries (FLTK 1.3.x):
     See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date"
     and file nanosvg/README.txt.
 [2] Git commit in https://gitlab.freedesktop.org/libdecor/libdecor
+\endcode
 
-General information:
+<h2>General information:</h2>
 
   FLTK does not include the entire library distributions. We only provide the
   source files necessary to build the FLTK library and some README and/or
@@ -64,7 +72,7 @@ General information:
   "STR 3456", "Issue #123", or "PR #234".
 
 
-How to update the bundled libraries:
+\section bundled-how-to How to update the bundled libraries
 
   It is generally advisable to use a graphical merge program. I'm using
   'meld' under Linux, but YMMV.
@@ -79,7 +87,7 @@ How to update the bundled libraries:
   Currently there are no known exceptions.
 
 
-Merging source files:
+<h2>Merging source files:</h2>
 
   Please check if some source and header files contain "FLTK" comments
   and/or 'fltk_' symbol prefixing to be aware of necessary merges.
@@ -101,21 +109,21 @@ Merging source files:
   configure/make and in CMake based builds, respectively.
 
 
-Upgrade order:
+<h2>Upgrade order:</h2>
 
   There is only one dependency between all bundled libraries: libpng
   depends on zlib. Hence zlib should be upgraded first, then all other
   libs can be upgraded in arbitrary order.
 
 
-Tests after merge:
+<h2>Tests after merge:</h2>
 
   Tests should be done on as many platforms as possible, both with
   autotools (configure/make) and CMake. Windows (Visual Studio) and
   macOS (Xcode) builds need CMake to generate the IDE files.
 
 
-Upgrade notes for specific libraries:
+<h2>Upgrade notes for specific libraries:</h2>
 
   The following chapters contain informations about specific files and
   how they are upgraded. Since the changes in all bundled libraries are
@@ -123,18 +131,18 @@ Upgrade notes for specific libraries:
   verify that no other changes are necessary.
 
 
-zlib:
+\section bundled-zlib zlib:
 
   Website:    https://zlib.net/
-  Download:   See website and follow links.
-  Repository: git clone https://github.com/madler/zlib.git
+ \n Download:   See website and follow links.
+ \n Repository: git clone https://github.com/madler/zlib.git
 
   zlib should be upgraded first because libpng depends on zlib.
 
   Download the latest zlib sources, `cd' to /path-to/zlib and run
-
+\code
     $ ./configure --zprefix
-
+\endcode
   This creates the header file 'zconf.h' with definitions to enable
   the standard 'z_' symbol prefix.
 
@@ -153,97 +161,89 @@ zlib:
 
   The following files need special handling:
 
-    CMakeLists.txt: Keep FLTK version, update manually if necessary.
+    - CMakeLists.txt: Keep FLTK version, update manually if necessary.
+    - Makefile: Same as CMakeLists.txt.
+    - gzread.c: Merge changes (see above, manual merge recommended).
+    - zconf.h:  Merge changes (see above, manual merge recommended).
+    - zlib.h:   Merge changes (see above, manual merge recommended).
+    - makedepend: Keep this file.
 
-    Makefile: Same as CMakeLists.txt.
-
-    gzread.c: Merge changes (see above, manual merge recommended).
-    zconf.h:  Merge changes (see above, manual merge recommended).
-    zlib.h:   Merge changes (see above, manual merge recommended).
-
-    makedepend: Keep this file.
-
-      Run `make depend' in the zlib folder on a Linux system after
+Run `make depend' in the zlib folder on a Linux system after
       the upgrade to update this file.
 
 
-png:
+\section bundled-ong png:
 
   Website:    http://libpng.org/pub/png/libpng.html
-  Download:   See website and follow links.
-  Repository: git clone https://git.code.sf.net/p/libpng/code libpng
+\n  Download:   See website and follow links.
+\n Repository: git clone https://git.code.sf.net/p/libpng/code libpng
 
   libpng should be upgraded after zlib because it depends on zlib.
 
   Download the latest libpng sources, `cd' to /path-to/libpng and run
-
+\code
     $ ./configure --with-libpng-prefix=fltk_
-
+    $ make
+\endcode
   This creates the header files 'pnglibconf.h' and 'pngprefix.h'
   with the 'fltk_' symbol prefix.
 
   The following files need special handling:
 
-    CMakeLists.txt: Keep FLTK version, update manually if necessary.
+    - CMakeLists.txt: Keep FLTK version, update manually if necessary.
+    - Makefile: Same as CMakeLists.txt.
+    - pnglibconf.h: Generate on a Linux system and merge (see above).
+    - pngprefix.h:  Generate on a Linux system and merge (see above).
+    - makedepend: Keep this file.
 
-    Makefile: Same as CMakeLists.txt.
-
-    pnglibconf.h: Generate on a Linux system and merge (see above).
-    pngprefix.h:  Generate on a Linux system and merge (see above).
-
-    makedepend: Keep this file.
-
-      Run `make depend' in the png folder on a Linux system after
+Run `make depend' in the png folder on a Linux system after
       the upgrade to update this file.
 
 
-jpeg:
+\section bundled-jpeg jpeg:
 
   Website:    https://ijg.org/
-  Download:   See website and follow links.
-  Repository: <unknown>
+\n  Download:   See website and follow links.
+\n  Repository: N/A
 
   Download the latest jpeg-xy sources on a Linux (or Unix) system,
   `cd' to /path-to/jpeg-xy and run
-
+\code
     $ ./configure
     $ make [-jN]
-
+\endcode
   This builds the library and should create the static library file
   '.libs/libjpeg.a'.
 
   Execute the following command to extract the libjpeg symbol names
   used to build the 'prefixed' libfltk_jpeg library:
-
+\code
   $ nm --extern-only --defined-only .libs/libjpeg.a | awk '{print $3}' \
     | sed '/^$/d' | sort -u | awk '{print "#define "$1" fltk_"$1}' \
     > fltk_jpeg_prefix.h
-
+\endcode
   This creates the header file 'fltk_jpeg_prefix.h' with the
-  '#define' statements using the 'fltk_' symbol prefix.
+  '# define' statements using the 'fltk_' symbol prefix.
 
   The following files need special handling:
 
-    CMakeLists.txt: Keep FLTK version, update manually if necessary.
-
-    Makefile: Same as CMakeLists.txt.
-
-    fltk_jpeg_prefix.h:  Generate on a Linux system and merge (see above).
-
+    - CMakeLists.txt: Keep FLTK version, update manually if necessary.
+    - Makefile: Same as CMakeLists.txt.
+    - fltk_jpeg_prefix.h:  Generate on a Linux system and merge (see above).
+    - jconfig.h: keep changes flagged with \verbatim /* FLTK */ \endverbatim
     Note: more to come...
+    - makedepend: Keep this file.
 
-    makedepend: Keep this file.
-
-      Run `make depend' in the jpeg folder on a Linux system after
+Run `make depend' in the jpeg folder on a Linux system after
       the upgrade to update this file.
 
 
-nanosvg:
+\section bundled-nanosvg nanosvg:
 
   Website:    https://github.com/memononen/nanosvg
-  Download:   See website and follow links.
-  Repository: git clone https://github.com/memononen/nanosvg.git
-  FLTK Fork:  git clone https://github.com/fltk/nanosvg.git
+\n  Download:   See website and follow links.
+\n  Repository: git clone https://github.com/memononen/nanosvg.git
+\n  FLTK Fork:  git clone https://github.com/fltk/nanosvg.git
 
   FLTK has its own GitHub fork of the original repository (see above).
 
@@ -258,20 +258,20 @@ nanosvg:
 
   Use this fork (branch 'fltk') to get the nanosvg library with FLTK
   specific patches:
-
+\code
     $ git clone https://github.com/fltk/nanosvg.git nanosvg-fltk
     $ cd nanosvg-fltk
     $ git checkout fltk
     $ cd src
     $ cp nanosvg.h nanosvgrast.h /path/to/fltk-1.4/nanosvg/
-
+\endcode
   This library does not have its own build files since it is a header-only
   library. The headers are included in FLTK where necessary.
 
   The following files need special handling:
 
     nanosvg.h:     Merge or download from FLTK's fork (see above).
-    nanosvgrast.h: Merge or download from FLTK's fork (see above).
+\n    nanosvgrast.h: Merge or download from FLTK's fork (see above).
 
   Maintaining branch 'fltk' in FLTK's fork of nanosvg (fltk/nanosvg):
 
@@ -287,14 +287,14 @@ nanosvg:
 
     Step 1: clone the fltk/nanosvg fork, set the remote 'upstream',
     and update the 'master' branch:
-
+\code
     $ cd /to/your/dev/dir
     $ git clone https://github.com/fltk/nanosvg.git nanosvg-fltk
     $ cd nanosvg-fltk
     $ git remote add upstream https://github.com/memononen/nanosvg
     $ git checkout master
     $ git pull upstream master
-
+\endcode
     Note: the 'master' branch must never be changed, i.e. it must
     always be the same as 'upstream/master'. Never commit your own
     (FLTK specific) changes to branch 'master'.
@@ -306,10 +306,10 @@ nanosvg:
     (one commit per patch) because this will preserve the history and
     the committer and make it easier to skip single patches when they
     are accepted upstream.
-
+\code
     $ git checkout fltk
     $ git rebase upstream/master
-
+\endcode
     At this point you may need to fix conflicts! Do whatever is
     necessary to update the branch 'fltk'.
 
@@ -317,9 +317,9 @@ nanosvg:
 
     Hint: use `git show <any-older-tag-name>' to see its contents.
     I like to write a summary of commits in the tag comment.
-
+\code
     $ git tag -a fltk_yyyy-mm-dd fltk
-
+\endcode
     Replace 'yyyy-mm-dd' with the current date and add a comment
     when asked for it (your editor will open an empty file).
 
@@ -330,20 +330,20 @@ nanosvg:
 
     Step 4: push the new branch 'fltk' and the tag to the fltk/nanosvg
     repository:
-
+\code
     $ git push -f origin fltk
     $ git push origin fltk_yyyy-mm-dd
-
+\endcode
     Step 5: copy the changed files to your working copy of the FLTK
     repository (if not done already), update this file accordingly,
     and commit/push the update to the fltk/fltk repository.
 
 
-libdecor:
+\section bundled-libdecor libdecor:
 
   Website:    https://gitlab.freedesktop.org/libdecor/libdecor
-  Download:   See website and follow links.
-  Repository: git clone https://gitlab.freedesktop.org/libdecor/libdecor.git
+\n  Download:   See website and follow links.
+\n  Repository: git clone https://gitlab.freedesktop.org/libdecor/libdecor.git
 
   libdecor is used by the Wayland/X11 hybrid platform to draw window
   titlebars when FLTK apps run as Wayland clients and the running
@@ -352,16 +352,16 @@ libdecor:
   the system version of libdecor. libdecor will remain as an FLTK bundle to
   support Linux configurations where the libdecor package is not
   available or not installed.
-  
+
   FLTK uses libdecor source files without any modification.
   This part of the libdecor source tree is copied to directory libdecor/ of
   the FLTK source tree:
-    demo/
-      demo.c
-      egl.c
+  <pre>
     LICENSE
     README.md
     src/    ... and files below except meson.build files
-
+</pre>
   Furthermore, directory libdecor/build/ of the FLTK source tree does not
   originate from the libdecor source tree but contains 3 FLTK-created files.
+  File build/Makefile may need changes if a libdecor update adds or renames source files.
+*/

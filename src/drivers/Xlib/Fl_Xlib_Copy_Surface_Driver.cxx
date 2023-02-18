@@ -1,7 +1,7 @@
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
 #include "../X11/Fl_X11_Screen_Driver.H"
 #if FLTK_USE_CAIRO
 #  include <cairo-xlib.h>
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #  include <cairo/cairo.h>
 #else
 #  include "Fl_Xlib_Graphics_Driver.H"
@@ -32,7 +32,7 @@
 
 Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
 #if FLTK_USE_CAIRO
-  driver(new Fl_Display_Cairo_Graphics_Driver());
+  driver(new Fl_X11_Cairo_Graphics_Driver());
 #else
   driver(new Fl_Xlib_Graphics_Driver());
 #endif
@@ -46,7 +46,7 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
   cairo_surface_destroy(surf);
   cairo_scale(cairo_, 1/s, 1/s);
   cairo_save(cairo_);
-  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif
   driver()->push_no_clip();
   fl_window = xid;
@@ -78,7 +78,7 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
   oldwindow = fl_window;
   fl_window = xid;
 #if FLTK_USE_CAIRO
-  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif
 }
 

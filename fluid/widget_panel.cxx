@@ -43,7 +43,7 @@ Fl_Menu_Item menu_1[] = {
  {"right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"   Outside Alignment   ", 0,  0, (void*)((fl_intptr_t)0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
  {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
@@ -562,20 +562,26 @@ sized to fit the container.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
+        { Fl_Group* o = new Fl_Group(95, 210, 0, 20, "Shortcut:");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          o->end();
+        } // Fl_Group* o
         { // This is a special button that grabs keystrokes directly
-          Shortcut_Button* o = new Shortcut_Button(95, 210, 310, 20, "Shortcut:");
+          Fl_Shortcut_Button* o = new Fl_Shortcut_Button(95, 210, 310, 20);
           o->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
           o->box(FL_DOWN_BOX);
           o->color(FL_BACKGROUND2_COLOR);
-          o->selection_color(FL_BACKGROUND2_COLOR);
+          o->selection_color((Fl_Color)12);
           o->labeltype(FL_NORMAL_LABEL);
-          o->labelfont(1);
+          o->labelfont(0);
           o->labelsize(11);
           o->labelcolor(FL_FOREGROUND_COLOR);
           o->callback((Fl_Callback*)shortcut_in_cb);
-          o->align(Fl_Align(FL_ALIGN_LEFT));
-          o->when(FL_WHEN_RELEASE);
-        } // Shortcut_Button* o
+          o->align(Fl_Align(FL_ALIGN_CENTER));
+          o->when(FL_WHEN_CHANGED);
+        } // Fl_Shortcut_Button* o
         { Fl_Group* o = new Fl_Group(95, 235, 300, 20, "X Class:");
           o->labelfont(1);
           o->labelsize(11);
@@ -623,6 +629,7 @@ sized to fit the container.");
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
             o->tooltip("Activate the widget.");
+            o->shortcut(0x400061);
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
             o->callback((Fl_Callback*)active_cb);
@@ -656,7 +663,6 @@ sized to fit the container.");
         } // Fl_Input* o
         { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
           o->labelsize(11);
-          Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         o->end();
         Fl_Group::current()->resizable(o);

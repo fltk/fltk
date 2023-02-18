@@ -138,7 +138,7 @@ MyClass::draw() {
 \endcode
 
 \todo Clarify Fl_Window::damage(uchar) handling - seems confused/wrong?
-      ORing value doesn't match setting behaviour in FL_Widget.H!
+      ORing value doesn't match setting behavior in Fl_Widget.H!
 
 \anchor subclassing_draw_box
 void Fl_Widget::draw_box() const <br>
@@ -210,9 +210,6 @@ keypress does not match the character.
 
 \par
 The second version lets you do this test against an arbitrary string.
-
-\todo Clarify Fl_Widget::test_shortcut() explanations. Fl_Widget.h
-      says Internal Use only, but subclassing chapter gives details!
 
 \anchor subclassing_type
 uchar Fl_Widget::type() const <br>

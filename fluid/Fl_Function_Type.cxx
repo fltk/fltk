@@ -209,16 +209,16 @@ Fl_Type *Fl_Function_Type::make(Strategy strategy) {
   - "C" is written if we want a C signature instead of C++
   - "return_type" is followed by the return type of the function
  */
-void Fl_Function_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Function_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 2: f.write_string("protected"); break;
   }
-  if (cdecl_) write_string("C");
+  if (cdecl_) f.write_string("C");
   if (return_type) {
-    write_string("return_type");
-    write_word(return_type);
+    f.write_string("return_type");
+    f.write_word(return_type);
   }
 }
 
@@ -226,7 +226,7 @@ void Fl_Function_Type::write_properties() {
  Read function specific properties fron an .fl file.
  \param[in] c read from this string
  */
-void Fl_Function_Type::read_property(const char *c) {
+void Fl_Function_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
@@ -234,9 +234,9 @@ void Fl_Function_Type::read_property(const char *c) {
   } else if (!strcmp(c,"C")) {
     cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
-    storestring(read_word(),return_type);
+    storestring(f.read_word(),return_type);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -245,8 +245,8 @@ void Fl_Function_Type::read_property(const char *c) {
  */
 void Fl_Function_Type::open() {
   if (!function_panel) make_function_panel();
-  f_return_type_input->static_value(return_type);
-  f_name_input->static_value(name());
+  f_return_type_input->value(return_type);
+  f_name_input->value(name());
   if (is_in_class()) {
     f_public_member_choice->value(public_);
     f_public_member_choice->show();
@@ -328,9 +328,9 @@ int Fl_Function_Type::is_public() const {
 /**
  Write the code for the source and the header file.
  This writes the code that goes \b before all children of this class.
- \see write_code2()
+ \see write_code2(Fd_Code_Writer& f)
  */
-void Fl_Function_Type::write_code1() {
+void Fl_Function_Type::write_code1(Fd_Code_Writer& f) {
   constructor=0;
   havewidgets = 0;
   Fl_Type *child;
@@ -346,10 +346,10 @@ void Fl_Function_Type::write_code1() {
     }
   }
   if (havechildren)
-    write_c("\n");
+    f.write_c("\n");
   if (ismain()) {
     if (havechildren)
-      write_c("int main(int argc, char **argv) {\n");
+      f.write_c("int main(int argc, char **argv) {\n");
   } else {
     const char* rtype = return_type;
     const char* star = "";
@@ -375,24 +375,24 @@ void Fl_Function_Type::write_code1() {
     const char* k = class_name(0);
     if (k) {
       if (havechildren)
-        write_comment_c();
-      write_public(public_);
+        write_comment_c(f);
+      f.write_public(public_);
       if (name()[0] == '~')
         constructor = 1;
       else {
         size_t n = strlen(k);
         if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
-      write_h("%s", indent(1));
-      if (is_static) write_h("static ");
-      if (is_virtual) write_h("virtual ");
+      f.write_h("%s", f.indent(1));
+      if (is_static) f.write_h("static ");
+      if (is_virtual) f.write_h("virtual ");
       if (!constructor) {
-        write_h("%s%s ", rtype, star);
+        f.write_h("%s%s ", rtype, star);
         if (havechildren)
-          write_c("%s%s ", rtype, star);
+          f.write_c("%s%s ", rtype, star);
       }
 
-      // if this is a subclass, only write_h() the part before the ':'
+      // if this is a subclass, only f.write_h() the part before the ':'
       char s[1024], *sptr = s;
       char *nptr = (char *)name();
 
@@ -407,9 +407,9 @@ void Fl_Function_Type::write_code1() {
       *sptr = '\0';
 
       if (s[strlen(s)-1] == '}') {  // special case for inlined functions
-        write_h("%s\n", s);
+        f.write_h("%s\n", s);
       } else {
-        write_h("%s;\n", s);
+        f.write_h("%s;\n", s);
       }
       // skip all function default param. init in body:
       int skips=0,skipc=0;
@@ -437,20 +437,20 @@ void Fl_Function_Type::write_code1() {
       *sptr = '\0';
 
       if (havechildren)
-        write_c("%s::%s {\n", k, s);
+        f.write_c("%s::%s {\n", k, s);
     } else {
       if (havechildren)
-        write_comment_c();
+        write_comment_c(f);
       if (public_==1) {
         if (cdecl_)
-          write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
+          f.write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
         else
-          write_h("%s%s %s;\n", rtype, star, name());
+          f.write_h("%s%s %s;\n", rtype, star, name());
       } else if (public_==2) {
         // write neither the prototype nor static, the function may be declared elsewhere
       } else {
         if (havechildren)
-          write_c("static ");
+          f.write_c("static ");
       }
 
       // write everything but the default parameters (if any)
@@ -481,21 +481,21 @@ void Fl_Function_Type::write_code1() {
       *sptr = '\0';
 
       if (havechildren)
-        write_c("%s%s %s {\n", rtype, star, s);
+        f.write_c("%s%s %s {\n", rtype, star, s);
     }
   }
 
   if (havewidgets && child && !child->name())
-    write_c("%s%s* w;\n", indent(1), subclassname(child));
-  indentation++;
+    f.write_c("%s%s* w;\n", f.indent(1), subclassname(child));
+  f.indentation++;
 }
 
 /**
  Write the code for the source and the header file.
  This writes the code that goes \b after all children of this class.
- \see write_code1()
+ \see write_code1(Fd_Code_Writer& f)
  */
-void Fl_Function_Type::write_code2() {
+void Fl_Function_Type::write_code2(Fd_Code_Writer& f) {
   Fl_Type *child;
   const char *var = "w";
   char havechildren = 0;
@@ -506,15 +506,15 @@ void Fl_Function_Type::write_code2() {
 
   if (ismain()) {
     if (havewidgets)
-      write_c("%s%s->show(argc, argv);\n", indent(1), var);
+      f.write_c("%s%s->show(argc, argv);\n", f.indent(1), var);
     if (havechildren)
-      write_c("%sreturn Fl::run();\n", indent(1));
+      f.write_c("%sreturn Fl::run();\n", f.indent(1));
   } else if (havewidgets && !constructor && !return_type) {
-    write_c("%sreturn %s;\n", indent(1), var);
+    f.write_c("%sreturn %s;\n", f.indent(1), var);
   }
   if (havechildren)
-    write_c("}\n");
-  indentation = 0;
+    f.write_c("}\n");
+  f.indentation = 0;
 }
 
 /**
@@ -619,24 +619,24 @@ BREAK2:
 /**
  Grab changes from an external editor and write this node.
  */
-void Fl_Code_Type::write() {
+void Fl_Code_Type::write(Fd_Project_Writer &f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
-  Fl_Type::write();
+  Fl_Type::write(f);
 }
 
 /**
  Write the code block with the correct indentation.
  */
-void Fl_Code_Type::write_code1() {
+void Fl_Code_Type::write_code1(Fd_Code_Writer& f) {
   // External editor changes? If so, load changes into ram, update mtime/size
   if ( handle_editor_changes() == 1 ) {
     main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
   }
 
-  write_c_indented(name(), 0, '\n');
+  f.write_c_indented(name(), 0, '\n');
 }
 
 /**
@@ -737,22 +737,22 @@ Fl_Type *Fl_CodeBlock_Type::make(Strategy strategy) {
   - "after" is followed by the code that comes after the children
  The "before" code is stored in the name() field.
  */
-void Fl_CodeBlock_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_CodeBlock_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   if (after) {
-    write_string("after");
-    write_word(after);
+    f.write_string("after");
+    f.write_word(after);
   }
 }
 
 /**
  Read the node specifc properties.
  */
-void Fl_CodeBlock_Type::read_property(const char *c) {
+void Fl_CodeBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"after")) {
-    storestring(read_word(),after);
+    storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -761,8 +761,8 @@ void Fl_CodeBlock_Type::read_property(const char *c) {
  */
 void Fl_CodeBlock_Type::open() {
   if (!codeblock_panel) make_codeblock_panel();
-  code_before_input->static_value(name());
-  code_after_input->static_value(after);
+  code_before_input->value(name());
+  code_after_input->value(after);
   codeblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -788,19 +788,19 @@ BREAK2:
 /**
  Write the "before" code.
  */
-void Fl_CodeBlock_Type::write_code1() {
+void Fl_CodeBlock_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
-  write_c("%s%s {\n", indent(), c ? c : "");
-  indentation++;
+  f.write_c("%s%s {\n", f.indent(), c ? c : "");
+  f.indentation++;
 }
 
 /**
  Write the "after" code.
  */
-void Fl_CodeBlock_Type::write_code2() {
-  indentation--;
-  if (after) write_c("%s} %s\n", indent(), after);
-  else write_c("%s}\n", indent());
+void Fl_CodeBlock_Type::write_code2(Fd_Code_Writer& f) {
+  f.indentation--;
+  if (after) f.write_c("%s} %s\n", f.indent(), after);
+  else f.write_c("%s}\n", f.indent());
 }
 
 // ---- Fl_Decl_Type declaration
@@ -861,23 +861,23 @@ Fl_Type *Fl_Decl_Type::make(Strategy strategy) {
   - "private"/"public"/"protected"
   - "local"/"global" if this is static or not
  */
-void Fl_Decl_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Decl_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 1: write_string("public"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 1: f.write_string("public"); break;
+    case 2: f.write_string("protected"); break;
   }
   if (static_)
-    write_string("local");
+    f.write_string("local");
   else
-    write_string("global");
+    f.write_string("global");
 }
 
 /**
  Read the specific properties.
  */
-void Fl_Decl_Type::read_property(const char *c) {
+void Fl_Decl_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
   } else if (!strcmp(c,"private")) {
@@ -889,7 +889,7 @@ void Fl_Decl_Type::read_property(const char *c) {
   } else if (!strcmp(c,"global")) {
     static_ = 0;
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -898,7 +898,7 @@ void Fl_Decl_Type::read_property(const char *c) {
  */
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
-  decl_input->static_value(name());
+  decl_input->value(name());
   if (is_in_class()) {
     decl_class_choice->value(public_);
     decl_class_choice->show();
@@ -960,7 +960,7 @@ BREAK2:
  \todo There are a lot of side effect in this node depending on the given text
     and the parent node. They need to be understood and documented.
  */
-void Fl_Decl_Type::write_code1() {
+void Fl_Decl_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
   if (!c) return;
   // handle a few keywords differently if inside a class
@@ -969,9 +969,9 @@ void Fl_Decl_Type::write_code1() {
                         || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
                         || (!strncmp(c,"struct",6) && isspace(c[6]))
                         ) ) {
-    write_public(public_);
-    write_comment_h(indent(1));
-    write_h("%s%s\n", indent(1), c);
+    f.write_public(public_);
+    write_comment_h(f, f.indent(1));
+    f.write_h("%s%s\n", f.indent(1), c);
     return;
   }
   // handle putting #include, extern, using or typedef into decl:
@@ -984,11 +984,11 @@ void Fl_Decl_Type::write_code1() {
       //    || !strncmp(c,"struct",6) && isspace(c[6])
       ) {
     if (public_) {
-      write_comment_h();
-      write_h("%s\n", c);
+      write_comment_h(f);
+      f.write_h("%s\n", c);
     } else {
-      write_comment_c();
-      write_c("%s\n", c);
+      write_comment_c(f);
+      f.write_c("%s\n", c);
     }
     return;
   }
@@ -999,26 +999,26 @@ void Fl_Decl_Type::write_code1() {
   // lose spaces between text and comment, if any
   while (e>c && e[-1]==' ') e--;
   if (class_name(1)) {
-    write_public(public_);
-    write_comment_h(indent(1));
-    write_hc(indent(1), int(e-c), c, csc);
+    f.write_public(public_);
+    write_comment_h(f, f.indent(1));
+    f.write_hc(f.indent(1), int(e-c), c, csc);
   } else {
     if (public_) {
       if (static_)
-        write_h("extern ");
+        f.write_h("extern ");
       else
-        write_comment_h();
-      write_hc("", int(e-c), c, csc);
+        write_comment_h(f);
+      f.write_hc("", int(e-c), c, csc);
 
       if (static_) {
-        write_comment_c();
-        write_cc("", int(e-c), c, csc);
+        write_comment_c(f);
+        f.write_cc("", int(e-c), c, csc);
       }
     } else {
-      write_comment_c();
+      write_comment_c(f);
       if (static_)
-        write_c("static ");
-      write_cc("", int(e-c), c, csc);
+        f.write_c("static ");
+      f.write_cc("", int(e-c), c, csc);
     }
   }
 }
@@ -1076,27 +1076,27 @@ Fl_Type *Fl_Data_Type::make(Strategy strategy) {
   - "filename" followed by the filename of the file to inline
   - "textmode" if data is written in ASCII vs. binary
  */
-void Fl_Data_Type::write_properties() {
-  Fl_Decl_Type::write_properties();
+void Fl_Data_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Decl_Type::write_properties(f);
   if (filename_) {
-    write_string("filename");
-    write_word(filename_);
+    f.write_string("filename");
+    f.write_word(filename_);
   }
   if (text_mode_) {
-    write_string("textmode");
+    f.write_string("textmode");
   }
 }
 
 /**
  Read specific properties.
  */
-void Fl_Data_Type::read_property(const char *c) {
+void Fl_Data_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"filename")) {
-    storestring(read_word(), filename_, 1);
+    storestring(f.read_word(), filename_, 1);
   } else if (!strcmp(c,"textmode")) {
     text_mode_ = 1;
   } else {
-    Fl_Decl_Type::read_property(c);
+    Fl_Decl_Type::read_property(f, c);
   }
 }
 
@@ -1105,7 +1105,7 @@ void Fl_Data_Type::read_property(const char *c) {
  */
 void Fl_Data_Type::open() {
   if (!data_panel) make_data_panel();
-  data_input->static_value(name());
+  data_input->value(name());
   if (is_in_class()) {
     data_class_choice->value(public_);
     data_class_choice->show();
@@ -1208,7 +1208,7 @@ BREAK2:
 /**
  Write the content of the external file inline into the source code.
  */
-void Fl_Data_Type::write_code1() {
+void Fl_Data_Type::write_code1(Fd_Code_Writer& f) {
   const char *message = 0;
   const char *c = name();
   if (!c) return;
@@ -1216,7 +1216,7 @@ void Fl_Data_Type::write_code1() {
   char *data = 0;
   int nData = -1;
   // path should be set correctly already
-  if (filename_ && !write_sourceview) {
+  if (filename_ && !f.write_sourceview) {
     enter_project_dir();
     FILE *f = fl_fopen(filename_, "rb");
     leave_project_dir();
@@ -1236,71 +1236,71 @@ void Fl_Data_Type::write_code1() {
     fn = filename_ ? filename_ : "<no filename>";
   }
   if (is_in_class()) {
-    write_public(public_);
+    f.write_public(public_);
     if (text_mode_) {
-      write_h("%sstatic const char *%s;\n", indent(1), c);
-      write_c("\n");
-      write_comment_c();
-      write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
-      if (message) write_c("#error %s %s\n", message, fn);
-      write_cstring(data, nData);
+      f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
+      f.write_c("\n");
+      write_comment_c(f);
+      f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      if (message) f.write_c("#error %s %s\n", message, fn);
+      f.write_cstring(data, nData);
     } else {
-      write_h("%sstatic unsigned char %s[%d];\n", indent(1), c, nData);
-      write_c("\n");
-      write_comment_c();
-      write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
-      if (message) write_c("#error %s %s\n", message, fn);
-      write_cdata(data, nData);
+      f.write_h("%sstatic unsigned char %s[%d];\n", f.indent(1), c, nData);
+      f.write_c("\n");
+      write_comment_c(f);
+      f.write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      if (message) f.write_c("#error %s %s\n", message, fn);
+      f.write_cdata(data, nData);
     }
-    write_c(";\n");
+    f.write_c(";\n");
   } else {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
         if (text_mode_) {
-          write_h("extern const char *%s;\n", c);
-          write_c("\n");
-          write_comment_c();
-          write_c("const char *%s = /* text inlined from %s */\n", c, fn);
-          if (message) write_c("#error %s %s\n", message, fn);
-          write_cstring(data, nData);
+          f.write_h("extern const char *%s;\n", c);
+          f.write_c("\n");
+          write_comment_c(f);
+          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+          if (message) f.write_c("#error %s %s\n", message, fn);
+          f.write_cstring(data, nData);
         } else {
-          write_h("extern unsigned char %s[%d];\n", c, nData);
-          write_c("\n");
-          write_comment_c();
-          write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
-          if (message) write_c("#error %s %s\n", message, fn);
-          write_cdata(data, nData);
+          f.write_h("extern unsigned char %s[%d];\n", c, nData);
+          f.write_c("\n");
+          write_comment_c(f);
+          f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          if (message) f.write_c("#error %s %s\n", message, fn);
+          f.write_cdata(data, nData);
         }
-        write_c(";\n");
+        f.write_c(";\n");
       } else {
-        write_comment_h();
-        write_h("#error Unsupported declaration loading inline data %s\n", fn);
+        write_comment_h(f);
+        f.write_h("#error Unsupported declaration loading inline data %s\n", fn);
         if (text_mode_)
-          write_h("const char *%s = \"abc...\";\n", c);
+          f.write_h("const char *%s = \"abc...\";\n", c);
         else
-          write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
+          f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
     } else {
-      write_c("\n");
-      write_comment_c();
+      f.write_c("\n");
+      write_comment_c(f);
       if (static_)
-        write_c("static ");
+        f.write_c("static ");
       if (text_mode_) {
-        write_c("const char *%s = /* text inlined from %s */\n", c, fn);
-        if (message) write_c("#error %s %s\n", message, fn);
-        write_cstring(data, nData);
+        f.write_c("const char *%s = /* text inlined from %s */\n", c, fn);
+        if (message) f.write_c("#error %s %s\n", message, fn);
+        f.write_cstring(data, nData);
       } else {
-        write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
-        if (message) write_c("#error %s %s\n", message, fn);
-        write_cdata(data, nData);
+        f.write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        if (message) f.write_c("#error %s %s\n", message, fn);
+        f.write_cdata(data, nData);
       }
-      write_c(";\n");
+      f.write_c(";\n");
     }
   }
   // if we are in interactive mode, we pop up a warning dialog
   // giving the error: (batch_mode && !write_sourceview) ???
-  if (message && !write_sourceview) {
+  if (message && !f.write_sourceview) {
     if (batch_mode)
       fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
     else
@@ -1365,28 +1365,28 @@ Fl_Type *Fl_DeclBlock_Type::make(Strategy strategy) {
   - "public"/"protected"
   - "after" followed by the second code block.
  */
-void Fl_DeclBlock_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_DeclBlock_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   switch (public_) {
-    case 1: write_string("public"); break;
-    case 2: write_string("protected"); break;
+    case 1: f.write_string("public"); break;
+    case 2: f.write_string("protected"); break;
   }
-  write_string("after");
-  write_word(after);
+  f.write_string("after");
+  f.write_word(after);
 }
 
 /**
  Read the specific properties.
  */
-void Fl_DeclBlock_Type::read_property(const char *c) {
+void Fl_DeclBlock_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if(!strcmp(c,"public")) {
     public_ = 1;
   } else if(!strcmp(c,"protected")) {
     public_ = 2;
   } else  if (!strcmp(c,"after")) {
-    storestring(read_word(),after);
+    storestring(f.read_word(),after);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1395,29 +1395,34 @@ void Fl_DeclBlock_Type::read_property(const char *c) {
  */
 void Fl_DeclBlock_Type::open() {
   if (!declblock_panel) make_declblock_panel();
-  decl_before_input->static_value(name());
+  decl_before_input->value(name());
   declblock_public_choice->value((public_>0));
-  decl_after_input->static_value(after);
+  decl_after_input->value(after);
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == declblock_panel_cancel) goto BREAK2;
       else if (w == declblock_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char*c = decl_before_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (message) continue;
-    name(c);
-    c = decl_after_input->value();
-    while (isspace(*c)) c++;
-    message = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (message) continue;
-    storestring(c,after);
+    const char* a = decl_before_input->value();
+    while (isspace(*a)) a++;
+    const char* b = decl_after_input->value();
+    while (isspace(*b)) b++;
+    message = c_check(a&&a[0]=='#' ? a+1 : a);
+    if (!message)
+      message = c_check(b&&b[0]=='#' ? b+1 : b);
+    if (message) {
+      int v = fl_choice("%s", "try again", "keep anyway", "cancel", message);
+      printf("%d\n", v);
+      if (v==0) continue; // try again
+      if (v == 1) { } // keep input
+      if (v==2) goto BREAK2;
+    }
+    name(a);
+    storestring(b, after);
     if (public_ != declblock_public_choice->value()) {
       set_modflag(1);
       public_ = declblock_public_choice->value();
@@ -1433,21 +1438,21 @@ BREAK2:
  Write the \b before code to the source file, and to the header file if declared public.
  The before code is stored in the name() field.
  */
-void Fl_DeclBlock_Type::write_code1() {
+void Fl_DeclBlock_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
   if (public_)
-    write_h("%s\n", c);
-  write_c("%s\n", c);
+    f.write_h("%s\n", c);
+  f.write_c("%s\n", c);
 }
 
 /**
  Write the \b after code to the source file, and to the header file if declared public.
  */
-void Fl_DeclBlock_Type::write_code2() {
+void Fl_DeclBlock_Type::write_code2(Fd_Code_Writer& f) {
   const char* c = after;
   if (public_)
-    write_h("%s\n", c);
-  write_c("%s\n", c);
+    f.write_h("%s\n", c);
+  f.write_c("%s\n", c);
 }
 
 // ---- Fl_Comment_Type declaration
@@ -1496,16 +1501,16 @@ Fl_Type *Fl_Comment_Type::make(Strategy strategy) {
   - "in_source"/"not_in_source" if the comment will be written to the source code
   - "in_header"/"not_in_header" if the comment will be written to the header file
  */
-void Fl_Comment_Type::write_properties() {
-  Fl_Type::write_properties();
-  if (in_c_) write_string("in_source"); else write_string("not_in_source");
-  if (in_h_) write_string("in_header"); else write_string("not_in_header");
+void Fl_Comment_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
+  if (in_c_) f.write_string("in_source"); else f.write_string("not_in_source");
+  if (in_h_) f.write_string("in_header"); else f.write_string("not_in_header");
 }
 
 /**
  Read extra properties.
  */
-void Fl_Comment_Type::read_property(const char *c) {
+void Fl_Comment_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"in_source")) {
     in_c_ = 1;
   } else if (!strcmp(c,"not_in_source")) {
@@ -1515,7 +1520,7 @@ void Fl_Comment_Type::read_property(const char *c) {
   } else if (!strcmp(c,"not_in_header")) {
     in_h_ = 0;
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1688,7 +1693,7 @@ const char *Fl_Comment_Type::title() {
 /**
  Write the comment to the files.
  */
-void Fl_Comment_Type::write_code1() {
+void Fl_Comment_Type::write_code1(Fd_Code_Writer& f) {
   const char* c = name();
   if (!c) return;
   if (!in_c_ && !in_h_) return;
@@ -1698,8 +1703,8 @@ void Fl_Comment_Type::write_code1() {
   // if this seems to be a C style comment, copy the block as is
   // (it's up to the user to correctly close the comment)
   if (s[0]=='/' && s[1]=='*') {
-    if (in_h_) write_h("%s\n", c);
-    if (in_c_) write_c("%s\n", c);
+    if (in_h_) f.write_h("%s\n", c);
+    if (in_c_) f.write_c("%s\n", c);
     return;
   }
   // copy the comment line by line, add the double slash if needed
@@ -1715,12 +1720,12 @@ void Fl_Comment_Type::write_code1() {
     while (isspace(*s)) s++;
     if (s!=e && ( s[0]!='/' || s[1]!='/') ) {
       // if no comment marker was found, we add one ourselves
-      if (in_h_) write_h("// ");
-      if (in_c_) write_c("// ");
+      if (in_h_) f.write_h("// ");
+      if (in_c_) f.write_c("// ");
     }
     // now copy the rest of the line
-    if (in_h_) write_h("%s\n", b);
-    if (in_c_) write_c("%s\n", b);
+    if (in_h_) f.write_h("%s\n", b);
+    if (in_c_) f.write_c("%s\n", b);
     if (eol==0) break;
     *e++ = eol;
     b = e;
@@ -1795,30 +1800,30 @@ Fl_Type *Fl_Class_Type::make(Strategy strategy) {
   - ":" followed by the super class
   - "private"/"protected"
  */
-void Fl_Class_Type::write_properties() {
-  Fl_Type::write_properties();
+void Fl_Class_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Type::write_properties(f);
   if (subclass_of) {
-    write_string(":");
-    write_word(subclass_of);
+    f.write_string(":");
+    f.write_word(subclass_of);
   }
   switch (public_) {
-    case 0: write_string("private"); break;
-    case 2: write_string("protected"); break;
+    case 0: f.write_string("private"); break;
+    case 2: f.write_string("protected"); break;
   }
 }
 
 /**
  Read additional properties.
  */
-void Fl_Class_Type::read_property(const char *c) {
+void Fl_Class_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
   } else if (!strcmp(c,":")) {
-    storestring(read_word(), subclass_of);
+    storestring(f.read_word(), subclass_of);
   } else {
-    Fl_Type::read_property(c);
+    Fl_Type::read_property(f, c);
   }
 }
 
@@ -1832,8 +1837,8 @@ void Fl_Class_Type::open() {
     sprintf(fullname,"%s %s",prefix(),name());
   else
     strcpy(fullname, name());
-  c_name_input->static_value(fullname);
-  c_subclass_input->static_value(subclass_of);
+  c_name_input->value(fullname);
+  c_subclass_input->value(subclass_of);
   c_public_button->value(public_);
   const char *c = comment();
   c_comment_input->buffer()->text(c?c:"");
@@ -1898,25 +1903,25 @@ BREAK2:
 /**
  Write the header code that declares this class.
  */
-void Fl_Class_Type::write_code1() {
+void Fl_Class_Type::write_code1(Fd_Code_Writer& f) {
   parent_class = current_class;
   current_class = this;
   write_public_state = 0;
-  write_h("\n");
-  write_comment_h();
+  f.write_h("\n");
+  write_comment_h(f);
   if (prefix() && strlen(prefix()))
-    write_h("class %s %s ", prefix(), name());
+    f.write_h("class %s %s ", prefix(), name());
   else
-    write_h("class %s ", name());
-  if (subclass_of) write_h(": %s ", subclass_of);
-  write_h("{\n");
+    f.write_h("class %s ", name());
+  if (subclass_of) f.write_h(": %s ", subclass_of);
+  f.write_h("{\n");
 }
 
 /**
  Write the header code that ends the declaration of this class.
  */
-void Fl_Class_Type::write_code2() {
-  write_h("};\n");
+void Fl_Class_Type::write_code2(Fd_Code_Writer& f) {
+  f.write_h("};\n");
   current_class = parent_class;
 }
 

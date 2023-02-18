@@ -16,8 +16,10 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #include <FL/platform_types.h>
 #include <FL/filename.H>
+#include <FL/fl_utf8.h>
 
 /**
   \file numericsort.c
@@ -26,38 +28,52 @@
 /*
   numericsort() - Compare two directory entries, possibly with a
                   case-insensitive comparison...
-
-  *FIXME* This is not UTF-8 aware -- particularly case-insensitive comparison.
-  *FIXME* If you fix it, don't forget to update the documentation below.
 */
 
 static int numericsort(struct dirent **A, struct dirent **B, int cs) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;
+  int len_a, len_b;
+  const char *end_a = a + strlen(a);
+  const char *end_b = b + strlen(b);
+  unsigned UTF_A, UTF_B;
   int ret = 0;
-  for (;;) {
-    if (isdigit(*a & 255) && isdigit(*b & 255)) {
+  while (1) {
+    UTF_A = fl_utf8decode(a, end_a, &len_a);
+    a += len_a;
+    UTF_B = fl_utf8decode(b, end_b, &len_b);
+    b += len_b;
+    if (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) {
       int diff,magdiff;
-      while (*a == '0') a++;
-      while (*b == '0') b++;
-      while (isdigit(*a & 255) && *a == *b) {a++; b++;}
-      diff = (isdigit(*a & 255) && isdigit(*b & 255)) ? *a - *b : 0;
+      while (UTF_A == '0') {UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;}
+      while (UTF_B == '0') {UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;}
+      while (UTF_A <= 255 && isdigit(UTF_A) && UTF_A == UTF_B) {
+        UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
+        UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
+      }
+      diff = (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) ? UTF_A - UTF_B : 0;
       magdiff = 0;
-      while (isdigit(*a & 255)) {magdiff++; a++;}
-      while (isdigit(*b & 255)) {magdiff--; b++;}
+      while (UTF_A <= 255 && isdigit(UTF_A)) {
+        magdiff++;
+        UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
+      }
+      while (UTF_B <= 255 && isdigit(UTF_B)) {
+        magdiff--;
+        UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
+      }
       if (magdiff) {ret = magdiff; break;} /* compare # of significant digits */
       if (diff) {ret = diff; break;}       /* compare first non-zero digit */
     } else {
       if (cs) {
         /* compare case-sensitive */
-        if ((ret = *a-*b)) break;
+        if ((ret = UTF_A - UTF_B)) break;
       } else {
         /* compare case-insensitive */
-        if ((ret = tolower(*a & 255)-tolower(*b & 255))) break;
+        if ((ret = fl_tolower(UTF_A) - fl_tolower(UTF_B))) break;
       }
 
-      if (!*a) break;
-      a++; b++;
+      if (a >= end_a) break;
+      //a++; b++;
     }
   }
   if (!ret) return 0;
@@ -67,9 +83,7 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
 /**
   Compares directory entries alphanumerically (case-insensitive).
 
-  \note This comparison is not (yet) UTF-8 aware.
-
-  \todo Make comparison UTF-8 aware.
+  \note This comparison is UTF-8 aware.
 
   \see fl_numericsort()
 */
@@ -106,13 +120,7 @@ int fl_casenumericsort(struct dirent **A, struct dirent **B) {
   \retval   0 A == B
   \retval  +1 A \> B
 
-  \note This comparison is not (yet) UTF-8 aware:
-    - UTF-8 characters are compared according to their binary values.
-    - Locale settings may influence the result in unexpected ways.
-    - The latter is particularly true for fl_casenumericsort().
-  This may be changed in a future release.
-
-  \todo Make comparison UTF-8 aware.
+  \note This comparison is UTF-8 aware.
 
   \see fl_casenumericsort()
 */

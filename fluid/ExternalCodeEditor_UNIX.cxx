@@ -59,6 +59,8 @@ ExternalCodeEditor::ExternalCodeEditor() {
   filename_   = 0;
   file_mtime_ = 0;
   file_size_  = 0;
+  alert_pipe_[0] = alert_pipe_[1] = -1;
+  alert_pipe_open_ = false;
 }
 
 /**
@@ -71,6 +73,12 @@ ExternalCodeEditor::~ExternalCodeEditor() {
            (void*)this, (long)pid_);
   close_editor();   // close editor, delete tmp file
   set_filename(0);  // free()s filename
+
+  if (alert_pipe_open_) {
+    Fl::remove_fd(alert_pipe_[0]);
+    if (alert_pipe_[0] != -1) ::close(alert_pipe_[0]);
+    if (alert_pipe_[1] != -1) ::close(alert_pipe_[1]);
+  }
 }
 
 /**
@@ -350,6 +358,23 @@ static int make_args(char *s,         // string containing words (gets trashed!)
 }
 
 /**
+ If no alert pipe is open yet, try to create the pipe and hook it up the the fd callback.
+
+ The alert pipe is used to communicate from the forked process to the main
+ FLTK app in case launching the editor failed.
+ */
+void ExternalCodeEditor::open_alert_pipe() {
+  if (!alert_pipe_open_) {
+    if (::pipe(alert_pipe_) == 0) {
+      Fl::add_fd(alert_pipe_[0], FL_READ, alert_pipe_cb, this);
+      alert_pipe_open_ = true;
+    } else {
+      alert_pipe_[0] = alert_pipe_[1] = -1;
+    }
+  }
+}
+
+/**
  Start editor in background (fork/exec)
  \return 0 on success, leaves editor child process running as 'pid_'
  \return -1 on error, posts dialog with reason (child exits)
@@ -360,6 +385,8 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
                         editor_cmd, filename);
   char cmd[1024];
   snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
+  command_line_.value(editor_cmd);
+  open_alert_pipe();
   // Fork editor to background..
   switch ( pid_ = fork() ) {
     case -1:    // error
@@ -367,11 +394,18 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
       return -1;
     case 0: {   // child
       // NOTE: OSX wants minimal code between fork/exec, see Apple TN2083
+      // NOTE: no FLTK calls after a fork. Use a pipe to tell the app if the
+      //       command can't launch
       int nargs;
       char **args = 0;
       if (make_args(cmd, &nargs, &args) > 0) {
         execvp(args[0], args);  // run command - doesn't return if succeeds
-        fl_alert("couldn't exec() '%s': %s", cmd, strerror(errno));
+        if (alert_pipe_open_) {
+          int err = errno;
+          if (::write(alert_pipe_[1], &err, sizeof(int)) != sizeof(int)) {
+            // should not happen, but if it does, at least we tried
+          }
+        }
         exit(1);
       }
       exit(1);
@@ -515,4 +549,26 @@ void ExternalCodeEditor::set_update_timer_callback(Fl_Timeout_Handler cb) {
  */
 int ExternalCodeEditor::editors_open() {
   return L_editors_open;
+}
+
+/**
+ It the forked process can't run the editor, it will send the errno through a pipe.
+ */
+void ExternalCodeEditor::alert_pipe_cb(FL_SOCKET s, void* d) {
+  ExternalCodeEditor* self = (ExternalCodeEditor*)d;
+  self->last_error_ = 0;
+  if (::read(s, &self->last_error_, sizeof(int)) != sizeof(int))
+    return;
+  const char* cmd = self->command_line_.value();
+  if (cmd && *cmd) {
+    if (cmd[0] == '/') { // is this an absoluet filename?
+      fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"",
+               fl_filename_name(cmd), strerror(self->last_error_), cmd);
+    } else {
+      char pwd[FL_PATH_MAX+1];
+      fl_getcwd(pwd, FL_PATH_MAX);
+      fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"\npwd: \"%s\"",
+               fl_filename_name(cmd), strerror(self->last_error_), cmd, pwd);
+    }
+  }
 }

@@ -355,13 +355,12 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface && !egl_swap_in_progress) {
-    egl_swap_in_progress = true;
+    egl_swap_in_progress = true; // prevents crash while down resizing rotating glpuzzle
     while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
       wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     }
     wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
     wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
-    wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     egl_swap_in_progress = false;
   }
@@ -400,10 +399,6 @@ static void delayed_scissor(Fl_Wayland_Gl_Window_Driver *dr) {
   dr->apply_scissor();
 }*/
 
-static void delayed_flush(Fl_Gl_Window *win) {
-  win->flush();
-}
-
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
   struct wld_window *win = fl_wl_xid(pWindow);
@@ -415,9 +410,6 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (W2 != W || H2 != H) {
     wl_egl_window_resize(egl_window, W, H, 0, 0);
     //fprintf(stderr, "Fl_Wayland_Gl_Window_Driver::resize to %dx%d\n", W, H);
-    if (!pWindow->parent()) {
-        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_flush, pWindow);
-    }
   }
   /* CONTROL_LEAKING_SUB_GL_WINDOWS
   if (Fl_Wayland_Window_Driver::driver(pWindow)->subRect()) {

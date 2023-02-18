@@ -331,7 +331,7 @@ in here.
 
 \par
 The X region that is a combination of all \c damage()
-calls done so far is in <tt>Fl_X::i(this)->region</tt>. If
+calls done so far is in <tt>Fl_X::flx(this)->region</tt>. If
 \c NULL then you should redraw the entire window. The
 undocumented function \c fl_clip_region(XRegion) will
 initialize the FLTK clip stack with a region or \c NULL
@@ -348,12 +348,15 @@ undamaged image (such as a backing buffer) around.
 Here is a sample where an undamaged image is kept somewhere:
 \code
 void MyWindow::flush() {
-  fl_clip_region(Fl_X::i(this)->region);
-  Fl_X::i(this)->region = 0;
+  fl_clip_region(Fl_X::flx(this)->region);
+  Fl_X::flx(this)->region = 0;
   if (damage() != 2) {... draw things into backing store ...}
   ... copy backing store to window ...
 }
 \endcode
+
+\note For compatibility with FLTK versions before 1.4, member function
+\c Fl_X::flx(Fl_Window*) can also be written \c Fl_X::i(Fl_Window*).
 
 virtual void Fl_Window::hide()
 

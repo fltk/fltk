@@ -2,7 +2,7 @@
 # CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -97,13 +97,10 @@ if (APPLE)
   set (HAVE_SCANDIR 1)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
   if (OPTION_APPLE_X11)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -U__APPLE__")
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -U__APPLE__")
     if (NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0)) # a.k.a. macOS version ≥ 10.13
       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LIBCPP_HAS_THREAD_API_PTHREAD")
     endif (NOT(${CMAKE_SYSTEM_VERSION} VERSION_LESS 17.0.0))
   else ()
-    set (__APPLE_QUARTZ__ 1)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
   endif (OPTION_APPLE_X11)

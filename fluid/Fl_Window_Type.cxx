@@ -257,11 +257,6 @@ void show_settings_cb(Fl_Widget *, void *) {
   settings_window->show();
 }
 
-void show_global_settings_cb(Fl_Widget *, void *) {
-  global_settings_window->hotspot(global_settings_window);
-  show_global_settings_window();
-}
-
 void header_input_cb(Fl_Input* i, void*) {
   if (strcmp(g_project.header_file_name, i->value()))
     set_modflag(1);
@@ -946,7 +941,7 @@ void Fl_Window_Type::draw_overlay() {
     }
 
     // Check spacing and alignment between individual widgets
-    if (drag && selection->is_widget()) {
+    if (drag && selection && selection->is_widget()) {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
         if (q != selection && q->is_widget()) {
           Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
@@ -1359,7 +1354,7 @@ int Fl_Window_Type::handle(int event) {
       // or in the same group, add after selection. Otherwise, just add
       // at the end of the selected group.
       if (   Fl_Type::current_dnd->group()
-          && selection->group()
+          && selection && selection->group()
           && Fl_Type::current_dnd->group()==selection->group())
       {
         Fl_Type *cc = Fl_Type::current;
@@ -1465,7 +1460,7 @@ int Fl_Window_Type::handle(int event) {
         for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
           if (!o1->visible()) goto CONTINUE;
         if (Fl::event_inside(myo->o)) selection = myo;
-        if (myo->o->x()>=x1 && myo->o->y()>y1 &&
+        if (myo && myo->o && myo->o->x()>=x1 && myo->o->y()>y1 &&
             myo->o->x()+myo->o->w()<mx && myo->o->y()+myo->o->h()<my) {
           n++;
           select(myo, toggle ? !myo->selected : 1);
@@ -1473,7 +1468,7 @@ int Fl_Window_Type::handle(int event) {
       CONTINUE:;
       }
       // if nothing in box, select what was clicked on:
-      if (!n) {
+      if (selection && !n) {
         select(selection, toggle ? !selection->selected : 1);
       }
     }
@@ -1543,47 +1538,47 @@ int Fl_Window_Type::handle(int event) {
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Window_Type::write_code1() {
-  Fl_Widget_Type::write_code1();
+void Fl_Window_Type::write_code1(Fd_Code_Writer& f) {
+  Fl_Widget_Type::write_code1(f);
 }
 
-void Fl_Window_Type::write_code2() {
+void Fl_Window_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
-  write_extra_code();
-  if (modal) write_c("%s%s->set_modal();\n", indent(), var);
-  else if (non_modal) write_c("%s%s->set_non_modal();\n", indent(), var);
+  write_extra_code(f);
+  if (modal) f.write_c("%s%s->set_modal();\n", f.indent(), var);
+  else if (non_modal) f.write_c("%s%s->set_non_modal();\n", f.indent(), var);
   if (!((Fl_Window*)o)->border()) {
-    write_c("%s%s->clear_border();\n", indent(), var);
+    f.write_c("%s%s->clear_border();\n", f.indent(), var);
   }
   if (xclass) {
-    write_c("%s%s->xclass(", indent(), var);
-    write_cstring(xclass);
-    write_c(");\n");
+    f.write_c("%s%s->xclass(", f.indent(), var);
+    f.write_cstring(xclass);
+    f.write_c(");\n");
   }
   if (sr_max_w || sr_max_h) {
-    write_c("%s%s->size_range(%d, %d, %d, %d);\n", indent(), var,
+    f.write_c("%s%s->size_range(%d, %d, %d, %d);\n", f.indent(), var,
             sr_min_w, sr_min_h, sr_max_w, sr_max_h);
   } else if (sr_min_w || sr_min_h) {
-    write_c("%s%s->size_range(%d, %d);\n", indent(), var, sr_min_w, sr_min_h);
+    f.write_c("%s%s->size_range(%d, %d);\n", f.indent(), var, sr_min_w, sr_min_h);
   }
-  write_c("%s%s->end();\n", indent(), var);
+  f.write_c("%s%s->end();\n", f.indent(), var);
   if (((Fl_Window*)o)->resizable() == o)
-    write_c("%s%s->resizable(%s);\n", indent(), var, var);
-  write_block_close();
+    f.write_c("%s%s->resizable(%s);\n", f.indent(), var, var);
+  write_block_close(f);
 }
 
-void Fl_Window_Type::write_properties() {
-  Fl_Widget_Type::write_properties();
-  if (modal) write_string("modal");
-  else if (non_modal) write_string("non_modal");
-  if (!((Fl_Window*)o)->border()) write_string("noborder");
-  if (xclass) {write_string("xclass"); write_word(xclass);}
+void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Widget_Type::write_properties(f);
+  if (modal) f.write_string("modal");
+  else if (non_modal) f.write_string("non_modal");
+  if (!((Fl_Window*)o)->border()) f.write_string("noborder");
+  if (xclass) {f.write_string("xclass"); f.write_word(xclass);}
   if (sr_min_w || sr_min_h || sr_max_w || sr_max_h)
-    write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
-  if (o->visible()) write_string("visible");
+    f.write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+  if (o->visible()) f.write_string("visible");
 }
 
-void Fl_Window_Type::read_property(const char *c) {
+void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1593,18 +1588,18 @@ void Fl_Window_Type::read_property(const char *c) {
   } else if (!strcmp(c,"noborder")) {
     ((Fl_Window*)o)->border(0);
   } else if (!strcmp(c,"xclass")) {
-    storestring(read_word(),xclass);
+    storestring(f.read_word(),xclass);
     ((Fl_Window*)o)->xclass(xclass);
   } else if (!strcmp(c,"size_range")) {
     int mw, mh, MW, MH;
-    if (sscanf(read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
+    if (sscanf(f.read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
       sr_min_w = mw; sr_min_h = mh; sr_max_w = MW; sr_max_h = MH;
     }
   } else if (!strcmp(c,"xywh")) {
-    Fl_Widget_Type::read_property(c);
+    Fl_Widget_Type::read_property(f, c);
     pasteoffset = 0; // make it not apply to contents
   } else {
-    Fl_Widget_Type::read_property(c);
+    Fl_Widget_Type::read_property(f, c);
   }
 }
 
@@ -1664,21 +1659,21 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   return myo;
 }
 
-void Fl_Widget_Class_Type::write_properties() {
-  Fl_Window_Type::write_properties();
+void Fl_Widget_Class_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Window_Type::write_properties(f);
   if (wc_relative==1)
-    write_string("position_relative");
+    f.write_string("position_relative");
   else if (wc_relative==2)
-    write_string("position_relative_rescale");
+    f.write_string("position_relative_rescale");
 }
 
-void Fl_Widget_Class_Type::read_property(const char *c) {
+void Fl_Widget_Class_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
       wc_relative = 2;
   } else {
-    Fl_Window_Type::read_property(c);
+    Fl_Window_Type::read_property(f, c);
   }
 }
 
@@ -1695,9 +1690,9 @@ static const char *trimclassname(const char *n) {
 }
 
 
-void Fl_Widget_Class_Type::write_code1() {
+void Fl_Widget_Class_Type::write_code1(Fd_Code_Writer& f) {
 #if 0
-  Fl_Widget_Type::write_code1();
+  Fl_Widget_Type::write_code1(Fd_Code_Writer& f);
 #endif // 0
 
   current_widget_class = this;
@@ -1706,80 +1701,80 @@ void Fl_Widget_Class_Type::write_code1() {
   const char *c = subclass();
   if (!c) c = "Fl_Group";
 
-  write_c("\n");
-  write_comment_h();
-  write_h("\nclass %s : public %s {\n", name(), c);
+  f.write_c("\n");
+  write_comment_h(f);
+  f.write_h("\nclass %s : public %s {\n", name(), c);
   if (strstr(c, "Window")) {
-    write_h("%svoid _%s();\n", indent(1), trimclassname(name()));
-    write_h("public:\n");
-    write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n", indent(1), trimclassname(name()));
-    write_h("%s%s(int W, int H, const char *L = 0);\n", indent(1), trimclassname(name()));
-    write_h("%s%s();\n", indent(1), trimclassname(name()));
+    f.write_h("%svoid _%s();\n", f.indent(1), trimclassname(name()));
+    f.write_h("public:\n");
+    f.write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n", f.indent(1), trimclassname(name()));
+    f.write_h("%s%s(int W, int H, const char *L = 0);\n", f.indent(1), trimclassname(name()));
+    f.write_h("%s%s();\n", f.indent(1), trimclassname(name()));
 
     // a constructor with all four dimensions plus label
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
-    write_c("%s%s(X, Y, W, H, L)\n{\n", indent(1), c);
-    write_c("%s_%s();\n", indent(1), trimclassname(name()));
-    write_c("}\n\n");
+    f.write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
+    f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c);
+    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    write_c("%s::%s(int W, int H, const char *L) :\n", name(), trimclassname(name()));
-    write_c("%s%s(0, 0, W, H, L)\n{\n", indent(1), c);
-    write_c("%sclear_flag(16);\n", indent(1));
-    write_c("%s_%s();\n", indent(1), trimclassname(name()));
-    write_c("}\n\n");
+    f.write_c("%s::%s(int W, int H, const char *L) :\n", name(), trimclassname(name()));
+    f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c);
+    f.write_c("%sclear_flag(16);\n", f.indent(1));
+    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
-    write_c("%s::%s() :\n", name(), trimclassname(name()));
-    write_c("%s%s(0, 0, %d, %d, ", indent(1), c, o->w(), o->h());
+    f.write_c("%s::%s() :\n", name(), trimclassname(name()));
+    f.write_c("%s%s(0, 0, %d, %d, ", f.indent(1), c, o->w(), o->h());
     const char *cstr = label();
-    if (cstr) write_cstring(cstr);
-    else write_c("0");
-    write_c(")\n{\n");
-    write_c("%sclear_flag(16);\n", indent(1));
-    write_c("%s_%s();\n", indent(1), trimclassname(name()));
-    write_c("}\n\n");
+    if (cstr) f.write_cstring(cstr);
+    else f.write_c("0");
+    f.write_c(")\n{\n");
+    f.write_c("%sclear_flag(16);\n", f.indent(1));
+    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c("}\n\n");
 
-    write_c("void %s::_%s() {\n", name(), trimclassname(name()));
-//    write_c("%s%s *w = this;\n", indent(1), name());
+    f.write_c("void %s::_%s() {\n", name(), trimclassname(name()));
+//    f.write_c("%s%s *w = this;\n", f.indent(1), name());
   } else {
-    write_h("public:\n");
-    write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n",
-            indent(1), trimclassname(name()));
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
+    f.write_h("public:\n");
+    f.write_h("%s%s(int X, int Y, int W, int H, const char *L = 0);\n",
+            f.indent(1), trimclassname(name()));
+    f.write_c("%s::%s(int X, int Y, int W, int H, const char *L) :\n", name(), trimclassname(name()));
     if (wc_relative==1)
-      write_c("%s%s(0, 0, W, H, L)\n{\n", indent(1), c);
+      f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c);
     else if (wc_relative==2)
-      write_c("%s%s(0, 0, %d, %d, L)\n{\n", indent(1), c, o->w(), o->h());
+      f.write_c("%s%s(0, 0, %d, %d, L)\n{\n", f.indent(1), c, o->w(), o->h());
     else
-      write_c("%s%s(X, Y, W, H, L)\n{\n", indent(1), c);
+      f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c);
   }
 
-//  write_c("%s%s *o = this;\n", indent(1), name());
+//  f.write_c("%s%s *o = this;\n", f.indent(1), name());
 
-  indentation++;
-  write_widget_code();
+  f.indentation++;
+  write_widget_code(f);
 }
 
-void Fl_Widget_Class_Type::write_code2() {
-  write_extra_code();
+void Fl_Widget_Class_Type::write_code2(Fd_Code_Writer& f) {
+  write_extra_code(f);
   if (wc_relative==1)
-    write_c("%sposition(X, Y);\n", indent());
+    f.write_c("%sposition(X, Y);\n", f.indent());
   else if (wc_relative==2)
-    write_c("%sresize(X, Y, W, H);\n", indent());
-  if (modal) write_c("%sset_modal();\n", indent());
-  else if (non_modal) write_c("%sset_non_modal();\n", indent());
-  if (!((Fl_Window*)o)->border()) write_c("%sclear_border();\n", indent());
+    f.write_c("%sresize(X, Y, W, H);\n", f.indent());
+  if (modal) f.write_c("%sset_modal();\n", f.indent());
+  else if (non_modal) f.write_c("%sset_non_modal();\n", f.indent());
+  if (!((Fl_Window*)o)->border()) f.write_c("%sclear_border();\n", f.indent());
   if (xclass) {
-    write_c("%sxclass(", indent());
-    write_cstring(xclass);
-    write_c(");\n");
+    f.write_c("%sxclass(", f.indent());
+    f.write_cstring(xclass);
+    f.write_c(");\n");
   }
-  write_c("%send();\n", indent());
+  f.write_c("%send();\n", f.indent());
   if (((Fl_Window*)o)->resizable() == o)
-    write_c("%sresizable(this);\n", indent());
-  indentation--;
-  write_c("}\n");
+    f.write_c("%sresizable(this);\n", f.indent());
+  f.indentation--;
+  f.write_c("}\n");
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1787,17 +1782,7 @@ void Fl_Widget_Class_Type::write_code2() {
 
 Fl_Widget *Fl_Window_Type::enter_live_mode(int) {
   Fl_Window *win = new Fl_Window(o->x(), o->y(), o->w(), o->h());
-  live_widget = win;
-  if (live_widget) {
-    copy_properties();
-    Fl_Type *n;
-    for (n = next; n && n->level > level; n = n->next) {
-      if (n->level == level+1)
-        n->enter_live_mode();
-    }
-    win->end();
-  }
-  return live_widget;
+  return propagate_live_mode(win);
 }
 
 void Fl_Window_Type::leave_live_mode() {

@@ -59,11 +59,11 @@ private:
   cairo_rectangle_int_t *subRect_;      // makes sure subwindow remains inside its parent window
   static bool in_flush; // useful for progressive window drawing
   static Fl_Wayland_Plugin *gl_plugin();
-  struct wl_cursor *cursor_;
-  void delete_cursor_();
+  Fl_Cursor standard_cursor_; // window's standard custom kind
+  void delete_cursor_(struct wld_window *);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
 public:
-  struct wl_cursor *cursor() { return cursor_; };
+  inline Fl_Cursor standard_cursor() { return standard_cursor_; };
   bool in_handle_configure; // distinguish OS and user window resize
   struct window_output {
     Fl_Wayland_Screen_Driver::output* output;
@@ -128,13 +128,14 @@ public:
   // menu-related stuff
   void reposition_menu_window(int x, int y) FL_OVERRIDE;
   void menu_window_area(int &X, int &Y, int &W, int &H, int nscreen = -1) FL_OVERRIDE;
-  static bool tall_popup; // to support tall menu buttons
+  static bool new_popup; // to support tall menu buttons
   bool process_menu_or_tooltip(struct wld_window *);
   static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
 };
 
 
 struct wld_window {
+  Fl_Window *fl_win;
   struct wl_list outputs;
   struct wl_surface *wl_surface;
   struct fl_wld_buffer *buffer;
@@ -145,7 +146,7 @@ struct wld_window {
     struct xdg_popup *xdg_popup;
     struct xdg_toplevel *xdg_toplevel;
   };
-  Fl_Window *fl_win;
+  struct wl_cursor *custom_cursor; // non-null when using custom cursor
   enum Fl_Wayland_Window_Driver::kind kind;
   int configured_width;
   int configured_height;

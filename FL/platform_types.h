@@ -12,6 +12,9 @@
  *     https://www.fltk.org/bugs.php
  */
 
+#ifndef Fl_Platform_Types_H
+#define Fl_Platform_Types_H
+
 /** \file
  Definitions of platform-dependent types.
  The exact nature of these types varies with the platform.
@@ -61,6 +64,13 @@ typedef opaque FL_SOCKET; /**< socket or file descriptor */
   \li macOS: NSOpenGLContext *
  */
 typedef struct opaque *GLContext;
+
+/**
+ Platform-specific point in time, used for delta time calculation.
+ \note This type may be a struct. sizeof(Fl_Timestamp) may be different on
+ different platforms. Fl_Timestamp may change with future ABI changes.
+ */
+typedef opaque Fl_Timestamp;
 
 #  define FL_COMMAND  opaque   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
 #  define FL_CONTROL  opaque   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
@@ -127,4 +137,15 @@ extern FL_EXPORT int fl_control_modifier();
 
 #endif /* FL_PLATFORM_TYPES_H */
 
+// This is currently the same for all platforms, but may change in the future
+struct Fl_Timestamp_t {
+  long sec;
+  long usec;
+};
+
+typedef struct Fl_Timestamp_t Fl_Timestamp;
+
 #endif /* FL_DOXYGEN */
+
+#endif /* Fl_Platform_Types_H */
+

@@ -512,7 +512,10 @@ overlay$(EXEEXT): overlay.o
 
 pack$(EXEEXT): pack.o
 
-pixmap$(EXEEXT): pixmap.o
+pixmap$(EXEEXT): pixmap.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ pixmap.o $(LINKFLTKIMG) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
 
 pixmap_browser$(EXEEXT): pixmap_browser.o $(IMGLIBNAME)
 	echo Linking $@...

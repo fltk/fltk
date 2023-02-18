@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 
 #include "fluid.h"
 #include "Fl_Window_Type.h"
@@ -30,66 +30,11 @@
 #include <FL/fl_string_functions.h>
 #include "../src/flstring.h"
 
-/** \class Shortcut_Button
- A button that allows the user to type a key combination to create shortcuts.
- After clicked once, the button catches the following keyboard events and
- records the pressed keys and all modifiers. It draws a text representation of
- the shortcut. The backspace key deletes the current shortcut.
- */
-
-/**
- Draw the textual representation of the shortcut.
- */
-void Shortcut_Button::draw() {
-  if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
-  else draw_box(FL_UP_BOX, FL_WHITE);
-  fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-  if (g_project.use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
-    char buf[1024];
-    fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
-    fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-  } else {
-    fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-  }
-}
-
-/**
- Handle keystrokes to catch the user's shortcut.
- */
-int Shortcut_Button::handle(int e) {
-  when(0); type(FL_TOGGLE_BUTTON);
-  if (e == FL_KEYBOARD) {
-    if (!value()) return 0;
-    int v = Fl::event_text()[0];
-    if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
-      if (isupper(v)) {
-        v = tolower(v);
-        v |= FL_SHIFT;
-      }
-      v = v | (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL));
-    } else {
-      v = (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) | Fl::event_key();
-      if (v == FL_BackSpace && svalue) v = 0;
-    }
-    if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
-    return 1;
-  } else if (e == FL_UNFOCUS) {
-    int c = changed(); value(0); if (c) set_changed();
-    return 1;
-  } else if (e == FL_FOCUS) {
-    return value();
-  } else {
-    int r = Fl_Button::handle(e);
-    if (e == FL_RELEASE && value() && Fl::focus() != this) take_focus();
-    return r;
-  }
-}
-
 /** \class Widget_Bin_Button
  The Widget_Bin_Button button is a button that can be used in the widget bin to
  allow the user to drag and drop widgets into a window or group. This feature
  makes it easy for the user to position a widget at a specific location within
- the window or group. 
+ the window or group.
  */
 
 /**

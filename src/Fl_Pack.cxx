@@ -1,7 +1,7 @@
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,7 +41,6 @@
   \param[in] X,Y        X and Y coordinates (position)
   \param[in] W,H        width and height, respectively
   \param[in] L          label (optional)
-
 */
 Fl_Pack::Fl_Pack(int X, int Y, int W, int H, const char *L)
 : Fl_Group(X, Y, W, H, L) {
@@ -151,4 +150,16 @@ void Fl_Pack::draw() {
     draw_box();
     draw_label();
   }
+}
+
+/** Override Fl_Group resize behavior.
+
+  Resizing an Fl_Pack will not resize any of its children, but trigger a
+  redraw, which in turn recalculates the dimensions of all children.
+
+  \param[in] X, Y, W, H new position and size of the Fl_Pack widget
+*/
+void Fl_Pack::resize(int X, int Y, int W, int H) {
+  Fl_Widget::resize(X, Y, W, H);
+  redraw();
 }

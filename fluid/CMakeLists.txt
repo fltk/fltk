@@ -24,11 +24,11 @@ set (CPPFILES
   Fl_Widget_Type.cxx
   Fl_Window_Type.cxx
   Fluid_Image.cxx
-  Shortcut_Button.cxx
   about_panel.cxx
   align_widget.cxx
   alignment_panel.cxx
   code.cxx
+  custom_widgets.cxx
   factory.cxx
   file.cxx
   fluid.cxx
@@ -52,13 +52,13 @@ set (HEADERFILES
   Fl_Widget_Type.h
   Fl_Window_Type.h
   Fluid_Image.h
-  Shortcut_Button.h
   StyleParse.h
   about_panel.h
   align_widget.h
   alignment_panel.h
   code.h
   comments.h
+  custom_widgets.h
   factory.h
   file.h
   fluid.h
@@ -158,6 +158,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
   # create bundle
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/fluid.plist")
   set_target_properties (fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+  set_target_properties (fluid PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "org.fltk.fluid")
 
   # The line below would wrongly install /Applications/fluid.icns
   # ## set_target_properties (fluid PROPERTIES RESOURCE ${ICON_PATH})

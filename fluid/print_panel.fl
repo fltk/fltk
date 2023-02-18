@@ -26,7 +26,7 @@ decl {\#include "fluid.h"} {private local
 decl {\#include <FL/fl_string_functions.h>} {private local
 }
 
-decl {\#include "../src/flstring.h"} {private local
+decl {\#include "../src/flstring.h"} {selected private local
 }
 
 decl {\#include <stdlib.h>} {private local
@@ -39,7 +39,7 @@ Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
     label Print
-    xywh {465 222 465 235} type Double hide modal
+    xywh {465 222 465 235} type Double modal visible
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -213,7 +213,7 @@ print_collate_group[1 - i]->hide();}
     label {Printer Properties}
     callback {print_properties_panel->hide();
 print_update_status();}
-    xywh {462 486 290 130} type Double hide modal
+    xywh {462 486 290 130} type Double modal visible
   } {
     Fl_Choice print_page_size {
       label {Page Size:}
@@ -233,16 +233,16 @@ print_update_status();}
       xywh {110 45 170 40} labelfont 1 labelsize 12 align 4
     } {
       Fl_Button {print_output_mode[0]} {
-        image {pixmaps/print_color.xpm} xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
+        image {pixmaps/print_color.xpm} compress_image 0 xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
       }
       Fl_Button {print_output_mode[1]} {
-        image {pixmaps/print_color.xpm} xywh {150 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+        image {pixmaps/print_color.xpm} compress_image 0 xywh {150 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
       }
       Fl_Button {print_output_mode[2]} {
-        image {pixmaps/print_gray.xpm} xywh {200 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+        image {pixmaps/print_gray.xpm} compress_image 0 xywh {200 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
       }
       Fl_Button {print_output_mode[3]} {
-        image {pixmaps/print_gray.xpm} xywh {240 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+        image {pixmaps/print_gray.xpm} compress_image 0 xywh {240 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
       }
     }
     Fl_Return_Button {} {
@@ -328,7 +328,7 @@ if (defname[0]) {
 print_update_status();} {}
 }
 
-Function {print_update_status()} {open selected return_type void
+Function {print_update_status()} {open return_type void
 } {
   code {FILE *lpstat;
 char command[1024];

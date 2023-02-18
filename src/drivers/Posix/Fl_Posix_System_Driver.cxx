@@ -1,7 +1,7 @@
 //
 // Definition of Posix system driver (used by the X11, Wayland and macOS platforms).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -230,6 +230,10 @@ void *Fl_Posix_System_Driver::dlopen_or_dlsym(const char *lib_name, const char *
         if (!lib_address) {
           snprintf(path, FL_PATH_MAX, "/sw/lib/%s.dylib", lib_name);
           lib_address = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+          // the GTK2 shared lib has a new name under homebrew in macOS, try it:
+          if (!lib_address && !strcmp(lib_name, "libgtk-x11-2.0")) {
+            lib_address = dlopen("/opt/homebrew/lib/libgtkmacintegration-gtk2.dylib", RTLD_LAZY | RTLD_GLOBAL);
+          }
         }
       }
     }

@@ -1,7 +1,7 @@
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1273,6 +1273,7 @@ double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int utf32) {
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
+  if ((str == NULL) || (n == 0)) return 0.;
   if (n == fl_utf8len(*str)) { // str contains a single unicode character
     int l;
     unsigned c = fl_utf8decode(str, str+n, &l);
@@ -1312,14 +1313,17 @@ int Fl_Xlib_Graphics_Driver::descent_unscaled() {
   else return -1;
 }
 
+// FIXME: this (static) function should likely be in Fl_Graphics_Driver.
+// The code is the same as in src/drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+
 static int font_name_process(const char *name, char &face) {
   int l = strlen(name);
   face = ' ';
-  if (l > 8 && !memcmp(name + l - 8, " Regular", 8)) l -= 8;
-  else if (l > 6 && !memcmp(name + l - 6, " Plain", 6)) l -= 6;
-  else if (l > 12 && !memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face='P';}
-  else if (l > 7 && !memcmp(name + l - 7, " Italic", 7)) {l -= 7; face='I';}
-  else if (l > 5 && !memcmp(name + l - 5, " Bold", 5)) {l -= 5; face='B';}
+  if      (l >  8 && !memcmp(name + l -  8, " Regular", 8)) l -= 8;
+  else if (l >  6 && !memcmp(name + l -  6, " Plain", 6)) l -= 6;
+  else if (l > 12 && !memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face = 'P';}
+  else if (l >  7 && !memcmp(name + l -  7, " Italic", 7)) {l -= 7; face = 'I';}
+  else if (l >  5 && !memcmp(name + l -  5, " Bold", 5)) {l -= 5; face = 'B';}
   return l;
 }
 
@@ -1345,14 +1349,14 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     PangoFontFace **faces;
     int n_faces;
     const char *fam_name = pango_font_family_get_name (families[fam]);
-    int l = strlen(fam_name);
+    int lfam = strlen(fam_name);
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
       const char *p = pango_font_face_get_face_name(faces[j]);
       // build the font's FLTK name
-      l += strlen(p) + 2;
-      char *q = new char[l];
-      snprintf(q, l, "%s %s", fam_name, p);
+      int lfont = lfam + strlen(p) + 2;
+      char *q = new char[lfont];
+      snprintf(q, lfont, "%s %s", fam_name, p);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free

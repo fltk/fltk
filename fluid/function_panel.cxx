@@ -1,7 +1,7 @@
 //
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 
 #include "function_panel.h"
 #include "fluid.h"
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 #include "pixmaps.h"
 #include "factory.h"
 #include "Fl_Type.h"
@@ -625,7 +625,7 @@ Fl_Double_Window* make_class_panel() {
 
 Fl_Double_Window *comment_panel=(Fl_Double_Window *)0;
 
-CodeEditor *comment_input=(CodeEditor *)0;
+Fl_Text_Editor *comment_input=(Fl_Text_Editor *)0;
 
 Fl_Return_Button *comment_panel_ok=(Fl_Return_Button *)0;
 
@@ -642,21 +642,16 @@ Fl_Button *comment_load=(Fl_Button *)0;
 Fl_Double_Window* make_comment_panel() {
   { Fl_Double_Window* o = comment_panel = new Fl_Double_Window(550, 280, "Comment Properties");
     comment_panel->labelsize(11);
-    { CodeEditor* o = comment_input = new CodeEditor(110, 10, 430, 230);
+    { Fl_Text_Editor* o = comment_input = new Fl_Text_Editor(110, 10, 430, 230);
       comment_input->box(FL_DOWN_BOX);
-      comment_input->color(FL_BACKGROUND2_COLOR);
-      comment_input->selection_color(FL_SELECTION_COLOR);
-      comment_input->labeltype(FL_NORMAL_LABEL);
-      comment_input->labelfont(0);
       comment_input->labelsize(11);
-      comment_input->labelcolor(FL_FOREGROUND_COLOR);
       comment_input->textfont(4);
       comment_input->textsize(11);
-      comment_input->align(Fl_Align(FL_ALIGN_TOP));
-      comment_input->when(FL_WHEN_RELEASE);
+      comment_input->textcolor((Fl_Color)58);
       Fl_Group::current()->resizable(comment_input);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
-    } // CodeEditor* comment_input
+      o->buffer(new Fl_Text_Buffer());
+    } // Fl_Text_Editor* comment_input
     { Fl_Group* o = new Fl_Group(110, 250, 430, 20);
       o->labelsize(11);
       { comment_panel_ok = new Fl_Return_Button(370, 250, 80, 20, "OK");

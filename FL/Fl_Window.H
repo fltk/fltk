@@ -72,7 +72,7 @@ private:
   // TODO: it would make sense to merge the use of Fl_X and Fl_Window_Driver, maybe simply by
   // TODO: deriving Fl_Window_Driver from Fl_X. However, there are a lot of historic kludges
   // TODO: for some platforms around Fl_X.
-  Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
+  Fl_X *flx_; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 
   const char* iconlabel_;
@@ -400,10 +400,10 @@ public:
     ). You can tell if a window is iconified with (w->shown()
     && !w->visible()).
   */
-  int shown() {return i != 0;}
+  int shown() {return flx_ != 0;}
   /**
-    Puts the window on the screen. Usually (on X) this has the side
-    effect of opening the display.
+    Puts the window on the screen. This has the side
+    effect of opening the display, if not done before.
 
     If the window is already shown then it is restored and raised to the
     top.  This is really convenient because your program can call show()
@@ -434,24 +434,24 @@ public:
   */
   void hide() FL_OVERRIDE;
   /**
-    Puts the window on the screen and parses command-line arguments.
+    Puts the window on the screen with show() and parses command-line arguments.
 
-    Usually (on X) this has the side effect of opening the display.
-
-    This form should be used for top-level windows, at least for the
-    first (main) window. It allows standard arguments to be parsed
+    This call should be used for top-level windows, at least for the
+    first (main) window. It allows standard arguments to be parsed, as done by Fl::args(int, char **),
     from the command-line. You can use \p argc and \p argv from
     main(int argc, char **argv) for this call.
 
-    The first call also sets up some system-specific internal
-    variables like the system colors.
-
-    \todo explain which system parameters are set up.
+    This call also sets up some system-specific internal variables, that is,
+    it sets FL_SELECTION_COLOR and calls Fl::background(), Fl::background2(), Fl::foreground()
+    with default or X resources-given values, and calls Fl::scheme(const char *) for the current scheme.
+    On X11, it also calls Fl::dnd_text_ops(int), Fl_Tooltip::enable(int),
+    Fl::visible_focus(int) with X resources-given values.
 
     \param argc command-line argument count, usually from main()
     \param argv command-line argument vector, usually from main()
 
     \see virtual void Fl_Window::show()
+    \see Fl::args(int, char **)
   */
   void show(int argc, char **argv);
 

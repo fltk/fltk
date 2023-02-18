@@ -48,7 +48,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
       break;
 
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
-      option = "--file-selection --multiple";
+      option = "--file-selection --multiple --separator='\n'";
       break;
 
     default:
@@ -66,7 +66,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
     preset = new char[l];
     snprintf(preset, l, "--filename '%s'", _directory);
   }
-  int lcommand = 1000;
+  int lcommand = 10000;
   char *command = new char[lcommand];
   strcpy(command, "zenity ");
   if (_title) {
@@ -77,7 +77,8 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
   snprintf(command+l, lcommand-l, " %s %s ", option, preset ? preset : "");
   delete[] preset;
   if (_parsedfilt) {
-    char *p = strtok(_parsedfilt, "\n");
+    char *parsed_filter_copy = strdup(_parsedfilt); // keep _parsedfilt unchanged for re-use
+    char *p = strtok(parsed_filter_copy, "\n");
     while (p) {
       char *op = strchr(p, '(');
       l = strlen(command);
@@ -105,6 +106,7 @@ char *Fl_Zenity_Native_File_Chooser_Driver::build_command() {
       }
       p = strtok(NULL, "\n");
     }
+    free(parsed_filter_copy);
   }
   strcat(command, " 2> /dev/null"); // get rid of stderr output
 //puts(command);

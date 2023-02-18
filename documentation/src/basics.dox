@@ -7,11 +7,16 @@ that use FLTK.
 
 \section basics_writing Writing Your First FLTK Program
 
-All programs must include the file <tt><FL/Fl.H></tt>. This file
-should be included as the first FLTK header file.
-In addition the program must include a header file for each
-FLTK class it uses. Listing 1 shows a simple "Hello,
-World!" program that uses FLTK to display the window.
+Up to FLTK 1.3.x all FLTK programs were required to include the file
+<tt><FL/Fl.H></tt> as the first FLTK header file.
+
+Since FLTK 1.4.0 this requirement was relaxed and <tt><FL/Fl.H></tt> needs
+only be included if the class \c Fl is used or if some other stuff like
+enumerations is used in the source code. Example code in this documentation
+may still include it "everywhere" even if it is no longer strictly required.
+
+In addition the program must include a header file for each FLTK class it uses.
+Listing 1 shows a simple "Hello, World!" program that uses FLTK to display the window.
 
 \par Listing 1 - "hello.cxx"
 \code

@@ -131,7 +131,7 @@ function or variable.
 The recommended way to prepare and use platform-specific code that would contain
 X11-specific and possibly Wayland-specific parts is as follows :
 
-a) Organize platform-specific code as follows :
+a) Organize platform-specific code as follows¹:
 
   #include <FL/platform.H>
 
@@ -155,6 +155,21 @@ c) Check that function fl_x11_display() returns non-NULL before using any X11-sp
 function or variable, and that fl_wl_display() returns non-NULL before using any
 Wayland-specific function or variable. Make sure that fl_open_display() was called
 directly or indirectly before using any such symbol.
+
+¹ To be also compatible with macOS+XQuartz, a slightly different organization is necessary:
+  #include <FL/platform.H>
+  #if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
+  #  ifdef FLTK_USE_X11
+     *** X11-specific code which can run under Linux/Unix or under macOS+XQuartz ***
+  #  endif
+  #  ifdef FLTK_USE_WAYLAND
+     *** Wayland-specific code ***
+  #  endif
+  #elif defined(__APPLE__)
+     *** macOS-specific code which doesn't run under XQuartz ***
+  #elif defined(_WIN32)
+     *** Windows-specific code ***
+  #endif
 
 3.3 Forcing an FLTK App to Always Use the X11 Backend
 -----------------------------------------------------
@@ -236,6 +251,3 @@ These packages are necessary to build the FLTK library and the sway compositor:
 git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
 
 Package installation command: sudo pkg install <package-name ...>
-
-If FLTK is built using the configure/make procedure, include argument "--enable-localzlib"
-in the "configure" command.

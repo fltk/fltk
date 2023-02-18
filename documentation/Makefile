@@ -37,6 +37,7 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/subclassing.dox \
                          $(SRC_DOCDIR)/opengl.dox \
                          $(SRC_DOCDIR)/fluid.dox \
+                         $(SRC_DOCDIR)/fltk-options.dox \
                          $(SRC_DOCDIR)/advanced.dox \
                          $(SRC_DOCDIR)/unicode.dox \
                          $(SRC_DOCDIR)/enumerations.dox \
@@ -51,7 +52,8 @@ HTMLFILES	= 	 \
 
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
-		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
+		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) \
+		$(SRC_DOCDIR)/fltk-options.$(CAT1EXT)
 
 all:	$(MANPAGES)
 
@@ -91,11 +93,13 @@ install: $(MANPAGES)
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat3
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man $(DESTDIR)$(mandir)/man1/fluid.1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man $(DESTDIR)$(mandir)/man1/fltk-config.1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-options.man $(DESTDIR)$(mandir)/man1/fltk-options.1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man3
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
 
@@ -116,6 +120,8 @@ uninstall:
 	$(RM) $(DESTDIR)$(mandir)/man1/fluid.1
 	$(RM) $(DESTDIR)$(mandir)/cat1/fltk-config.$(CAT1EXT)
 	$(RM) $(DESTDIR)$(mandir)/man1/fltk-config.1
+	$(RM) $(DESTDIR)$(mandir)/cat1/fltk-options.$(CAT1EXT)
+	$(RM) $(DESTDIR)$(mandir)/man1/fltk-options.1
 	$(RM) $(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)
 	$(RM) $(DESTDIR)$(mandir)/man3/fltk.3
 

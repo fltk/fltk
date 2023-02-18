@@ -258,7 +258,7 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
   reschedule the subsequent timeouts. Please see Fl::repeat_timeout() for
   an example.
- 
+
   Since version 1.4, a timeout can be started from a child thread under the
   condition that the call to Fl::add_timeout is wrapped in Fl::lock() and Fl::unlock().
 
@@ -719,7 +719,7 @@ Fl_Window* Fl::first_window() {
   \param[in] window must be shown and not NULL
 */
 Fl_Window* Fl::next_window(const Fl_Window* window) {
-  Fl_X* i = window ? Fl_X::i(window) : 0;
+  Fl_X* i = window ? Fl_X::flx(window) : 0;
   if (!i) {
     Fl::error("Fl::next_window() failed: window (%p) not shown.", window);
     return 0;
@@ -738,7 +738,7 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
  */
 void Fl::first_window(Fl_Window* window) {
   if (!window || !window->shown()) return;
-  Fl_Window_Driver::find( Fl_X::i(window)->xid );
+  Fl_Window_Driver::find( Fl_X::flx(window)->xid );
 }
 
 /**
@@ -1616,7 +1616,7 @@ void Fl_Widget::damage(uchar fl) {
     damage(fl, x(), y(), w(), h());
   } else {
     // damage entire window by deleting the region:
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
+    Fl_X* i = Fl_X::flx((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
     if (i->region) {
       fl_graphics_driver->XDestroyRegion(i->region);
@@ -1636,7 +1636,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     if (!wi) return;
     fl = FL_DAMAGE_CHILD;
   }
-  Fl_X* i = Fl_X::i((Fl_Window*)wi);
+  Fl_X* i = Fl_X::flx((Fl_Window*)wi);
   if (!i) return; // window not mapped, so ignore it
 
   // clip the damage to the window and quit if none:
@@ -2081,9 +2081,11 @@ int Fl::clipboard_contains(const char *type)
  Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
  file descriptor.
 
- Under UNIX/Linux/MacOS <I>any</I> file descriptor can be monitored (files,
+ Under UNIX/Linux/macOS <I>any</I> file descriptor can be monitored (files,
  devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
  Windows applications can only monitor sockets.
+
+ Under macOS, Fl::add_fd() opens the display if that's not been done before.
  */
 void Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)
 {
@@ -2156,7 +2158,7 @@ FL_EXPORT bool fl_disable_wayland = true;
 #endif // FL_DOXYGEN
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
-  Fl_X *temp = Fl_X::i(w);
+  Fl_X *temp = Fl_X::flx(w);
   return temp ? (Window)temp->xid : 0;
 }
 /** \addtogroup group_macosx

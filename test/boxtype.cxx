@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Scheme_Choice.H>
 #include <FL/fl_draw.H>
 
@@ -82,7 +82,8 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
   N++;
   x = x*W+10;
   y = y*H+10;
-  Fl_Box *b = new Fl_Box(type,x,y,square ? H-20 : W-20,H-20,name);
+  Fl_Button *b = new Fl_Button(x,y,square ? H-20 : W-20,H-20,name);
+  b->box(type);
   b->labelsize(11);
   if (inactive) {
     b->color(FL_GREEN);

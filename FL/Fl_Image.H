@@ -267,11 +267,14 @@ public:
   virtual void color_average(Fl_Color c, float i);
   /**
    The inactive() method calls
-   color_average(FL_BACKGROUND_COLOR, 0.33f) to produce
+   color_average(\ref FL_BACKGROUND_COLOR, 0.33f) to produce
    an image that appears grayed out.
 
    An internal copy is made of the original image before
    changes are applied, to avoid modifying the original image.
+
+   \note The RGB color of \ref FL_BACKGROUND_COLOR may change when the
+   connection to the display is made. See fl_open_display().
    */
   void inactive() { color_average(FL_GRAY, .33f); }
   virtual void desaturate();

@@ -20,7 +20,7 @@
 #include "Fl_X11_Screen_Driver.H"
 #if FLTK_USE_CAIRO
 #  include <cairo-xlib.h>
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #endif // FLTK_USE_CAIRO
@@ -81,7 +81,7 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
   Window root, parent, *children;
   unsigned n = 0;
-  Status status = XQueryTree(fl_display, Fl_X::i(win)->xid, &root, &parent, &children, &n);
+  Status status = XQueryTree(fl_display, Fl_X::flx(win)->xid, &root, &parent, &children, &n);
   if (status != 0 && n) XFree(children);
   // when compiz is used, root and parent are the same window
   // and I don't know where to find the window decoration
@@ -91,7 +91,7 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   // sometimes, very wide window borders are reported
   // ignore them all:
   XWindowAttributes w_attributes;
-  XGetWindowAttributes(fl_display, Fl_X::i(win)->xid, &w_attributes);
+  XGetWindowAttributes(fl_display, Fl_X::flx(win)->xid, &w_attributes);
   if (attributes.width - w_attributes.width >= 20) {
     attributes.height -= (attributes.width - w_attributes.width);
     attributes.width = w_attributes.width;
@@ -124,7 +124,7 @@ int Fl_X11_Window_Driver::decorated_w()
 
 void Fl_X11_Window_Driver::take_focus()
 {
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!Fl_X11_Screen_Driver::ewmh_supported()) {
 
     // Save and restore the current group because 'show()' sets it to NULL.
@@ -162,7 +162,7 @@ void Fl_X11_Window_Driver::flush_double()
 void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 {
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
+  Fl_X *i = Fl_X::flx(pWindow);
   if (!other_xid) {
     other_xid = fl_create_offscreen(w(), h());
 #if FLTK_USE_CAIRO
@@ -173,7 +173,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
 #if FLTK_USE_CAIRO
-  ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
 #endif
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
@@ -201,11 +201,11 @@ void Fl_X11_Window_Driver::flush_overlay()
 #if FLTK_USE_CAIRO
     float scale = fl_graphics_driver->scale();
     int W = pWindow->w() * scale, H = pWindow->h() * scale;
-    cairo_surface_t *s = cairo_xlib_surface_create(fl_display, Fl_X::i(pWindow)->xid, fl_visual->visual, W, H);
+    cairo_surface_t *s = cairo_xlib_surface_create(fl_display, Fl_X::flx(pWindow)->xid, fl_visual->visual, W, H);
     cairo_t *overlay_cairo = cairo_create(s);
     cairo_surface_destroy(s);
     cairo_save(overlay_cairo);
-    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(overlay_cairo);
+    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(overlay_cairo);
 #endif
     pWindow->as_overlay_window()->draw_overlay();
 #if FLTK_USE_CAIRO
@@ -323,7 +323,7 @@ void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
     }
   }
 
-  if (Fl_X::i(pWindow))
+  if (Fl_X::flx(pWindow))
     set_icons();
 }
 
@@ -418,7 +418,7 @@ void Fl_X11_Window_Driver::make_current() {
       cairo_surface_destroy(s);
       cairo_save(cairo_);
     }
-    ((Fl_Display_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
+    ((Fl_X11_Cairo_Graphics_Driver*)fl_graphics_driver)->set_cairo(cairo_);
   }
   fl_graphics_driver->scale(scale);
 #elif USE_XFT
@@ -433,7 +433,7 @@ void Fl_X11_Window_Driver::make_current() {
 
 
 void Fl_X11_Window_Driver::hide() {
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
 # if USE_XFT && ! FLTK_USE_CAIRO

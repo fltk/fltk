@@ -981,11 +981,14 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
  with the extension \c code_file_name which are both
  settable by the user.
 
- In batch_mode, the function will either be silent, or write an error message
- to \c stderr and exit with exit code 1.
+ If the code filename has not been set yet, a "save file as" dialog will be
+ presented to the user.
 
- In interactive mode, we will pop up an error message, or, if the user
- hasn't isabled that, pop up a confirmation message.
+ In batch_mode, the function will either be silent, or, if opening or writing
+ the files fails, write an error message to \c stderr and exit with exit code 1.
+
+ In interactive mode, it will pop up an error message, or, if the user
+ hasn't disabled that, pop up a confirmation message.
 
  \return 1 if the operation failed, 0 if it succeeded
  */
@@ -1013,7 +1016,8 @@ int write_code_files() {
     strlcpy(hname, g_project.header_file_name, FL_PATH_MAX);
   }
   if (!batch_mode) enter_project_dir();
-  int x = write_code(cname,hname);
+  Fd_Code_Writer f;
+  int x = f.write_code(cname, hname);
   if (!batch_mode) leave_project_dir();
   strlcat(cname, " and ", FL_PATH_MAX);
   strlcat(cname, hname, FL_PATH_MAX);
@@ -1426,8 +1430,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb,0,FL_MENU_DIVIDER},
-  {"Global &FLTK Settings...",FL_ALT+FL_SHIFT+'g',show_global_settings_cb},
+  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1650,7 +1653,6 @@ void make_main_window() {
   if (!batch_mode) {
     load_history();
     make_settings_window();
-    make_global_settings_window();
   }
 }
 
@@ -1933,9 +1935,9 @@ void update_sourceview_cb(Fl_Button*, void*)
     g_project.header_file_name = sv_header_filename;
 
     // generate the code and load the files
-    write_sourceview = 1;
+    Fd_Code_Writer f;
     // generate files
-    if (write_code(sv_source_filename, sv_header_filename))
+    if (f.write_code(sv_source_filename, sv_header_filename, true))
     {
       // load file into source editor
       int pos = sv_source->top_line();
@@ -1948,7 +1950,6 @@ void update_sourceview_cb(Fl_Button*, void*)
       // update the source code highlighting
       update_sourceview_position();
     }
-    write_sourceview = 0;
 
     g_project.code_file_name = code_file_name_bak;
     g_project.header_file_name = header_file_name_bak;

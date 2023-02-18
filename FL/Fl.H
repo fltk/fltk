@@ -470,6 +470,13 @@ public:
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
+
+  static Fl_Timestamp now();
+  static double seconds_since(Fl_Timestamp& then);
+  static double seconds_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
+  static long ticks_since(Fl_Timestamp& then);
+  static long ticks_between(Fl_Timestamp& back, Fl_Timestamp& further_back);
+
   // private
   static void run_idle();
   static void run_checks();
@@ -1155,15 +1162,24 @@ public:
     that the normal one is first, followed by bold, italic, and bold
     italic.
 
-    The optional argument is a string to describe the set of fonts to
+    The only argument to this function is somehat obsolete since FLTK and most
+    underlying operating systems move to support Unicode. For completeness,
+    following is the original documentation and a few updates:
+
+    On X11, the optional argument is a string to describe the set of fonts to
     add.  Passing NULL will select only fonts that have the
     ISO8859-1 character set (and are thus usable by normal text).  Passing
     "-*" will select all fonts with any encoding as long as they have
     normal X font names with dashes in them.  Passing "*" will list every
     font that exists (on X this may produce some strange output).  Other
-    values may be useful but are system dependent.  With Windows NULL
-    selects fonts with ISO8859-1 encoding and non-NULL selects
-    all fonts.
+    values may be useful but are system dependent.
+
+    With the Xft option on Linux, this parameter is ignored.
+
+    With Windows, `NULL` selects fonts with ANSI_CHARSET encoding and non-NULL
+    selects all fonts.
+
+    On macOS, this parameter is ignored.
 
     The return value is how many faces are in the table after this is done.
   */

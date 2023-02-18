@@ -147,16 +147,6 @@
 #define HAVE_X11_XREGION_H 0
 
 /*
- * __APPLE_QUARTZ__:
- *
- * All Apple implementations are now based on Quartz and Cocoa,
- * so this flag should always be on for Mac OS X. This flag has
- * no meaning on operating systems other than Mac OS X.
- */
-
-#undef __APPLE_QUARTZ__
-
-/*
  * HAVE_GL_OVERLAY:
  *
  * It is possible your GL has an overlay even if X does not.  If so,

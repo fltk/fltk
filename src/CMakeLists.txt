@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -78,6 +78,7 @@ set (CPPFILES
   Fl_Scroll.cxx
   Fl_Scrollbar.cxx
   Fl_Shared_Image.cxx
+  Fl_Shortcut_Button.cxx
   Fl_Simple_Terminal.cxx
   Fl_Single_Window.cxx
   Fl_Slider.cxx
@@ -226,7 +227,7 @@ if (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
   if (FLTK_USE_CAIRO)
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-      drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+      drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.cxx
     )
   else ()
     if (USE_XFT)
@@ -265,7 +266,7 @@ if (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
  if (FLTK_USE_CAIRO)
    set (DRIVER_HEADER_FILES ${DRIVER_HEADER_FILES}
      drivers/Cairo/Fl_Cairo_Graphics_Driver.H
-     drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H
+     drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.H
    )
  elseif (USE_PANGO)
    set (DRIVER_HEADER_FILES ${DRIVER_HEADER_FILES}
@@ -297,7 +298,7 @@ elseif (OPTION_USE_WAYLAND)
     endif (OPTION_USE_KDIALOG)
     if (FLTK_USE_X11)
       list (APPEND DRIVER_FILES
-        drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.cxx
+        drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.cxx
         drivers/X11/Fl_X11_Screen_Driver.cxx
         drivers/X11/Fl_X11_Window_Driver.cxx
         drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
@@ -313,7 +314,7 @@ elseif (OPTION_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Window_Driver.H
     drivers/Wayland/Fl_Wayland_Graphics_Driver.H
     drivers/Cairo/Fl_Cairo_Graphics_Driver.H
-    drivers/Cairo/Fl_Display_Cairo_Graphics_Driver.H
+    drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.H
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.H
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
@@ -471,6 +472,7 @@ set (IMGCPPFILES
   Fl_BMP_Image.cxx
   Fl_File_Icon2.cxx
   Fl_GIF_Image.cxx
+  Fl_Anim_GIF_Image.cxx
   Fl_Help_Dialog.cxx
   Fl_ICO_Image.cxx
   Fl_JPEG_Image.cxx

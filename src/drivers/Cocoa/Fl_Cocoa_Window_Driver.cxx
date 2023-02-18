@@ -58,7 +58,7 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
     oWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-    Fl_X *myi = Fl_X::i(pWindow);
+    Fl_X *myi = Fl_X::flx(pWindow);
     fl_clip_region(myi->region); myi->region = 0;
     fl_begin_offscreen(other_xid);
     draw();
@@ -215,7 +215,7 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
 
 
 void Fl_Cocoa_Window_Driver::hide() {
-  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X* ip = Fl_X::flx(pWindow);
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer

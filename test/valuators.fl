@@ -37,7 +37,7 @@ Function {} {open
     Fl_Slider {} {
       label FL_HORIZONTAL
       user_data {"Fl_Slider FL_HORIZONTAL"}
-      callback callback
+      callback callback selected
       xywh {140 80 130 20} type Horizontal selection_color 1 labelsize 8
     }
     Fl_Slider {} {
@@ -125,7 +125,7 @@ Function {} {open
     Fl_Scrollbar {} {
       label {FL_VERTICAL (0) ->}
       user_data {"Fl_Scrollbar FL_VERTICAL"}
-      callback callback selected
+      callback callback
       tooltip {Vertical Scrollbar} xywh {405 30 20 90} labelsize 8 align 13 maximum 100 value 20
     }
     Fl_Box {} {

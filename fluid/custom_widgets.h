@@ -20,16 +20,6 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
 
-// Button will catch and display keyboard shortcuts when activated.
-class Shortcut_Button : public Fl_Button {
-public:
-  int svalue;
-  int handle(int) FL_OVERRIDE;
-  void draw() FL_OVERRIDE;
-  Shortcut_Button(int X,int Y,int W,int H, const char* l = 0) :
-    Fl_Button(X,Y,W,H,l) {svalue = 0;}
-};
-
 // Adding drag and drop for dragging widgets into windows.
 class Widget_Bin_Button : public Fl_Button {
 public:

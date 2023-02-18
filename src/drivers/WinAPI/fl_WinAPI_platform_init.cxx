@@ -34,8 +34,22 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 #if USE_GDIPLUS
   // Initialize GDI+.
   static Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  if (Fl_GDIplus_Graphics_Driver::gdiplusToken == 0) {
-    GdiplusStartup(&Fl_GDIplus_Graphics_Driver::gdiplusToken, &gdiplusStartupInput, NULL);
+  if (Fl_GDIplus_Graphics_Driver::gdiplus_state_ == Fl_GDIplus_Graphics_Driver::STATE_CLOSED) {
+    Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_STARTUP;
+    Gdiplus::Status ret = GdiplusStartup(&Fl_GDIplus_Graphics_Driver::gdiplus_token_, &gdiplusStartupInput, NULL);
+    if (ret == 0) { // 0 is same as Gdiplus::Status::Ok, but old mingw64 barks at that
+      Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_OPEN;
+    } else {
+      Fl::warning("GdiplusStartup failed with error code %d.", ret);
+      Fl_GDIplus_Graphics_Driver::gdiplus_state_ = Fl_GDIplus_Graphics_Driver::STATE_CLOSED;
+      return new Fl_GDI_Graphics_Driver();
+    }
+  } else if (Fl_GDIplus_Graphics_Driver::gdiplus_state_ == Fl_GDIplus_Graphics_Driver::STATE_OPEN) {
+//    Fl::warning("GdiplusStartup() called, but driver is already open.");
+  } else if (Fl_GDIplus_Graphics_Driver::gdiplus_state_ == Fl_GDIplus_Graphics_Driver::STATE_SHUTDOWN) {
+//    Fl::warning("GdiplusStartup() called while driver is shutting down.");
+  } else if (Fl_GDIplus_Graphics_Driver::gdiplus_state_ == Fl_GDIplus_Graphics_Driver::STATE_STARTUP) {
+//    Fl::warning("GdiplusStartup() called recursively.");
   }
   Fl_Graphics_Driver *driver = new Fl_GDIplus_Graphics_Driver();
   return driver;

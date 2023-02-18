@@ -1,7 +1,7 @@
 //
 // Support for using Cairo to draw into X11 windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,7 +15,7 @@
 //
 
 /* \file
-    Declaration of class Fl_Display_Cairo_Graphics_Driver.
+    Declaration of class Fl_X11_Cairo_Graphics_Driver.
 */
 
 #ifndef FL_DISPLAY_CAIRO_GRAPHICS_DRIVER_H
@@ -23,7 +23,7 @@
 
 #include "Fl_Cairo_Graphics_Driver.H"
 
-class Fl_Display_Cairo_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
+class Fl_X11_Cairo_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 private:
   static void *gc_;
 public:

@@ -39,6 +39,7 @@
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
 class Fl_Input_Undo_Action;
+class Fl_Input_Undo_Action_List;
 
 /**
   This class provides a low-overhead text input field.
@@ -148,6 +149,8 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   /** \internal local undo event */
   Fl_Input_Undo_Action* undo_;
+  Fl_Input_Undo_Action_List* undo_list_;
+  Fl_Input_Undo_Action_List* redo_list_;
 
   /** \internal Horizontal cursor position in pixels while moving up or down. */
   static double up_down_pos;
@@ -211,6 +214,9 @@ protected:
 
   /* Return the number of lines displayed on a single page.  */
   int linesPerPage();
+
+  /* Apply the current undo/redo operation, called from undo() or redo() */
+  int apply_undo();
 
 public:
 
@@ -282,31 +288,37 @@ public:
 
   /** Gets the position of the text cursor.
     \return the cursor position as an index in the range 0..size()
-    \see position(int, int)
+    \see insert_position(int, int)
   */
-  int position() const {return position_;}
+  int insert_position() const { return position_; }
+  FL_DEPRECATED("in 1.4.0 - use insert_position() instead",
+  int position() const ) { return insert_position(); }
 
   /** Gets the current selection mark.
     \return index into the text */
   int mark() const {return mark_;}
 
   /* Sets the index for the cursor and mark. */
-  int position(int p, int m);
+  int insert_position(int p, int m);
+  FL_DEPRECATED("in 1.4.0 - use insert_position(p, m) or Fl_Widget::position(x, y) instead",
+  int position(int p, int m)) { return insert_position(p, m); }
 
   /** Sets the cursor position and mark.
     position(n) is the same as <tt>position(n, n)</tt>.
     \param p new index for cursor and mark
     \return 0 if no positions changed
-    \see position(int, int), position(), mark(int)
+    \see insert_position(int, int), insert_position(), mark(int)
   */
-  int position(int p) {return position(p, p);}
+  int insert_position(int p) { return insert_position(p, p); }
+  FL_DEPRECATED("in 1.4.0 - use insert_position(p) instead",
+  int position(int p)) { return insert_position(p); }
 
   /** Sets the current selection mark.
-    mark(n) is the same as <tt>position(position(),n)</tt>.
+    mark(n) is the same as <tt>insert_position(insert_position(),n)</tt>.
     \param m new index of the mark
     \return 0 if the mark did not change
-    \see position(), position(int, int) */
-  int mark(int m) {return position(position(), m);}
+    \see insert_position(), insert_position(int, int) */
+  int mark(int m) {return insert_position(insert_position(), m);}
 
   /* Deletes text from \p b to \p e and inserts the new string \p text. */
   int replace(int b, int e, const char *text, int ilen=0);
@@ -321,7 +333,7 @@ public:
 
     \return 0 if no data was copied
   */
-  int cut() {return replace(position(), mark(), 0);}
+  int cut() {return replace(insert_position(), mark(), 0);}
 
   /**
     Deletes the next \p n bytes rounded to characters before or after the cursor.
@@ -335,7 +347,7 @@ public:
            A negative number will cut characters to the left of the cursor.
     \return 0 if no data was copied
   */
-  int cut(int n) {return replace(position(), position()+n, 0);}
+  int cut(int n) {return replace(insert_position(), insert_position()+n, 0);}
 
   /**
     Deletes all characters between index \p a and \p b.
@@ -371,6 +383,9 @@ public:
 
   /* Undo previous changes to the text buffer. */
   int undo();
+
+  /* Redo previous undo operations. */
+  int redo();
 
   /* Copy the yank buffer to the clipboard. */
   int copy_cuts();

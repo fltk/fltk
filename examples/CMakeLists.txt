@@ -81,6 +81,10 @@ set (FLUID_SOURCES
 ############################################################
 
 set (IMAGE_SOURCES
+  animgifimage
+  animgifimage-play
+  animgifimage-resize
+  animgifimage-simple
   howto-simple-svg
 )
 

@@ -63,20 +63,21 @@
   you pick the item with the mouse.  The '\&' character in item names are
   only looked at when the menu is popped up, however.
 
-  \todo Refactor the doxygen comments for Fl_Choice changed() documentation.
-
+  The inherited Fl_Widget::changed() and related methods can be used as follows:
   \li <tt>int Fl_Widget::changed() const</tt>
-      This value is true the user picks a different value. <em>It is turned
+      This value is true when the user picks a different value. <em>It is turned
       off by value() and just before doing a callback (the callback can turn
       it back on if desired).</em>
   \li <tt>void Fl_Widget::set_changed()</tt>
       This method sets the changed() flag.
   \li <tt>void Fl_Widget::clear_changed()</tt>
       This method clears the changed() flag.
-  \li <tt>Fl_Boxtype Fl_Choice::down_box() const</tt>
+ 
+ The inherited Fl_Menu_::down_box() methods can be used as follows:
+  \li <tt>Fl_Boxtype Fl_Menu_::down_box() const</tt>
       Gets the current down box, which is used when the menu is popped up.
       The default down box type is \c FL_DOWN_BOX.
-  \li <tt>void Fl_Choice::down_box(Fl_Boxtype b)</tt>
+  \li <tt>void Fl_Menu_::down_box(Fl_Boxtype b)</tt>
       Sets the current down box type to \p b.
 
  Simple example:

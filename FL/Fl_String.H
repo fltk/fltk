@@ -63,8 +63,6 @@
   \endcode
 
   \since 1.4.0
-
-  \todo Complete documentation of class Fl_String
 */
 
 class Fl_String {
@@ -96,10 +94,12 @@ private:
 
 public:
   void value(const char *str);
-  void value(const char *str, int slen);
-
+  void value(const char *str, int len);
+  /** Returns a pointer to the first character stored in the object */
   const char *value() const { return value_; }
+  /** Returns a pointer to the first byte stored in the object */
   char *buffer() { return value_; }
+  /** Returns the number of bytes currently stored in the object */
   int size() const { return size_; }
 
   int slen() const;

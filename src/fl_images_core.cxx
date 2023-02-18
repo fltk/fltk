@@ -27,6 +27,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_BMP_Image.H>
 #include <FL/Fl_GIF_Image.H>
+#include <FL/Fl_Anim_GIF_Image.H>
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_PNM_Image.H>
@@ -89,7 +90,8 @@ fl_check_images(const char *name,               // I - Filename
 
   if (memcmp(header, "GIF87a", 6) == 0 ||
       memcmp(header, "GIF89a", 6) == 0) // GIF file
-    return new Fl_GIF_Image(name);
+    return Fl_GIF_Image::animate ? new Fl_Anim_GIF_Image(name) :
+                                   new Fl_GIF_Image(name);
 
   // BMP
 

@@ -160,9 +160,14 @@ void later_cb(Fl_Widget*,void*) {
   widget_browser->rebuild();
 }
 
+/** \brief Delete all children of a Type.
+ */
 static void delete_children(Fl_Type *p) {
   Fl_Type *f;
+  // find all types following p that are higher in level, effectively finding
+  // the last child of the last child
   for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
+  // now loop back up to p, deleting all children on the way
   for (; f != p; ) {
     Fl_Type *g = f->prev;
     delete f;
@@ -178,14 +183,16 @@ void delete_all(int selected_only) {
       Fl_Type *g = f->next;
       delete f;
       f = g;
-    } else f = f->next;
+    } else {
+      f = f->next;
+    }
   }
   if(!selected_only) {
     // reset the setting for the external shell command
     shell_prefs_get();
     shell_settings_write();
     widget_browser->hposition(0);
-    widget_browser->position(0);
+    widget_browser->vposition(0);
   }
   selection_changed(0);
   widget_browser->redraw();
@@ -281,11 +288,11 @@ Fl_Type::Fl_Type() {
  */
 Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.
-  if (prev) prev->next = next; else first = next;
-  if (next) next->prev = prev; else last = prev;
-  if (Fl_Type::last==this) Fl_Type::last = prev;
-  if (Fl_Type::first==this) Fl_Type::first = next;
-  if (current == this) current = 0;
+  if (prev) prev->next = next; // else first = next; // don't do that! The Type may not be part of the main list
+  if (next) next->prev = prev; // else last = prev;
+  if (Fl_Type::last == this) Fl_Type::last = prev;
+  if (Fl_Type::first == this) Fl_Type::first = next;
+  if (current == this) current = NULL;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
   if (label_) free((void*)label_);
@@ -299,14 +306,16 @@ Fl_Type::~Fl_Type() {
 Fl_Type *Fl_Type::prev_sibling() {
   Fl_Type *n;
   for (n = prev; n && n->level > level; n = n->prev) ;
-  return n;
+  if (n && (n->level == level))
+    return n;
+  return 0;
 }
 
 // Return the next sibling in the tree structure or NULL.
 Fl_Type *Fl_Type::next_sibling() {
   Fl_Type *n;
   for (n = next; n && n->level > level; n = n->next) ;
-  if (n->level==level)
+  if (n && (n->level == level))
     return n;
   return 0;
 }
@@ -410,9 +419,9 @@ void Fl_Type::add(Fl_Type *p, Strategy strategy) {
     // we have current, t is the new node, p is the parent
     // find the next child of the parent after current
     //t->add(p); // add as a last child
-    Fl_Type *cc = current;
-    for (cc = current->next; cc; cc=cc->next) {
-      if (cc->level<=this->level)
+    Fl_Type *cc;
+    for (cc = current->next; cc; cc = cc->next) {
+      if (cc->level <= this->level)
         break;
     }
     if (cc && cc->level==this->level && cc!=this) {
@@ -574,76 +583,76 @@ void Fl_Type::move_before(Fl_Type* g) {
 
 
 // write a widget and all its children:
-void Fl_Type::write() {
-    write_indent(level);
-    write_word(type_name());
+void Fl_Type::write(Fd_Project_Writer &f) {
+  f.write_indent(level);
+  f.write_word(type_name());
 
-    if (is_class()) {
-      const char * p =  ((Fl_Class_Type*)this)->prefix();
-      if (p &&  strlen(p))
-        write_word(p);
-    }
+  if (is_class()) {
+    const char * p =  ((Fl_Class_Type*)this)->prefix();
+    if (p &&  strlen(p))
+      f.write_word(p);
+  }
 
-    write_word(name());
-    write_open(level);
-    write_properties();
-    write_close(level);
-    if (!is_parent()) return;
-    // now do children:
-    write_open(level);
-    Fl_Type *child;
-    for (child = next; child && child->level > level; child = child->next)
-        if (child->level == level+1) child->write();
-    write_close(level);
+  f.write_word(name());
+  f.write_open(level);
+  write_properties(f);
+  f.write_close(level);
+  if (!is_parent()) return;
+  // now do children:
+  f.write_open(level);
+  Fl_Type *child;
+  for (child = next; child && child->level > level; child = child->next)
+    if (child->level == level+1) child->write(f);
+  f.write_close(level);
 }
 
-void Fl_Type::write_properties() {
+void Fl_Type::write_properties(Fd_Project_Writer &f) {
   // repeat this for each attribute:
   if (label()) {
-    write_indent(level+1);
-    write_word("label");
-    write_word(label());
+    f.write_indent(level+1);
+    f.write_word("label");
+    f.write_word(label());
   }
   if (user_data()) {
-    write_indent(level+1);
-    write_word("user_data");
-    write_word(user_data());
+    f.write_indent(level+1);
+    f.write_word("user_data");
+    f.write_word(user_data());
   }
   if (user_data_type()) {
-    write_word("user_data_type");
-    write_word(user_data_type());
+    f.write_word("user_data_type");
+    f.write_word(user_data_type());
   }
   if (callback()) {
-    write_indent(level+1);
-    write_word("callback");
-    write_word(callback());
+    f.write_indent(level+1);
+    f.write_word("callback");
+    f.write_word(callback());
   }
   if (comment()) {
-    write_indent(level+1);
-    write_word("comment");
-    write_word(comment());
+    f.write_indent(level+1);
+    f.write_word("comment");
+    f.write_word(comment());
   }
-  if (is_parent() && open_) write_word("open");
-  if (selected) write_word("selected");
+  if (is_parent() && open_) f.write_word("open");
+  if (selected) f.write_word("selected");
 }
 
-void Fl_Type::read_property(const char *c) {
+void Fl_Type::read_property(Fd_Project_Reader &f, const char *c) {
   if (!strcmp(c,"label"))
-    label(read_word());
+    label(f.read_word());
   else if (!strcmp(c,"user_data"))
-    user_data(read_word());
+    user_data(f.read_word());
   else if (!strcmp(c,"user_data_type"))
-    user_data_type(read_word());
+    user_data_type(f.read_word());
   else if (!strcmp(c,"callback"))
-    callback(read_word());
+    callback(f.read_word());
   else if (!strcmp(c,"comment"))
-    comment(read_word());
+    comment(f.read_word());
   else if (!strcmp(c,"open"))
     open_ = 1;
   else if (!strcmp(c,"selected"))
     select(this,1);
   else
-    read_error("Unknown property \"%s\"", c);
+    f.read_error("Unknown property \"%s\"", c);
 }
 
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
@@ -652,86 +661,86 @@ int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
  Write a comment into the header file.
  \param[in] pre indent the comment by this string
 */
-void Fl_Type::write_comment_h(const char *pre)
+void Fl_Type::write_comment_h(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    write_h("%s/**\n", pre);
+    f.write_h("%s/**\n", pre);
     const char *s = comment();
-    write_h("%s ", pre);
+    f.write_h("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_h("\n%s ", pre);
+          f.write_h("\n%s ", pre);
         }
       } else {
-        write_h("%c", *s); // FIXME this is much too slow!
+        f.write_h("%c", *s); // FIXME this is much too slow!
       }
       s++;
     }
-    write_h("\n%s*/\n", pre);
+    f.write_h("\n%s*/\n", pre);
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_c(const char *pre)
+void Fl_Type::write_comment_c(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    write_c("%s/**\n", pre);
+    f.write_c("%s/**\n", pre);
     const char *s = comment();
-    write_c("%s ", pre);
+    f.write_c("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_c("\n%s ", pre);
+          f.write_c("\n%s ", pre);
         }
       } else {
-        write_c("%c", *s); // FIXME this is much too slow!
+        f.write_c("%c", *s); // FIXME this is much too slow!
       }
       s++;
     }
-    write_c("\n%s*/\n", pre);
+    f.write_c("\n%s*/\n", pre);
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Fl_Type::write_comment_inline_c(const char *pre)
+void Fl_Type::write_comment_inline_c(Fd_Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
     if (strchr(s, '\n')==0L) {
       // single line comment
-      if (pre) write_c("%s", pre);
-      write_c("// %s\n", s);
-      if (!pre) write_c("%s", indent_plus(1));
+      if (pre) f.write_c("%s", pre);
+      f.write_c("// %s\n", s);
+      if (!pre) f.write_c("%s", f.indent_plus(1));
     } else {
-      write_c("%s/*\n", pre?pre:"");
+      f.write_c("%s/*\n", pre?pre:"");
       if (pre)
-        write_c("%s ", pre);
+        f.write_c("%s ", pre);
       else
-        write_c("%s ", indent_plus(1));
+        f.write_c("%s ", f.indent_plus(1));
       while(*s) {
         if (*s=='\n') {
           if (s[1]) {
             if (pre)
-              write_c("\n%s ", pre);
+              f.write_c("\n%s ", pre);
             else
-              write_c("\n%s ", indent_plus(1));
+              f.write_c("\n%s ", f.indent_plus(1));
           }
         } else {
-          write_c("%c", *s); // FIXME this is much too slow!
+          f.write_c("%c", *s); // FIXME this is much too slow!
         }
         s++;
       }
       if (pre)
-        write_c("\n%s */\n", pre);
+        f.write_c("\n%s */\n", pre);
       else
-        write_c("\n%s */\n", indent_plus(1));
+        f.write_c("\n%s */\n", f.indent_plus(1));
       if (!pre)
-        write_c("%s", indent_plus(1));
+        f.write_c("%s", f.indent_plus(1));
     }
   }
 }
@@ -775,9 +784,9 @@ int Fl_Type::user_defined(const char* cbname) const {
   return 0;
 }
 
-const char *Fl_Type::callback_name() {
+const char *Fl_Type::callback_name(Fd_Code_Writer& f) {
   if (is_name(callback())) return callback();
-  return unique_id(this, "cb", name(), label());
+  return f.unique_id(this, "cb", name(), label());
 }
 
 const char* Fl_Type::class_name(const int need_nest) const {
@@ -816,15 +825,15 @@ const Fl_Class_Type *Fl_Type::is_in_class() const {
   return 0;
 }
 
-void Fl_Type::write_static() {
+void Fl_Type::write_static(Fd_Code_Writer&) {
 }
 
-void Fl_Type::write_code1() {
-  write_h("// Header for %s\n", title());
-  write_c("// Code for %s\n", title());
+void Fl_Type::write_code1(Fd_Code_Writer& f) {
+  f.write_h("// Header for %s\n", title());
+  f.write_c("// Code for %s\n", title());
 }
 
-void Fl_Type::write_code2() {
+void Fl_Type::write_code2(Fd_Code_Writer&) {
 }
 
 /// \}

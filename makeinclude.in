@@ -1,7 +1,7 @@
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -117,7 +117,6 @@ EXEEXT		= @EXEEXT@
 
 # Do we build the OpenGL demos?
 GLDEMOS    = @GLDEMOS@
-GLWLDEMO   = @GLWLDEMO@
 
 # Do we build the threads demo?
 THREADS		= @THREADS@
@@ -128,6 +127,9 @@ FLUID		= @FLUID@$(EXEEXT)
 # Name and/or path of FLUID executable we use for building:
 # depends on the build type (native or cross-compiler)
 FLUID_BUILD	= @FLUID_BUILD@
+
+# Name of fltk-options executable we install
+FLTK_OPTIONS = @FLTK_OPTIONS@$(EXEEXT)
 
 # Possible steps for OS X build only
 OSX_ONLY	= @OSX_ONLY@

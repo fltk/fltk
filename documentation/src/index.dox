@@ -72,6 +72,8 @@
         - \ref fluid_selecting_moving
         - \ref fluid_images
 
+    \subpage fltk-options
+
     \subpage advanced
 
     \subpage unicode
@@ -90,8 +92,6 @@
         - \subpage osissues
 
         - \subpage migration_1_4
-
-        - \subpage development
 
         - \subpage license
 

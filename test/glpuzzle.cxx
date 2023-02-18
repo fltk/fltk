@@ -1130,7 +1130,7 @@ Reshape(int width, int height)
 
   W = width;
   H = height;
-  glViewport(0, 0, W, H);
+  glViewport(0, 0, (GLsizei)W, (GLsizei)H);
   glGetIntegerv(GL_VIEWPORT, viewport);
 }
 
@@ -1453,7 +1453,7 @@ main(int argc, char **argv)
     }
   }
 
-  glutInitWindowSize(W, H);
+  glutInitWindowSize((int)W, (int)H);
   if (doubleBuffer) {
     glutInitDisplayMode(GLUT_DEPTH | GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE);
   } else {

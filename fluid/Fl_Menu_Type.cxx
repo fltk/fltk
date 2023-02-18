@@ -28,7 +28,7 @@
 #include "file.h"
 #include "code.h"
 #include "Fluid_Image.h"
-#include "Shortcut_Button.h"
+#include "custom_widgets.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
@@ -37,6 +37,7 @@
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Shortcut_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Multi_Label.H>
@@ -227,7 +228,7 @@ int isdeclare(const char *c);
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
-const char* Fl_Menu_Item_Type::menu_name(int& i) {
+const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
   i = 0;
   Fl_Type* t = prev;
   while (t && t->is_menu_item()) {
@@ -238,20 +239,21 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
     t = t->prev;
     i++;
   }
-  return unique_id(t, "menu", t->name(), t->label());
+  if (!t) return "\n#error Fl_Menu_Item_Type::menu_name, invalid f\n";
+  return f.unique_id(t, "menu", t->name(), t->label());
 }
 
-void Fl_Menu_Item_Type::write_static() {
+void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
   if (image && label() && label()[0]) {
-    write_declare("#include <FL/Fl.H>");
-    write_declare("#include <FL/Fl_Multi_Label.H>");
+    f.write_h_once("#include <FL/Fl.H>");
+    f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
   if (callback() && is_name(callback()) && !user_defined(callback()))
-    write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
+    f.write_h_once("extern void %s(Fl_Menu_*, %s);", callback(),
                   user_data_type() ? user_data_type() : "void*");
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && isdeclare(extra_code(n)))
-      write_declare("%s", extra_code(n));
+      f.write_h_once("%s", extra_code(n));
   }
   if (callback() && !is_name(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -264,48 +266,46 @@ void Fl_Menu_Item_Type::write_static() {
       do d++; while (is_id(*d));
       while (*d && !is_id(*d)) d++;
     }
-    const char* cn = callback_name();
+    const char* cn = callback_name(f);
     const char* k = class_name(1);
     if (k) {
-      write_c("\nvoid %s::%s_i(Fl_Menu_*", k, cn);
+      f.write_c("\nvoid %s::%s_i(Fl_Menu_*", k, cn);
     } else {
-      write_c("\nstatic void %s(Fl_Menu_*", cn);
+      f.write_c("\nstatic void %s(Fl_Menu_*", cn);
     }
-    if (use_o) write_c(" o");
+    if (use_o) f.write_c(" o");
     const char* ut = user_data_type() ? user_data_type() : "void*";
-    write_c(", %s", ut);
-    if (use_v) write_c(" v");
-    write_c(") {\n");
-    write_c_indented(callback(), 1, 0);
+    f.write_c(", %s", ut);
+    if (use_v) f.write_c(" v");
+    f.write_c(") {\n");
+    f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
       const char *p = strrchr(callback(), '\n');
       if (p) p ++;
       else p = callback();
       // Only add trailing semicolon if the last line is not a preprocessor
       // statement...
-      if (*p != '#' && *p) write_c(";");
+      if (*p != '#' && *p) f.write_c(";");
     }
-    write_c("\n}\n");
+    f.write_c("\n}\n");
     if (k) {
-      write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      write_c("%s((%s*)(o", indent(1), k);
+      f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
+      f.write_c("%s((%s*)(o", f.indent(1), k);
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
       if (t && !strcmp(t->type_name(), "Fl_Input_Choice"))
-        write_c("->parent()");
+        f.write_c("->parent()");
       for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
-        write_c("->parent()");
+        f.write_c("->parent()");
       if (!q || strcmp(q->type_name(), "widget_class"))
-        write_c("->user_data()");
-      write_c("))->%s_i(o,v);\n}\n", cn);
+        f.write_c("->user_data()");
+      f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
   }
   if (image) {
-    if (image->written != write_number) {
-      image->write_static(compress_image_);
-      image->written = write_number;
-    }
+    if (!f.c_contains(image))
+      image->write_static(f, compress_image_);
   }
   if (next && next->is_menu_item()) return;
   // okay, when we hit last item in the menu we have to write the
@@ -313,20 +313,20 @@ void Fl_Menu_Item_Type::write_static() {
   const char* k = class_name(1);
   if (k) {
     int i;
-    write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
+    f.write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(f, i));
   } else {
     int i;
-    write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
+    f.write_c("\nFl_Menu_Item %s[] = {\n", menu_name(f, i));
   }
   Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
   for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
-    ((Fl_Menu_Item_Type*)q)->write_item();
+    ((Fl_Menu_Item_Type*)q)->write_item(f);
     int thislevel = q->level; if (q->is_parent()) thislevel++;
     int nextlevel =
       (q->next && q->next->is_menu_item()) ? q->next->level : t->level+1;
-    while (thislevel > nextlevel) {write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
+    while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
   }
-  write_c(" {0,0,0,0,0,0,0,0,0}\n};\n");
+  f.write_c(" {0,0,0,0,0,0,0,0,0}\n};\n");
 
   if (k) {
     // Write menu item variables...
@@ -338,12 +338,12 @@ void Fl_Menu_Item_Type::write_static() {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
           int i;
-          const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(i);
-          write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
+          const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(f, i);
+          f.write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
         } else {
           // if the name is an array, only define the array.
-          // The actual assignment is in write_code1()
-          write_c("Fl_Menu_Item* %s::%s;\n", k, c);
+          // The actual assignment is in write_code1(Fd_Code_Writer& f)
+          f.write_c("Fl_Menu_Item* %s::%s;\n", k, c);
         }
       }
     }
@@ -363,7 +363,7 @@ int Fl_Menu_Item_Type::flags() {
   return i;
 }
 
-void Fl_Menu_Item_Type::write_item() {
+void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
   static const char * const labeltypes[] = {
     "FL_NORMAL_LABEL",
     "FL_NO_LABEL",
@@ -375,120 +375,124 @@ void Fl_Menu_Item_Type::write_item() {
     "FL_IMAGE_LABEL"
   };
 
-  write_comment_inline_c(" ");
-  write_c(" {");
+  write_comment_inline_c(f, " ");
+  f.write_c(" {");
   if (label() && label()[0])
     switch (g_project.i18n_type) {
       case 1:
         // we will call i18n when the menu is instantiated for the first time
-        write_c("%s(", g_project.i18n_static_function.value());
-        write_cstring(label());
-        write_c(")");
+        f.write_c("%s(", g_project.i18n_static_function.value());
+        f.write_cstring(label());
+        f.write_c(")");
         break;
       case 2:
         // fall through: strings can't be translated before a catalog is choosen
       default:
-        write_cstring(label());
+        f.write_cstring(label());
     }
   else
-    write_c("\"\"");
+    f.write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
-                int s = ((Fl_Button*)o)->shortcut();
-                if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-                        write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
-                } else {
-                        write_c(", 0x%x, ", s);
-                }
-  } else
-    write_c(", 0, ");
+    int s = ((Fl_Button*)o)->shortcut();
+    if (g_project.use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+      f.write_c(", ");
+      if (s & FL_COMMAND) f.write_c("FL_COMMAND|");
+      if (s & FL_CONTROL) f.write_c("FL_CONTROL|");
+      f.write_c("0x%x, ", s & ~(FL_CTRL|FL_META));
+    } else {
+      f.write_c(", 0x%x, ", s);
+    }
+  } else {
+    f.write_c(", 0, ");
+  }
   if (callback()) {
     const char* k = is_name(callback()) ? 0 : class_name(1);
     if (k) {
-      write_c(" (Fl_Callback*)%s::%s,", k, callback_name());
+      f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
     } else {
-      write_c(" (Fl_Callback*)%s,", callback_name());
+      f.write_c(" (Fl_Callback*)%s,", callback_name(f));
     }
   } else
-    write_c(" 0,");
+    f.write_c(" 0,");
   if (user_data())
-    write_c(" (void*)(%s),", user_data());
+    f.write_c(" (void*)(%s),", user_data());
   else
-    write_c(" 0,");
-  write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
+    f.write_c(" 0,");
+  f.write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
           labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
-  write_c("},\n");
+  f.write_c("},\n");
 }
 
-void start_menu_initialiser(int &initialized, const char *name, int index) {
+void start_menu_initialiser(Fd_Code_Writer& f, int &initialized, const char *name, int index) {
   if (!initialized) {
     initialized = 1;
-    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), name, index);
-    indentation++;
+    f.write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", f.indent(), name, index);
+    f.indentation++;
   }
 }
 
-void Fl_Menu_Item_Type::write_code1() {
-  int i; const char* mname = menu_name(i);
+void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
+  int i; const char* mname = menu_name(f, i);
 
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      write_h("%sstatic Fl_Menu_Item %s[];\n", indent(1), mname);
+      f.write_h("%sstatic Fl_Menu_Item %s[];\n", f.indent(1), mname);
     } else {
-      write_h("extern Fl_Menu_Item %s[];\n", mname);
+      f.write_h("extern Fl_Menu_Item %s[];\n", mname);
     }
   }
 
   const char *c = array_name(this);
   if (c) {
     if (class_name(1)) {
-      write_public(public_);
-      write_h("%sstatic Fl_Menu_Item *%s;\n", indent(1), c);
+      f.write_public(public_);
+      f.write_h("%sstatic Fl_Menu_Item *%s;\n", f.indent(1), c);
     } else {
       if (c==name())
-        write_h("#define %s (%s+%d)\n", c, mname, i);
+        f.write_h("#define %s (%s+%d)\n", c, mname, i);
       else
-        write_h("extern Fl_Menu_Item *%s;\n", c);
+        f.write_h("extern Fl_Menu_Item *%s;\n", c);
     }
   }
 
   if (callback()) {
     if (!is_name(callback()) && class_name(1)) {
-      const char* cn = callback_name();
+      const char* cn = callback_name(f);
       const char* ut = user_data_type() ? user_data_type() : "void*";
-      write_public(0);
-      write_h("%sinline void %s_i(Fl_Menu_*, %s);\n", indent(1), cn, ut);
-      write_h("%sstatic void %s(Fl_Menu_*, %s);\n", indent(1), cn, ut);
+      f.write_public(0);
+      f.write_h("%sinline void %s_i(Fl_Menu_*, %s);\n", f.indent(1), cn, ut);
+      f.write_h("%sstatic void %s(Fl_Menu_*, %s);\n", f.indent(1), cn, ut);
     }
   }
 
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
-    write_c("%s%s = &%s[%d];\n", indent_plus(1), name(), mname, i);
+    f.write_c("%s%s = &%s[%d];\n", f.indent_plus(1), name(), mname, i);
   }
   if (image) {
-    start_menu_initialiser(menuItemInitialized, mname, i);
+    start_menu_initialiser(f, menuItemInitialized, mname, i);
     if (label() && label()[0]) {
-      write_c("%sFl_Multi_Label *ml = new Fl_Multi_Label;\n", indent());
-      write_c("%sml->labela = (char*)", indent());
-      image->write_inline();
-      write_c(";\n");
+      f.write_c("%sFl_Multi_Label *ml = new Fl_Multi_Label;\n", f.indent());
+      f.write_c("%sml->labela = (char*)", f.indent());
+      image->write_inline(f);
+      f.write_c(";\n");
       if (g_project.i18n_type==0) {
-        write_c("%sml->labelb = o->label();\n", indent());
+        f.write_c("%sml->labelb = o->label();\n", f.indent());
       } else if (g_project.i18n_type==1) {
-        write_c("%sml->labelb = %s(o->label());\n",
-                indent(), g_project.i18n_function.value());
+        f.write_c("%sml->labelb = %s(o->label());\n",
+                f.indent(), g_project.i18n_function.value());
       } else if (g_project.i18n_type==2) {
-        write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+        f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
+                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
                 g_project.i18n_set.value(), msgnum());
       }
-      write_c("%sml->typea = FL_IMAGE_LABEL;\n", indent());
-      write_c("%sml->typeb = FL_NORMAL_LABEL;\n", indent());
-      write_c("%sml->label(o);\n", indent());
+      f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
+      f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
+      f.write_c("%sml->label(o);\n", f.indent());
     } else {
-      image->write_code(0, "o");
+      image->write_code(f, 0, "o");
     }
   }
   if (g_project.i18n_type && label() && label()[0]) {
@@ -497,30 +501,30 @@ void Fl_Menu_Item_Type::write_code1() {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
-      start_menu_initialiser(menuItemInitialized, mname, i);
+      start_menu_initialiser(f, menuItemInitialized, mname, i);
       if (g_project.i18n_type==1) {
-        write_c("%so->label(%s(o->label()));\n",
-                indent(), g_project.i18n_function.value());
+        f.write_c("%so->label(%s(o->label()));\n",
+                f.indent(), g_project.i18n_function.value());
       } else if (g_project.i18n_type==2) {
-        write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
+        f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
+                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
                 g_project.i18n_set.value(), msgnum());
       }
     }
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && !isdeclare(extra_code(n))) {
-      start_menu_initialiser(menuItemInitialized, mname, i);
-      write_c("%s%s\n", indent(), extra_code(n));
+      start_menu_initialiser(f, menuItemInitialized, mname, i);
+      f.write_c("%s%s\n", f.indent(), extra_code(n));
     }
   }
   if (menuItemInitialized) {
-    indentation--;
-    write_c("%s}\n",indent());
+    f.indentation--;
+    f.write_c("%s}\n",f.indent());
   }
 }
 
-void Fl_Menu_Item_Type::write_code2() {}
+void Fl_Menu_Item_Type::write_code2(Fd_Code_Writer&) {}
 
 ////////////////////////////////////////////////////////////////
 // This is the base class for widgets that contain a menu (ie
@@ -612,12 +616,12 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
   return this;
 }
 
-void Fl_Menu_Type::write_code2() {
+void Fl_Menu_Type::write_code2(Fd_Code_Writer& f) {
   if (next && next->is_menu_item()) {
-    write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
-            unique_id(this, "menu", name(), label()));
+    f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
+            f.unique_id(this, "menu", name(), label()));
   }
-  Fl_Widget_Type::write_code2();
+  Fl_Widget_Type::write_code2(f);
 }
 
 void Fl_Menu_Type::copy_properties() {
@@ -690,16 +694,16 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 // Shortcut entry item in panel:
 
 
-void shortcut_in_cb(Shortcut_Button* i, void* v) {
+void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
-      i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
     else if (current_widget->is_input())
-      i->svalue = ((Fl_Input_*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
     else if (current_widget->is_value_input())
-      i->svalue = ((Fl_Value_Input*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
     else if (current_widget->is_text_display())
-      i->svalue = ((Fl_Text_Display*)(current_widget->o))->shortcut();
+      i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
       return;
@@ -711,21 +715,21 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut() != (int)i->value()) mod = 1;
+        b->shortcut(i->value());
         if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_input()) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut() != (int)i->value()) mod = 1;
+        b->shortcut(i->value());
       } else if (o->selected && o->is_value_input()) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut() != (int)i->value()) mod = 1;
+        b->shortcut(i->value());
       } else if (o->selected && o->is_text_display()) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
-        if (b->shortcut()!=i->svalue) mod = 1;
-        b->shortcut(i->svalue);
+        if (b->shortcut() != (int)i->value()) mod = 1;
+        b->shortcut(i->value());
       }
     if (mod) set_modflag(1);
   }

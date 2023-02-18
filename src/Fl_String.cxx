@@ -1,7 +1,7 @@
 //
 // Basic Fl_String class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,15 +23,18 @@
   Basic Fl_String class for FLTK.
 */
 
+/** Constructs an empty string */
 Fl_String::Fl_String() {
   init();
 }
 
+/** Constructor from a C-style string */
 Fl_String::Fl_String(const char *str) {
   init();
   value(str);
 }
 
+/** Constructor from a buffer of \c size bytes */
 Fl_String::Fl_String(const char *str, int size) {
   init();
   value(str, size);
@@ -43,13 +46,13 @@ void Fl_String::init() {
   capacity_ = 0;
 }
 
-// copy constructor
+/** copy constructor */
 Fl_String::Fl_String(const Fl_String &in) {
   init();
   value(in.value(), in.size());
 }
 
-// copy assignment operator
+/** copy assignment operator */
 Fl_String& Fl_String::operator=(const Fl_String &in) {
   if (this == &in)
     return *this;
@@ -58,13 +61,14 @@ Fl_String& Fl_String::operator=(const Fl_String &in) {
   return *this;
 }
 
-// assignment operator for 'const char *'
+/** assignment operator for 'const char *' */
 Fl_String& Fl_String::operator=(const char *in) {
   value(in);
   // debug("*STRING* assigned");
   return *this;
 }
 
+/** Destructor */
 Fl_String::~Fl_String() {
   delete[] value_;
 }
@@ -96,15 +100,18 @@ void Fl_String::alloc_buf(int size, bool preserve_text) {
   value_ = new_value;
 }
 
+/** Assigns the string value to a C-style string */
 void Fl_String::value(const char *str) {
   value(str, str ? (int)strlen(str) : 0);
 }
 
+/** Returns the number of non-null bytes in the object */
 int Fl_String::slen() const {
   if (!value_) return 0;
   return (int)strlen(value_);
 }
 
+/** Assigns the string value to a buffer of \c len bytes */
 void Fl_String::value(const char *str, int len) {
   if (str) {
     alloc_buf(len);
@@ -119,12 +126,13 @@ void Fl_String::value(const char *str, int len) {
   }
 }
 
+/** Returns the minimum capacity of the object */
 int Fl_String::capacity() const {
   return capacity_; // > 0 ? capacity_ - 1 : capacity_;
 }
 
-/** Set the minumum capacity to num_bytes plus one for a terminating NUL.
- The cintents of the string buffer will be copied if needed.
+/** Set the minimum capacity to \c num_bytes plus one for a terminating NUL.
+ The contents of the string buffer will be copied if needed.
  \param num_bytes minimum size of buffer
  */
 void Fl_String::capacity(int num_bytes) {
@@ -154,7 +162,7 @@ void Fl_String::release() {
 */
 void Fl_String::debug(const char *info) const {
   if (info) {
-    printf("Fl_String '%-20s': %p, value = %p (%d/%d): '%s'\n",
+    printf("Fl_String '%-20s': %p, value = %p (%d/%d):\n%s\n",
            info, this, value_, size_, capacity_, value_ ? value_ : "<NULL>");
   }
 }

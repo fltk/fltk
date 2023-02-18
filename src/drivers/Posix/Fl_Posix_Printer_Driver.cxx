@@ -1,7 +1,7 @@
 //
 // PostScript priting support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2020 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
 #include <dlfcn.h>   // for dlopen et al
 #include <unistd.h>  // for mkstemp
 #include <FL/filename.H>
-#include "../Unix/Fl_Unix_System_Driver.H"
+#include "Fl_Posix_System_Driver.H"
 #define GTK_PAPER_NAME_LETTER "na_letter"
 #define GTK_RESPONSE_NONE 0
 #define GTK_RESPONSE_OK -5

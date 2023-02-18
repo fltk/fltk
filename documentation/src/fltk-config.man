@@ -81,7 +81,7 @@ Enables image file support.
 .br
 Displays the current FLTK version number, e.g. "1.1.0".
 .SH SEE ALSO
-fluid(1), fltk(3)
+fluid(1), fltk-options(1), fltk(3)
 .br
 FLTK Programming Manual
 .br

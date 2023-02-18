@@ -1,7 +1,7 @@
 //
 // Event names header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,6 +15,11 @@
 //
 
 // Thanks to Greg Ercolano for this addition.
+
+/**
+ \file names.h
+ This file defines arrays of human readable names for FLTK symbolic constants.
+*/
 
 #ifndef FL_NAMES_H
 #define FL_NAMES_H

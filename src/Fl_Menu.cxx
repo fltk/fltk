@@ -373,7 +373,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   drawn_selected = -1;
   if (button) {
     box(button->box());
-    if (box() == FL_NO_BOX || box() == FL_FLAT_BOX) box(FL_UP_BOX);
+    // don't force a box type, but make sure that the background is redrawn
+    if (box() == FL_NO_BOX) box(FL_FLAT_BOX);
   } else {
     box(FL_UP_BOX);
   }
@@ -444,7 +445,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   //if (X > scr_x+scr_w-W) X = right_edge-W;
   if (X > scr_x+scr_w-W) X = scr_x+scr_w-W;
   x(X); w(W);
-  h((numitems ? itemheight*numitems-Fl::menu_linespacing() : 0)+2*BW+3);
+  h((numitems ? itemheight*numitems-4 : 0)+2*BW+3);
   if (selected >= 0) {
     Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;
   } else {
@@ -527,7 +528,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   int xx = BW;
   int W = w();
   int ww = W-2*BW-1;
-  int yy = BW+1+n*itemheight;
+  int yy = BW+1+n*itemheight+Fl::menu_linespacing()/2-2;
   int hh = itemheight - Fl::menu_linespacing();
 
   if (eraseit && n != selected) {

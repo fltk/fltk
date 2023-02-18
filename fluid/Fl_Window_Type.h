@@ -31,7 +31,6 @@ void toggle_overlays(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
-void show_global_settings_cb(Fl_Widget *, void *);
 
 class Fl_Window_Type : public Fl_Widget_Type {
 protected:
@@ -52,8 +51,8 @@ protected:
   void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);
   int handle(int);
   void setlabel(const char *) FL_OVERRIDE;
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   Fl_Widget_Type *_make() FL_OVERRIDE {return 0;} // we don't call this
   Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return 0;}
   int recalc;           // set by fix_overlay()
@@ -85,8 +84,8 @@ public:
   void fix_overlay();                   // Update the bounding box, etc
   uchar *read_image(int &ww, int &hh);  // Read an image of the window
 
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int read_fdesign(const char*, const char*) FL_OVERRIDE;
 
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -119,11 +118,11 @@ public:
   char write_public_state; // true when public: has been printed
   char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
-  void write_properties() FL_OVERRIDE;
-  void read_property(const char *) FL_OVERRIDE;
+  void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
+  void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 
-  void write_code1() FL_OVERRIDE;
-  void write_code2() FL_OVERRIDE;
+  void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
+  void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   int pixmapID() FL_OVERRIDE { return 48; }

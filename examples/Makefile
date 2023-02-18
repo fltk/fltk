@@ -22,7 +22,11 @@ SHELL = /bin/sh
 .SILENT:
 
 # Executables
-ALL = browser-simple$(EXEEXT) \
+ALL = animgifimage$(EXEEXT) \
+      animgifimage-play$(EXEEXT) \
+      animgifimage-simple$(EXEEXT) \
+      animgifimage-resize$(EXEEXT) \
+      browser-simple$(EXEEXT) \
       cairo-draw-x$(EXEEXT) \
       chart-simple$(EXEEXT) \
       draggable-group$(EXEEXT) \

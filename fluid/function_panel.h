@@ -1,7 +1,7 @@
 //
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -94,7 +94,7 @@ extern Fl_Return_Button *c_panel_ok;
 extern Fl_Button *c_panel_cancel;
 Fl_Double_Window* make_class_panel();
 extern Fl_Double_Window *comment_panel;
-extern CodeEditor *comment_input;
+extern Fl_Text_Editor *comment_input;
 extern Fl_Return_Button *comment_panel_ok;
 extern Fl_Button *comment_panel_cancel;
 extern Fl_Light_Button *comment_in_source;

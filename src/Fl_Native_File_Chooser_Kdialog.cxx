@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget : KDE version
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -170,7 +170,6 @@ int Fl_Kdialog_Native_File_Chooser_Driver::show() {
     }
   }
   delete[] command;
-  if (_title) { free(_title); _title = NULL; }
   if (!pipe) return -1;
   return (data.all_files == NULL ? 1 : 0);
 }
@@ -206,9 +205,11 @@ char *Fl_Kdialog_Native_File_Chooser_Driver::parse_filter(const char *f) {
   const char *r = strchr(f, '{');
   char *developed = NULL;
   if (r) { // with {}
+    if (r <= p) return NULL;
     char *lead = new char[r-p];
     memcpy(lead, p+1, (r-p)-1); lead[(r-p)-1] = 0;
     const char *r2 = strchr(r, '}');
+    if (!r2 || r2 == r + 1) return NULL;
     char *ends = new char[r2-r];
     memcpy(ends, r+1, (r2-r)-1); ends[(r2-r)-1] = 0;
     char *ptr;
@@ -242,16 +243,19 @@ void Fl_Kdialog_Native_File_Chooser_Driver::filter(const char *f) {
   _parsedfilt = strfree(_parsedfilt);   // clear previous parsed filter (if any)
   _nfilters = 0;
   if (!f) return;
-  _filter = strdup(f);
+  _filter = new char[strlen(f) + 1];
+  strcpy(_filter, f);
   char *f2 = strdup(f);
   char *ptr;
   char *part = strtok_r(f2, "\n", &ptr);
   while (part) {
     char *p = parse_filter(part);
-    _parsedfilt = strapp(_parsedfilt, p);
-    _parsedfilt = strapp(_parsedfilt, "\n");
-    delete[] p;
-    _nfilters++;
+    if (p) {
+      _parsedfilt = strapp(_parsedfilt, p);
+      _parsedfilt = strapp(_parsedfilt, "\n");
+      delete[] p;
+      _nfilters++;
+    }
     part = strtok_r(NULL, "\n", &ptr);
   }
   free(f2);

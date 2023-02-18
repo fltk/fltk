@@ -33,6 +33,7 @@ extern void fl_draw(const char*, int, float, float);
 
 ////////////////////////////////////////////////////////////////
 
+// see: Fl_Text_Undo_Action
 class Fl_Input_Undo_Action {
 public:
   Fl_Input_Undo_Action() :
@@ -68,6 +69,50 @@ public:
 
   void clear() {
     undocut = undoinsert = 0;
+  }
+};
+
+// see: Fl_Text_Undo_Action_List
+class Fl_Input_Undo_Action_List {
+  Fl_Input_Undo_Action** list_;
+  int list_size_;
+  int list_capacity_;
+public:
+  Fl_Input_Undo_Action_List() :
+    list_(NULL),
+    list_size_(0),
+    list_capacity_(0)
+  { }
+
+  ~Fl_Input_Undo_Action_List() {
+    clear();
+  }
+
+  void push(Fl_Input_Undo_Action* action) {
+    if (list_size_ == list_capacity_) {
+      list_capacity_ += 25;
+      list_ = (Fl_Input_Undo_Action**)realloc(list_, list_capacity_ * sizeof(Fl_Input_Undo_Action*));
+    }
+    list_[list_size_++] = action;
+  }
+
+  Fl_Input_Undo_Action* pop() {
+    if (list_size_ > 0)
+      return list_[--list_size_];
+    else
+      return NULL;
+  }
+
+  void clear() {
+    if (list_) {
+      for (int i=0; i<list_size_; i++) {
+        delete list_[i];
+      }
+      delete list_;
+    }
+    list_ = NULL;
+    list_size_ = 0;
+    list_capacity_ = 0;
   }
 };
 
@@ -186,7 +231,7 @@ double Fl_Input_::expandpos(
 /** \internal
   Marks a range of characters for update.
 
-  This call marks all characters from \p to the end of the
+  This call marks all characters from \p p to the end of the
   text buffer for update. At least these characters
   will be redrawn in the next update cycle.
 
@@ -261,10 +306,10 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   int selstart, selend;
   if (Fl::focus()!=this && /*Fl::selection_owner()!=this &&*/ Fl::pushed()!=this)
     selstart = selend = 0;
-  else if (position() <= mark()) {
-    selstart = position(); selend = mark();
+  else if (insert_position() <= mark()) {
+    selstart = insert_position(); selend = mark();
   } else {
-    selend = position(); selstart = mark();
+    selend = insert_position(); selstart = mark();
   }
 
   setfont();
@@ -279,8 +324,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   int curx, cury;
   for (p=value(), curx=cury=lines=0; ;) {
     e = expand(p, buf);
-    if (position() >= p-value() && position() <= e-value()) {
-      curx = int(expandpos(p, value()+position(), buf, 0)+.5);
+    if (insert_position() >= p-value() && insert_position() <= e-value()) {
+      curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
       if (Fl::focus()==this && !was_up_down) up_down_pos = curx;
       cury = lines*height;
       int newscroll = xscroll_;
@@ -405,10 +450,10 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     if (Fl::focus() == this && (
                                 (Fl::screen_driver()->has_marked_text() && Fl::compose_state) ||
                                 selstart == selend) &&
-        position() >= p-value() && position() <= e-value()) {
+        insert_position() >= p-value() && insert_position() <= e-value()) {
       fl_color(cursor_color());
       // cursor position may need to be recomputed (see STR #2486)
-      curx = int(expandpos(p, value()+position(), buf, 0)+.5);
+      curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
       if (readonly()) {
         // Draw '^' caret cursor
         fl_line((int)(xpos+curx-2.5f), Y+ypos+height-1,
@@ -629,14 +674,14 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
     }
     // if the multiple click does not increase the selection, revert
     // to single-click behavior:
-    if (!drag && (mark() > position() ?
-                  (newmark >= position() && newpos <= mark()) :
-                  (newmark >= mark() && newpos <= position()))) {
+    if (!drag && (mark() > insert_position() ?
+                  (newmark >= insert_position() && newpos <= mark()) :
+                  (newmark >= mark() && newpos <= insert_position()))) {
       Fl::event_clicks(0);
       newmark = newpos = (int) (l-value());
     }
   }
-  position(newpos, newmark);
+  insert_position(newpos, newmark);
 }
 
 /**
@@ -656,7 +701,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
   \return 0 if no positions changed
   \see position(int), position(), mark(int)
 */
-int Fl_Input_::position(int p, int m) {
+int Fl_Input_::insert_position(int p, int m) {
   int is_same = 0;
   was_up_down = 0;
   if (p<0) p = 0;
@@ -730,7 +775,7 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
     if (f <= up_down_pos) l = t; else r = t-1;
   }
   int j = (int) (l-value());
-  j = position(j, keepmark ? mark_ : j);
+  j = insert_position(j, keepmark ? mark_ : j);
   was_up_down = 1;
   return j;
 }
@@ -749,10 +794,10 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
   \see Fl::copy(const char *, int, int)
 */
 int Fl_Input_::copy(int clipboard) {
-  int b = position();
+  int b = insert_position();
   int e = mark();
   if (b != e) {
-    if (b > e) {b = mark(); e = position();}
+    if (b > e) {b = mark(); e = insert_position();}
     if (input_type() == FL_SECRET_INPUT) e = b;
     Fl::copy(value()+b, e-b, clipboard);
     return 1;
@@ -780,7 +825,7 @@ int Fl_Input_::append(const char* t, int l, char keep_selection)
   int om = mark_, op = position_;
   int ret = replace(end, end, t, l);
   if (keep_selection) {
-    position(op, om);
+    insert_position(op, om);
   }
   return ret;
 }
@@ -891,6 +936,9 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
     } else if (e == undo_->undoat && (e-b)<undo_->undoinsert) {
       undo_->undoinsert -= e-b;
     } else {
+      redo_list_->clear();
+      undo_list_->push(undo_);
+      undo_ = new Fl_Input_Undo_Action();
       undo_->undobuffersize(e-b);
       memcpy(undo_->undobuffer, value_+b, e-b);
       undo_->undocut = e-b;
@@ -903,9 +951,12 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   }
 
   if (ilen) {
-    if (b == undo_->undoat)
+    if (b == undo_->undoat) {
       undo_->undoinsert += ilen;
-    else {
+    } else {
+      redo_list_->clear();
+      undo_list_->push(undo_);
+      undo_ = new Fl_Input_Undo_Action();
       undo_->undocut = 0;
       undo_->undoinsert = ilen;
     }
@@ -947,13 +998,13 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
 }
 
 /**
-  Undoes previous changes to the text buffer.
+ Apply the current undo/redo operation
 
-  This call undoes a number of previous calls to replace().
+ It's up to undo() and redo() to push and pop actions to and from the lists.
 
-  \return non-zero if any change was made.
-*/
-int Fl_Input_::undo() {
+ \return 1 if the current action changed any text.
+ \see undo(), redo() */
+int Fl_Input_::apply_undo() {
   was_up_down = 0;
   if (!undo_->undocut && !undo_->undoinsert) return 0;
 
@@ -961,6 +1012,8 @@ int Fl_Input_::undo() {
   int xlen = undo_->undoinsert;
   int b = undo_->undoat-xlen;
   int b1 = b;
+
+  minimal_update(position_);
 
   put_in_buffer(size_+ilen);
 
@@ -989,8 +1042,50 @@ int Fl_Input_::undo() {
     while (b1 > 0 && index(b1)!='\n') b1--;
   minimal_update(b1);
   set_changed();
-  if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+
   return 1;
+}
+
+/**
+ Undoes previous changes to the text buffer.
+
+ This call undoes a number of previous calls to replace().
+
+ \return non-zero if any change was made.
+ */
+int Fl_Input_::undo() {
+  if (apply_undo() == 0)
+    return 0;
+
+  redo_list_->push(undo_);
+  undo_ = undo_list_->pop();
+  if (!undo_) undo_ = new Fl_Input_Undo_Action();
+
+  if (when()&FL_WHEN_CHANGED) do_callback(FL_REASON_CHANGED);
+
+  return 1;
+}
+
+/**
+ Redo previous undo operation.
+
+ This call reapplies previously executed undo operations.
+
+ \return non-zero if any change was made.
+ */
+int Fl_Input_::redo() {
+  Fl_Input_Undo_Action *redo_action = redo_list_->pop();
+  if (!redo_action)
+    return 0;
+
+  if (undo_->undocut || undo_->undoinsert)
+    undo_list_->push(undo_);
+  undo_ = redo_action;
+
+  int ret = apply_undo();
+  if (ret && (when()&FL_WHEN_CHANGED)) do_callback(FL_REASON_CHANGED);
+
+  return ret;
 }
 
 /**
@@ -1125,7 +1220,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
         return 1;
       } else return replace(0, size(), t, (int) (e-t));
     }
-    return replace(position(), mark(), t, (int) (e-t));}
+    return replace(insert_position(), mark(), t, (int) (e-t));}
 
   case FL_SHORTCUT:
     if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
@@ -1168,6 +1263,8 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   xscroll_ = yscroll_ = 0;
   maximum_size_ = 32767;
   shortcut_ = 0;
+  undo_list_ = new Fl_Input_Undo_Action_List();
+  redo_list_ = new Fl_Input_Undo_Action_List();
   undo_ = new Fl_Input_Undo_Action();
   set_flag(SHORTCUT_LABEL);
   set_flag(MAC_USE_ACCENTS_MENU);
@@ -1236,6 +1333,8 @@ void Fl_Input_::put_in_buffer(int len) {
 int Fl_Input_::static_value(const char* str, int len) {
   clear_changed();
   undo_->clear();
+  undo_list_->clear();
+  redo_list_->clear();
   if (str == value_ && len == size_) return 0;
   if (len) { // non-empty new value:
     if (xscroll_ || yscroll_) {
@@ -1259,7 +1358,7 @@ int Fl_Input_::static_value(const char* str, int len) {
     xscroll_ = yscroll_ = 0;
     minimal_update(0);
   }
-  position(readonly() ? 0 : size());
+  insert_position(readonly() ? 0 : size());
   return 1;
 }
 
@@ -1336,6 +1435,8 @@ void Fl_Input_::resize(int X, int Y, int W, int H) {
   from the parent Fl_Group.
 */
 Fl_Input_::~Fl_Input_() {
+  delete undo_list_;
+  delete redo_list_;
   delete undo_;
   if (bufsize) free((void*)buffer);
 }

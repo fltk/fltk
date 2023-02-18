@@ -21,6 +21,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_utf8.h>
 
 
 // This is the base class for browsers.  To be useful it must be
@@ -49,7 +50,7 @@
 */
 
 static void scrollbar_callback(Fl_Widget* s, void*) {
-  ((Fl_Browser_*)(s->parent()))->position(int(((Fl_Scrollbar*)s)->value()));
+  ((Fl_Browser_*)(s->parent()))->vposition(int(((Fl_Scrollbar*)s)->value()));
 }
 
 static void hscrollbar_callback(Fl_Widget* s, void*) {
@@ -181,7 +182,7 @@ void Fl_Browser_::update_top() {
   }
 }
 
-// Change position(), top() will update when update_top() is called
+// Change vposition(), top() will update when update_top() is called
 // (probably by draw() or handle()):
 /**
   Sets the vertical scroll position of the list to pixel position \p pos.
@@ -189,9 +190,9 @@ void Fl_Browser_::update_top() {
   of the screen. Example: A position of '3' scrolls the top three pixels of
   the list off the top edge of the screen.
   \param[in] pos The vertical position (in pixels) to scroll the browser to.
-  \see position(), hposition()
+  \see vposition(), hposition()
 */
-void Fl_Browser_::position(int pos) {
+void Fl_Browser_::vposition(int pos) {
   if (pos < 0) pos = 0;
   if (pos == position_) return;
   position_ = pos;
@@ -204,7 +205,7 @@ void Fl_Browser_::position(int pos) {
   of the screen. Example: A position of '18' scrolls the left 18 pixels of the list
   off the left edge of the screen.
   \param[in] pos The horizontal position (in pixels) to scroll the browser to.
-  \see position(), hposition()
+  \see vposition(), hposition()
 */
 void Fl_Browser_::hposition(int pos) {
   if (pos < 0) pos = 0;
@@ -244,7 +245,7 @@ void Fl_Browser_::display(void* item) {
 
   // First special case - want to display first item in the list?
   update_top();
-  if (item == item_first()) {position(0); return;}
+  if (item == item_first()) { vposition(0); return; }
 
   int X, Y, W, H, Yp; bbox(X, Y, W, H);
   void* l = top_;
@@ -252,11 +253,11 @@ void Fl_Browser_::display(void* item) {
   int h1;
 
   // 2nd special case - want to display item already displayed at top of browser?
-  if (l == item) {position(real_position_+Y); return;} // scroll up a bit
+  if (l == item) { vposition(real_position_+Y); return; } // scroll up a bit
 
   // 3rd special case - want to display item just above top of browser?
   void* lp = item_prev(l);
-  if (lp == item) {position(real_position_+Y-item_quick_height(lp)); return;}
+  if (lp == item) { vposition(real_position_+Y-item_quick_height(lp)); return; }
 
 #ifdef DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
   // search for item.  We search both up and down the list at the same time,
@@ -268,9 +269,9 @@ void Fl_Browser_::display(void* item) {
       if (l == item) {
         if (Y <= H) { // it is visible or right at bottom
           Y = Y+h1-H; // find where bottom edge is
-          if (Y > 0) position(real_position_+Y); // scroll down a bit
+          if (Y > 0) vposition(real_position_+Y); // scroll down a bit
         } else {
-          position(real_position_+Y-(H-h1)/2); // center it
+          vposition(real_position_+Y-(H-h1)/2); // center it
         }
         return;
       }
@@ -281,8 +282,8 @@ void Fl_Browser_::display(void* item) {
       h1 = item_quick_height(lp);
       Yp -= h1;
       if (lp == item) {
-        if ((Yp + h1) >= 0) position(real_position_+Yp);
-        else position(real_position_+Yp-(H-h1)/2);
+        if ((Yp + h1) >= 0) vposition(real_position_+Yp);
+        else vposition(real_position_+Yp-(H-h1)/2);
         return;
       }
       lp = item_prev(lp);
@@ -871,12 +872,12 @@ J1:
     if (my < Y && my < py) {
       int p = real_position_+my-Y;
       if (p<0) p = 0;
-      position(p);
+      vposition(p);
     } else if (my > (Y+H) && my > py) {
       int p = real_position_+my-(Y+H);
       int hh = full_height()-H; if (p > hh) p = hh;
       if (p<0) p = 0;
-      position(p);
+      vposition(p);
     }
     if (type() == FL_NORMAL_BROWSER || !top_)
       ;
@@ -984,15 +985,16 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   item_swap(void*, void*) and item_text(void*) must be implemented for this call.
   \param[in] flags FL_SORT_ASCENDING -- sort in ascending order\n
                    FL_SORT_DESCENDING -- sort in descending order\n
+                  FL_SORT_CASEINSENSITIVE -- add this to sort case-insensitively\n
                    Values other than the above will cause undefined behavior\n
                    Other flags may appear in the future.
-  \todo Add a flag to ignore case
 */
 void Fl_Browser_::sort(int flags) {
   //
   // Simple bubble sort - pure lazyness on my side.
   //
   int i, j, n = -1, desc = ((flags&FL_SORT_DESCENDING)==FL_SORT_DESCENDING);
+  bool caseinsensitive = (flags&FL_SORT_CASEINSENSITIVE);
   void *a =item_first(), *b, *c;
   if (!a) return;
   while (a) {
@@ -1008,12 +1010,14 @@ void Fl_Browser_::sort(int flags) {
       const char *tb = item_text(b);
       c = item_next(b);
       if (desc) {
-        if (strcmp(ta, tb)<0) {
+        if ( (caseinsensitive && fl_utf_strcasecmp(ta, tb) < 0) ||
+            (!caseinsensitive && strcmp(ta, tb) < 0) ) {
           item_swap(a, b);
           swapped = 1;
         }
       } else {
-        if (strcmp(ta, tb)>0) {
+        if ( (caseinsensitive && fl_utf_strcasecmp(ta, tb) > 0) ||
+            (!caseinsensitive && strcmp(ta, tb) > 0) ) {
           item_swap(a, b);
           swapped = 1;
         }

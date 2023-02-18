@@ -47,11 +47,10 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#ifdef FLTK_USE_X11
   int i = 1;
-
   Fl::args(argc,argv,i,arg);
 
+#ifdef FLTK_USE_X11
   if (visid >= 0) {
     fl_open_display();
     XVisualInfo templt; int num;

@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 #include "../../Fl_Screen_Driver.H"
 #if FLTK_USE_CAIRO
 #  include <cairo-xlib.h>
-#  include "../Cairo/Fl_Display_Cairo_Graphics_Driver.H"
+#  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #else
 #  include "Fl_Xlib_Graphics_Driver.H"
 #endif // FLTK_USE_CAIRO
@@ -38,12 +38,12 @@ Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int hig
     offscreen = (Fl_Offscreen)XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   }
 #if FLTK_USE_CAIRO
-  driver(new Fl_Display_Cairo_Graphics_Driver());
+  driver(new Fl_X11_Cairo_Graphics_Driver());
   cairo_surface_t *s = cairo_xlib_surface_create(fl_display, offscreen, fl_visual->visual, w, h);
   cairo_ = cairo_create(s);
   cairo_surface_destroy(s);
   cairo_save(cairo_);
-  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #else
   driver(new Fl_Xlib_Graphics_Driver());
 #endif
@@ -63,7 +63,7 @@ void Fl_Xlib_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   fl_window = offscreen;
 #if FLTK_USE_CAIRO
-  ((Fl_Display_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
+  ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif
 }
 

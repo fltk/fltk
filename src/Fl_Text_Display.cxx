@@ -395,7 +395,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  as-needed highlighting, triggered by a style buffer entry of
  "unfinishedStyle".  Style buffer can trigger additional redisplay during
  a normal buffer modification if the buffer contains a primary Fl_Text_Selection
- (see extendRangeForStyleMods for more information on this protocol).
+ (see extend_range_for_styles() for more information on this protocol).
 
  Style buffers, tables and their associated memory are managed by the caller.
 
@@ -423,8 +423,6 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  \param cbArg an optional argument for the callback above, usually a pointer
    to the Text Display.
 
- \todo  "extendRangeForStyleMods" does not exist (might be a hangover
-         from the port from nedit). Find the correct function.
  \see Fl_Text_Display::style_buffer()
  */
 void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
@@ -1235,8 +1233,6 @@ int Fl_Text_Display::wrapped_row(int row) const {
  (scroll_() counts them too) and/or to count from the most efficient
  starting point, but the efficiency of this routine is not as important to
  the overall performance of the text display.
-
- \todo Unicode?
  */
 void Fl_Text_Display::display_insert() {
   int hOffset, topLine, X, Y;
@@ -1760,7 +1756,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   /* If the changes caused scrolling, re-paint everything and we're done. */
   if ( scrolled ) {
     textD->damage(FL_DAMAGE_EXPOSE);
-    if ( textD->mStyleBuffer )   /* See comments in extendRangeForStyleMods */
+    if ( textD->mStyleBuffer )   /* See comments in extend_range_for_styles() */
       textD->mStyleBuffer->primary_selection()->selected(0);
     return;
   }
@@ -1834,11 +1830,9 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
  numbering is turned on.  There is some performance cost to maintaining this
  line count, so normally absolute line numbers are not tracked if line
  numbering is off.  This routine allows callers to specify that they still
- want this line count maintained (for use via TextDPosToLineAndCol).
+ want this line count maintained (for use via Fl_Text_Display::position_to_linecol()).
  More specifically, this allows the line number reported in the statistics
  line to be calibrated in absolute lines, rather than post-wrapped lines.
-
- \todo  TextDPosToLineAndCol does not exist (nedit port?)
  */
 void Fl_Text_Display::maintain_absolute_top_line_number(int state) {
   mNeedAbsTopLineNum = state;
@@ -3733,7 +3727,7 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
 
   int retLines, retLineStart;
 
-  /* if we're not wrapping use more efficient BufEndOfLine */
+  /* if we're not wrapping use more efficient Fl_Text_Buffer::line_end() */
   if (!mContinuousWrap) {
     int le = buffer()->line_end(startPos);
     int ls = buffer()->next_char(le);
@@ -3760,8 +3754,8 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
  with all of the text display code which was originally written without
  continuous wrap mode and always expects to wrap at a newline character.
 
- Given the position of the end of the line, as returned by TextDEndOfLine
- or BufEndOfLine, this returns true if there is a line terminating
+ Given the position of the end of the line, as returned by Fl_Text_Display::line_end()
+ or Fl_Text_Buffer::line_end(), this returns true if there is a line terminating
  character, and false if there's not.  On the last character in the
  buffer, this function can't tell for certain whether a trailing space was
  used as a wrap point, and just guesses that it wasn't.  So if an exact
@@ -3769,8 +3763,6 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
 
  \param lineEndPos index of character where the line wraps
  \return 1 if a \\n character causes the line wrap
-
- \todo TextDEndOfLine and BufEndOfLine functions don't exist (nedit port?)
  */
 int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
   IS_UTF8_ALIGNED2(buffer(), lineEndPos)

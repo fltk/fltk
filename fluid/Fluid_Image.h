@@ -23,7 +23,10 @@
 
 #include <FL/Fl_Shared_Image.H>
 
+#include "code.h"
+
 class Fluid_Image {
+  bool is_animated_gif_;
   const char *name_;
   int refcount;
   Fl_Shared_Image *img;
@@ -31,9 +34,9 @@ class Fluid_Image {
 protected:
   Fluid_Image(const char *name); // no public constructor
   ~Fluid_Image(); // no public destructor
-  size_t write_static_binary(const char* fmt);
-  size_t write_static_text(const char* fmt);
-  void write_static_rgb(const char* idata_name);
+  size_t write_static_binary(Fd_Code_Writer& f, const char* fmt);
+  size_t write_static_text(Fd_Code_Writer& f, const char* fmt);
+  void write_static_rgb(Fd_Code_Writer& f, const char* idata_name);
 public:
   int written;
   static Fluid_Image* find(const char *);
@@ -41,11 +44,11 @@ public:
   void increment();
   void image(Fl_Widget *); // set the image of this widget
   void deimage(Fl_Widget *); // set the deimage of this widget
-  void write_static(int compressed);
-  void write_initializer(const char *type_name, const char *format, ...);
-  void write_code(int bind, const char *var, int inactive = 0);
-  void write_inline(int inactive = 0);
-  void write_file_error(const char *fmt);
+  void write_static(Fd_Code_Writer& f, int compressed);
+  void write_initializer(Fd_Code_Writer& f, const char *type_name, const char *format, ...);
+  void write_code(Fd_Code_Writer& f, int bind, const char *var, int inactive = 0);
+  void write_inline(Fd_Code_Writer& f, int inactive = 0);
+  void write_file_error(Fd_Code_Writer& f, const char *fmt);
   const char *name() const {return name_;}
 };
 
