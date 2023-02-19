@@ -164,8 +164,22 @@ The rest of this chapter describes what happens when the Wayland leg has been ch
 
 \section wayland-connection Opening a Wayland connection
 
-Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the Wayland connection
-calling \c wl_display_connect(NULL) which returns a <tt>struct wl_display</tt> object.
+Establishing a Wayland connection requires environment variable \c XDG_RUNTIME_DIR to be
+defined and to point to a directory containing a socket connected to a Wayland
+compositor. This is usually done by the login procedure of Wayland-friendly desktops.
+The name of the Wayland socket is determined as follows:
+- the client may call Fl::display(const char *display_name) before \c fl_open_display() runs
+or use the \c -display command line argument and transmit there the socket name;
+- environment variable \c WAYLAND_DISPLAY can be defined to the socket name;
+- otherwise, \c "wayland-0" is used.
+
+What socket is selected determines what compositor will be used by the client application.
+
+Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the connection to the
+Wayland socket identified above calling \c wl_display_connect(NULL) which returns a
+<tt>struct wl_display</tt> pointer or NULL in case of failure. Such NULL return is the hint
+that allows the FLTK display opening procedure of the Wayland/X11 hybrid to recognize when Wayland
+access is not possible and to fallback to X11.
 
 Then, function \c wl_registry_add_listener() associates a 2-member listener, whose 1st member,
 \c registry_handle_global(), will be called by Wayland a number of times to indicate each time a protocol
@@ -187,7 +201,8 @@ stored as member \c wl_compositor of the \c Fl_Wayland_Screen_Driver object.
 and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
 
 Finally, function \c wl_display_get_fd() is called to obtain the file descriptor of the Wayland socket
-and a call to Fl::add_fd() makes FLTK listen to this descriptor and associates function \c fd_callback()
+and a call to Fl::add_fd() makes FLTK listen to this descriptor and associates function
+\c wayland_socket_callback()
 from file \c Fl_Wayland_Screen_Driver.cxx with it. This function calls \c wl_display_dispatch() which
 asks the Wayland client library to process requests arrived in the socket. The \c wl_display_dispatch()
 call is repeated as long as data are available for reading.
