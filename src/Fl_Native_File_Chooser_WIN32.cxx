@@ -375,7 +375,7 @@ static void RestoreCWD(char *thecwd) {
 
 // SHOW FILE BROWSER
 int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
-  bool unixpath = IsUnixPath(_directory) | IsUnixPath(_preset_file);    // caller uses unix paths?
+  bool unixpath = IsUnixPath(_directory) || IsUnixPath(_preset_file);    // caller uses unix paths?
   ClearOFN();
   clear_pathnames();
   size_t fsize = FNFC_MAX_PATH;
