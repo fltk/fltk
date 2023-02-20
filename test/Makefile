@@ -30,7 +30,8 @@ CPPUNITTEST = \
 	unittest_viewport.cxx \
 	unittest_scrollbarsize.cxx \
 	unittest_schemes.cxx \
-	unittest_simple_terminal.cxx
+	unittest_simple_terminal.cxx \
+	unittest_core.cxx
 
 OBJUNITTEST = \
 	unittests.o \

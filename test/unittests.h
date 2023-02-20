@@ -20,6 +20,10 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 
+#include <stdarg.h>
+
+class Fl_Simple_Terminal;
+
 // WINDOW/WIDGET SIZES
 const int UT_MAINWIN_W  = 700;                                // main window w()
 const int UT_MAINWIN_H  = 400;                                // main window h()
@@ -50,7 +54,8 @@ enum {
   UT_TEST_VIEWPORT,
   UT_TEST_SCROLLBARSIZE,
   UT_TEST_SCHEMES,
-  UT_TEST_SIMPLE_TERMINAL
+  UT_TEST_SIMPLE_TERMINAL,
+  UT_TEST_CORE,
 };
 
 // This class helps to automatically register a new test with the unittest app.
@@ -73,6 +78,122 @@ private:
   static int num_tests_;
   static UnitTest* test_list_[];
 };
+
+typedef bool (*Ut_Test_Call)();
+
+class Ut_Test {
+  friend class Ut_Suite;
+  const char *name_;
+  Ut_Test_Call call_;
+  bool failed_;
+public:
+  Ut_Test(const char *suitename, const char *testname, Ut_Test_Call call);
+  bool run(const char *suite);
+  void print_failed(const char *suite);
+};
+
+class Ut_Suite {
+  static Ut_Suite **suit_list_;
+  static int suit_list_size_;
+  Ut_Test **test_list_;
+  int test_list_size_;
+  const char *name_;
+  Ut_Suite(const char *name);
+public:
+  void add(Ut_Test *test);
+  int size() { return test_list_size_; }
+  int run();
+  void print_failed();
+  static Ut_Suite *locate(const char *name);
+  static int run_all_tests();
+  static void printf(const char *format, ...);
+  static void log_bool(const char *file, int line, const char *cond, bool result, bool expected);
+  static void log_string(const char *file, int line, const char *cond, const char *result, const char *expected);
+  static void log_int(const char *file, int line, const char *cond, int result, const char *expected);
+  static void color(int);
+  static const char *red;
+  static const char *green;
+  static const char *normal;
+  static Fl_Simple_Terminal *tty;
+};
+
+
+#define UT_CONCAT_(prefix, suffix) prefix##suffix
+#define UT_CONCAT(prefix, suffix) UT_CONCAT_(prefix, suffix)
+
+#define TEST(SUITE, CASE) \
+  static bool UT_CONCAT(test_call_, __LINE__)(); \
+  Ut_Test UT_CONCAT(test__, __LINE__)(#SUITE, #CASE, UT_CONCAT(test_call_, __LINE__)); \
+  static bool UT_CONCAT(test_call_, __LINE__)()
+
+#define EXPECT_TRUE(COND) \
+  bool UT_CONCAT(cond, __LINE__) = COND; \
+  if (UT_CONCAT(cond, __LINE__) != true) { \
+    Ut_Suite::log_bool(__FILE__, __LINE__, #COND, UT_CONCAT(cond, __LINE__), true); \
+    return false; \
+  }
+
+#define EXPECT_STREQ(A, B) \
+  const char *UT_CONCAT(a, __LINE__) = A; \
+  const char *UT_CONCAT(b, __LINE__) = B; \
+  if (   (UT_CONCAT(a, __LINE__)==NULL && UT_CONCAT(b, __LINE__)!=NULL) \
+      || (UT_CONCAT(a, __LINE__)!=NULL && UT_CONCAT(b, __LINE__)==NULL) \
+      || (UT_CONCAT(b, __LINE__)!=NULL && strcmp(UT_CONCAT(a, __LINE__), UT_CONCAT(b, __LINE__))!=0) ) { \
+  Ut_Suite::log_string(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_EQ(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) != UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_NE(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) == UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_LT(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) >= UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_LE(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) > UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_GT(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) <= UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define EXPECT_GE(A, B) \
+  int UT_CONCAT(a, __LINE__) = A; \
+  int UT_CONCAT(b, __LINE__) = B; \
+  if (UT_CONCAT(a, __LINE__) < UT_CONCAT(b, __LINE__)) { \
+    Ut_Suite::log_int(__FILE__, __LINE__, #A, UT_CONCAT(a, __LINE__), #B); \
+    return false; \
+  }
+
+#define RUN_ALL_TESTS() \
+  Ut_Suite::run_all_tests()
+
 
 // The main window needs an additional drawing feature in order to support
 // the viewport alignment test.
