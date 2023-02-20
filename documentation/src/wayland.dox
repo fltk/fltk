@@ -164,8 +164,22 @@ The rest of this chapter describes what happens when the Wayland leg has been ch
 
 \section wayland-connection Opening a Wayland connection
 
-Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the Wayland connection
-calling \c wl_display_connect(NULL) which returns a <tt>struct wl_display</tt> object.
+Establishing a Wayland connection requires environment variable \c XDG_RUNTIME_DIR to be
+defined and to point to a directory containing a socket connected to a Wayland
+compositor. This is usually done by the login procedure of Wayland-friendly desktops.
+The name of the Wayland socket is determined as follows:
+- the client may call Fl::display(const char *display_name) before \c fl_open_display() runs
+or use the \c -display command line argument and transmit there the socket name;
+- environment variable \c WAYLAND_DISPLAY can be defined to the socket name;
+- otherwise, \c "wayland-0" is used.
+
+What socket is selected determines what compositor will be used by the client application.
+
+Function \c Fl_Wayland_Screen_Driver::open_display_platform() establishes the connection to the
+Wayland socket identified above calling \c wl_display_connect(NULL) which returns a
+<tt>struct wl_display</tt> pointer or NULL in case of failure. Such NULL return is the hint
+that allows the FLTK display opening procedure of the Wayland/X11 hybrid to recognize when Wayland
+access is not possible and to fallback to X11.
 
 Then, function \c wl_registry_add_listener() associates a 2-member listener, whose 1st member,
 \c registry_handle_global(), will be called by Wayland a number of times to indicate each time a protocol
@@ -187,7 +201,8 @@ stored as member \c wl_compositor of the \c Fl_Wayland_Screen_Driver object.
 and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
 
 Finally, function \c wl_display_get_fd() is called to obtain the file descriptor of the Wayland socket
-and a call to Fl::add_fd() makes FLTK listen to this descriptor and associates function \c fd_callback()
+and a call to Fl::add_fd() makes FLTK listen to this descriptor and associates function
+\c wayland_socket_callback()
 from file \c Fl_Wayland_Screen_Driver.cxx with it. This function calls \c wl_display_dispatch() which
 asks the Wayland client library to process requests arrived in the socket. The \c wl_display_dispatch()
 call is repeated as long as data are available for reading.
@@ -521,10 +536,9 @@ Finally, function do_set_cursor() of file \c Fl_Wayland_Screen_Driver.cxx makes 
 the current \c wl_cursor object to draw its shape on screen. That's done with a call to
 \c wl_pointer_set_cursor() and a few other functions.
 
-Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
-is used to create a custom cursor shape. This operation uses a non-public type,
-<tt>struct cursor_image</tt>, defined for FLTK in file \c Fl_Wayland_Window_Driver.cxx as copied from
-file \c wayland-cursor.c of the Wayland project source code:
+<h3>Custom cursor shapes</h3>
+To support custom cursors, FLTK presently uses a <u>non-public type</u>,
+<tt>struct cursor_image</tt>, defined in file \c Fl_Wayland_Window_Driver.cxx as follows:
 \code
 struct cursor_image {
   struct wl_cursor_image image;
@@ -533,12 +547,17 @@ struct cursor_image {
   int offset;
 };
 \endcode
-This definition shows that a pointer to a \c cursor_image object can also be viewed as a pointer to the
+This definition has been copied to the FLTK source code from file \c wayland-cursor.c of the
+Wayland project source code because it's not accessible via Wayland header files.
+It shows that a pointer to a \c cursor_image object can also be viewed as a pointer to the
 embedded <tt>struct wl_cursor_image</tt> object, this one being part of the public Wayland API.
 It also shows that a <tt>struct cursor_image</tt> object has an associated
-<tt>struct wl_buffer</tt> object used to contain the cursor's graphics. Function \c set_cursor()
-creates a \c cursor_image object, allocates the corresponding \c wl_buffer by a call to
-\c create_shm_buffer() and draws into that buffer the cursor's shape using regular FLTK means.
+<tt>struct wl_buffer</tt> object used to contain the cursor's graphics.
+
+Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
+gives FLTK support of custom cursor shapes. It creates a \c cursor_image object, allocates the
+corresponding \c wl_buffer by a call to \c Fl_Wayland_Graphics_Driver::create_shm_buffer() and draws
+the cursor shape into that buffer using the offscreen-drawing method of FLTK.
 
 The public type <tt>struct wl_cursor</tt> is essentially an array of \c wl_cursor_image objects
 and a name:
@@ -549,16 +568,15 @@ struct wl_cursor {
   char *name;
 };
 \endcode
-Function \c set_cursor() also creates a <tt>struct wl_cursor</tt> object containing a single
-\c wl_cursor_image, which is in fact the \c cursor_image.
+Function \c set_cursor(const Fl_RGB_Image *rgb, …) also creates a <tt>struct wl_cursor</tt> object
+containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
 A pointer to this <tt>struct wl_cursor</tt> object is stored in member \c custom_cursor of the
 window's \ref wld_window. Finally, function \c do_set_cursor() makes the system pointer use
-the custom \c wl_cursor to draw its shape. That is how the custom cursor shape is constructed and used.
+the custom \c wl_cursor to draw its shape.
 
-Member function
-\c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor shape. This
-occurs when a window associated to a custom cursor is un-mapped and when such a window gets
-associated to a standard cursor or to a new custom cursor.
+Member function \c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor
+shape. This occurs when a window associated to a custom cursor is un-mapped and when such a window
+gets associated to a standard cursor or to a new custom cursor.
 
 
 
