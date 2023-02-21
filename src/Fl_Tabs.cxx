@@ -243,9 +243,9 @@ void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
   int i, fv=-1, lv=nc; // first and last visible tab
-  if (nc==0) return;
+  if (nc <= 0) return;
 
-  // count visibel children
+  // count visible children
   for (i = 0; i < nc; i++) {
     if (tab_pos[i]+tab_offset < 0) fv = i;
     if (tab_pos[i]+tab_width[i]+tab_offset <= w()-H) lv = i;
