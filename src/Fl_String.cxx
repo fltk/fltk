@@ -65,7 +65,7 @@ void Fl_String::grow_(int n) {
   }
   // allocate now
   char *new_buffer = (char*)::malloc(alloc_size_);
-  if (buffer_) {
+  if (buffer_ && (size_ > 0)) {
     memcpy(new_buffer, buffer_, size_);
     ::free(buffer_);
   }

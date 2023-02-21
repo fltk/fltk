@@ -389,7 +389,7 @@ const char* ExternalCodeEditor::tmp_filename() {
   static char path[512];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext  = g_project.code_file_name;    // e.g. ".cxx"
+  const char *ext  = g_project.code_file_name.c_str();    // e.g. ".cxx"
   _snprintf(path, sizeof(path), "%s\\%p%s", tmpdir, (void*)this, ext);
   path[sizeof(path)-1] = 0;
   return path;
