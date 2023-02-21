@@ -69,7 +69,8 @@ void Fl_String::grow_(int n) {
     memcpy(new_buffer, buffer_, size_);
     ::free(buffer_);
   }
-  new_buffer[size_] = 0; // trailing NUL
+  if (size_ >= 0)
+    new_buffer[size_] = 0; // trailing NUL
   buffer_ = new_buffer;
   capacity_ = alloc_size_-1;  // trailing NUL
 }
