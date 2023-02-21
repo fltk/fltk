@@ -17,137 +17,294 @@
 #include <FL/Fl_String.H>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+
 
 /** \file src/Fl_String.cxx
-  Basic Fl_String class for FLTK.
-*/
+ Basic Fl_String class for FLTK.
+ */
 
-/** Constructs an empty string */
-Fl_String::Fl_String() {
-  init();
-}
 
-/** Constructor from a C-style string */
-Fl_String::Fl_String(const char *str) {
-  init();
-  value(str);
-}
+/*
+ If value_ is NULL, c_str() and buffer() will point here.
+ */
+const char Fl_String::NUL = 0;
 
-/** Constructor from a buffer of \c size bytes */
-Fl_String::Fl_String(const char *str, int size) {
-  init();
-  value(str, size);
-}
+/**
+ Indicate a maximum value or error.
+ This value is generally used as end of string indicator or as the error
+ indicator by the functions that return a string index.
+ */
+const int Fl_String::npos = INT_MAX;
 
-void Fl_String::init() {
+/**
+ Initialise the class instance.
+ */
+void Fl_String::init_() {
+  buffer_ = NULL;
   size_ = 0;
-  value_ = 0;
   capacity_ = 0;
 }
 
-/** copy constructor */
-Fl_String::Fl_String(const Fl_String &in) {
-  init();
-  value(in.value(), in.size());
-}
-
-/** copy assignment operator */
-Fl_String& Fl_String::operator=(const Fl_String &in) {
-  if (this == &in)
-    return *this;
-  value(in.value(), in.size());
-  // debug("copy assigned");
-  return *this;
-}
-
-/** assignment operator for 'const char *' */
-Fl_String& Fl_String::operator=(const char *in) {
-  value(in);
-  // debug("*STRING* assigned");
-  return *this;
-}
-
-/** Destructor */
-Fl_String::~Fl_String() {
-  delete[] value_;
-}
-
-/** Grow the buffer size to at least size+1 bytes.
- By default, this call destroys the contents of the current buffer.
- \param size in bytes
- \param preserve_text copy existing text into the new buffer
+/**
+ Grow the buffer to a capacity of at least n bytes.
  */
-void Fl_String::alloc_buf(int size, bool preserve_text) {
-  if (size < 0)
+void Fl_String::grow_(int n) {
+  if (n <= capacity_)
     return;
-  if (size > 0 && size <= capacity_)
-    return;
-
-  int new_size = (size + 1 + 15) & (~15); // round upwards
-  char *new_value = new char[new_size];
-  capacity_ = new_size - 1;
-
-  if (preserve_text) {
-    size_ = (int)strlen(value_);
-    // the new buffer always has a higher capacity than the old one
-    // make sure we copy the trailing NUL.
-    memcpy(new_value, value_, size_+1);
+  int alloc_size_ = n + 1; // trailling NUL
+  // round n up so we can grow in chunks
+  if (alloc_size_ <= 24) { // allocate at least 24 bytes
+    alloc_size_ = 24;
+  } else if (alloc_size_ < 1024) {
+    alloc_size_ = (alloc_size_+128) & ~127; // allocate in 128 byte chunks
   } else {
-    size_ = 0;
+    alloc_size_ = (alloc_size_+2048) & ~2047; // allocate in 2k chunks
   }
-  delete[] value_;
-  value_ = new_value;
-}
-
-/** Assigns the string value to a C-style string */
-void Fl_String::value(const char *str) {
-  value(str, str ? (int)strlen(str) : 0);
-}
-
-/** Returns the number of non-null bytes in the object */
-int Fl_String::slen() const {
-  if (!value_) return 0;
-  return (int)strlen(value_);
-}
-
-/** Assigns the string value to a buffer of \c len bytes */
-void Fl_String::value(const char *str, int len) {
-  if (str) {
-    alloc_buf(len);
-    size_ = len;
-    memcpy(value_, str, size_);
-    value_[size_] = '\0';
-  } else {            // str == NULL
-    size_ = 0;        // ignore len !
-    delete[] value_;  // free buffer
-    value_ = NULL;    // set null pointer (!)
-    capacity_ = 0;    // reset capacity
+  // allocate now
+  char *new_buffer = (char*)::malloc(alloc_size_);
+  if (buffer_) {
+    memcpy(new_buffer, buffer_, size_);
+    ::free(buffer_);
   }
+  new_buffer[size_] = 0; // trailing NUL
+  buffer_ = new_buffer;
+  capacity_ = alloc_size_-1;  // trailing NUL
 }
 
-/** Returns the minimum capacity of the object */
-int Fl_String::capacity() const {
-  return capacity_; // > 0 ? capacity_ - 1 : capacity_;
-}
-
-/** Set the minimum capacity to \c num_bytes plus one for a terminating NUL.
- The contents of the string buffer will be copied if needed.
- \param num_bytes minimum size of buffer
+/**
+ Shrink the buffer to n bytes, or size, if size > n.
  */
-void Fl_String::capacity(int num_bytes) {
-  alloc_buf(num_bytes, true);
+void Fl_String::shrink_(int n) {
+  if (n < size_)
+    n = size_;
+  if (n == capacity_)
+    return;
+  if (n == 0) {
+    if (buffer_)
+      ::free(buffer_);
+    buffer_ = NULL;
+  } else {
+    buffer_ = (char*)::realloc(buffer_, n+1); // NUL
+    buffer_[size_] = 0; // trailing NUL
+  }
+  capacity_ = n;
 }
 
+// ---- Assignment ----------------------------------------------------- MARK: -
 
-void Fl_String::release() {
-  delete[] value_;
-  value_ = 0;
-  size_ = 0;
-  capacity_ = 0;
+/**
+ Allocate an empty string.
+ */
+Fl_String::Fl_String() {
+  init_();
 }
 
-// =============================  DEBUG  =============================
+/**
+ Copy constructor.
+ */
+Fl_String::Fl_String(const Fl_String &str) {
+  init_();
+  assign(str);
+}
+
+/**
+ Constructor from a C-style string.
+ */
+Fl_String::Fl_String(const char *cstr) {
+  init_();
+  assign(cstr);
+}
+
+/**
+ Constructor from a buffer of size bytes.
+ */
+Fl_String::Fl_String(const char *str, int size) {
+  init_();
+  assign(str, size);
+}
+
+/**
+ Destructor.
+ */
+Fl_String::~Fl_String() {
+  if (buffer_)
+    ::free(buffer_);
+}
+
+/**
+ Copy assignment operator
+ */
+Fl_String &Fl_String::operator=(const Fl_String &str) {
+  return assign(str);
+}
+
+/**
+ Assign a C-style string.
+ */
+Fl_String &Fl_String::operator=(const char *cstr) {
+  return assign(cstr);
+}
+
+/**
+ Copy another string.
+ */
+Fl_String &Fl_String::assign(const Fl_String &str) {
+  if (&str == this) return *this;
+  return assign(str.data(), str.size());
+}
+
+/**
+ Assign a C-style string.
+ */
+Fl_String &Fl_String::assign(const char *cstr) {
+  if (cstr && *cstr) {
+    int len = (int)::strlen(cstr);
+    return assign(cstr, len);
+  } else {
+    resize(0);
+  }
+  return *this;
+}
+
+/**
+ Assign a buffer of size bytes.
+ */
+Fl_String &Fl_String::assign(const char *str, int size) {
+  if (size > 0) {
+    grow_(size);
+    memcpy(buffer_, str, size);
+    buffer_[size] = 0;
+    size_ = size;
+  } else {
+    resize(0);
+  }
+  return *this;
+}
+
+// ---- Element Access ------------------------------------------------- MARK: -
+
+/**
+ Returns a reference to the character at specified location.
+ */
+char Fl_String::operator[](int n) const {
+  if (buffer_)
+    return buffer_[n];
+  else
+    return 0;
+}
+
+/**
+ Returns a reference to the character at specified location.
+ */
+char &Fl_String::operator[](int n) {
+  if (!buffer_)
+    reserve(1);
+  return buffer_[n];
+}
+
+/**
+ Return a pointer to the NUL terminated buffer.
+ */
+const char *Fl_String::data() const {
+  if (buffer_)
+    return buffer_;
+  else
+    return &NUL;
+}
+
+/**
+ Return a pointer to the writable NUL terminated buffer.
+ */
+char *Fl_String::data() {
+  if (!buffer_)
+    reserve(1);
+  return buffer_;
+}
+
+/**
+ Return a pointer to the NUL terminated buffer.
+ \note same as Fl_String::data()
+ */
+const char *Fl_String::c_str() const {
+  return data();
+}
+
+// ---- Capacity ------------------------------------------------------- MARK: -
+
+/**
+ Checks if the string is empty.
+ */
+bool Fl_String::empty() const {
+  return (size_ == 0);
+}
+
+/**
+ Returns the number of bytes in the string.
+ */
+int Fl_String::size() const {
+  return size_;
+}
+
+/**
+ Reserve n bytes for storage.
+ If n is less or equal than size, the capacity is set to size.
+ */
+void Fl_String::reserve(int n) {
+  grow_(n);
+}
+
+/**
+ Return the number of chars that are allocated for storage.
+ */
+int Fl_String::capacity() const {
+  return capacity_;
+}
+
+/**
+ Shrink the capacity to fit the current size.
+ */
+void Fl_String::shrink_to_fit() {
+  shrink_(size_);
+}
+
+// ---- Operations ----------------------------------------------------- MARK: -
+
+/**
+ Set an ampty string.
+ */
+void Fl_String::clear() {
+  resize(0);
+}
+
+/**
+ Resizes the string to contain n characters.
+ If the current size is less than n, the space is filled with NUL.
+ */
+void Fl_String::resize(int n) {
+  if (n == size_)
+    return;
+  if (n < size_) {
+    size_ = n;
+    if (buffer_) buffer_[size_] = 0;
+  } else {
+    grow_(n);
+    if (buffer_) ::memset(buffer_+size_, 0, n-size_+1);
+  }
+  size_ = n;
+}
+
+// --- Non Standard ---------------------------------------------------- MARK: -
+
+/**
+ Returns the number bytes until the first NUL byte.
+ */
+int Fl_String::strlen() const {
+  if (!buffer_) return 0;
+  return (int)::strlen(buffer_);
+}
 
 /**
   Write some details about the string to stdout.
@@ -163,7 +320,7 @@ void Fl_String::release() {
 void Fl_String::debug(const char *info) const {
   if (info) {
     printf("Fl_String '%-20s': %p, value = %p (%d/%d):\n%s\n",
-           info, this, value_, size_, capacity_, value_ ? value_ : "<NULL>");
+           info, this, buffer_, size_, capacity_, buffer_ ? buffer_ : "<NULL>");
   }
 }
 
@@ -191,7 +348,7 @@ void Fl_String::hexdump(const char *info) const {
     } else if ((i & 3) == 0) {        // separator after 4 bytes
       printf(" ");
     }
-    printf(" %02x", (unsigned char)value_[i]);
+    printf(" %02x", (unsigned char)buffer_[i]);
   }
   printf("\n");
 }

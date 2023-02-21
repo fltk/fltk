@@ -42,8 +42,8 @@ void rename_button(Fl_Widget *o, void *v) {
     fl_message_icon_label("€");
     input = fl_password_str(20, "Enter password (max. 20 characters):", o->label());
   }
-  if (input.value()) {
-    o->copy_label(input.value());
+  if (!input.empty()) {
+    o->copy_label(input.c_str());
     o->redraw();
   }
 }

@@ -381,7 +381,7 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
     switch (g_project.i18n_type) {
       case 1:
         // we will call i18n when the menu is instantiated for the first time
-        f.write_c("%s(", g_project.i18n_static_function.value());
+        f.write_c("%s(", g_project.i18n_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -482,11 +482,11 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
       } else if (g_project.i18n_type==1) {
         f.write_c("%sml->labelb = %s(o->label());\n",
-                f.indent(), g_project.i18n_function.value());
+                f.indent(), g_project.i18n_function.c_str());
       } else if (g_project.i18n_type==2) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
-                g_project.i18n_set.value(), msgnum());
+                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
+                g_project.i18n_set.c_str(), msgnum());
       }
       f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
@@ -504,11 +504,11 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
       if (g_project.i18n_type==1) {
         f.write_c("%so->label(%s(o->label()));\n",
-                f.indent(), g_project.i18n_function.value());
+                f.indent(), g_project.i18n_function.c_str());
       } else if (g_project.i18n_type==2) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.value() : "_catalog",
-                g_project.i18n_set.value(), msgnum());
+                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
+                g_project.i18n_set.c_str(), msgnum());
       }
     }
   }

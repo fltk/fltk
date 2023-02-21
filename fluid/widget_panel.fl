@@ -66,7 +66,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback image_cb
+            callback image_cb selected
             tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
@@ -471,7 +471,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
         } {}
         Fl_Button {} {
           callback shortcut_in_cb
-          comment {This is a special button that grabs keystrokes directly} selected
+          comment {This is a special button that grabs keystrokes directly}
           tooltip {The shortcut key for the widget.
 Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 12 labelsize 11 when 1
           code0 {\#include <FL/Fl_Shortcut_Button.H>}

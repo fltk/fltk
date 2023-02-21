@@ -22,34 +22,38 @@
 
 TEST(Fl_String, Assignment) {
   Fl_String null;
-  EXPECT_STREQ(null.value(), NULL);
+  EXPECT_STREQ(null.c_str(), "");
+  EXPECT_TRUE(null.empty());
 
   Fl_String null2(NULL);
-  EXPECT_STREQ(null2.value(), NULL);
+  EXPECT_STREQ(null2.c_str(), "");
+  EXPECT_TRUE(null2.empty());
 
   Fl_String empty("");
-  EXPECT_STREQ(empty.value(), "");
+  EXPECT_STREQ(empty.c_str(), "");
+  EXPECT_TRUE(empty.empty());
 
   Fl_String text("hello");
-  EXPECT_STREQ(text.value(), "hello");
+  EXPECT_STREQ(text.c_str(), "hello");
   EXPECT_EQ(text.size(), 5);
-  EXPECT_EQ(text.slen(), 5);
+  EXPECT_EQ(text.strlen(), 5);
   EXPECT_GE(text.capacity(), 5);
+  EXPECT_TRUE(!text.empty());
 
   Fl_String text2("abcdef", 3);
-  EXPECT_STREQ(text2.value(), "abc");
+  EXPECT_STREQ(text2.c_str(), "abc");
 
   Fl_String text3("abc\0def", 7);
   EXPECT_EQ(text3.size(), 7);
 
   Fl_String text4(text);
-  EXPECT_STREQ(text4.value(), "hello");
+  EXPECT_STREQ(text4.c_str(), "hello");
 
   Fl_String text5 = text;
-  EXPECT_STREQ(text5.value(), "hello");
+  EXPECT_STREQ(text5.c_str(), "hello");
 
   Fl_String text6 = "yoohoo";
-  EXPECT_STREQ(text6.value(), "yoohoo");
+  EXPECT_STREQ(text6.c_str(), "yoohoo");
 
   return true;
 }
@@ -57,8 +61,8 @@ TEST(Fl_String, Assignment) {
 TEST(Fl_String, Access) {
 
   Fl_String hello = "hello";
-  EXPECT_STREQ(hello.value(), "hello");
-  EXPECT_STREQ(hello.buffer(), "hello");
+  EXPECT_STREQ(hello.c_str(), "hello");
+  EXPECT_STREQ(hello.data(), "hello");
 
   return true;
 }
@@ -69,16 +73,16 @@ TEST(Fl_String, Capacity) {
   EXPECT_EQ(hello.capacity(), 0);
 
   hello = "hi";
-  EXPECT_STREQ(hello.value(), "hi");
+  EXPECT_STREQ(hello.c_str(), "hi");
   EXPECT_GE(hello.capacity(), 2);
 
   hello = "the quick brown fox jumps over the lazy dog";
-  EXPECT_STREQ(hello.value(), "the quick brown fox jumps over the lazy dog");
+  EXPECT_STREQ(hello.c_str(), "the quick brown fox jumps over the lazy dog");
   EXPECT_GE(hello.capacity(), 41);
 
   int c = hello.capacity();
-  hello.capacity(c+100);
-  EXPECT_STREQ(hello.value(), "the quick brown fox jumps over the lazy dog");
+  hello.reserve(c+100);
+  EXPECT_STREQ(hello.c_str(), "the quick brown fox jumps over the lazy dog");
   EXPECT_GE(hello.capacity(), 141);
 
   return true;
@@ -94,13 +98,16 @@ TEST(Fl_Int_Vector, Capacitiy) {
 //
 class Ut_Core_Test : public Fl_Group {
   Fl_Simple_Terminal *tty;
-  bool suite_ran_ = false;
+  bool suite_ran_;
 public:
   static Fl_Widget *create() {
     return new Ut_Core_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
   Ut_Core_Test(int x, int y, int w, int h)
-  : Fl_Group(x, y, w, h) {
+  : Fl_Group(x, y, w, h),
+    tty(NULL),
+    suite_ran_(false)
+  {
     tty = new Fl_Simple_Terminal(x+4, y+4, w-8, h-8, "Unittest Log");
     tty->ansi(true);
     end();

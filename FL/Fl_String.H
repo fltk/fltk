@@ -66,49 +66,106 @@
 */
 
 class Fl_String {
+
 private:
+  /*
+   FLTK does no small string optimisation.
+   If the string is empty and cpacity is not set, value_ will be NULL.
+   */
+  char *buffer_;
   int size_;
-  char *value_;
   int capacity_;
 
+  void init_();
+  void grow_(int n);
+  void shrink_(int n);
+
+protected:
+  static const char NUL;
+
 public:
+  static const int npos;
+
+  // ---- Assignment
   Fl_String();
-  Fl_String(const char *str);
+  Fl_String(const Fl_String &str);
+  Fl_String(const char *cstr);
   Fl_String(const char *str, int size);
+  ~Fl_String();
+  Fl_String& operator=(const Fl_String &str);
+  Fl_String& operator=(const char *cstr);
+  Fl_String &assign(const Fl_String &str);
+  Fl_String &assign(const char *cstr);
+  Fl_String &assign(const char *str, int size);
 
-  // copy constructor
-  Fl_String(const Fl_String &in);
+  // ---- Element Access
+  char operator[](int n) const;
+  char &operator[](int n);
+  const char *data() const;
+  char *data();
+  const char *c_str() const;
 
-  // copy assignment operator
-  Fl_String& operator=(const Fl_String &in);
-
-  // assignment operator for 'const char *'
-  Fl_String& operator=(const char *in);
-
-  virtual ~Fl_String();
-
-private:
-  void init();
-  void alloc_buf(int size, bool preserve_text=false);
-  void release();
-
-public:
-  void value(const char *str);
-  void value(const char *str, int len);
-  /** Returns a pointer to the first character stored in the object */
-  const char *value() const { return value_; }
-  /** Returns a pointer to the first byte stored in the object */
-  char *buffer() { return value_; }
-  /** Returns the number of bytes currently stored in the object */
-  int size() const { return size_; }
-
-  int slen() const;
+  // ---- Capacity
+  bool empty() const;
+  int size() const;
+  void reserve(int n);
   int capacity() const;
-  void capacity(int num_bytes);
+  void shrink_to_fit();
 
-  void debug(const char *info = 0) const;     // output string info
-  void hexdump(const char *info = 0) const;   // output string info + hexdump
+  // --- Operations
+  void clear();
+  void resize(int n);
 
+  // --- Non Standard
+  int strlen() const;
+  void debug(const char *info = 0) const;
+  void hexdump(const char *info = 0) const;
 }; // class Fl_String
+
+
+/*
+ Reminder: these parts of the std::string interface should be implemented:
+
+ https://en.cppreference.com/w/cpp/string/basic_string/basic_string
+
+ ✔︎ Fl_String::npos = maximum size value
+ ✔︎ Fl_String() = constructs an empty string
+ ✔︎ Fl_String(const Fl_String other) = copy
+   Fl_String(const Fl_String other, int pos) = copy, starting at pos (clips to other)
+   Fl_String(const Fl_String other, int pos, int n) = copy n bytes, starting at pos (clips to other)
+ ✔︎ Fl_String(const char*, int n) = copy n characters, can contain NUL
+ ✔︎ Fl_String(const char*) = copy up to NUL
+ ? Fl_String(int cap) = create an empty string with that capacity (not C++ std)
+
+ ✔︎ operator=(const Fl_String) = copy
+ ✔︎ operator=(const char *) = copy
+
+   char at(int pos) const = get character at pos, out of range returns 0
+ ✔︎ char [](int pos) const = get character at, no bounds check
+ ✔︎ char &[](int pos) = get reference to character at, no bounds check
+ ✔︎ char *data() = return a pointer to the buffer that is always NUL terminated even if empty()
+ ✔︎ const char *c_str() = return a pointer to the buffer that is always NUL terminated even if empty()
+
+ ✔︎ bool empty() = return true if the string has no characters
+ ✔︎ size_type size() const = number of bytes in buffer including in-sequnce NUL, but not trailing NUL
+ ? size_type strlen() const = strlen(c_str()) (not C++ std)
+ ✔︎ void reserve(int n) = make buffer at least n bytes plus possible trailing NUL
+ ✔︎ size_t capacity() = room in buffer plus possible trailing NUL
+ ✔︎ void shrink_to_fit() = make buffer as big as content
+
+ ✔︎ void clear()
+   String insert(...) - many variants
+   String erase(int pos, int cnt)
+   void push_back(char)
+   char pop_back() = returns char, not C++ std
+   append(...) - many variants like insert
+   +=
+   replace(...) - many variants
+   Fl_String substr(int pos, int n)
+ ✔︎ resize(int n)
+
+   operator+
+   operator==
+ */
 
 #endif // _FL_Fl_String_H_
