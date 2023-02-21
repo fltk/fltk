@@ -190,8 +190,14 @@ Fl_Glut_Window::Fl_Glut_Window(int X,int Y,int W,int H, const char *t) :
 
 static int initargc;
 static char **initargv;
+static char glut_starttime_set = 0;
+static Fl_Timestamp glut_starttime;
 
 void glutInit(int *argc, char **argv) {
+  if (!glut_starttime_set) {
+    glut_starttime = Fl::now();
+    glut_starttime_set = 1;
+  }
   initargc = *argc;
   initargv = new char*[*argc+1];
   int i,j;
@@ -405,7 +411,12 @@ int glutGet(GLenum type) {
   case GLUT_INIT_WINDOW_WIDTH: return initw;
   case GLUT_INIT_WINDOW_HEIGHT: return inith;
   case GLUT_INIT_DISPLAY_MODE: return glut_mode;
-//case GLUT_ELAPSED_TIME:
+  case GLUT_ELAPSED_TIME:
+      if (!glut_starttime_set) {
+        glut_starttime = Fl::now();
+        glut_starttime_set = 1;
+      }
+      return (int)(Fl::seconds_since(glut_starttime)*1000.0); // milliseconds
   case GLUT_WINDOW_BUFFER_SIZE:
     if (glutGet(GLUT_WINDOW_RGBA))
       return glutGet(GLUT_WINDOW_RED_SIZE)+

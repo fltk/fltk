@@ -433,7 +433,7 @@ public:
 class FLDataObject : public IDataObject
 {
   DWORD m_cRefCount;
-  FLEnum *m_EnumF;
+  //FLEnum *m_EnumF;
 public:
   FLDataObject() { m_cRefCount = 1; }// m_EnumF = new FLEnum();}
   virtual ~FLDataObject() { }
