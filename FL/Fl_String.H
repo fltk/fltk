@@ -21,46 +21,31 @@
   Basic Fl_String class for FLTK.
 */
 
+// See: https://en.cppreference.com/w/cpp/string/basic_string/basic_string
+
 /**
   Fl_String is the basic string class for FLTK.
 
   In this version Fl_String can be used to store strings, copy strings,
-  and move strings. There are no string manipulation methods yet.
+  move strings, and do basic string manipulation. Fl_String implements a
+  subset of std::string with a couple of extensions. Std::string should be
+  a drop-in if we ever decide to allow templates and the std library.
 
-  Fl_String can hold the value of an Fl_Input widget including \e nul bytes
-  if the constructor Fl_String(const char *str, int size) is used.
+  Fl_String always maintains a trailing \e nul byte, but can also contain
+  \e nul bytes insde the string if the constructor
+  Fl_String(const char *str, int size) is used.
 
   Assignment and copy constructors \b copy the string value such that the
   source string can be freed immediately after the assignment.
 
-  The string value() can be an empty string \c "" or \c NULL.
-
-  If value() is not \c NULL it is guaranteed that the string is terminated by
-  a trailing \c nul byte even if the string contains embedded \c nul bytes.
+  c_str() and data() can be an empty string \c "", but never be \c NULL.
 
   The method size() returns the full string size, whether the string contains
-  embedded \c nul bytes or not. The special method slen() returns 0 if value()
-  is \c NULL, otherwise the same as \c strlen() would do.
+  embedded \c nul bytes or not. The special method Fl_String::strlen() returns
+  the length of the string up to the first \e nul.
 
-  Examples:
-  \code
-  Fl_String np(NULL);
-  printf("  np    : value = %p, size = %d, slen = %d\n", np.value(), np.size(), np.slen());
-  Fl_String empty("");
-  printf("  empty : value = %p, size = %d\n", empty.value(), empty.size());
-  Fl_String fltk("FLTK");
-  Fl_Input i(0, 0, 0, 0);
-  i.value("abc\0def", 7);
-  Fl_String str(i.value(), i.size());
-  printf("  str   : strlen = %lu, size = %d, capacity = %d\n",
-         strlen(str.value()), str.size(), str.capacity());
-
-  Output:
-
-  np    : value = (nil), size = 0, slen = 0
-  empty : value = 0x562840befbf0, size = 0
-  str   : strlen = 3, size = 7, capacity = 15
-  \endcode
+  All methods of Fl_String work on a byte level. They are not UTF-8 aware,
+  but may hold and manipulate UTF-8 strings if done with care.
 
   \since 1.4.0
 */
@@ -79,6 +64,7 @@ private:
   void init_();
   void grow_(int n);
   void shrink_(int n);
+  Fl_String &replace_(int at, int n_del, const char *src, int n_ins);
 
 protected:
   static const char NUL;
@@ -99,6 +85,7 @@ public:
   Fl_String &assign(const char *str, int size);
 
   // ---- Element Access
+  char at(int pos) const;
   char operator[](int n) const;
   char &operator[](int n);
   const char *data() const;
@@ -114,6 +101,18 @@ public:
 
   // --- Operations
   void clear();
+  Fl_String &insert(int at, const char *src, int n_ins=npos);
+  Fl_String &insert(int at, const Fl_String &src);
+  Fl_String &erase(int at, int n_del);
+  void push_back(char c);
+  void pop_back();
+  Fl_String &append(const char *src, int n_ins=npos);
+  Fl_String &append(const Fl_String &src);
+  Fl_String &operator+=(const char *src);
+  Fl_String &operator+=(const Fl_String &src);
+  Fl_String &replace(int at, int n_del, const char *src, int n_ins=npos);
+  Fl_String &replace(int at, int n_del, const Fl_String &src);
+  Fl_String substr(int pos=0, int n=npos) const;
   void resize(int n);
 
   // --- Non Standard
@@ -122,50 +121,9 @@ public:
   void hexdump(const char *info = 0) const;
 }; // class Fl_String
 
-
-/*
- Reminder: these parts of the std::string interface should be implemented:
-
- https://en.cppreference.com/w/cpp/string/basic_string/basic_string
-
- ✔︎ Fl_String::npos = maximum size value
- ✔︎ Fl_String() = constructs an empty string
- ✔︎ Fl_String(const Fl_String other) = copy
-   Fl_String(const Fl_String other, int pos) = copy, starting at pos (clips to other)
-   Fl_String(const Fl_String other, int pos, int n) = copy n bytes, starting at pos (clips to other)
- ✔︎ Fl_String(const char*, int n) = copy n characters, can contain NUL
- ✔︎ Fl_String(const char*) = copy up to NUL
- ? Fl_String(int cap) = create an empty string with that capacity (not C++ std)
-
- ✔︎ operator=(const Fl_String) = copy
- ✔︎ operator=(const char *) = copy
-
-   char at(int pos) const = get character at pos, out of range returns 0
- ✔︎ char [](int pos) const = get character at, no bounds check
- ✔︎ char &[](int pos) = get reference to character at, no bounds check
- ✔︎ char *data() = return a pointer to the buffer that is always NUL terminated even if empty()
- ✔︎ const char *c_str() = return a pointer to the buffer that is always NUL terminated even if empty()
-
- ✔︎ bool empty() = return true if the string has no characters
- ✔︎ size_type size() const = number of bytes in buffer including in-sequnce NUL, but not trailing NUL
- ? size_type strlen() const = strlen(c_str()) (not C++ std)
- ✔︎ void reserve(int n) = make buffer at least n bytes plus possible trailing NUL
- ✔︎ size_t capacity() = room in buffer plus possible trailing NUL
- ✔︎ void shrink_to_fit() = make buffer as big as content
-
- ✔︎ void clear()
-   String insert(...) - many variants
-   String erase(int pos, int cnt)
-   void push_back(char)
-   char pop_back() = returns char, not C++ std
-   append(...) - many variants like insert
-   +=
-   replace(...) - many variants
-   Fl_String substr(int pos, int n)
- ✔︎ resize(int n)
-
-   operator+
-   operator==
- */
+// ---- Non-member functions
+extern Fl_String operator+(const Fl_String &lhs, const Fl_String &rhs);
+extern Fl_String operator+(const Fl_String &lhs, const char *rhs);
+extern bool operator==(const Fl_String &lhs, const Fl_String &rhs);
 
 #endif // _FL_Fl_String_H_

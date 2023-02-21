@@ -94,6 +94,27 @@ void Fl_String::shrink_(int n) {
   capacity_ = n;
 }
 
+/**
+ Remove \p n_del bytes at \p at and insert \p n_ins bytes from \p src.
+ */
+Fl_String &Fl_String::replace_(int at, int n_del, const char *ins, int n_ins) {
+  if (at > size_) at = size_;
+  if (n_del > size_ - at) n_del = size_ - at;
+  int diff = n_ins - n_del, new_size = size_ + diff;
+  if (diff) {
+    int src = at + n_del, dst = at + n_ins, n = size_ - src;
+    grow_(new_size);
+    if (n > 0) ::memmove(buffer_+dst, buffer_+src, n);
+  }
+  if (n_ins > 0) {
+    ::memmove(buffer_+at, ins, n_ins);
+  }
+  size_ = new_size;;
+  buffer_[size_] = 0;
+  return *this;
+}
+
+
 // ---- Assignment ----------------------------------------------------- MARK: -
 
 /**
@@ -188,7 +209,16 @@ Fl_String &Fl_String::assign(const char *str, int size) {
 // ---- Element Access ------------------------------------------------- MARK: -
 
 /**
- Returns a reference to the character at specified location.
+ Returns the character at specified bouds checked location.
+ */
+char Fl_String::at(int n) const {
+  if ((n < 0)||(n>=size_))
+    return 0;
+  return operator[](n);
+}
+
+/**
+ Returns the character at specified location.
  */
 char Fl_String::operator[](int n) const {
   if (buffer_)
@@ -281,6 +311,98 @@ void Fl_String::clear() {
 }
 
 /**
+ Insert a C-style string of buffer.
+ */
+Fl_String &Fl_String::insert(int at, const char *src, int n_ins) {
+  if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
+  return replace_(at, 0, src, n_ins);
+}
+
+/**
+ Insert another string.
+ */
+Fl_String &Fl_String::insert(int at, const Fl_String &src) {
+  return replace_(at, 0, src.buffer_, src.size_);
+}
+
+/**
+ Erase some bytes within a string.
+ */
+Fl_String &Fl_String::erase(int at, int n_del) {
+  return replace_(at, n_del, NULL, 0);
+}
+
+/**
+ Append a single character.
+ */
+void Fl_String::push_back(char c) {
+  replace_(size_, 0, &c, 1);
+}
+
+/**
+ Crop the last character.
+ */
+void Fl_String::pop_back() {
+  replace_(size_-1, 1, NULL, 0);
+}
+
+/**
+ Append a C-style string of buffer.
+ */
+Fl_String &Fl_String::append(const char *src, int n_ins) {
+  if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
+  return replace_(size_, 0, src, n_ins);
+}
+
+/**
+ Append another string.
+ */
+Fl_String &Fl_String::append(const Fl_String &src) {
+  return replace_(size_, 0, src.buffer_, src.size_);
+}
+
+/**
+ Append a C-style string of buffer.
+ */
+Fl_String &Fl_String::operator+=(const char *src) {
+  return append(src);
+}
+
+/**
+ Append another string.
+ */
+Fl_String &Fl_String::operator+=(const Fl_String &src) {
+  return replace_(size_, 0, src.buffer_, src.size_);
+}
+
+/**
+ Replace part of the string with a C-style string of buffer.
+ */
+Fl_String &Fl_String::replace(int at, int n_del, const char *src, int n_ins) {
+  if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
+  return replace_(at, n_del, src, n_ins);
+}
+
+/**
+ Replace part of the string with another string.
+ */
+Fl_String &Fl_String::replace(int at, int n_del, const Fl_String &src) {
+  return replace_(at, n_del, src.buffer_, src.size_);
+}
+
+/**
+ Return a sub string from a string.
+ */
+Fl_String Fl_String::substr(int pos, int n) const {
+  if (n > size_) n = size_;
+  int first = pos, last = pos + n;
+  if ((first < 0) || (first>size_) || (last<=first))
+    return Fl_String();
+  if (last > size_) last = size_;
+  return Fl_String(buffer_+first, last-first);
+}
+
+/**
  Resizes the string to contain n characters.
  If the current size is less than n, the space is filled with NUL.
  */
@@ -352,4 +474,34 @@ void Fl_String::hexdump(const char *info) const {
     printf(" %02x", (unsigned char)buffer_[i]);
   }
   printf("\n");
+}
+
+// ---- Non-member functions ------------------------------------------- MARK: -
+
+/**
+ Add two strings.
+ */
+Fl_String operator+(const Fl_String &lhs, const Fl_String &rhs) {
+  Fl_String ret = lhs;
+  return ret += rhs;
+}
+
+/**
+ Add two strings.
+ */
+Fl_String operator+(const Fl_String &lhs, const char *rhs) {
+  Fl_String ret = lhs;
+  return ret += rhs;
+}
+
+/**
+ Compare two strings.
+ */
+bool operator==(const Fl_String &lhs, const Fl_String &rhs) {
+  if (lhs.size() == rhs.size()) {
+    int sz = lhs.size();
+    if (sz == 0) return true;
+    if (memcmp(lhs.data(), rhs.data(), sz) == 0) return true;
+  }
+  return false;
 }
