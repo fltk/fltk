@@ -816,8 +816,12 @@ struct wld_window {
 
 \anchor fl_wld_buffer
 <h3>struct fl_wld_buffer</h3>
-Defined in \c Fl_Wayland_Graphics_Driver.H. One such record is
-created for each shown()'n or resized Fl_Window by \c Fl_Wayland_Graphics_Driver::create_shm_buffer().
+Defined in \c Fl_Wayland_Graphics_Driver.H. One such record is created when and by:
+- an Fl_Window is show()'n or resized, by \c Fl_Wayland_Graphics_Driver::create_shm_buffer();
+- an Fl_Image_Surface object is created, by the \c Fl_Wayland_Image_Surface_Driver c'tor;
+- a custom cursor shape is created or text is dragged, by
+\c Fl_Wayland_Graphics_Driver::create_shm_buffer().
+
 <pre>
 struct fl_wld_buffer {
   struct wl_buffer *wl_buffer; // the Wayland buffer
