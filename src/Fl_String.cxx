@@ -161,9 +161,9 @@ Fl_String::Fl_String(const char *cstr) {
 }
 
 /**
- Constructor from a buffer of size bytes.
- \param[in] str a buffer that may contain NUL character
- \paran[in] size number of bytes to copy
+ Constructor from data of \p size bytes.
+ \param[in] str   a block of data that may contain NUL character
+ \paran[in] size  number of bytes to copy
  */
 Fl_String::Fl_String(const char *str, int size) {
   init_();
@@ -222,8 +222,8 @@ Fl_String &Fl_String::assign(const char *cstr) {
 }
 
 /**
- Assign a buffer of size bytes.
- \param[in] str a buffer that may contain NUL character
+ Assign a data of \p size bytes.
+ \param[in] str a block of data that may contain NUL character
  \paran[in] size number of bytes to copy
  \return self
  */
@@ -276,8 +276,8 @@ char &Fl_String::operator[](int n) {
 }
 
 /**
- Return a pointer to the NUL terminated buffer.
- \return reference to non-mutable string buffer
+ Return a pointer to the NUL terminated string.
+ \return reference to non-mutable string
  */
 const char *Fl_String::data() const {
   if (buffer_)
@@ -287,8 +287,8 @@ const char *Fl_String::data() const {
 }
 
 /**
- Return a pointer to the writable NUL terminated buffer.
- \return reference to mutable string buffer
+ Return a pointer to the writable NUL terminated string.
+ \return reference to mutable string
  */
 char *Fl_String::data() {
   if (!buffer_)
@@ -297,8 +297,8 @@ char *Fl_String::data() {
 }
 
 /**
- Return a pointer to the NUL terminated buffer.
- \return reference to non-mutable string buffer
+ Return a pointer to the NUL terminated string.
+ \return reference to non-mutable string
  \note same as `const char *Fl_String::data() const`
  */
 const char *Fl_String::c_str() const {
@@ -334,7 +334,7 @@ void Fl_String::reserve(int n) {
 
 /**
  Return the number of chars that are allocated for storage.
- \return capacity of buffer, not counting trailling NUL
+ \return string capacity, not counting trailling NUL
  */
 int Fl_String::capacity() const {
   return capacity_;
@@ -357,7 +357,7 @@ void Fl_String::clear() {
 }
 
 /**
- Insert a C-style string of buffer.
+ Insert a C-style string or data.
  \param[in] at    insert at this index
  \param[in] src   copy bytes from here
  \param[in] n_ins optional number of bytes to copy - if not set, copy C-style string
@@ -404,7 +404,7 @@ void Fl_String::pop_back() {
 }
 
 /**
- Append a C-style string of buffer.
+ Append a C-style string or data.
  \param[in] src   copy bytes from here
  \param[in] n_ins optional number of bytes to copy - if not set, copy C-style string
  \return self
@@ -424,7 +424,7 @@ Fl_String &Fl_String::append(const Fl_String &src) {
 }
 
 /**
- Append a C-style string of buffer.
+ Append a C-style string or data.
  \param[in] src   copy C-style string from here
  \return self
  */
@@ -442,7 +442,7 @@ Fl_String &Fl_String::operator+=(const Fl_String &src) {
 }
 
 /**
- Replace part of the string with a C-style string of buffer.
+ Replace part of the string with a C-style string or data.
  \param[in] at    erase and insert at this index
  \param[in] n_del number of bytes to erase
  \param[in] src   copy bytes from here
