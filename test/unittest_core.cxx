@@ -179,7 +179,7 @@ TEST(Fl_String, Non-Member Functions) {
   EXPECT_STREQ(result.c_str(), "ac");
   result = empty + "x";
   EXPECT_STREQ(result.c_str(), "x");
-  EXPECT_TRUE(a != b);
+  EXPECT_TRUE(!(a == b));
   EXPECT_TRUE(a == a);
   EXPECT_TRUE(empty == empty);
   EXPECT_TRUE(a+b == "ab");
