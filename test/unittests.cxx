@@ -291,7 +291,6 @@ void Ut_Suite::print_epilog() {
   for (i=0; i<suite_list_size_; i++) {
     suite_list_[i]->print_failed();
   }
-  return num_failed_;
 }
 
 /** Static method to run all tests in all test suites.

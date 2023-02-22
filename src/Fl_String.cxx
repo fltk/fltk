@@ -50,6 +50,11 @@ void Fl_String::init_() {
 
 /**
  Grow the buffer to a capacity of at least n bytes.
+
+ This method will always grow the buffer size, or keep it as is, but never
+ shrink it. Use shrink_to_fit() shrinking the buffer as much as possible.
+
+ \param[in] n number of bytes needed, not counting the trailing NUL
  */
 void Fl_String::grow_(int n) {
   if (n <= capacity_)
@@ -77,6 +82,11 @@ void Fl_String::grow_(int n) {
 
 /**
  Shrink the buffer to n bytes, or size, if size > n.
+
+ Shrink the buffer as much as possible. If \p n is 0 and the string is empty,
+ the buffer will be released.
+
+ \param[in] n shrink buffer to n bytes, not counting the trailing NUL
  */
 void Fl_String::shrink_(int n) {
   if (n < size_)
@@ -96,6 +106,14 @@ void Fl_String::shrink_(int n) {
 
 /**
  Remove \p n_del bytes at \p at and insert \p n_ins bytes from \p src.
+
+ String will remain NUL terminated. Data in \p ins may contain NULs.
+
+ \param[in] at    remove and insert bytes at this index
+ \param[in] n_del number of bytes to remove
+ \param[in] ins   insert bytes from here, can be NULL if \p n_ins is also 0
+ \param[in] n_ins number of bytes to insert
+ \return self
  */
 Fl_String &Fl_String::replace_(int at, int n_del, const char *ins, int n_ins) {
   if (at > size_) at = size_;
@@ -126,6 +144,7 @@ Fl_String::Fl_String() {
 
 /**
  Copy constructor.
+ \param[in] str copy from another Fl_String
  */
 Fl_String::Fl_String(const Fl_String &str) {
   init_();
@@ -134,6 +153,7 @@ Fl_String::Fl_String(const Fl_String &str) {
 
 /**
  Constructor from a C-style string.
+ \param[in] cstr a NUL terminated C-style string
  */
 Fl_String::Fl_String(const char *cstr) {
   init_();
@@ -142,6 +162,8 @@ Fl_String::Fl_String(const char *cstr) {
 
 /**
  Constructor from a buffer of size bytes.
+ \param[in] str a buffer that may contain NUL character
+ \paran[in] size number of bytes to copy
  */
 Fl_String::Fl_String(const char *str, int size) {
   init_();
@@ -158,6 +180,8 @@ Fl_String::~Fl_String() {
 
 /**
  Copy assignment operator
+ \param[in] str copy from another Fl_String
+ \return self
  */
 Fl_String &Fl_String::operator=(const Fl_String &str) {
   return assign(str);
@@ -165,6 +189,8 @@ Fl_String &Fl_String::operator=(const Fl_String &str) {
 
 /**
  Assign a C-style string.
+ \param[in] cstr a NUL terminated C-style string
+ \return self
  */
 Fl_String &Fl_String::operator=(const char *cstr) {
   return assign(cstr);
@@ -172,6 +198,8 @@ Fl_String &Fl_String::operator=(const char *cstr) {
 
 /**
  Copy another string.
+ \param[in] str copy from another Fl_String
+ \return self
  */
 Fl_String &Fl_String::assign(const Fl_String &str) {
   if (&str == this) return *this;
@@ -180,6 +208,8 @@ Fl_String &Fl_String::assign(const Fl_String &str) {
 
 /**
  Assign a C-style string.
+ \param[in] cstr a NUL terminated C-style string
+ \return self
  */
 Fl_String &Fl_String::assign(const char *cstr) {
   if (cstr && *cstr) {
@@ -193,6 +223,9 @@ Fl_String &Fl_String::assign(const char *cstr) {
 
 /**
  Assign a buffer of size bytes.
+ \param[in] str a buffer that may contain NUL character
+ \paran[in] size number of bytes to copy
+ \return self
  */
 Fl_String &Fl_String::assign(const char *str, int size) {
   if (size > 0) {
@@ -210,6 +243,8 @@ Fl_String &Fl_String::assign(const char *str, int size) {
 
 /**
  Returns the character at specified bouds checked location.
+ \param[in] n index of character
+ \return character at that index, or NUL if out of bounds
  */
 char Fl_String::at(int n) const {
   if ((n < 0)||(n>=size_))
@@ -219,6 +254,8 @@ char Fl_String::at(int n) const {
 
 /**
  Returns the character at specified location.
+ \param[in] n index of character
+ \return character at that index
  */
 char Fl_String::operator[](int n) const {
   if (buffer_)
@@ -229,6 +266,8 @@ char Fl_String::operator[](int n) const {
 
 /**
  Returns a reference to the character at specified location.
+ \param[in] n index of character
+ \return reference to that character, so it can be used as lvalue
  */
 char &Fl_String::operator[](int n) {
   if (!buffer_)
@@ -238,6 +277,7 @@ char &Fl_String::operator[](int n) {
 
 /**
  Return a pointer to the NUL terminated buffer.
+ \return reference to non-mutable string buffer
  */
 const char *Fl_String::data() const {
   if (buffer_)
@@ -248,6 +288,7 @@ const char *Fl_String::data() const {
 
 /**
  Return a pointer to the writable NUL terminated buffer.
+ \return reference to mutable string buffer
  */
 char *Fl_String::data() {
   if (!buffer_)
@@ -257,7 +298,8 @@ char *Fl_String::data() {
 
 /**
  Return a pointer to the NUL terminated buffer.
- \note same as Fl_String::data()
+ \return reference to non-mutable string buffer
+ \note same as `const char *Fl_String::data() const`
  */
 const char *Fl_String::c_str() const {
   return data();
@@ -267,6 +309,7 @@ const char *Fl_String::c_str() const {
 
 /**
  Checks if the string is empty.
+ \return true if string contains no data
  */
 bool Fl_String::empty() const {
   return (size_ == 0);
@@ -274,6 +317,7 @@ bool Fl_String::empty() const {
 
 /**
  Returns the number of bytes in the string.
+ \return number of bytes in string, not counting trailing NUL
  */
 int Fl_String::size() const {
   return size_;
@@ -282,6 +326,7 @@ int Fl_String::size() const {
 /**
  Reserve n bytes for storage.
  If n is less or equal than size, the capacity is set to size.
+ \param[in] n requested minimum size, not counting trailling NUL
  */
 void Fl_String::reserve(int n) {
   grow_(n);
@@ -289,6 +334,7 @@ void Fl_String::reserve(int n) {
 
 /**
  Return the number of chars that are allocated for storage.
+ \return capacity of buffer, not counting trailling NUL
  */
 int Fl_String::capacity() const {
   return capacity_;
@@ -312,6 +358,10 @@ void Fl_String::clear() {
 
 /**
  Insert a C-style string of buffer.
+ \param[in] at    insert at this index
+ \param[in] src   copy bytes from here
+ \param[in] n_ins optional number of bytes to copy - if not set, copy C-style string
+ \return self
  */
 Fl_String &Fl_String::insert(int at, const char *src, int n_ins) {
   if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
@@ -320,6 +370,9 @@ Fl_String &Fl_String::insert(int at, const char *src, int n_ins) {
 
 /**
  Insert another string.
+ \param[in] at    insert at this index
+ \param[in] src   copy string from here
+ \return self
  */
 Fl_String &Fl_String::insert(int at, const Fl_String &src) {
   return replace_(at, 0, src.buffer_, src.size_);
@@ -327,6 +380,9 @@ Fl_String &Fl_String::insert(int at, const Fl_String &src) {
 
 /**
  Erase some bytes within a string.
+ \param[in] at    erase at this index
+ \param[in] n_del number of bytes to erase
+ \return self
  */
 Fl_String &Fl_String::erase(int at, int n_del) {
   return replace_(at, n_del, NULL, 0);
@@ -334,13 +390,14 @@ Fl_String &Fl_String::erase(int at, int n_del) {
 
 /**
  Append a single character.
+ \param[in] c append this byte
  */
 void Fl_String::push_back(char c) {
   replace_(size_, 0, &c, 1);
 }
 
 /**
- Crop the last character.
+ Remove the last character.
  */
 void Fl_String::pop_back() {
   replace_(size_-1, 1, NULL, 0);
@@ -348,6 +405,9 @@ void Fl_String::pop_back() {
 
 /**
  Append a C-style string of buffer.
+ \param[in] src   copy bytes from here
+ \param[in] n_ins optional number of bytes to copy - if not set, copy C-style string
+ \return self
  */
 Fl_String &Fl_String::append(const char *src, int n_ins) {
   if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
@@ -356,6 +416,8 @@ Fl_String &Fl_String::append(const char *src, int n_ins) {
 
 /**
  Append another string.
+ \param[in] src   copy string from here
+ \return self
  */
 Fl_String &Fl_String::append(const Fl_String &src) {
   return replace_(size_, 0, src.buffer_, src.size_);
@@ -363,6 +425,8 @@ Fl_String &Fl_String::append(const Fl_String &src) {
 
 /**
  Append a C-style string of buffer.
+ \param[in] src   copy C-style string from here
+ \return self
  */
 Fl_String &Fl_String::operator+=(const char *src) {
   return append(src);
@@ -370,6 +434,8 @@ Fl_String &Fl_String::operator+=(const char *src) {
 
 /**
  Append another string.
+ \param[in] src   copy string from here
+ \return self
  */
 Fl_String &Fl_String::operator+=(const Fl_String &src) {
   return replace_(size_, 0, src.buffer_, src.size_);
@@ -377,6 +443,11 @@ Fl_String &Fl_String::operator+=(const Fl_String &src) {
 
 /**
  Replace part of the string with a C-style string of buffer.
+ \param[in] at    erase and insert at this index
+ \param[in] n_del number of bytes to erase
+ \param[in] src   copy bytes from here
+ \param[in] n_ins optional number of bytes to copy - if not set, copy C-style string
+ \return self
  */
 Fl_String &Fl_String::replace(int at, int n_del, const char *src, int n_ins) {
   if (n_ins == npos) n_ins = src ? (int)::strlen(src) : 0;
@@ -385,6 +456,10 @@ Fl_String &Fl_String::replace(int at, int n_del, const char *src, int n_ins) {
 
 /**
  Replace part of the string with another string.
+ \param[in] at    erase and insert at this index
+ \param[in] n_del number of bytes to erase
+ \param[in] src   copy string from here
+ \return self
  */
 Fl_String &Fl_String::replace(int at, int n_del, const Fl_String &src) {
   return replace_(at, n_del, src.buffer_, src.size_);
@@ -392,6 +467,9 @@ Fl_String &Fl_String::replace(int at, int n_del, const Fl_String &src) {
 
 /**
  Return a sub string from a string.
+ \param[in] pos   copy string from here - if omitted, copy from start
+ \param[in] n     number of bytes - if ommited, copy all bytes
+ \return a new string
  */
 Fl_String Fl_String::substr(int pos, int n) const {
   if (n > size_) n = size_;
@@ -403,8 +481,13 @@ Fl_String Fl_String::substr(int pos, int n) const {
 }
 
 /**
- Resizes the string to contain n characters.
- If the current size is less than n, the space is filled with NUL.
+ Resizes the string to n characters.
+
+ If \p n is less then the current size, the string will be cropped. If \p n
+ is more than the current size, the new space will be filled with
+ NUL characters.
+
+ \param[in] n   new size of string
  */
 void Fl_String::resize(int n) {
   if (n == size_)
@@ -423,6 +506,7 @@ void Fl_String::resize(int n) {
 
 /**
  Returns the number bytes until the first NUL byte.
+ \return number of bytes in C-style string
  */
 int Fl_String::strlen() const {
   if (!buffer_) return 0;
@@ -479,7 +563,10 @@ void Fl_String::hexdump(const char *info) const {
 // ---- Non-member functions ------------------------------------------- MARK: -
 
 /**
- Add two strings.
+ Concatenate two strings.
+ \param[in] lhs first string
+ \param[in] rhs second string
+ \return self
  */
 Fl_String operator+(const Fl_String &lhs, const Fl_String &rhs) {
   Fl_String ret = lhs;
@@ -487,7 +574,10 @@ Fl_String operator+(const Fl_String &lhs, const Fl_String &rhs) {
 }
 
 /**
- Add two strings.
+ Concatenate two strings.
+ \param[in] lhs first string
+ \param[in] rhs second C-style string
+ \return self
  */
 Fl_String operator+(const Fl_String &lhs, const char *rhs) {
   Fl_String ret = lhs;
@@ -496,6 +586,9 @@ Fl_String operator+(const Fl_String &lhs, const char *rhs) {
 
 /**
  Compare two strings.
+ \param[in] lhs first string
+ \param[in] rhs second string
+ \return true is strings are the same size and have the same content
  */
 bool operator==(const Fl_String &lhs, const Fl_String &rhs) {
   if (lhs.size() == rhs.size()) {

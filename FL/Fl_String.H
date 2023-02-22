@@ -49,7 +49,6 @@
 
   \since 1.4.0
 */
-
 class Fl_String {
 
 private:
