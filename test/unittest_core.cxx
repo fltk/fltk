@@ -20,6 +20,7 @@
 #include <FL/Fl_Simple_Terminal.H>
 #include <FL/Fl_String.H>
 
+/* Test Fl_String constructor and assignment. */
 TEST(Fl_String, Assignment) {
   Fl_String null;
   EXPECT_STREQ(null.c_str(), "");   // default initialisation is an empty string
@@ -60,8 +61,8 @@ TEST(Fl_String, Assignment) {
   return true;
 }
 
+/* Test methods that access Fl_String content and parts of it. */
 TEST(Fl_String, Access) {
-
   Fl_String hello = "hello";
   EXPECT_STREQ(hello.c_str(), "hello");
   EXPECT_STREQ(hello.data(), "hello");
@@ -80,8 +81,8 @@ TEST(Fl_String, Access) {
   return true;
 }
 
+/* Test the Fl_String capacity management. */
 TEST(Fl_String, Capacity) {
-
   Fl_String hello;
   EXPECT_EQ(hello.capacity(), 0);
 
@@ -105,6 +106,7 @@ TEST(Fl_String, Capacity) {
   return true;
 }
 
+/* Test all methods that operate on Fl_String. */
 TEST(Fl_String, Operations) {
   Fl_String empty;
   Fl_String hello = "Hello", world = "World";
@@ -169,6 +171,7 @@ TEST(Fl_String, Operations) {
   return true;
 }
 
+/* Test all Fl_String functions that are no part of the class. */
 TEST(Fl_String, Non-Member Functions) {
   Fl_String a = "a", b = "b", empty = "", result;
   result = a + b;
@@ -191,13 +194,28 @@ TEST(Fl_String, Non-Member Functions) {
 //
 //------- test aspects of the FLTK core library ----------
 //
+
+/*
+ Create a tab with only a terminal window in it. When shown for the first time,
+ unittest will visualize progress by runing all regsitered tests one-by-one
+ every few miliseconds.
+
+ When run in command line mode (option `--core`), all tests are executed
+ at full speed.
+ */
 class Ut_Core_Test : public Fl_Group {
+
   Fl_Simple_Terminal *tty;
   bool suite_ran_;
+
 public:
+
+  // Create the tab
   static Fl_Widget *create() {
     return new Ut_Core_Test(UT_TESTAREA_X, UT_TESTAREA_Y, UT_TESTAREA_W, UT_TESTAREA_H);
   }
+
+  // Constructor for this tab
   Ut_Core_Test(int x, int y, int w, int h)
   : Fl_Group(x, y, w, h),
     tty(NULL),
@@ -208,16 +226,25 @@ public:
     end();
     Ut_Suite::tty = tty;
   }
+
+  // Run one single test and repeat calling this until all tests are done
+  static void timer_cb(void*) {
+    // Run a test every few miliseconds to visualize the progress
+    if (Ut_Suite::run_next_test())
+      Fl::repeat_timeout(0.2, timer_cb);
+  }
+
+  // Showing this tab for the first time will trigger the tests
   void show() FL_OVERRIDE {
     Fl_Group::show();
     if (!suite_ran_) {
-      // TODO: make this run test-by-test in an idel callback
-      RUN_ALL_TESTS();
+      Fl::add_timeout(0.5, timer_cb);
       suite_ran_ = true;
     }
   }
 };
 
+// Register this tab with the unittest app.
 UnitTest core(UT_TEST_CORE, "Core Functionality", Ut_Core_Test::create);
 
 

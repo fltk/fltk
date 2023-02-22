@@ -43,6 +43,8 @@ class Fl_Hold_Browser *browser = NULL;
 int UnitTest::num_tests_ = 0;
 UnitTest *UnitTest::test_list_[200] = { 0 };
 
+// ----- UnitTest ------------------------------------------------------ MARK: -
+
 UnitTest::UnitTest(int index, const char* label, Fl_Widget* (*create)())
   : widget_(0L)
 {
@@ -78,6 +80,8 @@ void UnitTest::add(int index, UnitTest* t) {
   if (index >= num_tests_)
     num_tests_ = index+1;
 }
+
+// ----- Ut_Main_Window ------------------------------------------------ MARK: -
 
 Ut_Main_Window::Ut_Main_Window(int w, int h, const char *l)
   : Fl_Double_Window(w, h, l),
@@ -120,17 +124,28 @@ void Ut_Main_Window::test_alignment(int v) {
   redraw();
 }
 
-// ------ UnitTest Test Cases --------------------------------------------------
+// ----- Ut_Test ------------------------------------------------------- MARK: -
 
+/** Create a unit test that can contain many test cases using EXPECT_*.
+
+ Ut_Test should be instantiated by using the TEST(SUITE, NAME) macro. Multiple
+ TEST() macros can be called within the same source file to generate an
+ arbitrary number of tests. TEST() can be called in multiple source files
+ of the same application.
+
+ The constructor also registers the test with Ut_Suite and groups it by name.
+ */
 Ut_Test::Ut_Test(const char *suitename, const char *testname, Ut_Test_Call call)
 : name_(testname),
   call_(call),
-  failed_(false)
+  failed_(false),
+  done_(false)
 {
   Ut_Suite *suite = Ut_Suite::locate(suitename);
   suite->add(this);
 }
 
+/** Run all cases inside the test and return false when the first case fails. */
 bool Ut_Test::run(const char *suite) {
   Ut_Suite::printf("%s[ RUN      ]%s %s.%s\n",
                    Ut_Suite::green, Ut_Suite::normal, suite, name_);
@@ -144,9 +159,11 @@ bool Ut_Test::run(const char *suite) {
                      Ut_Suite::red, Ut_Suite::normal, suite, name_);
     failed_ = true;
   }
+  done_ = true;
   return ret;
 }
 
+/** Print a message is the test was previously marked failed. */
 void Ut_Test::print_failed(const char *suite) {
   if (failed_) {
     Ut_Suite::printf("%s[  FAILED  ]%s %s.%s\n",
@@ -154,15 +171,19 @@ void Ut_Test::print_failed(const char *suite) {
   }
 }
 
-// ------ UnitTest Test Suites -------------------------------------------------
+// ----- Ut_Suite ------------------------------------------------------ MARK: -
 
-Ut_Suite **Ut_Suite::suit_list_ = NULL;
-int Ut_Suite::suit_list_size_ = 0;
+Ut_Suite **Ut_Suite::suite_list_ = NULL;
+int Ut_Suite::suite_list_size_ = 0;
+int Ut_Suite::num_tests_ = 0;
+int Ut_Suite::num_passed_ = 0;
+int Ut_Suite::num_failed_ = 0;
 const char *Ut_Suite::red = "\033[31m";
 const char *Ut_Suite::green = "\033[32m";
 const char *Ut_Suite::normal = "\033[0m";
 Fl_Simple_Terminal *Ut_Suite::tty = NULL;
 
+/** Switch the user of color escape sequnces in the log text. */
 void Ut_Suite::color(int v) {
   if (v) {
     red = "\033[31m";
@@ -175,13 +196,20 @@ void Ut_Suite::color(int v) {
   }
 }
 
+/** Create a suite that will group tests by the suite name.
+
+ Ut_Suite is automatically instantiated by using the TEST(SUITE, NAME) macro.
+ Multiple TEST() macros are grouped into suits by suite name.
+ */
 Ut_Suite::Ut_Suite(const char *name)
 : test_list_(NULL),
   test_list_size_(0),
-  name_(name)
+  name_(name),
+  done_(false)
 {
 }
 
+/** Add a test to the suite. This is done automatically by the TEST() macro. */
 void Ut_Suite::add(Ut_Test *test) {
   if ( (test_list_size_ % 16) == 0 ) {
     test_list_ = (Ut_Test**)realloc(test_list_, (test_list_size_+16)*sizeof(Ut_Test*));
@@ -189,78 +217,133 @@ void Ut_Suite::add(Ut_Test *test) {
   test_list_[test_list_size_++] = test;
 }
 
+/** Static method that will find or create a suite by name. */
 Ut_Suite *Ut_Suite::locate(const char *name) {
-  for (int i=0; i<suit_list_size_; i++) {
-    if (strcmp(name, suit_list_[i]->name_)==0)
-      return suit_list_[i];
+  for (int i=0; i<suite_list_size_; i++) {
+    if (strcmp(name, suite_list_[i]->name_)==0)
+      return suite_list_[i];
   }
-  if ( (suit_list_size_ % 16) == 0 ) {
-    suit_list_ = (Ut_Suite**)realloc(suit_list_, (suit_list_size_+16)*sizeof(Ut_Suite*));
+  if ( (suite_list_size_ % 16) == 0 ) {
+    suite_list_ = (Ut_Suite**)realloc(suite_list_, (suite_list_size_+16)*sizeof(Ut_Suite*));
   }
   Ut_Suite *s = new Ut_Suite(name);
-  suit_list_[suit_list_size_++] = s;
+  suite_list_[suite_list_size_++] = s;
   return s;
 }
 
-int Ut_Suite::run() {
+/** Logs the start of a test suite run. */
+void Ut_Suite::print_suite_epilog() {
   Ut_Suite::printf("%s[----------]%s %d test%s from %s\n", Ut_Suite::green, Ut_Suite::normal,
                    test_list_size_, test_list_size_ == 1 ? "" : "s", name_);
-  int num_failed = 0;
-  for (int i=0; i<test_list_size_; i++) {
-    if (!test_list_[i]->run(name_)) {
-      num_failed++;
-    }
-  }
-  return num_failed;
 }
 
+/** Run all tests in a single suite, returning the number of failed tests. */
+int Ut_Suite::run() {
+  print_suite_epilog();
+  int num_tests_failed = 0;
+  for (int i=0; i<test_list_size_; i++) {
+    if (!test_list_[i]->run(name_)) {
+      num_tests_failed++;
+    }
+  }
+  return num_tests_failed;
+}
+
+/** Static method to log all tests that are marked failed. */
 void Ut_Suite::print_failed() {
   for (int i=0; i<test_list_size_; i++) {
     test_list_[i]->print_failed(name_);
   }
 }
 
-int Ut_Suite::run_all_tests() {
+/** Static method to log the start of a test run. */
+void Ut_Suite::print_prolog() {
   int i;
-  int num_tests = 0;
-  int num_passed = 0;
-  int num_failed = 0;
-  for (i=0; i<suit_list_size_; i++) {
-    num_tests += suit_list_[i]->size();
+  num_tests_ = 0;
+  num_passed_ = 0;
+  num_failed_ = 0;
+  for (i=0; i<suite_list_size_; i++) {
+    num_tests_ += suite_list_[i]->size();
   }
   Ut_Suite::printf("%s[==========]%s Running %d tests from %d test case%s.\n",
                    Ut_Suite::green, Ut_Suite::normal,
-                   num_tests, suit_list_size_,
-                   suit_list_size_ == 1 ? "" : "s");
-  for (i=0; i<suit_list_size_; i++) {
-    int n = suit_list_[i]->run();
-    num_passed += suit_list_[i]->size() - n;
-    num_failed += n;
-  }
-  Ut_Suite::printf("%s[==========]%s %d tests from %d test case%s ran.\n",
-                   Ut_Suite::green, Ut_Suite::normal,
-                   num_tests, suit_list_size_,
-                   suit_list_size_ == 1 ? "" : "s");
-  if (num_passed) {
-    Ut_Suite::printf("%s[  PASSED  ]%s %d test%s.\n",
-                     Ut_Suite::green, Ut_Suite::normal, num_passed,
-                     num_passed == 1 ? "" : "s");
-  }
-  if (num_failed) {
-    Ut_Suite::printf("%s[  FAILED  ]%s %d test%s, listed below:\n",
-                     Ut_Suite::red, Ut_Suite::normal, num_failed,
-                     num_failed == 1 ? "" : "s");
-  }
-  for (i=0; i<suit_list_size_; i++) {
-    suit_list_[i]->print_failed();
-  }
-  //  Ut_Suite::printf("\n%d FAILED TEST%s.\n", num_failed,
-  //                   num_failed == 1 ? "" : "S");
-  //[   FAILED ] 2 tests, listed below:
-  //[   FAILED ] BarTest.ReturnsTrueOnSuccess
-  return num_failed;
+                   num_tests_, suite_list_size_,
+                   suite_list_size_ == 1 ? "" : "s");
 }
 
+/** Static method to log the end of a test run. */
+void Ut_Suite::print_epilog() {
+  int i;
+  Ut_Suite::printf("%s[==========]%s %d tests from %d test case%s ran.\n",
+                   Ut_Suite::green, Ut_Suite::normal,
+                   num_tests_, suite_list_size_,
+                   suite_list_size_ == 1 ? "" : "s");
+  if (num_passed_) {
+    Ut_Suite::printf("%s[  PASSED  ]%s %d test%s.\n",
+                     Ut_Suite::green, Ut_Suite::normal, num_passed_,
+                     num_passed_ == 1 ? "" : "s");
+  }
+  if (num_failed_) {
+    Ut_Suite::printf("%s[  FAILED  ]%s %d test%s, listed below:\n",
+                     Ut_Suite::red, Ut_Suite::normal, num_failed_,
+                     num_failed_ == 1 ? "" : "s");
+  }
+  for (i=0; i<suite_list_size_; i++) {
+    suite_list_[i]->print_failed();
+  }
+  return num_failed_;
+}
+
+/** Static method to run all tests in all test suites.
+ Returns the number of failed tests.
+ */
+int Ut_Suite::run_all_tests() {
+  print_prolog();
+  // loop through all suites which then loop through all tests
+  for (int i=0; i<suite_list_size_; i++) {
+    int n = suite_list_[i]->run();
+    num_passed_ += suite_list_[i]->size() - n;
+    num_failed_ += n;
+  }
+  print_epilog();
+  return num_failed_;
+}
+
+/** Static method to run all test, one-by-one, until done.
+ Run all tests by calling `while (Ut_Suite::run_next_test()) { }`.
+ This is used to visualise test progress with the terminal window by runnig test
+ asynchronously and adding a noticable delay between calls.
+ */
+bool Ut_Suite::run_next_test() {
+  // if all suites are done, print the ending text and return
+  Ut_Suite *last = suite_list_[suite_list_size_-1];
+  if (last->done_) {
+    print_epilog();
+    return false;
+  }
+  // if no tests ran yet, print the starting text
+  Ut_Suite *first = suite_list_[0];
+  if (!first->done_ && !first->test_list_[0]->done_) {
+    print_prolog();
+  }
+  // now find the next test that hasn't ran yet
+  for (int i=0; i<suite_list_size_; i++) {
+    Ut_Suite *st = suite_list_[i];
+    if (st->done_) continue;
+    if (!st->test_list_[0]->done_)
+      st->print_suite_epilog();
+    for (int j=0; j<st->test_list_size_; j++) {
+      if (st->test_list_[j]->done_) continue;
+      if (st->test_list_[j]->run(st->name_)) num_passed_++; else num_failed_++;
+      return true;
+    }
+    st->done_ = true;
+    return true;
+  }
+  return true;
+}
+
+/** A printf that is redirected to the terminal or stdout. */
 void Ut_Suite::printf(const char *format, ...)
 {
   va_list args;
@@ -273,6 +356,7 @@ void Ut_Suite::printf(const char *format, ...)
   va_end(args);
 }
 
+/** Log the result of a boolean case fail. */
 void Ut_Suite::log_bool(const char *file, int line, const char *cond, bool result, bool expected) {
   Ut_Suite::printf("%s(%d): error:\n", file, line);
   Ut_Suite::printf("Value of: %s\n", cond);
@@ -280,6 +364,7 @@ void Ut_Suite::log_bool(const char *file, int line, const char *cond, bool resul
   Ut_Suite::printf("Expected: %s\n", expected ? "true" : "false");
 }
 
+/** Log the result of a string comparison case fail. */
 void Ut_Suite::log_string(const char *file, int line, const char *cond, const char *result, const char *expected) {
   Ut_Suite::printf("%s(%d): error:\n", file, line);
   Ut_Suite::printf("Value of: %s\n", cond);
@@ -287,6 +372,7 @@ void Ut_Suite::log_string(const char *file, int line, const char *cond, const ch
   Ut_Suite::printf("Expected: %s\n", expected);
 }
 
+/** Log the result of an integer comparison case fail. */
 void Ut_Suite::log_int(const char *file, int line, const char *cond, int result, const char *expected) {
   Ut_Suite::printf("%s(%d): error:\n", file, line);
   Ut_Suite::printf("Value of: %s\n", cond);
@@ -294,7 +380,7 @@ void Ut_Suite::log_int(const char *file, int line, const char *cond, int result,
   Ut_Suite::printf("Expected: %s\n", expected);
 }
 
-//------- include the various unit tests as inline code -------
+// ----- main ---------------------------------------------------------- MARK: -
 
 // callback whenever the browser value changes
 void ui_browser_cb(Fl_Widget*, void*) {
@@ -356,8 +442,7 @@ int main(int argc, char** argv) {
   }
 
   if (run_core_tests_only) {
-    int ret = RUN_ALL_TESTS();
-    return ret;
+    return RUN_ALL_TESTS();
   }
 
   Fl::get_system_colors();
