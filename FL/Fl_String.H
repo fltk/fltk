@@ -28,7 +28,7 @@
 
   In this version Fl_String can be used to store strings, copy strings,
   move strings, and do basic string manipulation. Fl_String implements a
-  subset of std::string with a couple of extensions. Std::string should be
+  subset of std::string with a couple of extensions. std::string should be
   a drop-in if we ever decide to allow templates and the std library.
 
   Fl_String always maintains a trailing \e nul byte, but can also contain
@@ -54,7 +54,7 @@ class Fl_String {
 private:
   /*
    FLTK does no small string optimisation.
-   If the string is empty and cpacity is not set, value_ will be NULL.
+   If the string is empty and capacity is not set, buffer_ will be NULL.
    */
   char *buffer_;
   int size_;

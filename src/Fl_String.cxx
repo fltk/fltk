@@ -28,7 +28,7 @@
 
 
 /*
- If value_ is NULL, c_str() and buffer() will point here.
+ If buffer_ is NULL, c_str() and buffer() will point here.
  */
 const char Fl_String::NUL = 0;
 
@@ -52,7 +52,7 @@ void Fl_String::init_() {
  Grow the buffer to a capacity of at least n bytes.
 
  This method will always grow the buffer size, or keep it as is, but never
- shrink it. Use shrink_to_fit() shrinking the buffer as much as possible.
+ shrink it. Use shrink_to_fit() to shrink the buffer as much as possible.
 
  \param[in] n number of bytes needed, not counting the trailing NUL
  */
@@ -127,7 +127,7 @@ Fl_String &Fl_String::replace_(int at, int n_del, const char *ins, int n_ins) {
   if (n_ins > 0) {
     ::memmove(buffer_+at, ins, n_ins);
   }
-  size_ = new_size;;
+  size_ = new_size;
   buffer_[size_] = 0;
   return *this;
 }
@@ -162,7 +162,7 @@ Fl_String::Fl_String(const char *cstr) {
 
 /**
  Constructor from data of \p size bytes.
- \param[in] str   a block of data that may contain NUL character
+ \param[in] str   a block of data that may contain NUL characters
  \paran[in] size  number of bytes to copy
  */
 Fl_String::Fl_String(const char *str, int size) {
@@ -222,8 +222,8 @@ Fl_String &Fl_String::assign(const char *cstr) {
 }
 
 /**
- Assign a data of \p size bytes.
- \param[in] str a block of data that may contain NUL character
+ Assign a data block of \p size bytes.
+ \param[in] str a block of data that may contain NUL characters
  \paran[in] size number of bytes to copy
  \return self
  */
@@ -242,12 +242,12 @@ Fl_String &Fl_String::assign(const char *str, int size) {
 // ---- Element Access ------------------------------------------------- MARK: -
 
 /**
- Returns the character at specified bouds checked location.
+ Returns the character at specified bounds checked location.
  \param[in] n index of character
  \return character at that index, or NUL if out of bounds
  */
 char Fl_String::at(int n) const {
-  if ((n < 0)||(n>=size_))
+  if ((n < 0) || (n >= size_))
     return 0;
   return operator[](n);
 }
@@ -350,7 +350,7 @@ void Fl_String::shrink_to_fit() {
 // ---- Operations ----------------------------------------------------- MARK: -
 
 /**
- Set an ampty string.
+ Set an empty string.
  */
 void Fl_String::clear() {
   resize(0);
@@ -466,15 +466,15 @@ Fl_String &Fl_String::replace(int at, int n_del, const Fl_String &src) {
 }
 
 /**
- Return a sub string from a string.
+ Return a substring from a string.
  \param[in] pos   copy string from here - if omitted, copy from start
- \param[in] n     number of bytes - if ommited, copy all bytes
+ \param[in] n     number of bytes - if omitted, copy all bytes
  \return a new string
  */
 Fl_String Fl_String::substr(int pos, int n) const {
   if (n > size_) n = size_;
   int first = pos, last = pos + n;
-  if ((first < 0) || (first>size_) || (last<=first))
+  if ((first < 0) || (first > size_) || (last <= first))
     return Fl_String();
   if (last > size_) last = size_;
   return Fl_String(buffer_+first, last-first);
@@ -483,7 +483,7 @@ Fl_String Fl_String::substr(int pos, int n) const {
 /**
  Resizes the string to n characters.
 
- If \p n is less then the current size, the string will be cropped. If \p n
+ If \p n is less than the current size, the string will be cropped. If \p n
  is more than the current size, the new space will be filled with
  NUL characters.
 
@@ -505,7 +505,7 @@ void Fl_String::resize(int n) {
 // --- Non Standard ---------------------------------------------------- MARK: -
 
 /**
- Returns the number bytes until the first NUL byte.
+ Returns the number of bytes until the first NUL byte.
  \return number of bytes in C-style string
  */
 int Fl_String::strlen() const {
@@ -588,7 +588,7 @@ Fl_String operator+(const Fl_String &lhs, const char *rhs) {
  Compare two strings.
  \param[in] lhs first string
  \param[in] rhs second string
- \return true is strings are the same size and have the same content
+ \return true if strings are the same size and have the same content
  */
 bool operator==(const Fl_String &lhs, const Fl_String &rhs) {
   if (lhs.size() == rhs.size()) {
