@@ -330,7 +330,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   can be a local/automatic variable.
 
   The \p ret variable is set to 0 if the user clicked OK, and to a negative
-  value if the user canceled the dialog. If the dialog was cancled, the returned
+  value if the user canceled the dialog. If the dialog was canceled, the returned
   string will be empty.
 
   \code #include <FL/fl_ask.H> \endcode
@@ -352,7 +352,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   \param[in] defstr  defines the default returned string if no text is entered
 
   \return the user string input if OK was clicked which can be empty
-  \return an empty string and set \p ret to a negative value if the user caceled the dialog
+  \return an empty string and set \p ret to a negative value if the user canceled the dialog
 
   \since 1.4.0
 */
@@ -425,7 +425,7 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   \param[in] defstr  defines the default returned string if no text is entered
 
   \return the user string input if OK was clicked which can be empty
-  \return an empty string and set \p ret to a negative value if the user caceled the dialog
+  \return an empty string and set \p ret to a negative value if the user canceled the dialog
 
   \since 1.4.0
 */
