@@ -59,7 +59,7 @@ void Fl_String::init_() {
 void Fl_String::grow_(int n) {
   if (n <= capacity_)
     return;
-  int alloc_size_ = n + 1; // trailling NUL
+  int alloc_size_ = n + 1; // trailing NUL
   // round n up so we can grow in chunks
   if (alloc_size_ <= 24) { // allocate at least 24 bytes
     alloc_size_ = 24;
@@ -326,7 +326,7 @@ int Fl_String::size() const {
 /**
  Reserve n bytes for storage.
  If n is less or equal than size, the capacity is set to size.
- \param[in] n requested minimum size, not counting trailling NUL
+ \param[in] n requested minimum size, not counting trailing NUL
  */
 void Fl_String::reserve(int n) {
   grow_(n);
@@ -334,7 +334,7 @@ void Fl_String::reserve(int n) {
 
 /**
  Return the number of chars that are allocated for storage.
- \return string capacity, not counting trailling NUL
+ \return string capacity, not counting trailing NUL
  */
 int Fl_String::capacity() const {
   return capacity_;
