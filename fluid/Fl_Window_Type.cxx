@@ -196,15 +196,15 @@ void show_project_cb(Fl_Widget *, void *) {
   use_FL_COMMAND_button->value(g_project.use_FL_COMMAND);
   utf8_in_src_button->value(g_project.utf8_in_src);
   avoid_early_includes_button->value(g_project.avoid_early_includes);
-  header_file_input->value(g_project.header_file_name);
-  code_file_input->value(g_project.code_file_name);
+  header_file_input->value(g_project.header_file_name.c_str());
+  code_file_input->value(g_project.code_file_name.c_str());
   i18n_type_chooser->value(g_project.i18n_type);
-  i18n_function_input->value(g_project.i18n_function);
-  i18n_static_function_input->value(g_project.i18n_static_function);
-  i18n_file_input->value(g_project.i18n_file);
-  i18n_set_input->value(g_project.i18n_set);
-  i18n_include_input->value(g_project.i18n_include);
-  i18n_conditional_input->value(g_project.i18n_conditional);
+  i18n_function_input->value(g_project.i18n_function.c_str());
+  i18n_static_function_input->value(g_project.i18n_static_function.c_str());
+  i18n_file_input->value(g_project.i18n_file.c_str());
+  i18n_set_input->value(g_project.i18n_set.c_str());
+  i18n_include_input->value(g_project.i18n_include.c_str());
+  i18n_conditional_input->value(g_project.i18n_conditional.c_str());
   switch (g_project.i18n_type) {
   case 0 : /* None */
       i18n_include_input->hide();
@@ -258,12 +258,12 @@ void show_settings_cb(Fl_Widget *, void *) {
 }
 
 void header_input_cb(Fl_Input* i, void*) {
-  if (strcmp(g_project.header_file_name, i->value()))
+  if (strcmp(g_project.header_file_name.c_str(), i->value()))
     set_modflag(1);
   g_project.header_file_name = i->value();
 }
 void code_input_cb(Fl_Input* i, void*) {
-  if (strcmp(g_project.code_file_name, i->value()))
+  if (strcmp(g_project.code_file_name.c_str(), i->value()))
     set_modflag(1);
   g_project.code_file_name = i->value();
 }

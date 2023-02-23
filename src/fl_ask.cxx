@@ -320,7 +320,7 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
 
-  Like fl_input(), but this method has an additional (first) argument \p maxchar
+  Like fl_input(), but this method has the additional argument \p maxchar
   that limits the number of \b characters that can be input. Since the
   string is encoded in UTF-8 it is possible that the number of bytes
   in the string is larger than \p maxchar.
@@ -329,36 +329,56 @@ const char *fl_input(const char *fmt, const char *defstr, ...) {
   returns the string in an Fl_String object that must be released after use. This
   can be a local/automatic variable.
 
+  The \p ret variable is set to 0 if the user clicked OK, and to a negative
+  value if the user canceled the dialog. If the dialog was canceled, the returned
+  string will be empty.
+
   \code #include <FL/fl_ask.H> \endcode
 
   Example:
   \code
-    { Fl_String str = fl_input_str(0, "Enter text:", "");
-      printf("Text is: '%s'\n", str.value() ? str.value() : "<cancelled>");
+    { int ret;
+      Fl_String str = fl_input_str(ret, 0, "Enter text:", "");
+      if (ret < 0)
+        printf("Text input was canceled.\n");
+      else
+        printf("Text is: '%s'\n", str.c_str());
     } // (str goes out of scope)
   \endcode
 
-  If the user hits \c Escape or closes the window \c str.value() returns NULL.
-
+  \param[out] ret    0 if user clicked OK, negative if dialog was canceled
   \param[in] maxchar input size limit in characters (not bytes), use 0 for no limit
   \param[in] fmt     can be used as an sprintf-like format and variables for the message text
   \param[in] defstr  defines the default returned string if no text is entered
 
-  \return the user string input if OK was pushed or NULL in Fl_String::value()
-  \retval Fl_String::value() == NULL if Cancel was pushed or the window was closed by the user
+  \return the user string input if OK was clicked which can be empty
+  \return an empty string and set \p ret to a negative value if the user canceled the dialog
 
   \since 1.4.0
 */
-Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
-
+Fl_String fl_input_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
-  if (maxchar < 0)
-    maxchar = 0;
+  if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
   const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar);
   va_end(ap);
-  return r; // Fl_String(r)
+  ret = (r == NULL) ? -1 : 0;
+  return Fl_String(r);
+}
+
+/** Shows an input dialog displaying the \p fmt message with variable arguments.
+ \note No information is given if the user canceled the dialog or clicked OK.
+ \see fl_input_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
+ */
+Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
+  Fl_Message msg("?");
+  if (maxchar < 0) maxchar = 0;
+  va_list ap;
+  va_start(ap, defstr);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar);
+  va_end(ap);
+  return Fl_String(r);
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
@@ -378,7 +398,6 @@ Fl_String fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) {
   \retval NULL if Cancel was pushed or the window was closed by the user
 */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
-
   Fl_Message msg("?");
   va_list ap;
   va_start(ap, defstr);
@@ -400,26 +419,41 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 
   \code #include <FL/fl_ask.H> \endcode
 
-  \param[in] maxchar input size limit in characters (not bytes); use 0 for no limit
+  \param[out] ret    0 if user clicked OK, negative if dialog was canceled
+  \param[in] maxchar input size limit in characters (not bytes), use 0 for no limit
   \param[in] fmt     can be used as an sprintf-like format and variables for the message text
   \param[in] defstr  defines the default returned string if no text is entered
 
-  \return the user string input if OK was pushed or NULL in Fl_String::value()
-  \retval Fl_String::value() == NULL if Cancel was pushed or the window was closed by the user
+  \return the user string input if OK was clicked which can be empty
+  \return an empty string and set \p ret to a negative value if the user canceled the dialog
 
   \since 1.4.0
 */
-Fl_String fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) {
-
+Fl_String fl_password_str(int &ret, int maxchar, const char *fmt, const char *defstr, ...) {
   Fl_Message msg("?");
-  if (maxchar < 0)
-    maxchar = 0;
+  if (maxchar < 0) maxchar = 0;
   va_list ap;
   va_start(ap, defstr);
   const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar);
   va_end(ap);
-  return r; // Fl_String(r)
+  ret = (r == NULL) ? -1 : 0;
+  return Fl_String(r);
 }
+
+/** Shows an input dialog displaying the \p fmt message with variable arguments.
+ \note No information is given if the user canceled the dialog or clicked OK.
+ \see fl_password_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
+ */
+Fl_String fl_password_str(int maxchar, const char *fmt, const char *defstr, ...) {
+  Fl_Message msg("?");
+  if (maxchar < 0) maxchar = 0;
+  va_list ap;
+  va_start(ap, defstr);
+  const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar);
+  va_end(ap);
+  return Fl_String(r);
+}
+
 
 /** Sets the preferred position for the message box used in
   many common dialogs like fl_message(), fl_alert(),

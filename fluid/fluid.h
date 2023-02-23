@@ -78,18 +78,6 @@ extern int batch_mode;
 
 extern int pasteoffset;
 
-// ---- string handling
-
-class Fd_String : public Fl_String
-{
-public:
-  Fd_String() : Fl_String("") { }
-  Fd_String(const char* s) : Fl_String(s) { }
-  int empty() { return size()==0; }
-  void operator=(const char* s) { value(s); }
-  operator const char* () const { return value(); }
-};
-
 // ---- project settings
 
 class Fluid_Project {
@@ -99,27 +87,27 @@ public:
   void reset();
 
   int i18n_type;
-  Fd_String i18n_include;
-  Fd_String i18n_conditional;
-  Fd_String i18n_function;
-  Fd_String i18n_static_function;
-  Fd_String i18n_file;
-  Fd_String i18n_set;
-  Fd_String i18n_program;
+  Fl_String i18n_include;
+  Fl_String i18n_conditional;
+  Fl_String i18n_function;
+  Fl_String i18n_static_function;
+  Fl_String i18n_file;
+  Fl_String i18n_set;
+  Fl_String i18n_program;
   int include_H_from_C;
   int use_FL_COMMAND;
   int utf8_in_src;
   int avoid_early_includes;
   int header_file_set;
   int code_file_set;
-  Fd_String header_file_name;
-  Fd_String code_file_name;
+  Fl_String header_file_name;
+  Fl_String code_file_name;
 };
 
 extern Fluid_Project g_project;
 
-extern Fd_String g_code_filename_arg;
-extern Fd_String g_header_filename_arg;
+extern Fl_String g_code_filename_arg;
+extern Fl_String g_header_filename_arg;
 
 // ---- public functions
 

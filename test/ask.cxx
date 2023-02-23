@@ -34,16 +34,17 @@
 
 void rename_button(Fl_Widget *o, void *v) {
   int what = fl_int(v);
+  int ret = 0;
   Fl_String input;
   if (what == 0) {
     fl_message_icon_label("§");
-    input = fl_input_str(0, "Input (no size limit, use ctrl/j for newline):", o->label());
+    input = fl_input_str(ret, 0, "Input (no size limit, use ctrl/j for newline):", o->label());
   } else {
     fl_message_icon_label("€");
-    input = fl_password_str(20, "Enter password (max. 20 characters):", o->label());
+    input = fl_password_str(ret, 20, "Enter password (max. 20 characters):", o->label());
   }
-  if (input.value()) {
-    o->copy_label(input.value());
+  if (ret == 0) {
+    o->copy_label(input.c_str());
     o->redraw();
   }
 }

@@ -24,7 +24,7 @@ class ExternalCodeEditor {
   time_t file_mtime_;                   // last modify time of the file (used to determine if file changed)
   size_t file_size_;                    // last file size (used to determine if changed)
   const char *filename_;
-  Fd_String command_line_;
+  Fl_String command_line_;
   int last_error_;
   int alert_pipe_[2];
   bool alert_pipe_open_;
