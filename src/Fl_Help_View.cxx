@@ -1,11 +1,11 @@
 //
-// Fl_Help_View widget routines.
+// Fl_Help_View widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2022 by Bill Spitzak and others.
+// Copyright 2011-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,8 +23,7 @@
 //   Fl_Help_View::add_link()        - Add a new link to the list.
 //   Fl_Help_View::add_target()      - Add a new target to the list.
 //   Fl_Help_View::compare_targets() - Compare two targets.
-//   Fl_Help_View::do_align()        - Compute the alignment for a line in
-//                                     a block.
+//   Fl_Help_View::do_align()        - Compute the alignment for a line in a block.
 //   Fl_Help_View::draw()            - Draw the Fl_Help_View widget.
 //   Fl_Help_View::format()          - Format the help text.
 //   Fl_Help_View::format_table()    - Format a table...
@@ -52,12 +51,13 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Int_Vector.H>
+#include <FL/Fl_String.H>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
-#include <FL/filename.H>        // fl_open_uri()
-#include <FL/fl_string_functions.h>       // fl_strdup()
+#include <FL/filename.H>                // fl_open_uri()
+#include <FL/fl_string_functions.h>     // fl_strdup()
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
@@ -141,8 +141,7 @@ struct fl_margins {
   fl_margins() { clear();  }
 
   int clear() {
-//    puts("fl_margins::clear()");
-
+    // puts("fl_margins::clear()");
     depth_ = 0;
     return margins_[0] = 4;
   }
@@ -150,8 +149,8 @@ struct fl_margins {
   int current() { return margins_[depth_]; }
 
   int pop() {
-//    printf("fl_margins::pop(): depth_=%d, xx=%d\n", depth_,
-//           depth_ > 0 ? margins_[depth_ - 1] : 4);
+    // printf("fl_margins::pop(): depth_=%d, xx=%d\n", depth_,
+    //        depth_ > 0 ? margins_[depth_ - 1] : 4);
 
     if (depth_ > 0) {
       depth_ --;
@@ -164,8 +163,8 @@ struct fl_margins {
 
     xx = margins_[depth_] + indent;
 
-//    printf("fl_margins::push(indent=%d): depth_=%d, xx=%d\n", indent,
-//           depth_ + 1, xx);
+    // printf("fl_margins::push(indent=%d): depth_=%d, xx=%d\n", indent,
+    //        depth_ + 1, xx);
 
     if (depth_ < 99) {
       depth_ ++;
@@ -262,6 +261,9 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
   }
 }
 
+// [Internal class HV_Edit_Buffer]
+
+// Debug: set to 1 for basic debugging, 2 for more, 0 for none
 #define DEBUG_EDIT_BUFFER 0
 
 #if (DEBUG_EDIT_BUFFER > 1)
@@ -272,50 +274,32 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 #define DEBUG_FUNCTION(L,F)
 #endif
 
+/* Note: Don't use Doxygen docs for this internal class.
 
-/* ** Intentionally not Doxygen docs.
-  HelpView Edit Buffer management class.
-  <b>Internal use only.</b>
+  Internal class to manage the Fl_Help_View edit buffer.
+  This is a subclass of Fl_String since FLTK 1.4.0.
 
   This class is for internal use in this file. Its sole purpose is to
   allow buffer management to avoid buffer overflows in stack variables
   used to edit strings for formatting and drawing (STR #3275).
-
-  This class will likely be superseded by an Fl_String or Fl_Buffer class
-  in a later FLTK release (1.4.x).
-
-  Note: The buffer allocation and extension size (chunk size) must be
-  a power of 2, but this is deliberately never checked, because this
-  class is only used here with default values. Using extension sizes
-  that are not a power of 2 may result in unpredictable behavior.
 */
 
-class HV_Edit_Buffer {
-
-  int size_;                            // actually used text size w/o nul
-  int allocated_;                       // allocated buffer size
-  int extend_;                          // extend size (must be a power of 2)
-
-  char *buf_;                           // internal buffer
-
+class HV_Edit_Buffer : public Fl_String {
 public:
+  // use default constructor and destructor, none defined here
 
-  HV_Edit_Buffer (int alloc = 1024, int ext = 1024);    // c'tor
-  ~HV_Edit_Buffer ();                                   // d'tor
-
-  char *c_str() { return buf_; }
-  void clear();
-  int size() { return size_; }
-  void check(int size);
-  const char *add(const char *text, int size = -1);
-  void add(char c);
+  // append a Unicode character (Code Point) to the string
   void add(int ucs);
 
-  int cmp(const char * str) { return !strcasecmp(buf_, str); }
-  int width() { return (int)fl_width(buf_); }
+  // case insensitive comparison of buffer contents with a string
+  int cmp(const char *str) {
+    return !strcasecmp(c_str(), str);
+  }
 
-  char & operator[] (int idx) { return buf_[idx]; }
-  char operator[] (int idx) const { return buf_[idx]; }
+  // string width of the entire buffer contents
+  int width() {
+    return (int)fl_width(c_str());
+  }
 
 #if (DEBUG_EDIT_BUFFER)
   void print(const char *text = "");
@@ -323,160 +307,35 @@ public:
 };
 
 /*
-  Edit buffer constructor.
-*/
-HV_Edit_Buffer::HV_Edit_Buffer(
-        int     alloc,
-        int     ext)
-{
-  alloc = (alloc + ext-1) & (~(ext-1)); // round to chunk size
-
-  size_ = 0;
-  allocated_ = alloc;
-  extend_ = ext;
-  buf_ = (char *)malloc(alloc);
-}
-
-/*
-  Clears the edit buffer, but doesn't free the buffer.
-*/
-void HV_Edit_Buffer::clear()
-{
-
-  // DEBUG_FUNCTION(__LINE__,__FUNCTION__);
-
-  size_ = 0;
-  buf_[0] = '\0';
-}
-
-/*
-  Adds text to the buffer.
-
-  \param[in]    text    text to be added
-  \param[in]    size    text size, default: -1 => strlen(text)
-  \returns      new input text pointer, i.e. points beyond inserted text
-*/
-const char *HV_Edit_Buffer::add(const char *text, int size) {
-
-  if (size < 0) size = (int)strlen(text);
-  if (!size) return text;
-
-  check(size);
-
-#if (DEBUG_EDIT_BUFFER > 1)
-  printf("HV_Edit_Buffer::add(text,%d), allocated=%d, size=%d\n",
-         size, allocated_, size_+size);
-  fflush(stdout);
-#endif
-
-  memcpy(buf_+size_, text, size);
-  size_ += size;
-  buf_[size_] = '\0';
-
-  return (text + size);
-
-} // add(const char *text, int size)
-
-/*
-  Adds one byte (character) to the buffer.
-
-  \note It is possible to add partial UTF-8 sequences.
-
-  \param[in]    c       byte (char) to be added
-*/
-void HV_Edit_Buffer::add(char c) {
-
-  check(1);
-
-#if (DEBUG_EDIT_BUFFER > 1)
-  printf("HV_Edit_Buffer::add(char = '%c'), allocated=%d, size=%d\n",
-         c, allocated_, size_+1);
-  fflush(stdout);
-#endif
-
-  buf_[size_++] = c;
-  buf_[size_] = '\0';
-
-} // add(char c)
-
-/*
-  Adds one Unicode character (int) to the buffer.
+  Append one Unicode character (code point) to the buffer.
 
   The Unicode character \p ucs is converted to UTF-8 and appended to
   the buffer.
 
-  \param[in]    ucs     Unicode character (code point) to be added
+  \param[in]  ucs  Unicode character (code point) to be added
 */
 void HV_Edit_Buffer::add(int ucs) {
-
   int len;
   char cbuf[6];
-
   len = fl_utf8encode((unsigned int)ucs, cbuf);
   if (len < 1) len = 1;
-  add(cbuf,len);
-
+  append(cbuf, len);
 } // add(int ucs)
 
 /*
-  Checks needed buffer size and reallocates the buffer if necessary.
-
-  Tests if the given string \p size can be added to the string buffer.
-  An additional nul byte is also considered in the calculation.
-
-  \p size must be >= 0.
-
-  If the requested \p size doesn't fit in the allocated buffer size,
-  the buffer is extended.
-
-  \param[in]    size    requested text size to be added (w/o trailing nul)
-*/
-void HV_Edit_Buffer::check(int size) {
-
-  if (size_ + size + 1 <= allocated_) return;
-
-  int new_size = (allocated_ + size + extend_) & (~(extend_-1)); // round to chunk size
-
-  buf_ = (char *)realloc(buf_, new_size);
-
-#if (DEBUG_EDIT_BUFFER)
-  printf("HV_Edit_Buffer::check(%d), allocated: %d ->%d\n",
-         size, allocated_, new_size);
-  fflush(stdout);
-#endif
-
-  allocated_ = new_size;
-
-} // HV_Edit_Buffer::check()
-
-
-/*
-  The destructor frees the edit buffer.
-*/
-HV_Edit_Buffer::~HV_Edit_Buffer() {
-
-  if (buf_) {
-#if (DEBUG_EDIT_BUFFER)
-    printf("~HV_Edit_Buffer(): size = %d, allocated = %d\n",
-      size_, allocated_);
-    fflush(stdout);
-#endif
-    free(buf_);
-  }
-} // ~HV_Edit_Buffer()
-
-
-/*
-  Prints the edit buffer (Debug only).
+  Print the edit buffer (Debug only).
 */
 #if (DEBUG_EDIT_BUFFER)
 void HV_Edit_Buffer::print(const char *text) {
-  printf("HV_Edit_Buffer::print(%s), allocated=%d, size=%d\n",
-         text, allocated_, size_);
-  printf("    \"%s\"\n", buf_ && size_ ? buf_ : "");
+  printf("HV_Edit_Buffer::print(%s), capacity=%d, size=%d\n",
+         text, capacity(), size());
+  printf("    \"%s\"\n", c_str() && size() ? c_str() : "");
   fflush(stdout);
 } // print()
 #endif
+
+// [End of internal class HV_Edit_Buffer]
+
 
 /** Adds a text block to the list. */
 Fl_Help_Block *                                 // O - Pointer to new block
@@ -782,12 +641,12 @@ Fl_Help_View::draw()
               else if (*ptr == '\t')
               {
                 // Do tabs every 8 columns...
-                buf.add(' '); // add at least one space
+                buf += ' '; // add at least one space
                 while (buf.size() & 7)
-                  buf.add(' ');
+                  buf += ' ';
               }
               else {
-                buf.add(' ');
+                buf += ' ';
               }
               if ((fsize + 2) > hh)
                 hh = fsize + 2;
@@ -836,7 +695,7 @@ Fl_Help_View::draw()
           }
 
           while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-            buf.add(*ptr++);
+            buf += *ptr++;
 
           attrs = ptr;
           while (*ptr && *ptr != '>')
@@ -1112,13 +971,13 @@ Fl_Help_View::draw()
           if (pre)
           {
             if (*ptr == ' ')
-              buf.add(' ');
+              buf += ' ';
             else
             {
               // Do tabs every 8 columns...
-              buf.add(' '); // at least one space
+              buf += ' '; // at least one space
               while (buf.size() & 7)
-                buf.add(' ');
+                buf += ' ';
             }
           }
 
@@ -1133,7 +992,7 @@ Fl_Help_View::draw()
           int qch = quote_char(ptr);
 
           if (qch < 0)
-            buf.add('&');
+            buf += '&';
           else {
             int utf8l = buf.size();
             buf.add(qch);
@@ -1148,7 +1007,7 @@ Fl_Help_View::draw()
         }
         else
         {
-          buf.add(*ptr++);
+          buf += *ptr++;
 
           if ((fsize + 2) > hh)
             hh = fsize + 2;
@@ -1477,7 +1336,7 @@ void Fl_Help_View::format() {
         }
 
         while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-          buf.add(*ptr++);
+          buf += *ptr++;
 
         attrs = ptr;
         while (*ptr && *ptr != '>')
@@ -2005,7 +1864,7 @@ void Fl_Help_View::format() {
         int qch = quote_char(ptr);
 
         if (qch < 0)
-          buf.add('&');
+          buf += '&';
         else {
           buf.add(qch);
           ptr = strchr(ptr, ';') + 1;
@@ -2016,7 +1875,7 @@ void Fl_Help_View::format() {
       }
       else
       {
-        buf.add(*ptr++);
+        buf += *ptr++;
 
         if ((fsize + 2) > hh)
           hh = fsize + 2;
@@ -2167,7 +2026,7 @@ Fl_Help_View::format_table(int        *table_width,     // O - Total table width
       // Check width...
       if (needspace)
       {
-        buf.add(' ');
+        buf += ' ';
         needspace = 0;
       }
 
@@ -2188,7 +2047,7 @@ Fl_Help_View::format_table(int        *table_width,     // O - Total table width
       start = ptr;
 
       for (buf.clear(), ptr ++; *ptr && *ptr != '>' && !isspace((*ptr)&255);)
-        buf.add(*ptr++);
+        buf += *ptr++;
 
       attrs = ptr;
       while (*ptr && *ptr != '>')
@@ -2434,7 +2293,7 @@ Fl_Help_View::format_table(int        *table_width,     // O - Total table width
       int qch = quote_char(ptr);
 
       if (qch < 0)
-        buf.add('&');
+        buf += '&';
       else {
         buf.add(qch);
         ptr = strchr(ptr, ';') + 1;
@@ -2442,7 +2301,7 @@ Fl_Help_View::format_table(int        *table_width,     // O - Total table width
     }
     else
     {
-      buf.add(*ptr++);
+      buf += *ptr++;
     }
   }
 
@@ -2573,7 +2432,7 @@ Fl_Help_View::free_data() {
         buf.clear();
 
         while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-          buf.add(*ptr++);
+          buf += *ptr++;
 
         attrs = ptr;
         while (*ptr && *ptr != '>')
