@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   // of the `canvas` widget and start it immediately.
   // We use the `DONT_RESIZE_CANVAS` flag here to tell the
   // animation *not* to change the canvas size (which is the default).
-  const char *default_image = "../test/pixmaps/fltk_animated.gif";
+  const char *default_image = "../test/images/fltk_animated.gif";
   Fl_Anim_GIF_Image animgif(/*name_=*/ argv[1] ? argv[1] : default_image,
                           /*canvas_=*/ &canvas,
                            /*flags_=*/ Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
