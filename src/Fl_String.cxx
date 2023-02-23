@@ -424,6 +424,16 @@ Fl_String &Fl_String::append(const Fl_String &src) {
 }
 
 /**
+ Append a single byte.
+ \param[in] c single byte character
+ \return self
+ */
+Fl_String &Fl_String::append(char c) {
+  push_back(c);
+  return *this;
+}
+
+/**
  Append a C-style string or data.
  \param[in] src   copy C-style string from here
  \return self
@@ -438,7 +448,16 @@ Fl_String &Fl_String::operator+=(const char *src) {
  \return self
  */
 Fl_String &Fl_String::operator+=(const Fl_String &src) {
-  return replace_(size_, 0, src.buffer_, src.size_);
+  return append(src);
+}
+
+/**
+ Append a single byte.
+ \param[in] c single byte character
+ \return self
+ */
+Fl_String &Fl_String::operator+=(char c) {
+  return append(c);
 }
 
 /**

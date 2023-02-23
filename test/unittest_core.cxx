@@ -137,6 +137,8 @@ TEST(Fl_String, Operations) {
   EXPECT_STREQ(hello.c_str(), "HelloWorld");
   hello += "!";
   EXPECT_STREQ(hello.c_str(), "HelloWorld!");
+  hello += '?';
+  EXPECT_STREQ(hello.c_str(), "HelloWorld!?");
 
   hello = "Hello";
   hello.replace(0, 0, "Say ", 4);

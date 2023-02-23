@@ -107,8 +107,10 @@ public:
   void pop_back();
   Fl_String &append(const char *src, int n_ins=npos);
   Fl_String &append(const Fl_String &src);
+  Fl_String &append(char c);
   Fl_String &operator+=(const char *src);
   Fl_String &operator+=(const Fl_String &src);
+  Fl_String &operator+=(char c);
   Fl_String &replace(int at, int n_del, const char *src, int n_ins=npos);
   Fl_String &replace(int at, int n_del, const Fl_String &src);
   Fl_String substr(int pos=0, int n=npos) const;
