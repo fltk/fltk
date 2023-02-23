@@ -44,6 +44,12 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
+    - name: Unittest
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: ./bin/test/unittests --core
+
+
   build-wayland:
     runs-on: ubuntu-latest
 
