@@ -19,6 +19,7 @@
 #include "Fl_System_Driver.H"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Plugin.H>
+#include <FL/Fl_String.H>
 #include <FL/filename.H>
 
 #include <stdio.h>
@@ -799,6 +800,33 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
 }
 
 /**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0).
+
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used
+ */
+char Fl_Preferences::get( const char *key, Fl_String &value, const Fl_String &defaultValue ) {
+  const char *v = node->get( key );
+  if (v) {
+    if ( strchr( v, '\\' ) ) {
+      char *text = decodeText( v );
+      value = text;
+      ::free(text);
+    } else {
+      value = v;
+    }
+    return 1;
+  } else {
+    value = defaultValue;
+    return 0;
+  }
+}
+
+/**
  Sets an entry (name/value pair). The return value indicates if there
  was a problem storing the data in memory. However it does not
  reflect if the value was actually stored in the preference file.
@@ -967,6 +995,20 @@ char Fl_Preferences::set( const char *key, const void *data, int dsize ) {
   free( buffer );
   return 1;
 }
+
+/**
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preference file.
+
+ \param[in] key name of entry
+ \param[in] value set this entry to value (stops at the first nul character).
+ \return 0 if setting the value failed
+ */
+char Fl_Preferences::set( const char *entry, const Fl_String &value ) {
+  return set(entry, value.c_str());
+}
+
 
 /**
  Returns the size of the value part of an entry.
@@ -1211,9 +1253,9 @@ int Fl_Preferences::RootNode::read() {
   FILE *f = fl_fopen( filename_, "rb" );
   if ( !f )
     return -1;
-  if (fgets( buf, 1024, f )==0) { /* ignore */ }
-  if (fgets( buf, 1024, f )==0) { /* ignore */ }
-  if (fgets( buf, 1024, f )==0) { /* ignore */ }
+  if (fgets( buf, 1024, f )==0) { /* ignore: "; FLTK preferences file format 1.0" */ }
+  if (fgets( buf, 1024, f )==0) { /* ignore: "; vendor: ..." */ }
+  if (fgets( buf, 1024, f )==0) { /* ignore: "; application: ..." */ }
   Node *nd = prefs_->node;
   for (;;) {
     if ( !fgets( buf, 1024, f ) ) break;        // EOF or Error
