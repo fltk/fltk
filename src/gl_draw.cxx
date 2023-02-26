@@ -221,7 +221,7 @@ void gl_rect(int x, int y, int w, int h) {
   glVertex2i(x+w-1, y);
   glVertex2i(x, y);
   glVertex2i(x, y+h-1);
-  glVertex2i(x+w, y+h-1);
+  glVertex2i(x+w-1, y+h-1);
   glEnd();
 }
 
