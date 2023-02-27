@@ -180,7 +180,7 @@ public:
       for (int i=0; i<list_size_; i++) {
         delete list_[i];
       }
-      delete list_;
+      ::free(list_);
     }
     list_ = NULL;
     list_size_ = 0;
