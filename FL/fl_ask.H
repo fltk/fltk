@@ -72,8 +72,14 @@ FL_EXPORT int fl_choice_n(const char *q, const char *b0, const char *b1, const c
 FL_EXPORT Fl_String fl_input_str(int maxchar, const char *label, const char *deflt = 0, ...)
     __fl_attr((__format__(__printf__, 2, 4)));
 
+FL_EXPORT Fl_String fl_input_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
+    __fl_attr((__format__(__printf__, 3, 5)));
+
 FL_EXPORT Fl_String fl_password_str(int maxchar, const char *label, const char *deflt = 0, ...)
     __fl_attr((__format__(__printf__, 2, 4)));
+
+FL_EXPORT Fl_String fl_password_str(int &ret, int maxchar, const char *label, const char *deflt = 0, ...)
+    __fl_attr((__format__(__printf__, 3, 5)));
 
 FL_EXPORT Fl_Widget *fl_message_icon();
 extern FL_EXPORT Fl_Font fl_message_font_;

@@ -299,7 +299,7 @@ const char* ExternalCodeEditor::tmp_filename() {
   static char path[FL_PATH_MAX+1];
   const char *tmpdir = create_tmpdir();
   if ( !tmpdir ) return 0;
-  const char *ext = g_project.code_file_name;   // e.g. ".cxx"
+  const char *ext = g_project.code_file_name.c_str();   // e.g. ".cxx"
   snprintf(path, FL_PATH_MAX, "%s/%p%s", tmpdir, (void*)this, ext);
   path[FL_PATH_MAX] = 0;
   return path;
@@ -385,7 +385,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
                         editor_cmd, filename);
   char cmd[1024];
   snprintf(cmd, sizeof(cmd), "%s %s", editor_cmd, filename);
-  command_line_.value(editor_cmd);
+  command_line_ = editor_cmd;
   open_alert_pipe();
   // Fork editor to background..
   switch ( pid_ = fork() ) {
@@ -559,7 +559,7 @@ void ExternalCodeEditor::alert_pipe_cb(FL_SOCKET s, void* d) {
   self->last_error_ = 0;
   if (::read(s, &self->last_error_, sizeof(int)) != sizeof(int))
     return;
-  const char* cmd = self->command_line_.value();
+  const char* cmd = self->command_line_.c_str();
   if (cmd && *cmd) {
     if (cmd[0] == '/') { // is this an absoluet filename?
       fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"",

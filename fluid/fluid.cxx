@@ -164,8 +164,8 @@ int compile_strings = 0;        // fluic -cs
 int batch_mode = 0;             // if set (-c, -u) don't open display
 
 /// command line arguments override settings in the projectfile
-Fd_String g_code_filename_arg;
-Fd_String g_header_filename_arg;
+Fl_String g_code_filename_arg;
+Fl_String g_header_filename_arg;
 
 /** \var int Fluid_Project::header_file_set
  If set, commandline overrides header file name in .fl file.
@@ -1001,19 +1001,20 @@ int write_code_files() {
   char cname[FL_PATH_MAX+1];
   char hname[FL_PATH_MAX+1];
   g_project.i18n_program = fl_filename_name(filename);
-  g_project.i18n_program.capacity(FL_PATH_MAX);
-  fl_filename_setext(g_project.i18n_program.buffer(), FL_PATH_MAX, "");
-  if (g_project.code_file_name[0] == '.' && strchr(g_project.code_file_name, '/') == NULL) {
+  g_project.i18n_program.resize(FL_PATH_MAX);
+  fl_filename_setext(g_project.i18n_program.data(), FL_PATH_MAX, "");
+  g_project.i18n_program.resize(g_project.i18n_program.strlen());
+  if (g_project.code_file_name[0] == '.' && strchr(g_project.code_file_name.c_str(), '/') == NULL) {
     strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
-    fl_filename_setext(cname, FL_PATH_MAX, g_project.code_file_name);
+    fl_filename_setext(cname, FL_PATH_MAX, g_project.code_file_name.c_str());
   } else {
-    strlcpy(cname, g_project.code_file_name, FL_PATH_MAX);
+    strlcpy(cname, g_project.code_file_name.c_str(), FL_PATH_MAX);
   }
-  if (g_project.header_file_name[0] == '.' && strchr(g_project.header_file_name, '/') == NULL) {
+  if (g_project.header_file_name[0] == '.' && strchr(g_project.header_file_name.c_str(), '/') == NULL) {
     strlcpy(hname, fl_filename_name(filename), FL_PATH_MAX);
-    fl_filename_setext(hname, FL_PATH_MAX, g_project.header_file_name);
+    fl_filename_setext(hname, FL_PATH_MAX, g_project.header_file_name.c_str());
   } else {
-    strlcpy(hname, g_project.header_file_name, FL_PATH_MAX);
+    strlcpy(hname, g_project.header_file_name.c_str(), FL_PATH_MAX);
   }
   if (!batch_mode) enter_project_dir();
   Fd_Code_Writer f;
@@ -1805,7 +1806,7 @@ void set_modflag(int mf, int mfc) {
 #endif // _WIN32
     else basename = filename;
 
-    code_ext = fl_filename_ext(g_project.code_file_name);
+    code_ext = fl_filename_ext(g_project.code_file_name.c_str());
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';
     snprintf(title, sizeof(title), "%s%c  %s%c",
@@ -1927,11 +1928,12 @@ void update_sourceview_cb(Fl_Button*, void*)
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
     g_project.i18n_program = fl_filename_name(sv_source_filename);
-    g_project.i18n_program.capacity(FL_PATH_MAX);
-    fl_filename_setext(g_project.i18n_program.buffer(), FL_PATH_MAX, "");
-    Fd_String code_file_name_bak = g_project.code_file_name;
+    g_project.i18n_program.resize(FL_PATH_MAX);
+    fl_filename_setext(g_project.i18n_program.data(), FL_PATH_MAX, "");
+    g_project.i18n_program.resize(g_project.i18n_program.strlen());
+    Fl_String code_file_name_bak = g_project.code_file_name;
     g_project.code_file_name = sv_source_filename;
-    Fd_String header_file_name_bak = g_project.header_file_name;
+    Fl_String header_file_name_bak = g_project.header_file_name;
     g_project.header_file_name = sv_header_filename;
 
     // generate the code and load the files

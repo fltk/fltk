@@ -172,7 +172,7 @@ Run `make depend' in the zlib folder on a Linux system after
       the upgrade to update this file.
 
 
-\section bundled-ong png:
+\section bundled-png png:
 
   Website:    http://libpng.org/pub/png/libpng.html
 \n  Download:   See website and follow links.
@@ -195,6 +195,7 @@ Run `make depend' in the zlib folder on a Linux system after
     - pnglibconf.h: Generate on a Linux system and merge (see above).
     - pngprefix.h:  Generate on a Linux system and merge (see above).
     - makedepend: Keep this file.
+    - png.c: Keep a change labelled with "FLTK"
 
 Run `make depend' in the png folder on a Linux system after
       the upgrade to update this file.
