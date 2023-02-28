@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +20,15 @@
 
 #ifndef Fl_H
 #  define Fl_H
+
+// In FLTK 1.3.x WIN32 must be defined on Windows (if not using CYGWIN).
+// Since FLTK 1.3.9 we define WIN32 if it's not defined on Windows
+// to avoid common user errors, for instance GitHub Issue #686.
+// Note: since FLTK 1.4.0 we use '_WIN32' anyway, no need to define WIN32.
+
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(WIN32)
+#define WIN32
+#endif
 
 #include <FL/Fl_Export.H>
 
@@ -1414,7 +1421,3 @@ public:
  /** @} */
 
 #endif // !Fl_H
-
-//
-// End of "$Id$".
-//
