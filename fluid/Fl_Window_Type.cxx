@@ -567,7 +567,6 @@ void Fl_Window_Type::newdx() {
   if (Fl::event_state(FL_ALT) || !snap) {
     mydx = mx-x1;
     mydy = my-y1;
-
     if (abs(mydx) < 2 && abs(mydy) < 2) mydx = mydy = 0;
   } else {
     int dx0 = mx-x1;
@@ -1151,6 +1150,7 @@ extern Fl_Menu_Item Main_Menu[];
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
   overlay_item->label("Hide O&verlays");
+  if (overlay_button) overlay_button->label("Hide &Overlays");
   overlays_invisible = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
@@ -1181,10 +1181,13 @@ void redraw_overlays() {
 void toggle_overlays(Fl_Widget *,void *) {
   overlays_invisible = !overlays_invisible;
 
-  if (overlays_invisible)
+  if (overlays_invisible) {
     overlay_item->label("Show O&verlays");
-  else
+    if (overlay_button) overlay_button->label("Show &Overlays");
+  } else {
     overlay_item->label("Hide O&verlays");
+    if (overlay_button) overlay_button->label("Hide &Overlays");
+  }
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
     if (o->is_window()) {

@@ -113,6 +113,8 @@ Fl_Box *w_when_box=(Fl_Box *)0;
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
 
+Fl_Button *overlay_button=(Fl_Button *)0;
+
 /**
  Create a panel that can be used with all known widgets
 */
@@ -1012,12 +1014,11 @@ avior.");
         wLiveMode->labelsize(11);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);
       } // Fl_Button* wLiveMode
-      { Fl_Button* o = new Fl_Button(240, 370, 100, 20, "Hide &Overlays");
-        o->tooltip("Hide the widget overlay box.");
-        o->labelsize(11);
-        o->labelcolor((Fl_Color)1);
-        o->callback((Fl_Callback*)overlay_cb);
-      } // Fl_Button* o
+      { overlay_button = new Fl_Button(240, 370, 100, 20, "Hide &Overlays");
+        overlay_button->tooltip("Hide the widget overlay box.");
+        overlay_button->labelsize(11);
+        overlay_button->callback((Fl_Callback*)overlay_cb);
+      } // Fl_Button* overlay_button
       { Fl_Return_Button* o = new Fl_Return_Button(345, 370, 65, 20, "Close");
         o->labelsize(11);
         o->callback((Fl_Callback*)ok_cb);
