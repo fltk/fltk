@@ -57,12 +57,13 @@ decl {void init_scheme(void);} {
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 }
 
-Function {make_project_window()} {} {
+Function {make_project_window()} {open
+} {
   Fl_Window project_window {
     label {Project Settings}
-    xywh {472 246 399 298} type Double hide
+    xywh {472 246 399 298} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} modal
+    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
@@ -181,8 +182,8 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {701 666 360 355} type Double hide resizable
-    code0 {o->size_range(o->w(), o->h());} non_modal
+    xywh {701 666 360 355} type Double resizable
+    code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -291,8 +292,8 @@ Examples:
 Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
-    label {Shell Command} open selected
-    xywh {844 473 375 208} type Double resizable modal size_range {375 208 1024 208} visible
+    label {Shell Command} open
+    xywh {502 196 375 208} type Double resizable modal size_range {375 208 1024 208} visible
   } {
     Fl_Group {} {open
       xywh {0 0 375 165} resizable
@@ -302,8 +303,8 @@ Function {make_shell_window()} {open
         tooltip {external shell command} xywh {82 14 277 20} labelfont 1 labelsize 12 textfont 4 textsize 12 resizable
       }
       Fl_Check_Button shell_savefl_button {
-        label {save .fl design file}
-        tooltip {save the design to the .fl file before running the command} xywh {82 39 136 19} down_box DOWN_BOX labelsize 12
+        label {save .fl project file}
+        tooltip {save the project to the .fl file before running the command} xywh {82 39 136 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Check_Button shell_writecode_button {
         label {save source code}
@@ -314,7 +315,7 @@ Function {make_shell_window()} {open
         tooltip {save the internationalisation string before running the command} xywh {82 79 126 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Check_Button shell_use_fl_button {
-        label {use settings in .fl design files}
+        label {use settings in .fl project files}
         callback {g_shell_use_fl_settings = shell_use_fl_button->value();
 fluid_prefs.set("shell_use_fl", g_shell_use_fl_settings);
 if (g_shell_use_fl_settings) {
@@ -322,7 +323,7 @@ if (g_shell_use_fl_settings) {
 } else {
   shell_prefs_get();
 }
-update_shell_window();}
+update_shell_window();} selected
         tooltip {check to read and write shell command from and to .fl files} xywh {82 110 180 19} down_box DOWN_BOX labelsize 12
       }
       Fl_Box {} {
@@ -364,7 +365,7 @@ shell_window->hide();}
   }
   Fl_Window shell_run_window {
     label {Shell Command Output}
-    xywh {887 409 555 430} type Double resizable visible
+    xywh {455 590 555 430} type Double resizable visible
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable
@@ -393,7 +394,7 @@ Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
     label {Layout Settings}
-    xywh {745 303 310 245} type Double hide non_modal
+    xywh {745 303 310 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x

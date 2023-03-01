@@ -420,8 +420,8 @@ Fl_Double_Window* make_shell_window() {
         shell_command_input->textsize(12);
         Fl_Group::current()->resizable(shell_command_input);
       } // Fl_Input* shell_command_input
-      { shell_savefl_button = new Fl_Check_Button(82, 39, 136, 19, "save .fl design file");
-        shell_savefl_button->tooltip("save the design to the .fl file before running the command");
+      { shell_savefl_button = new Fl_Check_Button(82, 39, 136, 19, "save .fl project file");
+        shell_savefl_button->tooltip("save the project to the .fl file before running the command");
         shell_savefl_button->down_box(FL_DOWN_BOX);
         shell_savefl_button->labelsize(12);
       } // Fl_Check_Button* shell_savefl_button
@@ -435,7 +435,7 @@ Fl_Double_Window* make_shell_window() {
         shell_writemsgs_button->down_box(FL_DOWN_BOX);
         shell_writemsgs_button->labelsize(12);
       } // Fl_Check_Button* shell_writemsgs_button
-      { shell_use_fl_button = new Fl_Check_Button(82, 110, 180, 19, "use settings in .fl design files");
+      { shell_use_fl_button = new Fl_Check_Button(82, 110, 180, 19, "use settings in .fl project files");
         shell_use_fl_button->tooltip("check to read and write shell command from and to .fl files");
         shell_use_fl_button->down_box(FL_DOWN_BOX);
         shell_use_fl_button->labelsize(12);
