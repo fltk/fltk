@@ -1402,14 +1402,11 @@ int Fl_Window_Type::handle(int event) {
     }}
     // see if user grabs edges of selected region:
     if (numselected && !(Fl::event_state(FL_SHIFT)) &&
-        mx<=br+snap && mx>=bx-snap && my<=bt+snap && my>=by-snap) {
-      int snap1 = snap>5 ? snap : 5;
-      int w1 = (br-bx)/4; if (w1 > snap1) w1 = snap1;
-      if (mx>=br-w1) drag |= RIGHT;
-      else if (mx<bx+w1) drag |= LEFT;
-      w1 = (bt-by)/4; if (w1 > snap1) w1 = snap1;
-      if (my<=by+w1) drag |= TOP;
-      else if (my>bt-w1) drag |= BOTTOM;
+        mx<=br+2 && mx>=bx-2 && my<=bt+2 && my>=by-2) {
+      if (mx >= br-5) drag |= RIGHT;
+      else if (mx <= bx+5) drag |= LEFT;
+      if (my >= bt-5) drag |= BOTTOM;
+      else if (my <= by+5) drag |= TOP;
       if (!drag) drag = DRAG;
     }
     // do object-specific selection of other objects:
