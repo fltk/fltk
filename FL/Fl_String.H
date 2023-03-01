@@ -21,6 +21,8 @@
   Basic Fl_String class for FLTK.
 */
 
+#include "Fl_Export.H"
+
 // See: https://en.cppreference.com/w/cpp/string/basic_string/basic_string
 
 /**
@@ -49,7 +51,7 @@
 
   \since 1.4.0
 */
-class Fl_String {
+class FL_EXPORT Fl_String {
 
 private:
   /*
