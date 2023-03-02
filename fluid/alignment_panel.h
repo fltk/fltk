@@ -21,6 +21,7 @@
 #include <FL/Fl.H>
 #include "fluid.h"
 #include "widget_browser.h"
+#include "Fd_Snap_Action.h"
 #include "shell_command.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
@@ -104,5 +105,6 @@ extern Fl_Check_Button *guides_toggle;
 #include <FL/Fl_Round_Button.H>
 extern void default_widget_size_cb(Fl_Round_Button*, long);
 extern Fl_Round_Button *def_widget_size[6];
+#include <FL/Fl_Value_Input.H>
 Fl_Double_Window* make_layout_window();
 #endif

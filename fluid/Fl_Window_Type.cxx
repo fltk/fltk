@@ -29,6 +29,7 @@
 #include "code.h"
 #include "widget_panel.h"
 #include "factory.h"
+#include "Fd_Snap_Action.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
@@ -560,43 +561,49 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   update_xywh();
 }
 
+// To snap, we must know:
+// dx, dy : how far we moved away from the push event (mx-x1, my-y1)
+// bx, by, bt, br : the bounding box when at the push event
+// drag : flags for the part of the bounding box that we drag
+// dist : distance to closest snap position
+// sx, sy : delta to closest snap position
+// the group that contains the selection
+// the window that contains the selection
+// maybe an alternative bounding box containing the label extent of outside labels
+
+// write dx and dy to render and finally apply the drag
+
+// mark all snnap actions that match our dx, and/or dy, so we can drag a visual aid
+
 // calculate actual move by moving mouse position (mx,my) to
 // nearest multiple of gridsize, and snap to original position
 void Fl_Window_Type::newdx() {
   int mydx, mydy;
-  if (Fl::event_state(FL_ALT) || !snap) {
-    mydx = mx-x1;
-    mydy = my-y1;
-    if (abs(mydx) < 2 && abs(mydy) < 2) mydx = mydy = 0;
-  } else {
-    int dx0 = mx-x1;
-    int ix = (drag&RIGHT) ? br : bx;
-    mydx = gridx ? ((ix+dx0+gridx/2)/gridx)*gridx - ix : dx0;
-    if (dx0 > snap) {
-      if (mydx < 0) mydx = 0;
-    } else if (dx0 < -snap) {
-      if (mydx > 0) mydx = 0;
-    } else
-      mydx = 0;
-    int dy0 = my-y1;
-    int iy = (drag&BOTTOM) ? by : bt;
-    mydy = gridy ? ((iy+dy0+gridy/2)/gridy)*gridy - iy : dy0;
-    if (dy0 > snap) {
-      if (mydy < 0) mydy = 0;
-    } else if (dy0 < -snap) {
-      if (mydy > 0) mydy = 0;
-    } else
-      mydy = 0;
-  }
+  mydx = mx-x1;
+  mydy = my-y1;
 
-  if (!(drag & (DRAG | BOX | LEFT | RIGHT))) {
+  if (!(drag & (FD_DRAG | FD_BOX | FD_LEFT | FD_RIGHT))) {
     mydx = 0;
     dx = 0;
   }
 
-  if (!(drag & (DRAG | BOX | TOP | BOTTOM))) {
+  if (!(drag & (FD_DRAG | FD_BOX | FD_TOP | FD_BOTTOM))) {
     mydy = 0;
     dy = 0;
+  }
+
+  if (show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
+    Fl_Type *selection = 0L; // special power for the first selected widget
+    for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+      if (q->selected && q->is_widget() && !q->is_menu_item()) {
+        selection = q;
+        break;
+      }
+    }
+    Fd_Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 16, 16, mydx, mydy, (Fl_Widget_Type*)selection, this };
+    Fd_Snap_Action::check_all(data);
+    if (data.x_dist < 16) mydx = data.dx_out;
+    if (data.y_dist < 16) mydy = data.dy_out;
   }
 
   if (dx != mydx || dy != mydy) {
@@ -612,34 +619,34 @@ void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T
   R = X+myo->o->w();
   T = Y+myo->o->h();
   if (!drag) return;
-  if (drag&DRAG) {
+  if (drag&FD_DRAG) {
     X += dx;
     Y += dy;
     R += dx;
     T += dy;
   } else {
-    if (drag&LEFT) {
+    if (drag&FD_LEFT) {
       if (X==bx) {
         X += dx;
       } else {
         if (X<bx+dx) X = bx+dx;
       }
     }
-    if (drag&TOP) {
+    if (drag&FD_TOP) {
       if (Y==by) {
         Y += dy;
       } else {
         if (Y<by+dy) Y = by+dy;
       }
     }
-    if (drag&RIGHT) {
+    if (drag&FD_RIGHT) {
       if (R==br) {
         R += dx;
       } else {
         if (R>br+dx) R = br+dx;
       }
     }
-    if (drag&BOTTOM) {
+    if (drag&FD_BOTTOM) {
       if (T==bt) {
         T += dy;
       } else {
@@ -649,118 +656,6 @@ void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T
   }
   if (R<X) {int n = X; X = R; R = n;}
   if (T<Y) {int n = Y; Y = T; T = n;}
-}
-
-// draw a vertical arrow pointing toward y2
-static void draw_v_arrow(int x, int y1, int y2) {
-  int dy = (y1>y2) ? -1 : 1 ;
-  fl_yxline(x, y1, y2);
-  fl_xyline(x-4, y2, x+4);
-  fl_line(x-2, y2-dy*5, x, y2-dy);
-  fl_line(x+2, y2-dy*5, x, y2-dy);
-}
-
-static void draw_h_arrow(int x1, int y, int x2) {
-  int dx = (x1>x2) ? -1 : 1 ;
-  fl_xyline(x1, y, x2);
-  fl_yxline(x2, y-4, y+4);
-  fl_line(x2-dx*5, y-2, x2-dx, y);
-  fl_line(x2-dx*5, y+2, x2-dx, y);
-}
-
-static void draw_top_brace(const Fl_Widget *w) {
-  fl_yxline(w->x(), w->y()-2, w->y()+6);
-  fl_yxline(w->x()+w->w()-1, w->y()-2, w->y()+6);
-  fl_xyline(w->x()-2, w->y(), w->x()+w->w()+1);
-}
-
-static void draw_left_brace(const Fl_Widget *w) {
-  fl_xyline(w->x()-2, w->y(), w->x()+6);
-  fl_xyline(w->x()-2, w->y()+w->h()-1, w->x()+6);
-  fl_yxline(w->x(), w->y()-2, w->y()+w->h()+1);
-}
-
-static void draw_right_brace(const Fl_Widget *w) {
-  int xx = w->x() + w->w() - 1;
-  fl_xyline(xx-6, w->y(), xx+2);
-  fl_xyline(xx-6, w->y()+w->h()-1, xx+2);
-  fl_yxline(xx, w->y()-2, w->y()+w->h()+1);
-}
-
-static void draw_bottom_brace(const Fl_Widget *w) {
-  int yy = w->y() + w->h() - 1;
-  fl_yxline(w->x(), yy-6, yy+2);
-  fl_yxline(w->x()+w->w()-1, yy-6, yy+2);
-  fl_xyline(w->x()-2, yy, w->x()+w->w()+1);
-}
-
-static void draw_height(int x, int y, int b, Fl_Align a) {
-  char buf[16];
-  int h = b - y;
-  sprintf(buf, "%d", h);
-  fl_font(FL_HELVETICA, 9);
-  int lw = (int)fl_width(buf);
-  int lx;
-
-  b --;
-  if (h < 30) {
-    // Move height to the side...
-    if (a == FL_ALIGN_LEFT) lx = x - lw - 2;
-    else lx = x + 2;
-
-    fl_yxline(x, y, b);
-  } else {
-    // Put height inside the arrows...
-    lx = x - lw / 2;
-
-    fl_yxline(x, y, y + (h - 11) / 2);
-    fl_yxline(x, y + (h + 11) / 2, b);
-  }
-
-  // Draw the height...
-  fl_draw(buf, lx, y + (h + 9) / 2);
-
-  // Draw the arrowheads...
-  fl_line(x-2, y+5, x, y+1, x+2, y+5);
-  fl_line(x-2, b-5, x, b-1, x+2, b-5);
-
-  // Draw the end lines...
-  fl_xyline(x - 4, y, x + 4);
-  fl_xyline(x - 4, b, x + 4);
-}
-
-static void draw_width(int x, int y, int r, Fl_Align a) {
-  char buf[16];
-  int w = r-x;
-  sprintf(buf, "%d", w);
-  fl_font(FL_HELVETICA, 9);
-  int lw = (int)fl_width(buf);
-  int ly = y + 4;
-
-  r --;
-
-  if (lw > (w - 20)) {
-    // Move width above/below the arrows...
-    if (a == FL_ALIGN_TOP) ly -= 10;
-    else ly += 10;
-
-    fl_xyline(x, y, r);
-  } else {
-    // Put width inside the arrows...
-    fl_xyline(x, y, x + (w - lw - 2) / 2);
-    fl_xyline(x + (w + lw + 2) / 2, y, r);
-  }
-
-  // Draw the width...
-  fl_draw(buf, x + (w - lw) / 2, ly);
-
-  // Draw the arrowheads...
-  fl_line(x+5, y-2, x+1, y, x+5, y+2);
-  fl_line(r-5, y-2, r-1, y, r-5, y+2);
-
-  // Draw the end lines...
-  fl_yxline(x, y - 4, y + 4);
-  fl_yxline(r, y - 4, y + 4);
 }
 
 void Fl_Window_Type::draw_overlay() {
@@ -780,7 +675,7 @@ void Fl_Window_Type::draw_overlay() {
     sx = bx; sy = by; sr = br; st = bt;
   }
   fl_color(FL_RED);
-  if (drag==BOX && (x1 != mx || y1 != my)) {
+  if (drag==FD_BOX && (x1 != mx || y1 != my)) {
     int x = x1; int r = mx; if (x > r) {x = mx; r = x1;}
     int y = y1; int b = my; if (y > b) {y = my; b = y1;}
     fl_rect(x,y,r-x,b-y);
@@ -791,10 +686,10 @@ void Fl_Window_Type::draw_overlay() {
   int mybx,myby,mybr,mybt;
   int mysx,mysy,mysr,myst;
   mybx = mysx = o->w(); myby = mysy = o->h(); mybr = mysr = 0; mybt = myst = 0;
-  Fl_Type *selection = 0L; // used to store the one selected widget (if n==1)
+  Fl_Type *selection = 0L; // special power for the first selected widget
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_widget() && !q->is_menu_item()) {
-      selection = q;
+      if (!selection) selection = q;
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
@@ -842,6 +737,7 @@ void Fl_Window_Type::draw_overlay() {
     }
   if (selected) return;
 
+#if 0
   if (show_guides && drag) {
     // draw overlays for UI Guideline distances
     // - check for distance to the window edge
@@ -1129,6 +1025,7 @@ void Fl_Window_Type::draw_overlay() {
     mysx += mybx-mybx_bak; mysr += mybr-mybr_bak;
     mysy += myby-myby_bak; myst += mybt-mybt_bak;
   }
+#endif
   // align the snapping selection box with the box we draw.
   sx = mysx; sy = mysy; sr = mysr; st = myst;
 
@@ -1143,6 +1040,11 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mysr-5,mysy,5,5);
   fl_rectf(mysr-5,myst-5,5,5);
   fl_rectf(mysx,myst-5,5,5);
+
+  if (show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
+    Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 16, 16, dx, dy, (Fl_Widget_Type*)selection, this};
+    Fd_Snap_Action::draw_all(data);
+  }
 }
 
 extern Fl_Menu_Item Main_Menu[];
@@ -1406,11 +1308,11 @@ int Fl_Window_Type::handle(int event) {
     // see if user grabs edges of selected region:
     if (numselected && !(Fl::event_state(FL_SHIFT)) &&
         mx<=br+2 && mx>=bx-2 && my<=bt+2 && my>=by-2) {
-      if (mx >= br-5) drag |= RIGHT;
-      else if (mx <= bx+5) drag |= LEFT;
-      if (my >= bt-5) drag |= BOTTOM;
-      else if (my <= by+5) drag |= TOP;
-      if (!drag) drag = DRAG;
+      if (mx >= br-5) drag |= FD_RIGHT;
+      else if (mx <= bx+5) drag |= FD_LEFT;
+      if (my >= bt-5) drag |= FD_BOTTOM;
+      else if (my <= by+5) drag |= FD_TOP;
+      if (!drag) drag = FD_DRAG;
     }
     // do object-specific selection of other objects:
     {Fl_Type* t = selection->click_test(mx, my);
@@ -1427,7 +1329,7 @@ int Fl_Window_Type::handle(int event) {
       selection = t;
       drag = 0;
     } else {
-      if (!drag) drag = BOX; // if all else fails, start a new selection region
+      if (!drag) drag = FD_BOX; // if all else fails, start a new selection region
     }}
     return 1;
 
@@ -1442,7 +1344,7 @@ int Fl_Window_Type::handle(int event) {
     if (!drag) return 0;
     mx = Fl::event_x();
     my = Fl::event_y();
-    if (drag != BOX && (dx || dy || !Fl::event_is_click())) {
+    if (drag != FD_BOX && (dx || dy || !Fl::event_is_click())) {
       if (dx || dy) moveallchildren();
     } else if ((Fl::event_clicks() || Fl::event_state(FL_CTRL))) {
       Fl_Widget_Type::open();
@@ -1510,7 +1412,7 @@ int Fl_Window_Type::handle(int event) {
     case FL_Up:    dx = 0; dy = -1; goto ARROW;
     case FL_Down:  dx = 0; dy = +1; goto ARROW;
     ARROW:
-      drag = (Fl::event_state(FL_SHIFT)) ? (RIGHT|BOTTOM) : DRAG;
+      drag = (Fl::event_state(FL_SHIFT)) ? (FD_RIGHT|FD_BOTTOM) : FD_DRAG;
       if (Fl::event_state(FL_COMMAND)) {dx *= gridx; dy *= gridy;}
       moveallchildren();
       drag = 0;

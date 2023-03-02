@@ -1091,7 +1091,8 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \see Fl_Widget::as_window(), Fl_Widget::as_gl_window()
    */
-  virtual Fl_Group* as_group() {return 0;}
+  virtual Fl_Group* as_group() { return NULL; }
+  virtual Fl_Group const* as_group() const { return NULL; }
 
   /** Returns an Fl_Window pointer if this widget is an Fl_Window.
 
@@ -1105,7 +1106,8 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \see Fl_Widget::as_group(), Fl_Widget::as_gl_window()
    */
-  virtual Fl_Window* as_window() {return 0;}
+  virtual Fl_Window* as_window() { return 0; }
+  virtual Fl_Window const* as_window() const { return NULL; }
 
   /** Returns an Fl_Gl_Window pointer if this widget is an Fl_Gl_Window.
 
@@ -1117,7 +1119,8 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \see Fl_Widget::as_group(), Fl_Widget::as_window()
    */
-  virtual class Fl_Gl_Window* as_gl_window() {return 0;}
+  virtual class Fl_Gl_Window* as_gl_window() { return NULL; }
+  virtual class Fl_Gl_Window const* as_gl_window() const { return NULL; }
 
   /** Returns non zero if MAC_USE_ACCENTS_MENU flag is set, 0 otherwise.
    */

@@ -17,6 +17,7 @@
 set (CPPFILES
   CodeEditor.cxx
   StyleParse.cxx
+  Fd_Snap_Action.cxx
   Fl_Function_Type.cxx
   Fl_Group_Type.cxx
   Fl_Menu_Type.cxx
@@ -45,6 +46,7 @@ set (CPPFILES
 
 set (HEADERFILES
   CodeEditor.h
+  Fd_Snap_Action.h
   Fl_Function_Type.h
   Fl_Group_Type.h
   Fl_Menu_Type.h

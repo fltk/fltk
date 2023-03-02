@@ -514,9 +514,41 @@ static void cb_Close2(Fl_Button*, void*) {
 
 Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
 
+static void cb_left(Fl_Value_Input* o, void* v) {
+  if (v) {
+    o->value((double)fd_left_window_margin);
+  } else {
+    fd_left_window_margin = (int)o->value();
+  }
+}
+
+static void cb_right(Fl_Value_Input* o, void* v) {
+  if (v) {
+    o->value((double)fd_right_window_margin);
+  } else {
+    fd_right_window_margin = (int)o->value();
+  }
+}
+
+static void cb_top(Fl_Value_Input* o, void* v) {
+  if (v) {
+    o->value((double)fd_top_window_margin);
+  } else {
+    fd_top_window_margin = (int)o->value();
+  }
+}
+
+static void cb_bottom(Fl_Value_Input* o, void* v) {
+  if (v) {
+    o->value((double)fd_bottom_window_margin);
+  } else {
+    fd_bottom_window_margin = (int)o->value();
+  }
+}
+
 Fl_Double_Window* make_layout_window() {
-  { grid_window = new Fl_Double_Window(310, 245, "Layout Settings");
-    { Fl_Int_Input* o = horizontal_input = new Fl_Int_Input(116, 10, 50, 25, "x");
+  { grid_window = new Fl_Double_Window(459, 450, "Layout Settings");
+    { Fl_Int_Input* o = horizontal_input = new Fl_Int_Input(259, 209, 50, 25, "x");
       horizontal_input->tooltip("Horizontal grid spacing.");
       horizontal_input->type(2);
       horizontal_input->box(FL_THIN_DOWN_BOX);
@@ -524,7 +556,7 @@ Fl_Double_Window* make_layout_window() {
       horizontal_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Int_Input* horizontal_input
-    { Fl_Int_Input* o = vertical_input = new Fl_Int_Input(179, 10, 50, 25, "pixels");
+    { Fl_Int_Input* o = vertical_input = new Fl_Int_Input(322, 209, 50, 25, "pixels");
       vertical_input->tooltip("Vertical grid spacing.");
       vertical_input->type(2);
       vertical_input->box(FL_THIN_DOWN_BOX);
@@ -532,7 +564,7 @@ Fl_Double_Window* make_layout_window() {
       vertical_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Int_Input* vertical_input
-    { Fl_Int_Input* o = snap_input = new Fl_Int_Input(116, 45, 50, 25, "pixel snap");
+    { Fl_Int_Input* o = snap_input = new Fl_Int_Input(259, 244, 50, 25, "pixel snap");
       snap_input->tooltip("Snap to grid within this many pixels.");
       snap_input->type(2);
       snap_input->box(FL_THIN_DOWN_BOX);
@@ -540,79 +572,95 @@ Fl_Double_Window* make_layout_window() {
       snap_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Int_Input* snap_input
-    { guides_toggle = new Fl_Check_Button(116, 80, 110, 25, "Show Guides");
+    { guides_toggle = new Fl_Check_Button(259, 279, 110, 25, "Show Guides");
       guides_toggle->tooltip("Show distance and alignment guides in overlay");
       guides_toggle->down_box(FL_DOWN_BOX);
       guides_toggle->callback((Fl_Callback*)guides_cb, (void*)(4));
     } // Fl_Check_Button* guides_toggle
-    { Fl_Button* o = new Fl_Button(240, 210, 60, 25, "Close");
+    { Fl_Button* o = new Fl_Button(383, 409, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close2);
     } // Fl_Button* o
-    { Fl_Box* o = new Fl_Box(47, 10, 70, 25, "Grid:");
+    { Fl_Box* o = new Fl_Box(190, 209, 70, 25, "Grid:");
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(10, 115, 107, 25, "Widget Size:");
+    { Fl_Box* o = new Fl_Box(153, 314, 107, 25, "Widget Size:");
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
-    { Fl_Group* o = new Fl_Group(105, 115, 192, 75);
-      { def_widget_size[0] = new Fl_Round_Button(115, 115, 70, 25);
+    { Fl_Group* o = new Fl_Group(248, 314, 192, 75);
+      { def_widget_size[0] = new Fl_Round_Button(258, 314, 70, 25);
         def_widget_size[0]->type(102);
         def_widget_size[0]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[0]->callback((Fl_Callback*)default_widget_size_cb, (void*)(8));
       } // Fl_Round_Button* def_widget_size[0]
-      { Fl_Box* o = new Fl_Box(130, 115, 50, 25, "tiny");
+      { Fl_Box* o = new Fl_Box(273, 314, 50, 25, "tiny");
         o->labelsize(8);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { def_widget_size[1] = new Fl_Round_Button(202, 115, 70, 25);
+      { def_widget_size[1] = new Fl_Round_Button(345, 314, 70, 25);
         def_widget_size[1]->type(102);
         def_widget_size[1]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[1]->callback((Fl_Callback*)default_widget_size_cb, (void*)(11));
       } // Fl_Round_Button* def_widget_size[1]
-      { Fl_Box* o = new Fl_Box(218, 115, 50, 25, "small");
+      { Fl_Box* o = new Fl_Box(361, 314, 50, 25, "small");
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { def_widget_size[2] = new Fl_Round_Button(115, 140, 70, 25);
+      { def_widget_size[2] = new Fl_Round_Button(258, 339, 70, 25);
         def_widget_size[2]->type(102);
         def_widget_size[2]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[2]->callback((Fl_Callback*)default_widget_size_cb, (void*)(14));
       } // Fl_Round_Button* def_widget_size[2]
-      { Fl_Box* o = new Fl_Box(130, 140, 50, 25, "normal");
+      { Fl_Box* o = new Fl_Box(273, 339, 50, 25, "normal");
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { def_widget_size[3] = new Fl_Round_Button(202, 140, 90, 25);
+      { def_widget_size[3] = new Fl_Round_Button(345, 339, 90, 25);
         def_widget_size[3]->type(102);
         def_widget_size[3]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[3]->callback((Fl_Callback*)default_widget_size_cb, (void*)(18));
       } // Fl_Round_Button* def_widget_size[3]
-      { Fl_Box* o = new Fl_Box(218, 140, 68, 25, "medium");
+      { Fl_Box* o = new Fl_Box(361, 339, 68, 25, "medium");
         o->labelsize(18);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { def_widget_size[4] = new Fl_Round_Button(115, 165, 75, 25);
+      { def_widget_size[4] = new Fl_Round_Button(258, 364, 75, 25);
         def_widget_size[4]->type(102);
         def_widget_size[4]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[4]->callback((Fl_Callback*)default_widget_size_cb, (void*)(24));
       } // Fl_Round_Button* def_widget_size[4]
-      { Fl_Box* o = new Fl_Box(130, 165, 64, 25, "large");
+      { Fl_Box* o = new Fl_Box(273, 364, 64, 25, "large");
         o->labelsize(24);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { def_widget_size[5] = new Fl_Round_Button(202, 165, 95, 25);
+      { def_widget_size[5] = new Fl_Round_Button(345, 364, 95, 25);
         def_widget_size[5]->type(102);
         def_widget_size[5]->down_box(FL_ROUND_DOWN_BOX);
         def_widget_size[5]->callback((Fl_Callback*)default_widget_size_cb, (void*)(32));
       } // Fl_Round_Button* def_widget_size[5]
-      { Fl_Box* o = new Fl_Box(218, 165, 76, 25, "huge");
+      { Fl_Box* o = new Fl_Box(361, 364, 76, 25, "huge");
         o->labelsize(32);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
+    { Fl_Value_Input* o = new Fl_Value_Input(172, 16, 53, 24, "left window margin:");
+      o->step(1);
+      o->callback((Fl_Callback*)cb_left);
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(172, 44, 53, 24, "right window margin:");
+      o->step(1);
+      o->callback((Fl_Callback*)cb_right);
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(172, 72, 53, 24, "top window margin:");
+      o->step(1);
+      o->callback((Fl_Callback*)cb_top);
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(172, 100, 53, 24, "bottom window margin:");
+      o->step(1);
+      o->callback((Fl_Callback*)cb_bottom);
+    } // Fl_Value_Input* o
     grid_window->set_non_modal();
     grid_window->end();
   } // Fl_Double_Window* grid_window
