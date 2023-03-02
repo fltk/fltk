@@ -22,6 +22,8 @@ int fd_left_window_margin   = 15;
 int fd_right_window_margin  = 15;
 int fd_top_window_margin    = 15;
 int fd_bottom_window_margin = 15;
+int fd_window_grid_x = 10;
+int fd_window_grid_y = 24;
 
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
@@ -29,6 +31,7 @@ static void draw_left_brace(const Fl_Widget *w);
 static void draw_right_brace(const Fl_Widget *w);
 static void draw_top_brace(const Fl_Widget *w);
 static void draw_bottom_brace(const Fl_Widget *w);
+static void draw_grid(int x, int y, int dx, int dy);
 
 /** \class Fd_Snap_Action
  */
@@ -50,6 +53,21 @@ void Fd_Snap_Action::check_y_(Fd_Snap_Data &d, int y_ref, int y_snap) {
   if (d2 <= d.y_dist) {
     d.dy_out = dy;
     d.y_dist = d2;
+  }
+}
+
+void Fd_Snap_Action::check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap) {
+  int ddx = x_ref + d.dx - x_snap;
+  int d2x = ddx * ddx;
+  dx = d.dx - ddx;
+  int ddy = y_ref + d.dy - y_snap;
+  int d2y = ddy * ddy;
+  dy = d.dy - ddy;
+  if ((d2x <= d.x_dist) && (d2y <= d.y_dist)) {
+    d.dx_out = dx;
+    d.x_dist = d2x;
+    d.dy_out = dy;
+    d.y_dist = d2y;
   }
 }
 
@@ -182,6 +200,43 @@ public:
 };
 Fd_Snap_Bottom_Window_Margin snap_bottom_window_margin;
 
+/**
+ If the selection is the child of the window, align to the window grid.
+ */
+class Fd_Snap_Window_Grid : public Fd_Snap_Action {
+protected:
+  int closest_x, closest_y;
+public:
+  Fd_Snap_Window_Grid() { type = 3; mask = FD_LEFT|FD_TOP|FD_DRAG; }
+  void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (d.wgt && d.wgt->parent != d.win) return;
+
+    int suggested_x = d.bx + d.dx;
+    closest_x = ((suggested_x - fd_left_window_margin + fd_window_grid_x/2) / fd_window_grid_x) * fd_window_grid_x + fd_left_window_margin;
+    int suggested_y = d.by + d.dy;
+    closest_y = ((suggested_y - fd_top_window_margin + fd_window_grid_y/2) / fd_window_grid_y) * fd_window_grid_y + fd_top_window_margin;
+
+    if (closest_x <= fd_left_window_margin || closest_x >= d.win->o->w() - fd_right_window_margin) return;
+    if (closest_y <= fd_top_window_margin || closest_y >= d.win->o->h() - fd_bottom_window_margin) return;
+
+    if (d.drag == FD_LEFT)
+      check_x_(d, d.bx, closest_x);
+    else if (d.drag == FD_TOP)
+      check_y_(d, d.by, closest_y);
+    else
+      check_x_y_(d, d.bx, closest_x, d.by, closest_y);
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    draw_grid(closest_x, closest_y, fd_window_grid_x, fd_window_grid_y);
+  };
+  bool matches(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (d.drag == FD_LEFT) return (d.dx == dx);
+    if (d.drag == FD_TOP) return (d.dy == dy);
+    return (d.drag & mask) && (d.dx == dx) && (d.dy == dy);
+  }
+};
+Fd_Snap_Window_Grid snap_window_grid;
+
 // ---- snap actions list ---------------------------------------------- MARK: -
 
 Fd_Snap_Action *Fd_Snap_Action::list[] = {
@@ -194,6 +249,9 @@ Fd_Snap_Action *Fd_Snap_Action::list[] = {
   &snap_right_window_margin,
   &snap_top_window_margin,
   &snap_bottom_window_margin,
+
+  &snap_window_grid,
+
   NULL
 };
 
@@ -316,3 +374,23 @@ static void draw_width(int x, int y, int r, Fl_Align a) {
   fl_yxline(r, y - 4, y + 4);
 }
 
+static void draw_grid(int x, int y, int dx, int dy) {
+  int dx2 = 1, dy2 = 1;
+  const int n = 2;
+  for (int i=-n; i<=n; i++) {
+    for (int j=-n; j<=n; j++) {
+      int xx = x + i*dx , yy = y + j*dy;
+      fl_xyline(xx-dx2, yy, xx+dx2);
+      fl_yxline(xx, yy-dy2, yy+dy2);
+    }
+  }
+
+
+//  fl_xyline(x-2*ws/3, y-hs, x+2*ws/3);
+//  fl_xyline(x-5*ws/4, y, x+5*ws/4);
+//  fl_xyline(x-2*ws/3, y+hs, x+2*ws/3);
+//
+//  fl_yxline(x-ws, y-2*hs/3, y+2*hs/3);
+//  fl_yxline(x, y-5*hs/4, y+5*hs/4);
+//  fl_yxline(x+ws, y-2*hs/3, y+2*hs/3);
+}

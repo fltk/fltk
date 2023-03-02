@@ -23,6 +23,8 @@ extern int fd_left_window_margin;
 extern int fd_right_window_margin;
 extern int fd_top_window_margin;
 extern int fd_bottom_window_margin;
+extern int fd_window_grid_x;
+extern int fd_window_grid_y;
 
 /**
  \brief Structure holding all the data to perform interactive alignment operations.
@@ -44,6 +46,7 @@ class Fd_Snap_Action {
 protected:
   void check_x_(Fd_Snap_Data &d, int x_ref, int x_snap);
   void check_y_(Fd_Snap_Data &d, int y_ref, int y_snap);
+  void check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap);
 public:
   int dx, dy, type, mask;
   Fd_Snap_Action() : dx(128), dy(128), type(0), mask(0) { }
