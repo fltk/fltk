@@ -166,7 +166,7 @@ Fl_String::Fl_String(const char *cstr) {
 /**
  Constructor from data of \p size bytes.
  \param[in] str   a block of data that may contain NUL characters
- \paran[in] size  number of bytes to copy
+ \param[in] size  number of bytes to copy
  */
 Fl_String::Fl_String(const char *str, int size) {
   init_();
@@ -227,7 +227,7 @@ Fl_String &Fl_String::assign(const char *cstr) {
 /**
  Assign a data block of \p size bytes.
  \param[in] str a block of data that may contain NUL characters
- \paran[in] size number of bytes to copy
+ \param[in] size number of bytes to copy
  \return self
  */
 Fl_String &Fl_String::assign(const char *str, int size) {
