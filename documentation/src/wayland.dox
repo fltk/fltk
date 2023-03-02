@@ -449,11 +449,11 @@ This function also associates a 'listener' to each display
 by calling function \c wl_output_add_listener(). This 'listener' is an array of callback function
 pointers among which one (\c output_mode) runs when the display is resized and another
 (\c output_scale) when the Wayland scale factor (see below) is changed.
-FLTK defines type <tt>struct output</tt> (see \ref output) inside class
-\c Fl_Wayland_Screen_Driver to store display size and scaling information.
+FLTK defines type <tt>struct Fl_Wayland_Screen_Driver::output</tt> (see \ref output)
+to store display size and scaling information.
 One such record is created for each display. FLTK uses 2 distinct scaling parameters under Wayland:
-- <tt>int wld_scale;</tt>. This member variable of <tt>struct output</tt> typically equals 1
-for standard, and 2 for
+- <tt>int wld_scale;</tt>. This member variable of
+<tt>struct Fl_Wayland_Screen_Driver::output</tt> typically equals 1 for standard, and 2 for
 HighDPI displays. Its value is set by the Wayland compositor for each display with the effect
 that 1 Wayland graphics unit represents a block of \c nxn pixels when the value is \c n.
 Another effect is that a drawing buffer for a surface of size WxH units contains
@@ -469,7 +469,8 @@ member variable of display # \c n. This variable is used by function
 \c Fl_Wayland_Window_Driver::make_current() when it calls \c Fl_Wayland_Graphics_Driver::set_buffer()
 that scales the graphics driver by this factor with \c cairo_scale().
 
-The display size information of <tt>struct output</tt> accounts for the value of its \c wld_scale member
+The display size information of <tt>struct Fl_Wayland_Screen_Driver::output</tt> accounts for
+the value of its \c wld_scale member
 variable: \c width and \c height are set to the number of pixels of the display / \c wld_scale.
 
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
@@ -793,7 +794,7 @@ Function \c fl_wl_xid(Fl_Window*) returns a pointer to the <tt>struct wld_window
 <pre>
 struct wld_window {
   Fl_Window *fl_win;
-  struct wl_list outputs; // linked list of outputs where this surface is mapped
+  struct Fl_Wayland_Screen_Driver::output *output; // the display where win is mapped (see \ref output)
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
   struct xdg_surface *xdg_surface;
@@ -809,7 +810,6 @@ struct wld_window {
   int configured_height;
   int floating_width; // helps restoring size after un-maximizing
   int floating_height;
-  int scale; // the Wayland scale factor for HighDPI displays (1 or 2, possibly 3)
   int state; // indicates whether window is fullscreen, maximized. Used otherwise for POPUPs
 }
 </pre>
@@ -837,8 +837,8 @@ struct fl_wld_buffer {
 </pre>
 
 \anchor output
-<h3>struct output</h3>
-Defined inside class \c Fl_Wayland_Screen_Driver. One such record is
+<h3>struct Fl_Wayland_Screen_Driver::output</h3>
+One such record is
 created for each display of the system by function \c registry_handle_global() when it receives a
 \c "wl_output" interface. These records are kept in a linked list of them all, and
 an identifier of this linked list is stored in member \c outputs of the unique
@@ -849,7 +849,7 @@ an identifier of this linked list is stored in member \c outputs of the unique
 \endcode
 gives access, the Wayland way, to the linked list of displays in the system.
 <pre>
-struct output { // one record for each display
+struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
   short width; // = nber of horizontal pixels / wld_scale
   short height; // = nber of vertical pixels / wld_scale
