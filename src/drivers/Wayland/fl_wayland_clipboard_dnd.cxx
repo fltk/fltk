@@ -236,7 +236,7 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
   if (use_selection) {
     // use the text as dragging icon
     Fl_Widget *current = Fl::pushed() ? Fl::pushed() : Fl::first_window();
-    s = fl_wl_xid(current->top_window())->scale;
+    s = Fl_Wayland_Window_Driver::driver(current->top_window())->wld_scale();
     off = (struct fl_wld_buffer *)offscreen_from_text(fl_selection_buffer[0], s);
     dnd_icon = wl_compositor_create_surface(scr_driver->wl_compositor);
   } else dnd_icon = NULL;
@@ -576,9 +576,12 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
   } else if (type == Fl::clipboard_image && clipboard_contains(Fl::clipboard_image)) {
     if (get_clipboard_image()) return;
     struct wld_window * xid = fl_wl_xid(receiver.top_window());
-    if (xid && xid->scale > 1) {
-      Fl_RGB_Image *rgb = (Fl_RGB_Image*)Fl::e_clipboard_data;
-      rgb->scale(rgb->data_w() / xid->scale, rgb->data_h() / xid->scale);
+    if (xid) {
+      int s = Fl_Wayland_Window_Driver::driver(receiver.top_window())->wld_scale();
+      if ( s > 1) {
+        Fl_RGB_Image *rgb = (Fl_RGB_Image*)Fl::e_clipboard_data;
+        rgb->scale(rgb->data_w() / s, rgb->data_h() / s);
+      }
     }
     int done = receiver.handle(FL_PASTE);
     Fl::e_clipboard_type = "";

@@ -1,7 +1,7 @@
 //
 // Implementation of Wayland Screen interface
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -105,11 +105,6 @@ struct pointer_output {
     struct wl_list link;
  };
 
- struct Fl_Wayland_Window_Driver::window_output {  // FLTK defined
-   Fl_Wayland_Screen_Driver::output* output;
-   struct wl_list link;
- }
-
  The unique Fl_Wayland_Screen_Driver object contains a member
    "outputs" of type struct wl_list = list of Fl_Wayland_Screen_Driver::output records
    - this list is initialised by open-display
@@ -119,15 +114,11 @@ struct pointer_output {
    (outputs member of the Fl_Wayland_Screen_Driver) and the list of struct output objects attached
    to each window.
 
- Each Fl_Wayland_Window_Driver object contains a member
-   "outputs" of type struct wl_list = list of Fl_Wayland_Window_Driver::window_output records
-   - this list is fed by surface_enter() (when a surface is mapped)
-   - these records contain:
-   window_output->output = (Fl_Wayland_Screen_Driver::output*)wl_output_get_user_data(wl_output);
-   where wl_output is received from OS by surface_enter()
-   - surface_leave() removes the adequate record from the list
-   - hide() empties the list
-   - Fl_Wayland_Window_Driver::update_scale() sets the scale info of the records for a given window
+ Each struct wld_window object contains a member
+   "output" of type pter to Fl_Wayland_Screen_Driver::output
+   - this pointer is set by surface_enter() (when a surface is mapped)
+   - surface_leave() sets it to NULL
+   - hide() sets it to NULL
  */
 
 static Fl_Int_Vector key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
@@ -937,17 +928,24 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
 
 static void output_done(void *data, struct wl_output *wl_output)
 {
+  // Runs at startup and when desktop scale factor is changed
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
-  Fl_Wayland_Window_Driver::window_output *window_output;
 //fprintf(stderr, "output_done output=%p\n",output);
   Fl_X *xp = Fl_X::first;
   while (xp) { // all mapped windows
     struct wld_window *win = (struct wld_window*)xp->xid;
-    wl_list_for_each(window_output, &(win->outputs), link) { // all Fl_Wayland_Window_Driver::window_output for this window
-      if (window_output->output == output) {
-        Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(win->fl_win);
-        if (output->wld_scale != win->scale) win_driver->update_scale();
+    Fl_Window *W = win->fl_win;
+    if (win->buffer || W->as_gl_window()) {
+      if (W->as_gl_window()) {
+        wl_surface_set_buffer_scale(win->wl_surface, output->wld_scale);
+        Fl_Window_Driver::driver(W)->is_a_rescale(true);
+        W->resize(W->x(), W->y(), W->w(), W->h());
+        Fl_Window_Driver::driver(W)->is_a_rescale(false);
+      } else {
+        Fl_Wayland_Graphics_Driver::buffer_release(win);
       }
+      W->redraw();
+      Fl_Window_Driver::driver(W)->flush();
     }
     xp = xp->next;
   }
@@ -1069,7 +1067,6 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 static void registry_handle_global_remove(void *data, struct wl_registry *registry, uint32_t name)
 {//TODO to be tested
   Fl_Wayland_Screen_Driver::output *output;
-  Fl_Wayland_Window_Driver::window_output *window_output, *tmp;
 //fprintf(stderr, "registry_handle_global_remove data=%p id=%u\n", data, name);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   wl_list_for_each(output, &(scr_driver->outputs), link) { // all screens of the system
@@ -1077,12 +1074,9 @@ static void registry_handle_global_remove(void *data, struct wl_registry *regist
       Fl_X *xp = Fl_X::first;
       while (xp) { // all mapped windows
         struct wld_window *win = (struct wld_window*)xp->xid;
-        wl_list_for_each_safe(window_output, tmp, &(win->outputs), link) { // all Fl_Wayland_Window_Driver::window_output for this window
-          if (window_output->output == output) {
-            wl_list_remove(&window_output->link);
-            free(window_output);
+          if (win->output == output) {
+            win->output = NULL;
           }
-        }
         xp = xp->next;
       }
       wl_list_remove(&output->link);
@@ -1353,7 +1347,8 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
   struct fl_wld_buffer *buffer = win ? xid->buffer : (struct fl_wld_buffer *)Fl_Surface_Device::surface()->driver()->gc();
-  float s = win ? xid->scale * scale(win->screen_num()) :
+  float s = win ?
+    Fl_Wayland_Window_Driver::driver(win)->wld_scale() * scale(win->screen_num()) :
                   Fl_Surface_Device::surface()->driver()->scale();
   int Xs, Ys, ws, hs;
   if (s == 1) {

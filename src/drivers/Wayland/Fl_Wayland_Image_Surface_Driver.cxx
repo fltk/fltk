@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,8 +25,8 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
   float d = 1;
   if (!off) {
     fl_open_display();
-    if (Fl_Wayland_Window_Driver::wld_window) {
-      d = Fl_Wayland_Window_Driver::wld_window->scale;
+    if (Fl_Wayland_Window_Driver::wld_window && Fl_Wayland_Window_Driver::wld_window->output) {
+      d = Fl_Wayland_Window_Driver::wld_window->output->wld_scale;
     }
     d *= fl_graphics_driver->scale();
     if (d != 1 && high_res) {
