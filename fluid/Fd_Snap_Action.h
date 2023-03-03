@@ -43,13 +43,6 @@ extern int fd_widget_inc_w;
 extern int fd_widget_min_h;
 extern int fd_widget_inc_h;
 
-//extern int fd_..._group_margin;
-//extern int fd_..._group_grid;
-//extern int fd_..._tabs_margin;
-//
-//extern int fd_widget_minimum_width; _height;
-//extern int fd_widget_grid_width; _height;
-
 /**
  \brief Structure holding all the data to perform interactive alignment operations.
  */
