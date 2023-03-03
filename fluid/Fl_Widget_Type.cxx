@@ -2624,11 +2624,33 @@ static void load_panel() {
     the_panel->hide();
 }
 
+extern Fl_Window *widgetbin_panel;
+
 // This is called when user double-clicks an item, open or update the panel:
 void Fl_Widget_Type::open() {
-  if (!the_panel) the_panel = make_widget_panel();
+  bool adjust_position = false;
+  if (!the_panel) {
+    the_panel = make_widget_panel();
+    adjust_position = true;
+  }
   load_panel();
-  if (numselected) the_panel->show();
+  if (numselected) {
+    the_panel->show();
+    if (adjust_position) {
+      if (widgetbin_panel && widgetbin_panel->visible()) {
+        if (   (the_panel->x()+the_panel->w() > widgetbin_panel->x())
+            && (the_panel->x() < widgetbin_panel->x()+widgetbin_panel->w())
+            && (the_panel->y()+the_panel->h() > widgetbin_panel->y())
+            && (the_panel->y() < widgetbin_panel->y()+widgetbin_panel->h()) )
+        {
+          if (widgetbin_panel->y()+widgetbin_panel->h()+the_panel->h() > Fl::h())
+            the_panel->position(the_panel->x(), widgetbin_panel->y()-the_panel->h()-30);
+          else
+            the_panel->position(the_panel->x(), widgetbin_panel->y()+widgetbin_panel->h()+30);
+        }
+      }
+    }
+  }
 }
 
 extern void redraw_overlays();
