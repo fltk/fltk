@@ -396,39 +396,49 @@ shell_run_window->hide();}
 Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
-    label {Layout Settings} open
+    label {Layout Settings}
+    callback {if (v == LOAD) {
+  for (int i=0; i<o->children(); ++i) {
+    Fl_Widget *c = o->child(i);
+    c->do_callback(c, v);
+  }
+}} open selected
     xywh {478 283 459 450} type Double non_modal visible
   } {
-    Fl_Input horizontal_input {
-      label x
-      user_data 1 user_data_type long
-      callback grid_cb
-      tooltip {Horizontal grid spacing.} xywh {259 209 50 25} type Int box THIN_DOWN_BOX align 8
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input vertical_input {
-      label pixels
-      user_data 2 user_data_type long
-      callback grid_cb
-      tooltip {Vertical grid spacing.} xywh {322 209 50 25} type Int box THIN_DOWN_BOX align 8
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input snap_input {
-      label {pixel snap}
-      user_data 3 user_data_type long
-      callback grid_cb
-      tooltip {Snap to grid within this many pixels.} xywh {259 244 50 25} type Int box THIN_DOWN_BOX align 8
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Check_Button guides_toggle {
-      label {Show Guides}
-      user_data 4 user_data_type long
-      callback guides_cb
-      tooltip {Show distance and alignment guides in overlay} xywh {259 279 110 25} down_box DOWN_BOX
+    Fl_Group {} {open
+      xywh {259 209 113 95}
+    } {
+      Fl_Input horizontal_input {
+        label x
+        user_data 1 user_data_type long
+        callback grid_cb
+        tooltip {Horizontal grid spacing.} xywh {259 209 50 25} type Int box THIN_DOWN_BOX align 8
+        code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+      }
+      Fl_Input vertical_input {
+        label pixels
+        user_data 2 user_data_type long
+        callback grid_cb
+        tooltip {Vertical grid spacing.} xywh {322 209 50 25} type Int box THIN_DOWN_BOX align 8
+        code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+      }
+      Fl_Input snap_input {
+        label {pixel snap}
+        user_data 3 user_data_type long
+        callback grid_cb
+        tooltip {Snap to grid within this many pixels.} xywh {259 244 50 25} type Int box THIN_DOWN_BOX align 8
+        code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+      }
+      Fl_Check_Button guides_toggle {
+        label {Show Guides}
+        user_data 4 user_data_type long
+        callback guides_cb
+        tooltip {Show distance and alignment guides in overlay} xywh {259 279 110 25} down_box DOWN_BOX
+      }
     }
     Fl_Button {} {
       label Close
-      callback {grid_window->hide();}
+      callback {if (v != LOAD) grid_window->hide();}
       tooltip {Close this dialog.} xywh {383 409 60 25}
     }
     Fl_Box {} {
@@ -499,39 +509,58 @@ Function {make_layout_window()} {open
     }
     Fl_Value_Input {} {
       label {left window margin:}
-      callback {if (v) {
+      callback {if (v == LOAD) {
   o->value((double)fd_left_window_margin);
 } else {
   fd_left_window_margin = (int)o->value();
 }}
-      xywh {172 16 53 24} step 1
+      xywh {165 15 50 22} step 1
     }
     Fl_Value_Input {} {
       label {right window margin:}
-      callback {if (v) {
+      callback {if (v == LOAD) {
   o->value((double)fd_right_window_margin);
 } else {
   fd_right_window_margin = (int)o->value();
 }}
-      xywh {172 44 53 24} step 1
+      xywh {165 45 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top window margin:}
-      callback {if (v) {
+      callback {if (v == LOAD) {
   o->value((double)fd_top_window_margin);
 } else {
   fd_top_window_margin = (int)o->value();
 }}
-      xywh {172 72 53 24} step 1
+      xywh {165 75 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom window margin:}
-      callback {if (v) {
+      callback {if (v == LOAD) {
   o->value((double)fd_bottom_window_margin);
 } else {
   fd_bottom_window_margin = (int)o->value();
-}} selected
-      xywh {172 100 53 24} step 1
+}}
+      xywh {165 105 50 22} step 1
+    }
+    Fl_Value_Input {} {
+      label {window grid x:}
+      callback {if (v == LOAD) {
+  o->value((double)fd_window_grid_x);
+} else {
+  fd_window_grid_x = (int)o->value();
+}}
+      xywh {165 135 50 22} step 1
+    }
+    Fl_Value_Input {} {
+      label {window grid y:}
+      callback {if (v == LOAD) {
+  o->value((double)fd_window_grid_y);
+} else {
+  fd_window_grid_y = (int)o->value();
+}}
+      xywh {165 165 50 22} step 1
     }
   }
+  code {grid_window->do_callback(grid_window, LOAD);} {}
 }

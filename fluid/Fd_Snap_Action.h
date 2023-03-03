@@ -26,10 +26,29 @@ extern int fd_bottom_window_margin;
 extern int fd_window_grid_x;
 extern int fd_window_grid_y;
 
+extern int fd_left_group_margin;
+extern int fd_right_group_margin;
+extern int fd_top_group_margin;
+extern int fd_bottom_group_margin;
+
+extern int fd_widget_gap_x;
+extern int fd_widget_gap_y;
+extern int fd_widget_min_w;
+extern int fd_widget_inc_w;
+extern int fd_widget_min_h;
+extern int fd_widget_inc_h;
+
+//extern int fd_..._group_margin;
+//extern int fd_..._group_grid;
+//extern int fd_..._tabs_margin;
+//
+//extern int fd_widget_minimum_width; _height;
+//extern int fd_widget_grid_width; _height;
+
 /**
  \brief Structure holding all the data to perform interactive alignment operations.
  */
-typedef struct {
+typedef struct Fd_Snap_Data {
   int dx, dy;           ///< distance of the mouse from its initial PUSH event
   int bx, by, br, bt;   ///< bounding box of the original push event or current bounding box when drawing
   int drag;             ///< drag event mask
@@ -44,8 +63,8 @@ typedef struct {
  */
 class Fd_Snap_Action {
 protected:
-  void check_x_(Fd_Snap_Data &d, int x_ref, int x_snap);
-  void check_y_(Fd_Snap_Data &d, int y_ref, int y_snap);
+  int check_x_(Fd_Snap_Data &d, int x_ref, int x_snap);
+  int check_y_(Fd_Snap_Data &d, int y_ref, int y_snap);
   void check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap);
 public:
   int dx, dy, type, mask;
