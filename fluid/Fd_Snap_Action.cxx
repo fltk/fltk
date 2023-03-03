@@ -21,22 +21,24 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
+int Fd_Snap_Action::eex = 0;
+int Fd_Snap_Action::eey = 0;
 
 int fd_left_window_margin   = 15;
 int fd_right_window_margin  = 15;
 int fd_top_window_margin    = 15;
 int fd_bottom_window_margin = 15;
 
-int fd_window_grid_x        = 25;
-int fd_window_grid_y        = 25;
+int fd_window_grid_x        = 10;//25;
+int fd_window_grid_y        = 10;//25;
 
 int fd_left_group_margin    = 10;
 int fd_right_group_margin   = 10;
 int fd_top_group_margin     = 10;
 int fd_bottom_group_margin  = 10;
 
-int fd_group_grid_x         = 10;
-int fd_group_grid_y         = 10;
+int fd_group_grid_x         = 0;//10;
+int fd_group_grid_y         = 0;//10;
 
 int fd_top_tabs_margin      = 25;
 int fd_bottom_tabs_margin   = 25;
@@ -44,9 +46,9 @@ int fd_bottom_tabs_margin   = 25;
 int fd_widget_gap_x         = 10;
 int fd_widget_gap_y         = 8;
 int fd_widget_min_w         = 20;
-int fd_widget_inc_w         = 10;
+int fd_widget_inc_w         = 999;//10;
 int fd_widget_min_h         = 18;
-int fd_widget_inc_h         = 4;
+int fd_widget_inc_h         = 999;//4;
 
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
@@ -73,7 +75,7 @@ static bool in_window(Fd_Snap_Data &d) {
 }
 
 static bool in_group(Fd_Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_group());
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_group() && d.wgt->parent != d.win);
 }
 
 static bool in_tabs(Fd_Snap_Data &d) {
@@ -89,9 +91,10 @@ static Fl_Group *parent(Fd_Snap_Data &d) {
 
 int Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap) {
   int dd = x_ref + d.dx - x_snap;
-  int d2 = dd * dd;
+  int d2 = abs(dd);
   if (d2 > d.x_dist) return 1;
   dx = d.dx_out = d.dx - dd;
+  ex = d.ex_out = x_snap;
   if (d2 == d.x_dist) return 0;
   d.x_dist = d2;
   return -1;
@@ -99,9 +102,10 @@ int Fd_Snap_Action::check_x_(Fd_Snap_Data &d, int x_ref, int x_snap) {
 
 int Fd_Snap_Action::check_y_(Fd_Snap_Data &d, int y_ref, int y_snap) {
   int dd = y_ref + d.dy - y_snap;
-  int d2 = dd * dd;
+  int d2 = abs(dd);
   if (d2 > d.y_dist) return 1;
   dy = d.dy_out = d.dy - dd;
+  ey = d.ey_out = y_snap;
   if (d2 == d.y_dist) return 0;
   d.y_dist = d2;
   return -1;
@@ -109,22 +113,24 @@ int Fd_Snap_Action::check_y_(Fd_Snap_Data &d, int y_ref, int y_snap) {
 
 void Fd_Snap_Action::check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap) {
   int ddx = x_ref + d.dx - x_snap;
-  int d2x = ddx * ddx;
+  int d2x = abs(ddx);
   int ddy = y_ref + d.dy - y_snap;
-  int d2y = ddy * ddy;
+  int d2y = abs(ddy);
   if ((d2x <= d.x_dist) && (d2y <= d.y_dist)) {
     dx = d.dx_out = d.dx - ddx;
+    ex = d.ex_out = x_snap;
     d.x_dist = d2x;
     dy = d.dy_out = d.dy - ddy;
+    ey = d.ey_out = y_snap;
     d.y_dist = d2y;
   }
 }
 
 bool Fd_Snap_Action::matches(Fd_Snap_Data &d) {
   switch (type) {
-    case 1: return (d.drag & mask) && (d.dx==dx);
-    case 2: return (d.drag & mask) && (d.dy==dy);
-    case 3: return (d.drag & mask) && (d.dx==dx) && (d.dy==dy);
+    case 1: return (d.drag & mask) && (eex == ex) && (d.dx == dx);
+    case 2: return (d.drag & mask) && (eey == ey) && (d.dy == dy);
+    case 3: return (d.drag & mask) && (eex == ex) && (eey == ey);
   }
   return false;
 }
@@ -134,6 +140,8 @@ void Fd_Snap_Action::check_all(Fd_Snap_Data &data) {
     if (list[i]->mask & data.drag)
       list[i]->check(data);
   }
+  eex = data.ex_out;
+  eey = data.ey_out;
 }
 
 void Fd_Snap_Action::draw_all(Fd_Snap_Data &data) {
@@ -169,28 +177,28 @@ public:
 
 class Fd_Snap_Left_Window_Edge : public Fd_Snap_Left {
 public:
-  void check(Fd_Snap_Data &d) FL_OVERRIDE { check_x_(d, d.bx, 0); }
+  void check(Fd_Snap_Data &d) FL_OVERRIDE { clr(); check_x_(d, d.bx, 0); }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE { draw_left_brace(d.win->o); };
 };
 Fd_Snap_Left_Window_Edge snap_left_window_edge;
 
 class Fd_Snap_Right_Window_Edge : public Fd_Snap_Right {
 public:
-  void check(Fd_Snap_Data &d) FL_OVERRIDE { check_x_(d, d.br, d.win->o->w()); }
+  void check(Fd_Snap_Data &d) FL_OVERRIDE { clr(); check_x_(d, d.br, d.win->o->w()); }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE { draw_right_brace(d.win->o); };
 };
 Fd_Snap_Right_Window_Edge snap_right_window_edge;
 
 class Fd_Snap_Top_Window_Edge : public Fd_Snap_Top {
 public:
-  void check(Fd_Snap_Data &d) FL_OVERRIDE { check_y_(d, d.by, 0); }
+  void check(Fd_Snap_Data &d) FL_OVERRIDE { clr(); check_y_(d, d.by, 0); }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE { draw_top_brace(d.win->o); };
 };
 Fd_Snap_Top_Window_Edge snap_top_window_edge;
 
 class Fd_Snap_Bottom_Window_Edge : public Fd_Snap_Bottom {
 public:
-  void check(Fd_Snap_Data &d) FL_OVERRIDE { check_y_(d, d.bt, d.win->o->h()); }
+  void check(Fd_Snap_Data &d) FL_OVERRIDE { clr(); check_y_(d, d.bt, d.win->o->h()); }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE { draw_bottom_brace(d.win->o); };
 };
 Fd_Snap_Bottom_Window_Edge snap_bottom_window_edge;
@@ -198,6 +206,7 @@ Fd_Snap_Bottom_Window_Edge snap_bottom_window_edge;
 class Fd_Snap_Left_Window_Margin : public Fd_Snap_Left {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_window(d)) check_x_(d, d.bx, fd_left_window_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -209,6 +218,7 @@ Fd_Snap_Left_Window_Margin snap_left_window_margin;
 class Fd_Snap_Right_Window_Margin : public Fd_Snap_Right {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_window(d)) check_x_(d, d.br, d.win->o->w()-fd_right_window_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -220,6 +230,7 @@ Fd_Snap_Right_Window_Margin snap_right_window_margin;
 class Fd_Snap_Top_Window_Margin : public Fd_Snap_Top {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_window(d)) check_y_(d, d.by, fd_top_window_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -231,6 +242,7 @@ Fd_Snap_Top_Window_Margin snap_top_window_margin;
 class Fd_Snap_Bottom_Window_Margin : public Fd_Snap_Bottom {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_window(d)) check_y_(d, d.bt, d.win->o->h()-fd_bottom_window_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -244,6 +256,7 @@ Fd_Snap_Bottom_Window_Margin snap_bottom_window_margin;
 class Fd_Snap_Left_Group_Edge : public Fd_Snap_Left {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_x_(d, d.bx, parent(d)->x());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -255,6 +268,7 @@ Fd_Snap_Left_Group_Edge snap_left_group_edge;
 class Fd_Snap_Right_Group_Edge : public Fd_Snap_Right {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_x_(d, d.br, parent(d)->x() + parent(d)->w());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -266,6 +280,7 @@ Fd_Snap_Right_Group_Edge snap_right_group_edge;
 class Fd_Snap_Top_Group_Edge : public Fd_Snap_Top {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_y_(d, d.by, parent(d)->y());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -277,6 +292,7 @@ Fd_Snap_Top_Group_Edge snap_top_group_edge;
 class Fd_Snap_Bottom_Group_Edge : public Fd_Snap_Bottom {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_y_(d, d.bt, parent(d)->y() + parent(d)->h());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -289,6 +305,7 @@ Fd_Snap_Bottom_Group_Edge snap_bottom_group_edge;
 class Fd_Snap_Left_Group_Margin : public Fd_Snap_Left {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_x_(d, d.bx, parent(d)->x() + fd_left_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -301,6 +318,7 @@ Fd_Snap_Left_Group_Margin snap_left_group_margin;
 class Fd_Snap_Right_Group_Margin : public Fd_Snap_Right {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d)) check_x_(d, d.br, parent(d)->x()+parent(d)->w()-fd_right_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -313,6 +331,7 @@ Fd_Snap_Right_Group_Margin snap_right_group_margin;
 class Fd_Snap_Top_Group_Margin : public Fd_Snap_Top {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d) && !in_tabs(d)) check_y_(d, d.by, parent(d)->y()+fd_top_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -325,6 +344,7 @@ Fd_Snap_Top_Group_Margin snap_top_group_margin;
 class Fd_Snap_Bottom_Group_Margin : public Fd_Snap_Bottom {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_group(d) && !in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-fd_bottom_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -339,6 +359,7 @@ Fd_Snap_Bottom_Group_Margin snap_bottom_group_margin;
 class Fd_Snap_Top_Tabs_Margin : public Fd_Snap_Top_Group_Margin {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_tabs(d)) check_y_(d, d.by, parent(d)->y()+fd_top_tabs_margin);
   }
 };
@@ -347,6 +368,7 @@ Fd_Snap_Top_Tabs_Margin snap_top_tabs_margin;
 class Fd_Snap_Bottom_Tabs_Margin : public Fd_Snap_Bottom_Group_Margin {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-fd_bottom_tabs_margin);
   }
 };
@@ -373,15 +395,16 @@ public:
       check_x_y_(d, d.bx, nearest_x, d.by, nearest_y);
   }
   bool matches(Fd_Snap_Data &d) FL_OVERRIDE {
-    if (d.drag == FD_LEFT) return (d.dx == dx);
-    if (d.drag == FD_TOP) return (d.dy == dy);
-    return (d.drag & mask) && (d.dx == dx) && (d.dy == dy);
+    if (d.drag == FD_LEFT) return (eex == ex);
+    if (d.drag == FD_TOP) return (eey == ey);
+    return (d.drag & mask) && (eex == ex) && (eey == ey);
   }
 };
 
 class Fd_Snap_Window_Grid : public Fd_Snap_Grid {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (in_window(d)) check_grid(d, fd_left_window_margin, fd_window_grid_x, d.win->o->w()-fd_right_window_margin,
                                  fd_top_window_margin, fd_window_grid_y, d.win->o->h()-fd_bottom_window_margin);
   }
@@ -395,6 +418,7 @@ class Fd_Snap_Group_Grid : public Fd_Snap_Grid {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
     if (in_group(d)) {
+      clr();
       Fl_Widget *g = parent(d);
       check_grid(d, g->x()+fd_left_group_margin, fd_group_grid_x, g->x()+g->w()-fd_right_group_margin,
                  g->y()+fd_top_group_margin, fd_group_grid_y, g->y()+g->h()-fd_bottom_group_margin);
@@ -415,6 +439,7 @@ public:
   Fd_Snap_Sibling() : best_match(NULL) { }
   virtual int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) = 0;
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     best_match = NULL;
     if (!d.wgt) return;
     if (!d.wgt->parent->is_group()) return;
@@ -441,61 +466,102 @@ public:
   }
 };
 
-/**
- Snap to the left edge of other widgets in the same group
- */
-class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
+class Fd_Snap_Siblings_Left_Same : public Fd_Snap_Sibling {
 public:
-  Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
+  Fd_Snap_Siblings_Left_Same() { type = 1; mask = FD_LEFT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_x_(d, d.bx, s->x()),
-                  check_x_(d, d.br, s->x()),
-                  check_x_(d, d.br+fd_widget_gap_x, s->x()));
+    return check_x_(d, d.bx, s->x());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_left_brace(best_match);
   };
 };
-Fd_Snap_Siblings_Left snap_siblings_left;
+Fd_Snap_Siblings_Left_Same snap_siblings_left_same;
 
-class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
+class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
 public:
-  Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
+  Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_x_(d, d.br, s->x()+s->w()),
-                  check_x_(d, d.bx, s->x()+s->w()),
-                  check_x_(d, d.bx-fd_widget_gap_x, s->x()+s->w()));
+    return fl_min(check_x_(d, d.bx, s->x()+s->w()),
+                  check_x_(d, d.bx, s->x()+s->w()+fd_widget_gap_x) );
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_right_brace(best_match);
   };
 };
+Fd_Snap_Siblings_Left snap_siblings_left;
+
+class Fd_Snap_Siblings_Right_Same : public Fd_Snap_Sibling {
+public:
+  Fd_Snap_Siblings_Right_Same() { type = 1; mask = FD_RIGHT|FD_DRAG; }
+  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
+    return check_x_(d, d.br, s->x()+s->w());
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (best_match) draw_right_brace(best_match);
+  };
+};
+Fd_Snap_Siblings_Right_Same snap_siblings_right_same;
+
+class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
+public:
+  Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
+  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
+    return fl_min(check_x_(d, d.br, s->x()),
+                  check_x_(d, d.br, s->x()-fd_widget_gap_x));
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (best_match) draw_left_brace(best_match);
+  };
+};
 Fd_Snap_Siblings_Right snap_siblings_right;
 
-class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
+class Fd_Snap_Siblings_Top_Same : public Fd_Snap_Sibling {
 public:
-  Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
+  Fd_Snap_Siblings_Top_Same() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_y_(d, d.by, s->y()),
-                  check_y_(d, d.bt, s->y()),
-                  check_y_(d, d.bt+fd_widget_gap_y, s->y()) );;
+    return check_y_(d, d.by, s->y());
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_top_brace(best_match);
   };
 };
-Fd_Snap_Siblings_Top snap_siblings_top;
+Fd_Snap_Siblings_Top_Same snap_siblings_top_same;
 
-class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
+class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
 public:
-  Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_TOP|FD_DRAG; }
+  Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_y_(d, d.bt, s->y()+s->h()),
-                  check_y_(d, d.by, s->y()+s->h()),
-                  check_y_(d, d.by-fd_widget_gap_y, s->y()+s->h()) );
+    return fl_min(check_y_(d, d.by, s->y()+s->h()),
+                  check_y_(d, d.by, s->y()+s->h()+fd_widget_gap_y));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_bottom_brace(best_match);
+  };
+};
+Fd_Snap_Siblings_Top snap_siblings_top;
+
+class Fd_Snap_Siblings_Bottom_Same : public Fd_Snap_Sibling {
+public:
+  Fd_Snap_Siblings_Bottom_Same() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
+  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
+    return check_y_(d, d.bt, s->y()+s->h());
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (best_match) draw_bottom_brace(best_match);
+  };
+};
+Fd_Snap_Siblings_Bottom_Same snap_siblings_bottom_same;
+
+class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
+public:
+  Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
+  int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
+    return fl_min(check_y_(d, d.bt, s->y()),
+                  check_y_(d, d.bt, s->y()-fd_widget_gap_y));
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (best_match) draw_top_brace(best_match);
   };
 };
 Fd_Snap_Siblings_Bottom snap_siblings_bottom;
@@ -507,6 +573,7 @@ class Fd_Snap_Widget_Ideal_Width : public Fd_Snap_Action {
 public:
   Fd_Snap_Widget_Ideal_Width() { type = 1; mask = FD_RIGHT; }
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (!d.wgt) return;
     int iw = 15, ih = 15;
     d.wgt->ideal_size(iw, ih);
@@ -529,6 +596,7 @@ class Fd_Snap_Widget_Ideal_Height : public Fd_Snap_Action {
 public:
   Fd_Snap_Widget_Ideal_Height() { type = 2; mask = FD_BOTTOM; }
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    clr();
     if (!d.wgt) return;
     int iw, ih;
     d.wgt->ideal_size(iw, ih);
@@ -576,10 +644,10 @@ Fd_Snap_Action *Fd_Snap_Action::list[] = {
   &snap_top_tabs_margin,
   &snap_bottom_tabs_margin,
 
-  &snap_siblings_left,
-  &snap_siblings_right,
-  &snap_siblings_top,
-  &snap_siblings_bottom,
+  &snap_siblings_left_same, &snap_siblings_left,
+  &snap_siblings_right_same, &snap_siblings_right,
+  &snap_siblings_top_same, &snap_siblings_top,
+  &snap_siblings_bottom_same, &snap_siblings_bottom,
 
   &snap_widget_ideal_width,
   &snap_widget_ideal_height,

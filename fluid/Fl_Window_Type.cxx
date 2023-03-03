@@ -600,10 +600,10 @@ void Fl_Window_Type::newdx() {
         break;
       }
     }
-    Fd_Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 16, 16, mydx, mydy, (Fl_Widget_Type*)selection, this };
+    Fd_Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Fl_Widget_Type*)selection, this };
     Fd_Snap_Action::check_all(data);
-    if (data.x_dist < 16) mydx = data.dx_out;
-    if (data.y_dist < 16) mydy = data.dy_out;
+    if (data.x_dist < 4) mydx = data.dx_out;
+    if (data.y_dist < 4) mydy = data.dy_out;
   }
 
   if (dx != mydx || dy != mydy) {
@@ -1042,7 +1042,7 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mysx,myst-5,5,5);
 
   if (show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 16, 16, dx, dy, (Fl_Widget_Type*)selection, this};
+    Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Fl_Widget_Type*)selection, this};
     Fd_Snap_Action::draw_all(data);
   }
 }

@@ -54,6 +54,7 @@ typedef struct Fd_Snap_Data {
   int dx_out, dy_out;   ///< current closest snapping point as a delta
   Fl_Widget_Type *wgt;  ///< first selected widget
   Fl_Window_Type *win;  ///< window that handles the drag action
+  int ex_out, ey_out;   ///< chosen snap position
 } Fd_Snap_Data;
 
 /**
@@ -64,13 +65,15 @@ protected:
   int check_x_(Fd_Snap_Data &d, int x_ref, int x_snap);
   int check_y_(Fd_Snap_Data &d, int y_ref, int y_snap);
   void check_x_y_(Fd_Snap_Data &d, int x_ref, int x_snap, int y_ref, int y_snap);
+  void clr() { ex = dx = 0x7fff;  }
 public:
-  int dx, dy, type, mask;
-  Fd_Snap_Action() : dx(128), dy(128), type(0), mask(0) { }
+  int ex, ey, dx, dy, type, mask;
+  Fd_Snap_Action() : ex(0x7fff), ey(0x7fff), dx(128), dy(128), type(0), mask(0) { }
   virtual void check(Fd_Snap_Data &d) = 0;
   virtual void draw(Fd_Snap_Data &d) { }
   virtual bool matches(Fd_Snap_Data &d);
 public:
+  static int eex, eey;
   static Fd_Snap_Action *list[];
   static void check_all(Fd_Snap_Data &d);
   static void draw_all(Fd_Snap_Data &d);

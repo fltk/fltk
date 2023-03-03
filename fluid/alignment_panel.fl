@@ -594,7 +594,7 @@ Function {make_layout_window()} {open
   o->value((double)fd_widget_inc_h);
 } else {
   fd_widget_inc_h = (int)o->value();
-}} selected
+}}
       xywh {165 334 50 22} step 1
     }
     Fl_Value_Input {} {
@@ -666,7 +666,7 @@ Function {make_layout_window()} {open
   o->value((double)fd_bottom_tabs_margin);
 } else {
   fd_bottom_tabs_margin = (int)o->value();
-}}
+}} selected
       xywh {372 233 50 22} step 1
     }
     Fl_Value_Input {} {
