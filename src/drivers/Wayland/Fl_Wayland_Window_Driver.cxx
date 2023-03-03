@@ -1742,7 +1742,8 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
 
 
 int Fl_Wayland_Window_Driver::wld_scale() {
-  if (!wld_window || !wld_window->output) {
+  struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
+  if (!xid->output) {
     Fl_Wayland_Screen_Driver::output *output;
     int scale = 1;
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
@@ -1751,7 +1752,7 @@ int Fl_Wayland_Window_Driver::wld_scale() {
     }
     return scale;
   }
-  return wld_window->output->wld_scale;
+  return xid->output->wld_scale;
 }
 
 
