@@ -1,11 +1,11 @@
 //
-// Window type code for the Fast Light Tool Kit (FLTK).
+// Window type code file for the Fast Light Tool Kit (FLTK).
 //
 // The widget describing an Fl_Window.  This is also all the code
 // for interacting with the overlay, which allows the user to
 // select, move, and resize the children widgets.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,7 @@
 
 extern Fl_Preferences   fluid_prefs;
 
-inline int fl_min(int a, int b) { return (a < b ? a : b); }
+static int fl_min(int a, int b) { return (a < b ? a : b); }
 
 // Update the XYWH values in the widget panel...
 static void update_xywh() {
@@ -263,6 +263,7 @@ void header_input_cb(Fl_Input* i, void*) {
     set_modflag(1);
   g_project.header_file_name = i->value();
 }
+
 void code_input_cb(Fl_Input* i, void*) {
   if (strcmp(g_project.code_file_name.c_str(), i->value()))
     set_modflag(1);
@@ -371,6 +372,7 @@ uchar *Overlay_Window::read_image(int &ww, int &hh) {
 void Overlay_Window::draw_overlay() {
   window->draw_overlay();
 }
+
 int Overlay_Window::handle(int e) {
   int ret =  window->handle(e);
   if (ret==0) {
@@ -384,7 +386,7 @@ int Overlay_Window::handle(int e) {
 }
 
 /**
- Make and add a new WIndow node.
+ Make and add a new Window node.
  \param[in] strategy is kAddAsLastChild or kAddAfterCurrent
  \return new node
  */
@@ -561,20 +563,6 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   update_xywh();
 }
 
-// To snap, we must know:
-// dx, dy : how far we moved away from the push event (mx-x1, my-y1)
-// bx, by, bt, br : the bounding box when at the push event
-// drag : flags for the part of the bounding box that we drag
-// dist : distance to closest snap position
-// sx, sy : delta to closest snap position
-// the group that contains the selection
-// the window that contains the selection
-// maybe an alternative bounding box containing the label extent of outside labels
-
-// write dx and dy to render and finally apply the drag
-
-// mark all snnap actions that match our dx, and/or dy, so we can drag a visual aid
-
 // calculate actual move by moving mouse position (mx,my) to
 // nearest multiple of gridsize, and snap to original position
 void Fl_Window_Type::newdx() {
@@ -737,295 +725,6 @@ void Fl_Window_Type::draw_overlay() {
     }
   if (selected) return;
 
-#if 0
-  if (show_guides && drag) {
-    // draw overlays for UI Guideline distances
-    // - check for distance to the window edge
-    //    * FLTK suggests 10 pixels from the edge
-    int d;
-    int xsp, ysp;
-    int mybx_bak = mybx, myby_bak = myby, mybr_bak = mybr, mybt_bak = mybt;
-    Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
-
-
-    ideal_spacing(xsp, ysp);
-
-    if (drag) {
-      // Check top spacing...
-      if (abs(d = myby - ysp) < 3) {
-        dy -= d;
-        if (drag & DRAG) mybt -= d;
-        myby -= d;
-        draw_v_arrow(mybx+5, myby, 0);
-      }
-
-      // Check bottom spacing...
-      if (abs(d = o->h() - mybt - ysp) < 3) {
-        dy += d;
-        if (drag & DRAG) myby += d;
-        mybt += d;
-        draw_v_arrow(mybx+5, mybt, o->h());
-      }
-
-      // Check left spacing...
-      if (abs(d = mybx - xsp) < 3) {
-        dx -= d;
-        if (drag & DRAG) mybr -= d;
-        mybx -= d;
-        draw_h_arrow(mybx, myby+5, 0);
-      }
-
-      // Check right spacing...
-      if (abs(d = o->w() - mybr - xsp) < 3) {
-        dx += d;
-        if (drag & DRAG) mybx += d;
-        mybr += d;
-        draw_h_arrow(mybr, myby+5, o->w());
-      }
-    }
-
-    if (numselected==1 && selection && !(drag & DRAG)) {
-      // Check ideal sizes
-      int x,y,r,t;
-      newposition(mysel,x,y,r,t);
-      int w = r-x;
-      int h = t-y;
-      int iw = w, ih = h;
-
-      mysel->ideal_size(iw, ih);
-
-      if (drag & (TOP | BOTTOM)) {
-        // Check height
-        if (abs(d = ih - h) < 5) {
-          // Resize height
-          if (drag & TOP) {
-            myby -= d;
-            y -= d;
-            dy -= d;
-          } else {
-            mybt += d;
-            t += d;
-            dy += d;
-          }
-        }
-
-        // Draw height guide
-        draw_height(x < 50 ? x+10 : x-10, y, t,
-                    x < 50 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
-      }
-
-      if (drag & (LEFT | RIGHT)) {
-        // Check width
-        if (abs(d = iw - w) < 5) {
-          // Resize width
-          if (drag & LEFT) {
-            mybx -= d;
-            x -= d;
-            dx -= d;
-          } else {
-            mybr += d;
-            r += d;
-            dx += d;
-          }
-        }
-
-        // Draw width guide
-        draw_width(x, y < 50 ? y+10 : y-10, r,
-                   y < 50 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
-      }
-    }
-
-    // Check spacing and alignment between individual widgets
-    if (drag && selection && selection->is_widget()) {
-      for (Fl_Type *q=next; q && q->level>level; q = q->next)
-        if (q != selection && q->is_widget()) {
-          Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
-          // Only check visible widgets...
-          if (!qw->o->visible_r()) continue;
-
-          // Get bounding box of widget...
-          int qx = qw->o->x();
-          int qr = qw->o->x() + qw->o->w();
-          int qy = qw->o->y();
-          int qt = qw->o->y() + qw->o->h();
-
-          if (!(qw->o->align() & FL_ALIGN_INSIDE)) {
-            // Adjust top/bottom for top/bottom labels...
-            int ww, hh;
-            ww = qw->o->w();
-            hh = qw->o->labelsize();
-            qw->o->measure_label(ww, hh);
-            if (qw->o->align() & FL_ALIGN_TOP) qy -= hh;
-            if (qw->o->align() & FL_ALIGN_BOTTOM) qt += hh;
-          }
-
-          // Do horizontal alignment when the widget is within 25
-          // pixels vertically...
-          if (fl_min(abs(qy - mysel->o->y() - mysel->o->h()),
-                     abs(mysel->o->y() - qt)) < 25) {
-            // Align to left of other widget...
-            if ((drag & (LEFT | DRAG)) && abs(d = mybx - qx) < 3) {
-              dx += d;
-              mybx += d;
-              if (drag & DRAG) mybr += d;
-
-              draw_left_brace(qw->o);
-            }
-
-            // Align to right of other widget...
-            if ((drag & (RIGHT | DRAG)) &&
-                abs(d = qr - mybr) < 3) {
-              dx += d;
-              if (drag & DRAG) mybx += d;
-              mybr += d;
-
-              draw_right_brace(qw->o);
-            }
-          }
-
-          // Align to top of other widget...
-          if ((drag & (TOP | DRAG)) && abs(d = myby - qy) < 3) {
-            dy += d;
-            myby += d;
-            if (drag & DRAG) mybt += d;
-
-            draw_top_brace(qw->o);
-          }
-
-          // Align to bottom of other widget...
-          if ((drag & (BOTTOM | DRAG)) && abs(d = qt - mybt) < 3) {
-            dy += d;
-            if (drag & DRAG) myby += d;
-            mybt += d;
-
-            draw_bottom_brace(qw->o);
-          }
-
-          // Check spacing between widgets
-          if (mysel->is_group()) mysel->ideal_spacing(xsp, ysp);
-          else qw->ideal_spacing(xsp, ysp);
-
-          if ((qt)>=myby && qy<=mybt) {
-            if (drag & (LEFT | DRAG)) {
-              // Compare left of selected to left of current
-              if (abs(d = qx - mybx - xsp) >= 3)
-                d = qx - mybx + xsp;
-
-              if (abs(d) < 3) {
-                dx += d;
-                mybx += d;
-                if (drag & DRAG) mybr += d;
-
-                // Draw left arrow
-                draw_h_arrow(mybx, (myby+mybt)/2, qx);
-              }
-
-              // Compare left of selected to right of current
-              if (abs(d = qr - mybx - xsp) >= 3)
-                d = qr - mybx + xsp;
-
-              if (abs(d) < 3) {
-                dx += d;
-                mybx += d;
-                if (drag & DRAG) mybr += d;
-
-                // Draw left arrow
-                draw_h_arrow(mybx, (myby+mybt)/2, qr);
-              }
-            }
-
-            if (drag & (RIGHT | DRAG)) {
-              // Compare right of selected to left of current
-              if (abs(d = qx - mybr - xsp) >= 3)
-                d = qx - mybr + xsp;
-
-              if (abs(d) < 3) {
-                dx += d;
-                if (drag & DRAG) mybx += d;
-                mybr += d;
-
-                // Draw right arrow
-                draw_h_arrow(mybr, (myby+mybt)/2, qx);
-              }
-
-              // Compare right of selected to right of current
-              if (abs(d = qr - mybr + xsp) >= 3)
-                d = qr - mybr - xsp;
-
-              if (abs(d) < 3) {
-                dx += d;
-                if (drag & DRAG) mybx += d;
-                mybr += d;
-
-                // Draw right arrow
-                draw_h_arrow(mybr, (myby+mybt)/2, qr);
-              }
-            }
-          }
-
-          if (qr>=mybx && qx<=mybr) {
-            // Compare top of selected to top of current
-            if (drag & (TOP | DRAG)) {
-              if (abs(d = qy - myby - ysp) >= 3)
-                d = qy - myby + ysp;
-
-              if (abs(d) < 3) {
-                dy += d;
-                myby += d;
-                if (drag & DRAG) mybt += d;
-
-                // Draw up arrow...
-                draw_v_arrow((mybx+mybr)/2, myby, qy);
-              }
-
-              // Compare top of selected to bottom of current
-              if (abs(d = qt - myby - ysp) >= 3)
-                d = qt - myby + ysp;
-
-              if (abs(d) < 3) {
-                dy += d;
-                myby += d;
-                if (drag & DRAG) mybt += d;
-
-                // Draw up arrow...
-                draw_v_arrow((mybx+mybr)/2, myby, qt);
-              }
-            }
-
-            // Compare bottom of selected to top of current
-            if (drag & (BOTTOM | DRAG)) {
-              if (abs(d = qy - mybt - ysp) >= 3)
-                d = qy - mybt + ysp;
-
-              if (abs(d) < 3) {
-                dy += d;
-                if (drag & DRAG) myby += d;
-                mybt += d;
-
-                // Draw down arrow...
-                draw_v_arrow((mybx+mybr)/2, mybt, qy);
-              }
-
-              // Compare bottom of selected to bottom of current
-              if (abs(d = qt - mybt - ysp) >= 3)
-                d = qt - mybt + ysp;
-
-              if (abs(d) < 3) {
-                dy += d;
-                if (drag & DRAG) myby += d;
-                mybt += d;
-
-                // Draw down arrow...
-                draw_v_arrow((mybx+mybr)/2, mybt, qt);
-              }
-            }
-          }
-        }
-    }
-    mysx += mybx-mybx_bak; mysr += mybr-mybr_bak;
-    mysy += myby-myby_bak; myst += mybt-mybt_bak;
-  }
-#endif
   // align the snapping selection box with the box we draw.
   sx = mysx; sy = mysy; sr = mysr; st = myst;
 

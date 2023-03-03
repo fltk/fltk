@@ -82,17 +82,6 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
   if (h < 15) h = 15;
 }
 
-// Return the ideal widget spacing...
-void
-Fl_Widget_Type::ideal_spacing(int &x, int &y) {
-  if (o->labelsize() < 10)
-    x = y = 0;
-  else if (o->labelsize() < 14)
-    x = y = 5;
-  else
-    x = y = 10;
-}
-
 /**
  Make a new Widget node.
  \param[in] strategy is kAddAsLastChild or kAddAfterCurrent

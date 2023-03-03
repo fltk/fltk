@@ -137,11 +137,6 @@ public:
 
 class Fl_Tabs_Type : public Fl_Group_Type {
 public:
-  void ideal_spacing(int &x, int &y) FL_OVERRIDE {
-     x = 10;
-     fl_font(o->labelfont(), o->labelsize());
-     y = fl_height() + o->labelsize() - 6;
-  }
   const char *type_name() FL_OVERRIDE {return tabs_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TabGroup";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {

@@ -111,7 +111,6 @@ public:
   void copy_properties() FL_OVERRIDE;
 
   virtual void ideal_size(int &w, int &h);
-  virtual void ideal_spacing(int &x, int &y);
 
   ~Fl_Widget_Type();
   void redraw();
