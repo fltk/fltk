@@ -168,10 +168,11 @@ The rest of this chapter describes what happens when the Wayland leg has been ch
 
 Establishing a Wayland connection requires environment variable \c XDG_RUNTIME_DIR to be
 defined and to point to a directory containing a socket connected to a Wayland
-compositor. This is usually done by the login procedure of Wayland-friendly desktops.
+compositor. This variable is usually set by the login procedure of Wayland-friendly desktops.
 The name of the Wayland socket is determined as follows:
-- the client may call Fl::display(const char *display_name) before \c fl_open_display() runs
-or use the \c -display command line argument and transmit there the socket name;
+- the client may call <tt>Fl::display(const char *display_name)</tt> before
+\c fl_open_display() runs or use the \c -display command line argument and transmit there the
+socket name;
 - environment variable \c WAYLAND_DISPLAY can be defined to the socket name;
 - otherwise, \c "wayland-0" is used.
 
@@ -346,7 +347,8 @@ mapped on the display. This 3-step mechanism works as follows:
 obtain a <tt>struct wl_callback</tt> object and stores it as member \c cb of the surface's
 \ref fl_wld_buffer.
 - Then it calls \c wl_callback_add_listener() to associate this object to the FLTK-defined,
-callback function \c surface_frame_done() that Wayland calls at the end of the mapping operation.
+callback function \c surface_frame_done() that Wayland calls when it's ready for another
+mapping operation.
 - Finally \c surface_frame_done() destroys the \c wl_callback object by function
 \c wl_callback_destroy() and sets member \c cb to NULL.
 
@@ -380,7 +382,7 @@ computing and drawing in memory but not on display more lines of the desired Man
 
 \section wayland-buffer-factory Buffer factories
 
-Wayland calls <em>buffer factory</em> a software procedure that constructs objects of type
+Wayland names <em>buffer factory</em> a software procedure that constructs objects of type
 <tt>struct wl_buffer</tt> for use by a client application.
 FLTK creates a \c wl_buffer object each time an Fl_Window is mapped on a display or resized.
 That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
@@ -402,7 +404,7 @@ beginning at offset \c chunk_offset in it. This function returns a pointer to th
 beginning of the mmap'ed memory section encapsulated by this \c wl_buffer.
 Variable \c chunk_offset is then increased by the length of this section.
 
-A window's \c wl_buffer is re-used each time the window's content changes, and is destroyed by function
+A window's \c wl_buffer is re-used each time the window gets redrawn, and is destroyed by function
 \c Fl_Wayland_Graphics_Driver::buffer_release() which calls \c wl_buffer_destroy() when
 \c Fl_Window::hide() runs or the window is resized.
 
@@ -851,15 +853,19 @@ gives access, the Wayland way, to the linked list of displays in the system.
 <pre>
 struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
-  short width; // = nber of horizontal pixels / wld_scale
-  short height; // = nber of vertical pixels / wld_scale
+  short width; // nber of horizontal pixels / wld_scale
+  short height; // nber of vertical pixels / wld_scale
   float dpi; // at this point, always 96.
-  struct wl_output *wl_output;
+  struct wl_output *wl_output; // the Wayland object for this display
   int wld_scale; // Wayland scale factor
   float gui_scale; // FLTK scale factor
   struct wl_list link; // links these records together
 };
 </pre>
+It's possible to get the FLTK-defined record associated to a display from the
+Wayland-associated object for the same display, say <tt>struct wl_output *wl_output</tt>,
+by this call:
+<tt>(struct Fl_Wayland_Screen_Driver::output *)wl_output_get_user_data(wl_output)</tt>.
 
 \anchor seat
 <h3>struct seat</h3>
