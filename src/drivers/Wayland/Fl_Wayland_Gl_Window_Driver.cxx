@@ -403,7 +403,6 @@ static void delayed_scissor(Fl_Wayland_Gl_Window_Driver *dr) {
 
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
-  struct wld_window *win = fl_wl_xid(pWindow);
   float f = Fl::screen_scale(pWindow->screen_num());
   int s = Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale();
   W = (W * s) * f;

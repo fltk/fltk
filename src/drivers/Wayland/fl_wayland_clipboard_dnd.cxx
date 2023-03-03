@@ -375,7 +375,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
     n = Fl_Screen_Driver::convert_crlf(from, n);
     from += n;
   }
-  fl_selection_length[1] = from - fl_selection_buffer[1];;
+  fl_selection_length[1] = from - fl_selection_buffer[1];
   fl_selection_buffer[1][fl_selection_length[1]] = 0;
   Fl::e_clipboard_type = Fl::clipboard_plain_text;
 }
