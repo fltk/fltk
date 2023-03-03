@@ -35,6 +35,9 @@ int fd_right_group_margin   = 10;
 int fd_top_group_margin     = 10;
 int fd_bottom_group_margin  = 10;
 
+int fd_top_tabs_margin      = 25;
+int fd_bottom_tabs_margin   = 25;
+
 int fd_widget_gap_x         = 10;
 int fd_widget_gap_y         = 8;
 int fd_widget_min_w         = 20;
@@ -67,6 +70,10 @@ static bool in_window(Fd_Snap_Data &d) {
 
 static bool in_group(Fd_Snap_Data &d) {
   return (d.wgt && d.wgt->parent && d.wgt->parent->is_group());
+}
+
+static bool in_tabs(Fd_Snap_Data &d) {
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_tabs());
 }
 
 static Fl_Group *parent(Fd_Snap_Data &d) {
@@ -302,7 +309,7 @@ Fd_Snap_Right_Group_Margin snap_right_group_margin;
 class Fd_Snap_Top_Group_Margin : public Fd_Snap_Top {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
-    if (in_group(d)) check_y_(d, d.by, parent(d)->y()+fd_top_group_margin);
+    if (in_group(d) && !in_tabs(d)) check_y_(d, d.by, parent(d)->y()+fd_top_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     draw_top_brace(parent(d));
@@ -314,7 +321,7 @@ Fd_Snap_Top_Group_Margin snap_top_group_margin;
 class Fd_Snap_Bottom_Group_Margin : public Fd_Snap_Bottom {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
-    if (in_group(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-fd_bottom_group_margin);
+    if (in_group(d) && !in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-fd_bottom_group_margin);
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     draw_bottom_brace(parent(d));
@@ -322,6 +329,22 @@ public:
   };
 };
 Fd_Snap_Bottom_Group_Margin snap_bottom_group_margin;
+
+class Fd_Snap_Top_Tabs_Margin : public Fd_Snap_Top_Group_Margin {
+public:
+  void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (in_tabs(d)) check_y_(d, d.by, parent(d)->y()+fd_top_tabs_margin);
+  }
+};
+Fd_Snap_Top_Tabs_Margin snap_top_tabs_margin;
+
+class Fd_Snap_Bottom_Tabs_Margin : public Fd_Snap_Bottom_Group_Margin {
+public:
+  void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (in_tabs(d)) check_y_(d, d.bt, parent(d)->y()+parent(d)->h()-fd_bottom_tabs_margin);
+  }
+};
+Fd_Snap_Bottom_Tabs_Margin snap_bottom_tabs_margin;
 
 /**
  If the selection is the child of the window, align to the window grid.
@@ -513,6 +536,9 @@ Fd_Snap_Action *Fd_Snap_Action::list[] = {
   &snap_right_group_margin,
   &snap_top_group_margin,
   &snap_bottom_group_margin,
+
+  &snap_top_tabs_margin,
+  &snap_bottom_tabs_margin,
 
   &snap_siblings_left,
   &snap_siblings_right,

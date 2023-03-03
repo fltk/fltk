@@ -152,6 +152,7 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 13; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  int is_tabs() const FL_OVERRIDE {return 1;}
 };
 
 // ---- Fl_Scroll_Type ------------------------------------------------- MARK: -

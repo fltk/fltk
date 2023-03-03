@@ -31,6 +31,9 @@ extern int fd_right_group_margin;
 extern int fd_top_group_margin;
 extern int fd_bottom_group_margin;
 
+extern int fd_top_tabs_margin;
+extern int fd_bottom_tabs_margin;
+
 extern int fd_widget_gap_x;
 extern int fd_widget_gap_y;
 extern int fd_widget_min_w;
