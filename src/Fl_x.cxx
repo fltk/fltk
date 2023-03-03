@@ -1453,14 +1453,39 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
   return (long)total;
 }
 
+/*
+  Internal function to reduce "deprecated" warnings for XKeycodeToKeysym().
+  This way we get at most one warning. The option to use XkbKeycodeToKeysym()
+  instead would not help much - see STR #2913 for more information.
+
+  Update (July 22, 2022): disable "deprecated declaration" warnings in
+  this function for GCC >= 4.6 and clang (all versions) to get rid of
+  these warnings at least for current GCC and clang compilers.
+
+  Note: '#pragma GCC diagnostic push' needs at least GCC 4.6.
+*/
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 5))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
-  KeySym* syms;
-  int returned;
-  syms = XGetKeyboardMapping(d, k, i+1, &returned);
-  KeySym sym = syms[i];
-  XFree(syms);
-  return sym;
+  return XKeycodeToKeysym(d, k, i);
 }
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 5))
+#pragma GCC diagnostic pop
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 int fl_handle(const XEvent& thisevent)
 {

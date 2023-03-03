@@ -23,17 +23,17 @@ static Fl_Double_Window *win;
 
 void choice_cb(Fl_Widget *, void *v) {
   Fl_Color c = (Fl_Color)(fl_intptr_t)v;
-  uchar buffer[32*32*3] = {};
+  uchar buffer[32*32*3];
   Fl_RGB_Image icon(buffer, 32, 32, 3);
   icon.color_average(c, 0.0);
   win->icon(&icon);
 }
 
 Fl_Menu_Item choices[] = {
-  {"Red",0,choice_cb,(void*)FL_RED,0,0,0,0,0},
-  {"Green",0,choice_cb,(void*)FL_GREEN,0,0,0,0,0},
-  {"Blue",0,choice_cb,(void*)FL_BLUE,0,0,0,0,0},
-  {0,0,0,0,0,0,0,0,0}
+  {"Red",0,choice_cb,(void*)FL_RED},
+  {"Green",0,choice_cb,(void*)FL_GREEN},
+  {"Blue",0,choice_cb,(void*)FL_BLUE},
+  {0}
 };
 
 int main(int argc, char **argv) {

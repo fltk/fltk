@@ -117,12 +117,12 @@ void  gl_font(int fontid, int size) {
 }
 
 #ifndef __APPLE__
+static void get_list(int r) {
+  gl_fontsize->glok[r] = 1;
 #if defined(USE_X11)
 # if USE_XFT
 // FIXME
 # else
-static void get_list(int r) {
-  gl_fontsize->glok[r] = 1;
   unsigned int ii = r * 0x400;
   for (int i = 0; i < 0x400; i++) {
     XFontStruct *font = NULL;
@@ -130,20 +130,17 @@ static void get_list(int r) {
     fl_XGetUtf8FontAndGlyph(gl_fontsize->font, ii, &font, &id);
     if (font) glXUseXFont(font->fid, id, 1, gl_fontsize->listbase+ii);
     ii++;
-  }
-}
+   }
 # endif
 #elif defined(WIN32)
-static void get_list(int r) {
-  gl_fontsize->glok[r] = 1;
   unsigned int ii = r * 0x400;
   HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
   wglUseFontBitmapsW(fl_gc, ii, 0x400, gl_fontsize->listbase+ii);
   SelectObject(fl_gc, oldFid);
-}
 #else
 #  error unsupported platform
 #endif
+} // get_list
 #endif
 
 void gl_remove_displaylist_fonts()

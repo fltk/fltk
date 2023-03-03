@@ -149,7 +149,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mStyleTable = 0;
   mNStyles = 0;
   mNVisibleLines = 1;
-  mLineStarts = new int[mNVisibleLines+1];
+  mLineStarts = new int[mNVisibleLines];
   mLineStarts[0] = 0;
   for (i=1; i<mNVisibleLines; i++)
     mLineStarts[i] = -1;
