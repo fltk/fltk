@@ -30,6 +30,8 @@ extern int fd_left_group_margin;
 extern int fd_right_group_margin;
 extern int fd_top_group_margin;
 extern int fd_bottom_group_margin;
+extern int fd_group_grid_x;
+extern int fd_group_grid_y;
 
 extern int fd_top_tabs_margin;
 extern int fd_bottom_tabs_margin;

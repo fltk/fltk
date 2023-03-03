@@ -27,13 +27,16 @@ int fd_right_window_margin  = 15;
 int fd_top_window_margin    = 15;
 int fd_bottom_window_margin = 15;
 
-int fd_window_grid_x        = 10;
-int fd_window_grid_y        = 24;
+int fd_window_grid_x        = 25;
+int fd_window_grid_y        = 25;
 
 int fd_left_group_margin    = 10;
 int fd_right_group_margin   = 10;
 int fd_top_group_margin     = 10;
 int fd_bottom_group_margin  = 10;
+
+int fd_group_grid_x         = 10;
+int fd_group_grid_y         = 10;
 
 int fd_top_tabs_margin      = 25;
 int fd_bottom_tabs_margin   = 25;
@@ -55,7 +58,8 @@ static void draw_grid(int x, int y, int dx, int dy);
 static void draw_width(int x, int y, int r, Fl_Align a);
 static void draw_height(int x, int y, int b, Fl_Align a);
 
-inline int fl_min(int a, int b) { return (a < b ? a : b); }
+static int fl_min(int a, int b) { return (a < b ? a : b); }
+static int fl_min(int a, int b, int c) { return fl_min(a, fl_min(b, c)); }
 
 static int nearest(int x, int left, int grid, int right=0x7fff) {
   int grid_x = ((x-left+grid/2)/grid)*grid+left;
@@ -330,6 +334,8 @@ public:
 };
 Fd_Snap_Bottom_Group_Margin snap_bottom_group_margin;
 
+// ----- tabs snapping ------------------------------------------------- MARK: -
+
 class Fd_Snap_Top_Tabs_Margin : public Fd_Snap_Top_Group_Margin {
 public:
   void check(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -346,21 +352,19 @@ public:
 };
 Fd_Snap_Bottom_Tabs_Margin snap_bottom_tabs_margin;
 
-/**
- If the selection is the child of the window, align to the window grid.
- */
-class Fd_Snap_Window_Grid : public Fd_Snap_Action {
+// ----- grid snapping ------------------------------------------------- MARK: -
+
+class Fd_Snap_Grid : public Fd_Snap_Action {
 protected:
   int nearest_x, nearest_y;
 public:
-  Fd_Snap_Window_Grid() { type = 3; mask = FD_LEFT|FD_TOP|FD_DRAG; }
-  void check(Fd_Snap_Data &d) FL_OVERRIDE {
-    if (d.wgt && d.wgt->parent != d.win) return;
-    if ((fd_window_grid_x <= 1) || (fd_window_grid_y <= 1)) return;
+  Fd_Snap_Grid() { type = 3; mask = FD_LEFT|FD_TOP|FD_DRAG; }
+  void check_grid(Fd_Snap_Data &d, int left, int grid_x, int right, int top, int grid_y, int bottom) {
+    if ((grid_x <= 1) || (grid_y <= 1)) return;
     int suggested_x = d.bx + d.dx;
-    nearest_x = nearest(suggested_x, fd_left_window_margin, fd_window_grid_x, d.win->o->w() - fd_right_window_margin);
+    nearest_x = nearest(suggested_x, left, grid_x, right);
     int suggested_y = d.by + d.dy;
-    nearest_y = nearest(suggested_y, fd_top_window_margin, fd_window_grid_y, d.win->o->h() - fd_bottom_window_margin);
+    nearest_y = nearest(suggested_y, top, grid_y, bottom);
     if (d.drag == FD_LEFT)
       check_x_(d, d.bx, nearest_x);
     else if (d.drag == FD_TOP)
@@ -368,16 +372,39 @@ public:
     else
       check_x_y_(d, d.bx, nearest_x, d.by, nearest_y);
   }
-  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
-    draw_grid(nearest_x, nearest_y, fd_window_grid_x, fd_window_grid_y);
-  };
   bool matches(Fd_Snap_Data &d) FL_OVERRIDE {
     if (d.drag == FD_LEFT) return (d.dx == dx);
     if (d.drag == FD_TOP) return (d.dy == dy);
     return (d.drag & mask) && (d.dx == dx) && (d.dy == dy);
   }
 };
+
+class Fd_Snap_Window_Grid : public Fd_Snap_Grid {
+public:
+  void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (in_window(d)) check_grid(d, fd_left_window_margin, fd_window_grid_x, d.win->o->w()-fd_right_window_margin,
+                                 fd_top_window_margin, fd_window_grid_y, d.win->o->h()-fd_bottom_window_margin);
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    draw_grid(nearest_x, nearest_y, fd_window_grid_x, fd_window_grid_y);
+  };
+};
 Fd_Snap_Window_Grid snap_window_grid;
+
+class Fd_Snap_Group_Grid : public Fd_Snap_Grid {
+public:
+  void check(Fd_Snap_Data &d) FL_OVERRIDE {
+    if (in_group(d)) {
+      Fl_Widget *g = parent(d);
+      check_grid(d, g->x()+fd_left_group_margin, fd_group_grid_x, g->x()+g->w()-fd_right_group_margin,
+                 g->y()+fd_top_group_margin, fd_group_grid_y, g->y()+g->h()-fd_bottom_group_margin);
+    }
+  }
+  void draw(Fd_Snap_Data &d) FL_OVERRIDE {
+    draw_grid(nearest_x, nearest_y, fd_group_grid_x, fd_group_grid_y);
+  };
+};
+Fd_Snap_Group_Grid snap_group_grid;
 
 // ----- sibling snapping ---------------------------------------------- MARK: -
 
@@ -421,7 +448,9 @@ class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return check_x_(d, d.bx, s->x());
+    return fl_min(check_x_(d, d.bx, s->x()),
+                  check_x_(d, d.br, s->x()),
+                  check_x_(d, d.br+fd_widget_gap_x, s->x()));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_left_brace(best_match);
@@ -433,7 +462,9 @@ class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min( check_x_(d, d.br, s->x()+s->w()), check_x_(d, d.bx-fd_widget_gap_x, s->x()+s->w()) );
+    return fl_min(check_x_(d, d.br, s->x()+s->w()),
+                  check_x_(d, d.bx, s->x()+s->w()),
+                  check_x_(d, d.bx-fd_widget_gap_x, s->x()+s->w()));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_right_brace(best_match);
@@ -445,7 +476,9 @@ class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return check_y_(d, d.by, s->y());
+    return fl_min(check_y_(d, d.by, s->y()),
+                  check_y_(d, d.bt, s->y()),
+                  check_y_(d, d.bt+fd_widget_gap_y, s->y()) );;
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_top_brace(best_match);
@@ -457,7 +490,9 @@ class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min( check_y_(d, d.bt, s->y()+s->h()), check_y_(d, d.by-fd_widget_gap_y, s->y()+s->h()) );
+    return fl_min(check_y_(d, d.bt, s->y()+s->h()),
+                  check_y_(d, d.by, s->y()+s->h()),
+                  check_y_(d, d.by-fd_widget_gap_y, s->y()+s->h()) );
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
     if (best_match) draw_bottom_brace(best_match);
@@ -526,6 +561,7 @@ Fd_Snap_Action *Fd_Snap_Action::list[] = {
   &snap_bottom_window_margin,
 
   &snap_window_grid,
+  &snap_group_grid,
 
   &snap_left_group_edge,
   &snap_right_group_edge,
