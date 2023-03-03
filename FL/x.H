@@ -82,7 +82,7 @@ typedef ulong Fl_Offscreen;
   fl_push_no_clip()
 #    define fl_end_offscreen() \
   fl_pop_clip(); fl_window = _sw; _ss->set_current(); \
-  if (!_sgc) XFreeGC(fl_display, fl_gc); fl_gc = _sgc
+  if (!_sgc) { XFreeGC(fl_display, fl_gc); } fl_gc = _sgc
 
 extern FL_EXPORT void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
