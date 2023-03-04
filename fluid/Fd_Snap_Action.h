@@ -19,29 +19,36 @@
 
 #include "Fl_Window_Type.h"
 
-extern int fd_left_window_margin;
-extern int fd_right_window_margin;
-extern int fd_top_window_margin;
-extern int fd_bottom_window_margin;
-extern int fd_window_grid_x;
-extern int fd_window_grid_y;
+class Fd_Layout_Preset {
+public:
+  int left_window_margin;
+  int right_window_margin;
+  int top_window_margin;
+  int bottom_window_margin;
+  int window_grid_x;
+  int window_grid_y;
 
-extern int fd_left_group_margin;
-extern int fd_right_group_margin;
-extern int fd_top_group_margin;
-extern int fd_bottom_group_margin;
-extern int fd_group_grid_x;
-extern int fd_group_grid_y;
+  int left_group_margin;
+  int right_group_margin;
+  int top_group_margin;
+  int bottom_group_margin;
+  int group_grid_x;
+  int group_grid_y;
 
-extern int fd_top_tabs_margin;
-extern int fd_bottom_tabs_margin;
+  int top_tabs_margin;
+  int bottom_tabs_margin;
 
-extern int fd_widget_gap_x;
-extern int fd_widget_gap_y;
-extern int fd_widget_min_w;
-extern int fd_widget_inc_w;
-extern int fd_widget_min_h;
-extern int fd_widget_inc_h;
+  int widget_min_w;
+  int widget_inc_w;
+  int widget_gap_x;
+  int widget_min_h;
+  int widget_inc_h;
+  int widget_gap_y;
+};
+
+extern Fd_Layout_Preset layout;
+
+
 
 /**
  \brief Structure holding all the data to perform interactive alignment operations.

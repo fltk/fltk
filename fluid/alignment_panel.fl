@@ -402,7 +402,7 @@ Function {make_layout_window()} {open
     Fl_Widget *c = o->child(i);
     c->do_callback(c, v);
   }
-}} open selected
+}} open
     xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
@@ -475,180 +475,180 @@ Function {make_layout_window()} {open
     Fl_Value_Input {} {
       label {left window margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_left_window_margin);
+  o->value((double)layout.left_window_margin);
 } else {
-  fd_left_window_margin = (int)o->value();
+  layout.left_window_margin = (int)o->value();
 }}
       xywh {167 82 50 22} step 1
     }
     Fl_Value_Input {} {
       label {right window margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_right_window_margin);
+  o->value((double)layout.right_window_margin);
 } else {
-  fd_right_window_margin = (int)o->value();
+  layout.right_window_margin = (int)o->value();
 }}
       xywh {167 112 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top window margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_top_window_margin);
+  o->value((double)layout.top_window_margin);
 } else {
-  fd_top_window_margin = (int)o->value();
+  layout.top_window_margin = (int)o->value();
 }}
       xywh {167 142 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom window margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_bottom_window_margin);
+  o->value((double)layout.bottom_window_margin);
 } else {
-  fd_bottom_window_margin = (int)o->value();
+  layout.bottom_window_margin = (int)o->value();
 }}
       xywh {167 172 50 22} step 1
     }
     Fl_Value_Input {} {
       label {window grid x:}
       callback {if (v == LOAD) {
-  o->value((double)fd_window_grid_x);
+  o->value((double)layout.window_grid_x);
 } else {
-  fd_window_grid_x = (int)o->value();
+  layout.window_grid_x = (int)o->value();
 }}
       xywh {167 202 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x min:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_min_w);
+  o->value((double)layout.widget_min_w);
 } else {
-  fd_widget_min_w = (int)o->value();
+  layout.widget_min_w = (int)o->value();
 }}
       xywh {167 270 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x incr:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_inc_w);
+  o->value((double)layout.widget_inc_w);
 } else {
-  fd_widget_inc_w = (int)o->value();
+  layout.widget_inc_w = (int)o->value();
 }}
       xywh {167 300 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x gap:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_gap_x);
+  o->value((double)layout.widget_gap_x);
 } else {
-  fd_widget_gap_x = (int)o->value();
+  layout.widget_gap_x = (int)o->value();
 }}
       xywh {167 330 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y min:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_min_h);
+  o->value((double)layout.widget_min_h);
 } else {
-  fd_widget_min_h = (int)o->value();
+  layout.widget_min_h = (int)o->value();
 }}
       xywh {167 371 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y incr:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_inc_h);
+  o->value((double)layout.widget_inc_h);
 } else {
-  fd_widget_inc_h = (int)o->value();
+  layout.widget_inc_h = (int)o->value();
 }}
       xywh {167 401 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y gap:}
       callback {if (v == LOAD) {
-  o->value((double)fd_widget_gap_y);
+  o->value((double)layout.widget_gap_y);
 } else {
-  fd_widget_gap_y = (int)o->value();
-}}
+  layout.widget_gap_y = (int)o->value();
+}} selected
       xywh {167 431 50 22} step 1
     }
     Fl_Value_Input {} {
       label {window grid y:}
       callback {if (v == LOAD) {
-  o->value((double)fd_window_grid_y);
+  o->value((double)layout.window_grid_y);
 } else {
-  fd_window_grid_y = (int)o->value();
+  layout.window_grid_y = (int)o->value();
 }}
       xywh {167 232 50 22} step 1
     }
     Fl_Value_Input {} {
       label {left group margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_left_group_margin);
+  o->value((double)layout.left_group_margin);
 } else {
-  fd_left_group_margin = (int)o->value();
+  layout.left_group_margin = (int)o->value();
 }}
       xywh {374 82 50 22} step 1
     }
     Fl_Value_Input {} {
       label {right group margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_right_group_margin);
+  o->value((double)layout.right_group_margin);
 } else {
-  fd_right_group_margin = (int)o->value();
+  layout.right_group_margin = (int)o->value();
 }}
       xywh {374 112 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top group margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_top_group_margin);
+  o->value((double)layout.top_group_margin);
 } else {
-  fd_top_group_margin = (int)o->value();
+  layout.top_group_margin = (int)o->value();
 }}
       xywh {374 142 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom group margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_bottom_group_margin);
+  o->value((double)layout.bottom_group_margin);
 } else {
-  fd_bottom_group_margin = (int)o->value();
+  layout.bottom_group_margin = (int)o->value();
 }}
       xywh {374 172 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top tabs margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_top_tabs_margin);
+  o->value((double)layout.top_tabs_margin);
 } else {
-  fd_top_tabs_margin = (int)o->value();
+  layout.top_tabs_margin = (int)o->value();
 }}
       xywh {374 270 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom tabs margin:}
       callback {if (v == LOAD) {
-  o->value((double)fd_bottom_tabs_margin);
+  o->value((double)layout.bottom_tabs_margin);
 } else {
-  fd_bottom_tabs_margin = (int)o->value();
+  layout.bottom_tabs_margin = (int)o->value();
 }}
       xywh {374 300 50 22} step 1
     }
     Fl_Value_Input {} {
       label {group grid x:}
       callback {if (v == LOAD) {
-  o->value((double)fd_group_grid_x);
+  o->value((double)layout.group_grid_x);
 } else {
-  fd_group_grid_x = (int)o->value();
+  layout.group_grid_x = (int)o->value();
 }}
       xywh {374 202 50 22} step 1
     }
     Fl_Value_Input {} {
       label {group grid y:}
       callback {if (v == LOAD) {
-  o->value((double)fd_group_grid_y);
+  o->value((double)layout.group_grid_y);
 } else {
-  fd_group_grid_y = (int)o->value();
+  layout.group_grid_y = (int)o->value();
 }}
       xywh {374 232 50 22} step 1
     }

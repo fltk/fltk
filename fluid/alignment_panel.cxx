@@ -517,161 +517,161 @@ Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
 
 static void cb_left(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_left_window_margin);
+    o->value((double)layout.left_window_margin);
   } else {
-    fd_left_window_margin = (int)o->value();
+    layout.left_window_margin = (int)o->value();
   }
 }
 
 static void cb_right(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_right_window_margin);
+    o->value((double)layout.right_window_margin);
   } else {
-    fd_right_window_margin = (int)o->value();
+    layout.right_window_margin = (int)o->value();
   }
 }
 
 static void cb_top(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_top_window_margin);
+    o->value((double)layout.top_window_margin);
   } else {
-    fd_top_window_margin = (int)o->value();
+    layout.top_window_margin = (int)o->value();
   }
 }
 
 static void cb_bottom(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_bottom_window_margin);
+    o->value((double)layout.bottom_window_margin);
   } else {
-    fd_bottom_window_margin = (int)o->value();
+    layout.bottom_window_margin = (int)o->value();
   }
 }
 
 static void cb_window(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_window_grid_x);
+    o->value((double)layout.window_grid_x);
   } else {
-    fd_window_grid_x = (int)o->value();
+    layout.window_grid_x = (int)o->value();
   }
 }
 
 static void cb_widget(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_min_w);
+    o->value((double)layout.widget_min_w);
   } else {
-    fd_widget_min_w = (int)o->value();
+    layout.widget_min_w = (int)o->value();
   }
 }
 
 static void cb_widget1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_inc_w);
+    o->value((double)layout.widget_inc_w);
   } else {
-    fd_widget_inc_w = (int)o->value();
+    layout.widget_inc_w = (int)o->value();
   }
 }
 
 static void cb_widget2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_gap_x);
+    o->value((double)layout.widget_gap_x);
   } else {
-    fd_widget_gap_x = (int)o->value();
+    layout.widget_gap_x = (int)o->value();
   }
 }
 
 static void cb_widget3(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_min_h);
+    o->value((double)layout.widget_min_h);
   } else {
-    fd_widget_min_h = (int)o->value();
+    layout.widget_min_h = (int)o->value();
   }
 }
 
 static void cb_widget4(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_inc_h);
+    o->value((double)layout.widget_inc_h);
   } else {
-    fd_widget_inc_h = (int)o->value();
+    layout.widget_inc_h = (int)o->value();
   }
 }
 
 static void cb_widget5(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_widget_gap_y);
+    o->value((double)layout.widget_gap_y);
   } else {
-    fd_widget_gap_y = (int)o->value();
+    layout.widget_gap_y = (int)o->value();
   }
 }
 
 static void cb_window1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_window_grid_y);
+    o->value((double)layout.window_grid_y);
   } else {
-    fd_window_grid_y = (int)o->value();
+    layout.window_grid_y = (int)o->value();
   }
 }
 
 static void cb_left1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_left_group_margin);
+    o->value((double)layout.left_group_margin);
   } else {
-    fd_left_group_margin = (int)o->value();
+    layout.left_group_margin = (int)o->value();
   }
 }
 
 static void cb_right1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_right_group_margin);
+    o->value((double)layout.right_group_margin);
   } else {
-    fd_right_group_margin = (int)o->value();
+    layout.right_group_margin = (int)o->value();
   }
 }
 
 static void cb_top1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_top_group_margin);
+    o->value((double)layout.top_group_margin);
   } else {
-    fd_top_group_margin = (int)o->value();
+    layout.top_group_margin = (int)o->value();
   }
 }
 
 static void cb_bottom1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_bottom_group_margin);
+    o->value((double)layout.bottom_group_margin);
   } else {
-    fd_bottom_group_margin = (int)o->value();
+    layout.bottom_group_margin = (int)o->value();
   }
 }
 
 static void cb_top2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_top_tabs_margin);
+    o->value((double)layout.top_tabs_margin);
   } else {
-    fd_top_tabs_margin = (int)o->value();
+    layout.top_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_bottom2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_bottom_tabs_margin);
+    o->value((double)layout.bottom_tabs_margin);
   } else {
-    fd_bottom_tabs_margin = (int)o->value();
+    layout.bottom_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_group(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_group_grid_x);
+    o->value((double)layout.group_grid_x);
   } else {
-    fd_group_grid_x = (int)o->value();
+    layout.group_grid_x = (int)o->value();
   }
 }
 
 static void cb_group1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)fd_group_grid_y);
+    o->value((double)layout.group_grid_y);
   } else {
-    fd_group_grid_y = (int)o->value();
+    layout.group_grid_y = (int)o->value();
   }
 }
 
