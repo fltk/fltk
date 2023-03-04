@@ -100,7 +100,8 @@ extern Fl_Double_Window *grid_window;
 extern void default_widget_size_cb(Fl_Round_Button*, long);
 extern Fl_Round_Button *def_widget_size[6];
 #include <FL/Fl_Value_Input.H>
-extern void guides_cb(Fl_Check_Button*, long);
-extern Fl_Check_Button *guides_toggle;
+extern void propagate_load(Fl_Group*, void*);
+extern Fl_Menu_Item fontmenu[];
 Fl_Double_Window* make_layout_window();
+extern Fl_Menu_Item menu_Presets[];
 #endif

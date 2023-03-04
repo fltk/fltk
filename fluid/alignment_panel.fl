@@ -403,73 +403,73 @@ Function {make_layout_window()} {open
     c->do_callback(c, v);
   }
 }} open selected
-    xywh {478 283 520 546} type Double non_modal visible
+    xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
       label Close
       callback {if (v != LOAD) grid_window->hide();}
-      tooltip {Close this dialog.} xywh {437 498 60 25}
+      tooltip {Close this dialog.} xywh {435 515 60 25}
     }
     Fl_Box {} {
       label {Widget Size:}
-      xywh {207 403 107 25} labelfont 1 align 24
+      xywh {241 367 107 25} labelfont 1 align 24
     }
     Fl_Group {} {open
-      xywh {302 403 192 75}
+      xywh {305 393 192 75}
     } {
       Fl_Round_Button {def_widget_size[0]} {
         user_data 8 user_data_type long
         callback default_widget_size_cb
-        xywh {312 403 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {315 393 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label tiny
-        xywh {327 403 50 25} labelsize 8 align 20
+        xywh {330 393 50 25} labelsize 8 align 20
       }
       Fl_Round_Button {def_widget_size[1]} {
         user_data 11 user_data_type long
         callback default_widget_size_cb
-        xywh {399 403 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {402 393 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label small
-        xywh {415 403 50 25} labelsize 11 align 20
+        xywh {418 393 50 25} labelsize 11 align 20
       }
       Fl_Round_Button {def_widget_size[2]} {
         user_data 14 user_data_type long
         callback default_widget_size_cb
-        xywh {312 428 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {315 418 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label normal
-        xywh {327 428 50 25} align 20
+        xywh {330 418 50 25} align 20
       }
       Fl_Round_Button {def_widget_size[3]} {
         user_data 18 user_data_type long
         callback default_widget_size_cb
-        xywh {399 428 90 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {402 418 90 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label medium
-        xywh {415 428 68 25} labelsize 18 align 20
+        xywh {418 418 68 25} labelsize 18 align 20
       }
       Fl_Round_Button {def_widget_size[4]} {
         user_data 24 user_data_type long
         callback default_widget_size_cb
-        xywh {312 453 75 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {315 443 75 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label large
-        xywh {327 453 64 25} labelsize 24 align 20
+        xywh {330 443 64 25} labelsize 24 align 20
       }
       Fl_Round_Button {def_widget_size[5]} {
         user_data 32 user_data_type long
         callback default_widget_size_cb
-        xywh {399 453 95 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {402 443 95 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label huge
-        xywh {415 453 76 25} labelsize 32 align 20
+        xywh {418 443 76 25} labelsize 32 align 20
       }
     }
     Fl_Value_Input {} {
@@ -479,7 +479,7 @@ Function {make_layout_window()} {open
 } else {
   fd_left_window_margin = (int)o->value();
 }}
-      xywh {165 15 50 22} step 1
+      xywh {167 82 50 22} step 1
     }
     Fl_Value_Input {} {
       label {right window margin:}
@@ -488,7 +488,7 @@ Function {make_layout_window()} {open
 } else {
   fd_right_window_margin = (int)o->value();
 }}
-      xywh {165 45 50 22} step 1
+      xywh {167 112 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top window margin:}
@@ -497,7 +497,7 @@ Function {make_layout_window()} {open
 } else {
   fd_top_window_margin = (int)o->value();
 }}
-      xywh {165 75 50 22} step 1
+      xywh {167 142 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom window margin:}
@@ -506,7 +506,7 @@ Function {make_layout_window()} {open
 } else {
   fd_bottom_window_margin = (int)o->value();
 }}
-      xywh {165 105 50 22} step 1
+      xywh {167 172 50 22} step 1
     }
     Fl_Value_Input {} {
       label {window grid x:}
@@ -515,7 +515,7 @@ Function {make_layout_window()} {open
 } else {
   fd_window_grid_x = (int)o->value();
 }}
-      xywh {165 135 50 22} step 1
+      xywh {167 202 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x min:}
@@ -524,7 +524,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_min_w = (int)o->value();
 }}
-      xywh {165 203 50 22} step 1
+      xywh {167 270 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x incr:}
@@ -533,7 +533,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_inc_w = (int)o->value();
 }}
-      xywh {165 233 50 22} step 1
+      xywh {167 300 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget x gap:}
@@ -542,7 +542,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_gap_x = (int)o->value();
 }}
-      xywh {165 263 50 22} step 1
+      xywh {167 330 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y min:}
@@ -551,7 +551,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_min_h = (int)o->value();
 }}
-      xywh {165 304 50 22} step 1
+      xywh {167 371 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y incr:}
@@ -560,7 +560,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_inc_h = (int)o->value();
 }}
-      xywh {165 334 50 22} step 1
+      xywh {167 401 50 22} step 1
     }
     Fl_Value_Input {} {
       label {widget y gap:}
@@ -569,7 +569,7 @@ Function {make_layout_window()} {open
 } else {
   fd_widget_gap_y = (int)o->value();
 }}
-      xywh {165 364 50 22} step 1
+      xywh {167 431 50 22} step 1
     }
     Fl_Value_Input {} {
       label {window grid y:}
@@ -578,7 +578,7 @@ Function {make_layout_window()} {open
 } else {
   fd_window_grid_y = (int)o->value();
 }}
-      xywh {165 165 50 22} step 1
+      xywh {167 232 50 22} step 1
     }
     Fl_Value_Input {} {
       label {left group margin:}
@@ -587,7 +587,7 @@ Function {make_layout_window()} {open
 } else {
   fd_left_group_margin = (int)o->value();
 }}
-      xywh {372 15 50 22} step 1
+      xywh {374 82 50 22} step 1
     }
     Fl_Value_Input {} {
       label {right group margin:}
@@ -596,7 +596,7 @@ Function {make_layout_window()} {open
 } else {
   fd_right_group_margin = (int)o->value();
 }}
-      xywh {372 45 50 22} step 1
+      xywh {374 112 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top group margin:}
@@ -605,7 +605,7 @@ Function {make_layout_window()} {open
 } else {
   fd_top_group_margin = (int)o->value();
 }}
-      xywh {372 75 50 22} step 1
+      xywh {374 142 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom group margin:}
@@ -614,7 +614,7 @@ Function {make_layout_window()} {open
 } else {
   fd_bottom_group_margin = (int)o->value();
 }}
-      xywh {372 105 50 22} step 1
+      xywh {374 172 50 22} step 1
     }
     Fl_Value_Input {} {
       label {top tabs margin:}
@@ -623,7 +623,7 @@ Function {make_layout_window()} {open
 } else {
   fd_top_tabs_margin = (int)o->value();
 }}
-      xywh {372 203 50 22} step 1
+      xywh {374 270 50 22} step 1
     }
     Fl_Value_Input {} {
       label {bottom tabs margin:}
@@ -632,7 +632,7 @@ Function {make_layout_window()} {open
 } else {
   fd_bottom_tabs_margin = (int)o->value();
 }}
-      xywh {372 233 50 22} step 1
+      xywh {374 300 50 22} step 1
     }
     Fl_Value_Input {} {
       label {group grid x:}
@@ -641,7 +641,7 @@ Function {make_layout_window()} {open
 } else {
   fd_group_grid_x = (int)o->value();
 }}
-      xywh {372 135 50 22} step 1
+      xywh {374 202 50 22} step 1
     }
     Fl_Value_Input {} {
       label {group grid y:}
@@ -650,13 +650,64 @@ Function {make_layout_window()} {open
 } else {
   fd_group_grid_y = (int)o->value();
 }}
-      xywh {372 165 50 22} step 1
+      xywh {374 232 50 22} step 1
     }
-    Fl_Check_Button guides_toggle {
-      label {Show Guides}
-      user_data 4 user_data_type long
-      callback guides_cb
-      tooltip {Show distance and alignment guides in overlay} xywh {372 263 110 25} down_box DOWN_BOX
+    Fl_Group {} {
+      label {Label Font:}
+      callback propagate_load open
+      xywh {107 479 200 20} labelfont 1 labelsize 11 align 4
+    } {
+      Fl_Choice {} {open
+        tooltip {The style of the label text.} xywh {107 479 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+        code0 {extern Fl_Menu_Item fontmenu[];}
+        code1 {o->menu(fontmenu);}
+      } {}
+      Fl_Value_Input {} {
+        tooltip {The size of the label text.} xywh {258 479 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+      }
+    }
+    Fl_Group {} {
+      label {Text Font:}
+      callback propagate_load open
+      xywh {107 507 200 20} labelfont 1 labelsize 11 align 4
+    } {
+      Fl_Choice {} {open
+        tooltip {The value text style.} xywh {107 507 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+        code0 {extern Fl_Menu_Item fontmenu[];}
+        code1 {o->menu(fontmenu);}
+      } {}
+      Fl_Value_Input {} {
+        tooltip {The value text size.} xywh {258 507 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+      }
+    }
+    Fl_Choice {} {
+      label {Presets:} open
+      xywh {182 11 130 20} down_box BORDER_BOX
+    } {
+      MenuItem {} {
+        label {FLTK.Main}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label {FLTK.Dialog}
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label {FLTK.Toolbox}
+        xywh {0 0 31 20}
+      }
+    }
+    Fl_Button {} {
+      label {+}
+      xywh {312 11 20 20}
+    }
+    Fl_Button {} {
+      label {-}
+      xywh {332 11 20 20}
+    }
+    Fl_Button {} {
+      label {//}
+      xywh {352 11 20 20}
     }
   }
   code {grid_window->do_callback(grid_window, LOAD);} {}

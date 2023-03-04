@@ -64,18 +64,6 @@ static void update_xywh() {
   }
 }
 
-void guides_cb(Fl_Check_Button *i, long) {
-  show_guides = i->value();
-  fluid_prefs.set("show_guides", show_guides);
-
-  for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
-    if (p->is_window()) {
-      Fl_Window_Type *w = (Fl_Window_Type *)p;
-      ((Fl_Overlay_Window *)(w->o))->redraw_overlay();
-    }
-  }
-}
-
 // Set default widget sizes...
 void default_widget_size_cb(Fl_Round_Button *b, long size) {
   // Update the "normal" text size of new widgets...
@@ -83,7 +71,6 @@ void default_widget_size_cb(Fl_Round_Button *b, long size) {
   Fl_Widget_Type::default_size = (int)size;
   fluid_prefs.set("widget_size", Fl_Widget_Type::default_size);
 }
-
 
 void i18n_type_cb(Fl_Choice *c, void *) {
   undo_checkpoint();
@@ -206,7 +193,6 @@ void show_project_cb(Fl_Widget *, void *) {
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
-  guides_toggle->value(show_guides);
   int s = Fl_Widget_Type::default_size;
   if (s<=8) def_widget_size[0]->setonly();
   else if (s<=11) def_widget_size[1]->setonly();
@@ -755,6 +741,30 @@ void toggle_overlays(Fl_Widget *,void *) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
+}
+
+void toggle_guides(Fl_Widget *,void *) {
+  show_guides = !show_guides;
+  fluid_prefs.set("show_guides", show_guides);
+
+  if (show_guides) {
+    guides_item->label("Hide Guides");
+    if (guides_button) guides_button->label("Hide &Guides");
+  } else {
+    guides_item->label("Show Guides");
+    if (guides_button) guides_button->label("Show &Guides");
+  }
+
+  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+    if (o->is_window()) {
+      Fl_Widget_Type* w = (Fl_Widget_Type*)o;
+      ((Overlay_Window*)(w->o))->redraw_overlay();
+    }
+  }
+}
+
+void guides_cb(Fl_Button *o, void *v) {
+  toggle_guides(NULL, NULL);
 }
 
 extern void select(Fl_Type *,int);

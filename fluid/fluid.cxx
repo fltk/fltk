@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -122,6 +122,9 @@ Fl_Menu_Item *sourceview_item = NULL;
 
 /// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
 Fl_Menu_Item *overlay_item = NULL;
+
+/// Menuitem to show or hide the editing guides, label will change if overlay visibility changes.
+Fl_Menu_Item *guides_item = NULL;
 
 ////////////////////////////////////////////////////////////////
 
@@ -1415,6 +1418,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Group", FL_F+7, group_cb},
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_COMMAND+FL_SHIFT+'o',toggle_overlays},
+  {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
@@ -1630,6 +1634,7 @@ void make_main_window() {
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
+    guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();

@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -63,6 +63,8 @@ extern Fl_Menu_Item *widgetbin_item;
 extern Fl_Menu_Item *sourceview_item;
 extern Fl_Menu_Item *overlay_item;
 extern Fl_Button *overlay_button;
+extern Fl_Menu_Item *guides_item;
+extern Fl_Button *guides_button;
 
 extern int modflag;
 

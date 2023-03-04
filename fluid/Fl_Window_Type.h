@@ -28,6 +28,7 @@ class Fl_Widget_Class_Type;
 extern Fl_Menu_Item window_type_menu[];
 extern Fl_Widget_Class_Type *current_widget_class;
 void toggle_overlays(Fl_Widget *,void *);
+void toggle_guides(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);

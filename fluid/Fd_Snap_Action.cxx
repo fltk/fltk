@@ -50,6 +50,11 @@ int fd_widget_inc_w         = 10;//10;
 int fd_widget_min_h         = 20;
 int fd_widget_inc_h         = 4;//4;
 
+// fd_layout_labelfont
+// fd_layout_labelsize
+// fd_layout_textfont
+// fd_layout_textsize
+
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
 static void draw_left_brace(const Fl_Widget *w);

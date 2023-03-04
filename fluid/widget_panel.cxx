@@ -115,6 +115,8 @@ Fl_Button *wLiveMode=(Fl_Button *)0;
 
 Fl_Button *overlay_button=(Fl_Button *)0;
 
+Fl_Button *guides_button=(Fl_Button *)0;
+
 /**
  Create a panel that can be used with all known widgets
 */
@@ -971,7 +973,7 @@ access the Widget pointer and \'v\' to access the user value.");
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 335, 310, 20, "Type:");
+        { Fl_Group* o = new Fl_Group(95, 332, 310, 26, "Type:");
           o->labelfont(1);
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
@@ -1001,25 +1003,30 @@ access the Widget pointer and \'v\' to access the user value.");
     } // Fl_Tabs* o
     { Fl_Group* o = new Fl_Group(10, 370, 400, 20);
       o->labelsize(11);
-      { // Hidden resizable box
-        Fl_Box* o = new Fl_Box(10, 370, 75, 20);
-        o->labelsize(11);
-        o->hide();
-        Fl_Group::current()->resizable(o);
-      } // Fl_Box* o
-      { wLiveMode = new Fl_Button(155, 370, 80, 20, "Live &Resize");
+      { wLiveMode = new Fl_Button(10, 370, 80, 20, "Live &Resize");
         wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
 avior.");
         wLiveMode->type(1);
         wLiveMode->labelsize(11);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);
       } // Fl_Button* wLiveMode
-      { overlay_button = new Fl_Button(240, 370, 100, 20, "Hide &Overlays");
+      { overlay_button = new Fl_Button(94, 370, 80, 20, "Hide &Overlays");
         overlay_button->tooltip("Hide the widget overlay box.");
         overlay_button->labelsize(11);
         overlay_button->callback((Fl_Callback*)overlay_cb);
       } // Fl_Button* overlay_button
-      { Fl_Return_Button* o = new Fl_Return_Button(345, 370, 65, 20, "Close");
+      { guides_button = new Fl_Button(178, 370, 80, 20, "Hide &Guides");
+        guides_button->tooltip("Hide alignment guides.");
+        guides_button->labelsize(11);
+        guides_button->callback((Fl_Callback*)guides_cb);
+      } // Fl_Button* guides_button
+      { // Hidden resizable box
+        Fl_Box* o = new Fl_Box(258, 370, 72, 20);
+        o->labelsize(11);
+        o->hide();
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      { Fl_Return_Button* o = new Fl_Return_Button(330, 370, 80, 20, "Close");
         o->labelsize(11);
         o->callback((Fl_Callback*)ok_cb);
       } // Fl_Return_Button* o
