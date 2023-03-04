@@ -102,6 +102,10 @@ extern Fl_Round_Button *def_widget_size[6];
 #include <FL/Fl_Value_Input.H>
 extern void propagate_load(Fl_Group*, void*);
 extern Fl_Menu_Item fontmenu[];
+extern Fl_Choice *layout_choice;
+#include <FL/Fl_Menu_Button.H>
+extern Fl_Menu_Button *w_layout_menu;
 Fl_Double_Window* make_layout_window();
-extern Fl_Menu_Item menu_Presets[];
+extern Fl_Menu_Item menu_layout_choice[];
+extern Fl_Menu_Item menu_w_layout_menu[];
 #endif

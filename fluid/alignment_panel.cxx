@@ -675,10 +675,21 @@ static void cb_group1(Fl_Value_Input* o, void* v) {
   }
 }
 
-Fl_Menu_Item menu_Presets[] = {
- {"FLTK.Main", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"FLTK.Dialog", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"FLTK.Toolbox", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+Fl_Choice *layout_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_layout_choice[] = {
+ {"FLTK", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Grid", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
+
+Fl_Menu_Item menu_w_layout_menu[] = {
+ {"Rename", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Import", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Export", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Delete", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -879,26 +890,36 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Value_Input* o
       o->end();
     } // Fl_Group* o
-    { Fl_Choice* o = new Fl_Choice(182, 11, 130, 20, "Presets:");
-      o->down_box(FL_BORDER_BOX);
-      o->menu(menu_Presets);
-    } // Fl_Choice* o
-    { new Fl_Button(312, 11, 20, 20, "+");
+    { layout_choice = new Fl_Choice(170, 11, 130, 24);
+      layout_choice->down_box(FL_BORDER_BOX);
+      layout_choice->menu(menu_layout_choice);
+    } // Fl_Choice* layout_choice
+    { new Fl_Button(300, 11, 24, 24, "+");
     } // Fl_Button* o
-    { new Fl_Button(332, 11, 20, 20, "-");
+    { new Fl_Button(315, 479, 30, 24, "-");
     } // Fl_Button* o
-    { new Fl_Button(352, 11, 20, 20, "//");
+    { new Fl_Button(345, 479, 50, 24, "edit");
     } // Fl_Button* o
-    { Fl_Group* o = new Fl_Group(121, 44, 270, 20);
-      { Fl_Button* o = new Fl_Button(121, 44, 90, 20, "Application");
+    { new Fl_Button(395, 479, 50, 24, "load");
+    } // Fl_Button* o
+    { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
+      w_layout_menu->menu(menu_w_layout_menu);
+    } // Fl_Menu_Button* w_layout_menu
+    { new Fl_Button(445, 479, 50, 24, "save");
+    } // Fl_Button* o
+    { Fl_Group* o = new Fl_Group(121, 48, 270, 20);
+      { Fl_Button* o = new Fl_Button(121, 48, 90, 20, "Application");
         o->type(102);
         o->value(1);
+        o->labelsize(12);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(211, 44, 90, 20, "Dialog");
+      { Fl_Button* o = new Fl_Button(211, 48, 90, 20, "Dialog");
         o->type(102);
+        o->labelsize(12);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(301, 44, 90, 20, "Toolbox");
+      { Fl_Button* o = new Fl_Button(301, 48, 90, 20, "Toolbox");
         o->type(102);
+        o->labelsize(12);
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o

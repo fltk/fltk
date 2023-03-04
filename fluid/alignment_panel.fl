@@ -402,7 +402,7 @@ Function {make_layout_window()} {open
     Fl_Widget *c = o->child(i);
     c->do_callback(c, v);
   }
-}} open selected
+}} open
     xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
@@ -680,49 +680,72 @@ Function {make_layout_window()} {open
         tooltip {The value text size.} xywh {258 507 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
       }
     }
-    Fl_Choice {} {
-      label {Presets:} open
-      xywh {182 11 130 20} down_box BORDER_BOX
+    Fl_Choice layout_choice {open
+      xywh {170 11 130 24} down_box BORDER_BOX
     } {
       MenuItem {} {
-        label {FLTK.Main}
+        label FLTK
         xywh {0 0 31 20}
       }
       MenuItem {} {
-        label {FLTK.Dialog}
-        xywh {0 0 31 20}
-      }
-      MenuItem {} {
-        label {FLTK.Toolbox}
+        label Grid
         xywh {0 0 31 20}
       }
     }
     Fl_Button {} {
       label {+}
-      xywh {312 11 20 20}
+      xywh {300 11 24 24}
     }
     Fl_Button {} {
       label {-}
-      xywh {332 11 20 20}
+      xywh {315 479 30 24}
     }
     Fl_Button {} {
-      label {//}
-      xywh {352 11 20 20}
+      label edit
+      xywh {345 479 50 24}
+    }
+    Fl_Button {} {
+      label load
+      xywh {395 479 50 24}
+    }
+    Fl_Menu_Button w_layout_menu {open selected
+      xywh {324 11 24 24}
+    } {
+      MenuItem {} {
+        label Rename
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label Import
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label Export
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label Delete
+        xywh {0 0 31 20}
+      }
+    }
+    Fl_Button {} {
+      label save
+      xywh {445 479 50 24}
     }
     Fl_Group {} {open
-      xywh {121 44 270 20}
+      xywh {121 48 270 20}
     } {
       Fl_Button {} {
         label Application
-        xywh {121 44 90 20} type Radio value 1
+        xywh {121 48 90 20} type Radio value 1 labelsize 12
       }
       Fl_Button {} {
         label Dialog
-        xywh {211 44 90 20} type Radio
+        xywh {211 48 90 20} type Radio labelsize 12
       }
       Fl_Button {} {
         label Toolbox
-        xywh {301 44 90 20} type Radio
+        xywh {301 48 90 20} type Radio labelsize 12
       }
     }
   }

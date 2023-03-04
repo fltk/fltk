@@ -22,6 +22,9 @@
 
 class Fd_Layout_Preset {
 public:
+  enum { BUILTIN, CUSTOM, IMPORTED, FROM_PROJECT };
+  int flags;
+
   int left_window_margin;
   int right_window_margin;
   int top_window_margin;
@@ -46,12 +49,10 @@ public:
   int widget_inc_h;
   int widget_gap_y;
 
-  // layout.layout_labelfont
-  // layout.layout_labelsize
-  // layout.layout_textfont
-  // layout.layout_textsize
-
-  // flags: internal, custom, from file, from project
+  int labelfont;
+  int labelsize;
+  int textfont;
+  int textsize;
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
@@ -78,6 +79,7 @@ public:
   static Fl_Menu_Item list_menu[];
   static Fd_Layout_Suite *list;
   static int list_size;
+  static bool list_is_static;
   static void write_all(Fl_Preferences &prefs);
   static void read_all(Fl_Preferences &prefs);
   static Fd_Layout_Preset *add(const char *name);
@@ -85,8 +87,6 @@ public:
   static Fd_Layout_Preset *at(int);
   static int size();
 };
-
-
 
 /**
  \brief Structure holding all the data to perform interactive alignment operations.

@@ -26,18 +26,23 @@ int Fd_Snap_Action::eex = 0;
 int Fd_Snap_Action::eey = 0;
 
 Fd_Layout_Preset layout = {  // the currently active layout
+  Fd_Layout_Preset::BUILTIN,
   15, 15, 15, 15, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   25, 25,               // tabs:      t, b
   20, 10, 4,            // widget_x:  min, inc, gap
   20,  4, 8,            // widget_y:  min, inc, gap
+  0, 14, 0, 14          // labelfont/size, textfont/size
 };
 
 Fd_Layout_Preset fltk_app = { };
 Fd_Layout_Preset fltk_dlg = { };
 Fd_Layout_Preset fltk_tool = { };
+Fd_Layout_Preset grid_app = { };
+Fd_Layout_Preset grid_dlg = { };
+Fd_Layout_Preset grid_tool = { };
 Fd_Layout_Suite fltk = { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool };
-Fd_Layout_Suite grid = { "Grid", &fltk_app, &fltk_dlg, &fltk_tool };
+Fd_Layout_Suite grid = { "Grid", &grid_app, &grid_dlg, &grid_tool };
 
 Fl_Menu_Item Fd_Layout_Suite::list_menu[] = {
   { fltk.name },
@@ -46,6 +51,7 @@ Fl_Menu_Item Fd_Layout_Suite::list_menu[] = {
 };
 Fd_Layout_Suite *Fd_Layout_Suite::list = { &fltk };
 int Fd_Layout_Suite::list_size = 2;
+bool Fd_Layout_Suite::list_is_static = true;
 
 
 // Presets: FLTK, Grid, ..., External
