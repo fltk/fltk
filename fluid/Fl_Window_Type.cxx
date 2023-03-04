@@ -76,21 +76,6 @@ void guides_cb(Fl_Check_Button *i, long) {
   }
 }
 
-void grid_cb(Fl_Int_Input *i, long v) {
-  int n = atoi(i->value());
-  if (n < 0) n = 0;
-  switch (v) {
-    case 1:
-      gridx = n;
-      fluid_prefs.set("gridx", n);
-      break;
-    case 2:
-      gridy = n;
-      fluid_prefs.set("gridy", n);
-      break;
-  }
-}
-
 // Set default widget sizes...
 void default_widget_size_cb(Fl_Round_Button *b, long size) {
   // Update the "normal" text size of new widgets...
@@ -221,9 +206,6 @@ void show_project_cb(Fl_Widget *, void *) {
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
-  char buf[128];
-  sprintf(buf,"%d",gridx); horizontal_input->value(buf);
-  sprintf(buf,"%d",gridy); vertical_input->value(buf);
   guides_toggle->value(show_guides);
   int s = Fl_Widget_Type::default_size;
   if (s<=8) def_widget_size[0]->setonly();

@@ -42,8 +42,6 @@ extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Bar *main_menubar;
 extern Fl_Window *main_window;
 
-extern int gridx;
-extern int gridy;
 extern int show_guides;
 extern int show_comments;
 

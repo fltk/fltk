@@ -96,14 +96,11 @@ extern Fl_Simple_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 extern Fl_Double_Window *grid_window;
-extern void grid_cb(Fl_Int_Input*, long);
-extern Fl_Int_Input *horizontal_input;
-extern Fl_Int_Input *vertical_input;
-extern void guides_cb(Fl_Check_Button*, long);
-extern Fl_Check_Button *guides_toggle;
 #include <FL/Fl_Round_Button.H>
 extern void default_widget_size_cb(Fl_Round_Button*, long);
 extern Fl_Round_Button *def_widget_size[6];
 #include <FL/Fl_Value_Input.H>
+extern void guides_cb(Fl_Check_Button*, long);
+extern Fl_Check_Button *guides_toggle;
 Fl_Double_Window* make_layout_window();
 #endif

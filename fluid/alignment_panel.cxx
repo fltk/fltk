@@ -509,12 +509,6 @@ static void cb_grid_window(Fl_Double_Window* o, void* v) {
   }
 }
 
-Fl_Int_Input *horizontal_input=(Fl_Int_Input *)0;
-
-Fl_Int_Input *vertical_input=(Fl_Int_Input *)0;
-
-Fl_Check_Button *guides_toggle=(Fl_Check_Button *)0;
-
 static void cb_Close2(Fl_Button*, void* v) {
   if (v != LOAD) grid_window->hide();
 }
@@ -681,41 +675,15 @@ static void cb_group1(Fl_Value_Input* o, void* v) {
   }
 }
 
+Fl_Check_Button *guides_toggle=(Fl_Check_Button *)0;
+
 Fl_Double_Window* make_layout_window() {
   { grid_window = new Fl_Double_Window(520, 546, "Layout Settings");
     grid_window->callback((Fl_Callback*)cb_grid_window);
-    { Fl_Group* o = new Fl_Group(313, 298, 113, 95);
-      { Fl_Int_Input* o = horizontal_input = new Fl_Int_Input(313, 298, 50, 25, "x");
-        horizontal_input->tooltip("Horizontal grid spacing.");
-        horizontal_input->type(2);
-        horizontal_input->box(FL_THIN_DOWN_BOX);
-        horizontal_input->callback((Fl_Callback*)grid_cb, (void*)(1));
-        horizontal_input->align(Fl_Align(FL_ALIGN_RIGHT));
-        o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-      } // Fl_Int_Input* horizontal_input
-      { Fl_Int_Input* o = vertical_input = new Fl_Int_Input(376, 298, 50, 25, "pixels");
-        vertical_input->tooltip("Vertical grid spacing.");
-        vertical_input->type(2);
-        vertical_input->box(FL_THIN_DOWN_BOX);
-        vertical_input->callback((Fl_Callback*)grid_cb, (void*)(2));
-        vertical_input->align(Fl_Align(FL_ALIGN_RIGHT));
-        o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-      } // Fl_Int_Input* vertical_input
-      { guides_toggle = new Fl_Check_Button(313, 368, 110, 25, "Show Guides");
-        guides_toggle->tooltip("Show distance and alignment guides in overlay");
-        guides_toggle->down_box(FL_DOWN_BOX);
-        guides_toggle->callback((Fl_Callback*)guides_cb, (void*)(4));
-      } // Fl_Check_Button* guides_toggle
-      o->end();
-    } // Fl_Group* o
     { Fl_Button* o = new Fl_Button(437, 498, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close2);
     } // Fl_Button* o
-    { Fl_Box* o = new Fl_Box(244, 298, 70, 25, "Grid:");
-      o->labelfont(1);
-      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
-    } // Fl_Box* o
     { Fl_Box* o = new Fl_Box(207, 403, 107, 25, "Widget Size:");
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
@@ -856,6 +824,11 @@ Fl_Double_Window* make_layout_window() {
       o->step(1);
       o->callback((Fl_Callback*)cb_group1);
     } // Fl_Value_Input* o
+    { guides_toggle = new Fl_Check_Button(372, 263, 110, 25, "Show Guides");
+      guides_toggle->tooltip("Show distance and alignment guides in overlay");
+      guides_toggle->down_box(FL_DOWN_BOX);
+      guides_toggle->callback((Fl_Callback*)guides_cb, (void*)(4));
+    } // Fl_Check_Button* guides_toggle
     grid_window->set_non_modal();
     grid_window->end();
   } // Fl_Double_Window* grid_window

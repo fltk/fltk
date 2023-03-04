@@ -74,12 +74,6 @@ Fl_Window *main_window;
 /// Fluid application preferences, allways accessible, will be flushed when app closes.
 Fl_Preferences  fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 
-/// Align widget position and size when designing, saved in app preferences and project file.
-int gridx = 5;
-
-/// Align widget position and size when designing, saved in app preferences and project file.
-int gridy = 5;
-
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
 
@@ -1141,10 +1135,6 @@ void delete_cb(Fl_Widget *, void *) {
 void paste_cb(Fl_Widget*, void*) {
   //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
-  // TODO: make the paste offset more predictable, if any at all.
-  // TODO: Don't use the grid if the user switched it off.
-  if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
-  if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
@@ -1615,8 +1605,6 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
  */
 void make_main_window() {
   if (!batch_mode) {
-    fluid_prefs.get("gridx", gridx, 5);
-    fluid_prefs.get("gridy", gridy, 5);
     fluid_prefs.get("show_guides", show_guides, 0);
     fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
     fluid_prefs.get("show_comments", show_comments, 1);
@@ -2132,8 +2120,6 @@ int main(int argc,char **argv) {
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
-
-  grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
 
 #ifdef _WIN32
   Fl::run();

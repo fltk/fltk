@@ -402,41 +402,13 @@ Function {make_layout_window()} {open
     Fl_Widget *c = o->child(i);
     c->do_callback(c, v);
   }
-}} open
+}} open selected
     xywh {478 283 520 546} type Double non_modal visible
   } {
-    Fl_Group {} {open
-      xywh {313 298 113 95}
-    } {
-      Fl_Input horizontal_input {
-        label x
-        user_data 1 user_data_type long
-        callback grid_cb
-        tooltip {Horizontal grid spacing.} xywh {313 298 50 25} type Int box THIN_DOWN_BOX align 8
-        code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-      }
-      Fl_Input vertical_input {
-        label pixels
-        user_data 2 user_data_type long
-        callback grid_cb
-        tooltip {Vertical grid spacing.} xywh {376 298 50 25} type Int box THIN_DOWN_BOX align 8
-        code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-      }
-      Fl_Check_Button guides_toggle {
-        label {Show Guides}
-        user_data 4 user_data_type long
-        callback guides_cb
-        tooltip {Show distance and alignment guides in overlay} xywh {313 368 110 25} down_box DOWN_BOX
-      }
-    }
     Fl_Button {} {
       label Close
       callback {if (v != LOAD) grid_window->hide();}
       tooltip {Close this dialog.} xywh {437 498 60 25}
-    }
-    Fl_Box {} {
-      label {Grid:}
-      xywh {244 298 70 25} labelfont 1 align 24
     }
     Fl_Box {} {
       label {Widget Size:}
@@ -578,7 +550,7 @@ Function {make_layout_window()} {open
   o->value((double)fd_widget_min_h);
 } else {
   fd_widget_min_h = (int)o->value();
-}} selected
+}}
       xywh {165 304 50 22} step 1
     }
     Fl_Value_Input {} {
@@ -679,6 +651,12 @@ Function {make_layout_window()} {open
   fd_group_grid_y = (int)o->value();
 }}
       xywh {372 165 50 22} step 1
+    }
+    Fl_Check_Button guides_toggle {
+      label {Show Guides}
+      user_data 4 user_data_type long
+      callback guides_cb
+      tooltip {Show distance and alignment guides in overlay} xywh {372 263 110 25} down_box DOWN_BOX
     }
   }
   code {grid_window->do_callback(grid_window, LOAD);} {}

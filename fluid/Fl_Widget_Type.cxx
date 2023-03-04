@@ -135,16 +135,6 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
     W = H = B;
   }
 
-  // satisfy the grid requirements (otherwise it edits really strangely):
-  if (gridx>1) {
-    X = (X/gridx)*gridx;
-    W = ((W-1)/gridx+1)*gridx;
-  }
-  if (gridy>1) {
-    Y = (Y/gridy)*gridy;
-    H = ((H-1)/gridy+1)*gridy;
-  }
-
   // Construct the Fl_Type:
   Fl_Widget_Type *t = _make();
   if (!o) o = widget(0,0,100,100); // create template widget
