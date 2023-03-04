@@ -1,19 +1,17 @@
 //
-// "$Id$"
-//
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Implementation of fl_draw(const char*,int,int,int,int,Fl_Align)
@@ -64,7 +62,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
       // test for word-wrap:
       if (word_start < p && wrap) {
 	double newwidth = w + fl_width(word_end, (int) (o-word_end) );
-	if (word_end > buf && newwidth > maxw) { // break before this word
+	if (word_end > buf && int(newwidth) > maxw) { // break before this word
 	  o = word_end;
 	  p = word_start;
 	  break;
@@ -79,12 +77,14 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
 
     if (o > e) {
       if (maxbuf) break; // don't overflow buffer
-      l_local_buff += (o - e) + 200; // enlarge buffer
-      buf = (char*)realloc(local_buf, l_local_buff);
-      e = buf + l_local_buff - 4; // update pointers to buffer content
-      o = buf + (o - local_buf);
-      word_end = buf + (word_end - local_buf);
-      local_buf = buf;
+      l_local_buff += int(o - e) + 200; // enlarge buffer
+      size_t delta_o = (o - local_buf);
+      size_t delta_end = (word_end - local_buf);
+      local_buf = (char*)realloc(local_buf, l_local_buff);
+      buf = local_buf;
+      e = local_buf + l_local_buff - 4; // update pointers to buffer content
+      o = local_buf + delta_o;
+      word_end = local_buf + delta_end;
     }
 
     if (c == '\t') {
@@ -96,17 +96,6 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-/* This is in fact not useful: the point is that a valid UTF-8 sequence for a non-ascii char contains no ascii char,
- thus no tab, space, control, & or @ we want to process differently.
- Also, invalid UTF-8 sequences are copied unchanged by this procedure.
- Therefore, checking for tab, space, control, & or @, and copying the byte otherwise, is enough.
- } else  if (handle_utf8_seq(p, o)) { // figure out if we have an utf8 valid sequence before we determine the nbsp test validity:
-#ifdef __APPLE__
-    } else if (c == 0xCA) { // non-breaking space in MacRoman
-#else
-    } else if (c == 0xA0) { // non-breaking space in ISO 8859
-#endif
-      *o++ = ' ';*/
     } else if (c == '@' && draw_symbols) { // Symbol???
       if (p[1] && p[1] != '@')  break;
       *o++ = c;
@@ -261,8 +250,9 @@ void fl_draw(
   if (str) {
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
-      if (lines>1) e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen,
-				width, align&FL_ALIGN_WRAP, draw_symbols);
+      if (lines>1)
+        e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen,
+			 width, align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
@@ -454,7 +444,3 @@ int fl_height(int font, int size) {
     fl_font(tf,ts);                       // restore
     return(height);
 }
-
-//
-// End of "$Id$".
-//
