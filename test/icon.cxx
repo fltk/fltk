@@ -23,7 +23,7 @@ static Fl_Double_Window *win;
 
 void choice_cb(Fl_Widget *, void *v) {
   Fl_Color c = (Fl_Color)(fl_intptr_t)v;
-  uchar buffer[32*32*3];
+  static uchar buffer[32*32*3];         // static: issue #296
   Fl_RGB_Image icon(buffer, 32, 32, 3);
   icon.color_average(c, 0.0);
   win->icon(&icon);
