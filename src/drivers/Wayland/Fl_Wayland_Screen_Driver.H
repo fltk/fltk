@@ -80,8 +80,6 @@ public:
   
 // static member variables
   static FL_EXPORT struct wl_display *wl_display;
-  // use it to make sure the Wayland leg was selected and fl_open_display() has run
-  static struct wl_registry *wl_registry;
   static const struct wl_data_device_listener *p_data_device_listener;
   // next length of marked text after current marked text will have been replaced
   static int next_marked_length;
@@ -113,11 +111,12 @@ public:
   struct wl_cursor *xc_se;
   struct wl_cursor *xc_ne;
   struct wl_cursor *xc_nw;
+  struct wl_registry *wl_registry;
   struct wl_compositor *wl_compositor;
   struct wl_subcompositor *wl_subcompositor;
   struct wl_shm *wl_shm;
   struct seat *seat;
-  struct wl_list outputs; // linked list of all screens in system
+  struct wl_list outputs; // linked list of struct output records for all screens in system
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
