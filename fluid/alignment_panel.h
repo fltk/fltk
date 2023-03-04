@@ -99,7 +99,6 @@ extern Fl_Double_Window *grid_window;
 extern void grid_cb(Fl_Int_Input*, long);
 extern Fl_Int_Input *horizontal_input;
 extern Fl_Int_Input *vertical_input;
-extern Fl_Int_Input *snap_input;
 extern void guides_cb(Fl_Check_Button*, long);
 extern Fl_Check_Button *guides_toggle;
 #include <FL/Fl_Round_Button.H>

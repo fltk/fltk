@@ -77,6 +77,8 @@ public:
   static Fd_Snap_Action *list[];
   static void check_all(Fd_Snap_Data &d);
   static void draw_all(Fd_Snap_Data &d);
+  static void get_resize_stepsize(int &x_step, int &y_step);
+  static void get_move_stepsize(int &x_step, int &y_step);
 };
 
 #endif // _FLUID_FD_SNAP_ACTION_H

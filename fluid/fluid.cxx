@@ -80,9 +80,6 @@ int gridx = 5;
 /// Align widget position and size when designing, saved in app preferences and project file.
 int gridy = 5;
 
-/// Activate snapping to grid, saved in app preferences and project file.
-int snap = 1;
-
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
 
@@ -1618,7 +1615,6 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
  */
 void make_main_window() {
   if (!batch_mode) {
-    fluid_prefs.get("snap", snap, 1);
     fluid_prefs.get("gridx", gridx, 5);
     fluid_prefs.get("gridy", gridy, 5);
     fluid_prefs.get("show_guides", show_guides, 0);

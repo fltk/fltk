@@ -130,7 +130,7 @@ bool Fd_Snap_Action::matches(Fd_Snap_Data &d) {
   switch (type) {
     case 1: return (d.drag & mask) && (eex == ex) && (d.dx == dx);
     case 2: return (d.drag & mask) && (eey == ey) && (d.dy == dy);
-    case 3: return (d.drag & mask) && (eex == ex) && (eey == ey);
+    case 3: return (d.drag & mask) && (eex == ex) && (d.dx == dx) && (eey == ey) && (d.dy == dy);
   }
   return false;
 }
@@ -150,6 +150,35 @@ void Fd_Snap_Action::draw_all(Fd_Snap_Data &data) {
       list[i]->draw(data);
   }
 }
+
+/** Return a sensible step size for resizing a widget. */
+void Fd_Snap_Action::get_resize_stepsize(int &x_step, int &y_step) {
+  if ((fd_widget_inc_w > 1) && (fd_widget_inc_h > 1)) {
+    x_step = fd_widget_inc_w;
+    y_step = fd_widget_inc_h;
+  } else if ((fd_group_grid_x > 1) && (fd_group_grid_y > 1)) {
+    x_step = fd_group_grid_x;
+    y_step = fd_group_grid_y;
+  } else {
+    x_step = fd_window_grid_x;
+    y_step = fd_window_grid_y;
+  }
+}
+
+/** Return a sensible step size for moving a widget. */
+void Fd_Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
+  if ((fd_group_grid_x > 1) && (fd_group_grid_y > 1)) {
+    x_step = fd_group_grid_x;
+    y_step = fd_group_grid_y;
+  } else if ((fd_window_grid_x > 1) && (fd_window_grid_y > 1)) {
+    x_step = fd_window_grid_x;
+    y_step = fd_window_grid_y;
+  } else {
+    x_step = fd_widget_gap_x;
+    y_step = fd_widget_gap_y;
+  }
+}
+
 
 // ---- snapping prototypes -------------------------------------------- MARK: -
 
@@ -396,8 +425,8 @@ public:
   }
   bool matches(Fd_Snap_Data &d) FL_OVERRIDE {
     if (d.drag == FD_LEFT) return (eex == ex);
-    if (d.drag == FD_TOP) return (eey == ey);
-    return (d.drag & mask) && (eex == ex) && (eey == ey);
+    if (d.drag == FD_TOP) return (eey == ey) && (d.dx == dx);
+    return (d.drag & mask) && (eex == ex) && (d.dx == dx) && (eey == ey) && (d.dy == dy);
   }
 };
 

@@ -44,7 +44,6 @@ extern Fl_Window *main_window;
 
 extern int gridx;
 extern int gridy;
-extern int snap;
 extern int show_guides;
 extern int show_comments;
 
@@ -77,6 +76,7 @@ extern int compile_file;           // fluid -c
 extern int compile_strings;        // fluic -cs
 extern int batch_mode;
 
+extern int pasteoffset;
 extern int pasteoffset;
 
 // ---- project settings

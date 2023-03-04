@@ -88,22 +88,6 @@ void grid_cb(Fl_Int_Input *i, long v) {
       gridy = n;
       fluid_prefs.set("gridy", n);
       break;
-    case 3:
-      snap = n;
-      fluid_prefs.set("snap", n);
-      break;
-  }
-
-  // Next go through all of the windows in the project and set the
-  // stepping for resizes...
-  Fl_Type *p;
-  Fl_Window_Type *w;
-
-  for (p = Fl_Type::first; p; p = p->next) {
-    if (p->is_window()) {
-      w = (Fl_Window_Type *)p;
-      ((Fl_Window *)(w->o))->size_range(gridx, gridy, Fl::w(), Fl::h());
-    }
   }
 }
 
@@ -240,7 +224,6 @@ void show_grid_cb(Fl_Widget *, void *) {
   char buf[128];
   sprintf(buf,"%d",gridx); horizontal_input->value(buf);
   sprintf(buf,"%d",gridy); vertical_input->value(buf);
-  sprintf(buf,"%d",snap); snap_input->value(buf);
   guides_toggle->value(show_guides);
   int s = Fl_Widget_Type::default_size;
   if (s<=8) def_widget_size[0]->setonly();
@@ -402,9 +385,6 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
     this->o = new Fl_Window(100,100);
     Fl_Group::current(0);
   }
-  // Set the size ranges for this window; in order to avoid opening the
-  // X display we use an arbitrary maximum size...
-  ((Fl_Window *)(this->o))->size_range(gridx, gridy, 6144, 4096);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
@@ -454,9 +434,7 @@ void Fl_Window_Type::open() {
     w->show();
     w->resizable(p);
   }
-
   w->image(Fl::scheme_bg_);
-  w->size_range(gridx, gridy, Fl::w(), Fl::h());
 }
 
 // Read an image of the window
@@ -1112,7 +1090,15 @@ int Fl_Window_Type::handle(int event) {
     case FL_Down:  dx = 0; dy = +1; goto ARROW;
     ARROW:
       drag = (Fl::event_state(FL_SHIFT)) ? (FD_RIGHT|FD_BOTTOM) : FD_DRAG;
-      if (Fl::event_state(FL_COMMAND)) {dx *= gridx; dy *= gridy;}
+      if (Fl::event_state(FL_COMMAND)) {
+        int x_step, y_step;
+        if (drag & (FD_RIGHT|FD_BOTTOM))
+          Fd_Snap_Action::get_resize_stepsize(x_step, y_step);
+        else
+          Fd_Snap_Action::get_move_stepsize(x_step, y_step);
+        dx *= x_step;
+        dy *= y_step;
+      }
       moveallchildren();
       drag = 0;
       return 1;
@@ -1243,9 +1229,6 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
     this->o = new Fl_Window(100,100);
     Fl_Group::current(0);
   }
-  // Set the size ranges for this window; in order to avoid opening the
-  // X display we use an arbitrary maximum size...
-  ((Fl_Window *)(this->o))->size_range(gridx, gridy, 6144, 4096);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;

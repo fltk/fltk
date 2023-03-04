@@ -71,6 +71,7 @@ Fl_Double_Window* make_project_window() {
       o->selection_color((Fl_Color)12);
       o->labelcolor(FL_BACKGROUND2_COLOR);
       { Fl_Group* o = new Fl_Group(10, 36, 379, 220, "Output");
+        o->hide();
         { Fl_Box* o = new Fl_Box(20, 49, 340, 49, "Use \"name.ext\" to set a file name or just \".ext\" to set extension.");
           o->align(Fl_Align(132|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -115,7 +116,6 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 36, 378, 220, "Internationalization");
-        o->hide();
         { i18n_type_chooser = new Fl_Choice(128, 48, 136, 25, "Use:");
           i18n_type_chooser->tooltip("Type of internationalization to use.");
           i18n_type_chooser->box(FL_THIN_UP_BOX);
@@ -513,8 +513,6 @@ Fl_Int_Input *horizontal_input=(Fl_Int_Input *)0;
 
 Fl_Int_Input *vertical_input=(Fl_Int_Input *)0;
 
-Fl_Int_Input *snap_input=(Fl_Int_Input *)0;
-
 Fl_Check_Button *guides_toggle=(Fl_Check_Button *)0;
 
 static void cb_Close2(Fl_Button*, void* v) {
@@ -703,14 +701,6 @@ Fl_Double_Window* make_layout_window() {
         vertical_input->align(Fl_Align(FL_ALIGN_RIGHT));
         o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
       } // Fl_Int_Input* vertical_input
-      { Fl_Int_Input* o = snap_input = new Fl_Int_Input(313, 333, 50, 25, "pixel snap");
-        snap_input->tooltip("Snap to grid within this many pixels.");
-        snap_input->type(2);
-        snap_input->box(FL_THIN_DOWN_BOX);
-        snap_input->callback((Fl_Callback*)grid_cb, (void*)(3));
-        snap_input->align(Fl_Align(FL_ALIGN_RIGHT));
-        o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-      } // Fl_Int_Input* snap_input
       { guides_toggle = new Fl_Check_Button(313, 368, 110, 25, "Show Guides");
         guides_toggle->tooltip("Show distance and alignment guides in overlay");
         guides_toggle->down_box(FL_DOWN_BOX);
