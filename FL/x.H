@@ -1,9 +1,7 @@
 //
-// "$Id$"
-//
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -82,7 +80,8 @@ typedef ulong Fl_Offscreen;
   fl_push_no_clip()
 #    define fl_end_offscreen() \
   fl_pop_clip(); fl_window = _sw; _ss->set_current(); \
-  if (!_sgc) XFreeGC(fl_display, fl_gc); fl_gc = _sgc
+  if (!_sgc) XFreeGC(fl_display, fl_gc); \
+    fl_gc = _sgc
 
 extern FL_EXPORT void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
@@ -179,7 +178,3 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 
 #  endif
 #endif
-
-//
-// End of "$Id$".
-//
