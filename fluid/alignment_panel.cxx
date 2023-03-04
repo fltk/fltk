@@ -889,6 +889,19 @@ Fl_Double_Window* make_layout_window() {
     } // Fl_Button* o
     { new Fl_Button(352, 11, 20, 20, "//");
     } // Fl_Button* o
+    { Fl_Group* o = new Fl_Group(121, 44, 270, 20);
+      { Fl_Button* o = new Fl_Button(121, 44, 90, 20, "Application");
+        o->type(102);
+        o->value(1);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(211, 44, 90, 20, "Dialog");
+        o->type(102);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(301, 44, 90, 20, "Toolbox");
+        o->type(102);
+      } // Fl_Button* o
+      o->end();
+    } // Fl_Group* o
     grid_window->set_non_modal();
     grid_window->end();
   } // Fl_Double_Window* grid_window

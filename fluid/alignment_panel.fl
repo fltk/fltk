@@ -402,7 +402,7 @@ Function {make_layout_window()} {open
     Fl_Widget *c = o->child(i);
     c->do_callback(c, v);
   }
-}} open
+}} open selected
     xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
@@ -568,7 +568,7 @@ Function {make_layout_window()} {open
   o->value((double)layout.widget_gap_y);
 } else {
   layout.widget_gap_y = (int)o->value();
-}} selected
+}}
       xywh {167 431 50 22} step 1
     }
     Fl_Value_Input {} {
@@ -708,6 +708,22 @@ Function {make_layout_window()} {open
     Fl_Button {} {
       label {//}
       xywh {352 11 20 20}
+    }
+    Fl_Group {} {open
+      xywh {121 44 270 20}
+    } {
+      Fl_Button {} {
+        label Application
+        xywh {121 44 90 20} type Radio value 1
+      }
+      Fl_Button {} {
+        label Dialog
+        xywh {211 44 90 20} type Radio
+      }
+      Fl_Button {} {
+        label Toolbox
+        xywh {301 44 90 20} type Radio
+      }
     }
   }
   code {grid_window->do_callback(grid_window, LOAD);} {}

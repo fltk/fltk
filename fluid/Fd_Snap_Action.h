@@ -19,6 +19,7 @@
 
 #include "Fl_Window_Type.h"
 
+
 class Fd_Layout_Preset {
 public:
   int left_window_margin;
@@ -44,9 +45,46 @@ public:
   int widget_min_h;
   int widget_inc_h;
   int widget_gap_y;
+
+  // layout.layout_labelfont
+  // layout.layout_labelsize
+  // layout.layout_textfont
+  // layout.layout_textsize
+
+  // flags: internal, custom, from file, from project
+
+  void write(Fl_Preferences &prefs);
+  void read(Fl_Preferences &prefs);
+  // operator=();
 };
 
 extern Fd_Layout_Preset layout;
+
+class Fd_Layout_Suite {
+public:
+  char const* name;
+  Fd_Layout_Preset *application;
+  Fd_Layout_Preset *dialog;
+  Fd_Layout_Preset *toolbox;
+  void write(Fl_Preferences &prefs);
+  void read(Fl_Preferences &prefs);
+  void write(Fd_Project_Writer*);
+  void read(Fd_Project_Reader*);
+  int load(const char *filename);
+  int save(const char *filename);
+//  Fd_Layout_Suite();
+//  ~Fd_Layout_Suite();
+public:
+  static Fl_Menu_Item list_menu[];
+  static Fd_Layout_Suite *list;
+  static int list_size;
+  static void write_all(Fl_Preferences &prefs);
+  static void read_all(Fl_Preferences &prefs);
+  static Fd_Layout_Preset *add(const char *name);
+  static void remove(int);
+  static Fd_Layout_Preset *at(int);
+  static int size();
+};
 
 
 

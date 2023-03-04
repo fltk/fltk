@@ -19,6 +19,7 @@
 #include "Fl_Group_Type.h"
 
 #include <FL/fl_draw.H>
+#include <FL/Fl_Menu_Bar.H>
 #include <math.h>
 
 int Fd_Snap_Action::eex = 0;
@@ -32,15 +33,25 @@ Fd_Layout_Preset layout = {  // the currently active layout
   20,  4, 8,            // widget_y:  min, inc, gap
 };
 
+Fd_Layout_Preset fltk_app = { };
+Fd_Layout_Preset fltk_dlg = { };
+Fd_Layout_Preset fltk_tool = { };
+Fd_Layout_Suite fltk = { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool };
+Fd_Layout_Suite grid = { "Grid", &fltk_app, &fltk_dlg, &fltk_tool };
+
+Fl_Menu_Item Fd_Layout_Suite::list_menu[] = {
+  { fltk.name },
+  { grid.name },
+  { NULL }
+};
+Fd_Layout_Suite *Fd_Layout_Suite::list = { &fltk };
+int Fd_Layout_Suite::list_size = 2;
+
+
 // Presets: FLTK, Grid, ..., External
 // Application
 // Dialog
 // Toolbox
-
-// layout.layout_labelfont
-// layout.layout_labelsize
-// layout.layout_textfont
-// layout.layout_textsize
 
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
