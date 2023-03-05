@@ -270,8 +270,12 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer, con
   } else if (strcmp(mime_type, "image/bmp") == 0 && (!fl_selection_offer_type || strcmp(fl_selection_offer_type, "image/png"))) {
     fl_selection_type[1] = Fl::clipboard_image;
     fl_selection_offer_type = "image/bmp";
+  } else if (strcmp(mime_type, "text/uri-list") == 0 && !fl_selection_type[1]) {
+    fl_selection_type[1] = Fl::clipboard_plain_text;
+    fl_selection_offer_type = "text/uri-list";
   } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 && !fl_selection_type[1]) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
+    fl_selection_offer_type = wld_plain_text_clipboard;
   }
 }
 
@@ -325,7 +329,7 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   int fds[2];
   if (pipe(fds)) return;
-  wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
+  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   // read in fl_selection_buffer
@@ -357,7 +361,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
 //fprintf(stderr, "get_clipboard_or_dragged_text: size=%ld\n", rest);
   // read full clipboard data
   if (pipe(fds)) return;
-  wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
+  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   if (rest+1 > fl_selection_buffer_length[1]) {

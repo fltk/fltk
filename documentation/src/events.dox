@@ -271,7 +271,7 @@ application on the desktop to an FLTK widget. Text is transferred
 using UTF-8 encoding. Files are received as a list of full path
 and file names, separated by newline.
 
-On some X11 platforms, files are received as a URL-encoded UTF-8 string,
+On some X11 platforms and with Wayland, files are received as a URL-encoded UTF-8 string,
 that is, non-ASCII bytes (and a few others such as space and %) are
 replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
 The \ref fl_decode_uri() function can be used to transform in-place
