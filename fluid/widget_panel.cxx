@@ -662,7 +662,8 @@ sized to fit the container.");
           o->callback((Fl_Callback*)tooltip_cb);
         } // Fl_Input* o
         { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
-          o->labelsize(11);
+          o->hide();
+          Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         o->end();
         Fl_Group::current()->resizable(o);

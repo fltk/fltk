@@ -1,7 +1,7 @@
 //
 // Implementation of the Wayland graphics driver.
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -99,7 +99,8 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, bool n
   cairo_surface_flush(surf);
   memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
-  wl_surface_set_buffer_scale(window->wl_surface, window->scale);
+  wl_surface_set_buffer_scale(window->wl_surface,
+                              Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale());
   window->buffer->cb = wl_surface_frame(window->wl_surface);
   if (need_damage) wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
   wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);

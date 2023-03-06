@@ -54,24 +54,44 @@ struct seat {
   struct zwp_text_input_v3 *text_input;
 };
 
+
 class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
+private:
   static int insertion_point_x;
   static int insertion_point_y;
   static int insertion_point_width;
   static int insertion_point_height;
   static bool insertion_point_location_is_valid;
 public:
+// type definitions
+  typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
+  struct output { // one record for each screen
+    uint32_t id;
+    short width; // in pixels
+    short height; // in pixels
+    float dpi;
+    struct wl_output *wl_output;
+    int wld_scale; // Wayland scale factor
+    float gui_scale; // FLTK scale factor
+    struct wl_list link;
+  };
+  
+// static member variables
   static FL_EXPORT struct wl_display *wl_display;
-  // use it to make sure the Wayland leg was selected and fl_open_display() has run
-  static struct wl_registry *wl_registry;
+  static const struct wl_data_device_listener *p_data_device_listener;
+  // next length of marked text after current marked text will have been replaced
+  static int next_marked_length;
+  static compositor_name compositor; // identifies the used Wayland compositor
+
+// static member functions
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
-  int get_mouse_unscaled(int &xx, int &yy);
-  void screen_count_set(int count) {num_screens = count;}
-
-  void reset_cursor();
+  static Fl_Window *surface_to_window(struct wl_surface *);
+  static bool own_output(struct wl_output *output);
+  
+// member variables
   struct wl_cursor *xc_arrow;
   struct wl_cursor *xc_ns;
   struct wl_cursor *xc_wait;
@@ -91,37 +111,24 @@ public:
   struct wl_cursor *xc_se;
   struct wl_cursor *xc_ne;
   struct wl_cursor *xc_nw;
-  static const struct wl_data_device_listener *p_data_device_listener;
-
-public:
+  struct wl_registry *wl_registry;
   struct wl_compositor *wl_compositor;
   struct wl_subcompositor *wl_subcompositor;
   struct wl_shm *wl_shm;
   struct seat *seat;
-  struct wl_list outputs; // linked list of all screens in system
-  struct output { // one record for each screen
-    uint32_t id;
-    short width; // in pixels
-    short height; // in pixels
-    float dpi;
-    struct wl_output *wl_output;
-    int wld_scale; // Wayland scale factor
-    float gui_scale; // FLTK scale factor
-    struct wl_list link;
-  };
+  struct wl_list outputs; // linked list of struct output records for all screens in system
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
-
+  
+// constructor
   Fl_Wayland_Screen_Driver();
+
+// overriden functions from parent class Fl_Screen_Driver
   APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return PER_SCREEN_APP_SCALING; }
   float scale(int n) FL_OVERRIDE;
   void scale(int n, float f) FL_OVERRIDE;
-  int screen_num_unscaled(int x, int y);
-
-  void copy_image(const unsigned char* data, int W, int H);
   // --- screen configuration
-  void init_workarea();
   void init() FL_OVERRIDE;
   int x() FL_OVERRIDE;
   int y() FL_OVERRIDE;
@@ -138,6 +145,7 @@ public:
   // --- global colors
   void get_system_colors() FL_OVERRIDE;
   const char *get_system_scheme() FL_OVERRIDE;
+  // this one is in fl_wayland_clipboard_dnd.cxx
   int dnd(int unused) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   void compose_reset() FL_OVERRIDE;
@@ -149,7 +157,6 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   void offscreen_size(Fl_Offscreen o, int &width, int &height) FL_OVERRIDE;
   int has_marked_text() const FL_OVERRIDE;
-  static int next_marked_length; // next length of marked text after current marked text will have been replaced
   // --- clipboard operations
   // this one is in fl_wayland_clipboard_dnd.cxx
   void copy(const char *stuff, int len, int clipboard, const char *type) FL_OVERRIDE;
@@ -157,24 +164,28 @@ public:
   void paste(Fl_Widget &receiver, int clipboard, const char *type) FL_OVERRIDE;
   // this one is in fl_wayland_clipboard_dnd.cxx
   int clipboard_contains(const char *type) FL_OVERRIDE;
-  // --- Wayland-special
-  void set_cursor();
-  struct wl_cursor *default_cursor();
-  void default_cursor(struct wl_cursor *cursor);
-  struct wl_cursor *cache_cursor(const char *cursor_name);
-  static Fl_Window *surface_to_window(struct wl_surface *);
-  uint32_t get_serial();
-  struct wl_seat *get_wl_seat();
-  char  *get_seat_name();
-  struct xkb_keymap *get_xkb_keymap();
-  static bool own_output(struct wl_output *output);
-  typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
-  static compositor_name compositor; // identifies the used Wayland compositor
   void set_spot(int font, int height, int x, int y, int w, int h, Fl_Window *win) FL_OVERRIDE;
   void reset_spot() FL_OVERRIDE;
   void *control_maximize_button(void *data) FL_OVERRIDE;
   int event_key(int k) FL_OVERRIDE;
   int get_key(int k) FL_OVERRIDE;
+
+// Wayland-specific member functions
+  int get_mouse_unscaled(int &xx, int &yy);
+  void screen_count_set(int count) {num_screens = count;}
+  void reset_cursor();
+  int screen_num_unscaled(int x, int y);
+  // this one is in fl_wayland_clipboard_dnd.cxx
+  void copy_image(const unsigned char* data, int W, int H);
+  void init_workarea();
+  void set_cursor();
+  struct wl_cursor *default_cursor();
+  void default_cursor(struct wl_cursor *cursor);
+  struct wl_cursor *cache_cursor(const char *cursor_name);
+  uint32_t get_serial();
+  struct wl_seat *get_wl_seat();
+  char  *get_seat_name();
+  struct xkb_keymap *get_xkb_keymap();
 };
 
 

@@ -197,7 +197,8 @@ void Fl_Wayland_Window_Driver::flush_overlay()
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
   struct wld_window * xid = fl_wl_xid(pWindow);
-  wl_surface_damage_buffer(xid->wl_surface, 0, 0, pWindow->w() * xid->scale, pWindow->h() * xid->scale);
+  int s = wld_scale();
+  wl_surface_damage_buffer(xid->wl_surface, 0, 0, pWindow->w() * s, pWindow->h() * s);
 }
 
 
@@ -350,7 +351,7 @@ void Fl_Wayland_Window_Driver::make_current() {
 
   Fl_Wayland_Window_Driver::wld_window = window;
   fl_window = (Window)window;
-  float scale = Fl::screen_scale(pWindow->screen_num()) * window->scale;
+  float scale = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
            pWindow->w() * scale, pWindow->h() * scale);
@@ -392,20 +393,20 @@ void Fl_Wayland_Window_Driver::flush() {
 
   Fl_X *ip = Fl_X::flx(pWindow);
   struct flCairoRegion* r = (struct flCairoRegion*)ip->region;
-  float f = Fl::screen_scale(pWindow->screen_num());
+  float f = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
   if (r && window->buffer) {
     for (int i = 0; i < r->count; i++) {
-      int left = r->rects[i].x * window->scale * f;
-      int top = r->rects[i].y * window->scale * f;
-      int width = r->rects[i].width * window->scale * f;
-      int height = r->rects[i].height * window->scale * f;
+      int left = r->rects[i].x * f;
+      int top = r->rects[i].y * f;
+      int width = r->rects[i].width * f;
+      int height = r->rects[i].height * f;
       wl_surface_damage_buffer(window->wl_surface, left, top, width, height);
 //fprintf(stderr, "damage %dx%d %dx%d\n", left, top, width, height);
     }
   } else {
     wl_surface_damage_buffer(window->wl_surface, 0, 0,
-    pWindow->w() * window->scale * f, pWindow->h() * window->scale * f);
-//fprintf(stderr, "damage 0x0 %dx%d\n", pWindow->w() * window->scale, pWindow->h() * window->scale);
+    pWindow->w() * f, pWindow->h() * f);
+//fprintf(stderr, "damage 0x0 %dx%d\n", pWindow->w() * f, pWindow->h() * f);
   }
 
   Fl_Wayland_Window_Driver::in_flush = true;
@@ -473,11 +474,7 @@ void Fl_Wayland_Window_Driver::hide() {
       wld_win->wl_surface = NULL;
     }
     if (wld_win->custom_cursor) delete_cursor_(wld_win);
-    Fl_Wayland_Window_Driver::window_output *window_output, *tmp;
-    wl_list_for_each_safe(window_output, tmp, &wld_win->outputs, link) {
-        wl_list_remove(&window_output->link);
-        free(window_output);
-    }
+    wld_win->output = NULL;
     if (Fl_Wayland_Window_Driver::wld_window == wld_win) Fl_Wayland_Window_Driver::wld_window = NULL;
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
     free(wld_win);
@@ -506,7 +503,6 @@ void Fl_Wayland_Window_Driver::map() {
       wl_subsurface_place_above(wl_win->subsurface, parent->wl_surface);
       wl_win->configured_width = pWindow->w();
       wl_win->configured_height = pWindow->h();
-      wl_win->scale = parent->scale;
       wait_for_expose_value = 0;
       pWindow->redraw();
     }
@@ -583,7 +579,7 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
 {
   struct wld_window * xid = fl_wl_xid(pWindow);
   struct fl_wld_buffer *buffer = xid->buffer;
-  float s = xid->scale * fl_graphics_driver->scale();
+  float s = wld_scale() * fl_graphics_driver->scale();
   if (s != 1) {
     src_x = src_x * s;
     src_y = src_y * s;
@@ -633,7 +629,6 @@ static struct libdecor_interface libdecor_iface = {
 static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_output *wl_output)
 {
   struct wld_window *window = (struct wld_window*)data;
-  Fl_Wayland_Window_Driver::window_output *window_output;
 
   if (!Fl_Wayland_Screen_Driver::own_output(wl_output))
     return;
@@ -642,11 +637,8 @@ static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_o
   if (output == NULL)
     return;
 
-  window_output = (Fl_Wayland_Window_Driver::window_output*)calloc(1, sizeof *window_output);
-  window_output->output = output;
-  wl_list_insert(&window->outputs, &window_output->link);
+  window->output = output;
   Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
-  win_driver->update_scale();
   if (!window->fl_win->parent()) { // for top-level, set its screen number
     Fl_Wayland_Screen_Driver::output *running_output;
     Fl_Wayland_Screen_Driver *scr_dr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
@@ -666,16 +658,8 @@ static void surface_leave(void *data, struct wl_surface *wl_surface, struct wl_o
 {
   struct wld_window *window = (struct wld_window*)data;
   if (! window->wl_surface) return;
-  Fl_Wayland_Window_Driver::window_output *window_output;
-
-  wl_list_for_each(window_output, &window->outputs, link) {
-    if (window_output->output->wl_output == wl_output) {
-      wl_list_remove(&window_output->link);
-      free(window_output);
-      Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
-      win_driver->update_scale();
-      break;
-    }
+  if (window->output->wl_output == wl_output) {
+    window->output = NULL;
   }
 }
 
@@ -1124,7 +1108,6 @@ void Fl_Wayland_Window_Driver::makeWindow()
 {
   struct wld_window *new_window;
   bool is_floatingtitle = false;
-  Fl_Wayland_Screen_Driver::output *output;
   wait_for_expose_value = 1;
 
   if (pWindow->parent() && !pWindow->window()) return;
@@ -1132,12 +1115,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
 
   new_window = (struct wld_window *)calloc(1, sizeof *new_window);
   new_window->fl_win = pWindow;
-  new_window->scale = 1;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  wl_list_for_each(output, &(scr_driver->outputs), link) {
-    new_window->scale = MAX(new_window->scale, output->wld_scale);
-  }
-  wl_list_init(&new_window->outputs);
 
   new_window->wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   //Fl::warning("makeWindow:%p wayland-scale=%d user-scale=%.2f\n", pWindow, new_window->scale, Fl::screen_scale(0));
@@ -1413,26 +1391,6 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
 }
 
 
-void Fl_Wayland_Window_Driver::update_scale()
-{
-  struct wld_window *window = fl_wl_xid(pWindow);
-  int scale = 0;
-  Fl_Wayland_Window_Driver::window_output *window_output;
-
-  wl_list_for_each(window_output, &window->outputs, link) {
-    scale = fl_max(scale, window_output->output->wld_scale);
-  }
-  if (scale && scale != window->scale) {
-    window->scale = scale;
-    if (window->buffer || window->fl_win->as_gl_window()) {
-      Fl_Wayland_Graphics_Driver::buffer_release(window);
-      window->fl_win->damage(FL_DAMAGE_ALL);
-      Fl_Window_Driver::driver(window->fl_win)->flush();
-    }
-  }
-}
-
-
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
   pWindow->wait_for_expose(); // useful for border(0) just after show()
@@ -1499,7 +1457,7 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
   struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
   struct wl_cursor *new_cursor = (struct wl_cursor*)malloc(sizeof(struct wl_cursor));
   struct cursor_image *new_image = (struct cursor_image*)calloc(1, sizeof(struct cursor_image));
-  int scale = xid->scale;
+  int scale = wld_scale();
   new_image->image.width = rgb->w() * scale;
   new_image->image.height = rgb->h() * scale;
   new_image->image.hotspot_x = hotx * scale;
@@ -1780,6 +1738,21 @@ void Fl_Wayland_Window_Driver::menu_window_area(int &X, int &Y, int &W, int &H, 
     }
     //printf("menu_window_area: %dx%d - %dx%d\n",X,Y,W,H);
   } else Fl_Window_Driver::menu_window_area(X, Y, W, H, nscreen);
+}
+
+
+int Fl_Wayland_Window_Driver::wld_scale() {
+  struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
+  if (!xid->output) {
+    Fl_Wayland_Screen_Driver::output *output;
+    int scale = 1;
+    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    wl_list_for_each(output, &(scr_driver->outputs), link) {
+      scale = fl_max(scale, output->wld_scale);
+    }
+    return scale;
+  }
+  return xid->output->wld_scale;
 }
 
 

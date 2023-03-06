@@ -65,10 +65,6 @@ private:
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; };
   bool in_handle_configure; // distinguish OS and user window resize
-  struct window_output {
-    Fl_Wayland_Screen_Driver::output* output;
-    struct wl_list link;
-  };
   // --- support for screen-specific scaling factors
   struct type_for_resize_window_between_screens {
     int screen;
@@ -78,7 +74,7 @@ public:
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset) FL_OVERRIDE;
-  void update_scale();
+  int wld_scale();
   cairo_rectangle_int_t *subRect() { return subRect_; } // getter
   void subRect(cairo_rectangle_int_t *r); // setter
   void checkSubwindowFrame();
@@ -136,7 +132,7 @@ public:
 
 struct wld_window {
   Fl_Window *fl_win;
-  struct wl_list outputs;
+  struct Fl_Wayland_Screen_Driver::output *output; // the display where win is mapped
   struct wl_surface *wl_surface;
   struct fl_wld_buffer *buffer;
   struct xdg_surface *xdg_surface;
@@ -152,7 +148,6 @@ struct wld_window {
   int configured_height;
   int floating_width;
   int floating_height;
-  int scale;
   int state;
 };
 

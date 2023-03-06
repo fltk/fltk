@@ -19,7 +19,7 @@
 
 #include <FL/Fl_Button.H>
 
-class Fl_Shortcut_Button : public Fl_Button {
+class FL_EXPORT Fl_Shortcut_Button : public Fl_Button {
 private:
   bool hot_, pre_hot_;
   Fl_Shortcut pre_esc_;

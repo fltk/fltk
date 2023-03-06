@@ -236,7 +236,7 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
   if (use_selection) {
     // use the text as dragging icon
     Fl_Widget *current = Fl::pushed() ? Fl::pushed() : Fl::first_window();
-    s = fl_wl_xid(current->top_window())->scale;
+    s = Fl_Wayland_Window_Driver::driver(current->top_window())->wld_scale();
     off = (struct fl_wld_buffer *)offscreen_from_text(fl_selection_buffer[0], s);
     dnd_icon = wl_compositor_create_surface(scr_driver->wl_compositor);
   } else dnd_icon = NULL;
@@ -270,8 +270,12 @@ static void data_offer_handle_offer(void *data, struct wl_data_offer *offer, con
   } else if (strcmp(mime_type, "image/bmp") == 0 && (!fl_selection_offer_type || strcmp(fl_selection_offer_type, "image/png"))) {
     fl_selection_type[1] = Fl::clipboard_image;
     fl_selection_offer_type = "image/bmp";
+  } else if (strcmp(mime_type, "text/uri-list") == 0 && !fl_selection_type[1]) {
+    fl_selection_type[1] = Fl::clipboard_plain_text;
+    fl_selection_offer_type = "text/uri-list";
   } else if (strcmp(mime_type, wld_plain_text_clipboard) == 0 && !fl_selection_type[1]) {
     fl_selection_type[1] = Fl::clipboard_plain_text;
+    fl_selection_offer_type = wld_plain_text_clipboard;
   }
 }
 
@@ -325,7 +329,7 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   int fds[2];
   if (pipe(fds)) return;
-  wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
+  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   // read in fl_selection_buffer
@@ -357,7 +361,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
 //fprintf(stderr, "get_clipboard_or_dragged_text: size=%ld\n", rest);
   // read full clipboard data
   if (pipe(fds)) return;
-  wl_data_offer_receive(offer, wld_plain_text_clipboard, fds[1]);
+  wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
   if (rest+1 > fl_selection_buffer_length[1]) {
@@ -375,7 +379,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
     n = Fl_Screen_Driver::convert_crlf(from, n);
     from += n;
   }
-  fl_selection_length[1] = from - fl_selection_buffer[1];;
+  fl_selection_length[1] = from - fl_selection_buffer[1];
   fl_selection_buffer[1][fl_selection_length[1]] = 0;
   Fl::e_clipboard_type = Fl::clipboard_plain_text;
 }
@@ -576,9 +580,12 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
   } else if (type == Fl::clipboard_image && clipboard_contains(Fl::clipboard_image)) {
     if (get_clipboard_image()) return;
     struct wld_window * xid = fl_wl_xid(receiver.top_window());
-    if (xid && xid->scale > 1) {
-      Fl_RGB_Image *rgb = (Fl_RGB_Image*)Fl::e_clipboard_data;
-      rgb->scale(rgb->data_w() / xid->scale, rgb->data_h() / xid->scale);
+    if (xid) {
+      int s = Fl_Wayland_Window_Driver::driver(receiver.top_window())->wld_scale();
+      if ( s > 1) {
+        Fl_RGB_Image *rgb = (Fl_RGB_Image*)Fl::e_clipboard_data;
+        rgb->scale(rgb->data_w() / s, rgb->data_h() / s);
+      }
     }
     int done = receiver.handle(FL_PASTE);
     Fl::e_clipboard_type = "";

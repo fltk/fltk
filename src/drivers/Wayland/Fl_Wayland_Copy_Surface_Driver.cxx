@@ -1,7 +1,7 @@
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,9 @@
 
 
 Fl_Wayland_Copy_Surface_Driver::Fl_Wayland_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  int os_scale = (Fl_Wayland_Window_Driver::wld_window ? Fl_Wayland_Window_Driver::wld_window->scale : 1);
+  int os_scale =
+    (Fl_Wayland_Window_Driver::wld_window && Fl_Wayland_Window_Driver::wld_window->output ?
+                  Fl_Wayland_Window_Driver::wld_window->output->wld_scale : 1);
   img_surf = new Fl_Image_Surface(w * os_scale, h * os_scale);
   driver(img_surf->driver());
   driver()->scale(os_scale);

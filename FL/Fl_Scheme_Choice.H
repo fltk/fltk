@@ -21,7 +21,7 @@
 #include <FL/Fl_Scheme.H>
 #include <FL/Fl_Choice.H>
 
-class Fl_Scheme_Choice : public Fl_Choice {
+class FL_EXPORT Fl_Scheme_Choice : public Fl_Choice {
 
 protected:
   static void scheme_cb_(Fl_Widget *w, void *);

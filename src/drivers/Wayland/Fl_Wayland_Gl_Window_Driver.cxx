@@ -1,7 +1,7 @@
 //
 // Class Fl_Wayland_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -298,7 +298,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     Fl_Wayland_Gl_Choice *g = (Fl_Wayland_Gl_Choice*)this->g();
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
-    wl_surface_set_buffer_scale(surface, win->scale);
+    wl_surface_set_buffer_scale(surface,
+                                Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale());
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
@@ -311,7 +312,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
 float Fl_Wayland_Gl_Window_Driver::pixels_per_unit()
 {
   int ns = pWindow->screen_num();
-  int wld_scale = pWindow->shown() ? fl_wl_xid(pWindow)->scale : 1;
+  int wld_scale = (pWindow->shown() ?
+    Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale() : 1);
   return wld_scale * Fl::screen_driver()->scale(ns);
 }
 
@@ -401,10 +403,10 @@ static void delayed_scissor(Fl_Wayland_Gl_Window_Driver *dr) {
 
 void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
-  struct wld_window *win = fl_wl_xid(pWindow);
   float f = Fl::screen_scale(pWindow->screen_num());
-  W = (W * win->scale) * f;
-  H = (H * win->scale) * f;
+  int s = Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale();
+  W = (W * s) * f;
+  H = (H * s) * f;
   int W2, H2;
   wl_egl_window_get_attached_size(egl_window, &W2, &H2);
   if (W2 != W || H2 != H) {

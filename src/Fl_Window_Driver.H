@@ -2,7 +2,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -100,6 +100,7 @@ public:
   int aspect();
   unsigned char size_range_set();
   int is_resizable() { return pWindow->is_resizable(); }
+  void is_a_rescale(bool b) { is_a_rescale_ = b;}
   int fullscreen_screen_top();
   int fullscreen_screen_bottom();
   int fullscreen_screen_left();

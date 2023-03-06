@@ -40,7 +40,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
+        callback propagate_load open selected
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -66,7 +66,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback image_cb selected
+            callback image_cb
             tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Button {} {
@@ -539,7 +539,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
         }
         Fl_Box {} {
-          xywh {95 305 300 5} labelsize 11
+          xywh {95 305 300 5} hide resizable
         }
       }
       Fl_Group {} {

@@ -63,10 +63,13 @@ void Fl_String::grow_(int n) {
   // round n up so we can grow in chunks
   if (alloc_size_ <= 24) { // allocate at least 24 bytes
     alloc_size_ = 24;
-  } else if (alloc_size_ < 1024) {
-    alloc_size_ = (alloc_size_+128) & ~127; // allocate in 128 byte chunks
+  } else if (alloc_size_ < 1024 + 8) {
+    alloc_size_ = ((alloc_size_+128-8) & ~127) + 8; // allocate in 128 byte chunks
   } else {
-    alloc_size_ = (alloc_size_+2048) & ~2047; // allocate in 2k chunks
+    alloc_size_ = ((alloc_size_+2048-8) & ~2047) + 8; // allocate in 2k chunks
+    // adding 8 keeps the buffer 64-bit aligned while generating a space for
+    // the trailing NUL without jumping to the next chunk size for common
+    // allocations like 1024 or 2048 (FL_PATH_MAX).
   }
   // allocate now
   char *new_buffer = (char*)::malloc(alloc_size_);
@@ -163,7 +166,7 @@ Fl_String::Fl_String(const char *cstr) {
 /**
  Constructor from data of \p size bytes.
  \param[in] str   a block of data that may contain NUL characters
- \paran[in] size  number of bytes to copy
+ \param[in] size  number of bytes to copy
  */
 Fl_String::Fl_String(const char *str, int size) {
   init_();
@@ -224,7 +227,7 @@ Fl_String &Fl_String::assign(const char *cstr) {
 /**
  Assign a data block of \p size bytes.
  \param[in] str a block of data that may contain NUL characters
- \paran[in] size number of bytes to copy
+ \param[in] size number of bytes to copy
  \return self
  */
 Fl_String &Fl_String::assign(const char *str, int size) {
