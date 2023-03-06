@@ -17,10 +17,12 @@
 #include "Fd_Snap_Action.h"
 
 #include "Fl_Group_Type.h"
+#include "alignment_panel.h"
 
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <math.h>
+#include <string.h>
 
 int Fd_Snap_Action::eex = 0;
 int Fd_Snap_Action::eey = 0;
@@ -35,23 +37,75 @@ Fd_Layout_Preset layout = {  // the currently active layout
   0, 14, 0, 14          // labelfont/size, textfont/size
 };
 
-Fd_Layout_Preset fltk_app = { };
-Fd_Layout_Preset fltk_dlg = { };
-Fd_Layout_Preset fltk_tool = { };
-Fd_Layout_Preset grid_app = { };
-Fd_Layout_Preset grid_dlg = { };
-Fd_Layout_Preset grid_tool = { };
+Fd_Layout_Preset fltk_app = { Fd_Layout_Preset::BUILTIN, 1 };
+Fd_Layout_Preset fltk_dlg = { Fd_Layout_Preset::BUILTIN, 2 };
+Fd_Layout_Preset fltk_tool = { Fd_Layout_Preset::BUILTIN, 3 };
 Fd_Layout_Suite fltk = { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool };
+
+Fd_Layout_Preset grid_app = { Fd_Layout_Preset::BUILTIN, 4 };
+Fd_Layout_Preset grid_dlg = { Fd_Layout_Preset::BUILTIN, 5 };
+Fd_Layout_Preset grid_tool = { Fd_Layout_Preset::BUILTIN, 6 };
 Fd_Layout_Suite grid = { "Grid", &grid_app, &grid_dlg, &grid_tool };
 
+int Fd_Layout_Preset::current = 0;
+
+// TODO: this should be in alignment_panel.h
+void edit_layout_suite_cb(Fl_Choice *w, void *user_data) {
+  if (user_data == LOAD) {
+    w->value(Fd_Layout_Suite::current);
+  } else {
+    int index = w->value();
+    Fd_Layout_Suite::current = index;
+    ::memcpy(&layout, Fd_Layout_Suite::list[index]->layout[Fd_Layout_Preset::current], sizeof(Fd_Layout_Preset));
+    grid_window->do_callback(grid_window, LOAD);
+    Fd_Layout_Suite::list_menu[index].setonly();
+  }
+}
+
+void select_layout_suite_cb(Fl_Widget *, void *user_data) {
+  int index = (int)(fl_intptr_t)user_data;
+  Fd_Layout_Suite::current = index;
+  ::memcpy(&layout, Fd_Layout_Suite::list[index]->layout[Fd_Layout_Preset::current], sizeof(Fd_Layout_Preset));
+  // TODO: This code is duplicated here and in edit_layout_suite_cb
+  if (grid_window)
+    grid_window->do_callback(grid_window, LOAD);
+}
+
+void select_layout_preset_cb(Fl_Widget *, void *user_data) {
+  int index = (int)(fl_intptr_t)user_data;
+  Fd_Layout_Preset::current = index;
+  ::memcpy(&layout, Fd_Layout_Suite::list[Fd_Layout_Suite::current]->layout[index], sizeof(Fd_Layout_Preset));
+  // TODO: This code is duplicated here and in edit_layout_preset_cb
+  if (grid_window)
+    grid_window->do_callback(grid_window, LOAD);
+}
+
+// TODO: this should be in alignment_panel.h
+void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
+  int index = (int)(w - preset_choice[0]);
+  if (user_data == LOAD) {
+    w->value(Fd_Layout_Preset::current == index);
+  } else {
+    Fd_Layout_Preset::current = index;
+    ::memcpy(&layout, Fd_Layout_Suite::list[Fd_Layout_Suite::current]->layout[index], sizeof(Fd_Layout_Preset));
+    grid_window->do_callback(grid_window, LOAD);
+    // TODO: find menu item in make_main_window()
+    Fl_Menu_Item *mi = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
+    mi[index].setonly();
+  }
+}
+
 Fl_Menu_Item Fd_Layout_Suite::list_menu[] = {
-  { fltk.name },
-  { grid.name },
+  // TODO: these should be radio buttons
+  { fltk.name, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE }, // TODO: save the last choosen suite in preferences
+  { grid.name, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
   { NULL }
 };
-Fd_Layout_Suite *Fd_Layout_Suite::list = { &fltk };
+
+Fd_Layout_Suite *Fd_Layout_Suite::list[] = { &fltk, &grid };
 int Fd_Layout_Suite::list_size = 2;
 bool Fd_Layout_Suite::list_is_static = true;
+int Fd_Layout_Suite::current = 0;
 
 
 // Presets: FLTK, Grid, ..., External

@@ -501,12 +501,7 @@ ings");
 Fl_Double_Window *grid_window=(Fl_Double_Window *)0;
 
 static void cb_grid_window(Fl_Double_Window* o, void* v) {
-  if (v == LOAD) {
-    for (int i=0; i<o->children(); ++i) {
-      Fl_Widget *c = o->child(i);
-      c->do_callback(c, v);
-    }
-  }
+  propagate_load(o, v);
 }
 
 static void cb_Close2(Fl_Button*, void* v) {
@@ -689,9 +684,17 @@ Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Import", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Export", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ /*
+  Gray out if settings are fixed internal presets
+  Check if stored in preferences
+  If user checks somefile.fl, remove the .fl from the name and clone
+  */
+ {"Keep in Preferences", 0,  0, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+Fl_Button *preset_choice[3]={(Fl_Button *)0};
 
 Fl_Double_Window* make_layout_window() {
   { grid_window = new Fl_Double_Window(520, 573, "Layout Settings");
@@ -892,6 +895,7 @@ Fl_Double_Window* make_layout_window() {
     } // Fl_Group* o
     { layout_choice = new Fl_Choice(170, 11, 130, 24);
       layout_choice->down_box(FL_BORDER_BOX);
+      layout_choice->callback((Fl_Callback*)edit_layout_suite_cb);
       layout_choice->menu(menu_layout_choice);
     } // Fl_Choice* layout_choice
     { new Fl_Button(300, 11, 24, 24, "+");
@@ -908,19 +912,23 @@ Fl_Double_Window* make_layout_window() {
     { new Fl_Button(445, 479, 50, 24, "save");
     } // Fl_Button* o
     { Fl_Group* o = new Fl_Group(121, 48, 270, 20);
-      { Fl_Button* o = new Fl_Button(121, 48, 90, 20, "Application");
-        o->type(102);
-        o->value(1);
-        o->labelsize(12);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(211, 48, 90, 20, "Dialog");
-        o->type(102);
-        o->labelsize(12);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(301, 48, 90, 20, "Toolbox");
-        o->type(102);
-        o->labelsize(12);
-      } // Fl_Button* o
+      o->callback((Fl_Callback*)propagate_load);
+      { preset_choice[0] = new Fl_Button(121, 48, 90, 20, "Application");
+        preset_choice[0]->type(102);
+        preset_choice[0]->value(1);
+        preset_choice[0]->labelsize(12);
+        preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb);
+      } // Fl_Button* preset_choice[0]
+      { preset_choice[1] = new Fl_Button(211, 48, 90, 20, "Dialog");
+        preset_choice[1]->type(102);
+        preset_choice[1]->labelsize(12);
+        preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb);
+      } // Fl_Button* preset_choice[1]
+      { preset_choice[2] = new Fl_Button(301, 48, 90, 20, "Toolbox");
+        preset_choice[2]->type(102);
+        preset_choice[2]->labelsize(12);
+        preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb);
+      } // Fl_Button* preset_choice[2]
       o->end();
     } // Fl_Group* o
     grid_window->set_non_modal();

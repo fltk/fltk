@@ -57,6 +57,8 @@ public:
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   // operator=();
+
+  static int current;
 };
 
 extern Fd_Layout_Preset layout;
@@ -64,9 +66,7 @@ extern Fd_Layout_Preset layout;
 class Fd_Layout_Suite {
 public:
   char const* name;
-  Fd_Layout_Preset *application;
-  Fd_Layout_Preset *dialog;
-  Fd_Layout_Preset *toolbox;
+  Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
@@ -77,9 +77,11 @@ public:
 //  ~Fd_Layout_Suite();
 public:
   static Fl_Menu_Item list_menu[];
-  static Fd_Layout_Suite *list;
+  static Fd_Layout_Suite *list[];
   static int list_size;
   static bool list_is_static;
+  static int current;
+
   static void write_all(Fl_Preferences &prefs);
   static void read_all(Fl_Preferences &prefs);
   static Fd_Layout_Preset *add(const char *name);

@@ -397,12 +397,7 @@ Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
     label {Layout Settings}
-    callback {if (v == LOAD) {
-  for (int i=0; i<o->children(); ++i) {
-    Fl_Widget *c = o->child(i);
-    c->do_callback(c, v);
-  }
-}} open
+    callback {propagate_load(o, v);} open selected
     xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
@@ -680,7 +675,8 @@ Function {make_layout_window()} {open
         tooltip {The value text size.} xywh {258 507 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
       }
     }
-    Fl_Choice layout_choice {open
+    Fl_Choice layout_choice {
+      callback edit_layout_suite_cb open
       xywh {170 11 130 24} down_box BORDER_BOX
     } {
       MenuItem {} {
@@ -708,7 +704,7 @@ Function {make_layout_window()} {open
       label load
       xywh {395 479 50 24}
     }
-    Fl_Menu_Button w_layout_menu {open selected
+    Fl_Menu_Button w_layout_menu {open
       xywh {324 11 24 24}
     } {
       MenuItem {} {
@@ -724,6 +720,13 @@ Function {make_layout_window()} {open
         xywh {0 0 31 20}
       }
       MenuItem {} {
+        label {Keep in Preferences}
+        comment {Gray out if settings are fixed internal presets
+Check if stored in preferences
+If user checks somefile.fl, remove the .fl from the name and clone}
+        xywh {0 0 31 20} type Toggle
+      }
+      MenuItem {} {
         label Delete
         xywh {0 0 31 20}
       }
@@ -732,19 +735,23 @@ Function {make_layout_window()} {open
       label save
       xywh {445 479 50 24}
     }
-    Fl_Group {} {open
+    Fl_Group {} {
+      callback propagate_load open
       xywh {121 48 270 20}
     } {
-      Fl_Button {} {
+      Fl_Button {preset_choice[0]} {
         label Application
+        callback edit_layout_preset_cb
         xywh {121 48 90 20} type Radio value 1 labelsize 12
       }
-      Fl_Button {} {
+      Fl_Button {preset_choice[1]} {
         label Dialog
+        callback edit_layout_preset_cb
         xywh {211 48 90 20} type Radio labelsize 12
       }
-      Fl_Button {} {
+      Fl_Button {preset_choice[2]} {
         label Toolbox
+        callback edit_layout_preset_cb
         xywh {301 48 90 20} type Radio labelsize 12
       }
     }
