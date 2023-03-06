@@ -268,16 +268,7 @@ selection indication. Most modern programs ignore this.
 
 FLTK supports drag and drop of text and files from any
 application on the desktop to an FLTK widget. Text is transferred
-using UTF-8 encoding. Files are received as a list of full path
-and file names, separated by newline.
-
-On some X11 platforms and with Wayland, files are received as a URL-encoded UTF-8 string,
-that is, non-ASCII bytes (and a few others such as space and %) are
-replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
-The \ref fl_decode_uri() function can be used to transform in-place
-the received string into a proper UTF-8 string. On these platforms,
-strings corresponding to dropped files are further prepended
-by <tt>file://</tt> (or other prefixes such as <tt>computer://</tt>).
+using UTF-8 encoding.
 
 See Fl::dnd() for drag and drop from an FLTK widget.
 
@@ -289,6 +280,20 @@ depends on the protocol used on each platform.
 
 \p FL_DND_* events cannot be used in widgets derived
 from Fl_Group or Fl_Window.
+
+\subsection events_fl_dnd_files Dropped filenames
+Files are received as a list of full path and file names.
+- On some X11 platforms, files are received as a URL-encoded UTF-8 string,
+that is, non-ASCII bytes (and a few others such as space and %) are
+replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
+The \ref fl_decode_uri() function can be used to transform in-place
+the received string into a proper UTF-8 string. On these platforms,
+strings corresponding to dropped files are further prepended
+by <tt>file://</tt> (or other prefixes such as <tt>computer://</tt>).
+- Other X11 situations put all dropped filenames in a single line, separated by
+spaces.
+- On non-X11 platforms, including Wayland, files dropped are received one
+pathname per line, with no  <tt>'\\n'</tt> after the last pathname.
 
 \subsection events_fl_dnd_enter FL_DND_ENTER
 

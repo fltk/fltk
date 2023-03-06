@@ -328,6 +328,7 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 // which is enlarged if necessary.
 static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   int fds[2];
+  char *from;
   if (pipe(fds)) return;
   wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
@@ -341,7 +342,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
       close(fds[0]);
       fl_selection_length[1] = to - fl_selection_buffer[1];
       fl_selection_buffer[1][ fl_selection_length[1] ] = 0;
-      return;
+      goto way_out;
     }
     n = Fl_Screen_Driver::convert_crlf(to, n);
     to += n;
@@ -360,7 +361,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   }
 //fprintf(stderr, "get_clipboard_or_dragged_text: size=%ld\n", rest);
   // read full clipboard data
-  if (pipe(fds)) return;
+  if (pipe(fds)) goto way_out;
   wl_data_offer_receive(offer, fl_selection_offer_type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
@@ -369,7 +370,7 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
     fl_selection_buffer[1] = new char[rest+1000+1];
     fl_selection_buffer_length[1] = rest+1000;
   }
-  char *from = fl_selection_buffer[1];
+  from = fl_selection_buffer[1];
   while (true) {
     ssize_t n = read(fds[0], from, rest);
     if (n <= 0) {
@@ -381,6 +382,19 @@ static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
   }
   fl_selection_length[1] = from - fl_selection_buffer[1];
   fl_selection_buffer[1][fl_selection_length[1]] = 0;
+way_out:
+  if (strcmp(fl_selection_offer_type, "text/uri-list") == 0) {
+    fl_decode_uri(fl_selection_buffer[1]); // decode encoded bytes
+    char *p = fl_selection_buffer[1];
+    while (*p) { // remove prefixes
+      if (strncmp(p, "file://", 7) == 0) {
+        memmove(p, p+7, strlen(p+7)+1);
+      }
+      p = strchr(p, '\n');
+      if (!p) break;
+      if (*++p == 0) *(p-1) = 0; // remove last '\n'
+    }
+  }
   Fl::e_clipboard_type = Fl::clipboard_plain_text;
 }
 
