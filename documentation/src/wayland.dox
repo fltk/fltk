@@ -763,7 +763,7 @@ FLTK can copy or paste plain UTF-8 text or image data to/from the clipboard. Ima
 clipboard as \c image/bmp mime type. Images in \c image/bmp or \c image/png mime types from the
 clipboard can be pasted to FLTK apps.
 
-Files dropped are received one pathname per line, with no '\n' after the last pathname.
+Files dropped are received one pathname per line, with no \c '\\n' after the last pathname.
 
 
 \section wayland-egl EGL as support for OpenGL
