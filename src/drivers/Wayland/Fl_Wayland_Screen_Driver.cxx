@@ -597,6 +597,7 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
   int condition = (Fl::e_state & (FL_ALT | FL_META | FL_CTRL)) && ascii < 128 ; // letter+modifier key
   condition |= (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R); // pressing modifier key
   condition |= (Fl::e_keysym >= FL_Home && Fl::e_keysym <= FL_Help);
+  condition |= Fl::e_keysym == FL_Tab;
 //fprintf(stderr, "compose: condition=%d e_state=%x ascii=%d\n", condition, Fl::e_state, ascii);
   if (condition) { del = 0; return 0;}
 //fprintf(stderr, "compose: del=%d compose_state=%d next_marked_length=%d \n", del, Fl::compose_state, next_marked_length);
@@ -666,6 +667,8 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   static char buf[128];
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(seat->xkb_state, keycode);
+  // replace ISO_Left_Tab (Shift-TAB) with FL_Tab
+  if (sym == 0xfe20) sym = FL_Tab;
   if (sym >= 'A' && sym <= 'Z') sym += 32; // replace uppercase by lowercase letter
 /*xkb_keysym_get_name(sym, buf, sizeof(buf));
 const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
