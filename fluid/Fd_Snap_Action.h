@@ -61,7 +61,7 @@ extern Fd_Layout_Preset layout;
 
 class Fd_Layout_Suite {
 public:
-  char const* name;
+  char *name;
   Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
   bool is_static;
   void write(Fl_Preferences &prefs);
@@ -96,6 +96,7 @@ public:
   void current_preset(int ix) { current_preset_ = ix; }
   Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }
   int add(const char *name);
+  void rename(const char *name);
   void capacity(int);
 
   void write(Fl_Preferences &prefs);

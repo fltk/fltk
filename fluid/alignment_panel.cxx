@@ -694,13 +694,24 @@ static void cb_(Fl_Button*, void* v) {
 
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 
+static void cb_Rename(Fl_Menu_*, void*) {
+  // Rename the current layout suite
+
+  Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name;
+  const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
+  if (new_name == NULL)
+    return; 
+
+  g_layout_list.rename(new_name);
+}
+
 Fl_Menu_Item menu_w_layout_menu[] = {
- {"Rename...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Load...", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in User Settings", 0,  0, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in Project File", 0,  0, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Delete", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Rename...", 0,  (Fl_Callback*)cb_Rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Load...", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save...", 0,  0, 0, 129, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in User Settings", 0,  0, 0, 3, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in Project File", 0,  0, 0, 131, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Delete", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

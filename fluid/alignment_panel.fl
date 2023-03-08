@@ -700,7 +700,7 @@ const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_s
 if (new_name == NULL)
   return; 
 
-g_layout_list.add(new_name);} selected
+g_layout_list.add(new_name);}
       xywh {300 11 24 24}
     }
     Fl_Menu_Button w_layout_menu {open
@@ -708,27 +708,35 @@ g_layout_list.add(new_name);} selected
     } {
       MenuItem {} {
         label {Rename...}
+        callback {// Rename the current layout suite
+
+Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name;
+const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
+if (new_name == NULL)
+  return; 
+
+g_layout_list.rename(new_name);} selected
         xywh {0 0 31 20} divider
       }
       MenuItem {} {
         label {Load...}
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} deactivate
       }
       MenuItem {} {
         label {Save...}
-        xywh {0 0 31 20} divider
+        xywh {0 0 31 20} deactivate divider
       }
       MenuItem {} {
         label {Save in User Settings}
-        xywh {0 0 31 20} type Toggle
+        xywh {0 0 31 20} type Toggle deactivate
       }
       MenuItem {} {
         label {Save in Project File}
-        xywh {0 0 31 20} type Toggle divider
+        xywh {0 0 31 20} type Toggle deactivate divider
       }
       MenuItem {} {
         label Delete
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} deactivate
       }
     }
     Fl_Group {} {

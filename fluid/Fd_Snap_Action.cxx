@@ -129,7 +129,7 @@ Fd_Layout_List::~Fd_Layout_List() {
   if (!list_is_static_) {
     ::free(main_menu_);
     ::free(choice_menu_);
-    ::free(list_);
+    ::free(list_); // TODO: delete items in list, free name memebr of items
   }
 }
 
@@ -139,8 +139,10 @@ void Fd_Layout_List::update_dialogs() {
     preset_menu = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
 
   layout = *g_layout_list[g_layout_list.current_suite()].layout[g_layout_list.current_preset()];
-  if (grid_window)
+  if (grid_window) {
     grid_window->do_callback(grid_window, LOAD);
+    layout_choice->redraw();
+  }
   preset_menu[g_layout_list.current_preset()].setonly();
   g_layout_list.main_menu_[g_layout_list.current_suite()].setonly();
 }
@@ -186,6 +188,7 @@ int Fd_Layout_List::add(const char *name) {
   int n = list_size_;
   Fd_Layout_Suite &old_suite = list_[current_suite()];
   Fd_Layout_Suite new_suite;
+  // TODO: use placement 'new': new (list_[n]])Fd_Layout_Preset;
   new_suite.name = strdup(name);
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
@@ -204,25 +207,15 @@ int Fd_Layout_List::add(const char *name) {
   return 0;
 }
 
-//int Fd_Layout_Suite::add(Fd_Layout_Suite *suite) {
-//  int new_size = list_size + 1;
-//  Fd_Layout_Suite **new_list = (Fd_Layout_Suite**)::malloc(sizeof(Fd_Layout_Suite*) * new_size);
-//  ::memcpy(new_list, list, sizeof(Fd_Layout_Suite*) * list_size);
-//  new_list[list_size] = suite;
-//  if (list_is_static)
-//    list_is_static = false;
-//  else
-//    ::free(list);
-//  list = new_list;
-//  // TODO: update pulldown menus and the links to them (list_menu, unnamed)
-//  // TODO: update menu pointers
-//  // NOTE: maybe it is enough to allow for a fixed number of entries?
-//}
-
-// Presets: FLTK, Grid, ..., External
-// Application
-// Dialog
-// Toolbox
+// TODO: make sure that we do not rename a read-only layout
+void Fd_Layout_List::rename(const char *name) {
+  int n = current_suite();
+  ::free(list_[n].name);
+  list_[n].name = strdup(name);
+  main_menu_[n].label(name);
+  choice_menu_[n].label(name);
+  update_dialogs();
+}
 
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
