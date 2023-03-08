@@ -678,18 +678,28 @@ Fl_Menu_Item menu_layout_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+static void cb_(Fl_Button*, void* v) {
+  // Clone the current layout suite
+
+  if (v == LOAD) return;
+
+  Fl_String old_name = "Copy of ";
+  old_name.append(g_layout_list[g_layout_list.current_suite()].name);
+  const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
+  if (new_name == NULL)
+    return; 
+
+  g_layout_list.add(new_name);
+}
+
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 
 Fl_Menu_Item menu_w_layout_menu[] = {
- {"Rename", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Import", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Export", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- /*
-  Gray out if settings are fixed internal presets
-  Check if stored in preferences
-  If user checks somefile.fl, remove the .fl from the name and clone
-  */
- {"Keep in Preferences", 0,  0, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Rename...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Load...", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in User Settings", 0,  0, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in Project File", 0,  0, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
@@ -898,34 +908,30 @@ Fl_Double_Window* make_layout_window() {
       layout_choice->callback((Fl_Callback*)edit_layout_suite_cb);
       layout_choice->menu(menu_layout_choice);
     } // Fl_Choice* layout_choice
-    { new Fl_Button(300, 11, 24, 24, "+");
-    } // Fl_Button* o
-    { new Fl_Button(315, 479, 30, 24, "-");
-    } // Fl_Button* o
-    { new Fl_Button(345, 479, 50, 24, "edit");
-    } // Fl_Button* o
-    { new Fl_Button(395, 479, 50, 24, "load");
+    { Fl_Button* o = new Fl_Button(300, 11, 24, 24, "+");
+      o->callback((Fl_Callback*)cb_);
     } // Fl_Button* o
     { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
       w_layout_menu->menu(menu_w_layout_menu);
     } // Fl_Menu_Button* w_layout_menu
-    { new Fl_Button(445, 479, 50, 24, "save");
-    } // Fl_Button* o
     { Fl_Group* o = new Fl_Group(121, 48, 270, 20);
       o->callback((Fl_Callback*)propagate_load);
       { preset_choice[0] = new Fl_Button(121, 48, 90, 20, "Application");
         preset_choice[0]->type(102);
         preset_choice[0]->value(1);
+        preset_choice[0]->selection_color(FL_DARK2);
         preset_choice[0]->labelsize(12);
         preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb);
       } // Fl_Button* preset_choice[0]
       { preset_choice[1] = new Fl_Button(211, 48, 90, 20, "Dialog");
         preset_choice[1]->type(102);
+        preset_choice[1]->selection_color(FL_DARK2);
         preset_choice[1]->labelsize(12);
         preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb);
       } // Fl_Button* preset_choice[1]
       { preset_choice[2] = new Fl_Button(301, 48, 90, 20, "Toolbox");
         preset_choice[2]->type(102);
+        preset_choice[2]->selection_color(FL_DARK2);
         preset_choice[2]->labelsize(12);
         preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb);
       } // Fl_Button* preset_choice[2]

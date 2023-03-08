@@ -19,12 +19,10 @@
 
 #include "Fl_Window_Type.h"
 
+class Fl_Menu_Item;
 
 class Fd_Layout_Preset {
 public:
-  enum { BUILTIN, CUSTOM, IMPORTED, FROM_PROJECT };
-  int flags;
-
   int left_window_margin;
   int right_window_margin;
   int top_window_margin;
@@ -56,9 +54,7 @@ public:
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  // operator=();
-
-  static int current;
+  Fd_Layout_Preset &operator=(Fd_Layout_Preset const& src);
 };
 
 extern Fd_Layout_Preset layout;
@@ -67,6 +63,7 @@ class Fd_Layout_Suite {
 public:
   char const* name;
   Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
+  bool is_static;
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
@@ -76,19 +73,40 @@ public:
 //  Fd_Layout_Suite();
 //  ~Fd_Layout_Suite();
 public:
-  static Fl_Menu_Item list_menu[];
-  static Fd_Layout_Suite *list[];
-  static int list_size;
-  static bool list_is_static;
-  static int current;
 
-  static void write_all(Fl_Preferences &prefs);
-  static void read_all(Fl_Preferences &prefs);
-  static Fd_Layout_Preset *add(const char *name);
-  static void remove(int);
-  static Fd_Layout_Preset *at(int);
-  static int size();
 };
+
+class Fd_Layout_List {
+public:
+  Fl_Menu_Item *main_menu_;
+  Fl_Menu_Item *choice_menu_;
+  Fd_Layout_Suite *list_;
+  int list_size_;
+  int list_capacity_;
+  bool list_is_static_;
+  int current_suite_;
+  int current_preset_;
+public:
+  Fd_Layout_List();
+  ~Fd_Layout_List();
+  void update_dialogs();
+  int current_suite() const { return current_suite_; }
+  void current_suite(int ix) { current_suite_ = ix; }
+  int current_preset() const { return current_preset_; }
+  void current_preset(int ix) { current_preset_ = ix; }
+  Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }
+  int add(const char *name);
+  void capacity(int);
+
+  void write(Fl_Preferences &prefs);
+  void read(Fl_Preferences &prefs);
+  int add(Fd_Layout_Suite*);
+  void remove(int);
+  Fd_Layout_Preset *at(int);
+  int size();
+};
+
+extern Fd_Layout_List g_layout_list;
 
 /**
  \brief Structure holding all the data to perform interactive alignment operations.

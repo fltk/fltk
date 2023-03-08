@@ -397,7 +397,7 @@ Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
     label {Layout Settings}
-    callback {propagate_load(o, v);} open selected
+    callback {propagate_load(o, v);} open
     xywh {478 283 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
@@ -690,50 +690,46 @@ Function {make_layout_window()} {open
     }
     Fl_Button {} {
       label {+}
+      callback {// Clone the current layout suite
+
+if (v == LOAD) return;
+
+Fl_String old_name = "Copy of ";
+old_name.append(g_layout_list[g_layout_list.current_suite()].name);
+const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
+if (new_name == NULL)
+  return; 
+
+g_layout_list.add(new_name);} selected
       xywh {300 11 24 24}
-    }
-    Fl_Button {} {
-      label {-}
-      xywh {315 479 30 24}
-    }
-    Fl_Button {} {
-      label edit
-      xywh {345 479 50 24}
-    }
-    Fl_Button {} {
-      label load
-      xywh {395 479 50 24}
     }
     Fl_Menu_Button w_layout_menu {open
       xywh {324 11 24 24}
     } {
       MenuItem {} {
-        label Rename
+        label {Rename...}
+        xywh {0 0 31 20} divider
+      }
+      MenuItem {} {
+        label {Load...}
         xywh {0 0 31 20}
       }
       MenuItem {} {
-        label Import
-        xywh {0 0 31 20}
+        label {Save...}
+        xywh {0 0 31 20} divider
       }
       MenuItem {} {
-        label Export
-        xywh {0 0 31 20}
-      }
-      MenuItem {} {
-        label {Keep in Preferences}
-        comment {Gray out if settings are fixed internal presets
-Check if stored in preferences
-If user checks somefile.fl, remove the .fl from the name and clone}
+        label {Save in User Settings}
         xywh {0 0 31 20} type Toggle
+      }
+      MenuItem {} {
+        label {Save in Project File}
+        xywh {0 0 31 20} type Toggle divider
       }
       MenuItem {} {
         label Delete
         xywh {0 0 31 20}
       }
-    }
-    Fl_Button {} {
-      label save
-      xywh {445 479 50 24}
     }
     Fl_Group {} {
       callback propagate_load open
@@ -742,17 +738,17 @@ If user checks somefile.fl, remove the .fl from the name and clone}
       Fl_Button {preset_choice[0]} {
         label Application
         callback edit_layout_preset_cb
-        xywh {121 48 90 20} type Radio value 1 labelsize 12
+        xywh {121 48 90 20} type Radio value 1 selection_color 45 labelsize 12
       }
       Fl_Button {preset_choice[1]} {
         label Dialog
         callback edit_layout_preset_cb
-        xywh {211 48 90 20} type Radio labelsize 12
+        xywh {211 48 90 20} type Radio selection_color 45 labelsize 12
       }
       Fl_Button {preset_choice[2]} {
         label Toolbox
         callback edit_layout_preset_cb
-        xywh {301 48 90 20} type Radio labelsize 12
+        xywh {301 48 90 20} type Radio selection_color 45 labelsize 12
       }
     }
   }

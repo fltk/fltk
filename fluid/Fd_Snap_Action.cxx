@@ -24,11 +24,16 @@
 #include <math.h>
 #include <string.h>
 
+// TODO: selection should be initialised from Preferences to last selection
+// TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
+// TODO: pressed buttons are almost indistinguishable from normal buttons
+
+void select_layout_suite_cb(Fl_Widget *, void *user_data);
+
 int Fd_Snap_Action::eex = 0;
 int Fd_Snap_Action::eey = 0;
 
 Fd_Layout_Preset layout = {  // the currently active layout
-  Fd_Layout_Preset::BUILTIN,
   15, 15, 15, 15, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   25, 25,               // tabs:      t, b
@@ -37,76 +42,182 @@ Fd_Layout_Preset layout = {  // the currently active layout
   0, 14, 0, 14          // labelfont/size, textfont/size
 };
 
-Fd_Layout_Preset fltk_app = { Fd_Layout_Preset::BUILTIN, 1 };
-Fd_Layout_Preset fltk_dlg = { Fd_Layout_Preset::BUILTIN, 2 };
-Fd_Layout_Preset fltk_tool = { Fd_Layout_Preset::BUILTIN, 3 };
-Fd_Layout_Suite fltk = { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool };
+static Fd_Layout_Preset fltk_app = { 1 };
+static Fd_Layout_Preset fltk_dlg = { 2 };
+static Fd_Layout_Preset fltk_tool = { 3 };
 
-Fd_Layout_Preset grid_app = { Fd_Layout_Preset::BUILTIN, 4 };
-Fd_Layout_Preset grid_dlg = { Fd_Layout_Preset::BUILTIN, 5 };
-Fd_Layout_Preset grid_tool = { Fd_Layout_Preset::BUILTIN, 6 };
-Fd_Layout_Suite grid = { "Grid", &grid_app, &grid_dlg, &grid_tool };
+static Fd_Layout_Preset grid_app = { 4 };
+static Fd_Layout_Preset grid_dlg = { 5 };
+static Fd_Layout_Preset grid_tool = { 6 };
 
-int Fd_Layout_Preset::current = 0;
+static Fd_Layout_Suite static_suite_list[] = {
+  { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true },
+  { "Grid", &grid_app, &grid_dlg, &grid_tool, true }
+};
+
+static Fl_Menu_Item static_main_menu[] = {
+  { static_suite_list[0].name, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
+  { static_suite_list[1].name, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
+  { NULL }
+};
+
+static Fl_Menu_Item static_choice_menu[] = {
+  { static_suite_list[0].name }, // TODO: save the last choosen suite in preferences
+  { static_suite_list[1].name },
+  { NULL }
+};
+
+Fd_Layout_List g_layout_list;
+
+Fd_Layout_Preset &Fd_Layout_Preset::operator=(Fd_Layout_Preset const& rhs) {
+  if (this != &rhs)
+    ::memcpy(this, &rhs, sizeof(Fd_Layout_Preset));
+  return *this;
+}
+
+void layout_suite_marker(Fl_Widget *, void *) {
+  // never called
+}
 
 // TODO: this should be in alignment_panel.h
 void edit_layout_suite_cb(Fl_Choice *w, void *user_data) {
   if (user_data == LOAD) {
-    w->value(Fd_Layout_Suite::current);
+    w->value(g_layout_list.current_suite());
   } else {
     int index = w->value();
-    Fd_Layout_Suite::current = index;
-    ::memcpy(&layout, Fd_Layout_Suite::list[index]->layout[Fd_Layout_Preset::current], sizeof(Fd_Layout_Preset));
-    grid_window->do_callback(grid_window, LOAD);
-    Fd_Layout_Suite::list_menu[index].setonly();
+    g_layout_list.current_suite(index);
+    g_layout_list.update_dialogs();
   }
 }
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
-  Fd_Layout_Suite::current = index;
-  ::memcpy(&layout, Fd_Layout_Suite::list[index]->layout[Fd_Layout_Preset::current], sizeof(Fd_Layout_Preset));
-  // TODO: This code is duplicated here and in edit_layout_suite_cb
-  if (grid_window)
-    grid_window->do_callback(grid_window, LOAD);
+  g_layout_list.current_suite(index);
+  g_layout_list.update_dialogs();
 }
 
 void select_layout_preset_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
-  Fd_Layout_Preset::current = index;
-  ::memcpy(&layout, Fd_Layout_Suite::list[Fd_Layout_Suite::current]->layout[index], sizeof(Fd_Layout_Preset));
-  // TODO: This code is duplicated here and in edit_layout_preset_cb
-  if (grid_window)
-    grid_window->do_callback(grid_window, LOAD);
+  g_layout_list.current_preset(index);
+  g_layout_list.update_dialogs();
 }
 
 // TODO: this should be in alignment_panel.h
 void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
   int index = (int)(w - preset_choice[0]);
   if (user_data == LOAD) {
-    w->value(Fd_Layout_Preset::current == index);
+    w->value(g_layout_list.current_preset() == index);
   } else {
-    Fd_Layout_Preset::current = index;
-    ::memcpy(&layout, Fd_Layout_Suite::list[Fd_Layout_Suite::current]->layout[index], sizeof(Fd_Layout_Preset));
-    grid_window->do_callback(grid_window, LOAD);
-    // TODO: find menu item in make_main_window()
-    Fl_Menu_Item *mi = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
-    mi[index].setonly();
+    g_layout_list.current_preset(index);
+    g_layout_list.update_dialogs();
   }
 }
 
-Fl_Menu_Item Fd_Layout_Suite::list_menu[] = {
-  // TODO: these should be radio buttons
-  { fltk.name, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE }, // TODO: save the last choosen suite in preferences
-  { grid.name, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
-  { NULL }
-};
+Fd_Layout_List::Fd_Layout_List()
+: main_menu_(static_main_menu),
+  choice_menu_(static_choice_menu),
+  list_(static_suite_list),
+  list_size_(2),
+  list_capacity_(2),
+  list_is_static_(true),
+  current_suite_(0),
+  current_preset_(0)
+{
+}
 
-Fd_Layout_Suite *Fd_Layout_Suite::list[] = { &fltk, &grid };
-int Fd_Layout_Suite::list_size = 2;
-bool Fd_Layout_Suite::list_is_static = true;
-int Fd_Layout_Suite::current = 0;
+Fd_Layout_List::~Fd_Layout_List() {
+  if (!list_is_static_) {
+    ::free(main_menu_);
+    ::free(choice_menu_);
+    ::free(list_);
+  }
+}
 
+void Fd_Layout_List::update_dialogs() {
+  static Fl_Menu_Item *preset_menu = NULL;
+  if (!preset_menu)
+    preset_menu = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
+
+  layout = *g_layout_list[g_layout_list.current_suite()].layout[g_layout_list.current_preset()];
+  if (grid_window)
+    grid_window->do_callback(grid_window, LOAD);
+  preset_menu[g_layout_list.current_preset()].setonly();
+  g_layout_list.main_menu_[g_layout_list.current_suite()].setonly();
+}
+
+/**
+ Allocate enough space for n entries in the list.
+ */
+void Fd_Layout_List::capacity(int n) {
+  static Fl_Menu_Item *suite_menu = NULL;
+  if (!suite_menu)
+    suite_menu = (Fl_Menu_Item*)main_menubar->find_item(layout_suite_marker);
+
+  int old_n = list_size_;
+
+  Fd_Layout_Suite *new_list = (Fd_Layout_Suite*)::calloc(n, sizeof(Fd_Layout_Suite));
+  ::memcpy(new_list, list_, old_n * sizeof(Fd_Layout_Suite));
+  if (!list_is_static_) ::free(list_);
+  list_ = new_list;
+
+  Fl_Menu_Item *new_main_menu = (Fl_Menu_Item*)::calloc(n+1, sizeof(Fl_Menu_Item));
+  ::memcpy(new_main_menu, main_menu_, old_n * sizeof(Fl_Menu_Item));
+  if (!list_is_static_) ::free(main_menu_);
+  main_menu_ = new_main_menu;
+  suite_menu->user_data(main_menu_);
+
+  Fl_Menu_Item *new_choice_menu = (Fl_Menu_Item*)::calloc(n+1, sizeof(Fl_Menu_Item));
+  ::memcpy(new_choice_menu, choice_menu_, old_n * sizeof(Fl_Menu_Item));
+  if (!list_is_static_) ::free(choice_menu_);
+  choice_menu_ = new_choice_menu;
+  layout_choice->menu(choice_menu_);
+
+  list_is_static_ = false;
+}
+
+/**
+ Clone the currently selected suite and append it to the list.
+ Selectes the new layout and updates the UI.
+ */
+int Fd_Layout_List::add(const char *name) {
+  if (list_size_ == list_capacity_) {
+    capacity(list_capacity_ * 2);
+  }
+  int n = list_size_;
+  Fd_Layout_Suite &old_suite = list_[current_suite()];
+  Fd_Layout_Suite new_suite;
+  new_suite.name = strdup(name);
+  for (int i=0; i<3; ++i) {
+    new_suite.layout[i] = new Fd_Layout_Preset;
+    new_suite.layout[i] = old_suite.layout[i];
+  }
+  new_suite.is_static = false;
+  ::memcpy(list_+n, &new_suite, sizeof(Fd_Layout_Suite));
+  main_menu_[n].label(new_suite.name);
+  main_menu_[n].callback(main_menu_[0].callback());
+  main_menu_[n].argument(n);
+  main_menu_[n].flags = main_menu_[0].flags;
+  choice_menu_[n].label(new_suite.name);
+  list_size_ = n + 1;
+  current_suite(n);
+  update_dialogs();
+  return 0;
+}
+
+//int Fd_Layout_Suite::add(Fd_Layout_Suite *suite) {
+//  int new_size = list_size + 1;
+//  Fd_Layout_Suite **new_list = (Fd_Layout_Suite**)::malloc(sizeof(Fd_Layout_Suite*) * new_size);
+//  ::memcpy(new_list, list, sizeof(Fd_Layout_Suite*) * list_size);
+//  new_list[list_size] = suite;
+//  if (list_is_static)
+//    list_is_static = false;
+//  else
+//    ::free(list);
+//  list = new_list;
+//  // TODO: update pulldown menus and the links to them (list_menu, unnamed)
+//  // TODO: update menu pointers
+//  // NOTE: maybe it is enough to allow for a fixed number of entries?
+//}
 
 // Presets: FLTK, Grid, ..., External
 // Application

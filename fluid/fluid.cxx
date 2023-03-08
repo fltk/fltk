@@ -1361,6 +1361,7 @@ void print_menu_cb(Fl_Widget *, void *) {
 // ---- Main menu bar
 
 extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
+extern void layout_suite_marker(Fl_Widget *, void *user_data);
 
 /**
  This is the main Fluid menu.
@@ -1458,7 +1459,7 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Huge",FL_ALT+'6',(Fl_Callback *)widget_size_cb,(void*)32,0,FL_NORMAL_LABEL,FL_HELVETICA,32},
     {0},
   {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
-  {"Presets", 0, NULL, (void*)Fd_Layout_Suite::list_menu, FL_SUBMENU_POINTER|FL_MENU_DIVIDER },
+  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER|FL_MENU_DIVIDER },
   {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },  // TODO: save the last choosen layout preset in preferences
   {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
   {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
