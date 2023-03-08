@@ -626,7 +626,6 @@ static dead_key_struct dead_keys[] = {
   {XKB_KEY_dead_acute, "´"},
   {XKB_KEY_dead_circumflex, "^"},
   {XKB_KEY_dead_tilde, "~"},
-  {XKB_KEY_dead_perispomeni, "~"}, // alias for dead_tilde
   {XKB_KEY_dead_macron, "¯"},
   {XKB_KEY_dead_breve, "˘"},
   {XKB_KEY_dead_abovedot, "˙"},
