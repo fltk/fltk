@@ -44,8 +44,16 @@ app as parameters of these calls. Each listener is first associated to its corre
 Wayland object by a call to a specific Wayland function of the form \c wl_XXX_add_listener().
 
 Wayland differs noticeably from X11 in that the position of a window in the display is
-completely hidden to the client app. Besides toplevel and sub-windows, Wayland
-allows to create popup windows positioned relatively to a previously mapped other window.
+completely hidden to the client app. This prevents function \c Fl_Window::position() from having
+any effect on a top-level window. Wayland also prevents a client app from knowing whether
+a window is minimized: \c Fl_Window::show() has no effect on an already mapped window.
+Subwindows can be positionned as usual relatively to their
+parent window. FLTK uses that for the small, yellow windows that display
+the new scale factor value when it's changed: these are created as short-lived subwindows
+centered above \c Fl::first_window().
+Wayland allows to create popup windows positioned relatively to a previously mapped other
+window, with the sole restriction that any popup must intersect or at least touch that other
+window.
 This allows FLTK to create menus and tooltips, but it seriously complicates the algorithm
 to pilot menus, because the previous algorithm conceived for other platforms assumes
 the position of a window in the display to be known to the client app, which is wrong
@@ -280,7 +288,8 @@ above unfold.
 
 \section wayland-graphics-driver Fl_Wayland_Graphics_Driver and Fl_Cairo_Graphics_Driver
 
-Wayland uses an \c Fl_Wayland_Graphics_Driver object for all its on-screen drawing operations.
+The Wayland platform of FLTK uses an \c Fl_Wayland_Graphics_Driver object for all its on-screen
+drawing operations.
 This object is created by function \c Fl_Graphics_Driver::newMainGraphicsDriver() called by
 \c Fl_Display_Device::display_device() when the library opens the display.
 New \c Fl_Wayland_Graphics_Driver objects are also created for each \c Fl_Image_Surface and
@@ -389,7 +398,8 @@ That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer(
 which follows this 3-step procedure to create a "buffer factory" for FLTK and construct
 Wayland buffers from it:
 - Libdecor function <tt>os_create_anonymous_file(off_t size)</tt> creates an adequate file and mmap's
-it. FLTK initially sets this file size to \c pool_size = 10 MB. This size will be increased when and
+it. This file lives in RAM because it is created by function \c memfd_create().
+FLTK initially sets this file size to \c pool_size = 10 MB. This size will be increased when and
 if necessary.
 FLTK stores in variable \c pool_memory the address of the beginning of the mmap'ed memory structure.
 - Wayland function \c wl_shm_create_pool() has this mmap'ed memory shared with the
