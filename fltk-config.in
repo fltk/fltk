@@ -261,8 +261,8 @@ if test x$use_images = xyes; then
 fi
 
 if test x$use_cairo = xyes -a $FLTK_HAVE_CAIRO = 1; then
-    LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
+    LDLIBS="$CAIROLIBS $LDLIBS"
+    LDSTATIC="$CAIROLIBS $LDSTATIC"
 fi
 
 LDLIBS="$DSOLINK $LDFLAGS $libs $LDLIBS"
@@ -388,10 +388,6 @@ if test "$echo_libs" = "yes"; then
 
     if test x$use_gl = xyes; then
         USELIBS="$libdir/libfltk_gl.a $USELIBS"
-    fi
-
-    if test x$use_cairo = xyes; then
-        USELIBS="$libdir/libfltk_cairo.a $USELIBS"
     fi
 
     if test x$use_images = xyes; then

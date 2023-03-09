@@ -1,7 +1,7 @@
 #
 # Top-level Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -113,7 +113,7 @@ native-dist:
 	epm -v -f native fltk
 
 etags:
-	etags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.cxx fluid/*.h fluid/*.cxx fltk-options/*.cxx test/*.h test/*.cxx
+	etags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.c fluid/*.h fluid/*.cxx test/*.h test/*.cxx
 
 #
 # Run the clang.llvm.org static code analysis tool on the C sources.

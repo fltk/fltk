@@ -86,7 +86,7 @@ AC_SUBST(OPTIM)
 
 dnl Other options
 AC_ARG_ENABLE([cairo], AS_HELP_STRING([--enable-cairo], [add support for Fl_Cairo_Window]))
-AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for cairo extended use]))
+AC_ARG_ENABLE([cairoext], AS_HELP_STRING([--enable-cairoext], [use FLTK code instrumentation for Cairo extended use]))
 
 AC_ARG_ENABLE([cp936], AS_HELP_STRING([--enable-cp936], [turn on CP936]))
 AS_IF([test x$enable_cp936 = xyes], [
@@ -235,7 +235,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         LIBS="$CAIROLIBS $LIBS"
         LINKFLTK="$LINKFLTK $LINKFLTKCAIRO"
     ], [
-        AC_MSG_ERROR([Cairo requested but not available.])
+        AC_MSG_ERROR([Cairo requested but not found.])
     ])
 ], [test x$enable_cairo = xyes], [
     AS_IF([$PKGCONFIG --exists cairo], [
@@ -247,7 +247,7 @@ AS_IF([test x$enable_cairoext = xyes], [
         LINKFLTKCAIRO="../lib/libfltk_cairo.a"
         FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
     ], [
-        AC_MSG_ERROR([Cairo requested but not available.])
+        AC_MSG_ERROR([Cairo requested but not found.])
     ])
 ])
 

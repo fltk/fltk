@@ -1,8 +1,8 @@
 #
-# A macro used by the CMake build system for the Fast Light Tool Kit (FLTK).
-# Written by Michael Surette
+# A function used by the CMake build system for the Fast Light Tool Kit (FLTK).
+# Originally written by Michael Surette
 #
-# Copyright 1998-2020 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -17,7 +17,7 @@
 
 ################################################################################
 #
-# macro CREATE_EXAMPLE - Create a test/demo (example) program
+# function CREATE_EXAMPLE - Create a test/demo (example) program
 #
 # Input:
 #
@@ -119,13 +119,13 @@ function (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   set_target_properties   (${TARGET_NAME} PROPERTIES OUTPUT_NAME ${NAME})
   target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
-  # we must link all programs with fltk_cairo if option CAIROEXT is enabled
+  # we must link all programs with cairo if option CAIROEXT is enabled
   if (FLTK_HAVE_CAIROEXT)
-    target_link_libraries (${TARGET_NAME} fltk_cairo cairo)
+    target_link_libraries (${TARGET_NAME} ${PKG_CAIRO_LIBRARIES})
   endif ()
 
-  if (FLTK_HAVE_CAIRO)
-    fl_target_link_directories (${TARGET_NAME} PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
+  if (FLTK_HAVE_CAIRO AND PKG_CAIRO_LIBRARY_DIRS)
+    fl_target_link_directories (${TARGET_NAME} PUBLIC ${PKG_CAIRO_LIBRARY_DIRS})
   endif ()
 
   if (USE_GDIPLUS)        # can only be true on Windows

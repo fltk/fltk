@@ -51,11 +51,7 @@ else ()
 
 endif ()
 
-# we must link all programs with fltk_cairo if option CAIROEXT is enabled
-if (FLTK_HAVE_CAIROEXT)
-  list (APPEND FLTK_OPTIONS_LIBS fltk_cairo cairo)
-endif (FLTK_HAVE_CAIROEXT)
-
+# we must link fltk-optons with cairo if option CAIRO is enabled
 if (FLTK_HAVE_CAIRO)
   fl_target_link_directories (fltk-options PRIVATE "${PKG_CAIRO_LIBRARY_DIRS}")
 endif (FLTK_HAVE_CAIRO)

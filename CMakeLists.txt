@@ -102,7 +102,17 @@ endif (debug_build)
 unset (debug_build)
 
 #######################################################################
-# build the FLTK libraries
+# Build a dummy ("empty") Cairo library for backwards compatibility.
+# This should be removed some time after 1.4.0 was released, maybe
+# in FLTK 1.4.1, 1.4.2, 1.5.0, or whatever the next minor release is.
+#######################################################################
+
+if (FLTK_HAVE_CAIRO)
+  add_subdirectory (cairo)
+endif ()
+
+#######################################################################
+# build the standard FLTK libraries
 #######################################################################
 
 add_subdirectory(src)
@@ -129,11 +139,13 @@ endif (FLTK_BUILD_FLTK_OPTIONS)
 # install.cmake creates these files for an installed FLTK
 # these two would only differ in paths, so common variables are set here
 #######################################################################
+
 include (CMake/variables.cmake)
 
 #######################################################################
 # final config and export
 #######################################################################
+
 include (CMake/export.cmake)
 
 configure_file (
@@ -157,6 +169,7 @@ endif (FLTK_BUILD_EXAMPLES)
 #######################################################################
 # installation
 #######################################################################
+
 include (CMake/install.cmake)
 
 #######################################################################
@@ -221,15 +234,15 @@ else ()
 endif ()
 
 if (FLTK_BUILD_FLUID)
-   message (STATUS "FLUID will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
+  message (STATUS "FLUID            will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fluid")
 else ()
-   message (STATUS "FLUID will not be built (set FLTK_BUILD_FLUID=ON to build)")
+  message (STATUS "FLUID            will not be built (set FLTK_BUILD_FLUID=ON to build)")
 endif ()
 
 if (FLTK_BUILD_FLTK_OPTIONS)
-   message (STATUS "fltk-options will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-options")
+  message (STATUS "fltk-options     will be built in ${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-options")
 else ()
-   message (STATUS "fltk-options will not be built (set FLTK_BUILD_FLTK_OPTIONS=ON to build)")
+  message (STATUS "fltk-options     will not be built (set FLTK_BUILD_FLTK_OPTIONS=ON to build)")
 endif ()
 
 if (FLTK_BUILD_TEST)
@@ -243,21 +256,21 @@ else ()
 endif ()
 
 if (FLTK_USE_BUILTIN_JPEG)
-  message (STATUS "Image Libraries: JPEG = Builtin")
+  message (STATUS "Image Libraries:         JPEG = Builtin")
 else ()
-  message (STATUS "Image Libraries: JPEG = System")
+  message (STATUS "Image Libraries:         JPEG = System")
 endif ()
 
 if (FLTK_USE_BUILTIN_PNG)
-  message (STATUS "                 PNG  = Builtin")
+  message (STATUS "                         PNG  = Builtin")
 else ()
-  message (STATUS "                 PNG  = System")
+  message (STATUS "                         PNG  = System")
 endif ()
 
 if (FLTK_USE_BUILTIN_ZLIB)
-  message (STATUS "                 ZLIB = Builtin")
+  message (STATUS "                         ZLIB = Builtin")
 else ()
-  message (STATUS "                 ZLIB = System")
+  message (STATUS "                         ZLIB = System")
 endif ()
 
 if (UNIX AND NOT (APPLE AND NOT OPTION_APPLE_X11))

@@ -412,19 +412,8 @@ if (OPTION_CAIRO OR OPTION_CAIROEXT)
     if (OPTION_CAIROEXT)
       set (FLTK_HAVE_CAIROEXT 1)
     endif (OPTION_CAIROEXT)
-    add_subdirectory (cairo)
 
-    if (0)
-      fl_debug_var (PKG_CAIRO_INCLUDE_DIRS)
-      fl_debug_var (PKG_CAIRO_CFLAGS)
-      fl_debug_var (PKG_CAIRO_LIBRARIES)
-      fl_debug_var (PKG_CAIRO_LIBRARY_DIRS)
-      fl_debug_var (PKG_CAIRO_STATIC_INCLUDE_DIRS)
-      fl_debug_var (PKG_CAIRO_STATIC_CFLAGS)
-      fl_debug_var (PKG_CAIRO_STATIC_LIBRARIES)
-      fl_debug_var (PKG_CAIRO_STATIC_LIBRARY_DIRS)
-    endif()
-
+    ### FIXME ###
     include_directories (${PKG_CAIRO_INCLUDE_DIRS})
 
     # Cairo libs and flags for fltk-config
@@ -442,15 +431,66 @@ if (OPTION_CAIRO OR OPTION_CAIROEXT)
     string (REPLACE ";" " " CAIROLIBS  "${CAIROLIBS}")
     string (REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
 
-    # fl_debug_var (FLTK_LDLIBS)
-    # fl_debug_var (CAIROFLAGS)
-    # fl_debug_var (CAIROLIBS)
+  else (PKG_CAIRO_FOUND)
 
-  else ()
-    message (STATUS "*** Cairo was requested but not found - please check your cairo installation")
-    message (STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
-    message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
+    if (NOT MSVC)
+      message (STATUS "*** Cairo was requested but not found - please check your cairo installation")
+      message (STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
+      message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
+    endif ()
+
+    # Tweak Cairo includes / libs / paths for Visual Studio (TEMPORARY solution).
+    # Todo: find a better way to set the required variables and flags!
+    # AlbrechtS 03/2023
+
+    message (STATUS "--- Cairo not found: trying to find Cairo for MSVC ...")
+
+    if (NOT FLTK_CAIRO_DIR)
+      message (STATUS "--- Please set FLTK_CAIRO_DIR to point at the Cairo installation folder ...")
+      message (STATUS "    ... with files 'include/cairo.h' and 'lib/x64/cairo.lib'")
+      message (STATUS "--- Example: cmake -DFLTK_CAIRO_DIR=\"C:/cairo-windows\" ...")
+      message (STATUS "--- Note: this will be changed in the future; currently only 64-bit supported")
+      message (FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
+    endif ()
+
+    set (CAIROLIBS "-lcairo")                             # should be correct: needs cairo.lib
+
+    # simulate results of 'pkg_search_module (PKG_CAIRO cairo)' and more (above)
+    # these variables will be used later
+
+    set (PKG_CAIRO_LIBRARIES "cairo")
+    set (PKG_CAIRO_INCLUDE_DIRS "${FLTK_CAIRO_DIR}/include")
+    set (PKG_CAIRO_LIBRARY_DIRS "${FLTK_CAIRO_DIR}/lib/x64/")
+
+    ### FIXME ###
+    include_directories (${PKG_CAIRO_INCLUDE_DIRS})
+
+    set (FLTK_HAVE_CAIRO 1)
+    if (OPTION_CAIROEXT)
+      set (FLTK_HAVE_CAIROEXT 1)
+    endif (OPTION_CAIROEXT)
+
   endif (PKG_CAIRO_FOUND)
+
+  if (0) # 1 = DEBUG, 0 = no output
+    message (STATUS "--- options.cmake: Cairo related variables ---")
+    if (MSVC)
+      fl_debug_var (FLTK_CAIRO_DIR)
+    endif (MSVC)
+    fl_debug_var (PKG_CAIRO_INCLUDE_DIRS)
+    fl_debug_var (PKG_CAIRO_CFLAGS)
+    fl_debug_var (PKG_CAIRO_LIBRARIES)
+    fl_debug_var (PKG_CAIRO_LIBRARY_DIRS)
+    fl_debug_var (PKG_CAIRO_STATIC_INCLUDE_DIRS)
+    fl_debug_var (PKG_CAIRO_STATIC_CFLAGS)
+    fl_debug_var (PKG_CAIRO_STATIC_LIBRARIES)
+    fl_debug_var (PKG_CAIRO_STATIC_LIBRARY_DIRS)
+    message (STATUS "--- fltk-config/Cairo variables ---")
+    fl_debug_var (FLTK_LDLIBS)
+    fl_debug_var (CAIROFLAGS)
+    fl_debug_var (CAIROLIBS)
+    message (STATUS "--- End of Cairo related variables ---")
+  endif() # 1 = DEBUG, ...
 
 endif (OPTION_CAIRO OR OPTION_CAIROEXT)
 
