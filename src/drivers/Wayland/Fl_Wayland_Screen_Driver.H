@@ -77,7 +77,7 @@ public:
     float gui_scale; // FLTK scale factor
     struct wl_list link;
   };
-  
+
 // static member variables
   static FL_EXPORT struct wl_display *wl_display;
   static const struct wl_data_device_listener *p_data_device_listener;
@@ -90,7 +90,7 @@ public:
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
   static Fl_Window *surface_to_window(struct wl_surface *);
   static bool own_output(struct wl_output *output);
-  
+
 // member variables
   struct wl_cursor *xc_arrow;
   struct wl_cursor *xc_ns;
@@ -120,11 +120,11 @@ public:
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
-  
+
 // constructor
   Fl_Wayland_Screen_Driver();
 
-// overriden functions from parent class Fl_Screen_Driver
+// overridden functions from parent class Fl_Screen_Driver
   APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return PER_SCREEN_APP_SCALING; }
   float scale(int n) FL_OVERRIDE;
   void scale(int n, float f) FL_OVERRIDE;

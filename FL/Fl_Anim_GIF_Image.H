@@ -126,7 +126,7 @@ public:
   int frame_w(int frame) const;
   int frame_h(int frame) const;
 
-  // -- overriden methods
+  // -- overridden methods
   void color_average(Fl_Color c, float i) FL_OVERRIDE;
   Fl_Image *copy(int W, int H) const FL_OVERRIDE;
   Fl_Image *copy() const { return Fl_Pixmap::copy(); }

@@ -421,7 +421,7 @@ int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, 
       swap = next;
       next = current;
       current = swap;
-      *(next+1) = 0;          // must clean the first cell, next are overriden by *1
+      *(next+1) = 0;          // must clean the first cell, next are overridden by *1
       for (i=0; i<w; i++){
         for (k=0; k<4; k++){   // generating 4 x-pixels for 1 RGB
           short error, o1, o2, o3;
@@ -454,7 +454,7 @@ int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, 
       swap = next;
       next = current;
       current = swap;
-      *(next+1) = 0;          // must clean the first cell, next are overriden by *1
+      *(next+1) = 0;          // must clean the first cell, next are overridden by *1
 
       for (i = w-1; i >= 0; i--){
 

@@ -252,7 +252,7 @@ public:
   FL_DEPRECATED("in 1.4.0 - use vposition(pos) instead",
   void position(int pos)) { return vposition(pos); }
   void position(int x, int y) { Fl_Group::position(x, y); }
-  
+
   /**
     Gets the horizontal scroll position of the list as a pixel position \p pos.
     The position returned is how many pixels of the list are scrolled off the left edge

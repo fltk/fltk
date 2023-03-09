@@ -1073,6 +1073,7 @@ Fl_Anim_GIF_Image.o: ../FL/Fl_Plugin.H
 Fl_Anim_GIF_Image.o: ../FL/Fl_Preferences.H
 Fl_Anim_GIF_Image.o: ../FL/Fl_RGB_Image.H
 Fl_Anim_GIF_Image.o: ../FL/Fl_Shared_Image.H
+Fl_Anim_GIF_Image.o: ../FL/fl_string_functions.h
 Fl_Anim_GIF_Image.o: ../FL/fl_types.h
 Fl_Anim_GIF_Image.o: ../FL/fl_utf8.h
 Fl_Anim_GIF_Image.o: ../FL/Fl_Widget.H

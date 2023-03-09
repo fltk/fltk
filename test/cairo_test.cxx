@@ -42,7 +42,7 @@
 //    (configure --enable-cairoext or CMake OPTION_CAIROEXT)
 //    which defines the preprocessor variable FLTK_HAVE_CAIROEXT.
 //    If Fl::cairo_autolink_context(true); is called at the beginning
-//    of main(), any overriden draw() function gets access to an adequate
+//    of main(), any overridden draw() function gets access to an adequate
 //    Cairo context with Fl::cairo_cc() without having to call
 //    Fl::cairo_make_current(Fl_Window*).
 

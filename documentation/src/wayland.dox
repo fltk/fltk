@@ -47,7 +47,7 @@ Wayland differs noticeably from X11 in that the position of a window in the disp
 completely hidden to the client app. This prevents function \c Fl_Window::position() from having
 any effect on a top-level window. Wayland also prevents a client app from knowing whether
 a window is minimized: \c Fl_Window::show() has no effect on an already mapped window.
-Subwindows can be positionned as usual relatively to their
+Subwindows can be positioned as usual relatively to their
 parent window. FLTK uses that for the small, yellow windows that display
 the new scale factor value when it's changed: these are created as short-lived subwindows
 centered above \c Fl::first_window().

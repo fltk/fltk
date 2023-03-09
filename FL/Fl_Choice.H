@@ -72,7 +72,7 @@
       This method sets the changed() flag.
   \li <tt>void Fl_Widget::clear_changed()</tt>
       This method clears the changed() flag.
- 
+
  The inherited Fl_Menu_::down_box() methods can be used as follows:
   \li <tt>Fl_Boxtype Fl_Menu_::down_box() const</tt>
       Gets the current down box, which is used when the menu is popped up.
