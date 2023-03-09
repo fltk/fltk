@@ -305,6 +305,7 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
     wl_display_roundtrip(fl_wl_display());
     wl_display_roundtrip(fl_wl_display());
+    wl_display_roundtrip(fl_wl_display()); // necessary for gl_overlay
   }
 }
 
