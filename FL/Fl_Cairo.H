@@ -22,7 +22,7 @@
     specific Cairo headers. This is no longer true since 1.4.0.
 
   This header file is platform agnostic. If you need platform specific Cairo
-  headers you need to #include them in your source file.
+  headers you need to \#include them in your source file.
 
   To use FLTK's builtin Cairo support you need to <tt>\#include \<FL/Fl.H></tt>
   \b before you include any other FLTK header which is officially required anyway.
