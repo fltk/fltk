@@ -61,6 +61,7 @@
 
 #else /* FL_DOXYGEN */
 
+#ifdef __cplusplus
 
 /*
   Declare macros specific to Visual Studio.
@@ -132,6 +133,7 @@
 #if (__cplusplus >= 199711L) // C++89
 #endif // C++89
 
+#endif // __cplusplus
 
 /*
  Declare macros specific to clang
