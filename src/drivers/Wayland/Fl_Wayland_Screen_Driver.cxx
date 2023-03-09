@@ -610,7 +610,7 @@ int Fl_Wayland_Screen_Driver::compose(int& del) {
 
 void Fl_Wayland_Screen_Driver::compose_reset()
 {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl::compose_state = 0;
   next_marked_length = 0;
   xkb_compose_state_reset(seat->xkb_compose_state);
@@ -1173,7 +1173,7 @@ void Fl_Wayland_Screen_Driver::init_workarea()
 
 
 int Fl_Wayland_Screen_Driver::x() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1182,7 +1182,7 @@ int Fl_Wayland_Screen_Driver::x() {
 }
 
 int Fl_Wayland_Screen_Driver::y() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1191,7 +1191,7 @@ int Fl_Wayland_Screen_Driver::y() {
 }
 
 int Fl_Wayland_Screen_Driver::w() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1200,7 +1200,7 @@ int Fl_Wayland_Screen_Driver::w() {
 }
 
 int Fl_Wayland_Screen_Driver::h() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
     break;
@@ -1210,7 +1210,7 @@ int Fl_Wayland_Screen_Driver::h() {
 
 
 void Fl_Wayland_Screen_Driver::init() {
-  if (!Fl_Wayland_Screen_Driver::wl_display) open_display();
+  if (!Fl_Wayland_Screen_Driver::wl_registry) open_display();
 }
 
 
