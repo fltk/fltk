@@ -25,13 +25,13 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
   float d = 1;
   if (!off) {
     fl_open_display();
-    if (Fl_Wayland_Window_Driver::wld_window && Fl_Wayland_Window_Driver::wld_window->output) {
-      d = Fl_Wayland_Window_Driver::wld_window->output->wld_scale;
+    if (Fl_Wayland_Window_Driver::wld_window) {
+      d = Fl_Wayland_Window_Driver::driver(Fl_Wayland_Window_Driver::wld_window->fl_win)->wld_scale();
     }
     d *= fl_graphics_driver->scale();
     if (d != 1 && high_res) {
-      w = int(w*d);
-      h = int(h*d);
+      w = int(w * d);
+      h = int(h * d);
     }
     struct fl_wld_buffer *off_ = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
     off_->stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w);
