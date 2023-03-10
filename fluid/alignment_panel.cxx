@@ -705,13 +705,19 @@ static void cb_Rename(Fl_Menu_*, void*) {
   g_layout_list.rename(new_name);
 }
 
+static void cb_Delete(Fl_Menu_*, void*) {
+  // remove the current suite
+
+  g_layout_list.remove(g_layout_list.current_suite());
+}
+
 Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename...", 0,  (Fl_Callback*)cb_Rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Load...", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  0, 0, 129, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save in User Settings", 0,  0, 0, 3, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save in Project File", 0,  0, 0, 131, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Delete", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Delete", 0,  (Fl_Callback*)cb_Delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

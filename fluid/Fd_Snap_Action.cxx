@@ -51,8 +51,8 @@ static Fd_Layout_Preset grid_dlg = { 5 };
 static Fd_Layout_Preset grid_tool = { 6 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { "FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true },
-  { "Grid", &grid_app, &grid_dlg, &grid_tool, true }
+  { (char*)"FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true },
+  { (char*)"Grid", &grid_app, &grid_dlg, &grid_tool, true }
 };
 
 static Fl_Menu_Item static_main_menu[] = {
@@ -214,6 +214,22 @@ void Fd_Layout_List::rename(const char *name) {
   list_[n].name = strdup(name);
   main_menu_[n].label(name);
   choice_menu_[n].label(name);
+  update_dialogs();
+}
+
+// TODO: make sure that we do not remove a read-only layout
+void Fd_Layout_List::remove(int ix) {
+  // assert(ix>=0);
+  // assert(ix<list_size_);
+  // assert(!list[ix].is_static);
+  int tail = list_size_-ix-1;
+  if (tail)
+    ::memmove(list_+ix, list_+ix+1, tail * sizeof(Fd_Layout_Suite));
+  ::memmove(main_menu_+ix, main_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
+  ::memmove(choice_menu_+ix, choice_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
+  list_size_--;
+  if (g_layout_list.current_suite() >= list_size_)
+    g_layout_list.current_suite(list_size_ - 1);
   update_dialogs();
 }
 

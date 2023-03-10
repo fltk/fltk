@@ -715,7 +715,7 @@ const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_s
 if (new_name == NULL)
   return; 
 
-g_layout_list.rename(new_name);} selected
+g_layout_list.rename(new_name);}
         xywh {0 0 31 20} divider
       }
       MenuItem {} {
@@ -736,7 +736,10 @@ g_layout_list.rename(new_name);} selected
       }
       MenuItem {} {
         label Delete
-        xywh {0 0 31 20} deactivate
+        callback {// remove the current suite
+
+g_layout_list.remove(g_layout_list.current_suite());} selected
+        xywh {0 0 31 20}
       }
     }
     Fl_Group {} {
