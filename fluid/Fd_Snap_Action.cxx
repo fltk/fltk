@@ -51,8 +51,8 @@ static Fd_Layout_Preset grid_dlg = { 5 };
 static Fd_Layout_Preset grid_tool = { 6 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true },
-  { (char*)"Grid", &grid_app, &grid_dlg, &grid_tool, true }
+  { (char*)"FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true, false, false },
+  { (char*)"Grid", &grid_app, &grid_dlg, &grid_tool, true, false, false }
 };
 
 static Fl_Menu_Item static_main_menu[] = {
@@ -69,11 +69,7 @@ static Fl_Menu_Item static_choice_menu[] = {
 
 Fd_Layout_List g_layout_list;
 
-Fd_Layout_Preset &Fd_Layout_Preset::operator=(Fd_Layout_Preset const& rhs) {
-  if (this != &rhs)
-    ::memcpy(this, &rhs, sizeof(Fd_Layout_Preset));
-  return *this;
-}
+// ---- Callbacks ------------------------------------------------------ MARK: -
 
 void layout_suite_marker(Fl_Widget *, void *) {
   // never called
@@ -113,6 +109,105 @@ void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
   }
 }
 
+// ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
+
+Fd_Layout_Preset &Fd_Layout_Preset::operator=(Fd_Layout_Preset const& rhs) {
+  if (this != &rhs)
+    ::memcpy(this, &rhs, sizeof(Fd_Layout_Preset));
+  return *this;
+}
+
+void Fd_Layout_Preset::write(Fl_Preferences &prefs) {
+  Fl_Preferences p_win(prefs, "Window");
+  p_win.set("left_margin", left_window_margin);
+  p_win.set("right_margin", right_window_margin);
+  p_win.set("top_margin", top_window_margin);
+  p_win.set("bottom_margin", bottom_window_margin);
+  p_win.set("grid_x", window_grid_x);
+  p_win.set("grid_y", window_grid_y);
+
+  Fl_Preferences p_grp(prefs, "Group");
+  p_grp.set("left_margin", left_group_margin);
+  p_grp.set("right_margin", right_group_margin);
+  p_grp.set("top_margin", top_group_margin);
+  p_grp.set("bottom_margin", bottom_group_margin);
+  p_grp.set("grid_x", group_grid_x);
+  p_grp.set("grid_y", group_grid_y);
+
+  Fl_Preferences p_tbs(prefs, "Tabs");
+  p_tbs.set("top_margin", top_tabs_margin);
+  p_tbs.set("bottom_margin", bottom_tabs_margin);
+
+  Fl_Preferences p_wgt(prefs, "Widget");
+  p_wgt.set("min_w", widget_min_w);
+  p_wgt.set("inc_w", widget_inc_w);
+  p_wgt.set("gap_x", widget_gap_x);
+  p_wgt.set("min_h", widget_min_h);
+  p_wgt.set("inc_h", widget_inc_h);
+  p_wgt.set("gap_y", widget_gap_y);
+
+  Fl_Preferences p_lyt(prefs, "Layout");
+  p_lyt.set("labelfont", labelfont);
+  p_lyt.set("labelsize", labelsize);
+  p_lyt.set("textfont", textfont);
+  p_lyt.set("textsize", textsize);
+}
+
+void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
+  Fl_Preferences p_win(prefs, "Window");
+  p_win.get("left_margin", left_window_margin, 15);
+  p_win.get("right_margin", right_window_margin, 15);
+  p_win.get("top_margin", top_window_margin, 15);
+  p_win.get("bottom_margin", bottom_window_margin, 15);
+  p_win.get("grid_x", window_grid_x, 0);
+  p_win.get("grid_y", window_grid_y, 0);
+
+  Fl_Preferences p_grp(prefs, "Group");
+  p_grp.get("left_margin", left_group_margin, 10);
+  p_grp.get("right_margin", right_group_margin, 10);
+  p_grp.get("top_margin", top_group_margin, 10);
+  p_grp.get("bottom_margin", bottom_group_margin, 10);
+  p_grp.get("grid_x", group_grid_x, 0);
+  p_grp.get("grid_y", group_grid_y, 0);
+
+  Fl_Preferences p_tbs(prefs, "Tabs");
+  p_tbs.get("top_margin", top_tabs_margin, 25);
+  p_tbs.get("bottom_margin", bottom_tabs_margin, 25);
+
+  Fl_Preferences p_wgt(prefs, "Widget");
+  p_wgt.get("min_w", widget_min_w, 20);
+  p_wgt.get("inc_w", widget_inc_w, 10);
+  p_wgt.get("gap_x", widget_gap_x, 4);
+  p_wgt.get("min_h", widget_min_h, 20);
+  p_wgt.get("inc_h", widget_inc_h, 4);
+  p_wgt.get("gap_y", widget_gap_y, 8);
+
+  Fl_Preferences p_lyt(prefs, "Layout");
+  p_lyt.get("labelfont", labelfont, 0);
+  p_lyt.get("labelsize", labelsize, 14);
+  p_lyt.get("textfont", textfont, 0);
+  p_lyt.get("textsize", textsize, 14);
+}
+
+// ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
+
+void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
+  prefs.set("name", name);
+  for (int i = 0; i < 3; ++i) {
+    Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
+    layout[i]->write(prefs_preset);
+  }
+}
+
+void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
+  for (int i = 0; i < 3; ++i) {
+    Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
+    layout[i]->read(prefs_preset);
+  }
+}
+
+// ---- Fd_Layout_List ------------------------------------------------- MARK: -
+
 Fd_Layout_List::Fd_Layout_List()
 : main_menu_(static_main_menu),
   choice_menu_(static_choice_menu),
@@ -145,6 +240,53 @@ void Fd_Layout_List::update_dialogs() {
   }
   preset_menu[g_layout_list.current_preset()].setonly();
   g_layout_list.main_menu_[g_layout_list.current_suite()].setonly();
+}
+
+void Fd_Layout_List::write(Fl_Preferences &prefs) {
+  Fl_Preferences prefs_list(prefs, "Layouts");
+  prefs_list.clear();
+  prefs_list.set("current_suite", list_[current_suite()].name);
+  prefs_list.set("current_preset", current_preset());
+  int n = 0;
+  for (int i = 0; i < list_size_; ++i) {
+    Fd_Layout_Suite &suite = list_[i];
+    if (!suite.is_static && suite.is_user_setting) {
+      Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(n++));
+      suite.write(prefs_suite);
+    }
+  }
+}
+
+void Fd_Layout_List::read(Fl_Preferences &prefs) {
+  Fl_Preferences prefs_list(prefs, "Layouts");
+  Fl_String cs;
+  int cp;
+  prefs_list.get("current_suite", cs, "");
+  prefs_list.get("current_preset", cp, 0);
+  for (int i = 0; i < prefs_list.groups(); ++i) {
+    Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(i));
+    char *new_name = NULL;
+    prefs_suite.get("name", new_name, NULL);
+    if (new_name) {
+      int n = add(new_name);
+      list_[n].read(prefs_suite);
+      ::free(new_name);
+    }
+  }
+  current_suite(cs);
+  current_preset(cp);
+  update_dialogs();
+}
+
+void Fd_Layout_List::current_suite(Fl_String arg_name) {
+  if (arg_name.empty()) return;
+  for (int i = 0; i < list_size_; ++i) {
+    Fd_Layout_Suite &suite = list_[i];
+    if (suite.name && (strcmp(suite.name, arg_name.c_str()) == 0)) {
+      current_suite(i);
+      break;
+    }
+  }
 }
 
 /**
@@ -195,6 +337,8 @@ int Fd_Layout_List::add(const char *name) {
     new_suite.layout[i] = old_suite.layout[i];
   }
   new_suite.is_static = false;
+  new_suite.is_user_setting = old_suite.is_static || old_suite.is_user_setting;
+  new_suite.is_project_setting = old_suite.is_project_setting;
   ::memcpy(list_+n, &new_suite, sizeof(Fd_Layout_Suite));
   main_menu_[n].label(new_suite.name);
   main_menu_[n].callback(main_menu_[0].callback());
@@ -204,7 +348,7 @@ int Fd_Layout_List::add(const char *name) {
   list_size_ = n + 1;
   current_suite(n);
   update_dialogs();
-  return 0;
+  return n;
 }
 
 // TODO: make sure that we do not rename a read-only layout
@@ -222,6 +366,7 @@ void Fd_Layout_List::remove(int ix) {
   // assert(ix>=0);
   // assert(ix<list_size_);
   // assert(!list[ix].is_static);
+  bool update_user_settings = list_[ix].is_user_setting;
   int tail = list_size_-ix-1;
   if (tail)
     ::memmove(list_+ix, list_+ix+1, tail * sizeof(Fd_Layout_Suite));
@@ -233,6 +378,8 @@ void Fd_Layout_List::remove(int ix) {
   update_dialogs();
 }
 
+// ---- Helper --------------------------------------------------------- MARK: -
+
 static void draw_h_arrow(int, int, int);
 static void draw_v_arrow(int x, int y1, int y2);
 static void draw_left_brace(const Fl_Widget *w);
@@ -242,9 +389,6 @@ static void draw_bottom_brace(const Fl_Widget *w);
 static void draw_grid(int x, int y, int dx, int dy);
 static void draw_width(int x, int y, int r, Fl_Align a);
 static void draw_height(int x, int y, int b, Fl_Align a);
-
-static int fl_min(int a, int b) { return (a < b ? a : b); }
-static int fl_min(int a, int b, int c) { return fl_min(a, fl_min(b, c)); }
 
 static int nearest(int x, int left, int grid, int right=0x7fff) {
   int grid_x = ((x-left+grid/2)/grid)*grid+left;
@@ -268,6 +412,8 @@ static bool in_tabs(Fd_Snap_Data &d) {
 static Fl_Group *parent(Fd_Snap_Data &d) {
   return (d.wgt->o->parent());
 }
+
+// ---- Fd_Snap_Action ------------------------------------------------- MARK: -
 
 /** \class Fd_Snap_Action
  */
@@ -361,7 +507,6 @@ void Fd_Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
     y_step = layout.widget_gap_y;
   }
 }
-
 
 // ---- snapping prototypes -------------------------------------------- MARK: -
 
@@ -694,7 +839,7 @@ class Fd_Snap_Siblings_Left : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Left() { type = 1; mask = FD_LEFT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_x_(d, d.bx, s->x()+s->w()),
+    return fd_min(check_x_(d, d.bx, s->x()+s->w()),
                   check_x_(d, d.bx, s->x()+s->w()+layout.widget_gap_x) );
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -719,7 +864,7 @@ class Fd_Snap_Siblings_Right : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Right() { type = 1; mask = FD_RIGHT|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_x_(d, d.br, s->x()),
+    return fd_min(check_x_(d, d.br, s->x()),
                   check_x_(d, d.br, s->x()-layout.widget_gap_x));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -744,7 +889,7 @@ class Fd_Snap_Siblings_Top : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Top() { type = 2; mask = FD_TOP|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_y_(d, d.by, s->y()+s->h()),
+    return fd_min(check_y_(d, d.by, s->y()+s->h()),
                   check_y_(d, d.by, s->y()+s->h()+layout.widget_gap_y));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {
@@ -769,7 +914,7 @@ class Fd_Snap_Siblings_Bottom : public Fd_Snap_Sibling {
 public:
   Fd_Snap_Siblings_Bottom() { type = 2; mask = FD_BOTTOM|FD_DRAG; }
   int sibling_check(Fd_Snap_Data &d, Fl_Widget *s) FL_OVERRIDE {
-    return fl_min(check_y_(d, d.bt, s->y()),
+    return fd_min(check_y_(d, d.bt, s->y()),
                   check_y_(d, d.bt, s->y()-layout.widget_gap_y));
   }
   void draw(Fd_Snap_Data &d) FL_OVERRIDE {

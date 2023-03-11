@@ -317,6 +317,10 @@ struct FL_EXPORT Fl_Menu_Item {
         before FLTK 1.4.0.
   */
   int value() const {return (flags & FL_MENU_VALUE) ? 1 : 0;}
+
+  /** Sets the current value of the check or radio item. */
+  void value(int v) { v ? set() : clear(); }
+
   /**
     Turns the check or radio item "on" for the menu item. Note that this
     does not turn off any adjacent radio items like setonly() does.

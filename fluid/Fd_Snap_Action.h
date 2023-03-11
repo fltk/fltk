@@ -64,6 +64,9 @@ public:
   char *name;
   Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
   bool is_static;
+  bool is_user_setting;
+  bool is_project_setting;
+//  char *filename;
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
@@ -92,6 +95,7 @@ public:
   void update_dialogs();
   int current_suite() const { return current_suite_; }
   void current_suite(int ix) { current_suite_ = ix; }
+  void current_suite(Fl_String);
   int current_preset() const { return current_preset_; }
   void current_preset(int ix) { current_preset_ = ix; }
   Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }

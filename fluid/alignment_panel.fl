@@ -703,10 +703,24 @@ if (new_name == NULL)
 g_layout_list.add(new_name);}
       xywh {300 11 24 24}
     }
-    Fl_Menu_Button w_layout_menu {open
+    Fl_Menu_Button w_layout_menu {
+      callback {if (v == LOAD) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  if (suite.is_static) {
+    w_layout_menu_rename->deactivate();
+    w_layout_menu_user_setting->deactivate();
+    w_layout_menu_delete->deactivate();
+  } else {
+    w_layout_menu_rename->activate();
+    w_layout_menu_user_setting->activate();
+    w_layout_menu_delete->activate();
+  }
+  w_layout_menu_user_setting->value(suite.is_user_setting);
+  w_layout_menu_project_setting->value(suite.is_project_setting);
+}} open
       xywh {324 11 24 24}
     } {
-      MenuItem {} {
+      MenuItem w_layout_menu_rename {
         label {Rename...}
         callback {// Rename the current layout suite
 
@@ -718,27 +732,32 @@ if (new_name == NULL)
 g_layout_list.rename(new_name);}
         xywh {0 0 31 20} divider
       }
-      MenuItem {} {
+      MenuItem w_layout_menu_load {
         label {Load...}
         xywh {0 0 31 20} deactivate
       }
-      MenuItem {} {
+      MenuItem w_layout_menu_save {
         label {Save...}
         xywh {0 0 31 20} deactivate divider
       }
-      MenuItem {} {
+      MenuItem w_layout_menu_user_setting {
         label {Save in User Settings}
-        xywh {0 0 31 20} type Toggle deactivate
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+if (!suite.is_static)
+  suite.is_user_setting = o->value();} selected
+        xywh {0 0 31 20} type Toggle
       }
-      MenuItem {} {
+      MenuItem w_layout_menu_project_setting {
         label {Save in Project File}
-        xywh {0 0 31 20} type Toggle deactivate divider
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+suite.is_project_setting = o->value();}
+        xywh {0 0 31 20} type Toggle divider
       }
-      MenuItem {} {
+      MenuItem w_layout_menu_delete {
         label Delete
         callback {// remove the current suite
 
-g_layout_list.remove(g_layout_list.current_suite());} selected
+g_layout_list.remove(g_layout_list.current_suite());}
         xywh {0 0 31 20}
       }
     }

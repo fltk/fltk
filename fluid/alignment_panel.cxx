@@ -694,7 +694,24 @@ static void cb_(Fl_Button*, void* v) {
 
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 
-static void cb_Rename(Fl_Menu_*, void*) {
+static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
+  if (v == LOAD) {
+    Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+    if (suite.is_static) {
+      w_layout_menu_rename->deactivate();
+      w_layout_menu_user_setting->deactivate();
+      w_layout_menu_delete->deactivate();
+    } else {
+      w_layout_menu_rename->activate();
+      w_layout_menu_user_setting->activate();
+      w_layout_menu_delete->activate();
+    }
+    w_layout_menu_user_setting->value(suite.is_user_setting);
+    w_layout_menu_project_setting->value(suite.is_project_setting);
+  }
+}
+
+static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   // Rename the current layout suite
 
   Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name;
@@ -705,19 +722,30 @@ static void cb_Rename(Fl_Menu_*, void*) {
   g_layout_list.rename(new_name);
 }
 
-static void cb_Delete(Fl_Menu_*, void*) {
+static void cb_w_layout_menu_user_setting(Fl_Menu_* o, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  if (!suite.is_static)
+    suite.is_user_setting = o->value();
+}
+
+static void cb_w_layout_menu_project_setting(Fl_Menu_* o, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  suite.is_project_setting = o->value();
+}
+
+static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
   // remove the current suite
 
   g_layout_list.remove(g_layout_list.current_suite());
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
- {"Rename...", 0,  (Fl_Callback*)cb_Rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Load...", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  0, 0, 129, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in User Settings", 0,  0, 0, 3, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in Project File", 0,  0, 0, 131, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Delete", 0,  (Fl_Callback*)cb_Delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -929,6 +957,7 @@ Fl_Double_Window* make_layout_window() {
       o->callback((Fl_Callback*)cb_);
     } // Fl_Button* o
     { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
+      w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
       w_layout_menu->menu(menu_w_layout_menu);
     } // Fl_Menu_Button* w_layout_menu
     { Fl_Group* o = new Fl_Group(121, 48, 270, 20);

@@ -137,4 +137,7 @@ extern void align_widget_cb(Fl_Widget *, long);
 extern void widget_size_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
 
+inline int fd_min(int a, int b) { return (a < b ? a : b); }
+inline int fd_min(int a, int b, int c) { return fd_min(a, fd_min(b, c)); }
+
 #endif // _FLUID_FLUID_H

@@ -47,8 +47,6 @@
 
 extern Fl_Preferences   fluid_prefs;
 
-static int fl_min(int a, int b) { return (a < b ? a : b); }
-
 // Update the XYWH values in the widget panel...
 static void update_xywh() {
   if (current_widget && current_widget->is_widget()) {

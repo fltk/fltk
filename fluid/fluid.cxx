@@ -72,7 +72,7 @@ Fl_Menu_Bar *main_menubar = NULL;
 Fl_Window *main_window;
 
 /// Fluid application preferences, allways accessible, will be flushed when app closes.
-Fl_Preferences  fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
+Fl_Preferences fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
@@ -686,6 +686,8 @@ void exit_cb(Fl_Widget *,void *) {
     delete about_panel;
   if (help_dialog)
     delete help_dialog;
+
+  g_layout_list.write(fluid_prefs);
 
   undo_clear();
 
@@ -2091,6 +2093,7 @@ int main(int argc,char **argv) {
       // Open previous file when no file specified...
       open_history_cb(0, absolute_history[0]);
     }
+    g_layout_list.read(fluid_prefs);
   }
   undo_suspend();
   if (c && !read_file(c,0)) {
@@ -2137,7 +2140,6 @@ int main(int argc,char **argv) {
   Fl::run();
 #else
   while (!quit_flag) Fl::wait();
-
   if (quit_flag) exit_cb(0,0);
 #endif // _WIN32
 
