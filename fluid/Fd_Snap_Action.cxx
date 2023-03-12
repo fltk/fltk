@@ -25,6 +25,8 @@
 #include <math.h>
 #include <string.h>
 
+#include <assert.h>
+
 // TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
 // TODO: save layout file
 // TODO: load layout file
@@ -80,15 +82,20 @@ Fd_Layout_List g_layout_list;
 // ---- Callbacks ------------------------------------------------------ MARK: -
 
 void layout_suite_marker(Fl_Widget *, void *) {
+  assert(0);
   // intentionally left empty
 }
 
 // TODO: this should be in alignment_panel.h
 void edit_layout_suite_cb(Fl_Choice *w, void *user_data) {
   if (user_data == LOAD) {
+    assert(g_layout_list.current_suite() >= 0);
+    assert(g_layout_list.current_suite() < g_layout_list.list_size_);
     w->value(g_layout_list.current_suite());
   } else {
     int index = w->value();
+    assert(index >= 0);
+    assert(index < g_layout_list.list_size_);
     g_layout_list.current_suite(index);
     g_layout_list.update_dialogs();
   }
@@ -96,12 +103,16 @@ void edit_layout_suite_cb(Fl_Choice *w, void *user_data) {
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
+  assert(index >= 0);
+  assert(index < g_layout_list.list_size_);
   g_layout_list.current_suite(index);
   g_layout_list.update_dialogs();
 }
 
 void select_layout_preset_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
+  assert(index >= 0);
+  assert(index < 3);
   g_layout_list.current_preset(index);
   g_layout_list.update_dialogs();
 }
@@ -109,6 +120,8 @@ void select_layout_preset_cb(Fl_Widget *, void *user_data) {
 // TODO: this should be in alignment_panel.h
 void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
   int index = (int)(w - preset_choice[0]);
+  assert(index >= 0);
+  assert(index < 3);
   if (user_data == LOAD) {
     w->value(g_layout_list.current_preset() == index);
   } else {
@@ -120,6 +133,7 @@ void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
 // ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
 
 void Fd_Layout_Preset::write(Fl_Preferences &prefs) {
+  assert(this);
   Fl_Preferences p_win(prefs, "Window");
   p_win.set("left_margin", left_window_margin);
   p_win.set("right_margin", right_window_margin);
@@ -156,6 +170,7 @@ void Fd_Layout_Preset::write(Fl_Preferences &prefs) {
 }
 
 void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
+  assert(this);
   Fl_Preferences p_win(prefs, "Window");
   p_win.get("left_margin", left_window_margin, 15);
   p_win.get("right_margin", right_window_margin, 15);
@@ -194,25 +209,35 @@ void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
 // ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
 
 void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
+  assert(this);
+  assert(name);
   prefs.set("name", name);
   for (int i = 0; i < 3; ++i) {
     Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
+    assert(layout[i]);
     layout[i]->write(prefs_preset);
   }
 }
 
 void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
+  assert(this);
   for (int i = 0; i < 3; ++i) {
     Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
+    assert(layout[i]);
     layout[i]->read(prefs_preset);
   }
 }
 
 int Fd_Layout_Suite::load(const char *filename) {
+  assert(this);
+  assert(filename);
   const char *name = fl_filename_name(filename);
   if (!name) return -1;
   int n = g_layout_list.add(name);
+  assert(n >= 0);
+  assert(n < g_layout_list.list_size_);
   Fd_Layout_Suite &suite = g_layout_list[n];
+  assert(suite.name);
   Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
   Fl_Preferences prefs_list(prefs, "Layouts");
   suite.filename = fl_strdup(filename);
@@ -221,6 +246,8 @@ int Fd_Layout_Suite::load(const char *filename) {
 }
 
 int Fd_Layout_Suite::save(const char *filename) {
+  assert(this);
+  assert(filename);
   Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
   prefs.clear();
   Fl_Preferences prefs_list(prefs, "Layouts");
@@ -243,6 +270,7 @@ Fd_Layout_List::Fd_Layout_List()
 }
 
 Fd_Layout_List::~Fd_Layout_List() {
+  assert(this);
   if (!list_is_static_) {
     ::free(main_menu_);
     ::free(choice_menu_);
@@ -252,16 +280,23 @@ Fd_Layout_List::~Fd_Layout_List() {
 
 void Fd_Layout_List::update_dialogs() {
   static Fl_Menu_Item *preset_menu = NULL;
-  if (!preset_menu)
+  if (!preset_menu) {
     preset_menu = (Fl_Menu_Item*)main_menubar->find_item(select_layout_preset_cb);
-
-  layout = g_layout_list[g_layout_list.current_suite()].layout[g_layout_list.current_preset()];
+    assert(preset_menu);
+  }
+  assert(this);
+  assert(current_suite_ >= 0 );
+  assert(current_suite_ < list_size_);
+  assert(current_preset_ >= 0 );
+  assert(current_preset_ < 3);
+  layout = list_[current_suite_].layout[current_preset_];
+  assert(layout);
   if (grid_window) {
     grid_window->do_callback(grid_window, LOAD);
     layout_choice->redraw();
   }
-  preset_menu[g_layout_list.current_preset()].setonly();
-  g_layout_list.main_menu_[g_layout_list.current_suite()].setonly();
+  preset_menu[current_preset_].setonly();
+  main_menu_[current_suite_].setonly();
 }
 
 void Fd_Layout_List::write(Fl_Preferences &prefs) {
@@ -301,8 +336,10 @@ void Fd_Layout_List::read(Fl_Preferences &prefs) {
 }
 
 void Fd_Layout_List::current_suite(int ix) {
+  assert(ix >= 0);
+  assert(ix < list_size_);
   current_suite_ = ix;
-  layout = g_layout_list[current_suite_].layout[current_preset_];
+  layout = list_[current_suite_].layout[current_preset_];
 }
 
 void Fd_Layout_List::current_suite(Fl_String arg_name) {
@@ -317,8 +354,10 @@ void Fd_Layout_List::current_suite(Fl_String arg_name) {
 }
 
 void Fd_Layout_List::current_preset(int ix) {
+  assert(ix >= 0);
+  assert(ix < 3);
   current_preset_ = ix;
-  layout = g_layout_list[current_suite_].layout[current_preset_];
+  layout = list_[current_suite_].layout[current_preset_];
 }
 
 /**
@@ -360,11 +399,10 @@ int Fd_Layout_List::add(const char *name) {
     capacity(list_capacity_ * 2);
   }
   int n = list_size_;
-  Fd_Layout_Suite &old_suite = list_[current_suite()];
-  Fd_Layout_Suite new_suite;
-  // TODO: use placement 'new': new (list_[n]])Fd_Layout_Preset;
+  Fd_Layout_Suite &old_suite = list_[current_suite_];
+  Fd_Layout_Suite &new_suite = list_[n];
+  ::memset(&new_suite, 0, sizeof(Fd_Layout_Suite));
   new_suite.name = fl_strdup(name);
-  new_suite.filename = NULL;
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
@@ -372,13 +410,12 @@ int Fd_Layout_List::add(const char *name) {
   new_suite.is_static = false;
   new_suite.is_user_setting = old_suite.is_static || old_suite.is_user_setting;
   new_suite.is_project_setting = old_suite.is_project_setting;
-  ::memcpy(list_+n, &new_suite, sizeof(Fd_Layout_Suite));
   main_menu_[n].label(new_suite.name);
   main_menu_[n].callback(main_menu_[0].callback());
   main_menu_[n].argument(n);
   main_menu_[n].flags = main_menu_[0].flags;
   choice_menu_[n].label(new_suite.name);
-  list_size_ = n + 1;
+  list_size_++;
   current_suite(n);
   return n;
 }
@@ -400,8 +437,8 @@ void Fd_Layout_List::remove(int ix) {
   ::memmove(main_menu_+ix, main_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
   ::memmove(choice_menu_+ix, choice_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
   list_size_--;
-  if (g_layout_list.current_suite() >= list_size_)
-    g_layout_list.current_suite(list_size_ - 1);
+  if (current_suite() >= list_size_)
+    current_suite(list_size_ - 1);
 }
 
 // ---- Helper --------------------------------------------------------- MARK: -
