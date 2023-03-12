@@ -473,7 +473,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->left_window_margin);
 } else {
   layout->left_window_margin = (int)o->value();
-}} selected
+}}
       xywh {167 82 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -482,7 +482,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->right_window_margin);
 } else {
   layout->right_window_margin = (int)o->value();
-}} selected
+}}
       xywh {167 112 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -491,7 +491,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->top_window_margin);
 } else {
   layout->top_window_margin = (int)o->value();
-}} selected
+}}
       xywh {167 142 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -500,7 +500,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->bottom_window_margin);
 } else {
   layout->bottom_window_margin = (int)o->value();
-}} selected
+}}
       xywh {167 172 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -509,7 +509,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->window_grid_x);
 } else {
   layout->window_grid_x = (int)o->value();
-}} selected
+}}
       xywh {167 202 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -518,7 +518,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_min_w);
 } else {
   layout->widget_min_w = (int)o->value();
-}} selected
+}}
       xywh {167 270 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -527,7 +527,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_inc_w);
 } else {
   layout->widget_inc_w = (int)o->value();
-}} selected
+}}
       xywh {167 300 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -536,7 +536,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_gap_x);
 } else {
   layout->widget_gap_x = (int)o->value();
-}} selected
+}}
       xywh {167 330 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -545,7 +545,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_min_h);
 } else {
   layout->widget_min_h = (int)o->value();
-}} selected
+}}
       xywh {167 371 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -554,7 +554,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_inc_h);
 } else {
   layout->widget_inc_h = (int)o->value();
-}} selected
+}}
       xywh {167 401 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -563,7 +563,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->widget_gap_y);
 } else {
   layout->widget_gap_y = (int)o->value();
-}} selected
+}}
       xywh {167 431 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -572,7 +572,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->window_grid_y);
 } else {
   layout->window_grid_y = (int)o->value();
-}} selected
+}}
       xywh {167 232 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -581,7 +581,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->left_group_margin);
 } else {
   layout->left_group_margin = (int)o->value();
-}} selected
+}}
       xywh {374 82 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -590,7 +590,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->right_group_margin);
 } else {
   layout->right_group_margin = (int)o->value();
-}} selected
+}}
       xywh {374 112 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -599,7 +599,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->top_group_margin);
 } else {
   layout->top_group_margin = (int)o->value();
-}} selected
+}}
       xywh {374 142 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -608,7 +608,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->bottom_group_margin);
 } else {
   layout->bottom_group_margin = (int)o->value();
-}} selected
+}}
       xywh {374 172 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -617,7 +617,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->top_tabs_margin);
 } else {
   layout->top_tabs_margin = (int)o->value();
-}} selected
+}}
       xywh {374 270 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -626,7 +626,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->bottom_tabs_margin);
 } else {
   layout->bottom_tabs_margin = (int)o->value();
-}} selected
+}}
       xywh {374 300 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -635,7 +635,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->group_grid_x);
 } else {
   layout->group_grid_x = (int)o->value();
-}} selected
+}}
       xywh {374 202 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
@@ -644,7 +644,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->group_grid_y);
 } else {
   layout->group_grid_y = (int)o->value();
-}} selected
+}}
       xywh {374 232 50 22} maximum 32767 step 1
     }
     Fl_Group {} {
@@ -736,11 +736,41 @@ g_layout_list.update_dialogs();}
       }
       MenuItem w_layout_menu_load {
         label {Load...}
-        xywh {0 0 31 20} deactivate
+        xywh {0 0 31 20}
       }
       MenuItem w_layout_menu_save {
         label {Save...}
-        xywh {0 0 31 20} deactivate divider
+        callback {// Give the user a file chooser with a suggested name
+
+Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+
+Fl_Native_File_Chooser fnfc;
+fnfc.title("Save Layout Settings:");
+fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+fnfc.filter("FLUID Layouts\\t*.fll\\n");
+if (suite.filename) {
+  char *fn = strdup(suite.filename);
+  char *name = (char*)fl_filename_name(suite.filename);
+  if (name > fn) {
+    name[-1] = 0;
+    fnfc.directory(fn);
+    fnfc.preset_file(name);
+    ::free(fn);
+  } else if (name) {
+    fnfc.preset_file(name);
+    ::free(fn);
+  }
+}
+if (fnfc.show() != 0) return;
+const char *new_filename = fnfc.filename();
+if (!new_filename) return;
+if (suite.filename)
+  ::free(suite.filename);
+suite.filename = strdup(new_filename);
+suite.save(new_filename);} selected
+        xywh {0 0 31 20} divider
+        code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }
       MenuItem w_layout_menu_user_setting {
         label {Save in User Settings}

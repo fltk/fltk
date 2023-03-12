@@ -61,11 +61,11 @@ extern Fd_Layout_Preset *layout;
 class Fd_Layout_Suite {
 public:
   char *name;
+  char *filename;
   Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
   bool is_static;
   bool is_user_setting;
   bool is_project_setting;
-//  char *filename;
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);

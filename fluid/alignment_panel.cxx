@@ -724,6 +724,38 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   g_layout_list.update_dialogs();
 }
 
+static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
+  // Give the user a file chooser with a suggested name
+
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Save Layout Settings:");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+  fnfc.filter("FLUID Layouts\t*.fll\n");
+  if (suite.filename) {
+    char *fn = strdup(suite.filename);
+    char *name = (char*)fl_filename_name(suite.filename);
+    if (name > fn) {
+      name[-1] = 0;
+      fnfc.directory(fn);
+      fnfc.preset_file(name);
+      ::free(fn);
+    } else if (name) {
+      fnfc.preset_file(name);
+      ::free(fn);
+    }
+  }
+  if (fnfc.show() != 0) return;
+  const char *new_filename = fnfc.filename();
+  if (!new_filename) return;
+  if (suite.filename)
+    ::free(suite.filename);
+  suite.filename = strdup(new_filename);
+  suite.save(new_filename);
+}
+
 static void cb_w_layout_menu_user_setting(Fl_Menu_* o, void*) {
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
   if (!suite.is_static)
@@ -744,8 +776,8 @@ static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
 
 Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Load...", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save...", 0,  0, 0, 129, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Load...", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},

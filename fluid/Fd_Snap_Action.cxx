@@ -34,7 +34,6 @@
 // TODO: use labelsize and textsize (labelfont?)
 // TODO: move panel to global settings panel (move load, save to main pulldown, or to toolbaox?)
 
-
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
 int Fd_Snap_Action::eex = 0;
@@ -59,8 +58,8 @@ static Fd_Layout_Preset grid_dlg = { 5 };
 static Fd_Layout_Preset grid_tool = { 6 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", &fltk_app, &fltk_dlg, &fltk_tool, true, false, false },
-  { (char*)"Grid", &grid_app, &grid_dlg, &grid_tool, true, false, false }
+  { (char*)"FLTK", NULL, &fltk_app, &fltk_dlg, &fltk_tool, true, false, false },
+  { (char*)"Grid", NULL, &grid_app, &grid_dlg, &grid_tool, true, false, false }
 };
 
 static Fl_Menu_Item static_main_menu[] = {
@@ -208,6 +207,20 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
   }
 }
 
+int Fd_Layout_Suite::load(const char *filename) {
+  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs_list(prefs, "Layouts");
+  // TODO: create a new layout and overwrite that! Don't overwrite the current layout.
+  read(prefs_list);
+}
+
+int Fd_Layout_Suite::save(const char *filename) {
+  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  prefs.clear();
+  Fl_Preferences prefs_list(prefs, "Layouts");
+  write(prefs_list);
+}
+
 // ---- Fd_Layout_List ------------------------------------------------- MARK: -
 
 Fd_Layout_List::Fd_Layout_List()
@@ -344,6 +357,7 @@ int Fd_Layout_List::add(const char *name) {
   Fd_Layout_Suite new_suite;
   // TODO: use placement 'new': new (list_[n]])Fd_Layout_Preset;
   new_suite.name = strdup(name);
+  new_suite.filename = NULL;
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
