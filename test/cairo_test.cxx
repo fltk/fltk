@@ -176,7 +176,7 @@ public:
     // FIXME: this should be simplified with an FLTK API, for instance:
     // Fl::cairo_flush(cc);
 
-    cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
+    cairo_surface_t *s = cairo_get_target(cc);
     cairo_surface_flush(s);
   }
   void set_draw_cb( void (*cb)(cairo_using_window*, cairo_t*)) {
