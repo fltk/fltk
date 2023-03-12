@@ -41,6 +41,9 @@ decl {\#include <FL/Fl_Text_Display.H>} {public local
 decl {\#include <FL/filename.H>} {public local
 }
 
+decl {\#include <FL/fl_string_functions.h>} {public local
+}
+
 decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
 }
 
@@ -736,6 +739,19 @@ g_layout_list.update_dialogs();}
       }
       MenuItem w_layout_menu_load {
         label {Load...}
+        callback {// Give the user a file chooser and load that file
+
+Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+
+Fl_Native_File_Chooser fnfc;
+fnfc.title("Load Layout Settings:");
+fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+fnfc.options(Fl_Native_File_Chooser::USE_FILTER_EXT);
+fnfc.filter("FLUID Layouts\\t*.fll\\n");
+if (fnfc.show() != 0) return;
+const char *new_filename = fnfc.filename();
+if (!new_filename) return;
+suite.load(new_filename);} selected
         xywh {0 0 31 20}
       }
       MenuItem w_layout_menu_save {
@@ -750,7 +766,7 @@ fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
 fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
 fnfc.filter("FLUID Layouts\\t*.fll\\n");
 if (suite.filename) {
-  char *fn = strdup(suite.filename);
+  char *fn = fl_strdup(suite.filename);
   char *name = (char*)fl_filename_name(suite.filename);
   if (name > fn) {
     name[-1] = 0;
@@ -767,8 +783,8 @@ const char *new_filename = fnfc.filename();
 if (!new_filename) return;
 if (suite.filename)
   ::free(suite.filename);
-suite.filename = strdup(new_filename);
-suite.save(new_filename);} selected
+suite.filename = fl_strdup(new_filename);
+suite.save(new_filename);}
         xywh {0 0 31 20} divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }

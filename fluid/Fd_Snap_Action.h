@@ -19,7 +19,7 @@
 
 #include "Fl_Window_Type.h"
 
-class Fl_Menu_Item;
+struct Fl_Menu_Item;
 
 class Fd_Layout_Preset {
 public:

@@ -26,6 +26,7 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/filename.H>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl_Scheme_Choice.H>
 /**
  // initialize the scheme from preferences

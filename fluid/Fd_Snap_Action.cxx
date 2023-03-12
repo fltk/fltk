@@ -21,6 +21,7 @@
 
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Bar.H>
+#include <FL/fl_string_functions.h>
 #include <math.h>
 #include <string.h>
 
@@ -208,10 +209,15 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
 }
 
 int Fd_Layout_Suite::load(const char *filename) {
+  const char *name = fl_filename_name(filename);
+  if (!name) return -1;
+  int n = g_layout_list.add(name);
+  Fd_Layout_Suite &suite = g_layout_list[n];
   Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
   Fl_Preferences prefs_list(prefs, "Layouts");
-  // TODO: create a new layout and overwrite that! Don't overwrite the current layout.
-  read(prefs_list);
+  suite.filename = fl_strdup(filename);
+  suite.read(prefs_list);
+  return 0;
 }
 
 int Fd_Layout_Suite::save(const char *filename) {
@@ -219,6 +225,7 @@ int Fd_Layout_Suite::save(const char *filename) {
   prefs.clear();
   Fl_Preferences prefs_list(prefs, "Layouts");
   write(prefs_list);
+  return 0;
 }
 
 // ---- Fd_Layout_List ------------------------------------------------- MARK: -
@@ -356,7 +363,7 @@ int Fd_Layout_List::add(const char *name) {
   Fd_Layout_Suite &old_suite = list_[current_suite()];
   Fd_Layout_Suite new_suite;
   // TODO: use placement 'new': new (list_[n]])Fd_Layout_Preset;
-  new_suite.name = strdup(name);
+  new_suite.name = fl_strdup(name);
   new_suite.filename = NULL;
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
@@ -380,7 +387,7 @@ int Fd_Layout_List::add(const char *name) {
 void Fd_Layout_List::rename(const char *name) {
   int n = current_suite();
   ::free(list_[n].name);
-  list_[n].name = strdup(name);
+  list_[n].name = fl_strdup(name);
   main_menu_[n].label(name);
   choice_menu_[n].label(name);
 }
