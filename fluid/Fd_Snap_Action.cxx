@@ -24,10 +24,16 @@
 #include <math.h>
 #include <string.h>
 
-
-// TODO: selection should be initialised from Preferences to last selection
 // TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
-// TODO: pressed buttons are almost indistinguishable from normal buttons
+// TODO: save layout file
+// TODO: load layout file
+// TODO: save layout in .fl file
+// TODO: load layout from .fl file
+// TODO: warning if the user wants to change builtin layouts
+// TODO: rearrange to panel
+// TODO: use labelsize and textsize (labelfont?)
+// TODO: move panel to global settings panel (move load, save to main pulldown, or to toolbaox?)
+
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
@@ -64,7 +70,7 @@ static Fl_Menu_Item static_main_menu[] = {
 };
 
 static Fl_Menu_Item static_choice_menu[] = {
-  { static_suite_list[0].name }, // TODO: save the last choosen suite in preferences
+  { static_suite_list[0].name },
   { static_suite_list[1].name },
   { NULL }
 };
@@ -74,7 +80,7 @@ Fd_Layout_List g_layout_list;
 // ---- Callbacks ------------------------------------------------------ MARK: -
 
 void layout_suite_marker(Fl_Widget *, void *) {
-  // never called
+  // intentionally left empty
 }
 
 // TODO: this should be in alignment_panel.h
@@ -365,11 +371,7 @@ void Fd_Layout_List::rename(const char *name) {
   choice_menu_[n].label(name);
 }
 
-// TODO: make sure that we do not remove a read-only layout
 void Fd_Layout_List::remove(int ix) {
-  // assert(ix>=0);
-  // assert(ix<list_size_);
-  // assert(!list[ix].is_static);
   bool update_user_settings = list_[ix].is_user_setting;
   int tail = list_size_-ix-1;
   if (tail)
