@@ -54,10 +54,9 @@ public:
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  Fd_Layout_Preset &operator=(Fd_Layout_Preset const& src);
 };
 
-extern Fd_Layout_Preset layout;
+extern Fd_Layout_Preset *layout;
 
 class Fd_Layout_Suite {
 public:
@@ -94,10 +93,10 @@ public:
   ~Fd_Layout_List();
   void update_dialogs();
   int current_suite() const { return current_suite_; }
-  void current_suite(int ix) { current_suite_ = ix; }
+  void current_suite(int ix);
   void current_suite(Fl_String);
   int current_preset() const { return current_preset_; }
-  void current_preset(int ix) { current_preset_ = ix; }
+  void current_preset(int ix);
   Fd_Layout_Suite &operator[](int ix) { return list_[ix]; }
   int add(const char *name);
   void rename(const char *name);

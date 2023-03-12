@@ -5,7 +5,7 @@ code_name {.cxx}
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -470,182 +470,182 @@ Function {make_layout_window()} {open
     Fl_Value_Input {} {
       label {left window margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.left_window_margin);
+  o->value((double)layout->left_window_margin);
 } else {
-  layout.left_window_margin = (int)o->value();
-}}
-      xywh {167 82 50 22} step 1
+  layout->left_window_margin = (int)o->value();
+}} selected
+      xywh {167 82 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {right window margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.right_window_margin);
+  o->value((double)layout->right_window_margin);
 } else {
-  layout.right_window_margin = (int)o->value();
-}}
-      xywh {167 112 50 22} step 1
+  layout->right_window_margin = (int)o->value();
+}} selected
+      xywh {167 112 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {top window margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.top_window_margin);
+  o->value((double)layout->top_window_margin);
 } else {
-  layout.top_window_margin = (int)o->value();
-}}
-      xywh {167 142 50 22} step 1
+  layout->top_window_margin = (int)o->value();
+}} selected
+      xywh {167 142 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {bottom window margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.bottom_window_margin);
+  o->value((double)layout->bottom_window_margin);
 } else {
-  layout.bottom_window_margin = (int)o->value();
-}}
-      xywh {167 172 50 22} step 1
+  layout->bottom_window_margin = (int)o->value();
+}} selected
+      xywh {167 172 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {window grid x:}
       callback {if (v == LOAD) {
-  o->value((double)layout.window_grid_x);
+  o->value((double)layout->window_grid_x);
 } else {
-  layout.window_grid_x = (int)o->value();
-}}
-      xywh {167 202 50 22} step 1
+  layout->window_grid_x = (int)o->value();
+}} selected
+      xywh {167 202 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget x min:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_min_w);
+  o->value((double)layout->widget_min_w);
 } else {
-  layout.widget_min_w = (int)o->value();
-}}
-      xywh {167 270 50 22} step 1
+  layout->widget_min_w = (int)o->value();
+}} selected
+      xywh {167 270 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget x incr:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_inc_w);
+  o->value((double)layout->widget_inc_w);
 } else {
-  layout.widget_inc_w = (int)o->value();
-}}
-      xywh {167 300 50 22} step 1
+  layout->widget_inc_w = (int)o->value();
+}} selected
+      xywh {167 300 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget x gap:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_gap_x);
+  o->value((double)layout->widget_gap_x);
 } else {
-  layout.widget_gap_x = (int)o->value();
-}}
-      xywh {167 330 50 22} step 1
+  layout->widget_gap_x = (int)o->value();
+}} selected
+      xywh {167 330 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget y min:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_min_h);
+  o->value((double)layout->widget_min_h);
 } else {
-  layout.widget_min_h = (int)o->value();
-}}
-      xywh {167 371 50 22} step 1
+  layout->widget_min_h = (int)o->value();
+}} selected
+      xywh {167 371 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget y incr:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_inc_h);
+  o->value((double)layout->widget_inc_h);
 } else {
-  layout.widget_inc_h = (int)o->value();
-}}
-      xywh {167 401 50 22} step 1
+  layout->widget_inc_h = (int)o->value();
+}} selected
+      xywh {167 401 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {widget y gap:}
       callback {if (v == LOAD) {
-  o->value((double)layout.widget_gap_y);
+  o->value((double)layout->widget_gap_y);
 } else {
-  layout.widget_gap_y = (int)o->value();
-}}
-      xywh {167 431 50 22} step 1
+  layout->widget_gap_y = (int)o->value();
+}} selected
+      xywh {167 431 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {window grid y:}
       callback {if (v == LOAD) {
-  o->value((double)layout.window_grid_y);
+  o->value((double)layout->window_grid_y);
 } else {
-  layout.window_grid_y = (int)o->value();
-}}
-      xywh {167 232 50 22} step 1
+  layout->window_grid_y = (int)o->value();
+}} selected
+      xywh {167 232 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {left group margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.left_group_margin);
+  o->value((double)layout->left_group_margin);
 } else {
-  layout.left_group_margin = (int)o->value();
-}}
-      xywh {374 82 50 22} step 1
+  layout->left_group_margin = (int)o->value();
+}} selected
+      xywh {374 82 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {right group margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.right_group_margin);
+  o->value((double)layout->right_group_margin);
 } else {
-  layout.right_group_margin = (int)o->value();
-}}
-      xywh {374 112 50 22} step 1
+  layout->right_group_margin = (int)o->value();
+}} selected
+      xywh {374 112 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {top group margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.top_group_margin);
+  o->value((double)layout->top_group_margin);
 } else {
-  layout.top_group_margin = (int)o->value();
-}}
-      xywh {374 142 50 22} step 1
+  layout->top_group_margin = (int)o->value();
+}} selected
+      xywh {374 142 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {bottom group margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.bottom_group_margin);
+  o->value((double)layout->bottom_group_margin);
 } else {
-  layout.bottom_group_margin = (int)o->value();
-}}
-      xywh {374 172 50 22} step 1
+  layout->bottom_group_margin = (int)o->value();
+}} selected
+      xywh {374 172 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {top tabs margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.top_tabs_margin);
+  o->value((double)layout->top_tabs_margin);
 } else {
-  layout.top_tabs_margin = (int)o->value();
-}}
-      xywh {374 270 50 22} step 1
+  layout->top_tabs_margin = (int)o->value();
+}} selected
+      xywh {374 270 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {bottom tabs margin:}
       callback {if (v == LOAD) {
-  o->value((double)layout.bottom_tabs_margin);
+  o->value((double)layout->bottom_tabs_margin);
 } else {
-  layout.bottom_tabs_margin = (int)o->value();
-}}
-      xywh {374 300 50 22} step 1
+  layout->bottom_tabs_margin = (int)o->value();
+}} selected
+      xywh {374 300 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {group grid x:}
       callback {if (v == LOAD) {
-  o->value((double)layout.group_grid_x);
+  o->value((double)layout->group_grid_x);
 } else {
-  layout.group_grid_x = (int)o->value();
-}}
-      xywh {374 202 50 22} step 1
+  layout->group_grid_x = (int)o->value();
+}} selected
+      xywh {374 202 50 22} maximum 32767 step 1
     }
     Fl_Value_Input {} {
       label {group grid y:}
       callback {if (v == LOAD) {
-  o->value((double)layout.group_grid_y);
+  o->value((double)layout->group_grid_y);
 } else {
-  layout.group_grid_y = (int)o->value();
-}}
-      xywh {374 232 50 22} step 1
+  layout->group_grid_y = (int)o->value();
+}} selected
+      xywh {374 232 50 22} maximum 32767 step 1
     }
     Fl_Group {} {
       label {Label Font:}
@@ -700,7 +700,8 @@ const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_s
 if (new_name == NULL)
   return; 
 
-g_layout_list.add(new_name);}
+g_layout_list.add(new_name);
+g_layout_list.update_dialogs();}
       xywh {300 11 24 24}
     }
     Fl_Menu_Button w_layout_menu {
@@ -729,7 +730,8 @@ const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_s
 if (new_name == NULL)
   return; 
 
-g_layout_list.rename(new_name);}
+g_layout_list.rename(new_name);
+g_layout_list.update_dialogs();}
         xywh {0 0 31 20} divider
       }
       MenuItem w_layout_menu_load {
@@ -744,7 +746,7 @@ g_layout_list.rename(new_name);}
         label {Save in User Settings}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 if (!suite.is_static)
-  suite.is_user_setting = o->value();} selected
+  suite.is_user_setting = o->value();}
         xywh {0 0 31 20} type Toggle
       }
       MenuItem w_layout_menu_project_setting {
@@ -757,7 +759,8 @@ suite.is_project_setting = o->value();}
         label Delete
         callback {// remove the current suite
 
-g_layout_list.remove(g_layout_list.current_suite());}
+g_layout_list.remove(g_layout_list.current_suite());
+g_layout_list.update_dialogs();}
         xywh {0 0 31 20}
       }
     }

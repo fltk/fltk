@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -512,161 +512,161 @@ Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
 
 static void cb_left(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.left_window_margin);
+    o->value((double)layout->left_window_margin);
   } else {
-    layout.left_window_margin = (int)o->value();
+    layout->left_window_margin = (int)o->value();
   }
 }
 
 static void cb_right(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.right_window_margin);
+    o->value((double)layout->right_window_margin);
   } else {
-    layout.right_window_margin = (int)o->value();
+    layout->right_window_margin = (int)o->value();
   }
 }
 
 static void cb_top(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.top_window_margin);
+    o->value((double)layout->top_window_margin);
   } else {
-    layout.top_window_margin = (int)o->value();
+    layout->top_window_margin = (int)o->value();
   }
 }
 
 static void cb_bottom(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.bottom_window_margin);
+    o->value((double)layout->bottom_window_margin);
   } else {
-    layout.bottom_window_margin = (int)o->value();
+    layout->bottom_window_margin = (int)o->value();
   }
 }
 
 static void cb_window(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.window_grid_x);
+    o->value((double)layout->window_grid_x);
   } else {
-    layout.window_grid_x = (int)o->value();
+    layout->window_grid_x = (int)o->value();
   }
 }
 
 static void cb_widget(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_min_w);
+    o->value((double)layout->widget_min_w);
   } else {
-    layout.widget_min_w = (int)o->value();
+    layout->widget_min_w = (int)o->value();
   }
 }
 
 static void cb_widget1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_inc_w);
+    o->value((double)layout->widget_inc_w);
   } else {
-    layout.widget_inc_w = (int)o->value();
+    layout->widget_inc_w = (int)o->value();
   }
 }
 
 static void cb_widget2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_gap_x);
+    o->value((double)layout->widget_gap_x);
   } else {
-    layout.widget_gap_x = (int)o->value();
+    layout->widget_gap_x = (int)o->value();
   }
 }
 
 static void cb_widget3(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_min_h);
+    o->value((double)layout->widget_min_h);
   } else {
-    layout.widget_min_h = (int)o->value();
+    layout->widget_min_h = (int)o->value();
   }
 }
 
 static void cb_widget4(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_inc_h);
+    o->value((double)layout->widget_inc_h);
   } else {
-    layout.widget_inc_h = (int)o->value();
+    layout->widget_inc_h = (int)o->value();
   }
 }
 
 static void cb_widget5(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.widget_gap_y);
+    o->value((double)layout->widget_gap_y);
   } else {
-    layout.widget_gap_y = (int)o->value();
+    layout->widget_gap_y = (int)o->value();
   }
 }
 
 static void cb_window1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.window_grid_y);
+    o->value((double)layout->window_grid_y);
   } else {
-    layout.window_grid_y = (int)o->value();
+    layout->window_grid_y = (int)o->value();
   }
 }
 
 static void cb_left1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.left_group_margin);
+    o->value((double)layout->left_group_margin);
   } else {
-    layout.left_group_margin = (int)o->value();
+    layout->left_group_margin = (int)o->value();
   }
 }
 
 static void cb_right1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.right_group_margin);
+    o->value((double)layout->right_group_margin);
   } else {
-    layout.right_group_margin = (int)o->value();
+    layout->right_group_margin = (int)o->value();
   }
 }
 
 static void cb_top1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.top_group_margin);
+    o->value((double)layout->top_group_margin);
   } else {
-    layout.top_group_margin = (int)o->value();
+    layout->top_group_margin = (int)o->value();
   }
 }
 
 static void cb_bottom1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.bottom_group_margin);
+    o->value((double)layout->bottom_group_margin);
   } else {
-    layout.bottom_group_margin = (int)o->value();
+    layout->bottom_group_margin = (int)o->value();
   }
 }
 
 static void cb_top2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.top_tabs_margin);
+    o->value((double)layout->top_tabs_margin);
   } else {
-    layout.top_tabs_margin = (int)o->value();
+    layout->top_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_bottom2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.bottom_tabs_margin);
+    o->value((double)layout->bottom_tabs_margin);
   } else {
-    layout.bottom_tabs_margin = (int)o->value();
+    layout->bottom_tabs_margin = (int)o->value();
   }
 }
 
 static void cb_group(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.group_grid_x);
+    o->value((double)layout->group_grid_x);
   } else {
-    layout.group_grid_x = (int)o->value();
+    layout->group_grid_x = (int)o->value();
   }
 }
 
 static void cb_group1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout.group_grid_y);
+    o->value((double)layout->group_grid_y);
   } else {
-    layout.group_grid_y = (int)o->value();
+    layout->group_grid_y = (int)o->value();
   }
 }
 
@@ -690,6 +690,7 @@ static void cb_(Fl_Button*, void* v) {
     return; 
 
   g_layout_list.add(new_name);
+  g_layout_list.update_dialogs();
 }
 
 Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
@@ -720,6 +721,7 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
     return; 
 
   g_layout_list.rename(new_name);
+  g_layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_user_setting(Fl_Menu_* o, void*) {
@@ -737,6 +739,7 @@ static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
   // remove the current suite
 
   g_layout_list.remove(g_layout_list.current_suite());
+  g_layout_list.update_dialogs();
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
@@ -819,82 +822,102 @@ Fl_Double_Window* make_layout_window() {
       o->end();
     } // Fl_Group* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 82, 50, 22, "left window margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_left);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 112, 50, 22, "right window margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_right);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 142, 50, 22, "top window margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_top);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 172, 50, 22, "bottom window margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_bottom);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 202, 50, 22, "window grid x:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_window);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 270, 50, 22, "widget x min:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 300, 50, 22, "widget x incr:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 330, 50, 22, "widget x gap:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget2);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 371, 50, 22, "widget y min:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget3);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 401, 50, 22, "widget y incr:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget4);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 431, 50, 22, "widget y gap:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_widget5);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 232, 50, 22, "window grid y:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_window1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 82, 50, 22, "left group margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_left1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 112, 50, 22, "right group margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_right1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 142, 50, 22, "top group margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_top1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 172, 50, 22, "bottom group margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_bottom1);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 270, 50, 22, "top tabs margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_top2);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 300, 50, 22, "bottom tabs margin:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_bottom2);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 202, 50, 22, "group grid x:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_group);
     } // Fl_Value_Input* o
     { Fl_Value_Input* o = new Fl_Value_Input(374, 232, 50, 22, "group grid y:");
+      o->maximum(32767);
       o->step(1);
       o->callback((Fl_Callback*)cb_group1);
     } // Fl_Value_Input* o
