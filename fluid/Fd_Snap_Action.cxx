@@ -118,11 +118,11 @@ void select_layout_preset_cb(Fl_Widget *, void *user_data) {
 }
 
 // TODO: this should be in alignment_panel.h
-void edit_layout_preset_cb(Fl_Button *w, void *user_data) {
-  int index = (int)(w - preset_choice[0]);
+void edit_layout_preset_cb(Fl_Button *w, long user_data) {
+  int index = (int)w->argument();
   assert(index >= 0);
   assert(index < 3);
-  if (user_data == LOAD) {
+  if (user_data == (long)LOAD) {
     w->value(g_layout_list.current_preset() == index);
   } else {
     g_layout_list.current_preset(index);

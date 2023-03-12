@@ -1038,19 +1038,19 @@ Fl_Double_Window* make_layout_window() {
         preset_choice[0]->value(1);
         preset_choice[0]->selection_color(FL_DARK2);
         preset_choice[0]->labelsize(12);
-        preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb);
+        preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(0));
       } // Fl_Button* preset_choice[0]
       { preset_choice[1] = new Fl_Button(211, 48, 90, 20, "Dialog");
         preset_choice[1]->type(102);
         preset_choice[1]->selection_color(FL_DARK2);
         preset_choice[1]->labelsize(12);
-        preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb);
+        preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(1));
       } // Fl_Button* preset_choice[1]
       { preset_choice[2] = new Fl_Button(301, 48, 90, 20, "Toolbox");
         preset_choice[2]->type(102);
         preset_choice[2]->selection_color(FL_DARK2);
         preset_choice[2]->labelsize(12);
-        preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb);
+        preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(2));
       } // Fl_Button* preset_choice[2]
       o->end();
     } // Fl_Group* o

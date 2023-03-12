@@ -751,7 +751,7 @@ fnfc.filter("FLUID Layouts\\t*.fll\\n");
 if (fnfc.show() != 0) return;
 const char *new_filename = fnfc.filename();
 if (!new_filename) return;
-suite.load(new_filename);} selected
+suite.load(new_filename);}
         xywh {0 0 31 20}
       }
       MenuItem w_layout_menu_save {
@@ -784,7 +784,7 @@ if (!new_filename) return;
 if (suite.filename)
   ::free(suite.filename);
 suite.filename = fl_strdup(new_filename);
-suite.save(new_filename);}
+suite.save(new_filename);} selected
         xywh {0 0 31 20} divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }
@@ -816,16 +816,19 @@ g_layout_list.update_dialogs();}
     } {
       Fl_Button {preset_choice[0]} {
         label Application
+        user_data 0 user_data_type long
         callback edit_layout_preset_cb
         xywh {121 48 90 20} type Radio value 1 selection_color 45 labelsize 12
       }
       Fl_Button {preset_choice[1]} {
         label Dialog
+        user_data 1 user_data_type long
         callback edit_layout_preset_cb
         xywh {211 48 90 20} type Radio selection_color 45 labelsize 12
       }
       Fl_Button {preset_choice[2]} {
         label Toolbox
+        user_data 2 user_data_type long
         callback edit_layout_preset_cb
         xywh {301 48 90 20} type Radio selection_color 45 labelsize 12
       }

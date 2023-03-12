@@ -108,7 +108,7 @@ extern Fl_Choice *layout_choice;
 #include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Button *w_layout_menu;
 #include <FL/Fl_Native_File_Chooser.H>
-extern void edit_layout_preset_cb(Fl_Button*, void*);
+extern void edit_layout_preset_cb(Fl_Button*, long);
 extern Fl_Button *preset_choice[3];
 Fl_Double_Window* make_layout_window();
 extern Fl_Menu_Item menu_layout_choice[];
