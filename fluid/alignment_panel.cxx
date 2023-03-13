@@ -798,7 +798,7 @@ Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  /*
   Not yet supported. .fl format has no room
   for storing layout presets. Maybe add XML
