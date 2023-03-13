@@ -1509,8 +1509,8 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   Fl_Surface_Device::pop_current();
   delete img_surf;
   memcpy(offscreen->data, offscreen->draw_buffer, offscreen->data_size);
-  // delete the previous custom cursor, if there was one, but keep its Fl_RGB_Image
-  delete_cursor_(xid, true);
+  // delete the previous custom cursor, if there was one, and keep its Fl_RGB_Image if appropriate
+  delete_cursor_(xid, !keep_copy);
   //have this new cursor used
   xid->custom_cursor = new struct wld_window::custom_cursor;
   xid->custom_cursor->wl_cursor = new_cursor;
