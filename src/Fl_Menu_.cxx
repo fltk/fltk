@@ -372,10 +372,10 @@ void Fl_Menu_Item::setonly(Fl_Menu_Item const* first) {
     if (!j->text || !j->radio()) break; // stop after group
     j->clear();
   }
-  if (j != first) for (j = this-1; ; j--) { // go up
-    if (j == first) break;
+  if (this != first) for (j = this-1; ; j--) { // go up
     if (!j->text || (j->flags&FL_MENU_DIVIDER) || !j->radio()) break;
     j->clear();
+    if (j == first) break;
   }
 }
 

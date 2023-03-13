@@ -242,7 +242,10 @@ int Fd_Layout_Suite::load(const char *filename) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   suite.filename = fl_strdup(filename);
   suite.read(prefs_list);
-  return 0;
+  suite.is_static = false;
+  suite.is_user_setting = false;
+  suite.is_project_setting = false;
+  return n;
 }
 
 int Fd_Layout_Suite::save(const char *filename) {
@@ -387,6 +390,7 @@ void Fd_Layout_List::capacity(int n) {
   choice_menu_ = new_choice_menu;
   layout_choice->menu(choice_menu_);
 
+  list_capacity_ = n;
   list_is_static_ = false;
 }
 

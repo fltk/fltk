@@ -737,7 +737,11 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
   if (fnfc.show() != 0) return;
   const char *new_filename = fnfc.filename();
   if (!new_filename) return;
-  suite.load(new_filename);
+  int n = suite.load(new_filename);
+  if (n >= 0) {
+    g_layout_list.current_suite(n);
+    g_layout_list.update_dialogs();
+  }
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
@@ -795,7 +799,12 @@ Fl_Menu_Item menu_w_layout_menu[] = {
  {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ /*
+  Not yet supported. .fl format has no room
+  for storing layout presets. Maybe add XML
+  format or abuse `snap` tag in .fl?
+  */
+ {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 146, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };

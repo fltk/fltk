@@ -751,7 +751,11 @@ fnfc.filter("FLUID Layouts\\t*.fll\\n");
 if (fnfc.show() != 0) return;
 const char *new_filename = fnfc.filename();
 if (!new_filename) return;
-suite.load(new_filename);}
+int n = suite.load(new_filename);
+if (n >= 0) {
+  g_layout_list.current_suite(n);
+  g_layout_list.update_dialogs();
+}}
         xywh {0 0 31 20}
       }
       MenuItem w_layout_menu_save {
@@ -784,7 +788,7 @@ if (!new_filename) return;
 if (suite.filename)
   ::free(suite.filename);
 suite.filename = fl_strdup(new_filename);
-suite.save(new_filename);} selected
+suite.save(new_filename);}
         xywh {0 0 31 20} divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }
@@ -799,7 +803,10 @@ if (!suite.is_static)
         label {Save in Project File}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.is_project_setting = o->value();}
-        xywh {0 0 31 20} type Toggle divider
+        comment {Not yet supported. .fl format has no room
+for storing layout presets. Maybe add XML
+format or abuse `snap` tag in .fl?} selected
+        xywh {0 0 31 20} type Toggle hide divider
       }
       MenuItem w_layout_menu_delete {
         label Delete
