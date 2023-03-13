@@ -295,8 +295,8 @@ void Fd_Layout_List::update_dialogs() {
     grid_window->do_callback(grid_window, LOAD);
     layout_choice->redraw();
   }
-  preset_menu[current_preset_].setonly();
-  main_menu_[current_suite_].setonly();
+  preset_menu[current_preset_].setonly(preset_menu);
+  main_menu_[current_suite_].setonly(main_menu_);
 }
 
 void Fd_Layout_List::write(Fl_Preferences &prefs) {
