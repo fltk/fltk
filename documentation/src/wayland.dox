@@ -572,7 +572,8 @@ It also shows that a <tt>struct cursor_image</tt> object has an associated
 <tt>struct wl_buffer</tt> object used to contain the cursor's graphics.
 
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
-gives FLTK support of custom cursor shapes. It creates a \c cursor_image object, allocates the
+gives FLTK support of custom cursor shapes. It calls \c Fl_Wayland_Window_Driver::set_cursor_4args()
+that creates a \c cursor_image object, allocates the
 corresponding \c wl_buffer by a call to \c Fl_Wayland_Graphics_Driver::create_shm_buffer() and draws
 the cursor shape into that buffer using the offscreen-drawing method of FLTK.
 
@@ -585,11 +586,16 @@ struct wl_cursor {
   char *name;
 };
 \endcode
-Function \c set_cursor(const Fl_RGB_Image *rgb, …) also creates a <tt>struct wl_cursor</tt> object
-containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
-A pointer to this <tt>struct wl_cursor</tt> object is stored in member \c custom_cursor of the
-window's \ref wld_window. Finally, function \c do_set_cursor() makes the system pointer use
-the custom \c wl_cursor to draw its shape.
+Function \c Fl_Wayland_Window_Driver::set_cursor_4args() also creates a <tt>struct wl_cursor</tt>
+object containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
+Finally, a <tt>struct custom_cursor</tt> (see \ref wld_window) is allocated and used to memorize
+the <tt>struct wl_cursor</tt> and the cursor's image and hotspot.
+A pointer to this <tt>struct custom_cursor</tt> object is stored in member \c custom_cursor of the
+window's \ref wld_window.
+
+Function \c Fl_Wayland_Window_Driver::set_cursor_4args() is also called when a window with a custom
+cursor is moved between distinct displays or when a display is rescaled to adapt the cursor size
+to the new display's scale factor.
 
 Member function \c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor
 shape. This occurs when a window associated to a custom cursor is un-mapped and when such a window
@@ -810,14 +816,18 @@ struct wld_window {
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
   struct xdg_surface *xdg_surface;
+  enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
   union {
     struct libdecor_frame *frame; // for DECORATED windows
     struct wl_subsurface *subsurface; // for SUBWINDOW windows
     struct xdg_popup *xdg_popup; // for POPUP windows
     struct xdg_toplevel *xdg_toplevel; // for UNFRAMED windows
   };
-  struct wl_cursor *custom_cursor; // non-null when using custom cursor
-  enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
+  struct custom_cursor {
+    struct wl_cursor *wl_cursor;
+    const Fl_RGB_Image *rgb;
+    int hotx, hoty;
+  } *custom_cursor; // non-null when using custom cursor
   int configured_width; // used when negotiating window size with the compositor
   int configured_height;
   int floating_width; // helps restoring size after un-maximizing
