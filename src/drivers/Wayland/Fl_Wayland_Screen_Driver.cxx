@@ -179,7 +179,6 @@ static void do_set_cursor(struct seat *seat, struct wl_cursor *wl_cursor = NULL)
             image->hotspot_x / scale,
             image->hotspot_y / scale);
   wl_surface_attach(seat->cursor_surface, buffer, 0, 0);
-  wl_surface_set_buffer_scale(seat->cursor_surface, scale);
   wl_surface_damage_buffer(seat->cursor_surface, 0, 0,
          image->width, image->height);
   wl_surface_commit(seat->cursor_surface);
@@ -258,7 +257,8 @@ static void pointer_enter(void *data,
 {
   Fl_Window *win = event_coords_from_surface(surface, surface_x, surface_y);
   if (!win) return;
-  struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor;// use custom cursor if present
+  // use custom cursor if present
+  struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
   struct seat *seat = (struct seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
@@ -412,6 +412,7 @@ static void cursor_surface_enter(void *data,
         struct wl_surface *wl_surface,
         struct wl_output *wl_output)
 {
+  // Runs when the seat's cursor_surface enters a display
   struct seat *seat = (struct seat*)data;
   struct pointer_output *pointer_output;
 
@@ -428,9 +429,13 @@ static void cursor_surface_enter(void *data,
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
 //fprintf(stderr, "cursor_surface_enter: cursor_default=%d standard_cursor=%d\n", driver->cursor_default(), driver->standard_cursor());
-    struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor;
-    if (cursor) do_set_cursor(seat, cursor);
-    else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
+    struct wld_window *xid = fl_wl_xid(win);
+    struct wld_window::custom_cursor *custom = xid->custom_cursor;
+    if (custom) {
+      // Change custom cursor's width & height according to display's wld_scale
+      driver->set_cursor_4args(custom->rgb, custom->hotx, custom->hoty, false);
+      do_set_cursor(seat, xid->custom_cursor->wl_cursor);
+    } else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
     else win->cursor(driver->standard_cursor());
   }
 }
@@ -448,6 +453,14 @@ static void cursor_surface_leave(void *data,
       free(pointer_output);
     }
   }
+  try_update_cursor(seat);
+  // maintain custom window cursor
+  Fl_Window *win = Fl::first_window();
+  if (win) {
+    struct wld_window *xid = fl_wl_xid(win);
+    if (xid->custom_cursor) do_set_cursor(seat, xid->custom_cursor->wl_cursor);
+  }
+
 }
 
 static struct wl_surface_listener cursor_surface_listener = {
@@ -962,6 +975,17 @@ static void output_scale(void *data, struct wl_output *wl_output, int32_t factor
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
   output->wld_scale = factor;
 //fprintf(stderr,"output_scale: wl_output=%p factor=%d\n",wl_output, factor);
+  // rescale cursors of windows that map here and have a custom cursor
+  Fl_Window *win = Fl::first_window();
+  while (win) {
+    struct wld_window *xid = fl_wl_xid(win);
+    if (xid->custom_cursor && wl_output_get_user_data(wl_output) == xid->output) {
+      Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
+      driver->set_cursor_4args(xid->custom_cursor->rgb,
+                               xid->custom_cursor->hotx, xid->custom_cursor->hoty, false);
+    };
+    win = Fl::next_window(win);
+  }
 }
 
 

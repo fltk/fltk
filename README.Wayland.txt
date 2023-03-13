@@ -96,11 +96,8 @@ a minimized window has no effect.
 it's currently not possible for an app to be notified of changes to the content of
 the system clipboard, that is, Fl::add_clipboard_notify() has no effect.
 
-* With GTK-style window titlebars, narrow windows are silently forced to be wide enough
+* Narrow windows with a titlebar are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
-
-* The library should support multi-display configurations in principle, but has not been
-tested in that situation.
 
 * Text input methods have been tested without any understanding of the writing systems,
 so feedback on this subject would be helpful.

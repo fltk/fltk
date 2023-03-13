@@ -451,19 +451,19 @@ displaying dragged text in a DnD operation.
 
 \section wayland-display Displays and HighDPI support
 
-Wayland uses the concept of seat of type <tt>struct wl_seat</tt> which encompasses displays,
-a keyboard, a mouse, and a trackpad. It might be possible for an app to deal with several seats,
-but that has not been tested with FLTK yet. Each seat may contain one or more displays, which
-Wayland calls outputs, of type <tt>struct wl_output</tt>.
+Wayland uses the concept of <em>seat</em> of type <tt>struct wl_seat</tt> which encompasses displays,
+a keyboard, a mouse, and a trackpad. Although Wayland may be in principle able to deal with several
+seats, FLTK's Wayland platform is conceived for one seat only. That seat may contain one or more
+displays, which Wayland calls <em>outputs</em>, of type <tt>struct wl_output</tt>.
 
-As written above, function \c registry_handle_global() discovers available seats at start-up time.
-This function also associates a 'listener' to each display
-by calling function \c wl_output_add_listener(). This 'listener' is an array of callback function
+As written above, function \c registry_handle_global() discovers the available seat at start-up time.
+This function also associates a listener to each display connected to the system
+by calling function \c wl_output_add_listener(). This listener is an array of callback function
 pointers among which one (\c output_mode) runs when the display is resized and another
 (\c output_scale) when the Wayland scale factor (see below) is changed.
 FLTK defines type <tt>struct Fl_Wayland_Screen_Driver::output</tt> (see \ref output)
 to store display size and scaling information.
-One such record is created for each display. FLTK uses 2 distinct scaling parameters under Wayland:
+One such record is created for each display. FLTK uses 2 distinct scaling parameters for each display:
 - <tt>int wld_scale;</tt>. This member variable of
 <tt>struct Fl_Wayland_Screen_Driver::output</tt> typically equals 1 for standard, and 2 for
 HighDPI displays. Its value is set by the Wayland compositor for each display with the effect
