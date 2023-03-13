@@ -1517,7 +1517,6 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   xid->custom_cursor->rgb = rgb;
   xid->custom_cursor->hotx = hotx;
   xid->custom_cursor->hoty = hoty;
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   return 1;
 }
 
