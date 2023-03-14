@@ -408,6 +408,9 @@ static void try_update_cursor(struct seat *seat)
 }
 
 
+static void output_scale(void *data, struct wl_output *wl_output, int32_t factor);
+
+
 static void cursor_surface_enter(void *data,
         struct wl_surface *wl_surface,
         struct wl_output *wl_output)
@@ -424,21 +427,19 @@ static void cursor_surface_enter(void *data,
 //fprintf(stderr, "cursor_surface_enter: wl_output_get_user_data(%p)=%p\n", wl_output, pointer_output->output);
   wl_list_insert(&seat->pointer_outputs, &pointer_output->link);
   try_update_cursor(seat);
+  Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)wl_output_get_user_data(wl_output);
+  output_scale(output, wl_output, output->wld_scale); // rescale custom cursors
   // maintain custom or standard window cursor
   Fl_Window *win = Fl::first_window();
   if (win) {
     Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
-//fprintf(stderr, "cursor_surface_enter: cursor_default=%d standard_cursor=%d\n", driver->cursor_default(), driver->standard_cursor());
     struct wld_window *xid = fl_wl_xid(win);
-    struct wld_window::custom_cursor *custom = xid->custom_cursor;
-    if (custom) {
-      // Change custom cursor's width & height according to display's wld_scale
-      driver->set_cursor_4args(custom->rgb, custom->hotx, custom->hoty, false);
-      do_set_cursor(seat, xid->custom_cursor->wl_cursor);
-    } else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
+    if (xid->custom_cursor) do_set_cursor(seat, xid->custom_cursor->wl_cursor);
+    else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
     else win->cursor(driver->standard_cursor());
   }
 }
+
 
 static void cursor_surface_leave(void *data,
         struct wl_surface *wl_surface,
@@ -979,7 +980,7 @@ static void output_scale(void *data, struct wl_output *wl_output, int32_t factor
   Fl_Window *win = Fl::first_window();
   while (win) {
     struct wld_window *xid = fl_wl_xid(win);
-    if (xid->custom_cursor && wl_output_get_user_data(wl_output) == xid->output) {
+    if (xid->custom_cursor && output == xid->output) {
       Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
       driver->set_cursor_4args(xid->custom_cursor->rgb,
                                xid->custom_cursor->hotx, xid->custom_cursor->hoty, false);
