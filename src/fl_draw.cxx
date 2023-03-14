@@ -43,15 +43,17 @@ static char* underline_at;
  */
 static const char* expand_text_(const char* from, char*& buf, int maxbuf, double maxw, int& n,
                double &width, int wrap, int draw_symbols) {
-  char* e = buf+(maxbuf-4);
   underline_at = 0;
   double w = 0;
   static int l_local_buff = 500;
   static char *local_buf = (char*)malloc(l_local_buff); // initial buffer allocation
+  char* e;
   if (maxbuf == 0) {
     buf = local_buf;
     e = buf + l_local_buff - 4;
-    }
+  } else {
+    e = buf+(maxbuf-4);
+  }
   char* o = buf;
   char* word_end = o;
   const char* word_start = from;
