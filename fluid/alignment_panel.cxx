@@ -508,8 +508,6 @@ static void cb_Close2(Fl_Button*, void* v) {
   if (v != LOAD) grid_window->hide();
 }
 
-Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
-
 static void cb_left(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
     o->value((double)layout->left_window_margin);
@@ -670,6 +668,38 @@ static void cb_group1(Fl_Value_Input* o, void* v) {
   }
 }
 
+static void cb_(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->labelfont);
+  } else {
+    layout->labelfont = (int)o->value();
+  }
+}
+
+static void cb_1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->labelsize);
+  } else {
+    layout->labelsize = (int)o->value();
+  }
+}
+
+static void cb_2(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->textfont);
+  } else {
+    layout->textfont = (int)o->value();
+  }
+}
+
+static void cb_3(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->textsize);
+  } else {
+    layout->textsize = (int)o->value();
+  }
+}
+
 Fl_Choice *layout_choice=(Fl_Choice *)0;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
@@ -688,7 +718,7 @@ Fl_Menu_Item menu_layout_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_(Fl_Button*, void* v) {
+static void cb_4(Fl_Button*, void* v) {
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -823,66 +853,6 @@ Fl_Double_Window* make_layout_window() {
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close2);
     } // Fl_Button* o
-    { Fl_Box* o = new Fl_Box(241, 367, 107, 25, "Widget Size:");
-      o->labelfont(1);
-      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
-    } // Fl_Box* o
-    { Fl_Group* o = new Fl_Group(305, 393, 192, 75);
-      { def_widget_size[0] = new Fl_Round_Button(315, 393, 70, 25);
-        def_widget_size[0]->type(102);
-        def_widget_size[0]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[0]->callback((Fl_Callback*)default_widget_size_cb, (void*)(8));
-      } // Fl_Round_Button* def_widget_size[0]
-      { Fl_Box* o = new Fl_Box(330, 393, 50, 25, "tiny");
-        o->labelsize(8);
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      { def_widget_size[1] = new Fl_Round_Button(402, 393, 70, 25);
-        def_widget_size[1]->type(102);
-        def_widget_size[1]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[1]->callback((Fl_Callback*)default_widget_size_cb, (void*)(11));
-      } // Fl_Round_Button* def_widget_size[1]
-      { Fl_Box* o = new Fl_Box(418, 393, 50, 25, "small");
-        o->labelsize(11);
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      { def_widget_size[2] = new Fl_Round_Button(315, 418, 70, 25);
-        def_widget_size[2]->type(102);
-        def_widget_size[2]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[2]->callback((Fl_Callback*)default_widget_size_cb, (void*)(14));
-      } // Fl_Round_Button* def_widget_size[2]
-      { Fl_Box* o = new Fl_Box(330, 418, 50, 25, "normal");
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      { def_widget_size[3] = new Fl_Round_Button(402, 418, 90, 25);
-        def_widget_size[3]->type(102);
-        def_widget_size[3]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[3]->callback((Fl_Callback*)default_widget_size_cb, (void*)(18));
-      } // Fl_Round_Button* def_widget_size[3]
-      { Fl_Box* o = new Fl_Box(418, 418, 68, 25, "medium");
-        o->labelsize(18);
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      { def_widget_size[4] = new Fl_Round_Button(315, 443, 75, 25);
-        def_widget_size[4]->type(102);
-        def_widget_size[4]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[4]->callback((Fl_Callback*)default_widget_size_cb, (void*)(24));
-      } // Fl_Round_Button* def_widget_size[4]
-      { Fl_Box* o = new Fl_Box(330, 443, 64, 25, "large");
-        o->labelsize(24);
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      { def_widget_size[5] = new Fl_Round_Button(402, 443, 95, 25);
-        def_widget_size[5]->type(102);
-        def_widget_size[5]->down_box(FL_ROUND_DOWN_BOX);
-        def_widget_size[5]->callback((Fl_Callback*)default_widget_size_cb, (void*)(32));
-      } // Fl_Round_Button* def_widget_size[5]
-      { Fl_Box* o = new Fl_Box(418, 443, 76, 25, "huge");
-        o->labelsize(32);
-        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      } // Fl_Box* o
-      o->end();
-    } // Fl_Group* o
     { Fl_Value_Input* o = new Fl_Value_Input(167, 82, 50, 22, "left window margin:");
       o->maximum(32767);
       o->step(1);
@@ -995,6 +965,7 @@ Fl_Double_Window* make_layout_window() {
         o->labelfont(1);
         o->labelsize(11);
         o->textsize(11);
+        o->callback((Fl_Callback*)cb_);
         Fl_Group::current()->resizable(o);
         o->menu(fontmenu);
       } // Fl_Choice* o
@@ -1005,6 +976,7 @@ Fl_Double_Window* make_layout_window() {
         o->step(1);
         o->value(14);
         o->textsize(11);
+        o->callback((Fl_Callback*)cb_1);
       } // Fl_Value_Input* o
       o->end();
     } // Fl_Group* o
@@ -1020,6 +992,7 @@ Fl_Double_Window* make_layout_window() {
         o->labelfont(1);
         o->labelsize(11);
         o->textsize(11);
+        o->callback((Fl_Callback*)cb_2);
         Fl_Group::current()->resizable(o);
         o->menu(fontmenu);
       } // Fl_Choice* o
@@ -1030,6 +1003,7 @@ Fl_Double_Window* make_layout_window() {
         o->step(1);
         o->value(14);
         o->textsize(11);
+        o->callback((Fl_Callback*)cb_3);
       } // Fl_Value_Input* o
       o->end();
     } // Fl_Group* o
@@ -1039,7 +1013,7 @@ Fl_Double_Window* make_layout_window() {
       layout_choice->menu(menu_layout_choice);
     } // Fl_Choice* layout_choice
     { Fl_Button* o = new Fl_Button(300, 11, 24, 24, "+");
-      o->callback((Fl_Callback*)cb_);
+      o->callback((Fl_Callback*)cb_4);
     } // Fl_Button* o
     { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
       w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);

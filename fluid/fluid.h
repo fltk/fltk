@@ -134,7 +134,6 @@ extern void new_from_template_cb(Fl_Widget *w, void *v);
 extern int write_code_files();
 extern void write_strings_cb(Fl_Widget *, void *);
 extern void align_widget_cb(Fl_Widget *, long);
-extern void widget_size_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
 
 inline int fd_min(int a, int b) { return (a < b ? a : b); }

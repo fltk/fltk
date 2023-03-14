@@ -97,9 +97,6 @@ extern Fl_Simple_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 extern Fl_Double_Window *grid_window;
-#include <FL/Fl_Round_Button.H>
-extern void default_widget_size_cb(Fl_Round_Button*, long);
-extern Fl_Round_Button *def_widget_size[6];
 #include <FL/Fl_Value_Input.H>
 extern void propagate_load(Fl_Group*, void*);
 extern Fl_Menu_Item fontmenu[];

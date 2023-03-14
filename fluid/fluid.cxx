@@ -1448,21 +1448,13 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
     {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
     {0},
-  {"&Center In Group",0,0,0,FL_SUBMENU},
+  {"&Center In Group",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
-  {"Set &Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
-    {"&Tiny",FL_ALT+'1',(Fl_Callback *)widget_size_cb,(void*)8,0,FL_NORMAL_LABEL,FL_HELVETICA,8},
-    {"&Small",FL_ALT+'2',(Fl_Callback *)widget_size_cb,(void*)11,0,FL_NORMAL_LABEL,FL_HELVETICA,11},
-    {"&Normal",FL_ALT+'3',(Fl_Callback *)widget_size_cb,(void*)14,0,FL_NORMAL_LABEL,FL_HELVETICA,14},
-    {"&Medium",FL_ALT+'4',(Fl_Callback *)widget_size_cb,(void*)18,0,FL_NORMAL_LABEL,FL_HELVETICA,18},
-    {"&Large",FL_ALT+'5',(Fl_Callback *)widget_size_cb,(void*)24,0,FL_NORMAL_LABEL,FL_HELVETICA,24},
-    {"&Huge",FL_ALT+'6',(Fl_Callback *)widget_size_cb,(void*)32,0,FL_NORMAL_LABEL,FL_HELVETICA,32},
-    {0},
   {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
-  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER|FL_MENU_DIVIDER },
-  {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },  // TODO: save the last choosen layout preset in preferences
+  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER },
+  {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
   {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
   {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
   {0},
@@ -1619,7 +1611,6 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
 void make_main_window() {
   if (!batch_mode) {
     fluid_prefs.get("show_guides", show_guides, 0);
-    fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
     fluid_prefs.get("show_comments", show_comments, 1);
     shell_prefs_get();
     make_layout_window();

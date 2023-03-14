@@ -61,8 +61,6 @@ protected:
   Fl_Widget *live_widget;
 
 public:
-  static int default_size;
-
   const char *xclass; // junk string, used for shortcut
   Fl_Widget *o;
   int public_;

@@ -4,8 +4,32 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite {alignment_panel.fl}
-  current_preset 0
+  current_suite FLTK
+  current_preset 1
+  suite {
+    name {alignment_panel.fl}
+    preset { 1
+      15 15 15 15 0 0
+      10 10 10 10 0 0
+      25 25
+      20 10 4 20 4 8
+      0 14 0 14
+    }
+    preset { 1
+      10 10 10 10 0 0
+      10 10 10 10 0 0
+      20 20
+      20 10 5 20 5 5
+      0 11 0 11
+    }
+    preset { 1
+      10 10 10 10 0 0
+      10 10 10 10 0 0
+      18 18
+      16 8 2 16 4 2
+      0 10 0 10
+    }
+  }
   suite {
     name {alignment_panel.fl}
     preset { 1
@@ -161,15 +185,15 @@ set_modflag(-1, -1);}
         } {
           MenuItem {} {
             label None
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
           MenuItem {} {
             label {GNU gettext}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
           MenuItem {} {
             label {POSIX catgets}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
         }
         Fl_Input i18n_include_input {
@@ -437,68 +461,6 @@ Function {make_layout_window()} {open
       callback {if (v != LOAD) grid_window->hide();}
       tooltip {Close this dialog.} xywh {435 515 60 25}
     }
-    Fl_Box {} {
-      label {Widget Size:}
-      xywh {241 367 107 25} labelfont 1 align 24
-    }
-    Fl_Group {} {open
-      xywh {305 393 192 75}
-    } {
-      Fl_Round_Button {def_widget_size[0]} {
-        user_data 8 user_data_type long
-        callback default_widget_size_cb
-        xywh {315 393 70 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label tiny
-        xywh {330 393 50 25} labelsize 8 align 20
-      }
-      Fl_Round_Button {def_widget_size[1]} {
-        user_data 11 user_data_type long
-        callback default_widget_size_cb
-        xywh {402 393 70 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label small
-        xywh {418 393 50 25} labelsize 11 align 20
-      }
-      Fl_Round_Button {def_widget_size[2]} {
-        user_data 14 user_data_type long
-        callback default_widget_size_cb
-        xywh {315 418 70 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label normal
-        xywh {330 418 50 25} align 20
-      }
-      Fl_Round_Button {def_widget_size[3]} {
-        user_data 18 user_data_type long
-        callback default_widget_size_cb
-        xywh {402 418 90 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label medium
-        xywh {418 418 68 25} labelsize 18 align 20
-      }
-      Fl_Round_Button {def_widget_size[4]} {
-        user_data 24 user_data_type long
-        callback default_widget_size_cb
-        xywh {315 443 75 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label large
-        xywh {330 443 64 25} labelsize 24 align 20
-      }
-      Fl_Round_Button {def_widget_size[5]} {
-        user_data 32 user_data_type long
-        callback default_widget_size_cb
-        xywh {402 443 95 25} type Radio down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label huge
-        xywh {418 443 76 25} labelsize 32 align 20
-      }
-    }
     Fl_Value_Input {} {
       label {left window margin:}
       callback {if (v == LOAD) {
@@ -684,12 +646,22 @@ Function {make_layout_window()} {open
       callback propagate_load open
       xywh {107 479 200 20} labelfont 1 labelsize 11 align 4
     } {
-      Fl_Choice {} {open
+      Fl_Choice {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->labelfont);
+} else {
+  layout->labelfont = (int)o->value();
+}} open
         tooltip {The style of the label text.} xywh {107 479 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
         code0 {extern Fl_Menu_Item fontmenu[];}
         code1 {o->menu(fontmenu);}
       } {}
       Fl_Value_Input {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->labelsize);
+} else {
+  layout->labelsize = (int)o->value();
+}}
         tooltip {The size of the label text.} xywh {258 479 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
       }
     }
@@ -698,12 +670,22 @@ Function {make_layout_window()} {open
       callback propagate_load open
       xywh {107 507 200 20} labelfont 1 labelsize 11 align 4
     } {
-      Fl_Choice {} {open
+      Fl_Choice {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->textfont);
+} else {
+  layout->textfont = (int)o->value();
+}} open selected
         tooltip {The value text style.} xywh {107 507 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
         code0 {extern Fl_Menu_Item fontmenu[];}
         code1 {o->menu(fontmenu);}
       } {}
       Fl_Value_Input {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->textsize);
+} else {
+  layout->textsize = (int)o->value();
+}}
         tooltip {The value text size.} xywh {258 507 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
       }
     }
@@ -714,16 +696,16 @@ Function {make_layout_window()} {open
     int index = o->value();
     g_layout_list.current_suite(index);
     g_layout_list.update_dialogs();
-  }} open selected
+  }} open
       xywh {170 11 130 24} down_box BORDER_BOX
     } {
       MenuItem {} {
         label FLTK
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
       MenuItem {} {
         label Grid
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
     }
     Fl_Button {} {
@@ -770,7 +752,7 @@ if (new_name == NULL)
 
 g_layout_list.rename(new_name);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} divider
+        xywh {0 0 31 20} labelsize 14 divider
       }
       MenuItem w_layout_menu_load {
         label {Load...}
@@ -791,7 +773,7 @@ if (n >= 0) {
   g_layout_list.current_suite(n);
   g_layout_list.update_dialogs();
 }}
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
       MenuItem w_layout_menu_save {
         label {Save...}
@@ -824,7 +806,7 @@ if (suite.filename)
   ::free(suite.filename);
 suite.filename = fl_strdup(new_filename);
 suite.save(new_filename);}
-        xywh {0 0 31 20} divider
+        xywh {0 0 31 20} labelsize 14 divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }
       MenuItem w_layout_menu_user_setting {
@@ -832,13 +814,13 @@ suite.save(new_filename);}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 if (!suite.is_static)
   suite.is_user_setting = o->value();}
-        xywh {0 0 31 20} type Toggle
+        xywh {0 0 31 20} type Toggle labelsize 14
       }
       MenuItem w_layout_menu_project_setting {
         label {Save in Project File}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.is_project_setting = o->value();}
-        xywh {0 0 31 20} type Toggle divider
+        xywh {0 0 31 20} type Toggle labelsize 14 divider
       }
       MenuItem w_layout_menu_delete {
         label Delete
@@ -846,7 +828,7 @@ suite.is_project_setting = o->value();}
 
 g_layout_list.remove(g_layout_list.current_suite());
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
     }
     Fl_Group {} {

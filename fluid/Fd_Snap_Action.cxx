@@ -27,20 +27,18 @@
 #include <string.h>
 #include <assert.h>
 
-// TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
 // TODO: how should we name layouts that are within the project file?
 // TODO: warning if the user wants to change builtin layouts
 // TODO: rearrange layout panel
-// TODO: actually use labelsize and textsize (labelfont?)
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
-// TODO: set some sane values for builtin presets
+// INFO: how about a small tool box for quick preset selection and diabeling of individual snaps?
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
 int Fd_Snap_Action::eex = 0;
 int Fd_Snap_Action::eey = 0;
 
-Fd_Layout_Preset default_layout = {  // the currently active layout
+static Fd_Layout_Preset fltk_app = {
   15, 15, 15, 15, 0, 0, // window:    l, r, t, b, gx, gy
   10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
   25, 25,               // tabs:      t, b
@@ -48,15 +46,49 @@ Fd_Layout_Preset default_layout = {  // the currently active layout
   20,  4, 8,            // widget_y:  min, inc, gap
   0, 14, 0, 14          // labelfont/size, textfont/size
 };
-Fd_Layout_Preset *layout = &default_layout;
+static Fd_Layout_Preset fltk_dlg = {
+  10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
+  10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
+  20, 20,               // tabs:      t, b
+  20, 10, 5,            // widget_x:  min, inc, gap
+  20,  5, 5,            // widget_y:  min, inc, gap
+  0, 11, 0, 11          // labelfont/size, textfont/size
+};
+static Fd_Layout_Preset fltk_tool = {
+  10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
+  10, 10, 10, 10, 0, 0, // group:     l, r, t, b, gx, gy
+  18, 18,               // tabs:      t, b
+  16,  8, 2,            // widget_x:  min, inc, gap
+  16,  4, 2,            // widget_y:  min, inc, gap
+  0, 10, 0, 10          // labelfont/size, textfont/size
+};
 
-static Fd_Layout_Preset fltk_app = { 1 };
-static Fd_Layout_Preset fltk_dlg = { 2 };
-static Fd_Layout_Preset fltk_tool = { 3 };
+static Fd_Layout_Preset grid_app = {
+  12, 12, 12, 12, 12, 12, // window:    l, r, t, b, gx, gy
+  12, 12, 12, 12, 12, 12, // group:     l, r, t, b, gx, gy
+  24, 24,                 // tabs:      t, b
+  12, 6, 6,               // widget_x:  min, inc, gap
+  12, 6, 6,               // widget_y:  min, inc, gap
+  0, 14, 0, 14            // labelfont/size, textfont/size
+};
 
-static Fd_Layout_Preset grid_app = { 4 };
-static Fd_Layout_Preset grid_dlg = { 5 };
-static Fd_Layout_Preset grid_tool = { 6 };
+static Fd_Layout_Preset grid_dlg = {
+  10, 10, 10, 10, 10, 10, // window:    l, r, t, b, gx, gy
+  10, 10, 10, 10, 10, 10, // group:     l, r, t, b, gx, gy
+  20, 20,                 // tabs:      t, b
+  10, 5, 5,               // widget_x:  min, inc, gap
+  10, 5, 5,               // widget_y:  min, inc, gap
+  0, 12, 0, 12            // labelfont/size, textfont/size
+};
+
+static Fd_Layout_Preset grid_tool = {
+  8, 8, 8, 8, 8, 8, // window:    l, r, t, b, gx, gy
+  8, 8, 8, 8, 8, 8, // group:     l, r, t, b, gx, gy
+  16, 16,           // tabs:      t, b
+  8, 4, 4,          // widget_x:  min, inc, gap
+  8, 4, 4,          // widget_y:  min, inc, gap
+  0, 10, 0, 10      // labelfont/size, textfont/size
+};
 
 static Fd_Layout_Suite static_suite_list[] = {
   { (char*)"FLTK", NULL, &fltk_app, &fltk_dlg, &fltk_tool, true, false, false },
@@ -75,6 +107,7 @@ static Fl_Menu_Item static_choice_menu[] = {
   { NULL }
 };
 
+Fd_Layout_Preset *layout = &fltk_app;
 Fd_Layout_List g_layout_list;
 
 // ---- Callbacks ------------------------------------------------------ MARK: -

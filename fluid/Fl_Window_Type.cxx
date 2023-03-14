@@ -62,14 +62,6 @@ static void update_xywh() {
   }
 }
 
-// Set default widget sizes...
-void default_widget_size_cb(Fl_Round_Button *b, long size) {
-  // Update the "normal" text size of new widgets...
-  b->setonly();
-  Fl_Widget_Type::default_size = (int)size;
-  fluid_prefs.set("widget_size", Fl_Widget_Type::default_size);
-}
-
 void i18n_type_cb(Fl_Choice *c, void *) {
   undo_checkpoint();
 
@@ -191,13 +183,6 @@ void show_project_cb(Fl_Widget *, void *) {
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
-  int s = Fl_Widget_Type::default_size;
-  if (s<=8) def_widget_size[0]->setonly();
-  else if (s<=11) def_widget_size[1]->setonly();
-  else if (s<=14) def_widget_size[2]->setonly();
-  else if (s<=18) def_widget_size[3]->setonly();
-  else if (s<=24) def_widget_size[4]->setonly();
-  else if (s<=32) def_widget_size[5]->setonly();
   grid_window->hotspot(grid_window);
   grid_window->show();
 }

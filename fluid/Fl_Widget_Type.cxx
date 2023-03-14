@@ -49,8 +49,6 @@
 // instance, sets the widget pointers, and makes all the display
 // update correctly...
 
-int Fl_Widget_Type::default_size = FL_NORMAL_SIZE;
-
 int Fl_Widget_Type::is_widget() const {return 1;}
 int Fl_Widget_Type::is_public() const {return public_;}
 
@@ -1345,6 +1343,7 @@ void labelfont_cb(Fl_Choice* i, void *v) {
   } else {
     int mod = 0;
     int n = i->value();
+    if (n <= 0) n = layout->labelfont;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1364,7 +1363,7 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
   } else {
     int mod = 0;
     n = int(i->value());
-    if (n <= 0) n = Fl_Widget_Type::default_size;
+    if (n <= 0) n = layout->labelsize;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1821,6 +1820,7 @@ void textfont_cb(Fl_Choice* i, void* v) {
   } else {
     int mod = 0;
     n = (Fl_Font)i->value();
+    if (n <= 0) n = layout->textfont;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1841,7 +1841,7 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
   } else {
     int mod = 0;
     s = int(i->value());
-    if (s <= 0) s = Fl_Widget_Type::default_size;
+    if (s <= 0) s = layout->textsize;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
