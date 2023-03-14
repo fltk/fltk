@@ -70,7 +70,7 @@ decl {\#include <FL/Fl_Text_Display.H>} {public local
 decl {\#include <FL/filename.H>} {public local
 }
 
-decl {\#include <FL/fl_string_functions.h>} {selected public local
+decl {\#include <FL/fl_string_functions.h>} {public local
 }
 
 decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
@@ -708,7 +708,13 @@ Function {make_layout_window()} {open
       }
     }
     Fl_Choice layout_choice {
-      callback edit_layout_suite_cb open
+      callback {if (v == LOAD) {
+    o->value(g_layout_list.current_suite());
+  } else {
+    int index = o->value();
+    g_layout_list.current_suite(index);
+    g_layout_list.update_dialogs();
+  }} open selected
       xywh {170 11 130 24} down_box BORDER_BOX
     } {
       MenuItem {} {

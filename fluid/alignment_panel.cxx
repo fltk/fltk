@@ -672,6 +672,16 @@ static void cb_group1(Fl_Value_Input* o, void* v) {
 
 Fl_Choice *layout_choice=(Fl_Choice *)0;
 
+static void cb_layout_choice(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+      o->value(g_layout_list.current_suite());
+    } else {
+      int index = o->value();
+      g_layout_list.current_suite(index);
+      g_layout_list.update_dialogs();
+    }
+}
+
 Fl_Menu_Item menu_layout_choice[] = {
  {"FLTK", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Grid", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
@@ -1025,7 +1035,7 @@ Fl_Double_Window* make_layout_window() {
     } // Fl_Group* o
     { layout_choice = new Fl_Choice(170, 11, 130, 24);
       layout_choice->down_box(FL_BORDER_BOX);
-      layout_choice->callback((Fl_Callback*)edit_layout_suite_cb);
+      layout_choice->callback((Fl_Callback*)cb_layout_choice);
       layout_choice->menu(menu_layout_choice);
     } // Fl_Choice* layout_choice
     { Fl_Button* o = new Fl_Button(300, 11, 24, 24, "+");

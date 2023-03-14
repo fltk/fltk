@@ -28,11 +28,12 @@
 #include <assert.h>
 
 // TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
+// TODO: how should we name layouts that are within the project file?
 // TODO: warning if the user wants to change builtin layouts
 // TODO: rearrange layout panel
 // TODO: actually use labelsize and textsize (labelfont?)
-// TODO: move panel to global settings panel (move load, save to main pulldown, or to toolbaox?)
-// TODO: set some sane values for builtin presets, maybe rename Fluid to FLTK
+// TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
+// TODO: set some sane values for builtin presets
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
@@ -83,21 +84,6 @@ void layout_suite_marker(Fl_Widget *, void *) {
   // intentionally left empty
 }
 
-// TODO: this should be in alignment_panel.h
-void edit_layout_suite_cb(Fl_Choice *w, void *user_data) {
-  if (user_data == LOAD) {
-    assert(g_layout_list.current_suite() >= 0);
-    assert(g_layout_list.current_suite() < g_layout_list.list_size_);
-    w->value(g_layout_list.current_suite());
-  } else {
-    int index = w->value();
-    assert(index >= 0);
-    assert(index < g_layout_list.list_size_);
-    g_layout_list.current_suite(index);
-    g_layout_list.update_dialogs();
-  }
-}
-
 void select_layout_suite_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
   assert(index >= 0);
@@ -114,7 +100,6 @@ void select_layout_preset_cb(Fl_Widget *, void *user_data) {
   g_layout_list.update_dialogs();
 }
 
-// TODO: this should be in alignment_panel.h
 void edit_layout_preset_cb(Fl_Button *w, long user_data) {
   int index = (int)w->argument();
   assert(index >= 0);
@@ -361,6 +346,15 @@ int Fd_Layout_Suite::save(const char *filename) {
   return 0;
 }
 
+Fd_Layout_Suite::~Fd_Layout_Suite() {
+  if (is_static) return;
+  if (name) ::free(name);
+  if (filename) ::free(filename);
+  for (int i = 0; i < 3; ++i) {
+    delete layout[i];
+  }
+}
+
 // ---- Fd_Layout_List ------------------------------------------------- MARK: -
 
 Fd_Layout_List::Fd_Layout_List()
@@ -380,7 +374,12 @@ Fd_Layout_List::~Fd_Layout_List() {
   if (!list_is_static_) {
     ::free(main_menu_);
     ::free(choice_menu_);
-    ::free(list_); // TODO: delete items in list, free name memebr of items
+    for (int i = 0; i < list_size_; i++) {
+      Fd_Layout_Suite &suite = list_[i];
+      if (!suite.is_static)
+        suite.~Fd_Layout_Suite();
+    }
+    ::free(list_);
   }
 }
 

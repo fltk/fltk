@@ -74,8 +74,7 @@ public:
   void read(Fd_Project_Reader*);
   int load(const char *filename);
   int save(const char *filename);
-//  Fd_Layout_Suite();
-//  ~Fd_Layout_Suite();
+  ~Fd_Layout_Suite();
 public:
 
 };
