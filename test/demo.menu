@@ -66,6 +66,7 @@
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle
+	@e:Cairo\nSupport:cairo_test
 	@e:Block\nAttack!:blocks
 	@e:Checkers:checkers
 	@e:Sudoku:sudoku

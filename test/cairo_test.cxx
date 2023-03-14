@@ -1,7 +1,7 @@
 //
 // Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -155,15 +155,17 @@ typedef Fl_Cairo_Window cairo_using_window;
 
 class cairo_using_window : public Fl_Double_Window {
   void (*draw_with_cairo_)(cairo_using_window*, cairo_t*);
+
 public:
+
   cairo_using_window(int w, int h, const char *title) : Fl_Double_Window(w, h, title) {
     Fl_Box *box = new Fl_Box(FL_NO_BOX, 0, 0, w, 25,
-                             "use Cairo and the FLTK API in Fl_Double_Window");
+                             "Cairo and FLTK API in Fl_Double_Window");
     box->labelfont(FL_TIMES_BOLD);
     box->labelsize(12);
     box->labelcolor(FL_BLUE);
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Window::draw(); // perform drawings with the FLTK API
 #ifndef FLTK_HAVE_CAIROEXT
     Fl::cairo_make_current(this); // announce Cairo will be used in this window
@@ -172,13 +174,9 @@ public:
     draw_with_cairo_(this, cc);   // draw in this window using Cairo
 
     // flush Cairo drawings: necessary at least for Windows
-    // see also FL/Fl_Cairo_Window.H
-    // FIXME: this should be simplified with an FLTK API, for instance:
-    // Fl::cairo_flush(cc);
-
-    cairo_surface_t *s = cairo_get_target(cc);
-    cairo_surface_flush(s);
+    Fl::cairo_flush(cc);
   }
+
   void set_draw_cb( void (*cb)(cairo_using_window*, cairo_t*)) {
     draw_with_cairo_ = cb;
   }
@@ -196,7 +194,7 @@ int main(int argc, char **argv) {
 #ifdef FLTK_HAVE_CAIROEXT
   Fl::cairo_autolink_context(true);
 #endif
-  cairo_using_window window(300, 300, "FLTK loves Cairo");
+  cairo_using_window window(350, 350, "FLTK loves Cairo");
 
   window.resizable(&window);
   window.color(FL_WHITE);

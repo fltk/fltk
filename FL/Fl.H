@@ -1399,42 +1399,96 @@ public:
   */
 public:
   // Cairo support API
-  static cairo_t * cairo_make_current(Fl_Window* w);
-   /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true,
-      any current window dc is linked to a current cairo context.
-      This is not the default, because it may not be necessary
-      to add cairo support to all fltk supported windows.
-      When you wish to associate a cairo context in this mode,
-      you need to call explicitly in your draw() overridden method,
-      Fl::cairo_make_current(Fl_Window*). This will create a cairo context
-      but only for this Window.
-      Still in custom cairo application it is possible to handle
-      completely this process automatically by setting \p alink to true.
-      In this last case, you don't need anymore to call Fl::cairo_make_current().
-      You can use Fl::cairo_cc() to get the current cairo context anytime.
-     \note Only available when configure has the --enable-cairo option
+
+  static cairo_t *cairo_make_current(Fl_Window *w);
+
+  /** When FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true,
+    any current window dc is linked to a current Cairo context.
+    This is not the default, because it may not be necessary
+    to add Cairo support to all fltk supported windows.
+    When you wish to associate a Cairo context in this mode,
+    you need to call explicitly in your draw() overridden method,
+    Fl::cairo_make_current(Fl_Window*). This will create a Cairo context
+    only for this Window.
+    Still in custom Cairo application it is possible to handle
+    completely this process automatically by setting \p alink to true.
+    In this last case, you don't need anymore to call Fl::cairo_make_current().
+    You can use Fl::cairo_cc() to get the current Cairo context anytime.
+
+    \note Only available when configure has the --enable-cairo option
   */
-  static void cairo_autolink_context(bool alink) {cairo_state_.autolink(alink);}
+  static void cairo_autolink_context(bool alink) {
+    cairo_state_.autolink(alink);
+  }
+
   /**
-    Gets the current autolink mode for cairo support.
-    \retval false if no cairo context autolink is made for each window.
-    \retval true if any fltk window is attached a cairo context when it
+    Gets the current autolink mode for Cairo support.
+    \retval false if no Cairo context autolink is made for each window.
+    \retval true if any fltk window is attached a Cairo context when it
     is current. \see void cairo_autolink_context(bool alink)
     \note Only available when configure has the --enable-cairo option
  */
-  static bool cairo_autolink_context() {return cairo_state_.autolink();}
-  /** Gets the current cairo context linked with a fltk window. */
-  static cairo_t * cairo_cc() { return cairo_state_.cc(); }
-  /** Sets the current cairo context to \p c.
-      Set \p own to true if you want fltk to handle this cc deletion.
-     \note Only available when configure has the --enable-cairo option
-*/
-  static void cairo_cc(cairo_t * c, bool own=false){ cairo_state_.cc(c, own); }
+  static bool cairo_autolink_context() {
+    return cairo_state_.autolink();
+  }
+
+  /** Gets the current Cairo context linked with a fltk window. */
+  static cairo_t *cairo_cc() {
+    return cairo_state_.cc();
+  }
+
+  /** Sets the current Cairo context to \p c.
+    Set \p own to true if you want fltk to handle this cc deletion.
+    \note Only available when configure has the --enable-Cairo option
+  */
+  static void cairo_cc(cairo_t *c, bool own=false) {
+    cairo_state_.cc(c, own);
+  }
+
+  /** Flush Cairo drawings on Cairo context \p c.
+    This is \b required on Windows if you use the Cairo context provided
+    by the "Cairo autolink" option. Call this when all your drawings on
+    the Cairo context are finished. This is maybe not necessary on other
+    platforms than Windows but it does no harm if you call it always.
+
+    You don't need to use this if you use an Fl_Cairo_Window which does
+    this automatically after the draw callback returns.
+
+    Code example for "Cairo autolink" mode:
+
+    In the overridden draw() method of your subclass of Fl_Window or any
+    widget:
+    \code
+      cairo_t *cc = Fl::cairo_cc();   // get the "autolink" Cairo context
+      // ... your Cairo drawings are here ...
+      Fl::cairo_flush(cc);            // flush Cairo drawings to the device
+    \endcode
+
+    If you configure FLTK with \c '--enable-cairo' or CMake option
+    \c 'OPTION_CAIRO' (i.e. without \c '--enable-cairoext' or CMake option
+    \c 'OPTION_CAIROEXT') or if you don't enable the \c 'autolink' Cairo
+    context you may do the equivalent to use Cairo drawings in an
+    overridden draw() method of derived classes by using
+    \code
+      // get the  Cairo context for the \c window
+      cairo_t *cc = Fl::cairo_make_current(window);
+      // ... your Cairo drawings are here ...
+      Fl::cairo_flush(cc); // flush Cairo drawings to the device
+    \endcode
+    \see Fl::cairo_autolink_context(bool)
+    \see Fl::cairo_make_current(Fl_Window*);
+  */
+  static void cairo_flush(cairo_t *c) {
+    // flush Cairo drawings: necessary at least for Windows
+    cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
+    cairo_surface_flush(s);
+  }
 
 private:
-  static cairo_t * cairo_make_current(void* gc);
-  static cairo_t * cairo_make_current(void* gc, int W, int H);
+  static cairo_t *cairo_make_current(void *gc);
+  static cairo_t *cairo_make_current(void *gc, int W, int H);
   static Fl_Cairo_State cairo_state_;
+
 public:
   /** @} */
 

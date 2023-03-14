@@ -102,8 +102,7 @@ protected:
         Fl::cairo_make_current(this);
       draw_cb_(this, Fl::cairo_cc());
       // flush Cairo drawings: necessary at least for Windows
-      cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
-      cairo_surface_flush(s);
+      Fl::cairo_flush(Fl::cairo_cc());
     }
   }
 
