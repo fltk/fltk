@@ -171,10 +171,8 @@ public:
   int get_key(int k) FL_OVERRIDE;
 
 // Wayland-specific member functions
-  int get_mouse_unscaled(int &xx, int &yy);
   void screen_count_set(int count) {num_screens = count;}
   void reset_cursor();
-  int screen_num_unscaled(int x, int y);
   // this one is in fl_wayland_clipboard_dnd.cxx
   void copy_image(const unsigned char* data, int W, int H);
   void init_workarea();

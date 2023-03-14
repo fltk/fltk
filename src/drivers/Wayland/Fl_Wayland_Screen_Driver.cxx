@@ -1411,23 +1411,6 @@ void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int
   height = off->data_size / off->stride;
 }
 
-//NOTICE: returns -1 if x,y is not in any screen
-int Fl_Wayland_Screen_Driver::screen_num_unscaled(int x, int y)
-{
-  if (num_screens < 0) init();
-
-  Fl_Wayland_Screen_Driver::output *output;
-  int screen = 0;
-  wl_list_for_each(output, &outputs, link) {
-    int s = output->wld_scale;
-    int sx = 0, sy = 0, sw = output->width/s, sh = output->height/s;
-    if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
-      return screen;
-    }
-    screen++;
-  }
-  return -1;
-}
 
 float Fl_Wayland_Screen_Driver::scale(int n) {
   Fl_Wayland_Screen_Driver::output *output;
@@ -1492,19 +1475,17 @@ struct xkb_keymap *Fl_Wayland_Screen_Driver::get_xkb_keymap() {
 }
 
 
-int Fl_Wayland_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
-  open_display();
-  mx = Fl::e_x_root; my = Fl::e_y_root;
-  int screen = screen_num_unscaled(mx, my);
-  return screen >= 0 ? screen : 0;
-}
-
-
 int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
-  int snum = get_mouse_unscaled(xx, yy);
+  open_display();
+  xx = Fl::e_x_root; yy = Fl::e_y_root;
+  if (!seat->pointer_focus) return 0;
+  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
+  if (!win) return 0;
+  int snum = Fl_Window_Driver::driver(win)->screen_num();
   float s = scale(snum);
   xx = xx/s;
   yy = yy/s;
+//printf("get_mouse(%dx%d)->%d\n", xx, yy, snum);
   return snum;
 }
 
