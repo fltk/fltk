@@ -18,24 +18,21 @@
 
 #include "Fl_Group_Type.h"
 #include "alignment_panel.h"
+#include "file.h"
 
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/fl_string_functions.h>
 #include <math.h>
 #include <string.h>
-
 #include <assert.h>
 
 // TODO: how about a small tool box for quick preset selection and diabeling of individual snaps?
-// TODO: save layout file
-// TODO: load layout file
-// TODO: save layout in .fl file
-// TODO: load layout from .fl file
 // TODO: warning if the user wants to change builtin layouts
-// TODO: rearrange to panel
-// TODO: use labelsize and textsize (labelfont?)
+// TODO: rearrange layout panel
+// TODO: actually use labelsize and textsize (labelfont?)
 // TODO: move panel to global settings panel (move load, save to main pulldown, or to toolbaox?)
+// TODO: set some sane values for builtin presets, maybe rename Fluid to FLTK
 
 void select_layout_suite_cb(Fl_Widget *, void *user_data);
 
@@ -206,6 +203,79 @@ void Fd_Layout_Preset::read(Fl_Preferences &prefs) {
   p_lyt.get("textsize", textsize, 14);
 }
 
+void Fd_Layout_Preset::write(Fd_Project_Writer *out) {
+  out->write_string("    preset { 1\n"); // preset format version
+  out->write_string("      %d %d %d %d %d %d\n",
+                    left_window_margin, right_window_margin,
+                    top_window_margin, bottom_window_margin,
+                    window_grid_x, window_grid_y);
+  out->write_string("      %d %d %d %d %d %d\n",
+                    left_group_margin, right_group_margin,
+                    top_group_margin, bottom_group_margin,
+                    group_grid_x, group_grid_y);
+  out->write_string("      %d %d\n", top_tabs_margin, bottom_tabs_margin);
+  out->write_string("      %d %d %d %d %d %d\n",
+                    widget_min_w, widget_inc_w, widget_gap_x,
+                    widget_min_h, widget_inc_h, widget_gap_y);
+  out->write_string("      %d %d %d %d\n",
+                    labelfont, labelsize, textfont, textsize);
+  out->write_string("    }\n"); // preset format version
+}
+
+void Fd_Layout_Preset::read(Fd_Project_Reader *in) {
+  const char *key;
+  key = in->read_word(1);
+  if (key && !strcmp(key, "{")) {
+    for (;;) {
+      key = in->read_word();
+      if (!key) return;
+      if (key[0] == '}') break;
+      int ver = atoi(key);
+      if (ver == 0) {
+        continue;
+      } else if (ver == 1) {
+        left_window_margin = in->read_int();
+        right_window_margin = in->read_int();
+        top_window_margin = in->read_int();
+        bottom_window_margin = in->read_int();
+        window_grid_x = in->read_int();
+        window_grid_y = in->read_int();
+
+        left_group_margin = in->read_int();
+        right_group_margin = in->read_int();
+        top_group_margin = in->read_int();
+        bottom_group_margin = in->read_int();
+        group_grid_x = in->read_int();
+        group_grid_y = in->read_int();
+
+        top_tabs_margin = in->read_int();
+        bottom_tabs_margin = in->read_int();
+
+        widget_min_w = in->read_int();
+        widget_inc_w = in->read_int();
+        widget_gap_x = in->read_int();
+        widget_min_h = in->read_int();
+        widget_inc_h = in->read_int();
+        widget_gap_y = in->read_int();
+
+        labelfont = in->read_int();
+        labelsize = in->read_int();
+        textfont = in->read_int();
+        textsize = in->read_int();
+      } else { // skip unknown chunks
+        for (;;) {
+          key = in->read_word(1);
+          if (key && (key[0] == '}'))
+            return;
+        }
+      }
+    }
+  } else {
+    // format error
+  }
+}
+
+
 // ---- Fd_Layout_Suite ------------------------------------------------ MARK: -
 
 void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
@@ -225,6 +295,39 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
     Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
     assert(layout[i]);
     layout[i]->read(prefs_preset);
+  }
+}
+
+void Fd_Layout_Suite::write(Fd_Project_Writer *out) {
+  out->write_string("  suite {\n");
+  out->write_string("    name "); out->write_word(name); out->write_string("\n");
+  for (int i = 0; i < 3; ++i) {
+    layout[i]->write(out);
+  }
+  out->write_string("  }\n");
+}
+
+void Fd_Layout_Suite::read(Fd_Project_Reader *in) {
+  const char *key;
+  key = in->read_word(1);
+  if (key && !strcmp(key, "{")) {
+    int ix = 0;
+    for (;;) {
+      key = in->read_word();
+      if (!key) return;
+      if (!strcmp(key, "name")) {
+        in->read_word(); // ignore
+      } else if (!strcmp(key, "preset")) {
+        if (ix >= 3) return; // file format error
+        layout[ix++]->read(in);
+      } else if (!strcmp(key, "}")) {
+        break;
+      } else {
+        in->read_word(); // unknown key, ignore, hopefully a key-value pair
+      }
+    }
+  } else {
+    // file format error
   }
 }
 
@@ -317,10 +420,10 @@ void Fd_Layout_List::write(Fl_Preferences &prefs) {
   }
 }
 
-void Fd_Layout_List::read(Fl_Preferences &prefs) {
+void Fd_Layout_List::read(Fl_Preferences &prefs, bool from_user_prefs) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   Fl_String cs;
-  int cp;
+  int cp = 0;
   prefs_list.get("current_suite", cs, "");
   prefs_list.get("current_preset", cp, 0);
   for (int i = 0; i < prefs_list.groups(); ++i) {
@@ -330,12 +433,61 @@ void Fd_Layout_List::read(Fl_Preferences &prefs) {
     if (new_name) {
       int n = add(new_name);
       list_[n].read(prefs_suite);
+      list_[n].is_static = false;
+      list_[n].is_user_setting = from_user_prefs;
+      list_[n].is_project_setting = false;
       ::free(new_name);
     }
   }
   current_suite(cs);
   current_preset(cp);
   update_dialogs();
+}
+
+void Fd_Layout_List::write(Fd_Project_Writer *out) {
+  out->write_string("\nsnap {\n  ver 1\n");
+  out->write_string("  current_suite "); out->write_word(list_[current_suite()].name); out->write_string("\n");
+  out->write_string("  current_preset %d\n", current_preset());
+  for (int i=0; i<list_size_; i++) {
+    Fd_Layout_Suite &suite = list_[i];
+    if (suite.is_project_setting)
+      suite.write(out);
+  }
+  out->write_string("}");
+}
+
+void Fd_Layout_List::read(Fd_Project_Reader *in) {
+  const char *key;
+  key = in->read_word(1);
+  if (key && !strcmp(key, "{")) {
+    Fl_String cs;
+    int cp = 0;
+    for (;;) {
+      key = in->read_word();
+      if (!key) return;
+      if (!strcmp(key, "ver")) {
+        in->read_int();
+      } else if (!strcmp(key, "current_suite")) {
+        cs = in->read_word();
+      } else if (!strcmp(key, "current_preset")) {
+        cp = in->read_int();
+      } else if (!strcmp(key, "suite")) {
+        int n = add(in->filename_name());
+        list_[n].read(in);
+        list_[n].is_user_setting = false;
+        list_[n].is_project_setting = true;
+      } else if (!strcmp(key, "}")) {
+        break;
+      } else {
+        in->read_word(); // unknown key, ignore, hopefully a key-value pair
+      }
+    }
+    current_suite(cs);
+    current_preset(cp);
+    update_dialogs();
+  } else {
+    // old style "snap" is followed by an integer. Ignore.
+  }
 }
 
 void Fd_Layout_List::current_suite(int ix) {
@@ -424,7 +576,6 @@ int Fd_Layout_List::add(const char *name) {
   return n;
 }
 
-// TODO: make sure that we do not rename a read-only layout
 void Fd_Layout_List::rename(const char *name) {
   int n = current_suite();
   ::free(list_[n].name);

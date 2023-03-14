@@ -71,7 +71,6 @@ Fl_Double_Window* make_project_window() {
       o->selection_color((Fl_Color)12);
       o->labelcolor(FL_BACKGROUND2_COLOR);
       { Fl_Group* o = new Fl_Group(10, 36, 379, 220, "Output");
-        o->hide();
         { Fl_Box* o = new Fl_Box(20, 49, 340, 49, "Use \"name.ext\" to set a file name or just \".ext\" to set extension.");
           o->align(Fl_Align(132|FL_ALIGN_INSIDE));
         } // Fl_Box* o
@@ -116,6 +115,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 36, 378, 220, "Internationalization");
+        o->hide();
         { i18n_type_chooser = new Fl_Choice(128, 48, 136, 25, "Use:");
           i18n_type_chooser->tooltip("Type of internationalization to use.");
           i18n_type_chooser->box(FL_THIN_UP_BOX);
@@ -798,13 +798,8 @@ Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- /*
-  Not yet supported. .fl format has no room
-  for storing layout presets. Maybe add XML
-  format or abuse `snap` tag in .fl?
-  */
- {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 146, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };

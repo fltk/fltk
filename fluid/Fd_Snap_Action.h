@@ -54,6 +54,8 @@ public:
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
+  void write(Fd_Project_Writer*);
+  void read(Fd_Project_Reader*);
 };
 
 extern Fd_Layout_Preset *layout;
@@ -103,7 +105,9 @@ public:
   void capacity(int);
 
   void write(Fl_Preferences &prefs);
-  void read(Fl_Preferences &prefs);
+  void read(Fl_Preferences &prefs, bool from_user_prefs);
+  void write(Fd_Project_Writer*);
+  void read(Fd_Project_Reader*);
   int add(Fd_Layout_Suite*);
   void remove(int);
   Fd_Layout_Preset *at(int);

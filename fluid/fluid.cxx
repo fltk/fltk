@@ -2089,11 +2089,11 @@ int main(int argc,char **argv) {
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
+    g_layout_list.read(fluid_prefs, true);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
       open_history_cb(0, absolute_history[0]);
     }
-    g_layout_list.read(fluid_prefs);
   }
   undo_suspend();
   if (c && !read_file(c,0)) {

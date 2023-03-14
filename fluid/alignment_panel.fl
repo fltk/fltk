@@ -2,6 +2,35 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite {alignment_panel.fl}
+  current_preset 0
+  suite {
+    name {alignment_panel.fl}
+    preset { 1
+      1 16 32 64 0 0
+      0 0 0 0 0 0
+      0 0
+      0 0 0 0 0 0
+      0 0 0 0
+    }
+    preset { 1
+      2 0 0 0 0 0
+      0 0 0 0 0 0
+      0 0
+      0 0 0 0 0 0
+      0 0 0 0
+    }
+    preset { 1
+      3 0 0 0 0 0
+      0 0 0 0 0 0
+      0 0
+      0 0 0 0 0 0
+      0 0 0 0
+    }
+  }
+}
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -41,7 +70,7 @@ decl {\#include <FL/Fl_Text_Display.H>} {public local
 decl {\#include <FL/filename.H>} {public local
 }
 
-decl {\#include <FL/fl_string_functions.h>} {public local
+decl {\#include <FL/fl_string_functions.h>} {selected public local
 }
 
 decl {\#include <FL/Fl_Scheme_Choice.H>} {public local
@@ -82,7 +111,7 @@ set_modflag(-1, -1);}
     } {
       Fl_Group {} {
         label Output open
-        xywh {10 36 379 220} hide
+        xywh {10 36 379 220}
       } {
         Fl_Box {} {
           label {Use "name.ext" to set a file name or just ".ext" to set extension.}
@@ -123,7 +152,7 @@ set_modflag(-1, -1);}
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 36 378 220}
+        xywh {10 36 378 220} hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
@@ -401,7 +430,7 @@ Function {make_layout_window()} {open
   Fl_Window grid_window {
     label {Layout Settings}
     callback {propagate_load(o, v);} open
-    xywh {478 283 520 573} type Double non_modal visible
+    xywh {519 281 520 573} type Double non_modal visible
   } {
     Fl_Button {} {
       label Close
@@ -803,10 +832,7 @@ if (!suite.is_static)
         label {Save in Project File}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.is_project_setting = o->value();}
-        comment {Not yet supported. .fl format has no room
-for storing layout presets. Maybe add XML
-format or abuse `snap` tag in .fl?} selected
-        xywh {0 0 31 20} type Toggle hide divider
+        xywh {0 0 31 20} type Toggle divider
       }
       MenuItem w_layout_menu_delete {
         label Delete
