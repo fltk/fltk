@@ -1482,9 +1482,6 @@ int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return 0;
   int snum = Fl_Window_Driver::driver(win)->screen_num();
-  float s = scale(snum);
-  xx = xx/s;
-  yy = yy/s;
 //printf("get_mouse(%dx%d)->%d\n", xx, yy, snum);
   return snum;
 }
