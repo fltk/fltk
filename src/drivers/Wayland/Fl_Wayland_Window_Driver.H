@@ -60,7 +60,7 @@ private:
   static bool in_flush; // useful for progressive window drawing
   static Fl_Wayland_Plugin *gl_plugin();
   Fl_Cursor standard_cursor_; // window's standard custom kind
-  void delete_cursor_(struct wld_window *, bool keep_rgb = false);
+  void delete_cursor_(struct wld_window *, bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; };
