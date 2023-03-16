@@ -27,7 +27,6 @@
 #include <string.h>
 #include <assert.h>
 
-// TODO: how should we name layouts that are within the project file?
 // TODO: warning if the user wants to change builtin layouts
 // TODO: rearrange layout panel
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
@@ -91,19 +90,19 @@ static Fd_Layout_Preset grid_tool = {
 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", NULL, &fltk_app, &fltk_dlg, &fltk_tool, true, false, false },
-  { (char*)"Grid", NULL, &grid_app, &grid_dlg, &grid_tool, true, false, false }
+  { (char*)"FLTK", (char*)"@fd_beaker FLTK", &fltk_app, &fltk_dlg, &fltk_tool, FD_STORE_INTERNAL },
+  { (char*)"Grid", (char*)"@fd_beaker Grid", &grid_app, &grid_dlg, &grid_tool, FD_STORE_INTERNAL }
 };
 
 static Fl_Menu_Item static_main_menu[] = {
-  { static_suite_list[0].name, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
-  { static_suite_list[1].name, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
+  { static_suite_list[0].menu_label, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
+  { static_suite_list[1].menu_label, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
   { NULL }
 };
 
 static Fl_Menu_Item static_choice_menu[] = {
-  { static_suite_list[0].name },
-  { static_suite_list[1].name },
+  { static_suite_list[0].menu_label },
+  { static_suite_list[1].menu_label },
   { NULL }
 };
 
@@ -298,8 +297,8 @@ void Fd_Layout_Preset::read(Fd_Project_Reader *in) {
 
 void Fd_Layout_Suite::write(Fl_Preferences &prefs) {
   assert(this);
-  assert(name);
-  prefs.set("name", name);
+  assert(name_);
+  prefs.set("name", name_);
   for (int i = 0; i < 3; ++i) {
     Fl_Preferences prefs_preset(prefs, Fl_Preferences::Name(i));
     assert(layout[i]);
@@ -318,7 +317,7 @@ void Fd_Layout_Suite::read(Fl_Preferences &prefs) {
 
 void Fd_Layout_Suite::write(Fd_Project_Writer *out) {
   out->write_string("  suite {\n");
-  out->write_string("    name "); out->write_word(name); out->write_string("\n");
+  out->write_string("    name "); out->write_word(name_); out->write_string("\n");
   for (int i = 0; i < 3; ++i) {
     layout[i]->write(out);
   }
@@ -334,7 +333,7 @@ void Fd_Layout_Suite::read(Fd_Project_Reader *in) {
       key = in->read_word();
       if (!key) return;
       if (!strcmp(key, "name")) {
-        in->read_word(); // ignore
+        name(in->read_word());
       } else if (!strcmp(key, "preset")) {
         if (ix >= 3) return; // file format error
         layout[ix++]->read(in);
@@ -349,46 +348,167 @@ void Fd_Layout_Suite::read(Fd_Project_Reader *in) {
   }
 }
 
-int Fd_Layout_Suite::load(const char *filename) {
-  assert(this);
-  assert(filename);
-  const char *name = fl_filename_name(filename);
-  if (!name) return -1;
-  int n = g_layout_list.add(name);
-  assert(n >= 0);
-  assert(n < g_layout_list.list_size_);
-  Fd_Layout_Suite &suite = g_layout_list[n];
-  assert(suite.name);
-  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
-  Fl_Preferences prefs_list(prefs, "Layouts");
-  suite.filename = fl_strdup(filename);
-  suite.read(prefs_list);
-  suite.is_static = false;
-  suite.is_user_setting = false;
-  suite.is_project_setting = false;
-  return n;
+void Fd_Layout_Suite::update_label() {
+  Fl_String sym;
+  switch (storage_) {
+    case FD_STORE_INTERNAL: sym.assign("@fd_beaker  "); break;
+    case FD_STORE_USER: sym.assign("@fd_user  "); break;
+    case FD_STORE_PROJECT: sym.assign("@fd_project  "); break;
+    case FD_STORE_FILE: sym.assign("@fd_file  "); break;
+  }
+  sym.append(name_);
+  if (menu_label)
+    ::free(menu_label);
+  menu_label = strdup(sym.c_str());
+  g_layout_list.update_menu_labels();
 }
 
-int Fd_Layout_Suite::save(const char *filename) {
-  assert(this);
-  assert(filename);
-  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
-  prefs.clear();
-  Fl_Preferences prefs_list(prefs, "Layouts");
-  write(prefs_list);
-  return 0;
+void Fd_Layout_Suite::name(const char *n) {
+  if (name_)
+    ::free(name_);
+  if (n)
+    name_ = strdup(n);
+  else
+    name_ = NULL;
+  update_label();
 }
 
 Fd_Layout_Suite::~Fd_Layout_Suite() {
-  if (is_static) return;
-  if (name) ::free(name);
-  if (filename) ::free(filename);
+  if (storage_ == FD_STORE_INTERNAL) return;
+  if (name_) ::free(name_);
   for (int i = 0; i < 3; ++i) {
     delete layout[i];
   }
 }
 
 // ---- Fd_Layout_List ------------------------------------------------- MARK: -
+
+static void fd_beaker(Fl_Color c) {
+  fl_color(221);
+  fl_begin_polygon();
+  fl_vertex(-0.6,  0.2);
+  fl_vertex(-0.9,  0.8);
+  fl_vertex(-0.8,  0.9);
+  fl_vertex( 0.8,  0.9);
+  fl_vertex( 0.9,  0.8);
+  fl_vertex( 0.6,  0.2);
+  fl_end_polygon();
+  fl_color(c);
+  fl_begin_line();
+  fl_vertex(-0.3, -0.9);
+  fl_vertex(-0.2, -0.8);
+  fl_vertex(-0.2, -0.2);
+  fl_vertex(-0.9,  0.8);
+  fl_vertex(-0.8,  0.9);
+  fl_vertex( 0.8,  0.9);
+  fl_vertex( 0.9,  0.8);
+  fl_vertex( 0.2, -0.2);
+  fl_vertex( 0.2, -0.8);
+  fl_vertex( 0.3, -0.9);
+  fl_end_line();
+}
+
+static void fd_user(Fl_Color c) {
+  fl_color(245);
+  fl_begin_complex_polygon();
+  fl_arc( 0.1,  0.9, 0.8,  0.0,  80.0);
+  fl_arc( 0.0, -0.5, 0.4, -65.0, 245.0);
+  fl_arc(-0.1,  0.9, 0.8, 100.0, 180.0);
+  fl_end_complex_polygon();
+  fl_color(c);
+  fl_begin_line();
+  fl_arc( 0.1,  0.9, 0.8,  0.0,  80.0);
+  fl_arc( 0.0, -0.5, 0.4, -65.0, 245.0);
+  fl_arc(-0.1,  0.9, 0.8, 100.0, 180.0);
+  fl_end_line();
+}
+
+static void fd_project(Fl_Color c) {
+  Fl_Color fc = FL_LIGHT2;
+  fl_color(fc);
+  fl_begin_complex_polygon();
+  fl_vertex(-0.7, -1.0);
+  fl_vertex(0.1, -1.0);
+  fl_vertex(0.1, -0.4);
+  fl_vertex(0.7, -0.4);
+  fl_vertex(0.7, 1.0);
+  fl_vertex(-0.7, 1.0);
+  fl_end_complex_polygon();
+
+  fl_color(fl_lighter(fc));
+  fl_begin_polygon();
+  fl_vertex(0.1, -1.0);
+  fl_vertex(0.1, -0.4);
+  fl_vertex(0.7, -0.4);
+  fl_end_polygon();
+
+  fl_color(fl_darker(c));
+  fl_begin_loop();
+  fl_vertex(-0.7, -1.0);
+  fl_vertex(0.1, -1.0);
+  fl_vertex(0.1, -0.4);
+  fl_vertex(0.7, -0.4);
+  fl_vertex(0.7, 1.0);
+  fl_vertex(-0.7, 1.0);
+  fl_end_loop();
+
+  fl_begin_line();
+  fl_vertex(0.1, -1.0);
+  fl_vertex(0.7, -0.4);
+  fl_end_line();
+}
+
+void fd_file(Fl_Color c) {
+  Fl_Color fl = FL_LIGHT2;
+  Fl_Color fc = FL_DARK3;
+  fl_color(fc);
+  fl_begin_polygon(); // case
+  fl_vertex(-0.9, -1.0);
+  fl_vertex(0.9, -1.0);
+  fl_vertex(1.0, -0.9);
+  fl_vertex(1.0, 0.9);
+  fl_vertex(0.9, 1.0);
+  fl_vertex(-0.9, 1.0);
+  fl_vertex(-1.0, 0.9);
+  fl_vertex(-1.0, -0.9);
+  fl_end_polygon();
+
+  fl_color(fl_lighter(fl));
+  fl_begin_polygon();
+  fl_vertex(-0.7, -1.0); // slider
+  fl_vertex(0.7, -1.0);
+  fl_vertex(0.7, -0.4);
+  fl_vertex(-0.7, -0.4);
+  fl_end_polygon();
+
+  fl_begin_polygon(); // label
+  fl_vertex(-0.7, 0.0);
+  fl_vertex(0.7, 0.0);
+  fl_vertex(0.7, 1.0);
+  fl_vertex(-0.7, 1.0);
+  fl_end_polygon();
+
+  fl_color(fc);
+  fl_begin_polygon();
+  fl_vertex(-0.5, -0.9); // slot
+  fl_vertex(-0.3, -0.9);
+  fl_vertex(-0.3, -0.5);
+  fl_vertex(-0.5, -0.5);
+  fl_end_polygon();
+
+  fl_color(fl_darker(c));
+  fl_begin_loop();
+  fl_vertex(-0.9, -1.0);
+  fl_vertex(0.9, -1.0);
+  fl_vertex(1.0, -0.9);
+  fl_vertex(1.0, 0.9);
+  fl_vertex(0.9, 1.0);
+  fl_vertex(-0.9, 1.0);
+  fl_vertex(-1.0, 0.9);
+  fl_vertex(-1.0, -0.9);
+  fl_end_loop();
+}
+
 
 Fd_Layout_List::Fd_Layout_List()
 : main_menu_(static_main_menu),
@@ -398,8 +518,13 @@ Fd_Layout_List::Fd_Layout_List()
   list_capacity_(2),
   list_is_static_(true),
   current_suite_(0),
-  current_preset_(0)
+  current_preset_(0),
+  filename_(NULL)
 {
+  fl_add_symbol("fd_beaker", fd_beaker, 1);
+  fl_add_symbol("fd_user", fd_user, 1);
+  fl_add_symbol("fd_project", fd_project, 1);
+  fl_add_symbol("fd_file", fd_file, 1);
 }
 
 Fd_Layout_List::~Fd_Layout_List() {
@@ -409,11 +534,12 @@ Fd_Layout_List::~Fd_Layout_List() {
     ::free(choice_menu_);
     for (int i = 0; i < list_size_; i++) {
       Fd_Layout_Suite &suite = list_[i];
-      if (!suite.is_static)
+      if (suite.storage_ != FD_STORE_INTERNAL)
         suite.~Fd_Layout_Suite();
     }
     ::free(list_);
   }
+  if (filename_) ::free(filename_);
 }
 
 void Fd_Layout_List::update_dialogs() {
@@ -437,22 +563,45 @@ void Fd_Layout_List::update_dialogs() {
   main_menu_[current_suite_].setonly(main_menu_);
 }
 
-void Fd_Layout_List::write(Fl_Preferences &prefs) {
+void Fd_Layout_List::update_menu_labels() {
+  for (int i=0; i<list_size_; i++) {
+    main_menu_[i].label(list_[i].menu_label);
+    choice_menu_[i].label(list_[i].menu_label);
+  }
+}
+
+int Fd_Layout_List::load(const char *filename) {
+  remove_all(FD_STORE_FILE);
+  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  read(prefs, FD_STORE_FILE);
+  return 0;
+}
+
+int Fd_Layout_List::save(const char *filename) {
+  assert(this);
+  assert(filename);
+  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  prefs.clear();
+  write(prefs, FD_STORE_FILE);
+  return 0;
+}
+
+void Fd_Layout_List::write(Fl_Preferences &prefs, int storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
-  prefs_list.set("current_suite", list_[current_suite()].name);
+  prefs_list.set("current_suite", list_[current_suite()].name_);
   prefs_list.set("current_preset", current_preset());
   int n = 0;
   for (int i = 0; i < list_size_; ++i) {
     Fd_Layout_Suite &suite = list_[i];
-    if (!suite.is_static && suite.is_user_setting) {
+    if (suite.storage_ == storage) {
       Fl_Preferences prefs_suite(prefs_list, Fl_Preferences::Name(n++));
       suite.write(prefs_suite);
     }
   }
 }
 
-void Fd_Layout_List::read(Fl_Preferences &prefs, bool from_user_prefs) {
+void Fd_Layout_List::read(Fl_Preferences &prefs, int storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   Fl_String cs;
   int cp = 0;
@@ -465,9 +614,7 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, bool from_user_prefs) {
     if (new_name) {
       int n = add(new_name);
       list_[n].read(prefs_suite);
-      list_[n].is_static = false;
-      list_[n].is_user_setting = from_user_prefs;
-      list_[n].is_project_setting = false;
+      list_[n].storage(storage);
       ::free(new_name);
     }
   }
@@ -478,11 +625,11 @@ void Fd_Layout_List::read(Fl_Preferences &prefs, bool from_user_prefs) {
 
 void Fd_Layout_List::write(Fd_Project_Writer *out) {
   out->write_string("\nsnap {\n  ver 1\n");
-  out->write_string("  current_suite "); out->write_word(list_[current_suite()].name); out->write_string("\n");
+  out->write_string("  current_suite "); out->write_word(list_[current_suite()].name_); out->write_string("\n");
   out->write_string("  current_preset %d\n", current_preset());
   for (int i=0; i<list_size_; i++) {
     Fd_Layout_Suite &suite = list_[i];
-    if (suite.is_project_setting)
+    if (suite.storage_ == FD_STORE_PROJECT)
       suite.write(out);
   }
   out->write_string("}");
@@ -506,8 +653,7 @@ void Fd_Layout_List::read(Fd_Project_Reader *in) {
       } else if (!strcmp(key, "suite")) {
         int n = add(in->filename_name());
         list_[n].read(in);
-        list_[n].is_user_setting = false;
-        list_[n].is_project_setting = true;
+        list_[n].storage(FD_STORE_PROJECT);
       } else if (!strcmp(key, "}")) {
         break;
       } else {
@@ -533,7 +679,7 @@ void Fd_Layout_List::current_suite(Fl_String arg_name) {
   if (arg_name.empty()) return;
   for (int i = 0; i < list_size_; ++i) {
     Fd_Layout_Suite &suite = list_[i];
-    if (suite.name && (strcmp(suite.name, arg_name.c_str()) == 0)) {
+    if (suite.name_ && (strcmp(suite.name_, arg_name.c_str()) == 0)) {
       current_suite(i);
       break;
     }
@@ -590,19 +736,20 @@ int Fd_Layout_List::add(const char *name) {
   Fd_Layout_Suite &old_suite = list_[current_suite_];
   Fd_Layout_Suite &new_suite = list_[n];
   ::memset(&new_suite, 0, sizeof(Fd_Layout_Suite));
-  new_suite.name = fl_strdup(name);
+  new_suite.name(name);
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Fd_Layout_Preset));
   }
-  new_suite.is_static = false;
-  new_suite.is_user_setting = old_suite.is_static || old_suite.is_user_setting;
-  new_suite.is_project_setting = old_suite.is_project_setting;
-  main_menu_[n].label(new_suite.name);
+  int new_storage = old_suite.storage_;
+  if (new_storage == FD_STORE_INTERNAL)
+    new_storage = FD_STORE_USER;
+  new_suite.storage(new_storage);
+  main_menu_[n].label(new_suite.menu_label);
   main_menu_[n].callback(main_menu_[0].callback());
   main_menu_[n].argument(n);
   main_menu_[n].flags = main_menu_[0].flags;
-  choice_menu_[n].label(new_suite.name);
+  choice_menu_[n].label(new_suite.menu_label);
   list_size_++;
   current_suite(n);
   return n;
@@ -610,14 +757,12 @@ int Fd_Layout_List::add(const char *name) {
 
 void Fd_Layout_List::rename(const char *name) {
   int n = current_suite();
-  ::free(list_[n].name);
-  list_[n].name = fl_strdup(name);
-  main_menu_[n].label(name);
-  choice_menu_[n].label(name);
+  list_[n].name(name);
+  main_menu_[n].label(list_[n].menu_label);
+  choice_menu_[n].label(list_[n].menu_label);
 }
 
 void Fd_Layout_List::remove(int ix) {
-  bool update_user_settings = list_[ix].is_user_setting;
   int tail = list_size_-ix-1;
   if (tail)
     ::memmove(list_+ix, list_+ix+1, tail * sizeof(Fd_Layout_Suite));
@@ -626,6 +771,13 @@ void Fd_Layout_List::remove(int ix) {
   list_size_--;
   if (current_suite() >= list_size_)
     current_suite(list_size_ - 1);
+}
+
+void Fd_Layout_List::remove_all(int storage) {
+  for (int i=list_size_-1; i>=0; --i) {
+    if (list_[i].storage_ == storage)
+      remove(i);
+  }
 }
 
 // ---- Helper --------------------------------------------------------- MARK: -

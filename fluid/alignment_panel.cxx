@@ -497,6 +497,7 @@ ings");
   } // Fl_Double_Window* shell_run_window
   return shell_run_window;
 }
+Fl_Menu_Item *w_layout_menu_storage[4];
 
 Fl_Double_Window *grid_window=(Fl_Double_Window *)0;
 
@@ -724,7 +725,7 @@ static void cb_4(Fl_Button*, void* v) {
   if (v == LOAD) return;
 
   Fl_String old_name = "Copy of ";
-  old_name.append(g_layout_list[g_layout_list.current_suite()].name);
+  old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
   const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
   if (new_name == NULL)
     return; 
@@ -738,29 +739,52 @@ Fl_Menu_Button *w_layout_menu=(Fl_Menu_Button *)0;
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
   if (v == LOAD) {
     Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-    if (suite.is_static) {
+    if (suite.storage_ == FD_STORE_INTERNAL) {
       w_layout_menu_rename->deactivate();
-      w_layout_menu_user_setting->deactivate();
+      for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
       w_layout_menu_delete->deactivate();
     } else {
       w_layout_menu_rename->activate();
-      w_layout_menu_user_setting->activate();
+      for (int i=1; i<4; i++) w_layout_menu_storage[i]->activate();
       w_layout_menu_delete->activate();
     }
-    w_layout_menu_user_setting->value(suite.is_user_setting);
-    w_layout_menu_project_setting->value(suite.is_project_setting);
+    w_layout_menu_storage[suite.storage_]->setonly();
   }
 }
 
 static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
   // Rename the current layout suite
 
-  Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name;
+  Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
   const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
   if (new_name == NULL)
     return; 
 
   g_layout_list.rename(new_name);
+  g_layout_list.update_dialogs();
+}
+
+static void cb_w_layout_menu_storage(Fl_Menu_*, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  suite.storage(FD_STORE_INTERNAL);
+  g_layout_list.update_dialogs();
+}
+
+static void cb_w_layout_menu_storage1(Fl_Menu_*, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  suite.storage(FD_STORE_USER);
+  g_layout_list.update_dialogs();
+}
+
+static void cb_w_layout_menu_storage2(Fl_Menu_*, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  suite.storage(FD_STORE_PROJECT);
+  g_layout_list.update_dialogs();
+}
+
+static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  suite.storage(FD_STORE_FILE);
   g_layout_list.update_dialogs();
 }
 
@@ -777,54 +801,41 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
   if (fnfc.show() != 0) return;
   const char *new_filename = fnfc.filename();
   if (!new_filename) return;
-  int n = suite.load(new_filename);
-  if (n >= 0) {
-    g_layout_list.current_suite(n);
-    g_layout_list.update_dialogs();
-  }
+  g_layout_list.load(new_filename);
+  //g_layout_list.current_suite(n);
+  g_layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
   // Give the user a file chooser with a suggested name
 
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+    Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Save Layout Settings:");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-  fnfc.filter("FLUID Layouts\t*.fll\n");
-  if (suite.filename) {
-    char *fn = fl_strdup(suite.filename);
-    char *name = (char*)fl_filename_name(suite.filename);
-    if (name > fn) {
-      name[-1] = 0;
-      fnfc.directory(fn);
-      fnfc.preset_file(name);
-      ::free(fn);
-    } else if (name) {
-      fnfc.preset_file(name);
-      ::free(fn);
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Save Layout Settings:");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    fnfc.filter("FLUID Layouts\t*.fll\n");
+    if (g_layout_list.filename_) {
+      char *fn = fl_strdup(g_layout_list.filename_);
+      char *name = (char*)fl_filename_name(g_layout_list.filename_);
+      if (name > fn) {
+        name[-1] = 0;
+        fnfc.directory(fn);
+        fnfc.preset_file(name);
+        ::free(fn);
+      } else if (name) {
+        fnfc.preset_file(name);
+        ::free(fn);
+      }
     }
-  }
-  if (fnfc.show() != 0) return;
-  const char *new_filename = fnfc.filename();
-  if (!new_filename) return;
-  if (suite.filename)
-    ::free(suite.filename);
-  suite.filename = fl_strdup(new_filename);
-  suite.save(new_filename);
-}
-
-static void cb_w_layout_menu_user_setting(Fl_Menu_* o, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-  if (!suite.is_static)
-    suite.is_user_setting = o->value();
-}
-
-static void cb_w_layout_menu_project_setting(Fl_Menu_* o, void*) {
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-  suite.is_project_setting = o->value();
+    if (fnfc.show() != 0) return;
+    const char *new_filename = fnfc.filename();
+    if (!new_filename) return;
+    if (g_layout_list.filename_)
+      ::free(g_layout_list.filename_);
+    g_layout_list.filename_ = fl_strdup(new_filename);
+    g_layout_list.save(new_filename);
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
@@ -836,10 +847,12 @@ static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
 
 Fl_Menu_Item menu_w_layout_menu[] = {
  {"Rename...", 0,  (Fl_Callback*)cb_w_layout_menu_rename, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"@fd_beaker  FLUID Built-In", 0,  (Fl_Callback*)cb_w_layout_menu_storage, 0, 9, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"@fd_user  User Preference", 0,  (Fl_Callback*)cb_w_layout_menu_storage1, 0, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"@fd_project  Store in .fl Project File", 0,  (Fl_Callback*)cb_w_layout_menu_storage2, 0, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"@fd_file  Store in External File", 0,  (Fl_Callback*)cb_w_layout_menu_storage3, 0, 136, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Load...", 0,  (Fl_Callback*)cb_w_layout_menu_load, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Save...", 0,  (Fl_Callback*)cb_w_layout_menu_save, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in User Settings", 0,  (Fl_Callback*)cb_w_layout_menu_user_setting, 0, 2, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
- {"Save in Project File", 0,  (Fl_Callback*)cb_w_layout_menu_project_setting, 0, 130, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {"Delete", 0,  (Fl_Callback*)cb_w_layout_menu_delete, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
@@ -1017,6 +1030,10 @@ Fl_Double_Window* make_layout_window() {
     } // Fl_Button* o
     { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
       w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
+        w_layout_menu_storage[0] = &menu_w_layout_menu[1];
+        w_layout_menu_storage[1] = &menu_w_layout_menu[2];
+        w_layout_menu_storage[2] = &menu_w_layout_menu[3];
+        w_layout_menu_storage[3] = &menu_w_layout_menu[4];
       w_layout_menu->menu(menu_w_layout_menu);
     } // Fl_Menu_Button* w_layout_menu
     { Fl_Group* o = new Fl_Group(121, 48, 270, 20);

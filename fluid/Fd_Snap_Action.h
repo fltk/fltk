@@ -21,6 +21,13 @@
 
 struct Fl_Menu_Item;
 
+enum {
+  FD_STORE_INTERNAL,
+  FD_STORE_USER,
+  FD_STORE_PROJECT,
+  FD_STORE_FILE,
+};
+
 class Fd_Layout_Preset {
 public:
   int left_window_margin;
@@ -62,18 +69,17 @@ extern Fd_Layout_Preset *layout;
 
 class Fd_Layout_Suite {
 public:
-  char *name;
-  char *filename;
+  char *name_;
+  char *menu_label;
   Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
-  bool is_static;
-  bool is_user_setting;
-  bool is_project_setting;
+  int storage_;
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
   void read(Fd_Project_Reader*);
-  int load(const char *filename);
-  int save(const char *filename);
+  void update_label();
+  void storage(int s) { storage_ = s; update_label(); }
+  void name(const char *n);
   ~Fd_Layout_Suite();
 public:
 
@@ -89,10 +95,12 @@ public:
   bool list_is_static_;
   int current_suite_;
   int current_preset_;
+  char *filename_;
 public:
   Fd_Layout_List();
   ~Fd_Layout_List();
   void update_dialogs();
+  void update_menu_labels();
   int current_suite() const { return current_suite_; }
   void current_suite(int ix);
   void current_suite(Fl_String);
@@ -103,12 +111,15 @@ public:
   void rename(const char *name);
   void capacity(int);
 
-  void write(Fl_Preferences &prefs);
-  void read(Fl_Preferences &prefs, bool from_user_prefs);
+  int load(const char *filename);
+  int save(const char *filename);
+  void write(Fl_Preferences &prefs, int storage);
+  void read(Fl_Preferences &prefs, int storage);
   void write(Fd_Project_Writer*);
   void read(Fd_Project_Reader*);
   int add(Fd_Layout_Suite*);
-  void remove(int);
+  void remove(int index);
+  void remove_all(int storage);
   Fd_Layout_Preset *at(int);
   int size();
 };

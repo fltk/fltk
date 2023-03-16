@@ -110,9 +110,8 @@ Fl_Double_Window* make_layout_window();
 extern Fl_Menu_Item menu_layout_choice[];
 extern Fl_Menu_Item menu_w_layout_menu[];
 #define w_layout_menu_rename (menu_w_layout_menu+0)
-#define w_layout_menu_load (menu_w_layout_menu+1)
-#define w_layout_menu_save (menu_w_layout_menu+2)
-#define w_layout_menu_user_setting (menu_w_layout_menu+3)
-#define w_layout_menu_project_setting (menu_w_layout_menu+4)
-#define w_layout_menu_delete (menu_w_layout_menu+5)
+extern Fl_Menu_Item *w_layout_menu_storage[4];
+#define w_layout_menu_load (menu_w_layout_menu+5)
+#define w_layout_menu_save (menu_w_layout_menu+6)
+#define w_layout_menu_delete (menu_w_layout_menu+7)
 #endif

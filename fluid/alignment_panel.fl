@@ -4,10 +4,10 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite FLTK
-  current_preset 1
+  current_suite Peter
+  current_preset 0
   suite {
-    name {alignment_panel.fl}
+    name Test
     preset { 1
       15 15 15 15 0 0
       10 10 10 10 0 0
@@ -28,30 +28,6 @@ snap {
       18 18
       16 8 2 16 4 2
       0 10 0 10
-    }
-  }
-  suite {
-    name {alignment_panel.fl}
-    preset { 1
-      1 16 32 64 0 0
-      0 0 0 0 0 0
-      0 0
-      0 0 0 0 0 0
-      0 0 0 0
-    }
-    preset { 1
-      2 0 0 0 0 0
-      0 0 0 0 0 0
-      0 0
-      0 0 0 0 0 0
-      0 0 0 0
-    }
-    preset { 1
-      3 0 0 0 0 0
-      0 0 0 0 0 0
-      0 0
-      0 0 0 0 0 0
-      0 0 0 0
     }
   }
 }
@@ -185,15 +161,15 @@ set_modflag(-1, -1);}
         } {
           MenuItem {} {
             label None
-            xywh {0 0 100 20} labelsize 14
+            xywh {0 0 100 20}
           }
           MenuItem {} {
             label {GNU gettext}
-            xywh {0 0 100 20} labelsize 14
+            xywh {0 0 100 20}
           }
           MenuItem {} {
             label {POSIX catgets}
-            xywh {0 0 100 20} labelsize 14
+            xywh {0 0 100 20}
           }
         }
         Fl_Input i18n_include_input {
@@ -449,6 +425,9 @@ shell_run_window->hide();}
   }
 }
 
+decl {Fl_Menu_Item *w_layout_menu_storage[4];} {private global
+}
+
 Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
@@ -675,7 +654,7 @@ Function {make_layout_window()} {open
   o->value((double)layout->textfont);
 } else {
   layout->textfont = (int)o->value();
-}} open selected
+}} open
         tooltip {The value text style.} xywh {107 507 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
         code0 {extern Fl_Menu_Item fontmenu[];}
         code1 {o->menu(fontmenu);}
@@ -701,11 +680,11 @@ Function {make_layout_window()} {open
     } {
       MenuItem {} {
         label FLTK
-        xywh {0 0 31 20} labelsize 14
+        xywh {0 0 31 20}
       }
       MenuItem {} {
         label Grid
-        xywh {0 0 31 20} labelsize 14
+        xywh {0 0 31 20}
       }
     }
     Fl_Button {} {
@@ -715,7 +694,7 @@ Function {make_layout_window()} {open
 if (v == LOAD) return;
 
 Fl_String old_name = "Copy of ";
-old_name.append(g_layout_list[g_layout_list.current_suite()].name);
+old_name.append(g_layout_list[g_layout_list.current_suite()].name_);
 const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
 if (new_name == NULL)
   return; 
@@ -727,32 +706,59 @@ g_layout_list.update_dialogs();}
     Fl_Menu_Button w_layout_menu {
       callback {if (v == LOAD) {
   Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-  if (suite.is_static) {
+  if (suite.storage_ == FD_STORE_INTERNAL) {
     w_layout_menu_rename->deactivate();
-    w_layout_menu_user_setting->deactivate();
+    for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
     w_layout_menu_delete->deactivate();
   } else {
     w_layout_menu_rename->activate();
-    w_layout_menu_user_setting->activate();
+    for (int i=1; i<4; i++) w_layout_menu_storage[i]->activate();
     w_layout_menu_delete->activate();
   }
-  w_layout_menu_user_setting->value(suite.is_user_setting);
-  w_layout_menu_project_setting->value(suite.is_project_setting);
-}} open
+  w_layout_menu_storage[suite.storage_]->setonly();
+}} open selected
       xywh {324 11 24 24}
     } {
       MenuItem w_layout_menu_rename {
         label {Rename...}
         callback {// Rename the current layout suite
 
-Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name;
+Fl_String old_name = g_layout_list[g_layout_list.current_suite()].name_;
 const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
 if (new_name == NULL)
   return; 
 
 g_layout_list.rename(new_name);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} labelsize 14 divider
+        xywh {0 0 31 20} divider
+      }
+      MenuItem {w_layout_menu_storage[0]} {
+        label {@fd_beaker  FLUID Built-In}
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+suite.storage(FD_STORE_INTERNAL);
+g_layout_list.update_dialogs();}
+        xywh {0 0 31 20} type Radio deactivate
+      }
+      MenuItem {w_layout_menu_storage[1]} {
+        label {@fd_user  User Preference}
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+suite.storage(FD_STORE_USER);
+g_layout_list.update_dialogs();}
+        xywh {0 0 31 20} type Radio
+      }
+      MenuItem {w_layout_menu_storage[2]} {
+        label {@fd_project  Store in .fl Project File}
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+suite.storage(FD_STORE_PROJECT);
+g_layout_list.update_dialogs();}
+        xywh {0 0 31 20} type Radio
+      }
+      MenuItem {w_layout_menu_storage[3]} {
+        label {@fd_file  Store in External File}
+        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+suite.storage(FD_STORE_FILE);
+g_layout_list.update_dialogs();}
+        xywh {0 0 31 20} type Radio divider
       }
       MenuItem w_layout_menu_load {
         label {Load...}
@@ -768,59 +774,44 @@ fnfc.filter("FLUID Layouts\\t*.fll\\n");
 if (fnfc.show() != 0) return;
 const char *new_filename = fnfc.filename();
 if (!new_filename) return;
-int n = suite.load(new_filename);
-if (n >= 0) {
-  g_layout_list.current_suite(n);
-  g_layout_list.update_dialogs();
-}}
-        xywh {0 0 31 20} labelsize 14
+g_layout_list.load(new_filename);
+//g_layout_list.current_suite(n);
+g_layout_list.update_dialogs();}
+        xywh {0 0 31 20}
       }
       MenuItem w_layout_menu_save {
         label {Save...}
         callback {// Give the user a file chooser with a suggested name
 
-Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
+  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 
-Fl_Native_File_Chooser fnfc;
-fnfc.title("Save Layout Settings:");
-fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-fnfc.filter("FLUID Layouts\\t*.fll\\n");
-if (suite.filename) {
-  char *fn = fl_strdup(suite.filename);
-  char *name = (char*)fl_filename_name(suite.filename);
-  if (name > fn) {
-    name[-1] = 0;
-    fnfc.directory(fn);
-    fnfc.preset_file(name);
-    ::free(fn);
-  } else if (name) {
-    fnfc.preset_file(name);
-    ::free(fn);
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Save Layout Settings:");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+  fnfc.filter("FLUID Layouts\\t*.fll\\n");
+  if (g_layout_list.filename_) {
+    char *fn = fl_strdup(g_layout_list.filename_);
+    char *name = (char*)fl_filename_name(g_layout_list.filename_);
+    if (name > fn) {
+      name[-1] = 0;
+      fnfc.directory(fn);
+      fnfc.preset_file(name);
+      ::free(fn);
+    } else if (name) {
+      fnfc.preset_file(name);
+      ::free(fn);
+    }
   }
-}
-if (fnfc.show() != 0) return;
-const char *new_filename = fnfc.filename();
-if (!new_filename) return;
-if (suite.filename)
-  ::free(suite.filename);
-suite.filename = fl_strdup(new_filename);
-suite.save(new_filename);}
-        xywh {0 0 31 20} labelsize 14 divider
+  if (fnfc.show() != 0) return;
+  const char *new_filename = fnfc.filename();
+  if (!new_filename) return;
+  if (g_layout_list.filename_)
+    ::free(g_layout_list.filename_);
+  g_layout_list.filename_ = fl_strdup(new_filename);
+  g_layout_list.save(new_filename);}
+        xywh {0 0 31 20} divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
-      }
-      MenuItem w_layout_menu_user_setting {
-        label {Save in User Settings}
-        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-if (!suite.is_static)
-  suite.is_user_setting = o->value();}
-        xywh {0 0 31 20} type Toggle labelsize 14
-      }
-      MenuItem w_layout_menu_project_setting {
-        label {Save in Project File}
-        callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-suite.is_project_setting = o->value();}
-        xywh {0 0 31 20} type Toggle labelsize 14 divider
       }
       MenuItem w_layout_menu_delete {
         label Delete
@@ -828,7 +819,7 @@ suite.is_project_setting = o->value();}
 
 g_layout_list.remove(g_layout_list.current_suite());
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} labelsize 14
+        xywh {0 0 31 20}
       }
     }
     Fl_Group {} {
