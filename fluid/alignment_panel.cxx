@@ -505,202 +505,6 @@ static void cb_grid_window(Fl_Double_Window* o, void* v) {
   propagate_load(o, v);
 }
 
-static void cb_Close2(Fl_Button*, void* v) {
-  if (v != LOAD) grid_window->hide();
-}
-
-static void cb_left(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->left_window_margin);
-  } else {
-    layout->left_window_margin = (int)o->value();
-  }
-}
-
-static void cb_right(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->right_window_margin);
-  } else {
-    layout->right_window_margin = (int)o->value();
-  }
-}
-
-static void cb_top(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->top_window_margin);
-  } else {
-    layout->top_window_margin = (int)o->value();
-  }
-}
-
-static void cb_bottom(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->bottom_window_margin);
-  } else {
-    layout->bottom_window_margin = (int)o->value();
-  }
-}
-
-static void cb_window(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->window_grid_x);
-  } else {
-    layout->window_grid_x = (int)o->value();
-  }
-}
-
-static void cb_widget(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_min_w);
-  } else {
-    layout->widget_min_w = (int)o->value();
-  }
-}
-
-static void cb_widget1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_inc_w);
-  } else {
-    layout->widget_inc_w = (int)o->value();
-  }
-}
-
-static void cb_widget2(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_gap_x);
-  } else {
-    layout->widget_gap_x = (int)o->value();
-  }
-}
-
-static void cb_widget3(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_min_h);
-  } else {
-    layout->widget_min_h = (int)o->value();
-  }
-}
-
-static void cb_widget4(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_inc_h);
-  } else {
-    layout->widget_inc_h = (int)o->value();
-  }
-}
-
-static void cb_widget5(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->widget_gap_y);
-  } else {
-    layout->widget_gap_y = (int)o->value();
-  }
-}
-
-static void cb_window1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->window_grid_y);
-  } else {
-    layout->window_grid_y = (int)o->value();
-  }
-}
-
-static void cb_left1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->left_group_margin);
-  } else {
-    layout->left_group_margin = (int)o->value();
-  }
-}
-
-static void cb_right1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->right_group_margin);
-  } else {
-    layout->right_group_margin = (int)o->value();
-  }
-}
-
-static void cb_top1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->top_group_margin);
-  } else {
-    layout->top_group_margin = (int)o->value();
-  }
-}
-
-static void cb_bottom1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->bottom_group_margin);
-  } else {
-    layout->bottom_group_margin = (int)o->value();
-  }
-}
-
-static void cb_top2(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->top_tabs_margin);
-  } else {
-    layout->top_tabs_margin = (int)o->value();
-  }
-}
-
-static void cb_bottom2(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->bottom_tabs_margin);
-  } else {
-    layout->bottom_tabs_margin = (int)o->value();
-  }
-}
-
-static void cb_group(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->group_grid_x);
-  } else {
-    layout->group_grid_x = (int)o->value();
-  }
-}
-
-static void cb_group1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->group_grid_y);
-  } else {
-    layout->group_grid_y = (int)o->value();
-  }
-}
-
-static void cb_(Fl_Choice* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->labelfont);
-  } else {
-    layout->labelfont = (int)o->value();
-  }
-}
-
-static void cb_1(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->labelsize);
-  } else {
-    layout->labelsize = (int)o->value();
-  }
-}
-
-static void cb_2(Fl_Choice* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->textfont);
-  } else {
-    layout->textfont = (int)o->value();
-  }
-}
-
-static void cb_3(Fl_Value_Input* o, void* v) {
-  if (v == LOAD) {
-    o->value((double)layout->textsize);
-  } else {
-    layout->textsize = (int)o->value();
-  }
-}
-
 Fl_Choice *layout_choice=(Fl_Choice *)0;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
@@ -719,7 +523,7 @@ Fl_Menu_Item menu_layout_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_4(Fl_Button*, void* v) {
+static void cb_(Fl_Button*, void* v) {
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -859,176 +663,219 @@ Fl_Menu_Item menu_w_layout_menu[] = {
 
 Fl_Button *preset_choice[3]={(Fl_Button *)0};
 
+static void cb_Left(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->left_window_margin);
+  } else {
+    layout->left_window_margin = (int)o->value();
+  }
+}
+
+static void cb_Top(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->top_window_margin);
+  } else {
+    layout->top_window_margin = (int)o->value();
+  }
+}
+
+static void cb_Right(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->right_window_margin);
+  } else {
+    layout->right_window_margin = (int)o->value();
+  }
+}
+
+static void cb_Bottom(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->bottom_window_margin);
+  } else {
+    layout->bottom_window_margin = (int)o->value();
+  }
+}
+
+static void cb_Horizontal(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->window_grid_x);
+  } else {
+    layout->window_grid_x = (int)o->value();
+  }
+}
+
+static void cb_Vertical(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->window_grid_y);
+  } else {
+    layout->window_grid_y = (int)o->value();
+  }
+}
+
+static void cb_Left1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->left_group_margin);
+  } else {
+    layout->left_group_margin = (int)o->value();
+  }
+}
+
+static void cb_Top1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->top_group_margin);
+  } else {
+    layout->top_group_margin = (int)o->value();
+  }
+}
+
+static void cb_Right1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->right_group_margin);
+  } else {
+    layout->right_group_margin = (int)o->value();
+  }
+}
+
+static void cb_Bottom1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->bottom_group_margin);
+  } else {
+    layout->bottom_group_margin = (int)o->value();
+  }
+}
+
+static void cb_Horizontal1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->group_grid_x);
+  } else {
+    layout->group_grid_x = (int)o->value();
+  }
+}
+
+static void cb_Vertical1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->group_grid_y);
+  } else {
+    layout->group_grid_y = (int)o->value();
+  }
+}
+
+static void cb_Top2(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->top_tabs_margin);
+  } else {
+    layout->top_tabs_margin = (int)o->value();
+  }
+}
+
+static void cb_Bottom2(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->bottom_tabs_margin);
+  } else {
+    layout->bottom_tabs_margin = (int)o->value();
+  }
+}
+
+static void cb_Minimum(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_min_w);
+  } else {
+    layout->widget_min_w = (int)o->value();
+  }
+}
+
+static void cb_Increment(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_inc_w);
+  } else {
+    layout->widget_inc_w = (int)o->value();
+  }
+}
+
+static void cb_Gap(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_gap_x);
+  } else {
+    layout->widget_gap_x = (int)o->value();
+  }
+}
+
+static void cb_1(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_min_h);
+  } else {
+    layout->widget_min_h = (int)o->value();
+  }
+}
+
+static void cb_2(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_inc_h);
+  } else {
+    layout->widget_inc_h = (int)o->value();
+  }
+}
+
+static void cb_3(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->widget_gap_y);
+  } else {
+    layout->widget_gap_y = (int)o->value();
+  }
+}
+
+static void cb_4(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->labelfont);
+  } else {
+    layout->labelfont = (int)o->value();
+  }
+}
+
+static void cb_5(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->labelsize);
+  } else {
+    layout->labelsize = (int)o->value();
+  }
+}
+
+static void cb_6(Fl_Choice* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->textfont);
+  } else {
+    layout->textfont = (int)o->value();
+  }
+}
+
+static void cb_7(Fl_Value_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value((double)layout->textsize);
+  } else {
+    layout->textsize = (int)o->value();
+  }
+}
+
+static void cb_Close2(Fl_Button*, void* v) {
+  if (v != LOAD) grid_window->hide();
+}
+
 Fl_Double_Window* make_layout_window() {
-  { grid_window = new Fl_Double_Window(520, 573, "Layout Settings");
+  { grid_window = new Fl_Double_Window(320, 491, "Layout Settings");
     grid_window->callback((Fl_Callback*)cb_grid_window);
-    { Fl_Button* o = new Fl_Button(435, 515, 60, 25, "Close");
-      o->tooltip("Close this dialog.");
-      o->callback((Fl_Callback*)cb_Close2);
-    } // Fl_Button* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 82, 50, 22, "left window margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_left);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 112, 50, 22, "right window margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_right);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 142, 50, 22, "top window margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_top);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 172, 50, 22, "bottom window margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_bottom);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 202, 50, 22, "window grid x:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_window);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 270, 50, 22, "widget x min:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 300, 50, 22, "widget x incr:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 330, 50, 22, "widget x gap:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget2);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 371, 50, 22, "widget y min:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget3);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 401, 50, 22, "widget y incr:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget4);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 431, 50, 22, "widget y gap:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_widget5);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(167, 232, 50, 22, "window grid y:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_window1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 82, 50, 22, "left group margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_left1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 112, 50, 22, "right group margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_right1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 142, 50, 22, "top group margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_top1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 172, 50, 22, "bottom group margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_bottom1);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 270, 50, 22, "top tabs margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_top2);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 300, 50, 22, "bottom tabs margin:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_bottom2);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 202, 50, 22, "group grid x:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_group);
-    } // Fl_Value_Input* o
-    { Fl_Value_Input* o = new Fl_Value_Input(374, 232, 50, 22, "group grid y:");
-      o->maximum(32767);
-      o->step(1);
-      o->callback((Fl_Callback*)cb_group1);
-    } // Fl_Value_Input* o
-    { Fl_Group* o = new Fl_Group(107, 479, 200, 20, "Label Font:");
+    { Fl_Box* o = new Fl_Box(10, 10, 60, 24, "Layout:");
       o->labelfont(1);
       o->labelsize(11);
-      o->callback((Fl_Callback*)propagate_load);
-      o->align(Fl_Align(FL_ALIGN_LEFT));
-      { Fl_Choice* o = new Fl_Choice(107, 479, 152, 20);
-        o->tooltip("The style of the label text.");
-        o->box(FL_THIN_UP_BOX);
-        o->down_box(FL_BORDER_BOX);
-        o->labelfont(1);
-        o->labelsize(11);
-        o->textsize(11);
-        o->callback((Fl_Callback*)cb_);
-        Fl_Group::current()->resizable(o);
-        o->menu(fontmenu);
-      } // Fl_Choice* o
-      { Fl_Value_Input* o = new Fl_Value_Input(258, 479, 49, 20);
-        o->tooltip("The size of the label text.");
-        o->labelsize(11);
-        o->maximum(100);
-        o->step(1);
-        o->value(14);
-        o->textsize(11);
-        o->callback((Fl_Callback*)cb_1);
-      } // Fl_Value_Input* o
-      o->end();
-    } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(107, 507, 200, 20, "Text Font:");
-      o->labelfont(1);
-      o->labelsize(11);
-      o->callback((Fl_Callback*)propagate_load);
-      o->align(Fl_Align(FL_ALIGN_LEFT));
-      { Fl_Choice* o = new Fl_Choice(107, 507, 152, 20);
-        o->tooltip("The value text style.");
-        o->box(FL_DOWN_BOX);
-        o->down_box(FL_BORDER_BOX);
-        o->labelfont(1);
-        o->labelsize(11);
-        o->textsize(11);
-        o->callback((Fl_Callback*)cb_2);
-        Fl_Group::current()->resizable(o);
-        o->menu(fontmenu);
-      } // Fl_Choice* o
-      { Fl_Value_Input* o = new Fl_Value_Input(258, 507, 49, 20);
-        o->tooltip("The value text size.");
-        o->labelsize(11);
-        o->maximum(100);
-        o->step(1);
-        o->value(14);
-        o->textsize(11);
-        o->callback((Fl_Callback*)cb_3);
-      } // Fl_Value_Input* o
-      o->end();
-    } // Fl_Group* o
-    { layout_choice = new Fl_Choice(170, 11, 130, 24);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { layout_choice = new Fl_Choice(70, 10, 187, 24);
       layout_choice->down_box(FL_BORDER_BOX);
       layout_choice->callback((Fl_Callback*)cb_layout_choice);
       layout_choice->menu(menu_layout_choice);
     } // Fl_Choice* layout_choice
-    { Fl_Button* o = new Fl_Button(300, 11, 24, 24, "+");
-      o->callback((Fl_Callback*)cb_4);
+    { Fl_Button* o = new Fl_Button(257, 10, 24, 24, "+");
+      o->callback((Fl_Callback*)cb_);
     } // Fl_Button* o
-    { w_layout_menu = new Fl_Menu_Button(324, 11, 24, 24);
+    { w_layout_menu = new Fl_Menu_Button(281, 10, 24, 24);
       w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
         w_layout_menu_storage[0] = &menu_w_layout_menu[1];
         w_layout_menu_storage[1] = &menu_w_layout_menu[2];
@@ -1036,29 +883,298 @@ Fl_Double_Window* make_layout_window() {
         w_layout_menu_storage[3] = &menu_w_layout_menu[4];
       w_layout_menu->menu(menu_w_layout_menu);
     } // Fl_Menu_Button* w_layout_menu
-    { Fl_Group* o = new Fl_Group(121, 48, 270, 20);
+    { Fl_Box* o = new Fl_Box(10, 39, 60, 20, "Preset:");
+      o->labelfont(1);
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Group* o = new Fl_Group(70, 39, 235, 20);
+      o->labelsize(11);
       o->callback((Fl_Callback*)propagate_load);
-      { preset_choice[0] = new Fl_Button(121, 48, 90, 20, "Application");
+      { preset_choice[0] = new Fl_Button(70, 39, 78, 20, "Application");
         preset_choice[0]->type(102);
         preset_choice[0]->value(1);
         preset_choice[0]->selection_color(FL_DARK2);
-        preset_choice[0]->labelsize(12);
+        preset_choice[0]->labelsize(11);
         preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(0));
       } // Fl_Button* preset_choice[0]
-      { preset_choice[1] = new Fl_Button(211, 48, 90, 20, "Dialog");
+      { preset_choice[1] = new Fl_Button(148, 39, 79, 20, "Dialog");
         preset_choice[1]->type(102);
         preset_choice[1]->selection_color(FL_DARK2);
-        preset_choice[1]->labelsize(12);
+        preset_choice[1]->labelsize(11);
         preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(1));
       } // Fl_Button* preset_choice[1]
-      { preset_choice[2] = new Fl_Button(301, 48, 90, 20, "Toolbox");
+      { preset_choice[2] = new Fl_Button(227, 39, 78, 20, "Toolbox");
         preset_choice[2]->type(102);
         preset_choice[2]->selection_color(FL_DARK2);
-        preset_choice[2]->labelsize(12);
+        preset_choice[2]->labelsize(11);
         preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(2));
       } // Fl_Button* preset_choice[2]
       o->end();
     } // Fl_Group* o
+    { Fl_Box* o = new Fl_Box(70, 64, 235, 20, "---- Window ----");
+      o->labelfont(1);
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Box* o = new Fl_Box(10, 99, 60, 20, "Margin:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 99, 55, 20, "Left:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Left);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 99, 55, 20, "Top:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Top);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(190, 99, 55, 20, "Right:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Right);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(250, 99, 55, 20, "Bottom:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Bottom);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(17, 133, 53, 20, "Grid:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 133, 55, 20, "Horizontal:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Horizontal);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 133, 55, 20, "Vertical:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Vertical);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(70, 158, 235, 20, "---- Group ----");
+      o->labelfont(1);
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Box* o = new Fl_Box(10, 193, 60, 20, "Margin:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 193, 55, 20, "Left:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Left1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 193, 55, 20, "Top:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Top1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(190, 193, 55, 20, "Right:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Right1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(250, 193, 55, 20, "Bottom:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Bottom1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(17, 227, 53, 20, "Grid:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 227, 55, 20, "Horizontal:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Horizontal1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 227, 55, 20, "Vertical:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Vertical1);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(70, 252, 235, 20, "---- Tabs ----");
+      o->labelfont(1);
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Box* o = new Fl_Box(10, 287, 60, 20, "Margin:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 287, 55, 20, "Top:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Top2);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 287, 55, 20, "Bottom:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Bottom2);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(70, 312, 235, 20, "---- Widget ----");
+      o->labelfont(1);
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Box* o = new Fl_Box(10, 347, 60, 20, "Horizontal:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 346, 55, 20, "Minimum:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Minimum);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 346, 55, 20, "Increment:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Increment);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(190, 346, 55, 20, "Gap:");
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_Gap);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Box* o = new Fl_Box(17, 372, 53, 20, "Vertical:");
+      o->labelsize(11);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
+    } // Fl_Box* o
+    { Fl_Value_Input* o = new Fl_Value_Input(70, 372, 55, 20);
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_1);
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(130, 372, 55, 20);
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_2);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Value_Input* o = new Fl_Value_Input(190, 372, 55, 20);
+      o->labelsize(11);
+      o->maximum(32767);
+      o->step(1);
+      o->textsize(11);
+      o->callback((Fl_Callback*)cb_3);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+    } // Fl_Value_Input* o
+    { Fl_Group* o = new Fl_Group(70, 397, 200, 20, "Label Font:");
+      o->labelsize(11);
+      o->callback((Fl_Callback*)propagate_load);
+      o->align(Fl_Align(FL_ALIGN_LEFT));
+      { Fl_Choice* o = new Fl_Choice(70, 397, 152, 20);
+        o->tooltip("The style of the label text.");
+        o->box(FL_THIN_UP_BOX);
+        o->down_box(FL_BORDER_BOX);
+        o->labelfont(1);
+        o->labelsize(11);
+        o->textsize(11);
+        o->callback((Fl_Callback*)cb_4);
+        Fl_Group::current()->resizable(o);
+        o->menu(fontmenu);
+      } // Fl_Choice* o
+      { Fl_Value_Input* o = new Fl_Value_Input(221, 397, 49, 20);
+        o->tooltip("The size of the label text.");
+        o->labelsize(11);
+        o->maximum(100);
+        o->step(1);
+        o->value(14);
+        o->textsize(11);
+        o->callback((Fl_Callback*)cb_5);
+      } // Fl_Value_Input* o
+      o->end();
+    } // Fl_Group* o
+    { Fl_Group* o = new Fl_Group(70, 422, 200, 20, "Text Font:");
+      o->labelsize(11);
+      o->callback((Fl_Callback*)propagate_load);
+      o->align(Fl_Align(FL_ALIGN_LEFT));
+      { Fl_Choice* o = new Fl_Choice(70, 422, 152, 20);
+        o->tooltip("The value text style.");
+        o->box(FL_DOWN_BOX);
+        o->down_box(FL_BORDER_BOX);
+        o->labelfont(1);
+        o->labelsize(11);
+        o->textsize(11);
+        o->callback((Fl_Callback*)cb_6);
+        Fl_Group::current()->resizable(o);
+        o->menu(fontmenu);
+      } // Fl_Choice* o
+      { Fl_Value_Input* o = new Fl_Value_Input(221, 422, 49, 20);
+        o->tooltip("The value text size.");
+        o->labelsize(11);
+        o->maximum(100);
+        o->step(1);
+        o->value(14);
+        o->textsize(11);
+        o->callback((Fl_Callback*)cb_7);
+      } // Fl_Value_Input* o
+      o->end();
+    } // Fl_Group* o
+    { Fl_Button* o = new Fl_Button(245, 456, 60, 25, "Close");
+      o->tooltip("Close this dialog.");
+      o->callback((Fl_Callback*)cb_Close2);
+    } // Fl_Button* o
     grid_window->set_non_modal();
     grid_window->end();
   } // Fl_Double_Window* grid_window

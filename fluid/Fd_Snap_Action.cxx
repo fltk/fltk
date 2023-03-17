@@ -28,7 +28,6 @@
 #include <assert.h>
 
 // TODO: warning if the user wants to change builtin layouts
-// TODO: rearrange layout panel
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
 // INFO: how about a small tool box for quick preset selection and diabeling of individual snaps?
 

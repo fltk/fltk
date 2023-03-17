@@ -4,8 +4,8 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite Peter
-  current_preset 0
+  current_suite Test
+  current_preset 1
   suite {
     name Test
     preset { 1
@@ -96,7 +96,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {472 246 399 298} type Double
+    xywh {739 251 399 298} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -161,15 +161,15 @@ set_modflag(-1, -1);}
         } {
           MenuItem {} {
             label None
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
           MenuItem {} {
             label {GNU gettext}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
           MenuItem {} {
             label {POSIX catgets}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 14
           }
         }
         Fl_Input i18n_include_input {
@@ -217,7 +217,7 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {701 666 360 355} type Double resizable
+    xywh {722 580 360 355} type Double resizable
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Choice scheme_choice {
@@ -328,7 +328,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {502 196 375 208} type Double resizable modal size_range {375 208 1024 208} visible
+    xywh {390 202 375 208} type Double resizable modal size_range {375 208 1024 208} visible
   } {
     Fl_Group {} {open
       xywh {0 0 375 165} resizable
@@ -433,240 +433,11 @@ Function {make_layout_window()} {open
   Fl_Window grid_window {
     label {Layout Settings}
     callback {propagate_load(o, v);} open
-    xywh {519 281 520 573} type Double non_modal visible
+    xywh {392 444 320 491} type Double non_modal visible
   } {
-    Fl_Button {} {
-      label Close
-      callback {if (v != LOAD) grid_window->hide();}
-      tooltip {Close this dialog.} xywh {435 515 60 25}
-    }
-    Fl_Value_Input {} {
-      label {left window margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->left_window_margin);
-} else {
-  layout->left_window_margin = (int)o->value();
-}}
-      xywh {167 82 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {right window margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->right_window_margin);
-} else {
-  layout->right_window_margin = (int)o->value();
-}}
-      xywh {167 112 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {top window margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->top_window_margin);
-} else {
-  layout->top_window_margin = (int)o->value();
-}}
-      xywh {167 142 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {bottom window margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->bottom_window_margin);
-} else {
-  layout->bottom_window_margin = (int)o->value();
-}}
-      xywh {167 172 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {window grid x:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->window_grid_x);
-} else {
-  layout->window_grid_x = (int)o->value();
-}}
-      xywh {167 202 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget x min:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_min_w);
-} else {
-  layout->widget_min_w = (int)o->value();
-}}
-      xywh {167 270 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget x incr:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_inc_w);
-} else {
-  layout->widget_inc_w = (int)o->value();
-}}
-      xywh {167 300 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget x gap:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_gap_x);
-} else {
-  layout->widget_gap_x = (int)o->value();
-}}
-      xywh {167 330 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget y min:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_min_h);
-} else {
-  layout->widget_min_h = (int)o->value();
-}}
-      xywh {167 371 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget y incr:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_inc_h);
-} else {
-  layout->widget_inc_h = (int)o->value();
-}}
-      xywh {167 401 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {widget y gap:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->widget_gap_y);
-} else {
-  layout->widget_gap_y = (int)o->value();
-}}
-      xywh {167 431 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {window grid y:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->window_grid_y);
-} else {
-  layout->window_grid_y = (int)o->value();
-}}
-      xywh {167 232 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {left group margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->left_group_margin);
-} else {
-  layout->left_group_margin = (int)o->value();
-}}
-      xywh {374 82 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {right group margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->right_group_margin);
-} else {
-  layout->right_group_margin = (int)o->value();
-}}
-      xywh {374 112 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {top group margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->top_group_margin);
-} else {
-  layout->top_group_margin = (int)o->value();
-}}
-      xywh {374 142 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {bottom group margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->bottom_group_margin);
-} else {
-  layout->bottom_group_margin = (int)o->value();
-}}
-      xywh {374 172 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {top tabs margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->top_tabs_margin);
-} else {
-  layout->top_tabs_margin = (int)o->value();
-}}
-      xywh {374 270 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {bottom tabs margin:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->bottom_tabs_margin);
-} else {
-  layout->bottom_tabs_margin = (int)o->value();
-}}
-      xywh {374 300 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {group grid x:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->group_grid_x);
-} else {
-  layout->group_grid_x = (int)o->value();
-}}
-      xywh {374 202 50 22} maximum 32767 step 1
-    }
-    Fl_Value_Input {} {
-      label {group grid y:}
-      callback {if (v == LOAD) {
-  o->value((double)layout->group_grid_y);
-} else {
-  layout->group_grid_y = (int)o->value();
-}}
-      xywh {374 232 50 22} maximum 32767 step 1
-    }
-    Fl_Group {} {
-      label {Label Font:}
-      callback propagate_load open
-      xywh {107 479 200 20} labelfont 1 labelsize 11 align 4
-    } {
-      Fl_Choice {} {
-        callback {if (v == LOAD) {
-  o->value((double)layout->labelfont);
-} else {
-  layout->labelfont = (int)o->value();
-}} open
-        tooltip {The style of the label text.} xywh {107 479 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
-        code0 {extern Fl_Menu_Item fontmenu[];}
-        code1 {o->menu(fontmenu);}
-      } {}
-      Fl_Value_Input {} {
-        callback {if (v == LOAD) {
-  o->value((double)layout->labelsize);
-} else {
-  layout->labelsize = (int)o->value();
-}}
-        tooltip {The size of the label text.} xywh {258 479 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
-      }
-    }
-    Fl_Group {} {
-      label {Text Font:}
-      callback propagate_load open
-      xywh {107 507 200 20} labelfont 1 labelsize 11 align 4
-    } {
-      Fl_Choice {} {
-        callback {if (v == LOAD) {
-  o->value((double)layout->textfont);
-} else {
-  layout->textfont = (int)o->value();
-}} open
-        tooltip {The value text style.} xywh {107 507 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
-        code0 {extern Fl_Menu_Item fontmenu[];}
-        code1 {o->menu(fontmenu);}
-      } {}
-      Fl_Value_Input {} {
-        callback {if (v == LOAD) {
-  o->value((double)layout->textsize);
-} else {
-  layout->textsize = (int)o->value();
-}}
-        tooltip {The value text size.} xywh {258 507 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
-      }
+    Fl_Box {} {
+      label {Layout:}
+      xywh {10 10 60 24} labelfont 1 labelsize 11 align 24
     }
     Fl_Choice layout_choice {
       callback {if (v == LOAD) {
@@ -675,16 +446,16 @@ Function {make_layout_window()} {open
     int index = o->value();
     g_layout_list.current_suite(index);
     g_layout_list.update_dialogs();
-  }} open
-      xywh {170 11 130 24} down_box BORDER_BOX
+  }}
+      xywh {70 10 187 24} down_box BORDER_BOX
     } {
       MenuItem {} {
         label FLTK
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
       MenuItem {} {
         label Grid
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
     }
     Fl_Button {} {
@@ -701,7 +472,7 @@ if (new_name == NULL)
 
 g_layout_list.add(new_name);
 g_layout_list.update_dialogs();}
-      xywh {300 11 24 24}
+      xywh {257 10 24 24}
     }
     Fl_Menu_Button w_layout_menu {
       callback {if (v == LOAD) {
@@ -716,8 +487,8 @@ g_layout_list.update_dialogs();}
     w_layout_menu_delete->activate();
   }
   w_layout_menu_storage[suite.storage_]->setonly();
-}} open selected
-      xywh {324 11 24 24}
+}}
+      xywh {281 10 24 24}
     } {
       MenuItem w_layout_menu_rename {
         label {Rename...}
@@ -730,35 +501,35 @@ if (new_name == NULL)
 
 g_layout_list.rename(new_name);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} divider
+        xywh {0 0 31 20} labelsize 14 divider
       }
       MenuItem {w_layout_menu_storage[0]} {
         label {@fd_beaker  FLUID Built-In}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_INTERNAL);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} type Radio deactivate
+        xywh {0 0 31 20} type Radio labelsize 14 deactivate
       }
       MenuItem {w_layout_menu_storage[1]} {
         label {@fd_user  User Preference}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_USER);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} type Radio
+        xywh {0 0 31 20} type Radio labelsize 14
       }
       MenuItem {w_layout_menu_storage[2]} {
         label {@fd_project  Store in .fl Project File}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_PROJECT);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} type Radio
+        xywh {0 0 31 20} type Radio labelsize 14
       }
       MenuItem {w_layout_menu_storage[3]} {
         label {@fd_file  Store in External File}
         callback {Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
 suite.storage(FD_STORE_FILE);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20} type Radio divider
+        xywh {0 0 31 20} type Radio labelsize 14 divider
       }
       MenuItem w_layout_menu_load {
         label {Load...}
@@ -777,7 +548,7 @@ if (!new_filename) return;
 g_layout_list.load(new_filename);
 //g_layout_list.current_suite(n);
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
       MenuItem w_layout_menu_save {
         label {Save...}
@@ -810,7 +581,7 @@ g_layout_list.update_dialogs();}
     ::free(g_layout_list.filename_);
   g_layout_list.filename_ = fl_strdup(new_filename);
   g_layout_list.save(new_filename);}
-        xywh {0 0 31 20} divider
+        xywh {0 0 31 20} labelsize 14 divider
         code0 {\#include <FL/Fl_Native_File_Chooser.H>}
       }
       MenuItem w_layout_menu_delete {
@@ -819,31 +590,309 @@ g_layout_list.update_dialogs();}
 
 g_layout_list.remove(g_layout_list.current_suite());
 g_layout_list.update_dialogs();}
-        xywh {0 0 31 20}
+        xywh {0 0 31 20} labelsize 14
       }
+    }
+    Fl_Box {} {
+      label {Preset:}
+      xywh {10 39 60 20} labelfont 1 labelsize 11 align 24
     }
     Fl_Group {} {
       callback propagate_load open
-      xywh {121 48 270 20}
+      xywh {70 39 235 20} labelsize 11
     } {
       Fl_Button {preset_choice[0]} {
         label Application
         user_data 0 user_data_type long
         callback edit_layout_preset_cb
-        xywh {121 48 90 20} type Radio value 1 selection_color 45 labelsize 12
+        xywh {70 39 78 20} type Radio value 1 selection_color 45 labelsize 11
       }
       Fl_Button {preset_choice[1]} {
         label Dialog
         user_data 1 user_data_type long
         callback edit_layout_preset_cb
-        xywh {211 48 90 20} type Radio selection_color 45 labelsize 12
+        xywh {148 39 79 20} type Radio selection_color 45 labelsize 11
       }
       Fl_Button {preset_choice[2]} {
         label Toolbox
         user_data 2 user_data_type long
         callback edit_layout_preset_cb
-        xywh {301 48 90 20} type Radio selection_color 45 labelsize 12
+        xywh {227 39 78 20} type Radio selection_color 45 labelsize 11
       }
+    }
+    Fl_Box {} {
+      label {---- Window ----}
+      xywh {70 64 235 20} labelfont 1 labelsize 11 align 20
+    }
+    Fl_Box {} {
+      label {Margin:}
+      xywh {10 99 60 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Left:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->left_window_margin);
+} else {
+  layout->left_window_margin = (int)o->value();
+}}
+      xywh {70 99 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Top:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->top_window_margin);
+} else {
+  layout->top_window_margin = (int)o->value();
+}}
+      xywh {130 99 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Right:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->right_window_margin);
+} else {
+  layout->right_window_margin = (int)o->value();
+}}
+      xywh {190 99 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Bottom:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->bottom_window_margin);
+} else {
+  layout->bottom_window_margin = (int)o->value();
+}}
+      xywh {250 99 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {Grid:}
+      xywh {17 133 53 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Horizontal:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->window_grid_x);
+} else {
+  layout->window_grid_x = (int)o->value();
+}}
+      xywh {70 133 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Vertical:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->window_grid_y);
+} else {
+  layout->window_grid_y = (int)o->value();
+}}
+      xywh {130 133 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {---- Group ----}
+      xywh {70 158 235 20} labelfont 1 labelsize 11 align 20
+    }
+    Fl_Box {} {
+      label {Margin:}
+      xywh {10 193 60 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Left:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->left_group_margin);
+} else {
+  layout->left_group_margin = (int)o->value();
+}}
+      xywh {70 193 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Top:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->top_group_margin);
+} else {
+  layout->top_group_margin = (int)o->value();
+}}
+      xywh {130 193 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Right:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->right_group_margin);
+} else {
+  layout->right_group_margin = (int)o->value();
+}}
+      xywh {190 193 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Bottom:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->bottom_group_margin);
+} else {
+  layout->bottom_group_margin = (int)o->value();
+}}
+      xywh {250 193 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {Grid:}
+      xywh {17 227 53 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Horizontal:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->group_grid_x);
+} else {
+  layout->group_grid_x = (int)o->value();
+}}
+      xywh {70 227 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Vertical:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->group_grid_y);
+} else {
+  layout->group_grid_y = (int)o->value();
+}} selected
+      xywh {130 227 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {---- Tabs ----}
+      xywh {70 252 235 20} labelfont 1 labelsize 11 align 20
+    }
+    Fl_Box {} {
+      label {Margin:}
+      xywh {10 287 60 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Top:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->top_tabs_margin);
+} else {
+  layout->top_tabs_margin = (int)o->value();
+}}
+      xywh {70 287 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Bottom:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->bottom_tabs_margin);
+} else {
+  layout->bottom_tabs_margin = (int)o->value();
+}}
+      xywh {130 287 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {---- Widget ----}
+      xywh {70 312 235 20} labelfont 1 labelsize 11 align 20
+    }
+    Fl_Box {} {
+      label {Horizontal:}
+      xywh {10 347 60 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      label {Minimum:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_min_w);
+} else {
+  layout->widget_min_w = (int)o->value();
+}}
+      xywh {70 346 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Increment:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_inc_w);
+} else {
+  layout->widget_inc_w = (int)o->value();
+}}
+      xywh {130 346 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      label {Gap:}
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_gap_x);
+} else {
+  layout->widget_gap_x = (int)o->value();
+}}
+      xywh {190 346 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Box {} {
+      label {Vertical:}
+      xywh {17 372 53 20} labelsize 11 align 24
+    }
+    Fl_Value_Input {} {
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_min_h);
+} else {
+  layout->widget_min_h = (int)o->value();
+}}
+      xywh {70 372 55 20} labelsize 11 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_inc_h);
+} else {
+  layout->widget_inc_h = (int)o->value();
+}}
+      xywh {130 372 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Value_Input {} {
+      callback {if (v == LOAD) {
+  o->value((double)layout->widget_gap_y);
+} else {
+  layout->widget_gap_y = (int)o->value();
+}}
+      xywh {190 372 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
+    }
+    Fl_Group {} {
+      label {Label Font:}
+      callback propagate_load open
+      xywh {70 397 200 20} labelsize 11 align 4
+    } {
+      Fl_Choice {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->labelfont);
+} else {
+  layout->labelfont = (int)o->value();
+}} open
+        tooltip {The style of the label text.} xywh {70 397 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+        code0 {extern Fl_Menu_Item fontmenu[];}
+        code1 {o->menu(fontmenu);}
+      } {}
+      Fl_Value_Input {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->labelsize);
+} else {
+  layout->labelsize = (int)o->value();
+}}
+        tooltip {The size of the label text.} xywh {221 397 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+      }
+    }
+    Fl_Group {} {
+      label {Text Font:}
+      callback propagate_load open
+      xywh {70 422 200 20} labelsize 11 align 4
+    } {
+      Fl_Choice {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->textfont);
+} else {
+  layout->textfont = (int)o->value();
+}} open
+        tooltip {The value text style.} xywh {70 422 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+        code0 {extern Fl_Menu_Item fontmenu[];}
+        code1 {o->menu(fontmenu);}
+      } {}
+      Fl_Value_Input {} {
+        callback {if (v == LOAD) {
+  o->value((double)layout->textsize);
+} else {
+  layout->textsize = (int)o->value();
+}}
+        tooltip {The value text size.} xywh {221 422 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+      }
+    }
+    Fl_Button {} {
+      label Close
+      callback {if (v != LOAD) grid_window->hide();}
+      tooltip {Close this dialog.} xywh {245 456 60 25}
     }
   }
   code {grid_window->do_callback(grid_window, LOAD);} {}
