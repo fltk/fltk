@@ -4,10 +4,10 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite Test
+  current_suite {FLUID (based on FLTK)}
   current_preset 1
   suite {
-    name Test
+    name {FLUID (based on FLTK)}
     preset { 1
       15 15 15 15 0 0
       10 10 10 10 0 0
@@ -67,7 +67,7 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 }
 
-decl {\#include <FL/filename.H>} {public local
+decl {\#include <FL/filename.H>} {selected public local
 }
 
 decl {\#include <FL/fl_string_functions.h>} {public local
@@ -749,7 +749,7 @@ g_layout_list.update_dialogs();}
   o->value((double)layout->group_grid_y);
 } else {
   layout->group_grid_y = (int)o->value();
-}} selected
+}}
       xywh {130 227 55 20} labelsize 11 align 5 maximum 32767 step 1 textsize 11
     }
     Fl_Box {} {
