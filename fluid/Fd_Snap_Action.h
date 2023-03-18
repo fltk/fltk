@@ -80,6 +80,7 @@ public:
   void update_label();
   void storage(int s) { storage_ = s; update_label(); }
   void name(const char *n);
+  void init();
   ~Fd_Layout_Suite();
 public:
 

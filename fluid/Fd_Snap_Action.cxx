@@ -372,6 +372,13 @@ void Fd_Layout_Suite::name(const char *n) {
   update_label();
 }
 
+void Fd_Layout_Suite::init() {
+  name_ = NULL;
+  menu_label = NULL;
+  layout[0] = layout[1] = layout[2] = NULL;
+  storage_ = 0;
+}
+
 Fd_Layout_Suite::~Fd_Layout_Suite() {
   if (storage_ == FD_STORE_INTERNAL) return;
   if (name_) ::free(name_);
@@ -701,20 +708,24 @@ void Fd_Layout_List::capacity(int n) {
     suite_menu = (Fl_Menu_Item*)main_menubar->find_item(layout_suite_marker);
 
   int old_n = list_size_;
+  int i;
 
   Fd_Layout_Suite *new_list = (Fd_Layout_Suite*)::calloc(n, sizeof(Fd_Layout_Suite));
-  ::memcpy(new_list, list_, old_n * sizeof(Fd_Layout_Suite));
+  for (i = 0; i < old_n; i++)
+    new_list[i] = list_[i];
   if (!list_is_static_) ::free(list_);
   list_ = new_list;
 
   Fl_Menu_Item *new_main_menu = (Fl_Menu_Item*)::calloc(n+1, sizeof(Fl_Menu_Item));
-  ::memcpy(new_main_menu, main_menu_, old_n * sizeof(Fl_Menu_Item));
+  for (i = 0; i < old_n; i++)
+    new_main_menu[i] = main_menu_[i];
   if (!list_is_static_) ::free(main_menu_);
   main_menu_ = new_main_menu;
   suite_menu->user_data(main_menu_);
 
   Fl_Menu_Item *new_choice_menu = (Fl_Menu_Item*)::calloc(n+1, sizeof(Fl_Menu_Item));
-  ::memcpy(new_choice_menu, choice_menu_, old_n * sizeof(Fl_Menu_Item));
+  for (i = 0; i < old_n; i++)
+    new_choice_menu[i] = choice_menu_[i];
   if (!list_is_static_) ::free(choice_menu_);
   choice_menu_ = new_choice_menu;
   layout_choice->menu(choice_menu_);
@@ -734,7 +745,7 @@ int Fd_Layout_List::add(const char *name) {
   int n = list_size_;
   Fd_Layout_Suite &old_suite = list_[current_suite_];
   Fd_Layout_Suite &new_suite = list_[n];
-  ::memset(&new_suite, 0, sizeof(Fd_Layout_Suite));
+  new_suite.init();
   new_suite.name(name);
   for (int i=0; i<3; ++i) {
     new_suite.layout[i] = new Fd_Layout_Preset;
