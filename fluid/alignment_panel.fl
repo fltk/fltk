@@ -64,10 +64,10 @@ decl {\#include "shell_command.h"} {public global
 decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 }
 
-decl {\#include <FL/Fl_Text_Display.H>} {public local
+decl {\#include <FL/Fl_Text_Display.H>} {selected public local
 }
 
-decl {\#include <FL/filename.H>} {selected public local
+decl {\#include <FL/filename.H>} {public local
 }
 
 decl {\#include <FL/fl_string_functions.h>} {public local
@@ -842,7 +842,7 @@ g_layout_list.update_dialogs();}
     } {
       Fl_Choice {} {
         callback {if (v == LOAD) {
-  o->value((double)layout->labelfont);
+  o->value(layout->labelfont);
 } else {
   layout->labelfont = (int)o->value();
 }} open
@@ -852,7 +852,7 @@ g_layout_list.update_dialogs();}
       } {}
       Fl_Value_Input {} {
         callback {if (v == LOAD) {
-  o->value((double)layout->labelsize);
+  o->value(layout->labelsize);
 } else {
   layout->labelsize = (int)o->value();
 }}
@@ -866,7 +866,7 @@ g_layout_list.update_dialogs();}
     } {
       Fl_Choice {} {
         callback {if (v == LOAD) {
-  o->value((double)layout->textfont);
+  o->value(layout->textfont);
 } else {
   layout->textfont = (int)o->value();
 }} open
@@ -876,7 +876,7 @@ g_layout_list.update_dialogs();}
       } {}
       Fl_Value_Input {} {
         callback {if (v == LOAD) {
-  o->value((double)layout->textsize);
+  o->value(layout->textsize);
 } else {
   layout->textsize = (int)o->value();
 }}

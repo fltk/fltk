@@ -135,7 +135,7 @@ void edit_layout_preset_cb(Fl_Button *w, long user_data) {
   int index = (int)w->argument();
   assert(index >= 0);
   assert(index < 3);
-  if (user_data == (long)LOAD) {
+  if (user_data == (long)(fl_intptr_t)LOAD) {
     w->value(g_layout_list.current_preset() == index);
   } else {
     g_layout_list.current_preset(index);
@@ -358,7 +358,7 @@ void Fd_Layout_Suite::update_label() {
   sym.append(name_);
   if (menu_label)
     ::free(menu_label);
-  menu_label = strdup(sym.c_str());
+  menu_label = fl_strdup(sym.c_str());
   g_layout_list.update_menu_labels();
 }
 
@@ -366,7 +366,7 @@ void Fd_Layout_Suite::name(const char *n) {
   if (name_)
     ::free(name_);
   if (n)
-    name_ = strdup(n);
+    name_ = fl_strdup(n);
   else
     name_ = NULL;
   update_label();

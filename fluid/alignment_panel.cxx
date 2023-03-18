@@ -819,7 +819,7 @@ static void cb_3(Fl_Value_Input* o, void* v) {
 
 static void cb_4(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->labelfont);
+    o->value(layout->labelfont);
   } else {
     layout->labelfont = (int)o->value();
   }
@@ -827,7 +827,7 @@ static void cb_4(Fl_Choice* o, void* v) {
 
 static void cb_5(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->labelsize);
+    o->value(layout->labelsize);
   } else {
     layout->labelsize = (int)o->value();
   }
@@ -835,7 +835,7 @@ static void cb_5(Fl_Value_Input* o, void* v) {
 
 static void cb_6(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->textfont);
+    o->value(layout->textfont);
   } else {
     layout->textfont = (int)o->value();
   }
@@ -843,7 +843,7 @@ static void cb_6(Fl_Choice* o, void* v) {
 
 static void cb_7(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    o->value((double)layout->textsize);
+    o->value(layout->textsize);
   } else {
     layout->textsize = (int)o->value();
   }
