@@ -89,8 +89,8 @@ static Fd_Layout_Preset grid_tool = {
 };
 
 static Fd_Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", (char*)"@fd_beaker FLTK", &fltk_app, &fltk_dlg, &fltk_tool, FD_STORE_INTERNAL },
-  { (char*)"Grid", (char*)"@fd_beaker Grid", &grid_app, &grid_dlg, &grid_tool, FD_STORE_INTERNAL }
+  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, FD_STORE_INTERNAL },
+  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, FD_STORE_INTERNAL }
 };
 
 static Fl_Menu_Item static_main_menu[] = {
