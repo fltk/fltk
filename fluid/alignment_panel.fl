@@ -534,9 +534,6 @@ g_layout_list.update_dialogs();}
       MenuItem w_layout_menu_load {
         label {Load...}
         callback {// Give the user a file chooser and load that file
-
-Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-
 Fl_Native_File_Chooser fnfc;
 fnfc.title("Load Layout Settings:");
 fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
@@ -553,9 +550,6 @@ g_layout_list.update_dialogs();}
       MenuItem w_layout_menu_save {
         label {Save...}
         callback {// Give the user a file chooser with a suggested name
-
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Save Layout Settings:");
   fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);

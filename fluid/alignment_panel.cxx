@@ -594,9 +594,6 @@ static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
 
 static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
   // Give the user a file chooser and load that file
-
-  Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Load Layout Settings:");
   fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
@@ -612,9 +609,6 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
   // Give the user a file chooser with a suggested name
-
-    Fd_Layout_Suite &suite = g_layout_list[g_layout_list.current_suite()];
-
     Fl_Native_File_Chooser fnfc;
     fnfc.title("Save Layout Settings:");
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
