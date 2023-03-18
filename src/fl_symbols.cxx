@@ -655,6 +655,43 @@ static void draw_redo(Fl_Color c) {
   fl_scale(-1.0, 1.0);
 }
 
+static void draw_open_box(Fl_Color col) {
+  fl_color(col);
+  BCP;
+  vv(-1.0, -1.0); vv(-0.4, -1.0); vv(-0.4, -0.75); vv(-0.75, -0.75);
+  vv(-0.75, 0.75); vv(0.75, 0.75); vv(0.75, 0.4); vv(1.0, 0.4); vv(1.0, 1.0);
+  vv(-1.0, 1.0);
+  ECP;
+  set_outline_color(col);
+  BC;
+  vv(-1.0, -1.0); vv(-0.4, -1.0); vv(-0.4, -0.75); vv(-0.75, -0.75);
+  vv(-0.75, 0.75); vv(0.75, 0.75); vv(0.75, 0.4); vv(1.0, 0.4); vv(1.0, 1.0);
+  vv(-1.0, 1.0);
+  EC;
+}
+
+static void draw_import(Fl_Color col)
+{
+  fl_push_matrix();
+  fl_scale(-1.0, 1.0);
+  draw_open_box(col);
+  fl_scale(-1.0, 1.0);
+  fl_translate(-0.8, -0.3);
+  fl_rotate(45.0+90);
+  draw_round_arrow(col, 3);
+  fl_pop_matrix();
+}
+
+static void draw_export(Fl_Color col)
+{
+  draw_open_box(col);
+  fl_push_matrix();
+  fl_translate(0.7, 0.1);
+  fl_rotate(225.0);
+  draw_round_arrow(col, 3);
+  fl_pop_matrix();
+}
+
 static void fl_init_symbols(void) {
   static char beenhere;
   if (beenhere) return;
@@ -701,6 +738,9 @@ static void fl_init_symbols(void) {
   fl_add_symbol("reload",       draw_reload,            1);
   fl_add_symbol("undo",         draw_undo,              1);
   fl_add_symbol("redo",         draw_redo,              1);
+
+  fl_add_symbol("import",       draw_import,            1);
+  fl_add_symbol("export",       draw_export,            1);
 
 //  fl_add_symbol("file",      draw_file,           1);
 }

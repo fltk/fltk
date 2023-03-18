@@ -28,7 +28,7 @@ int N = 0;
 #define W 70
 #define H 70
 #define ROWS 6
-#define COLS 6
+#define COLS 7
 
 Fl_Double_Window *window;
 Fl_Value_Slider *orientation;
@@ -119,6 +119,8 @@ bt("@refresh");
 bt("@reload");
 bt("@undo");
 bt("@redo");
+bt("@import");
+bt("@export");
 
   orientation = new Fl_Value_Slider(
     (int)(window->w()*.05+.5), window->h()-40,

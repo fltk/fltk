@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,9 +42,6 @@ extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Bar *main_menubar;
 extern Fl_Window *main_window;
 
-extern int gridx;
-extern int gridy;
-extern int snap;
 extern int show_guides;
 extern int show_comments;
 
@@ -65,6 +62,9 @@ extern Fl_Menu_Item *history_item;
 extern Fl_Menu_Item *widgetbin_item;
 extern Fl_Menu_Item *sourceview_item;
 extern Fl_Menu_Item *overlay_item;
+extern Fl_Button *overlay_button;
+extern Fl_Menu_Item *guides_item;
+extern Fl_Button *guides_button;
 
 extern int modflag;
 
@@ -76,6 +76,7 @@ extern int compile_file;           // fluid -c
 extern int compile_strings;        // fluic -cs
 extern int batch_mode;
 
+extern int pasteoffset;
 extern int pasteoffset;
 
 // ---- project settings
@@ -133,7 +134,9 @@ extern void new_from_template_cb(Fl_Widget *w, void *v);
 extern int write_code_files();
 extern void write_strings_cb(Fl_Widget *, void *);
 extern void align_widget_cb(Fl_Widget *, long);
-extern void widget_size_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
+
+inline int fd_min(int a, int b) { return (a < b ? a : b); }
+inline int fd_min(int a, int b, int c) { return fd_min(a, fd_min(b, c)); }
 
 #endif // _FLUID_FLUID_H

@@ -1,7 +1,7 @@
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,8 +49,6 @@
 // instance, sets the widget pointers, and makes all the display
 // update correctly...
 
-int Fl_Widget_Type::default_size = FL_NORMAL_SIZE;
-
 int Fl_Widget_Type::is_widget() const {return 1;}
 int Fl_Widget_Type::is_public() const {return public_;}
 
@@ -80,17 +78,6 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
 
   if (w < 15) w = 15;
   if (h < 15) h = 15;
-}
-
-// Return the ideal widget spacing...
-void
-Fl_Widget_Type::ideal_spacing(int &x, int &y) {
-  if (o->labelsize() < 10)
-    x = y = 0;
-  else if (o->labelsize() < 14)
-    x = y = 5;
-  else
-    x = y = 10;
 }
 
 /**
@@ -144,16 +131,6 @@ Fl_Type *Fl_Widget_Type::make(Strategy strategy) {
     X = ULX+B;
     Y = ULY+B;
     W = H = B;
-  }
-
-  // satisfy the grid requirements (otherwise it edits really strangely):
-  if (gridx>1) {
-    X = (X/gridx)*gridx;
-    W = ((W-1)/gridx+1)*gridx;
-  }
-  if (gridy>1) {
-    Y = (Y/gridy)*gridy;
-    H = ((H-1)/gridy+1)*gridy;
   }
 
   // Construct the Fl_Type:
@@ -1366,6 +1343,7 @@ void labelfont_cb(Fl_Choice* i, void *v) {
   } else {
     int mod = 0;
     int n = i->value();
+    if (n <= 0) n = layout->labelfont;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1385,7 +1363,7 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
   } else {
     int mod = 0;
     n = int(i->value());
-    if (n <= 0) n = Fl_Widget_Type::default_size;
+    if (n <= 0) n = layout->labelsize;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1842,6 +1820,7 @@ void textfont_cb(Fl_Choice* i, void* v) {
   } else {
     int mod = 0;
     n = (Fl_Font)i->value();
+    if (n <= 0) n = layout->textfont;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1862,7 +1841,7 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
   } else {
     int mod = 0;
     s = int(i->value());
-    if (s <= 0) s = Fl_Widget_Type::default_size;
+    if (s <= 0) s = layout->textsize;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -2635,11 +2614,33 @@ static void load_panel() {
     the_panel->hide();
 }
 
+extern Fl_Window *widgetbin_panel;
+
 // This is called when user double-clicks an item, open or update the panel:
 void Fl_Widget_Type::open() {
-  if (!the_panel) the_panel = make_widget_panel();
+  bool adjust_position = false;
+  if (!the_panel) {
+    the_panel = make_widget_panel();
+    adjust_position = true;
+  }
   load_panel();
-  if (numselected) the_panel->show();
+  if (numselected) {
+    the_panel->show();
+    if (adjust_position) {
+      if (widgetbin_panel && widgetbin_panel->visible()) {
+        if (   (the_panel->x()+the_panel->w() > widgetbin_panel->x())
+            && (the_panel->x() < widgetbin_panel->x()+widgetbin_panel->w())
+            && (the_panel->y()+the_panel->h() > widgetbin_panel->y())
+            && (the_panel->y() < widgetbin_panel->y()+widgetbin_panel->h()) )
+        {
+          if (widgetbin_panel->y()+widgetbin_panel->h()+the_panel->h() > Fl::h())
+            the_panel->position(the_panel->x(), widgetbin_panel->y()-the_panel->h()-30);
+          else
+            the_panel->position(the_panel->x(), widgetbin_panel->y()+widgetbin_panel->h()+30);
+        }
+      }
+    }
+  }
 }
 
 extern void redraw_overlays();

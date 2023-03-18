@@ -137,11 +137,6 @@ public:
 
 class Fl_Tabs_Type : public Fl_Group_Type {
 public:
-  void ideal_spacing(int &x, int &y) FL_OVERRIDE {
-     x = 10;
-     fl_font(o->labelfont(), o->labelsize());
-     y = fl_height() + o->labelsize() - 6;
-  }
   const char *type_name() FL_OVERRIDE {return tabs_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TabGroup";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
@@ -152,6 +147,7 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
   int pixmapID() FL_OVERRIDE { return 13; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
+  int is_tabs() const FL_OVERRIDE {return 1;}
 };
 
 // ---- Fl_Scroll_Type ------------------------------------------------- MARK: -

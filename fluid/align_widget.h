@@ -20,6 +20,5 @@
 class Fl_Widget;
 
 void align_widget_cb(Fl_Widget *, long);
-void widget_size_cb(Fl_Widget *, long);
 
 #endif // _FLUID_ALIGN_WIDGET_H

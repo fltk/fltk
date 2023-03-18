@@ -19,6 +19,7 @@ include ../makeinclude
 CPPFILES = \
 	CodeEditor.cxx \
 	StyleParse.cxx \
+	Fd_Snap_Action.cxx \
 	Fl_Function_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \

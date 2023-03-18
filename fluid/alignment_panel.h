@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2020 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,10 +21,12 @@
 #include <FL/Fl.H>
 #include "fluid.h"
 #include "widget_browser.h"
+#include "Fd_Snap_Action.h"
 #include "shell_command.h"
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/filename.H>
+#include <FL/fl_string_functions.h>
 #include <FL/Fl_Scheme_Choice.H>
 /**
  // initialize the scheme from preferences
@@ -95,14 +97,21 @@ extern Fl_Simple_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 extern Fl_Double_Window *grid_window;
-extern void grid_cb(Fl_Int_Input*, long);
-extern Fl_Int_Input *horizontal_input;
-extern Fl_Int_Input *vertical_input;
-extern Fl_Int_Input *snap_input;
-extern void guides_cb(Fl_Check_Button*, long);
-extern Fl_Check_Button *guides_toggle;
-#include <FL/Fl_Round_Button.H>
-extern void default_widget_size_cb(Fl_Round_Button*, long);
-extern Fl_Round_Button *def_widget_size[6];
+extern Fl_Choice *layout_choice;
+#include <FL/Fl_Menu_Button.H>
+extern Fl_Menu_Button *w_layout_menu;
+#include <FL/Fl_Native_File_Chooser.H>
+extern void propagate_load(Fl_Group*, void*);
+extern void edit_layout_preset_cb(Fl_Button*, long);
+extern Fl_Button *preset_choice[3];
+#include <FL/Fl_Value_Input.H>
+extern Fl_Menu_Item fontmenu[];
 Fl_Double_Window* make_layout_window();
+extern Fl_Menu_Item menu_layout_choice[];
+extern Fl_Menu_Item menu_w_layout_menu[];
+#define w_layout_menu_rename (menu_w_layout_menu+0)
+extern Fl_Menu_Item *w_layout_menu_storage[4];
+#define w_layout_menu_load (menu_w_layout_menu+5)
+#define w_layout_menu_save (menu_w_layout_menu+6)
+#define w_layout_menu_delete (menu_w_layout_menu+7)
 #endif

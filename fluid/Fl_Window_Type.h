@@ -5,7 +5,7 @@
 // This should have the widget pointer in it, but it is still in the
 // Fl_Type base class.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,9 +28,19 @@ class Fl_Widget_Class_Type;
 extern Fl_Menu_Item window_type_menu[];
 extern Fl_Widget_Class_Type *current_widget_class;
 void toggle_overlays(Fl_Widget *,void *);
+void toggle_guides(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
+
+enum {
+  FD_LEFT   = 1,  // user drags the left side of the selection box
+  FD_RIGHT  = 2,
+  FD_BOTTOM = 4,
+  FD_TOP    = 8,
+  FD_DRAG   = 16, // user drags the entire selection
+  FD_BOX    = 32  // user creates a new selection box
+};
 
 class Fl_Window_Type : public Fl_Widget_Type {
 protected:
@@ -45,7 +55,6 @@ protected:
   int dx,dy;
   int drag;             // which parts of bbox are being moved
   int numselected;      // number of children selected
-  enum {LEFT=1,RIGHT=2,BOTTOM=4,TOP=8,DRAG=16,BOX=32};
   void draw_overlay();
   void newdx();
   void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);

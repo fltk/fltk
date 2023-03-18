@@ -560,6 +560,7 @@ public:
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Window* as_window() FL_OVERRIDE { return this; }
+  Fl_Window const* as_window() const FL_OVERRIDE { return this; }
 
   /**
    Return non-null if this is an Fl_Overlay_Window object.
