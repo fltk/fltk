@@ -31,9 +31,15 @@
 // --- line and polygon drawing with integer coordinates
 
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
-  glBegin(GL_POINTS);
-  glVertex2f(x+0.5f, y+0.5f);
-  glEnd();
+  if (line_width_ == 1.0f) {
+    glBegin(GL_POINTS);
+    glVertex2f(x+0.5f, y+0.5f);
+    glEnd();
+  } else {
+    float offset = line_width_ / 2.0f;
+    float xx = x+0.5f, yy = y+0.5f;
+    glRectf(xx-offset, yy-offset, xx+offset, yy+offset);
+  }
 }
 
 void Fl_OpenGL_Graphics_Driver::rect(int x, int y, int w, int h) {
