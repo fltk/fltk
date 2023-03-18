@@ -774,8 +774,10 @@ void Fd_Layout_List::rename(const char *name) {
 
 void Fd_Layout_List::remove(int ix) {
   int tail = list_size_-ix-1;
-  if (tail)
-    ::memmove(list_+ix, list_+ix+1, tail * sizeof(Fd_Layout_Suite));
+  if (tail) {
+    for (int i = ix; i < list_size_-1; i++)
+      list_[i] = list_[i+1];
+  }
   ::memmove(main_menu_+ix, main_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
   ::memmove(choice_menu_+ix, choice_menu_+ix+1, (tail+1) * sizeof(Fl_Menu_Item));
   list_size_--;
