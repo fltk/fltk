@@ -62,10 +62,15 @@ static void update_xywh() {
   }
 }
 
-void i18n_type_cb(Fl_Choice *c, void *) {
-  undo_checkpoint();
-
-  switch (g_project.i18n_type = c->value()) {
+void i18n_type_cb(Fl_Choice *c, void *v) {
+  if (v == LOAD) {
+    c->value(g_project.i18n_type);
+  } else {
+    undo_checkpoint();
+    g_project.i18n_type = c->value();
+    set_modflag(1);
+  }
+  switch (g_project.i18n_type) {
   case 0 : /* None */
       i18n_include_input->hide();
       i18n_conditional_input->hide();
@@ -108,128 +113,16 @@ void i18n_type_cb(Fl_Choice *c, void *) {
       break;
   }
 
-  set_modflag(1);
-}
-
-void i18n_text_cb(Fl_Input *i, void *) {
-  undo_checkpoint();
-
-  if (i == i18n_function_input)
-    g_project.i18n_function = i->value();
-  else if (i == i18n_static_function_input)
-    g_project.i18n_static_function = i->value();
-  else if (i == i18n_file_input)
-    g_project.i18n_file = i->value();
-  else if (i == i18n_include_input)
-    g_project.i18n_include = i->value();
-  else if (i == i18n_conditional_input)
-    g_project.i18n_conditional = i->value();
-
-  set_modflag(1);
-}
-
-void i18n_int_cb(Fl_Int_Input *i, void *) {
-  undo_checkpoint();
-
-  if (i == i18n_set_input)
-    g_project.i18n_set = i->value();
-
-  set_modflag(1);
-}
-
-void show_project_cb(Fl_Widget *, void *) {
-  if(project_window==0) make_project_window();
-  include_H_from_C_button->value(g_project.include_H_from_C);
-  use_FL_COMMAND_button->value(g_project.use_FL_COMMAND);
-  utf8_in_src_button->value(g_project.utf8_in_src);
-  avoid_early_includes_button->value(g_project.avoid_early_includes);
-  header_file_input->value(g_project.header_file_name.c_str());
-  code_file_input->value(g_project.code_file_name.c_str());
-  i18n_type_chooser->value(g_project.i18n_type);
-  i18n_function_input->value(g_project.i18n_function.c_str());
-  i18n_static_function_input->value(g_project.i18n_static_function.c_str());
-  i18n_file_input->value(g_project.i18n_file.c_str());
-  i18n_set_input->value(g_project.i18n_set.c_str());
-  i18n_include_input->value(g_project.i18n_include.c_str());
-  i18n_conditional_input->value(g_project.i18n_conditional.c_str());
-  switch (g_project.i18n_type) {
-  case 0 : /* None */
-      i18n_include_input->hide();
-      i18n_conditional_input->hide();
-      i18n_file_input->hide();
-      i18n_set_input->hide();
-      i18n_function_input->hide();
-      i18n_static_function_input->hide();
-      break;
-  case 1 : /* GNU gettext */
-      i18n_include_input->show();
-      i18n_conditional_input->show();
-      i18n_file_input->hide();
-      i18n_set_input->hide();
-      i18n_function_input->show();
-      i18n_static_function_input->show();
-      break;
-  case 2 : /* POSIX cat */
-      i18n_include_input->show();
-      i18n_conditional_input->show();
-      i18n_file_input->show();
-      i18n_set_input->show();
-      i18n_function_input->hide();
-      i18n_static_function_input->hide();
-      break;
-  }
-  project_window->hotspot(project_window);
-  project_window->show();
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
-  grid_window->hotspot(grid_window);
-  grid_window->show();
+  settings_window->show();
+  w_settings_tabs->value(w_settings_layout_tab);
 }
 
 void show_settings_cb(Fl_Widget *, void *) {
   settings_window->hotspot(settings_window);
   settings_window->show();
-}
-
-void header_input_cb(Fl_Input* i, void*) {
-  if (strcmp(g_project.header_file_name.c_str(), i->value()))
-    set_modflag(1);
-  g_project.header_file_name = i->value();
-}
-
-void code_input_cb(Fl_Input* i, void*) {
-  if (strcmp(g_project.code_file_name.c_str(), i->value()))
-    set_modflag(1);
-  g_project.code_file_name = i->value();
-}
-
-void include_H_from_C_button_cb(Fl_Check_Button* b, void*) {
-  if (g_project.include_H_from_C != b->value()) {
-    set_modflag(1);
-    g_project.include_H_from_C = b->value();
-  }
-}
-
-void use_FL_COMMAND_button_cb(Fl_Check_Button* b, void*) {
-  if (g_project.use_FL_COMMAND != b->value()) {
-    set_modflag(1);
-    g_project.use_FL_COMMAND = b->value();
-  }
-}
-
-void utf8_in_src_cb(Fl_Check_Button *b, void*) {
-  if (g_project.utf8_in_src != b->value()) {
-    set_modflag(1);
-    g_project.utf8_in_src = b->value();
-  }
-}
-
-void avoid_early_includes_cb(Fl_Check_Button *b, void*) {
-  if (g_project.avoid_early_includes != b->value()) {
-    set_modflag(1);
-    g_project.avoid_early_includes = b->value();
-  }
 }
 
 ////////////////////////////////////////////////////////////////

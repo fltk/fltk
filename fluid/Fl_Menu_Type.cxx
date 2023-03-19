@@ -164,8 +164,6 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   }
   if (!o) {
     o = new Fl_Button(0,0,100,20); // create template widget
-    o->labelsize(layout->labelsize);
-    o->labelfont(layout->labelfont);
   }
 
   Fl_Menu_Item_Type* t = submenuflag ? new Fl_Submenu_Type() : new Fl_Menu_Item_Type();

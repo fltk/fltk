@@ -33,7 +33,7 @@ Shell_Settings shell_settings_linux = { };
 Shell_Settings shell_settings_macos = { };
 
 /// Current shell command, stored in .fl file for each platform, and in app prefs
-char *g_shell_command = NULL;
+Fl_String g_shell_command;
 
 /// Save .fl file before running, stored in .fl file for each platform, and in app prefs
 int g_shell_save_fl = 1;
@@ -85,11 +85,7 @@ void shell_settings_read()
 #else
   Shell_Settings &shell_settings = shell_settings_linux;
 #endif
-  if (g_shell_command)
-    free((void*)g_shell_command);
-  g_shell_command = NULL;
-  if (shell_settings.command)
-    g_shell_command = fl_strdup(shell_settings.command);
+  g_shell_command = shell_settings.command;
   g_shell_save_fl = ((shell_settings.flags&1)==1);
   g_shell_save_code = ((shell_settings.flags&2)==2);
   g_shell_save_strings = ((shell_settings.flags&4)==4);
@@ -112,8 +108,8 @@ void shell_settings_write()
   if (shell_settings.command)
     free((void*)shell_settings.command);
   shell_settings.command = NULL;
-  if (g_shell_command)
-    shell_settings.command = fl_strdup(g_shell_command);
+  if (!g_shell_command.empty())
+    shell_settings.command = fl_strdup(g_shell_command.c_str());
   shell_settings.flags = 0;
   if (g_shell_save_fl)
     shell_settings.flags |= 1;
@@ -244,13 +240,13 @@ void Fl_Process::clean_close(HANDLE& h) {
 
 // Shell command support...
 
-static bool prepare_shell_command(const char * &command)  { // common pre-shell command code all platforms
-  shell_window->hide();
+static bool prepare_shell_command()  {
+//  settings_window->hide();
   if (s_proc.desc()) {
     fl_alert("Previous shell command still running!");
     return false;
   }
-  if ((command = g_shell_command) == NULL || !*command) {
+  if (g_shell_command.empty()) {
     fl_alert("No shell command entered!");
     return false;
   }
@@ -282,17 +278,15 @@ void shell_pipe_cb(FL_SOCKET, void*) {
 }
 
 void do_shell_command(Fl_Return_Button*, void*) {
-  const char    *command=NULL;  // Command to run
-
-  if (!prepare_shell_command(command)) return;
+  if (!prepare_shell_command()) return;
 
   // Show the output window and clear things...
   shell_run_terminal->text("");
-  shell_run_terminal->append(command);
+  shell_run_terminal->append(g_shell_command.c_str());
   shell_run_terminal->append("\n");
   shell_run_window->label("Shell Command Running...");
 
-  if (s_proc.popen((char *)command) == NULL) {
+  if (s_proc.popen((char *)g_shell_command.c_str()) == NULL) {
     fl_alert("Unable to run shell command: %s", strerror(errno));
     return;
   }
@@ -343,31 +337,7 @@ void do_shell_command(Fl_Return_Button*, void*) {
  Fluid app settings are saved per user and per machine.
  */
 void show_shell_window() {
-  update_shell_window();
-  shell_window->hotspot(shell_command_input);
-  shell_window->show();
-}
-
-/**
- Update the shell properties dialog box.
- */
-void update_shell_window() {
-  shell_command_input->value(g_shell_command);
-  shell_savefl_button->value(g_shell_save_fl);
-  shell_writecode_button->value(g_shell_save_code);
-  shell_writemsgs_button->value(g_shell_save_strings);
-  shell_use_fl_button->value(g_shell_use_fl_settings);
-}
-
-/**
- Copy the sshe;l settings from the dialog box into the variables.
- */
-void apply_shell_window() {
-  if (g_shell_command)
-    free((void*)g_shell_command);
-  g_shell_command = fl_strdup(shell_command_input->value());
-  g_shell_save_fl = shell_savefl_button->value();
-  g_shell_save_code = shell_writecode_button->value();
-  g_shell_save_strings = shell_writemsgs_button->value();
+  settings_window->show();
+  w_settings_tabs->value(w_settings_shell_tab);
 }
 
