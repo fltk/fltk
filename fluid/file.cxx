@@ -296,11 +296,6 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         g_project.i18n_conditional = read_word();
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_type"))
-      {
-        g_project.i18n_type = atoi(read_word());
-        goto CONTINUE;
-      }
       if (!strcmp(c,"header_name")) {
         if (!g_project.header_file_set) g_project.header_file_name = read_word();
         else read_word();

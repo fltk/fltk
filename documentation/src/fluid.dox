@@ -20,6 +20,7 @@ Subchapters:
 \li \ref fluid_i18n
 \li \ref fluid_limitations
 \li \ref fluid_hotkeys
+\li \ref fluid_licenses
 
 \section fluid_what_is_fluid What is FLUID?
 
@@ -1679,6 +1680,12 @@ On Apple computers, use the Apple Command key instead of Ctrl.
 <tr><td> `Shift-Ctrl-Arrow` </td><td> resize by grid units </td></tr>
 </table>
 
+\section fluid_licenses Licenses
+
+FLUID uses graphical images based on the Zendesk Garden Stroke icon set:
+<a href="">https://github.com/zendeskgarden</a>.
+Garden Stroke is licensed under the Apache License, Version 2.0:
+<a href="">https://www.apache.org/licenses/LICENSE-2.0.html</a>.
 
 \htmlonly
 <hr>

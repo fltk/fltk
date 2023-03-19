@@ -281,6 +281,13 @@ void Fluid_Project::reset() {
   code_file_name = ".cxx";
 }
 
+void Fluid_Project::update_settings_dialog() {
+  if (settings_window) {
+    w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
+    w_settings_i18n_tab->do_callback(w_settings_i18n_tab, LOAD);
+  }
+}
+
 // ---- Sourceview definition
 
 void update_sourceview_position();
@@ -635,6 +642,7 @@ void revert_cb(Fl_Widget *,void *) {
   if (!read_file(filename, 0)) {
     undo_resume();
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     fl_message("Can't read %s: %s", filename, strerror(errno));
     return;
   }
@@ -642,6 +650,7 @@ void revert_cb(Fl_Widget *,void *) {
   undo_resume();
   set_modflag(0, 0);
   undo_clear();
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -775,6 +784,7 @@ void open_cb(Fl_Widget *, void *v) {
   if (!read_file(c, v!=0)) {
     undo_resume();
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -794,6 +804,7 @@ void open_cb(Fl_Widget *, void *v) {
     undo_clear();
     if (oldfilename) free((void *)oldfilename);
   }
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -826,6 +837,7 @@ void open_history_cb(Fl_Widget *, void *v) {
     free((void *)filename);
     filename = oldfilename;
     if (main_window) main_window->label(filename);
+    g_project.update_settings_dialog();
     return;
   }
   set_modflag(0, 0);
@@ -836,6 +848,7 @@ void open_history_cb(Fl_Widget *, void *v) {
     free((void *)oldfilename);
     oldfilename = 0L;
   }
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -864,6 +877,7 @@ void new_cb(Fl_Widget *, void *v) {
   set_filename(NULL);
   set_modflag(0, 0);
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -964,6 +978,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
   }
 
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
   set_modflag(0);
   undo_clear();
 }
@@ -1425,8 +1440,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
-  {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
+  {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1811,8 +1825,8 @@ void set_modflag(int mf, int mfc) {
   }
 
   // Enable/disable the Save menu item...
-  if (modflag) save_item->activate();
-  else save_item->deactivate();
+//  if (modflag) save_item->activate();
+//  else save_item->deactivate();
 }
 
 // ---- Sourceview implementation

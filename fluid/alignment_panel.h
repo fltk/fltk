@@ -54,17 +54,12 @@ extern Fl_Spinner *recent_spinner;
 extern Fl_Check_Button *use_external_editor_button;
 #include <FL/Fl_Input.H>
 extern Fl_Input *editor_command_input;
-extern void header_input_cb(Fl_Input*, void*);
+extern Fl_Group *w_settings_project_tab;
 extern Fl_Input *header_file_input;
-extern void code_input_cb(Fl_Input*, void*);
 extern Fl_Input *code_file_input;
-extern void include_H_from_C_button_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *include_H_from_C_button;
-extern void use_FL_COMMAND_button_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *use_FL_COMMAND_button;
-extern void utf8_in_src_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *utf8_in_src_button;
-extern void avoid_early_includes_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *avoid_early_includes_button;
 extern Fl_Group *w_settings_layout_tab;
 #include <FL/Fl_Choice.H>
@@ -81,14 +76,13 @@ extern Fl_Menu_Item fontmenu[];
 extern Fl_Group *w_settings_shell_tab;
 extern Fl_Check_Button *shell_use_fl_button;
 #include <FL/Fl_Return_Button.H>
+extern Fl_Group *w_settings_i18n_tab;
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;
-extern void i18n_text_cb(Fl_Input*, void*);
 extern Fl_Input *i18n_include_input;
 extern Fl_Input *i18n_conditional_input;
 extern Fl_Input *i18n_file_input;
 #include <FL/Fl_Int_Input.H>
-extern void i18n_int_cb(Fl_Int_Input*, void*);
 extern Fl_Int_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
 extern Fl_Input *i18n_static_function_input;

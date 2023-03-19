@@ -88,6 +88,7 @@ void redo_cb(Fl_Widget *, void *) {
   if (!read_file(undo_filename(undo_current + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     undo_resume();
     return;
   }
@@ -104,6 +105,7 @@ void redo_cb(Fl_Widget *, void *) {
   // Update modified flag...
   set_modflag(undo_current != undo_save);
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
 
   // Update undo/redo menu items...
   if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
@@ -129,6 +131,7 @@ void undo_cb(Fl_Widget *, void *) {
   if (!read_file(undo_filename(undo_current - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     undo_resume();
     return;
   }
@@ -151,6 +154,7 @@ void undo_cb(Fl_Widget *, void *) {
   if (undo_current <= 0) Main_Menu[undo_item].deactivate();
   Main_Menu[redo_item].activate();
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
   undo_resume();
 }
 

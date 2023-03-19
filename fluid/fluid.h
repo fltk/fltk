@@ -86,6 +86,7 @@ public:
   Fluid_Project();
   ~Fluid_Project();
   void reset();
+  void update_settings_dialog();
 
   int i18n_type;
   Fl_String i18n_include;
