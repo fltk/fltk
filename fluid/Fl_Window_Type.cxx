@@ -183,8 +183,8 @@ void show_project_cb(Fl_Widget *, void *) {
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
-  grid_window->hotspot(grid_window);
-  grid_window->show();
+  settings_window->show();
+  w_settings_tabs->value(w_settings_layout_tab);
 }
 
 void show_settings_cb(Fl_Widget *, void *) {

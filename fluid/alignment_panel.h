@@ -40,13 +40,29 @@ extern Fl_Double_Window *project_window;
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Group.H>
+Fl_Double_Window* make_project_window();
+extern void i18n_cb(Fl_Choice *,void *);
+extern void scheme_cb(Fl_Scheme_Choice *, void *);
+extern Fl_Double_Window *settings_window;
+extern Fl_Tabs *w_settings_tabs;
+extern void scheme_cb(Fl_Scheme_Choice*, void*);
+extern Fl_Scheme_Choice *scheme_choice;
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Check_Button.H>
+extern Fl_Check_Button *tooltips_button;
+extern Fl_Check_Button *completion_button;
+extern Fl_Check_Button *openlast_button;
+extern Fl_Check_Button *prevpos_button;
+extern Fl_Check_Button *show_comments_button;
+#include <FL/Fl_Spinner.H>
+extern Fl_Spinner *recent_spinner;
+extern Fl_Check_Button *use_external_editor_button;
 #include <FL/Fl_Input.H>
+extern Fl_Input *editor_command_input;
 extern void header_input_cb(Fl_Input*, void*);
 extern Fl_Input *header_file_input;
 extern void code_input_cb(Fl_Input*, void*);
 extern Fl_Input *code_file_input;
-#include <FL/Fl_Check_Button.H>
 extern void include_H_from_C_button_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *include_H_from_C_button;
 extern void use_FL_COMMAND_button_cb(Fl_Check_Button*, void*);
@@ -55,7 +71,20 @@ extern void utf8_in_src_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *utf8_in_src_button;
 extern void avoid_early_includes_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button *avoid_early_includes_button;
+extern Fl_Group *w_settings_layout_tab;
 #include <FL/Fl_Choice.H>
+extern Fl_Choice *layout_choice;
+#include <FL/Fl_Menu_Button.H>
+extern Fl_Menu_Button *w_layout_menu;
+#include <FL/Fl_Native_File_Chooser.H>
+extern void propagate_load(Fl_Group*, void*);
+extern void edit_layout_preset_cb(Fl_Button*, long);
+extern Fl_Button *preset_choice[3];
+#include <FL/Fl_Value_Input.H>
+extern Fl_Menu_Item fontmenu[];
+extern Fl_Group *w_settings_shell_tab;
+extern Fl_Check_Button *shell_use_fl_button;
+#include <FL/Fl_Return_Button.H>
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;
 extern void i18n_text_cb(Fl_Input*, void*);
@@ -67,46 +96,7 @@ extern void i18n_int_cb(Fl_Int_Input*, void*);
 extern Fl_Int_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
 extern Fl_Input *i18n_static_function_input;
-Fl_Double_Window* make_project_window();
-extern Fl_Menu_Item menu_i18n_type_chooser[];
-extern void i18n_cb(Fl_Choice *,void *);
-extern void scheme_cb(Fl_Scheme_Choice *, void *);
-extern Fl_Double_Window *settings_window;
-extern void scheme_cb(Fl_Scheme_Choice*, void*);
-extern Fl_Scheme_Choice *scheme_choice;
-extern Fl_Check_Button *tooltips_button;
-extern Fl_Check_Button *completion_button;
-extern Fl_Check_Button *openlast_button;
-extern Fl_Check_Button *prevpos_button;
-extern Fl_Check_Button *show_comments_button;
-#include <FL/Fl_Spinner.H>
-extern Fl_Spinner *recent_spinner;
-extern Fl_Check_Button *use_external_editor_button;
-extern Fl_Input *editor_command_input;
 Fl_Double_Window* make_settings_window();
-extern Fl_Double_Window *shell_window;
-extern Fl_Input *shell_command_input;
-extern Fl_Check_Button *shell_savefl_button;
-extern Fl_Check_Button *shell_writecode_button;
-extern Fl_Check_Button *shell_writemsgs_button;
-extern Fl_Check_Button *shell_use_fl_button;
-#include <FL/Fl_Return_Button.H>
-extern Fl_Double_Window *shell_run_window;
-#include <FL/Fl_Simple_Terminal.H>
-extern Fl_Simple_Terminal *shell_run_terminal;
-extern Fl_Return_Button *shell_run_button;
-Fl_Double_Window* make_shell_window();
-extern Fl_Double_Window *grid_window;
-extern Fl_Choice *layout_choice;
-#include <FL/Fl_Menu_Button.H>
-extern Fl_Menu_Button *w_layout_menu;
-#include <FL/Fl_Native_File_Chooser.H>
-extern void propagate_load(Fl_Group*, void*);
-extern void edit_layout_preset_cb(Fl_Button*, long);
-extern Fl_Button *preset_choice[3];
-#include <FL/Fl_Value_Input.H>
-extern Fl_Menu_Item fontmenu[];
-Fl_Double_Window* make_layout_window();
 extern Fl_Menu_Item menu_layout_choice[];
 extern Fl_Menu_Item menu_w_layout_menu[];
 #define w_layout_menu_rename (menu_w_layout_menu+0)
@@ -114,4 +104,10 @@ extern Fl_Menu_Item *w_layout_menu_storage[4];
 #define w_layout_menu_load (menu_w_layout_menu+5)
 #define w_layout_menu_save (menu_w_layout_menu+6)
 #define w_layout_menu_delete (menu_w_layout_menu+7)
+extern Fl_Menu_Item menu_i18n_type_chooser[];
+extern Fl_Double_Window *shell_run_window;
+#include <FL/Fl_Simple_Terminal.H>
+extern Fl_Simple_Terminal *shell_run_terminal;
+extern Fl_Return_Button *shell_run_button;
+Fl_Double_Window* make_shell_window();
 #endif

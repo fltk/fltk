@@ -1612,7 +1612,6 @@ void make_main_window() {
     fluid_prefs.get("show_guides", show_guides, 0);
     fluid_prefs.get("show_comments", show_comments, 1);
     shell_prefs_get();
-    make_layout_window();
     make_shell_window();
   }
 
@@ -2134,9 +2133,6 @@ int main(int argc,char **argv) {
 #endif // _WIN32
 
   undo_clear();
-  if (g_shell_command)
-    ::free(g_shell_command);
-
   return (0);
 }
 

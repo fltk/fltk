@@ -561,8 +561,8 @@ void Fd_Layout_List::update_dialogs() {
   assert(current_preset_ < 3);
   layout = list_[current_suite_].layout[current_preset_];
   assert(layout);
-  if (grid_window) {
-    grid_window->do_callback(grid_window, LOAD);
+  if (w_settings_layout_tab) {
+    w_settings_layout_tab->do_callback(w_settings_layout_tab, LOAD);
     layout_choice->redraw();
   }
   preset_menu[current_preset_].setonly(preset_menu);
