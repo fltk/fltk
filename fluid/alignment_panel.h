@@ -33,18 +33,13 @@
 */
 void init_scheme(void);
 extern struct Fl_Menu_Item *dbmanager_item;
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Preferences.H>
-#include <FL/Fl_Tooltip.H>
-extern Fl_Double_Window *project_window;
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Tabs.H>
-#include <FL/Fl_Group.H>
-Fl_Double_Window* make_project_window();
 extern void i18n_cb(Fl_Choice *,void *);
 extern void scheme_cb(Fl_Scheme_Choice *, void *);
+#include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *settings_window;
+#include <FL/Fl_Tabs.H>
 extern Fl_Tabs *w_settings_tabs;
+#include <FL/Fl_Group.H>
 extern void scheme_cb(Fl_Scheme_Choice*, void*);
 extern Fl_Scheme_Choice *scheme_choice;
 #include <FL/Fl_Box.H>
@@ -74,6 +69,7 @@ extern Fl_Check_Button *avoid_early_includes_button;
 extern Fl_Group *w_settings_layout_tab;
 #include <FL/Fl_Choice.H>
 extern Fl_Choice *layout_choice;
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Button *w_layout_menu;
 #include <FL/Fl_Native_File_Chooser.H>

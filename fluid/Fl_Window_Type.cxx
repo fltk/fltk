@@ -138,7 +138,6 @@ void i18n_int_cb(Fl_Int_Input *i, void *) {
 }
 
 void show_project_cb(Fl_Widget *, void *) {
-  if(project_window==0) make_project_window();
   include_H_from_C_button->value(g_project.include_H_from_C);
   use_FL_COMMAND_button->value(g_project.use_FL_COMMAND);
   utf8_in_src_button->value(g_project.utf8_in_src);
@@ -178,8 +177,8 @@ void show_project_cb(Fl_Widget *, void *) {
       i18n_static_function_input->hide();
       break;
   }
-  project_window->hotspot(project_window);
-  project_window->show();
+//  project_window->hotspot(project_window);
+//  project_window->show();
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
