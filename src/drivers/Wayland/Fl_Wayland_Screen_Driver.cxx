@@ -1083,6 +1083,15 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strncmp(interface, "zowl_mach_ipc", 13) == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::OWL;
     //fprintf(stderr, "Running the Owl compositor\n");
+    if (wl_list_length(&scr_driver->outputs) == 0) {
+      Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)calloc(1, sizeof *output);
+      output->id = 1;
+      output->wld_scale = 1;
+      output->gui_scale = 1.f;
+      output->width = 1440; output->height = 900;
+      wl_list_insert(&(scr_driver->outputs), &output->link);
+      scr_driver->screen_count_set(1);
+    }
   } else if (strcmp(interface, zwp_text_input_manager_v3_interface.name) == 0) {
     scr_driver->text_input_base = (struct zwp_text_input_manager_v3 *) wl_registry_bind(wl_registry, id, &zwp_text_input_manager_v3_interface, 1);
     //printf("scr_driver->text_input_base=%p version=%d\n",scr_driver->text_input_base,version);
