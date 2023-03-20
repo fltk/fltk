@@ -853,9 +853,11 @@ All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
-left corner of the enclosing Fl_Window. The global variable
-\c fl_gc (of type \c CGContextRef) is the appropriate Quartz 2D drawing environment.
-Include FL/platform.H to declare the \c fl_gc variable.
+left corner of the enclosing Fl_Window. The function \c fl_mac_gc() returns the appropriate
+Quartz 2D drawing environment (of type \c CGContextRef). For compatibility with previous FLTK
+versions, deprecated global variable \c fl_gc gives the same value.
+
+Include FL/platform.H to declare the \c fl_mac_gc() function (or the \c fl_gc variable).
 
 \subsection osissues_localize Internationalization
 All FLTK programs contain an application menu with, e.g., the About xxx, Hide xxx, and Quit xxx items.
