@@ -1101,16 +1101,18 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 
 static void registry_handle_global_remove(void *data, struct wl_registry *registry, uint32_t name)
 {//TODO to be tested
-  Fl_Wayland_Screen_Driver::output *output;
+  Fl_Wayland_Screen_Driver::output *output, *tmp;
 //fprintf(stderr, "registry_handle_global_remove data=%p id=%u\n", data, name);
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  wl_list_for_each(output, &(scr_driver->outputs), link) { // all screens of the system
+  wl_list_for_each_safe(output, tmp, &(scr_driver->outputs), link) { // all screens of the system
     if (output->id == name) { // the screen being removed
+      again:
       Fl_X *xp = Fl_X::first;
       while (xp) { // all mapped windows
         struct wld_window *win = (struct wld_window*)xp->xid;
           if (win->output == output) {
-            win->output = NULL;
+            delete win->fl_win;
+            goto again;
           }
         xp = xp->next;
       }
