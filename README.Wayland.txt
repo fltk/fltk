@@ -11,15 +11,10 @@ Contents
    2.1    Configuration
    2.2    Known Limitations
 
- 3   Preparing Platform Specific Code for the Wayland Platform
-   3.1    Handling X11 specific Source Code
-   3.2    Handling X11 and Wayland Specific Source Code in the Same App
-   3.3    Forcing an FLTK App to Always Use the X11 Backend
-
- 4   Platform Specific Notes
-   4.1    Debian and Derivatives (like Ubuntu)
-   4.2    Fedora
-   4.3    FreeBSD
+ 3   Platform Specific Notes
+   3.1    Debian and Derivatives (like Ubuntu)
+   3.2    Fedora
+   3.3    FreeBSD
 
 
 1 Introduction
@@ -31,7 +26,7 @@ Pre-existing platform-independent source code for FLTK 1.3.x should build and
 run unchanged with FLTK 1.4 and the Wayland platform.
 The code has been tested on Debian, Ubuntu, RaspberryPiOS and Fedora with
 3 distinct Wayland compositors: mutter (Gnome's compositor), weston, and KDE.
-The code has also been tested under FreeBSD and the sway wayland compositor.
+The code has also been tested under FreeBSD and the Sway Wayland compositor.
 CJK text-input methods, as well as dead and compose keys are supported.
 
 
@@ -54,7 +49,12 @@ X11 is used at run time as follows:
   compositor is available;
 - if $FLTK_BACKEND has another value, the library stops with error.
 
-See also 3.3 below for another way to control whether Wayland or X11 is used.
+Alternatively, it is possible to force a program linked to a Wayland-enabled
+FLTK library to use X11 in all situations by putting this declaration somewhere
+in the source code :
+  FL_EXPORT bool fl_disable_wayland = true;
+FLTK source code and also X11-specific source code conceived for FLTK 1.3
+should run with a Wayland-enabled, FLTK 1.4 library with that single change only.
 
 On pure Wayland systems without the X11 headers and libraries, FLTK can be built
 with its Wayland backend only (see below).
@@ -63,7 +63,7 @@ with its Wayland backend only (see below).
 ------------------
 
 On Linux and FreeBSD systems equipped with the adequate software packages
-(see section 4 below), the default building procedure produces a Wayland/X11
+(see section 3 below), the default building procedure produces a Wayland/X11
 hybrid library. On systems lacking all or part of Wayland-required packages,
 the default building procedure produces a X11-based library.
 
@@ -106,86 +106,13 @@ so feedback on this subject would be helpful.
 although it works inside X11 windows on the same hardware.
 
 
-3 Preparing Platform Specific Code for the Wayland Platform
-===========================================================
-
-While platform-independent source code prepared for FLTK 1.3 is expected
-to be compatible with no change with FLTK 1.4 and the Wayland platform,
-X11-specific source code may require some attention.
-
-3.1 Handling X11 specific Source Code
--------------------------------------
-
-If an FLTK 1.4 application contains X11-specific code, execution of this code
-in the context of an active Wayland session can produce malfunctions or program crashes.
-To ensure that X11-specific code gets called only when an X11 connection is active,
-check that function fl_x11_display() returns non-NULL before using any X11-specific
-function or variable.
-
-3.2 Handling X11 and Wayland Specific Source Code in the Same App
------------------------------------------------------------------
-
-The recommended way to prepare and use platform-specific code that would contain
-X11-specific and possibly Wayland-specific parts is as follows :
-
-a) Organize platform-specific code as follows¹:
-
-  #include <FL/platform.H>
-
-  #ifdef __APPLE__
-     *** macOS-specific code ***
-  #elif defined(_WIN32)
-     *** Windows-specific code ***
-  #else
-  #  ifdef FLTK_USE_X11
-     *** X11-specific code ***
-  #  endif
-  #  ifdef FLTK_USE_WAYLAND
-     *** Wayland-specific code ***
-  #  endif
-  #endif
-
-b) Make sure to use distinct names for global variables and functions
-in the X11- and the Wayland-specific sections.
-
-c) Check that function fl_x11_display() returns non-NULL before using any X11-specific
-function or variable, and that fl_wl_display() returns non-NULL before using any
-Wayland-specific function or variable. Make sure that fl_open_display() was called
-directly or indirectly before using any such symbol.
-
-¹ To be also compatible with macOS+XQuartz, a slightly different organization is necessary:
-  #include <FL/platform.H>
-  #if defined(FLTK_USE_X11) || defined(FLTK_USE_WAYLAND)
-  #  ifdef FLTK_USE_X11
-     *** X11-specific code which can run under Linux/Unix or under macOS+XQuartz ***
-  #  endif
-  #  ifdef FLTK_USE_WAYLAND
-     *** Wayland-specific code ***
-  #  endif
-  #elif defined(__APPLE__)
-     *** macOS-specific code which doesn't run under XQuartz ***
-  #elif defined(_WIN32)
-     *** Windows-specific code ***
-  #endif
-
-3.3 Forcing an FLTK App to Always Use the X11 Backend
------------------------------------------------------
-
-Alternatively, it is possible to force a program linked to a Wayland-enabled
-FLTK library to use X11 in all situations by putting this declaration somewhere
-in the source code :
-  FL_EXPORT bool fl_disable_wayland = true;
-FLTK source code and also X11-specific source code conceived for FLTK 1.3
-should run with a Wayland-enabled, FLTK 1.4 library with that single change only.
-
-
-4 Platform Specific Notes
+3 Platform Specific Notes
 =========================
 
 The following are notes about building FLTK for the Wayland platform
 on the various supported Linux distributions/OS.
 
-4.1 Debian and Derivatives (like Ubuntu, RaspberryPiOS)
+3.1 Debian and Derivatives (like Ubuntu, RaspberryPiOS)
 -------------------------------------------------------
 
 Under Debian, the Wayland platform requires version 11 (a.k.a. Bullseye) or more recent.
@@ -216,7 +143,7 @@ These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 Package installation command: sudo apt-get install <package-name ...>
 
 
-4.2 Fedora
+3.2 Fedora
 ----------
 
 The Wayland platform is known to work with Fedora version 35.
@@ -239,12 +166,12 @@ package groups listed in section 2.2 of file README.Unix.txt :
 Package installation command: sudo yum install <package-name ...>
 
 
-4.3 FreeBSD
+3.3 FreeBSD
 -----------
 
-The Wayland platform is known to work with FreeBSD version 13.1 and the sway compositor.
+The Wayland platform is known to work with FreeBSD version 13.1 and the Sway compositor.
 
-These packages are necessary to build the FLTK library and the sway compositor:
+These packages are necessary to build the FLTK library and use the Sway compositor:
 git autoconf pkgconf xorg urwfonts gnome glew seatd sway dmenu-wayland dmenu evdev-proto
 
 Package installation command: sudo pkg install <package-name ...>
