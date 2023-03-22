@@ -650,6 +650,22 @@ if (UNIX AND OPTION_USE_WAYLAND)
       set(PROTOCOLS /usr/share/wayland-protocols)
     endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
   endif (NOT (CMAKE_VERSION VERSION_LESS 3.4))
+  if (NOT(EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml))
+    message(WARNING "Install necessary file ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml")
+  endif ()
+  if (NOT(EXISTS ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml))
+    message(WARNING
+      "Install necessary file ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml")
+  endif ()
+  if (NOT(EXISTS ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml))
+    message(WARNING
+      "Install necessary file ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml")
+  endif ()
+  if (NOT((EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml) AND
+          (EXISTS ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml) AND
+          (EXISTS ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml)))
+      message(FATAL_ERROR "*** Terminating: one or more required file(s) missing.")
+  endif ()
   add_custom_command(
     OUTPUT xdg-shell-protocol.c xdg-shell-client-protocol.h
     COMMAND wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
