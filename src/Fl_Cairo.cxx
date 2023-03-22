@@ -26,6 +26,14 @@
 
 #ifdef FLTK_HAVE_CAIRO
 
+// Define USE_MAC_OS for convenience (below). We use macOS specific features
+// if USE_MAC_OS is defined, otherwise we're using X11 (XQuartz) on macOS
+
+#if defined __APPLE__ && !defined(FLTK_USE_X11)
+#define USE_MAC_OS
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #include <FL/platform.H>
 #include <FL/Fl_Window.H>
 
@@ -118,7 +126,7 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
 
   // Scale the Cairo context appropriately. This is platform dependent
 
-#ifndef __APPLE__
+#if !defined(USE_MAC_OS)
   float scale = Fl::screen_scale(wi->screen_num()); // get the screen scaling factor
 #endif
 
@@ -129,7 +137,7 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
   cairo_ctxt = Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
 #endif
 
-#ifndef __APPLE__
+#if !defined(USE_MAC_OS)
   cairo_scale(cairo_ctxt, scale, scale);
 #endif
   return cairo_ctxt;
@@ -215,7 +223,7 @@ cairo_t *Fl::cairo_make_current(void *gc, int W, int H) {
   cairo_state_.gc(gc); // keep track for next time
   cairo_surface_t *s = cairo_create_surface(gc, W, H);
 
-#if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
+#if defined(USE_MAC_OS) && defined(FLTK_HAVE_CAIROEXT)
   CGAffineTransform at = CGContextGetCTM((CGContextRef)gc);
   CGContextSaveGState((CGContextRef)gc);
   CGContextConcatCTM((CGContextRef)gc, CGAffineTransformInvert(at));
@@ -223,7 +231,7 @@ cairo_t *Fl::cairo_make_current(void *gc, int W, int H) {
 
   cairo_t *c = cairo_create(s);
 
-#if defined(__APPLE__) && defined(FLTK_HAVE_CAIROEXT)
+#if defined(USE_MAC_OS) && defined(FLTK_HAVE_CAIROEXT)
   CGContextRestoreGState((CGContextRef)gc);
 #endif
 
