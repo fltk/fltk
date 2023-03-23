@@ -1,5 +1,5 @@
 //
-// Cairo window header file for the Fast Light Tool Kit (FLTK).
+// Fl_Cairo_Window header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2023 by Bill Spitzak and others.
 //
@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/* \file
-    Fl_Cairo_Window, an FLTK window incorporating a Cairo draw callback.
+/** \file FL/Fl_Cairo_Window.H
+  \brief Fl_Cairo_Window, an FLTK window incorporating a Cairo draw callback.
 */
 
 #ifndef FL_CAIRO_WINDOW_H
@@ -27,6 +27,7 @@
 
 // Cairo is currently supported for the following platforms:
 // Win32, Apple Quartz, X11, Wayland
+
 #  include <FL/Fl.H>
 #  include <FL/Fl_Double_Window.H>
 
@@ -42,47 +43,48 @@
   so that the only thing you have to do is to provide your Cairo code.
   All Cairo context handling is achieved transparently.
 
-   The default coordinate system for cairo drawing commands within Fl_Cario_Window
-   is FLTK's coordinate system, where the `x,y,w,h` values are releative to the
-   top/left corner of the Fl_Cairo_Window, as one would expect with regular
-   FLTK drawing commands, e.g.: `(0&le;x&le;w-1),(0&le;y&le;h-1)`. \b Example:
-   \code
-   static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
-       // Draw an "X"
-       const double xmax = (window->w() - 1);
-       const double ymax = (window->h() - 1);
-       cairo_set_line_width(cr, 1.00);                               // line width for drawing
-       cairo_set_source_rgb(cr, 1.0, 0.5, 0.0);                      // orange
-       cairo_move_to(cr, 0.0, 0.0);  cairo_line_to(cr, xmax, ymax);  // draw diagonal "\"
-       cairo_move_to(cr, 0.0, ymax); cairo_line_to(cr, xmax, 0.0);   // draw diagonal "/"
-       cairo_stroke(cr);                                             // stroke the lines
-   }
-   \endcode
+  The default coordinate system for Cairo drawing commands within Fl_Cairo_Window
+  is FLTK's coordinate system, where the `x,y,w,h` values are relative to the
+  top/left corner of the Fl_Cairo_Window, as one would expect with regular
+  FLTK drawing commands, e.g.: `(0 ≤ x ≤ w-1), (0 ≤ y ≤ h-1)`.
+  \b Example:
+  \code
+  static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+    // Draw an "X"
+    const double xmax = (window->w() - 1);
+    const double ymax = (window->h() - 1);
+    cairo_set_line_width(cr, 1.00);                               // line width for drawing
+    cairo_set_source_rgb(cr, 1.0, 0.5, 0.0);                      // orange
+    cairo_move_to(cr, 0.0, 0.0);  cairo_line_to(cr, xmax, ymax);  // draw diagonal "\"
+    cairo_move_to(cr, 0.0, ymax); cairo_line_to(cr, xmax, 0.0);   // draw diagonal "/"
+    cairo_stroke(cr);                                             // stroke the lines
+  }
+  \endcode
 
-   The FLTK coordinate system differs from the default native cairo coordinate system
-   which uses normalized `(0.0&hellip;1.0)` values for x and y, e.g.: `(0&le;x&le;1.0),(0&le;y&le;1.0)`.
-   So beware of this when copy/pasting cairo example programs that assume normalized values.
-   If need be, you can revert to the cairo coordinate system by simply calling `cairo_scale()`
-   with the widget's `w()` and `h()` values. \b Example:
+  The FLTK coordinate system differs from the default native Cairo coordinate system
+  which uses normalized `(0.0 … 1.0)` values for x and y, e.g.: `(0 ≤ x ≤ 1.0), (0 ≤ y ≤ 1.0)`.
+  So beware of this when copy/pasting Cairo example programs that assume normalized values.
+  If need be, you can revert to the Cairo coordinate system by simply calling `cairo_scale()`
+  with the widget's `w()` and `h()` values. \b Example:
 
-   \code
-   static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
-       cairo_scale(cr, window->w(), window->h());    // use cairo's default coordinate system
-       [..use 0.0 to 1.0 values from here on..]
-   }
-   \endcode
+  \code
+  static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+    cairo_scale(cr, window->w(), window->h());    // use Cairo's default coordinate system
+    [..use 0.0 to 1.0 values from here on..]
+  }
+  \endcode
 
-   \see examples/cairo-draw-x.cxx
-   \see test/cairo_test.cxx
+  \see examples/cairo-draw-x.cxx
+  \see test/cairo_test.cxx
 
-   \note Class Fl_Cairo_Window requires the FLTK library to have been built with
-   CMake option OPTION_CAIRO or configure --enable-cairo.
+  \note Class Fl_Cairo_Window requires the FLTK library to have been built with
+  CMake option OPTION_CAIRO or configure --enable-cairo.
 
-   \note You can alternatively define your custom cairo FLTK window,
-   and thus at least override the draw() method to provide custom Cairo
-   support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)
-   to attach a context to your window. You should do it only when your window is
-   the current window. \see Fl_Window::current()
+  \note You can alternatively define your custom Cairo FLTK window,
+  and thus at least override the draw() method to provide custom Cairo
+  support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)
+  to attach a context to your window. You should do this only when your window is
+  the current window. \see Fl_Window::current()
 */
 class FL_EXPORT Fl_Cairo_Window : public Fl_Double_Window {
 
@@ -93,7 +95,7 @@ public:
     : Fl_Double_Window(X, Y, W, H, L), draw_cb_(0) {}
 
 protected:
-  /** Overloaded to provide Cairo callback support */
+  /** Overloaded to provide Cairo callback support. */
   void draw() FL_OVERRIDE {
     Fl_Double_Window::draw();
     if (draw_cb_) { // call the Cairo draw callback

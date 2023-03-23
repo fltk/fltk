@@ -301,8 +301,10 @@ char *Fl_String::data() {
 
 /**
  Return a pointer to the NUL terminated string.
+
  \return reference to non-mutable string
- \note same as `const char *Fl_String::data() const`
+
+ \note same as Fl_String::data() const
  */
 const char *Fl_String::c_str() const {
   return data();
