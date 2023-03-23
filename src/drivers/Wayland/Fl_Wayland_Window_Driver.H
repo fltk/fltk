@@ -144,7 +144,7 @@ struct wld_window {
     struct xdg_popup *xdg_popup;
     struct xdg_toplevel *xdg_toplevel;
   };
-  struct custom_cursor {
+  struct custom_cursor_ {
     struct wl_cursor *wl_cursor;
     const Fl_RGB_Image *rgb;
     int hotx, hoty;

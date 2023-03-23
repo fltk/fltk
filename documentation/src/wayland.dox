@@ -588,9 +588,9 @@ struct wl_cursor {
 \endcode
 Function \c Fl_Wayland_Window_Driver::set_cursor_4args() also creates a <tt>struct wl_cursor</tt>
 object containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
-Finally, a <tt>struct custom_cursor</tt> (see \ref wld_window) is allocated and used to memorize
+Finally, a <tt>struct custom_cursor_</tt> (see \ref wld_window) is allocated and used to memorize
 the <tt>struct wl_cursor</tt> and the cursor's image and hotspot.
-A pointer to this <tt>struct custom_cursor</tt> object is stored in member \c custom_cursor of the
+A pointer to this <tt>struct custom_cursor_</tt> object is stored in member \c custom_cursor of the
 window's \ref wld_window.
 
 Function \c Fl_Wayland_Window_Driver::set_cursor_4args() is also called when a window with a custom
@@ -823,7 +823,7 @@ struct wld_window {
     struct xdg_popup *xdg_popup; // for POPUP windows
     struct xdg_toplevel *xdg_toplevel; // for UNFRAMED windows
   };
-  struct custom_cursor {
+  struct custom_cursor_ {
     struct wl_cursor *wl_cursor;
     const Fl_RGB_Image *rgb;
     int hotx, hoty;
