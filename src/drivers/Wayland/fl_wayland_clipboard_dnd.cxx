@@ -77,13 +77,15 @@ void write_data_source_cb(FL_SOCKET fd, data_source_write_struct *data) {
 static void data_source_handle_send(void *data, struct wl_data_source *source, const char *mime_type, int fd) {
   fl_intptr_t rank = (fl_intptr_t)data;
 //fprintf(stderr, "data_source_handle_send: %s fd=%d l=%d\n", mime_type, fd, fl_selection_length[1]);
-  if (strcmp(mime_type, wld_plain_text_clipboard) == 0 || strcmp(mime_type, "text/plain") == 0 || strcmp(mime_type, "image/bmp") == 0) {
+  if (((!strcmp(mime_type, wld_plain_text_clipboard) || !strcmp(mime_type, "text/plain")) && fl_selection_type[rank] == Fl::clipboard_plain_text)
+      ||
+    (!strcmp(mime_type, "image/bmp") && fl_selection_type[rank] == Fl::clipboard_image) ) {
     data_source_write_struct *write_data = new data_source_write_struct;
     write_data->rest = fl_selection_length[rank];
     write_data->from = fl_selection_buffer[rank];
     Fl::add_fd(fd, FL_WRITE, (Fl_FD_Handler)write_data_source_cb, write_data);
   } else {
-    Fl::error("Destination client requested unsupported MIME type: %s\n", mime_type);
+    //Fl::error("Destination client requested unsupported MIME type: %s\n", mime_type);
     close(fd);
   }
 }

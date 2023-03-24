@@ -96,6 +96,12 @@ a minimized window has no effect.
 it's currently not possible for an app to be notified of changes to the content of
 the system clipboard, that is, Fl::add_clipboard_notify() has no effect.
 
+* Copying data to the clipboard is best done when the app has focus. Any copy operation
+performed when the app not yet got the focus does not change the clipboard. A copy operation
+performed when the app has lost the focus is successful only if the type of the copied
+data, that is text or image, is the same as the last data type copied when the app had
+the focus.
+
 * Narrow windows with a titlebar are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
 
