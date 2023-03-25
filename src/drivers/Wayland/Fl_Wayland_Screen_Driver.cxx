@@ -698,7 +698,6 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
     Fl::e_keysym = '0';
     for_key_vector = '0';
   }
-  if (for_key_vector >= 'a' && for_key_vector <= 'z') for_key_vector -= 32;
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
     if (search_int_vector(key_vector, for_key_vector) < 0) key_vector.push_back(for_key_vector);
   } else {
@@ -1580,7 +1579,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::event_key(int k) {
-  if (k >= 'a' && k <= 'z') k -= 32;
+  if (k >= 'A' && k <= 'Z') k += 32;
   return (search_int_vector(key_vector, k) >= 0);
 }
 
