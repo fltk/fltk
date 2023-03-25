@@ -667,6 +667,42 @@ STATICIMAGELIBS=""
 AC_SUBST([IMAGELIBS])
 AC_SUBST([STATICIMAGELIBS])
 
+
+# Handle the JPEG lib linking mode (use fltk local or system lib)
+# If --enable-(resp. --disable-)localjpeg parameter is not set by user
+# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
+# Check for System lib use if automatic mode or --disable-localjpeg is requested
+sysjpeglib_ok=no
+sysjpeginc_ok=no
+AS_IF([test x$enable_localjpeg != xyes], [
+    AC_CHECK_LIB([jpeg], [jpeg_CreateCompress], [
+        AC_CHECK_HEADER([jpeglib.h], [sysjpeginc_ok=yes])
+        AS_IF([test x$sysjpeginc_ok = xyes], [
+            sysjpeglib_ok=yes
+        ])
+    ])
+])
+
+# Now set the jpeg lib and include flags according to the requested mode and availability
+AS_IF([test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno], [
+    JPEGINC="-I../jpeg"
+    JPEG="jpeg"
+    IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
+    AC_DEFINE([HAVE_LIBJPEG])
+    # Finally, warn user if system lib was requested but not found
+    AS_IF([test x$enable_localjpeg = xno], [
+        AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
+    ])
+], [
+    JPEGINC=""
+    JPEG=""
+    IMAGELIBS="-ljpeg $IMAGELIBS"
+    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
+    AC_DEFINE([HAVE_LIBJPEG])
+])
+
+
 # Handle the ZLIB lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localzlib parameter is not set by user
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
@@ -681,6 +717,7 @@ AS_IF([test x$enable_localzlib != xyes], [
         ])
     ])
 ])
+
 
 # Handle the PNG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localpng parameter is not set by user
@@ -705,7 +742,8 @@ AS_IF([test x$enable_localpng != xyes], [
     ])
 ])
 
-# If we use the system zlib, we must also use the system png zlib and vice versa
+
+# If we use the system zlib, we must also use the system png lib and vice versa.
 # If either of them is not available, we fall back to using both local libraries
 AS_IF([test x$syspnglib_ok = xyes -a x$syszlib_ok != xyes], [
     syspnglib_ok=no
@@ -770,40 +808,6 @@ AS_IF([test x$enable_localpng = xyes -o x$syspnglib_ok = xno], [
     ])
 ])
 
-
-# Handle the JPEG lib linking mode (use fltk local or system lib)
-# If --enable-(resp. --disable-)localjpeg parameter is not set by user
-# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
-# Check for System lib use if automatic mode or --disable-localjpeg is requested
-sysjpeglib_ok=no
-sysjpeginc_ok=no
-AS_IF([test x$enable_localjpeg != xyes], [
-    AC_CHECK_LIB([jpeg], [jpeg_CreateCompress], [
-        AC_CHECK_HEADER([jpeglib.h], [sysjpeginc_ok=yes])
-        AS_IF([test x$sysjpeginc_ok = xyes], [
-            sysjpeglib_ok=yes
-        ])
-    ])
-])
-
-# Now set the jpeg lib and include flags according to the requested mode and availability
-AS_IF([test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno], [
-    JPEGINC="-I../jpeg"
-    JPEG="jpeg"
-    IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
-    AC_DEFINE([HAVE_LIBJPEG])
-    # Finally, warn user if system lib was requested but not found
-    AS_IF([test x$enable_localjpeg = xno], [
-        AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
-    ])
-], [
-    JPEGINC=""
-    JPEG=""
-    IMAGELIBS="-ljpeg $IMAGELIBS"
-    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
-    AC_DEFINE([HAVE_LIBJPEG])
-])
 
 AC_SUBST([JPEG])
 AC_SUBST([JPEGINC])
