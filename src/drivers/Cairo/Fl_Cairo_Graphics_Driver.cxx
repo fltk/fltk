@@ -1422,4 +1422,20 @@ int Fl_Cairo_Graphics_Driver::antialias() {
   return (cairo_get_antialias(cairo_) != CAIRO_ANTIALIAS_NONE);
 }
 
+
+void Fl_Cairo_Graphics_Driver::focus_rect(int x, int y, int w, int h)
+{
+  cairo_save(cairo_);
+  cairo_set_line_width(cairo_, 1);
+  cairo_set_line_cap(cairo_, CAIRO_LINE_CAP_BUTT);
+  cairo_set_line_join(cairo_, CAIRO_LINE_JOIN_MITER);
+  static double dots[2] = {1., 1.};
+  cairo_set_dash(cairo_, dots, 2, 1);
+  cairo_set_antialias(cairo_,  CAIRO_ANTIALIAS_NONE);
+  cairo_rectangle(cairo_, x, y, w-1, h-1);
+  cairo_stroke(cairo_);
+  cairo_restore(cairo_);
+  surface_needs_commit();
+}
+
 #endif // USE_PANGO

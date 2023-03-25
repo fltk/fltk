@@ -197,6 +197,7 @@ public:
   void restore_scale(float) FL_OVERRIDE;
   void antialias(int state) FL_OVERRIDE;
   int antialias() FL_OVERRIDE;
+  void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
 };
 
 #endif // FL_CAIRO_GRAPHICS_DRIVER_H
