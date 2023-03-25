@@ -1521,7 +1521,7 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   // delete the previous custom cursor, if there was one, and keep its Fl_RGB_Image if appropriate
   delete_cursor_(xid, keep_copy);
   //have this new cursor used
-  xid->custom_cursor = new struct wld_window::custom_cursor_;
+  xid->custom_cursor = new wld_window::custom_cursor_;
   xid->custom_cursor->wl_cursor = new_cursor;
   xid->custom_cursor->rgb = rgb;
   xid->custom_cursor->hotx = hotx;
