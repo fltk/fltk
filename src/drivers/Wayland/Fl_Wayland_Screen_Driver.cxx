@@ -1580,6 +1580,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::event_key(int k) {
+  if (k >= 'a' && k <= 'z') k -= 32;
   return (search_int_vector(key_vector, k) >= 0);
 }
 
