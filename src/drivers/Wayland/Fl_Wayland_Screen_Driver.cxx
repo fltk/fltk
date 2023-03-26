@@ -802,16 +802,6 @@ static const struct wl_keyboard_listener wl_keyboard_listener = {
 };
 
 
-void Fl_Wayland_Screen_Driver::enable_im() {
-  if (seat->text_input) zwp_text_input_v3_enable(seat->text_input);
-}
-
-
-void Fl_Wayland_Screen_Driver::disable_im() {
-  if (seat->text_input) zwp_text_input_v3_disable(seat->text_input);
-}
-
-
 void text_input_enter(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
                       struct wl_surface *surface) {
 //puts("text_input_enter");
@@ -883,6 +873,25 @@ static const struct zwp_text_input_v3_listener text_input_listener = {
 };
 
 
+void Fl_Wayland_Screen_Driver::enable_im() {
+  if (text_input_base && !seat->text_input) {
+    seat->text_input = zwp_text_input_manager_v3_get_text_input(text_input_base, seat->wl_seat);
+    //printf("seat->text_input=%p\n",seat->text_input);
+    zwp_text_input_v3_add_listener(seat->text_input, &text_input_listener, NULL);
+  }
+}
+
+
+void Fl_Wayland_Screen_Driver::disable_im() {
+  if (seat->text_input) {
+    zwp_text_input_v3_disable(seat->text_input);
+    zwp_text_input_v3_commit(seat->text_input);
+    zwp_text_input_v3_destroy(seat->text_input);
+    seat->text_input = NULL;
+  }
+}
+
+
 static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capabilities)
 {
   struct seat *seat = (struct seat*)data;
@@ -908,11 +917,7 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
           seat->wl_keyboard = NULL;
   }
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (scr_driver->text_input_base) {
-    seat->text_input = zwp_text_input_manager_v3_get_text_input(scr_driver->text_input_base, seat->wl_seat);
-//printf("seat->text_input=%p\n",seat->text_input);
-    zwp_text_input_v3_add_listener(seat->text_input, &text_input_listener, NULL);
-  }
+  scr_driver->enable_im();
 }
 
 static void seat_name(void *data, struct wl_seat *wl_seat, const char *name) {
