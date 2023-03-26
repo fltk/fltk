@@ -169,6 +169,8 @@ public:
   void *control_maximize_button(void *data) FL_OVERRIDE;
   int event_key(int k) FL_OVERRIDE;
   int get_key(int k) FL_OVERRIDE;
+  void enable_im() FL_OVERRIDE;
+  void disable_im() FL_OVERRIDE;
 
 // Wayland-specific member functions
   void screen_count_set(int count) {num_screens = count;}

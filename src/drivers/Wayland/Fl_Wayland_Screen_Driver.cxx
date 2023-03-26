@@ -802,6 +802,16 @@ static const struct wl_keyboard_listener wl_keyboard_listener = {
 };
 
 
+void Fl_Wayland_Screen_Driver::enable_im() {
+  if (seat->text_input) zwp_text_input_v3_enable(seat->text_input);
+}
+
+
+void Fl_Wayland_Screen_Driver::disable_im() {
+  if (seat->text_input) zwp_text_input_v3_disable(seat->text_input);
+}
+
+
 void text_input_enter(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
                       struct wl_surface *surface) {
 //puts("text_input_enter");
