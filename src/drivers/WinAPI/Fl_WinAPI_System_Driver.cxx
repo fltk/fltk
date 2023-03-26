@@ -1,7 +1,7 @@
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -39,6 +39,7 @@
 #include <direct.h>
 #include <io.h>
 #include <fcntl.h>
+#include <shlobj.h>
 
 // function pointer for the UuidCreate Function
 // RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
@@ -845,65 +846,33 @@ void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
 char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, Fl_Preferences::Root root, const char *vendor,
                                                   const char *application)
 {
-#  define FLPREFS_RESOURCE      "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
-#  define FLPREFS_RESOURCEW     L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
   static char *filename = 0L;
-  // make enough room for a UTF16 pathname
-  if (!filename) filename = (char*)::malloc(2*FL_PATH_MAX);
-  filename[0] = 0;
-  filename[1] = 0;
-  size_t appDataLen = strlen(vendor) + strlen(application) + 8;
-  DWORD nn;
-  LONG err;
-  HKEY key;
+  // make enough room for a UTF-16 pathname
+  if (!filename) filename = (char*)::malloc(2 * FL_PATH_MAX);
+  HRESULT res;
 
-  switch (root&Fl_Preferences::ROOT_MASK) {
-    case Fl_Preferences::SYSTEM:
-      err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
-      if (err == ERROR_SUCCESS) {
-        nn = (DWORD) (FL_PATH_MAX - appDataLen);
-        err = RegQueryValueExW( key, L"Common AppData", 0L, 0L,
-                               (BYTE*)filename, &nn );
-        if ( err != ERROR_SUCCESS ) {
-          filename[0] = 0;
-          filename[1] = 0;
-        }
-        RegCloseKey(key);
-      }
-      break;
-    case Fl_Preferences::USER:
-      err = RegOpenKeyW( HKEY_CURRENT_USER, FLPREFS_RESOURCEW, &key );
-      if (err == ERROR_SUCCESS) {
-        nn = (DWORD) (FL_PATH_MAX - appDataLen);
-        err = RegQueryValueExW( key, L"AppData", 0L,0L,
-                               (BYTE*)filename, &nn );
-        if ( err != ERROR_SUCCESS ) {
-          filename[0] = 0;
-          filename[1] = 0;
-        }
-        RegCloseKey(key);
-      }
-      break;
-  }
-  if (!filename[1] && !filename[0]) {
-    // Don't write data into some arbitrary directory! Just return NULL.
-    //strcpy(filename, "C:\\FLTK");
+  // https://learn.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shgetfolderpathw
+
+  int appdata = CSIDL_APPDATA;              // assume user preferences
+  if ((root & Fl_Preferences::ROOT_MASK) == Fl_Preferences::SYSTEM)
+    appdata = CSIDL_COMMON_APPDATA;         // use system preferences
+
+  res = SHGetFolderPathW(NULL,               // hwnd: Reserved!
+                         appdata,            // csidl: User or common Application Data (Roaming)
+                         NULL,               // hToken (unused)
+                         SHGFP_TYPE_CURRENT, // dwFlags: use current, potentially redirected path
+                         (LPWSTR)filename);  // out: filename in Windows wide string encoding
+  if (res != S_OK) {
+    // don't write data into some arbitrary directory! Just return NULL.
     return 0L;
-  } else {
-#if 0
-    wchar_t *b = (wchar_t*)_wcsdup((wchar_t *)filename);
-#else
-    // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
-    // For implementation of wcsdup functionality See
-    // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
-    wchar_t *b = (wchar_t *)malloc((wcslen((wchar_t *)filename) + 1) * sizeof(wchar_t));
-    wcscpy(b, (wchar_t *) filename);
-#endif
-    //  filename[fl_unicode2utf(b, wcslen((wchar_t*)b), filename)] = 0;
-    unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, (unsigned) wcslen(b));
-    filename[len] = 0;
-    free(b);
   }
+
+  // convert the path from Windows wide character (UTF-16) to UTF-8
+  // FIXME: can this be simplified? Don't allocate/copy/move/free more than necessary!
+  char *buf = NULL;
+  wchar_to_utf8((wchar_t *)filename, buf);   // allocates buf for conversion
+  strcpy(filename, buf);
+  free(buf);
 
   // Make sure that the parameters are not NULL
   if ( (vendor==0L) || (vendor[0]==0) )
@@ -911,6 +880,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences * /*prefs*/, F
   if ( (application==0L) || (application[0]==0) )
     application = "unknown";
 
+  // append vendor, application, and ".prefs", and convert '\' to '/'
   snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
