@@ -28,32 +28,6 @@
 
 class Fl_Window;
 
-struct seat {
-  struct wl_seat *wl_seat;
-  struct wl_pointer *wl_pointer;
-  struct wl_keyboard *wl_keyboard;
-  uint32_t keyboard_enter_serial;
-  struct wl_surface *keyboard_surface;
-  struct wl_list pointer_outputs;
-  struct wl_cursor_theme *cursor_theme;
-  struct wl_cursor *default_cursor;
-  struct wl_surface *cursor_surface;
-  struct wl_surface *pointer_focus;
-  int pointer_scale;
-  uint32_t serial;
-  uint32_t pointer_enter_serial;
-  struct wl_data_device_manager *data_device_manager;
-  struct wl_data_device *data_device;
-  struct wl_data_source *data_source;
-  struct xkb_state *xkb_state;
-  struct xkb_context *xkb_context;
-  struct xkb_keymap *xkb_keymap;
-  struct xkb_compose_state *xkb_compose_state;
-  char *name;
-  struct zwp_text_input_v3 *text_input;
-};
-
-
 class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
@@ -66,6 +40,30 @@ private:
 public:
 // type definitions
   typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
+  struct seat {
+    struct wl_seat *wl_seat;
+    struct wl_pointer *wl_pointer;
+    struct wl_keyboard *wl_keyboard;
+    uint32_t keyboard_enter_serial;
+    struct wl_surface *keyboard_surface;
+    struct wl_list pointer_outputs;
+    struct wl_cursor_theme *cursor_theme;
+    struct wl_cursor *default_cursor;
+    struct wl_surface *cursor_surface;
+    struct wl_surface *pointer_focus;
+    int pointer_scale;
+    uint32_t serial;
+    uint32_t pointer_enter_serial;
+    struct wl_data_device_manager *data_device_manager;
+    struct wl_data_device *data_device;
+    struct wl_data_source *data_source;
+    struct xkb_state *xkb_state;
+    struct xkb_context *xkb_context;
+    struct xkb_keymap *xkb_keymap;
+    struct xkb_compose_state *xkb_compose_state;
+    char *name;
+    struct zwp_text_input_v3 *text_input;
+  };
   struct output { // one record for each screen
     uint32_t id;
     short width; // in pixels

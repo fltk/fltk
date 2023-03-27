@@ -888,19 +888,18 @@ by this call:
 <tt>(struct Fl_Wayland_Screen_Driver::output *)wl_output_get_user_data(wl_output)</tt>.
 
 \anchor seat
-<h3>struct seat</h3>
-Defined in file \c Fl_Wayland_Screen_Driver.H. One such record is created by
+<h3>struct Fl_Wayland_Screen_Driver::seat</h3>
+Defined in file \c Fl_Wayland_Screen_Driver.H. One record is created by
 function \c registry_handle_global() when it receives a \c "wl_seat" or
-\c wl_data_device_manager_interface.name interface. A pointer to this record is stored in member
+\c wl_data_device_manager_interface.name interface. A pointer to this struct is stored in member
 \c seat of the client's unique \c Fl_Wayland_Screen_Driver object.
 <pre>
-struct seat {
+struct Fl_Wayland_Screen_Driver::seat {
   struct wl_seat *wl_seat;
   struct wl_pointer *wl_pointer;
   struct wl_keyboard *wl_keyboard;
   uint32_t keyboard_enter_serial;
   struct wl_surface *keyboard_surface;
-  struct wl_list link;
   struct wl_list pointer_outputs;
   struct wl_cursor_theme *cursor_theme;
   struct wl_cursor *default_cursor;

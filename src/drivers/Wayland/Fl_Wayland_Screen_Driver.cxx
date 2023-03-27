@@ -162,7 +162,7 @@ static struct wl_shm_listener shm_listener = {
   shm_format
 };
 
-static void do_set_cursor(struct seat *seat, struct wl_cursor *wl_cursor = NULL)
+static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor = NULL)
 {
   struct wl_cursor_image *image;
   struct wl_buffer *buffer;
@@ -259,7 +259,7 @@ static void pointer_enter(void *data,
   if (!win) return;
   // use custom cursor if present
   struct wl_cursor *cursor = fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   do_set_cursor(seat, cursor);
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
@@ -275,7 +275,7 @@ static void pointer_leave(void *data,
         uint32_t serial,
         struct wl_surface *surface)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   if (seat->pointer_focus == surface) seat->pointer_focus = NULL;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
   if (win) {
@@ -293,7 +293,7 @@ static void pointer_motion(void *data,
          wl_fixed_t surface_x,
          wl_fixed_t surface_y)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   Fl_Window *win = event_coords_from_surface(seat->pointer_focus, surface_x, surface_y);
   if (!win) return;
   // If there's an active grab() and the pointer is in a window other than the grab(),
@@ -316,7 +316,7 @@ static void pointer_button(void *data,
          uint32_t button,
          uint32_t state)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   seat->serial = serial;
   int event = 0;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
@@ -354,7 +354,7 @@ static void pointer_axis(void *data,
        uint32_t axis,
        wl_fixed_t value)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
@@ -388,9 +388,9 @@ bool Fl_Wayland_Screen_Driver::own_output(struct wl_output *output)
   return wl_proxy_get_tag((struct wl_proxy *)output) == &proxy_tag;
 }
 
-static void init_cursors(struct seat *seat);
+static void init_cursors(struct Fl_Wayland_Screen_Driver::seat *seat);
 
-static void try_update_cursor(struct seat *seat)
+static void try_update_cursor(struct Fl_Wayland_Screen_Driver::seat *seat)
 {
   if (wl_list_empty(&seat->pointer_outputs)) return;
   struct pointer_output *pointer_output;
@@ -416,7 +416,7 @@ static void cursor_surface_enter(void *data,
         struct wl_output *wl_output)
 {
   // Runs when the seat's cursor_surface enters a display
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   struct pointer_output *pointer_output;
 
   if (!Fl_Wayland_Screen_Driver::own_output(wl_output))
@@ -445,7 +445,7 @@ static void cursor_surface_leave(void *data,
         struct wl_surface *wl_surface,
         struct wl_output *wl_output)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   struct pointer_output *pointer_output, *tmp;
 
   wl_list_for_each_safe(pointer_output, tmp, &seat->pointer_outputs, link) {
@@ -470,7 +470,7 @@ static struct wl_surface_listener cursor_surface_listener = {
 };
 
 
-static void init_cursors(struct seat *seat)
+static void init_cursors(struct Fl_Wayland_Screen_Driver::seat *seat)
 {
   char *name;
   int size;
@@ -505,7 +505,7 @@ static void init_cursors(struct seat *seat)
 static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t format, int32_t fd, uint32_t size)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   assert(format == WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1);
 
   char *map_shm = (char*)mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
@@ -527,7 +527,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface,
                struct wl_array *keys)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
 //fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are:\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
@@ -675,7 +675,7 @@ static void remove_int_vector(Fl_Int_Vector& v, int val) {
 static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   seat->serial = serial;
   static char buf[128];
   uint32_t keycode = key + 8;
@@ -758,7 +758,7 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
 static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
 //fprintf(stderr, "keyboard leave fl_win=%p\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
   seat->keyboard_surface = NULL;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
@@ -771,7 +771,7 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t mods_latched, uint32_t mods_locked,
                uint32_t group)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   xkb_state_update_mask(seat->xkb_state, mods_depressed, mods_latched, mods_locked, 0, 0, group);
   Fl::e_state &= ~(FL_SHIFT+FL_CTRL+FL_ALT+FL_CAPS_LOCK+FL_NUM_LOCK);
   if (xkb_state_mod_name_is_active(seat->xkb_state, XKB_MOD_NAME_SHIFT, XKB_STATE_MODS_DEPRESSED))
@@ -894,7 +894,7 @@ void Fl_Wayland_Screen_Driver::disable_im() {
 
 static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capabilities)
 {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   if ((capabilities & WL_SEAT_CAPABILITY_POINTER) && !seat->wl_pointer) {
     seat->wl_pointer = wl_seat_get_pointer(wl_seat);
     wl_pointer_add_listener(seat->wl_pointer, &pointer_listener, seat);
@@ -921,7 +921,7 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
 }
 
 static void seat_name(void *data, struct wl_seat *wl_seat, const char *name) {
-  struct seat *seat = (struct seat*)data;
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   seat->name = strdup(name);
 }
 
@@ -1036,7 +1036,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     if (version < 3) {
       Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
     }
-    if (!scr_driver->seat) scr_driver->seat = (struct seat*)calloc(1, sizeof(struct seat));
+    if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1, sizeof(struct Fl_Wayland_Screen_Driver::seat));
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
     scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 3);
@@ -1057,7 +1057,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     }
 
   } else if (strcmp(interface, wl_data_device_manager_interface.name) == 0) {
-    if (!scr_driver->seat) scr_driver->seat = (struct seat*)calloc(1, sizeof(struct seat));
+    if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1, sizeof(struct Fl_Wayland_Screen_Driver::seat));
     scr_driver->seat->data_device_manager = (struct wl_data_device_manager*)wl_registry_bind(wl_registry, id, &wl_data_device_manager_interface, 3);
     if (scr_driver->seat->wl_seat) {
       scr_driver->seat->data_device = wl_data_device_manager_get_data_device(scr_driver->seat->data_device_manager, scr_driver->seat->wl_seat);
