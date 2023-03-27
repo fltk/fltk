@@ -1,5 +1,5 @@
 //
-// Definition of X11 Screen interface
+// Definition of the Wayland Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2023 by Bill Spitzak and others.
@@ -34,7 +34,6 @@ struct seat {
   struct wl_keyboard *wl_keyboard;
   uint32_t keyboard_enter_serial;
   struct wl_surface *keyboard_surface;
-  struct wl_list link;
   struct wl_list pointer_outputs;
   struct wl_cursor_theme *cursor_theme;
   struct wl_cursor *default_cursor;

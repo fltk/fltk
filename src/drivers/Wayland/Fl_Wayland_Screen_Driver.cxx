@@ -1195,14 +1195,58 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   fl_create_print_window();
 }
 
+
 void Fl_Wayland_Screen_Driver::close_display() {
+  if (text_input_base) {
+    disable_im();
+    zwp_text_input_manager_v3_destroy(text_input_base);
+    text_input_base = NULL;
+  }
+  while (wl_list_length(&outputs) > 0) {
+    Fl_Wayland_Screen_Driver::output *output;
+    wl_list_for_each(output, &outputs, link) {
+      wl_list_remove(&output->link);
+      screen_count_set( wl_list_length(&outputs) );
+      if (output->wl_output) wl_output_destroy(output->wl_output);
+      free(output);
+      break;
+    }
+  }
+  wl_subcompositor_destroy(wl_subcompositor); wl_subcompositor = NULL;
+  wl_surface_destroy(seat->cursor_surface); seat->cursor_surface = NULL;
+  wl_cursor_theme_destroy(seat->cursor_theme); seat->cursor_theme = NULL;
+  wl_compositor_destroy(wl_compositor); wl_compositor = NULL;
+  wl_shm_destroy(wl_shm); wl_shm = NULL;
+  if (seat->wl_keyboard) {
+    xkb_state_unref(seat->xkb_state); seat->xkb_state = NULL;
+    xkb_keymap_unref(seat->xkb_keymap); seat->xkb_keymap = NULL;
+    wl_keyboard_destroy(seat->wl_keyboard);
+    seat->wl_keyboard = NULL;
+  }
+  wl_pointer_destroy(seat->wl_pointer); seat->wl_pointer = NULL;
+  xkb_compose_state_unref(seat->xkb_compose_state); seat->xkb_compose_state = NULL;
+  xkb_context_unref(seat->xkb_context); seat->xkb_context = NULL;
+  if (seat->data_source) {
+    wl_data_source_destroy(seat->data_source);
+    seat->data_source = NULL;
+  }
+  wl_data_device_destroy(seat->data_device); seat->data_device = NULL;
+  wl_data_device_manager_destroy(seat->data_device_manager); seat->data_device_manager = NULL;
+  wl_seat_destroy(seat->wl_seat); seat->wl_seat = NULL;
+  if (seat->name) free(seat->name);
+  delete seat; seat = NULL;
+  if (libdecor_context) {
+    libdecor_unref(libdecor_context);
+    libdecor_context = NULL;
+  }
+  xdg_wm_base_destroy(xdg_wm_base); xdg_wm_base = NULL;
   Fl_Wayland_Plugin *plugin = Fl_Wayland_Window_Driver::gl_plugin();
   if (plugin) plugin->terminate();
 
   Fl::remove_fd(wl_display_get_fd(Fl_Wayland_Screen_Driver::wl_display));
+  wl_registry_destroy(wl_registry); wl_registry = NULL;
   wl_display_disconnect(Fl_Wayland_Screen_Driver::wl_display);
   Fl_Wayland_Screen_Driver::wl_display = NULL;
-  wl_registry = NULL;
 }
 
 
