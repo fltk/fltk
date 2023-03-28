@@ -1461,7 +1461,7 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
 
 
 void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
-  if (!border()) pWindow->Fl_Group::resize(X, Y, W, H);
+  if (!border()) pWindow->resize(X, Y, W, H);
   xdg_toplevel_unset_fullscreen(xdg_toplevel());
   pWindow->_clear_fullscreen();
   Fl::handle(FL_FULLSCREEN, pWindow);
@@ -1605,8 +1605,10 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
         fl_win->configured_width = W;
         fl_win->configured_height = H;
         W *= f; H *= f;
-        xdg_toplevel_set_min_size(fl_win->xdg_toplevel, W, H);
-        xdg_toplevel_set_max_size(fl_win->xdg_toplevel, W, H);
+        if (!pWindow->fullscreen_active()) {
+          xdg_toplevel_set_min_size(fl_win->xdg_toplevel, W, H);
+          xdg_toplevel_set_max_size(fl_win->xdg_toplevel, W, H);
+        }
         xdg_surface_set_window_geometry(fl_win->xdg_surface, 0, 0, W, H);
         //printf("xdg_surface_set_window_geometry: %dx%d\n",W, H);
       }
