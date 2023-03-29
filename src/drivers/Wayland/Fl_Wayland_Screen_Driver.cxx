@@ -523,12 +523,57 @@ static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
   seat->xkb_state = xkb_state;
 }
 
+
+static int search_int_vector(Fl_Int_Vector& v, int val) {
+  for (unsigned pos = 0; pos < v.size(); pos++) {
+    if (v[pos] == val) return pos;
+  }
+  return -1;
+}
+
+
+static void remove_int_vector(Fl_Int_Vector& v, int val) {
+  int pos = search_int_vector(v, val);
+  if (pos < 0) return;
+  int last = v.pop_back();
+  if (last != val) v[pos] = last;
+}
+
+
+static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
+                           uint32_t *p_keycode, xkb_keysym_t *p_sym) {
+  uint32_t keycode = key + 8;
+  xkb_keysym_t sym = xkb_state_key_get_one_sym(xkb_state, keycode);
+  if (sym == 0xfe20) sym = FL_Tab;
+  if (sym >= 'A' && sym <= 'Z') sym += 32; // replace uppercase by lowercase letter
+  int for_key_vector = sym; // for support of Fl::event_key(int)
+  // special processing for number keys == keycodes 10-19 :
+  if (keycode >= 10 && keycode <= 18) {
+    for_key_vector = '1' + (keycode - 10);
+  } else if (keycode == 19) {
+    for_key_vector = '0';
+  }
+  if (p_keycode) *p_keycode = keycode;
+  if (p_sym) *p_sym = sym;
+  return for_key_vector;
+}
+
+
 static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface,
                struct wl_array *keys)
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
-//fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are:\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
+//fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are: ", Fl_Wayland_Screen_Driver::surface_to_window(surface));
+  // Replace wl_array_for_each(p, keys) rejected by C++
+  for (uint32_t *p = (uint32_t *)(keys)->data;
+      (const char *) p < ((const char *) (keys)->data + (keys)->size);
+      (p)++) {
+    int for_key_vector = process_wld_key(seat->xkb_state, *p, NULL, NULL);
+//fprintf(stderr, "%d ", for_key_vector);
+    if (search_int_vector(key_vector, for_key_vector) < 0) key_vector.push_back(for_key_vector);
+  }
+//fprintf(stderr, "\n");
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
@@ -656,48 +701,21 @@ static dead_key_struct dead_keys[] = {
 const int dead_key_count = sizeof(dead_keys)/sizeof(struct dead_key_struct);
 
 
-static int search_int_vector(Fl_Int_Vector& v, int val) {
-  for (unsigned pos = 0; pos < v.size(); pos++) {
-    if (v[pos] == val) return pos;
-  }
-  return -1;
-}
-
-
-static void remove_int_vector(Fl_Int_Vector& v, int val) {
-  int pos = search_int_vector(v, val);
-  if (pos < 0) return;
-  int last = v.pop_back();
-  if (last != val) v[pos] = last;
-}
-
-
 static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   seat->serial = serial;
   static char buf[128];
-  uint32_t keycode = key + 8;
-  xkb_keysym_t sym = xkb_state_key_get_one_sym(seat->xkb_state, keycode);
-  // replace ISO_Left_Tab (Shift-TAB) with FL_Tab
-  if (sym == 0xfe20) sym = FL_Tab;
-  if (sym >= 'A' && sym <= 'Z') sym += 32; // replace uppercase by lowercase letter
+  uint32_t keycode;
+  xkb_keysym_t sym;
+  int for_key_vector = process_wld_key(seat->xkb_state, key, &keycode, &sym);
 /*xkb_keysym_get_name(sym, buf, sizeof(buf));
 const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
 fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Screen_Driver::surface_to_window(seat->keyboard_surface));*/
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
-  Fl::e_keysym = sym;
-  int for_key_vector = sym; // for support of Fl::event_key(int)
-  // special processing for number keys == keycodes 10-19 :
-  if (keycode >= 10 && keycode <= 18) {
-    Fl::e_keysym = keycode + 39;
-    for_key_vector = '1' + (keycode - 10);
-  } else if (keycode == 19) {
-    Fl::e_keysym = '0';
-    for_key_vector = '0';
-  }
+  Fl::e_keysym = for_key_vector;
   if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
     if (search_int_vector(key_vector, for_key_vector) < 0) key_vector.push_back(for_key_vector);
   } else {
