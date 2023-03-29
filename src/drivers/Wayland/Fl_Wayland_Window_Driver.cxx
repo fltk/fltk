@@ -704,7 +704,9 @@ static void handle_configure(struct libdecor_frame *frame,
   if (!window->xdg_surface) window->xdg_surface = libdecor_frame_get_xdg_surface(frame);
 
   if (window->fl_win->fullscreen_active()) {
-    libdecor_frame_set_fullscreen(window->frame, NULL);
+    if (!(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
+      libdecor_frame_set_fullscreen(window->frame, NULL);
+    }
   } else if (driver->show_iconic()) {
     libdecor_frame_set_minimized(window->frame);
     driver->show_iconic(0);
@@ -713,6 +715,7 @@ static void handle_configure(struct libdecor_frame *frame,
     window_state = LIBDECOR_WINDOW_STATE_NONE;
   if ((window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) &&
       !(window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN) && !window->fl_win->border()) {
+    // necessary so Mutter correctly positions borderless window back from fullscreen
     window->fl_win->redraw();
   }
   window->state = window_state;
@@ -863,6 +866,19 @@ static const struct xdg_surface_listener xdg_surface_listener = {
 };
 
 
+static bool parse_states_fullscreen(struct wl_array *states)
+{
+  uint32_t *p;
+  // Replace wl_array_for_each(p, states) rejected by C++
+  for (p = (uint32_t *)(states)->data;
+      (const char *) p < ((const char *) (states)->data + (states)->size);
+      (p)++) {
+    if (*p == XDG_TOPLEVEL_STATE_FULLSCREEN) return true;
+  }
+  return false;
+}
+
+
 static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel,
                                    int32_t width, int32_t height, struct wl_array *states)
 {
@@ -870,7 +886,9 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   // under Weston: width & height are 0 during both calls
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
-  if (window->fl_win->fullscreen_active()) xdg_toplevel_set_fullscreen(xdg_toplevel, NULL);
+  if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states)) {
+    xdg_toplevel_set_fullscreen(xdg_toplevel, NULL);
+  }
   if (window->configured_width) Fl_Window_Driver::driver(window->fl_win)->wait_for_expose_value = 0;
   float f = Fl::screen_scale(window->fl_win->screen_num());
   if (width == 0 || height == 0) {
@@ -1453,8 +1471,6 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
   if (xdg_toplevel()) {
     xdg_toplevel_set_fullscreen(xdg_toplevel(), NULL);
     pWindow->_set_fullscreen();
-    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // OK, but try to find something more specific
-    wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
     Fl::handle(FL_FULLSCREEN, pWindow);
   }
 }
