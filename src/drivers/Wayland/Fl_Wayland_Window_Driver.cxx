@@ -883,7 +883,7 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
                                    int32_t width, int32_t height, struct wl_array *states)
 {
   // runs for borderless top-level windows
-  // under Weston: width & height are 0 during both calls
+  // under Weston: width & height are 0 during both calls, except if fullscreen
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
   if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states)) {
