@@ -1007,14 +1007,14 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         ])
       ],[
         missing="no"
-        AS_IF([$PKGCONFIG --exists wayland-client],[],[missing="yes"])
-        AS_IF([$PKGCONFIG --exists wayland-protocols],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists 'wayland-client >= 1.18'],[],[missing="yes"])
+        AS_IF([$PKGCONFIG --exists 'wayland-protocols >= 1.15'],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists wayland-cursor],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists xkbcommon],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists dbus-1],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists pangocairo],[],[missing="yes"])
         AS_IF([test x$missing = xyes], [
-            AC_MSG_WARN([These packages 'wayland-client wayland-protocols wayland-cursor xkbcommon dbus-1 pangocairo' are required to build FLTK for wayland.])
+            AC_MSG_WARN([These packages 'wayland-client>=1.18 wayland-protocols>=1.15 wayland-cursor xkbcommon dbus-1 pangocairo' are required to build FLTK for wayland.])
             AC_MSG_WARN([At least one of them is missing.])
           AS_IF([test x$enable_wayland = xyes], [
             AC_MSG_ERROR([Building for Wayland is not possible. Aborting.])
