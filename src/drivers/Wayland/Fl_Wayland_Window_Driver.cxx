@@ -667,6 +667,8 @@ static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_o
       win_driver->is_a_rescale(true);
       window->fl_win->size(window->fl_win->w(), window->fl_win->h());
       win_driver->is_a_rescale(false);
+    } else if (window->buffer) {
+      Fl_Wayland_Graphics_Driver::buffer_commit(window, true);
     }
     if (window->fl_win->as_gl_window())
       wl_surface_set_buffer_scale(window->wl_surface, output->wld_scale);
