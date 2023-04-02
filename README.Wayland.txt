@@ -122,8 +122,7 @@ on the various supported Linux distributions/OS.
 -------------------------------------------------------
 
 Under Debian, the Wayland platform requires version 11 (a.k.a. Bullseye) or more recent.
-Under Ubuntu, the Wayland platform is known to work with version 20.04 (focal fossa) or
-more recent.
+Under Ubuntu, the Wayland platform requires version 20.04 (focal fossa) or more recent.
 
 These packages are necessary to build the FLTK library, in addition to those listed
 in section 2.1 of file README.Unix.txt :
@@ -152,7 +151,7 @@ Package installation command: sudo apt-get install <package-name ...>
 3.2 Fedora
 ----------
 
-The Wayland platform is known to work with Fedora version 35.
+The Wayland platform is known to work with Fedora version 35 or more recent.
 
 These packages are necessary to build the FLTK library, in addition to
 package groups listed in section 2.2 of file README.Unix.txt :
