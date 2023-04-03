@@ -23,7 +23,6 @@
 #include "Fl_Wayland_Image_Surface_Driver.H"
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
-#  include <cairo-xlib.h>
 #  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"
 #  include "../X11/Fl_X11_Screen_Driver.H"
 #  include "../X11/Fl_X11_Window_Driver.H"

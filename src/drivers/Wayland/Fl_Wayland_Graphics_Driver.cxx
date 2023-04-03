@@ -15,7 +15,6 @@
 //
 
 #include <config.h>
-#include <FL/platform.H>
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"

@@ -19,7 +19,6 @@
 
 #include <config.h>
 #if HAVE_GL
-#include <FL/platform.H>
 #include "../../Fl_Gl_Window_Driver.H"
 #include <wayland-egl.h>
 #include <EGL/egl.h>
