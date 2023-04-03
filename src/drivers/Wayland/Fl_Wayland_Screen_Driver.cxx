@@ -780,6 +780,7 @@ static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
 //fprintf(stderr, "keyboard leave fl_win=%p\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
   seat->keyboard_surface = NULL;
   Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  if (!win && Fl::focus()) win = Fl::focus()->top_window();
   if (win) Fl::handle(FL_UNFOCUS, win);
   key_vector.size(0);
 }
