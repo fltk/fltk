@@ -85,7 +85,6 @@ public:
 // static member functions
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
-  static Fl_Window *surface_to_window(struct wl_surface *);
   static bool own_output(struct wl_output *output);
 
 // member variables

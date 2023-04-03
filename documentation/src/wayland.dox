@@ -126,9 +126,9 @@ necessary glue C source file from a given XML file. For example, for FLTK to use
 protocol, these commands are run at build time to generate a .c file that will be compiled into libfltk
 and a header file that FLTK code will include:
 \code
-set(PROTOCOLS /usr/share/wayland-protocols)
-wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
-wayland-scanner client-header ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
+PROTOCOLS=`pkg-config --variable=pkgdatadir wayland-protocols`
+wayland-scanner private-code $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
+wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
 \endcode
 Similar operations are performed for FLTK to use protocols <tt>xdg decoration unstable v1</tt> and
 <tt>text input unstable v3</tt>.
@@ -232,7 +232,7 @@ Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wa
 receive user input, and define a local coordinate system". Buffers allow the client app to
 draw to surfaces (see below). FLTK makes no use of local coordinate systems. FLTK creates a surface
 with function \c wl_compositor_create_surface() each time an Fl_Window is show()'n.
-Static member function <tt>Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *)</tt>
+Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
 Function \c wl_surface_add_listener() associates the surface with a listener which allows to
 associate each surface with the display where it is mapped. FLTK recognizes 4 distinct

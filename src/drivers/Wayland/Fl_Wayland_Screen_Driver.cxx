@@ -217,21 +217,9 @@ static inline void checkdouble() {
 struct wl_display *Fl_Wayland_Screen_Driver::wl_display = NULL;
 
 
-Fl_Window *Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *surface) {
-  if (surface) {
-    Fl_X *xp = Fl_X::first;
-    while (xp) {
-      if (((struct wld_window*)xp->xid)->wl_surface == surface) return xp->w;
-      xp = xp->next;
-    }
-  }
-  return NULL;
-}
-
-
 static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
                                        wl_fixed_t surface_x, wl_fixed_t surface_y) {
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (!win) return NULL;
   int delta_x = 0, delta_y = 0;
   while (win->parent()) {
@@ -277,7 +265,7 @@ static void pointer_leave(void *data,
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   if (seat->pointer_focus == surface) seat->pointer_focus = NULL;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (win) {
     Fl::belowmouse(0);
     set_event_xy(win);
@@ -319,7 +307,7 @@ static void pointer_button(void *data,
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
   seat->serial = serial;
   int event = 0;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   win = win->top_window();
   wld_event_time = time;
@@ -355,7 +343,7 @@ static void pointer_axis(void *data,
        wl_fixed_t value)
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
   int delta = wl_fixed_to_int(value) / 10;
@@ -564,7 +552,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
                struct wl_array *keys)
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
-//fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are: ", Fl_Wayland_Screen_Driver::surface_to_window(surface));
+//fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are: ", Fl_Wayland_Window_Driver::surface_to_window(surface));
   // Replace wl_array_for_each(p, keys) rejected by C++
   for (uint32_t *p = (uint32_t *)(keys)->data;
       (const char *) p < ((const char *) (keys)->data + (keys)->size);
@@ -576,7 +564,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 //fprintf(stderr, "\n");
   seat->keyboard_surface = surface;
   seat->keyboard_enter_serial = serial;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (win) {
     Fl::handle(FL_FOCUS, win);
     fl_wl_find(fl_wl_xid(win));
@@ -712,7 +700,7 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   int for_key_vector = process_wld_key(seat->xkb_state, key, &keycode, &sym);
 /*xkb_keysym_get_name(sym, buf, sizeof(buf));
 const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
-fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Screen_Driver::surface_to_window(seat->keyboard_surface));*/
+fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface));*/
   xkb_state_key_get_utf8(seat->xkb_state, keycode, buf, sizeof(buf));
 //fprintf(stderr, "utf8: '%s' e_length=%d [%d]\n", buf, (int)strlen(buf), *buf);
   Fl::e_keysym = for_key_vector;
@@ -759,7 +747,7 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
   int event = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? FL_KEYDOWN : FL_KEYUP);
   // Send event to focus-containing top window as defined by FLTK,
   // otherwise send it to Wayland-defined focus window
-  Fl_Window *win = ( Fl::focus() ? Fl::focus()->top_window() : Fl_Wayland_Screen_Driver::surface_to_window(seat->keyboard_surface) );
+  Fl_Window *win = ( Fl::focus() ? Fl::focus()->top_window() : Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface) );
   if (win) {
     set_event_xy(win);
     Fl::e_is_click = 0;
@@ -777,9 +765,9 @@ static void wl_keyboard_leave(void *data, struct wl_keyboard *wl_keyboard,
                uint32_t serial, struct wl_surface *surface)
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
-//fprintf(stderr, "keyboard leave fl_win=%p\n", Fl_Wayland_Screen_Driver::surface_to_window(surface));
+//fprintf(stderr, "keyboard leave fl_win=%p\n", Fl_Wayland_Window_Driver::surface_to_window(surface));
   seat->keyboard_surface = NULL;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
   if (!win && Fl::focus()) win = Fl::focus()->top_window();
   if (win) Fl::handle(FL_UNFOCUS, win);
   key_vector.size(0);
@@ -851,7 +839,7 @@ void text_input_preedit_string(void *data, struct zwp_text_input_v3 *zwp_text_in
   Fl::e_length = text ? strlen(text) : 0;
   Fl::e_keysym = 'a'; // fake a simple key
   struct wl_surface *surface = (struct wl_surface*)data;
-  Fl_Window *win =  Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win =  Fl_Wayland_Window_Driver::surface_to_window(surface);
   set_event_xy(win);
   Fl::e_is_click = 0;
   Fl::handle(FL_KEYDOWN, win);
@@ -863,7 +851,7 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
   Fl::e_text = (char*)text;
   Fl::e_length = strlen(text);
   struct wl_surface *surface = (struct wl_surface*)data;
-  Fl_Window *win =  Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win =  Fl_Wayland_Window_Driver::surface_to_window(surface);
   set_event_xy(win);
   Fl::e_is_click = 0;
   Fl::handle(FL_KEYDOWN, win);
@@ -1567,7 +1555,7 @@ int Fl_Wayland_Screen_Driver::get_mouse(int &xx, int &yy) {
   open_display();
   xx = Fl::e_x_root; yy = Fl::e_y_root;
   if (!seat->pointer_focus) return 0;
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(seat->pointer_focus);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return 0;
   int snum = Fl_Window_Driver::driver(win)->screen_num();
 //printf("get_mouse(%dx%d)->%d\n", xx, yy, snum);

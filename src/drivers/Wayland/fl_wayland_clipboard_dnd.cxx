@@ -406,7 +406,7 @@ static uint32_t fl_dnd_serial;
 
 static void data_device_handle_enter(void *data, struct wl_data_device *data_device, uint32_t serial,
     struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer) {
-  Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(surface);
+  Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(surface);
 //printf("Drag entered our surface %p(win=%p) at %dx%d\n", surface, win, wl_fixed_to_int(x), wl_fixed_to_int(y));
   if (win) {
     fl_dnd_target_surface = surface;
@@ -437,7 +437,7 @@ static void data_device_handle_motion(void *data, struct wl_data_device *data_de
   int ret = 0;
   if (fl_dnd_target_window) {
     float f = Fl::screen_scale(fl_dnd_target_window->screen_num());
-    Fl_Window *win = Fl_Wayland_Screen_Driver::surface_to_window(fl_dnd_target_surface);
+    Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(fl_dnd_target_surface);
     Fl::e_x = wl_fixed_to_int(x) / f;
     Fl::e_y = wl_fixed_to_int(y) / f;
     while (win->parent()) {

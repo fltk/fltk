@@ -688,6 +688,16 @@ static struct wl_surface_listener surface_listener = {
 };
 
 
+Fl_Window *Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *surface) {
+  if (surface) {
+    if (wl_proxy_get_listener((struct wl_proxy *)surface) == &surface_listener) {
+      return ((struct wld_window *)wl_surface_get_user_data(surface))->fl_win;
+    }
+  }
+  return NULL;
+}
+
+
 static void handle_configure(struct libdecor_frame *frame,
      struct libdecor_configuration *configuration, void *user_data)
 {
