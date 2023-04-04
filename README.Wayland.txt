@@ -12,7 +12,7 @@ Contents
    2.2    Known Limitations
 
  3   Platform Specific Notes
-   3.1    Debian and Derivatives (like Ubuntu)
+   3.1    Debian and Derivatives (like Ubuntu, Mint, RaspberryPiOS)
    3.2    Fedora
    3.3    FreeBSD
 
@@ -97,10 +97,10 @@ it's currently not possible for an app to be notified of changes to the content 
 the system clipboard, that is, Fl::add_clipboard_notify() has no effect.
 
 * Copying data to the clipboard is best done when the app has focus. Any copy operation
-performed when the app not yet got the focus does not change the clipboard. A copy operation
-performed when the app has lost the focus is successful only if the type of the copied
-data, that is text or image, is the same as the last data type copied when the app had
-the focus.
+performed when the app did not get the focus yet does not change the clipboard. A copy
+operation performed when the app has lost the focus is successful only if the type of
+the copied data, that is, text or image, is the same as the last data type copied when
+the app had the focus.
 
 * Narrow windows with a titlebar are silently forced to be wide enough
 for the titlebar to display window buttons and a few letters of the title.
@@ -118,8 +118,8 @@ although it works inside X11 windows on the same hardware.
 The following are notes about building FLTK for the Wayland platform
 on the various supported Linux distributions/OS.
 
-3.1 Debian and Derivatives (like Ubuntu, RaspberryPiOS)
--------------------------------------------------------
+3.1 Debian and Derivatives (like Ubuntu, Mint, RaspberryPiOS)
+-------------------------------------------------------------
 
 Under Debian, the Wayland platform requires version 11 (a.k.a. Bullseye) or more recent.
 Under Ubuntu, the Wayland platform requires version 20.04 (focal fossa) or more recent.
@@ -133,13 +133,13 @@ in section 2.1 of file README.Unix.txt :
 - libdbus-1-dev
 - libxkbcommon-dev
 - libxinerama-dev
-- libgtk-3-dev   <== highly recommended, gives windows a GTK-style titlebar
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake
 - cmake-qt-gui   <== if you plan to use the GUI of CMake
 
-This package is necessary to run FLTK apps under the Gnome-Wayland desktop:
+These packages allow to run FLTK apps under the Gnome-Wayland desktop:
 - gnome-core
+- libgtk-3-dev   <== highly recommended, gives windows a Gnome-style titlebar
 
 These packages allow to run FLTK apps under the KDE/Plasma-Wayland desktop:
 - kde-plasma-desktop
