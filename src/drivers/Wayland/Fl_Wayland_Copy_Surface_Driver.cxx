@@ -14,7 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #include "Fl_Wayland_Copy_Surface_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Wayland_Graphics_Driver.H"

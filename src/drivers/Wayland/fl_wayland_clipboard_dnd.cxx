@@ -16,7 +16,6 @@
 
 #if !defined(FL_DOXYGEN)
 
-#  include <config.h>
 #  include <FL/Fl.H>
 #  include <FL/platform.H>
 #  include <FL/Fl_Window.H>
