@@ -791,14 +791,7 @@ static void handle_configure(struct libdecor_frame *frame,
    }
   libdecor_state_free(state);
 
-  // necessary with SSD
-  driver->in_handle_configure = true;
-  if (!window->fl_win->as_gl_window()) {
-    driver->flush();
-  } else {
-    driver->Fl_Window_Driver::flush(); // GL window
-  }
-  driver->in_handle_configure = false;
+  driver->flush();
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::WESTON || !is_1st_run) {
     window->fl_win->clear_damage();
   }
@@ -1273,9 +1266,9 @@ void Fl_Wayland_Window_Driver::makeWindow()
   size_range();
   pWindow->set_visible();
   int old_event = Fl::e_number;
+  pWindow->redraw();
   pWindow->handle(Fl::e_number = FL_SHOW); // get child windows to appear
   Fl::e_number = old_event;
-  pWindow->redraw();
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
     pWindow->wait_for_expose(); // to map the popup
@@ -1585,8 +1578,16 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
-  int is_a_move = (X != x() || Y != y() || Fl_Window::is_a_rescale());
-  int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
+  int is_a_move = (X != x() || Y != y());
+  bool true_rescale = Fl_Window::is_a_rescale();
+  if (fl_win && fl_win->buffer) {
+    float scale = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
+    int stride = cairo_format_stride_for_width(
+                 Fl_Cairo_Graphics_Driver::cairo_format, int(W * scale) );
+    size_t bsize = stride * int(H * scale);
+    true_rescale = (bsize != fl_win->buffer->data_size);
+  }
+  int is_a_resize = (W != w() || H != h() || true_rescale);
   if (is_a_move) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
