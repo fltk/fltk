@@ -345,9 +345,10 @@ graphics data to the display. That is done by calling function \c
 Fl_Wayland_Graphics_Driver::buffer_commit() which copies the byte array of the Cairo surface to
 the Wayland buffer's starting memory address, and calls functions \c wl_surface_attach()
 and \c wl_surface_commit(). Before calling Fl_Window::flush(),
-FLTK has computed a damaged region. \c Fl_Wayland_Window_Driver::flush() also calls function
-\c wl_surface_damage_buffer() with that information to inform the compositor of what parts
-of the surface need its attention.
+FLTK has computed a damaged region. If that region is not null,
+\c Fl_Wayland_Graphics_Driver::buffer_commit() copies only the damaged part of the Cairo
+surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
+parts to inform the compositor of what parts of the surface need its attention.
 
 An important detail here is that FLTK uses Wayland's synchronization
 mechanism to make sure the surface's \c wl_buffer is not changed until the surface is fully

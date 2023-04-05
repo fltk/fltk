@@ -395,27 +395,13 @@ void Fl_Wayland_Window_Driver::flush() {
 
   Fl_X *ip = Fl_X::flx(pWindow);
   struct flCairoRegion* r = (struct flCairoRegion*)ip->region;
-  float f = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
-  if (r && window->buffer) {
-    for (int i = 0; i < r->count; i++) {
-      int left = r->rects[i].x * f;
-      int top = r->rects[i].y * f;
-      int width = r->rects[i].width * f;
-      int height = r->rects[i].height * f;
-      wl_surface_damage_buffer(window->wl_surface, left, top, width, height);
-//fprintf(stderr, "damage %dx%d %dx%d\n", left, top, width, height);
-    }
-  } else {
-    wl_surface_damage_buffer(window->wl_surface, 0, 0,
-    pWindow->w() * f, pWindow->h() * f);
-//fprintf(stderr, "damage 0x0 %dx%d\n", pWindow->w() * f, pWindow->h() * f);
-  }
+  if (!window->buffer) r = NULL;
 
   Fl_Wayland_Window_Driver::in_flush = true;
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush = false;
   if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
-  Fl_Wayland_Graphics_Driver::buffer_commit(window, false);
+  Fl_Wayland_Graphics_Driver::buffer_commit(window, r);
 }
 
 
@@ -667,7 +653,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_o
       window->fl_win->size(window->fl_win->w(), window->fl_win->h());
       win_driver->is_a_rescale(false);
     } else if (window->buffer) {
-      Fl_Wayland_Graphics_Driver::buffer_commit(window, true);
+      Fl_Wayland_Graphics_Driver::buffer_commit(window);
     }
     if (window->fl_win->as_gl_window())
       wl_surface_set_buffer_scale(window->wl_surface, output->wld_scale);

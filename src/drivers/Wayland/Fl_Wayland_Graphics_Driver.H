@@ -78,7 +78,7 @@ public:
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) FL_OVERRIDE;
   static struct fl_wld_buffer *create_shm_buffer(int width, int height);
   static void buffer_release(struct wld_window *window);
-  static void buffer_commit(struct wld_window *window, bool need_damage = true);
+  static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
   static void cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format);
   void *gc() FL_OVERRIDE;
   void gc(void *gc) FL_OVERRIDE;
