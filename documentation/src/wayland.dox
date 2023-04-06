@@ -37,11 +37,10 @@ For example, mapping a window on a display is not done by the core protocol but 
 letter 'z'. For example, the protocol FLTK uses to support CJK input methods is called
 \c zwp_text_input_v3 and is, unfortunately, unstable.
 
-Wayland makes intensive use of the 'listener' mechanism. A listener is a small array of pointers
-to FLTK-defined callback functions associated to a Wayland-defined object; Wayland
-calls these functions when defined events occur, and transmits relevant information to the client
-app as parameters of these calls. Each listener is first associated to its corresponding
-Wayland object by a call to a specific Wayland function of the form \c wl_XXX_add_listener().
+Wayland makes intensive use of the <em>listener</em> mechanism. A listener is a small array
+of pointers to FLTK-defined callback functions associated to a Wayland-defined object;
+Wayland calls these functions when defined events occur (more at \ref wayland-listeners
+below).
 
 Wayland differs noticeably from X11 in that the position of a window in the display is
 completely hidden to the client app. This prevents function \c Fl_Window::position() from having
@@ -225,6 +224,40 @@ is nearly exactly the
 same as that used by the X11 backend. The Wayland backend differs only in the callback function
 called to handle data read from the Wayland connection socket, which is Wayland-specific.
 
+\section wayland-listeners Listeners
+
+A Wayland 'listener' is a small array of pointers to FLTK-defined callback functions
+associated to a Wayland-defined object;
+Wayland calls these functions when defined events occur, and transmits relevant information
+to the client app as parameters of these calls. Each listener is associated to its
+corresponding Wayland object, usually right after the object's creation, by a call to a
+specific Wayland function named following the form \c wl_XXX_add_listener().
+For example, this code:
+\code
+static struct wl_surface_listener surface_listener = {
+  surface_enter,
+  surface_leave,
+};
+
+  pointer_type pter_to_data;
+  struct wl_surface *my_wl_surface;
+  my_wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+  wl_surface_add_listener(my_wl_surface, &surface_listener, pter_to_data);
+\endcode
+creates a Wayland object of type <tt>struct wl_surface</tt>, associates
+a 2-member listener called \c surface_listener to it,
+and associates \c pter_to_data to it as <em>user data</em>. The \c wl_surface object's
+"user data" can be obtained later calling function \c wl_surface_get_user_data().
+
+Wayland function \c wl_proxy_get_listener() returns a pointer
+to a Wayland object's listener provided that object is transmitted cast to type
+<tt>struct wl_proxy *</tt>. This gives a handy way to distinguish FLTK-created Wayland
+objects from objects of other origin: the listener of an FLTK-created object is a known
+FLTK listener. For example, function \c Fl_Wayland_Window_Driver::surface_to_window()
+uses this possibility calling <tt>wl_proxy_get_listener( (struct wl_proxy *)wl_surface )</tt>
+for any object of type <tt>struct wl_surface</tt>: if that object was created as in the
+example above, this call returns a pointer to FLTK's \c surface_listener static variable.
+
 \section wayland-surface Wayland windows and surfaces
 
 Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wayland surface
@@ -346,7 +379,7 @@ Fl_Wayland_Graphics_Driver::buffer_commit() which copies the byte array of the C
 the Wayland buffer's starting memory address, and calls functions \c wl_surface_attach()
 and \c wl_surface_commit(). Before calling Fl_Window::flush(),
 FLTK has computed a damaged region. If that region is not null,
-\c Fl_Wayland_Graphics_Driver::buffer_commit() copies only the damaged part of the Cairo
+\c Fl_Wayland_Graphics_Driver::buffer_commit() copies only the damaged parts of the Cairo
 surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
 parts to inform the compositor of what parts of the surface need its attention.
 
@@ -384,7 +417,7 @@ buffer and instruct Wayland to map it to the display when \c cb is NULL
 which means that the compositor is ready to start performing a mapping operation, and will only
 modify \c draw_buffer when \c cb is not NULL, letting the compositor complete its ongoing
 mapping task.
-For example, FLTK's mandelbrot test app can be seen to progressively fill its window from
+For example, FLTK's mandelbrot test app set to fullscreen can be seen to progressively fill its window from
 top to bottom by blocks of lines, each block appearing when the compositor is ready to map
 a new buffer. When the compositor is not ready, the app does not block but continues
 computing and drawing in memory but not on display more lines of the desired Mandelbrot graph.
