@@ -84,10 +84,12 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
   struct wld_window *window = (struct wld_window *)data;
 //fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
   wl_callback_destroy(cb);
-  window->buffer->cb = NULL;
-  if (window->buffer->draw_buffer_needs_commit) {
-//fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window);
+  if (window->buffer) { // fix for issue #712
+    window->buffer->cb = NULL;
+    if (window->buffer->draw_buffer_needs_commit) {
+      //fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
+      Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    }
   }
 }
 
