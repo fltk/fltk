@@ -515,10 +515,6 @@ member variable of display # \c n. This variable is used by function
 \c Fl_Wayland_Window_Driver::make_current() when it calls \c Fl_Wayland_Graphics_Driver::set_buffer()
 that scales the graphics driver by this factor with \c cairo_scale().
 
-The display size information of <tt>struct Fl_Wayland_Screen_Driver::output</tt> accounts for
-the value of its \c wld_scale member
-variable: \c width and \c height are set to the number of pixels of the display / \c wld_scale.
-
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
 <tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
 
@@ -907,8 +903,9 @@ gives access, the Wayland way, to the linked list of displays in the system.
 <pre>
 struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
-  short width; // nber of horizontal pixels / wld_scale
-  short height; // nber of vertical pixels / wld_scale
+  int x, y; // logical position of the top-left of display
+  int width; // nber of horizontal pixels
+  int height; // nber of vertical pixels
   float dpi; // at this point, always 96.
   struct wl_output *wl_output; // the Wayland object for this display
   int wld_scale; // Wayland scale factor

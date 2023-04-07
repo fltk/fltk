@@ -949,6 +949,8 @@ static void output_geometry(void *data,
 {
   //fprintf(stderr, "output_geometry: x=%d y=%d physical=%dx%d\n",x,y,physical_width,physical_height);
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
+  output->x = int(x);
+  output->y = int(y);
   output->dpi = 96; // to elaborate
 }
 
@@ -956,8 +958,8 @@ static void output_mode(void *data, struct wl_output *wl_output, uint32_t flags,
       int32_t width, int32_t height, int32_t refresh)
 {
   Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)data;
-  output->width = width;
-  output->height = height;
+  output->width = int(width);
+  output->height = int(height);
 //fprintf(stderr, "output_mode: [%p]=%dx%d\n",output->wl_output,width,height);
 }
 
@@ -1018,6 +1020,9 @@ static struct wl_output_listener output_listener = {
 };
 
 
+// Notice: adding use of unstable protocol "XDG output" would allow FLTK to be notified
+// in real time of changes to the relative location of multiple displays;
+// with the present code, that information is received at startup only.
 static void registry_handle_global(void *user_data, struct wl_registry *wl_registry,
            uint32_t id, const char *interface, uint32_t version) {
 //fprintf(stderr, "interface=%s version=%u\n", interface, version);
@@ -1261,10 +1266,10 @@ static int workarea_xywh[4] = { -1, -1, -1, -1 };
 
 void Fl_Wayland_Screen_Driver::init_workarea()
 {
-  workarea_xywh[0] = 0;
-  workarea_xywh[1] = 0;
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &outputs, link) {
+    workarea_xywh[0] = output->x; // pixels
+    workarea_xywh[1] = output->y; // pixels
     workarea_xywh[2] = output->width; // pixels
     workarea_xywh[3] = output->height; // pixels
     break;
@@ -1342,7 +1347,8 @@ void Fl_Wayland_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n
     wl_list_for_each(output, &outputs, link) {
       if (i++ == n) { // n'th screen of the system
         float s = output->gui_scale * output->wld_scale;
-        X = Y = 0;
+        X = output->x / s;
+        Y = output->y / s;
         W = output->width / s;
         H = output->height / s;
         break;
