@@ -518,6 +518,18 @@ that scales the graphics driver by this factor with \c cairo_scale().
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
 <tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
 
+<h3>Fractional scaling</h3>
+The KDE compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
+that can take values between 100% and 200%. Wayland implements this rendering all
+<tt>wl_surface</tt>'s as if the scaling was at 200%, and downsizing them
+to the desired fractional scale value at the compositing stage.
+Seen from FLTK, everything runs as when <tt>wld_scale = 2</tt>. These commands make gnome
+accept fractional scaling, and turn that off:
+\code
+gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+gsettings reset org.gnome.mutter experimental-features
+\endcode
+
 
 \section wayland-mouse Mouse and trackpad handling
 
