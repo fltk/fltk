@@ -178,6 +178,7 @@ static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat, struct wl
             image->hotspot_x / scale,
             image->hotspot_y / scale);
   wl_surface_attach(seat->cursor_surface, buffer, 0, 0);
+  wl_surface_set_buffer_scale(seat->cursor_surface, scale);
   wl_surface_damage_buffer(seat->cursor_surface, 0, 0,
          image->width, image->height);
   wl_surface_commit(seat->cursor_surface);
