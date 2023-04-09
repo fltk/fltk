@@ -137,7 +137,6 @@ target_link_libraries (fluid ${FLUID_LIBS})
 # make sure that external types find the FLUID header files
 target_include_directories (fluid PRIVATE ".")
 
-
 # Add fluid-cmd console app (Windows only) for converting .fl to .cxx/.h files.
 # This is done for all Windows targets, even if cross-compiling.
 

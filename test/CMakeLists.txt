@@ -276,9 +276,19 @@ endif (OPTION_BUILD_SHARED_LIBS)
 # copy the required test files
 
 file (COPY
-  demo.menu rgb.txt browser.cxx editor.cxx valuators.fl
+  rgb.txt browser.cxx editor.cxx valuators.fl
   help_dialog.html
   DESTINATION ${TESTFILE_PATH}
+)
+
+foreach (FLTK_EXT_TEST ${FLTK_EXT_TESTS})
+  list(APPEND FLTK_EXT_DEMO_LIST ${${FLTK_EXT_TEST}_DEMO})
+endforeach()
+list(JOIN FLTK_EXT_DEMO_LIST "\n" FLTK_EXT_DEMO_ENTRIES)
+configure_file(
+  demo.menu.in
+  ${TESTFILE_PATH}/demo.menu
+  @ONLY
 )
 
 # copy the image directory for help_dialog.html
