@@ -85,6 +85,10 @@ else ()
 endif (WIN32)
 
 source_group("Header Files" FILES ${HEADERFILES})
+source_group("Extensions Files" FILES ${FLTK_EXT_FLUID_FILES})
+
+list (APPEND CPPFILES ${FLTK_EXT_FLUID_FILES})
+message(STATUS "{FLTK_EXT_FLUID_FILES}:" ${FLTK_EXT_FLUID_FILES})
 
 set (FLUID_TARGETS fluid)         # fluid and optional fluid-cmd target
 set (FLUID_LIBS fltk fltk_images) # libraries used to link fluid executables
@@ -129,6 +133,9 @@ if (USE_GDIPLUS)        # can only be true on Windows
 endif (USE_GDIPLUS)
 
 target_link_libraries (fluid ${FLUID_LIBS})
+
+# make sure that external types find the FLUID header files
+target_include_directories (fluid PRIVATE ".")
 
 
 # Add fluid-cmd console app (Windows only) for converting .fl to .cxx/.h files.

@@ -15,7 +15,12 @@ list(APPEND FLTK_EXT_TESTS
   FL_RANGE_SLIDER_TEST
 )
 
+list(APPEND FLTK_EXT_FLUID_FILES
+  ${EXT_WIDGET_DIR}/fluid/Fl_Range_Slider_Type.cxx
+)
+
 set (FL_RANGE_SLIDER_TEST_EXE rangeslider)
+set (FL_RANGE_SLIDER_TEST_DEMO "Fl_Range_Slider\nDemo\nProgram")
 set (FL_RANGE_SLIDER_TEST_CPP_FILES ${EXT_WIDGET_DIR}/test/rangeslider.cxx)
 set (FL_RANGE_SLIDER_TEST_LIBS "fltk_images;fltk")
 
