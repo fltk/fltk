@@ -144,6 +144,8 @@ if (WIN32)
   list (APPEND FLUID_TARGETS fluid-cmd)
   add_executable (fluid-cmd ${CPPFILES} ${HEADERFILES})
   target_link_libraries (fluid-cmd ${FLUID_LIBS})
+  # make sure that external types find the FLUID header files
+  target_include_directories (fluid-cmd PRIVATE ".")
 
   # we must link fluid-cmd with Cairo if OPTION_CAIRO is enabled (same as above)
   if (FLTK_HAVE_CAIRO)
@@ -164,6 +166,8 @@ if (OPTION_BUILD_SHARED_LIBS)
   else ()
     target_link_libraries (fluid-shared fltk_images_SHARED)
   endif (MSVC)
+  # make sure that external types find the FLUID header files
+  target_include_directories (fluid-shared PRIVATE ".")
 endif ()
 
 # install fluid GUI and commandline tool

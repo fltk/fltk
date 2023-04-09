@@ -282,7 +282,9 @@ file (COPY
 )
 
 foreach (FLTK_EXT_TEST ${FLTK_EXT_TESTS})
-  list(APPEND FLTK_EXT_DEMO_LIST ${${FLTK_EXT_TEST}_DEMO})
+  if (DEFINED ${FLTK_EXT_TEST}_DEMO)
+    list(APPEND FLTK_EXT_DEMO_LIST ${${FLTK_EXT_TEST}_DEMO})
+  endif()
 endforeach()
 list(JOIN FLTK_EXT_DEMO_LIST "\n" FLTK_EXT_DEMO_ENTRIES)
 configure_file(
