@@ -95,7 +95,7 @@ if test -d $includedir/FL/images; then
 fi
 
 # Cairo support
-if test -n $CAIROFLAGS; then
+if test -n "$CAIROFLAGS"; then
     CFLAGS="$CAIROFLAGS $CFLAGS"
     CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
 fi
