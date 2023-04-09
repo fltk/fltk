@@ -202,6 +202,11 @@ else ()
   CREATE_EXAMPLE (cairo_test cairo_test.cxx fltk)
 endif (FLTK_HAVE_CAIRO)
 
+# Test apps for widget extensions
+foreach (FLTK_EXT_TEST ${FLTK_EXT_TESTS})
+  CREATE_EXAMPLE (${${FLTK_EXT_TEST}_EXE} ${${FLTK_EXT_TEST}_CPP_FILES} ${${FLTK_EXT_TEST}_LIBS})
+endforeach()
+
 # /EXPERIMENTAL/ Build some of the demo programs linked against the shared lib(s)
 
 if (OPTION_BUILD_SHARED_LIBS)

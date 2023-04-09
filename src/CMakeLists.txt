@@ -396,12 +396,14 @@ else ()
 endif (FLTK_USE_X11 AND NOT OPTION_USE_WAYLAND)
 
 source_group("Header Files" FILES ${HEADER_FILES})
+source_group("Extension Files" FILES ${FLTK_EXT_CPP_FILES} ${FLTK_EXT_HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
 source_group("Driver Header Files" FILES ${DRIVER_HEADER_FILES})
 
 set (CPPFILES
   ${CPPFILES}
   ${DRIVER_FILES}
+  ${FLTK_EXT_CPP_FILES}
 )
 
 set (FORMS_FILES

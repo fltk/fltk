@@ -76,6 +76,18 @@ include (CMake/resources.cmake)
 include (CMake/options.cmake)
 
 #######################################################################
+# extensions
+#######################################################################
+file (GLOB EXT_WIDGET_DIR_LIST "extensions/widgets/*")
+foreach (EXT_WIDGET_DIR ${EXT_WIDGET_DIR_LIST})
+  include (${EXT_WIDGET_DIR}/config.cmake)
+endforeach()
+install (FILES ${FLTK_EXT_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/FL/)
+include_directories(${FLTK_EXT_INCLUDE_DIRECTORIES})
+message (STATUS "Extensions sources: ${FLTK_EXT_CPP_FILES}")
+message (STATUS "Extensions headers: ${FLTK_EXT_HEADER_FILES}")
+
+#######################################################################
 # print (debug) several build variables and options
 #######################################################################
 
