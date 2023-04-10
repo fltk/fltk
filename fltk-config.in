@@ -51,7 +51,16 @@ includedir=@includedir@
 libdir=@libdir@
 srcdir=@srcdir@
 
-# libraries to link with (must be after 'prefix' stuff)
+# BEGIN fltk-config code
+
+# Check for local invocation (in FLTK source folder), and update paths accordingly...
+selfdir=`dirname "$0"`
+if test -f "$selfdir/FL/Fl_Window.H"; then
+    includedir="$selfdir"
+    libdir="$selfdir/lib"
+fi
+
+# Libraries to link with (must be after 'prefix' stuff and after check for local invocation)
 LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
 DSOLINK="@DSOLINK@"
@@ -60,16 +69,6 @@ STATICIMAGELIBS="@STATICIMAGELIBS@"
 SHAREDSUFFIX="@SHAREDSUFFIX@"
 CAIROLIBS="@CAIROLIBS@"
 GLLIBS="@GLLIBS@"
-
-# BEGIN fltk-config code
-
-selfdir=`dirname "$0"`
-
-# Check for local invocation (in FLTK source folder), and update paths accordingly...
-if test -f "$selfdir/FL/Fl_Window.H"; then
-    includedir="$selfdir"
-    libdir="$selfdir/lib"
-fi
 
 # Check bundled image libraries in source tree
 if test -f "$libdir/libfltk_jpeg.a"; then
