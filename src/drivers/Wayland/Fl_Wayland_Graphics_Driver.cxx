@@ -107,7 +107,7 @@ static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
     int offset = top * buffer->stride + 4 * left;
     int W4 = 4 * width;
     for (int l = 0; l < height; l++) {
-      if (offset + W4 >= buffer->data_size) {
+      if (offset + W4 >= (int)buffer->data_size) {
         W4 = buffer->data_size - offset;
         if (W4 <= 0) break;
       }
