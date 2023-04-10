@@ -25,3 +25,25 @@ To a predefined number of variables that are later used to build FLTK and FLUID.
 Variables may need to be defined.
 
 
+
+This is an idea that I have been following for a while, and now that I finally implemented it, it wasn't complicated at all.
+
+My "extension" system makes it really easy to add widgets and test programs to core FLTK directly from a GitHub archive via CMake. Endusers need to put only a single additional line per extension into their CMake files to download any external widget and add it to FLTK when compiling their apps. For example:
+```
+# CMakeLists.txt
+include (FetchContent)
+
+FetchContent_Declare(FLTK GIT_REPOSITORY https://github.com/fltk/fltk GIT_TAG master)
+FetchContent_Populate(Fl_LED_Button https://github.com/matthiaswm/Fl_LED_Button SOURCE fltk/extensions/widgets/Fl_LED_Button)
+FetchContent_Populate(Fl_Spaceball https://github.com/matthiaswm/Fl_Spaceball SOURCE fltk/extensions/widgets/Fl_Spaceball)
+FetchContent_MakeAvailable(FLTK)
+
+add_executable(main main.cpp)
+target_include_directories(main PRIVATE ${fltk_SOURCE_DIR} ${fltk_BINARY_DIR}) # needed for visual studio
+target_link_libraries(main PRIVATE fltk) 
+```
+After calling these, we can `#include <FL/Fl_Spaceball.H>`, for example, or any other FLTK header.
+
+This is all completely transparent and fully automatic once the user launches CMake.
+
+
