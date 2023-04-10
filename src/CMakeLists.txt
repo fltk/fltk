@@ -646,7 +646,11 @@ if (UNIX AND OPTION_USE_WAYLAND)
   else()
     execute_process(COMMAND pkg-config --variable=pkgdatadir wayland-protocols
       OUTPUT_VARIABLE PROTOCOLS)
+    # strip trailing newline
+    string (REPLACE "\n" "" PROTOCOLS ${PROTOCOLS})
   endif (NOT (CMAKE_VERSION VERSION_LESS 3.4))
+  # replace "//" with "/"
+  string (REPLACE "//" "/" PROTOCOLS ${PROTOCOLS})
   if (NOT(EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml))
     message(WARNING "Install necessary file ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml")
   endif ()
