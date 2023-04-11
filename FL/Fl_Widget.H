@@ -652,7 +652,7 @@ public:
       Each widget has a single callback.
       \param[in] cb new callback
    */
-  void callback(Fl_Callback0* cb) {callback_ = (Fl_Callback*)cb;}
+  void callback(Fl_Callback0* cb) {callback_ = (Fl_Callback*)(void*)cb;}
 
   /** Sets the current callback function for the widget.
       Each widget has a single callback.
@@ -660,7 +660,7 @@ public:
       \param[in] p user data
    */
   void callback(Fl_Callback1* cb, long p = 0) {
-    callback_ = (Fl_Callback*)cb;
+    callback_ = (Fl_Callback*)(void *)cb;
     user_data_ = (void*)(fl_intptr_t)p;
   }
 
