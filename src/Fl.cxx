@@ -953,6 +953,8 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
     connected.
 
     \see Fl_Widget::take_focus()
+    \see Fl_Widget::needs_keyboard() const
+    \see Fl_Widget::needs_keyboard(bool)
 */
 void Fl::focus(Fl_Widget *o)
 {
@@ -960,8 +962,8 @@ void Fl::focus(Fl_Widget *o)
 
   // request an on-screen keyboard on touch screen devices if needed
   Fl_Widget *prevFocus = Fl::focus();
-  char hideKeyboard = ( prevFocus && (prevFocus->flags()&Fl_Widget::NEEDS_KEYBOARD) );
-  char showKeyboard = (o && (o->flags()&Fl_Widget::NEEDS_KEYBOARD));
+  char hideKeyboard = (prevFocus && prevFocus->needs_keyboard());
+  char showKeyboard = (o && o->needs_keyboard());
   if (hideKeyboard && !showKeyboard)
     Fl::screen_driver()->release_keyboard();
   if (showKeyboard && !hideKeyboard)

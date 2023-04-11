@@ -14,13 +14,14 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/** \file
-   Fl_Widget, Fl_Label classes . */
+/**
+  \file FL/Fl_Widget.H
+  \brief Fl_Widget and Fl_Label classes.
+*/
 
 #ifndef Fl_Widget_H
 #define Fl_Widget_H
 
-#include "Enumerations.H"
 #include "Fl.H"
 
 class Fl_Widget;
@@ -84,7 +85,6 @@ struct FL_EXPORT Fl_Label {
  */
 class FL_EXPORT Fl_Widget {
   friend class Fl_Group;
-  friend void Fl::focus(Fl_Widget*);
 
   Fl_Group* parent_;
   Fl_Callback* callback_;
@@ -157,11 +157,15 @@ protected:
         GROUP_RELATIVE  = 1<<16,  ///< Reserved, not implemented. DO NOT USE.
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         FULLSCREEN      = 1<<18,  ///< a fullscreen window (Fl_Window)
-        MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
-        NEEDS_KEYBOARD  = 1<<20,  ///< set this on touch screen devices if a widget needs a keyboard when it gets Focus. @see Fl_Screen_Driver::request_keyboard()
+        MAC_USE_ACCENTS_MENU = 1<<19, ///< On the macOS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
+        NEEDS_KEYBOARD  = 1<<20,  ///< set on touch screen devices if a widget needs a keyboard when it gets the focus. Reserved, not yet used in 1.4.0. \see Fl_Widget::needs_keyboard()
         IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
-        DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it no longer needed
-        // a tiny bit more space for new flags...
+        DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
+
+        // Note to devs: add new FLTK core flags above this line (up to 1<<28).
+
+        // Three more flags, reserved for user code
+
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
         USERFLAG1       = 1<<31   ///< reserved for 3rd party extensions
@@ -252,6 +256,34 @@ public:
       \retval 1 current label was assigned with copy_label().
   */
   int is_label_copied() const {return ((flags_ & COPIED_LABEL) ? 1 : 0);}
+
+  /**
+    Sets whether this widget needs a keyboard.
+
+    Set this on touch screen devices if a widget needs a keyboard when it gets the focus.
+
+    \note This flag can be set but is not yet \b used in FLTK 1.4.0. It is intended to be
+      used in the future on real touch devices.
+
+    \param[in]  needs   Set this to true or false
+
+    \internal Needs implementations in screen driver methods:
+      \see Fl::screen_driver()->request_keyboard();
+      \see Fl::screen_driver()->release_keyboard();
+  */
+  void needs_keyboard(bool needs) {
+    if (needs) set_flag(NEEDS_KEYBOARD);
+    else clear_flag(NEEDS_KEYBOARD);
+  }
+
+  /**
+    Returns whether this widget needs a keyboard.
+    \return  true or false
+    \see needs_keyboard(bool)
+  */
+  bool needs_keyboard() const {
+    return (flags_ & NEEDS_KEYBOARD);
+  }
 
   /** Returns a pointer to the parent widget.
       Usually this is a Fl_Group or Fl_Window.
