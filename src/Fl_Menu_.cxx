@@ -359,10 +359,11 @@ void Fl_Menu_::setonly(Fl_Menu_Item* item) {
 }
 
 /** Turns the radio item "on" for the menu item and turns "off" adjacent radio items set.
- \deprecated This method is dangerous if radio items are first in the menu.
- Use Fl_Menu_::setonly(Fl_Menu_Item*) instead.
+ \note This method is dangerous if radio items are first in the menu.
+ Make sure that \p first is set ciorrectly or use Fl_Menu_::setonly(Fl_Menu_Item*) instead.
+ \param[in] first start of menu array or NULL (default) if the radio group is not the first item
  */
-void Fl_Menu_Item::setonly() {
+void Fl_Menu_Item::setonly(Fl_Menu_Item const* first) {
   flags |= FL_MENU_RADIO | FL_MENU_VALUE;
   Fl_Menu_Item* j;
   for (j = this; ; ) {  // go down
@@ -371,9 +372,10 @@ void Fl_Menu_Item::setonly() {
     if (!j->text || !j->radio()) break; // stop after group
     j->clear();
   }
-  for (j = this-1; ; j--) { // go up
+  if (this != first) for (j = this-1; ; j--) { // go up
     if (!j->text || (j->flags&FL_MENU_DIVIDER) || !j->radio()) break;
     j->clear();
+    if (j == first) break;
   }
 }
 

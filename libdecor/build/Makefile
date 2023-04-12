@@ -20,12 +20,7 @@ OBJECTS =  fl_libdecor.o libdecor-cairo-blur.o fl_libdecor-plugins.o \
   ../../src/xdg-decoration-protocol.o ../../src/xdg-shell-protocol.o \
   ../../src/text-input-protocol.o cursor-settings.o os-compatibility.o
 
-
-# ${UNAME} is set to the product of `uname -s` in makeinclude
-
-Linux_PROTO  = /usr/share/wayland-protocols
-FreeBSD_PROTO =  /usr/local/share/wayland-protocols
-PROTOCOLS = ${${UNAME}_PROTO}
+PROTOCOLS = `pkg-config --variable=pkgdatadir wayland-protocols`
 
 Linux_CFLAGS =
 FreeBSD_CFLAGS = -I/usr/local/include

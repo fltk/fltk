@@ -1,7 +1,7 @@
 //
-// Class Fl_Wayland_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
+// Class Fl_WinAPI_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,14 +22,6 @@
 #include <FL/platform.H>
 #include "../../Fl_Gl_Window_Driver.H"
 #include <FL/gl.h>
-
-/* Implementation note about OpenGL drawing on the Wayland platform
-
-After eglCreateWindowSurface() with attributes {EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER, EGL_NONE},
-eglQueryContext() reports that EGL_RENDER_BUFFER equals EGL_BACK_BUFFER.
-This experiment suggests that the platform only supports double-buffer drawing.
-Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayland.
-*/
 
 class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);

@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,16 +72,7 @@ Fl_Menu_Bar *main_menubar = NULL;
 Fl_Window *main_window;
 
 /// Fluid application preferences, allways accessible, will be flushed when app closes.
-Fl_Preferences  fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
-
-/// Align widget position and size when designing, saved in app preferences and project file.
-int gridx = 5;
-
-/// Align widget position and size when designing, saved in app preferences and project file.
-int gridy = 5;
-
-/// Activate snapping to grid, saved in app preferences and project file.
-int snap = 1;
+Fl_Preferences fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
@@ -131,6 +122,9 @@ Fl_Menu_Item *sourceview_item = NULL;
 
 /// Menuitem to show or hide the editing overlay, label will change if overlay visibility changes.
 Fl_Menu_Item *overlay_item = NULL;
+
+/// Menuitem to show or hide the editing guides, label will change if overlay visibility changes.
+Fl_Menu_Item *guides_item = NULL;
 
 ////////////////////////////////////////////////////////////////
 
@@ -285,7 +279,13 @@ void Fluid_Project::reset() {
   code_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
+}
 
+void Fluid_Project::update_settings_dialog() {
+  if (settings_window) {
+    w_settings_project_tab->do_callback(w_settings_project_tab, LOAD);
+    w_settings_i18n_tab->do_callback(w_settings_i18n_tab, LOAD);
+  }
 }
 
 // ---- Sourceview definition
@@ -642,6 +642,7 @@ void revert_cb(Fl_Widget *,void *) {
   if (!read_file(filename, 0)) {
     undo_resume();
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     fl_message("Can't read %s: %s", filename, strerror(errno));
     return;
   }
@@ -649,6 +650,7 @@ void revert_cb(Fl_Widget *,void *) {
   undo_resume();
   set_modflag(0, 0);
   undo_clear();
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -692,6 +694,8 @@ void exit_cb(Fl_Widget *,void *) {
     delete about_panel;
   if (help_dialog)
     delete help_dialog;
+
+  g_layout_list.write(fluid_prefs, FD_STORE_USER);
 
   undo_clear();
 
@@ -780,6 +784,7 @@ void open_cb(Fl_Widget *, void *v) {
   if (!read_file(c, v!=0)) {
     undo_resume();
     widget_browser->rebuild();
+    g_project.update_settings_dialog();
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -799,6 +804,7 @@ void open_cb(Fl_Widget *, void *v) {
     undo_clear();
     if (oldfilename) free((void *)oldfilename);
   }
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -831,6 +837,7 @@ void open_history_cb(Fl_Widget *, void *v) {
     free((void *)filename);
     filename = oldfilename;
     if (main_window) main_window->label(filename);
+    g_project.update_settings_dialog();
     return;
   }
   set_modflag(0, 0);
@@ -841,6 +848,7 @@ void open_history_cb(Fl_Widget *, void *v) {
     free((void *)oldfilename);
     oldfilename = 0L;
   }
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -869,6 +877,7 @@ void new_cb(Fl_Widget *, void *v) {
   set_filename(NULL);
   set_modflag(0, 0);
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
 }
 
 /**
@@ -969,6 +978,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
   }
 
   widget_browser->rebuild();
+  g_project.update_settings_dialog();
   set_modflag(0);
   undo_clear();
 }
@@ -1144,10 +1154,6 @@ void delete_cb(Fl_Widget *, void *) {
 void paste_cb(Fl_Widget*, void*) {
   //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
-  // TODO: make the paste offset more predictable, if any at all.
-  // TODO: Don't use the grid if the user switched it off.
-  if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
-  if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
   undo_checkpoint();
   undo_suspend();
   Strategy strategy = kAddAfterCurrent;
@@ -1370,6 +1376,9 @@ void print_menu_cb(Fl_Widget *, void *) {
 
 // ---- Main menu bar
 
+extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
+extern void layout_suite_marker(Fl_Widget *, void *user_data);
+
 /**
  This is the main Fluid menu.
 
@@ -1428,10 +1437,10 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Group", FL_F+7, group_cb},
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_COMMAND+FL_SHIFT+'o',toggle_overlays},
+  {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
-  {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
+  {"Settings...",FL_ALT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1452,19 +1461,15 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
     {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
     {0},
-  {"&Center In Group",0,0,0,FL_SUBMENU},
+  {"&Center In Group",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
-  {"Set &Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
-    {"&Tiny",FL_ALT+'1',(Fl_Callback *)widget_size_cb,(void*)8,0,FL_NORMAL_LABEL,FL_HELVETICA,8},
-    {"&Small",FL_ALT+'2',(Fl_Callback *)widget_size_cb,(void*)11,0,FL_NORMAL_LABEL,FL_HELVETICA,11},
-    {"&Normal",FL_ALT+'3',(Fl_Callback *)widget_size_cb,(void*)14,0,FL_NORMAL_LABEL,FL_HELVETICA,14},
-    {"&Medium",FL_ALT+'4',(Fl_Callback *)widget_size_cb,(void*)18,0,FL_NORMAL_LABEL,FL_HELVETICA,18},
-    {"&Large",FL_ALT+'5',(Fl_Callback *)widget_size_cb,(void*)24,0,FL_NORMAL_LABEL,FL_HELVETICA,24},
-    {"&Huge",FL_ALT+'6',(Fl_Callback *)widget_size_cb,(void*)32,0,FL_NORMAL_LABEL,FL_HELVETICA,32},
-    {0},
-  {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb},
+  {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
+  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER },
+  {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
+  {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
+  {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
   {0},
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
@@ -1618,14 +1623,9 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
  */
 void make_main_window() {
   if (!batch_mode) {
-    fluid_prefs.get("snap", snap, 1);
-    fluid_prefs.get("gridx", gridx, 5);
-    fluid_prefs.get("gridy", gridy, 5);
     fluid_prefs.get("show_guides", show_guides, 0);
-    fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
     fluid_prefs.get("show_comments", show_comments, 1);
     shell_prefs_get();
-    make_layout_window();
     make_shell_window();
   }
 
@@ -1646,6 +1646,7 @@ void make_main_window() {
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
+    guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();
@@ -1824,8 +1825,8 @@ void set_modflag(int mf, int mfc) {
   }
 
   // Enable/disable the Save menu item...
-  if (modflag) save_item->activate();
-  else save_item->deactivate();
+//  if (modflag) save_item->activate();
+//  else save_item->deactivate();
 }
 
 // ---- Sourceview implementation
@@ -2091,6 +2092,7 @@ int main(int argc,char **argv) {
     main_window->show(argc,argv);
     toggle_widgetbin_cb(0,0);
     toggle_sourceview_cb(0,0);
+    g_layout_list.read(fluid_prefs, FD_STORE_USER);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
       open_history_cb(0, absolute_history[0]);
@@ -2137,20 +2139,14 @@ int main(int argc,char **argv) {
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
 
-  grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
-
 #ifdef _WIN32
   Fl::run();
 #else
   while (!quit_flag) Fl::wait();
-
   if (quit_flag) exit_cb(0,0);
 #endif // _WIN32
 
   undo_clear();
-  if (g_shell_command)
-    ::free(g_shell_command);
-
   return (0);
 }
 

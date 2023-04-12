@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     // set initial size to fit into window
     double ratio = orig->valid() ? (double)orig->w() / orig->h() : 1;
     int W = win.w() - 40;
-    int H = (double)W / ratio;
+    int H = int(W / ratio);
     printf("original size: %d x %d\n", orig->w(), orig->h());
     win.size(W, H);
     Fl::add_handler(events);

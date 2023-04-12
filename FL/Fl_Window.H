@@ -526,17 +526,6 @@ public:
   */
   void make_current();
 
-  /**
-    Changes the cursor for this window.
-
-    This always calls the system. If you are changing the cursor a lot
-    you may want to keep track of how you set it in a static variable
-    and call this only if the new cursor is different.
-
-    The type Fl_Cursor is an enumeration defined in <FL/Enumerations.H>.
-
-    \see cursor(const Fl_RGB_Image*, int, int), default_cursor()
-  */
   void cursor(Fl_Cursor);
   void cursor(const Fl_RGB_Image*, int, int);
   void default_cursor(Fl_Cursor);
@@ -571,6 +560,7 @@ public:
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Window* as_window() FL_OVERRIDE { return this; }
+  Fl_Window const* as_window() const FL_OVERRIDE { return this; }
 
   /**
    Return non-null if this is an Fl_Overlay_Window object.

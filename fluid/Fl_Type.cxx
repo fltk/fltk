@@ -34,6 +34,7 @@ copied or otherwise examined.
 #include "Fl_Type.h"
 
 #include "fluid.h"
+#include "Fd_Snap_Action.h"
 #include "Fl_Function_Type.h"
 #include "Fl_Widget_Type.h"
 #include "Fl_Window_Type.h"
@@ -193,6 +194,8 @@ void delete_all(int selected_only) {
     shell_settings_write();
     widget_browser->hposition(0);
     widget_browser->vposition(0);
+    g_layout_list.remove_all(FD_STORE_PROJECT);
+    g_layout_list.update_dialogs();
   }
   selection_changed(0);
   widget_browser->redraw();

@@ -207,7 +207,8 @@ public:
   void make_overlay_current();
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  Fl_Gl_Window* as_gl_window() FL_OVERRIDE {return this;}
+  Fl_Gl_Window* as_gl_window() FL_OVERRIDE { return this; }
+  Fl_Gl_Window const* as_gl_window() const FL_OVERRIDE { return this; }
 
   float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.

@@ -2,7 +2,7 @@
 // Definition of the part of the screen driver shared by X11 and Wayland platforms
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,6 +18,7 @@
 #ifndef FL_UNIX_SCREEN_DRIVER_H
 #define FL_UNIX_SCREEN_DRIVER_H
 
+#include <config.h>
 #include "../../Fl_Screen_Driver.H"
 
 #  if USE_POLL

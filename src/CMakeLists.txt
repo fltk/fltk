@@ -172,6 +172,10 @@ set (CPPFILES
   screen_xywh.cxx
 )
 
+if (FLTK_HAVE_CAIRO) # OPTION_CAIRO or OPTION_CAIROEXT
+  list (APPEND CPPFILES Fl_Cairo.cxx)
+endif ()
+
 # find all header files in source directory <FL/...>
 file (GLOB
   HEADER_FILES
@@ -616,6 +620,10 @@ if (HAVE_XRENDER)
   list (APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
 endif (HAVE_XRENDER)
 
+if (FLTK_HAVE_CAIRO) # OPTION_CAIRO or OPTION_CAIROEXT
+  list (APPEND OPTIONAL_LIBS ${PKG_CAIRO_LIBRARIES})
+endif()
+
 if (USE_PANGO)
   ### FIXME ###  This needs to use the PKG_* variables directly
   list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOCAIRO})
@@ -636,12 +644,29 @@ if (UNIX AND OPTION_USE_WAYLAND)
   if (NOT (CMAKE_VERSION VERSION_LESS 3.4))
     pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir) # requires cmake 3.4
   else()
-    if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
-      set(PROTOCOLS /usr/local/share/wayland-protocols)
-    else ()
-      set(PROTOCOLS /usr/share/wayland-protocols)
-    endif (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "FreeBSD")
+    execute_process(COMMAND pkg-config --variable=pkgdatadir wayland-protocols
+      OUTPUT_VARIABLE PROTOCOLS)
+    # strip trailing newline
+    string (REPLACE "\n" "" PROTOCOLS ${PROTOCOLS})
   endif (NOT (CMAKE_VERSION VERSION_LESS 3.4))
+  # replace "//" with "/"
+  string (REPLACE "//" "/" PROTOCOLS ${PROTOCOLS})
+  if (NOT(EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml))
+    message(WARNING "Install necessary file ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml")
+  endif ()
+  if (NOT(EXISTS ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml))
+    message(WARNING
+      "Install necessary file ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml")
+  endif ()
+  if (NOT(EXISTS ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml))
+    message(WARNING
+      "Install necessary file ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml")
+  endif ()
+  if (NOT((EXISTS ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml) AND
+          (EXISTS ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml) AND
+          (EXISTS ${PROTOCOLS}/unstable/text-input/text-input-unstable-v3.xml)))
+      message(FATAL_ERROR "*** Terminating: one or more required file(s) missing.")
+  endif ()
   add_custom_command(
     OUTPUT xdg-shell-protocol.c xdg-shell-client-protocol.h
     COMMAND wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
@@ -694,6 +719,10 @@ endif (UNIX AND OPTION_USE_WAYLAND)
 FL_ADD_LIBRARY (fltk STATIC "${STATIC_FILES}")
 target_link_libraries (fltk ${OPTIONAL_LIBS})
 
+if (FLTK_HAVE_CAIRO)
+  fl_target_link_directories (fltk PUBLIC "${PKG_CAIRO_LIBRARY_DIRS}")
+endif()
+
 #######################################################################
 
 FL_ADD_LIBRARY (fltk_forms STATIC "${FORMS_FILES}")
@@ -738,7 +767,8 @@ endif (OPENGL_FOUND)
 if (OPTION_BUILD_SHARED_LIBS AND NOT MSVC)
 
   FL_ADD_LIBRARY (fltk SHARED "${SHARED_FILES}")
-  target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS})
+  target_link_libraries (fltk_SHARED ${OPTIONAL_LIBS} ${PKG_CAIRO_LIBRARIES})
+  fl_target_link_directories (fltk_SHARED PUBLIC "${PKG_CAIRO_LIBRARY_DIRS}")
 
   ###################################################################
 

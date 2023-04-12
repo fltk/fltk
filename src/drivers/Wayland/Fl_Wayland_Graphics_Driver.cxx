@@ -14,8 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
-#include <FL/platform.H>
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
@@ -86,23 +84,54 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
   struct wld_window *window = (struct wld_window *)data;
 //fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
   wl_callback_destroy(cb);
-  window->buffer->cb = NULL;
-  if (window->buffer->draw_buffer_needs_commit) {
-//fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
-    Fl_Wayland_Graphics_Driver::buffer_commit(window);
+  if (window->buffer) { // fix for issue #712
+    window->buffer->cb = NULL;
+    if (window->buffer->draw_buffer_needs_commit) {
+      //fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
+      Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    }
   }
 }
 
 
-void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window, bool need_damage) {
+// copy pixels in region r from the Cairo surface to the Wayland buffer
+static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
+  struct fl_wld_buffer *buffer = window->buffer;
+  float f = Fl::screen_scale(window->fl_win->screen_num()) *
+    Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale();
+  for (int i = 0; i < r->count; i++) {
+    int left = r->rects[i].x * f;
+    int top = r->rects[i].y * f;
+    int width = r->rects[i].width * f;
+    int height = r->rects[i].height * f;
+    int offset = top * buffer->stride + 4 * left;
+    int W4 = 4 * width;
+    for (int l = 0; l < height; l++) {
+      if (offset + W4 >= (int)buffer->data_size) {
+        W4 = buffer->data_size - offset;
+        if (W4 <= 0) break;
+      }
+      memcpy((uchar*)buffer->data + offset, buffer->draw_buffer + offset, W4);
+      offset += buffer->stride;
+    }
+    wl_surface_damage_buffer(window->wl_surface, left, top, width, height);
+  }
+}
+
+
+void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
+                                struct flCairoRegion *r) {
   cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
   cairo_surface_flush(surf);
-  memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
+  if (r) copy_region(window, r);
+  else {
+    memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
+    wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
+  }
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
   wl_surface_set_buffer_scale(window->wl_surface,
                               Fl_Wayland_Window_Driver::driver(window->fl_win)->wld_scale());
   window->buffer->cb = wl_surface_frame(window->wl_surface);
-  if (need_damage) wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
   wl_callback_add_listener(window->buffer->cb, &surface_frame_listener, window);
   wl_surface_commit(window->wl_surface);
   window->buffer->draw_buffer_needs_commit = false;

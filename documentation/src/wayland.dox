@@ -37,15 +37,22 @@ For example, mapping a window on a display is not done by the core protocol but 
 letter 'z'. For example, the protocol FLTK uses to support CJK input methods is called
 \c zwp_text_input_v3 and is, unfortunately, unstable.
 
-Wayland makes intensive use of the 'listener' mechanism. A listener is a small array of pointers
-to FLTK-defined callback functions associated to a Wayland-defined object; Wayland
-calls these functions when defined events occur, and transmits relevant information to the client
-app as parameters of these calls. Each listener is first associated to its corresponding
-Wayland object by a call to a specific Wayland function of the form \c wl_XXX_add_listener().
+Wayland makes intensive use of the <em>listener</em> mechanism. A listener is a small array
+of pointers to FLTK-defined callback functions associated to a Wayland-defined object;
+Wayland calls these functions when defined events occur (more at \ref wayland-listeners
+below).
 
 Wayland differs noticeably from X11 in that the position of a window in the display is
-completely hidden to the client app. Besides toplevel and sub-windows, Wayland
-allows to create popup windows positioned relatively to a previously mapped other window.
+completely hidden to the client app. This prevents function \c Fl_Window::position() from having
+any effect on a top-level window. Wayland also prevents a client app from knowing whether
+a window is minimized: \c Fl_Window::show() has no effect on an already mapped window.
+Subwindows can be positioned as usual relatively to their
+parent window. FLTK uses that for the small, yellow windows that display
+the new scale factor value when it's changed: these are created as short-lived subwindows
+centered above \c Fl::first_window().
+Wayland allows to create popup windows positioned relatively to a previously mapped other
+window, with the sole restriction that any popup must intersect or at least touch that other
+window.
 This allows FLTK to create menus and tooltips, but it seriously complicates the algorithm
 to pilot menus, because the previous algorithm conceived for other platforms assumes
 the position of a window in the display to be known to the client app, which is wrong
@@ -118,9 +125,9 @@ necessary glue C source file from a given XML file. For example, for FLTK to use
 protocol, these commands are run at build time to generate a .c file that will be compiled into libfltk
 and a header file that FLTK code will include:
 \code
-set(PROTOCOLS /usr/share/wayland-protocols)
-wayland-scanner private-code ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
-wayland-scanner client-header ${PROTOCOLS}/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
+PROTOCOLS=`pkg-config --variable=pkgdatadir wayland-protocols`
+wayland-scanner private-code $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.c
+wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shell-client-protocol.h
 \endcode
 Similar operations are performed for FLTK to use protocols <tt>xdg decoration unstable v1</tt> and
 <tt>text input unstable v3</tt>.
@@ -217,6 +224,40 @@ is nearly exactly the
 same as that used by the X11 backend. The Wayland backend differs only in the callback function
 called to handle data read from the Wayland connection socket, which is Wayland-specific.
 
+\section wayland-listeners Listeners
+
+A Wayland 'listener' is a small array of pointers to FLTK-defined callback functions
+associated to a Wayland-defined object;
+Wayland calls these functions when defined events occur, and transmits relevant information
+to the client app as parameters of these calls. Each listener is associated to its
+corresponding Wayland object, usually right after the object's creation, by a call to a
+specific Wayland function named following the form \c wl_XXX_add_listener().
+For example, this code:
+\code
+static struct wl_surface_listener surface_listener = {
+  surface_enter,
+  surface_leave,
+};
+
+  pointer_type pter_to_data;
+  struct wl_surface *my_wl_surface;
+  my_wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+  wl_surface_add_listener(my_wl_surface, &surface_listener, pter_to_data);
+\endcode
+creates a Wayland object of type <tt>struct wl_surface</tt>, associates
+a 2-member listener called \c surface_listener to it,
+and associates \c pter_to_data to it as <em>user data</em>. The \c wl_surface object's
+"user data" can be obtained later calling function \c wl_surface_get_user_data().
+
+Wayland function \c wl_proxy_get_listener() returns a pointer
+to a Wayland object's listener provided that object is transmitted cast to type
+<tt>struct wl_proxy *</tt>. This gives a handy way to distinguish FLTK-created Wayland
+objects from objects of other origin: the listener of an FLTK-created object is a known
+FLTK listener. For example, function \c Fl_Wayland_Window_Driver::surface_to_window()
+uses this possibility calling <tt>wl_proxy_get_listener( (struct wl_proxy *)wl_surface )</tt>
+for any object of type <tt>struct wl_surface</tt>: if that object was created as in the
+example above, this call returns a pointer to FLTK's \c surface_listener static variable.
+
 \section wayland-surface Wayland windows and surfaces
 
 Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wayland surface
@@ -224,7 +265,7 @@ Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wa
 receive user input, and define a local coordinate system". Buffers allow the client app to
 draw to surfaces (see below). FLTK makes no use of local coordinate systems. FLTK creates a surface
 with function \c wl_compositor_create_surface() each time an Fl_Window is show()'n.
-Static member function <tt>Fl_Wayland_Screen_Driver::surface_to_window(struct wl_surface *)</tt>
+Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
 Function \c wl_surface_add_listener() associates the surface with a listener which allows to
 associate each surface with the display where it is mapped. FLTK recognizes 4 distinct
@@ -280,7 +321,8 @@ above unfold.
 
 \section wayland-graphics-driver Fl_Wayland_Graphics_Driver and Fl_Cairo_Graphics_Driver
 
-Wayland uses an \c Fl_Wayland_Graphics_Driver object for all its on-screen drawing operations.
+The Wayland platform of FLTK uses an \c Fl_Wayland_Graphics_Driver object for all its on-screen
+drawing operations.
 This object is created by function \c Fl_Graphics_Driver::newMainGraphicsDriver() called by
 \c Fl_Display_Device::display_device() when the library opens the display.
 New \c Fl_Wayland_Graphics_Driver objects are also created for each \c Fl_Image_Surface and
@@ -336,9 +378,10 @@ graphics data to the display. That is done by calling function \c
 Fl_Wayland_Graphics_Driver::buffer_commit() which copies the byte array of the Cairo surface to
 the Wayland buffer's starting memory address, and calls functions \c wl_surface_attach()
 and \c wl_surface_commit(). Before calling Fl_Window::flush(),
-FLTK has computed a damaged region. \c Fl_Wayland_Window_Driver::flush() also calls function
-\c wl_surface_damage_buffer() with that information to inform the compositor of what parts
-of the surface need its attention.
+FLTK has computed a damaged region. If that region is not null,
+\c Fl_Wayland_Graphics_Driver::buffer_commit() copies only the damaged parts of the Cairo
+surface to the Wayland buffer and calls function \c wl_surface_damage_buffer() for these
+parts to inform the compositor of what parts of the surface need its attention.
 
 An important detail here is that FLTK uses Wayland's synchronization
 mechanism to make sure the surface's \c wl_buffer is not changed until the surface is fully
@@ -374,7 +417,7 @@ buffer and instruct Wayland to map it to the display when \c cb is NULL
 which means that the compositor is ready to start performing a mapping operation, and will only
 modify \c draw_buffer when \c cb is not NULL, letting the compositor complete its ongoing
 mapping task.
-For example, FLTK's mandelbrot test app can be seen to progressively fill its window from
+For example, FLTK's mandelbrot test app set to fullscreen can be seen to progressively fill its window from
 top to bottom by blocks of lines, each block appearing when the compositor is ready to map
 a new buffer. When the compositor is not ready, the app does not block but continues
 computing and drawing in memory but not on display more lines of the desired Mandelbrot graph.
@@ -389,7 +432,8 @@ That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer(
 which follows this 3-step procedure to create a "buffer factory" for FLTK and construct
 Wayland buffers from it:
 - Libdecor function <tt>os_create_anonymous_file(off_t size)</tt> creates an adequate file and mmap's
-it. FLTK initially sets this file size to \c pool_size = 10 MB. This size will be increased when and
+it. This file lives in RAM because it is created by function \c memfd_create().
+FLTK initially sets this file size to \c pool_size = 10 MB. This size will be increased when and
 if necessary.
 FLTK stores in variable \c pool_memory the address of the beginning of the mmap'ed memory structure.
 - Wayland function \c wl_shm_create_pool() has this mmap'ed memory shared with the
@@ -441,19 +485,19 @@ displaying dragged text in a DnD operation.
 
 \section wayland-display Displays and HighDPI support
 
-Wayland uses the concept of seat of type <tt>struct wl_seat</tt> which encompasses displays,
-a keyboard, a mouse, and a trackpad. It might be possible for an app to deal with several seats,
-but that has not been tested with FLTK yet. Each seat may contain one or more displays, which
-Wayland calls outputs, of type <tt>struct wl_output</tt>.
+Wayland uses the concept of <em>seat</em> of type <tt>struct wl_seat</tt> which encompasses displays,
+a keyboard, a mouse, and a trackpad. Although Wayland may be in principle able to deal with several
+seats, FLTK's Wayland platform is conceived for one seat only. That seat may contain one or more
+displays, which Wayland calls <em>outputs</em>, of type <tt>struct wl_output</tt>.
 
-As written above, function \c registry_handle_global() discovers available seats at start-up time.
-This function also associates a 'listener' to each display
-by calling function \c wl_output_add_listener(). This 'listener' is an array of callback function
+As written above, function \c registry_handle_global() discovers the available seat at start-up time.
+This function also associates a listener to each display connected to the system
+by calling function \c wl_output_add_listener(). This listener is an array of callback function
 pointers among which one (\c output_mode) runs when the display is resized and another
 (\c output_scale) when the Wayland scale factor (see below) is changed.
 FLTK defines type <tt>struct Fl_Wayland_Screen_Driver::output</tt> (see \ref output)
 to store display size and scaling information.
-One such record is created for each display. FLTK uses 2 distinct scaling parameters under Wayland:
+One such record is created for each display. FLTK uses 2 distinct scaling parameters for each display:
 - <tt>int wld_scale;</tt>. This member variable of
 <tt>struct Fl_Wayland_Screen_Driver::output</tt> typically equals 1 for standard, and 2 for
 HighDPI displays. Its value is set by the Wayland compositor for each display with the effect
@@ -471,12 +515,20 @@ member variable of display # \c n. This variable is used by function
 \c Fl_Wayland_Window_Driver::make_current() when it calls \c Fl_Wayland_Graphics_Driver::set_buffer()
 that scales the graphics driver by this factor with \c cairo_scale().
 
-The display size information of <tt>struct Fl_Wayland_Screen_Driver::output</tt> accounts for
-the value of its \c wld_scale member
-variable: \c width and \c height are set to the number of pixels of the display / \c wld_scale.
-
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
 <tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
+
+<h3>Fractional scaling</h3>
+The KDE compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
+that can take values between 100% and 200%. Wayland implements this rendering all
+<tt>wl_surface</tt>'s as if the scaling was at 200%, and downsizing them
+to the desired fractional scale value at the compositing stage.
+Seen from FLTK, everything runs as when <tt>wld_scale = 2</tt>. These commands make gnome
+accept fractional scaling, and turn that off:
+\code
+gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+gsettings reset org.gnome.mutter experimental-features
+\endcode
 
 
 \section wayland-mouse Mouse and trackpad handling
@@ -562,7 +614,8 @@ It also shows that a <tt>struct cursor_image</tt> object has an associated
 <tt>struct wl_buffer</tt> object used to contain the cursor's graphics.
 
 Function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int hoty)</tt>
-gives FLTK support of custom cursor shapes. It creates a \c cursor_image object, allocates the
+gives FLTK support of custom cursor shapes. It calls \c Fl_Wayland_Window_Driver::set_cursor_4args()
+that creates a \c cursor_image object, allocates the
 corresponding \c wl_buffer by a call to \c Fl_Wayland_Graphics_Driver::create_shm_buffer() and draws
 the cursor shape into that buffer using the offscreen-drawing method of FLTK.
 
@@ -575,11 +628,16 @@ struct wl_cursor {
   char *name;
 };
 \endcode
-Function \c set_cursor(const Fl_RGB_Image *rgb, …) also creates a <tt>struct wl_cursor</tt> object
-containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
-A pointer to this <tt>struct wl_cursor</tt> object is stored in member \c custom_cursor of the
-window's \ref wld_window. Finally, function \c do_set_cursor() makes the system pointer use
-the custom \c wl_cursor to draw its shape.
+Function \c Fl_Wayland_Window_Driver::set_cursor_4args() also creates a <tt>struct wl_cursor</tt>
+object containing a single \c wl_cursor_image, which is in fact the \c cursor_image.
+Finally, a <tt>struct custom_cursor_</tt> (see \ref wld_window) is allocated and used to memorize
+the <tt>struct wl_cursor</tt> and the cursor's image and hotspot.
+A pointer to this <tt>struct custom_cursor_</tt> object is stored in member \c custom_cursor of the
+window's \ref wld_window.
+
+Function \c Fl_Wayland_Window_Driver::set_cursor_4args() is also called when a window with a custom
+cursor is moved between distinct displays or when a display is rescaled to adapt the cursor size
+to the new display's scale factor.
 
 Member function \c Fl_Wayland_Window_Driver::delete_cursor_() is used to delete any custom cursor
 shape. This occurs when a window associated to a custom cursor is un-mapped and when such a window
@@ -763,8 +821,7 @@ FLTK can copy or paste plain UTF-8 text or image data to/from the clipboard. Ima
 clipboard as \c image/bmp mime type. Images in \c image/bmp or \c image/png mime types from the
 clipboard can be pasted to FLTK apps.
 
-Files dropped are received one per line with URL-encoded UTF-8 names prepended by
-<tt>file://</tt> (see \ref events_dnd).
+Files dropped are received one pathname per line, with no \c '\\n' after the last pathname.
 
 
 \section wayland-egl EGL as support for OpenGL
@@ -801,14 +858,18 @@ struct wld_window {
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
   struct xdg_surface *xdg_surface;
+  enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
   union {
     struct libdecor_frame *frame; // for DECORATED windows
     struct wl_subsurface *subsurface; // for SUBWINDOW windows
     struct xdg_popup *xdg_popup; // for POPUP windows
     struct xdg_toplevel *xdg_toplevel; // for UNFRAMED windows
   };
-  struct wl_cursor *custom_cursor; // non-null when using custom cursor
-  enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
+  struct custom_cursor_ {
+    struct wl_cursor *wl_cursor;
+    const Fl_RGB_Image *rgb;
+    int hotx, hoty;
+  } *custom_cursor; // non-null when using custom cursor
   int configured_width; // used when negotiating window size with the compositor
   int configured_height;
   int floating_width; // helps restoring size after un-maximizing
@@ -854,8 +915,9 @@ gives access, the Wayland way, to the linked list of displays in the system.
 <pre>
 struct Fl_Wayland_Screen_Driver::output { // one record for each display
   uint32_t id; // an identifier of the display
-  short width; // nber of horizontal pixels / wld_scale
-  short height; // nber of vertical pixels / wld_scale
+  int x, y; // logical position of the top-left of display
+  int width; // nber of horizontal pixels
+  int height; // nber of vertical pixels
   float dpi; // at this point, always 96.
   struct wl_output *wl_output; // the Wayland object for this display
   int wld_scale; // Wayland scale factor
@@ -869,19 +931,18 @@ by this call:
 <tt>(struct Fl_Wayland_Screen_Driver::output *)wl_output_get_user_data(wl_output)</tt>.
 
 \anchor seat
-<h3>struct seat</h3>
-Defined in file \c Fl_Wayland_Screen_Driver.H. One such record is created by
+<h3>struct Fl_Wayland_Screen_Driver::seat</h3>
+Defined in file \c Fl_Wayland_Screen_Driver.H. One record is created by
 function \c registry_handle_global() when it receives a \c "wl_seat" or
-\c wl_data_device_manager_interface.name interface. A pointer to this record is stored in member
+\c wl_data_device_manager_interface.name interface. A pointer to this struct is stored in member
 \c seat of the client's unique \c Fl_Wayland_Screen_Driver object.
 <pre>
-struct seat {
+struct Fl_Wayland_Screen_Driver::seat {
   struct wl_seat *wl_seat;
   struct wl_pointer *wl_pointer;
   struct wl_keyboard *wl_keyboard;
   uint32_t keyboard_enter_serial;
   struct wl_surface *keyboard_surface;
-  struct wl_list link;
   struct wl_list pointer_outputs;
   struct wl_cursor_theme *cursor_theme;
   struct wl_cursor *default_cursor;

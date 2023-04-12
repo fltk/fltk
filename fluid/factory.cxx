@@ -27,6 +27,7 @@
 #include "fluid.h"
 #include "Fl_Window_Type.h"
 #include "Fl_Group_Type.h"
+#include "Fd_Snap_Action.h"
 #include "pixmaps.h"
 #include "undo.h"
 
@@ -1064,12 +1065,14 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
 
       // Set font sizes...
-      wt->o->labelsize(Fl_Widget_Type::default_size);
+      wt->o->labelsize(layout->labelsize);
+      wt->o->labelfont(layout->labelfont);
 
-      Fl_Font f;
-      int s = Fl_Widget_Type::default_size;
+      Fl_Font f = layout->textfont;
+      int s = layout->textsize;
       Fl_Color c;
 
+      wt->textstuff(1, f, s, c);
       wt->textstuff(2, f, s, c);
 
       // Resize and/or reposition new widget...

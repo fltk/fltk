@@ -290,8 +290,23 @@ c++ -I/usr/local/include ...
   the C++ compiler suitable for your system or use the `fltk-config` script
   as described below (this is recommended).
 
-The \p fltk-config script included with FLTK can be used to get the compiler
-and the options that are required by your compiler:
+\subsection basics_fltk_config Compiling Programs with the 'fltk-config' Script
+
+The \p fltk-config script included with FLTK can be used on systems with
+a Posix compliant shell, for instance Unix/Linux, macOS, Windows with MinGW,
+MSYS2, or Cygwin.
+
+\note `fltk-config` is not designed to work on Windows with Visual Studio
+compilers. If it works, then only by accident and this is undefined behavior.
+
+\code
+fltk-config --help
+\endcode
+
+displays all available options.
+
+`fltk-config` can be used to get the compiler and the options that are
+required by your compiler to build a program using the FLTK library:
 
 \code
   fltk-config --cc
@@ -316,19 +331,21 @@ c++ ... -L/usr/local/lib -lfltk -lXext -lX11 ... -lm -ldl
 Aside from the "fltk" library, there are also the following libraries
   - "fltk_forms" for the XForms compatibility classes (deprecated)
   - "fltk_gl" for the OpenGL and GLUT classes
-  - "fltk_images" for the image file classes, Fl_Help_Dialog widget, and system icon support
-  - "fltk_cairo" for optional integrated Cairo support.
+  - "fltk_images" for the image file classes, Fl_Help_Dialog widget, and system icon support.
+
+The libraries are named `fltk.lib`, `fltk_forms.lib`, `fltk_gl.lib`, and
+`fltk_images.lib` under Windows.
 
 \note
-  The separate \p fltk_cairo library will likely be removed in FLTK 1.4.0
-  (this is work in progress).
+  The separate \p fltk_cairo library is no longer necessary since FLTK 1.4.0.
+  However, this release of FLTK builds a dummy `fltk_cairo` library for
+  backwards compatibility. You are advised to remove the usage of
+  the `fltk_cairo` library from your build systems and tools.
+  <b>The `fltk_cairo` library will be removed in a future release.</b>
 
-\note
-The libraries are named "fltk.lib", "fltk_gl.lib", "fltk_forms.lib", "fltk_images.lib",
-and fltk_cairo.lib, respectively under Windows.
 
-As before, the \p fltk-config script included with FLTK can be
-used to get the options that are required by your linker:
+As before, the \p fltk-config script can be used to get the options that are
+required by your linker:
 
 \code
 c++ ... `fltk-config --ldflags`
@@ -340,46 +357,89 @@ The forms, GL, and images libraries are included with the "--use-foo"
 options, as follows:
 
 \code
-c++ ... `fltk-config --use-forms --ldflags`
-c++ ... `fltk-config --use-gl --ldflags`
+c++ ... `fltk-config --use-forms  --ldflags`
+c++ ... `fltk-config --use-gl     --ldflags`
 c++ ... `fltk-config --use-images --ldflags`
+c++ ... `fltk-config --use-cairo  --ldflags`
 c++ ... `fltk-config --use-forms --use-gl --use-images --ldflags`
-c++ ... `fltk-config --use-cairo --ldflags`
 \endcode
 
-Finally, you can use the \p fltk-config script to
-compile a single source file as a FLTK program:
+The option `--use-cairo` may be used to build your program with Cairo libs if
+you use Cairo in your code. It does no longer include the `fltk_cairo` lib but
+all necessary Cairo compiler flags and Cairo libs, if and only if FLTK has been
+built with the optional Cairo support by configure or CMake.
+
+Finally, you can use the \p fltk-config script to compile one or more source
+files as a FLTK program.
+
+The following examples will create an executable named \p filename (or
+\p filename.exe under Windows) from a single source file:
 
 \code
-fltk-config --compile filename.cpp
+fltk-config --compile filename.cxx
 fltk-config --use-forms --compile filename.cpp
-fltk-config --use-gl --compile filename.cpp
-fltk-config --use-images --compile filename.cpp
+fltk-config --use-gl --compile filename.C
+fltk-config --use-images --compile filename.cc
 fltk-config --use-cairo --compile filename.cpp
 fltk-config --use-forms --use-gl --use-images --compile filename.cpp
 \endcode
-
-Any of these will create an executable named \p filename (or \p filename.exe
-under Windows).
 
 \note <kbd>'fltk-config \-\-compile'</kbd> accepts only a limited set of file
   extensions for C++ source files: \p '.cpp', \p '.cxx',  \p '.cc',  and \p '.C'
   (capital 'C').
 
+\subsection basics_fltk_config2 Compiling Multiple Source Files with 'fltk-config'
+
+Before version 1.4.0 \p fltk-config accepted only a single source file
+and no additional compiler options or libraries.
+As of FLTK 1.4.0 it is possible to use additional compiler flags, more than
+one source file, and additional link libraries.
+
+This is intended to be used for quick prototyping and not for production code
+development. It can be used to test compiler command options (like `-Wall` or
+`-Wextra`) or additional link libraries if these are required.
+
+Building from more than one source file with flags and libraries can be
+achieved as follows:
+
 \code
-fltk-config --help
+fltk-config [USE-FLAGS] --compile MAIN [FLAGS] [SOURCES] [--link LFLAGS LIBS]
 \endcode
 
-displays all available options.
+where
+ - arguments in `[...]` are optional
+ - `USE-FLAGS` are as described above, e.g. `--use-images`
+ - `MAIN` is the main C++ source file as documented above
+ - `FLAGS` are additional compiler flags
+ - `SOURCES` are additional source files or libraries
+ - `--link` is used to separate source files and flags from linker flags and libs
+ - `LFLAGS` are optional linker flags
+ - `LIBS` are additional libraries to link against
+
+The final commandline is composed like this example:
+\code
+$ fltk-config --compile main.cxx button.o -Wextra x1.a --link -L/usr/include/cairo/ -lcairo
+
+g++ {fltk-flags} -o main -Wextra main.cxx button.o x1.a {fltk-libs} -L/usr/include/cairo/ -lcairo
+\endcode
+
+where `{fltk-flags}` are the compiler flags generated by `fltk-config` as
+before and `{fltk-libs}` are the usual linker flags and libraries.
+All optional parameters are used as-is, i.e. there is no syntax checking or
+special parsing except: the order of flags and source files is preserved
+(from the commandline) but all flags (`-something`) are positioned before
+all sources, i.e. arguments w/o leading dash ('-').
+All compiler flags and libraries generated from the library build follow
+all options and source files given on the commandline, and finally
+everything after `--link` is appended.
+
 
 \subsection basics_makefile Compiling Programs with Makefiles
 
-The previous section described how to use \p fltk-config to
-build a program consisting of a single source file from the command
-line, and this is very convenient for small test programs.
-But \p fltk-config can also be used to set the compiler and
-linker options as variables within a \p Makefile that can be
-used to build programs out of multiple source files:
+The previous sections described how to use \p fltk-config to build a program
+from the command line, and this is very convenient for small test programs.
+But \p fltk-config can also be used to set the compiler and linker options
+as variables within a \p Makefile that can be used to build larger programs.
 
 \code
 CXX      = $(shell fltk-config --cxx)
@@ -421,6 +481,7 @@ You will also need to add the following libraries to the \p Linker settings:
  - all FLTK libraries your program requires (fltk_gl, fltk_images, …)
  - additional libraries like \p libpng.lib, \p libjpeg.lib, etc.
  - the Windows Common Controls (\p comctl32.lib) and
+ - the GDIplus library if used to build FLTK (\p gdiplus.lib) and
  - the Windows Socket (\p ws2_32.lib) libraries.
 
 \note There's a \p Linker setting "Additional Library Directories" or similar;

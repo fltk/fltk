@@ -60,7 +60,7 @@ private:
   static bool in_flush; // useful for progressive window drawing
   static Fl_Wayland_Plugin *gl_plugin();
   Fl_Cursor standard_cursor_; // window's standard custom kind
-  void delete_cursor_(struct wld_window *);
+  void delete_cursor_(struct wld_window *, bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; };
@@ -84,6 +84,7 @@ public:
   virtual ~Fl_Wayland_Window_Driver();
   static struct wld_window *wld_window;
   static void redraw(struct wld_window *window);
+  static Fl_Window *surface_to_window(struct wl_surface *);
 
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);}
   static void resize_after_screen_change(void *data);
@@ -116,6 +117,7 @@ public:
   // --- window cursor stuff
   int set_cursor(Fl_Cursor) FL_OVERRIDE;
   int set_cursor(const Fl_RGB_Image*, int, int) FL_OVERRIDE;
+  int set_cursor_4args(const Fl_RGB_Image*, int, int, bool);
 
   void shape(const Fl_Image* img) FL_OVERRIDE;
   void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
@@ -136,14 +138,18 @@ struct wld_window {
   struct wl_surface *wl_surface;
   struct fl_wld_buffer *buffer;
   struct xdg_surface *xdg_surface;
-  union {
+  enum Fl_Wayland_Window_Driver::kind kind;
+  union { // for each value of kind
     struct libdecor_frame *frame;
     struct wl_subsurface *subsurface;
     struct xdg_popup *xdg_popup;
     struct xdg_toplevel *xdg_toplevel;
   };
-  struct wl_cursor *custom_cursor; // non-null when using custom cursor
-  enum Fl_Wayland_Window_Driver::kind kind;
+  struct custom_cursor_ {
+    struct wl_cursor *wl_cursor;
+    const Fl_RGB_Image *rgb;
+    int hotx, hoty;
+  } *custom_cursor; // non-null when using custom cursor
   int configured_width;
   int configured_height;
   int floating_width;

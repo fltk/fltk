@@ -303,8 +303,8 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
-    wl_display_roundtrip(fl_wl_display());
-    wl_display_roundtrip(fl_wl_display());
+    if (pWindow->parent()) win = fl_wl_xid(pWindow->top_window());
+    while (!win->xdg_surface) wl_display_roundtrip(fl_wl_display());
   }
 }
 

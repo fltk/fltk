@@ -26,6 +26,7 @@ CPPFILES = \
 	Fl_Browser_load.cxx \
 	Fl_Box.cxx \
 	Fl_Button.cxx \
+	Fl_Cairo.cxx \
 	Fl_Chart.cxx \
 	Fl_Check_Browser.cxx \
 	Fl_Check_Button.cxx \
@@ -452,7 +453,7 @@ $(LIBNAME): $(OBJECTS)
 
 libfltk.so.$(FL_DSO_VERSION): $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS)
+	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS) $(CAIROLIBS)
 	$(RM) libfltk.so
 	$(LN) libfltk.so.$(FL_DSO_VERSION) libfltk.so
 
@@ -468,7 +469,7 @@ libfltk.$(FL_DSO_VERSION).dylib: $(OBJECTS)
 		-install_name $(libdir)/$@ \
 		-current_version $(FL_VERSION) \
 		-compatibility_version $(FL_DSO_VERSION).0 \
-		$(OBJECTS) $(LDLIBS)
+		$(OBJECTS) $(LDLIBS) $(CAIROLIBS)
 	$(RM) libfltk.dylib
 	$(LN) libfltk.$(FL_DSO_VERSION).dylib libfltk.dylib
 

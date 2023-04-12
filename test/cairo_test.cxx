@@ -1,7 +1,7 @@
 //
 // Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,7 +42,7 @@
 //    (configure --enable-cairoext or CMake OPTION_CAIROEXT)
 //    which defines the preprocessor variable FLTK_HAVE_CAIROEXT.
 //    If Fl::cairo_autolink_context(true); is called at the beginning
-//    of main(), any overriden draw() function gets access to an adequate
+//    of main(), any overridden draw() function gets access to an adequate
 //    Cairo context with Fl::cairo_cc() without having to call
 //    Fl::cairo_make_current(Fl_Window*).
 
@@ -151,26 +151,32 @@ void draw_image(cairo_t *cr, int w, int h) {
 
 typedef Fl_Cairo_Window cairo_using_window;
 
-#else // !USE_FL_CAIRO_WINDOW
+#else // !USE_FL_CAIRO_WINDOW || defined(FLTK_HAVE_CAIROEXT)
 
 class cairo_using_window : public Fl_Double_Window {
   void (*draw_with_cairo_)(cairo_using_window*, cairo_t*);
+
 public:
+
   cairo_using_window(int w, int h, const char *title) : Fl_Double_Window(w, h, title) {
     Fl_Box *box = new Fl_Box(FL_NO_BOX, 0, 0, w, 25,
-                             "use Cairo and the FLTK API in Fl_Double_Window");
+                             "Cairo and FLTK API in Fl_Double_Window");
     box->labelfont(FL_TIMES_BOLD);
     box->labelsize(12);
     box->labelcolor(FL_BLUE);
   }
-  void draw() {
+  void draw() FL_OVERRIDE {
     Fl_Window::draw(); // perform drawings with the FLTK API
 #ifndef FLTK_HAVE_CAIROEXT
     Fl::cairo_make_current(this); // announce Cairo will be used in this window
 #endif
     cairo_t *cc = Fl::cairo_cc(); // get the adequate Cairo context
-    draw_with_cairo_(this, cc); // draw in this window using Cairo
+    draw_with_cairo_(this, cc);   // draw in this window using Cairo
+
+    // flush Cairo drawings: necessary at least for Windows
+    Fl::cairo_flush(cc);
   }
+
   void set_draw_cb( void (*cb)(cairo_using_window*, cairo_t*)) {
     draw_with_cairo_ = cb;
   }
@@ -188,7 +194,7 @@ int main(int argc, char **argv) {
 #ifdef FLTK_HAVE_CAIROEXT
   Fl::cairo_autolink_context(true);
 #endif
-  cairo_using_window window(300, 300, "FLTK loves Cairo");
+  cairo_using_window window(350, 350, "FLTK loves Cairo");
 
   window.resizable(&window);
   window.color(FL_WHITE);

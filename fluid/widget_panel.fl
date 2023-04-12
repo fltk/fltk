@@ -30,7 +30,7 @@ Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
-    comment {Use a Double Window to avoid flickering.} open
+    comment {Use a Double Window to avoid flickering.} open selected
     xywh {566 244 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
@@ -40,7 +40,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open selected
+        callback propagate_load open
         xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -784,7 +784,7 @@ wCallback->do_callback(wCallback, v);} open
         Fl_Group {} {
           label {Type:}
           callback propagate_load open
-          xywh {95 335 310 20} labelfont 1 labelsize 11 align 4
+          xywh {95 332 310 26} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input_Choice {} {
             callback user_data_type_cb open
@@ -809,24 +809,29 @@ wCallback->do_callback(wCallback, v);} open
     Fl_Group {} {open
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Box {} {
-        comment {Hidden resizable box}
-        xywh {10 370 75 20} labelsize 11 hide resizable
-      }
       Fl_Button wLiveMode {
         label {Live &Resize}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {155 370 80 20} type Toggle labelsize 11
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 11
       }
-      Fl_Button {} {
+      Fl_Button overlay_button {
         label {Hide &Overlays}
         callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {240 370 100 20} labelsize 11 labelcolor 1
+        tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 11
+      }
+      Fl_Button guides_button {
+        label {Hide &Guides}
+        callback guides_cb
+        tooltip {Hide alignment guides.} xywh {178 370 80 20} labelsize 11
+      }
+      Fl_Box {} {
+        comment {Hidden resizable box}
+        xywh {258 370 72 20} labelsize 11 hide resizable
       }
       Fl_Return_Button {} {
         label Close
         callback ok_cb
-        xywh {345 370 65 20} labelsize 11
+        xywh {330 370 80 20} labelsize 11
       }
     }
   }

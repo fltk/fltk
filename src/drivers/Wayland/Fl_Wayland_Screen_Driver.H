@@ -1,5 +1,5 @@
 //
-// Definition of X11 Screen interface
+// Definition of the Wayland Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2023 by Bill Spitzak and others.
@@ -28,33 +28,6 @@
 
 class Fl_Window;
 
-struct seat {
-  struct wl_seat *wl_seat;
-  struct wl_pointer *wl_pointer;
-  struct wl_keyboard *wl_keyboard;
-  uint32_t keyboard_enter_serial;
-  struct wl_surface *keyboard_surface;
-  struct wl_list link;
-  struct wl_list pointer_outputs;
-  struct wl_cursor_theme *cursor_theme;
-  struct wl_cursor *default_cursor;
-  struct wl_surface *cursor_surface;
-  struct wl_surface *pointer_focus;
-  int pointer_scale;
-  uint32_t serial;
-  uint32_t pointer_enter_serial;
-  struct wl_data_device_manager *data_device_manager;
-  struct wl_data_device *data_device;
-  struct wl_data_source *data_source;
-  struct xkb_state *xkb_state;
-  struct xkb_context *xkb_context;
-  struct xkb_keymap *xkb_keymap;
-  struct xkb_compose_state *xkb_compose_state;
-  char *name;
-  struct zwp_text_input_v3 *text_input;
-};
-
-
 class Fl_Wayland_Screen_Driver : public Fl_Unix_Screen_Driver
 {
   friend class Fl_Screen_Driver;
@@ -67,17 +40,42 @@ private:
 public:
 // type definitions
   typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
+  struct seat {
+    struct wl_seat *wl_seat;
+    struct wl_pointer *wl_pointer;
+    struct wl_keyboard *wl_keyboard;
+    uint32_t keyboard_enter_serial;
+    struct wl_surface *keyboard_surface;
+    struct wl_list pointer_outputs;
+    struct wl_cursor_theme *cursor_theme;
+    struct wl_cursor *default_cursor;
+    struct wl_surface *cursor_surface;
+    struct wl_surface *pointer_focus;
+    int pointer_scale;
+    uint32_t serial;
+    uint32_t pointer_enter_serial;
+    struct wl_data_device_manager *data_device_manager;
+    struct wl_data_device *data_device;
+    struct wl_data_source *data_source;
+    struct xkb_state *xkb_state;
+    struct xkb_context *xkb_context;
+    struct xkb_keymap *xkb_keymap;
+    struct xkb_compose_state *xkb_compose_state;
+    char *name;
+    struct zwp_text_input_v3 *text_input;
+  };
   struct output { // one record for each screen
     uint32_t id;
-    short width; // in pixels
-    short height; // in pixels
+    int x, y; // logical position of screen
+    int width; // in pixels
+    int height; // in pixels
     float dpi;
     struct wl_output *wl_output;
     int wld_scale; // Wayland scale factor
     float gui_scale; // FLTK scale factor
     struct wl_list link;
   };
-  
+
 // static member variables
   static FL_EXPORT struct wl_display *wl_display;
   static const struct wl_data_device_listener *p_data_device_listener;
@@ -88,9 +86,8 @@ public:
 // static member functions
   static void insertion_point_location(int x, int y, int height);
   static bool insertion_point_location(int *px, int *py, int *pwidth, int *pheight);
-  static Fl_Window *surface_to_window(struct wl_surface *);
   static bool own_output(struct wl_output *output);
-  
+
 // member variables
   struct wl_cursor *xc_arrow;
   struct wl_cursor *xc_ns;
@@ -120,11 +117,11 @@ public:
   struct libdecor *libdecor_context;
   struct xdg_wm_base *xdg_wm_base;
   struct zwp_text_input_manager_v3 *text_input_base;
-  
+
 // constructor
   Fl_Wayland_Screen_Driver();
 
-// overriden functions from parent class Fl_Screen_Driver
+// overridden functions from parent class Fl_Screen_Driver
   APP_SCALING_CAPABILITY rescalable() FL_OVERRIDE { return PER_SCREEN_APP_SCALING; }
   float scale(int n) FL_OVERRIDE;
   void scale(int n, float f) FL_OVERRIDE;
@@ -169,12 +166,12 @@ public:
   void *control_maximize_button(void *data) FL_OVERRIDE;
   int event_key(int k) FL_OVERRIDE;
   int get_key(int k) FL_OVERRIDE;
+  void enable_im() FL_OVERRIDE;
+  void disable_im() FL_OVERRIDE;
 
 // Wayland-specific member functions
-  int get_mouse_unscaled(int &xx, int &yy);
   void screen_count_set(int count) {num_screens = count;}
   void reset_cursor();
-  int screen_num_unscaled(int x, int y);
   // this one is in fl_wayland_clipboard_dnd.cxx
   void copy_image(const unsigned char* data, int W, int H);
   void init_workarea();

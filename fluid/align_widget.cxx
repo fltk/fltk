@@ -477,31 +477,3 @@ void align_widget_cb(Fl_Widget*, long how)
   if (changed)
     set_modflag(1);
 }
-
-
-// Set sizes of selected widgets...
-void widget_size_cb(Fl_Widget *, long size) {
-  // Update any selected widgets...
-  int changed = 0;
-  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-    if (o->selected && o->is_widget()) {
-      if (!changed) {
-        changed = 1;
-        undo_checkpoint();
-      }
-
-      Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-      w->labelsize((Fl_Font)size);
-      Fl_Font f;
-      int s = (int)size;
-      Fl_Color c;
-      ((Fl_Widget_Type *)o)->textstuff(2, f, s, c);
-
-      w->redraw();
-      // since this may be a major change, the whole window should be redrawn
-      if (w->window()) w->window()->redraw();
-    }
-  }
-  if (changed)
-    set_modflag(1);
-}

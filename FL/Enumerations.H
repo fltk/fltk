@@ -531,7 +531,7 @@ enum Fl_Callback_Reason {
 #define FL_Forward      0xEF27   ///< Like forward on a browser
 #define FL_Stop         0xEF28   ///< Stop current operation
 #define FL_Refresh      0xEF29   ///< Refresh the page
-#define FL_Sleep        0xEF2F   ///< Put system to sleep        
+#define FL_Sleep        0xEF2F   ///< Put system to sleep
 #define FL_Favorites    0xEF30   ///< Show favorite locations
 
 /**@}*/  // group: Non-ASCII key names

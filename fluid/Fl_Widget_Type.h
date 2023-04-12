@@ -61,8 +61,6 @@ protected:
   Fl_Widget *live_widget;
 
 public:
-  static int default_size;
-
   const char *xclass; // junk string, used for shortcut
   Fl_Widget *o;
   int public_;
@@ -111,7 +109,6 @@ public:
   void copy_properties() FL_OVERRIDE;
 
   virtual void ideal_size(int &w, int &h);
-  virtual void ideal_spacing(int &x, int &y);
 
   ~Fl_Widget_Type();
   void redraw();

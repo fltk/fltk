@@ -682,5 +682,5 @@ shape$(EXEEXT): shape.o
 
 cairo_test$(EXEEXT): cairo_test.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(CAIROLIBS) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@

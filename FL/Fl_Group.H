@@ -228,6 +228,7 @@ public:
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Group* as_group() FL_OVERRIDE { return this; }
+  Fl_Group const* as_group() const FL_OVERRIDE { return this; }
 
   // back compatibility functions:
 

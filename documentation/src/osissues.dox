@@ -4,6 +4,7 @@
 
 This appendix describes the operating system specific interfaces in FLTK:
 \li \ref osissues_accessing
+\li \ref osissues_wl_x11_hybrid
 \li \ref osissues_unix
 \li \ref osissues_win32
 \li \ref osissues_macos
@@ -44,7 +45,39 @@ operating system.
 </TABLE>
 </CENTER>
 
+\section osissues_wl_x11_hybrid The Wayland/X11 hybrid library
+
+By default, the FLTK library is, under Linux and Unix, a Wayland/X11 hybrid which
+can run FLTK-based apps as Wayland clients or as X11 clients.
+The choice between running an app as a Wayland or an X11 client is done as follows,
+when the app runs function \c fl_open_display() (that function can be called explicitly by the app
+or implicitly by FLTK, for example the first time an Fl_Window is show()'n) :
+- if environment variable FLTK_BACKEND is not defined, Wayland is used if a Wayland compositor
+  is available, otherwise X11 is used;
+- if $FLTK_BACKEND equals "wayland", the library makes the app a Wayland client, and stops
+  with error if no Wayland compositor is available;
+- if $FLTK_BACKEND equals "x11", the library makes the app an X11 client even if a Wayland
+  compositor is available.
+
+After function \c fl_open_display() has been called, exactly one of the functions \c fl_wl_display()
+and \c fl_x11_display() returns a non-NULL value.
+When the former function does, the app runs as a Wayland client,
+and Wayland-specific functions and symbols described below (\ref osissues_wayland) can be used, whereas
+X11-specific functions and symbols cannot. Otherwise, the app runs as an X11 client, and only
+X11-specific functions and symbols below (\ref osissues_unix) can be used.
+
+Because a single app can be expected to run either Wayland or X11, it's necessary to use distinct
+names for global variables and functions in the X11- and the Wayland-specific source code.
+
+Non-default configurations of the FLTK library under Linux/Unix are described in
+file README.Wayland.txt.
+
 \section osissues_unix The UNIX (X11) Interface
+
+Cross-platform applications should bracket X11-specific source code between
+<tt>\#if defined(FLTK_USE_X11) / \#endif</tt> and should ensure function
+\c fl_x11_display() returns non-NULL before calling X11-specific functions and using
+X11-specific symbols.
 
 The UNIX interface provides access to the X Window System
 state information and data structures.
@@ -494,6 +527,9 @@ what is done by the gnome and KDE desktops.
 
 \section osissues_win32 The Windows Interface
 
+Cross-platform applications should bracket Windows-specific source code between
+<tt>\#ifdef _WIN32 / \#endif</tt>.
+
 The Windows interface provides access to the Windows GDI
 state information and data structures.
 
@@ -712,6 +748,9 @@ version of FLTK:
 
 \section osissues_macos The Apple OS X Interface
 
+Cross-platform applications should bracket macOS-specific source code between
+<tt>\#if defined(\_\_APPLE\_\_) && !defined(FLTK_USE_X11) / \#endif</tt>.
+
 FLTK supports Apple OS X using the Apple Cocoa library. Older
 versions of MacOS are no longer supported.
 
@@ -853,9 +892,11 @@ All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
-left corner of the enclosing Fl_Window. The global variable
-\c fl_gc (of type \c CGContextRef) is the appropriate Quartz 2D drawing environment.
-Include FL/platform.H to declare the \c fl_gc variable.
+left corner of the enclosing Fl_Window. The function \c fl_mac_gc() returns the appropriate
+Quartz 2D drawing environment (of type \c CGContextRef). For compatibility with previous FLTK
+versions, deprecated global variable \c fl_gc gives the same value.
+
+Include FL/platform.H to declare the \c fl_mac_gc() function (or the \c fl_gc variable).
 
 \subsection osissues_localize Internationalization
 All FLTK programs contain an application menu with, e.g., the About xxx, Hide xxx, and Quit xxx items.
@@ -946,8 +987,10 @@ FLTK uses UTF-8-encoded UNIX-style filenames and paths.
 
 \section osissues_wayland The Wayland Interface
 
-See file README.Wayland.txt for details about how to organize platform-specific
-source code for the Wayland platform.
+Cross-platform applications should bracket Wayland-specific source code between
+<tt>\#ifdef FLTK_USE_WAYLAND / \#endif</tt> and should ensure function
+\c fl_wl_display() returns non-NULL before calling Wayland-specific functions and using
+Wayland-specific symbols.
 
 extern struct wl_display *fl_wl_display();
 \par

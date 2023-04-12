@@ -120,9 +120,9 @@ static void zoom(bool out) {
   // Note: deliberately no range check (use key 'N' to reset)
   static const double f = 1.05;
   if (out)
-    animgif.resize((double)W/f, (double)H/f);
+    animgif.resize(int(W/f), int(H/f));
   else
-    animgif.resize(f*W, f*H);
+    animgif.resize(int(f*W), int(f*H));
 }
 
 static void change_speed(int dir_) {

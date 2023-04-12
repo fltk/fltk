@@ -18,6 +18,7 @@
 #include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/fl_string_functions.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -198,8 +199,8 @@ void Fl_Anim_GIF_Image::FrameInfo::copy(const FrameInfo& fi) {
     double scale_factor_x = (double)canvas_w / (double)fi.canvas_w;
     double scale_factor_y = (double)canvas_h / (double)fi.canvas_h;
     if (fi.optimize_mem) {
-      frames[i].x = lround(fi.frames[i].x * scale_factor_x);
-      frames[i].y = lround(fi.frames[i].y * scale_factor_y);
+      frames[i].x = (unsigned short)lround(fi.frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)lround(fi.frames[i].y * scale_factor_y);
       int new_w = (int)lround(fi.frames[i].w * scale_factor_x);
       int new_h = (int)lround(fi.frames[i].h * scale_factor_y);
       frames[i].w = new_w;
@@ -402,8 +403,8 @@ void Fl_Anim_GIF_Image::FrameInfo::resize(int W, int H) {
   double scale_factor_y = (double)H / (double)canvas_h;
   for (int i=0; i < frames_size; i++) {
     if (optimize_mem) {
-      frames[i].x = lround(frames[i].x * scale_factor_x);
-      frames[i].y = lround(frames[i].y * scale_factor_y);
+      frames[i].x = (unsigned short)lround(frames[i].x * scale_factor_x);
+      frames[i].y = (unsigned short)lround(frames[i].y * scale_factor_y);
       int new_w = (int)lround(frames[i].w * scale_factor_x);
       int new_h = (int)lround(frames[i].h * scale_factor_y);
       frames[i].w = new_w;
@@ -745,7 +746,7 @@ Fl_Image *Fl_Anim_GIF_Image::copy(int W, int H) const /* override */ {
     delete gif;
   }
 
-  if (name_) copied->name_ = strdup(name_);
+  if (name_) copied->name_ = fl_strdup(name_);
   copied->flags_ = flags_;
   copied->frame_ = frame_;
   copied->speed_ = speed_;
@@ -820,8 +821,8 @@ void Fl_Anim_GIF_Image::draw(int x, int y, int w, int h,
         Fl_RGB_Image *rgb = fi_->frames[f].rgb;
         if (rgb) {
           float s = Fl_Graphics_Driver::default_driver().scale();
-                rgb->scale(s*fi_->frames[f].w, s*fi_->frames[f].h, 0, 1);
-          rgb->draw(x + s*fi_->frames[f].x, y + s*fi_->frames[f].y, w, h, cx, cy);
+          rgb->scale(int(s*fi_->frames[f].w), int(s*fi_->frames[f].h), 0, 1);
+          rgb->draw(int(x + s*fi_->frames[f].x), int(y + s*fi_->frames[f].y), w, h, cx, cy);
         }
       }
     }
@@ -1040,7 +1041,7 @@ bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
   free(name_);
-  name_ = name ? strdup(name) : 0;
+  name_ = name ? fl_strdup(name) : 0;
 
   // as load() can be called multiple times
   // we have to replicate the actions of the pixmap destructor here

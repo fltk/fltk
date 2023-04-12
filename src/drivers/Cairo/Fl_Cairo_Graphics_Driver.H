@@ -28,12 +28,10 @@ typedef struct _PangoLayout  PangoLayout;
 typedef struct _PangoContext PangoContext;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-#if USE_PANGO
-  struct flCairoRegion {
-    int count;
-    struct _cairo_rectangle *rects;
-  }; // a region is the union of a series of rectangles
-#endif
+struct flCairoRegion {
+  int count;
+  struct _cairo_rectangle *rects;
+}; // a region is the union of a series of rectangles
 
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:
@@ -197,6 +195,7 @@ public:
   void restore_scale(float) FL_OVERRIDE;
   void antialias(int state) FL_OVERRIDE;
   int antialias() FL_OVERRIDE;
+  void focus_rect(int x, int y, int w, int h) FL_OVERRIDE;
 };
 
 #endif // FL_CAIRO_GRAPHICS_DRIVER_H

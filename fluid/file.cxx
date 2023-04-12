@@ -159,6 +159,10 @@ int Fd_Project_Reader::close_read() {
   return 1;
 }
 
+const char *Fd_Project_Reader::filename_name() {
+  return fl_filename_name(fname);
+}
+
 /**
  Convert an ASCII sequence form the \.fl file that starts with a \\ into a single character.
  Conversion includes the common C style \\ characters like \\n, \\x## hex
@@ -292,11 +296,6 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         g_project.i18n_conditional = read_word();
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_type"))
-      {
-        g_project.i18n_type = atoi(read_word());
-        goto CONTINUE;
-      }
       if (!strcmp(c,"header_name")) {
         if (!g_project.header_file_set) g_project.header_file_name = read_word();
         else read_word();
@@ -309,7 +308,12 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         goto CONTINUE;
       }
 
-      if (!strcmp(c, "snap") || !strcmp(c, "gridx") || !strcmp(c, "gridy")) {
+      if (!strcmp(c, "snap")) {
+        g_layout_list.read(this);
+        goto CONTINUE;
+      }
+
+      if (!strcmp(c, "gridx") || !strcmp(c, "gridy")) {
         // grid settings are now global
         read_word();
         goto CONTINUE;
@@ -520,6 +524,15 @@ const char *Fd_Project_Reader::read_word(int wantbrace) {
     buffer[length] = 0;
     return buffer;
 
+  }
+}
+
+int Fd_Project_Reader::read_int() {
+  const char *word = read_word();
+  if (word) {
+    return atoi(word);
+  } else {
+    return 0;
   }
 }
 
@@ -791,7 +804,7 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
   if (!selected_only) {
     write_string("\nheader_name"); write_word(g_project.header_file_name.c_str());
     write_string("\ncode_name"); write_word(g_project.code_file_name.c_str());
-
+    g_layout_list.write(this);
 #if 0
     // https://github.com/fltk/fltk/issues/328
     // Project wide settings require a redesign.

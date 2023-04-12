@@ -216,12 +216,12 @@ void gl_measure(const char* str, int& x, int& y) {
 void gl_rect(int x, int y, int w, int h) {
   if (w < 0) {w = -w; x = x-w;}
   if (h < 0) {h = -h; y = y-h;}
-  glBegin(GL_LINE_STRIP);
-  glVertex2i(x+w-1, y+h-1);
-  glVertex2i(x+w-1, y);
+  glBegin(GL_LINE_LOOP);
+  int r = x+w-1, b = y+h-1;
+  glVertex2i(r, b);
+  glVertex2i(r, y);
   glVertex2i(x, y);
-  glVertex2i(x, y+h-1);
-  glVertex2i(x+w, y+h-1);
+  glVertex2i(x, b);
   glEnd();
 }
 

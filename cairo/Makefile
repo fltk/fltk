@@ -1,8 +1,8 @@
 #
-# CAIRO library makefile for the Fast Light Toolkit (FLTK).
+# Dummy Cairo Library Makefile for the Fast Light Toolkit (FLTK).
 #
 # Copyright 1997-2009 by Easy Software Products.
-# Copyright 2010-2021 by Bill Spitzak and others.
+# Copyright 2010-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -15,6 +15,15 @@
 #     https://www.fltk.org/bugs.php
 #
 
+########################################################################
+# Note: since FLTK 1.4.0 Fl_Cairo_Window support [1] is included in
+# libfltk and libfltk_cairo is no longer necessary. This directory is
+# used to build an "empty" dummy library for backwards compatibility,
+# just in case users expect it to exist.
+# ----------------------------------------------------------------------
+# The entire 'cairo' folder will be removed in a later FLTK release.
+########################################################################
+
 # Note:	see ../configure.in and/or ../makeinclude for definition of
 #	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
@@ -24,8 +33,8 @@ include ../makeinclude
 #
 # Object files...
 #
-CAIROCPPFILES   = Fl_Cairo.cxx
-CAIROOBJECTS	= $(CAIROCPPFILES:.cxx=.o)
+CAIROCFILES	= cairo_dummy.c
+CAIROOBJECTS	= $(CAIROCFILES:.c=.o)
 
 #
 # Make all of the targets...
@@ -89,7 +98,7 @@ mgwfltknox_cairo-$(FL_DSO_VERSION).dll: $(CAIROLIBNAME) ../src/mgwfltknox-$(FL_D
 clean:
 	-$(RM) *.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM) $(CAIROOBJECTS)  $(CAIROLIBNAME) $(CAIRODSONAME) \
-		libfltk_cairo.so src/libfltk_cairo.sl  src/libfltk_cairo.dylib
+		libfltk_cairo.so src/libfltk_cairo.sl src/libfltk_cairo.dylib
 
 #
 # Install everything...
@@ -163,8 +172,8 @@ uninstall:
 
 $(CAIROOBJECTS):	../makeinclude
 
-depend: $(CAIROCPPFILES)
-	makedepend -Y -I.. -f makedepend -w 20 $(CAIROCPPFILES)
+depend: $(CAIROCFILES)
+	makedepend -Y -I.. -f makedepend -w 20 $(CAIROCFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
 	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u -f >> makedepend.tmp; )

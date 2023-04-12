@@ -20,6 +20,9 @@
 #include <FL/Fl_Choice.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_RGB_Image.H>
+#include "../fluid/pixmaps/compressed.xpm"
 
 Fl_Cursor cursor = FL_CURSOR_DEFAULT;
 
@@ -29,6 +32,13 @@ void choice_cb(Fl_Widget *, void *v) {
   cursor = (Fl_Cursor)(fl_intptr_t)v;
   cursor_slider->value(cursor);
   fl_cursor(cursor);
+}
+
+void custom_cb(Fl_Widget *widget, void *) {
+  Fl_Pixmap pxm(compressed_xpm);
+  Fl_RGB_Image rgb(&pxm);
+  rgb.scale(16,16);
+  widget->top_window()->cursor(&rgb, rgb.w()/2, rgb.h()/2);
 }
 
 Fl_Menu_Item choices[] = {
@@ -53,6 +63,7 @@ Fl_Menu_Item choices[] = {
   {"FL_CURSOR_W",0,choice_cb,(void*)FL_CURSOR_W},
   {"FL_CURSOR_NW",0,choice_cb,(void*)FL_CURSOR_NW},
   {"FL_CURSOR_NONE",0,choice_cb,(void*)FL_CURSOR_NONE},
+  {"custom cursor",0,custom_cb,NULL},
   {0}
 };
 

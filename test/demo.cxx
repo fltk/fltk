@@ -69,10 +69,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#if defined __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -84,6 +80,14 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>              // fl_alert()
 #include <FL/fl_utf8.h>             // fl_getcwd()
+
+// Define USE_MAC_OS for convenience (below). We use macOS specific features (bundles
+// and paths) if USE_MAC_OS is defined, otherwise we're using X11 (XQuartz) on macOS
+
+#if defined __APPLE__ && !defined(FLTK_USE_X11)
+#define USE_MAC_OS
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 
 #define FORM_W 350
 #define FORM_H 440
@@ -122,7 +126,7 @@ char command      [2 * FL_PATH_MAX + 40]; // command to be executed
 
 #ifdef _WIN32
 const char *suffix = ".exe";
-#elif defined __APPLE__
+#elif defined USE_MAC_OS
 const char *suffix = ".app";
 #else
 const char *suffix = "";
@@ -393,7 +397,7 @@ void dobut(Fl_Widget *, long arg) {
 
   // format commandline with optional parameters
 
-#if defined(__APPLE__) // macOS
+#if defined(USE_MAC_OS) // macOS
 
   if (params[0]) {
     // we assume that we have only one argument which is a filename in 'data_path'
@@ -431,13 +435,13 @@ void dobut(Fl_Widget *, long arg) {
     fl_alert("Error starting process, error #%lu\n'%s'", err, command);
   }
 
-#elif defined __APPLE__
+#elif defined USE_MAC_OS
 
   debug_var("Command", command);
 
   system(command);
 
-#else // other platforms (Unix, Linux)
+#else // other platforms (Unix, Linux, X11, and XQuartz on macOS)
 
   strcat(command, " &"); // run in background
 
@@ -534,7 +538,7 @@ int main(int argc, char **argv) {
   // construct app_path for all executable files
 
   fl_filename_absolute(app_path, sizeof(app_path), argv[0]);
-#ifdef __APPLE__
+#if defined(USE_MAC_OS)
     char *q = strstr(app_path, "/Contents/MacOS/");
     if (q) *q = 0;
 #endif
