@@ -198,9 +198,6 @@ void Fl_Wayland_Window_Driver::flush_overlay()
     fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid, 0, 0);
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
-  struct wld_window * xid = fl_wl_xid(pWindow);
-  int s = wld_scale();
-  wl_surface_damage_buffer(xid->wl_surface, 0, 0, pWindow->w() * s, pWindow->h() * s);
 }
 
 
