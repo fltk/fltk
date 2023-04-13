@@ -25,7 +25,7 @@ enum {
   FD_STORE_INTERNAL,
   FD_STORE_USER,
   FD_STORE_PROJECT,
-  FD_STORE_FILE,
+  FD_STORE_FILE
 };
 
 class Fd_Layout_Preset {
