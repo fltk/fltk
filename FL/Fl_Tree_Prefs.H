@@ -77,7 +77,7 @@ enum Fl_Tree_Select {
 ///
 enum Fl_Tree_Item_Reselect_Mode {
   FL_TREE_SELECTABLE_ONCE=0,    ///< Item can only be selected once (default)
-  FL_TREE_SELECTABLE_ALWAYS,    ///< Enables FL_TREE_REASON_RESELECTED events for callbacks
+  FL_TREE_SELECTABLE_ALWAYS     ///< Enables FL_TREE_REASON_RESELECTED events for callbacks
 };
 
 /// \enum Fl_Tree_Item_Draw_Mode

@@ -161,7 +161,7 @@ public:
     ATTR_GRAMMAR        = 0x0008, ///< grammar suggestion (blue dotted underline)
     ATTR_SPELLING       = 0x000C, ///< spelling suggestion (red dotted underline)
     ATTR_STRIKE_THROUGH = 0x0010, ///< line through the middle of the text
-    ATTR_LINES_MASK     = 0x001C, ///< the mask for all underline and strike through types
+    ATTR_LINES_MASK     = 0x001C  ///< the mask for all underline and strike through types
   };
 
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);

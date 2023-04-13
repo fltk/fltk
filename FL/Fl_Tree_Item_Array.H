@@ -48,7 +48,7 @@ class FL_EXPORT Fl_Tree_Item_Array {
   int _size;                    // #items *allocated* for array
   int _chunksize;               // #items to enlarge mem allocation
   enum {
-    MANAGE_ITEM = 1,            ///> manage the Fl_Tree_Item's internals (internal use only)
+    MANAGE_ITEM = 1             ///> manage the Fl_Tree_Item's internals (internal use only)
   };
   char _flags;                  // flags to control behavior
   void enlarge(int count);

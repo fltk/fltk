@@ -1,7 +1,7 @@
 //
 // Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002-2022 by Matthias Melcher.
+// Copyright 2002-2023 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -137,7 +137,7 @@ public:
     CORE_SYSTEM_L = CORE | SYSTEM_L,   ///< Same as CORE | SYSTEM | C_LOCALE
     CORE_USER_L   = CORE | USER_L,     ///< Same as CORE | USER | C_LOCALE
     CORE_SYSTEM   = CORE | SYSTEM,     ///< Deprecated, same as CORE | SYSTEM. Use CORE_SYSTEM_L instead.
-    CORE_USER     = CORE | USER,       ///< Deprecated, same as CORE | USER. Use CORE_USER_L instead.
+    CORE_USER     = CORE | USER        ///< Deprecated, same as CORE | USER. Use CORE_USER_L instead.
   };
 
   /**

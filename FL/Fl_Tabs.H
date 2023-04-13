@@ -303,7 +303,7 @@ public:
     OVERFLOW_COMPRESS = 0,
     OVERFLOW_CLIP,
     OVERFLOW_PULLDOWN,
-    OVERFLOW_DRAG,
+    OVERFLOW_DRAG
   };
 
   void handle_overflow(int ov);
