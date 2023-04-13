@@ -27,6 +27,9 @@
 #include <FL/fl_draw.H>
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
+#if ! PANGO_VERSION_CHECK(1,16,0)
+#  error "Requires Pango 1.16 or higher"
+#endif
 #include <math.h>
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
@@ -1134,7 +1137,11 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   delete[] string;
   width = NULL;
   //A PangoFontset represents a set of PangoFont to use when rendering text.
-  PangoFontset *fontset = pango_font_map_load_fontset(pango_cairo_font_map_get_default(), context, fontref, pango_language_get_default());
+  PangoFontset *fontset = pango_font_map_load_fontset(
+                                      pango_cairo_font_map_get_default(), // 1.10
+                                      context, fontref,
+                                      pango_language_get_default() // 1.16
+                                                      );
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
@@ -1201,7 +1208,12 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
     //A PangoFontMap represents the set of fonts available for a particular rendering system.
     PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
     //A PangoContext stores global information used to control the itemization process.
+#if PANGO_VERSION_CHECK(1,22,0)
     pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
+#else
+    pango_context_ = pango_context_new();
+    pango_context_set_font_map(pango_context_, def_font_map);
+#endif
     pango_layout_ = pango_layout_new(pango_context_);
   }
   font_descriptor( find(fnum, s, pango_context_) );

@@ -32,8 +32,8 @@
 #include <FL/math.h> // for M_PI
 #include <pango/pangocairo.h>
 #include <cairo/cairo-ps.h>
-#  if ! PANGO_VERSION_CHECK(1,22,0)
-#    error "Requires Pango 1.22 or higher"
+#  if ! PANGO_VERSION_CHECK(1,10,0)
+#    error "Requires Pango 1.10 or higher"
 #  endif
 #endif
 
@@ -1527,7 +1527,12 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   if (!n) return;
   if (!pango_context_) {
     PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
+#if PANGO_VERSION_CHECK(1,22,0)
     pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
+#else
+    pango_context_ = pango_context_new();
+    pango_context_set_font_map(pango_context_, def_font_map);
+#endif
     pango_layout_ = pango_layout_new(pango_context_);
   }
   PangoFontDescription *pfd = Fl_Graphics_Driver::default_driver().pango_font_description();

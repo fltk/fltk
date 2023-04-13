@@ -17,10 +17,6 @@
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
-#include <pango/pangocairo.h>
-#if ! PANGO_VERSION_CHECK(1,22,0)
-#  error "Requires Pango 1.22 or higher"
-#endif
 #include <sys/mman.h>
 #include <unistd.h> // for close()
 #include <errno.h>
