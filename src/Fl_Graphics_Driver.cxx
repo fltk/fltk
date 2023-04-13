@@ -56,7 +56,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   xpoint = NULL;
   what = NONE;
   n = 0;
-};
+}
 
 /** Destructor */
 Fl_Graphics_Driver::~Fl_Graphics_Driver() {

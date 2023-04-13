@@ -128,7 +128,7 @@ Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
 extern "C" {
   bool fl_libdecor_using_weston(void) {
     return Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON;
-  };
+  }
 }
 
 static void xdg_wm_base_ping(void *data, struct xdg_wm_base *xdg_wm_base, uint32_t serial)
