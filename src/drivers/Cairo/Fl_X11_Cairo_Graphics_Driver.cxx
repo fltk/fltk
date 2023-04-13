@@ -62,3 +62,7 @@ void Fl_X11_Cairo_Graphics_Driver::gc(void *value) {
 void *Fl_X11_Cairo_Graphics_Driver::gc() {
   return gc_;
 }
+
+extern FL_EXPORT cairo_t* fl_cairo_gc() {
+  return ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
+}

@@ -1817,7 +1817,7 @@ FL_EXPORT struct wl_surface *fl_wl_surface(struct wld_window *xid) {
 }
 
 
-cairo_t *fl_wl_cairo() {
+cairo_t *fl_wl_gc() {
   return ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
 }
 

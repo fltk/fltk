@@ -80,8 +80,6 @@ public:
   static void buffer_release(struct wld_window *window);
   static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
   static void cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format);
-  void *gc() FL_OVERRIDE;
-  void gc(void *gc) FL_OVERRIDE;
 };
 
 #endif // FL_WAYLAND_GRAPHICS_DRIVER_H

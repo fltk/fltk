@@ -208,12 +208,3 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_O
   cairo_surface_destroy(surf);
   cairo_restore(cairo_);
 }
-
-
-void Fl_Wayland_Graphics_Driver::gc(void *off) {} // equivalent is done by set_buffer()
-
-
-void *Fl_Wayland_Graphics_Driver::gc() {
-  return buffer_;
-}
-
