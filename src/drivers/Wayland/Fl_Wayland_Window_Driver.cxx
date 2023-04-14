@@ -420,6 +420,13 @@ static void delayed_delete_Fl_X(Fl_X *i) {
 }
 
 
+static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
+                                      Fl_Wayland_Screen_Driver *scr_driver) {
+  if (scr_driver->seat->pointer_focus == surface) scr_driver->seat->pointer_focus = NULL;
+  wl_surface_destroy(surface);
+}
+
+
 void Fl_Wayland_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
@@ -455,7 +462,8 @@ void Fl_Wayland_Window_Driver::hide() {
       }
     }
     if (wld_win->wl_surface) {
-      wl_surface_destroy(wld_win->wl_surface);
+      Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+      destroy_surface_caution_pointer_focus(wld_win->wl_surface, scr_driver);
       wld_win->wl_surface = NULL;
     }
     if (wld_win->custom_cursor) delete_cursor_(wld_win);
@@ -1264,7 +1272,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
         // a tall menuwindow with a menutitle: don't create the menutitle at all
         // and undo what has been created/allocated before
         struct wld_window *xid = fl_wl_xid(previous_floatingtitle);
-        wl_surface_destroy(xid->wl_surface);
+        destroy_surface_caution_pointer_focus(xid->wl_surface, scr_driver);
         free(xid);
         Fl_Window_Driver::driver(previous_floatingtitle)->hide_common();
         previous_floatingtitle = NULL;
@@ -1757,7 +1765,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   xdg_popup_destroy(old_popup);
   delete old_win_pos;
   xdg_surface_destroy(old_xdg);
-  wl_surface_destroy(old_surface);
+  destroy_surface_caution_pointer_focus(old_surface, scr_driver);
   this->y(y);
 }
 
