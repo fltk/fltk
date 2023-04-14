@@ -34,6 +34,52 @@
 
 Fl_XFont_On_Demand fl_xfont = 0;
 
+
+#if ! USE_PANGO
+
+// The predefined fonts that FLTK has with Xft but without Pango:
+static Fl_Fontdesc built_in_table[] = {
+#if 1
+  {" sans"},
+  {"Bsans"},
+  {"Isans"},
+  {"Psans"},
+  {" mono"},
+  {"Bmono"},
+  {"Imono"},
+  {"Pmono"},
+  {" serif"},
+  {"Bserif"},
+  {"Iserif"},
+  {"Pserif"},
+  {" symbol"},
+  {" screen"},
+  {"Bscreen"},
+  {" zapf dingbats"},
+#else
+  {" helvetica"},
+  {"Bhelvetica"},
+  {"Ihelvetica"},
+  {"Phelvetica"},
+  {" courier"},
+  {"Bcourier"},
+  {"Icourier"},
+  {"Pcourier"},
+  {" times"},
+  {"Btimes"},
+  {"Itimes"},
+  {"Ptimes"},
+  {" symbol"},
+  {" lucidatypewriter"},
+  {"Blucidatypewriter"},
+  {" zapf dingbats"},
+#endif
+};
+
+FL_EXPORT Fl_Fontdesc* fl_fonts = (Fl_Fontdesc*)built_in_table;
+
+#endif // ! USE_PANGO
+
 static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle);
 
 // For some reason Xft produces errors if you destroy a window whose id

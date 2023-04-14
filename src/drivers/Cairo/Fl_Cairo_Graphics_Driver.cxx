@@ -37,6 +37,30 @@
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
+// The predefined fonts that FLTK has with Pango:
+static Fl_Fontdesc built_in_table[] = {
+  {"Sans"},
+  {"Sans Bold"},
+  {"Sans Italic"},
+  {"Sans Bold Italic"},
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"Monospace Italic"},
+  {"Monospace Bold Italic"},
+  {"Serif"},
+  {"Serif Bold"},
+  {"Serif Italic"},
+  {"Serif Bold Italic"},
+  {"Standard Symbols PS"}, // FL_SYMBOL
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"D050000L"},            // FL_ZAPF_DINGBATS
+};
+
+
+FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+
+
 // duplicated from Fl_PostScript.cxx
 struct callback_data {
   const uchar *data;
@@ -70,6 +94,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
     curdata += cb_data->D;
   }
 }
+// end of duplicated part
 
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
@@ -999,9 +1024,6 @@ int Fl_Cairo_Graphics_Driver::height() {
 int Fl_Cairo_Graphics_Driver::descent() {
   return font_descriptor()->descent / float(PANGO_SCALE) + 0.5;
 }
-
-
-extern Fl_Fontdesc *fl_fonts;
 
 
 void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
