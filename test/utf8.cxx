@@ -416,16 +416,13 @@ int make_font_chooser(void)
   // create the widget frame
   create_font_widget();
 
-  // Load the systems available fonts - ask for everything
-  //    font_count = Fl::set_fonts("*");
-#ifdef _WIN32
-  font_count = Fl::set_fonts("*");
-#elif defined(__APPLE__)
-  font_count = Fl::set_fonts("*");
-#else
-  // Load the systems available fonts - ask for everything that claims to be
-  // iso10646 compatible
+  // Load the system's available fonts
+#if defined(FLTK_USE_X11) && !defined(FLTK_USE_CAIRO)
+  // ask for everything that claims to be iso10646 compatible
   font_count = Fl::set_fonts("-*-*-*-*-*-*-*-*-*-*-*-*-iso10646-1");
+#else
+  // ask for everything
+  font_count = Fl::set_fonts("*");
 #endif
 
   // allocate space for the sizes and numsizes array, now we know how many
