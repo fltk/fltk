@@ -1542,7 +1542,7 @@ void scheme_cb(Fl_Scheme_Choice *choice, void *) {
 */
 void init_scheme() {
   int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
-  char *scheme_name;                        // scheme name since 1.4.0
+  char *scheme_name = 0;                    // scheme name since 1.4.0
   fluid_prefs.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
   if (!strcmp(scheme_name, "XXX")) {
     fluid_prefs.get("scheme", scheme_index, 0);
@@ -1558,6 +1558,7 @@ void init_scheme() {
     fluid_prefs.set("scheme_name", scheme_name);
   }
   Fl::scheme(scheme_name);
+  free(scheme_name);
 }
 
 /**
