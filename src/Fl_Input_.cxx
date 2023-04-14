@@ -88,6 +88,10 @@ public:
     clear();
   }
 
+  int size() const {
+    return list_size_;
+  }
+
   void push(Fl_Input_Undo_Action* action) {
     if (list_size_ == list_capacity_) {
       list_capacity_ += 25;
@@ -1067,6 +1071,15 @@ int Fl_Input_::undo() {
 }
 
 /**
+ Check if the last operation can be undone.
+
+ \return true if the widget can unod the last change
+ */
+bool Fl_Input_::can_undo() {
+  return (undo_->undocut || undo_->undoinsert);
+}
+
+/**
  Redo previous undo operation.
 
  This call reapplies previously executed undo operations.
@@ -1080,12 +1093,23 @@ int Fl_Input_::redo() {
 
   if (undo_->undocut || undo_->undoinsert)
     undo_list_->push(undo_);
+  else
+    delete undo_;
   undo_ = redo_action;
 
   int ret = apply_undo();
   if (ret && (when()&FL_WHEN_CHANGED)) do_callback(FL_REASON_CHANGED);
 
   return ret;
+}
+
+/**
+ Check if there is a redo action available.
+
+ \return true if the widget can redo the last undo action
+ */
+bool Fl_Input_::can_redo() {
+  return (redo_list_->size() > 0);
 }
 
 /**
