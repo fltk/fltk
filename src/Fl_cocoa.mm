@@ -2468,6 +2468,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl::handle(FL_KEYUP,window);
   fl_unlock_function();
 }
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_10
+  typedef NSUInteger NSEventModifierFlags;
+#endif
 - (void)flagsChanged:(NSEvent *)theEvent {
   //NSLog(@"flagsChanged: ");
   fl_lock_function();
