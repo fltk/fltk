@@ -158,6 +158,10 @@ public:
     clear();
   }
 
+  int size() {
+    return list_size_;
+  }
+
   void push(Fl_Text_Undo_Action* action) {
     if (list_size_ == list_capacity_) {
       list_capacity_ += 25;
@@ -628,6 +632,13 @@ int Fl_Text_Buffer::undo(int *cursorPos) {
   return ret;
 }
 
+/*
+ Check if undo is anabled and if the last action can be undone.
+ */
+bool Fl_Text_Buffer::can_undo() {
+  return (mCanUndo && mUndo && !mUndo->empty());
+}
+
 /**
  Redo previous undo action.
  */
@@ -642,7 +653,18 @@ int Fl_Text_Buffer::redo(int *cursorPos) {
   // running the redo action will also generate a new undo action
   // Note: there is a slight chance that the current undo action and the
   //       generated action merge into one.
-  return apply_undo(redo_action, cursorPos);
+  int ret = apply_undo(redo_action, cursorPos);
+
+  delete redo_action;
+  return ret;
+}
+
+/**
+ Check if undo is anabled and if the last undo action can be redone.
+ \see canUndo()
+ */
+bool Fl_Text_Buffer::can_redo() {
+  return (mCanUndo && mRedoList->size());
 }
 
 /*

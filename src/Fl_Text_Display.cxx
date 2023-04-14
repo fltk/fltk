@@ -442,8 +442,6 @@ void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
   damage(FL_DAMAGE_EXPOSE);
 }
 
-
-
 /**
  \brief Find the longest line of all visible lines.
 

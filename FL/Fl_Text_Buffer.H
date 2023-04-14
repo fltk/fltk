@@ -328,12 +328,28 @@ public:
   int undo(int *cp=0);
 
   /**
+   Check if undo is anabled and if the last action can be undone.
+   \see canUndo()
+   */
+  bool can_undo();
+
+  /**
    Redo previous undo action.
    */
   int redo(int *cp=0);
 
   /**
-   Lets the undo system know if we can undo changes
+   Check if undo is anabled and if the last undo action can be redone.
+   \see canUndo()
+   */
+  bool can_redo();
+
+  /**
+   Enable or disable undo actions for this text buffer.
+   Undo actions are enable for text buffer by default. If used as a style buffer
+   in Fl_Text_Display, undo actions are disabled as they are handled by the
+   text buffer.
+   \see can_undo()
    */
   void canUndo(char flag=1);
 
