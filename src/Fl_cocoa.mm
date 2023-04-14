@@ -2545,7 +2545,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   else if ( [[pboard types] containsObject:UTF8_pasteboard_type] ) {
     NSData *data = [pboard dataForType:UTF8_pasteboard_type];
     DragData = (char *)malloc([data length] + 1);
-    [data getBytes:DragData];
+    [data getBytes:DragData length:[data length]];
     DragData[[data length]] = 0;
     Fl_Screen_Driver::convert_crlf(DragData, strlen(DragData));
   }
@@ -3528,7 +3528,7 @@ static int get_plain_text_from_clipboard(int clipboard)
         free(aux_c);
       }
       else {
-        [data getBytes:fl_selection_buffer[clipboard]];
+        [data getBytes:fl_selection_buffer[clipboard] length:[data length]];
       }
       fl_selection_buffer[clipboard][len - 1] = 0;
       length = Fl_Screen_Driver::convert_crlf(fl_selection_buffer[clipboard], len - 1); // turn all \r characters into \n:
