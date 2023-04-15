@@ -75,8 +75,8 @@ protected:
 
   // Internal virtual methods, which are called during decoding to pass data
   // to the Fl_Anim_GIF_Image class.
-  virtual void on_frame_data(GIF_FRAME &gf) {}
-  virtual void on_extension_data(GIF_FRAME &gf) {}
+  virtual void on_frame_data(GIF_FRAME &) {}
+  virtual void on_extension_data(GIF_FRAME &) {}
 
 private:
 
