@@ -1075,7 +1075,7 @@ int Fl_Input_::undo() {
 
  \return true if the widget can unod the last change
  */
-bool Fl_Input_::can_undo() {
+bool Fl_Input_::can_undo() const {
   return (undo_->undocut || undo_->undoinsert);
 }
 
@@ -1108,7 +1108,7 @@ int Fl_Input_::redo() {
 
  \return true if the widget can redo the last undo action
  */
-bool Fl_Input_::can_redo() {
+bool Fl_Input_::can_redo() const {
   return (redo_list_->size() > 0);
 }
 

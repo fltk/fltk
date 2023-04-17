@@ -120,7 +120,7 @@ public:
     undocut = undoinsert = 0;
   }
 
-  bool empty() {
+  bool empty() const {
     return (!undocut && !undoinsert);
   }
 };
@@ -158,7 +158,7 @@ public:
     clear();
   }
 
-  int size() {
+  int size() const {
     return list_size_;
   }
 
@@ -635,7 +635,7 @@ int Fl_Text_Buffer::undo(int *cursorPos) {
 /*
  Check if undo is anabled and if the last action can be undone.
  */
-bool Fl_Text_Buffer::can_undo() {
+bool Fl_Text_Buffer::can_undo() const {
   return (mCanUndo && mUndo && !mUndo->empty());
 }
 
@@ -663,7 +663,7 @@ int Fl_Text_Buffer::redo(int *cursorPos) {
  Check if undo is anabled and if the last undo action can be redone.
  \see canUndo()
  */
-bool Fl_Text_Buffer::can_redo() {
+bool Fl_Text_Buffer::can_redo() const {
   return (mCanUndo && mRedoList->size());
 }
 
