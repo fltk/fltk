@@ -331,7 +331,7 @@ public:
    Check if undo is anabled and if the last action can be undone.
    \see canUndo()
    */
-  bool can_undo();
+  bool can_undo() const;
 
   /**
    Redo previous undo action.
@@ -342,7 +342,7 @@ public:
    Check if undo is anabled and if the last undo action can be redone.
    \see canUndo()
    */
-  bool can_redo();
+  bool can_redo() const;
 
   /**
    Enable or disable undo actions for this text buffer.

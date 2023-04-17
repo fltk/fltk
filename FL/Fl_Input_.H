@@ -385,13 +385,13 @@ public:
   int undo();
 
   /* Return true if the last operation can be undone. */
-  bool can_undo();
+  bool can_undo() const;
 
   /* Redo previous undo operations. */
   int redo();
 
   /* Return true if there is a redo action in the list. */
-  bool can_redo();
+  bool can_redo() const;
 
   /* Copy the yank buffer to the clipboard. */
   int copy_cuts();
