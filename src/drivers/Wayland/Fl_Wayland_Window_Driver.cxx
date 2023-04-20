@@ -1160,6 +1160,13 @@ void Fl_Wayland_Window_Driver::makeWindow()
   new_window->wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
   //Fl::warning("makeWindow:%p wayland-scale=%d user-scale=%.2f\n", pWindow, new_window->scale, Fl::screen_scale(0));
   wl_surface_add_listener(new_window->wl_surface, &surface_listener, new_window);
+  
+  if (!shape()) { // rectangular FLTK windows are opaque
+    struct wl_region *opaque = wl_compositor_create_region(scr_driver->wl_compositor);
+    wl_region_add(opaque, 0, 0, 1000000, 1000000);
+    wl_surface_set_opaque_region(new_window->wl_surface, opaque);
+    wl_region_destroy(opaque);
+  }
 
   if (pWindow->user_data() == &Fl_Screen_Driver::transient_scale_display && Fl::first_window()) {
   // put transient scale win at center of top window by making it a child of top
