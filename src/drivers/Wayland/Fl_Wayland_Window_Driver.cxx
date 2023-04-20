@@ -536,6 +536,11 @@ void Fl_Wayland_Window_Driver::size_range() {
       }
       libdecor_frame_set_min_content_size(wl_win->frame, minw()*f, minh()*f);
       libdecor_frame_set_max_content_size(wl_win->frame, maxw()*f, maxh()*f);
+      if (xdg_toplevel()) {
+        struct libdecor_state *state = libdecor_state_new(int(w() * f), int(h() * f));
+        libdecor_frame_commit(wl_win->frame, state, NULL);
+        libdecor_state_free(state);
+      }
     } else if (wl_win->kind == UNFRAMED && wl_win->xdg_toplevel) {
       xdg_toplevel_set_min_size(wl_win->xdg_toplevel, minw()*f, minh()*f);
       if (maxw() && maxh())

@@ -1641,10 +1641,6 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
       if (dim->tracker->exists()) {
         Fl_Window *win = (Fl_Window*)dim->tracker->widget();
         win->size_range(dim->minw, dim->minh, dim->maxw, dim->maxh);
-        float f = Fl::screen_scale(win->screen_num());
-        struct libdecor_state *state = libdecor_state_new(int(win->w() * f), int(win->h() * f));
-        libdecor_frame_commit(fl_wl_xid(win)->frame, state, NULL);
-        libdecor_state_free(state);
       }
       first_dim = dim->next;
       delete dim->tracker;
