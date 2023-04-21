@@ -40,12 +40,6 @@
 Window fl_window;
 
 
-void Fl_X11_Window_Driver::destroy_double_buffer() {
-  fl_delete_offscreen(other_xid);
-  other_xid = 0;
-}
-
-
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {

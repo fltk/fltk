@@ -72,13 +72,6 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
 }
 
 
-void Fl_Cocoa_Window_Driver::destroy_double_buffer()
-{
-  if (pWindow->as_overlay_window()) fl_delete_offscreen(other_xid);
-  other_xid = 0;
-}
-
-
 void Fl_Cocoa_Window_Driver::draw_begin()
 {
   if (!Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) return;

@@ -113,6 +113,7 @@ public:
   void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
   void flx(Fl_X *x) { pWindow->flx_ = x; }
   Fl_Cursor cursor_default() { return pWindow->cursor_default; }
+  void destroy_double_buffer();
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {
     return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
@@ -144,7 +145,6 @@ public:
 
   virtual void makeWindow() {}
   virtual void wait_for_expose();
-  virtual void destroy_double_buffer();
   virtual void show();
   virtual void resize(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void hide() {}

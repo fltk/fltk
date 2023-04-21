@@ -61,12 +61,6 @@ bool Fl_Wayland_Window_Driver::new_popup = false; // to support tall menu button
 Fl_Window *Fl_Wayland_Window_Driver::previous_floatingtitle = NULL;
 
 
-void Fl_Wayland_Window_Driver::destroy_double_buffer() {
-  if (pWindow->as_overlay_window()) fl_delete_offscreen(other_xid);
-  other_xid = 0;
-}
-
-
 Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_Driver(win)
 {
   shape_data_ = NULL;
