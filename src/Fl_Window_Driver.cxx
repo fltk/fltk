@@ -72,8 +72,6 @@ int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_scree
 int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
 void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
 
-void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
-
 
 /**
  Draw the window content.
@@ -106,11 +104,11 @@ void Fl_Window_Driver::take_focus() {
 }
 
 void Fl_Window_Driver::flush_double() {
-  flush_Fl_Window();
+  pWindow->Fl_Window::flush();
 }
 
 void Fl_Window_Driver::flush_overlay() {
-  flush_Fl_Window();
+  pWindow->Fl_Window::flush();
 }
 
 void Fl_Window_Driver::draw_begin() {

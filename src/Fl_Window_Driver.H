@@ -57,7 +57,6 @@ private:
 protected:
   Fl_Window *pWindow;
   int screen_num_; // number of screen where window is mapped
-  void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
