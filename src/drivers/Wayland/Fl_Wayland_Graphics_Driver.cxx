@@ -186,14 +186,13 @@ void Fl_Wayland_Graphics_Driver::set_buffer(struct fl_wld_buffer *buffer, float 
 void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen src, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   struct fl_wld_buffer *osrc = (struct fl_wld_buffer *)src;
-  int height = osrc->data_size / osrc->stride;
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);
   double s = matrix.xx;
   cairo_save(cairo_);
   cairo_rectangle(cairo_, x, y, w, h);
   cairo_clip(cairo_);
-  cairo_surface_t *surf = cairo_image_surface_create_for_data(osrc->draw_buffer, Fl_Cairo_Graphics_Driver::cairo_format, osrc->width, height, osrc->stride);
+  cairo_surface_t *surf = cairo_get_target(osrc->cairo_);
   cairo_pattern_t *pat = cairo_pattern_create_for_surface(surf);
   cairo_set_source(cairo_, pat);
   cairo_matrix_init_scale(&matrix, s, s);
@@ -201,6 +200,5 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_O
   cairo_pattern_set_matrix(pat, &matrix);
   cairo_mask(cairo_, pat);
   cairo_pattern_destroy(pat);
-  cairo_surface_destroy(surf);
   cairo_restore(cairo_);
 }
