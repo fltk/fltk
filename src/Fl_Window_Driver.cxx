@@ -22,6 +22,7 @@
  */
 
 #include "Fl_Window_Driver.H"
+#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
@@ -120,7 +121,7 @@ void Fl_Window_Driver::draw_end() {
 }
 
 void Fl_Window_Driver::destroy_double_buffer() {
-  fl_delete_offscreen(other_xid);
+  delete other_xid;
   other_xid = 0;
 }
 

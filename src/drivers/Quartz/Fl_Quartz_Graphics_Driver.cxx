@@ -111,17 +111,8 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Of
     CGDataProviderRelease(src_bytes);
     CGColorSpaceRelease(lut);
   }
-  float s = scale();
-  Fl_Surface_Device *current = Fl_Surface_Device::surface();
-  // test whether osrc was created by fl_create_offscreen()
-  fl_begin_offscreen(osrc); // does nothing if osrc was not created by fl_create_offscreen()
-  if (current != Fl_Surface_Device::surface()) { // osrc was created by fl_create_offscreen()
-    Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
-    int pw, ph;
-    imgs->printable_rect(&pw, &ph);
-    s = sw / float(pw);
-    fl_end_offscreen();
-  }
+  CGAffineTransform at = CGContextGetCTM(src);
+  float s = at.a;
   draw_CGImage(img, x, y, w, h, srcx, srcy, sw/s, sh/s);
   CGImageRelease(img);
 }

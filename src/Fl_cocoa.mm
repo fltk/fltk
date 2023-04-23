@@ -27,6 +27,7 @@ extern "C" {
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Rect.H>
 #include <FL/fl_string_functions.h>
@@ -3969,9 +3970,9 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
   }
   height = nl * fl_height() + 3;
   width += 6;
-  Fl_Offscreen off = fl_create_offscreen(width, height);
-  fl_begin_offscreen(off);
-  CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
+  Fl_Image_Surface *off = new Fl_Image_Surface(width, height, 1);
+  Fl_Surface_Device::push_current(off);
+  CGContextSetRGBFillColor( (CGContextRef)off->offscreen(), 0,0,0,0);
   fl_rectf(0,0,width,height);
   fl_color(FL_BLACK);
   p = text;
@@ -3988,9 +3989,9 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
     y += fl_height();
     p = q + 1;
   }
-  fl_end_offscreen();
-  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
-  fl_delete_offscreen( off );
+  Fl_Surface_Device::pop_current();
+  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off->offscreen() );
+  delete off;
   *pwidth = width;
   *pheight = height;
   return image;
@@ -4006,8 +4007,8 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
   else {
     width = 16; height = 16;
     }
-  Fl_Offscreen off = fl_create_offscreen(width, height);
-  fl_begin_offscreen(off);
+  Fl_Image_Surface *off = new Fl_Image_Surface(width, height, 1);
+  Fl_Surface_Device::push_current(off);
   if (fl_mac_os_version >= version_threshold) {
     fl_font(FL_HELVETICA, 20);
     fl_color(FL_BLACK);
@@ -4016,15 +4017,15 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
     fl_draw(str, l, 1, 16);
     }
   else { // draw two squares
-    CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
+    CGContextSetRGBFillColor( (CGContextRef)off->offscreen(), 0,0,0,0);
     fl_rectf(0,0,width,height);
-    CGContextSetRGBStrokeColor( (CGContextRef)off, 0,0,0,0.6);
+    CGContextSetRGBStrokeColor( (CGContextRef)off->offscreen(), 0,0,0,0.6);
     fl_rect(0,0,width,height);
     fl_rect(2,2,width-4,height-4);
   }
-  fl_end_offscreen();
-  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
-  fl_delete_offscreen( off );
+  Fl_Surface_Device::pop_current();
+  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off->offscreen() );
+  delete off;
   *pwidth = width;
   *pheight = height;
   return image;

@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include "Fl_PostScript_Graphics_Driver.H"
 #include <FL/Fl_PostScript.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
 #include <FL/fl_string_functions.h>
@@ -1128,8 +1129,8 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   // create an offscreen image of the string
   Fl_Color text_color = Fl_Graphics_Driver::color();
   Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
-  Fl_Offscreen off = fl_create_offscreen(w_scaled, (int)(h+3*scale) );
-  fl_begin_offscreen(off);
+  Fl_Image_Surface *off = new Fl_Image_Surface(w_scaled, (int)(h+3*scale), 1);
+  Fl_Surface_Device::push_current(off);
   fl_color(bg_color);
   // color offscreen background with a shade contrasting with the text color
   fl_rectf(0, 0, w_scaled, (int)(h+3*scale) );
@@ -1147,9 +1148,9 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   else fl_draw(str, n, 0, (int)(h * 0.8) );
   // read (most of) the offscreen image
   uchar *img = fl_read_image(NULL, 0, 1, w2, h, 0);
-  fl_end_offscreen();
+  Fl_Surface_Device::pop_current();
   font(fontnum, old_size);
-  fl_delete_offscreen(off);
+  delete off;
   // compute the mask of what is not the background
   uchar *img_mask = calc_mask(img, w2, h, bg_color);
   delete[] img;

@@ -22,6 +22,7 @@
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/platform.H>
 #include "Fl_WinAPI_Window_Driver.H"
@@ -290,16 +291,16 @@ void Fl_WinAPI_Window_Driver::flush_double()
   if (!i) return; // window not yet created
 
   if (!other_xid) {
-    other_xid = fl_create_offscreen(w(), h());
+    other_xid = new Fl_Image_Surface(w(), h(), 1);
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
     fl_clip_region(i->region); i->region = 0;
 #if 0 /* Short form that transiently changes the current Fl_Surface_Device */
-    fl_begin_offscreen(other_xid);
+    Fl_Surface_Device::push_current(other_xid);
     fl_graphics_driver->clip_region( 0 );
     draw();
-    fl_end_offscreen();
+    Fl_Surface_Device::pop_current();
 #else
     /* Alternative form that avoids changing the current Fl_Surface_Device.
      The code run in the window draw() method can call Fl_Surface_Device::surface()
@@ -307,7 +308,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
      for an Fl_Double_Window.
      */
     HDC sgc = fl_gc;
-    fl_gc = fl_makeDC((HBITMAP)other_xid);
+    fl_gc = fl_makeDC((HBITMAP)other_xid->offscreen());
     int savedc = SaveDC(fl_gc);
     fl_graphics_driver->gc(fl_gc);
     fl_graphics_driver->restore_clip(); // duplicate clip region into new gc
@@ -322,7 +323,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
   }
   int X = 0, Y = 0, W = 0, H = 0;
   fl_clip_box(0, 0, w(), h(), X, Y, W, H);
-  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
+  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
 }
 
 
@@ -339,20 +340,20 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 
   if (!other_xid) {
-    other_xid = fl_create_offscreen(w(), h());
+    other_xid = new Fl_Image_Surface(w(), h(), 1);
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
     fl_clip_region(i->region); i->region = 0;
-    fl_begin_offscreen(other_xid);
+    Fl_Surface_Device::push_current(other_xid);
     fl_graphics_driver->clip_region(0);
     draw();
-    fl_end_offscreen();
+    Fl_Surface_Device::pop_current();
   }
 
   if (eraseoverlay) fl_clip_region(0);
   int X, Y, W, H; fl_clip_box(0, 0, w(), h(), X, Y, W, H);
-  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
+  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
 
   if (overlay() == oWindow) oWindow->draw_overlay();
 }

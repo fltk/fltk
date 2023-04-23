@@ -23,11 +23,13 @@
 #  include <cairo/cairo.h>
 #endif // FLTK_USE_CAIRO
 
+class Fl_Image_Surface;
+
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
   void end_current() FL_OVERRIDE;
 protected:
-  Fl_Offscreen xid;
+  Fl_Image_Surface *xid;
   Window oldwindow;
   Fl_Xlib_Copy_Surface_Driver(int w, int h);
   ~Fl_Xlib_Copy_Surface_Driver();
