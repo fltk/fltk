@@ -39,6 +39,15 @@
 #include <direct.h>
 #include <io.h>
 #include <fcntl.h>
+
+// We must define _WIN32_IE at least to 0x0500 before inclusion of 'shlobj.h' to enable
+// the declaration of SHGFP_TYPE_CURRENT for some older versions of MinGW, notably
+// header versions 5.3.0 and earlier, whereas 5.4.2 seems to define _WIN32_IE as needed.
+#if !(defined _WIN32_IE) || (_WIN32_IE < 0x0500)
+#  undef _WIN32_IE
+#  define _WIN32_IE  0x0500
+#endif /* _WIN32_WINNT checks */
+
 #include <shlobj.h>
 
 // function pointer for the UuidCreate Function
