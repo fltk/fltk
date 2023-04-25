@@ -1046,13 +1046,13 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_shm_add_listener(scr_driver->wl_shm, &shm_listener, NULL);
 
   } else if (strcmp(interface, "wl_seat") == 0) {
-    if (version < 3) {
-      Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
+    if (version < 2) {
+      Fl::fatal("%s version 2 required but only version %i is available\n", interface, version);
     }
     if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1, sizeof(struct Fl_Wayland_Screen_Driver::seat));
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
-    scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 3);
+    scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 2);
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     const char *locale = getenv("LC_ALL");
     if (!locale || !*locale)
@@ -1080,7 +1080,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 
   } else if (strcmp(interface, "wl_output") == 0) {
     if (version < 2) {
-      Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
+      Fl::fatal("%s version 2 required but only version %i is available\n", interface, version);
     }
     Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)calloc(1, sizeof *output);
     output->id = id;
