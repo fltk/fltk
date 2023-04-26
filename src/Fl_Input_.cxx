@@ -221,10 +221,10 @@ double Fl_Input_::expandpos(
          chr += 7-(chr%8);
       } else n += 2;
     } else {
-      n++;
+      n += fl_utf8len1(*p);
     }
     chr += fl_utf8len((char)p[0]) >= 1;
-    p++;
+    p += fl_utf8len1(*p);
   }
   if (returnn) *returnn = n;
   return fl_width(buf, n);
