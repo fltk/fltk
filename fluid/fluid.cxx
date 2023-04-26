@@ -1466,7 +1466,7 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
   {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
-  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER },
+  {"Presets", 0, layout_suite_marker, (void*)main_layout_submenu_, FL_SUBMENU_POINTER },
   {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
   {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
   {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
