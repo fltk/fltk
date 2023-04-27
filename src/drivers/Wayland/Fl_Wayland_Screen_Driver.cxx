@@ -149,19 +149,6 @@ extern const char *fl_bg2;
 // end of extern additions workaround
 
 
-static bool has_xrgb = false;
-
-
-static void shm_format(void *data, struct wl_shm *wl_shm, uint32_t format)
-{
-  if (format == Fl_Wayland_Graphics_Driver::wld_format)
-    has_xrgb = true;
-}
-
-static struct wl_shm_listener shm_listener = {
-  shm_format
-};
-
 static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor = NULL)
 {
   struct wl_cursor_image *image;
@@ -1044,7 +1031,6 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, "wl_shm") == 0) {
     scr_driver->wl_shm = (struct wl_shm*)wl_registry_bind(wl_registry,
             id, &wl_shm_interface, 1);
-    wl_shm_add_listener(scr_driver->wl_shm, &shm_listener, NULL);
 
   } else if (strcmp(interface, "wl_seat") == 0) {
     if (version < 2) {
@@ -1181,6 +1167,17 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
 }
 
 
+static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
+  *(struct wl_callback **)data = NULL;
+  wl_callback_destroy(cb);
+}
+
+
+static const struct wl_callback_listener sync_listener = {
+  sync_done
+};
+
+
 void Fl_Wayland_Screen_Driver::open_display_platform() {
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
@@ -1199,11 +1196,9 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
 
   wl_registry = wl_display_get_registry(wl_display);
   wl_registry_add_listener(wl_registry, &registry_listener, NULL);
-  wl_display_dispatch(wl_display);
-  wl_display_roundtrip(wl_display);
-  if (!has_xrgb) {
-    Fl::fatal("Error: no WL_SHM_FORMAT_ARGB8888 shm format\n");
-  }
+  struct wl_callback *registry_cb = wl_display_sync(wl_display);
+  wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
+  while (registry_cb) wl_display_dispatch(wl_display);
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
              wl_display);
   fl_create_print_window();
