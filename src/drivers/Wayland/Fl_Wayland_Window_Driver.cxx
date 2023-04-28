@@ -116,6 +116,10 @@ void Fl_Wayland_Window_Driver::decorated_win_size(int &w, int &h)
   Fl_Window *win = pWindow;
   w = win->w();
   h = win->h();
+  // needed until libdecor_plugin_fallback_frame_get_border_size() is corrected upstream
+  if (((Fl_Wayland_Screen_Driver*)Fl::screen_driver())->compositor ==
+      Fl_Wayland_Screen_Driver::OWL) return;
+
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
   int X, titlebar_height;
   libdecor_frame_translate_coordinate(fl_wl_xid(win)->frame, 0, 0, &X, &titlebar_height);
@@ -786,6 +790,17 @@ static void handle_configure(struct libdecor_frame *frame,
   if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::WESTON || !is_1st_run) {
     window->fl_win->clear_damage();
   }
+  
+  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::OWL) {
+    Fl_Window *sub = Fl::first_window();
+    while (sub) { // search still un-exposed sub-windows
+      if (sub->window() == window->fl_win) {
+        Fl_Window_Driver::driver(sub)->wait_for_expose_value = 0;
+        break;
+      }
+      sub = Fl::next_window(sub);
+    }
+  }
 }
 
 
@@ -896,16 +911,6 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   }
   window->configured_width = ceil(width / f);
   window->configured_height = ceil(height / f);
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::OWL) {
-    Fl_Window *sub = Fl::first_window();
-    while (sub) { // search still un-exposed sub-windows
-      if (sub->window() == window->fl_win) {
-        Fl_Window_Driver::driver(sub)->wait_for_expose_value = 0;
-        break;
-      }
-      sub = Fl::next_window(sub);
-    }
-  }
 }
 
 
@@ -1179,9 +1184,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->menu_window() || pWindow->tooltip_window()) { // a menu window or tooltip
     is_floatingtitle = process_menu_or_tooltip(new_window);
 
-    // Don't attempt to use libdecor with OWL
-  } else if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL &&
-             pWindow->border() && !pWindow->parent() ) { // a decorated window
+  } else if (pWindow->border() && !pWindow->parent() ) { // a decorated window
     new_window->kind = DECORATED;
     if (!scr_driver->libdecor_context)
       scr_driver->libdecor_context = libdecor_new(Fl_Wayland_Screen_Driver::wl_display, &libdecor_iface);
@@ -1213,7 +1216,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
     new_window->configured_height = pWindow->h();
     if (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL) {
       // With OWL, delay zeroing of subwindow's wait_for_expose_value until
-      // after their parent is configured, see xdg_toplevel_configure().
+      // after their parent is configured, see handle_configure().
       wait_for_expose_value = 0;
     }
     pWindow->border(0);

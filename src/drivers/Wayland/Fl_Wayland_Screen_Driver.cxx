@@ -1493,7 +1493,6 @@ void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int
 
 float Fl_Wayland_Screen_Driver::scale(int n) {
   Fl_Wayland_Screen_Driver::output *output;
-  if (wl_list_length(&outputs) == 0) return 1; // necessary under OWL
   int i = 0;
   wl_list_for_each(output, &outputs, link) {
     if (i++ == n) break;
