@@ -347,14 +347,15 @@ void Fl_Wayland_Window_Driver::make_current() {
 
   Fl_Wayland_Window_Driver::wld_window = window;
   fl_window = (Window)window;
-  float scale = Fl::screen_scale(pWindow->screen_num()) * wld_scale();
+  float f = Fl::screen_scale(pWindow->screen_num());
+  int wld_s = wld_scale();
   if (!window->buffer) {
     window->buffer = Fl_Wayland_Graphics_Driver::create_shm_buffer(
-           pWindow->w() * scale, pWindow->h() * scale);
+           int(pWindow->w() * f) * wld_s, int(pWindow->h() * f) * wld_s);
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
   }
-  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, scale);
+  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, f * wld_s);
   cairo_rectangle_int_t *extents = subRect();
   if (extents) { // make damage-to-buffer not to leak outside parent
     Fl_Region clip_region = fl_graphics_driver->XRectangleRegion(extents->x, extents->y,
