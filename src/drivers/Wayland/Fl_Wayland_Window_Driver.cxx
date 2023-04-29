@@ -809,6 +809,7 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
 {
   Fl_Window_Driver::wait_for_expose();
   struct wld_window * xid = fl_wl_xid(pWindow);
+  if (!xid) return;
   if (pWindow->fullscreen_active()) {
     if (xid->kind == DECORATED) {
       while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) || !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
