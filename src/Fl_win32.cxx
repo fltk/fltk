@@ -2095,8 +2095,15 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
       parent = fl_xid(w);
       if (!w->visible())
         showit = 0;
-    } else if (Fl::grab())
-      parent = fl_xid(Fl::grab());
+//      https://www.fltk.org/str.php?L1115+P0+S-2+C0+I0+O0+E0+V1.+Q
+//      Mike added the code below to fix issues with tooltips that unfortunately
+//      he does not specify in detail. After extensive testing, I can'tt see
+//      how this fixes things, but I do see how a window opened by a timer will
+//      link that window to the current popup, which is wrong.
+//      Matt, Apr 30th, 2023
+//    } else if (Fl::grab()) {
+//      parent = fl_xid(Fl::grab());
+    }
   }
 
   Fl_X *x = new Fl_X;
