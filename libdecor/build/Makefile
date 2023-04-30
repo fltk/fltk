@@ -51,7 +51,7 @@ os-compatibility.o : ../src/os-compatibility.c
 	$(CC) $(CFLAGS_DECOR) -c  ../src/os-compatibility.c
 
 cursor-settings.o : ../src/cursor-settings.c
-	$(CC) $(CFLAGS_DECOR)  -c ../src/cursor-settings.c -DHAS_DBUS `pkg-config --cflags dbus-1`
+	$(CC) $(CFLAGS_DECOR)  -c ../src/cursor-settings.c $(LIBDECORDBUS)
 
 ../../src/xdg-shell-protocol.c :
 	wayland-scanner private-code $(PROTOCOLS)/stable/xdg-shell/xdg-shell.xml \

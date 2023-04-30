@@ -899,6 +899,7 @@ HLINKS=
 OSX_ONLY=:
 THREADS=
 LIBDECORDIR=""
+LIBDECORDBUS=""
 
 AC_ARG_WITH([links], AS_HELP_STRING([--with-links], [make header links for common misspellings (default=no)]))
 
@@ -1011,10 +1012,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AS_IF([$PKGCONFIG --exists 'wayland-protocols >= 1.15'],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists wayland-cursor],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists xkbcommon],[],[missing="yes"])
-        AS_IF([$PKGCONFIG --exists dbus-1],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists pangocairo],[],[missing="yes"])
         AS_IF([test x$missing = xyes], [
-            AC_MSG_WARN([These packages 'wayland-client>=1.18 wayland-protocols>=1.15 wayland-cursor xkbcommon dbus-1 pangocairo' are required to build FLTK for wayland.])
+            AC_MSG_WARN([These packages 'wayland-client>=1.18 wayland-protocols>=1.15 wayland-cursor xkbcommon  pangocairo' are required to build FLTK for wayland.])
             AC_MSG_WARN([At least one of them is missing.])
           AS_IF([test x$enable_wayland = xyes], [
             AC_MSG_ERROR([Building for Wayland is not possible. Aborting.])
@@ -1044,11 +1044,14 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 #     CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
-      LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
+      LIBS="$LIBS -ldl"
 #     CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
+      AS_IF([$PKGCONFIG --exists dbus-1], 
+       [LIBDECORDBUS="-DHAS_DBUS $($PKGCONFIG --cflags dbus-1)" LIBS="$LIBS $($PKGCONFIG --libs dbus-1)"]
+      )
       LDFLAGS="$LDFLAGS -rdynamic"
       AC_SUBST([UNAME])
       UNAME="$(uname -s)"
@@ -1407,6 +1410,7 @@ AC_SUBST([OSX_ONLY])
 AC_SUBST([THREADS])
 
 AC_SUBST([LIBDECORDIR])
+AC_SUBST([LIBDECORDBUS])
 
 AC_SUBST([INSTALL_DESKTOP])
 AC_SUBST([UNINSTALL_DESKTOP])
