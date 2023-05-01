@@ -491,12 +491,13 @@ static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
                                                              XKB_KEYMAP_FORMAT_TEXT_V1, XKB_KEYMAP_COMPILE_NO_FLAGS);
   munmap(map_shm, size);
   close(fd);
-
-  struct xkb_state *xkb_state = xkb_state_new(xkb_keymap);
-  xkb_keymap_unref(seat->xkb_keymap);
-  xkb_state_unref(seat->xkb_state);
-  seat->xkb_keymap = xkb_keymap;
-  seat->xkb_state = xkb_state;
+  if (xkb_keymap) {
+    struct xkb_state *xkb_state = xkb_state_new(xkb_keymap);
+    xkb_keymap_unref(seat->xkb_keymap);
+    if (seat->xkb_state) xkb_state_unref(seat->xkb_state);
+    seat->xkb_keymap = xkb_keymap;
+    seat->xkb_state = xkb_state;
+  }
 }
 
 
@@ -703,8 +704,8 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
   // Process dead keys and compose sequences :
   enum xkb_compose_status status = XKB_COMPOSE_NOTHING;
   // This part is useful only if the compositor doesn't support protocol text-input-unstable-v3
-  if (state == WL_KEYBOARD_KEY_STATE_PRESSED && !(sym >= FL_Shift_L && sym <= FL_Alt_R) &&
-      sym != XKB_KEY_ISO_Level3_Shift) {
+  if (seat->xkb_compose_state && state == WL_KEYBOARD_KEY_STATE_PRESSED &&
+      !(sym >= FL_Shift_L && sym <= FL_Alt_R) && sym != XKB_KEY_ISO_Level3_Shift) {
     xkb_compose_state_feed(seat->xkb_compose_state, sym);
     status = xkb_compose_state_get_status(seat->xkb_compose_state);
     if (status == XKB_COMPOSE_COMPOSING) {
@@ -901,7 +902,7 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
     seat->wl_pointer = NULL;
   }
 
-  bool have_keyboard = capabilities & WL_SEAT_CAPABILITY_KEYBOARD;
+  bool have_keyboard = seat->xkb_context && (capabilities & WL_SEAT_CAPABILITY_KEYBOARD);
   if (have_keyboard && seat->wl_keyboard == NULL) {
           seat->wl_keyboard = wl_seat_get_keyboard(wl_seat);
           wl_keyboard_add_listener(seat->wl_keyboard,
@@ -1041,15 +1042,17 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_list_init(&scr_driver->seat->pointer_outputs);
     scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 2);
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-    const char *locale = getenv("LC_ALL");
-    if (!locale || !*locale)
-      locale = getenv("LC_CTYPE");
-    if (!locale || !*locale)
-      locale = getenv("LANG");
-    if (!locale || !*locale)
-      locale = "C";
-    struct xkb_compose_table *table = xkb_compose_table_new_from_locale(scr_driver->seat->xkb_context, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
-    scr_driver->seat->xkb_compose_state = xkb_compose_state_new(table, XKB_COMPOSE_STATE_NO_FLAGS);
+    if (scr_driver->seat->xkb_context) {
+      const char *locale = getenv("LC_ALL");
+      if (!locale || !*locale)
+        locale = getenv("LC_CTYPE");
+      if (!locale || !*locale)
+        locale = getenv("LANG");
+      if (!locale || !*locale)
+        locale = "C";
+      struct xkb_compose_table *table = xkb_compose_table_new_from_locale(scr_driver->seat->xkb_context, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+      if (table) scr_driver->seat->xkb_compose_state = xkb_compose_state_new(table, XKB_COMPOSE_STATE_NO_FLAGS);
+    }
     wl_seat_add_listener(scr_driver->seat->wl_seat, &seat_listener, scr_driver->seat);
     if (scr_driver->seat->data_device_manager) {
       scr_driver->seat->data_device = wl_data_device_manager_get_data_device(scr_driver->seat->data_device_manager, scr_driver->seat->wl_seat);
@@ -1227,14 +1230,26 @@ void Fl_Wayland_Screen_Driver::close_display() {
   wl_compositor_destroy(wl_compositor); wl_compositor = NULL;
   wl_shm_destroy(wl_shm); wl_shm = NULL;
   if (seat->wl_keyboard) {
-    xkb_state_unref(seat->xkb_state); seat->xkb_state = NULL;
-    xkb_keymap_unref(seat->xkb_keymap); seat->xkb_keymap = NULL;
+    if (seat->xkb_state) {
+      xkb_state_unref(seat->xkb_state);
+      seat->xkb_state = NULL;
+    }
+    if (seat->xkb_keymap) {
+      xkb_keymap_unref(seat->xkb_keymap);
+      seat->xkb_keymap = NULL;
+    }
     wl_keyboard_destroy(seat->wl_keyboard);
     seat->wl_keyboard = NULL;
   }
   wl_pointer_destroy(seat->wl_pointer); seat->wl_pointer = NULL;
-  xkb_compose_state_unref(seat->xkb_compose_state); seat->xkb_compose_state = NULL;
-  xkb_context_unref(seat->xkb_context); seat->xkb_context = NULL;
+  if (seat->xkb_compose_state) {
+    xkb_compose_state_unref(seat->xkb_compose_state);
+    seat->xkb_compose_state = NULL;
+  }
+  if (seat->xkb_context) {
+    xkb_context_unref(seat->xkb_context);
+    seat->xkb_context = NULL;
+  }
   if (seat->data_source) {
     wl_data_source_destroy(seat->data_source);
     seat->data_source = NULL;
