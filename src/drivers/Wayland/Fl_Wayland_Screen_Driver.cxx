@@ -1227,7 +1227,10 @@ void Fl_Wayland_Screen_Driver::close_display() {
   }
   wl_subcompositor_destroy(wl_subcompositor); wl_subcompositor = NULL;
   wl_surface_destroy(seat->cursor_surface); seat->cursor_surface = NULL;
-  wl_cursor_theme_destroy(seat->cursor_theme); seat->cursor_theme = NULL;
+  if (seat->cursor_theme) {
+    wl_cursor_theme_destroy(seat->cursor_theme);
+    seat->cursor_theme = NULL;
+  }
   wl_compositor_destroy(wl_compositor); wl_compositor = NULL;
   wl_shm_destroy(wl_shm); wl_shm = NULL;
   if (seat->wl_keyboard) {

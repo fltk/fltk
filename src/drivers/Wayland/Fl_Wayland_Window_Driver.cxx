@@ -1330,7 +1330,7 @@ void Fl_Wayland_Window_Driver::resize_after_screen_change(void *data) {
 int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
-
+  if (!scr_driver->seat->cursor_theme) return 1;
   // Cursor names are the files of directory /usr/share/icons/XXXX/cursors/
   // where XXXX is the name of the current 'cursor theme'.
   switch (c) {
