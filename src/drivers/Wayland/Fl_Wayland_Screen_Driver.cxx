@@ -1082,6 +1082,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_output_add_listener(output->wl_output, &output_listener, output);
     wl_list_insert(&(scr_driver->outputs), &output->link);
     scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
+    wl_display_roundtrip(scr_driver->wl_display); // important
 //fprintf(stderr, "wl_output: id=%d wl_output=%p screen_count()=%d\n", id, output->wl_output, Fl::screen_count());
 
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
