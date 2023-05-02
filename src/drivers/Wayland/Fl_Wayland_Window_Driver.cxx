@@ -1069,6 +1069,7 @@ static const char *get_prog_name() {
  item, when there's one, is visible immediately after the tall popup is mapped on display.
  */
 
+static bool flip_gravity = false;
 
 bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
@@ -1117,12 +1118,14 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     }
     if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED)
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y, &popup_x, &popup_y);
+    if (flip_gravity) {popup_y += pWindow->h();}
     xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y, 1, 1);
     popup_y++;
   }
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
-  xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+  xdg_positioner_set_gravity(positioner, flip_gravity ?
+                XDG_POSITIONER_GRAVITY_TOP_RIGHT : XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
   int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
     XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
@@ -1274,7 +1277,23 @@ void Fl_Wayland_Window_Driver::makeWindow()
   Fl::e_number = old_event;
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
-    pWindow->wait_for_expose(); // to map the popup
+    int count = 0; // attempt to map the menuwindow (i.e., until it appears on a screen)
+    while (!new_window->output && count <= 5) {
+      wl_display_roundtrip(scr_driver->wl_display);
+      count++;
+    }
+    if (!new_window->output) {
+//printf("menuwindow doesn't map: count=%d\n",count);
+      // On a secondary display, the menuwindow may fail to map in what looks like
+      // a bug in the compositor. Bypass this problem by attempting again to create
+      // the menuwindow with another constraint: XDG_POSITIONER_GRAVITY_TOP_RIGHT
+      // instead of XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT.
+      pWindow->hide();
+      flip_gravity = true;
+      pWindow->show();
+      return;
+    }
+    flip_gravity = false;
     if (previous_floatingtitle) { // a menuwindow with a menutitle
       //puts("previous_floatingtitle");
       int HH;
