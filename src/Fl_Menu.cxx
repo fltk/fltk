@@ -186,6 +186,12 @@ static menuwindow *to_menuwindow(Fl_Window *win) {
   return ((window_with_items*)win)->as_menuwindow();
 }
 
+/** Returns whether win is a menutitle window */
+bool Fl_Window_Driver::is_menutitle(Fl_Window *win) {
+  if (!win->menu_window()) return false;
+  return (((window_with_items*)win)->as_menuwindow() == NULL);
+}
+
 /** Accessor to the "origin" member variable of class menuwindow.
  Variable origin is not NULL when 2 menuwindow's occur, one being a submenu of the other;
  it links the menuwindow at right to the one at left. */

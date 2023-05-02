@@ -1277,13 +1277,23 @@ void Fl_Wayland_Window_Driver::makeWindow()
   Fl::e_number = old_event;
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
-    int count = 0; // attempt to map the menuwindow (i.e., until it appears on a screen)
-    while (!new_window->output && count <= 5) {
-      wl_display_roundtrip(scr_driver->wl_display);
-      count++;
+    int HH;
+    Fl_Window_Driver::menu_parent(&HH);
+    bool simple = (menu_bartitle(pWindow) || is_menutitle(pWindow) || pWindow->h() > HH);
+    if (!simple) {
+      simple = (menu_leftorigin(pWindow) != NULL);
     }
-    if (!new_window->output) {
-//printf("menuwindow doesn't map: count=%d\n",count);
+    if (simple) {
+      pWindow->wait_for_expose();
+    } else {
+      int count = 0; // attempt to map the menuwindow (i.e., until it appears on a screen)
+      while (!new_window->output && count <= 5) {
+        wl_display_roundtrip(scr_driver->wl_display);
+        count++;
+      }
+    }
+    if (!new_window->output && !simple) {
+//printf("menuwindow doesn't map: pWindow=%p\n",pWindow);
       // On a secondary display, the menuwindow may fail to map in what looks like
       // a bug in the compositor. Bypass this problem by attempting again to create
       // the menuwindow with another constraint: XDG_POSITIONER_GRAVITY_TOP_RIGHT
