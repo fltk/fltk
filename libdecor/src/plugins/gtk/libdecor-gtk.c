@@ -1350,7 +1350,7 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	enum libdecor_window_state state;
 	GtkStyleContext *style;
 	int pref_width;
-	int current_min_w, current_min_h, W, H;
+	int current_min_w, current_min_h, current_max_w, current_max_h, W, H;
 
 	state = libdecor_frame_get_window_state((struct libdecor_frame*)frame_gtk);
 	style = gtk_widget_get_style_context(frame_gtk->window);
@@ -1378,10 +1378,10 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 	if (current_min_w < pref_width) {
 		current_min_w = pref_width;
 		libdecor_frame_set_min_content_size(&frame_gtk->frame, current_min_w, current_min_h);
-		if (!resizable(frame_gtk)) {
-			libdecor_frame_set_max_content_size(&frame_gtk->frame,
-				current_min_w, current_min_h);
-		}
+	}
+	libdecor_frame_get_max_content_size(&frame_gtk->frame, &current_max_w, &current_max_h);
+	if (current_max_w && current_max_w < current_min_w) {
+		libdecor_frame_set_max_content_size(&frame_gtk->frame, current_min_w, current_max_h);
 	}
 	W = libdecor_frame_get_content_width(&frame_gtk->frame);
 	H = libdecor_frame_get_content_height(&frame_gtk->frame);

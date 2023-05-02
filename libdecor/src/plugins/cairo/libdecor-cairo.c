@@ -997,17 +997,24 @@ ensure_component(struct libdecor_frame_cairo *frame_cairo,
 static void
 ensure_border_surfaces(struct libdecor_frame_cairo *frame_cairo)
 {
-	int min_width, min_height;
+	int min_width, min_height, current_max_w, current_max_h;
 
 	frame_cairo->shadow.opaque = false;
 	ensure_component(frame_cairo, &frame_cairo->shadow);
 
 	libdecor_frame_get_min_content_size(&frame_cairo->frame,
 					    &min_width, &min_height);
-	libdecor_frame_set_min_content_size(&frame_cairo->frame,
-		MAX(min_width, (int)MAX(56, 4 * BUTTON_WIDTH)),
-		MAX(min_height, (int)MAX(56, TITLE_HEIGHT + 1)));
+	min_width = MAX(min_width, (int)MAX(56, 4 * BUTTON_WIDTH));
+	min_height = MAX(min_height, (int)MAX(56, TITLE_HEIGHT + 1));
+	libdecor_frame_set_min_content_size(&frame_cairo->frame, min_width, min_height);
+	libdecor_frame_get_max_content_size(&frame_cairo->frame, &current_max_w, 
+		&current_max_h);
+	if (current_max_w && current_max_w < min_width) current_max_w = min_width;
+	if (current_max_h && current_max_h < min_height) current_max_h = min_height;
+	libdecor_frame_set_max_content_size(&frame_cairo->frame, current_max_w, 
+		current_max_h);
 }
+
 
 static void
 ensure_title_bar_surfaces(struct libdecor_frame_cairo *frame_cairo)
