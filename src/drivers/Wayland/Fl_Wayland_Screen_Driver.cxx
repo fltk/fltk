@@ -1470,12 +1470,6 @@ void Fl_Wayland_Screen_Driver::get_system_colors()
 }
 
 
-const char *Fl_Wayland_Screen_Driver::get_system_scheme()
-{
-  return getenv("FLTK_SCHEME");
-}
-
-
 Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
