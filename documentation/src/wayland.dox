@@ -922,6 +922,7 @@ struct Fl_Wayland_Screen_Driver::output { // one record for each display
   struct wl_output *wl_output; // the Wayland object for this display
   int wld_scale; // Wayland scale factor
   float gui_scale; // FLTK scale factor
+  bool done; // true means record members have been initialized
   struct wl_list link; // links these records together
 };
 </pre>

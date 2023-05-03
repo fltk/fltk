@@ -73,6 +73,7 @@ public:
     struct wl_output *wl_output;
     int wld_scale; // Wayland scale factor
     float gui_scale; // FLTK scale factor
+    bool done;
     struct wl_list link;
   };
 

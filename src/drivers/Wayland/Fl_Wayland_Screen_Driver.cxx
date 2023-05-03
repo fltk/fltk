@@ -977,6 +977,7 @@ static void output_done(void *data, struct wl_output *wl_output)
     }
     xp = xp->next;
   }
+  output->done = true;
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->seat) try_update_cursor(scr_driver->seat);
@@ -1082,7 +1083,6 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     wl_output_add_listener(output->wl_output, &output_listener, output);
     wl_list_insert(&(scr_driver->outputs), &output->link);
     scr_driver->screen_count_set( wl_list_length(&(scr_driver->outputs)) );
-    wl_display_roundtrip(scr_driver->wl_display); // important
 //fprintf(stderr, "wl_output: id=%d wl_output=%p screen_count()=%d\n", id, output->wl_output, Fl::screen_count());
 
   } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
@@ -1107,6 +1107,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       output->wld_scale = 1;
       output->gui_scale = 1.f;
       output->width = 1440; output->height = 900;
+      output->done = true;
       wl_list_insert(&(scr_driver->outputs), &output->link);
       scr_driver->screen_count_set(1);
     }
@@ -1172,8 +1173,15 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
 
 
 static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
+  // runs after all calls to registry_handle_global()
   *(struct wl_callback **)data = NULL;
   wl_callback_destroy(cb);
+  // keep processing until output_done() has run for each screen
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  Fl_Wayland_Screen_Driver::output *output;
+  wl_list_for_each(output, &scr_driver->outputs, link) { // each screen of the system
+    while (!output->done) wl_display_dispatch(scr_driver->wl_display);
+  }
 }
 
 
