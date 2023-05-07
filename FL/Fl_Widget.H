@@ -161,7 +161,7 @@ protected:
         NEEDS_KEYBOARD  = 1<<20,  ///< set on touch screen devices if a widget needs a keyboard when it gets the focus. Reserved, not yet used in 1.4.0. \see Fl_Widget::needs_keyboard()
         IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
         DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
-        AUTO_FREE_USER_DATA = 1<<23, ///< automatically call ::free() on the user_data pointer when destroying this widget
+        AUTO_FREE_USER_DATA = 1<<23, ///< automatically call `free()` on the user_data pointer when destroying this widget
 
         // Note to devs: add new FLTK core flags above this line (up to 1<<28).
 
