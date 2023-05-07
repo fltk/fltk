@@ -25,62 +25,9 @@
 Fl_Window *window = NULL;
 
 /*
- We create our own little calls here that uses method callbacks.
+ here is a list of callback functions that can take parameter lists and are
+ not limited to FLTK's built-in user_data `void*`.
  */
-class MyButton0 : public Fl_Button {
-  // z will be set in the constructor
-  int z;
-public:
-  // create a simple push button
-  MyButton0(int x, int y, int w, int h, const char *label)
-  : Fl_Button(x, y, w, h, label), z(7)
-  {
-    // 1: the macro need a pointer to the button first
-    // 2: we can call a method in any class, but here we call ourselves
-    // 3: call a method in our own class, so we need to set 'this' again
-    // 4: this is the method that we want to call; it must be "public"
-    FL_METHOD_CALLBACK(this, MyButton0, this, hello_0);
-  }
-  // public non-static callback method
-  void hello_0() {
-    // its not a static method, so we have full access to all members, i.e. 'z'
-    fl_message("MyButton0 has the z value %d.", z);
-  }
-};
-
-/*
- This class demonstrates method callbacks with two additional callback parameters.
- */
-class MyButton2 : public Fl_Button {
-  int z;
-public:
-  MyButton2(int x, int y, int w, int h, const char *label)
-  : Fl_Button(x, y, w, h, label), z(3)
-  {
-    FL_METHOD_CALLBACK(this, MyButton2, this, hello_2, const char *, text, "CALLBACK", float, v, 3.141592654);
-  }
-  void hello_2(const char *text, float v) {
-    fl_message("MyButton2 has the z value %d\nand the callback says\n%s %g", z, text, v);
-  }
-};
-
-/*
- This class demonstrates method callbacks with four additional callback
- parameters. The maximum is currently five.
- */
-class MyButton4 : public Fl_Button {
-  int z;
-public:
-  MyButton4(int x, int y, int w, int h, const char *label)
-  : Fl_Button(x, y, w, h, label), z(1) { }
-  void hello_4(int a1, int a2, int a3, int a4) {
-    fl_message("MyButton4 has the z value %d.\n%d %d %d %d", z, a1, a2, a3, a4);
-  }
-};
-
-
-// here is a list of callback functions that can take parameter lists and are
-// not limited to FLTK's built-in user_data `void*`.
 void hello_0_args_cb() {
   fl_message("Hello with 0 arguments");
 }
@@ -91,6 +38,36 @@ void hello_2_args_cb(const char *text, int number) {
 
 void hello_4_args_cb(int a1, int a2, int a3, int a4) {
   fl_message("Hello with 4 arguments:\n%d %d %d %d", a1, a2, a3, a4);
+}
+
+/*
+ We create our own little class here that uses method callbacks.
+ */
+class MyButton : public Fl_Button {
+  // id will be set in the constructor
+  int id_;
+public:
+  // create a simple push button
+  MyButton(int x, int y, int w, int h, const char *label, int id)
+  : Fl_Button(x, y, w, h, label), id_(id)
+  { }
+  // public non-static callback method
+  void hello(int a, int b, int c) {
+    // its not a static method, so we have full access to all members, i.e. 'z'
+    fl_message("MyButton has the id %d\nand was called with the custom parameters\n%d, %d, and %d.", id_, a, b, c);
+  }
+};
+
+/*
+ Custom parameters are duplicated (shallow copy) whenever the macros code is
+ called. That way, creating multiple widgets dynamically with the same function
+ will create individual user data sets at runtime for every widget.
+ */
+void make_button(Fl_Window *win, int set) {
+  int y_lut[] = { 60, 90 };
+  const char *label_lut[] = { "id 2 (5, 6, 7)", "id 3 (6, 7, 8)" };
+  MyButton *btn = new MyButton(200, y_lut[set], 180, 25, label_lut[set], set+2);
+  FL_METHOD_CALLBACK(btn, MyButton, btn, hello, int, a, set+5, int, b, set+6, int, c, set+7);
 }
 
 
@@ -114,18 +91,24 @@ int main(int argc, char ** argv) {
   FL_FUNCTION_CALLBACK(func_cb_btn_4, hello_4_args_cb, int, a1, 1, int, a2, 2, int, a3, 3, int, a4, 4);
 
   /* -- testing non-static method callbacks with multiple arguments
-   The following buttons call non-static class methods with up to five
-   additioanl parametrs. Check the classes above to see how this is implemented.
+   The following buttons call non-static class methods with custom parameters.
+   Check the class above to see how this is implemented.
    */
 
   new Fl_Box(200, 5, 180, 25, "Method Callbacks:");
 
-  MyButton0 *meth_cb_btn_0 = new MyButton0(200, 30, 180, 25, "0 args");
+  MyButton *meth_cb_btn_0 = new MyButton(200, 30, 180, 25, "id 1 (1, 2, 3)", 1);
+  // 1: the macro needs a pointer to the button first
+  // 2: we can call a method in any class, but here we call ourselves
+  // 3: call a method in our own class, so we need to set 'this' again
+  // 4: this is the method that we want to call; it must be "public"
+  // 5: add a bunch of parameters
+  FL_METHOD_CALLBACK(meth_cb_btn_0, MyButton, meth_cb_btn_0, hello, int, a, 1, int, b, 2, int, c, 3);
 
-  MyButton2 *meth_cb_btn_2 = new MyButton2(200, 60, 180, 25, "2 args");
-
-  MyButton4 *meth_cb_btn_4 = new MyButton4(200, 90, 180, 25, "4 args");
-  FL_METHOD_CALLBACK(meth_cb_btn_4, MyButton4, meth_cb_btn_4, hello_4, int, a1, 1, int, a2, 2, int, a3, 3, int, a4, 4);
+  // Call the same FL_METHOD_CALLBACK macro multiple times to ensure we get
+  // individual parameter sets.
+  make_button(window, 0);
+  make_button(window, 1);
 
   /* -- testing inline callback functions
    Adding a simple Lambda style functionality to FLTK without actually using
@@ -136,7 +119,7 @@ int main(int argc, char ** argv) {
 
   Fl_Button *inline_cb_btn_0 = new Fl_Button(390, 30, 180, 25, "0 args");
   FL_INLINE_CALLBACK(inline_cb_btn_0,
-                     { fl_message("Inline callabck with 0 args."); }
+                     { fl_message("Inline callback with 0 args."); }
                      );
 
   Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");

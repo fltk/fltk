@@ -14,6 +14,11 @@
  *     https://www.fltk.org/bugs.php
  */
 
+#ifndef _FL_FL_CALLBACK_H_
+#define _FL_FL_CALLBACK_H_
+
+#include <stdlib.h>
+
 /**
  \file FL_CALLBACK.H
  This file provides macros for easy callbacks of functions and methods
@@ -34,6 +39,10 @@
  triplets can now follow, where each triplet is a comma separated list of
  a type, the parameter name, and the value, for example: `int, x, 3`. Passing
  two arguments is done in two triplets: `int, x, 3, int, y, 4`.
+
+ Custom parameters are duplicated (shallow copy) whenever the macro is called
+ and are marked to be automatically free'd by the callback widget
+ when destroyed.
 
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
@@ -75,6 +84,10 @@
  list of a type, the parameter name, and the value, for example: `int, x, 3`.
  Passing two arguments is done in two triplets: `int, x, 3, int, y, 4`.
 
+ Custom parameters are duplicated (shallow copy) whenever the macro is called
+ and are marked to be automatically free'd by the callback widget
+ when destroyed.
+
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
  ...
@@ -107,6 +120,10 @@
  and the value, for example: `int, x, 3`. Passing two arguments is done in two
  triplets: `int, x, 3, int, y, 4`.
 
+ Custom parameters are duplicated (shallow copy) whenever the macro is called
+ and are marked to be automatically free'd by the callback widget
+ when destroyed.
+
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
  ...
@@ -128,9 +145,6 @@
 #define FL_INLINE_CALLBACK(WIDGET, FUNC, ...)
 
 #else // FL_DOXYGEN
-
-#ifndef _FL_FL_CALLBACK_H_
-#define _FL_FL_CALLBACK_H_
 
 #define _FL_LIST_MEMBERS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42) i00 i01; i10 i11; i20 i21; i30 i31; i40 i41;
 #define _FL_LIST_FN_ARGS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42) i00 i01, i10 i11, i20 i21, i30 i31, i40 i41
@@ -176,10 +190,14 @@ FUNC( \
 FL_CONCAT(_FL_LIST_ARGS_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 ); }; \
 } FL_CONCAT(cbtype_,__LINE__); \
-static FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
+FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
 FL_CONCAT(_FL_LIST_VALUES_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 }; \
-WIDGET->callback(FL_CONCAT(cbd_,__LINE__).cb, &FL_CONCAT(cbd_,__LINE__)); } while(0)
+FL_CONCAT(cbtype_,__LINE__) *FL_CONCAT(cbd_data_,__LINE__) = (FL_CONCAT(cbtype_,__LINE__)*)::malloc(sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+::memcpy(FL_CONCAT(cbd_data_,__LINE__), &FL_CONCAT(cbd_,__LINE__), sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+WIDGET->callback(FL_CONCAT(cbd_data_,__LINE__)->cb, FL_CONCAT(cbd_data_,__LINE__)); \
+WIDGET->auto_free_user_data(true); \
+} while(0)
 
 #define FL_METHOD_CALLBACK(WIDGET, CLASS, SELF, METH, ...) do {\
 typedef struct FL_CONCAT(cbtype_,__LINE__) { \
@@ -191,10 +209,14 @@ cbdata->self->METH( \
 FL_CONCAT(_FL_LIST_ARGS_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 ); }; \
 } FL_CONCAT(cbtype_,__LINE__); \
-static FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
+FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
 SELF, FL_CONCAT(_FL_LIST_VALUES_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 }; \
-WIDGET->callback(FL_CONCAT(cbd_,__LINE__).cb, &FL_CONCAT(cbd_,__LINE__)); } while(0)
+FL_CONCAT(cbtype_,__LINE__) *FL_CONCAT(cbd_data_,__LINE__) = (FL_CONCAT(cbtype_,__LINE__)*)::malloc(sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+::memcpy(FL_CONCAT(cbd_data_,__LINE__), &FL_CONCAT(cbd_,__LINE__), sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+WIDGET->callback(FL_CONCAT(cbd_data_,__LINE__)->cb, FL_CONCAT(cbd_data_,__LINE__)); \
+WIDGET->auto_free_user_data(true); \
+} while(0)
 
 #define FL_INLINE_CALLBACK(WIDGET, FUNC, ...) do {\
 typedef struct FL_CONCAT(cbtype_,__LINE__) { \
@@ -208,10 +230,14 @@ cbdata->func( \
 FL_CONCAT(_FL_LIST_ARGS_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 ); }; \
 } FL_CONCAT(cbtype_,__LINE__); \
-static FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
+FL_CONCAT(cbtype_,__LINE__) FL_CONCAT(cbd_,__LINE__) = { \
 FL_CONCAT(_FL_LIST_VALUES_, FL_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
 }; \
-WIDGET->callback(FL_CONCAT(cbd_,__LINE__).cb, &FL_CONCAT(cbd_,__LINE__)); } while(0)
+FL_CONCAT(cbtype_,__LINE__) *FL_CONCAT(cbd_data_,__LINE__) = (FL_CONCAT(cbtype_,__LINE__)*)::malloc(sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+::memcpy(FL_CONCAT(cbd_data_,__LINE__), &FL_CONCAT(cbd_,__LINE__), sizeof(FL_CONCAT(cbtype_,__LINE__))); \
+WIDGET->callback(FL_CONCAT(cbd_data_,__LINE__)->cb, FL_CONCAT(cbd_data_,__LINE__)); \
+WIDGET->auto_free_user_data(true); \
+} while(0)
 
 //  The macro:
 //  FL_FUNCTION_CALLBACK(func_cb_btn_4, hello_4_args_cb, int, a1, 1, int, a2, 2, int, a3, 3, int, a4, 4);

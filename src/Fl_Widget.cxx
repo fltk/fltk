@@ -178,6 +178,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
   // remove stale entries from default callback queue (Fl::readqueue())
   if (callback_ == default_callback) cleanup_readqueue(this);
+  if ( (flags_ & AUTO_FREE_USER_DATA) && user_data_) ::free(user_data_);
 }
 
 /**
@@ -399,3 +400,16 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
   if (callback_ != default_callback)
     clear_changed();
 }
+
+/*
+ \brief Sets the user data for this widget.
+ Sets the new user data (void *) argument that is passed to the callback function.
+ \param[in] v new user data
+ \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+ */
+void Fl_Widget::user_data(void* v, bool auto_free) {
+  if ((flags_ & AUTO_FREE_USER_DATA) && user_data_) ::free(user_data_);
+  user_data_ = v;
+  auto_free_user_data(auto_free);
+}
+

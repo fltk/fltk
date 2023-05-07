@@ -161,6 +161,7 @@ protected:
         NEEDS_KEYBOARD  = 1<<20,  ///< set on touch screen devices if a widget needs a keyboard when it gets the focus. Reserved, not yet used in 1.4.0. \see Fl_Widget::needs_keyboard()
         IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
         DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
+        AUTO_FREE_USER_DATA = 1<<23, ///< automatically call ::free() on the user_data pointer when destroying this widget
 
         // Note to devs: add new FLTK core flags above this line (up to 1<<28).
 
@@ -671,8 +672,12 @@ public:
       Each widget has a single callback.
       \param[in] cb new callback
       \param[in] p user data
+      \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
    */
-  void callback(Fl_Callback* cb, void* p) {callback_ = cb; user_data_ = p;}
+  void callback(Fl_Callback* cb, void* p, bool auto_free=false) {
+    callback_ = cb;
+    user_data(p, auto_free);
+  }
 
   /** Sets the current callback function for the widget.
       Each widget has a single callback.
@@ -695,7 +700,7 @@ public:
    */
   void callback(Fl_Callback1* cb, long p = 0) {
     callback_ = (Fl_Callback*)(fl_intptr_t)(cb);
-    user_data_ = (void*)(fl_intptr_t)p;
+    user_data((void*)(fl_intptr_t)p);
   }
 
   /** Gets the user data for this widget.
@@ -704,11 +709,15 @@ public:
    */
   void* user_data() const {return user_data_;}
 
-  /** Sets the user data for this widget.
-      Sets the new user data (void *) argument that is passed to the callback function.
-      \param[in] v new user data
+  /** \brief Sets the user data for this widget. */
+  void user_data(void* v, bool auto_free=false);
+
+  /** Destroy user_data() field when calling the widget detructor.
+      Tell the widget to free any data that the user_data() member may point to
+      when deleting the widget itselt. This is usefule when widgets are
+      dynamically allocated and need a private set of user data.
    */
-  void user_data(void* v) {user_data_ = v;}
+  void auto_free_user_data(bool v) { v ? set_flag(AUTO_FREE_USER_DATA) : clear_flag(AUTO_FREE_USER_DATA); }
 
   /** Gets the current user data (long) argument that is passed to the callback function.
 
@@ -727,7 +736,7 @@ public:
 
     \see argument()
    */
-  void argument(long v) {user_data_ = (void*)(fl_intptr_t)v;}
+  void argument(long v) {user_data((void*)(fl_intptr_t)v);}
 
   /** Returns the conditions under which the callback is called.
 
