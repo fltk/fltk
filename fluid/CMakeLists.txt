@@ -14,6 +14,8 @@
 #     https://www.fltk.org/bugs.php
 #
 
+# Source files for 'fluid-lib' = all source files except fluid.cxx
+
 set (CPPFILES
   CodeEditor.cxx
   StyleParse.cxx
@@ -32,7 +34,6 @@ set (CPPFILES
   custom_widgets.cxx
   factory.cxx
   file.cxx
-  fluid.cxx
   function_panel.cxx
   pixmaps.cxx
   shell_command.cxx
@@ -42,7 +43,7 @@ set (CPPFILES
   widget_panel.cxx
 )
 
-# also list header files in Apple's Xcode IDE
+# List header files in Apple's Xcode IDE
 
 set (HEADERFILES
   CodeEditor.h
@@ -74,7 +75,7 @@ set (HEADERFILES
   widget_panel.h
 )
 
-# ExternalCodeEditor: platform specific files
+# Add ExternalCodeEditor: platform specific files
 
 if (WIN32)
   list (APPEND CPPFILES ExternalCodeEditor_WIN32.cxx)
@@ -86,8 +87,16 @@ endif (WIN32)
 
 source_group("Header Files" FILES ${HEADERFILES})
 
-set (FLUID_TARGETS fluid)         # fluid and optional fluid-cmd target
-set (FLUID_LIBS fltk fltk_images) # libraries used to link fluid executables
+# Build a local object library to avoid compiling all source files
+# for all fluid targets (fluid, fluid-cmd, fluid-shared). This
+# library includes everything except the main program (fluid.cxx).
+
+add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES})
+
+# Build fluid with all its variants (fluid-cmd, fluid-shared) ...
+
+set (FLUID_TARGETS fluid)                   # fluid and optional fluid-cmd target
+set (FLUID_LIBS fluid-lib fltk fltk_images) # libraries used to link fluid executables
 
 if (APPLE AND (NOT OPTION_APPLE_X11))
 
@@ -95,7 +104,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
 
   set (ICON_NAME fluid.icns)
   set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${HEADERFILES} ${ICON_PATH})
+  add_executable (fluid MACOSX_BUNDLE fluid.cxx ${HEADERFILES} ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -111,12 +120,12 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
 
 else ()
 
-  # option WIN32 builds a Windows GUI program, ignored on other platforms
-  add_executable (fluid WIN32 ${CPPFILES} ${HEADERFILES})
+  # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
+  add_executable (fluid WIN32 fluid.cxx ${HEADERFILES})
 
 endif ()
 
-# we must link fluid with Cairo if OPTION_CAIRO is enabled
+# Link fluid with Cairo if OPTION_CAIRO is enabled
 if (FLTK_HAVE_CAIRO)
   target_include_directories (fluid PRIVATE ${PKG_CAIRO_INCLUDE_DIRS})
   if (PKG_CAIRO_LIBRARY_DIRS)
@@ -130,16 +139,16 @@ endif (USE_GDIPLUS)
 
 target_link_libraries (fluid ${FLUID_LIBS})
 
-
 # Add fluid-cmd console app (Windows only) for converting .fl to .cxx/.h files.
 # This is done for all Windows targets, even if cross-compiling.
 
 if (WIN32)
   list (APPEND FLUID_TARGETS fluid-cmd)
-  add_executable (fluid-cmd ${CPPFILES} ${HEADERFILES})
+  add_executable (fluid-cmd fluid.cxx ${HEADERFILES})
   target_link_libraries (fluid-cmd ${FLUID_LIBS})
 
-  # we must link fluid-cmd with Cairo if OPTION_CAIRO is enabled (same as above)
+  # Link fluid-cmd with Cairo if OPTION_CAIRO is enabled (same as above)
+
   if (FLTK_HAVE_CAIRO)
     target_include_directories (fluid-cmd PRIVATE ${PKG_CAIRO_INCLUDE_DIRS})
     if (PKG_CAIRO_LIBRARY_DIRS)
@@ -152,15 +161,15 @@ endif (WIN32)
 
 if (OPTION_BUILD_SHARED_LIBS)
   list (APPEND FLUID_TARGETS fluid-shared)
-  add_executable (fluid-shared ${CPPFILES} ${HEADERFILES})
+  add_executable (fluid-shared fluid.cxx ${HEADERFILES})
   if (MSVC)
-    target_link_libraries (fluid-shared fltk_SHARED)
+    target_link_libraries (fluid-shared fluid-lib fltk_SHARED)
   else ()
-    target_link_libraries (fluid-shared fltk_images_SHARED)
+    target_link_libraries (fluid-shared fluid-lib fltk_images_SHARED)
   endif (MSVC)
 endif ()
 
-# install fluid GUI and commandline tool
+# Install fluid GUI and commandline tool
 
 if (APPLE AND (NOT OPTION_APPLE_X11))
 
@@ -199,7 +208,7 @@ else()
 
 endif (APPLE AND (NOT OPTION_APPLE_X11))
 
-# install desktop files
+# Install desktop files
 
 if (UNIX)
   install (FILES fluid.desktop
