@@ -250,8 +250,10 @@ WIDGET->auto_free_user_data(true); \
 //        hello_4_args_cb( cbdata->a1, cbdata->a2, cbdata->a3, cbdata->a4 );
 //      };
 //    } cbtype_114;
-//    static cbtype_114 cbd_114 = { 1, 2, 3, 4 };
-//    func_cb_btn_4->callback(cbd_114.cb, &cbd_114);
+//    cbtype_114 cbd_114 = { 1, 2, 3, 4 };
+//    cbtype_114 *cbd_data_114 = ::malloc(sizeof(cbtype_114));
+//    ::memcpy(cbd_datat_114, &cbd_114, sizeof(cbtype_114));
+//    func_cb_btn_4->callback(cbd_data_114->cb, cbd_data_114);
 //  } while(0)
 
 //  The macro:
@@ -265,8 +267,10 @@ WIDGET->auto_free_user_data(true); \
 //        cbdata->self->hello_2( cbdata->text, cbdata->v );
 //      };
 //    } cbtype_60;
-//    static cbtype_60 cbd_60 = { this, "CALLBACK", 3.141592654 };
-//    this->callback(cbd_60.cb, &cbd_60);
+//    cbtype_60 cbd_60 = { this, "CALLBACK", 3.141592654 };
+//    cbtype_60 *cbd_data_60 = ::malloc(sizeof(cbtype_60));
+//    ::memcpy(cbd_datat_60, &cbd_60, sizeof(cbtype_60));
+//    this->callback(cbd_data_60->cb, cbd_data_60);
 //  } while(0);
 
 //  The macro:
@@ -284,8 +288,10 @@ WIDGET->auto_free_user_data(true); \
 //        cbtype_145 *cbdata = (cbtype_145*)user_data; cbdata->func( cbdata->text, cbdata->number );
 //      };
 //    } cbtype_145;
-//    static cbtype_145 cbd_145 = { "FLTK", 2 };
-//    inline_cb_btn_2->callback(cbd_145.cb, &cbd_145);
+//    cbtype_145 cbd_145 = { "FLTK", 2 };
+//    cbtype_145 *cbd_data_145 = ::malloc(sizeof(cbtype_145));
+//    ::memcpy(cbd_datat_145, &cbd_145, sizeof(cbtype_145));
+//    inline_cb_btn_2->callback(cbd_dtat_145->cb, cbd_data_145);
 //  } while(0);
 
 #endif // FL_DOXYGEN
