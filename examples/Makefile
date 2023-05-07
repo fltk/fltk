@@ -28,6 +28,7 @@ ALL = animgifimage$(EXEEXT) \
       animgifimage-resize$(EXEEXT) \
       browser-simple$(EXEEXT) \
       cairo-draw-x$(EXEEXT) \
+      callbacks$(EXEEXT) \
       chart-simple$(EXEEXT) \
       draggable-group$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
