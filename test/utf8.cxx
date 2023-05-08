@@ -622,10 +622,10 @@ int main(int argc, char** argv)
     snprintf(bu, sizeof(bu), "0x%06X", y * 16);
     Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
     b->textfont(FL_COURIER);
-    b->value(fl_strdup(bu));
+    b->value(bu);
     b = new Fl_Input(280,(y-off)*25,380,25);
     b->textfont(extra_font);
-    b->value(fl_strdup(buf));
+    b->value(buf);
   }
   scroll.end();
   main_win->resizable(scroll);
@@ -643,6 +643,11 @@ int main(int argc, char** argv)
   l = fl_utf_toupper((const unsigned char*)utf8l, l, utf8u);
   utf8u[l] = '\0';
   i3.value(utf8u);
+
+  // free strings that are no longer used
+  free(utf8u);
+  free(utf8l);
+  free(utf8);
 
   const char *ltr_txt = "\\->e\xCC\x82=\xC3\xAA";
   Fl_Input i4(5, 90, 190, 25);
