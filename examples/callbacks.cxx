@@ -25,8 +25,8 @@
 Fl_Window *window = NULL;
 
 /*
- here is a list of callback functions that can take parameter lists and are
- not limited to FLTK's built-in user_data `void*`.
+ Here is a list of callback functions that can take custom parameters and are
+ not limited to FLTK's built-in `void*` user_data.
  */
 void hello_0_args_cb() {
   fl_message("Hello with 0 arguments");
@@ -53,15 +53,17 @@ public:
   { }
   // public non-static callback method
   void hello(int a, int b, int c) {
-    // its not a static method, so we have full access to all members, i.e. 'z'
+    // it's not a static method, so we have full access to all members, i.e. 'id_'
     fl_message("MyButton has the id %d\nand was called with the custom parameters\n%d, %d, and %d.", id_, a, b, c);
   }
 };
 
 /*
- Custom parameters are duplicated (shallow copy) whenever the macros code is
- called. That way, creating multiple widgets dynamically with the same function
- will create individual user data sets at runtime for every widget.
+ Whenever the macro code is invoked, custom parameters are duplicated (using a
+ shallow copy). This ensures that each widget created dynamically with the same
+ function has its own separate set of user data at runtime. Consequently,
+ multiple widgets can be created dynamically, and each widget will have its
+ own unique set of parameters.
  */
 void make_button(Fl_Window *win, int set) {
   int y_lut[] = { 60, 90 };
@@ -100,13 +102,14 @@ int main(int argc, char ** argv) {
   MyButton *meth_cb_btn_0 = new MyButton(200, 30, 180, 25, "id 1 (1, 2, 3)", 1);
   // 1: the macro needs a pointer to the button first
   // 2: we can call a method in any class, but here we call ourselves
-  // 3: call a method in our own class, so we need to set 'this' again
+  // 3: call a method in our own class, so we need to set 'meth_cb_btn_0' again
+  //    Note: we could just as well call a method in a different class.
   // 4: this is the method that we want to call; it must be "public"
-  // 5: add a bunch of parameters
+  // 5: add zero to five parameter triplets, note the comma placement
   FL_METHOD_CALLBACK(meth_cb_btn_0, MyButton, meth_cb_btn_0, hello, int, a, 1, int, b, 2, int, c, 3);
 
-  // Call the same FL_METHOD_CALLBACK macro multiple times to ensure we get
-  // individual parameter sets.
+  // call the same FL_METHOD_CALLBACK macro multiple times to ensure we get
+  // individual parameter sets
   make_button(window, 0);
   make_button(window, 1);
 

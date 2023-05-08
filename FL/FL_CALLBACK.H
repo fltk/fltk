@@ -1,5 +1,5 @@
 /*
- * Macros for easy callback for the Fast Light Tool Kit (FLTK).
+ * Macros for easy callbacks for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 2023 by Bill Spitzak and others.
  *
@@ -22,27 +22,32 @@
 /**
  \file FL_CALLBACK.H
  This file provides macros for easy callbacks of functions and methods
- with multiple a type safe arguments.
+ with multiple type safe arguments.
 */
 
 #ifdef FL_DOXYGEN
 
 /**
- \brief Declare a plain C or static method callback with custom parameters.
+ \brief Declare a C function callback with custom parameters.
 
- This macro makes it easy to call arbitray functions with up to five custom
- parameters. It expands FLTK's limitation of passing a single `void*` argument
- and is type safe.
+ You can declare a plain C function callback or a static method callback with
+ custom parameters using this macro. It simplifies the process of calling
+ arbitrary functions with up to five custom parameters. The macro generates
+ code that ensures type safety and expands FLTK's standard callbacks, which
+ are limited to a single `void*` argument.
 
- The first argument is the widget that will handle this callback. The second
- argument is a regular function or a static method in any class. Up to five
- triplets can now follow, where each triplet is a comma separated list of
- a type, the parameter name, and the value, for example: `int, x, 3`. Passing
- two arguments is done in two triplets: `int, x, 3, int, y, 4`.
+ To use the macro, you provide the widget that will handle the callback as the
+ first argument. The second argument can be either a regular function or a
+ static method in any class. After that, you can include up to five triplets,
+ where each triplet consists of a type, a parameter name, and a value.
 
- Custom parameters are duplicated (shallow copy) whenever the macro is called
- and are marked to be automatically free'd by the callback widget
- when destroyed.
+ For example, you can use `int, x, 3` to specify an integer parameter with a
+ value of 3. If you need to pass two arguments, you can use two triplets
+ like this: `int, x, 3, int, y, 4`, etc. .
+
+ Whenever the macro is called, the custom parameters are duplicated
+ (shallow copy) and marked for automatic deallocation using `free()` by the
+ callback widget when it is destroyed.
 
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
@@ -58,7 +63,8 @@
  );
  \endcode
 
- There is a little demo program for FL_*_*CALLBACK in `examples/callbacks.cxx`.
+ You can find a small demonstration program showcasing the usage of
+ `FL_*_CALLBACK` in the `examples/callbacks.cxx` file.
 
  \param WIDGET the widget that will call the callback
  \param FUNC a C/C++ function or a static class method
@@ -71,22 +77,26 @@
 /**
  \brief Declare a non-static class method callback with custom parameters.
 
- This macro makes it easy to call arbitray methods in any class with up to five
- custom parameters. It expands FLTK's limitation of passing a single `void*`
- argument and is type safe.
+ You can declare a callback for a non-static class method with custom parameters
+ using this macro. It provides a convenient way to call arbitrary methods in
+ any class, overcoming FLTK's limitation of passing only a single void*
+ argument. Furthermore, it ensures type safety.
 
- The first argument is the widget that will handle this callback. The second
- argument indicates the class type that will be called. The third argument
- must be a pointer to an instance of that class. The fourth argument is the
- method in that class. It must be public and should not be static.
+ The first argument of the macro specifies the widget that will handle the
+ callback. The second argument indicates the class type to be called. The
+ third argument must be a pointer to an instance of that class. Finally, the
+ fourth argument is the name of the method within the class. It should be
+ public and non-static.
 
- Up to five triplets can now follow, where each triplet is a comma separated
- list of a type, the parameter name, and the value, for example: `int, x, 3`.
- Passing two arguments is done in two triplets: `int, x, 3, int, y, 4`.
+ Following these arguments, you can include up to five triplets, where each
+ triplet consists of a type, a parameter name, and a value. For example,
+ `int, x, 3` specifies an integer parameter with a value of 3. If you need to
+ pass two arguments, you can use two triplets, like this:
+ `int, x, 3, int, y, 4`.
 
- Custom parameters are duplicated (shallow copy) whenever the macro is called
- and are marked to be automatically free'd by the callback widget
- when destroyed.
+ When the macro is called, the custom parameters are duplicated (shallow copy)
+ and marked for automatic deallocation by the callback widget
+ when it is destroyed.
 
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
@@ -95,7 +105,8 @@
  FL_METHOD_CALLBACK(btn, Fl_Button, btn, color, Fl_Color, c, FL_GREEN);
  \endcode
 
- There is a little demo program for FL_*_*CALLBACK in `examples/callbacks.cxx`.
+ You can find a small demonstration program showcasing the usage of
+ `FL_*_CALLBACK` in the `examples/callbacks.cxx` file.
 
  \param WIDGET the widget that will call the callback
  \param CLASS the class type
@@ -103,44 +114,47 @@
  \param METH a C++ class method that must be public and not static
  \param ... a list of zero to five triples declaring type, name, and value
 
- \see FL_METHOD_CALLBACK, FL_INLINE_CALLBACK
+ \see FL_FUNCTION_CALLBACK, FL_INLINE_CALLBACK
  */
 #define FL_METHOD_CALLBACK(WIDGET, CLASS, SELF, METH, ...)
 
 /**
  \brief Inline a function as a callback with custom parameters.
 
- This macro makes it possible to write a callback function right where the
- widget and callback is declared, somewhat similar to a Lambda function. The
- function body is limited to a syntacx that the macro preprocessor tollerates.
+ You can use this macro to inline a function as a callback, allowing you to
+ define the callback function right where the widget and callback are declared,
+ similar to a Lambda function. The function body is limited to a syntax that
+ the macro preprocessor can handle.
 
- The first argument is the widget that will handle this callback. The second
- argument is the function body itself. Up to five triplets can now follow,
- where each triplet is a comma separated list of a type, the parameter name,
- and the value, for example: `int, x, 3`. Passing two arguments is done in two
- triplets: `int, x, 3, int, y, 4`.
+ The first argument of the macro specifies the widget that will handle the
+ callback. The second argument is the actual function body itself. Following
+ these arguments, you can include up to five triplets, where each triplet
+ consists of a type, a parameter name, and a value. For example, `int, x, 3`
+ specifies an integer parameter with a value of 3. If you need to pass two
+ arguments, you can use two triplets, such as `int, x, 3, int, y, 4`.
 
- Custom parameters are duplicated (shallow copy) whenever the macro is called
- and are marked to be automatically free'd by the callback widget
- when destroyed.
+ When the macro is called, the custom parameters are duplicated (shallow copy)
+ and marked for automatic deallocation by the callback widget
+ when it is destroyed.
 
  \code{.cpp}
  #include <FL/FL_CALLBACK.H>
  ...
  Fl_Button *btn = new Fl_Button(10, 10, 100, 20, "Test");
  FL_INLINE_CALLBACK(btn,
-   { fl_message("Greetings for the %s button", name); },
+   { fl_message("Greetings from the %s button", name); },
    const char*, name, btn->label()
  );
  \endcode
 
- There is a little demo program for FL_*_*CALLBACK in `examples/callbacks.cxx`.
+ You can find a small demonstration program showcasing the usage of
+ `FL_*_CALLBACK` in the `examples/callbacks.cxx` file.
 
  \param WIDGET the widget that will call the callback
  \param FUNC the function body within the limits of the C macro preprocessor
  \param ... a list of zero to five triples declaring type, name, and value
 
- \see FL_METHOD_CALLBACK, FL_INLINE_CALLBACK
+ \see FL_METHOD_CALLBACK, FL_FUNCTION_CALLBACK
  */
 #define FL_INLINE_CALLBACK(WIDGET, FUNC, ...)
 
