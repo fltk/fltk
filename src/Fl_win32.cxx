@@ -14,11 +14,12 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// Note: this file contains platform specific code and will therefore
+// not be processed by doxygen (see Doxyfile.in).
+
 // This file contains Windows-specific code for FLTK which is always linked
 // in.  Search other files for "_WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
-
-#if defined(_WIN32) && !defined(FL_DOXYGEN)
 
 /* We require Windows 2000 features (e.g. VK definitions) */
 # if !defined(WINVER) || (WINVER < 0x0500)
@@ -2741,5 +2742,3 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   fl_graphics_driver->gc(save_gc);
   Fl_Surface_Device::pop_current();
 }
-
-#endif // defined(_WIN32) and !defined(FL_DOXYGEN)

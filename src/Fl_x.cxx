@@ -14,7 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#if !defined(FL_DOXYGEN)
+// Note: this file contains platform specific code and will therefore
+// not be processed by doxygen (see Doxyfile.in).
 
 #  ifndef FLTK_CONSOLIDATE_MOTION
 #  define FLTK_CONSOLIDATE_MOTION 0
@@ -3026,5 +3027,3 @@ void Fl_X11_Window_Driver::show() {
     XMapRaised(fl_display, fl_xid(pWindow));
   }
 }
-
-#endif // !defined(FL_DOXYGEN)
