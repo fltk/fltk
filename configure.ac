@@ -140,6 +140,8 @@ AC_ARG_ENABLE([xinerama], AS_HELP_STRING([--disable-xinerama], [turn off Xineram
 
 AC_ARG_ENABLE([xrender], AS_HELP_STRING([--disable-xrender], [turn off Xrender support]))
 
+AC_ARG_ENABLE([fluid], AS_HELP_STRING([--disable-fluid], [turn off fluid building]))
+
 AS_CASE([$host_os], [cygwin* | mingw*], [
   AC_ARG_ENABLE([gdiplus], AS_HELP_STRING([--disable-gdiplus], [don't use GDI+ for antialiased graphics]))
 
@@ -900,11 +902,14 @@ OSX_ONLY=:
 THREADS=
 LIBDECORDIR=""
 LIBDECORDBUS=""
+FLUIDDIR=""
 
 AC_ARG_WITH([links], AS_HELP_STRING([--with-links], [make header links for common misspellings (default=no)]))
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
+
+AS_IF([test x$enable_fluid != xno], [FLUIDDIR="fluid"])
 
 AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     dnl Cygwin environment, using windows GDI ...
@@ -1409,6 +1414,8 @@ AC_SUBST([HLINKS])
 AC_SUBST([OSX_ONLY])
 AC_SUBST([THREADS])
 
+AC_SUBST([FLUIDDIR])
+
 AC_SUBST([LIBDECORDIR])
 AC_SUBST([LIBDECORDBUS])
 
@@ -1762,6 +1769,10 @@ AS_CASE([$host_os], [mingw*], [
     echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
 ])
 
+AS_IF([test x$enable_fluid != xno], [
+    echo "Build fluid: Yes"
+    ])
+    
 dnl
 echo "Cross-compiling: $fltk_cross_compiling"
 AS_IF([test "$fltk_cross_compiling" = "yes"], [

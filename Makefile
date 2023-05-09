@@ -16,12 +16,17 @@
 
 include makeinclude
 
-DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) fluid fltk-options test documentation
+DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options test \
+       documentation
 
 all: makeinclude fltk-config
 	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
+	done
+	for dir in $(FLUIDDIR); do\
+	  echo "=== making fluidtest ===";\
+	  (cd test; $(MAKE)  $(MFLAGS) allfluid);\
 	done
 
 install: makeinclude
