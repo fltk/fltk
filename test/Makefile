@@ -243,8 +243,9 @@ GLALL = \
 	unittests$(EXEEXT)
 
 all:	$(ALL) $(GLDEMOS)
-
-allfluid: $(ALLFLUID)
+	for dir in $(FLUIDDIR); do\
+	  $(MAKE)  $(MFLAGS) $(ALLFLUID);\
+	done
 
 gldemos:	$(GLALL)
 

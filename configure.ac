@@ -1770,7 +1770,9 @@ AS_CASE([$host_os], [mingw*], [
 ])
 
 AS_IF([test x$enable_fluid != xno], [
-    echo "Build fluid: Yes"
+    echo "    Build fluid: YES"
+    ],[
+    echo "    Build fluid: NO"
     ])
     
 dnl

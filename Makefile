@@ -24,10 +24,6 @@ all: makeinclude fltk-config
 		echo "=== making $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
 	done
-	for dir in $(FLUIDDIR); do\
-	  echo "=== making fluidtest ===";\
-	  (cd test; $(MAKE)  $(MFLAGS) allfluid);\
-	done
 
 install: makeinclude
 	-mkdir -p $(DESTDIR)$(bindir)
