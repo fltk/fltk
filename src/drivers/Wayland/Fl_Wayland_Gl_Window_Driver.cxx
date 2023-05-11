@@ -413,7 +413,6 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
     wl_egl_window_resize(egl_window, W, H, 0, 0);
     //fprintf(stderr, "Fl_Wayland_Gl_Window_Driver::resize from %dx%d to %dx%d\n",
     //        W2, H2, W, H);
-    Fl::wait(0);
   }
   /* CONTROL_LEAKING_SUB_GL_WINDOWS
   if (Fl_Wayland_Window_Driver::driver(pWindow)->subRect()) {
@@ -442,7 +441,6 @@ void Fl_Wayland_Gl_Window_Driver::gl_start() {
   wl_egl_window_get_attached_size(dr->gl_start_support_->egl_window, &W2, &H2);
   if (W2 != W || H2 != H) {
     wl_egl_window_resize(dr->gl_start_support_->egl_window, W, H, 0, 0);
-    Fl::wait(0);
   }
   glClearColor(0., 0., 0., 0.);
   glClear(GL_COLOR_BUFFER_BIT);

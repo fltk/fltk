@@ -669,6 +669,7 @@ static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_o
       win_driver->is_a_rescale(false);
       if (window->fl_win->as_gl_window() && !window->fl_win->parent() &&
           post_scale != pre_scale) { // necessary for glpuzzle on 2-screen system
+        Fl::wait(0);
         Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, window->fl_win);
       }
     } else if (window->buffer) {
