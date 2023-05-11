@@ -623,6 +623,12 @@ static struct libdecor_interface libdecor_iface = {
   .error = handle_error,
 };
 
+
+static void delayed_redraw(Fl_Window *win) {
+  win->redraw();
+}
+
+
 static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_output *wl_output)
 {
   struct wld_window *window = (struct wld_window*)data;
@@ -661,9 +667,14 @@ static void surface_enter(void *data, struct wl_surface *wl_surface, struct wl_o
       win_driver->is_a_rescale(true);
       window->fl_win->size(window->fl_win->w(), window->fl_win->h());
       win_driver->is_a_rescale(false);
+      if (window->fl_win->as_gl_window() && !window->fl_win->parent() &&
+          post_scale != pre_scale) { // necessary for glpuzzle on 2-screen system
+        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, window->fl_win);
+      }
     } else if (window->buffer) {
-      if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
-      Fl_Wayland_Graphics_Driver::buffer_commit(window);
+      if (!window->buffer->cb) {
+        Fl_Wayland_Graphics_Driver::buffer_commit(window);
+      }
     }
     if (window->fl_win->as_gl_window())
       wl_surface_set_buffer_scale(window->wl_surface, output->wld_scale);
