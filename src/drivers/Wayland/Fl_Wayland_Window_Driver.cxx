@@ -1081,8 +1081,6 @@ static const char *get_prog_name() {
  item, when there's one, is visible immediately after the tall popup is mapped on display.
  */
 
-static bool flip_gravity = false;
-
 bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_window) {
   // a menu window or tooltip
   new_window->kind = Fl_Wayland_Window_Driver::POPUP;
@@ -1105,7 +1103,8 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   if (!target) target = Fl::first_window();
   Fl_Window *parent_win = target->top_window();
   while (parent_win && parent_win->menu_window()) parent_win = Fl::next_window(parent_win);
-  struct wld_window * parent_xid = fl_wl_xid(menu_origin ? menu_origin : parent_win);
+  Fl_Window *origin_win = (menu_origin ? menu_origin : parent_win);
+  struct wld_window * parent_xid = fl_wl_xid(origin_win);
   struct xdg_surface *parent_xdg = parent_xid->xdg_surface;
   float f = Fl::screen_scale(parent_win->screen_num());
   //fprintf(stderr, "menu parent_win=%p pos:%dx%d size:%dx%d\n", parent_win, pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
@@ -1124,20 +1123,19 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
       popup_x -= menu_origin->x() * f;
       popup_y -= menu_origin->y() * f;
     }
+    if (popup_x >= origin_win->w() * f) popup_x = origin_win->w() * f - 1;
     if (!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_bartitle(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
       // prevent first popup from going above the permissible source window
       popup_y = fl_max(popup_y, - pWindow->h() * f);
     }
     if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED)
       libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y, &popup_x, &popup_y);
-    if (flip_gravity) {popup_y += pWindow->h();}
-    xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y, 1, 1);
+    xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
     popup_y++;
   }
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
-  xdg_positioner_set_gravity(positioner, flip_gravity ?
-                XDG_POSITIONER_GRAVITY_TOP_RIGHT : XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
+  xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
   int constraint = XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
     XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
@@ -1145,6 +1143,9 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
   }
   xdg_positioner_set_constraint_adjustment(positioner, constraint);
+  if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
+    xdg_positioner_set_offset(positioner, 0, popup_y);
+  }
   new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface, parent_xdg, positioner);
   struct win_positioner *win_pos = new struct win_positioner;
   win_pos->window = new_window;
@@ -1289,33 +1290,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   Fl::e_number = old_event;
   // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
-    int HH;
-    Fl_Window_Driver::menu_parent(&HH);
-    bool simple = (menu_bartitle(pWindow) || is_menutitle(pWindow) || pWindow->h() > HH);
-    if (!simple) {
-      simple = (menu_leftorigin(pWindow) != NULL);
-    }
-    if (simple) {
-      pWindow->wait_for_expose();
-    } else {
-      int count = 0; // attempt to map the menuwindow (i.e., until it appears on a screen)
-      while (!new_window->output && count <= 5) {
-        wl_display_roundtrip(scr_driver->wl_display);
-        count++;
-      }
-    }
-    if (!new_window->output && !simple) {
-//printf("menuwindow doesn't map: pWindow=%p\n",pWindow);
-      // On a secondary display, the menuwindow may fail to map in what looks like
-      // a bug in the compositor. Bypass this problem by attempting again to create
-      // the menuwindow with another constraint: XDG_POSITIONER_GRAVITY_TOP_RIGHT
-      // instead of XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT.
-      pWindow->hide();
-      flip_gravity = true;
-      pWindow->show();
-      return;
-    }
-    flip_gravity = false;
+    pWindow->wait_for_expose();
     if (previous_floatingtitle) { // a menuwindow with a menutitle
       //puts("previous_floatingtitle");
       int HH;
@@ -1766,7 +1741,6 @@ void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
 
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   if (y == pWindow->y()) return;
-  wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display); // necessary for sway
   struct wld_window * xid_menu = fl_wl_xid(pWindow);
 //printf("reposition %dx%d[cur=%d] menu->state=%d\n", x, y, pWindow->y(), xid_menu->state);
   struct xdg_popup *old_popup = xid_menu->xdg_popup;
@@ -1795,13 +1769,15 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
     popup_x -= menu_origin->x() * f;
     popup_y -= menu_origin->y() * f;
   }
+  if (popup_x >= menu_origin->w() * f) popup_x = menu_origin->w() * f - 1;
   if (parent_xid->kind == DECORATED)
     libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y, &popup_x, &popup_y);
-  xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y, 1, 1);
+  xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
   xdg_positioner_set_size(positioner, pWindow->w() * f , pWindow->h() * f );
   xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   xdg_positioner_set_constraint_adjustment(positioner, XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X);
+  xdg_positioner_set_offset(positioner, 0, popup_y);
   xid_menu->xdg_popup = xdg_surface_get_popup(xid_menu->xdg_surface, parent_xid->xdg_surface, positioner);
   xdg_positioner_destroy(positioner);
   struct win_positioner *win_pos = new struct win_positioner;
