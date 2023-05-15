@@ -219,6 +219,8 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
   Fl::e_x = wl_fixed_to_int(surface_x) / f + delta_x;
   Fl::e_x_root = Fl::e_x + win->x();
   Fl::e_y = wl_fixed_to_int(surface_y) / f + delta_y;
+  int *poffset = Fl_Window_Driver::menu_offset_y(win);
+  if (poffset) Fl::e_y -= *poffset;
   Fl::e_y_root = Fl::e_y + win->y();
   return win;
 }

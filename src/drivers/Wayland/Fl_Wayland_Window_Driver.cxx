@@ -356,6 +356,10 @@ void Fl_Wayland_Window_Driver::make_current() {
                                             &window->buffer->draw_buffer_needs_commit);
   }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, f * wld_s);
+  int *poffset = Fl_Window_Driver::menu_offset_y(pWindow);
+  if (poffset) { // for tall menu windows under KDE to offset drawing inside window
+    cairo_translate(window->buffer->cairo_, 0, *poffset);
+  }
   cairo_rectangle_int_t *extents = subRect();
   if (extents) { // make damage-to-buffer not to leak outside parent
     Fl_Region clip_region = fl_graphics_driver->XRectangleRegion(extents->x, extents->y,
@@ -1741,6 +1745,21 @@ void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
 
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   if (y == pWindow->y()) return;
+  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KDE) {
+    // The KDE compositor refuses to position a popup such that it extends above
+    // the top of the screen. Therefore, instead of sliding the popup window
+    // on the display, we slide the drawing inside the fixed popup via
+    // member variable offset_y of the menuwindow class, and we redraw the popup
+    // content. It's also useful to make such tall popup window transparent.
+    *Fl_Window_Driver::menu_offset_y(pWindow) += (y - pWindow->y());
+    struct wld_window *xid = fl_wl_xid(pWindow);
+    wl_surface_set_opaque_region(xid->wl_surface, NULL);
+    memset(xid->buffer->draw_buffer, 0, xid->buffer->data_size);
+    //printf("offset_y=%d\n", *Fl_Window_Driver::menu_offset_y(pWindow));
+    this->y(y);
+    pWindow->redraw();
+    return;
+  }
   struct wld_window * xid_menu = fl_wl_xid(pWindow);
 //printf("reposition %dx%d[cur=%d] menu->state=%d\n", x, y, pWindow->y(), xid_menu->state);
   struct xdg_popup *old_popup = xid_menu->xdg_popup;

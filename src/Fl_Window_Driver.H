@@ -200,6 +200,7 @@ public:
   static int menu_itemheight(Fl_Window*);
   static int menu_bartitle(Fl_Window*);
   static int menu_selected(Fl_Window*);
+  static int *menu_offset_y(Fl_Window*);
   static bool is_floating_title(Fl_Window *);
   static void scroll_to_selected_item(Fl_Window *);
   static bool is_menutitle(Fl_Window *);

@@ -163,6 +163,7 @@ public:
   menuwindow* as_menuwindow() FL_OVERRIDE { return this; }
   int menubartitle;
   menuwindow *origin;
+  int offset_y;
 };
 
 Fl_Window *menuwindow::parent_ = NULL;
@@ -222,6 +223,12 @@ int Fl_Window_Driver::menu_bartitle(Fl_Window *win) {
 int Fl_Window_Driver::menu_selected(Fl_Window *win) {
   menuwindow *mwin = to_menuwindow(win);
   return (mwin ? mwin->selected : -1);
+}
+
+/** Accessor to the address of the offset_y member variable of class menuwindow */
+int *Fl_Window_Driver::menu_offset_y(Fl_Window *win) {
+  menuwindow *mwin = to_menuwindow(win);
+  return (mwin ? &(mwin->offset_y) : NULL);
 }
 
 /** Returns whether win is a non-menubar menutitle */
@@ -371,6 +378,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   int tx = X, ty = Y;
   menubartitle = menubar_title;
   origin = NULL;
+  offset_y = 0;
 
   Fl_Window_Driver::driver(this)->menu_window_area(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
