@@ -1754,7 +1754,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
     *Fl_Window_Driver::menu_offset_y(pWindow) += (y - pWindow->y());
     struct wld_window *xid = fl_wl_xid(pWindow);
     wl_surface_set_opaque_region(xid->wl_surface, NULL);
-    memset(xid->buffer->draw_buffer, 0, xid->buffer->data_size);
+    if (xid->buffer) memset(xid->buffer->draw_buffer, 0, xid->buffer->data_size);
     //printf("offset_y=%d\n", *Fl_Window_Driver::menu_offset_y(pWindow));
     this->y(y);
     pWindow->redraw();
