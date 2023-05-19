@@ -910,7 +910,7 @@ void Fl_Simple_Terminal::append(const char *s, int len) {
     append_ansi(s, len);
   } else {
     // raw append
-    buf->append(s);
+    buf->append(s, len);
     lines_ += ::strcnt(s, '\n');  // count total line feeds in string added
   }
   enforce_history_lines();
