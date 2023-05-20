@@ -957,6 +957,7 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
   int HH;
   Fl_Window_Driver::menu_parent(&HH);
   if (window->fl_win->h() > HH && y != win_pos->y) { // A menu taller than the display
+    // Under KDE, height is set to the display height or less: we ignore that.
     window->state = (y - win_pos->y);
     // make selected item visible, if there's one
     Fl_Window_Driver::scroll_to_selected_item(window->fl_win);

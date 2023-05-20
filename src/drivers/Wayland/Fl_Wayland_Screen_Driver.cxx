@@ -1182,7 +1182,7 @@ static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   Fl_Wayland_Screen_Driver::output *output;
   wl_list_for_each(output, &scr_driver->outputs, link) { // each screen of the system
-    while (!output->done) wl_display_dispatch(scr_driver->wl_display);
+    while (!output->done) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   }
 }
 
