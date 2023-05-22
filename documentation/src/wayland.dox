@@ -406,7 +406,7 @@ at any time and then calls the FLTK drawing API. This is made possible
 in function \c Fl_Wayland_Window_Driver::make_current() with
 \code
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb) &&
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb) &&
       !wait_for_expose_value ) {
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
   }

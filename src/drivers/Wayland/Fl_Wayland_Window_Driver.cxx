@@ -339,7 +339,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
 
   // to support progressive drawing
-  if ( (!Fl_Wayland_Window_Driver::in_flush) && window->buffer && (!window->buffer->cb) &&
+  if ( (!Fl_Wayland_Window_Driver::in_flush_) && window->buffer && (!window->buffer->cb) &&
       !wait_for_expose_value ) {
     //fprintf(stderr, "direct make_current: new cb=%p\n", window->buffer->cb);
     Fl_Wayland_Graphics_Driver::buffer_commit(window);
@@ -382,9 +382,9 @@ void Fl_Wayland_Window_Driver::flush() {
     int W = pWindow->w();
     int H = pWindow->h();
     float scale = fl_graphics_driver->scale();
-    Fl_Wayland_Window_Driver::in_flush = true;
+    Fl_Wayland_Window_Driver::in_flush_ = true;
     Fl_Window_Driver::flush();
-    Fl_Wayland_Window_Driver::in_flush = false;
+    Fl_Wayland_Window_Driver::in_flush_ = false;
     gl_plugin()->do_swap(pWindow); // useful only for GL win with overlay
     if (scale != fl_graphics_driver->scale() || W != pWindow->w() || H != pWindow->h()) gl_plugin()->invalidate(pWindow);
     return;
@@ -396,9 +396,9 @@ void Fl_Wayland_Window_Driver::flush() {
   struct flCairoRegion* r = (struct flCairoRegion*)ip->region;
   if (!window->buffer || pWindow->as_overlay_window()) r = NULL;
 
-  Fl_Wayland_Window_Driver::in_flush = true;
+  Fl_Wayland_Window_Driver::in_flush_ = true;
   Fl_Window_Driver::flush();
-  Fl_Wayland_Window_Driver::in_flush = false;
+  Fl_Wayland_Window_Driver::in_flush_ = false;
   if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
   Fl_Wayland_Graphics_Driver::buffer_commit(window, r);
 }
@@ -475,7 +475,7 @@ void Fl_Wayland_Window_Driver::hide() {
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
     free(wld_win);
   }
-  if (pWindow->as_gl_window() && in_flush) {
+  if (pWindow->as_gl_window() && in_flush_) {
     ip->xid = 0;
     ip->next = NULL; // to end the loop in calling Fl::flush()
     Fl::add_timeout(.01, (Fl_Timeout_Handler)delayed_delete_Fl_X, ip);
@@ -990,7 +990,7 @@ static const struct xdg_popup_listener popup_listener = {
   .popup_done = popup_done,
 };
 
-bool Fl_Wayland_Window_Driver::in_flush = false;
+bool Fl_Wayland_Window_Driver::in_flush_ = false;
 
 // Compute the parent window of the transient scale window
 static Fl_Window *calc_transient_parent(int &center_x, int &center_y) {

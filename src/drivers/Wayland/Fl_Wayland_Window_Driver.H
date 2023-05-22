@@ -48,7 +48,6 @@ class Fl_Wayland_Plugin;
 class Fl_Wayland_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_Wayland_Gl_Window_Driver;
-  friend class Fl_Wayland_Screen_Driver;
 private:
   struct shape_data_type {
     int lw_; ///<  width of shape image
@@ -57,8 +56,7 @@ private:
     cairo_pattern_t *mask_pattern_;
   } *shape_data_;
   cairo_rectangle_int_t *subRect_;      // makes sure subwindow remains inside its parent window
-  static bool in_flush; // useful for progressive window drawing
-  static Fl_Wayland_Plugin *gl_plugin();
+  static bool in_flush_; // useful for progressive window drawing
   Fl_Cursor standard_cursor_; // window's standard custom kind
   void delete_cursor_(struct wld_window *, bool delete_rgb = true);
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
@@ -87,6 +85,7 @@ public:
 
   static inline Fl_Wayland_Window_Driver* driver(const Fl_Window *w) {return (Fl_Wayland_Window_Driver*)Fl_Window_Driver::driver(w);}
   static void resize_after_screen_change(void *data);
+  static Fl_Wayland_Plugin *gl_plugin();
 
   // --- window data
   int decorated_w() FL_OVERRIDE;
