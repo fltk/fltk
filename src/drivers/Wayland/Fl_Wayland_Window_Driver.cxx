@@ -399,7 +399,11 @@ void Fl_Wayland_Window_Driver::flush() {
   Fl_Wayland_Window_Driver::in_flush_ = true;
   Fl_Window_Driver::flush();
   Fl_Wayland_Window_Driver::in_flush_ = false;
-  if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
+  if (window->buffer->cb) {
+    wl_callback_destroy(window->buffer->cb);
+    window->buffer->cb = NULL;
+    r = NULL;
+  }
   Fl_Wayland_Graphics_Driver::buffer_commit(window, r);
 }
 
