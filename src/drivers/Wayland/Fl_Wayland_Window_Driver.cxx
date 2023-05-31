@@ -1297,8 +1297,8 @@ void Fl_Wayland_Window_Driver::makeWindow()
   pWindow->redraw();
   pWindow->handle(Fl::e_number = FL_SHOW); // get child windows to appear
   Fl::e_number = old_event;
-  // make sure each popup is mapped with its constraints before mapping next popup
   if (pWindow->menu_window() && !is_floatingtitle) {
+    // make sure each menu window is mapped with its constraints before mapping next popup
     pWindow->wait_for_expose();
     if (previous_floatingtitle) { // a menuwindow with a menutitle
       //puts("previous_floatingtitle");
@@ -1333,7 +1333,6 @@ void Fl_Wayland_Window_Driver::makeWindow()
       win_pos->child_popup = NULL;
       xdg_popup_add_listener(xid->xdg_popup, &popup_listener, win_pos);
       wl_surface_commit(xid->wl_surface);
-      previous_floatingtitle->wait_for_expose();
       struct win_positioner *parent_win_pos =
         (struct win_positioner*)xdg_popup_get_user_data(new_window->xdg_popup);
       parent_win_pos->child_popup = previous_floatingtitle;
@@ -1538,7 +1537,7 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
     memcpy(data, rgb->array, ld * rgb->data_h());
     Fl_RGB_Image *rgb2 = new Fl_RGB_Image(data, rgb->data_w(), rgb->data_h(), rgb->d(), rgb->ld());
     rgb2->alloc_array = 1;
-    rgb2->scale(rgb->w(), rgb->h());
+    rgb2->scale(rgb->w(), rgb->h(), 0, 1);
     rgb = rgb2;
   }
 // build a new wl_cursor and its image
