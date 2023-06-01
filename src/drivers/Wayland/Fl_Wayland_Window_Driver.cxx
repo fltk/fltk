@@ -70,12 +70,23 @@ Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_D
   subRect_ = NULL;
 }
 
+
+struct custom_cursor_data {
+  struct fl_wld_buffer *offscreen;
+  struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *buf_data;
+};
+
+
 void Fl_Wayland_Window_Driver::delete_cursor_(struct wld_window *xid, bool delete_rgb) {
   struct wld_window::custom_cursor_ *custom = xid->custom_cursor;
   if (custom) {
     struct wl_cursor *wl_cursor = custom->wl_cursor;
     struct cursor_image *new_image = (struct cursor_image*)wl_cursor->images[0];
-    struct fl_wld_buffer *offscreen = (struct fl_wld_buffer *)wl_buffer_get_user_data(new_image->buffer);
+    custom_cursor_data *buf_data =
+      (custom_cursor_data *)wl_buffer_get_user_data(new_image->buffer);
+    struct fl_wld_buffer *offscreen = buf_data->offscreen;
+    wl_buffer_set_user_data(new_image->buffer, buf_data->buf_data);
+    free(buf_data);
     struct wld_window fake_xid;
     fake_xid.buffer = offscreen;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_xid);
@@ -1554,7 +1565,12 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   //create a Wayland buffer and have it used as an image of the new cursor
   struct fl_wld_buffer *offscreen = Fl_Wayland_Graphics_Driver::create_shm_buffer(new_image->image.width, new_image->image.height);
   new_image->buffer = offscreen->wl_buffer;
-  wl_buffer_set_user_data(new_image->buffer, offscreen);
+  custom_cursor_data *new_buf_data =
+    (custom_cursor_data*)malloc(sizeof(custom_cursor_data));
+  new_buf_data->buf_data = (struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data *)
+      wl_buffer_get_user_data(new_image->buffer);
+  new_buf_data->offscreen = offscreen;
+  wl_buffer_set_user_data(new_image->buffer, new_buf_data);
   new_cursor->image_count = 1;
   new_cursor->images = (struct wl_cursor_image**)malloc(sizeof(struct wl_cursor_image*));
   new_cursor->images[0] = (struct wl_cursor_image*)new_image;

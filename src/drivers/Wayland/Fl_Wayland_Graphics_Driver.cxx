@@ -33,7 +33,6 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
   struct fl_wld_buffer *buffer;
   int stride = cairo_format_stride_for_width(Fl_Cairo_Graphics_Driver::cairo_format, width);
   int size = stride * height;
-  static char *pool_memory = NULL;
   static int pool_size = 10000000; // gets increased if necessary
   static int chunk_offset = pool_size;
   static int fd = -1;
@@ -41,23 +40,39 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
   if (chunk_offset + size > pool_size) {
     chunk_offset = 0;
     if (pool) {
+      struct wld_shm_pool_data *pool_data =
+        (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool);
       wl_shm_pool_destroy(pool);
       close(fd);
+      pool_data->destroyed = true;
+      if (pool_data->use_count == 0) {
+        /*int err =*/ munmap(pool_data->pool_memory, pool_data->pool_size);
+//printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
+        free(pool_data);
+      }
     }
     if (size > pool_size) pool_size = 2 * size;
     fd = os_create_anonymous_file(pool_size);
-    pool_memory = (char*)mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (pool_memory == MAP_FAILED) {
+    struct wld_shm_pool_data *pool_data = (struct wld_shm_pool_data*)
+        calloc(1, sizeof(struct wld_shm_pool_data));
+    pool_data->pool_memory = (char*)mmap(NULL, pool_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (pool_data->pool_memory == MAP_FAILED) {
       close(fd);
       Fl::fatal("mmap failed: %s\n", strerror(errno));
     }
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     pool = wl_shm_create_pool(scr_driver->wl_shm, fd, pool_size);
+    pool_data->pool_size = pool_size;
+    wl_shm_pool_set_user_data(pool, pool_data);
   }
   buffer = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
   buffer->stride = stride;
   buffer->wl_buffer = wl_shm_pool_create_buffer(pool, chunk_offset, width, height, stride, Fl_Wayland_Graphics_Driver::wld_format);
-  buffer->data = (void*)(pool_memory + chunk_offset);
+  struct wld_shm_pool_data *pool_data =
+    (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool);
+  pool_data->use_count++;
+  wl_buffer_set_user_data(buffer->wl_buffer, pool_data);
+  buffer->data = (void*)(pool_data->pool_memory + chunk_offset);
   chunk_offset += size;
   buffer->data_size = size;
   buffer->width = width;
@@ -159,7 +174,16 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 {
   if (window->buffer) {
     if (window->buffer->cb) wl_callback_destroy(window->buffer->cb);
+    struct wld_shm_pool_data *pool_data =
+      (struct wld_shm_pool_data *)wl_buffer_get_user_data(window->buffer->wl_buffer);
     wl_buffer_destroy(window->buffer->wl_buffer);
+//printf("wl_buffer_destroy(%p)\n",window->buffer->wl_buffer);
+    pool_data->use_count--;
+    if (pool_data->destroyed && pool_data->use_count == 0) {
+      /*int err =*/ munmap(pool_data->pool_memory, pool_data->pool_size);
+//printf("munmap(%p)->%d\n", pool_data->pool_memory, err);
+      free(pool_data);
+    }
     delete[] window->buffer->draw_buffer;
     window->buffer->draw_buffer = NULL;
     cairo_destroy(window->buffer->cairo_);

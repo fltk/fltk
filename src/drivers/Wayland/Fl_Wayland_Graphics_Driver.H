@@ -72,6 +72,12 @@ class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 private:
   struct fl_wld_buffer *buffer_;
 public:
+  struct wld_shm_pool_data { // attached to wl_shm_pool objects
+    char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
+    int pool_size; // size of encapsulated memory
+    int use_count; // nber of active wl_buffer objects in this wl_shm_pool
+    bool destroyed; // true after the wl_shm_pool was destroyed
+  };
   Fl_Wayland_Graphics_Driver();
   static const uint32_t wld_format;
   void set_buffer(struct fl_wld_buffer *buffer, float scale = 0);
