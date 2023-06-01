@@ -590,9 +590,30 @@ is increased to <tt>2 * size</tt>. This mechanism allows to access new mmap'ed m
 \c chunk_offset reaches the end of the previous mmap'ed section, and to enlarge the size of the
 mmap'ed memory when necessary.
 
-Wayland object <tt>struct wl_shm_pool</tt> guarantees that the corresponding mmap'ed memory will be
-freed when all \c wl_buffer objects which encapsulate sections of this mmap'ed memory have been
-destroyed.
+To free the memory used by a \c wl_shm_pool object, it's not enough to destroy
+all \c wl_buffer objects built from this \c wl_shm_pool object and to call
+\c wl_shm_pool_destroy(). It's also necessary to call \c munmap() on the mmap'ed memory
+shared between the client and the compositor and encapsulated by the \c wl_shm_pool.
+This explains this type definition inside class \c Fl_Wayland_Graphics_Driver:
+\code
+  struct wld_shm_pool_data { // attached to wl_shm_pool objects
+    char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
+    int pool_size; // size of encapsulated memory
+    int use_count; // nber of active wl_buffer objects in this wl_shm_pool
+    bool destroyed; // true after the wl_shm_pool was destroyed
+  };
+\endcode
+A record of this type is created for each \c wl_shm_pool object and attached to it with
+a call to \c wl_shm_pool_set_user_data(). This record contains the starting address
+and the size of the mmap'ed memory section necessary for a future \c munmap() call.
+Member \c destroyed is turned to \c true after the call to \c wl_shm_pool_destroy().
+Member \c use_count starts at 0, is incremented each time a \c wl_buffer is created from
+this \c wl_shm_pool and decremented each time a \c wl_buffer is destroyed.
+The same record is also associated to each \c wl_buffer object created from
+this \c wl_shm_pool by \c wl_buffer_set_user_data().
+Overall, this allows FLTK to detect when all \c wl_buffer objects
+from a \c wl_shm_pool have been destroyed and to call \c munmap() to complete the release
+of that pool's memory resources.
 
 Wayland uses also \c wl_buffer objects to support cursors, and
 FLTK uses the "buffer factory" described here also when creating custom cursors (see
