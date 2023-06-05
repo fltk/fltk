@@ -486,6 +486,12 @@ Each of these two objects encapsulates a byte array of the same size and the sam
 destined to contain the Fl_Window's graphics. The Cairo surface object is where FLTK draws.
 The Wayland buffer is what Wayland maps on the display. FLTK copies the Cairo surface's byte array
 to the Wayland buffer's byte array before beginning the mapping operation.
+If \c width and \c height are a window's dimensions in pixels,
+\code
+  int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
+  int size = stride * height;
+\endcode
+give \c size, the common size of both byte arrays.
 
 Section \ref wayland-buffer-factory below details how FLTK creates \c wl_buffer objects.
 
@@ -552,75 +558,72 @@ Wayland names <em>buffer factory</em> a software procedure that constructs objec
 <tt>struct wl_buffer</tt> for use by a client application.
 FLTK creates a \c wl_buffer object each time an Fl_Window is mapped on a display or resized.
 That's done by member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
-which follows this 3-step procedure to create a "buffer factory" for FLTK and construct
+which follows this 3-step procedure to create a "buffer factory" for FLTK and to construct
 Wayland buffers from it:
-- Libdecor function <tt>os_create_anonymous_file(off_t size)</tt> creates an adequate file and mmap's
-it. This file lives in RAM because it is created by function \c memfd_create().
-FLTK initially sets this file size to \c pool_size = 10 MB. This size will be increased when and
-if necessary.
-FLTK stores in variable \c pool_memory the address of the beginning of the mmap'ed memory structure.
+- Libdecor function <tt>os_create_anonymous_file(off_t size)</tt> creates an adequate file
+and mmap's it. This file lives in RAM because it is created by function \c memfd_create().
+FLTK sets this file size to 10 MB unless the size of the buffer to be created
+is larger; in that case the anonymous file is sized to twice the buffer size.
 - Wayland function \c wl_shm_create_pool() shares this mmap'ed memory with the
-Wayland compositor and returns an object of type <tt>struct wl_shm_pool</tt> which encapsulates
-this memory. FLTK initializes
-to 0 a variable called \c chunk_offset that represents the offset inside the mmap'ed memory available
-for further \c wl_buffer objects.
-- Wayland function \c wl_shm_pool_create_buffer() creates from the \c wl_shm_pool object a
-\c wl_buffer object which encapsulates a section of a given size of the shared memory structure
-beginning at offset \c chunk_offset in it. This function returns a pointer to the resulting
-\c wl_buffer object. Quantity <tt>pool_memory + chunk_offset</tt> is therefore the address of the
+Wayland compositor and returns an object of type <tt>struct wl_shm_pool</tt> which
+encapsulates this memory. A record of type
+<tt>struct Fl_Wayland_Graphics_Driver::wld_shm_pool_data</tt> is created and associated to
+the newly created \c wl_shm_pool by \c wl_shm_pool_set_user_data(). This record stores
+the starting address (\c pool_memory) and size (\c pool_size) of the pool's encapsulated
+memory. The record also contains member \c buffers of type <tt>struct wl_list</tt> which
+stores the access point to the linked list of \c wl_buffer objects that will be created from
+the \c wl_shm_pool.
+- A variable named \c chunk_offset represents the offset within the pool's shared
+memory available for the buffer being constructed. It equals 0 when the pool has just been
+created and is updated as detailed below when one or more buffers have been previously created
+from the pool. A record of type  <tt>struct fl_wld_buffer</tt> is created. This record will
+contain (member \c wl_buffer) the address of a \c wl_buffer object that's created by function
+\c wl_shm_pool_create_buffer(). This \c wl_buffer object encapsulates a section of a given
+size of the pool's shared memory beginning at offset \c chunk_offset in it.
+Quantity <tt>pool_memory + chunk_offset</tt> is therefore the address of the
 beginning of the mmap'ed memory section encapsulated by this \c wl_buffer.
-Variable \c chunk_offset is then increased by the length of this section.
-
-A window's \c wl_buffer is re-used each time the window gets redrawn, and is destroyed by function
-\c Fl_Wayland_Graphics_Driver::buffer_release() which calls \c wl_buffer_destroy() when
-\c Fl_Window::hide() runs or the window is resized.
-
-If \c width and \c height are a window's dimensions in pixels,
+Member \c shm_pool of the newly constructed \c fl_wld_buffer object is set to the address of
+the current \c wl_shm_pool object. This record is added to the head of the linked list of
+current pool's buffers by a call to \c wl_list_insert().
+At that point, a <tt>struct fl_wld_buffer</tt> record is part of the linked list of all
+such records corresponding to \c wl_buffer objects created from the same \c wl_shm_pool
+object, and member \c shm_pool of this record gives the address of this \c wl_shm_pool.
+When a new <tt>struct fl_wld_buffer</tt> record is to be created,
 \code
-  int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
-  int size = stride * height;
+  struct wld_shm_pool_data *pool_data =
+      (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool);
+  struct fl_wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
+  int chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->data_size;
 \endcode
-give \c size, the size in bytes of a memory buffer needed to store the window's graphics.
-If <tt>chunk_offset + size > pool_size</tt> holds when function \c create_shm_buffer() attempts to
-create a new \c wl_buffer object, \c chunk_offset is reset to 0,
-function \c wl_shm_pool_destroy() is called to destroy
-the current \c wl_shm_pool object, and a new \c wl_shm_pool object is created and used by FLTK's
-"buffer factory". If <tt>size > pool_size</tt> holds at that step, the value of \c pool_size
-is increased to <tt>2 * size</tt>. This mechanism allows to access new mmap'ed memory when
-\c chunk_offset reaches the end of the previous mmap'ed section, and to enlarge the size of the
-mmap'ed memory when necessary.
+gives the offset within the current pool's mmap'ed memory available for a new \c wl_buffer.
+Macro \c wl_container_of() gives the address of a record belonging to a linked list of
+records of the same type.
 
-To free the memory used by a \c wl_shm_pool object, it's not enough to destroy
-all \c wl_buffer objects built from this \c wl_shm_pool object and to call
-\c wl_shm_pool_destroy(). It's also necessary to call \c munmap() on the mmap'ed memory
-shared between the client and the compositor and encapsulated by the \c wl_shm_pool.
-This explains this type definition inside class \c Fl_Wayland_Graphics_Driver:
-\code
-  struct wld_shm_pool_data { // attached to wl_shm_pool objects
-    char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
-    int pool_size; // size of encapsulated memory
-    int use_count; // nber of active wl_buffer objects in this wl_shm_pool
-    bool destroyed; // true after the wl_shm_pool was destroyed
-  };
-\endcode
-A record of this type is created for each \c wl_shm_pool object and attached to it with
-a call to \c wl_shm_pool_set_user_data(). This record contains the starting address
-and the size of the mmap'ed memory section necessary for a future \c munmap() call.
-Member \c destroyed is turned to \c true after the call to \c wl_shm_pool_destroy().
-Member \c use_count starts at 0, is incremented each time a \c wl_buffer is created from
-this \c wl_shm_pool and decremented each time a \c wl_buffer is destroyed.
-The same record is also associated to each \c wl_buffer object created from
-this \c wl_shm_pool by \c wl_buffer_set_user_data().
-Overall, this allows FLTK to detect when all \c wl_buffer objects
-from a \c wl_shm_pool have been destroyed and to call \c munmap() to complete the release
-of that pool's memory resources.
+A window's \c wl_buffer is re-used each time the window gets redrawn, and is destroyed by
+function \c Fl_Wayland_Graphics_Driver::buffer_release() when \c Fl_Window::hide() runs or
+the window is resized. Function \c Fl_Wayland_Graphics_Driver::buffer_release() destroys the
+\c wl_buffer with \c wl_buffer_destroy() and removes the corresponding
+\c fl_wld_buffer record from the linked list of buffers from the same \c wl_shm_pool.
+Since new \c fl_wld_buffer records are added at the head of the linked list, and since
+the record at the head of this list is used to compute the offset within the pool's mmap'ed
+memory available for a new \c wl_buffer, destruction of the last created \c wl_buffer
+allows to re-use the destroyed buffer's pool's memory for a new \c wl_buffer.
+When the linked list results empty, the \c wl_shm_pool is destroyed by
+\c wl_shm_pool_destroy(), the pool's mmap'ed memory is munmap'ed, and the pool's associated
+<tt>struct wld_shm_pool_data</tt> is freed.
 
-Wayland uses also \c wl_buffer objects to support cursors, and
-FLTK uses the "buffer factory" described here also when creating custom cursors (see
-\ref custom-cursor) with
-function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *,…)</tt> because
-\c create_shm_buffer() runs as well. In contrast, standard shaped-cursors (e.g., FL_CURSOR_INSERT)
-use their own "buffer factory" inside Wayland functions such as \c wl_cursor_theme_get_cursor().
+If the sum of \c chunk_offset plus the buffer size is larger than the current pool's size
+when function \c create_shm_buffer() is called, \c chunk_offset is reset
+to 0, and a new \c wl_shm_pool object is created and used by FLTK's "buffer factory".
+This mechanism allows to access new mmap'ed memory when \c chunk_offset reaches the end of
+the previous mmap'ed section.
+
+Wayland uses also \c wl_buffer objects to support cursors. FLTK uses the "buffer factory"
+described here when creating custom cursors (see \ref custom-cursor) with
+function <tt>Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *,…)</tt> which calls
+\c create_shm_buffer(). In contrast, standard shaped-cursors (e.g., FL_CURSOR_INSERT)
+use their own "buffer factory" inside Wayland functions such as
+\c wl_cursor_theme_get_cursor().
 Therefore, the fact that the \c wl_buffer objects behind standard cursors are never destroyed
 doesn't prevent disused <tt>struct wl_shm_pool</tt> objects from being freed because those
 buffers come from a distinct "buffer factory".
