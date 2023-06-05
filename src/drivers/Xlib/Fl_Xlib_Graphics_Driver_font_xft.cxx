@@ -22,6 +22,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>  // fl_strdup()
 #include <FL/platform.H>
+#include <FL/fl_utf8.h>
 #include "Fl_Font.H"
 
 #include <stdio.h>
@@ -1391,6 +1392,15 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
   Fl_Xlib_Graphics_Driver::context();
   Fl_Xlib_Graphics_Driver::init_built_in_fonts();
   pango_font_map_list_families(Fl_Xlib_Graphics_Driver::pfmap_, &families, &n_families);
+  char *saved_lang = fl_getenv("LANG");
+  const char *Clang = "LANG=C";
+  if (saved_lang && strcmp(saved_lang, Clang)) {
+    // Force LANG=C to prevent pango_font_face_get_face_name() below from returning
+    // translated versions of Bold, Italic, etc… (see issue #732).
+    // Unfortunately, using setlocale() doesn't do the job.
+    saved_lang = strdup(saved_lang);
+    fl_putenv(Clang);
+  } else saved_lang = NULL;
   for (int fam = 0; fam < n_families; fam++) {
     PangoFontFace **faces;
     int n_faces;
@@ -1408,6 +1418,10 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
   }
   /*g_*/free(families);
+  if (saved_lang) {
+    fl_putenv(saved_lang);
+    free(saved_lang);
+  }
   // Sort the list into alphabetic order
   qsort(fl_fonts + FL_FREE_FONT, count, sizeof(Fl_Fontdesc), (sort_f_type)font_sort);
   return FL_FREE_FONT + count;
