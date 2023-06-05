@@ -1053,6 +1053,8 @@ struct fl_wld_buffer {
   struct wl_callback *cb; // non-NULL while Wayland buffer is being committed
   bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
   cairo_t *cairo_; // used when drawing to the Cairo image surface
+  struct wl_shm_pool *shm_pool; // pter to wl_shm_pool from which this wl_buffer comes
+  struct wl_list link; // links all buffers from the same wl_shm_pool
 };
 </pre>
 
