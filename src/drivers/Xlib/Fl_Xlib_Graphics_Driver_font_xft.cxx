@@ -1389,9 +1389,6 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
   fl_open_display();
   int n_families, count = 0;
   PangoFontFamily **families;
-  Fl_Xlib_Graphics_Driver::context();
-  Fl_Xlib_Graphics_Driver::init_built_in_fonts();
-  pango_font_map_list_families(Fl_Xlib_Graphics_Driver::pfmap_, &families, &n_families);
   char *saved_lang = fl_getenv("LANG");
   const char *Clang = "LANG=C";
   if (saved_lang && strcmp(saved_lang, Clang)) {
@@ -1404,6 +1401,9 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     strcpy(saved_lang + 5, p);
     fl_putenv(Clang);
   } else saved_lang = NULL;
+  Fl_Xlib_Graphics_Driver::context();
+  Fl_Xlib_Graphics_Driver::init_built_in_fonts();
+  pango_font_map_list_families(Fl_Xlib_Graphics_Driver::pfmap_, &families, &n_families);
   for (int fam = 0; fam < n_families; fam++) {
     PangoFontFace **faces;
     int n_faces;
