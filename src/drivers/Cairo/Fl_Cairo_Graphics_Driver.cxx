@@ -1075,7 +1075,10 @@ Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
     // Force LANG=C to prevent pango_font_face_get_face_name() below from returning
     // translated versions of Bold, Italic, etc… (see issue #732).
     // Unfortunately, using setlocale() doesn't do the job.
-    saved_lang = strdup(saved_lang);
+    char *p = saved_lang;
+    saved_lang = (char*)malloc(strlen(p) + 6);
+    memcpy(saved_lang, "LANG=", 5);
+    strcpy(saved_lang + 5, p);
     fl_putenv(Clang);
   } else saved_lang = NULL;
   static PangoFontMap *pfmap_ = pango_cairo_font_map_get_default(); // 1.10
