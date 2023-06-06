@@ -1412,10 +1412,13 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
       const char *p = pango_font_face_get_face_name(faces[j]);
+      // Remove " Regular" suffix from font names
+      if (!strcasecmp(p, "regular")) p = NULL;
       // build the font's FLTK name
-      int lfont = lfam + strlen(p) + 2;
+      int lfont = lfam + (p ? strlen(p) + 2 : 1);
       char *q = new char[lfont];
-      snprintf(q, lfont, "%s %s", fam_name, p);
+      if (p) snprintf(q, lfont, "%s %s", fam_name, p);
+      else strcpy(q, fam_name);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
