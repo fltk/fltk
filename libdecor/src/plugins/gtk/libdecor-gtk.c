@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <wayland-client-core.h>
 #include <wayland-cursor.h>
 
 #include "libdecor-plugin.h"
@@ -427,10 +428,13 @@ libdecor_plugin_gtk_destroy(struct libdecor_plugin *plugin)
 
 	free(plugin_gtk->cursor_theme_name);
 
-	wl_shm_destroy(plugin_gtk->wl_shm);
+	if (plugin_gtk->wl_shm)
+		wl_shm_destroy(plugin_gtk->wl_shm);
 
-	wl_compositor_destroy(plugin_gtk->wl_compositor);
-	wl_subcompositor_destroy(plugin_gtk->wl_subcompositor);
+	if (plugin_gtk->wl_compositor)
+		wl_compositor_destroy(plugin_gtk->wl_compositor);
+	if (plugin_gtk->wl_subcompositor)
+		wl_subcompositor_destroy(plugin_gtk->wl_subcompositor);
 
 
 	free(plugin_gtk);
@@ -2100,6 +2104,7 @@ pointer_leave(void *data,
 	if (frame_gtk) {
 		frame_gtk->active = NULL;
 		frame_gtk->hdr_focus.widget = NULL;
+		frame_gtk->hdr_focus.type = HEADER_NONE;
 		draw_decoration(frame_gtk);
 		libdecor_frame_toplevel_commit(&frame_gtk->frame);
 		update_local_cursor(seat);
@@ -2532,15 +2537,6 @@ globals_callback(void *user_data,
 
 	wl_callback_destroy(callback);
 	plugin_gtk->globals_callback = NULL;
-
-	if (!has_required_globals(plugin_gtk)) {
-		struct libdecor *context = plugin_gtk->context;
-
-		libdecor_notify_plugin_error(
-				context,
-				LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
-				"Compositor is missing required globals");
-	}
 }
 
 static const struct wl_callback_listener globals_callback_listener = {
@@ -2580,6 +2576,13 @@ libdecor_plugin_new(struct libdecor *context)
 	wl_callback_add_listener(plugin_gtk->globals_callback,
 				 &globals_callback_listener,
 				 plugin_gtk);
+	wl_display_roundtrip(wl_display);
+
+	if (!has_required_globals(plugin_gtk)) {
+		fprintf(stderr, "libdecor-gtk-WARNING: Could not get required globals\n");
+		libdecor_plugin_gtk_destroy(&plugin_gtk->plugin);
+		return NULL;
+	}
 
 	/* setup GTK context */
 	gdk_set_allowed_backends("wayland");
