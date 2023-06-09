@@ -18,6 +18,7 @@
 #include "Fl_Xlib_Copy_Surface_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include "../X11/Fl_X11_Screen_Driver.H"
 #if FLTK_USE_CAIRO
@@ -39,9 +40,9 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
   float s = Fl_Graphics_Driver::default_driver().scale();
   driver()->scale(s);
   oldwindow = fl_window;
-  xid = fl_create_offscreen(w,h);
+  xid = new Fl_Image_Surface(w, h, 1);
 #if FLTK_USE_CAIRO
-  cairo_surface_t *surf = cairo_xlib_surface_create(fl_display, xid, fl_visual->visual, w * s, h * s);
+  cairo_surface_t *surf = cairo_xlib_surface_create(fl_display, xid->offscreen(), fl_visual->visual, w * s, h * s);
   cairo_ = cairo_create(surf);
   cairo_surface_destroy(surf);
   cairo_scale(cairo_, 1/s, 1/s);
@@ -49,7 +50,7 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
   ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif
   driver()->push_no_clip();
-  fl_window = xid;
+  fl_window = xid->offscreen();
   driver()->color(FL_WHITE);
   driver()->rectf(0, 0, w, h);
   fl_window = oldwindow;
@@ -59,13 +60,13 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
 Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   driver()->pop_clip();
   Window old_win = fl_window;
-  fl_window = xid;
+  fl_window = xid->offscreen();
   Fl_RGB_Image *rgb = Fl::screen_driver()->read_win_rectangle(0, 0, width, height, 0);
   fl_window = old_win;
   if (is_current()) end_current();
   Fl_X11_Screen_Driver::copy_image(rgb->array, rgb->w(), rgb->h(), 1);
   delete rgb;
-  fl_delete_offscreen(xid);
+  delete xid;
 #if FLTK_USE_CAIRO
   cairo_destroy(cairo_);
 #endif
@@ -76,7 +77,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
 void Fl_Xlib_Copy_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   oldwindow = fl_window;
-  fl_window = xid;
+  fl_window = xid->offscreen();
 #if FLTK_USE_CAIRO
   ((Fl_X11_Cairo_Graphics_Driver*)driver())->set_cairo(cairo_);
 #endif

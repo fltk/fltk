@@ -1013,11 +1013,11 @@ struct wl_surface *fl_wl_surface(struct wld_window *wld_win)
 Returns a pointer to the struct wl_surface corresponding to a show()'n
 top-level window or subwindow.
 
-cairo_t *fl_wl_cairo(void)
+cairo_t *fl_wl_gc()
 \par
 Drawing natively to a Wayland window : Within an overridden Fl_Widget::draw() method,
 or after a call to Fl_Window::make_current(), it's possible to draw
-<u>using the Cairo library</u>. Function \c fl_wl_cairo() returns the adequate
+<u>using the Cairo library</u>. Function \c fl_wl_gc() returns the adequate
 \c cairo_t* value. Regular FLTK coordinates, with top-left origin, are to be used.
 All FLTK-defined drawing functions (e.g., fl_rect(), fl_draw()) can be used too.
 

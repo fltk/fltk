@@ -120,7 +120,7 @@ public:
     undocut = undoinsert = 0;
   }
 
-  bool empty() {
+  bool empty() const {
     return (!undocut && !undoinsert);
   }
 };
@@ -156,6 +156,10 @@ public:
   ~Fl_Text_Undo_Action_List() {
     unlock();
     clear();
+  }
+
+  int size() const {
+    return list_size_;
   }
 
   void push(Fl_Text_Undo_Action* action) {
@@ -376,7 +380,7 @@ char Fl_Text_Buffer::byte_at(int pos) const {
  Insert some text at the given index.
  Pos must be at a character boundary.
 */
-void Fl_Text_Buffer::insert(int pos, const char *text)
+void Fl_Text_Buffer::insert(int pos, const char *text, int insertedLength)
 {
   IS_UTF8_ALIGNED2(this, (pos))
   IS_UTF8_ALIGNED(text)
@@ -395,7 +399,7 @@ void Fl_Text_Buffer::insert(int pos, const char *text)
   call_predelete_callbacks(pos, 0);
 
   /* insert and redisplay */
-  int nInserted = insert_(pos, text);
+  int nInserted = insert_(pos, text, insertedLength);
   mCursorPosHint = pos + nInserted;
   IS_UTF8_ALIGNED2(this, (mCursorPosHint))
   call_modify_callbacks(pos, 0, nInserted, 0, NULL);
@@ -450,7 +454,7 @@ void Fl_Text_Buffer::printf(const char *fmt, ...) {
  Replace a range of text with new text.
  Start and end must be at a character boundary.
 */
-void Fl_Text_Buffer::replace(int start, int end, const char *text)
+void Fl_Text_Buffer::replace(int start, int end, const char *text, int insertedLength)
 {
   // Range check...
   if (!text)
@@ -467,7 +471,7 @@ void Fl_Text_Buffer::replace(int start, int end, const char *text)
   call_predelete_callbacks(start, end - start);
   const char *deletedText = text_range(start, end);
   remove_(start, end);
-  int nInserted = insert_(start, text);
+  int nInserted = insert_(start, text, insertedLength);
   mCursorPosHint = start + nInserted;
   call_modify_callbacks(start, end - start, nInserted, 0, deletedText);
   free((void *) deletedText);
@@ -628,6 +632,13 @@ int Fl_Text_Buffer::undo(int *cursorPos) {
   return ret;
 }
 
+/*
+ Check if undo is anabled and if the last action can be undone.
+ */
+bool Fl_Text_Buffer::can_undo() const {
+  return (mCanUndo && mUndo && !mUndo->empty());
+}
+
 /**
  Redo previous undo action.
  */
@@ -642,7 +653,18 @@ int Fl_Text_Buffer::redo(int *cursorPos) {
   // running the redo action will also generate a new undo action
   // Note: there is a slight chance that the current undo action and the
   //       generated action merge into one.
-  return apply_undo(redo_action, cursorPos);
+  int ret = apply_undo(redo_action, cursorPos);
+
+  delete redo_action;
+  return ret;
+}
+
+/**
+ Check if undo is anabled and if the last undo action can be redone.
+ \see canUndo()
+ */
+bool Fl_Text_Buffer::can_redo() const {
+  return (mCanUndo && mRedoList->size());
 }
 
 /*
@@ -1333,12 +1355,12 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
  Insert a string into the buffer.
  Pos must be at a character boundary. Text must be a correct UTF-8 string.
  */
-int Fl_Text_Buffer::insert_(int pos, const char *text)
+int Fl_Text_Buffer::insert_(int pos, const char *text, int insertedLength)
 {
   if (!text || !*text)
     return 0;
 
-  int insertedLength = (int) strlen(text);
+  if (insertedLength == -1) insertedLength = (int) strlen(text);
 
   /* Prepare the buffer to receive the new text.  If the new text fits in
    the current buffer, just move the gap (if necessary) to where

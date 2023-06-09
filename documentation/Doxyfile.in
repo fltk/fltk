@@ -614,12 +614,6 @@ RECURSIVE              = YES
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE  = @FLTK_SOURCE_DIR@/src/drivers/
-EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_dnd_win32.cxx
-EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_dnd_x.cxx
-EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_mac.cxx
-EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_win32.cxx
-EXCLUDE += @FLTK_SOURCE_DIR@/src/Fl_get_key_mac.cxx
-EXCLUDE += @FLTK_SOURCE_DIR@/src/Fl_get_key_win32.cxx
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -633,15 +627,17 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS =  @FLTK_SOURCE_DIR@/src/*_win32.cxx
-EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_mac.cxx
-EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/*_x.cxx
+# Exclude pure platform specific source files
 
-# Exclude Wayland specific files that are generated in the source tree
-# by configure + make
+EXCLUDE_PATTERNS =  */src/*_win32.cxx
+EXCLUDE_PATTERNS += */src/*_mac.cxx
+EXCLUDE_PATTERNS += */src/*_x.cxx
 
-EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/xdg*
-EXCLUDE_PATTERNS += @FLTK_SOURCE_DIR@/src/text-input*
+# Exclude Wayland specific files generated in the source tree
+# by configure + make (but not by CMake)
+
+EXCLUDE_PATTERNS += */src/xdg*
+EXCLUDE_PATTERNS += */src/text-input*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -655,9 +651,9 @@ EXCLUDE_SYMBOLS  =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_CURRENT_SOURCE_DIR@/../test \
-                         @CMAKE_CURRENT_SOURCE_DIR@/../examples \
-                         @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_CURRENT_SOURCE_DIR@
+EXAMPLE_PATH     = @CMAKE_CURRENT_SOURCE_DIR@/../test \
+                   @CMAKE_CURRENT_SOURCE_DIR@/../examples \
+                   @CMAKE_CURRENT_BINARY_DIR@ @CMAKE_CURRENT_SOURCE_DIR@
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

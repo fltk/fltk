@@ -1466,7 +1466,7 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
   {"&Grid and Size Settings...",FL_COMMAND+'g',show_grid_cb, NULL, FL_MENU_DIVIDER},
-  {"Presets", 0, layout_suite_marker, (void*)g_layout_list.main_menu_, FL_SUBMENU_POINTER },
+  {"Presets", 0, layout_suite_marker, (void*)main_layout_submenu_, FL_SUBMENU_POINTER },
   {"Application", 0, select_layout_preset_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
   {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
   {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
@@ -1542,7 +1542,7 @@ void scheme_cb(Fl_Scheme_Choice *choice, void *) {
 */
 void init_scheme() {
   int scheme_index = 0;                     // scheme index for backwards compatibility (1.3.x)
-  char *scheme_name;                        // scheme name since 1.4.0
+  char *scheme_name = 0;                    // scheme name since 1.4.0
   fluid_prefs.get("scheme_name", scheme_name, "XXX"); // XXX means: not set => fallback 1.3.x
   if (!strcmp(scheme_name, "XXX")) {
     fluid_prefs.get("scheme", scheme_index, 0);
@@ -1558,6 +1558,7 @@ void init_scheme() {
     fluid_prefs.set("scheme_name", scheme_name);
   }
   Fl::scheme(scheme_name);
+  free(scheme_name);
 }
 
 /**

@@ -150,7 +150,14 @@ libdecor_plugin_fallback_frame_get_border_size(struct libdecor_plugin *plugin,
 					       int *top,
 					       int *bottom)
 {
-	*left = *right = *top = *bottom = 0;
+	if (left)
+		*left = 0;
+	if (right)
+		*right = 0;
+	if (top)
+		*top = 0;
+	if (bottom)
+		*bottom = 0;
 
 	return true;
 }

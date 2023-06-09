@@ -1,7 +1,7 @@
 //
 // ICO image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,7 +46,7 @@ public:
   int idcount() const { return idcount_; }
 
   /** Returns the array of idcount() loaded IconDirEntry structures. */
-  IconDirEntry * const icondirentry() const { return icondirentry_; }
+  const IconDirEntry * icondirentry() const { return icondirentry_; }
 
 private:
   int idcount_;

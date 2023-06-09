@@ -54,28 +54,19 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
   if (!oWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   if (!other_xid) {
-    other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
+    other_xid = new Fl_Image_Surface(oWindow->w(), oWindow->h(), 1);
     oWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
     Fl_X *myi = Fl_X::flx(pWindow);
     fl_clip_region(myi->region); myi->region = 0;
-    fl_begin_offscreen(other_xid);
+    Fl_Surface_Device::push_current(other_xid);
     draw();
-    fl_end_offscreen();
+    Fl_Surface_Device::pop_current();
   }
   if (erase_overlay) fl_clip_region(0);
-  if (other_xid) {
-    fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid, 0, 0);
-  }
+  fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid->offscreen(), 0, 0);
   if (overlay() == oWindow) oWindow->draw_overlay();
-}
-
-
-void Fl_Cocoa_Window_Driver::destroy_double_buffer()
-{
-  if (pWindow->as_overlay_window()) fl_delete_offscreen(other_xid);
-  other_xid = 0;
 }
 
 

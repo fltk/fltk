@@ -289,7 +289,7 @@ if test x$use_images = xyes; then
     LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
 fi
 
-if test x$use_cairo = xyes -a -n $CAIROLIBS; then
+if test x$use_cairo = xyes -a -n "$CAIROLIBS"; then
     LDLIBS="$CAIROLIBS $LDLIBS"
     LDSTATIC="$CAIROLIBS $LDSTATIC"
 fi

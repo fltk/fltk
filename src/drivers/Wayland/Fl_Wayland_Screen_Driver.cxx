@@ -44,6 +44,7 @@ extern "C" {
 
 
 #define fl_max(a,b) ((a) > (b) ? (a) : (b))
+#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 struct pointer_output {
   Fl_Wayland_Screen_Driver::output* output;
@@ -128,7 +129,7 @@ Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
 extern "C" {
   bool fl_libdecor_using_weston(void) {
     return Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::WESTON;
-  };
+  }
 }
 
 static void xdg_wm_base_ping(void *data, struct xdg_wm_base *xdg_wm_base, uint32_t serial)
@@ -147,19 +148,6 @@ extern const char *fl_bg;
 extern const char *fl_bg2;
 // end of extern additions workaround
 
-
-static bool has_xrgb = false;
-
-
-static void shm_format(void *data, struct wl_shm *wl_shm, uint32_t format)
-{
-  if (format == Fl_Wayland_Graphics_Driver::wld_format)
-    has_xrgb = true;
-}
-
-static struct wl_shm_listener shm_listener = {
-  shm_format
-};
 
 static void do_set_cursor(struct Fl_Wayland_Screen_Driver::seat *seat, struct wl_cursor *wl_cursor = NULL)
 {
@@ -231,6 +219,8 @@ static Fl_Window *event_coords_from_surface(struct wl_surface *surface,
   Fl::e_x = wl_fixed_to_int(surface_x) / f + delta_x;
   Fl::e_x_root = Fl::e_x + win->x();
   Fl::e_y = wl_fixed_to_int(surface_y) / f + delta_y;
+  int *poffset = Fl_Window_Driver::menu_offset_y(win);
+  if (poffset) Fl::e_y -= *poffset;
   Fl::e_y_root = Fl::e_y + win->y();
   return win;
 }
@@ -503,12 +493,13 @@ static void wl_keyboard_keymap(void *data, struct wl_keyboard *wl_keyboard,
                                                              XKB_KEYMAP_FORMAT_TEXT_V1, XKB_KEYMAP_COMPILE_NO_FLAGS);
   munmap(map_shm, size);
   close(fd);
-
-  struct xkb_state *xkb_state = xkb_state_new(xkb_keymap);
-  xkb_keymap_unref(seat->xkb_keymap);
-  xkb_state_unref(seat->xkb_state);
-  seat->xkb_keymap = xkb_keymap;
-  seat->xkb_state = xkb_state;
+  if (xkb_keymap) {
+    struct xkb_state *xkb_state = xkb_state_new(xkb_keymap);
+    xkb_keymap_unref(seat->xkb_keymap);
+    if (seat->xkb_state) xkb_state_unref(seat->xkb_state);
+    seat->xkb_keymap = xkb_keymap;
+    seat->xkb_state = xkb_state;
+  }
 }
 
 
@@ -553,6 +544,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 {
   struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat*)data;
 //fprintf(stderr, "keyboard enter fl_win=%p; keys pressed are: ", Fl_Wayland_Window_Driver::surface_to_window(surface));
+  key_vector.size(0);
   // Replace wl_array_for_each(p, keys) rejected by C++
   for (uint32_t *p = (uint32_t *)(keys)->data;
       (const char *) p < ((const char *) (keys)->data + (keys)->size);
@@ -714,8 +706,8 @@ fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, 
   // Process dead keys and compose sequences :
   enum xkb_compose_status status = XKB_COMPOSE_NOTHING;
   // This part is useful only if the compositor doesn't support protocol text-input-unstable-v3
-  if (state == WL_KEYBOARD_KEY_STATE_PRESSED && !(sym >= FL_Shift_L && sym <= FL_Alt_R) &&
-      sym != XKB_KEY_ISO_Level3_Shift) {
+  if (seat->xkb_compose_state && state == WL_KEYBOARD_KEY_STATE_PRESSED &&
+      !(sym >= FL_Shift_L && sym <= FL_Alt_R) && sym != XKB_KEY_ISO_Level3_Shift) {
     xkb_compose_state_feed(seat->xkb_compose_state, sym);
     status = xkb_compose_state_get_status(seat->xkb_compose_state);
     if (status == XKB_COMPOSE_COMPOSING) {
@@ -912,7 +904,7 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
     seat->wl_pointer = NULL;
   }
 
-  bool have_keyboard = capabilities & WL_SEAT_CAPABILITY_KEYBOARD;
+  bool have_keyboard = seat->xkb_context && (capabilities & WL_SEAT_CAPABILITY_KEYBOARD);
   if (have_keyboard && seat->wl_keyboard == NULL) {
           seat->wl_keyboard = wl_seat_get_keyboard(wl_seat);
           wl_keyboard_add_listener(seat->wl_keyboard,
@@ -987,6 +979,7 @@ static void output_done(void *data, struct wl_output *wl_output)
     }
     xp = xp->next;
   }
+  output->done = true;
 
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (scr_driver->seat) try_update_cursor(scr_driver->seat);
@@ -1042,26 +1035,27 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, "wl_shm") == 0) {
     scr_driver->wl_shm = (struct wl_shm*)wl_registry_bind(wl_registry,
             id, &wl_shm_interface, 1);
-    wl_shm_add_listener(scr_driver->wl_shm, &shm_listener, NULL);
 
   } else if (strcmp(interface, "wl_seat") == 0) {
-    if (version < 3) {
-      Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
+    if (version < 2) {
+      Fl::fatal("%s version 2 required but only version %i is available\n", interface, version);
     }
     if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1, sizeof(struct Fl_Wayland_Screen_Driver::seat));
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
-    scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 3);
+    scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id, &wl_seat_interface, 2);
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-    const char *locale = getenv("LC_ALL");
-    if (!locale || !*locale)
-      locale = getenv("LC_CTYPE");
-    if (!locale || !*locale)
-      locale = getenv("LANG");
-    if (!locale || !*locale)
-      locale = "C";
-    struct xkb_compose_table *table = xkb_compose_table_new_from_locale(scr_driver->seat->xkb_context, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
-    scr_driver->seat->xkb_compose_state = xkb_compose_state_new(table, XKB_COMPOSE_STATE_NO_FLAGS);
+    if (scr_driver->seat->xkb_context) {
+      const char *locale = getenv("LC_ALL");
+      if (!locale || !*locale)
+        locale = getenv("LC_CTYPE");
+      if (!locale || !*locale)
+        locale = getenv("LANG");
+      if (!locale || !*locale)
+        locale = "C";
+      struct xkb_compose_table *table = xkb_compose_table_new_from_locale(scr_driver->seat->xkb_context, locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+      if (table) scr_driver->seat->xkb_compose_state = xkb_compose_state_new(table, XKB_COMPOSE_STATE_NO_FLAGS);
+    }
     wl_seat_add_listener(scr_driver->seat->wl_seat, &seat_listener, scr_driver->seat);
     if (scr_driver->seat->data_device_manager) {
       scr_driver->seat->data_device = wl_data_device_manager_get_data_device(scr_driver->seat->data_device_manager, scr_driver->seat->wl_seat);
@@ -1070,7 +1064,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 
   } else if (strcmp(interface, wl_data_device_manager_interface.name) == 0) {
     if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1, sizeof(struct Fl_Wayland_Screen_Driver::seat));
-    scr_driver->seat->data_device_manager = (struct wl_data_device_manager*)wl_registry_bind(wl_registry, id, &wl_data_device_manager_interface, 3);
+    scr_driver->seat->data_device_manager = (struct wl_data_device_manager*)wl_registry_bind(wl_registry, id, &wl_data_device_manager_interface, fl_min(version, 3));
     if (scr_driver->seat->wl_seat) {
       scr_driver->seat->data_device = wl_data_device_manager_get_data_device(scr_driver->seat->data_device_manager, scr_driver->seat->wl_seat);
       wl_data_device_add_listener(scr_driver->seat->data_device, Fl_Wayland_Screen_Driver::p_data_device_listener, NULL);
@@ -1079,7 +1073,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 
   } else if (strcmp(interface, "wl_output") == 0) {
     if (version < 2) {
-      Fl::fatal("%s version 3 required but only version %i is available\n", interface, version);
+      Fl::fatal("%s version 2 required but only version %i is available\n", interface, version);
     }
     Fl_Wayland_Screen_Driver::output *output = (Fl_Wayland_Screen_Driver::output*)calloc(1, sizeof *output);
     output->id = id;
@@ -1115,6 +1109,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       output->wld_scale = 1;
       output->gui_scale = 1.f;
       output->width = 1440; output->height = 900;
+      output->done = true;
       wl_list_insert(&(scr_driver->outputs), &output->link);
       scr_driver->screen_count_set(1);
     }
@@ -1179,6 +1174,24 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
 }
 
 
+static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
+  // runs after all calls to registry_handle_global()
+  *(struct wl_callback **)data = NULL;
+  wl_callback_destroy(cb);
+  // keep processing until output_done() has run for each screen
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  Fl_Wayland_Screen_Driver::output *output;
+  wl_list_for_each(output, &scr_driver->outputs, link) { // each screen of the system
+    while (!output->done) wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
+  }
+}
+
+
+static const struct wl_callback_listener sync_listener = {
+  sync_done
+};
+
+
 void Fl_Wayland_Screen_Driver::open_display_platform() {
   static bool beenHereDoneThat = false;
   if (beenHereDoneThat)
@@ -1197,11 +1210,9 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
 
   wl_registry = wl_display_get_registry(wl_display);
   wl_registry_add_listener(wl_registry, &registry_listener, NULL);
-  wl_display_dispatch(wl_display);
-  wl_display_roundtrip(wl_display);
-  if (!has_xrgb) {
-    Fl::fatal("Error: no WL_SHM_FORMAT_ARGB8888 shm format\n");
-  }
+  struct wl_callback *registry_cb = wl_display_sync(wl_display);
+  wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
+  while (registry_cb) wl_display_dispatch(wl_display);
   Fl::add_fd(wl_display_get_fd(wl_display), FL_READ, (Fl_FD_Handler)wayland_socket_callback,
              wl_display);
   fl_create_print_window();
@@ -1226,18 +1237,33 @@ void Fl_Wayland_Screen_Driver::close_display() {
   }
   wl_subcompositor_destroy(wl_subcompositor); wl_subcompositor = NULL;
   wl_surface_destroy(seat->cursor_surface); seat->cursor_surface = NULL;
-  wl_cursor_theme_destroy(seat->cursor_theme); seat->cursor_theme = NULL;
+  if (seat->cursor_theme) {
+    wl_cursor_theme_destroy(seat->cursor_theme);
+    seat->cursor_theme = NULL;
+  }
   wl_compositor_destroy(wl_compositor); wl_compositor = NULL;
   wl_shm_destroy(wl_shm); wl_shm = NULL;
   if (seat->wl_keyboard) {
-    xkb_state_unref(seat->xkb_state); seat->xkb_state = NULL;
-    xkb_keymap_unref(seat->xkb_keymap); seat->xkb_keymap = NULL;
+    if (seat->xkb_state) {
+      xkb_state_unref(seat->xkb_state);
+      seat->xkb_state = NULL;
+    }
+    if (seat->xkb_keymap) {
+      xkb_keymap_unref(seat->xkb_keymap);
+      seat->xkb_keymap = NULL;
+    }
     wl_keyboard_destroy(seat->wl_keyboard);
     seat->wl_keyboard = NULL;
   }
   wl_pointer_destroy(seat->wl_pointer); seat->wl_pointer = NULL;
-  xkb_compose_state_unref(seat->xkb_compose_state); seat->xkb_compose_state = NULL;
-  xkb_context_unref(seat->xkb_context); seat->xkb_context = NULL;
+  if (seat->xkb_compose_state) {
+    xkb_compose_state_unref(seat->xkb_compose_state);
+    seat->xkb_compose_state = NULL;
+  }
+  if (seat->xkb_context) {
+    xkb_context_unref(seat->xkb_context);
+    seat->xkb_context = NULL;
+  }
   if (seat->data_source) {
     wl_data_source_destroy(seat->data_source);
     seat->data_source = NULL;
@@ -1446,12 +1472,6 @@ void Fl_Wayland_Screen_Driver::get_system_colors()
 }
 
 
-const char *Fl_Wayland_Screen_Driver::get_system_scheme()
-{
-  return getenv("FLTK_SCHEME");
-}
-
-
 Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
@@ -1496,7 +1516,6 @@ void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int
 
 float Fl_Wayland_Screen_Driver::scale(int n) {
   Fl_Wayland_Screen_Driver::output *output;
-  if (wl_list_length(&outputs) == 0) return 1; // necessary under OWL
   int i = 0;
   wl_list_for_each(output, &outputs, link) {
     if (i++ == n) break;

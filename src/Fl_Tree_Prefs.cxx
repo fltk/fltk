@@ -165,20 +165,12 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _showroot               = 1;
   _connectorwidth         = 17;
   _sortorder              = FL_TREE_SORT_NONE;
-  _selectbox              = FL_FLAT_BOX;
+  _selectbox              = FL_THIN_UP_BOX;
   _selectmode             = FL_TREE_SELECT_SINGLE;
   _itemreselectmode       = FL_TREE_SELECTABLE_ONCE;
   _itemdrawmode           = FL_TREE_ITEM_DRAW_DEFAULT;
   _itemdrawcallback       = 0;
   _itemdrawuserdata       = 0;
-  // Let fltk's current 'scheme' affect defaults
-  if (Fl::is_scheme("gtk+")) {
-    _selectbox = _FL_GTK_THIN_UP_BOX;
-  } else if (Fl::is_scheme("plastic")) {
-    _selectbox = _FL_PLASTIC_THIN_UP_BOX;
-  } else if (Fl::is_scheme("oxy")) {
-    _selectbox = _FL_OXY_THIN_UP_BOX;
-  }
 }
 
 /// Fl_Tree_Prefs destructor

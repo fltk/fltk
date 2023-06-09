@@ -75,7 +75,7 @@ typedef enum {
 typedef enum {
   FO_END_OF_LIST = 0,
   FO_HEADLINE,
-  FO_OPTION_BOOL,
+  FO_OPTION_BOOL
   // FO_OPTION_INT,     // not yet implemented
   // FO_OPTION_TEXT,    // not yet implemented
   // FO_OPTION_SCHEME,  // not yet implemented

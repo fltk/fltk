@@ -7,8 +7,9 @@ version 1.4.0, a C++ Graphical User Interface
 ("GUI") toolkit for UNIX, Microsoft Windows and Apple OS X.
 
 Version 1.4.0 introduces support for a new windowing system
-under LINUX: Wayland. Thus, FLTK applications under LINUX can
-now be built to use either X11 or Wayland as windowing system.
+under Linux/Unix: Wayland. FLTK applications under Linux/Unix
+run, unchanged, as Wayland or X11 clients depending on what's
+available at run-time.
 
 Each of the chapters in this manual is designed as a tutorial for
 using FLTK, while the appendices provide a convenient reference

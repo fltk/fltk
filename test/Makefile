@@ -156,7 +156,6 @@ ALL =	\
 	button$(EXEEXT) \
 	buttons$(EXEEXT) \
 	cairo_test$(EXEEXT) \
-	checkers$(EXEEXT) \
 	clipboard$(EXEEXT) \
 	clock$(EXEEXT) \
 	colbrowser$(EXEEXT) \
@@ -168,7 +167,6 @@ ALL =	\
 	device$(EXEEXT) \
 	doublebuffer$(EXEEXT) \
 	editor$(EXEEXT) \
-	fast_slow$(EXEEXT) \
 	file_chooser$(EXEEXT) \
 	flex_demo$(EXEEXT) \
 	flex_login$(EXEEXT) \
@@ -180,14 +178,11 @@ ALL =	\
 	icon$(EXEEXT) \
 	iconize$(EXEEXT) \
 	image$(EXEEXT) \
-	inactive$(EXEEXT) \
 	input$(EXEEXT) \
 	input_choice$(EXEEXT) \
-	keyboard$(EXEEXT) \
 	label$(EXEEXT) \
 	line_style$(EXEEXT) \
 	list_visuals$(EXEEXT) \
-	mandelbrot$(EXEEXT) \
 	menubar$(EXEEXT) \
 	message$(EXEEXT) \
 	minimum$(EXEEXT) \
@@ -199,10 +194,7 @@ ALL =	\
 	pack$(EXEEXT) \
 	pixmap$(EXEEXT) \
 	pixmap_browser$(EXEEXT) \
-	preferences$(EXEEXT) \
 	device$(EXEEXT) \
-	radio$(EXEEXT) \
-	resize$(EXEEXT) \
 	resizebox$(EXEEXT) \
 	resize-example1$(EXEEXT) \
 	resize-example2$(EXEEXT) \
@@ -220,20 +212,29 @@ ALL =	\
 	sudoku$(EXEEXT) \
 	symbols$(EXEEXT) \
 	table$(EXEEXT) \
-	tabs$(EXEEXT) \
 	$(THREADS) \
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
-	tree$(EXEEXT) \
 	twowin$(EXEEXT) \
-	valuators$(EXEEXT) \
 	utf8$(EXEEXT) \
 	windowfocus$(EXEEXT)
-
+	
+ALLFLUID = \
+	checkers$(EXEEXT) \
+	fast_slow$(EXEEXT) \
+	inactive$(EXEEXT) \
+	keyboard$(EXEEXT) \
+	mandelbrot$(EXEEXT) \
+	preferences$(EXEEXT) \
+	radio$(EXEEXT) \
+	resize$(EXEEXT) \
+	tabs$(EXEEXT) \
+	tree$(EXEEXT) \
+	valuators$(EXEEXT) \
+	CubeView$(EXEEXT)
 
 GLALL = \
 	cube$(EXEEXT) \
-	CubeView$(EXEEXT) \
 	fractals$(EXEEXT) \
 	fullscreen$(EXEEXT) \
 	gl_overlay$(EXEEXT) \
@@ -242,6 +243,9 @@ GLALL = \
 	unittests$(EXEEXT)
 
 all:	$(ALL) $(GLDEMOS)
+	for dir in $(FLUIDDIR); do\
+	  $(MAKE)  $(MFLAGS) $(ALLFLUID);\
+	done
 
 gldemos:	$(GLALL)
 
@@ -256,7 +260,7 @@ depend:	$(CPPFILES)
 include makedepend
 
 clean:
-	$(RM) $(ALL) $(GLALL) core
+	$(RM) $(ALL) $(ALLFLUID) $(GLALL) core
 	$(RMDIR) *.app
 	$(RM) *.o core.* *~ *.bck *.bak
 	$(RM) CubeViewUI.cxx CubeViewUI.h

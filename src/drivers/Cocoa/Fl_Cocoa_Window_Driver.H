@@ -123,7 +123,6 @@ public:
   void draw_end() FL_OVERRIDE;
   void make_current() FL_OVERRIDE;
   void label(const char *name, const char *mininame) FL_OVERRIDE;
-  void destroy_double_buffer() FL_OVERRIDE;
   void show() FL_OVERRIDE;
   void resize(int X,int Y,int W,int H) FL_OVERRIDE;
   void hide() FL_OVERRIDE;

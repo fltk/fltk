@@ -106,8 +106,12 @@ FLTKCAIROOPTION = @FLTKCAIROOPTION@
 LINKSHARED	= @DSOLINK@ @LINKSHARED@ $(IMAGELIBS) $(CAIROLIBS)
 IMAGELIBS	= -L../lib @IMAGELIBS@
 
+# optional extra build step for fluid:
+FLUIDDIR  = @FLUIDDIR@
+
 # optional extra build step for libdecor:
 LIBDECORDIR	= @LIBDECORDIR@
+LIBDECORDBUS    = @LIBDECORDBUS@
 
 # image libraries to build...
 IMAGEDIRS	= @JPEG@ @ZLIB@ @PNG@

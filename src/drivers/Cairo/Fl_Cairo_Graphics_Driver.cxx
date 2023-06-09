@@ -25,14 +25,42 @@
 #include "../../Fl_Screen_Driver.H"
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_utf8.h>
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
+#if ! PANGO_VERSION_CHECK(1,16,0)
+#  error "Requires Pango 1.16 or higher"
+#endif
 #include <math.h>
 #include <stdlib.h>  // abs(int)
 #include <string.h>  // memcpy()
 #include <stdint.h>  // uint32_t
 
 extern unsigned fl_cmap[256]; // defined in fl_color.cxx
+
+// The predefined fonts that FLTK has with Pango:
+static Fl_Fontdesc built_in_table[] = {
+  {"Sans"},
+  {"Sans Bold"},
+  {"Sans Italic"},
+  {"Sans Bold Italic"},
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"Monospace Italic"},
+  {"Monospace Bold Italic"},
+  {"Serif"},
+  {"Serif Bold"},
+  {"Serif Italic"},
+  {"Serif Bold Italic"},
+  {"Standard Symbols PS"}, // FL_SYMBOL
+  {"Monospace"},
+  {"Monospace Bold"},
+  {"D050000L"},            // FL_ZAPF_DINGBATS
+};
+
+
+FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
+
 
 // duplicated from Fl_PostScript.cxx
 struct callback_data {
@@ -67,6 +95,7 @@ static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
     curdata += cb_data->D;
   }
 }
+// end of duplicated part
 
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
@@ -998,9 +1027,6 @@ int Fl_Cairo_Graphics_Driver::descent() {
 }
 
 
-extern Fl_Fontdesc *fl_fonts;
-
-
 void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
   static int i = 0;
   if (!i) {
@@ -1043,6 +1069,18 @@ Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
   fl_open_display();
   int n_families, count = 0;
   PangoFontFamily **families;
+  char *saved_lang = fl_getenv("LANG");
+  const char *Clang = "LANG=C";
+  if (saved_lang && strcmp(saved_lang, Clang)) {
+    // Force LANG=C to prevent pango_font_face_get_face_name() below from returning
+    // translated versions of Bold, Italic, etc… (see issue #732).
+    // Unfortunately, using setlocale() doesn't do the job.
+    char *p = saved_lang;
+    saved_lang = (char*)malloc(strlen(p) + 6);
+    memcpy(saved_lang, "LANG=", 5);
+    strcpy(saved_lang + 5, p);
+    fl_putenv(Clang);
+  } else saved_lang = NULL;
   static PangoFontMap *pfmap_ = pango_cairo_font_map_get_default(); // 1.10
   Fl_Cairo_Graphics_Driver::init_built_in_fonts();
   pango_font_map_list_families(pfmap_, &families, &n_families);
@@ -1054,15 +1092,22 @@ Fl_Font Fl_Cairo_Graphics_Driver::set_fonts(const char* /*pattern_name*/)
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
       const char *p = pango_font_face_get_face_name(faces[j]);
+      // Remove " Regular" suffix from font names
+      if (!strcasecmp(p, "regular")) p = NULL;
       // build the font's FLTK name
-      int lfont = lfam + strlen(p) + 2;
+      int lfont = lfam + (p ? strlen(p) + 2 : 1);
       char *q = new char[lfont];
-      snprintf(q, lfont, "%s %s", fam_name, p);
+      if (p) snprintf(q, lfont, "%s %s", fam_name, p);
+      else strcpy(q, fam_name);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
   }
   /*g_*/free(families);
+  if (saved_lang) {
+    fl_putenv(saved_lang);
+    free(saved_lang);
+  }
   // Sort the list into alphabetic order
   qsort(fl_fonts + FL_FREE_FONT, count, sizeof(Fl_Fontdesc), (sort_f_type)font_sort);
   return FL_FREE_FONT + count;
@@ -1134,7 +1179,11 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   delete[] string;
   width = NULL;
   //A PangoFontset represents a set of PangoFont to use when rendering text.
-  PangoFontset *fontset = pango_font_map_load_fontset(pango_cairo_font_map_get_default(), context, fontref, pango_language_get_default());
+  PangoFontset *fontset = pango_font_map_load_fontset(
+                                      pango_cairo_font_map_get_default(), // 1.10
+                                      context, fontref,
+                                      pango_language_get_default() // 1.16
+                                                      );
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
@@ -1201,7 +1250,12 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
     //A PangoFontMap represents the set of fonts available for a particular rendering system.
     PangoFontMap *def_font_map = pango_cairo_font_map_get_default(); // 1.10
     //A PangoContext stores global information used to control the itemization process.
+#if PANGO_VERSION_CHECK(1,22,0)
     pango_context_ = pango_font_map_create_context(def_font_map); // 1.22
+#else
+    pango_context_ = pango_context_new();
+    pango_context_set_font_map(pango_context_, def_font_map);
+#endif
     pango_layout_ = pango_layout_new(pango_context_);
   }
   font_descriptor( find(fnum, s, pango_context_) );

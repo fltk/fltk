@@ -130,9 +130,9 @@ in section 2.1 of file README.Unix.txt :
 - libpango1.0-dev
 - libwayland-dev
 - wayland-protocols
-- libdbus-1-dev
 - libxkbcommon-dev
 - libxinerama-dev
+- libdbus-1-dev  <== recommended to query current cursor theme
 - libglew-dev    <== necessary to use OpenGL version 3 or above
 - cmake          <== if you plan to build with CMake
 - cmake-qt-gui   <== if you plan to use the GUI of CMake
@@ -161,8 +161,8 @@ package groups listed in section 2.2 of file README.Unix.txt :
 - cairo-devel
 - libxkbcommon-devel
 - pango-devel
-- dbus-devel
 - mesa-libGLU-devel
+- dbus-devel   <== recommended to query current cursor theme
 - gtk3-devel   <== highly recommended, gives windows a GTK-style titlebar
 - glew-devel   <== necessary to use OpenGL version 3 or above
 - cmake        <== if you plan to build with CMake

@@ -81,7 +81,7 @@ const char *_q_check(const char * & c, int type) {
 /**
  Check normal code, match brackets and parenthesis.
  Recursively run a line of code and make sure that
- {, ", ', and ( are matched.
+ {, [, ", ', and ( are matched.
  \param[inout] c start searching here, return the end of the search
  \param[in] type find this character match
  \return NULL if the character was found, else a pointer to a static string
@@ -92,7 +92,7 @@ const char *_c_check(const char * & c, int type) {
   for (;;) switch (*c++) {
     case 0:
       if (!type) return 0;
-      sprintf(buffer, "missing %c", type);
+      sprintf(buffer, "missing '%c'", type);
       return buffer;
     case '/':
       // Skip comments as needed...
@@ -107,10 +107,12 @@ const char *_c_check(const char * & c, int type) {
         }
       }
       break;
-    case '#':
-      // treat cpp directives as a comment:
-      while (*c != '\n' && *c) c++;
-      break;
+//    case '#':
+//      // treat cpp directives as a comment:
+//      // Matt: a '#' character can appear as a concatenator when defining macros
+//      // Matt: so instead we just silently ignore the '#'
+//      while (*c != '\n' && *c) c++;
+//      break;
     case '{':
       if (type==')') goto UNEXPECTED;
       d = _c_check(c,'}');
@@ -118,6 +120,10 @@ const char *_c_check(const char * & c, int type) {
       break;
     case '(':
       d = _c_check(c,')');
+      if (d) return d;
+      break;
+    case '[':
+      d = _c_check(c,']');
       if (d) return d;
       break;
     case '\"':
@@ -130,9 +136,10 @@ const char *_c_check(const char * & c, int type) {
       break;
     case '}':
     case ')':
+    case ']':
     UNEXPECTED:
       if (type == *(c-1)) return 0;
-      sprintf(buffer, "unexpected %c", *(c-1));
+      sprintf(buffer, "unexpected '%c'", *(c-1));
       return buffer;
   }
 }
@@ -141,7 +148,7 @@ const char *_c_check(const char * & c, int type) {
  Check legality of c code (sort of) and return error:
  Make sure that {, ", ', and ( are matched.
  \param[in] c start searching here
- \param[in] type find this character match
+ \param[in] type find this character match (default is 0)
  \return NULL if the character was found, else a pointer to a static string
     with an error message
  \note This function checks every conceivable line of code, which is not
@@ -244,6 +251,7 @@ void Fl_Function_Type::read_property(Fd_Project_Reader &f, const char *c) {
  Open the function_panel dialog box to edit this function.
  */
 void Fl_Function_Type::open() {
+  // fill dialog box
   if (!function_panel) make_function_panel();
   f_return_type_input->value(return_type);
   f_name_input->value(name());
@@ -264,26 +272,39 @@ void Fl_Function_Type::open() {
   function_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
+    // - message loop until OK or cancel is pressed
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == f_panel_cancel) goto BREAK2;
       else if (w == f_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char*c = f_name_input->value();
+    // - check syntax
+    const char *c = f_name_input->value();
     while (isspace(*c)) c++;
-    message = c_check(c); if (message) continue;
-    const char *d = c;
-    for (; *d != '('; d++) if (isspace(*d) || !*d) break;
-    if (*c && *d != '(') {
-      message = "must be name(arguments), try again:"; continue;
+    message = c_check(c);
+    if (!message) {
+      const char *d = c;
+      for (; *d != '('; d++) if (isspace(*d) || !*d) break;
+      if (*c && *d != '(')
+        message = "must be 'name(arguments)'";
     }
+    if (!message) {
+      c = f_return_type_input->value();
+      message = c_check(c);
+    }
+    // - alert user
+    if (message) {
+      int v = fl_choice("Potential syntax error detected: %s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
+      if (v==0) goto BREAK2;  // Cancel Dialog
+      if (v==1) ;             // Ignore Error
+      if (v==2) continue;     // Continue Editing
+    }
+    // - copy dialog data to target variables
     int mod = 0;
-    c = f_return_type_input->value();
-    message = c_check(c); if (message) continue;
     name(f_name_input->value());
-    storestring(c, return_type);
+    storestring(f_return_type_input->value(), return_type);
     if (is_in_class()) {
       if (public_ != f_public_member_choice->value()) {
         mod = 1;
@@ -596,7 +617,6 @@ void Fl_Code_Type::open() {
   code_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == code_panel_cancel) goto BREAK2;
@@ -604,7 +624,14 @@ void Fl_Code_Type::open() {
       else if (!w) Fl::wait();
     }
     char*c = code_input->buffer()->text();
-    message = c_check(c); if (message) continue;
+    message = c_check(c);
+    if (message) {
+      int v = fl_choice("Potential syntax error detected: %s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
+      if (v==0) { free(c); goto BREAK2; } // Cancel Dialog
+      if (v==1) ;                         // Ignore Error
+      if (v==2) { free(c); continue; }    // Continue Editing
+    }
     name(c);
     free(c);
     break;
@@ -766,19 +793,29 @@ void Fl_CodeBlock_Type::open() {
   codeblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
+    // event loop
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == codeblock_panel_cancel) goto BREAK2;
       else if (w == codeblock_panel_ok) break;
       else if (!w) Fl::wait();
     }
-    const char*c = code_before_input->value();
-    message = c_check(c); if (message) continue;
-    name(c);
-    c = code_after_input->value();
-    message = c_check(c); if (message) continue;
-    storestring(c, after);
+    // check for syntax errors
+    message = c_check(code_before_input->value());
+    if (!message) {
+      message = c_check(code_after_input->value());
+    }
+    // alert user
+    if (message) {
+      int v = fl_choice("Potential syntax error detected: %s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
+      if (v==0) goto BREAK2;  // Cancel Dialog
+      if (v==1) ;             // Ignore Error
+      if (v==2) continue;     // Continue Editing
+    }
+    // write to variables
+    name(code_before_input->value());
+    storestring(code_after_input->value(), after);
     break;
   }
 BREAK2:
@@ -913,17 +950,26 @@ void Fl_Decl_Type::open() {
   decl_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
+    // event loop
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == decl_panel_cancel) goto BREAK2;
       else if (w == decl_panel_ok) break;
       else if (!w) Fl::wait();
     }
+    // check values
     const char*c = decl_input->value();
     while (isspace(*c)) c++;
     message = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (message) continue;
+    // alert user
+    if (message) {
+      int v = fl_choice("Potential syntax error detected: %s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
+      if (v==0) goto BREAK2;  // Cancel Dialog
+      if (v==1) ;             // Ignore Error
+      if (v==2) continue;     // Continue Editing
+    }
+    // copy vlaues
     name(c);
     if (is_in_class()) {
       if (public_!=decl_class_choice->value()) {
@@ -1120,9 +1166,7 @@ void Fl_Data_Type::open() {
   const char *c = comment();
   data_comment_input->buffer()->text(c?c:"");
   data_panel->show();
-  const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == data_panel_cancel) goto BREAK2;
@@ -1142,7 +1186,7 @@ void Fl_Data_Type::open() {
     // store the variable name:
     const char*c = data_input->value();
     char *s = fl_strdup(c), *p = s, *q, *n;
-    for (;;++p) {
+    for (;;++p) { // remove leading spaces
       if (!isspace((unsigned char)(*p))) break;
     }
     n = p;
@@ -1156,12 +1200,16 @@ void Fl_Data_Type::open() {
       if (!*q) break;
       if (!isspace((unsigned char)(*q))) goto OOPS;
     }
+    *p = 0; // remove trailing spaces
     if (n==q) {
-    OOPS: message = "variable name must be a C identifier";
-      free((void*)s);
-      continue;
+    OOPS:
+      int v = fl_choice("%s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing",
+                        "Variable name must be a C identifier");
+      if (v==0) { free(s); goto BREAK2; } // Cancel Dialog
+      if (v==1) ;                         // Ignore Error
+      if (v==2) { free(s); continue; }    // Continue Editing
     }
-    *p = 0;
     name(n);
     free(s);
     // store flags
@@ -1415,11 +1463,11 @@ void Fl_DeclBlock_Type::open() {
     if (!message)
       message = c_check(b&&b[0]=='#' ? b+1 : b);
     if (message) {
-      int v = fl_choice("%s", "try again", "keep anyway", "cancel", message);
-      printf("%d\n", v);
-      if (v==0) continue; // try again
-      if (v == 1) { } // keep input
-      if (v==2) goto BREAK2;
+      int v = fl_choice("Potential syntax error detected: %s",
+                        "Cancel Dialog", "Ignore Error", "Continue Editing", message);
+      if (v==0) goto BREAK2;  // Cancel Dialog
+      if (v==1) ;             // Ignore Error
+      if (v==2) continue;     // Continue Editing
     }
     name(a);
     storestring(b, after);
@@ -1570,11 +1618,9 @@ void Fl_Comment_Type::open() {
   comment_in_source->value(in_c_);
   comment_in_header->value(in_h_);
   comment_panel->show();
-  const char* message = 0;
   char itempath[FL_PATH_MAX]; itempath[0] = 0;
   int last_selected_item = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == comment_panel_cancel) goto BREAK2;
@@ -1848,6 +1894,8 @@ void Fl_Class_Type::open() {
   char *na=0,*pr=0,*p=0; // name and prefix substrings
 
   for (;;) { // repeat as long as there are errors
+    // we don;t give the option to ignore this error here because code depends
+    // on this being a C++ identifier
     if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();

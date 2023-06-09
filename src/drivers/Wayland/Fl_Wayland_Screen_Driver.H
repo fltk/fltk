@@ -73,6 +73,7 @@ public:
     struct wl_output *wl_output;
     int wld_scale; // Wayland scale factor
     float gui_scale; // FLTK scale factor
+    bool done;
     struct wl_list link;
   };
 
@@ -141,7 +142,6 @@ public:
   void grab(Fl_Window* win) FL_OVERRIDE;
   // --- global colors
   void get_system_colors() FL_OVERRIDE;
-  const char *get_system_scheme() FL_OVERRIDE;
   // this one is in fl_wayland_clipboard_dnd.cxx
   int dnd(int unused) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;

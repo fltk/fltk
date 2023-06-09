@@ -33,29 +33,6 @@
 #include <stdio.h>
 
 
-static Fl_Fontdesc built_in_table[] = {  // Pango font names
-  {"Sans"},
-  {"Sans Bold"},
-  {"Sans Italic"},
-  {"Sans Bold Italic"},
-  {"Monospace"},
-  {"Monospace Bold"},
-  {"Monospace Italic"},
-  {"Monospace Bold Italic"},
-  {"Serif"},
-  {"Serif Bold"},
-  {"Serif Italic"},
-  {"Serif Bold Italic"},
-  {"Standard Symbols PS"}, // FL_SYMBOL
-  {"Monospace"},           // FL_SCREEN
-  {"Monospace Bold"},      // FL_SCREEN_BOLD
-  {"D050000L"},            // FL_ZAPF_DINGBATS
-};
-
-
-FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
-
-
 #ifdef FLTK_USE_X11
 
 static bool attempt_wayland() {

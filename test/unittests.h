@@ -55,7 +55,7 @@ enum {
   UT_TEST_SCROLLBARSIZE,
   UT_TEST_SCHEMES,
   UT_TEST_SIMPLE_TERMINAL,
-  UT_TEST_CORE,
+  UT_TEST_CORE
 };
 
 // This class helps to automatically register a new test with the unittest app.

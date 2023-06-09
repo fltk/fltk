@@ -395,6 +395,7 @@ way_out:
       if (!p) break;
       if (*++p == 0) *(p-1) = 0; // remove last '\n'
     }
+    fl_selection_length[1] = strlen(fl_selection_buffer[1]);
   }
   Fl::e_clipboard_type = Fl::clipboard_plain_text;
 }

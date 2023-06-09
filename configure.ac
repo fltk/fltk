@@ -140,6 +140,8 @@ AC_ARG_ENABLE([xinerama], AS_HELP_STRING([--disable-xinerama], [turn off Xineram
 
 AC_ARG_ENABLE([xrender], AS_HELP_STRING([--disable-xrender], [turn off Xrender support]))
 
+AC_ARG_ENABLE([fluid], AS_HELP_STRING([--disable-fluid], [turn off fluid building]))
+
 AS_CASE([$host_os], [cygwin* | mingw*], [
   AC_ARG_ENABLE([gdiplus], AS_HELP_STRING([--disable-gdiplus], [don't use GDI+ for antialiased graphics]))
 
@@ -899,11 +901,15 @@ HLINKS=
 OSX_ONLY=:
 THREADS=
 LIBDECORDIR=""
+LIBDECORDBUS=""
+FLUIDDIR=""
 
 AC_ARG_WITH([links], AS_HELP_STRING([--with-links], [make header links for common misspellings (default=no)]))
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
+
+AS_IF([test x$enable_fluid != xno], [FLUIDDIR="fluid"])
 
 AS_CASE([$host_os_gui], [cygwin* | mingw*], [
     dnl Cygwin environment, using windows GDI ...
@@ -1011,10 +1017,9 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
         AS_IF([$PKGCONFIG --exists 'wayland-protocols >= 1.15'],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists wayland-cursor],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists xkbcommon],[],[missing="yes"])
-        AS_IF([$PKGCONFIG --exists dbus-1],[],[missing="yes"])
         AS_IF([$PKGCONFIG --exists pangocairo],[],[missing="yes"])
         AS_IF([test x$missing = xyes], [
-            AC_MSG_WARN([These packages 'wayland-client>=1.18 wayland-protocols>=1.15 wayland-cursor xkbcommon dbus-1 pangocairo' are required to build FLTK for wayland.])
+            AC_MSG_WARN([These packages 'wayland-client>=1.18 wayland-protocols>=1.15 wayland-cursor xkbcommon  pangocairo' are required to build FLTK for wayland.])
             AC_MSG_WARN([At least one of them is missing.])
           AS_IF([test x$enable_wayland = xyes], [
             AC_MSG_ERROR([Building for Wayland is not possible. Aborting.])
@@ -1044,11 +1049,14 @@ AS_CASE([$host_os_gui], [cygwin* | mingw*], [
 #     CXXFLAGS="$CXXFLAGS -DUSE_SYSTEM_LIBDECOR=0"
       LIBS="$LIBS $($PKGCONFIG --libs wayland-cursor) $($PKGCONFIG --libs wayland-client) $($PKGCONFIG --libs xkbcommon) $($PKGCONFIG --libs pangocairo) "
       AS_IF([test x$enable_x11 != xno], [LIBS="$LIBS $($PKGCONFIG --libs x11)"] )
-      LIBS="$LIBS $($PKGCONFIG --libs dbus-1) -ldl"
+      LIBS="$LIBS -ldl"
 #     CXXFLAGS="$CXXFLAGS -I../libdecor/src"
       DSOFLAGS="$LIBS $DSOFLAGS"
       enable_pango=yes
       LIBDECORDIR="libdecor/build"
+      AS_IF([$PKGCONFIG --exists dbus-1], 
+       [LIBDECORDBUS="-DHAS_DBUS $($PKGCONFIG --cflags dbus-1)" LIBS="$LIBS $($PKGCONFIG --libs dbus-1)"]
+      )
       LDFLAGS="$LDFLAGS -rdynamic"
       AC_SUBST([UNAME])
       UNAME="$(uname -s)"
@@ -1406,7 +1414,10 @@ AC_SUBST([HLINKS])
 AC_SUBST([OSX_ONLY])
 AC_SUBST([THREADS])
 
+AC_SUBST([FLUIDDIR])
+
 AC_SUBST([LIBDECORDIR])
+AC_SUBST([LIBDECORDBUS])
 
 AC_SUBST([INSTALL_DESKTOP])
 AC_SUBST([UNINSTALL_DESKTOP])
@@ -1758,6 +1769,12 @@ AS_CASE([$host_os], [mingw*], [
     echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
 ])
 
+AS_IF([test x$enable_fluid != xno], [
+    echo "    Build fluid: YES"
+    ],[
+    echo "    Build fluid: NO"
+    ])
+    
 dnl
 echo "Cross-compiling: $fltk_cross_compiling"
 AS_IF([test "$fltk_cross_compiling" = "yes"], [

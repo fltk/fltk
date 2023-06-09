@@ -26,6 +26,7 @@
 #endif // FLTK_USE_CAIRO
 
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
@@ -38,12 +39,6 @@
 #define ShapeSet                        0
 
 Window fl_window;
-
-
-void Fl_X11_Window_Driver::destroy_double_buffer() {
-  fl_delete_offscreen(other_xid);
-  other_xid = 0;
-}
 
 
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
@@ -164,11 +159,11 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::flx(pWindow);
   if (!other_xid) {
-    other_xid = fl_create_offscreen(w(), h());
+    other_xid = new Fl_Image_Surface(w(), h(), 1);
 #if FLTK_USE_CAIRO
-    fl_begin_offscreen(other_xid);
+    Fl_Surface_Device::push_current(other_xid);
     cairo_ = ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->cr();
-    fl_end_offscreen();
+    Fl_Surface_Device::pop_current();
 #endif
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
@@ -177,7 +172,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 #endif
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
-      fl_window = other_xid;
+      fl_window = other_xid->offscreen();
 # if defined(FLTK_HAVE_CAIROEXT)
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 # endif
@@ -187,7 +182,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   if (erase_overlay) fl_clip_region(0);
   int X = 0, Y = 0, W = 0, H = 0;
   fl_clip_box(0, 0, w(), h(), X, Y, W, H);
-  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
+  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid->offscreen(), X, Y);
 }
 
 

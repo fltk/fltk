@@ -22,6 +22,7 @@
  */
 
 #include "Fl_Window_Driver.H"
+#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
@@ -72,8 +73,6 @@ int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_scree
 int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
 void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
 
-void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
-
 
 /**
  Draw the window content.
@@ -106,11 +105,11 @@ void Fl_Window_Driver::take_focus() {
 }
 
 void Fl_Window_Driver::flush_double() {
-  flush_Fl_Window();
+  pWindow->Fl_Window::flush();
 }
 
 void Fl_Window_Driver::flush_overlay() {
-  flush_Fl_Window();
+  pWindow->Fl_Window::flush();
 }
 
 void Fl_Window_Driver::draw_begin() {
@@ -122,7 +121,7 @@ void Fl_Window_Driver::draw_end() {
 }
 
 void Fl_Window_Driver::destroy_double_buffer() {
-  fl_delete_offscreen(other_xid);
+  delete other_xid;
   other_xid = 0;
 }
 

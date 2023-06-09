@@ -101,14 +101,14 @@ Fl_Surface_Device::~Fl_Surface_Device()
 /**  A constructor that sets the graphics driver used by the display */
 Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device(graphics_driver) {
   this->set_current();
-};
+}
 
 
 /** Returns a pointer to the unique display device */
 Fl_Display_Device *Fl_Display_Device::display_device() {
   static Fl_Display_Device *display = new Fl_Display_Device(Fl_Graphics_Driver::newMainGraphicsDriver());
   return display;
-};
+}
 
 
 Fl_Surface_Device *Fl_Surface_Device::default_surface()

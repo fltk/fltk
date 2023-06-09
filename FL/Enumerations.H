@@ -455,7 +455,7 @@ enum Fl_Callback_Reason {
   FL_REASON_CHANGED,      ///< the value of the widget was modified
   FL_REASON_GOT_FOCUS,    ///< a widget received focus
   FL_REASON_LOST_FOCUS,   ///< a widget lost focus
-  FL_REASON_RELEASED,     ///< the mouse button was released
+  FL_REASON_RELEASED      ///< the mouse button was released
 };
 /**@}*/          // group: Callback Reasons
 

@@ -16,7 +16,8 @@
 
 include makeinclude
 
-DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) fluid fltk-options test documentation
+DIRS = $(IMAGEDIRS) $(LIBDECORDIR) src $(CAIRODIR) $(FLUIDDIR) fltk-options test \
+       documentation
 
 all: makeinclude fltk-config
 	for dir in $(DIRS); do\

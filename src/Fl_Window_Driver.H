@@ -37,6 +37,7 @@
 class Fl_X;
 class Fl_Image;
 class Fl_RGB_Image;
+class Fl_Image_Surface;
 
 /**
  \brief A base class for platform specific window handling code.
@@ -57,7 +58,6 @@ private:
 protected:
   Fl_Window *pWindow;
   int screen_num_; // number of screen where window is mapped
-  void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -65,7 +65,7 @@ public:
   static fl_uintptr_t xid(const Fl_Window *win);
   static Fl_Window *find(fl_uintptr_t xid);
   int wait_for_expose_value;
-  Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
+  Fl_Image_Surface *other_xid; // offscreen bitmap (overlay and double-buffered windows)
   int screen_num();
   void screen_num(int n) { screen_num_ = n; }
 
@@ -114,6 +114,7 @@ public:
   void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
   void flx(Fl_X *x) { pWindow->flx_ = x; }
   Fl_Cursor cursor_default() { return pWindow->cursor_default; }
+  void destroy_double_buffer();
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {
     return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
@@ -145,7 +146,6 @@ public:
 
   virtual void makeWindow() {}
   virtual void wait_for_expose();
-  virtual void destroy_double_buffer();
   virtual void show();
   virtual void resize(int /*X*/, int /*Y*/, int /*W*/, int /*H*/) {}
   virtual void hide() {}
@@ -200,8 +200,10 @@ public:
   static int menu_itemheight(Fl_Window*);
   static int menu_bartitle(Fl_Window*);
   static int menu_selected(Fl_Window*);
+  static int *menu_offset_y(Fl_Window*);
   static bool is_floating_title(Fl_Window *);
   static void scroll_to_selected_item(Fl_Window *);
+  static bool is_menutitle(Fl_Window *);
 
   virtual fl_uintptr_t os_id() { return 0; }
 };

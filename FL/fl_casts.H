@@ -15,6 +15,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#ifndef _FL_fl_casts_H_
+#define _FL_fl_casts_H_
+
 #include <FL/platform_types.h>
 
 inline char fl_char(void *v)             { return (char)(fl_intptr_t)v; }
@@ -32,3 +35,5 @@ inline void *fl_voidptr(int v)           { return (void *)(fl_intptr_t)v; }
 inline void *fl_voidptr(unsigned int v)  { return (void *)(fl_uintptr_t)v; }
 inline void *fl_voidptr(long v)          { return (void *)(fl_intptr_t)v; }
 inline void *fl_voidptr(unsigned long v) { return (void *)(fl_uintptr_t)v; }
+
+#endif /* _FL_fl_casts_H_ */

@@ -151,7 +151,7 @@ private:
   int _selecting;
   int _scrollbar_size;
   enum {
-    TABCELLNAV = 1<<0,                  ///> tab cell navigation flag
+    TABCELLNAV = 1<<0                   ///> tab cell navigation flag
   };
   unsigned int flags_;
 

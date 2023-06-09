@@ -93,7 +93,7 @@ static Fd_Layout_Suite static_suite_list[] = {
   { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, FD_STORE_INTERNAL }
 };
 
-static Fl_Menu_Item static_main_menu[] = {
+Fl_Menu_Item main_layout_submenu_[] = {
   { static_suite_list[0].menu_label, 0, select_layout_suite_cb, (void*)0, FL_MENU_RADIO|FL_MENU_VALUE },
   { static_suite_list[1].menu_label, 0, select_layout_suite_cb, (void*)1, FL_MENU_RADIO },
   { NULL }
@@ -517,7 +517,7 @@ void fd_file(Fl_Color c) {
 
 
 Fd_Layout_List::Fd_Layout_List()
-: main_menu_(static_main_menu),
+: main_menu_(main_layout_submenu_),
   choice_menu_(static_choice_menu),
   list_(static_suite_list),
   list_size_(2),

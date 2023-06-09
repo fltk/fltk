@@ -20,7 +20,7 @@
 Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
   static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
   return display;
-};
+}
 
 Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver)
 : Fl_Surface_Device(graphics_driver)

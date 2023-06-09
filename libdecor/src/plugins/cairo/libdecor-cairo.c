@@ -398,12 +398,15 @@ libdecor_plugin_cairo_destroy(struct libdecor_plugin *plugin)
 
 	free(plugin_cairo->cursor_theme_name);
 
-	wl_shm_destroy(plugin_cairo->wl_shm);
+	if (plugin_cairo->wl_shm)
+		wl_shm_destroy(plugin_cairo->wl_shm);
 
 	pango_font_description_free(plugin_cairo->font);
 
-	wl_compositor_destroy(plugin_cairo->wl_compositor);
-	wl_subcompositor_destroy(plugin_cairo->wl_subcompositor);
+	if (plugin_cairo->wl_compositor)
+		wl_compositor_destroy(plugin_cairo->wl_compositor);
+	if (plugin_cairo->wl_subcompositor)
+		wl_subcompositor_destroy(plugin_cairo->wl_subcompositor);
 
 	libdecor_plugin_release(&plugin_cairo->plugin);
 	free(plugin_cairo);
@@ -997,17 +1000,24 @@ ensure_component(struct libdecor_frame_cairo *frame_cairo,
 static void
 ensure_border_surfaces(struct libdecor_frame_cairo *frame_cairo)
 {
-	int min_width, min_height;
+	int min_width, min_height, current_max_w, current_max_h;
 
 	frame_cairo->shadow.opaque = false;
 	ensure_component(frame_cairo, &frame_cairo->shadow);
 
 	libdecor_frame_get_min_content_size(&frame_cairo->frame,
 					    &min_width, &min_height);
-	libdecor_frame_set_min_content_size(&frame_cairo->frame,
-		MAX(min_width, (int)MAX(56, 4 * BUTTON_WIDTH)),
-		MAX(min_height, (int)MAX(56, TITLE_HEIGHT + 1)));
+	min_width = MAX(min_width, (int)MAX(56, 4 * BUTTON_WIDTH));
+	min_height = MAX(min_height, (int)MAX(56, TITLE_HEIGHT + 1));
+	libdecor_frame_set_min_content_size(&frame_cairo->frame, min_width, min_height);
+	libdecor_frame_get_max_content_size(&frame_cairo->frame, &current_max_w, 
+		&current_max_h);
+	if (current_max_w && current_max_w < min_width) current_max_w = min_width;
+	if (current_max_h && current_max_h < min_height) current_max_h = min_height;
+	libdecor_frame_set_max_content_size(&frame_cairo->frame, current_max_w, 
+		current_max_h);
 }
+
 
 static void
 ensure_title_bar_surfaces(struct libdecor_frame_cairo *frame_cairo)
@@ -2672,13 +2682,6 @@ globals_callback(void *user_data,
 
 	wl_callback_destroy(callback);
 	plugin_cairo->globals_callback = NULL;
-
-	if (!has_required_globals(plugin_cairo)) {
-		libdecor_notify_plugin_error(
-				plugin_cairo->context,
-				LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
-				"Compositor is missing required globals");
-	}
 }
 
 static const struct wl_callback_listener globals_callback_listener = {
@@ -2724,6 +2727,13 @@ libdecor_plugin_new(struct libdecor *context)
 	wl_callback_add_listener(plugin_cairo->globals_callback,
 				 &globals_callback_listener,
 				 plugin_cairo);
+	wl_display_roundtrip(wl_display);
+
+	if (!has_required_globals(plugin_cairo)) {
+		fprintf(stderr, "libdecor-cairo-WARNING: Could not get required globals\n");
+		libdecor_plugin_cairo_destroy(&plugin_cairo->plugin);
+		return NULL;
+	}
 
 	return &plugin_cairo->plugin;
 }
