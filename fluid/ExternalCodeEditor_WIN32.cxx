@@ -1,10 +1,22 @@
 //
-// "$Id$".
+// External code editor management class for Windows
 //
-//       External code editor management class for Windows
+// Copyright 1998-2023 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     https://www.fltk.org/COPYING.php
+//
+// Please see the following page on how to report bugs and issues:
+//
+//     https://www.fltk.org/bugs.php
 //
 
-#ifdef WIN32	        /* This entire file windows only */
+//      Note: This entire file Windows only.
+
+#ifdef WIN32
 
 #include <stdio.h>      // snprintf()
 
@@ -474,9 +486,8 @@ void ExternalCodeEditor::reap_cleanup() {
 int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
   if ( pid_reaped ) *pid_reaped = 0;
   if ( !is_editing() ) return -2;
-  int err;
   DWORD msecs_wait = 50;   // .05 sec
-  switch ( err = WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
+  switch ( WaitForSingleObject(pinfo_.hProcess, msecs_wait) ) {
     case WAIT_TIMEOUT: {   // process didn't reap, still running
       return 0;
     }

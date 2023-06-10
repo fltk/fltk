@@ -1,4 +1,4 @@
-CHANGES IN FLTK 1.3.9					RELEASED: Nov ?? 2022
+CHANGES IN FLTK 1.3.9					RELEASED: ??? ?? 2023
 
 FLTK 1.3.9 is a maintenance release with some fixes and enhancements.
 
@@ -9,14 +9,21 @@ Details:
     X11: Suppress compiler warnings when using gcc or clang
     Fix crash if a program exits before it opens a window (STR 3484).
     Fix compilation error with current Visual Studio 2022
+    Windows: #define WIN32 if not defined by user
+    Backport warning fixes from 1.4.0 in src/fl_draw.cxx (#693)
+    Fix compiler warning as pointed out in PR #693
+    Fix another compiler warning (#693)
+    Remove unused variable, fix "type issue" (#445, part 2)
 
   ManoloFLTK:
     macOS platform: fix for issue #325 Disabling IM disables Greek and Cyrillic layouts
     Fix fullscreen window level corner cases on macOS - cont'd
     Fix for issue #373 apparent with macOS platform and SDK ≤ 10.13
-    Fi xfor issue #452:  Fl::get_font_name failure on OS-X.
-    Fix for issue #454 : crash in Fl::get_font_name().
+    Fix for issue #452: Fl::get_font_name failure on OS-X.
+    Fix for issue #454: crash in Fl::get_font_name().
     Issue #469: Fl_Sys_Menu_Bar menu item shortcuts using Escape or Tab do not work on Mac
+    Add support of macOS Ventura 13.0
+    Fix "Focus is lost leaving full screen on macOS 13" (#608)
 
   YX:
     Fix IME problem (issue #270)
