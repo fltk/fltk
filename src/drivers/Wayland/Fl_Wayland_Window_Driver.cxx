@@ -1172,6 +1172,8 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     //libdecor_frame_popup_grab(parent_xid->frame, scr_driver->get_seat_name());
   }
   wl_surface_commit(new_window->wl_surface);
+  // put it on same screen as parent_win
+  this->screen_num(parent_win->screen_num());
   return false;
 }
 
@@ -1322,7 +1324,10 @@ void Fl_Wayland_Window_Driver::makeWindow()
       xdg_surface_add_listener(xid->xdg_surface, &xdg_surface_listener, xid);
       struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
       xdg_positioner_set_anchor_rect(positioner, 0, 0, 1, 1);
-      float f = Fl::screen_scale(Fl_Window_Driver::menu_parent()->screen_num());
+      int snum = Fl_Window_Driver::menu_parent()->screen_num();
+      float f = Fl::screen_scale(snum);
+      // put it on same screen as parent menu
+      Fl_Window_Driver::driver(previous_floatingtitle)->screen_num(snum);
       xdg_positioner_set_size(positioner, previous_floatingtitle->w() * f , previous_floatingtitle->h() * f );
       xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_TOP_LEFT);
       xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_TOP_RIGHT);
