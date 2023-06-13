@@ -663,8 +663,10 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 	/* when in SSD mode, frame_gtk->header is not a proper GTK widget */
 	if (!GTK_IS_WIDGET(frame_gtk->header)) return;
 	gtk_widget_destroy(frame_gtk->header);
+	frame_gtk->header = NULL;
 	if (!GTK_IS_WIDGET(frame_gtk->window)) return;
 	gtk_widget_destroy(frame_gtk->window);
+	frame_gtk->window = NULL;
 
 	free_border_component(&frame_gtk->headerbar);
 	free_border_component(&frame_gtk->shadow);
@@ -675,6 +677,7 @@ libdecor_plugin_gtk_frame_free(struct libdecor_plugin *plugin,
 	}
 
 	free(frame_gtk->title);
+	frame_gtk->title = NULL;
 
 	frame_gtk->decoration_type = DECORATION_TYPE_NONE;
 
@@ -889,11 +892,15 @@ ensure_title_bar_surfaces(struct libdecor_frame_gtk *frame_gtk)
 	 *       after construction. So we just destroy and re-create them.
 	 */
 	/* avoid warning when restoring previously turned off decoration */
-	if (GTK_IS_WIDGET(frame_gtk->header))
+	if (GTK_IS_WIDGET(frame_gtk->header)) {
 		gtk_widget_destroy(frame_gtk->header);
+		frame_gtk->header = NULL;
+	}
 	/* avoid warning when restoring previously turned off decoration */
-	if (GTK_IS_WIDGET(frame_gtk->window))
+	if (GTK_IS_WIDGET(frame_gtk->window)) {
 		gtk_widget_destroy(frame_gtk->window);
+		frame_gtk->window = NULL;
+	}
 	frame_gtk->window = gtk_offscreen_window_new();
 	frame_gtk->header = gtk_header_bar_new();
 
@@ -1530,10 +1537,9 @@ libdecor_plugin_gtk_frame_property_changed(struct libdecor_plugin *plugin,
 	if (!streq(frame_gtk->title, new_title))
 		redraw_needed = true;
 	free(frame_gtk->title);
+	frame_gtk->title = NULL;
 	if (new_title)
 		frame_gtk->title = strdup(new_title);
-	else
-		frame_gtk->title = NULL;
 
 	if (frame_gtk->capabilities != libdecor_frame_get_capabilities(frame)) {
 		frame_gtk->capabilities = libdecor_frame_get_capabilities(frame);
