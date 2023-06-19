@@ -996,7 +996,10 @@ static void output_scale(void *data, struct wl_output *wl_output, int32_t factor
   Fl_Window *win = Fl::first_window();
   while (win) {
     struct wld_window *xid = fl_wl_xid(win);
-    if (xid->custom_cursor && output == xid->output) {
+    struct Fl_Wayland_Window_Driver::surface_output *s_output;
+    // get 1st screen where window appears
+    s_output = wl_container_of(xid->outputs.next, s_output, link);
+    if (xid->custom_cursor && output == s_output->output) {
       Fl_Wayland_Window_Driver *driver = Fl_Wayland_Window_Driver::driver(win);
       driver->set_cursor_4args(xid->custom_cursor->rgb,
                                xid->custom_cursor->hotx, xid->custom_cursor->hoty, false);
@@ -1131,10 +1134,13 @@ static void registry_handle_global_remove(void *data, struct wl_registry *regist
       Fl_X *xp = Fl_X::first;
       while (xp) { // all mapped windows
         struct wld_window *win = (struct wld_window*)xp->xid;
-          if (win->output == output) {
+        struct Fl_Wayland_Window_Driver::surface_output *s_output;
+        wl_list_for_each(s_output, &win->outputs, link) {
+          if (output == s_output->output) {
             delete win->fl_win;
             goto again;
           }
+      }
         xp = xp->next;
       }
       wl_list_remove(&output->link);

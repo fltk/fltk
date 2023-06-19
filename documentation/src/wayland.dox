@@ -71,7 +71,7 @@ of all displays of the system (see \ref wayland-output "Fl_Wayland_Screen_Driver
   Fl_Wayland_Screen_Driver::output *output;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   wl_list_for_each(output, &(scr_driver->outputs), link) {
-    // … work with output, a member of the linked list of all displays in the system …
+    // … work with output, an item of the linked list of all displays in the system …
   }
 \endcode
 
@@ -298,11 +298,10 @@ Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wa
 "has a rectangular area which may be displayed on zero or more displays, present buffers,
 receive user input, and define a local coordinate system". Buffers allow the client app to
 draw to surfaces (see \ref wayland-buffer). FLTK creates a surface
-with function \c wl_compositor_create_surface() each time an Fl_Window is show()'n.
+each time an Fl_Window is show()'n.
 Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
-Function \c wl_surface_add_listener() associates the surface with a listener which allows to
-associate each surface with the display where it is mapped. FLTK recognizes 4 distinct
+FLTK recognizes 4 distinct
 kinds of surfaces named DECORATED, UNFRAMED, POPUP and SUBWINDOW.
 DECORATED are toplevel windows with a titlebar. UNFRAMED have no titlebar. POPUP correspond to menus
 and tooltips, SUBWINDOW to an Fl_Window embedded in another Fl_Window. Function
@@ -327,19 +326,25 @@ varies with the window's kind. These explain this part of the \ref wld_window re
   };
 \endcode
 
-Except for SUBWINDOW's, each surface is associated to a 'configure' function that Wayland calls one or
-more times when the window is going to be mapped on the display.
-The 'configure' function of DECORATED surfaces is \c handle_configure(). Wayland calls it
-twice when mapping a DECORATED surface. The first \c handle_configure() run allows to set
-the window's \c xdg_surface object which is returned by function \c libdecor_frame_get_xdg_surface().
+Except for SUBWINDOW's, each surface is associated to a 'configure' function that Wayland
+calls one or more times when the window is going to be mapped on the display.
+The 'configure' function of DECORATED surfaces is \c handle_configure() which is the 1st
+member of a 4-member listener named \c libdecor_frame_iface associated to a decorated window
+when it's created calling \c libdecor_decorate(). Finally, a call to \c libdecor_frame_map()
+triggers the process of mapping the newly created DECORATED surface on a display.
+Wayland calls \c handle_configure() twice during this process.
+The first \c handle_configure() run allows to set the window's \c xdg_surface object
+which is returned by function \c libdecor_frame_get_xdg_surface().
 FLTK distinguishes the first from the second run of \c handle_configure() by looking at
 the \c xdg_surface member variable that's NULL at the beginning of the 1st run and not NULL later.
 Wayland calls \c handle_configure() also during operations such as resizing, minimizing (see below).
 With the help of a few calls to libdecor functions, FLTK obtains in this function
-all needed information about the size and state of the mapped window. The 'configure'
-functions of UNFRAMED and POPUP surfaces are \c xdg_surface_configure(),
-\c xdg_toplevel_configure() and \c popup_configure(). They transmit effective window size
-information to FLTK. Also, these 'configure' functions are where the window's
+all needed information about the size and state of the mapped window.
+The 'configure' functions of UNFRAMED and POPUP surfaces are \c xdg_surface_configure(),
+\c xdg_toplevel_configure() and \c popup_configure(). The mapping process of these surfaces
+is triggered by a call to \c wl_surface_commit().
+These 'configure' functions transmit effective window size
+information to FLTK. Also, they are where the window's
 \c Fl_Window_Driver::wait_for_expose_value member variable is set to 0 to indicate that the
 window has been mapped to display. \b Caution: there are some small
 differences between how and when the various Wayland compositors call \c handle_configure().
@@ -640,12 +645,17 @@ displays, which Wayland calls <em>outputs</em>, of type <tt>struct wl_output</tt
 
 As written above, function \c registry_handle_global() discovers the available seat at start-up time.
 This function also associates a listener to each display connected to the system
-by calling function \c wl_output_add_listener(). This listener is an array of callback function
-pointers among which one (\c output_mode) runs when the display is resized and another
-(\c output_scale) when the Wayland scale factor (see below) is changed.
+by calling function \c wl_output_add_listener(). This listener's member functions run
+at program startup when Wayland discovers its displays (see \ref wayland-connection).
+Member \c output_mode runs also when the display is resized and member
+\c output_scale also when the Wayland scale factor (see below) is changed.
 FLTK defines type \c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output"
 to store display size and scaling information.
-One such record is created for each display. FLTK uses 2 distinct scaling parameters for each display:
+One such record is created for each display. These records are put in a
+<tt>struct wl_list</tt> accessible from member \c outputs of the single
+\c Fl_Wayland_Screen_Driver object.
+
+FLTK uses 2 distinct scaling parameters for each display:
 - <tt>int wld_scale;</tt>. This member variable of the
 \c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output" record
 typically equals 1 for standard, and 2 for
@@ -666,6 +676,27 @@ that scales the graphics driver by this factor with \c cairo_scale().
 
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
 <tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
+
+When an \c Fl_Window is to be show()'n, \c Fl_Wayland_Window_Driver::makeWindow() creates
+a <tt>struct wl_surface</tt> with \c wl_compositor_create_surface() and associates it
+calling \c wl_surface_add_listener() with a 2-member listener called \c surface_listener
+encharged of managing as follows the list of displays where this \c wl_surface will map.
+The \c Fl_Window possesses an initially empty linked list of displays accessible at
+member \c outputs of the window's \ref wld_window record.
+When the \c Fl_Window, or more exactly its associated <tt>struct wl_surface</tt> is mapped
+on a display, member \c surface_enter() of \c surface_listener runs.
+This function adds the display where the surface belongs to <u>the end</u> of the linked
+list of displays for this surface.
+When a surface is dragged or enlarged across the edge of a display
+in a multi-display system and expands on a second display, \c surface_enter() runs again,
+and this surface's list of displays contains 2 items.
+When a surface leaves a display, member \c surface_leave() of \c surface_listener runs.
+It removes that display from the surface's list of displays.
+Each time <u>the first</u> item of a surface's list of displays
+changes, function \c change_scale() is called and applies that display's \c gui_scale
+value to that surface calling \c Fl_Window_Driver::screen_num(int). When a window
+is unmapped by function \c Fl_Wayland_Window_Driver::hide(), the surface's list of displays
+is emptied.
 
 <h3>Fractional scaling</h3>
 The KDE compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
@@ -809,7 +840,8 @@ to \c wl_seat_get_keyboard() returns a pointer stored in member \c wl_keyboard o
 and a call to \c wl_keyboard_add_listener() installs a 6-member listener of type
 <tt>struct wl_keyboard_listener</tt>. These 6 FLTK-defined, callback functions are used as follows.
 
-Function \c wl_keyboard_keymap() runs once and allows initialization of access to this keyboard.
+Function \c wl_keyboard_keymap() runs when the app starts and also if the keyboard layout
+is changed during run-time. It allows initialization of access to this keyboard.
 Noticeably, member \c xkb_state of type <tt>struct xkb_state*</tt> of the current
 \ref wayland-seat "Fl_Wayland_Screen_Driver::seat" record is adequately initialized.
 
@@ -883,11 +915,14 @@ text input method about the position of the insertion point.
 
 \section wayland-libdecor Interface with libdecor
 
-FLTK uses a library called \c libdecor to determine whether the Wayland compositor uses CSD or SSD mode,
-and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor). \c Libdecor is
-conceived to load at run-time a plugin present in a shared library in the system and
-expected to draw titlebars in a way that best matches the Desktop. As of early 2023, two plugins
-are available:
+FLTK uses a library called
+<a href= https://gitlab.freedesktop.org/libdecor/libdecor/-/blob/master/README.md>
+libdecor</a> to determine whether the Wayland compositor uses CSD or SSD mode,
+and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor).
+\c Libdecor is conceived to be present in a shared library linked to the Wayland
+client application which itself, and if the running Wayland compositor uses CSD mode,
+loads another shared library intended to draw titlebars in a way that best matches the
+Desktop. As of early 2023, two titlebar-drawing \c libdecor plugins are available:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
@@ -1009,8 +1044,7 @@ Function \c fl_wl_xid(Fl_Window*) returns a pointer to the <tt>struct wld_window
 <pre>
 struct wld_window {
   Fl_Window *fl_win;
-  // the display where win is mapped (see \ref wayland-output "Fl_Wayland_Screen_Driver::output")
-  struct Fl_Wayland_Screen_Driver::output *output;
+  struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
   struct xdg_surface *xdg_surface;
