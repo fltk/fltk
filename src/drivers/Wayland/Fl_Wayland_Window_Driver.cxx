@@ -418,10 +418,6 @@ void Fl_Wayland_Window_Driver::show() {
 
 static void popup_done(void *data, struct xdg_popup *xdg_popup);
 
-static void delayed_delete_Fl_X(Fl_X *i) {
-  delete i;
-}
-
 
 static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
                                       struct Fl_Wayland_Screen_Driver::seat *seat) {
@@ -481,13 +477,7 @@ void Fl_Wayland_Window_Driver::hide() {
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
     free(wld_win);
   }
-  if (pWindow->as_gl_window() && in_flush_) {
-    ip->xid = 0;
-    ip->next = NULL; // to end the loop in calling Fl::flush()
-    Fl::add_timeout(.01, (Fl_Timeout_Handler)delayed_delete_Fl_X, ip);
-  } else {
-    delete ip;
-  }
+  delete ip;
 }
 
 
