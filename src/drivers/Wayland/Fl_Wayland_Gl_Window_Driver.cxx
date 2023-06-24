@@ -304,7 +304,7 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
     if (pWindow->parent()) win = fl_wl_xid(pWindow->top_window());
-    while (!win->xdg_surface) wl_display_roundtrip(fl_wl_display());
+    while (wl_list_empty(&win->outputs)) wl_display_dispatch(fl_wl_display());
   }
 }
 

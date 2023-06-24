@@ -427,6 +427,11 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 }
 
 
+static void delayed_delete_Fl_X(Fl_X *i) {
+  delete i;
+}
+
+
 void Fl_Wayland_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
@@ -477,7 +482,21 @@ void Fl_Wayland_Window_Driver::hide() {
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
     free(wld_win);
   }
-  delete ip;
+  if (pWindow->as_gl_window() && in_flush_) {
+    // Under Wayland and for a GL window, this scenario can occur (e.g. test/cube):
+    // Fl::flush() calls Fl_Wayland_Window_Driver::flush()
+    // calls Fl_Wayland_Gl_Window_Driver::swap_buffers()
+    // calls wl_display_dispatch_pending() calls Fl_Window::hide().
+    // We make sure here to force exit from the loop over all damaged windows
+    // in Fl::flush() and delay deletion of the Fl_X record after return from
+    // Fl::flush().
+      ip->xid = 0;
+      ip->next = NULL;
+      Fl::damage(1); // make sure potential remaining damaged windows get drawn
+      Fl::add_timeout(.01, (Fl_Timeout_Handler)delayed_delete_Fl_X, ip);
+    } else {
+      delete ip;
+    }
 }
 
 
@@ -624,11 +643,6 @@ static struct libdecor_interface libdecor_iface = {
 };
 
 
-static void delayed_redraw(Fl_Window *win) {
-  win->redraw();
-}
-
-
 void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *window,
                   float pre_scale) {
   Fl_Wayland_Window_Driver *win_driver = Fl_Wayland_Window_Driver::driver(window->fl_win);
@@ -655,11 +669,6 @@ void change_scale(Fl_Wayland_Screen_Driver::output *output, struct wld_window *w
       win_driver->is_a_rescale(true);
       window->fl_win->size(window->fl_win->w(), window->fl_win->h());
       win_driver->is_a_rescale(false);
-      if (window->fl_win->as_gl_window() && !window->fl_win->parent() &&
-          post_scale != pre_scale) { // for opening toplevel GL window on 2-screen system
-        win_driver->Fl_Window_Driver::flush();
-        Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_redraw, window->fl_win);
-      }
     }
   }
   if (window->fl_win->as_gl_window())
