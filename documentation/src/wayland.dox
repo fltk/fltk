@@ -54,7 +54,7 @@ Wayland allows to create popup windows positioned relatively to a previously map
 window. This allows FLTK to position adequately menu and tooltip windows, see
 \ref menu-windows.
 
-Wayland uses a trick of its own to handle lists of linked records. It defines the opaque type
+Wayland uses a trick of its own to handle lists of linked records. It defines type
 <tt>struct wl_list</tt> and a few macros (\c wl_list_init(), \c wl_list_for_each(), \c wl_list_insert(),
 \c wl_list_for_each_safe(), \c wl_list_remove()) to manage linked lists. Records put in these
 lists must contain a member variable of type <tt>struct wl_list</tt> used to link records together
@@ -71,7 +71,7 @@ of all displays of the system (see \ref wayland-output "Fl_Wayland_Screen_Driver
   Fl_Wayland_Screen_Driver::output *output;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   wl_list_for_each(output, &(scr_driver->outputs), link) {
-    // … work with output, a member of the linked list of all displays in the system …
+    // … work with output, an item of the linked list of all displays in the system …
   }
 \endcode
 
@@ -96,7 +96,8 @@ to a mapped Fl_Window.
 
 Classes \c Fl_Wayland_Window_Driver, \c Fl_Wayland_Screen_Driver, \c Fl_Wayland_Graphics_Driver,
 \c Fl_Wayland_Copy_Surface_Driver, \c Fl_Wayland_Image_Surface_Driver and
-\c Fl_Wayland_Gl_Window_Driver contain all the Wayland-specific code of the FLTK library.
+\c Fl_Wayland_Gl_Window_Driver and \c file fl_wayland_platform_init.cxx
+contain all the Wayland-specific code of the FLTK library.
 This code is located at \c src/drivers/Wayland/ in the FLTK source tree.
 A single C++ source file generally contains all the code of a given class.
 The code related to copy, paste and drag-and-drop operations, however,
@@ -111,7 +112,7 @@ The public C API to Wayland, xkb and libdecor libraries are obtained with
 #include <wayland-cursor.h>
 #include <xkbcommon/xkbcommon.h>
 #include <xkbcommon/xkbcommon-compose.h>
-#include <linux/input.h>
+#include <linux/input.h> // for BTN_LEFT, BTN_RIGHT, BTN_MIDDLE
 #include "../../../libdecor/src/libdecor.h"
 #include "../../../libdecor/src/libdecor-plugin.h"
 \endcode
@@ -142,8 +143,8 @@ use the same type name for different purposes or the same symbol name.
 That is why function <tt>fl_xid(const Fl_Window*)</tt> is deprecated in FLTK 1.4 and replaced by
 \c fl_wl_xid() for Wayland and \c fl_x11_xid() for X11. Also, global variable
 <tt>Window fl_window</tt> is not used by the Wayland platform which instead uses
-<tt>static struct wld_window *Fl_Wayland_Window_Driver:: wld_window;</tt>.
-The FLTK library contains also a dedicated source file,
+<tt>static struct wld_window *Fl_Wayland_Window_Driver:: wld_window</tt>.
+The FLTK library contains also a short source file,
 \c fl_wayland_platform_init.cxx, that determines, at startup time, whether
 the app will run as a Wayland or as an X11 client. Function \c attempt_wayland() therein performs
 this choice as follows :
@@ -180,19 +181,26 @@ corresponding Wayland object, usually right after the object's creation, by a ca
 specific Wayland function named following the form \c wl_XXX_add_listener().
 For example, this code:
 \code
+static void surface_enter(……) { …… } // called when a surface enters a display
+static void surface_leave(……) { …… } // called when a surface leaves a display
+
 static struct wl_surface_listener surface_listener = {
   surface_enter,
   surface_leave,
 };
 
-  pointer_type pter_to_data;
-  struct wl_surface *my_wl_surface;
-  my_wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
-  wl_surface_add_listener(my_wl_surface, &surface_listener, pter_to_data);
+some_pointer_type pter_to_data;
+struct wl_surface *my_wl_surface;
+my_wl_surface = wl_compositor_create_surface(scr_driver->wl_compositor);
+wl_surface_add_listener(my_wl_surface, &surface_listener, pter_to_data);
 \endcode
-creates a Wayland object of type <tt>struct wl_surface</tt>, associates
-a 2-member listener called \c surface_listener to it,
-and associates \c pter_to_data to it as <em>user data</em>. The \c wl_surface object's
+creates a Wayland object of type <tt>struct wl_surface</tt>, and associates it with
+a 2-member listener called \c surface_listener. After this, Wayland is expected to call
+the 2 listener members, \c surface_enter or \c surface_leave, each time \c my_wl_surface will
+enter or leave, respectively, a display. The arguments of these calls, not detailed here,
+allow the member functions to identify which surface enters or leaves which display.
+The \c wl_surface_add_listener() call above also associates \c pter_to_data to
+\c my_wl_surface as <em>user data</em>. The \c wl_surface object's
 "user data" can be obtained later calling function \c wl_surface_get_user_data().
 
 Wayland function \c wl_proxy_get_listener() returns a pointer
@@ -231,19 +239,25 @@ supported by the compositor or a system feature such as displays and keyboards.
 This code allows to run the client until all calls to \c registry_handle_global() have
 occurred:
 \code
-  static const struct wl_callback_listener sync_listener = {
-    sync_done
-  };
+static void sync_done(void *data, struct wl_callback *cb, uint32_t time) {
+  *(struct wl_callback **)data = NULL;
+  wl_callback_destroy(cb);
+}
 
-  struct wl_callback *registry_cb = wl_display_sync(wl_display);
-  wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
-  while (registry_cb) wl_display_dispatch(wl_display);
+static const struct wl_callback_listener sync_listener = {
+  sync_done
+};
+
+struct wl_callback *registry_cb = wl_display_sync(wl_display);
+wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
+while (registry_cb) wl_display_dispatch(wl_display);
 \endcode
 A pointer to an object of type <tt>struct wl_callback</tt> created by function
 \c wl_display_sync() is assigned to variable \c registry_cb.
 Then a 1-member listener is attached to this object. Wayland will run this listener's
 member function, \c sync_done(), after all calls to \c registry_handle_global() have
-occurred. Function \c sync_done() sets to null variable \c registry_cb.
+occurred. Function \c sync_done() sets to null variable \c registry_cb and destroys
+the \c wl_callback.
 Finally, function \c wl_display_dispatch() is called as long as variable \c registry_cb is
 not null. This makes Wayland process all its pending requests until \c sync_done() runs.
 
@@ -259,8 +273,9 @@ and version of a component or feature of the Wayland system. It's necessary to c
 point to the corresponding Wayland protocol or system feature. This pointer is stored in a dedicated
 member variable of the unique \c Fl_Wayland_Screen_Driver object of an FLTK app, or of another object
 accessible from this object.
-For example, when \c interface equals "wl_compositor", \c the value returned by wl_registry_bind() is
-stored as member \c wl_compositor of the \c Fl_Wayland_Screen_Driver object.
+For example, when \c interface equals "wl_compositor", the value returned by
+\c wl_registry_bind() is stored as member \c wl_compositor of the
+\c Fl_Wayland_Screen_Driver object.
 \c registry_handle_global() also identifies whether the Mutter, Weston, or KDE compositor is connected
 and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
 
@@ -298,11 +313,10 @@ Wayland defines objects called surfaces of type <tt>struct wl_surface</tt>. A Wa
 "has a rectangular area which may be displayed on zero or more displays, present buffers,
 receive user input, and define a local coordinate system". Buffers allow the client app to
 draw to surfaces (see \ref wayland-buffer). FLTK creates a surface
-with function \c wl_compositor_create_surface() each time an Fl_Window is show()'n.
+each time an Fl_Window is show()'n.
 Static member function <tt>Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *)</tt>
 gives the \c Fl_Window* corresponding to the surface given in argument.
-Function \c wl_surface_add_listener() associates the surface with a listener which allows to
-associate each surface with the display where it is mapped. FLTK recognizes 4 distinct
+FLTK recognizes 4 distinct
 kinds of surfaces named DECORATED, UNFRAMED, POPUP and SUBWINDOW.
 DECORATED are toplevel windows with a titlebar. UNFRAMED have no titlebar. POPUP correspond to menus
 and tooltips, SUBWINDOW to an Fl_Window embedded in another Fl_Window. Function
@@ -327,19 +341,25 @@ varies with the window's kind. These explain this part of the \ref wld_window re
   };
 \endcode
 
-Except for SUBWINDOW's, each surface is associated to a 'configure' function that Wayland calls one or
-more times when the window is going to be mapped on the display.
-The 'configure' function of DECORATED surfaces is \c handle_configure(). Wayland calls it
-twice when mapping a DECORATED surface. The first \c handle_configure() run allows to set
-the window's \c xdg_surface object which is returned by function \c libdecor_frame_get_xdg_surface().
+Except for SUBWINDOW's, each surface is associated to a 'configure' function that Wayland
+calls one or more times when the window is going to be mapped on the display.
+The 'configure' function of DECORATED surfaces is \c handle_configure() which is the 1st
+member of a 4-member listener named \c libdecor_frame_iface associated to a decorated window
+when it's created calling \c libdecor_decorate(). Finally, a call to \c libdecor_frame_map()
+triggers the process of mapping the newly created DECORATED surface on a display.
+Wayland calls \c handle_configure() twice during this process.
+The first \c handle_configure() run allows to set the window's \c xdg_surface object
+which is returned by function \c libdecor_frame_get_xdg_surface().
 FLTK distinguishes the first from the second run of \c handle_configure() by looking at
 the \c xdg_surface member variable that's NULL at the beginning of the 1st run and not NULL later.
 Wayland calls \c handle_configure() also during operations such as resizing, minimizing (see below).
 With the help of a few calls to libdecor functions, FLTK obtains in this function
-all needed information about the size and state of the mapped window. The 'configure'
-functions of UNFRAMED and POPUP surfaces are \c xdg_surface_configure(),
-\c xdg_toplevel_configure() and \c popup_configure(). They transmit effective window size
-information to FLTK. Also, these 'configure' functions are where the window's
+all needed information about the size and state of the mapped window.
+The 'configure' functions of UNFRAMED and POPUP surfaces are \c xdg_surface_configure(),
+\c xdg_toplevel_configure() and \c popup_configure(). The mapping process of these surfaces
+is triggered by a call to \c wl_surface_commit().
+These 'configure' functions transmit effective window size
+information to FLTK. Also, they are where the window's
 \c Fl_Window_Driver::wait_for_expose_value member variable is set to 0 to indicate that the
 window has been mapped to display. \b Caution: there are some small
 differences between how and when the various Wayland compositors call \c handle_configure().
@@ -543,9 +563,9 @@ in function \c Fl_Wayland_Window_Driver::make_current() with
 Thus, \c buffer_commit() runs only when \c cb is NULL. If an app rapidly performs calls
 to Fl_Window::make_current() and to drawing functions, FLTK will copy \c draw_buffer to the Wayland
 buffer and instruct Wayland to map it to the display when \c cb is NULL
-which means that the compositor is ready to start performing a mapping operation, and will only
-modify \c draw_buffer when \c cb is not NULL, letting the compositor complete its ongoing
-mapping task.
+which means that the compositor is ready to start performing a mapping operation.
+In contrast, FLTK will only modify \c draw_buffer when \c cb is not NULL, letting the compositor
+complete its ongoing mapping task.
 For example, FLTK's mandelbrot test app set to fullscreen can be seen to progressively fill its window from
 top to bottom by blocks of lines, each block appearing when the compositor is ready to map
 a new buffer. When the compositor is not ready, the app does not block but continues
@@ -640,12 +660,17 @@ displays, which Wayland calls <em>outputs</em>, of type <tt>struct wl_output</tt
 
 As written above, function \c registry_handle_global() discovers the available seat at start-up time.
 This function also associates a listener to each display connected to the system
-by calling function \c wl_output_add_listener(). This listener is an array of callback function
-pointers among which one (\c output_mode) runs when the display is resized and another
-(\c output_scale) when the Wayland scale factor (see below) is changed.
+by calling function \c wl_output_add_listener(). This listener's member functions run
+at program startup when Wayland discovers its displays (see \ref wayland-connection).
+Member \c output_mode runs also when the display is resized and member
+\c output_scale also when the Wayland scale factor (see below) is changed.
 FLTK defines type \c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output"
 to store display size and scaling information.
-One such record is created for each display. FLTK uses 2 distinct scaling parameters for each display:
+One such record is created for each display. These records are put in a
+<tt>struct wl_list</tt> accessible from member \c outputs of the single
+\c Fl_Wayland_Screen_Driver object.
+
+FLTK uses 2 distinct scaling parameters for each display:
 - <tt>int wld_scale;</tt>. This member variable of the
 \c struct \ref wayland-output "Fl_Wayland_Screen_Driver::output" record
 typically equals 1 for standard, and 2 for
@@ -666,6 +691,27 @@ that scales the graphics driver by this factor with \c cairo_scale().
 
 Overall, an FLTK object, say an Fl_Window, of size \c WxH FLTK units occupies
 <tt>W * wld_scale * gui_scale x H * wld_scale * gui_scale</tt> pixels on the display.
+
+When an \c Fl_Window is to be show()'n, \c Fl_Wayland_Window_Driver::makeWindow() creates
+a <tt>struct wl_surface</tt> with \c wl_compositor_create_surface() and associates it
+calling \c wl_surface_add_listener() with a 2-member listener called \c surface_listener
+encharged of managing as follows the list of displays where this \c wl_surface will map.
+The \c Fl_Window possesses an initially empty linked list of displays accessible at
+member \c outputs of the window's \ref wld_window record.
+When the \c Fl_Window, or more exactly its associated <tt>struct wl_surface</tt> is mapped
+on a display, member \c surface_enter() of \c surface_listener runs.
+This function adds the display where the surface belongs to <u>the end</u> of the linked
+list of displays for this surface.
+When a surface is dragged or enlarged across the edge of a display
+in a multi-display system and expands on a second display, \c surface_enter() runs again,
+and this surface's list of displays contains 2 items.
+When a surface leaves a display, member \c surface_leave() of \c surface_listener runs.
+It removes that display from the surface's list of displays.
+Each time <u>the first</u> item of a surface's list of displays
+changes, function \c change_scale() is called and applies that display's \c gui_scale
+value to that surface calling \c Fl_Window_Driver::screen_num(int). When a window
+is unmapped by function \c Fl_Wayland_Window_Driver::hide(), the surface's list of displays
+is emptied.
 
 <h3>Fractional scaling</h3>
 The KDE compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
@@ -809,7 +855,8 @@ to \c wl_seat_get_keyboard() returns a pointer stored in member \c wl_keyboard o
 and a call to \c wl_keyboard_add_listener() installs a 6-member listener of type
 <tt>struct wl_keyboard_listener</tt>. These 6 FLTK-defined, callback functions are used as follows.
 
-Function \c wl_keyboard_keymap() runs once and allows initialization of access to this keyboard.
+Function \c wl_keyboard_keymap() runs when the app starts and also if the keyboard layout
+is changed during run-time. It allows initialization of access to this keyboard.
 Noticeably, member \c xkb_state of type <tt>struct xkb_state*</tt> of the current
 \ref wayland-seat "Fl_Wayland_Screen_Driver::seat" record is adequately initialized.
 
@@ -883,11 +930,14 @@ text input method about the position of the insertion point.
 
 \section wayland-libdecor Interface with libdecor
 
-FLTK uses a library called \c libdecor to determine whether the Wayland compositor uses CSD or SSD mode,
-and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor). \c Libdecor is
-conceived to load at run-time a plugin present in a shared library in the system and
-expected to draw titlebars in a way that best matches the Desktop. As of early 2023, two plugins
-are available:
+FLTK uses a library called
+<a href= https://gitlab.freedesktop.org/libdecor/libdecor/-/blob/master/README.md>
+libdecor</a> to determine whether the Wayland compositor uses CSD or SSD mode,
+and also to draw window titlebars when in CSD mode (see \ref bundled-libdecor).
+\c Libdecor is conceived to be present in a shared library linked to the Wayland
+client application which itself, and if the running Wayland compositor uses CSD mode,
+loads another shared library intended to draw titlebars in a way that best matches the
+Desktop. As of early 2023, two titlebar-drawing \c libdecor plugins are available:
 - \c libdecor-gtk intended for the Gnome desktop;
 - \c libdecor-cairo for other situations.
 
@@ -984,10 +1034,12 @@ Files dropped are received one pathname per line, with no \c '\\n' after the las
 Wayland uses <a href=https://www.khronos.org/api/egl>EGL™</a> to interface OpenGL with the underlying
 native platform window system. OpenGL-using FLTK apps are therefore linked to \c libwayland-egl.so and
 \c libEGL.so in addition to \c libGL.so and \c libGLU.so. These librairies allow FLTK to
-create and initialize an EGL display connection, create objects of type \c wl_egl_window,
-\c EGLSurface, and \c GLContext. An object of type \c wl_egl_window is created by function
-\c Fl_Wayland_Gl_Window_Driver::make_current_before() in reference to
-an existing \c wl_surface object which connects this EGL-object with a given Wayland window.
+create and initialize an EGL display connection, and create objects of type \c wl_egl_window,
+\c EGLSurface, and \c GLContext.
+Function \c Fl_Wayland_Gl_Window_Driver::make_current_before() creates an object of type
+\c wl_egl_window for each show()'n \c Fl_Gl_Window calling function \c wl_egl_window_create().
+The first argument of this call of type <tt>struct wl_surface</tt> is how a Wayland window is
+set to use OpenGL.
 
 FLTK calls function \c Fl_Wayland_Gl_Window_Driver::swap_buffers() each time it wants a GL context
 to be sent to the display. This function contains some pure GL code to emulate an overlay buffer
@@ -1009,8 +1061,7 @@ Function \c fl_wl_xid(Fl_Window*) returns a pointer to the <tt>struct wld_window
 <pre>
 struct wld_window {
   Fl_Window *fl_win;
-  // the display where win is mapped (see \ref wayland-output "Fl_Wayland_Screen_Driver::output")
-  struct Fl_Wayland_Screen_Driver::output *output;
+  struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface; // the window's surface
   struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
   struct xdg_surface *xdg_surface;

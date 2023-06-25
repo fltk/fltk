@@ -40,6 +40,8 @@ void Fl_Printer::untranslate(void) {}
 int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
 void Fl_Printer::set_current(void) {}
+void Fl_PostScript_File_Device::end_current(void) {}
+void Fl_PostScript_File_Device::set_current(void) {}
 bool Fl_Printer::is_current(void) {return false;}
 Fl_Printer::~Fl_Printer(void) {}
 

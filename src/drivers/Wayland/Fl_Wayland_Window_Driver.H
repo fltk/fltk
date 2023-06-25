@@ -68,6 +68,10 @@ public:
     int screen;
     bool busy;
   };
+  struct surface_output { // for linked list of displays where a surface maps
+    struct Fl_Wayland_Screen_Driver::output *output;
+    struct wl_list link;
+  };
   static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
   void decorated_win_size(int &w, int &h);
   void shape_bitmap_(Fl_Image* b);
@@ -131,7 +135,7 @@ public:
 
 struct wld_window {
   Fl_Window *fl_win;
-  struct Fl_Wayland_Screen_Driver::output *output; // the display where win is mapped
+  struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface;
   struct fl_wld_buffer *buffer;
   struct xdg_surface *xdg_surface;

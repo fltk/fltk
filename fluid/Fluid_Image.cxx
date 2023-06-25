@@ -199,7 +199,9 @@ void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
     size_t nData = write_static_binary(f, "PNG");
     f.write_c(";\n");
     write_initializer(f, "Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(name()), idata_name, nData);
-  } else if (fl_ascii_strcasecmp(fl_filename_ext(name()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(name()), ".svgz")==0) {
+  }
+#ifdef FLTK_USE_SVG
+  else if (fl_ascii_strcasecmp(fl_filename_ext(name()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(name()), ".svgz")==0) {
     bool gzipped = (strcmp(fl_filename_ext(name()), ".svgz") == 0);
     // Write svg image data...
     if (compressed) {
@@ -232,7 +234,9 @@ void Fluid_Image::write_static(Fd_Code_Writer& f, int compressed) {
         write_file_error(f, "RGB_from_SVG");
       }
     }
-  } else {
+  }
+#endif // FLTK_USE_SVG
+  else {
     write_static_rgb(f, idata_name);
   }
 }
