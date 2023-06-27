@@ -358,11 +358,7 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 
   if (egl_surface && !egl_swap_in_progress) {
     egl_swap_in_progress = true; // prevents crash while down resizing rotating glpuzzle
-    while (wl_display_prepare_read(Fl_Wayland_Screen_Driver::wl_display) != 0) {
-      wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
-    }
-    wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
-    wl_display_read_events(Fl_Wayland_Screen_Driver::wl_display);
+    wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     egl_swap_in_progress = false;
   }

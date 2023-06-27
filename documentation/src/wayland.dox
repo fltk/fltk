@@ -106,7 +106,7 @@ member functions of class \c Fl_Wayland_Screen_Driver.
 Furthermore, class \c Fl_Unix_System_Driver is used by both the Wayland and the X11
 FLTK platforms.
 
-The public C API to Wayland, xkb and libdecor libraries are obtained with
+The public C API to Wayland, xkb, EGL and libdecor libraries are obtained with
 \code
 #include <wayland-client.h>
 #include <wayland-cursor.h>
@@ -115,6 +115,10 @@ The public C API to Wayland, xkb and libdecor libraries are obtained with
 #include <linux/input.h> // for BTN_LEFT, BTN_RIGHT, BTN_MIDDLE
 #include "../../../libdecor/src/libdecor.h"
 #include "../../../libdecor/src/libdecor-plugin.h"
+#if HAVE_GL
+#  include <wayland-egl.h>
+#  include <EGL/egl.h>
+#endif // HAVE_GL
 \endcode
 as necessary.
 
@@ -1044,11 +1048,9 @@ set to use OpenGL.
 FLTK calls function \c Fl_Wayland_Gl_Window_Driver::swap_buffers() each time it wants a GL context
 to be sent to the display. This function contains some pure GL code to emulate an overlay buffer
 to support Fl_Gl_Window objects overriding their \c draw_overlay() member function.
-Then, it calls function \c eglSwapBuffers() after having called Wayland code to synchronize EGL use
+Then, it calls function \c eglSwapBuffers() after having called
+\c wl_display_dispatch_pending() to synchronize EGL use
 with the rest of the Wayland compositor's activity.
-This synchronization procedure is as explained in the
-<a href=https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display>
-description of function wl_display_prepare_read_queue()</a>.
 
 
 \section wayland-type FLTK-defined, Wayland-specific types
