@@ -104,8 +104,8 @@ Here are some of the core features unique to FLTK:
 
 \li Support for overlay hardware, with emulation if none is available.
 
-\li Very small & fast portable 2-D drawing library to hide Xlib, Windows,
-    or QuickDraw.
+\li Very small & fast portable 2-D drawing library to hide Xlib, Cairo, Windows,
+    or macOS Quartz.
 
 \li OpenGL/Mesa drawing area widget.
 
@@ -205,7 +205,7 @@ Disable OpenGL support
 Disable support of reading and writing of Support Vector Graphics (.svg) files.
 
 \par --disable-print
-Disable print support for an X11 platform
+Disable print support for an X11/Wayland platform
 
 \par --enable-shared
 Enable generation of shared libraries
@@ -214,10 +214,11 @@ Enable generation of shared libraries
 Enable multithreading support
 
 \par --enable-wayland
+This is the default for Linux and FreeBSD systems equipped with the Wayland software.
 Enable the use of Wayland for all window operations, of Cairo for all graphics
-and of Pango for text drawing (Linux and FreeBSD only). Resulting FLTK apps
-use Wayland if a Wayland compositor is available at run-time, and use
-the equivalent of "--enable-x11 --enable-usecairo" otherwise.
+and of Pango for text drawing. Resulting FLTK apps run as Wayland clients if a Wayland
+compositor is available at run-time, and as X11 clients otherwise but keep using
+Cairo and Pango for all graphics.
 
 \par --disable-xft
 Disables the Xft library, resulting in non anti-aliased fonts (X11 platform).
@@ -227,15 +228,11 @@ All drawing operations use the Cairo library (rather than Xlib) producing
 antialiased graphics (X11 platform, implies --enable-pango).
 
 \par --enable-pango
-Enable the Pango library for drawing any text in any script with any font under X11.
+Enable the Pango library for drawing any text in any script with any font under X11/Wayland.
 
 \par --enable-x11
-This is the default under Unix and Linux.
 When targeting cygwin, build with X11 GUI instead of windows GDI.
 Also applicable to macOS platforms supplemented with XQuartz.
-
-\par --enable-wayland
-Enable use of the Wayland system for window handling.
 
 \par --enable-cairo
 Enable support of class Fl_Cairo_Window (all platforms, requires the Cairo library).
