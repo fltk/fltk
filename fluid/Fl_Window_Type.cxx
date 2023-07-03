@@ -993,32 +993,52 @@ int Fl_Window_Type::handle(int event) {
 
 ////////////////////////////////////////////////////////////////
 
+
+/**
+ Write the C++ code that comes before the children of the window are written.
+ \param f the source code output stream
+ */
 void Fl_Window_Type::write_code1(Fd_Code_Writer& f) {
   Fl_Widget_Type::write_code1(f);
 }
 
+
+/**
+ Write the C++ code that comes after the children of the window are written.
+ \param f the source code output stream
+ */
 void Fl_Window_Type::write_code2(Fd_Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
-  write_extra_code(f);
-  if (modal) f.write_c("%s%s->set_modal();\n", f.indent(), var);
-  else if (non_modal) f.write_c("%s%s->set_non_modal();\n", f.indent(), var);
+  // make the window modal or non-modal
+  if (modal) {
+    f.write_c("%s%s->set_modal();\n", f.indent(), var);
+  } else if (non_modal) {
+    f.write_c("%s%s->set_non_modal();\n", f.indent(), var);
+  }
+  // clear the window border
   if (!((Fl_Window*)o)->border()) {
     f.write_c("%s%s->clear_border();\n", f.indent(), var);
   }
+  // set the xclass of the window
   if (xclass) {
     f.write_c("%s%s->xclass(", f.indent(), var);
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
+  // make the window resizable
+  if (((Fl_Window*)o)->resizable() == o)
+    f.write_c("%s%s->resizable(%s);\n", f.indent(), var, var);
+  // set the size range last
   if (sr_max_w || sr_max_h) {
     f.write_c("%s%s->size_range(%d, %d, %d, %d);\n", f.indent(), var,
             sr_min_w, sr_min_h, sr_max_w, sr_max_h);
   } else if (sr_min_w || sr_min_h) {
     f.write_c("%s%s->size_range(%d, %d);\n", f.indent(), var, sr_min_w, sr_min_h);
   }
+  // insert extra code from user, may call `show()`
+  write_extra_code(f);
+  // stop adding widgets to this window
   f.write_c("%s%s->end();\n", f.indent(), var);
-  if (((Fl_Window*)o)->resizable() == o)
-    f.write_c("%s%s->resizable(%s);\n", f.indent(), var, var);
   write_block_close(f);
 }
 
@@ -1208,26 +1228,41 @@ void Fl_Widget_Class_Type::write_code1(Fd_Code_Writer& f) {
   write_widget_code(f);
 }
 
+/**
+ Write the C++ code that comes after the children of the window are written.
+ \param f the source code output stream
+ */
 void Fl_Widget_Class_Type::write_code2(Fd_Code_Writer& f) {
-  write_extra_code(f);
-  if (wc_relative==1)
-    f.write_c("%sposition(X, Y);\n", f.indent());
-  else if (wc_relative==2)
-    f.write_c("%sresize(X, Y, W, H);\n", f.indent());
-  if (modal) f.write_c("%sset_modal();\n", f.indent());
-  else if (non_modal) f.write_c("%sset_non_modal();\n", f.indent());
+  // make the window modal or non-modal
+  if (modal) {
+    f.write_c("%sset_modal();\n", f.indent());
+  } else if (non_modal) {
+    f.write_c("%sset_non_modal();\n", f.indent());
+  }
+  // clear the window border
   if (!((Fl_Window*)o)->border()) f.write_c("%sclear_border();\n", f.indent());
+  // set the xclass of the window
   if (xclass) {
     f.write_c("%sxclass(", f.indent());
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
-  f.write_c("%send();\n", f.indent());
+  // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
     f.write_c("%sresizable(this);\n", f.indent());
+  // insert extra code from user
+  write_extra_code(f);
+  // stop adding widgets to this window
+  f.write_c("%send();\n", f.indent());
+  // reposition or resize the Widget Class to fit into the target
+  if (wc_relative==1)
+    f.write_c("%sposition(X, Y);\n", f.indent());
+  else if (wc_relative==2)
+    f.write_c("%sresize(X, Y, W, H);\n", f.indent());
   f.indentation--;
   f.write_c("}\n");
 }
+
 
 ////////////////////////////////////////////////////////////////
 // live mode support
