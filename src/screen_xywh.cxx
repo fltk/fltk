@@ -133,6 +133,9 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
   that contains the specified screen position \p x, \p y
   \param[in] x, y the absolute screen position
   \return a screen number ∈ [0 , Fl::screen_count()-1]
+  \attention When the running system contains screens with different scaling factor values, this API
+ may become ambiguous because a given value pair (\p x, \p y) may belong to distinct screens.
+ In that situation, other APIs should be preferred, e.g., Fl_Window::screen_num() and Fl::screen_scale(int).
 */
 int Fl::screen_num(int x, int y)
 {
