@@ -1052,12 +1052,12 @@ and puts in the returned \c Fl_Gl_Choice object the first matching configuration
 The filtering gets done with bits \c EGL_WINDOW_BIT, to support the creation of window
 surfaces, and \c EGL_OPENGL_BIT, to support the creation of OpenGL contexts.
 
-EGL needs 2 more objects created for each \c Fl_Gl_Window of type
-<tt>struct wl_egl_window</tt> and \c EGLSurface. Both are created by member
+EGL needs 2 more objects created for each \c Fl_Gl_Window. They have types
+<tt>struct wl_egl_window</tt> and \c EGLSurface, and are created by member
 function \c Fl_Wayland_Gl_Window_Driver::make_current_before() which runs at the
 beginning of \c Fl_Gl_Window::make_current().
 The first argument of the call to \c wl_egl_window_create() therein has type
-<tt>struct wl_surface *</tt> and is what connects EGL with the desired Wayland window.
+<tt>struct wl_surface *</tt> and is what connects EGL with the targetted Wayland window.
 
 EGL creates with \c eglCreateContext() an object of type \c EGLContext via member
 function \c Fl_Wayland_Gl_Window_Driver::create_gl_context() called by
@@ -1078,6 +1078,12 @@ emulate an overlay buffer to support Fl_Gl_Window objects overriding their
 Then, it calls function \c eglSwapBuffers() after having called
 \c wl_display_dispatch_pending() to synchronize EGL use
 with the rest of the Wayland compositor's activity.
+Function \c wl_display_dispatch_pending() calls the listeners attached to
+commands the Wayland compositor recently sent to the client.
+The fact that this function gets called during the process of drawing an Fl_Gl_Window
+makes possible a scenario that cannot occur with other FLTK platforms : a GL window can be
+closed while being drawn. Function \c Fl_Wayland_Window_Driver::hide() is written to
+handle such scenario without error (see comments therein).
 
 The overridden \c Fl_Wayland_Gl_Window_Driver::resize() function is implemented with
 calls to \c wl_egl_window_get_attached_size() and \c wl_egl_window_resize().
