@@ -57,7 +57,7 @@
  }
  delete printer;
  \endcode
- <p>Recommend method to refresh GUI while printing :
+ <p>Recommended method to refresh GUI while printing :
  \code
  printer->begin_job(0);
  ……
