@@ -64,7 +64,6 @@ set (HEADERFILES
   custom_widgets.h
   factory.h
   file.h
-  fluid.h
   function_panel.h
   print_panel.h
   pixmaps.h
@@ -91,7 +90,7 @@ source_group("Header Files" FILES ${HEADERFILES})
 # for all fluid targets (fluid, fluid-cmd, fluid-shared). This
 # library includes everything except the main program (fluid.cxx).
 
-add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES})
+add_library (fluid-lib OBJECT EXCLUDE_FROM_ALL ${CPPFILES} ${HEADERFILES})
 
 # Build fluid with all its variants (fluid-cmd, fluid-shared) ...
 
@@ -104,7 +103,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
 
   set (ICON_NAME fluid.icns)
   set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/icons/${ICON_NAME}")
-  add_executable (fluid MACOSX_BUNDLE fluid.cxx ${HEADERFILES} ${ICON_PATH})
+  add_executable (fluid MACOSX_BUNDLE fluid.cxx fluid.h ${ICON_PATH})
 
   # create macOS bundle wrapper script
 
@@ -121,7 +120,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11))
 else ()
 
   # Option 'WIN32' builds a Windows GUI program, ignored on other platforms
-  add_executable (fluid WIN32 fluid.cxx ${HEADERFILES})
+  add_executable (fluid WIN32 fluid.cxx fluid.h)
 
 endif ()
 
@@ -144,7 +143,7 @@ target_link_libraries (fluid ${FLUID_LIBS})
 
 if (WIN32)
   list (APPEND FLUID_TARGETS fluid-cmd)
-  add_executable (fluid-cmd fluid.cxx ${HEADERFILES})
+  add_executable (fluid-cmd fluid.cxx fluid.h)
   target_link_libraries (fluid-cmd ${FLUID_LIBS})
 
   # Link fluid-cmd with Cairo if OPTION_CAIRO is enabled (same as above)
@@ -161,7 +160,7 @@ endif (WIN32)
 
 if (OPTION_BUILD_SHARED_LIBS)
   list (APPEND FLUID_TARGETS fluid-shared)
-  add_executable (fluid-shared fluid.cxx ${HEADERFILES})
+  add_executable (fluid-shared fluid.cxx fluid.h)
   if (MSVC)
     target_link_libraries (fluid-shared fluid-lib fltk_SHARED)
   else ()
