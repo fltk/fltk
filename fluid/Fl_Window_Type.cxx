@@ -140,13 +140,29 @@ static int overlays_invisible;
 class Overlay_Window : public Fl_Overlay_Window {
   void draw() FL_OVERRIDE;
   void draw_overlay() FL_OVERRIDE;
+  static void close_cb(Overlay_Window *self, void*);
 public:
   Fl_Window_Type *window;
   int handle(int) FL_OVERRIDE;
-  Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {Fl_Group::current(0);}
+  Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {
+    Fl_Group::current(0);
+    callback((Fl_Callback*)close_cb);
+  }
   void resize(int,int,int,int) FL_OVERRIDE;
   uchar *read_image(int &ww, int &hh);
 };
+
+/**
+ \brief User closes the window, so we mark the .fl file as changed.
+ Mark the .fl file a changed, but don;t mark the source files as changed.
+ \param self pointer to this window
+ */
+void Overlay_Window::close_cb(Overlay_Window *self, void*) {
+  if (self->visible())
+    set_modflag(1, -2);
+  self->hide();
+}
+
 void Overlay_Window::draw() {
   const int CHECKSIZE = 8;
   // see if box is clear or a frame or rounded:
@@ -265,9 +281,11 @@ void Fl_Window_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 
 ////////////////////////////////////////////////////////////////
 
-// Double-click on window widget shows the window, or if already shown,
-// it shows the control panel.
-void Fl_Window_Type::open() {
+/**
+ \brief Show the Window Type editor window without setting the modified flag.
+ \see Fl_Window_Type::open()
+ */
+void Fl_Window_Type::open_() {
   Overlay_Window *w = (Overlay_Window *)o;
   if (w->shown()) {
     w->show();
@@ -279,6 +297,20 @@ void Fl_Window_Type::open() {
     w->resizable(p);
   }
   w->image(Fl::scheme_bg_);
+}
+
+/**
+ \brief Show the Window Type editor window and set the modified flag if needed.
+ Double-click on window widget shows the window, or if already shown, it shows
+ the control panel.
+ \see Fl_Window_Type::open_()
+ */
+void Fl_Window_Type::open() {
+  Overlay_Window *w = (Overlay_Window *)o;
+  if (!w->visible()) {
+    set_modflag(1, -2);
+  }
+  open_();
 }
 
 // Read an image of the window
@@ -1059,7 +1091,7 @@ void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"non_modal")) {
     non_modal = 1;
   } else if (!strcmp(c, "visible")) {
-    if (Fl::first_window()) open(); // only if we are using user interface
+    if (Fl::first_window()) open_(); // only if we are using user interface
   } else if (!strcmp(c,"noborder")) {
     ((Fl_Window*)o)->border(0);
   } else if (!strcmp(c,"xclass")) {

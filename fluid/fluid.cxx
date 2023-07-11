@@ -1781,7 +1781,7 @@ void set_filename(const char *c) {
  \param[in] mf 0 to clear the modflag, 1 to mark the design "modified", -1 to
     ignore this parameter
  \param[in] mfc default -1 to let \c mf control \c modflag_c, 0 to mark the
-    code files current, 1 to mark it out of date.
+    code files current, 1 to mark it out of date. -2 to ignore changes to mf.
  */
 void set_modflag(int mf, int mfc) {
   const char *basename;
@@ -1796,7 +1796,7 @@ void set_modflag(int mf, int mfc) {
     if (mfc==-1 && mf==1)
       mfc = mf;
   }
-  if (mfc!=-1) {
+  if (mfc>=0) {
     modflag_c = mfc;
   }
 

@@ -107,7 +107,7 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings} open
+    label {GUI Settings} open selected
     xywh {617 332 340 580} type Double align 80 resizable
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
@@ -198,7 +198,7 @@ redraw_browser();}
           callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
 G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
 fluid_prefs.set("external_editor_command", G_external_editor_command);
-redraw_browser();} selected
+redraw_browser();}
           tooltip {The editor command to open your external text editor.
 Include any necessary flags to ensure your editor does not background itself.
 Examples:

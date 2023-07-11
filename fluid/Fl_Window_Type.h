@@ -67,6 +67,7 @@ protected:
   int recalc;           // set by fix_overlay()
   void moveallchildren();
   int pixmapID() FL_OVERRIDE { return 1; }
+  void open_();
 
 public:
 
