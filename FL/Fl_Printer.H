@@ -57,6 +57,16 @@
  }
  delete printer;
  \endcode
+ <p>Recommended method to refresh GUI while printing :
+ \code
+ printer->begin_job(0);
+ ……
+ Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+ Fl::check(); // or any operation that draws to display
+ Fl_Surface_Device::pop_current();
+ ……
+ printer->end_job();
+ \endcode
  <b>Platform specifics</b>
  <ul>
  <li>X11 and Wayland platforms:

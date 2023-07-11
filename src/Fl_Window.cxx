@@ -600,16 +600,44 @@ int Fl_Window::handle(int ev)
 
 /**
   Sets the allowable range the user can resize this window to.
-  This only works for top-level windows.
+
+  We recommend to call size_range() if you have a resizable() widget
+  in a main window, and to call it after setting the resizable() and
+  before show()'ing the window for best cross platform compatibility.
+
+  If this function is \b not called, FLTK tries to figure out the range
+  when the window is shown. Please see the protected method
+  default_size_range() for details.
 
   It is undefined what happens if the current window size does not fit
   in the constraints passed to size_range().
 
-  We recommend to call size_range() if you have a resizable() widget
-  in a main window.
+  \note
+  This only works for top-level windows and the exact behavior can be
+  platform specific. To work correctly across all platforms size_range()
+  must be called after setting the resizable() widget of the window and
+  before the window is show()'n.
 
-  If this function is \b not called, FLTK tries to figure out the range.
-  Please see the protected method default_size_range() for details.
+  Calling size_range() after the window has been shown may work on some
+  but not all platforms. If you need to change the size_range() after
+  the window has been shown, then you should consider to hide() and
+  show() the window again, i.e. call hide(), size_range(), and show()
+  in this order.
+
+  Typical usage: call
+  \code
+      size_range(minWidth, minHeight);
+  \endcode
+  after setting the resizable widget and before calling show().
+  This ensures that the window cannot be resized smaller than the given
+  values by user interaction.
+
+  \c maxWidth and \c maxHeight might be useful in some special cases but
+  less frequently used.
+
+  The other optional parameters \c deltaX, \c deltaY, and \c aspectRatio
+  are not recommended because they may not work on all platforms and may
+  even under X11 not be supported by all Window Managers.
 
   \param[in] minWidth,minHeight The smallest the window can be.
     Either value must be greater than 0.

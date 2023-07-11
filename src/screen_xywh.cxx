@@ -94,6 +94,8 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my)
  \param[out]  X,Y,W,H the work area bounding box
  \param[in] n the screen number (0 to Fl::screen_count() - 1)
  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
+ \note Like all quantities accessible via public APIs of FLTK, values of \p X,Y,W,H
+ are given in FLTK units, that is, in drawing units divided by the scaling factor of screen \p n.
 */
 void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 {
@@ -106,6 +108,8 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n)
   Under Windows, Mac OS X, and the Gnome desktop, screen #0 contains the menubar/taskbar
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] n the screen number (0 to Fl::screen_count() - 1)
+  \note Like all quantities accessible via public APIs of FLTK, values of \p X,Y,W,H
+  are given in FLTK units, that is, in drawing units divided by the scaling factor of screen \p n.
   \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n)
@@ -133,6 +137,9 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
   that contains the specified screen position \p x, \p y
   \param[in] x, y the absolute screen position
   \return a screen number ∈ [0 , Fl::screen_count()-1]
+  \attention When the running system contains screens with different scaling factor values, this API
+ may become ambiguous because a given value pair (\p x, \p y) may belong to distinct screens.
+ In that situation, other APIs should be preferred, e.g., Fl_Window::screen_num() and Fl::screen_scale(int).
 */
 int Fl::screen_num(int x, int y)
 {

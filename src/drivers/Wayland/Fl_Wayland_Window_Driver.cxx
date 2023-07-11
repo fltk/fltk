@@ -427,8 +427,9 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 }
 
 
-static void delayed_delete_Fl_X(Fl_X *i) {
-  delete i;
+static void delayed_delete_Fl_X(void *data) {
+  Fl::remove_check(delayed_delete_Fl_X, data);
+  delete (Fl_X*)data;
 }
 
 
@@ -483,17 +484,18 @@ void Fl_Wayland_Window_Driver::hide() {
     free(wld_win);
   }
   if (pWindow->as_gl_window() && in_flush_) {
-    // Under Wayland and for a GL window, this scenario can occur (e.g. test/cube):
+    // Under Wayland and for a GL window, this summarized scenario can occur
+    // when closing a window with "escape" (e.g. test/cube):
     // Fl::flush() calls Fl_Wayland_Window_Driver::flush()
     // calls Fl_Wayland_Gl_Window_Driver::swap_buffers()
-    // calls wl_display_dispatch_pending() calls Fl_Window::hide().
+    // calls wl_display_dispatch_pending() calls Fl_Wayland_Window_Driver::hide().
     // We make sure here to force exit from the loop over all damaged windows
-    // in Fl::flush() and delay deletion of the Fl_X record after return from
-    // Fl::flush().
+    // in Fl::flush(), and postpone deletion of the Fl_X record until after return
+    // from Fl::flush().
       ip->xid = 0;
       ip->next = NULL;
       Fl::damage(1); // make sure potential remaining damaged windows get drawn
-      Fl::add_timeout(.01, (Fl_Timeout_Handler)delayed_delete_Fl_X, ip);
+      Fl::add_check(delayed_delete_Fl_X, ip);
     } else {
       delete ip;
     }
@@ -880,14 +882,15 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   }
 }
 
-static void delayed_close(Fl_Window *win) {
-  Fl::handle(FL_CLOSE, win);
+static void delayed_close(void *data) {
+  Fl::remove_check(delayed_close, data);
+  Fl::handle(FL_CLOSE, (Fl_Window*)data);
 }
 
 static void handle_close(struct libdecor_frame *frame, void *user_data)
-{
+{ // runs when the close button of a window titlebar is pushed
   struct wld_window* wl_win = (struct wld_window*)user_data;
-  Fl::add_timeout(0.01, (Fl_Timeout_Handler)delayed_close, wl_win->fl_win);
+  Fl::add_check(delayed_close, wl_win->fl_win);
 }
 
 

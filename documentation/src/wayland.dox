@@ -106,7 +106,7 @@ member functions of class \c Fl_Wayland_Screen_Driver.
 Furthermore, class \c Fl_Unix_System_Driver is used by both the Wayland and the X11
 FLTK platforms.
 
-The public C API to Wayland, xkb and libdecor libraries are obtained with
+The public C API to Wayland, xkb, EGL and libdecor libraries are obtained with
 \code
 #include <wayland-client.h>
 #include <wayland-cursor.h>
@@ -115,6 +115,10 @@ The public C API to Wayland, xkb and libdecor libraries are obtained with
 #include <linux/input.h> // for BTN_LEFT, BTN_RIGHT, BTN_MIDDLE
 #include "../../../libdecor/src/libdecor.h"
 #include "../../../libdecor/src/libdecor-plugin.h"
+#if HAVE_GL
+#  include <wayland-egl.h>
+#  include <EGL/egl.h>
+#endif // HAVE_GL
 \endcode
 as necessary.
 
@@ -1033,23 +1037,62 @@ Files dropped are received one pathname per line, with no \c '\\n' after the las
 
 Wayland uses <a href=https://www.khronos.org/api/egl>EGL™</a> to interface OpenGL with the underlying
 native platform window system. OpenGL-using FLTK apps are therefore linked to \c libwayland-egl.so and
-\c libEGL.so in addition to \c libGL.so and \c libGLU.so. These librairies allow FLTK to
-create and initialize an EGL display connection, and create objects of type \c wl_egl_window,
-\c EGLSurface, and \c GLContext.
-Function \c Fl_Wayland_Gl_Window_Driver::make_current_before() creates an object of type
-\c wl_egl_window for each show()'n \c Fl_Gl_Window calling function \c wl_egl_window_create().
-The first argument of this call of type <tt>struct wl_surface</tt> is how a Wayland window is
-set to use OpenGL.
+\c libEGL.so in addition to \c libGL.so and \c libGLU.so.
 
-FLTK calls function \c Fl_Wayland_Gl_Window_Driver::swap_buffers() each time it wants a GL context
-to be sent to the display. This function contains some pure GL code to emulate an overlay buffer
-to support Fl_Gl_Window objects overriding their \c draw_overlay() member function.
-Then, it calls function \c eglSwapBuffers() after having called Wayland code to synchronize EGL use
+EGL is initialized calling member function \c Fl_Wayland_Gl_Window_Driver::init()
+once, the first time the \c Fl_Wayland_Gl_Window_Driver c'tor runs. That is done
+with calls to <tt>eglGetDisplay(), eglInitialize(), eglGetConfigs(), and
+eglBindAPI()</tt>. Function \c eglGetConfigs() computes the number of usable
+EGL frame buffer configurations for the display and stores it in static member variable
+\c Fl_Wayland_Gl_Window_Driver::configs_count.
+
+Member function \c Fl_Wayland_Gl_Window_Driver::find() calls \c eglChooseConfig()
+to filter the set of GL configurations that match the \c Fl_Gl_Window's mode(),
+and puts in the returned \c Fl_Gl_Choice object the first matching configuration.
+The filtering gets done with bits \c EGL_WINDOW_BIT, to support the creation of window
+surfaces, and \c EGL_OPENGL_BIT, to support the creation of OpenGL contexts.
+
+EGL needs 2 more objects created for each \c Fl_Gl_Window. They have types
+<tt>struct wl_egl_window</tt> and \c EGLSurface, and are created by member
+function \c Fl_Wayland_Gl_Window_Driver::make_current_before() which runs at the
+beginning of \c Fl_Gl_Window::make_current().
+The first argument of the call to \c wl_egl_window_create() therein has type
+<tt>struct wl_surface *</tt> and is what connects EGL with the targetted Wayland window.
+
+EGL creates with \c eglCreateContext() an object of type \c EGLContext via member
+function \c Fl_Wayland_Gl_Window_Driver::create_gl_context() called by
+\c Fl_Gl_Window::make_current(). Types \c EGLContext and \c GLContext are 2 names
+for the same object. The call to \c eglCreateContext() is made asking for a GL
+context of version at least 2. This does not prevent from obtaining contexts of higher
+versions, namely above 3.2, which are compatible with version 2 (the so-called
+compatibility profile) under all tested Linux systems.
+
+FLTK function \c Fl_Gl_Window::make_current() calls overridden function
+\c Fl_Wayland_Gl_Window_Driver::set_gl_context() which calls EGL function
+\c eglMakeCurrent() when the cached context changes.
+
+FLTK calls function \c Fl_Wayland_Gl_Window_Driver::swap_buffers() each time it wants a
+GL context to be sent to the display. This function contains some pure GL code to
+emulate an overlay buffer to support Fl_Gl_Window objects overriding their
+\c draw_overlay() member function.
+Then, it calls function \c eglSwapBuffers() after having called
+\c wl_display_dispatch_pending() to synchronize EGL use
 with the rest of the Wayland compositor's activity.
-This synchronization procedure is as explained in the
-<a href=https://wayland.freedesktop.org/docs/html/apb.html#Client-classwl__display>
-description of function wl_display_prepare_read_queue()</a>.
+Function \c wl_display_dispatch_pending() calls the listeners attached to
+commands the Wayland compositor recently sent to the client.
+The fact that this function gets called during the process of drawing an Fl_Gl_Window
+makes possible a scenario that cannot occur with other FLTK platforms : a GL window can be
+closed while being drawn. Function \c Fl_Wayland_Window_Driver::hide() is written to
+handle such scenario without error (see comments therein).
 
+The overridden \c Fl_Wayland_Gl_Window_Driver::resize() function is implemented with
+calls to \c wl_egl_window_get_attached_size() and \c wl_egl_window_resize().
+
+Class \c Fl_Wayland_Gl_Plugin exists to allow \c libfltk to call functions from
+\c libfltk_gl, \c libwayland-egl.so or \c libEGL.so and without having \c libfltk
+force linking any FLTK app with these GL-related libraries.
+For example, \c Fl_Wayland_Window_Driver::flush() needs to call
+\c Fl_Gl_Window::valid(0).
 
 \section wayland-type FLTK-defined, Wayland-specific types
 

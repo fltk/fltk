@@ -192,6 +192,10 @@ OPTION_WAYLAND_ONLY - default OFF
    In conjunction with OPTION_USE_WAYLAND, restricts FLTK to support the
    Wayland backend only.
 
+OPTION_ALLOW_GTK_PLUGIN - default ON
+   Allow to use libdecor's GTK plugin to draw window titlebars (Wayland only).
+   Otherwise, FLTK will not use GTK and apps will not need linking to GTK.
+
 OPTION_ABI_VERSION - default EMPTY
    Use a numeric value corresponding to the FLTK ABI version you want to
    build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).

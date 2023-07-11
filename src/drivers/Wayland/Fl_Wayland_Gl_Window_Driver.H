@@ -35,6 +35,11 @@ Consequently, FL_DOUBLE is enforced in all Fl_Gl_Window::mode_ values under Wayl
 class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   friend class Fl_Wayland_Gl_Plugin;
+private:
+  static EGLDisplay egl_display;
+  static EGLint configs_count;
+  struct wl_egl_window *egl_window;
+  EGLSurface egl_surface;
   bool egl_swap_in_progress;
   Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win);
   float pixels_per_unit() FL_OVERRIDE;
@@ -52,11 +57,7 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   void gl_start() FL_OVERRIDE;
   void gl_visual(Fl_Gl_Choice *c) FL_OVERRIDE;
   char *alpha_mask_for_string(const char *str, int n, int w, int h, Fl_Fontsize fs) FL_OVERRIDE;
-  static EGLDisplay egl_display;
-  static EGLint configs_count;
   void init();
-  struct wl_egl_window *egl_window;
-  EGLSurface egl_surface;
 public:
   //virtual bool need_scissor() { return true; } // CONTROL_LEAKING_SUB_GL_WINDOWS
   //void apply_scissor(); // CONTROL_LEAKING_SUB_GL_WINDOWS
