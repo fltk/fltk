@@ -136,8 +136,6 @@ extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
 extern void overlay_cb(Fl_Button*, void*);
 extern Fl_Button *overlay_button;
-extern void guides_cb(Fl_Button*, void*);
-extern Fl_Button *guides_button;
 #include <FL/Fl_Return_Button.H>
 extern void ok_cb(Fl_Return_Button*, void*);
 Fl_Double_Window* make_widget_panel();

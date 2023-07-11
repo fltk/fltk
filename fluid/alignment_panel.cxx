@@ -200,6 +200,10 @@ static void cb_editor_command_input(Fl_Input*, void*) {
   redraw_browser();
 }
 
+Fl_Check_Button *guides_button=(Fl_Check_Button *)0;
+
+Fl_Check_Button *restricted_button=(Fl_Check_Button *)0;
+
 Fl_Group *w_settings_project_tab=(Fl_Group *)0;
 
 static void cb_w_settings_project_tab(Fl_Group* o, void* v) {
@@ -1016,7 +1020,7 @@ Fl_Double_Window* make_settings_window() {
           o->labelsize(11);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { tooltips_button = new Fl_Check_Button(120, 115, 180, 20, "Show Tooltips");
+        { tooltips_button = new Fl_Check_Button(120, 115, 200, 20, "Show Tooltips");
           tooltips_button->down_box(FL_DOWN_BOX);
           tooltips_button->labelsize(11);
           tooltips_button->callback((Fl_Callback*)cb_tooltips_button);
@@ -1025,7 +1029,7 @@ Fl_Double_Window* make_settings_window() {
           tooltips_button->value(b);
           Fl_Tooltip::enable(b);
         } // Fl_Check_Button* tooltips_button
-        { completion_button = new Fl_Check_Button(120, 135, 180, 20, "Show Completion Dialogs");
+        { completion_button = new Fl_Check_Button(120, 135, 200, 20, "Show Completion Dialogs");
           completion_button->down_box(FL_DOWN_BOX);
           completion_button->labelsize(11);
           completion_button->callback((Fl_Callback*)cb_completion_button);
@@ -1033,7 +1037,7 @@ Fl_Double_Window* make_settings_window() {
           fluid_prefs.get("show_completion_dialogs", b, 1);
           completion_button->value(b);
         } // Fl_Check_Button* completion_button
-        { openlast_button = new Fl_Check_Button(120, 155, 180, 20, "Open Previous File on Startup");
+        { openlast_button = new Fl_Check_Button(120, 155, 200, 20, "Open Previous File on Startup");
           openlast_button->down_box(FL_DOWN_BOX);
           openlast_button->labelsize(11);
           openlast_button->callback((Fl_Callback*)cb_openlast_button);
@@ -1041,7 +1045,7 @@ Fl_Double_Window* make_settings_window() {
           fluid_prefs.get("open_previous_file", b, 0);
           openlast_button->value(b);
         } // Fl_Check_Button* openlast_button
-        { prevpos_button = new Fl_Check_Button(120, 175, 180, 20, "Remember Window Positions");
+        { prevpos_button = new Fl_Check_Button(120, 175, 200, 20, "Remember Window Positions");
           prevpos_button->down_box(FL_DOWN_BOX);
           prevpos_button->labelsize(11);
           prevpos_button->callback((Fl_Callback*)cb_prevpos_button);
@@ -1049,7 +1053,7 @@ Fl_Double_Window* make_settings_window() {
           fluid_prefs.get("prev_window_pos", b, 1);
           prevpos_button->value(b);
         } // Fl_Check_Button* prevpos_button
-        { show_comments_button = new Fl_Check_Button(120, 195, 180, 20, "Show Comments in Browser");
+        { show_comments_button = new Fl_Check_Button(120, 195, 200, 20, "Show Comments in Browser");
           show_comments_button->down_box(FL_DOWN_BOX);
           show_comments_button->labelsize(11);
           show_comments_button->callback((Fl_Callback*)cb_show_comments_button);
@@ -1088,6 +1092,26 @@ f\n    gedit\n emacs");
           fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);
           editor_command_input->value(G_external_editor_command);
         } // Fl_Input* editor_command_input
+        { Fl_Box* o = new Fl_Box(120, 300, 0, 20, "Overlays: ");
+          o->labelfont(1);
+          o->labelsize(11);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+        } // Fl_Box* o
+        { Fl_Check_Button* o = guides_button = new Fl_Check_Button(120, 300, 200, 20, "Show Positioning Guides");
+          guides_button->tooltip("show guides that help to position and resize widgets and enable snapping");
+          guides_button->down_box(FL_DOWN_BOX);
+          guides_button->labelsize(11);
+          guides_button->callback((Fl_Callback*)toggle_guides_cb);
+          o->value(show_guides);
+        } // Fl_Check_Button* guides_button
+        { Fl_Check_Button* o = restricted_button = new Fl_Check_Button(120, 320, 200, 20, "Show Restricted Areas");
+          restricted_button->tooltip("show overlapping and out of bounds areas, show unfilled areas in Fl_Pack grou\
+ps");
+          restricted_button->down_box(FL_DOWN_BOX);
+          restricted_button->labelsize(11);
+          restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
+          o->value(show_restricted);
+        } // Fl_Check_Button* restricted_button
         o->image()->scale(36, 24);
         o->end();
       } // Fl_Group* o
@@ -1416,11 +1440,11 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           o->callback((Fl_Callback*)cb_3);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Group* o = new Fl_Group(85, 465, 200, 20, "Label Font:");
+        { Fl_Group* o = new Fl_Group(85, 464, 201, 21, "Label Font:");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(85, 465, 152, 20);
+          { Fl_Choice* o = new Fl_Choice(85, 465, 150, 20);
             o->tooltip("The style of the label text.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -1431,7 +1455,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(236, 465, 49, 20);
+          { Fl_Value_Input* o = new Fl_Value_Input(235, 465, 50, 20);
             o->tooltip("The size of the label text.");
             o->labelsize(11);
             o->maximum(100);
@@ -1442,7 +1466,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
-        { Fl_Choice* o = new Fl_Choice(85, 490, 152, 20);
+        { Fl_Choice* o = new Fl_Choice(85, 490, 150, 20);
           o->tooltip("The value text style.");
           o->box(FL_DOWN_BOX);
           o->down_box(FL_BORDER_BOX);
@@ -1452,7 +1476,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           o->callback((Fl_Callback*)cb_6);
           o->menu(fontmenu);
         } // Fl_Choice* o
-        { Fl_Value_Input* o = new Fl_Value_Input(236, 490, 49, 20);
+        { Fl_Value_Input* o = new Fl_Value_Input(235, 490, 50, 20);
           o->tooltip("The value text size.");
           o->labelsize(11);
           o->maximum(100);
@@ -1592,10 +1616,10 @@ nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    o->size_range(o->w(), o->h());
     settings_window->set_non_modal();
-    settings_window->end();
     settings_window->resizable(settings_window);
+    o->size_range(o->w(), o->h());
+    settings_window->end();
   } // Fl_Double_Window* settings_window
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
   return settings_window;

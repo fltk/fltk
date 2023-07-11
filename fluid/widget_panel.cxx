@@ -115,8 +115,6 @@ Fl_Button *wLiveMode=(Fl_Button *)0;
 
 Fl_Button *overlay_button=(Fl_Button *)0;
 
-Fl_Button *guides_button=(Fl_Button *)0;
-
 /**
  Create a panel that can be used with all known widgets
 */
@@ -1015,11 +1013,6 @@ avior.");
         overlay_button->labelsize(11);
         overlay_button->callback((Fl_Callback*)overlay_cb);
       } // Fl_Button* overlay_button
-      { guides_button = new Fl_Button(178, 370, 80, 20, "Hide &Guides");
-        guides_button->tooltip("Hide alignment guides.");
-        guides_button->labelsize(11);
-        guides_button->callback((Fl_Callback*)guides_cb);
-      } // Fl_Button* guides_button
       { // Hidden resizable box
         Fl_Box* o = new Fl_Box(258, 370, 72, 20);
         o->labelsize(11);
@@ -1032,8 +1025,8 @@ avior.");
       } // Fl_Return_Button* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h());
     o->size_range(420, 400);
+    o->size_range(o->w(), o->h());
     o->end();
   } // Fl_Double_Window* o
   return w;

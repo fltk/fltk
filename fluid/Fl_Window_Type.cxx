@@ -500,6 +500,96 @@ void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T
   if (T<Y) {int n = Y; Y = T; T = n;}
 }
 
+void fd_hatch(int x, int y, int w, int h, int size=6, int offset=0, int pad=3) {
+  x -= pad; y -= pad; w += 2*pad; h += 2*pad;
+  int yp = (x+offset+y*size-1-y)%size;
+  if (w > h) {
+    for (; yp < h; yp+=size)
+      fl_line(x, y+yp, x+yp, y);
+    for (; yp < w; yp+=size)
+      fl_line(x+yp-h, y+h, x+yp, y);
+    for (; yp < w+h; yp+=size)
+      fl_line(x+yp-h, y+h, x+w, y+yp-w);
+  } else {
+    for (; yp < w; yp+=size)
+      fl_line(x, y+yp, x+yp, y);
+    for (; yp < h; yp+=size)
+      fl_line(x, y+yp, x+w, y+yp-w);
+    for (; yp < h+w; yp+=size)
+      fl_line(x+yp-h, y+h, x+w, y+yp-w);
+  }
+}
+
+/**
+ \brief Draw a hatch pattern over all children that overlap the bounds of this box.
+ \param[in] group check all children of this group
+ \param[in] x, y, w, h bounding box of this group
+ */
+void Fl_Window_Type::draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h) {
+  for (Fl_Type *p = group->next; p && p->level>group->level; p = p->next) {
+    if (p->level == group->level+1 && p->is_widget() && !p->is_menu_item()) {
+      Fl_Widget *o = ((Fl_Widget_Type*)p)->o;
+      if (o->x() < x) fd_hatch(o->x(), o->y(), x-o->x(), o->h());
+      if (o->y() < y) fd_hatch(o->x(), o->y(), o->w(), y-o->y());
+      if (o->x()+o->w() > x+w) fd_hatch(x+w, o->y(), (o->x()+o->w())-(x+w), o->h());
+      if (o->y()+o->h() > y+h) fd_hatch(o->x(), y+h, o->w(), (o->y()+o->h())-(y+h));
+    }
+  }
+}
+
+/**
+ \brief Draw a hatch pattern for all groups that have out of bounds children.
+ */
+void Fl_Window_Type::draw_out_of_bounds() {
+  // get every group in the hierarchy, then draw any overlap of a direct child with that group
+  fl_color(FL_DARK_RED);
+  draw_out_of_bounds(this, 0, 0, o->w(), o->h());
+  for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+    // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
+    if (q->is_group() && !q->is_scroll()) {
+      Fl_Widget_Type *w = (Fl_Widget_Type*)q;
+      draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
+    }
+  }
+  fl_color(FL_RED);
+}
+
+/**
+ \brief Compare all children in the same level and hatch overlapping areas.
+ */
+void Fl_Window_Type::draw_overlaps() {
+  fl_color(FL_DARK_YELLOW);
+  // loop through all widgets in this window
+  for (Fl_Type *q=next; q && q->level>level; q = q->next) {
+    // is it a valid widget
+    if (q->is_widget() && !q->is_menu_item()) {
+      Fl_Widget_Type *w = (Fl_Widget_Type*)q;
+      // is the widget visible
+      if (w->o->visible()) {
+        int x = w->o->x(), y = w->o->y();
+        int r = x + w->o->w(), b = y + w->o->h();
+        for (Fl_Type *p=q->next; p && p->level>=q->level; p = p->next) {
+          if (p->level==q->level && p->is_widget() && !p->is_menu_item()) {
+            Fl_Widget_Type *wp = (Fl_Widget_Type*)p;
+            if (wp->o->visible()) {
+              int px = fd_max(x, wp->o->x());
+              int py = fd_max(y, wp->o->y());
+              int pr = fd_min(r, wp->o->x() + wp->o->w());
+              int pb = fd_min(b, wp->o->y() + wp->o->h());
+              if (pr > px && pb > py)
+                fd_hatch(px, py, pr-px, pb-py);
+            }
+          }
+        }
+      } else {
+        int l = q->level;
+        for (; q && q->next && q->next->level>l; q = q->next) { }
+      }
+    }
+  }
+  fl_color(FL_RED);
+}
+
 void Fl_Window_Type::draw_overlay() {
   if (recalc) {
     bx = o->w(); by = o->h(); br = 0; bt = 0;
@@ -523,6 +613,13 @@ void Fl_Window_Type::draw_overlay() {
     fl_rect(x,y,r-x,b-y);
   }
   if (overlays_invisible && !drag) return;
+
+  if (show_restricted) {
+    draw_out_of_bounds();
+    draw_overlaps();
+    // TODO: for Fl_Tile, find all areas that are not covered by visible children
+  }
+
   if (selected) fl_rect(0,0,o->w(),o->h());
   if (!numselected) return;
   int mybx,myby,mybr,mybt;
@@ -598,6 +695,8 @@ void Fl_Window_Type::draw_overlay() {
     Fd_Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Fl_Widget_Type*)selection, this};
     Fd_Snap_Action::draw_all(data);
   }
+
+  // TODO: for invisible boxes (NONE, FLAT, etc.) draw a faint outline when dragging
 }
 
 extern Fl_Menu_Item Main_Menu[];
@@ -651,17 +750,21 @@ void toggle_overlays(Fl_Widget *,void *) {
     }
 }
 
+/**
+ \brief User changes settings to show positioning guides in layout editor overlay.
+ This is called from the main menu and from the check button in the Settings
+ dialog.
+ */
 void toggle_guides(Fl_Widget *,void *) {
   show_guides = !show_guides;
   fluid_prefs.set("show_guides", show_guides);
 
-  if (show_guides) {
+  if (show_guides)
     guides_item->label("Hide Guides");
-    if (guides_button) guides_button->label("Hide &Guides");
-  } else {
+  else
     guides_item->label("Show Guides");
-    if (guides_button) guides_button->label("Show &Guides");
-  }
+  if (guides_button)
+    guides_button->value(show_guides);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
     if (o->is_window()) {
@@ -671,8 +774,44 @@ void toggle_guides(Fl_Widget *,void *) {
   }
 }
 
-void guides_cb(Fl_Button *o, void *v) {
+/**
+ \brief User changes settings to show positioning guides in layout editor overlay.
+ This is called from the check button in the Settings dialog.
+ */
+void toggle_guides_cb(Fl_Check_Button *o, void *v) {
   toggle_guides(NULL, NULL);
+}
+
+/**
+ \brief User changes settings to show overlapping and out of bounds widgets.
+ This is called from the main menu and from the check button in the Settings
+ dialog.
+ */
+void toggle_restricted(Fl_Widget *,void *) {
+  show_restricted = !show_restricted;
+  fluid_prefs.set("show_restricted", show_restricted);
+
+  if (show_restricted)
+    restricted_item->label("Hide Restricted");
+  else
+    restricted_item->label("Show Restricted");
+  if (restricted_button)
+    restricted_button->value(show_restricted);
+
+  for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
+    if (o->is_window()) {
+      Fl_Widget_Type* w = (Fl_Widget_Type*)o;
+      ((Overlay_Window*)(w->o))->redraw_overlay();
+    }
+  }
+}
+
+/**
+ \brief User changes settings to show overlapping and out of bounds widgets.
+ This is called from the check button in the Settings dialog.
+ */
+void toggle_restricted_cb(Fl_Check_Button *o, void *v) {
+  toggle_restricted(NULL, NULL);
 }
 
 extern void select(Fl_Type *,int);

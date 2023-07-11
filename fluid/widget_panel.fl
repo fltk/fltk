@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite {My Test}
+  current_preset 1
+}
 comment {//
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +35,7 @@ Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
-    comment {Use a Double Window to avoid flickering.} open selected
+    comment {Use a Double Window to avoid flickering.} open
     xywh {566 244 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
@@ -806,7 +811,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {open selected
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Button wLiveMode {
@@ -818,11 +823,6 @@ wCallback->do_callback(wCallback, v);} open
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 11
-      }
-      Fl_Button guides_button {
-        label {Hide &Guides}
-        callback guides_cb
-        tooltip {Hide alignment guides.} xywh {178 370 80 20} labelsize 11
       }
       Fl_Box {} {
         comment {Hidden resizable box}
