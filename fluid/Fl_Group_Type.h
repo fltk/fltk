@@ -164,6 +164,7 @@ public:
   int pixmapID() FL_OVERRIDE { return 19; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
+  int is_scroll() const FL_OVERRIDE { return 1; }
 };
 
 // ---- Fl_Tile_Type --------------------------------------------------- MARK: -

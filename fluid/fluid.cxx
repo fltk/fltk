@@ -77,6 +77,12 @@ Fl_Preferences fluid_prefs(Fl_Preferences::USER_L, "fltk.org", "fluid");
 /// Show guides in the design window when positioning widgets, saved in app preferences.
 int show_guides = 1;
 
+/// Show areas of restricted use in overlay plane.
+/// Restrited areas are widget that overlap each other, widgets that are outside
+/// of their parent's bounds (execept children of Scroll groups), and areas
+/// within an Fl_Tile that are not covered by children.
+int show_restricted = 1;
+
 /// Show widget comments in the browser, saved in app preferences.
 int show_comments = 1;
 
@@ -125,6 +131,9 @@ Fl_Menu_Item *overlay_item = NULL;
 
 /// Menuitem to show or hide the editing guides, label will change if overlay visibility changes.
 Fl_Menu_Item *guides_item = NULL;
+
+/// Menuitem to show or hide the restricted area overlys, label will change if overlay visibility changes.
+Fl_Menu_Item *restricted_item = NULL;
 
 ////////////////////////////////////////////////////////////////
 
@@ -1438,6 +1447,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_COMMAND+FL_SHIFT+'o',toggle_overlays},
   {"Hide Guides",FL_COMMAND+FL_SHIFT+'g',toggle_guides},
+  {"Hide Restricted",FL_COMMAND+FL_SHIFT+'r',toggle_restricted},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Settings...",FL_ALT+'p',show_settings_cb},
@@ -1624,7 +1634,8 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
  */
 void make_main_window() {
   if (!batch_mode) {
-    fluid_prefs.get("show_guides", show_guides, 0);
+    fluid_prefs.get("show_guides", show_guides, 1);
+    fluid_prefs.get("show_restricted", show_restricted, 1);
     fluid_prefs.get("show_comments", show_comments, 1);
     shell_prefs_get();
     make_shell_window();
@@ -1648,6 +1659,7 @@ void make_main_window() {
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
     guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
+    restricted_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_restricted);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();
@@ -1781,7 +1793,7 @@ void set_filename(const char *c) {
  \param[in] mf 0 to clear the modflag, 1 to mark the design "modified", -1 to
     ignore this parameter
  \param[in] mfc default -1 to let \c mf control \c modflag_c, 0 to mark the
-    code files current, 1 to mark it out of date.
+    code files current, 1 to mark it out of date. -2 to ignore changes to mf.
  */
 void set_modflag(int mf, int mfc) {
   const char *basename;
@@ -1796,7 +1808,7 @@ void set_modflag(int mf, int mfc) {
     if (mfc==-1 && mf==1)
       mfc = mf;
   }
-  if (mfc!=-1) {
+  if (mfc>=0) {
     modflag_c = mfc;
   }
 

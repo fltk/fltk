@@ -34,6 +34,7 @@ class Fl_Menu_Bar;
 class Fl_Type;
 class Fl_Choice;
 class Fl_Button;
+class Fl_Check_Button;
 
 extern int force_parent;
 
@@ -43,6 +44,7 @@ extern Fl_Menu_Bar *main_menubar;
 extern Fl_Window *main_window;
 
 extern int show_guides;
+extern int show_restricted;
 extern int show_comments;
 
 extern int G_use_external_editor;
@@ -64,7 +66,8 @@ extern Fl_Menu_Item *sourceview_item;
 extern Fl_Menu_Item *overlay_item;
 extern Fl_Button *overlay_button;
 extern Fl_Menu_Item *guides_item;
-extern Fl_Button *guides_button;
+extern Fl_Menu_Item *restricted_item;
+extern Fl_Check_Button *guides_button;
 
 extern int modflag;
 
@@ -138,6 +141,7 @@ extern void align_widget_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
 
 inline int fd_min(int a, int b) { return (a < b ? a : b); }
+inline int fd_max(int a, int b) { return (a > b ? a : b); }
 inline int fd_min(int a, int b, int c) { return fd_min(a, fd_min(b, c)); }
 
 #endif // _FLUID_FLUID_H

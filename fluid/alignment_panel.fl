@@ -108,7 +108,7 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {617 332 340 580} type Double align 80 resizable
+    xywh {617 331 340 580} type Double align 80 resizable
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Tabs w_settings_tabs {
@@ -116,7 +116,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255
     } {
       Fl_Group {} {
-        label General open
+        label General open selected
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {
@@ -135,7 +135,7 @@ Function {make_settings_window()} {open
           label {Show Tooltips}
           callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
-          xywh {120 115 180 20} down_box DOWN_BOX labelsize 11
+          xywh {120 115 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("show_tooltips", b, 1);}
           code2 {tooltips_button->value(b);}
@@ -144,7 +144,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         Fl_Check_Button completion_button {
           label {Show Completion Dialogs}
           callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-          xywh {120 135 180 20} down_box DOWN_BOX labelsize 11
+          xywh {120 135 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
           code2 {completion_button->value(b);}
@@ -152,7 +152,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         Fl_Check_Button openlast_button {
           label {Open Previous File on Startup}
           callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-          xywh {120 155 180 20} down_box DOWN_BOX labelsize 11
+          xywh {120 155 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("open_previous_file", b, 0);}
           code2 {openlast_button->value(b);}
@@ -160,7 +160,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         Fl_Check_Button prevpos_button {
           label {Remember Window Positions}
           callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
-          xywh {120 175 180 20} down_box DOWN_BOX labelsize 11
+          xywh {120 175 200 20} down_box DOWN_BOX labelsize 11
           code0 {int b;}
           code1 {fluid_prefs.get("prev_window_pos", b, 1);}
           code2 {prevpos_button->value(b);}
@@ -170,7 +170,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
           callback {show_comments = show_comments_button->value();
 fluid_prefs.set("show_comments", show_comments);
 redraw_browser();}
-          xywh {120 195 180 20} down_box DOWN_BOX labelsize 11
+          xywh {120 195 200 20} down_box DOWN_BOX labelsize 11
           code1 {fluid_prefs.get("show_comments", show_comments, 1);}
           code2 {show_comments_button->value(show_comments);}
         }
@@ -198,7 +198,7 @@ redraw_browser();}
           callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
 G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
 fluid_prefs.set("external_editor_command", G_external_editor_command);
-redraw_browser();} selected
+redraw_browser();}
           tooltip {The editor command to open your external text editor.
 Include any necessary flags to ensure your editor does not background itself.
 Examples:
@@ -207,6 +207,22 @@ Examples:
  emacs} xywh {120 255 200 20} labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
           code1 {fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);}
           code2 {editor_command_input->value(G_external_editor_command);}
+        }
+        Fl_Box {} {
+          label {Overlays: }
+          xywh {120 300 0 20} labelfont 1 labelsize 11 align 4
+        }
+        Fl_Check_Button guides_button {
+          label {Show Positioning Guides}
+          callback toggle_guides_cb
+          tooltip {show guides that help to position and resize widgets and enable snapping} xywh {120 300 200 20} down_box DOWN_BOX labelsize 11
+          code0 {o->value(show_guides);}
+        }
+        Fl_Check_Button restricted_button {
+          label {Show Restricted Areas}
+          callback toggle_restricted_cb
+          tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {120 320 200 20} down_box DOWN_BOX labelsize 11
+          code0 {o->value(show_restricted);}
         }
       }
       Fl_Group w_settings_project_tab {
@@ -707,7 +723,7 @@ g_layout_list.update_dialogs();}
         Fl_Group {} {
           label {Label Font:}
           callback propagate_load open
-          xywh {85 465 200 20} labelsize 11 align 4
+          xywh {85 464 201 21} labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback {if (v == LOAD) {
@@ -715,7 +731,7 @@ g_layout_list.update_dialogs();}
 } else {
   layout->labelfont = (int)o->value();
 }} open
-            tooltip {The style of the label text.} xywh {85 465 152 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
+            tooltip {The style of the label text.} xywh {85 465 150 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
@@ -725,7 +741,7 @@ g_layout_list.update_dialogs();}
 } else {
   layout->labelsize = (int)o->value();
 }}
-            tooltip {The size of the label text.} xywh {236 465 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+            tooltip {The size of the label text.} xywh {235 465 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
           }
         }
         Fl_Choice {} {
@@ -734,7 +750,7 @@ g_layout_list.update_dialogs();}
 } else {
   layout->textfont = (int)o->value();
 }} open
-          tooltip {The value text style.} xywh {85 490 152 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+          tooltip {The value text style.} xywh {85 490 150 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
           code0 {extern Fl_Menu_Item fontmenu[];}
           code1 {o->menu(fontmenu);}
         } {}
@@ -744,7 +760,7 @@ g_layout_list.update_dialogs();}
 } else {
   layout->textsize = (int)o->value();
 }}
-          tooltip {The value text size.} xywh {236 490 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+          tooltip {The value text size.} xywh {235 490 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
         }
       }
       Fl_Group w_settings_shell_tab {

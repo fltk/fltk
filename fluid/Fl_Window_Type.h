@@ -29,6 +29,7 @@ extern Fl_Menu_Item window_type_menu[];
 extern Fl_Widget_Class_Type *current_widget_class;
 void toggle_overlays(Fl_Widget *,void *);
 void toggle_guides(Fl_Widget *,void *);
+void toggle_restricted(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
@@ -55,6 +56,9 @@ protected:
   int dx,dy;
   int drag;             // which parts of bbox are being moved
   int numselected;      // number of children selected
+  void draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h);
+  void draw_out_of_bounds();
+  void draw_overlaps();
   void draw_overlay();
   void newdx();
   void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);
@@ -67,6 +71,7 @@ protected:
   int recalc;           // set by fix_overlay()
   void moveallchildren();
   int pixmapID() FL_OVERRIDE { return 1; }
+  void open_();
 
 public:
 
