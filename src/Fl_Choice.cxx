@@ -148,7 +148,7 @@ Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *L)
   align(FL_ALIGN_LEFT);
   when(FL_WHEN_RELEASE);
   textfont(FL_HELVETICA);
-  box(FL_FLAT_BOX);
+  box(FL_UP_BOX);
   down_box(FL_BORDER_BOX);
 }
 
