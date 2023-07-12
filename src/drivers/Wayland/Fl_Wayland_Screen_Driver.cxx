@@ -308,10 +308,16 @@ static void pointer_button(void *data,
     return;
   }
   int b = 0;
-  Fl::e_state &= ~FL_BUTTONS;
-  if (button == BTN_LEFT) {Fl::e_state |= FL_BUTTON1; b = 1;}
-  else if (button == BTN_RIGHT) {Fl::e_state |= FL_BUTTON3; b = 3;}
-  else if (button == BTN_MIDDLE) {Fl::e_state |= FL_BUTTON2; b = 2;}
+  // Fl::e_state &= ~FL_BUTTONS;    // DO NOT reset the mouse button state!
+  if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+    if (button == BTN_LEFT) { Fl::e_state |= FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT) { Fl::e_state |= FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE) { Fl::e_state |= FL_BUTTON2; b = 2; }
+  } else { // must be WL_POINTER_BUTTON_STATE_RELEASED
+    if (button == BTN_LEFT) { Fl::e_state &= ~FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT) { Fl::e_state &= ~FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE) { Fl::e_state &= ~FL_BUTTON2; b = 2; }
+  }
   Fl::e_keysym = FL_Button + b;
   Fl::e_dx = Fl::e_dy = 0;
 
