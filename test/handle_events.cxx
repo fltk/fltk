@@ -1,7 +1,7 @@
 //
 // Event test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-// compile standalone as: fltk-config --compile handle_events.cxx
+// Build: fltk-config --compile handle_events.cxx
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -62,13 +62,14 @@ public:
 int app::handle(int ev) {
   print_event(ev); // common for all events
   int res = WINDOW_TYPE::handle(ev);
+  int buttons = Fl::event_buttons() >> 24; // bits: 1=left, 2=middle, 4=right button
   switch (ev) {
     case FL_PUSH:
-      fprintf(stderr, ", button %d down", Fl::event_button());
+      fprintf(stderr, ", button %d down, buttons = 0x%x", Fl::event_button(), buttons);
       res = 1;
       break;
     case FL_RELEASE:
-      fprintf(stderr, ", button %d up", Fl::event_button());
+      fprintf(stderr, ", button %d up,   buttons = 0x%x", Fl::event_button(), buttons);
       res = 1;
       break;
     case FL_MOUSEWHEEL:
@@ -77,8 +78,11 @@ int app::handle(int ev) {
       break;
     case FL_ENTER:
     case FL_LEAVE:
+      res = 1;
+      break;
     case FL_MOVE:
     case FL_DRAG:
+      fprintf(stderr, ",          mouse buttons = 0x%x", buttons);
       res = 1;
       break;
     case FL_KEYBOARD:
