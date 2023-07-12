@@ -34,8 +34,11 @@
 Fl_Class_Type *current_class = NULL;
 
 /**
- Return 1 if the list contains a function with the given signature at the top level.
- \param[in] rtype return type
+ \brief Return 1 if the list contains a function with the given signature at the top level.
+ Fl_Widget_Type uses this to check if a callback by a certain signature is
+ already defined by the user within this file. If not, Fl_Widget_Type will
+ generate an `extern $sig$;` statement.
+ \param[in] rtype return type, can be NULL to avoid checking (not used by Fl_Widget_Type)
  \param[in] sig function signature
  \return 1 if found.
  */
