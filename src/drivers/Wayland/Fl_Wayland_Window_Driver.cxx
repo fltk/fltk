@@ -749,6 +749,17 @@ Fl_Window *Fl_Wayland_Window_Driver::surface_to_window(struct wl_surface *surfac
 }
 
 
+static struct Fl_Wayland_Screen_Driver::output *screen_num_to_output(int num_screen) {
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  int i = 0;
+  Fl_Wayland_Screen_Driver::output *output;
+  wl_list_for_each(output, &(scr_driver->outputs), link) { // all screens of the system
+    if (i++ == num_screen) return output;
+  }
+  return NULL;
+}
+
+
 static void handle_configure(struct libdecor_frame *frame,
      struct libdecor_configuration *configuration, void *user_data)
 {
@@ -766,9 +777,14 @@ static void handle_configure(struct libdecor_frame *frame,
 
   if (!window->xdg_surface) window->xdg_surface = libdecor_frame_get_xdg_surface(frame);
 
+  struct wl_output *wl_output = NULL;
   if (window->fl_win->fullscreen_active()) {
     if (!(window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
-      libdecor_frame_set_fullscreen(window->frame, NULL);
+      if (Fl_Window_Driver::driver(window->fl_win)->force_position()) {
+        struct Fl_Wayland_Screen_Driver::output *output  = screen_num_to_output(window->fl_win->screen_num());
+        if (output) wl_output = output->wl_output;
+      }
+      libdecor_frame_set_fullscreen(window->frame, wl_output);
     }
   } else if (driver->show_iconic()) {
     libdecor_frame_set_minimized(window->frame);
@@ -799,6 +815,13 @@ static void handle_configure(struct libdecor_frame *frame,
     } else { width = height = 0; }
   }
 
+  if (window->fl_win->fullscreen_active() &&
+       Fl_Window_Driver::driver(window->fl_win)->force_position()) {
+    int X, Y, W, H;
+    Fl::screen_xywh(X, Y, W, H, window->fl_win->screen_num());
+    width = W * f; height = H * f;
+  }
+  
   if (width == 0) {
     width = window->floating_width;
     height = window->floating_height;
@@ -808,6 +831,7 @@ static void handle_configure(struct libdecor_frame *frame,
   driver->in_handle_configure = true;
   window->fl_win->resize(0, 0, ceil(width / f), ceil(height / f));
   driver->in_handle_configure = false;
+  if (wl_output) window->fl_win->redraw();
 
   if (ceil(width / f) != window->configured_width || ceil(height / f) != window->configured_height) {
     if (window->buffer) {
@@ -956,7 +980,16 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
   if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states)) {
-    xdg_toplevel_set_fullscreen(xdg_toplevel, NULL);
+    struct wl_output *wl_output = NULL;
+    if (Fl_Window_Driver::driver(window->fl_win)->force_position()) {
+      struct Fl_Wayland_Screen_Driver::output *output  = screen_num_to_output(window->fl_win->screen_num());
+      if (output) wl_output = output->wl_output;
+    }
+    xdg_toplevel_set_fullscreen(xdg_toplevel, wl_output);
+    if (wl_output) {
+      int X, Y;
+      Fl::screen_xywh(X, Y, width, height, window->fl_win->screen_num());
+    }
   }
   if (window->configured_width) Fl_Window_Driver::driver(window->fl_win)->wait_for_expose_value = 0;
   float f = Fl::screen_scale(window->fl_win->screen_num());

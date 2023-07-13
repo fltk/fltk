@@ -382,6 +382,14 @@ to detect that Wayland needs be informed of the desired size change, which gets 
 to \c libdecor_frame_commit(). Wayland later calls \c handle_configure() and events described
 above unfold.
 
+Wayland generally does not provide a way to control where the compositor should map a window
+in the system displays. Nevertheless, for multi-display systems, Wayland allows to control
+on what display should the compositor map a fullscreen window. That is done inside function
+\c handle_configure() which calls \c libdecor_frame_set_fullscreen() for DECORATED windows
+and inside function \c xdg_toplevel_configure() which calls \c xdg_toplevel_set_fullscreen()
+for UNFRAMED. The <tt>struct wl_output</tt> pointer for the targetted display is transmitted
+as 2nd argument of these calls.
+
 \section menu-windows Menu windows and other popups
 Menu windows, tiny menu title windows, and tooltip windows are implemented using Wayland's
 popup mechanism which allows to position a popup window relatively to a previously mapped
