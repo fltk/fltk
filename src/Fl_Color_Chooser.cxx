@@ -1,7 +1,7 @@
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -428,9 +428,14 @@ int Flcc_ValueBox::handle_key(int key) {
 
 void Fl_Color_Chooser::rgb_cb(Fl_Widget* o, void*) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)(o->parent());
-  double R = c->rvalue.value();
-  double G = c->gvalue.value();
-  double B = c->bvalue.value();
+  // clamp input values to valid ranges (issue #749, part 1)
+  double R = c->rvalue.clamp(c->rvalue.value());
+  double G = c->gvalue.clamp(c->gvalue.value());
+  double B = c->bvalue.clamp(c->bvalue.value());
+  // update input values if they were clamped (#749, part 2)
+  c->rvalue.value(R);
+  c->gvalue.value(G);
+  c->bvalue.value(B);
   if (c->mode() == M_HSV) {
     if (c->hsv(R,G,B)) c->do_callback(FL_REASON_CHANGED);
     return;
