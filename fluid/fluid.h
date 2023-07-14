@@ -92,13 +92,17 @@ public:
   void update_settings_dialog();
 
   int i18n_type;
-  Fl_String i18n_include;
-  Fl_String i18n_conditional;
-  Fl_String i18n_function;
-  Fl_String i18n_static_function;
-  Fl_String i18n_file;
-  Fl_String i18n_set;
-  Fl_String i18n_program;
+  Fl_String i18n_gnu_include;
+  Fl_String i18n_gnu_conditional;
+  Fl_String i18n_gnu_function;
+  Fl_String i18n_gnu_static_function;
+
+  Fl_String i18n_pos_include;
+  Fl_String i18n_pos_conditional;
+  Fl_String i18n_pos_file;
+  Fl_String i18n_pos_set;
+
+  Fl_String basename;
   int include_H_from_C;
   int use_FL_COMMAND;
   int utf8_in_src;

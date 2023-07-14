@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 Function {button_cb(Fl_Button *b, void *)} {
   comment {Buttons test callback} open private return_type void
 } {
@@ -9,14 +14,13 @@ Function {button_cb(Fl_Button *b, void *)} {
 sprintf(msg, "Label: '%s'\\nValue: %d", b->label(),b->value());
 cb_info->value(msg);
 cb_info->redraw();
-printf("%s\\n",msg);} {selected
-  }
+printf("%s\\n",msg);} {}
 }
 
 Function {} {open
 } {
-  Fl_Window {} {open
-    xywh {463 67 369 214} type Double hide
+  Fl_Window {} {open selected
+    xywh {470 366 369 214} type Double visible
   } {
     Fl_Button {} {
       label {&Fl_Button A1}

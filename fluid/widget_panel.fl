@@ -60,7 +60,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           }
           Fl_Choice {} {
             callback labeltype_cb open
-            tooltip {The label style for the widget.} xywh {284 40 120 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+            tooltip {The label style for the widget.} xywh {285 40 119 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
             code0 {extern Fl_Menu_Item labeltypemenu[];}
             code1 {o->menu(labeltypemenu);}
           } {}
@@ -77,7 +77,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
           Fl_Button {} {
             label {Browse...}
             callback image_browse_cb
-            tooltip {Click to choose the active image.} xywh {294 65 70 20} labelsize 11
+            tooltip {Click to choose the active image.} xywh {295 65 69 20} labelsize 11
           }
           Fl_Button {} {
             callback compress_image_cb
@@ -105,7 +105,7 @@ or compressed in the original file format} xywh {364 65 20 20} type Toggle
           Fl_Button {} {
             label {Browse...}
             callback inactive_browse_cb
-            tooltip {Click to choose the inactive image.} xywh {294 90 70 20} labelsize 11
+            tooltip {Click to choose the inactive image.} xywh {295 90 69 20} labelsize 11
           }
           Fl_Button {} {
             callback compress_deimage_cb
@@ -327,14 +327,14 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           Fl_Choice {} {
             label {Children:}
             callback wc_relative_cb open
-            tooltip {When instantiating a widget class, the children can either be fixed in their original position, automatically be repositioned, or both repsositioned and resized to fit the container.} xywh {335 150 65 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
+            tooltip {When instantiating a widget class, the children can either be fixed in their original position, automatically be repositioned, or both repsositioned and resized to fit the container.} xywh {335 150 64 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
           } {
             MenuItem {} {
               label Fixed
               xywh {0 0 31 20} labelsize 11
             }
             MenuItem {} {
-              label Reposition
+              label Reposition selected
               xywh {0 0 31 20} labelsize 11
             }
             MenuItem {} {
@@ -343,7 +343,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             }
           }
           Fl_Box {} {
-            xywh {398 150 1 20} resizable
+            xywh {399 150 1 20} hide resizable
           }
         }
         Fl_Group {} {
@@ -565,7 +565,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           } {}
           Fl_Value_Input {} {
             callback labelsize_cb
-            tooltip {The size of the label text.} xywh {246 40 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+            tooltip {The size of the label text.} xywh {247 40 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
           }
           Fl_Button w_labelcolor {
             label {Label Color}
@@ -638,7 +638,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           } {}
           Fl_Value_Input {} {
             callback textsize_cb
-            tooltip {The value text size.} xywh {246 115 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+            tooltip {The value text size.} xywh {247 115 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
           }
           Fl_Button w_textcolor {
             label {Text Color}
@@ -673,7 +673,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           }
           Fl_Choice {} {
             callback subtype_cb open
-            tooltip {The widget subtype.} xywh {265 40 140 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
+            tooltip {The widget subtype.} xywh {267 40 138 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {}
         }
         Fl_Group {} {
@@ -707,7 +707,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           }
           Fl_Choice {} {
             callback name_public_cb open
-            tooltip {Change widget accessibility.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+            tooltip {Change widget accessibility.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11 hide
           } {
             MenuItem {} {
               label local
@@ -811,7 +811,7 @@ wCallback->do_callback(wCallback, v);} open
         }
       }
     }
-    Fl_Group {} {open selected
+    Fl_Group {} {open
       xywh {10 370 400 20} labelsize 11
     } {
       Fl_Button wLiveMode {

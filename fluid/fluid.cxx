@@ -191,26 +191,43 @@ Fl_String g_header_filename_arg;
  \todo document me
  */
 
-/** \var int Fluid_Project::i18n_include
- For either type of translation, write a #include statement into the
+/** \var int Fluid_Project::i18n_gnu_include
+ Include file for GNU i18n, writes an #include statement into the
  source file.
 
- This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext, or
- `<nl_types.h>` for Posix catgets.
+ This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
 
  Fluid accepts filenames in quotes or in \< and \>. If neither is found,
  double quotes are added.
- If this value is emty, no include statement will be generated.
+ If this value is empty, no include statement will be generated.
+
+ Saved in the .fl design file if GNU i18n is selected.
+ */
+
+/** \var int Fluid_Project::i18n_pos_include
+ Include file for Posix i18n, write a #include statement into the
+ source file.
+
+ This is usually `<nl_types.h>` for Posix catgets.
+
+ Fluid accepts filenames in quotes or in \< and \>. If neither is found,
+ double quotes are added.
+ If this value is empty, no include statement will be generated.
 
  Saved in the .fl design file.
  */
 
-/** \var int Fluid_Project::i18n_conditional
+/** \var int Fluid_Project::i18n_gnu_conditional
  Saved in the .fl design file.
  \todo document me
  */
 
-/** \var int Fluid_Project::i18n_function
+/** \var int Fluid_Project::i18n_pos_conditional
+ Saved in the .fl design file.
+ \todo document me
+ */
+
+/** \var int Fluid_Project::i18n_gnu_function
  For the gettext/intl.h options, this is the function that translates text
  at runtime.
 
@@ -219,7 +236,7 @@ Fl_String g_header_filename_arg;
  Saved in the .fl design file.
  */
 
-/** \var int Fluid_Project::i18n_static_function
+/** \var int Fluid_Project::i18n_gnu_static_function
  For the gettext/intl.h options, this is the function that marks the
  translation of text at initialisation time.
 
@@ -231,17 +248,17 @@ Fl_String g_header_filename_arg;
  Saved in the .fl design file.
  */
 
-/** \var int Fluid_Project::i18n_file
+/** \var int Fluid_Project::i18n_pos_file
  Saved in the .fl design file.
  \todo document me
  */
 
-/** \var int Fluid_Project::i18n_set
+/** \var int Fluid_Project::i18n_pos_set
  Saved in the .fl design file.
  \todo document me
  */
 
-/** \var int Fluid_Project::i18n_program
+/** \var int Fluid_Project::basename
  \todo document me
  */
 
@@ -273,13 +290,18 @@ Fluid_Project::~Fluid_Project() {
 void Fluid_Project::reset() {
   ::delete_all();
   i18n_type = 0;
-  i18n_include = "";
-  i18n_conditional = "";
-  i18n_function = "";
-  i18n_static_function = "";
-  i18n_file = "";
-  i18n_set = "";
-  i18n_program = "";
+
+  i18n_gnu_include = "<libintl.h>";
+  i18n_gnu_conditional = "";
+  i18n_gnu_function = "gettext";
+  i18n_gnu_static_function = "gettext_noop";
+
+  i18n_pos_include = "<nl_types.h>";
+  i18n_pos_conditional = "";
+  i18n_pos_file = "";
+  i18n_pos_set = "1";
+
+  basename = "";
   include_H_from_C = 1;
   use_FL_COMMAND = 0;
   utf8_in_src = 0;
@@ -1019,10 +1041,10 @@ int write_code_files() {
   }
   char cname[FL_PATH_MAX+1];
   char hname[FL_PATH_MAX+1];
-  g_project.i18n_program = fl_filename_name(filename);
-  g_project.i18n_program.resize(FL_PATH_MAX);
-  fl_filename_setext(g_project.i18n_program.data(), FL_PATH_MAX, "");
-  g_project.i18n_program.resize(g_project.i18n_program.strlen());
+  g_project.basename = fl_filename_name(filename);
+  g_project.basename.resize(FL_PATH_MAX);
+  fl_filename_setext(g_project.basename.data(), FL_PATH_MAX, "");
+  g_project.basename.resize(g_project.basename.strlen());
   if (g_project.code_file_name[0] == '.' && strchr(g_project.code_file_name.c_str(), '/') == NULL) {
     strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
     fl_filename_setext(cname, FL_PATH_MAX, g_project.code_file_name.c_str());
@@ -1941,10 +1963,10 @@ void update_sourceview_cb(Fl_Button*, void*)
     sv_strings->buffer()->loadfile(fn);
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
-    g_project.i18n_program = fl_filename_name(sv_source_filename);
-    g_project.i18n_program.resize(FL_PATH_MAX);
-    fl_filename_setext(g_project.i18n_program.data(), FL_PATH_MAX, "");
-    g_project.i18n_program.resize(g_project.i18n_program.strlen());
+    g_project.basename = fl_filename_name(sv_source_filename);
+    g_project.basename.resize(FL_PATH_MAX);
+    fl_filename_setext(g_project.basename.data(), FL_PATH_MAX, "");
+    g_project.basename.resize(g_project.basename.strlen());
     Fl_String code_file_name_bak = g_project.code_file_name;
     g_project.code_file_name = sv_source_filename;
     Fl_String header_file_name_bak = g_project.header_file_name;

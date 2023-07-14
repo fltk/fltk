@@ -2918,13 +2918,13 @@ void Fl_Widget_Type::write_code1(Fd_Code_Writer& f) {
         f.write_cstring(label());
         break;
     case 1 : /* GNU gettext */
-        f.write_c("%s(", g_project.i18n_function.c_str());
+        f.write_c("%s(", g_project.i18n_gnu_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
-                g_project.i18n_set.c_str(), msgnum());
+        f.write_c("catgets(%s,%s,%d,", g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
+                g_project.i18n_pos_set.c_str(), msgnum());
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -2991,13 +2991,13 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
         f.write_cstring(tooltip());
         break;
     case 1 : /* GNU gettext */
-        f.write_c("%s(", g_project.i18n_function.c_str());
+        f.write_c("%s(", g_project.i18n_gnu_function.c_str());
         f.write_cstring(tooltip());
         f.write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,", g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
-                g_project.i18n_set.c_str(), msgnum() + 1);
+        f.write_c("catgets(%s,%s,%d,", g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
+                g_project.i18n_pos_set.c_str(), msgnum() + 1);
         f.write_cstring(tooltip());
         f.write_c(")");
         break;

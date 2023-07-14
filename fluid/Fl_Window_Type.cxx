@@ -72,44 +72,16 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
   }
   switch (g_project.i18n_type) {
   case 0 : /* None */
-      i18n_include_input->hide();
-      i18n_conditional_input->hide();
-      i18n_file_input->hide();
-      i18n_set_input->hide();
-      i18n_function_input->hide();
-      i18n_static_function_input->hide();
+      i18n_gnu_group->hide();
+      i18n_posix_group->hide();
       break;
   case 1 : /* GNU gettext */
-      i18n_include_input->value("<libintl.h>");
-      g_project.i18n_include = i18n_include_input->value();
-      i18n_conditional_input->value("");
-      g_project.i18n_conditional = i18n_conditional_input->value();
-      i18n_function_input->value("gettext");
-      g_project.i18n_function = i18n_function_input->value();
-      i18n_static_function_input->value("gettext_noop");
-      g_project.i18n_static_function = i18n_static_function_input->value();
-      i18n_include_input->show();
-      i18n_conditional_input->show();
-      i18n_file_input->hide();
-      i18n_set_input->hide();
-      i18n_function_input->show();
-      i18n_static_function_input->show();
+      i18n_gnu_group->show();
+      i18n_posix_group->hide();
       break;
   case 2 : /* POSIX cat */
-      i18n_include_input->value("<nl_types.h>");
-      g_project.i18n_include = i18n_include_input->value();
-      i18n_conditional_input->value("");
-      g_project.i18n_conditional = i18n_conditional_input->value();
-      i18n_file_input->value("");
-      g_project.i18n_file = i18n_file_input->value();
-      i18n_set_input->value("1");
-      g_project.i18n_set = i18n_set_input->value();
-      i18n_include_input->show();
-      i18n_conditional_input->show();
-      i18n_file_input->show();
-      i18n_set_input->show();
-      i18n_function_input->hide();
-      i18n_static_function_input->hide();
+      i18n_gnu_group->hide();
+      i18n_posix_group->show();
       break;
   }
 
