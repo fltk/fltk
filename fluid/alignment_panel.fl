@@ -107,8 +107,8 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings} open
-    xywh {617 331 340 580} type Double align 80 resizable
+    label {FLUID Settings} open selected
+    xywh {617 331 340 580} type Double align 80
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Tabs w_settings_tabs {
@@ -116,7 +116,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255
     } {
       Fl_Group {} {
-        label General open selected
+        label General open
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {

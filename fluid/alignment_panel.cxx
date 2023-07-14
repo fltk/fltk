@@ -991,7 +991,7 @@ static void cb_Close(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_settings_window() {
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 580, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 580, "FLUID Settings");
     settings_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { w_settings_tabs = new Fl_Tabs(10, 10, 320, 530);
       w_settings_tabs->selection_color((Fl_Color)12);
@@ -1002,7 +1002,7 @@ Fl_Double_Window* make_settings_window() {
         o->image( image_general_64() );
         o->labelsize(11);
         { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
-          scheme_choice->box(FL_FLAT_BOX);
+          scheme_choice->box(FL_UP_BOX);
           scheme_choice->down_box(FL_BORDER_BOX);
           scheme_choice->color(FL_BACKGROUND_COLOR);
           scheme_choice->selection_color(FL_SELECTION_COLOR);
@@ -1617,7 +1617,6 @@ nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
     settings_window->set_non_modal();
-    settings_window->resizable(settings_window);
     o->size_range(o->w(), o->h());
     settings_window->end();
   } // Fl_Double_Window* settings_window

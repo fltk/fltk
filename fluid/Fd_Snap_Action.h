@@ -37,7 +37,7 @@ enum {
  \brief Collection of layout settings.
 
  Presets contain default fonts and font sizes for labels and text. They
- can be used to guide widget positions usung margins, grids, and gap sizes.
+ can be used to guide widget positions using margins, grids, and gap sizes.
  There are three Presets available in one Suite, marked "application",
  "dialog", and "toolbox".
  */
