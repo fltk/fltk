@@ -164,10 +164,10 @@ public:
    Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) can be used to
    discover the coordinates of the area of screen #n.
    When these screens have various scale factor
-   values, an \p (x, y) pair may not be enough to specify the targetted screen
+   values, an \p (x, y) pair may not be enough to specify the targeted screen
    for the window, because the same \p (x,y) pair can belong to several screens.
    In that situation, a call to Fl_Window::screen_num(int) is to be used to identify
-   unambiguously the targetted screen.
+   unambiguously the targeted screen.
 
     \see Fl_Window(int w, int h, const char *title)
     \see Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n)
