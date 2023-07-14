@@ -175,12 +175,22 @@ an Option is missing, a default value is assumed.
       extension e.g. “.cxx”
 
   "snap" <word> : starting in V1.4 since May 2023, the 'snap' keyword can be
-      used to store one layout suite with three presets. 'snap' if followed by
-      a '{', then a 'name' word followed by the name of the suite, and three
-      'preset' words, each followed by a '{', a version number, and 24
-      integers (V1), followed by a '}'. 'snap' is claosed with a trailin '}'.
-      As with other attributes, the content of 'snap' appears like a single
-      word to unsuspecting readers.
+      used to store the selected layout and preset and include more suites
+      of presets. The format looks like this:
+
+      snap {                         optional snap Word since 5.2023
+        ver 1                        version of following data
+        current_suite {My Test}      opt. name of suite selected at save time
+        current_preset 1             opt. preset selected within suite
+        suite {                      optional suite store within project
+          name {MyLayout v0.3}       name of the layout
+          preset { 1                 3x preset, preset version
+            (24 integers)            values representing the layout preset
+          }
+          ...                        (two more presets)
+        }
+        ...                          (opt. more suites)
+      }
 
   "gridx" <word> : ignored
 
