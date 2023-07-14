@@ -1217,7 +1217,7 @@ Fl_Menu_Item New_Menu[] = {
 /**
  Modify a menuitem to display an icon in front of the label.
  This is implemented using Fl_Multi_Label as the labeltype (FL_MULTI_LABEL).
- The icon may be null. If ic is null only the text (is assigned
+ The icon may be null. If ic is null only the text is assigned
  to the label and Fl_Multi_Label is not used.
  \param[in] mi pointer to tme menu item that will be modified
  \param[in] ic icon for the menu, may be NULL
@@ -1284,7 +1284,7 @@ Fl_Type *typename_to_prototype(const char *inName)
 
  This is used by the .fl file reader. New types are always created as
  the last child of the first compatible parent. New widgets have a default
- setup. Their position, sizem and label will be read next in the file.
+ setup. Their position, size and label will be read next in the file.
 
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
@@ -1310,6 +1310,10 @@ Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
 
 struct symbol {const char *name; int value;};
 
+/**
+ Table with all symbols known by the "fdesign" format reader.
+ This table does not need to be sorted alphabetically.
+ */
 static symbol table[] = {
   {"BLACK",                     FL_BLACK},
   {"RED",                       FL_RED},
@@ -1432,10 +1436,36 @@ static symbol table[] = {
   {"HOR_NICE_SLIDER",           FL_HOR_NICE_SLIDER},
 };
 
+/**
+ \brief Find a symbol in an array of name/value pairs and return the value.
+
+ If numberok is 0, and the symbol was not found, v remains unchanged and the
+ function returns 0.
+
+ If numberok is set and no label matched, the symbol is interpreted as a
+ string containing an integer. If the string is not an integer, v is set to 0
+ and the function returns 0.
+
+ If the symbol is found, or the integer could be read, v is set to the
+ value, and the function returns 1.
+
+ \param[in] name find a symbol by this name, a leading "FL_" is ignored
+ \param[out] v value associated to the symbol, or the integer value
+ \param[in] numberok if set, the symbol can also be a text representing an
+    integer number
+ \return 0 if the symbol was not found and the integer was not valid
+ \return 1 otherwise and set v
+ */
 int lookup_symbol(const char *name, int &v, int numberok) {
-  if (name[0]=='F' && name[1]=='L' && name[2]=='_') name += 3;
-  for (int i=0; i < int(sizeof(table)/sizeof(*table)); i++)
-    if (!fl_ascii_strcasecmp(name,table[i].name)) {v = table[i].value; return 1;}
-  if (numberok && ((v = atoi(name)) || !strcmp(name,"0"))) return 1;
+  if ((name[0]=='F') && (name[1]=='L') && (name[2]=='_'))
+    name += 3;
+  for (int i=0; i < int(sizeof(table)/sizeof(*table)); i++) {
+    if (!fl_ascii_strcasecmp(name,table[i].name)) {
+      v = table[i].value;
+      return 1;
+    }
+  }
+  if (numberok && ((v = atoi(name)) || !strcmp(name,"0")))
+    return 1;
   return 0;
 }

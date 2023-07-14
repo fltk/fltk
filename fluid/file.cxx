@@ -227,7 +227,7 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
       break;
     }
 
-    // Make sure that we don;t go through the list of options for child nodes
+    // Make sure that we don't go through the list of options for child nodes
     if (!skip_options) {
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {

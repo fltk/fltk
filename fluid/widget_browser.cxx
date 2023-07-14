@@ -252,7 +252,7 @@ int Widget_Browser::item_height(void *l) const {
  \return height in FLTK units
  */
 int Widget_Browser::incr_height() const {
-  return textsize()+2;
+  return textsize()+5;
 }
 
 /**
