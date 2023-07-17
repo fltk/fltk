@@ -589,9 +589,10 @@ else
       }
       Fl_Button {} {
         user_data {"widget_class"}
-        callback type_make_cb
+        callback type_make_cb selected
         tooltip {Widget Class} xywh {55 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[Fl_Type::ID::Widget_Class]);}
+        class Widget_Bin_Window_Button
       }
       Fl_Button {} {
         user_data {"decl"}
@@ -747,7 +748,7 @@ else
       }
       Fl_Button {} {
         user_data {"Fl_Value_Output"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip {Value Output} xywh {307 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[Fl_Type::ID::Value_Output]);}
         class Widget_Bin_Button

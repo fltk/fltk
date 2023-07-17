@@ -191,6 +191,7 @@ public:
   static void draw_all(Fd_Snap_Data &d);
   static void get_resize_stepsize(int &x_step, int &y_step);
   static void get_move_stepsize(int &x_step, int &y_step);
+  static void better_size(int &w, int &h);
 };
 
 #endif // _FLUID_FD_SNAP_ACTION_H

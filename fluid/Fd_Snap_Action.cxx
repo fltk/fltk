@@ -1071,6 +1071,27 @@ void Fd_Snap_Action::get_move_stepsize(int &x_step, int &y_step) {
   }
 }
 
+/** Fix the given size to the same or next bigger snap position. */
+void Fd_Snap_Action::better_size(int &w, int &h) {
+  int x_min = 1, y_min = 1, x_inc = 1, y_inc = 1;
+  get_resize_stepsize(x_inc, y_inc);
+  if (x_inc < 1) x_inc = 1;
+  if (y_inc < 1) y_inc = 1;
+  if ((layout->widget_min_w > 1) && (layout->widget_min_h > 1)) {
+    x_min = layout->widget_min_w;
+    y_min = layout->widget_min_h;
+  } else if ((layout->group_grid_x > 1) && (layout->group_grid_y > 1)) {
+    x_min = layout->group_grid_x;
+    y_min = layout->group_grid_y;
+  } else {
+    x_min = x_inc;
+    y_min = y_inc;
+  }
+  int ww = fd_max(w - x_min, 0); w = (w - ww + x_inc - 1) / x_inc; w = w * x_inc; w = w + ww;
+  int hh = fd_max(h - y_min, 0); h = (h - hh + y_inc - 1) / y_inc; h = h * y_inc; h = h + hh;
+}
+
+
 // ---- snapping prototypes -------------------------------------------- MARK: -
 
 /**

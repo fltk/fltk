@@ -299,6 +299,18 @@ uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
   return idata;
 }
 
+void Fl_Window_Type::ideal_size(int &w, int &h) {
+  w = 480, h = 320;
+  if (main_window) {
+    int sx, sy, sw, sh;
+    Fl_Window *win = main_window;
+    int screen = Fl::screen_num(win->x(), win->y());
+    Fl::screen_work_area(sx, sy, sw, sh, screen);
+    w = fd_min(w, sw*3/4); h = fd_min(h, sh*3/4);
+    Fd_Snap_Action::better_size(w, h);
+  }
+}
+
 
 // control panel items:
 

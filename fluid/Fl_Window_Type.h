@@ -96,6 +96,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Window";}
 
   void open() FL_OVERRIDE;
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
 
   void fix_overlay();                   // Update the bounding box, etc
   uchar *read_image(int &ww, int &hh);  // Read an image of the window

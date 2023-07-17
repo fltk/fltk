@@ -753,12 +753,20 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("CodeBlock"));
         o->image(pixmap[Fl_Type::ID::CodeBlock]);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(55, 46, 24, 24);
+      { Widget_Bin_Window_Button* o = new Widget_Bin_Window_Button(55, 46, 24, 24);
         o->tooltip("Widget Class");
         o->box(FL_THIN_UP_BOX);
+        o->color(FL_BACKGROUND_COLOR);
+        o->selection_color(FL_BACKGROUND_COLOR);
+        o->labeltype(FL_NORMAL_LABEL);
+        o->labelfont(0);
+        o->labelsize(14);
+        o->labelcolor(FL_FOREGROUND_COLOR);
         o->callback((Fl_Callback*)type_make_cb, (void*)("widget_class"));
+        o->align(Fl_Align(FL_ALIGN_CENTER));
+        o->when(FL_WHEN_RELEASE);
         o->image(pixmap[Fl_Type::ID::Widget_Class]);
-      } // Fl_Button* o
+      } // Widget_Bin_Window_Button* o
       { Fl_Button* o = new Fl_Button(5, 71, 24, 24);
         o->tooltip("Declaration");
         o->box(FL_THIN_UP_BOX);
