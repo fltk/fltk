@@ -4,7 +4,7 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite {My Test}
+  current_suite FLTK
   current_preset 1
 }
 comment {//

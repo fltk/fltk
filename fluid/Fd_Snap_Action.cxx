@@ -111,7 +111,6 @@ Fd_Layout_List g_layout_list;
 // ---- Callbacks ------------------------------------------------------ MARK: -
 
 void layout_suite_marker(Fl_Widget *, void *) {
-  assert(0);
   // intentionally left empty
 }
 
@@ -820,7 +819,7 @@ void Fd_Layout_List::capacity(int n) {
     new_choice_menu[i] = choice_menu_[i];
   if (!list_is_static_) ::free(choice_menu_);
   choice_menu_ = new_choice_menu;
-  layout_choice->menu(choice_menu_);
+  if (layout_choice) layout_choice->menu(choice_menu_);
 
   list_capacity_ = n;
   list_is_static_ = false;

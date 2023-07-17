@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 comment {//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -23,10 +28,10 @@ comment {//
 decl {\#include "fluid.h"} {private local
 }
 
-decl {\#include "custom_widgets.h"} {selected private global
+decl {\#include "custom_widgets.h"} {private global
 }
 
-decl {\#include "pixmaps.h"} {private local
+decl {\#include "pixmaps.h"} {selected private local
 }
 
 decl {\#include "factory.h"} {private local
@@ -480,7 +485,7 @@ Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
     label {Comment Properties} open
-    xywh {780 296 550 280} type Double labelsize 11 resizable
+    xywh {519 374 550 280} type Double labelsize 11 resizable
     code0 {o->size_range(320, 180);} modal visible
   } {
     Fl_Text_Editor comment_input {
@@ -546,7 +551,7 @@ Function {make_widgetbin()} {open
   exit_cb((Fl_Widget*)o, v);
 else
   toggle_widgetbin_cb((Fl_Widget*)o, v);}
-    xywh {449 206 600 102} type Single align 80 non_modal visible
+    xywh {421 218 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       label Code open
@@ -979,7 +984,7 @@ Function {make_sourceview()} {open
   Fl_Window sourceview_panel {
     label {Code View}
     callback toggle_sourceview_cb open
-    xywh {464 265 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
+    xywh {400 569 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs sv_tab {
       callback update_sourceview_position_cb open

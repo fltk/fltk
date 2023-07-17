@@ -175,7 +175,9 @@ void Fl_Widget_Type::setlabel(const char *n) {
   redraw();
 }
 
-Fl_Widget_Type::Fl_Widget_Type() {
+Fl_Widget_Type::Fl_Widget_Type()
+: override_visible_(0)
+{
   for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = 0; }
   subclass_ = 0;
   hotspot_ = 0;
@@ -3264,7 +3266,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     if (s != fs) f.write_string("textsize %d", s);
     if (c != fc) f.write_string("textcolor %d", c);
   }}
-  if (!o->visible()) f.write_string("hide");
+  if (!o->visible() && !override_visible_) f.write_string("hide");
   if (!o->active()) f.write_string("deactivate");
   if (resizable()) f.write_string("resizable");
   if (hotspot()) f.write_string(is_menu_item() ? "divider" : "hotspot");

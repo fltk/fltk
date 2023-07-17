@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 comment {//
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
@@ -35,11 +40,11 @@ if (!cbuf[0]) {
   sprintf(cbuf, "Copyright © 1998 - %d\\nby Bill Spitzak and others", lt->tm_year+1900);
 }} {}
   Fl_Window about_panel {
-    label {About FLUID} open
+    label {About FLUID} open selected
     xywh {449 217 345 180} type Double color 50 selection_color 47 hotspot
     code0 {\#include "../src/flstring.h"} non_modal visible
   } {
-    Fl_Box {} {selected
+    Fl_Box {} {
       image {icons/fluid.animated.gif} compress_image 1 xywh {10 10 115 120}
       code0 {((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);}
     }

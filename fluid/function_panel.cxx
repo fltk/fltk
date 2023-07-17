@@ -191,8 +191,8 @@ Fl_Double_Window* make_code_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(200, 150);
     code_panel->set_modal();
+    o->size_range(200, 150);
     code_panel->end();
   } // Fl_Double_Window* code_panel
   // Enable line numbers
@@ -245,8 +245,8 @@ Fl_Double_Window* make_codeblock_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h(), Fl::w(), o->h());
     codeblock_panel->set_modal();
+    o->size_range(o->w(), o->h(), Fl::w(), o->h());
     codeblock_panel->end();
   } // Fl_Double_Window* codeblock_panel
   return codeblock_panel;
@@ -326,8 +326,8 @@ Fl_Double_Window* make_declblock_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h(), Fl::w(), o->h());
     declblock_panel->set_modal();
+    o->size_range(o->w(), o->h(), Fl::w(), o->h());
     declblock_panel->end();
   } // Fl_Double_Window* declblock_panel
   return declblock_panel;
@@ -693,8 +693,8 @@ Fl_Double_Window* make_comment_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(320, 180);
     comment_panel->set_modal();
+    o->size_range(320, 180);
     comment_panel->end();
   } // Fl_Double_Window* comment_panel
   return comment_panel;

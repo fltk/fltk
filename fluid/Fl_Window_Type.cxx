@@ -1193,7 +1193,7 @@ void Fl_Window_Type::write_properties(Fd_Project_Writer &f) {
   if (xclass) {f.write_string("xclass"); f.write_word(xclass);}
   if (sr_min_w || sr_min_h || sr_max_w || sr_max_h)
     f.write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
-  if (o->visible()) f.write_string("visible");
+  if (o->visible() || override_visible_) f.write_string("visible");
 }
 
 void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
@@ -1202,7 +1202,10 @@ void Fl_Window_Type::read_property(Fd_Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"non_modal")) {
     non_modal = 1;
   } else if (!strcmp(c, "visible")) {
-    if (Fl::first_window()) open_(); // only if we are using user interface
+    if (batch_mode) // don't actually open any windows in batch mode
+      override_visible_ = 1;
+    else // in interactive mode, we simply show the window
+      open_();
   } else if (!strcmp(c,"noborder")) {
     ((Fl_Window*)o)->border(0);
   } else if (!strcmp(c,"xclass")) {
