@@ -43,7 +43,7 @@ enum {
   FD_BOX    = 32  // user creates a new selection box
 };
 
-class Fl_Window_Type : public Fl_Widget_Type {
+class Fl_Window_Type : public Fl_Widget_Type { // FIXME: Fl_Group
 protected:
 
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return window_type_menu;}
@@ -85,9 +85,11 @@ public:
     numselected(0),
     recalc(0),
     modal(0), non_modal(0),
+    xclass(NULL),
     sr_min_w(0), sr_min_h(0), sr_max_w(0), sr_max_h(0)
   { }
   uchar modal, non_modal;
+  const char *xclass; // junk string, used for shortcut
 
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Window";}

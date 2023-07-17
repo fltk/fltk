@@ -565,26 +565,27 @@ sized to fit the container.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 210, 0, 20, "Shortcut:");
+        { Fl_Group* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
           o->labelfont(1);
           o->labelsize(11);
+          o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
+          { // This is a special button that grabs keystrokes directly
+            Fl_Shortcut_Button* o = new Fl_Shortcut_Button(95, 210, 310, 20);
+            o->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color((Fl_Color)12);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->callback((Fl_Callback*)shortcut_in_cb);
+            o->align(Fl_Align(FL_ALIGN_CENTER));
+            o->when(FL_WHEN_CHANGED);
+          } // Fl_Shortcut_Button* o
           o->end();
         } // Fl_Group* o
-        { // This is a special button that grabs keystrokes directly
-          Fl_Shortcut_Button* o = new Fl_Shortcut_Button(95, 210, 310, 20);
-          o->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
-          o->box(FL_DOWN_BOX);
-          o->color(FL_BACKGROUND2_COLOR);
-          o->selection_color((Fl_Color)12);
-          o->labeltype(FL_NORMAL_LABEL);
-          o->labelfont(0);
-          o->labelsize(11);
-          o->labelcolor(FL_FOREGROUND_COLOR);
-          o->callback((Fl_Callback*)shortcut_in_cb);
-          o->align(Fl_Align(FL_ALIGN_CENTER));
-          o->when(FL_WHEN_CHANGED);
-        } // Fl_Shortcut_Button* o
         { Fl_Group* o = new Fl_Group(95, 235, 300, 20, "X Class:");
           o->labelfont(1);
           o->labelsize(11);
@@ -632,7 +633,6 @@ sized to fit the container.");
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
             o->tooltip("Activate the widget.");
-            o->shortcut(0x400061);
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
             o->callback((Fl_Callback*)active_cb);

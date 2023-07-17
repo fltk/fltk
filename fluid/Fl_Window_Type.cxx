@@ -340,25 +340,23 @@ void border_cb(Fl_Light_Button* i, void* v) {
 
 void xclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {
+    if (current_widget->is_window()) {
+      i->show();
+      i->parent()->show();
+      i->value(((Fl_Window_Type *)current_widget)->xclass);
+    } else {
       i->hide();
       i->parent()->hide(); // hides the "X Class:" label as well
-      return;
     }
-    i->show();
-    i->parent()->show();
-    i->value(((Fl_Widget_Type *)current_widget)->xclass);
   } else {
     int mod = 0;
     undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_widget()) {
+      if (o->selected && o->is_window()) {
         mod = 1;
-        Fl_Widget_Type* w = (Fl_Widget_Type*)o;
-        if (w->is_window() || w->is_button())
-          storestring(i->value(),w->xclass);
-        if (w->is_window()) ((Fl_Window*)(w->o))->xclass(w->xclass);
-        else if (w->is_menu_item()) w->redraw();
+        Fl_Window_Type *wt = (Fl_Window_Type *)o;
+        storestring(i->value(), wt->xclass);
+        ((Fl_Window*)(wt->o))->xclass(wt->xclass);
       }
     }
     if (mod) set_modflag(1);

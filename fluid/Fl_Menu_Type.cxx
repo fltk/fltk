@@ -705,9 +705,11 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
+      i->parent()->hide();
       return;
     }
     i->show();
+    i->parent()->show();
     i->redraw();
   } else {
     int mod = 0;

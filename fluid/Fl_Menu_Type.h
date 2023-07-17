@@ -5,7 +5,7 @@
 // This should have the widget pointer in it, but it is still in the
 // Fl_Type base class.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,7 +31,7 @@
 
 extern Fl_Menu_Item menu_item_type_menu[];
 
-class Fl_Menu_Item_Type : public Fl_Widget_Type {
+class Fl_Menu_Item_Type : public Fl_Widget_Type { // FIXME: hmmmmm
 public:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return menu_item_type_menu;}
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
@@ -157,7 +157,7 @@ public:
   ID id() const FL_OVERRIDE { return ID::Choice; }
 };
 
-class Fl_Input_Choice_Type : public Fl_Menu_Type {
+class Fl_Input_Choice_Type : public Fl_Menu_Type { // FIXME: Composite: Fl_Group
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE {
     Fl_Input_Choice *myo = (Fl_Input_Choice*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
     switch (w) {

@@ -334,7 +334,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
               xywh {0 0 31 20} labelsize 11
             }
             MenuItem {} {
-              label Reposition selected
+              label Reposition
               xywh {0 0 31 20} labelsize 11
             }
             MenuItem {} {
@@ -471,20 +471,22 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
           }
         }
         Fl_Group {} {
-          label {Shortcut:} open
-          xywh {95 210 0 20} labelfont 1 labelsize 11 align 4
-        } {}
-        Fl_Button {} {
-          callback shortcut_in_cb
-          comment {This is a special button that grabs keystrokes directly}
-          tooltip {The shortcut key for the widget.
+          label {Shortcut:}
+          callback propagate_load open
+          xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
+        } {
+          Fl_Button {} {
+            callback shortcut_in_cb
+            comment {This is a special button that grabs keystrokes directly} selected
+            tooltip {The shortcut key for the widget.
 Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 12 labelsize 11 when 1
-          code0 {\#include <FL/Fl_Shortcut_Button.H>}
-          class Fl_Shortcut_Button
+            code0 {\#include <FL/Fl_Shortcut_Button.H>}
+            class Fl_Shortcut_Button
+          }
         }
         Fl_Group {} {
           label {X Class:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 235 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -521,7 +523,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
           Fl_Light_Button {} {
             label Active
             callback active_cb
-            tooltip {Activate the widget.} xywh {160 260 60 20} shortcut 0x400061 selection_color 1 labelsize 11
+            tooltip {Activate the widget.} xywh {160 260 60 20} selection_color 1 labelsize 11
           }
           Fl_Light_Button {} {
             label Resizable

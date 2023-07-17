@@ -1,7 +1,7 @@
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -197,6 +197,7 @@ public:
   virtual int is_public() const {return 1;}
 
   virtual ID id() const { return ID::Base_; }
+  virtual bool is_a(ID inID) { return (inID==ID::Base_); }
 
   const char* class_name(const int need_nest) const;
   const class Fl_Class_Type* is_in_class() const;

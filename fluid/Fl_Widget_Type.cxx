@@ -186,7 +186,6 @@ Fl_Widget_Type::Fl_Widget_Type()
   inactive_name_ = 0;
   image = 0;
   inactive = 0;
-  xclass = 0;
   o = 0;
   public_ = 1;
   bind_image_ = 0;
@@ -1047,7 +1046,7 @@ void box_cb(Fl_Choice* i, void *v) {
 void down_box_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
     int n;
-    if (current_widget->is_button() && !current_widget->is_menu_item())
+    if (current_widget->is_a(Fl_Type::ID::Button))
       n = ((Fl_Button*)(current_widget->o))->down_box();
     else if (current_widget->id() == Fl_Type::ID::Input_Choice)
       n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
@@ -1068,7 +1067,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
     if (n == ZERO_ENTRY) n = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected) {
-        if (o->is_button() && !o->is_menu_item()) {
+        if (o->is_a(Fl_Type::ID::Button)) {
           Fl_Widget_Type* q = (Fl_Widget_Type*)o;
           ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
           if (((Fl_Button*)(q->o))->value()) q->redraw();
