@@ -47,21 +47,21 @@ public:
   void write_item(Fd_Code_Writer& f);
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Menu_Item; }
+  ID id() const FL_OVERRIDE { return ID_Menu_Item; }
 };
 
 class Fl_Radio_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
   const char* type_name() FL_OVERRIDE {return "RadioMenuItem";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Radio_Menu_Item; }
+  ID id() const FL_OVERRIDE { return ID_Radio_Menu_Item; }
 };
 
 class Fl_Checkbox_Menu_Item_Type : public Fl_Menu_Item_Type {
 public:
   const char* type_name() FL_OVERRIDE {return "CheckMenuItem";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Checkbox_Menu_Item; }
+  ID id() const FL_OVERRIDE { return ID_Checkbox_Menu_Item; }
 };
 
 class Fl_Submenu_Type : public Fl_Menu_Item_Type {
@@ -77,7 +77,7 @@ public:
   void add_child(Fl_Type*a, Fl_Type*b) FL_OVERRIDE {parent->add_child(a,b);}
   void move_child(Fl_Type*a, Fl_Type*b) FL_OVERRIDE {parent->move_child(a,b);}
   void remove_child(Fl_Type*a) FL_OVERRIDE {parent->remove_child(a);}
-  ID id() const FL_OVERRIDE { return ID::Submenu; }
+  ID id() const FL_OVERRIDE { return ID_Submenu; }
 };
 
 class Fl_Menu_Type : public Fl_Widget_Type {
@@ -107,7 +107,7 @@ public:
   Fl_Type* click_test(int x, int y) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Menu_; }
+  ID id() const FL_OVERRIDE { return ID_Menu_; }
 };
 
 extern Fl_Menu_Item button_type_menu[];
@@ -127,7 +127,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Button_Type();}
-  ID id() const FL_OVERRIDE { return ID::Menu_Button; }
+  ID id() const FL_OVERRIDE { return ID_Menu_Button; }
 };
 
 extern Fl_Menu_Item dummymenu[];
@@ -154,7 +154,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Choice_Type();}
-  ID id() const FL_OVERRIDE { return ID::Choice; }
+  ID id() const FL_OVERRIDE { return ID_Choice; }
 };
 
 class Fl_Input_Choice_Type : public Fl_Menu_Type { // FIXME: Composite: Fl_Group
@@ -191,7 +191,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Input_Choice_Type();}
   void build_menu() FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Input_Choice; }
+  ID id() const FL_OVERRIDE { return ID_Input_Choice; }
   void copy_properties() FL_OVERRIDE;
 };
 
@@ -206,7 +206,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::MenuBar";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Bar_Type();}
-  ID id() const FL_OVERRIDE { return ID::Menu_Bar; }
+  ID id() const FL_OVERRIDE { return ID_Menu_Bar; }
 };
 
 

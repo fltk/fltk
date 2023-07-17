@@ -73,8 +73,8 @@ public:
     return new Fl_Box(x, y, w, h, "label");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Box_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Box; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Box) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Box; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Box) ? true : super::is_a(inID); }
 };
 
 static Fl_Box_Type Fl_Box_type;
@@ -96,8 +96,8 @@ public:
     return new Fl_Clock(x, y, w, h);
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Clock_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Clock; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Clock) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Clock; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Clock) ? true : super::is_a(inID); }
 };
 
 static Fl_Clock_Type Fl_Clock_type;
@@ -121,8 +121,8 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Progress_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Progress; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Progress) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Progress; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Progress) ? true : super::is_a(inID); }
 };
 
 static Fl_Progress_Type Fl_Progress_type;
@@ -161,8 +161,8 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Button_Type(); }
   int is_button() const FL_OVERRIDE { return 1; }
-  ID id() const FL_OVERRIDE { return ID::Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Button) ? true : super::is_a(inID); }
 };
 
 static Fl_Button_Type Fl_Button_type;
@@ -188,8 +188,8 @@ public:
     return new Fl_Return_Button(x, y, w, h, "Button");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Return_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Return_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Return_Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Return_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
 };
 
 static Fl_Return_Button_Type Fl_Return_Button_type;
@@ -213,8 +213,8 @@ public:
     return new Fl_Repeat_Button(x, y, w, h, "Button");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Repeat_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Repeat_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Repeat_Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Repeat_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
 };
 
 static Fl_Repeat_Button_Type Fl_Repeat_Button_type;
@@ -237,8 +237,8 @@ public:
     return new Fl_Light_Button(x, y, w, h, "Button");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Light_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Light_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Light_Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Light_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
 };
 
 static Fl_Light_Button_Type Fl_Light_Button_type;
@@ -261,8 +261,8 @@ public:
     return new Fl_Check_Button(x, y, w, h, "Button");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Check_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Check_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Check_Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Check_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
 };
 
 static Fl_Check_Button_Type Fl_Check_Button_type;
@@ -285,8 +285,8 @@ public:
     return new Fl_Round_Button(x, y, w, h, "Button");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Round_Button_Type(); }
-  ID id() const FL_OVERRIDE { return ID::Round_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID::Round_Button) ? true : super::is_a(inID); }
+  ID id() const FL_OVERRIDE { return ID_Round_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
 };
 static Fl_Round_Button_Type Fl_Round_Button_type;
 
@@ -333,7 +333,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Browser_Type();}
-  ID id() const FL_OVERRIDE { return ID::Browser; }
+  ID id() const FL_OVERRIDE { return ID_Browser; }
 };
 static Fl_Browser_Type Fl_Browser_type;
 
@@ -380,7 +380,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Check_Browser_Type();}
-  ID id() const FL_OVERRIDE { return ID::Check_Browser; }
+  ID id() const FL_OVERRIDE { return ID_Check_Browser; }
 };
 static Fl_Check_Browser_Type Fl_Check_Browser_type;
 
@@ -419,7 +419,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tree_Type();}
-  ID id() const FL_OVERRIDE { return ID::Tree; }
+  ID id() const FL_OVERRIDE { return ID_Tree; }
 };
 static Fl_Tree_Type Fl_Tree_type;
 
@@ -450,7 +450,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Browser_Type();}
-  ID id() const FL_OVERRIDE { return ID::File_Browser; }
+  ID id() const FL_OVERRIDE { return ID_File_Browser; }
 };
 static Fl_File_Browser_Type Fl_File_Browser_type;
 
@@ -483,7 +483,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Counter(x,y,w,h,"counter:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Counter_Type();}
-  ID id() const FL_OVERRIDE { return ID::Counter; }
+  ID id() const FL_OVERRIDE { return ID_Counter; }
 };
 static Fl_Counter_Type Fl_Counter_type;
 
@@ -527,7 +527,7 @@ public:
     return new Fl_Spinner(x,y,w,h,"spinner:");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Spinner_Type();}
-  ID id() const FL_OVERRIDE { return ID::Spinner; }
+  ID id() const FL_OVERRIDE { return ID_Spinner; }
 };
 static Fl_Spinner_Type Fl_Spinner_type;
 
@@ -576,7 +576,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Input_Type();}
-  ID id() const FL_OVERRIDE { return ID::Input; }
+  ID id() const FL_OVERRIDE { return ID_Input; }
   void copy_properties() FL_OVERRIDE {
     Fl_Widget_Type::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
@@ -626,7 +626,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Input_Type();}
-  ID id() const FL_OVERRIDE { return ID::File_Input; }
+  ID id() const FL_OVERRIDE { return ID_File_Input; }
 };
 static Fl_File_Input_Type Fl_File_Input_type;
 
@@ -667,7 +667,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Display_Type();}
-  ID id() const FL_OVERRIDE { return ID::Text_Display; }
+  ID id() const FL_OVERRIDE { return ID_Text_Display; }
 };
 static Fl_Text_Display_Type Fl_Text_Display_type;
 
@@ -708,7 +708,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Editor_Type();}
-  ID id() const FL_OVERRIDE { return ID::Text_Editor; }
+  ID id() const FL_OVERRIDE { return ID_Text_Editor; }
 };
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
@@ -745,7 +745,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
-  ID id() const FL_OVERRIDE { return ID::Simple_Terminal; }
+  ID id() const FL_OVERRIDE { return ID_Simple_Terminal; }
 };
 static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
 
@@ -776,7 +776,7 @@ public:
     }
     return myo;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Help_View_Type();}
-  ID id() const FL_OVERRIDE { return ID::Help_View; }
+  ID id() const FL_OVERRIDE { return ID_Help_View; }
 };
 static Fl_Help_View_Type Fl_Help_View_type;
 
@@ -792,7 +792,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Adjuster(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Adjuster_Type();}
-  ID id() const FL_OVERRIDE { return ID::Adjuster; }
+  ID id() const FL_OVERRIDE { return ID_Adjuster; }
 };
 static Fl_Adjuster_Type Fl_Adjuster_type;
 
@@ -813,7 +813,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Dial(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Dial_Type();}
-  ID id() const FL_OVERRIDE { return ID::Dial; }
+  ID id() const FL_OVERRIDE { return ID_Dial; }
 };
 static Fl_Dial_Type Fl_Dial_type;
 
@@ -833,7 +833,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Roller(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Roller_Type();}
-  ID id() const FL_OVERRIDE { return ID::Roller; }
+  ID id() const FL_OVERRIDE { return ID_Roller; }
 };
 static Fl_Roller_Type Fl_Roller_type;
 
@@ -857,7 +857,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Slider(x,y,w,h,"slider:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Slider_Type();}
-  ID id() const FL_OVERRIDE { return ID::Slider; }
+  ID id() const FL_OVERRIDE { return ID_Slider; }
 };
 static Fl_Slider_Type Fl_Slider_type;
 
@@ -874,7 +874,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Scrollbar(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Scrollbar_Type();}
-  ID id() const FL_OVERRIDE { return ID::Scrollbar; }
+  ID id() const FL_OVERRIDE { return ID_Scrollbar; }
 };
 static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
@@ -906,7 +906,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Output_Type();}
-  ID id() const FL_OVERRIDE { return ID::Output; }
+  ID id() const FL_OVERRIDE { return ID_Output; }
 };
 static Fl_Output_Type Fl_Output_type;
 
@@ -935,7 +935,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Input_Type();}
-  ID id() const FL_OVERRIDE { return ID::Value_Input; }
+  ID id() const FL_OVERRIDE { return ID_Value_Input; }
 };
 static Fl_Value_Input_Type Fl_Value_Input_type;
 
@@ -975,7 +975,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Output_Type();}
-  ID id() const FL_OVERRIDE { return ID::Value_Output; }
+  ID id() const FL_OVERRIDE { return ID_Value_Output; }
 };
 static Fl_Value_Output_Type Fl_Value_Output_type;
 
@@ -1002,7 +1002,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Value_Slider(x,y,w,h,"slider:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Slider_Type();}
-  ID id() const FL_OVERRIDE { return ID::Value_Slider; }
+  ID id() const FL_OVERRIDE { return ID_Value_Slider; }
 };
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
 
@@ -1172,7 +1172,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
 
       if ((t->parent && t->parent->is_flex())) {
         // Do not resize or layout the widget. Flex will need the widget size.
-      } else if (wt->id() == Fl_Type::ID::Menu_Bar) {
+      } else if (wt->id() == Fl_Type::ID_Menu_Bar) {
         // Move and resize the menubar across the top of the window...
         wt->o->resize(0, 0, w, h);
       } else {

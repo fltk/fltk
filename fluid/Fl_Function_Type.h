@@ -61,7 +61,7 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Function; }
+  ID id() const FL_OVERRIDE { return ID_Function; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
@@ -85,7 +85,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "code";}
   int is_code_block() const FL_OVERRIDE {return 0;}
   int is_code() const FL_OVERRIDE {return 1;}
-  ID id() const FL_OVERRIDE { return ID::Code; }
+  ID id() const FL_OVERRIDE { return ID_Code; }
   int is_public() const FL_OVERRIDE { return -1; }
   int is_editing();
   int reap_editor();
@@ -108,7 +108,7 @@ public:
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
-  ID id() const FL_OVERRIDE { return ID::CodeBlock; }
+  ID id() const FL_OVERRIDE { return ID_CodeBlock; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 };
@@ -131,7 +131,7 @@ public:
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Decl; }
+  ID id() const FL_OVERRIDE { return ID_Decl; }
 };
 
 // ---- Fl_Data_Type declaration
@@ -150,7 +150,7 @@ public:
   const char *type_name() FL_OVERRIDE {return "data";}
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Data; }
+  ID id() const FL_OVERRIDE { return ID_Data; }
 };
 
 // ---- Fl_DeclBlock_Type declaration
@@ -172,7 +172,7 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::DeclBlock; }
+  ID id() const FL_OVERRIDE { return ID_DeclBlock; }
 };
 
 // ---- Fl_Comment_Type declaration
@@ -193,7 +193,7 @@ public:
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
   int is_comment() const FL_OVERRIDE { return 1; }
-  ID id() const FL_OVERRIDE { return ID::Comment; }
+  ID id() const FL_OVERRIDE { return ID_Comment; }
 };
 
 // ---- Fl_Class_Type declaration
@@ -219,7 +219,7 @@ public:
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
-  ID id() const FL_OVERRIDE { return ID::Class; }
+  ID id() const FL_OVERRIDE { return ID_Class; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 

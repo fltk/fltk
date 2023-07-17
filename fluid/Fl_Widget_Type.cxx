@@ -59,7 +59,7 @@ const char* subclassname(Fl_Type* l) {
     if (c) return c;
     if (l->is_class()) return "Fl_Group";
     if (p->o->type() == FL_WINDOW+1) return "Fl_Double_Window";
-    if (p->id() == Fl_Type::ID::Input) {
+    if (p->id() == Fl_Type::ID_Input) {
       if (p->o->type() == FL_FLOAT_INPUT) return "Fl_Float_Input";
       if (p->o->type() == FL_INT_INPUT) return "Fl_Int_Input";
     }
@@ -877,7 +877,7 @@ void h_cb(Fluid_Coord_Input *i, void *v) {
 
 void wc_relative_cb(Fl_Choice *i, void *v) {
   if (v == LOAD) {
-    if (current_widget->id() == Fl_Type::ID::Widget_Class) {
+    if (current_widget->id() == Fl_Type::ID_Widget_Class) {
       i->show();
       i->value(((Fl_Widget_Class_Type *)current_widget)->wc_relative);
     } else {
@@ -887,7 +887,7 @@ void wc_relative_cb(Fl_Choice *i, void *v) {
     int mod = 0;
     undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && (current_widget->id() == Fl_Type::ID::Widget_Class)) {
+      if (o->selected && (current_widget->id() == Fl_Type::ID_Widget_Class)) {
         Fl_Widget_Class_Type *t = (Fl_Widget_Class_Type *)o;
         t->wc_relative = i->value();
         mod = 1;
@@ -1046,9 +1046,9 @@ void box_cb(Fl_Choice* i, void *v) {
 void down_box_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
     int n;
-    if (current_widget->is_a(Fl_Type::ID::Button))
+    if (current_widget->is_a(Fl_Type::ID_Button))
       n = ((Fl_Button*)(current_widget->o))->down_box();
-    else if (current_widget->id() == Fl_Type::ID::Input_Choice)
+    else if (current_widget->id() == Fl_Type::ID_Input_Choice)
       n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
     else if (current_widget->is_menu_button())
       n = ((Fl_Menu_*)(current_widget->o))->down_box();
@@ -1067,11 +1067,11 @@ void down_box_cb(Fl_Choice* i, void *v) {
     if (n == ZERO_ENTRY) n = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected) {
-        if (o->is_a(Fl_Type::ID::Button)) {
+        if (o->is_a(Fl_Type::ID_Button)) {
           Fl_Widget_Type* q = (Fl_Widget_Type*)o;
           ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
           if (((Fl_Button*)(q->o))->value()) q->redraw();
-        } else if (o->id() == Fl_Type::ID::Input_Choice) {
+        } else if (o->id() == Fl_Type::ID_Input_Choice) {
           Fl_Widget_Type* q = (Fl_Widget_Type*)o;
           ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
         } else if (o->is_menu_button()) {
@@ -1277,9 +1277,9 @@ void visible_cb(Fl_Light_Button* i, void* v) {
         n ? q->o->show() : q->o->hide();
         q->redraw();
         if (n && q->parent && q->parent->type_name()) {
-          if (q->parent->id() == Fl_Type::ID::Tabs) {
+          if (q->parent->id() == Fl_Type::ID_Tabs) {
             ((Fl_Tabs *)q->o->parent())->value(q->o);
-          } else if (q->parent->id() == Fl_Type::ID::Wizard) {
+          } else if (q->parent->id() == Fl_Type::ID_Wizard) {
             ((Fl_Wizard *)q->o->parent())->value(q->o);
           }
         }
@@ -1438,7 +1438,7 @@ void color_common(Fl_Color c) {
     if (o->selected && o->is_widget()) {
       Fl_Widget_Type* q = (Fl_Widget_Type*)o;
       q->o->color(c); q->o->redraw();
-      if (q->parent && (q->parent->id() == Fl_Type::ID::Tabs)) {
+      if (q->parent && (q->parent->id() == Fl_Type::ID_Tabs)) {
         if (q->o->parent()) q->o->parent()->redraw();
       }
       mod = 1;
@@ -2809,7 +2809,7 @@ void Fl_Widget_Type::write_static(Fd_Code_Writer& f) {
       Fl_Type *q = 0;
       for (Fl_Type* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
-      if (!q || (q->id() != Fl_Type::ID::Widget_Class))
+      if (!q || (q->id() != Fl_Type::ID_Widget_Class))
         f.write_c("->user_data()");
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
@@ -3035,7 +3035,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
     if (b->value()) f.write_c("%s%s->value(1);\n", f.indent(), var);
-  } else if (id() == Fl_Type::ID::Input_Choice) {
+  } else if (id() == Fl_Type::ID_Input_Choice) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
@@ -3211,7 +3211,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
     if (b->value()) f.write_string("value 1");
-  } else if (id() == Fl_Type::ID::Input_Choice) {
+  } else if (id() == Fl_Type::ID_Input_Choice) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
@@ -3343,7 +3343,7 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Button*)o)->down_box((Fl_Boxtype)x);
     }
-  } else if ((id() == Fl_Type::ID::Input_Choice) && !strcmp(c,"down_box")) {
+  } else if ((id() == Fl_Type::ID_Input_Choice) && !strcmp(c,"down_box")) {
     const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;

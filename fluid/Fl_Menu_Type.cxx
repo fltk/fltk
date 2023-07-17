@@ -293,11 +293,11 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && (t->id() == Fl_Type::ID::Input_Choice))
+      if (t && (t->id() == Fl_Type::ID_Input_Choice))
         f.write_c("->parent()");
       for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         f.write_c("->parent()");
-      if (!q || (q->id() != Fl_Type::ID::Widget_Class))
+      if (!q || (q->id() != Fl_Type::ID_Widget_Class))
         f.write_c("->user_data()");
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }

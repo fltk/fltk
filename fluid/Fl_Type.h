@@ -87,30 +87,38 @@ protected:
 
 public:
 
-  typedef enum {
+  enum ID {
     // administrative
-    Base_, Widget_, Menu_,
+    ID_Base_, ID_Widget_, ID_Menu_,
     // non-widget
-    Function, Code, CodeBlock, Decl, DeclBlock, Class, Widget_Class,
-    Comment, Data,
+    ID_Function, ID_Code, ID_CodeBlock,
+    ID_Decl, ID_DeclBlock, ID_Class,
+    ID_Widget_Class, ID_Comment, ID_Data,
     // groups
-    Window, Group, Pack, Flex, Tabs, Scroll, Tile, Wizard,
+    ID_Window, ID_Group, ID_Pack,
+    ID_Flex, ID_Tabs, ID_Scroll,
+    ID_Tile, ID_Wizard,
     // buttons
-    Button, Return_Button, Light_Button, Check_Button, Repeat_Button, Round_Button,
+    ID_Button, ID_Return_Button, ID_Light_Button,
+    ID_Check_Button, ID_Repeat_Button, ID_Round_Button,
     // valuators
-    Slider, Scrollbar, Value_Slider, Adjuster, Counter, Spinner, Dial,
-    Roller, Value_Input, Value_Output,
+    ID_Slider, ID_Scrollbar, ID_Value_Slider,
+    ID_Adjuster, ID_Counter, ID_Spinner,
+    ID_Dial, ID_Roller, ID_Value_Input, ID_Value_Output,
     // text
-    Input, Output, Text_Editor, Text_Display, File_Input, Simple_Terminal,
+    ID_Input, ID_Output, ID_Text_Editor,
+    ID_Text_Display, ID_File_Input, ID_Simple_Terminal,
     // menus
-    Menu_Bar, Menu_Button, Choice, Input_Choice, Submenu, Menu_Item,
-    Checkbox_Menu_Item, Radio_Menu_Item,
+    ID_Menu_Bar, ID_Menu_Button, ID_Choice,
+    ID_Input_Choice, ID_Submenu, ID_Menu_Item,
+    ID_Checkbox_Menu_Item, ID_Radio_Menu_Item,
     // browsers
-    Browser, Check_Browser, File_Browser, Tree, Help_View, Table,
+    ID_Browser, ID_Check_Browser, ID_File_Browser,
+    ID_Tree, ID_Help_View, ID_Table,
     // misc
-    Box, Clock, Progress,
-    MaxID
-  } ID;
+    ID_Box, ID_Clock, ID_Progress,
+    ID_Max_
+  };
 
   virtual ~Fl_Type();
   virtual Fl_Type *make(Strategy strategy) = 0;
@@ -196,8 +204,8 @@ public:
   virtual int is_class() const {return 0;}
   virtual int is_public() const {return 1;}
 
-  virtual ID id() const { return ID::Base_; }
-  virtual bool is_a(ID inID) { return (inID==ID::Base_); }
+  virtual ID id() const { return ID_Base_; }
+  virtual bool is_a(ID inID) { return (inID==ID_Base_); }
 
   const char* class_name(const int need_nest) const;
   const class Fl_Class_Type* is_in_class() const;

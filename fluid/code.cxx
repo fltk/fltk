@@ -663,7 +663,7 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
   if (p->is_widget() && p->is_class()) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
-      if (q->id() != Fl_Type::ID::Function) q = write_code(q);
+      if (q->id() != Fl_Type::ID_Function) q = write_code(q);
       else {
         int level = q->level;
         do {
@@ -676,7 +676,7 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     p->write_code2(*this);
 
     for (q = p->next; q && q->level > p->level;) {
-      if (q->id() == Fl_Type::ID::Function) q = write_code(q);
+      if (q->id() == Fl_Type::ID_Function) q = write_code(q);
       else {
         int level = q->level;
         do {

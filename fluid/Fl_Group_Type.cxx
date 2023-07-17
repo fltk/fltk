@@ -78,7 +78,7 @@ void group_cb(Fl_Widget *, void *) {
   // Find the current widget:
   Fl_Type *qq = Fl_Type::current;
   while (qq && (!qq->is_widget() || qq->is_menu_item())) qq = qq->parent;
-  if (!qq || qq->level < 1 || (qq->level == 1 && (qq->id() == Fl_Type::ID::Widget_Class))) {
+  if (!qq || qq->level < 1 || (qq->level == 1 && (qq->id() == Fl_Type::ID_Widget_Class))) {
     fl_message("Please select widgets to group");
     return;
   }
@@ -107,7 +107,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   Fl_Type *q = Fl_Type::current;
   while (q && (!q->is_widget() || q->is_menu_item())) q = q->parent;
   if (q) q = q->parent;
-  if (!q || q->level < 1 || (q->level == 1 && (q->id() == Fl_Type::ID::Widget_Class))) {
+  if (!q || q->level < 1 || (q->level == 1 && (q->id() == Fl_Type::ID_Widget_Class))) {
     fl_message("Please select widgets in a group");
     return;
   }
