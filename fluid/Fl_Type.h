@@ -87,6 +87,31 @@ protected:
 
 public:
 
+  typedef enum {
+    // administrative
+    Base_, Widget_, Menu_,
+    // non-widget
+    Function, Code, CodeBlock, Decl, DeclBlock, Class, Widget_Class,
+    Comment, Data,
+    // groups
+    Window, Group, Pack, Flex, Tabs, Scroll, Tile, Wizard,
+    // buttons
+    Button, Return_Button, Light_Button, Check_Button, Repeat_Button, Round_Button,
+    // valuators
+    Slider, Scrollbar, Value_Slider, Adjuster, Counter, Spinner, Dial,
+    Roller, Value_Input, Value_Output,
+    // text
+    Input, Output, Text_Editor, Text_Display, File_Input, Simple_Terminal,
+    // menus
+    Menu_Bar, Menu_Button, Choice, Input_Choice, Submenu, Menu_Item,
+    Checkbox_Menu_Item, Radio_Menu_Item,
+    // browsers
+    Browser, Check_Browser, File_Browser, Tree, Help_View, Table,
+    // misc
+    Box, Clock, Progress,
+    MaxID
+  } ID;
+
   virtual ~Fl_Type();
   virtual Fl_Type *make(Strategy strategy) = 0;
 
@@ -171,7 +196,7 @@ public:
   virtual int is_class() const {return 0;}
   virtual int is_public() const {return 1;}
 
-  virtual int pixmapID() { return 0; }
+  virtual ID id() const { return ID::Base_; }
 
   const char* class_name(const int need_nest) const;
   const class Fl_Class_Type* is_in_class() const;

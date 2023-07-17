@@ -688,8 +688,8 @@ void check_redraw_corresponding_parent(Fl_Type *s) {
     if( !s || !s->selected || !s->is_widget()) return;
     for (Fl_Type *i=s; i && i->parent; i=i->parent) {
         if (i->is_group() && prev_parent &&
-            (!strcmp(i->type_name(), "Fl_Tabs") ||
-             !strcmp(i->type_name(), "Fl_Wizard"))) {
+            ( (i->id() == Fl_Type::ID::Tabs) ||
+              (i->id() == Fl_Type::ID::Wizard))) {
              ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
              return;
         }

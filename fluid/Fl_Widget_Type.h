@@ -102,6 +102,7 @@ public:
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();
 
+  ID id() const FL_OVERRIDE { return ID::Widget_; }
   int is_widget() const FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
 

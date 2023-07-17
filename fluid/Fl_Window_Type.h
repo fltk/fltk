@@ -70,7 +70,7 @@ protected:
   Fl_Widget *widget(int,int,int,int) FL_OVERRIDE {return 0;}
   int recalc;           // set by fix_overlay()
   void moveallchildren();
-  int pixmapID() FL_OVERRIDE { return 1; }
+  ID id() const FL_OVERRIDE { return ID::Window; }
   void open_();
 
 public:
@@ -139,7 +139,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
-  int pixmapID() FL_OVERRIDE { return 48; }
+  ID id() const FL_OVERRIDE { return ID::Widget_Class; }
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}

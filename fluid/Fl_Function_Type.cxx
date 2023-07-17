@@ -45,7 +45,7 @@ Fl_Class_Type *current_class = NULL;
 int has_toplevel_function(const char *rtype, const char *sig) {
   Fl_Type *child;
   for (child = Fl_Type::first; child; child = child->next) {
-    if (!child->is_in_class() && strcmp(child->type_name(), "Function")==0) {
+    if (!child->is_in_class() && (child->id() == Fl_Type::ID::Function)) {
       const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
@@ -1982,7 +1982,7 @@ void Fl_Class_Type::write_code2(Fd_Code_Writer& f) {
 int Fl_Class_Type::has_function(const char *rtype, const char *sig) const {
   Fl_Type *child;
   for (child = next; child && child->level > level; child = child->next) {
-    if (child->level == level+1 && strcmp(child->type_name(), "Function")==0) {
+    if (child->level == level+1 && (child->id() == Fl_Type::ID::Function)) {
       const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
