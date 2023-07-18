@@ -699,7 +699,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
       i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
     else if (current_widget->is_input())
       i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_value_input())
+    else if (current_widget->is_a(Fl_Type::ID_Value_Input))
       i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
     else if (current_widget->is_text_display())
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
@@ -723,7 +723,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_value_input()) {
+      } else if (o->selected && o->is_a(Fl_Type::ID_Value_Input)) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());

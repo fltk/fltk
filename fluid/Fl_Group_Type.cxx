@@ -25,6 +25,7 @@
 #include "code.h"
 #include "widget_browser.h"
 #include "undo.h"
+#include "Fd_Snap_Action.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -426,8 +427,6 @@ int Fl_Flex_Type::is_fixed(Fl_Type *t) {
 
 Fl_Table_Type Fl_Table_type;    // the "factory"
 
-const char table_type_name[] = "Fl_Table";
-
 static const int MAX_ROWS = 14;
 static const int MAX_COLS = 7;
 
@@ -539,6 +538,12 @@ Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
   copy_properties();
   grp->end();
   return live_widget;
+}
+
+void Fl_Table_Type::ideal_size(int &w, int &h) FL_OVERRIDE {
+  w = 160;
+  h = 120;
+  Fd_Snap_Action::better_size(w, h);
 }
 
 // ---- Fl_Tabs_Type --------------------------------------------------- MARK: -

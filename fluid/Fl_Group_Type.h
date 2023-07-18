@@ -109,15 +109,17 @@ public:
 
 // ---- Fl_Table_Type -------------------------------------------------- MARK: -
 
-extern const char table_type_name[];
-
-class Fl_Table_Type : public Fl_Group_Type {
+class Fl_Table_Type : public Fl_Group_Type
+{
+  typedef Fl_Group_Type super;
 public:
-  const char *type_name() FL_OVERRIDE {return table_type_name;}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::TableGroup";}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Table_Type();}
-  Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
+  const char *type_name() FL_OVERRIDE { return "Fl_Table"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::TableGroup"; }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Table_Type(); }
+  Fl_Widget *widget(int X, int Y, int W, int H) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Table; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Table) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;

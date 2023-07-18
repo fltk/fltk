@@ -89,7 +89,7 @@ public:
 
   enum ID {
     // administrative
-    ID_Base_, ID_Widget_, ID_Menu_,
+    ID_Base_, ID_Widget_, ID_Menu_, ID_Browser_, ID_Valuator,
     // non-widget
     ID_Function, ID_Code, ID_CodeBlock,
     ID_Decl, ID_DeclBlock, ID_Class,
@@ -184,11 +184,10 @@ public:
   // fake rtti:
   virtual int is_parent() const {return 0;}
   virtual int is_widget() const {return 0;}
+  /// TODO: Misnamed: This is true if the widget is a button or a menu item with button functionality
   virtual int is_button() const {return 0;}
   virtual int is_input() const {return 0;}
-  virtual int is_value_input() const {return 0;}
   virtual int is_text_display() const {return 0;}
-  virtual int is_valuator() const {return 0;}
   virtual int is_spinner() const {return 0;}
   virtual int is_menu_item() const {return 0;}
   virtual int is_menu_button() const {return 0;}
