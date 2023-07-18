@@ -540,7 +540,7 @@ Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
   return live_widget;
 }
 
-void Fl_Table_Type::ideal_size(int &w, int &h) FL_OVERRIDE {
+void Fl_Table_Type::ideal_size(int &w, int &h) {
   w = 160;
   h = 120;
   Fd_Snap_Action::better_size(w, h);
