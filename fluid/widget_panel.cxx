@@ -150,7 +150,7 @@ Fl_Double_Window* make_widget_panel() {
             o->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Choice* o = new Fl_Choice(284, 40, 120, 20);
+          { Fl_Choice* o = new Fl_Choice(285, 40, 119, 20);
             o->tooltip("The label style for the widget.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -175,7 +175,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)image_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(294, 65, 70, 20, "Browse...");
+          { Fl_Button* o = new Fl_Button(295, 65, 69, 20, "Browse...");
             o->tooltip("Click to choose the active image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)image_browse_cb);
@@ -208,7 +208,7 @@ mat");
             o->callback((Fl_Callback*)inactive_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Button* o = new Fl_Button(294, 90, 70, 20, "Browse...");
+          { Fl_Button* o = new Fl_Button(295, 90, 69, 20, "Browse...");
             o->tooltip("Click to choose the inactive image.");
             o->labelsize(11);
             o->callback((Fl_Callback*)inactive_browse_cb);
@@ -377,7 +377,7 @@ math, including the variables\ny, py, sy, cy, and i");
             widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             widget_h_input->when(FL_WHEN_RELEASE);
           } // Fluid_Coord_Input* widget_h_input
-          { Fl_Choice* o = new Fl_Choice(335, 150, 65, 20, "Children:");
+          { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
             o->tooltip("When instantiating a widget class, the children can either be fixed in their \
 original position, automatically be repositioned, or both repsositioned and re\
 sized to fit the container.");
@@ -388,7 +388,8 @@ sized to fit the container.");
             o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             o->menu(menu_Children);
           } // Fl_Choice* o
-          { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
+          { Fl_Box* o = new Fl_Box(399, 150, 1, 20);
+            o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
@@ -564,26 +565,27 @@ sized to fit the container.");
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 210, 0, 20, "Shortcut:");
+        { Fl_Group* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
           o->labelfont(1);
           o->labelsize(11);
+          o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
+          { // This is a special button that grabs keystrokes directly
+            Fl_Shortcut_Button* o = new Fl_Shortcut_Button(95, 210, 310, 20);
+            o->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
+            o->box(FL_DOWN_BOX);
+            o->color(FL_BACKGROUND2_COLOR);
+            o->selection_color((Fl_Color)12);
+            o->labeltype(FL_NORMAL_LABEL);
+            o->labelfont(0);
+            o->labelsize(11);
+            o->labelcolor(FL_FOREGROUND_COLOR);
+            o->callback((Fl_Callback*)shortcut_in_cb);
+            o->align(Fl_Align(FL_ALIGN_CENTER));
+            o->when(FL_WHEN_CHANGED);
+          } // Fl_Shortcut_Button* o
           o->end();
         } // Fl_Group* o
-        { // This is a special button that grabs keystrokes directly
-          Fl_Shortcut_Button* o = new Fl_Shortcut_Button(95, 210, 310, 20);
-          o->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
-          o->box(FL_DOWN_BOX);
-          o->color(FL_BACKGROUND2_COLOR);
-          o->selection_color((Fl_Color)12);
-          o->labeltype(FL_NORMAL_LABEL);
-          o->labelfont(0);
-          o->labelsize(11);
-          o->labelcolor(FL_FOREGROUND_COLOR);
-          o->callback((Fl_Callback*)shortcut_in_cb);
-          o->align(Fl_Align(FL_ALIGN_CENTER));
-          o->when(FL_WHEN_CHANGED);
-        } // Fl_Shortcut_Button* o
         { Fl_Group* o = new Fl_Group(95, 235, 300, 20, "X Class:");
           o->labelfont(1);
           o->labelsize(11);
@@ -631,7 +633,6 @@ sized to fit the container.");
           } // Fl_Light_Button* o
           { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
             o->tooltip("Activate the widget.");
-            o->shortcut(0x400061);
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
             o->callback((Fl_Callback*)active_cb);
@@ -691,7 +692,7 @@ sized to fit the container.");
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(246, 40, 50, 20);
+          { Fl_Value_Input* o = new Fl_Value_Input(247, 40, 49, 20);
             o->tooltip("The size of the label text.");
             o->labelsize(11);
             o->maximum(100);
@@ -782,7 +783,7 @@ sized to fit the container.");
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(246, 115, 50, 20);
+          { Fl_Value_Input* o = new Fl_Value_Input(247, 115, 49, 20);
             o->tooltip("The value text size.");
             o->labelsize(11);
             o->maximum(100);
@@ -827,7 +828,7 @@ sized to fit the container.");
             o->callback((Fl_Callback*)subclass_cb, (void*)(4));
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Choice* o = new Fl_Choice(265, 40, 140, 20);
+          { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
             o->tooltip("The widget subtype.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -866,6 +867,7 @@ sized to fit the container.");
             o->textsize(11);
             o->callback((Fl_Callback*)name_public_cb);
             o->when(FL_WHEN_CHANGED);
+            o->hide();
             o->menu(menu_3);
           } // Fl_Choice* o
           o->end();

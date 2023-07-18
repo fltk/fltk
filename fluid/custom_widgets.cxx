@@ -92,7 +92,7 @@ int Widget_Bin_Window_Button::handle(int inEvent)
         return ret;
       if (!Fl::event_is_click()) {
         if (!drag_win) {
-          drag_win = new Fl_Window(0, 0, 100, 100);
+          drag_win = new Fl_Window(0, 0, 480, 320);
           drag_win->border(0);
           drag_win->set_non_modal();
         }

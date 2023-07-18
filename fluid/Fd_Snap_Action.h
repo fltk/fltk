@@ -23,43 +23,54 @@ struct Fl_Menu_Item;
 
 extern Fl_Menu_Item main_layout_submenu_[];
 
+/**
+ Indicate the storage location for a layout suite.
+ */
 enum {
-  FD_STORE_INTERNAL,
-  FD_STORE_USER,
-  FD_STORE_PROJECT,
-  FD_STORE_FILE
+  FD_STORE_INTERNAL,  ///< stored inside FLUID app
+  FD_STORE_USER,      ///< suite is stored in the user wide FLUID settings
+  FD_STORE_PROJECT,   ///< suite is stored within the current .fl project file
+  FD_STORE_FILE       ///< store suite in external file
 };
 
+/**
+ \brief Collection of layout settings.
+
+ Presets contain default fonts and font sizes for labels and text. They
+ can be used to guide widget positions using margins, grids, and gap sizes.
+ There are three Presets available in one Suite, marked "application",
+ "dialog", and "toolbox".
+ */
 class Fd_Layout_Preset {
 public:
-  int left_window_margin;
+  int left_window_margin;   ///< gap between the window border and the widget
   int right_window_margin;
   int top_window_margin;
   int bottom_window_margin;
-  int window_grid_x;
+  int window_grid_x;        ///< a regular grid across the window with its origin in the top left window corner
   int window_grid_y;
 
-  int left_group_margin;
+  int left_group_margin;    ///< gap between the border of a widget and its parent group
   int right_group_margin;
   int top_group_margin;
   int bottom_group_margin;
-  int group_grid_x;
+  int group_grid_x;         ///< a regular grid across the group with its origin in the top left group corner
   int group_grid_y;
 
-  int top_tabs_margin;
-  int bottom_tabs_margin;
+  int top_tabs_margin;      ///< preferred top edge tab size inside Fl_Tabs
+  int bottom_tabs_margin;   ///< preferred bottom edge tab size inside Fl_Tabs
 
-  int widget_min_w;
-  int widget_inc_w;
-  int widget_gap_x;
+  int widget_min_w;         ///< minimum widget width
+  int widget_inc_w;         ///< widget width increments starting from widget_min_w
+  int widget_gap_x;         ///< preferred horizontal gap between widgets
   int widget_min_h;
   int widget_inc_h;
   int widget_gap_y;
 
-  int labelfont;
-  int labelsize;
-  int textfont;
-  int textsize;
+  int labelfont;            ///< preferred font for labels
+  int labelsize;            ///< preferred size for labels
+  int textfont;             ///< preferred font for text elements
+  int textsize;             ///< preferred size for text elements
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
@@ -69,12 +80,20 @@ public:
 
 extern Fd_Layout_Preset *layout;
 
+/**
+ \brief A collection of layout presets.
+
+ A suite of layout presets is designed to cover various use cases when
+ designing UI layouts for applications.
+ There are three Presets available in one Suite, marked "application",
+ "dialog", and "toolbox".
+ */
 class Fd_Layout_Suite {
 public:
-  char *name_;
-  char *menu_label;
-  Fd_Layout_Preset *layout[3]; // application, dialog, toolbox;
-  int storage_;
+  char *name_;                  ///< name of the suite
+  char *menu_label;             ///< label text used in pulldown menu
+  Fd_Layout_Preset *layout[3];  ///< presetes for application, dialog, and toolbox windows
+  int storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
@@ -88,6 +107,13 @@ public:
 
 };
 
+/**
+ \brief Manage all layout suites that are available to the user.
+
+ FLUID has two built-in suites. More suites can be cloned or added and stored
+ as a user preference, as part of an .fl project file, or in a seperate file
+ for import/export and sharing.
+ */
 class Fd_Layout_List {
 public:
   Fl_Menu_Item *main_menu_;
@@ -165,6 +191,7 @@ public:
   static void draw_all(Fd_Snap_Data &d);
   static void get_resize_stepsize(int &x_step, int &y_step);
   static void get_move_stepsize(int &x_step, int &y_step);
+  static void better_size(int &w, int &h);
 };
 
 #endif // _FLUID_FD_SNAP_ACTION_H

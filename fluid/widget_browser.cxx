@@ -252,7 +252,7 @@ int Widget_Browser::item_height(void *l) const {
  \return height in FLTK units
  */
 int Widget_Browser::incr_height() const {
-  return textsize()+2;
+  return textsize()+5;
 }
 
 /**
@@ -335,7 +335,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   // Width=18: Draw the icon associated with the type.
-  Fl_Pixmap *pm = pixmap[l->pixmapID()];
+  Fl_Pixmap *pm = pixmap[l->id()];
   if (pm) pm->draw(X-18, Y);
 
   // Add tags on top of the icon for locked and protected types.
@@ -348,8 +348,8 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
       && !l->is_window()
       && ((Fl_Widget_Type*)l)->o
       && !((Fl_Widget_Type*)l)->o->visible()
-      && (!l->parent || (   strcmp(l->parent->type_name(),"Fl_Tabs")
-                         && strcmp(l->parent->type_name(),"Fl_Wizard")) )
+      && (!l->parent || (   (l->parent->id() != Fl_Type::ID_Tabs)
+                         && (l->parent->id() != Fl_Type::ID_Wizard) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);

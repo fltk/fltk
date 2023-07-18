@@ -293,11 +293,11 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && !strcmp(t->type_name(), "Fl_Input_Choice"))
+      if (t && (t->id() == Fl_Type::ID_Input_Choice))
         f.write_c("->parent()");
       for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         f.write_c("->parent()");
-      if (!q || strcmp(q->type_name(), "widget_class"))
+      if (!q || (q->id() != Fl_Type::ID_Widget_Class))
         f.write_c("->user_data()");
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
@@ -380,7 +380,7 @@ void Fl_Menu_Item_Type::write_item(Fd_Code_Writer& f) {
     switch (g_project.i18n_type) {
       case 1:
         // we will call i18n when the menu is instantiated for the first time
-        f.write_c("%s(", g_project.i18n_static_function.c_str());
+        f.write_c("%s(", g_project.i18n_gnu_static_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -481,11 +481,11 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
       } else if (g_project.i18n_type==1) {
         f.write_c("%sml->labelb = %s(o->label());\n",
-                f.indent(), g_project.i18n_function.c_str());
+                f.indent(), g_project.i18n_gnu_function.c_str());
       } else if (g_project.i18n_type==2) {
         f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
-                g_project.i18n_set.c_str(), msgnum());
+                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
+                g_project.i18n_pos_set.c_str(), msgnum());
       }
       f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
@@ -503,11 +503,11 @@ void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
       start_menu_initialiser(f, menuItemInitialized, mname, i);
       if (g_project.i18n_type==1) {
         f.write_c("%so->label(%s(o->label()));\n",
-                f.indent(), g_project.i18n_function.c_str());
+                f.indent(), g_project.i18n_gnu_function.c_str());
       } else if (g_project.i18n_type==2) {
         f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                f.indent(), g_project.i18n_file[0] ? g_project.i18n_file.c_str() : "_catalog",
-                g_project.i18n_set.c_str(), msgnum());
+                f.indent(), g_project.i18n_pos_file[0] ? g_project.i18n_pos_file.c_str() : "_catalog",
+                g_project.i18n_pos_set.c_str(), msgnum());
       }
     }
   }
@@ -705,9 +705,11 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
+      i->parent()->hide();
       return;
     }
     i->show();
+    i->parent()->show();
     i->redraw();
   } else {
     int mod = 0;

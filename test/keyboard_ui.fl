@@ -2,12 +2,17 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 Function {make_window()} {open
 } {
-  Fl_Window my_window {open selected
-    xywh {461 296 495 215} type Double hide
+  Fl_Window my_window {open
+    xywh {448 339 495 215} type Double
     code0 {\#include "keyboard.h"}
-    class MyWindow
+    class MyWindow visible
   } {
     Fl_Button {} {
       label {Esc }
@@ -685,8 +690,8 @@ Function {make_window()} {open
       xywh {15 20 170 30} labelsize 9 align 5
     }
     Fl_Box {} {
-      label {Fl::event_state():}
-      xywh {400 15 80 40} labelsize 9 align 5
+      label {Fl::event_state():} selected
+      xywh {400 15 80 0} labelsize 9 align 5
     }
     Fl_Output text_output {
       label {Fl::event_text():}

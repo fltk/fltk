@@ -3,10 +3,15 @@ version 1.0400
 i18n_type 1
 i18n_include {<stdio.h>}
 i18n_conditional {}
-i18n_function _
-i18n_static_function N_
+i18n_gnu_function gettext
+i18n_gnu_static_function gettext_noop
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 0
+}
 comment {About test/preferences:
 
 The preferences app shows two features of FLTK and FLUID.
@@ -136,28 +141,28 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {562 185 298 347} type Double visible
+    xywh {480 345 322 355} type Double visible
   } {
     Fl_Button {} {
       label Cancel
-      callback closeWindowCB
-      xywh {210 303 75 25}
+      callback closeWindowCB selected
+      xywh {118 316 90 24}
     }
     Fl_Button {} {
       label OK
-      callback saveAndCloseWindowCB selected
-      xywh {125 303 75 25}
+      callback saveAndCloseWindowCB
+      xywh {217 316 90 24}
     }
     Fl_Group {} {
       label {Get Up:} open
-      xywh {20 30 115 225} box ENGRAVED_FRAME align 5
+      xywh {15 22 144 248} box ENGRAVED_FRAME align 5
     } {
       Fl_Input wAlarm {
         label {Alarm at:}
-        xywh {25 55 45 20} align 5
+        xywh {25 47 60 20} align 5
       }
       Fl_Choice wAmPm {open
-        xywh {75 55 55 20} down_box BORDER_BOX
+        xywh {85 47 60 20} down_box BORDER_BOX
       } {
         MenuItem {} {
           label {a.m.}
@@ -170,7 +175,7 @@ Function {} {open return_type int
       }
       Fl_Choice wWear {
         label {Wear:} open
-        xywh {25 100 105 20} down_box BORDER_BOX align 5
+        xywh {25 92 120 20} down_box BORDER_BOX align 5
       } {
         MenuItem {} {
           label shoes
@@ -190,41 +195,41 @@ Function {} {open return_type int
         }
       }
       Fl_Group {} {open
-        xywh {35 120 98 60}
+        xywh {25 112 120 76}
       } {
         Fl_Round_Button wLeft {
           label {left side}
-          xywh {35 120 95 25} type Radio down_box ROUND_DOWN_BOX
+          xywh {35 112 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Round_Button wRight {
           label {right side}
-          xywh {35 140 95 25} type Radio down_box ROUND_DOWN_BOX
+          xywh {35 136 100 24} type Radio down_box ROUND_DOWN_BOX
         }
         Fl_Box {} {
           label {of the bed}
-          xywh {38 160 95 20}
+          xywh {35 160 100 24}
         }
       }
       Fl_Check_Button wShower {
         label shower
-        xywh {25 180 105 25} down_box DOWN_BOX
+        xywh {25 188 105 24} down_box DOWN_BOX
       }
       Fl_Check_Button wShave {
         label shave
-        xywh {25 200 105 25} down_box DOWN_BOX
+        xywh {25 212 105 24} down_box DOWN_BOX
       }
       Fl_Check_Button wBrush {
         label {brush teeth}
-        xywh {25 220 105 25} down_box DOWN_BOX
+        xywh {25 236 105 24} down_box DOWN_BOX
       }
     }
     Fl_Group {} {
       label {Breakfast:} open
-      xywh {160 30 115 225} box ENGRAVED_FRAME align 5
+      xywh {163 22 144 248} box ENGRAVED_FRAME align 5
     } {
       Fl_Choice wDrink {
         label {Drink:} open
-        xywh {165 50 105 20} down_box BORDER_BOX align 5
+        xywh {173 48 120 20} down_box BORDER_BOX align 5
       } {
         MenuItem {} {
           label coffee
@@ -241,11 +246,11 @@ Function {} {open return_type int
       }
       Fl_Check_Button wMilk {
         label {with milk}
-        xywh {170 70 100 25} down_box DOWN_BOX
+        xywh {173 68 100 24} down_box DOWN_BOX
       }
       Fl_Choice wBread {
         label {Bread:} open
-        xywh {165 110 105 20} down_box BORDER_BOX align 5
+        xywh {173 116 120 20} down_box BORDER_BOX align 5
       } {
         MenuItem flWheatItem {
           label wheat
@@ -266,25 +271,25 @@ Function {} {open return_type int
       }
       Fl_Check_Button wButter {
         label {with butter}
-        xywh {170 130 100 25} down_box DOWN_BOX
+        xywh {173 136 100 24} down_box DOWN_BOX
       }
       Fl_Input wEggs {
         label eggs
-        xywh {165 163 30 20} type Int align 8
+        xywh {173 168 30 20} type Int align 8
       }
       Fl_Value_Slider wMinutes {
         label {min.}
-        xywh {175 185 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
+        xywh {173 196 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
       }
       Fl_Input wPaper {
         label {Newspaper:}
-        xywh {165 225 105 20} align 5
+        xywh {173 239 120 20} align 5
       }
     }
     Fl_Choice wLanguage {
       label {Language:}
       callback {fl_message("%s", _("Please restart the app to use your new language setting."));} open
-      xywh {120 269 105 20} down_box BORDER_BOX
+      xywh {185 283 105 20} down_box BORDER_BOX
       code0 {\#include <FL/fl_ask.H>}
     } {
       MenuItem {} {

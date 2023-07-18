@@ -2,6 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 comment {//
 // FLUID template support for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +37,7 @@ decl {\#include <FL/fl_ask.H>} {private local
 decl {\#include <FL/fl_string_functions.h>} {private local
 }
 
-decl {\#include <FL/filename.H>} {selected private local
+decl {\#include <FL/filename.H>} {private local
 }
 
 decl {\#include "../src/flstring.h"} {private local
@@ -68,8 +73,8 @@ template_preview->image(0);
 template_browser->deselect();
 template_name->value("");
 template_instance->value("");
-template_panel->hide();}
-    xywh {455 202 460 355} type Double hide resizable modal
+template_panel->hide();} selected
+    xywh {478 284 460 355} type Double resizable modal visible
   } {
     Fl_Browser template_browser {
       label {Available Templates:}

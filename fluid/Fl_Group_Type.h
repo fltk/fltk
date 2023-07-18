@@ -51,7 +51,7 @@ public:
   void remove_child(Fl_Type*) FL_OVERRIDE;
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_group() const FL_OVERRIDE {return 1;}
-  int pixmapID() FL_OVERRIDE { return 6; }
+  ID id() const FL_OVERRIDE { return ID_Group; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
@@ -68,7 +68,7 @@ public:
   const char *type_name() FL_OVERRIDE {return pack_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::PackedGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Pack_Type();}
-  int pixmapID() FL_OVERRIDE { return 22; }
+  ID id() const FL_OVERRIDE { return ID_Pack; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
@@ -90,7 +90,7 @@ public:
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Flex_Type(); }
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
-  int pixmapID() FL_OVERRIDE { return 56; }
+  ID id() const FL_OVERRIDE { return ID_Flex; }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
@@ -117,7 +117,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TableGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Table_Type();}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE;
-  int pixmapID() FL_OVERRIDE { return 51; }
+  ID id() const FL_OVERRIDE { return ID_Table; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -145,7 +145,7 @@ public:
   Fl_Type* click_test(int,int) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
-  int pixmapID() FL_OVERRIDE { return 13; }
+  ID id() const FL_OVERRIDE { return ID_Tabs; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   int is_tabs() const FL_OVERRIDE {return 1;}
 };
@@ -161,7 +161,7 @@ public:
   const char *type_name() FL_OVERRIDE {return scroll_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::ScrollGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Scroll_Type();}
-  int pixmapID() FL_OVERRIDE { return 19; }
+  ID id() const FL_OVERRIDE { return ID_Scroll; }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   int is_scroll() const FL_OVERRIDE { return 1; }
@@ -176,7 +176,7 @@ public:
   const char *type_name() FL_OVERRIDE {return tile_type_name;}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TileGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tile_Type();}
-  int pixmapID() FL_OVERRIDE { return 20; }
+  ID id() const FL_OVERRIDE { return ID_Tile; }
   void copy_properties() FL_OVERRIDE;
 };
 
@@ -198,7 +198,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     iwizard *g = new iwizard(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Wizard_Type();}
-  int pixmapID() FL_OVERRIDE { return 21; }
+  ID id() const FL_OVERRIDE { return ID_Wizard; }
 };
 
 #endif // _FLUID_FL_GROUP_TYPE_H

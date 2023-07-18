@@ -914,74 +914,110 @@ Fl_Menu_Item menu_i18n_type_chooser[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-Fl_Input *i18n_include_input=(Fl_Input *)0;
+Fl_Group *i18n_gnu_group=(Fl_Group *)0;
 
-static void cb_i18n_include_input(Fl_Input* o, void* v) {
+static void cb_i18n_gnu_group(Fl_Group* o, void* v) {
+  propagate_load(o, v);
+}
+
+Fl_Input *i18n_gnu_include_input=(Fl_Input *)0;
+
+static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_include.c_str());
+    o->value(g_project.i18n_gnu_include.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_include = o->value();
+    g_project.i18n_gnu_include = o->value();
     set_modflag(1);
   }
 }
 
-Fl_Input *i18n_conditional_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_conditional_input=(Fl_Input *)0;
 
-static void cb_i18n_conditional_input(Fl_Input* o, void* v) {
+static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_conditional.c_str());
+    o->value(g_project.i18n_gnu_conditional.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_conditional = o->value();
+    g_project.i18n_gnu_conditional = o->value();
     set_modflag(1);
   }
 }
 
-Fl_Input *i18n_file_input=(Fl_Input *)0;
+Fl_Input *i18n_gnu_function_input=(Fl_Input *)0;
 
-static void cb_i18n_file_input(Fl_Input* o, void* v) {
+static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_file.c_str());
+    o->value(g_project.i18n_gnu_function.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_file = o->value();
+    g_project.i18n_gnu_function = o->value();
     set_modflag(1);
   }
 }
 
-Fl_Int_Input *i18n_set_input=(Fl_Int_Input *)0;
+Fl_Input *i18n_gnu_static_function_input=(Fl_Input *)0;
 
-static void cb_i18n_set_input(Fl_Int_Input* o, void* v) {
+static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_set.c_str());
+    o->value(g_project.i18n_gnu_static_function.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_set = o->value();
+    g_project.i18n_gnu_static_function = o->value();
     set_modflag(1);
   }
 }
 
-Fl_Input *i18n_function_input=(Fl_Input *)0;
+Fl_Group *i18n_posix_group=(Fl_Group *)0;
 
-static void cb_i18n_function_input(Fl_Input* o, void* v) {
+static void cb_i18n_posix_group(Fl_Group* o, void* v) {
+  propagate_load(o, v);
+}
+
+Fl_Input *i18n_pos_include_input=(Fl_Input *)0;
+
+static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_function.c_str());
+    o->value(g_project.i18n_pos_include.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_function = o->value();
+    g_project.i18n_pos_include = o->value();
     set_modflag(1);
   }
 }
 
-Fl_Input *i18n_static_function_input=(Fl_Input *)0;
+Fl_Input *i18n_pos_conditional_input=(Fl_Input *)0;
 
-static void cb_i18n_static_function_input(Fl_Input* o, void* v) {
+static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    o->value(g_project.i18n_static_function.c_str());
+    o->value(g_project.i18n_pos_conditional.c_str());
   } else {
     undo_checkpoint();
-    g_project.i18n_static_function = o->value();
+    g_project.i18n_pos_conditional = o->value();
+    set_modflag(1);
+  }
+}
+
+Fl_Input *i18n_pos_file_input=(Fl_Input *)0;
+
+static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value(g_project.i18n_pos_file.c_str());
+  } else {
+    undo_checkpoint();
+    g_project.i18n_pos_file = o->value();
+    set_modflag(1);
+  }
+}
+
+Fl_Int_Input *i18n_pos_set_input=(Fl_Int_Input *)0;
+
+static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
+  if (v == LOAD) {
+    o->value(g_project.i18n_pos_set.c_str());
+  } else {
+    undo_checkpoint();
+    g_project.i18n_pos_set = o->value();
     set_modflag(1);
   }
 }
@@ -991,7 +1027,7 @@ static void cb_Close(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_settings_window() {
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 580, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 580, "FLUID Settings");
     settings_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { w_settings_tabs = new Fl_Tabs(10, 10, 320, 530);
       w_settings_tabs->selection_color((Fl_Color)12);
@@ -1002,7 +1038,7 @@ Fl_Double_Window* make_settings_window() {
         o->image( image_general_64() );
         o->labelsize(11);
         { scheme_choice = new Fl_Scheme_Choice(120, 78, 120, 25, "Scheme: ");
-          scheme_choice->box(FL_FLAT_BOX);
+          scheme_choice->box(FL_UP_BOX);
           scheme_choice->down_box(FL_BORDER_BOX);
           scheme_choice->color(FL_BACKGROUND_COLOR);
           scheme_choice->selection_color(FL_SELECTION_COLOR);
@@ -1554,58 +1590,84 @@ ings");
           i18n_type_chooser->callback((Fl_Callback*)i18n_type_cb);
           i18n_type_chooser->menu(menu_i18n_type_chooser);
         } // Fl_Choice* i18n_type_chooser
-        { i18n_include_input = new Fl_Input(100, 103, 220, 20, "#include:");
-          i18n_include_input->tooltip("The include file for internationalization.");
-          i18n_include_input->box(FL_THIN_DOWN_BOX);
-          i18n_include_input->labelsize(11);
-          i18n_include_input->textfont(4);
-          i18n_include_input->textsize(11);
-          i18n_include_input->callback((Fl_Callback*)cb_i18n_include_input);
-        } // Fl_Input* i18n_include_input
-        { i18n_conditional_input = new Fl_Input(100, 128, 220, 20, "Conditional:");
-          i18n_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
+        { i18n_gnu_group = new Fl_Group(100, 103, 220, 95);
+          i18n_gnu_group->callback((Fl_Callback*)cb_i18n_gnu_group);
+          { i18n_gnu_include_input = new Fl_Input(100, 103, 220, 20, "#include:");
+            i18n_gnu_include_input->tooltip("The include file for internationalization.");
+            i18n_gnu_include_input->box(FL_THIN_DOWN_BOX);
+            i18n_gnu_include_input->labelsize(11);
+            i18n_gnu_include_input->textfont(4);
+            i18n_gnu_include_input->textsize(11);
+            i18n_gnu_include_input->callback((Fl_Callback*)cb_i18n_gnu_include_input);
+          } // Fl_Input* i18n_gnu_include_input
+          { i18n_gnu_conditional_input = new Fl_Input(100, 128, 220, 20, "Conditional:");
+            i18n_gnu_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
 le FLTK_GETTEXT_FOUND");
-          i18n_conditional_input->box(FL_THIN_DOWN_BOX);
-          i18n_conditional_input->labelsize(11);
-          i18n_conditional_input->textfont(4);
-          i18n_conditional_input->textsize(11);
-          i18n_conditional_input->callback((Fl_Callback*)cb_i18n_conditional_input);
-        } // Fl_Input* i18n_conditional_input
-        { i18n_file_input = new Fl_Input(100, 153, 220, 20, "File:");
-          i18n_file_input->tooltip("The name of the message catalog.");
-          i18n_file_input->box(FL_THIN_DOWN_BOX);
-          i18n_file_input->labelsize(11);
-          i18n_file_input->textfont(4);
-          i18n_file_input->textsize(11);
-          i18n_file_input->callback((Fl_Callback*)cb_i18n_file_input);
-        } // Fl_Input* i18n_file_input
-        { i18n_set_input = new Fl_Int_Input(100, 178, 220, 20, "Set:");
-          i18n_set_input->tooltip("The message set number.");
-          i18n_set_input->type(2);
-          i18n_set_input->box(FL_THIN_DOWN_BOX);
-          i18n_set_input->labelsize(11);
-          i18n_set_input->textfont(4);
-          i18n_set_input->textsize(11);
-          i18n_set_input->callback((Fl_Callback*)cb_i18n_set_input);
-        } // Fl_Int_Input* i18n_set_input
-        { i18n_function_input = new Fl_Input(100, 153, 220, 20, "Function:");
-          i18n_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or\
+            i18n_gnu_conditional_input->box(FL_THIN_DOWN_BOX);
+            i18n_gnu_conditional_input->labelsize(11);
+            i18n_gnu_conditional_input->textfont(4);
+            i18n_gnu_conditional_input->textsize(11);
+            i18n_gnu_conditional_input->callback((Fl_Callback*)cb_i18n_gnu_conditional_input);
+          } // Fl_Input* i18n_gnu_conditional_input
+          { i18n_gnu_function_input = new Fl_Input(100, 153, 220, 20, "Function:");
+            i18n_gnu_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or\
  \"_\"");
-          i18n_function_input->box(FL_THIN_DOWN_BOX);
-          i18n_function_input->labelsize(11);
-          i18n_function_input->textfont(4);
-          i18n_function_input->textsize(11);
-          i18n_function_input->callback((Fl_Callback*)cb_i18n_function_input);
-        } // Fl_Input* i18n_function_input
-        { i18n_static_function_input = new Fl_Input(100, 178, 220, 20, "Static Function:");
-          i18n_static_function_input->tooltip("function to call to translate static text, The function to call to internatio\
+            i18n_gnu_function_input->box(FL_THIN_DOWN_BOX);
+            i18n_gnu_function_input->labelsize(11);
+            i18n_gnu_function_input->textfont(4);
+            i18n_gnu_function_input->textsize(11);
+            i18n_gnu_function_input->callback((Fl_Callback*)cb_i18n_gnu_function_input);
+          } // Fl_Input* i18n_gnu_function_input
+          { i18n_gnu_static_function_input = new Fl_Input(100, 178, 220, 20, "Static Function:");
+            i18n_gnu_static_function_input->tooltip("function to call to translate static text, The function to call to internatio\
 nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
-          i18n_static_function_input->box(FL_THIN_DOWN_BOX);
-          i18n_static_function_input->labelsize(11);
-          i18n_static_function_input->textfont(4);
-          i18n_static_function_input->textsize(11);
-          i18n_static_function_input->callback((Fl_Callback*)cb_i18n_static_function_input);
-        } // Fl_Input* i18n_static_function_input
+            i18n_gnu_static_function_input->box(FL_THIN_DOWN_BOX);
+            i18n_gnu_static_function_input->labelsize(11);
+            i18n_gnu_static_function_input->textfont(4);
+            i18n_gnu_static_function_input->textsize(11);
+            i18n_gnu_static_function_input->callback((Fl_Callback*)cb_i18n_gnu_static_function_input);
+          } // Fl_Input* i18n_gnu_static_function_input
+          i18n_gnu_group->end();
+        } // Fl_Group* i18n_gnu_group
+        { i18n_posix_group = new Fl_Group(100, 103, 220, 95);
+          i18n_posix_group->callback((Fl_Callback*)cb_i18n_posix_group);
+          i18n_posix_group->hide();
+          { i18n_pos_include_input = new Fl_Input(100, 103, 220, 20, "#include:");
+            i18n_pos_include_input->tooltip("The include file for internationalization.");
+            i18n_pos_include_input->box(FL_THIN_DOWN_BOX);
+            i18n_pos_include_input->labelsize(11);
+            i18n_pos_include_input->textfont(4);
+            i18n_pos_include_input->textsize(11);
+            i18n_pos_include_input->callback((Fl_Callback*)cb_i18n_pos_include_input);
+          } // Fl_Input* i18n_pos_include_input
+          { i18n_pos_conditional_input = new Fl_Input(100, 128, 220, 20, "Conditional:");
+            i18n_pos_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp\
+le FLTK_GETTEXT_FOUND");
+            i18n_pos_conditional_input->box(FL_THIN_DOWN_BOX);
+            i18n_pos_conditional_input->labelsize(11);
+            i18n_pos_conditional_input->textfont(4);
+            i18n_pos_conditional_input->textsize(11);
+            i18n_pos_conditional_input->callback((Fl_Callback*)cb_i18n_pos_conditional_input);
+          } // Fl_Input* i18n_pos_conditional_input
+          { i18n_pos_file_input = new Fl_Input(100, 153, 220, 20, "File:");
+            i18n_pos_file_input->tooltip("The name of the message catalog.");
+            i18n_pos_file_input->box(FL_THIN_DOWN_BOX);
+            i18n_pos_file_input->labelsize(11);
+            i18n_pos_file_input->textfont(4);
+            i18n_pos_file_input->textsize(11);
+            i18n_pos_file_input->callback((Fl_Callback*)cb_i18n_pos_file_input);
+          } // Fl_Input* i18n_pos_file_input
+          { i18n_pos_set_input = new Fl_Int_Input(100, 178, 80, 20, "Set:");
+            i18n_pos_set_input->tooltip("The message set number.");
+            i18n_pos_set_input->type(2);
+            i18n_pos_set_input->box(FL_THIN_DOWN_BOX);
+            i18n_pos_set_input->labelsize(11);
+            i18n_pos_set_input->textfont(4);
+            i18n_pos_set_input->textsize(11);
+            i18n_pos_set_input->callback((Fl_Callback*)cb_i18n_pos_set_input);
+          } // Fl_Int_Input* i18n_pos_set_input
+          i18n_posix_group->end();
+        } // Fl_Group* i18n_posix_group
         o->image()->scale(36, 24);
         w_settings_i18n_tab->end();
       } // Fl_Group* w_settings_i18n_tab
@@ -1617,7 +1679,6 @@ nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
     settings_window->set_non_modal();
-    settings_window->resizable(settings_window);
     o->size_range(o->w(), o->h());
     settings_window->end();
   } // Fl_Double_Window* settings_window

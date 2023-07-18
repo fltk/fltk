@@ -5,7 +5,7 @@
 // This should have the widget pointer in it, but it is still in the
 // Fl_Type base class.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -37,7 +37,10 @@ void selection_changed(Fl_Type* new_current);
 Fl_Type *sort(Fl_Type *parent);
 void comment_cb(class Fl_Text_Editor* i, void *v);
 
-class Fl_Widget_Type : public Fl_Type {
+class Fl_Widget_Type : public Fl_Type
+{
+  typedef Fl_Type super;
+  
   virtual Fl_Widget *widget(int,int,int,int) = 0;
   virtual Fl_Widget_Type *_make() = 0; // virtual constructor
   void setlabel(const char *) FL_OVERRIDE;
@@ -51,6 +54,12 @@ class Fl_Widget_Type : public Fl_Type {
 
 protected:
 
+  /// This variable is set for visible windows in batch mode.
+  /// We can't open a window in batch mode, even if we want the "visible" flags
+  /// set, so we need a second place to store this information while also
+  /// disabeling the output of the "hide" property by the Widget Type.
+  uchar override_visible_;
+  
   void write_static(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_widget_code(Fd_Code_Writer& f);
@@ -61,7 +70,6 @@ protected:
   Fl_Widget *live_widget;
 
 public:
-  const char *xclass; // junk string, used for shortcut
   Fl_Widget *o;
   int public_;
   int bind_image_;
@@ -96,6 +104,8 @@ public:
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item *subtypes();
 
+  ID id() const FL_OVERRIDE { return ID_Widget_; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Widget_) ? true : super::is_a(inID); }
   int is_widget() const FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
 

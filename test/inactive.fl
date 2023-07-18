@@ -2,13 +2,18 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 Function {} {open
 } {
   Fl_Window {} {open
-    xywh {390 200 420 369} type Double hide resizable
+    xywh {462 303 420 369} type Double resizable visible
   } {
     Fl_Group the_group {
-      label {activate()/deactivate() called on this Fl_Group} open
+      label {activate()/deactivate() called on this Fl_Group} open selected
       xywh {25 25 375 295} box ENGRAVED_FRAME align 17 resizable
     } {
       Fl_Button {} {
@@ -25,31 +30,31 @@ Function {} {open
       } {
         Fl_Check_Button {} {
           label red
-          xywh {50 170 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 1 labelcolor 1
+          xywh {54 172 97 20} type Radio down_box DIAMOND_DOWN_BOX selection_color 1 labelcolor 1
         }
         Fl_Check_Button {} {
           label green
-          xywh {50 190 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 2 labelcolor 2
+          xywh {54 192 97 20} type Radio down_box DIAMOND_DOWN_BOX selection_color 2 labelcolor 2
         }
         Fl_Check_Button {} {
           label blue
-          xywh {50 210 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 4 labelcolor 4
+          xywh {54 212 97 20} type Radio down_box DIAMOND_DOWN_BOX selection_color 4 labelcolor 4
         }
         Fl_Check_Button {} {
           label white
-          xywh {50 230 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 55 labelcolor 55
+          xywh {54 232 97 20} type Radio down_box DIAMOND_DOWN_BOX selection_color 55 labelcolor 55
         }
         Fl_Check_Button {} {
           label check
-          xywh {50 130 105 25} down_box DOWN_BOX
+          xywh {54 132 97 20} down_box DOWN_BOX
         }
         Fl_Round_Button {} {
           label round
-          xywh {50 150 105 25} down_box ROUND_DOWN_BOX
+          xywh {54 152 97 20} down_box ROUND_DOWN_BOX
         }
       }
       Fl_Slider {} {
-        label Fl_Slider selected
+        label Fl_Slider
         xywh {165 50 24 205} value 0.5
       }
       Fl_Input {} {

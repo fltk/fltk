@@ -2,10 +2,15 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 1
+}
 Function {} {open
 } {
-  Fl_Window {} {open
-    xywh {401 207 366 261} type Double hide resizable
+  Fl_Window {} {open selected
+    xywh {479 310 366 261} type Double resizable visible
   } {
     Fl_Button {} {
       label {@<-}
@@ -44,7 +49,7 @@ w->size(w->w()-20, w->h()-20);}
       xywh {30 190 110 40} labelfont 1 labelsize 18
     }
     Fl_Box {} {
-      label {This is a test of program-generated resize() of a window.  The window should move or resize once when each button is clicked.  The program and window manager should not go into fits echoing resizes back and forth!} selected
+      label {This is a test of program-generated resize() of a window.  The window should move or resize once when each button is clicked.  The program and window manager should not go into fits echoing resizes back and forth!}
       xywh {150 10 160 220} box BORDER_BOX align 148
     }
   }

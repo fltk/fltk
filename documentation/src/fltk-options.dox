@@ -41,6 +41,9 @@ tool called fltk-options.
 `fltk-options` is a hybrid app that is part of FLTK and can be installed on
 the target system. It includes an up-to-date man page.
 
+\image html fluid-edit-global-fltk-settings.png "fltk-options Application"
+\image latex fluid-edit-global-fltk-settings.png "fltk-options Application" width=10cm
+
 When fltk-options is called without any command-line arguments, it opens in
 interactive mode and provides a user interface to view and alter all
 system and current user options.

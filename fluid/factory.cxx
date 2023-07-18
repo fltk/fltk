@@ -32,10 +32,19 @@
 #include "undo.h"
 
 #include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Clock.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Repeat_Button.H>
+#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Progress.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Flex.H>
 #include "../src/flstring.h"
@@ -43,131 +52,241 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Box.H>
-class Fl_Box_Type : public Fl_Widget_Type {
+
+// ---- Other Types --------------------------------------------------- MARK: -
+
+
+// ---- Box ----
+
+class Fl_Box_Type : public Fl_Widget_Type
+{
+  typedef Fl_Widget_Type super;
 public:
-  const char *type_name() FL_OVERRIDE {return "Fl_Box";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::Widget";}
-  Fl_Widget *widget(int x,int y,int w, int h) FL_OVERRIDE {
-    return new Fl_Box(x,y,w,h,"label");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Box_Type();}
-  int pixmapID() FL_OVERRIDE { return 5; }
+  void ideal_size(int &w, int &h) FL_OVERRIDE {
+    w = 100; h = 100;
+    Fd_Snap_Action::better_size(w, h);
+  }
+  const char *type_name() FL_OVERRIDE { return "Fl_Box"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::Widget"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Box(x, y, w, h, "label");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Box_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Box; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Box) ? true : super::is_a(inID); }
 };
+
 static Fl_Box_Type Fl_Box_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Button.H>
+// ---- Clock ----
+
+class Fl_Clock_Type : public Fl_Widget_Type
+{
+  typedef Fl_Widget_Type super;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE {
+    w = 80; h = 80;
+    Fd_Snap_Action::better_size(w, h);
+  }
+  const char *type_name() FL_OVERRIDE { return "Fl_Clock"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::Clock"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Clock(x, y, w, h);
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Clock_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Clock; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Clock) ? true : super::is_a(inID); }
+};
+
+static Fl_Clock_Type Fl_Clock_type;
+
+
+// ---- Progress ----
+
+class Fl_Progress_Type : public Fl_Widget_Type
+{
+  typedef Fl_Widget_Type super;
+public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE {
+    w = 120; h = 24;
+    Fd_Snap_Action::better_size(w, h);
+  }
+  const char *type_name() FL_OVERRIDE { return "Fl_Progress"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::ProgressBar"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    Fl_Progress *myo = new Fl_Progress(x, y, w, h, "label");
+    myo->value(50);
+    return myo;
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Progress_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Progress; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Progress) ? true : super::is_a(inID); }
+};
+
+static Fl_Progress_Type Fl_Progress_type;
+
+
+
+// ---- Button Types --------------------------------------------------- MARK: -
+
+
+// ---- Button ----
+
 static Fl_Menu_Item buttontype_menu[] = {
   {"Normal",0,0,(void*)0},
   {"Toggle",0,0,(void*)FL_TOGGLE_BUTTON},
   {"Radio",0,0,(void*)FL_RADIO_BUTTON},
-  {0}};
-class Fl_Button_Type : public Fl_Widget_Type {
-  Fl_Menu_Item *subtypes() FL_OVERRIDE {return buttontype_menu;}
+  {0}
+};
+
+/**
+ \brief A handler for the simple push button and a base class for all other buttons.
+ */
+class Fl_Button_Type : public Fl_Widget_Type
+{
+  typedef Fl_Widget_Type super;
+  Fl_Menu_Item *subtypes() FL_OVERRIDE { return buttontype_menu; }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    Fl_Widget_Type::ideal_size(w, h);
-    w += 2 * (o->labelsize() - 4);
-    h = (h / 5) * 5;
+    h = layout->labelsize + 8;
+    w = layout->labelsize * 4 + 8;
+    Fd_Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE {return "Fl_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::Button";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Button_Type();}
-  int is_button() const FL_OVERRIDE {return 1;}
-  int pixmapID() FL_OVERRIDE { return 2; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::Button"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Button_Type(); }
+  int is_button() const FL_OVERRIDE { return 1; }
+  ID id() const FL_OVERRIDE { return ID_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Button) ? true : super::is_a(inID); }
 };
+
 static Fl_Button_Type Fl_Button_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Return_Button.H>
-class Fl_Return_Button_Type : public Fl_Button_Type {
+// ---- Return Button ----
+
+/**
+ \brief The Return Button is simply a Button with the return key as a hotkey.
+ */
+class Fl_Return_Button_Type : public Fl_Button_Type
+{
+  typedef Fl_Button_Type super;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    Fl_Button_Type::ideal_size(w, h);
-    int W = o->h();
-    if (o->w()/3 < W) W = o->w()/3;
-    w += W + 8 - o->labelsize();
+    h = layout->labelsize + 8;
+    w = layout->labelsize * 4 + 8 + h; // make room for the symbol
+    Fd_Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE {return "Fl_Return_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::ReturnButton";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Return_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Return_Button_Type();}
-  int pixmapID() FL_OVERRIDE { return 23; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Return_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::ReturnButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Return_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Return_Button_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Return_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
 };
+
 static Fl_Return_Button_Type Fl_Return_Button_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Repeat_Button.H>
-class Fl_Repeat_Button_Type : public Fl_Widget_Type {
+// ---- Repeat Button ----
+
+/**
+ \brief Handler for Fl_Repeat_Button.
+ \note Even though Fl_Repeat_Button is somewhat limited compared to Fl_Button,
+    and some settings may not make much sense, it is still derived from it,
+    so the wrapper should be as well.
+ */
+class Fl_Repeat_Button_Type : public Fl_Button_Type
+{
+  typedef Fl_Button_Type super;
 public:
-  const char *type_name() FL_OVERRIDE {return "Fl_Repeat_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::RepeatButton";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Repeat_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Repeat_Button_Type();}
-  int pixmapID() FL_OVERRIDE { return 25; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Repeat_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::RepeatButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Repeat_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Repeat_Button_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Repeat_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
 };
+
 static Fl_Repeat_Button_Type Fl_Repeat_Button_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Light_Button.H>
-class Fl_Light_Button_Type : public Fl_Button_Type {
+// ---- Light Button ----
+
+class Fl_Light_Button_Type : public Fl_Button_Type
+{
+  typedef Fl_Button_Type super;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    Fl_Button_Type::ideal_size(w, h);
-    w += 4;
+    h = layout->labelsize + 8;
+    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the light
+    Fd_Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE {return "Fl_Light_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::LightButton";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Light_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Light_Button_Type();}
-  int pixmapID() FL_OVERRIDE { return 24; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Light_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::LightButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Light_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Light_Button_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Light_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
 };
+
 static Fl_Light_Button_Type Fl_Light_Button_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Check_Button.H>
-class Fl_Check_Button_Type : public Fl_Button_Type {
+// ---- Check Button ----
+
+class Fl_Check_Button_Type : public Fl_Button_Type
+{
+  typedef Fl_Button_Type super;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    Fl_Button_Type::ideal_size(w, h);
-    w += 4;
+    h = layout->labelsize + 8;
+    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
+    Fd_Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE {return "Fl_Check_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::CheckButton";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Check_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Check_Button_Type();}
-  int pixmapID() FL_OVERRIDE { return 3; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Check_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::CheckButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Check_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Check_Button_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Check_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
 };
+
 static Fl_Check_Button_Type Fl_Check_Button_type;
 
-////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Round_Button.H>
-class Fl_Round_Button_Type : public Fl_Button_Type {
+// ---- Round Button ----
+
+class Fl_Round_Button_Type : public Fl_Button_Type
+{
+  typedef Fl_Button_Type super;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    Fl_Button_Type::ideal_size(w, h);
-    w += 4;
+    h = layout->labelsize + 8;
+    w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
+    Fd_Snap_Action::better_size(w, h);
   }
-  const char *type_name() FL_OVERRIDE {return "Fl_Round_Button";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::RadioButton";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Round_Button(x,y,w,h,"button");}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Round_Button_Type();}
-  int pixmapID() FL_OVERRIDE { return 4; }
+  const char *type_name() FL_OVERRIDE { return "Fl_Round_Button"; }
+  const char *alt_type_name() FL_OVERRIDE { return "fltk::RadioButton"; }
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE {
+    return new Fl_Round_Button(x, y, w, h, "Button");
+  }
+  Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Round_Button_Type(); }
+  ID id() const FL_OVERRIDE { return ID_Round_Button; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
 };
 static Fl_Round_Button_Type Fl_Round_Button_type;
 
@@ -183,7 +302,7 @@ static Fl_Menu_Item browser_type_menu[] = {
   {"Hold",0,0,(void*)FL_HOLD_BROWSER},
   {"Multi",0,0,(void*)FL_MULTI_BROWSER},
   {0}};
-class Fl_Browser_Type : public Fl_Widget_Type {
+class Fl_Browser_Type : public Fl_Widget_Type { // FIXME: Fl_Group(!), Fl_Browser_
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
@@ -214,7 +333,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Browser_Type();}
-  int pixmapID() FL_OVERRIDE { return 31; }
+  ID id() const FL_OVERRIDE { return ID_Browser; }
 };
 static Fl_Browser_Type Fl_Browser_type;
 
@@ -230,7 +349,7 @@ int Fl_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   return 1;
 }
 
-class Fl_Check_Browser_Type : public Fl_Widget_Type {
+class Fl_Check_Browser_Type : public Fl_Widget_Type { // FIXME: Fl_Browser_
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
@@ -261,7 +380,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Check_Browser_Type();}
-  int pixmapID() FL_OVERRIDE { return 32; }
+  ID id() const FL_OVERRIDE { return ID_Check_Browser; }
 };
 static Fl_Check_Browser_Type Fl_Check_Browser_type;
 
@@ -277,7 +396,7 @@ int Fl_Check_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   return 1;
 }
 
-class Fl_Tree_Type : public Fl_Widget_Type {
+class Fl_Tree_Type : public Fl_Widget_Type { // FIXME: Fl_Group
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     if (h < 60) h = 60;
@@ -300,11 +419,11 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tree_Type();}
-  int pixmapID() FL_OVERRIDE { return 50; }
+  ID id() const FL_OVERRIDE { return ID_Tree; }
 };
 static Fl_Tree_Type Fl_Tree_type;
 
-class Fl_File_Browser_Type : public Fl_Widget_Type {
+class Fl_File_Browser_Type : public Fl_Widget_Type { // FIXME: Fl_Browser (no underscore)
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return browser_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
@@ -331,7 +450,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Browser_Type();}
-  int pixmapID() FL_OVERRIDE { return 33; }
+  ID id() const FL_OVERRIDE { return ID_File_Browser; }
 };
 static Fl_File_Browser_Type Fl_File_Browser_type;
 
@@ -354,17 +473,17 @@ static Fl_Menu_Item counter_type_menu[] = {
   {"Normal",0,0,(void*)FL_NORMAL_COUNTER},
   {"Simple",0,0,(void*)FL_SIMPLE_COUNTER},
   {0}};
-class Fl_Counter_Type : public Fl_Widget_Type {
+class Fl_Counter_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return counter_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
   int is_valuator() const FL_OVERRIDE {return 1;}
-  int pixmapID() FL_OVERRIDE { return 41; }
 public:
   const char *type_name() FL_OVERRIDE {return "Fl_Counter";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Counter";}
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Counter(x,y,w,h,"counter:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Counter_Type();}
+  ID id() const FL_OVERRIDE { return ID_Counter; }
 };
 static Fl_Counter_Type Fl_Counter_type;
 
@@ -387,10 +506,9 @@ static Fl_Menu_Item spinner_type_menu[] = {
   {"Integer",0,0,(void*)FL_INT_INPUT},
   {"Float",  0,0,(void*)FL_FLOAT_INPUT},
   {0}};
-class Fl_Spinner_Type : public Fl_Widget_Type {
+class Fl_Spinner_Type : public Fl_Widget_Type {  // FIXME: Fl_Group, *NOT* Fl_Valuator
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return spinner_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
-  int pixmapID() FL_OVERRIDE { return 47; }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     Fl_Spinner *myo = (Fl_Spinner *)o;
@@ -409,6 +527,7 @@ public:
     return new Fl_Spinner(x,y,w,h,"spinner:");
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Spinner_Type();}
+  ID id() const FL_OVERRIDE { return ID_Spinner; }
 };
 static Fl_Spinner_Type Fl_Spinner_type;
 
@@ -434,7 +553,7 @@ static Fl_Menu_Item input_type_menu[] = {
   {"Int",0,0,(void*)FL_INT_INPUT},
   {"Float",0,0,(void*)FL_FLOAT_INPUT},
   {0}};
-class Fl_Input_Type : public Fl_Widget_Type {
+class Fl_Input_Type : public Fl_Widget_Type { // FIXME: Fl_Input_
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return input_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
@@ -457,7 +576,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Input_Type();}
-  int pixmapID() FL_OVERRIDE { return 14; }
+  ID id() const FL_OVERRIDE { return ID_Input; }
   void copy_properties() FL_OVERRIDE {
     Fl_Widget_Type::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
@@ -484,7 +603,7 @@ int Fl_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_File_Input.H>
-class Fl_File_Input_Type : public Fl_Widget_Type {
+class Fl_File_Input_Type : public Fl_Widget_Type { // FIXME: Fl_Input
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return 0;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
@@ -507,7 +626,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_File_Input_Type();}
-  int pixmapID() FL_OVERRIDE { return 30; }
+  ID id() const FL_OVERRIDE { return ID_File_Input; }
 };
 static Fl_File_Input_Type Fl_File_Input_type;
 
@@ -526,7 +645,7 @@ int Fl_File_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Text_Display.H>
-class Fl_Text_Display_Type : public Fl_Widget_Type {
+class Fl_Text_Display_Type : public Fl_Widget_Type { // FIXME: Fl_Group
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
@@ -548,7 +667,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Display_Type();}
-  int pixmapID() FL_OVERRIDE { return 28; }
+  ID id() const FL_OVERRIDE { return ID_Text_Display; }
 };
 static Fl_Text_Display_Type Fl_Text_Display_type;
 
@@ -567,7 +686,7 @@ int Fl_Text_Display_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Text_Editor.H>
-class Fl_Text_Editor_Type : public Fl_Widget_Type {
+class Fl_Text_Editor_Type : public Fl_Widget_Type { // FIXME: Fl_Text_Display
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) FL_OVERRIDE;
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
@@ -589,7 +708,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Text_Editor_Type();}
-  int pixmapID() FL_OVERRIDE { return 29; }
+  ID id() const FL_OVERRIDE { return ID_Text_Editor; }
 };
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
@@ -608,7 +727,7 @@ int Fl_Text_Editor_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Simple_Terminal.H>
-class Fl_Simple_Terminal_Type : public Fl_Text_Editor_Type {
+class Fl_Simple_Terminal_Type : public Fl_Text_Editor_Type { // FIXME: Fl_Text_Display
 public:
   const char *type_name() FL_OVERRIDE {return "Fl_Simple_Terminal";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::SimpleTerminal";}
@@ -626,28 +745,15 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
-  int pixmapID() FL_OVERRIDE { return 52; }
+  ID id() const FL_OVERRIDE { return ID_Simple_Terminal; }
 };
 static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
 
-////////////////////////////////////////////////////////////////
-
-#include <FL/Fl_Clock.H>
-class Fl_Clock_Type : public Fl_Widget_Type {
-public:
-  const char *type_name() FL_OVERRIDE {return "Fl_Clock";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::Clock";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    return new Fl_Clock(x,y,w,h);}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Clock_Type();}
-  int pixmapID() FL_OVERRIDE { return 34; }
-};
-static Fl_Clock_Type Fl_Clock_type;
 
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Help_View.H>
-class Fl_Help_View_Type : public Fl_Widget_Type {
+class Fl_Help_View_Type : public Fl_Widget_Type { // FIXME: Fl_Group
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     Fl_Help_View *myo = (Fl_Help_View *)o;
@@ -670,30 +776,15 @@ public:
     }
     return myo;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Help_View_Type();}
-  int pixmapID() FL_OVERRIDE { return 35; }
+  ID id() const FL_OVERRIDE { return ID_Help_View; }
 };
 static Fl_Help_View_Type Fl_Help_View_type;
 
-////////////////////////////////////////////////////////////////
-
-#include <FL/Fl_Progress.H>
-class Fl_Progress_Type : public Fl_Widget_Type {
-public:
-  const char *type_name() FL_OVERRIDE {return "Fl_Progress";}
-  const char *alt_type_name() FL_OVERRIDE {return "fltk::ProgressBar";}
-  Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
-    Fl_Progress *myo = new Fl_Progress(x,y,w,h,"label");
-    myo->value(50);
-    return myo;}
-  Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Progress_Type();}
-  int pixmapID() FL_OVERRIDE { return 36; }
-};
-static Fl_Progress_Type Fl_Progress_type;
 
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Adjuster.H>
-class Fl_Adjuster_Type : public Fl_Widget_Type {
+class Fl_Adjuster_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
   int is_valuator() const FL_OVERRIDE {return 1;}
 public:
   const char *type_name() FL_OVERRIDE {return "Fl_Adjuster";}
@@ -701,7 +792,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Adjuster(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Adjuster_Type();}
-  int pixmapID() FL_OVERRIDE { return 40; }
+  ID id() const FL_OVERRIDE { return ID_Adjuster; }
 };
 static Fl_Adjuster_Type Fl_Adjuster_type;
 
@@ -713,7 +804,7 @@ static Fl_Menu_Item dial_type_menu[] = {
   {"Line",0,0,(void*)FL_LINE_DIAL},
   {"Fill",0,0,(void*)FL_FILL_DIAL},
   {0}};
-class Fl_Dial_Type : public Fl_Widget_Type {
+class Fl_Dial_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return dial_type_menu;}
   int is_valuator() const FL_OVERRIDE {return 1;}
 public:
@@ -722,7 +813,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Dial(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Dial_Type();}
-  int pixmapID() FL_OVERRIDE { return 42; }
+  ID id() const FL_OVERRIDE { return ID_Dial; }
 };
 static Fl_Dial_Type Fl_Dial_type;
 
@@ -733,7 +824,7 @@ static Fl_Menu_Item roller_type_menu[] = {
   {"Vertical",0,0,(void*)0},
   {"Horizontal",0,0,(void*)FL_HORIZONTAL},
   {0}};
-class Fl_Roller_Type : public Fl_Widget_Type {
+class Fl_Roller_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return roller_type_menu;}
   int is_valuator() const FL_OVERRIDE {return 1;}
 public:
@@ -742,7 +833,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Roller(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Roller_Type();}
-  int pixmapID() FL_OVERRIDE { return 43; }
+  ID id() const FL_OVERRIDE { return ID_Roller; }
 };
 static Fl_Roller_Type Fl_Roller_type;
 
@@ -757,7 +848,7 @@ static Fl_Menu_Item slider_type_menu[] = {
   {"Vert Knob",0,0,(void*)FL_VERT_NICE_SLIDER},
   {"Horz Knob",0,0,(void*)FL_HOR_NICE_SLIDER},
   {0}};
-class Fl_Slider_Type : public Fl_Widget_Type {
+class Fl_Slider_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
   Fl_Menu_Item *subtypes() FL_OVERRIDE {return slider_type_menu;}
   int is_valuator() const FL_OVERRIDE {return 2;}
 public:
@@ -766,7 +857,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Slider(x,y,w,h,"slider:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Slider_Type();}
-  int pixmapID() FL_OVERRIDE { return 37; }
+  ID id() const FL_OVERRIDE { return ID_Slider; }
 };
 static Fl_Slider_Type Fl_Slider_type;
 
@@ -783,7 +874,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Scrollbar(x,y,w,h);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Scrollbar_Type();}
-  int pixmapID() FL_OVERRIDE { return 38; }
+  ID id() const FL_OVERRIDE { return ID_Scrollbar; }
 };
 static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
@@ -815,14 +906,14 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Output_Type();}
-  int pixmapID() FL_OVERRIDE { return 27; }
+  ID id() const FL_OVERRIDE { return ID_Output; }
 };
 static Fl_Output_Type Fl_Output_type;
 
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Value_Input.H>
-class Fl_Value_Input_Type : public Fl_Widget_Type {
+class Fl_Value_Input_Type : public Fl_Widget_Type { // FIXME: Fl_Input_
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     Fl_Value_Input *myo = (Fl_Value_Input *)o;
@@ -844,7 +935,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Input_Type();}
-  int pixmapID() FL_OVERRIDE { return 44; }
+  ID id() const FL_OVERRIDE { return ID_Value_Input; }
 };
 static Fl_Value_Input_Type Fl_Value_Input_type;
 
@@ -863,7 +954,7 @@ int Fl_Value_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Value_Output.H>
-class Fl_Value_Output_Type : public Fl_Widget_Type {
+class Fl_Value_Output_Type : public Fl_Widget_Type { // FIXME: Fl_Valuator
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     Fl_Value_Output *myo = (Fl_Value_Output *)o;
@@ -884,7 +975,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Output_Type();}
-  int pixmapID() FL_OVERRIDE { return 45; }
+  ID id() const FL_OVERRIDE { return ID_Value_Output; }
 };
 static Fl_Value_Output_Type Fl_Value_Output_type;
 
@@ -911,7 +1002,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) FL_OVERRIDE {
     return new Fl_Value_Slider(x,y,w,h,"slider:");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Value_Slider_Type();}
-  int pixmapID() FL_OVERRIDE { return 39; }
+  ID id() const FL_OVERRIDE { return ID_Value_Slider; }
 };
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
 
@@ -1081,7 +1172,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
 
       if ((t->parent && t->parent->is_flex())) {
         // Do not resize or layout the widget. Flex will need the widget size.
-      } else if (!strcmp(wt->type_name(), "Fl_Menu_Bar")) {
+      } else if (wt->id() == Fl_Type::ID_Menu_Bar) {
         // Move and resize the menubar across the top of the window...
         wt->o->resize(0, 0, w, h);
       } else {
@@ -1095,6 +1186,20 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
           wt->o->size(w, h);
         }
       }
+    }
+    if (t->is_window()) {
+      int x = 0, y = 0, w = 480, h = 320;
+      Fl_Window_Type *wt = (Fl_Window_Type *)t;
+      wt->ideal_size(w, h);
+      if (main_window) {
+        int sx, sy, sw, sh;
+        Fl_Window *win = main_window;
+        int screen = Fl::screen_num(win->x(), win->y());
+        Fl::screen_work_area(sx, sy, sw, sh, screen);
+        x = sx + sw/2 - w/2;
+        y = sy + sh/2 - h/2;
+      }
+      wt->o->resize(x, y, w, h);
     }
     // make the new widget visible
     select_only(t);
@@ -1128,7 +1233,7 @@ Fl_Type *add_new_widget_from_user(const char *inName, Strategy strategy) {
 /**
  Callback for all menu items.
  */
-static void cb(Fl_Widget *, void *v) {
+static void cbf(Fl_Widget *, void *v) {
   Fl_Type *t = NULL;
   if (Fl_Type::current && Fl_Type::current->is_group())
     t = ((Fl_Type*)v)->make(kAddAsLastChild);
@@ -1137,17 +1242,29 @@ static void cb(Fl_Widget *, void *v) {
   select_only(t);
 }
 
+/**
+ Callback for all menu items.
+ */
+static void cb(Fl_Widget *, void *v) {
+  Fl_Type *t = NULL;
+  if (Fl_Type::current && Fl_Type::current->is_group())
+    t = add_new_widget_from_user((Fl_Type*)v, kAddAsLastChild);
+  else
+    t = add_new_widget_from_user((Fl_Type*)v, kAddAfterCurrent);
+  select_only(t);
+}
+
 Fl_Menu_Item New_Menu[] = {
 {"Code",0,0,0,FL_SUBMENU},
-  {"Function/Method",0,cb,(void*)&Fl_Function_type},
-  {"Code",0,cb,(void*)&Fl_Code_type},
-  {"Code Block",0,cb,(void*)&Fl_CodeBlock_type},
-  {"Declaration",0,cb,(void*)&Fl_Decl_type},
-  {"Declaration Block",0,cb,(void*)&Fl_DeclBlock_type},
-  {"Class",0,cb,(void*)&Fl_Class_type},
+  {"Function/Method",0,cbf,(void*)&Fl_Function_type},
+  {"Code",0,cbf,(void*)&Fl_Code_type},
+  {"Code Block",0,cbf,(void*)&Fl_CodeBlock_type},
+  {"Declaration",0,cbf,(void*)&Fl_Decl_type},
+  {"Declaration Block",0,cbf,(void*)&Fl_DeclBlock_type},
+  {"Class",0,cbf,(void*)&Fl_Class_type},
   {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
-  {"Comment",0,cb,(void*)&Fl_Comment_type},
-  {"Inlined Data",0,cb,(void*)&Fl_Data_type},
+  {"Comment",0,cbf,(void*)&Fl_Comment_type},
+  {"Inlined Data",0,cbf,(void*)&Fl_Data_type},
 {0},
 {"Group",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Window_type},
@@ -1217,7 +1334,7 @@ Fl_Menu_Item New_Menu[] = {
 /**
  Modify a menuitem to display an icon in front of the label.
  This is implemented using Fl_Multi_Label as the labeltype (FL_MULTI_LABEL).
- The icon may be null. If ic is null only the text (is assigned
+ The icon may be null. If ic is null only the text is assigned
  to the label and Fl_Multi_Label is not used.
  \param[in] mi pointer to tme menu item that will be modified
  \param[in] ic icon for the menu, may be NULL
@@ -1248,12 +1365,12 @@ void fill_in_New_Menu() {
     if (m->user_data()) {
       Fl_Type *t = (Fl_Type*)m->user_data();
       if (m->text) {
-        make_iconlabel( m, pixmap[t->pixmapID()], m->label() );
+        make_iconlabel( m, pixmap[t->id()], m->label() );
       } else {
         const char *n = t->type_name();
         if (!strncmp(n,"Fl_",3)) n += 3;
         if (!strncmp(n,"fltk::",6)) n += 6;
-        make_iconlabel( m, pixmap[t->pixmapID()], n );
+        make_iconlabel( m, pixmap[t->id()], n );
       }
     }
   }
@@ -1284,7 +1401,7 @@ Fl_Type *typename_to_prototype(const char *inName)
 
  This is used by the .fl file reader. New types are always created as
  the last child of the first compatible parent. New widgets have a default
- setup. Their position, sizem and label will be read next in the file.
+ setup. Their position, size and label will be read next in the file.
 
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
@@ -1310,6 +1427,10 @@ Fl_Type *add_new_widget_from_file(const char *inName, Strategy strategy) {
 
 struct symbol {const char *name; int value;};
 
+/**
+ Table with all symbols known by the "fdesign" format reader.
+ This table does not need to be sorted alphabetically.
+ */
 static symbol table[] = {
   {"BLACK",                     FL_BLACK},
   {"RED",                       FL_RED},
@@ -1432,10 +1553,36 @@ static symbol table[] = {
   {"HOR_NICE_SLIDER",           FL_HOR_NICE_SLIDER},
 };
 
+/**
+ \brief Find a symbol in an array of name/value pairs and return the value.
+
+ If numberok is 0, and the symbol was not found, v remains unchanged and the
+ function returns 0.
+
+ If numberok is set and no label matched, the symbol is interpreted as a
+ string containing an integer. If the string is not an integer, v is set to 0
+ and the function returns 0.
+
+ If the symbol is found, or the integer could be read, v is set to the
+ value, and the function returns 1.
+
+ \param[in] name find a symbol by this name, a leading "FL_" is ignored
+ \param[out] v value associated to the symbol, or the integer value
+ \param[in] numberok if set, the symbol can also be a text representing an
+    integer number
+ \return 0 if the symbol was not found and the integer was not valid
+ \return 1 otherwise and set v
+ */
 int lookup_symbol(const char *name, int &v, int numberok) {
-  if (name[0]=='F' && name[1]=='L' && name[2]=='_') name += 3;
-  for (int i=0; i < int(sizeof(table)/sizeof(*table)); i++)
-    if (!fl_ascii_strcasecmp(name,table[i].name)) {v = table[i].value; return 1;}
-  if (numberok && ((v = atoi(name)) || !strcmp(name,"0"))) return 1;
+  if ((name[0]=='F') && (name[1]=='L') && (name[2]=='_'))
+    name += 3;
+  for (int i=0; i < int(sizeof(table)/sizeof(*table)); i++) {
+    if (!fl_ascii_strcasecmp(name,table[i].name)) {
+      v = table[i].value;
+      return 1;
+    }
+  }
+  if (numberok && ((v = atoi(name)) || !strcmp(name,"0")))
+    return 1;
   return 0;
 }

@@ -4,7 +4,7 @@ header_name {.h}
 code_name {.cxx}
 snap {
   ver 1
-  current_suite {My Test}
+  current_suite FLTK
   current_preset 1
   suite {
     name {FLUID (based on FLTK)}
@@ -107,8 +107,8 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings} open
-    xywh {617 331 340 580} type Double align 80 resizable
+    label {FLUID Settings} open selected
+    xywh {423 204 340 580} type Double align 80
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Tabs w_settings_tabs {
@@ -116,7 +116,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255
     } {
       Fl_Group {} {
-        label General open selected
+        label General open
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {
@@ -858,71 +858,103 @@ g_layout_list.update_dialogs();}
             xywh {0 -11 100 20} labelsize 11
           }
         }
-        Fl_Input i18n_include_input {
-          label {\#include:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_include.c_str());
+        Fl_Group i18n_gnu_group {
+          callback {propagate_load(o, v);} open
+          xywh {100 103 220 95}
+        } {
+          Fl_Input i18n_gnu_include_input {
+            label {\#include:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_gnu_include.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_include = o->value();
+  g_project.i18n_gnu_include = o->value();
   set_modflag(1);
 }}
-          tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+            tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_gnu_conditional_input {
+            label {Conditional:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_gnu_conditional.c_str());
+} else {
+  undo_checkpoint();
+  g_project.i18n_gnu_conditional = o->value();
+  set_modflag(1);
+}}
+            tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_gnu_function_input {
+            label {Function:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_gnu_function.c_str());
+} else {
+  undo_checkpoint();
+  g_project.i18n_gnu_function = o->value();
+  set_modflag(1);
+}}
+            tooltip {The function to call to translate labels and tooltips, usually "gettext" or "_"} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_gnu_static_function_input {
+            label {Static Function:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_gnu_static_function.c_str());
+} else {
+  undo_checkpoint();
+  g_project.i18n_gnu_static_function = o->value();
+  set_modflag(1);
+}}
+            tooltip {function to call to translate static text, The function to call to internationalize labels and tooltips, usually "gettext_noop" or "N_"} xywh {100 178 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
         }
-        Fl_Input i18n_conditional_input {
-          label {Conditional:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_conditional.c_str());
+        Fl_Group i18n_posix_group {
+          callback {propagate_load(o, v);} open
+          xywh {100 103 220 95} hide
+        } {
+          Fl_Input i18n_pos_include_input {
+            label {\#include:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_pos_include.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_conditional = o->value();
+  g_project.i18n_pos_include = o->value();
   set_modflag(1);
 }}
-          tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
-        }
-        Fl_Input i18n_file_input {
-          label {File:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_file.c_str());
+            tooltip {The include file for internationalization.} xywh {100 103 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_pos_conditional_input {
+            label {Conditional:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_pos_conditional.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_file = o->value();
+  g_project.i18n_pos_conditional = o->value();
   set_modflag(1);
 }}
-          tooltip {The name of the message catalog.} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
-        }
-        Fl_Input i18n_set_input {
-          label {Set:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_set.c_str());
+            tooltip {only include the header file if this preprocessor macro is defined, for example FLTK_GETTEXT_FOUND} xywh {100 128 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_pos_file_input {
+            label {File:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_pos_file.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_set = o->value();
+  g_project.i18n_pos_file = o->value();
   set_modflag(1);
 }}
-          tooltip {The message set number.} xywh {100 178 220 20} type Int box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
-        }
-        Fl_Input i18n_function_input {
-          label {Function:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_function.c_str());
+            tooltip {The name of the message catalog.} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Input i18n_pos_set_input {
+            label {Set:}
+            callback {if (v == LOAD) {
+  o->value(g_project.i18n_pos_set.c_str());
 } else {
   undo_checkpoint();
-  g_project.i18n_function = o->value();
+  g_project.i18n_pos_set = o->value();
   set_modflag(1);
 }}
-          tooltip {The function to call to translate labels and tooltips, usually "gettext" or "_"} xywh {100 153 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
-        }
-        Fl_Input i18n_static_function_input {
-          label {Static Function:}
-          callback {if (v == LOAD) {
-  o->value(g_project.i18n_static_function.c_str());
-} else {
-  undo_checkpoint();
-  g_project.i18n_static_function = o->value();
-  set_modflag(1);
-}}
-          tooltip {function to call to translate static text, The function to call to internationalize labels and tooltips, usually "gettext_noop" or "N_"} xywh {100 178 220 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+            tooltip {The message set number.} xywh {100 178 80 20} type Int box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+          }
         }
       }
     }
@@ -939,7 +971,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {455 590 555 430} type Double align 80 resizable visible
+    xywh {454 638 555 430} type Double align 80 resizable visible
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable

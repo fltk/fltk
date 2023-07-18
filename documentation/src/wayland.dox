@@ -62,7 +62,7 @@ and often named 'link'. Access to such a list is possible memorizing a value of 
 <tt>struct wl_list</tt> computed by macro \c wl_list_init().
 Macro <tt>wl_list_for_each(arg1, arg2, arg3)</tt> allows to run through all list elements with:
 - \c arg1 is a pointer variable of the type of elements of the linked list;
-- \c arg2 is the address of a variable of type <tt>struct wl_list</tt> identifying the targetted list;
+- \c arg2 is the address of a variable of type <tt>struct wl_list</tt> identifying the targeted list;
 - \c arg3 is the name of the member variable of these elements used to link them together.
 
 For example, \c wl_list_for_each() can be used as follows to scan the linked list
@@ -381,6 +381,14 @@ When the window size change is caused by the app itself calling the window's \c 
 to detect that Wayland needs be informed of the desired size change, which gets done by a call
 to \c libdecor_frame_commit(). Wayland later calls \c handle_configure() and events described
 above unfold.
+
+Wayland generally does not provide a way to control where the compositor should map a window
+in the system displays. Nevertheless, for multi-display systems, Wayland allows to control
+on what display should the compositor map a fullscreen window. That is done inside function
+\c handle_configure() which calls \c libdecor_frame_set_fullscreen() for DECORATED windows
+and inside function \c xdg_toplevel_configure() which calls \c xdg_toplevel_set_fullscreen()
+for UNFRAMED. The <tt>struct wl_output</tt> pointer for the targeted display is transmitted
+as 2nd argument of these calls.
 
 \section menu-windows Menu windows and other popups
 Menu windows, tiny menu title windows, and tooltip windows are implemented using Wayland's
@@ -1057,7 +1065,7 @@ EGL needs 2 more objects created for each \c Fl_Gl_Window. They have types
 function \c Fl_Wayland_Gl_Window_Driver::make_current_before() which runs at the
 beginning of \c Fl_Gl_Window::make_current().
 The first argument of the call to \c wl_egl_window_create() therein has type
-<tt>struct wl_surface *</tt> and is what connects EGL with the targetted Wayland window.
+<tt>struct wl_surface *</tt> and is what connects EGL with the targeted Wayland window.
 
 EGL creates with \c eglCreateContext() an object of type \c EGLContext via member
 function \c Fl_Wayland_Gl_Window_Driver::create_gl_context() called by

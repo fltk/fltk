@@ -227,7 +227,7 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
       break;
     }
 
-    // Make sure that we don;t go through the list of options for child nodes
+    // Make sure that we don't go through the list of options for child nodes
     if (!skip_options) {
       // this is the first word in a .fd file:
       if (!strcmp(c,"Magic:")) {
@@ -272,28 +272,34 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         g_project.i18n_type = atoi(read_word());
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_function")) {
-        g_project.i18n_function = read_word();
+      if (!strcmp(c,"i18n_gnu_function")) {
+        g_project.i18n_gnu_function = read_word();
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_static_function")) {
-        g_project.i18n_static_function = read_word();
+      if (!strcmp(c,"i18n_gnu_static_function")) {
+        g_project.i18n_gnu_static_function = read_word();
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_file")) {
-        g_project.i18n_file = read_word();
+      if (!strcmp(c,"i18n_pos_file")) {
+        g_project.i18n_pos_file = read_word();
         goto CONTINUE;
       }
-      if (!strcmp(c,"i18n_set")) {
-        g_project.i18n_set = read_word();
+      if (!strcmp(c,"i18n_pos_set")) {
+        g_project.i18n_pos_set = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_include")) {
-        g_project.i18n_include = read_word();
+        if (g_project.i18n_type == 1)
+          g_project.i18n_gnu_include = read_word();
+        else if (g_project.i18n_type == 2)
+          g_project.i18n_pos_include = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"i18n_conditional")) {
-        g_project.i18n_conditional = read_word();
+        if (g_project.i18n_type == 1)
+          g_project.i18n_gnu_conditional = read_word();
+        else if (g_project.i18n_type == 2)
+          g_project.i18n_pos_conditional = read_word();
         goto CONTINUE;
       }
       if (!strcmp(c,"header_name")) {
@@ -784,19 +790,21 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
     write_string("\navoid_early_includes");
   if (g_project.i18n_type) {
     write_string("\ni18n_type %d", g_project.i18n_type);
-    write_string("\ni18n_include"); write_word(g_project.i18n_include.c_str());
-    write_string("\ni18n_conditional"); write_word(g_project.i18n_conditional.c_str());
     switch (g_project.i18n_type) {
       case 1 : /* GNU gettext */
-        write_string("\ni18n_function"); write_word(g_project.i18n_function.c_str());
-        write_string("\ni18n_static_function"); write_word(g_project.i18n_static_function.c_str());
+        write_string("\ni18n_include"); write_word(g_project.i18n_gnu_include.c_str());
+        write_string("\ni18n_conditional"); write_word(g_project.i18n_gnu_conditional.c_str());
+        write_string("\ni18n_gnu_function"); write_word(g_project.i18n_gnu_function.c_str());
+        write_string("\ni18n_gnu_static_function"); write_word(g_project.i18n_gnu_static_function.c_str());
         break;
       case 2 : /* POSIX catgets */
-        if (g_project.i18n_file[0]) {
-          write_string("\ni18n_file");
-          write_word(g_project.i18n_file.c_str());
+        write_string("\ni18n_include"); write_word(g_project.i18n_pos_include.c_str());
+        write_string("\ni18n_conditional"); write_word(g_project.i18n_pos_conditional.c_str());
+        if (!g_project.i18n_pos_file.empty()) {
+          write_string("\ni18n_pos_file");
+          write_word(g_project.i18n_pos_file.c_str());
         }
-        write_string("\ni18n_set"); write_word(g_project.i18n_set.c_str());
+        write_string("\ni18n_pos_set"); write_word(g_project.i18n_pos_set.c_str());
         break;
     }
   }

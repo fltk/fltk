@@ -1,7 +1,7 @@
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -87,6 +87,39 @@ protected:
 
 public:
 
+  enum ID {
+    // administrative
+    ID_Base_, ID_Widget_, ID_Menu_,
+    // non-widget
+    ID_Function, ID_Code, ID_CodeBlock,
+    ID_Decl, ID_DeclBlock, ID_Class,
+    ID_Widget_Class, ID_Comment, ID_Data,
+    // groups
+    ID_Window, ID_Group, ID_Pack,
+    ID_Flex, ID_Tabs, ID_Scroll,
+    ID_Tile, ID_Wizard,
+    // buttons
+    ID_Button, ID_Return_Button, ID_Light_Button,
+    ID_Check_Button, ID_Repeat_Button, ID_Round_Button,
+    // valuators
+    ID_Slider, ID_Scrollbar, ID_Value_Slider,
+    ID_Adjuster, ID_Counter, ID_Spinner,
+    ID_Dial, ID_Roller, ID_Value_Input, ID_Value_Output,
+    // text
+    ID_Input, ID_Output, ID_Text_Editor,
+    ID_Text_Display, ID_File_Input, ID_Simple_Terminal,
+    // menus
+    ID_Menu_Bar, ID_Menu_Button, ID_Choice,
+    ID_Input_Choice, ID_Submenu, ID_Menu_Item,
+    ID_Checkbox_Menu_Item, ID_Radio_Menu_Item,
+    // browsers
+    ID_Browser, ID_Check_Browser, ID_File_Browser,
+    ID_Tree, ID_Help_View, ID_Table,
+    // misc
+    ID_Box, ID_Clock, ID_Progress,
+    ID_Max_
+  };
+
   virtual ~Fl_Type();
   virtual Fl_Type *make(Strategy strategy) = 0;
 
@@ -171,7 +204,8 @@ public:
   virtual int is_class() const {return 0;}
   virtual int is_public() const {return 1;}
 
-  virtual int pixmapID() { return 0; }
+  virtual ID id() const { return ID_Base_; }
+  virtual bool is_a(ID inID) { return (inID==ID_Base_); }
 
   const char* class_name(const int need_nest) const;
   const class Fl_Class_Type* is_in_class() const;

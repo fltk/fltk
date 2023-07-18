@@ -105,7 +105,7 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 
 /**
   Gets the screen bounding rect for the given screen.
-  Under Windows, Mac OS X, and the Gnome desktop, screen #0 contains the menubar/taskbar
+  Under Windows, Mac OS X, and X11 + the Gnome desktop, screen #0 contains the menubar/taskbar
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] n the screen number (0 to Fl::screen_count() - 1)
   \note Like all quantities accessible via public APIs of FLTK, values of \p X,Y,W,H

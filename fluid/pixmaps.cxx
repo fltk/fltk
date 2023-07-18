@@ -1,7 +1,7 @@
 //
 // Fluid Image management for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,6 +15,8 @@
 //
 
 #include "pixmaps.h"
+
+#include "Fl_Type.h"
 
 #include <FL/Fl_Pixmap.H>
 
@@ -87,139 +89,84 @@ Fl_Pixmap *protected_pixmap;
 Fl_Pixmap *invisible_pixmap;
 Fl_Pixmap *compressed_pixmap;
 
-Fl_Pixmap *window_pixmap;
-Fl_Pixmap *button_pixmap;
-Fl_Pixmap *checkbutton_pixmap;
-Fl_Pixmap *roundbutton_pixmap;
-Fl_Pixmap *box_pixmap;
-Fl_Pixmap *group_pixmap;
-Fl_Pixmap *function_pixmap;
-Fl_Pixmap *code_pixmap;
-Fl_Pixmap *codeblock_pixmap;
-Fl_Pixmap *comment_pixmap;
-Fl_Pixmap *declaration_pixmap;
-Fl_Pixmap *declarationblock_pixmap;
-Fl_Pixmap *class_pixmap;
-Fl_Pixmap *tabs_pixmap;
-Fl_Pixmap *input_pixmap;
-Fl_Pixmap *choice_pixmap;
-Fl_Pixmap *menuitem_pixmap;
-Fl_Pixmap *menubar_pixmap;
-Fl_Pixmap *submenu_pixmap;
-Fl_Pixmap *scroll_pixmap;
-Fl_Pixmap *tile_pixmap;
-Fl_Pixmap *wizard_pixmap;
-Fl_Pixmap *pack_pixmap;
-Fl_Pixmap *returnbutton_pixmap;
-Fl_Pixmap *lightbutton_pixmap;
-Fl_Pixmap *repeatbutton_pixmap;
-Fl_Pixmap *menubutton_pixmap;
-Fl_Pixmap *output_pixmap;
-Fl_Pixmap *textdisplay_pixmap;
-Fl_Pixmap *textedit_pixmap;
-Fl_Pixmap *fileinput_pixmap;
-Fl_Pixmap *browser_pixmap;
-Fl_Pixmap *checkbrowser_pixmap;
-Fl_Pixmap *filebrowser_pixmap;
-Fl_Pixmap *clock_pixmap;
-Fl_Pixmap *help_pixmap;
-Fl_Pixmap *progress_pixmap;
-Fl_Pixmap *slider_pixmap;
-Fl_Pixmap *scrollbar_pixmap;
-Fl_Pixmap *valueslider_pixmap;
-Fl_Pixmap *adjuster_pixmap;
-Fl_Pixmap *counter_pixmap;
-Fl_Pixmap *dial_pixmap;
-Fl_Pixmap *roller_pixmap;
-Fl_Pixmap *valueinput_pixmap;
-Fl_Pixmap *valueoutput_pixmap;
-Fl_Pixmap *spinner_pixmap;
-Fl_Pixmap *widgetclass_pixmap;
-Fl_Pixmap *data_pixmap;
-Fl_Pixmap *tree_pixmap;
-Fl_Pixmap *table_pixmap;
-Fl_Pixmap *simple_terminal_pixmap;
-Fl_Pixmap *input_choice_pixmap;
-Fl_Pixmap *check_menuitem_pixmap;
-Fl_Pixmap *radio_menuitem_pixmap;
-Fl_Pixmap *flex_pixmap;
-
-Fl_Pixmap *pixmap[57];
+Fl_Pixmap *pixmap[Fl_Type::ID_Max_] = { NULL };
 
 void loadPixmaps()
 {
+  Fl_Pixmap *tmp;
+
   bind_pixmap = new Fl_Pixmap(bind_xpm); bind_pixmap->scale(16, 16);
   lock_pixmap = new Fl_Pixmap(lock_xpm); lock_pixmap->scale(16, 16);
   protected_pixmap = new Fl_Pixmap(protected_xpm); protected_pixmap->scale(16, 16);
   invisible_pixmap = new Fl_Pixmap(invisible_xpm); invisible_pixmap->scale(16, 16);
   compressed_pixmap = new Fl_Pixmap(compressed_xpm); compressed_pixmap->scale(16, 16);
 
-  pixmap[1] = window_pixmap = new Fl_Pixmap(flWindow_xpm); window_pixmap->scale(16, 16);
-  pixmap[2] = button_pixmap = new Fl_Pixmap(flButton_xpm); button_pixmap->scale(16, 16);
-  pixmap[3] = checkbutton_pixmap = new Fl_Pixmap(flCheckButton_xpm); checkbutton_pixmap->scale(16, 16);
-  pixmap[4] = roundbutton_pixmap = new Fl_Pixmap(flRoundButton_xpm); roundbutton_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Window] = tmp = new Fl_Pixmap(flWindow_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Button] = tmp = new Fl_Pixmap(flButton_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Check_Button] = tmp = new Fl_Pixmap(flCheckButton_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Round_Button] = tmp = new Fl_Pixmap(flRoundButton_xpm); tmp->scale(16, 16);
 
-  pixmap[5] = box_pixmap = new Fl_Pixmap(flBox_xpm); box_pixmap->scale(16, 16);
-  pixmap[6] = group_pixmap = new Fl_Pixmap(flGroup_xpm); group_pixmap->scale(16, 16);
-  pixmap[7] = function_pixmap = new Fl_Pixmap(flFunction_xpm); function_pixmap->scale(16, 16);
-  pixmap[8] = code_pixmap = new Fl_Pixmap(flCode_xpm); code_pixmap->scale(16, 16);
-  pixmap[9] = codeblock_pixmap = new Fl_Pixmap(flCodeBlock_xpm); codeblock_pixmap->scale(16, 16);
-  pixmap[10] = declaration_pixmap = new Fl_Pixmap(flDeclaration_xpm); declaration_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Box] = tmp = new Fl_Pixmap(flBox_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Group] = tmp = new Fl_Pixmap(flGroup_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Function] = tmp = new Fl_Pixmap(flFunction_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Code] = tmp = new Fl_Pixmap(flCode_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_CodeBlock] = tmp = new Fl_Pixmap(flCodeBlock_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Decl] = tmp = new Fl_Pixmap(flDeclaration_xpm); tmp->scale(16, 16);
 
-  pixmap[11] = declarationblock_pixmap = new Fl_Pixmap(flDeclarationBlock_xpm); declarationblock_pixmap->scale(16, 16);
-  pixmap[12] = class_pixmap = new Fl_Pixmap(flClass_xpm); class_pixmap->scale(16, 16);
-  pixmap[13] = tabs_pixmap = new Fl_Pixmap(flTabs_xpm); tabs_pixmap->scale(16, 16);
-  pixmap[14] = input_pixmap = new Fl_Pixmap(flInput_xpm); input_pixmap->scale(16, 16);
-  pixmap[15] = choice_pixmap = new Fl_Pixmap(flChoice_xpm); choice_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_DeclBlock] = tmp = new Fl_Pixmap(flDeclarationBlock_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Class] = tmp = new Fl_Pixmap(flClass_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Tabs] = tmp = new Fl_Pixmap(flTabs_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Input] = tmp = new Fl_Pixmap(flInput_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Choice] = tmp = new Fl_Pixmap(flChoice_xpm); tmp->scale(16, 16);
 
-  pixmap[16] = menuitem_pixmap = new Fl_Pixmap(flMenuitem_xpm); menuitem_pixmap->scale(16, 16);
-  pixmap[17] = menubar_pixmap = new Fl_Pixmap(flMenubar_xpm); menubar_pixmap->scale(16, 16);
-  pixmap[18] = submenu_pixmap = new Fl_Pixmap(flSubmenu_xpm); submenu_pixmap->scale(16, 16);
-  pixmap[19] = scroll_pixmap = new Fl_Pixmap(flScroll_xpm); scroll_pixmap->scale(16, 16);
-  pixmap[20] = tile_pixmap = new Fl_Pixmap(flTile_xpm); tile_pixmap->scale(16, 16);
-  pixmap[21] = wizard_pixmap = new Fl_Pixmap(flWizard_xpm); wizard_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Menu_Item] = tmp = new Fl_Pixmap(flMenuitem_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Menu_Bar] = tmp = new Fl_Pixmap(flMenubar_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Submenu] = tmp = new Fl_Pixmap(flSubmenu_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Scroll] = tmp = new Fl_Pixmap(flScroll_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Tile] = tmp = new Fl_Pixmap(flTile_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Wizard] = tmp = new Fl_Pixmap(flWizard_xpm); tmp->scale(16, 16);
 
-  pixmap[22] = pack_pixmap = new Fl_Pixmap(flPack_xpm); pack_pixmap->scale(16, 16);
-  pixmap[23] = returnbutton_pixmap = new Fl_Pixmap(flReturnButton_xpm); returnbutton_pixmap->scale(16, 16);
-  pixmap[24] = lightbutton_pixmap = new Fl_Pixmap(flLightButton_xpm); lightbutton_pixmap->scale(16, 16);
-  pixmap[25] = repeatbutton_pixmap = new Fl_Pixmap(flRepeatButton_xpm); repeatbutton_pixmap->scale(16, 16);
-  pixmap[26] = menubutton_pixmap = new Fl_Pixmap(flMenuButton_xpm); menubutton_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Pack] = tmp = new Fl_Pixmap(flPack_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Return_Button] = tmp = new Fl_Pixmap(flReturnButton_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Light_Button] = tmp = new Fl_Pixmap(flLightButton_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Repeat_Button] = tmp = new Fl_Pixmap(flRepeatButton_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Menu_Button] = tmp = new Fl_Pixmap(flMenuButton_xpm); tmp->scale(16, 16);
 
-  pixmap[27] = output_pixmap = new Fl_Pixmap(flOutput_xpm); output_pixmap->scale(16, 16);
-  pixmap[28] = textdisplay_pixmap = new Fl_Pixmap(flTextDisplay_xpm); textdisplay_pixmap->scale(16, 16);
-  pixmap[29] = textedit_pixmap = new Fl_Pixmap(flTextEdit_xpm); textedit_pixmap->scale(16, 16);
-  pixmap[30] = fileinput_pixmap = new Fl_Pixmap(flFileInput_xpm); fileinput_pixmap->scale(16, 16);
-  pixmap[31] = browser_pixmap = new Fl_Pixmap(flBrowser_xpm); browser_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Output] = tmp = new Fl_Pixmap(flOutput_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Text_Display] = tmp = new Fl_Pixmap(flTextDisplay_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Text_Editor] = tmp = new Fl_Pixmap(flTextEdit_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_File_Input] = tmp = new Fl_Pixmap(flFileInput_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Browser] = tmp = new Fl_Pixmap(flBrowser_xpm); tmp->scale(16, 16);
 
-  pixmap[32] = checkbrowser_pixmap = new Fl_Pixmap(flCheckBrowser_xpm); checkbrowser_pixmap->scale(16, 16);
-  pixmap[33] = filebrowser_pixmap = new Fl_Pixmap(flFileBrowser_xpm); filebrowser_pixmap->scale(16, 16);
-  pixmap[34] = clock_pixmap = new Fl_Pixmap(flClock_xpm); clock_pixmap->scale(16, 16);
-  pixmap[35] = help_pixmap = new Fl_Pixmap(flHelp_xpm); help_pixmap->scale(16, 16);
-  pixmap[36] = progress_pixmap = new Fl_Pixmap(flProgress_xpm); progress_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Check_Browser] = tmp = new Fl_Pixmap(flCheckBrowser_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_File_Browser] = tmp = new Fl_Pixmap(flFileBrowser_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Clock] = tmp = new Fl_Pixmap(flClock_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Help_View] = tmp = new Fl_Pixmap(flHelp_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Progress] = tmp = new Fl_Pixmap(flProgress_xpm); tmp->scale(16, 16);
 
-  pixmap[37] = slider_pixmap = new Fl_Pixmap(flSlider_xpm); slider_pixmap->scale(16, 16);
-  pixmap[38] = scrollbar_pixmap = new Fl_Pixmap(flScrollBar_xpm); scrollbar_pixmap->scale(16, 16);
-  pixmap[39] = valueslider_pixmap = new Fl_Pixmap(flValueSlider_xpm); valueslider_pixmap->scale(16, 16);
-  pixmap[40] = adjuster_pixmap = new Fl_Pixmap(flAdjuster_xpm); adjuster_pixmap->scale(16, 16);
-  pixmap[41] = counter_pixmap = new Fl_Pixmap(flCounter_xpm); counter_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Slider] = tmp = new Fl_Pixmap(flSlider_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Scrollbar] = tmp = new Fl_Pixmap(flScrollBar_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Value_Slider] = tmp = new Fl_Pixmap(flValueSlider_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Adjuster] = tmp = new Fl_Pixmap(flAdjuster_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Counter] = tmp = new Fl_Pixmap(flCounter_xpm); tmp->scale(16, 16);
 
-  pixmap[42] = dial_pixmap = new Fl_Pixmap(flDial_xpm); dial_pixmap->scale(16, 16);
-  pixmap[43] = roller_pixmap = new Fl_Pixmap(flRoller_xpm); roller_pixmap->scale(16, 16);
-  pixmap[44] = valueinput_pixmap = new Fl_Pixmap(flValueInput_xpm); valueinput_pixmap->scale(16, 16);
-  pixmap[45] = valueoutput_pixmap = new Fl_Pixmap(flValueOutput_xpm); valueoutput_pixmap->scale(16, 16);
-  pixmap[46] = comment_pixmap = new Fl_Pixmap(flComment_xpm); comment_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Dial] = tmp = new Fl_Pixmap(flDial_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Roller] = tmp = new Fl_Pixmap(flRoller_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Value_Input] = tmp = new Fl_Pixmap(flValueInput_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Value_Output] = tmp = new Fl_Pixmap(flValueOutput_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Comment] = tmp = new Fl_Pixmap(flComment_xpm); tmp->scale(16, 16);
 
-  pixmap[47] = spinner_pixmap = new Fl_Pixmap(flSpinner_xpm); spinner_pixmap->scale(16, 16);
-  pixmap[48] = widgetclass_pixmap = new Fl_Pixmap(flWidgetClass_xpm); widgetclass_pixmap->scale(16, 16);
-  pixmap[49] = data_pixmap = new Fl_Pixmap(flData_xpm); data_pixmap->scale(16, 16);
-  pixmap[50] = tree_pixmap = new Fl_Pixmap(flTree_xpm); tree_pixmap->scale(16, 16);
-  pixmap[51] = table_pixmap = new Fl_Pixmap(flTable_xpm); table_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Spinner] = tmp = new Fl_Pixmap(flSpinner_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Widget_Class] = tmp = new Fl_Pixmap(flWidgetClass_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Data] = tmp = new Fl_Pixmap(flData_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Tree] = tmp = new Fl_Pixmap(flTree_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Table] = tmp = new Fl_Pixmap(flTable_xpm); tmp->scale(16, 16);
 
-  pixmap[52] = simple_terminal_pixmap = new Fl_Pixmap(flSimpleTerminal_xpm); simple_terminal_pixmap->scale(16, 16);
-  pixmap[53] = input_choice_pixmap = new Fl_Pixmap(flInputChoice_xpm); input_choice_pixmap->scale(16, 16);
-  pixmap[54] = check_menuitem_pixmap = new Fl_Pixmap(flCheckMenuitem_xpm); check_menuitem_pixmap->scale(16, 16);
-  pixmap[55] = radio_menuitem_pixmap = new Fl_Pixmap(flRadioMenuitem_xpm); radio_menuitem_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Simple_Terminal] = tmp = new Fl_Pixmap(flSimpleTerminal_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Input_Choice] = tmp = new Fl_Pixmap(flInputChoice_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Checkbox_Menu_Item] = tmp = new Fl_Pixmap(flCheckMenuitem_xpm); tmp->scale(16, 16);
+  pixmap[Fl_Type::ID_Radio_Menu_Item] = tmp = new Fl_Pixmap(flRadioMenuitem_xpm); tmp->scale(16, 16);
 
-  pixmap[56] = flex_pixmap = new Fl_Pixmap(flFlex_xpm); flex_pixmap->scale(16, 16);
+  pixmap[Fl_Type::ID_Flex] = tmp = new Fl_Pixmap(flFlex_xpm); tmp->scale(16, 16);
 }
 

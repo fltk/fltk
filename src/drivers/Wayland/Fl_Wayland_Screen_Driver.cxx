@@ -308,21 +308,27 @@ static void pointer_button(void *data,
     return;
   }
   int b = 0;
-  Fl::e_state &= ~FL_BUTTONS;
+  // Fl::e_state &= ~FL_BUTTONS;    // DO NOT reset the mouse button state!
   if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-    if (button == BTN_LEFT) {Fl::e_state |= FL_BUTTON1; b = 1;}
-    else if (button == BTN_RIGHT) {Fl::e_state |= FL_BUTTON3; b = 3;}
-    else if (button == BTN_MIDDLE) {Fl::e_state |= FL_BUTTON2; b = 2;}
-    Fl::e_keysym = FL_Button + b;
+    if (button == BTN_LEFT) { Fl::e_state |= FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT) { Fl::e_state |= FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE) { Fl::e_state |= FL_BUTTON2; b = 2; }
+  } else { // must be WL_POINTER_BUTTON_STATE_RELEASED
+    if (button == BTN_LEFT) { Fl::e_state &= ~FL_BUTTON1; b = 1; }
+    else if (button == BTN_RIGHT) { Fl::e_state &= ~FL_BUTTON3; b = 3; }
+    else if (button == BTN_MIDDLE) { Fl::e_state &= ~FL_BUTTON2; b = 2; }
   }
+  Fl::e_keysym = FL_Button + b;
   Fl::e_dx = Fl::e_dy = 0;
 
   set_event_xy(win);
   if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
     event = FL_PUSH;
     checkdouble();
-  } else if (state == WL_POINTER_BUTTON_STATE_RELEASED) event = FL_RELEASE;
-//fprintf(stderr, "%s %s\n", fl_eventnames[event], win->label() ? win->label():"[]");
+  } else if (state == WL_POINTER_BUTTON_STATE_RELEASED) {
+    event = FL_RELEASE;
+  }
+  // fprintf(stderr, "%s %s\n", fl_eventnames[event], win->label() ? win->label():"[]");
   Fl::handle(event, win);
 }
 
