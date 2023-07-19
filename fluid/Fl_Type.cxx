@@ -18,17 +18,79 @@
 /// \{
 
 /** \class Fl_Type
-Each object described by Fluid is one of these objects.  They
-are all stored in a double-linked list.
+ Each object described by Fluid is one of these objects.  They
+ are all stored in a double-linked list.
 
-The "type" of the object is covered by the virtual functions.
-There will probably be a lot of these virtual functions.
+ The "type" of the object is covered by the virtual functions.
+ There will probably be a lot of these virtual functions.
 
-The type browser is also a list of these objects, but they
-are "factory" instances, not "real" ones.  These objects exist
-only so the "make" method can be called on them.  They are
-not in the linked list and are not written to files or
-copied or otherwise examined.
+ The type browser is also a list of these objects, but they
+ are "factory" instances, not "real" ones.  These objects exist
+ only so the "make" method can be called on them.  They are
+ not in the linked list and are not written to files or
+ copied or otherwise examined.
+
+ The Fl_Type inheritance is currently:
+      --+-- Fl_Type
+        +-- Fl_Function_Type
+        +-- Fl_Code_Type
+        +-- Fl_CodeBlock_Type
+        +-+ Fl_Decl_Type
+        | +-- Fl_Data
+        +-- Fl_DeclBlock_Type
+        +-- Fl_Comment_Type
+        +-- Fl_Class_Type
+        +-+ Fl_Widget_Type, 'o' points to a class derived from Fl_Widget
+          +-+ Fl_Browser_Base_Type, 'o' is Fl_Browser
+          | +-+ Fl_Browser
+          | | +-- Fl_File_Browser
+          | +-- Fl_Check_Browser
+          +-- Fl_Tree_Type
+          +-- Fl_Help_View_Type
+          +-+ Fl_Valuator_Type, 'o' is Fl_Valuator_
+          | +-- Fl_Counter_Type
+          | +-- Fl_Adjuster_Type
+          | +-- Fl_Dial_Type
+          | +-- Fl_Roller_Type
+          | +-- Fl_Slider_Type
+          | +-- Fl_Value_Input_Type
+          | +-- Fl_Value_Output_Type
+          +-+ Fl_Input_Type
+          | +-- Fl_Output_Type
+          +-+ Fl_Text_Display_Type
+          | +-- Fl_Text_Editor+Type
+          | +-- Fl_Simple_Terminal_Type
+          +-- Fl_Box_Type
+          +-- Fl_Clock_Type
+          +-- Fl_Progress_Type
+          +-- Fl_Spinner_Type
+          +-+ Fl_Group_Type
+          | +-- Fl_Pack_Type
+          | +-- Fl_Flex_Type
+          | +-- Fl_Table_Type
+          | +-- Fl_Tabs_Type
+          | +-- Fl_Scroll_Type
+          | +-- Fl_Tile_Type
+          | +-- Fl_Wizard_Type
+          | +-+ Fl_Window_Type
+          |   +-- Fl_Widget_Class_Type
+          +-+ Fl_Menu_Manager_Type, 'o' is based on Fl_Widget
+          | +-+ Fl_Menu_Base_Type, 'o' is based on Fl_Menu_
+          | | +-- Fl_Menu_Button_Type
+          | | +-- Fl_Choice_Type
+          | | +-- Fl_Menu_Bar_Type
+          | +-- Fl_Input_Choice_Type, 'o' is based on Fl_Input_Choice which is Fl_Group
+          +-+ Fl_Button_Type
+            +-- Fl_Return_Button_Type
+            +-- Fl_Repeat_Button_Type
+            +-- Fl_Light_Button_Type
+            +-- Fl_Check_Button_Type
+            +-- Fl_Round_Button_Type
+            +-+ Fl_Menu_Item_Type, 'o' is derived from Fl_Button in FLUID
+              +-- Fl_Radio_Menu_Item_Type
+              +-- Fl_Checkbox_Menu_Item_Type
+              +-- Fl_Submenu_Item_Type
+
 */
 
 #include "Fl_Type.h"

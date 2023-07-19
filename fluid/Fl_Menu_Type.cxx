@@ -158,7 +158,7 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
     if ( (force_parent && q->is_menu_item()) || !q->is_parent()) p = p->parent;
   }
   force_parent = 0;
-  if (!p || !(p->is_menu_button() || (p->is_menu_item() && p->is_parent()))) {
+  if (!p || !(p->is_a(ID_Menu_Manager_) || (p->is_menu_item() && p->is_parent()))) {
     fl_message("Please select a menu to add to");
     return 0;
   }
@@ -532,7 +532,7 @@ void Fl_Menu_Item_Type::write_code2(Fd_Code_Writer&) {}
 // children.  An actual array of Fl_Menu_Items is kept parallel
 // with the child objects and updated as they change.
 
-void Fl_Menu_Type::build_menu() {
+void Fl_Menu_Base_Type::build_menu() {
   Fl_Menu_* w = (Fl_Menu_*)o;
   // count how many Fl_Menu_Item structures needed:
   int n = 0;
@@ -596,7 +596,7 @@ void Fl_Menu_Type::build_menu() {
   o->redraw();
 }
 
-Fl_Type* Fl_Menu_Type::click_test(int, int) {
+Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
   if (selected) return 0; // let user move the widget
   Fl_Menu_* w = (Fl_Menu_*)o;
   if (!menusize) return 0;
@@ -615,7 +615,7 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
   return this;
 }
 
-void Fl_Menu_Type::write_code2(Fd_Code_Writer& f) {
+void Fl_Menu_Manager_Type::write_code2(Fd_Code_Writer& f) {
   if (next && next->is_menu_item()) {
     f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
             f.unique_id(this, "menu", name(), label()));
@@ -623,7 +623,7 @@ void Fl_Menu_Type::write_code2(Fd_Code_Writer& f) {
   Fl_Widget_Type::write_code2(f);
 }
 
-void Fl_Menu_Type::copy_properties() {
+void Fl_Menu_Base_Type::copy_properties() {
   Fl_Widget_Type::copy_properties();
   Fl_Menu_ *s = (Fl_Menu_*)o, *d = (Fl_Menu_*)live_widget;
   d->menu(s->menu());

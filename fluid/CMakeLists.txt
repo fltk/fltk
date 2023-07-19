@@ -26,6 +26,7 @@ set (CPPFILES
   Fl_Type.cxx
   Fl_Widget_Type.cxx
   Fl_Window_Type.cxx
+  Fl_Button_Type.cxx
   Fluid_Image.cxx
   about_panel.cxx
   align_widget.cxx
@@ -54,6 +55,7 @@ set (HEADERFILES
   Fl_Type.h
   Fl_Widget_Type.h
   Fl_Window_Type.h
+  Fl_Button_Type.h
   Fluid_Image.h
   StyleParse.h
   about_panel.h

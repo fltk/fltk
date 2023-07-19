@@ -1050,7 +1050,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
       n = ((Fl_Button*)(current_widget->o))->down_box();
     else if (current_widget->id() == Fl_Type::ID_Input_Choice)
       n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
-    else if (current_widget->is_menu_button())
+    else if (current_widget->is_a(Fl_Type::ID_Menu_Manager_))
       n = ((Fl_Menu_*)(current_widget->o))->down_box();
     else {
       i->deactivate(); return;
@@ -1074,7 +1074,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
         } else if (o->id() == Fl_Type::ID_Input_Choice) {
           Fl_Widget_Type* q = (Fl_Widget_Type*)o;
           ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
-        } else if (o->is_menu_button()) {
+        } else if (o->is_a(Fl_Type::ID_Menu_Manager_)) {
           Fl_Widget_Type* q = (Fl_Widget_Type*)o;
           ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
         }
@@ -2037,7 +2037,7 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
 
 void min_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Valuator)) {
+    if (current_widget->is_a(Fl_Type::ID_Valuator_)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->minimum());
     } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
@@ -2054,7 +2054,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        if (q->is_a(Fl_Type::ID_Valuator)) {
+        if (q->is_a(Fl_Type::ID_Valuator_)) {
           ((Fl_Valuator*)(q->o))->minimum(n);
           q->o->redraw();
           mod = 1;
@@ -2071,7 +2071,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
 
 void max_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Valuator)) {
+    if (current_widget->is_a(Fl_Type::ID_Valuator_)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->maximum());
     } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
@@ -2088,7 +2088,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        if (q->is_a(Fl_Type::ID_Valuator)) {
+        if (q->is_a(Fl_Type::ID_Valuator_)) {
           ((Fl_Valuator*)(q->o))->maximum(n);
           q->o->redraw();
           mod = 1;
@@ -2105,7 +2105,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
 
 void step_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Valuator)) {
+    if (current_widget->is_a(Fl_Type::ID_Valuator_)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->step());
     } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
@@ -2122,7 +2122,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        if (q->is_a(Fl_Type::ID_Valuator)) {
+        if (q->is_a(Fl_Type::ID_Valuator_)) {
           ((Fl_Valuator*)(q->o))->step(n);
           q->o->redraw();
           mod = 1;
@@ -2139,7 +2139,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
 
 void value_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Fl_Type::ID_Valuator)) {
+    if (current_widget->is_a(Fl_Type::ID_Valuator_)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->value());
     } else if (current_widget->is_button()) {
@@ -2157,7 +2157,7 @@ void value_cb(Fl_Value_Input* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-        if (q->is_a(Fl_Type::ID_Valuator)) {
+        if (q->is_a(Fl_Type::ID_Valuator_)) {
           ((Fl_Valuator*)(q->o))->value(n);
           mod = 1;
         } else if (q->is_button()) {
@@ -3041,7 +3041,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
-  } else if (is_menu_button()) {
+  } else if (is_a(Fl_Type::ID_Menu_Manager_)) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
@@ -3061,7 +3061,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     f.write_c("%s%s->labelsize(%d);\n", f.indent(), var, o->labelsize());
   if (o->labelcolor() != tplate->labelcolor() || subclass())
     write_color(f, "labelcolor", o->labelcolor());
-  if (is_a(ID_Valuator)) {
+  if (is_a(ID_Valuator_)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
     if (v->minimum()!=t->minimum())
@@ -3217,7 +3217,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
-  } else if (is_menu_button()) {
+  } else if (is_a(Fl_Type::ID_Menu_)) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
@@ -3240,7 +3240,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     f.write_string("align %d", o->align());
   if (o->when() != tplate->when())
     f.write_string("when %d", o->when());
-  if (is_a(ID_Valuator)) {
+  if (is_a(ID_Valuator_)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
     if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
@@ -3351,7 +3351,7 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Input_Choice*)o)->down_box((Fl_Boxtype)x);
     }
-  } else if (is_menu_button() && !strcmp(c,"down_box")) {
+  } else if (is_a(Fl_Type::ID_Menu_) && !strcmp(c,"down_box")) {
     const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
@@ -3398,21 +3398,19 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"when")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {
-    if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),0));
     if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"maximum")) {
-    if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),0));
     if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"step")) {
-    if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),0));
     if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),0));
   } else if (!strcmp(c,"value")) {
-    if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),0));
+    if (is_a(ID_Valuator_)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),0));
     if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),0));
   } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) && is_a(ID_Slider)) {
     ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),0));
-  } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) ) {
-    int x = is_a(ID_Slider);
   } else if (!strcmp(c,"textfont")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) {ft=(Fl_Font)x; textstuff(1,ft,s,cc);}
   } else if (!strcmp(c,"textsize")) {
@@ -3658,7 +3656,7 @@ void Fl_Widget_Type::copy_properties() {
   }
 
   // copy all attributes specific to Fl_Valuator and derived classes
-  if (is_a(ID_Valuator)) {
+  if (is_a(ID_Valuator_)) {
     Fl_Valuator* d = (Fl_Valuator*)live_widget, *s = (Fl_Valuator*)o;
     d->minimum(s->minimum());
     d->maximum(s->maximum());

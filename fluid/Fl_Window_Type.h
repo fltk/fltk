@@ -21,12 +21,13 @@
 #ifndef _FLUID_FL_WINDOW_TYPE_H
 #define _FLUID_FL_WINDOW_TYPE_H
 
-#include "Fl_Widget_Type.h"
+#include "Fl_Group_Type.h"
 
 class Fl_Widget_Class_Type;
 
 extern Fl_Menu_Item window_type_menu[];
 extern Fl_Widget_Class_Type *current_widget_class;
+
 void toggle_overlays(Fl_Widget *,void *);
 void toggle_guides(Fl_Widget *,void *);
 void toggle_restricted(Fl_Widget *,void *);
@@ -43,7 +44,9 @@ enum {
   FD_BOX    = 32  // user creates a new selection box
 };
 
-class Fl_Window_Type : public Fl_Widget_Type { // FIXME: Fl_Group
+class Fl_Window_Type : public Fl_Group_Type
+{
+  typedef Fl_Group_Type super;
 protected:
 
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return window_type_menu;}
@@ -71,6 +74,7 @@ protected:
   int recalc;           // set by fix_overlay()
   void moveallchildren();
   ID id() const FL_OVERRIDE { return ID_Window; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Window) ? true : super::is_a(inID); }
   void open_();
 
 public:
@@ -122,7 +126,9 @@ public:
   static int popupx, popupy;
 };
 
-class Fl_Widget_Class_Type : private Fl_Window_Type {
+class Fl_Widget_Class_Type : private Fl_Window_Type
+{
+  typedef Fl_Window_Type super;
 protected:
   Fl_Menu_Item* subtypes() FL_OVERRIDE {return 0;}
 
@@ -143,6 +149,7 @@ public:
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   ID id() const FL_OVERRIDE { return ID_Widget_Class; }
+  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}
