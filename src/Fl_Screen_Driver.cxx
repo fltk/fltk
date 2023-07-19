@@ -432,7 +432,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   b->copy_label(str);
   b->labelfont(FL_TIMES_BOLD);
   b->labelsize(Fl_Fontsize(30 * s / d->scale(nscreen)));
-  b->labelcolor(FL_BLACK);
+  b->labelcolor(Fl_Tooltip::textcolor());
   b->color(Fl_Tooltip::color());
   win->end();
   win->shape(img);
