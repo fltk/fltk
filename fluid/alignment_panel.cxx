@@ -687,9 +687,9 @@ static void cb_3(Fl_Value_Input* o, void* v) {
 
 static void cb_4(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->labelfont);
+    o->value(layout->labelfont+1);
   } else {
-    layout->labelfont = (int)o->value();
+    layout->labelfont = (int)o->value()-1;
   }
 }
 
@@ -703,9 +703,9 @@ static void cb_5(Fl_Value_Input* o, void* v) {
 
 static void cb_6(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    o->value(layout->textfont);
+    o->value(layout->textfont+1);
   } else {
-    layout->textfont = (int)o->value();
+    layout->textfont = (int)o->value()-1;
   }
 }
 
@@ -1476,7 +1476,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           o->callback((Fl_Callback*)cb_3);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Group* o = new Fl_Group(85, 464, 201, 21, "Label Font:");
+        { Fl_Group* o = new Fl_Group(85, 465, 201, 20, "Label Font:");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
@@ -1489,12 +1489,13 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->textsize(11);
             o->callback((Fl_Callback*)cb_4);
             Fl_Group::current()->resizable(o);
-            o->menu(fontmenu);
+            o->menu(fontmenu_w_default);
           } // Fl_Choice* o
           { Fl_Value_Input* o = new Fl_Value_Input(235, 465, 50, 20);
             o->tooltip("The size of the label text.");
             o->labelsize(11);
-            o->maximum(100);
+            o->minimum(1);
+            o->maximum(1000);
             o->step(1);
             o->value(14);
             o->textsize(11);
@@ -1502,25 +1503,31 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
-        { Fl_Choice* o = new Fl_Choice(85, 490, 150, 20);
-          o->tooltip("The value text style.");
-          o->box(FL_DOWN_BOX);
-          o->down_box(FL_BORDER_BOX);
-          o->labelfont(1);
+        { Fl_Group* o = new Fl_Group(85, 490, 200, 20, "Text Font:");
           o->labelsize(11);
-          o->textsize(11);
-          o->callback((Fl_Callback*)cb_6);
-          o->menu(fontmenu);
-        } // Fl_Choice* o
-        { Fl_Value_Input* o = new Fl_Value_Input(235, 490, 50, 20);
-          o->tooltip("The value text size.");
-          o->labelsize(11);
-          o->maximum(100);
-          o->step(1);
-          o->value(14);
-          o->textsize(11);
-          o->callback((Fl_Callback*)cb_7);
-        } // Fl_Value_Input* o
+          o->callback((Fl_Callback*)propagate_load);
+          o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fl_Choice* o = new Fl_Choice(85, 490, 150, 20);
+            o->tooltip("The value text style.");
+            o->box(FL_DOWN_BOX);
+            o->down_box(FL_BORDER_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_6);
+            o->menu(fontmenu_w_default);
+          } // Fl_Choice* o
+          { Fl_Value_Input* o = new Fl_Value_Input(235, 490, 50, 20);
+            o->tooltip("The value text size.");
+            o->labelsize(11);
+            o->maximum(1000);
+            o->step(1);
+            o->value(14);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_7);
+          } // Fl_Value_Input* o
+          o->end();
+        } // Fl_Group* o
         o->image()->scale(36, 24);
         w_settings_layout_tab->end();
       } // Fl_Group* w_settings_layout_tab

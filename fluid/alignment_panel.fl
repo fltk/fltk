@@ -107,7 +107,7 @@ decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {FLUID Settings} open selected
+    label {FLUID Settings} open
     xywh {423 204 340 580} type Double align 80
     code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
@@ -116,7 +116,7 @@ Function {make_settings_window()} {open
       xywh {10 10 320 530} selection_color 12 labelsize 11 labelcolor 255
     } {
       Fl_Group {} {
-        label General open
+        label General open selected
         image {icons/general_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {
@@ -316,7 +316,7 @@ Examples:
       }
       Fl_Group w_settings_layout_tab {
         label Layout
-        callback {propagate_load(o, v);}
+        callback {propagate_load(o, v);} open
         image {icons/layout_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
@@ -723,17 +723,17 @@ g_layout_list.update_dialogs();}
         Fl_Group {} {
           label {Label Font:}
           callback propagate_load open
-          xywh {85 464 201 21} labelsize 11 align 4
+          xywh {85 465 201 20} labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback {if (v == LOAD) {
-  o->value(layout->labelfont);
+  o->value(layout->labelfont+1);
 } else {
-  layout->labelfont = (int)o->value();
+  layout->labelfont = (int)o->value()-1;
 }} open
             tooltip {The style of the label text.} xywh {85 465 150 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
-            code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code0 {extern Fl_Menu_Item fontmenu_w_default[];}
+            code1 {o->menu(fontmenu_w_default);}
           } {}
           Fl_Value_Input {} {
             callback {if (v == LOAD) {
@@ -741,26 +741,32 @@ g_layout_list.update_dialogs();}
 } else {
   layout->labelsize = (int)o->value();
 }}
-            tooltip {The size of the label text.} xywh {235 465 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+            tooltip {The size of the label text.} xywh {235 465 50 20} labelsize 11 minimum 1 maximum 1000 step 1 value 14 textsize 11
           }
         }
-        Fl_Choice {} {
-          callback {if (v == LOAD) {
-  o->value(layout->textfont);
+        Fl_Group {} {
+          label {Text Font:}
+          callback propagate_load open
+          xywh {85 490 200 20} labelsize 11 align 4
+        } {
+          Fl_Choice {} {
+            callback {if (v == LOAD) {
+  o->value(layout->textfont+1);
 } else {
-  layout->textfont = (int)o->value();
+  layout->textfont = (int)o->value()-1;
 }} open
-          tooltip {The value text style.} xywh {85 490 150 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
-          code0 {extern Fl_Menu_Item fontmenu[];}
-          code1 {o->menu(fontmenu);}
-        } {}
-        Fl_Value_Input {} {
-          callback {if (v == LOAD) {
+            tooltip {The value text style.} xywh {85 490 150 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+            code0 {extern Fl_Menu_Item fontmenu_w_default[];}
+            code1 {o->menu(fontmenu_w_default);}
+          } {}
+          Fl_Value_Input {} {
+            callback {if (v == LOAD) {
   o->value(layout->textsize);
 } else {
   layout->textsize = (int)o->value();
 }}
-          tooltip {The value text size.} xywh {235 490 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+            tooltip {The value text size.} xywh {235 490 50 20} labelsize 11 maximum 1000 step 1 value 14 textsize 11
+          }
         }
       }
       Fl_Group w_settings_shell_tab {
@@ -836,7 +842,7 @@ g_layout_list.update_dialogs();}
       }
       Fl_Group w_settings_i18n_tab {
         label Locale
-        callback {propagate_load(o, v);} open
+        callback {propagate_load(o, v);}
         image {icons/language_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11 hide
         code0 {o->image()->scale(36, 24);}
       } {
@@ -971,7 +977,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {454 638 555 430} type Double align 80 resizable visible
+    xywh {769 585 555 430} type Double align 80 resizable visible
   } {
     Fl_Simple_Terminal shell_run_terminal {
       xywh {10 10 535 375} resizable

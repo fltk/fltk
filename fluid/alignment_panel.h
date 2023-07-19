@@ -76,7 +76,7 @@ extern void propagate_load(Fl_Group*, void*);
 extern void edit_layout_preset_cb(Fl_Button*, long);
 extern Fl_Button *preset_choice[3];
 #include <FL/Fl_Value_Input.H>
-extern Fl_Menu_Item fontmenu[];
+extern Fl_Menu_Item fontmenu_w_default[];
 extern Fl_Group *w_settings_shell_tab;
 extern Fl_Check_Button *shell_use_fl_button;
 #include <FL/Fl_Return_Button.H>

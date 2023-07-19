@@ -350,7 +350,7 @@ class Fl_Counter_Type : public Fl_Valuator_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->textsize + 8;
+    h = layout->textsize_not_null() + 8;
     w = layout->labelsize * 4 + 4 * h; // make room for the arrows
     Fd_Snap_Action::better_size(w, h);
   }
@@ -791,8 +791,8 @@ class Fl_Text_Display_Type : public Fl_Widget_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->textsize * 4 + 8;
-    w = layout->textsize * 10 + 8;
+    h = layout->textsize_not_null() * 4 + 8;
+    w = layout->textsize_not_null() * 10 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Text_Display"; }
@@ -1155,14 +1155,17 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
 
       // Set font sizes...
       wt->o->labelsize(layout->labelsize);
-      wt->o->labelfont(layout->labelfont);
+      if (layout->labelfont >= 0)
+        wt->o->labelfont(layout->labelfont);
 
       Fl_Font f = layout->textfont;
       int s = layout->textsize;
       Fl_Color c;
 
-      wt->textstuff(1, f, s, c);
-      wt->textstuff(2, f, s, c);
+      if (layout->textfont >= 0)
+        wt->textstuff(1, f, s, c);
+      if (layout->textsize > 0)
+        wt->textstuff(2, f, s, c);
 
       // Resize and/or reposition new widget...
       int w = 0, h = 0;

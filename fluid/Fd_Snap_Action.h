@@ -76,6 +76,8 @@ public:
   void read(Fl_Preferences &prefs);
   void write(Fd_Project_Writer*);
   void read(Fd_Project_Reader*);
+
+  int textsize_not_null();
 };
 
 extern Fd_Layout_Preset *layout;

@@ -42,7 +42,7 @@ static Fd_Layout_Preset fltk_app = {
   25, 25,               // tabs:      t, b
   20, 10, 4,            // widget_x:  min, inc, gap
   20,  4, 8,            // widget_y:  min, inc, gap
-  0, 14, 0, 14          // labelfont/size, textfont/size
+  0, 14, -1, 14          // labelfont/size, textfont/size
 };
 static Fd_Layout_Preset fltk_dlg = {
   10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
@@ -50,7 +50,7 @@ static Fd_Layout_Preset fltk_dlg = {
   20, 20,               // tabs:      t, b
   20, 10, 5,            // widget_x:  min, inc, gap
   20,  5, 5,            // widget_y:  min, inc, gap
-  0, 11, 0, 11          // labelfont/size, textfont/size
+  0, 11, -1, 11          // labelfont/size, textfont/size
 };
 static Fd_Layout_Preset fltk_tool = {
   10, 10, 10, 10, 0, 0, // window:    l, r, t, b, gx, gy
@@ -58,7 +58,7 @@ static Fd_Layout_Preset fltk_tool = {
   18, 18,               // tabs:      t, b
   16,  8, 2,            // widget_x:  min, inc, gap
   16,  4, 2,            // widget_y:  min, inc, gap
-  0, 10, 0, 10          // labelfont/size, textfont/size
+  0, 10, -1, 10          // labelfont/size, textfont/size
 };
 
 static Fd_Layout_Preset grid_app = {
@@ -67,7 +67,7 @@ static Fd_Layout_Preset grid_app = {
   24, 24,                 // tabs:      t, b
   12, 6, 6,               // widget_x:  min, inc, gap
   12, 6, 6,               // widget_y:  min, inc, gap
-  0, 14, 0, 14            // labelfont/size, textfont/size
+  0, 14, -1, 14            // labelfont/size, textfont/size
 };
 
 static Fd_Layout_Preset grid_dlg = {
@@ -76,7 +76,7 @@ static Fd_Layout_Preset grid_dlg = {
   20, 20,                 // tabs:      t, b
   10, 5, 5,               // widget_x:  min, inc, gap
   10, 5, 5,               // widget_y:  min, inc, gap
-  0, 12, 0, 12            // labelfont/size, textfont/size
+  0, 12, -1, 12            // labelfont/size, textfont/size
 };
 
 static Fd_Layout_Preset grid_tool = {
@@ -85,7 +85,7 @@ static Fd_Layout_Preset grid_tool = {
   16, 16,           // tabs:      t, b
   8, 4, 4,          // widget_x:  min, inc, gap
   8, 4, 4,          // widget_y:  min, inc, gap
-  0, 10, 0, 10      // labelfont/size, textfont/size
+  0, 10, -1, 10      // labelfont/size, textfont/size
 };
 
 static Fd_Layout_Suite static_suite_list[] = {
@@ -300,6 +300,18 @@ void Fd_Layout_Preset::read(Fd_Project_Reader *in) {
   } else {
     // format error
   }
+}
+
+/**
+ Return the preferred text size, but make sure it's not 0.
+ */
+int Fd_Layout_Preset::textsize_not_null() {
+  // try the user selected text size
+  if (textsize > 0) return textsize;
+  // if the user did not set one, try the label size
+  if (labelsize > 0) return labelsize;
+  // if that doesn;t work, fall back to the default value
+  return 14;
 }
 
 

@@ -1300,23 +1300,45 @@ void active_cb(Fl_Light_Button* i, void* v) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item fontmenu[] = {
-{"Helvetica"},
-{"Helvetica bold"},
-{"Helvetica italic"},
-{"Helvetica bold italic"},
-{"Courier"},
-{"Courier bold"},
-{"Courier italic"},
-{"Courier bold italic"},
-{"Times"},
-{"Times bold"},
-{"Times italic"},
-{"Times bold italic"},
-{"Symbol"},
-{"Terminal"},
-{"Terminal Bold"},
-{"Zapf Dingbats"},
-{0}};
+  {"Helvetica"},
+  {"Helvetica bold"},
+  {"Helvetica italic"},
+  {"Helvetica bold italic"},
+  {"Courier"},
+  {"Courier bold"},
+  {"Courier italic"},
+  {"Courier bold italic"},
+  {"Times"},
+  {"Times bold"},
+  {"Times italic"},
+  {"Times bold italic"},
+  {"Symbol"},
+  {"Terminal"},
+  {"Terminal Bold"},
+  {"Zapf Dingbats"},
+  {NULL}
+};
+
+Fl_Menu_Item fontmenu_w_default[] = {
+  {"<default>", 0, NULL, NULL, FL_MENU_DIVIDER},
+  {"Helvetica"},
+  {"Helvetica bold"},
+  {"Helvetica italic"},
+  {"Helvetica bold italic"},
+  {"Courier"},
+  {"Courier bold"},
+  {"Courier italic"},
+  {"Courier bold italic"},
+  {"Times"},
+  {"Times bold"},
+  {"Times italic"},
+  {"Times bold italic"},
+  {"Symbol"},
+  {"Terminal"},
+  {"Terminal Bold"},
+  {"Zapf Dingbats"},
+  {NULL}
+};
 
 void labelfont_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
@@ -1327,6 +1349,7 @@ void labelfont_cb(Fl_Choice* i, void *v) {
     int mod = 0;
     int n = i->value();
     if (n <= 0) n = layout->labelfont;
+    if (n <= 0) n = FL_HELVETICA;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1827,6 +1850,7 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
     int mod = 0;
     s = int(i->value());
     if (s <= 0) s = layout->textsize;
+    if (s <= 0) s = layout->labelsize;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
