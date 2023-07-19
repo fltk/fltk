@@ -9,7 +9,7 @@
 // to a factory instance for every class (both the ones defined
 // here and ones in other files)
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,6 @@
 #include "factory.h"
 
 #include "fluid.h"
-#include "Fl_Window_Type.h"
 #include "Fl_Group_Type.h"
 #include "Fd_Snap_Action.h"
 #include "pixmaps.h"
@@ -35,26 +34,17 @@
 #include <FL/Fl_Adjuster.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Browser.H>
-#include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Browser.H>
-#include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Clock.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Dial.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Input.H>
-#include <FL/Fl_Flex.H>
-#include <FL/Fl_Group.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Input.H>
-#include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Output.H>
-#include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Progress.H>
-#include <FL/Fl_Return_Button.H>
-#include <FL/Fl_Repeat_Button.H>
-#include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Roller.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Simple_Terminal.H>

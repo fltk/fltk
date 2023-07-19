@@ -1,7 +1,7 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Button type header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@ public:
   void ideal_size(int &w, int &h) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE { return "Fl_Button"; }
   const char *alt_type_name() FL_OVERRIDE { return "fltk::Button"; }
-  Fl_Widget *widget(int x, int y, int w, int h);
+  Fl_Widget *widget(int x, int y, int w, int h) FL_OVERRIDE;
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Button_Type(); }
   int is_button() const FL_OVERRIDE { return 1; }
   ID id() const FL_OVERRIDE { return ID_Button; }
