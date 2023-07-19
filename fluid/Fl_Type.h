@@ -186,9 +186,6 @@ public:
   virtual int is_widget() const {return 0;}
   /// TODO: Misnamed: This is true if the widget is a button or a menu item with button functionality
   virtual int is_button() const {return 0;}
-  virtual int is_input() const {return 0;}
-  virtual int is_text_display() const {return 0;}
-  virtual int is_spinner() const {return 0;}
   virtual int is_menu_item() const {return 0;}
   virtual int is_menu_button() const {return 0;}
   virtual int is_group() const {return 0;}

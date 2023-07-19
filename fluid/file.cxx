@@ -443,7 +443,7 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
 void Fd_Project_Reader::read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
-  if (!fin) {
+  if (!fin) { // FIXME: this line suppresses any error messages in interactve mode
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
     fl_message("%s", buffer);

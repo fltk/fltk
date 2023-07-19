@@ -2040,7 +2040,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
     if (current_widget->is_a(Fl_Type::ID_Valuator)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->minimum());
-    } else if (current_widget->is_spinner()) {
+    } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
       i->activate();
       i->value(((Fl_Spinner*)(current_widget->o))->minimum());
     } else {
@@ -2058,7 +2058,7 @@ void min_cb(Fl_Value_Input* i, void* v) {
           ((Fl_Valuator*)(q->o))->minimum(n);
           q->o->redraw();
           mod = 1;
-        } else if (q->is_spinner()) {
+        } else if (q->is_a(Fl_Type::ID_Spinner)) {
           ((Fl_Spinner*)(q->o))->minimum(n);
           q->o->redraw();
           mod = 1;
@@ -2074,7 +2074,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
     if (current_widget->is_a(Fl_Type::ID_Valuator)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->maximum());
-    } else if (current_widget->is_spinner()) {
+    } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
       i->activate();
       i->value(((Fl_Spinner*)(current_widget->o))->maximum());
     } else {
@@ -2092,7 +2092,7 @@ void max_cb(Fl_Value_Input* i, void* v) {
           ((Fl_Valuator*)(q->o))->maximum(n);
           q->o->redraw();
           mod = 1;
-        } else if (q->is_spinner()) {
+        } else if (q->is_a(Fl_Type::ID_Spinner)) {
           ((Fl_Spinner*)(q->o))->maximum(n);
           q->o->redraw();
           mod = 1;
@@ -2108,7 +2108,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
     if (current_widget->is_a(Fl_Type::ID_Valuator)) {
       i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->step());
-    } else if (current_widget->is_spinner()) {
+    } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
       i->activate();
       i->value(((Fl_Spinner*)(current_widget->o))->step());
     } else {
@@ -2126,7 +2126,7 @@ void step_cb(Fl_Value_Input* i, void* v) {
           ((Fl_Valuator*)(q->o))->step(n);
           q->o->redraw();
           mod = 1;
-        } else if (q->is_spinner()) {
+        } else if (q->is_a(Fl_Type::ID_Spinner)) {
           ((Fl_Spinner*)(q->o))->step(n);
           q->o->redraw();
           mod = 1;
@@ -2145,7 +2145,7 @@ void value_cb(Fl_Value_Input* i, void* v) {
     } else if (current_widget->is_button()) {
       i->activate();
       i->value(((Fl_Button*)(current_widget->o))->value());
-    } else if (current_widget->is_spinner()) {
+    } else if (current_widget->is_a(Fl_Type::ID_Spinner)) {
       i->activate();
       i->value(((Fl_Spinner*)(current_widget->o))->value());
     } else
@@ -2164,7 +2164,7 @@ void value_cb(Fl_Value_Input* i, void* v) {
           ((Fl_Button*)(q->o))->value(n != 0);
           if (q->is_menu_item()) q->redraw();
           mod = 1;
-        } else if (q->is_spinner()) {
+        } else if (q->is_a(Fl_Type::ID_Spinner)) {
           ((Fl_Spinner*)(q->o))->value(n);
           mod = 1;
         }
@@ -2461,7 +2461,7 @@ void subtype_cb(Fl_Choice* i, void* v) {
       int j;
       for (j = 0;; j++) {
         if (!m[j].text) {j = 0; break;}
-        if (current_widget->is_spinner()) {
+        if (current_widget->is_a(Fl_Type::ID_Spinner)) {
           if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
         } else {
           if (m[j].argument() == current_widget->o->type()) break;
@@ -2479,7 +2479,7 @@ void subtype_cb(Fl_Choice* i, void* v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         if (q->subtypes()==m) {
-          if (q->is_spinner())
+          if (q->is_a(Fl_Type::ID_Spinner))
             ((Fl_Spinner*)q->o)->type(n);
           else if (q->is_flex())
             ((Fl_Flex_Type*)q)->change_subtype_to(n);
@@ -3008,7 +3008,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     f.write_c(");\n");
   }
 
-  if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
+  if (is_a(Fl_Type::ID_Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
     f.write_c("%s%s->type(%d);\n", f.indent(), var, ((Fl_Spinner*)o)->type());
   else if (o->type() != tplate->type() && !is_window())
     f.write_c("%s%s->type(%d);\n", f.indent(), var, o->type());
@@ -3018,9 +3018,9 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
   // write shortcut command if needed
   int shortcut = 0;
   if (is_button()) shortcut = ((Fl_Button*)o)->shortcut();
-  else if (is_input()) shortcut = ((Fl_Input_*)o)->shortcut();
+  else if (is_a(ID_Input)) shortcut = ((Fl_Input_*)o)->shortcut();
   else if (is_a(ID_Value_Input)) shortcut = ((Fl_Value_Input*)o)->shortcut();
-  else if (is_text_display()) shortcut = ((Fl_Text_Display*)o)->shortcut();
+  else if (is_a(ID_Text_Display)) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
     if (g_project.use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
       f.write_c("%s%s->shortcut(", f.indent(), var);
@@ -3083,7 +3083,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
       if (x != y) f.write_c("%s%s->slider_size(%g);\n", f.indent(), var, x);
     }
   }
-  if (is_spinner()) {
+  if (is_a(Fl_Type::ID_Spinner)) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* t = (Fl_Spinner*)(tplate);
     if (v->minimum()!=t->minimum())
@@ -3186,7 +3186,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
   if (bind_deimage_) f.write_string("bind_deimage 1");
   f.write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
-  if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
+  if (is_a(Fl_Type::ID_Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
     f.write_string("type");
     f.write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
   } else if (subtypes() && (o->type() != tplate->type() || is_window())) {
@@ -3195,7 +3195,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
   }
   if (o->box() != tplate->box()) {
     f.write_string("box"); f.write_word(boxname(o->box()));}
-  if (is_input()) {
+  if (is_a(ID_Input)) {
     Fl_Input_* b = (Fl_Input_*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
@@ -3203,7 +3203,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
     Fl_Value_Input* b = (Fl_Value_Input*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
-  if (is_text_display()) {
+  if (is_a(ID_Text_Display)) {
     Fl_Text_Display* b = (Fl_Text_Display*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
@@ -3253,7 +3253,7 @@ void Fl_Widget_Type::write_properties(Fd_Project_Writer &f) {
       if (x != y) f.write_string("slider_size %g", x);
     }
   }
-  if (is_spinner()) {
+  if (is_a(Fl_Type::ID_Spinner)) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* t = (Fl_Spinner*)(tplate);
     if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
@@ -3329,7 +3329,7 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"compress_deimage")) {
     compress_deimage_ = (int)atol(f.read_word());
   } else if (!strcmp(c,"type")) {
-    if (is_spinner())
+    if (is_a(ID_Spinner))
       ((Fl_Spinner*)o)->type(item_number(subtypes(), f.read_word()));
     else
       o->type(item_number(subtypes(), f.read_word()));
@@ -3399,18 +3399,20 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {
     if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),0));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"maximum")) {
     if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),0));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),0));
   } else if (!strcmp(c,"step")) {
     if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->step(strtod(f.read_word(),0));
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),0));
   } else if (!strcmp(c,"value")) {
     if (is_a(ID_Valuator)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),0));
-    if (is_spinner()) ((Fl_Spinner*)o)->value(strtod(f.read_word(),0));
-  } else if ((!strcmp(c,"slider_size")||!strcmp(c,"size")) && is_a(ID_Slider)) {
+    if (is_a(ID_Spinner)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),0));
+  } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) && is_a(ID_Slider)) {
     ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),0));
+  } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) ) {
+    int x = is_a(ID_Slider);
   } else if (!strcmp(c,"textfont")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) {ft=(Fl_Font)x; textstuff(1,ft,s,cc);}
   } else if (!strcmp(c,"textsize")) {
@@ -3430,9 +3432,9 @@ void Fl_Widget_Type::read_property(Fd_Project_Reader &f, const char *c) {
   } else if (!strcmp(c,"shortcut")) {
     int shortcut = (int)strtol(f.read_word(),0,0);
     if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
-    else if (is_input()) ((Fl_Input_*)o)->shortcut(shortcut);
+    else if (is_a(ID_Input)) ((Fl_Input_*)o)->shortcut(shortcut);
     else if (is_a(ID_Value_Input)) ((Fl_Value_Input*)o)->shortcut(shortcut);
-    else if (is_text_display()) ((Fl_Text_Display*)o)->shortcut(shortcut);
+    else if (is_a(ID_Text_Display)) ((Fl_Text_Display*)o)->shortcut(shortcut);
   } else {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
@@ -3629,7 +3631,7 @@ void Fl_Widget_Type::copy_properties() {
   }
 
   // copy all attributes specific to widgets derived from Fl_Input_
-  if (is_input()) {
+  if (is_a(ID_Input)) {
     Fl_Input_* d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
     d->shortcut(s->shortcut());
     d->textfont(ff);
@@ -3647,7 +3649,7 @@ void Fl_Widget_Type::copy_properties() {
   }
 
   // copy all attributes specific to widgets derived from Fl_Text_Display
-  if (is_text_display()) {
+  if (is_a(ID_Text_Display)) {
     Fl_Text_Display* d = (Fl_Text_Display*)live_widget, *s = (Fl_Text_Display*)o;
     d->shortcut(s->shortcut());
     d->textfont(ff);
@@ -3669,7 +3671,7 @@ void Fl_Widget_Type::copy_properties() {
   }
 
   // copy all attributes specific to Fl_Spinner and derived classes
-  if (is_spinner()) {
+  if (is_a(ID_Spinner)) {
     Fl_Spinner* d = (Fl_Spinner*)live_widget, *s = (Fl_Spinner*)o;
     d->minimum(s->minimum());
     d->maximum(s->maximum());

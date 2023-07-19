@@ -697,11 +697,11 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
       i->value( ((Fl_Button*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_input())
+    else if (current_widget->is_a(Fl_Type::ID_Input))
       i->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
     else if (current_widget->is_a(Fl_Type::ID_Value_Input))
       i->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_text_display())
+    else if (current_widget->is_a(Fl_Type::ID_Text_Display))
       i->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       i->hide();
@@ -719,7 +719,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
         if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
-      } else if (o->selected && o->is_input()) {
+      } else if (o->selected && o->is_a(Fl_Type::ID_Input)) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
@@ -727,7 +727,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-      } else if (o->selected && o->is_text_display()) {
+      } else if (o->selected && o->is_a(Fl_Type::ID_Text_Display)) {
         Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
