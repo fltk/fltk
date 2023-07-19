@@ -1,7 +1,7 @@
 #
 # FLUID Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2021 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -20,6 +20,7 @@ CPPFILES = \
 	CodeEditor.cxx \
 	StyleParse.cxx \
 	Fd_Snap_Action.cxx \
+	Fl_Button_Type.cxx \
 	Fl_Function_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \

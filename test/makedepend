@@ -566,7 +566,6 @@ CubeMain.o: ../FL/Enumerations.H
 CubeMain.o: ../FL/Fl.H
 CubeMain.o: ../FL/fl_attr.h
 CubeMain.o: ../FL/Fl_Bitmap.H
-CubeMain.o: ../FL/Fl_Box.H
 CubeMain.o: ../FL/Fl_Cairo.H
 CubeMain.o: ../FL/fl_casts.H
 CubeMain.o: ../FL/fl_config.h
@@ -638,6 +637,7 @@ cursor.o: ../FL/Fl_Value_Slider.H
 cursor.o: ../FL/Fl_Widget.H
 cursor.o: ../FL/Fl_Window.H
 cursor.o: ../FL/platform_types.h
+cursor.o: ../fluid/pixmaps/compressed.xpm
 curve.o: ../FL/Enumerations.H
 curve.o: ../FL/Fl.H
 curve.o: ../FL/fl_attr.h
