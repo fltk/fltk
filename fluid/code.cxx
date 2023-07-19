@@ -656,14 +656,14 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
   }
   // write all code that come before the children code
   // (but don't write the last comment until the very end)
-  if (!(p==Fl_Type::last && p->is_comment()))
+  if (!(p==Fl_Type::last && p->is_a(Fl_Type::ID_Comment)))
     p->write_code1(*this);
   // recursively write the code of all children
   Fl_Type* q;
   if (p->is_widget() && p->is_class()) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
-      if (q->id() != Fl_Type::ID_Function) q = write_code(q);
+      if (!q->is_a(Fl_Type::ID_Function)) q = write_code(q);
       else {
         int level = q->level;
         do {
@@ -676,7 +676,7 @@ Fl_Type* Fd_Code_Writer::write_code(Fl_Type* p) {
     p->write_code2(*this);
 
     for (q = p->next; q && q->level > p->level;) {
-      if (q->id() == Fl_Type::ID_Function) q = write_code(q);
+      if (q->is_a(Fl_Type::ID_Function)) q = write_code(q);
       else {
         int level = q->level;
         do {
@@ -733,7 +733,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;
-  if (first_type && first_type->is_comment()) {
+  if (first_type && first_type->is_a(Fl_Type::ID_Comment)) {
     if (write_sourceview) {
       first_type->code_position = (int)ftell(code_file);
       first_type->header_position = (int)ftell(header_file);
@@ -850,7 +850,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
   fprintf(header_file, "#endif\n");
 
   Fl_Type* last_type = Fl_Type::last;
-  if (last_type && last_type->is_comment()) {
+  if (last_type && last_type->is_a(Fl_Type::ID_Comment)) {
     if (write_sourceview) {
       last_type->code_position = (int)ftell(code_file);
       last_type->header_position = (int)ftell(header_file);

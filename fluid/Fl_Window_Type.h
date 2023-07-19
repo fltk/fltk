@@ -74,7 +74,7 @@ protected:
   int recalc;           // set by fix_overlay()
   void moveallchildren();
   ID id() const FL_OVERRIDE { return ID_Window; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Window) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Window) ? true : super::is_a(inID); }
   void open_();
 
 public:
@@ -115,7 +115,6 @@ public:
 
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_group() const FL_OVERRIDE {return 1;}
-  int is_window() const FL_OVERRIDE {return 1;}
 
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
@@ -149,7 +148,7 @@ public:
   Fl_Type *make(Strategy strategy) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "widget_class";}
   ID id() const FL_OVERRIDE { return ID_Widget_Class; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_Class) ? true : super::is_a(inID); }
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_decl_block() const FL_OVERRIDE {return 1;}

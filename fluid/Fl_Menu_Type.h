@@ -48,7 +48,6 @@ public:
   const char* type_name() FL_OVERRIDE {return "MenuItem";}
   const char* alt_type_name() FL_OVERRIDE {return "fltk::Item";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
-  int is_menu_item() const FL_OVERRIDE {return 1;}
   int is_button() const FL_OVERRIDE {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) FL_OVERRIDE {return 0;}
   Fl_Widget_Type* _make() FL_OVERRIDE {return 0;}
@@ -58,8 +57,9 @@ public:
   void write_item(Fd_Code_Writer& f);
   void write_code1(Fd_Code_Writer& f) FL_OVERRIDE;
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
+  int is_true_widget() const FL_OVERRIDE { return 0; }
   ID id() const FL_OVERRIDE { return ID_Menu_Item; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Menu_Item) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Item) ? true : super::is_a(inID); }
 };
 
 /**
@@ -72,7 +72,7 @@ public:
   const char* type_name() FL_OVERRIDE {return "RadioMenuItem";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Radio_Menu_Item; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Radio_Menu_Item) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Radio_Menu_Item) ? true : super::is_a(inID); }
 };
 
 /**
@@ -85,7 +85,7 @@ public:
   const char* type_name() FL_OVERRIDE {return "CheckMenuItem";}
   Fl_Type* make(Strategy strategy) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Checkbox_Menu_Item; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Checkbox_Menu_Item) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Checkbox_Menu_Item) ? true : super::is_a(inID); }
 };
 
 /**
@@ -111,7 +111,7 @@ public:
   void move_child(Fl_Type*a, Fl_Type*b) FL_OVERRIDE {parent->move_child(a,b);}
   void remove_child(Fl_Type*a) FL_OVERRIDE {parent->remove_child(a);}
   ID id() const FL_OVERRIDE { return ID_Submenu; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Submenu) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Submenu) ? true : super::is_a(inID); }
 };
 
 // -----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ public:
   void write_code2(Fd_Code_Writer& f) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE = 0;
   ID id() const FL_OVERRIDE { return ID_Menu_Manager_; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Menu_Manager_) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Manager_) ? true : super::is_a(inID); }
 };
 
 /**
@@ -185,7 +185,7 @@ public:
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Input_Choice_Type();}
   void build_menu() FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Input_Choice; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Input_Choice) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Input_Choice) ? true : super::is_a(inID); }
   void copy_properties() FL_OVERRIDE;
 };
 
@@ -215,7 +215,7 @@ public:
   Fl_Type* click_test(int x, int y) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Menu_; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Menu_) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_) ? true : super::is_a(inID); }
 };
 
 extern Fl_Menu_Item button_type_menu[];
@@ -241,7 +241,7 @@ public:
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Button_Type();}
   ID id() const FL_OVERRIDE { return ID_Menu_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Menu_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Button) ? true : super::is_a(inID); }
 };
 
 
@@ -272,7 +272,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Choice_Type();}
   ID id() const FL_OVERRIDE { return ID_Choice; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Choice) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Choice) ? true : super::is_a(inID); }
 };
 
 
@@ -293,7 +293,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Menu_Bar_Type();}
   ID id() const FL_OVERRIDE { return ID_Menu_Bar; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Menu_Bar) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Menu_Bar) ? true : super::is_a(inID); }
 };
 
 

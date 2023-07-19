@@ -108,7 +108,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Browser_Base_Type(); }
   ID id() const FL_OVERRIDE { return ID_Browser_; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Browser_) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Browser_) ? true : super::is_a(inID); }
 };
 
 static Fl_Browser_Base_Type Fl_Browser_Base_type;
@@ -141,7 +141,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Browser_Type(); }
   ID id() const FL_OVERRIDE { return ID_Browser; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Browser) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Browser) ? true : super::is_a(inID); }
 };
 
 static Fl_Browser_Type Fl_Browser_type;
@@ -174,7 +174,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Check_Browser_Type(); }
   ID id() const FL_OVERRIDE { return ID_Check_Browser; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Check_Browser) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Check_Browser) ? true : super::is_a(inID); }
 };
 
 static Fl_Check_Browser_Type Fl_Check_Browser_type;
@@ -200,7 +200,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_File_Browser_Type(); }
   ID id() const FL_OVERRIDE { return ID_File_Browser; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_File_Browser) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_File_Browser) ? true : super::is_a(inID); }
 };
 
 static Fl_File_Browser_Type Fl_File_Browser_type;
@@ -243,7 +243,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Tree_Type(); }
   ID id() const FL_OVERRIDE { return ID_Tree; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Tree) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tree) ? true : super::is_a(inID); }
 };
 
 static Fl_Tree_Type Fl_Tree_type;
@@ -289,7 +289,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Help_View_Type(); }
   ID id() const FL_OVERRIDE { return ID_Help_View; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Help_View) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Help_View) ? true : super::is_a(inID); }
 };
 
 static Fl_Help_View_Type Fl_Help_View_type;
@@ -315,7 +315,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Valuator_Type(); }
   ID id() const FL_OVERRIDE { return ID_Valuator_; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Valuator_) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Valuator_) ? true : super::is_a(inID); }
 };
 
 static Fl_Valuator_Type Fl_Valuator_type;
@@ -361,7 +361,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Counter_Type(); }
   ID id() const FL_OVERRIDE { return ID_Counter; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Counter) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Counter) ? true : super::is_a(inID); }
 };
 
 static Fl_Counter_Type Fl_Counter_type;
@@ -388,7 +388,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Adjuster_Type(); }
   ID id() const FL_OVERRIDE { return ID_Adjuster; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Adjuster) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Adjuster) ? true : super::is_a(inID); }
 };
 
 static Fl_Adjuster_Type Fl_Adjuster_type;
@@ -422,7 +422,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Dial_Type(); }
   ID id() const FL_OVERRIDE { return ID_Dial; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Dial) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Dial) ? true : super::is_a(inID); }
 };
 static Fl_Dial_Type Fl_Dial_type;
 
@@ -455,7 +455,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Roller_Type(); }
   ID id() const FL_OVERRIDE { return ID_Roller; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Roller) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Roller) ? true : super::is_a(inID); }
 };
 
 static Fl_Roller_Type Fl_Roller_type;
@@ -495,7 +495,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Slider_Type(); }
   ID id() const FL_OVERRIDE { return ID_Slider; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Slider) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Slider) ? true : super::is_a(inID); }
 };
 
 static Fl_Slider_Type Fl_Slider_type;
@@ -524,7 +524,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Scrollbar_Type(); }
   ID id() const FL_OVERRIDE { return ID_Scrollbar; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Scrollbar) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Scrollbar) ? true : super::is_a(inID); }
 };
 static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
@@ -556,7 +556,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Slider_Type(); }
   ID id() const FL_OVERRIDE { return ID_Value_Slider; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Value_Slider) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Slider) ? true : super::is_a(inID); }
 };
 
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
@@ -595,7 +595,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Input_Type(); }
   ID id() const FL_OVERRIDE { return ID_Value_Input; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Value_Input) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Input) ? true : super::is_a(inID); }
 };
 
 static Fl_Value_Input_Type Fl_Value_Input_type;
@@ -634,7 +634,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Value_Output_Type(); }
   ID id() const FL_OVERRIDE { return ID_Value_Output; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Value_Output) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Value_Output) ? true : super::is_a(inID); }
 };
 
 static Fl_Value_Output_Type Fl_Value_Output_type;
@@ -690,7 +690,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Input_Type(); }
   ID id() const FL_OVERRIDE { return ID_Input; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Input) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Input) ? true : super::is_a(inID); }
   void copy_properties() FL_OVERRIDE {
     Fl_Widget_Type::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
@@ -727,7 +727,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_File_Input_Type(); }
   ID id() const FL_OVERRIDE { return ID_File_Input; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_File_Input) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_File_Input) ? true : super::is_a(inID); }
 };
 
 static Fl_File_Input_Type Fl_File_Input_type;
@@ -758,7 +758,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Output_Type(); }
   ID id() const FL_OVERRIDE { return ID_Output; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Output) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Output) ? true : super::is_a(inID); }
 };
 
 static Fl_Output_Type Fl_Output_type;
@@ -808,7 +808,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Text_Display_Type(); }
   ID id() const FL_OVERRIDE { return ID_Text_Display; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Text_Display) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Text_Display) ? true : super::is_a(inID); }
 };
 static Fl_Text_Display_Type Fl_Text_Display_type;
 
@@ -835,7 +835,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Text_Editor_Type(); }
   ID id() const FL_OVERRIDE { return ID_Text_Editor; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Text_Editor) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Text_Editor) ? true : super::is_a(inID); }
 };
 
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
@@ -868,7 +868,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Simple_Terminal_Type();}
   ID id() const FL_OVERRIDE { return ID_Simple_Terminal; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Simple_Terminal) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Simple_Terminal) ? true : super::is_a(inID); }
 };
 
 static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
@@ -898,7 +898,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Box_Type(); }
   ID id() const FL_OVERRIDE { return ID_Box; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Box) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Box) ? true : super::is_a(inID); }
 };
 
 static Fl_Box_Type Fl_Box_type;
@@ -925,7 +925,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Clock_Type(); }
   ID id() const FL_OVERRIDE { return ID_Clock; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Clock) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Clock) ? true : super::is_a(inID); }
 };
 
 static Fl_Clock_Type Fl_Clock_type;
@@ -956,7 +956,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Progress_Type(); }
   ID id() const FL_OVERRIDE { return ID_Progress; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Progress) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Progress) ? true : super::is_a(inID); }
 };
 
 static Fl_Progress_Type Fl_Progress_type;
@@ -1002,7 +1002,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Spinner_Type(); }
   ID id() const FL_OVERRIDE { return ID_Spinner; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Spinner) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Spinner) ? true : super::is_a(inID); }
 };
 
 static Fl_Spinner_Type Fl_Spinner_type;
@@ -1149,7 +1149,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_window())
+    if (t->is_widget() && !t->is_a(Fl_Type::ID_Window))
     {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
 
@@ -1168,7 +1168,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_flex())) {
+      if ((t->parent && t->parent->is_a(Fl_Type::ID_Flex))) {
         // Do not resize or layout the widget. Flex will need the widget size.
       } else if (wt->is_a(Fl_Type::ID_Menu_Bar)) {
         // Move and resize the menubar across the top of the window...
@@ -1185,7 +1185,7 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
         }
       }
     }
-    if (t->is_window()) {
+    if (t->is_a(Fl_Type::ID_Window)) {
       int x = 0, y = 0, w = 480, h = 320;
       Fl_Window_Type *wt = (Fl_Window_Type *)t;
       wt->ideal_size(w, h);

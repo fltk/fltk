@@ -626,7 +626,7 @@ void save_template_cb(Fl_Widget *, void *) {
 
   for (t = Fl_Type::first; t; t = t->next) {
     // Find the first window...
-    if (t->is_window()) break;
+    if (t->is_a(Fl_Type::ID_Window)) break;
   }
 
   if (!t) return;
@@ -1349,7 +1349,7 @@ void print_menu_cb(Fl_Widget *, void *) {
   Fl_Window *win;
 
   for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
-    if (t->is_window()) {
+    if (t->is_a(Fl_Type::ID_Window)) {
       windows[num_windows] = (Fl_Window_Type *)t;
       if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
       num_windows ++;

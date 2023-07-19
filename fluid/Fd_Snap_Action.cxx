@@ -922,7 +922,7 @@ static bool in_group(Fd_Snap_Data &d) {
 }
 
 static bool in_tabs(Fd_Snap_Data &d) {
-  return (d.wgt && d.wgt->parent && d.wgt->parent->is_tabs());
+  return (d.wgt && d.wgt->parent && d.wgt->parent->is_a(Fl_Type::ID_Tabs));
 }
 
 static Fl_Group *parent(Fd_Snap_Data &d) {

@@ -64,7 +64,7 @@ public:
   int is_code_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Function; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Function) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Function) ? true : super::is_a(inID); }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int has_signature(const char *, const char*) const;
@@ -91,7 +91,7 @@ public:
   int is_code_block() const FL_OVERRIDE {return 0;}
   int is_code() const FL_OVERRIDE {return 1;}
   ID id() const FL_OVERRIDE { return ID_Code; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Code) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Code) ? true : super::is_a(inID); }
   int is_public() const FL_OVERRIDE { return -1; }
   int is_editing();
   int reap_editor();
@@ -117,7 +117,7 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE { return -1; }
   ID id() const FL_OVERRIDE { return ID_CodeBlock; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_CodeBlock) ? true : super::is_a(inID); }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 };
@@ -143,7 +143,7 @@ public:
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Decl; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Decl) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Decl) ? true : super::is_a(inID); }
 };
 
 // ---- Fl_Data_Type declaration
@@ -165,7 +165,7 @@ public:
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Data; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Data) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Data) ? true : super::is_a(inID); }
 };
 
 // ---- Fl_DeclBlock_Type declaration
@@ -190,7 +190,7 @@ public:
   int is_decl_block() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_DeclBlock; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_DeclBlock) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_DeclBlock) ? true : super::is_a(inID); }
 };
 
 // ---- Fl_Comment_Type declaration
@@ -212,9 +212,8 @@ public:
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   int is_public() const FL_OVERRIDE { return 1; }
-  int is_comment() const FL_OVERRIDE { return 1; }
   ID id() const FL_OVERRIDE { return ID_Comment; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Comment) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Comment) ? true : super::is_a(inID); }
 };
 
 // ---- Fl_Class_Type declaration
@@ -243,7 +242,7 @@ public:
   int is_class() const FL_OVERRIDE {return 1;}
   int is_public() const FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Class; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Class) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Class) ? true : super::is_a(inID); }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
 

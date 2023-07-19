@@ -137,7 +137,7 @@ void Fl_Input_Choice_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -155,10 +155,10 @@ Fl_Type *Fl_Menu_Item_Type::make(Strategy strategy) {
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
   if (p) {
-    if ( (force_parent && q->is_menu_item()) || !q->is_parent()) p = p->parent;
+    if ( (force_parent && q->is_a(ID_Menu_Item)) || !q->is_parent()) p = p->parent;
   }
   force_parent = 0;
-  if (!p || !(p->is_a(ID_Menu_Manager_) || (p->is_menu_item() && p->is_parent()))) {
+  if (!p || !(p->is_a(ID_Menu_Manager_) || p->is_a(ID_Submenu))) {
     fl_message("Please select a menu to add to");
     return 0;
   }
@@ -230,7 +230,7 @@ int isdeclare(const char *c);
 const char* Fl_Menu_Item_Type::menu_name(Fd_Code_Writer& f, int& i) {
   i = 0;
   Fl_Type* t = prev;
-  while (t && t->is_menu_item()) {
+  while (t && t->is_a(ID_Menu_Item)) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
     // detect empty submenu:
@@ -290,14 +290,14 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     if (k) {
       f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
       f.write_c("%s((%s*)(o", f.indent(1), k);
-      Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
+      Fl_Type* t = parent; while (t->is_a(ID_Menu_Item)) t = t->parent;
       Fl_Type *q = 0;
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
-      if (t && (t->id() == Fl_Type::ID_Input_Choice))
+      if (t && t->is_a(Fl_Type::ID_Input_Choice))
         f.write_c("->parent()");
       for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         f.write_c("->parent()");
-      if (!q || (q->id() != Fl_Type::ID_Widget_Class))
+      if (!q || !q->is_a(Fl_Type::ID_Widget_Class))
         f.write_c("->user_data()");
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
@@ -306,7 +306,7 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     if (!f.c_contains(image))
       image->write_static(f, compress_image_);
   }
-  if (next && next->is_menu_item()) return;
+  if (next && next->is_a(ID_Menu_Item)) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
   const char* k = class_name(1);
@@ -317,20 +317,20 @@ void Fl_Menu_Item_Type::write_static(Fd_Code_Writer& f) {
     int i;
     f.write_c("\nFl_Menu_Item %s[] = {\n", menu_name(f, i));
   }
-  Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
-  for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
+  Fl_Type* t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
+  for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
     ((Fl_Menu_Item_Type*)q)->write_item(f);
     int thislevel = q->level; if (q->is_parent()) thislevel++;
     int nextlevel =
-      (q->next && q->next->is_menu_item()) ? q->next->level : t->level+1;
+      (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : t->level+1;
     while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
   }
   f.write_c(" {0,0,0,0,0,0,0,0,0}\n};\n");
 
   if (k) {
     // Write menu item variables...
-    t = prev; while (t && t->is_menu_item()) t = t->prev;
-    for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
+    t = prev; while (t && t->is_a(ID_Menu_Item)) t = t->prev;
+    for (Fl_Type* q = t->next; q && q->is_a(ID_Menu_Item); q = q->next) {
       Fl_Menu_Item_Type *m = (Fl_Menu_Item_Type*)q;
       const char *c = array_name(m);
       if (c) {
@@ -433,7 +433,7 @@ void start_menu_initialiser(Fd_Code_Writer& f, int &initialized, const char *nam
 void Fl_Menu_Item_Type::write_code1(Fd_Code_Writer& f) {
   int i; const char* mname = menu_name(f, i);
 
-  if (!prev->is_menu_item()) {
+  if (!prev->is_a(ID_Menu_Item)) {
     // for first menu item, declare the array
     if (class_name(1)) {
       f.write_h("%sstatic Fl_Menu_Item %s[];\n", f.indent(1), mname);
@@ -588,7 +588,7 @@ void Fl_Menu_Base_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_a(ID_Menu_Item)) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -616,7 +616,7 @@ Fl_Type* Fl_Menu_Base_Type::click_test(int, int) {
 }
 
 void Fl_Menu_Manager_Type::write_code2(Fd_Code_Writer& f) {
-  if (next && next->is_menu_item()) {
+  if (next && next->is_a(ID_Menu_Item)) {
     f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
             f.unique_id(this, "menu", name(), label()));
   }
@@ -718,7 +718,7 @@ void shortcut_in_cb(Fl_Shortcut_Button* i, void* v) {
         Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;
         b->shortcut(i->value());
-        if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
+        if (o->is_a(Fl_Type::ID_Menu_Item)) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_a(Fl_Type::ID_Input)) {
         Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut() != (int)i->value()) mod = 1;

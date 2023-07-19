@@ -111,7 +111,7 @@ int Widget_Bin_Window_Button::handle(int inEvent)
         Fl_Type *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {
           Fl_Type *new_type = add_new_widget_from_user(prototype, kAddAfterCurrent);
-          if (new_type && new_type->is_window()) {
+          if (new_type && new_type->is_a(Fl_Type::ID_Window)) {
             Fl_Window_Type *new_window = (Fl_Window_Type*)new_type;
             Fl_Window *w = (Fl_Window *)new_window->o;
             w->position(Fl::event_x_root(), Fl::event_y_root());

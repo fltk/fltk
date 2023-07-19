@@ -57,6 +57,9 @@ Fl_Type *Fl_Group_Type::make(Strategy strategy) {
   return Fl_Widget_Type::make(strategy);
 }
 
+/**
+ \brief Enlarge the group size, so all children fit within.
+ */
 void fix_group_size(Fl_Type *tt) {
   if (!tt || !tt->is_group()) return;
   Fl_Group_Type* t = (Fl_Group_Type*)tt;
@@ -65,12 +68,13 @@ void fix_group_size(Fl_Type *tt) {
   int R = X+t->o->w();
   int B = Y+t->o->h();
   for (Fl_Type *nn = t->next; nn && nn->level > t->level; nn = nn->next) {
-    if (!nn->is_widget() || nn->is_menu_item()) continue;
-    Fl_Widget_Type* n = (Fl_Widget_Type*)nn;
-    int x = n->o->x();  if (x < X) X = x;
-    int y = n->o->y();  if (y < Y) Y = y;
-    int r = x+n->o->w();if (r > R) R = r;
-    int b = y+n->o->h();if (b > B) B = b;
+    if (nn->is_true_widget()) {
+      Fl_Widget_Type* n = (Fl_Widget_Type*)nn;
+      int x = n->o->x();  if (x < X) X = x;
+      int y = n->o->y();  if (y < Y) Y = y;
+      int r = x+n->o->w();if (r > R) R = r;
+      int b = y+n->o->h();if (b > B) B = b;
+    }
   }
   t->o->resize(X,Y,R-X,B-Y);
 }
@@ -78,8 +82,8 @@ void fix_group_size(Fl_Type *tt) {
 void group_cb(Fl_Widget *, void *) {
   // Find the current widget:
   Fl_Type *qq = Fl_Type::current;
-  while (qq && (!qq->is_widget() || qq->is_menu_item())) qq = qq->parent;
-  if (!qq || qq->level < 1 || (qq->level == 1 && (qq->id() == Fl_Type::ID_Widget_Class))) {
+  while (qq && !qq->is_true_widget()) qq = qq->parent;
+  if (!qq || qq->level < 1 || (qq->level == 1 && qq->is_a(Fl_Type::ID_Widget_Class))) {
     fl_message("Please select widgets to group");
     return;
   }
@@ -106,9 +110,9 @@ void group_cb(Fl_Widget *, void *) {
 void ungroup_cb(Fl_Widget *, void *) {
   // Find the group:
   Fl_Type *q = Fl_Type::current;
-  while (q && (!q->is_widget() || q->is_menu_item())) q = q->parent;
+  while (q && !q->is_true_widget()) q = q->parent;
   if (q) q = q->parent;
-  if (!q || q->level < 1 || (q->level == 1 && (q->id() == Fl_Type::ID_Widget_Class))) {
+  if (!q || q->level < 1 || (q->level == 1 && q->is_a(Fl_Type::ID_Widget_Class))) {
     fl_message("Please select widgets in a group");
     return;
   }
@@ -399,13 +403,13 @@ void Fl_Flex_Type::change_subtype_to(int n) {
 int Fl_Flex_Type::parent_is_flex(Fl_Type *t) {
   return (t->is_widget()
           && t->parent
-          && t->parent->is_flex());
+          && t->parent->is_a(ID_Flex));
 }
 
 int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_flex()) return 0;
+  if (!t->parent->is_a(ID_Flex)) return 0;
   Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Fl_Widget_Type*)t)->o;
@@ -416,7 +420,7 @@ int Fl_Flex_Type::size(Fl_Type *t, char fixed_only) {
 int Fl_Flex_Type::is_fixed(Fl_Type *t) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_flex()) return 0;
+  if (!t->parent->is_a(ID_Flex)) return 0;
   Fl_Flex_Type* ft = (Fl_Flex_Type*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Fl_Widget_Type*)t)->o;

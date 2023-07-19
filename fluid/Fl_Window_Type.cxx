@@ -316,7 +316,7 @@ void Fl_Window_Type::ideal_size(int &w, int &h) {
 
 void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {i->hide(); return;}
+    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
@@ -328,7 +328,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
 
 void non_modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {i->hide(); return;}
+    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
@@ -340,7 +340,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
 
 void border_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {i->hide(); return;}
+    if (!current_widget->is_a(Fl_Type::ID_Window)) {i->hide(); return;}
     i->show();
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
@@ -352,7 +352,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
 
 void xclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_window()) {
+    if (current_widget->is_a(Fl_Type::ID_Window)) {
       i->show();
       i->parent()->show();
       i->value(((Fl_Window_Type *)current_widget)->xclass);
@@ -364,7 +364,7 @@ void xclass_cb(Fl_Input* i, void* v) {
     int mod = 0;
     undo_checkpoint();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
-      if (o->selected && o->is_window()) {
+      if (o->selected && o->is_a(Fl_Type::ID_Window)) {
         mod = 1;
         Fl_Window_Type *wt = (Fl_Window_Type *)o;
         storestring(i->value(), wt->xclass);
@@ -419,7 +419,7 @@ void Fl_Window_Type::newdx() {
   if (show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
     Fl_Type *selection = 0L; // special power for the first selected widget
     for (Fl_Type *q=next; q && q->level>level; q = q->next) {
-      if (q->selected && q->is_widget() && !q->is_menu_item()) {
+      if (q->selected && q->is_true_widget()) {
         selection = q;
         break;
       }
@@ -509,7 +509,7 @@ void fd_hatch(int x, int y, int w, int h, int size=6, int offset=0, int pad=3) {
  */
 void Fl_Window_Type::draw_out_of_bounds(Fl_Widget_Type *group, int x, int y, int w, int h) {
   for (Fl_Type *p = group->next; p && p->level>group->level; p = p->next) {
-    if (p->level == group->level+1 && p->is_widget() && !p->is_menu_item()) {
+    if (p->level == group->level+1 && p->is_true_widget()) {
       Fl_Widget *o = ((Fl_Widget_Type*)p)->o;
       if (o->x() < x) fd_hatch(o->x(), o->y(), x-o->x(), o->h());
       if (o->y() < y) fd_hatch(o->x(), o->y(), o->w(), y-o->y());
@@ -528,7 +528,7 @@ void Fl_Window_Type::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Fl_Type *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_group() && !q->is_scroll()) {
+    if (q->is_group() && !q->is_a(ID_Scroll)) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -544,14 +544,14 @@ void Fl_Window_Type::draw_overlaps() {
   // loop through all widgets in this window
   for (Fl_Type *q=next; q && q->level>level; q = q->next) {
     // is it a valid widget
-    if (q->is_widget() && !q->is_menu_item()) {
+    if (q->is_true_widget()) {
       Fl_Widget_Type *w = (Fl_Widget_Type*)q;
       // is the widget visible
       if (w->o->visible()) {
         int x = w->o->x(), y = w->o->y();
         int r = x + w->o->w(), b = y + w->o->h();
         for (Fl_Type *p=q->next; p && p->level>=q->level; p = p->next) {
-          if (p->level==q->level && p->is_widget() && !p->is_menu_item()) {
+          if (p->level==q->level && p->is_true_widget()) {
             Fl_Widget_Type *wp = (Fl_Widget_Type*)p;
             if (wp->o->visible()) {
               int px = fd_max(x, wp->o->x());
@@ -577,7 +577,7 @@ void Fl_Window_Type::draw_overlay() {
     bx = o->w(); by = o->h(); br = 0; bt = 0;
     numselected = 0;
     for (Fl_Type *q=next; q && q->level>level; q=q->next)
-      if (q->selected && q->is_widget() && !q->is_menu_item()) {
+      if (q->selected && q->is_true_widget()) {
         numselected++;
         Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
         if (myo->o->x() < bx) bx = myo->o->x();
@@ -609,7 +609,7 @@ void Fl_Window_Type::draw_overlay() {
   mybx = mysx = o->w(); myby = mysy = o->h(); mybr = mysr = 0; mybt = myst = 0;
   Fl_Type *selection = 0L; // special power for the first selected widget
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
-    if (q->selected && q->is_widget() && !q->is_menu_item()) {
+    if (q->selected && q->is_true_widget()) {
       if (!selection) selection = q;
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
@@ -694,24 +694,28 @@ void Fl_Window_Type::fix_overlay() {
 
 // check if we must redraw any parent of tabs/wizard type
 void check_redraw_corresponding_parent(Fl_Type *s) {
-    Fl_Widget_Type * prev_parent = 0;
-    if( !s || !s->selected || !s->is_widget()) return;
-    for (Fl_Type *i=s; i && i->parent; i=i->parent) {
-        if (i->is_group() && prev_parent &&
-            ( (i->id() == Fl_Type::ID_Tabs) ||
-              (i->id() == Fl_Type::ID_Wizard))) {
-             ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
-             return;
-        }
-        if (i->is_group() && s->is_widget())
-            prev_parent = (Fl_Widget_Type*)i;
+  Fl_Widget_Type * prev_parent = 0;
+  if( !s || !s->selected || !s->is_widget()) return;
+  for (Fl_Type *i=s; i && i->parent; i=i->parent) {
+    if (i->is_group() && prev_parent) {
+      if (i->is_a(Fl_Type::ID_Tabs)) {
+        ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
+        return;
+      }
+      if (i->is_a(Fl_Type::ID_Wizard)) {
+        ((Fl_Wizard*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
+        return;
+      }
     }
+    if (i->is_group() && s->is_widget())
+      prev_parent = (Fl_Widget_Type*)i;
+  }
 }
 
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_window()) ((Fl_Window_Type*)o)->fix_overlay();
+    if (o->is_a(Fl_Type::ID_Window)) ((Fl_Window_Type*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -726,7 +730,7 @@ void toggle_overlays(Fl_Widget *,void *) {
   }
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
-    if (o->is_window()) {
+    if (o->is_a(Fl_Type::ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -749,7 +753,7 @@ void toggle_guides(Fl_Widget *,void *) {
     guides_button->value(show_guides);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_window()) {
+    if (o->is_a(Fl_Type::ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -781,7 +785,7 @@ void toggle_restricted(Fl_Widget *,void *) {
     restricted_button->value(show_restricted);
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next) {
-    if (o->is_window()) {
+    if (o->is_a(Fl_Type::ID_Window)) {
       Fl_Widget_Type* w = (Fl_Widget_Type*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -811,7 +815,7 @@ void Fl_Window_Type::moveallchildren()
   undo_checkpoint();
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
-    if (i->selected && i->is_widget() && !i->is_menu_item()) {
+    if (i->selected && i->is_true_widget()) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
@@ -834,7 +838,7 @@ void Fl_Window_Type::moveallchildren()
       // move all the children, whether selected or not:
       Fl_Type* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_widget() && !p->is_menu_item() && !myo->is_flex()) {
+        if (p->is_true_widget() && !myo->is_a(ID_Flex)) {
           Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);
@@ -992,7 +996,7 @@ int Fl_Window_Type::handle(int event) {
     // find the innermost item clicked on:
     selection = this;
     {for (Fl_Type* i=next; i && i->level>level; i=i->next)
-      if (i->is_widget() && !i->is_menu_item()) {
+      if (i->is_true_widget()) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
         if (!o1->visible()) goto CONTINUE2;
@@ -1022,7 +1026,7 @@ int Fl_Window_Type::handle(int event) {
       } else {
         deselect();
         select(t, 1);
-        if (t->is_menu_item()) t->open();
+        if (t->is_a(ID_Menu_Item)) t->open();
       }
       selection = t;
       drag = 0;
@@ -1055,7 +1059,7 @@ int Fl_Window_Type::handle(int event) {
       if (!toggle) deselect(); else Fl::event_is_click(0);
       // select everything in box:
       for (Fl_Type*i=next; i&&i->level>level; i=i->next)
-        if (i->is_widget() && !i->is_menu_item()) {
+        if (i->is_true_widget()) {
         Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
         for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
           if (!o1->visible()) goto CONTINUE;
@@ -1089,7 +1093,7 @@ int Fl_Window_Type::handle(int event) {
       if (Fl::event_state(FL_SHIFT)) backtab = 1;
       // find current child:
       Fl_Type *i = Fl_Type::current;
-      while (i && (!i->is_widget() || i->is_menu_item())) i = i->parent;
+      while (i && !i->is_true_widget()) i = i->parent;
       if (!i) return 0;
       Fl_Type *p = i->parent;
       while (p && p != this) p = p->parent;
@@ -1100,7 +1104,7 @@ int Fl_Window_Type::handle(int event) {
       for (;;) {
         i = backtab ? i->prev : i->next;
         if (!i || i->level <= level) {i = p; break;}
-        if (i->is_widget() && !i->is_menu_item()) break;
+        if (i->is_true_widget()) break;
       }
       deselect(); select(i,1);
       return 1;}

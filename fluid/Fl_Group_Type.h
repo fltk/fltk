@@ -54,7 +54,7 @@ public:
   int is_parent() const FL_OVERRIDE {return 1;}
   int is_group() const FL_OVERRIDE {return 1;}
   ID id() const FL_OVERRIDE { return ID_Group; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Group) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Group) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void leave_live_mode() FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
@@ -74,7 +74,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::PackedGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Pack_Type();}
   ID id() const FL_OVERRIDE { return ID_Pack; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Pack) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Pack) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
 };
@@ -99,7 +99,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {
     Fl_Flex *g = new Fl_Flex(X,Y,W,H); Fl_Group::current(0); return g;}
   ID id() const FL_OVERRIDE { return ID_Flex; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Flex) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Flex) ? true : super::is_a(inID); }
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;
   void read_property(Fd_Project_Reader &f, const char *) FL_OVERRIDE;
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
@@ -109,7 +109,6 @@ public:
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
-  int is_flex() const FL_OVERRIDE {return 1;}
   void change_subtype_to(int n);
   static int parent_is_flex(Fl_Type*);
   static int size(Fl_Type*, char fixed_only=0);
@@ -128,7 +127,7 @@ public:
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Table_Type(); }
   Fl_Widget *widget(int X, int Y, int W, int H) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Table; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Table) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Table) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void move_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
@@ -159,9 +158,8 @@ public:
   void add_child(Fl_Type*, Fl_Type*) FL_OVERRIDE;
   void remove_child(Fl_Type*) FL_OVERRIDE;
   ID id() const FL_OVERRIDE { return ID_Tabs; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Tabs) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tabs) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
-  int is_tabs() const FL_OVERRIDE {return 1;}
 };
 
 // ---- Fl_Scroll_Type ------------------------------------------------- MARK: -
@@ -178,10 +176,9 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::ScrollGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Scroll_Type();}
   ID id() const FL_OVERRIDE { return ID_Scroll; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Scroll) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Scroll) ? true : super::is_a(inID); }
   Fl_Widget *enter_live_mode(int top=0) FL_OVERRIDE;
   void copy_properties() FL_OVERRIDE;
-  int is_scroll() const FL_OVERRIDE { return 1; }
 };
 
 // ---- Fl_Tile_Type --------------------------------------------------- MARK: -
@@ -196,7 +193,7 @@ public:
   const char *alt_type_name() FL_OVERRIDE {return "fltk::TileGroup";}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Tile_Type();}
   ID id() const FL_OVERRIDE { return ID_Tile; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Tile) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Tile) ? true : super::is_a(inID); }
   void copy_properties() FL_OVERRIDE;
 };
 
@@ -221,7 +218,7 @@ public:
     iwizard *g = new iwizard(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() FL_OVERRIDE {return new Fl_Wizard_Type();}
   ID id() const FL_OVERRIDE { return ID_Wizard; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Wizard) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Wizard) ? true : super::is_a(inID); }
 };
 
 #endif // _FLUID_FL_GROUP_TYPE_H

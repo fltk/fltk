@@ -345,11 +345,11 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   if (   l->is_widget()
-      && !l->is_window()
+      && !l->is_a(Fl_Type::ID_Window)
       && ((Fl_Widget_Type*)l)->o
       && !((Fl_Widget_Type*)l)->o->visible()
-      && (!l->parent || (   (l->parent->id() != Fl_Type::ID_Tabs)
-                         && (l->parent->id() != Fl_Type::ID_Wizard) ) )
+      && (!l->parent || (   !l->parent->is_a(Fl_Type::ID_Tabs)
+                         && !l->parent->is_a(Fl_Type::ID_Wizard) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);

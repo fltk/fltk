@@ -105,8 +105,9 @@ public:
   virtual Fl_Menu_Item *subtypes();
 
   ID id() const FL_OVERRIDE { return ID_Widget_; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Widget_) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Widget_) ? true : super::is_a(inID); }
   int is_widget() const FL_OVERRIDE;
+  int is_true_widget() const FL_OVERRIDE { return 1; }
   int is_public() const FL_OVERRIDE;
 
   void write_properties(Fd_Project_Writer &f) FL_OVERRIDE;

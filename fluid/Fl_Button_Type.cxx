@@ -85,7 +85,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Return_Button_Type(); }
   ID id() const FL_OVERRIDE { return ID_Return_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Return_Button) ? true : super::is_a(inID); }
 };
 
 Fl_Return_Button_Type Fl_Return_Button_type;
@@ -110,7 +110,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Repeat_Button_Type(); }
   ID id() const FL_OVERRIDE { return ID_Repeat_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Repeat_Button) ? true : super::is_a(inID); }
 };
 
 Fl_Repeat_Button_Type Fl_Repeat_Button_type;
@@ -137,7 +137,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Light_Button_Type(); }
   ID id() const FL_OVERRIDE { return ID_Light_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Light_Button) ? true : super::is_a(inID); }
 };
 
 Fl_Light_Button_Type Fl_Light_Button_type;
@@ -164,7 +164,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Check_Button_Type(); }
   ID id() const FL_OVERRIDE { return ID_Check_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Check_Button) ? true : super::is_a(inID); }
 };
 
 Fl_Check_Button_Type Fl_Check_Button_type;
@@ -191,7 +191,7 @@ public:
   }
   Fl_Widget_Type *_make() FL_OVERRIDE { return new Fl_Round_Button_Type(); }
   ID id() const FL_OVERRIDE { return ID_Round_Button; }
-  bool is_a(ID inID) FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
+  bool is_a(ID inID) const FL_OVERRIDE { return (inID==ID_Round_Button) ? true : super::is_a(inID); }
 };
 
 Fl_Round_Button_Type Fl_Round_Button_type;
