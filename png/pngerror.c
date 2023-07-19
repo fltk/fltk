@@ -255,7 +255,7 @@ void
 png_warning_parameter_unsigned(png_warning_parameters p, int number, int format,
     png_alloc_size_t value)
 {
-   char buffer[PNG_NUMBER_BUFFER_SIZE];
+   char buffer[PNG_NUMBER_BUFFER_SIZE] = {0};
    png_warning_parameter(p, number, PNG_FORMAT_NUMBER(buffer, format, value));
 }
 
@@ -265,7 +265,7 @@ png_warning_parameter_signed(png_warning_parameters p, int number, int format,
 {
    png_alloc_size_t u;
    png_charp str;
-   char buffer[PNG_NUMBER_BUFFER_SIZE];
+   char buffer[PNG_NUMBER_BUFFER_SIZE] = {0};
 
    /* Avoid overflow by doing the negate in a png_alloc_size_t: */
    u = (png_alloc_size_t)value;
