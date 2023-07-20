@@ -70,14 +70,9 @@ const char* subclassname(Fl_Type* l) {
 // Return the ideal widget size...
 void
 Fl_Widget_Type::ideal_size(int &w, int &h) {
-  h = o->labelsize();
-  o->measure_label(w, h);
-
-  w += Fl::box_dw(o->box());
-  h += Fl::box_dh(o->box());
-
-  if (w < 15) w = 15;
-  if (h < 15) h = 15;
+  w = 120;
+  h = 100;
+  Fd_Snap_Action::better_size(w, h);
 }
 
 /**

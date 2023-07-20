@@ -207,7 +207,7 @@ int Overlay_Window::handle(int e) {
  */
 Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_code_block()) p = p->parent;
+  while (p && (!p->is_code_block() || p->is_a(ID_Widget_Class))) p = p->parent;
   if (!p) {
     fl_message("Please select a function");
     return 0;
@@ -307,8 +307,8 @@ void Fl_Window_Type::ideal_size(int &w, int &h) {
     int screen = Fl::screen_num(win->x(), win->y());
     Fl::screen_work_area(sx, sy, sw, sh, screen);
     w = fd_min(w, sw*3/4); h = fd_min(h, sh*3/4);
-    Fd_Snap_Action::better_size(w, h);
   }
+  Fd_Snap_Action::better_size(w, h);
 }
 
 
@@ -966,7 +966,7 @@ int Fl_Window_Type::handle(int event) {
       {
         Fl_Type *cc = Fl_Type::current;
         Fl_Type::current = Fl_Type::current_dnd;
-        add_new_widget_from_user(prototype, kAddAfterCurrent);
+        add_new_widget_from_user(prototype, kAddAsLastChild);
         Fl_Type::current = cc;
       } else {
         add_new_widget_from_user(prototype, kAddAsLastChild);

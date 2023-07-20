@@ -1,7 +1,7 @@
 //
-// Widget type header file for the Fast Light Tool Kit (FLTK).
+// Group type header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -40,6 +40,7 @@ class Fl_Group_Type : public Fl_Widget_Type
 {
   typedef Fl_Widget_Type super;
 public:
+  void ideal_size(int &w, int &h) FL_OVERRIDE;
   const char *type_name() FL_OVERRIDE {return "Fl_Group";}
   const char *alt_type_name() FL_OVERRIDE {return "fltk::Group";}
   Fl_Widget *widget(int X,int Y,int W,int H) FL_OVERRIDE {

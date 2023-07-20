@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_FACTORY_H
-#define _FLUID_FACTORY_H
+#ifndef _FL_BUTTON_TYPE_H
+#define _FL_BUTTON_TYPE_H
 
 #include "Fl_Widget_Type.h"
 
@@ -40,4 +40,4 @@ public:
 extern Fl_Button_Type Fl_Button_type;
 
 
-#endif // _FLUID_FACTORY_H
+#endif // _FL_BUTTON_TYPE_H

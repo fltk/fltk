@@ -2,7 +2,7 @@
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
 // Type classes for most of the fltk widgets.  Most of the work
-// is done by code in Fl_Widget_Type.C.  Also a factory instance
+// is done by code in Fl_Widget_Type.cxx.  Also a factory instance
 // of each of these type classes.
 //
 // This file also contains the "new" menu, which has a pointer
@@ -26,6 +26,7 @@
 
 #include "fluid.h"
 #include "Fl_Group_Type.h"
+#include "Fl_Menu_Type.h"
 #include "Fd_Snap_Action.h"
 #include "pixmaps.h"
 #include "undo.h"
@@ -351,7 +352,7 @@ class Fl_Counter_Type : public Fl_Valuator_Type
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
     h = layout->textsize_not_null() + 8;
-    w = layout->labelsize * 4 + 4 * h; // make room for the arrows
+    w = layout->textsize_not_null() * 4 + 4 * h; // make room for the arrows
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Counter"; }
@@ -583,8 +584,8 @@ class Fl_Value_Input_Type : public Fl_Valuator_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8;
+    h = layout->textsize_not_null() + 8;
+    w = layout->textsize_not_null() * 4 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Value_Input"; }
@@ -622,8 +623,8 @@ class Fl_Value_Output_Type : public Fl_Valuator_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8;
+    h = layout->textsize_not_null() + 8;
+    w = layout->textsize_not_null() * 4 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Value_Output"; }
@@ -677,8 +678,8 @@ class Fl_Input_Type : public Fl_Widget_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 6 + 8;
+    h = layout->textsize_not_null() + 8;
+    w = layout->textsize_not_null() * 6 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Input"; }
@@ -714,8 +715,8 @@ class Fl_File_Input_Type : public Fl_Input_Type
   Fl_Menu_Item *subtypes() FL_OVERRIDE { return NULL; } // Don't inherit.
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8 + 10; // Directoy bar is additional 10 pixels high
-    w = layout->labelsize * 10 + 8;
+    h = layout->textsize_not_null() + 8 + 10; // Directoy bar is additional 10 pixels high
+    w = layout->textsize_not_null() * 10 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_File_Input"; }
@@ -991,8 +992,8 @@ class Fl_Spinner_Type : public Fl_Widget_Type
   }
 public:
   void ideal_size(int &w, int &h) FL_OVERRIDE {
-    h = layout->labelsize + 8;
-    w = layout->labelsize * 4 + 8;
+    h = layout->textsize_not_null() + 8;
+    w = layout->textsize_not_null() * 4 + 8;
     Fd_Snap_Action::better_size(w, h);
   }
   const char *type_name() FL_OVERRIDE { return "Fl_Spinner"; }
@@ -1149,32 +1150,67 @@ Fl_Type *add_new_widget_from_user(Fl_Type *inPrototype, Strategy strategy) {
   undo_suspend();
   Fl_Type *t = ((Fl_Type*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(Fl_Type::ID_Window))
-    {
+    if (t->is_widget() && !t->is_a(Fl_Type::ID_Window)) {
       Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
+      bool changed = false;
 
       // Set font sizes...
+      changed |= (wt->o->labelsize() != layout->labelsize);
       wt->o->labelsize(layout->labelsize);
-      if (layout->labelfont >= 0)
+      if (layout->labelfont >= 0) {
+        changed |= (wt->o->labelfont() != layout->labelfont);
         wt->o->labelfont(layout->labelfont);
+      }
 
-      Fl_Font f = layout->textfont;
-      int s = layout->textsize;
-      Fl_Color c;
+      Fl_Font fc, f = layout->textfont;
+      int sc, s = layout->textsize;
+      Fl_Color cc, c;
+      wt->textstuff(0, fc, sc, cc);
 
-      if (layout->textfont >= 0)
+      if ((f >= 0) && (fc != f)) {
+        changed = true;
         wt->textstuff(1, f, s, c);
-      if (layout->textsize > 0)
+      }
+      if ((s > 0) && (sc != s)) {
+        changed = true;
         wt->textstuff(2, f, s, c);
+      }
 
+      if (changed && t->is_a(Fl_Type::ID_Menu_Item)) {
+        Fl_Type * tt = t->parent;
+        while (tt && !tt->is_a(Fl_Type::ID_Menu_Manager_)) tt = tt->parent;
+        ((Fl_Menu_Manager_Type*)tt)->build_menu();
+      }
+    }
+    if (t->is_true_widget() && !t->is_a(Fl_Type::ID_Window)) {
       // Resize and/or reposition new widget...
+      Fl_Widget_Type *wt = (Fl_Widget_Type *)t;
+
+      // The parent field is already set at this point, so we can use that
+      // inside ideal_size().
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
       if ((t->parent && t->parent->is_a(Fl_Type::ID_Flex))) {
         // Do not resize or layout the widget. Flex will need the widget size.
-      } else if (wt->is_a(Fl_Type::ID_Menu_Bar)) {
-        // Move and resize the menubar across the top of the window...
+      } else if (   wt->is_a(Fl_Type::ID_Group)
+                 && wt->parent
+                 && wt->parent->is_a(Fl_Type::ID_Tabs)
+                 //&& (Fl_Window_Type::popupx == 0x7FFFFFFF)
+                 && (layout->top_tabs_margin > 0)) {
+        // If the widget is a group and the parent is tabs and the top tabs
+        // margin is set (and the user is not requesting a specific position)
+        // then  prefit the group correctly to the Tabs container.
+        Fl_Widget *po = ((Fl_Tabs_Type*)wt->parent)->o;
+        wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
+                      po->w(), po->h() - layout->top_tabs_margin);
+      } else if (   wt->is_a(Fl_Type::ID_Menu_Bar)
+                 && wt->parent
+                 && wt->parent->is_a(Fl_Type::ID_Window)
+                 && (wt->prev == wt->parent)) {
+        // If this is the first child of a window, make the menu bar as wide as
+        // the window and drop it at 0, 0. Otherwise just use the suggested size.
+        w = wt->o->window()->w();
         wt->o->resize(0, 0, w, h);
       } else {
         if (Fl_Window_Type::popupx != 0x7FFFFFFF) {

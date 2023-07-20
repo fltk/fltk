@@ -5,7 +5,7 @@
 // the Fl_Tabs widget, with special stuff to select tab items and
 // insure that only one is visible.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -134,6 +134,18 @@ void ungroup_cb(Fl_Widget *, void *) {
   widget_browser->rebuild();
   undo_resume();
   set_modflag(1);
+}
+
+void Fl_Group_Type::ideal_size(int &w, int &h) {
+  if (parent && parent->is_true_widget()) {
+    Fl_Widget *p = ((Fl_Widget_Type*)parent)->o;
+    w = p->w() / 2;
+    h = p->h() / 2;
+  } else {
+    w = 140;
+    h = 140;
+  }
+  Fd_Snap_Action::better_size(w, h);
 }
 
 void Fl_Group_Type::write_code1(Fd_Code_Writer& f) {
