@@ -229,7 +229,7 @@ void template_load() {
       fputs(
   "# data file for the Fltk User Interface Designer (fluid)\nversion 1.0400\nheader_name {.h}\n"
   "code_name {.cxx}\ncomment {//\n// @INSTANCE@ for the Fast Light Tool Kit (FLT"
-  "K).\n//\n// Copyright 1998-2020 by Bill Spitzak and others.\n//\n// This library is free sof"
+  "K).\n//\n// Copyright 1998-2023 by Bill Spitzak and others.\n//\n// This library is free sof"
   "tware. Distribution and use rights are outlined in\n// the file \"COPYING\" which should have "
   "been included with this file.  If this\n// file is missing or damaged, see the license at:\n"
   "//\n//     https://www.fltk.org/COPYING.php\n//\n// Please see the following page on how to report "

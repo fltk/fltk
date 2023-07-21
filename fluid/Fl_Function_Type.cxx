@@ -1583,11 +1583,13 @@ void Fl_Comment_Type::read_property(Fd_Project_Reader &f, const char *c) {
  */
 static void load_comments_preset(Fl_Preferences &menu) {
   static const char * const predefined_comment[] = {
-    "GNU Public License/GPL Header",  "GNU Public License/GPL Footer",
-    "GNU Public License/LGPL Header", "GNU Public License/LGPL Footer",
+    "GNU Public License v3/GPL Header",  "GNU Public License v3/GPL Footer",
+    "GNU Public License v3/LGPL Header", "GNU Public License v3/LGPL Footer",
     "FLTK/Header" };
-  int i;
-  menu.set("n", 5);
+  int i, n;
+  menu.get("n", n, -1);
+  if (n == -1) menu.set("n", 5);
+  menu.set("version", 10400);
   Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
   for (i=0; i<5; i++) {
     menu.set(Fl_Preferences::Name(i), predefined_comment[i]);
@@ -1602,13 +1604,13 @@ void Fl_Comment_Type::open() {
   if (!comment_panel) make_comment_panel();
   const char *text = name();
   {
-    int i=0, n=0;
+    int i=0, n=0, version = 0;
     Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
     comment_predefined->clear();
     comment_predefined->add("_Edit/Add current comment...");
     comment_predefined->add("_Edit/Remove last selection...");
-    menu.get("n", n, -1);
-    if (n==-1) load_comments_preset(menu);
+    menu.get("version", version, -1);
+    if (version < 10400) load_comments_preset(menu);
     menu.get("n", n, 0);
     for (i=0;i<n;i++) {
       char *text;
@@ -1651,7 +1653,7 @@ void Fl_Comment_Type::open() {
         } else if (comment_predefined->value()==2) {
           // remove the last selected comment from the database
           if (itempath[0]==0 || last_selected_item==0) {
-            fl_message("Please select an entry form this menu first.");
+            fl_message("Please select an entry from this menu first.");
           } else if (fl_choice("Are you sure that you want to delete the entry\n"
                                "\"%s\"\nfrom the database?", "Cancel", "Delete",
                                NULL, itempath)) {
