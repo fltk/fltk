@@ -721,6 +721,10 @@ void exit_cb(Fl_Widget *,void *) {
     delete sourceview_panel;
     sourceview_panel = 0;
   }
+  if (shell_run_window) {
+    save_position(shell_run_window,"shell_run_Window_pos");
+  }
+
   if (about_panel)
     delete about_panel;
   if (help_dialog)

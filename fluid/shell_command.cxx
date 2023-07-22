@@ -262,6 +262,21 @@ static bool prepare_shell_command()  {
   return true;
 }
 
+void shell_proc_done() {
+  shell_run_terminal->append("... END SHELL COMMAND ...\n");
+  shell_run_button->activate();
+  shell_run_window->label("FLUID Shell");
+  fl_beep();
+}
+
+void shell_timer_cb(void*) {
+  if (!s_proc.desc()) {
+    shell_proc_done();
+  } else {
+    Fl::add_timeout(0.25, shell_timer_cb);
+  }
+}
+
 // Support the full piped shell command...
 void shell_pipe_cb(FL_SOCKET, void*) {
   char  line[1024]="";          // Line from command output...
@@ -271,48 +286,46 @@ void shell_pipe_cb(FL_SOCKET, void*) {
     shell_run_terminal->append(line);
   } else {
     // End of file; tell the parent...
+    Fl::remove_timeout(shell_timer_cb);
     Fl::remove_fd(s_proc.get_fileno());
     s_proc.close();
-    shell_run_terminal->append("... END SHELL COMMAND ...\n");
+    shell_proc_done();
   }
 }
 
 void do_shell_command(Fl_Return_Button*, void*) {
   if (!prepare_shell_command()) return;
 
+  if (!shell_run_window->visible()) {
+    Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+    int x, y, w, h;
+    pos.get("x", x, -1);
+    pos.get("y", y, 0);
+    pos.get("w", w, 640);
+    pos.get("h", h, 480);
+    if (x!=-1) {
+      shell_run_window->resize(x, y, w, h);
+    }
+    shell_run_window->show();
+  }
+
   // Show the output window and clear things...
-  shell_run_terminal->text("");
-  shell_run_terminal->append(g_shell_command.c_str());
-  shell_run_terminal->append("\n");
-  shell_run_window->label("Shell Command Running...");
+  shell_run_terminal->printf("\e[0;32m%s\e[0m\n", g_shell_command.c_str());
+  shell_run_window->label(g_shell_command.c_str());
 
   if (s_proc.popen((char *)g_shell_command.c_str()) == NULL) {
-    fl_alert("Unable to run shell command: %s", strerror(errno));
+    shell_run_terminal->printf("\e[1;31mUnable to run shell command: %s\e[0m\n",
+                               strerror(errno));
+    shell_run_window->label("FLUID Shell");
     return;
   }
-
   shell_run_button->deactivate();
 
-  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
-  int x, y, w, h;
-  pos.get("x", x, -1);
-  pos.get("y", y, 0);
-  pos.get("w", w, 640);
-  pos.get("h", h, 480);
-  if (x!=-1) {
-    shell_run_window->resize(x, y, w, h);
-  }
-  shell_run_window->show();
-
+  // if the function below does not for some reason, we will check periodically
+  // to see if the command is done
+  Fl::add_timeout(0.25, shell_timer_cb);
+  // this will tell us when the shell command is done
   Fl::add_fd(s_proc.get_fileno(), shell_pipe_cb);
-
-  while (s_proc.desc()) Fl::wait();
-
-  shell_run_button->activate();
-  shell_run_window->label("Shell Command Complete");
-  fl_beep();
-
-  while (shell_run_window->shown()) Fl::wait();
 }
 
 /**
