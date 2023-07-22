@@ -390,6 +390,9 @@ parse_states(struct wl_array *states)
 		case XDG_TOPLEVEL_STATE_TILED_BOTTOM:
 			pending_state |= LIBDECOR_WINDOW_STATE_TILED_BOTTOM;
 			break;
+		case XDG_TOPLEVEL_STATE_SUSPENDED:
+			pending_state |= LIBDECOR_WINDOW_STATE_SUSPENDED;
+			break;
 		default:
 			break;
 		}
@@ -431,9 +434,26 @@ xdg_toplevel_close(void *user_data,
 	frame_priv->iface->close(frame, frame_priv->user_data);
 }
 
+static void
+xdg_toplevel_configure_bounds(void *data,
+			      struct xdg_toplevel *xdg_toplevel,
+			      int32_t width,
+			      int32_t height)
+{
+}
+
+static void
+xdg_toplevel_wm_capabilities(void *data,
+			     struct xdg_toplevel *xdg_toplevel,
+			     struct wl_array *capabilities)
+{
+}
+
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
 	xdg_toplevel_configure,
 	xdg_toplevel_close,
+	xdg_toplevel_configure_bounds,
+	xdg_toplevel_wm_capabilities,
 };
 
 static void
@@ -1238,7 +1258,7 @@ init_xdg_wm_base(struct libdecor *context,
 	context->xdg_wm_base = wl_registry_bind(context->wl_registry,
 						id,
 						&xdg_wm_base_interface,
-						MIN(version,2));
+						MIN(version,6));
 	xdg_wm_base_add_listener(context->xdg_wm_base,
 				 &xdg_wm_base_listener,
 				 context);
@@ -1389,18 +1409,21 @@ calculate_priority(const struct libdecor_plugin_description *plugin_description)
 }
 
 static bool
-check_symbol_conflicts(const struct libdecor_plugin_description *plugin_description)
+check_symbol_conflicts(const struct libdecor_plugin_description *plugin_description, void *lib)
 {
 	char * const *symbol;
 
 	symbol = plugin_description->conflicting_symbols;
 	while (*symbol) {
 		dlerror();
-		dlsym (RTLD_DEFAULT, *symbol);
+		void *sym = dlsym(RTLD_DEFAULT, *symbol);
 		if (!dlerror()) {
-			fprintf(stderr, "Plugin \"%s\" uses conflicting symbol \"%s\".\n",
+			void *libsym = dlsym(lib, *symbol);
+			if (!dlerror() && libsym != sym) {
+				fprintf(stderr, "Plugin \"%s\" uses conflicting symbol \"%s\".\n",
 					plugin_description->description, *symbol);
-			return false;
+				return false;
+			}
 		}
 
 		symbol++;
@@ -1460,7 +1483,7 @@ load_plugin_loader(struct libdecor *context,
 		return NULL;
 	}
 
-	if (!check_symbol_conflicts(plugin_description)) {
+	if (!check_symbol_conflicts(plugin_description, lib)) {
 		dlclose(lib);
 		return NULL;
 	}

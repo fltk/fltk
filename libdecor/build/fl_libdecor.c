@@ -16,6 +16,13 @@
 
 /* Improvements to libdecor.c without modifying libdecor.c itself */
 
+// this part to support libdecor commit f43652c7 dated 15-jul-2023
+#include "xdg-shell-client-protocol.h"
+#ifndef XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION
+#  define XDG_TOPLEVEL_STATE_SUSPENDED (enum xdg_toplevel_state)9
+#endif
+// end of this part
+
 #define libdecor_frame_set_minimized libdecor_frame_set_minimized_orig
 #define libdecor_new libdecor_new_orig
 #include <dlfcn.h>

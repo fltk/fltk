@@ -81,6 +81,7 @@ enum libdecor_window_state {
 	LIBDECOR_WINDOW_STATE_TILED_RIGHT = 1 << 4,
 	LIBDECOR_WINDOW_STATE_TILED_TOP = 1 << 5,
 	LIBDECOR_WINDOW_STATE_TILED_BOTTOM = 1 << 6,
+	LIBDECOR_WINDOW_STATE_SUSPENDED = 1 << 7,
 };
 
 enum libdecor_resize_edge {
