@@ -79,6 +79,11 @@ The FLTK Wayland platform uses a library called libdecor which handles window de
 this form of libdecor. CMake OPTION_USE_SYSTEM_LIBDECOR can be turned on to have FLTK
 use the system's version of libdecor which is available on recent Linux distributions (e.g.,
 Debian Bookworm or more recent in packages libdecor-0-0 and libdecor-0-plugin-1-cairo).
+FLTK equipped with libdecor supports both the client-side decoration mode (CSD) and the
+server-side decoration mode (SSD) as determined by the active Wayland compositor.
+Mutter (gnome's Wayland compositor) and Weston use CSD mode, KWin and Sway use SSD mode.
+Furthermore, setting environment variable LIBDECOR_FORCE_CSD to 1 will make FLTK use CSD
+mode even if the compositor would have selected SSD mode.
 
  2.2 Known Limitations
 ----------------------
