@@ -354,7 +354,7 @@ void Fl_Wayland_Window_Driver::make_current() {
   }
   ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, f * wld_s);
   int *poffset = Fl_Window_Driver::menu_offset_y(pWindow);
-  if (poffset) { // for tall menu windows under KDE to offset drawing inside window
+  if (poffset) { // for tall menu windows under KWIN to offset drawing inside window
     cairo_translate(window->buffer->cairo_, 0, *poffset);
   }
   cairo_rectangle_int_t *extents = subRect();
@@ -799,7 +799,7 @@ static void handle_configure(struct libdecor_frame *frame,
   }
   window->state = window_state;
 
-  // Weston, KDE, and some versions of Mutter, on purpose, don't set the
+  // Weston, KWin, and some versions of Mutter, on purpose, don't set the
   // window width x height when xdg_toplevel_configure runs twice
   // during resizable window creation (see https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/6).
   // Consequently, libdecor_configuration_get_content_size() may return false twice.
@@ -1037,7 +1037,7 @@ static void popup_configure(void *data, struct xdg_popup *xdg_popup, int32_t x, 
   int HH;
   Fl_Window_Driver::menu_parent(&HH);
   if (window->fl_win->h() > HH && y != win_pos->y) { // A menu taller than the display
-    // Under KDE, height is set to the display height or less: we ignore that.
+    // Under KWin, height is set to the display height or less: we ignore that.
     window->state = (y - win_pos->y);
     // make selected item visible, if there's one
     Fl_Window_Driver::scroll_to_selected_item(window->fl_win);
@@ -1551,7 +1551,7 @@ void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
   pWindow->wait_for_expose(); // useful for border(0) just after show()
   struct libdecor_frame *frame = fl_wl_xid(pWindow)->frame;
-  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KDE) {
+  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KWIN) {
     if (fl_wl_xid(pWindow)->kind == DECORATED) {
       libdecor_frame_set_visibility(frame, pWindow->border());
     } else {
@@ -1832,8 +1832,8 @@ void Fl_Wayland_Window_Driver::subRect(cairo_rectangle_int_t *r) {
 
 void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
   if (y == pWindow->y()) return;
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KDE) {
-    // The KDE compositor refuses to position a popup such that it extends above
+  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
+    // The KWin compositor refuses to position a popup such that it extends above
     // the top of the screen. Therefore, instead of sliding the popup window
     // on the display, we slide the drawing inside the fixed popup via
     // member variable offset_y of the menuwindow class, and we redraw the popup

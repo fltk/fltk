@@ -300,7 +300,7 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
  this address.
  
  A plugin is loaded also if SSD.
- KDE has its own size limit, similar to that of GDK plugin
+ KWin has its own size limit, similar to that of GDK plugin
  */
 static const char *get_libdecor_plugin_description(struct libdecor_frame *frame) {
   static const struct libdecor_plugin_description *plugin_description = NULL;

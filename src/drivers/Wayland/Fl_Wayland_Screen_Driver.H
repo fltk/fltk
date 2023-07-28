@@ -39,7 +39,7 @@ private:
   static bool insertion_point_location_is_valid;
 public:
 // type definitions
-  typedef enum {unspecified, MUTTER, WESTON, KDE, OWL} compositor_name;
+  typedef enum {unspecified, MUTTER, WESTON, KWIN, OWL} compositor_name;
   struct seat {
     struct wl_seat *wl_seat;
     struct wl_pointer *wl_pointer;

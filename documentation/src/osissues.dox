@@ -1069,10 +1069,11 @@ or in <tt>$HOME/.local/share/applications/</tt> so it's available to a single us
 \subsection osissues_wayland_decoration Window titlebars
 Wayland supports both client-side window decoration (CSD), where client applications
 are responsible for drawing window titlebars, and server-side window
-decoration (SSD), where the Wayland compositor itself draws window titlebars. Among 3
+decoration (SSD), where the Wayland compositor itself draws window titlebars. Among 4
 tested Wayland compositors, Mutter (gnome's compositor) and Weston use CSD mode
-whereas the KDE compositor uses SSD mode. When running in CSD mode, FLTK uses a library called
-<a href=https://gitlab.gnome.org/jadahl/libdecor>libdecor</a> to draw titlebars.
+whereas the KWin and Sway compositors use SSD mode.
+When running in CSD mode, FLTK uses a library
+called <a href=https://gitlab.freedesktop.org/libdecor/libdecor>libdecor</a> to draw titlebars.
 The libdecor library has been conceived to use various plug-in's to draw
 titlebars in various fashions intended to match any desktop's preferred titlebar style.
 FLTK supports drawing titlebars with any libdecor plug-in via an environment variable

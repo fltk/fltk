@@ -280,7 +280,7 @@ accessible from this object.
 For example, when \c interface equals "wl_compositor", the value returned by
 \c wl_registry_bind() is stored as member \c wl_compositor of the
 \c Fl_Wayland_Screen_Driver object.
-\c registry_handle_global() also identifies whether the Mutter, Weston, or KDE compositor is connected
+\c registry_handle_global() also identifies whether the Mutter, Weston, or KWin compositor is connected
 and stores this information in static member variable \c Fl_Wayland_Screen_Driver::compositor.
 
 Wayland calls \c registry_handle_global() with its parameter \c interface equals to
@@ -726,7 +726,7 @@ is unmapped by function \c Fl_Wayland_Window_Driver::hide(), the surface's list 
 is emptied.
 
 <h3>Fractional scaling</h3>
-The KDE compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
+The KWin compositor, and gnome too if specially set, allow to use <em>fractional scaling</em>
 that can take intermediate values between 100% and 200%. Wayland implements this rendering all
 <tt>wl_surface</tt>'s as if the scaling was at 200%, and downsizing them
 to the desired fractional scale value at the compositing stage.
@@ -956,9 +956,16 @@ Desktop. As of early 2023, two titlebar-drawing \c libdecor plugins are availabl
 Because \c libdecor is not yet in Linux packages, or only in a preliminary state, FLTK bundles the
 most recent source code of \c libdecor and its plugins. This code is included in libfltk.
 FLTK uses \c libdecor-gtk when software package \c libgtk-3-dev is present in the
-system, and \c libdecor-cairo otherwise.
+build system, and \c libdecor-cairo otherwise.
 
-\c Libdecor uses the Wayland protocol <tt>"xdg decoration unstable v1"</tt> hinted at before.
+\c Libdecor uses the Wayland protocol
+<a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>
+xdg decoration unstable v1</a> to request being decorated by a supporting compositor.
+If the running compositor supports SSD, \c libdecor doesn't draw window titlebars because
+the compositor does it. That is what happens with the \c KWin and \c Sway compositors.
+However, if environment variable \c LIBDECOR_FORCE_CSD is defined to value \c 1 when an
+FLTK app runs, \c libdecor instructs an SSD-able compositor to refrain from decorating its
+windows and decorates windows itself.
 
 CMake \c OPTION_USE_SYSTEM_LIBDECOR has been defined to allow FLTK in the future, when \c libdecor and
 \c libdecor-gtk will be part of Linux packages, to use these packages rather than the \c libdecor

@@ -51,16 +51,16 @@ struct pointer_output {
   struct wl_list link;
 };
 
-/* Implementation note about support of 3 Wayland compositors: Mutter, Weston, KDE.
+/* Implementation note about support of 3 Wayland compositors: Mutter, Weston, KWin.
 
 - About CSD and SSD :
  * Mutter and Weston use CSD (client-side decoration) which means that libdecor.so draws all window
  titlebars and responds to resize, minimization and maximization events.
- * KDE uses SSD (server-side decoration) which means the OS draws titlebars according to its own rules
+ * KWin uses SSD (server-side decoration) which means the OS draws titlebars according to its own rules
  and triggers resize, minimization and maximization events.
 
 - Function registry_handle_global() runs within fl_open_display() and sets public static variable
- Fl_Wayland_Screen_Driver::compositor to either Fl_Wayland_Screen_Driver::MUTTER, ::WESTON, or ::KDE.
+ Fl_Wayland_Screen_Driver::compositor to either Fl_Wayland_Screen_Driver::MUTTER, ::WESTON, or ::KWIN.
 
 - Specific operations for WESTON:
  * When a libdecor-framed window is minimized under Weston, the frame remains on display. To avoid
@@ -85,7 +85,7 @@ struct pointer_output {
 
  - Support of Fl_Window::border(int) :
  FLTK uses libdecor_frame_set_visibility() to show or hide a toplevel window's frame. This doesn't work
- with KDE which uses Server-Side Decoration. In that case, FLTK hides and re-shows the window to toggle
+ with KWin which uses Server-Side Decoration. In that case, FLTK hides and re-shows the window to toggle
  between presence and absence of a window's frame.
 */
 
@@ -1107,8 +1107,8 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::WESTON;
     //fprintf(stderr, "Running the Weston compositor\n");
   } else if (strcmp(interface, "org_kde_plasma_shell") == 0) {
-    Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::KDE;
-    //fprintf(stderr, "Running the KDE compositor\n");
+    Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::KWIN;
+    //fprintf(stderr, "Running the KWin compositor\n");
   } else if (strncmp(interface, "zowl_mach_ipc", 13) == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::OWL;
     //fprintf(stderr, "Running the Owl compositor\n");
