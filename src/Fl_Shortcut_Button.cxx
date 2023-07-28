@@ -49,8 +49,8 @@ Fl_Shortcut_Button::Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l)
   default_set_(false),
   handle_default_button_(false),
   pre_esc_(0),
-  shortcut_value(0),
-  default_shortcut_(0)
+  default_shortcut_(0),
+  shortcut_value(0)
 {
   box(FL_DOWN_BOX);
   selection_color(FL_SELECTION_COLOR);
@@ -159,7 +159,6 @@ int Fl_Shortcut_Button::handle(int e) {
   bool inside_default_button = false;
   if (default_set_ && ( (e == FL_PUSH) || (e == FL_DRAG) || (e == FL_RELEASE) ) ) {
     int X = x() + Fl::box_dx(box());
-    int Y = y() + Fl::box_dy(box());
     int W = w() - Fl::box_dw(box());
     int H = h() - Fl::box_dh(box());
     if (Fl::event_inside(this) && (Fl::event_x() > X+W-H))
