@@ -37,7 +37,6 @@ class Fl_Wayland_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Wayland_Gl_Plugin;
 private:
   static EGLDisplay egl_display;
-  static EGLint configs_count;
   struct wl_egl_window *egl_window;
   EGLSurface egl_surface;
   bool egl_swap_in_progress;

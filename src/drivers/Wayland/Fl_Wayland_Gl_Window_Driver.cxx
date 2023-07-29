@@ -63,7 +63,6 @@ struct gl_start_support { // to support use of gl_start / gl_finish
 static EGLConfig wld_egl_conf = NULL;
 
 EGLDisplay Fl_Wayland_Gl_Window_Driver::egl_display = EGL_NO_DISPLAY;
-EGLint Fl_Wayland_Gl_Window_Driver::configs_count = 0;
 
 
 Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {
@@ -97,7 +96,7 @@ void Fl_Wayland_Gl_Window_Driver::init() {
   }
   //printf("EGL major: %d, minor %d\n", major, minor);
 
-  eglGetConfigs(egl_display, NULL, 0, &configs_count);
+  //eglGetConfigs(egl_display, NULL, 0, &configs_count);
   //printf("EGL has %d configs\n", configs_count);
   eglBindAPI(EGL_OPENGL_API);
 }
@@ -156,29 +155,16 @@ Fl_Gl_Choice *Fl_Wayland_Gl_Window_Driver::find(int m, const int *alistp)
   if (m & FL_STENCIL) config_attribs[15] = 1;
   if (m & FL_ALPHA) config_attribs[17] = (m & FL_RGB8) ? 8 : 1;
 
-  static EGLConfig *configs = (void**)calloc(configs_count, sizeof(EGLConfig));
-  eglChooseConfig(egl_display, config_attribs, configs, configs_count, &n);
+  g = new Fl_Wayland_Gl_Choice(m, alistp, first);
+  eglChooseConfig(egl_display, config_attribs, &(g->egl_conf), 1, &n);
   if (n == 0 && (m & FL_MULTISAMPLE)) {
     config_attribs[13] = 0;
-    eglChooseConfig(egl_display, config_attribs, configs, configs_count, &n);
+    eglChooseConfig(egl_display, config_attribs, &(g->egl_conf), 1, &n);
   }
   if (n == 0) {
     Fl::fatal("failed to choose an EGL config\n");
   }
 
-  g = new Fl_Wayland_Gl_Choice(m, alistp, first);
-  /*for (int i = 0; i < n; i++) {
-    EGLint size;
-    eglGetConfigAttrib(egl_display, configs[i], EGL_BUFFER_SIZE, &size);
-    printf("Buffer size for config %d is %d\n", i, size);
-    eglGetConfigAttrib(egl_display, configs[i], EGL_RED_SIZE, &size);
-    printf("Red size for config %d is %d\n", i, size);
-    // just choose the first one
-    g->egl_conf = configs[i];
-    break;
-  }*/
-  // just choose the first config
-  g->egl_conf = configs[0];
   first = g;
   return g;
 }
