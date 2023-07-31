@@ -306,9 +306,10 @@ The \c wl_display_dispatch() call is repeated as long as data are available for 
 The event loop is run by function \c Fl_Unix_System_Driver::wait() which is used by both
 the Wayland and X11 FLTK backends. Among various tasks, this function waits for data arriving
 on the file descriptors FLTK is listening. Overall, the event loop of the Wayland backend
-is nearly exactly the
-same as that used by the X11 backend. The Wayland backend differs only in the callback function
-called to handle data read from the Wayland connection socket, which is Wayland-specific.
+is nearly exactly the same as that used by the X11 backend. The Wayland backend differs
+only in the callback function handling data read from the Wayland connection socket,
+and in overridden functions \c Fl_Wayland_Screen_Driver::poll_or_select_with_delay() and
+\c Fl_Wayland_Screen_Driver::poll_or_select().
 
 
 \section wayland-surface Wayland windows and surfaces

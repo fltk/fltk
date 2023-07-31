@@ -1341,7 +1341,7 @@ void Fl_Wayland_Window_Driver::makeWindow()
   if (pWindow->modal() || pWindow->non_modal()) {
     if (pWindow->modal()) Fl::modal_ = pWindow;
     if (new_window->kind == DECORATED && first_xid && first_xid->kind == DECORATED) {
-     libdecor_frame_set_parent(new_window->frame, first_xid->frame);
+     if (first_xid->frame) libdecor_frame_set_parent(new_window->frame, first_xid->frame);
     } else if (new_window->kind == UNFRAMED && new_window->xdg_toplevel && first_xid) {
       Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(first_xid->fl_win);
       if (top_dr->xdg_toplevel()) xdg_toplevel_set_parent(new_window->xdg_toplevel,
