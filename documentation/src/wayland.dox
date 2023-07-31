@@ -1056,10 +1056,7 @@ native platform window system. OpenGL-using FLTK apps are therefore linked to \c
 
 EGL is initialized calling member function \c Fl_Wayland_Gl_Window_Driver::init()
 once, the first time the \c Fl_Wayland_Gl_Window_Driver c'tor runs. That is done
-with calls to <tt>eglGetDisplay(), eglInitialize(), eglGetConfigs(), and
-eglBindAPI()</tt>. Function \c eglGetConfigs() computes the number of usable
-EGL frame buffer configurations for the display and stores it in static member variable
-\c Fl_Wayland_Gl_Window_Driver::configs_count.
+with calls to <tt>eglGetDisplay(), eglInitialize()</tt>, and \c eglBindAPI().
 
 Member function \c Fl_Wayland_Gl_Window_Driver::find() calls \c eglChooseConfig()
 to filter the set of GL configurations that match the \c Fl_Gl_Window's mode(),
@@ -1089,16 +1086,7 @@ FLTK function \c Fl_Gl_Window::make_current() calls overridden function
 FLTK calls function \c Fl_Wayland_Gl_Window_Driver::swap_buffers() each time it wants a
 GL context to be sent to the display. This function contains some pure GL code to
 emulate an overlay buffer to support Fl_Gl_Window objects overriding their
-\c draw_overlay() member function.
-Then, it calls function \c eglSwapBuffers() after having called
-\c wl_display_dispatch_pending() to synchronize EGL use
-with the rest of the Wayland compositor's activity.
-Function \c wl_display_dispatch_pending() calls the listeners attached to
-commands the Wayland compositor recently sent to the client.
-The fact that this function gets called during the process of drawing an Fl_Gl_Window
-makes possible a scenario that cannot occur with other FLTK platforms : a GL window can be
-closed while being drawn. Function \c Fl_Wayland_Window_Driver::hide() is written to
-handle such scenario without error (see comments therein).
+\c draw_overlay() member function. Then, it calls function \c eglSwapBuffers().
 
 The overridden \c Fl_Wayland_Gl_Window_Driver::resize() function is implemented with
 calls to \c wl_egl_window_get_attached_size() and \c wl_egl_window_resize().

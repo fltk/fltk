@@ -1681,6 +1681,21 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 }
 
 
+int Fl_Wayland_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
+  wl_display_dispatch_pending(wl_display);
+  return Fl_Unix_Screen_Driver::poll_or_select_with_delay(time_to_wait);
+}
+
+
+// like Fl_Wayland_Screen_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
+int Fl_Wayland_Screen_Driver::poll_or_select() {
+  int ret = wl_display_prepare_read(wl_display);
+  if (ret == 0) wl_display_cancel_read(wl_display);
+  else return 1;
+  return Fl_Unix_Screen_Driver::poll_or_select();
+}
+
+
 int Fl_Wayland_Screen_Driver::event_key(int k) {
   if (k >= 'A' && k <= 'Z') k += 32;
   return (search_int_vector(key_vector, k) >= 0);

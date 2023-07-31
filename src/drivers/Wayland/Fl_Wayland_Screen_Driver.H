@@ -168,6 +168,10 @@ public:
   int get_key(int k) FL_OVERRIDE;
   void enable_im() FL_OVERRIDE;
   void disable_im() FL_OVERRIDE;
+  
+  // overridden functions from parent class Fl_Unix_Screen_Driver
+  int poll_or_select_with_delay(double time_to_wait) FL_OVERRIDE;
+  int poll_or_select() FL_OVERRIDE;
 
 // Wayland-specific member functions
   void screen_count_set(int count) {num_screens = count;}

@@ -1,7 +1,7 @@
 //
 // Class Fl_Wayland_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -39,7 +39,6 @@ private:
   static EGLDisplay egl_display;
   struct wl_egl_window *egl_window;
   EGLSurface egl_surface;
-  bool egl_swap_in_progress;
   Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win);
   float pixels_per_unit() FL_OVERRIDE;
   void make_current_before() FL_OVERRIDE;

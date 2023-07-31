@@ -69,7 +69,6 @@ Fl_Wayland_Gl_Window_Driver::Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win) : Fl
   if (egl_display == EGL_NO_DISPLAY) init();
   egl_window = NULL;
   egl_surface = NULL;
-  egl_swap_in_progress = false;
 }
 
 
@@ -342,11 +341,8 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
     if (!overlay_buffer) return; // don't call eglSwapBuffers until overlay has been drawn
   }
 
-  if (egl_surface && !egl_swap_in_progress) {
-    egl_swap_in_progress = true; // prevents crash while down resizing rotating glpuzzle
-    wl_display_dispatch_pending(Fl_Wayland_Screen_Driver::wl_display);
+  if (egl_surface) {
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
-    egl_swap_in_progress = false;
   }
 }
 

@@ -427,12 +427,6 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 }
 
 
-static void delayed_delete_Fl_X(void *data) {
-  Fl::remove_check(delayed_delete_Fl_X, data);
-  delete (Fl_X*)data;
-}
-
-
 void Fl_Wayland_Window_Driver::hide() {
   Fl_X* ip = Fl_X::flx(pWindow);
   if (hide_common()) return;
@@ -483,22 +477,7 @@ void Fl_Wayland_Window_Driver::hide() {
 //fprintf(stderr, "After hide: sub=%p frame=%p xdg=%p top=%p pop=%p surf=%p\n", wld_win->subsurface,  wld_win->frame, wld_win->xdg_surface, wld_win->xdg_toplevel, wld_win->xdg_popup, wld_win->wl_surface);
     free(wld_win);
   }
-  if (pWindow->as_gl_window() && in_flush_) {
-    // Under Wayland and for a GL window, this summarized scenario can occur
-    // when closing a window with "escape" (e.g. test/cube):
-    // Fl::flush() calls Fl_Wayland_Window_Driver::flush()
-    // calls Fl_Wayland_Gl_Window_Driver::swap_buffers()
-    // calls wl_display_dispatch_pending() calls Fl_Wayland_Window_Driver::hide().
-    // We make sure here to force exit from the loop over all damaged windows
-    // in Fl::flush(), and postpone deletion of the Fl_X record until after return
-    // from Fl::flush().
-      ip->xid = 0;
-      ip->next = NULL;
-      Fl::damage(1); // make sure potential remaining damaged windows get drawn
-      Fl::add_check(delayed_delete_Fl_X, ip);
-    } else {
-      delete ip;
-    }
+  delete ip;
 }
 
 
