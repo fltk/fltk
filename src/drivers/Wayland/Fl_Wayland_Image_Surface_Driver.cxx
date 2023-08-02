@@ -67,6 +67,7 @@ void Fl_Wayland_Image_Surface_Driver::end_current() {
   cairo_surface_flush(surf);
   Fl_Wayland_Window_Driver::wld_window = pre_window;
   fl_window = (Window)pre_window;
+  Fl_Surface_Device::end_current();
 }
 
 void Fl_Wayland_Image_Surface_Driver::translate(int x, int y) {
