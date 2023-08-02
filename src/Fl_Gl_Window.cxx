@@ -354,13 +354,11 @@ void Fl_Gl_Window::draw_begin() {
     valid(1);
   }
 
-  glPushAttrib(GL_ENABLE_BIT);
-  glPushAttrib(GL_TRANSFORM_BIT);
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-//  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
   glOrtho(0.0, w(), h(), 0.0, -1.0, 1.0);
 
   glMatrixMode(GL_MODELVIEW);
@@ -368,6 +366,8 @@ void Fl_Gl_Window::draw_begin() {
   glLoadIdentity();
 
   glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
   glEnable(GL_POINT_SMOOTH);
 
   glLineWidth((GLfloat)(drv->pixels_per_unit_*drv->line_width_));
@@ -375,7 +375,6 @@ void Fl_Gl_Window::draw_begin() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   if (!pGlWindowDriver->need_scissor()) glDisable(GL_SCISSOR_TEST);
-  // TODO: all of the settings should be saved on the GL stack
 }
 
 /**
@@ -389,8 +388,7 @@ void Fl_Gl_Window::draw_end() {
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
 
-  glPopAttrib(); // GL_TRANSFORM_BIT
-  glPopAttrib(); // GL_ENABLE_BIT
+  glPopAttrib(); // GL_ALL_ATTRIB_BITS
 
   Fl_Surface_Device::pop_current();
   if (mode() & FL_OPENGL3) pGlWindowDriver->switch_back();
