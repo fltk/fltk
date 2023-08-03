@@ -1682,7 +1682,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
-  wl_display_dispatch_pending(wl_display);
+  if (wl_display_dispatch_pending(wl_display) > 0) return 1;
   return Fl_Unix_Screen_Driver::poll_or_select_with_delay(time_to_wait);
 }
 
