@@ -193,6 +193,9 @@ protected:
   /* Draw the text in the passed bounding box. */
   void drawtext(int, int, int, int);
 
+  /* Draw the text in the passed bounding box. */
+  void drawtext(int, int, int, int, bool draw_active);
+
   /* Move the cursor to the column given by up_down_pos. */
   int up_down_position(int, int keepmark=0);
 

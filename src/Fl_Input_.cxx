@@ -288,18 +288,37 @@ void Fl_Input_::setfont() const {
 }
 
 /**
+ Draws the text in the passed bounding box.
+
+ If <tt>damage() & FL_DAMAGE_ALL</tt> is true, this assumes the
+ area has already been erased to color(). Otherwise it does
+ minimal update and erases the area itself.
+
+ \param X, Y, W, H area that must be redrawn
+ */
+void Fl_Input_::drawtext(int X, int Y, int W, int H) {
+  drawtext(X, Y, W, H, (Fl::focus()==this));
+}
+
+/**
   Draws the text in the passed bounding box.
 
-  If <tt>damage() & FL_DAMAGE_ALL</tt> is true, this assumes the
-  area has already been erased to color(). Otherwise it does
-  minimal update and erases the area itself.
+  This version of `drawtext` allows the user to control whether the widget is
+  drawn as acitive, i.e. with the text cursor, or inactive. This is useful for
+  compound widgets where the input should be shown as active when actually
+  the container widget is the active one.
+
+  A caller should not draw the widget with `active` set if another text
+  widget may indeed be the active widget.
 
   \param X, Y, W, H area that must be redrawn
+  \param draw_active if set, the cursor will be drawn, even if the widget is not active
+  \see Fl_Input_::drawtext(int X, int Y, int W, int H)
 */
-void Fl_Input_::drawtext(int X, int Y, int W, int H) {
+void Fl_Input_::drawtext(int X, int Y, int W, int H, bool draw_active) {
   int do_mu = !(damage()&FL_DAMAGE_ALL);
 
-  if (Fl::focus()!=this && !size()) {
+  if (!draw_active && !size()) {
     if (do_mu) { // we have to erase it if cursor was there
       draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
                W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
@@ -308,7 +327,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   int selstart, selend;
-  if (Fl::focus()!=this && /*Fl::selection_owner()!=this &&*/ Fl::pushed()!=this)
+  if (!draw_active && /*Fl::selection_owner()!=this &&*/ Fl::pushed()!=this)
     selstart = selend = 0;
   else if (insert_position() <= mark()) {
     selstart = insert_position(); selend = mark();
@@ -330,7 +349,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     e = expand(p, buf);
     if (insert_position() >= p-value() && insert_position() <= e-value()) {
       curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
-      if (Fl::focus()==this && !was_up_down) up_down_pos = curx;
+      if (draw_active && !was_up_down) up_down_pos = curx;
       cury = lines*height;
       int newscroll = xscroll_;
       if (curx > newscroll+W-threshold) {
@@ -451,10 +470,13 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
   CONTINUE2:
     // draw the cursor:
-    if (Fl::focus() == this && (
-                                (Fl::screen_driver()->has_marked_text() && Fl::compose_state) ||
-                                selstart == selend) &&
-        insert_position() >= p-value() && insert_position() <= e-value()) {
+    if ( draw_active
+         && ( (Fl::screen_driver()->has_marked_text() && Fl::compose_state)
+              || selstart == selend
+             )
+         && insert_position() >= p-value()
+         && insert_position() <= e-value()
+        ) {
       fl_color(cursor_color());
       // cursor position may need to be recomputed (see STR #2486)
       curx = int(expandpos(p, value()+insert_position(), buf, 0)+.5);
@@ -487,9 +509,9 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   fl_pop_clip();
-  if (Fl::focus() == this) {
-       fl_set_spot(textfont(), textsize(),
-               (int)xpos+curx, Y+ypos_cur-fl_descent(), W, H, window()); //fix issue #270
+  if (draw_active) {
+    fl_set_spot(textfont(), textsize(),
+                (int)xpos+curx, Y+ypos_cur-fl_descent(), W, H, window()); //fix issue #270
   }
 }
 
