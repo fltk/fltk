@@ -94,9 +94,9 @@ void fl_overlay_clear() {
 
  The typical (and only) use for this function is to draw a selection rectangle
  during a mouse drag event sequence without having to redraw the entire content
- of the wideget.
+ of the widget.
 
- Your event handle should look similar to this (also see `test/mandelbrot`):
+ Your event handle should look similar to this (also see `test/mandelbrot.cxx`):
  ```
   int MyWidget::handle(int event) {
     static int ix, iy;
@@ -110,7 +110,7 @@ void fl_overlay_clear() {
         return 1;
       case FL_RELEASE:
         this->make_current();
-        fl_clear_overlay();
+        fl_overlay_clear();
         // select the element under the rectangle
         return 1;
     }
@@ -121,11 +121,11 @@ void fl_overlay_clear() {
  \note Between drawing an overlay rect and clearing it, the content of the
     widget must not change.
 
- \note fl_overlay_rect and fl_clear_overlay should be called when the actual
+ \note fl_overlay_rect() and fl_overlay_clear() should be called when the actual
     event occurs, and *not* within `MyWidget::draw()`.
 
- \note fl_overlay_rect and fl_clear_overlay should not be mixed with
-    Fl_Overlay_Window. Fl_Overlay_Window provides and entirely different way of
+ \note fl_overlay_rect() and fl_overlay_clear() should not be mixed with
+    Fl_Overlay_Window. Fl_Overlay_Window provides an entirely different way of
     drawing selection outlines and is not limited to rectangles.
 
  \param x, y, w, h position and size of the overlay rectangle.
