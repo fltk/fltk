@@ -10,7 +10,7 @@ snap {
 Function {make_window()} {open
 } {
   Fl_Window my_window {open
-    xywh {407 352 550 215} type Double
+    xywh {448 339 495 215} type Double
     code0 {\#include "keyboard.h"}
     class MyWindow visible
   } {
@@ -690,8 +690,8 @@ Function {make_window()} {open
       xywh {15 20 170 30} labelsize 9 align 5
     }
     Fl_Box {} {
-      label {Fl::event_state():}
-      xywh {400 0 80 15} labelsize 9 align 22
+      label {Fl::event_state():} selected
+      xywh {400 15 80 0} labelsize 9 align 5
     }
     Fl_Output text_output {
       label {Fl::event_text():}
@@ -709,30 +709,15 @@ Function {make_window()} {open
       callback key_cb
       xywh {420 70 20 20} labelsize 10
     }
-    Fl_Box {} {
-      label {Gestures:}
-      xywh {493 0 50 15} labelsize 9 align 22
+    Fl_Dial roller_x {
+      label {x:}
+      callback wheel_cb
+      xywh {440 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
-    Fl_Box w_scroll {
-      label Mousewheel selected
-      xywh {495 20 40 40} box DOWN_BOX selection_color 8 labelsize 8 align 2
-      code0 {\#include <FL/Fl_Positioner.H>}
-      code1 {w_scroll->xbounds(0.0, 32.0); w_scroll->ybounds(0.0, 32.0);}
-      code2 {w_scroll->value(16.0, 16.0);}
-      class Fl_Positioner
-    }
-    Fl_Box w_zoom {
-      label Zoom
-      tooltip {the zoom gestures is not supported on all platforms} xywh {495 75 40 40} box DOWN_BOX selection_color 8 labelsize 8 align 2
-      code0 {\#include <FL/Fl_Positioner.H>}
-      code1 {w_zoom->xbounds(0.0, 256.0); w_zoom->ybounds(256.0, 0.0);}
-      code2 {w_zoom->value(128.0, 128.0);}
-      class Fl_Positioner
-    }
-    Fl_Dial w_rotate {
-      label Rotate
-      tooltip {the rotation gestures is not supported on all platforms} xywh {495 130 40 40} box ROUND_DOWN_BOX selection_color 49 labelsize 8 maximum 1023 step 1
-      code1 {w_rotate->angles(0, 360);}
+    Fl_Dial roller_y {
+      label {y:}
+      callback wheel_cb
+      xywh {460 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
   }
 }
