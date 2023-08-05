@@ -407,7 +407,13 @@ enum Fl_Event { // events
   /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_ZOOM_EVENT = 27
+  FL_ZOOM_EVENT         = 27,
+  /** The user has made a rotation gesture (Mac OS platform only).
+   The Fl::event_dy() method can be used to find the rotation amount,
+   Fl::event_x() and Fl::event_y() are set as well.
+   This event is sent to the window's handle method.
+   */
+  FL_ROTATE_GESTURE     = 28
 // DEV NOTE: Keep this list in sync with FL/names.h
 };
 

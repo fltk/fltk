@@ -43,11 +43,22 @@ int handle(int e) {
   return (e == FL_SHORTCUT); // eat all keystrokes
 }
 
-int MyWindow::handle(int msg) {
-  if (msg==FL_MOUSEWHEEL) {
-    roller_x->value( roller_x->value() + Fl::e_dx * roller_x->step() );
-    roller_y->value( roller_y->value() + Fl::e_dy * roller_y->step() );
-    return 1;
+int MyWindow::handle(int event) {
+  static int r = 0;
+  switch (event) {
+    case FL_MOUSEWHEEL: {
+      int x = (int)(w_scroll->xvalue() - Fl::event_dx());
+      int y = (int)(w_scroll->yvalue() - Fl::event_dy());
+      w_scroll->value( (double)(x&31), (double)(y&31) );
+      return 1; }
+    case FL_ZOOM_GESTURE: {
+      int z = (int)(w_zoom->yvalue() + Fl::event_dy());
+      w_zoom->value( (double)(z&255), (double)(z&255) );
+      return 1; }
+    case FL_ROTATE_GESTURE: {
+      r = r - (Fl::event_dy()/100.0);
+      w_rotate->value( (double)(r&1023) );
+      return 1; }
   }
   return 0;
 }
