@@ -1169,8 +1169,15 @@ static void wayland_socket_callback(int fd, struct wl_display *display) {
   struct pollfd fds = (struct pollfd) { fd, POLLIN, 0 };
   do {
     if (wl_display_dispatch(display) == -1) {
-      Fl::fatal("Fatal error while communicating with the Wayland server: %s",
-                strerror(errno));
+      int err = wl_display_get_error(display);
+      if (err == EPROTO) {
+        const struct wl_interface *interface;
+        int code = wl_display_get_protocol_error(display, &interface, NULL);
+        Fl::fatal("Fatal error no %d in Wayland protocol: %s", code, interface->name);
+      } else {
+        Fl::fatal("Fatal error while communicating with the Wayland server: %s",
+                  strerror(errno));
+      }
     }
   }
   while (poll(&fds, 1, 0) > 0);
