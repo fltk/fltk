@@ -215,44 +215,9 @@ struct libdecor_frame_gtk {
 
 #endif // USE_SYSTEM_LIBDECOR || !HAVE_GTK
 
-/* these definitions are copied from libdecor/src/libdecor.c */
-
-struct libdecor_limits {
-  int min_width;
-  int min_height;
-  int max_width;
-  int max_height;
-};
-
-struct libdecor_frame_private {
-  int ref_count;
-  struct libdecor *context;
-  struct wl_surface *wl_surface;
-  struct libdecor_frame_interface *iface;
-  void *user_data;
-  struct xdg_surface *xdg_surface;
-  struct xdg_toplevel *xdg_toplevel;
-  struct zxdg_toplevel_decoration_v1 *toplevel_decoration;
-  bool pending_map;
-  struct {
-    char *app_id;
-    char *title;
-    struct libdecor_limits content_limits;
-    struct xdg_toplevel *parent;
-  } state;
-  struct libdecor_configuration *pending_configuration;
-  int content_width;
-  int content_height;
-  enum libdecor_window_state window_state;
-  enum zxdg_toplevel_decoration_v1_mode decoration_mode;
-  enum libdecor_capabilities capabilities;
-  struct libdecor_limits interactive_limits;
-  bool visible;
-};
-
 
 static unsigned char *gtk_titlebar_buffer(struct libdecor_frame *frame,
-                                                 int *width, int *height, int *stride)
+                                          int *width, int *height, int *stride)
 {
   struct libdecor_frame_gtk *lfg = (struct libdecor_frame_gtk *)frame;
 #if USE_SYSTEM_LIBDECOR || !HAVE_GTK
@@ -304,11 +269,13 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
  */
 static const char *get_libdecor_plugin_description(struct libdecor_frame *frame) {
   static const struct libdecor_plugin_description *plugin_description = NULL;
-  if (frame->priv->decoration_mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE) {
+  int X, Y = 0;
+  libdecor_frame_translate_coordinate(frame, 0, 0, &X, &Y);
+  if (Y == 0) {
     return "Server-Side Decoration";
   }
-   if (!plugin_description) {
- #if USE_SYSTEM_LIBDECOR
+  if (!plugin_description) {
+#if USE_SYSTEM_LIBDECOR
      char fname[PATH_MAX];
      const char *dir = getenv("LIBDECOR_PLUGIN_DIR");
      if (!dir) dir = LIBDECOR_PLUGIN_DIR;
