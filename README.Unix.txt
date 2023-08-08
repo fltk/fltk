@@ -77,13 +77,15 @@ Open a shell and install some development software:
   sudo apt-get install g++
   sudo apt-get install gdb
   sudo apt-get install git
-  sudo apt-get install autoconf
+  sudo apt-get install make
+  sudo apt-get install cmake      # install CMake...
+  sudo apt-get install autoconf   # ...or autoconf (or both)
   sudo apt-get install libx11-dev
   sudo apt-get install libglu1-mesa-dev
   sudo apt-get install libxft-dev
   sudo apt-get install libxcursor-dev
 
-These packages are optional but recommended:
+# These packages are optional but recommended:
 
   sudo apt-get install libasound2-dev
   sudo apt-get install freeglut3-dev
