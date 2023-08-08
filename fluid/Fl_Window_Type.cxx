@@ -84,7 +84,8 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
       i18n_posix_group->show();
       break;
   }
-
+  // make sure that the outside labels are redrawn too.
+  w_settings_i18n_tab->redraw();
 }
 
 void show_grid_cb(Fl_Widget *, void *) {
