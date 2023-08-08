@@ -77,9 +77,6 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
   buffer->shm_pool = pool;
   buffer->data = (void*)(pool_data->pool_memory + chunk_offset);
 //fprintf(stderr, "last=%p chunk_offset=%d ", pool_data->buffers.next, chunk_offset);
-  buffer->data_size = size;
-  buffer->width = width;
-  buffer->draw_buffer = new uchar[buffer->data_size];
   buffer->draw_buffer_needs_commit = true;
 //fprintf(stderr, "create_shm_buffer: %dx%d = %d\n", width, height, size);
   cairo_init(buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
@@ -154,6 +151,9 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
 
 
 void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format) {
+  buffer->data_size = stride * height;
+  buffer->draw_buffer = new uchar[buffer->data_size];
+  buffer->width = width;
   cairo_surface_t *surf = cairo_image_surface_create_for_data(buffer->draw_buffer, format,
                                                         width, height, stride);
   if (cairo_surface_status(surf) != CAIRO_STATUS_SUCCESS) {

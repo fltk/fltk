@@ -34,9 +34,6 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
     }
     struct fl_wld_buffer *off_ = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
     off_->stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w);
-    off_->data_size = off_->stride * h;
-    off_->draw_buffer = (uchar*)malloc(off_->data_size);
-    off_->width = w;
     offscreen = (Fl_Offscreen)off_;
     Fl_Wayland_Graphics_Driver::cairo_init(off_, w, h, off_->stride, CAIRO_FORMAT_RGB24);
   }
@@ -48,7 +45,7 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
 Fl_Wayland_Image_Surface_Driver::~Fl_Wayland_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) {
     cairo_destroy(((struct fl_wld_buffer *)offscreen)->cairo_);
-    free(((struct fl_wld_buffer *)offscreen)->draw_buffer);
+    delete[] ((struct fl_wld_buffer *)offscreen)->draw_buffer;
     free((struct fl_wld_buffer *)offscreen);
   }
   delete driver();
