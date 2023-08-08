@@ -1133,24 +1133,32 @@ struct wld_window {
 </pre>
 
 \anchor fl_wld_buffer
-<h3>struct fl_wld_buffer</h3>
-Defined in \c Fl_Wayland_Graphics_Driver.H. One such record is created when and by:
-- an Fl_Window is show()'n or resized, by \c Fl_Wayland_Graphics_Driver::create_shm_buffer();
-- an Fl_Image_Surface object is created, by the \c Fl_Wayland_Image_Surface_Driver c'tor;
-- a custom cursor shape is created or text is dragged, by
-\c Fl_Wayland_Graphics_Driver::create_shm_buffer().
+<h3>struct fl_wld_buffer and struct fl_wld_draw_buffer</h3>
+Defined in \c Fl_Wayland_Graphics_Driver.H.
+One <tt>struct fl_wld_buffer</tt> record is created
+by \c Fl_Wayland_Graphics_Driver::create_shm_buffer() when
+an Fl_Window is show()'n or resized,
+when a custom cursor shape is created, or when text is dragged.
+
+A <tt>struct fl_wld_draw_buffer</tt> record is created when an Fl_Image_Surface object
+is created by the \c Fl_Wayland_Image_Surface_Driver c'tor.
+One such record is also embedded inside each <tt>struct fl_wld_buffer</tt> record.
 
 <pre>
-struct fl_wld_buffer {
-  struct wl_buffer *wl_buffer; // the Wayland buffer
-  void *data; // address of the beginning of the Wayland buffer's byte array
+struct fl_wld_draw_buffer { // Under Wayland, Fl_Offscreen points to this structure
   size_t data_size; // of wl_buffer and draw_buffer
   int stride; // bytes per line
   int width;
-  unsigned char *draw_buffer; // address of the beginning of the Cairo image surface's byte array
+  unsigned char *buffer; // address of the beginning of the Cairo image surface's byte array
+  cairo_t *cairo_; // used when drawing to the Cairo image surface
+};
+
+struct fl_wld_buffer {
+  struct fl_wld_draw_buffer draw_buffer;
+  struct wl_buffer *wl_buffer; // the Wayland buffer
+  void *data; // address of the beginning of the Wayland buffer's byte array
   struct wl_callback *cb; // non-NULL while Wayland buffer is being committed
   bool draw_buffer_needs_commit; // true when draw_buffer has been modified but not yet committed
-  cairo_t *cairo_; // used when drawing to the Cairo image surface
   struct wl_shm_pool *shm_pool; // pter to wl_shm_pool from which this wl_buffer comes
   struct wl_list link; // links all buffers from the same wl_shm_pool
 };

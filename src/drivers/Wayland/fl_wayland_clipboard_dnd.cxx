@@ -176,7 +176,7 @@ static const struct wl_data_source_listener data_source_listener = {
 };
 
 
-static Fl_Offscreen offscreen_from_text(const char *text, int scale) {
+static struct fl_wld_buffer *offscreen_from_text(const char *text, int scale) {
   const char *p, *q;
   int width = 0, height, w2, ltext = strlen(text);
   fl_font(FL_HELVETICA, 10 * scale);
@@ -196,9 +196,9 @@ static Fl_Offscreen offscreen_from_text(const char *text, int scale) {
   if (width > 300*scale) width = 300*scale;
   height = nl * fl_height() + 3;
   width += 6;
-  struct fl_wld_buffer * off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
-  memset(off->draw_buffer, 0, off->data_size);
-  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)off);
+  struct fl_wld_buffer *off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
+  memset(off->draw_buffer.buffer, 0, off->draw_buffer.data_size);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)&off->draw_buffer);
   Fl_Surface_Device::push_current(surf);
   p = text;
   fl_font(FL_HELVETICA, 10 * scale);
@@ -217,9 +217,9 @@ static Fl_Offscreen offscreen_from_text(const char *text, int scale) {
   }
   Fl_Surface_Device::pop_current();
   delete surf;
-  cairo_surface_flush( cairo_get_target(off->cairo_) );
-  memcpy(off->data, off->draw_buffer, off->data_size);
-  return (Fl_Offscreen)off;
+  cairo_surface_flush( cairo_get_target(off->draw_buffer.cairo_) );
+  memcpy(off->data, off->draw_buffer.buffer, off->draw_buffer.data_size);
+  return off;
 }
 
 

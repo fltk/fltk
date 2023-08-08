@@ -44,7 +44,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
   if (pool) {
     // last fl_wld_buffer created from current pool
     struct fl_wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
-    chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->data_size;
+    chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->draw_buffer.data_size;
   }
   if (!pool || chunk_offset + size > pool_size) { // if true, a new pool is needed
     chunk_offset = 0;
@@ -70,7 +70,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
     wl_shm_pool_set_user_data(pool, pool_data);
   }
   buffer = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
-  buffer->stride = stride;
+  buffer->draw_buffer.stride = stride;
   buffer->wl_buffer = wl_shm_pool_create_buffer(pool, chunk_offset, width, height, stride, Fl_Wayland_Graphics_Driver::wld_format);
   // add this buffer to head of list of current pool's buffers
   wl_list_insert(&pool_data->buffers, &buffer->link);
@@ -79,7 +79,7 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
 //fprintf(stderr, "last=%p chunk_offset=%d ", pool_data->buffers.next, chunk_offset);
   buffer->draw_buffer_needs_commit = true;
 //fprintf(stderr, "create_shm_buffer: %dx%d = %d\n", width, height, size);
-  cairo_init(buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
+  cairo_init(&buffer->draw_buffer, width, height, stride, Fl_Cairo_Graphics_Driver::cairo_format);
   return buffer;
 }
 
@@ -115,15 +115,15 @@ static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
     int top = r->rects[i].y * f;
     int width = r->rects[i].width * f;
     int height = r->rects[i].height * f;
-    int offset = top * buffer->stride + 4 * left;
+    int offset = top * buffer->draw_buffer.stride + 4 * left;
     int W4 = 4 * width;
     for (int l = 0; l < height; l++) {
-      if (offset + W4 >= (int)buffer->data_size) {
-        W4 = buffer->data_size - offset;
+      if (offset + W4 >= (int)buffer->draw_buffer.data_size) {
+        W4 = buffer->draw_buffer.data_size - offset;
         if (W4 <= 0) break;
       }
-      memcpy((uchar*)buffer->data + offset, buffer->draw_buffer + offset, W4);
-      offset += buffer->stride;
+      memcpy((uchar*)buffer->data + offset, buffer->draw_buffer.buffer + offset, W4);
+      offset += buffer->draw_buffer.stride;
     }
     wl_surface_damage_buffer(window->wl_surface, left, top, width, height);
   }
@@ -132,11 +132,11 @@ static void copy_region(struct wld_window *window, struct flCairoRegion *r) {
 
 void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
                                 struct flCairoRegion *r) {
-  cairo_surface_t *surf = cairo_get_target(window->buffer->cairo_);
+  cairo_surface_t *surf = cairo_get_target(window->buffer->draw_buffer.cairo_);
   cairo_surface_flush(surf);
   if (r) copy_region(window, r);
   else {
-    memcpy(window->buffer->data, window->buffer->draw_buffer, window->buffer->data_size);
+    memcpy(window->buffer->data, window->buffer->draw_buffer.buffer, window->buffer->draw_buffer.data_size);
     wl_surface_damage_buffer(window->wl_surface, 0, 0, 1000000, 1000000);
   }
   wl_surface_attach(window->wl_surface, window->buffer->wl_buffer, 0, 0);
@@ -150,11 +150,11 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
 }
 
 
-void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int width, int height, int stride, cairo_format_t format) {
+void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_draw_buffer *buffer, int width, int height, int stride, cairo_format_t format) {
   buffer->data_size = stride * height;
-  buffer->draw_buffer = new uchar[buffer->data_size];
+  buffer->buffer = new uchar[buffer->data_size];
   buffer->width = width;
-  cairo_surface_t *surf = cairo_image_surface_create_for_data(buffer->draw_buffer, format,
+  cairo_surface_t *surf = cairo_image_surface_create_for_data(buffer->buffer, format,
                                                         width, height, stride);
   if (cairo_surface_status(surf) != CAIRO_STATUS_SUCCESS) {
     Fl::fatal("Can't create Cairo surface with cairo_image_surface_create_for_data()\n");
@@ -167,7 +167,7 @@ void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_buffer *buffer, int wi
     return;
   }
   cairo_surface_destroy(surf);
-  memset(buffer->draw_buffer, 0, buffer->data_size); // useful for transparent windows
+  memset(buffer->buffer, 0, buffer->data_size); // useful for transparent windows
   cairo_set_source_rgba(buffer->cairo_, .0, .0, .0, 1.0); // Black default color
   cairo_save(buffer->cairo_);
 }
@@ -192,9 +192,9 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
       free(pool_data);
       if (my_pool == pool) pool = NULL;
     }
-    delete[] window->buffer->draw_buffer;
-    window->buffer->draw_buffer = NULL;
-    cairo_destroy(window->buffer->cairo_);
+    delete[] window->buffer->draw_buffer.buffer;
+    window->buffer->draw_buffer.buffer = NULL;
+    cairo_destroy(window->buffer->draw_buffer.cairo_);
     free(window->buffer);
     window->buffer = NULL;
   }
@@ -204,20 +204,9 @@ void Fl_Wayland_Graphics_Driver::buffer_release(struct wld_window *window)
 const uint32_t Fl_Wayland_Graphics_Driver::wld_format = WL_SHM_FORMAT_ARGB8888;
 
 
-Fl_Wayland_Graphics_Driver::Fl_Wayland_Graphics_Driver () : Fl_Cairo_Graphics_Driver() {
-  buffer_ = NULL;
-}
-
-
-void Fl_Wayland_Graphics_Driver::set_buffer(struct fl_wld_buffer *buffer, float scale) {
-  this->buffer_ = buffer;
-  set_cairo(buffer->cairo_, scale);
-}
-
-
 void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen src, int srcx, int srcy) {
   // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
-  struct fl_wld_buffer *osrc = (struct fl_wld_buffer *)src;
+  struct fl_wld_draw_buffer *osrc = (struct fl_wld_draw_buffer *)src;
   cairo_matrix_t matrix;
   cairo_get_matrix(cairo_, &matrix);
   double s = matrix.xx;

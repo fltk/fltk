@@ -114,9 +114,9 @@ char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
   fl_draw(str, n, 0, fl_height() - fl_descent());
   // get the R channel only of the bitmap
   char *alpha_buf = new char[w*h], *r = alpha_buf;
-  struct fl_wld_buffer *off = (struct fl_wld_buffer *)surf->offscreen();
+  struct fl_wld_draw_buffer *off = (struct fl_wld_draw_buffer *)surf->offscreen();
   for (int i = 0; i < h; i++) {
-    uchar *q = off->draw_buffer + i * off->stride;
+    uchar *q = off->buffer + i * off->stride;
     for (int j = 0; j < w; j++) {
       *r++ = *q;
       q += 4;

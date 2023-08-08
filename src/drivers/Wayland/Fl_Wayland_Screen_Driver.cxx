@@ -22,6 +22,7 @@
 #include "xdg-shell-client-protocol.h"
 #include "../Posix/Fl_Posix_System_Driver.H"
 #include <FL/Fl.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/filename.H>
@@ -1494,7 +1495,9 @@ void Fl_Wayland_Screen_Driver::get_system_colors()
 Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
-  struct fl_wld_buffer *buffer = win ? xid->buffer : (struct fl_wld_buffer *)Fl_Surface_Device::surface()->driver()->gc();
+  struct fl_wld_draw_buffer *buffer = win ? &xid->buffer->draw_buffer :
+    (struct fl_wld_draw_buffer *)
+      (((Fl_Image_Surface*)Fl_Surface_Device::surface())->offscreen());//to check
   float s = win ?
     Fl_Wayland_Window_Driver::driver(win)->wld_scale() * scale(win->screen_num()) :
                   Fl_Surface_Device::surface()->driver()->scale();
@@ -1511,7 +1514,7 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
   uchar *data = new uchar[ws * hs * 3];
   uchar *p = data, *q;
   for (int j = 0; j < hs; j++) {
-    q = buffer->draw_buffer + (j+Ys) * buffer->stride + 4 * Xs;
+    q = buffer->buffer + (j+Ys) * buffer->stride + 4 * Xs;
     for (int i = 0; i < ws; i++) {
       *p++ = *(q+2); // R
       *p++ = *(q+1); // G
@@ -1527,7 +1530,7 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
 
 void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int &height)
 {
-  struct fl_wld_buffer *off = (struct fl_wld_buffer *)off_;
+  struct fl_wld_draw_buffer *off = (struct fl_wld_draw_buffer *)off_;
   width = off->width;
   height = off->data_size / off->stride;
 }

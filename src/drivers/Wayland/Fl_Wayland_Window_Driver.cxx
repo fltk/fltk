@@ -352,10 +352,10 @@ void Fl_Wayland_Window_Driver::make_current() {
     ((Fl_Cairo_Graphics_Driver*)fl_graphics_driver)->needs_commit_tag(
                                             &window->buffer->draw_buffer_needs_commit);
   }
-  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_buffer(window->buffer, f * wld_s);
+  ((Fl_Wayland_Graphics_Driver*)fl_graphics_driver)->set_cairo(window->buffer->draw_buffer.cairo_, f * wld_s);
   int *poffset = Fl_Window_Driver::menu_offset_y(pWindow);
   if (poffset) { // for tall menu windows under KWIN to offset drawing inside window
-    cairo_translate(window->buffer->cairo_, 0, *poffset);
+    cairo_translate(window->buffer->draw_buffer.cairo_, 0, *poffset);
   }
   cairo_rectangle_int_t *extents = subRect();
   if (extents) { // make damage-to-buffer not to leak outside parent
@@ -593,8 +593,8 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
       i = src_h - 1; to = -1; step = -1;
     }
     while (i != to) {
-      memcpy(buffer->draw_buffer + (dest_y + i) * buffer->stride + 4 * dest_x,
-             buffer->draw_buffer + (src_y + i) * buffer->stride + 4 * src_x, 4 * src_w);
+      memcpy(buffer->draw_buffer.buffer + (dest_y + i) * buffer->draw_buffer.stride + 4 * dest_x,
+             buffer->draw_buffer.buffer + (src_y + i) * buffer->draw_buffer.stride + 4 * src_x, 4 * src_w);
       i += step;
     }
   } else { // horizontal scroll
@@ -605,8 +605,8 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
       i = src_h - 1; to = -1; step = -1;
     }
     while (i != to) {
-      memmove(buffer->draw_buffer + (src_y + i) * buffer->stride + 4 * dest_x,
-             buffer->draw_buffer + (src_y + i) * buffer->stride + 4 * src_x, 4 * src_w);
+      memmove(buffer->draw_buffer.buffer + (src_y + i) * buffer->draw_buffer.stride + 4 * dest_x,
+             buffer->draw_buffer.buffer + (src_y + i) * buffer->draw_buffer.stride + 4 * src_x, 4 * src_w);
       i += step;
     }
   }
@@ -1628,15 +1628,15 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   new_cursor->images[0] = (struct wl_cursor_image*)new_image;
   new_cursor->name = strdup("custom cursor");
   // draw the rgb image to the cursor's drawing buffer
-  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)offscreen);
+  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)&offscreen->draw_buffer);
   Fl_Surface_Device::push_current(img_surf);
   Fl_Wayland_Graphics_Driver *driver = (Fl_Wayland_Graphics_Driver*)img_surf->driver();
   cairo_scale(driver->cr(), scale, scale);
-  memset(offscreen->draw_buffer, 0, offscreen->data_size);
+  memset(offscreen->draw_buffer.buffer, 0, offscreen->draw_buffer.data_size);
   ((Fl_RGB_Image*)rgb)->draw(0, 0);
   Fl_Surface_Device::pop_current();
   delete img_surf;
-  memcpy(offscreen->data, offscreen->draw_buffer, offscreen->data_size);
+  memcpy(offscreen->data, offscreen->draw_buffer.buffer, offscreen->draw_buffer.data_size);
   // delete the previous custom cursor, if there was one, and keep its Fl_RGB_Image if appropriate
   delete_cursor_(xid, keep_copy);
   //have this new cursor used
@@ -1681,7 +1681,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
     int stride = cairo_format_stride_for_width(
                  Fl_Cairo_Graphics_Driver::cairo_format, int(W * scale) );
     size_t bsize = stride * int(H * scale);
-    true_rescale = (bsize != fl_win->buffer->data_size);
+    true_rescale = (bsize != fl_win->buffer->draw_buffer.data_size);
   }
   int is_a_resize = (W != w() || H != h() || true_rescale);
   if (is_a_move) force_position(1);
@@ -1827,7 +1827,7 @@ void Fl_Wayland_Window_Driver::reposition_menu_window(int x, int y) {
     *Fl_Window_Driver::menu_offset_y(pWindow) += (y - pWindow->y());
     struct wld_window *xid = fl_wl_xid(pWindow);
     wl_surface_set_opaque_region(xid->wl_surface, NULL);
-    if (xid->buffer) memset(xid->buffer->draw_buffer, 0, xid->buffer->data_size);
+    if (xid->buffer) memset(xid->buffer->draw_buffer.buffer, 0, xid->buffer->draw_buffer.data_size);
     //printf("offset_y=%d\n", *Fl_Window_Driver::menu_offset_y(pWindow));
     this->y(y);
     pWindow->redraw();
