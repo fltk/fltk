@@ -92,11 +92,12 @@ static BOOL through_drawRect = NO;
 static BOOL through_Fl_X_flush = NO;
 static BOOL views_use_CA = NO; // YES means views are layer-backed, as on macOS 10.14 when linked with SDK 10.14
 static int im_enabled = -1;
-// OS version-dependent pasteboard type names. PPC still supported on 10.6 but lacks some 10.6 features.
+// OS version-dependent pasteboard type names.
+// Some, but not all, versions of the 10.6 SDK for PPC lack the 3 symbols below (PR #761)
 #if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6) || defined(__POWERPC__)
-#define NSPasteboardTypeTIFF @"public.tiff"
-#define NSPasteboardTypePDF @"com.adobe.pdf"
-#define NSPasteboardTypeString @"public.utf8-plain-text"
+#  define NSPasteboardTypeTIFF @"public.tiff"
+#  define NSPasteboardTypePDF @"com.adobe.pdf"
+#  define NSPasteboardTypeString @"public.utf8-plain-text"
 #endif
 static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF : NSTIFFPboardType);
 static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : NSPDFPboardType);
