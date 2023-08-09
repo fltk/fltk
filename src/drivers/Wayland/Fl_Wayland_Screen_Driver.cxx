@@ -1495,9 +1495,13 @@ void Fl_Wayland_Screen_Driver::get_system_colors()
 Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
-  struct fl_wld_draw_buffer *buffer = win ? &xid->buffer->draw_buffer :
-    (struct fl_wld_draw_buffer *)
-      (((Fl_Image_Surface*)Fl_Surface_Device::surface())->offscreen());//to check
+  if (win && (!xid || !xid->buffer)) return NULL;
+  struct fl_wld_draw_buffer *buffer;
+  if (win) buffer = &xid->buffer->draw_buffer;
+  else {
+    Fl_Image_Surface_Driver *dr = (Fl_Image_Surface_Driver*)Fl_Surface_Device::surface();
+    buffer = (struct fl_wld_draw_buffer *)dr->image_surface()->offscreen();
+  }
   float s = win ?
     Fl_Wayland_Window_Driver::driver(win)->wld_scale() * scale(win->screen_num()) :
                   Fl_Surface_Device::surface()->driver()->scale();

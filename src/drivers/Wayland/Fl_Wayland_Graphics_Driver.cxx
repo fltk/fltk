@@ -70,7 +70,6 @@ struct fl_wld_buffer *Fl_Wayland_Graphics_Driver::create_shm_buffer(int width, i
     wl_shm_pool_set_user_data(pool, pool_data);
   }
   buffer = (struct fl_wld_buffer*)calloc(1, sizeof(struct fl_wld_buffer));
-  buffer->draw_buffer.stride = stride;
   buffer->wl_buffer = wl_shm_pool_create_buffer(pool, chunk_offset, width, height, stride, Fl_Wayland_Graphics_Driver::wld_format);
   // add this buffer to head of list of current pool's buffers
   wl_list_insert(&pool_data->buffers, &buffer->link);
@@ -152,6 +151,7 @@ void Fl_Wayland_Graphics_Driver::buffer_commit(struct wld_window *window,
 
 void Fl_Wayland_Graphics_Driver::cairo_init(struct fl_wld_draw_buffer *buffer, int width, int height, int stride, cairo_format_t format) {
   buffer->data_size = stride * height;
+  buffer->stride = stride;
   buffer->buffer = new uchar[buffer->data_size];
   buffer->width = width;
   cairo_surface_t *surf = cairo_image_surface_create_for_data(buffer->buffer, format,

@@ -117,6 +117,9 @@ protected:
    of class Fl_Image_Surface_Driver for the plaform.
    */
   static Fl_Image_Surface_Driver *newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off);
+public:
+  /** Returns pointer to the associated Fl_Image_Surface object */
+  Fl_Image_Surface *image_surface() { return image_surface_; }
 };
 
 /**

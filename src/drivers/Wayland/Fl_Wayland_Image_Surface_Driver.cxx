@@ -33,9 +33,9 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
       h = int(h * d);
     }
     struct fl_wld_draw_buffer *off_ = (struct fl_wld_draw_buffer*)calloc(1, sizeof(struct fl_wld_draw_buffer));
-    off_->stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w);
     offscreen = (Fl_Offscreen)off_;
-    Fl_Wayland_Graphics_Driver::cairo_init(off_, w, h, off_->stride, CAIRO_FORMAT_RGB24);
+    Fl_Wayland_Graphics_Driver::cairo_init(off_, w, h,
+              cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w), CAIRO_FORMAT_RGB24);
   }
   driver(new Fl_Wayland_Graphics_Driver());
   if (d != 1 && high_res) driver()->scale(d);
