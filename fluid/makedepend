@@ -353,6 +353,7 @@ factory.o: ../FL/Fl_Button.H
 factory.o: ../FL/Fl_Cairo.H
 factory.o: ../FL/fl_casts.H
 factory.o: ../FL/Fl_Check_Browser.H
+factory.o: ../FL/Fl_Choice.H
 factory.o: ../FL/Fl_Clock.H
 factory.o: ../FL/fl_config.h
 factory.o: ../FL/Fl_Counter.H
@@ -370,6 +371,10 @@ factory.o: ../FL/Fl_Help_View.H
 factory.o: ../FL/Fl_Image.H
 factory.o: ../FL/Fl_Input.H
 factory.o: ../FL/Fl_Input_.H
+factory.o: ../FL/Fl_Input_Choice.H
+factory.o: ../FL/Fl_Menu_.H
+factory.o: ../FL/Fl_Menu_Bar.H
+factory.o: ../FL/Fl_Menu_Button.H
 factory.o: ../FL/Fl_Menu_Item.H
 factory.o: ../FL/Fl_Multi_Label.H
 factory.o: ../FL/Fl_Output.H
@@ -410,7 +415,9 @@ factory.o: code.h
 factory.o: factory.h
 factory.o: Fd_Snap_Action.h
 factory.o: fluid.h
+factory.o: Fl_Button_Type.h
 factory.o: Fl_Group_Type.h
+factory.o: Fl_Menu_Type.h
 factory.o: Fl_Type.h
 factory.o: Fl_Widget_Type.h
 factory.o: Fl_Window_Type.h

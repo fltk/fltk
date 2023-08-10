@@ -14,9 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-/** \file
- Implementation of the member functions of class Fl.
- */
+/** \file src/Fl.cxx
+  Implementation of the member functions of class Fl.
+*/
 
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -672,11 +672,14 @@ int Fl::ready()
   return system_driver()->ready();
 }
 
-/** Hide all visible window to make FLTK leav Fl::run().
- Fl:run() will run as long as there are visible windows. Call hide_all_windows()
- will hide all windows, effectively terminating the Fl::run() loop.
- \see Fl::run()
- */
+/** Hide all visible windows to make FLTK leave Fl::run().
+
+  Fl:run() will run as long as there are visible windows.
+  Call Fl::hide_all_windows() to hide (close) all currently shown
+  (visible) windows, effectively terminating the Fl::run() loop.
+  \see Fl::run()
+  \since 1.4.0
+*/
 void Fl::hide_all_windows() {
   while (Fl::first_window()) {
     Fl::first_window()->hide();
