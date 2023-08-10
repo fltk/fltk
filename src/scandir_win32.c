@@ -1,7 +1,7 @@
 /*
  * Windows scandir function for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2020 by Bill Spitzak and others.
+ * Copyright 1998-2023 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -88,32 +88,30 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   }
   strcpy(findIn, dirname);
 
-  for (d = findIn; *d; d++) if (*d=='/') *d='\\';
-  if (len==0) { strcpy(findIn, ".\\*"); }
-  if ((len==2)&&findIn[1]==':'&&isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }
-  if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); is_dir = 1; }
-  if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; is_dir = 1; }
-  if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; is_dir = 1; }
+  for (d = findIn; *d; d++) if (*d == '/') *d = '\\';
+  if (len == 0) { strcpy(findIn, ".\\*"); }
+  if ((len == 2) && (findIn[1] == ':') && isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }
+  if ((len == 1) && (d[-1] == '.')) { strcpy(findIn, ".\\*"); is_dir = 1; }
+  if ((len > 0) && (d[-1] == '\\')) { *d++ = '*'; *d = 0; is_dir = 1; }
+  if ((len > 1) && (d[-1] == '.') && (d[-2] == '\\')) { d[-1] = '*'; is_dir = 1; }
   { /* Create a block to limit the scope while we find the initial "wide" filename */
-     /* unsigned short * wbuf = (unsigned short*)malloc(sizeof(short) *(len + 10)); */
-     /* wbuf[fl_utf2unicode(findIn, strlen(findIn), wbuf)] = 0; */
-        unsigned short *wbuf = NULL;
-        unsigned wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), NULL, 0); /* Pass NULL to query length */
-        wlen++; /* add a little extra for termination etc. */
-        wbuf = (unsigned short*)malloc(sizeof(unsigned short)*(wlen+2));
-        wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), wbuf, wlen); /* actually convert the filename */
-        wbuf[wlen] = 0; /* NULL terminate the resultant string */
-        if (!is_dir) { /* this file may still be a directory that we need to list */
-          DWORD attr = GetFileAttributesW(wbuf);
-          if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY) ) {
-            wbuf[wlen] = '\\'; wbuf[wlen+1] = '*'; wbuf[wlen+2] = 0;
-          }
-        }
-        h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
-        free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
+    unsigned short *wbuf = NULL;
+    unsigned wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), NULL, 0); /* Pass NULL to query length */
+    wlen++; /* add a little extra for termination etc. */
+    wbuf = (unsigned short*)malloc(sizeof(unsigned short)*(wlen+2));
+    wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), wbuf, wlen); /* actually convert the filename */
+    wbuf[wlen] = 0; /* NULL terminate the resultant string */
+    if (!is_dir) { /* this file may still be a directory that we need to list */
+      DWORD attr = GetFileAttributesW(wbuf);
+      if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY) ) {
+        wbuf[wlen] = '\\'; wbuf[wlen+1] = '*'; wbuf[wlen+2] = 0;
+      }
+    }
+    h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
+    free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
   }
 
-  if (h==INVALID_HANDLE_VALUE) {
+  if (h == INVALID_HANDLE_VALUE) {
     free(findIn);
     ret = GetLastError();
     if (ret != ERROR_NO_MORE_FILES) {
@@ -128,7 +126,6 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     int dstlen = l * 5 + 1;
     selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
 
- /* l = fl_unicode2utf(findw.cFileName, l, selectDir->d_name); */
     l = fl_utf8fromwc(selectDir->d_name, dstlen, findw.cFileName, l);
 
     selectDir->d_name[l] = 0;
