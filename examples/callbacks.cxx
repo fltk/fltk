@@ -19,21 +19,23 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_String.H>
 #include <FL/fl_ask.H>
-#include <FL/FL_CALLBACK.H>
+#include <FL/fl_callback_macros.H>
 
 Fl_Window *window = NULL;
 
+
 /*
  Here is a list of callback functions that can take custom parameters and are
- not limited to FLTK's built-in `void*` user_data.
+ not limited to FLTK's built-in `void*` or `long` user_data.
  */
 void hello_0_args_cb() {
   fl_message("Hello with 0 arguments");
 }
 
-void hello_2_args_cb(const char *text, int number) {
-  fl_message("Hello with 2 arguments,\n\"%s\" and '%d'", text, number);
+void hello_2_args_cb(Fl_String &text, int number) {
+  fl_message("Hello with 2 arguments,\n\"%s\" and '%d'", text.c_str(), number);
 }
 
 void hello_4_args_cb(int a1, int a2, int a3, int a4) {
@@ -59,8 +61,8 @@ public:
 };
 
 /*
- Whenever the macro code is invoked, custom parameters are duplicated (using a
- shallow copy). This ensures that each widget created dynamically with the same
+ Whenever the code created by the macro is called, custom parameters are
+ duplicated. This ensures that each widget created dynamically with the same
  function has its own separate set of user data at runtime. Consequently,
  multiple widgets can be created dynamically, and each widget will have its
  own unique set of parameters.
@@ -83,11 +85,12 @@ int main(int argc, char ** argv) {
 
   new Fl_Box(10, 5, 180, 25, "Function Callbacks:");
 
+
   Fl_Button *func_cb_btn_0 = new Fl_Button(10, 30, 180, 25, "0 args");
   FL_FUNCTION_CALLBACK(func_cb_btn_0, hello_0_args_cb);
 
   Fl_Button *func_cb_btn_2 = new Fl_Button(10, 60, 180, 25, "2 args");
-  FL_FUNCTION_CALLBACK(func_cb_btn_2, hello_2_args_cb, const char *, text, "FLTK", int, number, 2);
+  FL_FUNCTION_CALLBACK(func_cb_btn_2, hello_2_args_cb, Fl_String, text, "FLTK", int, number, 2);
 
   Fl_Button *func_cb_btn_4 = new Fl_Button(10, 90, 180, 25, "4 args");
   FL_FUNCTION_CALLBACK(func_cb_btn_4, hello_4_args_cb, int, a1, 1, int, a2, 2, int, a3, 3, int, a4, 4);
@@ -132,7 +135,8 @@ int main(int argc, char ** argv) {
 
   Fl_Button *inline_cb_btn_4 = new Fl_Button(390, 90, 180, 25, "4 args");
   FL_INLINE_CALLBACK(inline_cb_btn_4,
-                     { fl_message("The mein window was at\nx:%d, y:%d, w:%d, h:%d\n"
+                     { fl_message("The main window was at\nx:%d, y:%d, w:%d, h:%d\n"
+                                  "when the callback was created\n"
                                   "and is now at x:%d, y:%d", x, y, w, h,
                                   window->x(), window->y()); },
                      int, x, window->x(),

@@ -70,6 +70,24 @@ struct FL_EXPORT Fl_Label {
 };
 
 
+/** A class prototype that allows for additional data in callbacks.
+
+ Users can extend this class and pass it to widget callbacks. Widgets can
+ take ownership of the callback data, deleting the data when the widget
+ itself is deleted.
+
+ The destructor of this class is virtual, allowing for additional code to
+ deallocate resources when the user data is deleted.
+
+ \see FL_FUNCTION_CALLBACK, FL_METHOD_CALLBACK, FL_INLINE_CALLBACK
+ \see Fl_Widget::callback(Fl_Callback*, Fl_Callback_User_Data*, bool)
+ \see Fl_Widget::user_data(Fl_Callback_User_Data*, bool)
+ */
+class Fl_Callback_User_Data {
+public:
+  virtual ~Fl_Callback_User_Data() { }
+};
+
 
 /** Fl_Widget is the base class for all widgets in FLTK.
 
@@ -161,7 +179,7 @@ protected:
         NEEDS_KEYBOARD  = 1<<20,  ///< set on touch screen devices if a widget needs a keyboard when it gets the focus. Reserved, not yet used in 1.4.0. \see Fl_Widget::needs_keyboard()
         IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
         DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
-        AUTO_FREE_USER_DATA = 1<<23, ///< automatically call `free()` on the user_data pointer when destroying this widget
+        AUTO_DELETE_USER_DATA = 1<<23, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
 
         // Note to devs: add new FLTK core flags above this line (up to 1<<28).
 
@@ -668,13 +686,24 @@ public:
    */
   Fl_Callback_p callback() const {return callback_;}
 
-  /** Sets the current callback function for the widget.
+  /** Sets the current callback function and data for the widget.
       Each widget has a single callback.
       \param[in] cb new callback
       \param[in] p user data
-      \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
    */
-  void callback(Fl_Callback* cb, void* p, bool auto_free=false) {
+  void callback(Fl_Callback* cb, void* p) {
+    callback_ = cb;
+    user_data(p);
+  }
+
+  /** Sets the current callback function and managed user data for the widget.
+   Setting auto_free will transfer ownership of the callback user data to the
+   widget. Delting the widget will then alos delete the user data.
+   \param[in] cb new callback
+   \param[in] p user data
+   \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+   */
+  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free=false) {
     callback_ = cb;
     user_data(p, auto_free);
   }
@@ -710,14 +739,10 @@ public:
   void* user_data() const {return user_data_;}
 
   /** \brief Sets the user data for this widget. */
-  void user_data(void* v, bool auto_free=false);
+  void user_data(void* v);
 
-  /** Destroy user_data() field when calling the widget detructor.
-      Tell the widget to free any data that the user_data() member may point to
-      when deleting the widget itselt. This is usefule when widgets are
-      dynamically allocated and need a private set of user data.
-   */
-  void auto_free_user_data(bool v) { v ? set_flag(AUTO_FREE_USER_DATA) : clear_flag(AUTO_FREE_USER_DATA); }
+  /** \brief Sets the user data for this widget. */
+  void user_data(Fl_Callback_User_Data* v, bool auto_free=false);
 
   /** Gets the current user data (long) argument that is passed to the callback function.
 
