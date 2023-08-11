@@ -169,9 +169,11 @@
 #else // FL_DOXYGEN
 
 /*
- All macros start with _FL_CBD_ to avoid naming conflicts.
+ All macros start with _FL_CBD_ to avoid naming conflicts. The 'ignore'
+ parameter is needed to ignore a potential lambda value for the
+ FL_INLINE_CALLBACK macro.
 
- For MACRO(int, a, 1, int, b, 2):
+ For MACRO(int, a, 1, int, b, 2, ignore):
  
  _FL_CBD_LIST_MEMBERS_2  generates `int a_; int b_;`
  _FL_CBD_LIST_FN_ARGS_2  generates `int a, int b`
@@ -179,39 +181,39 @@
  _FL_CBD_LIST_VALUES_2   generates `1, 2`
  _FL_CBD_LIST_INIT_2     generates `: a_(a), b_(b)`
 */
-#define _FL_CBD_LIST_MEMBERS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ...) i00 i01##_; i10 i11##_; i20 i21##_; i30 i31##_; i40 i41##_;
-#define _FL_CBD_LIST_FN_ARGS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ...) i00 i01, i10 i11, i20 i21, i30 i31, i40 i41
-#define _FL_CBD_LIST_ARGS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ...) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_, cbdata->i31##_, cbdata->i41##_
-#define _FL_CBD_LIST_VALUES_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ...) i02, i12, i22, i32, i42
-#define _FL_CBD_LIST_INIT_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ...) : i01##_(i01), i11##_(i11), i21##_(i21), i31##_(i31), i41##_(i41)
+#define _FL_CBD_LIST_MEMBERS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ignore) i00 i01##_; i10 i11##_; i20 i21##_; i30 i31##_; i40 i41##_;
+#define _FL_CBD_LIST_FN_ARGS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ignore) i00 i01, i10 i11, i20 i21, i30 i31, i40 i41
+#define _FL_CBD_LIST_ARGS_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ignore) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_, cbdata->i31##_, cbdata->i41##_
+#define _FL_CBD_LIST_VALUES_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ignore) i02, i12, i22, i32, i42
+#define _FL_CBD_LIST_INIT_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, ignore) : i01##_(i01), i11##_(i11), i21##_(i21), i31##_(i31), i41##_(i41)
 #define _FL_CBD_LIST_LAMBDA_5(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, i40, i41, i42, LAMBDA) LAMBDA
 
-#define _FL_CBD_LIST_MEMBERS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ...) i00 i01##_; i10 i11##_; i20 i21##_; i30 i31##_;
-#define _FL_CBD_LIST_FN_ARGS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ...) i00 i01, i10 i11, i20 i21, i30 i31
-#define _FL_CBD_LIST_ARGS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ...) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_, cbdata->i31##_
-#define _FL_CBD_LIST_VALUES_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ...) i02, i12, i22, i32
-#define _FL_CBD_LIST_INIT_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ...) : i01##_(i01), i11##_(i11), i21##_(i21), i31##_(i31)
+#define _FL_CBD_LIST_MEMBERS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ignore) i00 i01##_; i10 i11##_; i20 i21##_; i30 i31##_;
+#define _FL_CBD_LIST_FN_ARGS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ignore) i00 i01, i10 i11, i20 i21, i30 i31
+#define _FL_CBD_LIST_ARGS_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ignore) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_, cbdata->i31##_
+#define _FL_CBD_LIST_VALUES_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ignore) i02, i12, i22, i32
+#define _FL_CBD_LIST_INIT_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, ignore) : i01##_(i01), i11##_(i11), i21##_(i21), i31##_(i31)
 #define _FL_CBD_LIST_LAMBDA_4(i00, i01, i02, i10, i11, i12, i20, i21, i22, i30, i31, i32, LAMBDA) LAMBDA
 
-#define _FL_CBD_LIST_MEMBERS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ...) i00 i01##_; i10 i11##_; i20 i21##_;
-#define _FL_CBD_LIST_FN_ARGS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ...) i00 i01, i10 i11, i20 i21
-#define _FL_CBD_LIST_ARGS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ...) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_
-#define _FL_CBD_LIST_VALUES_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ...) i02, i12, i22
-#define _FL_CBD_LIST_INIT_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ...) : i01##_(i01), i11##_(i11), i21##_(i21)
+#define _FL_CBD_LIST_MEMBERS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ignore) i00 i01##_; i10 i11##_; i20 i21##_;
+#define _FL_CBD_LIST_FN_ARGS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ignore) i00 i01, i10 i11, i20 i21
+#define _FL_CBD_LIST_ARGS_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ignore) cbdata->i01##_, cbdata->i11##_, cbdata->i21##_
+#define _FL_CBD_LIST_VALUES_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ignore) i02, i12, i22
+#define _FL_CBD_LIST_INIT_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, ignore) : i01##_(i01), i11##_(i11), i21##_(i21)
 #define _FL_CBD_LIST_LAMBDA_3(i00, i01, i02, i10, i11, i12, i20, i21, i22, LAMBDA) LAMBDA
 
-#define _FL_CBD_LIST_MEMBERS_2(i00, i01, i02, i10, i11, i12, ...) i00 i01##_; i10 i11##_;
-#define _FL_CBD_LIST_FN_ARGS_2(i00, i01, i02, i10, i11, i12, ...) i00 i01, i10 i11
-#define _FL_CBD_LIST_ARGS_2(i00, i01, i02, i10, i11, i12, ...) cbdata->i01##_, cbdata->i11##_
-#define _FL_CBD_LIST_VALUES_2(i00, i01, i02, i10, i11, i12, ...) i02, i12
-#define _FL_CBD_LIST_INIT_2(i00, i01, i02, i10, i11, i12, ...) : i01##_(i01), i11##_(i11)
+#define _FL_CBD_LIST_MEMBERS_2(i00, i01, i02, i10, i11, i12, ignore) i00 i01##_; i10 i11##_;
+#define _FL_CBD_LIST_FN_ARGS_2(i00, i01, i02, i10, i11, i12, ignore) i00 i01, i10 i11
+#define _FL_CBD_LIST_ARGS_2(i00, i01, i02, i10, i11, i12, ignore) cbdata->i01##_, cbdata->i11##_
+#define _FL_CBD_LIST_VALUES_2(i00, i01, i02, i10, i11, i12, ignore) i02, i12
+#define _FL_CBD_LIST_INIT_2(i00, i01, i02, i10, i11, i12, ignore) : i01##_(i01), i11##_(i11)
 #define _FL_CBD_LIST_LAMBDA_2(i00, i01, i02, i10, i11, i12, LAMBDA) LAMBDA
 
-#define _FL_CBD_LIST_MEMBERS_1(i00, i01, i02, ...) i00 i01##_;
-#define _FL_CBD_LIST_FN_ARGS_1(i00, i01, i02, ...) i00 i01
-#define _FL_CBD_LIST_ARGS_1(i00, i01, i02, ...) cbdata->i01##_
-#define _FL_CBD_LIST_VALUES_1(i00, i01, i02, ...) i02
-#define _FL_CBD_LIST_INIT_1(i00, i01, i02, ...) : i01##_(i01)
+#define _FL_CBD_LIST_MEMBERS_1(i00, i01, i02, ignore) i00 i01##_;
+#define _FL_CBD_LIST_FN_ARGS_1(i00, i01, i02, ignore) i00 i01
+#define _FL_CBD_LIST_ARGS_1(i00, i01, i02, ignore) cbdata->i01##_
+#define _FL_CBD_LIST_VALUES_1(i00, i01, i02, ignore) i02
+#define _FL_CBD_LIST_INIT_1(i00, i01, i02, ignore) : i01##_(i01)
 #define _FL_CBD_LIST_LAMBDA_1(i00, i01, i02, LAMBDA) LAMBDA
 
 #define _FL_CBD_LIST_MEMBERS_0(...)
@@ -284,22 +286,22 @@
     class _FL_CBD_CLASS_NAME : public Fl_Callback_User_Data { /* create a local class with a unique name for one-time use */ \
     public: \
       /* generate a list of all callback argument, making them members of this class */ \
-      _FL_CBD_CONCAT(_FL_CBD_LIST_MEMBERS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
+      _FL_CBD_CONCAT(_FL_CBD_LIST_MEMBERS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore) \
       /* generate code for a static method used as a callback */ \
       static void cb(Fl_Widget *w, void *user_data) { \
         /* cast user_data into a poinbter to our local class type */ \
         _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
         (void)cbdata; /* supress unused variable warning */ \
         /* call a function or static method with up to 5 arguments */ \
-        FUNC(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)); \
+        FUNC(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)); \
       }; \
       /* generate the class constructor */ \
-      _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_FN_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)) \
+      _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_FN_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)) \
         /* generate the initialiser list */ \
-        _FL_CBD_CONCAT(_FL_CBD_LIST_INIT_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) { } \
+        _FL_CBD_CONCAT(_FL_CBD_LIST_INIT_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore) { } \
     }; \
     /* set the widget callback to call our local method with a new instance of our class */ \
-    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_VALUES_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)), true); \
+    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_VALUES_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)), true); \
   } while(0)
 
 /*
@@ -349,7 +351,7 @@
     class _FL_CBD_CLASS_NAME : public Fl_Callback_User_Data { /* create a local class with a unique name for one-time use */ \
     public: \
       /* generate a list of all callback argument, making them members of this class */ \
-      _FL_CBD_CONCAT(_FL_CBD_LIST_MEMBERS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__) \
+      _FL_CBD_CONCAT(_FL_CBD_LIST_MEMBERS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore) \
       /* store a pointer to the target class instance */ \
       CLASS *SELF##_; \
       /* generate code for a static method used as a callback */ \
@@ -358,15 +360,15 @@
         _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
         (void)cbdata; /* supress unused variable warning */ \
         /* call a class method with up to 5 arguments */ \
-        cbdata->SELF##_->METH(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)); \
+        cbdata->SELF##_->METH(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)); \
       }; \
       /* generate the class constructor */ \
-      _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_FN_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__), CLASS *SELF) \
+      _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_FN_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore), CLASS *SELF) \
         /* generate the initialiser list */ \
-        _FL_CBD_CONCAT(_FL_CBD_LIST_INIT_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__), SELF##_(SELF) { } \
+        _FL_CBD_CONCAT(_FL_CBD_LIST_INIT_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore), SELF##_(SELF) { } \
     }; \
     /* set the widget callback to call our local method with a new instance of our class */ \
-    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_VALUES_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__), SELF), true); \
+    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_VALUES_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore), SELF), true); \
   } while(0)
 
 /*
