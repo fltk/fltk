@@ -701,9 +701,9 @@ public:
    widget. Delting the widget will then alos delete the user data.
    \param[in] cb new callback
    \param[in] p user data
-   \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+   \param[in] auto_free if set, the widget will free user data when destroyed
    */
-  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free=false) {
+  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free) {
     callback_ = cb;
     user_data(p, auto_free);
   }
@@ -742,7 +742,7 @@ public:
   void user_data(void* v);
 
   /** \brief Sets the user data for this widget. */
-  void user_data(Fl_Callback_User_Data* v, bool auto_free=false);
+  void user_data(Fl_Callback_User_Data* v, bool auto_free);
 
   /** Gets the current user data (long) argument that is passed to the callback function.
 
