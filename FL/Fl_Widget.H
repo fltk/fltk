@@ -698,7 +698,7 @@ public:
 
   /** Sets the current callback function and managed user data for the widget.
    Setting auto_free will transfer ownership of the callback user data to the
-   widget. Delting the widget will then alos delete the user data.
+   widget. Deleting the widget will then alse delete the user data.
    \param[in] cb new callback
    \param[in] p user data
    \param[in] auto_free if set, the widget will free user data when destroyed
