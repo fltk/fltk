@@ -274,6 +274,7 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         /* cast user_data into a poinbter to our local class type */ \
         _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
+        (void)cbdata; /* supress unused variable warning */ \
         /* call a function or static method with up to 5 arguments */ \
         FUNC(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)); \
       }; \
@@ -340,6 +341,7 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         /* cast user_data into a poinbter to our local class type */ \
         _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
+        (void)cbdata; /* supress unused variable warning */ \
         /* call a class method with up to 5 arguments */ \
         cbdata->SELF##_->METH(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)); \
       }; \
@@ -407,6 +409,7 @@
       static void cb(Fl_Widget *w, void *user_data) { \
         /* cast user_data into a poinbter to our local class type */ \
         _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
+        (void)cbdata; /* supress unused variable warning */ \
         /* call inlined with up to 5 arguments */ \
         fn(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__)); \
       }; \
