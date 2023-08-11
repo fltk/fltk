@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
 
   /* -- testing inline callback functions
    Adding a simple Lambda style functionality to FLTK without actually using
-   lambdas and staying C99 compatible.
+   lambdas and staying C++99 compatible.
    */
 
   new Fl_Box(390, 5, 180, 25, "Inline Callbacks:");

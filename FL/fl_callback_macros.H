@@ -21,7 +21,7 @@
 
 /**
  \file fl_callback_macros.H
- This file provides macros for easy callbacks of functions and methods
+ This file provides macros for easy function and method callbacks
  with multiple type safe arguments.
 */
 
@@ -68,7 +68,7 @@
 
  \param WIDGET the widget that will call the callback
  \param FUNC a C/C++ function or a static class method
- \param ... a list of zero to five triples declaring type, name, and value
+ \param ... a list of zero to five triplets, each declaring a type, name, and value
 
  \see FL_METHOD_CALLBACK, FL_INLINE_CALLBACK
  */
@@ -112,7 +112,7 @@
  \param CLASS the class type
  \param SELF a pointer to an instance of the class
  \param METH a C++ class method that must be public and not static
- \param ... a list of zero to five triples declaring type, name, and value
+ \param ... a list of zero to five triplets, each declaring a type, name, and value
 
  \see FL_FUNCTION_CALLBACK, FL_INLINE_CALLBACK
  */
@@ -152,7 +152,7 @@
 
  \param WIDGET the widget that will call the callback
  \param FUNC the function body within the limits of the C macro preprocessor
- \param ... a list of zero to five triples declaring type, name, and value
+ \param ... a list of zero to five triplets, each declaring a type, name, and value
 
  \see FL_METHOD_CALLBACK, FL_FUNCTION_CALLBACK
  */
