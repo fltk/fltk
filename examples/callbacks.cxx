@@ -130,19 +130,22 @@ int main(int argc, char ** argv) {
 
   Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
   FL_INLINE_CALLBACK(inline_cb_btn_2,
-                     { fl_message("We received the message %s with %d!", text, number); },
-                     const char *, text, "FLTK", int, number, 2);
+                     const char *, text, "FLTK", int, number, 2,
+                     { fl_message("We received the message %s with %d!", text, number); }
+                     );
 
   Fl_Button *inline_cb_btn_4 = new Fl_Button(390, 90, 180, 25, "4 args");
   FL_INLINE_CALLBACK(inline_cb_btn_4,
-                     { fl_message("The main window was at\nx:%d, y:%d, w:%d, h:%d\n"
-                                  "when the callback was created\n"
-                                  "and is now at x:%d, y:%d", x, y, w, h,
-                                  window->x(), window->y()); },
                      int, x, window->x(),
                      int, y, window->y(),
                      int, w, window->w(),
-                     int, h, window->h());
+                     int, h, window->h(),
+                     { fl_message("The main window was at\nx:%d, y:%d, w:%d, h:%d\n"
+                                  "when the callback was created\n"
+                                  "and is now at x:%d, y:%d", x, y, w, h,
+                                  window->x(), window->y());
+                     }
+                     );
 
   window->end();
   window->show(argc,argv);

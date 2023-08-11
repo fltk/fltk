@@ -600,20 +600,24 @@ and type safe.
   callbacks to functions and static class methods with up to five arguments,
  - `FL_METHOD_CALLBACK(WIDGET, CLASS, SELF, METH, ...)` creates code for callbacks
   to arbitrary public class methods
- - `FL_INLINE_CALLBACK(WIDGET, FUNC, ...)`
+ - `FL_INLINE_CALLBACK(WIDGET, ...)`
   creates code for callback functions inlined into the widget creation code,
-  similar to lmbda function in C++11.
+  similar to lambda function in C++11. The last argument of this macro is the
+  callback code.
 
 The syntax is a bit unconventional, but the resulting code is flexible and
-need no additional maintenance. It is also C++98 compatible. For example:
+needs no additional maintenance. It is also C++98 compatible. For example:
 
 \code
 #include <FL/fl_callback_macros.H>
 ...
 Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
 FL_INLINE_CALLBACK(inline_cb_btn_2,
-                   { fl_message("We received the message %s with %d!", text, number); },
-                   const char *, text, "FLTK", int, number, 2);
+                   const char *, text, "FLTK",   int, number, 2,
+                     {
+                       fl_message("We received the message %s with %d!", text, number);
+                     }
+                   );
 \endcode
 
 \section common_shortcuts Shortcuts
