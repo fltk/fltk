@@ -172,8 +172,8 @@ Code example in header file:
 \code
   class Your_Image {
     // ...
-    copy() const FL_OVERRIDE;
-    copy(int w, int h) const FL_OVERRIDE;
+    Fl_Image *copy() const FL_OVERRIDE;
+    Fl_Image *copy(int w, int h) const FL_OVERRIDE;
   };
 \endcode
 

@@ -310,11 +310,11 @@ void do_shell_command(Fl_Return_Button*, void*) {
   }
 
   // Show the output window and clear things...
-  shell_run_terminal->printf("\e[0;32m%s\e[0m\n", g_shell_command.c_str());
+  shell_run_terminal->printf("\033[0;32m%s\e[0m\n", g_shell_command.c_str());
   shell_run_window->label(g_shell_command.c_str());
 
   if (s_proc.popen((char *)g_shell_command.c_str()) == NULL) {
-    shell_run_terminal->printf("\e[1;31mUnable to run shell command: %s\e[0m\n",
+    shell_run_terminal->printf("\033[1;31mUnable to run shell command: %s\e[0m\n",
                                strerror(errno));
     shell_run_window->label("FLUID Shell");
     return;
