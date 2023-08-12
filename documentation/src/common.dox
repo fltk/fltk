@@ -550,20 +550,6 @@ int xyz_data;
 button->callback(xyz_callback, &xyz_data);
 \endcode
 
-Normally callbacks are performed only when the value of the
-widget changes. You can change this using the Fl_Widget::when()
-method:
-
-\code
-button->when(FL_WHEN_NEVER);
-button->when(FL_WHEN_CHANGED);
-button->when(FL_WHEN_RELEASE);
-button->when(FL_WHEN_RELEASE_ALWAYS);
-button->when(FL_WHEN_ENTER_KEY);
-button->when(FL_WHEN_ENTER_KEY_ALWAYS);
-button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
-\endcode
-
 \note You cannot delete a widget inside a callback, as the
 widget may still be accessed by FLTK after your callback
 is completed. Instead, use the Fl::delete_widget()
@@ -593,17 +579,19 @@ class Foo {
 w->callback(my_static_callback, (void *)this);
 \endcode
 
-FLTK provides three macros to make callbacks easier, more flexible,
-and type safe.
+In an effort to make callbacks easier, more flexible, and type safe, FLTK
+provides three groups of macros that generate the code needed to call class
+methods directly with up to five custom parameters.
 
- - `FL_FUNCTION_CALLBACK(WIDGET, FUNC, ...)` creates boilerplate code for
-  callbacks to functions and static class methods with up to five arguments,
- - `FL_METHOD_CALLBACK(WIDGET, CLASS, SELF, METH, ...)` creates code for callbacks
-  to arbitrary public class methods
- - `FL_INLINE_CALLBACK(WIDGET, ...)`
-  creates code for callback functions inlined into the widget creation code,
-  similar to lambda function in C++11. The last argument of this macro is the
-  callback code.
+ - `FL_FUNCTION_CALLBACK_#(WIDGET, FUNCTION, ...)` creates code for callbacks to
+    functions and static class methods with up to five arguments. The `#` must
+    be replaced by the number of callback arguments.
+ - `FL_METHOD_CALLBACK_#(WIDGET, CLASS, SELF, METH, ...)` creates code for
+    callbacks to arbitrary public class methods
+ - `FL_INLINE_CALLBACK_#(WIDGET, ..., FUNCTION_BODY)` creates code for callback
+    functions that are very close to (almost in the same line) the widget
+    creation code, similar to lambda function in C++11. The last argument of
+    this macro is the callback code.
 
 The syntax is a bit unconventional, but the resulting code is flexible and
 needs no additional maintenance. It is also C++98 compatible. For example:
@@ -611,14 +599,44 @@ needs no additional maintenance. It is also C++98 compatible. For example:
 \code
 #include <FL/fl_callback_macros.H>
 ...
+Fl_String *str = new Fl_String("FLTK");
+Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+FL_METHOD_CALLBACK_2(btn,  Fl_String, str, insert,  int, 2,  const char*, "...");
+...
 Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
-FL_INLINE_CALLBACK(inline_cb_btn_2,
-                   const char *, text, "FLTK",   int, number, 2,
-                     {
-                       fl_message("We received the message %s with %d!", text, number);
-                     }
-                   );
+FL_INLINE_CALLBACK_2( inline_cb_btn_2,
+                      const char *, text, "FLTK",   int, number, 2,
+                      {
+                        fl_message("We received the message %s with %d!", text, number);
+                      }
+                    );
 \endcode
+
+\see Fl_Widget::callback(Fl_Callback*, void*), FL_FUNCTION_CALLBACK_3, FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
+
+\section common_when When and Reason
+
+Normally callbacks are performed only when the value of the
+widget changes. You can change this using the Fl_Widget::when()
+method:
+
+\code
+button->when(FL_WHEN_NEVER);
+button->when(FL_WHEN_CHANGED);
+button->when(FL_WHEN_RELEASE);
+button->when(FL_WHEN_RELEASE_ALWAYS);
+button->when(FL_WHEN_ENTER_KEY);
+button->when(FL_WHEN_ENTER_KEY_ALWAYS);
+button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
+\endcode
+
+Within the callback, you can query why the callback was called using
+Fl::callback_reason(). For example, setting
+
+\code myInput->when(FL_WHEN_RELEASE|FL_WHEN_CHANGED) \endcode
+
+for a text input field may return \ref FL_REASON_LOST_FOCUS or
+\ref FL_REASON_CHANGED as a callback reason.
 
 \section common_shortcuts Shortcuts
 
