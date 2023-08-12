@@ -71,7 +71,7 @@ void make_button(Fl_Window *win, int set) {
   int y_lut[] = { 60, 90 };
   const char *label_lut[] = { "id 2 (5, 6, 7)", "id 3 (6, 7, 8)" };
   MyButton *btn = new MyButton(200, y_lut[set], 180, 25, label_lut[set], set+2);
-  FL_METHOD_CALLBACK(btn, MyButton, btn, hello, int, a, set+5, int, b, set+6, int, c, set+7);
+  FL_METHOD_CALLBACK_3(btn, MyButton, btn, hello, int, set+5, int, set+6, int, set+7);
 }
 
 
@@ -85,15 +85,14 @@ int main(int argc, char ** argv) {
 
   new Fl_Box(10, 5, 180, 25, "Function Callbacks:");
 
-
   Fl_Button *func_cb_btn_0 = new Fl_Button(10, 30, 180, 25, "0 args");
-  FL_FUNCTION_CALLBACK(func_cb_btn_0, hello_0_args_cb);
+  FL_FUNCTION_CALLBACK_0(func_cb_btn_0, hello_0_args_cb);
 
   Fl_Button *func_cb_btn_2 = new Fl_Button(10, 60, 180, 25, "2 args");
-  FL_FUNCTION_CALLBACK(func_cb_btn_2, hello_2_args_cb, Fl_String, text, "FLTK", int, number, 2);
+  FL_FUNCTION_CALLBACK_2(func_cb_btn_2, hello_2_args_cb, Fl_String, "FLTK", int, 2);
 
   Fl_Button *func_cb_btn_4 = new Fl_Button(10, 90, 180, 25, "4 args");
-  FL_FUNCTION_CALLBACK(func_cb_btn_4, hello_4_args_cb, int, a1, 1, int, a2, 2, int, a3, 3, int, a4, 4);
+  FL_FUNCTION_CALLBACK_4(func_cb_btn_4, hello_4_args_cb, int, 1, int, 2, int, 3, int, 4);
 
   /* -- testing non-static method callbacks with multiple arguments
    The following buttons call non-static class methods with custom parameters.
@@ -109,7 +108,7 @@ int main(int argc, char ** argv) {
   //    Note: we could just as well call a method in a different class.
   // 4: this is the method that we want to call; it must be "public"
   // 5: add zero to five parameter triplets, note the comma placement
-  FL_METHOD_CALLBACK(meth_cb_btn_0, MyButton, meth_cb_btn_0, hello, int, a, 1, int, b, 2, int, c, 3);
+  FL_METHOD_CALLBACK_3(meth_cb_btn_0, MyButton, meth_cb_btn_0, hello, int, 1, int, 2, int, 3);
 
   // call the same FL_METHOD_CALLBACK macro multiple times to ensure we get
   // individual parameter sets
@@ -124,28 +123,28 @@ int main(int argc, char ** argv) {
   new Fl_Box(390, 5, 180, 25, "Inline Callbacks:");
 
   Fl_Button *inline_cb_btn_0 = new Fl_Button(390, 30, 180, 25, "0 args");
-  FL_INLINE_CALLBACK(inline_cb_btn_0,
-                     { fl_message("Inline callback with 0 args."); }
-                     );
+  FL_INLINE_CALLBACK_0(inline_cb_btn_0,
+                       { fl_message("Inline callback with 0 args."); }
+                       );
 
   Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
-  FL_INLINE_CALLBACK(inline_cb_btn_2,
-                     const char *, text, "FLTK", int, number, 2,
-                     { fl_message("We received the message %s with %d!", text, number); }
-                     );
+  FL_INLINE_CALLBACK_2(inline_cb_btn_2,
+                       const char *, text, "FLTK", int, number, 2,
+                       { fl_message("We received the message %s with %d!", text, number); }
+                       );
 
   Fl_Button *inline_cb_btn_4 = new Fl_Button(390, 90, 180, 25, "4 args");
-  FL_INLINE_CALLBACK(inline_cb_btn_4,
-                     int, x, window->x(),
-                     int, y, window->y(),
-                     int, w, window->w(),
-                     int, h, window->h(),
-                     { fl_message("The main window was at\nx:%d, y:%d, w:%d, h:%d\n"
-                                  "when the callback was created\n"
-                                  "and is now at x:%d, y:%d", x, y, w, h,
-                                  window->x(), window->y());
-                     }
-                     );
+  FL_INLINE_CALLBACK_4(inline_cb_btn_4,
+                       int, x, window->x(),
+                       int, y, window->y(),
+                       int, w, window->w(),
+                       int, h, window->h(),
+                       { fl_message("The main window was at\nx:%d, y:%d, w:%d, h:%d\n"
+                                    "when the callback was created\n"
+                                    "and is now at x:%d, y:%d", x, y, w, h,
+                                    window->x(), window->y());
+                       }
+                       );
 
   window->end();
   window->show(argc,argv);

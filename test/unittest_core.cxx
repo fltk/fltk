@@ -237,7 +237,13 @@ void cb1(MyString a, int b) {
 TEST(Fl_Callback_Macros, FL_FUNCTION_CALLBACK) {
   Fl_Group::current(NULL);
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-  FL_FUNCTION_CALLBACK(btn, cb1, MyString, a, "FLTK", int, b, 4);
+  FL_FUNCTION_CALLBACK_2(btn, cb1, MyString, "FLTK", int, 4);
+
+  do { class Fl_Callback_User_Data_240 : public Fl_Callback_User_Data {
+    public: MyString a_; int b_;
+    static void cb(Fl_Widget *w, void *user_data) {
+      Fl_Callback_User_Data_240 *cbdata = (Fl_Callback_User_Data_240*)user_data; (void)cbdata; cb1(cbdata->a_, cbdata->b_); }; Fl_Callback_User_Data_240(MyString a, int b) : a_(a), b_(b) { } }; btn->callback(Fl_Callback_User_Data_240::cb, new Fl_Callback_User_Data_240("FLTK", 4), true); } while(0);
+
   btn->do_callback();
   delete btn;
   EXPECT_TRUE(cb1a_ok); // callback called
@@ -251,7 +257,7 @@ TEST(Fl_Callback_Macros, FL_METHOD_CALLBACK) {
   Fl_Group::current(NULL);
   Fl_String *str = new Fl_String("FLTK");
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-  FL_METHOD_CALLBACK(btn, Fl_String, str, insert, int, at, 2, const char*, text, "XX");
+  FL_METHOD_CALLBACK_2(btn, Fl_String, str, insert, int, 2, const char*, "XX");
   btn->do_callback();
   EXPECT_STREQ(str->c_str(), "FLXXTK");
   delete btn;
@@ -260,13 +266,13 @@ TEST(Fl_Callback_Macros, FL_METHOD_CALLBACK) {
 }
 
 int cb3a = 0, cb3b = 0;
-TEST(Fl_Callback_Macros, FL_INILE_CALLBACK) {
+TEST(Fl_Callback_Macros, FL_INLINE_CALLBACK) {
   Fl_Group::current(NULL);
   Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
-  FL_INLINE_CALLBACK(btn,
-                     int, a, 42,  int, b, 16,
-                     { cb3a = a; cb3b = b; }
-                     );
+  FL_INLINE_CALLBACK_2(btn,
+                       int, a, 42,  int, b, 16,
+                       { cb3a = a; cb3b = b; }
+                       );
   btn->do_callback();
   EXPECT_EQ(cb3a, 42);
   EXPECT_EQ(cb3b, 16);
