@@ -106,7 +106,7 @@ cairo_t *Fl::cairo_make_current(Fl_Window *wi) {
     struct wld_window *xid = fl_wl_xid(wi);
     if (!xid->buffer)
       return NULL; // this may happen with GL windows
-    cairo_ctxt = xid->buffer->cairo_;
+    cairo_ctxt = xid->buffer->draw_buffer.cairo_;
     cairo_state_.cc(cairo_ctxt, false);
     return cairo_ctxt;
   }
