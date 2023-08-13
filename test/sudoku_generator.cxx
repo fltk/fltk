@@ -25,39 +25,14 @@
 // and adapted to the FLTK naming scheme.
 //
 
+#include "sudoku_generator.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <FL/Fl_Int_Vector.H>
 
 #define UNASSIGNED 0
-
-typedef int GridData[9][9];
-
-class Sudoku_Generator {
-private:
-public:
-  GridData grid;
-  GridData solnGrid;
-  int guessNum[9];
-  int gridPos[81];
-  int difficultyLevel;
-  bool grid_status;
-
-public:
-  Sudoku_Generator ();
-  Sudoku_Generator(int[81], bool row_major=true);
-  void fillEmptyDiagonalBox(int);
-  void createSeed();
-  void printGrid();
-  bool solveGrid();
-  void countSoln(int &number);
-  void genPuzzle(int minHints);
-  bool gridStatus();
-  void calculateDifficulty();
-  void restoreWorkGrid();
-  int branchDifficultyScore();
-};
 
 void Sudoku_Generator::restoreWorkGrid()
 {
@@ -71,7 +46,6 @@ int genRandNum(int maxLimit)
 {
   return rand()%maxLimit;
 }
-
 
 // We take an integer array of the length n and swap the content around randomly.
 // The function was part of the c++11 standard, but was removed in C++17 because
@@ -88,11 +62,6 @@ void random_shuffle(int *data, int n)
       data[j] = tmp;
     }
   }
-//  printf("Rand: ");
-//  for (int j=0; j<n; j++) {
-//    printf("%d ", data[j]);
-//  }
-//  printf("\n");
 }
 
 // Helper functions for solving grid
@@ -562,19 +531,19 @@ int generate_sudoku(int grid_data[81], int minHints, int maxHints)
 
   // Generating the puzzle
   puzzle->genPuzzle(minHints);
-  int minDiff = 100, maxDiff = 0;
-  for (int zz=0; zz<100; zz++) {
-    time_t start; time(&start);
-    random_shuffle(puzzle->gridPos, 81);
-    puzzle->restoreWorkGrid();
-    puzzle->genPuzzle(minHints);
-    time_t end; time(&end);
-    puzzle->calculateDifficulty();
-    printf("--- in %ld, difficulty is %d\n", end-start, puzzle->difficultyLevel);
-    if (puzzle->difficultyLevel < minDiff) minDiff = puzzle->difficultyLevel;
-    if (puzzle->difficultyLevel > maxDiff) maxDiff = puzzle->difficultyLevel;
-  }
-  printf("Difficulty range is %d to %d\n", minDiff, maxDiff);
+//  int minDiff = 100, maxDiff = 0;
+//  for (int zz=0; zz<100; zz++) {
+//    time_t start; time(&start);
+//    random_shuffle(puzzle->gridPos, 81);
+//    puzzle->restoreWorkGrid();
+//    puzzle->genPuzzle(minHints);
+//    time_t end; time(&end);
+//    puzzle->calculateDifficulty();
+//    printf("--- in %ld, difficulty is %d\n", end-start, puzzle->difficultyLevel);
+//    if (puzzle->difficultyLevel < minDiff) minDiff = puzzle->difficultyLevel;
+//    if (puzzle->difficultyLevel > maxDiff) maxDiff = puzzle->difficultyLevel;
+//  }
+//  printf("Difficulty range is %d to %d\n", minDiff, maxDiff);
   // 22: 55 to 1658
   // 25: 56 to 1456
   // 28: 53 to 953, 53 to 1153, 53 to 1253
