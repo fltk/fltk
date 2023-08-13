@@ -1911,16 +1911,16 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
     set_event_xy(window);
     Fl::e_dx = Fl::e_dy = 0;
-    if (xevent.xbutton.button == Button4) {
+    if (xevent.xbutton.button == Button4 && !Fl::event_shift()) {
       Fl::e_dy = -1; // Up
       event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == Button5) {
+    } else if (xevent.xbutton.button == Button5 && !Fl::event_shift()) {
       Fl::e_dy = +1; // Down
       event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == 6) {
+    } else if (xevent.xbutton.button == 6 || (xevent.xbutton.button == Button4 && Fl::event_shift())) {
         Fl::e_dx = -1; // Left
         event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == 7) {
+    } else if (xevent.xbutton.button == 7 || (xevent.xbutton.button == Button5 && Fl::event_shift())) {
         Fl::e_dx = +1; // Right
         event = FL_MOUSEWHEEL;
     } else {
