@@ -1082,7 +1082,7 @@ Sudoku::new_cb(Fl_Widget *widget, void *) {
 }
 
 
-extern int generate_sudoku(int grid_data[81]);
+extern int generate_sudoku(int grid_data[81], int minHints, int maxHints);
 
 // Create a new game...
 void
@@ -1091,7 +1091,7 @@ Sudoku::new_game(time_t seed) {
   {
     int grid_data[81];
     int *g = grid_data;
-    generate_sudoku(grid_data);
+    generate_sudoku(grid_data, 22, 31);
     SudokuCell *cell;
     for (int j = 0; j < 9; j ++) {
       for (int k = 0; k < 9; k ++) {
@@ -1356,6 +1356,17 @@ Sudoku::solve_game() {
 
 
 // Main entry for game...
+// Note 21-17 (proven minimum) clues can be set
+// easy: 30-36
+// expert: 25-30
+// algo: 22 (rare) to 25
+
+// extremely easy: 46+
+// easy: 36-46
+// medium: 32-35
+// difficult: 28-31
+// evil: 17-27
+
 int
 main(int argc, char *argv[]) {
   Sudoku s;

@@ -32,11 +32,13 @@
 
 #define UNASSIGNED 0
 
+typedef int GridData[9][9];
+
 class Sudoku_Generator {
 private:
 public:
-  int grid[9][9];
-  int solnGrid[9][9];
+  GridData grid;
+  GridData solnGrid;
   int guessNum[9];
   int gridPos[81];
   int difficultyLevel;
@@ -50,11 +52,19 @@ public:
   void printGrid();
   bool solveGrid();
   void countSoln(int &number);
-  void genPuzzle();
+  void genPuzzle(int minHints);
   bool gridStatus();
   void calculateDifficulty();
+  void restoreWorkGrid();
   int branchDifficultyScore();
 };
+
+void Sudoku_Generator::restoreWorkGrid()
+{
+  for(int i=0;i<9;i++)
+    for(int j=0;j<9;j++)
+      this->grid[i][j] = this->solnGrid[i][j];
+}
 
 // Generate a random number between 0 and maxLimit-1
 int genRandNum(int maxLimit)
@@ -68,20 +78,25 @@ int genRandNum(int maxLimit)
 // it was regarded as flawed.
 // This implementation is a minimal hack without care about random dstribution.
 // For additional randomness, we do that three times.
-void random_shuffle(int *data, int n, int (*r)(int))
+void random_shuffle(int *data, int n)
 {
-  for (int n = 3; n>0; --n) {
+  for (int z = 3; z>0; --z) {
     for (int i = n-1; i > 0; --i) {
-      int j = r(i+1);
+      int j = rand() % (i+1);
       int tmp = data[i];
       data[i] = data[j];
       data[j] = tmp;
     }
   }
+//  printf("Rand: ");
+//  for (int j=0; j<n; j++) {
+//    printf("%d ", data[j]);
+//  }
+//  printf("\n");
 }
 
 // Helper functions for solving grid
-bool FindUnassignedLocation(int grid[9][9], int &row, int &col)
+bool FindUnassignedLocation(const GridData &grid, int &row, int &col)
 {
   for (row = 0; row < 9; row++)
   {
@@ -95,7 +110,7 @@ bool FindUnassignedLocation(int grid[9][9], int &row, int &col)
 }
 
 // Return true if num exists in row of grid.
-bool UsedInRow(int grid[9][9], int row, int num)
+bool UsedInRow(const GridData &grid, int row, int num)
 {
   for (int col = 0; col < 9; col++)
   {
@@ -106,7 +121,7 @@ bool UsedInRow(int grid[9][9], int row, int num)
 }
 
 //  Return true if num exists in col of grid.
-bool UsedInCol(int grid[9][9], int col, int num)
+bool UsedInCol(const GridData &grid, int col, int num)
 {
   for (int row = 0; row < 9; row++)
   {
@@ -117,7 +132,7 @@ bool UsedInCol(int grid[9][9], int col, int num)
 }
 
 // Return true if num exists in box at row, col of grid.
-bool UsedInBox(int grid[9][9], int boxStartRow, int boxStartCol, int num)
+bool UsedInBox(const GridData grid, int boxStartRow, int boxStartCol, int num)
 {
   for (int row = 0; row < 3; row++)
   {
@@ -132,7 +147,7 @@ bool UsedInBox(int grid[9][9], int boxStartRow, int boxStartCol, int num)
 
 // Return true if a number can be used at row, col and does not appear
 // yet in the rom, column, or box
-bool isSafe(int grid[9][9], int row, int col, int num)
+bool isSafe(GridData &grid, int row, int col, int num)
 {
   return !UsedInRow(grid, row, num) && !UsedInCol(grid, col, num) && !UsedInBox(grid, row - row%3 , col - col%3, num);
 }
@@ -141,7 +156,7 @@ bool isSafe(int grid[9][9], int row, int col, int num)
 void Sudoku_Generator::fillEmptyDiagonalBox(int idx)
 {
   int start = idx*3;
-  random_shuffle(guessNum, 9, genRandNum);
+  random_shuffle(guessNum, 9);
   for (int i = 0; i < 3; ++i)
   {
     for (int j = 0; j < 3; ++j)
@@ -151,7 +166,7 @@ void Sudoku_Generator::fillEmptyDiagonalBox(int idx)
   }
 }
 
-// Create a soved Sudoku puzzle
+// Create a solved Sudoku puzzle
 void Sudoku_Generator::createSeed()
 {
   /* Fill diagonal boxes to form:
@@ -192,7 +207,7 @@ Sudoku_Generator::Sudoku_Generator()
     this->gridPos[i] = i;
   }
 
-  random_shuffle(gridPos, 81, genRandNum);
+  random_shuffle(gridPos, 81);
 
   // Randomly shuffling the guessing number array
   for(int i=0;i<9;i++)
@@ -200,7 +215,7 @@ Sudoku_Generator::Sudoku_Generator()
     this->guessNum[i]=i+1;
   }
 
-  random_shuffle(guessNum, 9, genRandNum);
+  random_shuffle(guessNum, 9);
 
   // Initialising the grid
   for(int i=0;i<9;i++)
@@ -285,7 +300,7 @@ Sudoku_Generator::Sudoku_Generator(int grid_data[81], bool row_major)
     this->guessNum[i]=i+1;
   }
 
-  random_shuffle(guessNum, 9, genRandNum);
+  random_shuffle(guessNum, 9);
 
   grid_status = true;
 }
@@ -375,8 +390,9 @@ void Sudoku_Generator::countSoln(int &number)
 
 
 // START: Generate puzzle
-void Sudoku_Generator::genPuzzle()
+void Sudoku_Generator::genPuzzle(int minHints)
 {
+  int numHints = 81;
   for(int i=0;i<81;i++)
   {
     int x = (this->gridPos[i])/9;
@@ -390,8 +406,13 @@ void Sudoku_Generator::genPuzzle()
     if(check!=1)
     {
       this->grid[x][y] = temp;
+//      printf("Can't remove cell %d\n", i);
+    } else {
+      numHints--;
+      if (numHints <= minHints) break;
     }
   }
+  printf("Found %d hints\n", numHints);
 }
 // END: Generate puzzle
 
@@ -400,7 +421,7 @@ void Sudoku_Generator::genPuzzle()
 int Sudoku_Generator::branchDifficultyScore()
 {
   int emptyPositions = -1;
-  int tempGrid[9][9];
+  GridData tempGrid;
   int sum=0;
 
   for(int i=0;i<9;i++)
@@ -420,7 +441,6 @@ int Sudoku_Generator::branchDifficultyScore()
     {
       if(tempGrid[(int)(i/9)][(int)(i%9)] == 0)
       {
-        // TODO: C++
         Fl_Int_Vector temp;
         temp.push_back(i);
 
@@ -488,7 +508,7 @@ void Sudoku_Generator::calculateDifficulty()
 
 
 // START: The main function
-int generate_sudoku(int grid_data[81])
+int generate_sudoku(int grid_data[81], int minHints, int maxHints)
 {
 #if 0
   int i, j;
@@ -541,7 +561,27 @@ int generate_sudoku(int grid_data[81])
   puzzle->createSeed();
 
   // Generating the puzzle
-  puzzle->genPuzzle();
+  puzzle->genPuzzle(minHints);
+  int minDiff = 100, maxDiff = 0;
+  for (int zz=0; zz<100; zz++) {
+    time_t start; time(&start);
+    random_shuffle(puzzle->gridPos, 81);
+    puzzle->restoreWorkGrid();
+    puzzle->genPuzzle(minHints);
+    time_t end; time(&end);
+    puzzle->calculateDifficulty();
+    printf("--- in %ld, difficulty is %d\n", end-start, puzzle->difficultyLevel);
+    if (puzzle->difficultyLevel < minDiff) minDiff = puzzle->difficultyLevel;
+    if (puzzle->difficultyLevel > maxDiff) maxDiff = puzzle->difficultyLevel;
+  }
+  printf("Difficulty range is %d to %d\n", minDiff, maxDiff);
+  // 22: 55 to 1658
+  // 25: 56 to 1456
+  // 28: 53 to 953, 53 to 1153, 53 to 1253
+  // 31: 50 to 850, 50 to 950, 50 to 850
+  // 40: 41 to 141
+  // 45: 36 to 136
+
 
   // Calculating difficulty of puzzle
   puzzle->calculateDifficulty();
@@ -557,20 +597,20 @@ int generate_sudoku(int grid_data[81])
 //  cout<<"The above sudoku puzzle has been stored in puzzles.svg in current folder\n";
 //  // freeing the memory
 
-  puzzle->printGrid();
+//  puzzle->printGrid();
   printf("Difficulty: %d\n", puzzle->difficultyLevel);
-  for (int d = 0; d<9; d++) {
-    int x = 0, y = 0;
-    for (;;) {
-      x = genRandNum(9);
-      y = genRandNum(9);
-      if (puzzle->grid[x][y] == 0) break;
-    }
-    puzzle->grid[x][y] = puzzle->solnGrid[x][y];
-    printf(" %d %d\n", x, y);
-    puzzle->calculateDifficulty();
-    printf("Difficulty: %d\n", puzzle->difficultyLevel);
-  }
+//  for (int d = 0; d<9; d++) {
+//    int x = 0, y = 0;
+//    for (;;) {
+//      x = genRandNum(9);
+//      y = genRandNum(9);
+//      if (puzzle->grid[x][y] == 0) break;
+//    }
+//    puzzle->grid[x][y] = puzzle->solnGrid[x][y];
+//    printf(" %d %d\n", x, y);
+//    puzzle->calculateDifficulty();
+//    printf("Difficulty: %d\n", puzzle->difficultyLevel);
+//  }
 
   int *g = grid_data;
   for(int i=0;i<9;i++) {
