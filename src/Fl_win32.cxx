@@ -1531,24 +1531,38 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       } // case WM_DEADCHAR ... WM_SYSCHAR
 
       case WM_MOUSEWHEEL: {
-        static int delta = 0; // running total of all motion
+        static int delta = 0; // running total of all vertical mousewheel motion
         delta += (SHORT)(HIWORD(wParam));
-        Fl::e_dx = 0;
-        Fl::e_dy = -delta / WHEEL_DELTA;
-        delta += Fl::e_dy * WHEEL_DELTA;
-        if (Fl::e_dy)
-          Fl::handle(FL_MOUSEWHEEL, window);
+        int dy = -delta / WHEEL_DELTA;
+        delta += dy * WHEEL_DELTA;
+        if (dy == 0) // nothing to do
+          return 0;
+        if (Fl::event_shift()) { // shift key pressed: send horizontal mousewheel event
+          Fl::e_dx = dy;
+          Fl::e_dy = 0;
+        } else { // shift key not pressed (normal behavior): send vertical mousewheel event
+          Fl::e_dx = 0;
+          Fl::e_dy = dy;
+        }
+        Fl::handle(FL_MOUSEWHEEL, window);
         return 0;
       }
 
       case WM_MOUSEHWHEEL: {
-        static int delta = 0; // running total of all motion
+        static int delta = 0; // running total of all horizontal mousewheel motion
         delta += (SHORT)(HIWORD(wParam));
-        Fl::e_dy = 0;
-        Fl::e_dx = delta / WHEEL_DELTA;
-        delta -= Fl::e_dx * WHEEL_DELTA;
-        if (Fl::e_dx)
-          Fl::handle(FL_MOUSEWHEEL, window);
+        int dx = delta / WHEEL_DELTA;
+        delta -= dx * WHEEL_DELTA;
+        if (dx == 0) // nothing to do
+          return 0;
+        if (Fl::event_shift()) { // shift key pressed: send *vertical* mousewheel event
+          Fl::e_dx = 0;
+          Fl::e_dy = dx;
+        } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
+          Fl::e_dx = dx;
+          Fl::e_dy = 0;
+        }
+        Fl::handle(FL_MOUSEWHEEL, window);
         return 0;
       }
 
