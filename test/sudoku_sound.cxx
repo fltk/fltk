@@ -18,6 +18,9 @@
 #include "sudoku_sound.h"
 
 #include <FL/Fl.H>
+#include <FL/platform.H>
+
+#include <math.h>
 
 // Sound class globals...
 int SudokuSound::frequencies[9] = {

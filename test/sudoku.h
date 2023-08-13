@@ -67,4 +67,4 @@ class Sudoku : public Fl_Double_Window {
 };
 
 
-#endif _SUDOKU_H_
+#endif // _SUDOKU_H_

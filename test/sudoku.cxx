@@ -15,6 +15,18 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// A Sudoku (i.e. the puzzle) is a partially completed grid. A grid has 9 rows,
+// 9 columns and 9 boxes, each having 9 cells (81 total). Boxes can also be
+// called blocks or regions.[1] Three horizontally adjacent blocks are a band,
+// and three vertically adjacent blocks are a stack.[2] The initially defined
+// values are clues or givens. An ordinary Sudoku (i.e. a proper Sudoku) has
+// one solution. Rows, columns and regions can be collectively referred to as
+// groups, of which the grid has 27. The One Rule encapsulates the three prime
+// rules, i.e. each digit (or number) can occur only once in each row, column,
+// and box; and can be compactly stated as: "Each digit appears once in each
+// group."
+//  - wikipedia.org
+
 #include "sudoku.h"
 #include "sudoku_cell.h"
 #include "sudoku_sound.h"
