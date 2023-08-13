@@ -211,7 +211,7 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
 
  \param o check the tab of this widget
  \param event_x, event_y event coordinatese
- \return 1 if we hit the close button, and 0 otherwie
+ \return 1 if we hit the close button, and 0 otherwise
  */
 int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
   (void)event_y;
@@ -227,6 +227,46 @@ int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
     }
   }
   return 0;
+}
+
+/**  Determine if the coordinates are in the area of the overflow menu button.
+
+ \param event_x, event_y event coordinatese
+ \return 1 if we hit the overflow menu button, and 0 otherwise
+ */
+int Fl_Tabs::hit_overflow_menu(int event_x, int event_y) {
+  if (!has_overflow_menu)
+    return 0;
+  int H = tab_height();
+  if (event_x < x()+w()-abs(H))
+    return 0;
+  if (H >= 0) {
+    if (event_y > y()+H)
+      return 0;
+  } else {
+    if (event_y < y()+h()+H)
+      return 0;
+  }
+  return 1;
+}
+
+/**  Determine if the coordinates are within the tabs area.
+
+ \param event_x, event_y event coordinatese
+ \return 1 if we hit the tabs area, and 0 otherwise
+ */
+int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
+  int H = tab_height();
+  if (H >= 0) {
+    if (event_y > y()+H)
+      return 0;
+  } else {
+    if (event_y < y()+h()+H)
+      return 0;
+  }
+  if (has_overflow_menu && event_x > x()+w()-abs(H))
+    return 0;
+  return 1;
 }
 
 void Fl_Tabs::check_overflow_menu() {
@@ -314,28 +354,35 @@ int Fl_Tabs::handle(int event) {
 
   switch (event) {
 
+  case FL_MOUSEWHEEL:
+    if (   ( (overflow_type == OVERFLOW_DRAG) || (overflow_type == OVERFLOW_PULLDOWN) )
+        && hit_tabs_area(Fl::event_x(), Fl::event_y()) ) {
+      int original_tab_offset = tab_offset;
+      tab_offset -= 2 * Fl::event_dx();
+      if (tab_offset > 0)
+        tab_offset = 0;
+      int m = 0;
+      if (overflow_type == OVERFLOW_PULLDOWN) m = abs(tab_height());
+      int dw = tab_pos[children()] + tab_offset - w();
+      if (dw < -m)
+        tab_offset -= dw+m;
+      if (tab_offset != original_tab_offset) {
+        damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL);
+        redraw();
+      }
+      return 1;
+    }
+    return Fl_Group::handle(event);
   case FL_PUSH:
     initial_x = Fl::event_x();
     initial_tab_offset = tab_offset;
     forward_motion_to_group = 0;
-    {
-      int H = tab_height();
-      if (H >= 0) {
-        if (Fl::event_y() > y()+H) {
-          forward_motion_to_group = 1;
-          return Fl_Group::handle(event);
-        }
-      } else {
-        if (Fl::event_y() < y()+h()+H) {
-          forward_motion_to_group = 1;
-          return Fl_Group::handle(event);
-        }
-        H = - H;
-      }
-      if (has_overflow_menu && Fl::event_x() > x()+w()-H) {
-        handle_overflow_menu();
-        return 1;
-      }
+    if (hit_overflow_menu(Fl::event_x(), Fl::event_y())) {
+      handle_overflow_menu();
+      return 1;
+    }
+    if (!hit_tabs_area(Fl::event_x(), Fl::event_y())) {
+      forward_motion_to_group = 1;
     }
     /* FALLTHROUGH */
   case FL_DRAG:

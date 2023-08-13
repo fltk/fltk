@@ -17,7 +17,7 @@ Function {} {open
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs tabs_group {open selected
+    Fl_Tabs tabs_group {open
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
       code0 {// tabs_group->handle_overflow(Fl_Tabs::OVERFLOW_PULLDOWN);}
     } {
@@ -164,8 +164,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2
-        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {330 60 320 235} selection_color 2 hide
+        label tab2 selected
+        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {330 60 320 235} selection_color 2
       } {
         Fl_Button {} {
           label button1
@@ -225,7 +225,7 @@ Function {} {open
       }
       Fl_Group {} {
         label {     tab5      } open
-        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 60 320 235} labeltype ENGRAVED_LABEL
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 60 320 235} labeltype ENGRAVED_LABEL hide
       } {
         Fl_Button {} {
           label button2
