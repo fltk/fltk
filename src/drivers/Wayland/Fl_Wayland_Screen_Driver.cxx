@@ -344,16 +344,26 @@ static void pointer_axis(void *data,
   if (!win) return;
   wld_event_time = time;
   int delta = wl_fixed_to_int(value) / 10;
-//fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
+  // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
   if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL) {
-    Fl::e_dx = delta;
-    Fl::e_dy = 0;
+    if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
+      Fl::e_dx = 0;
+      Fl::e_dy = delta;
+    } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
+      Fl::e_dx = delta;
+      Fl::e_dy = 0;
+    }
     Fl::handle(FL_MOUSEWHEEL, win->top_window());
   }
   if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL) {
-    Fl::e_dx = 0;
-    Fl::e_dy = delta;
+    if (Fl::event_shift()) { // shift key pressed: send horizontal mousewheel event
+      Fl::e_dx = delta;
+      Fl::e_dy = 0;
+    } else {// shift key not pressed (normal behavior): send vertical mousewheel event
+      Fl::e_dx = 0;
+      Fl::e_dy = delta;
+    }
     Fl::handle(FL_MOUSEWHEEL, win->top_window());
   }
 }
