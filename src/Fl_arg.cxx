@@ -284,6 +284,36 @@ void Fl_Window::show(int argc, char **argv) {
       fl = Fl::screen_driver()->XParseGeometry(geometry, &gx, &gy, &gw, &gh);
       if (fl & Fl_Screen_Driver::fl_XNegative) gx = Fl::w()-w()+gx;
       if (fl & Fl_Screen_Driver::fl_YNegative) gy = Fl::h()-h()+gy;
+
+      // Determine window gravity from geometry.  Note that negative X and Y
+      // will only end up truly accurate if the screen scale is (or has been
+      // set to) 1.0.  This is because information about the actual screen
+      // dimensions has been lost scaling integers.
+      static const Fl_Window_Driver::WIN_GRAVITY gravity_table[16] = {
+        Fl_Window_Driver::WIN_GRAVITY_STATIC,
+        Fl_Window_Driver::WIN_GRAVITY_WEST,
+        Fl_Window_Driver::WIN_GRAVITY_NORTH,
+        Fl_Window_Driver::WIN_GRAVITY_NORTHWEST,
+        Fl_Window_Driver::WIN_GRAVITY_STATIC,
+        Fl_Window_Driver::WIN_GRAVITY_EAST,
+        Fl_Window_Driver::WIN_GRAVITY_NORTH,
+        Fl_Window_Driver::WIN_GRAVITY_NORTHEAST,
+        Fl_Window_Driver::WIN_GRAVITY_STATIC,
+        Fl_Window_Driver::WIN_GRAVITY_WEST,
+        Fl_Window_Driver::WIN_GRAVITY_SOUTH,
+        Fl_Window_Driver::WIN_GRAVITY_SOUTHWEST,
+        Fl_Window_Driver::WIN_GRAVITY_STATIC,
+        Fl_Window_Driver::WIN_GRAVITY_EAST,
+        Fl_Window_Driver::WIN_GRAVITY_SOUTH,
+        Fl_Window_Driver::WIN_GRAVITY_SOUTHEAST
+      };
+      int gravity_index = 0;
+      gravity_index |= (fl & Fl_Screen_Driver::fl_XValue) ? 1 : 0;
+      gravity_index |= (fl & Fl_Screen_Driver::fl_YValue) ? 2 : 0;
+      gravity_index |= (fl & Fl_Screen_Driver::fl_XNegative) ? 4 : 0;
+      gravity_index |= (fl & Fl_Screen_Driver::fl_YNegative) ? 8 : 0;
+      pWindowDriver->win_gravity(gravity_table[gravity_index]);
+
       //  int mw,mh; minsize(mw,mh);
       //  if (mw > gw) gw = mw;
       //  if (mh > gh) gh = mh;
