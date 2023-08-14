@@ -2487,10 +2487,34 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   s = Fl::screen_driver()->scale(nscreen);
   // if (!win->parent()) printf("win creation on screen #%d\n", nscreen);
 #endif
+
+  int win_x = rint(X*s);
+  int win_y = rint(Y*s);
+
+  switch (Fl_X11_Window_Driver::driver(win)->win_gravity_) {
+    case Fl_X11_Window_Driver::WIN_GRAVITY_NORTHEAST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_EAST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHEAST:
+      win_x = Fl::screen_driver()->x_from_right(X);
+      break;
+    default:
+      break;
+  }
+
+  switch (Fl_X11_Window_Driver::driver(win)->win_gravity_) {
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHWEST:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTH:
+    case Fl_X11_Window_Driver::WIN_GRAVITY_SOUTHEAST:
+      win_y = Fl::screen_driver()->y_from_bottom(Y);
+      break;
+    default:
+      break;
+  }
+
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
                                root,
-                               rint(X*s), rint(Y*s), W*s, H*s,
+                               win_x, win_y, W*s, H*s,
                                0, // borderwidth
                                visual->depth,
                                InputOutput,
