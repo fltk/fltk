@@ -550,6 +550,72 @@ int xyz_data;
 button->callback(xyz_callback, &xyz_data);
 \endcode
 
+\note You cannot delete a widget inside a callback, as the
+widget may still be accessed by FLTK after your callback
+is completed. Instead, use the Fl::delete_widget()
+method to mark your widget for deletion when it is safe
+to do so.
+
+Many programmers new to FLTK or C++ try to use a
+non-static class method instead of a static class method
+or function for their callback. Since callbacks are done
+outside a C++ class, the `this` pointer is not
+initialized for class methods.
+
+To work around this problem, define a static method
+in your class that accepts a pointer to the class, and
+then have the static method call the class method(s) as
+needed. The data pointer you provide to the
+\p callback() method of the widget can be a
+pointer to the instance of your class.
+
+\code
+class Foo {
+  void my_callback(Fl_Widget *w);
+  static void my_static_callback(Fl_Widget *w, void *f) { ((Foo *)f)->my_callback(w); }
+  ...
+}
+...
+w->callback(my_static_callback, (void *)this);
+\endcode
+
+In an effort to make callbacks easier, more flexible, and type safe, FLTK
+provides three groups of macros that generate the code needed to call class
+methods directly with up to five custom parameters.
+
+ - `FL_FUNCTION_CALLBACK_#(WIDGET, FUNCTION, ...)` creates code for callbacks to
+    functions and static class methods with up to five arguments. The `#` must
+    be replaced by the number of callback arguments.
+ - `FL_METHOD_CALLBACK_#(WIDGET, CLASS, SELF, METH, ...)` creates code for
+    callbacks to arbitrary public class methods
+ - `FL_INLINE_CALLBACK_#(WIDGET, ..., FUNCTION_BODY)` creates code for callback
+    functions that are very close to (almost in the same line) the widget
+    creation code, similar to lambda function in C++11. The last argument of
+    this macro is the callback code.
+
+The syntax is a bit unconventional, but the resulting code is flexible and
+needs no additional maintenance. It is also C++98 compatible. For example:
+
+\code
+#include <FL/fl_callback_macros.H>
+...
+Fl_String *str = new Fl_String("FLTK");
+Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+FL_METHOD_CALLBACK_2(btn,  Fl_String, str, insert,  int, 2,  const char*, "...");
+...
+Fl_Button *inline_cb_btn_2 = new Fl_Button(390, 60, 180, 25, "2 args");
+FL_INLINE_CALLBACK_2( inline_cb_btn_2,
+                      const char *, text, "FLTK",   int, number, 2,
+                      {
+                        fl_message("We received the message %s with %d!", text, number);
+                      }
+                    );
+\endcode
+
+\see Fl_Widget::callback(Fl_Callback*, void*), FL_FUNCTION_CALLBACK_3, FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
+
+\section common_when When and Reason
+
 Normally callbacks are performed only when the value of the
 widget changes. You can change this using the Fl_Widget::when()
 method:
@@ -564,45 +630,13 @@ button->when(FL_WHEN_ENTER_KEY_ALWAYS);
 button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 \endcode
 
-<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
-<TR>
-        <TD><B>Note:</B>
+Within the callback, you can query why the callback was called using
+Fl::callback_reason(). For example, setting
 
-        You cannot delete a widget inside a callback, as the
-        widget may still be accessed by FLTK after your callback
-        is completed. Instead, use the Fl::delete_widget()
-        method to mark your widget for deletion when it is safe
-        to do so.
+\code myInput->when(FL_WHEN_RELEASE|FL_WHEN_CHANGED) \endcode
 
-        <B>Hint:</B>
-
-        Many programmers new to FLTK or C++ try to use a
-        non-static class method instead of a static class method
-        or function for their callback. Since callbacks are done
-        outside a C++ class, the <tt>this</tt> pointer is not
-        initialized for class methods.
-
-        To work around this problem, define a static method
-        in your class that accepts a pointer to the class, and
-        then have the static method call the class method(s) as
-        needed. The data pointer you provide to the
-        \p callback() method of the widget can be a
-        pointer to the instance of your class.
-
-\code
-class Foo {
-  void my_callback(Fl_Widget *w);
-  static void my_static_callback(Fl_Widget *w, void *f) { ((Foo *)f)->my_callback(w); }
-  ...
-}
-
-...
-
-w->callback(my_static_callback, (void *)this);
-\endcode
-        </TD>
-</TR>
-</TABLE></CENTER>
+for a text input field may return \ref FL_REASON_LOST_FOCUS or
+\ref FL_REASON_CHANGED as a callback reason.
 
 \section common_shortcuts Shortcuts
 

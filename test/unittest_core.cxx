@@ -17,8 +17,10 @@
 #include "unittests.h"
 
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Simple_Terminal.H>
 #include <FL/Fl_String.H>
+#include <FL/fl_callback_macros.H>
 
 /* Test Fl_String constructor and assignment. */
 TEST(Fl_String, Assignment) {
@@ -213,6 +215,68 @@ TEST(Fl_Preferences, Strings) {
     prefs.get("d", r, "x");
     EXPECT_STREQ(r.c_str(), "x");
   }
+  return true;
+}
+
+bool cb1a_ok = false, cb1b_ok = false, cb1c_ok = false;
+int cb1_alloc = 0;
+class MyString : public Fl_String {
+public:
+  MyString() : Fl_String() { cb1_alloc++; }
+  MyString(const MyString &str) : Fl_String(str) { cb1_alloc++; }
+  MyString(const char *t) : Fl_String(t) { cb1_alloc++; }
+  ~MyString() { cb1_alloc--; }
+};
+void cb1(MyString a, int b) {
+  cb1a_ok = true;
+  if (strcmp(a.c_str(),"FLTK")==0) cb1b_ok = true;
+  if (b==4) cb1c_ok = true;
+}
+
+/* Test callback macros. */
+TEST(Fl_Callback_Macros, FL_FUNCTION_CALLBACK) {
+  Fl_Group::current(NULL);
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  FL_FUNCTION_CALLBACK_2(btn, cb1, MyString, "FLTK", int, 4);
+
+  do { class Fl_Callback_User_Data_240 : public Fl_Callback_User_Data {
+    public: MyString a_; int b_;
+    static void cb(Fl_Widget *w, void *user_data) {
+      Fl_Callback_User_Data_240 *cbdata = (Fl_Callback_User_Data_240*)user_data; (void)cbdata; cb1(cbdata->a_, cbdata->b_); }; Fl_Callback_User_Data_240(MyString a, int b) : a_(a), b_(b) { } }; btn->callback(Fl_Callback_User_Data_240::cb, new Fl_Callback_User_Data_240("FLTK", 4), true); } while(0);
+
+  btn->do_callback();
+  delete btn;
+  EXPECT_TRUE(cb1a_ok); // callback called
+  EXPECT_TRUE(cb1b_ok); // string stored correctly
+  EXPECT_TRUE(cb1c_ok); // integer stored correctly
+  EXPECT_TRUE(cb1_alloc==0);  // string destroyed correctly (allocated as often as deallocated)
+  return true;
+}
+
+TEST(Fl_Callback_Macros, FL_METHOD_CALLBACK) {
+  Fl_Group::current(NULL);
+  Fl_String *str = new Fl_String("FLTK");
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  FL_METHOD_CALLBACK_2(btn, Fl_String, str, insert, int, 2, const char*, "XX");
+  btn->do_callback();
+  EXPECT_STREQ(str->c_str(), "FLXXTK");
+  delete btn;
+  delete str;
+  return true;
+}
+
+int cb3a = 0, cb3b = 0;
+TEST(Fl_Callback_Macros, FL_INLINE_CALLBACK) {
+  Fl_Group::current(NULL);
+  Fl_Button *btn = new Fl_Button(10, 10, 100, 100);
+  FL_INLINE_CALLBACK_2(btn,
+                       int, a, 42,  int, b, 16,
+                       { cb3a = a; cb3b = b; }
+                       );
+  btn->do_callback();
+  EXPECT_EQ(cb3a, 42);
+  EXPECT_EQ(cb3b, 16);
+  delete btn;
   return true;
 }
 

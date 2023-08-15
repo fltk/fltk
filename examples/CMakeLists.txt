@@ -32,6 +32,7 @@ file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 set (SIMPLE_SOURCES
   chart-simple
+  callbacks
   browser-simple
   draggable-group
   howto-add_fd-and-popen

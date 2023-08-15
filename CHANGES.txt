@@ -121,6 +121,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   - Added Fl_Surface_Device::push_current(new_surface) and
     Fl_Surface_Device::pop_current() to set/unset the current surface
     receiving graphics commands.
+  - New macros for easy function and method callbacks with multiple
+    type safe arguments (see FL_METHOD_CALLBACK_1 etc.) .
 
   New Configuration Options (ABI Version)
 
