@@ -131,7 +131,6 @@ CPPFILES =\
 	shape.cxx \
 	subwindow.cxx \
 	sudoku.cxx \
-	sudoku_generator.cxx \
 	symbols.cxx \
 	table.cxx \
 	tabs.cxx \
@@ -597,19 +596,19 @@ scroll$(EXEEXT): scroll.o
 
 subwindow$(EXEEXT): subwindow.o
 
-sudoku: sudoku.o sudoku_generator.o
+sudoku: sudoku.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o sudoku_generator.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -f -r sudoku.app
 	$(OSX_ONLY) mkdir -p sudoku.app/Contents/MacOS sudoku.app/Contents/Resources
 	$(OSX_ONLY) $(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) mac-resources/sudoku.icns sudoku.app/Contents/Resources/
 	$(OSX_ONLY) $(INSTALL_BIN) mac-resources/sudoku.plist sudoku.app/Contents/Info.plist
 
-sudoku.exe: sudoku.o sudoku_generator.o sudoku.rc
+sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
 	$(RC) sudoku.rc sudokures.o
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o sudoku_generator.o sudokures.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o sudokures.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 
 symbols$(EXEEXT): symbols.o
 
