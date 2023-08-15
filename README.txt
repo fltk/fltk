@@ -14,7 +14,7 @@ WHAT IS FLTK?
 
 LICENSING
 
-    FLTK comes with complete free source code. FLTK is available
+    FLTK comes with complete free source code.  FLTK is available
     under the terms of the GNU Library General Public License.
     Contrary to popular belief, it can be used in commercial
     software! (Even Bill Gates could use it.)
