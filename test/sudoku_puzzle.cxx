@@ -1,5 +1,5 @@
 //
-// Sudoku game using the Fast Light Tool Kit (FLTK).
+// Sudoku game puzzle using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
 // Copyright 2019-2021 by Bill Spitzak and others.
@@ -15,6 +15,18 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "sudoku_puzzle.h"
+#include "sudoku.h"
+
+#include <FL/fl_draw.H>
+
+SudokuPuzzle::SudokuPuzzle(int x, int y, int w, int h, const char *label)
+: Fl_Group(x, y, w, h, label)
+{
+  box(FL_BORDER_BOX);
+}
+
+#if 0
 // A Sudoku (i.e. the puzzle) is a partially completed grid. A grid has 9 rows,
 // 9 columns and 9 boxes, each having 9 cells (81 total). Boxes can also be
 // called blocks or regions.[1] Three horizontally adjacent blocks are a band,
@@ -47,7 +59,6 @@
 // - [ ] game hamburge menu
 
 #include "sudoku.h"
-#include "sudoku_puzzle.h"
 #include "sudoku_cell.h"
 #include "sudoku_sound.h"
 #include "sudoku_generator.h"
@@ -77,7 +88,6 @@
 // Default sizes...
 //
 
-
 #define GROUP_SIZE      160
 #define CELL_SIZE       50
 #define CELL_OFFSET     5
@@ -95,9 +105,7 @@ Fl_Preferences  Sudoku::prefs_(Fl_Preferences::USER_L, "fltk.org", "sudoku");
 
 // Create a Sudoku game window...
 Sudoku::Sudoku()
-  : Fl_Double_Window(kPuzzleSize + 2*kPadding,
-                     kPuzzleSize + 2*kPadding + kMenuOffset,
-                     "FLTK Sudoku")
+  : Fl_Double_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
 {
   int j, k;
   Fl_Group *g;
@@ -143,38 +151,28 @@ Sudoku::Sudoku()
   menubar_->menu(items);
 
   // Create the grids...
-  grid_ = new SudokuPuzzle(kPadding,
-                           kPadding + kMenuOffset,
-                           kPuzzleSize,
-                           kPuzzleSize);
-  Fl_Group *rsgrid = new Fl_Group(grid_->x()+1, grid_->y()+1,
-                                  grid_->w()-2, grid_->h()-2);
-  grid_->resizable(rsgrid);
+  grid_ = new Fl_Group(0, MENU_OFFSET, 3 * GROUP_SIZE, 3 * GROUP_SIZE);
 
   for (j = 0; j < 3; j ++)
     for (k = 0; k < 3; k ++) {
-      Fl_Group *group = new Fl_Group(grid_->x() + 1 + k*kGroupSize,
-                                     grid_->y() + 1 + j*kGroupSize,
-                                     kGroupSize,
-                                     kGroupSize);
-      group->box(FL_BORDER_BOX);
-      Fl_Group *rsgroup = new Fl_Group(group->x()+1, group->y()+1,
-                                       group->w()-2, group->h()-2);
-      rsgroup->box(FL_NO_BOX);
-      new Fl_Box(FL_BORDER_BOX, group->x()+1, group->y()+1, kCellSize, kCellSize, NULL);
-      new Fl_Box(FL_BORDER_BOX, group->x()+1+kCellSize, group->y()+1, kCellSize, kCellSize, NULL);
-      new Fl_Box(FL_BORDER_BOX, group->x()+1+2*kCellSize, group->y()+1, kCellSize, kCellSize, NULL);
-      group->resizable(rsgroup);
-      group->end();
+      g = new Fl_Group(k * GROUP_SIZE, j * GROUP_SIZE + MENU_OFFSET,
+                       GROUP_SIZE, GROUP_SIZE);
+      g->box(FL_BORDER_BOX);
+      if ((int)(j == 1) ^ (int)(k == 1)) g->color(FL_DARK3);
+      else g->color(FL_DARK2);
+      g->end();
+
+      grid_groups_[j][k] = g;
     }
 
   for (j = 0; j < 9; j ++)
     for (k = 0; k < 9; k ++) {
-      cell = new SudokuCell(grid_->x() + 2 + k*kCellSize + (k/3),
-                            grid_->y() + 2 + j*kCellSize + (j/3),
-                            kCellSize, kCellSize);
+      cell = new SudokuCell(k * CELL_SIZE + CELL_OFFSET +
+                                (k / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+                            j * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
+                                (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+                            CELL_SIZE, CELL_SIZE);
       cell->callback(reset_cb);
-      cell->hide();
       grid_cells_[j][k] = cell;
     }
 
@@ -844,3 +842,5 @@ main(int argc, char *argv[]) {
   // Run until the user quits...
   return (Fl::run());
 }
+
+#endif

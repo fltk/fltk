@@ -48,8 +48,7 @@ SudokuCell::draw() {
 
 
   // Draw the cell box...
-  if (readonly()) fl_draw_box(FL_UP_BOX, x(), y(), w(), h(), color());
-  else fl_draw_box(FL_DOWN_BOX, x(), y(), w(), h(), color());
+  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), color());
 
   // Draw the cell background...
   if (Fl::focus() == this) {
@@ -67,7 +66,10 @@ SudokuCell::draw() {
   if (value_) {
     s[0] = value_ + '0';
 
-    fl_font(FL_HELVETICA_BOLD, h() - 10);
+    if (readonly())
+      fl_font(FL_HELVETICA_BOLD, h() - 10);
+    else
+      fl_font(FL_HELVETICA, h() - 10);
     fl_draw(s, x(), y(), w(), h(), FL_ALIGN_CENTER);
   }
 

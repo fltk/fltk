@@ -1,5 +1,5 @@
 //
-// Sudoku game using the Fast Light Tool Kit (FLTK).
+// Sudoku game puzzle using the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2005-2018 by Michael Sweet.
 // Copyright 2019-2021 by Bill Spitzak and others.
@@ -15,26 +15,21 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _SUDOKU_H_
-#define _SUDOKU_H_
+#ifndef _SUDOKU_PUZZLE_H_
+#define _SUDOKU_PUZZLE_H_
 
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Preferences.H>
+#include <FL/Fl_Group.H>
 
+class SudokuPuzzle : public Fl_Group {
+public:
+  SudokuPuzzle(int x, int y, int w, int h, const char *label=NULL);
+};
+
+#if 0
 class SudokuCell;
 class SudokuSound;
 class Fl_Sys_Menu_Bar;
 class Fl_Help_Dialog;
-
-#ifdef __APPLE__
-const int kMenuOffset = 0;
-#else
-const int kMenuOffset = 25;
-#endif // __APPLE__
-const int kPadding = 5;
-const int kCellSize = 50;
-const int kGroupSize = 3*kCellSize + 2;
-const int kPuzzleSize = 3*kGroupSize + 2;
 
 // Sudoku window class...
 class Sudoku : public Fl_Double_Window {
@@ -76,5 +71,6 @@ class Sudoku : public Fl_Double_Window {
   void          update_helpers();
 };
 
+#endif
 
-#endif // _SUDOKU_H_
+#endif // _SUDOKU_PUZZLE_H_
