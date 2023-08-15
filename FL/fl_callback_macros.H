@@ -70,7 +70,7 @@
 
  \param WIDGET the widget that will call the callback
  \param FUNC a C/C++ function or a static class method
- \param TYPE0 VALUE0 TYPE1 VALUE1 TYPE2 VALUE2 a list of zero to five type/value pairs, all spearated by commas
+ \param TYPE0 VALUE0 TYPE1 VALUE1 TYPE2 VALUE2 a list of zero to five type/value pairs, all separated by commas
 
  \see FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
  */
@@ -115,7 +115,7 @@
  \param CLASS the class type
  \param SELF a pointer to an instance of the class
  \param METH a C++ class method that must be public and not static
- \param TYPE0 VALUE0 a list of zero to five type/value pairs, all spearated by commas
+ \param TYPE0 VALUE0 a list of zero to five type/value pairs, all separated by commas
 
  \see FL_FUNCTION_CALLBACK_3, FL_INLINE_CALLBACK_2
  */
@@ -227,30 +227,6 @@
   Deleting the button will also delete the data that was created in our
   boilerplate code.
  */
-#define FL_FUNCTION_CALLBACK(WIDGET, FUNC, ...) \
-  do {  /* the do...while(0) pattern allows for a trailing semicolon, making the macro look more like a function call */ \
-    class _FL_CBD_CLASS_NAME : public Fl_Callback_User_Data { /* create a local class with a unique name for one-time use */ \
-    public: \
-      /* generate a list of all callback argument, making them members of this class */ \
-      _FL_CBD_CONCAT(_FL_CBD_CONCAT(_FL_CBD_LIST_MEMBERS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0)),x__VA_ARGS__, ignore)) \
-      /* generate code for a static method used as a callback */ \
-      static void cb(Fl_Widget *w, void *user_data) { \
-        /* cast user_data into a pointer to our local class type */ \
-        _FL_CBD_CLASS_NAME *cbdata = (_FL_CBD_CLASS_NAME*)user_data; \
-        (void)cbdata; /* suppress unused variable warning */ \
-        /* call a function or static method with up to 5 arguments */ \
-        FUNC(_FL_CBD_CONCAT(_FL_CBD_LIST_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)); \
-      }; \
-      /* generate the class constructor */ \
-      _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_FN_ARGS_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)) \
-        /* generate the initialiser list */ \
-        _FL_CBD_CONCAT(_FL_CBD_LIST_INIT_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore) { } \
-    }; \
-    /* set the widget callback to call our local method with a new instance of our class */ \
-    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(_FL_CBD_CONCAT(_FL_CBD_LIST_VALUES_, _FL_CBD_COUNT_BY_3(__VA_ARGS__, 5, err, err, 4, err, err, 3, err, err, 2, err, err, 1, err, 0, 0))(__VA_ARGS__, ignore)), true); \
-  } while(0)
-
-
 #define FL_FUNCTION_CALLBACK_5(WIDGET, FUNC, TYPE0, VALUE0, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4) \
   do { \
     class _FL_CBD_CLASS_NAME : public Fl_Callback_User_Data { \
@@ -512,7 +488,7 @@
       Fl_Callback_User_Data_133(const char * p0, int p1)
       : p0_(p0),                  // copy parameter 0
         p1_(p1)                   // copy parameter 1
-      { }                         // condtructor body
+      { }                         // constructor body
     };
     // connect our class to the widget callback
     btn->callback(Fl_Callback_User_Data_133::cb,

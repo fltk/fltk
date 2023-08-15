@@ -170,7 +170,7 @@ protected:
         CLIP_CHILDREN   = 1<<11,  ///< all drawing within this widget will be clipped (Fl_Group)
         MENU_WINDOW     = 1<<12,  ///< a temporary popup window, dismissed by clicking outside (Fl_Window)
         TOOLTIP_WINDOW  = 1<<13,  ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
-        MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
+        MODAL           = 1<<14,  ///< a window blocking input to all other windows (Fl_Window)
         NO_OVERLAY      = 1<<15,  ///< window not using a hardware overlay plane (Fl_Menu_Window)
         GROUP_RELATIVE  = 1<<16,  ///< Reserved, not implemented. DO NOT USE.
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
@@ -698,7 +698,7 @@ public:
 
   /** Sets the current callback function and managed user data for the widget.
    Setting auto_free will transfer ownership of the callback user data to the
-   widget. Deleting the widget will then alse delete the user data.
+   widget. Deleting the widget will then also delete the user data.
    \param[in] cb new callback
    \param[in] p user data
    \param[in] auto_free if set, the widget will free user data when destroyed
