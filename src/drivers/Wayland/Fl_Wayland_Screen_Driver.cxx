@@ -343,7 +343,8 @@ static void pointer_axis(void *data,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
-  int delta = wl_fixed_to_int(value) / 10;
+  int delta = wl_fixed_to_int(value);
+  if (abs(delta) >= 10) delta /= 10;
   // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
   if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL) {
