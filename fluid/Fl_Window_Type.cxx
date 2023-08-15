@@ -221,7 +221,8 @@ Fl_Type *Fl_Window_Type::make(Strategy strategy) {
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
-  Overlay_Window *w = new Overlay_Window(100,100);
+  Overlay_Window *w = new Overlay_Window(100, 100);
+  w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
   myo->add(p, strategy);
@@ -1281,7 +1282,8 @@ Fl_Type *Fl_Widget_Class_Type::make(Strategy strategy) {
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
-  Overlay_Window *w = new Overlay_Window(100,100);
+  Overlay_Window *w = new Overlay_Window(100, 100);
+  w->size_range(10, 10);
   w->window = myo;
   myo->o = w;
   myo->add(p, strategy);
