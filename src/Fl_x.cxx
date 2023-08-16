@@ -1870,6 +1870,15 @@ int fl_handle(const XEvent& thisevent)
         keysym = FL_Favorites;
         break;
     }
+
+    // Special processing for number keys == keycodes 10-19
+    // necessary to support keyboard layouts with digits in uppercase :
+    if (keycode >= 10 && keycode <= 18) {
+      keysym = '1' + (keycode - 10);
+    } else if (keycode == 19) {
+      keysym = '0';
+    }
+
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
