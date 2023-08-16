@@ -282,8 +282,8 @@ void Fl_Window::show(int argc, char **argv) {
     if (geometry) {
       int fl = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
       fl = Fl::screen_driver()->XParseGeometry(geometry, &gx, &gy, &gw, &gh);
-      if (fl & Fl_Screen_Driver::fl_XNegative) gx = Fl::w()-w()+gx;
-      if (fl & Fl_Screen_Driver::fl_YNegative) gy = Fl::h()-h()+gy;
+      if (fl & Fl_Screen_Driver::fl_XNegative) gx = Fl::w()-gw+gx;
+      if (fl & Fl_Screen_Driver::fl_YNegative) gy = Fl::h()-gh+gy;
 
       // Determine window gravity from geometry.  Note that negative X and Y
       // will only end up truly accurate if the screen scale is (or has been
