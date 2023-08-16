@@ -50,9 +50,9 @@
 #  define ALSA_PCM_NEW_HW_PARAMS_API
 #  include <alsa/asoundlib.h>
 #endif // HAVE_ALSA_ASOUNDLIB_H
-#ifdef USE_MACOS
+#ifdef __APPLE__
 #  include <CoreAudio/AudioHardware.h>
-#endif // USE_MACOS
+#endif // __APPLE__
 #ifdef _WIN32
 #  include <mmsystem.h>
 #endif // _WIN32
@@ -88,7 +88,7 @@
 // the CoreAudio implementation you see here!
 class SudokuSound {
   // Private, OS-specific data...
-#ifdef USE_MACOS
+#ifdef __APPLE__
   AudioDeviceID device;
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   AudioDeviceIOProcID audio_proc_id;
@@ -115,7 +115,7 @@ class SudokuSound {
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   snd_pcm_t *handle;
 #  endif // HAVE_ALSA_ASOUNDLIB_H
-#endif // USE_MACOS
+#endif // __APPLE__
 
   // Common data...
   static int frequencies[9];
@@ -216,7 +216,7 @@ int SudokuSound::sample_size = 0;
 SudokuSound::SudokuSound() {
   sample_size = 0;
 
-#ifdef USE_MACOS
+#ifdef __APPLE__
   remaining = 0;
 
   UInt32 size = sizeof(device);
@@ -312,7 +312,7 @@ SudokuSound::SudokuSound() {
     }
   }
 #  endif // HAVE_ALSA_ASOUNDLIB_H
-#endif // USE_MACOS
+#endif // __APPLE__
 
   if (sample_size) {
     // Make each of the notes using a combination of sine and sawtooth waves
@@ -344,7 +344,7 @@ SudokuSound::SudokuSound() {
 
 // Cleanup the SudokuSound class
 SudokuSound::~SudokuSound() {
-#ifdef USE_MACOS
+#ifdef __APPLE__
   if (sample_size) {
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
     AudioDeviceStop(device, audio_proc_id);
@@ -373,7 +373,7 @@ SudokuSound::~SudokuSound() {
     snd_pcm_close(handle);
   }
 #  endif // HAVE_ALSA_ASOUNDLIB_H
-#endif // USE_MACOS
+#endif // __APPLE__
 
   if (sample_size) {
     for (int i = 0; i < 9; i ++) {
@@ -383,7 +383,7 @@ SudokuSound::~SudokuSound() {
 }
 
 
-#ifdef USE_MACOS
+#ifdef __APPLE__
 // Callback function for writing audio data...
 OSStatus
 SudokuSound::audio_cb(AudioDeviceID device,
@@ -413,7 +413,7 @@ SudokuSound::audio_cb(AudioDeviceID device,
 
   return noErr;
 }
-#endif // USE_MACOS
+#endif // __APPLE__
 
 #define NOTE_DURATION 50
 
@@ -421,7 +421,7 @@ SudokuSound::audio_cb(AudioDeviceID device,
 void SudokuSound::play(char note) {
   Fl::check();
 
-#ifdef USE_MACOS
+#ifdef __APPLE__
   // Point to the next note...
   data      = sample_data[note - 'A'];
   remaining = sample_size * 2;
@@ -477,7 +477,7 @@ void SudokuSound::play(char note) {
   XChangeKeyboardControl(fl_display,
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &control);
-#endif // USE_MACOS
+#endif // __APPLE__
 }
 
 
