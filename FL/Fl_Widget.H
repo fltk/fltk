@@ -79,7 +79,7 @@ struct FL_EXPORT Fl_Label {
  The destructor of this class is virtual, allowing for additional code to
  deallocate resources when the user data is deleted.
 
- \see FL_FUNCTION_CALLBACK, FL_METHOD_CALLBACK, FL_INLINE_CALLBACK
+ \see FL_FUNCTION_CALLBACK_3, FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
  \see Fl_Widget::callback(Fl_Callback*, Fl_Callback_User_Data*, bool)
  \see Fl_Widget::user_data(Fl_Callback_User_Data*, bool)
  */

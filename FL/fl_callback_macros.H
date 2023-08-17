@@ -55,10 +55,10 @@
  #include <FL/fl_callback_macros.H>
  ...
  Fl_Button *btn1 = new Fl_Button(10, 10, 100, 20, "Beep");
- FL_FUNCTION_CALLBACK(btn1, fl_beep);
+ FL_FUNCTION_CALLBACK_0(btn1, fl_beep);
  ...
  Fl_Button *btn2 = new Fl_Button(10, 40, 100, 20, "Hello");
- FL_FUNCTION_CALLBACK(btn2,
+ FL_FUNCTION_CALLBACK_5(btn2,
    fl_message,
    const char *, text, "Hello\n%d %d %d %d",
    int, a, 1,  int, b, 2,  int, c, 3,  int, d, 4
