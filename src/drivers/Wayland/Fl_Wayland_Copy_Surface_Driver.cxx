@@ -46,7 +46,7 @@ Fl_Wayland_Copy_Surface_Driver::~Fl_Wayland_Copy_Surface_Driver() {
 
 void Fl_Wayland_Copy_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
-  ((Fl_Wayland_Graphics_Driver*)driver())->set_cairo(((struct fl_wld_draw_buffer *)img_surf->offscreen())->cairo_);
+  ((Fl_Wayland_Graphics_Driver*)driver())->set_cairo((cairo_t*)img_surf->offscreen());
 }
 
 

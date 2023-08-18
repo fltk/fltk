@@ -101,7 +101,9 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
   wl_data_source_destroy(source);
   doing_dnd = false;
   if (dnd_icon) {
-    struct fl_wld_buffer * off = (struct fl_wld_buffer *)wl_surface_get_user_data(dnd_icon);
+    struct Fl_Wayland_Graphics_Driver::wld_buffer *off =
+      (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
+      wl_surface_get_user_data(dnd_icon);
     struct wld_window fake_window;
     fake_window.buffer = off;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_window);
@@ -176,7 +178,7 @@ static const struct wl_data_source_listener data_source_listener = {
 };
 
 
-static struct fl_wld_buffer *offscreen_from_text(const char *text, int scale) {
+static struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen_from_text(const char *text, int scale) {
   const char *p, *q;
   int width = 0, height, w2, ltext = strlen(text);
   fl_font(FL_HELVETICA, 10 * scale);
@@ -196,9 +198,14 @@ static struct fl_wld_buffer *offscreen_from_text(const char *text, int scale) {
   if (width > 300*scale) width = 300*scale;
   height = nl * fl_height() + 3;
   width += 6;
-  struct fl_wld_buffer *off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
+  width = ceil(width/float(scale)) * scale; // these must be multiples of scale
+  height = ceil(height/float(scale)) * scale;
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
   memset(off->draw_buffer.buffer, 0, off->draw_buffer.data_size);
-  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)&off->draw_buffer);
+  cairo_set_user_data(off->draw_buffer.cairo_,
+                      NULL,
+                      &off->draw_buffer, NULL);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)off->draw_buffer.cairo_);
   Fl_Surface_Device::push_current(surf);
   p = text;
   fl_font(FL_HELVETICA, 10 * scale);
@@ -232,13 +239,13 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
   wl_data_source_add_listener(source, &data_source_listener, (void*)0);
   wl_data_source_offer(source, wld_plain_text_clipboard);
   wl_data_source_set_actions(source, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
-  struct fl_wld_buffer * off = NULL;
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *off = NULL;
   int s = 1;
   if (use_selection) {
     // use the text as dragging icon
     Fl_Widget *current = Fl::pushed() ? Fl::pushed() : Fl::first_window();
     s = Fl_Wayland_Window_Driver::driver(current->top_window())->wld_scale();
-    off = (struct fl_wld_buffer *)offscreen_from_text(fl_selection_buffer[0], s);
+    off = (struct Fl_Wayland_Graphics_Driver::wld_buffer *)offscreen_from_text(fl_selection_buffer[0], s);
     dnd_icon = wl_compositor_create_surface(scr_driver->wl_compositor);
   } else dnd_icon = NULL;
   doing_dnd = true;

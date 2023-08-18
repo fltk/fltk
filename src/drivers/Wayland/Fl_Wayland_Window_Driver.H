@@ -25,6 +25,7 @@
 #include "../../Fl_Window_Driver.H"
 #include <FL/Fl_Plugin.H>
 #include "Fl_Wayland_Screen_Driver.H"
+#include "Fl_Wayland_Graphics_Driver.H"
 
 
 /*
@@ -137,7 +138,7 @@ struct wld_window {
   Fl_Window *fl_win;
   struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface;
-  struct fl_wld_buffer *buffer;
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer;
   struct xdg_surface *xdg_surface;
   enum Fl_Wayland_Window_Driver::kind kind;
   union { // for each value of kind

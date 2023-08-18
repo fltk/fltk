@@ -27,28 +27,24 @@
 #include <wayland-client.h> // for wl_list
 
 
-struct fl_wld_draw_buffer { // Under Wayland, Fl_Offscreen points to this structure
-  size_t data_size; // of wl_buffer and draw_buffer
-  int stride;
-  int width;
-  unsigned char *buffer;
-  cairo_t *cairo_;
-};
-
-
-struct fl_wld_buffer {
-  struct fl_wld_draw_buffer draw_buffer;
-  struct wl_buffer *wl_buffer;
-  void *data;
-  struct wl_callback *cb;
-  bool draw_buffer_needs_commit;
-  struct wl_shm_pool *shm_pool;
-  struct wl_list link; // links all buffers from the same wl_shm_pool
-};
-
-
 class Fl_Wayland_Graphics_Driver : public Fl_Cairo_Graphics_Driver {
 public:
+  struct draw_buffer {
+    size_t data_size; // of wl_buffer and buffer
+    int stride;
+    int width;
+    unsigned char *buffer;
+    cairo_t *cairo_;
+  };
+  struct wld_buffer {
+    struct draw_buffer draw_buffer;
+    struct wl_buffer *wl_buffer;
+    void *data;
+    struct wl_callback *cb;
+    bool draw_buffer_needs_commit;
+    struct wl_shm_pool *shm_pool;
+    struct wl_list link; // links all buffers from the same wl_shm_pool
+  };
   struct wld_shm_pool_data { // one record attached to each wl_shm_pool object
     char *pool_memory; // start of mmap'ed memory encapsulated by the wl_shm_pool
     int pool_size; // size of encapsulated memory
@@ -56,10 +52,11 @@ public:
   };
   static const uint32_t wld_format;
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) FL_OVERRIDE;
-  static struct fl_wld_buffer *create_shm_buffer(int width, int height);
+  static struct wld_buffer *create_shm_buffer(int width, int height);
   static void buffer_release(struct wld_window *window);
   static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
-  static void cairo_init(struct fl_wld_draw_buffer *buffer, int width, int height, int stride, cairo_format_t format);
+  static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride, cairo_format_t format);
+  static struct draw_buffer *offscreen_buffer(Fl_Offscreen);
 };
 
 #endif // FL_WAYLAND_GRAPHICS_DRIVER_H

@@ -76,7 +76,9 @@ void Fl_Wayland_Window_Driver::delete_cursor_(struct wld_window *xid, bool delet
   if (custom) {
     struct wl_cursor *wl_cursor = custom->wl_cursor;
     struct cursor_image *new_image = (struct cursor_image*)wl_cursor->images[0];
-    struct fl_wld_buffer *offscreen = (struct fl_wld_buffer *)wl_buffer_get_user_data(new_image->buffer);
+    struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen =
+      (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
+        wl_buffer_get_user_data(new_image->buffer);
     struct wld_window fake_xid;
     fake_xid.buffer = offscreen;
     Fl_Wayland_Graphics_Driver::buffer_release(&fake_xid);
@@ -575,7 +577,7 @@ int Fl_Wayland_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
                                  void (*draw_area)(void*, int,int,int,int), void* data)
 {
   struct wld_window * xid = fl_wl_xid(pWindow);
-  struct fl_wld_buffer *buffer = xid->buffer;
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer = xid->buffer;
   float s = wld_scale() * fl_graphics_driver->scale();
   if (s != 1) {
     src_x = src_x * s;
@@ -1620,7 +1622,7 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   new_image->image.delay = 0;
   new_image->offset = 0;
   //create a Wayland buffer and have it used as an image of the new cursor
-  struct fl_wld_buffer *offscreen = Fl_Wayland_Graphics_Driver::create_shm_buffer(new_image->image.width, new_image->image.height);
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen = Fl_Wayland_Graphics_Driver::create_shm_buffer(new_image->image.width, new_image->image.height);
   new_image->buffer = offscreen->wl_buffer;
   wl_buffer_set_user_data(new_image->buffer, offscreen);
   new_cursor->image_count = 1;
@@ -1628,7 +1630,11 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   new_cursor->images[0] = (struct wl_cursor_image*)new_image;
   new_cursor->name = strdup("custom cursor");
   // draw the rgb image to the cursor's drawing buffer
-  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)&offscreen->draw_buffer);
+  cairo_set_user_data(offscreen->draw_buffer.cairo_,
+                      NULL,
+                      &offscreen->draw_buffer,
+                      NULL);
+  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)offscreen->draw_buffer.cairo_);
   Fl_Surface_Device::push_current(img_surf);
   Fl_Wayland_Graphics_Driver *driver = (Fl_Wayland_Graphics_Driver*)img_surf->driver();
   cairo_scale(driver->cr(), scale, scale);

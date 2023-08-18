@@ -528,11 +528,12 @@ give \c size, the common size of both byte arrays.
 
 Section \ref wayland-buffer-factory below details how FLTK creates \c wl_buffer objects.
 
-FLTK associates to each surface a <tt>struct fl_wld_buffer</tt> (see \ref fl_wld_buffer) containing
-a pointer to the byte array of the Cairo image surface (member \c draw_buffer), information about the
+FLTK associates to each surface a
+<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> (see \ref wld_buffer) containing
+a pointer to the byte array of the Cairo image surface (member \c buffer), information about the
 Wayland buffer (members \c wl_buffer and \c data), the common size of the Cairo surface's and
 Wayland buffer's byte arrays (member \c data_size), and other information. A pointer to this
-<tt>struct fl_wld_buffer</tt> is memorized as member \c buffer of the Fl_Window's \ref wld_window.
+<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> is memorized as member \c buffer of the Fl_Window's \ref wld_window.
 All drawing operations to the Fl_Window then modify the content of the Cairo image surface.
 
 Function \c Fl_Wayland_Window_Driver::flush() is in charge of sending FLTK
@@ -550,7 +551,7 @@ mechanism to make sure the surface's \c wl_buffer is not changed until the surfa
 mapped on the display. This 3-step mechanism works as follows:
 - Fl_Wayland_Graphics_Driver::buffer_commit() first calls function \c wl_surface_frame() to
 obtain a <tt>struct wl_callback</tt> object and stores it as member \c cb of the surface's
-\ref fl_wld_buffer.
+\ref wld_buffer.
 - Then it calls \c wl_callback_add_listener() to associate this object to the FLTK-defined,
 callback function \c surface_frame_done() that Wayland calls when it's ready for another
 mapping operation.
@@ -609,23 +610,23 @@ the \c wl_shm_pool.
 - A variable named \c chunk_offset represents the offset within the pool's shared
 memory available for the buffer being constructed. It equals 0 when the pool has just been
 created and is updated as detailed below when one or more buffers have been previously created
-from the pool. A record of type  <tt>struct fl_wld_buffer</tt> is created. This record will
+from the pool. A record of type  <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> is created. This record will
 contain (member \c wl_buffer) the address of a \c wl_buffer object that's created by function
 \c wl_shm_pool_create_buffer(). This \c wl_buffer object encapsulates a section of a given
 size of the pool's shared memory beginning at offset \c chunk_offset in it.
 Quantity <tt>pool_memory + chunk_offset</tt> is therefore the address of the
 beginning of the mmap'ed memory section encapsulated by this \c wl_buffer.
-Member \c shm_pool of the newly constructed \c fl_wld_buffer object is set to the address of
+Member \c shm_pool of the newly constructed \c Fl_Wayland_Graphics_Driver::wld_buffer object is set to the address of
 the current \c wl_shm_pool object. This record is added to the head of the linked list of
 current pool's buffers by a call to \c wl_list_insert().
-At that point, a <tt>struct fl_wld_buffer</tt> record is part of the linked list of all
+At that point, a <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record is part of the linked list of all
 such records corresponding to \c wl_buffer objects created from the same \c wl_shm_pool
 object, and member \c shm_pool of this record gives the address of this \c wl_shm_pool.
-When a new <tt>struct fl_wld_buffer</tt> record is to be created,
+When a new <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record is to be created,
 \code
   struct wld_shm_pool_data *pool_data =
       (struct wld_shm_pool_data *)wl_shm_pool_get_user_data(pool);
-  struct fl_wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *record = wl_container_of(pool_data->buffers.next, record, link);
   int chunk_offset = ((char*)record->data - pool_data->pool_memory) + record->data_size;
 \endcode
 gives the offset within the current pool's mmap'ed memory available for a new \c wl_buffer.
@@ -636,8 +637,8 @@ A window's \c wl_buffer is re-used each time the window gets redrawn, and is des
 function \c Fl_Wayland_Graphics_Driver::buffer_release() when \c Fl_Window::hide() runs or
 the window is resized. Function \c Fl_Wayland_Graphics_Driver::buffer_release() destroys the
 \c wl_buffer with \c wl_buffer_destroy() and removes the corresponding
-\c fl_wld_buffer record from the linked list of buffers from the same \c wl_shm_pool.
-Since new \c fl_wld_buffer records are added at the head of the linked list, and since
+\c Fl_Wayland_Graphics_Driver::wld_buffer record from the linked list of buffers from the same \c wl_shm_pool.
+Since new \c Fl_Wayland_Graphics_Driver::wld_buffer records are added at the head of the linked list, and since
 the record at the head of this list is used to compute the offset within the pool's mmap'ed
 memory available for a new \c wl_buffer, destruction of the last created \c wl_buffer
 allows to re-use the destroyed buffer's pool's memory for a new \c wl_buffer.
@@ -1110,7 +1111,7 @@ struct wld_window {
   Fl_Window *fl_win;
   struct wl_list outputs; // linked list of displays where part or whole of window maps
   struct wl_surface *wl_surface; // the window's surface
-  struct fl_wld_buffer *buffer; // see \ref fl_wld_buffer
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *buffer; // see \ref wld_buffer
   struct xdg_surface *xdg_surface;
   enum Fl_Wayland_Window_Driver::kind kind; // DECORATED or POPUP or SUBWINDOW or UNFRAMED
   union {
@@ -1132,29 +1133,39 @@ struct wld_window {
 }
 </pre>
 
-\anchor fl_wld_buffer
-<h3>struct fl_wld_buffer and struct fl_wld_draw_buffer</h3>
-Defined in \c Fl_Wayland_Graphics_Driver.H.
-One <tt>struct fl_wld_buffer</tt> record is created
+\anchor wld_buffer
+<h3>struct wld_buffer and struct draw_buffer</h3>
+They are defined as types of class \c Fl_Wayland_Graphics_Driver in file
+\c Fl_Wayland_Graphics_Driver.H.
+One <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record is created
 by \c Fl_Wayland_Graphics_Driver::create_shm_buffer() when
 an Fl_Window is show()'n or resized,
 when a custom cursor shape is created, or when text is dragged.
 
-A <tt>struct fl_wld_draw_buffer</tt> record is created when an Fl_Image_Surface object
-is created by the \c Fl_Wayland_Image_Surface_Driver c'tor.
-One such record is also embedded inside each <tt>struct fl_wld_buffer</tt> record.
+A <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt> record
+is created when an Fl_Image_Surface object is created.
+One such record is also embedded inside each
+<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record.
 
 <pre>
-struct fl_wld_draw_buffer { // Under Wayland, Fl_Offscreen points to this structure
-  size_t data_size; // of wl_buffer and draw_buffer
+struct Fl_Wayland_Graphics_Driver::draw_buffer {
+  size_t data_size; // of wl_buffer and buffer
   int stride; // bytes per line
   int width;
   unsigned char *buffer; // address of the beginning of the Cairo image surface's byte array
   cairo_t *cairo_; // used when drawing to the Cairo image surface
 };
+</pre>
+FLTK gives offscreen buffers the platform-dependent type \c Fl_Offscreen which is
+in fact member \c cairo_ of <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt>.
+Thus, a variable with type \c Fl_Offscreen needs be casted to type \c cairo_t*.
+Member function <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer *
+Fl_Wayland_Graphics_Driver::offscreen_buffer(Fl_Offscreen);</tt>
+returns the \c draw_buffer record corresponding to an \c Fl_Offscreen value.
 
-struct fl_wld_buffer {
-  struct fl_wld_draw_buffer draw_buffer;
+<pre>
+struct Fl_Wayland_Graphics_Driver::wld_buffer {
+  struct draw_buffer draw_buffer;
   struct wl_buffer *wl_buffer; // the Wayland buffer
   void *data; // address of the beginning of the Wayland buffer's byte array
   struct wl_callback *cb; // non-NULL while Wayland buffer is being committed

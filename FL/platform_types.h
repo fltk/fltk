@@ -39,7 +39,7 @@ typedef opaque fl_uintptr_t;
  Platform-specific value representing an offscreen drawing buffer.
   \note This value can be safely cast to these types on each platform:
   \li X11: Pixmap
-  \li Wayland: struct fl_wld_draw_buffer *
+  \li Wayland: cairo_t *
   \li Windows: HBITMAP
   \li macOS:  CGContextRef
  */

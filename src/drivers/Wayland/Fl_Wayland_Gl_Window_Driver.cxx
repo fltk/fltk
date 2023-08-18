@@ -114,7 +114,8 @@ char *Fl_Wayland_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n,
   fl_draw(str, n, 0, fl_height() - fl_descent());
   // get the R channel only of the bitmap
   char *alpha_buf = new char[w*h], *r = alpha_buf;
-  struct fl_wld_draw_buffer *off = (struct fl_wld_draw_buffer *)surf->offscreen();
+  struct Fl_Wayland_Graphics_Driver::draw_buffer *off =
+    Fl_Wayland_Graphics_Driver::offscreen_buffer(surf->offscreen());
   for (int i = 0; i < h; i++) {
     uchar *q = off->buffer + i * off->stride;
     for (int j = 0; j < w; j++) {
@@ -274,7 +275,10 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
   if (!egl_window) {
     struct wld_window *win = fl_wl_xid(pWindow);
     struct wl_surface *surface = win->wl_surface;
-    egl_window = wl_egl_window_create(surface, pWindow->pixel_w(), pWindow->pixel_h());
+    int W = pWindow->pixel_w();
+    int H = pWindow->pixel_h();
+    int scale = Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale();
+    egl_window = wl_egl_window_create(surface, (W/scale)*scale, (H/scale)*scale);
     if (egl_window == EGL_NO_SURFACE) {
       Fl::fatal("Can't create egl window with wl_egl_window_create()\n");
     } else {
@@ -283,8 +287,7 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
     Fl_Wayland_Gl_Choice *g = (Fl_Wayland_Gl_Choice*)this->g();
     egl_surface = eglCreateWindowSurface(egl_display, g->egl_conf, egl_window, NULL);
 //fprintf(stderr, "Created egl surface=%p at scale=%d\n", egl_surface, win->scale);
-    wl_surface_set_buffer_scale(surface,
-                                Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale());
+    wl_surface_set_buffer_scale(surface, scale);
     // Tested apps: shape, glpuzzle, cube, fractals, gl_overlay, fullscreen, unittests,
     //   OpenGL3-glut-test, OpenGL3test.
     // Tested wayland compositors: mutter, kde-plasma, weston, sway on FreeBSD.
@@ -383,8 +386,8 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   if (!egl_window) return;
   float f = Fl::screen_scale(pWindow->screen_num());
   int s = Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale();
-  W = (W * s) * f;
-  H = (H * s) * f;
+  W = int(W * f) * s; // W, H must be multiples of int s
+  H = int(H * f) * s;
   int W2, H2;
   wl_egl_window_get_attached_size(egl_window, &W2, &H2);
   if (W2 != W || H2 != H) {

@@ -1507,11 +1507,12 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
                                                            bool ignore, bool *p_ignore) {
   struct wld_window* xid = win ? fl_wl_xid(win) : NULL;
   if (win && (!xid || !xid->buffer)) return NULL;
-  struct fl_wld_draw_buffer *buffer;
+  struct Fl_Wayland_Graphics_Driver::draw_buffer *buffer;
   if (win) buffer = &xid->buffer->draw_buffer;
   else {
     Fl_Image_Surface_Driver *dr = (Fl_Image_Surface_Driver*)Fl_Surface_Device::surface();
-    buffer = (struct fl_wld_draw_buffer *)dr->image_surface()->offscreen();
+    buffer = Fl_Wayland_Graphics_Driver::offscreen_buffer(
+                                              dr->image_surface()->offscreen());
   }
   float s = win ?
     Fl_Wayland_Window_Driver::driver(win)->wld_scale() * scale(win->screen_num()) :
@@ -1545,7 +1546,7 @@ Fl_RGB_Image *Fl_Wayland_Screen_Driver::read_win_rectangle(int X, int Y, int w, 
 
 void Fl_Wayland_Screen_Driver::offscreen_size(Fl_Offscreen off_, int &width, int &height)
 {
-  struct fl_wld_draw_buffer *off = (struct fl_wld_draw_buffer *)off_;
+  struct Fl_Wayland_Graphics_Driver::draw_buffer *off = Fl_Wayland_Graphics_Driver::offscreen_buffer(off_);
   width = off->width;
   height = off->data_size / off->stride;
 }
