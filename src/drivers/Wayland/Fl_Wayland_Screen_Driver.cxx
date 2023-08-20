@@ -538,8 +538,7 @@ static void remove_int_vector(Fl_Int_Vector& v, int val) {
 
 
 static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
-                           uint32_t *p_keycode, xkb_keysym_t *p_sym,
-                           struct xkb_keymap *xkb_keymap) {
+                           uint32_t *p_keycode, xkb_keysym_t *p_sym) {
   uint32_t keycode = key + 8;
   xkb_keysym_t sym = xkb_state_key_get_one_sym(xkb_state, keycode);
   if (sym == 0xfe20) sym = FL_Tab;
@@ -548,10 +547,9 @@ static int process_wld_key(struct xkb_state *xkb_state, uint32_t key,
   // Special processing for number keys == keysym in ['0'-'9'] :
   // compute sym2 = keysym for same key with opposite shift state
   int depressed = xkb_state_mod_name_is_active(xkb_state, XKB_MOD_NAME_SHIFT, XKB_STATE_MODS_DEPRESSED) ? 0 : 1;
-  struct xkb_state *xkb_state2 = xkb_state_new(xkb_keymap);
-  xkb_state_update_mask(xkb_state2, depressed, 0, 0, 0, 0, 0);
-  xkb_keysym_t sym2 = xkb_state_key_get_one_sym(xkb_state2, keycode);
-  xkb_state_unref(xkb_state2);
+  xkb_state_update_mask(xkb_state, depressed, 0, 0, 0, 0, 0);
+  xkb_keysym_t sym2 = xkb_state_key_get_one_sym(xkb_state, keycode);
+  xkb_state_update_mask(xkb_state, 1-depressed, 0, 0, 0, 0, 0);
   // use that other keysym if it matches a number key
   if (sym2 >= '0' && sym2 <= '9') {
     for_key_vector = sym2;
@@ -573,7 +571,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
   for (uint32_t *p = (uint32_t *)(keys)->data;
       (const char *) p < ((const char *) (keys)->data + (keys)->size);
       (p)++) {
-    int for_key_vector = process_wld_key(seat->xkb_state, *p, NULL, NULL, seat->xkb_keymap);
+    int for_key_vector = process_wld_key(seat->xkb_state, *p, NULL, NULL);
 //fprintf(stderr, "%d ", for_key_vector);
     if (search_int_vector(key_vector, for_key_vector) < 0) key_vector.push_back(for_key_vector);
   }
@@ -713,7 +711,7 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   static char buf[128];
   uint32_t keycode;
   xkb_keysym_t sym;
-  int for_key_vector = process_wld_key(seat->xkb_state, key, &keycode, &sym, seat->xkb_keymap);
+  int for_key_vector = process_wld_key(seat->xkb_state, key, &keycode, &sym);
 /*xkb_keysym_get_name(sym, buf, sizeof(buf));
 const char *action = (state == WL_KEYBOARD_KEY_STATE_PRESSED ? "press" : "release");
 fprintf(stderr, "key %s: sym: %-12s(%d) code:%u fl_win=%p, ", action, buf, sym, keycode, Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface));*/
