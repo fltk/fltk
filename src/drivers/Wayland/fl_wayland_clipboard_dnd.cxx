@@ -23,6 +23,7 @@
 #  include <FL/Fl_Image_Surface.H>
 #  include "Fl_Wayland_Screen_Driver.H"
 #  include "Fl_Wayland_Window_Driver.H"
+#  include "Fl_Wayland_Image_Surface_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
 #  include "../../flstring.h" // includes <string.h>
@@ -200,12 +201,9 @@ static struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen_from_text(const 
   width += 6;
   width = ceil(width/float(scale)) * scale; // these must be multiples of scale
   height = ceil(height/float(scale)) * scale;
-  struct Fl_Wayland_Graphics_Driver::wld_buffer *off = Fl_Wayland_Graphics_Driver::create_shm_buffer(width, height);
-  memset(off->draw_buffer.buffer, 0, off->draw_buffer.data_size);
-  cairo_set_user_data(off->draw_buffer.cairo_,
-                      NULL,
-                      &off->draw_buffer, NULL);
-  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 0, (Fl_Offscreen)off->draw_buffer.cairo_);
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *off;
+  Fl_Image_Surface *surf = Fl_Wayland_Graphics_Driver::custom_offscreen(
+      width, height, &off);
   Fl_Surface_Device::push_current(surf);
   p = text;
   fl_font(FL_HELVETICA, 10 * scale);

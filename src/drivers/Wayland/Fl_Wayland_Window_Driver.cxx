@@ -18,6 +18,7 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
+#include "Fl_Wayland_Image_Surface_Driver.H"
 #include <FL/filename.H>
 #include <wayland-cursor.h>
 #include "../../../libdecor/src/libdecor.h"
@@ -1622,7 +1623,9 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   new_image->image.delay = 0;
   new_image->offset = 0;
   //create a Wayland buffer and have it used as an image of the new cursor
-  struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen = Fl_Wayland_Graphics_Driver::create_shm_buffer(new_image->image.width, new_image->image.height);
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen;
+  Fl_Image_Surface *img_surf = Fl_Wayland_Graphics_Driver::custom_offscreen(
+      new_image->image.width, new_image->image.height, &offscreen);
   new_image->buffer = offscreen->wl_buffer;
   wl_buffer_set_user_data(new_image->buffer, offscreen);
   new_cursor->image_count = 1;
@@ -1630,15 +1633,9 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
   new_cursor->images[0] = (struct wl_cursor_image*)new_image;
   new_cursor->name = strdup("custom cursor");
   // draw the rgb image to the cursor's drawing buffer
-  cairo_set_user_data(offscreen->draw_buffer.cairo_,
-                      NULL,
-                      &offscreen->draw_buffer,
-                      NULL);
-  Fl_Image_Surface *img_surf = new Fl_Image_Surface(new_image->image.width, new_image->image.height, 0, (Fl_Offscreen)offscreen->draw_buffer.cairo_);
   Fl_Surface_Device::push_current(img_surf);
   Fl_Wayland_Graphics_Driver *driver = (Fl_Wayland_Graphics_Driver*)img_surf->driver();
   cairo_scale(driver->cr(), scale, scale);
-  memset(offscreen->draw_buffer.buffer, 0, offscreen->draw_buffer.data_size);
   ((Fl_RGB_Image*)rgb)->draw(0, 0);
   Fl_Surface_Device::pop_current();
   delete img_surf;

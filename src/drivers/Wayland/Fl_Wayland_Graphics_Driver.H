@@ -57,6 +57,8 @@ public:
   static void buffer_commit(struct wld_window *window, struct flCairoRegion *r = NULL);
   static void cairo_init(struct draw_buffer *buffer, int width, int height, int stride, cairo_format_t format);
   static struct draw_buffer *offscreen_buffer(Fl_Offscreen);
+  static const cairo_user_data_key_t key;
+  static Fl_Image_Surface *custom_offscreen(int w, int h, struct wld_buffer **buffer);
 };
 
 #endif // FL_WAYLAND_GRAPHICS_DRIVER_H

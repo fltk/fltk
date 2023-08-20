@@ -17,6 +17,7 @@
 #include "Fl_Wayland_Graphics_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
+#include <FL/Fl_Image_Surface.H>
 #include <sys/mman.h>
 #include <unistd.h> // for close()
 #include <errno.h>
@@ -224,8 +225,21 @@ void Fl_Wayland_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_O
   cairo_restore(cairo_);
 }
 
+const cairo_user_data_key_t Fl_Wayland_Graphics_Driver::key = {};
 
-struct Fl_Wayland_Graphics_Driver::draw_buffer *Fl_Wayland_Graphics_Driver::offscreen_buffer(
+struct
+Fl_Wayland_Graphics_Driver::draw_buffer *Fl_Wayland_Graphics_Driver::offscreen_buffer(
                                         Fl_Offscreen offscreen) {
-  return (struct draw_buffer*)cairo_get_user_data((cairo_t*)offscreen, NULL);
+  return (struct draw_buffer*)cairo_get_user_data((cairo_t*)offscreen, &key);
+}
+
+
+Fl_Image_Surface *Fl_Wayland_Graphics_Driver::custom_offscreen(int w, int h,
+                    struct Fl_Wayland_Graphics_Driver::wld_buffer **p_off) {
+  struct Fl_Wayland_Graphics_Driver::wld_buffer *off =
+    Fl_Wayland_Graphics_Driver::create_shm_buffer(w, h);
+  *p_off = off;
+  memset(off->draw_buffer.buffer, 0, off->draw_buffer.data_size);
+  cairo_set_user_data(off->draw_buffer.cairo_, &key, &off->draw_buffer, NULL);
+  return new Fl_Image_Surface(w, h, 0, (Fl_Offscreen)off->draw_buffer.cairo_);
 }

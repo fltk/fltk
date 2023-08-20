@@ -38,8 +38,8 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h, i
     Fl_Wayland_Graphics_Driver::cairo_init(off_, w, h,
               cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, w), CAIRO_FORMAT_RGB24);
     offscreen = (Fl_Offscreen)off_->cairo_;
-    cairo_set_user_data(off_->cairo_, NULL, off_, NULL);
-  } else offscreen = off;
+    cairo_set_user_data(off_->cairo_, &Fl_Wayland_Graphics_Driver::key, off_, NULL);
+  }
   driver(new Fl_Wayland_Graphics_Driver());
   if (d != 1 && high_res) driver()->scale(d);
 }
