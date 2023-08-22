@@ -1676,7 +1676,9 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
-  if (!pWindow->parent()) X = Y = 0; // toplevel windows must have origin at 0,0
+  // toplevel, non-popup windows must have origin at 0,0
+  if (!pWindow->parent() &&
+      !(pWindow->menu_window() || pWindow->tooltip_window())) X = Y = 0;
   int is_a_move = (X != x() || Y != y());
   bool true_rescale = Fl_Window::is_a_rescale();
   if (fl_win && fl_win->buffer) {
