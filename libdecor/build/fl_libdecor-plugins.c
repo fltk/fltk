@@ -53,8 +53,6 @@ struct buffer { // identical in libdecor-cairo.c and libdecor-gtk.c
 
 #else // !USE_SYSTEM_LIBDECOR
 
-#  include "xdg-decoration-client-protocol.h"
-
 const struct libdecor_plugin_description *fl_libdecor_plugin_description = NULL;
 
 #  ifdef HAVE_GTK
