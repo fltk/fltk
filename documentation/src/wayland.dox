@@ -892,7 +892,7 @@ released. Calls to functions \c xkb_state_update_mask() and \c xkb_state_mod_nam
 to set \c Fl::e_state adequately.
 
 Function \c wl_keyboard_repeat_info() does not run, for now, because this would require version 4 of
-the <tt>wl_keyboard</tt> object which is at version 3 in all tested Wayland compositors.
+the <tt>wl_keyboard</tt> object which is at version 2 in all tested Wayland compositors.
 
 
 \section wayland-text-input Support of text input methods
@@ -1012,12 +1012,6 @@ Each plugin puts its own string in member \c description of a record of type
 \c libdecor-plugin.h, accessing the symbol defined by the plugin to store a pointer to a value of this
 type is complicated for a reason and solved by a method detailed in a comment before function
 \c get_libdecor_plugin_description().
-
-Function \c get_libdecor_plugin_description() also determines whether the compositor uses CSD or SSD
-mode. This information is stored
-in member \c decoration_mode of <tt>struct libdecor_frame_private</tt> which is not part of
-the public libdecor API. For this reason, FLTK copies to \c fl_libdecor-plugins.c the definition of
-this type present in \c libdecor.c.
 
 Operation 2) above is done by FLTK-defined function \c fl_libdecor_titlebar_buffer() from file
 \c fl_libdecor-plugins.c. This function calls \c get_libdecor_plugin_description() seen above
