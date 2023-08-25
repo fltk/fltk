@@ -42,6 +42,12 @@
 #include "xdg-shell-client-protocol.h"
 #include "xdg-decoration-client-protocol.h"
 
+#ifdef HAVE_XDG_SHELL_V6
+#define XDG_WM_BASE_VER 6
+#else
+#define XDG_WM_BASE_VER 2
+#endif
+
 struct libdecor {
 	int ref_count;
 
@@ -390,9 +396,11 @@ parse_states(struct wl_array *states)
 		case XDG_TOPLEVEL_STATE_TILED_BOTTOM:
 			pending_state |= LIBDECOR_WINDOW_STATE_TILED_BOTTOM;
 			break;
+#ifdef HAVE_XDG_SHELL_V6
 		case XDG_TOPLEVEL_STATE_SUSPENDED:
 			pending_state |= LIBDECOR_WINDOW_STATE_SUSPENDED;
 			break;
+#endif
 		default:
 			break;
 		}
@@ -434,6 +442,7 @@ xdg_toplevel_close(void *user_data,
 	frame_priv->iface->close(frame, frame_priv->user_data);
 }
 
+#ifdef HAVE_XDG_SHELL_V6
 static void
 xdg_toplevel_configure_bounds(void *data,
 			      struct xdg_toplevel *xdg_toplevel,
@@ -448,12 +457,15 @@ xdg_toplevel_wm_capabilities(void *data,
 			     struct wl_array *capabilities)
 {
 }
+#endif
 
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
 	xdg_toplevel_configure,
 	xdg_toplevel_close,
+#ifdef HAVE_XDG_SHELL_V6
 	xdg_toplevel_configure_bounds,
 	xdg_toplevel_wm_capabilities,
+#endif
 };
 
 static void
@@ -592,6 +604,11 @@ libdecor_frame_unref(struct libdecor_frame *frame)
 	if (frame_priv->ref_count == 0) {
 		struct libdecor *context = frame_priv->context;
 		struct libdecor_plugin *plugin = context->plugin;
+
+		if (context->decoration_manager && frame_priv->toplevel_decoration) {
+        		zxdg_toplevel_decoration_v1_destroy(frame_priv->toplevel_decoration);
+        		frame_priv->toplevel_decoration = NULL;
+        	}
 
 		wl_list_remove(&frame->link);
 
@@ -1258,7 +1275,7 @@ init_xdg_wm_base(struct libdecor *context,
 	context->xdg_wm_base = wl_registry_bind(context->wl_registry,
 						id,
 						&xdg_wm_base_interface,
-						MIN(version,6));
+						MIN(version,XDG_WM_BASE_VER));
 	xdg_wm_base_add_listener(context->xdg_wm_base,
 				 &xdg_wm_base_listener,
 				 context);
