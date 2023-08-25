@@ -42,7 +42,15 @@ of pointers to FLTK-defined callback functions associated to a Wayland-defined o
 Wayland calls these functions when defined events occur (more at \ref wayland-listeners
 below).
 
-Wayland differs noticeably from X11 in that the position of a window in the display is
+Wayland differs noticeably from X11 in that rendering is left to clients: Wayland provides
+no drawing API. Instead, Wayland provides objects of type <tt>struct wl_buffer</tt> which
+bundle a memory array of pixel values shared between the client and the compositor.
+The client app is expected to draw to that memory buffer with whatever means it chooses,
+and to instruct the compositor to map those pixels to the display when the drawing
+is complete. The Wayland platform of FLTK draws with the Cairo library to \c Fl_Window's
+and \c Fl_Image_Surface's, and with OpenGL to \c Fl_Gl_Window's.
+
+Wayland differs also from X11 in that the position of a window in the display is
 completely hidden to the client app. This prevents function \c Fl_Window::position() from having
 any effect on a top-level window. Wayland also prevents a client app from knowing whether
 a window is minimized: \c Fl_Window::show() has no effect on a minimized window.
