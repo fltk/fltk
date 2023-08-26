@@ -127,7 +127,7 @@ private:
   //    Holds all state information for parsing esc sequences,
   //    so sequences can span multiple block read(2) operations, etc.
   //
-  class Fl_Escape_Seq {
+  class FL_EXPORT Fl_Escape_Seq {
   public:
     static const int maxbuf   = 80;
     static const int maxvals  = 10;
