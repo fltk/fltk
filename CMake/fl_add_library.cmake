@@ -50,7 +50,7 @@ macro (FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
   if (${LIBTYPE} STREQUAL "STATIC")
     set_target_properties(${TARGET_NAME}
       PROPERTIES
-      OUTPUT_NAME ${LIBNAME}
+      OUTPUT_NAME         ${LIBNAME}
       OUTPUT_NAME_DEBUG   ${OUTPUT_NAME_DEBUG}
       OUTPUT_NAME_RELEASE ${OUTPUT_NAME_RELEASE}
     )
@@ -61,9 +61,9 @@ macro (FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
   if (${LIBTYPE} STREQUAL "SHARED")
     set_target_properties(${TARGET_NAME}
       PROPERTIES
-      VERSION ${FLTK_VERSION}
-      SOVERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
-      OUTPUT_NAME ${LIBNAME}
+      VERSION             ${FLTK_VERSION}
+      SOVERSION           ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
+      OUTPUT_NAME         ${LIBNAME}
       OUTPUT_NAME_DEBUG   ${OUTPUT_NAME_DEBUG}
       OUTPUT_NAME_RELEASE ${OUTPUT_NAME_RELEASE}
     )
@@ -83,11 +83,13 @@ macro (FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
   set (DEBUG_ONAME 0)
 
   if (DEBUG_ONAME)
+    get_target_property (XX_NAME          ${TARGET_NAME} NAME)
     get_target_property (XX_ONAME         ${TARGET_NAME} OUTPUT_NAME)
     get_target_property (XX_ONAME_DEBUG   ${TARGET_NAME} OUTPUT_NAME_DEBUG)
     get_target_property (XX_ONAME_RELEASE ${TARGET_NAME} OUTPUT_NAME_RELEASE)
 
     fl_debug_var (TARGET_NAME)
+    fl_debug_var (XX_NAME)
     fl_debug_var (XX_ONAME)
     fl_debug_var (XX_ONAME_DEBUG)
     fl_debug_var (XX_ONAME_RELEASE)
