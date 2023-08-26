@@ -64,6 +64,7 @@ FL_EXPORT Fl_String fl_filename_setext(const Fl_String &filename, const Fl_Strin
 FL_EXPORT Fl_String fl_filename_expand(const Fl_String &from);
 FL_EXPORT Fl_String fl_filename_absolute(const Fl_String &from);
 FL_EXPORT Fl_String fl_filename_relative(const Fl_String &from);
+FL_EXPORT Fl_String fl_getcwd();
 
 #  endif
 

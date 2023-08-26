@@ -148,7 +148,7 @@ int modflag_c = 0;
 
 /// Application work directory, stored here when temporarily changing to the source code directory.
 /// \see goto_source_dir()
-static char* app_work_dir = NULL;
+static Fl_String app_work_dir;
 
 /// Used as a counter to set the .fl project dir as the current directory.
 /// \see enter_project_dir(), leave_project_dir()
@@ -368,22 +368,16 @@ void enter_project_dir() {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() no filename set\n");
     return;
   }
-  // get the absolute path to the current project
-  char project_path[FL_PATH_MAX]; project_path[0] = 0;
-  fl_filename_absolute(project_path, FL_PATH_MAX, filename);
-  // cut the name part and leave only the path to our project
-  char *p = (char*)fl_filename_name(project_path);
-  if (p) *p = 0;
   // store the current working directory for later
-  if (!app_work_dir) app_work_dir = (char*)malloc(FL_PATH_MAX);
-  fl_getcwd(app_work_dir, FL_PATH_MAX);
-  // now set the current directory to the path of our .fl file
-  if (fl_chdir(project_path)==-1) {
+  app_work_dir = fl_getcwd();
+  // set the current directory to the path of our .fl file
+  Fl_String project_path = fl_filename_path(fl_filename_absolute(Fl_String(filename)));
+  if (fl_chdir(project_path.c_str()) == -1) {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
-            project_path, strerror(errno));
+            project_path.c_str(), strerror(errno));
     return;
   }
-  // fprintf(stderr, "chdir to %s\n", fl_getcwd(0, FL_PATH_MAX));
+  //fprintf(stderr, "chdir from %s to %s\n", app_work_dir.c_str(), fl_getcwd().c_str());
 }
 
 /**
@@ -399,9 +393,9 @@ void leave_project_dir() {
   // still nested, stay in the project directory
   if (in_project_dir > 0) return;
   // no longer nested, return to the original, usually the application working directory
-  if (fl_chdir(app_work_dir) < 0) {
+  if (fl_chdir(app_work_dir.c_str()) < 0) {
     fprintf(stderr, "** Fluid internal error: leave_project_dir() can't chdir back to %s : %s\n",
-            app_work_dir, strerror(errno));
+            app_work_dir.c_str(), strerror(errno));
   }
 }
 

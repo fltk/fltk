@@ -325,3 +325,13 @@ Fl_String fl_filename_relative(const Fl_String &from) {
   fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
   return Fl_String(buffer);
 }
+
+/** Cross-platform function to get the current working directory
+ as a UTF-8 encoded value in an Fl_String.
+ \return the CWD encoded as UTF-8
+ */
+Fl_String fl_getcwd() {
+  char buffer[FL_PATH_MAX];
+  fl_getcwd(buffer, FL_PATH_MAX);
+  return Fl_String(buffer);
+}
