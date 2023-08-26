@@ -21,6 +21,8 @@
 #include <FL/Fl_Simple_Terminal.H>
 #include <FL/Fl_String.H>
 #include <FL/fl_callback_macros.H>
+#include <FL/filename.H>
+#include <FL/fl_utf8.h>
 
 /* Test Fl_String constructor and assignment. */
 TEST(Fl_String, Assignment) {
@@ -196,6 +198,29 @@ TEST(Fl_String, Non-Member Functions) {
 }
 
 /* Test additions to Fl_Preferences. */
+TEST(Fl_String, fl_filename_...) {
+  const Fl_String ref = "/test/me.txt";
+  Fl_String name = fl_filename_name(ref);
+  EXPECT_STREQ(name.c_str(), "me.txt");
+  name = fl_filename_name(Fl_String("/test/"));
+  EXPECT_STREQ(name.c_str(), "");
+  Fl_String path = fl_filename_path(ref);
+  EXPECT_STREQ(path.c_str(), "/test/");
+  Fl_String ext = fl_filename_ext(ref);
+  EXPECT_STREQ(ext.c_str(), ".txt");
+  ext = fl_filename_setext(ref, ".rtf");
+  EXPECT_STREQ(ext.c_str(), "/test/me.rtf");
+  fl_putenv("FL_UNITTEST=unit/test");
+  name = fl_filename_expand(Fl_String("abc/$FL_UNITTEST/xyz"));
+  EXPECT_STREQ(name.c_str(), "abc/unit/test/xyz");
+  Fl_String abs = fl_filename_absolute(Fl_String("./abc/def.txt"));
+  Fl_String rel = fl_filename_relative(abs);
+  EXPECT_STREQ(rel.c_str(), "abc/def.txt");
+  EXPECT_STREQ(ref.c_str(), "/test/me.txt");
+  return true;
+}
+
+/* Test additions to Fl_Preferences. */
 TEST(Fl_Preferences, Strings) {
   {
     Fl_Preferences prefs(Fl_Preferences::USER_L, "fltk.org", "unittests");
@@ -318,9 +343,9 @@ public:
 
   // Run one single test and repeat calling this until all tests are done
   static void timer_cb(void*) {
-    // Run a test every few miliseconds to visualize the progress
+    // Run a test every few milliseconds to visualize the progress
     if (Ut_Suite::run_next_test())
-      Fl::repeat_timeout(0.2, timer_cb);
+      Fl::repeat_timeout(0.15, timer_cb);
   }
 
   // Showing this tab for the first time will trigger the tests

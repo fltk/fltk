@@ -22,6 +22,7 @@
 
 #include <FL/filename.H>
 #include <FL/Fl.H>
+#include <FL/Fl_String.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
 #include <stdlib.h>
@@ -236,3 +237,91 @@ Fl_System_Driver::filename_relative(char *to,   // O - Relative filename
  \}
  \endcond
  */
+
+
+/**
+ Return a new string that contains the name part of the filename.
+ \param[in] filename file path and name
+ \return the name part of a filename
+ \see fl_filename_name(const char *filename)
+ */
+Fl_String fl_filename_name(const Fl_String &filename) {
+  return Fl_String(fl_filename_name(filename.c_str()));
+}
+
+/**
+ Return a new string that contains the path part of the filename.
+ \param[in] filename file path and name
+ \return the path part of a filename without the name
+ \see fl_filename_name(const char *filename)
+ */
+Fl_String fl_filename_path(const Fl_String &filename) {
+  const char *base = filename.c_str();
+  const char *name = fl_filename_name(base);
+  if (name) {
+    return Fl_String(base, (int)(name-base));
+  } else {
+    return Fl_String();
+  }
+}
+
+/**
+ Return a new string that contains the filename extension.
+ \param[in] filename file path and name
+ \return the filename extension including the prepending '.', or an empty
+    string if the filename has no extension
+ \see fl_filename_ext(const char *buf)
+ */
+Fl_String fl_filename_ext(const Fl_String &filename) {
+  return Fl_String(fl_filename_ext(filename.c_str()));
+}
+
+/**
+ Return a copy of the old filename with the new extension.
+ \param[in] filename file path and name
+ \param[in] new_extension new filename extension, starts with a '.'
+ \return the new filename
+ \see fl_filename_setext(char *to, int tolen, const char *ext)
+ */
+Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_extension) {
+  char buffer[FL_PATH_MAX];
+  fl_strlcpy(buffer, filename.c_str(), FL_PATH_MAX);
+  fl_filename_setext(buffer, FL_PATH_MAX, new_extension.c_str());
+  return Fl_String(buffer);
+}
+
+/**
+ Expands a filename containing shell variables and tilde (~).
+ \param[in] filename file path and name
+ \return the new filename
+ \see fl_filename_expand(char *to, int tolen, const char *from)
+*/
+Fl_String fl_filename_expand(const Fl_String &from) {
+  char buffer[FL_PATH_MAX];
+  fl_filename_expand(buffer, FL_PATH_MAX, from.c_str());
+  return Fl_String(buffer);
+}
+
+/**
+ Makes a filename absolute from a filename relative to the current working directory.
+ \param[in] filename file path and name
+ \return the new filename
+ \see fl_filename_absolute(char *to, int tolen, const char *from)
+ */
+Fl_String fl_filename_absolute(const Fl_String &from) {
+  char buffer[FL_PATH_MAX];
+  fl_filename_absolute(buffer, FL_PATH_MAX, from.c_str());
+  return Fl_String(buffer);
+}
+
+/**
+ Makes a filename relative to the current working directory.
+ \param[in] filename file path and name
+ \return the new filename
+ \see fl_filename_relative(char *to, int tolen, const char *from)
+ */
+Fl_String fl_filename_relative(const Fl_String &from) {
+  char buffer[FL_PATH_MAX];
+  fl_filename_relative(buffer, FL_PATH_MAX, from.c_str());
+  return Fl_String(buffer);
+}
