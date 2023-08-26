@@ -263,11 +263,11 @@ const char *Fl_Darwin_System_Driver::filename_name( const char *name )
 // original pointer.
 //
 // Most X11 implementations seem to default to Latin-1 as a code since it
-// is a superset of ISO 8859-1, the original wetsern codepage on X11.
+// is a superset of ISO 8859-1, the original Western codepage on X11.
 //
 // Apple's OS X however renders text in MacRoman for western settings. The
 // lookup tables below will convert all common character codes and replace
-// unknown characters with an upsidedown question mark.
+// unknown characters with an upside-down question mark.
 
 // This table converts Windows-1252/Latin 1 into MacRoman encoding
 static uchar latin2roman[128] = {

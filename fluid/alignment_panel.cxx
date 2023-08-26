@@ -484,16 +484,17 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     fnfc.filter("FLUID Layouts\t*.fll\n");
     if (g_layout_list.filename_) {
       char *fn = fl_strdup(g_layout_list.filename_);
-      char *name = (char*)fl_filename_name(g_layout_list.filename_);
+      char *name = (char*)fl_filename_name(fn);
       if (name > fn) {
         name[-1] = 0;
         fnfc.directory(fn);
         fnfc.preset_file(name);
-        ::free(fn);
       } else if (name) {
         fnfc.preset_file(name);
-        ::free(fn);
+      } else {
+        fnfc.preset_file("");
       }
+      ::free(fn);
     }
     if (fnfc.show() != 0) return;
     const char *new_filename = fnfc.filename();
