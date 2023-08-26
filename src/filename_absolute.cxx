@@ -292,8 +292,8 @@ Fl_String fl_filename_setext(const Fl_String &filename, const Fl_String &new_ext
 
 /**
  Expands a filename containing shell variables and tilde (~).
- \param[in] filename file path and name
- \return the new filename
+ \param[in] from file path and name
+ \return the new, expanded filename
  \see fl_filename_expand(char *to, int tolen, const char *from)
 */
 Fl_String fl_filename_expand(const Fl_String &from) {
@@ -304,8 +304,8 @@ Fl_String fl_filename_expand(const Fl_String &from) {
 
 /**
  Makes a filename absolute from a filename relative to the current working directory.
- \param[in] filename file path and name
- \return the new filename
+ \param[in] from relative filename
+ \return the new, absolute filename
  \see fl_filename_absolute(char *to, int tolen, const char *from)
  */
 Fl_String fl_filename_absolute(const Fl_String &from) {
@@ -316,8 +316,8 @@ Fl_String fl_filename_absolute(const Fl_String &from) {
 
 /**
  Makes a filename relative to the current working directory.
- \param[in] filename file path and name
- \return the new filename
+ \param[in] from file path and name
+ \return the new, relative filename
  \see fl_filename_relative(char *to, int tolen, const char *from)
  */
 Fl_String fl_filename_relative(const Fl_String &from) {
