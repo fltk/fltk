@@ -572,6 +572,7 @@ checks that \c cb is NULL before calling \c Fl_Wayland_Graphics_Driver::buffer_c
 If it's not NULL, FLTK calls function \c wl_callback_destroy() which instructs the compositor
 to abort the mapping operation and to get ready for processing of a new byte buffer.
 
+<h3>Progressive window drawing</h3>
 FLTK supports progressive drawing when an app calls function Fl_Window::make_current()
 at any time and then calls the FLTK drawing API. This is made possible
 in function \c Fl_Wayland_Window_Driver::make_current() with
@@ -583,15 +584,39 @@ in function \c Fl_Wayland_Window_Driver::make_current() with
   }
 \endcode
 Thus, \c buffer_commit() runs only when \c cb is NULL. If an app rapidly performs calls
-to Fl_Window::make_current() and to drawing functions, FLTK will copy \c draw_buffer to the Wayland
-buffer and instruct Wayland to map it to the display when \c cb is NULL
+to \c Fl_Window::make_current() and to drawing functions, FLTK will copy \c draw_buffer to
+the Wayland buffer and instruct Wayland to map it to the display when \c cb is NULL
 which means that the compositor is ready to start performing a mapping operation.
-In contrast, FLTK will only modify \c draw_buffer when \c cb is not NULL, letting the compositor
-complete its ongoing mapping task.
-For example, FLTK's mandelbrot test app set to fullscreen can be seen to progressively fill its window from
+This occurs when the progressive drawing operation begins. Later, \c cb is generally found
+non NULL when \c Fl_Wayland_Window_Driver::make_current() runs because the compositor
+is busy processing the previous Wayland buffer. When the compositor has completed
+this processing, the client app runs \c surface_frame_done() :
+\code
+static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
+  struct wld_window *window = (struct wld_window *)data;
+  wl_callback_destroy(cb);
+  if (window->buffer) {
+    window->buffer->cb = NULL;
+    if (window->buffer->draw_buffer_needs_commit) {
+      Fl_Wayland_Graphics_Driver::buffer_commit(window);
+    }
+  }
+}
+\endcode
+which, provided member variable \c draw_buffer_needs_commit is true, calls
+\c Fl_Wayland_Graphics_Driver::buffer_commit(). This makes the compositor maps the
+Wayland buffer in its new, more advanced, state. Here is where member variable
+\c draw_buffer_needs_commit is useful : it informs Wayland that the graphics
+buffer has changed and needs being committed. This variable is turned \c true
+every time a graphics operation changes the buffer content and turned \c false
+when the buffer gets committed.
+
+An example of progressive drawing is given by FLTK's mandelbrot test app.
+When set to fullscreen, this app can be seen to progressively fill its window from
 top to bottom by blocks of lines, each block appearing when the compositor is ready to map
 a new buffer. When the compositor is not ready, the app does not block but continues
-computing and drawing in memory but not on display more lines of the desired Mandelbrot graph.
+computing and drawing in memory but not on display more lines of the desired Mandelbrot
+graph.
 
 
 \section wayland-buffer-factory Buffer factories
