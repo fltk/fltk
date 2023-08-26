@@ -587,8 +587,7 @@ Fd_Layout_List::Fd_Layout_List()
   list_capacity_(2),
   list_is_static_(true),
   current_suite_(0),
-  current_preset_(0),
-  filename_(NULL)
+  current_preset_(0)
 {
   fl_add_symbol("fd_beaker", fd_beaker, 1);
   fl_add_symbol("fd_user", fd_user, 1);
@@ -611,7 +610,6 @@ Fd_Layout_List::~Fd_Layout_List() {
     }
     ::free(list_);
   }
-  if (filename_) ::free(filename_);
 }
 
 /**
@@ -651,9 +649,9 @@ void Fd_Layout_List::update_menu_labels() {
 /**
  Load all user layouts from the FLUID user preferences.
  */
-int Fd_Layout_List::load(const char *filename) {
+int Fd_Layout_List::load(const Fl_String &filename) {
   remove_all(FD_STORE_FILE);
-  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
   read(prefs, FD_STORE_FILE);
   return 0;
 }
@@ -661,10 +659,9 @@ int Fd_Layout_List::load(const char *filename) {
 /**
  Save all user layouts to the FLUID user preferences.
  */
-int Fd_Layout_List::save(const char *filename) {
+int Fd_Layout_List::save(const Fl_String &filename) {
   assert(this);
-  assert(filename);
-  Fl_Preferences prefs(filename, "layout.fluid.fltk.org", NULL);
+  Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", NULL);
   prefs.clear();
   write(prefs, FD_STORE_FILE);
   return 0;

@@ -482,26 +482,13 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
     fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
     fnfc.filter("FLUID Layouts\t*.fll\n");
-    if (g_layout_list.filename_) {
-      char *fn = fl_strdup(g_layout_list.filename_);
-      char *name = (char*)fl_filename_name(fn);
-      if (name > fn) {
-        name[-1] = 0;
-        fnfc.directory(fn);
-        fnfc.preset_file(name);
-      } else if (name) {
-        fnfc.preset_file(name);
-      } else {
-        fnfc.preset_file("");
-      }
-      ::free(fn);
-    }
+    Fl_String filename = g_layout_list.filename_;
+    fnfc.directory(fl_filename_path(filename).c_str());
+    fnfc.preset_file(fl_filename_name(filename).c_str());
     if (fnfc.show() != 0) return;
     const char *new_filename = fnfc.filename();
     if (!new_filename) return;
-    if (g_layout_list.filename_)
-      ::free(g_layout_list.filename_);
-    g_layout_list.filename_ = fl_strdup(new_filename);
+    g_layout_list.filename_ = new_filename;
     g_layout_list.save(new_filename);
 }
 

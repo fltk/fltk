@@ -1040,9 +1040,7 @@ int write_code_files() {
   char cname[FL_PATH_MAX+1];
   char hname[FL_PATH_MAX+1];
   g_project.basename = fl_filename_name(filename);
-  g_project.basename.resize(FL_PATH_MAX);
-  fl_filename_setext(g_project.basename.data(), FL_PATH_MAX, "");
-  g_project.basename.resize(g_project.basename.strlen());
+  g_project.basename = fl_filename_setext(g_project.basename, "");
   if (g_project.code_file_name[0] == '.' && strchr(g_project.code_file_name.c_str(), '/') == NULL) {
     strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
     fl_filename_setext(cname, FL_PATH_MAX, g_project.code_file_name.c_str());
@@ -1962,9 +1960,7 @@ void update_sourceview_cb(Fl_Button*, void*)
     sv_strings->scroll(top, 0);
   } else if (sv_source->visible_r() || sv_header->visible_r()) {
     g_project.basename = fl_filename_name(sv_source_filename);
-    g_project.basename.resize(FL_PATH_MAX);
-    fl_filename_setext(g_project.basename.data(), FL_PATH_MAX, "");
-    g_project.basename.resize(g_project.basename.strlen());
+    g_project.basename = fl_filename_setext(g_project.basename, "");
     Fl_String code_file_name_bak = g_project.code_file_name;
     g_project.code_file_name = sv_source_filename;
     Fl_String header_file_name_bak = g_project.header_file_name;

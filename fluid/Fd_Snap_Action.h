@@ -19,6 +19,8 @@
 
 #include "Fl_Window_Type.h"
 
+#include <FL/Fl_String.H>
+
 struct Fl_Menu_Item;
 
 extern Fl_Menu_Item main_layout_submenu_[];
@@ -126,7 +128,7 @@ public:
   bool list_is_static_;
   int current_suite_;
   int current_preset_;
-  char *filename_;
+  Fl_String filename_;
 public:
   Fd_Layout_List();
   ~Fd_Layout_List();
@@ -142,8 +144,8 @@ public:
   void rename(const char *name);
   void capacity(int);
 
-  int load(const char *filename);
-  int save(const char *filename);
+  int load(const Fl_String &filename);
+  int save(const Fl_String &filename);
   void write(Fl_Preferences &prefs, int storage);
   void read(Fl_Preferences &prefs, int storage);
   void write(Fd_Project_Writer*);
