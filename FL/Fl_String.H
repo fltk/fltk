@@ -1,7 +1,7 @@
 //
 // Basic Fl_String header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
   a drop-in if we ever decide to allow templates and the std library.
 
   Fl_String always maintains a trailing \e nul byte, but can also contain
-  \e nul bytes insde the string if the constructor
+  \e nul bytes inside the string if the constructor
   Fl_String(const char *str, int size) is used.
 
   Assignment and copy constructors \b copy the string value such that the
@@ -55,7 +55,7 @@ class FL_EXPORT Fl_String {
 
 private:
   /*
-   FLTK does no small string optimisation.
+   FLTK does no small string optimization.
    If the string is empty and capacity is not set, buffer_ will be NULL.
    */
   char *buffer_;

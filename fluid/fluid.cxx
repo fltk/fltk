@@ -1424,9 +1424,9 @@ extern void layout_suite_marker(Fl_Widget *, void *user_data);
  \c New_Menu creates new widgets and is explained in detail in another location.
 
  \see New_Menu
- \todo This menu need some major modernisation. Menus are too long and their
+ \todo This menu need some major modernization. Menus are too long and their
     sorting is not always obvious.
- \todo Shortcuts are all over the palce (Alt, Ctrl, Command, Shift-Ctrl,
+ \todo Shortcuts are all over the place (Alt, Ctrl, Command, Shift-Ctrl,
     function keys), and there should be a help page listing all shortcuts.
  */
 Fl_Menu_Item Main_Menu[] = {
@@ -2072,7 +2072,7 @@ static void sigint(SIGARG) {
  user interfaces and write the C++ files to manage them,
 
  Fluid can run form the command line in batch mode to convert .fl design files
- into C++ source and header files. In batch mode, no diplay is needed,
+ into C++ source and header files. In batch mode, no display is needed,
  particularly no X11 connection will be attempted on Linux/Unix.
 
  \param[in] argc number of arguments in the list
@@ -2086,7 +2086,7 @@ static void sigint(SIGARG) {
 int main(int argc,char **argv) {
   int i = 1;
 
-  setlocale(LC_ALL, "");      // enable multilanguage errors in file chooser
+  setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
 
   if (   (Fl::args(argc,argv,i,arg) == 0)   // unsupported argument found

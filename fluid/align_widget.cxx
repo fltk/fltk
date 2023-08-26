@@ -1,7 +1,7 @@
 //
 // Alignment code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,8 +24,8 @@
 #include <FL/Fl_Window.H>
 
 /**
- the first behaviour always uses the first selected widget as a reference
- the second behaviour uses the largest widget (most extreme positions) as
+ the first behavior always uses the first selected widget as a reference
+ the second behavior uses the largest widget (most extreme positions) as
  a reference.
  */
 #define BREAK_ON_FIRST break
@@ -236,7 +236,7 @@ void align_widget_cb(Fl_Widget*, long how)
           if (w->window()) w->window()->redraw();
         }
     break;
-  //---- space evently
+  //---- space evenly
   case 20: // space evenly across
     left = max; right = min; wdt = 0, n = 0;
     for (o = Fl_Type::first; o; o = o->next)

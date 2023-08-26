@@ -2,7 +2,7 @@
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 // Syntax highlighting rewritten by erco@seriss.com 09/15/20.
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -118,7 +118,7 @@ void CodeEditor::style_unfinished_cb(int, void*) {
  \param[in] pos insert position in text
  \param[in] nInserted number of bytes inserted
  \param[in] nDeleted number of bytes deleted
- \param[in] cbArg pointer back to the code editr
+ \param[in] cbArg pointer back to the code editor
  */
 void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
                               int /*nRestyled*/, const char * /*deletedText*/,
@@ -248,13 +248,13 @@ CodeEditor::~CodeEditor() {
 }
 
 /**
- Attempt to make the fluid code editor widget honour textsize setting.
+ Attempt to make the fluid code editor widget honor textsize setting.
  This works by updating the fontsizes in the style table.
  \param[in] s the new general height of the text font
  */
 void CodeEditor::textsize(Fl_Fontsize s) {
   Fl_Text_Editor::textsize(s); // call base class method
-  // now attempt to update our styletable to honour the new size...
+  // now attempt to update our styletable to honor the new size...
   int entries = sizeof(styletable) / sizeof(styletable[0]);
   for(int iter = 0; iter < entries; iter++) {
     styletable[iter].size = s;

@@ -40,7 +40,7 @@
 /*
  "character size" is the size of a UTF-8 character in bytes
  "character width" is the width of a Unicode character in pixels
- "column" was orginally defined as a character offset from the left margin.
+ "column" was originally defined as a character offset from the left margin.
  It was identical to the byte offset. In UTF-8, we have neither a byte offset
  nor truly fixed width fonts (*). Column could be a pixel value multiplied with
  an average character width (which is a bearable approximation).
@@ -192,7 +192,7 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
  All text in Fl_Text_Buffer must be encoded in UTF-8. All indices used in the
  function calls must be aligned to the start of a UTF-8 sequence. All indices
  and pointers returned will be aligned. All functions that return a single
- character will return that in an unsiged int in UCS-4 encoding.
+ character will return that in an unsigned int in UCS-4 encoding.
 
  The Fl_Text_Buffer class is used by the Fl_Text_Display and Fl_Text_Editor
  to manage complex text data and is based upon the excellent NEdit text
@@ -331,7 +331,7 @@ public:
   int undo(int *cp=0);
 
   /**
-   Check if undo is anabled and if the last action can be undone.
+   Check if undo is enabled and if the last action can be undone.
    \see canUndo()
    */
   bool can_undo() const;
@@ -342,7 +342,7 @@ public:
   int redo(int *cp=0);
 
   /**
-   Check if undo is anabled and if the last undo action can be redone.
+   Check if undo is enabled and if the last undo action can be redone.
    \see canUndo()
    */
   bool can_redo() const;

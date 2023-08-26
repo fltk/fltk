@@ -29,7 +29,7 @@ class Fl_String;
  \brief Fl_Preferences store user settings between application starts.
 
  Fl_Preferences are similar to the Registry on Windows and Preferences on MacOS,
- providing a simple method to store customisable user settings between app
+ providing a simple method to store customizable user settings between app
  launches, for instance the previous window position or a history of previously
  used documents.
 

@@ -1,7 +1,7 @@
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -94,7 +94,7 @@ protected:
   int printable_rect(int *w, int *h) FL_OVERRIDE;
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
-   of class Fl_Copy_Surface_Driver for the plaform.
+   of class Fl_Copy_Surface_Driver for the platform.
    */
   static Fl_Copy_Surface_Driver *newCopySurfaceDriver(int w, int h);
 };

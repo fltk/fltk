@@ -1,7 +1,7 @@
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -135,12 +135,12 @@ public:
   static int can_do(const int *m) {return can_do(0, m);}
   /**  Returns non-zero if the hardware supports the current OpenGL mode. */
   int can_do() {return can_do(mode_,alist);}
-  /** Returns the current OpenGL capabilites of the window.
+  /** Returns the current OpenGL capabilities of the window.
    Don't use this if capabilities were set through Fl_Gl_Window::mode(const int *a).
    */
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
   /**
-   Set or change the OpenGL capabilites of the window.  The value can be
+   Set or change the OpenGL capabilities of the window.  The value can be
    any of the following OR'd together:
 
    - \c FL_RGB - RGB color (not indexed)
@@ -180,7 +180,7 @@ public:
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
    */
   int mode(int a) {return mode(a,0);}
-  /** Set the OpenGL capabilites of the window using platform-specific data.
+  /** Set the OpenGL capabilities of the window using platform-specific data.
    \param a zero-ending array of platform-specific attributes and attribute values
    <p><b>Unix/Linux platform</b>: attributes are GLX attributes adequate for the 3rd argument of
    the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>, defined by including <GL/glx.h>).

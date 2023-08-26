@@ -415,7 +415,7 @@ enum Fl_Event { // events
 /**@{*/
 /** These constants determine when a callback is performed.
 
-    Fl_When is a bit field. Some values are merely shorcuts for common bit
+    Fl_When is a bit field. Some values are merely shortcuts for common bit
     combinations. New flags may be added in the future, so it's important to
     mask the required bit when reading via \p when().
 
@@ -1059,9 +1059,9 @@ const Fl_Font FL_SCREEN_BOLD            = 14;   ///< Default monospaced bold scr
 const Fl_Font FL_ZAPF_DINGBATS          = 15;   ///< Zapf-dingbats font
 
 const Fl_Font FL_FREE_FONT              = 16;   ///< first one to allocate
-const Fl_Font FL_BOLD                   = 1;    ///< add this to helvetica, courier, or times
-const Fl_Font FL_ITALIC                 = 2;    ///< add this to helvetica, courier, or times
-const Fl_Font FL_BOLD_ITALIC            = 3;    ///< add this to helvetica, courier, or times
+const Fl_Font FL_BOLD                   = 1;    ///< add this to Helvetica, Courier, or Times
+const Fl_Font FL_ITALIC                 = 2;    ///< add this to Helvetica, Courier, or Times
+const Fl_Font FL_BOLD_ITALIC            = 3;    ///< add this to Helvetica, Courier, or Times
 
 /**@}*/
 

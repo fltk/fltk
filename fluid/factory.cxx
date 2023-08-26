@@ -658,7 +658,7 @@ static Fl_Menu_Item input_type_menu[] = {
 
 /**
  \brief Manage simple text input widgets.
- The managed class is derived from Fl_Input_, but for simpleicity, deriving from
+ The managed class is derived from Fl_Input_, but for simplicity, deriving from
  Fl_Widget_Type seems sufficient here.
  */
 class Fl_Input_Type : public Fl_Widget_Type
@@ -773,7 +773,7 @@ static Fl_Output_Type Fl_Output_type;
 
 /**
  \brief Manage the Text Display as a base class.
- Fl_Text_Dissplay is actually derived from Fl_Group, but for FLUID, deriving
+ Fl_Text_Display is actually derived from Fl_Group, but for FLUID, deriving
  the type from Widget is better.
  */
 class Fl_Text_Display_Type : public Fl_Widget_Type
@@ -1125,7 +1125,7 @@ static Fl_Type *known_types[] = {
 /**
  Create and add a new widget to the widget tree.
 
- Fluid will try to set a default postion for widgets to the user's expectation.
+ Fluid will try to set a default position for widgets to the user's expectation.
  Using the context menu will put new widgets at the position of the mouse click.
  Pulldown menu and bin actions will generate widgets no too far from previously
  added widgets in the same group.

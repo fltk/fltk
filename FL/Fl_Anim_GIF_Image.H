@@ -1,7 +1,7 @@
 //
 // Fl_Anim_GIF_Image class header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2016-2022 by Christian Grabner <wcout@gmx.net>.
+// Copyright 2016-2023 by Christian Grabner <wcout@gmx.net>.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,7 +23,7 @@ class Fl_Widget;
 
 #include <FL/Fl_GIF_Image.H>
 
-// Load and display animater GIF images
+// Load and display animated GIF images
 class FL_EXPORT Fl_Anim_GIF_Image : public Fl_GIF_Image {
 
   class FrameInfo; // internal helper class
@@ -62,7 +62,7 @@ public:
      by storing frame data not as canvas-sized images but use the
      sizes defined in the GIF file.
      The drawbacks are higher cpu usage during playback and maybe
-     minor artefacts when resized.
+     minor artifacts when resized.
      */
     OPTIMIZE_MEMORY = 8,
     /**

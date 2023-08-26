@@ -1162,7 +1162,7 @@ public:
     that the normal one is first, followed by bold, italic, and bold
     italic.
 
-    The only argument to this function is somehat obsolete since FLTK and most
+    The only argument to this function is somewhat obsolete since FLTK and most
     underlying operating systems move to support Unicode. For completeness,
     following is the original documentation and a few updates:
 

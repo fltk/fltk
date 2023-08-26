@@ -40,7 +40,7 @@ FL_EXPORT extern char fl_draw_shortcut;
 // Colors:
 /**
   Set the color for all subsequent drawing operations.
-  For colormapped displays, a color cell will be allocated out of
+  For color-mapped displays, a color cell will be allocated out of
   \p fl_colormap the first time you use a color. If the colormap fills up
   then a least-squares algorithm is used to find the closest color.
   If no valid graphical context (fl_gc) is available,
@@ -871,7 +871,7 @@ inline void fl_text_extents(const char *t, int n, int &dx, int &dy, int &w, int 
 }
 
 // font encoding:
-// Note: doxygen comments here to avoid duplication for os-sepecific cases
+// Note: doxygen comments here to avoid duplication for os-specific cases
 /**
   Convert text from Windows/X11 latin1 character set to local encoding.
   \param[in] t character string (latin1 encoding)

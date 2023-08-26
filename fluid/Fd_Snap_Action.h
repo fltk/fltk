@@ -94,7 +94,7 @@ class Fd_Layout_Suite {
 public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
-  Fd_Layout_Preset *layout[3];  ///< presetes for application, dialog, and toolbox windows
+  Fd_Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
   int storage_;                 ///< storage location (see FD_STORE_INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
@@ -113,7 +113,7 @@ public:
  \brief Manage all layout suites that are available to the user.
 
  FLUID has two built-in suites. More suites can be cloned or added and stored
- as a user preference, as part of an .fl project file, or in a seperate file
+ as a user preference, as part of an .fl project file, or in a separate file
  for import/export and sharing.
  */
 class Fd_Layout_List {

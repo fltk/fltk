@@ -1,7 +1,7 @@
 //
 // PNG image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,7 @@
 /**
   The Fl_PNG_Image class supports loading, caching,
   and drawing of Portable Network Graphics (PNG) image files. The
-  class loads colormapped and full-color images and handles color-
+  class loads color-mapped and full-color images and handles color-
   and alpha-based transparency.
 */
 class FL_EXPORT Fl_PNG_Image : public Fl_RGB_Image {

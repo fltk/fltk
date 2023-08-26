@@ -356,7 +356,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 
 /* Treating UNDO for text widget.
 
- Goal: we want to continiously update the UI while the user is typing text
+ Goal: we want to continuously update the UI while the user is typing text
  (changing the label, in this case). Source View does deferred updates, and
  the widget browser and widget panel update on every keystroke. At the same
  time, we want to limit undo actions to few and logical units.
@@ -895,7 +895,7 @@ void wc_relative_cb(Fl_Choice *i, void *v) {
 ////////////////////////////////////////////////////////////////
 
 // turn number to string or string to number for saving to file:
-// does not work for hierarchial menus!
+// does not work for hierarchical menus!
 
 const char *item_name(Fl_Menu_Item* m, int i) {
   if (m) {

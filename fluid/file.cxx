@@ -210,7 +210,7 @@ int Fd_Project_Reader::read_quoted() {      // read whatever character is after 
  \param[in] paste if set, merge into existing design, else replace design
  \param[in] strategy add nodes after current or as last child
  \param[in] skip_options this is set if the options were already found in
- a previous call, and there is no need to waste time searchingg for them.
+ a previous call, and there is no need to waste time searching for them.
  */
 void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, char skip_options) {
   Fl_Type::current = p;

@@ -45,7 +45,7 @@ static int is_dir(const char *dirname) {
 /** \class ExternalCodeEditor
  Support for an external C++ code editor for Fluid Code block.
 
- This class can launch and quit a user defined program for editiing
+ This class can launch and quit a user defined program for editing
  code outside of Fluid.
  It observes changes in the external file and updates the Fluid
  widget to stay synchronized.
@@ -561,7 +561,7 @@ void ExternalCodeEditor::alert_pipe_cb(FL_SOCKET s, void* d) {
     return;
   const char* cmd = self->command_line_.c_str();
   if (cmd && *cmd) {
-    if (cmd[0] == '/') { // is this an absoluet filename?
+    if (cmd[0] == '/') { // is this an absolute filename?
       fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"",
                fl_filename_name(cmd), strerror(self->last_error_), cmd);
     } else {

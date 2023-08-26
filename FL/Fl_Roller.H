@@ -1,7 +1,7 @@
 //
 // Roller header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@
 
   The roller can be controlled by clicking and dragging the mouse, by the
   corresponding arrow keys when the roller has the keyboard focus, or by the
-  mousewheels when the mouse pointer is positioned over the roller widget.
+  mouse wheels when the mouse pointer is positioned over the roller widget.
 
   \image html Fl_Roller.png
   \image latex Fl_Roller.png "Fl_Roller" width=4cm

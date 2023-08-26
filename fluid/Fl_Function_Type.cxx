@@ -1,7 +1,7 @@
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,7 +62,7 @@ static char buffer[128]; // for error messages
 
 /**
  Check a quoted string contains a character.
- This is used to find a matchin " or ' in a string.
+ This is used to find a matching " or ' in a string.
  \param[inout] c start searching here, return where we found \c type
  \param[in] type find this character
  \return NULL if the character was found, else a pointer to a static string
@@ -112,7 +112,7 @@ const char *_c_check(const char * & c, int type) {
       break;
 //    case '#':
 //      // treat cpp directives as a comment:
-//      // Matt: a '#' character can appear as a concatenator when defining macros
+//      // Matt: a '#' character can appear as a concatenation when defining macros
 //      // Matt: so instead we just silently ignore the '#'
 //      while (*c != '\n' && *c) c++;
 //      break;
@@ -163,7 +163,7 @@ const char *c_check(const char *c, int type) {
   return _c_check(c,type);
 }
 
-// ---- Fl_Function_Type implemntation
+// ---- Fl_Function_Type implementation
 
 /** \class Fl_Function_Type
  Manage a C++ function node in the Fluid design.
@@ -609,7 +609,7 @@ void Fl_Code_Type::open() {
     const char *cmd = G_external_editor_command;
     const char *code = name();
     if ( editor_.open_editor(cmd, code) == 0 )
-      return;   // return if editor opened ok, fallthru to built-in if not
+      return;   // return if editor opened ok, fall thru to built-in if not
   }
   // Use built-in code editor..
   if (!code_panel) make_code_panel();
@@ -710,7 +710,7 @@ int Fl_Code_Type::handle_editor_changes() {
   return 0;
 }
 
-// ---- Fl_CodeBlock_Type implemntation
+// ---- Fl_CodeBlock_Type implementation
 
 /** \class Fl_CodeBlock_Type
  Manage two blocks of C++ code enclosing its children.
@@ -1578,7 +1578,7 @@ void Fl_Comment_Type::read_property(Fd_Project_Reader &f, const char *c) {
 /**
  Load available preset comments.
  Fluid comes with GPL and LGPL preset for comments. Users can
- add their own presets which are stored per user in a seperate
+ add their own presets which are stored per user in a separate
  preferences database.
  */
 static void load_comments_preset(Fl_Preferences &menu) {

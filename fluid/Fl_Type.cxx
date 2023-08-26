@@ -1,7 +1,7 @@
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -300,7 +300,7 @@ void fixvisible(Fl_Type *p) {
   }
 }
 
-// ---- implemenation of Fl_Type
+// ---- implementation of Fl_Type
 
 /** \var Fl_Type *Fl_Type::parent
  Link to the parent node in the tree structure.
@@ -349,7 +349,7 @@ Fl_Type::Fl_Type() {
 
  The destructor removes itself from the doubly linked list. This is dangerous,
  because the node does not know if it is part of the widget tree, or if it is
- in a seperate tree. We try to take care of that as well as possible.
+ in a separate tree. We try to take care of that as well as possible.
  */
 Fl_Type::~Fl_Type() {
   // warning: destructor only works for widgets that have been add()ed.

@@ -7,7 +7,7 @@
 // This file also contains code to make Fl_Menu_Button, Fl_Menu_Bar,
 // etc widgets.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -105,7 +105,7 @@ void Fl_Input_Choice_Type::build_menu() {
     }
     // Menus are already built during the .fl file reading process, so if the
     // end of a menu list is not read yet, the end markers (label==NULL) will
-    // not be set, and deleting dependants will randomly free memory.
+    // not be set, and deleting dependents will randomly free memory.
     // Clearing the array should avoid that.
     memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:
@@ -556,7 +556,7 @@ void Fl_Menu_Base_Type::build_menu() {
     }
     // Menus are already built during the .fl file reading process, so if the
     // end of a menu list is not read yet, the end markers (label==NULL) will
-    // not be set, and deleting dependants will randomly free memory.
+    // not be set, and deleting dependents will randomly free memory.
     // Clearing the array should avoid that.
     memset( (void*)w->menu(), 0, menusize * sizeof(Fl_Menu_Item) );
     // fill them all in:

@@ -1,7 +1,7 @@
 //
 // Fl_Rect header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
 /**
   Rectangle with standard FLTK coordinates (X, Y, W, H).
 
-  This may be used internally, for overloaded widget contructors and other
+  This may be used internally, for overloaded widget constructors and other
   overloaded methods like fl_measure(), fl_text_extents(), fl_rect(),
   fl_rectf(), and maybe more.
 */

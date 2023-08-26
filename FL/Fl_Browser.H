@@ -1,7 +1,7 @@
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -230,7 +230,7 @@ public:
     \li <tt>'\@c'</tt> Center the line horizontally
     \li <tt>'\@r'</tt> Right-justify the text
     \li <tt>'\@N'</tt> Use fl_inactive_color() to draw the text
-    \li <tt>'\@B0', '\@B1', ... '\@B255'</tt> Fill the backgound with
+    \li <tt>'\@B0', '\@B1', ... '\@B255'</tt> Fill the background with
       fl_color(n)
     \li <tt>'\@C0', '\@C1', ... '\@C255'</tt> Use fl_color(n) to draw the text
     \li <tt>'\@F0', '\@F1', ...</tt> Use fl_font(n) to draw the text

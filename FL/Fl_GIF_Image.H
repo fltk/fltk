@@ -1,7 +1,7 @@
 //
 // GIF image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -45,7 +45,7 @@ public:
 
 protected:
 
-  // Proteced constructors needed for animated GIF support through Fl_Anim_GIF_Image.
+  // Protected constructors needed for animated GIF support through Fl_Anim_GIF_Image.
   Fl_GIF_Image(const char* filename, bool anim);
   Fl_GIF_Image(const char* imagename, const unsigned char *data, const size_t length, bool anim);
   // Protected default constructor needed for Fl_Anim_GIF_Image.

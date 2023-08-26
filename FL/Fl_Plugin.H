@@ -1,7 +1,7 @@
 //
 // A Plugin system for FLTK, implemented in Fl_Preferences.cxx.
 //
-// Copyright 2002-2010 by Matthias Melcher.
+// Copyright 2002-2023 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@
  linking C++ classes at run-time, or optionally linking modules at compile
  time without the need to change the main application.
 
- Fl_Plugin_Manager uses static initialisation to create the plugin interface
+ Fl_Plugin_Manager uses static initialization to create the plugin interface
  early during startup. Plugins are stored in a temporary database, organized
  in classes.
 
