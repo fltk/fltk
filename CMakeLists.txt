@@ -2,7 +2,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Originally written by Michael Surette
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,11 +16,17 @@
 #
 
 #######################################################################
-# set CMake minimum version (must be before `project()`
+# Set CMake minimum version first: must be before `project()`
 #######################################################################
 
-# Minimum CMake version required by FLTK 1.4 (06/2020, work in progress)
-cmake_minimum_required (VERSION 3.2.3 FATAL_ERROR)
+# Minimum CMake version required by FLTK 1.4
+
+# Note 1: Linking against OBJECT libraries (fluid, test) requires
+#         at least CMake 3.12.0
+# Note 2: Used in fluid since 05/2023,
+#         used for Windows (MSVC) shared lib builds much earlier
+
+cmake_minimum_required (VERSION 3.12.0 FATAL_ERROR) # 05/2023
 
 #######################################################################
 
@@ -83,7 +89,7 @@ set (debug_build 0) # set to 1 to show debug info
 
 if (debug_build)
   message ("")
-  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set debug_build to 0 to disable the following info:")
+  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set 'debug_build' to 0 to disable the following info:")
   fl_debug_var (WIN32)
   fl_debug_var (MINGW)
   fl_debug_var (CYGWIN)
