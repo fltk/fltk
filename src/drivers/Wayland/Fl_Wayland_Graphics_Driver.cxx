@@ -86,24 +86,23 @@ struct Fl_Wayland_Graphics_Driver::wld_buffer *
 
 
 // used to support both normal and progressive drawing
-static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time);
-
-static const struct wl_callback_listener surface_frame_listener = {
-  .done = surface_frame_done,
-};
-
 static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time) {
   struct wld_window *window = (struct wld_window *)data;
-//fprintf(stderr,"surface_frame_done:  destroy cb=%p draw_buffer_needs_commit=%d\n", cb, window->buffer->draw_buffer_needs_commit);
+//fprintf(stderr,"surface_frame_done: draw_buffer_needs_commit=%d\n", window->buffer->draw_buffer_needs_commit);
   wl_callback_destroy(cb);
   if (window->buffer) { // fix for issue #712
     window->buffer->cb = NULL;
     if (window->buffer->draw_buffer_needs_commit) {
-      //fprintf(stderr,"surface_frame_done: new cb=%p \n", window->buffer->cb);
+      //fprintf(stderr,"surface_frame_done calls buffer_commit\n");
       Fl_Wayland_Graphics_Driver::buffer_commit(window);
     }
   }
 }
+
+
+static const struct wl_callback_listener surface_frame_listener = {
+  .done = surface_frame_done,
+};
 
 
 // copy pixels in region r from the Cairo surface to the Wayland buffer
