@@ -889,9 +889,9 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
 }
 
 
-static void delayed_close(void *data) {
-  Fl::remove_check(delayed_close, data);
-  Fl::handle(FL_CLOSE, (Fl_Window*)data);
+static void delayed_close(Fl_Window *win) {
+  Fl::remove_check((Fl_Timeout_Handler)delayed_close, win);
+  Fl::handle(FL_CLOSE, win);
 }
 
 
@@ -899,16 +899,14 @@ static void handle_close(struct libdecor_frame *frame, void *user_data)
 { // runs when the close button of a window titlebar is pushed
   // or after "Quit" of the application menu
   // or after the Kill command of Sway
-  struct wld_window* wl_win = (struct wld_window*)user_data;
-  int X, Y = 0;
-  if (wl_win->kind == Fl_Wayland_Window_Driver::DECORATED) {
-    libdecor_frame_translate_coordinate(wl_win->frame, 0, 0, &X, &Y);
-  }
-  if (Y == 0) Fl::handle(FL_CLOSE, wl_win->fl_win);
+  Fl_Window* win = ((struct wld_window*)user_data)->fl_win;
+  int X, Y;
+  libdecor_frame_translate_coordinate(frame, 0, 0, &X, &Y);
+  if (Y == 0) Fl::handle(FL_CLOSE, win);
   else {
     // the close window attempt is delayed because libdecor
     // uses the frame after return from this function
-    Fl::add_check(delayed_close, wl_win->fl_win);
+    Fl::add_check((Fl_Timeout_Handler)delayed_close, win);
   }
 }
 
