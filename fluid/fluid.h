@@ -80,7 +80,6 @@ extern int compile_strings;        // fluic -cs
 extern int batch_mode;
 
 extern int pasteoffset;
-extern int pasteoffset;
 
 // ---- project settings
 
@@ -129,15 +128,6 @@ extern void save_cb(Fl_Widget *, void *v);
 extern void save_template_cb(Fl_Widget *, void *);
 extern void revert_cb(Fl_Widget *,void *);
 extern void exit_cb(Fl_Widget *,void *);
-
-#ifdef __APPLE__
-extern void apple_open_cb(const char *c);
-#endif // __APPLE__
-
-extern void open_cb(Fl_Widget *, void *v);
-extern void open_history_cb(Fl_Widget *, void *v);
-extern void new_cb(Fl_Widget *, void *v);
-extern void new_from_template_cb(Fl_Widget *w, void *v);
 
 extern int write_code_files();
 extern void write_strings_cb(Fl_Widget *, void *);

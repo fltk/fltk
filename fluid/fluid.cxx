@@ -319,6 +319,34 @@ void Fluid_Project::update_settings_dialog() {
   }
 }
 
+/**
+ Give the user the opportunity to save a project before clearing it.
+
+ If the project has unsaved changes, this function pops up a dialog, that
+ allows the user to save the project, continue without saving the project,
+ or to cancel the operation.
+
+ If the user chooses to save, and no filename was set, a file dialog allows
+ the user to pick a name and location, or to cancel the operation.
+
+ \return false if the user aborted the operation and the calling function
+ should abort as well
+ */
+bool confirm_project_clear() {
+  if (modflag == 0) return true;
+  switch (fl_choice("This project has unsaved changes. Do you want to save\n"
+                    "the project file before proceeding?",
+                    "Cancel", "Save", "Don't Save"))
+  {
+    case 0 : /* Cancel */
+      return false;
+    case 1 : /* Save */
+      save_cb(NULL, NULL);
+      if (modflag) return false;  // user canceled the "Save As" dialog
+  }
+  return true;
+}
+
 // ---- Sourceview definition
 
 void update_sourceview_position();
@@ -333,7 +361,7 @@ extern Fl_Window *the_panel;
 void flush_text_widgets() {
   if (Fl::focus() && (Fl::focus()->top_window() == the_panel)) {
     Fl_Widget *old_focus = Fl::focus();
-    Fl::focus(NULL);
+    Fl::focus(NULL); // trigger callback of the widget that is losing focus
     Fl::focus(old_focus);
   }
 }
@@ -516,19 +544,10 @@ void save_cb(Fl_Widget *, void *v) {
     if (fnfc.show() != 0) return;
     c = fnfc.filename();
     if (!fl_access(c, 0)) {
-      const char *basename;
-      if ((basename = strrchr(c, '/')) != NULL)
-        basename ++;
-#if defined(_WIN32)
-      if ((basename = strrchr(c, '\\')) != NULL)
-        basename ++;
-#endif // _WIN32
-      else
-        basename = c;
-
+      Fl_String basename = fl_filename_name(Fl_String(c));
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
-                    "Replace", NULL, basename) == 0) return;
+                    "Replace", NULL, basename.c_str()) == 0) return;
     }
 
     if (v != (void *)2) set_filename(c);
@@ -685,20 +704,12 @@ void revert_cb(Fl_Widget *,void *) {
 void exit_cb(Fl_Widget *,void *) {
   flush_text_widgets();
 
+  // verify user intention
+  if (confirm_project_clear() == false)
+    return;
+
   // Stop any external editor update timers
   ExternalCodeEditor::stop_update_timer();
-
-  if (modflag)
-    switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before exiting?", "Cancel",
-                      "Save", "Don't Save"))
-    {
-      case 0 : /* Cancel */
-          return;
-      case 1 : /* Save */
-          save_cb(NULL, NULL);
-          if (modflag) return;  // Didn't save!
-    }
 
   save_position(main_window,"main_window_pos");
 
@@ -737,186 +748,42 @@ void exit_cb(Fl_Widget *,void *) {
   exit(0);
 }
 
-#ifdef __APPLE__
-
 /**
- Handle app launch with an associated filename (macOS only).
- Should there be a modified design already, Fluid asks for user confirmation.
- \param[in] c the filename of the new design
+ Clear the current project and create a new, empty one.
+
+ If the current project was modified, FLUID will give the user the opportunity
+ to save the old project first.
+
+ \return false if the operation was canceled
  */
-void apple_open_cb(const char *c) {
-  if (modflag) {
-    switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Don't Save",
-                      "Save", "Cancel"))
-    {
-      case 0 : /* Cancel */
-          return;
-      case 1 : /* Save */
-          save_cb(NULL, NULL);
-          if (modflag) return;  // Didn't save!
-    }
-  }
-  const char *oldfilename;
-  oldfilename = filename;
-  filename    = NULL;
-  set_filename(c);
-  undo_suspend();
-  if (!read_file(c, 0)) {
-    undo_resume();
-    fl_message("Can't read %s: %s", c, strerror(errno));
-    free((void *)filename);
-    filename = oldfilename;
-    if (main_window) main_window->label(filename);
-    return;
-  }
+bool new_project() {
+  // verify user intention
+  if (confirm_project_clear() == false)
+    return false;
 
-  // Loaded a file; free the old filename...
-  set_modflag(0, 0);
-  undo_resume();
-  undo_clear();
-  if (oldfilename) free((void *)oldfilename);
-}
-#endif // __APPLE__
-
-/**
- Open a file chooser and load a new file.
- If the current design was modified, Fluid will ask for user confirmation.
- \param[in] v if v is set, Fluid will not ask for confirmation.
- */
-void open_cb(Fl_Widget *, void *v) {
-  if (!v && modflag) {
-    switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Cancel",
-                      "Save", "Don't Save"))
-    {
-      case 0 : /* Cancel */
-          return;
-      case 1 : /* Save */
-          save_cb(NULL, NULL);
-          if (modflag) return;  // Didn't save!
-    }
-  }
-  const char *c;
-  const char *oldfilename;
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Open:");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fnfc.filter("FLUID Files\t*.f[ld]\n");
-  if (fnfc.show() != 0) return;
-  c = fnfc.filename();
-  oldfilename = filename;
-  filename    = NULL;
-  set_filename(c);
-  if (v != 0) undo_checkpoint();
-  undo_suspend();
-  if (!read_file(c, v!=0)) {
-    undo_resume();
-    widget_browser->rebuild();
-    g_project.update_settings_dialog();
-    fl_message("Can't read %s: %s", c, strerror(errno));
-    free((void *)filename);
-    filename = oldfilename;
-    if (main_window) set_modflag(modflag);
-    return;
-  }
-  undo_resume();
-  widget_browser->rebuild();
-  if (v) {
-    // Inserting a file; restore the original filename...
-    free((void *)filename);
-    filename = oldfilename;
-    set_modflag(1);
-  } else {
-    // Loaded a file; free the old filename...
-    set_modflag(0, 0);
-    undo_clear();
-    if (oldfilename) free((void *)oldfilename);
-  }
-  g_project.update_settings_dialog();
-}
-
-/**
- Open a file from history.
- If the current design was modified, Fluid will ask for user confirmation.
- \param[in] v points to the absolute path and filename.
- */
-void open_history_cb(Fl_Widget *, void *v) {
-  if (modflag) {
-    switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Cancel",
-                      "Save", "Don't Save"))
-    {
-      case 0 : /* Cancel */
-          return;
-      case 1 : /* Save */
-          save_cb(NULL, NULL);
-          if (modflag) return;  // Didn't save!
-    }
-  }
-  const char *oldfilename = filename;
-  filename = NULL;
-  set_filename((char *)v);
-  undo_suspend();
-  if (!read_file(filename, 0)) {
-    undo_resume();
-    undo_clear();
-    widget_browser->rebuild();
-    fl_message("Can't read %s: %s", filename, strerror(errno));
-    free((void *)filename);
-    filename = oldfilename;
-    if (main_window) main_window->label(filename);
-    g_project.update_settings_dialog();
-    return;
-  }
-  set_modflag(0, 0);
-  undo_resume();
-  undo_clear();
-  widget_browser->rebuild();
-  if (oldfilename) {
-    free((void *)oldfilename);
-    oldfilename = 0L;
-  }
-  g_project.update_settings_dialog();
-}
-
-/**
- Close the current design and create a new, empty one.
- If the current design was modified, Fluid will ask for user confirmation.
- \param[in] v if v is set, don't ask for confirmation
- */
-void new_cb(Fl_Widget *, void *v) {
-  // Check if the current file has been modified...
-  if (!v && modflag) {
-    // Yes, ask the user what to do...
-    switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before creating a new one?", "Cancel",
-                      "Save", "Don't Save"))
-    {
-      case 0 : /* Cancel */
-        return;
-      case 1 : /* Save */
-        save_cb(NULL, NULL);
-        if (modflag) return;  // Didn't save!
-    }
-  }
-
-  // Clear the current data...
+  // clear the current project
   g_project.reset();
   set_filename(NULL);
   set_modflag(0, 0);
   widget_browser->rebuild();
   g_project.update_settings_dialog();
+
+  // all is clear to continue
+  return true;
 }
 
 /**
  Open the template browser and load a new file from templates.
- If the current design was modified, Fluid will ask for user confirmation.
- \param[in] w widget that caused this request, unused
- \param[in] v if v is set, don't ask for confirmation
+
+ If the current project was modified, FLUID will give the user the opportunity
+ to save the old project first.
+
+ \return false if the operation was canceled or failed otherwise
  */
-void new_from_template_cb(Fl_Widget *w, void *v) {
-  new_cb(w, v);
+bool new_project_from_template() {
+  // clear the current project first
+  if (new_project() == false)
+    return false;
 
   // Setup the template panel...
   if (!template_panel) make_template_panel();
@@ -940,8 +807,8 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
   template_panel->label("New");
 
   //if ( template_browser->size() == 1 ) { // only one item?
-    template_browser->value(1);          // select it
-    template_browser->do_callback();
+  template_browser->value(1);          // select it
+  template_browser->do_callback();
   //}
 
   // Show the panel and wait for the user to do something...
@@ -950,7 +817,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
 
   // See if the user chose anything...
   int item = template_browser->value();
-  if (item < 1) return;
+  if (item < 1) return false;
 
   // Load the template, if any...
   const char *tname = (const char *)template_browser->data(item);
@@ -969,7 +836,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
                  strerror(errno));
         set_modflag(0);
         undo_clear();
-        return;
+        return false;
       }
 
       if ((outfile = fl_fopen(cutfname(1), "w")) == NULL) {
@@ -978,7 +845,7 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
         fclose(infile);
         set_modflag(0);
         undo_clear();
-        return;
+        return false;
       }
 
       while (fgets(line, sizeof(line), infile)) {
@@ -1010,7 +877,118 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
   g_project.update_settings_dialog();
   set_modflag(0);
   undo_clear();
+
+  return true;
 }
+
+/**
+ Open a native file chooser to allow choosing a project file for reading.
+
+ Path and filename are preset with the current project filename, if there
+ is one.
+
+ \param title a text describing the action after selecting a file (load, merge, ...)
+ \return the file path and name, or an empty string if the operation was canceled
+ */
+Fl_String open_project_filechooser(const Fl_String &title) {
+  Fl_Native_File_Chooser dialog;
+  dialog.title(title.c_str());
+  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  dialog.filter("FLUID Files\t*.f[ld]\n");
+  if (filename) {
+    Fl_String current_project_file = filename;
+    dialog.directory(fl_filename_path(current_project_file).c_str());
+    dialog.preset_file(fl_filename_name(current_project_file).c_str());
+  }
+  if (dialog.show() != 0)
+    return Fl_String();
+  return Fl_String(dialog.filename());
+}
+
+/**
+ Load a project from the give file name and path.
+
+ The project file is inserted at the currently selected type.
+
+ If no filename is given, FLUID will open a file chooser dialog.
+
+ \param[in] new_filename path and name of the new project file
+ \return false if the operation failed
+ */
+bool merge_project_file(const Fl_String &filename_arg) {
+  bool is_a_merge = (Fl_Type::first != NULL);
+  Fl_String title = is_a_merge ? "Merge Project File" : "Open Project File";
+
+  // ask for a filename if none was given
+  Fl_String new_filename = filename_arg;
+  if (new_filename.empty()) {
+    new_filename = open_project_filechooser(title);
+    if (new_filename.empty()) {
+      return false;
+    }
+  }
+
+  const char *c = new_filename.c_str();
+  const char *oldfilename = filename;
+  filename    = NULL;
+  set_filename(c);
+  if (is_a_merge) undo_checkpoint();
+  undo_suspend();
+  if (!read_file(c, is_a_merge)) {
+    undo_resume();
+    widget_browser->rebuild();
+    g_project.update_settings_dialog();
+    fl_message("Can't read %s: %s", c, strerror(errno));
+    free((void *)filename);
+    filename = oldfilename;
+    if (main_window) set_modflag(modflag);
+    return;
+  }
+  undo_resume();
+  widget_browser->rebuild();
+  if (is_a_merge) {
+    // Inserting a file; restore the original filename...
+    free((void *)filename);
+    filename = oldfilename;
+    set_modflag(1);
+  } else {
+    // Loaded a file; free the old filename...
+    set_modflag(0, 0);
+    undo_clear();
+    if (oldfilename) free((void *)oldfilename);
+  }
+  g_project.update_settings_dialog();
+}
+
+/**
+ Open a file chooser and load an exiting project file.
+
+ If the current project was modified, FLUID will give the user the opportunity
+ to save the old project first.
+
+ If no filename is given, FLUID will open a file chooser dialog.
+
+ \param[in] filename_arg load from this file, or show file chooser if empty
+ \return false if the operation was canceled or failed otherwise
+ */
+bool open_project_file(const Fl_String &new_filename) {
+  // verify user intention
+  if (new_project() == false)
+    return false;
+
+  return merge_project_file(new_filename);
+}
+
+#ifdef __APPLE__
+/**
+ Handle app launch with an associated filename (macOS only).
+ Should there be a modified design already, Fluid asks for user confirmation.
+ \param[in] c the filename of the new design
+ */
+void apple_open_cb(const char *c) {
+  open_project_file(Fl_String(c));
+}
+#endif // __APPLE__
 
 /**
  Generate the C++ source and header filenames and write those files.
@@ -1360,6 +1338,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     if (winpage+1 < frompage || winpage+1 > topage) continue;
     printjob.start_page();
     printjob.printable_rect(&w, &h);
+
     // Get the time and date...
     time_t curtime = time(NULL);
     struct tm *curdate = localtime(&curtime);
@@ -1370,19 +1349,12 @@ void print_menu_cb(Fl_Widget *, void *) {
     fl_draw(date, (w - (int)fl_width(date))/2, fl_height());
     sprintf(date, "%d/%d", ++pagecount, topage-frompage+1);
     fl_draw(date, w - (int)fl_width(date), fl_height());
+
     // Get the base filename...
-    const char *basename = strrchr(filename,
-#ifdef _WIN32
-                                   '\\'
-#else
-                                   '/'
-#endif
-                                   );
-    if (basename) basename ++;
-    else basename = filename;
-    sprintf(date, "%s", basename);
-    fl_draw(date, 0, fl_height());
-// print centered and scaled to fit in the page
+    Fl_String basename = fl_filename_name(Fl_String(filename));
+    fl_draw(basename.c_str(), 0, fl_height());
+
+    // print centered and scaled to fit in the page
     win = (Fl_Window*)windows[winpage]->o;
     ww = win->decorated_w();
     if(ww > w) scale_x = float(w)/ww;
@@ -1393,7 +1365,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     if (scale < 1) {
       printjob.scale(scale);
       printjob.printable_rect(&w, &h);
-      }
+    }
     printjob.origin(w/2, h/2);
     printjob.print_window(win, -ww/2, -hh/2);
     printjob.end_page();
@@ -1405,6 +1377,12 @@ void print_menu_cb(Fl_Widget *, void *) {
 
 extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
 extern void layout_suite_marker(Fl_Widget *, void *user_data);
+
+static void menu_file_new_cb(Fl_Widget *, void *) { new_project(); }
+static void menu_file_new_from_template_cb(Fl_Widget *, void *) { new_project_from_template(); }
+static void menu_file_open_cb(Fl_Widget *, void *) { open_project_file(""); }
+static void menu_file_insert_cb(Fl_Widget *, void *) { merge_project_file(""); }
+static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(Fl_String((const char*)v)); }
 
 /**
  This is the main Fluid menu.
@@ -1423,28 +1401,28 @@ extern void layout_suite_marker(Fl_Widget *, void *user_data);
  */
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
-  {"&New", FL_COMMAND+'n', new_cb, 0},
-  {"&Open...", FL_COMMAND+'o', open_cb, 0},
-  {"&Insert...", FL_COMMAND+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
+  {"&New", FL_COMMAND+'n', menu_file_new_cb},
+  {"&Open...", FL_COMMAND+'o', menu_file_open_cb},
+  {"&Insert...", FL_COMMAND+'i', menu_file_insert_cb, 0, FL_MENU_DIVIDER},
   {"&Save", FL_COMMAND+'s', save_cb, 0},
   {"Save &As...", FL_COMMAND+FL_SHIFT+'s', save_cb, (void*)1},
   {"Sa&ve A Copy...", 0, save_cb, (void*)2},
   {"&Revert...", 0, revert_cb, 0, FL_MENU_DIVIDER},
-  {"New &From Template...", FL_COMMAND+'N', new_from_template_cb, 0},
+  {"New &From Template...", FL_COMMAND+'N', menu_file_new_from_template_cb, 0},
   {"Save As &Template...", 0, save_template_cb, 0, FL_MENU_DIVIDER},
   {"&Print...", FL_COMMAND+'p', print_menu_cb},
   {"Write &Code...", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
-  {relative_history[0], FL_COMMAND+'0', open_history_cb, absolute_history[0]},
-  {relative_history[1], FL_COMMAND+'1', open_history_cb, absolute_history[1]},
-  {relative_history[2], FL_COMMAND+'2', open_history_cb, absolute_history[2]},
-  {relative_history[3], FL_COMMAND+'3', open_history_cb, absolute_history[3]},
-  {relative_history[4], FL_COMMAND+'4', open_history_cb, absolute_history[4]},
-  {relative_history[5], FL_COMMAND+'5', open_history_cb, absolute_history[5]},
-  {relative_history[6], FL_COMMAND+'6', open_history_cb, absolute_history[6]},
-  {relative_history[7], FL_COMMAND+'7', open_history_cb, absolute_history[7]},
-  {relative_history[8], FL_COMMAND+'8', open_history_cb, absolute_history[8]},
-  {relative_history[9], FL_COMMAND+'9', open_history_cb, absolute_history[9], FL_MENU_DIVIDER},
+  {relative_history[0], FL_COMMAND+'0', menu_file_open_history_cb, absolute_history[0]},
+  {relative_history[1], FL_COMMAND+'1', menu_file_open_history_cb, absolute_history[1]},
+  {relative_history[2], FL_COMMAND+'2', menu_file_open_history_cb, absolute_history[2]},
+  {relative_history[3], FL_COMMAND+'3', menu_file_open_history_cb, absolute_history[3]},
+  {relative_history[4], FL_COMMAND+'4', menu_file_open_history_cb, absolute_history[4]},
+  {relative_history[5], FL_COMMAND+'5', menu_file_open_history_cb, absolute_history[5]},
+  {relative_history[6], FL_COMMAND+'6', menu_file_open_history_cb, absolute_history[6]},
+  {relative_history[7], FL_COMMAND+'7', menu_file_open_history_cb, absolute_history[7]},
+  {relative_history[8], FL_COMMAND+'8', menu_file_open_history_cb, absolute_history[8]},
+  {relative_history[9], FL_COMMAND+'9', menu_file_open_history_cb, absolute_history[9], FL_MENU_DIVIDER},
   {"&Quit", FL_COMMAND+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
@@ -1672,7 +1650,7 @@ void make_main_window() {
     main_menubar->menu(Main_Menu);
     // quick access to all dynamic menu items
     save_item = (Fl_Menu_Item*)main_menubar->find_item(save_cb);
-    history_item = (Fl_Menu_Item*)main_menubar->find_item(open_history_cb);
+    history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
@@ -1814,9 +1792,8 @@ void set_filename(const char *c) {
     code files current, 1 to mark it out of date. -2 to ignore changes to mf.
  */
 void set_modflag(int mf, int mfc) {
-  const char *basename;
   const char *code_ext = NULL;
-  static char title[FL_PATH_MAX];
+  char new_title[FL_PATH_MAX];
 
   // Update the modflag_c to the worst possible condition. We could be a bit
   // more graceful and compare modification times of the files, but C++ has
@@ -1831,19 +1808,18 @@ void set_modflag(int mf, int mfc) {
   }
 
   if (main_window) {
+    Fl_String basename;
     if (!filename) basename = "Untitled.fl";
-    else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
-#if defined(_WIN32)
-    else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
-#endif // _WIN32
-    else basename = filename;
-
+    else basename = fl_filename_name(Fl_String(filename));
     code_ext = fl_filename_ext(g_project.code_file_name.c_str());
     char mod_star = modflag ? '*' : ' ';
     char mod_c_star = modflag_c ? '*' : ' ';
-    snprintf(title, sizeof(title), "%s%c  %s%c",
-             basename, mod_star, code_ext, mod_c_star);
-    main_window->copy_label(title);
+    snprintf(new_title, sizeof(new_title), "%s%c  %s%c",
+             basename.c_str(), mod_star, code_ext, mod_c_star);
+    const char *old_title = main_window->label();
+    // only update the title if it actually changed
+    if (!old_title || strcmp(old_title, new_title))
+      main_window->copy_label(new_title);
   }
   // if the UI was modified in any way, update the Source View panel
   if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
@@ -1854,10 +1830,6 @@ void set_modflag(int mf, int mfc) {
     Fl::remove_timeout(update_sourceview_timer, 0);
     Fl::add_timeout(0.5, update_sourceview_timer, 0);
   }
-
-  // Enable/disable the Save menu item...
-//  if (modflag) save_item->activate();
-//  else save_item->deactivate();
 }
 
 // ---- Sourceview implementation
@@ -2008,15 +1980,30 @@ void update_sourceview_timer(void*)
 static int arg(int argc, char** argv, int& i) {
   if (argv[i][0] != '-')
     return 0;
-  if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
-  if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
-  if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
-  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
+  if (argv[i][1] == 'd' && !argv[i][2]) {
+    G_debug=1;
+    i++; return 1;
+  }
+  if (argv[i][1] == 'u' && !argv[i][2]) {
+    update_file++;
+    batch_mode++;
+    i++; return 1;
+  }
+  if (argv[i][1] == 'c' && !argv[i][2]) {
+    compile_file++;
+    batch_mode++;
+    i++; return 1;
+  }
+  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {
+    compile_file++;
+    compile_strings++;
+    batch_mode++;
+    i++; return 1;
+  }
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     g_code_filename_arg = argv[i+1];
     batch_mode++;
-    i += 2;
-    return 2;
+    i += 2; return 2;
   }
   if (argv[i][1] == 'h' && !argv[i][2]) {
     if ( (i+1 < argc) && (argv[i+1][0] != '-') ) {
@@ -2124,7 +2111,7 @@ int main(int argc,char **argv) {
     g_layout_list.read(fluid_prefs, FD_STORE_USER);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
-      open_history_cb(0, absolute_history[0]);
+      open_project_file(absolute_history[0]);
     }
   }
   undo_suspend();
@@ -2137,7 +2124,7 @@ int main(int argc,char **argv) {
   }
   undo_resume();
 
-  // command line args override code and header filenams from the project file
+  // command line args override code and header filenames from the project file
   if (!g_code_filename_arg.empty()) {
     g_project.code_file_set = 1;
     g_project.code_file_name = g_code_filename_arg;
