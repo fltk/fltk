@@ -580,8 +580,6 @@ if (WIN32)
   list (APPEND STATIC_FILES fl_call_main.c)
 endif (WIN32)
 
-add_definitions(-DFL_LIBRARY)
-
 #######################################################################
 
 # prepare optional libs for shared and static FLTK libraries

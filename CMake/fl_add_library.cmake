@@ -37,13 +37,13 @@ macro (FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
   add_library(${TARGET_NAME} ${LIBTYPE} ${LIBFILES})
 
-  # target properties for all libraries
+  # Target properties for all libraries
 
-  set_target_properties(${TARGET_NAME}
-    PROPERTIES
-    CLEAN_DIRECT_OUTPUT TRUE
-    COMPILE_DEFINITIONS "FL_LIBRARY"
-  )
+  # Set 'PRIVATE' target compile definitions for the library
+  # so they are not inherited by consumers
+
+  target_compile_definitions(${TARGET_NAME}
+    PRIVATE "FL_LIBRARY")
 
   # additional target properties for static libraries
 
@@ -105,11 +105,9 @@ macro (FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
     endif (OPTION_LARGE_FILE)
 
     if (${LIBTYPE} STREQUAL "SHARED")
-      set_target_properties(${TARGET_NAME}
-        PROPERTIES
-        COMPILE_DEFINITIONS "FL_DLL"
-      )
-    endif (${LIBTYPE} STREQUAL "SHARED")
+      target_compile_definitions(${TARGET_NAME}
+        PRIVATE "FL_DLL")
+    endif ()
   endif (MSVC)
 
   install (TARGETS ${TARGET_NAME}
