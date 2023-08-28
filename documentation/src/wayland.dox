@@ -44,7 +44,7 @@ below).
 
 Wayland differs noticeably from X11 in that rendering is left to clients: Wayland provides
 no drawing API. Instead, Wayland provides objects of type <tt>struct wl_buffer</tt> which
-bundle a memory array of pixel values shared between the client and the compositor.
+encapsulate a memory array of pixel values shared between the client and the compositor.
 The client app is expected to draw to that memory buffer with whatever means it chooses,
 and to instruct the compositor to map those pixels to the display when the drawing
 is complete. The Wayland platform of FLTK draws with the Cairo library to \c Fl_Window's
@@ -538,9 +538,9 @@ Section \ref wayland-buffer-factory below details how FLTK creates \c wl_buffer 
 
 FLTK associates to each surface a
 <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> (see \ref wld_buffer) containing
-a pointer to the byte array of the Cairo image surface (member \c buffer), information about the
+a pointer to the byte array of the Cairo image surface (member \c draw_buffer.buffer), information about the
 Wayland buffer (members \c wl_buffer and \c data), the common size of the Cairo surface's and
-Wayland buffer's byte arrays (member \c data_size), and other information. A pointer to this
+Wayland buffer's byte arrays (member \c draw_buffer.data_size), and other information. A pointer to this
 <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> is memorized as member \c buffer of the Fl_Window's \ref wld_window.
 All drawing operations to the Fl_Window then modify the content of the Cairo image surface.
 
@@ -604,7 +604,7 @@ static void surface_frame_done(void *data, struct wl_callback *cb, uint32_t time
 }
 \endcode
 which, provided member variable \c draw_buffer_needs_commit is true, calls
-\c Fl_Wayland_Graphics_Driver::buffer_commit(). This makes the compositor maps the
+\c Fl_Wayland_Graphics_Driver::buffer_commit(). This makes the compositor map the
 Wayland buffer in its new, more advanced, state. Here is where member variable
 \c draw_buffer_needs_commit is useful : it informs Wayland that the graphics
 buffer has changed and needs being committed. This variable is turned \c true
@@ -1160,25 +1160,18 @@ struct wld_window {
 }
 </pre>
 
-\anchor wld_buffer
-<h3>struct wld_buffer and struct draw_buffer</h3>
-They are defined as types of class \c Fl_Wayland_Graphics_Driver in file
-\c Fl_Wayland_Graphics_Driver.H.
-One <tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record is created
-by \c Fl_Wayland_Graphics_Driver::create_shm_buffer() when
-an Fl_Window is show()'n or resized,
-when a custom cursor shape is created, or when text is dragged.
-
-A <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt> record
-is created when an Fl_Image_Surface object is created.
+\anchor draw_buffer
+<h3>struct Fl_Wayland_Graphics_Driver::draw_buffer</h3>
+Defined in file \c Fl_Wayland_Graphics_Driver.H.
+One such record is created when an Fl_Image_Surface object is created.
 One such record is also embedded inside each
-<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record.
+<tt>struct Fl_Wayland_Graphics_Driver::wld_buffer</tt> record (see \ref wld_buffer).
 
 <pre>
 struct Fl_Wayland_Graphics_Driver::draw_buffer {
-  size_t data_size; // of wl_buffer and buffer
+  size_t data_size; // of wl_buffer and buffer, in bytes
   int stride; // bytes per line
-  int width;
+  int width; // in pixels
   unsigned char *buffer; // address of the beginning of the Cairo image surface's byte array
   cairo_t *cairo_; // used when drawing to the Cairo image surface
 };
@@ -1186,13 +1179,19 @@ struct Fl_Wayland_Graphics_Driver::draw_buffer {
 FLTK gives offscreen buffers the platform-dependent type \c Fl_Offscreen which is
 in fact member \c cairo_ of <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer</tt>.
 Thus, a variable with type \c Fl_Offscreen needs be casted to type \c cairo_t*.
-Member function <tt>struct Fl_Wayland_Graphics_Driver::draw_buffer *
-Fl_Wayland_Graphics_Driver::offscreen_buffer(Fl_Offscreen);</tt>
-returns the \c draw_buffer record corresponding to an \c Fl_Offscreen value.
+<br>Static member function <tt>struct draw_buffer *offscreen_buffer(Fl_Offscreen)</tt>
+of class \c Fl_Wayland_Graphics_Driver returns the \c draw_buffer record corresponding
+to an \c Fl_Offscreen value.
 
+\anchor wld_buffer
+<h3>struct Fl_Wayland_Graphics_Driver::wld_buffer</h3>
+Defined in file \c Fl_Wayland_Graphics_Driver.H.
+One such record is created by \c Fl_Wayland_Graphics_Driver::create_shm_buffer() when
+an Fl_Window is show()'n or resized, when a custom cursor shape is created, or when
+text is dragged.
 <pre>
 struct Fl_Wayland_Graphics_Driver::wld_buffer {
-  struct draw_buffer draw_buffer;
+  struct draw_buffer draw_buffer; // see \ref draw_buffer
   struct wl_buffer *wl_buffer; // the Wayland buffer
   void *data; // address of the beginning of the Wayland buffer's byte array
   struct wl_callback *cb; // non-NULL while Wayland buffer is being committed

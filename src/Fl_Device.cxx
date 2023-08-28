@@ -49,14 +49,14 @@
 
   +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
-      +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
+      +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript/EPS drawing
       +- Fl_SVG_Graphics_Driver: platform-independent graphics driver for Scalable Vector Graphics drawing
       +- Fl_Quartz_Graphics_Driver: platform-specific graphics driver (MacOS)
           +- Fl_Quartz_Printer_Graphics_Driver: MacOS-specific, for drawing to printers
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
           +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
           +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
-              +- Fl_GDI_Printer_Graphics_Driver: re-implements a few member functions especially for output to printer
+              +- Fl_GDI_Printer_Graphics_Driver: overrides a few member functions especially for output to printer
       +- Fl_Cairo_Graphics_Driver: full FLTK drawing API based on Cairo and Pango
           +- Fl_Wayland_Graphics_Driver: Wayland-specific graphics driver
           +- Fl_X11_Cairo_Graphics_Driver: used by X11 leg of hybrid Wayland/X11 platform
