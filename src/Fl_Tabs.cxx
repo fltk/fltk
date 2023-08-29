@@ -69,13 +69,34 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
   Fl_Group::resize(X, Y, W, H);
 }
 
-// Return the left edges of each tab (plus a fake left edge for a tab
-// past the right-hand one).  These positions are actually of the left
-// edge of the slope.  They are either separated by the correct distance
-// or by EXTRASPACE or by zero.
-// These positions are updated in the private arrays tab_pos[] and
-// tab_width[], resp.. If needed, these arrays are (re)allocated.
-// Return value is the index of the selected item.
+/** Calculate tab positions and widths.
+
+  This protected method calculates the horizontal display positions and
+  widths of all tabs. If the number of children \c 'nc' (see below) is \> 0
+  three internal arrays are allocated, otherwise the arrays are free'd
+  and the pointers are set to NULL. Note that the first array is larger
+  (nc+1).
+
+  - tab_pos[nc+1] : The left edges of each tab plus a fake left edge
+    for a tab past the right-hand one.
+  - tab_width[nc] : The width of each tab
+  - tab_flags[nc] : Flags
+
+  \todo Document Fl_Tabs::tab_flags[]
+
+  These positions are actually of the left edge of the slope.
+  They are either separated by the correct distance
+  or by EXTRASPACE or by zero.
+  If needed, these arrays are (re)allocated.
+
+  The protected variable `tab_count` is set to the currently allocated
+  size, i.e. the number of children (`nc`).
+
+  \returns Index of the selected item, counting from 1 to nc.
+  \retval 0 If the number of children is 0 (zero).
+
+  \see clear_tab_positions()
+*/
 
 int Fl_Tabs::tab_positions() {
   const int nc = children();
@@ -154,8 +175,20 @@ int Fl_Tabs::tab_positions() {
   return selected;
 }
 
-// Returns space (height) in pixels needed for tabs. Negative to put them on the bottom.
-// Returns full height, if children() = 0.
+/**
+  Return space (height) in pixels usable for tabs.
+
+  The calculated height is the largest space between all children
+  and the upper and lower widget boundaries, respectively. If the
+  space at the bottom is larger than at the top, the value will be
+  negative and the tabs should be placed at the bottom.
+
+  \returns Vertical space that can be used for the tabs.
+  \retval  > 0  To put the tabs at the top of the widget.
+  \retval  < 0  To put the tabs on the bottom.
+  \retval Full height, if children() == 0.
+
+*/
 int Fl_Tabs::tab_height() {
   if (children() == 0) return h();
   int H = h();
@@ -252,7 +285,7 @@ int Fl_Tabs::hit_overflow_menu(int event_x, int event_y) {
 
 /**  Determine if the coordinates are within the tabs area.
 
- \param event_x, event_y event coordinatese
+ \param event_x, event_y event coordinates
  \return 1 if we hit the tabs area, and 0 otherwise
  */
 int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
@@ -333,8 +366,13 @@ void Fl_Tabs::draw_overflow_menu_button() {
   fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
 }
 
-void Fl_Tabs::redraw_tabs()
-{
+/**
+  Redraw all tabs (and only the tabs).
+
+  This method sets the Fl_Tab's damage flags so the tab area
+  is redrawn.
+*/
+void Fl_Tabs::redraw_tabs() {
   int H = tab_height();
   if (H >= 0) {
     H += Fl::box_dy(box());
@@ -868,6 +906,11 @@ void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
   }
 }
 
+/**
+  Clear internal array of tab positions and widths.
+
+  For details see tab_positions().
+*/
 void Fl_Tabs::clear_tab_positions() {
   if (tab_pos) {
     free(tab_pos);

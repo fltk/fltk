@@ -225,10 +225,10 @@ protected:
 
   int overflow_type;
   int tab_offset;
-  int *tab_pos;         // array of x-offsets of tabs per child + 1
-  int *tab_width;       // array of widths of tabs per child + 1
-  int *tab_flags;       // array of tab flag of tabs per child + 1
-  int tab_count;        // array size
+  int *tab_pos;         ///< Array of x-offsets of tabs per child + 1 \see tab_positions()
+  int *tab_width;       ///< Array of widths of tabs per child \see tab_positions()
+  int *tab_flags;       ///< Array of tab flag of tabs per child \see tab_positions()
+  int tab_count;        ///< Array size of tab positions etc. \see tab_positions()
   Fl_Align tab_align_;  // tab label alignment
   int has_overflow_menu;
   Fl_Menu_Item* overflow_menu;
