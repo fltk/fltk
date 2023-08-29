@@ -1015,7 +1015,7 @@ static void cb_Close(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_settings_window() {
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 580, "FLUID Settings");
+  { settings_window = new Fl_Double_Window(340, 580, "FLUID Settings");
     settings_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { w_settings_tabs = new Fl_Tabs(10, 10, 320, 530);
       w_settings_tabs->selection_color((Fl_Color)12);
@@ -1674,7 +1674,6 @@ le FLTK_GETTEXT_FOUND");
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
     settings_window->set_non_modal();
-    o->size_range(o->w(), o->h());
     settings_window->end();
   } // Fl_Double_Window* settings_window
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
