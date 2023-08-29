@@ -196,7 +196,7 @@ src/fltk-title.tex: src/fltk-title.tex.in
 
 src/fltk-book.tex.in: src/fltk-title.tex
 	echo "Generating $@ ..."
-	./make_header $< $@
+	./make_header $(DOXYDOC) $< $@
 
 src/fltk-book.tex: src/fltk-book.tex.in
 	echo "Generating $@ ..."

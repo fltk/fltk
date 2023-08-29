@@ -188,6 +188,7 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
   add_custom_command (
     OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/make_header
+            ${DOXYGEN_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-title.tex
             ${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex
     COMMAND ${DOXYGEN_EXECUTABLE} Doxybook
