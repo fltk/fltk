@@ -134,6 +134,8 @@ extern void write_strings_cb(Fl_Widget *, void *);
 extern void align_widget_cb(Fl_Widget *, long);
 extern void toggle_widgetbin_cb(Fl_Widget *, void *);
 
+extern char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0);
+
 inline int fd_min(int a, int b) { return (a < b ? a : b); }
 inline int fd_max(int a, int b) { return (a > b ? a : b); }
 inline int fd_min(int a, int b, int c) { return fd_min(a, fd_min(b, c)); }

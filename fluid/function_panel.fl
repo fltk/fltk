@@ -146,7 +146,7 @@ Function {make_code_panel()} {open
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   return; // ignore Escape
 code_panel->hide(); // otherwise hide..}
-    xywh {425 882 540 180} type Double labelsize 11 hide resizable
+    xywh {539 567 540 180} type Double labelsize 11 hide resizable
     code0 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor code_input {
@@ -484,9 +484,9 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label {Comment Properties} open
-    xywh {519 374 550 280} type Double labelsize 11 resizable
-    code0 {o->size_range(320, 180);} modal visible
+    label {Comment Properties}
+    xywh {519 374 550 280} type Double labelsize 11 hide resizable
+    code0 {o->size_range(320, 180);} modal
   } {
     Fl_Text_Editor comment_input {
       xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 textcolor 58 resizable
@@ -534,13 +534,14 @@ Function {make_comment_panel()} {open
   }
 }
 
-Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
+Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 } {
   code {const char *type_name = (const char*)d;
 if (Fl_Type::current && Fl_Type::current->is_parent())
   add_new_widget_from_user(type_name, kAddAsLastChild);
 else
-  add_new_widget_from_user(type_name, kAddAfterCurrent);} {}
+  add_new_widget_from_user(type_name, kAddAfterCurrent);} {selected
+  }
 }
 
 Function {make_widgetbin()} {open
@@ -550,8 +551,8 @@ Function {make_widgetbin()} {open
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else
-  toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {436 243 600 102} type Single align 80 non_modal visible
+  toggle_widgetbin_cb((Fl_Widget*)o, v);}
+    xywh {395 227 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       label Code open
@@ -964,7 +965,7 @@ else
       }
       Fl_Button {} {
         user_data {"Fl_Clock"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Clock xywh {567 21 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[Fl_Type::ID_Clock]);}
         class Widget_Bin_Button
@@ -975,93 +976,6 @@ else
         tooltip Progress xywh {542 46 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[Fl_Type::ID_Progress]);}
         class Widget_Bin_Button
-      }
-    }
-  }
-}
-
-Function {make_sourceview()} {open
-} {
-  Fl_Window sourceview_panel {
-    label {Code View}
-    callback toggle_sourceview_cb open
-    xywh {400 569 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
-  } {
-    Fl_Tabs sv_tab {
-      callback update_sourceview_position_cb open
-      xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
-    } {
-      Fl_Group {} {
-        label Source open
-        xywh {10 35 500 415} labelsize 13 resizable
-      } {
-        Fl_Text_Editor sv_source {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
-          code0 {\#include "CodeEditor.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class CodeViewer
-        }
-      }
-      Fl_Group {} {
-        label Header open
-        xywh {10 35 500 415} labelsize 13 hide
-      } {
-        Fl_Text_Editor sv_header {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
-          code0 {\#include "CodeEditor.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class CodeViewer
-        }
-      }
-      Fl_Group {} {
-        label Strings open
-        xywh {10 35 500 415} labelsize 13 hide
-      } {
-        Fl_Text_Display sv_strings {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class TextViewer
-        }
-      }
-      Fl_Group {} {
-        label Project open
-        xywh {10 35 500 415} labelsize 13 hide
-      } {
-        Fl_Text_Display sv_project {
-          xywh {20 50 480 390} textfont 4 textsize 11 resizable
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class TextViewer
-        }
-      }
-    }
-    Fl_Group {} {
-      xywh {10 460 500 20}
-    } {
-      Fl_Button {} {
-        label Refresh
-        callback update_sourceview_cb
-        xywh {10 460 61 20} labelsize 11
-      }
-      Fl_Light_Button sv_autorefresh {
-        label {Auto-Refresh}
-        xywh {76 460 91 20} labelsize 11
-        code0 {o->callback((Fl_Callback*)update_sourceview_cb);}
-      }
-      Fl_Light_Button sv_autoposition {
-        label {Auto-Position}
-        xywh {172 460 89 20} labelsize 11
-      }
-      Fl_Button {} {
-        label Close
-        callback toggle_sourceview_b_cb
-        xywh {460 460 50 20} labelsize 11
-      }
-      Fl_Box {} {
-        xywh {265 460 190 20} resizable
       }
     }
   }

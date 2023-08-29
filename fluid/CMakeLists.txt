@@ -38,6 +38,7 @@ set (CPPFILES
   function_panel.cxx
   pixmaps.cxx
   shell_command.cxx
+  sourceview_panel.cxx
   template_panel.cxx
   undo.cxx
   widget_browser.cxx
@@ -70,6 +71,7 @@ set (HEADERFILES
   print_panel.h
   pixmaps.h
   shell_command.h
+  sourceview_panel.h
   template_panel.h
   undo.h
   widget_browser.h

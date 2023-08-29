@@ -39,6 +39,7 @@ CPPFILES = \
 	function_panel.cxx \
 	pixmaps.cxx \
 	shell_command.cxx \
+	sourceview_panel.cxx \
 	template_panel.cxx \
 	undo.cxx \
 	widget_browser.cxx \
@@ -142,5 +143,6 @@ rebuild: fluid$(EXEEXT)
 	./fluid$(EXEEXT) -u -c alignment_panel.fl
 	./fluid$(EXEEXT) -u -c function_panel.fl
 	./fluid$(EXEEXT) -u -c print_panel.fl
+	./fluid$(EXEEXT) -u -c sourceview_panel.fl
 	./fluid$(EXEEXT) -u -c template_panel.fl
 	./fluid$(EXEEXT) -u -c widget_panel.fl
