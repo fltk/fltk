@@ -409,7 +409,7 @@ int Fl_Input::handle_key() {
     case FL_KP_Enter:
       if (when() & FL_WHEN_ENTER_KEY) {
         insert_position(size(), 0);
-        maybe_do_callback();
+        maybe_do_callback(FL_REASON_ENTER_KEY);
         return 1;
       } else if (multiline && !readonly()) {
         return replace(insert_position(), mark(), "\n", 1);

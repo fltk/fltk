@@ -405,7 +405,8 @@ void label_cb(Fl_Input* i, void *v) {
       undo_resume();
       if (mod) set_modflag(1);
     }
-    if ( (Fl::event() == FL_HIDE) || (Fl::event() == FL_UNFOCUS) )
+    int r = (int)Fl::callback_reason();
+    if ( (r == FL_REASON_LOST_FOCUS) || (r == FL_REASON_ENTER_KEY) )
       first_change = 1;
   }
 }
@@ -2502,7 +2503,7 @@ void propagate_load(Fl_Group* g, void* v) {
     Fl_Widget*const* a = g->array();
     for (int i=g->children(); i--;) {
       Fl_Widget* o = *a++;
-      o->do_callback(o,LOAD);
+      o->do_callback(o, LOAD, FL_REASON_USER);
     }
   }
 }
