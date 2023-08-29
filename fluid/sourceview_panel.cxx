@@ -19,6 +19,7 @@
 #include "sourceview_panel.h"
 #include "fluid.h"
 #include "file.h"
+#include "../src/flstring.h"
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Button.H>
 static char *sv_source_filename = NULL;
@@ -87,17 +88,17 @@ void update_sourceview_cb(class Fl_Button*, void*) {
     if (!sv_source_filename) {
       sv_source_filename = (char*)malloc(FL_PATH_MAX);
       fluid_prefs.getUserdataPath(sv_source_filename, FL_PATH_MAX);
-      strlcat(sv_source_filename, "source_view_tmp.cxx", FL_PATH_MAX);
+      fl_strlcat(sv_source_filename, "source_view_tmp.cxx", FL_PATH_MAX);
     }
     if (!sv_header_filename) {
       sv_header_filename = (char*)malloc(FL_PATH_MAX);
       fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
-      strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
+      fl_strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
     }
     if (!sv_design_filename) {
       sv_design_filename = (char*)malloc(FL_PATH_MAX);
       fluid_prefs.getUserdataPath(sv_design_filename, FL_PATH_MAX);
-      strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
+      fl_strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
     }
 
     if (sv_project->visible_r()) {

@@ -31,6 +31,9 @@ decl {\#include "fluid.h"} {private local
 decl {\#include "file.h"} {private local
 }
 
+decl {\#include "../src/flstring.h"} {selected private local
+}
+
 decl {\#include <FL/Fl_Tabs.H>} {private local
 }
 
@@ -105,17 +108,17 @@ and load those into the Code Viewer widgets.} open return_type void
   if (!sv_source_filename) {
     sv_source_filename = (char*)malloc(FL_PATH_MAX);
     fluid_prefs.getUserdataPath(sv_source_filename, FL_PATH_MAX);
-    strlcat(sv_source_filename, "source_view_tmp.cxx", FL_PATH_MAX);
+    fl_strlcat(sv_source_filename, "source_view_tmp.cxx", FL_PATH_MAX);
   }
   if (!sv_header_filename) {
     sv_header_filename = (char*)malloc(FL_PATH_MAX);
     fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
-    strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
+    fl_strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
   if (!sv_design_filename) {
     sv_design_filename = (char*)malloc(FL_PATH_MAX);
     fluid_prefs.getUserdataPath(sv_design_filename, FL_PATH_MAX);
-    strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
+    fl_strlcat(sv_design_filename, "source_view_tmp.fl", FL_PATH_MAX);
   }
 
   if (sv_project->visible_r()) {
