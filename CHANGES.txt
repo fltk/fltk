@@ -164,6 +164,7 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2022
   Other Improvements
 
   - (add new items here)
+  - Reported support of macOS 14.0 "Sonoma".
   - Added support for macOS 13.0 "Ventura".
   - Added support for macOS 12.0 "Monterey".
   - Added support for macOS 11.0 "Big Sur" and for building for
