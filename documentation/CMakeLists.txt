@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2022 by Bill Spitzak and others.
+# Copyright 1998-2023 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -40,11 +40,13 @@ if (GENERATE_DOCS)
 
   execute_process (COMMAND date "+%Y"
     OUTPUT_VARIABLE YEAR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
   # note: current locale is used for abbreviated month
   execute_process (COMMAND date "+%b %d, %Y"
     OUTPUT_VARIABLE CURRENT_DATE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
   # find git revision
@@ -55,12 +57,12 @@ if (GENERATE_DOCS)
   #        that contains the git revision.
 
   execute_process (COMMAND
-    git --git-dir=${CMAKE_SOURCE_DIR}/.git rev-parse --short=10 HEAD
+    git --git-dir=${FLTK_SOURCE_DIR}/.git rev-parse --short=10 HEAD
     OUTPUT_VARIABLE GIT_REVISION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET
   )
-  # strip trailing newline from git revision
-  string (REPLACE "\n" "" GIT_REVISION "${GIT_REVISION}")
+
   # set to "'unkown'" if git is not available
   if (GIT_REVISION STREQUAL "")
     set (GIT_REVISION "'unkown'")
@@ -69,6 +71,7 @@ if (GENERATE_DOCS)
   # find doxygen version
 
   if (DOXYGEN_FOUND)
+
     # strip trailing git revision if doxygen was built from source
     string (REGEX REPLACE " .*$" "" DOXYGEN_VERSION_SHORT ${DOXYGEN_VERSION})
     # strip trailing newline
@@ -90,6 +93,8 @@ if (GENERATE_DOCS)
   )
 
   if (0) # debug
+    fl_debug_var (YEAR)
+    fl_debug_var (CURRENT_DATE)
     fl_debug_var (GIT_REVISION)
     fl_debug_var (DOXYGEN_FOUND)
     fl_debug_var (DOXYGEN_EXECUTABLE)

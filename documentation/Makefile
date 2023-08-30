@@ -138,6 +138,15 @@ uninstall-linux uninstall-osx:
 # Both files are generated from the common source file Doxyfile.in.
 # Note that Doxyfile.in is shared with CMake to configure these files.
 
+# Note: There's no way to enable the "Driver Documentation" via configure+make,
+#       please use CMake 'OPTION_INCLUDE_DRIVER_DOCUMENTATION' instead.
+#       Alternatively (if you really need it) edit this Makefile and
+#       replace the two lines below containing "@DRIVER_DOCS@" to read:
+#	    -e's, @DRIVER_DOCS@, DriverDev,' \
+#       (w/o leading '#') to enable the "Driver Documentation" section.
+#       Please take care of copying tabs and spaces literally.
+# Note: There's no intention to enable this via configure option (use CMake).
+
 Doxyfile: Doxyfile.in generated.dox copyright.dox
 	echo "Generating Doxyfile ..."
 	$(DOXYDOC) -u -s - < $< | \
@@ -145,6 +154,7 @@ Doxyfile: Doxyfile.in generated.dox copyright.dox
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
+	    -e's, @DRIVER_DOCS@,,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
 	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
 	    -e's,@FLTK_SOURCE_DIR@,..,' \
@@ -157,6 +167,7 @@ Doxybook: Doxyfile.in generated.dox copyright.dox
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
+	    -e's, @DRIVER_DOCS@,,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@,.,' \
 	    -e's,@CMAKE_CURRENT_BINARY_DIR@,,' \
 	    -e's,@FLTK_SOURCE_DIR@,..,' \
