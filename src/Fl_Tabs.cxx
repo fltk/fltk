@@ -35,6 +35,8 @@
 #define EXTRAGAP 2
 #define MARGIN 20
 
+enum {LEFT, RIGHT, SELECTED};
+
 
 /** Make sure that we redraw all tabs when new children are added. */
 int Fl_Tabs::on_insert(Fl_Widget* candidate, int index) {
@@ -80,14 +82,21 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
   - tab_pos[nc+1] : The left edges of each tab plus a fake left edge
     for a tab past the right-hand one.
   - tab_width[nc] : The width of each tab
-  - tab_flags[nc] : Flags
+  - tab_flags[nc] : Flags, bit 0 is set if the tab is compressed
 
-  \todo Document Fl_Tabs::tab_flags[]
+  If needed, these arrays are (re)allocated.
 
   These positions are actually of the left edge of the slope.
   They are either separated by the correct distance
   or by EXTRASPACE or by zero.
-  If needed, these arrays are (re)allocated.
+
+  In OVERFLOW_COMPRESS mode, tab positions and widths are compressed to make
+  the entire tabs bar fit into the width of Fl_Tabs while keeping the selected
+  tab fully visible.
+
+  In other overflow modes, the tabs area may be dragged horizontally using
+  \ref tab_offset. The tab_pos array is not adjusted to the horizontal offset,
+  but starts at this->x() plus the box's left margin.
 
   The protected variable `tab_count` is set to the currently allocated
   size, i.e. the number of children (`nc`).
@@ -116,7 +125,7 @@ int Fl_Tabs::tab_positions() {
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
 
-  tab_pos[0] = Fl::box_dx(box());
+  int l = tab_pos[0] = Fl::box_dx(box());
   for (i=0; i<nc; i++) {
     Fl_Widget* o = *a++;
     if (o->visible()) selected = i;
@@ -141,36 +150,76 @@ int Fl_Tabs::tab_positions() {
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
-  int r = w();
-  if (tab_pos[i] <= r) return selected;
-
   if (overflow_type == OVERFLOW_COMPRESS) {
-    // uh oh, they are too big:
-    // pack them against right edge:
-    tab_pos[i] = r;
-    for (i = nc; i--;) {
-      int l = r-tab_width[i];
-      if (tab_pos[i+1] < l) l = tab_pos[i+1];
-      if (tab_pos[i] <= l) break;
-      tab_pos[i] = l;
-      tab_flags[i] |= 1;
-      r -= EXTRASPACE;
+    int r = w() - Fl::box_dw(box());;
+    if ( (nc > 1) && (tab_pos[nc] > r) ) {
+      int wdt = r - l;
+      // extreme case: the selected tab is wider than Fl_Tabs itself
+      int available = wdt - tab_width[selected];
+      if (available <= 8*nc) {
+        // if the current tab is so huge that it doesn't fit Fl_Tabs, we make
+        // shrink all other tabs to 8 pixels and give the selected tab the rest
+        for (i = 0; i < nc; i++) {
+          if (i < selected) {
+            tab_pos[i] = l + 8*i;
+            tab_flags[i] |= 1;
+          } else if (i>selected) {
+            tab_pos[i] = r - (nc-i)*8;
+            tab_flags[i] |= 1;
+          } else {
+            tab_pos[i] = l + 8*i;;
+            tab_flags[i] &= ~1;
+          }
+          tab_pos[nc] = r;
+        }
+      } else {
+        // This method tries to keep as many visible tabs to the left and right
+        // of the selected tab. All other tabs are compressed until they are
+        // no smaller than 8 pixels.
+        // Overlap to the left and right of the selection is proportional
+        // to the left and right total tabs widths.
+        // The dynamic of this method is really nice to watch: start FLUID and
+        // edit test/tabs. Select any tab and change the label to make the tab
+        // wider and smaller. All other tabs will move nicely to make room for
+        // the bigger label. Even if two tabs are each wider than Fl_Tabs.
+        int overflow = tab_pos[nc] - r;
+        int left_total = tab_pos[selected] - l;
+        int right_total = tab_pos[nc] - tab_pos[selected+1];
+        int left_overflow = left_total+right_total ? overflow * left_total / (left_total+right_total) : overflow;
+        int right_overflow = overflow - left_overflow;
+        // now clip the left tabs until we compensated overflow on the left
+        int xdelta = 0; // accumulate the tab x correction
+        for (i=0; i<selected; i++) {          // do this for all tabs on the left of selected
+          int tw = tab_width[i];              // get the current width of this tab
+          if (left_overflow > 0) {            // do we still need to compensate?
+            tw -= left_overflow;              // try to compensate everything
+            if (tw < 8) tw = 8;               // but keep a minimum width of 8
+            int wdelta = tab_width[i] - tw;   // how many pixels did we actually take?
+            left_overflow -= wdelta;          // remove that and keep the remaining overflow
+            xdelta += wdelta;                 // accumulate amount of pixel shift
+            if (wdelta > 16) tab_flags[i] |= 1; // remove the close button if we overlap too much
+          }
+          tab_pos[i+1] -= xdelta;             // fix the overlap by moving the tab on the right
+        }
+        // and clip the right tabs until we compensated overflow on the right
+        xdelta = 0;
+        for (i=nc-1; i>selected; i--) {
+          int tw = tab_width[i];
+          if (right_overflow > 0) {
+            tw -= right_overflow;
+            if (tw < 8) tw = 8;
+            int wdelta = tab_width[i] - tw;
+            right_overflow -= wdelta;
+            xdelta += wdelta;
+            // with the close button on the left, overlapping gets more confusing,
+            // so remove the button sooner
+            if (wdelta > 4) tab_flags[i] |= 1;
+          }
+          tab_pos[i] -= overflow - xdelta;
+        }
+        tab_pos[nc] = r;
+      }
     }
-    // pack them against left edge and truncate width if they still don't fit:
-    for (i = 0; i<nc; i++) {
-      if (tab_pos[i] >= i*EXTRASPACE) break;
-      tab_pos[i] = i*EXTRASPACE;
-      tab_flags[i] |= 1;
-      int W = w()-1-EXTRASPACE*(nc-i) - tab_pos[i];
-      if (tab_width[i] > W) tab_width[i] = W;
-    }
-    // adjust edges according to visiblity:
-    for (i = nc; i > selected; i--) {
-      tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
-    }
-    if ((selected > 0) && (tab_pos[selected-1]+tab_width[selected-1]>tab_pos[selected]))
-      tab_flags[selected] |= 1;
-    tab_flags[selected] &= ~1;
   }
   return selected;
 }
@@ -187,7 +236,6 @@ int Fl_Tabs::tab_positions() {
   \retval  > 0  To put the tabs at the top of the widget.
   \retval  < 0  To put the tabs on the bottom.
   \retval Full height, if children() == 0.
-
 */
 int Fl_Tabs::tab_height() {
   if (children() == 0) return h();
@@ -243,7 +291,7 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
  which updates a lookup table used to determine the width of each tab.
 
  \param o check the tab of this widget
- \param event_x, event_y event coordinatese
+ \param event_x, event_y event coordinates
  \return 1 if we hit the close button, and 0 otherwise
  */
 int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
@@ -264,7 +312,7 @@ int Fl_Tabs::hit_close(Fl_Widget *o, int event_x, int event_y) {
 
 /**  Determine if the coordinates are in the area of the overflow menu button.
 
- \param event_x, event_y event coordinatese
+ \param event_x, event_y event coordinates
  \return 1 if we hit the overflow menu button, and 0 otherwise
  */
 int Fl_Tabs::hit_overflow_menu(int event_x, int event_y) {
@@ -302,6 +350,9 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
   return 1;
 }
 
+/**
+ Check if the tabs overflow and sets the has_overflow_menu flag accordingly.
+ */
 void Fl_Tabs::check_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
@@ -312,6 +363,18 @@ void Fl_Tabs::check_overflow_menu() {
   }
 }
 
+/**
+ This is called when the user clicks the overflow pulldown menu button.
+
+ This method creates a menu item array that contains the titles of all
+ tabs in the Fl_Tabs group. Visible and invisible tabs are separated
+ by dividers to indicate their state.
+
+ The menu is then presented until the user selects an item or cancels.
+ The chosen tab is then selected and made visible.
+
+ The menu item array is the deleted.
+ */
 void Fl_Tabs::handle_overflow_menu() {
   int nc = children();
   int H = tab_height(); if (H < 0) H = -H;
@@ -325,7 +388,7 @@ void Fl_Tabs::handle_overflow_menu() {
   }
 
   // create a menu with all children
-  overflow_menu = new Fl_Menu_Item[nc+1];
+  Fl_Menu_Item* overflow_menu = new Fl_Menu_Item[nc+1];
   memset(overflow_menu, 0, sizeof(Fl_Menu_Item)*(nc+1));
   for (i = 0; i < nc; i++) {
     overflow_menu[i].label(child(i)->label());
@@ -350,6 +413,9 @@ void Fl_Tabs::handle_overflow_menu() {
   }
 }
 
+/**
+ Draw square button-like graphics with a down arrow in the top or bottom right corner.
+ */
 void Fl_Tabs::draw_overflow_menu_button() {
   int H = tab_height();
   int X, Y;
@@ -369,8 +435,7 @@ void Fl_Tabs::draw_overflow_menu_button() {
 /**
   Redraw all tabs (and only the tabs).
 
-  This method sets the Fl_Tab's damage flags so the tab area
-  is redrawn.
+  This method sets the Fl_Tab's damage flags so the tab area is redrawn.
 */
 void Fl_Tabs::redraw_tabs() {
   int H = tab_height();
@@ -383,6 +448,12 @@ void Fl_Tabs::redraw_tabs() {
   }
 }
 
+/**
+ Handle all events in the tabs area and forward the rest to the selected child.
+
+ \param[in] event handle this event
+ \return 1 if the event was handled
+ */
 int Fl_Tabs::handle(int event) {
   static int initial_x = 0;
   static int initial_tab_offset = 0;
@@ -646,8 +717,9 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
   return ret;
 }
 
-enum {LEFT, RIGHT, SELECTED};
-
+/**
+ Draw the tabs area, the optional pulldown button, and all children.
+ */
 void Fl_Tabs::draw() {
   Fl_Widget *v = value();
   int H = tab_height();
@@ -718,6 +790,24 @@ void Fl_Tabs::draw() {
   }
 }
 
+/**
+ Draw a tab in the top or bottom tabs area.
+
+ Tabs can be selected, or on the left or right side of the selected tab. If
+ overlapping, left tabs are drawn bottom to top using clipping. The selected
+ tab is then the topmost, followed by the right side tabs drawn top to bottom.
+
+ Tabs with the FL_WHEN_CLOSE bit set will draw a cross on their left side
+ only if they are not compressed/overlapping.
+
+ \param[in] x1 horizontal position of the left edge of the tab
+ \param[in] h2 horizontal position of the following tab
+ \param[in] w, h width and height of the tab
+ \param[in] o the child widget that corresponds to this tab
+ \param[in] flags if bit 1 is set, this tab is overlapped by another tab
+ \param[in] what can be LEFT, SELECTED, or RIGHT to indicate if the tab is to
+    the left side or the right side of the selected tab, or the selected tab itself
+ */
 void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, int what) {
   x1 += tab_offset;
   x2 += tab_offset;
@@ -840,13 +930,13 @@ Fl_Tabs::Fl_Tabs(int X, int Y, int W, int H, const char *L) :
   tab_count = 0;
   tab_align_ = FL_ALIGN_CENTER;
   has_overflow_menu = 0;
-  overflow_menu = NULL;
 }
 
+/**
+ Delete allocated resources and destroy all children.
+ */
 Fl_Tabs::~Fl_Tabs() {
   clear_tab_positions();
-  if (overflow_menu)
-    delete[] overflow_menu;
 }
 
 /**
@@ -909,7 +999,7 @@ void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
 /**
   Clear internal array of tab positions and widths.
 
-  For details see tab_positions().
+  \see tab_positions().
 */
 void Fl_Tabs::clear_tab_positions() {
   if (tab_pos) {
@@ -939,15 +1029,13 @@ void Fl_Tabs::clear_tab_positions() {
  You can set the desired behavior using the overflow() method.
 
  \param ov overflow type
+
+ \see OVERFLOW_COMPRESS, OVERFLOW_CLIP, OVERFLOW_PULLDOWN, OVERFLOW_DRAG
  */
 void Fl_Tabs::handle_overflow(int ov) {
   overflow_type = ov;
   tab_offset = 0;
   has_overflow_menu = 0;
-  if (overflow_menu) {
-    delete[] overflow_menu;
-    overflow_menu = NULL;
-  }
   damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL);
   redraw();
 }
