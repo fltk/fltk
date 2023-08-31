@@ -801,8 +801,8 @@ void Fl_Tabs::draw() {
  only if they are not compressed/overlapping.
 
  \param[in] x1 horizontal position of the left edge of the tab
- \param[in] h2 horizontal position of the following tab
- \param[in] w, h width and height of the tab
+ \param[in] x2 horizontal position of the following tab
+ \param[in] W, H width and height of the tab
  \param[in] o the child widget that corresponds to this tab
  \param[in] flags if bit 1 is set, this tab is overlapped by another tab
  \param[in] what can be LEFT, SELECTED, or RIGHT to indicate if the tab is to

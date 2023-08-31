@@ -180,14 +180,14 @@ struct Fl_Menu_Item;
   When the combined width of the tabs exceeds that of the Fl_Tabs widget, the
   tabs will overflow. Fl_Tabs provides four options for managing tabs overflow:
 
-  - \ref OVERFLOW_COMPRESS: proportionally compress the tabs to the left and right
+  - Fl_Tabs::OVERFLOW_COMPRESS: proportionally compress the tabs to the left and right
     of the selected tab until they all fit within the widget.
-  - \ref OVERFLOW_CLIP: clips any tabs that extend beyond the right edge of the
+  - Fl_Tabs::OVERFLOW_CLIP: clips any tabs that extend beyond the right edge of the
     Fl_Tabs widget, making some tabs unreachable.
-  - \ref OVERFLOW_PULLDOWN: doesn't compress the tabs but instead generates a
+  - Fl_Tabs::OVERFLOW_PULLDOWN: doesn't compress the tabs but instead generates a
     pulldown menu at the right end of the tabs area, displaying
     all available tabs.
-  - \ref OVERFLOW_DRAG: maintains the tabs' original sizes, allowing horizontal
+  - Fl_Tabs::OVERFLOW_DRAG: maintains the tabs' original sizes, allowing horizontal
     dragging of the tabs area using the mouse, a horizontal mouse wheel,
     or the horizontal scrolling gesture on touchpads.
 
