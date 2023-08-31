@@ -78,8 +78,16 @@ extern Fl_Button *preset_choice[3];
 #include <FL/Fl_Value_Input.H>
 extern Fl_Menu_Item fontmenu_w_default[];
 extern Fl_Group *w_settings_shell_tab;
-extern Fl_Check_Button *shell_use_fl_button;
-#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Browser.H>
+extern Fl_Browser *w_settings_shell_list;
+extern Fl_Group *w_settings_shell_toolbox;
+extern Fl_Button *w_settings_shell_dup;
+extern Fl_Button *w_settings_shell_remove;
+extern Fl_Button *w_settings_shell_play;
+extern Fl_Group *w_settings_shell_cmd;
+#include <FL/Fl_Shortcut_Button.H>
+#include <FL/Fl_Text_Editor.H>
+extern Fl_Menu_Button *w_sttings_shell_text_macros;
 extern Fl_Group *w_settings_i18n_tab;
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;
@@ -102,10 +110,13 @@ extern Fl_Menu_Item *w_layout_menu_storage[4];
 #define w_layout_menu_load (menu_w_layout_menu+5)
 #define w_layout_menu_save (menu_w_layout_menu+6)
 #define w_layout_menu_delete (menu_w_layout_menu+7)
+extern Fl_Menu_Item menu_Condition[];
+extern Fl_Menu_Item menu_w_sttings_shell_text_macros[];
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern Fl_Double_Window *shell_run_window;
 #include <FL/Fl_Simple_Terminal.H>
 extern Fl_Simple_Terminal *shell_run_terminal;
+#include <FL/Fl_Return_Button.H>
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 #endif

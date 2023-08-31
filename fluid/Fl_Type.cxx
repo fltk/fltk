@@ -252,8 +252,11 @@ void delete_all(int selected_only) {
   }
   if(!selected_only) {
     // reset the setting for the external shell command
-    shell_prefs_get();
-    shell_settings_write();
+    if (g_shell_config) {
+      g_shell_config->restore_defaults();
+      g_shell_config->rebuild_shell_menu();
+      g_shell_config->update_settings_dialog();
+    }
     widget_browser->hposition(0);
     widget_browser->vposition(0);
     g_layout_list.remove_all(FD_STORE_PROJECT);

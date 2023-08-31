@@ -1585,10 +1585,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Dialog",      0, select_layout_preset_cb, (void*)1, FL_MENU_RADIO },
   {"Toolbox",     0, select_layout_preset_cb, (void*)2, FL_MENU_RADIO },
   {0},
-{"&Shell",0,0,0,FL_SUBMENU},
-  {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
-  {"Execute &Again...",FL_ALT+'g',(Fl_Callback *)do_shell_command},
-  {0},
+{"&Shell", 0, shell_submenu_marker, (void*)default_shell_menu, FL_SUBMENU_POINTER},
 {"&Help",0,0,0,FL_SUBMENU},
   {"&Rapid development with FLUID...",0,help_cb},
   {"&FLTK Programmers Manual...",0,manual_cb, 0, FL_MENU_DIVIDER},
@@ -1710,7 +1707,6 @@ void make_main_window() {
     fluid_prefs.get("show_guides", show_guides, 1);
     fluid_prefs.get("show_restricted", show_restricted, 1);
     fluid_prefs.get("show_comments", show_comments, 1);
-    shell_prefs_get();
     make_shell_window();
   }
 
@@ -1740,6 +1736,8 @@ void make_main_window() {
 
   if (!batch_mode) {
     load_history();
+    g_shell_config = new Fd_Shell_Command_List;
+    g_shell_config->restore_defaults();
     make_settings_window();
   }
 }
