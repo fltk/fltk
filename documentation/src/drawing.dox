@@ -85,7 +85,7 @@ it's possible to set the
 it's possible to change the scale factor value of any screen at run time
 with ctrl/+/-/0/ keystrokes which enlarge, shrink, and reset, respectively,
 all FLTK windows on a screen and their content.
-Under macOS, the corresponding GUI scaling shortcuts are ⌘/+/-/0/.
+Under macOS, the corresponding GUI scaling shortcuts are cmd/+/-/0/.
 
 GUI rescaling involves also image drawing: the screen area covered by the drawn image
 contains a number of pixels that grows with the scale factor. When FLTK draws images,

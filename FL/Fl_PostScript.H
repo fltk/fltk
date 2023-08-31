@@ -40,19 +40,16 @@ class Fl_PostScript_Graphics_Driver;
  This class is used exactly as the Fl_Printer class except for the begin_job() call,
  two variants of which are usable and allow to specify what page format and layout are desired.
 
- <b>Processing of text</b>: Text uses vectorial fonts under the X11 + Pango and the Wayland platforms.
+ <br><b>Processing of text</b>: Text uses vectorial fonts under the X11 + Pango and the Wayland platforms.
  With other platforms, only text restricted to the Latin alphabet (and a few other characters
  listed in the table below) and to FLTK standard fonts is vectorized.  All other unicode characters
  or all other fonts (FL_FREE_FONT and above) are output as a bitmap.
  FLTK standard fonts are output using the corresponding PostScript standard fonts.
  The latin alphabet means all unicode characters between U+0020 and U+017F, or, in other words,
  the ASCII, Latin-1 Supplement and Latin Extended-A charts.
- <br><b>Processing of transparent Fl_RGB_Image objects</b>: Under the X11 + Pango and the Wayland platforms,
- these objects are output with their exact transparency. With other platforms, these objects
- are drawn blended to white color. Class Fl_EPS_File_Surface 's constructor allows to set another
- background color for blending.
- <center>Extra characters supported by standard PostScript fonts</center>
- <table>
+ \htmlonly
+ <table border=1>
+ <caption>Extra characters supported by standard PostScript fonts</caption>
  <tr> <th>Char</th><th>Codepoint</th><th>Name</th>  <th>Char</th><th>Codepoint</th><th>Name</th> <th>Char</th><th>Codepoint</th><th>Name</th></tr>
  <tr><td>ƒ</td><td>U+0192</td><td>florin</td><td>‚</td><td>U+201A</td><td>quotesinglbase</td><td>™</td><td>U+2122</td><td>trademark</td></tr>
  <tr><td>ˆ</td><td>U+02C6</td><td>circumflex</td><td>“</td><td>U+201C</td><td>quotedblleft</td><td>∂</td><td>U+2202</td><td>partialdiff</td></tr>
@@ -66,8 +63,16 @@ class Fl_PostScript_Graphics_Driver;
  <tr><td>–</td><td>U+2013</td><td>endash</td><td>‹</td><td>U+2039</td><td>guilsinglleft</td><td>◊</td><td>U+25CA</td><td>lozenge</td></tr>
  <tr><td>—</td><td>U+2014</td><td>emdash</td><td>›</td><td>U+203A</td><td>guilsinglright</td><td>ﬁ</td><td>U+FB01</td><td>fi</td></tr>
  <tr><td>‘</td><td>U+2018</td><td>quoteleft</td><td>/</td><td>U+2044</td><td>fraction</td><td>ﬂ</td><td>U+FB02</td><td>fl</td></tr>
- <tr><td>’</td><td>U+2019</td><td>quoteright</td><td>€</td><td>U+20AC</td><td>Euro</td><td></td><td>U+F8FF</td><td>apple (Mac OS only)</td></tr>
+ <tr><td>’</td><td>U+2019</td><td>quoteright</td><td>€</td><td>U+20AC</td><td>Euro</td><td></td><td>U+F8FF</td><td>apple (macOS only)</td></tr>
  </table>
+ \endhtmlonly
+
+ \image latex extraPSchars.png "Extra characters supported by standard PostScript fonts" width=16cm
+
+ <b>Processing of transparent Fl_RGB_Image objects</b>: Under the X11 + Pango and the Wayland platforms,
+ these objects are output with their exact transparency. With other platforms, these objects
+ are drawn blended to white color. Class Fl_EPS_File_Surface 's constructor allows to set another
+ background color for blending.
 
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
