@@ -251,7 +251,7 @@ void run_shell_command(const Fl_String &cmd, int flags) {
 
   if (cmd.empty()) {
     fl_alert("No shell command entered!");
-    return false;
+    return;
   }
 
   if (!shell_run_window->visible()) {
@@ -346,7 +346,7 @@ void Fd_Shell_Command::update_shell_menu() {
     const char *new_label = label.c_str();              // never NULL
     if (!old_label || (old_label && strcmp(old_label, new_label))) {
       if (old_label) ::free((void*)old_label);
-      shell_menu_item_->label(::strdup(new_label));
+      shell_menu_item_->label(fl_strdup(new_label));
     }
     shell_menu_item_->shortcut(shortcut);
   }
@@ -380,6 +380,7 @@ bool Fd_Shell_Command::is_active() {
       return false;
     }
   }
+  return false;
 }
 
 
@@ -454,7 +455,7 @@ void shell_submenu_marker(Fl_Widget*, void*) {
 }
 
 void menu_shell_cmd_cb(Fl_Widget*, void *u) {
-  long index = (long)u;
+  long index = (long)(fl_intptr_t)u;
   g_shell_config->list[index]->run();
 }
 
@@ -488,7 +489,7 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
     }
   }
   if (i>0) m[i-1].flags |= FL_MENU_DIVIDER;
-  m[i].label(::strdup("Customize..."));
+  m[i].label(fl_strdup("Customize..."));
   m[i].callback(menu_shell_customize_cb);
   // replace the old menu array with the new one
   Fl_Menu_Item *m_old = shell_menu_;
