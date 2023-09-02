@@ -37,25 +37,23 @@
 
 enum {LEFT, RIGHT, SELECTED};
 
+static int fl_min(int a, int b) { return a < b ? a : b; }
 
 /** Make sure that we redraw all tabs when new children are added. */
 int Fl_Tabs::on_insert(Fl_Widget* candidate, int index) {
   redraw_tabs();
-  damage(FL_DAMAGE_EXPOSE);
   return Fl_Group::on_insert(candidate, index);
 }
 
 /** Make sure that we redraw all tabs when children are moved. */
 int Fl_Tabs::on_move(int a, int b) {
   redraw_tabs();
-  damage(FL_DAMAGE_EXPOSE);
   return Fl_Group::on_move(a, b);
 }
 
 /** Make sure that we redraw all tabs when new children are removed. */
 void Fl_Tabs::on_remove(int index) {
   redraw_tabs();
-  damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL);
   if (child(index)->visible()) {
     if (index+1<children())
       value(child(index+1));
@@ -67,7 +65,7 @@ void Fl_Tabs::on_remove(int index) {
 
 /** Make sure that we redraw all tabs when the widget size changes. */
 void Fl_Tabs::resize(int X, int Y, int W, int H) {
-  damage(FL_DAMAGE_EXPOSE);
+  redraw_tabs();
   Fl_Group::resize(X, Y, W, H);
 }
 
@@ -106,7 +104,6 @@ void Fl_Tabs::resize(int X, int Y, int W, int H) {
 
   \see clear_tab_positions()
 */
-
 int Fl_Tabs::tab_positions() {
   const int nc = children();
   if (nc != tab_count) {
@@ -427,8 +424,8 @@ void Fl_Tabs::draw_overflow_menu_button() {
     X = x() + w() - H;
     Y = y() + h() - H - 1;
   }
-  fl_draw_box(box(), X, Y, H, H+1, color());
-  Fl_Rect r(X, Y, H, H+1);
+  fl_draw_box(box(), X, Y, H, H, color());
+  Fl_Rect r(X, Y, H, H);
   fl_draw_arrow(r, FL_ARROW_CHOICE, FL_ORIENT_NONE, fl_contrast(FL_BLACK, color()));
 }
 
@@ -440,11 +437,10 @@ void Fl_Tabs::draw_overflow_menu_button() {
 void Fl_Tabs::redraw_tabs() {
   int H = tab_height();
   if (H >= 0) {
-    H += Fl::box_dy(box());
-    damage(FL_DAMAGE_SCROLL, x(), y(), w(), H);
+    damage(FL_DAMAGE_EXPOSE, x(), y(), w(), H + SELECTION_BORDER);
   } else {
-    H = Fl::box_dy(box()) - H;
-    damage(FL_DAMAGE_SCROLL, x(), y() + h() - H, w(), H);
+    H = -H;
+    damage(FL_DAMAGE_EXPOSE, x(), y() + h() - H - SELECTION_BORDER, w(), H + SELECTION_BORDER);
   }
 }
 
@@ -475,10 +471,8 @@ int Fl_Tabs::handle(int event) {
       int dw = tab_pos[children()] + tab_offset - w();
       if (dw < -m)
         tab_offset -= dw+m;
-      if (tab_offset != original_tab_offset) {
-        damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL);
-        redraw();
-      }
+      if (tab_offset != original_tab_offset)
+        redraw_tabs();
       return 1;
     }
     return Fl_Group::handle(event);
@@ -517,7 +511,7 @@ int Fl_Tabs::handle(int event) {
             tab_offset -= dw+m;
           }
         }
-        damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL);
+        redraw_tabs();
         return 1;
       }
     }
@@ -708,12 +702,11 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
     tab_positions();
     if (tab_pos[selected]+tab_width[selected]+tab_offset+mr > w()) {
       tab_offset = w() - tab_pos[selected] - tab_width[selected] - mr;
-      damage(FL_DAMAGE_EXPOSE);
     } else if (tab_pos[selected]+tab_offset-m < 0) {
       tab_offset = -tab_pos[selected]+m;
-      damage(FL_DAMAGE_EXPOSE);
     }
   }
+  redraw_tabs();
   return ret;
 }
 
@@ -721,73 +714,141 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
  Draw the tabs area, the optional pulldown button, and all children.
  */
 void Fl_Tabs::draw() {
-  Fl_Widget *v = value();
-  int H = tab_height();
-  int ty, th;
-  if (H >= 0) {
-    ty = y(); th = H;
-  } else {
-    ty = y() + h() + H; th = -H;
-  }
-  Fl_Color c = v ? v->color() : color();
+  //
+  //  FL_DAMAGE_CHILD   : this is set if any of the children asked for a redraw
+  //                      Fl_Tabs forwards this by calling `update_child(v)`
+  //  FL_DAMAGE_EXPOSE  : this is set if some setting in a widget changed
+  //                      Fl_Tabs uses this to indicate that the tabs area needs a full redraw
+  //  FL_DAMAGE_SCROLL  : this is used as a custom flag in various widgets
+  //                      Fl_Tabs honors this flag for back compatibly as FL_DAMAGE_EXPOSE
+  //  FL_DAMAGE_ALL     : just redraw everything
 
-  if (damage() & FL_DAMAGE_ALL) { // redraw the children
-    draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), c);
+  // Anatomy of tabs on top:
+  //  +------+             +---+  <<-- selected tabs start at y()
+  //  | text | +------+    | V |   <-- other tabs are offset down by BORDER
+  //  |      | | text |    +---+   <-- the pulldown button width equals H
+  // ++      +-----------------+   <-- tab_height() to tab_height + Fl::box_dx(box())
+  // +-------------------------+   <-- tab_height + SELECTION_BORDER
+  // |                         |
+  //
+  //   <----> this area within the SELECTION_BORDER is called "stem" below
+  // tab_height() calculates the distance from y() to the "highest" child.
+  // Note that the SELECTION_BORDER bleeds into the child area!
+  // Note that the clear area under the selected tab also bleeds into the child.
+  // Note that children have FL_NO_BOX and Fl_Tabs must draw the background.
+  //
+  // Horizontally, we start tabs at x() + Fl::box_dx()
+  // When uncompressed, the space between tabs is EXTRASPACE
+  // EXTRAGAP is the space between the close cross and the label
+  // MARGIN is the minimal distance to the left and right edge of Fl_Tabs for
+  //  the selected tabs if the overflow mode allows scrolling
+
+  Fl_Widget *selected_child = value();
+  int selected = tab_positions();
+  int H = tab_height();
+  Fl_Color selected_tab_color = selected_child ? selected_child->color() : color();
+  bool tabs_at_top = (H > 0);
+  bool colored_selection_border = (selection_color() != selected_tab_color);
+
+  int tabs_y, tabs_h;
+  int child_area_y, child_area_h;
+  int clipped_child_area_y, clipped_child_area_h;
+  int selection_border_y, selection_border_h;
+
+  selection_border_h = colored_selection_border ? SELECTION_BORDER : Fl::box_dx(box());
+
+  if (tabs_at_top) {
+    tabs_h = H;
+    tabs_y = y();
+    selection_border_y = y() + tabs_h;
+    child_area_y = y() + tabs_h;
+    child_area_h = h() - tabs_h;
+    clipped_child_area_y = y() + tabs_h + selection_border_h;
+    clipped_child_area_h = h() - tabs_h - selection_border_h;
+  } else {
+    tabs_h = -H;
+    tabs_y = y() + h() - tabs_h;
+    selection_border_y = tabs_y - selection_border_h;
+    child_area_y = y();
+    child_area_h = h() - tabs_h;
+    clipped_child_area_y = y();
+    clipped_child_area_h = h() - tabs_h - selection_border_h;
   }
-  if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
-    if (selection_color() != c) {
-      // Draw the top or bottom SELECTION_BORDER lines of the tab pane in the
-      // selection color so that the user knows which tab is selected...
-      int clip_y = (H >= 0) ? y() + H : y() + h() + H - SELECTION_BORDER;
-      fl_push_clip(x(), clip_y, w(), SELECTION_BORDER);
-      draw_box(box(), x(), clip_y, w(), SELECTION_BORDER, selection_color());
-      fl_pop_clip();
-    }
-  }
-  if (damage() & FL_DAMAGE_ALL) { // redraw the children
-    if (v) draw_child(*v);
-  } else { // redraw the child
-    if (v) update_child(*v);
-  }
-  if (damage() & FL_DAMAGE_EXPOSE) { // redraw the tab bar background
+
+  // ---- draw the tabs and the selection border
+  if (damage() & (FL_DAMAGE_ALL|FL_DAMAGE_EXPOSE|FL_DAMAGE_SCROLL))
+  {
+    // -- draw tabs background
     if (parent()) {
       Fl_Widget *p = parent();
-      fl_push_clip(x(), ty, w(), th);
+      fl_push_clip(x(), tabs_y, w(), tabs_h);
       if (p->as_window())
         fl_draw_box(p->box(), 0, 0, p->w(), p->h(), p->color());
       else
         fl_draw_box(p->box(), p->x(), p->y(), p->w(), p->h(), p->color());
       fl_pop_clip();
     } else {
-      fl_rectf(x(), ty, w(), th, color());
+      fl_rectf(x(), tabs_y, w(), tabs_h, color());
     }
-  }
-  if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
-    const int nc = children();
-    int selected = tab_positions();
+
+    // -- draw selection border
+    fl_push_clip(x(), selection_border_y, w(), selection_border_h);
+    int stem_x = x() + tab_pos[selected] + tab_offset;
+    int stem_w = fl_min(tab_pos[selected+1] - tab_pos[selected], tab_width[selected]);
+    if (colored_selection_border) {
+      draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
+      draw_box(box(), x(), selection_border_y, w(), selection_border_h, selection_color());
+      if (tabs_at_top)
+        fl_rectf(stem_x, selection_border_y, stem_w, selection_border_h/2, selection_color());
+      else
+        fl_rectf(stem_x, selection_border_y+selection_border_h-selection_border_h/2, stem_w, selection_border_h/2, selection_color());
+    } else {
+      draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
+      fl_rectf(stem_x, child_area_y-tabs_h, stem_w, child_area_h+2*tabs_h, selection_color());
+    }
+    fl_pop_clip();
+
+    // -- draw all tabs
+    fl_push_clip(x(), tabs_y, w(), tabs_h);
     int i;
-    if (H>0)
-      fl_push_clip(x(), ty, w(), th+BORDER);
-    else
-      fl_push_clip(x(), ty-BORDER, w(), th+BORDER);
-    Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], tab_flags[i], LEFT);
-    for (i=nc-1; i > selected; i--)
+               tab_width[i], H, child(i), tab_flags[i], LEFT);
+    for (i=children()-1; i > selected; i--)
       draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], tab_flags[i], RIGHT);
-    if (v) {
-      i = selected;
-      draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
-               tab_width[i], H, a[i], tab_flags[i], SELECTED);
-    }
+               tab_width[i], H, child(i), tab_flags[i], RIGHT);
+    if (selected_child)
+      draw_tab(x()+tab_pos[selected], x()+tab_pos[selected+1],
+               tab_width[selected], H, selected_child, tab_flags[selected], SELECTED);
+    fl_pop_clip();
+
+    // -- draw the overflow menu button
     if (overflow_type == OVERFLOW_PULLDOWN)
       check_overflow_menu();
     if (has_overflow_menu)
       draw_overflow_menu_button();
+  }
+
+  // ---- draw the child area
+  if (damage() & (FL_DAMAGE_ALL|FL_DAMAGE_CHILD)) {
+    // clip to area below selection border
+    fl_push_clip(x(), clipped_child_area_y, w(), clipped_child_area_h);
+    if (damage() & (FL_DAMAGE_ALL)) {
+      // draw the box and background around the child
+      fl_draw_box(box(), x(), child_area_y, w(), child_area_h, selected_tab_color);
+      // force draw the selected child
+      if (selected_child)
+        draw_child(*selected_child);
+    } else if (damage() & (FL_DAMAGE_CHILD)) {
+      // draw the selected child
+      if (selected_child)
+        update_child(*selected_child);
+    }
+    // stop clipping
     fl_pop_clip();
   }
+
+  clear_damage();
 }
 
 /**
@@ -885,7 +946,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int flags, in
 
     // Draw the focus box
     if (Fl::focus() == this && o->visible())
-      draw_focus(bt, x1, y() + h() - H, W, H, bc);
+      draw_focus(bt, x1, y()+h()-H+1, W, H, bc);
 
     fl_pop_clip();
   }
@@ -1036,7 +1097,7 @@ void Fl_Tabs::handle_overflow(int ov) {
   overflow_type = ov;
   tab_offset = 0;
   has_overflow_menu = 0;
-  damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL);
+  damage(FL_DAMAGE_EXPOSE);
   redraw();
 }
 

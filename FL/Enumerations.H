@@ -1318,7 +1318,7 @@ enum Fl_Mode {
 enum Fl_Damage {
   FL_DAMAGE_CHILD    = 0x01, /**< A child needs to be redrawn. */
   FL_DAMAGE_EXPOSE   = 0x02, /**< The window was exposed. */
-  FL_DAMAGE_SCROLL   = 0x04, /**< The Fl_Scroll widget was scrolled. */
+  FL_DAMAGE_SCROLL   = 0x04, /**< The Fl_Scroll widget was scrolled. Used by other widgets for other widget specific damages. */
   FL_DAMAGE_OVERLAY  = 0x08, /**< The overlay planes need to be redrawn. */
   FL_DAMAGE_USER1    = 0x10, /**< First user-defined damage bit. */
   FL_DAMAGE_USER2    = 0x20, /**< Second user-defined damage bit. */
