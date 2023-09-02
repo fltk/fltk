@@ -91,6 +91,9 @@ decl {\#include <FL/fl_ask.H>} {private global
 decl {\#include <string.h>} {private global
 }
 
+decl {\#include <../src/flstring.h>} {private global
+}
+
 decl {void init_scheme(void);} {
   comment {// initialize the scheme from preferences} public global
 }
@@ -983,7 +986,7 @@ if (v == LOAD) {
       g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
     }
   }
-}} selected
+}}
             tooltip {save the internationalisation string before running the command} xywh {100 471 220 20} down_box DOWN_BOX labelsize 11
           }
           Fl_Button {} {
@@ -1056,7 +1059,7 @@ if (v == LOAD) {
               xywh {0 0 100 20} labelsize 11
             }
           }
-          Fl_Text_Editor {} {
+          Fl_Text_Editor w_settings_shell_command {
             label {Shell script:}
             callback {int selected = w_settings_shell_list->value();
 if (v == LOAD) {
@@ -1073,25 +1076,40 @@ if (v == LOAD) {
             xywh {100 347 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
             code0 {o->buffer(new Fl_Text_Buffer);}
           }
-          Fl_Menu_Button w_sttings_shell_text_macros {open
-            xywh {296 347 24 22} color 6 labelsize 11 textsize 11
+          Fl_Group {} {open
+            xywh {296 347 24 44}
           } {
-            MenuItem {} {
-              label {<<projectname>>}
-              xywh {0 0 100 20} labelsize 11
+            Fl_Menu_Button w_sttings_shell_text_macros {
+              callback {const Fl_Menu_Item *mi = o->mvalue();
+if (mi) {
+  char buffer[256];
+  fl_strlcpy(buffer, mi->label(), 255);
+  int n = (int)strlen(buffer)-1;
+  if (buffer[n]=='@') buffer[n] = 0;
+  char *word = buffer;
+  if (word[0]=='@') word++;
+  int at = w_settings_shell_command->insert_position();
+  w_settings_shell_command->buffer()->insert(at, word);
+}} open
+              xywh {296 347 24 22} labelsize 11 textsize 11
+            } {
+              MenuItem {} {
+                label {@@BASENAME@@} selected
+                xywh {0 0 100 20} labelfont 4 labelsize 11
+              }
+              MenuItem {} {
+                label {<<basename>>}
+                xywh {0 0 100 20} labelsize 11 hide
+              }
+              MenuItem {} {
+                label {<<projectpath>>}
+                xywh {0 0 100 20} labelsize 11 hide
+              }
             }
-            MenuItem {} {
-              label {<<basename>>}
-              xywh {0 0 100 20} labelsize 11
+            Fl_Button {} {
+              label {@square}
+              tooltip {open big code editor} xywh {296 369 24 22} color 6 labelsize 11 labelcolor 49
             }
-            MenuItem {} {
-              label {<<projectpath>>}
-              xywh {0 0 100 20} labelsize 11
-            }
-          }
-          Fl_Button {} {
-            label {@square}
-            tooltip {open big code editor} xywh {296 369 24 22} color 6 labelsize 11 labelcolor 49
           }
         }
       }

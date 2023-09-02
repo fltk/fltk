@@ -22,6 +22,7 @@
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>
 #include <string.h>
+#include <../src/flstring.h>
 void scheme_cb(Fl_Scheme_Choice *, void *);
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
@@ -1021,7 +1022,9 @@ Fl_Menu_Item menu_Condition[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-static void cb_Shell(Fl_Text_Editor* o, void* v) {
+Fl_Text_Editor *w_settings_shell_command=(Fl_Text_Editor *)0;
+
+static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   int selected = w_settings_shell_list->value();
   if (v == LOAD) {
     if (selected) {
@@ -1038,10 +1041,24 @@ static void cb_Shell(Fl_Text_Editor* o, void* v) {
 
 Fl_Menu_Button *w_sttings_shell_text_macros=(Fl_Menu_Button *)0;
 
+static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
+  const Fl_Menu_Item *mi = o->mvalue();
+  if (mi) {
+    char buffer[256];
+    fl_strlcpy(buffer, mi->label(), 255);
+    int n = (int)strlen(buffer)-1;
+    if (buffer[n]=='@') buffer[n] = 0;
+    char *word = buffer;
+    if (word[0]=='@') word++;
+    int at = w_settings_shell_command->insert_position();
+    w_settings_shell_command->buffer()->insert(at, word);
+  }
+}
+
 Fl_Menu_Item menu_w_sttings_shell_text_macros[] = {
- {"<<projectname>>", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"<<basename>>", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"<<projectpath>>", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"@@BASENAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"<<basename>>", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"<<projectpath>>", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -1859,27 +1876,30 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->callback((Fl_Callback*)cb_Condition);
             o->menu(menu_Condition);
           } // Fl_Choice* o
-          { Fl_Text_Editor* o = new Fl_Text_Editor(100, 347, 196, 80, "Shell script:");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textfont(4);
-            o->textsize(12);
-            o->callback((Fl_Callback*)cb_Shell);
-            o->align(Fl_Align(FL_ALIGN_LEFT));
+          { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(100, 347, 196, 80, "Shell script:");
+            w_settings_shell_command->labelfont(1);
+            w_settings_shell_command->labelsize(11);
+            w_settings_shell_command->textfont(4);
+            w_settings_shell_command->textsize(12);
+            w_settings_shell_command->callback((Fl_Callback*)cb_w_settings_shell_command);
+            w_settings_shell_command->align(Fl_Align(FL_ALIGN_LEFT));
             o->buffer(new Fl_Text_Buffer);
-          } // Fl_Text_Editor* o
-          { w_sttings_shell_text_macros = new Fl_Menu_Button(296, 347, 24, 22);
-            w_sttings_shell_text_macros->color((Fl_Color)6);
-            w_sttings_shell_text_macros->labelsize(11);
-            w_sttings_shell_text_macros->textsize(11);
-            w_sttings_shell_text_macros->menu(menu_w_sttings_shell_text_macros);
-          } // Fl_Menu_Button* w_sttings_shell_text_macros
-          { Fl_Button* o = new Fl_Button(296, 369, 24, 22, "@square");
-            o->tooltip("open big code editor");
-            o->color((Fl_Color)6);
-            o->labelsize(11);
-            o->labelcolor(FL_BACKGROUND_COLOR);
-          } // Fl_Button* o
+          } // Fl_Text_Editor* w_settings_shell_command
+          { Fl_Group* o = new Fl_Group(296, 347, 24, 44);
+            { w_sttings_shell_text_macros = new Fl_Menu_Button(296, 347, 24, 22);
+              w_sttings_shell_text_macros->labelsize(11);
+              w_sttings_shell_text_macros->textsize(11);
+              w_sttings_shell_text_macros->callback((Fl_Callback*)cb_w_sttings_shell_text_macros);
+              w_sttings_shell_text_macros->menu(menu_w_sttings_shell_text_macros);
+            } // Fl_Menu_Button* w_sttings_shell_text_macros
+            { Fl_Button* o = new Fl_Button(296, 369, 24, 22, "@square");
+              o->tooltip("open big code editor");
+              o->color((Fl_Color)6);
+              o->labelsize(11);
+              o->labelcolor(FL_BACKGROUND_COLOR);
+            } // Fl_Button* o
+            o->end();
+          } // Fl_Group* o
           w_settings_shell_cmd->end();
         } // Fl_Group* w_settings_shell_cmd
         o->image()->scale(36, 24);

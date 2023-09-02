@@ -55,9 +55,6 @@
 // TODO: confirm deleting a single command
 // TODO: set dirty flag
 // TODO: set "not default" flag
-// TODO: remove unused stuff
-// TODO: document all functions
-// TODO: remove unused methods
 // TODO: refactor namespace use
 // TODO: hostname, username, getenv support?
 
@@ -77,19 +74,31 @@ static Fl_Process s_proc;
 
 
 /** \class Fl_Process
- \todo Explain.
+ Launch an external shell command.
  */
 
+/**
+ Create a process manager
+ */
 Fl_Process::Fl_Process() {
   _fpt= NULL;
 }
 
+/**
+ Destroy the project manager.
+ */
 Fl_Process::~Fl_Process() {
+  // TODO: check what we need to do if a task is still running
   if (_fpt) close();
 }
 
-// FIXME: popen needs the UTF-8 equivalent fl_popen
-// portable open process:
+/**
+ Open a process.
+
+ \param[in] cmd the shell command that we want to run
+ \param[in] mode "r" or "w" for creating a stream that can read or write
+ \return a stream that is redirected from the shell command stdout
+ */
 FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 #if defined(_WIN32)  && !defined(__CYGWIN__)
   // PRECONDITIONS
@@ -131,6 +140,9 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 #endif
 }
 
+/**
+ Close the current process.
+ */
 int Fl_Process::close() {
 #if defined(_WIN32)  && !defined(__CYGWIN__)
   if (_fpt) {
@@ -149,11 +161,22 @@ int Fl_Process::close() {
 #endif
 }
 
-// non-null if file is open
+/**
+ non-null if file is open.
+
+ \return the current file descriptor of the process' stdout
+ */
 FILE *Fl_Process::desc() const {
   return _fpt;
 }
 
+/**
+ Receive a single line from the current process.
+
+ \param[out] line buffer to receive the line
+ \param[in] s size of the provided buffer
+ \return NULL if an orror occured, otherwise a pointer to the string
+ */
 char *Fl_Process::get_line(char * line, size_t s) const {
   return _fpt ? fgets(line, (int)s, _fpt) : NULL;
 }
@@ -194,9 +217,12 @@ void Fl_Process::clean_close(HANDLE& h) {
 
 #endif
 
+/**
+ Prepare FLUID for running a shell command according to the command flags.
 
-// Shell command support...
-
+ \param[in] flags set various flags to save the project, code, and string before running the command
+ \return false if the previous command is still running
+ */
 static bool prepare_shell_command(int flags)  {
 //  settings_window->hide();
   if (s_proc.desc()) {
@@ -215,6 +241,9 @@ static bool prepare_shell_command(int flags)  {
   return true;
 }
 
+/**
+ Called by the file handler when the command is finished.
+ */
 void shell_proc_done() {
   shell_run_terminal->append("... END SHELL COMMAND ...\n");
   shell_run_button->activate();
@@ -246,13 +275,32 @@ void shell_pipe_cb(FL_SOCKET, void*) {
   }
 }
 
-void run_shell_command(const Fl_String &cmd, int flags) {
-  if (!prepare_shell_command(flags)) return;
 
+static void expand_macros(Fl_String &cmd) {
+  int i;
+  for (i=0;;) {
+    i = cmd.find("@BASENAME@", i);
+    if (i==Fl_String::npos) break;
+    cmd.replace(i, 10, g_project.basename);
+  }
+}
+
+/**
+ Prepare for and run a shell command.
+
+ \param[in] cmd the command that is sent to `/bin/sh -c ...` or `cmd.exe` on Windows machines
+ \param[in] flags various flags in preparation of the command
+ */
+void run_shell_command(const Fl_String &cmd, int flags) {
   if (cmd.empty()) {
     fl_alert("No shell command entered!");
     return;
   }
+
+  if (!prepare_shell_command(flags)) return;
+
+  Fl_String expanded_cmd = cmd;
+  expand_macros(expanded_cmd);
 
   if (!shell_run_window->visible()) {
     Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
@@ -268,10 +316,10 @@ void run_shell_command(const Fl_String &cmd, int flags) {
   }
 
   // Show the output window and clear things...
-  shell_run_terminal->printf("\033[0;32m%s\033[0m\n", cmd.c_str());
-  shell_run_window->label(cmd.c_str());
+  shell_run_terminal->printf("\033[0;32m%s\033[0m\n", expanded_cmd.c_str());
+  shell_run_window->label(expanded_cmd.c_str());
 
-  if (s_proc.popen((char *)cmd.c_str()) == NULL) {
+  if (s_proc.popen((char *)expanded_cmd.c_str()) == NULL) {
     shell_run_terminal->printf("\033[1;31mUnable to run shell command: %s\033[0m\n",
                                strerror(errno));
     shell_run_window->label("FLUID Shell");
@@ -294,6 +342,22 @@ void run_shell_command(const Fl_String &cmd, int flags) {
 // command    fltk-config --compile <<codefile>>
 // flags      save_project | save_code | save_strings
 
+/**
+ Create an empty shell command structure.
+ */
+Fd_Shell_Command::Fd_Shell_Command()
+: shortcut(0),
+  condition(0),
+  flags(0),
+  shell_menu_item_(NULL)
+{
+}
+
+/**
+ Copy the aspects of a shell command dataset into a new shell command.
+
+ \param[in] rhs copy from this prototype
+ */
 Fd_Shell_Command::Fd_Shell_Command(const Fd_Shell_Command *rhs)
 : name(rhs->name),
   label(rhs->label),
@@ -306,6 +370,11 @@ Fd_Shell_Command::Fd_Shell_Command(const Fd_Shell_Command *rhs)
 {
 }
 
+/**
+ Create a default storage for a shell command and how it is accessible in FLUID.
+
+ \param[in] name is used as a stand-in for the command name and label
+ */
 Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name)
 : name(in_name),
   label(in_name),
@@ -317,6 +386,17 @@ Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name)
 {
 }
 
+/**
+ Create a default storage for a shell command and how it is accessible in FLUID.
+
+ \param[in] in_name name of this command in the command list in the settings panel
+ \param[in] in_label label text in the main pulldown menu
+ \param[in] in_shortcut a keyboard shortcut that will also appear in the main menu
+ \param[in] in_condition commands can be hidden for certain platforms by setting a condition
+ \param[in] in_condition_data more details for future conditions, i.e. per user, per host, etc.
+ \param[in] in_command the shell command that we want to run
+ \param[in] in_flags some flags to tell FLUID to save the project, code, or strings before running the command
+ */
 Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name,
                  const Fl_String &in_label,
                  Fl_Shortcut in_shortcut,
@@ -335,11 +415,20 @@ Fd_Shell_Command::Fd_Shell_Command(const Fl_String &in_name,
 {
 }
 
+/**
+ Run this command now.
+
+ Will open the Shell Panel and execute the command if no other command is
+ currently running.
+ */
 void Fd_Shell_Command::run() {
   if (!command.empty())
     run_shell_command(command, flags);
 }
 
+/**
+ Update the shell submenu in main menu with the shortcut and a copy of the label.
+ */
 void Fd_Shell_Command::update_shell_menu() {
   if (shell_menu_item_) {
     const char *old_label = shell_menu_item_->label();  // can be NULL
@@ -352,6 +441,11 @@ void Fd_Shell_Command::update_shell_menu() {
   }
 }
 
+/**
+ Check if the set condition is met.
+
+ \return true if this command appears in the main menu
+ */
 bool Fd_Shell_Command::is_active() {
   switch (condition) {
     case ALWAYS: return true;
@@ -384,7 +478,9 @@ bool Fd_Shell_Command::is_active() {
 }
 
 
-
+/**
+ Manage a list of shell commands and their parameters.
+ */
 Fd_Shell_Command_List::Fd_Shell_Command_List()
 : is_default_(false),
   list(NULL),
@@ -394,14 +490,26 @@ Fd_Shell_Command_List::Fd_Shell_Command_List()
 {
 }
 
+/**
+ Release all shell commands and destroy this class.
+ */
 Fd_Shell_Command_List::~Fd_Shell_Command_List() {
   clear();
 }
 
+/**
+ Return the shell command at the given index.
+
+ \param[in] index must be between 0 and list_size-1
+ \return a pointer to the shell command data
+ */
 Fd_Shell_Command *Fd_Shell_Command_List::at(int index) const {
   return list[index];
 }
 
+/**
+ Clear all current shell commands and reset the FLUID defaults.
+ */
 void Fd_Shell_Command_List::restore_defaults() {
   clear();
   add(new Fd_Shell_Command("all: build", "Build...", FL_COMMAND+'b', Fd_Shell_Command::ALWAYS, NULL,
@@ -414,6 +522,9 @@ void Fd_Shell_Command_List::restore_defaults() {
   is_default_ = true;
 }
 
+/**
+ Clear all shell commands.
+ */
 void Fd_Shell_Command_List::clear() {
   if (list) {
     for (int i=0; i<list_size; i++) {
@@ -426,6 +537,11 @@ void Fd_Shell_Command_List::clear() {
   }
 }
 
+/**
+ Add a previously created shell command to the end of the list.
+
+ \param[in] cmd a pointer to the command that we want to add
+ */
 void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
@@ -434,6 +550,12 @@ void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
   list[list_size++] = cmd;
 }
 
+/**
+ Insert a newly created shell command at the given position in the list.
+
+ \param[in] index must be between 0 and list_size-1
+ \param[in] cmd a pointer to the command that we want to add
+ */
 void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
   if (list_size == list_capacity) {
     list_capacity += 16;
@@ -444,27 +566,46 @@ void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
   list[index] = cmd;
 }
 
+/**
+ Remove and delete the command at the given index.
+
+ \param[in] index must be between 0 and list_size-1
+ */
 void Fd_Shell_Command_List::remove(int index) {
   delete list[index];
   list_size--;
   ::memmove(list+index, list+index+1, (list_size-index)*sizeof(Fd_Shell_Command**));
 }
 
+/**
+ Used to find the shell submenu within the main menu tree.
+ */
 void shell_submenu_marker(Fl_Widget*, void*) {
   // intentionally left empty
 }
 
+/**
+ This is called whenever the user clicks a shell command menu in the main menu.
+
+ \param[in] u cast tp long to get the index of the shell command
+ */
 void menu_shell_cmd_cb(Fl_Widget*, void *u) {
   long index = (long)(fl_intptr_t)u;
   g_shell_config->list[index]->run();
 }
 
+/**
+ This is called when the user selects the menu to edit the shell commands.
+ It pops up the setting panel at the shell settings tab.
+ */
 void menu_shell_customize_cb(Fl_Widget*, void*) {
   settings_window->show();
   w_settings_tabs->value(w_settings_shell_tab);
 }
 
-// rebuild the entire shell menu array
+/**
+ Rebuild the entire shell submenu from scratch and replace the old menu.
+ */
 void Fd_Shell_Command_List::rebuild_shell_menu() {
   static Fl_Menu_Item *shell_submenu = NULL;
   if (!shell_submenu)
@@ -506,15 +647,24 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
   }
 }
 
+/**
+ Tell the settings dialog to query this list and update its GUI elements.
+ */
 void Fd_Shell_Command_List::update_settings_dialog() {
   if (w_settings_shell_tab)
     w_settings_shell_tab->do_callback(w_settings_shell_tab, LOAD);
 }
 
+/**
+ The default shell submenu in batch mode.
+ */
 Fl_Menu_Item default_shell_menu[] = {
   {   "Customize...", 0, menu_shell_customize_cb },
   { NULL }
 };
 
+/**
+ A pointer to the list of shell commands if we are not in batch mode.
+ */
 Fd_Shell_Command_List *g_shell_config = NULL;
 

@@ -87,6 +87,7 @@ extern Fl_Button *w_settings_shell_play;
 extern Fl_Group *w_settings_shell_cmd;
 #include <FL/Fl_Shortcut_Button.H>
 #include <FL/Fl_Text_Editor.H>
+extern Fl_Text_Editor *w_settings_shell_command;
 extern Fl_Menu_Button *w_sttings_shell_text_macros;
 extern Fl_Group *w_settings_i18n_tab;
 extern void i18n_type_cb(Fl_Choice*, void*);
