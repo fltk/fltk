@@ -113,6 +113,7 @@ extern void textsize_cb(Fl_Value_Input*, void*);
 extern void textcolor_cb(Fl_Button*, void*);
 extern Fl_Button *w_textcolor;
 extern void textcolor_menu_cb(Fl_Menu_Button*, void*);
+extern void compact_cb(Fl_Light_Button*, void*);
 extern void subclass_cb(Fl_Input*, void*);
 extern void subtype_cb(Fl_Choice*, void*);
 extern void name_cb(Fl_Input*, void*);

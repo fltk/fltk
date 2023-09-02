@@ -79,6 +79,7 @@ class FL_EXPORT Fl_Button : public Fl_Widget {
   char value_;
   char oldval;
   uchar down_box_;
+  uchar compact_;
 
 protected:
 
@@ -167,6 +168,14 @@ public:
 
   /// (for backwards compatibility)
   void down_color(unsigned c) {selection_color(c);}
+
+  // handle flag for compact buttons, documentation in source code
+  void compact(uchar v);
+
+  /// Return true if buttons are rendered as compact buttons.
+  /// \return 0 if compact mode is off, 1 if it is on
+  /// \see compact(bool)
+  uchar compact() { return compact_; }
 };
 
 #endif

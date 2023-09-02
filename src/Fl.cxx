@@ -1143,12 +1143,12 @@ void fl_throw_focus(Fl_Widget *o) {
 // the inactive widget and all inactive parent groups.
 //
 // This is used to send FL_SHORTCUT events to the Fl::belowmouse() widget
-// in case the target widget itself is inactive_r(). In this case the event
+// in case the target widget itself is !active_r(). In this case the event
 // is sent to the first active_r() parent.
 //
 // This prevents sending events to inactive widgets that might get the
 // input focus otherwise. The search is fast and light and avoids calling
-// inactive_r() multiple times.
+// !active_r() multiple times.
 // See STR #3216.
 //
 // Returns: first active_r() widget "above" the widget wi or NULL if

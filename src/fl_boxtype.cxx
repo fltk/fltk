@@ -64,7 +64,7 @@ const uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'
   Gets the drawing color to be used for the background of a box.
 
   This method is only useful inside box drawing code. It returns the
-  color to be used, either fl_inactive(c) if the widget is inactive_r()
+  color to be used, either fl_inactive(c) if the widget is !active_r()
   or \p c otherwise.
 */
 Fl_Color Fl::box_color(Fl_Color c) {
@@ -84,7 +84,7 @@ Fl_Color Fl::box_color(Fl_Color c) {
   This method is only useful inside box drawing code. Whenever a box is
   drawn with one of the standard box drawing methods, a static variable
   is set depending on the widget's current state - if the widget is
-  inactive_r() then the internal variable is false (0), otherwise it
+  !active_r() then the internal variable is false (0), otherwise it
   is true (1). This is faster than calling Fl_Widget::active_r()
   because the state is cached.
 

@@ -25,6 +25,7 @@
 #include "Fl_Button_Type.h"
 
 #include "Fd_Snap_Action.h"
+#include "file.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
@@ -33,6 +34,9 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Repeat_Button.H>
 #include <FL/Fl_Round_Button.H>
+
+#include <stdlib.h>
+
 
 
 // ---- Button Types --------------------------------------------------- MARK: -
@@ -59,6 +63,30 @@ void Fl_Button_Type::ideal_size(int &w, int &h) {
 
 Fl_Widget *Fl_Button_Type::widget(int x, int y, int w, int h) {
   return new Fl_Button(x, y, w, h, "Button");
+}
+
+void Fl_Button_Type::write_properties(Fd_Project_Writer &f) {
+  Fl_Widget_Type::write_properties(f);
+  Fl_Button *btn = (Fl_Button*)o;
+  if (btn->compact()) {
+    f.write_string("compact");
+    f.write_string("%d", btn->compact());
+  }
+}
+
+void Fl_Button_Type::read_property(Fd_Project_Reader &f, const char *c) {
+  Fl_Button *btn = (Fl_Button*)o;
+  if (!strcmp(c, "compact")) {
+    btn->compact((uchar)atol(f.read_word()));
+  } else {
+    Fl_Widget_Type::read_property(f, c);
+  }
+}
+
+void Fl_Button_Type::copy_properties() {
+  Fl_Widget_Type::copy_properties();
+  Fl_Button *s = (Fl_Button*)o, *d = (Fl_Button*)live_widget;
+  d->compact(s->compact());
 }
 
 Fl_Button_Type Fl_Button_type;

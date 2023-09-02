@@ -1239,18 +1239,21 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
           { preset_choice[0] = new Fl_Button(85, 107, 78, 20, "Application");
             preset_choice[0]->type(102);
             preset_choice[0]->value(1);
+            preset_choice[0]->compact(1);
             preset_choice[0]->selection_color(FL_DARK2);
             preset_choice[0]->labelsize(11);
             preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(0));
           } // Fl_Button* preset_choice[0]
           { preset_choice[1] = new Fl_Button(163, 107, 79, 20, "Dialog");
             preset_choice[1]->type(102);
+            preset_choice[1]->compact(1);
             preset_choice[1]->selection_color(FL_DARK2);
             preset_choice[1]->labelsize(11);
             preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(1));
           } // Fl_Button* preset_choice[1]
           { preset_choice[2] = new Fl_Button(242, 107, 78, 20, "Toolbox");
             preset_choice[2]->type(102);
+            preset_choice[2]->compact(1);
             preset_choice[2]->selection_color(FL_DARK2);
             preset_choice[2]->labelsize(11);
             preset_choice[2]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(2));

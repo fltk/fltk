@@ -803,10 +803,16 @@ sized to fit the container.");
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(95, 140, 300, 40);
+        { Fl_Box* o = new Fl_Box(95, 165, 300, 40);
           o->labelsize(11);
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
+        { Fl_Light_Button* o = new Fl_Light_Button(95, 140, 90, 20, "Compact");
+          o->tooltip("use compact box types for closely set buttons");
+          o->selection_color((Fl_Color)1);
+          o->labelsize(11);
+          o->callback((Fl_Callback*)compact_cb);
+        } // Fl_Light_Button* o
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 30, 400, 330, "C++");

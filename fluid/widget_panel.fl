@@ -655,7 +655,12 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           } {}
         }
         Fl_Box {} {
-          xywh {95 140 300 40} labelsize 11 resizable
+          xywh {95 165 300 40} labelsize 11 resizable
+        }
+        Fl_Light_Button {} {
+          label Compact
+          callback compact_cb
+          tooltip {use compact box types for closely set buttons} xywh {95 140 90 20} selection_color 1 labelsize 11
         }
       }
       Fl_Group {} {

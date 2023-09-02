@@ -18,6 +18,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
+#include <FL/fl_draw.H>
 
 #include <FL/Fl_Radio_Button.H>
 #include <FL/Fl_Toggle_Button.H>
@@ -67,7 +68,29 @@ void Fl_Button::setonly() { // set this radio button on, turn others off
 void Fl_Button::draw() {
   if (type() == FL_HIDDEN_BUTTON) return;
   Fl_Color col = value() ? selection_color() : color();
-  draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
+  Fl_Boxtype bt = value() ? (down_box()?down_box():fl_down(box())) : box();
+  if (compact_ && parent()) {
+    Fl_Widget *p = parent();
+    int px, py, pw = p->w(), ph = p->h();
+    if (p->as_window()) { px = 0; py = 0; } else { px = p->x(); py = p->y(); }
+    fl_push_clip(x(), y(), w(), h());
+    draw_box(bt, px, py, pw, ph, col);
+    fl_pop_clip();
+    const int hh = 5, ww = 5;
+    Fl_Color divider_color = fl_gray_ramp(FL_NUM_GRAY/3);
+    if (!active_r())
+      divider_color = fl_inactive(divider_color);
+    if (x()+w() != px+pw) {
+      fl_color(divider_color);
+      fl_yxline(x()+w()-1, y()+hh, y()+h()-1-hh);
+    }
+    if (y()+h() != py+ph) {
+      fl_color(divider_color);
+      fl_xyline(x()+ww, y()+h()-1, x()+w()-1-ww);
+    }
+  } else {
+    draw_box(bt, col);
+  }
   draw_backdrop();
   if (labeltype() == FL_NORMAL_LABEL && value()) {
     Fl_Color c = labelcolor();
@@ -215,11 +238,14 @@ void Fl_Button::key_release_timeout(void *d)
   \param[in] L widget label, default is no label
  */
 Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L)
-: Fl_Widget(X,Y,W,H,L) {
+: Fl_Widget(X,Y,W,H,L),
+  shortcut_(0),
+  value_(0),
+  oldval(0),
+  down_box_(FL_NO_BOX),
+  compact_(0)
+{
   box(FL_UP_BOX);
-  down_box(FL_NO_BOX);
-  value_ = oldval = 0;
-  shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
 }
 
@@ -249,3 +275,23 @@ Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *L)
 {
   type(FL_TOGGLE_BUTTON);
 }
+
+/**
+ Decide if buttons should be rendered in compact mode.
+
+ \image html compact_buttons_gtk.png "compact button keypad using GTK+ Scheme"
+ \image latex compact_buttons_gtk.png "compact button keypad using GTK+ Scheme" width=4cm
+
+ \image html compact_buttons_gleam.png "compact buttons in Gleam"
+ \image latex compact_buttons_gleam.png "compact buttons in Gleam" width=4cm
+
+ In compact mode, the button's surrounding border is altered to visually signal
+ that multiple buttons are functionally linked together. To ensure the correct
+ rendering of buttons in compact mode, all buttons must be part of the same
+ group, positioned close to each other, and aligned with the edges of the
+ group. Any button outlines not in contact with the parent group's outline
+ will be displayed as separators.
+
+ \param[in] v switch compact mode on (1) or off (0)
+ */
+void Fl_Button::compact(uchar v) { compact_ = v; }

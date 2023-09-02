@@ -1081,6 +1081,39 @@ void down_box_cb(Fl_Choice* i, void *v) {
   }
 }
 
+void compact_cb(Fl_Light_Button* i, void* v) {
+  if (v == LOAD) {
+    uchar n;
+    if (current_widget->is_a(Fl_Type::ID_Button)) {
+      n = ((Fl_Button*)(current_widget->o))->compact();
+      i->value(n);
+      i->show();
+    } else {
+      i->hide();
+    }
+  } else {
+    int mod = 0;
+    uchar n = (uchar)i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_a(Fl_Type::ID_Button)) {
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        uchar v = ((Fl_Button*)(q->o))->compact();
+        if (n != v) {
+          if (!mod) {
+            mod = 1;
+            undo_checkpoint();
+          }
+          ((Fl_Button*)(q->o))->compact(n);
+          q->redraw();
+        }
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
+
+
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item whenmenu[] = {
@@ -3039,6 +3072,7 @@ void Fl_Widget_Type::write_widget_code(Fd_Code_Writer& f) {
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
                                boxname(b->down_box()));
     if (b->value()) f.write_c("%s%s->value(1);\n", f.indent(), var);
+    if (b->compact()) f.write_c("%s%s->compact(%d);\n", f.indent(), var, b->compact());
   } else if (is_a(Fl_Type::ID_Input_Choice)) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
