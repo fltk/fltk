@@ -325,8 +325,12 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         goto CONTINUE;
       }
 
-      if (strcmp(c, "shell")==0) {
-        // TODO: read shell command configuration
+      if (strcmp(c, "shell_commands")==0) {
+        if (g_shell_config) {
+          g_shell_config->read(this);
+        } else {
+          read_word();
+        }
       }
     }
     {

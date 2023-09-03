@@ -49,18 +49,15 @@
 // TODO: write to project file
 // TODO: read from project file
 // TODO: popup text editor
-// TODO: reset to defaults
 // TODO: action on new project (revert, load, merge)
 // TODO: import export?
-// TODO: confirm deleting a single command
-// TODO: set dirty flag
-// TODO: set "not default" flag
 // TODO: refactor namespace use
 // TODO: hostname, username, getenv support?
 
 #include "shell_command.h"
 
 #include "fluid.h"
+#include "file.h"
 #include "alignment_panel.h"
 
 #include <FL/Fl_Double_Window.H>
@@ -538,6 +535,20 @@ void Fd_Shell_Command_List::clear() {
 }
 
 /**
+ Read shell configuration from a project file.
+ */
+void Fd_Shell_Command_List::read(Fd_Project_Reader *in) {
+  in->read_word(); // TODO: skip for now
+}
+
+/**
+ Write shell configuration to a project file if it isn;t the FLUID default.
+ */
+void write(Fd_Project_Writer *out) {
+//  out->write(""shell_commands")...
+}
+
+/**
  Add a previously created shell command to the end of the list.
 
  \param[in] cmd a pointer to the command that we want to add
@@ -653,6 +664,20 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
 void Fd_Shell_Command_List::update_settings_dialog() {
   if (w_settings_shell_tab)
     w_settings_shell_tab->do_callback(w_settings_shell_tab, LOAD);
+}
+
+/**
+ Some settings changed, so tell the manager that this is no longer the FLUID default list.
+
+ \param[in] v new value
+ */
+void Fd_Shell_Command_List::is_default_list(bool v) {
+  if (v != is_default_) {
+    is_default_ = v;
+    if (w_settings_shell_tab)
+      w_settings_shell_default->do_callback(w_settings_shell_default, LOAD);
+  }
+  set_modflag(1);
 }
 
 /**

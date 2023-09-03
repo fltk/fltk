@@ -22,7 +22,7 @@
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>
 #include <string.h>
-#include <../src/flstring.h>
+#include "../src/flstring.h"
 void scheme_cb(Fl_Scheme_Choice *, void *);
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
@@ -792,6 +792,7 @@ static void cb_8(Fl_Button*, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }
 
@@ -815,6 +816,7 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }
 
@@ -838,6 +840,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }
 
@@ -859,8 +862,29 @@ static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
   }
 }
 
-static void cb_Restore(Fl_Button*, void*) {
-  g_shell_config->rebuild_shell_menu();
+Fl_Button *w_settings_shell_default=(Fl_Button *)0;
+
+static void cb_w_settings_shell_default(Fl_Button* o, void* v) {
+  if (v == LOAD) {
+    if (g_shell_config->is_default_)
+      o->deactivate();
+    else
+      o->activate();
+  } else {
+    if (!g_shell_config->is_default_) {
+      if (fl_choice("Restoring shell commands to the FLUID\n"
+                    "defaults will delete all custom shell\n"
+                    "commands in this project",
+                    "Cancel", "Restore Defaults", NULL
+                    ) == 1) 
+      {
+        g_shell_config->restore_defaults();
+        g_shell_config->rebuild_shell_menu();
+        g_shell_config->update_settings_dialog();
+        g_shell_config->is_default_list(true);
+      }
+    }
+  }
 }
 
 Fl_Group *w_settings_shell_cmd=(Fl_Group *)0;
@@ -889,6 +913,7 @@ static void cb_Name(Fl_Input* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->name = o->value();
       w_settings_shell_list->text(selected, o->value()); 
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -905,6 +930,7 @@ static void cb_Label(Fl_Input* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->label = o->value();
       g_shell_config->list[selected-1]->update_shell_menu();
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -933,6 +959,7 @@ static void cb_save(Fl_Check_Button* o, void* v) {
       } else {
         g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
       }
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -953,6 +980,7 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
       } else {
         g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
       }
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -973,6 +1001,7 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
       } else {
         g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
       }
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -990,6 +1019,7 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->shortcut = o->value();
       g_shell_config->list[selected-1]->update_shell_menu();
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -1005,9 +1035,10 @@ static void cb_Condition(Fl_Choice* o, void* v) {
     }
   } else {
     if (selected) {
-      int cond = o->mvalue()->argument();
+      int cond = (int)(o->mvalue()->argument());
       g_shell_config->list[selected-1]->condition = cond;
       g_shell_config->rebuild_shell_menu();
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -1035,6 +1066,7 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   } else {
     if (selected) {
       g_shell_config->list[selected-1]->command = o->buffer()->text();
+      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -1052,6 +1084,8 @@ static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
     if (word[0]=='@') word++;
     int at = w_settings_shell_command->insert_position();
     w_settings_shell_command->buffer()->insert(at, word);
+    w_settings_shell_command->do_callback(w_settings_shell_command, NULL);
+    g_shell_config->is_default_list(false);
   }
 }
 
@@ -1805,12 +1839,10 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             w_settings_shell_play->callback((Fl_Callback*)cb_w_settings_shell_play);
             w_settings_shell_play->deactivate();
           } // Fl_Button* w_settings_shell_play
-          { Fl_Button* o = new Fl_Button(224, 200, 96, 20, "Restore Defaults");
-            o->color((Fl_Color)6);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_Restore);
-            o->deactivate();
-          } // Fl_Button* o
+          { w_settings_shell_default = new Fl_Button(224, 200, 96, 20, "Restore Defaults");
+            w_settings_shell_default->labelsize(11);
+            w_settings_shell_default->callback((Fl_Callback*)cb_w_settings_shell_default);
+          } // Fl_Button* w_settings_shell_default
           w_settings_shell_toolbox->end();
         } // Fl_Group* w_settings_shell_toolbox
         { w_settings_shell_cmd = new Fl_Group(10, 235, 320, 265);
@@ -1897,6 +1929,7 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
               o->color((Fl_Color)6);
               o->labelsize(11);
               o->labelcolor(FL_BACKGROUND_COLOR);
+              o->hide();
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o

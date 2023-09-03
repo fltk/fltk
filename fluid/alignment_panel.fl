@@ -91,7 +91,7 @@ decl {\#include <FL/fl_ask.H>} {private global
 decl {\#include <string.h>} {private global
 }
 
-decl {\#include <../src/flstring.h>} {private global
+decl {\#include "../src/flstring.h"} {selected private global
 }
 
 decl {void init_scheme(void);} {
@@ -801,6 +801,7 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
+  g_shell_config->is_default_list(false);
 }}
             xywh {100 200 24 20} labelsize 11
           }
@@ -823,6 +824,7 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
+  g_shell_config->is_default_list(false);
 }}
             xywh {124 200 24 20} labelsize 11 deactivate
           }
@@ -845,6 +847,7 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
+  g_shell_config->is_default_list(false);
 }}
             xywh {148 200 24 20} labelsize 11 deactivate
           }
@@ -865,10 +868,29 @@ List:}
 }}
             xywh {172 200 24 20} labelsize 11 labelcolor 49 deactivate
           }
-          Fl_Button {} {
+          Fl_Button w_settings_shell_default {
             label {Restore Defaults}
-            callback {g_shell_config->rebuild_shell_menu();}
-            xywh {224 200 96 20} color 6 labelsize 11 deactivate
+            callback {if (v == LOAD) {
+  if (g_shell_config->is_default_)
+    o->deactivate();
+  else
+    o->activate();
+} else {
+  if (!g_shell_config->is_default_) {
+    if (fl_choice("Restoring shell commands to the FLUID\\n"
+                  "defaults will delete all custom shell\\n"
+                  "commands in this project",
+                  "Cancel", "Restore Defaults", NULL
+                  ) == 1) 
+    {
+      g_shell_config->restore_defaults();
+      g_shell_config->rebuild_shell_menu();
+      g_shell_config->update_settings_dialog();
+      g_shell_config->is_default_list(true);
+    }
+  }
+}}
+            xywh {224 200 96 20} labelsize 11
           }
         }
         Fl_Group w_settings_shell_cmd {
@@ -896,6 +918,7 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->name = o->value();
     w_settings_shell_list->text(selected, o->value()); 
+    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
@@ -913,6 +936,7 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->label = o->value();
     g_shell_config->list[selected-1]->update_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
@@ -943,6 +967,7 @@ if (v == LOAD) {
     } else {
       g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
     }
+    g_shell_config->is_default_list(false);
   }
 }}
             tooltip {save the project to the .fl file before running the command} xywh {100 432 220 20} down_box DOWN_BOX labelsize 11
@@ -964,6 +989,7 @@ if (v == LOAD) {
     } else {
       g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
     }
+    g_shell_config->is_default_list(false);
   }
 }}
             tooltip {generate the source code and header file before running the command} xywh {100 452 220 19} down_box DOWN_BOX labelsize 11
@@ -985,6 +1011,7 @@ if (v == LOAD) {
     } else {
       g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
     }
+    g_shell_config->is_default_list(false);
   }
 }}
             tooltip {save the internationalisation string before running the command} xywh {100 471 220 20} down_box DOWN_BOX labelsize 11
@@ -1003,6 +1030,7 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->shortcut = o->value();
     g_shell_config->list[selected-1]->update_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 297 130 20} labelsize 11 align 16
@@ -1021,9 +1049,10 @@ if (v == LOAD) {
   }
 } else {
   if (selected) {
-    int cond = o->mvalue()->argument();
+    int cond = (int)(o->mvalue()->argument());
     g_shell_config->list[selected-1]->condition = cond;
     g_shell_config->rebuild_shell_menu();
+    g_shell_config->is_default_list(false);
   }
 }} open
             xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
@@ -1071,6 +1100,7 @@ if (v == LOAD) {
 } else {
   if (selected) {
     g_shell_config->list[selected-1]->command = o->buffer()->text();
+    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 347 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
@@ -1090,11 +1120,13 @@ if (mi) {
   if (word[0]=='@') word++;
   int at = w_settings_shell_command->insert_position();
   w_settings_shell_command->buffer()->insert(at, word);
+  w_settings_shell_command->do_callback(w_settings_shell_command, NULL);
+  g_shell_config->is_default_list(false);
 }} open
               xywh {296 347 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {
-                label {@@BASENAME@@} selected
+                label {@@BASENAME@@}
                 xywh {0 0 100 20} labelfont 4 labelsize 11
               }
               MenuItem {} {
@@ -1108,7 +1140,7 @@ if (mi) {
             }
             Fl_Button {} {
               label {@square}
-              tooltip {open big code editor} xywh {296 369 24 22} color 6 labelsize 11 labelcolor 49
+              tooltip {open big code editor} xywh {296 369 24 22} color 6 labelsize 11 labelcolor 49 hide
             }
           }
         }

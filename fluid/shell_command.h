@@ -121,10 +121,11 @@ public:
 //  bool is_default();
 //  void move_up();
 //  void move_down();
-//  void read(class Fd_Project_Reader*);
-//  void write(class Fd_Project_Writer*);
+  void read(class Fd_Project_Reader*);
+  void write(class Fd_Project_Writer*);
   void rebuild_shell_menu();
   void update_settings_dialog();
+  void is_default_list(bool v);  
 };
 
 extern Fd_Shell_Command_List *g_shell_config;

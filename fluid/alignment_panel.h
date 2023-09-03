@@ -84,6 +84,7 @@ extern Fl_Group *w_settings_shell_toolbox;
 extern Fl_Button *w_settings_shell_dup;
 extern Fl_Button *w_settings_shell_remove;
 extern Fl_Button *w_settings_shell_play;
+extern Fl_Button *w_settings_shell_default;
 extern Fl_Group *w_settings_shell_cmd;
 #include <FL/Fl_Shortcut_Button.H>
 #include <FL/Fl_Text_Editor.H>
