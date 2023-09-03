@@ -91,7 +91,7 @@ decl {\#include <FL/fl_ask.H>} {private global
 decl {\#include <string.h>} {private global
 }
 
-decl {\#include "../src/flstring.h"} {selected private global
+decl {\#include "../src/flstring.h"} {private global
 }
 
 decl {void init_scheme(void);} {
@@ -1120,9 +1120,9 @@ if (mi) {
   if (word[0]=='@') word++;
   int at = w_settings_shell_command->insert_position();
   w_settings_shell_command->buffer()->insert(at, word);
-  w_settings_shell_command->do_callback(w_settings_shell_command, NULL);
+  w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
   g_shell_config->is_default_list(false);
-}} open
+}} open selected
               xywh {296 347 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {

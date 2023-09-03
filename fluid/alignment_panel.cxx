@@ -1084,7 +1084,7 @@ static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
     if (word[0]=='@') word++;
     int at = w_settings_shell_command->insert_position();
     w_settings_shell_command->buffer()->insert(at, word);
-    w_settings_shell_command->do_callback(w_settings_shell_command, NULL);
+    w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
     g_shell_config->is_default_list(false);
   }
 }
