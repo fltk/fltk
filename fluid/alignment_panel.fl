@@ -761,7 +761,7 @@ g_layout_list.update_dialogs();}
       }
       Fl_Group w_settings_shell_tab {
         label Shell
-        callback {propagate_load(o, v);} open
+        callback {propagate_load(o, v);} open selected
         image {icons/shell_64.png} compress_image 1 xywh {10 60 320 480} labelsize 11
         code0 {o->image()->scale(36, 24);}
       } {
@@ -1122,7 +1122,7 @@ if (mi) {
   w_settings_shell_command->buffer()->insert(at, word);
   w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
   g_shell_config->is_default_list(false);
-}} open selected
+}} open
               xywh {296 347 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {

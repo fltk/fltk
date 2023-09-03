@@ -801,11 +801,8 @@ int Fd_Project_Writer::write_project(const char *filename, int selected_only) {
     write_string("\nheader_name"); write_word(g_project.header_file_name.c_str());
     write_string("\ncode_name"); write_word(g_project.code_file_name.c_str());
     g_layout_list.write(this);
-#if 0
-    // https://github.com/fltk/fltk/issues/328
-    write_string("\nshell"); 
-    // TODO: write shell settings
-#endif
+    if (g_shell_config)
+      g_shell_config->write(this);
   }
 
   for (Fl_Type *p = Fl_Type::first; p;) {

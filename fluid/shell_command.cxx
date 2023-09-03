@@ -53,6 +53,9 @@
 // TODO: import export?
 // TODO: refactor namespace use
 // TODO: hostname, username, getenv support?
+// TODO: add ownership to item, as in layout
+//         FLUID presets, user, project file, external file, folder
+// TODO: make settings dialog resizable
 
 #include "shell_command.h"
 
@@ -474,6 +477,47 @@ bool Fd_Shell_Command::is_active() {
   return false;
 }
 
+void Fd_Shell_Command::read(class Fd_Project_Reader *in) {
+  const char *c = in->read_word(1);
+  if (strcmp(c, "{")!=0) return; // expecting start of group
+  for (;;) {
+    c = in->read_word(1);
+    if (strcmp(c, "}")==0) break; // end of command list
+    else if (strcmp(c, "name")==0)
+      name = in->read_word();
+    else if (strcmp(c, "label")==0)
+      label = in->read_word();
+    else if (strcmp(c, "shortcut")==0)
+      shortcut = in->read_int();
+    else if (strcmp(c, "condition")==0)
+      condition = in->read_int();
+    else if (strcmp(c, "condition_data")==0)
+      condition_data = in->read_word();
+    else if (strcmp(c, "command")==0)
+      command = in->read_word();
+    else if (strcmp(c, "flags")==0)
+      flags = in->read_int();
+    else
+      in->read_word(); // skip an unknown word
+  }
+}
+
+void Fd_Shell_Command::write(class Fd_Project_Writer *out) {
+  out->write_string("\n  command {");
+  out->write_string("\n    name "); out->write_word(name.c_str());
+  out->write_string("\n    label "); out->write_word(label.c_str());
+  if (shortcut) out->write_string("\n    shortcut %d", shortcut);
+  if (condition) out->write_string("\n    condition %d", condition);
+  if (!condition_data.empty()) {
+    out->write_string("\n    condition_data "); out->write_word(condition_data.c_str());
+  }
+  if (!command.empty()) {
+    out->write_string("\n    command "); out->write_word(command.c_str());
+  }
+  if (flags) out->write_string("\n    flags %d", flags);
+  out->write_string("\n  }");
+}
+
 
 /**
  Manage a list of shell commands and their parameters.
@@ -510,12 +554,12 @@ Fd_Shell_Command *Fd_Shell_Command_List::at(int index) const {
 void Fd_Shell_Command_List::restore_defaults() {
   clear();
   add(new Fd_Shell_Command("all: build", "Build...", FL_COMMAND+'b', Fd_Shell_Command::ALWAYS, NULL,
-                           "fltk-config --compile <<codefile>>",
-                           Fd_Shell_Command::SAVE_ALL));
+                           "fltk-config --compile @BASENAME@.cxx",
+                           Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE));
   add(new Fd_Shell_Command("all: run", "Run...", FL_COMMAND+'r', Fd_Shell_Command::ALWAYS, NULL,
-                           "fltk-config --compile <<codefile>>\n"
-                           "./<<basename>>",
-                           Fd_Shell_Command::SAVE_ALL));
+                           "fltk-config --compile @BASENAME@.cxx\n"
+                           "./@BASENAME@",
+                           Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE));
   is_default_ = true;
 }
 
@@ -538,14 +582,34 @@ void Fd_Shell_Command_List::clear() {
  Read shell configuration from a project file.
  */
 void Fd_Shell_Command_List::read(Fd_Project_Reader *in) {
-  in->read_word(); // TODO: skip for now
+  const char *c = in->read_word(1);
+  if (strcmp(c, "{")!=0) return; // expecting start of group
+  clear();
+  is_default_list(false);
+  for (;;) {
+    c = in->read_word(1);
+    if (strcmp(c, "}")==0) break; // end of command list
+    else if (strcmp(c, "command")==0) {
+      Fd_Shell_Command *cmd = new Fd_Shell_Command();
+      add(cmd);
+      cmd->read(in);
+    } else {
+      in->read_word(); // skip an unknown group
+    }
+  }
 }
 
 /**
  Write shell configuration to a project file if it isn;t the FLUID default.
  */
-void write(Fd_Project_Writer *out) {
-//  out->write(""shell_commands")...
+void Fd_Shell_Command_List::write(Fd_Project_Writer *out) {
+  if (!is_default_) {
+    out->write_string("\nshell_commands {");
+    for (int i=0; i<list_size; i++) {
+      list[i]->write(out);
+    }
+    out->write_string("\n}");
+  }
 }
 
 /**

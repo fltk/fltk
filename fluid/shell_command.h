@@ -96,8 +96,8 @@ public:
   int flags; // save_project, save_code, save_string, ...
   Fl_Menu_Item *shell_menu_item_;
   void run();
-//  void read(class Fd_Project_Reader*);
-//  void write(class Fd_Project_Writer*);
+  void read(class Fd_Project_Reader*);
+  void write(class Fd_Project_Writer*);
   void update_shell_menu();
   bool is_active();
 };
