@@ -1102,7 +1102,7 @@ if (v == LOAD) {
     g_shell_config->list[selected-1]->command = o->buffer()->text();
     g_shell_config->is_default_list(false);
   }
-}}
+}} selected
             xywh {100 347 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
             code0 {o->buffer(new Fl_Text_Buffer);}
           }
@@ -1128,7 +1128,7 @@ if (v == LOAD) {
     }
     w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
     g_shell_config->is_default_list(false);
-  }} open selected
+  }} open
               xywh {296 347 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {

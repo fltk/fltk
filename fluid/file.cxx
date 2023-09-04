@@ -331,6 +331,7 @@ void Fd_Project_Reader::read_children(Fl_Type *p, int paste, Strategy strategy, 
         } else {
           read_word();
         }
+        goto CONTINUE;
       }
     }
     {

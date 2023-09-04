@@ -2072,17 +2072,6 @@ int main(int argc,char **argv) {
     }
   }
 
-  printf("@BASENAME@:         %s\n",         g_project.get_basename().c_str());
-  printf("@PROJECTFILE_PATH@: %s\n", g_project.get_projectfile_path().c_str());
-  printf("@PROJECTFILE_NAME@: %s\n", g_project.get_projectfile_name().c_str());
-  printf("@CODEFILE_PATH@:    %s\n",    g_project.get_codefile_path().c_str());
-  printf("@CODEFILE_NAME@:    %s\n",    g_project.get_codefile_name().c_str());
-  printf("@HEADERFILE_PATH@:  %s\n",  g_project.get_headerfile_path().c_str());
-  printf("@HEADERFILE_NAME@:  %s\n",  g_project.get_headerfile_name().c_str());
-  printf("@TEXTFILE_PATH@:    %s\n",    g_project.get_textfile_path().c_str());
-  printf("@TEXTFILE_NAME@:    %s\n",    g_project.get_textfile_name().c_str());
-
-
   if (update_file) {            // fluid -u
     write_file(c,0);
     if (!compile_file)
