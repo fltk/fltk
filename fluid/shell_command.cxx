@@ -283,15 +283,15 @@ static void expand_macro(Fl_String &cmd, const Fl_String &macro, const Fl_String
 }
 
 static void expand_macros(Fl_String &cmd) {
-  expand_macro(cmd, "@BASENAME@",         g_project.get_basename());
-  expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.get_projectfile_path());
-  expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.get_projectfile_name());
-  expand_macro(cmd, "@CODEFILE_PATH@",    g_project.get_codefile_path());
-  expand_macro(cmd, "@CODEFILE_NAME@",    g_project.get_codefile_name());
-  expand_macro(cmd, "@HEADERFILE_PATH@",  g_project.get_headerfile_path());
-  expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.get_headerfile_name());
-  expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.get_textfile_path());
-  expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.get_textfile_name());
+  expand_macro(cmd, "@BASENAME@",         g_project.basename());
+  expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.projectfile_path());
+  expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.projectfile_name());
+  expand_macro(cmd, "@CODEFILE_PATH@",    g_project.codefile_path());
+  expand_macro(cmd, "@CODEFILE_NAME@",    g_project.codefile_name());
+  expand_macro(cmd, "@HEADERFILE_PATH@",  g_project.headerfile_path());
+  expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.headerfile_name());
+  expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.stringsfile_path());
+  expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.stringsfile_name());
 }
 
 /**

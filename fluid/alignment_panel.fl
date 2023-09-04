@@ -1102,33 +1102,33 @@ if (v == LOAD) {
     g_shell_config->list[selected-1]->command = o->buffer()->text();
     g_shell_config->is_default_list(false);
   }
-}} selected
+}}
             xywh {100 347 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
             code0 {o->buffer(new Fl_Text_Buffer);}
           }
           Fl_Group {} {open
             xywh {296 347 24 44}
           } {
-            Fl_Menu_Button w_sttings_shell_text_macros {
+            Fl_Menu_Button w_settings_shell_text_macros {
               callback {const Fl_Menu_Item *mi = o->mvalue();
-  if (mi) {
-    char buffer[256];
-    fl_strlcpy(buffer, mi->label(), 255);
-    int n = (int)strlen(buffer)-1;
-    if (buffer[n]=='@') buffer[n] = 0;
-    char *word = buffer;
-    if (word[0]=='@') word++;
-    if (w_settings_shell_command->buffer()->selected()) {
-      int start = 0, end = 0;
-      w_settings_shell_command->buffer()->selection_position(&start, &end);
-      w_settings_shell_command->buffer()->replace(start, end, word);
-    } else {
-      int pos = w_settings_shell_command->insert_position();
-      w_settings_shell_command->buffer()->insert(pos, word);
-    }
-    w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
-    g_shell_config->is_default_list(false);
-  }} open
+if (mi) {
+  char buffer[256];
+  fl_strlcpy(buffer, mi->label(), 255);
+  int n = (int)strlen(buffer)-1;
+  if (buffer[n]=='@') buffer[n] = 0;
+  char *word = buffer;
+  if (word[0]=='@') word++;
+  if (w_settings_shell_command->buffer()->selected()) {
+    int start = 0, end = 0;
+    w_settings_shell_command->buffer()->selection_position(&start, &end);
+    w_settings_shell_command->buffer()->replace(start, end, word);
+  } else {
+    int pos = w_settings_shell_command->insert_position();
+    w_settings_shell_command->buffer()->insert(pos, word);
+  }
+  w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
+  g_shell_config->is_default_list(false);
+}} open selected
               xywh {296 347 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {

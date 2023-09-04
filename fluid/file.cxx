@@ -137,7 +137,7 @@ int Fd_Project_Reader::open_read(const char *s) {
     fin = stdin;
     fname = "stdin";
   } else {
-    FILE *f = fl_fopen(s,"r");
+    FILE *f = fl_fopen(s, "r");
     if (!f)
       return 0;
     fin = f;

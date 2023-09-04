@@ -1071,9 +1071,9 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   }
 }
 
-Fl_Menu_Button *w_sttings_shell_text_macros=(Fl_Menu_Button *)0;
+Fl_Menu_Button *w_settings_shell_text_macros=(Fl_Menu_Button *)0;
 
-static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
+static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
   const Fl_Menu_Item *mi = o->mvalue();
   if (mi) {
     char buffer[256];
@@ -1095,7 +1095,7 @@ static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
   }
 }
 
-Fl_Menu_Item menu_w_sttings_shell_text_macros[] = {
+Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {"@@BASENAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@PROJECTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {"@@PROJECTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
@@ -1930,12 +1930,12 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->buffer(new Fl_Text_Buffer);
           } // Fl_Text_Editor* w_settings_shell_command
           { Fl_Group* o = new Fl_Group(296, 347, 24, 44);
-            { w_sttings_shell_text_macros = new Fl_Menu_Button(296, 347, 24, 22);
-              w_sttings_shell_text_macros->labelsize(11);
-              w_sttings_shell_text_macros->textsize(11);
-              w_sttings_shell_text_macros->callback((Fl_Callback*)cb_w_sttings_shell_text_macros);
-              w_sttings_shell_text_macros->menu(menu_w_sttings_shell_text_macros);
-            } // Fl_Menu_Button* w_sttings_shell_text_macros
+            { w_settings_shell_text_macros = new Fl_Menu_Button(296, 347, 24, 22);
+              w_settings_shell_text_macros->labelsize(11);
+              w_settings_shell_text_macros->textsize(11);
+              w_settings_shell_text_macros->callback((Fl_Callback*)cb_w_settings_shell_text_macros);
+              w_settings_shell_text_macros->menu(menu_w_settings_shell_text_macros);
+            } // Fl_Menu_Button* w_settings_shell_text_macros
             { Fl_Button* o = new Fl_Button(296, 369, 24, 22, "@square");
               o->tooltip("open big code editor");
               o->color((Fl_Color)6);
