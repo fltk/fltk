@@ -46,8 +46,6 @@
 // current shell commands? Or two buttons to save and load shell commands?
 
 // TODO: text module insert and replacement
-// TODO: write to project file
-// TODO: read from project file
 // TODO: popup text editor
 // TODO: action on new project (revert, load, merge)
 // TODO: import export?
@@ -56,6 +54,7 @@
 // TODO: add ownership to item, as in layout
 //         FLUID presets, user, project file, external file, folder
 // TODO: make settings dialog resizable
+// TODO: get a macro to find `fltk-config`
 
 #include "shell_command.h"
 
@@ -275,14 +274,24 @@ void shell_pipe_cb(FL_SOCKET, void*) {
   }
 }
 
+static void expand_macro(Fl_String &cmd, const Fl_String &macro, const Fl_String &content) {
+  for (int i=0;;) {
+    i = cmd.find(macro, i);
+    if (i==Fl_String::npos) break;
+    cmd.replace(i, macro.size(), content);
+  }
+}
 
 static void expand_macros(Fl_String &cmd) {
-  int i;
-  for (i=0;;) {
-    i = cmd.find("@BASENAME@", i);
-    if (i==Fl_String::npos) break;
-    cmd.replace(i, 10, g_project.basename);
-  }
+  expand_macro(cmd, "@BASENAME@",         g_project.get_basename());
+  expand_macro(cmd, "@PROJECTFILE_PATH@", g_project.get_projectfile_path());
+  expand_macro(cmd, "@PROJECTFILE_NAME@", g_project.get_projectfile_name());
+  expand_macro(cmd, "@CODEFILE_PATH@",    g_project.get_codefile_path());
+  expand_macro(cmd, "@CODEFILE_NAME@",    g_project.get_codefile_name());
+  expand_macro(cmd, "@HEADERFILE_PATH@",  g_project.get_headerfile_path());
+  expand_macro(cmd, "@HEADERFILE_NAME@",  g_project.get_headerfile_name());
+  expand_macro(cmd, "@TEXTFILE_PATH@",    g_project.get_textfile_path());
+  expand_macro(cmd, "@TEXTFILE_NAME@",    g_project.get_textfile_name());
 }
 
 /**

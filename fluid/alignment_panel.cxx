@@ -1082,8 +1082,14 @@ static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
     if (buffer[n]=='@') buffer[n] = 0;
     char *word = buffer;
     if (word[0]=='@') word++;
-    int at = w_settings_shell_command->insert_position();
-    w_settings_shell_command->buffer()->insert(at, word);
+    if (w_settings_shell_command->buffer()->selected()) {
+      int start = 0, end = 0;
+      w_settings_shell_command->buffer()->selection_position(&start, &end);
+      w_settings_shell_command->buffer()->replace(start, end, word);
+    } else {
+      int pos = w_settings_shell_command->insert_position();
+      w_settings_shell_command->buffer()->insert(pos, word);
+    }
     w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
     g_shell_config->is_default_list(false);
   }
@@ -1091,8 +1097,14 @@ static void cb_w_sttings_shell_text_macros(Fl_Menu_Button* o, void*) {
 
 Fl_Menu_Item menu_w_sttings_shell_text_macros[] = {
  {"@@BASENAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
- {"<<basename>>", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"<<projectpath>>", 0,  0, 0, 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"@@PROJECTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@PROJECTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@CODEFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@CODEFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@HEADERFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@HEADERFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@TEXTFILE_PATH@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
+ {"@@TEXTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

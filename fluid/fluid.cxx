@@ -46,6 +46,7 @@
 #include <FL/fl_string_functions.h>
 #include <locale.h>     // setlocale()..
 #include "../src/flstring.h"
+#include "../src/Fl_System_Driver.H"
 
 extern "C"
 {
@@ -397,7 +398,7 @@ void enter_project_dir() {
   // store the current working directory for later
   app_work_dir = fl_getcwd();
   // set the current directory to the path of our .fl file
-  Fl_String project_path = fl_filename_path(fl_filename_absolute(Fl_String(filename)));
+  Fl_String project_path = fl_filename_path(fl_filename_absolute(filename));
   if (fl_chdir(project_path.c_str()) == -1) {
     fprintf(stderr, "** Fluid internal error: enter_project_dir() can't chdir to %s: %s\n",
             project_path.c_str(), strerror(errno));
@@ -2070,6 +2071,17 @@ int main(int argc,char **argv) {
       g_project.header_file_name = g_header_filename_arg;
     }
   }
+
+  printf("@BASENAME@:         %s\n",         g_project.get_basename().c_str());
+  printf("@PROJECTFILE_PATH@: %s\n", g_project.get_projectfile_path().c_str());
+  printf("@PROJECTFILE_NAME@: %s\n", g_project.get_projectfile_name().c_str());
+  printf("@CODEFILE_PATH@:    %s\n",    g_project.get_codefile_path().c_str());
+  printf("@CODEFILE_NAME@:    %s\n",    g_project.get_codefile_name().c_str());
+  printf("@HEADERFILE_PATH@:  %s\n",  g_project.get_headerfile_path().c_str());
+  printf("@HEADERFILE_NAME@:  %s\n",  g_project.get_headerfile_name().c_str());
+  printf("@TEXTFILE_PATH@:    %s\n",    g_project.get_textfile_path().c_str());
+  printf("@TEXTFILE_NAME@:    %s\n",    g_project.get_textfile_name().c_str());
+
 
   if (update_file) {            // fluid -u
     write_file(c,0);
