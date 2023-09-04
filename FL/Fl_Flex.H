@@ -2,7 +2,7 @@
 // Fl_Flex widget header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2020 by Karsten Pedersen
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -113,14 +113,15 @@
 */
 class FL_EXPORT Fl_Flex : public Fl_Group {
 
-  int margin_left_;
-  int margin_top_;
-  int margin_right_;
-  int margin_bottom_;
-  int gap_;
-  int fixed_size_size_;
-  int fixed_size_alloc_;
-  Fl_Widget **fixed_size_;
+  int margin_left_;           // left margin
+  int margin_top_;            // top margin
+  int margin_right_;          // right margin
+  int margin_bottom_;         // bottom margin
+  int gap_;                   // gap between widgets
+  int fixed_size_size_;       // number of fixed size widgets in array
+  int fixed_size_alloc_;      // allocated size of fixed size array
+  Fl_Widget **fixed_size_;    // array of fixed size widgets
+  bool need_layout_;          // true if layout needs to be calculated
 
 public:
 
@@ -135,7 +136,7 @@ public:
   Fl_Flex(int X, int Y, int W, int H, const char *L = 0);
 
   // original Fl_Flex constructors:
-  // backwards compatible if direction *names* { ROW | COLUMN } are used
+  // backwards compatible if direction enums { ROW | COLUMN } are used
 
   Fl_Flex(int direction);
   Fl_Flex(int w, int h, int direction);
@@ -149,7 +150,7 @@ public:
   /**
     Set the horizontal or vertical size of a child widget.
 
-    \param[in]  w   widget to be affected
+    \param[in]  w     widget to be affected
     \param[in]  size  width (Fl_Flex::HORIZONTAL) or height (Fl_Flex::VERTICAL)
 
     \see fixed(Fl_Widget *w, int size)
@@ -168,8 +169,36 @@ protected:
   virtual int alloc_size(int size) const;
 
   void on_remove(int) FL_OVERRIDE;
+  void draw() FL_OVERRIDE;
 
 public:
+
+  /**
+    Set or reset the request to calculate the layout of children.
+
+    This is intended for internal use but can also be used by user
+    code to request layout calculation before the widget is drawn.
+
+    Call this if you changed attributes or sizes of children to ensure
+    that the layout is calculated properly. Changing other Fl_Flex
+    attributes or resizing the widget does this automatically.
+
+    \note Never call this with '\c set == 0' because this would defeat its
+      purpose to recalculate the layout before the widget is drawn.
+  */
+  void need_layout(int set) {
+    if (set) need_layout_ = true;
+    else need_layout_ = false;
+  }
+
+  /**
+    Returns whether layout calculation is required.
+
+    This should rarely be needed by user code. Used internally in draw().
+  */
+  bool need_layout() const {
+    return need_layout_;
+  }
 
   /** Returns the left margin size of the widget.
 
@@ -233,6 +262,7 @@ public:
     margin_left_ = margin_top_ = margin_right_ = margin_bottom_ = m;
     if (g >= 0)
       gap_ = g;
+    need_layout(1);
   }
 
   /** Set the margin sizes at all four edges of the Fl_Flex widget.
@@ -254,6 +284,7 @@ public:
     margin_top_    = top < 0 ? 0 : top;
     margin_right_  = right < 0 ? 0 : right;
     margin_bottom_ = bottom < 0 ? 0 : bottom;
+    need_layout(1);
   }
 
   /** Return the gap size of the widget.
@@ -273,6 +304,7 @@ public:
   */
   void gap(int g) {
     gap_ = g < 0 ? 0 : g;
+    need_layout(1);
   }
 
   /** Returns non-zero (true) if Fl_Flex alignment is horizontal (row mode).
@@ -287,19 +319,8 @@ public:
     return type() == Fl_Flex::HORIZONTAL ? 1 : 0;
   }
 
-  /**
-    Calculates the layout of the widget and redraws it.
-
-    If you change widgets in the Fl_Flex container you should call this method
-    to force recalculation of child widget sizes and positions. This can be
-    useful (necessary) if you hide(), show(), add() or remove() children.
-
-    This method also calls redraw() on the Fl_Flex widget.
-  */
-  void layout() {
-    resize(x(), y(), w(), h());
-    redraw();
-  }
+  // Calculate the layout of the widget and redraw it.
+  void layout();
 
   /**
     Gets the number of extra pixels of blank space that are added
@@ -325,6 +346,7 @@ public:
   */
   void spacing(int i) {
     gap(i);
+    need_layout(1);
   }
 
 };

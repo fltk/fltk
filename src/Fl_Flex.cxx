@@ -2,7 +2,7 @@
 // Fl_Flex widget implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2020 by Karsten Pedersen
-// Copyright 2022 by Bill Spitzak and others.
+// Copyright 2022-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 //
 
 #include <FL/Fl_Flex.H>
-#include <stdlib.h>
+#include <stdlib.h>       // malloc, free, ...
 
 /**
   Construct a new Fl_Flex widget with the given position, size, and label.
@@ -114,14 +114,16 @@ Fl_Flex::Fl_Flex(int x, int y, int w, int h, int direction)
 }
 
 void Fl_Flex::init(int t) {
-  gap_              = 0;      // default gap size
   margin_left_      = 0;      // default margin size
   margin_top_       = 0;      // default margin size
   margin_right_     = 0;      // default margin size
   margin_bottom_    = 0;      // default margin size
-  fixed_size_       = NULL;   // array of fixed size widgets
+  gap_              = 0;      // default gap size
   fixed_size_size_  = 0;      // number of fixed size widgets
   fixed_size_alloc_ = 0;      // allocated size of array of fixed size widgets
+  fixed_size_       = NULL;   // array of fixed size widgets
+  need_layout_      = false;  // no need to calculate layout yet
+
   type(HORIZONTAL);
   if (t == VERTICAL)
     type(VERTICAL);
@@ -138,13 +140,62 @@ Fl_Flex::~Fl_Flex() {
  */
 void Fl_Flex::on_remove(int index) {
   fixed(child(index), 0);
+  need_layout(1);
 }
 
+/**
+  Draw the widget.
+
+  This will finally calculate the layout of the widget and of all its
+  children if necessary and draw the widget.
+
+  Some changes of included children may require a new layout to be
+  calculated. If this is the case the user may need to call layout()
+  to make sure everything is calculated properly.
+
+  \see layout()
+*/
+void Fl_Flex::draw() {
+  if (need_layout()) {
+    layout();
+  }
+  need_layout(0);
+  Fl_Group::draw();
+}
+
+/**
+  Resize the container and calculate all child positions and sizes.
+
+  \param[in]  x,y   position
+  \param[in]  w,h   width and height
+*/
 void Fl_Flex::resize(int x, int y, int w, int h) {
 
   Fl_Widget::resize(x, y, w, h);
+  need_layout(1);
 
-  int cc = children();
+} // resize()
+
+
+
+/**
+  Calculates the layout of the widget and redraws it.
+
+  If you change widgets in the Fl_Flex container you should call this method
+  to force recalculation of child widget sizes and positions. This can be
+  useful (necessary) if you hide(), show(), add() or remove() children.
+
+  Call this method if you need to recalculate widget positions for usage in
+  an algorithm that places widgets at certain positions or when you need to
+  display (show) or hide one or more children depending on the current layout
+  (for instance a side bar).
+
+  This method also calls redraw() on the Fl_Flex widget.
+*/
+void Fl_Flex::layout() {
+  resize(x(), y(), w(), h());
+
+  const int nc = children();
 
   int dx = Fl::box_dx(box());
   int dy = Fl::box_dy(box());
@@ -152,22 +203,22 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
   int dh = Fl::box_dh(box());
 
   // Calculate total space minus gaps
-  int gaps = cc > 1 ? cc - 1 : 0;
+  int gaps = nc > 1 ? nc - 1 : 0;
   int hori = horizontal();
-  int space = hori ? (w - dw - margin_left_ - margin_right_)
-                   : (h - dh - margin_top_ - margin_bottom_);
+  int space = hori ? (w() - dw - margin_left_ - margin_right_)
+                   : (h() - dh - margin_top_ - margin_bottom_);
 
   // set x and y (start) position, calculate widget sizes
-  int xp = x + dx + margin_left_;
-  int yp = y + dy + margin_top_;
-  int hh = h - dh - margin_top_ - margin_bottom_; // if horizontal: constant height of widgets
-  int vw = w - dw - margin_left_ - margin_right_; // if vertical:   constant width of widgets
+  int xp = x() + dx + margin_left_;
+  int yp = y() + dy + margin_top_;
+  int hh = h() - dh - margin_top_ - margin_bottom_; // if horizontal: constant height of widgets
+  int vw = w() - dw - margin_left_ - margin_right_; // if vertical:   constant width of widgets
 
-  int fw = cc;    // number of flexible widgets
+  int fw = nc;    // number of flexible widgets
 
   // Precalculate remaining space that can be distributed
 
-  for (int i = 0; i < cc; i++) {
+  for (int i = 0; i < nc; i++) {
     Fl_Widget *c = child(i);
     if (c->visible()) {
       if (fixed(c)) {
@@ -194,7 +245,7 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
       sp++;
   }
 
-  for (int i = 0; i < cc; i++) {
+  for (int i = 0; i < nc; i++) {
     Fl_Widget *c = child(i);
     if (!c->visible())
       continue;
@@ -218,17 +269,23 @@ void Fl_Flex::resize(int x, int y, int w, int h) {
     }
   }
 
-} // resize()
+  need_layout(0); // layout done, no need to do it again when drawing
+  redraw();
+}
 
 /**
   Ends automatic child addition and resizes all children.
 
-  This calculates the layout depending on all children and whether
-  they have been assigned fix sizes or not.
+  This marks the Fl_Flex widget as changed (need_layout(1)) which forces the
+  widget to calculate its layout depending on all children and whether
+  they have been assigned fix sizes or not right before it is drawn.
+
+  \see layout()
+  \see draw()
 */
 void Fl_Flex::end() {
   Fl_Group::end();
-  resize(x(), y(), w(), h());
+  need_layout(1);
 }
 
 /**
@@ -237,7 +294,7 @@ void Fl_Flex::end() {
   This sets either the width or height of a child widget, depending on the
   type() of the Fl_Flex container (Fl_Flex::HORIZONTAL or Fl_Flex::VERTICAL).
   The other dimension is set to the full width or height of the Fl_Flex widget
-  minus margin sizes.
+  minus border and margin sizes.
 
   This can be used to set a fixed widget width or height of children
   of Fl_Flex so they are not resized dynamically.
@@ -266,10 +323,11 @@ void Fl_Flex::fixed(Fl_Widget *child, int size) {
       fixed_size_[i] = fixed_size_[i+1];
     }
     fixed_size_size_--;
+    need_layout(1);
     return;
   }
 
-  // if w is meant to be flexible, we are done now
+  // if w is meant to be flexible and we didn't find it, we are done now
   if (size == 0)
     return;
 
@@ -288,6 +346,7 @@ void Fl_Flex::fixed(Fl_Widget *child, int size) {
     child->size(size, h()-margin_top_-margin_bottom_-Fl::box_dh(box()));
   else
     child->size(w()-margin_left_-margin_right_-Fl::box_dw(box()), size);
+  need_layout(1);
 }
 
 /**
