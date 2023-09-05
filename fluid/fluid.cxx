@@ -1167,7 +1167,6 @@ void write_cb(Fl_Widget *, void *) {
  Write the strings that are used in i18n.
  */
 void write_strings_cb(Fl_Widget *, void *) {
-  static const char *exts[] = { ".txt", ".po", ".msg" };
   flush_text_widgets();
   if (!filename) {
     save_cb(0,0);
