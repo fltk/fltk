@@ -116,8 +116,6 @@ void update_sourceview_cb(class Fl_Button*, void*) {
       sv_strings->buffer()->loadfile(fn);
       sv_strings->scroll(top, 0);
     } else if (sv_source->visible_r() || sv_header->visible_r()) {
-      g_project.basename = fl_filename_name(sv_source_filename);
-      g_project.basename = fl_filename_setext(g_project.basename, "");
       Fl_String code_file_name_bak = g_project.code_file_name;
       g_project.code_file_name = sv_source_filename;
       Fl_String header_file_name_bak = g_project.header_file_name;

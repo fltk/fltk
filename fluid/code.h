@@ -18,6 +18,7 @@
 #define _FLUID_CODE_H
 
 #include <FL/fl_attr.h>
+#include <FL/Fl_String.H>
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -28,7 +29,7 @@ struct Fd_Text_Tree;
 struct Fd_Pointer_Tree;
 
 int is_id(char c);
-int write_strings(const char *sfile);
+int write_strings(const Fl_String &filename);
 
 class Fd_Code_Writer
 {

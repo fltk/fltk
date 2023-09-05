@@ -44,14 +44,14 @@ int is_id(char c) {
 }
 
 /**
- Write a file that contains all label and tooltip strings for internationalization.
+ Write a file that contains all label and tooltip strings for internationalisation.
  */
-int write_strings(const char *sfile) {
-  FILE *fp = fl_fopen(sfile, "w");
+int write_strings(const Fl_String &filename) {
   Fl_Type *p;
   Fl_Widget_Type *w;
   int i;
 
+  FILE *fp = fl_fopen(filename.c_str(), "w");
   if (!fp) return 1;
 
   switch (g_project.i18n_type) {
@@ -799,7 +799,7 @@ int Fd_Code_Writer::write_code(const char *s, const char *t, bool to_sourceview)
         write_c("// Initialize I18N stuff now for menus...\n");
         write_c("#%sinclude <locale.h>\n", indent());
         write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
-        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n", g_project.basename.c_str());
+        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n", g_project.basename().c_str());
       }
     }
     if (conditional) {

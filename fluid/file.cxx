@@ -419,14 +419,17 @@ int Fd_Project_Reader::read_project(const char *filename, int merge, Strategy st
   read_children(Fl_Type::current, merge, strategy);
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
-  for (o = Fl_Type::first; o; o = o->next)
-    if (o->is_a(Fl_Type::ID_Menu_Manager_))
+  for (o = Fl_Type::first; o; o = o->next) {
+    if (o->is_a(Fl_Type::ID_Menu_Manager_)) {
       o->add_child(0,0);
-  for (o = Fl_Type::first; o; o = o->next)
+    }
+  }
+  for (o = Fl_Type::first; o; o = o->next) {
     if (o->selected) {
       Fl_Type::current = o;
       break;
     }
+  }
   selection_changed(Fl_Type::current);
   shell_settings_read();
   int ret = close_read();

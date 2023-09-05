@@ -170,6 +170,7 @@ int batch_mode = 0;             // if set (-c, -u) don't open display
 /// command line arguments override settings in the projectfile
 Fl_String g_code_filename_arg;
 Fl_String g_header_filename_arg;
+Fl_String g_launch_path;
 
 /** \var int Fluid_Project::header_file_set
  If set, commandline overrides header file name in .fl file.
@@ -302,7 +303,6 @@ void Fluid_Project::reset() {
   i18n_pos_file = "";
   i18n_pos_set = "1";
 
-  basename = "";
   include_H_from_C = 1;
   use_FL_COMMAND = 0;
   utf8_in_src = 0;
@@ -985,6 +985,112 @@ void apple_open_cb(const char *c) {
 }
 #endif // __APPLE__
 
+// make sure that a path nae ends with a forward slash
+static Fl_String end_with_slash(const Fl_String &str) {
+  char last = str[str.size()-1];
+  if (last !='/' && last != '\\')
+    return str + "/";
+  else
+    return str;
+}
+
+/**
+ Get the absolute path of the project file, for example `/Users/matt/dev/`.
+ */
+Fl_String Fluid_Project::projectfile_path() const {
+  return end_with_slash(fl_filename_absolute(fl_filename_path(filename), g_launch_path));
+}
+
+/**
+ Get the project file name including extension, for example `test.fl`.
+ */
+Fl_String Fluid_Project::projectfile_name() const {
+  return fl_filename_name(filename);
+}
+
+/**
+ Get the absolute path of the generated C++ code file, for example `/Users/matt/dev/src/`.
+ */
+Fl_String Fluid_Project::codefile_path() const {
+  Fl_String path = fl_filename_path(code_file_name);
+  if (batch_mode)
+    return end_with_slash(fl_filename_absolute(path, g_launch_path));
+  else
+    return end_with_slash(fl_filename_absolute(path, projectfile_path()));
+}
+
+/**
+ Get the generated C++ code file name including extension, for example `test.cxx`.
+ */
+Fl_String Fluid_Project::codefile_name() const {
+  Fl_String name = fl_filename_name(code_file_name);
+  if (name.empty()) {
+    return fl_filename_setext(fl_filename_name(filename), ".cxx");
+  } else if (name[0] == '.') {
+    return fl_filename_setext(fl_filename_name(filename), code_file_name);
+  } else {
+    return name;
+  }
+}
+
+/**
+ Get the absolute path of the generated C++ header file, for example `/Users/matt/dev/src/`.
+ */
+Fl_String Fluid_Project::headerfile_path() const {
+  Fl_String path = fl_filename_path(header_file_name);
+  if (batch_mode)
+    return end_with_slash(fl_filename_absolute(path, g_launch_path));
+  else
+    return end_with_slash(fl_filename_absolute(path, projectfile_path()));
+}
+
+/**
+ Get the generated C++ header file name including extension, for example `test.cxx`.
+ */
+Fl_String Fluid_Project::headerfile_name() const {
+  Fl_String name = fl_filename_name(header_file_name);
+  if (name.empty()) {
+    return fl_filename_setext(fl_filename_name(filename), ".h");
+  } else if (name[0] == '.') {
+    return fl_filename_setext(fl_filename_name(filename), header_file_name);
+  } else {
+    return name;
+  }
+}
+
+/**
+ Get the absolute path of the generated i18n strings file, for example `/Users/matt/dev/`.
+ Although it may be more useful to put the text file into the same directory
+ with the source and header file, historically, the text is always saved with
+ the project file in interactive mode, and in the FLUID launch directory in
+ batch mode.
+ */
+Fl_String Fluid_Project::stringsfile_path() const {
+  if (batch_mode)
+    return end_with_slash(g_launch_path);
+  else
+    return projectfile_path();
+}
+
+/**
+ Get the generated i18n text file name including extension, for example `test.po`.
+ */
+Fl_String Fluid_Project::stringsfile_name() const {
+  switch (i18n_type) {
+    default: return fl_filename_setext(fl_filename_name(filename), ".txt");
+    case 1: return fl_filename_setext(fl_filename_name(filename), ".po");
+    case 2: return fl_filename_setext(fl_filename_name(filename), ".msg");
+  }
+}
+
+/**
+ Get the name of the project file without the filename extension.
+ */
+Fl_String Fluid_Project::basename() const {
+  return fl_filename_setext(fl_filename_name(filename), "");
+}
+
+
 /**
  Generate the C++ source and header filenames and write those files.
 
@@ -1004,43 +1110,46 @@ void apple_open_cb(const char *c) {
 
  \return 1 if the operation failed, 0 if it succeeded
  */
-int write_code_files() {
+int write_code_files()
+{
+  // -- handle user interface issues
   flush_text_widgets();
   if (!filename) {
     save_cb(0,0);
     if (!filename) return 1;
   }
-  char cname[FL_PATH_MAX+1];
-  char hname[FL_PATH_MAX+1];
-  g_project.basename = fl_filename_name(filename);
-  g_project.basename = fl_filename_setext(g_project.basename, "");
-  if (g_project.code_file_name[0] == '.' && strchr(g_project.code_file_name.c_str(), '/') == NULL) {
-    strlcpy(cname, fl_filename_name(filename), FL_PATH_MAX);
-    fl_filename_setext(cname, FL_PATH_MAX, g_project.code_file_name.c_str());
-  } else {
-    strlcpy(cname, g_project.code_file_name.c_str(), FL_PATH_MAX);
-  }
-  if (g_project.header_file_name[0] == '.' && strchr(g_project.header_file_name.c_str(), '/') == NULL) {
-    strlcpy(hname, fl_filename_name(filename), FL_PATH_MAX);
-    fl_filename_setext(hname, FL_PATH_MAX, g_project.header_file_name.c_str());
-  } else {
-    strlcpy(hname, g_project.header_file_name.c_str(), FL_PATH_MAX);
-  }
-  if (!batch_mode) enter_project_dir();
+
+  // -- generate the file names with absolute paths
   Fd_Code_Writer f;
-  int x = f.write_code(cname, hname);
+  Fl_String code_filename = g_project.codefile_path() + g_project.codefile_name();
+  Fl_String header_filename = g_project.headerfile_path() + g_project.headerfile_name();
+
+  // -- write the code and header files
+  if (!batch_mode) enter_project_dir();
+  int x = f.write_code(code_filename.c_str(), header_filename.c_str());
   if (!batch_mode) leave_project_dir();
-  strlcat(cname, " and ", FL_PATH_MAX);
-  strlcat(cname, hname, FL_PATH_MAX);
+
+  // -- print error message in batch mode or pop up an error or confirmation dialog box
   if (batch_mode) {
-    if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
+    if (!x) {
+      fprintf(stderr, "%s and %s: %s\n",
+              code_filename.c_str(),
+              header_filename.c_str(),
+              strerror(errno));
+      exit(1);
+    }
   } else {
     if (!x) {
-      fl_message("Can't write %s: %s", cname, strerror(errno));
+      fl_message("Can't write %s and %s: %s",
+                 code_filename.c_str(),
+                 header_filename.c_str(),
+                 strerror(errno));
     } else {
       set_modflag(-1, 0);
       if (completion_button->value()) {
-        fl_message("Wrote %s", cname);
+        fl_message("Wrote %s and %s",
+                   g_project.codefile_name().c_str(),
+                   g_project.headerfile_name().c_str());
       }
     }
   }
@@ -1064,19 +1173,18 @@ void write_strings_cb(Fl_Widget *, void *) {
     save_cb(0,0);
     if (!filename) return;
   }
-  char sname[FL_PATH_MAX];
-  strlcpy(sname, fl_filename_name(filename), sizeof(sname));
-  fl_filename_setext(sname, sizeof(sname), exts[g_project.i18n_type]);
-  if (!batch_mode) enter_project_dir();
-  int x = write_strings(sname);
-  if (!batch_mode) leave_project_dir();
+  Fl_String filename = g_project.stringsfile_path() + g_project.stringsfile_name();
+  int x = write_strings(filename);
   if (batch_mode) {
-    if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
+    if (x) {
+      fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));
+      exit(1);
+    }
   } else {
     if (x) {
-      fl_message("Can't write %s: %s", sname, strerror(errno));
+      fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
     } else if (completion_button->value()) {
-      fl_message("Wrote %s", sname);
+      fl_message("Wrote %s", g_project.stringsfile_name().c_str());
     }
   }
 }
@@ -1389,7 +1497,7 @@ static void menu_file_open_history_cb(Fl_Widget *, void *v) { open_project_file(
  \c New_Menu creates new widgets and is explained in detail in another location.
 
  \see New_Menu
- \todo This menu need some major modernization. Menus are too long and their
+ \todo This menu need some major modernisation. Menus are too long and their
     sorting is not always obvious.
  \todo Shortcuts are all over the place (Alt, Ctrl, Command, Shift-Ctrl,
     function keys), and there should be a help page listing all shortcuts.
@@ -1887,6 +1995,7 @@ int main(int argc,char **argv) {
 
   setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
+  g_launch_path = end_with_slash(fl_getcwd()); // store the current path at launch
 
   if (   (Fl::args(argc,argv,i,arg) == 0)   // unsupported argument found
       || (batch_mode && (i != argc-1))      // .fl filename missing
@@ -1947,13 +2056,16 @@ int main(int argc,char **argv) {
   undo_resume();
 
   // command line args override code and header filenames from the project file
-  if (!g_code_filename_arg.empty()) {
-    g_project.code_file_set = 1;
-    g_project.code_file_name = g_code_filename_arg;
-  }
-  if (!g_header_filename_arg.empty()) {
-    g_project.header_file_set = 1;
-    g_project.header_file_name = g_header_filename_arg;
+  // in batch mode only
+  if (batch_mode) {
+    if (!g_code_filename_arg.empty()) {
+      g_project.code_file_set = 1;
+      g_project.code_file_name = g_code_filename_arg;
+    }
+    if (!g_header_filename_arg.empty()) {
+      g_project.header_file_set = 1;
+      g_project.header_file_name = g_header_filename_arg;
+    }
   }
 
   if (update_file) {            // fluid -u
@@ -1968,6 +2080,11 @@ int main(int argc,char **argv) {
     write_cb(0,0);
     exit(0);
   }
+
+  // don't lock up if silly command line arguments were given
+  if (batch_mode)
+    exit(0);
+
   set_modflag(0);
   undo_clear();
 #ifndef _WIN32

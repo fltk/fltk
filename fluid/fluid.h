@@ -90,6 +90,16 @@ public:
   void reset();
   void update_settings_dialog();
 
+  Fl_String projectfile_path() const;
+  Fl_String projectfile_name() const;
+  Fl_String codefile_path() const;
+  Fl_String codefile_name() const;
+  Fl_String headerfile_path() const;
+  Fl_String headerfile_name() const;
+  Fl_String stringsfile_path() const;
+  Fl_String stringsfile_name() const;
+  Fl_String basename() const;
+
   int i18n_type;
   Fl_String i18n_gnu_include;
   Fl_String i18n_gnu_conditional;
@@ -101,7 +111,6 @@ public:
   Fl_String i18n_pos_file;
   Fl_String i18n_pos_set;
 
-  Fl_String basename;
   int include_H_from_C;
   int use_FL_COMMAND;
   int utf8_in_src;
@@ -116,6 +125,8 @@ extern Fluid_Project g_project;
 
 extern Fl_String g_code_filename_arg;
 extern Fl_String g_header_filename_arg;
+extern Fl_String g_launch_path;
+
 
 // ---- public functions
 
