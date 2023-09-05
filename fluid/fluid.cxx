@@ -46,7 +46,6 @@
 #include <FL/fl_string_functions.h>
 #include <locale.h>     // setlocale()..
 #include "../src/flstring.h"
-#include "../src/Fl_System_Driver.H"
 
 extern "C"
 {

@@ -52,9 +52,29 @@
 // TODO: refactor namespace use
 // TODO: hostname, username, getenv support?
 // TODO: add ownership to item, as in layout
-//         FLUID presets, user, project file, external file, folder
+//        FLUID presets, user, project file, external file, folder
+//        ./fluid.prefs
+//        ./fluid.user.prefs
 // TODO: make settings dialog resizable
 // TODO: get a macro to find `fltk-config`
+//        this is actually tricky to find
+//        for live builds, we could check the program launch directory
+//          if we know where build/Xcode/bin/Debug/fluid is, we
+//          my or may not find ./build/Xcode/fltk-config
+//        on macOS with Brew, we find /opt/homebrew/bin/fltk-config but the user
+//        can set their own install path.
+//        We can query the shell path, but that requires knowing the users shell.
+/*
+ #!/usr/bin/env osascript
+ set x to "poop"
+ say "@BASENAME@"
+
+ osascript <<EOD
+ say "spark"
+ EOD
+
+ /bin/bash -l -c 'fltk-config' does the trick for me
+ */
 
 #include "shell_command.h"
 
