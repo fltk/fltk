@@ -28,6 +28,8 @@
 #define MENUHEIGHT 25
 #define WINHEIGHT (BROWSERHEIGHT+MENUHEIGHT)
 
+// ---- types
+
 class Fl_Double_Window;
 class Fl_Window;
 class Fl_Menu_Bar;
@@ -35,6 +37,19 @@ class Fl_Type;
 class Fl_Choice;
 class Fl_Button;
 class Fl_Check_Button;
+
+/**
+ Indicate the storage location for tools like layout suites and shell macros.
+ \see class Fd_Shell_Command, class Fd_Layout_Suite
+ */
+typedef enum {
+  FD_STORE_INTERNAL,  ///< stored inside FLUID app
+  FD_STORE_USER,      ///< suite is stored in the user wide FLUID settings
+  FD_STORE_PROJECT,   ///< suite is stored within the current .fl project file
+  FD_STORE_FILE       ///< store suite in external file
+} Fd_Tool_Store;
+
+// ---- global variables
 
 extern int force_parent;
 
@@ -71,9 +86,6 @@ extern Fl_Check_Button *guides_button;
 
 extern int modflag;
 
-extern void enter_project_dir();
-extern void leave_project_dir();
-
 extern int update_file;            // fluid -u
 extern int compile_file;           // fluid -c
 extern int compile_strings;        // fluic -cs
@@ -81,7 +93,11 @@ extern int batch_mode;
 
 extern int pasteoffset;
 
-// ---- project settings
+extern Fl_String g_code_filename_arg;
+extern Fl_String g_header_filename_arg;
+extern Fl_String g_launch_path;
+
+// ---- project class declaration
 
 class Fluid_Project {
 public:
@@ -123,13 +139,10 @@ public:
 
 extern Fluid_Project g_project;
 
-extern Fl_String g_code_filename_arg;
-extern Fl_String g_header_filename_arg;
-extern Fl_String g_launch_path;
-
-
 // ---- public functions
 
+extern void enter_project_dir();
+extern void leave_project_dir();
 extern void set_filename(const char *c);
 extern void set_modflag(int mf, int mfc=-1);
 

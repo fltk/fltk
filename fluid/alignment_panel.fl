@@ -31,6 +31,23 @@ snap {
     }
   }
 }
+shell_commands {
+  command {
+    name {all: build}
+    label {Build...}
+    shortcut 4194402
+    command {fltk-config --compile @BASENAME@.cxx}
+    flags 3
+  }
+  command {
+    name {all: run}
+    label {Run...}
+    shortcut 4194418
+    command {fltk-config --compile @BASENAME@.cxx
+./@BASENAME@}
+    flags 3
+  }
+}
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
@@ -105,6 +122,9 @@ decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
 }
 
 decl {void scheme_cb(Fl_Scheme_Choice *, void *);} {public local
+}
+
+decl {int w_settings_shell_list_selected;} {public local
 }
 
 Function {make_settings_window()} {open
@@ -773,27 +793,36 @@ List:}
   // load from g_shell_config
   if (g_shell_config) {
     o->clear();
+    w_settings_shell_list_selected = 0;
     for (int i=0; i<g_shell_config->list_size; i++) {
       o->add(g_shell_config->list[i]->name.c_str());
     }
   }
 } else {
-  // value() probably changed, so update the command settings
-  w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
-  w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
+  int prev_selected = w_settings_shell_list_selected;
+  w_settings_shell_list_selected = 0;
+  int selected = w_settings_shell_list->value();
+  if (selected) {
+    if (w_settings_shell_list->selected(selected))
+      w_settings_shell_list_selected = selected;
+  }
+  if (w_settings_shell_list_selected != prev_selected) {
+    w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
+    w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
+  }
 }}
-          xywh {100 90 220 110} type Hold labelfont 1 labelsize 11 align 4 textsize 13
+          xywh {100 90 220 110} type Multi labelfont 1 labelsize 11 align 4 textsize 13
         }
         Fl_Group w_settings_shell_toolbox {
           callback {if (v==LOAD) {
   propagate_load(o, v);
 }} open
-          xywh {100 200 220 20}
+          xywh {100 200 220 22}
         } {
           Fl_Button {} {
             label {+}
             callback {if (v != LOAD) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
   g_shell_config->insert(selected, cmd);
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
@@ -801,21 +830,19 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
-  g_shell_config->is_default_list(false);
 }}
-            xywh {100 200 24 20} labelsize 11
+            xywh {100 200 24 22} labelsize 11
           }
           Fl_Button w_settings_shell_dup {
-            label Dup
-            callback {if (v==LOAD) {
-  int selected = w_settings_shell_list->value();
+            label {++}
+            callback {int selected = w_settings_shell_list_selected;
+if (v==LOAD) {
   if (selected) {
     o->activate();
   } else {
     o->deactivate();
   }
 } else {
-  int selected = w_settings_shell_list->value();
   if (!selected) return;
   Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1]);
   g_shell_config->insert(selected, cmd);
@@ -824,21 +851,19 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
-  g_shell_config->is_default_list(false);
 }}
-            xywh {124 200 24 20} labelsize 11 deactivate
+            xywh {124 200 24 22} labelsize 11 deactivate
           }
           Fl_Button w_settings_shell_remove {
             label {-}
-            callback {if (v==LOAD) {
-  int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
+if (v==LOAD) {
   if (selected) {
     o->activate();
   } else {
     o->deactivate();
   }
 } else {
-  int selected = w_settings_shell_list->value();
   if (!selected) return;
   g_shell_config->remove(selected-1);
   w_settings_shell_list->remove(selected);
@@ -847,67 +872,73 @@ List:}
   w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
   w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   g_shell_config->rebuild_shell_menu();
-  g_shell_config->is_default_list(false);
 }}
-            xywh {148 200 24 20} labelsize 11 deactivate
+            xywh {148 200 24 22} labelsize 11 deactivate
+          }
+          Fl_Menu_Button w_settings_shell_menu {open
+            xywh {172 200 24 22} labelsize 11 textsize 11
+          } {
+            MenuItem {} {
+              label {Import...}
+              xywh {90 90 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label {Export selected...}
+              xywh {10 10 100 20} labelsize 11 divider
+            }
+            MenuItem {} {
+              label {Import Example Scripts:}
+              xywh {20 20 100 20} labelfont 1 labelsize 10 deactivate
+            }
+            MenuItem {} {
+              label {Compile with fltk-config}
+              xywh {30 30 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label {Build and run}
+              xywh {40 40 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label {Build with Xcode on macOS}
+              xywh {50 50 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label {Build with CMake}
+              xywh {60 60 100 20} labelsize 11
+            }
           }
           Fl_Button w_settings_shell_play {
-            label {@>}
-            callback {if (v==LOAD) {
-  int selected = w_settings_shell_list->value();
+            label Run
+            callback {int selected = w_settings_shell_list_selected;
+if (v==LOAD) {
   if (selected) {
     o->activate();
   } else {
     o->deactivate();
   }
 } else {
-  int selected = w_settings_shell_list->value();
   if (!selected) return;
   Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
   cmd->run();
 }}
-            xywh {172 200 24 20} labelsize 11 labelcolor 49 deactivate
-          }
-          Fl_Button w_settings_shell_default {
-            label {Restore Defaults}
-            callback {if (v == LOAD) {
-  if (g_shell_config->is_default_)
-    o->deactivate();
-  else
-    o->activate();
-} else {
-  if (!g_shell_config->is_default_) {
-    if (fl_choice("Restoring shell commands to the FLUID\\n"
-                  "defaults will delete all custom shell\\n"
-                  "commands in this project",
-                  "Cancel", "Restore Defaults", NULL
-                  ) == 1) 
-    {
-      g_shell_config->restore_defaults();
-      g_shell_config->rebuild_shell_menu();
-      g_shell_config->update_settings_dialog();
-      g_shell_config->is_default_list(true);
-    }
-  }
-}}
-            xywh {224 200 96 20} labelsize 11
+            xywh {270 200 50 22} labelsize 11 deactivate
           }
         }
         Fl_Group w_settings_shell_cmd {
           callback {if (v==LOAD) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (selected) {
     o->activate();
   } else {
     o->deactivate();
   }
   propagate_load(o, v);
-}} open
-          xywh {10 235 320 265}
+}} open selected
+          xywh {10 235 320 291}
         } {
           Fl_Input {} {
             label {Name:}
-            callback {int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
     o->value(g_shell_config->list[selected-1]->name.c_str());
@@ -918,14 +949,13 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->name = o->value();
     w_settings_shell_list->text(selected, o->value()); 
-    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 246 220 20} labelfont 1 labelsize 11 when 13 textfont 4 textsize 11
           }
           Fl_Input {} {
             label {Label:}
-            callback {int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
     o->value(g_shell_config->list[selected-1]->label.c_str());
@@ -936,89 +966,13 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->label = o->value();
     g_shell_config->list[selected-1]->update_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 272 220 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {} {
-            label {Label:}
-            callback {if (v == LOAD) {
-//  o->value(g_shell_command.c_str());
-} else {
-//  g_shell_command = o->value();
-}}
-            xywh {230 322 90 20} labelfont 1 labelsize 11 textfont 4 textsize 11 hide
-          }
-          Fl_Check_Button {} {
-            label {save .fl project file}
-            callback {int selected = w_settings_shell_list->value();
-if (v == LOAD) {
-  if (selected) {
-    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_PROJECT);
-  } else {
-    o->value(0);
-  }
-} else {
-  if (selected) {
-    int v = o->value();
-    if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
-    } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
-    }
-    g_shell_config->is_default_list(false);
-  }
-}}
-            tooltip {save the project to the .fl file before running the command} xywh {100 432 220 20} down_box DOWN_BOX labelsize 11
-          }
-          Fl_Check_Button {} {
-            label {save source code}
-            callback {int selected = w_settings_shell_list->value();
-if (v == LOAD) {
-  if (selected) {
-    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_SOURCECODE);
-  } else {
-    o->value(0);
-  }
-} else {
-  if (selected) {
-    int v = o->value();
-    if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
-    } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
-    }
-    g_shell_config->is_default_list(false);
-  }
-}}
-            tooltip {generate the source code and header file before running the command} xywh {100 452 220 19} down_box DOWN_BOX labelsize 11
-          }
-          Fl_Check_Button {} {
-            label {save i18n strings}
-            callback {int selected = w_settings_shell_list->value();
-if (v == LOAD) {
-  if (selected) {
-    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_STRINGS);
-  } else {
-    o->value(0);
-  }
-} else {
-  if (selected) {
-    int v = o->value();
-    if (v) {
-      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
-    } else {
-      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
-    }
-    g_shell_config->is_default_list(false);
-  }
-}}
-            tooltip {save the internationalisation string before running the command} xywh {100 471 220 20} down_box DOWN_BOX labelsize 11
-          }
           Fl_Button {} {
             label Shortcut
-            callback {int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
     o->value(g_shell_config->list[selected-1]->shortcut);
@@ -1030,7 +984,6 @@ if (v == LOAD) {
   if (selected) {
     g_shell_config->list[selected-1]->shortcut = o->value();
     g_shell_config->list[selected-1]->update_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }}
             xywh {100 297 130 20} labelsize 11 align 16
@@ -1038,8 +991,39 @@ if (v == LOAD) {
             class Fl_Shortcut_Button
           }
           Fl_Choice {} {
+            label {Store:}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    Fd_Tool_Store ts = g_shell_config->list[selected-1]->storage;
+    o->value(o->find_item_with_argument((long)ts));
+  } else {
+    o->value(o->find_item_with_argument((long)FD_STORE_USER));
+  }
+} else {
+  if (selected) {
+    Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
+    g_shell_config->list[selected-1]->storage = ts;
+    // g_shell_config->rebuild_shell_menu(); 
+    // only if we prepend a storage location indicator
+  }
+}} open
+            xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+          } {
+            MenuItem {} {
+              label {@fd_user User Setting}
+              user_data FD_STORE_USER user_data_type long
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label {@fd_project Project File}
+              user_data FD_STORE_PROJECT user_data_type long
+              xywh {0 0 100 20} labelsize 11
+            }
+          }
+          Fl_Choice {} {
             label {Condition:}
-            callback {int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
     int cond = g_shell_config->list[selected-1]->condition;
@@ -1052,10 +1036,9 @@ if (v == LOAD) {
     int cond = (int)(o->mvalue()->argument());
     g_shell_config->list[selected-1]->condition = cond;
     g_shell_config->rebuild_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }} open
-            xywh {100 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+            xywh {100 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {all platforms}
@@ -1088,9 +1071,18 @@ if (v == LOAD) {
               xywh {0 0 100 20} labelsize 11
             }
           }
+          Fl_Input {} {
+            label {Label:}
+            callback {if (v == LOAD) {
+//  o->value(g_shell_command.c_str());
+} else {
+//  g_shell_command = o->value();
+}}
+            xywh {230 348 90 20} labelfont 1 labelsize 11 textfont 4 textsize 11 hide
+          }
           Fl_Text_Editor w_settings_shell_command {
             label {Shell script:}
-            callback {int selected = w_settings_shell_list->value();
+            callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
     o->buffer()->text(g_shell_config->list[selected-1]->command.c_str());
@@ -1100,14 +1092,13 @@ if (v == LOAD) {
 } else {
   if (selected) {
     g_shell_config->list[selected-1]->command = o->buffer()->text();
-    g_shell_config->is_default_list(false);
   }
 }}
-            xywh {100 347 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
+            xywh {100 373 196 80} labelfont 1 labelsize 11 align 4 textfont 4 textsize 12
             code0 {o->buffer(new Fl_Text_Buffer);}
           }
           Fl_Group {} {open
-            xywh {296 347 24 44}
+            xywh {296 373 24 44}
           } {
             Fl_Menu_Button w_settings_shell_text_macros {
               callback {const Fl_Menu_Item *mi = o->mvalue();
@@ -1127,9 +1118,8 @@ if (mi) {
     w_settings_shell_command->buffer()->insert(pos, word);
   }
   w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
-  g_shell_config->is_default_list(false);
-}} open selected
-              xywh {296 347 24 22} labelsize 11 textsize 11
+}} open
+              xywh {296 373 24 22} labelsize 11 textsize 11
             } {
               MenuItem {} {
                 label {@@BASENAME@@}
@@ -1170,8 +1160,71 @@ if (mi) {
             }
             Fl_Button {} {
               label {@square}
-              tooltip {open big code editor} xywh {296 369 24 22} color 6 labelsize 11 labelcolor 49 hide
+              tooltip {open big code editor} xywh {296 395 24 22} color 6 labelsize 11 labelcolor 49 hide
             }
+          }
+          Fl_Check_Button {} {
+            label {save .fl project file}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_PROJECT);
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    int v = o->value();
+    if (v) {
+      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
+    } else {
+      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
+    }
+  }
+}}
+            tooltip {save the project to the .fl file before running the command} xywh {100 458 220 20} down_box DOWN_BOX labelsize 11
+          }
+          Fl_Check_Button {} {
+            label {save source code}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_SOURCECODE);
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    int v = o->value();
+    if (v) {
+      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
+    } else {
+      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
+    }
+  }
+}}
+            tooltip {generate the source code and header file before running the command} xywh {100 478 220 19} down_box DOWN_BOX labelsize 11
+          }
+          Fl_Check_Button {} {
+            label {save i18n strings}
+            callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) {
+    o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_STRINGS);
+  } else {
+    o->value(0);
+  }
+} else {
+  if (selected) {
+    int v = o->value();
+    if (v) {
+      g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
+    } else {
+      g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
+    }
+  }
+}}
+            tooltip {save the internationalisation string before running the command} xywh {100 497 220 20} down_box DOWN_BOX labelsize 11
           }
         }
       }

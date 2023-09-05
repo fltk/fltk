@@ -24,6 +24,7 @@
 #include <string.h>
 #include "../src/flstring.h"
 void scheme_cb(Fl_Scheme_Choice *, void *);
+int w_settings_shell_list_selected;
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 
@@ -763,14 +764,23 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
     // load from g_shell_config
     if (g_shell_config) {
       o->clear();
+      w_settings_shell_list_selected = 0;
       for (int i=0; i<g_shell_config->list_size; i++) {
         o->add(g_shell_config->list[i]->name.c_str());
       }
     }
   } else {
-    // value() probably changed, so update the command settings
-    w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
-    w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
+    int prev_selected = w_settings_shell_list_selected;
+    w_settings_shell_list_selected = 0;
+    int selected = w_settings_shell_list->value();
+    if (selected) {
+      if (w_settings_shell_list->selected(selected))
+        w_settings_shell_list_selected = selected;
+    }
+    if (w_settings_shell_list_selected != prev_selected) {
+      w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
+      w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
+    }
   }
 }
 
@@ -784,7 +794,7 @@ static void cb_w_settings_shell_toolbox(Fl_Group* o, void* v) {
 
 static void cb_8(Fl_Button*, void* v) {
   if (v != LOAD) {
-    int selected = w_settings_shell_list->value();
+    int selected = w_settings_shell_list_selected;
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
@@ -792,22 +802,20 @@ static void cb_8(Fl_Button*, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }
 
 Fl_Button *w_settings_shell_dup=(Fl_Button *)0;
 
 static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
-    int selected = w_settings_shell_list->value();
     if (selected) {
       o->activate();
     } else {
       o->deactivate();
     }
   } else {
-    int selected = w_settings_shell_list->value();
     if (!selected) return;
     Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1]);
     g_shell_config->insert(selected, cmd);
@@ -816,22 +824,20 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }
 
 Fl_Button *w_settings_shell_remove=(Fl_Button *)0;
 
 static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
-    int selected = w_settings_shell_list->value();
     if (selected) {
       o->activate();
     } else {
       o->deactivate();
     }
   } else {
-    int selected = w_settings_shell_list->value();
     if (!selected) return;
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
@@ -840,50 +846,36 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
-    g_shell_config->is_default_list(false);
   }
 }
+
+Fl_Menu_Button *w_settings_shell_menu=(Fl_Menu_Button *)0;
+
+Fl_Menu_Item menu_w_settings_shell_menu[] = {
+ {"Import...", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Export selected...", 0,  0, 0, 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Import Example Scripts:", 0,  0, 0, 1, (uchar)FL_NORMAL_LABEL, 1, 10, 0},
+ {"Compile with fltk-config", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build and run", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build with Xcode on macOS", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"Build with CMake", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
 
 Fl_Button *w_settings_shell_play=(Fl_Button *)0;
 
 static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
-    int selected = w_settings_shell_list->value();
     if (selected) {
       o->activate();
     } else {
       o->deactivate();
     }
   } else {
-    int selected = w_settings_shell_list->value();
     if (!selected) return;
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->run();
-  }
-}
-
-Fl_Button *w_settings_shell_default=(Fl_Button *)0;
-
-static void cb_w_settings_shell_default(Fl_Button* o, void* v) {
-  if (v == LOAD) {
-    if (g_shell_config->is_default_)
-      o->deactivate();
-    else
-      o->activate();
-  } else {
-    if (!g_shell_config->is_default_) {
-      if (fl_choice("Restoring shell commands to the FLUID\n"
-                    "defaults will delete all custom shell\n"
-                    "commands in this project",
-                    "Cancel", "Restore Defaults", NULL
-                    ) == 1) 
-      {
-        g_shell_config->restore_defaults();
-        g_shell_config->rebuild_shell_menu();
-        g_shell_config->update_settings_dialog();
-        g_shell_config->is_default_list(true);
-      }
-    }
   }
 }
 
@@ -891,7 +883,7 @@ Fl_Group *w_settings_shell_cmd=(Fl_Group *)0;
 
 static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
   if (v==LOAD) {
-    int selected = w_settings_shell_list->value();
+    int selected = w_settings_shell_list_selected;
     if (selected) {
       o->activate();
     } else {
@@ -902,7 +894,7 @@ static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
 }
 
 static void cb_Name(Fl_Input* o, void* v) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
       o->value(g_shell_config->list[selected-1]->name.c_str());
@@ -913,13 +905,12 @@ static void cb_Name(Fl_Input* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->name = o->value();
       w_settings_shell_list->text(selected, o->value()); 
-      g_shell_config->is_default_list(false);
     }
   }
 }
 
 static void cb_Label(Fl_Input* o, void* v) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
       o->value(g_shell_config->list[selected-1]->label.c_str());
@@ -930,84 +921,12 @@ static void cb_Label(Fl_Input* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->label = o->value();
       g_shell_config->list[selected-1]->update_shell_menu();
-      g_shell_config->is_default_list(false);
-    }
-  }
-}
-
-static void cb_Label1(Fl_Input* o, void* v) {
-  if (v == LOAD) {
-  //  o->value(g_shell_command.c_str());
-  } else {
-  //  g_shell_command = o->value();
-  }
-}
-
-static void cb_save(Fl_Check_Button* o, void* v) {
-  int selected = w_settings_shell_list->value();
-  if (v == LOAD) {
-    if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_PROJECT);
-    } else {
-      o->value(0);
-    }
-  } else {
-    if (selected) {
-      int v = o->value();
-      if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
-      } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
-      }
-      g_shell_config->is_default_list(false);
-    }
-  }
-}
-
-static void cb_save1(Fl_Check_Button* o, void* v) {
-  int selected = w_settings_shell_list->value();
-  if (v == LOAD) {
-    if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_SOURCECODE);
-    } else {
-      o->value(0);
-    }
-  } else {
-    if (selected) {
-      int v = o->value();
-      if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
-      } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
-      }
-      g_shell_config->is_default_list(false);
-    }
-  }
-}
-
-static void cb_save2(Fl_Check_Button* o, void* v) {
-  int selected = w_settings_shell_list->value();
-  if (v == LOAD) {
-    if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_STRINGS);
-    } else {
-      o->value(0);
-    }
-  } else {
-    if (selected) {
-      int v = o->value();
-      if (v) {
-        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
-      } else {
-        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
-      }
-      g_shell_config->is_default_list(false);
     }
   }
 }
 
 static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
       o->value(g_shell_config->list[selected-1]->shortcut);
@@ -1019,13 +938,37 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
     if (selected) {
       g_shell_config->list[selected-1]->shortcut = o->value();
       g_shell_config->list[selected-1]->update_shell_menu();
-      g_shell_config->is_default_list(false);
     }
   }
 }
 
+static void cb_Store(Fl_Choice* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      Fd_Tool_Store ts = g_shell_config->list[selected-1]->storage;
+      o->value(o->find_item_with_argument((long)ts));
+    } else {
+      o->value(o->find_item_with_argument((long)FD_STORE_USER));
+    }
+  } else {
+    if (selected) {
+      Fd_Tool_Store ts = (Fd_Tool_Store)(o->mvalue()->argument());
+      g_shell_config->list[selected-1]->storage = ts;
+      // g_shell_config->rebuild_shell_menu(); 
+      // only if we prepend a storage location indicator
+    }
+  }
+}
+
+Fl_Menu_Item menu_Store[] = {
+ {"@fd_user User Setting", 0,  0, (void*)(FD_STORE_USER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"@fd_project Project File", 0,  0, (void*)(FD_STORE_PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 static void cb_Condition(Fl_Choice* o, void* v) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
       int cond = g_shell_config->list[selected-1]->condition;
@@ -1038,7 +981,6 @@ static void cb_Condition(Fl_Choice* o, void* v) {
       int cond = (int)(o->mvalue()->argument());
       g_shell_config->list[selected-1]->condition = cond;
       g_shell_config->rebuild_shell_menu();
-      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -1053,10 +995,18 @@ Fl_Menu_Item menu_Condition[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+static void cb_Label1(Fl_Input* o, void* v) {
+  if (v == LOAD) {
+  //  o->value(g_shell_command.c_str());
+  } else {
+  //  g_shell_command = o->value();
+  }
+}
+
 Fl_Text_Editor *w_settings_shell_command=(Fl_Text_Editor *)0;
 
 static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
-  int selected = w_settings_shell_list->value();
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
       o->buffer()->text(g_shell_config->list[selected-1]->command.c_str());
@@ -1066,7 +1016,6 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   } else {
     if (selected) {
       g_shell_config->list[selected-1]->command = o->buffer()->text();
-      g_shell_config->is_default_list(false);
     }
   }
 }
@@ -1091,7 +1040,6 @@ static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
       w_settings_shell_command->buffer()->insert(pos, word);
     }
     w_settings_shell_command->do_callback(w_settings_shell_command, (void*)NULL);
-    g_shell_config->is_default_list(false);
   }
 }
 
@@ -1107,6 +1055,66 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
  {"@@TEXTFILE_NAME@@", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 4, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
+
+static void cb_save(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_PROJECT);
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      int v = o->value();
+      if (v) {
+        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_PROJECT;
+      } else {
+        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
+      }
+    }
+  }
+}
+
+static void cb_save1(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_SOURCECODE);
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      int v = o->value();
+      if (v) {
+        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
+      } else {
+        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
+      }
+    }
+  }
+}
+
+static void cb_save2(Fl_Check_Button* o, void* v) {
+  int selected = w_settings_shell_list_selected;
+  if (v == LOAD) {
+    if (selected) {
+      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_STRINGS);
+    } else {
+      o->value(0);
+    }
+  } else {
+    if (selected) {
+      int v = o->value();
+      if (v) {
+        g_shell_config->list[selected-1]->flags |= Fd_Shell_Command::SAVE_STRINGS;
+      } else {
+        g_shell_config->list[selected-1]->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
+      }
+    }
+  }
+}
 
 Fl_Group *w_settings_i18n_tab=(Fl_Group *)0;
 
@@ -1822,42 +1830,42 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
         w_settings_shell_tab->labelsize(11);
         w_settings_shell_tab->callback((Fl_Callback*)cb_w_settings_shell_tab);
         { w_settings_shell_list = new Fl_Browser(100, 90, 220, 110, "Shell \nCommand \nList:");
-          w_settings_shell_list->type(2);
+          w_settings_shell_list->type(3);
           w_settings_shell_list->labelfont(1);
           w_settings_shell_list->labelsize(11);
           w_settings_shell_list->textsize(13);
           w_settings_shell_list->callback((Fl_Callback*)cb_w_settings_shell_list);
           w_settings_shell_list->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Browser* w_settings_shell_list
-        { w_settings_shell_toolbox = new Fl_Group(100, 200, 220, 20);
+        { w_settings_shell_toolbox = new Fl_Group(100, 200, 220, 22);
           w_settings_shell_toolbox->callback((Fl_Callback*)cb_w_settings_shell_toolbox);
-          { Fl_Button* o = new Fl_Button(100, 200, 24, 20, "+");
+          { Fl_Button* o = new Fl_Button(100, 200, 24, 22, "+");
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_8);
           } // Fl_Button* o
-          { w_settings_shell_dup = new Fl_Button(124, 200, 24, 20, "Dup");
+          { w_settings_shell_dup = new Fl_Button(124, 200, 24, 22, "++");
             w_settings_shell_dup->labelsize(11);
             w_settings_shell_dup->callback((Fl_Callback*)cb_w_settings_shell_dup);
             w_settings_shell_dup->deactivate();
           } // Fl_Button* w_settings_shell_dup
-          { w_settings_shell_remove = new Fl_Button(148, 200, 24, 20, "-");
+          { w_settings_shell_remove = new Fl_Button(148, 200, 24, 22, "-");
             w_settings_shell_remove->labelsize(11);
             w_settings_shell_remove->callback((Fl_Callback*)cb_w_settings_shell_remove);
             w_settings_shell_remove->deactivate();
           } // Fl_Button* w_settings_shell_remove
-          { w_settings_shell_play = new Fl_Button(172, 200, 24, 20, "@>");
+          { w_settings_shell_menu = new Fl_Menu_Button(172, 200, 24, 22);
+            w_settings_shell_menu->labelsize(11);
+            w_settings_shell_menu->textsize(11);
+            w_settings_shell_menu->menu(menu_w_settings_shell_menu);
+          } // Fl_Menu_Button* w_settings_shell_menu
+          { w_settings_shell_play = new Fl_Button(270, 200, 50, 22, "Run");
             w_settings_shell_play->labelsize(11);
-            w_settings_shell_play->labelcolor(FL_BACKGROUND_COLOR);
             w_settings_shell_play->callback((Fl_Callback*)cb_w_settings_shell_play);
             w_settings_shell_play->deactivate();
           } // Fl_Button* w_settings_shell_play
-          { w_settings_shell_default = new Fl_Button(224, 200, 96, 20, "Restore Defaults");
-            w_settings_shell_default->labelsize(11);
-            w_settings_shell_default->callback((Fl_Callback*)cb_w_settings_shell_default);
-          } // Fl_Button* w_settings_shell_default
           w_settings_shell_toolbox->end();
         } // Fl_Group* w_settings_shell_toolbox
-        { w_settings_shell_cmd = new Fl_Group(10, 235, 320, 265);
+        { w_settings_shell_cmd = new Fl_Group(10, 235, 320, 291);
           w_settings_shell_cmd->callback((Fl_Callback*)cb_w_settings_shell_cmd);
           { Fl_Input* o = new Fl_Input(100, 246, 220, 20, "Name:");
             o->labelfont(1);
@@ -1874,32 +1882,6 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Label);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(230, 322, 90, 20, "Label:");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->textfont(4);
-            o->textsize(11);
-            o->callback((Fl_Callback*)cb_Label1);
-            o->hide();
-          } // Fl_Input* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 432, 220, 20, "save .fl project file");
-            o->tooltip("save the project to the .fl file before running the command");
-            o->down_box(FL_DOWN_BOX);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_save);
-          } // Fl_Check_Button* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 452, 220, 19, "save source code");
-            o->tooltip("generate the source code and header file before running the command");
-            o->down_box(FL_DOWN_BOX);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_save1);
-          } // Fl_Check_Button* o
-          { Fl_Check_Button* o = new Fl_Check_Button(100, 471, 220, 20, "save i18n strings");
-            o->tooltip("save the internationalisation string before running the command");
-            o->down_box(FL_DOWN_BOX);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)cb_save2);
-          } // Fl_Check_Button* o
           { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(100, 297, 130, 20, "Shortcut");
             o->box(FL_UP_BOX);
             o->color(FL_BACKGROUND_COLOR);
@@ -1912,7 +1894,15 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
             o->when(FL_WHEN_RELEASE);
           } // Fl_Shortcut_Button* o
-          { Fl_Choice* o = new Fl_Choice(100, 322, 130, 20, "Condition:");
+          { Fl_Choice* o = new Fl_Choice(100, 322, 130, 20, "Store:");
+            o->down_box(FL_BORDER_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Store);
+            o->menu(menu_Store);
+          } // Fl_Choice* o
+          { Fl_Choice* o = new Fl_Choice(100, 348, 130, 20, "Condition:");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -1920,7 +1910,15 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             o->callback((Fl_Callback*)cb_Condition);
             o->menu(menu_Condition);
           } // Fl_Choice* o
-          { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(100, 347, 196, 80, "Shell script:");
+          { Fl_Input* o = new Fl_Input(230, 348, 90, 20, "Label:");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Label1);
+            o->hide();
+          } // Fl_Input* o
+          { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(100, 373, 196, 80, "Shell script:");
             w_settings_shell_command->labelfont(1);
             w_settings_shell_command->labelsize(11);
             w_settings_shell_command->textfont(4);
@@ -1929,14 +1927,14 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             w_settings_shell_command->align(Fl_Align(FL_ALIGN_LEFT));
             o->buffer(new Fl_Text_Buffer);
           } // Fl_Text_Editor* w_settings_shell_command
-          { Fl_Group* o = new Fl_Group(296, 347, 24, 44);
-            { w_settings_shell_text_macros = new Fl_Menu_Button(296, 347, 24, 22);
+          { Fl_Group* o = new Fl_Group(296, 373, 24, 44);
+            { w_settings_shell_text_macros = new Fl_Menu_Button(296, 373, 24, 22);
               w_settings_shell_text_macros->labelsize(11);
               w_settings_shell_text_macros->textsize(11);
               w_settings_shell_text_macros->callback((Fl_Callback*)cb_w_settings_shell_text_macros);
               w_settings_shell_text_macros->menu(menu_w_settings_shell_text_macros);
             } // Fl_Menu_Button* w_settings_shell_text_macros
-            { Fl_Button* o = new Fl_Button(296, 369, 24, 22, "@square");
+            { Fl_Button* o = new Fl_Button(296, 395, 24, 22, "@square");
               o->tooltip("open big code editor");
               o->color((Fl_Color)6);
               o->labelsize(11);
@@ -1945,6 +1943,24 @@ ped using octal notation `\\0123`. If this option is checked, Fluid will write\
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 458, 220, 20, "save .fl project file");
+            o->tooltip("save the project to the .fl file before running the command");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_save);
+          } // Fl_Check_Button* o
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 478, 220, 19, "save source code");
+            o->tooltip("generate the source code and header file before running the command");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_save1);
+          } // Fl_Check_Button* o
+          { Fl_Check_Button* o = new Fl_Check_Button(100, 497, 220, 20, "save i18n strings");
+            o->tooltip("save the internationalisation string before running the command");
+            o->down_box(FL_DOWN_BOX);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)cb_save2);
+          } // Fl_Check_Button* o
           w_settings_shell_cmd->end();
         } // Fl_Group* w_settings_shell_cmd
         o->image()->scale(36, 24);

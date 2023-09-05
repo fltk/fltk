@@ -35,6 +35,7 @@ void init_scheme(void);
 extern struct Fl_Menu_Item *dbmanager_item;
 extern void i18n_cb(Fl_Choice *,void *);
 extern void scheme_cb(Fl_Scheme_Choice *, void *);
+extern int w_settings_shell_list_selected;
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *settings_window;
 #include <FL/Fl_Tabs.H>
@@ -83,8 +84,8 @@ extern Fl_Browser *w_settings_shell_list;
 extern Fl_Group *w_settings_shell_toolbox;
 extern Fl_Button *w_settings_shell_dup;
 extern Fl_Button *w_settings_shell_remove;
+extern Fl_Menu_Button *w_settings_shell_menu;
 extern Fl_Button *w_settings_shell_play;
-extern Fl_Button *w_settings_shell_default;
 extern Fl_Group *w_settings_shell_cmd;
 #include <FL/Fl_Shortcut_Button.H>
 #include <FL/Fl_Text_Editor.H>
@@ -112,6 +113,8 @@ extern Fl_Menu_Item *w_layout_menu_storage[4];
 #define w_layout_menu_load (menu_w_layout_menu+5)
 #define w_layout_menu_save (menu_w_layout_menu+6)
 #define w_layout_menu_delete (menu_w_layout_menu+7)
+extern Fl_Menu_Item menu_w_settings_shell_menu[];
+extern Fl_Menu_Item menu_Store[];
 extern Fl_Menu_Item menu_Condition[];
 extern Fl_Menu_Item menu_w_settings_shell_text_macros[];
 extern Fl_Menu_Item menu_i18n_type_chooser[];

@@ -253,7 +253,8 @@ void delete_all(int selected_only) {
   if(!selected_only) {
     // reset the setting for the external shell command
     if (g_shell_config) {
-      g_shell_config->restore_defaults();
+//      g_shell_config->restore_defaults();
+      // TODO: unload the project shell commands
       g_shell_config->rebuild_shell_menu();
       g_shell_config->update_settings_dialog();
     }

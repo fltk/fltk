@@ -1,7 +1,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2023 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,12 +17,13 @@
 #ifndef _FLUID_SHELL_COMMAND_H
 #define _FLUID_SHELL_COMMAND_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "fluid.h"
 
 #include <FL/Fl_String.H>
 #include <FL/Enumerations.H>
 
+#include <stdio.h>
+#include <stdlib.h>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
@@ -38,9 +39,6 @@ struct Fl_Menu_Item;
 class Fl_Widget;
 
 void run_shell_command(const Fl_String &cmd, int flags);
-
-extern Fl_Menu_Item default_shell_menu[];
-void shell_submenu_marker(Fl_Widget*, void*);
 
 class Fl_Process {
 public:
@@ -83,6 +81,7 @@ public:
   Fd_Shell_Command(const Fl_String &in_name,
                    const Fl_String &in_label,
                    Fl_Shortcut in_shortcut,
+                   Fd_Tool_Store in_storage,
                    int in_condition,
                    const Fl_String &in_condition_data,
                    const Fl_String &in_command,
@@ -90,12 +89,15 @@ public:
   Fl_String name;
   Fl_String label;
   Fl_Shortcut shortcut;
+  Fd_Tool_Store storage;
   int condition; // always, hide, windows only, linux only, mac only, user, machine
   Fl_String condition_data; // user name, machine name
   Fl_String command;
   int flags; // save_project, save_code, save_string, ...
   Fl_Menu_Item *shell_menu_item_;
   void run();
+//  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
+//  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(class Fd_Project_Reader*);
   void write(class Fd_Project_Writer*);
   void update_shell_menu();
@@ -104,7 +106,6 @@ public:
 
 class Fd_Shell_Command_List {
 public:
-  bool is_default_;
   Fd_Shell_Command **list;
   int list_size;
   int list_capacity;
@@ -117,18 +118,21 @@ public:
   void insert(int index, Fd_Shell_Command *cmd);
   void remove(int index);
   void clear();
-  void restore_defaults();
-//  bool is_default();
 //  void move_up();
 //  void move_down();
+//  int load(const Fl_String &filename);
+//  int save(const Fl_String &filename);
+//  void write(Fl_Preferences &prefs, Fd_Tool_Store storage);
+//  void read(Fl_Preferences &prefs, Fd_Tool_Store storage);
   void read(class Fd_Project_Reader*);
   void write(class Fd_Project_Writer*);
   void rebuild_shell_menu();
   void update_settings_dialog();
-  void is_default_list(bool v);  
+
+  static Fl_Menu_Item default_menu[];
+  static void menu_marker(Fl_Widget*, void*);
 };
 
 extern Fd_Shell_Command_List *g_shell_config;
-
 
 #endif // _FLUID_SHELL_COMMAND_H
